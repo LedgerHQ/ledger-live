@@ -149,6 +149,28 @@ const filecoin: CurrenciesData<Transaction> = {
             warnings: {},
           },
         },
+        {
+          name: "Send max",
+          transaction: fromTransactionRaw({
+            family: "filecoin",
+            method: 1,
+            version: 1,
+            nonce: 100,
+            gasFeeCap: "1000",
+            gasLimit: 10,
+            gasPremium: "10000",
+            recipient: ACCOUNT_1,
+            amount: "1",
+            useAllAmount: true,
+          }),
+          expectedStatus: (account, tx, status) => {
+            return {
+              amount: account.spendableBalance.minus(status.estimatedFees),
+              errors: {},
+              warnings: {},
+            };
+          },
+        },
       ],
     },
   ],

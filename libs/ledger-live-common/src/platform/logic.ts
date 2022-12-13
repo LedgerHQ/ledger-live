@@ -26,6 +26,7 @@ import { Transaction } from "../generated/types";
 import { MessageData } from "../hw/signMessage/types";
 import { prepareMessageToSign } from "../hw/signMessage/index";
 import { TypedMessageData } from "../families/ethereum/types";
+import { Exchange } from "../exchange/platform/types";
 
 export function translateContent(content: any, locale = "en"): string {
   if (!content || typeof content !== "object") return content;
@@ -105,13 +106,16 @@ export function signTransactionLogic(
 
   const parentAccount = getParentAccount(account, accounts);
 
-  if (
-    (isTokenAccount(account)
-      ? parentAccount?.currency.family
-      : account.currency.family) !== platformTransaction.family
-  ) {
+  const accountFamily = isTokenAccount(account)
+    ? parentAccount?.currency.family
+    : account.currency.family;
+
+  if (accountFamily !== platformTransaction.family) {
     return Promise.reject(
-      new Error("Transaction family not matching account currency family")
+      new Error(`Transaction family not matching account currency family.\n
+      Account family: ${accountFamily}\n
+      Transaction family: ${platformTransaction.family}
+      `)
     );
   }
 
@@ -168,12 +172,7 @@ export type CompleteExchangeRequest = {
 };
 export type CompleteExchangeUiRequest = {
   provider: string;
-  exchange: {
-    fromAccount: AccountLike;
-    fromParentAccount: Account | null;
-    toAccount?: AccountLike;
-    toParentAccount: Account | null;
-  };
+  exchange: Exchange;
   transaction: TransactionCommon;
   binaryPayload: string;
   signature: string;
@@ -223,10 +222,15 @@ export function completeExchangeLogic(
 
   const accountBridge = getAccountBridge(fromAccount, fromParentAccount);
   const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
+  const mainFromAccountFamily = mainFromAccount.currency.family;
 
-  if (transaction.family !== mainFromAccount.currency.family) {
+  if (transaction.family !== mainFromAccountFamily) {
     return Promise.reject(
-      new Error("Account and transaction must be from the same family")
+      new Error(
+        `Account and transaction must be from the same family.\n
+        Account family: ${mainFromAccountFamily}\n
+        Transaction family: ${transaction.family}`
+      )
     );
   }
 
@@ -234,22 +238,34 @@ export function completeExchangeLogic(
   const { liveTx: liveTransaction } =
     getPlatformTransactionSignFlowInfos(platformTransaction);
 
-  let processedTransaction = accountBridge.createTransaction(mainFromAccount);
-  processedTransaction = accountBridge.updateTransaction(
+  /**
+   * 'subAccountId' is used for ETH and it's ERC-20 tokens.
+   * This field is ignored for BTC
+   */
+  const subAccountId = fromParentAccount ? fromAccount.id : undefined;
+
+  const bridgeTx = accountBridge.createTransaction(mainFromAccount);
+  /**
+   * We append the `recipient` to the tx created from `createTransaction`
+   * to avoid having userGasLimit reset to null for ETH txs
+   * cf. libs/ledger-live-common/src/families/ethereum/updateTransaction.ts
+   */
+  const tx = accountBridge.updateTransaction(
     {
-      ...processedTransaction,
+      ...bridgeTx,
       recipient: liveTransaction.recipient,
     },
     {
       ...liveTransaction,
       feesStrategy,
+      subAccountId,
     }
   );
 
   return uiNavigation({
     provider,
     exchange,
-    transaction: processedTransaction,
+    transaction: tx,
     binaryPayload,
     signature,
     feesStrategy,
@@ -271,7 +287,9 @@ export function signMessageLogic(
   const account = accounts.find((account) => account.id === accountId);
   if (account === undefined) {
     tracking.platformSignMessageFail(manifest);
-    return Promise.reject(new Error("account not found"));
+    return Promise.reject(
+      new Error(`account with id "${accountId}" not found`)
+    );
   }
 
   let formattedMessage: MessageData | TypedMessageData;

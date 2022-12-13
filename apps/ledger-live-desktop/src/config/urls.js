@@ -191,6 +191,8 @@ export const urls = {
   osmosisStakingRewards: "https://support.ledger.com/hc/en-us/articles/6235986236957?docs=true",
   algorandStakingRewards:
     "https://support.ledger.com/hc/en-us/articles/360015897740?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=algorand",
+  nearStakingRewards:
+    "https://support.ledger.com/hc/en-us/articles/360020450619-NEAR-NEAR-?docs=true",
   polkadotFeesInfo:
     "https://support.ledger.com/hc/en-us/articles/360016289919?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=polkadot",
   xpubLearnMore:
@@ -271,6 +273,11 @@ export const urls = {
     SyncError:
       "https://support.ledger.com/hc/en-us/articles/360012207759-Solve-a-synchronization-error?support=true",
     ServiceStatusWarning: "https://status.ledger.com",
+    EConnReset:
+      "https://support.ledger.com/hc/en-us/articles/6793501085981?support=true&utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=error_connect_manager",
+    TronSendTrc20ToNewAccountForbidden:
+      "https://support.ledger.com/hc/en-us/articles/6516823445533--Sending-TRC20-to-a-new-account-won-t-activate-it-message-in-Ledger-Live?support=true",
+    OperatingSystemOutdated: "https://support.ledger.com/hc/articles/8083692639901?support=true",
   },
   compound:
     "https://support.ledger.com/hc/en-us/articles/360017215099?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=compound",
@@ -303,4 +310,6 @@ export const urls = {
     learnMore:
       "https://support.ledger.com/hc/en-us/articles/360020499920-Celo-CELO-?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=celo",
   },
+  ledgerByFigmentTC:
+    "https://cdn.figment.io/legal/Current%20Ledger_Online%20Staking%20Delgation%20Services%20Agreement.pdf",
 };

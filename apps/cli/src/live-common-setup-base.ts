@@ -53,7 +53,8 @@ setSupportedCurrencies([
   "moonbeam",
   "cronos",
   "songbird",
-  "flare"
+  "flare",
+  "near",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

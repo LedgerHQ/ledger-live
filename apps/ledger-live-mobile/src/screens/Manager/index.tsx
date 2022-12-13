@@ -26,6 +26,7 @@ import {
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
 import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/types/ManagerNavigator";
+import ServicesWidget from "../../components/ServicesWidget";
 
 const action = createAction(connectManager);
 
@@ -100,7 +101,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
           <Trans i18nKey="manager.title" />
         </Text>
         {newDeviceSelectionFeatureFlag?.enabled ? (
-          <SelectDevice2 onSelect={onSelectDevice} />
+          <SelectDevice2 onSelect={onSelectDevice} stopBleScanning={!!device} />
         ) : (
           <>
             <SelectDevice
@@ -126,6 +127,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
           action={action}
           request={null}
         />
+        <ServicesWidget />
       </Flex>
     </NavigationScrollView>
   );

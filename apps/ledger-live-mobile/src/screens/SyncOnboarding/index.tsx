@@ -225,9 +225,9 @@ export const SyncOnboarding = ({
   }, []);
 
   const handleDesyncRetry = useCallback(() => {
+    // handleDesyncClose is then called
     setDesyncDrawerOpen(false);
-    goBackToPairingFlow();
-  }, [goBackToPairingFlow]);
+  }, []);
 
   const handleDesyncClose = useCallback(() => {
     setDesyncDrawerOpen(false);

@@ -19,6 +19,7 @@ import MODAL_TECHNICAL_DATA from "./TechnicalData";
 import MODAL_SHARE_ANALYTICS from "./ShareAnalytics";
 import MODAL_SETTINGS_ACCOUNT from "./SettingsAccount";
 import MODAL_RELEASE_NOTES from "./ReleaseNotes";
+import MODAL_TROUBLESHOOT_NETWORK from "./TroubleshootNetwork";
 import MODAL_SYSTEM_LANGUAGE_AVAILABLE from "./SystemLanguageAvailable";
 // $FlowFixMe
 import MODAL_TERM_OF_USE_UPDATE from "./TermOfUseUpdate";
@@ -86,6 +87,11 @@ import MODAL_CELO_WITHDRAW from "../families/celo/WithdrawFlowModal";
 import MODAL_CELO_ACTIVATE from "../families/celo/ActivateFlowModal";
 import MODAL_CELO_REVOKE from "../families/celo/RevokeFlowModal";
 
+import MODAL_NEAR_STAKE from "../families/near/StakingFlowModal";
+import MODAL_NEAR_REWARDS_INFO from "../families/near/StakingFlowModal/Info";
+import MODAL_NEAR_UNSTAKE from "../families/near/UnstakingFlowModal";
+import MODAL_NEAR_WITHDRAW from "../families/near/WithdrawingFlowModal";
+
 // Lending
 import MODAL_LEND_MANAGE from "../screens/lend/modals/ManageLend";
 import MODAL_LEND_ENABLE_INFO from "../screens/lend/modals/EnableInfoModal";
@@ -118,6 +124,7 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_SHARE_ANALYTICS,
   MODAL_SETTINGS_ACCOUNT,
   MODAL_RELEASE_NOTES,
+  MODAL_TROUBLESHOOT_NETWORK,
   MODAL_SYSTEM_LANGUAGE_AVAILABLE,
   MODAL_TERM_OF_USE_UPDATE,
   MODAL_CLAIM_REWARDS,
@@ -164,6 +171,10 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_CELO_WITHDRAW,
   MODAL_CELO_ACTIVATE,
   MODAL_CELO_REVOKE,
+  MODAL_NEAR_STAKE,
+  MODAL_NEAR_REWARDS_INFO,
+  MODAL_NEAR_UNSTAKE,
+  MODAL_NEAR_WITHDRAW,
   MODAL_FULL_NODE,
   MODAL_LOTTIE_DEBUGGER,
   MODAL_STORYLY_DEBUGGER,

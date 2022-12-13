@@ -3,6 +3,7 @@ import { Platform, SectionList } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import Illustration from "../../../images/illustration/Illustration";
 import { TrackScreen } from "../../../analytics";
 import { ScreenName } from "../../../const";
@@ -18,12 +19,14 @@ const images = {
     setupNano: require("../../../images/illustration/Light/_NewNano.png"),
     restoreRecoveryPhrase: require("../../../images/illustration/Light/_RestoreRecoveryPhrase.png"),
     syncCrypto: require("../../../images/illustration/Light/_SyncCrypto.png"),
+    protect: require("../../../images/illustration/Light/_000_PLACEHOLDER.png"),
   },
   dark: {
     pairNew: require("../../../images/illustration/Dark/_ConnectYourNano.png"),
     setupNano: require("../../../images/illustration/Dark/_NewNano.png"),
     restoreRecoveryPhrase: require("../../../images/illustration/Dark/_RestoreRecoveryPhrase.png"),
     syncCrypto: require("../../../images/illustration/Dark/_SyncCrypto.png"),
+    protect: require("../../../images/illustration/Dark/_000_PLACEHOLDER.png"),
   },
 };
 
@@ -36,6 +39,8 @@ const OnboardingStepUseCaseSelection = () => {
   const { t } = useTranslation();
   const route = useRoute<NavigationProps["route"]>();
   const navigation = useNavigation<NavigationProps["navigation"]>();
+
+  const servicesConfig = useFeature("protectServicesMobile");
 
   const deviceModelId = route?.params?.deviceModelId;
 
@@ -124,10 +129,44 @@ const OnboardingStepUseCaseSelection = () => {
                   title: t("onboarding.stepUseCase.restoreDevice.subTitle"),
                   event: "Onboarding - Restore",
                 },
+                ...(servicesConfig?.enabled
+                  ? [
+                      {
+                        disabled: deviceModelId !== "nanoX",
+                        onPress: () => {
+                          if (deviceModelId === "nanoX") {
+                            navigation.navigate(ScreenName.OnboardingPairNew, {
+                              deviceModelId: route.params.deviceModelId,
+                              next: ScreenName.OnboardingProtectFlow,
+                            });
+                          }
+                        },
+                        Image: (
+                          <Illustration
+                            size={130}
+                            darkSource={images.dark.protect}
+                            lightSource={images.light.protect}
+                          />
+                        ),
+                        title: t("onboarding.stepUseCase.protect.subTitle"),
+                        labelBadge:
+                          deviceModelId === "nanoX"
+                            ? t("onboarding.stepUseCase.protect.label")
+                            : undefined,
+                        event: "Onboarding - Restore Protect",
+                      },
+                    ]
+                  : []),
               ],
             },
           ],
-    [deviceModelId, navigation, route.params, t],
+    [
+      deviceModelId,
+      navigation,
+      route.params.deviceModelId,
+      servicesConfig?.enabled,
+      t,
+    ],
   );
 
   return (

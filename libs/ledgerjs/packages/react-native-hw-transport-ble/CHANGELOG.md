@@ -1,5 +1,43 @@
 # @ledgerhq/react-native-hw-transport-ble
 
+## 6.27.11
+
+### Patch Changes
+
+- [#2024](https://github.com/LedgerHQ/ledger-live/pull/2024) [`627b46b58e`](https://github.com/LedgerHQ/ledger-live/commit/627b46b58ed83970c69d621303af7a3a7e51850b) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Undo the auto disconnect mechanism, due to regressions
+
+* [#1871](https://github.com/LedgerHQ/ledger-live/pull/1871) [`ff5cb2cb11`](https://github.com/LedgerHQ/ledger-live/commit/ff5cb2cb11a2dcac0f2a65bf3ae4efac512cfe71) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Provide a forceful disconnection mechanism for close request on BleTransport
+
+## 6.27.11-next.1
+
+### Patch Changes
+
+- [#2024](https://github.com/LedgerHQ/ledger-live/pull/2024) [`627b46b58e`](https://github.com/LedgerHQ/ledger-live/commit/627b46b58ed83970c69d621303af7a3a7e51850b) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Undo the auto disconnect mechanism, due to regressions
+
+## 6.27.11-next.0
+
+### Patch Changes
+
+- [#1871](https://github.com/LedgerHQ/ledger-live/pull/1871) [`ff5cb2cb11`](https://github.com/LedgerHQ/ledger-live/commit/ff5cb2cb11a2dcac0f2a65bf3ae4efac512cfe71) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Provide a forceful disconnection mechanism for close request on BleTransport
+
+## 6.27.10
+
+### Patch Changes
+
+- Updated dependencies [[`856f49374e`](https://github.com/LedgerHQ/ledger-live/commit/856f49374ec9b49f005676e270acdb81b78879c8), [`77056e3692`](https://github.com/LedgerHQ/ledger-live/commit/77056e369256112188c183823a2c3fabfea2cba8)]:
+  - @ledgerhq/errors@6.12.1
+  - @ledgerhq/devices@7.0.5
+  - @ledgerhq/hw-transport@6.27.8
+
+## 6.27.10-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`856f49374e`](https://github.com/LedgerHQ/ledger-live/commit/856f49374ec9b49f005676e270acdb81b78879c8), [`77056e3692`](https://github.com/LedgerHQ/ledger-live/commit/77056e369256112188c183823a2c3fabfea2cba8)]:
+  - @ledgerhq/errors@6.12.1-next.0
+  - @ledgerhq/devices@7.0.5-next.0
+  - @ledgerhq/hw-transport@6.27.8-next.0
+
 ## 6.27.9
 
 ### Patch Changes
