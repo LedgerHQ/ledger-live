@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.28.0-nightly.1
+
+### Minor Changes
+
+- [#1805](https://github.com/LedgerHQ/ledger-live/pull/1805) [`d99aafd1d4`](https://github.com/LedgerHQ/ledger-live/commit/d99aafd1d48336f6b4da3c1d8e7c52dbc1676278) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - STAKE, UNSTAKE, and WITHDRAW operation types added to support NEAR staking operations
+
 ## 6.27.2-nightly.0
 
 ### Patch Changes

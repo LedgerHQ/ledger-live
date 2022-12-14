@@ -1,5 +1,19 @@
 # live-mobile
 
+## 3.13.0-nightly.1
+
+### Minor Changes
+
+- [#2080](https://github.com/LedgerHQ/ledger-live/pull/2080) [`2200448b70`](https://github.com/LedgerHQ/ledger-live/commit/2200448b70697df875fc03d72f7cfbec3572e875) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - bugfix: llm - fixes issue where From account was being displayed as target account on swap screen"
+
+* [#1805](https://github.com/LedgerHQ/ledger-live/pull/1805) [`d99aafd1d4`](https://github.com/LedgerHQ/ledger-live/commit/d99aafd1d48336f6b4da3c1d8e7c52dbc1676278) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - NEAR sync, send and stake
+
+### Patch Changes
+
+- Updated dependencies [[`d99aafd1d4`](https://github.com/LedgerHQ/ledger-live/commit/d99aafd1d48336f6b4da3c1d8e7c52dbc1676278), [`d99aafd1d4`](https://github.com/LedgerHQ/ledger-live/commit/d99aafd1d48336f6b4da3c1d8e7c52dbc1676278)]:
+  - @ledgerhq/live-common@27.10.0-nightly.0
+  - @ledgerhq/types-live@6.28.0-nightly.1
+
 ## 3.13.0-nightly.0
 
 ### Minor Changes

@@ -1,5 +1,17 @@
 # @ledgerhq/live-common
 
+## 27.10.0-nightly.0
+
+### Minor Changes
+
+- [#1805](https://github.com/LedgerHQ/ledger-live/pull/1805) [`d99aafd1d4`](https://github.com/LedgerHQ/ledger-live/commit/d99aafd1d48336f6b4da3c1d8e7c52dbc1676278) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - NEAR sync, send and stake
+
+### Patch Changes
+
+- Updated dependencies [[`d99aafd1d4`](https://github.com/LedgerHQ/ledger-live/commit/d99aafd1d48336f6b4da3c1d8e7c52dbc1676278)]:
+  - @ledgerhq/cryptoassets@7.1.0-nightly.0
+  - @ledgerhq/hw-app-eth@6.30.3-nightly.0
+
 ## 27.9.0
 
 ### Minor Changes

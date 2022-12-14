@@ -1,5 +1,23 @@
 # ledger-live-desktop
 
+## 2.51.0-nightly.2
+
+### Minor Changes
+
+- [#1805](https://github.com/LedgerHQ/ledger-live/pull/1805) [`d99aafd1d4`](https://github.com/LedgerHQ/ledger-live/commit/d99aafd1d48336f6b4da3c1d8e7c52dbc1676278) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - NEAR sync, send and stake
+
+* [#2053](https://github.com/LedgerHQ/ledger-live/pull/2053) [`07f48c9471`](https://github.com/LedgerHQ/ledger-live/commit/07f48c947120fc1dc472719a5ee8a9fbb7dcd478) Thanks [@sarneijim](https://github.com/sarneijim)! - Integrate ETH stake new flow (include receive flag)
+
+### Patch Changes
+
+- [`06f43afb06`](https://github.com/LedgerHQ/ledger-live/commit/06f43afb06d7eaa4d51fe95098135c55a5e0916b) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Accept terms of use when click get started button in onboarding
+
+* [#2075](https://github.com/LedgerHQ/ledger-live/pull/2075) [`0d36245257`](https://github.com/LedgerHQ/ledger-live/commit/0d362452577acb3190523e4bc4a5e9cd4985d712) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Fixes loading indicator padding on swap screen
+
+* Updated dependencies [[`d99aafd1d4`](https://github.com/LedgerHQ/ledger-live/commit/d99aafd1d48336f6b4da3c1d8e7c52dbc1676278), [`d99aafd1d4`](https://github.com/LedgerHQ/ledger-live/commit/d99aafd1d48336f6b4da3c1d8e7c52dbc1676278)]:
+  - @ledgerhq/live-common@27.10.0-nightly.0
+  - @ledgerhq/types-live@6.28.0-nightly.1
+
 ## 2.51.0-nightly.1
 
 ### Patch Changes

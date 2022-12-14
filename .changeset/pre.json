@@ -77,23 +77,30 @@
     "@actions/turborepo-gh-cache": "1.0.0",
     "@actions/generate-bot-super-report": "1.0.1",
     "@actions/turbo-affected": "1.0.0",
-    "@actions/live-common-affected": "1.0.0"
+    "@actions/live-common-affected": "1.0.0",
+    "@ledgerhq/hw-app-near": "6.27.3"
   },
   "changesets": [
     "chilly-donkeys-double",
     "dull-beers-work",
     "eighty-baboons-roll",
+    "gold-suns-help",
+    "green-turtles-relax",
+    "hot-jars-obey",
     "kind-chefs-dream",
     "large-mayflies-fly",
+    "metal-eyes-report",
     "nervous-kangaroos-lie",
     "ninety-eggs-look",
     "old-fans-beam",
     "olive-melons-smash",
     "pink-houses-do",
     "pink-terms-breathe",
+    "purple-pots-juggle",
     "quiet-llamas-travel",
     "real-pugs-mix",
     "rich-cats-remember",
+    "rich-dryers-hear",
     "rude-turtles-buy",
     "serious-queens-yell",
     "shy-bats-end",
@@ -102,7 +109,10 @@
     "spicy-jeans-study",
     "spotty-foxes-change",
     "stale-pens-fry",
+    "stupid-dodos-sip",
+    "tame-ghosts-jam",
     "tender-baboons-report",
+    "tiny-brooms-sit",
     "wicked-vans-count"
   ]
 }
