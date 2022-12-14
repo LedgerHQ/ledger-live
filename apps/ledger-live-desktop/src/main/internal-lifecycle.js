@@ -194,15 +194,16 @@ ipcMain.on("hydrateCurrencyData", (event, { currencyId, serialized }) => {
   internal.send({ type: "hydrateCurrencyData", serialized, currencyId });
 });
 
-const internalRequest = (channel, data) => {
-  return new Promise((resolve, reject) => {
-    const requestId = uuidv4();
+// TODO maybe add a timeout to avoid deadlocks ?
+const internalHandler = channel => {
+  ipcMain.on(channel, (event, { data, requestId }) => {
+    const replyChannel = `${channel}_RESPONSE_${requestId}`;
     const handler = message => {
       if (message.type === channel && message.requestId === requestId) {
         if (message.error) {
-          reject(message.error);
+          event.reply(replyChannel, { error: message.error });
         } else {
-          resolve(message.data);
+          event.reply(replyChannel, { data: message.data });
         }
         internal.process.removeListener("message", handler);
       }
@@ -213,14 +214,6 @@ const internalRequest = (channel, data) => {
   });
 };
 
-ipcMain.handle(transportOpenChannel, (event, data) => {
-  return internalRequest(transportOpenChannel, data);
-});
-
-ipcMain.handle(transportExchangeChannel, (event, data) => {
-  return internalRequest(transportExchangeChannel, data);
-});
-
-ipcMain.handle(transportCloseChannel, (event, data) => {
-  return internalRequest(transportCloseChannel, data);
-});
+internalHandler(transportOpenChannel);
+internalHandler(transportExchangeChannel);
+internalHandler(transportCloseChannel);
