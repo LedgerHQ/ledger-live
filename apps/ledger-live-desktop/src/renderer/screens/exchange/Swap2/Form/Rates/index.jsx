@@ -5,8 +5,8 @@ import { Trans } from "react-i18next";
 import { track } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
-import DecentralisedRate from "./DecentralisedRate";
-import CentralisedRate from "./CentralisedRate";
+import NoQuoteSwapRate from "./NoQuoteSwapRate";
+import SwapRate from "./SwapRate";
 import Countdown from "./Countdown";
 import EmptyState from "./EmptyState";
 import Filter from "./Filter";
@@ -191,7 +191,7 @@ export default function ProviderRate({
             selectedRate.provider === rate.provider &&
             selectedRate.tradeMethod === rate.tradeMethod;
           return rate.providerType === "DEX" && rate.rate === undefined ? (
-            <DecentralisedRate
+            <NoQuoteSwapRate
               filter={filter}
               key={rate.id}
               value={rate}
@@ -200,7 +200,7 @@ export default function ProviderRate({
               icon={rate.provider}
             />
           ) : (
-            <CentralisedRate
+            <SwapRate
               key={`${rate.provider}-${rate.tradeMethod}`}
               value={rate}
               selected={isSelected}

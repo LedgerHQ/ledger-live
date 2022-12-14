@@ -19,7 +19,7 @@ const SecondaryText: ThemedComponent<{}> = styled(Text)`
   color: ${p => p.theme.colors.neutral.c70};
 `;
 
-function DecentralisedRate({ value = {}, selected, onSelect, icon }: Props) {
+function NoQuoteSwapRate({ value = {}, selected, onSelect, icon }: Props) {
   return (
     <Rate
       value={value}
@@ -37,4 +37,4 @@ function DecentralisedRate({ value = {}, selected, onSelect, icon }: Props) {
   );
 }
 
-export default React.memo<Props>(DecentralisedRate);
+export default React.memo<Props>(NoQuoteSwapRate);
