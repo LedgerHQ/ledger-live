@@ -224,7 +224,7 @@ export function orchestrator(app: Probot) {
         checkName: GATE_CHECK_RUN_NAME,
       });
 
-      if (checkRun && affectedWorkflows > 0) {
+      if (checkRun && affectedWorkflows < 1) {
         await octokit.checks.update({
           owner,
           repo,
