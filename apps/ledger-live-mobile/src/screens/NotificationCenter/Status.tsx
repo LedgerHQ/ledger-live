@@ -49,14 +49,11 @@ export default function StatusCenter({ onClose, isOpened }: Props) {
 
   return (
     <BottomDrawer
-      title={t("notificationCenter.status.title", {
-        count: incidents.length,
-      })}
       isOpen={isOpened}
       onClose={onPressClose}
       Icon={
         <Flex
-          backgroundColor={colors.background.main}
+          backgroundColor={colors.neutral.c100a005}
           borderRadius={50}
           width={65}
           height={65}
@@ -69,6 +66,11 @@ export default function StatusCenter({ onClose, isOpened }: Props) {
     >
       <TrackScreen category={DRAWER} type="drawer" refreshSource={false} />
 
+      <Text variant="h4" fontWeight="semiBold" textAlign="center" mb={7}>
+        {t("notificationCenter.status.title", {
+          count: incidents.length,
+        })}
+      </Text>
       {new Array(incidents.length).fill(null).map((_e, index) => (
         <Text
           variant="body"

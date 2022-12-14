@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { ExternalLinkMedium } from "@ledgerhq/icons-ui/native";
 import Text from "../../Text";
 import Flex from "../../Layout/Flex";
@@ -11,6 +11,7 @@ export type CardProps = TouchableOpacityProps & {
   tag?: string;
   description?: string;
   cta?: string;
+  link?: string;
   time?: string;
   title?: string;
   onClickCard?: () => void;
@@ -43,10 +44,26 @@ const Timer = ({ time, viewed }: { time: string; viewed: boolean }) => (
 );
 
 const NotificationCard = (props: CardProps): React.ReactElement => {
-  const { tag = "", time = "", title, description, cta, viewed, onClickCard, showLinkCta } = props;
+  const {
+    tag = "",
+    time = "",
+    title,
+    description,
+    cta,
+    viewed,
+    onClickCard,
+    showLinkCta,
+    link = "",
+  } = props;
+
+  const ctaIcon = useMemo(() => {
+    const isDeepLink = link?.startsWith("ledgerlive:");
+
+    return link && isDeepLink ? undefined : () => <ExternalLinkMedium color="neutral.c100" />;
+  }, [link]);
 
   return (
-    <Base onPress={onClickCard} activeOpacity={0.5}>
+    <Base onPress={onClickCard} activeOpacity={link ? 0.5 : 1}>
       <Flex width="100%" flexDirection="column">
         <Flex flexDirection="row" justifyContent="space-between">
           <Tag tag={tag} />
@@ -74,7 +91,7 @@ const NotificationCard = (props: CardProps): React.ReactElement => {
               type="main"
               size="medium"
               iconPosition="right"
-              Icon={() => <ExternalLinkMedium color="neutral.c100" />}
+              Icon={ctaIcon}
               onPress={onClickCard}
               numberOfLines={1}
             >

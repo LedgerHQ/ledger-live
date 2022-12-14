@@ -5331,7 +5331,7 @@
       }
     },
     "status": {
-      "title": "Some issue might need your attention",
+      "title": "An issue might need your attention",
       "title_plural": "Some issues might need your attention",
       "desc": {
         "0": "They’re being investigated and will be resolved shortly.",
