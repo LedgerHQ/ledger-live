@@ -39,7 +39,7 @@ type NavigationProps = BaseComposite<
  * route param.
  *
  * This is meant as a data validation. We want to validate that the raw data
- * (that is eventually what will be transfered) allows to reconstruct exactly
+ * (that is eventually what will be transferred) allows to reconstruct exactly
  * the image previewed on the previous screen.
  *
  * We take this raw data and use it to rebuild the image from scratch, then

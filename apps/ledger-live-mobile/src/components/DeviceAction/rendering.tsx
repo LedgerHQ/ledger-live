@@ -43,7 +43,7 @@ import type { DeviceModelInfo } from "@ledgerhq/types-live";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ParamListBase } from "@react-navigation/native";
-import { isFirmwareUpdateVersionSupported } from "../../logic/firmwareUpdate";
+import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
 import { lastSeenDeviceSelector } from "../../reducers/settings";
 import { setModalLock } from "../../actions/appstate";
 import { urls } from "../../config/urls";
