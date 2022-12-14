@@ -1,8 +1,9 @@
 import type { SocketEvent } from "@ledgerhq/types-live";
 import { from, Observable } from "rxjs";
-import { mergeMap } from "rxjs/operators";
+import { mergeMap, retryWhen } from "rxjs/operators";
+import { LockedDeviceError } from "@ledgerhq/errors";
 import getDeviceInfo from "./getDeviceInfo";
-import { withDevice } from "./deviceAccess";
+import { retryWhileErrors, withDevice } from "./deviceAccess";
 import genuineCheck from "./genuineCheck";
 
 export type GetGenuineCheckFromDeviceIdArgs = {
@@ -49,13 +50,30 @@ export const getGenuineCheckFromDeviceId = ({
           return genuineCheck(t, deviceInfo);
         })
       )
-    ).subscribe({
-      next: (socketEvent: SocketEvent) => {
-        o.next({ socketEvent, deviceIsLocked: false });
-      },
-      error: (e) => {
-        o.error(e);
-      },
-    });
+    )
+      // Needs to retry with withDevice
+      .pipe(
+        retryWhen(
+          retryWhileErrors((e: Error) => {
+            // Cancels the locked-device unresponsive/timeout strategy if received any response/error
+            clearTimeout(lockedDeviceTimeout);
+
+            if (e instanceof LockedDeviceError) {
+              o.next({ socketEvent: null, deviceIsLocked: true });
+              return true;
+            }
+
+            return false;
+          })
+        )
+      )
+      .subscribe({
+        next: (socketEvent: SocketEvent) => {
+          o.next({ socketEvent, deviceIsLocked: false });
+        },
+        error: (e) => {
+          o.error(e);
+        },
+      });
   });
 };
