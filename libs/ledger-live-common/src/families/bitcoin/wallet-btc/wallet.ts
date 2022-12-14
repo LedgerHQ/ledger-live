@@ -17,9 +17,10 @@ import BitcoinLikeExplorer from "./explorer";
 import { TX, Address } from "./storage/types";
 import { blockchainBaseURL } from "../../../api/Ledger";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 class BitcoinLikeWallet {
-  explorer!: IExplorer;
+  explorers: { [currencyId: string]: IExplorer } = {};
 
   constructor() {}
 
@@ -27,8 +28,13 @@ class BitcoinLikeWallet {
     mock: () => new BitcoinLikeStorage(),
   };
 
-  getExplorer(explorerURI: string) {
-    return this.explorer || new BitcoinLikeExplorer({ explorerURI });
+  getExplorer(currency: CryptoCurrency) {
+    if (!this.explorers[currency.id]) {
+      this.explorers[currency.id] = new BitcoinLikeExplorer({
+        cryptoCurrency: currency,
+      });
+    }
+    return this.explorers[currency.id];
   }
 
   async generateAccount(
@@ -42,10 +48,11 @@ class BitcoinLikeWallet {
       storage: "mock";
       storageParams: any[];
     },
-    explorerURI: string
+    cryptoCurrency: CryptoCurrency
   ): Promise<Account> {
-    this.explorer = new BitcoinLikeExplorer({
-      explorerURI: explorerURI,
+    const explorerURI = blockchainBaseURL(cryptoCurrency);
+    this.explorers[explorerURI] = new BitcoinLikeExplorer({
+      cryptoCurrency: cryptoCurrency,
     });
     const crypto = cryptoFactory(params.currency);
     const storage = this.accountStorages[params.storage](
@@ -55,7 +62,7 @@ class BitcoinLikeWallet {
       params,
       xpub: new Xpub({
         storage,
-        explorer: this.explorer,
+        explorer: this.explorers[explorerURI],
         crypto,
         xpub: params.xpub,
         derivationMode: params.derivationMode,
@@ -336,14 +343,13 @@ class BitcoinLikeWallet {
     const currencyId = account.params.currency;
     const cryptoCurrency = getCryptoCurrencyById(currencyId);
     const crypto = cryptoFactory(currencyId);
-    const explorerURI = blockchainBaseURL(cryptoCurrency);
     const storage = this.accountStorages[account.params.storage](
       ...account.params.storageParams
     );
 
     return new Xpub({
       storage,
-      explorer: this.getExplorer(explorerURI),
+      explorer: this.getExplorer(cryptoCurrency),
       crypto,
       xpub: account.xpub.xpub,
       derivationMode: account.params.derivationMode,

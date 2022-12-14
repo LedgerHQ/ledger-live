@@ -9,6 +9,8 @@ import {
   responseInterceptor,
   errorInterceptor,
 } from "../../../../network";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { blockchainBaseURL } from "../../../../api/Ledger";
 
 type ExplorerParams = {
   no_token?: string;
@@ -24,14 +26,19 @@ class BitcoinLikeExplorer implements IExplorer {
   disableBatchSize = false;
 
   constructor({
-    explorerURI,
+    cryptoCurrency,
     disableBatchSize,
+    forcedExplorerURI,
   }: {
-    explorerURI: string;
+    cryptoCurrency: CryptoCurrency;
     disableBatchSize?: boolean;
+    forcedExplorerURI?: string;
   }) {
     const clientParams: AxiosRequestConfig = {
-      baseURL: explorerURI,
+      baseURL:
+        forcedExplorerURI != null
+          ? forcedExplorerURI
+          : blockchainBaseURL(cryptoCurrency),
     };
 
     // not react native

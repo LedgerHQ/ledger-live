@@ -2,7 +2,7 @@ import { DerivationModes } from "../types";
 import BitcoinLikeWallet from "../wallet";
 import * as utils from "../utils";
 import { Account } from "../account";
-import explorerUrl from "../test-explorer-url";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 describe("testing estimateMaxSpendable", () => {
   const wallet = new BitcoinLikeWallet();
@@ -19,7 +19,7 @@ describe("testing estimateMaxSpendable", () => {
         storage: "mock",
         storageParams: [],
       },
-      `${explorerUrl}/v4/btc`
+      getCryptoCurrencyById("bitcoin")
     );
 
     expect(account.xpub.xpub).toEqual(

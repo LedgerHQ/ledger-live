@@ -7,7 +7,7 @@ import BCHCrypto from "../crypto/bitcoincash";
 import BTCCrypto from "../crypto/bitcoin";
 import ZECCrypto from "../crypto/zec";
 import ZENCrypto from "../crypto/zen";
-import explorerUrl from "../test-explorer-url";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 describe("Unit tests for getAddress", () => {
   it("Test getAddress for bch and btc", async () => {
@@ -20,7 +20,7 @@ describe("Unit tests for getAddress", () => {
     const bchxpub = new Xpub({
       storage: new BitcoinLikeStorage(),
       explorer: new BitcoinLikeExplorer({
-        explorerURI: `${explorerUrl}/v4/bch`,
+        cryptoCurrency: getCryptoCurrencyById("bitcoin_cash"),
       }),
       crypto: bchCrypto,
       xpub: "xpub6BtWBf3Pu6hYwJBKvEwG7JtrTxxDrSGy39HaTgZz6GTSaFWFdoCtuEXSQtoKGaYdz1emg8xTXKYwjhu3xXRPzFnYS1z4yjKj7hLDQyNeDZr",
@@ -35,7 +35,7 @@ describe("Unit tests for getAddress", () => {
     const btcxpub = new Xpub({
       storage: new BitcoinLikeStorage(),
       explorer: new BitcoinLikeExplorer({
-        explorerURI: `${explorerUrl}/v4/btc`,
+        cryptoCurrency: getCryptoCurrencyById("bitcoin"),
       }),
       crypto: btcCrypto,
       xpub: "xpub6BtWBf3Pu6hYwJBKvEwG7JtrTxxDrSGy39HaTgZz6GTSaFWFdoCtuEXSQtoKGaYdz1emg8xTXKYwjhu3xXRPzFnYS1z4yjKj7hLDQyNeDZr",

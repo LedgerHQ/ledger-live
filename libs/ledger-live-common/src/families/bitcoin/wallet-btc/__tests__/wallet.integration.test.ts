@@ -4,7 +4,7 @@ import BitcoinLikeWallet from "../wallet";
 import { Account } from "../account";
 import { Merge } from "../pickingstrategies/Merge";
 import MockBtc from "../../mockBtc";
-import explorerUrl from "../test-explorer-url";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 jest.setTimeout(180000);
 
@@ -23,7 +23,7 @@ describe("testing wallet", () => {
         storage: "mock",
         storageParams: [],
       },
-      `${explorerUrl}/v4/btc`
+      getCryptoCurrencyById("bitcoin")
     );
 
     expect(account.xpub.xpub).toEqual(

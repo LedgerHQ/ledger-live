@@ -4,7 +4,7 @@ import {
   getSecp256k1Instance,
   setSecp256k1Instance,
 } from "../crypto/secp256k1";
-import explorerUrl from "../test-explorer-url";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 jest.setTimeout(180000);
 
@@ -31,7 +31,7 @@ describe("testing resilience of failures", () => {
               storage: "mock",
               storageParams: [],
             },
-            `${explorerUrl}/v4/btc`
+            getCryptoCurrencyById("bitcoin")
           )
           .then((a) => wallet.syncAccount(a))
       ).rejects.toEqual(new Error("FAILCRYPTO"));

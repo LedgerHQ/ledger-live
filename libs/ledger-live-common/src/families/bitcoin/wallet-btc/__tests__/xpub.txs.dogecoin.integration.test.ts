@@ -8,12 +8,12 @@ import BitcoinLikeStorage from "../storage";
 import { Merge } from "../pickingstrategies/Merge";
 import BitcoinLikeWallet from "../wallet";
 import MockBtc from "../../mockBtc";
-import explorerUrl from "../test-explorer-url";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 describe("testing dogecoin transactions", () => {
   const wallet = new BitcoinLikeWallet();
   const explorer = new BitcoinLikeExplorer({
-    explorerURI: `${explorerUrl}/v4/doge`,
+    cryptoCurrency: getCryptoCurrencyById("dogecoin"),
     disableBatchSize: true,
   });
 
@@ -86,7 +86,7 @@ describe("testing dogecoin transactions", () => {
         storage: "mock",
         storageParams: [],
       },
-      `${explorerUrl}/v4/doge`
+      getCryptoCurrencyById("dogecoin")
     );
     await wallet.signAccountTx({
       btc: new MockBtc(),

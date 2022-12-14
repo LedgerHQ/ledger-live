@@ -133,7 +133,6 @@ const getAccountShape: GetAccountShape = async (info) => {
     derivationMode as DerivationMode
   );
 
-  const explorerURI = blockchainBaseURL(currency);
   span = startSpan("sync", "generateAccount");
   const walletAccount =
     (initialAccount as BitcoinAccount)?.bitcoinResources?.walletAccount ||
@@ -148,7 +147,7 @@ const getAccountShape: GetAccountShape = async (info) => {
         storage: "mock",
         storageParams: [],
       },
-      explorerURI
+      currency
     ));
   span.finish();
 
