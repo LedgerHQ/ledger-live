@@ -26,6 +26,8 @@ export const urls = {
     ko: "https://www.ledger.com/ko/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
     ru: "https://www.ledger.com/ru/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
   },
+  pairingIssues:
+    "https://support.ledger.com/hc/en-us/articles/360025864773-Fix-Bluetooth-pairing-issues?support=true",
   ratingsContact:
     "https://support.ledger.com/hc/en-us/articles/4423020306705-Contact-Us?support=true",
   buyNanoX:

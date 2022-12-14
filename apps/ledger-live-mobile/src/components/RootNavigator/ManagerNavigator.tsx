@@ -100,7 +100,7 @@ const DeviceIcon = ({
       icon = <Icons.NanoSFoldedMedium size={size} color={color} />;
       break;
     case DeviceModelId.nanoFTS:
-      icon = <Icons.PowerMedium size={size} color={color} />;
+      icon = <Icons.StaxRegular size={size} color={color} />;
       break;
     case DeviceModelId.nanoX:
     default:

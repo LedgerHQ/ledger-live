@@ -101,6 +101,10 @@ export type SettingsState = {
   blacklistedTokenIds: string[],
   hiddenNftCollections: string[],
   deepLinkUrl: ?string,
+  lastSeenCustomImage: {
+    size: number,
+    hash: string,
+  },
   firstTimeLend: boolean,
   showClearCacheBanner: boolean,
   fullNodeEnabled: boolean,
@@ -175,6 +179,10 @@ const INITIAL_STATE: SettingsState = {
   hasInstalledApps: true,
   carouselVisibility: 0,
   lastSeenDevice: null,
+  lastSeenCustomImage: {
+    size: 0,
+    hash: "",
+  },
   latestFirmware: null,
   blacklistedTokenIds: [],
   hiddenNftCollections: [],
@@ -371,6 +379,13 @@ const handlers: Object = {
       KYC: {},
     },
   }),
+  SET_LAST_SEEN_CUSTOM_IMAGE: (state: SettingsState, { payload }) => ({
+    ...state,
+    lastSeenCustomImage: {
+      size: payload.imageSize,
+      hash: payload.imageHash,
+    },
+  }),
 };
 
 // TODO refactor selectors to *Selector naming convention
@@ -382,6 +397,8 @@ export const settingsExportSelector = storeSelector;
 export const discreetModeSelector = (state: State): boolean => state.settings.discreetMode === true;
 
 export const getCounterValueCode = (state: State) => state.settings.counterValue;
+
+export const lastSeenCustomImageSelector = (state: State) => state.settings.lastSeenCustomImage;
 
 export const deepLinkUrlSelector = (state: State) => state.settings.deepLinkUrl;
 

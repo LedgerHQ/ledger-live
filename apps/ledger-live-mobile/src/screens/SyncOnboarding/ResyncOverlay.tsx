@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
+import { Flex, Icons, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
-import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 
 type Props = {
   isOpen: boolean;
@@ -46,70 +45,36 @@ const ResyncOverlay = ({ isOpen, delay = 0, productName }: Props) => {
 
   return (
     <Flex
-      zIndex={100}
+      zIndex={1000}
       position="absolute"
       top={0}
       left={0}
       height="100%"
       width="100%"
+      background={colors.constant.overlay}
     >
-      <Svg width="100%" height="100%">
-        <Defs>
-          <LinearGradient
-            id="resyncOverlayGradient"
-            x1="0%"
-            y1="0%"
-            x2="0%"
-            y2="100%"
-            gradientUnits="userSpaceOnUse"
-          >
-            <Stop offset="0%" stopOpacity={0} stopColor="transparent" />
-            <Stop
-              offset="10%"
-              stopOpacity={0.4}
-              stopColor={colors.constant.overlay}
-            />
-            <Stop
-              offset="50%"
-              stopOpacity={0.5}
-              stopColor={colors.constant.overlay}
-            />
-            <Stop
-              offset="75%"
-              stopOpacity={0.7}
-              stopColor={colors.constant.overlay}
-            />
-          </LinearGradient>
-        </Defs>
-        <Rect
-          x="0"
-          y="0"
-          width="100%"
-          height="100%"
-          fill="url(#resyncOverlayGradient)"
-        />
-      </Svg>
       <Flex position="absolute" width="100%" bottom={0} padding={4}>
         <Flex
           width="100%"
-          backgroundColor="warning.c100"
+          backgroundColor="neutral.c100"
           borderRadius={radii[2]}
           p={6}
           flexDirection="row"
-          flexWrap="wrap"
-          justifyContent="space-between"
+          alignItems="center"
+          rowGap={4}
         >
-          <Text variant="body" textBreakStrategy="balanced" flexBasis="90%">
+          <Flex mr={4}>
+            <Icons.WarningSolidMedium color="warning.c80" size={20} />
+          </Flex>
+          <Text
+            variant="body"
+            flex={1}
+            textBreakStrategy="balanced"
+            color="neutral.c00"
+          >
             {t("syncOnboarding.resyncOverlay.content", { productName })}
           </Text>
-          <Flex
-            flexDirection="row"
-            alignItems="center"
-            justifyContent="center"
-            flexBasis="10%"
-          >
-            <InfiniteLoader color="black" size={24} />
-          </Flex>
+          <InfiniteLoader color="neutral.c00" size={24} />
         </Flex>
       </Flex>
     </Flex>
