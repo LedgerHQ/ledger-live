@@ -1,107 +1,12 @@
 import { Probot } from "probot";
+import { GATE_CHECK_RUN_NAME, WORKFLOWS } from "./const";
 import {
   createOrRerequestRunByName,
   downloadArtifact,
   extractWorkflowFile,
   getCheckRunByName,
+  updateGateCheckRun,
 } from "./tools";
-
-const BOT_APP_ID = 198164;
-const GATE_CHECK_RUN_NAME = "The Balrog has been summoned ❤️‍🔥";
-
-const WORKFLOWS = {
-  "build-desktop.yml": {
-    affected: ["ledger-live-desktop"],
-    checkRunName: "[Desktop] Build the app",
-    getInputs: (payload: any) => {
-      return {
-        sha: payload.workflow_run.head_sha,
-        ref: payload.workflow_run.head_branch,
-      };
-    },
-  },
-  "test-desktop.yml": {
-    affected: ["ledger-live-desktop"],
-    checkRunName: "[Desktop] Run e2e and unit tests",
-    getInputs: (payload: any) => {
-      return {
-        sha: payload.workflow_run.head_sha,
-        ref: payload.workflow_run.head_branch,
-      };
-    },
-  },
-  "build-mobile.yml": {
-    affected: ["live-mobile"],
-    checkRunName: "[Mobile] Build the app",
-    getInputs: (payload: any) => {
-      return {
-        sha: payload.workflow_run.head_sha,
-        ref: payload.workflow_run.head_branch,
-      };
-    },
-  },
-  "test-mobile.yml": {
-    affected: ["live-mobile"],
-    checkRunName: "[Mobile] Run tests",
-    getInputs: (payload: any) => {
-      return {
-        sha: payload.workflow_run.head_sha,
-        ref: payload.workflow_run.head_branch,
-      };
-    },
-  },
-  "test.yml": {
-    affected: [
-      "@ledgerhq/live-common",
-      "@ledgerhq/cryptoassets",
-      "@ledgerhq/devices",
-      "@ledgerhq/errors",
-      "@ledgerhq/hw-app-algorand",
-      "@ledgerhq/hw-app-btc",
-      "@ledgerhq/hw-app-cosmos",
-      "@ledgerhq/hw-app-eth",
-      "@ledgerhq/hw-app-helium",
-      "@ledgerhq/hw-app-polkadot",
-      "@ledgerhq/hw-app-solana",
-      "@ledgerhq/hw-app-str",
-      "@ledgerhq/hw-app-tezos",
-      "@ledgerhq/hw-app-trx",
-      "@ledgerhq/hw-app-xrp",
-      "@ledgerhq/hw-transport",
-      "@ledgerhq/hw-transport-http",
-      "@ledgerhq/hw-transport-mocker",
-      "@ledgerhq/hw-transport-node-ble",
-      "@ledgerhq/hw-transport-node-hid",
-      "@ledgerhq/hw-transport-node-hid-noevents",
-      "@ledgerhq/hw-transport-node-hid-singleton",
-      "@ledgerhq/hw-transport-node-speculos",
-      "@ledgerhq/hw-transport-node-speculos-http",
-      "@ledgerhq/hw-transport-web-ble",
-      "@ledgerhq/hw-transport-webhid",
-      "@ledgerhq/hw-transport-webusb",
-      "@ledgerhq/logs",
-      "@ledgerhq/react-native-hid",
-      "@ledgerhq/react-native-hw-transport-ble",
-      "@ledgerhq/types-cryptoassets",
-      "@ledgerhq/types-devices",
-      "@ledgerhq/types-live",
-      "@ledgerhq/crypto-icons-ui",
-      "@ledgerhq/icons-ui",
-      "@ledgerhq/native-ui",
-      "@ledgerhq/react-ui",
-      "@ledgerhq/ui-shared",
-    ],
-    checkRunName: "[Libraries] Run tests",
-    getInputs: (payload: any) => {
-      return {
-        sha: payload.workflow_run.head_sha,
-        ref: payload.workflow_run.head_branch,
-        since_branch:
-          payload.workflow_run.pull_requests[0]?.base.ref || "develop",
-      };
-    },
-  },
-};
 
 /**
  * Orchestrates workflows.
@@ -121,6 +26,9 @@ export function orchestrator(app: Probot) {
     const matchedWorkflow = WORKFLOWS[workflowFile as keyof typeof WORKFLOWS];
 
     if (matchedWorkflow) {
+      context.log.info(
+        `[Orchestrator](workflow_run.requested) ${payload.workflow_run.name}`
+      );
       // Create the related check run.
       await octokit.checks.create({
         owner,
@@ -136,6 +44,10 @@ export function orchestrator(app: Probot) {
   app.on("workflow_run", async (context) => {
     const { payload, octokit } = context;
 
+    context.log.debug(
+      `[Orchestrator](workflow_run.${payload.action}) ${payload.workflow_run.name}`
+    );
+
     // @ts-expect-error Expected because probot does not declare this webhook event even though it exists.
     if (context.payload.action !== "in_progress") return;
 
@@ -148,6 +60,9 @@ export function orchestrator(app: Probot) {
     const matchedWorkflow = WORKFLOWS[workflowFile as keyof typeof WORKFLOWS];
 
     if (matchedWorkflow) {
+      context.log.info(
+        `[Orchestrator](workflow_run.in_progress) ${payload.workflow_run.name}`
+      );
       // Create or retrigger the related check run
       await createOrRerequestRunByName({
         octokit,
@@ -179,6 +94,9 @@ export function orchestrator(app: Probot) {
     const matchedWorkflow = WORKFLOWS[workflowFile as keyof typeof WORKFLOWS];
 
     if (workflowFile === "gate.yml") {
+      context.log.info(
+        `[Orchestrator](workflow_run.completed) ${payload.workflow_run.name}`
+      );
       // Get the artifact named affected.json
       const artifacts = await octokit.actions.listWorkflowRunArtifacts({
         owner,
@@ -276,6 +194,9 @@ export function orchestrator(app: Probot) {
     );
 
     if (matchedWorkflow) {
+      context.log.info(
+        `[Orchestrator](check_run.created / check_run.rerequested) ${payload.check_run.name}`
+      );
       // Create or retrigger the related check run
       await createOrRerequestRunByName({
         octokit,
@@ -287,6 +208,12 @@ export function orchestrator(app: Probot) {
           started_at: new Date().toISOString(),
         },
       });
+      await updateGateCheckRun(
+        octokit,
+        owner,
+        repo,
+        payload.check_run.head_sha
+      );
     }
   });
 
@@ -304,104 +231,15 @@ export function orchestrator(app: Probot) {
     );
 
     if (matchedWorkflow) {
-      const checkSuites = await octokit.checks.listSuitesForRef({
+      context.log.info(
+        `[Orchestrator](check_run.completed) ${payload.check_run.name}`
+      );
+      await updateGateCheckRun(
+        octokit,
         owner,
         repo,
-        ref: payload.check_run.head_sha,
-      });
-      const checkSuite = checkSuites.data.check_suites.find(
-        (suite) => suite.app?.id === BOT_APP_ID
+        payload.check_run.head_sha
       );
-      if (checkSuite) {
-        const rawCheckRuns = await octokit.checks.listForSuite({
-          owner,
-          repo,
-          check_suite_id: checkSuite.id,
-        });
-
-        const conclusions = [
-          "success",
-          "pending",
-          "waiting",
-          "neutral",
-          "stale",
-          "skipped",
-          "timed_out",
-          "action_required",
-          "cancelled",
-          "startup_failure",
-          "failure",
-        ];
-        let gateId = null;
-
-        let summary = `### Monitoring:`;
-
-        const [
-          aggregatedConclusion,
-          aggregatedStatus,
-        ] = rawCheckRuns.data.check_runs.reduce(
-          (acc, check_run) => {
-            if (check_run.name === GATE_CHECK_RUN_NAME) {
-              gateId = check_run.id;
-              return acc;
-            }
-
-            if (
-              Object.values(WORKFLOWS).every(
-                (w) => w.checkRunName !== check_run.name
-              )
-            ) {
-              return acc;
-            }
-
-            summary += `\n- **${check_run.name}**: (${check_run.conclusion ||
-              check_run.status})`;
-
-            const priority = conclusions.indexOf(
-              check_run.conclusion || "neutral"
-            );
-            const accumulatorPriority = conclusions.indexOf(acc[0]);
-            const newPriority =
-              priority > accumulatorPriority
-                ? check_run.conclusion || "neutral"
-                : acc[0];
-            const newStatus =
-              check_run.status === "completed" && acc[1] === "completed"
-                ? "completed"
-                : "in_progress";
-            return [newPriority, newStatus];
-          },
-          ["success", "completed"]
-        );
-
-        if (gateId) {
-          if (aggregatedStatus === "completed") {
-            await octokit.checks.update({
-              name: owner,
-              repo,
-              check_run_id: gateId,
-              status: "completed",
-              conclusion: aggregatedConclusion,
-              output: {
-                title: aggregatedConclusion === "success" ? "✅" : "❌",
-                summary,
-              }, // TODO: add proper output
-              completed_at: new Date().toISOString(),
-            });
-          } else {
-            await octokit.checks.update({
-              owner,
-              repo,
-              check_run_id: gateId,
-              status: aggregatedStatus,
-              output: {
-                title: "⚙️",
-                summary,
-              },
-            });
-          }
-        }
-      }
     }
   });
 }
