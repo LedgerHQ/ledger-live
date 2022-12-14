@@ -84,32 +84,6 @@ const hedera: AppSpec<Transaction> = {
       },
     },
     {
-      name: "Send max",
-      maxRun: 2,
-      testDestination: genericTestDestination,
-      transaction: ({
-        account,
-        siblings,
-        bridge,
-      }: TransactionArg<Transaction>): TransactionRes<Transaction> => {
-        const sibling = pickSiblings(siblings, 4);
-        const recipient = sibling.freshAddress;
-        const transaction = bridge.createTransaction(account);
-
-        return {
-          transaction,
-          updates: [{ recipient }, { useAllAmount: true }],
-        };
-      },
-      test: ({ account, accountBeforeTransaction, operation }) => {
-        botTest("Account balance should have decreased", () => {
-          expect(account.balance.toNumber()).toBeLessThanOrEqual(
-            accountBeforeTransaction.balance.minus(operation.value).toNumber()
-          );
-        });
-      },
-    },
-    {
       name: "Memo",
       maxRun: 2,
       transaction: ({
@@ -138,6 +112,32 @@ const hedera: AppSpec<Transaction> = {
         );
       },
       testDestination: genericTestDestination,
+    },
+    {
+      name: "Send max",
+      maxRun: 1,
+      testDestination: genericTestDestination,
+      transaction: ({
+        account,
+        siblings,
+        bridge,
+      }: TransactionArg<Transaction>): TransactionRes<Transaction> => {
+        const sibling = pickSiblings(siblings, 4);
+        const recipient = sibling.freshAddress;
+        const transaction = bridge.createTransaction(account);
+
+        return {
+          transaction,
+          updates: [{ recipient }, { useAllAmount: true }],
+        };
+      },
+      test: ({ account, accountBeforeTransaction, operation }) => {
+        botTest("Account balance should have decreased", () => {
+          expect(account.balance.toNumber()).toBeLessThanOrEqual(
+            accountBeforeTransaction.balance.minus(operation.value).toNumber()
+          );
+        });
+      },
     },
   ],
 };
