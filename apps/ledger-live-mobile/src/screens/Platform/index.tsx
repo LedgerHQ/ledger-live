@@ -41,8 +41,9 @@ const PlatformCatalog = ({ route }: NavigationProps) => {
   const { platform, ...routeParams } = route.params ?? {};
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+  const emptyObject: AppManifest[] = [];
   const { state } = useRemoteLiveAppContext();
-  const manifests = state?.value?.liveAppByIndex || [];
+  const manifests = state?.value?.liveAppByIndex || emptyObject;
   // Disclaimer State
   const [disclaimerOpts, setDisclaimerOpts] = useState<DisclaimerOpts>(null);
   const [disclaimerOpened, setDisclaimerOpened] = useState<boolean>(false);
