@@ -54,13 +54,12 @@ function StepConfirmation({
 }: StepProps & { theme: * }) {
 
   if (optimisticOperation) {
-    const key = "textNRG";
     return (
       <Container>
         <TrackPage category="Freeze Flow" name="Step Confirmed" />
         <SuccessDisplay
           title={<Trans i18nKey="icon.freeze.steps.confirmation.success.title" />}
-          description={multiline(t(`icon.freeze.steps.confirmation.success.${key}`))}
+          description={multiline(t(`icon.freeze.steps.confirmation.success.textNRG`))}
         />
       </Container>
     );

@@ -8,7 +8,7 @@ import Popover from "~/renderer/components/Popover";
 import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 
-export default function SRInfoPopover({ ...props }: *) {
+export default function PRInfoPopover({ ...props }: *) {
   return (
     <Box
       horizontal
@@ -23,21 +23,21 @@ export default function SRInfoPopover({ ...props }: *) {
           <Box vertical px={2}>
             <Box vertical alignItems="start" justifyContent="start" my={2}>
               <Text ff="Inter|SemiBold" fontSize={4} color="palette.primary.main">
-                <Trans i18nKey="icon.manage.vote.steps.vote.info.superRepresentative.title" />
+                <Trans i18nKey="icon.manage.vote.steps.vote.info.publicRepresentative.title" />
               </Text>
 
               <Text fontSize={3} textAlign="left" color="palette.text.shade80">
-                <Trans i18nKey="icon.manage.vote.steps.vote.info.superRepresentative.description" />
+                <Trans i18nKey="icon.manage.vote.steps.vote.info.publicRepresentative.description" />
               </Text>
             </Box>
 
             <Box vertical alignItems="start" justifyContent="start" my={2}>
               <Text ff="Inter|SemiBold" fontSize={4} color="palette.primary.main">
-                <Trans i18nKey="icon.manage.vote.steps.vote.info.candidates.title" />
+                <Trans i18nKey="icon.manage.vote.steps.vote.info.subPRepresentative.title" />
               </Text>
 
               <Text fontSize={3} textAlign="left" color="palette.text.shade80">
-                <Trans i18nKey="icon.manage.vote.steps.vote.info.candidates.description" />
+                <Trans i18nKey="icon.manage.vote.steps.vote.info.subPRepresentative.description" />
               </Text>
             </Box>
           </Box>

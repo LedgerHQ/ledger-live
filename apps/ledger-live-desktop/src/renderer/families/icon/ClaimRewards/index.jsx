@@ -1,5 +1,4 @@
 // @flow
-
 import React, { PureComponent } from "react";
 import Modal from "~/renderer/components/Modal";
 import Body from "./Body";

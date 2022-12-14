@@ -89,7 +89,6 @@ export function StepConfirmationFooter({
   return (
     <>
       {concernedOperation ? (
-        // FIXME make a standalone component!
         <Button
           ml={2}
           event="Claim Reward Flow Step 3 View OpD Clicked"

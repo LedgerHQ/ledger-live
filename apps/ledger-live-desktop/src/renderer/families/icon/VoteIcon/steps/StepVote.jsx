@@ -8,7 +8,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import VotesField from "../fields/VotesField";
-import SRInfoPopover from "../Info/Body/SRInfoPopover";
+import PRInfoPopover from "../Info/Body/PRInfoPopover";
 
 export default function StepVote({
   account,
@@ -75,7 +75,7 @@ export function StepVoteFooter({
 
   return (
     <>
-      <SRInfoPopover color="palette.primary.main" />
+      <PRInfoPopover color="palette.primary.main" />
       <Box horizontal>
         <Button mr={1} secondary onClick={onClose}>
           <Trans i18nKey="common.cancel" />

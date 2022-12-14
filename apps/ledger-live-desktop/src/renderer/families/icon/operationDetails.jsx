@@ -43,6 +43,21 @@ function getURLWhatIsThis(op: Operation): ?string {
   }
 }
 
+const AmountField = ({ account, status: { amount }, field }: FieldComponentProps) => (
+  <TransactionConfirmField label={field.label}>
+    <FormattedVal
+      color={"palette.text.shade80"}
+      unit={getAccountUnit(account)}
+      val={amount}
+      fontSize={3}
+      inline
+      showCode
+      alwaysShowValue
+      disableRounding
+    />
+  </TransactionConfirmField>
+);
+
 type OperationsDetailsVotesProps = {
   votes: ?Array<Vote>,
   account: Account,

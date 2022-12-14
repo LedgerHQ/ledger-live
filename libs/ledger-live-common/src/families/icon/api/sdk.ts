@@ -275,7 +275,8 @@ export const getStake = async (address, currency) => {
     if (res?.unstakes) {
       const unstakes = res?.unstakes;
       for (let item of unstakes) {
-        unstake.plus(BigNumber(IconAmount.fromLoop(item.unstake || 0, iconUnit)));
+        const value =BigNumber(IconAmount.fromLoop(item.unstake || 0, iconUnit))
+        unstake = unstake.plus(value);
       }
     }
   } catch (error) {

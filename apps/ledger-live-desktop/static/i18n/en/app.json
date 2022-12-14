@@ -2399,8 +2399,9 @@
           "title": "Confirmation",
           "success": {
             "title": "",
-            "text": "Your assets were unfrozen successfully. Your {{resource}} points will be decreased, and your votes will be cancelled.",
-            "continue": "Continue"
+            "text": "Your assets were unfrozen successfully. Your staking value will be decreased.",
+            "continue": "Continue",
+            "close": "Close"
           },
           "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
         }
@@ -2452,12 +2453,12 @@
               "next": "Cast Votes"
             },
             "info": {
-              "message": "P-Rep, Sub P-Reps?",
-              "superRepresentative": {
+              "message": "P-Rep or Sub P-Reps?",
+              "publicRepresentative": {
                 "title": "Public representatives (P-Rep)",
                 "description": "Public Representatives (P-Reps) are elected for the ICON Network by delegation of ICONists. Top ranked 22 main P-Reps will participate in block production, verification and making governance decisions."
               },
-              "candidates": {
+              "subPRepresentative": {
                 "title": "Sub P-Reps",
                 "description": "The other 78 P-Reps are considered as Sub P-Rep and only receive the representative reward. They also verify blocks."
               }

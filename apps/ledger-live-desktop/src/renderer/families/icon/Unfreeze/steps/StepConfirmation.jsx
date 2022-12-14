@@ -31,17 +31,6 @@ const Container: ThemedComponent<{ shouldSpace?: boolean }> = styled(Box).attrs(
   min-height: 220px;
 `;
 
-const TooltipContent = () => (
-  <Box style={{ padding: 4 }}>
-    <Text style={{ marginBottom: 5 }}>
-      <Trans i18nKey="freeze.steps.confirmation.tooltip.title" />
-    </Text>
-    <Text>
-      <Trans i18nKey="freeze.steps.confirmation.tooltip.desc" />
-    </Text>
-  </Box>
-);
-
 function StepConfirmation({
   account,
   t,
@@ -54,13 +43,12 @@ function StepConfirmation({
 }: StepProps & { theme: * }) {
 
   if (optimisticOperation) {
-    const key = "textNRG";
     return (
       <Container>
         <TrackPage category="Freeze Flow" name="Step Confirmed" />
         <SuccessDisplay
-          title={<Trans i18nKey="icon.freeze.steps.confirmation.success.title" />}
-          description={multiline(t(`icon.freeze.steps.confirmation.success.${key}`))}
+          title={<Trans i18nKey="icon.unfreeze.steps.confirmation.success.title" />}
+          description={multiline(t(`icon.unfreeze.steps.confirmation.success.text`))}
         />
       </Container>
     );
@@ -72,7 +60,7 @@ function StepConfirmation({
         <TrackPage category="Freeze Flow" name="Step Confirmation Error" />
         {signed ? (
           <BroadcastErrorDisclaimer
-            title={<Trans i18nKey="icon.freeze.steps.confirmation.broadcastError" />}
+            title={<Trans i18nKey="icon.unfreeze.steps.confirmation.broadcastError" />}
           />
         ) : null}
         <ErrorDisplay error={error} withExportLogs />
@@ -99,42 +87,13 @@ export function StepConfirmationFooter({
   const time = useTimer(20);
   const isLoading = useVotingPowerLoading(account);
 
-  const openVote = useCallback(() => {
-    onClose();
-    if (account) {
-      const { iconResources } = account;
-      const { votes } = iconResources || {};
-
-      openModal(votes.length > 0 ? "MODAL_VOTE_ICON" : "MODAL_VOTE_ICON_INFO", {
-        account: account,
-      });
-    }
-  }, [account, onClose, openModal]);
-
   return error ? (
     <RetryButton ml={2} primary onClick={onRetry} />
   ) : (
     <Box horizontal alignItems="right">
-      <Button ml={2} event="Freeze Flow Step 3 View OpD Clicked" onClick={onClose} secondary>
-        <Trans i18nKey="icon.freeze.steps.confirmation.success.later" />
+      <Button ml={2} primary event="Unfreeze Flow Step 3 View OpD Clicked" onClick={onClose} secondary>
+      <Trans i18nKey="icon.unfreeze.steps.confirmation.success.close" />
       </Button>
-      {time > 0 && isLoading ? (
-        <ToolTip content={<TooltipContent />}>
-          <Button
-            ml={2}
-            isLoading={isLoading && time === 0}
-            disabled={isLoading}
-            primary
-            onClick={openVote}
-          >
-            <Trans i18nKey="icon.freeze.steps.confirmation.success.votePending" values={{ time }} />
-          </Button>
-        </ToolTip>
-      ) : (
-        <Button ml={2} primary onClick={openVote}>
-          <Trans i18nKey="icon.freeze.steps.confirmation.success.vote" />
-        </Button>
-      )}
     </Box>
   );
 }
