@@ -121,23 +121,49 @@ export function orchestrator(app: Probot) {
     const matchedWorkflow = WORKFLOWS[workflowFile as keyof typeof WORKFLOWS];
 
     if (matchedWorkflow) {
-      // Create or retrigger the related check run
-      await createOrRerequestRunByName({
-        octokit,
+      // Create the related check run.
+      await octokit.checks.create({
         owner,
         repo,
-        sha: payload.workflow_run.head_sha,
-        checkName: matchedWorkflow.checkRunName,
-        updateToPendingFields: {
-          details_url: `https://github.com/${owner}/${repo}/actions/runs/${payload.workflow_run.id}`,
-          output: {
-            title: "⚙️",
-            summary: "Work in progress 🧪",
-          }, // TODO: add proper output
-        },
+        name: matchedWorkflow.checkRunName,
+        head_sha: payload.workflow_run.head_sha,
+        status: "queued",
       });
     }
   });
+
+  app.on(
+    ("workflow_run.in_progress" as unknown) as "workflow_run.requested",
+    async (context) => {
+      const { payload, octokit } = context;
+
+      /* ⚠️ TEMP */
+      if (payload.workflow_run.head_branch !== "support/granular-ci") return;
+      /* ⚠️ /TEMP */
+
+      const { owner, repo } = context.repo();
+      const workflowFile = extractWorkflowFile(payload);
+      const matchedWorkflow = WORKFLOWS[workflowFile as keyof typeof WORKFLOWS];
+
+      if (matchedWorkflow) {
+        // Create or retrigger the related check run
+        await createOrRerequestRunByName({
+          octokit,
+          owner,
+          repo,
+          sha: payload.workflow_run.head_sha,
+          checkName: matchedWorkflow.checkRunName,
+          updateToPendingFields: {
+            details_url: `https://github.com/${owner}/${repo}/actions/runs/${payload.workflow_run.id}`,
+            output: {
+              title: "⚙️",
+              summary: "Work in progress 🧪",
+            }, // TODO: add proper output
+          },
+        });
+      }
+    }
+  );
 
   app.on("workflow_run.completed", async (context) => {
     const { payload, octokit } = context;
