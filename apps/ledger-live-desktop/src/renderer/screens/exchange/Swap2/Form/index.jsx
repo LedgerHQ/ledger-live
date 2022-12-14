@@ -402,6 +402,12 @@ const SwapForm = () => {
 
   const updateSelection = useCallback(
     selectedRate => {
+      if (!selectedRate) {
+        setNavigation(null);
+        swapTransaction.swap.updateSelectedRate({});
+        return;
+      }
+
       const { providerType } = selectedRate;
       if (providerType === "DEX") {
         setNavigation({ pathname: selectedRate.providerUrl ?? "/platform/1inch-lld", params: {} }); // TODO change when we have populated providerUrl

@@ -2,10 +2,11 @@
 import type { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import { FILTER } from "~/renderer/screens/exchange/Swap2/Form/utils";
 
-export const filterRates = (rates: ExchangeRate[], filters: string[]): ExchangeRate[] => {
-  if (!filters.length) return rates;
-
-  let filteredRates = rates;
+export const filterRates = (
+  rates: ExchangeRate[] | undefined,
+  filters: string[],
+): ExchangeRate[] => {
+  let filteredRates = rates ?? [];
   for (const filter of filters) {
     switch (filter) {
       case FILTER.centralised:

@@ -1,5 +1,5 @@
 // @flow
-import React, { useCallback, useState, useRef, useMemo } from "react";
+import React, { useCallback, useState, useMemo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { track } from "~/renderer/analytics/segment";
@@ -59,14 +59,22 @@ export default function ProviderRate({
 }: Props) {
   const dispatch = useDispatch();
   const [filter, setFilter] = useState([]);
-  const [defaultPartner, setDefaultPartner] = useState("");
   const selectedRate = useSelector(rateSelector);
+  const filteredRates = useMemo(() => filterRates(rates, filter), [rates, filter]);
 
-  const providerRef = useRef(null);
+  const setRate = useCallback(rate => {
+    updateSelection(rate);
+    dispatch(updateRateAction(rate));
+    // eslint-disable-next-line
+  }, []);
 
-  const filteredRates = useMemo(() => {
-    return filterRates(rates, filter);
-  }, [rates, filter]);
+  // when we have not got a selected rate in redux, we select the first one available
+  useEffect(() => {
+    if (!selectedRate && filteredRates.length > 0) {
+      const defaultRate = filteredRates[0];
+      setRate(defaultRate);
+    }
+  }, [filteredRates, selectedRate, setRate]);
 
   const updateRate = useCallback(
     rate => {
@@ -78,12 +86,11 @@ export default function ProviderRate({
         ...swapDefaultTrack,
         swap_type: rate.tradeMethod,
         value,
-        defaultPartner,
+        defaultPartner: rate.provider,
       });
-      updateSelection(rate);
-      dispatch(updateRateAction(rate));
+      setRate(rate);
     },
-    [defaultPartner, updateSelection, dispatch],
+    [setRate],
   );
 
   const updateFilter = useCallback(
@@ -95,13 +102,10 @@ export default function ProviderRate({
         value: newFilter,
       });
       setFilter(newFilter);
-      const first = filterRates(rates, newFilter)[0];
-      if (first) {
-        updateRate(first);
-        setDefaultPartner(first.provider);
-      }
+      const filteredRate = filterRates(rates, newFilter)[0];
+      setRate(filteredRate);
     },
-    [rates, updateRate],
+    [rates, setRate],
   );
 
   return (
@@ -179,7 +183,7 @@ export default function ProviderRate({
           </Tooltip>
         </Box>
       </TableHeader>
-      <Box mt={3} ref={providerRef}>
+      <Box mt={3}>
         {filteredRates.map(rate => (
           <CentralisedRate
             key={`${rate.provider}-${rate.tradeMethod}`}
