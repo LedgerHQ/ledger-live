@@ -128,42 +128,44 @@ export function orchestrator(app: Probot) {
         name: matchedWorkflow.checkRunName,
         head_sha: payload.workflow_run.head_sha,
         status: "queued",
+        started_at: new Date().toISOString(),
       });
     }
   });
 
-  app.on(
-    ("workflow_run.in_progress" as unknown) as "workflow_run.requested",
-    async (context) => {
-      const { payload, octokit } = context;
+  app.on("workflow_run", async (context) => {
+    const { payload, octokit } = context;
 
-      /* ⚠️ TEMP */
-      if (payload.workflow_run.head_branch !== "support/granular-ci") return;
-      /* ⚠️ /TEMP */
+    // @ts-expect-error Expected because probot does not declare this webhook event even though it exists.
+    if (context.payload.action !== "in_progress") return;
 
-      const { owner, repo } = context.repo();
-      const workflowFile = extractWorkflowFile(payload);
-      const matchedWorkflow = WORKFLOWS[workflowFile as keyof typeof WORKFLOWS];
+    /* ⚠️ TEMP */
+    if (payload.workflow_run.head_branch !== "support/granular-ci") return;
+    /* ⚠️ /TEMP */
 
-      if (matchedWorkflow) {
-        // Create or retrigger the related check run
-        await createOrRerequestRunByName({
-          octokit,
-          owner,
-          repo,
-          sha: payload.workflow_run.head_sha,
-          checkName: matchedWorkflow.checkRunName,
-          updateToPendingFields: {
-            details_url: `https://github.com/${owner}/${repo}/actions/runs/${payload.workflow_run.id}`,
-            output: {
-              title: "⚙️",
-              summary: "Work in progress 🧪",
-            }, // TODO: add proper output
-          },
-        });
-      }
+    const { owner, repo } = context.repo();
+    const workflowFile = extractWorkflowFile(payload);
+    const matchedWorkflow = WORKFLOWS[workflowFile as keyof typeof WORKFLOWS];
+
+    if (matchedWorkflow) {
+      // Create or retrigger the related check run
+      await createOrRerequestRunByName({
+        octokit,
+        owner,
+        repo,
+        sha: payload.workflow_run.head_sha,
+        checkName: matchedWorkflow.checkRunName,
+        updateToPendingFields: {
+          details_url: `https://github.com/${owner}/${repo}/actions/runs/${payload.workflow_run.id}`,
+          output: {
+            title: "⚙️",
+            summary: "Work in progress 🧪",
+            started_at: new Date().toISOString(),
+          }, // TODO: add proper output
+        },
+      });
     }
-  );
+  });
 
   app.on("workflow_run.completed", async (context) => {
     const { payload, octokit } = context;
@@ -198,10 +200,12 @@ export function orchestrator(app: Probot) {
       );
       const affected = new Set(JSON.parse(rawAffected.toString()));
 
+      let affectedWorkflows = 0;
       // For each workflow
       Object.entries(WORKFLOWS).forEach(([fileName, workflow]) => {
         const isAffected = workflow.affected.some((pkg) => affected.has(pkg));
         if (isAffected) {
+          affectedWorkflows++;
           octokit.actions.createWorkflowDispatch({
             owner,
             repo,
@@ -211,6 +215,24 @@ export function orchestrator(app: Probot) {
           });
         }
       });
+
+      const checkRun = await createOrRerequestRunByName({
+        octokit,
+        owner,
+        repo,
+        sha: payload.workflow_run.head_sha,
+        checkName: GATE_CHECK_RUN_NAME,
+      });
+
+      if (checkRun && affectedWorkflows > 0) {
+        await octokit.checks.update({
+          owner,
+          repo,
+          check_run_id: checkRun.id,
+          status: "completed",
+          conclusion: "success",
+        });
+      }
     } else if (matchedWorkflow) {
       // Update the related check run
       const checkRuns = await getCheckRunByName({
@@ -230,7 +252,10 @@ export function orchestrator(app: Probot) {
         check_run_id: checkRun.id,
         status: "completed",
         conclusion: payload.workflow_run.conclusion,
-        // output: "", // TODO: add proper output
+        output: {
+          title: "✅",
+          summary: "Completed successfully 🎉",
+        }, // TODO: add proper output
         completed_at: new Date().toISOString(),
       });
     }
@@ -259,6 +284,7 @@ export function orchestrator(app: Probot) {
         sha: payload.check_run.head_sha,
         checkName: GATE_CHECK_RUN_NAME,
         updateToPendingFields: {
+          started_at: new Date().toISOString(),
           output: {
             title: "⚙️",
             summary: "Work in progress 🧪",
@@ -311,6 +337,9 @@ export function orchestrator(app: Probot) {
           "failure",
         ];
         let gateId = null;
+
+        let summary = `Related check runs:`;
+
         const [
           aggregatedConclusion,
           aggregatedStatus,
@@ -320,6 +349,18 @@ export function orchestrator(app: Probot) {
               gateId = check_run.id;
               return acc;
             }
+
+            if (
+              Object.values(WORKFLOWS).every(
+                (w) => w.checkRunName !== check_run.name
+              )
+            ) {
+              return acc;
+            }
+
+            summary += `\n- **${check_run.name}**: (${check_run.conclusion ||
+              check_run.status})`;
+
             const priority = conclusions.indexOf(
               check_run.conclusion || "neutral"
             );
@@ -340,12 +381,15 @@ export function orchestrator(app: Probot) {
         if (gateId) {
           if (aggregatedStatus === "completed") {
             await octokit.checks.update({
-              owner,
+              name: owner,
               repo,
               check_run_id: gateId,
               status: "completed",
               conclusion: aggregatedConclusion,
-              // output: "", // TODO: add proper output
+              output: {
+                title: aggregatedConclusion === "success" ? "✅" : "❌",
+                summary,
+              }, // TODO: add proper output
               completed_at: new Date().toISOString(),
             });
           } else {
@@ -354,6 +398,10 @@ export function orchestrator(app: Probot) {
               repo,
               check_run_id: gateId,
               status: aggregatedStatus,
+              output: {
+                title: "⚙️",
+                summary,
+              },
             });
           }
         }

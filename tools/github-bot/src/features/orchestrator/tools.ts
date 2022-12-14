@@ -66,6 +66,7 @@ export const createOrRerequestRunByName = async ({
       name: checkName,
       head_sha: sha,
       status: "queued",
+      started_at: new Date().toISOString(),
     });
     checkRun = data;
   } else {
@@ -83,7 +84,6 @@ export const createOrRerequestRunByName = async ({
       repo,
       check_run_id: checkRun.id,
       status: "in_progress",
-      started_at: new Date().toISOString(),
       ...updateToPendingFields,
     });
   }
