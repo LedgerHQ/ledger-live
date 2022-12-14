@@ -15,8 +15,12 @@ import network from "../../network";
 import type { Transaction } from "../../generated/types";
 import { getSwapAPIBaseURL, getSwapAPIError } from "./";
 import { mockGetExchangeRates } from "./mock";
-import type { CustomMinOrMaxError, Exchange, GetExchangeRates, ExchangeRate, AvailableProviderV3 } from "./types";
-import getProviders from "./getProviders";
+import type {
+  CustomMinOrMaxError,
+  Exchange,
+  GetExchangeRates,
+  AvailableProviderV3,
+} from "./types";
 import { getMainAccount } from "../../account";
 
 const getExchangeRates: GetExchangeRates = async (
@@ -24,7 +28,7 @@ const getExchangeRates: GetExchangeRates = async (
   transaction: Transaction,
   userId?: string, // TODO remove when wyre doesn't require this for rates
   currencyTo?: TokenCurrency | CryptoCurrency | undefined | null,
-  providers: AvailableProviderV3[] = [],
+  providers: AvailableProviderV3[] = []
 ) => {
   if (getEnv("MOCK"))
     return mockGetExchangeRates(exchange, transaction, currencyTo);
@@ -38,22 +42,32 @@ const getExchangeRates: GetExchangeRates = async (
   const tenPowMagnitude = new BigNumber(10).pow(unitFrom.magnitude);
   const apiAmount = new BigNumber(amountFrom).div(tenPowMagnitude);
 
-  const providerList =  providers.filter(item => {
-    const index = item.pairs.findIndex(pair => pair.from === from && pair.to === to);
-    return index >= -1;
-  }).map(item => item.provider);
+  const providerList = providers
+    .filter((item) => {
+      const index = item.pairs.findIndex(
+        (pair) => pair.from === from && pair.to === to
+      );
+      return index >= -1;
+    })
+    .map((item) => item.provider);
 
   const decentralizedSwapAvailable = () => {
     const {
       fromAccount: sourceAccount,
       toAccount: targetAccount,
       fromParentAccount: sourceParentAccount,
-      toParentAccount: targetParentAccount
+      toParentAccount: targetParentAccount,
     } = exchange;
 
     if (sourceAccount && targetAccount) {
-      const sourceMainAccount = getMainAccount(sourceAccount, sourceParentAccount);
-      const targetMainAccount = getMainAccount(targetAccount, targetParentAccount);
+      const sourceMainAccount = getMainAccount(
+        sourceAccount,
+        sourceParentAccount
+      );
+      const targetMainAccount = getMainAccount(
+        targetAccount,
+        targetParentAccount
+      );
 
       if (
         targetMainAccount.currency.family === "ethereum" &&
@@ -67,19 +81,19 @@ const getExchangeRates: GetExchangeRates = async (
 
   // TODO Uncomment if and update item attribute with DEX type definition
 
-  if(!providerList.length && decentralizedSwapAvailable()) {
-  //   const dexProviders = ["paraswap", "oneinch"]
-  //   return dexProviders.map((provider) => {
-  //     return {
-  //       magnitudeAwareRate: undefined,
-  //       provider,
-  //       rate: undefined,
-  //       rateId: undefined,
-  //       toAmount: undefined,
-  //       tradeMethod: "float",
-  //       payoutNetworkFees: undefined
-  //     }
-  //   })
+  if (!providerList.length && decentralizedSwapAvailable()) {
+    //   const dexProviders = ["paraswap", "oneinch"]
+    //   return dexProviders.map((provider) => {
+    //     return {
+    //       magnitudeAwareRate: undefined,
+    //       provider,
+    //       rate: undefined,
+    //       rateId: undefined,
+    //       toAmount: undefined,
+    //       tradeMethod: "float",
+    //       payoutNetworkFees: undefined
+    //     }
+    //   })
   }
 
   const request = {
