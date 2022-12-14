@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.51.0-next.1
+
+### Patch Changes
+
+- [#2122](https://github.com/LedgerHQ/ledger-live/pull/2122) [`44b9deaa6c`](https://github.com/LedgerHQ/ledger-live/commit/44b9deaa6cec4caabb9a9fd71850f9b3a9d3907c) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix loading spinner not appearing at the end of the onboarding, giving the impression that the app is frozen
+
 ## 2.51.0-next.0
 
 ### Minor Changes
