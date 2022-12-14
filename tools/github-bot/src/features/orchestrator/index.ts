@@ -5,6 +5,7 @@ import {
   downloadArtifact,
   extractWorkflowFile,
   getCheckRunByName,
+  getGenericOutput,
   updateGateCheckRun,
 } from "./tools";
 
@@ -63,6 +64,7 @@ export function orchestrator(app: Probot) {
       context.log.info(
         `[Orchestrator](workflow_run.in_progress) ${payload.workflow_run.name}`
       );
+      const workflowUrl = `https://github.com/${owner}/${repo}/actions/runs/${payload.workflow_run.id}`;
       // Create or retrigger the related check run
       await createOrRerequestRunByName({
         octokit,
@@ -71,12 +73,12 @@ export function orchestrator(app: Probot) {
         sha: payload.workflow_run.head_sha,
         checkName: matchedWorkflow.checkRunName,
         updateToPendingFields: {
-          details_url: `https://github.com/${owner}/${repo}/actions/runs/${payload.workflow_run.id}`,
+          details_url: workflowUrl,
           output: {
-            title: "⚙️",
-            summary: "Work in progress 🧪",
+            title: "⚙️ Running",
+            summary: `The **[workflow](${workflowUrl})** is currently running.`,
             started_at: new Date().toISOString(),
-          }, // TODO: add proper output
+          },
         },
       });
     }
@@ -170,10 +172,7 @@ export function orchestrator(app: Probot) {
         check_run_id: checkRun.id,
         status: "completed",
         conclusion: payload.workflow_run.conclusion,
-        output: {
-          title: "✅",
-          summary: "Completed successfully 🎉",
-        }, // TODO: add proper output
+        output: getGenericOutput(payload.workflow_run.conclusion), // TODO: add proper output
         completed_at: new Date().toISOString(),
       });
     }

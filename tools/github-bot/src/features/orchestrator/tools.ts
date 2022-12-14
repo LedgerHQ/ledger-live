@@ -5,7 +5,6 @@ import { BOT_APP_ID, GATE_CHECK_RUN_NAME, WORKFLOWS } from "./const";
 
 type Octokit = InstanceType<typeof ProbotOctokit>;
 type CheckRunResponse = ReturnType<Octokit["checks"]["listForRef"]>;
-type CheckRun = Awaited<CheckRunResponse>["data"]["check_runs"][0];
 export const getCheckRunByName = async ({
   octokit,
   owner,
@@ -205,8 +204,8 @@ export async function updateGateCheckRun(
           return acc;
         }
 
-        summary += `\n- **${check_run.name}**: (${check_run.conclusion ||
-          check_run.status})`;
+        summary += `\n- **${check_run.name}**: _${check_run.conclusion ||
+          check_run.status}_`;
 
         const priority = conclusions.indexOf(check_run.conclusion || "neutral");
         const accumulatorPriority = conclusions.indexOf(acc[0]);
@@ -226,13 +225,13 @@ export async function updateGateCheckRun(
     if (gateId) {
       if (aggregatedStatus === "completed") {
         await octokit.checks.update({
-          name: owner,
+          owner,
           repo,
           check_run_id: gateId,
           status: "completed",
           conclusion: aggregatedConclusion,
           output: {
-            title: aggregatedConclusion === "success" ? "✅" : "❌",
+            title: getStatusEmoji(aggregatedConclusion),
             summary,
           }, // TODO: add proper output
           completed_at: new Date().toISOString(),
@@ -244,11 +243,84 @@ export async function updateGateCheckRun(
           check_run_id: gateId,
           status: aggregatedStatus,
           output: {
-            title: "⚙️",
+            title: "⚙️ Running",
             summary,
           },
         });
       }
     }
+  }
+}
+
+export function getGenericOutput(conclusion: string) {
+  switch (conclusion) {
+    case "success":
+      return {
+        title: getStatusEmoji(conclusion),
+        summary: "Completed successfully 🎉",
+      };
+    case "failure":
+      return {
+        title: getStatusEmoji(conclusion),
+        summary: "Completed with errors",
+      };
+    case "neutral":
+      return {
+        title: getStatusEmoji(conclusion),
+        summary: "Completed with neutral result",
+      };
+    case "cancelled":
+      return {
+        title: getStatusEmoji(conclusion),
+        summary: "Cancelled",
+      };
+    case "timed_out":
+      return {
+        title: getStatusEmoji(conclusion),
+        summary: "Timed out",
+      };
+    case "action_required":
+      return {
+        title: getStatusEmoji(conclusion),
+        summary: "Action required",
+      };
+    case "stale":
+      return {
+        title: getStatusEmoji(conclusion),
+        summary: "Stale",
+      };
+    case "skipped":
+      return {
+        title: getStatusEmoji(conclusion),
+        summary: "Skipped",
+      };
+    default:
+      return {
+        title: "❓",
+        summary: "Unknown",
+      };
+  }
+}
+
+export function getStatusEmoji(status: string) {
+  switch (status) {
+    case "success":
+      return "✅";
+    case "failure":
+      return "❌";
+    case "neutral":
+      return "🤷";
+    case "cancelled":
+      return "⏹";
+    case "timed_out":
+      return "⏱";
+    case "action_required":
+      return "🚨";
+    case "stale":
+      return "🧟";
+    case "skipped":
+      return "⏭";
+    default:
+      return "⏳";
   }
 }
