@@ -69,11 +69,7 @@ const Scanner = ({ onResult, liveQrCode, progress, instruction }: Props) => {
     case null:
       return <View />;
     case false:
-      return (
-        <View style={styles.container}>
-          <FallbackCameraScreen route={route} navigation={navigation} />
-        </View>
-      );
+      return <FallbackCameraScreen route={route} navigation={navigation} />;
     default:
       return (
         <View style={styles.container}>
