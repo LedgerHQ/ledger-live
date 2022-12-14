@@ -1,5 +1,4 @@
 // @flow
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { checkQuote } from "@ledgerhq/live-common/exchange/swap/index";
 import {
   usePollKYCStatus,
@@ -12,7 +11,7 @@ import {
   shouldShowKYCBanner,
   shouldShowLoginBanner,
 } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import React, { useCallback, useEffect, useMemo, useState, useRef } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
@@ -395,9 +394,6 @@ const SwapForm = () => {
   };
 
   const sourceAccount = swapTransaction.swap.from.account;
-  const sourceParentAccount = swapTransaction.swap.from.parentAccount;
-  const targetAccount = swapTransaction.swap.to.account;
-  const targetParentAccount = swapTransaction.swap.to.parentAccount;
   const sourceCurrency = swapTransaction.swap.from.currency;
   const targetCurrency = swapTransaction.swap.to.currency;
 
@@ -424,23 +420,6 @@ const SwapForm = () => {
     },
     [swapTransaction?.swap],
   );
-
-  // We check if a decentralized swap is available to conditionnaly render an Alert below.
-  // All Ethereum related currencies are considered available
-  const decentralizedSwapAvailable = useMemo(() => {
-    if (sourceAccount && targetAccount) {
-      const sourceMainAccount = getMainAccount(sourceAccount, sourceParentAccount);
-      const targetMainAccount = getMainAccount(targetAccount, targetParentAccount);
-
-      if (
-        targetMainAccount.currency.family === "ethereum" &&
-        sourceMainAccount.currency.id === targetMainAccount.currency.id
-      ) {
-        return true;
-      }
-    }
-    return false;
-  }, [sourceAccount, sourceParentAccount, targetAccount, targetParentAccount]);
 
   switch (currentFlow) {
     case "LOGIN":
@@ -534,7 +513,6 @@ const SwapForm = () => {
               provider={provider}
               refreshTime={refreshTime}
               countdown={!swapError && !idleState}
-              decentralizedSwapAvailable={decentralizedSwapAvailable}
               updateSelection={updateSelection}
             />
 

@@ -30,7 +30,6 @@ type Props = {
   refreshTime: number,
   updateSelection: () => void,
   countdown: boolean,
-  decentralizedSwapAvailable: boolean,
 };
 
 const TableHeader: ThemedComponent<{}> = styled(Box).attrs({

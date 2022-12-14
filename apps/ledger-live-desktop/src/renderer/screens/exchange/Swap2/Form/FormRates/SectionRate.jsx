@@ -15,7 +15,6 @@ export type SectionRateProps = {
   updateSelection: () => void,
   refreshTime: number,
   countdown: boolean,
-  decentralizedSwapAvailable: boolean,
 };
 
 const SectionRate = ({
@@ -26,7 +25,6 @@ const SectionRate = ({
   updateSelection,
   refreshTime,
   countdown,
-  decentralizedSwapAvailable,
 }: SectionRateProps) => {
   const rates = ratesState.value;
 
@@ -41,7 +39,6 @@ const SectionRate = ({
           updateSelection,
           refreshTime,
           countdown,
-          decentralizedSwapAvailable,
         }}
       />
     </ProvidersSection>
