@@ -45,9 +45,7 @@ const getExchangeRates: GetExchangeRates = async (
   const providerList = providers
     .filter((item) => {
       const index = item.pairs.findIndex(
-        (pair) =>
-          pair.from === "ethereum/erc20/btrfly" &&
-          pair.to === "ethereum/erc20/reflex"
+        (pair) => pair.from === from && pair.to === to
       );
       return index >= -1;
     })
@@ -70,9 +68,9 @@ const getExchangeRates: GetExchangeRates = async (
         targetAccount,
         targetParentAccount
       );
-
+      const dexFamilyList = ["ethereum", "binance", "polygon"];
       if (
-        targetMainAccount.currency.family === "ethereum" &&
+        dexFamilyList.includes(targetMainAccount.currency.family) &&
         sourceMainAccount.currency.id === targetMainAccount.currency.id
       ) {
         return true;
@@ -161,7 +159,7 @@ const getExchangeRates: GetExchangeRates = async (
     // const dexProviders = ["paraswap", "oneinch"];
     const dexProviders = [];
     dexProviders.filter((dexProvider) => {
-      if (rates.findIndex((rate) => rate.provider === dexProvider) < 0) {
+      if (!providerList.include(dexProvider)) {
         rates.push({
           magnitudeAwareRate: undefined,
           provider: dexProvider,
