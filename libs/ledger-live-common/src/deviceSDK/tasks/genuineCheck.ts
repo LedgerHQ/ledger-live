@@ -2,7 +2,7 @@ import type { DeviceId, DeviceInfo, FinalFirmware } from "@ledgerhq/types-live";
 import { Observable, from } from "rxjs";
 import { switchMap } from "rxjs/operators";
 
-import { getDeviceInfo } from "./getDeviceInfo";
+import { getDeviceInfoTask } from "./getDeviceInfo";
 import ManagerAPI from "../../api/Manager";
 import { getProviderId } from "../../manager";
 import { withDevice } from "../../hw/deviceAccess";
@@ -18,7 +18,8 @@ export function genuineCheckTask({
   let firmware: FinalFirmware;
 
   return new Observable((o) => {
-    getDeviceInfo({ deviceId }).subscribe({
+    // TODO: this getDeviceInfoTask should be called inside a genuineCheckAction, not here in the task
+    getDeviceInfoTask({ deviceId }).subscribe({
       next: (event) => {
         deviceInfo = event;
       },
