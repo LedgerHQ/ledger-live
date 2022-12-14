@@ -159,7 +159,7 @@ const getExchangeRates: GetExchangeRates = async (
     // const dexProviders = ["paraswap", "oneinch"];
     const dexProviders = [];
     dexProviders.filter((dexProvider) => {
-      if (!providerList.include(dexProvider)) {
+      if (!providerList.includes(dexProvider)) {
         rates.push({
           magnitudeAwareRate: undefined,
           provider: dexProvider,
