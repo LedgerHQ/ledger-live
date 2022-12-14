@@ -1,4 +1,12 @@
-import React, { memo, useCallback, useMemo, useState } from "react";
+import React, {
+  useRef,
+  useEffect,
+  memo,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
+import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 
 import {
@@ -16,6 +24,7 @@ import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/loc
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { lastSeenCustomImageSelector } from "../../../reducers/settings";
 import DeviceAppStorage from "./DeviceAppStorage";
 
 import NanoS from "../../../images/devices/NanoS";
@@ -74,12 +83,23 @@ const DeviceCard = ({
   onLanguageChange,
 }: Props) => {
   const { colors, theme } = useTheme();
+  const lastSeenCustomImage = useSelector(lastSeenCustomImageSelector);
+  const isFirstCustomImageUpdate = useRef<boolean>(true);
+
   const { deviceModel } = state;
   const [appsModalOpen, setAppsModalOpen] = useState(false);
 
   const [illustration] = useState(
     illustrations[deviceModel.id]({ color: colors.neutral.c100, theme }),
   );
+
+  useEffect(() => {
+    if (isFirstCustomImageUpdate.current) {
+      isFirstCustomImageUpdate.current = false;
+    } else {
+      dispatch({ type: "setCustomImage", lastSeenCustomImage });
+    }
+  }, [dispatch, lastSeenCustomImage]);
 
   const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
 
