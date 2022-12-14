@@ -42,10 +42,6 @@ import type { CosmosDelegationFlowParamList } from "../families/cosmos/Delegatio
 import type { CosmosRedelegationFlowParamList } from "../families/cosmos/RedelegationFlow/types";
 import type { CosmosUndelegationFlowParamList } from "../families/cosmos/UndelegationFlow/types";
 import type { CosmosClaimRewardsFlowParamList } from "../families/cosmos/ClaimRewardsFlow/types";
-import type { OsmosisDelegationFlowParamList } from "../families/osmosis/DelegationFlow/types";
-import type { OsmosisRedelegationFlowParamList } from "../families/osmosis/RedelegationFlow/types";
-import { OsmosisUndelegationFlowParamList } from "../families/osmosis/UndelegationFlow/types";
-import { OsmosisClaimRewardsFlowParamList } from "../families/osmosis/ClaimRewardsFlow/types";
 import { SolanaDelegationFlowParamList } from "../families/solana/DelegationFlow/types";
 import { StellarAddAssetFlowParamList } from "../families/stellar/AddAssetFlow/types";
 import { TezosDelegationFlowParamList } from "../families/tezos/DelegationFlow/types";
@@ -148,22 +144,6 @@ type Props =
   | StackNavigatorProps<
       CosmosClaimRewardsFlowParamList,
       ScreenName.CosmosClaimRewardsConnectDevice
-    >
-  | StackNavigatorProps<
-      OsmosisDelegationFlowParamList,
-      ScreenName.OsmosisDelegationConnectDevice
-    >
-  | StackNavigatorProps<
-      OsmosisRedelegationFlowParamList,
-      ScreenName.OsmosisRedelegationConnectDevice
-    >
-  | StackNavigatorProps<
-      OsmosisUndelegationFlowParamList,
-      ScreenName.OsmosisUndelegationConnectDevice
-    >
-  | StackNavigatorProps<
-      OsmosisClaimRewardsFlowParamList,
-      ScreenName.OsmosisClaimRewardsConnectDevice
     >
   | StackNavigatorProps<
       SolanaDelegationFlowParamList,

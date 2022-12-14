@@ -3,12 +3,11 @@ import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import type { Transaction as CosmosTransaction } from "@ledgerhq/live-common/families/cosmos/types";
-import type { Transaction as OsmosisTransaction } from "@ledgerhq/live-common/families/osmosis/types";
 import LText from "../../../components/LText";
 import SummaryRow from "../../../screens/SendFunds/SummaryRow";
 
 type Props = {
-  transaction: CosmosTransaction | OsmosisTransaction;
+  transaction: CosmosTransaction;
   editMemo: () => void;
 };
 

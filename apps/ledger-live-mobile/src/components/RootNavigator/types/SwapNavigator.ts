@@ -36,7 +36,6 @@ import {
   Transaction as SolanaTransaction,
 } from "@ledgerhq/live-common/families/solana/types";
 import { Transaction as HederaTransaction } from "@ledgerhq/live-common/families/hedera/types";
-import { Transaction as OsmosisTransaction } from "@ledgerhq/live-common/families/osmosis/types";
 import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/ripple/types";
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 import BigNumber from "bignumber.js";
@@ -272,7 +271,7 @@ export type SwapNavigatorParamList = {
     accountId: string;
     parentId?: string;
     account: CosmosAccount;
-    transaction: CosmosTransaction | OsmosisTransaction;
+    transaction: CosmosTransaction;
     currentNavigation:
       | ScreenName.LendingWithdrawSummary
       | ScreenName.LendingSupplySummary

@@ -29,9 +29,6 @@ import { ScreenName } from "../../../const";
 import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import type { CosmosDelegationFlowParamList } from "../DelegationFlow/types";
 import type { CosmosRedelegationFlowParamList } from "../RedelegationFlow/types";
-import type { OsmosisDelegationFlowParamList } from "../../osmosis/DelegationFlow/types";
-import { OsmosisRedelegationFlowParamList } from "../../osmosis/RedelegationFlow/types";
-import { OsmosisUndelegationFlowParamList } from "../../osmosis/UndelegationFlow/types";
 import { CosmosUndelegationFlowParamList } from "../UndelegationFlow/types";
 
 type Props =
@@ -43,18 +40,6 @@ type Props =
       CosmosRedelegationFlowParamList,
       | ScreenName.CosmosDefaultRedelegationAmount
       | ScreenName.CosmosRedelegationAmount
-    >
-  | StackNavigatorProps<
-      OsmosisDelegationFlowParamList,
-      ScreenName.OsmosisDelegationAmount
-    >
-  | StackNavigatorProps<
-      OsmosisRedelegationFlowParamList,
-      ScreenName.OsmosisRedelegationAmount
-    >
-  | StackNavigatorProps<
-      OsmosisUndelegationFlowParamList,
-      ScreenName.OsmosisUndelegationAmount
     >
   | StackNavigatorProps<
       CosmosUndelegationFlowParamList,

@@ -79,8 +79,6 @@ export const urls = {
   },
   celoStakingRewards:
     "https://support.ledger.com/hc/en-us/articles/360020499920-Celo-CELO-?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=celo&docs=true",
-  osmosisStakingRewards:
-    "https://support.ledger.com/hc/en-us/sections/4404369637521-Crypto-assets?docs=true",
   cosmosStaking:
     "https://www.ledger.com/staking-cosmos?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=cosmos",
   cosmosStakingRewards:
