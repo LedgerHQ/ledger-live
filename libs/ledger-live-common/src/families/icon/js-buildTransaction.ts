@@ -2,7 +2,7 @@ import type { IconAccount, Transaction } from "./types";
 import IconService from "icon-sdk-js";
 import { getNid } from "./logic";
 import BigNumber from "bignumber.js";
-import { IISS_SCORE_ADDRESS } from "./constants";
+import { IISS_SCORE_ADDRESS, RPC_VERSION } from "./constants";
 
 const { IconBuilder, IconConverter, IconAmount, IconUtil } = IconService;
 
@@ -23,13 +23,13 @@ export const buildTransaction = async (
       break;
     case 'unfreeze':
     case 'freeze':
-      iconTxData = buildStakingTransaction(a, t);
+      iconTxData = buildStakingTransaction(a, t, stepLimit);
       break;
     case 'vote':
-      iconTxData = buildVotingTransaction(a, t);
+      iconTxData = buildVotingTransaction(a, t, stepLimit);
       break;
     case 'claimReward':
-      iconTxData = buildClaimIScoreTransaction(a, t);
+      iconTxData = buildClaimIScoreTransaction(a, t, stepLimit);
       break;
     default:
       break;
@@ -50,110 +50,81 @@ const buildSendingTransaction = (
   const address = a.freshAddress;
 
   const icxTransactionBuilder = new IconBuilder.IcxTransactionBuilder();
-  let icxTransferData;
+  const icxTransferData = icxTransactionBuilder
+    .from(address)
+    .to(t.recipient)
+    .nid(IconConverter.toHexNumber(getNid(a.currency)))
+    .value(
+      IconConverter.toHexNumber(
+        IconAmount.of(t.amount, IconAmount.Unit.ICX).toLoop()
+      )
+    )
+    .timestamp(IconConverter.toHexNumber(new Date().getTime() * 1000))
+    .version(IconConverter.toHexNumber(RPC_VERSION));
   if (stepLimit) {
-    icxTransferData = icxTransactionBuilder
-      .from(address)
-      .to(t.recipient)
-      .nid(IconConverter.toHexNumber(getNid(a.currency)))
-      .value(
-        IconConverter.toHexNumber(
-          IconAmount.of(t.amount, IconAmount.Unit.ICX).toLoop()
-        )
-      )
-      .timestamp(IconConverter.toHexNumber(new Date().getTime() * 1000))
-      .version(IconConverter.toHexNumber(3))
-      .stepLimit(IconConverter.toHexNumber(stepLimit.toNumber()))
-      .build();
-  } else {
-    icxTransferData = icxTransactionBuilder
-      .from(address)
-      .to(t.recipient)
-      .nid(IconConverter.toHexNumber(getNid(a.currency)))
-      .value(
-        IconConverter.toHexNumber(
-          IconAmount.of(t.amount, IconAmount.Unit.ICX).toLoop()
-        )
-      )
-      .timestamp(IconConverter.toHexNumber(new Date().getTime() * 1000))
-      .version(IconConverter.toHexNumber(3))
-      .build();
+    icxTransferData.stepLimit(IconConverter.toHexNumber(stepLimit.toNumber()));
   }
-  return icxTransferData;
+
+  return icxTransferData.build();
 };
 
 const buildStakingTransaction = (
   a: IconAccount,
-  t: Transaction) => {
+  t: Transaction,
+  stepLimit?: BigNumber) => {
   const { iconResources } = a;
-  const address = a.freshAddress;
   let amount = t.amount;
   if (t.mode == 'freeze') {
     amount = t.amount.plus(iconResources.totalDelegated);
   } else {
-    amount = BigNumber(iconResources.votingPower).minus(t.amount);
+    amount = BigNumber(iconResources.votingPower).minus(t.amount).plus(a.iconResources?.totalDelegated || 0);
   }
-  const icxTransferData = new IconBuilder.CallTransactionBuilder()
-    .method('setStake')
-    .params({
-      value: IconConverter.toHexNumber(
-        IconAmount.of(amount, IconAmount.Unit.ICX).toLoop()
-      )
-    })
-    .from(address)
-    .to(IISS_SCORE_ADDRESS)
-    .nid(IconConverter.toHexNumber(getNid(a.currency)))
-    .timestamp(IconConverter.toHexNumber(new Date().getTime() * 1000))
-    .stepLimit(IconConverter.toHexNumber(IconConverter.toBigNumber(70000000)))
-    .version(IconConverter.toHexNumber(IconConverter.toBigNumber(3)))
-    .build();
 
-  return icxTransferData;
+  return buildCallTrantraction(a, t, 'setStake', {
+    value: IconConverter.toHexNumber(
+      IconAmount.of(amount, IconAmount.Unit.ICX).toLoop()
+    )
+  }, stepLimit);
 };
 
 const buildVotingTransaction = (
   a: IconAccount,
-  t: Transaction) => {
+  t: Transaction,
+  stepLimit?: BigNumber) => {
 
-  const address = a.freshAddress;
   const votes = t?.votes || [];
-  const icxTransferData = new IconBuilder.CallTransactionBuilder()
-    .method('setDelegation')
-    .params({
-      delegations: votes.map(item => {
-        return {
-          ...item, value: IconConverter.toHexNumber(
-            IconAmount.of(item.value, IconAmount.Unit.ICX).toLoop()
-          )
-        };
-      })
-    })
-    .from(address)
-    .to(IISS_SCORE_ADDRESS)
-    .nid(IconConverter.toHexNumber(getNid(a.currency)))
-    .timestamp(IconConverter.toHexNumber(new Date().getTime() * 1000))
-    .stepLimit(IconConverter.toHexNumber(IconConverter.toBigNumber(70000000)))
-    .version(IconConverter.toHexNumber(IconConverter.toBigNumber(3)))
-    .build();
 
-  return icxTransferData;
+  return buildCallTrantraction(a, t, 'setDelegation', {
+    delegations: votes.map(item => {
+      return {
+        ...item, value: IconConverter.toHexNumber(
+          IconAmount.of(item.value, IconAmount.Unit.ICX).toLoop()
+        )
+      };
+    })
+  }, stepLimit);
 };
 
 const buildClaimIScoreTransaction = (
   a: IconAccount,
-  t: Transaction) => {
+  t: Transaction, stepLimit) => {
+  return buildCallTrantraction(a, t, 'claimIScore', {}, stepLimit);
+};
 
+const buildCallTrantraction = (a: IconAccount, t: Transaction, method: string, param: any, stepLimit?: BigNumber) => {
   const address = a.freshAddress;
+
   const icxTransferData = new IconBuilder.CallTransactionBuilder()
-    .method('claimIScore')
-    .params({})
+    .method(method)
+    .params({ ...param })
     .from(address)
     .to(IISS_SCORE_ADDRESS)
     .nid(IconConverter.toHexNumber(getNid(a.currency)))
     .timestamp(IconConverter.toHexNumber(new Date().getTime() * 1000))
-    .stepLimit(IconConverter.toHexNumber(IconConverter.toBigNumber(70000000)))
-    .version(IconConverter.toHexNumber(IconConverter.toBigNumber(3)))
-    .build();
+    .version(IconConverter.toHexNumber(IconConverter.toBigNumber(3)));
+  if (stepLimit) {
+    icxTransferData.stepLimit(IconConverter.toHexNumber(stepLimit.toNumber()));
+  }
 
-  return icxTransferData;
+  return icxTransferData.build();
 };

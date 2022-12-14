@@ -1,17 +1,23 @@
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "./types";
 import type { DeviceTransactionField } from "../../transaction";
+import { getMainAccount } from "../../account";
 
 export type ExtraDeviceTransactionField =
   | {
-    type: "icon.votes";
-    label: string;
+      type: "icon.votes";
+      label: string;
+    }
+  | {
+      type: "icon.fees";
+      label: string;
     };
-
 
 function getDeviceTransactionConfig({
   transaction,
-  status: { estimatedFees },
+  account,
+  parentAccount,
+  status: { amount, estimatedFees },
 }: {
   account: AccountLike;
   parentAccount?: Account;
@@ -19,8 +25,9 @@ function getDeviceTransactionConfig({
   status: TransactionStatus;
 }): Array<DeviceTransactionField> {
   const fields: Array<DeviceTransactionField> = [];
-
-  if (transaction.votes && transaction.votes.length > 0) {
+  const mainAccount = getMainAccount(account, parentAccount);
+  const { mode, votes } = transaction;
+  if (votes && votes.length > 0) {
     // NB in future if we unify UI with other coin, we could converge to a "votes" top level
     fields.push({
       type: "icon.votes",
@@ -28,28 +35,45 @@ function getDeviceTransactionConfig({
     });
   }
 
-  if (transaction.useAllAmount) {
+  if (!estimatedFees.isZero()) {
     fields.push({
-      type: "text",
-      label: "Method",
-      value: "Transfer All",
+      type: "icon.fees",
+      label: "Fees",
     });
-  } else {
-    fields.push({
-      type: "text",
-      label: "Method",
-      value: "Transfer",
-    });
+  }
+
+  if (!amount.isZero()) {
     fields.push({
       type: "amount",
       label: "Amount",
     });
   }
 
-  if (!estimatedFees.isZero()) {
+  switch (mode) {
+    case 'freeze':
+      fields.push({
+        type: "address",
+        label: "Freeze to",
+        address: transaction.recipient,
+      });
+      break;
+
+    case 'unfreeze':
+      fields.push({
+        type: "address",
+        label: "Unfreeze From",
+        address: transaction.recipient,
+      });
+      break;
+    default:
+      break;
+  }
+
+  if (mode !== "send") {
     fields.push({
-      type: "fees",
-      label: "Fees",
+      type: "address",
+      label: "From Address",
+      address: mainAccount.freshAddress,
     });
   }
 

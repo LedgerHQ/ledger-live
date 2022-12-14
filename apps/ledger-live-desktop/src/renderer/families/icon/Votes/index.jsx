@@ -78,6 +78,7 @@ const Delegation = ({ account }: Props) => {
     showCode: true,
     discreet,
     locale,
+    subMagnitude: 3
   });
 
   const formattedVotes = formatVotes(votes, superRepresentatives);
@@ -148,12 +149,7 @@ const Delegation = ({ account }: Props) => {
           <ToolTip
             content={
               !canClaimRewards ? (
-                hasRewards && formattedNextRewardDate ? (
-                  <Trans
-                    i18nKey="icon.voting.nextRewardsDate"
-                    values={{ date: formattedNextRewardDate }}
-                  />
-                ) : (
+                (
                   <Trans i18nKey="icon.voting.noRewards" />
                 )
               ) : null

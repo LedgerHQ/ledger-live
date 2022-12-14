@@ -11,6 +11,7 @@ import type { Account } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "./types";
 
 import { isSelfTransaction, isValidAddress } from "./logic";
+import { IconVoteRequired } from "../../errors";
 
 const getTransactionStatus = async (
   a: Account,
@@ -61,6 +62,13 @@ const getTransactionStatus = async (
       errors.amount = new AmountRequired();
     }
   }
+
+  if (t.mode === 'vote') {
+    if (t.votes?.length === 0) {
+      errors.vote = new IconVoteRequired();
+    }
+  }
+
 
   return Promise.resolve({
     errors,
