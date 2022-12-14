@@ -1,6 +1,4 @@
-// @flow
-
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import Track from "~/renderer/analytics/Track";
 import Input from "~/renderer/components/Input";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
