@@ -285,10 +285,6 @@ export function orchestrator(app: Probot) {
         checkName: GATE_CHECK_RUN_NAME,
         updateToPendingFields: {
           started_at: new Date().toISOString(),
-          output: {
-            title: "⚙️",
-            summary: "Work in progress 🧪",
-          }, // TODO: add proper output
         },
       });
     }
@@ -338,7 +334,7 @@ export function orchestrator(app: Probot) {
         ];
         let gateId = null;
 
-        let summary = `Related check runs:`;
+        let summary = `### Monitoring:`;
 
         const [
           aggregatedConclusion,
