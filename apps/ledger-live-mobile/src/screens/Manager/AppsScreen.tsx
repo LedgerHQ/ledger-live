@@ -266,17 +266,7 @@ const AppsScreen = ({
       <FlatList
         data={items}
         ListHeaderComponent={
-          <>
-            <Flex mt={6} mb={8}>
-              <Text
-                variant={"h1"}
-                fontWeight={"medium"}
-                color={"neutral.c100"}
-                numberOfLines={1}
-              >
-                <Trans i18nKey="manager.title" />
-              </Text>
-            </Flex>
+          <Flex mt={4}>
             <DeviceCard
               distribution={distribution}
               state={state}
@@ -317,7 +307,7 @@ const AppsScreen = ({
                 />
               </Flex>
             </Flex>
-          </>
+          </Flex>
         }
         renderItem={renderRow}
         ListEmptyComponent={renderNoResults}

@@ -30,6 +30,7 @@ import generateTestScanAccounts from "./commands/generateTestScanAccounts";
 import generateTestTransaction from "./commands/generateTestTransaction";
 import genuineCheck from "./commands/genuineCheck";
 import getAddress from "./commands/getAddress";
+import getBatteryStatus from "./commands/getBatteryStatus";
 import getDeviceRunningMode from "./commands/getDeviceRunningMode";
 import getTransactionStatus from "./commands/getTransactionStatus";
 import i18n from "./commands/i18n";
@@ -88,6 +89,7 @@ export default {
   generateTestTransaction,
   genuineCheck,
   getAddress,
+  getBatteryStatus,
   getDeviceRunningMode,
   getTransactionStatus,
   i18n,
