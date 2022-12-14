@@ -52,4 +52,5 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugMultiAppInstall]: undefined;
   [ScreenName.DebugStoryly]: undefined;
   [ScreenName.DebugFetchCustomImage]: undefined;
+  [ScreenName.DebugCustomImageGraphics]: undefined;
 };

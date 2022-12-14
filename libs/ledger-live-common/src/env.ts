@@ -102,6 +102,21 @@ const envDefinitions = {
     def: "https://filecoin.coin.ledger.com",
     desc: "Filecoin API url",
   },
+  API_NEAR_ARCHIVE_NODE: {
+    def: "https://near.coin.ledger.com/node/",
+    parser: stringParser,
+    desc: "Archive node endpoint for NEAR",
+  },
+  API_NEAR_INDEXER: {
+    def: "https://near.coin.ledger.com/indexer/",
+    parser: stringParser,
+    desc: "Datahub Indexer API for NEAR",
+  },
+  API_NEAR_STAKING_POSITIONS_API: {
+    def: "https://validators-near.coin.ledger.com/",
+    parser: stringParser,
+    desc: "NEAR staking positions API",
+  },
   API_POLKADOT_INDEXER: {
     parser: stringParser,
     def: "https://polkadot.coin.ledger.com",
@@ -377,6 +392,16 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Ledger satstack Bitcoin explorer API",
   },
+  EXPORT_EXCLUDED_LOG_TYPES: {
+    def: "ble-frame",
+    parser: stringParser,
+    desc: "comma-separated list of excluded log types for exported logs",
+  },
+  EXPORT_MAX_LOGS: {
+    def: 5000,
+    parser: intParser,
+    desc: "maximum logs to keep for export",
+  },
   DISABLE_APP_VERSION_REQUIREMENTS: {
     def: false,
     parser: boolParser,
@@ -480,6 +505,11 @@ const envDefinitions = {
     def: "",
     parser: stringParser,
     desc: "mock remote live app manifest",
+  },
+  MOCK_OS_VERSION: {
+    def: "",
+    parser: stringParser,
+    desc: "if defined, overrides the os and version. format: os@version. Example: Windows_NT@6.1.7601",
   },
   NFT_CURRENCIES: {
     def: "ethereum,polygon",

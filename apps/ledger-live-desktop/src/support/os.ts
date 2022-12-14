@@ -1,5 +1,19 @@
 import os from "os";
 import semverSatisfies from "semver/functions/satisfies";
+import { getEnv } from "@ledgerhq/live-common/env";
+import { createCustomErrorClass } from "@ledgerhq/errors";
+import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
+
+type OperatingSystemOutdatedInfos = {
+  type: string;
+  release: string;
+  criteria: string;
+};
+
+export const OperatingSystemOutdated = createCustomErrorClass<
+  OperatingSystemOutdatedInfos,
+  LedgerErrorConstructor<OperatingSystemOutdatedInfos>
+>("OperatingSystemOutdated");
 
 export type SupportStatus =
   | {
@@ -28,7 +42,31 @@ export function supportStatusForOS(type: string, release: string): SupportStatus
 }
 
 export function getOperatingSystemSupportStatus(): SupportStatus {
-  const type = os.type();
-  const release = os.release();
+  const m = getEnv("MOCK_OS_VERSION");
+  let type;
+  let release;
+  if (m) {
+    const splits = m.split("@");
+    if (splits.length !== 2) {
+      throw new Error("MOCK_OS_VERSION format should be 'os@version'");
+    }
+    type = splits[0];
+    release = splits[1];
+  } else {
+    type = os.type();
+    release = os.release();
+  }
   return supportStatusForOS(type, release);
+}
+
+// throw a OperatingSystemOutdated error if conditions aren't met
+export function expectOperatingSystemSupportStatus() {
+  const support = getOperatingSystemSupportStatus();
+  if (!support.supported) {
+    throw new OperatingSystemOutdated("Your Operating System version is not supported", {
+      type: support.type,
+      release: support.release,
+      criteria: support.criteria,
+    });
+  }
 }

@@ -13,6 +13,7 @@ export enum ItemStatus {
 export type Item = {
   status: ItemStatus;
   title: string;
+  doneTitle?: string;
   estimatedTime?: number;
   renderBody?: (isDisplayed?: boolean) => ReactNode;
 };
