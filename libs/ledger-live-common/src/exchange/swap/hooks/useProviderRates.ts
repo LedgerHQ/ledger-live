@@ -48,7 +48,11 @@ export const useProviderRates = ({
   updateSelectedRate: (selected?: ExchangeRate) => void;
 } => {
   const { account: fromAccount, parentAccount: fromParentAccount } = fromState;
-  const { currency: toCurrency, parentAccount: toParentAccount, account: toAccount } = toState;
+  const {
+    currency: toCurrency,
+    parentAccount: toParentAccount,
+    account: toAccount,
+  } = toState;
 
   const [rates, dispatchRates] = useReducer(
     ratesReducer,
@@ -83,7 +87,12 @@ export const useProviderRates = ({
         dispatchRates({ type: "loading" });
         try {
           let rates: ExchangeRate[] = await getExchangeRates(
-            { fromAccount, toAccount, fromParentAccount, toParentAccount } as Exchange,
+            {
+              fromAccount,
+              toAccount,
+              fromParentAccount,
+              toParentAccount,
+            } as Exchange,
             transaction,
             undefined,
             toCurrency,

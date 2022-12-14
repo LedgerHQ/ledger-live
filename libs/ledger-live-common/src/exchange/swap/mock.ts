@@ -7,7 +7,6 @@ import {
   SwapExchangeRateAmountTooHigh,
   SwapExchangeRateAmountTooLow,
 } from "../../errors";
-import { getSwapAPIVersion } from "./";
 import type {
   CheckQuote,
   Exchange,
@@ -131,25 +130,25 @@ export const mockGetProviders: GetProviders = async () => {
   await new Promise((r) => setTimeout(r, 800));
 
   return [
-        {
-          provider: "ftx",
-          pairs: [
-            { from: "bitcoin", to: "ethereum", tradeMethod: "float" },
-            { from: "bitcoin", to: "ethereum", tradeMethod: "fixed" },
-            { from: "ethereum", to: "bitcoin", tradeMethod: "float" },
-            { from: "ethereum", to: "bitcoin", tradeMethod: "fixed" },
-          ],
-        },
-        {
-          provider: "wyre",
-          pairs: [
-            { from: "bitcoin", to: "ethereum", tradeMethod: "float" },
-            { from: "bitcoin", to: "ethereum", tradeMethod: "fixed" },
-            { from: "ethereum", to: "bitcoin", tradeMethod: "float" },
-            { from: "ethereum", to: "bitcoin", tradeMethod: "fixed" },
-          ],
-        },
-      ];
+    {
+      provider: "ftx",
+      pairs: [
+        { from: "bitcoin", to: "ethereum", tradeMethod: "float" },
+        { from: "bitcoin", to: "ethereum", tradeMethod: "fixed" },
+        { from: "ethereum", to: "bitcoin", tradeMethod: "float" },
+        { from: "ethereum", to: "bitcoin", tradeMethod: "fixed" },
+      ],
+    },
+    {
+      provider: "wyre",
+      pairs: [
+        { from: "bitcoin", to: "ethereum", tradeMethod: "float" },
+        { from: "bitcoin", to: "ethereum", tradeMethod: "fixed" },
+        { from: "ethereum", to: "bitcoin", tradeMethod: "float" },
+        { from: "ethereum", to: "bitcoin", tradeMethod: "fixed" },
+      ],
+    },
+  ];
 };
 export const mockGetStatus: GetMultipleStatus = async (statusList) => {
   //Fake delay to show loading UI

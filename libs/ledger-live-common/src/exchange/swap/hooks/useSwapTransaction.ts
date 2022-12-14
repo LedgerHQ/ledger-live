@@ -48,7 +48,7 @@ export const useSwapTransaction = ({
   defaultParentAccount = selectorStateDefaultValues.parentAccount,
   onNoRates,
   excludeFixedRates,
-  providers
+  providers,
 }: {
   accounts?: Account[];
   setExchangeRate?: SetExchangeRateCallback;
@@ -108,7 +108,7 @@ export const useSwapTransaction = ({
     transaction,
     onNoRates,
     setExchangeRate,
-    providers
+    providers,
   });
 
   return {
