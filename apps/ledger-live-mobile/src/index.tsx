@@ -43,6 +43,7 @@ import { isEqual } from "lodash";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import Braze from "react-native-appboy-sdk";
 import Config from "react-native-config";
+import { AppManifest } from "@ledgerhq/live-common/platform/types";
 import logger from "./logger";
 import {
   saveAccounts,
@@ -106,7 +107,6 @@ import { isAcceptedTerms } from "./logic/terms";
 import type { Writeable } from "./types/helpers";
 import HookDynamicContentCards from "./dynamicContent/useContentCards";
 import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
-import { AppManifest } from "@ledgerhq/live-common/platform/types";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
