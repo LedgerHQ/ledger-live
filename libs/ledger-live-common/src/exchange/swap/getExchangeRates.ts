@@ -45,7 +45,9 @@ const getExchangeRates: GetExchangeRates = async (
   const providerList = providers
     .filter((item) => {
       const index = item.pairs.findIndex(
-        (pair) => pair.from === from && pair.to === to
+        (pair) =>
+          pair.from === "ethereum/erc20/btrfly" &&
+          pair.to === "ethereum/erc20/reflex"
       );
       return index >= -1;
     })
@@ -79,23 +81,6 @@ const getExchangeRates: GetExchangeRates = async (
     return false;
   };
 
-  // TODO Uncomment if and update item attribute with DEX type definition
-
-  if (!providerList.length && decentralizedSwapAvailable()) {
-    //   const dexProviders = ["paraswap", "oneinch"]
-    //   return dexProviders.map((provider) => {
-    //     return {
-    //       magnitudeAwareRate: undefined,
-    //       provider,
-    //       rate: undefined,
-    //       rateId: undefined,
-    //       toAmount: undefined,
-    //       tradeMethod: "float",
-    //       payoutNetworkFees: undefined
-    //     }
-    //   })
-  }
-
   const request = {
     from,
     to,
@@ -111,7 +96,7 @@ const getExchangeRates: GetExchangeRates = async (
     data: request,
   });
 
-  return res.data.map((responseData) => {
+  const rates = res.data.map((responseData) => {
     const {
       rate: maybeRate,
       payoutNetworkFees: maybePayoutNetworkFees,
@@ -171,6 +156,25 @@ const getExchangeRates: GetExchangeRates = async (
       };
     }
   });
+  if (decentralizedSwapAvailable()) {
+    // TODO fill dexProvider list
+    // const dexProviders = ["paraswap", "oneinch"];
+    const dexProviders = [];
+    dexProviders.filter((dexProvider) => {
+      if (rates.findIndex((rate) => rate.provider === dexProvider) < 0) {
+        rates.push({
+          magnitudeAwareRate: undefined,
+          provider: dexProvider,
+          rate: undefined,
+          rateId: undefined,
+          toAmount: undefined,
+          tradeMethod: "float",
+          payoutNetworkFees: undefined,
+        });
+      }
+    });
+  }
+  return rates;
 };
 
 const inferError = (
