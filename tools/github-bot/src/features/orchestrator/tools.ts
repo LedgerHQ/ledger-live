@@ -79,15 +79,15 @@ export const createOrRerequestRunByName = async ({
     });
   }
 
-  if (updateToPendingFields) {
-    await octokit.checks.update({
-      owner,
-      repo,
-      check_run_id: checkRun.id,
-      status: "in_progress",
-      ...updateToPendingFields,
-    });
-  }
+  // if (updateToPendingFields) {
+  //   await octokit.checks.update({
+  //     owner,
+  //     repo,
+  //     check_run_id: checkRun.id,
+  //     status: "in_progress",
+  //     ...updateToPendingFields,
+  //   });
+  // }
 
   return checkRun;
 };
