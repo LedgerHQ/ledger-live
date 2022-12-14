@@ -292,6 +292,6 @@ const edges = ["bottom"] as Edge[];
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: 16,
   },
 });

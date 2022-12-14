@@ -37,6 +37,9 @@ export type FeatureId =
   | "receiveStakingFlowConfigDesktop"
   | "ethStakingProviders"
   | "storyly"
+  | "staxWelcomeScreen"
+  | "postOnboardingClaimNft"
+  | "postOnboardingAssetsTransfer"
   | "firebaseEnvironmentReadOnly"
   | "protectServicesMobile";
 
