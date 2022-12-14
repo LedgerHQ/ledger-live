@@ -362,6 +362,14 @@ export const reducer = (state: State, action: Action): State => {
       );
       return { ...state, currentError: null, installQueue, uninstallQueue };
     }
+    case "setCustomImage": {
+      const { lastSeenCustomImage } = action;
+      const { size } = lastSeenCustomImage;
+      return {
+        ...state,
+        customImageBlocks: Math.ceil(size / getBlockSize(state)),
+      };
+    }
 
     case "uninstall": {
       const { name } = action;
@@ -405,13 +413,14 @@ export const distribute = (
   state: State,
   config?: $Shape<typeof defaultConfig>
 ): AppsDistribution => {
+  const { customImageBlocks } = state;
   const { warnMemoryRatio, sortApps } = { ...defaultConfig, ...config };
   const blockSize = getBlockSize(state);
   const totalBytes = state.deviceModel.memorySize;
   const totalBlocks = Math.floor(totalBytes / blockSize);
   const osBytes = (state.firmware && state.firmware.bytes) || 0;
   const osBlocks = Math.ceil(osBytes / blockSize);
-  const appsSpaceBlocks = totalBlocks - osBlocks;
+  const appsSpaceBlocks = totalBlocks - osBlocks - customImageBlocks;
   const appsSpaceBytes = appsSpaceBlocks * blockSize;
   let totalAppsBlocks = 0;
   const apps = state.installed.map((app) => {
@@ -447,6 +456,7 @@ export const distribute = (
     appsSpaceBlocks,
     appsSpaceBytes,
     totalAppsBlocks,
+    customImageBlocks,
     totalAppsBytes,
     freeSpaceBlocks,
     freeSpaceBytes,

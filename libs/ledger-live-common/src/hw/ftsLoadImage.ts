@@ -15,6 +15,8 @@ import {
 import getAppAndVersion from "./getAppAndVersion";
 import { isDashboardName } from "./isDashboardName";
 import attemptToQuitApp, { AttemptToQuitAppEvent } from "./attemptToQuitApp";
+import ftsFetchImageSize from "./ftsFetchImageSize";
+import ftsFetchImageHash from "./ftsFetchImageHash";
 import { gzip } from "pako";
 
 const MAX_APDU_SIZE = 255;
@@ -34,6 +36,8 @@ export type LoadImageEvent =
     }
   | {
       type: "imageLoaded";
+      imageSize: number;
+      imageHash: string;
     };
 
 export type LoadImageRequest = {
@@ -155,8 +159,16 @@ export default function loadImage({
                 );
               }
 
+              // Fetch image size
+              const imageBytes = await ftsFetchImageSize(transport);
+
+              // Fetch image hash
+              const imageHash = await ftsFetchImageHash(transport);
+
               subscriber.next({
                 type: "imageLoaded",
+                imageSize: imageBytes,
+                imageHash,
               });
 
               subscriber.complete();
@@ -167,7 +179,7 @@ export default function loadImage({
                 (e &&
                   e instanceof TransportStatusError &&
                   [0x6e00, 0x6d00, 0x6e01, 0x6d01, 0x6d02].includes(
-                    // @ts-expect-error typescript not checking agains the instanceof
+                    // @ts-expect-error typescript not checking against the instanceof
                     e.statusCode
                   ))
               ) {
