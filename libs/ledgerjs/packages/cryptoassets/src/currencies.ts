@@ -2808,7 +2808,6 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       chainId: 50,
       networkId: 50,
       rpc: "https://rpc.xdcrpc.com",
-      chainId: 50,
       explorer: {
         uri: "https://xdc.blocksscan.io",
         type: "blocksscan",
