@@ -5,6 +5,7 @@ import { Trans } from "react-i18next";
 import { track } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
+import DecentralisedRate from "./DecentralisedRate";
 import CentralisedRate from "./CentralisedRate";
 import Countdown from "./Countdown";
 import EmptyState from "./EmptyState";
@@ -184,16 +185,31 @@ export default function ProviderRate({
         </Box>
       </TableHeader>
       <Box mt={3}>
-        {filteredRates.map(rate => (
-          <CentralisedRate
-            key={`${rate.provider}-${rate.tradeMethod}`}
-            value={rate}
-            selected={rate === selectedRate}
-            onSelect={updateRate}
-            fromCurrency={fromCurrency}
-            toCurrency={toCurrency}
-          />
-        ))}
+        {filteredRates.map(rate => {
+          const isSelected =
+            selectedRate &&
+            selectedRate.provider === rate.provider &&
+            selectedRate.tradeMethod === rate.tradeMethod;
+          return rate.providerType === "DEX" && rate.rate === undefined ? (
+            <DecentralisedRate
+              filter={filter}
+              key={rate.id}
+              value={rate}
+              selected={isSelected}
+              onSelect={updateRate}
+              icon={rate.provider}
+            />
+          ) : (
+            <CentralisedRate
+              key={`${rate.provider}-${rate.tradeMethod}`}
+              value={rate}
+              selected={isSelected}
+              onSelect={updateRate}
+              fromCurrency={fromCurrency}
+              toCurrency={toCurrency}
+            />
+          );
+        })}
       </Box>
       {!filteredRates.length && <EmptyState />}
     </Box>

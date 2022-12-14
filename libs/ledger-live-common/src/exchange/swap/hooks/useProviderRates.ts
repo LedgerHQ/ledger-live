@@ -203,8 +203,12 @@ export const useProviderRates = ({
     ]
   );
 
+  // TODO remove this, only used to show a missing rate whilst we wait for the other PR to be merged.
+  const modified = rates.value?.map((r) =>
+    r.provider === "paraswap" ? { ...r, rate: undefined } : r
+  );
   return {
-    rates,
+    rates: { ...rates, value: modified },
     refetchRates,
     updateSelectedRate,
   };

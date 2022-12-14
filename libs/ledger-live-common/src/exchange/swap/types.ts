@@ -46,7 +46,7 @@ export type ExchangeRaw = {
   toAccount: AccountRawLike;
 };
 export type ExchangeRate = {
-  rate: BigNumber;
+  rate: BigNumber | undefined;
   // NB Raw rate, for display
   magnitudeAwareRate: BigNumber;
   // NB rate between satoshi units

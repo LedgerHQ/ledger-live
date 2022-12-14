@@ -58,6 +58,11 @@ export const toExchangeRateRaw = (
     tradeMethod,
     error,
   } = exchangeRate;
+
+  if (!rate) {
+    throw new Error("rate is required");
+  }
+
   return {
     rate: rate.toString(),
     magnitudeAwareRate: magnitudeAwareRate.toString(),

@@ -48,6 +48,7 @@ import FormNotAvailable from "./FormNotAvailable";
 import SwapFormSelectors from "./FormSelectors";
 import SwapFormSummary from "./FormSummary";
 import SwapFormRates from "./FormRates";
+import { DEX_PROVIDERS } from "~/renderer/screens/exchange/Swap2/Form/utils";
 
 const Wrapper: ThemedComponent<{}> = styled(Box).attrs({
   p: 20,
@@ -410,7 +411,10 @@ const SwapForm = () => {
 
       const { providerType } = selectedRate;
       if (providerType === "DEX") {
-        setNavigation({ pathname: selectedRate.providerUrl ?? "/platform/1inch-lld", params: {} }); // TODO change when we have populated providerUrl
+        const dexProvider = DEX_PROVIDERS.find(d => d.id === selectedRate.provider);
+        if (dexProvider) {
+          setNavigation(dexProvider.navigation);
+        }
       }
 
       if (providerType === "CEX") {
