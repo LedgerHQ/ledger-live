@@ -25,7 +25,7 @@ export const getCheckRunByName = async ({
     check_name: checkName,
   });
 
-export const createOrRerequestRunByName = async ({
+export const createRunByName = async ({
   octokit,
   owner,
   repo,
@@ -40,44 +40,14 @@ export const createOrRerequestRunByName = async ({
   checkName: string;
   updateToPendingFields?: Record<string, any>;
 }) => {
-  let checkRun;
-
-  try {
-    const response = await getCheckRunByName({
-      octokit,
-      owner,
-      repo,
-      ref: sha,
-      checkName,
-    });
-    if (response.status === 200) {
-      if (response.data.total_count > 0) {
-        checkRun = response.data.check_runs[0];
-      }
-    }
-  } catch (e) {
-    // ignore
-  }
-
-  if (!checkRun) {
-    // If not, create it.
-    const { data } = await octokit.checks.create({
-      owner,
-      repo,
-      name: checkName,
-      head_sha: sha,
-      status: "queued",
-      started_at: new Date().toISOString(),
-    });
-    checkRun = data;
-  } else {
-    // Else, retrigger the check run.
-    await octokit.checks.rerequestRun({
-      owner,
-      repo,
-      check_run_id: checkRun.id,
-    });
-  }
+  const { data: checkRun } = await octokit.checks.create({
+    owner,
+    repo,
+    name: checkName,
+    head_sha: sha,
+    status: "queued",
+    started_at: new Date().toISOString(),
+  });
 
   if (updateToPendingFields) {
     await octokit.checks.update({
