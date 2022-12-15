@@ -1,7 +1,7 @@
 import { from } from "rxjs";
 import fs from "fs";
 import type { ScanCommonOpts } from "../scan";
-import ftsLoadImage from "@ledgerhq/live-common/hw/ftsLoadImage";
+import ftsLoadImage from "@ledgerhq/live-common/hw/staxLoadImage";
 import { deviceOpt } from "../scan";
 
 type ftsLoadImageJobOpts = ScanCommonOpts & {
@@ -15,7 +15,7 @@ const exec = async (opts: ftsLoadImageJobOpts) => {
   const hexImage = fs.readFileSync(fileInput, "utf-8");
 
   await new Promise<void>((resolve) =>
-      ftsLoadImage({ deviceId, hexImage }).subscribe(
+      staxLoadImage({ deviceId, hexImage }).subscribe(
         (x) => console.log(x),
         (e) => {
           console.error(e);

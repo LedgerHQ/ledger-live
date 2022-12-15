@@ -22,10 +22,10 @@ import estimateMaxSpendable from "./commands/estimateMaxSpendable";
 import exportAccounts from "./commands/exportAccounts";
 import firmwareRepair from "./commands/firmwareRepair";
 import firmwareUpdate from "./commands/firmwareUpdate";
-import ftsFetchAndRestoreDemo from "./commands/ftsFetchAndRestoreDemo";
-import ftsFetchImage from "./commands/ftsFetchImage";
-import ftsFetchImageHash from "./commands/ftsFetchImageHash";
-import ftsLoadImage from "./commands/ftsLoadImage";
+import staxFetchAndRestoreDemo from "./commands/staxFetchAndRestoreDemo";
+import staxFetchImage from "./commands/staxFetchImage";
+import staxFetchImageHash from "./commands/staxFetchImageHash";
+import staxLoadImage from "./commands/staxLoadImage";
 import generateTestScanAccounts from "./commands/generateTestScanAccounts";
 import generateTestTransaction from "./commands/generateTestTransaction";
 import genuineCheck from "./commands/genuineCheck";
@@ -81,10 +81,10 @@ export default {
   exportAccounts,
   firmwareRepair,
   firmwareUpdate,
-  ftsFetchAndRestoreDemo,
-  ftsFetchImage,
-  ftsFetchImageHash,
-  ftsLoadImage,
+  staxFetchAndRestoreDemo,
+  staxFetchImage,
+  staxFetchImageHash,
+  staxLoadImage,
   generateTestScanAccounts,
   generateTestTransaction,
   genuineCheck,

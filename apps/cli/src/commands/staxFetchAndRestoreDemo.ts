@@ -3,8 +3,8 @@ import { from } from "rxjs";
 import fs from "fs";
 import type { ScanCommonOpts } from "../scan";
 import { deviceOpt } from "../scan";
-import ftsFetchImageHash from "@ledgerhq/live-common/hw/ftsFetchImageHash";
-import ftsLoadImage, { generateFtsImageFormat } from "@ledgerhq/live-common/hw/ftsLoadImage";
+import staxFetchImageHash from "@ledgerhq/live-common/hw/staxFetchImageHash";
+import staxLoadImage, { generateStaxImageFormat } from "@ledgerhq/live-common/hw/staxLoadImage";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import crypto from "crypto";
 
@@ -23,7 +23,7 @@ import crypto from "crypto";
  const exec = async (opts: ftsFetchAndRestoreJobOpts) => {
    const { fileInput, device: deviceId = "" } = opts;
    const hexImageWithoutHeader = fs.readFileSync(fileInput, "utf-8");
-   const hexImage = await generateFtsImageFormat(hexImageWithoutHeader, true);
+   const hexImage = await generateStaxImageFormat(hexImageWithoutHeader, true);
 
    await new Promise<void>(async (resolve) => {
      let hash = crypto.createHash('sha256').update(hexImage).digest('hex')
@@ -31,7 +31,7 @@ import crypto from "crypto";
     console.log(hash)
     console.log("Extracting hash from device")
 
-    const currentHash = await withDevice(deviceId)(t=>from(ftsFetchImageHash(t))).toPromise()
+    const currentHash = await withDevice(deviceId)(t=>from(staxFetchImageHash(t))).toPromise()
     if (currentHash === hash) {
       console.log("Hashes match, skip backup step because we can use the one we have")
     } else {
@@ -43,7 +43,7 @@ import crypto from "crypto";
 
     console.log("Restoring the image we backedup")
     await new Promise<void>((resolve) =>
-      ftsLoadImage({ deviceId, hexImage: hexImageWithoutHeader }).subscribe(
+      staxLoadImage({ deviceId, hexImage: hexImageWithoutHeader }).subscribe(
         (x) => console.log(x),
         (e) => {
           console.error(e);

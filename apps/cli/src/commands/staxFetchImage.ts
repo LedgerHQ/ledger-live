@@ -3,7 +3,7 @@ import { from } from "rxjs";
 import fs from "fs";
 import type { ScanCommonOpts } from "../scan";
 import { deviceOpt } from "../scan";
-import ftsFetchImage from "@ledgerhq/live-common/hw/ftsFetchImage";
+import ftsFetchImage from "@ledgerhq/live-common/hw/staxFetchImage";
 
 type ftsFetchImageJobOpts = ScanCommonOpts & {
   fileOutput: string;
@@ -13,7 +13,7 @@ const exec = async (opts: ftsFetchImageJobOpts) => {
   const { device: deviceId = "", fileOutput } = opts;
 
   await new Promise<void>((p) =>
-    ftsFetchImage({ deviceId }).subscribe(
+    staxFetchImage({ deviceId }).subscribe(
       (event) => {
         if (event.type === "imageFetched") {
           const { hexImage } = event;
