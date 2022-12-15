@@ -106,11 +106,16 @@ export default class Nervos {
    * const result = await myCoin.getAddress("44'/309'/0'/0/0");
    * const { publicKey, lockArgs, address, returnCode } = result;
    */
-  async getAddress(path: string) {
+  async getAddress(
+    path: string,
+    opts?: {
+      verify?: boolean;
+    }
+  ) {
     const bipPath = BIPPath.fromString(path).toPathArray();
     const serializedPath = this.serializePath(bipPath);
 
-    const p1 = 0x00;
+    const p1 = opts?.verify ? 0x01 : 0x00;
     const p2 = 0x00;
     const statusList = [SW_OK, SW_CANCEL];
 
