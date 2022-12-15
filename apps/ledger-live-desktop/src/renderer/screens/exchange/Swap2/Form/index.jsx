@@ -110,7 +110,7 @@ const SwapForm = () => {
   const { state: locationState } = useLocation();
   const history = useHistory();
   const accounts = useSelector(shallowAccountsSelector);
-  const { storedProviders, providers, providersError } = useProviders();
+  const { storedProviders, providersError } = useProviders();
   const exchangeRate = useSelector(rateSelector);
   const setExchangeRate = useCallback(
     rate => {
@@ -124,7 +124,7 @@ const SwapForm = () => {
     setIsSendMaxLoading,
     onNoRates: trackNoRates,
     ...locationState,
-    providers,
+    providers: storedProviders,
   });
 
   const exchangeRatesState = swapTransaction.swap?.rates;
@@ -487,7 +487,7 @@ const SwapForm = () => {
     swapTransaction.toggleMax(state);
   };
 
-  if (providers?.length)
+  if (storedProviders?.length)
     return (
       <Wrapper>
         <TrackPage category="Swap" name="Form" provider={provider} {...swapDefaultTrack} />
