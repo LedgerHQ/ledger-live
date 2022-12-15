@@ -10,9 +10,8 @@ import {
   getFiatCurrencyByTicker,
 } from "@ledgerhq/live-common/currencies/index";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import type { FeatureId, Feature } from "@ledgerhq/types-live";
+import type { DeviceModelInfo, FeatureId, Feature } from "@ledgerhq/types-live";
 import type { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
-import type { DeviceModelInfo } from "@ledgerhq/types-live";
 import type { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { getLanguages, defaultLocaleForLanguage } from "~/config/languages";
