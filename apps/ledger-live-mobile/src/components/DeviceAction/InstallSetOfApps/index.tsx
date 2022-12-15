@@ -47,6 +47,9 @@ const InstallSetOfApps = ({
   const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(
     lastSeenDeviceSelector,
   );
+  const lastDeviceProductName = lastSeenDevice?.modelId
+    ? getDeviceModel(lastSeenDevice?.modelId).productName
+    : lastSeenDevice?.modelId;
 
   const shouldRestoreApps = useMemo(() => {
     return restore && !!lastSeenDevice;
@@ -139,11 +142,8 @@ const InstallSetOfApps = ({
             : null}
         </Flex>
       </Flex>
-      <Text textAlign="center" color="neutral.c70">
-        <Trans
-          i18nKey="installSetOfApps.ongoing.disclaimer"
-          values={{ productName }}
-        />
+      <Text variant="paragraphLineHeight" color="neutral.c70">
+        <Trans i18nKey="installSetOfApps.ongoing.disclaimer" />
       </Text>
       <BottomModal
         isOpened={!!allowManagerRequestedWording || !!error}
@@ -162,7 +162,7 @@ const InstallSetOfApps = ({
     </Flex>
   ) : shouldRestoreApps ? (
     <Restore
-      deviceName={lastSeenDevice?.modelId}
+      deviceName={lastDeviceProductName}
       onConfirm={() => setUserConfirmed(true)}
       onReject={() => onResult(false)}
     />
