@@ -24,6 +24,7 @@ import {
   DisconnectedDevice,
   CantOpenDevice,
   TransportRaceCondition,
+  LockedDeviceError,
 } from "@ledgerhq/errors";
 import { FirmwareInfo } from "@ledgerhq/types-live";
 import {
@@ -142,7 +143,9 @@ export const isAllowedOnboardingStatePollingError = (
       error instanceof DisconnectedDevice ||
       error instanceof CantOpenDevice ||
       error instanceof TransportRaceCondition ||
-      error instanceof TransportStatusError)
+      error instanceof TransportStatusError ||
+      // A locked device is handled as an allowed error
+      error instanceof LockedDeviceError)
   ) {
     return true;
   }
