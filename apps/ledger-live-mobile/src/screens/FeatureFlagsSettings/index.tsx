@@ -148,7 +148,10 @@ export default function DebugFeatureFlags() {
           </Tag>
           <Divider />
           <ChipTabs
-            labels={["All", "Groups"]}
+            labels={[
+              t("settings.debug.featureFlagsTabAll"),
+              t("settings.debug.featureFlagsTabGroups"),
+            ]}
             activeIndex={activeTab}
             onChange={setActiveTab}
           />

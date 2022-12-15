@@ -2638,6 +2638,8 @@
       "featureFlagsEdit": "Edit",
       "featureFlagsRestore": "Restore",
       "featureFlagsRestoreAll": "Restore all flag values",
+      "featureFlagsTabAll": "All",
+      "featureFlagsTabGroups": "Groups",
       "firebaseProject": "Firebase project targeted by this build:"
     }
   },

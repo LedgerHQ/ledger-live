@@ -65,7 +65,7 @@ const GroupedFeatures: React.FC<Props> = ({
   }, [featureIds, resetFeature]);
 
   return (
-    <Flex>
+    <Flex mb={2}>
       <Pressable
         onPress={() => setFocusedGroupName(focused ? undefined : groupName)}
       >
