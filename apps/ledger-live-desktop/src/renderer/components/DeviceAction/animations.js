@@ -114,7 +114,11 @@ const nanoS = {
     light: NANO_S_LIGHT_openApp,
     dark: NANO_S_DARK_openApp,
   },
-  validate: {
+  verify: {
+    light: NANO_S_LIGHT_validate,
+    dark: NANO_S_DARK_validate,
+  },
+  sign: {
     light: NANO_S_LIGHT_validate,
     dark: NANO_S_DARK_validate,
   },
@@ -148,7 +152,11 @@ const nanoX = {
     light: NANO_X_LIGHT_openApp,
     dark: NANO_X_DARK_openApp,
   },
-  validate: {
+  verify: {
+    light: NANO_X_LIGHT_validate,
+    dark: NANO_X_DARK_validate,
+  },
+  sign: {
     light: NANO_X_LIGHT_validate,
     dark: NANO_X_DARK_validate,
   },
@@ -183,7 +191,11 @@ const nanoSP = {
     light: NANO_SP_LIGHT_openApp,
     dark: NANO_SP_DARK_openApp,
   },
-  validate: {
+  verify: {
+    light: NANO_SP_LIGHT_validate,
+    dark: NANO_SP_DARK_validate,
+  },
+  sign: {
     light: NANO_SP_LIGHT_validate,
     dark: NANO_SP_DARK_validate,
   },
@@ -260,7 +272,10 @@ const blue = {
   openApp: {
     light: BLUE_LIGHT_openApp,
   },
-  validate: {
+  verify: {
+    light: BLUE_LIGHT_validate,
+  },
+  sign: {
     light: BLUE_LIGHT_validate,
   },
   // Nb We are dropping the assets for blue soon, this is temp
