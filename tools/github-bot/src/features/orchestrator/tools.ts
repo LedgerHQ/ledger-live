@@ -213,52 +213,52 @@ export async function updateGateCheckRun(
   }
 }
 
-export function getGenericOutput(conclusion: string) {
+export function getGenericOutput(conclusion: string, summary?: string) {
   switch (conclusion) {
     case "success":
       return {
         title: getStatusEmoji(conclusion),
-        summary: "Completed successfully 🎉",
+        summary: summary || "Completed successfully 🎉",
       };
     case "failure":
       return {
         title: getStatusEmoji(conclusion),
-        summary: "Completed with errors",
+        summary: summary || "Completed with errors",
       };
     case "neutral":
       return {
         title: getStatusEmoji(conclusion),
-        summary: "Completed with neutral result",
+        summary: summary || "Completed with neutral result",
       };
     case "cancelled":
       return {
         title: getStatusEmoji(conclusion),
-        summary: "Cancelled",
+        summary: summary || "Cancelled",
       };
     case "timed_out":
       return {
         title: getStatusEmoji(conclusion),
-        summary: "Timed out",
+        summary: summary || "Timed out",
       };
     case "action_required":
       return {
         title: getStatusEmoji(conclusion),
-        summary: "Action required",
+        summary: summary || "Action required",
       };
     case "stale":
       return {
         title: getStatusEmoji(conclusion),
-        summary: "Stale",
+        summary: summary || "Stale",
       };
     case "skipped":
       return {
         title: getStatusEmoji(conclusion),
-        summary: "Skipped",
+        summary: summary || "Skipped",
       };
     default:
       return {
         title: "❓",
-        summary: "Unknown",
+        summary: summary || "Unknown",
       };
   }
 }
@@ -284,4 +284,21 @@ export function getStatusEmoji(status: string) {
     default:
       return "⏳";
   }
+}
+
+export async function prIsFork(
+  octokit: Octokit,
+  repo: string,
+  owner: string,
+  prNumber?: number
+) {
+  if (prNumber === undefined) return true;
+
+  const { data: pr } = await octokit.rest.pulls.get({
+    owner,
+    repo,
+    pull_number: prNumber,
+  });
+
+  return !!pr.head.repo?.fork;
 }
