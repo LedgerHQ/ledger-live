@@ -46,7 +46,7 @@ function Discover() {
       StackNavigationProp<BaseNavigatorStackParamList & MainNavigatorParamList>
     >();
 
-  const learn = useFeature("learn");
+  const learn = useFeature("brazeLearn");
   const referralProgramConfig = useFeature("referralProgramDiscoverCard");
   const isNFTDisabled =
     useFeature("disableNftLedgerMarket")?.enabled && Platform.OS === "ios";
@@ -93,29 +93,27 @@ function Discover() {
               },
             ]
           : []),
-        {
-          title: t("discover.sections.learn.title"),
-          subTitle: t("discover.sections.learn.desc"),
-          onPress: () => {
-            readOnlyTrack("Learn");
-            if (!learn?.enabled) {
-              track("Discover - Learn - OpenUrl", {
-                url: urls.discover.academy,
-              });
-              Linking.openURL(urls.discover.academy);
-            } else {
-              navigation.navigate(ScreenName.Learn);
-            }
-          },
-          disabled: false,
-          Image: (
-            <Illustration
-              size={110}
-              darkSource={images.dark.learnImg}
-              lightSource={images.light.learnImg}
-            />
-          ),
-        },
+
+        ...(learn?.enabled
+          ? [
+              {
+                title: t("discover.sections.learn.title"),
+                subTitle: t("discover.sections.learn.desc"),
+                onPress: () => {
+                  readOnlyTrack("Learn");
+                  navigation.navigate(ScreenName.Learn);
+                },
+                disabled: false,
+                Image: (
+                  <Illustration
+                    size={110}
+                    darkSource={images.dark.learnImg}
+                    lightSource={images.light.learnImg}
+                  />
+                ),
+              },
+            ]
+          : []),
         {
           title: t("discover.sections.earn.title"),
           subTitle: t("discover.sections.earn.desc"),
