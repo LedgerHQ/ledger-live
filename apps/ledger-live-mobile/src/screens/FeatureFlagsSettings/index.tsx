@@ -5,6 +5,7 @@ import {
   groupedFeatures,
   useFeature,
   useFeatureFlags,
+  useHasLocallyOverriddenFeatureFlags,
 } from "@ledgerhq/live-common/featureFlags/index";
 import type { FeatureId } from "@ledgerhq/types-live";
 
@@ -16,10 +17,12 @@ import {
   Tag,
   ChipTabs,
   Button,
+  Switch,
 } from "@ledgerhq/native-ui";
 import { includes, lowerCase, trim } from "lodash";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Keyboard } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import FeatureFlagDetails, {
   TagDisabled,
@@ -27,6 +30,8 @@ import FeatureFlagDetails, {
 } from "./FeatureFlagDetails";
 import Alert from "../../components/Alert";
 import GroupedFeatures from "./GroupedFeatures";
+import { featureFlagsBannerVisibleSelector } from "../../reducers/settings";
+import { setFeatureFlagsBannerVisible } from "../../actions/settings";
 
 const addFlagHint = `\
 If a feature flag is defined in the Firebase project \
@@ -130,6 +135,18 @@ export default function DebugFeatureFlags() {
 
   const additionalInfo = <Alert title={addFlagHint} type="hint" noIcon />;
 
+  const hasLocallyOverriddenFlags = useHasLocallyOverriddenFeatureFlags();
+  const featureFlagsBannerVisible = useSelector(
+    featureFlagsBannerVisibleSelector,
+  );
+  const dispatch = useDispatch();
+  const setFeatureFlagBannerVisible = useCallback(
+    newVal => {
+      dispatch(setFeatureFlagsBannerVisible(newVal));
+    },
+    [dispatch],
+  );
+
   return (
     <SafeAreaView edges={["bottom"]} style={{ flex: 1 }}>
       <NavigationScrollView>
@@ -146,6 +163,13 @@ export default function DebugFeatureFlags() {
           <Tag uppercase={false} type="color" alignSelf={"flex-start"}>
             {project}
           </Tag>
+          <Flex flexDirection="row" justifyContent="space-between">
+            <Text mt={3}>{t("settings.debug.showBannerDesc")}</Text>
+            <Switch
+              checked={featureFlagsBannerVisible}
+              onChange={setFeatureFlagBannerVisible}
+            />
+          </Flex>
           <Divider />
           <ChipTabs
             labels={[
@@ -168,6 +192,7 @@ export default function DebugFeatureFlags() {
             type="main"
             outline
             onPress={resetFeatures}
+            disabled={!hasLocallyOverriddenFlags}
           >
             {t("settings.debug.featureFlagsRestoreAll")}
           </Button>

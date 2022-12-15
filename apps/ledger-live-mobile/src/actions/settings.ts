@@ -70,6 +70,8 @@ import {
   SettingsSetDismissedDynamicCardsPayload,
   SettingsSetOverriddenFeatureFlagPlayload,
   SettingsSetOverriddenFeatureFlagsPlayload,
+  SettingsSetFeatureFlagsBannerVisible,
+  SettingsSetFeatureFlagsBannerVisiblePayload,
 } from "./types";
 import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
 
@@ -512,6 +514,14 @@ const setOverriddenFeatureFlagsAction =
 export const setOverriddenFeatureFlags = (overriddenFeatureFlags: {
   [key in FeatureId]?: Feature;
 }) => setOverriddenFeatureFlagsAction({ overriddenFeatureFlags });
+
+const setFeatureFlagsBannerVisibleAction =
+  createAction<SettingsSetFeatureFlagsBannerVisiblePayload>(
+    SettingsActionTypes.SET_FEATURE_FLAGS_BANNER_VISIBLE,
+  );
+export const setFeatureFlagsBannerVisible = (
+  featureFlagsBannerVisible: boolean,
+) => setFeatureFlagsBannerVisibleAction({ featureFlagsBannerVisible });
 
 const dangerouslyOverrideStateAction =
   createAction<SettingsDangerouslyOverrideStatePayload>(

@@ -66,6 +66,7 @@ import type {
   SettingsSetDismissedDynamicCardsPayload,
   SettingsSetOverriddenFeatureFlagPlayload,
   SettingsSetOverriddenFeatureFlagsPlayload,
+  SettingsSetFeatureFlagsBannerVisiblePayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -158,6 +159,7 @@ export const INITIAL_STATE: SettingsState = {
   },
   walletTabNavigatorLastVisitedTab: ScreenName.Portfolio,
   overriddenFeatureFlags: {},
+  featureFlagsBannerVisible: true,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -598,6 +600,15 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       overriddenFeatureFlags,
     };
   },
+  [SettingsActionTypes.SET_FEATURE_FLAGS_BANNER_VISIBLE]: (state, action) => {
+    const {
+      payload: { featureFlagsBannerVisible },
+    } = action as Action<SettingsSetFeatureFlagsBannerVisiblePayload>;
+    return {
+      ...state,
+      featureFlagsBannerVisible,
+    };
+  },
 };
 
 export default handleActions<SettingsState, SettingsPayload>(
@@ -821,3 +832,5 @@ export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
   state.settings.walletTabNavigatorLastVisitedTab;
 export const overriddenFeatureFlagsSelector = (state: State) =>
   state.settings.overriddenFeatureFlags;
+export const featureFlagsBannerVisibleSelector = (state: State) =>
+  state.settings.featureFlagsBannerVisible;
