@@ -10,6 +10,7 @@ import {
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import DeviceSetupView from "../../components/DeviceSetupView";
 
 export type Props = RootComposite<
   StackNavigatorProps<
@@ -171,13 +172,14 @@ export const BleDevicePairingFlow = ({ navigation, route }: Props) => {
   }, [handleGoBackFromScanning]);
 
   return (
-    <BleDevicePairingFlowComponent
-      key={keyToReset}
-      filterByDeviceModelId={filterByDeviceModelId}
-      areKnownDevicesDisplayed={areKnownDevicesDisplayed}
-      onGoBackFromScanning={handleGoBackFromScanning}
-      onPairingSuccess={onPairingSuccess}
-      onPairingSuccessAddToKnownDevices={onSuccessAddToKnownDevices}
-    />
+    <DeviceSetupView>
+      <BleDevicePairingFlowComponent
+        key={keyToReset}
+        filterByDeviceModelId={filterByDeviceModelId}
+        areKnownDevicesDisplayed={areKnownDevicesDisplayed}
+        onPairingSuccess={onPairingSuccess}
+        onPairingSuccessAddToKnownDevices={onSuccessAddToKnownDevices}
+      />
+    </DeviceSetupView>
   );
 };
