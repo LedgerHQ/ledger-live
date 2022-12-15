@@ -48,6 +48,9 @@ const TableHeader: ThemedComponent<{}> = styled(Box).attrs({
   border-bottom: 1px solid ${p => p.theme.colors.neutral.c30};
 `;
 
+// temporary flag to disable the swap feature - will be replaced by feature flag sourced from firebase. Ensure this is false when merging to develop branch.
+const SHOW_DEX_QUOTES = true;
+
 export default function ProviderRate({
   fromCurrency,
   toCurrency,
@@ -189,7 +192,8 @@ export default function ProviderRate({
             selectedRate &&
             selectedRate.provider === rate.provider &&
             selectedRate.tradeMethod === rate.tradeMethod;
-          return rate.providerType === "DEX" && rate.rate === undefined ? (
+          return rate.providerType === "DEX" &&
+            (SHOW_DEX_QUOTES === false || rate.rate === undefined) ? (
             <NoQuoteSwapRate
               filter={filter}
               key={rate.id}
