@@ -81,7 +81,7 @@ export function orchestrator(app: Probot) {
         repo,
         sha: payload.workflow_run.head_sha,
         checkName: matchedWorkflow.checkRunName,
-        updateToPendingFields: {
+        extraFields: {
           details_url: workflowUrl,
           output: {
             title: "⚙️ Running",
@@ -227,7 +227,7 @@ export function orchestrator(app: Probot) {
         repo,
         sha: payload.check_run.head_sha,
         checkName: GATE_CHECK_RUN_NAME,
-        updateToPendingFields: {
+        extraFields: {
           started_at: new Date().toISOString(),
         },
       });
