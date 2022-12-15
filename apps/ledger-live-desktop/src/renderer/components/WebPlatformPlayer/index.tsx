@@ -471,7 +471,7 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs = {}, conf
         />
         {!widgetLoaded ? (
           <Loader>
-            <BigSpinner size={50} />
+            <BigSpinner data-test-id="live-app-loading-spinner" size={50} />
           </Loader>
         ) : null}
       </Wrapper>

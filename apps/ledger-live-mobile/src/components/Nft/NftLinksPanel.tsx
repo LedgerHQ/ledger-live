@@ -220,7 +220,7 @@ const NftLinksPanel = ({
         ? [
             <NftLink
               primary
-              title={"Custom image"} // TODO: there is no design nor wording for this for now
+              title={t("customImage.nftEntryPointButtonLabel")}
               leftIcon={
                 <View
                   style={[

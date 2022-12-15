@@ -1,4 +1,12 @@
-import React, { memo, useCallback, useMemo, useState } from "react";
+import React, {
+  useRef,
+  useEffect,
+  memo,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
+import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 
 import {
@@ -9,13 +17,14 @@ import {
 import { App, DeviceInfo, idsToLanguage } from "@ledgerhq/types-live";
 
 import { Flex, Text, Button, Divider } from "@ledgerhq/native-ui";
-import { CircledCheckMedium } from "@ledgerhq/native-ui/assets/icons";
+import { CircledCheckSolidMedium } from "@ledgerhq/native-ui/assets/icons";
 import styled, { useTheme } from "styled-components/native";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { lastSeenCustomImageSelector } from "../../../reducers/settings";
 import DeviceAppStorage from "./DeviceAppStorage";
 
 import NanoS from "../../../images/devices/NanoS";
@@ -60,12 +69,6 @@ const BorderCard = styled.View`
   border-radius: 4px;
 `;
 
-const VersionContainer = styled(Flex).attrs({
-  borderRadius: 4,
-  paddingHorizontal: 8,
-  paddingVertical: 5.5,
-})``;
-
 const DeviceCard = ({
   distribution,
   state,
@@ -79,13 +82,24 @@ const DeviceCard = ({
   appList,
   onLanguageChange,
 }: Props) => {
-  const { colors } = useTheme();
+  const { colors, theme } = useTheme();
+  const lastSeenCustomImage = useSelector(lastSeenCustomImageSelector);
+  const isFirstCustomImageUpdate = useRef<boolean>(true);
+
   const { deviceModel } = state;
   const [appsModalOpen, setAppsModalOpen] = useState(false);
 
   const [illustration] = useState(
-    illustrations[deviceModel.id]({ color: colors.neutral.c100 }),
+    illustrations[deviceModel.id]({ color: colors.neutral.c100, theme }),
   );
+
+  useEffect(() => {
+    if (isFirstCustomImageUpdate.current) {
+      isFirstCustomImageUpdate.current = false;
+    } else {
+      dispatch({ type: "setCustomImage", lastSeenCustomImage });
+    }
+  }, [dispatch, lastSeenCustomImage]);
 
   const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
 
@@ -116,12 +130,13 @@ const DeviceCard = ({
 
   return (
     <BorderCard>
-      <Flex flexDirection={"row"} mt={24} mx={4} mb={8}>
+      <Flex flexDirection={"row"} mt={20} mx={4} mb={8} alignItems="center">
         {illustration}
         <Flex
           flex={1}
           flexDirection={"column"}
           alignItems={"flex-start"}
+          justifyContent="center"
           ml={4}
         >
           <DeviceName
@@ -130,30 +145,36 @@ const DeviceCard = ({
             initialDeviceName={initialDeviceName}
             disabled={pendingInstalls}
           />
-          <Flex flexDirection={"row"} alignItems={"center"} mt={2} mb={3}>
-            <Text
-              variant={"body"}
-              fontWeight={"medium"}
-              color={"palette.neutral.c80"}
-              numberOfLines={1}
-              mr={3}
-            >
-              <Trans i18nKey="DeviceItemSummary.genuine" />
-            </Text>
-            <CircledCheckMedium size={18} color={"palette.success.c80"} />
-          </Flex>
-          <VersionContainer backgroundColor={"neutral.c80"}>
+          <Flex
+            backgroundColor={"neutral.c30"}
+            py={1}
+            px={3}
+            borderRadius={4}
+            my={2}
+          >
             <Text
               variant={"subtitle"}
               fontWeight={"semiBold"}
-              color={"neutral.c20"}
+              color={"neutral.c80"}
             >
               <Trans
                 i18nKey="FirmwareVersionRow.subtitle"
                 values={{ version: deviceInfo.version }}
               />
             </Text>
-          </VersionContainer>
+          </Flex>
+          <Flex flexDirection={"row"} alignItems={"center"} mt={2} mb={3}>
+            <CircledCheckSolidMedium size={18} color={"palette.success.c80"} />
+            <Text
+              variant={"body"}
+              fontWeight={"medium"}
+              color={"palette.neutral.c80"}
+              numberOfLines={1}
+              ml={2}
+            >
+              <Trans i18nKey="DeviceItemSummary.genuine" />
+            </Text>
+          </Flex>
         </Flex>
       </Flex>
       {hasCustomImage || showDeviceLanguage ? (
