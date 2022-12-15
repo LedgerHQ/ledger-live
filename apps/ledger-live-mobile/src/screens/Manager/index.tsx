@@ -149,17 +149,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: "space-between",
   },
-  title: {
-    lineHeight: 27,
-    fontSize: 18,
-    marginVertical: 24,
-  },
-  footerContainer: {
-    flexDirection: "row",
-  },
-  buttonContainer: {
-    flex: 1,
-  },
 });
 
 export default function Screen(props: Props) {
