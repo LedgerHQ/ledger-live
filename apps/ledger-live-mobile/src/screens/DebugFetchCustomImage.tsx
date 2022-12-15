@@ -20,7 +20,9 @@ import CustomImageDeviceAction from "../components/CustomImageDeviceAction";
 import ResultDataTester from "../components/CustomImage/ResultDataTester";
 import { ProcessorPreviewResult } from "../components/CustomImage/ImageProcessor";
 import { targetDimensions } from "./CustomImage/shared";
-import FramedImage from "../components/CustomImage/FramedImage";
+import FramedImage, {
+  transferConfig,
+} from "../components/CustomImage/FramedImage";
 
 const deviceAction = createAction(ftsFetchImage);
 
@@ -158,7 +160,10 @@ export default function DebugFetchCustomImage() {
             />
             {imageSource ? (
               <Flex flexDirection="row" flexGrow={0}>
-                <FramedImage source={imageSource} />
+                <FramedImage
+                  frameConfig={transferConfig}
+                  source={imageSource}
+                />
               </Flex>
             ) : null}
           </>

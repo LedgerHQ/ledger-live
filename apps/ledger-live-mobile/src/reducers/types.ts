@@ -205,6 +205,10 @@ export type SettingsState = {
   firstConnectionHasDevice: boolean | null;
   firstConnectHasDeviceUpdated: boolean | null;
   customImageBackup?: { hex: string; hash: string };
+  lastSeenCustomImage: {
+    size: number;
+    hash: string;
+  };
   notifications: NotificationsSettings;
   walletTabNavigatorLastVisitedTab: keyof WalletTabNavigatorStackParamList;
 };
