@@ -18,43 +18,58 @@ export const transportOpen = ({
 }) => {
   const subjectExist = transports.get(data.descriptor);
 
-  if (!subjectExist) {
-    withDevice(data.descriptor)(transport => {
-      const subject = new Subject<APDUMessage>();
-      transports.set(data.descriptor, subject);
+  const onEnd = () => {
+    process.send?.({
+      type: transportOpenChannel,
+      data,
+      requestId,
+    });
+  };
 
-      subject.subscribe({
-        next: e => {
-          transport
-            .exchange(Buffer.from(e.apduHex, "hex"))
-            .then(response =>
-              process.send?.({
-                type: transportExchangeChannel,
-                data: response.toString("hex"),
-                requestId: e.requestId,
-              }),
-            )
-            .catch(error =>
-              process.send?.({
-                type: transportExchangeChannel,
-                error: serializeError(error),
-                requestId: e.requestId,
-              }),
-            );
-        },
-        complete: () => {
-          transports.delete(data.descriptor);
-        },
-      });
-
-      return subject;
-    }).subscribe();
+  // If already exists simply return success
+  if (subjectExist) {
+    return onEnd();
   }
 
-  process.send?.({
-    type: transportOpenChannel,
-    data,
-    requestId,
+  withDevice(data.descriptor)(transport => {
+    const subject = new Subject<APDUMessage>();
+    subject.subscribe({
+      next: e => {
+        transport
+          .exchange(Buffer.from(e.apduHex, "hex"))
+          .then(response =>
+            process.send?.({
+              type: transportExchangeChannel,
+              data: response.toString("hex"),
+              requestId: e.requestId,
+            }),
+          )
+          .catch(error =>
+            process.send?.({
+              type: transportExchangeChannel,
+              error: serializeError(error),
+              requestId: e.requestId,
+            }),
+          );
+      },
+      complete: () => {
+        transports.delete(data.descriptor);
+      },
+    });
+
+    transports.set(data.descriptor, subject);
+
+    onEnd();
+
+    return subject;
+  }).subscribe({
+    error: error => {
+      process.send?.({
+        type: transportOpenChannel,
+        error: serializeError(error),
+        requestId,
+      });
+    },
   });
 };
 
