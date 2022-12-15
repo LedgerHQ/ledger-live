@@ -45,10 +45,6 @@ import type { CosmosClaimRewardsFlowParamList } from "../families/cosmos/ClaimRe
 import type { NearStakingFlowParamList } from "../families/near/StakingFlow/types";
 import type { NearUnstakingFlowParamList } from "../families/near/UnstakingFlow/types";
 import type { NearWithdrawingFlowParamList } from "../families/near/WithdrawingFlow/types";
-import type { OsmosisDelegationFlowParamList } from "../families/osmosis/DelegationFlow/types";
-import type { OsmosisRedelegationFlowParamList } from "../families/osmosis/RedelegationFlow/types";
-import { OsmosisUndelegationFlowParamList } from "../families/osmosis/UndelegationFlow/types";
-import { OsmosisClaimRewardsFlowParamList } from "../families/osmosis/ClaimRewardsFlow/types";
 import { SolanaDelegationFlowParamList } from "../families/solana/DelegationFlow/types";
 import { StellarAddAssetFlowParamList } from "../families/stellar/AddAssetFlow/types";
 import { TezosDelegationFlowParamList } from "../families/tezos/DelegationFlow/types";
@@ -163,22 +159,6 @@ type Props =
   | StackNavigatorProps<
       NearWithdrawingFlowParamList,
       ScreenName.NearWithdrawingConnectDevice
-    >
-  | StackNavigatorProps<
-      OsmosisDelegationFlowParamList,
-      ScreenName.OsmosisDelegationConnectDevice
-    >
-  | StackNavigatorProps<
-      OsmosisRedelegationFlowParamList,
-      ScreenName.OsmosisRedelegationConnectDevice
-    >
-  | StackNavigatorProps<
-      OsmosisUndelegationFlowParamList,
-      ScreenName.OsmosisUndelegationConnectDevice
-    >
-  | StackNavigatorProps<
-      OsmosisClaimRewardsFlowParamList,
-      ScreenName.OsmosisClaimRewardsConnectDevice
     >
   | StackNavigatorProps<
       SolanaDelegationFlowParamList,
