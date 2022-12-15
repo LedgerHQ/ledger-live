@@ -1,19 +1,24 @@
 import React, { useCallback, useState, useMemo } from "react";
 import { Trans } from "react-i18next";
+import { useSelector } from "react-redux";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import withRemountableWrapper from "@ledgerhq/live-common/hoc/withRemountableWrapper";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { getDeviceModel } from "@ledgerhq/devices";
+import { DeviceModelInfo } from "@ledgerhq/types-live";
 
 import { DeviceActionDefaultRendering } from "..";
 import BottomModal from "../../BottomModal";
 
 import Item from "./Item";
 import Confirmation from "./Confirmation";
+import Restore from "./Restore";
+import { lastSeenDeviceSelector } from "../../../reducers/settings";
 
 type Props = {
+  restore?: boolean;
   dependencies?: string[];
   device: Device;
   onResult: (done: boolean) => void;
@@ -30,6 +35,7 @@ const action = createAction(connectApp);
  * this is rendered.
  */
 const InstallSetOfApps = ({
+  restore = false,
   dependencies = [],
   device: selectedDevice,
   onResult,
@@ -38,14 +44,35 @@ const InstallSetOfApps = ({
 }: Props & { remountMe: () => void }) => {
   const [userConfirmed, setUserConfirmed] = useState(false);
   const productName = getDeviceModel(selectedDevice.modelId).productName;
+  const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(
+    lastSeenDeviceSelector,
+  );
+
+  const shouldRestoreApps = useMemo(() => {
+    return restore && !!lastSeenDevice;
+  }, [restore, lastSeenDevice]);
+
+  const getLastSeenDeviceAppNames = useCallback(() => {
+    if (!lastSeenDevice) {
+      return null;
+    }
+    return lastSeenDevice.apps.map(app => app.name);
+  }, [lastSeenDevice]);
+
+  const getDependencies = useCallback(() => {
+    if (shouldRestoreApps) {
+      return getLastSeenDeviceAppNames() || [];
+    }
+    return dependencies;
+  }, [dependencies, shouldRestoreApps, getLastSeenDeviceAppNames]);
 
   const commandRequest = useMemo(
     () => ({
-      dependencies: dependencies.map(appName => ({ appName })),
+      dependencies: getDependencies().map(appName => ({ appName })),
       appName: "BOLOS",
       withInlineInstallProgress: true,
     }),
-    [dependencies],
+    [getDependencies],
   );
 
   const status = action.useHook(
@@ -97,7 +124,7 @@ const InstallSetOfApps = ({
             )}
           </Text>
           {itemProgress !== undefined
-            ? dependencies?.map((appName, i) => (
+            ? getDependencies()?.map((appName, i) => (
                 <Item
                   key={appName}
                   i={i}
@@ -133,6 +160,12 @@ const InstallSetOfApps = ({
         </Flex>
       </BottomModal>
     </Flex>
+  ) : shouldRestoreApps ? (
+    <Restore
+      deviceName={lastSeenDevice?.modelId}
+      onConfirm={() => setUserConfirmed(true)}
+      onReject={() => onResult(false)}
+    />
   ) : (
     <Confirmation
       productName={productName}
