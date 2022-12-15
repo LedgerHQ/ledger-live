@@ -53,7 +53,7 @@ const getExchangeRates: GetExchangeRates = async (
           pair.to === to &&
           (includeDEX || !dexProviders.includes(item.provider))
       );
-      return index >= -1;
+      return index > -1;
     })
     .map((item) => item.provider);
 
