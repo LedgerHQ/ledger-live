@@ -1,7 +1,24 @@
 export const BOT_APP_ID = 198164;
 export const GATE_CHECK_RUN_NAME = "The Balrog has been summoned ❤️‍🔥";
+export enum RUNNERS {
+  internal,
+  external,
+  both,
+}
 export const WORKFLOWS = {
   "build-desktop.yml": {
+    runsOn: RUNNERS.internal,
+    affected: ["ledger-live-desktop"],
+    checkRunName: "[Desktop] Build the app",
+    getInputs: (payload: any) => {
+      return {
+        sha: payload.workflow_run.head_sha,
+        ref: payload.workflow_run.head_branch,
+      };
+    },
+  },
+  "build-desktop-external.yml": {
+    runsOn: RUNNERS.external,
     affected: ["ledger-live-desktop"],
     checkRunName: "[Desktop] Build the app",
     getInputs: (payload: any) => {
@@ -12,6 +29,18 @@ export const WORKFLOWS = {
     },
   },
   "test-desktop.yml": {
+    runsOn: RUNNERS.internal,
+    affected: ["ledger-live-desktop"],
+    checkRunName: "[Desktop] Run e2e and unit tests",
+    getInputs: (payload: any) => {
+      return {
+        sha: payload.workflow_run.head_sha,
+        ref: payload.workflow_run.head_branch,
+      };
+    },
+  },
+  "test-desktop-external.yml": {
+    runsOn: RUNNERS.external,
     affected: ["ledger-live-desktop"],
     checkRunName: "[Desktop] Run e2e and unit tests",
     getInputs: (payload: any) => {
@@ -22,6 +51,18 @@ export const WORKFLOWS = {
     },
   },
   "build-mobile.yml": {
+    runsOn: RUNNERS.internal,
+    affected: ["live-mobile"],
+    checkRunName: "[Mobile] Build the app",
+    getInputs: (payload: any) => {
+      return {
+        sha: payload.workflow_run.head_sha,
+        ref: payload.workflow_run.head_branch,
+      };
+    },
+  },
+  "build-mobile-external.yml": {
+    runsOn: RUNNERS.external,
     affected: ["live-mobile"],
     checkRunName: "[Mobile] Build the app",
     getInputs: (payload: any) => {
@@ -32,6 +73,7 @@ export const WORKFLOWS = {
     },
   },
   "test-mobile.yml": {
+    runsOn: RUNNERS.both,
     affected: ["live-mobile"],
     checkRunName: "[Mobile] Run tests",
     getInputs: (payload: any) => {
@@ -42,6 +84,7 @@ export const WORKFLOWS = {
     },
   },
   "test.yml": {
+    runsOn: RUNNERS.both,
     affected: [
       "@ledgerhq/live-common",
       "@ledgerhq/cryptoassets",

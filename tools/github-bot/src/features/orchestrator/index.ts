@@ -1,11 +1,12 @@
 import { Probot } from "probot";
-import { GATE_CHECK_RUN_NAME, WORKFLOWS } from "./const";
+import { GATE_CHECK_RUN_NAME, RUNNERS, WORKFLOWS } from "./const";
 import {
   createRunByName,
   downloadArtifact,
   extractWorkflowFile,
   getCheckRunByName,
   getGenericOutput,
+  prIsFork,
   updateGateCheckRun,
 } from "./tools";
 
@@ -113,6 +114,14 @@ export function orchestrator(app: Probot) {
       context.log.info(
         `[Orchestrator](workflow_run.completed) ${payload.workflow_run.name}`
       );
+
+      const isFork = await prIsFork(
+        octokit,
+        repo,
+        owner,
+        payload.workflow_run.pull_requests[0]?.number
+      );
+
       // Get the artifact named affected.json
       const artifacts = await octokit.actions.listWorkflowRunArtifacts({
         owner,
@@ -137,6 +146,8 @@ export function orchestrator(app: Probot) {
       let affectedWorkflows = 0;
       // For each workflow…
       Object.entries(WORKFLOWS).forEach(([fileName, workflow]) => {
+        if (isFork && workflow.runsOn === RUNNERS.internal) return;
+        if (!isFork && workflow.runsOn === RUNNERS.external) return;
         // Determine if the workflow is affected
         const isAffected = workflow.affected.some((pkg) => affected.has(pkg));
         if (isAffected) {

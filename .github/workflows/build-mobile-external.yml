@@ -1,12 +1,6 @@
-name: "[Build] Mobile App"
+name: "[Build] Mobile App (external)"
 
 on:
-  push:
-    branches:
-      - main
-      - develop
-      - release
-      - hotfix
   workflow_dispatch:
     inputs:
       sha:
@@ -18,53 +12,18 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.inputs.ref || github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ref != 'develop' || github.ref_name != 'develop' }}
+  cancel-in-progress: ${{ github.event.inputs.ref != 'develop' }}
 
 jobs:
-  start-runner:
-    name: Start self-hosted EC2 runner
-    runs-on: [ledger-live, linux]
-    outputs:
-      label: ${{ steps.start-ec2-linux-runner.outputs.label }}
-      ec2-instance-id: ${{ steps.start-ec2-linux-runner.outputs.ec2-instance-id }}
-    steps:
-      - name: Start EC2 Linux Runner
-        id: start-ec2-linux-runner
-        uses: LedgerHQ/actions/ec2-linux-runner@main
-        with:
-          mode: start
-          github-token: ${{ secrets.CI_BOT_TOKEN }}
-          project: 2049
-          aws-nfs-logging: true
-          ami-name-filter: ledger-live-runner
-          instance-volume-size: 30
-          instance-type: c5.4xlarge
-
-  stop-runner:
-    name: Stop self-hosted EC2 runner
-    if: ${{ always() && needs.start-runner.result == 'success' }}
-    needs: [start-runner, build-mobile-app-android]
-    runs-on: [ledger-live, linux]
-    steps:
-      - name: Stop EC2 Linux Runner
-        if: ${{ always() && needs.start-runner.result == 'success' }}
-        uses: LedgerHQ/actions/ec2-linux-runner@main
-        with:
-          mode: stop
-          github-token: ${{ secrets.CI_BOT_TOKEN }}
-          label: ${{ needs.start-runner.outputs.label }}
-          ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
-
   build-mobile-app-android:
     name: "Build Ledger Live Mobile (Android)"
-    needs: start-runner
-    runs-on: ${{ needs.start-runner.outputs.label }}
+    runs-on: ubuntu-latest
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.event.push.head.sha }}
+          ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
       - name: set git user
         run: |
           git config user.email "team-live@ledger.fr"
@@ -72,7 +31,6 @@ jobs:
       - uses: pnpm/action-setup@v2
         with:
           version: latest
-          dest: ${{ runner.temp }}/setup-pnpm
       - uses: actions/setup-node@v3
         with:
           node-version: 16.x
@@ -102,6 +60,7 @@ jobs:
       - name: Get short SHA
         id: slug
         run: echo "sha8=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
       - name: make local version
         env:
           VERSION: ${{ steps.version.outputs.clean }}-sha.${{ steps.slug.outputs.sha8 }}
@@ -119,7 +78,7 @@ jobs:
           ANDROID_KEY_PASS: staging
           NODE_OPTIONS: "--max-old-space-size=7168"
           ANDROID_KEYSTORE_FILE: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/staging.kstr
-        run: pnpm build-ci:llm:android --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+        run: pnpm build:llm:android --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
       - uses: ./tools/actions/get-package-infos
         id: post-version
         with:
@@ -128,7 +87,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.post-version.outputs.version }}-release
-          path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/stagingRelease
+          path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/release
 
   build-mobile-app-ios:
     runs-on: macos-latest
