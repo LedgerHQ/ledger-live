@@ -49,6 +49,7 @@ export const useSwapTransaction = ({
   onNoRates,
   excludeFixedRates,
   providers,
+  includeDEX,
 }: {
   accounts?: Account[];
   setExchangeRate?: SetExchangeRateCallback;
@@ -59,6 +60,7 @@ export const useSwapTransaction = ({
   onNoRates?: OnNoRatesCallback;
   excludeFixedRates?: boolean;
   providers?: AvailableProviderV3[];
+  includeDEX?: boolean;
 } = {}): SwapTransactionType => {
   const bridgeTransaction = useBridgeTransaction(() => ({
     account: defaultAccount,
@@ -109,6 +111,7 @@ export const useSwapTransaction = ({
     onNoRates,
     setExchangeRate,
     providers,
+    includeDEX,
   });
 
   return {

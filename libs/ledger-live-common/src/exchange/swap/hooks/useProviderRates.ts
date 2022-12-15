@@ -35,6 +35,7 @@ export const useProviderRates = ({
   onNoRates,
   setExchangeRate,
   providers,
+  includeDEX,
 }: {
   fromState: SwapSelectorStateType;
   toState: SwapSelectorStateType;
@@ -42,6 +43,7 @@ export const useProviderRates = ({
   onNoRates?: OnNoRatesCallback;
   setExchangeRate?: SetExchangeRateCallback | null | undefined;
   providers?: AvailableProviderV3[];
+  includeDEX?: boolean;
 }): {
   rates: RatesReducerState;
   refetchRates: () => void;
@@ -96,7 +98,8 @@ export const useProviderRates = ({
             transaction,
             undefined,
             toCurrency,
-            providers
+            providers,
+            includeDEX
           );
 
           if (abort) return;

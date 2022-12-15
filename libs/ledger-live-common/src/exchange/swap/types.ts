@@ -143,7 +143,8 @@ export type GetExchangeRates = (
   arg1: Transaction,
   wyreUserId?: string,
   currencyTo?: TokenCurrency | CryptoCurrency | undefined | null,
-  providers?: AvailableProviderV3[]
+  providers?: AvailableProviderV3[],
+  includeDEX?: boolean
 ) => Promise<ExchangeRate[]>;
 export type GetProviders = () => Promise<AvailableProvider[]>;
 export type InitSwapResult = {

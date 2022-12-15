@@ -28,7 +28,8 @@ const getExchangeRates: GetExchangeRates = async (
   transaction: Transaction,
   userId?: string, // TODO remove when wyre doesn't require this for rates
   currencyTo?: TokenCurrency | CryptoCurrency | undefined | null,
-  providers: AvailableProviderV3[] = []
+  providers: AvailableProviderV3[] = [],
+  includeDEX = false
 ) => {
   if (getEnv("MOCK"))
     return mockGetExchangeRates(exchange, transaction, currencyTo);
@@ -42,10 +43,15 @@ const getExchangeRates: GetExchangeRates = async (
   const tenPowMagnitude = new BigNumber(10).pow(unitFrom.magnitude);
   const apiAmount = new BigNumber(amountFrom).div(tenPowMagnitude);
 
+  const dexProviders = ["paraswap", "oneinch"];
+
   const providerList = providers
     .filter((item) => {
       const index = item.pairs.findIndex(
-        (pair) => pair.from === from && pair.to === to
+        (pair) =>
+          pair.from === from &&
+          pair.to === to &&
+          (includeDEX || !dexProviders.includes(item.provider))
       );
       return index >= -1;
     })
@@ -154,10 +160,7 @@ const getExchangeRates: GetExchangeRates = async (
       };
     }
   });
-  if (decentralizedSwapAvailable()) {
-    // TODO fill dexProvider list
-    // const dexProviders = ["paraswap", "oneinch"];
-    const dexProviders = [];
+  if (includeDEX && decentralizedSwapAvailable()) {
     dexProviders.filter((dexProvider) => {
       if (!providerList.includes(dexProvider)) {
         rates.push({
