@@ -159,7 +159,7 @@ export const INITIAL_STATE: SettingsState = {
   },
   walletTabNavigatorLastVisitedTab: ScreenName.Portfolio,
   overriddenFeatureFlags: {},
-  featureFlagsBannerVisible: true,
+  featureFlagsBannerVisible: false,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
