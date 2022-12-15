@@ -375,7 +375,9 @@ export function SwapForm({
           undefined,
         );
         swapTransaction.setFromAccount(account);
-      } else {
+      }
+
+      if (params.target === "to") {
         swapTransaction.setToAccount(
           swapTransaction.swap.to.currency,
           account,

@@ -31,6 +31,25 @@ export interface DeviceModel {
 /**
  *
  */
+export enum ChargingModes {
+  NONE = 0x00,
+  USB = 0x01,
+  QI = 0x02,
+}
+
+/**
+ * Series of flags to represent the health status of the Ledger hardware wallet battery.
+ */
+export interface BatteryStatusFlags {
+  charging: ChargingModes;
+  issueCharging: boolean;
+  issueTemperature: boolean;
+  issueBattery: boolean;
+}
+
+/**
+ *
+ */
 export interface BluetoothInfos {
   deviceModel: DeviceModel;
   serviceUuid: string;

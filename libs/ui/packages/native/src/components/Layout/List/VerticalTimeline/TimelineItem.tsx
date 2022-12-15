@@ -111,7 +111,7 @@ export default function TimelineItem({
                   : "primary.c90"
               }
             >
-              {item.title}
+              {item.status === "completed" ? item.doneTitle ?? item.title : item.title}
             </Text>
             {item?.estimatedTime && item.status === "active" && (
               <Tag>

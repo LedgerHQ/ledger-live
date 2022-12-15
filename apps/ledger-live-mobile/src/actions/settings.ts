@@ -32,6 +32,7 @@ import {
   SettingsSetAnalyticsPayload,
   SettingsSetAvailableUpdatePayload,
   SettingsSetCarouselVisibilityPayload,
+  SettingsSetLastSeenCustomImagePayload,
   SettingsSetCountervaluePayload,
   SettingsSetDiscreetModePayload,
   SettingsSetExperimentalUsbSupportPayload,
@@ -184,6 +185,18 @@ const completeCustomImageFlowAction = createAction(
   SettingsActionTypes.SETTINGS_COMPLETE_CUSTOM_IMAGE_FLOW,
 );
 export const completeCustomImageFlow = () => completeCustomImageFlowAction();
+
+const setLastSeenCustomImageAction =
+  createAction<SettingsSetLastSeenCustomImagePayload>(
+    SettingsActionTypes.SET_LAST_SEEN_CUSTOM_IMAGE,
+  );
+export const setLastSeenCustomImage = ({
+  imageSize,
+  imageHash,
+}: SettingsSetLastSeenCustomImagePayload) =>
+  setLastSeenCustomImageAction({ imageSize, imageHash });
+export const clearLastSeenCustomImage = () =>
+  setLastSeenCustomImageAction({ imageSize: 0, imageHash: "" });
 
 const completeOnboardingAction = createAction(
   SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING,
