@@ -11,7 +11,7 @@ import { ungzip } from "pako";
 
 import { withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
-import ftsFetchImageHash from "./ftsFetchImageHash";
+import staxFetchImageHash from "./staxFetchImageHash";
 import getAppAndVersion from "./getAppAndVersion";
 import { isDashboardName } from "./isDashboardName";
 import attemptToQuitApp, { AttemptToQuitAppEvent } from "./attemptToQuitApp";
@@ -60,7 +60,7 @@ export default function fetchImage({
             mergeMap(async () => {
               timeoutSub.unsubscribe();
               // Fetch the image hash from the device
-              const imgHash = await ftsFetchImageHash(transport);
+              const imgHash = await staxFetchImageHash(transport);
               subscriber.next({ type: "currentImageHash", imgHash });
               // We don't have an image to backup
               if (imgHash === "") {
@@ -190,47 +190,46 @@ export default function fetchImage({
   return sub as Observable<FetchImageEvent>;
 }
 
-// transforms from a FTS binary image format to an LLM hex string format
-const parseFtsImageFormat: (ftsImageBuffer: Buffer) => Promise<string> = async (
-  ftsImageBuffer
-) => {
-  // const width = ftsImageBuffer.readUint16LE(0); // always 400
-  // const height = ftsImageBuffer.readUint16LE(2); // always 672
-  const bppCompressionByte = ftsImageBuffer.readUInt8(4);
+// transforms from a Stax binary image format to an LLM hex string format
+const parseFtsImageFormat: (staxImageBuffer: Buffer) => Promise<string> =
+  async (staxImageBuffer) => {
+    // const width = staxImageBuffer.readUint16LE(0); // always 400
+    // const height = staxImageBuffer.readUint16LE(2); // always 672
+    const bppCompressionByte = staxImageBuffer.readUInt8(4);
 
-  // const bpp = bppCompressionByte >> 4; // always 2
-  const compression = bppCompressionByte & 0x0f;
+    // const bpp = bppCompressionByte >> 4; // always 2
+    const compression = bppCompressionByte & 0x0f;
 
-  const dataLengthBuffer = Buffer.from([
-    ftsImageBuffer.readUInt8(5),
-    ftsImageBuffer.readUInt8(6),
-    ftsImageBuffer.readUInt8(7),
-    0x00,
-  ]);
-
-  const dataLength = dataLengthBuffer.readUInt32LE();
-  const imageData = ftsImageBuffer.slice(8);
-
-  if (compression === 0) {
-    return imageData.toString("hex");
-  }
-
-  let uncompressedImageData = Buffer.from([]);
-
-  let offset = 0;
-  while (offset < dataLength) {
-    const currentChunkSize = imageData.readUInt16LE(offset);
-    offset += 2;
-
-    const chunk = imageData.slice(offset, offset + currentChunkSize);
-    const uncompressedChunk = await ungzip(chunk);
-
-    uncompressedImageData = Buffer.concat([
-      uncompressedImageData,
-      uncompressedChunk,
+    const dataLengthBuffer = Buffer.from([
+      staxImageBuffer.readUInt8(5),
+      staxImageBuffer.readUInt8(6),
+      staxImageBuffer.readUInt8(7),
+      0x00,
     ]);
-    offset += currentChunkSize;
-  }
 
-  return uncompressedImageData.toString("hex");
-};
+    const dataLength = dataLengthBuffer.readUInt32LE();
+    const imageData = staxImageBuffer.slice(8);
+
+    if (compression === 0) {
+      return imageData.toString("hex");
+    }
+
+    let uncompressedImageData = Buffer.from([]);
+
+    let offset = 0;
+    while (offset < dataLength) {
+      const currentChunkSize = imageData.readUInt16LE(offset);
+      offset += 2;
+
+      const chunk = imageData.slice(offset, offset + currentChunkSize);
+      const uncompressedChunk = await ungzip(chunk);
+
+      uncompressedImageData = Buffer.concat([
+        uncompressedImageData,
+        uncompressedChunk,
+      ]);
+      offset += currentChunkSize;
+    }
+
+    return uncompressedImageData.toString("hex");
+  };

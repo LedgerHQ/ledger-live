@@ -1,14 +1,14 @@
-import ftsFetchImageSize from "./ftsFetchImageSize";
+import staxFetchImageSize from "./staxFetchImageSize";
 
 const mockTransportGenerator = (out) => ({ send: () => out });
-describe("ftsFetchImageSize", () => {
+describe("staxFetchImageSize", () => {
   test("should return size if available", async () => {
     const mockedTransport = mockTransportGenerator(
       Buffer.from("000089e99000", "hex")
     );
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore next-line
-    const response = await ftsFetchImageSize(mockedTransport);
+    const response = await staxFetchImageSize(mockedTransport);
     expect(response).toBe(35305);
   });
 
@@ -18,13 +18,13 @@ describe("ftsFetchImageSize", () => {
     );
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore next-line
-    await expect(ftsFetchImageSize(mockedTransport)).resolves.toBe(0);
+    await expect(staxFetchImageSize(mockedTransport)).resolves.toBe(0);
   });
 
   test("unexpected bootloader or any other code, should throw", async () => {
     const mockedTransport = mockTransportGenerator(Buffer.from("662d", "hex"));
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore next-line
-    await expect(ftsFetchImageSize(mockedTransport)).rejects.toThrow(Error);
+    await expect(staxFetchImageSize(mockedTransport)).rejects.toThrow(Error);
   });
 });
