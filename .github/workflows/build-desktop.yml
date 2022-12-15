@@ -115,39 +115,41 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.event.push.head.sha }}
-      - name: set git user
-        run: |
-          git config user.email "team-live@ledger.fr"
-          git config user.name "Team Live"
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
-          dest: ${{ runner.temp }}/setup-pnpm
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-gh-cache
-        with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
-      - uses: ./tools/actions/composites/build-desktop
-        id: build-desktop
-        with:
-          os: linux
-      - name: build the app
-        run: pnpm build:lld --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
-      - name: upload linux app
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
-          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
+      # - uses: actions/checkout@v3
+      #   with:
+      #     ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.event.push.head.sha }}
+      # - name: set git user
+      #   run: |
+      #     git config user.email "team-live@ledger.fr"
+      #     git config user.name "Team Live"
+      # - uses: pnpm/action-setup@v2
+      #   with:
+      #     version: latest
+      #     dest: ${{ runner.temp }}/setup-pnpm
+      # - uses: actions/setup-node@v3
+      #   with:
+      #     node-version: 16.x
+      #     cache: pnpm
+      #     cache-dependency-path: "**/pnpm-lock.yaml"
+      # - name: TurboRepo local caching server
+      #   id: turborepo-cache-server
+      #   uses: ./tools/actions/turborepo-gh-cache
+      #   with:
+      #     server-token: "yolo"
+      #     cleanup-cache-folder: "true"
+      # - uses: ./tools/actions/composites/build-desktop
+      #   id: build-desktop
+      #   with:
+      #     os: linux
+      # - name: build the app
+      #   run: pnpm build:lld --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+      # - name: upload linux app
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: ${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
+      #     path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
+      - name: Dummy
+        run: exit 0
 
   # build-desktop-app-linux-external:
   #   name: "Build Ledger Live Desktop (Linux)"
@@ -206,42 +208,44 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.inputs.sha || github.event.inputs.ref  || github.event.push.head.sha }}
-      - name: update path
-        run: |
-          echo "C:\Program Files\Git\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-      - uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 2.1.816
-      - name: set git user
-        run: |
-          git config user.email "team-live@ledger.fr"
-          git config user.name "Team Live"
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
-          dest: ${{ runner.temp }}/setup-pnpm
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-gh-cache
-        with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
-      - uses: ./tools/actions/composites/build-desktop
-        id: build-desktop
-        with:
-          os: win
-      - name: build the app
-        run: |
-          pnpm build:lld --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
-        shell: bash
-      - name: upload windows
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ steps.build-desktop.outputs.version }}-win-x64.exe
-          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-win-x64.exe
+      # - uses: actions/checkout@v3
+      #   with:
+      #     ref: ${{ github.event.inputs.sha || github.event.inputs.ref  || github.event.push.head.sha }}
+      # - name: update path
+      #   run: |
+      #     echo "C:\Program Files\Git\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      # - uses: actions/setup-dotnet@v1
+      #   with:
+      #     dotnet-version: 2.1.816
+      # - name: set git user
+      #   run: |
+      #     git config user.email "team-live@ledger.fr"
+      #     git config user.name "Team Live"
+      # - uses: pnpm/action-setup@v2
+      #   with:
+      #     version: latest
+      #     dest: ${{ runner.temp }}/setup-pnpm
+      # - name: TurboRepo local caching server
+      #   id: turborepo-cache-server
+      #   uses: ./tools/actions/turborepo-gh-cache
+      #   with:
+      #     server-token: "yolo"
+      #     cleanup-cache-folder: "true"
+      # - uses: ./tools/actions/composites/build-desktop
+      #   id: build-desktop
+      #   with:
+      #     os: win
+      # - name: build the app
+      #   run: |
+      #     pnpm build:lld --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+      #   shell: bash
+      # - name: upload windows
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: ${{ steps.build-desktop.outputs.version }}-win-x64.exe
+      #     path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-win-x64.exe
+      - name: Dummy
+        run: exit 0
 
   build-desktop-app-macos:
     name: "Build Ledger Live Desktop (Mac OS X)"
@@ -251,42 +255,44 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.inputs.sha || github.event.inputs.ref  || github.event.push.head.sha }}
-          persist-credentials: false
-      - name: set git user
-        run: |
-          git config user.email "team-live@ledger.fr"
-          git config user.name "Team Live"
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
-          dest: ${{ runner.temp }}/setup-pnpm
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-gh-cache
-        with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
-      - uses: ./tools/actions/composites/build-desktop
-        id: build-desktop
-        with:
-          os: mac
-      - name: build the app
-        run: |
-          eval "$(rbenv init - bash)"
-          pnpm build:lld --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
-      - name: upload macOS app
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ steps.build-desktop.outputs.version }}-mac.dmg
-          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-mac.dmg
+      # - uses: actions/checkout@v3
+      #   with:
+      #     ref: ${{ github.event.inputs.sha || github.event.inputs.ref  || github.event.push.head.sha }}
+      #     persist-credentials: false
+      # - name: set git user
+      #   run: |
+      #     git config user.email "team-live@ledger.fr"
+      #     git config user.name "Team Live"
+      # - uses: pnpm/action-setup@v2
+      #   with:
+      #     version: latest
+      #     dest: ${{ runner.temp }}/setup-pnpm
+      # - uses: actions/setup-node@v3
+      #   with:
+      #     node-version: 16.x
+      #     cache: pnpm
+      #     cache-dependency-path: "**/pnpm-lock.yaml"
+      # - name: TurboRepo local caching server
+      #   id: turborepo-cache-server
+      #   uses: ./tools/actions/turborepo-gh-cache
+      #   with:
+      #     server-token: "yolo"
+      #     cleanup-cache-folder: "true"
+      # - uses: ./tools/actions/composites/build-desktop
+      #   id: build-desktop
+      #   with:
+      #     os: mac
+      # - name: build the app
+      #   run: |
+      #     eval "$(rbenv init - bash)"
+      #     pnpm build:lld --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+      # - name: upload macOS app
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: ${{ steps.build-desktop.outputs.version }}-mac.dmg
+      #     path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-mac.dmg
+      - name: Dummy
+        run: exit 0
   # report:
   #   needs:
   #     [
