@@ -2637,6 +2637,7 @@
       "featureFlagsDesc": "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
       "featureFlagsEdit": "Edit",
       "featureFlagsRestore": "Restore",
+      "featureFlagsRestoreAll": "Restore all flag values",
       "firebaseProject": "Firebase project targeted by this build:"
     }
   },

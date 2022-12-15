@@ -4,24 +4,24 @@ import {
   defaultFeatures,
   groupedFeatures,
   useFeature,
+  useFeatureFlags,
 } from "@ledgerhq/live-common/featureFlags/index";
 import type { FeatureId } from "@ledgerhq/types-live";
 
 import {
-  BaseInput,
   Text,
   Flex,
   SearchInput,
-  Icons,
+  Divider,
   Tag,
   ChipTabs,
+  Button,
 } from "@ledgerhq/native-ui";
 import { includes, lowerCase, trim } from "lodash";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Keyboard } from "react-native";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import FeatureFlagDetails, {
-  Divider,
   TagDisabled,
   TagEnabled,
 } from "./FeatureFlagDetails";
@@ -42,6 +42,7 @@ export default function DebugFeatureFlags() {
   const [searchInput, setSearchInput] = useState<string>("");
   const searchInputTrimmed = trim(searchInput);
   const [activeTab, setActiveTab] = useState(0);
+  const { resetFeatures } = useFeatureFlags();
 
   const featureFlags = useMemo(() => {
     const featureKeys = Object.keys(defaultFeatures);
@@ -132,10 +133,15 @@ export default function DebugFeatureFlags() {
   return (
     <SafeAreaView edges={["bottom"]} style={{ flex: 1 }}>
       <NavigationScrollView>
-        <Flex p={16}>
-          <Alert type="primary">
-            <Text>{t("settings.debug.featureFlagsTitle")}</Text>
+        <Flex px={16}>
+          <Alert type="primary" noIcon>
+            {t("settings.debug.featureFlagsTitle")}
           </Alert>
+          <Flex flexDirection="row" mt={4}>
+            <Text>Legend: </Text>
+            <TagEnabled mx={2}>enabled flag</TagEnabled>
+            <TagDisabled mx={2}>disabled flag</TagDisabled>
+          </Flex>
           <Text my={3}>{t("settings.debug.firebaseProject")}</Text>
           <Tag uppercase={false} type="color" alignSelf={"flex-start"}>
             {project}
@@ -153,11 +159,15 @@ export default function DebugFeatureFlags() {
             onChange={handleSearch}
             autoCapitalize="none"
           />
-          <Flex flexDirection="row" mt={4}>
-            <Text>Legend: </Text>
-            <TagEnabled mx={2}>enabled flag</TagEnabled>
-            <TagDisabled mx={2}>disabled flag</TagDisabled>
-          </Flex>
+          <Button
+            mt={3}
+            size="small"
+            type="main"
+            outline
+            onPress={resetFeatures}
+          >
+            {t("settings.debug.featureFlagsRestoreAll")}
+          </Button>
           <Divider />
           {activeTab === 0 ? (
             <>

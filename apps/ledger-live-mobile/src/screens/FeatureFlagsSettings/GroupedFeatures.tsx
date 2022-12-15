@@ -1,6 +1,6 @@
 import { groupedFeatures } from "@ledgerhq/live-common/featureFlags/groupedFeatures";
 import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/provider";
-import { Flex, Link, Switch, Tag } from "@ledgerhq/native-ui";
+import { Divider, Flex, Link, Switch, Tag } from "@ledgerhq/native-ui";
 import { FeatureId } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -18,6 +18,7 @@ const GroupedFeatures: React.FC<Props> = ({
   groupName,
   focused,
   setFocusedGroupName,
+  isLast,
 }) => {
   const [focusedName, setFocusedName] = useState<string | undefined>();
   const { featureIds } = groupedFeatures[groupName];
@@ -103,6 +104,7 @@ const GroupedFeatures: React.FC<Props> = ({
         </Flex>
       </Pressable>
       {focused ? <Flex pl={6}>{flagsList}</Flex> : null}
+      {!isLast && focused ? <Divider /> : null}
     </Flex>
   );
 };
