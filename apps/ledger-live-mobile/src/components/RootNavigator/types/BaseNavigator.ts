@@ -145,7 +145,7 @@ export type BaseNavigatorStackParamList = {
     deviceModelIds?: DeviceModelId[];
   };
   [ScreenName.EditDeviceName]: {
-    deviceId: string;
+    device: Device;
     deviceName: string;
   };
   [ScreenName.MarketCurrencySelect]: undefined;
