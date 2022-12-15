@@ -13,15 +13,18 @@ export const groupedFeatures: Record<
     featureIds: [
       "customImage",
       "deviceInitialApps",
-      "syncOnboarding",
       "llmNewDeviceSelection",
+      "postOnboardingAssetsTransfer",
+      "postOnboardingClaimNft",
+      "staxWelcomeScreen",
+      "syncOnboarding",
     ],
   },
   disableNft: {
     featureIds: [
-      "disableNftSend",
       "disableNftLedgerMarket",
       "disableNftRaribleOpensea",
+      "disableNftSend",
     ],
   },
 };
