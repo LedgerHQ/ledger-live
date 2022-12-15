@@ -1132,7 +1132,7 @@
       "loading": "Loading ...",
       "resolving": "Resolving dependencies",
       "progress": "Installing apps {{progress}}%",
-      "disclaimer": "Apps on {{ productName }} are used to approve transactions. You can add or remove them at any time."
+      "disclaimer": "Add or remove apps at any time from Ledger Live."
     }
   },
   "onboarding": {
