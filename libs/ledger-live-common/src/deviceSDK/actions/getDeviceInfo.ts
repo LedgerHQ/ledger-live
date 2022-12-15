@@ -16,20 +16,27 @@ export type DeviceActionError = Error;
 // lockedDevice (and unresponsive would be handle with lockedDevice)
 // error ? meaning an action can throw an error, but it's always handled in the state ? could be interesting
 // If only those, it's ok ? But what happens if we device to add a new prop to this "general state" ? We will need to add it everywhere ?
-export type GetDeviceInfoActionState = {
+type State = {
   deviceInfo: DeviceInfo | null;
+};
+
+// TODO: put it somewhere else: in the type lib
+export type GeneralState = {
   lockedDevice: boolean;
   error: DeviceActionError | null;
 };
 
+// Maybe here, or in the type lib
+export type GetDeviceInfoActionState = State & GeneralState;
+
 // or maybe to be more flexible on the "general state"/"common state"
-export type GetDeviceInfoActionState2 = {
-  deviceInfo: DeviceInfo | null;
-  commonState: {
-    lockedDevice?: boolean;
-    error?: DeviceActionError | null;
-  };
-};
+// export type GetDeviceInfoActionState2 = {
+//   deviceInfo: DeviceInfo | null;
+//   commonState: {
+//     lockedDevice?: boolean;
+//     error?: DeviceActionError | null;
+//   };
+// };
 
 export function getDeviceInfoAction({
   deviceId,
