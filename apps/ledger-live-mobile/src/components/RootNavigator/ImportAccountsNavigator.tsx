@@ -28,7 +28,7 @@ export default function ImportAccountsNavigator() {
           ...TransparentHeaderNavigationOptions,
           headerShown: true,
           headerTitle: () => (
-            <Text variant="h3" color="constant.white" uppercase>
+            <Text variant="h3" uppercase>
               {t("account.import.scan.title")}
             </Text>
           ),
