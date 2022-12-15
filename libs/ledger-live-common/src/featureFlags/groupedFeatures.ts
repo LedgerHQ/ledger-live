@@ -5,11 +5,9 @@ export const groupedFeatures: Record<
   string,
   {
     featureIds: FeatureId[];
-    iconNameWeight?: string;
   }
 > = {
   stax: {
-    iconNameWeight: "StaxRegular",
     featureIds: [
       "customImage",
       "deviceInitialApps",
