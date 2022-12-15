@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Icons } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/types-devices";
-import ftsFetchImageHash from "@ledgerhq/live-common/hw/ftsFetchImageHash";
+import staxFetchImageHash from "@ledgerhq/live-common/hw/staxFetchImageHash";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 
 import { from } from "rxjs";
@@ -26,7 +26,7 @@ const CustomLockScreen: React.FC<{ device: Device }> = ({ device }) => {
   const { t } = useTranslation();
 
   useEffect(() => {
-    withDevice(device.deviceId)(transport => from(ftsFetchImageHash(transport)))
+    withDevice(device.deviceId)(transport => from(staxFetchImageHash(transport)))
       .toPromise()
       .then(hash => {
         setDeviceHasImage(hash !== "");

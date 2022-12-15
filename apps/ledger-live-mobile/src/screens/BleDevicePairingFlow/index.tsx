@@ -21,7 +21,7 @@ export type Props = RootComposite<
 // Necessary when the pairing flow is opened from a deeplink without any params
 // Shouldn't be relied upon for other usages
 const defaultNavigationParams = {
-  filterByDeviceModelId: DeviceModelId.nanoFTS, // This needs to be removed when nanos are supported
+  filterByDeviceModelId: DeviceModelId.stax, // This needs to be removed when nanos are supported
   areKnownDevicesDisplayed: true,
   onSuccessAddToKnownDevices: false,
   successNavigateToConfig: {

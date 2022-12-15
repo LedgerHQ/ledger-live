@@ -11,7 +11,7 @@ import { useTheme } from "@react-navigation/native";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useSelector, useDispatch } from "react-redux";
 import { createAction } from "@ledgerhq/live-common/hw/actions/ftsFetchImage";
-import ftsFetchImage from "@ledgerhq/live-common/hw/ftsFetchImage";
+import staxFetchImage from "@ledgerhq/live-common/hw/ftsFetchImage";
 import { customImageBackupSelector } from "../../../../reducers/settings";
 import { setCustomImageBackup } from "../../../../actions/settings";
 import NavigationScrollView from "../../../../components/NavigationScrollView";
@@ -24,7 +24,7 @@ import FramedImage, {
   transferConfig,
 } from "../../../../components/CustomImage/FramedImage";
 
-const deviceAction = createAction(ftsFetchImage);
+const deviceAction = createAction(staxFetchImage);
 
 export default function DebugFetchCustomImage() {
   const { colors } = useTheme();
