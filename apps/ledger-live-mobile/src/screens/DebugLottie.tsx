@@ -151,11 +151,11 @@ const DebugLottie = () => {
           }}
         />
         <Button
-          type={modelId === "nanoFTS" ? "primary" : "secondary"}
-          title="nanoFTS"
+          type={modelId === "stax" ? "primary" : "secondary"}
+          title="stax"
           disabled={!!Config.OVERRIDE_MODEL_ID}
           onPress={() => {
-            setModelId("nanoFTS" as DeviceModelId);
+            setModelId("stax" as DeviceModelId);
           }}
         />
       </View>

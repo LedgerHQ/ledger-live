@@ -26,7 +26,7 @@ const postOnboardingActions: Record<
 };
 
 /**
- * Mock of post onboarding actions for DeviceModelId.nanoFTS
+ * Mock of post onboarding actions for DeviceModelId.stax
  */
 const ftsPostOnboardingActionsMock: PostOnboardingAction[] = [
   claimMock,
@@ -65,7 +65,7 @@ export function getPostOnboardingActionsForDevice(
     case DeviceModelId.nanoX:
       /** Set here the list of actions for the post onboarding of the Nano X */
       return [];
-    case DeviceModelId.nanoFTS:
+    case DeviceModelId.stax:
       if (mock) return ftsPostOnboardingActionsMock;
       return ftsPostOnboardingActions;
     default:

@@ -25,8 +25,8 @@ import useCenteredImage, {
   CenteredResult,
 } from "../components/CustomImage/useCenteredImage";
 import { targetDimensions } from "./CustomImage/shared";
-import confirmLockscreen from "../animations/nanoFTS/customimage/confirmLockscreen.json";
-import allowConnection from "../animations/nanoFTS/customimage/allowConnection.json";
+import confirmLockscreen from "../animations/stax/customimage/confirmLockscreen.json";
+import allowConnection from "../animations/stax/customimage/allowConnection.json";
 import { FramedImageWithLottieWithContext } from "../components/CustomImage/FramedImageWithLottie";
 import {
   renderImageCommitRequested,
@@ -38,7 +38,7 @@ import imageSource from "../components/CustomImage/assets/examplePicture.webp";
 const device = {
   deviceId: "",
   deviceName: "",
-  modelId: DeviceModelId.nanoFTS,
+  modelId: DeviceModelId.stax,
   wired: false,
 };
 

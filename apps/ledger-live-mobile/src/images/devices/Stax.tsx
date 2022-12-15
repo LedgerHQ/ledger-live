@@ -10,7 +10,7 @@ import Svg, {
 } from "react-native-svg";
 
 // a little bit of hack on the size but that's okay since this illustration is only temporary
-const NanoFTS = ({
+const Stax = ({
   size = 90,
   theme,
 }: {
@@ -127,4 +127,4 @@ const NanoFTS = ({
     </Svg>
   );
 
-export default NanoFTS;
+export default Stax;

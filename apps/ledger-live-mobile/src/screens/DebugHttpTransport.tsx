@@ -16,7 +16,7 @@ const DebugHttpTransport = () => {
   const models = [
     DeviceModelId.nanoX,
     DeviceModelId.nanoSP,
-    DeviceModelId.nanoFTS,
+    DeviceModelId.stax,
   ];
   const navigation =
     useNavigation<StackNavigationProp<Record<string, object | undefined>>>();

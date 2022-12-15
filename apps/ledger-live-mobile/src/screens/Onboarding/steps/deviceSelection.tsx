@@ -34,9 +34,9 @@ const nanoSP = {
   id: DeviceModelId.nanoSP,
   setupTime: 600000,
 };
-const nanoFTS = {
+const stax = {
   source: require("../../../../assets/images/devices/StaxCropped.png"),
-  id: DeviceModelId.nanoFTS,
+  id: DeviceModelId.stax,
   setupTime: 300000,
 };
 
@@ -56,7 +56,7 @@ function OnboardingStepDeviceSelection() {
 
   const devices = useMemo(() => {
     if (syncOnboarding?.enabled) {
-      return [nanoFTS, nanoX, nanoSP, nanoS];
+      return [stax, nanoX, nanoSP, nanoS];
     }
     return [nanoX, nanoSP, nanoS];
   }, [syncOnboarding?.enabled]);
@@ -66,7 +66,7 @@ function OnboardingStepDeviceSelection() {
 
   const next = (deviceModelId: DeviceModelId) => {
     // Add NanoX.id, NanoSP.id etc. when they will support the sync-onboarding
-    if ([nanoFTS.id].includes(deviceModelId)) {
+    if ([stax.id].includes(deviceModelId)) {
       const navigateInput: NavigateInput<RootStackParamList> = {
         name: NavigatorName.BaseOnboarding,
         params: {
@@ -86,7 +86,7 @@ function OnboardingStepDeviceSelection() {
       navigation.push(NavigatorName.Base, {
         screen: ScreenName.BleDevicePairingFlow,
         params: {
-          filterByDeviceModelId: DeviceModelId.nanoFTS,
+          filterByDeviceModelId: DeviceModelId.stax,
           areKnownDevicesDisplayed: true,
           onSuccessAddToKnownDevices: false,
           onSuccessNavigateToConfig: {
