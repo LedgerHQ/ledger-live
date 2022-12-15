@@ -20,7 +20,7 @@ const PostOnboardingHubTester = () => {
     >
       <Button
         data-test-id="postonboarding-tester-button"
-        onClick={() => handleInitFTS(DeviceModelId.nanoFTS, true, () => history.push("/"))}
+        onClick={() => handleInitFTS(DeviceModelId.stax, true, () => history.push("/"))}
         primary
       >
         {t("postOnboardingDebugger.buttonTitle")}

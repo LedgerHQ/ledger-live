@@ -59,20 +59,20 @@ import NanoXRecoverDark from "~/renderer/components/Onboarding/Screens/Tutorial/
 import NanoXPlugDeviceLight from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoX/plugDevice/light.json";
 import NanoXPlugDeviceDark from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoX/plugDevice/dark.json";
 
-import NanoFTSConfirmWordsLight from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoFTS/confirmWords/light.json";
-import NanoFTSConfirmWordsDark from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoFTS/confirmWords/dark.json";
-import NanoFTSNumberOfWordsLight from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoFTS/numberOfWords/light.json";
-import NanoFTSNumberOfWordsDark from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoFTS/numberOfWords/dark.json";
-import NanoFTSPinCodeLight from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoFTS/pinCode/light.json";
-import NanoFTSPinCodeDark from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoFTS/pinCode/dark.json";
-import NanoFTSPowerOnRecoveryLight from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoFTS/powerOnRecovery/light.json";
-import NanoFTSPowerOnRecoveryDark from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoFTS/powerOnRecovery/dark.json";
-import NanoFTSPowerOnLight from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoFTS/powerOn/light.json";
-import NanoFTSPowerOnDark from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoFTS/powerOn/dark.json";
-import NanoFTSRecoverLight from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoFTS/recover/light.json";
-import NanoFTSRecoverDark from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoFTS/recover/dark.json";
-import NanoFTSPlugDeviceLight from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoFTS/plugDevice/light.json";
-import NanoFTSPlugDeviceDark from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoFTS/plugDevice/dark.json";
+import StaxConfirmWordsLight from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/stax/confirmWords/light.json";
+import StaxConfirmWordsDark from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/stax/confirmWords/dark.json";
+import StaxNumberOfWordsLight from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/stax/numberOfWords/light.json";
+import StaxNumberOfWordsDark from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/stax/numberOfWords/dark.json";
+import StaxPinCodeLight from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/stax/pinCode/light.json";
+import StaxPinCodeDark from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/stax/pinCode/dark.json";
+import StaxPowerOnRecoveryLight from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/stax/powerOnRecovery/light.json";
+import StaxPowerOnRecoveryDark from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/stax/powerOnRecovery/dark.json";
+import StaxPowerOnLight from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/stax/powerOn/light.json";
+import StaxPowerOnDark from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/stax/powerOn/dark.json";
+import StaxRecoverLight from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/stax/recover/light.json";
+import StaxRecoverDark from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/stax/recover/dark.json";
+import StaxPlugDeviceLight from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/stax/plugDevice/light.json";
+import StaxPlugDeviceDark from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/stax/plugDevice/dark.json";
 
 const AnimationWrapper: ThemedComponent<{ modelId?: DeviceModelId }> = styled.div`
   width: 600px;
@@ -146,34 +146,34 @@ export const lottieAnimations = {
       dark: NanoSPPlugDeviceDark,
     },
   },
-  nanoFTS: {
+  stax: {
     confirmWords: {
-      light: NanoFTSConfirmWordsLight,
-      dark: NanoFTSConfirmWordsDark,
+      light: StaxConfirmWordsLight,
+      dark: StaxConfirmWordsDark,
     },
     numberOfWords: {
-      light: NanoFTSNumberOfWordsLight,
-      dark: NanoFTSNumberOfWordsDark,
+      light: StaxNumberOfWordsLight,
+      dark: StaxNumberOfWordsDark,
     },
     pinCode: {
-      light: NanoFTSPinCodeLight,
-      dark: NanoFTSPinCodeDark,
+      light: StaxPinCodeLight,
+      dark: StaxPinCodeDark,
     },
     powerOnRecovery: {
-      light: NanoFTSPowerOnRecoveryLight,
-      dark: NanoFTSPowerOnRecoveryDark,
+      light: StaxPowerOnRecoveryLight,
+      dark: StaxPowerOnRecoveryDark,
     },
     powerOn: {
-      light: NanoFTSPowerOnLight,
-      dark: NanoFTSPowerOnDark,
+      light: StaxPowerOnLight,
+      dark: StaxPowerOnDark,
     },
     recover: {
-      light: NanoFTSRecoverLight,
-      dark: NanoFTSRecoverDark,
+      light: StaxRecoverLight,
+      dark: StaxRecoverDark,
     },
     plugDevice: {
-      light: NanoFTSPlugDeviceLight,
-      dark: NanoFTSPlugDeviceDark,
+      light: StaxPlugDeviceLight,
+      dark: StaxPlugDeviceDark,
     },
   },
   nanoX: {
@@ -319,10 +319,10 @@ const LottieDebugger = ({ name }: { name: string }) => {
                 <Button
                   primary
                   onClick={() => {
-                    setModelId("nanoFTS");
+                    setModelId("stax");
                   }}
                 >
-                  Nano FTS
+                  Stax
                 </Button>
               </Box>
               <Box>

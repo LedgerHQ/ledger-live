@@ -2,7 +2,7 @@ import React, { useEffect, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { setLastSeenCustomImage, clearLastSeenCustomImage } from "~/renderer/actions/settings";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { createAction } from "@ledgerhq/live-common/hw/actions/ftsLoadImage";
+import { createAction } from "@ledgerhq/live-common/hw/actions/staxLoadImage";
 import { ImageLoadRefusedOnDevice, ImageCommitRefusedOnDevice } from "@ledgerhq/live-common/errors";
 import withRemountableWrapper from "@ledgerhq/live-common/hoc/withRemountableWrapper";
 import { getEnv } from "@ledgerhq/live-common/env";
@@ -31,9 +31,9 @@ type Props = {
   blockNavigation?: (blocked: boolean) => void;
 };
 
-const ftsLoadImageExec = command("ftsLoadImage");
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : ftsLoadImageExec);
-const mockedDevice = { deviceId: "", modelId: DeviceModelId.nanoFTS, wired: true };
+const staxLoadImageExec = command("staxLoadImage");
+const action = createAction(getEnv("MOCK") ? mockedEventEmitter : staxLoadImageExec);
+const mockedDevice = { deviceId: "", modelId: DeviceModelId.stax, wired: true };
 
 const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props => {
   const {
@@ -52,7 +52,7 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const validDevice = device?.modelId === DeviceModelId.nanoFTS ? device : null;
+  const validDevice = device?.modelId === DeviceModelId.stax ? device : null;
   const status = action?.useHook(validDevice, commandRequest);
   const payload = action?.mapResult(status);
 
@@ -125,7 +125,7 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
         </Flex>
       ) : (
         <DeviceActionDefaultRendering
-          overridesPreferredDeviceModel={DeviceModelId.nanoFTS}
+          overridesPreferredDeviceModel={DeviceModelId.stax}
           status={status}
           request={commandRequest}
           payload={payload}
