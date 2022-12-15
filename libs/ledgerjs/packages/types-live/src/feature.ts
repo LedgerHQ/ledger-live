@@ -1,7 +1,7 @@
 /**  Add others with union (e.g. "learn" | "market" | "foo") */
 export type FeatureId =
   | "learn"
-  | "pushNotifications"
+  | "brazePushNotifications"
   | "llmNewDeviceSelection"
   | "llmUsbFirmwareUpdate"
   | "ratings"
@@ -17,6 +17,7 @@ export type FeatureId =
   | "currencyCronos"
   | "currencySongbird"
   | "currencyFlare"
+  | "currencyNear"
   | "currencyFantomMobile"
   | "currencyMoonbeamMobile"
   | "currencyCronosMobile"
@@ -31,7 +32,16 @@ export type FeatureId =
   | "referralProgramDesktopBanner"
   | "disableNftSend"
   | "disableNftLedgerMarket"
-  | "disableNftRaribleOpensea";
+  | "disableNftRaribleOpensea"
+  | "walletNftGallery"
+  | "receiveStakingFlowConfigDesktop"
+  | "ethStakingProviders"
+  | "storyly"
+  | "staxWelcomeScreen"
+  | "postOnboardingClaimNft"
+  | "postOnboardingAssetsTransfer"
+  | "firebaseEnvironmentReadOnly"
+  | "protectServicesMobile";
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */
@@ -44,6 +54,12 @@ export type Feature = {
   desktop_version?: string;
   /** Whether the remote value of `enabled` was overriden due to `desktop_version` */
   enabledOverriddenForCurrentDesktopVersion?: boolean;
+  /** The `mobile_version` option is mobile specific, it has no impact on mobile */
+  /** If set, the feature is disabled when the mobile app version does not satisfies this param */
+  /** It should respect the semantic versioning specification (https://semver.org/) */
+  mobile_version?: string;
+  /** Whether the remote value of `enabled` was overriden due to `mobile_version` */
+  enabledOverriddenForCurrentMobileVersion?: boolean;
   /** You can optionnally use one of the two following options (languages_whitelisted and languages_blacklisted) (Only implemented on mobile for now) */
   /** List of languages for which the feature is enabled (it will be disabled by default for all of the others) */
   languages_whitelisted?: [string];

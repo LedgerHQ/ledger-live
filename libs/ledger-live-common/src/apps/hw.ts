@@ -1,5 +1,9 @@
 import Transport from "@ledgerhq/hw-transport";
-import { getDeviceModel, identifyTargetId } from "@ledgerhq/devices";
+import {
+  DeviceModelId,
+  getDeviceModel,
+  identifyTargetId,
+} from "@ledgerhq/devices";
 import { UnexpectedBootloader } from "@ledgerhq/errors";
 import { concat, of, EMPTY, from, Observable, throwError, defer } from "rxjs";
 import { mergeMap, map } from "rxjs/operators";
@@ -7,6 +11,7 @@ import type { Exec, AppOp, ListAppsEvent, ListAppsResult } from "./types";
 import manager, { getProviderId } from "../manager";
 import installApp from "../hw/installApp";
 import uninstallApp from "../hw/uninstallApp";
+import ftsFetchImageSize from "../hw/ftsFetchImageSize";
 import { log } from "@ledgerhq/logs";
 import getDeviceInfo from "../hw/getDeviceInfo";
 import {
@@ -17,7 +22,11 @@ import {
 import ManagerAPI from "../api/Manager";
 import { getEnv } from "../env";
 import hwListApps from "../hw/listApps";
-import { polyfillApp, polyfillApplication } from "./polyfill";
+import {
+  calculateDependencies,
+  polyfillApp,
+  polyfillApplication,
+} from "./polyfill";
 import {
   reducer,
   isOutOfMemoryState,
@@ -138,7 +147,8 @@ export const streamAppInstall = ({
       })
     )
   );
-
+const emptyHashData =
+  "0000000000000000000000000000000000000000000000000000000000000000";
 export const listApps = (
   transport: Transport,
   deviceInfo: DeviceInfo
@@ -157,30 +167,34 @@ export const listApps = (
 
     async function main() {
       const installedP: Promise<[{ name: string; hash: string }[], boolean]> =
-        new Promise<{ name: string; hash: string }[]>((resolve, reject) => {
-          sub = ManagerAPI.listInstalledApps(transport, {
-            targetId: deviceInfo.targetId,
-            perso: "perso_11",
-          }).subscribe({
-            next: (e) => {
-              if (e.type === "result") {
-                resolve(e.payload);
-              } else if (
-                e.type === "device-permission-granted" ||
-                e.type === "device-permission-requested"
-              ) {
-                o.next(e);
-              }
-            },
-            error: reject,
-          });
-        })
+        new Promise<{ name: string; hash: string; hash_code_data: string }[]>(
+          (resolve, reject) => {
+            sub = ManagerAPI.listInstalledApps(transport, {
+              targetId: deviceInfo.targetId,
+              perso: "perso_11",
+            }).subscribe({
+              next: (e) => {
+                if (e.type === "result") {
+                  resolve(e.payload);
+                } else if (
+                  e.type === "device-permission-granted" ||
+                  e.type === "device-permission-requested"
+                ) {
+                  o.next(e);
+                }
+              },
+              error: reject,
+            });
+          }
+        )
           .then((apps) =>
-            apps.map(({ name, hash }) => ({
-              name,
-              hash,
-              blocks: 0,
-            }))
+            apps
+              .filter(({ hash_code_data }) => hash_code_data !== emptyHashData)
+              .map(({ name, hash }) => ({
+                name,
+                hash,
+                blocks: 0,
+              }))
           )
           .catch((e) => {
             log("hw", "failed to HSM list apps " + String(e) + "\n" + e.stack);
@@ -251,13 +265,18 @@ export const listApps = (
         sortedCryptoCurrencies,
       ] = await Promise.all([
         installedP,
-        ManagerAPI.listApps().then((apps) => apps.map(polyfillApplication)),
+        ManagerAPI.listApps().then((apps) =>
+          apps.map((app) => {
+            return polyfillApplication(app, provider);
+          })
+        ),
         applicationsByDeviceP,
         firmwareP,
         currenciesByMarketcap(
           listCryptoCurrencies(getEnv("MANAGER_DEV_MODE"), true)
         ),
       ]);
+      calculateDependencies();
 
       // unfortunately we sometimes (nano s 1.3.1) miss app.name (it's set as "" from list apps)
       // the fallback strategy is to look it up in applications list
@@ -371,6 +390,8 @@ export const listApps = (
         }
       );
       const deviceModel = getDeviceModel(deviceModelId);
+      const bytesPerBlock = deviceModel.getBlockSize(deviceInfo.version);
+
       const appByName = {};
       apps.forEach((app) => {
         if (app) appByName[app.name] = app;
@@ -391,7 +412,7 @@ export const listApps = (
               availableAppVersion || {
                 bytes: 0,
               }
-            ).bytes || 0) / deviceModel.getBlockSize(deviceInfo.version)
+            ).bytes || 0) / bytesPerBlock
           );
         const updated =
           appsThatKeepChangingHashes.includes(name) ||
@@ -420,6 +441,14 @@ export const listApps = (
         .map((a) => a?.name ?? "")
         .filter(Boolean);
 
+      let customImageBlocks = 0;
+      if (deviceModelId === DeviceModelId.nanoFTS) {
+        const customImageSize = await ftsFetchImageSize(transport);
+        if (customImageSize) {
+          customImageBlocks = Math.ceil(customImageSize / bytesPerBlock);
+        }
+      }
+
       const result: ListAppsResult = {
         appByName,
         appsListNames,
@@ -428,6 +457,7 @@ export const listApps = (
         deviceInfo,
         deviceModelId,
         firmware,
+        customImageBlocks,
       };
       o.next({
         type: "result",

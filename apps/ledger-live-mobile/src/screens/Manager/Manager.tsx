@@ -7,6 +7,7 @@ import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index"
 import { CommonActions } from "@react-navigation/native";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
 import { useApps } from "./shared";
 import AppsScreen from "./AppsScreen";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
@@ -20,7 +21,6 @@ import { setLastSeenDeviceInfo } from "../../actions/settings";
 import { ScreenName } from "../../const";
 import FirmwareUpdateScreen from "../../components/FirmwareUpdate";
 import useLatestFirmware from "../../hooks/useLatestFirmware";
-import { isFirmwareUpdateVersionSupported } from "../../logic/firmwareUpdate";
 import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/types/ManagerNavigator";
 import {
   BaseComposite,

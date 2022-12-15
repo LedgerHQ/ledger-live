@@ -69,7 +69,7 @@ function isObject(value) {
 }
 
 // inspired from https://github.com/programble/errio/blob/master/index.js
-export const deserializeError = (object: any): Error => {
+export const deserializeError = (object: any): Error | undefined => {
   if (object && typeof object === "object") {
     try {
       if (typeof object.message === "string") {
@@ -113,7 +113,7 @@ export const deserializeError = (object: any): Error => {
       }
     }
 
-    if (!error.stack && Error.captureStackTrace) {
+    if (error && !error.stack && Error.captureStackTrace) {
       Error.captureStackTrace(error, deserializeError);
     }
     return error;

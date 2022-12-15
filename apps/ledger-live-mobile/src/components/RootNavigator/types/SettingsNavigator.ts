@@ -1,4 +1,4 @@
-import { Device } from "@ledgerhq/react-native-hw-transport-ble/lib/types";
+import type { Device } from "@ledgerhq/types-devices";
 import { ScreenName } from "../../../const";
 
 export type SettingsNavigatorStackParamList = {
@@ -50,4 +50,7 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.OnboardingLanguage]: undefined;
   [ScreenName.PostOnboardingDebugScreen]: undefined;
   [ScreenName.DebugMultiAppInstall]: undefined;
+  [ScreenName.DebugStoryly]: undefined;
+  [ScreenName.DebugFetchCustomImage]: undefined;
+  [ScreenName.DebugCustomImageGraphics]: undefined;
 };

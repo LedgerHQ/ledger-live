@@ -45,6 +45,7 @@ import {
 
 import ReactRoot from "~/renderer/ReactRoot";
 import AppError from "~/renderer/AppError";
+import { expectOperatingSystemSupportStatus } from "~/support/os";
 
 logger.add(new LoggerTransport());
 
@@ -63,6 +64,8 @@ async function init() {
     log,
     Transport,
   });
+
+  expectOperatingSystemSupportStatus();
 
   if (getEnv("PLAYWRIGHT_RUN")) {
     const spectronData = await getKey("app", "PLAYWRIGHT_RUN", {});

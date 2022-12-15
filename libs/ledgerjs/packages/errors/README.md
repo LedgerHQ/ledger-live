@@ -10,10 +10,32 @@ Hodl all possible errors of Ledger (live, ledgerjs) so we can deal with them in 
 
 #### Table of Contents
 
-*   [TransportError](#transporterror)
+*   [HwTransportErrorType](#hwtransporterrortype)
+*   [HwTransportError](#hwtransporterror)
     *   [Parameters](#parameters)
-*   [TransportStatusError](#transportstatuserror)
+*   [TransportError](#transporterror)
     *   [Parameters](#parameters-1)
+*   [TransportStatusError](#transportstatuserror)
+    *   [Parameters](#parameters-2)
+
+### HwTransportErrorType
+
+Type of a Transport error used to represent all equivalent errors coming from all possible implementation of Transport
+
+### HwTransportError
+
+**Extends Error**
+
+Represents an error coming from any Transport implementation.
+
+Needed to map a specific implementation error into an error that
+can be managed by any code unaware of the specific Transport implementation
+that was used.
+
+#### Parameters
+
+*   `type` **[HwTransportErrorType](#hwtransporterrortype)** 
+*   `message` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 
 ### TransportError
 

@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { BoxedIcon, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import {
-  CircledAlertMedium,
   CircledCheckSolidMedium,
+  WarningSolidMedium,
 } from "@ledgerhq/native-ui/assets/icons";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -58,7 +58,7 @@ const CheckCard = ({ title, index, status, ...props }: CheckCardProps) => {
       checkIcon = <CircledCheckSolidMedium color="success.c100" size={24} />;
       break;
     case "failed":
-      checkIcon = <CircledAlertMedium color="warning.c100" size={24} />;
+      checkIcon = <WarningSolidMedium color="warning.c80" size={24} />;
       break;
     case "inactive":
     default:
@@ -258,9 +258,6 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
     case "active":
       genuineCheckStepTitle = t(
         "syncOnboarding.softwareChecksSteps.genuineCheckStep.active.title",
-        {
-          productName,
-        },
       );
       break;
     case "completed":
@@ -305,6 +302,7 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
       } else {
         firmwareUpdateStepTitle = t(
           "syncOnboarding.softwareChecksSteps.firmwareUpdateStep.completed.noUpdateAvailable.title",
+          { productName },
         );
       }
       break;
@@ -315,7 +313,7 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
       break;
     default:
       firmwareUpdateStepTitle = t(
-        "syncOnboarding.softwareChecksSteps.firmwareUpdateStep.inactive.title",
+        "syncOnboarding.softwareChecksSteps.firmwareUpdateStep.active.title",
       );
       break;
   }

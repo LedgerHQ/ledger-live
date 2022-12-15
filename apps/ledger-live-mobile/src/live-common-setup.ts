@@ -77,6 +77,7 @@ setSupportedCurrencies([
   "songbird",
   "flare",
   "juno",
+  "near",
 ]);
 
 if (Config.VERBOSE) {

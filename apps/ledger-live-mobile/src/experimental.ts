@@ -84,6 +84,24 @@ export const experimentalFeatures: Feature[] = [
     valueOn: "https://countervalues-experimental.live.ledger.com",
     valueOff: "https://countervalues.live.ledger.com",
   },
+  {
+    type: "toggle",
+    name: "EIP1559_MINIMUM_FEES_GATE",
+    title: "Deactivate EIP-1559 minimum priority fee gate",
+    description:
+      "This will allow a transaction to be sent without any minimum priority fee expected. This may result in a transaction getting stuck in the mempool forever.",
+    valueOn: false,
+    valueOff: true,
+  },
+  {
+    type: "integer",
+    name: "EIP1559_PRIORITY_FEE_LOWER_GATE",
+    title: "Custom priority fee gate",
+    description:
+      "Customize the percentage of our estimated minimal priority fee allowed for an advanced EIP1559 transaction",
+    minValue: 0,
+    maxValue: 1,
+  },
   ...(__DEV__
     ? [
         {

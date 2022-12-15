@@ -29,7 +29,7 @@ jobs:
         run: |
           echo ${{ inputs.username }}
           echo ${{ inputs.organisation }}
-      - uses: ledgerhq/ledger-live/tools/actions/is-org-member@develop
+      - uses: ./tools/actions/is-org-member
         id: is-org-member
         with:
           organisation: ${{ inputs.organisation }}

@@ -56,6 +56,10 @@ function Discover() {
       banner: `Dapp_${bannerName}`,
       screen: "Discover",
     });
+    track("Discover Banner Clicked", {
+      banner: `Dapp_${bannerName}`,
+      screen: "Discover",
+    });
   }, []);
 
   const featuresList: {
@@ -176,7 +180,15 @@ function Discover() {
             ]
           : []),
       ].sort((a, b) => (b.disabled ? -1 : 0)),
-    [learn?.enabled, referralProgramConfig, navigation, readOnlyTrack, t],
+    [
+      t,
+      isNFTDisabled,
+      referralProgramConfig?.enabled,
+      referralProgramConfig?.params.url,
+      navigation,
+      readOnlyTrack,
+      learn?.enabled,
+    ],
   );
 
   const { setSource, setScreen } = useContext(AnalyticsContext);

@@ -84,6 +84,29 @@ const elrondSpec: AppSpec<Transaction> = {
         expectCorrectBalanceChange(input);
       },
     },
+    {
+      name: "send max",
+      maxRun: 1,
+      transaction: ({ account, siblings, bridge }) => {
+        invariant(account.spendableBalance.gt(0), "balance is 0");
+        const sibling = pickSiblings(siblings, maxAccounts);
+
+        return {
+          transaction: bridge.createTransaction(account),
+          updates: [
+            {
+              recipient: sibling.freshAddress,
+            },
+            {
+              useAllAmount: true,
+            },
+          ],
+        };
+      },
+      test: (input) => {
+        expectCorrectBalanceChange(input);
+      },
+    },
   ],
 };
 

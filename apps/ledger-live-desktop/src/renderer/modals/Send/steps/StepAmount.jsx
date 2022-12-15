@@ -10,7 +10,6 @@ import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAle
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import SpendableBanner from "~/renderer/components/SpendableBanner";
 import BuyButton from "~/renderer/components/BuyButton";
-import { NotEnoughGas } from "@ledgerhq/errors";
 import Label from "~/renderer/components/Label";
 import Input from "~/renderer/components/Input";
 import { useSelector } from "react-redux";
@@ -119,14 +118,18 @@ export class StepAmountFooter extends PureComponent<StepProps> {
     const isTerminated = mainAccount.currency.terminated;
     const hasErrors = Object.keys(errors).length;
     const canNext = !bridgePending && !hasErrors && !isTerminated;
-    const { gasPrice } = errors;
+    const {
+      gasPrice: gasPriceError,
+      maxPriorityFee: maxPriorityFeeError,
+      maxFee: maxFeeError,
+    } = errors;
 
     return (
       <>
         {!isNFTSend ? (
           <AccountFooter parentAccount={parentAccount} account={account} status={status} />
         ) : null}
-        {gasPrice instanceof NotEnoughGas ? (
+        {gasPriceError || maxPriorityFeeError || maxFeeError ? (
           <BuyButton currency={mainAccount.currency} account={mainAccount} />
         ) : null}
         <Button

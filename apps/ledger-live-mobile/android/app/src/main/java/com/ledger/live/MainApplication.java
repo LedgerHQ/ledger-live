@@ -16,6 +16,7 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.config.ReactFeatureFlags;
 import com.facebook.soloader.SoLoader;
 import com.ledger.live.newarchitecture.MainApplicationReactNativeHost;
+import com.braze.BrazeActivityLifecycleCallbackListener;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -87,6 +88,7 @@ public class MainApplication extends Application implements ReactApplication {
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
     ApplicationLifecycleDispatcher.onApplicationCreate(this);
     createNotificationChannel();
+    registerActivityLifecycleCallbacks(new BrazeActivityLifecycleCallbackListener());
   }
 
   /**
@@ -104,13 +106,7 @@ public class MainApplication extends Application implements ReactApplication {
         */
         Class<?> aClass = Class.forName("com.ledger.live.ReactNativeFlipper");
         aClass.getMethod("initializeFlipper", Context.class, ReactInstanceManager.class).invoke(null, context, reactInstanceManager);
-      } catch (ClassNotFoundException e) {
-        e.printStackTrace();
-      } catch (NoSuchMethodException e) {
-        e.printStackTrace();
-      } catch (IllegalAccessException e) {
-        e.printStackTrace();
-      } catch (InvocationTargetException e) {
+      } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
         e.printStackTrace();
       }
     }

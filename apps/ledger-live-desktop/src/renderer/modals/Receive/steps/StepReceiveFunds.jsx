@@ -24,6 +24,7 @@ import Receive2NoDevice from "~/renderer/components/Receive2NoDevice";
 import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
 import type { StepProps } from "../Body";
 import type { AccountLike } from "@ledgerhq/types-live";
+import { track } from "~/renderer/analytics/segment";
 import Modal from "~/renderer/components/Modal";
 import Alert from "~/renderer/components/Alert";
 import ModalBody from "~/renderer/components/Modal/ModalBody";
@@ -31,6 +32,10 @@ import QRCode from "~/renderer/components/QRCode";
 import { getEnv } from "@ledgerhq/live-common/env";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
 import byFamily from "~/renderer/generated/StepReceiveFunds";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { LOCAL_STORAGE_KEY_PREFIX } from "./StepReceiveStakingFlow";
+import { useDispatch } from "react-redux";
+import { openModal } from "~/renderer/actions/modals";
 
 const Separator = styled.div`
   border-top: 1px solid #99999933;
@@ -139,7 +144,8 @@ const StepReceiveFunds = (props: StepProps) => {
     eventType,
     currencyName,
   } = props;
-
+  const dispatch = useDispatch();
+  const receiveStakingFlowConfig = useFeature("receiveStakingFlowConfigDesktop");
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   invariant(account && mainAccount, "No account given");
 
@@ -187,6 +193,50 @@ const StepReceiveFunds = (props: StepProps) => {
     onResetSkip();
   }, [device, onChangeAddressVerified, onResetSkip, transitionTo, isAddressVerified]);
 
+  const onFinishReceiveFlow = useCallback(() => {
+    const id = account?.currency?.id;
+    const dismissModal = global.localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${id}`) === "true";
+    if (
+      !dismissModal &&
+      receiveStakingFlowConfig?.enabled &&
+      receiveStakingFlowConfig?.params[id]?.enabled
+    ) {
+      track("button_clicked", {
+        button: "continue",
+        page: window.location.hash
+          .split("/")
+          .filter(e => e !== "#")
+          .join("/"),
+        currency: currencyName,
+        modal: "receive",
+        account,
+      });
+      if (receiveStakingFlowConfig?.params?.[id]?.direct) {
+        dispatch(
+          openModal("MODAL_ETH_STAKE", {
+            account,
+            checkbox: true,
+            singleProviderRedirectMode: false,
+            source: "receive",
+          }),
+        );
+        onClose();
+      } else {
+        transitionTo("stakingFlow");
+      }
+    } else {
+      onClose();
+    }
+  }, [
+    account,
+    currencyName,
+    dispatch,
+    onClose,
+    receiveStakingFlowConfig?.enabled,
+    receiveStakingFlowConfig?.params,
+    transitionTo,
+  ]);
+
   // when address need verification we trigger it on device
   useEffect(() => {
     if (isAddressVerified === null) {
@@ -228,7 +278,7 @@ const StepReceiveFunds = (props: StepProps) => {
                 <Button event="Page Receive Step 3 re-verify" outlineGrey onClick={onVerify}>
                   <Trans i18nKey="common.reverify" />
                 </Button>
-                <Button data-test-id="modal-continue-button" primary onClick={onClose}>
+                <Button data-test-id="modal-continue-button" primary onClick={onFinishReceiveFlow}>
                   <Trans i18nKey="common.done" />
                 </Button>
               </Box>

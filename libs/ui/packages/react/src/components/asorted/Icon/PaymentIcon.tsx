@@ -1,4 +1,4 @@
-import * as paymentProviders from "@ledgerhq/icons-ui/react/_Payment/index";
+import * as paymentProviders from "@ledgerhq/icons-ui/react/Payment/index";
 
 import React from "react";
 
@@ -6,9 +6,6 @@ export const sizes = {
   XXS: 16,
   XS: 24,
   S: 32,
-  M: 40,
-  L: 48,
-  XL: 56,
 };
 
 export type PaymentIconSizes = keyof typeof sizes;
@@ -47,7 +44,7 @@ const PaymentIcon = ({ name, size = "S" }: Props): JSX.Element | null => {
     object: paymentProviders,
   }) as React.ElementType;
   if (Component) {
-    return <Component size={sizes[size]} />;
+    return <Component height={sizes[size]} />;
   }
   return null;
 };

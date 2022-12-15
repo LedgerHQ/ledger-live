@@ -17,7 +17,6 @@ import litecoin from "./datasets/litecoin";
 import peercoin from "./datasets/peercoin";
 import pivx from "./datasets/pivx";
 import qtum from "./datasets/qtum";
-import stakenet from "./datasets/stakenet";
 import vertcoin from "./datasets/vertcoin";
 import viacoin from "./datasets/viacoin";
 import zcash from "./datasets/zcash";
@@ -38,7 +37,6 @@ const dataset: DatasetTest<Transaction> = {
     peercoin,
     pivx,
     qtum,
-    stakenet,
     vertcoin,
     viacoin,
     zcash,

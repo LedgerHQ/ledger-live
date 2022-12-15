@@ -77,29 +77,21 @@ function EmptyStateAccount({ t, account, parentAccount, openModal, history }: Pr
 
   const onBuy = useCallback(() => {
     setTrackingSource("empty state account");
-    // PTX smart routing redirect to live app or to native implementation
-    if (ptxSmartRouting?.enabled) {
-      const params = {
-        currency: currency?.id,
-        account: mainAccount?.id,
-        mode: "buy", // buy or sell
-      };
 
-      history.push({
-        // replace 'multibuy' in case live app id changes
-        pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ?? "multibuy"}`,
-        state: params,
-      });
-    } else {
-      history.push({
-        pathname: "/exchange",
-        state: {
-          mode: "onRamp",
-          currencyId: currency.id,
-          accountId: mainAccount.id,
-        },
-      });
-    }
+    history.push({
+      pathname: "/exchange",
+      state: ptxSmartRouting?.enabled
+        ? {
+            currency: currency?.id,
+            account: mainAccount?.id,
+            mode: "buy", // buy or sell
+          }
+        : {
+            mode: "onRamp",
+            currencyId: currency.id,
+            accountId: mainAccount.id,
+          },
+    });
   }, [currency, history, mainAccount, ptxSmartRouting]);
 
   if (!mainAccount) return null;
