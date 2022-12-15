@@ -434,7 +434,6 @@ export const SyncOnboarding = ({
               {
                 key: CompanionStepKey.Apps,
                 title: t("syncOnboarding.appsStep.title", { productName }),
-                estimatedTime: 120,
                 renderBody: () => (
                   <InstallSetOfApps
                     restore={shouldRestoreApps}
@@ -469,6 +468,7 @@ export const SyncOnboarding = ({
       handleInstallAppsComplete,
       initialAppsToInstall,
       companionStepKey,
+      shouldRestoreApps,
     ],
   );
 
