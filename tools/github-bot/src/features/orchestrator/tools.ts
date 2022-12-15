@@ -31,33 +31,24 @@ export const createRunByName = async ({
   repo,
   sha,
   checkName,
-  updateToPendingFields = {},
+  extraFields = {},
 }: {
   octokit: Octokit;
   owner: string;
   repo: string;
   sha: string;
   checkName: string;
-  updateToPendingFields?: Record<string, any>;
+  extraFields?: Record<string, any>;
 }) => {
   const { data: checkRun } = await octokit.checks.create({
     owner,
     repo,
     name: checkName,
     head_sha: sha,
-    status: "queued",
+    status: "in_progress",
     started_at: new Date().toISOString(),
+    ...extraFields,
   });
-
-  if (updateToPendingFields) {
-    await octokit.checks.update({
-      owner,
-      repo,
-      check_run_id: checkRun.id,
-      status: "in_progress",
-      ...updateToPendingFields,
-    });
-  }
 
   return checkRun;
 };
