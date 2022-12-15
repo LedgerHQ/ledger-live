@@ -30,7 +30,6 @@ import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/t
 import ServicesWidget from "../../components/ServicesWidget";
 import BuyDeviceCTA from "../../components/BuyDeviceCTA";
 import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/shared";
-import { useServicesWidgetEnabled } from "../../components/ServicesWidget/useServicesWidgetEnabled";
 
 const action = createAction(connectManager);
 
