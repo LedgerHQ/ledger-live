@@ -154,6 +154,7 @@ export function orchestrator(app: Probot) {
         }
       });
 
+      // Create or recreate the Gate check run
       const checkRun = await createRunByName({
         octokit,
         owner,
