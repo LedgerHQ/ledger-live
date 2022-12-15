@@ -26,7 +26,9 @@ const CustomLockScreen: React.FC<{ device: Device }> = ({ device }) => {
   const { t } = useTranslation();
 
   useEffect(() => {
-    withDevice(device.deviceId)(transport => from(staxFetchImageHash(transport)))
+    withDevice(device.deviceId)(transport =>
+      from(staxFetchImageHash(transport)),
+    )
       .toPromise()
       .then(hash => {
         setDeviceHasImage(hash !== "");
