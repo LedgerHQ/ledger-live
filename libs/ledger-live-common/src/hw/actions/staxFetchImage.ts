@@ -21,7 +21,7 @@ import { useEffect, useState } from "react";
 import { log } from "@ledgerhq/logs";
 import type { DeviceInfo } from "@ledgerhq/types-live";
 import { useReplaySubject } from "../../observable";
-import type { FetchImageEvent, FetchImageRequest } from "../ftsFetchImage";
+import type { FetchImageEvent, FetchImageRequest } from "../staxFetchImage";
 import type { Action, Device } from "./types";
 import isEqual from "lodash/isEqual";
 import { ConnectManagerTimeout } from "../../errors";

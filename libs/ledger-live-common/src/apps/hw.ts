@@ -11,7 +11,7 @@ import type { Exec, AppOp, ListAppsEvent, ListAppsResult } from "./types";
 import manager, { getProviderId } from "../manager";
 import installApp from "../hw/installApp";
 import uninstallApp from "../hw/uninstallApp";
-import ftsFetchImageSize from "../hw/ftsFetchImageSize";
+import staxFetchImageSize from "../hw/staxFetchImageSize";
 import { log } from "@ledgerhq/logs";
 import getDeviceInfo from "../hw/getDeviceInfo";
 import {
@@ -442,8 +442,8 @@ export const listApps = (
         .filter(Boolean);
 
       let customImageBlocks = 0;
-      if (deviceModelId === DeviceModelId.nanoFTS) {
-        const customImageSize = await ftsFetchImageSize(transport);
+      if (deviceModelId === DeviceModelId.stax) {
+        const customImageSize = await staxFetchImageSize(transport);
         if (customImageSize) {
           customImageBlocks = Math.ceil(customImageSize / bytesPerBlock);
         }
