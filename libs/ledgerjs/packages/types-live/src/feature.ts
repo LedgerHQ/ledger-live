@@ -72,7 +72,7 @@ export type Feature = {
   /** Whether the remote value of this object was overriden by an environment variable */
   overriddenByEnv?: boolean;
   /** Additional params */
-  params?: unknown;
+  params?: any;
 };
 
 /** */

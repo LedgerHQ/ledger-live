@@ -5,16 +5,23 @@ export const groupedFeatures: Record<
   string,
   {
     featureIds: FeatureId[];
-    iconName: string;
+    iconNameWeight?: string;
   }
 > = {
   stax: {
-    iconName: "staxRegular",
+    iconNameWeight: "StaxRegular",
     featureIds: [
       "customImage",
       "deviceInitialApps",
       "syncOnboarding",
       "llmNewDeviceSelection",
+    ],
+  },
+  disableNft: {
+    featureIds: [
+      "disableNftSend",
+      "disableNftLedgerMarket",
+      "disableNftRaribleOpensea",
     ],
   },
 };
