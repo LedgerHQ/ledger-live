@@ -1,5 +1,36 @@
 # @ledgerhq/live-common
 
+## 27.10.0-nightly.1
+
+### Patch Changes
+
+- [#2124](https://github.com/LedgerHQ/ledger-live/pull/2124) [`ae891a166e`](https://github.com/LedgerHQ/ledger-live/commit/ae891a166e5de9947781af3630b1accca42da1a6) Thanks [@Justkant](https://github.com/Justkant)! - add icon support for h3m on ledger live.
+
+* [#2066](https://github.com/LedgerHQ/ledger-live/pull/2066) [`3a267c1424`](https://github.com/LedgerHQ/ledger-live/commit/3a267c14241ebc9184490e7eb81b5d4bcc94b092) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - New feature flag staxWelcomeScreen
+
+- [#1961](https://github.com/LedgerHQ/ledger-live/pull/1961) [`1aee1b0103`](https://github.com/LedgerHQ/ledger-live/commit/1aee1b01034f0c5ea90f0ff6aa0d28fc7be0b9f9) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Bring isFirmwareUpdateVersionSupported from LLM to live-common with tests
+
+* [#1997](https://github.com/LedgerHQ/ledger-live/pull/1997) [`5cf73f5ce6`](https://github.com/LedgerHQ/ledger-live/commit/5cf73f5ce673bc1e9552ad46bcc7f25c40a92960) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Add support for custom image storage usage in the list apps and distribution logic
+
+- [#2012](https://github.com/LedgerHQ/ledger-live/pull/2012) [`93bd602206`](https://github.com/LedgerHQ/ledger-live/commit/93bd602206137e10e5d5c8aa61d9b5aefef993ce) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Added support for Battery status APDU + CLI command and tests
+
+- Updated dependencies [[`3a267c1424`](https://github.com/LedgerHQ/ledger-live/commit/3a267c14241ebc9184490e7eb81b5d4bcc94b092)]:
+  - @ledgerhq/devices@7.0.6-nightly.1
+  - @ledgerhq/hw-transport@6.27.9-nightly.1
+  - @ledgerhq/hw-app-algorand@6.27.9-nightly.1
+  - @ledgerhq/hw-app-btc@9.1.1-nightly.0
+  - @ledgerhq/hw-app-cosmos@6.27.9-nightly.1
+  - @ledgerhq/hw-app-eth@6.30.3-nightly.1
+  - @ledgerhq/hw-app-near@6.27.4-nightly.0
+  - @ledgerhq/hw-app-polkadot@6.27.9-nightly.1
+  - @ledgerhq/hw-app-solana@7.0.3-nightly.1
+  - @ledgerhq/hw-app-str@6.27.9-nightly.1
+  - @ledgerhq/hw-app-tezos@6.27.9-nightly.1
+  - @ledgerhq/hw-app-trx@6.27.9-nightly.1
+  - @ledgerhq/hw-app-xrp@6.27.9-nightly.1
+  - @ledgerhq/hw-transport-mocker@6.27.9-nightly.1
+  - @ledgerhq/hw-transport-node-speculos@6.27.9-nightly.1
+
 ## 27.10.0-nightly.0
 
 ### Minor Changes

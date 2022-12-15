@@ -1,5 +1,22 @@
 # ledger-live-desktop
 
+## 2.51.0-nightly.3
+
+### Patch Changes
+
+- [#1997](https://github.com/LedgerHQ/ledger-live/pull/1997) [`53baff3c7b`](https://github.com/LedgerHQ/ledger-live/commit/53baff3c7b74c58b17adcf2f58cf9b2ebd75eb73) Thanks [@juan-cortes](https://github.com/juan-cortes)! - LLD React to custom image loading and reflect the space taken by it
+
+* [#2066](https://github.com/LedgerHQ/ledger-live/pull/2066) [`3a267c1424`](https://github.com/LedgerHQ/ledger-live/commit/3a267c14241ebc9184490e7eb81b5d4bcc94b092) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Remove useless field from PostOnboardingAction type
+
+* Updated dependencies [[`3a267c1424`](https://github.com/LedgerHQ/ledger-live/commit/3a267c14241ebc9184490e7eb81b5d4bcc94b092), [`ae891a166e`](https://github.com/LedgerHQ/ledger-live/commit/ae891a166e5de9947781af3630b1accca42da1a6), [`3a267c1424`](https://github.com/LedgerHQ/ledger-live/commit/3a267c14241ebc9184490e7eb81b5d4bcc94b092), [`f6947ccc8f`](https://github.com/LedgerHQ/ledger-live/commit/f6947ccc8faceef656929e5fdde1fa6f52619efb), [`3a267c1424`](https://github.com/LedgerHQ/ledger-live/commit/3a267c14241ebc9184490e7eb81b5d4bcc94b092), [`3a267c1424`](https://github.com/LedgerHQ/ledger-live/commit/3a267c14241ebc9184490e7eb81b5d4bcc94b092), [`1aee1b0103`](https://github.com/LedgerHQ/ledger-live/commit/1aee1b01034f0c5ea90f0ff6aa0d28fc7be0b9f9), [`5cf73f5ce6`](https://github.com/LedgerHQ/ledger-live/commit/5cf73f5ce673bc1e9552ad46bcc7f25c40a92960), [`93bd602206`](https://github.com/LedgerHQ/ledger-live/commit/93bd602206137e10e5d5c8aa61d9b5aefef993ce)]:
+  - @ledgerhq/devices@7.0.6-nightly.1
+  - @ledgerhq/live-common@27.10.0-nightly.1
+  - @ledgerhq/types-devices@6.22.4-nightly.0
+  - @ledgerhq/types-live@6.28.0-nightly.2
+  - @ledgerhq/hw-transport@6.27.9-nightly.1
+  - @ledgerhq/hw-transport-node-hid-singleton@6.28.6-nightly.1
+  - @ledgerhq/hw-transport-http@6.27.9-nightly.1
+
 ## 2.51.0-nightly.2
 
 ### Minor Changes

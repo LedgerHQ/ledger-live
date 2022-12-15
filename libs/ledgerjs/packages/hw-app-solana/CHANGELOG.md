@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-solana
 
+## 7.0.3-nightly.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.27.9-nightly.1
+
 ## 7.0.3-nightly.0
 
 ### Patch Changes

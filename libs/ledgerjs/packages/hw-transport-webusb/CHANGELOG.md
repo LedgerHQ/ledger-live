@@ -1,5 +1,13 @@
 # @ledgerhq/hw-transport-webusb
 
+## 6.27.9-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`3a267c1424`](https://github.com/LedgerHQ/ledger-live/commit/3a267c14241ebc9184490e7eb81b5d4bcc94b092)]:
+  - @ledgerhq/devices@7.0.6-nightly.1
+  - @ledgerhq/hw-transport@6.27.9-nightly.1
+
 ## 6.27.9-nightly.0
 
 ### Patch Changes
