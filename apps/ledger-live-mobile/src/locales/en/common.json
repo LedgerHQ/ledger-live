@@ -1115,6 +1115,12 @@
     "mostPopular": "Most popular"
   },
   "installSetOfApps": {
+    "restore": {
+      "title": "Install the same apps as on {{deviceName}}?",
+      "titleNoDeviceName": "Install the same apps as on previous Ledger device?",
+      "installCTA": "Install now",
+      "skipCTA": "I'll do this later"
+    },
     "landing": {
       "estimatedTime": "{{ minutes }} min",
       "title": "{{ productName }} uses apps to enable secure blockchain transactions",
