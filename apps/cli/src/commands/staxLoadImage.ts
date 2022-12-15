@@ -1,21 +1,21 @@
 import { from } from "rxjs";
 import fs from "fs";
 import type { ScanCommonOpts } from "../scan";
-import ftsLoadImage from "@ledgerhq/live-common/hw/ftsLoadImage";
+import staxLoadImage from "@ledgerhq/live-common/hw/staxLoadImage";
 import { deviceOpt } from "../scan";
 
-type ftsLoadImageJobOpts = ScanCommonOpts & {
+type staxLoadImageJobOpts = ScanCommonOpts & {
   fileInput: string;
 };
 
 
-const exec = async (opts: ftsLoadImageJobOpts) => {
+const exec = async (opts: staxLoadImageJobOpts) => {
   const { fileInput, device: deviceId = "" } = opts;
 
   const hexImage = fs.readFileSync(fileInput, "utf-8");
 
   await new Promise<void>((resolve) =>
-      ftsLoadImage({ deviceId, hexImage }).subscribe(
+      staxLoadImage({ deviceId, hexImage }).subscribe(
         (x) => console.log(x),
         (e) => {
           console.error(e);
@@ -30,15 +30,15 @@ const exec = async (opts: ftsLoadImageJobOpts) => {
 };
 
 export default {
-  description: "Test functionality lock screen customization on FTS for loading an image",
+  description: "Test functionality lock screen customization on Stax for loading an image",
   args: [
     deviceOpt,
     {
       name: "fileInput",
       alias: "i",
       type: String,
-      desc: "Text file containing the hex data of the image to load on FTS",
+      desc: "Text file containing the hex data of the image to load on Stax",
     }
   ],
-  job: (opts: ftsLoadImageJobOpts): any => from(exec(opts)),
+  job: (opts: staxLoadImageJobOpts): any => from(exec(opts)),
 };

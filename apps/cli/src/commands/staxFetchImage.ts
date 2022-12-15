@@ -3,17 +3,17 @@ import { from } from "rxjs";
 import fs from "fs";
 import type { ScanCommonOpts } from "../scan";
 import { deviceOpt } from "../scan";
-import ftsFetchImage from "@ledgerhq/live-common/hw/ftsFetchImage";
+import staxFetchImage from "@ledgerhq/live-common/hw/staxFetchImage";
 
-type ftsFetchImageJobOpts = ScanCommonOpts & {
+type staxFetchImageJobOpts = ScanCommonOpts & {
   fileOutput: string;
 };
 
-const exec = async (opts: ftsFetchImageJobOpts) => {
+const exec = async (opts: staxFetchImageJobOpts) => {
   const { device: deviceId = "", fileOutput } = opts;
 
   await new Promise<void>((p) =>
-    ftsFetchImage({ deviceId }).subscribe(
+    staxFetchImage({ deviceId }).subscribe(
       (event) => {
         if (event.type === "imageFetched") {
           const { hexImage } = event;
@@ -40,7 +40,7 @@ const exec = async (opts: ftsFetchImageJobOpts) => {
 };
 
 export default {
-  description: "Test functionality lock screen customization on FTS for fetching an image",
+  description: "Test functionality lock screen customization on Stax for fetching an image",
   args: [
     deviceOpt,
     {
@@ -50,5 +50,5 @@ export default {
       desc: "Output file path in case you want to save Hex string image",
     },
   ],
-  job: (opts: ftsFetchImageJobOpts): any => from(exec(opts)),
+  job: (opts: staxFetchImageJobOpts): any => from(exec(opts)),
 };
