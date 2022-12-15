@@ -15,7 +15,6 @@ import {
   Tag,
 } from "@ledgerhq/native-ui";
 import { includes, lowerCase, trim } from "lodash";
-import { InputRenderLeftContainer } from "@ledgerhq/native-ui/components/Form/Input/BaseInput";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Keyboard } from "react-native";
 import NavigationScrollView from "../../components/NavigationScrollView";
@@ -28,32 +27,23 @@ import Alert from "../../components/Alert";
 
 const addFlagHint = `\
 If a feature flag is defined in the targeted Firebase environment \
-but it is missing from the list, you can type its name in \
-the input field "Add missing flag" above and it will appear in the list.\nType the \
+but it is missing from the list, you can type its **exact** name in \
+the search input field above and it will appear in the list.\nType the \
 flag name in camelCase without the "feature" prefix.\
 `;
 
 export default function DebugFeatureFlags() {
   const { t } = useTranslation();
   const [focusedName, setFocusedName] = useState<string | undefined>();
-  const [hiddenFlagName, setHiddenFlagName] = useState("");
-  const trimmedHiddenFlagName = trim(hiddenFlagName);
   const [searchInput, setSearchInput] = useState<string>("");
+  const searchInputTrimmed = trim(searchInput);
 
   const featureFlags = useMemo(() => {
     const featureKeys = Object.keys(defaultFeatures);
-    if (trimmedHiddenFlagName && !featureKeys.includes(trimmedHiddenFlagName))
-      featureKeys.push(trimmedHiddenFlagName);
+    if (searchInputTrimmed && !featureKeys.includes(searchInputTrimmed))
+      featureKeys.push(searchInputTrimmed);
     return featureKeys;
-  }, [trimmedHiddenFlagName]);
-
-  const handleAddHiddenFlag = useCallback(
-    value => {
-      setHiddenFlagName(trim(value));
-      setSearchInput(value);
-    },
-    [setSearchInput, setHiddenFlagName],
-  );
+  }, [searchInputTrimmed]);
 
   const handleSearch = useCallback(value => {
     setSearchInput(value);
@@ -83,7 +73,11 @@ export default function DebugFeatureFlags() {
   );
 
   const config = useFeature("firebaseEnvironmentReadOnly");
-  const project = config?.params?.project;
+  const params = config?.params;
+  const project =
+    params !== null && typeof params === "object" && "project" in params
+      ? (params as { project: string }).project
+      : "";
 
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   useEffect(() => {
@@ -117,18 +111,6 @@ export default function DebugFeatureFlags() {
             value={searchInput}
             placeholder="Search flag"
             onChange={handleSearch}
-            autoCapitalize="none"
-          />
-          <Flex mt={3} />
-          <BaseInput
-            value={undefined}
-            renderLeft={() => (
-              <InputRenderLeftContainer>
-                <Icons.PlusMedium color="neutral.c70" />
-              </InputRenderLeftContainer>
-            )}
-            placeholder="Add missing flag (instructions below)"
-            onChange={handleAddHiddenFlag}
             autoCapitalize="none"
           />
           <Flex flexDirection="row" mt={4}>
