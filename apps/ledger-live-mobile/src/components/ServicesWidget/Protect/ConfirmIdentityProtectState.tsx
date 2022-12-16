@@ -13,17 +13,19 @@ function ConfirmIdentityProtectState({
 
   const { confirmNowURI, viewDetailsURI } = params || {};
 
+  const source = "ledgerlive://myledger";
+
   const onConfirmNow = useCallback(() => {
     Linking.canOpenURL(confirmNowURI).then(() =>
-      Linking.openURL(confirmNowURI),
+      Linking.openURL(`${confirmNowURI}&source=${source}`),
     );
-  }, [confirmNowURI]);
+  }, [confirmNowURI, source]);
 
   const onViewDetails = useCallback(() => {
     Linking.canOpenURL(viewDetailsURI).then(() =>
-      Linking.openURL(viewDetailsURI),
+      Linking.openURL(`${viewDetailsURI}&source=${source}`),
     );
-  }, [viewDetailsURI]);
+  }, [source, viewDetailsURI]);
 
   return (
     <>

@@ -9,9 +9,11 @@ function ActiveProtectState({ params }: { params: Record<string, string> }) {
 
   const { viewDetailsURI } = params || {};
 
+  const source = "ledgerlive://myledger";
+
   const onViewDetails = useCallback(() => {
     Linking.canOpenURL(viewDetailsURI).then(() =>
-      Linking.openURL(viewDetailsURI),
+      Linking.openURL(`${viewDetailsURI}&source=${source}`),
     );
   }, [viewDetailsURI]);
 
