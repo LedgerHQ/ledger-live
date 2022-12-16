@@ -80,8 +80,8 @@ export default function ProviderRate({
     [dispatch],
   );
 
-  // if the selected rate in redux is not in the filtered rates, we need to update it
   useEffect(() => {
+    // if the selected rate in redux is not in the filtered rates, we need to update it
     if (
       selectedRate &&
       filteredRates.length > 0 &&
@@ -90,6 +90,16 @@ export default function ProviderRate({
       )
     ) {
       dispatch(updateRateAction(filteredRates[0]));
+    }
+
+    // if there is no selected rate but there is a filtered rate, we need to update it
+    if (!selectedRate && filteredRates.length > 0) {
+      dispatch(updateRateAction(filteredRates[0]));
+    }
+
+    // if there are no filtered rates, we need to unset the selected rate
+    if (selectedRate && filteredRates.length === 0) {
+      dispatch(updateRateAction(null));
     }
   }, [filteredRates, selectedRate, dispatch]);
 
