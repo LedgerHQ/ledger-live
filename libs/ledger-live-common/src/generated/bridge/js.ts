@@ -4,6 +4,7 @@ import cardano from "../../families/cardano/bridge/js";
 import celo from "../../families/celo/bridge/js";
 import cosmos from "../../families/cosmos/bridge/js";
 import crypto_org from "../../families/crypto_org/bridge/js";
+import dfinity from "../../families/dfinity/bridge/js";
 import elrond from "../../families/elrond/bridge/js";
 import ethereum from "../../families/ethereum/bridge/js";
 import evm from "../../families/evm/bridge/js";
@@ -25,6 +26,7 @@ export default {
   celo,
   cosmos,
   crypto_org,
+  dfinity,
   elrond,
   ethereum,
   evm,

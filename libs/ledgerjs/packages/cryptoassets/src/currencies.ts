@@ -3333,7 +3333,32 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  dfinity: {
+    type: "CryptoCurrency",
+    id: "dfinity",
+    coinType: 223,
+    name: "Dfinity",
+    managerAppName: "InternetComputer",
+    ticker: "ICP",
+    scheme: "dfinity",
+    color: "#0090ff",
+    family: "dfinity",
+    units: [
+      {
+        name: "ICP",
+        code: "ICP",
+        magnitude: 8,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.icpexplorer.org/#/tx/$hash",
+        address: "https://www.icpexplorer.org/#/acct/$address",
+      },
+    ],
+  },
   // ethereum nanoapp currencies
+  // Light Integrations are at the end of the list until we figure out a way to fix the ticker/managerApp collisions
   arbitrum: {
     type: "CryptoCurrency",
     id: "arbitrum",
