@@ -95,19 +95,6 @@ jobs:
       # DEBUG_LOGS: 1
     runs-on: windows-latest
     steps:
-      - name: format os name
-        id: os
-        uses: actions/github-script@v6
-        with:
-          result-encoding: string
-          script: |
-            if ("${{ matrix.os }}" === "ubuntu-latest") {
-              return "linux"
-            } else if ("${{ matrix.os }}" === "macos-latest") {
-              return "macos"
-            } else if ("${{ matrix.os }}" === "windows-latest") {
-              return "windows"
-            }
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
@@ -125,7 +112,7 @@ jobs:
       - uses: ./tools/actions/composites/test-desktop
         id: test-desktop
         with:
-          os: ${{ steps.os.outputs.result }}
+          os: windows
           turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
 
   test-desktop-app-linux:
@@ -141,12 +128,6 @@ jobs:
     needs: [start-runner]
     runs-on: ${{ needs.start-runner.outputs.label }}
     steps:
-      - name: format os name
-        id: os
-        uses: actions/github-script@v6
-        with:
-          result-encoding: string
-          script: return "macos"
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
@@ -164,7 +145,7 @@ jobs:
       - uses: ./tools/actions/composites/test-desktop
         id: test-desktop
         with:
-          os: ${{ steps.os.outputs.result }}
+          os: linux
           turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
 
   test-desktop-app-mac:
@@ -178,12 +159,6 @@ jobs:
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
     steps:
-      - name: format os name
-        id: os
-        uses: actions/github-script@v6
-        with:
-          result-encoding: string
-          script: return "macos"
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
@@ -201,7 +176,7 @@ jobs:
       - uses: ./tools/actions/composites/test-desktop
         id: test-desktop
         with:
-          os: ${{ steps.os.outputs.result }}
+          os: macos
           turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
 
   # report:
