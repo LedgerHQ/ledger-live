@@ -197,11 +197,7 @@ export async function updateGateCheckRun(
           status: "completed",
           conclusion: aggregatedConclusion,
           output: {
-            title:
-              getStatusEmoji(aggregatedConclusion) +
-              " " +
-              aggregatedConclusion[0].toLocaleUpperCase() +
-              aggregatedConclusion.slice(1),
+            title: formatConclusion(aggregatedConclusion),
             summary,
           },
           completed_at: new Date().toISOString(),
@@ -226,50 +222,59 @@ export function getGenericOutput(conclusion: string, summary?: string) {
   switch (conclusion) {
     case "success":
       return {
-        title: getStatusEmoji(conclusion),
+        title: formatConclusion(conclusion),
         summary: summary || "Completed successfully 🎉",
       };
     case "failure":
       return {
-        title: getStatusEmoji(conclusion),
+        title: formatConclusion(conclusion),
         summary: summary || "Completed with errors",
       };
     case "neutral":
       return {
-        title: getStatusEmoji(conclusion),
+        title: formatConclusion(conclusion),
         summary: summary || "Completed with neutral result",
       };
     case "cancelled":
       return {
-        title: getStatusEmoji(conclusion),
+        title: formatConclusion(conclusion),
         summary: summary || "Cancelled",
       };
     case "timed_out":
       return {
-        title: getStatusEmoji(conclusion),
+        title: formatConclusion(conclusion),
         summary: summary || "Timed out",
       };
     case "action_required":
       return {
-        title: getStatusEmoji(conclusion),
+        title: formatConclusion(conclusion),
         summary: summary || "Action required",
       };
     case "stale":
       return {
-        title: getStatusEmoji(conclusion),
+        title: formatConclusion(conclusion),
         summary: summary || "Stale",
       };
     case "skipped":
       return {
-        title: getStatusEmoji(conclusion),
+        title: formatConclusion(conclusion),
         summary: summary || "Skipped",
       };
     default:
       return {
-        title: "❓",
+        title: "❓ Unknown",
         summary: summary || "Unknown",
       };
   }
+}
+
+export function formatConclusion(conclusion: string) {
+  return (
+    getStatusEmoji(conclusion) +
+    " " +
+    conclusion[0].toLocaleUpperCase() +
+    conclusion.slice(1)
+  );
 }
 
 export function getStatusEmoji(status: string) {
@@ -281,7 +286,7 @@ export function getStatusEmoji(status: string) {
     case "neutral":
       return "🤷";
     case "cancelled":
-      return "⏹";
+      return "🛑";
     case "timed_out":
       return "⏱";
     case "action_required":
