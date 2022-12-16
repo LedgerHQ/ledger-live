@@ -8,8 +8,12 @@ function NewProtectState({ params }: { params: Record<string, string> }) {
   const { t } = useTranslation();
   const { learnMoreURI, alreadySubscribedURI } = params || {};
 
+  const source = "ledgerlive://myledger";
+
   const onLearnMore = useCallback(() => {
-    Linking.canOpenURL(learnMoreURI).then(() => Linking.openURL(learnMoreURI));
+    Linking.canOpenURL(learnMoreURI).then(() =>
+      Linking.openURL(`${learnMoreURI}&source=${source}`),
+    );
   }, [learnMoreURI]);
 
   const onAlreadySubscribe = useCallback(() => {

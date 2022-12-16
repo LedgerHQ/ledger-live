@@ -13,13 +13,17 @@ function PaymentRejectedProtectState({
 
   const { editNowURI, viewDetailsURI } = params || {};
 
+  const source = "ledgerlive://myledger";
+
   const onEditNow = useCallback(() => {
-    Linking.canOpenURL(editNowURI).then(() => Linking.openURL(editNowURI));
+    Linking.canOpenURL(editNowURI).then(() =>
+      Linking.openURL(`${editNowURI}&source=${source}`),
+    );
   }, [editNowURI]);
 
   const onViewDetails = useCallback(() => {
     Linking.canOpenURL(viewDetailsURI).then(() =>
-      Linking.openURL(viewDetailsURI),
+      Linking.openURL(`${viewDetailsURI}&source=${source}`),
     );
   }, [viewDetailsURI]);
 
