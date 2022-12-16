@@ -103,7 +103,7 @@ jobs:
           node-version: 16
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v4
         with:
           python-version: "3.10"
       - uses: ruby/setup-ruby@v1
