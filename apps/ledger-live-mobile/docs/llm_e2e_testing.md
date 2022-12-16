@@ -3,9 +3,10 @@
 This project uses [Detox](https://github.com/wix/Detox) and [Jest](https://jestjs.io/) for end-to-end testing the LLM application. Detox is a mobile end-to-end testing tool developed by Wix, and is specifically built for React Native applications. Please refer to the documentation of those projects for the specifics. In this readme you will find the key setup and workflow steps for testing a flow in Ledger Live Mobile.
 
 ---
+
 ---
 
-## Full script to install iOS and Android debug versions from scratch
+## Quick start script to install iOS and Android debug versions from scratch
 
 > Ensure you have Android Studio and Xcode installed with the relevant development/emulator tools installed (see 'Local Environment Setup' below).
 
@@ -22,24 +23,37 @@ pnpm mobile e2e:build -c ios.sim.debug
 ```
 
 ---
+
 ---
 
 ## Local Environment Setup
 
 Writing and running Detox tests requires Xcode for iOS and Android Studio (along with the SDK and emulator tools) for Android. The best place to setup both Android and iOS is to follow the [React Native's own documentation](https://reactnative.dev/docs/environment-setup).
 
-Detox also has good documentation for [Android](https://wix.github.io/Detox/docs/introduction/android-dev-env/) and [iOS](https://wix.github.io/Detox/docs/introduction/ios-dev-env) environment setup. Both guides differ slightly from the React Native ones but they may help to overcome some issues you have.
+Next, follow the steps in the Detox [Environment Setup](https://wix.github.io/Detox/docs/introduction/getting-started) section. Most of the setup is taken care of in the React Native docs, but you will have to do some additional installations, such as the Detox CLI and `applesimutils` (MacOS only).
 
-### Additional iOS setup steps
+The Android toolkit is more complex than the iOS one, so follow the Detox [Android Environment Setup guide](https://wix.github.io/Detox/docs/guide/android-dev-env) for help. Once you've followed the guide, the main things to make sure of are:
 
-Make sure to install Wix's `applesimutils` (info found [here](https://wix.github.io/Detox/docs/introduction/ios-dev-env)).
+- Java version 11 installed. Check with `java -version`
+- Android 12.0 (API Level 11) is installed.
+- Android SDK Build Tools, SDK Platform Tools, SDK Command Line Tools, Android Emulator, CMake 3.10.2 and NDK 21.4.7075529 are installed. You can do this through Android Studio > Tools > SDK Tools, or via the [command line](https://wix.github.io/Detox/docs/guide/android-dev-env#heres-how-to-install-them-using-the-command-line).
+- Your shell profile (for example `~/.zshrc`) should have environmental variables setup something like this:
+
+```shell
+export JAVA_HOME=`/usr/libexec/java_home`
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export PATH=$PATH:$ANDROID_HOME/emulator:$ANDROID_HOME/tools/bin/sdkmanager:$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin
+```
+
+> Note: There is a bit of inconsistency in the documentation between React Native, Detox and Android themselves about whether to use `ANDROID_ROOT` or `ANDROID_SDK_ROOT`. The second one is now deprecated but both should work in either case.
 
 ---
+
 ---
 
 ## Test Setup and Execution
 
-Clean your local environment (the main thing this step does is remove `node_modules` and previous iOS and Android mobile app builds):
+Clean your local environment to remove `node_modules` and previous iOS and Android mobile app builds:
 
 ```bash
 pnpm clean
@@ -59,9 +73,9 @@ Build dependencies for the mobile app:
 pnpm build:llm:deps
 ```
 
-### Android
+### Android Tests
 
-Verify you have an emulator [installed](https://developer.android.com/studio/run/managing-avds) and have that match the Detox `avdName` (currently 'Pixel_5_API_31') in the `detox.config.js` file. Be sure to make the device the correct architecture and system image (currently x86_64 if you are on an Intel mac and arm64_v8a if you are on an M1).
+Verify you have an emulator [installed](https://developer.android.com/studio/run/managing-avds) and have that match the Detox `avdName` (currently 'Pixel_5_API_31') in the `detox.config.js` file. Be sure to make the device the correct architecture and system image. Currently this is x86_64 if you are on an Intel mac and arm64_v8a if you are on an M1 Mac (\_info required for Windows and Linux\*). If you are on an Intel Mac, you must run `export CI=1` in the terminal session before
 
 - Build the apps
   - Debug: `pnpm mobile e2e:build -c android.emu.debug`
@@ -70,7 +84,9 @@ Verify you have an emulator [installed](https://developer.android.com/studio/run
   - Debug: First, run `pnpm mobile start` to run Metro bundler, then in a separate terminal window run `pnpm mobile e2e:test -c android.emu.debug`
   - Release: `pnpm mobile e2e:test -c android.emu.release`
 
-### iOS
+> If you get an error for Android debug tests complaining that the emulator cannot find the bundled JS script, run `adb reverse tcp:8081 tcp:8081` before starting the tests (but make sure the emulator is already started). This makes it possible for the emulator to access the Metro bundler on your local machine.
+
+### iOS Tests
 
 Make sure you have the correct iPhone simulator that is listed in `detox.config.js` installed (currently 'iPhone 13'). You can check if you do with `applesimutils --list`. Also make sure you have an iOS version installed for simulators by going to Xcode > Preferences > Components. You can try whichever version you like, but iOS 13.0 is known to work locally.
 
@@ -82,6 +98,7 @@ Make sure you have the correct iPhone simulator that is listed in `detox.config.
   - Release: `pnpm mobile e2e:test -c ios.sim.release`
 
 ---
+
 ---
 
 ## Project Structure
@@ -89,6 +106,7 @@ Make sure you have the correct iPhone simulator that is listed in `detox.config.
 Most files for the tests are in the `/e2e` LLM app folder.
 
 - `/bridge`: This contains the code to setup a websocket which allows communication between the test process and the LLM app. This allows us to:
+
   - create different conditions for testing the app by setting the user data.
   - perform mock device actions.
   - do quick navigations around the app (useful for setting up tests).
@@ -114,6 +132,7 @@ Most files for the tests are in the `/e2e` LLM app folder.
 - `.github/workflows/test-mobile.yml`: The workflow file to kick off tests in the Github servers.
 
 ---
+
 ---
 
 ## Development workflow
@@ -179,25 +198,26 @@ describe("Onboarding", () => {
     onboardingSteps = new OnboardingSteps();
     onboardingSteps = new PortfolioPage();
   })
-  
+
   it("onboarding step should be visible", async () => {
      // test assertions
     await expect(onboardingSteps.getSomeElement()).toBeVisible();
   });
-  
+
   it("should be able to start onboarding", async () => {
     // test actions (tap on some element)
     await onboardingSteps.startOnboarding();
   });
-  
+
   it("should do some other stuffs", async () => {
     await onboardingSteps.DoIOwnDevice(true);
     // ...
-  }) 
-   
+  })
+
 ```
 
 ---
+
 ---
 
 ## Tools and Features
@@ -208,11 +228,10 @@ Coming soon... :construction:
 
 ### Detox Recorder
 
-### Screenshot Comparison
-
 ---
+
 ---
 
 ## CI
 
-> :warning: Android and iOS tests are currently switched **off** on the CI due to issues installing the app on the emulators and general flakiness with the runners.
+> :warning: Android and iOS tests are currently switched **off** on the CI for PRs due to issues installing the app on the emulators and general flakiness with the runners. However the tests are running at [midday and midnight daily](https://github.com/LedgerHQ/ledger-live/actions/workflows/test-mobile-e2e.yml)
