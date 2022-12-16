@@ -33,8 +33,12 @@ function NewProtectState({ params }: { params: Record<string, string> }) {
     useNavigation<StackNavigatorNavigation<ManagerNavigatorStackParamList>>();
   const { learnMoreURI } = params || {};
 
+  const source = "ledgerlive://myledger";
+
   const onLearnMore = useCallback(() => {
-    Linking.canOpenURL(learnMoreURI).then(() => Linking.openURL(learnMoreURI));
+    Linking.canOpenURL(learnMoreURI).then(() =>
+      Linking.openURL(`${learnMoreURI}&source=${source}`),
+    );
   }, [learnMoreURI]);
 
   const onAlreadySubscribe = useCallback(() => {

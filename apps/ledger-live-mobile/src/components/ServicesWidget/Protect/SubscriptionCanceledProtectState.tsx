@@ -13,15 +13,17 @@ function SubscriptionCanceledProtectState({
 
   const { contactLedgerSupportURI, viewDetailsURI } = params || {};
 
+  const source = "ledgerlive://myledger";
+
   const onContactLedgerSupport = useCallback(() => {
     Linking.canOpenURL(contactLedgerSupportURI).then(() =>
-      Linking.openURL(contactLedgerSupportURI),
+      Linking.openURL(`${contactLedgerSupportURI}&source=${source}`),
     );
   }, [contactLedgerSupportURI]);
 
   const onViewDetails = useCallback(() => {
     Linking.canOpenURL(viewDetailsURI).then(() =>
-      Linking.openURL(viewDetailsURI),
+      Linking.openURL(`${viewDetailsURI}&source=${source}`),
     );
   }, [viewDetailsURI]);
 
