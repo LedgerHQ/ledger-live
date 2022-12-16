@@ -146,7 +146,7 @@ function Delegations({ account }: Props) {
     onNavigate({
       route: NavigatorName.CosmosDelegationFlow,
       screen:
-        delegations.length > 0
+        delegations.length === 0
           ? ScreenName.CosmosDelegationValidator
           : ScreenName.CosmosDelegationStarted,
     });
@@ -165,7 +165,7 @@ function Delegations({ account }: Props) {
 
   useEffect(() => {
     const state = getCosmosBannerState({ ...account });
-    const bannerText = getCosmosBannerProps(state, { t });
+    const bannerText = getCosmosBannerProps(state, { t }, account);
     setBanner({ ...state, ...bannerText });
   }, [account, t]);
 
@@ -520,6 +520,7 @@ function Delegations({ account }: Props) {
           image={<IlluRewards style={styles.illustration} />}
           description={t("cosmos.delegation.delegationEarn", {
             name: account.currency.name,
+            ticker: account.currency.ticker,
           })}
           infoUrl={urls.cosmosStaking}
           infoTitle={t("cosmos.delegation.info")}
