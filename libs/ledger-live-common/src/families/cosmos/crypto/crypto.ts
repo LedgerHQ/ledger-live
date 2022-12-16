@@ -79,7 +79,12 @@ class Crypto {
         (1 - validatorCommission)
       );
     } else if (this.currencyId === "osmo") {
-      return 0.15; // todo fix this obviously
+      return (
+        (rewardsState.inflationMaxRate /
+          1000000 /
+          rewardsState.actualBondedRatio) *
+        (1 - validatorCommission)
+      );
     } else if (this.currencyId === "juno") {
       return 0.15; // todo fix this obviously
     } else {
@@ -89,11 +94,11 @@ class Crypto {
 
   getRewardsState(): any {
     if (this.currencyId === "cosmos") {
-      return this.getStargateRewardsState();
+      return this.getCosmosRewardsState();
     } else if (this.currencyId === "osmo") {
       return this.getOsmosisRewardsState();
     } else if (this.currencyId === "juno") {
-      return this.getOsmosisRewardsState();
+      return this.getJunoRewardsState();
     } else {
       throw new Error(`${this.currencyId} is not supported`);
     }
@@ -141,7 +146,7 @@ class Crypto {
     throw new Error("Unreachable code");
   };
 
-  private getStargateRewardsState = makeLRUCache(
+  private getCosmosRewardsState = makeLRUCache(
     async () => {
       // All obtained values are strings ; so sometimes we will need to parse them as numbers
       const inflationUrl = `${this.lcd}/cosmos/mint/${this.version}/inflation`;
@@ -266,19 +271,84 @@ class Crypto {
       return { ...params };
     };
 
+  private queryMintParmas = async (): Promise<any> => {
+    const { data } = await network({
+      method: "GET",
+      url: `${this.lcd}/osmosis/mint/${this.version}/params`,
+    });
+    const { params } = data;
+    return { ...params };
+  };
+
+  private queryEpochProvisions = async (): Promise<number> => {
+    const { data } = await network({
+      method: "GET",
+      url: `${this.lcd}/osmosis/mint/${this.version}/epoch_provisions`,
+    });
+    return data.epoch_provisions;
+  };
+
+  private queryEpochDuration = async (
+    epochIdentifier: string
+  ): Promise<number> => {
+    const { data } = await network({
+      method: "GET",
+      url: `${this.lcd}/osmosis/epochs/${this.version}/epochs`,
+    });
+    let res = 0;
+    data.epochs.forEach((epoch) => {
+      if (epoch.identifier === epochIdentifier) {
+        res = parseInt(epoch.duration.slice(0, -1));
+      }
+    });
+    return res;
+  };
+
   private getOsmosisRewardsState = makeLRUCache(
     async () => {
       const distributionParams = await this.queryDistributionParams();
-      const supply = await this.queryTotalSupply(this.currency.units[1].code);
-      const totalSupply = parseUatomStrAsAtomNumber(supply.amount);
+      const mintParams = await this.queryMintParmas();
+      const epochProvisions = await this.queryEpochProvisions();
+      const totalSupply = 100000000;
       const pool = await this.queryPool();
-
       const actualBondedRatio =
         parseUatomStrAsAtomNumber(pool.bonded_tokens) / totalSupply;
       const communityPoolCommission = parseFloat(
         distributionParams.community_tax
       );
+      const stakingRatio: number =
+        mintParams["distribution_proportions"]["staking"];
+      const epochIdentifier = mintParams["epoch_identifier"];
+      const epochDuration = await this.queryEpochDuration(epochIdentifier);
+      // Hardcoded mock values
+      const targetBondedRatio = 0.1;
+      const assumedTimePerBlock = 7;
+      const inflationRate =
+        (epochProvisions * stakingRatio * 365 * 24 * 3600) /
+        epochDuration /
+        1000000;
+      const averageTimePerBlock = 7;
+      const averageDailyFees = 0;
+      const currentValueInflation = 0.01;
+      return {
+        targetBondedRatio,
+        communityPoolCommission,
+        assumedTimePerBlock,
+        inflationRateChange: inflationRate,
+        inflationMaxRate: inflationRate,
+        inflationMinRate: inflationRate,
+        actualBondedRatio,
+        averageTimePerBlock,
+        totalSupply,
+        averageDailyFees,
+        currentValueInflation,
+      };
+    },
+    () => this.currencyId
+  );
 
+  private getJunoRewardsState = makeLRUCache(
+    async () => {
       // Hardcoded mock values
       const targetBondedRatio = 0.1;
       const assumedTimePerBlock = 7;
@@ -290,14 +360,14 @@ class Crypto {
       const currentValueInflation = 0.01;
       return {
         targetBondedRatio,
-        communityPoolCommission,
+        communityPoolCommission: 0.03,
         assumedTimePerBlock,
         inflationRateChange,
         inflationMaxRate,
         inflationMinRate,
-        actualBondedRatio,
+        actualBondedRatio: 0,
         averageTimePerBlock,
-        totalSupply,
+        totalSupply: 100000000,
         averageDailyFees,
         currentValueInflation,
       };

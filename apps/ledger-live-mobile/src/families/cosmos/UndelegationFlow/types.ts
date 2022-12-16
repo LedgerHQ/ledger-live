@@ -22,6 +22,7 @@ export type CosmosUndelegationFlowParamList = {
     value?: BigNumber;
     redelegatedBalance?: BigNumber;
     mode?: string;
+    nextScreen: ScreenName.CosmosUndelegationSelectDevice;
   };
   [ScreenName.CosmosUndelegationSelectDevice]: {
     accountId: string;
