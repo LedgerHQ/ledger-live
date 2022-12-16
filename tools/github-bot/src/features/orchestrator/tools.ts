@@ -145,7 +145,9 @@ export async function updateGateCheckRun(
     ];
     let gateId = null;
 
-    let summary = `### Monitoring:`;
+    let summary = `#### This is the gate check run. It aggregates the status of all the other checks in the check suite.`;
+    summary += `\n\n`;
+    summary += `### 👁 Watching`;
 
     const [
       aggregatedConclusion,
@@ -165,8 +167,11 @@ export async function updateGateCheckRun(
           return acc;
         }
 
-        summary += `\n- **${check_run.name}**: _${check_run.conclusion ||
-          check_run.status}_`;
+        summary += `\n- **[${check_run.name}](${
+          check_run.html_url
+        })**: ${check_run.conclusion || check_run.status} ${getStatusEmoji(
+          check_run.conclusion || check_run.status
+        )}`;
 
         const priority = conclusions.indexOf(check_run.conclusion || "neutral");
         const accumulatorPriority = conclusions.indexOf(acc[0]);
@@ -192,9 +197,13 @@ export async function updateGateCheckRun(
           status: "completed",
           conclusion: aggregatedConclusion,
           output: {
-            title: getStatusEmoji(aggregatedConclusion),
+            title:
+              getStatusEmoji(aggregatedConclusion) +
+              " " +
+              aggregatedConclusion[0].toLocaleUpperCase() +
+              aggregatedConclusion.slice(1),
             summary,
-          }, // TODO: add proper output
+          },
           completed_at: new Date().toISOString(),
         });
       } else {
