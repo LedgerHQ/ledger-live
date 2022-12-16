@@ -19,7 +19,6 @@ export const getAccount = async (addr: string) => {
     nonce,
   };
 };
-
 export const getValidators = async () => {
   const validators = await api.getValidators();
   return {
