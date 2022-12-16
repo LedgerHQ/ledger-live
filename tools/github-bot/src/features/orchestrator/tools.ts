@@ -130,6 +130,12 @@ export async function updateGateCheckRun(
       check_suite_id: checkSuite.id,
     });
 
+    const rawWorkflowRuns = await octokit.rest.actions.listWorkflowRunsForRepo({
+      owner,
+      repo,
+      head_sha: checkSuite.head_sha,
+    });
+
     const conclusions = [
       "success",
       "pending",
@@ -159,19 +165,23 @@ export async function updateGateCheckRun(
           return acc;
         }
 
-        if (
-          Object.values(WORKFLOWS).every(
-            (w) => w.checkRunName !== check_run.name
-          )
-        ) {
+        const workflowMeta = Object.entries(WORKFLOWS).find(
+          ([, w]) => w.checkRunName === check_run.name
+        );
+
+        if (!workflowMeta) {
           return acc;
         }
 
+        const workflowRun = rawWorkflowRuns.data.workflow_runs.find(
+          (wr) => wr.name === ".github/workflows/" + workflowMeta[0]
+        );
+
         summary += `\n- ${getStatusEmoji(
           check_run.conclusion || check_run.status
-        )} **[${check_run.name}](${
-          check_run.html_url
-        })**: \`${check_run.conclusion || check_run.status}\``;
+        )} **[${check_run.name}](${workflowRun?.html_url ||
+          check_run.html_url})**: \`${check_run.conclusion ||
+          check_run.status}\``;
 
         const priority = conclusions.indexOf(check_run.conclusion || "neutral");
         const accumulatorPriority = conclusions.indexOf(acc[0]);
