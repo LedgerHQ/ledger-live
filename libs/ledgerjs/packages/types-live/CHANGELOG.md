@@ -1,5 +1,17 @@
 # @ledgerhq/types-live
 
+## 6.27.1
+
+### Patch Changes
+
+- [`720dc1f58a`](https://github.com/LedgerHQ/ledger-live/commit/720dc1f58a6cea9c8a933139ff94a1d9f1b98129) Thanks [@Justkant](https://github.com/Justkant)! - The push notifications feature flag's key has been modified
+
+## 6.27.1-next.0
+
+### Patch Changes
+
+- [`720dc1f58a`](https://github.com/LedgerHQ/ledger-live/commit/720dc1f58a6cea9c8a933139ff94a1d9f1b98129) Thanks [@Justkant](https://github.com/Justkant)! - The push notifications feature flag's key has been modified
+
 ## 6.27.0
 
 ### Minor Changes
