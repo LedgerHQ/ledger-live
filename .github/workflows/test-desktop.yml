@@ -84,12 +84,8 @@ jobs:
           ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
 
   # REWORK WINDOWS FOR OWN RUNNERS ? WAITING FOR KUBERNETES SOLUTION FROM INFRA ?
-  test-desktop-app-external:
+  test-desktop-app-windows:
     name: "Live Desktop Tests"
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -97,7 +93,7 @@ jobs:
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
-    runs-on: ${{ matrix.os }}
+    runs-on: windows-latest
     steps:
       - name: format os name
         id: os
@@ -132,8 +128,47 @@ jobs:
           os: ${{ steps.os.outputs.result }}
           turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
 
+  test-desktop-app-linux:
+    name: "Live Desktop Tests (Linux)"
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      INSTRUMENT_BUILD: true
+      FORCE_COLOR: 3
+      CI_OS: "ubuntu-latest"
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+      # DEBUG: "pw:browser*"
+      # DEBUG_LOGS: 1
+    needs: [start-runner]
+    runs-on: ${{ needs.start-runner.outputs.label }}
+    steps:
+      - name: format os name
+        id: os
+        uses: actions/github-script@v6
+        with:
+          result-encoding: string
+          script: return "macos"
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+      - uses: ./tools/actions/composites/setup-test-desktop
+        id: setup-test-desktop
+        with:
+          skip_python: true
+          skip_ruby: true
+      - name: TurboRepo local caching server
+        id: turborepo-cache-server
+        uses: ./tools/actions/turborepo-gh-cache
+        with:
+          server-token: "yolo"
+          cleanup-cache-folder: "true"
+      - uses: ./tools/actions/composites/test-desktop
+        id: test-desktop
+        with:
+          os: ${{ steps.os.outputs.result }}
+          turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
+
   test-desktop-app-mac:
-    name: "Ledger Live Desktop Tests (macOS X)"
+    name: "Live Desktop Tests (macOS X)"
     runs-on: [ledger-live, macos]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -361,7 +396,8 @@ jobs:
 
   allure-report:
     name: "Allure Reports Export on Server"
-    needs: [test-desktop-app-external, test-desktop-app-mac]
+    needs:
+      [test-desktop-app-windows, test-desktop-app-linux, test-desktop-app-mac]
     runs-on: [ledger-live, linux]
     if: ${{ always() && !cancelled() }}
     steps:
