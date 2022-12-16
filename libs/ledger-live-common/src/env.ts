@@ -74,7 +74,7 @@ const envDefinitions = {
   },
 
   API_ZILLIQA_INDEXER_API_ENDPOINT: {
-    def: "https://xizuu0g7fh.execute-api.us-west-2.amazonaws.com/prod/",
+    def: "https://api.zindex.zilliqa.com/zilliqa",
     parser: stringParser,
     desc: "Indexer endpoint for Zilliqa",
   },

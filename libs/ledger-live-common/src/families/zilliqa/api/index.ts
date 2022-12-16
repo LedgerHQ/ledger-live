@@ -6,11 +6,12 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
 import * as bech32 from "bech32";
 
-const bearerToken = "<insert here>";
+const bearerToken = "<insert token>";
 const indexerEndPoint = getEnv("API_ZILLIQA_INDEXER_API_ENDPOINT").replace(
 	/\/$/,
 	""
 );
+// http://api.zindex.zilliqa.com/
 const nodeEndPoint = getEnv("API_ZILLIQA_NODE").replace(/\/$/, "");
 const HRP = "zil";
 
@@ -46,6 +47,34 @@ function toBech32(pubkey: string): string {
 
 export const getAccount = async (addr: string) => {
 	addr = fromBech32(addr);
+
+	// Implementation using node
+	const resp = await network({
+		method: "POST",
+
+		url: `${nodeEndPoint}`,
+
+		data: {
+			id: "1",
+			jsonrpc: "2.0",
+			method: "GetBalance",
+			params: [addr.substring(2, addr.length)],
+		},
+		headers: {
+			contentType: "application/json",
+		},
+	});
+
+	const node_data = resp.data;
+	if (!node_data || !node_data.result) {
+		return {
+			blockHeight: 0,
+			balance: new BigNumber(0),
+			nonce: 0,
+		};
+	}
+
+	// Implementation using indexer
 	const { data } = await network({
 		method: "POST",
 
@@ -75,8 +104,8 @@ export const getAccount = async (addr: string) => {
 		};
 	}
 
-	// TODO: How do we obtain an appropriate nonce?
-	const nonce = 0;
+	// TODO: How do we obtain an appropriate nonce from indexer and drop node implementation or get blockheight from node and drop indexer call?
+	const nonce = node_data.result.nonce;
 	return {
 		blockHeight: data.data.getUserBalanceByToken.lastBlockID,
 		balance: new BigNumber(data.data.getUserBalanceByToken.amount),

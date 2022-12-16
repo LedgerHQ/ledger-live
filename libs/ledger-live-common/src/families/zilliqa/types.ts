@@ -10,16 +10,16 @@ import type {
 
 export type Transaction = TransactionCommon & {
 	family: "zilliqa";
-	//	fee: BigNumber | null | undefined;
-	//	gasprice: BigNumber | undefined | null;
-	//	gaslimit: Long | undefined | null;
+	fee?: BigNumber;
+	gasPrice?: BigNumber;
+	gaslimit?: Long;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
 	family: "zilliqa";
-	//	fee: BigNumber | null | undefined;
-	//	gasprice: BigNumber | undefined | null;
-	//	gaslimit: Long | undefined | null;
+	fee?: BigNumber;
+	gasPrice?: BigNumber;
+	gaslimit?: Long;
 };
 export type TransactionStatus = TransactionStatusCommon;
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
