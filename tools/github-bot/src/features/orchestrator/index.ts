@@ -199,7 +199,7 @@ export function orchestrator(app: Probot) {
         return;
       }
       const checkRun = checkRuns.data.check_runs[0];
-      const summary = `The **[workflow run](${payload.workflow_run.html_url})** has completed with status \`payload.workflow_run.conclusion\`.`;
+      const summary = `The **[workflow run](${payload.workflow_run.html_url})** has completed with status \`${payload.workflow_run.conclusion}\`.`;
       await octokit.checks.update({
         owner,
         repo,
