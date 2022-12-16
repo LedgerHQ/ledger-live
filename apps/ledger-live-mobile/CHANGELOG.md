@@ -1,5 +1,13 @@
 # live-mobile
 
+## 3.13.0-nightly.3
+
+### Patch Changes
+
+- [#2126](https://github.com/LedgerHQ/ledger-live/pull/2126) [`3b858335f4`](https://github.com/LedgerHQ/ledger-live/commit/3b858335f412ad6f10ce32148992b117df969182) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fix UI for Fallback Camera screen, import accounts/scan
+
+* [#2086](https://github.com/LedgerHQ/ledger-live/pull/2086) [`fabdfbddd5`](https://github.com/LedgerHQ/ledger-live/commit/fabdfbddd59bb17a61ee4a889178cce53dfabc24) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix all cosmos delegation flow with an amount of 0
+
 ## 3.13.0-nightly.2
 
 ### Minor Changes
