@@ -111,6 +111,8 @@ export function orchestrator(app: Probot) {
     const matchedWorkflow = WORKFLOWS[workflowFile as keyof typeof WORKFLOWS];
 
     if (workflowFile === "gate.yml") {
+      if (payload.workflow_run.conclusion !== "success") return;
+
       context.log.info(
         `[Orchestrator](workflow_run.completed) ${payload.workflow_run.name}`
       );
@@ -146,8 +148,8 @@ export function orchestrator(app: Probot) {
       let affectedWorkflows = 0;
       // For each workflow…
       Object.entries(WORKFLOWS).forEach(([fileName, workflow]) => {
-        // if (isFork && workflow.runsOn === RUNNERS.internal) return;
-        // if (!isFork && workflow.runsOn === RUNNERS.external) return;
+        if (isFork && workflow.runsOn === RUNNERS.internal) return;
+        if (!isFork && workflow.runsOn === RUNNERS.external) return;
         // Determine if the workflow is affected
         const isAffected = workflow.affected.some((pkg) => affected.has(pkg));
         if (isAffected) {
@@ -197,13 +199,14 @@ export function orchestrator(app: Probot) {
         return;
       }
       const checkRun = checkRuns.data.check_runs[0];
+      const summary = `The **[workflow run](${payload.workflow_run.html_url})** has completed with status \`${payload.workflow_run.conclusion}\`.`;
       await octokit.checks.update({
         owner,
         repo,
         check_run_id: checkRun.id,
         status: "completed",
         conclusion: payload.workflow_run.conclusion,
-        output: getGenericOutput(payload.workflow_run.conclusion), // TODO: add proper output
+        output: getGenericOutput(payload.workflow_run.conclusion, summary), // TODO: add proper output
         completed_at: new Date().toISOString(),
       });
     }
