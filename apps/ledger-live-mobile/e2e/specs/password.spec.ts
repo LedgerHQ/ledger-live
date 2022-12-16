@@ -45,7 +45,7 @@ describe("Password Lock Screen", () => {
 
   it("should puts app in background and wait 1 minute and 1 second", async () => {
     await device.sendToHome(); // leave LLM app and go to phone's home screen
-    await delay(61000); // password takes 60 seconds of app inactivity to activate
+    await delay(6001); // password takes 6 seconds of app inactivity to activate in mock mode
   });
 
   it("should move the app to foreground", async () => {
