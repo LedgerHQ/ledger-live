@@ -21,6 +21,7 @@ import styled from "styled-components";
 import Tooltip from "~/renderer/components/Tooltip";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
 import { filterRates } from "./filterRates";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 type Props = {
   fromCurrency: $PropertyType<SwapSelectorStateType, "currency">,
@@ -48,9 +49,6 @@ const TableHeader: ThemedComponent<{}> = styled(Box).attrs({
   border-bottom: 1px solid ${p => p.theme.colors.neutral.c30};
 `;
 
-// temporary flag to disable the swap feature - will be replaced by feature flag sourced from firebase. Ensure this is false when merging to develop branch.
-const SHOW_DEX_QUOTES = true;
-
 export default function ProviderRate({
   fromCurrency,
   toCurrency,
@@ -60,6 +58,7 @@ export default function ProviderRate({
   refreshTime,
   countdown,
 }: Props) {
+  const showDexQuotes: boolean | null = useFeature("swapShowDexQuotes");
   const dispatch = useDispatch();
   const [filter, setFilter] = useState([]);
   const selectedRate = useSelector(rateSelector);
@@ -192,8 +191,7 @@ export default function ProviderRate({
             selectedRate &&
             selectedRate.provider === rate.provider &&
             selectedRate.tradeMethod === rate.tradeMethod;
-          return rate.providerType === "DEX" &&
-            (SHOW_DEX_QUOTES === false || rate.rate === undefined) ? (
+          return rate.providerType === "DEX" && (!showDexQuotes || rate.rate === undefined) ? (
             <NoQuoteSwapRate
               filter={filter}
               key={rate.id}
