@@ -1,4 +1,4 @@
-import { sortAccountsByStatus } from "./swap";
+import { filterAvailableToAssets, sortAccountsByStatus } from "./swap";
 
 const accounts = [
   { type: "Account", name: "test1", disabled: false },
@@ -28,4 +28,27 @@ const expectedOrder = [
 
 test("SortAccountsByStatus should keep disable accounts with active subAccounts before disable accounts", () => {
   expect(sortAccountsByStatus(accounts).map(value => value.name)).toEqual(expectedOrder);
+});
+
+test("filterAvailableToAssets returns to assets with fromId", () => {
+  const toAssets = filterAvailableToAssets(
+    [
+      { from: "a", to: "b" },
+      { from: "b", to: "a" },
+      { from: "c", to: "d" },
+      { from: "a", to: "e" },
+    ],
+    "a",
+  );
+  expect(toAssets).toEqual(["b", "e"]);
+});
+
+test("filterAvailableToAssets returns to assets without fromId", () => {
+  const toAssets = filterAvailableToAssets([
+    { from: "a", to: "b" },
+    { from: "b", to: "a" },
+    { from: "c", to: "d" },
+    { from: "a", to: "e" },
+  ]);
+  expect(toAssets).toEqual(["b", "a", "d", "e"]);
 });
