@@ -9,9 +9,6 @@ on:
       - hotfix
   workflow_dispatch:
     inputs:
-      # check_run_id:
-      #   description: id to update the check run on PR
-      #   required: false
       sha:
         description: the head sha to target the correct check run
         required: false
@@ -24,42 +21,6 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ref != 'develop' || github.ref_name != 'develop' }}
 
 jobs:
-  # update-check:
-  #   name: "Update Checks on PR"
-  #   if: github.event_name == 'workflow_dispatch' && github.event.inputs.check_run_id != '' && github.event.inputs.sha != ''
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Generate token
-  #       id: generate-token
-  #       uses: tibdex/github-app-token@v1
-  #       with:
-  #         app_id: ${{ secrets.GH_BOT_APP_ID }}
-  #         private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-  #     - uses: actions/github-script@v6
-  #       with:
-  #         github-token: ${{ steps.generate-token.outputs.token }}
-  #         script: |
-  #           const previous = await github.rest.checks.update({
-  #             owner: context.repo.owner,
-  #             repo: context.repo.repo,
-  #             head_sha: "${{ github.event.inputs.sha }}",
-  #             check_run_id: "${{ github.event.inputs.check_run_id }}",
-  #           });
-  #           await github.rest.checks.update({
-  #             owner: context.repo.owner,
-  #             repo: context.repo.repo,
-  #             name: previous.data.name,
-  #             head_sha: "${{ github.event.inputs.sha }}",
-  #             check_run_id: "${{ github.event.inputs.check_run_id }}",
-  #             details_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }}`,
-  #             status: "in_progress",
-  #             started_at: new Date().toISOString(),
-  #             output: {
-  #               title: "⚙️ Testing",
-  #               summary: `You can follow the progress of the tests [here](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }})`
-  #             }
-  #           });
-
   codecheck:
     name: "Ledger Live Mobile CodeCheck"
     env:
@@ -67,43 +28,41 @@ jobs:
       FORCE_COLOR: 3
     runs-on: ubuntu-latest
     steps:
-      # - uses: actions/checkout@v3
-      #   with:
-      #     ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
-      # - uses: pnpm/action-setup@v2
-      #   with:
-      #     version: latest
-      # - uses: actions/setup-node@v3
-      #   with:
-      #     node-version: 16
-      #     cache: pnpm
-      #     cache-dependency-path: "**/pnpm-lock.yaml"
-      # - uses: ruby/setup-ruby@v1
-      #   with:
-      #     ruby-version: 2.7
-      # - name: TurboRepo local caching server
-      #   id: turborepo-cache-server
-      #   uses: ./tools/actions/turborepo-gh-cache
-      #   with:
-      #     server-token: "yolo"
-      #     cleanup-cache-folder: "true"
-      # - name: Install dependencies
-      #   run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
-      # - name: Run linter
-      #   run: pnpm lint --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" -- --format="json" -o="lint.json"
-      # - name: Run code checkers
-      #   run: pnpm typecheck --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
-      # - name: ls and git
-      #   run: |
-      #     git status
-      #     ls ./apps/ledger-live-mobile
-      # - uses: actions/upload-artifact@v3
-      #   name: "uploads LINTER results"
-      #   with:
-      #     name: lint
-      #     path: ${{ github.workspace }}/apps/ledger-live-mobile/lint.json
-      - name: Dummy
-        run: exit 0
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+      - name: TurboRepo local caching server
+        id: turborepo-cache-server
+        uses: ./tools/actions/turborepo-gh-cache
+        with:
+          server-token: "yolo"
+          cleanup-cache-folder: "true"
+      - name: Install dependencies
+        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+      - name: Run linter
+        run: pnpm lint --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" -- --format="json" -o="lint.json"
+      - name: Run code checkers
+        run: pnpm typecheck --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+      - name: ls and git
+        run: |
+          git status
+          ls ./apps/ledger-live-mobile
+      - uses: actions/upload-artifact@v3
+        name: "uploads LINTER results"
+        with:
+          name: lint
+          path: ${{ github.workspace }}/apps/ledger-live-mobile/lint.json
   # report:
   #   needs: codecheck
   #   if: always() && github.event_name == 'workflow_dispatch' && github.event.inputs.check_run_id != '' && github.event.inputs.sha != ''

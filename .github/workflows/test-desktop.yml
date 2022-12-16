@@ -28,31 +28,27 @@ jobs:
     name: "Ledger Live Desktop TypeCheck"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
-      INSTRUMENT_BUILD: true
       FORCE_COLOR: 3
       CI_OS: ubuntu-latest
-
     runs-on: ubuntu-latest
     steps:
-      # - uses: actions/checkout@v3
-      #   with:
-      #     ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
-      # - uses: ./tools/actions/composites/setup-test-desktop
-      #   id: setup-test-desktop
-      # - name: TurboRepo local caching server
-      #   id: turborepo-cache-server
-      #   uses: ./tools/actions/turborepo-gh-cache
-      #   with:
-      #     server-token: "yolo"
-      #     cleanup-cache-folder: "true"
-      # - name: Install dependencies
-      #   run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
-      # - name: Build dependencies
-      #   run: pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
-      # - name: Run code checkers
-      #   run: pnpm desktop test:codecheck
-      - name: Dummy
-        run: exit 0
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+      - uses: ./tools/actions/composites/setup-test-desktop
+        id: setup-test-desktop
+      - name: TurboRepo local caching server
+        id: turborepo-cache-server
+        uses: ./tools/actions/turborepo-gh-cache
+        with:
+          server-token: "yolo"
+          cleanup-cache-folder: "true"
+      - name: Install dependencies
+        run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
+      - name: Build dependencies
+        run: pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+      - name: Run code checkers
+        run: pnpm desktop test:codecheck
 
   start-runner:
     name: Start self-hosted EC2 runner
@@ -88,204 +84,91 @@ jobs:
           ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
 
   # REWORK WINDOWS FOR OWN RUNNERS ? WAITING FOR KUBERNETES SOLUTION FROM INFRA ?
-  test-desktop-app-windows:
-    name: "Windows Live Desktop Tests"
+  test-desktop-app-external:
+    name: "Live Desktop Tests"
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
-      INSTRUMENT_BUILD: true
       FORCE_COLOR: 3
       CI_OS: "windows-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
     steps:
-      # - name: format os name
-      #   id: os
-      #   uses: actions/github-script@v6
-      #   with:
-      #     result-encoding: string
-      #     script: |
-      #       return "windows"
-      # - uses: actions/checkout@v3
-      #   with:
-      #     ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
-      # - uses: ./tools/actions/composites/setup-test-desktop
-      #   id: setup-test-desktop
-      #   with:
-      #     skip_ruby: true
-      # - name: Install node-gyp globally
-      #   run: |
-      #     pnpm add -g node-gyp
-      # - name: TurboRepo local caching server
-      #   id: turborepo-cache-server
-      #   uses: ./tools/actions/turborepo-gh-cache
-      #   with:
-      #     server-token: "yolo"
-      #     cleanup-cache-folder: "true"
-      # - uses: ./tools/actions/composites/test-desktop
-      #   id: test-desktop
-      #   with:
-      #     os: ${{ steps.os.outputs.result }}
-      #     turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
-      - name: Dummy
-        run: exit 0
-
-  test-desktop-app-linux:
-    name: "Linux Live Desktop Tests"
-    env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
-      INSTRUMENT_BUILD: true
-      FORCE_COLOR: 3
-      CI_OS: "ubuntu-latest"
-      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-      # DEBUG: "pw:browser*"
-      # DEBUG_LOGS: 1
-    needs: [start-runner]
-    runs-on: ${{ needs.start-runner.outputs.label }}
-    steps:
-      # - name: format os name
-      #   id: os
-      #   uses: actions/github-script@v6
-      #   with:
-      #     result-encoding: string
-      #     script: |
-      #       return "linux"
-      # - uses: actions/checkout@v3
-      #   with:
-      #     ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
-      # - uses: ./tools/actions/composites/setup-test-desktop
-      #   id: setup-test-desktop
-      #   with:
-      #     skip_python: true
-      #     skip_ruby: true
-      # - name: TurboRepo local caching server
-      #   id: turborepo-cache-server
-      #   uses: ./tools/actions/turborepo-gh-cache
-      #   with:
-      #     server-token: "yolo"
-      #     cleanup-cache-folder: "true"
-      # # Composite
-      # - name: Install dependencies
-      #   run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
-      # - name: Install playwright dependencies
-      #   run: npx playwright@1.27.1 install --with-deps chromium
-      # - name: Build dependencies
-      #   env:
-      #     GOGC: 75
-      #   run: |
-      #     pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
-      #     pnpm desktop build:testing
-      # - name: Build Dummy SDK app for testing
-      #   run: pnpm --filter="dummy-live-app" i && pnpm --filter="dummy-live-app" build
-      # - name: Run unit tests
-      #   run: pnpm desktop test:jest
-      # - name: Run playwright tests
-      #   run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
-      # - name: upload diffs to imgur
-      #   if: always() && !cancelled()
-      #   uses: ledgerhq/ledger-live/tools/actions/upload-images@develop
-      #   id: imgur
-      #   with:
-      #     path: apps/ledger-live-desktop/tests/artifacts/test-results
-      #     workspace: ${{ github.workspace }}
-      #     os: ${{ steps.os.outputs.result }}
-      # - name: upload ci suggested screenshots
-      #   if: always() && !cancelled()
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: images
-      #     path: images-${{ steps.os.outputs.result }}.json
-      # - name: Upload playwright test results [On Failure]
-      #   uses: actions/upload-artifact@v3
-      #   if: failure() && !cancelled()
-      #   with:
-      #     name: ${{ format('playwright-results-{0}', steps.os.outputs.result) }}
-      #     path: |
-      #       apps/ledger-live-desktop/tests/artifacts/test-results
-      #       apps/ledger-live-desktop/tests/artifacts/html-report
-      #       apps/ledger-live-desktop/tests/artifacts/coverage
-      #       apps/ledger-live-desktop/tests/artifacts/videos
-      #       apps/ledger-live-desktop/tests/artifacts/logs
-      - name: Dummy
-        run: exit 0
+      - name: format os name
+        id: os
+        uses: actions/github-script@v6
+        with:
+          result-encoding: string
+          script: |
+            if ("${{ matrix.os }}" === "ubuntu-latest") {
+              return "linux"
+            } else if ("${{ matrix.os }}" === "macos-latest") {
+              return "macos"
+            } else if ("${{ matrix.os }}" === "windows-latest") {
+              return "windows"
+            }
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+      - uses: ./tools/actions/composites/setup-test-desktop
+        id: setup-test-desktop
+      - name: Install node-gyp globally
+        run: |
+          pnpm add -g node-gyp
+      - name: TurboRepo local caching server
+        id: turborepo-cache-server
+        uses: ./tools/actions/turborepo-gh-cache
+        with:
+          server-token: "yolo"
+          cleanup-cache-folder: "true"
+      - uses: ./tools/actions/composites/test-desktop
+        id: test-desktop
+        with:
+          os: ${{ steps.os.outputs.result }}
+          turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
 
   test-desktop-app-mac:
-    name: "macOS Live Desktop Tests"
+    name: "Ledger Live Desktop Tests (macOS X)"
     runs-on: [ledger-live, macos]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
-      INSTRUMENT_BUILD: true
       FORCE_COLOR: 3
       CI_OS: "macos-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
     steps:
-      # - name: format os name
-      #   id: os
-      #   uses: actions/github-script@v6
-      #   with:
-      #     result-encoding: string
-      #     script: return "macos"
-      # - uses: actions/checkout@v3
-      #   with:
-      #     ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
-      # - uses: ./tools/actions/composites/setup-test-desktop
-      #   id: setup-test-desktop
-      #   with:
-      #     skip_python: true
-      #     skip_ruby: true
-      # - name: TurboRepo local caching server
-      #   id: turborepo-cache-server
-      #   uses: ./tools/actions/turborepo-gh-cache
-      #   with:
-      #     server-token: "yolo"
-      #     cleanup-cache-folder: "true"
-      # # Composite
-      # - name: Install dependencies
-      #   run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
-      # - name: Install playwright dependencies
-      #   run: npx playwright@1.27.1 install --with-deps chromium
-      # - name: Build dependencies
-      #   env:
-      #     GOGC: 75
-      #   run: |
-      #     pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
-      #     pnpm desktop build:testing
-      # - name: Build Dummy SDK app for testing
-      #   run: pnpm --filter="dummy-live-app" i && pnpm --filter="dummy-live-app" build
-      # - name: Run unit tests
-      #   run: pnpm desktop test:jest
-      # - name: Run playwright tests
-      #   run: pnpm desktop test:playwright
-      # - name: upload diffs to imgur
-      #   if: always() && !cancelled()
-      #   uses: ledgerhq/ledger-live/tools/actions/upload-images@develop
-      #   id: imgur
-      #   with:
-      #     path: apps/ledger-live-desktop/tests/artifacts/test-results
-      #     workspace: ${{ github.workspace }}
-      #     os: ${{ steps.os.outputs.result }}
-      # - name: upload ci suggested screenshots
-      #   if: always() && !cancelled()
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: images
-      #     path: images-${{ steps.os.outputs.result }}.json
-      # - name: Upload playwright test results [On Failure]
-      #   uses: actions/upload-artifact@v3
-      #   if: failure() && !cancelled()
-      #   with:
-      #     name: ${{ format('playwright-results-{0}', steps.os.outputs.result) }}
-      #     path: |
-      #       apps/ledger-live-desktop/tests/artifacts/test-results
-      #       apps/ledger-live-desktop/tests/artifacts/html-report
-      #       apps/ledger-live-desktop/tests/artifacts/coverage
-      #       apps/ledger-live-desktop/tests/artifacts/videos
-      #       apps/ledger-live-desktop/tests/artifacts/logs
-      - name: Dummy
-        run: exit 0
+      - name: format os name
+        id: os
+        uses: actions/github-script@v6
+        with:
+          result-encoding: string
+          script: return "macos"
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+      - uses: ./tools/actions/composites/setup-test-desktop
+        id: setup-test-desktop
+        with:
+          skip_python: true
+          skip_ruby: true
+      - name: TurboRepo local caching server
+        id: turborepo-cache-server
+        uses: ./tools/actions/turborepo-gh-cache
+        with:
+          server-token: "yolo"
+          cleanup-cache-folder: "true"
+      - uses: ./tools/actions/composites/test-desktop
+        id: test-desktop
+        with:
+          os: ${{ steps.os.outputs.result }}
+          turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
+
   # report:
   #   needs:
   #     [
@@ -475,52 +358,53 @@ jobs:
   #     #           body,
   #     #         })
   #     #       }
-  # allure-report:
-  #   name: "Allure Reports Export on Server"
-  #   needs: [test-desktop-app, test-desktop-app-mac-internal]
-  #   runs-on: [ledger-live, linux]
-  #   if: ${{ always() && !cancelled() && needs.is-affected.outputs.is-desktop-affected == 'true' && github.event.pull_request != '' && !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
-  #   steps:
-  #     - name: checkout
-  #       uses: actions/checkout@v3
-  #       with:
-  #         ref: ${{ github.event.inputs.ref || 'develop' }}
-  #     - name: Download Allure Report - Windows
-  #       uses: actions/download-artifact@v2
-  #       with:
-  #         name: allure-results-windows
-  #         path: allure-results-windows
-  #     - name: Download Allure Report - MacOS
-  #       uses: actions/download-artifact@v2
-  #       with:
-  #         name: allure-results-macos
-  #         path: allure-results-macos
-  #     - name: Download Allure Report - Linux
-  #       uses: actions/download-artifact@v2
-  #       with:
-  #         name: allure-results-linux
-  #         path: allure-results-linux
-  #     - name: Send Results and Generate Allure Report - Windows
-  #       uses: ./tools/actions/composites/upload-allure-report
-  #       if: always()
-  #       with:
-  #         platform: windows
-  #         login: ${{ secrets.ALLURE_LOGIN }}
-  #         password: ${{ secrets.ALLURE_PASSWORD }}
-  #         path: allure-results-windows
-  #     - name: Send Results and Generate Allure Report - MacOS
-  #       uses: ./tools/actions/composites/upload-allure-report
-  #       if: always()
-  #       with:
-  #         platform: macos
-  #         login: ${{ secrets.ALLURE_LOGIN }}
-  #         password: ${{ secrets.ALLURE_PASSWORD }}
-  #         path: allure-results-macos
-  #     - name: Send Results and Generate Allure Report - Linux
-  #       uses: ./tools/actions/composites/upload-allure-report
-  #       if: always()
-  #       with:
-  #         platform: linux
-  #         login: ${{ secrets.ALLURE_LOGIN }}
-  #         password: ${{ secrets.ALLURE_PASSWORD }}
-  #         path: allure-results-linux
+
+  allure-report:
+    name: "Allure Reports Export on Server"
+    needs: [test-desktop-app-external, test-desktop-app-mac]
+    runs-on: [ledger-live, linux]
+    if: ${{ always() && !cancelled() }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+      - name: Download Allure Report - Windows
+        uses: actions/download-artifact@v2
+        with:
+          name: allure-results-windows
+          path: allure-results-windows
+      - name: Download Allure Report - MacOS
+        uses: actions/download-artifact@v2
+        with:
+          name: allure-results-macos
+          path: allure-results-macos
+      - name: Download Allure Report - Linux
+        uses: actions/download-artifact@v2
+        with:
+          name: allure-results-linux
+          path: allure-results-linux
+      - name: Send Results and Generate Allure Report - Windows
+        uses: ./tools/actions/composites/upload-allure-report
+        if: always()
+        with:
+          platform: windows
+          login: ${{ secrets.ALLURE_LOGIN }}
+          password: ${{ secrets.ALLURE_PASSWORD }}
+          path: allure-results-windows
+      - name: Send Results and Generate Allure Report - MacOS
+        uses: ./tools/actions/composites/upload-allure-report
+        if: always()
+        with:
+          platform: macos
+          login: ${{ secrets.ALLURE_LOGIN }}
+          password: ${{ secrets.ALLURE_PASSWORD }}
+          path: allure-results-macos
+      - name: Send Results and Generate Allure Report - Linux
+        uses: ./tools/actions/composites/upload-allure-report
+        if: always()
+        with:
+          platform: linux
+          login: ${{ secrets.ALLURE_LOGIN }}
+          password: ${{ secrets.ALLURE_PASSWORD }}
+          path: allure-results-linux

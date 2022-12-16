@@ -62,75 +62,73 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      # - uses: actions/checkout@v3
-      #   with:
-      #     ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.event.push.head.sha }}
-      # - name: set git user
-      #   run: |
-      #     git config user.email "team-live@ledger.fr"
-      #     git config user.name "Team Live"
-      # - uses: pnpm/action-setup@v2
-      #   with:
-      #     version: latest
-      #     dest: ${{ runner.temp }}/setup-pnpm
-      # - uses: actions/setup-node@v3
-      #   with:
-      #     node-version: 16.x
-      #     cache: pnpm
-      #     cache-dependency-path: "**/pnpm-lock.yaml"
-      # - uses: ruby/setup-ruby@v1
-      #   with:
-      #     ruby-version: 3.1.2
-      #   env:
-      #     ImageOS: ubuntu20
-      # - uses: actions/setup-java@v3
-      #   with:
-      #     distribution: "zulu" # See 'Supported distributions' for available options
-      #     java-version: "11"
-      # - name: setup Android SDK
-      #   uses: android-actions/setup-android@v2.0.6
-      # - name: install dependencies
-      #   run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
-      # - uses: ./tools/actions/get-package-infos
-      #   id: version
-      #   with:
-      #     path: ${{ github.workspace }}/apps/ledger-live-mobile
-      # - name: set beta name
-      #   uses: ./tools/actions/change-product-name
-      #   with:
-      #     path: ${{ github.workspace }}/apps/ledger-live-mobile
-      # - name: Get short SHA
-      #   id: slug
-      #   run: echo "sha8=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-      # - name: make local version
-      #   env:
-      #     VERSION: ${{ steps.version.outputs.clean }}-sha.${{ steps.slug.outputs.sha8 }}
-      #   run: cd apps/ledger-live-mobile && npm version $VERSION
-      # - name: TurboRepo local caching server
-      #   id: turborepo-cache-server
-      #   uses: ./tools/actions/turborepo-gh-cache
-      #   with:
-      #     server-token: "yolo"
-      #     cleanup-cache-folder: "true"
-      # - name: build the app
-      #   env:
-      #     ANDROID_KEYSTORE_PASS: staging
-      #     ANDROID_KEY_ALIAS: staging
-      #     ANDROID_KEY_PASS: staging
-      #     NODE_OPTIONS: "--max-old-space-size=7168"
-      #     ANDROID_KEYSTORE_FILE: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/staging.kstr
-      #   run: pnpm build-ci:llm:android --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
-      # - uses: ./tools/actions/get-package-infos
-      #   id: post-version
-      #   with:
-      #     path: ${{ github.workspace }}/apps/ledger-live-mobile
-      # - name: upload Android app
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: ${{ steps.post-version.outputs.version }}-release
-      #     path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/stagingRelease
-      - name: Dummy
-        run: exit 0
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.event.push.head.sha }}
+      - name: set git user
+        run: |
+          git config user.email "team-live@ledger.fr"
+          git config user.name "Team Live"
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+          dest: ${{ runner.temp }}/setup-pnpm
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1.2
+        env:
+          ImageOS: ubuntu20
+      - uses: actions/setup-java@v3
+        with:
+          distribution: "zulu" # See 'Supported distributions' for available options
+          java-version: "11"
+      - name: setup Android SDK
+        uses: android-actions/setup-android@v2.0.6
+      - name: install dependencies
+        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+      - uses: ./tools/actions/get-package-infos
+        id: version
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-mobile
+      - name: set beta name
+        uses: ./tools/actions/change-product-name
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-mobile
+      - name: Get short SHA
+        id: slug
+        run: echo "sha8=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - name: make local version
+        env:
+          VERSION: ${{ steps.version.outputs.clean }}-sha.${{ steps.slug.outputs.sha8 }}
+        run: cd apps/ledger-live-mobile && npm version $VERSION
+      - name: TurboRepo local caching server
+        id: turborepo-cache-server
+        uses: ./tools/actions/turborepo-gh-cache
+        with:
+          server-token: "yolo"
+          cleanup-cache-folder: "true"
+      - name: build the app
+        env:
+          ANDROID_KEYSTORE_PASS: staging
+          ANDROID_KEY_ALIAS: staging
+          ANDROID_KEY_PASS: staging
+          NODE_OPTIONS: "--max-old-space-size=7168"
+          ANDROID_KEYSTORE_FILE: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/staging.kstr
+        run: pnpm build-ci:llm:android --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+      - uses: ./tools/actions/get-package-infos
+        id: post-version
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-mobile
+      - name: upload Android app
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ steps.post-version.outputs.version }}-release
+          path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/stagingRelease
 
   build-mobile-app-ios:
     runs-on: macos-latest
@@ -138,33 +136,31 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      # - uses: actions/checkout@v3
-      #   with:
-      #     ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.event.push.head.sha }}
-      # - name: set git user
-      #   run: |
-      #     git config user.email "team-live@ledger.fr"
-      #     git config user.name "Team Live"
-      # - uses: pnpm/action-setup@v2
-      #   with:
-      #     version: latest
-      # - uses: actions/setup-node@v3
-      #   with:
-      #     node-version: 16.x
-      #     cache: pnpm
-      #     cache-dependency-path: "**/pnpm-lock.yaml"
-      # - uses: ruby/setup-ruby@v1
-      #   with:
-      #     ruby-version: 3.1.2
-      # - name: Cache LLM pods
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: |
-      #       apps/ledger-live-mobile/ios/Pods
-      #       ~/Library/Caches/CocoaPods
-      #       ~/.cocoapods
-      #     key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
-      # - name: install dependencies
-      #   run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
-      - name: Dummy
-        run: exit 0
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.event.push.head.sha }}
+      - name: set git user
+        run: |
+          git config user.email "team-live@ledger.fr"
+          git config user.name "Team Live"
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1.2
+      - name: Cache LLM pods
+        uses: actions/cache@v3
+        with:
+          path: |
+            apps/ledger-live-mobile/ios/Pods
+            ~/Library/Caches/CocoaPods
+            ~/.cocoapods
+          key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
+      - name: install dependencies
+        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
