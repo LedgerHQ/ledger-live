@@ -167,11 +167,11 @@ export async function updateGateCheckRun(
           return acc;
         }
 
-        summary += `\n- **[${check_run.name}](${
-          check_run.html_url
-        })**: ${check_run.conclusion || check_run.status} ${getStatusEmoji(
+        summary += `\n- ${getStatusEmoji(
           check_run.conclusion || check_run.status
-        )}`;
+        )} **[${check_run.name}](${
+          check_run.html_url
+        })**: \`${check_run.conclusion || check_run.status}\``;
 
         const priority = conclusions.indexOf(check_run.conclusion || "neutral");
         const accumulatorPriority = conclusions.indexOf(acc[0]);
@@ -290,8 +290,12 @@ export function getStatusEmoji(status: string) {
       return "🧟";
     case "skipped":
       return "⏭";
-    default:
+    case "in_progress":
+      return "⚙️";
+    case "queued":
       return "⏳";
+    default:
+      return "❓";
   }
 }
 
