@@ -54,7 +54,6 @@ export default function ProviderRate({
   toCurrency,
   rates,
   provider,
-  updateSelection,
   refreshTime,
   countdown,
 }: Props) {
@@ -63,20 +62,6 @@ export default function ProviderRate({
   const [filter, setFilter] = useState([]);
   const selectedRate = useSelector(rateSelector);
   const filteredRates = useMemo(() => filterRates(rates, filter), [rates, filter]);
-
-  const setRate = useCallback(rate => {
-    updateSelection(rate);
-    dispatch(updateRateAction(rate));
-    // eslint-disable-next-line
-  }, []);
-
-  // when we have not got a selected rate in redux, we select the first one available
-  useEffect(() => {
-    if (!selectedRate && filteredRates.length > 0) {
-      const defaultRate = filteredRates[0];
-      setRate(defaultRate);
-    }
-  }, [filteredRates, selectedRate, setRate]);
 
   const updateRate = useCallback(
     rate => {
@@ -90,25 +75,33 @@ export default function ProviderRate({
         value,
         defaultPartner: rate.provider,
       });
-      setRate(rate);
+      dispatch(updateRateAction(rate));
     },
-    [setRate],
+    [dispatch],
   );
 
-  const updateFilter = useCallback(
-    newFilter => {
-      track("button_clicked", {
-        button: "Filter selected",
-        page: "Page Swap Form",
-        ...swapDefaultTrack,
-        value: newFilter,
-      });
-      setFilter(newFilter);
-      const filteredRate = filterRates(rates, newFilter)[0];
-      setRate(filteredRate);
-    },
-    [rates, setRate],
-  );
+  // if the selected rate in redux is not in the filtered rates, we need to update it
+  useEffect(() => {
+    if (
+      selectedRate &&
+      filteredRates.length > 0 &&
+      !filteredRates.some(
+        r => r.provider === selectedRate.provider && r.tradeMethod === selectedRate.tradeMethod,
+      )
+    ) {
+      dispatch(updateRateAction(filteredRates[0]));
+    }
+  }, [filteredRates, selectedRate, dispatch]);
+
+  const updateFilter = useCallback(newFilter => {
+    track("button_clicked", {
+      button: "Filter selected",
+      page: "Page Swap Form",
+      ...swapDefaultTrack,
+      value: newFilter,
+    });
+    setFilter(newFilter);
+  }, []);
 
   return (
     <Box height="100%" width="100%">

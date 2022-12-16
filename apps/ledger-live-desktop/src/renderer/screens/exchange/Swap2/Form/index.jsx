@@ -110,7 +110,7 @@ const SwapForm = () => {
   const { state: locationState } = useLocation();
   const history = useHistory();
   const accounts = useSelector(shallowAccountsSelector);
-  const { storedProviders, providers, providersError } = useProviders();
+  const { storedProviders, providersError } = useProviders();
   const exchangeRate = useSelector(rateSelector);
   const setExchangeRate = useCallback(
     rate => {
@@ -124,7 +124,7 @@ const SwapForm = () => {
     setIsSendMaxLoading,
     onNoRates: trackNoRates,
     ...locationState,
-    providers,
+    providers: storedProviders,
     includeDEX: true,
   });
 
@@ -397,29 +397,28 @@ const SwapForm = () => {
   const sourceCurrency = swapTransaction.swap.from.currency;
   const targetCurrency = swapTransaction.swap.to.currency;
 
-  const updateSelection = useCallback(
-    selectedRate => {
-      if (!selectedRate) {
-        setNavigation(null);
-        swapTransaction.swap.updateSelectedRate({});
-        return;
-      }
+  useEffect(() => {
+    if (!exchangeRate) {
+      setNavigation(null);
+      swapTransaction.swap.updateSelectedRate({});
+      return;
+    }
 
-      const { providerType } = selectedRate;
-      if (providerType === "DEX") {
-        const dexProvider = DEX_PROVIDERS.find(d => d.id === selectedRate.provider);
-        if (dexProvider) {
-          setNavigation(dexProvider.navigation);
-        }
+    const { providerType } = exchangeRate;
+    if (providerType === "DEX") {
+      const dexProvider = DEX_PROVIDERS.find(d => d.id === exchangeRate.provider);
+      if (dexProvider) {
+        setNavigation(dexProvider.navigation);
       }
+    }
 
-      if (providerType === "CEX") {
-        setNavigation(null);
-        swapTransaction.swap.updateSelectedRate(selectedRate);
-      }
-    },
-    [swapTransaction?.swap],
-  );
+    if (providerType === "CEX") {
+      setNavigation(null);
+      swapTransaction.swap.updateSelectedRate(exchangeRate);
+    }
+    // suppressing as swapTransaction is not memoized and causes infinite loop
+    // eslint-disable-next-line
+  }, [exchangeRate]);
 
   switch (currentFlow) {
     case "LOGIN":
@@ -477,7 +476,7 @@ const SwapForm = () => {
     swapTransaction.toggleMax(state);
   };
 
-  if (providers?.length)
+  if (storedProviders?.length)
     return (
       <Wrapper>
         <TrackPage category="Swap" name="Form" provider={provider} {...swapDefaultTrack} />
@@ -513,7 +512,6 @@ const SwapForm = () => {
               provider={provider}
               refreshTime={refreshTime}
               countdown={!swapError && !idleState}
-              updateSelection={updateSelection}
             />
 
             {currentBanner === "LOGIN" ? (
