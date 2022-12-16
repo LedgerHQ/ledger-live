@@ -13,13 +13,17 @@ function AddPaymentProtectState({
 
   const { addNowURI, viewDetailsURI } = params || {};
 
+  const source = "ledgerlive://myledger";
+
   const onAddNow = useCallback(() => {
-    Linking.canOpenURL(addNowURI).then(() => Linking.openURL(addNowURI));
+    Linking.canOpenURL(addNowURI).then(() =>
+      Linking.openURL(`${addNowURI}&source=${source}`),
+    );
   }, [addNowURI]);
 
   const onViewDetails = useCallback(() => {
     Linking.canOpenURL(viewDetailsURI).then(() =>
-      Linking.openURL(viewDetailsURI),
+      Linking.openURL(`${viewDetailsURI}&source=${source}`),
     );
   }, [viewDetailsURI]);
 
