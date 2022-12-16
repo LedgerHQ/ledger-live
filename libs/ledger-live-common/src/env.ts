@@ -72,6 +72,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Explorer API for celo",
   },
+  API_ICP_ENDPOINT: {
+    def: "https://icp.node.dev.zondax.xyz/",
+    parser: stringParser,
+    desc: "Rosetta API for ICP",
+  },
   API_CELO_NODE: {
     def: "https://celo.coin.ledger.com/archive/",
     parser: stringParser,

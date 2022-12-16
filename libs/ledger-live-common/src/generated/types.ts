@@ -22,6 +22,10 @@ import { Transaction as crypto_orgTransaction } from "../families/crypto_org/typ
 import { TransactionRaw as crypto_orgTransactionRaw } from "../families/crypto_org/types";
 import { TransactionStatus as crypto_orgTransactionStatus } from "../families/crypto_org/types";
 import { TransactionStatusRaw as crypto_orgTransactionStatusRaw } from "../families/crypto_org/types";
+import { Transaction as dfinityTransaction } from "../families/dfinity/types";
+import { TransactionRaw as dfinityTransactionRaw } from "../families/dfinity/types";
+import { TransactionStatus as dfinityTransactionStatus } from "../families/dfinity/types";
+import { TransactionStatusRaw as dfinityTransactionStatusRaw } from "../families/dfinity/types";
 import { Transaction as elrondTransaction } from "../families/elrond/types";
 import { TransactionRaw as elrondTransactionRaw } from "../families/elrond/types";
 import { TransactionStatus as elrondTransactionStatus } from "../families/elrond/types";
@@ -86,6 +90,7 @@ export type Transaction =
   | celoTransaction
   | cosmosTransaction
   | crypto_orgTransaction
+  | dfinityTransaction
   | elrondTransaction
   | ethereumTransaction
   | evmTransaction
@@ -108,6 +113,7 @@ export type TransactionRaw =
   | celoTransactionRaw
   | cosmosTransactionRaw
   | crypto_orgTransactionRaw
+  | dfinityTransactionRaw
   | elrondTransactionRaw
   | ethereumTransactionRaw
   | evmTransactionRaw
@@ -130,6 +136,7 @@ export type TransactionStatus =
   | celoTransactionStatus
   | cosmosTransactionStatus
   | crypto_orgTransactionStatus
+  | dfinityTransactionStatus
   | elrondTransactionStatus
   | ethereumTransactionStatus
   | evmTransactionStatus
@@ -152,6 +159,7 @@ export type TransactionStatusRaw =
   | celoTransactionStatusRaw
   | cosmosTransactionStatusRaw
   | crypto_orgTransactionStatusRaw
+  | dfinityTransactionStatusRaw
   | elrondTransactionStatusRaw
   | ethereumTransactionStatusRaw
   | evmTransactionStatusRaw

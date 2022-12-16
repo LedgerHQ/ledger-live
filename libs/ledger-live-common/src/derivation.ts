@@ -167,6 +167,11 @@ const modes = Object.freeze({
     startsAt: 1,
     tag: "third-party",
   },
+  dfinity: {
+    tag: "third-party",
+    startsAt: 1,
+    overridesDerivation: "44'/223'/0'/0/<account>",
+  },
   solanaMain: {
     isNonIterable: true,
     overridesDerivation: "44'/501'",
@@ -376,6 +381,7 @@ const seedIdentifierPath = {
   cardano: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   cardano_testnet: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   near: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'`,
+  dfinity: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   _: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'`,
 };
 export const getSeedIdentifierDerivation = (
