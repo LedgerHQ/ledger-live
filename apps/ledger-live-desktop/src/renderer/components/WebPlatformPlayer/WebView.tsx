@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
-import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import {
   receiveOnAccountLogic,
@@ -34,7 +33,7 @@ import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 import { openModal } from "../../actions/modals";
 import TrackPage from "../../analytics/TrackPage";
 import useTheme from "../../hooks/useTheme";
-import { accountsSelector } from "../../reducers/accounts";
+import { flattenAccountsSelector } from "../../reducers/accounts";
 import BigSpinner from "../BigSpinner";
 
 import { track } from "~/renderer/analytics/segment";
@@ -65,7 +64,7 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
 
   const targetRef: { current: null | WebviewTag } = useRef(null);
   const dispatch = useDispatch();
-  const accounts = flattenAccounts(useSelector(accountsSelector));
+  const accounts = useSelector(flattenAccountsSelector);
   const { pushToast } = useToasts();
   const { t } = useTranslation();
 

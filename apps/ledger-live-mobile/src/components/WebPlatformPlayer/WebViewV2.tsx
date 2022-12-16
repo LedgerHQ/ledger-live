@@ -21,7 +21,6 @@ import {
   SignedOperation,
 } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-common/env";
-import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import {
@@ -50,7 +49,7 @@ import BigNumber from "bignumber.js";
 import { first } from "rxjs/operators";
 import { NavigatorName, ScreenName } from "../../const";
 import { broadcastSignedTx } from "../../logic/screenTransactionHooks";
-import { accountsSelector } from "../../reducers/accounts";
+import { flattenAccountsSelector } from "../../reducers/accounts";
 import UpdateIcon from "../../icons/Update";
 import InfoIcon from "../../icons/Info";
 import InfoPanel from "./InfoPanel";
@@ -118,7 +117,7 @@ export const WebView = ({ manifest, inputs }: Props) => {
   const targetRef: {
     current: null | RNWebView;
   } = useRef(null);
-  const accounts = flattenAccounts(useSelector(accountsSelector));
+  const accounts = useSelector(flattenAccountsSelector);
   const navigation = useNavigation();
   const [loadDate, setLoadDate] = useState(new Date());
   const [widgetLoaded, setWidgetLoaded] = useState(false);
