@@ -7,7 +7,6 @@ on:
       - develop
       - release
       - hotfix
-  # pull_request:
   workflow_dispatch:
     inputs:
       since_branch:
@@ -88,7 +87,6 @@ jobs:
           # Commenting because of random node-gyp failures on windows…
           # See:
           #  * https://github.com/serialport/node-serialport/issues/2322
-          #  * https://github.com/serialport/node-serialport/issues/2322
           # - windows-latest
 
     runs-on: ${{ matrix.os }}
@@ -105,13 +103,12 @@ jobs:
           node-version: 16
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v4
         with:
           python-version: "3.10"
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.6
-
       - name: TurboRepo local caching server
         id: turborepo-cache-server
         uses: ./tools/actions/turborepo-gh-cache

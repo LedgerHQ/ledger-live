@@ -130,6 +130,12 @@ export async function updateGateCheckRun(
       check_suite_id: checkSuite.id,
     });
 
+    const rawWorkflowRuns = await octokit.rest.actions.listWorkflowRunsForRepo({
+      owner,
+      repo,
+      head_sha: checkSuite.head_sha,
+    });
+
     const conclusions = [
       "success",
       "pending",
@@ -145,7 +151,9 @@ export async function updateGateCheckRun(
     ];
     let gateId = null;
 
-    let summary = `### Monitoring:`;
+    let summary = `#### This is the gate check run. It aggregates the status of all the other checks in the check suite.`;
+    summary += `\n\n`;
+    summary += `### 👁 Watching`;
 
     const [
       aggregatedConclusion,
@@ -157,16 +165,23 @@ export async function updateGateCheckRun(
           return acc;
         }
 
-        if (
-          Object.values(WORKFLOWS).every(
-            (w) => w.checkRunName !== check_run.name
-          )
-        ) {
+        const workflowMeta = Object.entries(WORKFLOWS).find(
+          ([, w]) => w.checkRunName === check_run.name
+        );
+
+        if (!workflowMeta) {
           return acc;
         }
 
-        summary += `\n- **${check_run.name}**: _${check_run.conclusion ||
-          check_run.status}_`;
+        const workflowRun = rawWorkflowRuns.data.workflow_runs.find(
+          (wr) => (wr as any).path === ".github/workflows/" + workflowMeta[0]
+        );
+
+        summary += `\n- ${getStatusEmoji(
+          check_run.conclusion || check_run.status
+        )} **[${check_run.name}](${workflowRun?.html_url ||
+          check_run.html_url})**: \`${check_run.conclusion ||
+          check_run.status}\``;
 
         const priority = conclusions.indexOf(check_run.conclusion || "neutral");
         const accumulatorPriority = conclusions.indexOf(acc[0]);
@@ -192,9 +207,9 @@ export async function updateGateCheckRun(
           status: "completed",
           conclusion: aggregatedConclusion,
           output: {
-            title: getStatusEmoji(aggregatedConclusion),
+            title: formatConclusion(aggregatedConclusion),
             summary,
-          }, // TODO: add proper output
+          },
           completed_at: new Date().toISOString(),
         });
       } else {
@@ -217,50 +232,59 @@ export function getGenericOutput(conclusion: string, summary?: string) {
   switch (conclusion) {
     case "success":
       return {
-        title: getStatusEmoji(conclusion),
+        title: formatConclusion(conclusion),
         summary: summary || "Completed successfully 🎉",
       };
     case "failure":
       return {
-        title: getStatusEmoji(conclusion),
+        title: formatConclusion(conclusion),
         summary: summary || "Completed with errors",
       };
     case "neutral":
       return {
-        title: getStatusEmoji(conclusion),
+        title: formatConclusion(conclusion),
         summary: summary || "Completed with neutral result",
       };
     case "cancelled":
       return {
-        title: getStatusEmoji(conclusion),
+        title: formatConclusion(conclusion),
         summary: summary || "Cancelled",
       };
     case "timed_out":
       return {
-        title: getStatusEmoji(conclusion),
+        title: formatConclusion(conclusion),
         summary: summary || "Timed out",
       };
     case "action_required":
       return {
-        title: getStatusEmoji(conclusion),
+        title: formatConclusion(conclusion),
         summary: summary || "Action required",
       };
     case "stale":
       return {
-        title: getStatusEmoji(conclusion),
+        title: formatConclusion(conclusion),
         summary: summary || "Stale",
       };
     case "skipped":
       return {
-        title: getStatusEmoji(conclusion),
+        title: formatConclusion(conclusion),
         summary: summary || "Skipped",
       };
     default:
       return {
-        title: "❓",
+        title: "❓ Unknown",
         summary: summary || "Unknown",
       };
   }
+}
+
+export function formatConclusion(conclusion: string) {
+  return (
+    getStatusEmoji(conclusion) +
+    " " +
+    conclusion[0].toLocaleUpperCase() +
+    conclusion.slice(1)
+  );
 }
 
 export function getStatusEmoji(status: string) {
@@ -272,7 +296,7 @@ export function getStatusEmoji(status: string) {
     case "neutral":
       return "🤷";
     case "cancelled":
-      return "⏹";
+      return "🛑";
     case "timed_out":
       return "⏱";
     case "action_required":
@@ -281,8 +305,12 @@ export function getStatusEmoji(status: string) {
       return "🧟";
     case "skipped":
       return "⏭";
-    default:
+    case "in_progress":
+      return "⚙️";
+    case "queued":
       return "⏳";
+    default:
+      return "❓";
   }
 }
 
