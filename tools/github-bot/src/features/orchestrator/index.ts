@@ -111,6 +111,8 @@ export function orchestrator(app: Probot) {
     const matchedWorkflow = WORKFLOWS[workflowFile as keyof typeof WORKFLOWS];
 
     if (workflowFile === "gate.yml") {
+      if (payload.workflow_run.conclusion !== "success") return;
+
       context.log.info(
         `[Orchestrator](workflow_run.completed) ${payload.workflow_run.name}`
       );
