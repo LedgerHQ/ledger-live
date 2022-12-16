@@ -32,13 +32,13 @@ export const getGenuineCheckFromDeviceId = ({
   deviceId,
   lockedDeviceTimeoutMs = 1000,
 }: GetGenuineCheckFromDeviceIdArgs): GetGenuineCheckFromDeviceIdOutput => {
-  return new Observable((o) => {
+  return new Observable((subscriber) => {
     // In order to know if a device is locked or not.
     // As we're not timing out inside the genuineCheckObservable flow (with rxjs timeout for ex)
     // once the device is unlock, getDeviceInfo should return the device info and
     // the flow will continue. No need to handle a retry strategy
     const lockedDeviceTimeout = setTimeout(() => {
-      o.next({ socketEvent: null, deviceIsLocked: true });
+      subscriber.next({ socketEvent: null, deviceIsLocked: true });
     }, lockedDeviceTimeoutMs);
 
     // withDevice handles the unsubscribing cleaning when leaving the useEffect
@@ -46,7 +46,7 @@ export const getGenuineCheckFromDeviceId = ({
       from(getDeviceInfo(t)).pipe(
         mergeMap((deviceInfo) => {
           clearTimeout(lockedDeviceTimeout);
-          o.next({ socketEvent: null, deviceIsLocked: false });
+          subscriber.next({ socketEvent: null, deviceIsLocked: false });
           return genuineCheck(t, deviceInfo);
         })
       )
@@ -59,7 +59,7 @@ export const getGenuineCheckFromDeviceId = ({
             clearTimeout(lockedDeviceTimeout);
 
             if (e instanceof LockedDeviceError) {
-              o.next({ socketEvent: null, deviceIsLocked: true });
+              subscriber.next({ socketEvent: null, deviceIsLocked: true });
               return true;
             }
 
@@ -68,12 +68,10 @@ export const getGenuineCheckFromDeviceId = ({
         )
       )
       .subscribe({
-        next: (socketEvent: SocketEvent) => {
-          o.next({ socketEvent, deviceIsLocked: false });
-        },
-        error: (e) => {
-          o.error(e);
-        },
+        next: (socketEvent: SocketEvent) =>
+          subscriber.next({ socketEvent, deviceIsLocked: false }),
+        error: (e) => subscriber.error(e),
+        complete: () => subscriber.complete(),
       });
   });
 };

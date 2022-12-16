@@ -204,7 +204,7 @@ describe("useGenuineCheck", () => {
     });
   });
 
-  describe("When the device is locked before doing a genuine check, and it timed out", () => {
+  describe("When the device is locked during the genuine check", () => {
     it("should notify the hook consumer of the need to unlock the device", async () => {
       mockedGetGenuineCheckFromDeviceId.mockReturnValue(
         of({
