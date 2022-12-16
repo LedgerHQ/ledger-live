@@ -16,11 +16,7 @@ import {
   findCryptoCurrencyById,
   listSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
-import {
-  flattenAccounts,
-  addPendingOperation,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import openTransportAsSubject, {
   BidirectionalEvent,
@@ -50,7 +46,7 @@ import { openModal } from "../../actions/modals";
 import { updateAccountWithUpdater } from "../../actions/accounts";
 import TrackPage from "../../analytics/TrackPage";
 import useTheme from "../../hooks/useTheme";
-import { accountsSelector } from "../../reducers/accounts";
+import { flattenAccountsSelector } from "../../reducers/accounts";
 import BigSpinner from "../BigSpinner";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
@@ -78,7 +74,7 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
 
   const targetRef: { current: null | WebviewTag } = useRef(null);
   const dispatch = useDispatch();
-  const accounts = flattenAccounts(useSelector(accountsSelector));
+  const accounts = useSelector(flattenAccountsSelector);
   const { pushToast } = useToasts();
   const { t } = useTranslation();
 

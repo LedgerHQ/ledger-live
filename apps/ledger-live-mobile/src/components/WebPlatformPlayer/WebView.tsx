@@ -29,10 +29,7 @@ import type {
   RawPlatformAccount,
 } from "@ledgerhq/live-common/platform/rawTypes";
 import { getEnv } from "@ledgerhq/live-common/env";
-import {
-  isTokenAccount,
-  flattenAccounts,
-} from "@ledgerhq/live-common/account/index";
+import { isTokenAccount } from "@ledgerhq/live-common/account/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   findCryptoCurrencyById,
@@ -64,7 +61,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { NavigatorName, ScreenName } from "../../const";
 import { broadcastSignedTx } from "../../logic/screenTransactionHooks";
-import { accountsSelector } from "../../reducers/accounts";
+import { flattenAccountsSelector } from "../../reducers/accounts";
 import UpdateIcon from "../../icons/Update";
 import InfoIcon from "../../icons/Info";
 import InfoPanel from "./InfoPanel";
@@ -130,7 +127,7 @@ export const WebView = ({ manifest, inputs }: Props) => {
   const targetRef: {
     current: null | RNWebView;
   } = useRef(null);
-  const accounts = flattenAccounts(useSelector(accountsSelector));
+  const accounts = useSelector(flattenAccountsSelector);
   const navigation =
     useNavigation<
       RootNavigationComposite<
