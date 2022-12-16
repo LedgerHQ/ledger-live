@@ -146,8 +146,8 @@ export function orchestrator(app: Probot) {
       let affectedWorkflows = 0;
       // For each workflow…
       Object.entries(WORKFLOWS).forEach(([fileName, workflow]) => {
-        // if (isFork && workflow.runsOn === RUNNERS.internal) return;
-        // if (!isFork && workflow.runsOn === RUNNERS.external) return;
+        if (isFork && workflow.runsOn === RUNNERS.internal) return;
+        if (!isFork && workflow.runsOn === RUNNERS.external) return;
         // Determine if the workflow is affected
         const isAffected = workflow.affected.some((pkg) => affected.has(pkg));
         if (isAffected) {
