@@ -174,7 +174,7 @@ export async function updateGateCheckRun(
         }
 
         const workflowRun = rawWorkflowRuns.data.workflow_runs.find(
-          (wr) => wr.name === ".github/workflows/" + workflowMeta[0]
+          (wr) => (wr as any).path === ".github/workflows/" + workflowMeta[0]
         );
 
         summary += `\n- ${getStatusEmoji(
