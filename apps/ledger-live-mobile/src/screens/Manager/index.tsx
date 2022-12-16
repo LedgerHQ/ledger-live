@@ -13,6 +13,7 @@ import { createAction, Result } from "@ledgerhq/live-common/hw/actions/manager";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
 
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ScreenName } from "../../const";
 import SelectDevice2 from "../../components/SelectDevice2";
 import SelectDevice from "../../components/SelectDevice";
@@ -26,6 +27,9 @@ import {
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
 import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/types/ManagerNavigator";
+import ServicesWidget from "../../components/ServicesWidget";
+import BuyDeviceCTA from "../../components/BuyDeviceCTA";
+import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/shared";
 
 const action = createAction(connectManager);
 
@@ -87,47 +91,58 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
     setDevice(params?.device);
   }, [params]);
 
+  const insets = useSafeAreaInsets();
+
   if (!isFocused) return null;
 
   return (
-    <NavigationScrollView
-      style={[styles.root]}
-      contentContainerStyle={styles.scrollContainer}
-    >
-      <Flex mt={70}>
-        <TrackScreen category="Manager" name="ChooseDevice" />
+    <Flex flex={1} pb={insets.bottom + TAB_BAR_SAFE_HEIGHT}>
+      <TrackScreen category="Manager" name="ChooseDevice" />
+      <Flex mt={100} px={16} mb={8}>
         <Text fontWeight="semiBold" variant="h4">
           <Trans i18nKey="manager.title" />
         </Text>
-        {newDeviceSelectionFeatureFlag?.enabled ? (
-          <SelectDevice2 onSelect={onSelectDevice} stopBleScanning={!!device} />
-        ) : (
-          <>
-            <SelectDevice
-              usbOnly={params?.firmwareUpdate}
-              autoSelectOnAdd
-              onSelect={onSelectDevice}
-              onBluetoothDeviceAction={onShowMenu}
-            />
-            {chosenDevice ? (
-              <RemoveDeviceMenu
-                open={showMenu}
-                device={chosenDevice as Device}
-                onHideMenu={onHideMenu}
-              />
-            ) : null}
-          </>
-        )}
-        <DeviceActionModal
-          onClose={() => onSelectDevice()}
-          device={device}
-          onResult={onSelect}
-          onModalHide={onModalHide}
-          action={action}
-          request={null}
-        />
       </Flex>
-    </NavigationScrollView>
+      <NavigationScrollView
+        style={[styles.root]}
+        contentContainerStyle={styles.scrollContainer}
+      >
+        <Flex>
+          {newDeviceSelectionFeatureFlag?.enabled ? (
+            <SelectDevice2
+              onSelect={onSelectDevice}
+              stopBleScanning={!!device}
+            />
+          ) : (
+            <>
+              <SelectDevice
+                usbOnly={params?.firmwareUpdate}
+                autoSelectOnAdd
+                onSelect={onSelectDevice}
+                onBluetoothDeviceAction={onShowMenu}
+              />
+              {chosenDevice ? (
+                <RemoveDeviceMenu
+                  open={showMenu}
+                  device={chosenDevice as Device}
+                  onHideMenu={onHideMenu}
+                />
+              ) : null}
+            </>
+          )}
+          <DeviceActionModal
+            onClose={() => onSelectDevice()}
+            device={device}
+            onResult={onSelect}
+            onModalHide={onModalHide}
+            action={action}
+            request={null}
+          />
+          <ServicesWidget />
+        </Flex>
+      </NavigationScrollView>
+      <BuyDeviceCTA />
+    </Flex>
   );
 };
 

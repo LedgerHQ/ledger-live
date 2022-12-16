@@ -2143,8 +2143,8 @@
         "ethereumGasPrice" : "Gas ücreti",
         "ethereumMaxFee" : "Ücret Üst Limiti ({{unitName}})",
         "ethereumPriorityFee" : "Öncelik Ücreti Üst Limiti ({{unitName}})",
-        "nextBlock" : "Sonraki blok: {{nextBaseFee}}",
-        "suggestedPriorityFee" : "Önerilen: {{lowPriorityFee}} - {{highPriorityFee}} {{unitName}}",
+        "nextBlock" : "Sonraki blok",
+        "suggested" : "Önerilen",
         "unitPerByte" : "bayt başına {{unit}}",
         "nft" : "NFT",
         "nftQuantity" : "Miktar"

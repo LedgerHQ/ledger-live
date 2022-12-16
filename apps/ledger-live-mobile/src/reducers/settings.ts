@@ -45,6 +45,7 @@ import type {
   SettingsSetLocalePayload,
   SettingsSetMarketCounterCurrencyPayload,
   SettingsSetCustomImageBackupPayload,
+  SettingsSetLastSeenCustomImagePayload,
   SettingsSetMarketFilterByStarredAccountsPayload,
   SettingsSetMarketRequestParamsPayload,
   SettingsSetNotificationsPayload,
@@ -115,7 +116,10 @@ export const INITIAL_STATE: SettingsState = {
   theme: "system",
   osTheme: undefined,
   customImageBackup: undefined,
-
+  lastSeenCustomImage: {
+    size: 0,
+    hash: "",
+  },
   carouselVisibility: Object.fromEntries(
     SLIDES.map(slide => [slide.name, true]),
   ),
@@ -264,6 +268,16 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
   [SettingsActionTypes.SETTINGS_COMPLETE_CUSTOM_IMAGE_FLOW]: state => ({
     ...state,
     hasCompletedCustomImageFlow: true,
+  }),
+
+  [SettingsActionTypes.SET_LAST_SEEN_CUSTOM_IMAGE]: (state, action) => ({
+    ...state,
+    lastSeenCustomImage: {
+      size: (action as Action<SettingsSetLastSeenCustomImagePayload>).payload
+        .imageSize,
+      hash: (action as Action<SettingsSetLastSeenCustomImagePayload>).payload
+        .imageHash,
+    },
   }),
 
   [SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING]: state => ({
@@ -631,6 +645,10 @@ export const analyticsEnabledSelector = createSelector(
 export const experimentalUSBEnabledSelector = createSelector(
   storeSelector,
   s => s.experimentalUSBEnabled,
+);
+export const lastSeenCustomImageSelector = createSelector(
+  storeSelector,
+  s => s.lastSeenCustomImage,
 );
 export const currencySettingsForAccountSelector = (
   s: State,

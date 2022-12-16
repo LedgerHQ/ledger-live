@@ -46,6 +46,7 @@ import {
 import { SettingsNavigatorStackParamList } from "../../../components/RootNavigator/types/SettingsNavigator";
 import PoweredByLedger from "../PoweredByLedger";
 import OpenStoryly from "./OpenDebugStoryly";
+import OpenDebugCustomImageGraphics from "./OpenDebugCustomImageGraphics";
 
 export function DebugMocks() {
   return (
@@ -74,6 +75,7 @@ export function DebugMocks() {
       <OpenLottie />
       <OpenDebugCustomImage />
       <OpenDebugFetchCustomImage />
+      <OpenDebugCustomImageGraphics />
       <OpenDebugPostOnboarding />
       <OpenStoryly />
       <OpenDebugPlayground />
@@ -133,6 +135,7 @@ export default function DebugSettings({
         "deviceInitialApps",
         "syncOnboarding",
         "llmNewDeviceSelection",
+        "staxWelcomeScreen",
       ] as FeatureId[]
     ).forEach(featureId =>
       overrideFeature(featureId, { ...getFeature(featureId), enabled: true }),

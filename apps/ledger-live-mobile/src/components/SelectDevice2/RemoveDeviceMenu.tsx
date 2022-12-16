@@ -42,6 +42,7 @@ const RemoveDeviceMenu = ({
       (illustrations[device.modelId] ?? NanoX)({
         color: colors.neutral.c100,
         size: 200,
+        theme: colors.type as "light" | "dark",
       }),
     [device.modelId, colors],
   );

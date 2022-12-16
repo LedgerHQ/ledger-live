@@ -2143,8 +2143,8 @@
         "ethereumGasPrice" : "Gaspreis",
         "ethereumMaxFee" : "Max. Gebühr ({{unitName}})",
         "ethereumPriorityFee" : "Max. Prioritätsgebühr ({{unitName}})",
-        "nextBlock" : "Nächster Block: {{nextBaseFee}}",
-        "suggestedPriorityFee" : "Vorgeschlagen: {{lowPriorityFee}} - {{highPriorityFee}} {{unitName}}",
+        "nextBlock" : "Nächster Block",
+        "suggested" : "Vorgeschlagen",
         "unitPerByte" : "{{unit}} pro Byte",
         "nft" : "NFT",
         "nftQuantity" : "Menge"

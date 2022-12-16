@@ -1,30 +1,43 @@
 import { Page, Locator } from "@playwright/test";
+import { waitFor } from "tests/utils/waitFor";
 
 export class DiscoverPage {
   readonly page: Page;
+  readonly discoverTitle: Locator;
   readonly discoverMenuButton: Locator;
   readonly testAppCatalogItem: Locator;
+  readonly disclaimerTitle: Locator;
   readonly disclaimerText: Locator;
+  readonly liveAppLoadingSpinner: Locator;
   readonly getAllAccountsButton: Locator;
   readonly requestAccountButton: Locator;
+  readonly selectAssetTitle: Locator;
+  readonly selectAssetSearchBar: Locator;
   readonly selectAccountTitle: Locator;
   readonly selectBtcAsset: Locator;
   readonly selectBtcAccount: Locator;
   readonly disclaimerCheckbox: Locator;
+  readonly signNetworkWarning: Locator;
   readonly signContinueButton: Locator;
   readonly confirmText: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.discoverMenuButton = page.locator("data-test-id=drawer-catalog-button");
+    this.discoverTitle = page.locator("data-test-id=discover-title");
     this.testAppCatalogItem = page.locator("#platform-catalog-app-dummy-live-app");
+    this.disclaimerTitle = page.locator("data-test-id=live-app-disclaimer-drawer-title");
     this.disclaimerText = page.locator("text=External Application");
+    this.liveAppLoadingSpinner = page.locator("data-test-id=live-app-loading-spinner");
     this.getAllAccountsButton = page.locator("data-test-id=get-all-accounts-button"); // TODO: make this into its own model
     this.requestAccountButton = page.locator("data-test-id=request-single-account-button");
-    this.selectAccountTitle = page.locator("text=Choose a crypto asset)");
+    this.selectAssetTitle = page.locator("data-test-id=select-asset-drawer-title");
+    this.selectAssetSearchBar = page.locator("data-test-id=select-asset-drawer-search-input");
+    this.selectAccountTitle = page.locator("data-test-id=select-account-drawer-title");
     this.selectBtcAsset = page.locator("text=Bitcoin").first();
     this.selectBtcAccount = page.locator("text=Bitcoin 1 (legacy)").first();
     this.disclaimerCheckbox = page.locator("data-test-id=dismiss-disclaimer");
+    this.signNetworkWarning = page.locator("text=Network fees are above 10% of the amount").first();
     this.signContinueButton = page.locator("text=Continue");
     this.confirmText = page.locator(
       "text=Please confirm the operation on your device to finalize it",
@@ -33,14 +46,21 @@ export class DiscoverPage {
 
   async openTestApp() {
     await this.testAppCatalogItem.click();
+    await this.disclaimerTitle.waitFor({ state: "visible" });
+  }
+
+  async waitForLiveAppToLoad() {
+    await this.liveAppLoadingSpinner.waitFor({ state: "detached" });
   }
 
   async getAccountsList() {
     await this.clickWebviewElement("[data-test-id=get-all-accounts-button]");
   }
 
-  async requestAccount() {
+  async requestAsset() {
     await this.clickWebviewElement("[data-test-id=request-single-account-button]");
+    await this.selectAssetTitle.isVisible();
+    await this.selectAssetSearchBar.isEnabled();
   }
 
   async selectAsset() {
@@ -48,6 +68,7 @@ export class DiscoverPage {
   }
 
   async selectAccount() {
+    await this.selectAccountTitle.isVisible();
     // TODO: make this dynamic with passed in variable
     await this.selectBtcAccount.click();
   }
@@ -62,14 +83,15 @@ export class DiscoverPage {
 
   async signTransaction() {
     await this.clickWebviewElement("[data-test-id=sign-transaction-button]");
+    await this.signNetworkWarning.waitFor({ state: "visible" });
   }
 
   async continueToSignTransaction() {
-    await this.signContinueButton.click({force: true});
+    await this.signContinueButton.click({ force: true });
   }
 
   async waitForConfirmationScreenToBeDisplayed() {
-    await this.confirmText.waitFor({state: "visible"});
+    await this.confirmText.waitFor({ state: "visible" });
   }
 
   async clickWebviewElement(elementName: string) {
@@ -83,5 +105,27 @@ export class DiscoverPage {
     `,
       );
     }, elementName);
+  }
+
+  async waitForCorrectTextInWebview(textToCheck: string) {
+    return waitFor(() => this.textIsPresent(textToCheck));
+  }
+
+  async textIsPresent(textToCheck: string) {
+    const result: boolean = await this.page.evaluate(textToCheck => {
+      const webview = document.querySelector("webview");
+      return (webview as any)
+        .executeJavaScript(
+          `(function() {
+        return document.querySelector('pre').innerHTML;
+      })();
+    `,
+        )
+        .then((text: string) => {
+          return text.includes(textToCheck);
+        });
+    }, textToCheck);
+
+    return result;
   }
 }

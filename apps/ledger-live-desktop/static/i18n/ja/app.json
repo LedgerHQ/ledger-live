@@ -2143,8 +2143,8 @@
         "ethereumGasPrice" : "ガス価格",
         "ethereumMaxFee" : "最大手数料 ({{unitName}})",
         "ethereumPriorityFee" : "最大優先手数料 ({{unitName}})",
-        "nextBlock" : "次のブロック: {{nextBaseFee}}",
-        "suggestedPriorityFee" : "推奨: {{lowPriorityFee}} - {{highPriorityFee}} {{unitName}}",
+        "nextBlock" : "次のブロック",
+        "suggested" : "推奨",
         "unitPerByte" : "1バイトあたり{{unit}}",
         "nft" : "NFT",
         "nftQuantity" : "数量"

@@ -2,6 +2,7 @@
 import editDeviceName from "@ledgerhq/live-common/lib/hw/editDeviceName";
 import getDeviceName from "@ledgerhq/live-common/lib/hw/getDeviceName";
 import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
+import getBatteryStatus from "@ledgerhq/live-common/lib/hw/getBatteryStatus";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
 import getVersion from "@ledgerhq/live-common/lib/hw/getVersion";
 import { createDeviceSocket as socket } from "@ledgerhq/live-common/lib/api/socket";
@@ -18,6 +19,7 @@ import type { Command } from "./helpers/commands";
 const bitcoinCurrency = getCryptoCurrencyById("bitcoin");
 const mapDeviceInfo = (args, { deviceInfo }) => [deviceInfo, ...args];
 const mapTargetId = (args, { deviceInfo }) => [deviceInfo.targetId, ...args];
+const mapP2 = (p2) => [+p2];
 
 export const commands: Command[] = [
   {
@@ -36,6 +38,19 @@ export const commands: Command[] = [
     id: "getDeviceInfo",
     exec: getDeviceInfo,
     form: [],
+  },
+
+  {
+    id: "getBatteryStatus",
+    exec: getBatteryStatus,
+    mapArgs: mapP2,
+    form: [
+      { 
+        type: "ascii",
+        default: "4",
+        maxlength: 1,
+      },
+    ],
   },
 
   {

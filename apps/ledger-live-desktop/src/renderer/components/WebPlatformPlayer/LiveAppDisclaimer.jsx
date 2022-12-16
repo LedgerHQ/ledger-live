@@ -93,7 +93,9 @@ export const LiveAppDisclaimer = ({ manifest }: Props) => {
         <LiveAppIcon size={48} name={manifest.name} icon={manifest.icon || ""} />
       </Head>
 
-      <Title>{t("platform.disclaimer.title")}</Title>
+      <Title data-test-id="live-app-disclaimer-drawer-title">
+        {t("platform.disclaimer.title")}
+      </Title>
 
       <Description>{t("platform.disclaimer.description")}</Description>
 

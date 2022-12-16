@@ -25,6 +25,7 @@ import type {
   WalletConnectState,
   SwapStateType,
   DynamicContentState,
+  ProtectState,
 } from "../reducers/types";
 import type { Unpacked } from "../types/helpers";
 
@@ -256,6 +257,7 @@ export enum SettingsActionTypes {
   ACCEPT_SWAP_PROVIDER = "ACCEPT_SWAP_PROVIDER",
   LAST_SEEN_DEVICE = "LAST_SEEN_DEVICE",
   LAST_SEEN_DEVICE_INFO = "LAST_SEEN_DEVICE_INFO",
+  SET_LAST_SEEN_CUSTOM_IMAGE = "SET_LAST_SEEN_CUSTOM_IMAGE",
   ADD_STARRED_MARKET_COINS = "ADD_STARRED_MARKET_COINS",
   REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
   SET_LAST_CONNECTED_DEVICE = "SET_LAST_CONNECTED_DEVICE",
@@ -361,6 +363,10 @@ export type SettingsSetSwapKycPayload = {
 export type SettingsAcceptSwapProviderPayload = {
   acceptedProvider: Unpacked<SettingsState["swap"]["acceptedProviders"]>;
 };
+export type SettingsSetLastSeenCustomImagePayload = {
+  imageSize: number;
+  imageHash: string;
+};
 export type SettingsLastSeenDevicePayload = {
   deviceInfo: NonNullable<SettingsState["lastSeenDevice"]>["deviceInfo"];
 };
@@ -448,6 +454,7 @@ export type SettingsPayload =
   | SettingsAcceptSwapProviderPayload
   | SettingsLastSeenDevicePayload
   | SettingsLastSeenDeviceInfoPayload
+  | SettingsSetLastSeenCustomImagePayload
   | SettingsAddStarredMarketcoinsPayload
   | SettingsRemoveStarredMarketcoinsPayload
   | SettingsSetLastConnectedDevicePayload
@@ -486,6 +493,19 @@ export type SwapPayload =
   | UpdateTransactionPayload
   | UpdateRatePayload;
 
+// === PROTECT ACTIONS ===
+
+export enum ProtectActionTypes {
+  UPDATE_DATA = "UPDATE_DATA",
+  UPDATE_PROTECT_STATUS = "UPDATE_PROTECT_STATUS",
+}
+
+export type ProtectDataPayload = Pick<ProtectState, "data">;
+
+export type ProtectStatusPayload = Pick<ProtectState, "protectStatus">;
+
+export type ProtectPayload = ProtectDataPayload | ProtectStatusPayload;
+
 // === PAYLOADS ===
 
 export type ActionsPayload =
@@ -497,4 +517,5 @@ export type ActionsPayload =
   | Action<SettingsPayload>
   | Action<WalletConnectPayload>
   | Action<PostOnboardingPayload>
-  | Action<SwapPayload>;
+  | Action<SwapPayload>
+  | Action<ProtectPayload>;

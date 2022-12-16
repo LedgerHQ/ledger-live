@@ -30,7 +30,7 @@ const DesyncDrawer = ({ isOpen, onClose, onRetry, device }: Props) => {
       preventBackdropClick
       noCloseButton
     >
-      <Text variant="h4" fontWeight="semiBold" mb={4} mt={8}>
+      <Text variant="h4" fontWeight="semiBold" mb={4}>
         {t("syncOnboarding.desyncDrawer.title", { productName })}
       </Text>
       <Text variant="bodyLineHeight" mb={8} color="neutral.c80">
