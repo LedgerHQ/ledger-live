@@ -154,7 +154,12 @@ function readPackage(pkg, context) {
         "expo-asset": "*",
       }),
       /* Other packages */
-      addDependencies("detox", { "@jest/reporters": "*", "jest-environment-node": "*", "jest-circus": "*" }),
+      addDependencies("detox", {
+        "@jest/reporters": "*",
+        "jest-environment-node": "*",
+        "jest-circus": "*",
+      }),
+      addDependencies("allure-playwright", { "@playwright/test": "*" }),
       addPeerDependencies("@svgr/core", { "@svgr/plugin-svgo": "*" }),
       addDependencies("@sentry/react-native", {
         tslib: "*",
