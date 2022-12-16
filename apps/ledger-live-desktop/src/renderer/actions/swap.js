@@ -39,11 +39,7 @@ export const filterAvailableToAssets = (pairs, fromId?: string) => {
 
   const toAssets = [];
   for (const pair of pairs) {
-    if (fromId && pair.from === fromId) {
-      toAssets.push(pair.to);
-    }
-
-    if (!fromId) {
+    if (!fromId || pair.from === fromId) {
       toAssets.push(pair.to);
     }
   }
