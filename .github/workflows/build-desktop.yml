@@ -21,8 +21,51 @@ concurrency:
   cancel-in-progress: ${{ github.ref_name != 'develop' }}
 
 jobs:
+  is-affected:
+    outputs:
+      is-desktop-affected: ${{ steps.affected.outputs.is-package-affected }}
+    runs-on: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: develop
+          fetch-depth: 0
+      - name: checkout branch (PR)
+        if: ${{ github.event_name == 'pull_request' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr checkout ${{ github.event.pull_request.number }}
+      - name: checkout branch (not PR)
+        if: ${{ github.event_name != 'pull_request' }}
+        run: |
+          git checkout $GITHUB_SHA
+      - uses: ./tools/actions/turbo-affected
+        id: affected
+        with:
+          package: "ledger-live-desktop"
+          head-ref: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.event.pull_request.base.ref) || 'HEAD^' }}
+
+  # Run dummy jobs when not affected to pass the required status checks
+  dummy:
+    name: "Build Ledger Live Desktop"
+    needs: is-affected
+    if: ${{ needs.is-affected.outputs.is-desktop-affected != 'true' }}
+    strategy:
+      matrix:
+        names:
+          - Linux
+          - Windows
+          - Mac OS X
+    runs-on: ubuntu-latest
+    steps:
+      - id: dummy
+        run: exit 0
+
   pr-is-fork:
     name: "Check if the PR is a fork"
+    needs: is-affected
+    if: ${{ needs.is-affected.outputs.is-desktop-affected == 'true' }}
     uses: ./.github/workflows/pr-is-fork.yml
     with:
       non-pr-result: false
@@ -57,6 +100,7 @@ jobs:
     runs-on: [ledger-live, linux]
     steps:
       - name: Stop EC2 Linux Runner
+        if: ${{ always() && needs.start-runner.result == 'success' }}
         uses: LedgerHQ/actions/ec2-linux-runner@main
         with:
           mode: stop
@@ -126,10 +170,9 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: "3.x"
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.7
-          bundler-cache: true
+      # - uses: ruby/setup-ruby@v1
+      #   with:
+      #     ruby-version: 3.1.2
       - uses: pnpm/action-setup@v2
         with:
           version: latest
@@ -160,6 +203,8 @@ jobs:
   build-desktop-app-windows:
     name: "Build Ledger Live Desktop (Windows)"
     runs-on: [ledger-live, windows]
+    needs: is-affected
+    if: ${{ needs.is-affected.outputs.is-desktop-affected == 'true' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -202,6 +247,8 @@ jobs:
 
   build-desktop-app-macos:
     name: "Build Ledger Live Desktop (Mac OS X)"
+    needs: is-affected
+    if: ${{ needs.is-affected.outputs.is-desktop-affected == 'true' }}
     runs-on: [ledger-live, macos]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"

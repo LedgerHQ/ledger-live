@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-eth",
-  "version": "6.29.11",
+  "version": "6.30.2",
   "description": "Ledger Hardware Wallet Ethereum Application API",
   "keywords": [
     "Ledger",
@@ -35,7 +35,8 @@
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "axios": "^0.26.1",
-    "bignumber.js": "^9.1.0"
+    "bignumber.js": "^9.1.0",
+    "crypto-js": "^4.1.1"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -47,5 +48,8 @@
     "lint:fix": "pnpm lint --fix",
     "test": "jest"
   },
-  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec"
+  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec",
+  "devDependencies": {
+    "ethers": "^5.6.9"
+  }
 }

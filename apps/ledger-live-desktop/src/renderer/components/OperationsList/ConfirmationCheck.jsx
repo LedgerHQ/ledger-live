@@ -128,6 +128,9 @@ const iconsComponent = {
   REVOKE: VoteNay,
   ACTIVATE: Vote,
   REGISTER: IconPlus,
+  STAKE: IconDelegate,
+  UNSTAKE: IconUndelegate,
+  WITHDRAW_UNSTAKED: IconCoins,
 };
 
 class ConfirmationCheck extends PureComponent<{

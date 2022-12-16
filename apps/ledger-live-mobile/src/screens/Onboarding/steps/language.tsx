@@ -29,7 +29,7 @@ import {
 } from "../../../reducers/settings";
 import ChangeDeviceLanguageAction from "../../../components/ChangeDeviceLanguageAction";
 import ChangeDeviceLanguagePrompt from "../../../components/ChangeDeviceLanguagePrompt";
-import { track } from "../../../analytics";
+import { track, updateIdentify } from "../../../analytics";
 import {
   BaseComposite,
   StackNavigatorProps,
@@ -106,6 +106,7 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
     await Promise.all([
       I18nManager.forceRTL(!I18nManager.isRTL),
       dispatch(setLanguage(selectedLanguage)),
+      updateIdentify(),
     ]);
     setTimeout(() => RNRestart.Restart(), 0);
   };
@@ -119,6 +120,7 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
         toggleModal();
       } else {
         dispatch(setLanguage(l));
+        updateIdentify();
 
         const deviceLanguageId = lastSeenDevice?.deviceInfo.languageId;
         const potentialDeviceLanguage = localeIdToDeviceLanguage[l];

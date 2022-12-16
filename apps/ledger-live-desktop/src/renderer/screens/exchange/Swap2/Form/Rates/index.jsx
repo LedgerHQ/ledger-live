@@ -2,6 +2,7 @@
 import React, { useCallback, useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Trans } from "react-i18next";
+import { track } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import DecentralisedRate from "./DecentralisedRate";
@@ -15,7 +16,7 @@ import type {
 } from "@ledgerhq/live-common/exchange/swap/types";
 import { rateSelector, updateRateAction } from "~/renderer/actions/swap";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { SWAP_VERSION } from "../../utils/index";
+import { swapDefaultTrack } from "../../utils/index";
 import styled from "styled-components";
 import Tooltip from "~/renderer/components/Tooltip";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
@@ -61,6 +62,7 @@ export default function ProviderRate({
   const dispatch = useDispatch();
   const [dexSelected, setDexSelected] = useState(null);
   const [filter, setFilter] = useState([]);
+  const [defaultPartner, setDefaultPartner] = useState("");
   const [emptyState, setEmptyState] = useState(false);
   const selectedRate = useSelector(rateSelector);
 
@@ -68,24 +70,47 @@ export default function ProviderRate({
 
   const setRate = useCallback(
     rate => {
+      track("partner_clicked", {
+        button: "Partner Chosen",
+        page: "Page Swap Form",
+        ...swapDefaultTrack,
+        swap_type: rate.tradeMethod,
+        value: rate,
+        defaultPartner,
+      });
       setDexSelected(null);
       updateSelection(rate);
       dispatch(updateRateAction(rate));
     },
-    [updateSelection, dispatch],
+    [defaultPartner, updateSelection, dispatch],
   );
 
   const setDexRate = useCallback(
     provider => {
+      track("partner_clicked", {
+        button: "Partner Dex Chosen",
+        page: "Page Swap Form",
+        ...swapDefaultTrack,
+        swap_type: "float",
+        value: provider,
+        defaultPartner,
+      });
       setDexSelected(provider);
       updateSelection(provider);
     },
-    [updateSelection],
+    [defaultPartner, updateSelection],
   );
 
   useEffect(() => {
+    track("button_clicked", {
+      button: "Filter selected",
+      page: "Page Swap Form",
+      ...swapDefaultTrack,
+      value: filter,
+    });
     if (filter.includes(FILTER.decentralised)) {
       setDexRate(DEX_PROVIDERS[0]);
+      setDefaultPartner(DEX_PROVIDERS[0].name);
     } else {
       let selectedRate;
       if (filter.includes(FILTER.float)) {
@@ -96,6 +121,7 @@ export default function ProviderRate({
         selectedRate = rates && rates[0];
       }
       setRate(selectedRate || {});
+      setDefaultPartner(selectedRate?.provider);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter]);
@@ -120,7 +146,7 @@ export default function ProviderRate({
         category="Swap"
         name="Form - Edit Rates"
         provider={provider}
-        swapVersion={SWAP_VERSION}
+        {...swapDefaultTrack}
       />
       <Box horizontal justifyContent="space-between" fontSize={5}>
         <Text

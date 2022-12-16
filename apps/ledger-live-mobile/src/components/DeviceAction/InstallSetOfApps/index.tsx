@@ -96,19 +96,20 @@ const InstallSetOfApps = ({
               <Trans i18nKey="installSetOfApps.ongoing.loading" />
             )}
           </Text>
-          {itemProgress &&
-            dependencies?.map((appName, i) => (
-              <Item
-                key={appName}
-                i={i}
-                appName={appName}
-                isActive={currentAppOp?.name === appName}
-                installed={
-                  progress ? !installQueue?.includes(appName) : undefined
-                }
-                itemProgress={itemProgress}
-              />
-            ))}
+          {itemProgress !== undefined
+            ? dependencies?.map((appName, i) => (
+                <Item
+                  key={appName}
+                  i={i}
+                  appName={appName}
+                  isActive={currentAppOp?.name === appName}
+                  installed={
+                    progress ? !installQueue?.includes(appName) : undefined
+                  }
+                  itemProgress={itemProgress}
+                />
+              ))
+            : null}
         </Flex>
       </Flex>
       <Text textAlign="center" color="neutral.c70">

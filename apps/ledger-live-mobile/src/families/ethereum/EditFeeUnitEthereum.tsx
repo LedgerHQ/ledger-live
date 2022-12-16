@@ -1,28 +1,29 @@
 import React, { useCallback } from "react";
-import { BigNumber } from "bignumber.js";
-import { View, StyleSheet } from "react-native";
-import { useTranslation } from "react-i18next";
 import Slider from "react-native-slider";
+import { BigNumber } from "bignumber.js";
+import { useTranslation } from "react-i18next";
+import { View, StyleSheet } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
+import { getDefaultFeeUnit } from "@ledgerhq/live-common/families/ethereum/logic";
 import {
-  Range,
   reverseRangeIndex,
   projectRangeIndex,
+  Range,
 } from "@ledgerhq/live-common/range";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 
-const GasSlider = React.memo(
+const FeeSlider = React.memo(
   ({
     value,
     onChange,
     range,
   }: {
     value: BigNumber;
-    onChange: (_: BigNumber) => void;
+    onChange: (arg: unknown) => void;
     range: Range;
   }) => {
     const { colors } = useTheme();
@@ -44,55 +45,48 @@ const GasSlider = React.memo(
     );
   },
 );
+
 type Props = {
   account: AccountLike;
-  parentAccount?: Account | null;
+  parentAccount: Account | null | undefined;
   transaction: Transaction;
-  gasPrice: BigNumber;
-  onChange: (..._: Array<BigNumber>) => void;
+  feeAmount: BigNumber;
+  onChange: (value: BigNumber) => void;
   range: Range;
+  title: string;
 };
 export default function EditFeeUnitEthereum({
   account,
   parentAccount,
   transaction,
-  gasPrice,
+  feeAmount,
   onChange,
   range,
+  title,
 }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const mainAccount = getMainAccount(account, parentAccount);
+  const unit = getDefaultFeeUnit(mainAccount.currency);
+
   const feeCustomUnit = transaction.feeCustomUnit;
+
   const onChangeF = useCallback(
     value => {
       onChange(value);
     },
     [onChange],
   );
-  const { networkInfo } = transaction;
-  if (!networkInfo) return null;
+
   return (
     <View>
-      <View
-        style={[
-          styles.sliderContainer,
-          {
-            backgroundColor: colors.card,
-          },
-        ]}
-      >
-        <View style={styles.gasPriceHeader}>
-          <LText style={styles.gasPriceLabel} semiBold>
-            {t("send.summary.gasPrice")}
+      <View style={[styles.sliderContainer]}>
+        <View style={styles.feeHeader}>
+          <LText style={styles.feeLabel} semiBold>
+            {t(title)}
           </LText>
           <View
-            style={[
-              styles.gasPrice,
-              {
-                backgroundColor: colors.lightLive,
-              },
-            ]}
+            style={[styles.feeAmount, { backgroundColor: colors.lightLive }]}
           >
             <LText
               style={[
@@ -103,14 +97,14 @@ export default function EditFeeUnitEthereum({
               ]}
             >
               <CurrencyUnitValue
-                unit={mainAccount.unit || feeCustomUnit}
-                value={gasPrice}
+                unit={unit || feeCustomUnit}
+                value={feeAmount}
               />
             </LText>
           </View>
         </View>
         <View style={styles.container}>
-          <GasSlider value={gasPrice} range={range} onChange={onChangeF} />
+          <FeeSlider value={feeAmount} range={range} onChange={onChangeF} />
           <View style={styles.textContainer}>
             <LText color="grey" style={styles.currencyUnitText}>
               {t("fees.speed.slow")}
@@ -124,19 +118,20 @@ export default function EditFeeUnitEthereum({
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   sliderContainer: {
     paddingLeft: 0,
   },
-  gasPriceHeader: {
+  feeHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
-  gasPriceLabel: {
+  feeLabel: {
     fontSize: 20,
   },
-  gasPrice: {
+  feeAmount: {
     paddingVertical: 4,
     paddingHorizontal: 8,
   },

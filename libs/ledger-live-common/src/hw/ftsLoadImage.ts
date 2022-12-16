@@ -15,6 +15,8 @@ import {
 import getAppAndVersion from "./getAppAndVersion";
 import { isDashboardName } from "./isDashboardName";
 import attemptToQuitApp, { AttemptToQuitAppEvent } from "./attemptToQuitApp";
+import ftsFetchImageSize from "./ftsFetchImageSize";
+import ftsFetchImageHash from "./ftsFetchImageHash";
 import { gzip } from "pako";
 
 const MAX_APDU_SIZE = 255;
@@ -34,6 +36,8 @@ export type LoadImageEvent =
     }
   | {
       type: "imageLoaded";
+      imageSize: number;
+      imageHash: string;
     };
 
 export type LoadImageRequest = {
@@ -155,8 +159,16 @@ export default function loadImage({
                 );
               }
 
+              // Fetch image size
+              const imageBytes = await ftsFetchImageSize(transport);
+
+              // Fetch image hash
+              const imageHash = await ftsFetchImageHash(transport);
+
               subscriber.next({
                 type: "imageLoaded",
+                imageSize: imageBytes,
+                imageHash,
               });
 
               subscriber.complete();
@@ -167,7 +179,7 @@ export default function loadImage({
                 (e &&
                   e instanceof TransportStatusError &&
                   [0x6e00, 0x6d00, 0x6e01, 0x6d01, 0x6d02].includes(
-                    // @ts-expect-error typescript not checking agains the instanceof
+                    // @ts-expect-error typescript not checking against the instanceof
                     e.statusCode
                   ))
               ) {
@@ -196,10 +208,10 @@ export default function loadImage({
   return sub as Observable<LoadImageEvent>;
 }
 
-const generateFtsImageFormat: (
-  imgHex: string,
+export const generateFtsImageFormat: (
+  hexImage: string,
   compressImage: boolean
-) => Promise<Buffer> = async (imgHex, compressImage) => {
+) => Promise<Buffer> = async (hexImage, compressImage) => {
   const width = 400;
   const height = 672;
   const bpp = 2; // value for 4 bits per pixel
@@ -211,7 +223,7 @@ const generateFtsImageFormat: (
   header.writeUInt16LE(height, 2); // height
   header.writeUInt8((bpp << 4) | compression, 4);
 
-  const imgData = Buffer.from(imgHex, "hex");
+  const imgData = Buffer.from(hexImage, "hex");
 
   if (!compressImage) {
     const dataLength = imgData.length;

@@ -51,4 +51,5 @@ setSupportedCurrencies([
   "songbird",
   "flare",
   "juno",
+  "near",
 ]);

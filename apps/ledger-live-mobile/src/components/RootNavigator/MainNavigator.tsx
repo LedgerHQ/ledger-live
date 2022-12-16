@@ -55,7 +55,9 @@ export default function MainNavigator({
     callback => {
       // NB This is conditionally going to show the confirmation modal from the manager
       // in the event of having ongoing installs/uninstalls.
-      managerNavLockCallback ? managerNavLockCallback(callback) : callback();
+      managerNavLockCallback
+        ? managerNavLockCallback(() => callback)
+        : callback();
     },
     [managerNavLockCallback],
   );
@@ -171,7 +173,7 @@ export default function MainNavigator({
           tabPress: e => {
             e.preventDefault();
             managerLockAwareCallback(() => {
-              if (hasOrderedNano) {
+              if (readOnlyModeEnabled && hasOrderedNano) {
                 navigation.navigate(
                   ScreenName.PostBuyDeviceSetupNanoWallScreen,
                 );

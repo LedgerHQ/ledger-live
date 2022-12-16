@@ -36,13 +36,14 @@ jobs:
           registry-url: "https://registry.npmjs.org"
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7 # Not needed with a .ruby-version file
-          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+          ruby-version:
+            3.1.2 # Not needed with a .ruby-version file
+            # runs 'bundle install' and caches installed gems automatically
+      - uses: ./tools/actions/get-package-infos
         id: desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+      - uses: ./tools/actions/get-package-infos
         id: mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
@@ -62,11 +63,11 @@ jobs:
         run: pnpm changeset publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+      - uses: ./tools/actions/get-package-infos
         id: post-desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+      - uses: ./tools/actions/get-package-infos
         id: post-mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile

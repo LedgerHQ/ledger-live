@@ -26,13 +26,13 @@ import perFamilyAccountActions from "~/renderer/generated/accountActions";
 import perFamilyManageActions from "~/renderer/generated/AccountHeaderManageActions";
 import useTheme from "~/renderer/hooks/useTheme";
 import IconAccountSettings from "~/renderer/icons/AccountSettings";
-import IconCoins from "~/renderer/icons/ClaimReward";
 import Graph from "~/renderer/icons/Graph";
 import IconWalletConnect from "~/renderer/icons/WalletConnect";
 import { useProviders } from "~/renderer/screens/exchange/Swap2/Form";
 import useCompoundAccountEnabled from "~/renderer/screens/lend/useCompoundAccountEnabled";
 import { rgba } from "~/renderer/styles/helpers";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import { track } from "~/renderer/analytics/segment";
 import {
   ActionDefault,
   BuyActionDefault,
@@ -41,6 +41,7 @@ import {
   SendActionDefault,
   SwapActionDefault,
 } from "./AccountActionsDefault";
+import { swapDefaultTrack } from "~/renderer/screens/exchange/Swap2/utils/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const ButtonSettings: ThemedComponent<{ disabled?: boolean }> = styled(Tabbable).attrs(() => ({
@@ -204,29 +205,21 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const onBuySell = useCallback(
     (mode = "buy") => {
       setTrackingSource("account header actions");
-      // PTX smart routing redirect to live app or to native implementation
-      if (ptxSmartRouting?.enabled) {
-        const params = {
-          currency: currency?.id,
-          account: mainAccount?.id,
-          mode, // buy or sell
-        };
 
-        history.push({
-          // replace 'multibuy' in case live app id changes
-          pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ?? "multibuy"}`,
-          state: params,
-        });
-      } else {
-        history.push({
-          pathname: "/exchange",
-          state: {
-            mode: "onRamp",
-            currencyId: currency.id,
-            accountId: mainAccount.id,
-          },
-        });
-      }
+      history.push({
+        pathname: "/exchange",
+        state: ptxSmartRouting?.enabled
+          ? {
+              currency: currency?.id,
+              account: mainAccount?.id,
+              mode, // buy or sell
+            }
+          : {
+              mode: "onRamp",
+              currencyId: currency.id,
+              accountId: mainAccount.id,
+            },
+      });
     },
     [currency, history, mainAccount, ptxSmartRouting],
   );
@@ -238,7 +231,13 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   }, [openModal, summary]);
 
   const onSwap = useCallback(() => {
-    setTrackingSource("account header actions");
+    track("button_clicked", {
+      button: "swap",
+      currency: currency.ticker,
+      page: "Page Account",
+      ...swapDefaultTrack,
+    });
+    setTrackingSource("Page Account");
     history.push({
       pathname: "/swap",
       state: {
@@ -248,12 +247,6 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
       },
     });
   }, [currency, history, account, parentAccount]);
-
-  const onPlatformStake = useCallback(() => {
-    setTrackingSource("account header actions");
-
-    history.push({ pathname: "/platform/lido", state: { accountId: account.id } });
-  }, [history, account]);
 
   const onSend = useCallback(() => {
     openModal("MODAL_SEND", { parentAccount, account });
@@ -303,17 +296,6 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
             eventProperties: { currencyName: currency.name },
             icon: Graph,
             label: <Trans i18nKey="lend.manage.cta" />,
-          },
-        ]
-      : []),
-    ...(currency.id === "ethereum"
-      ? [
-          {
-            key: "Stake",
-            onClick: onPlatformStake,
-            event: "Eth Stake Account Button",
-            icon: IconCoins,
-            label: <Trans i18nKey="account.stake" values={{ currency: currency.name }} />,
           },
         ]
       : []),

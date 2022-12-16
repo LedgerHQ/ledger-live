@@ -5,7 +5,7 @@ const child_process = require("child_process");
 const destination = path.join(__dirname, "..", "lib");
 
 // Copy files that we want to include in the published package.
-const requiredFiles = ["src/assets/images", "src/assets/fonts", "src/assets/providersFavicons"];
+const requiredFiles = ["src/assets/images", "src/assets/fonts"];
 
 requiredFiles.forEach((filename) => {
   const fromSrc = filename.startsWith("src/");

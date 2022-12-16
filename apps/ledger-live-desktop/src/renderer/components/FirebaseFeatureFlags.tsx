@@ -12,7 +12,7 @@ const checkFeatureFlagVersion = (feature: Feature) => {
   if (
     feature.enabled &&
     feature.desktop_version &&
-    !semver.satisfies(__APP_VERSION__, feature.desktop_version)
+    !semver.satisfies(__APP_VERSION__, feature.desktop_version, { includePrerelease: true })
   ) {
     return {
       enabledOverriddenForCurrentDesktopVersion: true,

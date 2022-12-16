@@ -1,7 +1,9 @@
 import React, { PropsWithChildren, useCallback, useState } from "react";
 import { useSelector } from "react-redux";
 import isEqual from "lodash/isEqual";
+import semver from "semver";
 import remoteConfig from "@react-native-firebase/remote-config";
+import VersionNumber from "react-native-version-number";
 import {
   FeatureFlagsProvider,
   defaultFeatures,
@@ -11,6 +13,24 @@ import { getEnv } from "@ledgerhq/live-common/env";
 
 import { formatFeatureId } from "./FirebaseRemoteConfig";
 import { languageSelector } from "../reducers/settings";
+
+const checkFeatureFlagVersion = (feature: Feature | undefined) => {
+  if (
+    feature &&
+    feature.enabled &&
+    feature.mobile_version &&
+    !semver.satisfies(VersionNumber.appVersion, feature.mobile_version, {
+      includePrerelease: true,
+    })
+  ) {
+    return {
+      enabledOverriddenForCurrentMobileVersion: true,
+      ...feature,
+      enabled: false,
+    };
+  }
+  return feature;
+};
 
 type Props = PropsWithChildren<unknown>;
 
@@ -24,7 +44,7 @@ const getFeature = (args: {
   try {
     // Nb prioritize local overrides
     if (allowOverride && localOverrides && localOverrides[key]) {
-      return localOverrides[key];
+      return checkFeatureFlagVersion(localOverrides[key]);
     }
 
     const envFlags = getEnv("FEATURE_FLAGS") as
@@ -58,7 +78,7 @@ const getFeature = (args: {
       };
     }
 
-    return feature;
+    return checkFeatureFlagVersion(feature);
   } catch (error) {
     console.error(`Failed to retrieve feature "${key}"`);
     return null;

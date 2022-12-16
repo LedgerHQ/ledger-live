@@ -4,7 +4,7 @@ import { v4 as uuid } from "uuid";
 import * as Sentry from "@sentry/react-native";
 import Config from "react-native-config";
 import { Platform } from "react-native";
-import analytics, { JsonMap } from "@segment/analytics-react-native";
+import { createClient, SegmentClient } from "@segment/analytics-react-native";
 import VersionNumber from "react-native-version-number";
 import RNLocalize from "react-native-localize";
 import { ReplaySubject } from "rxjs";
@@ -30,8 +30,10 @@ import {
   lastSeenDeviceSelector,
   sensitiveAnalyticsSelector,
   firstConnectionHasDeviceSelector,
+  firstConnectHasDeviceUpdatedSelector,
   readOnlyModeEnabledSelector,
   hasOrderedNanoSelector,
+  notificationsSelector,
 } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
 import { DeviceLike, State } from "../reducers/types";
@@ -39,6 +41,7 @@ import { satisfactionSelector } from "../reducers/ratings";
 import type { AppStore } from "../reducers";
 import { NavigatorName } from "../const";
 import { previousRouteNameRef, currentRouteNameRef } from "./screenRefs";
+import { AnonymousIpPlugin } from "./AnonymousIpPlugin";
 import { Maybe } from "../types/helpers";
 
 let sessionId = uuid();
@@ -49,7 +52,7 @@ const { ANALYTICS_LOGS, ANALYTICS_TOKEN } = Config;
 
 export const updateSessionId = () => (sessionId = uuid());
 
-const extraProperties = (store: AppStore) => {
+const extraProperties = async (store: AppStore) => {
   const state: State = store.getState();
   const sensitiveAnalytics = sensitiveAnalyticsSelector(state);
   const systemLanguage = sensitiveAnalytics
@@ -73,6 +76,16 @@ const extraProperties = (store: AppStore) => {
       }
     : {};
   const firstConnectionHasDevice = firstConnectionHasDeviceSelector(state);
+  const notifications = notificationsSelector(state);
+  const notificationsAllowed = notifications.areNotificationsAllowed;
+  const notificationsBlacklisted = Object.entries(notifications)
+    .filter(
+      ([key, value]) => key !== "areNotificationsAllowed" && value === false,
+    )
+    .map(([key]) => key);
+  const firstConnectHasDeviceUpdated =
+    firstConnectHasDeviceUpdatedSelector(state);
+  const { user } = await getOrCreateUser();
 
   return {
     appVersion,
@@ -81,60 +94,60 @@ const extraProperties = (store: AppStore) => {
     environment: ANALYTICS_LOGS ? "development" : "production",
     systemLanguage: sensitiveAnalytics ? null : systemLanguage,
     language,
+    appLanguage: language, // In Braze it can't be called language
     region: region?.split("-")[1] || region,
     platformOS: Platform.OS,
     platformVersion: Platform.Version,
     sessionId,
     devicesCount: devices.length,
     firstConnectionHasDevice,
+    firstConnectHasDeviceUpdated,
     ...(satisfaction
       ? {
           satisfaction,
         }
       : {}),
     ...deviceInfo,
+    notificationsAllowed,
+    notificationsBlacklisted,
+    userId: user?.id,
   };
-};
-
-const context = {
-  ip: "0.0.0.0",
 };
 
 type MaybeAppStore = Maybe<AppStore>;
 
 let storeInstance: MaybeAppStore; // is the redux store. it's also used as a flag to know if analytics is on or off.
+let segmentClient: SegmentClient | undefined;
 
-const token = __DEV__ ? null : ANALYTICS_TOKEN;
-export const start = async (store: AppStore) => {
-  if (token) {
-    await analytics.setup(token, {
-      android: {
-        collectDeviceId: false,
-      },
-      ios: {
-        trackAdvertising: false,
-        trackDeepLinks: false,
-      },
-    });
-  }
-
+const token = ANALYTICS_TOKEN;
+export const start = async (
+  store: AppStore,
+): Promise<SegmentClient | undefined> => {
   const { user, created } = await getOrCreateUser();
   storeInstance = store;
 
-  if (ANALYTICS_LOGS) console.log("analytics:identify", user.id);
-
-  if (created) {
-    if (ANALYTICS_LOGS) console.log("analytics:identify", user.id);
-
-    if (token) {
-      await analytics.reset();
-      await analytics.identify(user.id, extraProperties(store) as JsonMap, {
-        context,
-      });
-    }
+  if (created && ANALYTICS_LOGS) {
+    console.log("analytics:identify", user.id);
   }
 
-  track("Start", extraProperties(store), true);
+  console.log("START ANALYTICS", ANALYTICS_LOGS);
+  const userExtraProperties = await extraProperties(store);
+  if (token) {
+    segmentClient = createClient({
+      writeKey: token,
+      debug: !!ANALYTICS_LOGS,
+    });
+    // This allows us to not retrieve users ip addresses for privacy reasons
+    segmentClient.add({ plugin: new AnonymousIpPlugin() });
+
+    if (created) {
+      segmentClient.reset();
+    }
+    segmentClient.identify(user.id, userExtraProperties);
+  }
+
+  track("Start", userExtraProperties, true);
+  return segmentClient;
 };
 export const updateIdentify = async () => {
   Sentry.addBreadcrumb({
@@ -146,15 +159,10 @@ export const updateIdentify = async () => {
     return;
   }
 
-  if (ANALYTICS_LOGS)
-    console.log("analytics:identify", extraProperties(storeInstance), {
-      context,
-    });
+  const userExtraProperties = await extraProperties(storeInstance);
+  if (ANALYTICS_LOGS) console.log("analytics:identify", userExtraProperties);
   if (!token) return;
-  const { user } = await getOrCreateUser();
-  analytics.identify(user.id, extraProperties(storeInstance) as JsonMap, {
-    context,
-  });
+  segmentClient?.identify(userExtraProperties.userId, userExtraProperties);
 };
 export const stop = () => {
   if (ANALYTICS_LOGS) console.log("analytics:stop");
@@ -164,7 +172,7 @@ export const trackSubject = new ReplaySubject<{
   event: string;
   properties?: Error | Record<string, unknown> | null;
 }>(10);
-export const track = (
+export const track = async (
   event: string,
   properties?: Error | Record<string, unknown> | null,
   mandatory?: boolean | null,
@@ -191,9 +199,10 @@ export const track = (
 
   const screen = currentRouteNameRef.current;
 
+  const userExtraProperties = await extraProperties(storeInstance as AppStore);
   const allProperties = {
     screen,
-    ...extraProperties(storeInstance as AppStore),
+    ...userExtraProperties,
     ...properties,
   };
   if (ANALYTICS_LOGS) console.log("analytics:track", event, allProperties);
@@ -202,9 +211,7 @@ export const track = (
     properties: allProperties,
   });
   if (!token) return;
-  analytics.track(event, allProperties as JsonMap, {
-    context,
-  });
+  segmentClient?.track(event, allProperties);
 };
 export const getPageNameFromRoute = (route: RouteProp<ParamListBase>) => {
   const routeName =
@@ -248,7 +255,7 @@ export const useAnalytics = () => {
     page,
   };
 };
-export const screen = (
+export const screen = async (
   category?: string,
   name?: string | null,
   properties?: Record<string, unknown> | null | undefined,
@@ -276,9 +283,10 @@ export const screen = (
 
   const source = previousRouteNameRef.current;
 
+  const userExtraProperties = await extraProperties(storeInstance as AppStore);
   const allProperties = {
     source,
-    ...extraProperties(storeInstance as AppStore),
+    ...userExtraProperties,
     ...properties,
   };
   if (ANALYTICS_LOGS)
@@ -288,7 +296,5 @@ export const screen = (
     properties: allProperties,
   });
   if (!token) return;
-  analytics.track(title, allProperties as JsonMap, {
-    context,
-  });
+  segmentClient?.track(title, allProperties);
 };

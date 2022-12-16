@@ -33,11 +33,12 @@ const appVersionsRequired = {
   Algorand: ">= 1.2.9",
   Polkadot: ">= 15.9300.0",
   Elrond: ">= 1.0.11",
-  Ethereum: ">= 1.9.20",
+  Ethereum: ">= 1.10.1-0",
   Solana: ">= 1.2.0",
   Celo: ">= 1.1.8",
   "Cardano ADA": ">= 4.1.0",
   Zcash: "> 2.0.6",
+  NEAR: ">= 1.2.1",
 };
 export function mustUpgrade(
   deviceModel: DeviceModelId,

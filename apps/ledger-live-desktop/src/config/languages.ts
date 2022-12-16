@@ -55,7 +55,18 @@ export const allLanguages: Locale[] = [
   "zh",
 ];
 
-export const prodStableLanguages: Locale[] = ["en", "fr", "es", "ru", "zh", "de", "tr", "ja", "ko"];
+export const prodStableLanguages: Locale[] = [
+  "en",
+  "fr",
+  "es",
+  "pt",
+  "ru",
+  "zh",
+  "de",
+  "tr",
+  "ja",
+  "ko",
+];
 
 /**
  * List of languages that should be prompted to existing users once if they are

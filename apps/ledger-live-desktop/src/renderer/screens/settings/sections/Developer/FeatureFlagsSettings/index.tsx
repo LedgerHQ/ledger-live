@@ -1,9 +1,13 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useRef } from "react";
 import ButtonV2 from "~/renderer/components/Button";
 import { useTranslation } from "react-i18next";
-import { defaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
+import {
+  defaultFeatures,
+  useFeature,
+  useFeatureFlags,
+} from "@ledgerhq/live-common/featureFlags/index";
+import { Input, Icons, Flex, SearchInput, Alert, Tag } from "@ledgerhq/react-ui";
 import { SettingsSectionRow as Row } from "../../../SettingsSection";
-import { Input, Icons, Flex, SearchInput, Alert } from "@ledgerhq/react-ui";
 import { FeatureId } from "@ledgerhq/types-live";
 import { InputRenderLeftContainer } from "@ledgerhq/react-ui/components/form/BaseInput/index";
 import { includes, lowerCase, trim } from "lodash";
@@ -46,6 +50,42 @@ export const FeatureFlagContent = withV3StyleProvider((props: { visible?: boolea
       .filter(name => !searchInput || includes(lowerCase(name), lowerCase(searchInput)));
   }, [featureFlags, searchInput]);
 
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pressCount = useRef(0);
+
+  const { getFeature, overrideFeature } = useFeatureFlags();
+
+  const [cheatActivated, setCheatActivated] = useState(false);
+  const ruleThemAll = useCallback(() => {
+    ([
+      "customImage",
+      "deviceInitialApps",
+      "syncOnboarding",
+      "staxWelcomeScreen",
+    ] as FeatureId[]).forEach(featureId =>
+      overrideFeature(featureId, { ...getFeature(featureId), enabled: true }),
+    );
+    setCheatActivated(true);
+  }, [overrideFeature, getFeature]);
+
+  const onDescriptionClick = useCallback(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    pressCount.current += 1;
+    const timeout = setTimeout(() => {
+      pressCount.current = 0;
+    }, 300);
+    if (pressCount.current > 6) {
+      ruleThemAll();
+      pressCount.current = 0;
+    }
+    timeoutRef.current = timeout;
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [ruleThemAll]);
+
   const content = useMemo(
     () =>
       filteredFlags.map(flagName => (
@@ -59,11 +99,23 @@ export const FeatureFlagContent = withV3StyleProvider((props: { visible?: boolea
     [filteredFlags, focusedName],
   );
 
+  const config = useFeature("firebaseEnvironmentReadOnly");
+  const project = config?.params?.project;
+
   return (
     <Flex flexDirection="column" pt={2} rowGap={2} alignSelf="stretch">
-      {t("settings.developer.featureFlagsDesc")}
+      <div onClick={onDescriptionClick}>
+        {t("settings.developer.featureFlagsDesc")}
+        {cheatActivated ? " With great power comes great responsibility." : null}
+      </div>
       {!props.visible ? null : (
         <>
+          <Flex flexDirection="row" alignItems="center" columnGap={3}>
+            {t("settings.developer.firebaseProject")}
+            <Tag type="opacity" size="small" textProps={{ uppercase: false }} active>
+              {project}
+            </Tag>
+          </Flex>
           <SearchInput
             placeholder="Search"
             value={searchInput}

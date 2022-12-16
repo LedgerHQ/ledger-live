@@ -4,7 +4,7 @@ export const defaultFeatures: DefaultFeatures = {
   learn: {
     enabled: false,
   },
-  pushNotifications: {
+  brazePushNotifications: {
     enabled: false,
   },
   deviceLocalization: {
@@ -27,6 +27,9 @@ export const defaultFeatures: DefaultFeatures = {
     enabled: false,
   },
   currencyCronos: {
+    enabled: false,
+  },
+  currencyNear: {
     enabled: false,
   },
   currencySongbird: {
@@ -134,6 +137,51 @@ export const defaultFeatures: DefaultFeatures = {
     enabled: false,
   },
   mockFeature: {
+    enabled: false,
+  },
+  storyly: {
+    enabled: true,
+    params: {
+      stories: {
+        recoverySeed: {
+          testingEnabled: false,
+          token:
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NfaWQiOjY5NDgsImFwcF9pZCI6MTE0MjIsImluc19pZCI6MTQ4Mjl9.iak4gUnizDdPrEXJEV3wszzJ2YkYX-RIWDXv31aJkiE",
+        },
+        testStory: {
+          testingEnabled: false,
+          token:
+            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2NfaWQiOjY5NDgsImFwcF9pZCI6MTE0MjIsImluc19pZCI6MTIxOTh9.XqNitheri5VPDqebtA4JFu1VucVOHYlryki2TqCb1DQ",
+        },
+        storylyExample: {
+          testingEnabled: false,
+          token:
+            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2NfaWQiOjc2MCwiYXBwX2lkIjo0MDUsImluc19pZCI6NDA0fQ.1AkqOy_lsiownTBNhVOUKc91uc9fDcAxfQZtpm3nj40",
+        },
+      },
+    },
+  },
+  firebaseEnvironmentReadOnly: {
+    enabled: false,
+    params: {
+      project: "n/a (Firebase project could not be reached)",
+      comment:
+        "Do not modify this configuration. This is just a read-only helper to display the targeted Firebase environment in Ledger Live. The value of this flag has NO functional impact.",
+    },
+  },
+  walletNftGallery: {
+    enabled: false,
+  },
+  staxWelcomeScreen: {
+    enabled: false,
+  },
+  customImage: {
+    enabled: false,
+  },
+  postOnboardingClaimNft: {
+    enabled: false,
+  },
+  postOnboardingAssetsTransfer: {
     enabled: false,
   },
 };

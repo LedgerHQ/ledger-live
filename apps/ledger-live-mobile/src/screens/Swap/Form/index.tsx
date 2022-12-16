@@ -226,7 +226,7 @@ export function SwapForm({
     if (
       !provider ||
       !providerKYC?.id ||
-      !exchangeRate.rateId ||
+      exchangeRate.tradeMethod === "float" ||
       currentFlow === "KYC" ||
       currentFlow === "MFA"
     ) {
@@ -375,7 +375,9 @@ export function SwapForm({
           undefined,
         );
         swapTransaction.setFromAccount(account);
-      } else {
+      }
+
+      if (params.target === "to") {
         swapTransaction.setToAccount(
           swapTransaction.swap.to.currency,
           account,

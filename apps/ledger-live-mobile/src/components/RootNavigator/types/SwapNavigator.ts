@@ -65,7 +65,7 @@ export type SwapNavigatorParamList = {
   [ScreenName.SwapSelectProvider]: {
     provider?: string;
     swap: SwapDataType;
-    selectedId?: string;
+    selectedRate: ExchangeRate | undefined;
   };
   [ScreenName.SwapSelectFees]: {
     accountId?: string;

@@ -39,6 +39,7 @@ import {
 import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/ripple/types";
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 import BigNumber from "bignumber.js";
+import { Result } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { ScreenName } from "../../../const";
 
 export type SendFundsNavigatorStackParamList = {
@@ -203,6 +204,7 @@ export type SendFundsNavigatorStackParamList = {
     accountId: string;
     parentId?: string;
     transaction: EthereumTransaction;
+    setTransaction: Result<EthereumTransaction>["setTransaction"];
     currentNavigation:
       | ScreenName.LendingWithdrawSummary
       | ScreenName.LendingSupplySummary

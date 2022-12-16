@@ -20,7 +20,7 @@ const dataset: DatasetTest<Transaction> = {
           raw: ethereum1 as AccountRaw,
           transactions: [
             {
-              name: "success1",
+              name: "Send",
               transaction: fromTransactionRaw({
                 family: "evm",
                 mode: "send",
@@ -39,6 +39,30 @@ const dataset: DatasetTest<Transaction> = {
                 warnings: {
                   feeTooHigh: new FeeTooHigh(),
                 },
+              },
+            },
+            {
+              name: "Send max",
+              transaction: fromTransactionRaw({
+                family: "evm",
+                mode: "send",
+                recipient: "0x17733CAb76d9A2112576443F21735789733B1ca3",
+                amount: "1",
+                gasPrice: "100000000",
+                gasLimit: "21000",
+                chainId: 1,
+                nonce: 0,
+                useAllAmount: true,
+              }),
+              expectedStatus: (account, _, status) => {
+                return {
+                  amount: BigNumber.max(
+                    account.balance.minus(status.estimatedFees),
+                    0
+                  ),
+                  errors: {},
+                  warnings: {},
+                };
               },
             },
           ],
