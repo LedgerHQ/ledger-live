@@ -1,6 +1,7 @@
+import { of } from "rxjs";
 import { FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { renderHook, act } from "@testing-library/react-hooks";
-import { of } from "rxjs";
+import { aLatestFirmwareContextBuilder } from "../../mock/fixtures/aLatestFirmwareContext";
 import { getLatestAvailableFirmwareFromDeviceId } from "../getLatestAvailableFirmwareFromDeviceId";
 import { useGetLatestAvailableFirmware } from "./useGetLatestAvailableFirmware";
 
@@ -11,49 +12,13 @@ const mockedGetLatestAvailableFirmwareFromDeviceId = jest.mocked(
   getLatestAvailableFirmwareFromDeviceId
 );
 
-const aLatestFirmwareContext: FirmwareUpdateContext = {
-  osu: {
-    next_se_firmware_final_version: 1,
-    previous_se_firmware_final_version: [],
-    id: 0,
-    name: "OSU",
-    description: null,
-    display_name: null,
-    notes: null,
-    perso: "",
-    firmware: "",
-    firmware_key: "",
-    hash: "",
-    date_creation: "",
-    date_last_modified: "",
-    device_versions: [],
-    providers: [],
-  },
-  final: {
-    id: 1,
-    name: "FINAL",
-    description: null,
-    display_name: null,
-    notes: null,
-    perso: "",
-    firmware: "",
-    firmware_key: "",
-    hash: "",
-    date_creation: "",
-    date_last_modified: "",
-    device_versions: [],
-    providers: [],
-    version: "",
-    se_firmware: 1,
-    osu_versions: [],
-    mcu_versions: [],
-    application_versions: [],
-  },
-  shouldFlashMCU: false,
-};
-
-// TODO: rename into useGetLatestAvailableFirmware ?
 describe("useGetLatestAvailableFirmware", () => {
+  let aLatestFirmwareContext: FirmwareUpdateContext;
+
+  beforeEach(() => {
+    aLatestFirmwareContext = aLatestFirmwareContextBuilder();
+  });
+
   afterEach(() => {
     mockedGetLatestAvailableFirmwareFromDeviceId.mockClear();
     jest.clearAllTimers();
@@ -63,7 +28,9 @@ describe("useGetLatestAvailableFirmware", () => {
     it("should notify the hook consumer that there is no latest available firmware", async () => {
       mockedGetLatestAvailableFirmwareFromDeviceId.mockReturnValue(
         of({
-          firmwareUpdateContext: undefined,
+          firmwareUpdateContext: null,
+          deviceIsLocked: false,
+          status: "done",
         })
       );
       const { result } = renderHook(() =>
@@ -89,6 +56,8 @@ describe("useGetLatestAvailableFirmware", () => {
       mockedGetLatestAvailableFirmwareFromDeviceId.mockReturnValue(
         of({
           firmwareUpdateContext: aLatestFirmwareContext,
+          deviceIsLocked: false,
+          status: "done",
         })
       );
       const { result } = renderHook(() =>
@@ -106,6 +75,35 @@ describe("useGetLatestAvailableFirmware", () => {
       expect(result.current.status).toEqual("available-firmware");
       expect(result.current.error).toBeNull();
       expect(result.current.latestFirmware).toEqual(aLatestFirmwareContext);
+    });
+  });
+
+  describe("When the device is locked during the firmware update check", () => {
+    it("should notify the hook consumer of the need to unlock the device", async () => {
+      mockedGetLatestAvailableFirmwareFromDeviceId.mockReturnValue(
+        of({
+          firmwareUpdateContext: null,
+          deviceIsLocked: true,
+          status: "started",
+        })
+      );
+
+      const { result } = renderHook(() =>
+        useGetLatestAvailableFirmware({
+          getLatestAvailableFirmwareFromDeviceId:
+            mockedGetLatestAvailableFirmwareFromDeviceId,
+          deviceId: "A_DEVICE_ID",
+        })
+      );
+
+      await act(async () => {
+        jest.advanceTimersByTime(1);
+      });
+
+      expect(result.current.deviceIsLocked).toBe(true);
+      expect(result.current.status).toEqual("checking");
+      expect(result.current.error).toBeNull();
+      expect(result.current.latestFirmware).toBeNull();
     });
   });
 });
