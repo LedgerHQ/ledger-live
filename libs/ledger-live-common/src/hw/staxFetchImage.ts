@@ -149,7 +149,7 @@ export default function fetchImage({
                 currentOffset += chunkSize;
               }
 
-              const hexImage = await parseFtsImageFormat(imageBuffer);
+              const hexImage = await parseStaxImageFormat(imageBuffer);
 
               subscriber.next({ type: "imageFetched", hexImage });
 
@@ -191,7 +191,7 @@ export default function fetchImage({
 }
 
 // transforms from a Stax binary image format to an LLM hex string format
-const parseFtsImageFormat: (staxImageBuffer: Buffer) => Promise<string> =
+const parseStaxImageFormat: (staxImageBuffer: Buffer) => Promise<string> =
   async (staxImageBuffer) => {
     // const width = staxImageBuffer.readUint16LE(0); // always 400
     // const height = staxImageBuffer.readUint16LE(2); // always 672

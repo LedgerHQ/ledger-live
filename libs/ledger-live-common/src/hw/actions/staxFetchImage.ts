@@ -163,7 +163,7 @@ const implementations = {
           device: null,
         });
         device = null;
-        log("actions-fetch-fts-image-event/polling", "device init timeout");
+        log("actions-fetch-stax-image-event/polling", "device init timeout");
       }, INIT_DEBOUNCE);
       let connectSub;
       let loopT;
@@ -180,7 +180,7 @@ const implementations = {
           return;
         }
 
-        log("actions-fetch-fts-image-event/polling", "polling loop");
+        log("actions-fetch-stax-image-event/polling", "polling loop");
         connectSub = fetchImage(pollingOnDevice, backupHash)
           .pipe(
             timeout(DEVICE_POLLING_TIMEOUT),
@@ -224,7 +224,7 @@ const implementations = {
                     device = null;
                     o.next(event);
                     log(
-                      "actions-fetch-fts-image-event/polling",
+                      "actions-fetch-stax-image-event/polling",
                       "device disconnect timeout"
                     );
                   }, DISCONNECT_DEBOUNCE);
@@ -323,7 +323,7 @@ export const createAction = (
       const sub = impl
         .pipe(
           // debounce a bit the connect/disconnect event that we don't need
-          tap((e: Event) => log("actions-fetch-fts-image-event", e.type, e)),
+          tap((e: Event) => log("actions-fetch-stax-image-event", e.type, e)),
           // we gather all events with a reducer into the UI state
           scan(reducer, getInitialState()),
           // we debounce the UI state to not blink on the UI

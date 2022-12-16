@@ -28,13 +28,13 @@ const postOnboardingActions: Record<
 /**
  * Mock of post onboarding actions for DeviceModelId.stax
  */
-const ftsPostOnboardingActionsMock: PostOnboardingAction[] = [
+const staxPostOnboardingActionsMock: PostOnboardingAction[] = [
   claimMock,
   personalizeMock,
   migrateAssetsMock,
 ];
 
-const ftsPostOnboardingActions: PostOnboardingAction[] = [
+const staxPostOnboardingActions: PostOnboardingAction[] = [
   claimNftAction,
   customImageAction,
   assetsTransferAction,
@@ -66,8 +66,8 @@ export function getPostOnboardingActionsForDevice(
       /** Set here the list of actions for the post onboarding of the Nano X */
       return [];
     case DeviceModelId.stax:
-      if (mock) return ftsPostOnboardingActionsMock;
-      return ftsPostOnboardingActions;
+      if (mock) return staxPostOnboardingActionsMock;
+      return staxPostOnboardingActions;
     default:
       return [];
   }
