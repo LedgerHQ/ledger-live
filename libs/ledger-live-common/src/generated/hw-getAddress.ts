@@ -3,6 +3,7 @@ import cardano from "../families/cardano/hw-getAddress";
 import celo from "../families/celo/hw-getAddress";
 import cosmos from "../families/cosmos/hw-getAddress";
 import crypto_org from "../families/crypto_org/hw-getAddress";
+import dfinity from "../families/dfinity/hw-getAddress";
 import elrond from "../families/elrond/hw-getAddress";
 import ethereum from "../families/ethereum/hw-getAddress";
 import filecoin from "../families/filecoin/hw-getAddress";
@@ -23,6 +24,7 @@ export default {
   celo,
   cosmos,
   crypto_org,
+  dfinity,
   elrond,
   ethereum,
   filecoin,
