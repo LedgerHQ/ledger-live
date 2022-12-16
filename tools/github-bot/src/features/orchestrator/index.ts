@@ -199,13 +199,14 @@ export function orchestrator(app: Probot) {
         return;
       }
       const checkRun = checkRuns.data.check_runs[0];
+      const summary = `The **[workflow run](${payload.workflow_run.html_url})** has completed with status \`payload.workflow_run.conclusion\`.`;
       await octokit.checks.update({
         owner,
         repo,
         check_run_id: checkRun.id,
         status: "completed",
         conclusion: payload.workflow_run.conclusion,
-        output: getGenericOutput(payload.workflow_run.conclusion), // TODO: add proper output
+        output: getGenericOutput(payload.workflow_run.conclusion, summary), // TODO: add proper output
         completed_at: new Date().toISOString(),
       });
     }
