@@ -68,28 +68,10 @@ import BLUE_LIGHT_validate from "~/renderer/animations/blue/7Validate/data.json"
 
 // STAX
 
-import STAX_LIGHT_plugAndPinCode from "~/renderer/animations/stax/1PlugAndPinCode/light.json";
-import STAX_DARK_plugAndPinCode from "~/renderer/animations/stax/1PlugAndPinCode/dark.json";
-import STAX_LIGHT_enterPinCode from "~/renderer/animations/stax/3EnterPinCode/light.json";
-import STAX_DARK_enterPinCode from "~/renderer/animations/stax/3EnterPinCode/dark.json";
-import STAX_LIGHT_quitApp from "~/renderer/animations/stax/4QuitApp/light.json";
-import STAX_DARK_quitApp from "~/renderer/animations/stax/4QuitApp/dark.json";
-import STAX_LIGHT_allowManager from "~/renderer/animations/stax/5AllowManager/light.json";
-import STAX_DARK_allowManager from "~/renderer/animations/stax/5AllowManager/dark.json";
-import STAX_LIGHT_openApp from "~/renderer/animations/stax/6OpenApp/light.json";
-import STAX_DARK_openApp from "~/renderer/animations/stax/6OpenApp/dark.json";
-import STAX_LIGHT_validate from "~/renderer/animations/stax/7Validate/light.json";
-import STAX_DARK_validate from "~/renderer/animations/stax/7Validate/dark.json";
-import STAX_LIGHT_firmwareUpdating from "~/renderer/animations/stax/2FirmwareUpdating/light.json";
-import STAX_DARK_firmwareUpdating from "~/renderer/animations/stax/2FirmwareUpdating/dark.json";
-import STAX_LIGHT_installLoading from "~/renderer/animations/stax/8InstallLoading/light.json";
-import STAX_DARK_installLoading from "~/renderer/animations/stax/8InstallLoading/dark.json";
-import STAX_LIGHT_pairingProgress from "~/renderer/animations/stax/9PairingProgress/light.json";
-import STAX_DARK_pairingProgress from "~/renderer/animations/stax/9PairingProgress/dark.json";
-import STAX_LIGHT_pairingSuccess from "~/renderer/animations/stax/10PairingSuccess/light.json";
-import STAX_DARK_pairingSuccess from "~/renderer/animations/stax/10PairingSuccess/dark.json";
-import STAX_LIGHT_placeHolder from "~/renderer/animations/stax/11PlaceHolder/light.json";
-import STAX_DARK_placeHolder from "~/renderer/animations/stax/11PlaceHolder/dark.json";
+import STAX_enterPin from "~/renderer/animations/stax/enterPIN.json";
+import STAX_verifyAddress from "~/renderer/animations/stax/verifyAddress.json";
+import STAX_signTransaction from "~/renderer/animations/stax/signTransaction.json";
+import STAX_allowConnection from "~/renderer/animations/stax/allowConnection.json";
 
 /* eslint-enable camelcase */
 
@@ -211,48 +193,40 @@ const nanoSP = {
 
 const stax = {
   plugAndPinCode: {
-    light: STAX_LIGHT_plugAndPinCode,
-    dark: STAX_DARK_plugAndPinCode,
+    light: STAX_enterPin,
+    dark: STAX_enterPin,
   },
   enterPinCode: {
-    light: STAX_LIGHT_enterPinCode,
-    dark: STAX_DARK_enterPinCode,
+    light: STAX_enterPin,
+    dark: STAX_enterPin,
   },
   quitApp: {
-    light: STAX_LIGHT_quitApp,
-    dark: STAX_DARK_quitApp,
+    light: STAX_allowConnection,
+    dark: STAX_allowConnection,
   },
   allowManager: {
-    light: STAX_LIGHT_allowManager,
-    dark: STAX_DARK_allowManager,
+    light: STAX_allowConnection,
+    dark: STAX_allowConnection,
   },
   openApp: {
-    light: STAX_LIGHT_openApp,
-    dark: STAX_DARK_openApp,
+    light: STAX_allowConnection,
+    dark: STAX_allowConnection,
   },
-  validate: {
-    light: STAX_LIGHT_validate,
-    dark: STAX_DARK_validate,
+  verify: {
+    light: STAX_verifyAddress,
+    dark: STAX_verifyAddress,
+  },
+  sign: {
+    light: STAX_signTransaction,
+    dark: STAX_signTransaction,
   },
   firmwareUpdating: {
-    light: STAX_LIGHT_firmwareUpdating,
-    dark: STAX_DARK_firmwareUpdating,
+    light: STAX_allowConnection,
+    dark: STAX_allowConnection,
   },
   installLoading: {
-    light: STAX_LIGHT_installLoading,
-    dark: STAX_DARK_installLoading,
-  },
-  pairingProgress: {
-    light: STAX_LIGHT_pairingProgress,
-    dark: STAX_DARK_pairingProgress,
-  },
-  pairingSuccess: {
-    light: STAX_LIGHT_pairingSuccess,
-    dark: STAX_DARK_pairingSuccess,
-  },
-  placeHolder: {
-    light: STAX_LIGHT_placeHolder,
-    dark: STAX_DARK_placeHolder,
+    light: STAX_allowConnection,
+    dark: STAX_allowConnection,
   },
 };
 
