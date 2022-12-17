@@ -1,8 +1,8 @@
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
-import { useTheme } from "@react-navigation/native";
-import LText from "./LText";
+import { useTheme } from "styled-components/native";
+import { Text, Flex } from "@ledgerhq/native-ui";
 import Button from "./Button";
 import FallbackCamera from "../icons/FallbackCamera";
 
@@ -20,21 +20,20 @@ function FallbackCameraBody({
   onPress,
 }: Props) {
   const { colors } = useTheme();
-
   const IconSettings = () => (
-    <Icon name="settings" size={16} color={colors.white} />
+    <Icon name="settings" size={16} color={colors.palette.neutral.c100} />
   );
 
   return (
-    <View style={styles.root}>
+    <Flex flex={1} bg="background.main" px={6}>
       <View style={styles.body}>
-        <FallbackCamera />
-        <LText secondary bold style={styles.title}>
+        <FallbackCamera color={colors.constant.white} />
+        <Text variant="paragraph" mt={9} mb={3} fontSize={6}>
           {title}
-        </LText>
-        <LText style={styles.desc} color="smoke">
+        </Text>
+        <Text variant="paragraph" color="neutral.c70" mb={10}>
           {description}
-        </LText>
+        </Text>
         <Button
           event="CameraOpenSettings"
           type="primary"
@@ -44,19 +43,16 @@ function FallbackCameraBody({
           IconLeft={IconSettings}
         />
       </View>
-    </View>
+    </Flex>
   );
 }
 
 export default memo<Props>(FallbackCameraBody);
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
   body: {
     alignItems: "center",
+    justifyContent: "center",
+    flex: 1,
   },
   title: {
     marginTop: 40,
