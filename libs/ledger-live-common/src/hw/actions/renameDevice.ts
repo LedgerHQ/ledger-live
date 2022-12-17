@@ -4,13 +4,15 @@ import {
   debounceTime,
   catchError,
   switchMap,
+  map,
   tap,
   distinctUntilChanged,
   timeout,
 } from "rxjs/operators";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useCallback, useState } from "react";
 import { log } from "@ledgerhq/logs";
 import type { DeviceInfo } from "@ledgerhq/types-live";
+import { UserRefusedDeviceNameChange } from "@ledgerhq/errors";
 import { useReplaySubject } from "../../observable";
 import type { Action, Device } from "./types";
 import isEqual from "lodash/isEqual";
@@ -32,6 +34,7 @@ type State = {
   error: Error | null | undefined;
   completed?: boolean;
   name: string;
+  onRetry?: () => void;
 };
 
 type RenameDeviceAction = Action<string, State, string>;
@@ -263,7 +266,18 @@ export const createAction = (
 
   const useHook = (device: Device | null | undefined, name: string): State => {
     const [state, setState] = useState(() => getInitialState(device));
+    const [resetIndex, setResetIndex] = useState(0);
     const deviceSubject = useReplaySubject(device);
+
+    const onRetry = useCallback(() => {
+      setResetIndex((i) => i + 1);
+      setState(getInitialState(device));
+    }, [device]);
+
+    const productName = useMemo(
+      () => (device ? getDeviceModel(device.modelId).productName : ""),
+      [device]
+    );
 
     useEffect(() => {
       if (state.completed) return;
@@ -278,6 +292,18 @@ export const createAction = (
         .pipe(
           // debounce a bit the connect/disconnect event that we don't need
           tap((e: Event) => log("actions-rename-device-event", e.type, e)),
+          map((e: Event) => {
+            if (
+              productName &&
+              e.type === "error" &&
+              e.error instanceof UserRefusedDeviceNameChange
+            ) {
+              e.error = new UserRefusedDeviceNameChange(undefined, {
+                productName,
+              });
+            }
+            return e;
+          }),
           // we gather all events with a reducer into the UI state
           scan(reducer, getInitialState())
         ) // the state simply goes into a React state
@@ -285,10 +311,11 @@ export const createAction = (
       return () => {
         sub.unsubscribe();
       };
-    }, [name, deviceSubject, state.completed]);
+    }, [name, deviceSubject, state.completed, resetIndex, productName]);
 
     return {
       ...state,
+      onRetry,
     };
   };
 

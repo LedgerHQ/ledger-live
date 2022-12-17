@@ -1,17 +1,16 @@
 import React, { memo, useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import { DeviceNameInvalid } from "@ledgerhq/errors";
-import { Text, Icons, Flex } from "@ledgerhq/native-ui";
+import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
+import { Button, Text, Icons, Flex } from "@ledgerhq/native-ui";
 import { createAction } from "@ledgerhq/live-common/hw/actions/renameDevice";
 import renameDevice from "@ledgerhq/live-common/hw/renameDevice";
 import { TrackScreen } from "../analytics";
-import Button from "../components/Button";
 import KeyboardBackgroundDismiss from "../components/KeyboardBackgroundDismiss";
 import TextInput from "../components/TextInput";
 import TranslatedError from "../components/TranslatedError";
-import DeviceRenamed from "../components/DeviceRenamed";
 import DeviceActionModal from "../components/DeviceActionModal";
 import KeyboardView from "../components/KeyboardView";
 import { saveBleDeviceName } from "../actions/ble";
@@ -45,6 +44,8 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
   const originalName = route.params?.deviceName;
   const device = route.params?.device;
 
+  const { t } = useTranslation();
+  const { pushToast } = useToasts();
   const [name, setName] = useState<string>(originalName);
   const [completed, setCompleted] = useState<boolean>(false);
   const [error, setError] = useState<Error | undefined | null>(null);
@@ -77,8 +78,18 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
 
   const onSuccess = useCallback(() => {
     setCompleted(true);
+    setConnecting(false);
     saveBleDeviceName(device.deviceId, name);
-  }, [device.deviceId, name, saveBleDeviceName]);
+
+    pushToast({
+      id: "rename-device-success",
+      type: "success",
+      icon: "success",
+      title: t("EditDeviceName.success", { deviceName: name }),
+    });
+
+    navigation.goBack();
+  }, [device.deviceId, name, navigation, pushToast, saveBleDeviceName, t]);
 
   const onClose = useCallback(() => {
     if (completed) {
@@ -106,28 +117,36 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
               clearButtonMode="always"
               placeholder="Satoshi Nakamoto"
             />
-            <Text variant="small" color="neutral.c80">
-              <Trans
-                i18nKey="EditDeviceName.charactersRemaining"
-                values={{ remainingCount }}
-              />
-            </Text>
 
             {error ? (
-              <Text variant="body" color="error.c100" numberOfLines={2}>
+              <Flex alignItems={"center"} flexDirection={"row"} mt={1}>
                 <Icons.WarningMedium color="error.c100" size={16} />
-                <TranslatedError error={error} />
+                <Text
+                  variant="small"
+                  color="error.c100"
+                  ml={2}
+                  numberOfLines={2}
+                >
+                  <TranslatedError error={error} />
+                </Text>
+              </Flex>
+            ) : (
+              <Text variant="small" color="neutral.c80" mt={1}>
+                <Trans
+                  i18nKey="EditDeviceName.charactersRemaining"
+                  values={{ remainingCount }}
+                />
               </Text>
-            ) : null}
+            )}
 
             <Button
-              event="EditDeviceNameSubmit"
               type="main"
-              title={<Trans i18nKey="EditDeviceName.action" />}
               onPress={onSubmit}
               mt={5}
               disabled={!name.trim() || !!error}
-            />
+            >
+              <Trans i18nKey="EditDeviceName.action" />
+            </Button>
           </Flex>
 
           {connecting ? (
@@ -136,13 +155,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
               request={name}
               action={action}
               onClose={onClose}
-              renderOnResult={deviceName => (
-                <DeviceRenamed
-                  onContinue={onClose}
-                  onMount={onSuccess}
-                  deviceName={deviceName}
-                />
-              )}
+              onResult={onSuccess}
             />
           ) : null}
         </KeyboardView>
