@@ -1,5 +1,13 @@
 # live-mobile
 
+## 3.13.0-nightly.4
+
+### Patch Changes
+
+- Updated dependencies [[`b83ff5509c`](https://github.com/LedgerHQ/ledger-live/commit/b83ff5509cf7b66b39642d300b0d7ec5e8582ea7)]:
+  - @ledgerhq/react-native-hw-transport-ble@6.28.0-nightly.1
+  - @ledgerhq/live-common@27.10.0-nightly.2
+
 ## 3.13.0-nightly.3
 
 ### Patch Changes

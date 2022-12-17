@@ -1,5 +1,11 @@
 # @ledgerhq/react-native-hw-transport-ble
 
+## 6.28.0-nightly.1
+
+### Minor Changes
+
+- [#2002](https://github.com/LedgerHQ/ledger-live/pull/2002) [`b83ff5509c`](https://github.com/LedgerHQ/ledger-live/commit/b83ff5509cf7b66b39642d300b0d7ec5e8582ea7) Thanks [@vivalaakam](https://github.com/vivalaakam)! - create BleManager instance on request
+
 ## 6.27.12-nightly.0
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.51.0-nightly.4
+
+### Patch Changes
+
+- [#2147](https://github.com/LedgerHQ/ledger-live/pull/2147) [`360fc6321c`](https://github.com/LedgerHQ/ledger-live/commit/360fc6321c66cec18959be0200a705ca527075ae) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Improves performance of swap provider selector
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@27.10.0-nightly.2
+
 ## 2.51.0-nightly.3
 
 ### Patch Changes
