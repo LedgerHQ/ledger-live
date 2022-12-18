@@ -35,6 +35,7 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugGenerators]: undefined;
   [ScreenName.DebugMockGenerateAccounts]: undefined;
   [ScreenName.DebugExport]: undefined;
+  [ScreenName.DebugNetwork]: undefined;
   [ScreenName.DebugSwap]: undefined;
   [ScreenName.DebugBLE]: {
     deviceId: string;

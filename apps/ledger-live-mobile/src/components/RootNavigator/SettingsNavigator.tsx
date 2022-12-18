@@ -25,6 +25,7 @@ import DebugHttpTransport from "../../screens/Settings/Debug/Connectivity/DebugH
 import DebugInformation from "../../screens/Settings/Debug/Information";
 import DebugLogs from "../../screens/Settings/Debug/Debugging/Logs";
 import DebugLottie from "../../screens/Settings/Debug/Features/Lottie";
+import DebugNetwork from "../../screens/Settings/Debug/Debugging/Network";
 import DebugSettings from "../../screens/Settings/Debug";
 import DebugStore from "../../screens/Settings/Debug/Debugging/Store";
 import DebugStoryly from "../../screens/Settings/Debug/Features/Storyly";
@@ -187,6 +188,13 @@ export default function SettingsNavigator() {
         component={DebugSettings}
         options={{
           title: "Debug",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugNetwork}
+        component={DebugNetwork}
+        options={{
+          title: "Network",
         }}
       />
       <Stack.Screen

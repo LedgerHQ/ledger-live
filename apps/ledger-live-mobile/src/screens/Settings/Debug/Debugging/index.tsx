@@ -26,6 +26,12 @@ export default function Debugging() {
         onPress={() => navigation.navigate(ScreenName.DebugStore)}
       />
       <SettingsRow
+        title="Network connectivity"
+        desc="Check whether our services are reachable from here"
+        iconLeft={<Icons.ServerMedium size={32} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugNetwork)}
+      />
+      <SettingsRow
         title="Crashes"
         desc="Trigger application crashes"
         iconLeft={<Icons.WarningSolidMedium size={32} color="black" />}
