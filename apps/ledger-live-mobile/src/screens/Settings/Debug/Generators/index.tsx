@@ -33,7 +33,7 @@ export default function Debugging() {
       {getEnv("MOCK") ? (
         <SettingsRow
           title={"Toggle Service status incident"}
-          iconLeft={<Icons.MegaphoneMedium size={32} color="black" />}
+          iconLeft={<Icons.MegaphoneMedium size={24} color="black" />}
         >
           <Switch
             value={incidents.length > 0}
