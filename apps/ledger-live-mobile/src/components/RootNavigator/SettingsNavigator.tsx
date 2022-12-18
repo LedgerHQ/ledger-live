@@ -26,6 +26,7 @@ import DebugInformation from "../../screens/Settings/Debug/Information";
 import DebugLogs from "../../screens/Settings/Debug/Debugging/Logs";
 import DebugLottie from "../../screens/Settings/Debug/Features/Lottie";
 import DebugNetwork from "../../screens/Settings/Debug/Debugging/Network";
+import DebugCommandSender from "../../screens/Settings/Debug/Connectivity/CommandSender";
 import DebugSettings from "../../screens/Settings/Debug";
 import DebugStore from "../../screens/Settings/Debug/Debugging/Store";
 import DebugStoryly from "../../screens/Settings/Debug/Features/Storyly";
@@ -286,6 +287,13 @@ export default function SettingsNavigator() {
             />
           ),
         })}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugCommandSender}
+        component={DebugCommandSender}
+        options={{
+          title: "Command Sender",
+        }}
       />
       <Stack.Screen
         name={ScreenName.DebugBLEBenchmark}

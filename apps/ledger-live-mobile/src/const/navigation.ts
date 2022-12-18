@@ -27,6 +27,7 @@ export enum ScreenName {
   DebugBLE = "DebugBLE",
   DebugBLEBenchmark = "DebugBLEBenchmark",
   DebugConfiguration = "DebugConfiguration",
+  DebugCommandSender = "DebugCommandSender",
   DebugConnectivity = "DebugConnectivity",
   DebugCrash = "DebugCrash",
   DebugCustomImageGraphics = "DebugCustomImageGraphics",

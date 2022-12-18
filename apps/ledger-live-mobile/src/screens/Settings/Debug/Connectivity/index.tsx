@@ -34,12 +34,22 @@ export default function Connectivity() {
           />
           <SettingsRow
             title="Ble tool"
-            desc={
-              device.deviceName || device.deviceId || "Can't read name or id"
-            }
+            desc={`Debugging tool using ${
+              device.deviceName || device.deviceId
+            }`}
             iconLeft={<Icons.BluetoothMedium size={32} color="black" />}
             onPress={() =>
               navigation.navigate(ScreenName.DebugBLE, {
+                deviceId: device.deviceId,
+              })
+            }
+          />
+          <SettingsRow
+            title="Command sender"
+            desc={"Send commands to the device and get a response"}
+            iconLeft={<Icons.ToolboxMedium size={32} color="black" />}
+            onPress={() =>
+              navigation.navigate(ScreenName.DebugCommandSender, {
                 deviceId: device.deviceId,
               })
             }
