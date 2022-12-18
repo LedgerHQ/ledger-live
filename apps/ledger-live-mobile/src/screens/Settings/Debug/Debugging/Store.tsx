@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import React, { useCallback, PureComponent } from "react";
+import React, { useCallback, useState } from "react";
 import { BigNumber } from "bignumber.js";
 import { StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,74 +9,69 @@ import NavigationScrollView from "../../../../components/NavigationScrollView";
 import Button from "../../../../components/Button";
 import { SettingsActionTypes } from "../../../../actions/types";
 import { State } from "../../../../reducers/types";
-import { Theme } from "../../../../colors";
 
-class CollapsibleThingy extends PureComponent<
-  {
-    obj: Record<string, unknown>;
-    depth: number;
-    colors: Theme["colors"];
-  },
-  {
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    shown: {};
-  }
-> {
-  state = {
-    shown: {},
+type Props = {
+  data: { [key: string]: unknown };
+  depth: number;
+};
+
+const Node = ({ data = {}, depth }: Props) => {
+  const [shown, setShown] = useState<{ [key: string]: boolean }>({});
+  const { colors } = useTheme();
+
+  const toggleCollapse = (key: string) => {
+    setShown(prev => ({ ...prev, [key]: !prev[key] }));
   };
-  toggleCollapse = (key: string) =>
-    this.setState(prevState => ({
-      shown: {
-        ...prevState.shown,
-        [key]: !prevState.shown[key as keyof typeof prevState.shown],
-      },
-    }));
 
-  render() {
-    const { obj, depth = 0, colors } = this.props;
-    const { shown } = this.state;
-    return (
-      <View>
-        {Object.keys(obj || {}).map(key => {
-          const rowKey = depth + key;
-          const value = obj[key as keyof State];
-          const isObject = typeof value === "object";
-          const isOpen = shown[rowKey as keyof typeof shown];
-          const bullet = isObject ? (isOpen ? "-" : "+") : "";
-          return (
-            <View key={rowKey} style={[styles.wrapper]}>
+  return (
+    <View>
+      {Object.keys(data || {}).map(key => {
+        const rowKey = depth + key;
+        const value = data[key as keyof State];
+        const isObject = typeof value === "object";
+        const isOpen = shown[rowKey as keyof typeof shown];
+        const bullet = isObject ? (isOpen ? "-" : "+") : "";
+
+        return (
+          <View
+            key={rowKey}
+            style={[
+              styles.wrapper,
+              { borderColor: colors.black },
+              depth === 1 ? { borderLeftWidth: 0 } : {},
+            ]}
+          >
+            <Text
+              style={[styles.header, { borderColor: colors.black }]}
+              variant="body"
+              onPress={isObject ? () => toggleCollapse(rowKey) : undefined}
+            >
+              {bullet} {key}
+            </Text>
+            {isObject ? (
+              isOpen &&
+              value && (
+                <Node
+                  data={value as Record<string, unknown>}
+                  depth={depth + 1}
+                />
+              )
+            ) : (
               <Text
-                style={[styles.header]}
-                onPress={
-                  isObject ? () => this.toggleCollapse(rowKey) : undefined
-                }
-              >
-                {bullet} {key}
-              </Text>
-              {isObject ? (
-                isOpen &&
-                value && (
-                  <CollapsibleThingy
-                    colors={colors}
-                    obj={value as Record<string, unknown>}
-                    depth={depth + 1}
-                  />
-                )
-              ) : (
-                <Text selectable>{`(${typeof value}) ${value}`}</Text>
-              )}
-            </View>
-          );
-        })}
-      </View>
-    );
-  }
-}
+                selectable
+                variant="body"
+                style={[styles.value, { borderColor: colors.black }]}
+              >{`(${typeof value}) ${value}`}</Text>
+            )}
+          </View>
+        );
+      })}
+    </View>
+  );
+};
 
 export default function Store() {
   const state = useSelector<State, State>(s => s);
-  const { colors } = useTheme();
   const dispatch = useDispatch();
 
   /**
@@ -110,7 +105,6 @@ export default function Store() {
     <NavigationScrollView>
       <View
         style={{
-          padding: 16,
           flex: 1,
         }}
       >
@@ -119,11 +113,11 @@ export default function Store() {
           type="primary"
           title={"See on browser (debug on)"}
           containerStyle={{
-            marginBottom: 16,
+            margin: 16,
           }}
           onPress={onStoreDebug}
         />
-        <CollapsibleThingy obj={state} depth={1} colors={colors} />
+        <Node data={state} depth={1} />
       </View>
     </NavigationScrollView>
   );
@@ -131,24 +125,17 @@ export default function Store() {
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-    borderLeftWidth: 1,
-    paddingLeft: 8,
+    borderLeftWidth: 14,
   },
   buttonStyle: {
     marginBottom: 16,
   },
   header: {
-    fontSize: 18,
-    borderRadius: 8,
-    marginVertical: 4,
-    paddingHorizontal: 4,
-    paddingVertical: 2,
+    padding: 8,
     flex: 1,
   },
   value: {
-    paddingHorizontal: 4,
-    paddingVertical: 2,
-    paddingLeft: 8,
-    fontSize: 14,
+    padding: 8,
+    opacity: 0.7,
   },
 });
