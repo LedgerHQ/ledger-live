@@ -37,6 +37,12 @@ export default function Debugging() {
         iconLeft={<Icons.WarningSolidMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugCrash)}
       />
+      <SettingsRow
+        title="QR Benchmark"
+        desc="Not really sure what this is"
+        iconLeft={<Icons.QrCodeMedium size={32} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.BenchmarkQRStream)}
+      />
     </SettingsNavigationScrollView>
   );
 }

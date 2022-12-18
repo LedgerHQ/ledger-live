@@ -6,8 +6,8 @@ import {
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
-import BenchmarkQRStream from "../../screens/BenchmarkQRStream";
 
+import DebugBenchmarkQRStream from "../../screens/Settings/Debug/Broken/BenchmarkQRStream";
 import DebugBLE from "../../screens/Settings/Debug/Connectivity/BLE";
 import DebugBLEBenchmark from "../../screens/Settings/Debug/Connectivity/BLEBenchmark";
 import DebugConfiguration from "../../screens/Settings/Debug/Configuration";
@@ -367,7 +367,7 @@ export default function SettingsNavigator() {
       />
       <Stack.Screen
         name={ScreenName.BenchmarkQRStream}
-        component={BenchmarkQRStream}
+        component={DebugBenchmarkQRStream}
         options={{
           title: "Benchmark QRStream",
         }}
