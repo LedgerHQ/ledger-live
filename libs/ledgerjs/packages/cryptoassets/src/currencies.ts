@@ -2810,7 +2810,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       rpc: "https://rpc.xdcrpc.com",
       explorer: {
         uri: "https://xdc.blocksscan.io",
-        type: "blocksscan",
+        type: "etherscan",
       },
     },
     blockAvgTime: 2,
