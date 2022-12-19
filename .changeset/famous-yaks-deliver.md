@@ -1,5 +1,5 @@
 ---
-"ledger-live-desktop": major
+"ledger-live-desktop": minor
 ---
 
 Electron was upgraded from 15 to 21 as well as "electron-builder"
