@@ -149,7 +149,7 @@ const Step1Cropping = ({ navigation, route }: NavigationProps) => {
               onPress={handlePressNext}
               outline={false}
             >
-              {t("common.next")}
+              {t("customImage.confirmCrop")}
             </Button>
           </Flex>
         </BottomContainer>
