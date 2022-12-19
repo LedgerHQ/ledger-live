@@ -10,6 +10,7 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.internal,
     affected: ["ledger-live-desktop"],
     checkRunName: "[Desktop] Build the app",
+    summaryFile: "",
     getInputs: (payload: any) => {
       return {
         sha: payload.workflow_run.head_sha,
@@ -21,6 +22,7 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.external,
     affected: ["ledger-live-desktop"],
     checkRunName: "[Desktop] Build the app (external)",
+    summaryFile: "",
     getInputs: (payload: any) => {
       return {
         sha: payload.workflow_run.head_sha,
@@ -32,6 +34,7 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.internal,
     affected: ["ledger-live-desktop"],
     checkRunName: "[Desktop] Run e2e and unit tests",
+    summaryFile: "summary.json",
     getInputs: (payload: any) => {
       return {
         sha: payload.workflow_run.head_sha,
@@ -43,6 +46,7 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.external,
     affected: ["ledger-live-desktop"],
     checkRunName: "[Desktop] Run e2e and unit tests (external)",
+    summaryFile: "",
     getInputs: (payload: any) => {
       return {
         sha: payload.workflow_run.head_sha,
@@ -54,6 +58,7 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.internal,
     affected: ["live-mobile"],
     checkRunName: "[Mobile] Build the app",
+    summaryFile: "",
     getInputs: (payload: any) => {
       return {
         sha: payload.workflow_run.head_sha,
@@ -65,6 +70,7 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.external,
     affected: ["live-mobile"],
     checkRunName: "[Mobile] Build the app (external)",
+    summaryFile: "",
     getInputs: (payload: any) => {
       return {
         sha: payload.workflow_run.head_sha,
@@ -76,6 +82,7 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.both,
     affected: ["live-mobile"],
     checkRunName: "[Mobile] Run tests",
+    summaryFile: "",
     getInputs: (payload: any) => {
       return {
         sha: payload.workflow_run.head_sha,
@@ -126,6 +133,7 @@ export const WORKFLOWS = {
       "@ledgerhq/ui-shared",
     ],
     checkRunName: "[Libraries] Run tests",
+    summaryFile: "",
     getInputs: (payload: any) => {
       return {
         sha: payload.workflow_run.head_sha,
