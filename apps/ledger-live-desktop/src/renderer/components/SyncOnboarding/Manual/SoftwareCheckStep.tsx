@@ -140,9 +140,7 @@ const SoftwareCheckStep = ({ isDisplayed, onComplete, productName }: Props) => {
       />
       <GenuineCheckAnimationModal
         isOpen={devicePermissionState === "unlock-needed" || devicePermissionState === "requested"}
-        animationName={
-          devicePermissionState === "unlock-needed" ? "plugAndPinCode" : "allowManager"
-        }
+        animationName={devicePermissionState === "unlock-needed" ? "enterPinCode" : "allowManager"}
         deviceId={device?.modelId}
         productName={productName}
       />

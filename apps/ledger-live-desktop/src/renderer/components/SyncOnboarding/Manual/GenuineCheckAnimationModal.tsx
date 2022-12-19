@@ -9,21 +9,35 @@ import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animation
 export type Props = {
   isOpen: boolean;
   deviceId: DeviceModelId;
-  animationName: string;
+  animationName: "enterPinCode" | "allowManager";
   productName: string;
 };
 
-const GenuineCheckModal = ({ isOpen, deviceId, animationName, productName }: Props) => {
+const GenuineCheckAnimationModal = ({ isOpen, deviceId, animationName, productName }: Props) => {
   const { t } = useTranslation();
   const theme = useTheme();
+
+  let title: string;
+  // As long as we don't have full TS support on LLD, a default case needs to be handled and animationName value cannot be trusted
+  switch (animationName) {
+    case "enterPinCode":
+      title = t("syncOnboarding.manual.genuineCheckAnimationModal.enterPinCode.title", {
+        deviceName: productName,
+      });
+      break;
+    case "allowManager":
+    default:
+      title = t("syncOnboarding.manual.genuineCheckAnimationModal.allowManager.title", {
+        deviceName: productName,
+      });
+      break;
+  }
 
   return (
     <Popin position="relative" isOpen={isOpen}>
       <Flex flexDirection="column" alignItems="center" height="100%" px={8} py={16}>
         <Text variant="h4Inter" fontWeight="semiBold">
-          {t("syncOnboarding.manual.genuineCheckAnimationModal.message", {
-            deviceName: productName,
-          })}
+          {title}
         </Text>
         <Animation
           animation={getDeviceAnimation(deviceId, theme.theme as "light" | "dark", animationName)}
@@ -33,4 +47,4 @@ const GenuineCheckModal = ({ isOpen, deviceId, animationName, productName }: Pro
   );
 };
 
-export default GenuineCheckModal;
+export default GenuineCheckAnimationModal;
