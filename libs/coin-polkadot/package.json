@@ -1,10 +1,12 @@
 {
-  "name": "@ledgerhq/coin-framework",
+  "name": "@ledgerhq/coin-polkadot",
   "version": "6.27.8",
-  "description": "Ledger framework for Coin integration",
+  "description": "Ledger Polkadot Coin integration",
   "keywords": [
     "Ledger",
     "LedgerWallet",
+    "dot",
+    "Polkadot",
     "Hardware Wallet"
   ],
   "repository": {
@@ -14,7 +16,7 @@
   "bugs": {
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
-  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-framework",
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-polkadot",
   "publishConfig": {
     "access": "public"
   },
@@ -23,23 +25,24 @@
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/compressjs": "github:LedgerHQ/compressjs#d9e8e4d994923e0ea76a32b97289bcccfe71b82e",
+    "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
+    "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/hw-app-polkadot": "workspace:^",
+    "@ledgerhq/live-app-sdk": "^0.8.1",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "axios": "0.26.1",
+    "@polkadot/types": "9.8.1",
+    "@polkadot/types-known": "9.8.1",
+    "@polkadot/util": "10.1.12",
+    "@polkadot/util-crypto": "10.1.12",
     "bignumber.js": "^9.1.0",
+    "expect": "^27.4.6",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
-    "lru-cache": "5.1.1",
-    "minimatch": "^5.1.0",
-    "numeral": "^2.0.6",
-    "rxjs": "^6.6.7",
-    "rxjs-compat": "^6.6.7",
-    "utility-types": "^3.10.0"
+    "rxjs": "^6.6.7"
   },
   "devDependencies": {
     "@types/jest": "^29.2.4",
@@ -52,7 +55,7 @@
     "typescript": "^4.9.4"
   },
   "scripts": {
-    "clean": "rm -rf lib lib-es",
+    "clean": "rimraf lib lib-es",
     "build": "tsc && tsc -m ES6 --outDir lib-es",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
@@ -60,5 +63,6 @@
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
     "lint:fix": "pnpm lint --fix",
     "test": "jest"
-  }
+  },
+  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec"
 }
