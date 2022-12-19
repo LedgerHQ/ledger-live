@@ -671,11 +671,6 @@ const envDefinitions = {
     parser: stringParser,
     desc: "url used to fetch platform app manifests",
   },
-  PLATFORM_MANIFEST_STAGING_API_URL: {
-    def: "https://live-app-catalog.ledger.com/api/v1/apps",
-    parser: stringParser,
-    desc: "url used to fetch platform app manifests (staging)",
-  },
   PLATFORM_LOCAL_MANIFEST_JSON: {
     def: "",
     parser: stringParser,
