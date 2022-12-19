@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Linking } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
-import { BottomDrawer, Button, Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { BottomDrawer, Button, Flex, Icons, Text, Box } from "@ledgerhq/native-ui";
 
 import styled, { useTheme } from "styled-components/native";
 
@@ -19,7 +19,6 @@ const DRAWER = "Notification Center Status";
 export default function StatusCenter({ onClose, isOpened }: Props) {
   const { t } = useTranslation();
   const { incidents } = useFilteredServiceStatus();
-
   const { colors } = useTheme();
 
   const openSupportLink = useCallback(() => {
@@ -51,62 +50,63 @@ export default function StatusCenter({ onClose, isOpened }: Props) {
     <BottomDrawer
       isOpen={isOpened}
       onClose={onPressClose}
-      Icon={
-        <Flex
-          backgroundColor={colors.neutral.c100a005}
-          borderRadius={50}
-          width={65}
-          height={65}
-          alignItems="center"
-          justifyContent="center"
-        >
-          <Icons.WarningSolidMedium color={colors.warning.c70} size={40} />
-        </Flex>
-      }
     >
       <TrackScreen category={DRAWER} type="drawer" refreshSource={false} />
 
-      <Text variant="h4" fontWeight="semiBold" textAlign="center" mb={7}>
-        {t("notificationCenter.status.title", {
-          count: incidents.length,
-        })}
-      </Text>
-      {new Array(incidents.length).fill(null).map((_e, index) => (
+      <Flex
+        backgroundColor={colors.neutral.c100a005}
+        borderRadius={50}
+        width={64}
+        height={64}
+        alignItems="center"
+        justifyContent="center"
+        alignSelf="center"
+      >
+        <Icons.WarningSolidMedium color={colors.warning.c70} size={32} />
+      </Flex>
+      <Flex mx={7}>
+        <Text variant="h4" fontWeight="semiBold" textAlign="center" my={7}>
+          {t("notificationCenter.status.title", {
+            count: incidents.length,
+          })}
+        </Text>
+        {new Array(incidents.length).fill(null).map((_e, index) => (
+          <Text
+            variant="body"
+            fontWeight="medium"
+            color="neutral.c90"
+            key={index}
+            mb={3}
+          >
+            {`\u2022 ${incidents[index].name}`}
+          </Text>
+        ))}
+
         <Text
           variant="body"
           fontWeight="medium"
-          color="neutral.c90"
-          key={index}
-          mb={3}
+          color="neutral.c70"
+          mt={6}
+          textAlign="center"
         >
-          {`\u2022 ${incidents[index].name}`}
+          {t("notificationCenter.status.desc.0")}
         </Text>
-      ))}
 
-      <Text
-        variant="body"
-        fontWeight="medium"
-        color="neutral.c70"
-        mt={6}
-        textAlign="center"
-      >
-        {t("notificationCenter.status.desc.0")}
-      </Text>
-
-      <Text
-        variant="body"
-        fontWeight="medium"
-        color="neutral.c70"
-        textAlign="center"
-        justifyContent="center"
-        mt={3}
-      >
-        <Trans i18nKey="notificationCenter.status.desc.1">
-          <Link onPress={openSupportLink} fontWeight="bold">
-            {""}
-          </Link>
-        </Trans>
-      </Text>
+        <Text
+          variant="body"
+          fontWeight="medium"
+          color="neutral.c70"
+          textAlign="center"
+          justifyContent="center"
+          mt={3}
+        >
+          <Trans i18nKey="notificationCenter.status.desc.1">
+            <Link onPress={openSupportLink} fontWeight="bold">
+              {""}
+            </Link>
+          </Trans>
+        </Text>
+      </Flex>
 
       <Button type="main" size="large" onPress={onPressOk} mt={8} mb={4}>
         {t("notificationCenter.status.cta.ok")}
