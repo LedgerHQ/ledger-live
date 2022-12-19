@@ -51,7 +51,7 @@ type Props = {
   // And the scanning can only occur when LLM is not communicating with a device.
   // Other component using this component needs to stop the BLE scanning before starting
   // to communicate to a device via BLE.
-  stopBleScanning: boolean;
+  stopBleScanning?: boolean;
 };
 
 export default function SelectDevice({ onSelect, stopBleScanning }: Props) {
