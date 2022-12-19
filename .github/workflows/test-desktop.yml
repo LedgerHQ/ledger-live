@@ -85,7 +85,9 @@ jobs:
 
   # REWORK WINDOWS FOR OWN RUNNERS ? WAITING FOR KUBERNETES SOLUTION FROM INFRA ?
   test-desktop-app-windows:
-    name: "Live Desktop Tests"
+    name: "Live Desktop Tests (Windows)"
+    outputs:
+      status: ${{ steps.test-desktop.outputs.outcome }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -117,6 +119,8 @@ jobs:
 
   test-desktop-app-linux:
     name: "Live Desktop Tests (Linux)"
+    outputs:
+      status: ${{ steps.test-desktop.outputs.outcome-linux }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       INSTRUMENT_BUILD: true
@@ -151,6 +155,8 @@ jobs:
   test-desktop-app-mac:
     name: "Live Desktop Tests (macOS X)"
     runs-on: [ledger-live, macos]
+    outputs:
+      status: ${{ steps.test-desktop.outputs.outcome }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -233,9 +239,9 @@ jobs:
             const fs = require("fs");
             const statuses = [
               "${{ needs.typecheck.result }}",
-              "${{ needs.test-desktop-app-mac.result }}",
-              "${{ needs.test-desktop-app-linux.result }}",
-              "${{ needs.test-desktop-app-windows.result }}",
+              "${{ needs.test-desktop-app-mac.outputs.outcome }}",
+              "${{ needs.test-desktop-app-linux.outputs.outcome }}",
+              "${{ needs.test-desktop-app-windows.outputs.outcome }}",
             ];
             const keys = {
               mac: {
@@ -257,37 +263,45 @@ jobs:
             };
             const report = {
               mac: {
-                pass: ${{ needs.test-desktop-app-mac.result == 'success' }},
-                status: "${{ needs.test-desktop-app-mac.result }}",
+                pass: ${{ needs.test-desktop-app-mac.outputs.status == 'success' }},
+                status: "${{ needs.test-desktop-app-mac.outputs.status }}",
               },
               linux: {
-                pass: ${{ needs.test-desktop-app-linux.result == 'success' }},
-                status: "${{ needs.test-desktop-app-linux.result }}",
+                pass: ${{ needs.test-desktop-app-linux.outputs.status == 'success' }},
+                status: "${{ needs.test-desktop-app-linux.outputs.status }}",
               },
               windows: {
-                pass: ${{ needs.test-desktop-app-windows.result == 'success' }},
-                status: "${{ needs.test-desktop-app-windows.result }}",
+                pass: ${{ needs.test-desktop-app-windows.outputs.status == 'success' }},
+                status: "${{ needs.test-desktop-app-windows.outputs.status }}",
               },
             };
-            const isFailed = statuses.some(e => e === "failure") || typecheck.status === "failure";
-            const isCancelled = statuses.some(e => e === "cancelled") || typecheck.status === "cancelled";
+            const isFailed = statuses.some(e => e === "failure");
             let summary = `### TypeCheck
-            ${typecheck.pass ? "💚 Everything is fine" : "❌ Unfortunately type checks did not pass"}
-            **Type checks** ended with status => ${typecheck.status}
+            ${typecheck.pass ? "Everything is fine" : "Unfortunately type checks did not pass"}
+              - ${typecheck.pass ? "✅" : "❌  "} **Type checks** ended with status \`${typecheck.status}\`
+
             ### Screenshot Tests (Playwright)
             `
             Object.entries(report).forEach(([os, values]) => {
               summary +=`
               - ${values.pass
-                  ? `💚 Everything went good on ${keys[os].name} Live Desktop Tests`
-                  : `❌ Something went wrong on ${keys[os].name} Live Desktop Tests`
-                }
-                - final status => **${values.status}**`
+                  ? `✅ Live Desktop Tests on ${keys[os].name} ended with status \`${values.status}\``
+                  : `❌  Live Desktop Tests on ${keys[os].name} ended with status \`${values.status}\``
+                }`
             });
             summary += `
             ${{ steps.comment.outputs.body }}
             `
-            fs.writeFileSync("summary.json", JSON.stringify({ summary }), "utf-8");
+            const output = {
+              summary,
+              actions: isFailed ? [{
+                label: "regen screenshots",
+                identifier: "regen_screenshots",
+                description: "Regenerate screenshot for Live Desktop",
+              }] : [],
+            };
+
+            fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
       - uses: actions/upload-artifact@v3
         name: upload summary
         with:
@@ -304,7 +318,7 @@ jobs:
       #     github-token: ${{ steps.generate-token.outputs.token }}
       #     script: |
       #       const status = ${{ steps.status.outputs.result }};
-      #       const title = status.isFailed ? "🔴 Failed" : status.isCancelled ? "♾ Cancelled" : "💚 Success";
+      #       const title = status.isFailed ? "🔴 Failed" : status.isCancelled ? "♾ Cancelled" : "✅ Success";
       #       const actions = status.isFailed ? [{
       #         label: "regen screenshots",
       #         identifier: "regen_screenshots",
@@ -333,45 +347,6 @@ jobs:
       #         },
       #         actions
       #       });
-  #     # - name: create/update comment
-  #     #   uses: actions/github-script@v6
-  #     #   with:
-  #     #     script: |
-  #     #       const body = `${{ env.comment_header }}\n${{ steps.comment.outputs.body }}`;
-  #     #       const existingComment = await github.paginate(
-  #     #         github.rest.issues.listComments,
-  #     #         {
-  #     #           owner: context.repo.owner,
-  #     #           repo: context.repo.repo,
-  #     #           issue_number: context.issue.number,
-  #     #         },
-  #     #         (response, done) => {
-  #     #           const comments = response.data
-  #     #           const existingComment = comments
-  #     #             .find(comment =>
-  #     #               comment.user.login === 'github-actions[bot]' &&
-  #     #               comment.body.startsWith(`${{ env.comment_header }}`));
-  #     #           if (existingComment) {
-  #     #             done()
-  #     #             return existingComment;
-  #     #           }
-  #     #         }
-  #     #       ).then(resPerPage => resPerPage.find(res => !!res));
-  #     #       if (existingComment) {
-  #     #         await github.rest.issues.updateComment({
-  #     #           owner: context.repo.owner,
-  #     #           repo: context.repo.repo,
-  #     #           comment_id: existingComment?.id,
-  #     #           body,
-  #     #         });
-  #     #       } else {
-  #     #         await github.rest.issues.createComment({
-  #     #           owner: context.repo.owner,
-  #     #           repo: context.repo.repo,
-  #     #           issue_number: context.issue.number,
-  #     #           body,
-  #     #         })
-  #     #       }
 
   allure-report:
     name: "Allure Reports Export on Server"

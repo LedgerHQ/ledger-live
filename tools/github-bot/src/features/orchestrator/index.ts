@@ -200,7 +200,7 @@ export function orchestrator(app: Probot) {
       }
 
       let summary = `The **[workflow run](${payload.workflow_run.html_url})** has completed with status \`${payload.workflow_run.conclusion}\`.`;
-
+      let actions;
       if (matchedWorkflow.summaryFile) {
         // Get the summary artifact
         const artifacts = await octokit.actions.listWorkflowRunArtifacts({
@@ -222,7 +222,10 @@ export function orchestrator(app: Probot) {
           artifactId
         );
         const newSummary = JSON.parse(rawSummary.toString());
-        summary = newSummary.summary;
+        if (newSummary.summary) {
+          summary = newSummary?.summary;
+        }
+        actions = newSummary?.actions;
       }
 
       const checkRun = checkRuns.data.check_runs[0];
@@ -234,6 +237,7 @@ export function orchestrator(app: Probot) {
         conclusion: payload.workflow_run.conclusion,
         output: getGenericOutput(payload.workflow_run.conclusion, summary),
         completed_at: new Date().toISOString(),
+        actions,
       });
     }
   });
