@@ -198,15 +198,41 @@ export function orchestrator(app: Probot) {
       if (checkRuns.data.total_count === 0) {
         return;
       }
+
+      let summary = `The **[workflow run](${payload.workflow_run.html_url})** has completed with status \`${payload.workflow_run.conclusion}\`.`;
+
+      if (matchedWorkflow.summaryFile) {
+        // Get the summary artifact
+        const artifacts = await octokit.actions.listWorkflowRunArtifacts({
+          owner,
+          repo,
+          run_id: payload.workflow_run.id,
+        });
+
+        const artifactId = artifacts.data.artifacts.find(
+          (artifact) => artifact.name === matchedWorkflow.summaryFile
+        )?.id;
+
+        if (!artifactId) return;
+
+        const rawSummary = await downloadArtifact(
+          octokit,
+          owner,
+          repo,
+          artifactId
+        );
+        const newSummary = JSON.parse(rawSummary.toString());
+        summary = newSummary.summary;
+      }
+
       const checkRun = checkRuns.data.check_runs[0];
-      const summary = `The **[workflow run](${payload.workflow_run.html_url})** has completed with status \`${payload.workflow_run.conclusion}\`.`;
       await octokit.checks.update({
         owner,
         repo,
         check_run_id: checkRun.id,
         status: "completed",
         conclusion: payload.workflow_run.conclusion,
-        output: getGenericOutput(payload.workflow_run.conclusion, summary), // TODO: add proper output
+        output: getGenericOutput(payload.workflow_run.conclusion, summary),
         completed_at: new Date().toISOString(),
       });
     }
