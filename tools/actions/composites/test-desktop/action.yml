@@ -8,8 +8,8 @@ inputs:
     description: "port on which the turborepo local cache server is running"
     required: true
 outputs:
-  outcome: ${{ steps.tests.outputs.outcome }}
-  outcome-linux: ${{ steps.linux-tests.outputs.linux-outcome }}
+  outcome: ${{ steps.tests.outcome.outcome }}
+  outcome-linux: ${{ steps.linux-outcome.outputs.linux-outcome }}
 
 runs:
   using: "composite"
@@ -41,7 +41,7 @@ runs:
       shell: bash
     - name: set linux outcome (clean outputs)
       if: inputs.os == 'linux'
-      id: linux-output
+      id: linux-outcome
       run: echo "linux-outcome=${{ steps.linux-tests.outcome }}" >> $GITHUB_OUTPUT
       shell: bash
     - name: Run playwright tests
@@ -51,8 +51,9 @@ runs:
       shell: bash
     - name: set outcome (clean outputs)
       if: inputs.os != 'linux'
-      id: linux-output
+      id: outcome
       run: echo "outcome=${{ steps.tests.outcome }}" >> $GITHUB_OUTPUT
+      shell: bash
     - name: upload diffs to imgur
       if: always() && !cancelled()
       uses: ledgerhq/ledger-live/tools/actions/upload-images@develop
