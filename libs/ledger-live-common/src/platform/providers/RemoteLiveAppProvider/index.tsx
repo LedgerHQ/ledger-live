@@ -126,7 +126,7 @@ export function RemoteLiveAppProvider({
       setProvider,
       updateManifests,
     }),
-    [state, updateManifests]
+    [state, provider, setProvider, updateManifests]
   );
 
   useEffect(() => {
