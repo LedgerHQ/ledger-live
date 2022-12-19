@@ -120,7 +120,7 @@ jobs:
   test-desktop-app-linux:
     name: "Live Desktop Tests (Linux)"
     outputs:
-      status: ${{ steps.test-desktop.outputs.outcome }}
+      status: ${{ steps.test-desktop.outputs.outcome-linux }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       INSTRUMENT_BUILD: true
@@ -263,16 +263,16 @@ jobs:
             };
             const report = {
               mac: {
-                pass: ${{ needs.test-desktop-app-mac.outputs.result == 'success' }},
-                status: "${{ needs.test-desktop-app-mac.outputs.result }}",
+                pass: ${{ needs.test-desktop-app-mac.outputs.outcome == 'success' }},
+                status: "${{ needs.test-desktop-app-mac.outputs.outcome }}",
               },
               linux: {
-                pass: ${{ needs.test-desktop-app-linux.outputs.result == 'success' }},
-                status: "${{ needs.test-desktop-app-linux.outputs.result }}",
+                pass: ${{ needs.test-desktop-app-linux.outputs.outcome == 'success' }},
+                status: "${{ needs.test-desktop-app-linux.outputs.outcome }}",
               },
               windows: {
-                pass: ${{ needs.test-desktop-app-windows.outputs.result == 'success' }},
-                status: "${{ needs.test-desktop-app-windows.outputs.result }}",
+                pass: ${{ needs.test-desktop-app-windows.outputs.outcome == 'success' }},
+                status: "${{ needs.test-desktop-app-windows.outputs.outcome }}",
               },
             };
             const isFailed = statuses.some(e => e === "failure");

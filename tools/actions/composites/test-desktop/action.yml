@@ -8,7 +8,8 @@ inputs:
     description: "port on which the turborepo local cache server is running"
     required: true
 outputs:
-  outcome: ${{ inputs.os == 'linux' && steps.linux-tests.outcome || steps.tests.outcome  }}
+  outcome: ${{ steps.tests.outcome  }}
+  outcome-linux: ${{ steps.linux-tests.outcome  }}
 
 runs:
   using: "composite"
