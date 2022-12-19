@@ -7,6 +7,8 @@ inputs:
   turbo-server-port:
     description: "port on which the turborepo local cache server is running"
     required: true
+outputs:
+  outcome: ${{ inputs.os == 'linux' && steps.linux-tests.outcome || steps.tests.outcome  }}
 
 runs:
   using: "composite"
@@ -33,10 +35,12 @@ runs:
       shell: bash
     - name: Run playwright tests [Linux => xvfb-run]
       if: inputs.os == 'linux'
+      id: linux-tests
       run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
       shell: bash
     - name: Run playwright tests
       if: inputs.os != 'linux'
+      id: tests
       run: pnpm desktop test:playwright
       shell: bash
     - name: upload diffs to imgur
