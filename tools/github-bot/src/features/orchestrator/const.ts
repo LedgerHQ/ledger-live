@@ -53,7 +53,6 @@ export const WORKFLOWS = {
         ref: payload.workflow_run.head_branch,
       };
     },
-    getExtras: () => {},
   },
   "build-mobile.yml": {
     runsOn: RUNNERS.internal,

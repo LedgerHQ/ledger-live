@@ -263,16 +263,16 @@ jobs:
             };
             const report = {
               mac: {
-                pass: ${{ needs.test-desktop-app-mac.outputs.outcome == 'success' }},
-                status: "${{ needs.test-desktop-app-mac.outputs.outcome }}",
+                pass: ${{ needs.test-desktop-app-mac.outputs.status == 'success' }},
+                status: "${{ needs.test-desktop-app-mac.outputs.status }}",
               },
               linux: {
-                pass: ${{ needs.test-desktop-app-linux.outputs.outcome == 'success' }},
-                status: "${{ needs.test-desktop-app-linux.outputs.outcome }}",
+                pass: ${{ needs.test-desktop-app-linux.outputs.status == 'success' }},
+                status: "${{ needs.test-desktop-app-linux.outputs.status }}",
               },
               windows: {
-                pass: ${{ needs.test-desktop-app-windows.outputs.outcome == 'success' }},
-                status: "${{ needs.test-desktop-app-windows.outputs.outcome }}",
+                pass: ${{ needs.test-desktop-app-windows.outputs.status == 'success' }},
+                status: "${{ needs.test-desktop-app-windows.outputs.status }}",
               },
             };
             const isFailed = statuses.some(e => e === "failure");
@@ -347,45 +347,6 @@ jobs:
       #         },
       #         actions
       #       });
-  #     # - name: create/update comment
-  #     #   uses: actions/github-script@v6
-  #     #   with:
-  #     #     script: |
-  #     #       const body = `${{ env.comment_header }}\n${{ steps.comment.outputs.body }}`;
-  #     #       const existingComment = await github.paginate(
-  #     #         github.rest.issues.listComments,
-  #     #         {
-  #     #           owner: context.repo.owner,
-  #     #           repo: context.repo.repo,
-  #     #           issue_number: context.issue.number,
-  #     #         },
-  #     #         (response, done) => {
-  #     #           const comments = response.data
-  #     #           const existingComment = comments
-  #     #             .find(comment =>
-  #     #               comment.user.login === 'github-actions[bot]' &&
-  #     #               comment.body.startsWith(`${{ env.comment_header }}`));
-  #     #           if (existingComment) {
-  #     #             done()
-  #     #             return existingComment;
-  #     #           }
-  #     #         }
-  #     #       ).then(resPerPage => resPerPage.find(res => !!res));
-  #     #       if (existingComment) {
-  #     #         await github.rest.issues.updateComment({
-  #     #           owner: context.repo.owner,
-  #     #           repo: context.repo.repo,
-  #     #           comment_id: existingComment?.id,
-  #     #           body,
-  #     #         });
-  #     #       } else {
-  #     #         await github.rest.issues.createComment({
-  #     #           owner: context.repo.owner,
-  #     #           repo: context.repo.repo,
-  #     #           issue_number: context.issue.number,
-  #     #           body,
-  #     #         })
-  #     #       }
 
   allure-report:
     name: "Allure Reports Export on Server"
