@@ -101,8 +101,10 @@ const PostOnboardingHub = ({ navigation, route }: NavigationProps) => {
 
   const animationTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const clearAnimationTimeout = useCallback(() => {
-    animationTimeout.current && clearTimeout(animationTimeout.current);
-  }, [animationTimeout]);
+    !allDone &&
+      animationTimeout.current &&
+      clearTimeout(animationTimeout.current);
+  }, [allDone]);
 
   const triggerEndAnimation = useCallback(() => {
     const onAnimEnd = () => {

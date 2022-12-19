@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { useCompleteActionCallback } from "../../logic/postOnboarding/useCompleteAction";
-import { useNavigateToPostOnboardingHubCallback } from "../../logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
 import { NavigatorName, ScreenName } from "../../const";
 import Animation from "../../components/Animation";
 import { Linking } from "react-native";
@@ -28,7 +27,6 @@ const ClaimNftWelcome = () => {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const completePostOnboardingAction = useCompleteActionCallback();
-  const goBackToHub = useNavigateToPostOnboardingHubCallback();
 
   const handleGoToQrScan = useCallback(
     () =>
@@ -39,11 +37,9 @@ const ClaimNftWelcome = () => {
   );
 
   const handleSkipQrScan = useCallback(() => {
-    //goBackToHub();
-    Linking.openURL("ledgerlive://post-onboarding/nft-claimed?completed=true");
-    //completePostOnboardingAction(PostOnboardingActionId.claimNft);
-    //navigation.goBack();
-  }, []);
+    completePostOnboardingAction(PostOnboardingActionId.claimNft);
+    navigation.getParent()?.goBack();
+  }, [completePostOnboardingAction, navigation]);
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
