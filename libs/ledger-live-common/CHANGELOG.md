@@ -1,5 +1,54 @@
 # @ledgerhq/live-common
 
+## 27.10.0-protect.0
+
+### Minor Changes
+
+- [#1805](https://github.com/LedgerHQ/ledger-live/pull/1805) [`d99aafd1d4`](https://github.com/LedgerHQ/ledger-live/commit/d99aafd1d48336f6b4da3c1d8e7c52dbc1676278) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - NEAR sync, send and stake
+
+* [#2030](https://github.com/LedgerHQ/ledger-live/pull/2030) [`ee507188f0`](https://github.com/LedgerHQ/ledger-live/commit/ee507188f097429237bef6df0f63b5f6426dd91a) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - update fund partners
+
+### Patch Changes
+
+- [#1984](https://github.com/LedgerHQ/ledger-live/pull/1984) [`f1c15446da`](https://github.com/LedgerHQ/ledger-live/commit/f1c15446dabef05bb91dada8d8f53f9bc6474ba5) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: resilient BLE scanning
+
+* [#2124](https://github.com/LedgerHQ/ledger-live/pull/2124) [`ae891a166e`](https://github.com/LedgerHQ/ledger-live/commit/ae891a166e5de9947781af3630b1accca42da1a6) Thanks [@Justkant](https://github.com/Justkant)! - add icon support for h3m on ledger live.
+
+- [#2066](https://github.com/LedgerHQ/ledger-live/pull/2066) [`3a267c1424`](https://github.com/LedgerHQ/ledger-live/commit/3a267c14241ebc9184490e7eb81b5d4bcc94b092) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - New feature flag staxWelcomeScreen
+
+* [#2045](https://github.com/LedgerHQ/ledger-live/pull/2045) [`93e19275f3`](https://github.com/LedgerHQ/ledger-live/commit/93e19275f3336672579d2e3bab317489d47853c5) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Made the exported logs on LLM larger and configurable via ENV vars.
+
+- [#1961](https://github.com/LedgerHQ/ledger-live/pull/1961) [`1aee1b0103`](https://github.com/LedgerHQ/ledger-live/commit/1aee1b01034f0c5ea90f0ff6aa0d28fc7be0b9f9) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Bring isFirmwareUpdateVersionSupported from LLM to live-common with tests
+
+* [#1997](https://github.com/LedgerHQ/ledger-live/pull/1997) [`5cf73f5ce6`](https://github.com/LedgerHQ/ledger-live/commit/5cf73f5ce673bc1e9552ad46bcc7f25c40a92960) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Add support for custom image storage usage in the list apps and distribution logic
+
+- [#2058](https://github.com/LedgerHQ/ledger-live/pull/2058) [`aee5dd361f`](https://github.com/LedgerHQ/ledger-live/commit/aee5dd361fae6aacb8b7320107417185c90f9b8b) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Protection against syncing or adding the burn address for stellar
+
+* [#2012](https://github.com/LedgerHQ/ledger-live/pull/2012) [`93bd602206`](https://github.com/LedgerHQ/ledger-live/commit/93bd602206137e10e5d5c8aa61d9b5aefef993ce) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Added support for Battery status APDU + CLI command and tests
+
+- [#2052](https://github.com/LedgerHQ/ledger-live/pull/2052) [`13078a0825`](https://github.com/LedgerHQ/ledger-live/commit/13078a08256e3d74eb89dd0be4f0dda57611b68c) Thanks [@chabroA](https://github.com/chabroA)! - Refacto exchange partner config
+
+* [#1984](https://github.com/LedgerHQ/ledger-live/pull/1984) [`f1c15446da`](https://github.com/LedgerHQ/ledger-live/commit/f1c15446dabef05bb91dada8d8f53f9bc6474ba5) Thanks [@alexandremgo](https://github.com/alexandremgo)! - New HwTransportError for all the implementations of Transport
+
+* Updated dependencies [[`3a267c1424`](https://github.com/LedgerHQ/ledger-live/commit/3a267c14241ebc9184490e7eb81b5d4bcc94b092), [`d99aafd1d4`](https://github.com/LedgerHQ/ledger-live/commit/d99aafd1d48336f6b4da3c1d8e7c52dbc1676278), [`04a939310a`](https://github.com/LedgerHQ/ledger-live/commit/04a939310a52a7e0ebf0814286e6ad135c8c8cfa), [`f1c15446da`](https://github.com/LedgerHQ/ledger-live/commit/f1c15446dabef05bb91dada8d8f53f9bc6474ba5)]:
+  - @ledgerhq/devices@7.0.6-protect.0
+  - @ledgerhq/cryptoassets@7.1.0-protect.0
+  - @ledgerhq/errors@6.12.2-protect.0
+  - @ledgerhq/hw-transport@6.27.9-protect.0
+  - @ledgerhq/hw-app-eth@6.30.3-protect.0
+  - @ledgerhq/hw-app-algorand@6.27.9-protect.0
+  - @ledgerhq/hw-app-cosmos@6.27.9-protect.0
+  - @ledgerhq/hw-app-near@6.27.4-protect.0
+  - @ledgerhq/hw-app-polkadot@6.27.9-protect.0
+  - @ledgerhq/hw-app-solana@7.0.3-protect.0
+  - @ledgerhq/hw-app-trx@6.27.9-protect.0
+  - @ledgerhq/hw-transport-node-speculos@6.27.9-protect.0
+  - @ledgerhq/hw-app-btc@9.1.1-protect.0
+  - @ledgerhq/hw-app-str@6.27.9-protect.0
+  - @ledgerhq/hw-app-tezos@6.27.9-protect.0
+  - @ledgerhq/hw-app-xrp@6.27.9-protect.0
+  - @ledgerhq/hw-transport-mocker@6.27.9-protect.0
+
 ## 27.9.0
 
 ### Minor Changes
