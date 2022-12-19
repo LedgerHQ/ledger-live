@@ -334,7 +334,7 @@ const SyncOnboardingManual = () => {
                 animation={getDeviceAnimation(
                   "stax" as DeviceModelId,
                   theme.theme as "light" | "dark",
-                  "placeHolder",
+                  "plugAndPinCode",
                 )}
               />
             ) : (
