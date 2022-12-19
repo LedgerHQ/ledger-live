@@ -10,16 +10,19 @@ import { Text, Flex, Button } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useSelector, useDispatch } from "react-redux";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { createAction } from "@ledgerhq/live-common/hw/actions/staxFetchImage";
 import staxFetchImage from "@ledgerhq/live-common/hw/staxFetchImage";
+
+import { targetDisplayDimensions } from "../../../CustomImage/shared";
 import { customImageBackupSelector } from "../../../../reducers/settings";
 import { setCustomImageBackup } from "../../../../actions/settings";
 import NavigationScrollView from "../../../../components/NavigationScrollView";
 import SelectDevice from "../../../../components/SelectDevice";
+import SelectDevice2 from "../../../../components/SelectDevice2";
 import CustomImageDeviceAction from "../../../../components/CustomImageDeviceAction";
 import ResultDataTester from "../../../../components/CustomImage/ResultDataTester";
 import { ProcessorPreviewResult } from "../../../../components/CustomImage/ImageProcessor";
-import { targetDisplayDimensions } from "../../../CustomImage/shared";
 import FramedImage, {
   transferConfig,
 } from "../../../../components/CustomImage/FramedImage";
@@ -36,6 +39,8 @@ export default function DebugFetchCustomImage() {
   const { hash, hex } = useSelector(customImageBackupSelector) || {};
   const currentBackup = useRef<string>(hash || "");
   const dispatch = useDispatch();
+
+  const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
 
   // TODO move all the logic here onto its own thing
   // when we implement the screens of the flow.
@@ -92,7 +97,13 @@ export default function DebugFetchCustomImage() {
   return (
     <NavigationScrollView>
       <View style={[styles.root, { backgroundColor: colors.background }]}>
-        {!device ? <SelectDevice onSelect={setDevice} /> : null}
+        {!device ? (
+          newDeviceSelectionFeatureFlag?.enabled ? (
+            <SelectDevice2 onSelect={setDevice} />
+          ) : (
+            <SelectDevice onSelect={setDevice} />
+          )
+        ) : null}
         <Flex>
           {hash ? (
             <Button mb={2} onPress={onDeleteBackup} type="main">
