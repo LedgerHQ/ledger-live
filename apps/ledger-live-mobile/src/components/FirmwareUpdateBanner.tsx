@@ -89,7 +89,7 @@ const FirmwareUpdateBanner = ({
     : "";
 
   return showBanner && hasCompletedOnboarding && hasConnectedDevice ? (
-    <Flex mt={8} {...containerProps}>
+    <Flex mt={5} {...containerProps}>
       <Alert type="info" showIcon={false}>
         <Text flexShrink={1} flexGrow={1}>
           {t("FirmwareUpdate.newVersion", {
