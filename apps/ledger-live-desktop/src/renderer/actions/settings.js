@@ -46,6 +46,8 @@ export const setAllowExperimentalApps = (allowExperimentalApps: boolean) =>
   saveSettings({ allowExperimentalApps });
 export const setEnablePlatformDevTools = (enablePlatformDevTools: boolean) =>
   saveSettings({ enablePlatformDevTools });
+export const setCatalogProvider = (catalogProvider: string) => saveSettings({ catalogProvider });
+
 export const setEnableLearnPageStagingUrl = (enableLearnPageStagingUrl: boolean) =>
   saveSettings({ enableLearnPageStagingUrl });
 

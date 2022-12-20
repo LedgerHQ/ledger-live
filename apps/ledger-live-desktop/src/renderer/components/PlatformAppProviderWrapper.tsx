@@ -8,6 +8,7 @@ import { RemoteLiveAppProvider } from "@ledgerhq/live-common/platform/providers/
 import { LocalLiveAppProvider } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { getPlatformVersion } from "@ledgerhq/live-common/platform/version";
+import { catalogProviderSelector } from "~/renderer/reducers/settings";
 
 type PlatformAppProviderWrapperProps = {
   children: ReactNode;
@@ -18,6 +19,7 @@ const AUTO_UPDATE_DEFAULT_DELAY = 1800 * 1000; // 1800 seconds
 export function PlatformAppProviderWrapper({ children }: PlatformAppProviderWrapperProps) {
   const allowDebugApps = useSelector(allowDebugAppsSelector);
   const allowExperimentalApps = useSelector(allowExperimentalAppsSelector);
+  const provider = useSelector(catalogProviderSelector);
 
   return (
     <RemoteLiveAppProvider
@@ -30,7 +32,7 @@ export function PlatformAppProviderWrapper({ children }: PlatformAppProviderWrap
       updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
     >
       <LocalLiveAppProvider>
-        <RampCatalogProvider updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}>
+        <RampCatalogProvider provider={provider} updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}>
           {children}
         </RampCatalogProvider>
       </LocalLiveAppProvider>

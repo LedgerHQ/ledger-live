@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import Loader from "~/renderer/icons/Loader";
 import api from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/api/index";
 
-const CatalogProviderSelect = () => {
+const CatalogProviderInout = () => {
   const { provider, setProvider } = useRemoteLiveAppContext();
   const { t } = useTranslation();
   const [inputValue, setInputValue] = useState<string>(provider === "production" ? "" : provider);
@@ -54,7 +54,7 @@ const CatalogProviderSelect = () => {
 
   return (
     <>
-      <Track onUpdate event="CatalogProviderSelect" currentProvider={provider} />
+      <Track onUpdate event="CatalogProviderInout" currentProvider={provider} />
       <Box grow horizontal flow={2} alignItems="center">
         {enableCustomProvider ? (
           <>
@@ -83,4 +83,4 @@ const CatalogProviderSelect = () => {
   );
 };
 
-export default CatalogProviderSelect;
+export default CatalogProviderInout;
