@@ -550,8 +550,7 @@ const avalanche_c_chain: AppSpec<Transaction> = {
   currency: avax_c_chain,
   appQuery: {
     model: DeviceModelId.nanoS,
-    // TODO: should be "Avalanche"
-    appName: "Ethereum",
+    appName: "Avalanche",
   },
   genericDeviceAction: acceptTransaction,
   dependency: "Ethereum",

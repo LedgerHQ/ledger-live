@@ -13,7 +13,6 @@ setPlatformVersion(PLATFORM_VERSION);
 setWalletAPIVersion(WALLET_API_VERSION);
 
 setSupportedCurrencies([
-  "avalanche_c_chain",
   "bitcoin",
   "ethereum",
   "bsc",
@@ -34,6 +33,7 @@ setSupportedCurrencies([
   "decred",
   "digibyte",
   "algorand",
+  "avalanche_c_chain",
   "qtum",
   "bitcoin_gold",
   "komodo",
