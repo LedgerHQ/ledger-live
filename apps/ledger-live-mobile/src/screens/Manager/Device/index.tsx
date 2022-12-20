@@ -28,7 +28,7 @@ import { lastSeenCustomImageSelector } from "../../../reducers/settings";
 import DeviceAppStorage from "./DeviceAppStorage";
 
 import NanoS from "../../../images/devices/NanoS";
-import NanoFTS from "../../../images/devices/NanoFTS";
+import Stax from "../../../images/devices/Stax";
 import NanoX from "../../../images/devices/NanoX";
 
 import DeviceName from "./DeviceName";
@@ -42,7 +42,7 @@ const illustrations = {
   nanoSP: NanoS,
   nanoX: NanoX,
   blue: NanoS,
-  nanoFTS: NanoFTS,
+  stax: Stax,
 };
 
 type Props = {
@@ -125,8 +125,7 @@ const DeviceCard = ({
     deviceInfo.languageId !== undefined;
 
   const hasCustomImage =
-    useFeature("customImage")?.enabled &&
-    deviceModel.id === DeviceModelId.nanoFTS;
+    useFeature("customImage")?.enabled && deviceModel.id === DeviceModelId.stax;
 
   return (
     <BorderCard>

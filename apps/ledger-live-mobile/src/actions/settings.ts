@@ -35,7 +35,6 @@ import {
   SettingsSetLastSeenCustomImagePayload,
   SettingsSetCountervaluePayload,
   SettingsSetDiscreetModePayload,
-  SettingsSetExperimentalUsbSupportPayload,
   SettingsSetFirstConnectionHasDevicePayload,
   SettingsSetHasOrderedNanoPayload,
   SettingsSetLanguagePayload,
@@ -140,15 +139,6 @@ const setReadOnlyAction = createAction<SettingsSetReadOnlyModePayload>(
 export const setReadOnlyMode = (readOnlyModeEnabled: boolean) =>
   setReadOnlyAction({
     readOnlyModeEnabled,
-  });
-
-const setExperimentalUSBSupportAction =
-  createAction<SettingsSetExperimentalUsbSupportPayload>(
-    SettingsActionTypes.SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT,
-  );
-export const setExperimentalUSBSupport = (experimentalUSBEnabled: boolean) =>
-  setExperimentalUSBSupportAction({
-    experimentalUSBEnabled,
   });
 
 const setOrderAccountsAction = createAction<SettingsSetOrderAccountsPayload>(

@@ -328,11 +328,11 @@ const SyncOnboardingManual = () => {
             </Flex>
           </Flex>
           <Flex flex={1} justifyContent="center" alignItems="center">
-            {device?.modelId === "nanoFTS" ? (
+            {device?.modelId === "stax" ? (
               <Animation
                 height="540px"
                 animation={getDeviceAnimation(
-                  "nanoFTS" as DeviceModelId,
+                  "stax" as DeviceModelId,
                   theme.theme as "light" | "dark",
                   "placeHolder",
                 )}

@@ -37,7 +37,6 @@ import type {
   SettingsSetCarouselVisibilityPayload,
   SettingsSetCountervaluePayload,
   SettingsSetDiscreetModePayload,
-  SettingsSetExperimentalUsbSupportPayload,
   SettingsSetFirstConnectHasDeviceUpdatedPayload,
   SettingsSetHasOrderedNanoPayload,
   SettingsSetLanguagePayload,
@@ -105,7 +104,6 @@ export const INITIAL_STATE: SettingsState = {
   // readOnlyModeEnabled: !Config.DISABLE_READ_ONLY,
   readOnlyModeEnabled: true,
   hasOrderedNano: false,
-  experimentalUSBEnabled: false,
   countervalueFirst: true,
   graphCountervalueFirst: true,
   hideEmptyTokenAccounts: false,
@@ -295,16 +293,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     readOnlyModeEnabled: (action as Action<SettingsSetReadOnlyModePayload>)
       .payload.readOnlyModeEnabled,
-  }),
-
-  [SettingsActionTypes.SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT]: (
-    state,
-    action,
-  ) => ({
-    ...state,
-    experimentalUSBEnabled: (
-      action as Action<SettingsSetExperimentalUsbSupportPayload>
-    ).payload.experimentalUSBEnabled,
   }),
 
   [SettingsActionTypes.SETTINGS_SWITCH_COUNTERVALUE_FIRST]: state => ({
@@ -641,10 +629,6 @@ export const reportErrorsEnabledSelector = createSelector(
 export const analyticsEnabledSelector = createSelector(
   storeSelector,
   s => s.analyticsEnabled,
-);
-export const experimentalUSBEnabledSelector = createSelector(
-  storeSelector,
-  s => s.experimentalUSBEnabled,
 );
 export const lastSeenCustomImageSelector = createSelector(
   storeSelector,
