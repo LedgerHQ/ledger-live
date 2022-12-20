@@ -1,5 +1,6 @@
 import { handleActions } from "redux-actions";
 import type { Action, ReducerMap } from "redux-actions";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { BleState, State } from "./types";
 import type {
   BleAddKnownDevicePayload,
@@ -62,7 +63,12 @@ export const knownDevicesSelector = (s: State) => {
   // to be removed in a while.
   return s.ble.knownDevices.map(knownDevice => ({
     ...knownDevice,
-    modelId: knownDevice.modelId === "nanoFTS" ? "stax" : knownDevice.modelId,
+    modelId:
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      knownDevice.modelId === "nanoFTS"
+        ? DeviceModelId.stax
+        : knownDevice.modelId,
   }));
 };
 export const deviceNameByDeviceIdSelectorCreator =
