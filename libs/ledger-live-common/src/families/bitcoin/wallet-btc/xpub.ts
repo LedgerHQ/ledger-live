@@ -208,13 +208,6 @@ class Xpub {
       isChange: false,
     };
 
-    if (params.opReturnData) {
-      desiredOutputLeftToFit.script = this.crypto.toOpReturnOutputScript(
-        params.opReturnData
-      );
-      desiredOutputLeftToFit.value = new BigNumber(0);
-    }
-
     while (desiredOutputLeftToFit.value.gt(this.OUTPUT_VALUE_MAX)) {
       outputs.push({
         script: desiredOutputLeftToFit.script,
