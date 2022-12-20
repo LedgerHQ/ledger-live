@@ -11,7 +11,7 @@ import {
   transportCloseChannel,
   transportExchangeChannel,
   transportOpenChannel,
-} from "~/internal/transportHandler";
+} from "~/config/transportChannels";
 
 // ~~~ Local state that main thread keep
 

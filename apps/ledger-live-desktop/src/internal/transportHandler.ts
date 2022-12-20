@@ -1,13 +1,14 @@
 import { Subject } from "rxjs";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { DisconnectedDeviceDuringOperation, serializeError } from "@ledgerhq/errors";
+import {
+  transportCloseChannel,
+  transportExchangeChannel,
+  transportOpenChannel,
+} from "~/config/transportChannels";
 
 type APDUMessage = { apduHex: string; requestId: string };
 const transports = new Map<string, Subject<APDUMessage>>();
-
-export const transportOpenChannel = "transport:open";
-export const transportExchangeChannel = "transport:exchange";
-export const transportCloseChannel = "transport:close";
 
 export const transportOpen = ({
   data,
