@@ -223,7 +223,10 @@ export const generateStaxImageFormat: (
   header.writeUInt16LE(height, 2); // height
   header.writeUInt8((bpp << 4) | compression, 4);
 
-  const imgData = Buffer.from(hexImage, "hex");
+  // Nb Display image data is missing 2 pixels from each column.
+  // padding every 670 characters with two fillers, should do the trick.
+  const paddedHexImage = hexImage.replace(/(.{670})/g, "$100");
+  const imgData = Buffer.from(paddedHexImage, "hex");
 
   if (!compressImage) {
     const dataLength = imgData.length;
