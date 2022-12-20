@@ -37,7 +37,6 @@ export const addPendingOperation = (account: Account, operation: Operation) => {
     const acc = subaccounts.find((sub) => sub.id === op.accountId);
 
     if (acc) {
-      // $FlowFixMe
       const copy: SubAccount = { ...acc };
       copy.pendingOperations = appendPendingOp(acc.pendingOperations, op);
       subaccounts[subaccounts.indexOf(acc)] = copy;

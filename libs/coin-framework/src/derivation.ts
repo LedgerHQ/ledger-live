@@ -581,7 +581,6 @@ export function walletDerivation<R>({
             seedIdentifier,
           })
         ), // take until the list is complete (based on criteria defined by stepAddress)
-        // $FlowFixMe
         takeWhile((r) => !r.complete, true), // emit just the results
         concatMap(({ result }) => (result ? of(result) : empty()))
       );

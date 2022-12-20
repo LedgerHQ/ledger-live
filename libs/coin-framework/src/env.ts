@@ -785,7 +785,6 @@ export const setEnvUnsafe = (name: EnvName, unsafeValue: unknown): boolean => {
     return false;
   }
 
-  // $FlowFixMe flow don't seem to type proof it
   setEnv(name, value);
   return true;
 };
