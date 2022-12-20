@@ -1,8 +1,11 @@
-import { LockedDeviceError } from "@ledgerhq/errors";
+//import { LockedDeviceError } from "@ledgerhq/errors";
 import { DeviceId, DeviceInfo } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
-import { scan } from "rxjs/operators";
-import { getDeviceInfoTask } from "../tasks/getDeviceInfo";
+import { scan, tap } from "rxjs/operators";
+import {
+  getDeviceInfoTask,
+  GetDeviceInfoTaskEvent,
+} from "../tasks/getDeviceInfo";
 
 export type GetDeviceInfoActionArgs = { deviceId: DeviceId };
 
@@ -29,46 +32,68 @@ export type GeneralState = {
 // Maybe here, or in the type lib
 export type GetDeviceInfoActionState = State & GeneralState;
 
-// or maybe to be more flexible on the "general state"/"common state"
-// export type GetDeviceInfoActionState2 = {
-//   deviceInfo: DeviceInfo | null;
-//   commonState: {
-//     lockedDevice?: boolean;
-//     error?: DeviceActionError | null;
-//   };
+// export function getDeviceInfoAction({
+//   deviceId,
+// }: GetDeviceInfoActionArgs): Observable<GetDeviceInfoActionState> {
+//   // or getDeviceInfoTask({}).pipe(scan(reducer)).subscribe(o) ? See below
+//   return new Observable((o) => {
+//     getDeviceInfoTask({ deviceId }).subscribe({
+//       next: (event) => {
+//         o.next({ deviceInfo: event, lockedDevice: false, error: null });
+//       },
+//       error: (error) => {
+//         // TODO: handle device locked for ex ?
+//         if (error instanceof LockedDeviceError) {
+//           o.next({ deviceInfo: null, lockedDevice: true, error: null });
+//           return;
+//         }
+
+//         o.next({ deviceInfo: null, lockedDevice: false, error });
+//       },
+//       complete: () => o.complete(),
+//     });
+//   });
+// }
+
+const generalInitialState: GeneralState = { lockedDevice: false, error: null };
+export const initialState: GetDeviceInfoActionState = {
+  deviceInfo: null,
+  ...generalInitialState,
+};
+
+// const generalReducer = (currentState: GeneralState, event: GeneralTaskEvent) => {
+//   switch (event.type) {
+//     case "error":
+//       if (event.error instanceof LockedDeviceError) {
+//         return { ...currentState, lockedDevice: true };
+//       }
+//     default:
+//       return currentState;
+//   }
 // };
 
 export function getDeviceInfoAction({
   deviceId,
 }: GetDeviceInfoActionArgs): Observable<GetDeviceInfoActionState> {
-  // or getDeviceInfoTask({}).pipe(scan(reducer)).subscribe(o) ? See below
-  return new Observable((o) => {
-    getDeviceInfoTask({ deviceId }).subscribe({
-      next: (event) => {
-        o.next({ deviceInfo: event, lockedDevice: false, error: null });
-      },
-      error: (error) => {
-        // TODO: handle device locked for ex ?
-        if (error instanceof LockedDeviceError) {
-          o.next({ deviceInfo: null, lockedDevice: true, error: null });
-          return;
-        }
-
-        o.next({ deviceInfo: null, lockedDevice: false, error });
-      },
-      complete: () => o.complete(),
-    });
-  });
-}
-
-export function getDeviceInfoAction2({
-  deviceId,
-}: GetDeviceInfoActionArgs): Observable<GetDeviceInfoActionState> {
   // TODO: what does it looks like with several tasks ?
   return getDeviceInfoTask({ deviceId }).pipe(
-    scan((_precState: GetDeviceInfoActionState, event: DeviceInfo) => {
-      // TODO: handles error cases
-      return { deviceInfo: event, lockedDevice: false, error: null };
-    })
+    tap((event) => console.log(`🦖 ${JSON.stringify(event)}`)),
+    scan(
+      (
+        currentState: GetDeviceInfoActionState,
+        event: GetDeviceInfoTaskEvent
+      ) => {
+        switch (event.type) {
+          case "taskError":
+            return { ...initialState, error: event.error };
+          case "data":
+            return { ...currentState, deviceInfo: event.deviceInfo };
+          default:
+            // TODO: define a general reducer
+            return { ...currentState, error: event.error }; // ...generalReducer(currentState, event) };
+        }
+      },
+      initialState
+    )
   );
 }

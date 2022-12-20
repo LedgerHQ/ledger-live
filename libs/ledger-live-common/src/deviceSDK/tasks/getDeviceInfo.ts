@@ -1,7 +1,4 @@
-import {
-  DeviceOnDashboardExpected,
-  TransportStatusError,
-} from "@ledgerhq/errors";
+import { DeviceOnDashboardExpected } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import type { DeviceId, DeviceInfo } from "@ledgerhq/types-live";
 
@@ -12,17 +9,27 @@ import isDevFirmware from "../../hw/isDevFirmware";
 import { isDashboardName } from "../../hw/isDashboardName";
 import { withDevice } from "../../hw/deviceAccess";
 import { PROVIDERS } from "../../manager/provider";
-import { DeviceNotOnboarded } from "../../errors";
-import { Observable, of } from "rxjs";
-import { catchError, map, switchMap } from "rxjs/operators";
-import { withTransportAsyncJob } from "../helpers/withTransportAsyncJob";
+import { Observable } from "rxjs";
+import { map, filter, switchMap } from "rxjs/operators";
 
 const ManagerAllowedFlag = 0x08;
 const PinValidatedFlag = 0x80;
 
-export type GetDeviceInfoTaskArgs = { deviceId: DeviceId };
-export type GetDeviceInfoTaskEvent = DeviceInfo;
+// TODO: put it somewhere else: in the type lib
+export type GeneralTaskEvent = { type: "error"; error: Error };
 
+export type GetDeviceInfoTaskArgs = { deviceId: DeviceId };
+
+// TODO: check if there's a way to be more specific than that
+// It shoould be: DeviceOnDashboardExpected
+export type GetDeviceInfoTaskError = Error;
+
+export type GetDeviceInfoTaskEvent =
+  | { type: "data"; deviceInfo: DeviceInfo }
+  | { type: "taskError"; error: GetDeviceInfoTaskError }
+  | GeneralTaskEvent;
+
+// typeof lala = Error
 // Implementation with new Observable: easier to read ?
 // BUT: does not work currently because 2nd subscribe does not wait for 1st subscribe to complete
 // Fix: subscribe to 1st, and on complete start the 2nd command -> but indentation hell
@@ -33,206 +40,212 @@ export function getDeviceInfoTask({
 
   // To avoid having another process communicating to the device while we are waiting for a http call response
   // and create issue once we want to communicate with the device again, keeping the withDevice forbids this to happen
+  return new Observable((subscriber) => {
+    withDevice(deviceId)((transport) =>
+      getAppAndVersion(transport).pipe(
+        filter(({ name }) => {
+          if (!isDashboardName(name)) {
+            subscriber.next({
+              type: "taskError",
+              error: new DeviceOnDashboardExpected(),
+            });
+            return false;
+          }
+          return true;
+        }),
+        // should this be a map?
+        switchMap(() => {
+          console.log(`🧠 calling getVersion`);
+          return getVersion(transport);
+        }),
 
-  new Observable = (o) => {
+        map((value) => {
+          const {
+            isBootloader,
+            rawVersion,
+            targetId,
+            seVersion,
+            seTargetId,
+            mcuBlVersion,
+            mcuVersion,
+            mcuTargetId,
+            flags,
+            bootloaderVersion,
+            hardwareVersion,
+            languageId,
+          } = value;
 
-    .subscribe({
-      error: (error) => o.next({ error })
-    })
-  }
-  withDevice(deviceId)((transport) =>
-    getAppAndVersion(transport).pipe(
-      map((getAppAndVersion) => {
-        const { name } = getAppAndVersion;
-        return isDashboardName(name);
-      }),
-      map((isOnDashboard) => {
-        if (!isOnDashboard) {
-          throw new Error();
-        }
-      }),
-      () => getVersion(transport),
-      map((value) => {
-        const {
-          isBootloader,
-          rawVersion,
-          targetId,
-          seVersion,
-          seTargetId,
-          mcuBlVersion,
-          mcuVersion,
-          mcuTargetId,
-          flags,
-          bootloaderVersion,
-          hardwareVersion,
-          languageId,
-        } = value;
+          const isOSU = rawVersion.includes("-osu");
+          const version = rawVersion.replace("-osu", "");
+          const m = rawVersion.match(/([0-9]+.[0-9]+)(.[0-9]+)?(-(.*))?/);
+          const [, majMin, , , postDash] = m || [];
+          const providerName = PROVIDERS[postDash] ? postDash : null;
+          const flag = flags.length > 0 ? flags[0] : 0;
+          const managerAllowed = !!(flag & ManagerAllowedFlag);
+          const pinValidated = !!(flag & PinValidatedFlag);
 
-        const isOSU = rawVersion.includes("-osu");
-        const version = rawVersion.replace("-osu", "");
-        const m = rawVersion.match(/([0-9]+.[0-9]+)(.[0-9]+)?(-(.*))?/);
-        const [, majMin, , , postDash] = m || [];
-        const providerName = PROVIDERS[postDash] ? postDash : null;
-        const flag = flags.length > 0 ? flags[0] : 0;
-        const managerAllowed = !!(flag & ManagerAllowedFlag);
-        const pinValidated = !!(flag & PinValidatedFlag);
+          let isRecoveryMode = false;
+          let onboarded = true;
+          if (flags.length === 4) {
+            // Nb Since LNS+ unseeded devices are visible + extra flags
+            isRecoveryMode = !!(flags[0] & 0x01);
+            onboarded = !!(flags[0] & 0x04);
+          }
 
-        let isRecoveryMode = false;
-        let onboarded = true;
-        if (flags.length === 4) {
-          // Nb Since LNS+ unseeded devices are visible + extra flags
-          isRecoveryMode = !!(flags[0] & 0x01);
-          onboarded = !!(flags[0] & 0x04);
-        }
+          log(
+            "hw",
+            "deviceInfo: se@" +
+              version +
+              " mcu@" +
+              mcuVersion +
+              (isOSU ? " (osu)" : isBootloader ? " (bootloader)" : "")
+          );
 
-        log(
-          "hw",
-          "deviceInfo: se@" +
-            version +
-            " mcu@" +
-            mcuVersion +
-            (isOSU ? " (osu)" : isBootloader ? " (bootloader)" : "")
-        );
+          const hasDevFirmware = isDevFirmware(seVersion);
+          const deviceInfo: DeviceInfo = {
+            version,
+            mcuVersion,
+            seVersion,
+            mcuBlVersion,
+            majMin,
+            providerName: providerName || null,
+            targetId,
+            hasDevFirmware,
+            seTargetId,
+            mcuTargetId,
+            isOSU,
+            isBootloader,
+            isRecoveryMode,
+            managerAllowed,
+            pinValidated,
+            onboarded,
+            bootloaderVersion,
+            hardwareVersion,
+            languageId,
+          };
 
-        const hasDevFirmware = isDevFirmware(seVersion);
-
-        return of({
-          version,
-          mcuVersion,
-          seVersion,
-          mcuBlVersion,
-          majMin,
-          providerName: providerName || null,
-          targetId,
-          hasDevFirmware,
-          seTargetId,
-          mcuTargetId,
-          isOSU,
-          isBootloader,
-          isRecoveryMode,
-          managerAllowed,
-          pinValidated,
-          onboarded,
-          bootloaderVersion,
-          hardwareVersion,
-          languageId,
-        });
-      })
-    )
-  );
-
-  return new Observable((o) => {
-    withDevice(deviceId)((transport) => {
-      getAppAndVersion(transport)
-        .pipe(
-          switchMap(({ name }) => {
-            return isDashboardName(name);
-          })
-        )
-        .subscribe({
-          next: (probablyOnDashboard) => {
-            if (!probablyOnDashboard) {
-              o.error(new DeviceOnDashboardExpected());
-            }
-          },
-          error: (e) => {
-            console.log(`🚨 1st obs error: ${JSON.stringify(e)}`);
-            o.error(e);
-          },
-          complete: () => {
-            getVersion(transport)
-              .pipe(
-                switchMap((value) => {
-                  const {
-                    isBootloader,
-                    rawVersion,
-                    targetId,
-                    seVersion,
-                    seTargetId,
-                    mcuBlVersion,
-                    mcuVersion,
-                    mcuTargetId,
-                    flags,
-                    bootloaderVersion,
-                    hardwareVersion,
-                    languageId,
-                  } = value;
-
-                  const isOSU = rawVersion.includes("-osu");
-                  const version = rawVersion.replace("-osu", "");
-                  const m = rawVersion.match(
-                    /([0-9]+.[0-9]+)(.[0-9]+)?(-(.*))?/
-                  );
-                  const [, majMin, , , postDash] = m || [];
-                  const providerName = PROVIDERS[postDash] ? postDash : null;
-                  const flag = flags.length > 0 ? flags[0] : 0;
-                  const managerAllowed = !!(flag & ManagerAllowedFlag);
-                  const pinValidated = !!(flag & PinValidatedFlag);
-
-                  let isRecoveryMode = false;
-                  let onboarded = true;
-                  if (flags.length === 4) {
-                    // Nb Since LNS+ unseeded devices are visible + extra flags
-                    isRecoveryMode = !!(flags[0] & 0x01);
-                    onboarded = !!(flags[0] & 0x04);
-                  }
-
-                  log(
-                    "hw",
-                    "deviceInfo: se@" +
-                      version +
-                      " mcu@" +
-                      mcuVersion +
-                      (isOSU ? " (osu)" : isBootloader ? " (bootloader)" : "")
-                  );
-
-                  const hasDevFirmware = isDevFirmware(seVersion);
-
-                  return of({
-                    version,
-                    mcuVersion,
-                    seVersion,
-                    mcuBlVersion,
-                    majMin,
-                    providerName: providerName || null,
-                    targetId,
-                    hasDevFirmware,
-                    seTargetId,
-                    mcuTargetId,
-                    isOSU,
-                    isBootloader,
-                    isRecoveryMode,
-                    managerAllowed,
-                    pinValidated,
-                    onboarded,
-                    bootloaderVersion,
-                    hardwareVersion,
-                    languageId,
-                  });
-                })
-              )
-              .subscribe({
-                next: (value) => {
-                  o.next(value);
-                },
-                error: (e) => {
-                  // TODO: don't know if should handle it here
-                  if (e instanceof TransportStatusError) {
-                    // @ts-expect-error typescript not checking agains the instanceof
-                    if (e.statusCode === 0x6d06) {
-                      o.error(DeviceNotOnboarded());
-                    }
-                  }
-
-                  console.log(`🚨 2st obs error: ${JSON.stringify(e)}`);
-                  o.error(e);
-                },
-                complete: () => o.complete(),
-              });
-          },
-        });
+          return deviceInfo;
+        })
+      )
+    ).subscribe({
+      next: (deviceInfo) => subscriber.next({ type: "data", deviceInfo }),
+      error: (error) => subscriber.next({ type: "error", error }),
+      complete: () => subscriber.complete(),
     });
   });
+
+  // return new Observable((o) => {
+  //   withDevice(deviceId)((transport) => {
+  //     getAppAndVersion(transport)
+  //       .pipe(
+  //         switchMap(({ name }) => {
+  //           return isDashboardName(name);
+  //         })
+  //       )
+  //       .subscribe({
+  //         next: (probablyOnDashboard) => {
+  //           if (!probablyOnDashboard) {
+  //             o.error(new DeviceOnDashboardExpected());
+  //           }
+  //         },
+  //         error: (e) => {
+  //           console.log(`🚨 1st obs error: ${JSON.stringify(e)}`);
+  //           o.error(e);
+  //         },
+  //         complete: () => {
+  //           getVersion(transport)
+  //             .pipe(
+  //               switchMap((value) => {
+  //                 const {
+  //                   isBootloader,
+  //                   rawVersion,
+  //                   targetId,
+  //                   seVersion,
+  //                   seTargetId,
+  //                   mcuBlVersion,
+  //                   mcuVersion,
+  //                   mcuTargetId,
+  //                   flags,
+  //                   bootloaderVersion,
+  //                   hardwareVersion,
+  //                   languageId,
+  //                 } = value;
+
+  //                 const isOSU = rawVersion.includes("-osu");
+  //                 const version = rawVersion.replace("-osu", "");
+  //                 const m = rawVersion.match(
+  //                   /([0-9]+.[0-9]+)(.[0-9]+)?(-(.*))?/
+  //                 );
+  //                 const [, majMin, , , postDash] = m || [];
+  //                 const providerName = PROVIDERS[postDash] ? postDash : null;
+  //                 const flag = flags.length > 0 ? flags[0] : 0;
+  //                 const managerAllowed = !!(flag & ManagerAllowedFlag);
+  //                 const pinValidated = !!(flag & PinValidatedFlag);
+
+  //                 let isRecoveryMode = false;
+  //                 let onboarded = true;
+  //                 if (flags.length === 4) {
+  //                   // Nb Since LNS+ unseeded devices are visible + extra flags
+  //                   isRecoveryMode = !!(flags[0] & 0x01);
+  //                   onboarded = !!(flags[0] & 0x04);
+  //                 }
+
+  //                 log(
+  //                   "hw",
+  //                   "deviceInfo: se@" +
+  //                     version +
+  //                     " mcu@" +
+  //                     mcuVersion +
+  //                     (isOSU ? " (osu)" : isBootloader ? " (bootloader)" : "")
+  //                 );
+
+  //                 const hasDevFirmware = isDevFirmware(seVersion);
+
+  //                 return of({
+  //                   version,
+  //                   mcuVersion,
+  //                   seVersion,
+  //                   mcuBlVersion,
+  //                   majMin,
+  //                   providerName: providerName || null,
+  //                   targetId,
+  //                   hasDevFirmware,
+  //                   seTargetId,
+  //                   mcuTargetId,
+  //                   isOSU,
+  //                   isBootloader,
+  //                   isRecoveryMode,
+  //                   managerAllowed,
+  //                   pinValidated,
+  //                   onboarded,
+  //                   bootloaderVersion,
+  //                   hardwareVersion,
+  //                   languageId,
+  //                 });
+  //               })
+  //             )
+  //             .subscribe({
+  //               next: (value) => {
+  //                 o.next(value);
+  //               },
+  //               error: (e) => {
+  //                 // TODO: don't know if should handle it here
+  //                 if (e instanceof TransportStatusError) {
+  //                   // @ts-expect-error typescript not checking agains the instanceof
+  //                   if (e.statusCode === 0x6d06) {
+  //                     o.error(DeviceNotOnboarded());
+  //                   }
+  //                 }
+
+  //                 console.log(`🚨 2st obs error: ${JSON.stringify(e)}`);
+  //                 o.error(e);
+  //               },
+  //               complete: () => o.complete(),
+  //             });
+  //         },
+  //       });
+  //   });
+  // });
 }
 
 // Implementation full pipe: harder to read ?
