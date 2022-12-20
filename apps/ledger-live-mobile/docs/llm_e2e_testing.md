@@ -30,7 +30,13 @@ pnpm mobile e2e:build -c ios.sim.debug
 
 Writing and running Detox tests requires Xcode for iOS and Android Studio (along with the SDK and emulator tools) for Android. The best place to setup both Android and iOS is to follow the [React Native's own documentation](https://reactnative.dev/docs/environment-setup).
 
-Next, follow the steps in the Detox [Environment Setup](https://wix.github.io/Detox/docs/introduction/getting-started) section. Most of the setup is taken care of in the React Native docs, but you will have to do some additional installations, such as the Detox CLI and `applesimutils` (MacOS only).
+Next, follow the steps in the Detox [Environment Setup](https://wix.github.io/Detox/docs/introduction/getting-started) section.
+
+### Tips for iOS setup
+
+Most of the setup is taken care of in the React Native docs, but you will have to do some additional installations, such as the Detox CLI and `applesimutils` (MacOS only).
+
+### Tips for Android setup
 
 The Android toolkit is more complex than the iOS one, so follow the Detox [Android Environment Setup guide](https://wix.github.io/Detox/docs/guide/android-dev-env) for help. Once you've followed the guide, the main things to make sure of are:
 
