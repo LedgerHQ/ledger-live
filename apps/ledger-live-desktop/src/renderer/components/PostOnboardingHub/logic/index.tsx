@@ -19,7 +19,7 @@ const personalizeMock: PostOnboardingAction = {
   id: PostOnboardingActionId.personalizeMock,
   Icon: Icons.BracketsMedium,
   featureFlagId: "customImage",
-  title: `Personalize my ${getDeviceModel(DeviceModelId.nanoFTS).productName}`,
+  title: `Personalize my ${getDeviceModel(DeviceModelId.stax).productName}`,
   description: "By customizing the screen.",
   actionCompletedPopupLabel: "Device personalized",
   startAction: () =>
@@ -57,9 +57,9 @@ const postOnboardingActions: Record<PostOnboardingActionId, PostOnboardingAction
 };
 
 /**
- * Mock of post onboarding actions for DeviceModelId.nanoFTS
+ * Mock of post onboarding actions for DeviceModelId.stax
  */
-const ftsPostOnboardingActionsMock: PostOnboardingAction[] = [
+const staxPostOnboardingActionsMock: PostOnboardingAction[] = [
   claimMock,
   personalizeMock,
   migrateAssetsMock,
@@ -88,11 +88,11 @@ export function getPostOnboardingActionsForDevice(
     case DeviceModelId.nanoX:
       /** Set here the list of actions for the post onboarding of the Nano X */
       return [];
-    case DeviceModelId.nanoFTS:
-      if (mock) return ftsPostOnboardingActionsMock;
+    case DeviceModelId.stax:
+      if (mock) return staxPostOnboardingActionsMock;
       /**
        * Set here the list of actions for the post onboarding of the
-       * DeviceModelId.nanoFTS
+       * DeviceModelId.stax
        * */
       return [customImage];
     default:

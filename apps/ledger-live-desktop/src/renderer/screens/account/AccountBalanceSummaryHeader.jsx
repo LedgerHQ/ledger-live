@@ -43,7 +43,7 @@ export default function AccountBalanceSummaryHeader({
   const unit = getAccountUnit(account);
   const cvUnit = counterValue.units[0];
   const data = [
-    { valueChange: cryptoChange, balance: last.value, unit },
+    { valueChange: cryptoChange, balance: last.value, unit, dynamicSignificantDigits: 8 },
     { valueChange: countervalueChange, balance: last.countervalue, unit: cvUnit },
   ];
   if (countervalueFirst) {
@@ -75,6 +75,7 @@ export default function AccountBalanceSummaryHeader({
           isAvailable={isAvailable}
           totalBalance={data[0].balance}
           unit={data[0].unit}
+          dynamicSignificantDigits={data[0].dynamicSignificantDigits}
         >
           <Wrapper style={{ marginTop: 4 }}>
             <div style={{ width: "auto", marginRight: 20 }}>
@@ -88,6 +89,7 @@ export default function AccountBalanceSummaryHeader({
                   fontSize={6}
                   showCode
                   val={data[1].balance}
+                  dynamicSignificantDigits={data[1].dynamicSignificantDigits}
                 />
               ) : (
                 <NoCountervaluePlaceholder style={{}} />

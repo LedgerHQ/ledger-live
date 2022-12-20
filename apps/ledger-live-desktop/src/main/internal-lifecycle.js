@@ -7,6 +7,11 @@ import { setTags } from "~/sentry/main";
 import logger from "~/logger";
 import { getMainWindow } from "./window-lifecycle";
 import InternalProcess from "./InternalProcess";
+import {
+  transportCloseChannel,
+  transportExchangeChannel,
+  transportOpenChannel,
+} from "~/config/transportChannels";
 
 // ~~~ Local state that main thread keep
 
@@ -187,3 +192,27 @@ ipcMain.on("hydrateCurrencyData", (event, { currencyId, serialized }) => {
 
   internal.send({ type: "hydrateCurrencyData", serialized, currencyId });
 });
+
+// TODO maybe add a timeout to avoid deadlocks ?
+const internalHandler = channel => {
+  ipcMain.on(channel, (event, { data, requestId }) => {
+    const replyChannel = `${channel}_RESPONSE_${requestId}`;
+    const handler = message => {
+      if (message.type === channel && message.requestId === requestId) {
+        if (message.error) {
+          event.reply(replyChannel, { error: message.error });
+        } else {
+          event.reply(replyChannel, { data: message.data });
+        }
+        internal.process.removeListener("message", handler);
+      }
+    };
+
+    internal.process.on("message", handler);
+    internal.send({ type: channel, data, requestId });
+  });
+};
+
+internalHandler(transportOpenChannel);
+internalHandler(transportExchangeChannel);
+internalHandler(transportCloseChannel);

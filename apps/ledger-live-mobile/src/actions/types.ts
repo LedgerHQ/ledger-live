@@ -318,10 +318,6 @@ export type SettingsSetReadOnlyModePayload = Pick<
   SettingsState,
   "readOnlyModeEnabled"
 >;
-export type SettingsSetExperimentalUsbSupportPayload = Pick<
-  SettingsState,
-  "experimentalUSBEnabled"
->;
 export type SettingsHideEmptyTokenAccountsPayload = Pick<
   SettingsState,
   "hideEmptyTokenAccounts"
@@ -435,7 +431,6 @@ export type SettingsPayload =
   | SettingsSetSelectedTimeRangePayload
   | SettingsInstallAppFirstTimePayload
   | SettingsSetReadOnlyModePayload
-  | SettingsSetExperimentalUsbSupportPayload
   | SettingsHideEmptyTokenAccountsPayload
   | SettingsShowTokenPayload
   | SettingsBlacklistTokenPayload

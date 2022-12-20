@@ -201,7 +201,7 @@ export const renderVerifyUnwrapped = ({
 }) => (
   <AnimationWrapper modelId={modelId}>
     <DeviceBlocker />
-    <Animation animation={getDeviceAnimation(modelId, type, "validate")} />
+    <Animation animation={getDeviceAnimation(modelId, type, "verify")} />
   </AnimationWrapper>
 );
 
@@ -416,7 +416,7 @@ export const renderAllowLanguageInstallation = ({
   >
     <DeviceBlocker />
     <AnimationWrapper modelId={modelId}>
-      <Animation animation={getDeviceAnimation(modelId, type, "validate")} />
+      <Animation animation={getDeviceAnimation(modelId, type, "verify")} />
     </AnimationWrapper>
     <Log extraTextProps={{ fontSize: 20 }} alignSelf="stretch" mx={16} mt={10}>
       {t(`deviceLocalization.allowLanguageInstallation`)}

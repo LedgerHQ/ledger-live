@@ -21,7 +21,7 @@ const BleDeviceItem = ({ deviceMeta, onSelect }: Props) => {
 
   const deviceIcon = useMemo(() => {
     switch (deviceMeta.modelId) {
-      case DeviceModelId.nanoFTS:
+      case DeviceModelId.stax:
         return <Icons.StaxRegular size={20} />;
       case DeviceModelId.nanoX:
       default:

@@ -26,22 +26,28 @@ export const FirebaseRemoteConfigProvider = ({
 }: Props): JSX.Element | null => {
   const [loaded, setLoaded] = useState<boolean>(false);
 
-  const loadRemoteConfig = async () => {
-    try {
-      await remoteConfig().setDefaults({
-        ...formatDefaultFeatures(defaultFeatures),
-      });
-      await remoteConfig().fetchAndActivate();
-    } catch (error) {
-      console.error(
-        `Failed to fetch Firebase remote config with error: ${error}`,
-      );
-    }
-    setLoaded(true);
-  };
-
   useEffect(() => {
+    let unmounted = false;
+    const loadRemoteConfig = async () => {
+      try {
+        await remoteConfig().setDefaults({
+          ...formatDefaultFeatures(defaultFeatures),
+        });
+        await remoteConfig().fetchAndActivate();
+      } catch (error) {
+        console.error(
+          `Failed to fetch Firebase remote config with error: ${error}`,
+        );
+      }
+      if (!unmounted) {
+        setLoaded(true);
+      }
+    };
     loadRemoteConfig();
+
+    return () => {
+      unmounted = true;
+    };
   }, []);
 
   if (!loaded) {

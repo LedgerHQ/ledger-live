@@ -7,7 +7,6 @@ import {
   SwapExchangeRateAmountTooHigh,
   SwapExchangeRateAmountTooLow,
 } from "../../errors";
-import { getSwapAPIVersion } from "./";
 import type {
   CheckQuote,
   Exchange,
@@ -129,57 +128,27 @@ export const mockInitSwap = (
 export const mockGetProviders: GetProviders = async () => {
   //Fake delay to show loading UI
   await new Promise((r) => setTimeout(r, 800));
-  const usesV3 = getSwapAPIVersion() >= 3;
 
-  return usesV3
-    ? [
-        {
-          provider: "ftx",
-          pairs: [
-            { from: "bitcoin", to: "ethereum", tradeMethod: "float" },
-            { from: "bitcoin", to: "ethereum", tradeMethod: "fixed" },
-            { from: "ethereum", to: "bitcoin", tradeMethod: "float" },
-            { from: "ethereum", to: "bitcoin", tradeMethod: "fixed" },
-          ],
-        },
-        {
-          provider: "wyre",
-          pairs: [
-            { from: "bitcoin", to: "ethereum", tradeMethod: "float" },
-            { from: "bitcoin", to: "ethereum", tradeMethod: "fixed" },
-            { from: "ethereum", to: "bitcoin", tradeMethod: "float" },
-            { from: "ethereum", to: "bitcoin", tradeMethod: "fixed" },
-          ],
-        },
-      ]
-    : [
-        {
-          provider: "changelly",
-          supportedCurrencies: [
-            "bitcoin",
-            "litecoin",
-            "ethereum",
-            "tron",
-            "ethereum/erc20/omg",
-            "ethereum/erc20/0x_project",
-            "ethereum/erc20/augur",
-          ],
-          tradeMethod: "fixed",
-        },
-        {
-          provider: "changelly",
-          supportedCurrencies: [
-            "bitcoin",
-            "litecoin",
-            "ethereum",
-            "tron",
-            "ethereum/erc20/omg",
-            "ethereum/erc20/0x_project",
-            "ethereum/erc20/augur",
-          ],
-          tradeMethod: "float",
-        },
-      ];
+  return [
+    {
+      provider: "ftx",
+      pairs: [
+        { from: "bitcoin", to: "ethereum", tradeMethod: "float" },
+        { from: "bitcoin", to: "ethereum", tradeMethod: "fixed" },
+        { from: "ethereum", to: "bitcoin", tradeMethod: "float" },
+        { from: "ethereum", to: "bitcoin", tradeMethod: "fixed" },
+      ],
+    },
+    {
+      provider: "wyre",
+      pairs: [
+        { from: "bitcoin", to: "ethereum", tradeMethod: "float" },
+        { from: "bitcoin", to: "ethereum", tradeMethod: "fixed" },
+        { from: "ethereum", to: "bitcoin", tradeMethod: "float" },
+        { from: "ethereum", to: "bitcoin", tradeMethod: "fixed" },
+      ],
+    },
+  ];
 };
 export const mockGetStatus: GetMultipleStatus = async (statusList) => {
   //Fake delay to show loading UI
