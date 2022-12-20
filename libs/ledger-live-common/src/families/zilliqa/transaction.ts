@@ -17,11 +17,13 @@ SEND ${formatCurrencyUnit(getAccountUnit(account), t.amount, {
 TO ${t.recipient}`;
 
 const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
+	console.log("ZILLIQA: fromTransactionRaw.");
 	const common = fromTransactionCommonRaw(tr);
 	return { ...common, family: tr.family };
 };
 
 const toTransactionRaw = (t: Transaction): TransactionRaw => {
+	console.log("ZILLIQA: toTransactionRaw.");
 	const common = toTransactionCommonRaw(t);
 	return { ...common, family: t.family };
 };

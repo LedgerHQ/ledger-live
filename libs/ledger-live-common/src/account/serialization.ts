@@ -21,6 +21,10 @@ import {
   fromElrondResourcesRaw,
 } from "../families/elrond/serialization";
 import {
+  toZilliqaResourcesRaw,
+  fromZilliqaResourcesRaw,
+} from "../families/zilliqa/serialization";
+import {
   toCryptoOrgResourcesRaw,
   fromCryptoOrgResourcesRaw,
 } from "../families/crypto_org/serialization";
@@ -84,6 +88,7 @@ import {
   PolkadotAccountRaw,
 } from "@ledgerhq/coin-polkadot/types";
 import { ElrondAccount, ElrondAccountRaw } from "../families/elrond/types";
+import { ZilliqaAccount, ZilliqaAccountRaw } from "../families/zilliqa/types";
 import {
   CryptoOrgAccount,
   CryptoOrgAccountRaw,
@@ -99,6 +104,7 @@ export { toBitcoinResourcesRaw, fromBitcoinResourcesRaw };
 export { toPolkadotResourcesRaw, fromPolkadotResourcesRaw };
 export { toTezosResourcesRaw, fromTezosResourcesRaw };
 export { toElrondResourcesRaw, fromElrondResourcesRaw };
+export { toZilliqaResourcesRaw, fromZilliqaResourcesRaw };
 export { toCryptoOrgResourcesRaw, fromCryptoOrgResourcesRaw };
 export { toCardanoResourceRaw, fromCardanoResourceRaw };
 export { toSolanaResourcesRaw, fromSolanaResourcesRaw };
@@ -740,6 +746,16 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
         );
       break;
     }
+
+    case "zilliqa": {
+      const zilliqaResourcesRaw = (rawAccount as ZilliqaAccountRaw)
+        .zilliqaResources;
+      if (zilliqaResourcesRaw)
+        (res as ZilliqaAccount).zilliqaResources = fromZilliqaResourcesRaw(
+          zilliqaResourcesRaw
+        );
+      break;
+    }
     case "cardano": {
       const cardanoResourcesRaw = (rawAccount as CardanoAccountRaw)
         .cardanoResources;
@@ -907,7 +923,16 @@ export function toAccountRaw(account: Account): AccountRaw {
       }
       break;
     }
-    case "solana": {
+    case "zilliqa": {
+      const zilliqaAccount = account as ZilliqaAccount;
+      if (zilliqaAccount.zilliqaResources) {
+        (res as ZilliqaAccountRaw).zilliqaResources = toZilliqaResourcesRaw(
+          zilliqaAccount.zilliqaResources
+        );
+      }
+      break;
+    }
+       case "solana": {
       const solanaAccount = account as SolanaAccount;
       if (solanaAccount.solanaResources) {
         (res as SolanaAccountRaw).solanaResources = toSolanaResourcesRaw(

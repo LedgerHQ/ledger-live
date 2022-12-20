@@ -252,7 +252,7 @@ export default class Zilliqa {
   async signTransaction(
     path: string,
     message: string
-  ): Promise<{ signature: null | Buffer; returnCode: number }> {
+  ): Promise<{ signature: null | string; returnCode: number }> {
     // Getting path parameters
     const {
       account,
@@ -316,9 +316,9 @@ export default class Zilliqa {
       throw new UserRefusedOnDevice();
     }
 
-    let signature: Buffer | null = null;
+    let signature: string | null = null;
     if (response.length > 2) {
-      signature = response.slice(0, response.length - 2);
+      signature = response.slice(0, response.length - 2).toString("hex");
     }
 
     return {
@@ -337,7 +337,7 @@ export default class Zilliqa {
   async signMessage(
     path: string,
     message: string
-  ): Promise<{ signature: null | Buffer; returnCode: number }> {
+  ): Promise<{ signature: null | string; returnCode: number }> {
     // Getting path parameters
     const {
       account,
@@ -373,9 +373,9 @@ export default class Zilliqa {
       throw new UserRefusedOnDevice();
     }
 
-    let signature: Buffer | null = null;
+    let signature: string | null = null;
     if (response.length > 2) {
-      signature = response.slice(0, response.length - 2);
+      signature = response.slice(0, response.length - 2).toString("hex");
     }
 
     return {

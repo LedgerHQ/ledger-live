@@ -4,50 +4,29 @@ import network from "../../../network";
 import { patchOperationWithHash, encodeOperationId } from "../../../operation";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
-import * as bech32 from "bech32";
+import { fromBech32, toBech32 } from "../utils";
+import { BN, Long, bytes } from "@zilliqa-js/util";
+import { Zilliqa } from "@zilliqa-js/zilliqa";
 
-const bearerToken = "<insert token>";
+const bearerToken = "<insert token here>";
 const indexerEndPoint = getEnv("API_ZILLIQA_INDEXER_API_ENDPOINT").replace(
 	/\/$/,
 	""
 );
 // http://api.zindex.zilliqa.com/
 const nodeEndPoint = getEnv("API_ZILLIQA_NODE").replace(/\/$/, "");
-const HRP = "zil";
 
-function fromBech32(value: string): string {
-	let decoded;
-
-	try {
-		decoded = bech32.decode(value);
-	} catch (err) {
-		throw new Error("Zilliqa address cannot be decoded.");
-	}
-
-	const prefix = decoded.prefix;
-	if (prefix != HRP) {
-		throw new Error("HPR mismatch: This is not a Zilliqa address.");
-	}
-
-	const pubkey = Buffer.from(bech32.fromWords(decoded.words));
-
-	return "0x" + pubkey.toString("hex");
-}
-
-function toBech32(pubkey: string): string {
-	if (pubkey.substring(0, 2) === "0x") {
-		pubkey = pubkey.substring(2, pubkey.length);
-	}
-
-	const payload = Buffer.from(pubkey, "hex");
-	let words = bech32.toWords(payload);
-
-	return bech32.encode(HRP, words);
-}
+const ZILLIQA_MAINNET = 1;
+const ZILLIQA_DEVNET = 333;
+const msgVersion = 1; // current msgVersion
+export const VERSION = bytes.pack(ZILLIQA_MAINNET, msgVersion);
+export const zilliqa = new Zilliqa("https://api.zilliqa.com");
 
 export const getAccount = async (addr: string) => {
+	console.log("ZILLIQA: getAccount.");
 	addr = fromBech32(addr);
-
+	console.log("CHAIN:", await zilliqa.blockchain.getBlockChainInfo());
+	console.log("CHAIN:", await zilliqa.blockchain.getBalance(addr));
 	// Implementation using node
 	const resp = await network({
 		method: "POST",
@@ -106,11 +85,17 @@ export const getAccount = async (addr: string) => {
 
 	// TODO: How do we obtain an appropriate nonce from indexer and drop node implementation or get blockheight from node and drop indexer call?
 	const nonce = node_data.result.nonce;
+	console.log("Recieved nonce:", nonce);
 	return {
 		blockHeight: data.data.getUserBalanceByToken.lastBlockID,
 		balance: new BigNumber(data.data.getUserBalanceByToken.amount),
-		nonce,
+		nonce: parseInt(nonce) + 1,
 	};
+};
+
+export const getMinimumGasPrice = async () => {
+	//    return this.provider.send<string, string>(RPCMethod.GetMinimumGasPrice);
+	return 0;
 };
 
 function transactionToOperation(
@@ -119,6 +104,7 @@ function transactionToOperation(
 	addr: string,
 	transaction: any
 ): Operation {
+	console.log("ZILLIQA: transactionToOperation.");
 	const ret: Operation = {
 		id: encodeOperationId(accountId, transaction.TxId, type),
 		accountId,
@@ -149,6 +135,7 @@ export const getOperations = async (
 	addr: string,
 	startAt: number
 ): Promise<Operation[]> => {
+	console.log("ZILLIQA: getOperations.");
 	addr = fromBech32(addr);
 
 	const incoming_res = (

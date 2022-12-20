@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 
-import type { Transaction } from "./types";
+import type { Transaction, ZilliqaAccount } from "./types";
 import type {
 	Account,
 	Operation,
@@ -21,6 +21,8 @@ const buildOptimisticOperation = (
 	transaction: Transaction,
 	fee: BigNumber
 ): Operation => {
+	console.log("ZILLIQA: buildOptimisticOperation.");
+
 	const type = "OUT";
 
 	const value = BigNumber(transaction.amount).plus(fee);
@@ -32,13 +34,13 @@ const buildOptimisticOperation = (
 		value,
 		fee,
 		blockHash: null,
-		blockHeight: null,
+		blockHeight: account.blockHeight,
 		senders: [account.freshAddress],
 		recipients: [transaction.recipient].filter(Boolean),
 		accountId: account.id,
-		transactionSequenceNumber: getNonce(account),
+		transactionSequenceNumber: getNonce(account as ZilliqaAccount),
 		date: new Date(),
-		extra: { additionalField: transaction.amount },
+		extra: {},
 	};
 
 	return operation;
@@ -48,6 +50,7 @@ const buildOptimisticOperation = (
  * Adds signature to unsigned transaction. Will likely be a call to Zilliqa SDK
  */
 const signTx = (unsigned: string, signature: any) => {
+	console.log("ZILLIQA: signTx.");
 	return `${unsigned}:${signature}`;
 };
 
@@ -59,26 +62,32 @@ const signOperation = ({
 	deviceId,
 	transaction,
 }: {
-	account: Account;
+	account: ZilliqaAccount;
 	deviceId: any;
 	transaction: Transaction;
 }): Observable<SignOperationEvent> =>
 	withDevice(deviceId)((transport) =>
 		Observable.create((o) => {
 			async function main() {
+				console.log("ZILLIQA: signOperation.");
+
 				o.next({
 					type: "device-signature-requested",
 				});
 
+				/*
 				if (!transaction.fee) {
+					console.log("Transaction does not have a fee.");
 					throw new FeeNotLoaded();
 				}
+				*/
 
+				console.log("SIGN", account);
 				const unsigned = await buildTransaction(account, transaction);
 
 				// Sign by device
-				const myCoin = new Zilliqa(transport);
-				const r = await myCoin.signTransaction(
+				const zilliqa = new Zilliqa(transport);
+				const r = await zilliqa.signTransaction(
 					account.freshAddressPath,
 					unsigned
 				);
