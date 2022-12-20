@@ -49,6 +49,9 @@ jobs:
         run: pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
       - name: Run code checkers
         run: pnpm desktop test:codecheck
+      - name: print jobs
+        run: |
+          echo "${{ toJSON(job) }}"
 
   start-runner:
     name: Start self-hosted EC2 runner
@@ -284,10 +287,9 @@ jobs:
             Object.entries(report).forEach(([os, values]) => {
               summary +=`
               - ${values.pass
-                  ? `💚 Everything went good on ${keys[os].name} Live Desktop Tests`
-                  : `❌ Something went wrong on ${keys[os].name} Live Desktop Tests`
-                }
-                - final status => **${values.status}**`
+                  ? `💚 Live Desktop Tests on ${keys[os].name} ended with status \`${values.status}\``
+                  : `❌  Live Desktop Tests on ${keys[os].name} ended with status \`${values.status}\``
+                }`
             });
             summary += `
             ${{ steps.comment.outputs.body }}
