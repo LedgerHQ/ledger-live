@@ -17,7 +17,7 @@ jest.useFakeTimers();
 const aDevice = {
   deviceId: "DEVICE_ID_A",
   deviceName: "DEVICE_NAME_A",
-  modelId: DeviceModelId.nanoFTS,
+  modelId: DeviceModelId.stax,
   wired: false,
 };
 

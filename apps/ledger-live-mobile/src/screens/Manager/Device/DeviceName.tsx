@@ -49,7 +49,7 @@ export default function DeviceNameRow({
       >
         {displayedName}
       </Text>
-      {(id === DeviceModelId.nanoX || id === DeviceModelId.nanoFTS) && (
+      {(id === DeviceModelId.nanoX || id === DeviceModelId.stax) && (
         <Flex
           ml={3}
           backgroundColor={"palette.primary.c30"}

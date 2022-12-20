@@ -3,7 +3,7 @@ import { from } from "rxjs";
 import fs from "fs";
 import type { ScanCommonOpts } from "../scan";
 import { deviceOpt } from "../scan";
-import ftsFetchImageHash from "@ledgerhq/live-common/hw/ftsFetchImageHash";
+import staxFetchImageHash from "@ledgerhq/live-common/hw/staxFetchImageHash";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 
 export default {
@@ -13,7 +13,7 @@ export default {
   ],
   job: (arg: ScanCommonOpts): any => withDevice(arg.device || "")((t) =>
     from(
-      ftsFetchImageHash(t)
+      staxFetchImageHash(t)
     )
   ),
 };

@@ -15,8 +15,8 @@ import {
 import getAppAndVersion from "./getAppAndVersion";
 import { isDashboardName } from "./isDashboardName";
 import attemptToQuitApp, { AttemptToQuitAppEvent } from "./attemptToQuitApp";
-import ftsFetchImageSize from "./ftsFetchImageSize";
-import ftsFetchImageHash from "./ftsFetchImageHash";
+import staxFetchImageSize from "./staxFetchImageSize";
+import staxFetchImageHash from "./staxFetchImageHash";
 import { gzip } from "pako";
 
 const MAX_APDU_SIZE = 255;
@@ -63,7 +63,7 @@ export default function loadImage({
             mergeMap(async () => {
               timeoutSub.unsubscribe();
 
-              const imageData = await generateFtsImageFormat(hexImage, true);
+              const imageData = await generateStaxImageFormat(hexImage, true);
               const imageLength = imageData.length;
 
               const imageSize = Buffer.alloc(4);
@@ -160,10 +160,10 @@ export default function loadImage({
               }
 
               // Fetch image size
-              const imageBytes = await ftsFetchImageSize(transport);
+              const imageBytes = await staxFetchImageSize(transport);
 
               // Fetch image hash
-              const imageHash = await ftsFetchImageHash(transport);
+              const imageHash = await staxFetchImageHash(transport);
 
               subscriber.next({
                 type: "imageLoaded",
@@ -208,7 +208,7 @@ export default function loadImage({
   return sub as Observable<LoadImageEvent>;
 }
 
-export const generateFtsImageFormat: (
+export const generateStaxImageFormat: (
   hexImage: string,
   compressImage: boolean
 ) => Promise<Buffer> = async (hexImage, compressImage) => {

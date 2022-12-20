@@ -21,7 +21,7 @@ import { useEffect, useState } from "react";
 import { log } from "@ledgerhq/logs";
 import type { DeviceInfo } from "@ledgerhq/types-live";
 import { useReplaySubject } from "../../observable";
-import type { FetchImageEvent, FetchImageRequest } from "../ftsFetchImage";
+import type { LoadImageEvent, LoadImageRequest } from "../staxLoadImage";
 import type { Action, Device } from "./types";
 import isEqual from "lodash/isEqual";
 import { ConnectManagerTimeout } from "../../errors";
@@ -36,25 +36,31 @@ type State = {
   isLoading: boolean;
   requestQuitApp: boolean;
   unresponsive: boolean;
-  fetchingImage?: boolean;
-  imageFetched?: boolean;
+  imageLoadRequested?: boolean;
+  loadingImage?: boolean;
+  imageLoaded?: boolean;
+  imageCommitRequested?: boolean;
+  imageHash: string;
+  imageSize: number;
   device: Device | null | undefined;
   deviceInfo: DeviceInfo | null | undefined;
   error: Error | null | undefined;
-  hexImage?: string | undefined;
-  imgHash?: string | undefined;
   progress?: number;
-  completed?: boolean;
-  imageAlreadyBackedUp?: boolean;
 };
 
-type FetchImageAction = Action<string, State, boolean>;
+type LoadImageAction = Action<
+  string,
+  State,
+  { imageHash: string; imageSize: number }
+>;
 
-const mapResult = ({ completed, imageFetched, imageAlreadyBackedUp }: State) =>
-  completed || imageFetched || imageAlreadyBackedUp || null;
+const mapResult = ({ imageHash, imageSize }: State) => ({
+  imageHash,
+  imageSize,
+});
 
 type Event =
-  | FetchImageEvent
+  | LoadImageEvent
   | {
       type: "error";
       error: Error;
@@ -68,11 +74,11 @@ const getInitialState = (device?: Device | null | undefined): State => ({
   isLoading: !!device,
   requestQuitApp: false,
   unresponsive: false,
-  fetchingImage: false,
   device,
   deviceInfo: null,
   error: null,
-  imageAlreadyBackedUp: false,
+  imageSize: 0,
+  imageHash: "",
 });
 
 const reducer = (state: State, e: Event): State => {
@@ -96,39 +102,41 @@ const reducer = (state: State, e: Event): State => {
         requestQuitApp: true,
         isLoading: false,
       };
-    case "imageFetched":
+    case "loadImagePermissionRequested":
       return {
         ...state,
         unresponsive: false,
+        imageLoadRequested: true,
         isLoading: false,
-        fetchingImage: false,
-        imageFetched: true,
-        hexImage: e.hexImage,
       };
-    case "currentImageHash":
+    case "commitImagePermissionRequested":
       return {
         ...state,
         unresponsive: false,
+        imageCommitRequested: true,
+        loadingImage: false,
         isLoading: false,
-        fetchingImage: true,
-        imgHash: e.imgHash,
       };
-    case "imageAlreadyBackedUp":
+    case "imageLoaded":
       return {
         ...state,
         unresponsive: false,
+        imageLoadRequested: false,
+        imageCommitRequested: false,
         isLoading: false,
-        fetchingImage: false,
-        imageFetched: false,
-        imageAlreadyBackedUp: true,
-        completed: true,
+        loadingImage: false,
+        imageLoaded: true,
+        imageSize: e.imageSize,
+        imageHash: e.imageHash,
       };
     case "progress":
       return {
         ...state,
         unresponsive: false,
+        imageLoadRequested: false,
+        imageCommitRequested: false,
         isLoading: false,
-        fetchingImage: true,
+        loadingImage: true,
         progress: e.progress,
       };
   }
@@ -137,15 +145,15 @@ const reducer = (state: State, e: Event): State => {
 const implementations = {
   // in this paradigm, we know that deviceSubject is reflecting the device events
   // so we just trust deviceSubject to reflect the device context (switch between apps, dashboard,...)
-  event: ({ deviceSubject, fetchImage, backupHash }) =>
+  event: ({ deviceSubject, loadImage, language }) =>
     deviceSubject.pipe(
       debounceTime(1000),
-      switchMap((d) => fetchImage(d, backupHash))
+      switchMap((d) => loadImage(d, language))
     ),
   // in this paradigm, we can't observe directly the device, so we have to poll it
-  polling: ({ deviceSubject, fetchImage, backupHash }) =>
+  polling: ({ deviceSubject, loadImage, language }) =>
     new Observable((o) => {
-      const POLLING = 5000;
+      const POLLING = 2000;
       const INIT_DEBOUNCE = 5000;
       const DISCONNECT_DEBOUNCE = 5000;
       const DEVICE_POLLING_TIMEOUT = 60000;
@@ -163,7 +171,7 @@ const implementations = {
           device: null,
         });
         device = null;
-        log("actions-fetch-fts-image-event/polling", "device init timeout");
+        log("actions-load-stax-image-event/polling", "device init timeout");
       }, INIT_DEBOUNCE);
       let connectSub;
       let loopT;
@@ -180,8 +188,8 @@ const implementations = {
           return;
         }
 
-        log("actions-fetch-fts-image-event/polling", "polling loop");
-        connectSub = fetchImage(pollingOnDevice, backupHash)
+        log("actions-load-stax-image-event/polling", "polling loop");
+        connectSub = loadImage(pollingOnDevice, language)
           .pipe(
             timeout(DEVICE_POLLING_TIMEOUT),
             catchError((err) => {
@@ -224,7 +232,7 @@ const implementations = {
                     device = null;
                     o.next(event);
                     log(
-                      "actions-fetch-fts-image-event/polling",
+                      "actions-load-stax-image-event/polling",
                       "device disconnect timeout"
                     );
                   }, DISCONNECT_DEBOUNCE);
@@ -277,11 +285,10 @@ const implementations = {
       };
     }).pipe(distinctUntilChanged(isEqual)),
 };
-
 export const createAction = (
-  fetchImageExec: (arg0: FetchImageRequest) => Observable<FetchImageEvent>
-): FetchImageAction => {
-  const fetchImage = (device, backupHash: string) => {
+  loadImageExec: (arg0: LoadImageRequest) => Observable<LoadImageEvent>
+): LoadImageAction => {
+  const loadImage = (device, hexImage: string) => {
     return concat(
       of({
         type: "deviceChange",
@@ -289,9 +296,9 @@ export const createAction = (
       }),
       !device
         ? EMPTY
-        : fetchImageExec({
+        : loadImageExec({
             deviceId: device.deviceId,
-            backupHash,
+            hexImage,
           }).pipe(
             catchError((error: Error) =>
               of({
@@ -305,30 +312,33 @@ export const createAction = (
 
   const useHook = (
     device: Device | null | undefined,
-    backupHash: string
+    hexImage: string
   ): State => {
     const [state, setState] = useState(() => getInitialState(device));
     const deviceSubject = useReplaySubject(device);
 
     useEffect(() => {
-      if (state.imageFetched || state.imageAlreadyBackedUp || state.completed)
-        return;
+      if (state.imageLoaded) return;
 
       const impl = implementations[currentMode]({
         deviceSubject,
-        fetchImage,
-        backupHash,
+        loadImage,
+        language: hexImage,
       });
 
       const sub = impl
         .pipe(
           // debounce a bit the connect/disconnect event that we don't need
-          tap((e: Event) => log("actions-fetch-fts-image-event", e.type, e)),
+          tap((e: Event) => log("actions-load-stax-image-event", e.type, e)),
           // we gather all events with a reducer into the UI state
           scan(reducer, getInitialState()),
           // we debounce the UI state to not blink on the UI
           debounce((s: State) => {
-            if (s.fetchingImage) {
+            if (
+              s.loadingImage ||
+              s.imageLoadRequested ||
+              s.imageCommitRequested
+            ) {
               return EMPTY;
             }
 
@@ -340,7 +350,7 @@ export const createAction = (
       return () => {
         sub.unsubscribe();
       };
-    }, [backupHash, deviceSubject, state.imageFetched]);
+    }, [deviceSubject, hexImage, state.imageLoaded]);
 
     return {
       ...state,

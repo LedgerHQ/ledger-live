@@ -196,81 +196,81 @@ const animations: Animations = {
       },
     },
   },
-  nanoFTS: {
+  stax: {
     wired: {
       plugAndPinCode: {
-        light: require("../animations/nanoFTS/enterPIN.json"),
-        dark: require("../animations/nanoFTS/enterPIN.json"),
+        light: require("../animations/stax/enterPIN.json"),
+        dark: require("../animations/stax/enterPIN.json"),
       },
       enterPinCode: {
-        light: require("../animations/nanoFTS/enterPIN.json"),
-        dark: require("../animations/nanoFTS/enterPIN.json"),
+        light: require("../animations/stax/enterPIN.json"),
+        dark: require("../animations/stax/enterPIN.json"),
       },
       quitApp: {
-        light: require("../animations/nanoFTS/allowConnection.json"),
-        dark: require("../animations/nanoFTS/allowConnection.json"),
+        light: require("../animations/stax/allowConnection.json"),
+        dark: require("../animations/stax/allowConnection.json"),
       },
       allowManager: {
-        light: require("../animations/nanoFTS/allowConnection.json"),
-        dark: require("../animations/nanoFTS/allowConnection.json"),
+        light: require("../animations/stax/allowConnection.json"),
+        dark: require("../animations/stax/allowConnection.json"),
       },
       openApp: {
-        light: require("../animations/nanoFTS/allowConnection.json"),
-        dark: require("../animations/nanoFTS/allowConnection.json"),
+        light: require("../animations/stax/allowConnection.json"),
+        dark: require("../animations/stax/allowConnection.json"),
       },
       verify: {
-        light: require("../animations/nanoFTS/verifyAddress.json"),
-        dark: require("../animations/nanoFTS/verifyAddress.json"),
+        light: require("../animations/stax/verifyAddress.json"),
+        dark: require("../animations/stax/verifyAddress.json"),
       },
       sign: {
-        light: require("../animations/nanoFTS/signTransaction.json"),
-        dark: require("../animations/nanoFTS/signTransaction.json"),
+        light: require("../animations/stax/signTransaction.json"),
+        dark: require("../animations/stax/signTransaction.json"),
       },
       allowUpdate: {
-        light: require("../animations/nanoFTS/allowConnection.json"),
-        dark: require("../animations/nanoFTS/allowConnection.json"),
+        light: require("../animations/stax/allowConnection.json"),
+        dark: require("../animations/stax/allowConnection.json"),
       },
     },
     bluetooth: {
       plugAndPinCode: {
-        light: require("../animations/nanoFTS/enterPIN.json"),
-        dark: require("../animations/nanoFTS/enterPIN.json"),
+        light: require("../animations/stax/enterPIN.json"),
+        dark: require("../animations/stax/enterPIN.json"),
       },
       enterPinCode: {
-        light: require("../animations/nanoFTS/enterPIN.json"),
-        dark: require("../animations/nanoFTS/enterPIN.json"),
+        light: require("../animations/stax/enterPIN.json"),
+        dark: require("../animations/stax/enterPIN.json"),
       },
       quitApp: {
-        light: require("../animations/nanoFTS/allowConnection.json"),
-        dark: require("../animations/nanoFTS/allowConnection.json"),
+        light: require("../animations/stax/allowConnection.json"),
+        dark: require("../animations/stax/allowConnection.json"),
       },
       allowManager: {
-        light: require("../animations/nanoFTS/allowConnection.json"),
-        dark: require("../animations/nanoFTS/allowConnection.json"),
+        light: require("../animations/stax/allowConnection.json"),
+        dark: require("../animations/stax/allowConnection.json"),
       },
       openApp: {
-        light: require("../animations/nanoFTS/allowConnection.json"),
-        dark: require("../animations/nanoFTS/allowConnection.json"),
+        light: require("../animations/stax/allowConnection.json"),
+        dark: require("../animations/stax/allowConnection.json"),
       },
       verify: {
-        light: require("../animations/nanoFTS/verifyAddress.json"),
-        dark: require("../animations/nanoFTS/verifyAddress.json"),
+        light: require("../animations/stax/verifyAddress.json"),
+        dark: require("../animations/stax/verifyAddress.json"),
       },
       sign: {
-        light: require("../animations/nanoFTS/signTransaction.json"),
-        dark: require("../animations/nanoFTS/signTransaction.json"),
+        light: require("../animations/stax/signTransaction.json"),
+        dark: require("../animations/stax/signTransaction.json"),
       },
       allowUpdate: {
-        light: require("../animations/nanoFTS/allowConnection.json"),
-        dark: require("../animations/nanoFTS/allowConnection.json"),
+        light: require("../animations/stax/allowConnection.json"),
+        dark: require("../animations/stax/allowConnection.json"),
       },
       blePairing: {
-        light: require("../animations/nanoFTS/pairingProgress.json"),
-        dark: require("../animations/nanoFTS/pairingProgress.json"),
+        light: require("../animations/stax/pairingProgress.json"),
+        dark: require("../animations/stax/pairingProgress.json"),
       },
       blePaired: {
-        light: require("../animations/nanoFTS/pairingSuccess.json"),
-        dark: require("../animations/nanoFTS/pairingSuccess.json"),
+        light: require("../animations/stax/pairingSuccess.json"),
+        dark: require("../animations/stax/pairingSuccess.json"),
       },
     },
   },
