@@ -1,7 +1,6 @@
 // @flow
 import { app, ipcMain } from "electron";
 import path from "path";
-import { v4 as uuidv4 } from "uuid";
 import { setEnvUnsafe, getAllEnvs } from "@ledgerhq/live-common/env";
 import { isRestartNeeded } from "~/helpers/env";
 import { setTags } from "~/sentry/main";
