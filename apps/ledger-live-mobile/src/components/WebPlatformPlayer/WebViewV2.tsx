@@ -8,9 +8,12 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
-import { RpcError, Transport } from "@ledgerhq/wallet-api-core";
+import {
+  ServerError,
+  createCurrencyNotFound,
+  Transport,
+} from "@ledgerhq/wallet-api-core";
 import { WalletAPIServer, firstValueFrom } from "@ledgerhq/wallet-api-server";
-import { CURRENCY_NOT_FOUND } from "@ledgerhq/wallet-api-server/lib/errors";
 import { WebView as RNWebView } from "react-native-webview";
 import { useNavigation } from "@react-navigation/native";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
@@ -181,8 +184,9 @@ export const WebView = ({ manifest, inputs }: Props) => {
 
               if (!currency) {
                 tracking.requestAccountFail(manifest);
-                // @TODO replace with correct error
-                reject(new RpcError(CURRENCY_NOT_FOUND));
+                reject(
+                  new ServerError(createCurrencyNotFound(cryptoCurrencyIds[0])),
+                );
                 return;
               }
 
