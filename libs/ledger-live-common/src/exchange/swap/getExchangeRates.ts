@@ -44,19 +44,6 @@ const getExchangeRates: GetExchangeRates = async (
   const apiAmount = new BigNumber(amountFrom).div(tenPowMagnitude);
 
   const dexProviders = ["paraswap", "oneinch"];
-
-  const providerList = providers
-    .filter((provider) =>
-      getProviderConfig(provider.provider).type === "DEX" ? includeDEX : true
-    )
-    .filter((item) => {
-      const index = item.pairs.findIndex(
-        (pair) => pair.from === from && pair.to === to
-      );
-      return index > -1;
-    })
-    .map((item) => item.provider);
-
   const decentralizedSwapAvailable = () => {
     const {
       fromAccount: sourceAccount,
@@ -84,6 +71,25 @@ const getExchangeRates: GetExchangeRates = async (
     }
     return false;
   };
+
+  const providerList = providers
+    .filter((provider) => {
+      const validDex = (name) => {
+        return (
+          includeDEX &&
+          decentralizedSwapAvailable() &&
+          dexProviders.includes(name)
+        );
+      };
+      const validCex = (pairs) => {
+        const index = pairs.findIndex(
+          (pair) => pair.from === from && pair.to === to
+        );
+        return index > -1;
+      };
+      return validDex(provider.provider) || validCex(provider.pairs);
+    })
+    .map((item) => item.provider);
 
   const request = {
     from,
@@ -162,22 +168,22 @@ const getExchangeRates: GetExchangeRates = async (
       };
     }
   });
-  if (includeDEX && decentralizedSwapAvailable()) {
-    dexProviders.filter((dexProvider) => {
-      if (!providerList.includes(dexProvider)) {
-        rates.push({
-          magnitudeAwareRate: undefined,
-          provider: dexProvider,
-          providerType: "DEX",
-          rate: undefined,
-          rateId: undefined,
-          toAmount: undefined,
-          tradeMethod: "float",
-          payoutNetworkFees: undefined,
-        });
-      }
-    });
-  }
+
+  dexProviders.filter((dexProvider) => {
+    if (!providerList.includes(dexProvider)) {
+      rates.push({
+        magnitudeAwareRate: undefined,
+        provider: dexProvider,
+        providerType: "DEX",
+        rate: undefined,
+        rateId: undefined,
+        toAmount: undefined,
+        tradeMethod: "float",
+        payoutNetworkFees: undefined,
+      });
+    }
+  });
+
   return rates;
 };
 
