@@ -52,6 +52,7 @@ export default function DebugFeatureFlags() {
   const featureFlags = useMemo(() => {
     const featureKeys = Object.keys(defaultFeatures);
     if (searchInputTrimmed && !featureKeys.includes(searchInputTrimmed))
+      // The search input is added to the `featureKeys` in order to check for "hidden" feature flags
       featureKeys.push(searchInputTrimmed);
     return featureKeys;
   }, [searchInputTrimmed]);

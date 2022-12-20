@@ -30,13 +30,14 @@ export const FeatureFlagContent = withV3StyleProvider((props: { visible?: boolea
   const featureFlags = useMemo(() => {
     const featureKeys = Object.keys(defaultFeatures);
     if (searchInputTrimmed && !featureKeys.includes(searchInputTrimmed))
+      // The search input is added to the `featureKeys` in order to check for "hidden" feature flags
       featureKeys.push(searchInputTrimmed);
     return featureKeys;
   }, [searchInputTrimmed]);
 
   const filteredFlags = useMemo(() => {
     return featureFlags
-      .sort((a, b) => a[0].localeCompare(b[0]))
+      .sort()
       .filter(name => !searchInput || includes(lowerCase(name), lowerCase(searchInput)));
   }, [featureFlags, searchInput]);
 

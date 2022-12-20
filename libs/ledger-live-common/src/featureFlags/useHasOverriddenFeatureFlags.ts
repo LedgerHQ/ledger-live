@@ -1,7 +1,7 @@
-import { useFeatureFlags } from "./provider";
-import { defaultFeatures } from "./defaultFeatures";
 import { useMemo } from "react";
 import { FeatureId } from "@ledgerhq/types-live";
+import { useFeatureFlags } from "./provider";
+import { defaultFeatures } from "./defaultFeatures";
 
 /**
  *
