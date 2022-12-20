@@ -4,21 +4,22 @@ import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/Se
 import { Flex, Text } from "@ledgerhq/native-ui";
 import {
   CardMedium,
-  NotificationsMedium,
-  NotificationsOnMedium,
   SettingsMedium,
   WarningMedium,
 } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "styled-components/native";
 import Touchable from "../../components/Touchable";
 import { NavigatorName, ScreenName } from "../../const";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import DiscreetModeButton from "../../components/DiscreetModeButton";
 import { track } from "../../analytics";
 import useDynamicContent from "../../dynamicContent/dynamicContent";
+import Notifications from "../../icons/Notifications";
 
 function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
   const navigation = useNavigation();
+  const { colors } = useTheme();
 
   const { notificationCards } = useDynamicContent();
   const { incidents } = useFilteredServiceStatus();
@@ -108,11 +109,12 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
         </Flex>
         <Flex mr={7}>
           <Touchable onPress={onNotificationButtonPress}>
-            {notificationsCount > 0 ? (
-              <NotificationsOnMedium size={24} color={"neutral.c100"} />
-            ) : (
-              <NotificationsMedium size={24} color={"neutral.c100"} />
-            )}
+            <Notifications
+              size={24}
+              color={colors.neutral.c100}
+              dotColor={colors.error.c100}
+              isOn={notificationsCount > 0}
+            />
           </Touchable>
         </Flex>
         <Touchable onPress={onSettingsButtonPress} testID="settings-icon">
