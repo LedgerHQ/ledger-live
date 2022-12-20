@@ -99,10 +99,12 @@ export const getGasEstimation = (
 ): Promise<BigNumber> =>
   withApi(account.currency, async (api) => {
     const ethersTransaction = transactionToEthersTransaction(
-      transaction,
-      account
+      transaction
     ) as ethers.providers.TransactionRequest;
-    const gasEtimation = await api.estimateGas(ethersTransaction);
+    const gasEtimation = await api.estimateGas({
+      ...ethersTransaction,
+      from: account.freshAddress, // should be necessary for some estimations
+    });
 
     return new BigNumber(gasEtimation.toString());
   });
