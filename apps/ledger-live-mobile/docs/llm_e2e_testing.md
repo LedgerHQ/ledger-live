@@ -241,7 +241,7 @@ Coming soon... :construction:
 ### Animations
 
 Detox synchronization sometime can't handle well animations, especially looping ones.
-You could disable either the blocking animation while you are in MOCK env (preferred) or the synchronization by wrapping your test code between these lines :
+You could disable either the blocking animation while you are in MOCK env (preferred) or disable the synchronization by wrapping your test code between these lines :
 
 ```js
 await device.disableSynchronization();
