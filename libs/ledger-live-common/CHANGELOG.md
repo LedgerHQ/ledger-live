@@ -1,5 +1,13 @@
 # @ledgerhq/live-common
 
+## 27.10.0-nightly.3
+
+### Patch Changes
+
+- [#2149](https://github.com/LedgerHQ/ledger-live/pull/2149) [`184f2fd00d`](https://github.com/LedgerHQ/ledger-live/commit/184f2fd00d98d6ab8a6b94ac16ef7b20651a55e4) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Exposed getDefinitions on live-common
+
+* [#2052](https://github.com/LedgerHQ/ledger-live/pull/2052) [`13078a0825`](https://github.com/LedgerHQ/ledger-live/commit/13078a08256e3d74eb89dd0be4f0dda57611b68c) Thanks [@chabroA](https://github.com/chabroA)! - Refacto exchange partner config
+
 ## 27.10.0-nightly.2
 
 ### Patch Changes

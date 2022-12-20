@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.13.0-nightly.5
+
+### Patch Changes
+
+- [#2149](https://github.com/LedgerHQ/ledger-live/pull/2149) [`184f2fd00d`](https://github.com/LedgerHQ/ledger-live/commit/184f2fd00d98d6ab8a6b94ac16ef7b20651a55e4) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Reworked the debug menu and inner tools
+
+- Updated dependencies [[`184f2fd00d`](https://github.com/LedgerHQ/ledger-live/commit/184f2fd00d98d6ab8a6b94ac16ef7b20651a55e4), [`13078a0825`](https://github.com/LedgerHQ/ledger-live/commit/13078a08256e3d74eb89dd0be4f0dda57611b68c)]:
+  - @ledgerhq/live-common@27.10.0-nightly.3
+
 ## 3.13.0-nightly.4
 
 ### Patch Changes
