@@ -2,13 +2,13 @@ import React, { ReactNode } from "react";
 import {
   allowDebugAppsSelector,
   allowExperimentalAppsSelector,
+  catalogProviderSelector,
 } from "~/renderer/reducers/settings";
 import { useSelector } from "react-redux";
 import { RemoteLiveAppProvider } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { LocalLiveAppProvider } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { getPlatformVersion } from "@ledgerhq/live-common/platform/version";
-import { catalogProviderSelector } from "~/renderer/reducers/settings";
 
 type PlatformAppProviderWrapperProps = {
   children: ReactNode;
