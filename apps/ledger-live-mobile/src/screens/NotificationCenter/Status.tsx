@@ -2,7 +2,14 @@ import React, { useCallback } from "react";
 import { Linking } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
-import { BottomDrawer, Button, Flex, Icons, Text, Box } from "@ledgerhq/native-ui";
+import {
+  BottomDrawer,
+  Button,
+  Flex,
+  Icons,
+  Text,
+  Box,
+} from "@ledgerhq/native-ui";
 
 import styled, { useTheme } from "styled-components/native";
 
@@ -47,10 +54,7 @@ export default function StatusCenter({ onClose, isOpened }: Props) {
   }, [onClose]);
 
   return (
-    <BottomDrawer
-      isOpen={isOpened}
-      onClose={onPressClose}
-    >
+    <BottomDrawer isOpen={isOpened} onClose={onPressClose}>
       <TrackScreen category={DRAWER} type="drawer" refreshSource={false} />
 
       <Flex
