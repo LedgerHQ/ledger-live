@@ -1,5 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import type { PolkadotResourcesRaw, PolkadotResources } from "./types";
+
 export function toPolkadotResourcesRaw(
   r: PolkadotResources
 ): PolkadotResourcesRaw {
@@ -23,6 +24,7 @@ export function toPolkadotResourcesRaw(
     numSlashingSpans: r.numSlashingSpans,
   };
 }
+
 export function fromPolkadotResourcesRaw(
   r: PolkadotResourcesRaw
 ): PolkadotResources {

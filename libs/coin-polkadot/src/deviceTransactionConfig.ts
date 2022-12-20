@@ -1,14 +1,17 @@
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import type { PolkadotAccount, Transaction, TransactionStatus } from "./types";
-import type { DeviceTransactionField } from "@ledgerhq/coin-framework/lib/transaction";
+import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/lib/transaction/common";
 import { getMainAccount } from "@ledgerhq/coin-framework/lib/account";
 import { formatCurrencyUnit, getCryptoCurrencyById } from "@ledgerhq/coin-framework/lib/currencies";
 import { isStash } from "./logic";
+
 const currency = getCryptoCurrencyById("polkadot");
-export type ExtraDeviceTransactionField = {
+
+type ExtraDeviceTransactionField = {
   type: "polkadot.validators";
   label: string;
 };
+type DeviceTransactionField = CommonDeviceTransactionField & ExtraDeviceTransactionField
 
 const getSendFields = ({
   transaction,
