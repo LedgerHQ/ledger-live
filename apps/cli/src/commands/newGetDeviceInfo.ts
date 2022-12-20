@@ -1,4 +1,4 @@
-import { getDeviceInfo, GetDeviceInfoTaskEvent  } from "@ledgerhq/live-common/deviceSDK/tasks/getDeviceInfo"; 
+import { getDeviceInfoAction } from "@ledgerhq/live-common/deviceSDK/actions/getDeviceInfo"; 
 import { deviceOpt } from "../scan";
 
 export default {
@@ -9,7 +9,7 @@ export default {
   }: Partial<{
     device: string;
   }>) =>
-    getDeviceInfo({
+    getDeviceInfoAction({
       deviceId: device ?? "",
     }),
 };

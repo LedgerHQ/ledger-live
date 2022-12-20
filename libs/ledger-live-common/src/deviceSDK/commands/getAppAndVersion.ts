@@ -13,6 +13,7 @@ export type GetAppAndVersionCommandEvent = {
 export function getAppAndVersion(
   transport: Transport
 ): Observable<GetAppAndVersionCommandEvent> {
+  console.log(`🧠 calling getAppAndVersion`);
   return from(transport.send(0xb0, 0x01, 0x00, 0x00)).pipe(
     switchMap((result) => {
       let i = 0;
