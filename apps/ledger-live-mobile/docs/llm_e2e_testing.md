@@ -75,8 +75,6 @@ pnpm build:llm:deps
 
 ### Android Tests
 
-### Android
-
 Verify you have an emulator [installed](https://developer.android.com/studio/run/managing-avds) and have that match the Detox `avdName` (currently 'Pixel_5_API_31') in the `detox.config.js` file. Be sure to make the device the correct architecture and system image. Currently this is x86_64 if you are on an Intel mac and arm64_v8a if you are on an M1 Mac (\_info required for Windows and Linux\*). If you are on an Intel Mac, you must run `export CI=1` in the terminal session before
 
 - Build the apps
