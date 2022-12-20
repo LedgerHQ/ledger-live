@@ -176,7 +176,6 @@ export type SettingsState = {
   hasInstalledAnyApp: boolean;
   readOnlyModeEnabled: boolean;
   hasOrderedNano: boolean;
-  experimentalUSBEnabled: boolean;
   countervalueFirst: boolean;
   graphCountervalueFirst: boolean;
   hideEmptyTokenAccounts: boolean;
@@ -211,6 +210,10 @@ export type SettingsState = {
   firstConnectionHasDevice: boolean | null;
   firstConnectHasDeviceUpdated: boolean | null;
   customImageBackup?: { hex: string; hash: string };
+  lastSeenCustomImage: {
+    size: number;
+    hash: string;
+  };
   notifications: NotificationsSettings;
   walletTabNavigatorLastVisitedTab: keyof WalletTabNavigatorStackParamList;
 };

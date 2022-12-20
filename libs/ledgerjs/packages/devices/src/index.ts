@@ -83,7 +83,7 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
   },
   [DeviceModelId.nanoFTS]: {
     id: DeviceModelId.nanoFTS,
-    productName: "Ledger Nano FTS",
+    productName: "Ledger Stax",
     productIdMM: 0x60,
     legacyUsbProductId: 0x0006,
     usbOnly: false,

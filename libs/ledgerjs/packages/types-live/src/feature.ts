@@ -18,6 +18,7 @@ export type FeatureId =
   | "currencyCronos"
   | "currencySongbird"
   | "currencyFlare"
+  | "currencyNear"
   | "currencyFantomMobile"
   | "currencyMoonbeamMobile"
   | "currencyCronosMobile"
@@ -37,6 +38,9 @@ export type FeatureId =
   | "receiveStakingFlowConfigDesktop"
   | "ethStakingProviders"
   | "storyly"
+  | "staxWelcomeScreen"
+  | "postOnboardingClaimNft"
+  | "postOnboardingAssetsTransfer"
   | "firebaseEnvironmentReadOnly"
   | "protectServicesMobile";
 

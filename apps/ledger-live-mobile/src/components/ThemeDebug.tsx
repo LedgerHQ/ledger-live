@@ -1,12 +1,13 @@
 import React from "react";
 import { StyleSheet, View, Text } from "react-native";
-import Config from "react-native-config";
 import { useDispatch } from "react-redux";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+
 import { setTheme } from "../actions/settings";
 import { Theme } from "../reducers/types";
 
 const ThemeDebug = () => {
-  const render = Config.DEBUG_THEME;
+  const render = useEnv("DEBUG_THEME");
   const dispatch = useDispatch();
 
   const selectTheme = (t: Theme) => () => {
@@ -47,8 +48,8 @@ const styles = StyleSheet.create({
   },
   button: {
     borderWidth: 1,
-    padding: 7,
-    borderColor: "grey",
+    padding: 10,
+    borderColor: "black",
   },
 });
 export default ThemeDebug;

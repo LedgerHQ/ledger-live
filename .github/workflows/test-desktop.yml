@@ -288,3 +288,53 @@ jobs:
                 body,
               })
             }
+
+  allure-report:
+    name: "Allure Reports Export on Server"
+    needs: [test-desktop-app, test-desktop-app-mac-internal, report]
+    runs-on: [ledger-live, linux]
+    if: ${{ always() && !cancelled() && needs.is-affected.outputs.is-desktop-affected == 'true' && github.event.pull_request != '' && !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.ref || 'develop' }}
+      - name: Download Allure Report - Windows
+        uses: actions/download-artifact@v2
+        with:
+          name: allure-results-windows
+          path: allure-results-windows
+      - name: Download Allure Report - MacOS
+        uses: actions/download-artifact@v2
+        with:
+          name: allure-results-macos
+          path: allure-results-macos
+      - name: Download Allure Report - Linux
+        uses: actions/download-artifact@v2
+        with:
+          name: allure-results-linux
+          path: allure-results-linux
+      - name: Send Results and Generate Allure Report - Windows
+        uses: ./tools/actions/composites/upload-allure-report
+        if: always()
+        with:
+          platform: windows
+          login: ${{ secrets.ALLURE_LOGIN }}
+          password: ${{ secrets.ALLURE_PASSWORD }}
+          path: allure-results-windows
+      - name: Send Results and Generate Allure Report - MacOS
+        uses: ./tools/actions/composites/upload-allure-report
+        if: always()
+        with:
+          platform: macos
+          login: ${{ secrets.ALLURE_LOGIN }}
+          password: ${{ secrets.ALLURE_PASSWORD }}
+          path: allure-results-macos
+      - name: Send Results and Generate Allure Report - Linux
+        uses: ./tools/actions/composites/upload-allure-report
+        if: always()
+        with:
+          platform: linux
+          login: ${{ secrets.ALLURE_LOGIN }}
+          password: ${{ secrets.ALLURE_PASSWORD }}
+          path: allure-results-linux

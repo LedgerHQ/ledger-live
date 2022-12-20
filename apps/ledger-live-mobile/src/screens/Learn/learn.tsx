@@ -1,7 +1,11 @@
-import { Flex, InformativeCard } from "@ledgerhq/native-ui";
+import { InformativeCard } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
-import React, { memo } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { FlatList } from "react-native";
+import { TouchableHighlight } from "react-native-gesture-handler";
+import styled, { useTheme } from "styled-components/native";
+import { TrackScreen } from "../../analytics";
+import Skeleton from "../../components/Skeleton";
 import { ScreenName } from "../../const";
 import useDynamicContent from "../../dynamicContent/dynamicContent";
 import { LearnContentCard } from "../../dynamicContent/types";
@@ -11,12 +15,20 @@ const keyExtractor = (item: LearnContentCard) => item.id;
 function LearnSection() {
   const { learnCards, trackContentCardEvent } = useDynamicContent();
   const navigation = useNavigation();
+  const { colors } = useTheme();
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => setIsLoading(false), 750);
+  }, []);
 
   const renderItem = ({ item: card }: { item: LearnContentCard }) => {
     return (
-      <Flex px="16px" py="12px">
-        <InformativeCard
-          onClickCard={() => {
+      <Skeleton loading={isLoading} height="85px" m="16px" borderRadius="8px">
+        <Container
+          underlayColor={colors.neutral.c30}
+          onPress={() => {
             trackContentCardEvent("contentcard_clicked", {
               screen: ScreenName.Learn,
               campaign: card.id,
@@ -26,22 +38,32 @@ function LearnSection() {
               uri: card.link,
             });
           }}
-          imageUrl={card.image}
-          tag={card.tag}
-          title={card.title}
-        />
-      </Flex>
+        >
+          <InformativeCard
+            imageUrl={card.image}
+            tag={card.tag}
+            title={card.title}
+          />
+        </Container>
+      </Skeleton>
     );
   };
 
   return (
-    <FlatList
-      data={learnCards}
-      renderItem={renderItem}
-      keyExtractor={keyExtractor}
-      showsVerticalScrollIndicator={false}
-    />
+    <>
+      <TrackScreen category="Learn" />
+      <FlatList
+        data={learnCards}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        showsVerticalScrollIndicator={false}
+      />
+    </>
   );
 }
+
+const Container = styled(TouchableHighlight)`
+  padding: 16px;
+`;
 
 export default memo(LearnSection);

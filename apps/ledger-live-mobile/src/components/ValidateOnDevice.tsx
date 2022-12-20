@@ -196,7 +196,7 @@ export default function ValidateOnDevice({
         <Flex alignItems="center">
           <Flex marginBottom={isBigLottie ? 0 : 8}>
             <Animation
-              source={getDeviceAnimation({ device, key: "validate", theme })}
+              source={getDeviceAnimation({ device, key: "sign", theme })}
             />
           </Flex>
           {Title ? (

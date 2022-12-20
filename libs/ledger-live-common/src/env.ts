@@ -57,6 +57,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "Show tracking overlays on the app UI",
   },
+  DEBUG_THEME: {
+    def: false,
+    parser: boolParser,
+    desc: "Show theme debug overlay UI",
+  },
   API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
     def: "https://algorand.coin.ledger.com",
     parser: stringParser,
@@ -101,6 +106,21 @@ const envDefinitions = {
     parser: stringParser,
     def: "https://filecoin.coin.ledger.com",
     desc: "Filecoin API url",
+  },
+  API_NEAR_ARCHIVE_NODE: {
+    def: "https://near.coin.ledger.com/node/",
+    parser: stringParser,
+    desc: "Archive node endpoint for NEAR",
+  },
+  API_NEAR_INDEXER: {
+    def: "https://near.coin.ledger.com/indexer/",
+    parser: stringParser,
+    desc: "Datahub Indexer API for NEAR",
+  },
+  API_NEAR_STAKING_POSITIONS_API: {
+    def: "https://validators-near.coin.ledger.com/",
+    parser: stringParser,
+    desc: "NEAR staking positions API",
   },
   API_POLKADOT_INDEXER: {
     parser: stringParser,
@@ -286,6 +306,11 @@ const envDefinitions = {
     def: true,
     parser: boolParser,
     desc: "disable a problematic mechanism of our API",
+  },
+  DISABLE_FW_UPDATE_VERSION_CHECK: {
+    def: false,
+    parser: boolParser,
+    desc: "disable the version check for firmware update eligibility",
   },
   EIP1559_ENABLED_CURRENCIES: {
     def: "ethereum,ethereum_goerli,polygon",
@@ -708,7 +733,7 @@ const envDefinitions = {
   },
 };
 
-const getDefinition = (name: string): EnvDef<any> | null | undefined =>
+export const getDefinition = (name: string): EnvDef<any> | null | undefined =>
   envDefinitions[name];
 
 envDefinitions as Record<EnvName, EnvDef<any>>;
