@@ -181,6 +181,12 @@ class Base implements ICrypto {
     return toOutputScript(address, this.network);
   }
 
+  toOpReturnOutputScript(message: string): Buffer {
+    const data = Buffer.from(message, "utf-8");
+    const script = bjs.payments.embed({ data: [data] });
+    return script.output!;
+  }
+
   validateAddress(address: string): boolean {
     // bs58 address
     const res = bs58check.decodeUnsafe(address);
