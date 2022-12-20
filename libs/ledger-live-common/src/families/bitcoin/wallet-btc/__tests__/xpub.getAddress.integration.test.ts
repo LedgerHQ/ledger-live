@@ -82,7 +82,7 @@ describe("Unit tests for getAddress", () => {
 });
 
 describe("Transaction Output script", () => {
-  it("Test getoutputScriptFromAddress for btc, zcash and zen", () => {
+  it("Test toOutputScript for btc, zcash and zen", () => {
     const btcCrypto = new BTCCrypto({
       network: coininfo.bitcoin.main.toBitcoinJS(),
     });
@@ -128,7 +128,7 @@ describe("Transaction Output script", () => {
     );
   }, 30000);
 
-  it("should work for OP_RETURN output type", () => {
+  it("should work for OP_RETURN outputs", () => {
     const btcCrypto = new BTCCrypto({
       network: coininfo.bitcoin.main.toBitcoinJS(),
     });
