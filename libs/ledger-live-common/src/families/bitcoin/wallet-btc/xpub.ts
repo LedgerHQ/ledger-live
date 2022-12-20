@@ -188,7 +188,6 @@ class Xpub {
     changeAddress: Address;
     utxoPickingStrategy: PickingStrategy;
     sequence: number;
-    opReturnData?: string;
   }): Promise<TransactionInfo> {
     const outputs: OutputInfo[] = [];
 
@@ -198,17 +197,10 @@ class Xpub {
     // that are actually even more restricted
     const desiredOutputLeftToFit: BtcOutput = {
       script: this.crypto.toOutputScript(params.destAddress),
-      value: params.opReturnData ? new BigNumber(0) : params.amount,
+      value: params.amount,
       address: params.destAddress,
       isChange: false,
     };
-
-    if (params.opReturnData) {
-      desiredOutputLeftToFit.script = this.crypto.toOpReturnOutputScript(
-        params.opReturnData
-      );
-      desiredOutputLeftToFit.value = new BigNumber(0);
-    }
 
     while (desiredOutputLeftToFit.value.gt(this.OUTPUT_VALUE_MAX)) {
       outputs.push({
