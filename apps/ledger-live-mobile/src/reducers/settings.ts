@@ -747,8 +747,14 @@ export const swapSelectableCurrenciesSelector = (state: State) =>
 export const swapAcceptedProvidersSelector = (state: State) =>
   state.settings.swap.acceptedProviders;
 export const swapKYCSelector = (state: State) => state.settings.swap.KYC;
-export const lastSeenDeviceSelector = (state: State) =>
-  state.settings.lastSeenDevice;
+export const lastSeenDeviceSelector = (state: State) => {
+  // Nb workaround to prevent crash for dev/qa that have nanoFTS references.
+  // to be removed in a while.
+  if (state.settings.lastSeenDevice?.modelId === "nanoFTS") {
+    return { ...state.settings.lastSeenDevice, modelId: "stax" };
+  }
+  return state.settings.lastSeenDevice;
+};
 export const starredMarketCoinsSelector = (state: State) =>
   state.settings.starredMarketCoins;
 export const lastConnectedDeviceSelector = (state: State) =>
