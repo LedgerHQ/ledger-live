@@ -2,8 +2,10 @@ import type {
 	Account,
 	AccountBridge,
 	CurrencyBridge,
+	Operation,
+	SignedOperation,
 } from "@ledgerhq/types-live";
-import type { Transaction } from "../types";
+import type { Transaction, ZilliqaAccount } from "../types";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 import { BigNumber } from "bignumber.js";
 import { sync, scanAccounts } from "../js-synchronisation";
@@ -15,6 +17,20 @@ import {
 } from "@ledgerhq/errors";
 import signOperation from "../js-signOperation";
 import { isInvalidRecipient } from "../../../bridge/mockHelpers";
+import {
+	TxParams,
+	TransactionFactory,
+	Transaction as ZilliqaTransaction,
+} from "@zilliqa-js/account";
+import { BN, Long, bytes } from "@zilliqa-js/util";
+import { Zilliqa } from "@zilliqa-js/zilliqa";
+import { patchOperationWithHash } from "../../../operation";
+import { fromBech32, toBech32 } from "../utils";
+import { RPCMethod } from "@zilliqa-js/core";
+import { getAddressFromPublicKey } from "@zilliqa-js/crypto";
+import { buildNativeTransaction } from "../js-buildTransaction";
+import { zilliqa } from "../api";
+import { getNonce } from "../logic";
 
 const receive = makeAccountBridgeReceive();
 
@@ -26,8 +42,8 @@ const currencyBridge: CurrencyBridge = {
 	scanAccounts,
 };
 
-const createTransaction = (a: Account): Transaction => {
-	console.log("BRIDGE: Creating transaction");
+const createTransaction = (a: ZilliqaAccount): Transaction => {
+	console.log("ZILLIQA: createTransaction.");
 	return {
 		family: "zilliqa",
 		amount: new BigNumber(0),
@@ -43,8 +59,8 @@ const createTransaction = (a: Account): Transaction => {
 const prepareTransaction = async (a, t) => t;
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
 
-const getTransactionStatus = (account: Account, t: Transaction) => {
-	console.log("BRIDGE: getTransactionStatus");
+const getTransactionStatus = (account: ZilliqaAccount, t: Transaction) => {
+	console.log("ZILLIQA: getTransactionStatus.");
 
 	const errors: any = {};
 	const warnings: any = {};
@@ -87,8 +103,71 @@ const estimateMaxSpendable = () => {
 	throw new Error("estimateMaxSpendable not implemented");
 };
 
-const broadcast = () => {
-	throw new Error("broadcast not implemented");
+const broadcast = async ({
+	account,
+	signedOperation,
+}: {
+	account: ZilliqaAccount;
+	signedOperation: SignedOperation;
+}): Promise<Operation> => {
+	console.log("ZILLIQA: broadcast.");
+
+	const { signature, operation } = signedOperation;
+	const i = signature.indexOf(":");
+	const payload = signature.substring(0, i);
+	const sign = signature.substring(i + 1, signature.length);
+
+	const toAddr = fromBech32(operation.recipients[0]);
+
+	const tx = await buildNativeTransaction(
+		account,
+		toAddr,
+		getNonce(account),
+		new BN(operation.value.toString()),
+		sign
+	);
+	const params = tx.txParams;
+	if (account.zilliqaResources) {
+		const sender = getAddressFromPublicKey(
+			account.zilliqaResources.publicKey
+		);
+		console.log("Pub key:", account.zilliqaResources.publicKey);
+		console.log("Addr from pub:", sender);
+		console.log("Addr from pub:", toBech32(sender));
+	}
+	console.log("Value:", operation.value.toString());
+	console.log(params);
+	console.log("Value:", params.amount.toString());
+	console.log("GasPrice:", params.gasPrice.toString());
+
+	console.log(signature);
+	console.log(">>>");
+	// throw new Error("broadcast not implemented");
+
+	console.log("Sending", JSON.stringify(params));
+	let hash: string;
+	try {
+		const response = await zilliqa.blockchain.provider.send(
+			RPCMethod.CreateTransaction,
+			{
+				...params,
+				priority: false,
+			}
+		);
+
+		if (response.error) {
+			throw response.error;
+		}
+
+		hash = response.result.TranID;
+	} catch (e) {
+		console.log(e);
+		throw Error("FAILED broadcast");
+	}
+	console.log("HASH:", hash);
+	//	const walletAccount = getWalletAccount(account);
+	//	const hash = await wallet.broadcastTx(walletAccount, signature);
+	return patchOperationWithHash(operation, hash);
 };
 
 const accountBridge: AccountBridge<Transaction> = {

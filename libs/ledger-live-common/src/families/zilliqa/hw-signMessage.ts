@@ -25,7 +25,7 @@ const signMessage: SignMessage = async (
 			s: "",
 			v: 0,
 		},
-		signature: `0x${r.signature.toString("hex")}`,
+		signature: `0x${r.signature}`,
 	};
 };
 

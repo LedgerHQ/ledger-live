@@ -1,5 +1,4 @@
-import type { Transaction } from "./types";
-import type { Account } from "@ledgerhq/types-live";
+import type { Transaction, ZilliqaAccount } from "./types";
 
 import { getNonce } from "./logic";
 import {
@@ -7,23 +6,42 @@ import {
 	TransactionFactory,
 	Transaction as ZilliqaTransaction,
 } from "@zilliqa-js/account";
-import { Zilliqa } from "@zilliqa-js/zilliqa";
 import { BN, Long, bytes } from "@zilliqa-js/util";
+import { zilliqa, VERSION } from "./api";
 
-const chainId = 333; // chainId of the developer testnet
-const msgVersion = 1; // current msgVersion
-const VERSION = bytes.pack(chainId, msgVersion);
+export const buildNativeTransaction = async (
+	account: ZilliqaAccount,
+	toAddr: string,
+	nonce: number,
+	amount: BN,
+	signature?: string,
+	maybeGasPrice?: BN
+): Promise<ZilliqaTransaction> => {
+	console.log("ZILLIQA: buildNativeTransaction.");
 
-const zilliqa = new Zilliqa("https://dev-api.zilliqa.com");
+	if (!account.zilliqaResources) {
+		throw new Error("Zilliqa resources missing on account.");
+	}
 
-const getTransactionParams = (a: Account, t: Transaction) => {
-	return {
-		method: "transfer",
-		args: {
-			dest: t.recipient,
-			value: t.amount.toString(),
-		},
+	const gasPrice = maybeGasPrice || new BN(2000000000);
+	const gasLimit = new Long(50); // Gas limit is 50 units according to https://dev.zilliqa.com/basics/basics-zil-gas/?h=gas
+
+	const params: TxParams = {
+		version: VERSION,
+		toAddr,
+		amount,
+		gasPrice,
+		gasLimit,
+		nonce: nonce,
+		pubKey: account.zilliqaResources
+			? account.zilliqaResources.publicKey
+			: "",
+		code: "",
+		data: "",
+		signature,
 	};
+	const tx = new ZilliqaTransaction(params, zilliqa.provider);
+	return tx;
 };
 
 /**
@@ -31,23 +49,12 @@ const getTransactionParams = (a: Account, t: Transaction) => {
  * @param {Account} a
  * @param {Transaction} t
  */
-export const buildTransaction = async (a: Account, t: Transaction) => {
-	console.log("js-: Build transaction");
-
-	const nonce = getNonce(a);
-	console.log("js-: nonce - ", nonce);
-
-	const params: TxParams = {
-		version: VERSION,
-		toAddr: t.recipient,
-		amount: new BN(t.amount.toString()),
-		gasPrice: new BN(0),
-		gasLimit: new Long(0),
-	};
-
-	const tx = new ZilliqaTransaction(params, zilliqa.provider);
-
-	console.log(tx.bytes.toString("hex"));
-	//	console.log("js-: ", JSON.stringify(unsigned));
-	return "";
+export const buildTransaction = async (a: ZilliqaAccount, t: Transaction) => {
+	const tx = await buildNativeTransaction(
+		a,
+		t.recipient,
+		getNonce(a),
+		new BN(t.amount.toString())
+	);
+	return tx.bytes.toString("hex");
 };

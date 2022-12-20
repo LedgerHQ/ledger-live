@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import type { Account } from "@ledgerhq/types-live";
+import { ZilliqaAccount } from "./types";
 export const MAX_AMOUNT = 5000;
 
 /**
@@ -8,9 +8,12 @@ export const MAX_AMOUNT = 5000;
  * @param {string} address
  */
 export const isValidAddress = (address: string): boolean => {
-	if (!address) return false;
+    console.log("ZILLIQA: isValidAddress.");
+    if (!address) {
+        return false;
+    }
 
-	return !!address.match(/^[a-f0-9]{32}$/);
+    return !!address.match(/^[a-f0-9]{32}$/);
 };
 
 /**
@@ -19,7 +22,8 @@ export const isValidAddress = (address: string): boolean => {
  * @param {BigNumber} amount
  */
 export const specificCheck = (amount: BigNumber): boolean => {
-	return amount.gt(0) && amount.lte(MAX_AMOUNT);
+    console.log("ZILLIQA: specificCheck.");
+    return amount.gt(0) && amount.lte(MAX_AMOUNT);
 };
 
 /**
@@ -27,17 +31,7 @@ export const specificCheck = (amount: BigNumber): boolean => {
  *
  * @param {Account} a
  */
-export const getNonce = (a: Account): number => {
-	const lastPendingOp = a.pendingOperations[0];
-
-	// TODO: Get this to work
-	const nonce = 0; /* Math.max(
-		a.zilliqaResources?.nonce || 0,
-		lastPendingOp &&
-			typeof lastPendingOp.transactionSequenceNumber === "number"
-			? lastPendingOp.transactionSequenceNumber + 1
-			: 0
-	);*/
-
-	return nonce;
+export const getNonce = (a: ZilliqaAccount): number => {
+    console.log("ZILLIQA: getNonce.");
+    return a.zilliqaResources ? a.zilliqaResources.nonce : 1;
 };

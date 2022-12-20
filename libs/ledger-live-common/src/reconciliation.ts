@@ -28,6 +28,7 @@ import {
   fromSolanaResourcesRaw,
   fromCeloResourcesRaw,
   fromNearResourcesRaw,
+  fromZilliqaResourcesRaw,
   fromNFTRaw,
   toTronResourcesRaw,
   toCosmosResourcesRaw,
@@ -40,6 +41,7 @@ import {
   toSolanaResourcesRaw,
   toCeloResourcesRaw,
   toNearResourcesRaw,
+  toZilliqaResourcesRaw,
 } from "./account";
 import consoleWarnExpectToEqual from "./consoleWarnExpectToEqual";
 import { AlgorandAccount, AlgorandAccountRaw } from "./families/algorand/types";
@@ -57,6 +59,7 @@ import { TezosAccount, TezosAccountRaw } from "./families/tezos/types";
 import { TronAccount, TronAccountRaw } from "./families/tron/types";
 import { CeloAccount, CeloAccountRaw } from "./families/celo/types";
 import { NearAccount, NearAccountRaw } from "./families/near/types";
+import { ZilliqaAccount, ZilliqaAccountRaw } from "./families/zilliqa/types";
 
 // aim to build operations with the minimal diff & call to coin implementation possible
 export async function minimalOperationsBuilder<CO>(
@@ -442,6 +445,25 @@ export function patchAccount(
       }
       break;
     }
+    case "zilliqa": {
+      const zilliqaAcc = account as ZilliqaAccount;
+      const zilliqaUpdatedRaw = updatedRaw as ZilliqaAccountRaw;
+      if (
+        zilliqaUpdatedRaw.zilliqaResources &&
+        (!zilliqaAcc.zilliqaResources ||
+          !areSameResources(
+            toZilliqaResourcesRaw(zilliqaAcc.zilliqaResources),
+            zilliqaUpdatedRaw.zilliqaResources
+          ))
+      ) {
+        (next as ZilliqaAccount).zilliqaResources = fromZilliqaResourcesRaw(
+          zilliqaUpdatedRaw.zilliqaResources
+        );
+        changed = true;
+      }
+      break;
+    }
+
     case "cardano": {
       const cardanoAcc = account as CardanoAccount;
       const cardanoUpdatedRaw = updatedRaw as CardanoAccountRaw;
@@ -471,8 +493,9 @@ export function patchAccount(
             cryptoOrgUpdatedRaw.cryptoOrgResources
           ))
       ) {
-        (next as CryptoOrgAccount).cryptoOrgResources =
-          fromCryptoOrgResourcesRaw(cryptoOrgUpdatedRaw.cryptoOrgResources);
+        (next as CryptoOrgAccount).cryptoOrgResources = fromCryptoOrgResourcesRaw(
+          cryptoOrgUpdatedRaw.cryptoOrgResources
+        );
         changed = true;
       }
       break;

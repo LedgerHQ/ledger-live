@@ -2,9 +2,29 @@ import { encodeAccountId } from "../../account";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
 import { getAccount, getOperations } from "./api";
+import { ZilliqaAccount } from "./types";
 
 const getAccountShape: GetAccountShape = async (info) => {
-	const { address, initialAccount, currency, derivationMode } = info;
+	console.log("ZILLIQA: getAccountShape.");
+	console.log(info);
+	const { address, initialAccount, currency, derivationMode, rest } = info;
+	const account = initialAccount as ZilliqaAccount;
+
+	let publicKey: undefined | string;
+
+	if (rest && rest.publicKey) {
+		publicKey = rest.publicKey;
+	} else if (
+		account &&
+		account.zilliqaResources &&
+		account.zilliqaResources.publicKey
+	) {
+		// UI has a zilliqaResources attribute
+		publicKey = account.zilliqaResources.publicKey;
+	} else {
+		throw new Error("Account Info does not contain public key.");
+	}
+
 	const accountId = encodeAccountId({
 		type: "js",
 		version: "2",
@@ -27,7 +47,8 @@ const getAccountShape: GetAccountShape = async (info) => {
 		spendableBalance: balance,
 		operationsCount: operations.length,
 		blockHeight,
-		elrondResources: {
+		zilliqaResources: {
+			publicKey,
 			nonce,
 		},
 	};
