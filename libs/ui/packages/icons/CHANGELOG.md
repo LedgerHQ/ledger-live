@@ -1,5 +1,21 @@
 # @ledgerhq/icons-ui
 
+## 0.3.2
+
+### Patch Changes
+
+- [#1963](https://github.com/LedgerHQ/ledger-live/pull/1963) [`e3222832ba`](https://github.com/LedgerHQ/ledger-live/commit/e3222832ba1fc7f90940fe637bf4a29361a72d94) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - New CIC provider icon
+
+* [#1998](https://github.com/LedgerHQ/ledger-live/pull/1998) [`1269f149ae`](https://github.com/LedgerHQ/ledger-live/commit/1269f149aef5d842eddd83beb64ae65240c3dc0f) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Updated Payment providers icon : new sources and updated sizes
+
+## 0.3.2-next.0
+
+### Patch Changes
+
+- [#1963](https://github.com/LedgerHQ/ledger-live/pull/1963) [`e3222832ba`](https://github.com/LedgerHQ/ledger-live/commit/e3222832ba1fc7f90940fe637bf4a29361a72d94) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - New CIC provider icon
+
+* [#1998](https://github.com/LedgerHQ/ledger-live/pull/1998) [`1269f149ae`](https://github.com/LedgerHQ/ledger-live/commit/1269f149aef5d842eddd83beb64ae65240c3dc0f) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Updated Payment providers icon : new sources and updated sizes
+
 ## 0.3.1
 
 ### Patch Changes

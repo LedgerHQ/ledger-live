@@ -4,7 +4,11 @@ import {
   PostOnboardingActionId,
 } from "@ledgerhq/types-live";
 import { claimMock, migrateAssetsMock, personalizeMock } from "./mockActions";
-import { customImageAction } from "./actions";
+import {
+  assetsTransferAction,
+  claimNftAction,
+  customImageAction,
+} from "./actions";
 
 /**
  * All implemented post onboarding actions.
@@ -17,18 +21,24 @@ const postOnboardingActions: Record<
   migrateAssetsMock,
   personalizeMock,
   customImage: customImageAction,
+  claimNft: claimNftAction,
+  assetsTransfer: assetsTransferAction,
 };
 
 /**
- * Mock of post onboarding actions for DeviceModelId.nanoFTS
+ * Mock of post onboarding actions for DeviceModelId.stax
  */
-const ftsPostOnboardingActionsMock: PostOnboardingAction[] = [
+const staxPostOnboardingActionsMock: PostOnboardingAction[] = [
   claimMock,
   personalizeMock,
   migrateAssetsMock,
 ];
 
-const ftsPostOnboardingActions: PostOnboardingAction[] = [customImageAction];
+const staxPostOnboardingActions: PostOnboardingAction[] = [
+  claimNftAction,
+  customImageAction,
+  assetsTransferAction,
+];
 
 export function getPostOnboardingAction(
   id: PostOnboardingActionId,
@@ -55,9 +65,9 @@ export function getPostOnboardingActionsForDevice(
     case DeviceModelId.nanoX:
       /** Set here the list of actions for the post onboarding of the Nano X */
       return [];
-    case DeviceModelId.nanoFTS:
-      if (mock) return ftsPostOnboardingActionsMock;
-      return ftsPostOnboardingActions;
+    case DeviceModelId.stax:
+      if (mock) return staxPostOnboardingActionsMock;
+      return staxPostOnboardingActions;
     default:
       return [];
   }

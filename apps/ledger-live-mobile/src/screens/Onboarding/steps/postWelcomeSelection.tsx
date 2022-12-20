@@ -1,15 +1,17 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Text, ScrollListContainer } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { ImageSourcePropType } from "react-native";
 
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { TrackScreen } from "../../../analytics";
 import { NavigatorName, ScreenName } from "../../../const";
 import StyledStatusBar from "../../../components/StyledStatusBar";
-import Illustration from "../../../images/illustration/Illustration";
-import DiscoverCard from "../../Discover/DiscoverCard";
+import Illustration, {
+  Props as IllustrationProps,
+} from "../../../images/illustration/Illustration";
 import { setHasOrderedNano } from "../../../actions/settings";
 import DeviceSetupView from "../../../components/DeviceSetupView";
 import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
@@ -19,23 +21,26 @@ import {
 } from "../../../components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
 import Touchable from "../../../components/Touchable";
+import ChoiceCard, { Props as ChoiceCardProps } from "./ChoiceCard";
 
 const images = {
   light: {
     setupLedgerImg: require("../../../images/illustration/Light/Device/XFolded.png"),
+    setupLedgerStaxImg: require("../../../images/illustration/Light/Device/Stax.png"),
     buyNanoImg: require("../../../images/illustration/Shared/_BuyNanoX.png"),
     discoverLiveImg: require("../../../images/illustration/Light/_050.png"),
     syncCryptoImg: require("../../../images/illustration/Light/_074.png"),
   },
   dark: {
     setupLedgerImg: require("../../../images/illustration/Dark/Device/XFolded.png"),
+    setupLedgerStaxImg: require("../../../images/illustration/Dark/Device/Stax.png"),
     buyNanoImg: require("../../../images/illustration/Shared/_BuyNanoX.png"),
     discoverLiveImg: require("../../../images/illustration/Dark/_050.png"),
     syncCryptoImg: require("../../../images/illustration/Dark/_074.png"),
   },
 };
 
-type PostWelcomeDiscoverCardProps = {
+type PostWelcomeChoiceCardProps = {
   title: string;
   subTitle: string;
   event: string;
@@ -47,6 +52,8 @@ type PostWelcomeDiscoverCardProps = {
     light: ImageSourcePropType;
     dark: ImageSourcePropType;
   };
+  imageContainerProps?: ChoiceCardProps["imageContainerProps"];
+  imageProps?: Partial<IllustrationProps>;
 };
 
 const PostWelcomeDiscoverCard = ({
@@ -57,36 +64,38 @@ const PostWelcomeDiscoverCard = ({
   testID,
   onPress,
   imageSource,
-}: PostWelcomeDiscoverCardProps) => {
+  imageContainerProps,
+  imageProps,
+}: PostWelcomeChoiceCardProps) => {
   return (
-    <DiscoverCard
+    <ChoiceCard
       title={title}
-      titleProps={{ variant: "large" }}
-      subTitle={subTitle}
-      subTitleProps={{ variant: "paragraph" }}
+      titleProps={{ variant: "large", fontWeight: "semiBold" }}
+      subtitleElement={
+        <Text variant="paragraph" color="neutral.c70">
+          {subTitle}
+        </Text>
+      }
       event={event}
       testID={testID}
       onPress={onPress}
       eventProperties={eventProperties}
-      cardProps={{
-        mx: 0,
-        mb: 6,
-        borderWidth: 1,
-        borderColor: "transparent",
-      }}
-      imageContainerProps={{
-        position: "relative",
-        height: "auto",
-        alignItems: "center",
-        justifyContent: "center",
-        flex: 1,
-        paddingRight: 4,
-      }}
+      imageContainerProps={
+        imageContainerProps ?? {
+          position: "relative",
+          height: "auto",
+          alignItems: "center",
+          justifyContent: "center",
+          flex: 1,
+          paddingRight: 4,
+        }
+      }
       Image={
         <Illustration
           size={105}
           darkSource={imageSource.dark}
           lightSource={imageSource.light}
+          {...imageProps}
         />
       }
     />
@@ -129,6 +138,15 @@ function PostWelcomeSelection({ route }: NavigationProps) {
     dark: images.dark[key],
   });
 
+  const staxWelcomeScreenEnabled = useFeature("staxWelcomeScreen")?.enabled;
+  const setupLedgerImageSource = useMemo(
+    () =>
+      staxWelcomeScreenEnabled
+        ? getSourceImageObj("setupLedgerStaxImg")
+        : getSourceImageObj("setupLedgerImg"),
+    [staxWelcomeScreenEnabled],
+  );
+
   return (
     <DeviceSetupView hasBackButton>
       <ScrollListContainer flex={1} mx={6}>
@@ -158,7 +176,7 @@ function PostWelcomeSelection({ route }: NavigationProps) {
             }}
             testID={`Onboarding PostWelcome - Selection|SetupLedger`}
             onPress={setupLedger}
-            imageSource={getSourceImageObj("setupLedgerImg")}
+            imageSource={setupLedgerImageSource}
           />
         )}
         <PostWelcomeDiscoverCard
@@ -196,6 +214,12 @@ function PostWelcomeSelection({ route }: NavigationProps) {
             testID={`Onboarding PostWelcome - Selection|BuyNano`}
             onPress={buyLedger}
             imageSource={getSourceImageObj("buyNanoImg")}
+            imageContainerProps={{}}
+            imageProps={{
+              width: 140,
+              height: "90%",
+              resizeMode: "contain",
+            }}
           />
         )}
       </ScrollListContainer>

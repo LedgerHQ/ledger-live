@@ -21,8 +21,8 @@ const BleDeviceItem = ({ deviceMeta, onSelect }: Props) => {
 
   const deviceIcon = useMemo(() => {
     switch (deviceMeta.modelId) {
-      case DeviceModelId.nanoFTS:
-        return <Icons.PowerMedium size={20} />;
+      case DeviceModelId.stax:
+        return <Icons.StaxRegular size={20} />;
       case DeviceModelId.nanoX:
       default:
         return <Icons.NanoXFoldedMedium size={20} />;
@@ -67,7 +67,7 @@ const BleDeviceItem = ({ deviceMeta, onSelect }: Props) => {
           <Text flex={1} ml={4} variant="large" fontWeight="semiBold">
             {deviceName}
           </Text>
-          <ChevronRightMedium size={20} color="primary.c80" />
+          <ChevronRightMedium size={20} color="neutral.c70" />
         </Flex>
       </TouchableOpacity>
     </Flex>

@@ -37,7 +37,6 @@ import type {
   SettingsSetCarouselVisibilityPayload,
   SettingsSetCountervaluePayload,
   SettingsSetDiscreetModePayload,
-  SettingsSetExperimentalUsbSupportPayload,
   SettingsSetFirstConnectHasDeviceUpdatedPayload,
   SettingsSetHasOrderedNanoPayload,
   SettingsSetLanguagePayload,
@@ -45,6 +44,7 @@ import type {
   SettingsSetLocalePayload,
   SettingsSetMarketCounterCurrencyPayload,
   SettingsSetCustomImageBackupPayload,
+  SettingsSetLastSeenCustomImagePayload,
   SettingsSetMarketFilterByStarredAccountsPayload,
   SettingsSetMarketRequestParamsPayload,
   SettingsSetNotificationsPayload,
@@ -104,7 +104,6 @@ export const INITIAL_STATE: SettingsState = {
   // readOnlyModeEnabled: !Config.DISABLE_READ_ONLY,
   readOnlyModeEnabled: true,
   hasOrderedNano: false,
-  experimentalUSBEnabled: false,
   countervalueFirst: true,
   graphCountervalueFirst: true,
   hideEmptyTokenAccounts: false,
@@ -115,7 +114,10 @@ export const INITIAL_STATE: SettingsState = {
   theme: "system",
   osTheme: undefined,
   customImageBackup: undefined,
-
+  lastSeenCustomImage: {
+    size: 0,
+    hash: "",
+  },
   carouselVisibility: Object.fromEntries(
     SLIDES.map(slide => [slide.name, true]),
   ),
@@ -266,6 +268,16 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     hasCompletedCustomImageFlow: true,
   }),
 
+  [SettingsActionTypes.SET_LAST_SEEN_CUSTOM_IMAGE]: (state, action) => ({
+    ...state,
+    lastSeenCustomImage: {
+      size: (action as Action<SettingsSetLastSeenCustomImagePayload>).payload
+        .imageSize,
+      hash: (action as Action<SettingsSetLastSeenCustomImagePayload>).payload
+        .imageHash,
+    },
+  }),
+
   [SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING]: state => ({
     ...state,
     hasCompletedOnboarding: true,
@@ -281,16 +293,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     readOnlyModeEnabled: (action as Action<SettingsSetReadOnlyModePayload>)
       .payload.readOnlyModeEnabled,
-  }),
-
-  [SettingsActionTypes.SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT]: (
-    state,
-    action,
-  ) => ({
-    ...state,
-    experimentalUSBEnabled: (
-      action as Action<SettingsSetExperimentalUsbSupportPayload>
-    ).payload.experimentalUSBEnabled,
   }),
 
   [SettingsActionTypes.SETTINGS_SWITCH_COUNTERVALUE_FIRST]: state => ({
@@ -628,9 +630,9 @@ export const analyticsEnabledSelector = createSelector(
   storeSelector,
   s => s.analyticsEnabled,
 );
-export const experimentalUSBEnabledSelector = createSelector(
+export const lastSeenCustomImageSelector = createSelector(
   storeSelector,
-  s => s.experimentalUSBEnabled,
+  s => s.lastSeenCustomImage,
 );
 export const currencySettingsForAccountSelector = (
   s: State,

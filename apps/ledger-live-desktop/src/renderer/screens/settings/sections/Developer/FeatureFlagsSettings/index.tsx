@@ -57,7 +57,12 @@ export const FeatureFlagContent = withV3StyleProvider((props: { visible?: boolea
 
   const [cheatActivated, setCheatActivated] = useState(false);
   const ruleThemAll = useCallback(() => {
-    (["customImage", "deviceInitialApps", "syncOnboarding"] as FeatureId[]).forEach(featureId =>
+    ([
+      "customImage",
+      "deviceInitialApps",
+      "syncOnboarding",
+      "staxWelcomeScreen",
+    ] as FeatureId[]).forEach(featureId =>
       overrideFeature(featureId, { ...getFeature(featureId), enabled: true }),
     );
     setCheatActivated(true);

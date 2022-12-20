@@ -34,13 +34,16 @@ export const providersSelector: OutputSelector<
   swap => swap.providers,
 );
 
-const filterAvailableToAssets = (pairs, fromId?: string) => {
+export const filterAvailableToAssets = (pairs, fromId?: string) => {
   if (pairs === null || pairs === undefined) return null;
 
-  if (fromId)
-    return pairs.reduce((acc, pair) => (pair.from === fromId ? [...acc, pair.to] : acc), []);
-
-  return pairs.reduce((acc, pair) => [...acc, pair.to], []);
+  const toAssets = [];
+  for (const pair of pairs) {
+    if (!fromId || pair.from === fromId) {
+      toAssets.push(pair.to);
+    }
+  }
+  return toAssets;
 };
 
 const filterAvailableFromAssets = (pairs, allAccounts) => {

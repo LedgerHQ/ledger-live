@@ -518,7 +518,7 @@
       "title" : "Quantia a ser congelada não pode ser menor que 1"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "Enviar TRC20 para a nova conta não a ativará",
+      "title" : "Primeiro, você precisa enviar pelo menos 0,1 TRX para este endereço para habilitar o recebimento de tokens TRC20.",
       "description" : "Para ativá-la, envie primeiro TRX ou TRC10 para a conta. Depois ela pode receber TRC20."
     },
     "TronUnexpectedFees" : {
@@ -1902,6 +1902,9 @@
       "title" : "Nenhuma operação ainda?",
       "desc" : "Basta enviar os criptoativos para seu endereço de recebimento e esperar o aplicativo sincronizar."
     },
+    "carousel" : {
+      "title" : "Para você"
+    },
     "recommended" : {
       "title" : "Recomendado"
     },
@@ -2350,8 +2353,8 @@
     "display" : {
       "title" : "Geral",
       "desc" : "Configurar as configurações gerais do Ledger Live.",
-      "carousel" : "Visibilidade do carrossel",
-      "carouselDesc" : "Permitir a visibilidade do carrossel no Portfólio",
+      "carousel" : "Recomendações",
+      "carouselDesc" : "Mostraremos cartões com dicas personalizadas e nossas últimas ofertas só para você.",
       "language" : "Idioma de exibição",
       "languageDesc" : "Defina o idioma exibido no Ledger Live.",
       "region" : "Região",
@@ -2464,7 +2467,7 @@
       },
       "allowed" : {
         "title" : "Permitir Notificações",
-        "desc" : "Receba notificações sobre suas criptos, tendências de mercado e mais."
+        "desc" : "Receba notificações sobre seus criptoativos, tendências de mercado e mais"
       },
       "transactions" : {
         "title" : "Transações",
@@ -2486,7 +2489,7 @@
         "title" : "Alertas de preço",
         "desc" : "Configure alertas de preços para suas moedas favoritas para que você não perca nenhuma movimentação de mercado"
       },
-      "disclaimer" : "Privacidade de dados é fundamental na Ledger. Os dados coletados nunca são compartilhados com nossos parceiros"
+      "disclaimer" : "Seus dados e sua privacidade são importantes para nós da Ledger. Os dados coletados nunca são compartilhados com nossos parceiros."
     },
     "help" : {
       "title" : "Ajuda",
@@ -2568,7 +2571,7 @@
       "featureFlagsDesc" : "Valores sobrepostos serão redefinidos se o aplicativo for reexecutado. Apenas strings JSON válidas serão aceitas.",
       "featureFlagsEdit" : "Editar",
       "featureFlagsRestore" : "Restaurar",
-      "firebaseProject" : "Firebase project targeted by this build:"
+      "firebaseProject" : "Projeto Firebase mirado por esta versão:"
     }
   },
   "notifications" : {
@@ -3265,8 +3268,8 @@
       "gasPrice" : "Preço do gás",
       "maxFee" : "Taxa máxima",
       "maxPriorityFee" : "Taxa de prioridade máxima",
-      "nextBlock" : "Próximo bloco: {{nextBaseFee}}",
-      "suggestedPriorityFee" : "Sugerido {{lowPriorityFee}} - {{highPriorityFee}}",
+      "nextBlock" : "Próximo bloco",
+      "suggested" : "Sugerido",
       "maxFees" : "Taxas Máximas",
       "validateGasLimit" : "Validar limite de gás",
       "fees" : "Taxas",
@@ -4690,6 +4693,9 @@
         "title" : "Candidatos",
         "description" : "127 indivíduos eleitos por votação por toda a comunidade de detentores do token. As votações são contadas a cada 6 horas."
       }
+    },
+    "receive" : {
+      "newAddressTRC20" : "Primeiro, você precisa enviar pelo menos 0,1 TRX para este endereço para ativá-lo."
     }
   },
   "stellar" : {
@@ -5454,7 +5460,8 @@
     "drawer" : {
       "title" : "Escolha uma imagem",
       "options" : {
-        "uploadFromPhone" : "Enviar do meu telefone"
+        "uploadFromPhone" : "Escolher na minha galeria de imagens",
+        "selectFromNFTGallery" : "Escolher na galeria de NFTs"
       }
     },
     "cropImage" : "Cortar imagem",
@@ -5479,6 +5486,9 @@
       "loading" : "Carregando pré-visualização",
       "setPicture" : "Definir imagem personalizada",
       "editPicture" : "Editar imagem"
+    },
+    "nftGallery" : {
+      "title" : "Meus NFTs"
     }
   },
   "postOnboarding" : {

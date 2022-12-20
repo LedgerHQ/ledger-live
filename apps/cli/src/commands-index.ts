@@ -22,14 +22,11 @@ import estimateMaxSpendable from "./commands/estimateMaxSpendable";
 import exportAccounts from "./commands/exportAccounts";
 import firmwareRepair from "./commands/firmwareRepair";
 import firmwareUpdate from "./commands/firmwareUpdate";
-import ftsFetchAndRestoreDemo from "./commands/ftsFetchAndRestoreDemo";
-import ftsFetchImage from "./commands/ftsFetchImage";
-import ftsFetchImageHash from "./commands/ftsFetchImageHash";
-import ftsLoadImage from "./commands/ftsLoadImage";
 import generateTestScanAccounts from "./commands/generateTestScanAccounts";
 import generateTestTransaction from "./commands/generateTestTransaction";
 import genuineCheck from "./commands/genuineCheck";
 import getAddress from "./commands/getAddress";
+import getBatteryStatus from "./commands/getBatteryStatus";
 import getDeviceRunningMode from "./commands/getDeviceRunningMode";
 import getTransactionStatus from "./commands/getTransactionStatus";
 import i18n from "./commands/i18n";
@@ -46,6 +43,10 @@ import scanDescriptors from "./commands/scanDescriptors";
 import send from "./commands/send";
 import signMessage from "./commands/signMessage";
 import speculosList from "./commands/speculosList";
+import staxFetchAndRestoreDemo from "./commands/staxFetchAndRestoreDemo";
+import staxFetchImage from "./commands/staxFetchImage";
+import staxFetchImageHash from "./commands/staxFetchImageHash";
+import staxLoadImage from "./commands/staxLoadImage";
 import swap from "./commands/swap";
 import sync from "./commands/sync";
 import synchronousOnboarding from "./commands/synchronousOnboarding";
@@ -80,14 +81,11 @@ export default {
   exportAccounts,
   firmwareRepair,
   firmwareUpdate,
-  ftsFetchAndRestoreDemo,
-  ftsFetchImage,
-  ftsFetchImageHash,
-  ftsLoadImage,
   generateTestScanAccounts,
   generateTestTransaction,
   genuineCheck,
   getAddress,
+  getBatteryStatus,
   getDeviceRunningMode,
   getTransactionStatus,
   i18n,
@@ -104,6 +102,10 @@ export default {
   send,
   signMessage,
   speculosList,
+  staxFetchAndRestoreDemo,
+  staxFetchImage,
+  staxFetchImageHash,
+  staxLoadImage,
   swap,
   sync,
   synchronousOnboarding,
