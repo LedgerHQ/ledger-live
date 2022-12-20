@@ -1,5 +1,3 @@
-import { encodeURIScheme, decodeURIScheme } from "./CurrencyURIScheme";
-import { sanitizeValueString } from "./sanitizeValueString";
 import {
   listFiatCurrencies,
   findFiatCurrencyByTicker,
@@ -25,6 +23,9 @@ import {
   getTokenById,
   addTokens,
 } from "@ledgerhq/cryptoassets";
+import type { Currency } from "@ledgerhq/types-cryptoassets";
+import { encodeURIScheme, decodeURIScheme } from "./CurrencyURIScheme";
+import { sanitizeValueString } from "./sanitizeValueString";
 export * from "./support";
 import { parseCurrencyUnit } from "./parseCurrencyUnit";
 import { chopCurrencyUnitDecimals } from "./chopCurrencyUnitDecimals";
@@ -35,7 +36,6 @@ import {
 import { formatShort } from "./formatShort";
 import { valueFromUnit } from "./valueFromUnit";
 import { getCurrencyColor } from "./color";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
 
 const findCurrencyByTicker = (ticker: string): Currency | null | undefined =>
   findCryptoCurrencyByTicker(ticker) ||
