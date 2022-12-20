@@ -337,7 +337,7 @@ const NftViewer = ({ route }: Props) => {
       />
       <ScrollView
         contentContainerStyle={styles.scrollView}
-        testID={"nft_viewer_page_scrollview"}
+        testID={"nft-viewer-page-scrollview"}
       >
         <Box mx={6}>
           <Flex flexDirection={"row"} alignItems={"center"}>

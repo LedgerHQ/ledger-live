@@ -74,7 +74,7 @@ function Tab({
   return (
     <StyledTouchableOpacity
       onPress={onPress}
-      testID={`wallet_tab_${route.name}`}
+      testID={`wallet-tab-${route.name}`}
     >
       <StyledAnimatedView
         backgroundColor={rgba(colors.constant.white, 0.08)}

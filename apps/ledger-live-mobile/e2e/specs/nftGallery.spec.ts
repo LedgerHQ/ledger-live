@@ -29,12 +29,12 @@ describe("NFT Gallery screen", () => {
   });
 
   it("should navigate to NFT gallery on NFT tab press", async () => {
-    await tapByElement(walletTabNavigatorPage.getNftGalleryTab());
+    await walletTabNavigatorPage.navigateToNftGallery();
     await expect(nftGalleryPage.getNftList()).toBeVisible();
   });
 
   it("should navigate to NFT viewer page on NFT gallery item press", async () => {
-    await tapByElement(nftGalleryPage.getNftListItems());
+    await nftGalleryPage.navigateToNftViewer();
     await expect(nftViewerPage.getMainScrollView()).toBeVisible();
   });
 });

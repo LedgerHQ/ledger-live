@@ -1,6 +1,7 @@
-import { getElementById } from "../../helpers";
+import { getElementById, tapByElement } from "../../helpers";
 
 export default class NftGalleryPage {
-  getNftList = () => getElementById(`wallet_nft_gallery_list`);
-  getNftListItems = () => getElementById(`wallet_nft_gallery_list_item`);
+  getNftList = () => getElementById(`wallet-nft-gallery-list`);
+  getNftListItems = () => getElementById(`wallet-nft-gallery-list-item`);
+  navigateToNftViewer = () => tapByElement(this.getNftListItems());
 }

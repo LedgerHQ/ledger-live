@@ -43,7 +43,7 @@ export async function loadConfig(
   }
 }
 
-export function navigate(name: string) {
+function navigate(name: string) {
   postMessage({
     type: "navigate",
     payload: name,
