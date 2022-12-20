@@ -1,1 +1,2 @@
-export { default } from "./StakingRewardsBanner";
+// @flow
+export { default } from "./Delegations";

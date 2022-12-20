@@ -426,6 +426,19 @@ export enum ScreenName {
   Learn = "Learn",
   // cardano
   CardanoEditMemo = "CardanoEditMemo",
+  CardanoDelegationStarted = "CardanoDelegationStarted",
+  CardanoDelegationSummary = "CardanoDelegationSummary",
+  CardanoDelegationPoolSelect = "CardanoDelegationPoolSelect",
+  CardanoDelegationAmount = "CardanoDelegationAmount",
+  CardanoDelegationSelectDevice = "CardanoDelegationSelectDevice",
+  CardanoDelegationConnectDevice = "CardanoDelegationConnectDevice",
+  CardanoDelegationValidationError = "CardanoDelegationValidationError",
+  CardanoDelegationValidationSuccess = "CardanoDelegationValidationSuccess",
+  CardanoUndelegationSelectDevice = "CardanoUndelegationSelectDevice",
+  CardanoUndelegationConnectDevice = "CardanoUndelegationConnectDevice",
+  CardanoUndelegationValidationError = "CardanoUndelegationValidationError",
+  CardanoUndelegationValidationSuccess = "CardanoUndelegationValidationSuccess",
+
   // hedera
   HederaEditMemo = "HederaEditMemo",
 
@@ -520,6 +533,9 @@ export enum NavigatorName {
   CeloActivateFlow = "CeloActivateFlow",
   CeloRevokeFlow = "CeloRevokeFlow",
   CeloWithdrawFlow = "CeloWithdrawFlow",
+  // Cardano
+  CardanoEditMemo = "CardanoEditMemo",
+  CardanoDelegationFlow = "CardanoDelegationFlow",
 
   // Tab
   Main = "Main",
