@@ -26,7 +26,7 @@ export const customImageAction: PostOnboardingAction = {
 
 export const claimNftAction: PostOnboardingAction = {
   id: PostOnboardingActionId.claimNft,
-  disabled: true,
+  disabled: false,
   Icon: Icons.GiftCardMedium,
   featureFlagId: "postOnboardingClaimNft",
   title: "postOnboarding.actions.claimNft.title",

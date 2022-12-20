@@ -7,8 +7,13 @@ import { CameraType } from "expo-camera/build/Camera.types";
 import { Camera } from "expo-camera";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { Svg, Defs, Rect, Mask } from "react-native-svg";
-import { useIsFocused } from "@react-navigation/native";
+import {
+  useIsFocused,
+  useRoute,
+  useNavigation,
+} from "@react-navigation/native";
 import { urls } from "../../config/urls";
+import FallbackCameraScreen from "../screens/ImportAccounts/FallBackCameraScreen";
 
 const cameraBoxDimensions = {
   width: Dimensions.get("screen").width,
@@ -55,6 +60,8 @@ const ClaimNftQrScan = () => {
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const isInFocus = useIsFocused();
   const cameraRef = useRef<Camera>(null);
+  const route = useRoute();
+  const navigation = useNavigation();
   const [cameraDimensions, setCameraDimensions] = useState<
     | {
         height: number;
@@ -136,7 +143,13 @@ const ClaimNftQrScan = () => {
               justifyContent="center"
               bg="constant.black"
             >
-              <InfiniteLoader />
+              {!permission?.canAskAgain &&
+              !permission?.granted &&
+              permission?.status === "denied" ? (
+                <FallbackCameraScreen route={route} navigation={navigation} />
+              ) : (
+                <InfiniteLoader />
+              )}
             </Flex>
           )}
         </Flex>
