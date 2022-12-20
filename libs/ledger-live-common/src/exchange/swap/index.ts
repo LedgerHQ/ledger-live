@@ -102,16 +102,20 @@ const swapProviders: Record<string, SwapProviderConfig> = {
   ftx,
   ftxus: ftx,
   oneinch: {
-    nameAndPubkey: getNameAndPubKey("", ""),
-    signature: Buffer.from("", "hex"),
-    curve: "",
+    ...createExchangeProviderNameAndSignature({
+      name: "1inch",
+      signature: "",
+      publicKey: "",
+    }),
     needsKYC: false,
     needsBearerToken: false,
   },
   paraswap: {
-    nameAndPubkey: getNameAndPubKey("", ""),
-    signature: Buffer.from("", "hex"),
-    curve: "",
+    ...createExchangeProviderNameAndSignature({
+      name: "paraswap",
+      signature: "",
+      publicKey: "",
+    }),
     needsKYC: false,
     needsBearerToken: false,
   },
