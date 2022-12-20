@@ -1,6 +1,6 @@
 import { InformativeCard } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import { FlatList } from "react-native";
 import { TouchableHighlight } from "react-native-gesture-handler";
 import styled, { useTheme } from "styled-components/native";
@@ -23,21 +23,27 @@ function LearnSection() {
     setTimeout(() => setIsLoading(false), 750);
   }, []);
 
+  const onClickItem = useCallback(
+    (card: LearnContentCard) => {
+      trackContentCardEvent("contentcard_clicked", {
+        screen: ScreenName.Learn,
+        campaign: card.id,
+        link: card.link,
+      });
+      navigation.navigate(ScreenName.LearnWebView, {
+        uri: card.link,
+      });
+    },
+    [navigation, trackContentCardEvent],
+  );
+
   const renderItem = ({ item: card }: { item: LearnContentCard }) => {
+    console.log(card.image);
     return (
       <Skeleton loading={isLoading} height="85px" m="16px" borderRadius="8px">
         <Container
           underlayColor={colors.neutral.c30}
-          onPress={() => {
-            trackContentCardEvent("contentcard_clicked", {
-              screen: ScreenName.Learn,
-              campaign: card.id,
-              link: card.link,
-            });
-            navigation.navigate(ScreenName.LearnWebView, {
-              uri: card.link,
-            });
-          }}
+          onPress={() => onClickItem(card)}
         >
           <InformativeCard
             imageUrl={card.image}
