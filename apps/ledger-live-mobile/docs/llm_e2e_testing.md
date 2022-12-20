@@ -250,4 +250,4 @@ await device.enableSynchronization();
 ```
 https://wix.github.io/Detox/docs/api/device#devicedisablesynchronization
 
-But be really careful about it, as it will make these tests unstable.
+You will have to wait manually (waitFor) to replace the synchronization. But be really careful about it, as it might make these tests unstable.
