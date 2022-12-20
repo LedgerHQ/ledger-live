@@ -19,6 +19,7 @@ import type { EventTrigger, DataOfUser } from "../logic/notifications";
 import type { RatingsHappyMoment, RatingsDataOfUser } from "../logic/ratings";
 import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
 import { WalletContentCard, AssetContentCard } from "../dynamicContent/types";
+import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
 
 // === ACCOUNT STATE ===
 
@@ -169,7 +170,6 @@ export type SettingsState = {
   hasInstalledAnyApp: boolean;
   readOnlyModeEnabled: boolean;
   hasOrderedNano: boolean;
-  experimentalUSBEnabled: boolean;
   countervalueFirst: boolean;
   graphCountervalueFirst: boolean;
   hideEmptyTokenAccounts: boolean;
@@ -204,6 +204,10 @@ export type SettingsState = {
   firstConnectionHasDevice: boolean | null;
   firstConnectHasDeviceUpdated: boolean | null;
   customImageBackup?: { hex: string; hash: string };
+  lastSeenCustomImage: {
+    size: number;
+    hash: string;
+  };
   notifications: NotificationsSettings;
   walletTabNavigatorLastVisitedTab: keyof WalletTabNavigatorStackParamList;
 };
@@ -230,6 +234,30 @@ export type SwapStateType = {
   exchangeRateExpiration?: Date;
 };
 
+// === PROTECT STATE ===
+
+export type ProtectData = {
+  services: {
+    Protect: {
+      available: boolean;
+      active: boolean;
+      paymentDue: boolean;
+      subscribedAt: number;
+      lastPaymentDate: number;
+    };
+  };
+  accessToken: string;
+  expiresIn: number;
+  refreshExpiresIn: number;
+  refreshToken: string;
+  tokenType: string;
+};
+
+export type ProtectState = {
+  data: ProtectData;
+  protectStatus: ProtectStateNumberEnum;
+};
+
 // === ROOT STATE ===
 
 export type State = {
@@ -243,4 +271,5 @@ export type State = {
   swap: SwapStateType;
   walletconnect: WalletConnectState;
   postOnboarding: PostOnboardingState;
+  protect: ProtectState;
 };

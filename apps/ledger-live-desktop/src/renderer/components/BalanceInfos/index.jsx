@@ -33,6 +33,7 @@ type BalanceTotalProps = {
   showCryptoEvenIfNotAvailable?: boolean,
   account?: AccountLike,
   withTransactionsPendingConfirmationWarning?: boolean,
+  dynamicSignificantDigits?: number,
 };
 
 type Props = {
@@ -78,6 +79,7 @@ export function BalanceTotal({
   children = null,
   withTransactionsPendingConfirmationWarning,
   account,
+  dynamicSignificantDigits,
   ...boxProps
 }: BalanceTotalProps) {
   return (
@@ -95,6 +97,7 @@ export function BalanceTotal({
               fontSize={8}
               showCode
               val={totalBalance}
+              dynamicSignificantDigits={dynamicSignificantDigits}
               data-test-id="total-balance"
             />
           )}

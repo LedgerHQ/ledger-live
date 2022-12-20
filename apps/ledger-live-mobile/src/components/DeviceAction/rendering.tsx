@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Platform, ScrollView } from "react-native";
+import { Platform, ScrollView, StyleSheet } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components/native";
 import { LockedDeviceError, WrongDeviceForAccount } from "@ledgerhq/errors";
@@ -43,7 +43,7 @@ import type { DeviceModelInfo } from "@ledgerhq/types-live";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ParamListBase } from "@react-navigation/native";
-import { isFirmwareUpdateVersionSupported } from "../../logic/firmwareUpdate";
+import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
 import { lastSeenDeviceSelector } from "../../reducers/settings";
 import { setModalLock } from "../../actions/appstate";
 import { urls } from "../../config/urls";
@@ -63,11 +63,17 @@ import { track } from "../../analytics";
 import CurrencyUnitValue from "../CurrencyUnitValue";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
 import CurrencyIcon from "../CurrencyIcon";
-import Illustration from "../../images/illustration/Illustration";
-import { FramedImageWithContext } from "../CustomImage/FramedImage";
+import {
+  FramedImageWithContext,
+  transferConfig,
+} from "../CustomImage/FramedImage";
+import {
+  Props as FramedImageWithLottieProps,
+  FramedImageWithLottieWithContext,
+} from "../CustomImage/FramedImageWithLottie";
 
-import notOnboardedDarkImg from "../../images/illustration/Dark/_010.png";
-import notOnboardedLightImg from "../../images/illustration/Light/_010.png";
+const confirmLockscreen = require("../animations/stax/customimage/confirmLockscreen.json"); // eslint-disable-line @typescript-eslint/no-var-requires, import/no-unresolved
+const allowConnection = require("../animations/stax/customimage/allowConnection.json"); // eslint-disable-line @typescript-eslint/no-var-requires, import/no-unresolved
 
 const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -217,7 +223,7 @@ export function renderVerifyAddress({
     <Wrapper>
       <AnimationContainer withVerifyAddressHeight={device.modelId !== "blue"}>
         <Animation
-          source={getDeviceAnimation({ device, key: "validate", theme })}
+          source={getDeviceAnimation({ device, key: "verify", theme })}
         />
       </AnimationContainer>
       <TitleText>{t("DeviceAction.verifyAddress.title")}</TitleText>
@@ -277,7 +283,7 @@ export function renderConfirmSwap({
           withVerifyAddressHeight={device.modelId !== "blue"}
         >
           <Animation
-            source={getDeviceAnimation({ device, key: "validate", theme })}
+            source={getDeviceAnimation({ device, key: "sign", theme })}
           />
         </AnimationContainer>
         <TitleText>{t("DeviceAction.confirmSwap.title")}</TitleText>
@@ -395,7 +401,7 @@ export function renderConfirmSell({
         marginTop="16px"
         withVerifyAddressHeight={device.modelId !== "blue"}
       >
-        <Animation source={getDeviceAnimation({ device, key: "validate" })} />
+        <Animation source={getDeviceAnimation({ device, key: "sign" })} />
       </AnimationContainer>
       <TitleText>{t("DeviceAction.confirmSell.title")}</TitleText>
     </Wrapper>
@@ -413,15 +419,20 @@ export function renderAllowManager({
 }) {
   // TODO: disable gesture, modal close, hide header buttons
   return (
-    <Wrapper>
+    <Wrapper pb={6} pt={6}>
+      <Flex>
+        <Text fontWeight="semiBold" fontSize={24} textAlign="center" mb={10}>
+          {t("DeviceAction.allowManagerPermission", {
+            wording,
+            productName: getDeviceModel(device.modelId)?.productName,
+          })}
+        </Text>
+      </Flex>
       <AnimationContainer>
         <Animation
           source={getDeviceAnimation({ device, key: "allowManager", theme })}
         />
       </AnimationContainer>
-      <CenteredText>
-        {t("DeviceAction.allowManagerPermission", { wording })}
-      </CenteredText>
     </Wrapper>
   );
 }
@@ -434,6 +445,7 @@ export function renderAllowLanguageInstallation({
   device: Device;
 }) {
   const deviceName = getDeviceModel(device.modelId).productName;
+  const key = device.modelId === "stax" ? "allowConnection" : "sign";
 
   return (
     <Wrapper>
@@ -441,9 +453,7 @@ export function renderAllowLanguageInstallation({
         {t("deviceLocalization.allowLanguageInstallation", { deviceName })}
       </Text>
       <AnimationContainer>
-        <Animation
-          source={getDeviceAnimation({ device, key: "validate", theme })}
-        />
+        <Animation source={getDeviceAnimation({ device, key, theme })} />
       </AnimationContainer>
     </Wrapper>
   );
@@ -764,7 +774,7 @@ export function renderDeviceNotOnboarded({
   navigation: StackNavigationProp<ParamListBase>;
 }) {
   const navigateToOnboarding = () => {
-    if (device.modelId === DeviceModelId.nanoFTS) {
+    if (device.modelId === DeviceModelId.stax) {
       // On pairing success, navigate to the Sync Onboarding Companion
       navigation.navigate(NavigatorName.BaseOnboarding, {
         screen: NavigatorName.SyncOnboarding,
@@ -794,12 +804,10 @@ export function renderDeviceNotOnboarded({
 
   return (
     <Wrapper>
-      <Illustration
-        lightSource={notOnboardedLightImg}
-        darkSource={notOnboardedDarkImg}
-        size={175}
-      />
-      <Text variant="h4" textAlign="center" mt={4}>
+      <Flex backgroundColor="neutral.c30" p={16} borderRadius={999}>
+        <Icons.InfoAltFillMedium color="primary.c80" size={28} />
+      </Flex>
+      <Text variant="h4" textAlign="center" mt={6}>
         {t("DeviceAction.deviceNotOnboarded.title")}
       </Text>
       <Text variant="body" color="neutral.c70" textAlign="center" mt={4} mx={4}>
@@ -835,7 +843,7 @@ export function renderConnectYourDevice({
     <Wrapper>
       <AnimationContainer
         withConnectDeviceHeight={
-          ![DeviceModelId.blue, DeviceModelId.nanoFTS].includes(device.modelId)
+          ![DeviceModelId.blue, DeviceModelId.stax].includes(device.modelId)
         }
       >
         <Animation
@@ -925,7 +933,7 @@ export function renderSecureTransferDeviceConfirmation({
     <Wrapper>
       <AnimationContainer>
         <Animation
-          source={getDeviceAnimation({ device, key: "validate", theme })}
+          source={getDeviceAnimation({ device, key: "sign", theme })}
         />
       </AnimationContainer>
       <TitleText>{t(`DeviceAction.${exchangeTypeName}.title`)}</TitleText>
@@ -1093,42 +1101,44 @@ export const AutoRepair = ({
 const ImageLoadingGeneric: React.FC<{
   title: string;
   children?: React.ReactNode | undefined;
-  top?: React.ReactNode | undefined;
-  bottom?: React.ReactNode | undefined;
   progress?: number;
-  backgroundPlaceholderText?: string;
-}> = ({
-  title,
-  top,
-  bottom,
-  children,
-  progress,
-  backgroundPlaceholderText,
-}) => {
+  lottieSource?: FramedImageWithLottieProps["lottieSource"];
+}> = ({ title, children, progress, lottieSource }) => {
   return (
     <Flex
       flexDirection="column"
-      justifyContent="space-between"
+      justifyContent="center"
       alignItems="center"
       flex={1}
       alignSelf="stretch"
     >
-      <Flex flex={1} flexDirection="column" alignItems={"center"}>
-        {top}
-      </Flex>
-      <Flex flexDirection={"column"} alignItems="center" alignSelf="stretch">
-        <Text textAlign="center" variant="large" mb={10} alignSelf="stretch">
+      <Flex {...StyleSheet.absoluteFillObject}>
+        <Text
+          textAlign="center"
+          variant="h4"
+          fontWeight="semiBold"
+          mb={8}
+          alignSelf="stretch"
+        >
           {title}
         </Text>
-        <FramedImageWithContext
-          loadingProgress={progress}
-          backgroundPlaceholderText={backgroundPlaceholderText}
-        >
-          {children}
-        </FramedImageWithContext>
       </Flex>
-      <Flex flex={1} flexDirection="column" alignItems={"center"}>
-        {bottom}
+      <Flex flexDirection={"column"} alignItems="center" alignSelf="stretch">
+        {lottieSource ? (
+          <FramedImageWithLottieWithContext
+            loadingProgress={progress}
+            lottieSource={lottieSource}
+          >
+            {children}
+          </FramedImageWithLottieWithContext>
+        ) : (
+          <FramedImageWithContext
+            loadingProgress={progress}
+            frameConfig={transferConfig}
+          >
+            {children}
+          </FramedImageWithContext>
+        )}
       </Flex>
     </Flex>
   );
@@ -1144,8 +1154,8 @@ export const renderImageLoadRequested = ({
         productName:
           device.deviceName || getDeviceModel(device.modelId)?.productName,
       })}
+      lottieSource={allowConnection}
       progress={0}
-      backgroundPlaceholderText="load requested illustration placeholder"
     />
   );
 };
@@ -1157,19 +1167,16 @@ export const renderLoadingImage = ({
 }: RawProps & { progress: number; device: Device }) => {
   return (
     <ImageLoadingGeneric
-      title={t("customImage.loadingPicture", {
-        productName:
-          device.deviceName || getDeviceModel(device.modelId)?.productName,
-      })}
+      title={t(
+        progress > 0.9
+          ? "customImage.loadingPictureAlmostOver"
+          : "customImage.loadingPicture",
+        {
+          productName:
+            device.deviceName || getDeviceModel(device.modelId)?.productName,
+        },
+      )}
       progress={progress}
-      backgroundPlaceholderText="image loading illustration placeholder"
-      bottom={
-        <Flex flexDirection="column" flex={1} justifyContent="flex-end" pb={8}>
-          <Text textAlign="center" variant="bodyLineHeight" color="neutral.c60">
-            {t("customImage.timeDisclaimer")}
-          </Text>
-        </Flex>
-      }
     />
   );
 };
@@ -1180,26 +1187,12 @@ export const renderImageCommitRequested = ({
 }: RawProps & { device: Device }) => {
   return (
     <ImageLoadingGeneric
-      title={t("customImage.confirmPicture", {
+      title={t("customImage.commitRequested", {
         productName:
           device.deviceName || getDeviceModel(device.modelId)?.productName,
       })}
-      backgroundPlaceholderText="commit requested illustration placeholder"
-      top={
-        <Flex
-          flex={1}
-          flexDirection="column"
-          justifyContent="center"
-          alignItems="center"
-        >
-          <Flex mb={3} p={4} backgroundColor="neutral.c30" borderRadius={999}>
-            <Icons.CheckAloneMedium size={16} color="success.c50" />
-          </Flex>
-          <Text textAlign="center" color="neutral.c70" variant="bodyLineHeight">
-            {t("customImage.pictureLoaded")}
-          </Text>
-        </Flex>
-      }
+      lottieSource={confirmLockscreen}
+      progress={0.89} // hardcoded value to not have the image overflowing the "confirm button" in the lottie
     />
   );
 };

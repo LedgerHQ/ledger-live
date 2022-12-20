@@ -15,7 +15,7 @@ test("Manual", async ({ page }) => {
   });
 
   await test.step("Select device", async () => {
-    await onboardingPage.selectDevice("nanoFTS"); // TODO: do better
+    await onboardingPage.selectDevice("stax"); // TODO: do better
   });
 
   await test.step("Take screenshot of main screen", async () => {

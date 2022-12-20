@@ -1,4 +1,7 @@
-import type { ExchangeProviderNameAndSignature } from "../..";
+import {
+  createExchangeProviderNameAndSignature,
+  ExchangeProviderNameAndSignature,
+} from "../..";
 import { getEnv } from "../../../env";
 import { ExchangeTypes } from "../../hw-app-exchange/Exchange";
 // FIXME: to be move in this file alongide 'fundProviders' once 'src/exchange/sell/' is deprecated
@@ -21,80 +24,30 @@ const testFundProvider = {
     0x2f, 0x98, 0x7, 0xf, 0xe3, 0xe2, 0x0, 0x84, 0xd0, 0x23, 0xd6, 0x53, 0xe3,
     0xee, 0xf6, 0x96, 0xbc, 0xa0, 0x27, 0x78,
   ]),
-  curve: "secpk256k1",
 };
 
-const fundProviders: Record<
-  string,
-  {
-    nameAndPubkey: Buffer;
-    signature: Buffer;
-    curve: string;
-  }
-> = {
-  baanx: {
-    /**
-     * nameAndPubkey is the concatenation of:
-     * - an empty buffer of the size of the partner name
-     * - a buffer created from the partner name string in ascii encoding
-     * - a buffer created from the hexadecimal version of the partner public key
-     */
-    nameAndPubkey: Buffer.concat([
-      Buffer.from([5]),
-      Buffer.from("Baanx", "ascii"),
-      Buffer.from(
-        "04551878b446b6a711949fa51cc5a8685602f8ffb1dfd08f6ab869019d7c125d7737a79e8b5022d860ec7dfbe062d510fec3b5fe0f6ebb1f5e55a074bb7e5dbc4e",
-        "hex"
-      ),
-    ]),
-    signature: Buffer.from(
+const fundProviders: Record<string, ExchangeProviderNameAndSignature> = {
+  baanx: createExchangeProviderNameAndSignature({
+    name: "Baanx",
+    publicKey:
+      "04551878b446b6a711949fa51cc5a8685602f8ffb1dfd08f6ab869019d7c125d7737a79e8b5022d860ec7dfbe062d510fec3b5fe0f6ebb1f5e55a074bb7e5dbc4e",
+    signature:
       "304402200345c39e93a22c5ac3f1e70f8b9938b3a60d3a4906067443cf11095af0e685a502201ee5d88dd5539ce36341e49e2505c2a1659e26d8ff08801ed33c50a9126aedd1",
-      "hex"
-    ),
-    curve: "secp256r1",
-  },
-  youhodler: {
-    /**
-     * nameAndPubkey is the concatenation of:
-     * - an empty buffer of the size of the partner name
-     * - a buffer created from the partner name string in ascii encoding
-     * - a buffer created from the hexadecimal version of the partner public key
-     */
-    nameAndPubkey: Buffer.concat([
-      Buffer.from([9]),
-      Buffer.from("Youhodler", "ascii"),
-      Buffer.from(
-        "0471e9a38549562e7e49c2dc079f1350c75b42b5de23104572dbf0d7d2753d1581a246a8bd6e72257f450c023972ad2190c70b468e133648a47e87cce08d17047d",
-        "hex"
-      ),
-    ]),
-    signature: Buffer.from(
+  }),
+  youhodler: createExchangeProviderNameAndSignature({
+    name: "Youhodler",
+    publicKey:
+      "0471e9a38549562e7e49c2dc079f1350c75b42b5de23104572dbf0d7d2753d1581a246a8bd6e72257f450c023972ad2190c70b468e133648a47e87cce08d17047d",
+    signature:
       "304402207e18ad4540f47a86f7f4d40db3b9ca21a42026b37e404ef528a0e150ce88098e02206c05b27b66bef58e9a056152ef280077a8d7583260cb94c574a3074b2681ff6a",
-      "hex"
-    ),
-    curve: "secp256r1",
-  },
-  uquid: {
-    /**
-     * nameAndPubkey is the concatenation of:
-     * - an empty buffer of the size of the partner name
-     * - a buffer created from the partner name string in ascii encoding
-     * - a buffer created from the hexadecimal version of the partner public key
-     */
-    nameAndPubkey: Buffer.concat([
-      Buffer.from([5]),
-      Buffer.from("Uquid", "ascii"),
-      Buffer.from(
-        "02f96aa3d99d5ec6ce060808fd99c958c17f23e6cb9c1cf81d6419e11677410d04",
-        "hex"
-      ),
-    ]),
-    signature: Buffer.from(
+  }),
+  uquid: createExchangeProviderNameAndSignature({
+    name: "Uquid",
+    publicKey:
+      "02f96aa3d99d5ec6ce060808fd99c958c17f23e6cb9c1cf81d6419e11677410d04",
+    signature:
       "3045022100c24ad1df500551b901ebeaeb133cdfd23fcc498ca08637bc9793ecc6485aa79902207152856487f6ed74faabded16fcae07eaf47d84a155db8aaec3fd066e27cbf38",
-      "hex"
-    ),
-    curve: "secp256r1",
-  },
+  }),
 };
 
 const getProvider = (

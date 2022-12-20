@@ -13,25 +13,27 @@ import {
 } from "../../errors";
 import network from "../../network";
 import type { Transaction } from "../../generated/types";
-import {
-  getAvailableProviders,
-  getSwapAPIBaseURL,
-  getSwapAPIError,
-  getSwapAPIVersion,
-} from "./";
+import { getSwapAPIBaseURL, getSwapAPIError } from "./";
 import { mockGetExchangeRates } from "./mock";
-import type { CustomMinOrMaxError, Exchange, GetExchangeRates } from "./types";
+import type {
+  CustomMinOrMaxError,
+  Exchange,
+  GetExchangeRates,
+  AvailableProviderV3,
+} from "./types";
+import { getMainAccount } from "../../account";
 
 const getExchangeRates: GetExchangeRates = async (
   exchange: Exchange,
   transaction: Transaction,
   userId?: string, // TODO remove when wyre doesn't require this for rates
-  currencyTo?: TokenCurrency | CryptoCurrency | undefined | null
+  currencyTo?: TokenCurrency | CryptoCurrency | undefined | null,
+  providers: AvailableProviderV3[] = [],
+  includeDEX = false
 ) => {
   if (getEnv("MOCK"))
     return mockGetExchangeRates(exchange, transaction, currencyTo);
 
-  const usesV3 = getSwapAPIVersion() >= 3;
   const from = getAccountCurrency(exchange.fromAccount).id;
   const unitFrom = getAccountUnit(exchange.fromAccount);
   const unitTo =
@@ -40,11 +42,54 @@ const getExchangeRates: GetExchangeRates = async (
   const amountFrom = transaction.amount;
   const tenPowMagnitude = new BigNumber(10).pow(unitFrom.magnitude);
   const apiAmount = new BigNumber(amountFrom).div(tenPowMagnitude);
+
+  const dexProviders = ["paraswap", "oneinch"];
+
+  const providerList = providers
+    .filter((item) => {
+      const index = item.pairs.findIndex(
+        (pair) =>
+          pair.from === from &&
+          pair.to === to &&
+          (includeDEX || !dexProviders.includes(item.provider))
+      );
+      return index > -1;
+    })
+    .map((item) => item.provider);
+
+  const decentralizedSwapAvailable = () => {
+    const {
+      fromAccount: sourceAccount,
+      toAccount: targetAccount,
+      fromParentAccount: sourceParentAccount,
+      toParentAccount: targetParentAccount,
+    } = exchange;
+
+    if (sourceAccount && targetAccount) {
+      const sourceMainAccount = getMainAccount(
+        sourceAccount,
+        sourceParentAccount
+      );
+      const targetMainAccount = getMainAccount(
+        targetAccount,
+        targetParentAccount
+      );
+      const dexFamilyList = ["ethereum", "binance", "polygon"];
+      if (
+        dexFamilyList.includes(targetMainAccount.currency.family) &&
+        sourceMainAccount.currency.id === targetMainAccount.currency.id
+      ) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   const request = {
     from,
     to,
     amountFrom: apiAmount.toString(),
-    providers: usesV3 ? getAvailableProviders() : undefined,
+    providers: providerList,
   };
   const res = await network({
     method: "POST",
@@ -52,10 +97,10 @@ const getExchangeRates: GetExchangeRates = async (
     headers: {
       ...(userId ? { userId } : {}),
     },
-    data: usesV3 ? request : [request],
+    data: request,
   });
 
-  return res.data.map((responseData) => {
+  const rates = res.data.map((responseData) => {
     const {
       rate: maybeRate,
       payoutNetworkFees: maybePayoutNetworkFees,
@@ -115,6 +160,22 @@ const getExchangeRates: GetExchangeRates = async (
       };
     }
   });
+  if (includeDEX && decentralizedSwapAvailable()) {
+    dexProviders.filter((dexProvider) => {
+      if (!providerList.includes(dexProvider)) {
+        rates.push({
+          magnitudeAwareRate: undefined,
+          provider: dexProvider,
+          rate: undefined,
+          rateId: undefined,
+          toAmount: undefined,
+          tradeMethod: "float",
+          payoutNetworkFees: undefined,
+        });
+      }
+    });
+  }
+  return rates;
 };
 
 const inferError = (

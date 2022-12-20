@@ -32,9 +32,9 @@ import {
   SettingsSetAnalyticsPayload,
   SettingsSetAvailableUpdatePayload,
   SettingsSetCarouselVisibilityPayload,
+  SettingsSetLastSeenCustomImagePayload,
   SettingsSetCountervaluePayload,
   SettingsSetDiscreetModePayload,
-  SettingsSetExperimentalUsbSupportPayload,
   SettingsSetFirstConnectionHasDevicePayload,
   SettingsSetHasOrderedNanoPayload,
   SettingsSetLanguagePayload,
@@ -141,15 +141,6 @@ export const setReadOnlyMode = (readOnlyModeEnabled: boolean) =>
     readOnlyModeEnabled,
   });
 
-const setExperimentalUSBSupportAction =
-  createAction<SettingsSetExperimentalUsbSupportPayload>(
-    SettingsActionTypes.SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT,
-  );
-export const setExperimentalUSBSupport = (experimentalUSBEnabled: boolean) =>
-  setExperimentalUSBSupportAction({
-    experimentalUSBEnabled,
-  });
-
 const setOrderAccountsAction = createAction<SettingsSetOrderAccountsPayload>(
   SettingsActionTypes.SETTINGS_SET_ORDER_ACCOUNTS,
 );
@@ -184,6 +175,18 @@ const completeCustomImageFlowAction = createAction(
   SettingsActionTypes.SETTINGS_COMPLETE_CUSTOM_IMAGE_FLOW,
 );
 export const completeCustomImageFlow = () => completeCustomImageFlowAction();
+
+const setLastSeenCustomImageAction =
+  createAction<SettingsSetLastSeenCustomImagePayload>(
+    SettingsActionTypes.SET_LAST_SEEN_CUSTOM_IMAGE,
+  );
+export const setLastSeenCustomImage = ({
+  imageSize,
+  imageHash,
+}: SettingsSetLastSeenCustomImagePayload) =>
+  setLastSeenCustomImageAction({ imageSize, imageHash });
+export const clearLastSeenCustomImage = () =>
+  setLastSeenCustomImageAction({ imageSize: 0, imageHash: "" });
 
 const completeOnboardingAction = createAction(
   SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING,
