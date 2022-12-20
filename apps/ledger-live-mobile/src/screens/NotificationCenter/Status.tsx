@@ -8,7 +8,6 @@ import {
   Flex,
   Icons,
   Text,
-  Box,
 } from "@ledgerhq/native-ui";
 
 import styled, { useTheme } from "styled-components/native";
