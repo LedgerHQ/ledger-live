@@ -158,7 +158,7 @@ test("formatter will floor values by default", () => {
   expect(
     formatCurrencyUnit(
       getCryptoCurrencyById("bitcoin").units[0],
-      new BigNumber(1000010)
+      new BigNumber(1000001)
     )
   ).toBe("0.01");
   expect(
@@ -172,7 +172,7 @@ test("formatter will floor values by default", () => {
       getCryptoCurrencyById("bitcoin").units[0],
       new BigNumber("999999999999")
     )
-  ).toBe("9,999");
+  ).toBe("9,999.99");
 });
 test("formatter rounding can be disabled", () => {
   expect(
@@ -265,7 +265,7 @@ test("sub magnitude", () => {
         subMagnitude: 2,
       }
     )
-  ).toBe("9,999");
+  ).toBe("9,999.99");
 });
 test("parseCurrencyUnit", () => {
   expect(
