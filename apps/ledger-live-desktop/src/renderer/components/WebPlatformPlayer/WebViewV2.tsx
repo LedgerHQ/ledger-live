@@ -30,7 +30,7 @@ import {
   useWalletAPIUrl,
 } from "@ledgerhq/live-common/wallet-api/react";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import { RpcError, Transport } from "@ledgerhq/wallet-api-core";
+import { ServerError, createCurrencyNotFound, Transport } from "@ledgerhq/wallet-api-core";
 import {
   broadcastTransactionLogic,
   receiveOnAccountLogic,
@@ -38,9 +38,8 @@ import {
   signMessageLogic,
 } from "@ledgerhq/live-common/wallet-api/logic";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
-import { firstValueFrom, WalletAPIServer } from "@ledgerhq/wallet-api-server/lib/index";
+import { firstValueFrom, WalletAPIServer } from "@ledgerhq/wallet-api-server";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
-import { CURRENCY_NOT_FOUND } from "@ledgerhq/wallet-api-server/lib/errors";
 
 import { openModal } from "../../actions/modals";
 import { updateAccountWithUpdater } from "../../actions/accounts";
@@ -135,7 +134,7 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
             if (!currencyList[0]) {
               tracking.requestAccountFail(manifest);
               // @TODO replace with correct error
-              reject(new RpcError(CURRENCY_NOT_FOUND));
+              reject(new ServerError(createCurrencyNotFound(cryptoCurrencyIds[0])));
             }
           } else {
             currencyList = listSupportedCurrencies().filter(({ id }) =>
