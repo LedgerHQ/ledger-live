@@ -57,6 +57,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "Show tracking overlays on the app UI",
   },
+  DEBUG_THEME: {
+    def: false,
+    parser: boolParser,
+    desc: "Show theme debug overlay UI",
+  },
   API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
     def: "https://algorand.coin.ledger.com",
     parser: stringParser,
@@ -728,7 +733,7 @@ const envDefinitions = {
   },
 };
 
-const getDefinition = (name: string): EnvDef<any> | null | undefined =>
+export const getDefinition = (name: string): EnvDef<any> | null | undefined =>
   envDefinitions[name];
 
 envDefinitions as Record<EnvName, EnvDef<any>>;
