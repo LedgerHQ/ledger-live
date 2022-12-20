@@ -11,14 +11,12 @@ import LoggerTransport from "~/logger/logger-transport-internal";
 
 import { executeCommand, unsubscribeCommand, unsubscribeAllCommands } from "./commandHandler";
 import sentry, { setTags } from "~/sentry/internal";
+import { transportClose, transportExchange, transportOpen } from "~/internal/transportHandler";
 import {
-  transportClose,
-  transportExchange,
-  transportOpen,
   transportCloseChannel,
   transportExchangeChannel,
   transportOpenChannel,
-} from "~/internal/transportHandler";
+} from "~/config/transportChannels";
 
 process.on("exit", () => {
   logger.debug("exiting process, unsubscribing all...");
