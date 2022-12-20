@@ -17,6 +17,7 @@ import TabBarSafeAreaView, {
 import { AnalyticsContext } from "../../analytics/AnalyticsContext";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { MainNavigatorParamList } from "../../components/RootNavigator/types/MainNavigator";
+import useDynamicContent from "../../dynamicContent/dynamicContent";
 
 const images = {
   light: {
@@ -62,6 +63,8 @@ function Discover() {
     });
   }, []);
 
+  const { learnCards } = useDynamicContent();
+
   const featuresList: {
     title: string;
     subTitle?: string;
@@ -94,7 +97,29 @@ function Discover() {
             ]
           : []),
 
-        ...(learn?.enabled
+        ...(!learn?.enabled
+          ? [
+              {
+                title: t("discover.sections.learn.title"),
+                subTitle: t("discover.sections.learn.desc"),
+                onPress: () => {
+                  readOnlyTrack("Learn");
+                  track("Discover - Learn - OpenUrl", {
+                    url: urls.discover.academy,
+                  });
+                  Linking.openURL(urls.discover.academy);
+                },
+                disabled: false,
+                Image: (
+                  <Illustration
+                    size={110}
+                    darkSource={images.dark.learnImg}
+                    lightSource={images.light.learnImg}
+                  />
+                ),
+              },
+            ]
+          : learnCards.length > 0
           ? [
               {
                 title: t("discover.sections.learn.title"),
@@ -180,12 +205,13 @@ function Discover() {
       ].sort((a, b) => (b.disabled ? -1 : 0)),
     [
       t,
+      learn?.enabled,
+      learnCards,
       isNFTDisabled,
       referralProgramConfig?.enabled,
       referralProgramConfig?.params.url,
       navigation,
       readOnlyTrack,
-      learn?.enabled,
     ],
   );
 
