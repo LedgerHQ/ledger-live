@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { getEnv } from "../env";
-import { encodeTokenAccountId } from "./accountId";
+import { encodeTokenAccountId } from "./index";
 import { emptyHistoryCache } from "./balanceHistoryCache";
 import { isAccountDelegating } from "../families/tezos/bakers";
 import {

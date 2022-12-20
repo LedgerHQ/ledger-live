@@ -53,7 +53,7 @@ import {
   getTokenById,
   findTokenById,
 } from "../currencies";
-import { inferFamilyFromAccountId } from "./accountId";
+import { inferFamilyFromAccountId } from "./index";
 import accountByFamily from "../generated/account";
 import { isAccountEmpty } from "./helpers";
 import type { SwapOperation, SwapOperationRaw } from "../exchange/swap/types";

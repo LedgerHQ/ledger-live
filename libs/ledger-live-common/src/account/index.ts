@@ -3,7 +3,7 @@ export * from "./addAccounts";
 export * from "./support";
 export * from "./importAccounts";
 export * from "./serialization";
-export * from "./accountId";
+export * from "@ledgerhq/coin-framework/lib/account/accountId";
 export * from "./accountName";
 export * from "./ordering";
 export * from "./groupOperations";

@@ -4,7 +4,7 @@ import {
   UnavailableTezosOriginatedAccountReceive,
 } from "@ledgerhq/errors";
 import { getEnv } from "../env";
-import { decodeAccountId } from "./accountId";
+import { decodeAccountId } from "./index";
 import {
   getAllDerivationModes,
   getDerivationModesForCurrency,
