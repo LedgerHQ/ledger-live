@@ -13,7 +13,7 @@ import {
 } from "../../errors";
 import network from "../../network";
 import type { Transaction } from "../../generated/types";
-import { getSwapAPIBaseURL, getSwapAPIError } from "./";
+import { getProviderConfig, getSwapAPIBaseURL, getSwapAPIError } from "./";
 import { mockGetExchangeRates } from "./mock";
 import type {
   CustomMinOrMaxError,
@@ -47,7 +47,7 @@ const getExchangeRates: GetExchangeRates = async (
 
   const providerList = providers
     .filter((provider) =>
-      dexProviders.includes(provider.provider) ? includeDEX : true
+      getProviderConfig(provider.provider).type === "DEX" ? includeDEX : true
     )
     .filter((item) => {
       const index = item.pairs.findIndex(
