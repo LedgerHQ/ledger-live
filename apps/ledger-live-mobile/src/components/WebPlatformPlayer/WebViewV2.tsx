@@ -13,7 +13,7 @@ import {
   createCurrencyNotFound,
   Transport,
 } from "@ledgerhq/wallet-api-core";
-import { WalletAPIServer, firstValueFrom } from "@ledgerhq/wallet-api-server";
+import { WalletAPIServer } from "@ledgerhq/wallet-api-server";
 import { WebView as RNWebView } from "react-native-webview";
 import { useNavigation } from "@react-navigation/native";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
@@ -47,6 +47,7 @@ import openTransportAsSubject, {
   BidirectionalEvent,
 } from "@ledgerhq/live-common/hw/openTransportAsSubject";
 import { Subject } from "rxjs";
+import { firstValueFrom } from "rxjs7";
 import { useTheme } from "styled-components/native";
 import BigNumber from "bignumber.js";
 import { first } from "rxjs/operators";

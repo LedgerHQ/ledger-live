@@ -38,8 +38,9 @@ import {
   signMessageLogic,
 } from "@ledgerhq/live-common/wallet-api/logic";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
-import { firstValueFrom, WalletAPIServer } from "@ledgerhq/wallet-api-server";
+import { WalletAPIServer } from "@ledgerhq/wallet-api-server";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
+import { firstValueFrom } from "rxjs7";
 
 import { openModal } from "../../actions/modals";
 import { updateAccountWithUpdater } from "../../actions/accounts";
