@@ -4,6 +4,7 @@ import { Observable } from "@ledgerhq/wallet-api-server";
 import {
   accountToWalletAPIAccount,
   currencyToWalletAPICurrency,
+  getAccountIdFromWalletAccountId,
 } from "./converters";
 import { isWalletAPISupportedCurrency } from "./helpers";
 import { WalletAPICurrency, AppManifest, WalletAPIAccount } from "./types";
@@ -97,7 +98,7 @@ export function useGetAccountIds(
     }
 
     return accounts.reduce((accountIds, account) => {
-      accountIds.set(account.id, true);
+      accountIds.set(getAccountIdFromWalletAccountId(account.id), true);
       return accountIds;
     }, new Map());
   }, [accounts, accounts$]);
