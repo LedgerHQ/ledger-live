@@ -46,12 +46,12 @@ const getExchangeRates: GetExchangeRates = async (
   const dexProviders = ["paraswap", "oneinch"];
 
   const providerList = providers
+    .filter((provider) =>
+      dexProviders.includes(provider.provider) ? includeDEX : true
+    )
     .filter((item) => {
       const index = item.pairs.findIndex(
-        (pair) =>
-          pair.from === from &&
-          pair.to === to &&
-          (includeDEX || !dexProviders.includes(item.provider))
+        (pair) => pair.from === from && pair.to === to
       );
       return index > -1;
     })
@@ -168,6 +168,7 @@ const getExchangeRates: GetExchangeRates = async (
         rates.push({
           magnitudeAwareRate: undefined,
           provider: dexProvider,
+          providerType: "DEX",
           rate: undefined,
           rateId: undefined,
           toAmount: undefined,
