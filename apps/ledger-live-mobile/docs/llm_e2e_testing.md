@@ -59,6 +59,8 @@ Build dependencies for the mobile app:
 pnpm build:llm:deps
 ```
 
+Be sure to set the variable `MOCK=1` in the app .env file
+
 ### Android
 
 Verify you have an emulator [installed](https://developer.android.com/studio/run/managing-avds) and have that match the Detox `avdName` (currently 'Pixel_5_API_31') in the `detox.config.js` file. Be sure to make the device the correct architecture and system image (currently x86_64 if you are on an Intel mac and arm64_v8a if you are on an M1).
@@ -69,6 +71,9 @@ Verify you have an emulator [installed](https://developer.android.com/studio/run
 - Run the tests
   - Debug: First, run `pnpm mobile start` to run Metro bundler, then in a separate terminal window run `pnpm mobile e2e:test -c android.emu.debug`
   - Release: `pnpm mobile e2e:test -c android.emu.release`
+
+If the emulator is launched and the app is running but it doesn't seem to be able to communication with Metro, launch this command :
+`adb reverse tcp:8081 tcp:8081`
 
 ### iOS
 
@@ -216,3 +221,19 @@ Coming soon... :construction:
 ## CI
 
 > :warning: Android and iOS tests are currently switched **off** on the CI due to issues installing the app on the emulators and general flakiness with the runners.
+
+## Tips
+
+### Animations
+
+Detox synchronization sometime can't handle well animations, especially looping ones.
+You could disable either the blocking animation while you are in MOCK env (preferred) or the synchronization by wrapping your test code between these lines :
+
+```js
+await device.disableSynchronization();
+...
+await device.enableSynchronization();
+```
+https://wix.github.io/Detox/docs/api/device#devicedisablesynchronization
+
+But be really careful about it, as it will make these tests unstable.
