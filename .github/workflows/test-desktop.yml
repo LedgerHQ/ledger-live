@@ -49,9 +49,6 @@ jobs:
         run: pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
       - name: Run code checkers
         run: pnpm desktop test:codecheck
-      - name: print jobs
-        run: |
-          echo "${{ toJSON(job) }}"
 
   start-runner:
     name: Start self-hosted EC2 runner
@@ -280,14 +277,15 @@ jobs:
             };
             const isFailed = statuses.some(e => e === "failure");
             let summary = `### TypeCheck
-            ${typecheck.pass ? "💚 Everything is fine" : "❌ Unfortunately type checks did not pass"}
-            **Type checks** ended with status => ${typecheck.status}
+            ${typecheck.pass ? "Everything is fine" : "Unfortunately type checks did not pass"}
+              - ${typecheck.pass ? "✅" : "❌  "} **Type checks** ended with status \`${typecheck.status}\`
+
             ### Screenshot Tests (Playwright)
             `
             Object.entries(report).forEach(([os, values]) => {
               summary +=`
               - ${values.pass
-                  ? `💚 Live Desktop Tests on ${keys[os].name} ended with status \`${values.status}\``
+                  ? `✅ Live Desktop Tests on ${keys[os].name} ended with status \`${values.status}\``
                   : `❌  Live Desktop Tests on ${keys[os].name} ended with status \`${values.status}\``
                 }`
             });
@@ -320,7 +318,7 @@ jobs:
       #     github-token: ${{ steps.generate-token.outputs.token }}
       #     script: |
       #       const status = ${{ steps.status.outputs.result }};
-      #       const title = status.isFailed ? "🔴 Failed" : status.isCancelled ? "♾ Cancelled" : "💚 Success";
+      #       const title = status.isFailed ? "🔴 Failed" : status.isCancelled ? "♾ Cancelled" : "✅ Success";
       #       const actions = status.isFailed ? [{
       #         label: "regen screenshots",
       #         identifier: "regen_screenshots",
