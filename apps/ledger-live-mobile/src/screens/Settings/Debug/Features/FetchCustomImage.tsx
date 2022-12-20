@@ -19,7 +19,7 @@ import SelectDevice from "../../../../components/SelectDevice";
 import CustomImageDeviceAction from "../../../../components/CustomImageDeviceAction";
 import ResultDataTester from "../../../../components/CustomImage/ResultDataTester";
 import { ProcessorPreviewResult } from "../../../../components/CustomImage/ImageProcessor";
-import { targetDimensions } from "../../../CustomImage/shared";
+import { targetDisplayDimensions } from "../../../CustomImage/shared";
 import FramedImage, {
   transferConfig,
 } from "../../../../components/CustomImage/FramedImage";
@@ -154,7 +154,7 @@ export default function DebugFetchCustomImage() {
           <>
             <ResultDataTester
               hexData={hex as string}
-              {...targetDimensions}
+              {...targetDisplayDimensions}
               onPreviewResult={handleImageSourceLoaded}
               onError={() => console.error(error)}
             />

@@ -24,7 +24,7 @@ import { downloadImageToFile } from "../../../../components/CustomImage/imageUti
 import useCenteredImage, {
   CenteredResult,
 } from "../../../../components/CustomImage/useCenteredImage";
-import { targetDimensions } from "../../../CustomImage/shared";
+import { targetDisplayDimensions } from "../../../CustomImage/shared";
 import confirmLockscreen from "../../../../animations/stax/customimage/confirmLockscreen.json";
 import allowConnection from "../../../../animations/stax/customimage/allowConnection.json";
 import { FramedImageWithLottieWithContext } from "../../../../components/CustomImage/FramedImageWithLottie";
@@ -58,7 +58,7 @@ export default function DebugCustomImageGraphics() {
 
   useCenteredImage({
     ...imageToCrop,
-    targetDimensions,
+    targetDimensions: targetDisplayDimensions,
     onResult: setCroppedImage,
     onError: setError,
   });
