@@ -8,7 +8,7 @@ import AllowExperimentalAppsToggle from "./AllowExperimentalAppsToggle";
 import AllowDebugAppsToggle from "./AllowDebugAppsToggle";
 import EnablePlatformDevToolsToggle from "./EnablePlatformDevToolsToggle";
 import CatalogProviderInout from "./CatalogProviderInput";
-import CatalogRampProviderSelect from "./CatalogRampProviderSelect"
+import CatalogRampProviderSelect from "./CatalogRampProviderSelect";
 import RunLocalAppButton from "./RunLocalAppButton";
 import FeatureFlagsSettings from "./FeatureFlagsSettings";
 import EnableLearnPageStagingUrlToggle from "./EnableLearnPageStagingUrlToggle";

@@ -1,11 +1,10 @@
-
 import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setCatalogProvider } from "~/renderer/actions/settings";
 import { catalogProviderSelector } from "~/renderer/reducers/settings";
 import Select from "~/renderer/components/Select";
 import Track from "~/renderer/analytics/Track";
-import { providers } from "@ledgerhq/live-common/platform/PlatformAppProvider/providers";
+import { providers } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/api/index";
 
 const CatalogRampProviderSelect = () => {
   const dispatch = useDispatch();
