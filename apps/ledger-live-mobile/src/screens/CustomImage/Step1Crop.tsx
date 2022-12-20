@@ -8,7 +8,7 @@ import ImageCropper, {
   CropResult,
 } from "../../components/CustomImage/ImageCropper";
 import { ImageDimensions } from "../../components/CustomImage/types";
-import { targetDataDimensions, targetDisplayDimensions } from "./shared";
+import { targetDisplayDimensions } from "./shared";
 import Button from "../../components/Button";
 import { ScreenName } from "../../const";
 import BottomContainer from "../../components/CustomImage/BottomButtonsContainer";
