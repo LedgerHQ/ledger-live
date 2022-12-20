@@ -73,7 +73,7 @@ async function setRatingsDataOfUserInStorage(
 }
 
 const useRatings = () => {
-  const ratingsFeature = useFeature("ratings");
+  const ratingsFeature = useFeature("ratingsPrompt");
 
   const isRatingsModalOpen = useSelector(ratingsModalOpenSelector);
   const isRatingsModalLocked = useSelector(ratingsModalLockedSelector);
@@ -290,7 +290,10 @@ const useRatings = () => {
   );
 
   const handleEnjoyNotNow = useCallback(() => {
-    if (ratingsDataOfUser?.alreadyClosedFromEnjoyStep || ratingsDataOfUser?.alreadyClosedFromInitStep) {
+    if (
+      ratingsDataOfUser?.alreadyClosedFromEnjoyStep ||
+      ratingsDataOfUser?.alreadyClosedFromInitStep
+    ) {
       updateRatingsDataOfUserInStateAndStore({
         ...ratingsDataOfUser,
         doNotAskAgain: true,
@@ -312,7 +315,10 @@ const useRatings = () => {
   ]);
 
   const handleInitNotNow = useCallback(() => {
-    if (ratingsDataOfUser?.alreadyClosedFromEnjoyStep || ratingsDataOfUser?.alreadyClosedFromInitStep) {
+    if (
+      ratingsDataOfUser?.alreadyClosedFromEnjoyStep ||
+      ratingsDataOfUser?.alreadyClosedFromInitStep
+    ) {
       updateRatingsDataOfUserInStateAndStore({
         ...ratingsDataOfUser,
         doNotAskAgain: true,
