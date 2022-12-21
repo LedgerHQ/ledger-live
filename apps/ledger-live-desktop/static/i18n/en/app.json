@@ -1722,7 +1722,7 @@
     "swap": {
       "notice": {
         "default": "Verify the Swap details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them.",
-        "cic": "Verify the Swap details on your device before sending it. CIC may need to perform additional verification for some transactions, resulting in a delay."
+        "provider": "Verify the Swap details on your device before sending it. {{providerName}} may need to perform additional verification for some transactions, resulting in a delay."
       },
       "confirm": "Confirm Swap transaction",
       "amountSent": "Amount to send",

@@ -3620,7 +3620,7 @@
       "title": "Confirm swap operation on device",
       "alert": {
         "default": "Verify the Swap details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them.",
-        "cic": "Verify the Swap details on your device before sending it. CIC may need to perform additional verification for some transactions, resulting in a delay."
+        "provider": "Verify the Swap details on your device before sending it. {{providerName}} may need to perform additional verification for some transactions, resulting in a delay."
       },
       "acceptTerms": "By validating this transaction, I accept\n<0><0>{{provider}}</0>'s terms of use</0>",
       "notice": "Verify the Swap details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them."
