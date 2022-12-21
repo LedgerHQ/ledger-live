@@ -50,6 +50,32 @@ jobs:
       - name: Run code checkers
         run: pnpm desktop test:codecheck
 
+  unit-tests:
+    name: "Ledger Live Desktop Unit Tests"
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      FORCE_COLOR: 3
+      CI_OS: ubuntu-latest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+      - uses: ./tools/actions/composites/setup-test-desktop
+        id: setup-test-desktop
+      - name: TurboRepo local caching server
+        id: turborepo-cache-server
+        uses: ./tools/actions/turborepo-gh-cache
+        with:
+          server-token: "yolo"
+          cleanup-cache-folder: "true"
+      - name: Install dependencies
+        run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
+      - name: Build dependencies
+        run: pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+      - name: Run unit tests
+        run: pnpm desktop test:jest
+
   start-runner:
     name: Start self-hosted EC2 runner
     runs-on: [ledger-live, linux]
@@ -188,6 +214,7 @@ jobs:
     needs:
       [
         typecheck,
+        unit-tests,
         test-desktop-app-linux,
         test-desktop-app-windows,
         test-desktop-app-mac,
@@ -242,6 +269,7 @@ jobs:
               "${{ needs.test-desktop-app-mac.outputs.outcome }}",
               "${{ needs.test-desktop-app-linux.outputs.outcome }}",
               "${{ needs.test-desktop-app-windows.outputs.outcome }}",
+              "${{ needs.unit-tests.result }}",
             ];
             const keys = {
               mac: {
@@ -261,6 +289,10 @@ jobs:
               pass: ${{ needs.typecheck.result == 'success' }},
               status: "${{ needs.typecheck.result }}",
             };
+            const unitTests = {
+              pass: ${{ needs.unit-tests.result == 'success' }},
+              status: "${{ needs.unit-tests.result }}",
+            };
             const report = {
               mac: {
                 pass: ${{ needs.test-desktop-app-mac.outputs.status == 'success' }},
@@ -277,8 +309,12 @@ jobs:
             };
             const isFailed = statuses.some(e => e === "failure");
             let summary = `### TypeCheck
-            ${typecheck.pass ? "Everything is fine" : "Unfortunately type checks did not pass"}
+            ${typecheck.pass ? "Typechecks are fine" : "Unfortunately typechecks did not pass"}
               - ${typecheck.pass ? "✅" : "❌  "} **Type checks** ended with status \`${typecheck.status}\`
+
+            ### Unit Tests (Jest)
+            ${unitTests.pass ? "Unit tests are fine" : "Unit tests did not pass"}
+              - ${unitTests.pass ? "✅" : "❌  "} **Unit tests** ended with status \`${unitTests.status}\`
 
             ### Screenshot Tests (Playwright)
             `
@@ -294,11 +330,11 @@ jobs:
             `
             const output = {
               summary,
-              actions: isFailed ? [{
+              actions: [{
                 label: "regen screenshots",
                 identifier: "regen_screenshots",
                 description: "Regenerate screenshot for Live Desktop",
-              }] : [],
+              }],
             };
 
             fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
@@ -308,10 +344,6 @@ jobs:
           name: summary.json
           path: ${{ github.workspace }}/summary.json
 
-      #   isFailed,
-      #   isCancelled,
-      #   summary,
-      # }
       # - uses: actions/github-script@v6
       #   name: update checks
       #   with:
