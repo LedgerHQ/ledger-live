@@ -34,30 +34,16 @@ runs:
     - name: Build Dummy SDK app for testing
       run: pnpm --filter="dummy-live-app" i && pnpm --filter="dummy-live-app" build
       shell: bash
-    - name: Run unit tests [Linux]
-      if: inputs.os == 'linux'
-      run: pnpm desktop test:jest
-      shell: bash
     - name: Run playwright tests [Linux => xvfb-run]
       if: inputs.os == 'linux'
       id: linux-tests
       run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
       shell: bash
-    # - name: set linux outcome (clean outputs)
-    #   if: inputs.os == 'linux'
-    #   id: linux-outcome
-    #   run: echo "linux-outcome=${{ steps.linux-tests.outcome }}" >> $GITHUB_OUTPUT
-    #   shell: bash
     - name: Run playwright tests
       if: inputs.os != 'linux'
       id: tests
       run: pnpm desktop test:playwright
       shell: bash
-    # - name: set outcome (clean outputs)
-    #   if: inputs.os != 'linux'
-    #   id: outcome
-    #   run: echo "outcome=${{ steps.tests.outcome }}" >> $GITHUB_OUTPUT
-    #   shell: bash
     - name: upload diffs to imgur
       if: always() && !cancelled()
       uses: ledgerhq/ledger-live/tools/actions/upload-images@develop
