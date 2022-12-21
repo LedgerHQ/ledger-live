@@ -2,6 +2,7 @@ import React, { createContext, ReactNode, useContext } from "react";
 import type { FeatureId, Feature } from "@ledgerhq/types-live";
 
 type State = {
+  isFeature: (_: string) => boolean;
   getFeature: (_: FeatureId) => Feature | null;
   overrideFeature: (_: FeatureId, value: Feature) => void;
   resetFeature: (_: FeatureId) => void;
@@ -9,6 +10,7 @@ type State = {
 };
 
 const initialState: State = {
+  isFeature: (_) => false,
   getFeature: (_) => ({ enabled: false }),
   overrideFeature: (_) => {},
   resetFeature: (_) => {},

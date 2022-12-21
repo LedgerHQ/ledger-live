@@ -23,17 +23,23 @@ flag name in camelCase without the "feature" prefix.\
 
 export const FeatureFlagContent = withV3StyleProvider((props: { visible?: boolean }) => {
   const { t } = useTranslation();
+  const { getFeature, overrideFeature, isFeature } = useFeatureFlags();
   const [focusedName, setFocusedName] = useState<string | undefined>();
   const [searchInput, setSearchInput] = useState("");
   const searchInputTrimmed = trim(searchInput);
 
   const featureFlags = useMemo(() => {
     const featureKeys = Object.keys(defaultFeatures);
-    if (searchInputTrimmed && !featureKeys.includes(searchInputTrimmed))
-      // The search input is added to the `featureKeys` in order to check for "hidden" feature flags
-      featureKeys.push(searchInputTrimmed);
+    if (searchInputTrimmed && !featureKeys.includes(searchInputTrimmed)) {
+      const isHiddenFeature = isFeature(searchInputTrimmed);
+
+      // Only adds the search input value to the featureKeys if it is an existing hidden feature
+      if (isHiddenFeature) {
+        featureKeys.push(searchInputTrimmed);
+      }
+    }
     return featureKeys;
-  }, [searchInputTrimmed]);
+  }, [isFeature, searchInputTrimmed]);
 
   const filteredFlags = useMemo(() => {
     return featureFlags
@@ -43,8 +49,6 @@ export const FeatureFlagContent = withV3StyleProvider((props: { visible?: boolea
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pressCount = useRef(0);
-
-  const { getFeature, overrideFeature } = useFeatureFlags();
 
   const [cheatActivated, setCheatActivated] = useState(false);
   const ruleThemAll = useCallback(() => {

@@ -16,6 +16,7 @@ jest.mock("../reducer");
 
 const mockedUseFeatureFlags = jest.mocked(useFeatureFlags);
 const mockedGetFeatureWithMockFeatureEnabled = (enabled) => ({
+  isFeature: () => true,
   getFeature: (id) => {
     if (id === mockedFeatureIdToTest) return { enabled };
     return { enabled: true };

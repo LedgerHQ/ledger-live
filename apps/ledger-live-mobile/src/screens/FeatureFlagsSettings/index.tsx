@@ -47,15 +47,22 @@ export default function DebugFeatureFlags() {
   const [searchInput, setSearchInput] = useState<string>("");
   const searchInputTrimmed = trim(searchInput);
   const [activeTab, setActiveTab] = useState(0);
-  const { resetFeatures } = useFeatureFlags();
+  const { resetFeatures, isFeature } = useFeatureFlags();
 
   const featureFlags = useMemo(() => {
     const featureKeys = Object.keys(defaultFeatures);
-    if (searchInputTrimmed && !featureKeys.includes(searchInputTrimmed))
-      // The search input is added to the `featureKeys` in order to check for "hidden" feature flags
-      featureKeys.push(searchInputTrimmed);
+
+    if (searchInputTrimmed && !featureKeys.includes(searchInputTrimmed)) {
+      const isHiddenFeature = isFeature(searchInputTrimmed);
+
+      // Only adds the search input value to the featureKeys if it is an existing hidden feature
+      if (isHiddenFeature) {
+        featureKeys.push(searchInputTrimmed);
+      }
+    }
+
     return featureKeys;
-  }, [searchInputTrimmed]);
+  }, [isFeature, searchInputTrimmed]);
 
   const handleSearch = useCallback(value => {
     setSearchInput(value);
