@@ -40,13 +40,12 @@ const getTransactionStatus = async (
     ? a.balance.minus(estimatedFees)
     : new BigNumber(t.amount);
 
-
-
-  if (totalSpent.gt(a.balance)) {
-    errors.amount = new NotEnoughBalance();
-  }
-
   if (t.mode === 'send') {
+
+    if (totalSpent.gt(a.balance)) {
+      errors.amount = new NotEnoughBalance();
+    }
+
     if (amount.lte(0) && !t.useAllAmount) {
       errors.amount = new AmountRequired();
     }
