@@ -16,6 +16,13 @@ type Props = {
   disabled: boolean;
 };
 
+const hitSlop = {
+  bottom: 8,
+  left: 8,
+  right: 8,
+  top: 8,
+};
+
 export default function DeviceNameRow({
   device,
   initialDeviceName,
@@ -54,19 +61,23 @@ export default function DeviceNameRow({
         {displayedName}
       </Text>
       {(id === DeviceModelId.nanoX || id === DeviceModelId.stax) && (
-        <Flex
-          ml={3}
-          backgroundColor={"palette.primary.c30"}
-          borderRadius={14}
-          width={28}
-          height={28}
-          alignItems="center"
-          justifyContent="center"
+        <TouchableOpacity
+          onPress={onPress}
+          disabled={disabled}
+          hitSlop={hitSlop}
         >
-          <TouchableOpacity onPress={onPress} disabled={disabled}>
+          <Flex
+            ml={3}
+            backgroundColor={"palette.primary.c30"}
+            borderRadius={14}
+            width={28}
+            height={28}
+            alignItems="center"
+            justifyContent="center"
+          >
             <PenMedium size={16} color={"palette.primary.c80"} />
-          </TouchableOpacity>
-        </Flex>
+          </Flex>
+        </TouchableOpacity>
       )}
     </Flex>
   );

@@ -98,6 +98,9 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
   }, [completed, navigation]);
 
   const remainingCount = MAX_DEVICE_NAME - name.length;
+  const cleanName = name.trim();
+  const disabled =
+    !cleanName || !!error || running || cleanName === originalName;
 
   return (
     <KeyboardBackgroundDismiss>
@@ -137,12 +140,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
               </Text>
             )}
 
-            <Button
-              type="main"
-              onPress={onSubmit}
-              mt={5}
-              disabled={!name.trim() || !!error || running}
-            >
+            <Button type="main" onPress={onSubmit} mt={5} disabled={disabled}>
               <Trans i18nKey="EditDeviceName.action" />
             </Button>
           </Flex>
