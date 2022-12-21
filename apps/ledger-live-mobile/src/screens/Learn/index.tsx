@@ -1,13 +1,13 @@
 import React, { memo, useCallback } from "react";
+import { TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components/native";
 
-import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
+import { Flex, InfiniteLoader, Text, Icons } from "@ledgerhq/native-ui";
 
 import WebViewScreen from "../../components/WebViewScreen";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import HeaderRightClose from "../../components/HeaderRightClose";
 import { ScreenName } from "../../const/navigation";
 import { useNavigation } from "@react-navigation/native";
 
@@ -50,6 +50,7 @@ function LearnWebView({ route }: NavigationProps) {
       uri={uri}
       trackEventName="Page Learn"
       renderLoading={renderLoading}
+      enableNavigationOverride={false}
       renderHeader={() => (
         <Flex
           flexDirection="row"
@@ -60,13 +61,15 @@ function LearnWebView({ route }: NavigationProps) {
           zIndex={1}
         >
           <Flex width="20%" />
-          <Flex flex={1}>
+          <Flex width="60%">
             <Text textAlign="center" variant="h5" fontWeight="semiBold">
               {t("help.ledgerAcademy.title")}
             </Text>
           </Flex>
           <Flex width="20%" alignItems="flex-end">
-            <HeaderRightClose onClose={goBack} />
+            <TouchableOpacity onPress={goBack} style={{ padding: 16 }}>
+              <Icons.CloseMedium size={20} />
+            </TouchableOpacity>
           </Flex>
         </Flex>
       )}
