@@ -518,7 +518,7 @@
       "title" : "Le montant à geler ne peut pas être inférieur à 1."
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "Vous devez d’abord envoyer un minimum de 0,1 TRX à cette adresse avant de recevoir des tokens TRC20.",
+      "title" : "Envoyer des TRC-20 sur le nouveau compte ne l’activera pas.",
       "description" : "Pour l’activer, envoyez d’abord des TRX ou TRC-10 sur le compte. Il pourra ensuite recevoir des TRC-20."
     },
     "TronUnexpectedFees" : {
@@ -758,7 +758,7 @@
       "title" : "Frais de priorité plus élevés que nécessaire. Vous pourriez payer trop cher."
     },
     "MaxFeeTooLow" : {
-      "title" : "Frais max. inférieurs au montant recommandé"
+      "title" : "Les frais maximaux sont inférieurs au montant recommandé"
     },
     "PriorityFeeHigherThanMaxFee" : {
       "title" : "Les frais de priorité max. doivent être inférieurs aux frais max."
@@ -785,26 +785,14 @@
     }
   },
   "location" : {
-    "titleServiceRequired" : "Localisation requise",
-    "titlePermissionRequired" : "Accès à la localisation requis",
-    "titlePermissionRequiredPrecise" : "Accès à la localisation précise requis",
-    "descriptionServiceRequired" : "Ledger Live a besoin des services de localisation pour coupler votre appareil en Bluetooth.",
-    "descriptionPermissionRequired" : "Ledger Live a besoin de l’autorisation d’accéder à la position pour coupler votre appareil via Bluetooth.",
-    "descriptionPermissionRequiredPrecise" : "Ledger Live a besoin de l’autorisation d’accéder à la position précise pour coupler votre appareil via Bluetooth.",
+    "required" : "Localisation requise",
     "open" : "Ouvrir les paramètres de localisation",
+    "disabled" : "Ledger Live a besoin de la localisation pour coupler votre appareil en Bluetooth.",
     "noInfos" : "Ledger n’utilise pas vos données de localisation."
   },
   "permissions" : {
     "open" : "Ouvrir autorisa. des apps",
-    "authorize" : "Autoriser",
-    "bluetooth" : {
-      "modalTitle" : "Autorisation requise pour coupler votre Ledger via Bluetooth",
-      "modalDescriptionBase" : "Pour coupler votre Ledger via Bluetooth, autorisez Ledger Live à rechercher les appareils à proximité.",
-      "modalDescriptionSettingsVariant" : "Pour coupler votre Ledger via Bluetooth, accédez aux paramètres de votre téléphone et autorisez Ledger Live à rechercher les appareils à proximité.",
-      "modalButtonLabelBase" : "Autoriser",
-      "modalButtonLabelSettingsVariant" : "Accéder aux Paramètres",
-      "dontPair" : "Ne pas coupler"
-    }
+    "nearbyDevicesPermissionDenied" : "Pour le couplage par Bluetooth, autorisez l’application Ledger Live à rechercher les appareils à proximité."
   },
   "fees" : {
     "speed" : {
@@ -1902,9 +1890,6 @@
       "title" : "Pas encore d’opérations ?",
       "desc" : "Il vous suffit d’envoyer des crypto-actifs à votre adresse bénéficiaire et d’attendre que l’app se synchronise."
     },
-    "carousel" : {
-      "title" : "Pour vous"
-    },
     "recommended" : {
       "title" : "Recommandé"
     },
@@ -2353,8 +2338,8 @@
     "display" : {
       "title" : "Général",
       "desc" : "Configurez les paramètres de base de Ledger Live.",
-      "carousel" : "Recommandations",
-      "carouselDesc" : "Nous vous présenterons des cartes avec des conseils personnalisés et nos dernières offres exclusives.",
+      "carousel" : "Visibilité du carrousel",
+      "carouselDesc" : "Affichez le carrousel sur le Portefeuille.",
       "language" : "Langue d’affichage",
       "languageDesc" : "Choisissez la langue d’affichage de Ledger Live.",
       "region" : "Région",
@@ -2417,7 +2402,7 @@
     "accounts" : {
       "header" : "Comptes",
       "title" : "Comptes",
-      "desc" : "Gérer l’affichage des actifs dans l’app.",
+      "desc" : "Gérez l’affichage des actifs dans l’app.",
       "hideTokenCTA" : "Masquer le token",
       "showContractCTA" : "Afficher le contrat",
       "blacklistedTokens" : "Liste de tokens masqués",
@@ -2570,8 +2555,7 @@
       "featureFlagsTitle" : "Indicateurs de fonctionnalités (feature flags) définis et utilisés dans Ledger Live",
       "featureFlagsDesc" : "Les valeurs remplacées seront réinitialisées lorsque l’application sera relancée. Seules les chaînes JSON valides sont acceptées.",
       "featureFlagsEdit" : "Modifier",
-      "featureFlagsRestore" : "Restaurer",
-      "firebaseProject" : "Projet Firebase ciblé par ce build :"
+      "featureFlagsRestore" : "Restaurer"
     }
   },
   "notifications" : {
@@ -2684,8 +2668,8 @@
       },
       "securityVerify" : {
         "title" : "Pour une sécurité optimale, nous vous recommandons de vérifier cette adresse avec votre appareil Ledger.",
-        "subtitle1" : "Vérifier votre adresse permet une sécurité optimale. L’adresse affichée sur votre appareil Ledger ne peut pas être corrompue.",
-        "subtitle2" : "En vérifiant votre adresse, vous pourrez confirmer que l’adresse qui apparaît sur votre appareil Ledger est identique à celle affichée dans Ledger Live.",
+        "subtitle1" : "Vérifiez votre adresse pour gagner en sécurité. L’adresse affichée sur votre Ledger ne peut pas être corrompue.",
+        "subtitle2" : "Confirmez que l’adresse qui apparaît sur votre appareil Ledger est identique à celle affichée dans Ledger Live.",
         "verifyCta" : "Vérifier mon adresse",
         "dontVerifyCta" : "Afficher mon adresse sans la vérifier"
       },
@@ -3262,14 +3246,14 @@
       "amount" : "Montant",
       "from" : "De",
       "to" : "À",
-      "infoTotalTitle" : "Débit total",
+      "infoTotalTitle" : "Total débité",
       "infoTotalDesc" : "Comprend le montant de la transaction et les frais de réseau choisis",
       "gasLimit" : "Limite de gaz",
       "gasPrice" : "Prix du gaz",
       "maxFee" : "Frais maximaux",
       "maxPriorityFee" : "Frais de priorité maximaux",
-      "nextBlock" : "Bloc suivant",
-      "suggested" : "Suggérés",
+      "nextBlock" : "Bloc suivant : {{nextBaseFee}}",
+      "suggestedPriorityFee" : "Suggérés : {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees" : "Frais maximaux",
       "validateGasLimit" : "Valider la limite de gaz",
       "fees" : "Frais",
@@ -3549,10 +3533,7 @@
     },
     "confirmSwap" : {
       "title" : "Confirmer l’opération de swap sur l’appareil",
-      "alert" : {
-        "default" : "Vérifiez les détails de l’échange sur votre appareil avant de l’envoyer. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier.",
-        "cic" : "Vérifiez les détails de l’échange sur votre appareil avant de l’envoyer. Une vérification supplémentaire peut être effectuée par CIC pour certains transactions, entraînant un temps d’attente."
-      },
+      "alert" : "Vérifiez les détails de l’échange sur votre appareil avant de l’envoyer. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier.",
       "acceptTerms" : "En validant cette transaction, j’accepte\n<0>les Conditions d’utilisation de <0>{{provider}}</0></0>.",
       "notice" : "Vérifiez les détails de l’échange sur votre appareil avant de l’envoyer. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier."
     },
@@ -4693,9 +4674,6 @@
         "title" : "Candidats",
         "description" : "127 personnes élues par le vote de la communauté des détenteurs de tokens. Les votes sont mis à jour toutes les 6 heures."
       }
-    },
-    "receive" : {
-      "newAddressTRC20" : "Vous devez d’abord envoyer un minimum de 0,1 TRX à cette adresse pour l’activer."
     }
   },
   "stellar" : {
@@ -5401,8 +5379,7 @@
       "seeFewerNfts" : "Voir moins de NFT"
     },
     "gallery" : {
-      "allNft" : "Tous les NFT",
-      "addNew" : "Ajouter"
+      "allNft" : "Tous les NFT"
     },
     "viewer" : {
       "properties" : "Attributs",
@@ -5419,7 +5396,6 @@
     "viewerModal" : {
       "viewOn" : "Voir sur",
       "viewInExplorer" : "Dans l’explorateur",
-      "hide" : "Cacher la collection de NFT",
       "txDetails" : "Détails de la transaction"
     },
     "modalDisabled" : {
@@ -5460,8 +5436,7 @@
     "drawer" : {
       "title" : "Choisissez une image",
       "options" : {
-        "uploadFromPhone" : "Choisir dans ma galerie d’images",
-        "selectFromNFTGallery" : "Choisir dans ma galerie de NFT"
+        "uploadFromPhone" : "Télécharger à partir de mon téléphone"
       }
     },
     "cropImage" : "Recadrez l’image",
@@ -5480,15 +5455,25 @@
       "choosePicture" : "Choisissez une image"
     },
     "customImage" : "Image personnalisée",
-    "doThisLater" : "Pas maintenant",
-    "preview" : {
-      "title" : "Aperçu",
-      "loading" : "Chargement de l’aperçu",
-      "setPicture" : "Définir cette image",
-      "editPicture" : "Modifier l’image"
+    "doThisLater" : "Pas maintenant"
+  },
+  "claimNft" : {
+    "welcomePage" : {
+      "title" : "Placeholder title.",
+      "description" : {
+        "title" : "This is the title of the items list:",
+        "1" : "This is the first item on the list",
+        "2" : "This is the second item on the list",
+        "3" : "This is the third item on the list"
+      },
+      "claimButton" : "Obtenir votre NFT",
+      "backButton" : "J’ai déjà reçu mon NFT"
     },
-    "nftGallery" : {
-      "title" : "Mes NFT"
+    "qrScan" : {
+      "title" : "Scannez le code QR (placeholder text)",
+      "description" : {
+        "1" : "(placeholder text) Vous trouverez votre Pass exclusif dans le coffret de votre Ledger.\n\nCommencez par positionner dans le cadre le code QR qui se trouve au dos du Pass. Choisissez un endroit bien éclairé et utilisez un arrière-plan uni et clair."
+      }
     }
   },
   "postOnboarding" : {
@@ -5510,37 +5495,13 @@
         "description" : "En ajoutant une image",
         "popupLabel" : "Appareil personnalisé",
         "hubTitleAfterAction" : "Vous avez créé votre style !"
-      }
-    }
-  },
-  "wallet" : {
-    "tabs" : {
-      "crypto" : "Crypto",
-      "nft" : "NFT"
-    },
-    "nftGallery" : {
-      "empty" : {
-        "title" : "Pas (encore) de NFT",
-        "subtitle" : "Lancez-vous et recevez votre premier NFT.",
-        "receive" : "Recevoir des NFT",
-        "supportLink" : "Comment importer mes NFT d’un autre wallet ?"
       },
-      "receiveModal" : {
-        "title" : "Recevez un NFT comme n’importe quelle autre crypto",
-        "bullets" : {
-          "0" : "• Sélectionnez la blockchain du NFT.",
-          "1" : "• Choisissez le compte qui recevra le NFT."
-        },
-        "cta" : "Compris",
-        "info" : "J’aimerais en savoir plus"
-      },
-      "hideNftModal" : {
-        "title" : "Cacher la collection de NFT",
-        "desc" : "Cela cachera tous les NFT de {{collectionName}}. Vous pouvez restaurer leur visibilité depuis les Paramètres de Ledger Live.",
-        "cta" : "Cacher ce NFT"
-      },
-      "media" : {
-        "tag" : "{{count}} NFT"
+      "claimNft" : {
+        "title" : "Demandez votre NFT (placeholder text)",
+        "description" : "Obtenez votre NFT gratuit (placeholder text)",
+        "tagLabel" : "Gratuit",
+        "popupLabel" : "NFT demandé",
+        "hubTitleAfterAction" : "Vous avez bien demandé votre NFT. Lorem ipsum"
       }
     }
   }
