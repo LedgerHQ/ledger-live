@@ -171,6 +171,7 @@ class Xpub {
       account,
       index,
     };
+
     return address;
   }
 
