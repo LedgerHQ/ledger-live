@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.14.0-nightly.1
+
+### Patch Changes
+
+- [#2071](https://github.com/LedgerHQ/ledger-live/pull/2071) [`cc3c591bdc`](https://github.com/LedgerHQ/ledger-live/commit/cc3c591bdcb31df5882210fa43928603c2bcb200) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - fix ratings modal close behavior
+
 ## 0.14.0-nightly.0
 
 ### Minor Changes

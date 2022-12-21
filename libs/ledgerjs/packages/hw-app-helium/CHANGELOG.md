@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-helium
 
+## 6.29.4-nightly.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.27.9-nightly.2
+
 ## 6.29.4-nightly.1
 
 ### Patch Changes

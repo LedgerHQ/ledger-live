@@ -1,5 +1,12 @@
 # @ledgerhq/hw-transport-http
 
+## 6.27.9-nightly.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.27.9-nightly.2
+
 ## 6.27.9-nightly.1
 
 ### Patch Changes
