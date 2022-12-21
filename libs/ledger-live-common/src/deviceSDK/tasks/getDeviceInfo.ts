@@ -1,4 +1,4 @@
-import { DeviceOnDashboardExpected } from "@ledgerhq/errors";
+import { DeviceOnDashboardExpected, LockedDeviceError } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import type { DeviceId, DeviceInfo } from "@ledgerhq/types-live";
 
@@ -7,10 +7,10 @@ import { getAppAndVersion } from "../commands/getAppAndVersion";
 
 import isDevFirmware from "../../hw/isDevFirmware";
 import { isDashboardName } from "../../hw/isDashboardName";
-import { withDevice } from "../../hw/deviceAccess";
+import { retryWhileErrors, withDevice } from "../../hw/deviceAccess";
 import { PROVIDERS } from "../../manager/provider";
 import { Observable } from "rxjs";
-import { map, filter, switchMap } from "rxjs/operators";
+import { map, filter, switchMap, timeout, retryWhen } from "rxjs/operators";
 
 const ManagerAllowedFlag = 0x08;
 const PinValidatedFlag = 0x80;
@@ -28,6 +28,40 @@ export type GetDeviceInfoTaskEvent =
   | { type: "data"; deviceInfo: DeviceInfo }
   | { type: "taskError"; error: GetDeviceInfoTaskError }
   | GeneralTaskEvent;
+
+const NO_RESPONSE_TIMEOUT_MS = 30000;
+
+function wrappedGetDeviceInfoTask({ deviceId }) {
+  /**
+   * Timeouts that were not kept for now (and are probably not necessary):
+   * - initT: if a first event is not sent before 5sec, fails
+   * - disconnectT: a task specific timeout, used when opening an app in a task for ex
+   *
+   * We need something that retries the task in some cases, e.g. device locked
+   *
+   * Timeouts that are kept:
+   * - DEVICE_POLLING_TIMEOUT -> NO_RESPONSE_TIMEOUT_MS
+   *
+   * NOT the case: We listen to "unresponsive" event from Transport and map this event to LockedDeviceError
+   * inside the commands that needs it.
+   *
+   * At the Transport level: an exchange public method that would take a flag: throwOnUnresponsive which
+   * throws on unresponsive.
+   * We opt out of listening to "unresponsive" event from Transport in commands that needs to last longer
+   */
+  return getDeviceInfoTask({ deviceId }).pipe(
+    timeout(NO_RESPONSE_TIMEOUT_MS),
+    retryWhen(
+      retryWhileErrors((error) => {
+        if (error instanceof LockedDeviceError) {
+          return true;
+        }
+
+        return false;
+      })
+    )
+  );
+}
 
 // typeof lala = Error
 // Implementation with new Observable: easier to read ?
@@ -53,9 +87,7 @@ export function getDeviceInfoTask({
           }
           return true;
         }),
-        // should this be a map?
         switchMap(() => {
-          console.log(`🧠 calling getVersion`);
           return getVersion(transport);
         }),
 
