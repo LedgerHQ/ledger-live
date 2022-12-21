@@ -62,6 +62,10 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
+      - name: job id
+        run: |
+          echo "${{ github.job }}"
+          echo "${{ github.run_id }}"
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.event.push.head.sha }}
@@ -102,6 +106,10 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
+      - name: job id
+        run: |
+          echo "${{ github.job }}"
+          echo "${{ github.run_id }}"
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.inputs.sha || github.event.inputs.ref  || github.event.push.head.sha }}
@@ -145,6 +153,10 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
+      - name: job id
+        run: |
+          echo "${{ github.job }}"
+          echo "${{ github.run_id }}"
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.inputs.sha || github.event.inputs.ref  || github.event.push.head.sha }}
@@ -180,6 +192,7 @@ jobs:
         with:
           name: ${{ steps.build-desktop.outputs.version }}-mac.dmg
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-mac.dmg
+
   report:
     needs:
       [
@@ -188,7 +201,7 @@ jobs:
         build-desktop-app-windows,
       ]
     runs-on: ubuntu-latest
-    if: always() && github.event_name == 'workflow_dispatch' && github.event.inputs.check_run_id != '' && github.event.inputs.sha != ''
+    if: always() && !cancelled() && github.event_name == 'workflow_dispatch' && github.event.inputs.sha != ''
     steps:
       - name: generate token
         id: generate-token
@@ -237,13 +250,36 @@ jobs:
             };
             const isFailed = statuses.some(e => e === "failure");
             const isCancelled = statuses.some(e => e === "cancelled");
-            let summary = ``
-            Object.entries(report).map(([os, values]) => {
-              summary += `### ${keys[os].symbol} ${keys[os].name}
-            The build for ${keys[os].name} ${values.pass ? 'did' : 'did not'} completely successfully.
-            The run ended with conclusion => **${values.status}**
-            `
+
+            let summary = ``;
+
+            summary += `|`
+
+            const reportKeys = Object.keys(report);
+
+            reportKeys.forEach((k) => {
+              summary += ` ${keys[k].symbol} ${keys[k].name} |`;
             });
+
+            summary += `
+            |`;
+
+            for (let i = 0; i < reportKeys.length; i++) {
+              summary += ` :--: |`;
+            }
+
+            summary += `
+            |`;
+
+            Object.entries(report).forEach(([os, values]) => {
+              summary += ` ${values.pass ? "✅" : "❌"} (${values.status}) |`;
+            });
+
+            summary += `
+
+            [⚙️ Summary](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }})
+            `;
+
             const data = {
               isFailed,
               isCancelled,

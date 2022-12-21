@@ -82,7 +82,7 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.both,
     affected: ["live-mobile"],
     checkRunName: "[Mobile] Run tests",
-    summaryFile: "",
+    summaryFile: "summary.json",
     getInputs: (payload: any) => {
       return {
         sha: payload.workflow_run.head_sha,
