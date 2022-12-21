@@ -88,9 +88,10 @@ jobs:
             const isFailed = statuses.some(e => e === "failure");
             const isCancelled = statuses.some(e => e === "cancelled");
             let summary = `### Codechecks
-            ${ isSuccess ? "💚 Everything is fine" : "❌ Unfortunately some checks did not pass"}
-            **Code checks** ended with status => ${{needs.codecheck.result}}
+            ${ isSuccess ? "Everything is fine" : "Unfortunately some checks did not pass" }
+              - ${ isSuccess ? "✅" : "❌" } **Code checks** ended with status \`${{needs.codecheck.result}}\`
             `;
+
             const data = {
               isFailed,
               isCancelled,

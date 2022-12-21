@@ -311,11 +311,11 @@ jobs:
             const isFailed = statuses.some(e => e === "failure");
             let summary = `### TypeCheck
             ${typecheck.pass ? "Typechecks are fine" : "Unfortunately typechecks did not pass"}
-              - ${typecheck.pass ? "✅" : "❌  "} **Type checks** ended with status \`${typecheck.status}\`
+              - ${typecheck.pass ? "✅" : "❌"} **Type checks** ended with status \`${typecheck.status}\`
 
             ### Unit Tests (Jest)
             ${unitTests.pass ? "Unit tests are fine" : "Unit tests did not pass"}
-              - ${unitTests.pass ? "✅" : "❌  "} **Unit tests** ended with status \`${unitTests.status}\`
+              - ${unitTests.pass ? "✅" : "❌"} **Unit tests** ended with status \`${unitTests.status}\`
 
             ### Screenshot Tests (Playwright)
             `
@@ -323,7 +323,7 @@ jobs:
               summary +=`
               - ${values.pass
                   ? `✅ Live Desktop Tests on ${keys[os].name} ended with status \`${values.status}\``
-                  : `❌  Live Desktop Tests on ${keys[os].name} ended with status \`${values.status}\``
+                  : `❌ Live Desktop Tests on ${keys[os].name} ended with status \`${values.status}\``
                 }`
             });
             summary += `
