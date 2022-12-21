@@ -120,6 +120,7 @@ export function SwapForm({
     setIsSendMaxLoading,
     onNoRates: trackNoRates,
     excludeFixedRates: true,
+    providers,
   });
 
   const exchangeRatesState = swapTransaction.swap?.rates;

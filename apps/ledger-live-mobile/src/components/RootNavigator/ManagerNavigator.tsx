@@ -99,7 +99,7 @@ const DeviceIcon = ({
     case DeviceModelId.nanoSP:
       icon = <Icons.NanoSFoldedMedium size={size} color={color} />;
       break;
-    case DeviceModelId.nanoFTS:
+    case DeviceModelId.stax:
       icon = <Icons.StaxRegular size={size} color={color} />;
       break;
     case DeviceModelId.nanoX:

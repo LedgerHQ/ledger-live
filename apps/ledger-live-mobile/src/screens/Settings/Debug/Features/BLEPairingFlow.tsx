@@ -27,7 +27,7 @@ import { usePromptBluetoothCallback } from "../../../../logic/usePromptBluetooth
 const availableDeviceModelFilter = [
   "none",
   DeviceModelId.nanoX,
-  DeviceModelId.nanoFTS,
+  DeviceModelId.stax,
 ] as const;
 type AvailableDeviceModelFilter = typeof availableDeviceModelFilter[number];
 

@@ -555,7 +555,14 @@ export const dismissedBannerSelectorLoaded = (bannerKey: string) => (state: Stat
 export const hideEmptyTokenAccountsSelector = (state: State) =>
   state.settings.hideEmptyTokenAccounts;
 
-export const lastSeenDeviceSelector = (state: State) => state.settings.lastSeenDevice;
+export const lastSeenDeviceSelector = (state: State) => {
+  // Nb workaround to prevent crash for dev/qa that have nanoFTS references.
+  // to be removed in a while.
+  if (state.settings.lastSeenDevice?.modelId === "nanoFTS") {
+    return { ...state.settings.lastSeenDevice, modelId: "stax" };
+  }
+  return state.settings.lastSeenDevice;
+};
 
 export const latestFirmwareSelector = (state: State) => state.settings.latestFirmware;
 
