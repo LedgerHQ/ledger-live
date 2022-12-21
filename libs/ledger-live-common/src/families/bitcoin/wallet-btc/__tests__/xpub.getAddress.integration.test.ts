@@ -133,7 +133,8 @@ describe("Transaction Output script", () => {
       network: coininfo.bitcoin.main.toBitcoinJS(),
     });
 
-    const output = btcCrypto.toOpReturnOutputScript("charley loves heidi");
+    const data = Buffer.from("charley loves heidi", "utf-8");
+    const output = btcCrypto.toOpReturnOutputScript(data);
     const [opType, message] = script.decompile(output) as [number, Buffer];
 
     expect(output.toString("hex")).toEqual(

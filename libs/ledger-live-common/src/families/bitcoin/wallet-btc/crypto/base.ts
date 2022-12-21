@@ -181,8 +181,7 @@ class Base implements ICrypto {
     return toOutputScript(address, this.network);
   }
 
-  toOpReturnOutputScript(message: string): Buffer {
-    const data = Buffer.from(message, "utf-8");
+  toOpReturnOutputScript(data: Buffer): Buffer {
     const script = bjs.payments.embed({ data: [data] });
     return script.output!;
   }
