@@ -64,16 +64,7 @@ export type PolkadotResourcesRaw = {
   nominations: PolkadotNominationRaw[] | null | undefined;
   numSlashingSpans: number;
 };
-// export type Transaction = TransactionCommon & {
-//   mode: PolkadotOperationMode;
-//   family: "polkadot";
-//   fees: BigNumber | null | undefined;
-//   validators: string[] | null | undefined;
-//   era: string | null | undefined;
-//   rewardDestination: string | null | undefined;
-//   numSlashingSpans: number | null | undefined;
-// };
-export interface Transaction extends TransactionCommon {
+export type Transaction = TransactionCommon & {
   mode: PolkadotOperationMode;
   family: "polkadot";
   fees: BigNumber | null | undefined;

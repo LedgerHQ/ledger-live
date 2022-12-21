@@ -15,7 +15,7 @@ import {
   getDerivationModeStartsAt,
   DerivationMode,
 } from "../derivation";
-import type { Result, GetAddressOptions } from "../derivation";
+import type { Result } from "../derivation";
 import {
   getAccountPlaceholderName,
   getNewAccountPlaceholderName,
@@ -43,7 +43,7 @@ import type {
 } from "@ledgerhq/types-live";
 
 // Customize the way to iterate on the keychain derivation
-type IterateResult = ({
+export type IterateResult = ({
   transport,
   index,
   derivationsCache,
@@ -84,7 +84,7 @@ export type GetAccountShape = (
   accountInfo: AccountShapeInfo,
   config: SyncConfig
 ) => Promise<Partial<Account>>;
-type AccountUpdater = (account: Account) => Account;
+export type AccountUpdater = (account: Account) => Account;
 
 // compare that two dates are roughly the same date in order to update the case it would have drastically changed
 const sameDate = (a, b) => Math.abs(a - b) < 1000 * 60 * 30;
@@ -147,38 +147,6 @@ Operation[] {
 
   return all;
 }
-
-export const mergeNfts = (
-  oldNfts: ProtoNFT[],
-  newNfts: ProtoNFT[]
-): ProtoNFT[] => {
-  // Getting a map of id => NFT
-  const newNftsPerId: Record<string, ProtoNFT> = {};
-  newNfts.forEach((n) => {
-    newNftsPerId[n.id] = n;
-  });
-
-  // copying the argument to avoid mutating it
-  const nfts = oldNfts.slice();
-  for (let i = 0; i < nfts.length; i++) {
-    const nft = nfts[i];
-
-    // The NFTs are the same, do don't anything
-    if (!newNftsPerId[nft.id]) {
-      nfts.splice(i, 1);
-      i--;
-    } else if (!isEqual(nft, newNftsPerId[nft.id])) {
-      // Use the new NFT instead
-      nfts[i] = newNftsPerId[nft.id];
-    }
-
-    // Delete it from the newNfts to keep only the un-added ones at the end
-    delete newNftsPerId[nft.id];
-  }
-
-  // Prepending newNfts to respect nfts's newest to oldest order
-  return Object.values(newNftsPerId).concat(nfts);
-};
 
 export const makeSync =
   ({

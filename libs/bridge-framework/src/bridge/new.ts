@@ -23,15 +23,6 @@ import {
   TransactionStatusCommon
 } from "@ledgerhq/types-live";
 
-//-- FOR TEST PURPOSE ONLY
-type CosmosTransaction = TransactionCommon & {
-  family: "cosmos" | "osmosis";
-  memo: string | null | undefined;
-};
-//-- END
-
-export type BridgeTransaction = PolkadotTransaction | CosmosTransaction;
-
 export default class Bridge {
   private static instance: Bridge;
 
@@ -71,24 +62,12 @@ export default class Bridge {
     }
   }
   
-  // getAccountBridge(
-  //   account: PolkadotAccount,
-  //   parentAccount?: PolkadotAccount | null
-  // ): AccountBridge<PolkadotTransaction> {
-  //   const mainAccount = getMainAccount(account, parentAccount);
-  //   const supportedError = checkAccountSupported(mainAccount);
-
-  //   if (supportedError) {
-  //     throw supportedError;
-  //   }
-
-  //   return polkadotBridge.buildAccountBridge(this.deviceCommunication);
-  // }
-
-  getAccountBridge<T extends TransactionCommon>(
+  // AccountBridge Generic cannot be resolved as the Type returns may vary
+  // following conditions that cannot be resolved with inputs.
+  getAccountBridge(
     account: AccountLike,
     parentAccount?: Account | null
-  ): AccountBridge<T> {
+  ): AccountBridge<any> {
     const mainAccount = getMainAccount(account, parentAccount);
     const { currency } = mainAccount;
     const { type } = decodeAccountId(mainAccount.id);
@@ -100,8 +79,7 @@ export default class Bridge {
   
     switch(currency.family) {
       case "polkadot":
-        //FIXME, please
-        return polkadotBridge.buildAccountBridge(this.deviceCommunication) as AccountBridge<any>;
+        return polkadotBridge.buildAccountBridge(this.deviceCommunication);
       default: {
           if (type === "libcore") {
             throw new CurrencyNotSupported(

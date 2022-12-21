@@ -1,7 +1,7 @@
-import { AccessDeniedError } from "./errors";
+import { UnsupportedDerivation } from "./errors";
 
 function functionA() {
-  throw new AccessDeniedError();
+  throw new UnsupportedDerivation();
 }
 
 describe("custom errors", () => {
@@ -9,13 +9,13 @@ describe("custom errors", () => {
     try {
       functionA();
     } catch (e: any) {
-      expect(e).toBeInstanceOf(AccessDeniedError);
+      expect(e).toBeInstanceOf(UnsupportedDerivation);
     }
   });
 
   test("promise error instanceof", () => {
-    expect(Promise.reject(new AccessDeniedError())).rejects.toBeInstanceOf(
-      AccessDeniedError
+    expect(Promise.reject(new UnsupportedDerivation())).rejects.toBeInstanceOf(
+      UnsupportedDerivation
     );
   });
 });
