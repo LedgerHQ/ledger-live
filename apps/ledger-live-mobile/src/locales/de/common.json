@@ -518,7 +518,7 @@
       "title" : "Der zu sperrende Betrag kann nicht kleiner als 1 sein"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "Sie müssen zuerst mindestens 0,1 TRX an diese Adresse senden, um den Empfang von TRC20-Token zu aktivieren.",
+      "title" : "Das Senden von TRC20 an das neue Konto wird es nicht aktivieren",
       "description" : "Um es zu aktivieren, senden Sie zuerst entweder TRX oder TRC10 an das Konto. Dann kann es TRC20 empfangen."
     },
     "TronUnexpectedFees" : {
@@ -785,26 +785,14 @@
     }
   },
   "location" : {
-    "titleServiceRequired" : "Standortdienste erforderlich",
-    "titlePermissionRequired" : "Standortfreigabe erforderlich",
-    "titlePermissionRequiredPrecise" : "Präzise Standortfreigabe erforderlich",
-    "descriptionServiceRequired" : "Ledger Live erfordert Standortdienste, um Ihr Gerät über Bluetooth zu koppeln.",
-    "descriptionPermissionRequired" : "Ledger Live benötigt die Standortfreigabe, um Ihr Gerät über Bluetooth zu koppeln.",
-    "descriptionPermissionRequiredPrecise" : "Ledger Live benötigt die präzise Standortfreigabe, um Ihr Gerät über Bluetooth zu verbinden.",
+    "required" : "Standortdienste erforderlich",
     "open" : "Standort-Einstellungen öffnen",
+    "disabled" : "Ledger Live erfordert Standortdienste, um Ihr Gerät über Bluetooth zu koppeln.",
     "noInfos" : "Ledger greift nicht auf Ihre Standortinformationen zu."
   },
   "permissions" : {
     "open" : "App-Berechtigungen öffnen",
-    "authorize" : "Autorisieren",
-    "bluetooth" : {
-      "modalTitle" : "Für die Verbindung Ihres Ledgers über Bluetooth ist eine Genehmigung erforderlich",
-      "modalDescriptionBase" : "Um Ihren Ledger über Bluetooth zu verbinden, müssen Sie Ledger Live autorisieren, nach Geräten in der Nähe zu suchen.",
-      "modalDescriptionSettingsVariant" : "Um Ihren Ledger über Bluetooth zu verbinden, müssen Sie Ledger Live in den Einstellungen Ihres Telefons autorisieren, nach Geräten in der Nähe zu suchen.",
-      "modalButtonLabelBase" : "Autorisieren",
-      "modalButtonLabelSettingsVariant" : "Gehen Sie zu Einstellungen",
-      "dontPair" : "Nicht verbinden"
-    }
+    "nearbyDevicesPermissionDenied" : "Zum Herstellen von Bluetooth-Verbindungen müssen Sie der Ledger Live-App die Berechtigung gewähren, Geräte in der Nähe zu erkennen."
   },
   "fees" : {
     "speed" : {
@@ -1902,9 +1890,6 @@
       "title" : "Noch keine Aktionen?",
       "desc" : "Senden Sie einfach Krypto-Vermögenswerte an Ihre Empfangsadresse und warten Sie auf die Synchronisierung mit der App."
     },
-    "carousel" : {
-      "title" : "Für Sie"
-    },
     "recommended" : {
       "title" : "Empfohlen"
     },
@@ -2353,8 +2338,8 @@
     "display" : {
       "title" : "Allgemeines",
       "desc" : "Konfigurieren Sie die allgemeinen Ledger-Live-Einstellungen.",
-      "carousel" : "Empfehlungen",
-      "carouselDesc" : "Wir zeigen Ihnen Karten mit personalisierten Tipps und unseren neuesten Angeboten nur für Sie.",
+      "carousel" : "Karussell-Sichtbarkeit",
+      "carouselDesc" : "Aktivieren Sie die Sichtbarkeit des Karussells auf Portfolio",
       "language" : "Sprache",
       "languageDesc" : "Stellen Sie die in Ledger Live angezeigte Sprache ein.",
       "region" : "Region",
@@ -2467,7 +2452,7 @@
       },
       "allowed" : {
         "title" : "Benachrichtigungen zulassen",
-        "desc" : "Erhalten Sie Benachrichtigungen über Ihre Krypto-Werte, Markttrends und mehr"
+        "desc" : "Erhalten Sie Benachrichtigungen über Ihre Krypto, Markttendenzen und mehr"
       },
       "transactions" : {
         "title" : "Transaktionen",
@@ -2489,7 +2474,7 @@
         "title" : "Preisalarme",
         "desc" : "Legen Sie Preisalarme für Ihre Lieblingscoins fest, damit Sie keine Marktbewegung verpassen"
       },
-      "disclaimer" : "Ihre Daten und Ihr Datenschutz sind uns bei Ledger wichtig. Die gesammelten Daten werden niemals mit unseren Partnern geteilt"
+      "disclaimer" : "Der Datenschutz hat bei Ledger oberste Priorität. Die gesammelten Daten werden niemals an unsere Partner weitergegeben"
     },
     "help" : {
       "title" : "Hilfe",
@@ -2570,8 +2555,7 @@
       "featureFlagsTitle" : "In Ledger Live verwendete definierte Feature-Flags",
       "featureFlagsDesc" : "Überschriebene Werte werden zurückgesetzt, wenn die App neu gestartet wird. Es werden nur gültige JSON-Zeichenfolgen akzeptiert.",
       "featureFlagsEdit" : "Bearbeiten",
-      "featureFlagsRestore" : "Wiederherstellen",
-      "firebaseProject" : "Firebase-Projekt, auf das diese Entwicklung abzielt"
+      "featureFlagsRestore" : "Wiederherstellen"
     }
   },
   "notifications" : {
@@ -3268,8 +3252,8 @@
       "gasPrice" : "Gaspreis",
       "maxFee" : "Max. Gebühr",
       "maxPriorityFee" : "Maximale Prioritätsgebühr",
-      "nextBlock" : "Nächster Block",
-      "suggested" : "Vorgeschlagen",
+      "nextBlock" : "Nächster Block: {{nextBaseFee}}",
+      "suggestedPriorityFee" : "Vorgeschlagen: {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees" : "Max. Gebühren",
       "validateGasLimit" : "Gas-Limit validieren",
       "fees" : "Gebühren",
@@ -3549,10 +3533,7 @@
     },
     "confirmSwap" : {
       "title" : "Swap-Vorgang auf dem Gerät bestätigen",
-      "alert" : {
-        "default" : "Überprüfen Sie die Details des Tauschs auf Ihrem Gerät, bevor Sie sie senden. Die Adressen werden sicher ausgetauscht, sodass Sie diese nicht verifizieren müssen.",
-        "cic" : "Verifizieren Sie die Swap-Details auf Ihrem Gerät, bevor Sie diese senden. CIC muss möglicherweise eine zusätzliche Überprüfung für einige Transaktionen durchführen, was zu einer Verzögerung führen kann."
-      },
+      "alert" : "Vor dem Senden der Fondsdetails müssen Sie diese auf Ihrem Gerät verifizieren. Die Adressen müssen Sie nicht verifizieren, da diese sicher ausgetauscht werden.",
       "acceptTerms" : "Durch Validieren dieser Transaktion stimme ich den\n<0>Nutzungsbedingungen von <0>{{provider}}</0> zu</0>",
       "notice" : "Überprüfen Sie die Details des Tauschs auf Ihrem Gerät, bevor Sie sie senden. Die Adressen werden sicher ausgetauscht, sodass Sie diese nicht verifizieren müssen."
     },
@@ -4693,9 +4674,6 @@
         "title" : "Kandidaten",
         "description" : "127 Personen, die durch Abstimmung von der gesamten Token-Inhaber-Community gewählt werden. Die Abstimmungen werden alle 6 Stunden abgefragt."
       }
-    },
-    "receive" : {
-      "newAddressTRC20" : "Sie müssen zuerst mindestens 0,1 TRX an diese Adresse senden, um sie zu aktivieren."
     }
   },
   "stellar" : {
@@ -5401,8 +5379,7 @@
       "seeFewerNfts" : "Weniger NFT anzeigen"
     },
     "gallery" : {
-      "allNft" : "Alle NFT",
-      "addNew" : "Neu hinzufügen"
+      "allNft" : "Alle NFT"
     },
     "viewer" : {
       "properties" : "Eigenschaften",
@@ -5419,7 +5396,6 @@
     "viewerModal" : {
       "viewOn" : "Ansehen auf",
       "viewInExplorer" : "Im Explorer ansehen",
-      "hide" : "NFT-Sammlung ausblenden",
       "txDetails" : "Transaktionsdetails"
     },
     "modalDisabled" : {
@@ -5460,8 +5436,7 @@
     "drawer" : {
       "title" : "Wählen Sie ein Bild aus",
       "options" : {
-        "uploadFromPhone" : "Aus meiner Bildergalerie auswählen",
-        "selectFromNFTGallery" : "Aus meiner NFT-Galerie auswählen"
+        "uploadFromPhone" : "Von meinem Mobiltelefon hochladen"
       }
     },
     "cropImage" : "Bild zuschneiden",
@@ -5480,15 +5455,25 @@
       "choosePicture" : "Wählen Sie ein Bild aus"
     },
     "customImage" : "Benutzerdefiniertes Bild",
-    "doThisLater" : "Vielleicht später",
-    "preview" : {
-      "title" : "Vorschau",
-      "loading" : "Vorschau wird geladen",
-      "setPicture" : "Benutzerdefiniertes Bild einstellen",
-      "editPicture" : "Bild bearbeiten"
+    "doThisLater" : "Vielleicht später"
+  },
+  "claimNft" : {
+    "welcomePage" : {
+      "title" : "Platzhalter-Titel",
+      "description" : {
+        "title" : "Dies ist der Titel der Elementliste:",
+        "1" : "Dies ist das erste Element auf der Liste",
+        "2" : "Dies ist das zweite Element auf der Liste",
+        "3" : "Dies ist das dritte Element auf der Liste."
+      },
+      "claimButton" : "Beanspruchen Sie Ihr NFT",
+      "backButton" : "Ich habe mein NFT bereits beansprucht"
     },
-    "nftGallery" : {
-      "title" : "Meine NFTs"
+    "qrScan" : {
+      "title" : "QR-Code scannen (Platzhaltertext)",
+      "description" : {
+        "1" : "(Platzhaltertext) Sie finden Ihren exklusiven Pass in der Box Ihres Ledger-Geräts.\n\nBeginnen Sie, indem Sie den QR-Code auf der Rückseite des Passes im Rahmen positionieren. Verwenden Sie einen gut beleuchteten Bereich und einen einfachen hellen Hintergrund."
+      }
     }
   },
   "postOnboarding" : {
@@ -5510,37 +5495,13 @@
         "description" : "Durch Hinzufügen eines Bildes",
         "popupLabel" : "Gerät personalisiert",
         "hubTitleAfterAction" : "Dieser Bildschirm sieht gut aus"
-      }
-    }
-  },
-  "wallet" : {
-    "tabs" : {
-      "crypto" : "Krypto",
-      "nft" : "NFTs"
-    },
-    "nftGallery" : {
-      "empty" : {
-        "title" : "Noch keine NFTs zu zeigen",
-        "subtitle" : "Fangen Sie an, indem Sie Ihr erstes NFT erhalten.",
-        "receive" : "NFT erhalten",
-        "supportLink" : "Wie erhalten Sie NFTs von anderen Wallets?"
       },
-      "receiveModal" : {
-        "title" : "Sie erhalten ein NFT auf die gleiche Weise wie jede andere Kryptowährung",
-        "bullets" : {
-          "0" : "• Wählen Sie die NFT Krypto-Blockchain.",
-          "1" : "• Wählen Sie das für das NFT vorgesehene Konto"
-        },
-        "cta" : "Ok, verstanden",
-        "info" : "Ich würde gerne mehr erfahren"
-      },
-      "hideNftModal" : {
-        "title" : "NFT-Sammlung ausblenden",
-        "desc" : "Mit dieser Aktion werden alle NFTs aus der {{collectionName}} Sammlung ausgeblendet. Sie können die Ausblendung in den App-Einstellungen aufheben",
-        "cta" : "Dieses NFT ausblenden"
-      },
-      "media" : {
-        "tag" : "{{count}} NFTs"
+      "claimNft" : {
+        "title" : "NFT anfordern (Platzhaltertext)",
+        "description" : "Erhalten Sie Ihr kostenloses NFT (Platzhaltertext)",
+        "tagLabel" : "Gratis",
+        "popupLabel" : "NFT beansprucht",
+        "hubTitleAfterAction" : "NFT beansprucht. Lorem Ipsum"
       }
     }
   }
