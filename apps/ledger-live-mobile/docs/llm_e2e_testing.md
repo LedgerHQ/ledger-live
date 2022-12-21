@@ -32,13 +32,22 @@ Writing and running Detox tests requires Xcode for iOS and Android Studio (along
 
 Next, follow the steps in the Detox [Environment Setup](https://wix.github.io/Detox/docs/introduction/getting-started) section.
 
+Prerequisites for all Detox tests:
+
+- Node is installed (currently we use v16)
+
 ### Tips for iOS setup
 
-Most of the setup is taken care of in the React Native docs, but you will have to do some additional installations, such as the Detox CLI and `applesimutils` (MacOS only).
+Most of the setup is taken care of in the React Native docs, but you will have to do some additional installations, such as the Detox CLI and `applesimutils` (MacOS only). After following the above React Native and Detox steps, you should have the following setup:
+
+- XCode and XCode command line tools - run `xcode-select -v` and `xcrun --version` to make sure these are working
+- `rbenv` is installed and `which ruby` points to an `rbenv` shim, not `usr/bin/ruby`. Be sure to follow the steps to add `rbenv` to your shell profile.
+- An iPhone simulator for iPhone 13 - open Xcode > Window > Devices and Simulators > Simulators > Add a new device from the '+' sign in the bottom right corner.
+- `applesimutils` is installed via npm.
 
 ### Tips for Android setup
 
-The Android toolkit is more complex than the iOS one, so follow the Detox [Android Environment Setup guide](https://wix.github.io/Detox/docs/guide/android-dev-env) for help. Once you've followed the guide, the main things to make sure of are:
+The Android toolkit can be more complex than the iOS one. Once you've done the React Native and Detox setup steps, follow the Detox [Android Environment Setup guide](https://wix.github.io/Detox/docs/guide/android-dev-env) for further steps. The main things to make sure of are:
 
 - Java version 11 installed. Check with `java -version`
 - Android 12.0 (API Level 11) is installed.
