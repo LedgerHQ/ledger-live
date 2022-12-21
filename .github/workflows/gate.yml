@@ -1,13 +1,6 @@
 name: The Gate
 on:
   pull_request:
-  # pr-is-fork:
-  #   name: "Check if the PR is a fork"
-  #   uses: ./.github/workflows/pr-is-fork.yml
-  #   with:
-  #     non-pr-result: false
-  #   secrets:
-  #     token: ${{ secrets.COMMON_READ_ORG }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
