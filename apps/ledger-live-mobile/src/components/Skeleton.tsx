@@ -3,6 +3,7 @@ import { Animated, StyleProp, ViewStyle } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import { BorderProps } from "styled-system";
+import Config from "react-native-config";
 
 type Props = BaseStyledProps &
   BorderProps & {
@@ -25,7 +26,8 @@ const Skeleton: React.FC<Props> = ({
   const opacityAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    if (animated) {
+    // Disable animation when mock env because it was blocking Detox tests
+    if (animated && !Config.MOCK) {
       const duration = 1000;
       const values = { min: 0.5, max: 1 };
 

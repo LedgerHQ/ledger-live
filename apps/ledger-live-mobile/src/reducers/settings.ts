@@ -13,6 +13,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { ValidKYCStatus } from "@ledgerhq/live-common/exchange/swap/types";
 import type { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { CurrencySettings, SettingsState, State } from "./types";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 // eslint-disable-next-line import/no-cycle
@@ -755,12 +756,32 @@ export const swapSelectableCurrenciesSelector = (state: State) =>
 export const swapAcceptedProvidersSelector = (state: State) =>
   state.settings.swap.acceptedProviders;
 export const swapKYCSelector = (state: State) => state.settings.swap.KYC;
-export const lastSeenDeviceSelector = (state: State) =>
-  state.settings.lastSeenDevice;
+export const lastSeenDeviceSelector = (state: State) => {
+  // Nb workaround to prevent crash for dev/qa that have nanoFTS references.
+  // to be removed in a while.
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  if (state.settings.lastSeenDevice?.modelId === "nanoFTS") {
+    return { ...state.settings.lastSeenDevice, modelId: DeviceModelId.stax };
+  }
+  return state.settings.lastSeenDevice;
+};
 export const starredMarketCoinsSelector = (state: State) =>
   state.settings.starredMarketCoins;
-export const lastConnectedDeviceSelector = (state: State) =>
-  state.settings.lastConnectedDevice;
+export const lastConnectedDeviceSelector = (state: State) => {
+  // Nb workaround to prevent crash for dev/qa that have nanoFTS references.
+  // to be removed in a while.
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  if (state.settings.lastConnectedDevice?.modelId === "nanoFTS") {
+    return {
+      ...state.settings.lastConnectedDevice,
+      modelId: DeviceModelId.stax,
+    };
+  }
+
+  return state.settings.lastConnectedDevice;
+};
 export const hasOrderedNanoSelector = (state: State) =>
   state.settings.hasOrderedNano;
 export const marketRequestParamsSelector = (state: State) =>
