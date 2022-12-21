@@ -1,5 +1,4 @@
 import * as bech32 from "bech32";
-import { toOutputScript } from "bitcoinjs-lib/types/address";
 import { bech32m } from "../../bech32m";
 
 import * as utils from "../utils";

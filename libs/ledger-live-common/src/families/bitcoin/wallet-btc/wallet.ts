@@ -1,5 +1,4 @@
 import { flatten } from "lodash";
-import { address } from "bitcoinjs-lib";
 import BigNumber from "bignumber.js";
 import Btc from "@ledgerhq/hw-app-btc";
 import { log } from "@ledgerhq/logs";
@@ -19,11 +18,7 @@ import * as utils from "./utils";
 import cryptoFactory from "./crypto/factory";
 import BitcoinLikeExplorer from "./explorer";
 import { TX, Address } from "./storage/types";
-<<<<<<< HEAD
 import { blockchainBaseURL } from "../../../api/Ledger";
-
-=======
->>>>>>> 17980d2e8b (add opReturnData as transaction attribute)
 
 class BitcoinLikeWallet {
   explorers: { [currencyId: string]: IExplorer } = {};
@@ -160,17 +155,8 @@ class BitcoinLikeWallet {
       feePerByte *
       utils.maxTxSizeCeil(
         usableUtxoCount,
-<<<<<<< HEAD
-<<<<<<< HEAD
         outputScripts,
         outputScripts.length == 0,
-=======
-        outputAddresses.map((addr) => toOutputScript(addr)),
-=======
-        outputAddresses.map((addr) => address.toOutputScript(addr)),
->>>>>>> 17980d2e8b (add opReturnData as transaction attribute)
-        outputAddresses.length == 0,
->>>>>>> 6e21ed9924 (pass output scripts to txMaxSize)
         account.xpub.crypto,
         account.xpub.derivationMode
       );
