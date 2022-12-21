@@ -189,7 +189,7 @@ jobs:
         build-desktop-app-windows,
       ]
     runs-on: ubuntu-latest
-    if: always() && github.event_name == 'workflow_dispatch' && github.event.inputs.check_run_id != '' && github.event.inputs.sha != ''
+    if: always() && !cancelled() && github.event_name == 'workflow_dispatch' && github.event.inputs.sha != ''
     steps:
       - name: generate token
         id: generate-token
