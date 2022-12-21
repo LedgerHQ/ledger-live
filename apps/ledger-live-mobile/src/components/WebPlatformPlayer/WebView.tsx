@@ -163,14 +163,23 @@ export const WebView = ({ manifest, inputs }: Props) => {
       new Promise((resolve, reject) => {
         tracking.platformRequestAccountRequested(manifest);
 
+        /**
+         * make sure currencies are strings
+         * PS: yes `currencies` is properly typed as `string[]` but this typing only
+         * works at build time and the `currencies` array is received at runtime from
+         * JSONRPC requests. So we need to make sure the array is properly typed.
+         */
+        const safeCurrencyIds =
+          currencyIds?.filter(c => typeof c === "string") ?? undefined;
+
         const allCurrencies = listAndFilterCurrencies({
-          currencies: currencyIds,
+          currencies: safeCurrencyIds,
           includeTokens,
         });
         // handle no curencies selected case
         const cryptoCurrencyIds =
-          currencyIds && currencyIds.length > 0
-            ? currencyIds
+          safeCurrencyIds && safeCurrencyIds.length > 0
+            ? safeCurrencyIds
             : allCurrencies.map(currency => (currency as CryptoCurrency).id);
 
         const foundAccounts = cryptoCurrencyIds?.length
