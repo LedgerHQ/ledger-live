@@ -130,9 +130,9 @@ const ManageModal = ({ name, account, parentAccount, ...rest }: Props) => {
 
   const canFreeze = spendableBalance && spendableBalance.gte(MIN_TRANSACTION_AMOUNT) && votingPower == 0;
 
-  const canUnfreeze = true
+  const canUnfreeze = votingPower > 0;
 
-  const canVote = votingPower > 0;
+  const canVote = votingPower > 0 || votes?.length > 0;
 
   const onSelectAction = useCallback(
     (name, onClose) => {
@@ -197,7 +197,7 @@ const ManageModal = ({ name, account, parentAccount, ...rest }: Props) => {
                   {!canUnfreeze && (
                     <TimerWrapper>
                       <Clock size={12} />
-                      <Description isPill>Sang Đẹp Chai</Description>
+                      <Description isPill></Description>
                     </TimerWrapper>
                   )}
                 </ManageButton>
