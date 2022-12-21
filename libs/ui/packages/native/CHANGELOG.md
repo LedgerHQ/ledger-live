@@ -1,5 +1,18 @@
 # @ledgerhq/native-ui
 
+## 0.14.0-protect.0
+
+### Minor Changes
+
+- [#1802](https://github.com/LedgerHQ/ledger-live/pull/1802) [`b01f9f5c02`](https://github.com/LedgerHQ/ledger-live/commit/b01f9f5c02ef255738b557daba38c1d9f13ee8fe) Thanks [@LFBarreto](https://github.com/LFBarreto)! - NativeUI - add colo and text Color to tag component
+
+### Patch Changes
+
+- [#2071](https://github.com/LedgerHQ/ledger-live/pull/2071) [`cc3c591bdc`](https://github.com/LedgerHQ/ledger-live/commit/cc3c591bdcb31df5882210fa43928603c2bcb200) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - fix ratings modal close behavior
+
+- Updated dependencies [[`32993aea9a`](https://github.com/LedgerHQ/ledger-live/commit/32993aea9af5dfb7f2519263e5f2a22a88320cdc)]:
+  - @ledgerhq/icons-ui@0.3.3-protect.0
+
 ## 0.13.0
 
 ### Minor Changes

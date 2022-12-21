@@ -1,10 +1,10 @@
 {
   "name": "dummy-wallet-app",
-  "version": "0.1.0",
+  "version": "0.1.1-protect.0",
   "private": true,
   "dependencies": {
-    "@ledgerhq/hw-app-eth": "^6.29.11",
-    "@ledgerhq/hw-transport": "^6.27.6",
+    "@ledgerhq/hw-app-eth": "^6.30.3-protect.0",
+    "@ledgerhq/hw-transport": "^6.27.9-protect.0",
     "@ledgerhq/live-common": "workspace:*",
     "@ledgerhq/wallet-api-client": "^0.10.2",
     "@types/jest": "^27.0.1",

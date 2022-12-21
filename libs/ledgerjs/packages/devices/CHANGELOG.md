@@ -1,5 +1,16 @@
 # @ledgerhq/devices
 
+## 7.0.6-protect.0
+
+### Patch Changes
+
+- [#2066](https://github.com/LedgerHQ/ledger-live/pull/2066) [`3a267c1424`](https://github.com/LedgerHQ/ledger-live/commit/3a267c14241ebc9184490e7eb81b5d4bcc94b092) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - nanoFTS productName changed to "Ledger Stax"
+
+* [#2144](https://github.com/LedgerHQ/ledger-live/pull/2144) [`1f65abb76f`](https://github.com/LedgerHQ/ledger-live/commit/1f65abb76f1a36b428b5c33dd3ad6c58b4d96aa2) Thanks [@juan-cortes](https://github.com/juan-cortes)! - libs - rename nano fts to stax
+
+* Updated dependencies [[`f1c15446da`](https://github.com/LedgerHQ/ledger-live/commit/f1c15446dabef05bb91dada8d8f53f9bc6474ba5)]:
+  - @ledgerhq/errors@6.12.2-protect.0
+
 ## 7.0.5
 
 ### Patch Changes
