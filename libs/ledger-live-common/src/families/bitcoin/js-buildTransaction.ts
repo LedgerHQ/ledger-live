@@ -44,7 +44,8 @@ export const buildTransaction = async (
     walletAccount,
     transaction.feePerByte.toNumber(), //!\ wallet-btc handles fees as JS number
     transaction.utxoStrategy.excludeUTXOs,
-    [transaction.recipient]
+    [transaction.recipient],
+    transaction.opReturnData
   );
 
   log("btcwallet", "building transaction", transaction);
