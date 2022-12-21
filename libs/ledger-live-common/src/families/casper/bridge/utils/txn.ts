@@ -26,7 +26,6 @@ export function mapTxToOps(
     const ops: Operation[] = [];
     const {
       timestamp,
-      amount,
       caller_public_key,
       args: txArgs,
       deploy_hash,
@@ -36,7 +35,7 @@ export function mapTxToOps(
     const toAccount = txArgs.target.parsed;
 
     const date = new Date(timestamp);
-    const value = new BigNumber(amount);
+    const value = new BigNumber(txArgs.amount.parsed);
     const feeToUse = fees;
 
     const isSending = addressHash.toLowerCase() === fromAccount.toLowerCase();
