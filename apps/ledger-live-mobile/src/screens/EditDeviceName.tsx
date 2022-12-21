@@ -49,7 +49,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
   const [name, setName] = useState<string>(originalName);
   const [completed, setCompleted] = useState<boolean>(false);
   const [error, setError] = useState<Error | undefined | null>(null);
-  const [connecting, setConnecting] = useState(false);
+  const [running, setRunning] = useState(false);
 
   const onChangeText = useCallback((name: string) => {
     // Nb mobile devices tend to use U+2018 for single quote, not supported
@@ -66,11 +66,9 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
   }, []);
 
   const onSubmit = useCallback(async () => {
+    setRunning(true);
     if (originalName !== name) {
-      setTimeout(() => {
-        setName(name.trim());
-        setConnecting(true);
-      }, 800);
+      setName(name.trim());
     } else {
       navigation.goBack();
     }
@@ -78,7 +76,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
 
   const onSuccess = useCallback(() => {
     setCompleted(true);
-    setConnecting(false);
+    setRunning(false);
     saveBleDeviceName(device.deviceId, name);
 
     pushToast({
@@ -95,7 +93,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
     if (completed) {
       navigation.goBack();
     } else {
-      setConnecting(false);
+      setRunning(false);
     }
   }, [completed, navigation]);
 
@@ -143,13 +141,13 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
               type="main"
               onPress={onSubmit}
               mt={5}
-              disabled={!name.trim() || !!error}
+              disabled={!name.trim() || !!error || running}
             >
               <Trans i18nKey="EditDeviceName.action" />
             </Button>
           </Flex>
 
-          {connecting ? (
+          {running ? (
             <DeviceActionModal
               device={device}
               request={name}
