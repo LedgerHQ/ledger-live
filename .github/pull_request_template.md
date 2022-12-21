@@ -10,7 +10,6 @@ _Replace this text by a clear and concise description of what this pull request 
 
 ### ❓ Context
 
-- **Impacted projects**: `` <!-- The list of end user projects impacted by the change. -->
 - **Linked resource(s)**: `` <!-- Attach any ticket number if relevant. (JIRA / Github issue number) -->
 
 ### ✅ Checklist
