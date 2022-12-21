@@ -43,16 +43,17 @@ describe("Password Lock Screen", () => {
     await generalSettingsPage.enterNewPassword(CORRECT_PASSWORD + "\n"); // confirm password step
   });
 
-  it("should puts app in background and wait 1 minute and 1 second", async () => {
+  it("should not require the password if the user exits the app for less than the lock timeout", async () => {
     await device.sendToHome(); // leave LLM app and go to phone's home screen
-    await delay(6001); // password takes 6 seconds of app inactivity to activate in mock mode
-  });
-
-  it("should move the app to foreground", async () => {
-    await device.launchApp(); // restart LLM
+    await delay(1000); // the timeout on prod is 1 minute. With mock mode enabled, it is 5 seconds
+    await device.launchApp();
+    await expect(generalSettingsPage.getPreferredCurrency()).toBeVisible();
   });
 
   it("should need to enter password to unlock app", async () => {
+    await device.sendToHome();
+    await delay(6000); // password takes 5 seconds of app inactivity to activate in mock mode. Using 6 seconds to be on the safe side.
+    await device.launchApp(); // restart LLM
     await passwordEntryPage.enterPassword(CORRECT_PASSWORD);
     await passwordEntryPage.login();
   });
