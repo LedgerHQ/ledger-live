@@ -46,7 +46,9 @@ export const buildTransaction = async (
     transaction.utxoStrategy.excludeUTXOs,
     [transaction.recipient]
   );
+
   log("btcwallet", "building transaction", transaction);
+
   const txInfo = await wallet.buildAccountTx({
     fromAccount: walletAccount,
     dest: transaction.recipient,
@@ -55,7 +57,10 @@ export const buildTransaction = async (
     utxoPickingStrategy,
     // Definition of replaceable, per the standard: https://github.com/bitcoin/bips/blob/61ccc84930051e5b4a99926510d0db4a8475a4e6/bip-0125.mediawiki#summary
     sequence: transaction.rbf ? 0 : 0xffffffff,
+    opReturnData: transaction.opReturnData,
   });
+
   log("btcwallet", "txInfo", txInfo);
+
   return txInfo;
 };

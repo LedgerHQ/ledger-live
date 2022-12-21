@@ -1,4 +1,5 @@
 import { flatten } from "lodash";
+import { address } from "bitcoinjs-lib";
 import BigNumber from "bignumber.js";
 import Btc from "@ledgerhq/hw-app-btc";
 import { log } from "@ledgerhq/logs";
@@ -15,7 +16,6 @@ import { PickingStrategy } from "./pickingstrategies/types";
 import * as utils from "./utils";
 import cryptoFactory from "./crypto/factory";
 import { TX, Address } from "./storage/types";
-import { toOutputScript } from "bitcoinjs-lib/types/address";
 
 class BitcoinLikeWallet {
   explorerInstances: { [key: string]: IExplorer } = {};
@@ -150,7 +150,7 @@ class BitcoinLikeWallet {
       feePerByte *
       utils.maxTxSizeCeil(
         usableUtxoCount,
-        outputAddresses.map((addr) => toOutputScript(addr)),
+        outputAddresses.map((addr) => address.toOutputScript(addr)),
         outputAddresses.length == 0,
         account.xpub.crypto,
         account.xpub.derivationMode
@@ -183,6 +183,7 @@ class BitcoinLikeWallet {
     feePerByte: number;
     utxoPickingStrategy: PickingStrategy;
     sequence: number;
+    opReturnData?: Buffer;
   }): Promise<TransactionInfo> {
     const changeAddress = await params.fromAccount.xpub.getNewAddress(1, 1);
     const txInfo = await params.fromAccount.xpub.buildTx({
@@ -192,7 +193,9 @@ class BitcoinLikeWallet {
       changeAddress,
       utxoPickingStrategy: params.utxoPickingStrategy,
       sequence: params.sequence,
+      opReturnData: params.opReturnData,
     });
+
     return txInfo;
   }
 
