@@ -10,7 +10,7 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.internal,
     affected: ["ledger-live-desktop"],
     checkRunName: "[Desktop] Build the app",
-    summaryFile: "",
+    summaryFile: "summary.json",
     getInputs: (payload: any) => {
       return {
         sha: payload.workflow_run.head_sha,
