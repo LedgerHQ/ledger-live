@@ -27,21 +27,21 @@ type SwapFormProvidersProps = {
   provider?: string,
   refreshTime: number,
   countdown: boolean,
-  showDEXLinkBanners: boolean,
+  showNoQuoteDexRate: boolean,
 };
 const SwapFormProviders = ({
   swap,
   provider,
   refreshTime,
   countdown,
-  showDEXLinkBanners,
+  showNoQuoteDexRate,
 }: SwapFormProvidersProps) => {
   const { currency: fromCurrency } = swap.from;
   const { currency: toCurrency } = swap.to;
   const ratesState = swap.rates;
 
   const updatedRatesState = useMemo(() => {
-    if (showDEXLinkBanners && swap.rates?.value) {
+    if (showNoQuoteDexRate && swap.rates?.value) {
       return {
         ...swap.rates,
         value: swap.rates.value.concat(
@@ -69,7 +69,7 @@ const SwapFormProviders = ({
       };
     }
     return swap.rates;
-  }, [swap.rates, showDEXLinkBanners]);
+  }, [swap.rates, showNoQuoteDexRate]);
   const hasRates = ratesState?.value?.length > 0;
 
   const [hasFetchedRates, setHasFetchedRates] = useState(hasRates);

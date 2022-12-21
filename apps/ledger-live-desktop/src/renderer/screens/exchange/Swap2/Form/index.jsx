@@ -406,7 +406,7 @@ const SwapForm = () => {
 
   // We check if a decentralized swap is available to conditionnaly render an Alert below.
   // All Ethereum, Binance and Polygon related currencies are considered available
-  const showDEXLinkBanners = useMemo(() => {
+  const showNoQuoteDexRate = useMemo(() => {
     // if we are showing DEX quotes, we don't want to show the link banners
     if (showDexQuotes) {
       return false;
@@ -542,7 +542,7 @@ const SwapForm = () => {
               provider={provider}
               refreshTime={refreshTime}
               countdown={!swapError && !idleState}
-              showDEXLinkBanners={showDEXLinkBanners}
+              showNoQuoteDexRate={showNoQuoteDexRate}
             />
 
             {currentBanner === "LOGIN" ? (
