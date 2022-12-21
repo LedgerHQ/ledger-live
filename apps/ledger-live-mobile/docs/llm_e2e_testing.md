@@ -81,7 +81,7 @@ Verify you have an emulator [installed](https://developer.android.com/studio/run
   - Debug: `pnpm mobile e2e:build -c android.emu.debug`
   - Release: `pnpm mobile e2e:build -c android.emu.release`
 - Run the tests
-  - Debug: First, run `pnpm mobile start` to run Metro bundler, then in a separate terminal window run `pnpm mobile e2e:test -c android.emu.debug`. When developing locally, you may need to set the variable MOCK=1 in the app .env file to have the right test environment.
+  - Debug: First, run `pnpm mobile start` to run Metro bundler, then in a separate terminal window run `pnpm mobile e2e:test -c android.emu.debug`. When developing locally, you may need to put the content of the .env.mock file in the app .env file to have the right test environment.
   - Release: `pnpm mobile e2e:test -c android.emu.release`
 
 > If you get an error for Android debug tests complaining that the emulator cannot find the bundled JS script, run `adb reverse tcp:8081 tcp:8081` before starting the tests (but make sure the emulator is already started). This makes it possible for the emulator to access the Metro bundler on your local machine.
