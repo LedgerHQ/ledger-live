@@ -186,7 +186,12 @@ class Base implements ICrypto {
 
   toOpReturnOutputScript(data: Buffer): Buffer {
     const script = bjs.payments.embed({ data: [data] });
-    return script.output!;
+    const output = script.output!;
+    if (output.length > OP_RETURN_DATA_SIZE_LIMIT) {
+      throw new Error("OP_RETURN transactions cannot be larger than 40 bytes");
+    }
+
+    return output;
   }
 
   validateAddress(address: string): boolean {
