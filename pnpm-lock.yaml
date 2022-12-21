@@ -1261,7 +1261,7 @@ importers:
       buffer: ^6.0.3
       camelcase: ^6.2.1
       cashaddrjs: ^0.4.4
-      casper-js-sdk: ^2.10.0
+      casper-js-sdk: ^2.10.1
       coininfo: ^5.1.0
       cosmjs-types: 0.2.1
       create-hmac: ^1.1.7
@@ -8276,7 +8276,7 @@ packages:
   /@casperlabs/ts-results/3.3.5:
     resolution: {integrity: sha512-ymSQqqb4mOSet592li02u1Gd28LoOFJUm6R3jkdNQ+nqsnbHvN+izBigtP4aYmNwh6gFyCwDgjYporEJgDT4eA==}
     dependencies:
-      tslib: 2.5.0
+      tslib: 1.14.1
     dev: false
 
   /@celo/base/3.2.0:
@@ -53717,7 +53717,7 @@ packages:
     dev: true
 
   /to-arraybuffer/1.0.1:
-    resolution: {integrity: sha1-fSKbH8xjfkZsoIEYCDanqr/4P0M=}
+    resolution: {integrity: sha512-okFlQcoGTi4LQBG/PgSYblw9VOyptsz2KJZqc6qtgGdes8VktzUQkj4BI2blit072iS8VODNcMA+tvnS9dnuMA==}
 
   /to-camel-case/1.0.0:
     resolution: {integrity: sha512-nD8pQi5H34kyu1QDMFjzEIYqk0xa9Alt6ZfrdEMuHCFOfTLhDG5pgTu/aAM9Wt9lXILwlXmWP43b8sav0GNE8Q==}

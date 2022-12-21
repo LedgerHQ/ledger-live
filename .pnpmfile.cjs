@@ -40,7 +40,7 @@ function readPackage(pkg, context) {
     };
   }
   
-  if(pkg.name === "ts-results") {
+  if(pkg.name === "@casperlabs/ts-results") {
     pkg.dependencies['tslib'] = '^1.14.1';
   }
 
