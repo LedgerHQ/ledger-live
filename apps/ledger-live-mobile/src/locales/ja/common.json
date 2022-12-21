@@ -518,7 +518,7 @@
       "title" : "凍結額を1未満にすることはできません。"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "TRC20の受け取りを有効化するには、まず新しいアカウントに0.1 TRX以上を送る必要があります。",
+      "title" : "新しいアカウントにTRC20トークンを送金してもアクティブ化されません。",
       "description" : "有効化するには、TRXまたはTRC10トークンをアカウントに送金してください。その後、アカウントでTRC20トークンの受取が可能になります。"
     },
     "TronUnexpectedFees" : {
@@ -785,26 +785,14 @@
     }
   },
   "location" : {
-    "titleServiceRequired" : "位置情報サービスが必要です",
-    "titlePermissionRequired" : "位置情報の許可が必要です",
-    "titlePermissionRequiredPrecise" : "正確な位置情報の許可が必要です",
-    "descriptionServiceRequired" : "Ledger Liveは、Bluetoothでデバイスをペアリングするために、位置情報サービスへのアクセスが必要です。",
-    "descriptionPermissionRequired" : "Ledger Liveは、Bluetoothでデバイスをペアリングするために、位置情報の許可が必要です。",
-    "descriptionPermissionRequiredPrecise" : "Ledger Liveは、Bluetoothでデバイスをペアリングするために、位置情報の許可が必要です。",
+    "required" : "位置情報サービスが必要です",
     "open" : "位置情報の設定を開く",
+    "disabled" : "Ledger Liveは、Bluetoothでデバイスをペアリングするために、位置情報サービスへのアクセスが必要です。",
     "noInfos" : "Ledgerがあなたの位置情報にアクセスすることはありません。"
   },
   "permissions" : {
     "open" : "アプリの許可設定を開く",
-    "authorize" : "許可する",
-    "bluetooth" : {
-      "modalTitle" : "BluetoothでLedgerをペアリングするために必要な許可",
-      "modalDescriptionBase" : "LedgerをBluetoothでペアリングするには、Ledger Liveが近くのデバイスをスキャンするのを許可する必要があります。",
-      "modalDescriptionSettingsVariant" : "BluetoothでLedgerをペアリングするには、スマートフォンの設定でLedger Liveによる近くのデバイススキャンを許可する必要があります。",
-      "modalButtonLabelBase" : "許可する",
-      "modalButtonLabelSettingsVariant" : "設定を開く",
-      "dontPair" : "ペアリングしない"
-    }
+    "nearbyDevicesPermissionDenied" : "Bluetoothとペアリングするには、Ledger Liveアプリが近くのデバイスを検出することを許可してください。"
   },
   "fees" : {
     "speed" : {
@@ -1902,9 +1890,6 @@
       "title" : "トランザクションがありません。",
       "desc" : "暗号資産を受取アドレスに送金して、アプリが同期するのを待ちましょう。"
     },
-    "carousel" : {
-      "title" : "お客様へ"
-    },
     "recommended" : {
       "title" : "おすすめ"
     },
@@ -2353,8 +2338,8 @@
     "display" : {
       "title" : "一般",
       "desc" : "Ledger Liveの一般設定を変更します。",
-      "carousel" : "おすすめ",
-      "carouselDesc" : "お客様用にパーソナライズされたヒントと最新のオファーが記載されたカードをお見せします。",
+      "carousel" : "カルーセルの表示／非表示",
+      "carouselDesc" : "ポートフォリオ上でカルーセルの表示を有効化",
       "language" : "表示言語",
       "languageDesc" : "Ledger Liveの表示言語を設定。",
       "region" : "地域",
@@ -2467,7 +2452,7 @@
       },
       "allowed" : {
         "title" : "通知を許可",
-        "desc" : "暗号資産、市場動向などに関する通知を受け取る"
+        "desc" : "暗号資産、マーケットの傾向に関する通知を受け取る"
       },
       "transactions" : {
         "title" : "トランザクション",
@@ -2489,7 +2474,7 @@
         "title" : "価格アラート",
         "desc" : "お気に入りのコインの価格アラートを設定して、市場の動きを見逃さないようにしましょう"
       },
-      "disclaimer" : "お客様のデータとプライバシーは、Ledgerにとって重要です。収集されたデータが当社パートナーと共有されることはありません。"
+      "disclaimer" : "Ledgerでは、データとプライバシーを最も重視しています。収集されたデータが当社パートナーと共有されることはありません。"
     },
     "help" : {
       "title" : "ヘルプ",
@@ -2570,8 +2555,7 @@
       "featureFlagsTitle" : "Ledger Liveで使用される定義済みの機能フラグ",
       "featureFlagsDesc" : "上書きされた値は、アプリが再起動されるとリセットされます。有効なJSON文字列のみが受け入れられます。",
       "featureFlagsEdit" : "編集",
-      "featureFlagsRestore" : "復元",
-      "firebaseProject" : "対象となるFirebaseプロジェクト："
+      "featureFlagsRestore" : "復元"
     }
   },
   "notifications" : {
@@ -3268,8 +3252,8 @@
       "gasPrice" : "ガス価格",
       "maxFee" : "最大手数料",
       "maxPriorityFee" : "最大優先手数料",
-      "nextBlock" : "次のブロック",
-      "suggested" : "推奨",
+      "nextBlock" : "次のブロック: {{nextBaseFee}}",
+      "suggestedPriorityFee" : "推奨: {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees" : "最大手数料",
       "validateGasLimit" : "ガスリミットの検証",
       "fees" : "手数料",
@@ -3549,10 +3533,7 @@
     },
     "confirmSwap" : {
       "title" : "スワップ処理をデバイス上で確認する",
-      "alert" : {
-        "default" : "送付する前に、スワップの詳細をデバイス上で確認してください。アドレスは安全にやりとりされるため、確認の必要はありません。",
-        "cic" : "送付する前に、スワップの詳細をデバイス上で確認してください。CICでは、一部のトランザクションに対して追加の検証を実行する必要があり、遅延が発生する場合があります。"
-      },
+      "alert" : "送付する前に、スワップの詳細をデバイス上で確認してください。アドレスは安全にやりとりされるため、確認の必要はありません。",
       "acceptTerms" : "このトランザクションを検証することにより、私は\n<0><0>{{provider}}</0>の利用規約</0>に同意します",
       "notice" : "送付する前に、スワップの詳細をデバイス上で確認してください。アドレスは安全にやりとりされるため、確認の必要はありません。"
     },
@@ -4693,9 +4674,6 @@
         "title" : "候補者",
         "description" : "トークン所有者コミュニティ全体の投票によって123人が選出されました。投票は6時間ごとに集計されます。"
       }
-    },
-    "receive" : {
-      "newAddressTRC20" : "有効化するには、こちらのアドレスに0.1 TRX以上を送る必要があります。"
     }
   },
   "stellar" : {
@@ -5401,8 +5379,7 @@
       "seeFewerNfts" : "少量のNFTを見る"
     },
     "gallery" : {
-      "allNft" : "全てのNFT",
-      "addNew" : "新規追加"
+      "allNft" : "全てのNFT"
     },
     "viewer" : {
       "properties" : "プロパティ",
@@ -5419,7 +5396,6 @@
     "viewerModal" : {
       "viewOn" : "表示",
       "viewInExplorer" : "エクスプローラーで表示",
-      "hide" : "NFTコレクションを非表示",
       "txDetails" : "トランザクションの詳細"
     },
     "modalDisabled" : {
@@ -5460,8 +5436,7 @@
     "drawer" : {
       "title" : "画像を選択してください",
       "options" : {
-        "uploadFromPhone" : "画像ギャラリーから選択",
-        "selectFromNFTGallery" : "NFTギャラリーから選択"
+        "uploadFromPhone" : "携帯電話からアップロードする"
       }
     },
     "cropImage" : "画像をトリミング",
@@ -5480,15 +5455,25 @@
       "choosePicture" : "画像を選択"
     },
     "customImage" : "画像をカスタマイズ",
-    "doThisLater" : "後で",
-    "preview" : {
-      "title" : "プレビュー",
-      "loading" : "プレビューの読み込み中",
-      "setPicture" : "カスタム画像を設定する",
-      "editPicture" : "画像を編集"
+    "doThisLater" : "後で"
+  },
+  "claimNft" : {
+    "welcomePage" : {
+      "title" : "プレースホルダーのタイトル。",
+      "description" : {
+        "title" : "これは項目リストのタイトルです：",
+        "1" : "これはリストの最初の項目です",
+        "2" : "これはリストの2番目の項目です",
+        "3" : "これはリストの3番目の項目です"
+      },
+      "claimButton" : "NFTを獲得",
+      "backButton" : "私はすでにNFTを獲得しました"
     },
-    "nftGallery" : {
-      "title" : "私のNFT"
+    "qrScan" : {
+      "title" : "QRコードをスキャン（プレースホルダーのテキスト）",
+      "description" : {
+        "1" : "（プレースホルダーのテキスト）Ledgerデバイスのボックスに専用パスがあります。\n\nまず、パスの裏面にあるQRコードをフレーム内に配置します。明るいエリアとシンプルな明るい背景を使用してください。"
+      }
     }
   },
   "postOnboarding" : {
@@ -5510,37 +5495,13 @@
         "description" : "画像を追加することで",
         "popupLabel" : "デバイスがパーソナライズされました",
         "hubTitleAfterAction" : "画面状態は良好です"
-      }
-    }
-  },
-  "wallet" : {
-    "tabs" : {
-      "crypto" : "暗号資産",
-      "nft" : "NFT"
-    },
-    "nftGallery" : {
-      "empty" : {
-        "title" : "表示できるNFTはまだありません",
-        "subtitle" : "最初のNFTを受け取って開始しましょう。",
-        "receive" : "NFTを受け取る",
-        "supportLink" : "別のウォレットからNFTを入手するには？"
       },
-      "receiveModal" : {
-        "title" : "その他の暗号資産と同じ方法でNFTを受け取る",
-        "bullets" : {
-          "0" : "•NFTの暗号資産ブロックチェーンを選択する。",
-          "1" : "• NFTの受け取り方法を選ぶ"
-        },
-        "cta" : "了解",
-        "info" : "さらに詳しく"
-      },
-      "hideNftModal" : {
-        "title" : "NFTコレクションを非表示",
-        "desc" : "この操作により、すべての{{collectionName}}コレクションが非表示になります。アプリ設定から再度表示が可能です。",
-        "cta" : "このNFTを非表示にする"
-      },
-      "media" : {
-        "tag" : "{{count}}NFT"
+      "claimNft" : {
+        "title" : "NFTを申請（プレースホルダーのテキスト）",
+        "description" : "無料のNFTを入手（プレースホルダーのテキスト）",
+        "tagLabel" : "無料",
+        "popupLabel" : "NFTを申請済み",
+        "hubTitleAfterAction" : "NFTを獲得しました。Lorem ipsum"
       }
     }
   }
