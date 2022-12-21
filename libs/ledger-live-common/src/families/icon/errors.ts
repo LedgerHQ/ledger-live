@@ -5,3 +5,6 @@ import { createCustomErrorClass } from "@ledgerhq/errors";
  */
 export const IconSpecificError = createCustomErrorClass("IconSpecificError");
 export const IconVoteRequired = createCustomErrorClass("IconVoteRequired");
+export const IconNotEnoughVotingPower = createCustomErrorClass(
+  "IconNotEnoughVotingPower"
+);

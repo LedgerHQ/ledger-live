@@ -131,7 +131,7 @@ const Delegation = ({ account }: Props) => {
         title={<Trans i18nKey="icon.voting.header" />}
         titleProps={{ "data-e2e": "title_Delegation" }}
       >
-        {votingPower > 0 && formattedVotes.length > 0 ? (
+        {formattedVotes.length > 0 ? (
           <Button small color="palette.primary.main" onClick={onDelegate} mr={2}>
             <Box horizontal flow={1} alignItems="center">
               <Vote size={12} />

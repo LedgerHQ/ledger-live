@@ -42,7 +42,10 @@ const AmountField = ({ t, account, onChangeVotes, status, bridgePending, votes }
 
   const [search, setSearch] = useState("");
   const { iconResources } = account;
+
   invariant(iconResources && votes, "icon transaction required");
+
+  const {votingPower, totalDelegated, votes: validators}  = iconResources;
 
   const locale = useSelector(localeSelector);
 
@@ -50,8 +53,8 @@ const AmountField = ({ t, account, onChangeVotes, status, bridgePending, votes }
 
   const SR = useSortedSr(search, publicRepresentatives, votes);
 
-  const votesAvailable = iconResources.votingPower.toNumber();
-  const totalVotes = iconResources.totalDelegated.toNumber() + votesAvailable;
+  const votesAvailable = votingPower.toNumber();
+  const totalVotes = totalDelegated.toNumber() + votesAvailable;
   const votesUsed = votes.reduce((sum, v) => sum + Number(v.value), 0);
   const votesSelected = votes.length;
   const max = Math.max(0, totalVotes - votesUsed);
@@ -64,13 +67,16 @@ const AmountField = ({ t, account, onChangeVotes, status, bridgePending, votes }
       const voteCount = raw <= 0 || votesSelected > SR_MAX_VOTES ? 0 : raw;
       onChangeVotes(existing => {
         const update = existing.filter(v => v.address !== address);
-        if (voteCount > 0) {
+        let isRevote =false;
+        (voteCount == 0) && (isRevote = validators.some(item => (item.address == address && item.value > 0 && item.value != voteCount)))
+        // voting list remain only one item, and user want to revote it
+        if (voteCount > 0 || isRevote) {
           update.push({ address, value: voteCount });
         }
         return update;
       });
     },
-    [onChangeVotes, votesSelected],
+    [onChangeVotes, votesSelected, votes],
   );
 
   const containerRef = useRef();

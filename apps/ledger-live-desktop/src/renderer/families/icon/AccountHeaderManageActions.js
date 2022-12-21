@@ -28,7 +28,7 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
   const earnRewardDisabled = votingPower === 0 && spendableBalance.lt(minAmount);
 
   const onClick = useCallback(() => {
-    if (votingPower > 0) {
+    if (votingPower > 0 || iconResources.votes?.length > 0) {
       dispatch(
         openModal("MODAL_MANAGE_ICON", {
           parentAccount,

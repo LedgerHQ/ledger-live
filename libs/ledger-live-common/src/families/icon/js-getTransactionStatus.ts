@@ -7,19 +7,20 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   AmountRequired,
 } from "@ledgerhq/errors";
-import type { Account } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "./types";
+
+import type { IconAccount, Transaction, TransactionStatus } from "./types";
 
 import { isSelfTransaction, isValidAddress } from "./logic";
-import { IconVoteRequired } from "../../errors";
+import { IconNotEnoughVotingPower, IconVoteRequired } from "../../errors";
 
 const getTransactionStatus = async (
-  a: Account,
+  a: IconAccount,
   t: Transaction
 ): Promise<TransactionStatus> => {
   const errors: any = {};
   const warnings: any = {};
   const useAllAmount = !!t.useAllAmount;
+  const {votingPower, totalDelegated, votes: validators}  = a.iconResources;
 
   if (!t.fees) {
     errors.fees = new FeeNotLoaded();
@@ -57,7 +58,7 @@ const getTransactionStatus = async (
     } else if (!isValidAddress(t.recipient)) {
       errors.recipient = new InvalidAddress();
     }
-  } else if (t.mode === 'freeze' || t.mode === 'unfreeze' ) {
+  } else if (t.mode === 'freeze' || t.mode === 'unfreeze') {
     if (amount.lte(0) && !t.useAllAmount) {
       errors.amount = new AmountRequired();
     }
@@ -67,6 +68,12 @@ const getTransactionStatus = async (
     if (t.votes?.length === 0) {
       errors.vote = new IconVoteRequired();
     }
+    const votesUsed = t.votes.reduce((sum, v) => sum + Number(v.value), 0);
+    const totalVotes = Number(totalDelegated.toString()) +  Number(votingPower.toString())
+    if (votesUsed > totalVotes) {
+      errors.vote = new IconNotEnoughVotingPower();
+    }
+
   }
 
 
