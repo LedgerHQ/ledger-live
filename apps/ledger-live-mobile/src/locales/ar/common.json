@@ -518,7 +518,7 @@
       "title" : "مبلغ التجميد لا يمكن أن يكون أصغر من 1"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "تحتاج أولاً إلى إرسال على الأقل 0.1 TRX إلى هذا العنوان لتمكين تلقي رمز TRC20.",
+      "title" : "إرسال TRC20 إلى الحساب الجديد لن يؤدي إلى تفعيله",
       "description" : "لتفعيله، قم بإرسال إما TRX أو TRC10 إلى الحساب أولاً. ثم يمكن بعدها أن يتلقى TRC20."
     },
     "TronUnexpectedFees" : {
@@ -785,26 +785,14 @@
     }
   },
   "location" : {
-    "titleServiceRequired" : "خدمات الموقع مطلوبة",
-    "titlePermissionRequired" : "Location permission required",
-    "titlePermissionRequiredPrecise" : "Precise location permission required",
-    "descriptionServiceRequired" : "Ledger Live يتطلب خدمات الموقع لإقران جهازك عبر خاصية البلوتوث.",
-    "descriptionPermissionRequired" : "Ledger Live requires the location permission to pair your device through Bluetooth.",
-    "descriptionPermissionRequiredPrecise" : "Ledger Live requires the precise location permission to pair your device through Bluetooth.",
+    "required" : "خدمات الموقع مطلوبة",
     "open" : "فتح إعدادات الموقع",
+    "disabled" : "Ledger Live يتطلب خدمات الموقع لإقران جهازك عبر خاصية البلوتوث.",
     "noInfos" : "Ledger لا تقوم بالوصول إلى معلومات موقعك."
   },
   "permissions" : {
     "open" : "فتح تصريحات التطبيق",
-    "authorize" : "Authorize",
-    "bluetooth" : {
-      "modalTitle" : "Permission required to pair your Ledger over Bluetooth",
-      "modalDescriptionBase" : "To pair your Ledger over Bluetooth, you must authorize Ledger Live to scan for nearby devices.",
-      "modalDescriptionSettingsVariant" : "To pair your Ledger over Bluetooth, you must authorize Ledger Live to scan for nearby devices in your phone’s settings.",
-      "modalButtonLabelBase" : "Authorize",
-      "modalButtonLabelSettingsVariant" : "انتقل إلى الإعدادات",
-      "dontPair" : "Don't pair"
-    }
+    "nearbyDevicesPermissionDenied" : "للإقران من خلال البلوتوث، اسمح لتطبيق Ledger Live بمسح الأجهزة القريبة."
   },
   "fees" : {
     "speed" : {
@@ -1902,9 +1890,6 @@
       "title" : "لا توجد أي عمليات بعد؟",
       "desc" : "ببساطة قم بإرسال الأصول المشفرة إلى عنوان التلقي الخاص بك وانتظر حتى يقوم التطبيق بالمزامنة."
     },
-    "carousel" : {
-      "title" : "من أجلك"
-    },
     "recommended" : {
       "title" : "موصى به"
     },
@@ -2353,8 +2338,8 @@
     "display" : {
       "title" : "عامة",
       "desc" : "تكوين إعدادات Ledger Live العامة.",
-      "carousel" : "التوصيات",
-      "carouselDesc" : "سنعرض لك بطاقات تضم نصائح مخصصة وأحدث عروضنا من أجلك فقط.",
+      "carousel" : "رؤية كشريط دوّار",
+      "carouselDesc" : "تمكين الرؤية كشريط دوّار في المحفظة الاستثمارية",
       "language" : "لغة العرض",
       "languageDesc" : "قم بتعيين اللغة المعروضة في Ledger Live.",
       "region" : "المنطقة",
@@ -2489,7 +2474,7 @@
         "title" : "تنبيهات الأسعار",
         "desc" : "قم بتعيين تنبيهات السعر لعملاتك المفضلة حتى لا تفوتك حركة السوق"
       },
-      "disclaimer" : "بياناتك وخصوصيتك مهمة بالنسبة لنا في Ledger. البيانات التي تُجمع لا تُشارَك أبداً مع شركائنا."
+      "disclaimer" : "خصوصية البيانات أمر بالغ الأهمية في Ledger. البيانات التي تُجمع لا تُشارَك أبداً مع شركائنا."
     },
     "help" : {
       "title" : "مساعدة",
@@ -2570,8 +2555,7 @@
       "featureFlagsTitle" : "علامات الميزة المحددة المستخدمة في Ledger Live",
       "featureFlagsDesc" : "القيم المُتجاوزَة سيتم إعادة تعيينها إذا أُعيد إطلاق التطبيق. سيتم قبول خيوط JSON الصالحة فقط.",
       "featureFlagsEdit" : "تعديل",
-      "featureFlagsRestore" : "استعادة",
-      "firebaseProject" : "Firebase project targeted by this build:"
+      "featureFlagsRestore" : "استعادة"
     }
   },
   "notifications" : {
@@ -3268,8 +3252,8 @@
       "gasPrice" : "سعر الغاز",
       "maxFee" : "الحد الأقصى للرسوم",
       "maxPriorityFee" : "الحد الأقصى لرسوم الأولوية",
-      "nextBlock" : "الكتلة التالية",
-      "suggested" : "المُقترح",
+      "nextBlock" : "الكتلة التالية: {{nextBaseFee}}",
+      "suggestedPriorityFee" : "المُقترح: {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees" : "الحد الأقصى للرسوم",
       "validateGasLimit" : "تأكيد حد الغاز",
       "fees" : "رسوم",
@@ -3549,10 +3533,7 @@
     },
     "confirmSwap" : {
       "title" : "تأكيد عملية المبادلة على الجهاز",
-      "alert" : {
-        "default" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. يتم تبادل العناوين بشكل آمن حتى لا تضطر إلى التحقق منهم.",
-        "cic" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. CIC قد تحتاج إلى إجراء تحقق إضافي لبعض المعاملات، مما يؤدي إلى تأخير."
-      },
+      "alert" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. يتم تبادل العناوين بشكل آمن حتى لا تضطر إلى التحقق منهم.",
       "acceptTerms" : "بتأكيد صحة هذه المعاملة، أنا أقبل\n<0><0>شروط استخدام</0> {{provider}}</0>",
       "notice" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. يتم تبادل العناوين بشكل آمن حتى لا تضطر إلى التحقق منهم."
     },
@@ -4693,9 +4674,6 @@
         "title" : "المرشحون",
         "description" : "تم انتخاب 127 فردًا من خلال التصويت من قِبل مجتمع حاملي رموز التوكن بأكمله. يتم أخذ عينات من الأصوات كل 6 ساعات."
       }
-    },
-    "receive" : {
-      "newAddressTRC20" : "تحتاج أولاً إلى إرسال على الأقل 0.1 TRX إلى هذا العنوان لتنشيطه."
     }
   },
   "stellar" : {
@@ -5401,8 +5379,7 @@
       "seeFewerNfts" : "رؤية NFT أقل"
     },
     "gallery" : {
-      "allNft" : "جميع NFT",
-      "addNew" : "اضف جديد"
+      "allNft" : "جميع NFT"
     },
     "viewer" : {
       "properties" : "الخصائص",
@@ -5419,7 +5396,6 @@
     "viewerModal" : {
       "viewOn" : "مشاهدة على",
       "viewInExplorer" : "عرض في المتصفح",
-      "hide" : "إخفاء مجموعة NFT",
       "txDetails" : "تفاصيل المعاملة"
     },
     "modalDisabled" : {
@@ -5460,8 +5436,7 @@
     "drawer" : {
       "title" : "اختر صورة",
       "options" : {
-        "uploadFromPhone" : "اختر من معرض الصور خاصتي",
-        "selectFromNFTGallery" : "اختر من معرض الرموز غير القابلة للاستبدال (NFT)"
+        "uploadFromPhone" : "قم بالتحميل من هاتفك"
       }
     },
     "cropImage" : "قُصّ الصورة",
@@ -5480,15 +5455,25 @@
       "choosePicture" : "اختر صورة"
     },
     "customImage" : "صورة مخصصة",
-    "doThisLater" : "ربّما في وقت لاحق",
-    "preview" : {
-      "title" : "معاينة",
-      "loading" : "جاري تحميل المعاينة",
-      "setPicture" : "تعيين صورة مخصصة",
-      "editPicture" : "تعديل الصورة"
+    "doThisLater" : "ربّما في وقت لاحق"
+  },
+  "claimNft" : {
+    "welcomePage" : {
+      "title" : "عنوان الحيز المخصص.",
+      "description" : {
+        "title" : "هذا هو عنوان قائمة العناصر:",
+        "1" : "هذا هو العنصر الأول في القائمة",
+        "2" : "هذا هو العنصر الثاني في القائمة",
+        "3" : "هذا هو العنصر الثالث في القائمة"
+      },
+      "claimButton" : "قم بالمطالبة برمزك غير القابل للاستبدال (NFT)",
+      "backButton" : "لقد طالبت برمزي غير القابل للاستبدال بالفعل"
     },
-    "nftGallery" : {
-      "title" : "رموزي غير القابلة للاستبدال"
+    "qrScan" : {
+      "title" : "امسح كود QR (placeholder text)",
+      "description" : {
+        "1" : "(placeholder text) ستجد بطاقتك الحصرية في صندوق جهازك Ledger.\n\nابدأ بتوجيه كود QR الموجود على ظهر البطاقة داخل الإطار. استخدم منطقة مُضاءة جيداً وخلفية فاتحة بسيطة."
+      }
     }
   },
   "postOnboarding" : {
@@ -5510,37 +5495,13 @@
         "description" : "عن طريق إضافة صورة",
         "popupLabel" : "تم تخصيص الجهاز",
         "hubTitleAfterAction" : "الشاشة تبدو أنيقة"
-      }
-    }
-  },
-  "wallet" : {
-    "tabs" : {
-      "crypto" : "الأصول المشفرة",
-      "nft" : "الرموز غير القابلة للاستبدال (NFTs)"
-    },
-    "nftGallery" : {
-      "empty" : {
-        "title" : "لا توجد رموز غير قابلة للاستبدال لعرضها، ومع ذلك",
-        "subtitle" : "ابدأ تلقي أول رمز غير قابل للاستبدال.",
-        "receive" : "تلقي الرموز غير القابلة للاستبدال",
-        "supportLink" : "كيف تحصل على رموز غير قابلة للاستبدال من محافظ أخرى؟"
       },
-      "receiveModal" : {
-        "title" : "تلقى رمز غير قابل للاستبدال بنفس الطريقة مثل أصل مشفر آخر",
-        "bullets" : {
-          "0" : "• اختر سلسلة كتل الأصول المشفرة للرمز غير القابل للاستبدال.",
-          "1" : "• اختر حساب ليتم تلقي الرمز غير القابل للاستبدال عليه"
-        },
-        "cta" : "حسناً، فهمت.",
-        "info" : "أرغب في تعلم المزيد"
-      },
-      "hideNftModal" : {
-        "title" : "إخفاء مجموعة NFT",
-        "desc" : "هذا الإجراء سيُخفي جميع الرموز غير القابلة للاستبدال من مجموعة {{collectionName}}، يمكنك إلغاء الإخفاء من إعدادات التطبيق",
-        "cta" : "إخفاء هذا الرمز غير القابل للاستبدال"
-      },
-      "media" : {
-        "tag" : "{{count}} رمز غير قابل للاستبدال"
+      "claimNft" : {
+        "title" : "قم بالمطالبة بالرمز غير القابل للاستبدال (placeholder text)",
+        "description" : "احصل على رمزك غير القابل للاستبدال (NFT) المجاني (placeholder text)",
+        "tagLabel" : "مجاني",
+        "popupLabel" : "تمت المطالبة بالرمز غير القابل للاستبدال",
+        "hubTitleAfterAction" : "تمت المطالبة بالرمز غير القابل للاستبدال. أبجد هوز"
       }
     }
   }
