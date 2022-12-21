@@ -82,17 +82,19 @@ describe("Unit tests for getAddress", () => {
 });
 
 describe("Transaction Output script", () => {
-  it("Test toOutputScript for btc, zcash and zen", () => {
-    const btcCrypto = new BTCCrypto({
-      network: coininfo.bitcoin.main.toBitcoinJS(),
-    });
-    const zecCrypto = new ZECCrypto({
-      network: coininfo.zcash.main.toBitcoinJS(),
-    });
-    const zenCrypto = new ZENCrypto({
-      network: coininfo.zcash.main.toBitcoinJS(),
-    });
+  const btcCrypto = new BTCCrypto({
+    network: coininfo.bitcoin.main.toBitcoinJS(),
+  });
 
+  const zecCrypto = new ZECCrypto({
+    network: coininfo.zcash.main.toBitcoinJS(),
+  });
+
+  const zenCrypto = new ZENCrypto({
+    network: coininfo.zcash.main.toBitcoinJS(),
+  });
+
+  it("Test toOutputScript for btc, zcash and zen", () => {
     expect(
       btcCrypto
         .toOutputScript("1F1tAaz5x1HUXrCNLbtMDqcw6o5GNn4xqX")
@@ -129,11 +131,8 @@ describe("Transaction Output script", () => {
   }, 30000);
 
   it("should work for OP_RETURN outputs", () => {
-    const btcCrypto = new BTCCrypto({
-      network: coininfo.bitcoin.main.toBitcoinJS(),
-    });
-
     const data = Buffer.from("charley loves heidi", "utf-8");
+
     const output = btcCrypto.toOpReturnOutputScript(data);
     const [opType, message] = script.decompile(output) as [number, Buffer];
 
@@ -143,5 +142,18 @@ describe("Transaction Output script", () => {
 
     expect(opType).toEqual(script.OPS.OP_RETURN);
     expect(message.toString()).toEqual("charley loves heidi");
+  });
+
+  it("Should throw error if OP_RETURN larger than 40 bytes", () => {
+    try {
+      const data = Buffer.alloc(41);
+      const output = btcCrypto.toOpReturnOutputScript(data);
+      expect(output).toBe(null);
+    } catch (err) {
+      const error = err as Error;
+      expect(error.message).toBe(
+        "OP_RETURN transactions cannot be larger than 40 bytes"
+      );
+    }
   });
 });
