@@ -13,7 +13,8 @@ export type InputInfo = Input & { txHex: string };
 export type OutputInfo = {
   script: Buffer;
   value: BigNumber;
-  address: string;
+  // address can be null if OUTPUT script is OP_RETURN
+  address: string | null;
   isChange: boolean;
 };
 

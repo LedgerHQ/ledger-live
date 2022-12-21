@@ -1,4 +1,5 @@
 import * as bech32 from "bech32";
+import { toOutputScript } from "bitcoinjs-lib/types/address";
 import { bech32m } from "../../bech32m";
 import * as utils from "../utils";
 import { Currency } from "../crypto/types";
@@ -311,7 +312,7 @@ describe("Unit tests for maxTxSize", () => {
     (inputCount, outputAddrs, useChange, derivationMode, exp) => {
       const s = utils.maxTxSizeCeil(
         inputCount,
-        outputAddrs,
+        outputAddrs.map((addr) => toOutputScript(addr)),
         useChange,
         btc,
         derivationMode

@@ -146,7 +146,7 @@ describe.skip("testing xpub legacy transactions", () => {
     expectedFee1 =
       utils.maxTxSizeCeil(
         inputs.length,
-        outputs.map((o) => o.address),
+        outputs.map((o) => o.script),
         false,
         crypto,
         DerivationModes.LEGACY
@@ -279,7 +279,7 @@ describe.skip("testing xpub legacy transactions", () => {
     expectedFee2 =
       utils.maxTxSizeCeil(
         inputs.length,
-        outputs.map((o) => o.address),
+        outputs.map((o) => o.script),
         false,
         crypto,
         DerivationModes.LEGACY

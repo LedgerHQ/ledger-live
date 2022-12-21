@@ -9,7 +9,7 @@ import bs58 from "bs58";
 import bech32 from "bech32";
 import BIP32 from "./bip32";
 
-const OP_RETURN_DATA_SIZE_LIMIT = 40; // bytes
+const OP_RETURN_DATA_SIZE_LIMIT = 80; // bytes
 
 export function fallbackValidateAddress(address: string): boolean {
   try {
@@ -186,6 +186,7 @@ class Base implements ICrypto {
   toOpReturnOutputScript(data: Buffer): Buffer {
     const script = bjs.payments.embed({ data: [data] });
     const output = script.output!;
+    // OP_RETURN data larger than 80 bytes are not relayed: https://wiki.bitcoinsv.io/index.php/History_of_OP_RETURN
     if (output.length > OP_RETURN_DATA_SIZE_LIMIT) {
       throw new Error("OP_RETURN transactions cannot be larger than 40 bytes");
     }

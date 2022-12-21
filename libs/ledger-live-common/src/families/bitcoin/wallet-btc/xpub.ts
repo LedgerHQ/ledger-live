@@ -217,8 +217,7 @@ class Xpub {
       const opReturnOutput: OutputInfo = {
         script: this.crypto.toOpReturnOutputScript(params.opReturnData),
         value: new BigNumber(0),
-        // should we have an address ?
-        address: params.destAddress,
+        address: null,
         isChange: false,
       };
 
@@ -271,7 +270,7 @@ class Xpub {
 
     const txSize = maxTxSizeCeil(
       unspentUtxoSelected.length,
-      outputs.map((o) => o.address),
+      outputs.map((o) => o.script),
       true,
       this.crypto,
       this.derivationMode
