@@ -32,7 +32,7 @@ const Item = ({ device, onPress }: Props) => {
       case DeviceModelId.nanoS:
       case DeviceModelId.nanoSP:
         return <Icons.NanoSFoldedMedium size={24} />;
-      case DeviceModelId.nanoFTS:
+      case DeviceModelId.stax:
         return <Icons.StaxRegular size={24} />;
       case DeviceModelId.nanoX:
       default:

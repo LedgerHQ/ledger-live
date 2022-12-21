@@ -10,8 +10,8 @@ import { Text, Flex, Button } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useSelector, useDispatch } from "react-redux";
-import { createAction } from "@ledgerhq/live-common/hw/actions/ftsFetchImage";
-import ftsFetchImage from "@ledgerhq/live-common/hw/ftsFetchImage";
+import { createAction } from "@ledgerhq/live-common/hw/actions/staxFetchImage";
+import staxFetchImage from "@ledgerhq/live-common/hw/staxFetchImage";
 import { customImageBackupSelector } from "../../../../reducers/settings";
 import { setCustomImageBackup } from "../../../../actions/settings";
 import NavigationScrollView from "../../../../components/NavigationScrollView";
@@ -19,12 +19,12 @@ import SelectDevice from "../../../../components/SelectDevice";
 import CustomImageDeviceAction from "../../../../components/CustomImageDeviceAction";
 import ResultDataTester from "../../../../components/CustomImage/ResultDataTester";
 import { ProcessorPreviewResult } from "../../../../components/CustomImage/ImageProcessor";
-import { targetDimensions } from "../../../CustomImage/shared";
+import { targetDisplayDimensions } from "../../../CustomImage/shared";
 import FramedImage, {
   transferConfig,
 } from "../../../../components/CustomImage/FramedImage";
 
-const deviceAction = createAction(ftsFetchImage);
+const deviceAction = createAction(staxFetchImage);
 
 export default function DebugFetchCustomImage() {
   const { colors } = useTheme();
@@ -154,7 +154,7 @@ export default function DebugFetchCustomImage() {
           <>
             <ResultDataTester
               hexData={hex as string}
-              {...targetDimensions}
+              {...targetDisplayDimensions}
               onPreviewResult={handleImageSourceLoaded}
               onError={() => console.error(error)}
             />

@@ -2,8 +2,9 @@ import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View, FlatList, SafeAreaView } from "react-native";
 import type {
+  CryptoCurrency,
   CryptoOrTokenCurrency,
-  Currency,
+  TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "@react-navigation/native";
@@ -43,7 +44,7 @@ export default function RequestAccountsSelectCrypto({
   const { currencies } = route.params;
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(currencies);
   const onPressCurrency = useCallback(
-    (currency: Currency) => {
+    (currency: CryptoCurrency | TokenCurrency) => {
       navigation.navigate(ScreenName.RequestAccountsSelectAccount, {
         ...route.params,
         currency,

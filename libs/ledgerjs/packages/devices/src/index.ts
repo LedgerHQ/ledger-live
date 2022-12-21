@@ -26,7 +26,7 @@ export enum DeviceModelId {
   nanoS = "nanoS",
   nanoSP = "nanoSP",
   nanoX = "nanoX",
-  nanoFTS = "nanoFTS",
+  stax = "stax",
 }
 
 const devices: { [key in DeviceModelId]: DeviceModel } = {
@@ -81,8 +81,8 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
       },
     ],
   },
-  [DeviceModelId.nanoFTS]: {
-    id: DeviceModelId.nanoFTS,
+  [DeviceModelId.stax]: {
+    id: DeviceModelId.stax,
     productName: "Ledger Stax",
     productIdMM: 0x60,
     legacyUsbProductId: 0x0006,
@@ -106,7 +106,7 @@ const productMap = {
   "Nano S": DeviceModelId.nanoS,
   "Nano S Plus": DeviceModelId.nanoSP,
   "Nano X": DeviceModelId.nanoX,
-  "Nano FTS": DeviceModelId.nanoFTS,
+  Stax: DeviceModelId.stax,
 };
 
 const devicesList: DeviceModel[] = Object.values(devices);

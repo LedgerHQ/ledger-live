@@ -25,7 +25,12 @@ const defaultFormatOptions = {
   // discrete mode will hide amounts
   discreet: false,
   joinFragmentsSeparator: "",
+  // Increase the significant digits. Ex: For a value of 1.121212 BTC, dynamicSignificantDigits of 4 => 1.121 / dynamicSignificantDigits of 6 => 1.12121
+  dynamicSignificantDigits: 6,
 };
+
+export type formatCurrencyUnitOptions = Partial<typeof defaultFormatOptions>;
+
 type FormatFragment =
   | {
       kind: "value";
@@ -47,7 +52,7 @@ type FormatFragmentTypes = "value" | "sign" | "code" | "separator";
 export function formatCurrencyUnitFragment(
   unit: Unit,
   value: BigNumber,
-  _options?: Partial<typeof defaultFormatOptions>
+  _options?: formatCurrencyUnitOptions
 ): FormatFragment[] {
   if (!BigNumber.isBigNumber(value)) {
     console.warn("formatCurrencyUnit called with value=", value);
@@ -82,6 +87,7 @@ export function formatCurrencyUnitFragment(
     useGrouping,
     subMagnitude,
     discreet,
+    dynamicSignificantDigits,
   } = { ...defaultFormatOptions, ...unit, ...options };
   const { magnitude, code } = unit;
   const floatValue = value.div(new BigNumber(10).pow(magnitude));
@@ -94,7 +100,8 @@ export function formatCurrencyUnitFragment(
         Math.max(
           0, // dynamic max number of digits based on the value itself. to only show significant part
           Math.min(
-            4 - Math.round(Math.log10(floatValueAbs.toNumber())),
+            dynamicSignificantDigits -
+              Math.ceil(Math.log10(floatValueAbs.toNumber())),
             magnitude + subMagnitude,
             8
           )
@@ -140,7 +147,7 @@ export function formatCurrencyUnitFragment(
 export function formatCurrencyUnit(
   unit: Unit,
   value: BigNumber,
-  options?: Partial<typeof defaultFormatOptions>
+  options?: formatCurrencyUnitOptions
 ): string {
   const joinFragmentsSeparator =
     (options && options.joinFragmentsSeparator) ||
