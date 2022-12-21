@@ -405,7 +405,7 @@ const SwapForm = () => {
   const targetCurrency = swapTransaction.swap.to.currency;
 
   // We check if a decentralized swap is available to conditionnaly render an Alert below.
-  // All Ethereum related currencies are considered available
+  // All Ethereum, Binance and Polygon related currencies are considered available
   const showDEXLinkBanners = useMemo(() => {
     // if we are showing DEX quotes, we don't want to show the link banners
     if (showDexQuotes) {
