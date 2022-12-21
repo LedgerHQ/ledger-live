@@ -11,7 +11,7 @@ import { SettingsActionTypes } from "../../../../actions/types";
 import { State } from "../../../../reducers/types";
 
 type Props = {
-  data: { [key: string]: unknown };
+  data: Partial<{ [key in keyof State]: unknown }>;
   depth: number;
 };
 
