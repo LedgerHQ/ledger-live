@@ -43,7 +43,6 @@ const getExchangeRates: GetExchangeRates = async (
   const tenPowMagnitude = new BigNumber(10).pow(unitFrom.magnitude);
   const apiAmount = new BigNumber(amountFrom).div(tenPowMagnitude);
 
-  const dexProviders = ["paraswap", "oneinch"];
   const decentralizedSwapAvailable = () => {
     const {
       fromAccount: sourceAccount,
@@ -168,22 +167,6 @@ const getExchangeRates: GetExchangeRates = async (
       };
     }
   });
-
-  dexProviders.filter((dexProvider) => {
-    if (!providerList.includes(dexProvider)) {
-      rates.push({
-        magnitudeAwareRate: undefined,
-        provider: dexProvider,
-        providerType: "DEX",
-        rate: undefined,
-        rateId: undefined,
-        toAmount: undefined,
-        tradeMethod: "float",
-        payoutNetworkFees: undefined,
-      });
-    }
-  });
-
   return rates;
 };
 
