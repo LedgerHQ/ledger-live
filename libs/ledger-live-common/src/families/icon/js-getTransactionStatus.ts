@@ -20,7 +20,7 @@ const getTransactionStatus = async (
   const errors: any = {};
   const warnings: any = {};
   const useAllAmount = !!t.useAllAmount;
-  const {votingPower, totalDelegated, votes: validators}  = a.iconResources;
+  const { votingPower, totalDelegated, unstake } = a.iconResources;
 
   if (!t.fees) {
     errors.fees = new FeeNotLoaded();
@@ -40,14 +40,15 @@ const getTransactionStatus = async (
     ? a.balance.minus(estimatedFees)
     : new BigNumber(t.amount);
 
-  if (t.mode === 'send') {
-
-    if (totalSpent.gt(a.balance)) {
-      errors.amount = new NotEnoughBalance();
-    }
-
+  if (t.mode === 'freeze' || t.mode === 'unfreeze' || t.mode === 'send') {
     if (amount.lte(0) && !t.useAllAmount) {
       errors.amount = new AmountRequired();
+    }
+  }
+
+  if (t.mode === 'send') {
+    if (totalSpent.gt(a.balance)) {
+      errors.amount = new NotEnoughBalance();
     }
 
     if (!t.recipient) {
@@ -57,9 +58,16 @@ const getTransactionStatus = async (
     } else if (!isValidAddress(t.recipient)) {
       errors.recipient = new InvalidAddress();
     }
-  } else if (t.mode === 'freeze' || t.mode === 'unfreeze') {
-    if (amount.lte(0) && !t.useAllAmount) {
-      errors.amount = new AmountRequired();
+  }
+
+  if (t.mode === 'freeze') {
+    if (totalSpent.gt(a.balance.plus(unstake))) {
+      errors.amount = new NotEnoughBalance();
+    }
+  }
+  if (t.mode === 'unfreeze') {
+    if (t.amount.gt(a.iconResources.votingPower)) {
+      errors.amount = new NotEnoughBalance();
     }
   }
 
@@ -68,11 +76,10 @@ const getTransactionStatus = async (
       errors.vote = new IconVoteRequired();
     }
     const votesUsed = t.votes.reduce((sum, v) => sum + Number(v.value), 0);
-    const totalVotes = Number(totalDelegated.toString()) +  Number(votingPower.toString())
+    const totalVotes = Number(totalDelegated.toString()) + Number(votingPower.toString());
     if (votesUsed > totalVotes) {
       errors.vote = new IconNotEnoughVotingPower();
     }
-
   }
 
 
