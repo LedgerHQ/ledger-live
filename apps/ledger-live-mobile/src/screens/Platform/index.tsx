@@ -43,7 +43,9 @@ const PlatformCatalog = ({ route }: NavigationProps) => {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const emptyObject: AppManifest[] = [];
   const { state } = useRemoteLiveAppContext();
-  const manifests = state?.value?.liveAppByIndex || emptyObject;
+  const manifests =
+    state?.value?.liveAppByIndex?.filter(manifest => !manifest.private) ||
+    emptyObject;
   // Disclaimer State
   const [disclaimerOpts, setDisclaimerOpts] = useState<DisclaimerOpts>(null);
   const [disclaimerOpened, setDisclaimerOpened] = useState<boolean>(false);
