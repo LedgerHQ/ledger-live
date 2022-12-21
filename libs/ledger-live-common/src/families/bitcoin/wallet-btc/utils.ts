@@ -120,6 +120,7 @@ export function maxTxSize(
   outputScripts.forEach((script) => {
     outputsWeight += outputSize(currency, script) * baseByte;
   });
+
   if (includeChange) {
     outputsWeight += outputWeight(derivationMode);
   }

@@ -127,6 +127,7 @@ export const bitcoinPickingStrategy = {
 };
 export type BitcoinPickingStrategy =
   typeof bitcoinPickingStrategy[keyof typeof bitcoinPickingStrategy];
+
 export type UtxoStrategy = {
   strategy: BitcoinPickingStrategy;
   excludeUTXOs: Array<{
@@ -134,29 +135,37 @@ export type UtxoStrategy = {
     outputIndex: number;
   }>;
 };
+
 export type Transaction = TransactionCommon & {
   family: "bitcoin";
   utxoStrategy: UtxoStrategy;
   rbf: boolean;
   feePerByte: BigNumber | null | undefined;
   networkInfo: NetworkInfo | null | undefined;
+  opReturnData?: Buffer;
 };
+
 export type TransactionRaw = TransactionCommonRaw & {
   family: "bitcoin";
   utxoStrategy: UtxoStrategy;
   rbf: boolean;
   feePerByte: string | null | undefined;
   networkInfo: NetworkInfoRaw | null | undefined;
+  opReturnData?: Buffer;
 };
+
 export type TransactionStatus = TransactionStatusCommon & {
   txInputs?: BitcoinInput[];
   txOutputs?: BitcoinOutput[];
 };
+
 export type TransactionStatusRaw = TransactionStatusCommonRaw & {
   txInputs?: BitcoinInputRaw[];
   txOutputs?: BitcoinOutputRaw[];
 };
+
 export type BitcoinAccount = Account & { bitcoinResources: BitcoinResources };
+
 export type BitcoinAccountRaw = AccountRaw & {
   bitcoinResources: BitcoinResourcesRaw;
 };

@@ -276,12 +276,12 @@ class Xpub {
       this.derivationMode
     );
 
-    const dustAmount = computeDustAmount(this.crypto, txSize);
+    const dustLimit = computeDustAmount(this.crypto, txSize);
 
     // Abandon the change output if change output amount is less than dust amount
     if (
       needChangeoutput &&
-      total.minus(params.amount).minus(fee).gt(dustAmount)
+      total.minus(params.amount).minus(fee).gt(dustLimit)
     ) {
       outputs.push({
         script: this.crypto.toOutputScript(params.changeAddress.address),
