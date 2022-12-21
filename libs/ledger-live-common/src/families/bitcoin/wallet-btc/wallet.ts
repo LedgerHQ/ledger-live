@@ -15,6 +15,7 @@ import { PickingStrategy } from "./pickingstrategies/types";
 import * as utils from "./utils";
 import cryptoFactory from "./crypto/factory";
 import { TX, Address } from "./storage/types";
+import { toOutputScript } from "bitcoinjs-lib/types/address";
 
 class BitcoinLikeWallet {
   explorerInstances: { [key: string]: IExplorer } = {};
@@ -149,7 +150,7 @@ class BitcoinLikeWallet {
       feePerByte *
       utils.maxTxSizeCeil(
         usableUtxoCount,
-        outputAddresses,
+        outputAddresses.map((addr) => toOutputScript(addr)),
         outputAddresses.length == 0,
         account.xpub.crypto,
         account.xpub.derivationMode
