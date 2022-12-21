@@ -21,7 +21,6 @@ import type {
   GetExchangeRates,
   AvailableProviderV3,
 } from "./types";
-import { getMainAccount } from "../../account";
 
 const getExchangeRates: GetExchangeRates = async (
   exchange: Exchange,
@@ -43,50 +42,18 @@ const getExchangeRates: GetExchangeRates = async (
   const tenPowMagnitude = new BigNumber(10).pow(unitFrom.magnitude);
   const apiAmount = new BigNumber(amountFrom).div(tenPowMagnitude);
 
-  const decentralizedSwapAvailable = () => {
-    const {
-      fromAccount: sourceAccount,
-      toAccount: targetAccount,
-      fromParentAccount: sourceParentAccount,
-      toParentAccount: targetParentAccount,
-    } = exchange;
-
-    if (sourceAccount && targetAccount) {
-      const sourceMainAccount = getMainAccount(
-        sourceAccount,
-        sourceParentAccount
-      );
-      const targetMainAccount = getMainAccount(
-        targetAccount,
-        targetParentAccount
-      );
-      const dexFamilyList = ["ethereum", "binance", "polygon"];
-      if (
-        dexFamilyList.includes(targetMainAccount.currency.family) &&
-        sourceMainAccount.currency.id === targetMainAccount.currency.id
-      ) {
-        return true;
-      }
-    }
-    return false;
-  };
-
   const providerList = providers
     .filter((provider) => {
-      const validDex = (name) => {
-        return (
-          includeDEX &&
-          decentralizedSwapAvailable() &&
-          getProviderConfig(name).type === "DEX"
-        );
-      };
-      const validCex = (pairs) => {
-        const index = pairs.findIndex(
+      const validDex = (provider: AvailableProviderV3) =>
+        includeDEX && getProviderConfig(provider.provider).type === "DEX";
+      const validCex = (provider: AvailableProviderV3) => {
+        if (getProviderConfig(provider.provider).type !== "CEX") return false;
+        const index = provider.pairs.findIndex(
           (pair) => pair.from === from && pair.to === to
         );
         return index > -1;
       };
-      return validDex(provider.provider) || validCex(provider.pairs);
+      return validDex(provider) || validCex(provider);
     })
     .map((item) => item.provider);
 

@@ -11,12 +11,13 @@ import {
   shouldShowKYCBanner,
   shouldShowLoginBanner,
 } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import React, { useCallback, useEffect, useState, useRef } from "react";
+import React, { useCallback, useEffect, useState, useRef, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { setSwapKYCStatus } from "~/renderer/actions/settings";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import {
   providersSelector,
   rateSelector,
@@ -48,6 +49,7 @@ import SwapFormSelectors from "./FormSelectors";
 import SwapFormSummary from "./FormSummary";
 import SwapFormRates from "./FormRates";
 import { DEX_PROVIDERS } from "~/renderer/screens/exchange/Swap2/Form/utils";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 const Wrapper: ThemedComponent<{}> = styled(Box).attrs({
   p: 20,
@@ -118,6 +120,8 @@ const SwapForm = () => {
     },
     [dispatch],
   );
+  const showDexQuotes: boolean | null = useFeature("swapShowDexQuotes");
+
   const swapTransaction = useSwapTransaction({
     accounts,
     setExchangeRate,
@@ -125,7 +129,7 @@ const SwapForm = () => {
     onNoRates: trackNoRates,
     ...locationState,
     providers: storedProviders,
-    includeDEX: true,
+    includeDEX: showDexQuotes,
   });
 
   const exchangeRatesState = swapTransaction.swap?.rates;
@@ -395,7 +399,32 @@ const SwapForm = () => {
 
   const sourceAccount = swapTransaction.swap.from.account;
   const sourceCurrency = swapTransaction.swap.from.currency;
+  const sourceParentAccount = swapTransaction.swap.from.parentAccount;
+  const targetAccount = swapTransaction.swap.to.account;
+  const targetParentAccount = swapTransaction.swap.to.parentAccount;
   const targetCurrency = swapTransaction.swap.to.currency;
+
+  // We check if a decentralized swap is available to conditionnaly render an Alert below.
+  // All Ethereum related currencies are considered available
+  const showDEXLinkBanners = useMemo(() => {
+    // if we are showing DEX quotes, we don't want to show the link banners
+    if (showDexQuotes) {
+      return false;
+    }
+
+    if (sourceAccount && targetAccount) {
+      const sourceMainAccount = getMainAccount(sourceAccount, sourceParentAccount);
+      const targetMainAccount = getMainAccount(targetAccount, targetParentAccount);
+
+      if (
+        targetMainAccount.currency.family === "ethereum" &&
+        sourceMainAccount.currency.id === targetMainAccount.currency.id
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }, [showDexQuotes, sourceAccount, sourceParentAccount, targetAccount, targetParentAccount]);
 
   useEffect(() => {
     if (!exchangeRate) {
@@ -512,6 +541,7 @@ const SwapForm = () => {
               provider={provider}
               refreshTime={refreshTime}
               countdown={!swapError && !idleState}
+              showDEXLinkBanners={showDEXLinkBanners}
             />
 
             {currentBanner === "LOGIN" ? (

@@ -21,7 +21,6 @@ import styled from "styled-components";
 import Tooltip from "~/renderer/components/Tooltip";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
 import { filterRates } from "./filterRates";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 type Props = {
   fromCurrency: $PropertyType<SwapSelectorStateType, "currency">,
@@ -57,7 +56,6 @@ export default function ProviderRate({
   refreshTime,
   countdown,
 }: Props) {
-  const showDexQuotes: boolean | null = useFeature("swapShowDexQuotes");
   const dispatch = useDispatch();
   const [filter, setFilter] = useState([]);
   const selectedRate = useSelector(rateSelector);
@@ -194,7 +192,7 @@ export default function ProviderRate({
             selectedRate &&
             selectedRate.provider === rate.provider &&
             selectedRate.tradeMethod === rate.tradeMethod;
-          return rate.providerType === "DEX" && (!showDexQuotes || rate.rate === undefined) ? (
+          return rate.providerType === "DEX" && rate.rate === undefined ? (
             <NoQuoteSwapRate
               filter={filter}
               key={rate.id}

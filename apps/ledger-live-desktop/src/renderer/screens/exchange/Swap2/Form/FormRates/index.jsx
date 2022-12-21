@@ -1,10 +1,11 @@
 // @flow
 import type { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import styled from "styled-components";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
 import SectionRate from "./SectionRate";
+import { BigNumber } from "bignumber.js";
 
 const Form: ThemedComponent<{}> = styled.section.attrs(({ ready }) => ({
   style: ready ? { opacity: 1, maxHeight: "100vh", overflow: "visible" } : {},
@@ -26,11 +27,49 @@ type SwapFormProvidersProps = {
   provider?: string,
   refreshTime: number,
   countdown: boolean,
+  showDEXLinkBanners: boolean,
 };
-const SwapFormProviders = ({ swap, provider, refreshTime, countdown }: SwapFormProvidersProps) => {
+const SwapFormProviders = ({
+  swap,
+  provider,
+  refreshTime,
+  countdown,
+  showDEXLinkBanners,
+}: SwapFormProvidersProps) => {
   const { currency: fromCurrency } = swap.from;
   const { currency: toCurrency } = swap.to;
   const ratesState = swap.rates;
+
+  const updatedRatesState = useMemo(() => {
+    if (showDEXLinkBanners && swap.rates?.value) {
+      return {
+        ...swap.rates,
+        value: swap.rates.value.concat(
+          {
+            magnitudeAwareRate: BigNumber(0),
+            provider: "oneinch",
+            providerType: "DEX",
+            rate: undefined,
+            rateId: undefined,
+            toAmount: BigNumber(0),
+            tradeMethod: "float",
+            payoutNetworkFees: undefined,
+          },
+          {
+            magnitudeAwareRate: BigNumber(0),
+            provider: "paraswap",
+            providerType: "DEX",
+            rate: undefined,
+            rateId: undefined,
+            toAmount: BigNumber(0),
+            tradeMethod: "float",
+            payoutNetworkFees: undefined,
+          },
+        ),
+      };
+    }
+    return swap.rates;
+  }, [swap.rates, showDEXLinkBanners]);
   const hasRates = ratesState?.value?.length > 0;
 
   const [hasFetchedRates, setHasFetchedRates] = useState(hasRates);
@@ -42,7 +81,7 @@ const SwapFormProviders = ({ swap, provider, refreshTime, countdown }: SwapFormP
         provider={provider}
         fromCurrency={fromCurrency}
         toCurrency={toCurrency}
-        ratesState={ratesState}
+        ratesState={updatedRatesState}
         refreshTime={refreshTime}
         countdown={countdown}
       />
