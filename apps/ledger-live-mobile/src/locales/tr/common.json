@@ -518,7 +518,7 @@
       "title" : "Dondurulacak tutar 1'den küçük olamaz"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "TRC20 token alımını etkinleştirmek için önce bu hesaba en az 0,1 TRX göndermeniz gerekir.",
+      "title" : "TRC20'yi yeni hesaba göndermek hesabı etkinleştirmez",
       "description" : "Hesabı etkinleştirmek için hesaba önce TRX veya TRC10 gönderin. Ardından TRC20 alabilirsiniz."
     },
     "TronUnexpectedFees" : {
@@ -785,26 +785,14 @@
     }
   },
   "location" : {
-    "titleServiceRequired" : "Konum hizmetleri gerekli",
-    "titlePermissionRequired" : "Konum izni gerekiyor",
-    "titlePermissionRequiredPrecise" : "Tam konum izni gerekiyor",
-    "descriptionServiceRequired" : "Ledger Live, cihazınızı Bluetooth üzerinden eşleştirmek için konum hizmetleri gerektirir.",
-    "descriptionPermissionRequired" : "Ledger Live'ın cihazınızı Bluetooth üzerinden eşleştirmesi için konum izni gerekiyor.",
-    "descriptionPermissionRequiredPrecise" : "Ledger Live'ın cihazınızı Bluetooth üzerinden eşleştirmesi için tam konum izni gerekiyor.",
+    "required" : "Konum hizmetleri gerekli",
     "open" : "Konum ayarlarını aç",
+    "disabled" : "Ledger Live, cihazınızı Bluetooth üzerinden eşleştirmek için konum hizmetleri gerektirir.",
     "noInfos" : "Ledger konum bilgilerinize erişmez."
   },
   "permissions" : {
     "open" : "Uygulama izinlerini aç",
-    "authorize" : "İzin ver",
-    "bluetooth" : {
-      "modalTitle" : "Ledger'ınızı Bluetooth üzerinden eşleştirmek için izin gerekiyor",
-      "modalDescriptionBase" : "Ledger'ınızı Bluetooth üzerinden eşleştirmek için, Ledger Live'ın yakındaki cihazları taramasına izin vermeniz gerekiyor.",
-      "modalDescriptionSettingsVariant" : "Ledger'ınızı Bluetooth üzerinden eşleştirmek için, telefonunuzun ayarlarından Ledger Live'ın yakındaki cihazları taramasına izin vermeniz gerekiyor.",
-      "modalButtonLabelBase" : "İzin ver",
-      "modalButtonLabelSettingsVariant" : "Ayarlara git",
-      "dontPair" : "Eşleştirme"
-    }
+    "nearbyDevicesPermissionDenied" : "Bluetooth ile eşleştirmek için Ledger Live uygulamasına yakındaki cihazları tarama yetkisi verin."
   },
   "fees" : {
     "speed" : {
@@ -1902,9 +1890,6 @@
       "title" : "Henüz işlem yok mu?",
       "desc" : "Kripto varlıklarını alıcı adresinize gönderin ve uygulamanın senkronize olmasını bekleyin."
     },
-    "carousel" : {
-      "title" : "Sizin için"
-    },
     "recommended" : {
       "title" : "Önerilen"
     },
@@ -2353,8 +2338,8 @@
     "display" : {
       "title" : "Genel",
       "desc" : "Ledger Live'ın genel ayarlarını yapılandırın.",
-      "carousel" : "Öneriler",
-      "carouselDesc" : "Sadece size özel tekliflerimizi ve kişiselleştirilmiş ipuçlarımızı içeren kartlar göstereceğiz.",
+      "carousel" : "Galeri görünürlüğü",
+      "carouselDesc" : "Portföy sayfasındaki afişin görünürlüğünü etkinleştirin",
       "language" : "Görüntüleme dili",
       "languageDesc" : "Ledger Live'ın görüntüleneceği dili ayarlayın.",
       "region" : "Bölge",
@@ -2467,7 +2452,7 @@
       },
       "allowed" : {
         "title" : "Bildirimlere izin ver",
-        "desc" : "Kripto varlıklarınız, piyasa trendleri ve daha pek çok konuda bildirimler alın"
+        "desc" : "Kriptolarınız, piyasa eğilimleri ve diğer şeylerle ilgili bildirim alın"
       },
       "transactions" : {
         "title" : "İşlemler",
@@ -2489,7 +2474,7 @@
         "title" : "Fiyat Uyarıları",
         "desc" : "En çok tercih ettiğiniz coin'ler için fiyat uyarıları belirleyerek piyasa hareketlerini kaçırmayın"
       },
-      "disclaimer" : "Verilerinizin gizliliği, Ledger'da her şeyden önce gelir. Toplanan veriler iş ortaklarımızla asla paylaşılmaz."
+      "disclaimer" : "Ledger'da veri gizliliği her şeyden önce gelir. Toplanan veriler iş ortaklarımızla asla paylaşılmaz."
     },
     "help" : {
       "title" : "Yardım",
@@ -2570,8 +2555,7 @@
       "featureFlagsTitle" : "Ledger Live'da kullanılan tanımlı özellik bayrakları",
       "featureFlagsDesc" : "Uygulama yeniden başlatılırsa geçersiz bırakılan değerler sıfırlanacaktır. Sadece geçerli JSON dizeleri kabul edilecektir.",
       "featureFlagsEdit" : "Düzenle",
-      "featureFlagsRestore" : "Geri yükle",
-      "firebaseProject" : "Bu sürüm tarafından hedeflenen Firebase projesi:"
+      "featureFlagsRestore" : "Geri yükle"
     }
   },
   "notifications" : {
@@ -3268,8 +3252,8 @@
       "gasPrice" : "Gas ücreti",
       "maxFee" : "Ücret üst limiti",
       "maxPriorityFee" : "Öncelik ücreti üst limiti",
-      "nextBlock" : "Sonraki blok",
-      "suggested" : "Önerilen",
+      "nextBlock" : "Sonraki blok: {{nextBaseFee}}",
+      "suggestedPriorityFee" : "Önerilen: {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees" : "Maksimum ücret",
       "validateGasLimit" : "Gas limitini onayla",
       "fees" : "Ücretler",
@@ -3549,10 +3533,7 @@
     },
     "confirmSwap" : {
       "title" : "Takas işlemini cihazdan onaylayın",
-      "alert" : {
-        "default" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız.",
-        "cic" : "Göndermeden önce cihazınızdaki Takas bilgilerini doğrulayın. Bazı işlemler için CIC tarafından ek doğrulama adımları gerekebilir ve bu biraz gecikmeye neden olabilir."
-      },
+      "alert" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız.",
       "acceptTerms" : "Bu işlemi onaylayarak,\n<0><0>{{provider}}</0> Kullanım Koşullarını</0> kabul ediyorum.",
       "notice" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız."
     },
@@ -4693,9 +4674,6 @@
         "title" : "Adaylar",
         "description" : "Token sahibi topluluğun tamamı tarafından yapılan oylama sonucunda 127 kişi seçilir. Oylar her 6 saatte bir sayılır."
       }
-    },
-    "receive" : {
-      "newAddressTRC20" : "Önce bu hesaba en az 0,1 TRX göndererek hesabı etkinleştirmelisiniz."
     }
   },
   "stellar" : {
@@ -5401,8 +5379,7 @@
       "seeFewerNfts" : "Daha az NFT gör"
     },
     "gallery" : {
-      "allNft" : "Tüm NFT'ler",
-      "addNew" : "Yeni ekle"
+      "allNft" : "Tüm NFT'ler"
     },
     "viewer" : {
       "properties" : "Özellikler",
@@ -5419,7 +5396,6 @@
     "viewerModal" : {
       "viewOn" : "Burada görüntüle:",
       "viewInExplorer" : "Tarayıcıda görüntüle",
-      "hide" : "NFT koleksiyonunu gizleyin",
       "txDetails" : "İşlem bilgileri"
     },
     "modalDisabled" : {
@@ -5460,8 +5436,7 @@
     "drawer" : {
       "title" : "Bir görüntü seçin",
       "options" : {
-        "uploadFromPhone" : "Resim galerimden seç",
-        "selectFromNFTGallery" : "NFT galerisinden seç"
+        "uploadFromPhone" : "Telefonumdan yükle"
       }
     },
     "cropImage" : "Görüntüyü kırp",
@@ -5480,15 +5455,25 @@
       "choosePicture" : "Bir resim seçin"
     },
     "customImage" : "Özel resim",
-    "doThisLater" : "Belki sonra",
-    "preview" : {
-      "title" : "Ön izleme",
-      "loading" : "Ön izleme yükleniyor",
-      "setPicture" : "Özel resmi ayarla",
-      "editPicture" : "Resmi düzenle"
+    "doThisLater" : "Belki sonra"
+  },
+  "claimNft" : {
+    "welcomePage" : {
+      "title" : "Placeholder title.",
+      "description" : {
+        "title" : "Maddeler listesinin başlığı:",
+        "1" : "Listedeki ilk madde",
+        "2" : "Listedeki ikinci madde",
+        "3" : "Listedeki üçüncü madde"
+      },
+      "claimButton" : "NFT’nizi Alın",
+      "backButton" : "NFT’mi zaten aldım"
     },
-    "nftGallery" : {
-      "title" : "NFT'lerim"
+    "qrScan" : {
+      "title" : "QR kodunu tarayın (placeholder text)",
+      "description" : {
+        "1" : "(placeholder text) Özel kartınızı Ledger cihazınızın kutusunda bulacaksınız.\n\nKartın arkasındaki QR kodunu çerçevenin içine oturtarak işleme başlayın. Kartı aydınlık bir ortamda, açık renkli ve sade bir arka plan üzerinde tutun."
+      }
     }
   },
   "postOnboarding" : {
@@ -5510,37 +5495,13 @@
         "description" : "Görüntü ekleyerek",
         "popupLabel" : "Cihaz kişiselleştirildi",
         "hubTitleAfterAction" : "Ekran şık görünüyor"
-      }
-    }
-  },
-  "wallet" : {
-    "tabs" : {
-      "crypto" : "Kripto",
-      "nft" : "NFT'ler"
-    },
-    "nftGallery" : {
-      "empty" : {
-        "title" : "Gösterilecek NFT yok",
-        "subtitle" : "Başlangıç olarak ilk NFT'nizi alın.",
-        "receive" : "NFT al",
-        "supportLink" : "Diğer cüzdanlardaki NFT'ler nasıl alınır?"
       },
-      "receiveModal" : {
-        "title" : "Bir NFT'yi kriptoları aldığınız gibi alırsınız",
-        "bullets" : {
-          "0" : "• NFT'nin kripto blok zincirini seçin.",
-          "1" : "• NFT'nin geleceği hesabı seçin"
-        },
-        "cta" : "Tamam, anladım",
-        "info" : "Daha fazla bilgi istiyorum"
-      },
-      "hideNftModal" : {
-        "title" : "NFT koleksiyonunu gizleyin",
-        "desc" : "Bu eylem {{collectionName}} koleksiyonundaki tüm NFT'leri gizleyecektir. Onları uygulama ayarlarından tekrar görünür yapabilirsiniz",
-        "cta" : "Bu NFT'yi gizle"
-      },
-      "media" : {
-        "tag" : "{{count}} NFT"
+      "claimNft" : {
+        "title" : "NFT'nizi alın (placeholder text)",
+        "description" : "Ücretsiz NFT'nizi alın (placeholder text)",
+        "tagLabel" : "Ücretsiz",
+        "popupLabel" : "NFT alındı",
+        "hubTitleAfterAction" : "NFT alındı. Lorem ipsum"
       }
     }
   }
