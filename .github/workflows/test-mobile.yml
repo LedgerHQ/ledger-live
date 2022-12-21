@@ -54,25 +54,21 @@ jobs:
         run: pnpm lint --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" -- --format="json" -o="lint.json"
       - name: Run code checkers
         run: pnpm typecheck --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
-      - name: ls and git
-        run: |
-          git status
-          ls ./apps/ledger-live-mobile
-      - uses: actions/upload-artifact@v3
-        name: "uploads LINTER results"
-        with:
-          name: lint
-          path: ${{ github.workspace }}/apps/ledger-live-mobile/lint.json
+      # - uses: actions/upload-artifact@v3
+      #   name: "uploads LINTER results"
+      #   with:
+      #     name: lint
+      #     path: ${{ github.workspace }}/apps/ledger-live-mobile/lint.json
 
   report:
     needs: codecheck
     if: always() && !cancelled() && github.event_name == 'workflow_dispatch' && github.event.inputs.sha != ''
     runs-on: ubuntu-latest
     steps:
-      - name: "download linter results"
-        uses: actions/download-artifact@v3
-        with:
-          name: lint
+      # - name: "download linter results"
+      #   uses: actions/download-artifact@v3
+      #   with:
+      #     name: lint
       - name: generate token
         id: generate-token
         uses: tibdex/github-app-token@v1
