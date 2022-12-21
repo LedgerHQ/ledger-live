@@ -7,7 +7,6 @@ import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { useCompleteActionCallback } from "../../logic/postOnboarding/useCompleteAction";
 import { NavigatorName, ScreenName } from "../../const";
 import Animation from "../../components/Animation";
-import { Linking } from "react-native";
 
 const animation = {
   infinityPass: require("../../animations/infinityPassCentered.json"),

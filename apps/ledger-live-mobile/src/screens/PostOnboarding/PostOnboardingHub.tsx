@@ -72,12 +72,13 @@ const PostOnboardingHub = ({ navigation, route }: NavigationProps) => {
     /**
      * Complete claim NFT action if the route param completed is true
      * */
-    () =>
+    () => {
       route &&
-      route.params &&
-      route.params.completed &&
-      route.params.completed === "true" &&
-      completePostOnboardingAction(PostOnboardingActionId.claimNft),
+        route.params &&
+        route.params.completed &&
+        route.params.completed === "true" &&
+        completePostOnboardingAction(PostOnboardingActionId.claimNft);
+    },
     [clearLastActionCompleted, completePostOnboardingAction, route],
   );
 

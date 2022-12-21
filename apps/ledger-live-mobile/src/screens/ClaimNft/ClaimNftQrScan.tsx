@@ -12,6 +12,7 @@ import {
   useRoute,
   useNavigation,
 } from "@react-navigation/native";
+import { useNavigateToPostOnboardingHubCallback } from "../../logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
 import { urls } from "../../config/urls";
 import FallbackCameraScreen from "../screens/ImportAccounts/FallBackCameraScreen";
 
@@ -58,6 +59,8 @@ const WrappedSvg = () => (
 const ClaimNftQrScan = () => {
   const { t } = useTranslation();
   const [permission, requestPermission] = Camera.useCameraPermissions();
+  const navigateToHub = useNavigateToPostOnboardingHubCallback();
+
   const isInFocus = useIsFocused();
   const cameraRef = useRef<Camera>(null);
   const route = useRoute();
@@ -88,6 +91,14 @@ const ClaimNftQrScan = () => {
       }
     });
   });
+
+  useEffect(() => {
+    const redirectionTimeout = setTimeout(() => navigateToHub(), 120000);
+
+    return () => {
+      clearTimeout(redirectionTimeout);
+    };
+  }, [navigateToHub]);
 
   const handleBarCodeScanned = useCallback(({ data }) => {
     try {
