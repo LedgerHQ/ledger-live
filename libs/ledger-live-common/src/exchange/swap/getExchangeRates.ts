@@ -78,7 +78,7 @@ const getExchangeRates: GetExchangeRates = async (
         return (
           includeDEX &&
           decentralizedSwapAvailable() &&
-          dexProviders.includes(name)
+          getProviderConfig(name).type === "DEX"
         );
       };
       const validCex = (pairs) => {
