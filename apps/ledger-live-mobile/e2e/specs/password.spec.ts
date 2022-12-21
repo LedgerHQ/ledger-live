@@ -45,8 +45,7 @@ describe("Password Lock Screen", () => {
 
   it("should not require the password if the user exits the app for less than the lock timeout", async () => {
     await device.sendToHome(); // leave LLM app and go to phone's home screen
-    await delay(1000); // the timeout on prod is 1 minute. With mock mode enabled, it is 5 seconds
-    await device.launchApp();
+    await device.launchApp(); // launch app within the lock timeout (60 secs on prod, 5 secs with MOCK=1)
     await expect(generalSettingsPage.getPreferredCurrency()).toBeVisible();
   });
 
