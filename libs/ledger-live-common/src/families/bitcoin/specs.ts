@@ -277,6 +277,40 @@ const bitcoinLikeMutations = ({
     },
   },
   {
+    name: "send OP_RETURN transaction",
+    maxRun: 1,
+    transaction: ({ account, bridge, siblings, maxSpendable }) => {
+      invariant(maxSpendable.gt(minimalAmount), "balance is too low");
+      const sibling = pickSiblings(siblings, targetAccountSize);
+      const { bitcoinResources } = account as BitcoinAccount;
+      invariant(bitcoinResources, "bitcoin resources");
+
+      const transaction: Transaction = {
+        ...bridge.createTransaction(account),
+        feePerByte: new BigNumber(0.0001),
+        opReturnData: Buffer.from("charley loves heidi", "utf-8"),
+      };
+
+      return {
+        transaction,
+        updates: [
+          {
+            recipient: recipientVariation(sibling.freshAddress),
+            amount: minimalAmount,
+          },
+          {
+            utxoStrategy: {
+              ...transaction.utxoStrategy,
+            },
+          },
+        ],
+        destination: sibling,
+      };
+    },
+    recoverBadTransactionStatus,
+    testDestination,
+  },
+  {
     name: "send max",
     maxRun: 1,
     transaction: ({ account, siblings, bridge, maxSpendable }) => {
