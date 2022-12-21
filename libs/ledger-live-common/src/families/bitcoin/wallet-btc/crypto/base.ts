@@ -9,6 +9,8 @@ import bs58 from "bs58";
 import bech32 from "bech32";
 import BIP32 from "./bip32";
 
+const OP_RETURN_DATA_SIZE_LIMIT = 40; // bytes
+
 export function fallbackValidateAddress(address: string): boolean {
   try {
     bjs.address.fromBase58Check(address);
@@ -183,7 +185,12 @@ class Base implements ICrypto {
 
   toOpReturnOutputScript(data: Buffer): Buffer {
     const script = bjs.payments.embed({ data: [data] });
-    return script.output!;
+    const output = script.output!;
+    if (output.length > OP_RETURN_DATA_SIZE_LIMIT) {
+      throw new Error("OP_RETURN transactions cannot be larger than 40 bytes");
+    }
+
+    return output;
   }
 
   validateAddress(address: string): boolean {
