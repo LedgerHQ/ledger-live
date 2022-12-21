@@ -85,6 +85,8 @@ export const urls = {
     "https://support.ledger.com/hc/en-us/sections/4404369637521-Crypto-assets?docs=true",
   cosmosStaking:
     "https://www.ledger.com/staking-cosmos?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=cosmos",
+  cardanoStaking:
+    "https://www.ledger.com",
   cosmosStakingRewards:
     "https://support.ledger.com/hc/en-us/articles/360014339340-Earn-Cosmos-staking-rewards?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=cosmos",
   algorandStaking:
