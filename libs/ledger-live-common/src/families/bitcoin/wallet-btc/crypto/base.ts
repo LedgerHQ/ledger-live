@@ -9,7 +9,7 @@ import bs58 from "bs58";
 import bech32 from "bech32";
 import BIP32 from "./bip32";
 
-const OP_RETURN_DATA_SIZE_LIMIT = 80; // bytes
+export const OP_RETURN_DATA_SIZE_LIMIT = 80; // bytes
 
 export function fallbackValidateAddress(address: string): boolean {
   try {

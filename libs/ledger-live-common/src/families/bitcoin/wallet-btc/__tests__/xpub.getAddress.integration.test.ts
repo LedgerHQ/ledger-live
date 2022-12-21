@@ -8,6 +8,7 @@ import BCHCrypto from "../crypto/bitcoincash";
 import BTCCrypto from "../crypto/bitcoin";
 import ZECCrypto from "../crypto/zec";
 import ZENCrypto from "../crypto/zen";
+import { OP_RETURN_DATA_SIZE_LIMIT } from "../crypto/base";
 
 describe("Unit tests for getAddress", () => {
   it("Test getAddress for bch and btc", async () => {
@@ -146,7 +147,7 @@ describe("Transaction Output script", () => {
 
   it("Should throw error if OP_RETURN larger than 40 bytes", () => {
     try {
-      const data = Buffer.alloc(41);
+      const data = Buffer.alloc(OP_RETURN_DATA_SIZE_LIMIT + 1);
       const output = btcCrypto.toOpReturnOutputScript(data);
       expect(output).toBe(null);
     } catch (err) {
