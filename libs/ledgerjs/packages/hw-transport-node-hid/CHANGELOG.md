@@ -1,5 +1,14 @@
 # @ledgerhq/hw-transport-node-hid
 
+## 6.27.9-protect.1
+
+### Patch Changes
+
+- Updated dependencies [[`1f65abb76f`](https://github.com/LedgerHQ/ledger-live/commit/1f65abb76f1a36b428b5c33dd3ad6c58b4d96aa2)]:
+  - @ledgerhq/devices@7.0.6-protect.1
+  - @ledgerhq/hw-transport@6.27.9-protect.1
+  - @ledgerhq/hw-transport-node-hid-noevents@6.27.9-protect.1
+
 ## 6.27.9-protect.0
 
 ### Patch Changes

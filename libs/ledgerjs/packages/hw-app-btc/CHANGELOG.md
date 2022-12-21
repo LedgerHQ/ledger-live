@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-btc
 
+## 9.1.1-protect.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.27.9-protect.1
+
 ## 9.1.1-protect.0
 
 ### Patch Changes

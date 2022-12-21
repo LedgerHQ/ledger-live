@@ -1,5 +1,40 @@
 # live-mobile
 
+## 3.13.0-protect.1
+
+### Minor Changes
+
+- [#2037](https://github.com/LedgerHQ/ledger-live/pull/2037) [`3574c62cb3`](https://github.com/LedgerHQ/ledger-live/commit/3574c62cb3fd61b29b6794b1c5b40b2836a671f7) Thanks [@nparigi-ledger](https://github.com/nparigi-ledger)! - use new parameter from formatCurrencyUnit, dynamicSignificantDigits, in all related display value components/utils. Increased this value for the display of the account crypto value in Account page so more digits are shown.
+
+* [#1900](https://github.com/LedgerHQ/ledger-live/pull/1900) [`f4b14e0fcc`](https://github.com/LedgerHQ/ledger-live/commit/f4b14e0fccccfebaebb4782b75783b34e12710e4) Thanks [@Justkant](https://github.com/Justkant)! - feat(wallet-api): device.transport LLD & LLM integration [LIVE-4293]
+
+- [#1900](https://github.com/LedgerHQ/ledger-live/pull/1900) [`fc444a8a17`](https://github.com/LedgerHQ/ledger-live/commit/fc444a8a172edf1a8bf8bea5c481ab33f70b7e6f) Thanks [@Justkant](https://github.com/Justkant)! - feat(wallet-api): LLM server implementation [LIVE-4394]
+
+### Patch Changes
+
+- [#2149](https://github.com/LedgerHQ/ledger-live/pull/2149) [`184f2fd00d`](https://github.com/LedgerHQ/ledger-live/commit/184f2fd00d98d6ab8a6b94ac16ef7b20651a55e4) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Reworked the debug menu and inner tools
+
+* [#2071](https://github.com/LedgerHQ/ledger-live/pull/2071) [`cc3c591bdc`](https://github.com/LedgerHQ/ledger-live/commit/cc3c591bdcb31df5882210fa43928603c2bcb200) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - fix ratings modal close behavior
+
+- [#2157](https://github.com/LedgerHQ/ledger-live/pull/2157) [`55685e3fb7`](https://github.com/LedgerHQ/ledger-live/commit/55685e3fb77db9bde9b4c52f6f093cb32632ce44) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Prevent crash with reference to nanoFTS in app data
+
+* [#2144](https://github.com/LedgerHQ/ledger-live/pull/2144) [`f6dc733dd4`](https://github.com/LedgerHQ/ledger-live/commit/f6dc733dd447856c7ff6dff2eeaceadd992a0efb) Thanks [@juan-cortes](https://github.com/juan-cortes)! - LLM - rename nano fts to stax
+
+- [#2156](https://github.com/LedgerHQ/ledger-live/pull/2156) [`a078503879`](https://github.com/LedgerHQ/ledger-live/commit/a078503879b9c948439340c7cb6502d5b24e0460) Thanks [@juan-cortes](https://github.com/juan-cortes)! - 670pixel instead of 672 for custom lockscreen images
+
+* [#2153](https://github.com/LedgerHQ/ledger-live/pull/2153) [`de5a9ddc2b`](https://github.com/LedgerHQ/ledger-live/commit/de5a9ddc2b1ba20a2fc3db4bfc9058c1f9050efb) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - Pre-release LLM for protect
+
+* Updated dependencies [[`fc37600223`](https://github.com/LedgerHQ/ledger-live/commit/fc3760022341a90b51e4d836f38657ffef74040b), [`7025af53de`](https://github.com/LedgerHQ/ledger-live/commit/7025af53dec8b4ec06cbf57e93515af2bca58645), [`f9b6ff9d5a`](https://github.com/LedgerHQ/ledger-live/commit/f9b6ff9d5a61cd052855260fe94ac48ce54d41e8), [`57e7afeff1`](https://github.com/LedgerHQ/ledger-live/commit/57e7afeff1035a89caa696449c6d62cf482fac72), [`1f65abb76f`](https://github.com/LedgerHQ/ledger-live/commit/1f65abb76f1a36b428b5c33dd3ad6c58b4d96aa2), [`f4b14e0fcc`](https://github.com/LedgerHQ/ledger-live/commit/f4b14e0fccccfebaebb4782b75783b34e12710e4), [`184f2fd00d`](https://github.com/LedgerHQ/ledger-live/commit/184f2fd00d98d6ab8a6b94ac16ef7b20651a55e4), [`fc444a8a17`](https://github.com/LedgerHQ/ledger-live/commit/fc444a8a172edf1a8bf8bea5c481ab33f70b7e6f), [`3574c62cb3`](https://github.com/LedgerHQ/ledger-live/commit/3574c62cb3fd61b29b6794b1c5b40b2836a671f7), [`cc3c591bdc`](https://github.com/LedgerHQ/ledger-live/commit/cc3c591bdcb31df5882210fa43928603c2bcb200), [`bcd7c9fd5b`](https://github.com/LedgerHQ/ledger-live/commit/bcd7c9fd5b2a1e2d1b661df6a2004fc201ae99bf), [`9a9c5d700c`](https://github.com/LedgerHQ/ledger-live/commit/9a9c5d700cb0231facd1d29df7024cd9bca5da9d), [`22f514abe1`](https://github.com/LedgerHQ/ledger-live/commit/22f514abe1def1c385262a4cd7519d922b633f10)]:
+  - @ledgerhq/live-common@27.10.0-protect.1
+  - @ledgerhq/devices@7.0.6-protect.1
+  - @ledgerhq/types-devices@6.22.4-protect.1
+  - @ledgerhq/native-ui@0.14.0-protect.1
+  - @ledgerhq/hw-transport@6.27.9-protect.1
+  - @ledgerhq/react-native-hid@6.28.11-protect.1
+  - @ledgerhq/react-native-hw-transport-ble@6.28.0-protect.1
+  - @ledgerhq/types-live@6.28.0-protect.0
+  - @ledgerhq/hw-transport-http@6.27.9-protect.1
+
 ## 3.13.0-protect.0
 
 ### Minor Changes

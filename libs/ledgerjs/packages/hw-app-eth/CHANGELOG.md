@@ -1,5 +1,13 @@
 # @ledgerhq/hw-app-eth
 
+## 6.30.3-protect.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.27.9-protect.1
+  - @ledgerhq/hw-transport-mocker@6.27.9-protect.1
+
 ## 6.30.3-protect.0
 
 ### Patch Changes

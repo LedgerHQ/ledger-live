@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-near
 
+## 6.27.4-protect.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.27.9-protect.1
+
 ## 6.27.4-protect.0
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-tezos
 
+## 6.27.9-protect.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.27.9-protect.1
+
 ## 6.27.9-protect.0
 
 ### Patch Changes

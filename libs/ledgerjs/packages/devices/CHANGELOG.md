@@ -1,5 +1,11 @@
 # @ledgerhq/devices
 
+## 7.0.6-protect.1
+
+### Patch Changes
+
+- [#2144](https://github.com/LedgerHQ/ledger-live/pull/2144) [`1f65abb76f`](https://github.com/LedgerHQ/ledger-live/commit/1f65abb76f1a36b428b5c33dd3ad6c58b4d96aa2) Thanks [@juan-cortes](https://github.com/juan-cortes)! - libs - rename nano fts to stax
+
 ## 7.0.6-protect.0
 
 ### Patch Changes
