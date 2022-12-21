@@ -210,6 +210,7 @@ jobs:
         with:
           os: macos
           turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
+
   report:
     needs:
       [
@@ -310,11 +311,11 @@ jobs:
             const isFailed = statuses.some(e => e === "failure");
             let summary = `### TypeCheck
             ${typecheck.pass ? "Typechecks are fine" : "Unfortunately typechecks did not pass"}
-              - ${typecheck.pass ? "✅" : "❌  "} **Type checks** ended with status \`${typecheck.status}\`
+              - ${typecheck.pass ? "✅" : "❌"} **Type checks** ended with status \`${typecheck.status}\`
 
             ### Unit Tests (Jest)
             ${unitTests.pass ? "Unit tests are fine" : "Unit tests did not pass"}
-              - ${unitTests.pass ? "✅" : "❌  "} **Unit tests** ended with status \`${unitTests.status}\`
+              - ${unitTests.pass ? "✅" : "❌"} **Unit tests** ended with status \`${unitTests.status}\`
 
             ### Screenshot Tests (Playwright)
             `
@@ -322,7 +323,7 @@ jobs:
               summary +=`
               - ${values.pass
                   ? `✅ Live Desktop Tests on ${keys[os].name} ended with status \`${values.status}\``
-                  : `❌  Live Desktop Tests on ${keys[os].name} ended with status \`${values.status}\``
+                  : `❌ Live Desktop Tests on ${keys[os].name} ended with status \`${values.status}\``
                 }`
             });
             summary += `
@@ -343,42 +344,6 @@ jobs:
         with:
           name: summary.json
           path: ${{ github.workspace }}/summary.json
-
-      # - uses: actions/github-script@v6
-      #   name: update checks
-      #   with:
-      #     github-token: ${{ steps.generate-token.outputs.token }}
-      #     script: |
-      #       const status = ${{ steps.status.outputs.result }};
-      #       const title = status.isFailed ? "🔴 Failed" : status.isCancelled ? "♾ Cancelled" : "✅ Success";
-      #       const actions = status.isFailed ? [{
-      #         label: "regen screenshots",
-      #         identifier: "regen_screenshots",
-      #         description: "Regenerate screenshot for Live Desktop"
-      #       }] : [];
-      #       const previous = await github.rest.checks.update({
-      #         owner: context.repo.owner,
-      #         repo: context.repo.repo,
-      #         head_sha: "${{ github.event.inputs.sha }}",
-      #         check_run_id: "${{ github.event.inputs.check_run_id }}",
-      #       });
-      #       await github.rest.checks.update({
-      #         owner: context.repo.owner,
-      #         repo: context.repo.repo,
-      #         name: previous.data.name,
-      #         details_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }}`,
-      #         head_sha: "${{ github.event.inputs.sha }}",
-      #         check_run_id: "${{ github.event.inputs.check_run_id }}",
-      #         conclusion: status.isFailed ? 'failure' : status.isCancelled ? 'cancelled' : 'success',
-      #         completed_at: new Date().toISOString(),
-      #         output: {
-      #           title,
-      #           summary: `${status.summary}
-      #       ---
-      #       [⚙️ Summary](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }})`
-      #         },
-      #         actions
-      #       });
 
   allure-report:
     name: "Allure Reports Export on Server"
