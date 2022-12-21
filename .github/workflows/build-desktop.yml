@@ -181,112 +181,112 @@ jobs:
         with:
           name: ${{ steps.build-desktop.outputs.version }}-mac.dmg
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-mac.dmg
-  # report:
-  #   needs:
-  #     [
-  #       build-desktop-app-linux,
-  #       build-desktop-app-macos,
-  #       build-desktop-app-windows,
-  #     ]
-  #   runs-on: ubuntu-latest
-  #   if: always() && github.event_name == 'workflow_dispatch' && github.event.inputs.check_run_id != '' && github.event.inputs.sha != ''
-  #   steps:
-  #     - name: generate token
-  #       id: generate-token
-  #       uses: tibdex/github-app-token@v1
-  #       with:
-  #         app_id: ${{ secrets.GH_BOT_APP_ID }}
-  #         private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-  #     - uses: actions/github-script@v6
-  #       name: get statuses of runs
-  #       id: status
-  #       with:
-  #         script: |
-  #           const fs = require("fs");
-  #           const statuses = [
-  #             "${{ needs.build-desktop-app-macos.result }}",
-  #             "${{ needs.build-desktop-app-linux.result }}",
-  #             "${{ needs.build-desktop-app-windows.result }}",
-  #           ];
-  #           const keys = {
-  #             mac: {
-  #               symbol: "🍏",
-  #               name: "macOS"
-  #             },
-  #             windows: {
-  #               symbol: "🪟",
-  #               name: "Windows"
-  #             },
-  #             linux: {
-  #               symbol: "🐧",
-  #               name: "Linux"
-  #             },
-  #           };
-  #           const report = {
-  #             mac: {
-  #               pass: ${{ needs.build-desktop-app-macos.result == 'success' }},
-  #               status: "${{ needs.build-desktop-app-macos.result }}",
-  #             },
-  #             linux: {
-  #               pass: ${{ needs.build-desktop-app-linux.result == 'success' }},
-  #               status: "${{ needs.build-desktop-app-linux.result }}",
-  #             },
-  #             windows: {
-  #               pass: ${{ needs.build-desktop-app-windows.result == 'success' }},
-  #               status: "${{ needs.build-desktop-app-windows.result }}",
-  #             },
-  #           };
-  #           const isFailed = statuses.some(e => e === "failure");
-  #           const isCancelled = statuses.some(e => e === "cancelled");
-  #           let summary = ``
-  #           Object.entries(report).map(([os, values]) => {
-  #             summary += `### ${keys[os].symbol} ${keys[os].name}
-  #           The build for ${keys[os].name} ${values.pass ? 'did' : 'did not'} completely successfully.
-  #           The run ended with conclusion => **${values.status}**
-  #           `
-  #           });
-  #           const data = {
-  #             isFailed,
-  #             isCancelled,
-  #             summary,
-  #           }
-  #           fs.writeFileSync("output.json", JSON.stringify(data), "utf-8");
-  #     - uses: actions/upload-artifact@v3
-  #       name: upload output
-  #       with:
-  #         path: ${{ github.workspace }}/output.json
-  #         name: output.json
-  # - uses: actions/github-script@v6
-  #   with:
-  #     github-token: ${{ steps.generate-token.outputs.token }}
-  #     script: |
-  #       const status = ${{ steps.status.outputs.result }};
-  #       const title = status.isFailed ? "🔴 Failed" : status.isCancelled ? "♾ Cancelled" : "💚 Success";
-  #       const actions = status.isFailed ? [{
-  #         label: "Rerun job",
-  #         identifier: "rerun_job",
-  #         description: "relaunch failed jobs"
-  #       }] : [];
-  #       const previous = await github.rest.checks.update({
-  #         owner: context.repo.owner,
-  #         repo: context.repo.repo,
-  #         head_sha: "${{ github.event.inputs.sha }}",
-  #         check_run_id: "${{ github.event.inputs.check_run_id }}",
-  #       });
-  #       await github.rest.checks.update({
-  #         owner: context.repo.owner,
-  #         repo: context.repo.repo,
-  #         name: previous.data.name,
-  #         details_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }}`,
-  #         head_sha: "${{ github.event.inputs.sha }}",
-  #         check_run_id: "${{ github.event.inputs.check_run_id }}",
-  #         completed_at: new Date().toISOString(),
-  #         conclusion: status.isFailed ? 'failure' : status.isCancelled ? 'cancelled' : 'success',
-  #         output: {
-  #           title,
-  #           summary: `${status.summary}
-  #       ---
-  #       [⚙️ Summary](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }})`
-  #         },
-  #         actions
-  #       });
+  report:
+    needs:
+      [
+        build-desktop-app-linux,
+        build-desktop-app-macos,
+        build-desktop-app-windows,
+      ]
+    runs-on: ubuntu-latest
+    if: always() && github.event_name == 'workflow_dispatch' && github.event.inputs.check_run_id != '' && github.event.inputs.sha != ''
+    steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      - uses: actions/github-script@v6
+        name: get statuses of runs
+        id: status
+        with:
+          script: |
+            const fs = require("fs");
+            const statuses = [
+              "${{ needs.build-desktop-app-macos.result }}",
+              "${{ needs.build-desktop-app-linux.result }}",
+              "${{ needs.build-desktop-app-windows.result }}",
+            ];
+            const keys = {
+              mac: {
+                symbol: "🍏",
+                name: "macOS"
+              },
+              windows: {
+                symbol: "🪟",
+                name: "Windows"
+              },
+              linux: {
+                symbol: "🐧",
+                name: "Linux"
+              },
+            };
+            const report = {
+              mac: {
+                pass: ${{ needs.build-desktop-app-macos.result == 'success' }},
+                status: "${{ needs.build-desktop-app-macos.result }}",
+              },
+              linux: {
+                pass: ${{ needs.build-desktop-app-linux.result == 'success' }},
+                status: "${{ needs.build-desktop-app-linux.result }}",
+              },
+              windows: {
+                pass: ${{ needs.build-desktop-app-windows.result == 'success' }},
+                status: "${{ needs.build-desktop-app-windows.result }}",
+              },
+            };
+            const isFailed = statuses.some(e => e === "failure");
+            const isCancelled = statuses.some(e => e === "cancelled");
+            let summary = ``
+            Object.entries(report).map(([os, values]) => {
+              summary += `### ${keys[os].symbol} ${keys[os].name}
+            The build for ${keys[os].name} ${values.pass ? 'did' : 'did not'} completely successfully.
+            The run ended with conclusion => **${values.status}**
+            `
+            });
+            const data = {
+              isFailed,
+              isCancelled,
+              summary,
+            }
+            fs.writeFileSync("summary.json", JSON.stringify(data), "utf-8");
+      - uses: actions/upload-artifact@v3
+        name: upload output
+        with:
+          path: ${{ github.workspace }}/summary.json
+          name: summary.json
+      # - uses: actions/github-script@v6
+      #   with:
+      #     github-token: ${{ steps.generate-token.outputs.token }}
+      #     script: |
+      #       const status = ${{ steps.status.outputs.result }};
+      #       const title = status.isFailed ? "🔴 Failed" : status.isCancelled ? "♾ Cancelled" : "💚 Success";
+      #       const actions = status.isFailed ? [{
+      #         label: "Rerun job",
+      #         identifier: "rerun_job",
+      #         description: "relaunch failed jobs"
+      #       }] : [];
+      #       const previous = await github.rest.checks.update({
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         head_sha: "${{ github.event.inputs.sha }}",
+      #         check_run_id: "${{ github.event.inputs.check_run_id }}",
+      #       });
+      #       await github.rest.checks.update({
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         name: previous.data.name,
+      #         details_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }}`,
+      #         head_sha: "${{ github.event.inputs.sha }}",
+      #         check_run_id: "${{ github.event.inputs.check_run_id }}",
+      #         completed_at: new Date().toISOString(),
+      #         conclusion: status.isFailed ? 'failure' : status.isCancelled ? 'cancelled' : 'success',
+      #         output: {
+      #           title,
+      #           summary: `${status.summary}
+      #       ---
+      #       [⚙️ Summary](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }})`
+      #         },
+      #         actions
+      #       });
