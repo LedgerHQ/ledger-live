@@ -1,5 +1,5 @@
 import { device, expect } from "detox";
-import PortfolioPage from "../models/portfolioPage";
+import PortfolioPage from "../models/wallet/portfolioPage";
 import SettingsPage from "../models/settings/settingsPage";
 import GeneralSettingsPage from "../models/settings/generalSettingsPage";
 import PasswordEntryPage from "../models/passwordEntryPage";
@@ -45,7 +45,7 @@ describe("Password Lock Screen", () => {
 
   it("should puts app in background and wait 1 minute and 1 second", async () => {
     await device.sendToHome(); // leave LLM app and go to phone's home screen
-    await delay(60001); // password takes 60 seconds of app inactivity to activate
+    await delay(61000); // password takes 60 seconds of app inactivity to activate
   });
 
   it("should move the app to foreground", async () => {
