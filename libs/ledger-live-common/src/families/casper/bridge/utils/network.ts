@@ -181,7 +181,7 @@ export const fetchBlockHeight = async (): Promise<NNetworkStatusResponse> => {
 
 export const fetchTxs = async (addr: string): Promise<LTxnHistoryData[]> => {
   const response = await live<LTxnHistoryData>(
-    `/accounts/${addr}/extended-deploys`
+    `/accounts/${addr}/ledgerlive-deploys`
   );
   return response; // TODO Validate if the response fits this interface
 };

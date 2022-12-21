@@ -150,7 +150,7 @@ const getTransactionStatus = async (
     }
   }
 
-  if (amount.lt(MINIMUM_VALID_AMOUNT))
+  if (amount.lt(MINIMUM_VALID_AMOUNT) && !errors.amount)
     errors.amount = new InvalidMinimumAmount();
 
   // log("debug", "[getTransactionStatus] finish fn");
@@ -174,20 +174,7 @@ const estimateMaxSpendable = async ({
   transaction?: Transaction | null | undefined;
 }): Promise<BigNumber> => {
   const a = getMainAccount(account, parentAccount);
-  const { address } = getAddress(a);
-
-  const recipient = transaction?.recipient;
-
-  if (!validateAddress(address).isValid) throw new InvalidAddress();
-  if (recipient && !validateAddress(recipient).isValid)
-    throw new InvalidAddress();
-
-  const { purseUref } = await getAccountStateInfo(address);
-  if (!purseUref) return new BigNumber(0);
-
-  const balances = await fetchBalances(purseUref);
-
-  let balance = new BigNumber(balances.balance_value);
+  let balance = a.balance
 
   if (balance.eq(0)) return balance;
 
