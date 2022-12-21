@@ -98,7 +98,8 @@ const AmountField = ({
   const bridge = getAccountBridge(account, parentAccount);
 
   const defaultUnit = getAccountUnit(account);
-  const { spendableBalance } = account;
+  const { spendableBalance, iconResources } = account;
+  const totalSpendableBalance = spendableBalance.plus(iconResources.unstake)
 
   const [ratio, setRatio] = useState();
 
@@ -125,19 +126,19 @@ const AmountField = ({
 
   const amountAvailable = useMemo(
     () =>
-      formatCurrencyUnit(defaultUnit, getDecimalPart(spendableBalance, defaultUnit.magnitude), {
+      formatCurrencyUnit(defaultUnit, getDecimalPart(totalSpendableBalance, defaultUnit.magnitude), {
         disableRounding: true,
         showAllDigits: false,
         showCode: true,
         locale,
       }),
-    [spendableBalance, defaultUnit, locale],
+    [totalSpendableBalance, defaultUnit, locale, spendableBalance],
   );
 
   /** show amount ratio buttons only if we can ratio the available assets to 25% or less */
   const showAmountRatio = useMemo(
-    () => spendableBalance.gt(BigNumber(4 * 10 ** defaultUnit.magnitude)),
-    [spendableBalance, defaultUnit],
+    () => totalSpendableBalance.gt(BigNumber(4 * 10 ** defaultUnit.magnitude)),
+    [spendableBalance, defaultUnit, totalSpendableBalance],
   );
 
   const amountButtons = useMemo(
@@ -146,23 +147,23 @@ const AmountField = ({
         ? [
             {
               label: "25%",
-              value: spendableBalance.multipliedBy(0.25),
+              value: totalSpendableBalance.multipliedBy(0.25),
             },
             {
               label: "50%",
-              value: spendableBalance.multipliedBy(0.5),
+              value: totalSpendableBalance.multipliedBy(0.5),
             },
             {
               label: "75%",
-              value: spendableBalance.multipliedBy(0.75),
+              value: totalSpendableBalance.multipliedBy(0.75),
             },
             {
               label: "100%",
-              value: spendableBalance,
+              value: totalSpendableBalance,
             },
           ]
         : [],
-    [showAmountRatio, spendableBalance],
+    [showAmountRatio, spendableBalance, totalSpendableBalance],
   );
 
   if (!status) return null;
