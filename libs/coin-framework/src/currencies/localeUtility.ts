@@ -5,7 +5,7 @@ const options = {
 };
 const localeNotAvailable = (1.2).toLocaleString("en", options) !== "$1.20";
 
-const getFallback = (locale) =>
+const getFallback = (locale: string) =>
   staticFallback[Object.keys(staticFallback).includes(locale) ? locale : "en"];
 
 const staticFallback: Record<string, [string, string]> = {
@@ -17,8 +17,8 @@ const staticFallback: Record<string, [string, string]> = {
   ru: ["-1,00 $", "10 000,2"],
   zh: ["-US$1.00", "10,000.2"],
 };
-export const prefixFormat = ["sign", "code", "value"];
-export const suffixFormat = ["sign", "value", "separator", "code"];
+export const prefixFormat = ["sign", "code", "value"] as const;
+export const suffixFormat = ["sign", "value", "separator", "code"] as const;
 // returns decimal and thousands separator
 // FIXME: rename thousands to group
 export type GetSeparators = (locale: string) => {

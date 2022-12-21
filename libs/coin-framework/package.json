@@ -34,7 +34,7 @@
     "bignumber.js": "^9.1.0",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
-    "lru-cache": "5.1.1",
+    "lru-cache": "^7.14.1",
     "minimatch": "^5.1.0",
     "numeral": "^2.0.6",
     "rxjs": "^6.6.7",
@@ -42,7 +42,10 @@
     "utility-types": "^3.10.0"
   },
   "devDependencies": {
+    "@types/invariant": "^2.2.2",
     "@types/jest": "^29.2.4",
+    "@types/lodash": "^4.14.191",
+    "@types/numeral": "^2.0.2",
     "@typescript-eslint/eslint-plugin": "^5.46.1",
     "@typescript-eslint/parser": "^5.46.1",
     "eslint": "^8.30.0",

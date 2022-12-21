@@ -26,6 +26,9 @@ const defaultFormatOptions = {
   discreet: false,
   joinFragmentsSeparator: "",
 };
+
+export type formatCurrencyUnitOptions = Partial<typeof defaultFormatOptions>;
+
 type FormatFragment =
   | {
       kind: "value";
@@ -47,7 +50,7 @@ type FormatFragmentTypes = "value" | "sign" | "code" | "separator";
 export function formatCurrencyUnitFragment(
   unit: Unit,
   value: BigNumber,
-  _options?: Partial<typeof defaultFormatOptions>
+  _options?: formatCurrencyUnitOptions
 ): FormatFragment[] {
   if (!BigNumber.isBigNumber(value)) {
     console.warn("formatCurrencyUnit called with value=", value);
@@ -64,12 +67,17 @@ export function formatCurrencyUnitFragment(
     return [];
   }
 
-  const options = {};
+  const options: Record<string, formatCurrencyUnitOptions[keyof formatCurrencyUnitOptions]> = {};
 
-  for (const k in _options) {
-    // sanitize the undefined value
-    if (_options[k] !== undefined) {
-      options[k] = _options[k];
+  if (_options) {
+
+    let k: keyof formatCurrencyUnitOptions;
+    for (k in _options) {
+      // sanitize the undefined value
+      const value = _options[k]
+      if (value !== undefined) {
+          options[k] = value;
+      }
     }
   }
 

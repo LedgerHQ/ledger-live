@@ -5,7 +5,7 @@ import { $ElementType } from "utility-types";
 type EnvDef<V> = {
   desc: string;
   def: V;
-  parser: (arg0: unknown) => V | null | undefined;
+  parser: (arg: unknown) => V | null | undefined;
 };
 // type ExtractEnvValue = <V>(arg0: EnvDef<V>) => V;
 type EnvDefs = typeof envDefinitions;
@@ -51,7 +51,7 @@ const stringArrayParser = (v: any): string[] | null | undefined => {
   if (Array.isArray(v_array) && v_array.length > 0) return v_array;
 };
 
-const envDefinitions = {
+const envDefinitions: Record<string, EnvDef<boolean | string | number | string[] | unknown>> = {
   ANALYTICS_CONSOLE: {
     def: false,
     parser: boolParser,

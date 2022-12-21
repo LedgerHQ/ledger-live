@@ -43,9 +43,9 @@ export const sortAccountsComparatorFromOrder = (
       });
   }
 
-  const cvCaches = {};
+  const cvCaches: Record<string, BigNumber> = {};
 
-  const lazyCalcCV = (a) => {
+  const lazyCalcCV = (a: AccountLike) => {
     if (a.id in cvCaches) return cvCaches[a.id];
     const v =
       calculateCountervalue(getAccountCurrency(a), a.balance) ||

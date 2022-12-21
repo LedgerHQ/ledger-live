@@ -33,7 +33,7 @@ export const addPendingOperation = (account: Account, operation: Operation) => {
   const { subOperations } = operation;
   const { subAccounts } = account;
 
-  function addInSubAccount(subaccounts, op) {
+  function addInSubAccount(subaccounts: SubAccount[], op: Operation) {
     const acc = subaccounts.find((sub) => sub.id === op.accountId);
 
     if (acc) {

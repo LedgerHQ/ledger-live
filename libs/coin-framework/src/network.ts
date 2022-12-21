@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosResponse, Method } from "axios";
 import type { AxiosError, AxiosRequestConfig } from "axios";
 import { log } from "@ledgerhq/logs";
 import { NetworkDown, LedgerAPI5xx, LedgerAPI4xx } from "@ledgerhq/errors";
@@ -94,7 +94,7 @@ axios.interceptors.request.use(requestInterceptor);
 
 axios.interceptors.response.use(responseInterceptor, errorInterceptor);
 
-const makeError = (msg, status, url, method) => {
+const makeError = (msg: string, status: number, url: string | undefined, method: Method | "") => {
   const obj = {
     status,
     url,

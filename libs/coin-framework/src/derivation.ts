@@ -372,7 +372,7 @@ export const runAccountDerivationScheme = (
     address: "_",
     node: "_",
   }).replace(/[_/]+$/, "");
-const disableBIP44 = {
+const disableBIP44: Record<string, boolean> = {
   aeternity: true,
   tezos: true,
   // current workaround, device app does not seem to support bip44
@@ -384,7 +384,13 @@ const disableBIP44 = {
   cardano_testnet: true,
   near: true,
 };
-const seedIdentifierPath = {
+type SeedInfo = {
+  purpose: number;
+  coinType: number;
+}
+type SeedPathFn = (info: SeedInfo) => string;
+
+const seedIdentifierPath: Record<string, SeedPathFn> = {
   neo: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   filecoin: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   solana: ({ purpose, coinType }) => `${purpose}'/${coinType}'`,

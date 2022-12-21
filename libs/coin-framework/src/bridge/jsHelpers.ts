@@ -1,6 +1,6 @@
 import isEqual from "lodash/isEqual";
 import { BigNumber } from "bignumber.js";
-import { Observable, from } from "rxjs";
+import { Observable, Observer, from } from "rxjs";
 import { log } from "@ledgerhq/logs";
 import { WrongDeviceForAccount } from "@ledgerhq/errors";
 import Transport from "@ledgerhq/hw-transport";
@@ -35,9 +35,9 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   Account,
   AccountBridge,
+  Address,
   CurrencyBridge,
   Operation,
-  ProtoNFT,
   ScanAccountEvent,
   SyncConfig,
 } from "@ledgerhq/types-live";
@@ -53,7 +53,7 @@ export type IterateResult = ({
 }: {
   transport: Transport;
   index: number;
-  derivationsCache: Record<string, unknown>;
+  derivationsCache: Record<string, Result>;
   derivationScheme: string;
   derivationMode: DerivationMode;
   currency: CryptoCurrency;
@@ -87,7 +87,7 @@ export type GetAccountShape = (
 export type AccountUpdater = (account: Account) => Account;
 
 // compare that two dates are roughly the same date in order to update the case it would have drastically changed
-const sameDate = (a, b) => Math.abs(a - b) < 1000 * 60 * 30;
+const sameDate = (a: Date, b: Date) => Math.abs(a.getTime() - b.getTime()) < 1000 * 60 * 30;
 
 // an operation is relatively immutable, however we saw that sometimes it can temporarily change due to reorg,..
 export const sameOp = (a: Operation, b: Operation): boolean =>
@@ -109,7 +109,7 @@ Operation[] {
   // there is new fetched
   if (newFetched.length === 0) return existing;
   // efficient lookup map of id.
-  const existingIds = {};
+  const existingIds: Record<string, Operation> = {};
 
   for (const o of existing) {
     existingIds[o.id] = o;
@@ -121,7 +121,7 @@ Operation[] {
     .sort((a, b) => b.date.valueOf() - a.date.valueOf());
 
   // Deduplicate new ops to guarantee operations don't have dups
-  const newOpsIds = {};
+  const newOpsIds: Record<string, Operation> = {};
   newOps.forEach((op) => {
     newOpsIds[op.id] = op;
   });
@@ -159,7 +159,7 @@ export const makeSync =
     shouldMergeOps?: boolean;
   }): AccountBridge<any>["sync"] =>
   (initial, syncConfig): Observable<AccountUpdater> =>
-    Observable.create((o) => {
+    Observable.create((o: Observer<(acc: Account) => Account>) => {
       async function main() {
         const accountId = encodeAccountId({
           type: "js",
@@ -247,6 +247,13 @@ const defaultIterateResultBuilder = (getAddressFn: Resolver) => () =>
     derivationScheme,
     derivationMode,
     currency,
+  }: {
+    transport: Transport,
+    index: number | string,
+    derivationsCache: Record<string, Result>,
+    derivationScheme: string,
+    derivationMode: DerivationMode,
+    currency: CryptoCurrency,
   }): Promise<Result | null> => {
     const freshAddressPath = runDerivationScheme(derivationScheme, currency, {
       account: index,
@@ -275,23 +282,23 @@ export const makeScanAccounts =
     getAddressFn: Resolver;
     buildIterateResult?: IterateResultBuilder;
   }): CurrencyBridge["scanAccounts"] =>
-  ({ currency, deviceId, syncConfig }): Observable<ScanAccountEvent> =>
+  ({ currency, deviceId, syncConfig }: { currency: CryptoCurrency; deviceId: string; syncConfig: SyncConfig }): Observable<ScanAccountEvent> =>
   deviceCommunication(deviceId)((transport) =>
-      Observable.create((o) => {
+      Observable.create((o: Observer<{ type: "discovered"; account: Account }>) => {
         let finished = false;
 
         const unsubscribe = () => {
           finished = true;
         };
 
-        const derivationsCache = {};
+        const derivationsCache: Record<string, Result> = {};
 
         async function stepAccount(
-          index,
+          index: number,
           res: Result,
-          derivationMode,
-          seedIdentifier,
-          transport
+          derivationMode: DerivationMode,
+          seedIdentifier: string,
+          transport: Transport
         ): Promise<Account | null | undefined> {
           if (finished) return;
 
@@ -355,7 +362,7 @@ export const makeScanAccounts =
             blockHeight: 0,
             balanceHistoryCache: emptyHistoryCache,
           };
-          const account = { ...initialAccount, ...accountShape };
+          const account: Account = { ...initialAccount, ...accountShape };
 
           if (account.balanceHistoryCache === emptyHistoryCache) {
             account.balanceHistoryCache =
@@ -557,7 +564,7 @@ export function makeAccountBridgeReceive(
   }
 ) => Observable<AccountAddress> {
   return (account, { verify, deviceId, freshAddressIndex }) => {
-    let freshAddress;
+    let freshAddress: Address | undefined;
 
     if (freshAddressIndex !== undefined && freshAddressIndex !== null) {
       freshAddress = account.freshAddresses[freshAddressIndex];

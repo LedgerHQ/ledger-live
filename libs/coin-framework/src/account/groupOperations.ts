@@ -7,7 +7,7 @@ import type {
   Operation,
 } from "@ledgerhq/types-live";
 
-function startOfDay(t) {
+function startOfDay(t: Date) {
   return new Date(t.getFullYear(), t.getMonth(), t.getDate());
 }
 
@@ -21,7 +21,7 @@ type GroupOpsByDayOpts = {
   filterOperation?: (arg0: Operation, arg1: AccountLike) => boolean;
 };
 
-const hasStableOperation = (account, hash) =>
+const hasStableOperation = (account: AccountLike, hash: string) =>
   account.operations.some((op) => op.hash === hash);
 
 /**

@@ -1,4 +1,5 @@
 import LRU from "lru-cache";
+
 export type CacheRes<A extends Array<any>, T> = {
   (...args: A): Promise<T>;
   force: (...args: A) => Promise<T>;
@@ -9,7 +10,7 @@ export type CacheRes<A extends Array<any>, T> = {
 export const makeLRUCache = <A extends Array<any>, T>(
   f: (...args: A) => Promise<T>,
   keyExtractor: (...args: A) => string = () => "",
-  lruOpts: Record<string, any> = {
+  lruOpts: LRU.Options<string, any> = {
     max: 100,
     maxAge: 5 * 60 * 1000,
   }

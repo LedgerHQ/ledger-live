@@ -83,7 +83,7 @@ function getExperimentalSupports() {
   return getEnv("EXPERIMENTAL_CURRENCIES")
     .split(",")
     .filter(
-      (id) =>
+      (id: string) =>
         hasCryptoCurrencyId(id) &&
         !userSupportedCurrencies.find((c) => c.id === id)
     )

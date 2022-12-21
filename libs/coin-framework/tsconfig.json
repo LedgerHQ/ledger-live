@@ -4,8 +4,6 @@
     "declarationMap": true,
     "sourceMap": true,
     "strict": true,
-    "noImplicitAny": false,
-    "noImplicitThis": false,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -14,8 +12,8 @@
     "downlevelIteration": true,
     "resolveJsonModule": true,
     "lib": [
-      "DOM",
-      "ES2017"
+      "es2020",
+      "dom"
     ],
     "outDir": "lib"
   },

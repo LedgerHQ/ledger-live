@@ -16,7 +16,7 @@ export function retry<A>(
     ...options,
   };
 
-  function rec(remainingTry, i) {
+  function rec(remainingTry: number, i: number): Promise<A> {
     const result = f();
 
     if (remainingTry <= 0) {
@@ -42,7 +42,7 @@ export const atomicQueue = <R, A extends Array<any>>(
   job: Job<R, A>,
   queueIdentifier: (...args: A) => string = () => ""
 ): Job<R, A> => {
-  const queues = {};
+  const queues: Record<string, any> = {};
   return (...args) => {
     const id = queueIdentifier(...args);
     const queue = queues[id] || Promise.resolve();

@@ -26,7 +26,7 @@ export function encodeURIScheme(data: Data): string {
   return currency.scheme + ":" + address + (queryStr ? "?" + queryStr : "");
 }
 
-const convertedValue = (value, currency: CryptoCurrency) => {
+const convertedValue = (value: any, currency: CryptoCurrency) => {
   const float = new BigNumber(value);
 
   if (!float.isNaN() && float.gt(0)) {

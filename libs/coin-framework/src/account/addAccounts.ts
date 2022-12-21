@@ -47,7 +47,7 @@ export function groupAddAccounts(
   const importableAccounts: Account[] = [];
   const creatableAccounts: Account[] = [];
   const migrateAccounts: Account[] = [];
-  let alreadyEmptyAccount;
+  let alreadyEmptyAccount: Account | null = null;
   const scannedAccountsWithoutMigrate = [...scannedAccounts];
   existingAccounts.forEach((existingAccount) => {
     const migrate = findAccountMigration(
