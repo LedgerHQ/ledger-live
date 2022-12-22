@@ -257,23 +257,21 @@ jobs:
             summary += `|`
 
             Object.keys(report).forEach((k) => {
-              summary += ` ${keys[os].symbol} ${keys[os].name} |`;
+              summary += ` ${keys[k].symbol} ${keys[k].name} |`;
             });
 
             summary += `
-            |
-            `;
+            |`;
 
             for (let i = 0; i > report.length; i++) {
               summary += ` :--: |`;
             }
 
             summary += `
-            |
-            `;
+            |`;
 
             Object.entries(report).forEach(([os, values]) => {
-              summary += ` ${value.pass ? "✅" : "❌"} (${values.status}) |`;
+              summary += ` ${values.pass ? "✅" : "❌"} (${values.status}) |`;
             });
 
             summary += `
