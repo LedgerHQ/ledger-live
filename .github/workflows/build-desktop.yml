@@ -256,14 +256,16 @@ jobs:
 
             summary += `|`
 
-            Object.keys(report).forEach((k) => {
+            const reportKeys = Object.keys(report);
+
+            reportKeys.forEach((k) => {
               summary += ` ${keys[k].symbol} ${keys[k].name} |`;
             });
 
             summary += `
             |`;
 
-            for (let i = 0; i < report.length; i++) {
+            for (let i = 0; i < reportKeys.length; i++) {
               summary += ` :--: |`;
             }
 
