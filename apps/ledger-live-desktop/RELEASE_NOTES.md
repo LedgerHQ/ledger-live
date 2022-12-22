@@ -1,3 +1,13 @@
+# 2.51.0
+
+### 🚀 Features
+
+- Ledger Live is no longer compatible with Windows 7.
+
+### 🌷 Improvements
+
+- We've made some tweaks to improve the staking experience for Ethereum (ETH) and make it easier to select and access staking providers.
+
 # 2.50.1
 
 ### 🐛 Fixes
