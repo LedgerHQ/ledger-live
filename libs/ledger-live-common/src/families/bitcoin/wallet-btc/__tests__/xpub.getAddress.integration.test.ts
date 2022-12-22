@@ -1,9 +1,10 @@
-import { DerivationModes } from "..";
 import { script } from "bitcoinjs-lib";
+import coininfo from "coininfo";
+
+import { DerivationModes } from "..";
 import BitcoinLikeStorage from "../storage";
 import BitcoinLikeExplorer from "../explorer";
 import Xpub from "../xpub";
-import coininfo from "coininfo";
 import BCHCrypto from "../crypto/bitcoincash";
 import BTCCrypto from "../crypto/bitcoin";
 import ZECCrypto from "../crypto/zec";
@@ -68,15 +69,14 @@ describe("Unit tests for getAddress", () => {
     const btcCrypto = new BTCCrypto({
       network: coininfo.bitcoin.main.toBitcoinJS(),
     });
-    for (let i = 0; i < 1; i++) {
-      for (let j = 0; j < 1000; j++) {
-        btcCrypto.getAddress(
-          DerivationModes.TAPROOT,
-          "xpub6CThYZbX4PTeA7KRYZ8YXP3F6HwT2eVKPQap3Avieds3p1eos35UzSsJtTbJ3vQ8d3fjRwk4bCEz4m4H6mkFW49q29ZZ6gS8tvahs4WCZ9X",
-          i,
-          j
-        );
-      }
+
+    for (let j = 0; j < 1000; j++) {
+      btcCrypto.getAddress(
+        DerivationModes.TAPROOT,
+        "xpub6CThYZbX4PTeA7KRYZ8YXP3F6HwT2eVKPQap3Avieds3p1eos35UzSsJtTbJ3vQ8d3fjRwk4bCEz4m4H6mkFW49q29ZZ6gS8tvahs4WCZ9X",
+        0,
+        j
+      );
     }
   }, 30000);
 });
