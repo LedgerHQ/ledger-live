@@ -149,11 +149,10 @@ export const withDevice =
             return finalize(transport, [resolveQueuedDevice]);
           }
 
-          sub = job(transport) // $FlowFixMe
+          sub = job(transport)
             .pipe(
               catchError(initialErrorRemapping),
               catchError(errorRemapping), // close the transport and clean up everything
-              // $FlowFixMe
               transportFinally(() => {
                 log("withDevice", `${nonce}: job fully completed`);
                 return finalize(transport, [resolveQueuedDevice]);
