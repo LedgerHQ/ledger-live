@@ -7,13 +7,16 @@ import { Operation } from "@ledgerhq/types-live";
 import { fromBech32, toBech32 } from "../utils";
 import { BN, Long, bytes } from "@zilliqa-js/util";
 import { Zilliqa } from "@zilliqa-js/zilliqa";
+import { TxParams } from "@zilliqa-js/account";
+import { RPCMethod } from "@zilliqa-js/core";
 
-const bearerToken = "<insert token here>";
+const bearerToken = "<insert token>";
 const indexerEndPoint = getEnv("API_ZILLIQA_INDEXER_API_ENDPOINT").replace(
 	/\/$/,
 	""
 );
 // http://api.zindex.zilliqa.com/
+// TODO: Refactor
 const nodeEndPoint = getEnv("API_ZILLIQA_NODE").replace(/\/$/, "");
 
 const ZILLIQA_MAINNET = 1;
@@ -21,30 +24,29 @@ const ZILLIQA_DEVNET = 333;
 const msgVersion = 1; // current msgVersion
 export const VERSION = bytes.pack(ZILLIQA_MAINNET, msgVersion);
 export const zilliqa = new Zilliqa("https://api.zilliqa.com");
+export const ZILLIQA_TX_GAS_LIMIT = 50; // Gas limit is 50 units according to https://dev.zilliqa.com/basics/basics-zil-gas/?h=gas
+
+export const broadcastTransaction = async (params: TxParams) => {
+	const response = await zilliqa.blockchain.provider.send(
+		RPCMethod.CreateTransaction,
+		{
+			...params,
+			priority: false,
+		}
+	);
+
+	if (response.error) {
+		throw response.error;
+	}
+
+	return response.result.TranID;
+};
 
 export const getAccount = async (addr: string) => {
-	console.log("ZILLIQA: getAccount.");
 	addr = fromBech32(addr);
-	console.log("CHAIN:", await zilliqa.blockchain.getBlockChainInfo());
-	console.log("CHAIN:", await zilliqa.blockchain.getBalance(addr));
-	// Implementation using node
-	const resp = await network({
-		method: "POST",
 
-		url: `${nodeEndPoint}`,
-
-		data: {
-			id: "1",
-			jsonrpc: "2.0",
-			method: "GetBalance",
-			params: [addr.substring(2, addr.length)],
-		},
-		headers: {
-			contentType: "application/json",
-		},
-	});
-
-	const node_data = resp.data;
+	// Getting balance from chain
+	const node_data = await zilliqa.blockchain.getBalance(addr);
 	if (!node_data || !node_data.result) {
 		return {
 			blockHeight: 0,
@@ -52,6 +54,7 @@ export const getAccount = async (addr: string) => {
 			nonce: 0,
 		};
 	}
+	const nonce = node_data.result.nonce;
 
 	// Implementation using indexer
 	const { data } = await network({
@@ -83,9 +86,6 @@ export const getAccount = async (addr: string) => {
 		};
 	}
 
-	// TODO: How do we obtain an appropriate nonce from indexer and drop node implementation or get blockheight from node and drop indexer call?
-	const nonce = node_data.result.nonce;
-	console.log("Recieved nonce:", nonce);
 	return {
 		blockHeight: data.data.getUserBalanceByToken.lastBlockID,
 		balance: new BigNumber(data.data.getUserBalanceByToken.amount),
@@ -94,8 +94,12 @@ export const getAccount = async (addr: string) => {
 };
 
 export const getMinimumGasPrice = async () => {
-	//    return this.provider.send<string, string>(RPCMethod.GetMinimumGasPrice);
-	return 0;
+	const r = await zilliqa.blockchain.getMinimumGasPrice();
+	if (!r.result) {
+		throw new Error("Could not fetch minimum gas price");
+	}
+
+	return new BN(r.result);
 };
 
 function transactionToOperation(
@@ -104,14 +108,13 @@ function transactionToOperation(
 	addr: string,
 	transaction: any
 ): Operation {
-	console.log("ZILLIQA: transactionToOperation.");
+	const { gasPrice, gasLimit } = transaction;
+	const fee = new BigNumber(gasPrice.mul(gasLimit).toString());
+
 	const ret: Operation = {
 		id: encodeOperationId(accountId, transaction.TxId, type),
 		accountId,
-		fee: BigNumber(
-			parseInt(transaction.gasAmount || 0) *
-				parseInt(transaction.gasPrice || 0)
-		),
+		fee: fee,
 		value: BigNumber(transaction.amount),
 		type,
 		// This is where you retrieve the hash of the transaction
@@ -119,7 +122,9 @@ function transactionToOperation(
 		blockHash: null,
 		blockHeight: parseInt(transaction.blockID),
 		date: new Date(), // TODO: new Date(transaction.timestamp),
-		extra: {},
+		extra: {
+			amount: transaction.amount,
+		},
 		senders: [toBech32(transaction.fromAddress)],
 		recipients: transaction.toAddress
 			? [toBech32(transaction.toAddress)]
@@ -135,7 +140,6 @@ export const getOperations = async (
 	addr: string,
 	startAt: number
 ): Promise<Operation[]> => {
-	console.log("ZILLIQA: getOperations.");
 	addr = fromBech32(addr);
 
 	const incoming_res = (

@@ -19,7 +19,6 @@ export function fromBech32(value: string): string {
 
 	const pubkey = Buffer.from(bech32.fromWords(decoded.words));
 
-	console.log("Before:", "0x" + pubkey.toString("hex"));
 	return toChecksumAddress("0x" + pubkey.toString("hex"));
 }
 
