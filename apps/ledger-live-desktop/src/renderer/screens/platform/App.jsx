@@ -1,6 +1,6 @@
 // @flow
 import React, { useCallback, useMemo } from "react";
-import { useHistory, useLocation } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import useTheme from "~/renderer/hooks/useTheme";
 
 import { Card } from "~/renderer/components/Box";
@@ -20,17 +20,29 @@ type Props = {
     url: string,
   },
   appId?: string,
+  location: {
+    hash: string,
+    params: {
+      [key: string]: string,
+    },
+    pathname: string,
+    search: string,
+  },
 };
 
-export default function PlatformApp({ match, appId: propsAppId }: Props) {
+export default function PlatformApp({ match, appId: propsAppId, location }: Props) {
   const history = useHistory();
-  const { state: urlParams, search } = useLocation();
+  const { params: urlParams, search, pathname } = location;
   const appId = propsAppId || match.params?.appId;
-
+  const sufix = pathname.substr(
+    pathname.indexOf(match.params.appId) + match.params.appId.length + 1,
+  );
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
+  const manifest = JSON.parse(JSON.stringify(localManifest || remoteManifest));
 
-  const manifest = localManifest || remoteManifest;
+  const dappUrl = manifest.params.dappUrl.split("?");
+  manifest.params.dappUrl = `${dappUrl[0]}${sufix}?${dappUrl[1]}`;
 
   const returnTo = useMemo(() => {
     const params = new URLSearchParams(search);
