@@ -144,7 +144,7 @@ describe("Transaction Output script", () => {
     expect(message.toString()).toEqual("charley loves heidi");
   });
 
-  it("Should throw error if OP_RETURN larger than 40 bytes", () => {
+  it("Should throw error if OP_RETURN larger than OP_RETURN_DATA_SIZE_LIMIT bytes", () => {
     try {
       const data = Buffer.alloc(OP_RETURN_DATA_SIZE_LIMIT + 1);
       const output = btcCrypto.toOpReturnOutputScript(data);
