@@ -9,7 +9,8 @@ import bs58 from "bs58";
 import bech32 from "bech32";
 import BIP32 from "./bip32";
 
-export const OP_RETURN_DATA_SIZE_LIMIT = 80; // bytes
+// https://developer.bitcoin.org/devguide/transactions.html#null-data
+export const OP_RETURN_DATA_SIZE_LIMIT = 83; // bytes
 
 export function fallbackValidateAddress(address: string): boolean {
   try {

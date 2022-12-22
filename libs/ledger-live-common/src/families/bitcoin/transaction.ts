@@ -74,6 +74,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
       feeItems: toFeeItemsRaw(t.networkInfo.feeItems),
     },
     feesStrategy: t.feesStrategy,
+    opReturnData: t.opReturnData,
   };
 };
 
