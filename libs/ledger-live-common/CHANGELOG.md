@@ -1,5 +1,13 @@
 # @ledgerhq/live-common
 
+## 27.10.0-nightly.5
+
+### Patch Changes
+
+- [#2140](https://github.com/LedgerHQ/ledger-live/pull/2140) [`930c655cd5`](https://github.com/LedgerHQ/ledger-live/commit/930c655cd54c7bb9034ae8a81bf937a3ad6c7e6d) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Added rename device DeviceAction
+
+* [#2143](https://github.com/LedgerHQ/ledger-live/pull/2143) [`5fe65a6829`](https://github.com/LedgerHQ/ledger-live/commit/5fe65a6829fecf27391b51ffad71f62b431dc79c) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Exported object groupedFeatures that contains features grouped by common theme.
+
 ## 27.10.0-nightly.4
 
 ### Minor Changes
