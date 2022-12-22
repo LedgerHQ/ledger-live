@@ -2,58 +2,67 @@ import React, { useCallback, useState, useMemo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
   defaultFeatures,
+  groupedFeatures,
   useFeature,
+  useFeatureFlags,
+  useHasLocallyOverriddenFeatureFlags,
 } from "@ledgerhq/live-common/featureFlags/index";
 import type { FeatureId } from "@ledgerhq/types-live";
 
 import {
-  BaseInput,
   Text,
   Flex,
   SearchInput,
-  Icons,
+  Divider,
   Tag,
+  ChipTabs,
+  Button,
+  Switch,
 } from "@ledgerhq/native-ui";
 import { includes, lowerCase, trim } from "lodash";
-import { InputRenderLeftContainer } from "@ledgerhq/native-ui/components/Form/Input/BaseInput";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Keyboard } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import FeatureFlagDetails, {
-  Divider,
   TagDisabled,
   TagEnabled,
 } from "./FeatureFlagDetails";
 import Alert from "../../components/Alert";
+import GroupedFeatures from "./GroupedFeatures";
+import { featureFlagsBannerVisibleSelector } from "../../reducers/settings";
+import { setFeatureFlagsBannerVisible } from "../../actions/settings";
 
 const addFlagHint = `\
-If a feature flag is defined in the targeted Firebase environment \
-but it is missing from the list, you can type its name in \
-the input field "Add missing flag" above and it will appear in the list.\nType the \
-flag name in camelCase without the "feature" prefix.\
-`;
+If a feature flag is defined in the Firebase project \
+but it is missing here, you can type its name (camelCase, without "feature" prefix) in \
+the search field.`;
 
 export default function DebugFeatureFlags() {
   const { t } = useTranslation();
   const [focusedName, setFocusedName] = useState<string | undefined>();
-  const [hiddenFlagName, setHiddenFlagName] = useState("");
-  const trimmedHiddenFlagName = trim(hiddenFlagName);
+  const [focusedGroupName, setFocusedGroupName] = useState<
+    string | undefined
+  >();
   const [searchInput, setSearchInput] = useState<string>("");
+  const searchInputTrimmed = trim(searchInput);
+  const [activeTab, setActiveTab] = useState(0);
+  const { resetFeatures, isFeature } = useFeatureFlags();
 
   const featureFlags = useMemo(() => {
     const featureKeys = Object.keys(defaultFeatures);
-    if (trimmedHiddenFlagName && !featureKeys.includes(trimmedHiddenFlagName))
-      featureKeys.push(trimmedHiddenFlagName);
-    return featureKeys;
-  }, [trimmedHiddenFlagName]);
 
-  const handleAddHiddenFlag = useCallback(
-    value => {
-      setHiddenFlagName(trim(value));
-      setSearchInput(value);
-    },
-    [setSearchInput, setHiddenFlagName],
-  );
+    if (searchInputTrimmed && !featureKeys.includes(searchInputTrimmed)) {
+      const isHiddenFeature = isFeature(searchInputTrimmed);
+
+      // Only adds the search input value to the featureKeys if it is an existing hidden feature
+      if (isHiddenFeature) {
+        featureKeys.push(searchInputTrimmed);
+      }
+    }
+
+    return featureKeys;
+  }, [isFeature, searchInputTrimmed]);
 
   const handleSearch = useCallback(value => {
     setSearchInput(value);
@@ -61,14 +70,27 @@ export default function DebugFeatureFlags() {
 
   const filteredFlags = useMemo(() => {
     return featureFlags
-      .sort((a, b) => a[0].localeCompare(b[0]))
+      .sort()
       .filter(
         name =>
           !searchInput || includes(lowerCase(name), lowerCase(searchInput)),
       );
   }, [featureFlags, searchInput]);
 
-  const content = useMemo(
+  const filteredGroups = useMemo(() => {
+    return Object.keys(groupedFeatures)
+      .sort()
+      .filter(
+        groupName =>
+          !searchInput ||
+          includes(lowerCase(groupName), lowerCase(searchInput)) ||
+          groupedFeatures[groupName].featureIds.some(featureId =>
+            includes(lowerCase(featureId), lowerCase(searchInput)),
+          ),
+      );
+  }, [searchInput]);
+
+  const flagsList = useMemo(
     () =>
       filteredFlags.map((flagName, index, arr) => (
         <FeatureFlagDetails
@@ -82,8 +104,28 @@ export default function DebugFeatureFlags() {
     [filteredFlags, focusedName],
   );
 
+  const groupsList = useMemo(
+    () =>
+      filteredGroups
+        .sort()
+        .map((groupName, index, arr) => (
+          <GroupedFeatures
+            key={groupName}
+            groupName={groupName}
+            focused={focusedGroupName === groupName}
+            setFocusedGroupName={setFocusedGroupName}
+            isLast={index === arr.length - 1}
+          />
+        )),
+    [filteredGroups, focusedGroupName],
+  );
+
   const config = useFeature("firebaseEnvironmentReadOnly");
-  const project = config?.params?.project;
+  const params = config?.params;
+  const project =
+    params !== null && typeof params === "object" && "project" in params
+      ? (params as { project: string }).project
+      : "";
 
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   useEffect(() => {
@@ -99,19 +141,52 @@ export default function DebugFeatureFlags() {
     };
   }, []);
 
-  const additionalInfo = <Alert title={addFlagHint} type="hint" />;
+  const additionalInfo = <Alert title={addFlagHint} type="hint" noIcon />;
+
+  const hasLocallyOverriddenFlags = useHasLocallyOverriddenFeatureFlags();
+  const featureFlagsBannerVisible = useSelector(
+    featureFlagsBannerVisibleSelector,
+  );
+  const dispatch = useDispatch();
+  const setFeatureFlagBannerVisible = useCallback(
+    newVal => {
+      dispatch(setFeatureFlagsBannerVisible(newVal));
+    },
+    [dispatch],
+  );
 
   return (
     <SafeAreaView edges={["bottom"]} style={{ flex: 1 }}>
       <NavigationScrollView>
-        <Flex p={16}>
-          <Text mb={3}>{t("settings.debug.firebaseProject")}</Text>
-          <Tag mb={6} uppercase={false} type="color" alignSelf={"flex-start"}>
+        <Flex px={16}>
+          <Alert type="primary" noIcon>
+            {t("settings.debug.featureFlagsTitle")}
+          </Alert>
+          <Flex flexDirection="row" mt={4}>
+            <Text>Legend: </Text>
+            <TagEnabled mx={2}>enabled flag</TagEnabled>
+            <TagDisabled mx={2}>disabled flag</TagDisabled>
+          </Flex>
+          <Text my={3}>{t("settings.debug.firebaseProject")}</Text>
+          <Tag uppercase={false} type="color" alignSelf={"flex-start"}>
             {project}
           </Tag>
-          <Alert type="hint">
-            <Text>{t("settings.debug.featureFlagsTitle")}</Text>
-          </Alert>
+          <Flex flexDirection="row" justifyContent="space-between">
+            <Text mt={3}>{t("settings.debug.showBannerDesc")}</Text>
+            <Switch
+              checked={featureFlagsBannerVisible}
+              onChange={setFeatureFlagBannerVisible}
+            />
+          </Flex>
+          <Divider />
+          <ChipTabs
+            labels={[
+              t("settings.debug.featureFlagsTabAll"),
+              t("settings.debug.featureFlagsTabGroups"),
+            ]}
+            activeIndex={activeTab}
+            onChange={setActiveTab}
+          />
           <Flex mt={3} />
           <SearchInput
             value={searchInput}
@@ -119,31 +194,30 @@ export default function DebugFeatureFlags() {
             onChange={handleSearch}
             autoCapitalize="none"
           />
-          <Flex mt={3} />
-          <BaseInput
-            value={undefined}
-            renderLeft={() => (
-              <InputRenderLeftContainer>
-                <Icons.PlusMedium color="neutral.c70" />
-              </InputRenderLeftContainer>
-            )}
-            placeholder="Add missing flag (instructions above)"
-            onChange={handleAddHiddenFlag}
-            autoCapitalize="none"
-          />
-          <Flex flexDirection="row" mt={4}>
-            <Text>Legend: </Text>
-            <TagEnabled mx={2}>enabled flag</TagEnabled>
-            <TagDisabled mx={2}>disabled flag</TagDisabled>
-          </Flex>
+          <Button
+            mt={3}
+            size="small"
+            type="main"
+            outline
+            onPress={resetFeatures}
+            disabled={!hasLocallyOverriddenFlags}
+          >
+            {t("settings.debug.featureFlagsRestoreAll")}
+          </Button>
           <Divider />
-          {filteredFlags.length === 0 ? (
+          {activeTab === 0 ? (
             <>
-              <Text>{`No flag matching "${searchInput}"`}</Text>
-              {keyboardVisible ? additionalInfo : null}
+              {filteredFlags.length === 0 ? (
+                <>
+                  <Text>{`No flag matching "${searchInput}"`}</Text>
+                  {keyboardVisible ? additionalInfo : null}
+                </>
+              ) : null}
+              {flagsList}
             </>
-          ) : null}
-          {content}
+          ) : (
+            <>{groupsList}</>
+          )}
         </Flex>
       </NavigationScrollView>
       {keyboardVisible ? null : (
