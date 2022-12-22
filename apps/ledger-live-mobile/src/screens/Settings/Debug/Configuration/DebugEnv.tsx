@@ -28,9 +28,9 @@ export default function DebugEnv() {
 
     Object.keys(envs).forEach(key => {
       if (!(key in definitions)) {
-        const maybeDefinition = getDefinition(key);
-        if (maybeDefinition) {
-          definitions[key] = maybeDefinition.desc;
+        const definition = getDefinition(key);
+        if (definition) {
+          definitions[key] = definition.desc;
         }
       }
     });

@@ -547,8 +547,8 @@
       "description": "You rejected the address. If in doubt, please save your logs using the button below and provide them to Ledger Support."
     },
     "UserRefusedDeviceNameChange": {
-      "title": "Rename canceled on device",
-      "description": "You canceled the rename. Please try again."
+      "title": "Renaming was cancelled on {{ productName }}",
+      "description": ""
     },
     "UserRefusedFirmwareUpdate": {
       "title": "Firmware update canceled on device",
@@ -2637,7 +2637,12 @@
       "featureFlagsDesc": "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
       "featureFlagsEdit": "Edit",
       "featureFlagsRestore": "Restore",
-      "firebaseProject": "Firebase project targeted by this build:"
+      "featureFlagsRestoreAll": "Restore all flag values",
+      "featureFlagsTabAll": "All",
+      "featureFlagsTabGroups": "Groups",
+      "firebaseProject": "Firebase project targeted by this build:",
+      "showBannerDesc": "Show banner when flags are overridden",
+      "bannerTitle": "Flags overridden locally"
     }
   },
   "notifications": {
@@ -3707,7 +3712,9 @@
   "EditDeviceName": {
     "title": "Rename device",
     "charactersRemaining": "{{remainingCount}} characters remaining",
-    "action": "Confirm"
+    "action": "Set name",
+    "rename": "rename",
+    "success": "Device renamed to '{{deviceName}}'"
   },
   "PairDevices": {
     "Paired": {
