@@ -64,6 +64,9 @@ import type {
   SettingsUpdateCurrencyPayload,
   SettingsSetSwapSelectableCurrenciesPayload,
   SettingsSetDismissedDynamicCardsPayload,
+  SettingsSetOverriddenFeatureFlagPlayload,
+  SettingsSetOverriddenFeatureFlagsPlayload,
+  SettingsSetFeatureFlagsBannerVisiblePayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -155,6 +158,8 @@ export const INITIAL_STATE: SettingsState = {
     recommendationsCategory: true,
   },
   walletTabNavigatorLastVisitedTab: ScreenName.Portfolio,
+  overriddenFeatureFlags: {},
+  featureFlagsBannerVisible: false,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -573,6 +578,37 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       action as Action<SettingsSetWalletTabNavigatorLastVisitedTabPayload>
     ).payload.walletTabNavigatorLastVisitedTab,
   }),
+
+  [SettingsActionTypes.SET_OVERRIDDEN_FEATURE_FLAG]: (state, action) => {
+    const {
+      payload: { id, value },
+    } = action as Action<SettingsSetOverriddenFeatureFlagPlayload>;
+    return {
+      ...state,
+      overriddenFeatureFlags: {
+        ...state.overriddenFeatureFlags,
+        [id]: value,
+      },
+    };
+  },
+  [SettingsActionTypes.SET_OVERRIDDEN_FEATURE_FLAGS]: (state, action) => {
+    const {
+      payload: { overriddenFeatureFlags },
+    } = action as Action<SettingsSetOverriddenFeatureFlagsPlayload>;
+    return {
+      ...state,
+      overriddenFeatureFlags,
+    };
+  },
+  [SettingsActionTypes.SET_FEATURE_FLAGS_BANNER_VISIBLE]: (state, action) => {
+    const {
+      payload: { featureFlagsBannerVisible },
+    } = action as Action<SettingsSetFeatureFlagsBannerVisiblePayload>;
+    return {
+      ...state,
+      featureFlagsBannerVisible,
+    };
+  },
 };
 
 export default handleActions<SettingsState, SettingsPayload>(
@@ -794,3 +830,7 @@ export const notificationsSelector = (state: State) =>
   state.settings.notifications;
 export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
   state.settings.walletTabNavigatorLastVisitedTab;
+export const overriddenFeatureFlagsSelector = (state: State) =>
+  state.settings.overriddenFeatureFlags;
+export const featureFlagsBannerVisibleSelector = (state: State) =>
+  state.settings.featureFlagsBannerVisible;

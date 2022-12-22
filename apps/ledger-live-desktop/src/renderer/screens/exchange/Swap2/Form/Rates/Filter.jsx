@@ -37,7 +37,7 @@ export const Btn: ThemedComponent<{}> = styled(Button).attrs(p => {
   }
 `;
 
-export default function ProviderRate({ onClick }: Props) {
+export default function Filter({ onClick }: Props) {
   const [filter, setFilter] = useState([]);
 
   const updateFilter = useCallback(
@@ -70,7 +70,7 @@ export default function ProviderRate({ onClick }: Props) {
 
   return (
     <Container>
-      {[FILTER.centralised, FILTER.decentralised, FILTER.float, FILTER.fixed].map((type, i) => {
+      {[FILTER.centralised, FILTER.decentralised, FILTER.float, FILTER.fixed].map(type => {
         const selected = filter.includes(type);
         const props = { selected, key: type, updateFilter, type };
         return (

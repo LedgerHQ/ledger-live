@@ -12,6 +12,14 @@ const mockedAxios = jest.mocked(axios);
 jest.mock("./getProviders");
 const mockedProviders = jest.mocked(getProviders);
 
+const providers = [
+  {
+    provider: "changelly",
+    pairs: [{ from: "bitcoin", to: "ethereum", tradeMethod: "float" }],
+  },
+  { provider: "oneinch", pairs: [] },
+];
+
 const bitcoinCurrency = getCryptoCurrencyById("bitcoin");
 const ethereumCurrency = getCryptoCurrencyById("ethereum");
 
@@ -78,6 +86,7 @@ describe("swap/getExchangeRates", () => {
     const data = [
       {
         provider: "changelly",
+        providerType: "CEX",
         rateId: "RATE_ID",
         from: "bitcoin",
         to: "ethereum",
@@ -103,6 +112,7 @@ describe("swap/getExchangeRates", () => {
     const expectedExchangeRate: ExchangeRate = {
       magnitudeAwareRate: new BigNumber("140000000000"),
       provider: data[0].provider,
+      providerType: data[0].providerType as ExchangeRate["providerType"],
       rate: new BigNumber(data[0].rate),
       rateId: data[0].rateId,
       toAmount: new BigNumber("70000000000000000"),
@@ -118,6 +128,7 @@ describe("swap/getExchangeRates", () => {
     const data = [
       {
         provider: "changelly",
+        providerType: "CEX",
         from: "bitcoin",
         to: "ethereum",
         amountFrom: "0.005",
@@ -144,6 +155,7 @@ describe("swap/getExchangeRates", () => {
     const expectedExchangeRate: ExchangeRate = {
       magnitudeAwareRate: new BigNumber("133913600000"),
       provider: data[0].provider,
+      providerType: data[0].providerType as ExchangeRate["providerType"],
       rate: new BigNumber(13.39136),
       toAmount: new BigNumber("66956800000000000"),
       tradeMethod: data[0].tradeMethod,
@@ -151,5 +163,71 @@ describe("swap/getExchangeRates", () => {
     };
 
     expect(res).toEqual([expectedExchangeRate]);
+  });
+
+  it("should query for CEX providers only", async () => {
+    const resp = {
+      data: [],
+      status: 200,
+      statusText: "",
+      headers: {},
+      config: {},
+    };
+
+    mockedAxios.mockResolvedValue(Promise.resolve(resp));
+    mockedProviders.mockResolvedValue(Promise.resolve([]));
+    const includeDEX = false;
+    await getExchangeRates(
+      exchange,
+      transaction,
+      undefined,
+      undefined,
+      providers,
+      includeDEX
+    );
+    expect(mockedAxios).toHaveBeenCalledWith({
+      method: "POST",
+      url: "https://swap.ledger.com/v4/rate",
+      data: {
+        amountFrom: "0.0001",
+        from: "bitcoin",
+        providers: ["changelly"],
+        to: "ethereum",
+      },
+      headers: expect.anything(),
+    });
+  });
+
+  it("should query for CEX and DEX providers", async () => {
+    const resp = {
+      data: [],
+      status: 200,
+      statusText: "",
+      headers: {},
+      config: {},
+    };
+
+    mockedAxios.mockResolvedValue(Promise.resolve(resp));
+    mockedProviders.mockResolvedValue(Promise.resolve([]));
+    const includeDEX = true;
+    await getExchangeRates(
+      exchange,
+      transaction,
+      undefined,
+      undefined,
+      providers,
+      includeDEX
+    );
+    expect(mockedAxios).toHaveBeenCalledWith({
+      method: "POST",
+      url: "https://swap.ledger.com/v4/rate",
+      data: {
+        amountFrom: "0.0001",
+        from: "bitcoin",
+        providers: ["changelly", "oneinch"],
+        to: "ethereum",
+      },
+      headers: expect.anything(),
+    });
   });
 });

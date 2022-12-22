@@ -2,7 +2,7 @@ import React, { useCallback, useRef } from "react";
 import { Icons, Alert as AlertBox } from "@ledgerhq/native-ui";
 import { Alert, TouchableWithoutFeedback, View } from "react-native";
 import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/provider";
-import { FeatureId } from "@ledgerhq/types-live";
+import { groupedFeatures } from "@ledgerhq/live-common/featureFlags/groupedFeatures";
 import { TrackScreen } from "../../../analytics";
 import SettingsRow from "../../../components/SettingsRow";
 import { ScreenName } from "../../../const";
@@ -23,15 +23,7 @@ export default function DebugSettings({
   const { getFeature, overrideFeature } = useFeatureFlags();
 
   const ruleThemAll = useCallback(() => {
-    (
-      [
-        "customImage",
-        "deviceInitialApps",
-        "syncOnboarding",
-        "llmNewDeviceSelection",
-        "staxWelcomeScreen",
-      ] as FeatureId[]
-    ).forEach(featureId =>
+    groupedFeatures.stax.featureIds.forEach(featureId =>
       overrideFeature(featureId, { ...getFeature(featureId), enabled: true }),
     );
     Alert.alert(

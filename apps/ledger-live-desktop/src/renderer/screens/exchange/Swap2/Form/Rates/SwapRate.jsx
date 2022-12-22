@@ -34,7 +34,7 @@ const StyledCounterValue: ThemedComponent<{}> = styled(CounterValue)`
   color: ${p => p.theme.colors.neutral.c70};
 `;
 
-function CentralisedRate({ value = {}, selected, onSelect, fromCurrency, toCurrency }: Props) {
+function SwapRate({ value = {}, selected, onSelect, fromCurrency, toCurrency }: Props) {
   const { toAmount: amount, provider } = value;
   return (
     <Rate
@@ -100,4 +100,4 @@ function CentralisedRate({ value = {}, selected, onSelect, fromCurrency, toCurre
   );
 }
 
-export default React.memo<Props>(CentralisedRate);
+export default React.memo<Props>(SwapRate);
