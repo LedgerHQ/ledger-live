@@ -263,7 +263,7 @@ jobs:
             summary += `
             |`;
 
-            for (let i = 0; i > report.length; i++) {
+            for (let i = 0; i < report.length; i++) {
               summary += ` :--: |`;
             }
 
