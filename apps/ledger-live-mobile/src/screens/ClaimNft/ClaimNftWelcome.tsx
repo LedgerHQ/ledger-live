@@ -7,10 +7,11 @@ import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { useCompleteActionCallback } from "../../logic/postOnboarding/useCompleteAction";
 import { NavigatorName, ScreenName } from "../../const";
 import Animation from "../../components/Animation";
+import lottie from "../../animations/infinityPassCentered.json";
 
-const animation = {
+/*const animation = {
   infinityPass: require("../../animations/infinityPassCentered.json"),
-};
+};*/
 
 const BulletItem = ({ textKey }: { textKey: string }) => {
   const { t } = useTranslation();
@@ -44,7 +45,7 @@ const ClaimNftWelcome = () => {
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
       <Flex flex={1}>
         <Flex alignItems="center">
-          <Animation source={animation.infinityPass} />
+          <Animation source={lottie as string} />
         </Flex>
         <Flex flex={1} px={6} justifyContent="space-evenly">
           <Text variant="h4" fontWeight="semiBold" mt={7} textAlign="center">

@@ -124,60 +124,62 @@ const ClaimNftQrScan = () => {
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
       <Flex flex={1}>
-        <Flex
-          backgroundColor="neutral.c40"
-          alignItems="center"
-          justifyContent="center"
-          overflow="hidden"
-          {...cameraBoxDimensions}
-        >
-          {isInFocus ? (
-            <Camera
-              ref={cameraRef}
-              type={CameraType.back}
-              style={{
-                ...cameraDimensions,
-                alignSelf: "center",
-              }}
-              onBarCodeScanned={handleBarCodeScanned}
-              barCodeScannerSettings={{
-                barCodeTypes: [BarCodeScanner.Constants.BarCodeType.qr],
-              }}
-              ratio={ratio}
-            />
-          ) : null}
-          {cameraDimensions ? (
-            <WrappedSvg />
-          ) : (
+        {!permission?.canAskAgain &&
+        !permission?.granted &&
+        permission?.status === "denied" ? (
+          <FallbackCameraScreen route={route} navigation={navigation} />
+        ) : (
+          <>
             <Flex
-              {...StyleSheet.absoluteFillObject}
+              backgroundColor="neutral.c40"
+              alignItems="center"
               justifyContent="center"
-              bg="constant.black"
+              overflow="hidden"
+              {...cameraBoxDimensions}
             >
-              {!permission?.canAskAgain &&
-              !permission?.granted &&
-              permission?.status === "denied" ? (
-                <FallbackCameraScreen route={route} navigation={navigation} />
+              {isInFocus ? (
+                <Camera
+                  ref={cameraRef}
+                  type={CameraType.back}
+                  style={{
+                    ...cameraDimensions,
+                    alignSelf: "center",
+                  }}
+                  onBarCodeScanned={handleBarCodeScanned}
+                  barCodeScannerSettings={{
+                    barCodeTypes: [BarCodeScanner.Constants.BarCodeType.qr],
+                  }}
+                  ratio={ratio}
+                />
+              ) : null}
+              {cameraDimensions ? (
+                <WrappedSvg />
               ) : (
-                <InfiniteLoader />
+                <Flex
+                  {...StyleSheet.absoluteFillObject}
+                  justifyContent="center"
+                  bg="constant.black"
+                >
+                  <InfiniteLoader />
+                </Flex>
               )}
             </Flex>
-          )}
-        </Flex>
-        <Flex flex={1} px={7} alignItems="center">
-          <Text
-            variant="h4"
-            fontWeight="semiBold"
-            mt={7}
-            mb={6}
-            textAlign="center"
-          >
-            {t("claimNft.qrScan.title")}
-          </Text>
-          <Text color="neutral.c70" textAlign="center">
-            {t("claimNft.qrScan.description.1")}
-          </Text>
-        </Flex>
+            <Flex flex={1} px={7} alignItems="center">
+              <Text
+                variant="h4"
+                fontWeight="semiBold"
+                mt={7}
+                mb={6}
+                textAlign="center"
+              >
+                {t("claimNft.qrScan.title")}
+              </Text>
+              <Text color="neutral.c70" textAlign="center">
+                {t("claimNft.qrScan.description.1")}
+              </Text>
+            </Flex>
+          </>
+        )}
       </Flex>
     </SafeAreaView>
   );
