@@ -1,5 +1,6 @@
 import type { BigNumber } from "bignumber.js";
-import Long from "long";
+import { BN, Long } from "@zilliqa-js/util";
+
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type {
 	Account,
@@ -17,21 +18,19 @@ export type ZilliqaResources = {
 
 export type ZilliqaResourcesRaw = {
 	publicKey: string;
-	nonce: Long;
+	nonce: number;
 };
 
 export type Transaction = TransactionCommon & {
 	family: "zilliqa";
-	fee?: BigNumber;
-	gasPrice?: BigNumber;
-	gaslimit?: Long;
+	gasPrice?: BN;
+	gasLimit?: BN;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
 	family: "zilliqa";
-	fee?: BigNumber;
-	gasPrice?: BigNumber;
-	gaslimit?: Long;
+	gasPrice?: string;
+	gasLimit?: string;
 };
 export type TransactionStatus = TransactionStatusCommon;
 export type TransactionStatusRaw = TransactionStatusCommonRaw;

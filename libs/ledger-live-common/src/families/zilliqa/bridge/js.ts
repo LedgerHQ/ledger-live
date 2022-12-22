@@ -29,8 +29,17 @@ import { fromBech32, toBech32 } from "../utils";
 import { RPCMethod } from "@zilliqa-js/core";
 import { getAddressFromPublicKey } from "@zilliqa-js/crypto";
 import { buildNativeTransaction } from "../js-buildTransaction";
-import { zilliqa } from "../api";
+import {
+	getMinimumGasPrice,
+	broadcastTransaction,
+	ZILLIQA_TX_GAS_LIMIT,
+} from "../api";
 import { getNonce } from "../logic";
+import {
+	createTransaction,
+	updateTransaction,
+	prepareTransaction,
+} from "../js-transaction";
 
 const receive = makeAccountBridgeReceive();
 
@@ -42,31 +51,22 @@ const currencyBridge: CurrencyBridge = {
 	scanAccounts,
 };
 
-const createTransaction = (a: ZilliqaAccount): Transaction => {
-	console.log("ZILLIQA: createTransaction.");
-	return {
-		family: "zilliqa",
-		amount: new BigNumber(0),
-		recipient: "",
-		fee: new BigNumber(0),
-		//		fee: null,
-		//		tag: undefined,
-		//		networkInfo: null,
-		//		feeCustomUnit: null,
-	};
-};
-
-const prepareTransaction = async (a, t) => t;
-const updateTransaction = (t, patch) => ({ ...t, ...patch });
-
 const getTransactionStatus = (account: ZilliqaAccount, t: Transaction) => {
 	console.log("ZILLIQA: getTransactionStatus.");
-
 	const errors: any = {};
 	const warnings: any = {};
 	const useAllAmount = !!t.useAllAmount;
 
-	const estimatedFees = BigNumber(5000);
+	let { gasPrice, gasLimit } = t;
+	if (!gasPrice) {
+		gasPrice = new BN(0);
+	}
+
+	if (!gasLimit) {
+		gasLimit = new BN(ZILLIQA_TX_GAS_LIMIT);
+	}
+
+	const estimatedFees = new BigNumber(gasPrice.mul(gasLimit).toString());
 
 	const totalSpent = useAllAmount
 		? account.balance
@@ -100,6 +100,7 @@ const getTransactionStatus = (account: ZilliqaAccount, t: Transaction) => {
 };
 
 const estimateMaxSpendable = () => {
+	console.log("ZILLIQA: estimateMaxSpendable.");
 	throw new Error("estimateMaxSpendable not implemented");
 };
 
@@ -111,62 +112,48 @@ const broadcast = async ({
 	signedOperation: SignedOperation;
 }): Promise<Operation> => {
 	console.log("ZILLIQA: broadcast.");
-
 	const { signature, operation } = signedOperation;
 	const i = signature.indexOf(":");
-	const payload = signature.substring(0, i);
+
 	const sign = signature.substring(i + 1, signature.length);
+	// Unfortunately, the zilliqa-js API only allows encoding of the
+	// transaction, but not decoding. In a future version of this implmentation
+	// it would be preferable to unpack the transaction payload rather than
+	// reconstructing the transaction:
+	//
+	// const payload = signature.substring(0, i);
+	// const params = decodeTransactionProto(payload); /// <- this function does not exist
+	//
 
+	// Reconstructing the transaction
 	const toAddr = fromBech32(operation.recipients[0]);
-
+	console.log("OPERATION:", operation);
+	const gasPrice = await getMinimumGasPrice();
 	const tx = await buildNativeTransaction(
 		account,
 		toAddr,
 		getNonce(account),
-		new BN(operation.value.toString()),
+		new BN(operation.extra.amount.toString()),
+		gasPrice,
 		sign
 	);
+
 	const params = tx.txParams;
-	if (account.zilliqaResources) {
-		const sender = getAddressFromPublicKey(
-			account.zilliqaResources.publicKey
-		);
-		console.log("Pub key:", account.zilliqaResources.publicKey);
-		console.log("Addr from pub:", sender);
-		console.log("Addr from pub:", toBech32(sender));
-	}
-	console.log("Value:", operation.value.toString());
-	console.log(params);
-	console.log("Value:", params.amount.toString());
-	console.log("GasPrice:", params.gasPrice.toString());
 
-	console.log(signature);
-	console.log(">>>");
-	// throw new Error("broadcast not implemented");
-
-	console.log("Sending", JSON.stringify(params));
+	// Broadcasting transaction
 	let hash: string;
 	try {
-		const response = await zilliqa.blockchain.provider.send(
-			RPCMethod.CreateTransaction,
-			{
-				...params,
-				priority: false,
-			}
-		);
-
-		if (response.error) {
-			throw response.error;
-		}
-
-		hash = response.result.TranID;
+		hash = await broadcastTransaction(params);
 	} catch (e) {
+		console.log("TX:", params);
+		console.log("Gas limit:", params.gasLimit.toString());
+		console.log("Gas price:", params.gasPrice.toString());
+		console.log("Amount:", params.amount.toString());
+
 		console.log(e);
-		throw Error("FAILED broadcast");
+		throw Error("Failed to broadcast.");
 	}
-	console.log("HASH:", hash);
-	//	const walletAccount = getWalletAccount(account);
-	//	const hash = await wallet.broadcastTx(walletAccount, signature);
+
 	return patchOperationWithHash(operation, hash);
 };
 

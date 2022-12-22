@@ -6,7 +6,6 @@ import { ZilliqaAccount } from "./types";
 
 const getAccountShape: GetAccountShape = async (info) => {
 	console.log("ZILLIQA: getAccountShape.");
-	console.log(info);
 	const { address, initialAccount, currency, derivationMode, rest } = info;
 	const account = initialAccount as ZilliqaAccount;
 
@@ -33,11 +32,13 @@ const getAccountShape: GetAccountShape = async (info) => {
 		derivationMode,
 	});
 	const oldOperations = initialAccount?.operations || [];
+
 	// Needed for incremental synchronisation
 	const startAt = 0;
 
 	// get the current account balance state depending your api implementation
 	const { blockHeight, balance, nonce } = await getAccount(address);
+
 	// Merge new operations with the previously synced ones
 	const newOperations = await getOperations(accountId, address, startAt);
 	const operations = mergeOps(oldOperations, newOperations);

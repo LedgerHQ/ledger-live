@@ -15,6 +15,7 @@ import Zilliqa from "@ledgerhq/hw-app-zilliqa";
 
 import { buildTransaction } from "./js-buildTransaction";
 import { getNonce } from "./logic";
+import { getEstimatedFees } from "./js-getFeesForTransaction";
 
 const buildOptimisticOperation = (
 	account: Account,
@@ -40,7 +41,9 @@ const buildOptimisticOperation = (
 		accountId: account.id,
 		transactionSequenceNumber: getNonce(account as ZilliqaAccount),
 		date: new Date(),
-		extra: {},
+		extra: {
+			amount: transaction.amount,
+		},
 	};
 
 	return operation;
@@ -70,19 +73,19 @@ const signOperation = ({
 		Observable.create((o) => {
 			async function main() {
 				console.log("ZILLIQA: signOperation.");
-
 				o.next({
 					type: "device-signature-requested",
 				});
 
-				/*
-				if (!transaction.fee) {
-					console.log("Transaction does not have a fee.");
+				console.log("TRANSACTION", transaction);
+				if (!transaction.gasLimit || !transaction.gasPrice) {
+					console.log(
+						"Transaction does not have a gas limit and price specified."
+					);
 					throw new FeeNotLoaded();
 				}
-				*/
 
-				console.log("SIGN", account);
+				// Creating unsigned transaction
 				const unsigned = await buildTransaction(account, transaction);
 
 				// Sign by device
@@ -96,10 +99,12 @@ const signOperation = ({
 
 				o.next({ type: "device-signature-granted" });
 
+				const { gasPrice, gasLimit } = transaction;
+				const fee = new BigNumber(gasPrice.mul(gasLimit).toString());
 				const operation = buildOptimisticOperation(
 					account,
 					transaction,
-					transaction.fee ?? BigNumber(0)
+					fee
 				);
 
 				o.next({

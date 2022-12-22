@@ -6,6 +6,7 @@ const signMessage: SignMessage = async (
 	transport,
 	{ path, message }
 ): Promise<Result> => {
+	console.log("ZILLIQA: signMessage.");
 	log("debug", "start signMessage process");
 
 	const zilliqa = new Zilliqa(transport);
