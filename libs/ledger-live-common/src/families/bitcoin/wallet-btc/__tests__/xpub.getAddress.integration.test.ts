@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 import coininfo from "coininfo";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+=======
+import { script } from "bitcoinjs-lib";
+import coininfo from "coininfo";
+>>>>>>> 48cf7f6b14 (throw error if op_return and amount > 0)
 
 import { DerivationModes } from "..";
 import BitcoinLikeStorage from "../storage";

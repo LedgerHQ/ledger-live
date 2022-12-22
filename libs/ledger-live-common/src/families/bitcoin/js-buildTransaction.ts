@@ -32,7 +32,10 @@ export const buildTransaction = async (
   transaction: Transaction
 ): Promise<WalletTxInfo> => {
   const { feePerByte, recipient, opReturnData, utxoStrategy } = transaction;
+<<<<<<< HEAD
 
+=======
+>>>>>>> 48cf7f6b14 (throw error if op_return and amount > 0)
   if (!feePerByte) {
     throw new FeeNotLoaded();
   }
