@@ -5,7 +5,6 @@ import { setEnvUnsafe, getAllEnvs } from "@ledgerhq/live-common/env";
 import { isRestartNeeded } from "~/helpers/env";
 import { setTags } from "~/sentry/main";
 import logger from "~/logger";
-import { getMainWindow } from "./window-lifecycle";
 import InternalProcess from "./InternalProcess";
 import {
   transportCloseChannel,
@@ -143,15 +142,6 @@ function handleGlobalInternalMessage(payload) {
       // FIXME
       // const err = deserializeError(payload.error)
       // captureException(err)
-      break;
-    }
-    case "setDeviceBusy": {
-      const win = getMainWindow && getMainWindow();
-      if (!win) {
-        logger.warn(`can't ${payload.type} because no renderer`);
-        return;
-      }
-      win.webContents.send(payload.type, payload);
       break;
     }
     default:
