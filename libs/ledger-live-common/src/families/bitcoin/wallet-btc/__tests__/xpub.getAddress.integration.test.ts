@@ -130,7 +130,7 @@ describe("Transaction Output script", () => {
     );
   }, 30000);
 
-  it("should work for OP_RETURN outputs", () => {
+  it("should get correct output script for OP_RETURN opcode", () => {
     const data = Buffer.from("charley loves heidi", "utf-8");
 
     const output = btcCrypto.toOpReturnOutputScript(data);

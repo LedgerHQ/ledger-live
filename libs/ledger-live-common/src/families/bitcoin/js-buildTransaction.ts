@@ -32,9 +32,11 @@ export const buildTransaction = async (
   transaction: Transaction
 ): Promise<WalletTxInfo> => {
   const { feePerByte, recipient, opReturnData, utxoStrategy } = transaction;
+
   if (!feePerByte) {
     throw new FeeNotLoaded();
   }
+
   const walletAccount = getWalletAccount(account);
   const utxoPickingStrategy = selectUtxoPickingStrategy(
     walletAccount,
