@@ -10,13 +10,6 @@ export const Container = styled.div`
   flex: 1;
   height: 100%;
 `;
-// $FlowFixMe
-export const CustomWebview = styled("webview")`
-  border: none;
-  width: 100%;
-  flex: 1;
-  transition: opacity 200ms ease-out;
-`;
 
 export const Wrapper = styled(Box).attrs(() => ({
   flex: 1,
