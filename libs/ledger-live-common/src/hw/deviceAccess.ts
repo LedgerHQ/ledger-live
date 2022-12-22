@@ -13,10 +13,9 @@ import {
   TransportStatusError,
   DeviceHalted,
 } from "@ledgerhq/errors";
+import { log } from "@ledgerhq/logs";
 import { getEnv } from "../env";
 import { open, close, setAllowAutoDisconnect } from ".";
-
-export type AccessHook = () => () => void;
 
 const initialErrorRemapping = (error) =>
   throwError(
@@ -30,13 +29,8 @@ const initialErrorRemapping = (error) =>
       : error
   );
 
-const accessHooks: AccessHook[] = [];
-
 let errorRemapping = (e) => throwError(e);
 
-export const addAccessHook = (accessHook: AccessHook): void => {
-  accessHooks.push(accessHook);
-};
 export const setErrorRemapping = (
   f: (arg0: Error) => Observable<never>
 ): void => {
@@ -79,11 +73,32 @@ const needsCleanup = {};
 export const cancelDeviceAction = (transport: Transport): void => {
   needsCleanup[identifyTransport(transport)] = true;
 };
-const deviceQueues = {};
+
+// Gabriel's comment:
+// this looks like a mutex access logic to prevent a same device from being open multiple times
+// we have empty promises that get resolved when we're able to
+// open the device with that id, I don't think we should be using promises at all for this kind of stuff
+// we're only using it so we can call open(deviceId) when the previous connection has been clean
+// but why don't we just store the "connection" open status and create an actual queue
+const deviceQueues: { [deviceId: string]: Promise<void> } = {};
+
+// Gabriel's hypothesis on how this works:
+// the devicesQueues object only stores the latest promise for a device, and we schedule to resolve that whenever the job is finished
+// the thing is, if we call withDevice several times, we'll be chaining the new promise to the "then" of the previous promise
+// so we're indeed creating a queue, by creating a chain of promises, but we're only storing the end of the queue so we can chain the next promise
+// we're never actually storing the full queue, but the chain of promises still exist in memory, and they will do what they are supposed to do in order
+// that is open(device) -> execute job -> clean connection -> resolve promise -> next promise can start, so open(device) -> and so one...
+
+// To be able to differentiate withDevice calls in our logs
+let withDeviceNonce = 0;
+
 export const withDevice =
   (deviceId: string) =>
   <T>(job: (t: Transport) => Observable<T>): Observable<T> =>
     new Observable((o) => {
+      const nonce = withDeviceNonce++;
+      log("withDevice", `${nonce}: New job: deviceId=${deviceId || "USB"}`);
+
       let unsubscribed;
       let sub;
       const deviceQueue = deviceQueues[deviceId] || Promise.resolve();
@@ -97,20 +112,25 @@ export const withDevice =
           });
       };
 
-      // when we'll finish all the current job, we'll call finish
-      let finish;
-      // this new promise is the next exec queue
+      // When we'll finish all the current job, we'll call finish
+      let resolveQueuedDevice;
+      // This new promise is the next exec queue
       deviceQueues[deviceId] = new Promise((resolve) => {
-        finish = resolve;
+        resolveQueuedDevice = resolve;
       });
-      // for any new job, we'll now wait the exec queue to be available
+
+      log("withDevice", `${nonce}: Waiting for queue to complete`, {
+        deviceQueue,
+      });
+      // For any new job, we'll now wait the exec queue to be available
       deviceQueue
         .then(() => open(deviceId)) // open the transport
         .then(async (transport) => {
+          log("withDevice", `${nonce}: Starting job`);
           setAllowAutoDisconnect(transport, deviceId, false);
           if (unsubscribed) {
-            // it was unsubscribed prematurely
-            return finalize(transport, [finish]);
+            // It was unsubscribed prematurely
+            return finalize(transport, [resolveQueuedDevice]);
           }
 
           if (needsCleanup[identifyTransport(transport)]) {
@@ -118,42 +138,43 @@ export const withDevice =
             await transport.send(0, 0, 0, 0).catch(() => {});
           }
 
-          if (
-            transport.requestConnectionPriority &&
-            typeof transport.requestConnectionPriority === "function"
-          ) {
-            await transport.requestConnectionPriority("High");
-          }
-
           return transport;
         })
+        // This catch is here only for errors that might happen at open or at clean up of the transport before doing the job
         .catch((e) => {
-          finish();
+          resolveQueuedDevice();
           if (e instanceof BluetoothRequired) throw e;
           if (e instanceof TransportWebUSBGestureRequired) throw e;
           if (e instanceof TransportInterfaceNotAvailable) throw e;
           throw new CantOpenDevice(e.message);
         })
+        // Executes the job
         .then((transport) => {
           if (!transport) return;
 
           if (unsubscribed) {
-            // it was unsubscribed prematurely
-            return finalize(transport, [finish]);
+            // It was unsubscribed prematurely
+            return finalize(transport, [resolveQueuedDevice]);
           }
 
-          const cleanups = accessHooks.map((hook) => hook());
           sub = job(transport) // $FlowFixMe
             .pipe(
               catchError(initialErrorRemapping),
               catchError(errorRemapping), // close the transport and clean up everything
               // $FlowFixMe
-              transportFinally(() => finalize(transport, [...cleanups, finish]))
+              transportFinally(() => {
+                log("withDevice", `${nonce}: job fully completed`);
+                return finalize(transport, [resolveQueuedDevice]);
+              })
             )
             .subscribe(o);
         })
         .catch((error) => o.error(error));
+
+      // Returns function to unsubscribe from the job if we don't need it anymore.
+      // This will prevent us from executing the job unnecessarily later on
       return () => {
+        log("withDevice", `${nonce}: Unsubscribing job: ${!!sub}`);
         unsubscribed = true;
         if (sub) sub.unsubscribe();
       };
