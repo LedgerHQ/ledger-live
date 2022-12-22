@@ -553,7 +553,6 @@ const avalanche_c_chain: AppSpec<Transaction> = {
     appName: "Avalanche",
   },
   genericDeviceAction: acceptTransaction,
-  dependency: "Ethereum",
   testTimeout,
   minViableAmount: minAmountAVAXC,
   transactionCheck: ({ maxSpendable }) => {
