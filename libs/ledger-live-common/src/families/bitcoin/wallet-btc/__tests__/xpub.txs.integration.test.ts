@@ -23,7 +23,7 @@ describe.skip("testing xpub legacy transactions", () => {
   const explorer = new BitcoinLikeExplorer({
     explorerURI: "http://localhost:20000/blockchain/v3",
     explorerVersion: "v3",
-    disableBatchSize: true, // https://ledgerhq.atlassian.net/browse/BACK-2191
+    disableBatchSize: true,
   });
   const crypto = new Crypto({
     network,
