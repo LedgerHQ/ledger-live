@@ -35,7 +35,7 @@ const Timer = ({ time, viewed }: { time: string; viewed: boolean }) => (
 
     <Box
       ml={3}
-      backgroundColor={viewed ? "transparent" : "error.c50"}
+      backgroundColor={viewed ? "transparent" : "error.c80"}
       height="8px"
       width="8px"
       borderRadius={24}

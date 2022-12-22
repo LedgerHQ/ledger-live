@@ -112,7 +112,7 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
             <Notifications
               size={24}
               color={colors.neutral.c100}
-              dotColor={colors.error.c100}
+              dotColor={colors.error.c80}
               isOn={notificationsCount > 0}
             />
           </Touchable>
