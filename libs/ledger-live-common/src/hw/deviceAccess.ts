@@ -68,26 +68,18 @@ const transportFinally =
 const identifyTransport = (t) => (typeof t.id === "string" ? t.id : "");
 
 const needsCleanup = {};
-// when a series of APDUs are interrupted, this is called
+// When a series of APDUs are interrupted, this is called
 // so we don't forget to cleanup on the next withDevice
 export const cancelDeviceAction = (transport: Transport): void => {
   needsCleanup[identifyTransport(transport)] = true;
 };
 
-// Gabriel's comment:
-// this looks like a mutex access logic to prevent a same device from being open multiple times
-// we have empty promises that get resolved when we're able to
-// open the device with that id, I don't think we should be using promises at all for this kind of stuff
-// we're only using it so we can call open(deviceId) when the previous connection has been clean
-// but why don't we just store the "connection" open status and create an actual queue
+// The devicesQueues object only stores, for each device, the latest void promise that will resolve when the device is ready to be opened again.
+// They are scheduled to resolve whenever the job associated to the device is finished.
+// When calling withDevice several times, the new promise will be chained to the "then" of the previous promise:
+// open(device) -> execute job -> clean connection -> resolve promise -> next promise can start: open(device) -> etc.
+// So a queue is indeed created for each device, by creating a chain of promises, but only the end of the queue is stored for each device.
 const deviceQueues: { [deviceId: string]: Promise<void> } = {};
-
-// Gabriel's hypothesis on how this works:
-// the devicesQueues object only stores the latest promise for a device, and we schedule to resolve that whenever the job is finished
-// the thing is, if we call withDevice several times, we'll be chaining the new promise to the "then" of the previous promise
-// so we're indeed creating a queue, by creating a chain of promises, but we're only storing the end of the queue so we can chain the next promise
-// we're never actually storing the full queue, but the chain of promises still exist in memory, and they will do what they are supposed to do in order
-// that is open(device) -> execute job -> clean connection -> resolve promise -> next promise can start, so open(device) -> and so one...
 
 // To be able to differentiate withDevice calls in our logs
 let withDeviceNonce = 0;
