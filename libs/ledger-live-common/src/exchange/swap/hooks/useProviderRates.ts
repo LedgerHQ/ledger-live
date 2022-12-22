@@ -120,7 +120,8 @@ export const useProviderRates = ({
             if (
               rateError?.name !== rate.error?.name &&
               (rate.error?.name === "SwapExchangeRateAmountTooLow" ||
-                rate.error?.name === "SwapExchangeRateAmountTooHigh")
+                rate.error?.name === "SwapExchangeRateAmountTooHigh" ||
+                rate.error?.name === "SwapExchangeRateAmountTooLowOrTooHigh")
             ) {
               rateError = rate.error;
             }
@@ -128,15 +129,20 @@ export const useProviderRates = ({
             if (
               rateError?.name === rate.error?.name &&
               (rate.error?.name === "SwapExchangeRateAmountTooLow" ||
-                rate.error?.name === "SwapExchangeRateAmountTooHigh")
+                rate.error?.name === "SwapExchangeRateAmountTooHigh" ||
+                rate.error?.name === "SwapExchangeRateAmountTooLowOrTooHigh")
             ) {
               /**
                * Comparison pivot, depending on the order in which we want to sort errors
-               * If the order is ascending, the pivot is -1, otherwise it's 1
+               * Order: SwapExchangeRateAmountTooLowOrTooHigh > SwapExchangeRateAmountTooHigh > SwapExchangeRateAmountTooLow
                * Based on returns from https://mikemcl.github.io/bignumber.js/#cmp
                */
               const cmp =
-                rateError?.name === "SwapExchangeRateAmountTooLow" ? -1 : 1;
+                rateError?.name === "SwapExchangeRateAmountTooLowOrTooHigh"
+                  ? 3
+                  : rateError?.name === "SwapExchangeRateAmountTooHigh"
+                  ? 2
+                  : 1;
 
               /**
                * If the amount is too low, the user should put at least the
@@ -144,13 +150,14 @@ export const useProviderRates = ({
                * If the amount is too high, the user should put at most the
                * maximum amount possible
                */
-
-              rateError =
-                (rateError as CustomMinOrMaxError).amount.comparedTo(
-                  (rate.error as CustomMinOrMaxError)?.amount
-                ) === cmp
-                  ? rateError
-                  : rate.error;
+              if (rateError?.name !== "SwapExchangeRateAmountTooLowOrTooHigh") {
+                rateError =
+                  (rateError as CustomMinOrMaxError).amount.comparedTo(
+                    (rate.error as CustomMinOrMaxError)?.amount
+                  ) === cmp
+                    ? rateError
+                    : rate.error;
+              }
             }
 
             return rate.error ? acc : [...acc, rate];

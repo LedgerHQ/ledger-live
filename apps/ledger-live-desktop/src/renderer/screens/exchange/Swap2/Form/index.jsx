@@ -50,6 +50,7 @@ import SwapFormSummary from "./FormSummary";
 import SwapFormRates from "./FormRates";
 import { DEX_PROVIDERS } from "~/renderer/screens/exchange/Swap2/Form/utils";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import EmptyState from "./Rates/EmptyState";
 
 const Wrapper: ThemedComponent<{}> = styled(Box).attrs({
   p: 20,
@@ -531,6 +532,7 @@ const SwapForm = () => {
           isSendMaxLoading={isSendMaxLoading}
           updateSelectedRate={swapTransaction.swap.updateSelectedRate}
         />
+        {swapError?.message.length === 0 && <EmptyState />}
         {showDetails && (
           <>
             <SwapFormSummary
