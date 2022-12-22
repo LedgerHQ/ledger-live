@@ -419,7 +419,8 @@ const SwapForm = () => {
       const dexFamilyList = ["ethereum", "binance", "polygon"];
       if (
         dexFamilyList.includes(targetMainAccount.currency.family) &&
-        sourceMainAccount.currency.id === targetMainAccount.currency.id
+        sourceMainAccount.currency.id === targetMainAccount.currency.id &&
+        sourceMainAccount.currency.family === targetMainAccount.currency.family
       ) {
         return true;
       }
