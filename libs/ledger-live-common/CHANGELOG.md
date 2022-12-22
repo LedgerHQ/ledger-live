@@ -1,5 +1,42 @@
 # @ledgerhq/live-common
 
+## 27.10.0
+
+### Minor Changes
+
+- [#1805](https://github.com/LedgerHQ/ledger-live/pull/1805) [`d99aafd1d4`](https://github.com/LedgerHQ/ledger-live/commit/d99aafd1d48336f6b4da3c1d8e7c52dbc1676278) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - NEAR sync, send and stake
+
+* [#2030](https://github.com/LedgerHQ/ledger-live/pull/2030) [`ee507188f0`](https://github.com/LedgerHQ/ledger-live/commit/ee507188f097429237bef6df0f63b5f6426dd91a) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - update fund partners
+
+### Patch Changes
+
+- [#1984](https://github.com/LedgerHQ/ledger-live/pull/1984) [`f1c15446da`](https://github.com/LedgerHQ/ledger-live/commit/f1c15446dabef05bb91dada8d8f53f9bc6474ba5) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: resilient BLE scanning
+
+* [#2045](https://github.com/LedgerHQ/ledger-live/pull/2045) [`93e19275f3`](https://github.com/LedgerHQ/ledger-live/commit/93e19275f3336672579d2e3bab317489d47853c5) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Made the exported logs on LLM larger and configurable via ENV vars.
+
+- [#2058](https://github.com/LedgerHQ/ledger-live/pull/2058) [`aee5dd361f`](https://github.com/LedgerHQ/ledger-live/commit/aee5dd361fae6aacb8b7320107417185c90f9b8b) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Protection against syncing or adding the burn address for stellar
+
+* [#1984](https://github.com/LedgerHQ/ledger-live/pull/1984) [`f1c15446da`](https://github.com/LedgerHQ/ledger-live/commit/f1c15446dabef05bb91dada8d8f53f9bc6474ba5) Thanks [@alexandremgo](https://github.com/alexandremgo)! - New HwTransportError for all the implementations of Transport
+
+* Updated dependencies [[`d99aafd1d4`](https://github.com/LedgerHQ/ledger-live/commit/d99aafd1d48336f6b4da3c1d8e7c52dbc1676278), [`f1c15446da`](https://github.com/LedgerHQ/ledger-live/commit/f1c15446dabef05bb91dada8d8f53f9bc6474ba5)]:
+  - @ledgerhq/cryptoassets@7.1.0
+  - @ledgerhq/errors@6.12.2
+  - @ledgerhq/hw-transport@6.27.9
+  - @ledgerhq/hw-app-eth@6.30.3
+  - @ledgerhq/devices@7.0.6
+  - @ledgerhq/hw-app-algorand@6.27.9
+  - @ledgerhq/hw-app-cosmos@6.27.9
+  - @ledgerhq/hw-app-near@6.27.4
+  - @ledgerhq/hw-app-polkadot@6.27.9
+  - @ledgerhq/hw-app-solana@7.0.3
+  - @ledgerhq/hw-app-trx@6.27.9
+  - @ledgerhq/hw-transport-node-speculos@6.27.9
+  - @ledgerhq/hw-app-btc@9.1.1
+  - @ledgerhq/hw-app-str@6.27.9
+  - @ledgerhq/hw-app-tezos@6.27.9
+  - @ledgerhq/hw-app-xrp@6.27.9
+  - @ledgerhq/hw-transport-mocker@6.27.9
+
 ## 27.10.0-next.0
 
 ### Minor Changes

@@ -1,5 +1,21 @@
 # @ledgerhq/live-cli
 
+## 22.5.1
+
+### Patch Changes
+
+- Updated dependencies [[`f1c15446da`](https://github.com/LedgerHQ/ledger-live/commit/f1c15446dabef05bb91dada8d8f53f9bc6474ba5), [`d99aafd1d4`](https://github.com/LedgerHQ/ledger-live/commit/d99aafd1d48336f6b4da3c1d8e7c52dbc1676278), [`d99aafd1d4`](https://github.com/LedgerHQ/ledger-live/commit/d99aafd1d48336f6b4da3c1d8e7c52dbc1676278), [`93e19275f3`](https://github.com/LedgerHQ/ledger-live/commit/93e19275f3336672579d2e3bab317489d47853c5), [`ee507188f0`](https://github.com/LedgerHQ/ledger-live/commit/ee507188f097429237bef6df0f63b5f6426dd91a), [`aee5dd361f`](https://github.com/LedgerHQ/ledger-live/commit/aee5dd361fae6aacb8b7320107417185c90f9b8b), [`f1c15446da`](https://github.com/LedgerHQ/ledger-live/commit/f1c15446dabef05bb91dada8d8f53f9bc6474ba5)]:
+  - @ledgerhq/live-common@27.10.0
+  - @ledgerhq/cryptoassets@7.1.0
+  - @ledgerhq/errors@6.12.2
+  - @ledgerhq/hw-transport@6.27.9
+  - @ledgerhq/hw-transport-http@6.27.9
+  - @ledgerhq/hw-transport-node-ble@6.27.9
+  - @ledgerhq/hw-transport-node-hid@6.27.9
+  - @ledgerhq/hw-transport-node-speculos@6.27.9
+  - @ledgerhq/hw-app-btc@9.1.1
+  - @ledgerhq/hw-transport-mocker@6.27.9
+
 ## 22.5.1-next.0
 
 ### Patch Changes
