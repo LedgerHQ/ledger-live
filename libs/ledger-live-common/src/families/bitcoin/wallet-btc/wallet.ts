@@ -126,6 +126,7 @@ class BitcoinLikeWallet {
         )
       )
     );
+
     let balance = new BigNumber(0);
     log("btcwallet", "estimateAccountMaxSpendable utxos", utxos);
     let usableUtxoCount = 0;
