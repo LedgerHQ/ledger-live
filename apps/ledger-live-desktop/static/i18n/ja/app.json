@@ -131,7 +131,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blue"
   },
   "operation" : {
@@ -5559,8 +5559,7 @@
     "postOnboarding" : {
       "title" : "Ledgerデバイスをパーソナライズ",
       "description" : "画面をカスタマイズ",
-      "actionCompletedPopupLabel" : "デバイスがパーソナライズされました",
-      "actionCompletedHubTitle" : "画面状態は良好です。"
+      "actionCompletedPopupLabel" : "デバイスがパーソナライズされました"
     },
     "customImageSet" : "画像セットをカスタマイズ",
     "finishCTA" : "終了する"
