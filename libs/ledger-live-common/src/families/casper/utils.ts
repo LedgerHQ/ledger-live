@@ -42,7 +42,7 @@ export const isError = (r: {
 export const methodToString = (method: number): string => {
   switch (method) {
     case 0:
-      return "Transfer";
+      return "Token Transfer";
     default:
       return "Unknown";
   }
