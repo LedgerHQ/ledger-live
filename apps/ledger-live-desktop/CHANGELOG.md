@@ -1,75 +1,6 @@
 # ledger-live-desktop
 
-## 2.51.0-nightly.7
-
-### Patch Changes
-
-- [#2143](https://github.com/LedgerHQ/ledger-live/pull/2143) [`5fe65a6829`](https://github.com/LedgerHQ/ledger-live/commit/5fe65a6829fecf27391b51ffad71f62b431dc79c) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Feature flags overriding persistency over app restarts
-
-- Updated dependencies [[`930c655cd5`](https://github.com/LedgerHQ/ledger-live/commit/930c655cd54c7bb9034ae8a81bf937a3ad6c7e6d), [`5fe65a6829`](https://github.com/LedgerHQ/ledger-live/commit/5fe65a6829fecf27391b51ffad71f62b431dc79c)]:
-  - @ledgerhq/live-common@27.10.0-nightly.5
-
-## 2.51.0-nightly.6
-
-### Minor Changes
-
-- [#1900](https://github.com/LedgerHQ/ledger-live/pull/1900) [`f4b14e0fcc`](https://github.com/LedgerHQ/ledger-live/commit/f4b14e0fccccfebaebb4782b75783b34e12710e4) Thanks [@Justkant](https://github.com/Justkant)! - feat(wallet-api): device.transport LLD & LLM integration [LIVE-4293]
-
-* [#2037](https://github.com/LedgerHQ/ledger-live/pull/2037) [`3574c62cb3`](https://github.com/LedgerHQ/ledger-live/commit/3574c62cb3fd61b29b6794b1c5b40b2836a671f7) Thanks [@nparigi-ledger](https://github.com/nparigi-ledger)! - use new parameter from formatCurrencyUnit, dynamicSignificantDigits, in all related display value components/utils. Increased this value for the display of the account crypto value in Account page so more digits are shown.
-
-- [#1900](https://github.com/LedgerHQ/ledger-live/pull/1900) [`fc444a8a17`](https://github.com/LedgerHQ/ledger-live/commit/fc444a8a172edf1a8bf8bea5c481ab33f70b7e6f) Thanks [@Justkant](https://github.com/Justkant)! - feat(wallet-api): LLD server implementation [LIVE-4394]
-
-### Patch Changes
-
-- [#2156](https://github.com/LedgerHQ/ledger-live/pull/2156) [`158af85921`](https://github.com/LedgerHQ/ledger-live/commit/158af859211737818964ca093e45efe5b61a7b6d) Thanks [@juan-cortes](https://github.com/juan-cortes)! - 670pixel instead of 672 for custom lockscreen images
-
-* [#2138](https://github.com/LedgerHQ/ledger-live/pull/2138) [`36f2f7b28c`](https://github.com/LedgerHQ/ledger-live/commit/36f2f7b28cd309bcbbc7d35f649e9fad48715cbf) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Add nanoFTS lotties animations in LLD
-
-- [#2144](https://github.com/LedgerHQ/ledger-live/pull/2144) [`a8e5f2d685`](https://github.com/LedgerHQ/ledger-live/commit/a8e5f2d685653bc50b2da599df7a8efb0670ae53) Thanks [@juan-cortes](https://github.com/juan-cortes)! - LLD - rename nano fts to stax
-
-- Updated dependencies [[`fc37600223`](https://github.com/LedgerHQ/ledger-live/commit/fc3760022341a90b51e4d836f38657ffef74040b), [`7025af53de`](https://github.com/LedgerHQ/ledger-live/commit/7025af53dec8b4ec06cbf57e93515af2bca58645), [`f9b6ff9d5a`](https://github.com/LedgerHQ/ledger-live/commit/f9b6ff9d5a61cd052855260fe94ac48ce54d41e8), [`57e7afeff1`](https://github.com/LedgerHQ/ledger-live/commit/57e7afeff1035a89caa696449c6d62cf482fac72), [`1f65abb76f`](https://github.com/LedgerHQ/ledger-live/commit/1f65abb76f1a36b428b5c33dd3ad6c58b4d96aa2), [`f4b14e0fcc`](https://github.com/LedgerHQ/ledger-live/commit/f4b14e0fccccfebaebb4782b75783b34e12710e4), [`fc444a8a17`](https://github.com/LedgerHQ/ledger-live/commit/fc444a8a172edf1a8bf8bea5c481ab33f70b7e6f), [`3574c62cb3`](https://github.com/LedgerHQ/ledger-live/commit/3574c62cb3fd61b29b6794b1c5b40b2836a671f7), [`bcd7c9fd5b`](https://github.com/LedgerHQ/ledger-live/commit/bcd7c9fd5b2a1e2d1b661df6a2004fc201ae99bf), [`9a9c5d700c`](https://github.com/LedgerHQ/ledger-live/commit/9a9c5d700cb0231facd1d29df7024cd9bca5da9d), [`22f514abe1`](https://github.com/LedgerHQ/ledger-live/commit/22f514abe1def1c385262a4cd7519d922b633f10)]:
-  - @ledgerhq/live-common@27.10.0-nightly.4
-  - @ledgerhq/devices@7.0.6-nightly.2
-  - @ledgerhq/types-devices@6.22.4-nightly.1
-  - @ledgerhq/hw-transport@6.27.9-nightly.2
-  - @ledgerhq/hw-transport-node-hid-singleton@6.28.6-nightly.2
-  - @ledgerhq/types-live@6.28.0-nightly.2
-  - @ledgerhq/hw-transport-http@6.27.9-nightly.2
-
-## 2.51.0-nightly.5
-
-### Patch Changes
-
-- Updated dependencies [[`184f2fd00d`](https://github.com/LedgerHQ/ledger-live/commit/184f2fd00d98d6ab8a6b94ac16ef7b20651a55e4), [`13078a0825`](https://github.com/LedgerHQ/ledger-live/commit/13078a08256e3d74eb89dd0be4f0dda57611b68c)]:
-  - @ledgerhq/live-common@27.10.0-nightly.3
-
-## 2.51.0-nightly.4
-
-### Patch Changes
-
-- [#2147](https://github.com/LedgerHQ/ledger-live/pull/2147) [`360fc6321c`](https://github.com/LedgerHQ/ledger-live/commit/360fc6321c66cec18959be0200a705ca527075ae) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Improves performance of swap provider selector
-
-- Updated dependencies []:
-  - @ledgerhq/live-common@27.10.0-nightly.2
-
-## 2.51.0-nightly.3
-
-### Patch Changes
-
-- [#1997](https://github.com/LedgerHQ/ledger-live/pull/1997) [`53baff3c7b`](https://github.com/LedgerHQ/ledger-live/commit/53baff3c7b74c58b17adcf2f58cf9b2ebd75eb73) Thanks [@juan-cortes](https://github.com/juan-cortes)! - LLD React to custom image loading and reflect the space taken by it
-
-* [#2066](https://github.com/LedgerHQ/ledger-live/pull/2066) [`3a267c1424`](https://github.com/LedgerHQ/ledger-live/commit/3a267c14241ebc9184490e7eb81b5d4bcc94b092) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Remove useless field from PostOnboardingAction type
-
-* Updated dependencies [[`3a267c1424`](https://github.com/LedgerHQ/ledger-live/commit/3a267c14241ebc9184490e7eb81b5d4bcc94b092), [`ae891a166e`](https://github.com/LedgerHQ/ledger-live/commit/ae891a166e5de9947781af3630b1accca42da1a6), [`3a267c1424`](https://github.com/LedgerHQ/ledger-live/commit/3a267c14241ebc9184490e7eb81b5d4bcc94b092), [`f6947ccc8f`](https://github.com/LedgerHQ/ledger-live/commit/f6947ccc8faceef656929e5fdde1fa6f52619efb), [`3a267c1424`](https://github.com/LedgerHQ/ledger-live/commit/3a267c14241ebc9184490e7eb81b5d4bcc94b092), [`3a267c1424`](https://github.com/LedgerHQ/ledger-live/commit/3a267c14241ebc9184490e7eb81b5d4bcc94b092), [`1aee1b0103`](https://github.com/LedgerHQ/ledger-live/commit/1aee1b01034f0c5ea90f0ff6aa0d28fc7be0b9f9), [`5cf73f5ce6`](https://github.com/LedgerHQ/ledger-live/commit/5cf73f5ce673bc1e9552ad46bcc7f25c40a92960), [`93bd602206`](https://github.com/LedgerHQ/ledger-live/commit/93bd602206137e10e5d5c8aa61d9b5aefef993ce)]:
-  - @ledgerhq/devices@7.0.6-nightly.1
-  - @ledgerhq/live-common@27.10.0-nightly.1
-  - @ledgerhq/types-devices@6.22.4-nightly.0
-  - @ledgerhq/types-live@6.28.0-nightly.2
-  - @ledgerhq/hw-transport@6.27.9-nightly.1
-  - @ledgerhq/hw-transport-node-hid-singleton@6.28.6-nightly.1
-  - @ledgerhq/hw-transport-http@6.27.9-nightly.1
-
-## 2.51.0-nightly.2
+## 2.51.0
 
 ### Minor Changes
 
@@ -77,27 +8,51 @@
 
 * [#2053](https://github.com/LedgerHQ/ledger-live/pull/2053) [`07f48c9471`](https://github.com/LedgerHQ/ledger-live/commit/07f48c947120fc1dc472719a5ee8a9fbb7dcd478) Thanks [@sarneijim](https://github.com/sarneijim)! - Integrate ETH stake new flow (include receive flag)
 
+- [#2093](https://github.com/LedgerHQ/ledger-live/pull/2093) [`0d8405b179`](https://github.com/LedgerHQ/ledger-live/commit/0d8405b17950125c3e3bba50086c28876e9a0c68) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add swap data track
+
+* [#2093](https://github.com/LedgerHQ/ledger-live/pull/2093) [`0d8405b179`](https://github.com/LedgerHQ/ledger-live/commit/0d8405b17950125c3e3bba50086c28876e9a0c68) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add more explicit error on tron trc20
+
 ### Patch Changes
 
-- [`06f43afb06`](https://github.com/LedgerHQ/ledger-live/commit/06f43afb06d7eaa4d51fe95098135c55a5e0916b) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Accept terms of use when click get started button in onboarding
+- [#2122](https://github.com/LedgerHQ/ledger-live/pull/2122) [`44b9deaa6c`](https://github.com/LedgerHQ/ledger-live/commit/44b9deaa6cec4caabb9a9fd71850f9b3a9d3907c) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix loading spinner not appearing at the end of the onboarding, giving the impression that the app is frozen
+
+* [#2093](https://github.com/LedgerHQ/ledger-live/pull/2093) [`0d8405b179`](https://github.com/LedgerHQ/ledger-live/commit/0d8405b17950125c3e3bba50086c28876e9a0c68) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - LLD - Handle ECONNRESET error in manager
+
+- [#2093](https://github.com/LedgerHQ/ledger-live/pull/2093) [`0d8405b179`](https://github.com/LedgerHQ/ledger-live/commit/0d8405b17950125c3e3bba50086c28876e9a0c68) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Remove redirection to account details from receive banner
+
+* [#2058](https://github.com/LedgerHQ/ledger-live/pull/2058) [`aee5dd361f`](https://github.com/LedgerHQ/ledger-live/commit/aee5dd361fae6aacb8b7320107417185c90f9b8b) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add translation key
+
+- [#2093](https://github.com/LedgerHQ/ledger-live/pull/2093) [`0d8405b179`](https://github.com/LedgerHQ/ledger-live/commit/0d8405b17950125c3e3bba50086c28876e9a0c68) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Improve cic logo
+
+* [#2019](https://github.com/LedgerHQ/ledger-live/pull/2019) [`08b0445a5f`](https://github.com/LedgerHQ/ledger-live/commit/08b0445a5f8431042ddffe9abf01e1319d677ad8) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update Ethereum custom fees CSS for Ethereum
+
+- [#2112](https://github.com/LedgerHQ/ledger-live/pull/2112) [`06f43afb06`](https://github.com/LedgerHQ/ledger-live/commit/06f43afb06d7eaa4d51fe95098135c55a5e0916b) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Accept terms of use when click get started button in onboarding
 
 * [#2075](https://github.com/LedgerHQ/ledger-live/pull/2075) [`0d36245257`](https://github.com/LedgerHQ/ledger-live/commit/0d362452577acb3190523e4bc4a5e9cd4985d712) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Fixes loading indicator padding on swap screen
 
-* Updated dependencies [[`d99aafd1d4`](https://github.com/LedgerHQ/ledger-live/commit/d99aafd1d48336f6b4da3c1d8e7c52dbc1676278), [`d99aafd1d4`](https://github.com/LedgerHQ/ledger-live/commit/d99aafd1d48336f6b4da3c1d8e7c52dbc1676278)]:
-  - @ledgerhq/live-common@27.10.0-nightly.0
-  - @ledgerhq/types-live@6.28.0-nightly.1
+* Updated dependencies [[`f1c15446da`](https://github.com/LedgerHQ/ledger-live/commit/f1c15446dabef05bb91dada8d8f53f9bc6474ba5), [`b01f9f5c02`](https://github.com/LedgerHQ/ledger-live/commit/b01f9f5c02ef255738b557daba38c1d9f13ee8fe), [`32993aea9a`](https://github.com/LedgerHQ/ledger-live/commit/32993aea9af5dfb7f2519263e5f2a22a88320cdc), [`d99aafd1d4`](https://github.com/LedgerHQ/ledger-live/commit/d99aafd1d48336f6b4da3c1d8e7c52dbc1676278), [`93e19275f3`](https://github.com/LedgerHQ/ledger-live/commit/93e19275f3336672579d2e3bab317489d47853c5), [`ee507188f0`](https://github.com/LedgerHQ/ledger-live/commit/ee507188f097429237bef6df0f63b5f6426dd91a), [`d99aafd1d4`](https://github.com/LedgerHQ/ledger-live/commit/d99aafd1d48336f6b4da3c1d8e7c52dbc1676278), [`aee5dd361f`](https://github.com/LedgerHQ/ledger-live/commit/aee5dd361fae6aacb8b7320107417185c90f9b8b), [`f1c15446da`](https://github.com/LedgerHQ/ledger-live/commit/f1c15446dabef05bb91dada8d8f53f9bc6474ba5)]:
+  - @ledgerhq/live-common@27.10.0
+  - @ledgerhq/types-live@6.28.0
+  - @ledgerhq/react-ui@0.10.3
+  - @ledgerhq/errors@6.12.2
+  - @ledgerhq/hw-transport@6.27.9
+  - @ledgerhq/devices@7.0.6
+  - @ledgerhq/hw-transport-http@6.27.9
+  - @ledgerhq/hw-transport-node-hid-singleton@6.28.6
 
-## 2.51.0-nightly.1
+## 2.51.0-next.1
 
 ### Patch Changes
 
-- Updated dependencies [[`b01f9f5c02`](https://github.com/LedgerHQ/ledger-live/commit/b01f9f5c02ef255738b557daba38c1d9f13ee8fe)]:
-  - @ledgerhq/types-live@6.27.2-nightly.0
-  - @ledgerhq/live-common@27.9.0
+- [#2122](https://github.com/LedgerHQ/ledger-live/pull/2122) [`44b9deaa6c`](https://github.com/LedgerHQ/ledger-live/commit/44b9deaa6cec4caabb9a9fd71850f9b3a9d3907c) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix loading spinner not appearing at the end of the onboarding, giving the impression that the app is frozen
 
-## 2.51.0-nightly.0
+## 2.51.0-next.0
 
 ### Minor Changes
+
+- [#1805](https://github.com/LedgerHQ/ledger-live/pull/1805) [`d99aafd1d4`](https://github.com/LedgerHQ/ledger-live/commit/d99aafd1d48336f6b4da3c1d8e7c52dbc1676278) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - NEAR sync, send and stake
+
+* [#2053](https://github.com/LedgerHQ/ledger-live/pull/2053) [`07f48c9471`](https://github.com/LedgerHQ/ledger-live/commit/07f48c947120fc1dc472719a5ee8a9fbb7dcd478) Thanks [@sarneijim](https://github.com/sarneijim)! - Integrate ETH stake new flow (include receive flag)
 
 - [#2093](https://github.com/LedgerHQ/ledger-live/pull/2093) [`0d8405b179`](https://github.com/LedgerHQ/ledger-live/commit/0d8405b17950125c3e3bba50086c28876e9a0c68) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add swap data track
 
@@ -109,7 +64,25 @@
 
 * [#2093](https://github.com/LedgerHQ/ledger-live/pull/2093) [`0d8405b179`](https://github.com/LedgerHQ/ledger-live/commit/0d8405b17950125c3e3bba50086c28876e9a0c68) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Remove redirection to account details from receive banner
 
-- [#2093](https://github.com/LedgerHQ/ledger-live/pull/2093) [`0d8405b179`](https://github.com/LedgerHQ/ledger-live/commit/0d8405b17950125c3e3bba50086c28876e9a0c68) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Improve cic logo
+- [#2058](https://github.com/LedgerHQ/ledger-live/pull/2058) [`aee5dd361f`](https://github.com/LedgerHQ/ledger-live/commit/aee5dd361fae6aacb8b7320107417185c90f9b8b) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add translation key
+
+* [#2093](https://github.com/LedgerHQ/ledger-live/pull/2093) [`0d8405b179`](https://github.com/LedgerHQ/ledger-live/commit/0d8405b17950125c3e3bba50086c28876e9a0c68) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Improve cic logo
+
+- [#2019](https://github.com/LedgerHQ/ledger-live/pull/2019) [`08b0445a5f`](https://github.com/LedgerHQ/ledger-live/commit/08b0445a5f8431042ddffe9abf01e1319d677ad8) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update Ethereum custom fees CSS for Ethereum
+
+* [`06f43afb06`](https://github.com/LedgerHQ/ledger-live/commit/06f43afb06d7eaa4d51fe95098135c55a5e0916b) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Accept terms of use when click get started button in onboarding
+
+- [#2075](https://github.com/LedgerHQ/ledger-live/pull/2075) [`0d36245257`](https://github.com/LedgerHQ/ledger-live/commit/0d362452577acb3190523e4bc4a5e9cd4985d712) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Fixes loading indicator padding on swap screen
+
+- Updated dependencies [[`f1c15446da`](https://github.com/LedgerHQ/ledger-live/commit/f1c15446dabef05bb91dada8d8f53f9bc6474ba5), [`b01f9f5c02`](https://github.com/LedgerHQ/ledger-live/commit/b01f9f5c02ef255738b557daba38c1d9f13ee8fe), [`32993aea9a`](https://github.com/LedgerHQ/ledger-live/commit/32993aea9af5dfb7f2519263e5f2a22a88320cdc), [`d99aafd1d4`](https://github.com/LedgerHQ/ledger-live/commit/d99aafd1d48336f6b4da3c1d8e7c52dbc1676278), [`93e19275f3`](https://github.com/LedgerHQ/ledger-live/commit/93e19275f3336672579d2e3bab317489d47853c5), [`ee507188f0`](https://github.com/LedgerHQ/ledger-live/commit/ee507188f097429237bef6df0f63b5f6426dd91a), [`d99aafd1d4`](https://github.com/LedgerHQ/ledger-live/commit/d99aafd1d48336f6b4da3c1d8e7c52dbc1676278), [`aee5dd361f`](https://github.com/LedgerHQ/ledger-live/commit/aee5dd361fae6aacb8b7320107417185c90f9b8b), [`f1c15446da`](https://github.com/LedgerHQ/ledger-live/commit/f1c15446dabef05bb91dada8d8f53f9bc6474ba5)]:
+  - @ledgerhq/live-common@27.10.0-next.0
+  - @ledgerhq/types-live@6.28.0-next.0
+  - @ledgerhq/react-ui@0.10.3-next.0
+  - @ledgerhq/errors@6.12.2-next.0
+  - @ledgerhq/hw-transport@6.27.9-next.0
+  - @ledgerhq/devices@7.0.6-next.0
+  - @ledgerhq/hw-transport-http@6.27.9-next.0
+  - @ledgerhq/hw-transport-node-hid-singleton@6.28.6-next.0
 
 ## 2.50.1
 

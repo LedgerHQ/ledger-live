@@ -2,4 +2,4 @@
 "ledger-live-desktop": minor
 ---
 
-Add more explicit error on tron trc20
+Shows DEX quotes on swap screen.

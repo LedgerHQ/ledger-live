@@ -166,6 +166,7 @@ describe("useProviderRates", () => {
         toAmount: new BigNumber(1),
         magnitudeAwareRate: new BigNumber(1),
         provider: "ftx",
+        providerType: "CEX",
         tradeMethod: "float",
       });
       result.current.refetchRates();
