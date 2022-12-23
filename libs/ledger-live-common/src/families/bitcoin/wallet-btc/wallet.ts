@@ -42,6 +42,7 @@ class BitcoinLikeWallet {
       xpub: string;
       path: string;
       index: number;
+      // FIXME: currency should be removed and instead use CryptoCurrency
       currency: Currency;
       network: "mainnet" | "testnet";
       derivationMode: DerivationModes;
@@ -51,9 +52,7 @@ class BitcoinLikeWallet {
     cryptoCurrency: CryptoCurrency
   ): Promise<Account> {
     const explorerURI = blockchainBaseURL(cryptoCurrency);
-    this.explorers[explorerURI] = new BitcoinLikeExplorer({
-      cryptoCurrency: cryptoCurrency,
-    });
+    this.explorers[explorerURI] = this.getExplorer(cryptoCurrency);
     const crypto = cryptoFactory(params.currency);
     const storage = this.accountStorages[params.storage](
       ...params.storageParams

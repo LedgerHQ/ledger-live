@@ -171,38 +171,33 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       block_hash,
       batch_size = 2000
     ): Promise<Tx[]> {
-      const txs = Promise.all([
+      const query = {
+        batch_size,
+        noinput: true,
+        no_input: true,
+        no_token: true,
+        filtering: true,
+        block_hash,
+      };
+      const txsData: Promise<[{ data: Tx[] }, { data: Tx[] }]> = Promise.all([
         network({
           method: "GET",
           url: URL.format({
             pathname: `${baseURL}/address/${address}/txs/pending`,
-            query: {
-              batch_size,
-              noinput: true,
-              no_input: true,
-              no_token: true,
-              filtering: true,
-              block_hash,
-            },
+            query,
           }),
         }),
         network({
           method: "GET",
           url: URL.format({
             pathname: `${baseURL}/address/${address}/txs`,
-            query: {
-              batch_size,
-              noinput: true,
-              no_input: true,
-              no_token: true,
-              filtering: true,
-              block_hash,
-            },
+            query,
           }),
         }),
       ]);
-      const [pendingTxData, txData] = await txs;
-      return pendingTxData.data.concat(txData.data);
+      const [pendingTxData, txData] = await txsData;
+      Array.prototype.push.apply(txData.data, pendingTxData.data);
+      return txData.data;
     },
 
     async getCurrentBlock(): Promise<Block> {

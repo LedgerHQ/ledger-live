@@ -185,7 +185,8 @@ class BitcoinLikeExplorer implements IExplorer {
     });
     await this.client.release(client);
     const pendingTxs = await this.fetchPendingTxs(address, params);
-    return pendingTxs.concat(response.data.data);
+    Array.prototype.push.apply(response.data.data, pendingTxs);
+    return response.data.data;
   }
 
   async fetchPendingTxs(

@@ -19,6 +19,10 @@ export const findCurrencyExplorer = (
     };
   }
 
+  if (currency.explorerId == null) {
+    console.warn("no explorerId for", currency.id);
+  }
+
   return {
     endpoint: getEnv("EXPLORER"),
     id: currency.explorerId ?? currency.id,
