@@ -118,6 +118,7 @@ export type CryptoCurrency = CurrencyCommon & {
     link: string;
   };
   deviceTicker?: string;
+  // Used to connect to the right endpoint url since it is different from currencyId and ticker
   explorerId?: string;
 };
 

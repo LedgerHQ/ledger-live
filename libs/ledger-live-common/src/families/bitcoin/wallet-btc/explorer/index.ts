@@ -161,11 +161,7 @@ class BitcoinLikeExplorer implements IExplorer {
   }
 
   async getPendings(address: Address, nbMax?: number) {
-    const params: {
-      no_token?: string;
-      batch_size?: number;
-      block_hash?: string;
-    } = {
+    const params: ExplorerParams = {
       no_token: "true",
       batch_size: !this.disableBatchSize ? nbMax || 1000 : undefined,
       block_hash: undefined,
@@ -250,11 +246,7 @@ class BitcoinLikeExplorer implements IExplorer {
     address: Address,
     lastTx: TX | undefined
   ): Promise<TX[]> {
-    const params: {
-      no_token?: string;
-      batch_size?: number;
-      block_hash?: string;
-    } = {
+    const params: ExplorerParams = {
       no_token: "true",
       batch_size: !this.disableBatchSize ? batchSize : undefined,
       block_hash: lastTx ? lastTx.block.hash : undefined,
