@@ -1,4 +1,4 @@
-import { shell, WebviewTag } from "electron";
+import { WebviewTag } from "electron";
 import semver from "semver";
 import * as remote from "@electron/remote";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
