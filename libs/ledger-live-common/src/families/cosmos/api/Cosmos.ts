@@ -3,14 +3,14 @@ import network from "../../../network";
 import { patchOperationWithHash } from "../../../operation";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
-import Crypto from "../crypto/crypto";
+import cryptoFactory from "../crypto/crypto";
 
 export class CosmosAPI {
   protected _defaultEndpoint = "";
   private _version = "";
 
   constructor(currencyId: string) {
-    const crypto = new Crypto(currencyId);
+    const crypto = cryptoFactory(currencyId);
     this._defaultEndpoint = crypto.lcd;
     this._version = crypto.version;
   }

@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { getMaxEstimatedBalance } from "./logic";
 import { CacheRes, makeLRUCache } from "../../cache";
 import type { Account } from "@ledgerhq/types-live";
-import Crypto from "./crypto/crypto";
+import cryptoFactory from "./crypto/crypto";
 
 export const calculateFees: CacheRes<
   Array<{
@@ -40,7 +40,7 @@ const getEstimatedFees = async (
   account: CosmosAccount,
   transaction: Transaction
 ): Promise<any> => {
-  const cosmosCurrency = new Crypto(account.currency.id);
+  const cosmosCurrency = cryptoFactory(account.currency.id);
   let estimatedGas = BigNumber(cosmosCurrency.default_gas);
   if (cosmosCurrency.gas[transaction.mode]) {
     estimatedGas = BigNumber(cosmosCurrency.gas[transaction.mode]);

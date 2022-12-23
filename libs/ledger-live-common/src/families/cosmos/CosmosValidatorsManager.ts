@@ -4,7 +4,8 @@ import { EnvName, EnvValue } from "../../env";
 import { makeLRUCache } from "../../cache";
 import type { CosmosValidatorItem, CosmosRewardsState } from "./types";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import Crypto from "./crypto/crypto";
+import cryptoFactory from "./crypto/crypto";
+import cosmosBase from "./crypto/cosmosBase";
 
 export class CosmosValidatorsManager {
   protected _version: string;
@@ -12,7 +13,7 @@ export class CosmosValidatorsManager {
   protected _minDenom!: string;
   protected _endPoint: EnvValue<EnvName> | undefined;
   protected _rewardsState: any | undefined;
-  private _crypto: Crypto;
+  private _crypto: cosmosBase;
 
   constructor(
     currency: CryptoCurrency,
@@ -23,7 +24,7 @@ export class CosmosValidatorsManager {
     }
   ) {
     this._currency = currency;
-    this._crypto = new Crypto(currency.id);
+    this._crypto = cryptoFactory(currency.id);
     this._endPoint = this._crypto.lcd;
     this._version = this._crypto.version;
     this._minDenom = currency.units[1].code;
@@ -67,7 +68,7 @@ export class CosmosValidatorsManager {
   );
 
   getValidators = async (): Promise<CosmosValidatorItem[]> => {
-    const rewardsState = await this._crypto.getRewardsState();
+    const rewardsState = await this._crypto.getRewardsState()();
     // validators need the rewardsState ONLY to compute voting power as
     // percentage instead of raw uatoms amounts
     return await this.cacheValidators(rewardsState);

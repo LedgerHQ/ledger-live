@@ -14,7 +14,7 @@ import Text from "~/renderer/components/Text";
 import Alert from "~/renderer/components/Alert";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
-import Crypto from "@ledgerhq/live-common/families/cosmos/crypto/crypto";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/crypto/crypto";
 
 export default function StepAmount({
   account,
@@ -64,7 +64,7 @@ export default function StepAmount({
   ]);
 
   const amount = useMemo(() => (validator ? validator.amount : BigNumber(0)), [validator]);
-  const crypto = new Crypto(account.currency.id);
+  const crypto = cryptoFactory(account.currency.id);
   return (
     <Box flow={1}>
       <TrackPage category="Undelegation Flow" name="Step 1" />

@@ -5,7 +5,7 @@ import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { Account } from "@ledgerhq/types-live";
-import Crypto from "@ledgerhq/live-common/families/cosmos/crypto/crypto";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/crypto/crypto";
 import invariant from "invariant";
 import InfoModal from "../../modals/Info";
 import type { ModalInfo } from "../../modals/Info";
@@ -101,7 +101,7 @@ export default function AccountBalanceFooter({ account }: Props) {
 function useInfo(account: Account): Record<InfoName, ModalInfo[]> {
   const { t } = useTranslation();
   const CosmosIcon = getCryptoCurrencyIcon(account.currency);
-  const crypto = new Crypto(account.currency.id);
+  const crypto = cryptoFactory(account.currency.id);
   invariant(CosmosIcon, "Icon is expected");
   return {
     available: [

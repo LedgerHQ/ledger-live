@@ -5,7 +5,7 @@ import invariant from "invariant";
 import { Trans, useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { Alert, Button, Flex, Text } from "@ledgerhq/native-ui";
-import Crypto from "@ledgerhq/live-common/families/cosmos/crypto/crypto";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/crypto/crypto";
 
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { ScreenName } from "../../../const";
@@ -41,7 +41,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   invariant(account, "account must be defined");
 
   const mainAccount = getMainAccount(account, parentAccount);
-  const crypto = new Crypto(mainAccount.currency.id);
+  const crypto = cryptoFactory(mainAccount.currency.id);
   const howDelegationWorks = useCallback(() => {
     Linking.openURL(urls.cosmosStakingRewards);
   }, []);

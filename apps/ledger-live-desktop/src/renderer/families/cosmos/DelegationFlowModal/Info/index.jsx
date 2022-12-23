@@ -2,16 +2,14 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-
 import { openModal, closeModal } from "~/renderer/actions/modals";
 import EarnRewardsInfoModal from "~/renderer/components/EarnRewardsInfoModal";
 import WarnBox from "~/renderer/components/WarnBox";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
-import Crypto from "@ledgerhq/live-common/families/cosmos/crypto/crypto";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/crypto/crypto";
 
 type Props = {
   name?: string,
@@ -35,7 +33,7 @@ export default function CosmosEarnRewardsInfoModal({ name, account, parentAccoun
   const onLearnMore = useCallback(() => {
     openURL(urls.cosmosStakingRewards);
   }, []);
-  const crypto = new Crypto(account.currency.id);
+  const crypto = cryptoFactory(account.currency.id);
   return (
     <EarnRewardsInfoModal
       name={name}
