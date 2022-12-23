@@ -39,10 +39,11 @@ export default function PlatformApp({ match, appId: propsAppId, location }: Prop
   );
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
-  const manifest = JSON.parse(JSON.stringify(localManifest || remoteManifest));
+  const manifest = Object.assign({}, localManifest || remoteManifest);
 
   const dappUrl = manifest.params.dappUrl.split("?");
-  manifest.params.dappUrl = `${dappUrl[0]}${sufix}?${dappUrl[1]}`;
+  manifest.params.dappUrl =
+    dappUrl.length === 1 ? `${dappUrl[0]}${sufix}` : `${dappUrl[0]}${sufix}?${dappUrl[1]}`;
 
   const returnTo = useMemo(() => {
     const params = new URLSearchParams(search);
