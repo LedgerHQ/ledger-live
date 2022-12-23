@@ -1,5 +1,19 @@
 # @ledgerhq/hw-app-btc
 
+## 9.1.1
+
+### Patch Changes
+
+- Updated dependencies [[`f1c15446da`](https://github.com/LedgerHQ/ledger-live/commit/f1c15446dabef05bb91dada8d8f53f9bc6474ba5)]:
+  - @ledgerhq/hw-transport@6.27.9
+
+## 9.1.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`f1c15446da`](https://github.com/LedgerHQ/ledger-live/commit/f1c15446dabef05bb91dada8d8f53f9bc6474ba5)]:
+  - @ledgerhq/hw-transport@6.27.9-next.0
+
 ## 9.1.0
 
 ### Minor Changes

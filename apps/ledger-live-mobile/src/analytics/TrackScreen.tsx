@@ -38,7 +38,7 @@ export default function TrackScreen({
         screen(category, name, props);
       }
     }
-  }, [category, name, props, isFocused]);
+  }, [category, name, props, isFocused, refreshSource]);
 
   return null;
 }

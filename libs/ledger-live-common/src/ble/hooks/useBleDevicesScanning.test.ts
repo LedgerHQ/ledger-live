@@ -15,8 +15,8 @@ jest.useFakeTimers();
 const nanoXServiceUuid = getDeviceModel(DeviceModelId.nanoX).bluetoothSpec![0]
   .serviceUuid;
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-const nanoFTSServiceUuid = getDeviceModel(DeviceModelId.nanoFTS)
-  .bluetoothSpec![0].serviceUuid;
+const staxServiceUuid = getDeviceModel(DeviceModelId.stax).bluetoothSpec![0]
+  .serviceUuid;
 
 // Fake devices info we would get from the bluetooth transport listen
 const aTransportBleDevice = (overrideProps?: Partial<TransportBleDevice>) => {
@@ -71,7 +71,7 @@ describe("useBleDevicesScanning", () => {
           type: "add",
           descriptor: aTransportBleDevice({
             id: deviceIdB,
-            serviceUUIDs: [nanoFTSServiceUuid],
+            serviceUUIDs: [staxServiceUuid],
           }),
         });
       }, 1000);
@@ -108,7 +108,7 @@ describe("useBleDevicesScanning", () => {
         expect(result.current.scannedDevices).toHaveLength(2);
         expect(result.current.scannedDevices[1].deviceId).toBe(deviceIdB);
         expect(result.current.scannedDevices[1].deviceModel.id).toBe(
-          DeviceModelId.nanoFTS
+          DeviceModelId.stax
         );
       });
     });
@@ -136,7 +136,7 @@ describe("useBleDevicesScanning", () => {
           jest.advanceTimersByTime(1000);
         });
 
-        // The second scanned device was a nanoFTS, and was filtered out
+        // The second scanned device was a stax, and was filtered out
         expect(result.current.scannedDevices).toHaveLength(1);
 
         await act(async () => {

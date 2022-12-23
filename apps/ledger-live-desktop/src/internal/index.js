@@ -11,6 +11,12 @@ import LoggerTransport from "~/logger/logger-transport-internal";
 
 import { executeCommand, unsubscribeCommand, unsubscribeAllCommands } from "./commandHandler";
 import sentry, { setTags } from "~/sentry/internal";
+import { transportClose, transportExchange, transportOpen } from "~/internal/transportHandler";
+import {
+  transportCloseChannel,
+  transportExchangeChannel,
+  transportOpenChannel,
+} from "~/config/transportChannels";
 
 process.on("exit", () => {
   logger.debug("exiting process, unsubscribing all...");
@@ -50,6 +56,16 @@ if (INITIAL_SENTRY_TAGS) {
 
 process.on("message", m => {
   switch (m.type) {
+    case transportOpenChannel:
+      transportOpen(m);
+      break;
+    case transportExchangeChannel:
+      transportExchange(m);
+      break;
+    case transportCloseChannel:
+      transportClose(m);
+      break;
+
     case "command":
       // $FlowFixMe TODO
       executeCommand(m.command, process.send.bind(process));

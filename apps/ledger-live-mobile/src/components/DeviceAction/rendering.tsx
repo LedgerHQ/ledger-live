@@ -72,8 +72,8 @@ import {
   FramedImageWithLottieWithContext,
 } from "../CustomImage/FramedImageWithLottie";
 
-const confirmLockscreen = require("../animations/nanoFTS/customimage/confirmLockscreen.json"); // eslint-disable-line @typescript-eslint/no-var-requires, import/no-unresolved
-const allowConnection = require("../animations/nanoFTS/customimage/allowConnection.json"); // eslint-disable-line @typescript-eslint/no-var-requires, import/no-unresolved
+const confirmLockscreen = require("../animations/stax/customimage/confirmLockscreen.json"); // eslint-disable-line @typescript-eslint/no-var-requires, import/no-unresolved
+const allowConnection = require("../animations/stax/customimage/allowConnection.json"); // eslint-disable-line @typescript-eslint/no-var-requires, import/no-unresolved
 
 const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -445,7 +445,7 @@ export function renderAllowLanguageInstallation({
   device: Device;
 }) {
   const deviceName = getDeviceModel(device.modelId).productName;
-  const key = device.modelId === "nanoFTS" ? "allowConnection" : "sign";
+  const key = device.modelId === "stax" ? "allowConnection" : "sign";
 
   return (
     <Wrapper>
@@ -774,7 +774,7 @@ export function renderDeviceNotOnboarded({
   navigation: StackNavigationProp<ParamListBase>;
 }) {
   const navigateToOnboarding = () => {
-    if (device.modelId === DeviceModelId.nanoFTS) {
+    if (device.modelId === DeviceModelId.stax) {
       // On pairing success, navigate to the Sync Onboarding Companion
       navigation.navigate(NavigatorName.BaseOnboarding, {
         screen: NavigatorName.SyncOnboarding,
@@ -843,7 +843,7 @@ export function renderConnectYourDevice({
     <Wrapper>
       <AnimationContainer
         withConnectDeviceHeight={
-          ![DeviceModelId.blue, DeviceModelId.nanoFTS].includes(device.modelId)
+          ![DeviceModelId.blue, DeviceModelId.stax].includes(device.modelId)
         }
       >
         <Animation

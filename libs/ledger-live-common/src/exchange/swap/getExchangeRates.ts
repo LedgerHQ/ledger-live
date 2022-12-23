@@ -13,25 +13,26 @@ import {
 } from "../../errors";
 import network from "../../network";
 import type { Transaction } from "../../generated/types";
-import {
-  getAvailableProviders,
-  getSwapAPIBaseURL,
-  getSwapAPIError,
-  getSwapAPIVersion,
-} from "./";
+import { getProviderConfig, getSwapAPIBaseURL, getSwapAPIError } from "./";
 import { mockGetExchangeRates } from "./mock";
-import type { CustomMinOrMaxError, Exchange, GetExchangeRates } from "./types";
+import type {
+  CustomMinOrMaxError,
+  Exchange,
+  GetExchangeRates,
+  AvailableProviderV3,
+} from "./types";
 
 const getExchangeRates: GetExchangeRates = async (
   exchange: Exchange,
   transaction: Transaction,
   userId?: string, // TODO remove when wyre doesn't require this for rates
-  currencyTo?: TokenCurrency | CryptoCurrency | undefined | null
+  currencyTo?: TokenCurrency | CryptoCurrency | undefined | null,
+  providers: AvailableProviderV3[] = [],
+  includeDEX = false
 ) => {
   if (getEnv("MOCK"))
     return mockGetExchangeRates(exchange, transaction, currencyTo);
 
-  const usesV3 = getSwapAPIVersion() >= 3;
   const from = getAccountCurrency(exchange.fromAccount).id;
   const unitFrom = getAccountUnit(exchange.fromAccount);
   const unitTo =
@@ -40,11 +41,27 @@ const getExchangeRates: GetExchangeRates = async (
   const amountFrom = transaction.amount;
   const tenPowMagnitude = new BigNumber(10).pow(unitFrom.magnitude);
   const apiAmount = new BigNumber(amountFrom).div(tenPowMagnitude);
+
+  const providerList = providers
+    .filter((provider) => {
+      const validDex = (provider: AvailableProviderV3) =>
+        includeDEX && getProviderConfig(provider.provider).type === "DEX";
+      const validCex = (provider: AvailableProviderV3) => {
+        if (getProviderConfig(provider.provider).type !== "CEX") return false;
+        const index = provider.pairs.findIndex(
+          (pair) => pair.from === from && pair.to === to
+        );
+        return index > -1;
+      };
+      return validDex(provider) || validCex(provider);
+    })
+    .map((item) => item.provider);
+
   const request = {
     from,
     to,
     amountFrom: apiAmount.toString(),
-    providers: usesV3 ? getAvailableProviders() : undefined,
+    providers: providerList,
   };
   const res = await network({
     method: "POST",
@@ -52,15 +69,16 @@ const getExchangeRates: GetExchangeRates = async (
     headers: {
       ...(userId ? { userId } : {}),
     },
-    data: usesV3 ? request : [request],
+    data: request,
   });
 
-  return res.data.map((responseData) => {
+  const rates = res.data.map((responseData) => {
     const {
       rate: maybeRate,
       payoutNetworkFees: maybePayoutNetworkFees,
       rateId,
       provider,
+      providerType,
       amountFrom,
       amountTo,
       tradeMethod,
@@ -100,6 +118,7 @@ const getExchangeRates: GetExchangeRates = async (
     const out = {
       magnitudeAwareRate,
       provider,
+      providerType,
       rate,
       rateId,
       toAmount: magnitudeAwareToAmount,
@@ -115,6 +134,7 @@ const getExchangeRates: GetExchangeRates = async (
       };
     }
   });
+  return rates;
 };
 
 const inferError = (

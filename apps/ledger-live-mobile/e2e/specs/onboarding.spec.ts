@@ -1,7 +1,7 @@
 import { expect, waitFor } from "detox";
 import { waitForElementByText } from "../helpers";
 import OnboardingSteps from "../models/onboarding/onboardingSteps";
-import PortfolioPage from "../models/portfolioPage";
+import PortfolioPage from "../models/wallet/portfolioPage";
 
 let onboardingSteps: OnboardingSteps;
 let portfolioPage: PortfolioPage;

@@ -126,7 +126,7 @@ function GraphCard({
               </Text>
             ) : (
               <>
-                <Flex>
+                <Flex mx={6}>
                   {!balanceHistory ? (
                     <BigPlaceholder mt="8px" />
                   ) : (
