@@ -32,6 +32,7 @@ import {
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { ServerError, createCurrencyNotFound, Transport } from "@ledgerhq/wallet-api-core";
 import {
+  bitcoinFamillyAccountGetXPubLogic,
   broadcastTransactionLogic,
   receiveOnAccountLogic,
   signTransactionLogic,
@@ -437,6 +438,10 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
         tracking.deviceCloseSuccess(manifest);
 
         return Promise.resolve(transportId);
+      });
+
+      serverRef.current.setHandler("bitcoin.getXPub", ({ accountId }) => {
+        return bitcoinFamillyAccountGetXPubLogic({ manifest, accounts, tracking }, accountId);
       });
     }
     // Only used to init the server, no update needed
