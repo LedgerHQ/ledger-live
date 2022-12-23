@@ -131,7 +131,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blue"
   },
   "operation" : {
@@ -5559,8 +5559,7 @@
     "postOnboarding" : {
       "title" : "내 장치 커스텀",
       "description" : "화면 커스텀을 통해",
-      "actionCompletedPopupLabel" : "장치 커스텀 완료",
-      "actionCompletedHubTitle" : "더욱 깔끔한 화면을 즐길 수 있습니다."
+      "actionCompletedPopupLabel" : "장치 커스텀 완료"
     },
     "customImageSet" : "맞춤 이미지 세트",
     "finishCTA" : "완료"
