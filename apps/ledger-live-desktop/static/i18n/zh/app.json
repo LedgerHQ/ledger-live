@@ -131,7 +131,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blue"
   },
   "operation" : {
@@ -5559,8 +5559,7 @@
     "postOnboarding" : {
       "title" : "个性化我的设备",
       "description" : "通过自定义屏幕",
-      "actionCompletedPopupLabel" : "设备已个性化",
-      "actionCompletedHubTitle" : "那个屏幕看起来很简洁。"
+      "actionCompletedPopupLabel" : "设备已个性化"
     },
     "customImageSet" : "自定义图片集",
     "finishCTA" : "完成"
