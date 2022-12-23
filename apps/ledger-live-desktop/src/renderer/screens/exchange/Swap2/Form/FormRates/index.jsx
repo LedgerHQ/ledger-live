@@ -1,6 +1,6 @@
 // @flow
 import type { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useMemo } from "react";
 import styled from "styled-components";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
@@ -71,12 +71,10 @@ const SwapFormProviders = ({
     return swap.rates;
   }, [swap.rates, showNoQuoteDexRate]);
   const hasRates = ratesState?.value?.length > 0;
+  const loading = !hasRates && ratesState.status === "loading";
 
-  const [hasFetchedRates, setHasFetchedRates] = useState(hasRates);
-
-  useEffect(() => setHasFetchedRates(v => (!v ? hasRates : v)), [hasRates]);
   return (
-    <Form ready={hasFetchedRates}>
+    <Form ready={true}>
       <SectionRate
         provider={provider}
         fromCurrency={fromCurrency}
@@ -84,6 +82,7 @@ const SwapFormProviders = ({
         ratesState={updatedRatesState}
         refreshTime={refreshTime}
         countdown={countdown}
+        loading={loading}
       />
     </Form>
   );

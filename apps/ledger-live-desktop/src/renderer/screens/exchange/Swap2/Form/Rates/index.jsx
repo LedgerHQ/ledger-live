@@ -9,6 +9,7 @@ import NoQuoteSwapRate from "./NoQuoteSwapRate";
 import SwapRate from "./SwapRate";
 import Countdown from "./Countdown";
 import EmptyState from "./EmptyState";
+import LoadingState from "./LoadingState";
 import Filter from "./Filter";
 import type {
   SwapSelectorStateType,
@@ -30,6 +31,7 @@ type Props = {
   refreshTime: number,
   updateSelection: () => void,
   countdown: boolean,
+  loading: boolean,
 };
 
 const TableHeader: ThemedComponent<{}> = styled(Box).attrs({
@@ -55,6 +57,7 @@ export default function ProviderRate({
   provider,
   refreshTime,
   countdown,
+  loading,
 }: Props) {
   const dispatch = useDispatch();
   const [filter, setFilter] = useState([]);
@@ -213,7 +216,8 @@ export default function ProviderRate({
           );
         })}
       </Box>
-      {!filteredRates.length && <EmptyState />}
+      {!loading && !filteredRates.length && <EmptyState />}
+      {loading && <LoadingState />}
     </Box>
   );
 }
