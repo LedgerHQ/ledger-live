@@ -41,11 +41,10 @@ import {
   InvalidMinimumAmount,
   NotEnoughBalance,
   RecipientRequired,
+  MayBlockAccount
 } from "@ledgerhq/errors";
 import {
   broadcastTx,
-  fetchBalances,
-  getAccountStateInfo,
 } from "./utils/network";
 import { getMainAccount } from "../../../account/helpers";
 import { createNewDeploy } from "./utils/txn";
@@ -114,7 +113,7 @@ const getTransactionStatus = async (
   const errors: TransactionStatus["errors"] = {};
   const warnings: TransactionStatus["warnings"] = {};
 
-  const { balance } = a;
+  const { balance, spendableBalance } = a;
   const { address } = getAddress(a);
   const { recipient, useAllAmount } = t;
   let { amount } = t;
@@ -133,7 +132,7 @@ const getTransactionStatus = async (
   // This is the worst case scenario (the tx won't cost more than this value)
   const estimatedFees = t.fees;
 
-  let totalSpent;
+  let totalSpent = BigNumber(0);
 
   if (useAllAmount) {
     totalSpent = a.spendableBalance;
@@ -141,17 +140,26 @@ const getTransactionStatus = async (
     if (amount.lte(0) || totalSpent.gt(balance)) {
       errors.amount = new NotEnoughBalance();
     }
-  } else {
+  } 
+
+  if (!useAllAmount){
     totalSpent = amount.plus(estimatedFees);
     if (amount.eq(0)) {
       errors.amount = new AmountRequired();
-    } else if (totalSpent.gt(a.spendableBalance)) {
+    } 
+
+    if (totalSpent.gt(a.spendableBalance)) {
       errors.amount = new NotEnoughBalance();
     }
   }
 
   if (amount.lt(MINIMUM_VALID_AMOUNT) && !errors.amount)
     errors.amount = new InvalidMinimumAmount();
+  
+  if (spendableBalance.minus(totalSpent).minus(estimatedFees).lt(MINIMUM_VALID_AMOUNT)) 
+    warnings.amount = new MayBlockAccount();
+
+  
 
   // log("debug", "[getTransactionStatus] finish fn");
 
@@ -174,18 +182,15 @@ const estimateMaxSpendable = async ({
   transaction?: Transaction | null | undefined;
 }): Promise<BigNumber> => {
   const a = getMainAccount(account, parentAccount);
-  let balance = a.balance
+  let balance = a.spendableBalance
 
   if (balance.eq(0)) return balance;
-
-  const amount = transaction?.amount;
 
   const estimatedFees = transaction?.fees ?? getEstimatedFees();
 
   if (balance.lte(estimatedFees)) return new BigNumber(0);
 
   balance = balance.minus(estimatedFees);
-  if (amount) balance = balance.minus(amount);
 
   // log("debug", "[estimateMaxSpendable] finish fn");
 

@@ -31,22 +31,12 @@ function getDeviceTransactionConfig({
   });
   fields.push({
     type: "text",
-    label: "Recipient (Account hash)",
+    label: "Target (Account hash)",
     value: casperPubKeyToAccountHash(transaction.recipient),
   });
   fields.push({
     type: "text",
-    label: "Recipient (Public Key)",
-    value: transaction.recipient,
-  });
-  fields.push({
-    type: "text",
-    label: "Transfer ID",
-    value: transaction.transferId ?? "-",
-  });
-  fields.push({
-    type: "text",
-    label: "Method",
+    label: "Type",
     value: methodToString(0),
   });
 

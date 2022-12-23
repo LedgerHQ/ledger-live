@@ -23,6 +23,9 @@ export const AmountRequired = createCustomErrorClass("AmountRequired");
 export const InvalidMinimumAmount = createCustomErrorClass(
   "InvalidMinimumAmount"
 );
+export const MayBlockAccount = createCustomErrorClass(
+  "MayBlockAccount"
+);
 export const CasperInvalidTransferId = createCustomErrorClass(
   "CasperInvalidTransferId"
 );
