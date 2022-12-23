@@ -40,7 +40,13 @@ function LearnSection() {
   const renderItem = ({ item: card }: { item: LearnContentCard }) => {
     console.log(card.image);
     return (
-      <Skeleton loading={isLoading} height="85px" mx="16px" my="8px" borderRadius="8px">
+      <Skeleton
+        loading={isLoading}
+        height="85px"
+        mx="16px"
+        my="8px"
+        borderRadius="8px"
+      >
         <Container
           underlayColor={colors.neutral.c30}
           onPress={() => onClickItem(card)}
