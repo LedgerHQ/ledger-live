@@ -131,7 +131,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blue"
   },
   "operation" : {
@@ -5559,8 +5559,7 @@
     "postOnboarding" : {
       "title" : "Personnaliser mon appareil",
       "description" : "Avec un fond d’écran unique",
-      "actionCompletedPopupLabel" : "Appareil personnalisé",
-      "actionCompletedHubTitle" : "Vous avez créé votre style !"
+      "actionCompletedPopupLabel" : "Appareil personnalisé"
     },
     "customImageSet" : "Image définie",
     "finishCTA" : "Terminer"
