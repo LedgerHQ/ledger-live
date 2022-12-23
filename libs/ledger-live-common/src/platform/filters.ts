@@ -62,7 +62,10 @@ export function filterPlatformCurrencies(
   });
 }
 
-function matchVersion(filterParams: FilterParams, manifest: AppManifest) {
+function matchVersion(
+  filterParams: FilterParams,
+  manifest: AppManifest
+): boolean {
   return (
     !filterParams.version ||
     semver.satisfies(filterParams.version, manifest.apiVersion)
