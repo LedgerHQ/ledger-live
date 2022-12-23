@@ -1,4 +1,4 @@
-import { InformativeCard } from "@ledgerhq/native-ui";
+import { InformativeCard, Flex } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { FlatList } from "react-native";
@@ -40,7 +40,7 @@ function LearnSection() {
   const renderItem = ({ item: card }: { item: LearnContentCard }) => {
     console.log(card.image);
     return (
-      <Skeleton loading={isLoading} height="85px" m="16px" borderRadius="8px">
+      <Skeleton loading={isLoading} height="85px" mx="16px" my="8px" borderRadius="8px">
         <Container
           underlayColor={colors.neutral.c30}
           onPress={() => onClickItem(card)}
@@ -56,7 +56,7 @@ function LearnSection() {
   };
 
   return (
-    <>
+    <Flex mt={4}>
       <TrackScreen category="Learn" />
       <FlatList
         data={learnCards}
@@ -64,12 +64,15 @@ function LearnSection() {
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
       />
-    </>
+    </Flex>
   );
 }
 
 const Container = styled(TouchableHighlight)`
-  padding: 16px;
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-top: 8px;
+  padding-bottom: 8px;
 `;
 
 export default memo(LearnSection);

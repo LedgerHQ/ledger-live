@@ -61,14 +61,17 @@ function LearnWebView({ route }: NavigationProps) {
           zIndex={1}
         >
           <Flex width="20%" />
-          <Flex width="60%">
-            <Text textAlign="center" variant="h5" fontWeight="semiBold">
-              {t("help.ledgerAcademy.title")}
+          <Flex width="60%" alignItems="center" justifyContent="center" flexDirection="row">
+            <Icons.LockMedium size={16} color="neutral.c70" />
+            <Text textAlign="center" variant="small" fontWeight="medium" color="neutral.c70" ml={2}>
+              ledger.com/academy
             </Text>
           </Flex>
           <Flex width="20%" alignItems="flex-end">
             <TouchableOpacity onPress={goBack} style={{ padding: 16 }}>
-              <Icons.CloseMedium size={20} />
+              <Text variant="body" fontWeight="semiBold">
+                {t("common.close")}
+              </Text>
             </TouchableOpacity>
           </Flex>
         </Flex>

@@ -22,13 +22,12 @@ const CardContainer = (props: CardProps): React.ReactElement => {
 
   return (
     <Flex flexDirection="row">
-      <Flex justifyContent="space-between" alignItems="flex-start" p="12px" flex={1}>
+      <Flex justifyContent="space-between" alignItems="flex-start" py={2} pr={4} flex={1}>
         <Text
           variant="body"
           fontWeight="medium"
           color="neutral.c100"
           numberOfLines={2}
-          maxWidth={"95%"}
         >
           {title}
         </Text>
@@ -37,7 +36,6 @@ const CardContainer = (props: CardProps): React.ReactElement => {
           fontWeight="medium"
           color="neutral.c70"
           numberOfLines={1}
-          maxWidth={"95%"}
           mt={4}
         >
           {tag}
