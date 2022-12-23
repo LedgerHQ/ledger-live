@@ -131,7 +131,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blue"
   },
   "operation" : {
@@ -5559,8 +5559,7 @@
     "postOnboarding" : {
       "title" : "Cihazınızı kişiselleştirin",
       "description" : "Ekranı özelleştirin",
-      "actionCompletedPopupLabel" : "Cihaz kişiselleştirildi",
-      "actionCompletedHubTitle" : "Ekran gayet şık görünüyor."
+      "actionCompletedPopupLabel" : "Cihaz kişiselleştirildi"
     },
     "customImageSet" : "Özel resim ayarlandı",
     "finishCTA" : "Bitir"
