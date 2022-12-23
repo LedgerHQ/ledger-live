@@ -131,7 +131,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blue"
   },
   "operation" : {
@@ -5559,8 +5559,7 @@
     "postOnboarding" : {
       "title" : "تخصيص جهازي",
       "description" : "عبر تخصيص الشاشة",
-      "actionCompletedPopupLabel" : "تم تخصيص الجهاز",
-      "actionCompletedHubTitle" : "تلك الشاشة تبدو أنيقة."
+      "actionCompletedPopupLabel" : "تم تخصيص الجهاز"
     },
     "customImageSet" : "تم تعيين الصورة المخصصة",
     "finishCTA" : "إنهاء"
