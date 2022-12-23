@@ -131,7 +131,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blue"
   },
   "operation" : {
@@ -5559,8 +5559,7 @@
     "postOnboarding" : {
       "title" : "Персонализируйте устройство",
       "description" : "Благодаря гибким настройкам экрана",
-      "actionCompletedPopupLabel" : "Устройство персонализировано",
-      "actionCompletedHubTitle" : "Ваш экран выглядит восхитительно!"
+      "actionCompletedPopupLabel" : "Устройство персонализировано"
     },
     "customImageSet" : "Пользовательское изображение установлено",
     "finishCTA" : "Завершить"
