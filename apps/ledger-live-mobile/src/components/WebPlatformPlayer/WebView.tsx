@@ -57,7 +57,6 @@ import {
 } from "@ledgerhq/live-common/platform/react";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 import { useTheme } from "styled-components/native";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { NavigatorName, ScreenName } from "../../const";
 import { broadcastSignedTx } from "../../logic/screenTransactionHooks";
@@ -180,7 +179,7 @@ export const WebView = ({ manifest, inputs }: Props) => {
         const cryptoCurrencyIds =
           safeCurrencyIds && safeCurrencyIds.length > 0
             ? safeCurrencyIds
-            : allCurrencies.map(currency => (currency as CryptoCurrency).id);
+            : allCurrencies.map(currency => currency.id);
 
         const foundAccounts = cryptoCurrencyIds?.length
           ? accounts.filter(a =>

@@ -8,7 +8,6 @@ import {
   getTagDerivationMode,
   DerivationMode,
 } from "@ledgerhq/live-common/derivation";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   getAccountCurrency,
   isAccount,
@@ -54,10 +53,11 @@ export default function AdvancedLogs({ route }: NavigationProps) {
     minute: "2-digit",
   });
 
-  const currency = getAccountCurrency(account) as CryptoCurrency;
+  const currency = getAccountCurrency(account);
   const tag =
     (account.derivationMode !== undefined &&
       account.derivationMode !== null &&
+      currency.type === "CryptoCurrency" &&
       getTagDerivationMode(
         currency,
         (account as { derivationMode: DerivationMode }).derivationMode,
