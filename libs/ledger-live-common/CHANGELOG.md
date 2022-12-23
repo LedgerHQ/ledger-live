@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 27.11.0-nightly.0
+
+### Minor Changes
+
+- [#2123](https://github.com/LedgerHQ/ledger-live/pull/2123) [`9b3984fb92`](https://github.com/LedgerHQ/ledger-live/commit/9b3984fb92dd5233dda6603b855c402bdfd8c6a9) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Adds support for getting DEX quotes.
+
 ## 27.10.0
 
 ### Minor Changes

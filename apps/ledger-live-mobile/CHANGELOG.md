@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.13.0-nightly.8
+
+### Patch Changes
+
+- [#2120](https://github.com/LedgerHQ/ledger-live/pull/2120) [`432e7fd7f9`](https://github.com/LedgerHQ/ledger-live/commit/432e7fd7f9cb229d9dfef47ceffcefeb94a5cb77) Thanks [@github-actions](https://github.com/apps/github-actions)! - Made the exported logs on LLM larger and configurable via ENV vars.
+
+* [#2123](https://github.com/LedgerHQ/ledger-live/pull/2123) [`9b3984fb92`](https://github.com/LedgerHQ/ledger-live/commit/9b3984fb92dd5233dda6603b855c402bdfd8c6a9) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Fetches CEX quotes with updated common SDK
+
+* Updated dependencies [[`9b3984fb92`](https://github.com/LedgerHQ/ledger-live/commit/9b3984fb92dd5233dda6603b855c402bdfd8c6a9)]:
+  - @ledgerhq/live-common@27.11.0-nightly.0
+
 ## 3.13.0-nightly.7
 
 ### Patch Changes
