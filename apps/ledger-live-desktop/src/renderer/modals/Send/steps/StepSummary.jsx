@@ -74,6 +74,7 @@ export default class StepSummary extends PureComponent<StepProps> {
 
     // $FlowFixMe
     const memo = transaction.memo;
+    const transferId = transaction.transferId;
 
     return (
       <Box flow={4} mx={40}>
@@ -145,6 +146,18 @@ export default class StepSummary extends PureComponent<StepProps> {
               <Ellipsis ml={2}>
                 <Text ff="Inter|Medium" fontSize={4}>
                   {memo}
+                </Text>
+              </Ellipsis>
+            </Box>
+          )}
+          {transferId && (
+            <Box horizontal justifyContent="space-between" alignItems="center" mb={2}>
+              <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
+                <Trans i18nKey="families.casper.transferId" />
+              </Text>
+              <Ellipsis ml={2}>
+                <Text ff="Inter|Medium" fontSize={4}>
+                  {transferId}
                 </Text>
               </Ellipsis>
             </Box>
