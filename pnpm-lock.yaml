@@ -13,15 +13,15 @@ overrides:
   remove-flow-types-loader>loader-utils: '*'
 
 patchedDependencies:
-  react-native-image-crop-tools@1.6.2:
-    hash: ykxjy5s7xujdxmsgrwxo5mh3y4
-    path: patches/react-native-image-crop-tools@1.6.2.patch
   react-native-fast-crypto@2.2.0:
     hash: jdmv3zyvsaug2f6l23zgrmwdli
     path: patches/react-native-fast-crypto@2.2.0.patch
   react-native-video@5.2.0:
     hash: lojvl6twgoj4rxeqeytmq4uduq
     path: patches/react-native-video@5.2.0.patch
+  react-native-image-crop-tools@1.6.2:
+    hash: ykxjy5s7xujdxmsgrwxo5mh3y4
+    path: patches/react-native-image-crop-tools@1.6.2.patch
   rn-fetch-blob@0.12.0:
     hash: n5yzdsrxz654upecs5xliebtmm
     path: patches/rn-fetch-blob@0.12.0.patch
@@ -4532,7 +4532,6 @@ packages:
       '@babel/core': 7.18.10
       '@babel/helper-plugin-utils': 7.16.7
       '@babel/plugin-syntax-export-default-from': 7.16.7_@babel+core@7.18.10
-    dev: true
 
   /@babel/plugin-proposal-export-namespace-from/7.16.7_@babel+core@7.17.10:
     resolution: {integrity: sha512-ZxdtqDXLRGBL64ocZcs7ovt71L3jhC1RGSyR996svrCi3PYqHNkb3SwPJCs8RIzD86s+WPpt2S73+EHCGO+NUA==}
@@ -5102,7 +5101,6 @@ packages:
     dependencies:
       '@babel/core': 7.18.10
       '@babel/helper-plugin-utils': 7.18.9
-    dev: true
 
   /@babel/plugin-syntax-export-namespace-from/7.8.3_@babel+core@7.17.10:
     resolution: {integrity: sha512-MXf5laXo6c1IbEbegDmzGPwGNTsHZmEy6QGznu5Sh2UCWvueywb2ee+CCE4zQiZstxU9BMoQO9i6zUFSY0Kj0Q==}
@@ -6345,6 +6343,15 @@ packages:
       '@babel/core': 7.17.10
       '@babel/helper-plugin-utils': 7.18.9
 
+  /@babel/plugin-transform-object-assign/7.16.7_@babel+core@7.18.10:
+    resolution: {integrity: sha512-R8mawvm3x0COTJtveuoqZIjNypn2FjfvXZr4pSQ8VhEFBuQGBz4XhHasZtHXjgXU4XptZ4HtGof3NoYc93ZH9Q==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    dependencies:
+      '@babel/core': 7.18.10
+      '@babel/helper-plugin-utils': 7.18.9
+
   /@babel/plugin-transform-object-super/7.16.7:
     resolution: {integrity: sha512-14J1feiQVWaGvRxj2WjyMuXS2jsBkgB3MdSN5HuC2G5nRspa5RK9COcs82Pwy5BuGcjb+fYaUj94mYcOj7rCvw==}
     engines: {node: '>=6.9.0'}
@@ -6579,6 +6586,15 @@ packages:
       '@babel/core': 7.17.10
       '@babel/helper-plugin-utils': 7.18.9
 
+  /@babel/plugin-transform-react-jsx-self/7.16.7_@babel+core@7.18.10:
+    resolution: {integrity: sha512-oe5VuWs7J9ilH3BCCApGoYjHoSO48vkjX2CbA5bFVhIuO2HKxA3vyF7rleA4o6/4rTDbk6r8hBW7Ul8E+UZrpA==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    dependencies:
+      '@babel/core': 7.18.10
+      '@babel/helper-plugin-utils': 7.18.9
+
   /@babel/plugin-transform-react-jsx-self/7.16.7_@babel+core@7.9.0:
     resolution: {integrity: sha512-oe5VuWs7J9ilH3BCCApGoYjHoSO48vkjX2CbA5bFVhIuO2HKxA3vyF7rleA4o6/4rTDbk6r8hBW7Ul8E+UZrpA==}
     engines: {node: '>=6.9.0'}
@@ -6613,6 +6629,15 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+      '@babel/helper-plugin-utils': 7.18.9
+
+  /@babel/plugin-transform-react-jsx-source/7.16.7_@babel+core@7.18.10:
+    resolution: {integrity: sha512-rONFiQz9vgbsnaMtQlZCjIRwhJvlrPET8TabIUK2hzlXw9B9s2Ieaxte1SCOOXMbWRHodbKixNf3BLcWVOQ8Bw==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    dependencies:
+      '@babel/core': 7.18.10
       '@babel/helper-plugin-utils': 7.18.9
 
   /@babel/plugin-transform-react-jsx-source/7.16.7_@babel+core@7.9.0:
@@ -6865,7 +6890,6 @@ packages:
       semver: 6.3.0
     transitivePeerDependencies:
       - supports-color
-    dev: false
 
   /@babel/plugin-transform-runtime/7.9.0_@babel+core@7.9.0:
     resolution: {integrity: sha512-pUu9VSf3kI1OqbWINQ7MaugnitRss1z533436waNXp+0N3ur3zfut37sXiQMxkuCF4VUjwZucen/quskCh7NHw==}
@@ -12380,14 +12404,6 @@ packages:
       events: 3.3.0
     dev: false
 
-  /@ledgerhq/hw-transport/6.27.2:
-    resolution: {integrity: sha512-GF4pmK78rEKhZfbmunwQ131c+0MGa6L5IoYlwgFcg6CaFpUjjPiTCKUFsm4flsE0Z0Ltn9QuKoe+xEHULo7rGA==}
-    dependencies:
-      '@ledgerhq/devices': 7.0.6
-      '@ledgerhq/errors': 6.12.2
-      events: 3.3.0
-    dev: false
-
   /@ledgerhq/hw-transport/6.27.9:
     resolution: {integrity: sha512-Po0eFWyH3C6I5oxLW3t/jtjqFJdF6/zmF9WL3n5lvSVbtmilPGz2IFOwHoz/XWSwM4PLwV6JXgFBIC6h6UNn/Q==}
     dependencies:
@@ -12405,7 +12421,7 @@ packages:
   /@ledgerhq/live-app-sdk/0.5.1:
     resolution: {integrity: sha512-kWERpf8rVgxVGoksoU18SuYF2dc2WIC0t2zXgA5HI9toVK/gfmQz8x+ElXytImLbtQ+RhFUf73C03K2f9ZH5SQ==}
     dependencies:
-      bignumber.js: 9.0.2
+      bignumber.js: 9.1.0
       json-rpc-2.0: 0.2.19
     dev: false
 
@@ -13173,6 +13189,15 @@ packages:
       '@substrate/ss58-registry': 1.35.0
     dev: false
 
+  /@polkadot/networks/10.1.14:
+    resolution: {integrity: sha512-lo4Y57yBqiad4Z2zBW0r7Ct/iKXNgsTfazDTbHRkIh3RuX36PNYshaX3p7R0eNRuetV1jJv7jqwc1nAMNI2KwQ==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@polkadot/util': 10.1.14
+      '@substrate/ss58-registry': 1.35.0
+    dev: false
+
   /@polkadot/react-identicon/2.9.13_grbnt2wkerwtzf6thy4efz3p5i:
     resolution: {integrity: sha512-tcZyeFO7NDtuiwDRAMc717u2Lqx67GFfrrD+kS9NC+9FCB4b1CSY9OUusBStz0tBh10GwzdOnfoYIkgL15mztg==}
     peerDependencies:
@@ -13204,9 +13229,9 @@ packages:
       react-native: '*'
     dependencies:
       '@babel/runtime': 7.20.1
-      '@polkadot/ui-shared': 2.9.13_rctvuuxcfab7pevo7bnynlzygy
-      '@polkadot/util': 10.1.12
-      '@polkadot/util-crypto': 10.1.12_@polkadot+util@10.1.12
+      '@polkadot/ui-shared': 2.9.13_wjlk3ve25xa6jlxvfvd3k2im7y
+      '@polkadot/util': 10.1.14
+      '@polkadot/util-crypto': 10.1.14
       react: 17.0.2
       react-native: 0.68.5_qiqqwmyv63yhnuboofexv3s7x4
       react-native-svg: 12.4.4_ondxtwf5lqq5g76dzmsmwamaca
@@ -13219,7 +13244,7 @@ packages:
       '@babel/runtime': 7.20.1
       '@polkadot/types': 9.8.1
       '@polkadot/types-codec': 9.8.1
-      '@polkadot/util': 10.1.13
+      '@polkadot/util': 10.1.14
     dev: false
 
   /@polkadot/types-codec/9.8.1:
@@ -13227,8 +13252,8 @@ packages:
     engines: {node: '>=14.0.0'}
     dependencies:
       '@babel/runtime': 7.20.1
-      '@polkadot/util': 10.1.13
-      '@polkadot/x-bigint': 10.1.12
+      '@polkadot/util': 10.1.14
+      '@polkadot/x-bigint': 10.1.14
     dev: false
 
   /@polkadot/types-create/9.8.1:
@@ -13237,7 +13262,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.20.1
       '@polkadot/types-codec': 9.8.1
-      '@polkadot/util': 10.1.13
+      '@polkadot/util': 10.1.14
     dev: false
 
   /@polkadot/types-known/9.8.1:
@@ -13249,7 +13274,7 @@ packages:
       '@polkadot/types': 9.8.1
       '@polkadot/types-codec': 9.8.1
       '@polkadot/types-create': 9.8.1
-      '@polkadot/util': 10.1.12
+      '@polkadot/util': 10.1.13
     dev: false
 
   /@polkadot/types/9.8.1:
@@ -13261,8 +13286,8 @@ packages:
       '@polkadot/types-augment': 9.8.1
       '@polkadot/types-codec': 9.8.1
       '@polkadot/types-create': 9.8.1
-      '@polkadot/util': 10.1.12
-      '@polkadot/util-crypto': 10.1.12_@polkadot+util@10.1.12
+      '@polkadot/util': 10.1.14
+      '@polkadot/util-crypto': 10.1.14
       rxjs: 7.5.7
     dev: false
 
@@ -13271,7 +13296,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.20.1
       '@polkadot/networks': 10.1.13
-      '@polkadot/util': 10.1.12
+      '@polkadot/util': 10.1.13
       eventemitter3: 4.0.7
       store: 2.0.12
     dev: false
@@ -13285,6 +13310,18 @@ packages:
       '@babel/runtime': 7.20.1
       '@polkadot/util': 10.1.12
       '@polkadot/util-crypto': 10.1.12_@polkadot+util@10.1.12
+      color: 3.2.1
+    dev: false
+
+  /@polkadot/ui-shared/2.9.13_wjlk3ve25xa6jlxvfvd3k2im7y:
+    resolution: {integrity: sha512-kHxqgpvFF+OfSCbgKyhAomdKkeEx7iwjk28Ilxw0mwqbHgKRxZmel33dKAthiJKndBd5D29QGCWA7Ag1xnwGpA==}
+    peerDependencies:
+      '@polkadot/util': '*'
+      '@polkadot/util-crypto': '*'
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@polkadot/util': 10.1.14
+      '@polkadot/util-crypto': 10.1.14
       color: 3.2.1
     dev: false
 
@@ -13326,6 +13363,23 @@ packages:
       tweetnacl: 1.0.3
     dev: false
 
+  /@polkadot/util-crypto/10.1.14:
+    resolution: {integrity: sha512-Iq9C0Snv+pScZ9QgJoH7l++x9wdp9vhS3NMLm8ZqlDCNXUUl/3ViafZCfHRILQD9AsLcykE99mNzFDl3u8jZQA==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@noble/hashes': 1.1.3
+      '@noble/secp256k1': 1.7.0
+      '@polkadot/networks': 10.1.14
+      '@polkadot/util': 10.1.14
+      '@polkadot/wasm-crypto': 6.3.1_4k26yyd4hvb4qlrlenu4uyumaq
+      '@polkadot/x-bigint': 10.1.14
+      '@polkadot/x-randomvalues': 10.1.14
+      '@scure/base': 1.1.1
+      ed2curve: 0.3.0
+      tweetnacl: 1.0.3
+    dev: false
+
   /@polkadot/util/10.1.12:
     resolution: {integrity: sha512-bOz1WqDFzIgkTpT6oRhAdXKqETr2GffZdRlYqyOvP1ATAEa48/sRgzIvg7WTiI68D8By3fJmKuA+ggX3YrNF/w==}
     engines: {node: '>=14.0.0'}
@@ -13350,6 +13404,31 @@ packages:
       '@polkadot/x-textencoder': 10.1.13
       '@types/bn.js': 5.1.1
       bn.js: 5.2.1
+    dev: false
+
+  /@polkadot/util/10.1.14:
+    resolution: {integrity: sha512-DX8IUd3j+S4HJBs73gz5d7Z592aW5vn/aD7hzFUlBduQIYBy+L1KIoGchpD6hSSOs5HSy7owePmBlp1lPjUZBg==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@polkadot/x-bigint': 10.1.14
+      '@polkadot/x-global': 10.1.14
+      '@polkadot/x-textdecoder': 10.1.14
+      '@polkadot/x-textencoder': 10.1.14
+      '@types/bn.js': 5.1.1
+      bn.js: 5.2.1
+    dev: false
+
+  /@polkadot/wasm-bridge/6.3.1_4k26yyd4hvb4qlrlenu4uyumaq:
+    resolution: {integrity: sha512-1TYkHsb9AEFhU9uZj3biEnN2yKQNzdrwSjiTvfCYnt97pnEkKsZI6cku+YPZQv5w/x9CQa5Yua9e2DVVZSivGA==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      '@polkadot/util': '*'
+      '@polkadot/x-randomvalues': '*'
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@polkadot/util': 10.1.14
+      '@polkadot/x-randomvalues': 10.1.14
     dev: false
 
   /@polkadot/wasm-bridge/6.3.1_klobyzdarg25uad6uqq67z6rye:
@@ -13394,6 +13473,31 @@ packages:
     dependencies:
       '@babel/runtime': 7.20.1
       '@polkadot/util': 10.1.13
+    dev: false
+
+  /@polkadot/wasm-crypto-asmjs/6.3.1_@polkadot+util@10.1.14:
+    resolution: {integrity: sha512-zbombRfA5v/mUWQQhgg2YwaxhRmxRIrvskw65x+lruax3b6xPBFDs7yplopiJU3r8h2pTgQvX/DUksvqz2TCRQ==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      '@polkadot/util': '*'
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@polkadot/util': 10.1.14
+    dev: false
+
+  /@polkadot/wasm-crypto-init/6.3.1_4k26yyd4hvb4qlrlenu4uyumaq:
+    resolution: {integrity: sha512-9yaUBcu+snwjJLmPPGl3cyGRQ1afyFGm16qzTM0sgG/ZCfUlK4uk8KWZe+sBUKgoxb2oXY7Y4WklKgQI1YBdfw==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      '@polkadot/util': '*'
+      '@polkadot/x-randomvalues': '*'
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@polkadot/util': 10.1.14
+      '@polkadot/wasm-bridge': 6.3.1_4k26yyd4hvb4qlrlenu4uyumaq
+      '@polkadot/wasm-crypto-asmjs': 6.3.1_@polkadot+util@10.1.14
+      '@polkadot/wasm-crypto-wasm': 6.3.1_@polkadot+util@10.1.14
+      '@polkadot/x-randomvalues': 10.1.14
     dev: false
 
   /@polkadot/wasm-crypto-init/6.3.1_klobyzdarg25uad6uqq67z6rye:
@@ -13446,6 +13550,34 @@ packages:
       '@babel/runtime': 7.20.1
       '@polkadot/util': 10.1.13
       '@polkadot/wasm-util': 6.3.1_@polkadot+util@10.1.13
+    dev: false
+
+  /@polkadot/wasm-crypto-wasm/6.3.1_@polkadot+util@10.1.14:
+    resolution: {integrity: sha512-idSlzKGVzCfeCMRHsacRvqwojSaTadFxL/Dbls4z1thvfa3U9Ku0d2qVtlwg7Hj+tYWDiuP8Kygs+6bQwfs0XA==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      '@polkadot/util': '*'
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@polkadot/util': 10.1.14
+      '@polkadot/wasm-util': 6.3.1_@polkadot+util@10.1.14
+    dev: false
+
+  /@polkadot/wasm-crypto/6.3.1_4k26yyd4hvb4qlrlenu4uyumaq:
+    resolution: {integrity: sha512-OO8h0qeVkqp4xYZaRVl4iuWOEtq282pNBHDKb6SOJuI2g59eWGcKh4EQU9Me2VP6qzojIqptrkrVt7KQXC68gA==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      '@polkadot/util': '*'
+      '@polkadot/x-randomvalues': '*'
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@polkadot/util': 10.1.14
+      '@polkadot/wasm-bridge': 6.3.1_4k26yyd4hvb4qlrlenu4uyumaq
+      '@polkadot/wasm-crypto-asmjs': 6.3.1_@polkadot+util@10.1.14
+      '@polkadot/wasm-crypto-init': 6.3.1_4k26yyd4hvb4qlrlenu4uyumaq
+      '@polkadot/wasm-crypto-wasm': 6.3.1_@polkadot+util@10.1.14
+      '@polkadot/wasm-util': 6.3.1_@polkadot+util@10.1.14
+      '@polkadot/x-randomvalues': 10.1.14
     dev: false
 
   /@polkadot/wasm-crypto/6.3.1_klobyzdarg25uad6uqq67z6rye:
@@ -13502,6 +13634,16 @@ packages:
       '@polkadot/util': 10.1.13
     dev: false
 
+  /@polkadot/wasm-util/6.3.1_@polkadot+util@10.1.14:
+    resolution: {integrity: sha512-12oAv5J7Yoc9m6jixrSaQCxpOkWOyzHx3DMC8qmLjRiwdBWxqLmImOVRVnFsbaxqSbhBIHRuJphVxWE+GZETDg==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      '@polkadot/util': '*'
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@polkadot/util': 10.1.14
+    dev: false
+
   /@polkadot/x-bigint/10.1.12:
     resolution: {integrity: sha512-n9cRXhdPvA9qO9/dgb32Ej/5t4mI4KnBYoPqlAcGviOnn7lc9yEPlYSMfgt+4p7F2bX8o6nbmbvBXqZL457Yhw==}
     engines: {node: '>=14.0.0'}
@@ -13518,6 +13660,14 @@ packages:
       '@polkadot/x-global': 10.1.13
     dev: false
 
+  /@polkadot/x-bigint/10.1.14:
+    resolution: {integrity: sha512-HgrofhI+WM699ozJ9zFZcPUApB2jqwCEOMUgM1jv2WNxF0ILKNDpH08dB8OBy2SKfnKoSgmXwWtxWl1u+mq10A==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@polkadot/x-global': 10.1.14
+    dev: false
+
   /@polkadot/x-global/10.1.12:
     resolution: {integrity: sha512-APFCIVoyaB9rhgcg2j5ayW0WVTSDO4yUriyrOPgX4A4ZJ6DFV+w30h9uWtfKzNzAV6dDs6pDNlB0K4Mpi5CmcA==}
     engines: {node: '>=14.0.0'}
@@ -13527,6 +13677,13 @@ packages:
 
   /@polkadot/x-global/10.1.13:
     resolution: {integrity: sha512-9dQNjrXzdnjMFdpS1fcJRJveD8aQ2qyO5XWYnUmDjWVPmTY+olNuv7QOkfoJUgrFhqgeGEtUCmPZEWk8Tbwhqw==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@babel/runtime': 7.20.1
+    dev: false
+
+  /@polkadot/x-global/10.1.14:
+    resolution: {integrity: sha512-ye3Yx2bfIoHf5t78rbDad587J16JanrcfpGSWoknWOZ7wmatj/CJKWhJ/VKMPfJGEJm2LidH1B0W8QDfrMEmTA==}
     engines: {node: '>=14.0.0'}
     dependencies:
       '@babel/runtime': 7.20.1
@@ -13548,6 +13705,14 @@ packages:
       '@polkadot/x-global': 10.1.13
     dev: false
 
+  /@polkadot/x-randomvalues/10.1.14:
+    resolution: {integrity: sha512-mrZho4qogLZmox7wuP1XF03HTZ4CwAjzV7RvKmwH8ToNCR6E4NRo2btgG67Z0K+bUOQRbXWL2hQazusa2p2N6w==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@polkadot/x-global': 10.1.14
+    dev: false
+
   /@polkadot/x-textdecoder/10.1.12:
     resolution: {integrity: sha512-YKEr3QiTu8zxosVx9WWFhMmFw4hBmAKWkgd7dhpMU+wIaUlSBriV/7vL+HnvJMIKf1jz3iAZ7i0oDGfvj1cZ6w==}
     engines: {node: '>=14.0.0'}
@@ -13564,6 +13729,14 @@ packages:
       '@polkadot/x-global': 10.1.13
     dev: false
 
+  /@polkadot/x-textdecoder/10.1.14:
+    resolution: {integrity: sha512-qwbeR8v6a5Z9MdbjzcY5gFiRWbp8bBVoDEf1Dd+yH9/UAyFXodlMKs3irDdVhGVPCbZWQTVDEZRUgEqRxwKC7w==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@polkadot/x-global': 10.1.14
+    dev: false
+
   /@polkadot/x-textencoder/10.1.12:
     resolution: {integrity: sha512-WgHAUhiepWBAcOMOAJnBl2mZNu5KPmTndg4f1Z1CwNdg/AhAhJL/yh98f5KH1aajNkC+5xutlOzdmEySg+e21g==}
     engines: {node: '>=14.0.0'}
@@ -13578,6 +13751,14 @@ packages:
     dependencies:
       '@babel/runtime': 7.20.1
       '@polkadot/x-global': 10.1.13
+    dev: false
+
+  /@polkadot/x-textencoder/10.1.14:
+    resolution: {integrity: sha512-MC30rtQiFVgQDSP8wO5wa1so5tW3T7qs/DCT018A4zgjiK+uFdIGOerAgoxcNw3yC6IGnPIL5lsRO/1C9N60zA==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@polkadot/x-global': 10.1.14
     dev: false
 
   /@popperjs/core/2.11.5:
@@ -18308,7 +18489,7 @@ packages:
     resolution: {integrity: sha512-gyBO8FarBrItPGAfrnm4J7vrIWMsr9xqgfzgN4PAqY7eEmL8MDuZtdpk6B6DBuJ3hYbqxvOEa0QPhNzBxnGPeA==}
     engines: {node: '>=6.0.0'}
     dependencies:
-      '@ledgerhq/hw-transport': 6.27.2
+      '@ledgerhq/hw-transport': 6.27.9
       '@stablelib/blake2b': 1.0.1
       '@taquito/taquito': 13.0.1
       '@taquito/utils': 13.0.1
@@ -23377,10 +23558,6 @@ packages:
     resolution: {integrity: sha512-eJzYkFYy9L4JzXsbymsFn3p54D+llV27oTQ+ziJG7WFRheJcNZilgVXMG0LoZtlQSKBsJdWtLFqOD0u+U0jZKA==}
     dev: false
 
-  /bignumber.js/9.0.2:
-    resolution: {integrity: sha512-GAcQvbpsM0pUb0zw1EI0KhQEZ+lRwR5fYaAp3vPOYuP7aDvGy6cVN6XHLauvF8SOga2y0dcLcjt3iQDTSEliyw==}
-    dev: false
-
   /bignumber.js/9.1.0:
     resolution: {integrity: sha512-4LwHK4nfDOraBCtst+wOWIHbu1vhvAPJK8g8nROd4iuc3PSEjWif/qwbkh8jwCJz6yDBvtU4KPynETgrfh7y3A==}
     dev: false
@@ -25646,7 +25823,7 @@ packages:
   /core-js-compat/3.22.5:
     resolution: {integrity: sha512-rEF75n3QtInrYICvJjrAgV03HwKiYvtKHdPtaba1KucG+cNZ4NJnH9isqt979e67KZlhpbCOTwnsvnIr+CVeOg==}
     dependencies:
-      browserslist: 4.20.3
+      browserslist: 4.21.3
       semver: 7.0.0
 
   /core-js-pure/3.22.5:
@@ -29672,7 +29849,7 @@ packages:
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^4.0.0 || ^5.0.0
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-      jest: ^27.0.0
+      jest: '*'
     peerDependenciesMeta:
       '@typescript-eslint/eslint-plugin':
         optional: true
@@ -40875,6 +41052,54 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
+  /metro-react-native-babel-preset/0.67.0_@babel+core@7.18.10:
+    resolution: {integrity: sha512-tgTG4j0SKwLHbLRELMmgkgkjV1biYkWlGGKOmM484/fJC6bpDikdaFhfjsyE+W+qt7I5szbCPCickMTNQ+zwig==}
+    peerDependencies:
+      '@babel/core': '*'
+    dependencies:
+      '@babel/core': 7.18.10
+      '@babel/plugin-proposal-class-properties': 7.16.7_@babel+core@7.18.10
+      '@babel/plugin-proposal-export-default-from': 7.16.7_@babel+core@7.18.10
+      '@babel/plugin-proposal-nullish-coalescing-operator': 7.16.7_@babel+core@7.18.10
+      '@babel/plugin-proposal-object-rest-spread': 7.17.3_@babel+core@7.18.10
+      '@babel/plugin-proposal-optional-catch-binding': 7.16.7_@babel+core@7.18.10
+      '@babel/plugin-proposal-optional-chaining': 7.16.7_@babel+core@7.18.10
+      '@babel/plugin-syntax-dynamic-import': 7.8.3_@babel+core@7.18.10
+      '@babel/plugin-syntax-export-default-from': 7.16.7_@babel+core@7.18.10
+      '@babel/plugin-syntax-flow': 7.16.7_@babel+core@7.18.10
+      '@babel/plugin-syntax-nullish-coalescing-operator': 7.8.3_@babel+core@7.18.10
+      '@babel/plugin-syntax-optional-chaining': 7.8.3_@babel+core@7.18.10
+      '@babel/plugin-transform-arrow-functions': 7.16.7_@babel+core@7.18.10
+      '@babel/plugin-transform-async-to-generator': 7.16.8_@babel+core@7.18.10
+      '@babel/plugin-transform-block-scoping': 7.16.7_@babel+core@7.18.10
+      '@babel/plugin-transform-classes': 7.16.7_@babel+core@7.18.10
+      '@babel/plugin-transform-computed-properties': 7.16.7_@babel+core@7.18.10
+      '@babel/plugin-transform-destructuring': 7.17.7_@babel+core@7.18.10
+      '@babel/plugin-transform-exponentiation-operator': 7.16.7_@babel+core@7.18.10
+      '@babel/plugin-transform-flow-strip-types': 7.16.7_@babel+core@7.18.10
+      '@babel/plugin-transform-for-of': 7.16.7_@babel+core@7.18.10
+      '@babel/plugin-transform-function-name': 7.16.7_@babel+core@7.18.10
+      '@babel/plugin-transform-literals': 7.16.7_@babel+core@7.18.10
+      '@babel/plugin-transform-modules-commonjs': 7.17.9_@babel+core@7.18.10
+      '@babel/plugin-transform-object-assign': 7.16.7_@babel+core@7.18.10
+      '@babel/plugin-transform-parameters': 7.16.7_@babel+core@7.18.10
+      '@babel/plugin-transform-react-display-name': 7.16.7_@babel+core@7.18.10
+      '@babel/plugin-transform-react-jsx': 7.17.3_@babel+core@7.18.10
+      '@babel/plugin-transform-react-jsx-self': 7.16.7_@babel+core@7.18.10
+      '@babel/plugin-transform-react-jsx-source': 7.16.7_@babel+core@7.18.10
+      '@babel/plugin-transform-regenerator': 7.17.9_@babel+core@7.18.10
+      '@babel/plugin-transform-runtime': 7.17.10_@babel+core@7.18.10
+      '@babel/plugin-transform-shorthand-properties': 7.16.7_@babel+core@7.18.10
+      '@babel/plugin-transform-spread': 7.16.7_@babel+core@7.18.10
+      '@babel/plugin-transform-sticky-regex': 7.16.7_@babel+core@7.18.10
+      '@babel/plugin-transform-template-literals': 7.16.7_@babel+core@7.18.10
+      '@babel/plugin-transform-typescript': 7.16.8_@babel+core@7.18.10
+      '@babel/plugin-transform-unicode-regex': 7.16.7_@babel+core@7.18.10
+      '@babel/template': 7.16.7
+      react-refresh: 0.4.3
+    transitivePeerDependencies:
+      - supports-color
+
   /metro-react-native-babel-transformer/0.67.0:
     resolution: {integrity: sha512-P0JT09n7T01epUtgL9mH6BPat3xn4JjBakl4lWHdL61cvEGcrxuIom1eoFFKkgU/K5AVLU4aCAttHS7nSFCcEQ==}
     peerDependencies:
@@ -41012,13 +41237,13 @@ packages:
     resolution: {integrity: sha512-DwuBGAFcAivoac/swz8Lp7Y5Bcge1tzT7T6K0nf1ubqJP8YzBUtyR4pkjEYVUzVu/NZf7O54kHSPVu1ibYzOBQ==}
     hasBin: true
     dependencies:
-      '@babel/code-frame': 7.16.7
-      '@babel/core': 7.17.10
-      '@babel/generator': 7.17.10
-      '@babel/parser': 7.17.10
-      '@babel/template': 7.16.7
-      '@babel/traverse': 7.17.10
-      '@babel/types': 7.17.10
+      '@babel/code-frame': 7.18.6
+      '@babel/core': 7.18.10
+      '@babel/generator': 7.18.12
+      '@babel/parser': 7.18.11
+      '@babel/template': 7.18.10
+      '@babel/traverse': 7.18.11
+      '@babel/types': 7.18.10
       absolute-path: 0.0.0
       accepts: 1.3.8
       async: 2.6.4
@@ -41044,7 +41269,7 @@ packages:
       metro-hermes-compiler: 0.67.0
       metro-inspector-proxy: 0.67.0
       metro-minify-uglify: 0.67.0
-      metro-react-native-babel-preset: 0.67.0_@babel+core@7.17.10
+      metro-react-native-babel-preset: 0.67.0_@babel+core@7.18.10
       metro-resolver: 0.67.0
       metro-runtime: 0.67.0
       metro-source-map: 0.67.0
@@ -50615,7 +50840,7 @@ packages:
     dev: true
 
   /strip-json-comments/2.0.1:
-    resolution: {integrity: sha1-PFMZQukIwml8DsNEhYwobHygpgo=}
+    resolution: {integrity: sha512-4gB8na07fecVVkOI6Rs4e7T6NOTki5EmL7TUduTs6bu3EdnSycntVJ4re8kgZA+wx9IueI2Y11bfbgwtzuE0KQ==}
     engines: {node: '>=0.10.0'}
 
   /strip-json-comments/3.1.1:
