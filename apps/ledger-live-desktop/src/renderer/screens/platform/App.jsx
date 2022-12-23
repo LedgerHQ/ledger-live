@@ -37,13 +37,15 @@ export default function PlatformApp({ match, appId: propsAppId, location }: Prop
   const sufix = pathname.substr(
     pathname.indexOf(match.params.appId) + match.params.appId.length + 1,
   );
+
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
   const manifest = Object.assign({}, localManifest || remoteManifest);
-
-  const dappUrl = manifest.params.dappUrl.split("?");
-  manifest.params.dappUrl =
-    dappUrl.length === 1 ? `${dappUrl[0]}${sufix}` : `${dappUrl[0]}${sufix}?${dappUrl[1]}`;
+  if (sufix !== "") {
+    const dappUrl = manifest.params.dappUrl.split("?");
+    manifest.params.dappUrl =
+      dappUrl.length === 1 ? `${dappUrl[0]}${sufix}` : `${dappUrl[0]}${sufix}?${dappUrl[1]}`;
+  }
 
   const returnTo = useMemo(() => {
     const params = new URLSearchParams(search);
