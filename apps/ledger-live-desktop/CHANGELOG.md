@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.52.0-nightly.1
+
+### Patch Changes
+
+- [#2174](https://github.com/LedgerHQ/ledger-live/pull/2174) [`4208982cd9`](https://github.com/LedgerHQ/ledger-live/commit/4208982cd96f5e6b2ff9e5222e62279edf01fa95) Thanks [@chabroA](https://github.com/chabroA)! - Fix app crash in case requestAccount currencies array param contains non string values
+
 ## 2.52.0-nightly.0
 
 ### Minor Changes
