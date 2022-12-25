@@ -1675,6 +1675,8 @@
       "undelegated" : "Yetki iptal edildi",
       "undelegatedFrom" : "Yetkisi iptal edilen taraf",
       "undelegatedAmount" : "Yetkisi iptal edilen tutar",
+      "withdrawnFrom" : "Şuradan çekildi:",
+      "withdrawnAmount" : "Çekilen Tutar",
       "rewardFrom" : "Ödül kaynağı",
       "memo" : "Memo",
       "assetId" : "Varlık Kimliği",
@@ -2184,6 +2186,9 @@
     "title" : "Sürüm notları",
     "version" : "Ledger Live {{versionNb}}"
   },
+  "troubleshootNetwork" : {
+    "title" : "Ağ sorunlarını giderin"
+  },
   "systemLanguageAvailable" : {
     "title" : "Uygulama dili değiştirilsin mi?",
     "description" : {
@@ -2233,6 +2238,187 @@
     "value" : "Değer",
     "header" : "Hesap dağılımı ({{count}})"
   },
+  "elrond" : {
+    "summary" : {
+      "availableBalanceTooltip" : "Bu miktar aktarılabilir.",
+      "availableBalance" : "Mevcut bakiye",
+      "delegatedAssetsTooltip" : "Yetkisi devredilen varlıklar, staking sağlayıcısı tarafından doğrulayıcı node'ları çalıştırmak, işlemleri gerçekleştirmek ve konsensüs mekanizmasına katılarak ağı güvence altına almak amacıyla dolaylı olarak kullanılır.",
+      "delegatedAssets" : "Yetkisi devredilen varlıklar",
+      "undelegatingTooltip" : "Yetkisi iptal edilen varlıklar 10 günlük bir çözülme dönemine tabidir ve sadece bu süre sona erdikten sonra çekilebilir.",
+      "undelegating" : "Bekleyen Çekim İşlemleri"
+    },
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "MultiversX teknolojisiyle",
+        "moreInfo" : "Daha fazla bilgi",
+        "drawerTitle" : "MultiversX entegrasyonu",
+        "title" : "MultiversX eGold (EGLD) token'ı artık Ledger Live'da kullanılabilir",
+        "description" : "eGold (EGLD) token'larınızı artık Ledger Live üzerinden gönül rahatlığıyla güvenceye alabilir ve yönetebilirsiniz.",
+        "description2" : "MultiversX Network'e özgü olan MultiversX eGold (EGLD) Token'ı, bu ağ üzerindeki her türlü işlem, staking, akıllı sözleşme, yönetişim ve doğrulayıcı ödülleri için kullanılır.",
+        "description3" : "MultiversX ekibiyle aktif şekilde çalışarak staking işlemlerini, dahili ESDT (Elrond Standart Dijital Token) desteğini ve diğer birçok işlevi eklemek için çalışıyoruz.",
+        "website" : "İnternet Ölçeğinde Blok Zinciri"
+      }
+    },
+    "delegation" : {
+      "emptyState" : {
+        "description" : "Ağın güvenliğini sağlamak ve ödüllerden payınıza düşeni almak için EGLD'nizin yetkisini devredin.",
+        "info" : "Yetki devretme nedir?",
+        "delegation" : "Ödüller kazanın"
+      },
+      "commission" : "Komisyon",
+      "claimRewards" : "Ödüllerinizi alın",
+      "header" : "Yetki Devirleri",
+      "noRewards" : "Ödül yok",
+      "delegate" : "Yetki Devredin",
+      "undelegate" : "Yetki İptali",
+      "redelegateDisabledTooltip" : "Yetkiyi yeniden devretmek için <0>{{days}}</0> gün beklemelisiniz",
+      "redelegateMaxDisabledTooltip" : "Bir seferde en fazla <0>7</0> doğrulayıcıya yeniden yetki devredebilirsiniz.",
+      "undelegateDisabledTooltip" : "Bir seferde en fazla <0>7</0> doğrulayıcının yetkisini iptal edebilirsiniz.",
+      "reward" : "Ödüllerinizi alın",
+      "currentDelegation" : "Yetkisi devredilen tutar: <0>{{amount}}</0>",
+      "apr" : "Yıllık Faiz Getirisi (APR)",
+      "totalStake" : "Toplam Stake",
+      "activeTooltip" : "Yetkisi devredilen tutarlar üzerinden ödül kazanırsınız",
+      "inactiveTooltip" : "Yetkisi iptal edilen tutarlar üzerinden ödül kazanamazsınız",
+      "minSafeWarning" : "Fonlar yetersiz. En az 1 EGLD'nizin olması gerekiyor.",
+      "flow" : {
+        "title" : "Yetki Devredin",
+        "steps" : {
+          "amount" : {
+            "title" : "Yetki Devredin",
+            "subtitle" : "Varlıklarınızı aşağıdaki Staking Sağlayıcılarından birine stake edin.",
+            "warning" : "Staking Sağlayıcınızı akıllıca seçin! Şu anda tek risk, çeşitli nedenlerden ötürü ödül alamamaktır. Dolayısıyla bir sağlayıcıyı Güvenilirlik, İletişim ve Ekonomi kriterlerine göre seçmelisiniz.",
+            "fields" : {
+              "validator" : "Staking Sağlayıcısı"
+            }
+          },
+          "fields" : {
+            "amount" : "Stake edilecek miktar"
+          },
+          "starter" : {
+            "description" : "EGLD varlıklarınızın yetkisini bir Staking Sağlayıcısına devrederek ödüller kazanabilirsiniz.",
+            "bullet" : ["Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.", "Ledger cihazınızı kullanarak yetki devredin.", "Yetkisi İptal Edilen varlıklar 10 gün sonra yeniden kullanılabilir"],
+            "warning" : {
+              "description" : "Staking Sağlayıcınızı akıllıca seçin! Şu anda tek risk, çeşitli nedenlerden ötürü ödül alamamaktır. Dolayısıyla bir sağlayıcıyı Güvenilirlik, İletişim ve Ekonomi kriterlerine göre seçmelisiniz."
+            }
+          },
+          "validator" : {
+            "title" : "Staking Sağlayıcıları"
+          },
+          "connectDevice" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "success" : {
+              "title" : "Varlıklarınızın yetkisini başarıyla devrettiniz.",
+              "text" : "İşlem blok zinciri tarafından onaylandığında hesap bakiyeniz güncellenecek",
+              "cta" : "Ayrıntıları göster"
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    },
+    "claimRewards" : {
+      "flow" : {
+        "title" : "Ödüllerinizi alın",
+        "steps" : {
+          "claimRewards" : {
+            "title" : "Ödüller",
+            "compound" : "Birleştirme Ödülleri",
+            "claim" : "Ödüllerinizi alın",
+            "compoundOrClaim" : "Ödülleri Birleştirin veya Ödülleri Alın",
+            "compoundDescription" : "Ödüller, yetkisi devredilen tutara eklenecektir.",
+            "claimDescription" : "Ödüller, mevcut bakiyenize eklenecektir.",
+            "compoundInfo" : "<0>{{amount}}</0> kazandınız. Devam butonuna tıklayarak ödülünüzü hemen alın ve otomatik olarak aynı Staking Sağlayıcısına yetki devrini gerçekleştirin.",
+            "claimInfo" : "Aşağıdaki Staking Sağlayıcısından <0>{{amount}}</0> kazandınız. Devam butonuna tıklayarak ödülünüzü hemen alın ve otomatik olarak mevcut bakiyenize ekleyin.",
+            "selectLabel" : "Bir yetkili seçin"
+          },
+          "connectDevice" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "label" : "Onaylayın",
+            "success" : {
+              "title" : "Ödüller başarıyla alındı",
+              "titleCompound" : "Ödüller başarıyla birleştirildi",
+              "text" : "Ödüller mevcut bakiyenize eklendi",
+              "textCompound" : "<0>{{validator}}</0> hesabına <0>{{amount}}</0> EGLD tutarındaki birleştirme ödülü aktarımı başarıyla gerçekleştirildi.",
+              "cta" : "Ayrıntıları göster"
+            },
+            "pending" : {
+              "title" : "İşlem yayınlanıyor..."
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "header" : "Yetki İptalleri",
+      "headerTooltip" : "10 günlük çözülme sürecinden sonra kullanılabilir.",
+      "inactiveTooltip" : "Yetkisi iptal edilen tutarlar üzerinden ödül kazanamazsınız.",
+      "withdraw" : {
+        "cta" : "Çekimi Tamamla"
+      },
+      "flow" : {
+        "title" : "Varlıkların Yetkisini İptal Edin",
+        "steps" : {
+          "amount" : {
+            "title" : "Tutar",
+            "subtitle" : "Yetki iptal etme işleminin sonuçlanması <0>10 gün</0> sürer.",
+            "warning" : "Ödüller otomatik olarak alınacak. Yetki iptali 2 adımlı bir süreçtir: Yetki iptali talebinin ardından <0>10 günlük bir çözülme süreci</0> başlar. Bu sürenin ardından çekim işlemini sonlandırabilirsiniz ve yetkisi iptal edilen tutar mevcut bakiyenize aktarılır.",
+            "fields" : {
+              "validator" : "Staking Sağlayıcısı",
+              "amount" : "Yetkisi iptal edilecek tutar"
+            }
+          },
+          "device" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "success" : {
+              "title" : "Varlıklarınızdaki yetki devrini başarıyla iptal ettiniz.",
+              "description" : "<0>{{validator}}</0> hesabına devredilen <0>{{amount}}</0> tutarındaki yetki iptal edildi.",
+              "cta" : "Ayrıntıları göster"
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "flow" : {
+        "title" : "Çekimi Tamamla",
+        "steps" : {
+          "withdraw" : {
+            "title" : "Çekimi Tamamla",
+            "description" : "<0>{{validator}}</0> hesabına devredilen <0>{{amount}}</0> EGLD tutarındaki yetkiyi iptal ettiniz. Devam butonuna tıklayarak tutarı hemen çekin ve otomatik olarak mevcut bakiyenize geri ekleyin.",
+            "selectLabel" : "Bir yetki iptali seçin"
+          },
+          "connectDevice" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "label" : "Onaylayın",
+            "success" : {
+              "title" : "Fonlar başarıyla çekildi",
+              "text" : "<0>{{amount}}</0> adet varlık çekilerek hesap bakiyenize geri eklendi.",
+              "cta" : "Ayrıntıları göster"
+            },
+            "pending" : {
+              "title" : "İşlem yayınlanıyor..."
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    }
+  },
   "cardano" : {
     "account" : {
       "stakingRewardsBanner" : {
@@ -2241,6 +2427,9 @@
     }
   },
   "tron" : {
+    "receive" : {
+      "newAddressTRC20" : "Önce bu hesaba en az 0,1 TRX göndererek hesabı etkinleştirmelisiniz."
+    },
     "voting" : {
       "emptyState" : {
         "description" : "Artık varlık dondurarak ve oylama yaparak ödüller kazanabilirsiniz.",
@@ -3548,7 +3737,7 @@
       "featureFlagsEdit" : "Düzenle",
       "featureFlagsRestore" : "Geri yükle",
       "featureFlagsOverride" : "Geçersiz bırak",
-      "firebaseProject" : "Firebase project targeted by this build:",
+      "firebaseProject" : "Bu sürüm tarafından hedeflenen Firebase projesi:",
       "addLocalApp" : "Yerel uygulama ekleyin",
       "addLocalAppDesc" : "Yerel dizini kullanarak yerel dosyalara göz atın ve yerel bir uygulama ekleyin",
       "addLocalAppButton" : "Göz Atın",
@@ -3695,6 +3884,11 @@
       "title" : "Logları kaydedin",
       "desc" : "Ledger Live loglarını kaydetmek sorun giderme amacıyla gerekli olabilir.",
       "btn" : "Kaydet"
+    },
+    "troubleshootNetwork" : {
+      "title" : "Ağ sorunlarını giderin",
+      "desc" : "Sorun giderme amacıyla ağ koşullarını değerlendirmek için bir kontrol listesi kullanın.",
+      "btn" : "Sorun Gider"
     },
     "accounts" : {
       "hideEmptyTokens" : {
@@ -4734,6 +4928,10 @@
       "title" : "Üzgünüz, cihazınızın bağlantısı kesilmiş görünüyor",
       "description" : "Lütfen yeniden bağlanın ve tekrar deneyin."
     },
+    "EConnReset" : {
+      "title" : "Ledger uygulama mağazasına ulaşılamıyor",
+      "description" : "İnternet bağlantınız kapalı olabilir veya olağan dışı bir yapılandırma kullanıyor olabilir. İlk olarak proxy veya güvenlik duvarı gibi bağlantınızı engelleyen bir unsurun olup olmadığını kontrol edin. Sorun devam ederse çözümleri görmek için aşağıdaki düğmeye tıklayın veya müşteri destek ekibimizle iletişime geçin."
+    },
     "EnpointConfig" : {
       "title" : "Geçersiz bitiş noktası",
       "description" : "Lütfen geçerli bir bitiş noktası sağlayın"
@@ -4835,6 +5033,19 @@
     "NoAddressesFound" : {
       "title" : "Üzgünüz, hesap bulunamadı",
       "description" : "Adres hesaplamasında bir hata oluştu; tekrar deneyin veya Ledger Destek ile iletişime geçin"
+    },
+    "ElrondDecimalsLimitReached" : {
+      "title" : "Maksimum ondalık basamağı sınırına ulaşıldı",
+      "description" : "Lütfen belirtilen tutarın 18 ondalık basamağının olduğundan emin olun."
+    },
+    "ElrondMinDelegatedAmountError" : {
+      "title" : "Yetkisi devredilen miktar en az {{formattedAmount}} olmalıdır"
+    },
+    "ElrondMinUndelegatedAmountError" : {
+      "title" : "Yetki devri iptal edilen miktar en az {{formattedAmount}} olmalıdır"
+    },
+    "ElrondDelegationBelowMinimumError" : {
+      "title" : "Kalan yetki devri miktarı en az {{formattedAmount}} olmalıdır"
     },
     "NotEnoughBalance" : {
       "title" : "Üzgünüz, fon miktarı yetersiz",
@@ -5088,7 +5299,7 @@
       "title" : "Dondurulacak tutar 1'den az olamaz"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "TRC20'yi yeni bir hesaba göndermek onu etkinleştirmez",
+      "title" : "TRC20 token alımını etkinleştirmek için önce bu hesaba en az 0,1 TRX göndermeniz gerekir.",
       "description" : "Alıcı hesabının TRC20 gönderilmeden önce etkinleştirilmesi gerekir. Etkinleştirmek için TRX veya TRC10'u bir hesaba gönderin."
     },
     "TronUnexpectedFees" : {
