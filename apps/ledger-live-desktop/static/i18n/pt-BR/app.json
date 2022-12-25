@@ -209,7 +209,7 @@
     "menu" : "Menu",
     "stars" : "Contas Favoritas",
     "accounts" : "Contas",
-    "manager" : "My Ledger",
+    "manager" : "Minha Ledger",
     "exchange" : "Comprar / Vender",
     "swap" : "Trocar",
     "lend" : "Emprestar",
@@ -411,13 +411,13 @@
     },
     "missingApp" : {
       "title" : "Instale o aplicativo {{appName}} no seu dispositivo",
-      "subtitle" : "Vá ao My Ledger e instale o aplicativo {{appName}} para trocar ativos.",
-      "cta" : "Vá ao My Ledger"
+      "subtitle" : "Vá a Minha Ledger e instale o aplicativo {{appName}} para trocar ativos.",
+      "cta" : "Vá a Minha Ledger"
     },
     "outdatedApp" : {
       "title" : "Atualize o aplicativo {{appName}} no seu dispositivo",
-      "subtitle" : "Vá ao My Ledger e atualize o aplicativo {{appName}} para trocar ativos.",
-      "cta" : "Vá ao My Ledger"
+      "subtitle" : "Vá a Minha Ledger e atualize o aplicativo {{appName}} para trocar ativos.",
+      "cta" : "Vá a Minha Ledger"
     },
     "providers" : {
       "title" : "Escolha um provedor para trocar criptos",
@@ -823,7 +823,7 @@
       }
     },
     "sell" : {
-      "header" : "Venda cripto com nossos parceiros",
+      "header" : "Venda cripto pelos nossos provedores terceirizados",
       "title" : "Vender cripto via <0>{{provider}}</0>",
       "tab" : "Vender",
       "selectCrypto" : "Escolha um criptoativo",
@@ -1115,7 +1115,7 @@
     },
     "ledgerAcademy" : {
       "title" : "Ledger Academy",
-      "desc" : "Aprenda sobre criptomoedas"
+      "desc" : "Aprenda cripto"
     },
     "facebook" : {
       "title" : "Facebook",
@@ -1368,9 +1368,9 @@
   "emptyState" : {
     "dashboard" : {
       "title" : "Instalar aplicativos no seu dispositivo",
-      "desc" : "Acesse a My Ledger para instalar aplicativos em seu dispositivo. Você pode adicionar contas quando tiver aplicativos no seu dispositivo.",
+      "desc" : "Vá a Minha Ledger para instalar aplicativos em seu dispositivo. Você pode adicionar contas quando tiver aplicativos no seu dispositivo.",
       "buttons" : {
-        "installApp" : "Vá ao My Ledger",
+        "installApp" : "Vá a Minha Ledger",
         "help" : "Ajuda"
       }
     },
@@ -1379,7 +1379,7 @@
       "desc" : "Adicione uma conta para começar a gerenciar suas criptos. Você precisa instalar o aplicativo da sua cripto no seu dispositivo.",
       "buttons" : {
         "addAccount" : "Adicionar Conta",
-        "installApp" : "Vá ao My Ledger para instalar aplicativos",
+        "installApp" : "Vá a Minha Ledger para instalar aplicativos",
         "help" : "Ajuda"
       }
     }
@@ -1675,6 +1675,8 @@
       "undelegated" : "Removido de delegação",
       "undelegatedFrom" : "Removido de delegação de",
       "undelegatedAmount" : "Quantia removida de delegação",
+      "withdrawnFrom" : "Sacado de",
+      "withdrawnAmount" : "Quantia Sacada",
       "rewardFrom" : "Recompensa de",
       "memo" : "Memo",
       "assetId" : "ID do ativo",
@@ -1702,12 +1704,12 @@
     "quitApp" : "Feche o aplicativo no seu dispositivo",
     "appNotInstalledTitle" : "Aplicativo necessário em falta",
     "appNotInstalledTitle_plural" : "Aplicativos necessários em falta",
-    "appNotInstalled" : "O aplicativo {{appName}} é necessário para completar esta ação. Vá ao My Ledger e instale-o em seu dispositivo",
-    "appNotInstalled_plural" : "Os aplicativos {{appName}} são necessários para completar esta ação. Vá ao My Ledger e instale-os em seu dispositivo",
-    "openManager" : "Abra o My Ledger",
+    "appNotInstalled" : "O aplicativo {{appName}} é necessário para completar esta ação. Vá a Minha Ledger e o instale em seu dispositivo",
+    "appNotInstalled_plural" : "Os aplicativos {{appName}} são necessários para completar esta ação. Vá a Minha Ledger e os instale em seu dispositivo",
+    "openManager" : "Abra a Minha Ledger",
     "openOnboarding" : "Configurar Dispositivo",
     "outdated" : "Versão do aplicativo desatualizada",
-    "outdatedDesc" : "Uma atualização importante está disponível para o aplicativo {{appName}} no seu dispositivo. Vá ao My Ledger e o atualize.",
+    "outdatedDesc" : "Uma atualização importante está disponível para o aplicativo {{appName}} no seu dispositivo. Vá a Minha Ledger e o atualize.",
     "installApp" : "Instalação do aplicativo {{appName}}",
     "installAppDescription" : "Aguarde a instalação ser concluída",
     "listApps" : "Verificando dependências do aplicativo",
@@ -1753,8 +1755,8 @@
     },
     "disconnected" : {
       "title" : "Parece que um aplicativo está aberto no seu dispositivo",
-      "subtitle" : "Ao reabrir o My Ledger, o aplicativo será fechado em seu dispositivo",
-      "ctaReopen" : "Reabra o My Ledger",
+      "subtitle" : "Ao reabrir a Minha Ledger, o aplicativo será fechado em seu dispositivo",
+      "ctaReopen" : "Reabra a Minha Ledger",
       "ctaPortfolio" : "Voltar ao Portfólio"
     },
     "deviceStorage" : {
@@ -1782,7 +1784,7 @@
         "not_installed" : "Não Instalado"
       },
       "sort" : {
-        "title" : "Ordem",
+        "title" : "Ordenar",
         "name_asc" : "Nome A-Z",
         "name_desc" : "Nome Z-A",
         "marketcap_desc" : "Capitalização de mercado"
@@ -1797,7 +1799,7 @@
         "title_plural" : "Atualizações disponíveis",
         "progressTitle" : "{{number}} atualização de aplicativo",
         "progressTitle_plural" : "{{number}} atualizações de aplicativo",
-        "progressWarning" : "Não feche o My Ledger durante a atualização.",
+        "progressWarning" : "Não feche a Minha Ledger durante a atualização.",
         "progress" : "Atualizando todos..."
       },
       "item" : {
@@ -1861,7 +1863,7 @@
       "updateBtn" : "Atualizar Firmware",
       "banner" : {
         "warning" : "Atualização disponível para o firmware {{latestFirmware}}",
-        "cta" : "Vá ao My Ledger",
+        "cta" : "Vá a Minha Ledger",
         "old" : {
           "warning" : "A versão do firmware do dispositivo é antiga demais para ser atualizada. Contate o Suporte Ledger para substituir o dispositivo.",
           "cta" : "Contatar Suporte"
@@ -1917,7 +1919,7 @@
         "boot" : "Mantenha o botão lateral pressionado até {{option}} ser exibido",
         "recoveryMode" : "Selecione Modo {{mode}}. Aguarde o painel principal aparecer.",
         "third" : "3. Desinstale todos os aplicativos",
-        "openLive" : "Abra o My Ledger em sua Ledger Live.",
+        "openLive" : "Abra a Minha Ledger no Ledger Live.",
         "uninstall" : "Selecione o ícone de lixeira cinza em todos os aplicativos atualmente instalados na sua {{deviceName}}. Isso liberará espaço para o instalador de firmware.",
         "disclaimer" : "Nota: seus fundos não são afetados por esta operação, as chaves privadas para acessar seus criptoativos na blockchain permanecem seguras em sua folha de recuperação."
       }
@@ -2181,8 +2183,11 @@
     "title" : "Assinar Transação"
   },
   "releaseNotes" : {
-    "title" : "Notas de versão",
+    "title" : "Notas de lançamento",
     "version" : "Ledger Live {{versionNb}}"
+  },
+  "troubleshootNetwork" : {
+    "title" : "Solucionar problemas de rede"
   },
   "systemLanguageAvailable" : {
     "title" : "Alterar o idioma do seu aplicativo?",
@@ -2233,6 +2238,187 @@
     "value" : "Valor",
     "header" : "Alocação de conta ({{count}})"
   },
+  "elrond" : {
+    "summary" : {
+      "availableBalanceTooltip" : "Esta quantia pode ser transferida.",
+      "availableBalance" : "Saldo Disponível",
+      "delegatedAssetsTooltip" : "Os ativos delegados são usados indiretamente pelo provedor de staking para operar nodes validadores, processar transações e proteger a rede participando de um mecanismo de consenso.",
+      "delegatedAssets" : "Ativos Delegados",
+      "undelegatingTooltip" : "Os ativos não delegados ficam sujeitos a um período de desvinculação de 10 dias antes de poderem ser sacados.",
+      "undelegating" : "Saques Pendentes"
+    },
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Desenvolvido por MultiversX",
+        "moreInfo" : "Mais Informações",
+        "drawerTitle" : "Integração com MultiversX",
+        "title" : "O token MultiversX eGold (EGLD) agora está disponível no Ledger Live",
+        "description" : "Agora você pode proteger seus tokens eGold (EGLD) e gerenciá-los com segurança através do Ledger Live.",
+        "description2" : "O token MultiversX eGold (EGLD) é nativo da rede MultiversX e será usado para tudo, desde transações, staking, contratos inteligentes, governança e recompensas de validadores.",
+        "description3" : "Estamos trabalhando ativamente com a equipe da MultiversX para adicionar mais funcionalidades, como staking, suporte nativo ao ESDT (Elrond Standard Digital Token) e mais.",
+        "website" : "A Internet Scale Blockchain"
+      }
+    },
+    "delegation" : {
+      "emptyState" : {
+        "description" : "Delegue seu EGLD para proteger a rede e obter a sua parte nas recompensas.",
+        "info" : "O que é um a delegação?",
+        "delegation" : "Receber Recompensas"
+      },
+      "commission" : "Comissão",
+      "claimRewards" : "Resgatar Recompensas",
+      "header" : "Delegações",
+      "noRewards" : "Nenhuma recompensa disponível",
+      "delegate" : "Delegar",
+      "undelegate" : "Desdelegar",
+      "redelegateDisabledTooltip" : "Você pode redelegar em <0>{{days}}</0>",
+      "redelegateMaxDisabledTooltip" : "Você não pode redelegar a mais de <0>7</0> validadores por vez",
+      "undelegateDisabledTooltip" : "Você não pode desdelegar mais de <0>7</0> validadores por vez",
+      "reward" : "Resgatar Recompensas",
+      "currentDelegation" : "Delegado: <0>{{amount}}</0>",
+      "apr" : "APR",
+      "totalStake" : "Total Aplicado",
+      "activeTooltip" : "Quantias delegadas geram recompensas",
+      "inactiveTooltip" : "Quantias desdelegadas não geram recompensas",
+      "minSafeWarning" : "Fundos insuficientes. Você precisa de pelo menos 1 EGLD disponível.",
+      "flow" : {
+        "title" : "Delegar",
+        "steps" : {
+          "amount" : {
+            "title" : "Delegar",
+            "subtitle" : "Aplique seus ativos para um dos seguintes provedores de staking.",
+            "warning" : "Escolha o seu provedor de staking sabiamente. Atualmente, o único risco é o de não obter recompensas por vários motivos, portanto, você deve selecionar um provedor com base em confiabilidade, comunicação e economia.",
+            "fields" : {
+              "validator" : "Provedor de Staking"
+            }
+          },
+          "fields" : {
+            "amount" : "Quantia a aplicar"
+          },
+          "starter" : {
+            "description" : "Você pode obter recompensas delegando os seus ativos EGLD a um Provedor de Staking.",
+            "bullet" : ["Você continua tendo posse dos ativos delegados", "Delegar usando seu dispositivo Ledger", "Os ativos ficarão disponíveis 10 dias após a desdelegação."],
+            "warning" : {
+              "description" : "Escolha o seu provedor de staking sabiamente. Atualmente, o único risco é o de não obter recompensas por vários motivos, portanto, você deve selecionar um provedor com base em confiabilidade, comunicação e economia."
+            }
+          },
+          "validator" : {
+            "title" : "Provedores de Staking"
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmação",
+            "success" : {
+              "title" : "Você delegou seus ativos com sucesso.",
+              "text" : "O saldo da sua conta será atualizado quando a blockchain confirmar a transação.",
+              "cta" : "Ver Detalhes"
+            },
+            "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+          }
+        }
+      }
+    },
+    "claimRewards" : {
+      "flow" : {
+        "title" : "Resgatar Recompensas",
+        "steps" : {
+          "claimRewards" : {
+            "title" : "Recompensas",
+            "compound" : "Compor recompensas",
+            "claim" : "Resgatar Recompensas",
+            "compoundOrClaim" : "Compor recompensas ou Resgatar recompensas",
+            "compoundDescription" : "As recompensas serão adicionadas à quantia delegada.",
+            "claimDescription" : "As recompensas serão adicionadas ao seu saldo disponível.",
+            "compoundInfo" : "Você recebeu <0>{{amount}}</0>. Ao clicar em Continuar, elas serão resgatadas agora e automaticamente delegadas ao mesmo Provedor de Staking.",
+            "claimInfo" : "Você recebeu <0>{{amount}}</0> do provedor de staking abaixo. Ao clicar em Continuar, elas serão resgatadas agora e automaticamente adicionadas ao saldo disponível.",
+            "selectLabel" : "Selecione uma delegação"
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmação",
+            "label" : "Confirmação",
+            "success" : {
+              "title" : "O resgate de recompensas foi feito com sucesso",
+              "titleCompound" : "Recompensas compostas com sucesso",
+              "text" : "As recompensas foram adicionadas ao seu saldo disponível",
+              "textCompound" : "Sua transação de <0>{{amount}}</0> EGLD a <0>{{validator}}</0> para compor recompensas foi processada com sucesso.",
+              "cta" : "Ver Detalhes"
+            },
+            "pending" : {
+              "title" : "Transmitindo Transação..."
+            },
+            "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "header" : "Desdelegações",
+      "headerTooltip" : "Disponível após o período de desvinculação de 10 dias.",
+      "inactiveTooltip" : "Quantias removidas de delegação não geram recompensas",
+      "withdraw" : {
+        "cta" : "Finalizar Saque"
+      },
+      "flow" : {
+        "title" : "Desdelegar ativos",
+        "steps" : {
+          "amount" : {
+            "title" : "Quantia",
+            "subtitle" : "O processo de desdelegação leva <0>10 dias</0> para ser concluído.",
+            "warning" : "As recompensas serão resgatadas automaticamente. Desdelegar é um processo de 2 etapas: solicitação da desdelegação, seguido por um <0>período de desvinculação de 10 dias</0> após o qual você pode finalizar o saque e a quantia desdelegada será transferida para o seu saldo disponível.",
+            "fields" : {
+              "validator" : "Provedor de Staking",
+              "amount" : "Quantia a desdelegar"
+            }
+          },
+          "device" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmação",
+            "success" : {
+              "title" : "Ativos desdelegados com sucesso.",
+              "description" : "<0>{{amount}}</0> foram desdelegados de <0>{{validator}}</0>.",
+              "cta" : "Ver Detalhes"
+            },
+            "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "flow" : {
+        "title" : "Finalizar Saque",
+        "steps" : {
+          "withdraw" : {
+            "title" : "Finalizar Saque",
+            "description" : "Você desdelegou <0>{{amount}}</0> EGLD de <0>{{validator}}</0>. Ao clicar em Continuar, elas serão sacados agora e adicionados novamente automaticamente ao saldo disponível.",
+            "selectLabel" : "Selecione uma desdelegação"
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmação",
+            "label" : "Confirmação",
+            "success" : {
+              "title" : "Fundos sacados com sucesso",
+              "text" : "A quantia de <0>{{amount}}</0> foi sacada novamente para o seu saldo disponível.",
+              "cta" : "Ver Detalhes"
+            },
+            "pending" : {
+              "title" : "Transmitindo Transação..."
+            },
+            "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+          }
+        }
+      }
+    }
+  },
   "cardano" : {
     "account" : {
       "stakingRewardsBanner" : {
@@ -2241,6 +2427,9 @@
     }
   },
   "tron" : {
+    "receive" : {
+      "newAddressTRC20" : "Primeiro, você precisa enviar pelo menos 0,1 TRX para este endereço para ativá-lo."
+    },
     "voting" : {
       "emptyState" : {
         "description" : "Agora você pode ganhar recompensas com congelamento e votação.",
@@ -2773,7 +2962,7 @@
         "steps" : {
           "assets" : {
             "title" : "ASA (Ativo)",
-            "info" : "Para adicionar um ativo, é necessário enviar uma transação com taxas mínimas. Isto aparecerá no seu histórico de transações",
+            "info" : "Para adicionar um ativo, é necessário enviar uma transação com taxas mínimas. A transação vai aparecer no seu histórico",
             "selectLabel" : "Escolha um ASA (Ativo)",
             "disabledTooltip" : "Você já possui este ASA (Ativo) na sua conta Algorand"
           },
@@ -3262,7 +3451,7 @@
       "steps" : {
         "assets" : {
           "title" : "Ativo",
-          "info" : "Para adicionar um ativo, é necessário enviar uma transação com taxas mínimas. Isto aparecerá no seu histórico de transações",
+          "info" : "Para adicionar um ativo, é necessário enviar uma transação com taxas mínimas. A transação vai aparecer no seu histórico",
           "selectLabel" : "Escolha um ativo",
           "disabledTooltip" : "Você já tem este ativo em sua conta Stellar"
         },
@@ -3548,7 +3737,7 @@
       "featureFlagsEdit" : "Editar",
       "featureFlagsRestore" : "Restaurar",
       "featureFlagsOverride" : "Sobrepor",
-      "firebaseProject" : "Firebase project targeted by this build:",
+      "firebaseProject" : "Projeto Firebase mirado por esta versão:",
       "addLocalApp" : "Adicionar um aplicativo local",
       "addLocalAppDesc" : "Navegue por arquivos locais e adicione um aplicativo local usando um manifesto local",
       "addLocalAppButton" : "Navegar",
@@ -3613,7 +3802,7 @@
         },
         "managerDevMode" : {
           "title" : "Modo Desenvolvedor",
-          "description" : "Mostrar aplicativos testnet e de desenvolvedor no My Ledger."
+          "description" : "Mostrar aplicativos testnet e de desenvolvedor em Minha Ledger."
         },
         "scanForInvalidPaths" : {
           "title" : "Pesquisa de contas ampliada",
@@ -3632,7 +3821,7 @@
           "description" : "Habilita limite de intervalo personalizado para todas as contas. Ao aumentar este valor acima do padrão (20), o Ledger Live buscará moedas em mais endereços públicos não utilizados. Apenas para usuários avançados, pois pode quebrar a compatibilidade ao restaurar suas contas."
         },
         "forceProvider" : {
-          "title" : "Provedor My Ledger",
+          "title" : "Provedor Minha Ledger",
           "description" : "Alterar o provedor de aplicativos no My Ledger pode impossibilitar a instalação ou desinstalação de aplicativos no seu dispositivo Ledger."
         },
         "testAnimations" : {
@@ -3648,12 +3837,12 @@
           "description" : "Testar todos os recursos pós-introdução"
         },
         "1559DeactivateGate" : {
-          "title" : "Desativar portão da taxa de prioridade mínima EIP1559",
+          "title" : "Desativar taxa de prioridade mínima (EIP1559)",
           "description" : "Isso permitirá que a transação seja enviada sem que qualquer taxa de prioridade mínima seja esperada. Isso pode fazer com que uma transação fique presa na mempool para sempre."
         },
         "1559CustomPriorityLowerGate" : {
-          "title" : "Portão da taxa de prioridade personalizada",
-          "description" : "Personalize a porcentagem da nossa taxa de prioridade mínima estimada permitida para uma transação EIP1559 avançada"
+          "title" : "Personalizar Taxa de Prioridade",
+          "description" : "Defina uma porcentagem personalizada da nossa taxa de prioridade mínima estimada permitida para uma transação EIP1559 avançada"
         }
       }
     },
@@ -3695,6 +3884,11 @@
       "title" : "Salvar Registros",
       "desc" : "Pode ser necessário salvar os registros do Ledger Live para fins de solução de problemas.",
       "btn" : "Salvar"
+    },
+    "troubleshootNetwork" : {
+      "title" : "Solucionar problemas de rede",
+      "desc" : "Execute algumas verificações para determinar as condições da rede e solucionar problemas.",
+      "btn" : "Solucionar"
     },
     "accounts" : {
       "hideEmptyTokens" : {
@@ -4734,6 +4928,10 @@
       "title" : "Parece que seu dispositivo está desconectado",
       "description" : "Reconecte e tente novamente."
     },
+    "EConnReset" : {
+      "title" : "A loja de aplicativos da Ledger não pode ser acessada",
+      "description" : "Sua conexão com a internet pode ter caído ou estar usando uma configuração incomum. Comece verificando se alguma coisa está bloqueando sua conexão (proxy ou firewall). Se o problema persistir, clique abaixo para soluções ou contate nosso suporte ao cliente."
+    },
     "EnpointConfig" : {
       "title" : "Endpoint inválido",
       "description" : "Forneça um endpoint válido"
@@ -4835,6 +5033,19 @@
     "NoAddressesFound" : {
       "title" : "Nenhuma conta encontrada",
       "description" : "Algo deu errado com o cálculo do endereço, tente novamente ou contate o Suporte Ledger"
+    },
+    "ElrondDecimalsLimitReached" : {
+      "title" : "Limite máximo de decimais alcançado",
+      "description" : "Certifique-se de que a quantia fornecida tenha 18 decimais."
+    },
+    "ElrondMinDelegatedAmountError" : {
+      "title" : "Quantia delegada deve ser de pelo menos {{formattedAmount}}"
+    },
+    "ElrondMinUndelegatedAmountError" : {
+      "title" : "Quantia desdelegada deve ser de pelo menos {{formattedAmount}}"
+    },
+    "ElrondDelegationBelowMinimumError" : {
+      "title" : "Delegação restante não pode ser menos que {{formattedAmount}}"
     },
     "NotEnoughBalance" : {
       "title" : "Fundos Insuficientes",
@@ -5088,7 +5299,7 @@
       "title" : "Quantia a ser congelada não pode ser menor que 1"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "Enviar TRC20 para uma nova conta não a ativará",
+      "title" : "Primeiro, você precisa enviar pelo menos 0,1 TRX para este endereço para habilitar o recebimento de tokens TRC20.",
       "description" : "A conta do destinatário deve ser ativada antes de enviar TRC20 a ela. Envie TRX ou TRC10 a uma conta para ativá-la."
     },
     "TronUnexpectedFees" : {
