@@ -13,11 +13,9 @@ import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
-import type { StepId, StepProps, St } from "./types";
-import type { Account, Operation } from "@ledgerhq/types-live";
-import type { TFunction } from "react-i18next";
+import type { StepProps, St } from "./types";
+import type { Operation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";
 import { LEDGER_POOL_ADDRESSES } from "@ledgerhq/live-common/families/cardano/utils";
 
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
@@ -25,7 +23,6 @@ import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { closeModal, openModal } from "~/renderer/actions/modals";
-import { BigNumber } from "bignumber.js";
 
 import Stepper from "~/renderer/components/Stepper";
 import StepDelegation, { StepDelegationFooter } from "./steps/StepDelegation";
@@ -70,7 +67,7 @@ const steps: Array<St> = [
     component: StepSummary,
     noScroll: true,
     footer: StepSummaryFooter,
-    // onBack: ({ transitionTo }: StepProps) => transitionTo("validator"),
+    onBack: ({ transitionTo }: StepProps) => transitionTo("validator"),
   },
   {
     id: "connectDevice",
