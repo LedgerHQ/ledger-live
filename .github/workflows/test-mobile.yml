@@ -65,10 +65,10 @@ jobs:
     if: always() && !cancelled() && github.event_name == 'workflow_dispatch' && github.event.inputs.sha != ''
     runs-on: ubuntu-latest
     steps:
-      - name: "download linter results"
-        uses: actions/download-artifact@v3
-        with:
-          name: lint
+      # - name: "download linter results"
+      #   uses: actions/download-artifact@v3
+      #   with:
+      #     name: lint
       - uses: actions/github-script@v6
         name: "format report"
         id: status
@@ -88,6 +88,7 @@ jobs:
               - ${ isSuccess ? "✅" : "❌" } **Code checks** ended with status \`${{needs.codecheck.result}}\`
             `;
 
+            /*
             // Store eslint results as annotations
             let annotations = []
             try {
@@ -113,10 +114,11 @@ jobs:
             } catch(error) {
               // ignore for whatever reason it failed
             }
+            */
 
             const data = {
               summary,
-              annotations
+              // annotations
             };
 
             fs.writeFileSync("summary.json", JSON.stringify(data), "utf8");
