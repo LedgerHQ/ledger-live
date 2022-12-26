@@ -1,13 +1,13 @@
-import React, { createContext, ReactNode, useContext } from "react";
+import React, { createContext, useContext } from "react";
 import type { FeatureId, Feature } from "@ledgerhq/types-live";
 
-type State = {
+interface State {
   isFeature: (_: string) => boolean;
   getFeature: (_: FeatureId) => Feature | null;
   overrideFeature: (_: FeatureId, value: Feature) => void;
   resetFeature: (_: FeatureId) => void;
   resetFeatures: () => void;
-};
+}
 
 const initialState: State = {
   isFeature: (_) => false,
@@ -23,17 +23,13 @@ export function useFeatureFlags(): State {
   return useContext<State>(FeatureFlagsContext);
 }
 
-type Props = State & {
-  children?: ReactNode;
-};
-
-export function FeatureFlagsProvider({
+export const FeatureFlagsProvider: React.FC<State> = ({
   children,
   ...providerState
-}: Props): JSX.Element {
+}) => {
   return (
     <FeatureFlagsContext.Provider value={providerState}>
       {children}
     </FeatureFlagsContext.Provider>
   );
-}
+};
