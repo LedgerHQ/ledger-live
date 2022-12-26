@@ -186,45 +186,47 @@ class Xpub {
   }): Promise<TransactionInfo> {
     const outputs: OutputInfo[] = [];
 
-    const { amount, opReturnData } = params;
+    const {
+      amount,
+      opReturnData,
+      destAddress,
+      changeAddress,
+      utxoPickingStrategy,
+      feePerByte,
+      sequence,
+    } = params;
 
-    if (amount.gt(0) && opReturnData) {
-      throw new Error("OP_RETURN transaction with amount > 0 not allowed.");
-    }
+    // outputs splitting
+    // btc only support value fitting in uint64 and the lib
+    // we use to serialize output only take js number in params
+    // that are actually even more restricted
+    const desiredOutputLeftToFit: OutputInfo = {
+      script: this.crypto.toOutputScript(destAddress),
+      value: amount,
+      address: destAddress,
+      isChange: false,
+    };
 
-    if (amount.gt(0)) {
-      // outputs splitting
-      // btc only support value fitting in uint64 and the lib
-      // we use to serialize output only take js number in params
-      // that are actually even more restricted
-      const desiredOutputLeftToFit: OutputInfo = {
-        script: this.crypto.toOutputScript(params.destAddress),
-        value: params.amount,
-        address: params.destAddress,
+    while (desiredOutputLeftToFit.value.gt(this.OUTPUT_VALUE_MAX)) {
+      outputs.push({
+        script: desiredOutputLeftToFit.script,
+        value: new BigNumber(this.OUTPUT_VALUE_MAX),
+        address: destAddress,
         isChange: false,
-      };
+      });
 
-      while (desiredOutputLeftToFit.value.gt(this.OUTPUT_VALUE_MAX)) {
-        outputs.push({
-          script: desiredOutputLeftToFit.script,
-          value: new BigNumber(this.OUTPUT_VALUE_MAX),
-          address: params.destAddress,
-          isChange: false,
-        });
-
-        desiredOutputLeftToFit.value = desiredOutputLeftToFit.value.minus(
-          this.OUTPUT_VALUE_MAX
-        );
-      }
-
-      if (desiredOutputLeftToFit.value.gt(0)) {
-        outputs.push(desiredOutputLeftToFit);
-      }
+      desiredOutputLeftToFit.value = desiredOutputLeftToFit.value.minus(
+        this.OUTPUT_VALUE_MAX
+      );
     }
 
-    if (params.opReturnData) {
+    if (desiredOutputLeftToFit.value.gt(0)) {
+      outputs.push(desiredOutputLeftToFit);
+    }
+
+    if (opReturnData) {
       const opReturnOutput: OutputInfo = {
-        script: this.crypto.toOpReturnOutputScript(params.opReturnData),
+        script: this.crypto.toOpReturnOutputScript(opReturnData),
         value: new BigNumber(0),
         address: "",
         isChange: false,
@@ -239,10 +241,10 @@ class Xpub {
       unspentUtxos: unspentUtxoSelected,
       fee,
       needChangeoutput,
-    } = await params.utxoPickingStrategy.selectUnspentUtxosToUse(
+    } = await utxoPickingStrategy.selectUnspentUtxosToUse(
       this,
       outputs,
-      params.feePerByte
+      feePerByte
     );
 
     const txHexs = await Promise.all(
@@ -264,7 +266,7 @@ class Xpub {
         address: utxo.address,
         output_hash: utxo.output_hash,
         output_index: utxo.output_index,
-        sequence: params.sequence,
+        sequence: sequence,
       };
     });
 
@@ -288,14 +290,11 @@ class Xpub {
     const dustLimit = computeDustAmount(this.crypto, txSize);
 
     // Abandon the change output if change output amount is less than dust amount
-    if (
-      needChangeoutput &&
-      total.minus(params.amount).minus(fee).gt(dustLimit)
-    ) {
+    if (needChangeoutput && total.minus(amount).minus(fee).gt(dustLimit)) {
       outputs.push({
-        script: this.crypto.toOutputScript(params.changeAddress.address),
-        value: total.minus(params.amount).minus(fee),
-        address: params.changeAddress.address,
+        script: this.crypto.toOutputScript(changeAddress.address),
+        value: total.minus(amount).minus(fee),
+        address: changeAddress.address,
         isChange: true,
       });
     }
@@ -310,7 +309,7 @@ class Xpub {
       associatedDerivations,
       outputs,
       fee: total.minus(outputsValue).toNumber(),
-      changeAddress: params.changeAddress,
+      changeAddress: changeAddress,
     };
   }
 
