@@ -93,10 +93,9 @@ describe("testing wallet", () => {
 
     expect(outputs.length).toBe(3);
 
-    const filteredOutputs = outputs.filter((output) => output.address === "");
-    expect(filteredOutputs.length).toBe(1);
+    const [opReturnOutput] = outputs.filter((output) => output.address === "");
+    expect(opReturnOutput).toBeDefined();
 
-    const [opReturnOutput] = filteredOutputs;
     const [opType, message] = script.decompile(opReturnOutput.script) as [
       number,
       Buffer
@@ -106,6 +105,10 @@ describe("testing wallet", () => {
     expect(opReturnOutput.value.toNumber()).toBe(0);
     expect(opType).toEqual(script.OPS.OP_RETURN);
     expect(message.toString()).toEqual("charley loves heidi");
+
+    const [valueTx] = outputs.filter((output) => output.value.eq(100000));
+    expect(valueTx).toBeDefined();
+    expect(valueTx.address).toBe(receiveAddress.address);
   });
 
   it("should allow to build a transaction splitting outputs", async () => {
