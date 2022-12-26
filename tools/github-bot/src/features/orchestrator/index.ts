@@ -75,6 +75,9 @@ export function orchestrator(app: Probot) {
         `[Orchestrator](workflow_run.in_progress) ${payload.workflow_run.name}`
       );
       const workflowUrl = `https://github.com/${owner}/${repo}/actions/runs/${payload.workflow_run.id}`;
+      const summaryPrefix = matchedWorkflow.description
+        ? `#### ${matchedWorkflow.description}\n\n`
+        : "";
       // Will trigger the check_run.created event (which will update the gate)
       await createRunByName({
         octokit,
@@ -86,7 +89,9 @@ export function orchestrator(app: Probot) {
           details_url: workflowUrl,
           output: {
             title: "⚙️ Running",
-            summary: `The **[workflow](${workflowUrl})** is currently running.`,
+            summary:
+              summaryPrefix +
+              `The **[workflow](${workflowUrl})** is currently running.`,
             started_at: new Date().toISOString(),
           },
         },
@@ -227,6 +232,11 @@ export function orchestrator(app: Probot) {
         }
         actions = newSummary?.actions;
       }
+
+      const summaryPrefix = matchedWorkflow.description
+        ? `#### ${matchedWorkflow.description}\n\n`
+        : "";
+      summary = summaryPrefix + summary;
 
       const checkRun = checkRuns.data.check_runs[0];
       await octokit.checks.update({
