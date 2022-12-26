@@ -37,7 +37,7 @@ export const WORKFLOWS = {
   "test-desktop.yml": {
     checkRunName: "[Desktop] Run e2e and unit tests",
     description:
-      "Run end to end tests ([playwright](https://playwright.dev/), unit tests ([jest](https://jestjs.io/fr/)), the [type checker](https://www.typescriptlang.org/) and the [linter](https://eslint.org/) on the Ledger Live Desktop application.",
+      "Perform [end to end](https://playwright.dev/) and [unit](https://jestjs.io/fr/) tests, [type checks](https://www.typescriptlang.org/) and run the [linter](https://eslint.org/) on the Ledger Live Desktop application.",
     runsOn: RUNNERS.internal,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
