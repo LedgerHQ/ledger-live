@@ -18,6 +18,21 @@ import {
 } from "../reducers/settings";
 import { setOverriddenFeatureFlag } from "../actions/settings";
 
+const isFeature = (key: string): boolean => {
+  try {
+    const value = remoteConfig().getValue(formatToFirebaseFeatureId(key));
+
+    if (!value || !value.asString()) {
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error(`Failed to check if feature "${key}" exists`);
+    return false;
+  }
+};
+
 const checkFeatureFlagVersion = (feature: Feature | undefined) => {
   if (
     feature &&
@@ -147,6 +162,7 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
 
   return (
     <FeatureFlagsProvider
+      isFeature={isFeature}
       getFeature={wrappedGetFeature}
       overrideFeature={overrideFeature}
       resetFeature={resetFeature}
