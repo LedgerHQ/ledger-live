@@ -2,7 +2,7 @@ import { Probot } from "probot";
 import { upToDate } from "./features/upToDate";
 import { orchestrator } from "./features/orchestrator";
 import { autoClose } from "./features/autoClose";
-import { generateScreenshots } from "./commands/genarate-screenshots";
+import { generateScreenshots } from "./commands/generate-screenshots";
 import { regenPods } from "./commands/regen-pods";
 
 export default (app: Probot) => {
