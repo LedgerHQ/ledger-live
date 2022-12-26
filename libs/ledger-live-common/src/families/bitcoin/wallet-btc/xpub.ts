@@ -221,34 +221,17 @@ class Xpub {
       );
     }
 
-    if (amount.gt(0)) {
-      // outputs splitting
-      // btc only support value fitting in uint64 and the lib
-      // we use to serialize output only take js number in params
-      // that are actually even more restricted
-      const desiredOutputLeftToFit: OutputInfo = {
-        script: this.crypto.toOutputScript(params.destAddress),
-        value: params.amount,
-        address: params.destAddress,
+    while (desiredOutputLeftToFit.value.gt(this.OUTPUT_VALUE_MAX)) {
+      outputs.push({
+        script: desiredOutputLeftToFit.script,
+        value: new BigNumber(this.OUTPUT_VALUE_MAX),
+        address: destAddress,
         isChange: false,
-      };
+      });
 
-      while (desiredOutputLeftToFit.value.gt(this.OUTPUT_VALUE_MAX)) {
-        outputs.push({
-          script: desiredOutputLeftToFit.script,
-          value: new BigNumber(this.OUTPUT_VALUE_MAX),
-          address: params.destAddress,
-          isChange: false,
-        });
-
-        desiredOutputLeftToFit.value = desiredOutputLeftToFit.value.minus(
-          this.OUTPUT_VALUE_MAX
-        );
-      }
-
-      if (desiredOutputLeftToFit.value.gt(0)) {
-        outputs.push(desiredOutputLeftToFit);
-      }
+      desiredOutputLeftToFit.value = desiredOutputLeftToFit.value.minus(
+        this.OUTPUT_VALUE_MAX
+      );
     }
 
     if (opReturnData) {
@@ -293,7 +276,11 @@ class Xpub {
         address: utxo.address,
         output_hash: utxo.output_hash,
         output_index: utxo.output_index,
+<<<<<<< HEAD
         sequence,
+=======
+        sequence: sequence,
+>>>>>>> 53b82da0c0 (manage op_return tx with an amount)
       };
     });
 
