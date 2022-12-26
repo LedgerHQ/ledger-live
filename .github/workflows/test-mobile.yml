@@ -65,22 +65,18 @@ jobs:
     if: always() && !cancelled() && github.event_name == 'workflow_dispatch' && github.event.inputs.sha != ''
     runs-on: ubuntu-latest
     steps:
-      # - name: "download linter results"
-      #   uses: actions/download-artifact@v3
-      #   with:
-      #     name: lint
-      - name: generate token
-        id: generate-token
-        uses: tibdex/github-app-token@v1
+      - name: "download linter results"
+        uses: actions/download-artifact@v3
         with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          name: lint
       - uses: actions/github-script@v6
         name: "format report"
         id: status
         with:
           script: |
             const fs = require("fs");
+            const path = require("path");
+
             const statuses = [
               "${{ needs.codecheck.result }}"
             ];
@@ -92,10 +88,35 @@ jobs:
               - ${ isSuccess ? "✅" : "❌" } **Code checks** ended with status \`${{needs.codecheck.result}}\`
             `;
 
+            // Store eslint results as annotations
+            let annotations = []
+            try {
+              const lintResult = require("./lint.json");
+              const LEVELS = {
+                0: "notice",
+                1: "warning",
+                2: "failure"
+              };
+              const withErrorOrWarning = lintResult.filter(r => r.errorCount > 0 || r.fatalErrorCount > 0 || r.warningCount > 0);
+              annotations = withErrorOrWarning.flatMap(({ filePath, messages }) =>
+                messages.map((m) => ({
+                  path: path.relative(process.env.GITHUB_WORKSPACE, filePath),
+                  start_line: m.line,
+                  end_line: m.endLine,
+                  start_column: m.column,
+                  end_column: m.endColumn,
+                  annotation_level: LEVELS[m.severity],
+                  message: m.message,
+                  title: m.ruleId,
+                }))
+              );
+            } catch(error) {
+              // ignore for whatever reason it failed
+            }
+
             const data = {
-              isFailed,
-              isCancelled,
-              summary
+              summary,
+              annotations
             };
 
             fs.writeFileSync("summary.json", JSON.stringify(data), "utf8");
