@@ -2,7 +2,7 @@ import React from "react";
 import { Flex, Box, Text } from "@ledgerhq/react-ui";
 import styled, { useTheme } from "styled-components";
 import { scaleDimensions } from "./imageUtils";
-import { targetDimensions } from "./shared";
+import { targetDisplayDimensions } from "./shared";
 import StyleProviderV3 from "~/renderer/styles/StyleProviderV3";
 import { ImageDimensions } from "./types";
 
@@ -27,7 +27,7 @@ const absoluteFillObject = {
   right: 0,
 };
 
-const defaultImageDimensions = scaleDimensions(targetDimensions, 0.4);
+const defaultImageDimensions = scaleDimensions(targetDisplayDimensions, 0.4);
 
 const px = 3;
 const py = 3;
