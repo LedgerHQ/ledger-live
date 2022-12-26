@@ -55,6 +55,7 @@ describe("testing wallet", () => {
       account.xpub.derivationMode,
       []
     );
+
     const txInfo = await wallet.buildAccountTx({
       fromAccount: account,
       dest: receiveAddress.address,
@@ -63,6 +64,7 @@ describe("testing wallet", () => {
       utxoPickingStrategy,
       sequence: 0,
     });
+
     const tx = await wallet.signAccountTx({
       btc: new MockBtc(),
       fromAccount: account,
@@ -93,8 +95,8 @@ describe("testing wallet", () => {
 
     const filteredOutputs = outputs.filter((output) => output.address === "");
     expect(filteredOutputs.length).toBe(1);
-    const [opReturnOutput] = filteredOutputs;
 
+    const [opReturnOutput] = filteredOutputs;
     const [opType, message] = script.decompile(opReturnOutput.script) as [
       number,
       Buffer
