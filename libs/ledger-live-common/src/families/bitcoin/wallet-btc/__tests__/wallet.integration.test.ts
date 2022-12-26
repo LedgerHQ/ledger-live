@@ -1,4 +1,6 @@
 import BigNumber from "bignumber.js";
+import { script } from "bitcoinjs-lib";
+
 import { DerivationModes } from "../types";
 import BitcoinLikeWallet from "../wallet";
 import { Account } from "../account";
@@ -10,6 +12,7 @@ jest.setTimeout(180000);
 describe("testing wallet", () => {
   const wallet = new BitcoinLikeWallet();
   let account: Account;
+
   it("should generate an account", async () => {
     account = await wallet.generateAccount({
       xpub: "xpub6CV2NfQJYxHn7MbSQjQip3JMjTZGUbeoKz5xqkBftSZZPc7ssVPdjKrgh6N8U1zoQDxtSo6jLarYAQahpd35SJoUKokfqf1DZgdJWZhSMqP",
@@ -66,6 +69,41 @@ describe("testing wallet", () => {
       txInfo,
     });
     expect(Buffer.from(tx, "hex")).toHaveLength(20);
+  });
+
+  it("should allow to build a transaction with op_return output", async () => {
+    const receiveAddress = await wallet.getAccountNewReceiveAddress(account);
+    const utxoPickingStrategy = new Merge(
+      account.xpub.crypto,
+      account.xpub.derivationMode,
+      []
+    );
+
+    const { outputs } = await wallet.buildAccountTx({
+      fromAccount: account,
+      dest: receiveAddress.address,
+      amount: new BigNumber(100000),
+      feePerByte: 5,
+      utxoPickingStrategy,
+      sequence: 0,
+      opReturnData: Buffer.from("charley loves heidi"),
+    });
+
+    expect(outputs.length).toBe(3);
+
+    const filteredOutputs = outputs.filter((output) => output.address === "");
+    expect(filteredOutputs.length).toBe(1);
+    const [opReturnOutput] = filteredOutputs;
+
+    const [opType, message] = script.decompile(opReturnOutput.script) as [
+      number,
+      Buffer
+    ];
+
+    expect(opReturnOutput.isChange).toBe(false);
+    expect(opReturnOutput.value.toNumber()).toBe(0);
+    expect(opType).toEqual(script.OPS.OP_RETURN);
+    expect(message.toString()).toEqual("charley loves heidi");
   });
 
   it("should allow to build a transaction splitting outputs", async () => {
