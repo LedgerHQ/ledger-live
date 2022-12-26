@@ -226,12 +226,6 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
-      - name: generate token
-        id: generate-token
-        uses: tibdex/github-app-token@v1
-        with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - name: download images artifacts
         uses: actions/download-artifact@v3
         with:
@@ -265,13 +259,6 @@ jobs:
         with:
           script: |
             const fs = require("fs");
-            const statuses = [
-              "${{ needs.typecheck.result }}",
-              "${{ needs.test-desktop-app-mac.outputs.outcome }}",
-              "${{ needs.test-desktop-app-linux.outputs.outcome }}",
-              "${{ needs.test-desktop-app-windows.outputs.outcome }}",
-              "${{ needs.unit-tests.result }}",
-            ];
             const keys = {
               mac: {
                 symbol: "🍏",
@@ -286,14 +273,17 @@ jobs:
                 name: "Linux"
               },
             };
+
             const typecheck = {
               pass: ${{ needs.typecheck.result == 'success' }},
               status: "${{ needs.typecheck.result }}",
             };
+
             const unitTests = {
               pass: ${{ needs.unit-tests.result == 'success' }},
               status: "${{ needs.unit-tests.result }}",
             };
+
             const report = {
               mac: {
                 pass: ${{ needs.test-desktop-app-mac.outputs.status == 'success' }},
@@ -308,7 +298,7 @@ jobs:
                 status: "${{ needs.test-desktop-app-windows.outputs.status }}",
               },
             };
-            const isFailed = statuses.some(e => e === "failure");
+
             let summary = `### TypeCheck
             ${typecheck.pass ? "Typechecks are fine" : "Unfortunately typechecks did not pass"}
               - ${typecheck.pass ? "✅" : "❌"} **Type checks** ended with status \`${typecheck.status}\`
@@ -319,22 +309,39 @@ jobs:
 
             ### Screenshot Tests (Playwright)
             `
-            Object.entries(report).forEach(([os, values]) => {
-              summary +=`
-              - ${values.pass
-                  ? `✅ Live Desktop Tests on ${keys[os].name} ended with status \`${values.status}\``
-                  : `❌ Live Desktop Tests on ${keys[os].name} ended with status \`${values.status}\``
-                }`
+
+            summary += `|`
+
+            const reportKeys = Object.keys(report);
+
+            reportKeys.forEach((k) => {
+              summary += ` ${keys[k].symbol} ${keys[k].name} |`;
             });
+
+            summary += `
+            |`;
+
+            for (let i = 0; i < reportKeys.length; i++) {
+              summary += ` :--: |`;
+            }
+
+            summary += `
+            |`;
+
+            Object.entries(report).forEach(([os, values]) => {
+              summary += ` ${values.pass ? "✅" : "❌"} (${values.status}) |`;
+            });
+
             summary += `
             ${{ steps.comment.outputs.body }}
             `
+
             const output = {
               summary,
               actions: [{
-                label: "regen screenshots",
+                label: "Regenerate Screenshots",
                 identifier: "regen_screenshots",
-                description: "Regenerate screenshot for Live Desktop",
+                description: "Triggers a workflow that will attempt to regenerate the playwright screenshots and commit them",
               }],
             };
 
