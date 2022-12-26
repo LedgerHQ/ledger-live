@@ -218,19 +218,19 @@ export function orchestrator(app: Probot) {
           (artifact) => artifact.name === matchedWorkflow.summaryFile
         )?.id;
 
-        if (!artifactId) return;
-
-        const rawSummary = await downloadArtifact(
-          octokit,
-          owner,
-          repo,
-          artifactId
-        );
-        const newSummary = JSON.parse(rawSummary.toString());
-        if (newSummary.summary) {
-          summary = newSummary?.summary;
+        if (artifactId) {
+          const rawSummary = await downloadArtifact(
+            octokit,
+            owner,
+            repo,
+            artifactId
+          );
+          const newSummary = JSON.parse(rawSummary.toString());
+          if (newSummary.summary) {
+            summary = newSummary?.summary;
+          }
+          actions = newSummary?.actions;
         }
-        actions = newSummary?.actions;
       }
 
       const summaryPrefix = matchedWorkflow.description
