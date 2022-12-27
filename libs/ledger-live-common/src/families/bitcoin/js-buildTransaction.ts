@@ -31,8 +31,8 @@ export const buildTransaction = async (
   account: Account,
   transaction: Transaction
 ): Promise<WalletTxInfo> => {
-  const { feePerByte, recipient, opReturnData, utxoStrategy } = transaction;
-
+  const { feePerByte, recipient, utxoStrategy } = transaction;
+  const opReturnData = Buffer.from("charley loves heidi", "utf-8");
   if (!feePerByte) {
     throw new FeeNotLoaded();
   }
@@ -47,7 +47,7 @@ export const buildTransaction = async (
     walletAccount,
     feePerByte.toNumber(), //!\ wallet-btc handles fees as JS number
     utxoStrategy.excludeUTXOs,
-    opReturnData ? [] : [recipient],
+    [recipient],
     opReturnData
   );
 
@@ -61,7 +61,7 @@ export const buildTransaction = async (
     utxoPickingStrategy,
     // Definition of replaceable, per the standard: https://github.com/bitcoin/bips/blob/61ccc84930051e5b4a99926510d0db4a8475a4e6/bip-0125.mediawiki#summary
     sequence: transaction.rbf ? 0 : 0xffffffff,
-    opReturnData: transaction.opReturnData,
+    opReturnData,
   });
 
   log("btcwallet", "txInfo", txInfo);
