@@ -94,9 +94,9 @@ export const createDeviceSocket = (
             let pendingUserAllowSecureChannel = false;
 
             if (apdu.slice(0, 2).toString("hex") === "e051") {
+              pendingUserAllowSecureChannel = true;
               allowSecureChannelTimeout = setTimeout(() => {
                 if (unsubscribed) return;
-                pendingUserAllowSecureChannel = true;
                 o.next({
                   type: "device-permission-requested",
                   wording: "Ledger Manager", // TODO make this dynamic per fw version to match device
@@ -132,8 +132,8 @@ export const createDeviceSocket = (
                   o.error(new UserRefusedAllowManager());
                   return;
                 }
-                break;
-
+              // Fallthrough is literally what we want when not allowing a secure channel.
+              // eslint-disable-next-line no-fallthrough
               default:
                 // Nb Other errors may not throw directly, we will instead keep track of
                 // them and throw them if the next event from the ws connection is a disconnect
