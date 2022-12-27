@@ -339,9 +339,12 @@ jobs:
             const output = {
               summary,
               actions: [{
-                label: "Regenerate Screenshots",
+                // 20 chars max
+                label: "Regen. Screenshots",
+                // 20 chars max
                 identifier: "regen_screenshots",
-                description: "Triggers a workflow that will attempt to regenerate the playwright screenshots and commit them",
+                // 40 chars max
+                description: "Will regenerate playwright screenshots",
               }],
             };
 
