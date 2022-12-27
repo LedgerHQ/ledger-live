@@ -1,9 +1,11 @@
 import coininfo from "coininfo";
 import { script } from "bitcoinjs-lib";
 
+import BTCCrypto from "../crypto/bitcoin";
+import BTCCashCrypto from "../crypto/bitcoincash";
+import DogeCrypto from "../crypto/doge";
 import ZECCrypto from "../crypto/zec";
 import ZENCrypto from "../crypto/zen";
-import BTCCrypto from "../crypto/bitcoin";
 import { OP_RETURN_DATA_SIZE_LIMIT } from "../crypto/base";
 
 describe("Transaction Output script", () => {
@@ -17,6 +19,14 @@ describe("Transaction Output script", () => {
 
   const zenCrypto = new ZENCrypto({
     network: coininfo.zcash.main.toBitcoinJS(),
+  });
+
+  const btcCashCrypto = new BTCCashCrypto({
+    network: coininfo.bitcoincash.main.toBitcoinJS(),
+  });
+
+  const dogeCrypto = new DogeCrypto({
+    network: coininfo.dogecoin.main.toBitcoinJS(),
   });
 
   it("Test toOutputScript for btc, zcash and zen", () => {
@@ -56,17 +66,19 @@ describe("Transaction Output script", () => {
   }, 30000);
 
   it("should get correct output script for OP_RETURN opcode", () => {
-    const data = Buffer.from("charley loves heidi", "utf-8");
+    [btcCrypto, btcCashCrypto, dogeCrypto].forEach((coin) => {
+      const data = Buffer.from("charley loves heidi", "utf-8");
 
-    const output = btcCrypto.toOpReturnOutputScript(data);
-    const [opType, message] = script.decompile(output) as [number, Buffer];
+      const output = coin.toOpReturnOutputScript(data);
+      const [opType, message] = script.decompile(output) as [number, Buffer];
 
-    expect(output.toString("hex")).toEqual(
-      "6a13636861726c6579206c6f766573206865696469"
-    );
+      expect(output.toString("hex")).toEqual(
+        "6a13636861726c6579206c6f766573206865696469"
+      );
 
-    expect(opType).toEqual(script.OPS.OP_RETURN);
-    expect(message.toString()).toEqual("charley loves heidi");
+      expect(opType).toEqual(script.OPS.OP_RETURN);
+      expect(message.toString()).toEqual("charley loves heidi");
+    });
   });
 
   it("Should throw error if OP_RETURN larger than OP_RETURN_DATA_SIZE_LIMIT bytes", () => {
