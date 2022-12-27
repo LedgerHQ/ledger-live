@@ -206,6 +206,7 @@ export function orchestrator(app: Probot) {
 
       let summary = `The **[workflow run](${payload.workflow_run.html_url})** has completed with status \`${payload.workflow_run.conclusion}\`.`;
       let actions;
+      let annotations;
       if (matchedWorkflow.summaryFile) {
         // Get the summary artifact
         const artifacts = await octokit.actions.listWorkflowRunArtifacts({
@@ -230,6 +231,7 @@ export function orchestrator(app: Probot) {
             summary = newSummary?.summary;
           }
           actions = newSummary?.actions;
+          annotations = newSummary?.annotations;
         }
       }
 
@@ -249,6 +251,23 @@ export function orchestrator(app: Probot) {
         completed_at: new Date().toISOString(),
         actions,
       });
+
+      // Batch annotations to avoid hitting the API rate limit.
+      // "The Checks API limits the number of annotations to a maximum of 50 per API request.
+      // To create more than 50 annotations, you have to make multiple requests to the Update a check run endpoint.
+      // Each time you update the check run, annotations are appended to the list of annotations that already exist for the check run."
+      // See: https://docs.github.com/en/rest/checks/runs#update-a-check-run
+      while (annotations && annotations.length > 0) {
+        const batch = annotations.splice(0, 50);
+        await octokit.rest.checks.update({
+          owner,
+          repo,
+          check_run_id: checkRun.id,
+          output: {
+            annotations: batch,
+          },
+        });
+      }
     }
   });
 
