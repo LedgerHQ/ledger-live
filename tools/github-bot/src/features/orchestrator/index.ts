@@ -241,13 +241,14 @@ export function orchestrator(app: Probot) {
       summary = summaryPrefix + summary;
 
       const checkRun = checkRuns.data.check_runs[0];
+      const output = getGenericOutput(payload.workflow_run.conclusion, summary);
       await octokit.checks.update({
         owner,
         repo,
         check_run_id: checkRun.id,
         status: "completed",
         conclusion: payload.workflow_run.conclusion,
-        output: getGenericOutput(payload.workflow_run.conclusion, summary),
+        output,
         completed_at: new Date().toISOString(),
         actions,
       });
@@ -264,6 +265,7 @@ export function orchestrator(app: Probot) {
           repo,
           check_run_id: checkRun.id,
           output: {
+            ...output,
             annotations: batch,
           },
         });
