@@ -61,17 +61,43 @@ function nextStepKey(step: StepKey): StepKey {
   return step + 1;
 }
 
-const SyncOnboardingManual = () => {
+export type SyncOnboardingManualProps = {
+  deviceModelId: string; // Should be DeviceModelId. react-router 5 seems to only handle [K in keyof Params]?: string props
+};
+
+/**
+ * Component rendering the synchronous onboarding steps
+ *
+ * @param deviceModelId: a device model used to render the animation and text.
+ *  Needed because the device object can be null if disconnected.
+ */
+const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardingManualProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const history = useHistory();
   const [stepKey, setStepKey] = useState<StepKey>(StepKey.Paired);
+
   const device = useSelector(getCurrentDevice);
+
+  const deviceModelId = stringToDeviceModelId(strDeviceModelId, DeviceModelId.stax);
+  // Needed because the device object can be null or changed if disconnected/reconnected
+  const [lastKnownDeviceModelId, setLastKnownDeviceModelId] = useState<DeviceModelId>(
+    deviceModelId,
+  );
+
+  useEffect(() => {
+    if (device) {
+      setLastKnownDeviceModelId(device.modelId);
+    }
+  }, [device]);
 
   const productName = device
     ? getDeviceModel(device.modelId).productName || device.modelId
     : "Ledger Device";
   const deviceName = device?.deviceName || productName;
+
+  const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
+  const [isTroubleshootingDrawerOpen, setTroubleshootingDrawerOpen] = useState<boolean>(false);
 
   const handleSoftwareCheckComplete = useCallback(() => {
     setStepKey(nextStepKey(StepKey.SoftwareCheck));
