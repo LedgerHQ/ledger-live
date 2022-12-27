@@ -33,6 +33,7 @@ const Delegations = (props: DelegationsPropsType) => {
   const { delegations, validators, account, onDrawer } = props;
   const { t } = useTranslation();
 
+  const zeroBalance = account.spendableBalance.isZero();
   const navigation: StackNavigationProp<NavigationType> = useNavigation();
   const currency = useMemo(
     () => getAccountCurrency(getMainAccount(account, undefined)),
@@ -109,6 +110,14 @@ const Delegations = (props: DelegationsPropsType) => {
       ),
     [],
   );
+
+  /*
+   * Don't display anything if the user doesn't have any balance to spend.
+   */
+
+  if (delegatedAmount.eq(0) && rewardsAmount.eq(0) && zeroBalance) {
+    return null;
+  }
 
   /*
    * Return an introductory panel to delegations if the user hasn't previously delegated.

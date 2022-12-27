@@ -17,11 +17,8 @@ import { useTheme } from "styled-components/native";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/elrond/constants";
 
-import type {
-  NativeSyntheticEvent,
-  TextInputFocusEventData,
-} from "react-native";
 import type { PickAmountPropsType, RatioType } from "./types";
+
 import { localeSelector } from "../../../../../../../reducers/settings";
 import { ScreenName } from "../../../../../../../const";
 import Button from "../../../../../../../components/Button";
@@ -127,24 +124,6 @@ const PickAmount = (props: PickAmountPropsType) => {
   ];
 
   /*
-   * Fix the input issue on focus by moving the cursor at the beginning of the long amount.
-   */
-
-  const onInputFocus = useCallback(
-    (
-      focused: boolean,
-      event: NativeSyntheticEvent<TextInputFocusEventData> | undefined,
-    ) => {
-      if (focused && event) {
-        event.currentTarget.setNativeProps({
-          selection: { start: 0, end: 0 },
-        });
-      }
-    },
-    [],
-  );
-
-  /*
    * Handle the ration selection callback.
    */
 
@@ -198,7 +177,7 @@ const PickAmount = (props: PickAmountPropsType) => {
                 onChange={setValue}
                 inputStyle={styles.inputStyle}
                 hasError={hasErrors}
-                onFocus={onInputFocus}
+                isActive={true}
               />
 
               <View style={styles.ratioButtonContainer}>

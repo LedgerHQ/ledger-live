@@ -73,24 +73,6 @@ const PickAmount = (props: PickAmountPropsType) => {
   }, [transaction, account]);
 
   /*
-   * Fix the input issue on focus by moving the cursor at the beginning of the long amount.
-   */
-
-  const onInputFocus = useCallback(
-    (
-      focused: boolean,
-      event: NativeSyntheticEvent<TextInputFocusEventData> | undefined,
-    ) => {
-      if (focused && event) {
-        event.currentTarget.setNativeProps({
-          selection: { start: 0, end: 0 },
-        });
-      }
-    },
-    [],
-  );
-
-  /*
    * Handle the ration selection callback.
    */
 
@@ -188,8 +170,8 @@ const PickAmount = (props: PickAmountPropsType) => {
                 value={amount}
                 onChange={setAmount}
                 inputStyle={styles.inputStyle}
+                isActive={true}
                 hasError={delegationBelowMinimum || delegationAboveMaximum}
-                onFocus={onInputFocus}
               />
 
               <View style={styles.ratioButtonContainer}>

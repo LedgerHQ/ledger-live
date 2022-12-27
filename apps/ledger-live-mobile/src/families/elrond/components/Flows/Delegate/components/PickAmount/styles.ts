@@ -18,7 +18,6 @@ const styles = StyleSheet.create({
   },
   inputStyle: {
     textAlign: "center",
-    fontSize: 40,
     fontWeight: "600",
   },
   ratioButtonContainer: {
