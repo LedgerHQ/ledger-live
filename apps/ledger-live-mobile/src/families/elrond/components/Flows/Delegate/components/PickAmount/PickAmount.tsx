@@ -170,6 +170,7 @@ const PickAmount = (props: PickAmountPropsType) => {
                 value={amount}
                 onChange={setAmount}
                 inputStyle={styles.inputStyle}
+                isActive={true}
                 hasError={delegationBelowMinimum || delegationAboveMaximum}
               />
 
