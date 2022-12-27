@@ -39,8 +39,16 @@ const ContextMenu = ({ account, parentAccount }: Props) => {
   const items = [
     {
       key: "redelegate",
-      label: <Trans i18nKey="cardano.delegation.changeDelegation" />,
-      icon: <UserEdit size={16} />,
+      label: (
+        <Box color="palette.text.shade100">
+          <Trans i18nKey="cardano.delegation.changeDelegation" />
+        </Box>
+      ),
+      icon: (
+        <Box color="palette.text.shade100">
+          <UserEdit size={16} />
+        </Box>
+      ),
       onClick: () =>
         dispatch(
           openModal("MODAL_CARDANO_DELEGATE", {
@@ -53,8 +61,16 @@ const ContextMenu = ({ account, parentAccount }: Props) => {
     },
     {
       key: "stopDelegation",
-      label: <Trans i18nKey="delegation.contextMenu.stopDelegation" />,
-      icon: <StopCircle size={16} />,
+      label: (
+        <Box color="alertRed">
+          <Trans i18nKey="delegation.contextMenu.stopDelegation" />
+        </Box>
+      ),
+      icon: (
+        <Box color="alertRed">
+          <StopCircle size={16} />
+        </Box>
+      ),
       onClick: () =>
         dispatch(
           openModal("MODAL_CARDANO_DELEGATE", {
@@ -78,15 +94,10 @@ const ContextMenu = ({ account, parentAccount }: Props) => {
       onClick: () => void,
     },
   }) => {
-    const color = item.key === "stopDelegation" ? "alertRed" : "palette.text.shade100";
     return (
       <Item horizontal flow={2} onClick={item.onClick}>
-        {item.icon ? (
-          <Box mr={12} color={color}>
-            {item.icon}
-          </Box>
-        ) : null}
-        <Text ff="Inter|SemiBold" fontSize={3} color={color}>
+        {item.icon ? <Box mr={12}>{item.icon}</Box> : null}
+        <Text ff="Inter|SemiBold" fontSize={3}>
           {item.label}
         </Text>
       </Item>

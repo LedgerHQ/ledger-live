@@ -1,18 +1,10 @@
 // @flow
 
-import React, { useCallback, useMemo } from "react";
+import React from "react";
 import styled from "styled-components";
-import {
-  getMainAccount,
-  getAccountUnit,
-  getAccountCurrency,
-  shortAddressPreview,
-} from "@ledgerhq/live-common/account/index";
-import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
+import { getAccountUnit, shortAddressPreview } from "@ledgerhq/live-common/account/index";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { CardanoDelegation } from "@ledgerhq/live-common/families/cardano/types";
-import { openURL } from "~/renderer/linking";
-import CounterValue from "~/renderer/components/CounterValue";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Text from "~/renderer/components/Text";
 import Ellipsis from "~/renderer/components/Ellipsis";
@@ -38,34 +30,6 @@ const Wrapper: ThemedComponent<{ isPending: boolean }> = styled.div`
   }
 `;
 
-const Baker = styled.div`
-  flex: 1.5;
-  color: ${p => p.theme.colors.palette.text.shade100};
-  > :first-child {
-    margin-right: 6px;
-    border-radius: 50%;
-  }
-
-  > :nth-child(2),
-  > :only-child {
-    padding-right: 8px;
-  }
-
-  cursor: pointer;
-`;
-
-const Address = styled.div`
-  user-select: pointer;
-  flex: 1.5;
-  > :first-child {
-    margin-right: 8px;
-  }
-`;
-
-const Base = styled.div`
-  flex: 1;
-`;
-
 const CTA = styled.div`
   flex: 0.5;
   display: flex;
@@ -83,9 +47,6 @@ const Value: ThemedComponent<{}> = styled.div`
 
 const Row = ({ account, parentAccount, delegation }: Props) => {
   const unit = getAccountUnit(account);
-  const currency = getAccountCurrency(account);
-
-  const mainAccount = getMainAccount(account, parentAccount);
 
   let name = "";
   if (delegation && delegation.poolId) {
@@ -93,17 +54,8 @@ const Row = ({ account, parentAccount, delegation }: Props) => {
       ? delegation.ticker + " - " + delegation.name
       : shortAddressPreview(delegation.poolId);
   }
-  // const diffInDays = useMemo(() => moment().diff(delegation.operation.date, "days"), [
-  //   delegation.operation.date,
-  // ]);
 
-  const explorerView = getDefaultExplorerView(mainAccount.currency);
-  const poolUrl = getAddressExplorer(explorerView, delegation.poolId);
   const totalStaked = account.balance.plus(delegation.rewards);
-
-  const openPool = useCallback(() => {
-    if (poolUrl) openURL(poolUrl);
-  }, [poolUrl]);
 
   return (
     <Wrapper>
