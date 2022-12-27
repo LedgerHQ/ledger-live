@@ -6,8 +6,6 @@ exports[`Scriptrunner logic Non 9000 status that cause a ws close, should be map
 
 exports[`Scriptrunner logic Regardless of the error, if we are in bulk, it can't recover 1`] = `[TransportStatusError: Ledger device: USER_REFUSED_ON_DEVICE (0x5501)]`;
 
-exports[`Scriptrunner logic Regardless of the error, if we are in bulk, it can't recover 2`] = `[TransportStatusError: Ledger device: USER_REFUSED_ON_DEVICE (0x5501)]`;
-
 exports[`Scriptrunner logic Should break runner connection if device is locked 1`] = `[LockedDeviceError: Ledger device: Locked device (0x5515)]`;
 
 exports[`Scriptrunner logic Should continue exchange if HSM handles the error 1`] = `

@@ -214,44 +214,6 @@ const scenarios: Array<Scenario> = [
       ["onerror"],
     ],
   },
-  // Errors in bulk always throw
-  {
-    describe: "Regardless of the error, if we are in bulk, it can't recover",
-    device: `
-  => 0000000001
-  <= 9000
-  => 0000000002
-  <= 9000
-  => 0000000003
-  <= 9000
-  => 0001
-  <= 9000
-  => 0002
-  <= 9000
-  => 0003
-  <= 5501
-  => 0004
-  <= 9000
-`,
-    events: [
-      [
-        "onmessage",
-        '{ "query": "exchange", "nonce": 1, "data": "0000000001" }',
-      ],
-      [
-        "onmessage",
-        '{ "query": "exchange", "nonce": 2, "data": "0000000002" }',
-      ],
-      [
-        "onmessage",
-        '{ "query": "exchange", "nonce": 3, "data": "0000000003" }',
-      ],
-      [
-        "onmessage",
-        '{ "query": "bulk", "nonce": 4, "data": ["0001", "0002", "0003", "0004"] }',
-      ],
-    ],
-  },
 ];
 
 export default scenarios;
