@@ -73,7 +73,7 @@ export default function DelegationRow({
           <CounterValue
             currency={currency}
             showCode
-            value={new BigNumber(123123123.2323)}
+            value={delegation.rewards}
             alwaysShowSign={false}
             withPlaceholder
           />
