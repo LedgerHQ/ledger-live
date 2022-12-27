@@ -160,10 +160,10 @@ class BitcoinLikeExplorer implements IExplorer {
     return parseFloat(fees["relay_fee"]);
   }
 
-  async getPendings(address: Address, nbMax?: number) {
+  async getPendings(address: Address, nbMax: number = 1000) {
     const params: ExplorerParams = {
       no_token: "true",
-      batch_size: !this.disableBatchSize ? nbMax || 1000 : undefined,
+      batch_size: !this.disableBatchSize ? nbMax : undefined,
       block_hash: undefined,
     };
     const txs = await this.fetchTxs(address, params);
