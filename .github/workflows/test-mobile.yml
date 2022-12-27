@@ -114,7 +114,7 @@ jobs:
                 }))
               );
             } catch(error) {
-              // ignore for whatever reason it failed
+              console.error("Failed processing eslint annotations", error)
             }
 
             const data = {
