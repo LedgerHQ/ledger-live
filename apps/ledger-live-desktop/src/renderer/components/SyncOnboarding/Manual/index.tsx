@@ -1,17 +1,18 @@
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import { useHistory } from "react-router-dom";
 import { Flex, Text, VerticalTimeline } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { useTheme } from "styled-components";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
+import { stringToDeviceModelId } from "@ledgerhq/devices/helpers";
 import {
   OnboardingStep as DeviceOnboardingStep,
   fromSeedPhraseTypeToNbOfSeedWords,
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
 
 import { command } from "~/renderer/commands";
-import { useHistory } from "react-router-dom";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import HelpDrawer from "./HelpDrawer";
 import TroubleshootingDrawer from "./TroubleshootingDrawer";
@@ -159,6 +160,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
         title: t("syncOnboarding.manual.softwareCheckContent.title"),
         renderBody: (isDisplayed?: boolean) => (
           <SoftwareCheckStep
+            deviceModelId={lastKnownDeviceModelId}
             isDisplayed={isDisplayed}
             onComplete={handleSoftwareCheckComplete}
             productName={productName}
@@ -182,7 +184,13 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
         title: "Nano is ready",
       },
     ],
-    [t, productName, handleSoftwareCheckComplete, handleInstallRecommendedApplicationComplete],
+    [
+      t,
+      productName,
+      lastKnownDeviceModelId,
+      handleSoftwareCheckComplete,
+      handleInstallRecommendedApplicationComplete,
+    ],
   );
 
   const [steps, setSteps] = useState<Step[]>(defaultSteps);
@@ -195,16 +203,13 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
     onboardingState: deviceOnboardingState,
     allowedError,
     fatalError,
+    deviceIsLocked: deviceIsLockedDuringPolling,
   } = useOnboardingStatePolling({
     getOnboardingStatePolling: getOnboardingStatePollingCommand,
     device,
     pollingPeriodMs,
     stopPolling,
   });
-
-  const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
-  const [isTroubleshootingDrawerOpen, setTroubleshootingDrawerOpen] = useState<boolean>(false);
-  const [lastKnownDeviceId, setLastKnownDeviceId] = useState<DeviceModelId>(DeviceModelId.nanoX);
 
   const handleClose = useCallback(() => {
     history.push("/onboarding/select-device");
@@ -222,12 +227,6 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
   const handleDesyncTimerRunsOut = useCallback(() => {
     setTroubleshootingDrawerOpen(true);
   }, []);
-
-  useEffect(() => {
-    if (device) {
-      setLastKnownDeviceId(device.modelId);
-    }
-  }, [device]);
 
   useEffect(() => {
     if (
@@ -336,7 +335,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
       <Header onClose={handleClose} onHelp={() => setHelpDrawerOpen(true)} />
       <HelpDrawer isOpen={isHelpDrawerOpen} onClose={() => setHelpDrawerOpen(false)} />
       <TroubleshootingDrawer
-        lastKnownDeviceId={lastKnownDeviceId}
+        lastKnownDeviceId={lastKnownDeviceModelId}
         isOpen={isTroubleshootingDrawerOpen}
         onClose={handleTroubleshootingDrawerClose}
       />
@@ -354,17 +353,17 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
             </Flex>
           </Flex>
           <Flex flex={1} justifyContent="center" alignItems="center">
-            {device?.modelId === "stax" ? (
+            {!device || deviceIsLockedDuringPolling ? (
               <Animation
                 height="540px"
                 animation={getDeviceAnimation(
-                  "stax" as DeviceModelId,
+                  lastKnownDeviceModelId,
                   theme.theme as "light" | "dark",
-                  "plugAndPinCode",
+                  deviceIsLockedDuringPolling ? "enterPinCode" : "plugAndPinCode",
                 )}
               />
             ) : (
-              <DeviceIllustration deviceId={device?.modelId || ("nanoS" as DeviceModelId)} />
+              <DeviceIllustration deviceId={lastKnownDeviceModelId} />
             )}
           </Flex>
         </Flex>

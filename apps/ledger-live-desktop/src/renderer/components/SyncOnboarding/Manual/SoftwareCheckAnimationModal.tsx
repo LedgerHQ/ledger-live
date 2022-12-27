@@ -8,12 +8,21 @@ import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animation
 
 export type Props = {
   isOpen: boolean;
-  deviceId: DeviceModelId;
+  deviceModelId: DeviceModelId;
   animationName: "enterPinCode" | "allowManager";
   productName: string;
 };
 
-const GenuineCheckAnimationModal = ({ isOpen, deviceId, animationName, productName }: Props) => {
+/**
+ * Modal for the animations associated to the different software checks (genuine check and get latest available firmware update)
+ * As there are not device actions (yet), this modal is needed
+ */
+const SoftwareCheckAnimationModal = ({
+  isOpen,
+  deviceModelId,
+  animationName,
+  productName,
+}: Props) => {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -21,13 +30,13 @@ const GenuineCheckAnimationModal = ({ isOpen, deviceId, animationName, productNa
   // As long as we don't have full TS support on LLD, a default case needs to be handled and animationName value cannot be trusted
   switch (animationName) {
     case "enterPinCode":
-      title = t("syncOnboarding.manual.genuineCheckAnimationModal.enterPinCode.title", {
+      title = t("syncOnboarding.manual.softwareCheckAnimationModal.enterPinCode.title", {
         deviceName: productName,
       });
       break;
     case "allowManager":
     default:
-      title = t("syncOnboarding.manual.genuineCheckAnimationModal.allowManager.title", {
+      title = t("syncOnboarding.manual.softwareCheckAnimationModal.allowManager.title", {
         deviceName: productName,
       });
       break;
@@ -40,11 +49,15 @@ const GenuineCheckAnimationModal = ({ isOpen, deviceId, animationName, productNa
           {title}
         </Text>
         <Animation
-          animation={getDeviceAnimation(deviceId, theme.theme as "light" | "dark", animationName)}
+          animation={getDeviceAnimation(
+            deviceModelId,
+            theme.theme as "light" | "dark",
+            animationName,
+          )}
         />
       </Flex>
     </Popin>
   );
 };
 
-export default GenuineCheckAnimationModal;
+export default SoftwareCheckAnimationModal;

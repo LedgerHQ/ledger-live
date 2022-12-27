@@ -1206,7 +1206,7 @@
         "checkDeviceButton": "Run check again",
         "cancelButton": "Maybe later"
       },
-      "genuineCheckAnimationModal": {
+      "softwareCheckAnimationModal": {
         "allowManager": {
           "title": "Allow manager on {{deviceName}}"
         },

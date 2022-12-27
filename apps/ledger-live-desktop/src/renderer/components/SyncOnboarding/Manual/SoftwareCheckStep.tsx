@@ -4,12 +4,13 @@ import { useSelector } from "react-redux";
 
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/hw/hooks/useGetLatestAvailableFirmware";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { command } from "~/renderer/commands";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 
 import SoftwareCheckContent from "./SoftwareCheckContent";
 import GenuineCheckModal from "./GenuineCheckModal";
-import GenuineCheckAnimationModal from "./GenuineCheckAnimationModal";
+import SoftwareCheckAnimationModal from "./SoftwareCheckAnimationModal";
 import GenuineCheckCancelModal from "./GenuineCheckCancelModal";
 import GenuineCheckNotGenuineModal from "./GenuineCheckNotGenuineModal";
 import { Status as SoftwareCheckStatus } from "./shared";
@@ -20,6 +21,7 @@ export type Props = {
   isDisplayed?: boolean;
   onComplete: () => void;
   productName: string;
+  deviceModelId: DeviceModelId;
 };
 
 // The commands needs to be defined outside of the function component, to avoid creating it at
@@ -29,7 +31,7 @@ const getLatestAvailableFirmwareFromDeviceIdCommand = command(
   "getLatestAvailableFirmwareFromDeviceId",
 );
 
-const SoftwareCheckStep = ({ isDisplayed, onComplete, productName }: Props) => {
+const SoftwareCheckStep = ({ isDisplayed, onComplete, productName, deviceModelId }: Props) => {
   const [genuineCheckStatus, setGenuineCheckStatus] = useState<SoftwareCheckStatus>(
     SoftwareCheckStatus.inactive,
   );
@@ -41,13 +43,13 @@ const SoftwareCheckStep = ({ isDisplayed, onComplete, productName }: Props) => {
   const device = useSelector(getCurrentDevice);
   const deviceId = device?.deviceId ?? "";
 
-  const { genuineState, devicePermissionState, error, resetGenuineCheckState } = useGenuineCheck({
+  const { genuineState, devicePermissionState, resetGenuineCheckState } = useGenuineCheck({
     getGenuineCheckFromDeviceId: getGenuineCheckFromDeviceIdCommand,
     isHookEnabled: genuineCheckStatus === SoftwareCheckStatus.active,
     deviceId,
   });
 
-  const { latestFirmware /*, error */, status } = useGetLatestAvailableFirmware({
+  const { latestFirmware /*, error */, status, deviceIsLocked } = useGetLatestAvailableFirmware({
     getLatestAvailableFirmwareFromDeviceId: getLatestAvailableFirmwareFromDeviceIdCommand,
     isHookEnabled: firmwareUpdateStatus === SoftwareCheckStatus.active,
     deviceId,
@@ -108,6 +110,14 @@ const SoftwareCheckStep = ({ isDisplayed, onComplete, productName }: Props) => {
     }
   }, [isDisplayed, firmwareUpdateStatus, onComplete, status, genuineCheckStatus, latestFirmware]);
 
+  const softwareCheckAnimationModalIsOpen =
+    devicePermissionState === "unlock-needed" ||
+    devicePermissionState === "requested" ||
+    deviceIsLocked;
+
+  const softwareCheckAnimationModalAnimationName =
+    devicePermissionState === "unlock-needed" || deviceIsLocked ? "enterPinCode" : "allowManager";
+
   return (
     <Box>
       <GenuineCheckModal
@@ -138,10 +148,10 @@ const SoftwareCheckStep = ({ isDisplayed, onComplete, productName }: Props) => {
           setGenuineCheckStatus(SoftwareCheckStatus.failed);
         }}
       />
-      <GenuineCheckAnimationModal
-        isOpen={devicePermissionState === "unlock-needed" || devicePermissionState === "requested"}
-        animationName={devicePermissionState === "unlock-needed" ? "enterPinCode" : "allowManager"}
-        deviceId={device?.modelId}
+      <SoftwareCheckAnimationModal
+        isOpen={softwareCheckAnimationModalIsOpen}
+        animationName={softwareCheckAnimationModalAnimationName}
+        deviceModelId={deviceModelId}
         productName={productName}
       />
       <SoftwareCheckContent
