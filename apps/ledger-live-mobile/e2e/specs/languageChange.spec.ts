@@ -29,9 +29,9 @@ describe("Change Language", () => {
     await settingsPage.navigateToGeneralSettings();
   });
 
-  // it("Language selection should be visible", async () => {
-  //   await expect(generalSettingsPage.getEnterLanguageMenu()).toBeVisible();
-  // });
+  it("Settings page should be in English", async () => {
+    await expect(generalSettingsPage.isEnglish()).toBeVisible();
+  });
 
   it("should open language selection page", async () => {
     await generalSettingsPage.navigateToLanguageSelect();
@@ -39,5 +39,9 @@ describe("Change Language", () => {
 
   it("should select French", async () => {
     await generalSettingsPage.selectFrenchLanguage();
+  });
+
+  it("Settings page should be in French", async () => {
+    await expect(generalSettingsPage.isFrench()).toBeVisible();
   });
 });

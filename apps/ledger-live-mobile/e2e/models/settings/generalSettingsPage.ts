@@ -7,6 +7,8 @@ export default class GeneralSettingsPage {
   getConfirm = () => getElementByText("Confirm");
   getEnterLanguageMenu = () => getElementById("language-button");
   frenchButton = () => getElementByText("Français");
+  isEnglish = () => getElementByText("General");
+  isFrench = () => getElementByText("Général");
 
   async togglePassword() {
     await this.getPasswordSettingsSwitch().atIndex(0).tap();
