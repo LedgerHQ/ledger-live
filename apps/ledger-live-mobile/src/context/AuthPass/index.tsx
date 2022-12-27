@@ -78,20 +78,12 @@ class AuthPass extends PureComponent<Props, State> {
 
   appInBg: number | undefined;
   handleAppStateChange = (nextAppState: string) => {
+    const timeoutValue = getEnv("MOCK") ? 5000 : AUTOLOCK_TIMEOUT;
     if (
       this.state.appState.match(/inactive|background/) &&
       nextAppState === "active" &&
       !!this.appInBg &&
-      this.appInBg + AUTOLOCK_TIMEOUT < Date.now()
-    ) {
-      this.lock();
-      this.appInBg = Date.now();
-    } else if (
-      getEnv("MOCK") &&
-      this.state.appState.match(/inactive|background/) &&
-      nextAppState === "active" &&
-      !!this.appInBg &&
-      this.appInBg + 5000 < Date.now()
+      this.appInBg + timeoutValue < Date.now()
     ) {
       this.lock();
       this.appInBg = Date.now();
