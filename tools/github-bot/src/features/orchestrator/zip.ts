@@ -29,8 +29,8 @@ function getEndOfCentralDirectory(buffer: Buffer) {
   };
 }
 
-// Read one entry from the central directory
-function* readNextCentralDirectoryEntry(
+// Generator function that yields one entry from the central directory
+function* centralDirectoryYielder(
   buffer: Buffer,
   offset: number,
   eodOffset: number
@@ -106,12 +106,13 @@ function readLocalHeader(buffer: Buffer, offset: number) {
 // /!\ Do not use when there are multiple files/folders inside the archive
 export function unzipSingleFile(buffer: Buffer): Buffer {
   const endOfCentralDirectory = getEndOfCentralDirectory(buffer);
-  const centralDirectoryGenerator = readNextCentralDirectoryEntry(
+  const centralDirectory = centralDirectoryYielder(
     buffer,
     endOfCentralDirectory.offsetOfStartOfCentralDirectory,
     endOfCentralDirectory.eodOffset
   );
-  const centralDirectoryEntry: any = centralDirectoryGenerator.next().value;
+  const centralDirectoryEntry = centralDirectory.next().value;
+  if (!centralDirectoryEntry) return Buffer.alloc(0);
   const localHeader = readLocalHeader(
     buffer,
     centralDirectoryEntry.relativeOffsetOfLocalFileHeader
