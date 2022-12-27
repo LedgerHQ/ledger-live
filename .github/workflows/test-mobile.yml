@@ -54,21 +54,21 @@ jobs:
         run: pnpm lint --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" -- --format="json" -o="lint.json"
       - name: Run code checkers
         run: pnpm typecheck --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
-      # - uses: actions/upload-artifact@v3
-      #   name: "uploads LINTER results"
-      #   with:
-      #     name: lint
-      #     path: ${{ github.workspace }}/apps/ledger-live-mobile/lint.json
+      - uses: actions/upload-artifact@v3
+        name: upload eslint json output
+        with:
+          name: lint
+          path: ${{ github.workspace }}/apps/ledger-live-mobile/lint.json
 
   report:
     needs: codecheck
     if: always() && !cancelled() && github.event_name == 'workflow_dispatch' && github.event.inputs.sha != ''
     runs-on: ubuntu-latest
     steps:
-      # - name: "download linter results"
-      #   uses: actions/download-artifact@v3
-      #   with:
-      #     name: lint
+      - name: "download linter results"
+        uses: actions/download-artifact@v3
+        with:
+          name: lint
       - uses: actions/github-script@v6
         name: "format report"
         id: status
@@ -88,7 +88,6 @@ jobs:
               - ${ isSuccess ? "✅" : "❌" } **Code checks** ended with status \`${{needs.codecheck.result}}\`
             `;
 
-            /*
             // Store eslint results as annotations
             let annotations = []
             try {
@@ -114,11 +113,10 @@ jobs:
             } catch(error) {
               // ignore for whatever reason it failed
             }
-            */
 
             const data = {
               summary,
-              // annotations
+              annotations
             };
 
             fs.writeFileSync("summary.json", JSON.stringify(data), "utf8");
@@ -126,61 +124,3 @@ jobs:
         with:
           name: summary.json
           path: ${{ github.workspace }}/summary.json
-      # - uses: actions/github-script@v6
-      #   name: update checks
-      #   with:
-      #     github-token: ${{ steps.generate-token.outputs.token }}
-      #     script: |
-      #       const path = require("path");
-      #       const lintResult = require("./lint.json");
-      #       const status = ${{ steps.status.outputs.result }};
-      #       const title = status.isFailed ? "🔴 Failed" : status.isCancelled ? "♾ Cancelled" : "💚 Success";
-      #       const LEVELS = {
-      #         0: "notice",
-      #         1: "warning",
-      #         2: "failure"
-      #       };
-      #       const withErrorOrWarning = lintResult.filter(r => r.errorCount > 0 || r.fatalErrorCount > 0 || r.warningCount > 0);
-      #       let annotations = withErrorOrWarning.flatMap(({ filePath, messages }) =>
-      #         messages.map((m) => ({
-      #           path: path.relative(process.env.GITHUB_WORKSPACE, filePath),
-      #           start_line: m.line,
-      #           end_line: m.endLine,
-      #           start_column: m.column,
-      #           end_column: m.endColumn,
-      #           annotation_level: LEVELS[m.severity],
-      #           message: m.message,
-      #           title: m.ruleId,
-      #         }))
-      #       );
-      #       const split = Math.ceil(annotations.length / 50);
-      #       const extras = {
-      #         conclusion: status.isFailed ? 'failure' : status.isCancelled ? 'cancelled' : 'success',
-      #         completed_at: new Date().toISOString(),
-      #       };
-      #       for (let i = 0; i < split; i++) {
-      #         const batchedAnnotations = annotations.splice(0, 50);
-      #         const previous = await github.rest.checks.update({
-      #           owner: context.repo.owner,
-      #           repo: context.repo.repo,
-      #           head_sha: "${{ github.event.inputs.sha }}",
-      #           check_run_id: "${{ github.event.inputs.check_run_id }}",
-      #         });
-      #         await github.rest.checks.update({
-      #           owner: context.repo.owner,
-      #           repo: context.repo.repo,
-      #           name: previous.data.name,
-      #           details_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }}`,
-      #           head_sha: "${{ github.event.inputs.sha }}",
-      #           check_run_id: "${{ github.event.inputs.check_run_id }}",
-      #           status: annotations.length === 0 ? "completed" : "in_progress",
-      #           output: {
-      #             title,
-      #             annotations: batchedAnnotations,
-      #             summary: `${status.summary}
-      #       ---
-      #       [⚙️ Summary](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }})`
-      #           },
-      #           ...(annotations.length === 0 ? extras : {}),
-      #         });
-      #       }
