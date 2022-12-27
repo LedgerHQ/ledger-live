@@ -98,13 +98,16 @@ jobs:
                 2: "failure"
               };
               const withErrorOrWarning = lintResult.filter(r => r.errorCount > 0 || r.fatalErrorCount > 0 || r.warningCount > 0);
+              const sameLine = m.line === m.endLine;
               annotations = withErrorOrWarning.flatMap(({ filePath, messages }) =>
                 messages.map((m) => ({
                   path: path.relative(process.env.GITHUB_WORKSPACE, filePath),
                   start_line: m.line,
                   end_line: m.endLine,
-                  start_column: m.column,
-                  end_column: m.endColumn,
+                  // Annotations only support start_column and end_column on the same line. Omit this parameter if start_line and end_line have different values.
+                  // https://docs.github.com/en/rest/reference/checks#create-a-check-run
+                  start_column: sameLine ? m.column : undefined,
+                  end_column: sameLine ? m.endColumn : undefined,
                   annotation_level: LEVELS[m.severity],
                   message: m.message,
                   title: m.ruleId,
