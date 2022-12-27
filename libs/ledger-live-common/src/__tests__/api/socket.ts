@@ -3,7 +3,7 @@ import {
   RecordStore,
 } from "@ledgerhq/hw-transport-mocker";
 import { toArray } from "rxjs/operators";
-import scenarios from "./scenarios";
+import scenarios from "./test-helpers/scenarios";
 import WS from "isomorphic-ws";
 
 // import { setEnv } from "@ledgerhq/live-common/env";
