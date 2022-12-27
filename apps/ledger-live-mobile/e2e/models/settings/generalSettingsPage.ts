@@ -5,6 +5,8 @@ export default class GeneralSettingsPage {
   getPasswordTextInput = () => getElementById("password-text-input");
   getPreferredCurrency = () => getElementByText("Preferred currency");
   getConfirm = () => getElementByText("Confirm");
+  getEnterLanguageMenu = () => getElementById("language-button");
+  frenchButton = () => getElementByText("Français");
 
   async togglePassword() {
     await this.getPasswordSettingsSwitch().atIndex(0).tap();
@@ -16,5 +18,13 @@ export default class GeneralSettingsPage {
 
   async confirm() {
     await tapByElement(this.getConfirm());
+  }
+
+  async navigateToLanguageSelect() {
+    await tapByElement(this.getEnterLanguageMenu());
+  }
+
+  async selectFrenchLanguage() {
+    await tapByElement(this.frenchButton());
   }
 }
