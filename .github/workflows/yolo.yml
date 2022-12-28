@@ -1,0 +1,23 @@
+name: yolo
+on:
+  pull_request:
+
+jobs:
+  the-matrix:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+
+  reports:
+    needs: [the-matrix]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            console.log("${{ needs.the-matrix.result }}");
