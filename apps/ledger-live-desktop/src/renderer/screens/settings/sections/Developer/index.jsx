@@ -7,7 +7,7 @@ import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../Se
 import AllowExperimentalAppsToggle from "./AllowExperimentalAppsToggle";
 import AllowDebugAppsToggle from "./AllowDebugAppsToggle";
 import EnablePlatformDevToolsToggle from "./EnablePlatformDevToolsToggle";
-import CatalogProviderInout from "./CatalogProviderInput";
+import CatalogProviderInput from "./CatalogProviderInput";
 import CatalogRampProviderSelect from "./CatalogRampProviderSelect";
 import RunLocalAppButton from "./RunLocalAppButton";
 import FeatureFlagsSettings from "./FeatureFlagsSettings";
@@ -35,7 +35,7 @@ const SectionDeveloper = () => {
           title={t("settings.developer.catalogServer")}
           desc={t("settings.developer.catalogServerDesc")}
         >
-          <CatalogProviderInout />
+          <CatalogProviderInput />
         </Row>
 
         <Row

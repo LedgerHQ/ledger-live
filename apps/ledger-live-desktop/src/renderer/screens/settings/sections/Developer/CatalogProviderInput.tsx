@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import Loader from "~/renderer/icons/Loader";
 import api from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/api/index";
 
-const CatalogProviderInout = () => {
+const CatalogProviderInput = () => {
   const { provider, setProvider } = useRemoteLiveAppContext();
   const { t } = useTranslation();
   const [inputValue, setInputValue] = useState<string>(provider === "production" ? "" : provider);
@@ -83,4 +83,4 @@ const CatalogProviderInout = () => {
   );
 };
 
-export default CatalogProviderInout;
+export default CatalogProviderInput;
