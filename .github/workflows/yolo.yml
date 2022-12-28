@@ -39,4 +39,4 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |
-            console.log("${{ needs.the-matrix.outputs }}");
+            console.log("${{ fromJSON(needs.the-matrix.outputs) }}");
