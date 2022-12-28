@@ -4,6 +4,10 @@ on:
 
 jobs:
   the-matrix:
+    outputs:
+      linux: ${{ steps.output-ubuntu-latest.outcome }}
+      macos: ${{ steps.output-macos-latest.outcome }}
+      windows: ${{ steps.output-windows-latest.outcome }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
@@ -12,6 +16,10 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16.x
+      - name: output
+        id: output-${{ matrix.os }}
+        run: |
+          echo "zeubie"
 
   reports:
     needs: [the-matrix]
@@ -20,4 +28,4 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |
-            console.log("${{ needs.the-matrix.result }}");
+            console.log("${{ needs.the-matrix.outputs }}");
