@@ -37,11 +37,12 @@ type DisclaimerOpts =
   | null;
 const DAPP_DISCLAIMER_ID = "PlatformAppDisclaimer";
 
+const emptyObject: AppManifest[] = [];
+
 const PlatformCatalog = ({ route }: NavigationProps) => {
   const { platform, ...routeParams } = route.params ?? {};
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
-  const emptyObject: AppManifest[] = [];
   const { state } = useRemoteLiveAppContext();
   const manifests = state?.value?.liveAppFiltered || emptyObject;
   // Disclaimer State

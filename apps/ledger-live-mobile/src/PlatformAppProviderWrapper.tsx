@@ -30,6 +30,7 @@ export default function PlatformAppProviderWrapper({
       parameters={{
         version: getPlatformVersion(),
         platform: "mobile",
+        private: false,
         allowDebugApps: isDebugAppEnabled,
         allowExperimentalApps: isExperimentalAppEnabled,
       }}

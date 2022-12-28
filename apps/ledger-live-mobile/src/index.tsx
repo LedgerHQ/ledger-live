@@ -498,11 +498,12 @@ const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean) => ({
   },
 });
 
+const emptyObject: AppManifest[] = [];
+
 const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const wcContext = useContext(_wcContext);
-  const emptyObject: AppManifest[] = [];
   const { state } = useRemoteLiveAppContext();
   const liveAppProviderInitialized = !!state.value || !!state.error;
   const manifests = state?.value?.liveAppByIndex || emptyObject;
