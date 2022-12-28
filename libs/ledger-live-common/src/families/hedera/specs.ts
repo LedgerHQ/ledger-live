@@ -85,7 +85,7 @@ const hedera: AppSpec<Transaction> = {
     },
     {
       name: "Send max",
-      maxRun: 1,
+      maxRun: 2,
       testDestination: genericTestDestination,
       transaction: ({
         account,
@@ -103,7 +103,7 @@ const hedera: AppSpec<Transaction> = {
       },
       test: ({ account, accountBeforeTransaction, operation }) => {
         botTest("Account balance should have decreased", () => {
-          expect(account.balance.toNumber()).toBeLessThanOrEqual(
+          expect(account.balance.toNumber()).toEqual(
             accountBeforeTransaction.balance.minus(operation.value).toNumber()
           );
         });
