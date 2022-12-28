@@ -61,9 +61,6 @@ export type LiveAppManifest = {
   branch: AppBranch;
   permissions: AppPermission[];
   domains: string[];
-};
-
-export type AppManifest = LiveAppManifest & {
   categories: string[];
   currencies: string[] | "*";
   content: {
@@ -73,7 +70,7 @@ export type AppManifest = LiveAppManifest & {
 };
 
 export type PlatformApi = {
-  fetchManifest: () => Promise<AppManifest[]>;
+  fetchManifest: () => Promise<LiveAppManifest[]>;
 };
 
 export type PlatformSignedTransaction = SignedOperation;
