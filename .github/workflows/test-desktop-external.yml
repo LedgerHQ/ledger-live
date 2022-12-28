@@ -307,7 +307,7 @@ jobs:
   allure-report:
     name: "Allure Reports Export on Server"
     needs: [e2e-tests-windows, e2e-tests-linux, e2e-tests-mac]
-    runs-on: ubuntu-latest
+    runs-on: [ledger-live, linux]
     if: ${{ always() && !cancelled() }}
     steps:
       - name: checkout
