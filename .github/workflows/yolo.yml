@@ -5,9 +5,9 @@ on:
 jobs:
   the-matrix:
     outputs:
-      linux: ${{ steps.output-linux.outcome }}
-      macos: ${{ steps.output-macos.outcome }}
-      windows: ${{ steps.output-windows.outcome }}
+      linux: ${{ steps.output-ubuntu-latest.outcome }}
+      macos: ${{ steps.output-macos-latest.outcome }}
+      windows: ${{ steps.output-windows-latest.outcome }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
@@ -17,20 +17,9 @@ jobs:
         with:
           node-version: 16.x
       - name: output
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-        id: output-linux
+        id: ${{ format('output-{0}', matrix.os) }}
         run: |
           echo "zeubie 🐧"
-      - name: output
-        if: ${{ matrix.os == 'windows-latest' }}
-        id: output-windows
-        run: |
-          echo "zeubie 🪟"
-      - name: output
-        if: ${{ matrix.os == 'macos-latest' }}
-        id: output-macos
-        run: |
-          echo "zeubie 🍏"
 
   reports:
     needs: [the-matrix]
