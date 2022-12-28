@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
-import type { AppManifest } from "@ledgerhq/live-common/platform/types";
+import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useSelector } from "react-redux";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useBanner } from "../../components/banners/hooks";
@@ -37,7 +37,7 @@ type DisclaimerOpts =
   | null;
 const DAPP_DISCLAIMER_ID = "PlatformAppDisclaimer";
 
-const emptyObject: AppManifest[] = [];
+const emptyObject: LiveAppManifest[] = [];
 
 const PlatformCatalog = ({ route }: NavigationProps) => {
   const { platform, ...routeParams } = route.params ?? {};
@@ -51,7 +51,7 @@ const PlatformCatalog = ({ route }: NavigationProps) => {
   const [disclaimerDisabled, setDisclaimerDisabled] =
     useBanner(DAPP_DISCLAIMER_ID);
   const handlePressCard = useCallback(
-    (manifest: AppManifest) => {
+    (manifest: LiveAppManifest) => {
       const openDApp = () =>
         navigation.navigate(ScreenName.PlatformApp, {
           ...routeParams,
@@ -125,7 +125,7 @@ const PlatformCatalog = ({ route }: NavigationProps) => {
         {manifests.map(manifest => (
           <AppCard
             key={`${manifest.id}.${manifest.branch}`}
-            manifest={manifest as AppManifest}
+            manifest={manifest as LiveAppManifest}
             onPress={handlePressCard}
           />
         ))}

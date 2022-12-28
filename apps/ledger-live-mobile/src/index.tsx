@@ -43,7 +43,7 @@ import { isEqual } from "lodash";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import Braze from "react-native-appboy-sdk";
 import Config from "react-native-config";
-import { AppManifest } from "@ledgerhq/live-common/platform/types";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import logger from "./logger";
 import {
   saveAccounts,
@@ -498,7 +498,7 @@ const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean) => ({
   },
 });
 
-const emptyObject: AppManifest[] = [];
+const emptyObject: LiveAppManifest[] = [];
 
 const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useDispatch();

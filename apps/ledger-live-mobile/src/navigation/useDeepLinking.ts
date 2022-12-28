@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { CompositeScreenProps, useNavigation } from "@react-navigation/native";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { AppManifest } from "@ledgerhq/live-common/platform/types";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { NavigatorName, ScreenName } from "../const";
 import {
   BaseComposite,
@@ -61,7 +61,7 @@ type Navigation = BaseComposite<
     StackNavigatorProps<MainNavigatorParamList>
   >
 >;
-const emptyObject: AppManifest[] = [];
+const emptyObject: LiveAppManifest[] = [];
 export function useDeepLinkHandler() {
   const { navigate } = useNavigation<Navigation["navigation"]>();
   const { state } = useRemoteLiveAppContext();
