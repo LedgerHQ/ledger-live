@@ -39,4 +39,6 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |
-            console.log("${{ fromJSON(needs.the-matrix.outputs) }}");
+            console.log("${{ needs.the-matrix.outputs.linux }}");
+            console.log("${{ needs.the-matrix.outputs.macos }}");
+            console.log("${{ needs.the-matrix.outputs.windows }}");
