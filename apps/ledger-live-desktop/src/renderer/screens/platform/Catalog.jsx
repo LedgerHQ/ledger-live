@@ -53,10 +53,7 @@ const PlatformCatalog = () => {
   const history = useHistory();
 
   const { state } = useRemoteLiveAppContext();
-  const manifests = useMemo(
-    () => (state.value ? state.value.liveAppByIndex.filter(manifest => !manifest.private) : []),
-    [state.value],
-  );
+  const manifests = useMemo(() => (state.value ? state.value.liveAppFiltered : []), [state.value]);
 
   const dismissedBanners = useSelector(dismissedBannersSelector);
   const isDismissed = dismissedBanners.includes(DAPP_DISCLAIMER_ID);

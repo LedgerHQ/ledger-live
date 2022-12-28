@@ -94,7 +94,9 @@ export function RemoteLiveAppProvider({
     allowDebugApps && branches.push("debug");
 
     try {
-      const allManifests = await api.fetchLiveAppManifests(providerURL, {
+      const allManifests = await api.fetchLiveAppManifests(providerURL);
+
+      const catalogManifests = await api.fetchLiveAppManifests(providerURL, {
         ...params,
         branches,
       });
@@ -103,6 +105,7 @@ export function RemoteLiveAppProvider({
         isLoading: false,
         value: {
           liveAppByIndex: allManifests,
+          liveAppFiltered: catalogManifests,
           liveAppById: allManifests.reduce((acc, liveAppManifest) => {
             acc[liveAppManifest.id] = liveAppManifest;
             return acc;
