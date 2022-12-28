@@ -16,8 +16,12 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16.x
+      - name: tu vas faire quoi
+        id: os
+        run: |
+          echo "os=output-${{ matrix.os }}" >> $GITHUB_OUTPUT
       - name: output
-        id: ${{ format('output-{0}', matrix.os) }}
+        id: ${{ 'yolo' }}
         run: |
           echo "zeubie 🐧"
 
