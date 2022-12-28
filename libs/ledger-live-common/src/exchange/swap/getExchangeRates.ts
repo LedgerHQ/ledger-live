@@ -160,17 +160,21 @@ const inferError = (
     status,
   } = responseData;
 
+  // DEX quotes are out of limit scope error
+  if (
+    (!minAmountFrom || !minAmountFrom) &&
+    status === "error" &&
+    errorCode !== 300
+  ) {
+    return new SwapExchangeRateAmountTooLowOrTooHigh(undefined, {
+      message: "",
+    });
+  }
+
   if (!amountTo) {
     // We are in an error case regardless of api version.
     if (errorCode) {
       return getSwapAPIError(errorCode, errorMessage);
-    }
-
-    // DEX quotes do not have limit amount
-    if ((minAmountFrom === "" || maxAmountFrom === "") && status === "error") {
-      return new SwapExchangeRateAmountTooLowOrTooHigh(undefined, {
-        message: "",
-      });
     }
 
     // For out of range errors we will have a min/max pairing

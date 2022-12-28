@@ -104,6 +104,7 @@ const SwapForm = () => {
   const [currentBanner, setCurrentBanner] = useState(null);
   const [isSendMaxLoading, setIsSendMaxLoading] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+  const [showEmpty, setShowEmpty] = useState(false);
   const [idleState, setIdleState] = useState(false);
   const [firstRateId, setFirstRateId] = useState(null);
 
@@ -194,6 +195,10 @@ const SwapForm = () => {
     }, refreshTime);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [swapError, firstRateId]);
+
+  useEffect(() => {
+    setShowEmpty(swapError && swapError?.message.length === 0);
+  }, [swapError]);
 
   const refreshIdle = useCallback(() => {
     idleState && setIdleState(false);
@@ -532,8 +537,8 @@ const SwapForm = () => {
           isSendMaxLoading={isSendMaxLoading}
           updateSelectedRate={swapTransaction.swap.updateSelectedRate}
         />
-        {swapError?.message.length === 0 && <EmptyState />}
-        {showDetails && (
+        {showEmpty && <EmptyState />}
+        {showDetails && !showEmpty && (
           <>
             <SwapFormSummary
               swapTransaction={swapTransaction}
