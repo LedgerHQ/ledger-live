@@ -123,3 +123,90 @@ jobs:
           key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+
+  report:
+    runs-on: ubuntu-latest
+    needs: [build-mobile-app-android, build-mobile-app-ios]
+    if: always() && !cancelled() && github.event_name == 'workflow_dispatch' && github.event.inputs.sha != ''
+    steps:
+      - uses: actions/github-script@v6
+        name: get statuses of runs
+        id: status
+        with:
+          script: |
+            const fs = require("fs");
+            const statuses = [
+              "${{ needs.build-mobile-app-android.result }}",
+              "${{ needs.build-mobile-app-ios.result }}",
+            ];
+            const keys = {
+              ios: {
+                symbol: "🍏",
+                name: "iOS"
+              },
+              android: {
+                symbol: "🤖",
+                name: "Android"
+              },
+            };
+            const report = {
+              android: {
+                pass: ${{ needs.build-mobile-app-android.result == 'success' }},
+                status: "${{ needs.build-mobile-app-android.result }}",
+              },
+              ios: {
+                pass: ${{ needs.build-mobile-app-ios.result == 'success' }},
+                status: "${{ needs.build-mobile-app-ios.result }}",
+              },
+            };
+            const isFailed = statuses.some(e => e === "failure");
+            const isCancelled = statuses.some(e => e === "cancelled");
+
+            const iosSuccess = report.ios.pass;
+
+            let summary = ``;
+
+            summary += `|`
+
+            const reportKeys = Object.keys(report);
+
+            reportKeys.forEach((k) => {
+              summary += ` ${keys[k].symbol} ${keys[k].name} |`;
+            });
+
+            summary += `
+            |`;
+
+            for (let i = 0; i < reportKeys.length; i++) {
+              summary += ` :--: |`;
+            }
+
+            summary += `
+            |`;
+
+            Object.entries(report).forEach(([os, values]) => {
+              summary += ` ${values.pass ? "✅" : "❌"} (${values.status}) |`;
+            });
+
+            summary += `
+
+            [⚙️ Summary](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }})
+            `;
+
+            const output = {
+              summary,
+              actions: iosSuccess ? [] : [{
+                // 20 chars max
+                label: "Regen. Pods",
+                // 20 chars max
+                identifier: "regen_pods",
+                // 40 chars max
+                description: "Will regenerate cocoapods lockfile",
+              }],
+            }
+            fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
+      - uses: actions/upload-artifact@v3
+        name: upload output
+        with:
+          path: ${{ github.workspace }}/summary.json
+          name: summary.json

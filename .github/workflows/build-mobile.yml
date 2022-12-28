@@ -170,12 +170,6 @@ jobs:
     needs: [build-mobile-app-android, build-mobile-app-ios]
     if: always() && !cancelled() && github.event_name == 'workflow_dispatch' && github.event.inputs.sha != ''
     steps:
-      - name: generate token
-        id: generate-token
-        uses: tibdex/github-app-token@v1
-        with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - uses: actions/github-script@v6
         name: get statuses of runs
         id: status

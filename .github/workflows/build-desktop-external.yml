@@ -21,13 +21,30 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
     name: "Build Ledger Live Desktop"
     runs-on: ${{ matrix.os }}
+    outputs:
+      linux: ${{ steps.save-result.outputs.ubuntu-latest }}
+      windows: ${{ steps.save-result.outputs.windows-latest }}
+      mac: ${{ steps.save-result.outputs.macos-latest }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
+      - name: Format os name
+        id: os
+        uses: actions/github-script@v6
+        with:
+          result-encoding: string
+          script: |
+            if ("${{ matrix.os }}" === "ubuntu-latest") {
+              return "linux"
+            } else if ("${{ matrix.os }}" === "macos-latest") {
+              return "mac"
+            } else if ("${{ matrix.os }}" === "windows-latest") {
+              return "win"
+            }
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
-      - name: set git user
+      - name: Set git user
         run: |
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
@@ -56,133 +73,113 @@ jobs:
       - uses: ./tools/actions/composites/build-desktop
         id: build-desktop
         with:
-          os: linux
-      - name: build the app
+          os: ${{ steps.os.outputs.result }}
+      - name: Build the app
+        id: build-app
         run: pnpm build:lld --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
-      - name: upload linux app
+      - name: Save result
+        id: save-result
+        shell: bash
+        if: always()
+        run: |
+          echo "${{matrix.os}}=${{steps.build-app.outcome}}" >> $GITHUB_OUTPUT
+      - name: Upload linux app
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
-      - name: upload macOS app
+      - name: Upload macOS app
         if: matrix.os == 'macos-latest'
         uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.build-desktop.outputs.version }}-mac.dmg
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-mac.dmg
-      - name: upload windows
+      - name: Upload windows
         if: matrix.os == 'windows-latest'
         uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.build-desktop.outputs.version }}-win-x64.exe
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-win-x64.exe
-  # report:
-  #   needs:
-  #     [
-  #       build-desktop-app-linux,
-  #       build-desktop-app-macos,
-  #       build-desktop-app-windows,
-  #     ]
-  #   runs-on: ubuntu-latest
-  #   if: always() && github.event_name == 'workflow_dispatch' && github.event.inputs.check_run_id != '' && github.event.inputs.sha != ''
-  #   steps:
-  #     - name: generate token
-  #       id: generate-token
-  #       uses: tibdex/github-app-token@v1
-  #       with:
-  #         app_id: ${{ secrets.GH_BOT_APP_ID }}
-  #         private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-  #     - uses: actions/github-script@v6
-  #       name: get statuses of runs
-  #       id: status
-  #       with:
-  #         script: |
-  #           const fs = require("fs");
-  #           const statuses = [
-  #             "${{ needs.build-desktop-app-macos.result }}",
-  #             "${{ needs.build-desktop-app-linux.result }}",
-  #             "${{ needs.build-desktop-app-windows.result }}",
-  #           ];
-  #           const keys = {
-  #             mac: {
-  #               symbol: "🍏",
-  #               name: "macOS"
-  #             },
-  #             windows: {
-  #               symbol: "🪟",
-  #               name: "Windows"
-  #             },
-  #             linux: {
-  #               symbol: "🐧",
-  #               name: "Linux"
-  #             },
-  #           };
-  #           const report = {
-  #             mac: {
-  #               pass: ${{ needs.build-desktop-app-macos.result == 'success' }},
-  #               status: "${{ needs.build-desktop-app-macos.result }}",
-  #             },
-  #             linux: {
-  #               pass: ${{ needs.build-desktop-app-linux.result == 'success' }},
-  #               status: "${{ needs.build-desktop-app-linux.result }}",
-  #             },
-  #             windows: {
-  #               pass: ${{ needs.build-desktop-app-windows.result == 'success' }},
-  #               status: "${{ needs.build-desktop-app-windows.result }}",
-  #             },
-  #           };
-  #           const isFailed = statuses.some(e => e === "failure");
-  #           const isCancelled = statuses.some(e => e === "cancelled");
-  #           let summary = ``
-  #           Object.entries(report).map(([os, values]) => {
-  #             summary += `### ${keys[os].symbol} ${keys[os].name}
-  #           The build for ${keys[os].name} ${values.pass ? 'did' : 'did not'} completely successfully.
-  #           The run ended with conclusion => **${values.status}**
-  #           `
-  #           });
-  #           const data = {
-  #             isFailed,
-  #             isCancelled,
-  #             summary,
-  #           }
-  #           fs.writeFileSync("output.json", JSON.stringify(data), "utf-8");
-  #     - uses: actions/upload-artifact@v3
-  #       name: upload output
-  #       with:
-  #         path: ${{ github.workspace }}/output.json
-  #         name: output.json
-  # - uses: actions/github-script@v6
-  #   with:
-  #     github-token: ${{ steps.generate-token.outputs.token }}
-  #     script: |
-  #       const status = ${{ steps.status.outputs.result }};
-  #       const title = status.isFailed ? "🔴 Failed" : status.isCancelled ? "♾ Cancelled" : "💚 Success";
-  #       const actions = status.isFailed ? [{
-  #         label: "Rerun job",
-  #         identifier: "rerun_job",
-  #         description: "relaunch failed jobs"
-  #       }] : [];
-  #       const previous = await github.rest.checks.update({
-  #         owner: context.repo.owner,
-  #         repo: context.repo.repo,
-  #         head_sha: "${{ github.event.inputs.sha }}",
-  #         check_run_id: "${{ github.event.inputs.check_run_id }}",
-  #       });
-  #       await github.rest.checks.update({
-  #         owner: context.repo.owner,
-  #         repo: context.repo.repo,
-  #         name: previous.data.name,
-  #         details_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }}`,
-  #         head_sha: "${{ github.event.inputs.sha }}",
-  #         check_run_id: "${{ github.event.inputs.check_run_id }}",
-  #         completed_at: new Date().toISOString(),
-  #         conclusion: status.isFailed ? 'failure' : status.isCancelled ? 'cancelled' : 'success',
-  #         output: {
-  #           title,
-  #           summary: `${status.summary}
-  #       ---
-  #       [⚙️ Summary](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }})`
-  #         },
-  #         actions
-  #       });
+
+  report:
+    needs: build-desktop-app
+    runs-on: ubuntu-latest
+    if: always() && !cancelled() && github.event_name == 'workflow_dispatch' && github.event.inputs.sha != ''
+    steps:
+      - name: Echo outputs
+        run: |
+          echo "${{ toJSON(needs.build-desktop-app) }}"
+      - uses: actions/github-script@v6
+        name: Get statuses of runs
+        id: status
+        with:
+          script: |
+            const fs = require("fs");
+            const keys = {
+              mac: {
+                symbol: "🍏",
+                name: "macOS"
+              },
+              windows: {
+                symbol: "🪟",
+                name: "Windows"
+              },
+              linux: {
+                symbol: "🐧",
+                name: "Linux"
+              },
+            };
+            const report = {
+              mac: {
+                pass: ${{ needs.build-desktop-app.outputs.mac == 'success' }},
+                status: "${{ needs.build-desktop-app.outputs.mac }}",
+              },
+              linux: {
+                pass: ${{ needs.build-desktop-app.outputs.linux == 'success' }},
+                status: "${{ needs.build-desktop-app.outputs.linux }}",
+              },
+              windows: {
+                pass: ${{ needs.build-desktop-app.outputs.windows == 'success' }},
+                status: "${{ needs.build-desktop-app.outputs.windows }}",
+              },
+            };
+
+            let summary = ``;
+
+            summary += `|`
+
+            const reportKeys = Object.keys(report);
+
+            reportKeys.forEach((k) => {
+              summary += ` ${keys[k].symbol} ${keys[k].name} |`;
+            });
+
+            summary += `
+            |`;
+
+            for (let i = 0; i < reportKeys.length; i++) {
+              summary += ` :--: |`;
+            }
+
+            summary += `
+            |`;
+
+            Object.entries(report).forEach(([os, values]) => {
+              summary += ` ${values.pass ? "✅" : "❌"} (${values.status}) |`;
+            });
+
+            summary += `
+
+            [⚙️ Summary](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }})
+            `;
+
+            const data = {
+              summary,
+            }
+            fs.writeFileSync("summary.json", JSON.stringify(data), "utf-8");
+      - uses: actions/upload-artifact@v3
+        name: Upload output
+        with:
+          path: ${{ github.workspace }}/summary.json
+          name: summary.json
