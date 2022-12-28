@@ -41,34 +41,45 @@ jobs:
       - name: Run code checkers
         run: pnpm desktop test:codecheck
 
-  test-desktop-app:
-    name: "Live Desktop Tests"
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+  unit-tests:
+    name: "Ledger Live Desktop Unit Tests"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
-      CI_OS: "windows-latest"
+      CI_OS: ubuntu-latest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+      - uses: ./tools/actions/composites/setup-test-desktop
+        id: setup-test-desktop
+      - name: TurboRepo local caching server
+        id: turborepo-cache-server
+        uses: ./tools/actions/turborepo-gh-cache
+        with:
+          server-token: "yolo"
+          cleanup-cache-folder: "true"
+      - name: Install dependencies
+        run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
+      - name: Build dependencies
+        run: pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+      - name: Run unit tests
+        run: pnpm desktop test:jest
+
+  e2e-tests-linux:
+    name: "Live Desktop Tests (Ubuntu)"
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      FORCE_COLOR: 3
+      CI_OS: ubuntu-latest
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
+    outputs:
+      status: ${{ steps.test-desktop.outputs.outcome-linux }}
     steps:
-      - name: format os name
-        id: os
-        uses: actions/github-script@v6
-        with:
-          result-encoding: string
-          script: |
-            if ("${{ matrix.os }}" === "ubuntu-latest") {
-              return "linux"
-            } else if ("${{ matrix.os }}" === "macos-latest") {
-              return "macos"
-            } else if ("${{ matrix.os }}" === "windows-latest") {
-              return "windows"
-            }
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
@@ -86,194 +97,259 @@ jobs:
       - uses: ./tools/actions/composites/test-desktop
         id: test-desktop
         with:
-          os: ${{ steps.os.outputs.result }}
+          os: linux
           turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
-  # report:
-  #   needs:
-  #     [
-  #       typecheck,
-  #       test-desktop-app-linux,
-  #       test-desktop-app-windows,
-  #       test-desktop-app-mac,
-  #     ]
-  #     # [is-affected, pr-is-fork, test-desktop-app, test-desktop-app-mac-internal]
-  #   runs-on: ubuntu-latest
-  #   # if: ${{ always() && !cancelled() && needs.is-affected.outputs.is-desktop-affected == 'true' && github.event.pull_request != '' && !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
-  #   if: always() && github.event_name == 'workflow_dispatch' && github.event.inputs.check_run_id != '' && github.event.inputs.sha != ''
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #       with:
-  #         ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
-  #     - name: generate token
-  #       id: generate-token
-  #       uses: tibdex/github-app-token@v1
-  #       with:
-  #         app_id: ${{ secrets.GH_BOT_APP_ID }}
-  #         private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-  #     - name: download images artifacts
-  #       uses: actions/download-artifact@v3
-  #       with:
-  #         name: images
-  #     - name: parse images
-  #       uses: actions/github-script@v6
-  #       with:
-  #         script: |
-  #           const fs = require("fs");
-  #           const files = ["images-linux", "images-windows", "images-macos"];
-  #           let result = {};
-  #           for (const file of files) {
-  #             try {
-  #               const raw = JSON.parse(fs.readFileSync("${{github.workspace}}/" + file + ".json"));
-  #               const key = file.replace("images-", "").replace("-latest", "").trim()
-  #               result[key] = raw;
-  #             } catch (err) {
-  #               console.log(err);
-  #             }
-  #           }
-  #           fs.writeFileSync("./images.json", JSON.stringify(result, null, 2));
-  #     - name: prepare comment with screenshots
-  #       id: comment
-  #       uses: ./tools/actions/prepare-comment-screenshots
-  #       with:
-  #         images: images.json
-  #         no-actor: true
-  #     - uses: actions/github-script@v6
-  #       name: prepare status
-  #       id: status
-  #       with:
-  #         script: |
-  #           const statuses = [
-  #             "${{ needs.typecheck.result }}",
-  #             "${{ needs.test-desktop-app-mac.result }}",
-  #             "${{ needs.test-desktop-app-linux.result }}",
-  #             "${{ needs.test-desktop-app-windows.result }}",
-  #           ];
-  #           const keys = {
-  #             mac: {
-  #               symbol: "🍏",
-  #               name: "macOS"
-  #             },
-  #             windows: {
-  #               symbol: "🪟",
-  #               name: "Windows"
-  #             },
-  #             linux: {
-  #               symbol: "🐧",
-  #               name: "Linux"
-  #             },
-  #           };
-  #           const typecheck = {
-  #             pass: ${{ needs.typecheck.result == 'success' }},
-  #             status: "${{ needs.typecheck.result }}",
-  #           };
-  #           const report = {
-  #             mac: {
-  #               pass: ${{ needs.test-desktop-app-mac.result == 'success' }},
-  #               status: "${{ needs.test-desktop-app-mac.result }}",
-  #             },
-  #             linux: {
-  #               pass: ${{ needs.test-desktop-app-linux.result == 'success' }},
-  #               status: "${{ needs.test-desktop-app-linux.result }}",
-  #             },
-  #             windows: {
-  #               pass: ${{ needs.test-desktop-app-windows.result == 'success' }},
-  #               status: "${{ needs.test-desktop-app-windows.result }}",
-  #             },
-  #           };
-  #           const isFailed = statuses.some(e => e === "failure") || typecheck.status === "failure";
-  #           const isCancelled = statuses.some(e => e === "cancelled") || typecheck.status === "cancelled";
-  #           let summary = `### TypeCheck
-  #           ${typecheck.pass ? "💚 Everything is fine" : "❌ Unfortunately type checks did not pass"}
-  #           **Type checks** ended with status => ${typecheck.status}
-  #           ### Screenshot Tests (Playwright)
-  #           `
-  #           Object.entries(report).forEach(([os, values]) => {
-  #             summary +=`
-  #             - ${values.pass
-  #                 ? `💚 Everything went good on ${keys[os].name} Live Desktop Tests`
-  #                 : `❌ Something went wrong on ${keys[os].name} Live Desktop Tests`
-  #               }
-  #               - final status => **${values.status}**`
-  #           });
-  #           summary += `
-  #           ${{ steps.comment.outputs.body }}
-  #           `
-  #           return {
-  #             isFailed,
-  #             isCancelled,
-  #             summary,
-  #           }
-  #     - uses: actions/github-script@v6
-  #       name: update checks
-  #       with:
-  #         github-token: ${{ steps.generate-token.outputs.token }}
-  #         script: |
-  #           const status = ${{ steps.status.outputs.result }};
-  #           const title = status.isFailed ? "🔴 Failed" : status.isCancelled ? "♾ Cancelled" : "💚 Success";
-  #           const actions = status.isFailed ? [{
-  #             label: "regen screenshots",
-  #             identifier: "regen_screenshots",
-  #             description: "Regenerate screenshot for Live Desktop"
-  #           }] : [];
-  #           const previous = await github.rest.checks.update({
-  #             owner: context.repo.owner,
-  #             repo: context.repo.repo,
-  #             head_sha: "${{ github.event.inputs.sha }}",
-  #             check_run_id: "${{ github.event.inputs.check_run_id }}",
-  #           });
-  #           await github.rest.checks.update({
-  #             owner: context.repo.owner,
-  #             repo: context.repo.repo,
-  #             name: previous.data.name,
-  #             details_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }}`,
-  #             head_sha: "${{ github.event.inputs.sha }}",
-  #             check_run_id: "${{ github.event.inputs.check_run_id }}",
-  #             conclusion: status.isFailed ? 'failure' : status.isCancelled ? 'cancelled' : 'success',
-  #             completed_at: new Date().toISOString(),
-  #             output: {
-  #               title,
-  #               summary: `${status.summary}
-  #           ---
-  #           [⚙️ Summary](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }})`
-  #             },
-  #             actions
-  #           });
-  #     # - name: create/update comment
-  #     #   uses: actions/github-script@v6
-  #     #   with:
-  #     #     script: |
-  #     #       const body = `${{ env.comment_header }}\n${{ steps.comment.outputs.body }}`;
-  #     #       const existingComment = await github.paginate(
-  #     #         github.rest.issues.listComments,
-  #     #         {
-  #     #           owner: context.repo.owner,
-  #     #           repo: context.repo.repo,
-  #     #           issue_number: context.issue.number,
-  #     #         },
-  #     #         (response, done) => {
-  #     #           const comments = response.data
-  #     #           const existingComment = comments
-  #     #             .find(comment =>
-  #     #               comment.user.login === 'github-actions[bot]' &&
-  #     #               comment.body.startsWith(`${{ env.comment_header }}`));
-  #     #           if (existingComment) {
-  #     #             done()
-  #     #             return existingComment;
-  #     #           }
-  #     #         }
-  #     #       ).then(resPerPage => resPerPage.find(res => !!res));
-  #     #       if (existingComment) {
-  #     #         await github.rest.issues.updateComment({
-  #     #           owner: context.repo.owner,
-  #     #           repo: context.repo.repo,
-  #     #           comment_id: existingComment?.id,
-  #     #           body,
-  #     #         });
-  #     #       } else {
-  #     #         await github.rest.issues.createComment({
-  #     #           owner: context.repo.owner,
-  #     #           repo: context.repo.repo,
-  #     #           issue_number: context.issue.number,
-  #     #           body,
-  #     #         })
-  #     #       }
+
+  e2e-tests-mac:
+    name: "Live Desktop Tests (macOS X)"
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      FORCE_COLOR: 3
+      CI_OS: macos-latest
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+      # DEBUG: "pw:browser*"
+      # DEBUG_LOGS: 1
+    runs-on: macos-latest
+    outputs:
+      status: ${{ steps.test-desktop.outputs.outcome }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+      - uses: ./tools/actions/composites/setup-test-desktop
+        id: setup-test-desktop
+      - name: Install node-gyp globally
+        run: |
+          pnpm add -g node-gyp
+      - name: TurboRepo local caching server
+        id: turborepo-cache-server
+        uses: ./tools/actions/turborepo-gh-cache
+        with:
+          server-token: "yolo"
+          cleanup-cache-folder: "true"
+      - uses: ./tools/actions/composites/test-desktop
+        id: test-desktop
+        with:
+          os: macos
+          turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
+
+  e2e-tests-windows:
+    name: "Live Desktop Tests (Windows)"
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      FORCE_COLOR: 3
+      CI_OS: windows-latest
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+      # DEBUG: "pw:browser*"
+      # DEBUG_LOGS: 1
+    runs-on: windows-latest
+    outputs:
+      status: ${{ steps.test-desktop.outputs.outcome }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+      - uses: ./tools/actions/composites/setup-test-desktop
+        id: setup-test-desktop
+      - name: Install node-gyp globally
+        run: |
+          pnpm add -g node-gyp
+      - name: TurboRepo local caching server
+        id: turborepo-cache-server
+        uses: ./tools/actions/turborepo-gh-cache
+        with:
+          server-token: "yolo"
+          cleanup-cache-folder: "true"
+      - uses: ./tools/actions/composites/test-desktop
+        id: test-desktop
+        with:
+          os: windows
+          turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
+
+  report:
+    needs:
+      [typecheck, unit-tests, e2e-tests-linux, e2e-tests-mac, e2e-tests-windows]
+    runs-on: ubuntu-latest
+    if: always() && !cancelled() && github.event_name == 'workflow_dispatch' && github.event.inputs.sha != ''
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+      - name: download images artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: images
+      - name: parse images
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require("fs");
+            const files = ["images-linux", "images-windows", "images-macos"];
+            let result = {};
+            for (const file of files) {
+              try {
+                const raw = JSON.parse(fs.readFileSync("${{github.workspace}}/" + file + ".json"));
+                const key = file.replace("images-", "").replace("-latest", "").trim()
+                result[key] = raw;
+              } catch (err) {
+                console.log(err);
+              }
+            }
+            fs.writeFileSync("./images.json", JSON.stringify(result, null, 2));
+      - name: prepare comment with screenshots
+        id: comment
+        uses: ./tools/actions/prepare-comment-screenshots
+        with:
+          images: images.json
+          no-actor: true
+      - uses: actions/github-script@v6
+        name: prepare status
+        id: status
+        with:
+          script: |
+            const fs = require("fs");
+            const keys = {
+              mac: {
+                symbol: "🍏",
+                name: "macOS"
+              },
+              windows: {
+                symbol: "🪟",
+                name: "Windows"
+              },
+              linux: {
+                symbol: "🐧",
+                name: "Linux"
+              },
+            };
+
+            const typecheck = {
+              pass: ${{ needs.typecheck.result == 'success' }},
+              status: "${{ needs.typecheck.result }}",
+            };
+
+            const unitTests = {
+              pass: ${{ needs.unit-tests.result == 'success' }},
+              status: "${{ needs.unit-tests.result }}",
+            };
+
+            const report = {
+              mac: {
+                pass: ${{ needs.e2e-tests-mac.outputs.status == 'success' }},
+                status: "${{ needs.e2e-tests-mac.outputs.status }}",
+              },
+              linux: {
+                pass: ${{ needs.e2e-tests-linux.outputs.status == 'success' }},
+                status: "${{ needs.e2e-tests-linux.outputs.status }}",
+              },
+              windows: {
+                pass: ${{ needs.e2e-tests-windows.outputs.status == 'success' }},
+                status: "${{ needs.e2e-tests-windows.outputs.status }}",
+              },
+            };
+
+            let summary = `### TypeCheck
+            ${typecheck.pass ? "Typechecks are fine" : "Unfortunately typechecks did not pass"}
+              - ${typecheck.pass ? "✅" : "❌"} **Type checks** ended with status \`${typecheck.status}\`
+
+            ### Unit Tests (Jest)
+            ${unitTests.pass ? "Unit tests are fine" : "Unit tests did not pass"}
+              - ${unitTests.pass ? "✅" : "❌"} **Unit tests** ended with status \`${unitTests.status}\`
+
+            ### Screenshot Tests (Playwright)
+            `
+
+            summary += `|`
+
+            const reportKeys = Object.keys(report);
+
+            reportKeys.forEach((k) => {
+              summary += ` ${keys[k].symbol} ${keys[k].name} |`;
+            });
+
+            summary += `
+            |`;
+
+            for (let i = 0; i < reportKeys.length; i++) {
+              summary += ` :--: |`;
+            }
+
+            summary += `
+            |`;
+
+            Object.entries(report).forEach(([os, values]) => {
+              summary += ` ${values.pass ? "✅" : "❌"} (${values.status}) |`;
+            });
+
+            summary += `
+            ${{ steps.comment.outputs.body }}
+            `
+
+            const output = {
+              summary,
+              actions: [{
+                // 20 chars max
+                label: "Regen. Screenshots",
+                // 20 chars max
+                identifier: "regen_screenshots",
+                // 40 chars max
+                description: "Will regenerate playwright screenshots",
+              }],
+            };
+
+            fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
+      - uses: actions/upload-artifact@v3
+        name: upload summary
+        with:
+          name: summary.json
+          path: ${{ github.workspace }}/summary.json
+
+  allure-report:
+    name: "Allure Reports Export on Server"
+    needs: [e2e-tests-windows, e2e-tests-linux, e2e-tests-mac]
+    runs-on: ubuntu-latest
+    if: ${{ always() && !cancelled() }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+      - name: Download Allure Report - Windows
+        uses: actions/download-artifact@v3
+        with:
+          name: allure-results-windows
+          path: allure-results-windows
+      - name: Download Allure Report - MacOS
+        uses: actions/download-artifact@v3
+        with:
+          name: allure-results-macos
+          path: allure-results-macos
+      - name: Download Allure Report - Linux
+        uses: actions/download-artifact@v3
+        with:
+          name: allure-results-linux
+          path: allure-results-linux
+      - name: Send Results and Generate Allure Report - Windows
+        uses: ./tools/actions/composites/upload-allure-report
+        if: always()
+        with:
+          platform: windows
+          login: ${{ secrets.ALLURE_LOGIN }}
+          password: ${{ secrets.ALLURE_PASSWORD }}
+          path: allure-results-windows
+      - name: Send Results and Generate Allure Report - MacOS
+        uses: ./tools/actions/composites/upload-allure-report
+        if: always()
+        with:
+          platform: macos
+          login: ${{ secrets.ALLURE_LOGIN }}
+          password: ${{ secrets.ALLURE_PASSWORD }}
+          path: allure-results-macos
+      - name: Send Results and Generate Allure Report - Linux
+        uses: ./tools/actions/composites/upload-allure-report
+        if: always()
+        with:
+          platform: linux
+          login: ${{ secrets.ALLURE_LOGIN }}
+          password: ${{ secrets.ALLURE_PASSWORD }}
+          path: allure-results-linux
