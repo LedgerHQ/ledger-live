@@ -129,11 +129,14 @@ const getTransactionStatus = async (
     }
   }
 
+  const { opReturnData } = t;
+
   return {
     errors,
     warnings,
     estimatedFees,
     amount,
+    opReturnData: opReturnData?.toString(),
     totalSpent,
     txInputs,
     txOutputs,
