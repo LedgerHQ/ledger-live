@@ -26,7 +26,7 @@ export const WORKFLOWS = {
       "Build the Ledger Live Desktop application on all platforms and attach the binaries to the workflow run.",
     runsOn: RUNNERS.external,
     affected: ["ledger-live-desktop"],
-    summaryFile: "",
+    summaryFile: "summary.json",
     getInputs: (payload: any) => {
       return {
         sha: payload.workflow_run.head_sha,
@@ -54,7 +54,7 @@ export const WORKFLOWS = {
       "Run end to end tests ([playwright](https://playwright.dev/), unit tests ([jest](https://jestjs.io/fr/)), the [type checker](https://www.typescriptlang.org/) and the [linter](https://eslint.org/) on the Ledger Live Desktop application.",
     runsOn: RUNNERS.external,
     affected: ["ledger-live-desktop"],
-    summaryFile: "",
+    summaryFile: "summary.json",
     getInputs: (payload: any) => {
       return {
         sha: payload.workflow_run.head_sha,
@@ -82,7 +82,7 @@ export const WORKFLOWS = {
       "Build the Ledger Live Mobile application and attach the apk to the workflow run.",
     runsOn: RUNNERS.external,
     affected: ["live-mobile"],
-    summaryFile: "",
+    summaryFile: "summary.json",
     getInputs: (payload: any) => {
       return {
         sha: payload.workflow_run.head_sha,
