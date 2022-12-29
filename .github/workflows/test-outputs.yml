@@ -1,0 +1,28 @@
+name: Test Outputs
+on: pull_request
+
+jobs:
+  save-outputs:
+    name: Save Outputs
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dummy
+        id: dummy
+        run: |
+          echo "yo"
+      - name: Output
+        id: output
+        run: |
+          echo "${{matrix.os}}=${{steps.dummy.outcome}}" >> $GITHUB_OUTPUT
+
+  retrieve-outputs:
+    name: Print Outputs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Outputs
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: echo "$NEEDS"
