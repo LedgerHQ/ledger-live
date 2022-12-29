@@ -12,6 +12,7 @@ on:
       login:
         description: The GitHub username that triggered the workflow
         required: true
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref_name != 'develop' }}

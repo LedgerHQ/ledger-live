@@ -203,6 +203,8 @@ jobs:
             const isFailed = statuses.some(e => e === "failure");
             const isCancelled = statuses.some(e => e === "cancelled");
 
+            const iosSuccess = report.ios.pass;
+
             let summary = ``;
 
             summary += `|`
@@ -232,12 +234,18 @@ jobs:
             [⚙️ Summary](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }})
             `;
 
-            const data = {
-              isFailed,
-              isCancelled,
+            const output = {
               summary,
+              actions: iosSuccess ? [] : [{
+                // 20 chars max
+                label: "Regen. Pods",
+                // 20 chars max
+                identifier: "regen_pods",
+                // 40 chars max
+                description: "Will regenerate cocoapods lockfile",
+              }],
             }
-            fs.writeFileSync("summary.json", JSON.stringify(data), "utf-8");
+            fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
       - uses: actions/upload-artifact@v3
         name: upload output
         with:

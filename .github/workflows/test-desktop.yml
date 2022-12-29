@@ -307,6 +307,7 @@ jobs:
             summary += `|`
 
             const reportKeys = Object.keys(report);
+            const playwrightSuccess = Object.entries(report).every(([os, values]) => !!values.pass);
 
             reportKeys.forEach((k) => {
               summary += ` ${keys[k].symbol} ${keys[k].name} |`;
@@ -332,7 +333,7 @@ jobs:
 
             const output = {
               summary,
-              actions: [{
+              actions: playwrightSuccess ? [] : [{
                 // 20 chars max
                 label: "Regen. Screenshots",
                 // 20 chars max
