@@ -1,5 +1,29 @@
 # @ledgerhq/live-common
 
+## 27.11.0-nightly.1
+
+### Patch Changes
+
+- [#2176](https://github.com/LedgerHQ/ledger-live/pull/2176) [`3df451dafb`](https://github.com/LedgerHQ/ledger-live/commit/3df451dafb7233f5e3f897478aee22e89f6e5339) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Handled IL old firmware bug that prevented access to My Ledger
+
+- Updated dependencies [[`3df451dafb`](https://github.com/LedgerHQ/ledger-live/commit/3df451dafb7233f5e3f897478aee22e89f6e5339)]:
+  - @ledgerhq/errors@6.12.3-nightly.0
+  - @ledgerhq/devices@7.0.7-nightly.0
+  - @ledgerhq/hw-app-algorand@6.27.10-nightly.0
+  - @ledgerhq/hw-app-cosmos@6.27.10-nightly.0
+  - @ledgerhq/hw-app-eth@6.30.4-nightly.0
+  - @ledgerhq/hw-app-near@6.27.5-nightly.0
+  - @ledgerhq/hw-app-polkadot@6.27.10-nightly.0
+  - @ledgerhq/hw-app-solana@7.0.4-nightly.0
+  - @ledgerhq/hw-app-trx@6.27.10-nightly.0
+  - @ledgerhq/hw-transport@6.27.10-nightly.0
+  - @ledgerhq/hw-transport-node-speculos@6.27.10-nightly.0
+  - @ledgerhq/hw-app-btc@9.1.2-nightly.0
+  - @ledgerhq/hw-app-str@6.27.10-nightly.0
+  - @ledgerhq/hw-app-tezos@6.27.10-nightly.0
+  - @ledgerhq/hw-app-xrp@6.27.10-nightly.0
+  - @ledgerhq/hw-transport-mocker@6.27.10-nightly.0
+
 ## 27.11.0-nightly.0
 
 ### Minor Changes

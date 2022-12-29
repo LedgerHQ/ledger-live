@@ -1,5 +1,11 @@
 # @ledgerhq/errors
 
+## 6.12.3-nightly.0
+
+### Patch Changes
+
+- [#2176](https://github.com/LedgerHQ/ledger-live/pull/2176) [`3df451dafb`](https://github.com/LedgerHQ/ledger-live/commit/3df451dafb7233f5e3f897478aee22e89f6e5339) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Handled IL old firmware bug that prevented access to My Ledger
+
 ## 6.12.2
 
 ### Patch Changes
