@@ -3,6 +3,7 @@ import { Trans } from "react-i18next";
 import { StyleSheet, View, FlatList, SafeAreaView } from "react-native";
 import type {
   CryptoCurrency,
+  CryptoOrTokenCurrency,
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
 import {
@@ -33,7 +34,7 @@ type Props = {
   devMode?: boolean;
 } & NavigationProps;
 
-const keyExtractor = (currency: CryptoCurrency) => currency.id;
+const keyExtractor = (currency: CryptoOrTokenCurrency) => currency.id;
 
 const renderEmptyList = () => (
   <View style={styles.emptySearch}>
@@ -111,7 +112,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
     });
   };
 
-  const onPressItem = (currencyOrToken: CryptoCurrency | TokenCurrency) => {
+  const onPressItem = (currencyOrToken: CryptoOrTokenCurrency) => {
     if (currencyOrToken.type === "TokenCurrency") {
       onPressToken(currencyOrToken);
     } else {
@@ -119,11 +120,11 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
     }
   };
 
-  const renderList = (items: (CryptoCurrency | TokenCurrency)[]) => (
+  const renderList = (items: CryptoOrTokenCurrency[]) => (
     <FlatList
       contentContainerStyle={styles.list}
-      data={items as CryptoCurrency[]}
-      renderItem={({ item }) => (
+      data={items}
+      renderItem={({ item }: { item: CryptoOrTokenCurrency }) => (
         <CurrencyRow currency={item} onPress={onPressItem} />
       )}
       keyExtractor={keyExtractor}

@@ -15,7 +15,7 @@ import { Box, Flex, CardB } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 import { useTheme } from "styled-components/native";
-import { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useNavigation } from "@react-navigation/native";
 import { useSingleCoinMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
@@ -256,7 +256,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
               />
               <Flex minHeight={65}>
                 <MarketPriceSection
-                  currency={currency as CryptoCurrency}
+                  currency={currency}
                   selectedCoinData={selectedCoinData}
                   counterCurrency={counterCurrency}
                 />
