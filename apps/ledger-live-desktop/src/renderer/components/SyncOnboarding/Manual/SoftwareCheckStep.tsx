@@ -49,7 +49,7 @@ const SoftwareCheckStep = ({ isDisplayed, onComplete, productName, deviceModelId
     deviceId,
   });
 
-  const { latestFirmware /*, error */, status, deviceIsLocked } = useGetLatestAvailableFirmware({
+  const { latestFirmware /*, error */, status, lockedDevice } = useGetLatestAvailableFirmware({
     getLatestAvailableFirmwareFromDeviceId: getLatestAvailableFirmwareFromDeviceIdCommand,
     isHookEnabled: firmwareUpdateStatus === SoftwareCheckStatus.active,
     deviceId,
@@ -113,10 +113,10 @@ const SoftwareCheckStep = ({ isDisplayed, onComplete, productName, deviceModelId
   const softwareCheckAnimationModalIsOpen =
     devicePermissionState === "unlock-needed" ||
     devicePermissionState === "requested" ||
-    deviceIsLocked;
+    lockedDevice;
 
   const softwareCheckAnimationModalAnimationName =
-    devicePermissionState === "unlock-needed" || deviceIsLocked ? "enterPinCode" : "allowManager";
+    devicePermissionState === "unlock-needed" || lockedDevice ? "enterPinCode" : "allowManager";
 
   return (
     <Box>

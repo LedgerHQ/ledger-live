@@ -87,7 +87,7 @@ describe("getOnboardingStatePolling", () => {
             try {
               expect(value.onboardingState).toBeNull();
               expect(value.allowedError).toBeInstanceOf(DisconnectedDevice);
-              expect(value.deviceIsLocked).toBe(false);
+              expect(value.lockedDevice).toBe(false);
               done();
             } catch (expectError) {
               done(expectError);
@@ -101,7 +101,7 @@ describe("getOnboardingStatePolling", () => {
     });
 
     describe("and when the error is due to a locked device", () => {
-      it("should update the deviceIsLocked, update the onboarding state to null and keep track of the allowed error", (done) => {
+      it("should update the lockedDevice, update the onboarding state to null and keep track of the allowed error", (done) => {
         mockedGetVersion.mockRejectedValue(new LockedDeviceError());
         mockedExtractOnboardingState.mockReturnValue(anOnboardingState);
 
@@ -115,7 +115,7 @@ describe("getOnboardingStatePolling", () => {
             try {
               expect(value.onboardingState).toBeNull();
               expect(value.allowedError).toBeInstanceOf(LockedDeviceError);
-              expect(value.deviceIsLocked).toBe(true);
+              expect(value.lockedDevice).toBe(true);
               done();
             } catch (expectError) {
               done(expectError);
@@ -143,7 +143,7 @@ describe("getOnboardingStatePolling", () => {
             try {
               expect(value.onboardingState).toBeNull();
               expect(value.allowedError).toBeInstanceOf(TimeoutError);
-              expect(value.deviceIsLocked).toBe(false);
+              expect(value.lockedDevice).toBe(false);
               done();
             } catch (expectError) {
               done(expectError);
@@ -171,7 +171,7 @@ describe("getOnboardingStatePolling", () => {
             try {
               expect(value.onboardingState).toBeNull();
               expect(value.allowedError).toBeInstanceOf(TimeoutError);
-              expect(value.deviceIsLocked).toBe(false);
+              expect(value.lockedDevice).toBe(false);
               done();
             } catch (expectError) {
               done(expectError);
@@ -231,7 +231,7 @@ describe("getOnboardingStatePolling", () => {
             expect(value.allowedError).toBeInstanceOf(
               DeviceExtractOnboardingStateError
             );
-            expect(value.deviceIsLocked).toBe(false);
+            expect(value.lockedDevice).toBe(false);
             done();
           } catch (expectError) {
             done(expectError);
@@ -258,7 +258,7 @@ describe("getOnboardingStatePolling", () => {
           try {
             expect(value.allowedError).toBeNull();
             expect(value.onboardingState).toEqual(anOnboardingState);
-            expect(value.deviceIsLocked).toBe(false);
+            expect(value.lockedDevice).toBe(false);
             done();
           } catch (expectError) {
             done(expectError);
@@ -292,7 +292,7 @@ describe("getOnboardingStatePolling", () => {
           try {
             expect(value.onboardingState).toEqual(anOnboardingState);
             expect(value.allowedError).toBeNull();
-            expect(value.deviceIsLocked).toBe(false);
+            expect(value.lockedDevice).toBe(false);
             expect(spiedRepeatWhen).toHaveBeenCalledTimes(1);
             done();
           } catch (expectError) {

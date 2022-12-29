@@ -88,25 +88,25 @@ describe("getLatestAvailableFirmwareFromDeviceId", () => {
       }).subscribe({
         next: ({
           firmwareUpdateContext,
-          deviceIsLocked,
+          lockedDevice,
           status,
         }: GetLatestAvailableFirmwareFromDeviceIdResult) => {
           try {
             switch (step) {
               case 0:
                 expect(firmwareUpdateContext).toBeNull();
-                expect(deviceIsLocked).toBe(true);
+                expect(lockedDevice).toBe(true);
                 expect(status).toBe("started");
                 break;
               // A retry happened, this time with an unlocked device
               case 1:
                 expect(firmwareUpdateContext).toBeNull();
-                expect(deviceIsLocked).toBe(false);
+                expect(lockedDevice).toBe(false);
                 expect(status).toBe("started");
                 break;
               case 2:
                 expect(firmwareUpdateContext).toEqual(aLatestFirmwareContext);
-                expect(deviceIsLocked).toBe(false);
+                expect(lockedDevice).toBe(false);
                 expect(status).toBe("done");
                 done();
                 break;

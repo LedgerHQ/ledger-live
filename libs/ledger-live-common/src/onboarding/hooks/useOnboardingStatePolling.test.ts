@@ -55,18 +55,18 @@ describe("useOnboardingStatePolling", () => {
           {
             onboardingState: { ...anOnboardingState },
             allowedError: null,
-            deviceIsLocked: false,
+            lockedDevice: false,
           },
           {
             onboardingState: { ...aSecondOnboardingState },
             allowedError: null,
-            deviceIsLocked: false,
+            lockedDevice: false,
           },
           {
             // During the third polling, it gets the same onboarding state
             onboardingState: { ...aSecondOnboardingState },
             allowedError: null,
-            deviceIsLocked: false,
+            lockedDevice: false,
           }
         ).pipe(
           delayWhen((_, index) => {
@@ -95,7 +95,7 @@ describe("useOnboardingStatePolling", () => {
       expect(result.current.fatalError).toBeNull();
       expect(result.current.allowedError).toBeNull();
       expect(result.current.onboardingState).toEqual(anOnboardingState);
-      expect(result.current.deviceIsLocked).toBe(false);
+      expect(result.current.lockedDevice).toBe(false);
     });
 
     it("should fetch again the state at a defined frequency and only update the onboarding state returned to the consumer if it different than the previous one", async () => {
@@ -112,7 +112,7 @@ describe("useOnboardingStatePolling", () => {
       expect(result.current.fatalError).toBeNull();
       expect(result.current.allowedError).toBeNull();
       expect(result.current.onboardingState).toEqual(anOnboardingState);
-      expect(result.current.deviceIsLocked).toBe(false);
+      expect(result.current.lockedDevice).toBe(false);
 
       // Next polling
       await act(async () => {
@@ -122,7 +122,7 @@ describe("useOnboardingStatePolling", () => {
       expect(result.current.fatalError).toBeNull();
       expect(result.current.allowedError).toBeNull();
       expect(result.current.onboardingState).toEqual(aSecondOnboardingState);
-      expect(result.current.deviceIsLocked).toBe(false);
+      expect(result.current.lockedDevice).toBe(false);
       // To compare with the result of the third polling
       const prevOnboardingState = result.current.onboardingState;
 
@@ -136,7 +136,7 @@ describe("useOnboardingStatePolling", () => {
       // It should not have been updated
       // toBe matcher checks referential identity of object instances
       expect(result.current.onboardingState).toBe(prevOnboardingState);
-      expect(result.current.deviceIsLocked).toBe(false);
+      expect(result.current.lockedDevice).toBe(false);
     });
 
     describe("and when the hook consumer stops the polling", () => {
@@ -157,7 +157,7 @@ describe("useOnboardingStatePolling", () => {
         expect(result.current.fatalError).toBeNull();
         expect(result.current.allowedError).toBeNull();
         expect(result.current.onboardingState).toEqual(anOnboardingState);
-        expect(result.current.deviceIsLocked).toBe(false);
+        expect(result.current.lockedDevice).toBe(false);
 
         // The consumer stops the polling
         stopPolling = true;
@@ -174,7 +174,7 @@ describe("useOnboardingStatePolling", () => {
         expect(result.current.fatalError).toBeNull();
         expect(result.current.allowedError).toBeNull();
         expect(result.current.onboardingState).toEqual(anOnboardingState);
-        expect(result.current.deviceIsLocked).toBe(false);
+        expect(result.current.lockedDevice).toBe(false);
       });
     });
   });
@@ -186,23 +186,23 @@ describe("useOnboardingStatePolling", () => {
           {
             onboardingState: { ...anOnboardingState },
             allowedError: null,
-            deviceIsLocked: false,
+            lockedDevice: false,
           },
           {
             onboardingState: null,
             allowedError: new DisconnectedDevice("An allowed error"),
-            deviceIsLocked: false,
+            lockedDevice: false,
           },
           {
             onboardingState: null,
             // During the third polling, it gets the same allowed error
             allowedError: new DisconnectedDevice("An allowed error"),
-            deviceIsLocked: false,
+            lockedDevice: false,
           },
           {
             onboardingState: { ...aSecondOnboardingState },
             allowedError: null,
-            deviceIsLocked: false,
+            lockedDevice: false,
           }
         ).pipe(
           delayWhen((_, index) => {
@@ -227,7 +227,7 @@ describe("useOnboardingStatePolling", () => {
       expect(result.current.fatalError).toBeNull();
       expect(result.current.allowedError).toBeNull();
       expect(result.current.onboardingState).toEqual(anOnboardingState);
-      expect(result.current.deviceIsLocked).toBe(false);
+      expect(result.current.lockedDevice).toBe(false);
 
       await act(async () => {
         jest.advanceTimersByTime(pollingPeriodMs);
@@ -236,7 +236,7 @@ describe("useOnboardingStatePolling", () => {
       expect(result.current.allowedError).toBeInstanceOf(DisconnectedDevice);
       expect(result.current.fatalError).toBeNull();
       expect(result.current.onboardingState).toEqual(anOnboardingState);
-      expect(result.current.deviceIsLocked).toBe(false);
+      expect(result.current.lockedDevice).toBe(false);
       // To compare with the result of the third polling
       const prevAllowedError = result.current.allowedError;
 
@@ -250,7 +250,7 @@ describe("useOnboardingStatePolling", () => {
       // It should not have been updated
       // toBe matcher checks referential identity of object instances
       expect(result.current.allowedError).toBe(prevAllowedError);
-      expect(result.current.deviceIsLocked).toBe(false);
+      expect(result.current.lockedDevice).toBe(false);
     });
 
     it("should be able to recover once the allowed error is fixed and the onboarding state is updated", async () => {
@@ -268,7 +268,7 @@ describe("useOnboardingStatePolling", () => {
       expect(result.current.allowedError).toBeInstanceOf(DisconnectedDevice);
       expect(result.current.fatalError).toBeNull();
       expect(result.current.onboardingState).toEqual(anOnboardingState);
-      expect(result.current.deviceIsLocked).toBe(false);
+      expect(result.current.lockedDevice).toBe(false);
 
       await act(async () => {
         jest.advanceTimersByTime(2 * pollingPeriodMs);
@@ -278,7 +278,7 @@ describe("useOnboardingStatePolling", () => {
       expect(result.current.fatalError).toBeNull();
       expect(result.current.allowedError).toBeNull();
       expect(result.current.onboardingState).toEqual(aSecondOnboardingState);
-      expect(result.current.deviceIsLocked).toBe(false);
+      expect(result.current.lockedDevice).toBe(false);
     });
   });
 
@@ -289,23 +289,23 @@ describe("useOnboardingStatePolling", () => {
           {
             onboardingState: { ...anOnboardingState },
             allowedError: null,
-            deviceIsLocked: false,
+            lockedDevice: false,
           },
           {
             onboardingState: null,
             allowedError: new LockedDeviceError("An allowed error"),
-            deviceIsLocked: true,
+            lockedDevice: true,
           },
           {
             onboardingState: null,
             // During the third polling, it gets the same allowed error
             allowedError: new LockedDeviceError("An allowed error"),
-            deviceIsLocked: true,
+            lockedDevice: true,
           },
           {
             onboardingState: { ...aSecondOnboardingState },
             allowedError: null,
-            deviceIsLocked: false,
+            lockedDevice: false,
           }
         ).pipe(
           delayWhen((_, index) => {
@@ -315,7 +315,7 @@ describe("useOnboardingStatePolling", () => {
       );
     });
 
-    it("should update the deviceIsLocked, only update the allowed error returned to the consumer if different than the previous one, update the fatal error to null and keep the previous onboarding state", async () => {
+    it("should update the lockedDevice, only update the allowed error returned to the consumer if different than the previous one, update the fatal error to null and keep the previous onboarding state", async () => {
       const device = aDevice;
 
       const { result } = renderHook(() =>
@@ -330,13 +330,13 @@ describe("useOnboardingStatePolling", () => {
       expect(result.current.fatalError).toBeNull();
       expect(result.current.allowedError).toBeNull();
       expect(result.current.onboardingState).toEqual(anOnboardingState);
-      expect(result.current.deviceIsLocked).toBe(false);
+      expect(result.current.lockedDevice).toBe(false);
 
       await act(async () => {
         jest.advanceTimersByTime(pollingPeriodMs);
       });
 
-      expect(result.current.deviceIsLocked).toBe(true);
+      expect(result.current.lockedDevice).toBe(true);
       expect(result.current.allowedError).toBeInstanceOf(LockedDeviceError);
       expect(result.current.fatalError).toBeNull();
       expect(result.current.onboardingState).toEqual(anOnboardingState);
@@ -348,7 +348,7 @@ describe("useOnboardingStatePolling", () => {
         jest.advanceTimersByTime(pollingPeriodMs);
       });
 
-      expect(result.current.deviceIsLocked).toBe(true);
+      expect(result.current.lockedDevice).toBe(true);
       // It should not have been updated
       // toBe matcher checks referential identity of object instances
       expect(result.current.allowedError).toBe(prevAllowedError);
@@ -370,7 +370,7 @@ describe("useOnboardingStatePolling", () => {
 
       // Allowed error occured
       expect(result.current.allowedError).toBeInstanceOf(LockedDeviceError);
-      expect(result.current.deviceIsLocked).toBe(true);
+      expect(result.current.lockedDevice).toBe(true);
       expect(result.current.fatalError).toBeNull();
       expect(result.current.onboardingState).toEqual(anOnboardingState);
 
@@ -380,7 +380,7 @@ describe("useOnboardingStatePolling", () => {
 
       // Everything is ok on the next run
       expect(result.current.allowedError).toBeNull();
-      expect(result.current.deviceIsLocked).toBe(false);
+      expect(result.current.lockedDevice).toBe(false);
       expect(result.current.onboardingState).toEqual(aSecondOnboardingState);
       expect(result.current.fatalError).toBeNull();
     });
@@ -397,18 +397,18 @@ describe("useOnboardingStatePolling", () => {
           {
             onboardingState: { ...anOnboardingState },
             allowedError: null,
-            deviceIsLocked: false,
+            lockedDevice: false,
           },
           {
             onboardingState: { ...anOnboardingState },
             allowedError: null,
-            deviceIsLocked: false,
+            lockedDevice: false,
           },
           {
             // It should never be reached
             onboardingState: { ...anOnboardingStateThatShouldNeverBeReached },
             allowedError: null,
-            deviceIsLocked: false,
+            lockedDevice: false,
           }
         ).pipe(
           delayWhen((_, index) => {
@@ -440,7 +440,7 @@ describe("useOnboardingStatePolling", () => {
       expect(result.current.fatalError).toBeNull();
       expect(result.current.allowedError).toBeNull();
       expect(result.current.onboardingState).toEqual(anOnboardingState);
-      expect(result.current.deviceIsLocked).toBe(false);
+      expect(result.current.lockedDevice).toBe(false);
 
       await act(async () => {
         jest.advanceTimersByTime(pollingPeriodMs);
@@ -450,7 +450,7 @@ describe("useOnboardingStatePolling", () => {
       expect(result.current.allowedError).toBeNull();
       expect(result.current.fatalError).toBeInstanceOf(Error);
       expect(result.current.onboardingState).toEqual(anOnboardingState);
-      expect(result.current.deviceIsLocked).toBe(false);
+      expect(result.current.lockedDevice).toBe(false);
 
       await act(async () => {
         jest.advanceTimersByTime(pollingPeriodMs);
@@ -462,7 +462,7 @@ describe("useOnboardingStatePolling", () => {
       expect(result.current.onboardingState).not.toEqual(
         anOnboardingStateThatShouldNeverBeReached
       );
-      expect(result.current.deviceIsLocked).toBe(false);
+      expect(result.current.lockedDevice).toBe(false);
     });
   });
 });

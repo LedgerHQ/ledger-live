@@ -131,7 +131,7 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
     latestFirmware,
     error: latestFirmwareGettingError,
     status: latestFirmwareGettingStatus,
-    deviceIsLocked: latestFirmwareGettingDeviceIsLocked,
+    lockedDevice: latestFirmwareGettingLockedDevice,
   } = useGetLatestAvailableFirmware({
     isHookEnabled: firmwareUpdateStatus === "ongoing",
     deviceId: device.deviceId,
@@ -240,7 +240,7 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
         }
 
         // Updates the UI
-        if (latestFirmwareGettingDeviceIsLocked) {
+        if (latestFirmwareGettingLockedDevice) {
           nextDrawerToDisplay = "unlock-needed";
         } else if (
           latestFirmwareGettingStatus === "available-firmware" &&

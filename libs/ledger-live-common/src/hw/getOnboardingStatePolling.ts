@@ -35,7 +35,7 @@ import {
 export type OnboardingStatePollingResult = {
   onboardingState: OnboardingState | null;
   allowedError: Error | null;
-  deviceIsLocked: boolean;
+  lockedDevice: boolean;
 };
 
 export type GetOnboardingStatePollingResult =
@@ -55,7 +55,7 @@ export type GetOnboardingStatePollingArgs = {
  * @returns An Observable that polls the device onboarding state and pushes an object containing:
  * - onboardingState: the device state during the onboarding
  * - allowedError: any error that is allowed and does not stop the polling
- * - deviceIsLocked: a boolean set to true if the device is currently locked, false otherwise
+ * - lockedDevice: a boolean set to true if the device is currently locked, false otherwise
  */
 export const getOnboardingStatePolling = ({
   deviceId,
@@ -99,7 +99,7 @@ export const getOnboardingStatePolling = ({
                 return {
                   onboardingState: null,
                   allowedError: error,
-                  deviceIsLocked: false,
+                  lockedDevice: false,
                 };
               } else {
                 return {
@@ -109,14 +109,14 @@ export const getOnboardingStatePolling = ({
                       error?.name ?? error
                     } ${error?.message}`
                   ),
-                  deviceIsLocked: false,
+                  lockedDevice: false,
                 };
               }
             }
             return {
               onboardingState,
               allowedError: null,
-              deviceIsLocked: false,
+              lockedDevice: false,
             };
           })
         );
@@ -128,7 +128,7 @@ export const getOnboardingStatePolling = ({
             return {
               onboardingState: null,
               allowedError: allowedError,
-              deviceIsLocked: allowedError instanceof LockedDeviceError,
+              lockedDevice: allowedError instanceof LockedDeviceError,
             };
           })
         );

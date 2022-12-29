@@ -29,7 +29,7 @@ describe("useGetLatestAvailableFirmware", () => {
       mockedGetLatestAvailableFirmwareFromDeviceId.mockReturnValue(
         of({
           firmwareUpdateContext: null,
-          deviceIsLocked: false,
+          lockedDevice: false,
           status: "done",
         })
       );
@@ -56,7 +56,7 @@ describe("useGetLatestAvailableFirmware", () => {
       mockedGetLatestAvailableFirmwareFromDeviceId.mockReturnValue(
         of({
           firmwareUpdateContext: aLatestFirmwareContext,
-          deviceIsLocked: false,
+          lockedDevice: false,
           status: "done",
         })
       );
@@ -83,7 +83,7 @@ describe("useGetLatestAvailableFirmware", () => {
       mockedGetLatestAvailableFirmwareFromDeviceId.mockReturnValue(
         of({
           firmwareUpdateContext: null,
-          deviceIsLocked: true,
+          lockedDevice: true,
           status: "started",
         })
       );
@@ -100,7 +100,7 @@ describe("useGetLatestAvailableFirmware", () => {
         jest.advanceTimersByTime(1);
       });
 
-      expect(result.current.deviceIsLocked).toBe(true);
+      expect(result.current.lockedDevice).toBe(true);
       expect(result.current.status).toEqual("checking");
       expect(result.current.error).toBeNull();
       expect(result.current.latestFirmware).toBeNull();

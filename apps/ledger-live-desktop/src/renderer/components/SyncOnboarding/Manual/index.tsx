@@ -203,7 +203,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
     onboardingState: deviceOnboardingState,
     allowedError,
     fatalError,
-    deviceIsLocked: deviceIsLockedDuringPolling,
+    lockedDevice: lockedDeviceDuringPolling,
   } = useOnboardingStatePolling({
     getOnboardingStatePolling: getOnboardingStatePollingCommand,
     device,
@@ -353,13 +353,13 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
             </Flex>
           </Flex>
           <Flex flex={1} justifyContent="center" alignItems="center">
-            {!device || deviceIsLockedDuringPolling ? (
+            {!device || lockedDeviceDuringPolling ? (
               <Animation
                 height="540px"
                 animation={getDeviceAnimation(
                   lastKnownDeviceModelId,
                   theme.theme as "light" | "dark",
-                  deviceIsLockedDuringPolling ? "enterPinCode" : "plugAndPinCode",
+                  lockedDeviceDuringPolling ? "enterPinCode" : "plugAndPinCode",
                 )}
               />
             ) : (

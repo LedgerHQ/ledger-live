@@ -15,7 +15,7 @@ export type GetLatestAvailableFirmwareFromDeviceIdStatus = "started" | "done";
 export type GetLatestAvailableFirmwareFromDeviceIdResult = {
   firmwareUpdateContext: FirmwareUpdateContext | null;
   status: GetLatestAvailableFirmwareFromDeviceIdStatus;
-  deviceIsLocked: boolean;
+  lockedDevice: boolean;
 };
 
 export type GetLatestAvailableFirmwareFromDeviceIdOutput =
@@ -26,7 +26,7 @@ export type GetLatestAvailableFirmwareFromDeviceIdOutput =
  * @param deviceId A device id, or an empty string if device is usb plugged
  * @returns An Observable pushing objects containing:
  * - firmwareUpdateContext: a FirmwareUpdateContext if found, or null or undefined otherwise
- * - deviceIsLocked: a boolean set to true if the device is currently locked, false otherwise
+ * - lockedDevice: a boolean set to true if the device is currently locked, false otherwise
  * - status: to notify the consumer on the state of the request
  */
 export const getLatestAvailableFirmwareFromDeviceId = ({
@@ -38,7 +38,7 @@ export const getLatestAvailableFirmwareFromDeviceId = ({
         mergeMap((deviceInfo) => {
           subscriber.next({
             firmwareUpdateContext: null,
-            deviceIsLocked: false,
+            lockedDevice: false,
             status: "started",
           });
           return from(manager.getLatestFirmwareForDevice(deviceInfo));
@@ -51,7 +51,7 @@ export const getLatestAvailableFirmwareFromDeviceId = ({
             if (e instanceof LockedDeviceError) {
               subscriber.next({
                 firmwareUpdateContext: null,
-                deviceIsLocked: true,
+                lockedDevice: true,
                 status: "started",
               });
               return true;
@@ -66,7 +66,7 @@ export const getLatestAvailableFirmwareFromDeviceId = ({
           subscriber.next({
             firmwareUpdateContext,
             status: "done",
-            deviceIsLocked: false,
+            lockedDevice: false,
           }),
         error: (e) => subscriber.error(e),
         complete: () => subscriber.complete(),

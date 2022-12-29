@@ -27,7 +27,7 @@ export type useGetLatestAvailableFirmwareArgs = {
 export type useGetLatestAvailableFirmwareResult = {
   latestFirmware: FirmwareUpdateContext | null;
   status: FirmwareUpdateGettingStatus;
-  deviceIsLocked: boolean;
+  lockedDevice: boolean;
   error: Error | null;
 };
 
@@ -41,7 +41,7 @@ export type useGetLatestAvailableFirmwareResult = {
  * @returns An object containing:
  * - latestFirmware A FirmwareUpdateContext if found, or null if still processing or no available firmware update
  * - status A FirmwareUpdateGettingStatus to notify consumer on the hook state
- * - deviceIsLocked: a boolean set to true if the device is currently locked, false otherwise
+ * - lockedDevice: a boolean set to true if the device is currently locked, false otherwise
  * - error: any error that occurred during the process, or null
  */
 export const useGetLatestAvailableFirmware = ({
@@ -55,7 +55,7 @@ export const useGetLatestAvailableFirmware = ({
   const [error, setError] = useState<Error | null>(null);
   const [status, setStatus] =
     useState<FirmwareUpdateGettingStatus>("unchecked");
-  const [deviceIsLocked, setDeviceIsLocked] = useState<boolean>(false);
+  const [lockedDevice, setLockedDevice] = useState<boolean>(false);
 
   useEffect(() => {
     if (!isHookEnabled) {
@@ -66,11 +66,11 @@ export const useGetLatestAvailableFirmware = ({
     const sub = getLatestAvailableFirmwareFromDeviceId({ deviceId }).subscribe({
       next: ({
         firmwareUpdateContext,
-        deviceIsLocked,
+        lockedDevice,
         status: getStatus,
       }: GetLatestAvailableFirmwareFromDeviceIdResult) => {
         // A boolean, this will not trigger a rendering if the value is the same
-        setDeviceIsLocked(deviceIsLocked);
+        setLockedDevice(lockedDevice);
 
         if (getStatus === "done") {
           if (!firmwareUpdateContext) {
@@ -96,5 +96,5 @@ export const useGetLatestAvailableFirmware = ({
     };
   }, [deviceId, getLatestAvailableFirmwareFromDeviceId, isHookEnabled]);
 
-  return { latestFirmware, error, status, deviceIsLocked };
+  return { latestFirmware, error, status, lockedDevice };
 };

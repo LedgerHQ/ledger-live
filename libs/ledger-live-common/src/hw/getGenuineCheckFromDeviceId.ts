@@ -13,7 +13,7 @@ export type GetGenuineCheckFromDeviceIdArgs = {
 
 export type GetGenuineCheckFromDeviceIdResult = {
   socketEvent: SocketEvent | null;
-  deviceIsLocked: boolean;
+  lockedDevice: boolean;
 };
 
 export type GetGenuineCheckFromDeviceIdOutput =
@@ -26,7 +26,7 @@ export type GetGenuineCheckFromDeviceIdOutput =
  * @returns An Observable pushing objects containing:
  * - socketEvent: a SocketEvent giving the current status of the genuine check,
  *     null if the genuine check process did not reach any state yet
- * - deviceIsLocked: a boolean set to true if the device is currently locked, false otherwise
+ * - lockedDevice: a boolean set to true if the device is currently locked, false otherwise
  */
 export const getGenuineCheckFromDeviceId = ({
   deviceId,
@@ -38,7 +38,7 @@ export const getGenuineCheckFromDeviceId = ({
     // once the device is unlock, getDeviceInfo should return the device info and
     // the flow will continue. No need to handle a retry strategy
     const lockedDeviceTimeout = setTimeout(() => {
-      subscriber.next({ socketEvent: null, deviceIsLocked: true });
+      subscriber.next({ socketEvent: null, lockedDevice: true });
     }, lockedDeviceTimeoutMs);
 
     // withDevice handles the unsubscribing cleaning when leaving the useEffect
@@ -46,7 +46,7 @@ export const getGenuineCheckFromDeviceId = ({
       from(getDeviceInfo(t)).pipe(
         mergeMap((deviceInfo) => {
           clearTimeout(lockedDeviceTimeout);
-          subscriber.next({ socketEvent: null, deviceIsLocked: false });
+          subscriber.next({ socketEvent: null, lockedDevice: false });
           return genuineCheck(t, deviceInfo);
         })
       )
@@ -59,7 +59,7 @@ export const getGenuineCheckFromDeviceId = ({
             clearTimeout(lockedDeviceTimeout);
 
             if (e instanceof LockedDeviceError) {
-              subscriber.next({ socketEvent: null, deviceIsLocked: true });
+              subscriber.next({ socketEvent: null, lockedDevice: true });
               return true;
             }
 
@@ -69,7 +69,7 @@ export const getGenuineCheckFromDeviceId = ({
       )
       .subscribe({
         next: (socketEvent: SocketEvent) =>
-          subscriber.next({ socketEvent, deviceIsLocked: false }),
+          subscriber.next({ socketEvent, lockedDevice: false }),
         error: (e) => subscriber.error(e),
         complete: () => subscriber.complete(),
       });

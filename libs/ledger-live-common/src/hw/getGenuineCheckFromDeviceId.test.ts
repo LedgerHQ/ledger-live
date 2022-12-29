@@ -88,24 +88,24 @@ describe("getGenuineCheckFromDeviceId", () => {
         }).subscribe({
           next: ({
             socketEvent,
-            deviceIsLocked,
+            lockedDevice,
           }: GetGenuineCheckFromDeviceIdResult) => {
             try {
               switch (step) {
                 case 0:
                   expect(socketEvent).toBeNull();
-                  expect(deviceIsLocked).toBe(true);
+                  expect(lockedDevice).toBe(true);
                   break;
                 case 1:
                   expect(socketEvent).toBeNull();
-                  expect(deviceIsLocked).toBe(false);
+                  expect(lockedDevice).toBe(false);
                   break;
                 case 2:
                   expect(socketEvent).toEqual({
                     type: "device-permission-requested",
                     wording: "",
                   });
-                  expect(deviceIsLocked).toBe(false);
+                  expect(lockedDevice).toBe(false);
                   done();
                   break;
               }
@@ -154,25 +154,25 @@ describe("getGenuineCheckFromDeviceId", () => {
         }).subscribe({
           next: ({
             socketEvent,
-            deviceIsLocked,
+            lockedDevice,
           }: GetGenuineCheckFromDeviceIdResult) => {
             try {
               switch (step) {
                 case 0:
                   expect(socketEvent).toBeNull();
-                  expect(deviceIsLocked).toBe(true);
+                  expect(lockedDevice).toBe(true);
                   break;
                 // A retry happened, this time with an unlocked device
                 case 1:
                   expect(socketEvent).toBeNull();
-                  expect(deviceIsLocked).toBe(false);
+                  expect(lockedDevice).toBe(false);
                   break;
                 case 2:
                   expect(socketEvent).toEqual({
                     type: "device-permission-requested",
                     wording: "",
                   });
-                  expect(deviceIsLocked).toBe(false);
+                  expect(lockedDevice).toBe(false);
                   done();
                   break;
               }
@@ -219,31 +219,31 @@ describe("getGenuineCheckFromDeviceId", () => {
         }).subscribe({
           next: ({
             socketEvent,
-            deviceIsLocked,
+            lockedDevice,
           }: GetGenuineCheckFromDeviceIdResult) => {
             try {
               switch (step) {
                 // No locked device at first
                 case 0:
                   expect(socketEvent).toBeNull();
-                  expect(deviceIsLocked).toBe(false);
+                  expect(lockedDevice).toBe(false);
                   break;
                 // The locked device happens during the genuine check
                 case 1:
                   expect(socketEvent).toBeNull();
-                  expect(deviceIsLocked).toBe(true);
+                  expect(lockedDevice).toBe(true);
                   break;
                 // A retry happened, this time with an unlocked device
                 case 2:
                   expect(socketEvent).toBeNull();
-                  expect(deviceIsLocked).toBe(false);
+                  expect(lockedDevice).toBe(false);
                   break;
                 case 3:
                   expect(socketEvent).toEqual({
                     type: "device-permission-requested",
                     wording: "",
                   });
-                  expect(deviceIsLocked).toBe(false);
+                  expect(lockedDevice).toBe(false);
                   done();
                   break;
               }
