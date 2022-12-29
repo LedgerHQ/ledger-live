@@ -17,7 +17,7 @@ jobs:
         id: dummy
         run: |
           if [ "${{matrix.os}}" == "ubuntu-latest" ]; then
-            exit &
+            exit 1
           fi
           exit 0
       - name: Output
