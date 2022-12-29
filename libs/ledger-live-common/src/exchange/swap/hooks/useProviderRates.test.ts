@@ -346,8 +346,8 @@ describe("useProviderRates", () => {
         message: "",
       }) as Error;
 
-    mockedRates[0].error = swapExchangeRateAmountTooLowError;
-    mockedRates[1].error = swapExchangeRateAmountTooLowOrTwoHighError;
+    mockedRates[0].error = swapExchangeRateAmountTooLowOrTwoHighError;
+    mockedRates[1].error = swapExchangeRateAmountTooLowError;
 
     mockedGetExchangeRates.mockResolvedValue(mockedRates);
     const { result, waitForNextUpdate } = renderHook(useProviderRates, {
