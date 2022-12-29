@@ -29,6 +29,8 @@ import {
 } from "./logic";
 import invariant from "invariant";
 import { CosmosAPI, defaultCosmosAPI } from "./api/Cosmos";
+import * as bech32 from "bech32";
+import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 export class CosmosTransactionStatusManager {
   protected _api: CosmosAPI = defaultCosmosAPI;
@@ -220,7 +222,18 @@ export class CosmosTransactionStatusManager {
     } else if (a.freshAddress === t.recipient) {
       errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
     } else {
-      if (!(await this._api.isValidRecipent(t.recipient))) {
+      let isValid = true;
+      try {
+        bech32.decode(t.recipient);
+      } catch (e) {
+        isValid = false;
+      }
+      isValid =
+        isValid &&
+        t.recipient.startsWith(
+          findCryptoCurrencyById(a.currency.name.toLowerCase())?.id ?? ""
+        );
+      if (!isValid) {
         errors.recipient = new InvalidAddress(undefined, {
           currencyName: a.currency.name,
         });

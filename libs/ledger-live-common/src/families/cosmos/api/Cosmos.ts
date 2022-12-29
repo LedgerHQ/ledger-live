@@ -254,19 +254,6 @@ export class CosmosAPI {
     return [...receive.data.tx_responses, ...send.data.tx_responses];
   };
 
-  isValidRecipent = async (address: string): Promise<boolean> => {
-    try {
-      await network({
-        method: "GET",
-        url: `${this._defaultEndpoint}/cosmos/bank/${this._version}/balances/${address}`,
-      });
-
-      return true;
-    } catch (e) {
-      return false;
-    }
-  };
-
   simulate = async (tx_bytes: Array<any>): Promise<BigNumber> => {
     try {
       const { data } = await network({
