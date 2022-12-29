@@ -42,7 +42,7 @@ export default function PlatformApp({ match, appId: propsAppId, location }: Prop
   const remoteManifest = useRemoteLiveAppManifest(appId);
   const manifest = Object.assign({}, localManifest || remoteManifest);
   if (sufix !== "") {
-    const dappUrl = manifest.params.dappUrl.split("?");
+    const dappUrl = manifest?.params?.dappUrl?.split("?");
     manifest.params.dappUrl =
       dappUrl.length === 1 ? `${dappUrl[0]}${sufix}` : `${dappUrl[0]}${sufix}?${dappUrl[1]}`;
   }
