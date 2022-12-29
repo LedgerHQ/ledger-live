@@ -18,8 +18,19 @@ jobs:
         if: matrix.os != 'ubuntu-latest'
         run: |
           echo "yo"
+      - name: Dummy
+        id: dummy
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          exit 1
+      - name: Dummy
+        id: dummy
+        if: matrix.os != 'ubuntu-latest'
+        run: |
+          echo "yo"
       - name: Output
         id: output
+        if: always()
         run: |
           echo "${{matrix.os}}=${{steps.dummy.outcome}}" >> $GITHUB_OUTPUT
 
