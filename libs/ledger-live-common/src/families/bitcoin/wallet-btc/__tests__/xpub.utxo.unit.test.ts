@@ -89,7 +89,7 @@ describe("Transaction Output script", () => {
     } catch (err) {
       const error = err as Error;
       expect(error.message).toBe(
-        "OP_RETURN transactions cannot be larger than 40 bytes"
+        `OP_RETURN transactions cannot be larger than ${OP_RETURN_DATA_SIZE_LIMIT} bytes`
       );
     }
   });
