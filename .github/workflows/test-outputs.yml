@@ -15,6 +15,7 @@ jobs:
     steps:
       - name: Dummy
         id: dummy
+        if: matrix.os != 'ubuntu-latest'
         run: |
           echo "yo"
       - name: Output
@@ -28,4 +29,4 @@ jobs:
     needs: save-outputs
     steps:
       - name: Print Outputs
-        run: echo ${{ toJSON(needs) }}
+        run: echo "${{ toJSON(needs) }}"
