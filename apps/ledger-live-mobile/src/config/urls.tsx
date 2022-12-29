@@ -62,8 +62,107 @@ export const urls = {
     "https://support.ledger.com/hc/en-us/articles/360033802154?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=ops_details_change",
   delegation:
     "https://www.ledger.com/staking-tezos?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=delegation_tezos",
-  appSupport:
-    "https://support.ledger.com/hc/en-us/articles/360011454079-What-are-apps-and-accounts-?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=appsupport",
+  appSupport: {
+    "Cardano ADA":
+      "https://support.ledger.com/hc/en-us/articles/360020095874-Cardano-ADA-?docs=true",
+    "Eos EOS":
+      "https://support.ledger.com/hc/en-us/articles/360008913653-EOS-EOS-?docs=true",
+    "Avalanche AVAX":
+      "https://support.ledger.com/hc/en-us/articles/4415901099793-Set-up-and-use-Avalanche-Wallet-to-access-your-Ledger-Avalanche-AVAX-account?docs=true",
+    "NEAR NEAR":
+      "https://support.ledger.com/hc/en-us/articles/360020450619-NEAR-NEAR-?docs=true",
+    "Monero XMR":
+      "https://support.ledger.com/hc/en-us/articles/360006352934-Monero-XMR-?docs=true",
+    "Flow FLOW":
+      "https://support.ledger.com/hc/en-us/articles/360017362160-Flow-FLOW-?docs=true",
+    "VeChain VET":
+      "https://support.ledger.com/hc/en-us/articles/360007655934-VeChain-VET-?docs=true",
+    "Filecoin FIL":
+      "https://support.ledger.com/hc/en-us/articles/4402721277329-Filecoin-FIL-?docs=true",
+    "InternetComputer ICP":
+      "https://support.ledger.com/hc/en-us/articles/4412643422481-Internet-Computer-ICP-?docs=true",
+    "IOTA MIOTA":
+      "https://support.ledger.com/hc/en-us/articles/360011633353-IOTA-MIOTA-?docs=true",
+    "NEO NEO":
+      "https://support.ledger.com/hc/en-us/articles/115005530425-Neo-N3-NEO-?docs=true",
+    "Waves WAVES":
+      "https://support.ledger.com/hc/en-us/articles/360008681773-Waves-WAVES-?docs=true",
+    "Stacks STX":
+      "https://support.ledger.com/hc/en-us/articles/4403976798865-Stacks-STX-?docs=true",
+    "Zilliqa ZIL":
+      "https://support.ledger.com/hc/en-us/articles/360036164013-Zilliqa-ZIL-?docs=true",
+    "NEM XEM":
+      "https://support.ledger.com/hc/en-us/articles/360019206520-NEM-XEM-?docs=true",
+    "Ravencoin RVN":
+      "https://support.ledger.com/hc/en-us/articles/360011981839-Ravencoin-RVN-?docs=true",
+    "ICON ICX":
+      "https://support.ledger.com/hc/en-us/articles/360007653614-ICON-ICX-?docs=true",
+    "Moonbeam GLMR":
+      "https://support.ledger.com/hc/en-us/articles/4423995074589-Moonbeam-GLMR-?docs=true",
+    "Lisk LSK":
+      "https://support.ledger.com/hc/en-us/articles/360008701373-Lisk-LSK-?docs=true",
+    "Nervos CKB":
+      "https://support.ledger.com/hc/en-us/articles/4407107373329-Nervos-CKB-?docs=true",
+    "EnergyWebChain EWT":
+      "https://support.ledger.com/hc/en-us/articles/360013415519-EnergyWebChain-EWT-?docs=true",
+    "Moonriver MOVR":
+      "https://support.ledger.com/hc/en-us/articles/4411082889617-Moonriver-MOVR-?docs=true",
+    "Ark ARK":
+      "https://support.ledger.com/hc/en-us/articles/115005174589-Ark-ARK-?docs=true",
+    "ThunderCore TT":
+      "https://support.ledger.com/hc/en-us/articles/360035661854-ThunderCore-TT-?docs=true",
+    "Wanchain WAN":
+      "https://support.ledger.com/hc/en-us/articles/360007674793-Wanchain-WAN-?docs=true",
+    "Elastos ELA":
+      "https://support.ledger.com/hc/en-us/articles/360016225860-Elastos-ELA-?docs=true",
+    "Aeternity AE":
+      "https://support.ledger.com/hc/en-us/articles/360013043413-Aeternity-AE-?docs=true",
+    "Groestlcoin GRS":
+      "https://support.ledger.com/hc/en-us/articles/360016827214-Groestlcoin-GRS-?docs=true",
+    "Mix MIX":
+      "https://support.ledger.com/hc/en-us/articles/360011558494-MIX-Blockchain-MIX-?docs=true",
+    "Aion AION":
+      "https://support.ledger.com/hc/en-us/articles/360008599834-Aion-AION-?docs=true",
+    "Nimiq NIM":
+      "https://support.ledger.com/hc/en-us/articles/360005288614-Nimiq-NIM-?docs=true",
+    "QRL QRL":
+      "https://support.ledger.com/hc/en-us/articles/360019184453-Quantum-Resistant-Ledger-QRL-?docs=true",
+    "GoChain GO":
+      "https://support.ledger.com/hc/en-us/articles/360009766653-GoChain-GO-?docs=true",
+    "Shyft SHFT":
+      "https://support.ledger.com/hc/en-us/articles/4415014434065-Shyft-SHFT-?docs=true",
+    "Callisto CLO":
+      "https://support.ledger.com/hc/en-us/articles/360009612294-Callisto-CLO-?docs=true",
+    "Particl PART":
+      "https://support.ledger.com/hc/en-us/articles/360007687153-Particl-PART-?docs=true",
+    "Bitcoin Private BTCP":
+      "https://support.ledger.com/hc/en-us/articles/360003294734-Bitcoin-Private-BTCP-?docs=true",
+    "Factom FCT":
+      "https://support.ledger.com/hc/en-us/articles/360011611294-Factom-FCT-?docs=true",
+    "GameCredits GAME":
+      "https://support.ledger.com/hc/en-us/articles/360011609074-GameCredits-GAME-?docs=true",
+    "Ubiq UBQ":
+      "https://support.ledger.com/hc/en-us/articles/115005459725-Ubiq-UBQ-?docs=true",
+    "HPB HPB":
+      "https://support.ledger.com/hc/en-us/articles/360022262254-High-Performance-Blockchain-HPB-?docs=true",
+    "Hycon HYC":
+      "https://support.ledger.com/hc/en-us/articles/360008545974-Hycon-HYC-?docs=true",
+    "ZClassic ZCL":
+      "https://support.ledger.com/hc/en-us/articles/360013044913-ZClassic-ZCL-?docs=true",
+    "Expanse EXP":
+      "https://support.ledger.com/hc/en-us/articles/115005458085-Expanse-EXP-?docs=true",
+    "EtherGem EGM":
+      "https://support.ledger.com/hc/en-us/articles/360009611074-EtherGem-EGEM-?docs=true",
+    "FIC FIC":
+      "https://support.ledger.com/hc/en-us/articles/360008798573-FIC-Network-eFIC-?docs=true",
+    "Akroma AKA":
+      "https://support.ledger.com/hc/en-us/articles/360008674094-Akroma-AKA-?docs=true",
+    "Songbird SGB":
+      "https://support.ledger.com/hc/en-us/articles/4406759369489-Songbird-SGB-?docs=true",
+    "Ether-1 ETHO":
+      "https://support.ledger.com/hc/en-us/articles/360009720933-Ether-1-ETHO-?docs=true",
+    default: "https://support.ledger.com/hc/en-us/sections/4404369637521-Crypto-assets?docs=true",
+  },
   goToManager:
     "https://support.ledger.com/hc/en-us/articles/4404382258961-Install-uninstall-and-update-apps?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=gotomanager",
   addAccount:
