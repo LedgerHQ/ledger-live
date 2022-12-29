@@ -15,19 +15,11 @@ jobs:
     steps:
       - name: Dummy
         id: dummy
-        if: matrix.os != 'ubuntu-latest'
         run: |
-          echo "yo"
-      - name: Dummy
-        id: dummy
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          exit 1
-      - name: Dummy
-        id: dummy
-        if: matrix.os != 'ubuntu-latest'
-        run: |
-          echo "yo"
+          if [ "${{matrix.os}}" == "ubuntu-latest" ]; then
+            exit &
+          fi
+          exit 0
       - name: Output
         id: output
         if: always()
