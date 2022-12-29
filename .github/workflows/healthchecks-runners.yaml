@@ -1,0 +1,388 @@
+name: "CI runners healthchecks"
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */6 * * *"
+
+jobs:
+  start-runner:
+    name: Start self-hosted EC2 runner
+    runs-on: [ledger-live, linux]
+    outputs:
+      label: ${{ steps.start-ec2-linux-runner.outputs.label }}
+      ec2-instance-id: ${{ steps.start-ec2-linux-runner.outputs.ec2-instance-id }}
+    steps:
+      - name: Start EC2 Linux Runner
+        id: start-ec2-linux-runner
+        uses: LedgerHQ/actions/ec2-linux-runner@main
+        with:
+          mode: start
+          github-token: ${{ secrets.CI_BOT_TOKEN }}
+          project: 2049
+          aws-nfs-logging: true
+          ami-name-filter: ledger-live-runner
+          instance-volume-size: 30
+          instance-type: c5.4xlarge
+
+  stop-runner:
+    name: Stop self-hosted EC2 runner
+    if: ${{ always() && needs.start-runner.result == 'success' }}
+    needs: [start-runner, checks-linux]
+    runs-on: [ledger-live, linux]
+    steps:
+      - name: Stop EC2 Linux Runner
+        if: ${{ always() && needs.start-runner.result == 'success' }}
+        uses: LedgerHQ/actions/ec2-linux-runner@main
+        with:
+          mode: stop
+          github-token: ${{ secrets.CI_BOT_TOKEN }}
+          label: ${{ needs.start-runner.outputs.label }}
+          ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
+
+  checks-linux:
+    name: "CI runners Healthchecks (Linux)"
+    needs: [start-runner]
+    runs-on: ${{ needs.start-runner.outputs.label }}
+    outputs:
+      check-java: ${{ steps.check-java.outputs.result }}
+      check-node: ${{ steps.check-node.outputs.result }}
+      check-pnpm: ${{ steps.check-pnpm.outputs.result }}
+      check-python: ${{ steps.check-python.outputs.result }}
+      check-ruby: ${{ steps.check-ruby.outputs.result }}
+      check-android: ${{ steps.check-android.outputs.result }}
+      check-xvfb: ${{ steps.check-xvfb.outputs.result }}
+      java-version: ${{ steps.check-java.outputs.version }}
+      node-version: ${{ steps.check-node.outputs.version }}
+      pnpm-version: ${{ steps.check-pnpm.outputs.version }}
+      python-version: ${{ steps.check-python.outputs.version }}
+      ruby-version: ${{ steps.check-ruby.outputs.version }}
+      android-version: ${{ steps.check-android.outputs.version }}
+      xvfb-version: ${{ steps.check-xvfb.outputs.version }}
+    steps:
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "3.x"
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+          dest: ${{ runner.temp }}/setup-pnpm
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1.2
+        env:
+          ImageOS: ubuntu20
+      - uses: actions/setup-java@v3
+        with:
+          distribution: "zulu" # See 'Supported distributions' for available options
+          java-version: "11"
+      - name: setup Android SDK
+        uses: android-actions/setup-android@v2.0.6
+      - name: check java
+        id: check-java
+        run: |
+          if [[ $(java --version) ]]; then
+            result=ok
+          else
+            result=ko
+          fi
+          version=$(java --version | head -1 | awk '{ print $2 }')
+          echo "result=$result" >> $GITHUB_OUTPUT
+          echo "version=$version" >> $GITHUB_OUTPUT
+      - name: check pnpm
+        id: check-pnpm
+        run: |
+          if [[ $(pnpm --version) ]]; then
+            result=ok
+          else
+            result=ko
+          fi
+          version=$(pnpm --version)
+          echo "result=$result" >> $GITHUB_OUTPUT
+          echo "version=$version" >> $GITHUB_OUTPUT
+      - name: check node version
+        id: check-node
+        run: |
+          if [[ "$(node --version)" == *"v16."* ]]; then
+            result=ok
+          else
+            result=ko
+          fi
+          version=$(node --version)
+          echo "result=$result" >> $GITHUB_OUTPUT
+          echo "version=${version//v}" >> $GITHUB_OUTPUT
+      - name: check python
+        id: check-python
+        run: |
+          if [[ "$(python3 --version)" == *"3."* ]]; then
+            result=ok
+          else
+            result=ko
+          fi
+          version=$(python3 --version)
+          version=${version//Python }
+          echo "result=$result" >> $GITHUB_OUTPUT
+          echo "version=$version" >> $GITHUB_OUTPUT
+      - name: check ruby
+        id: check-ruby
+        run: |
+          if [[ "$(ruby --copyright)" == *"ruby - Copyright (C)"* ]]; then
+            result=ok
+          else
+            result=ko
+          fi
+          version=$(ruby --version | awk '{ print $2 }')
+          echo "result=$result" >> $GITHUB_OUTPUT
+          echo "version=$version" >> $GITHUB_OUTPUT
+      - name: check android
+        id: check-android
+        run: |
+          if [[ $(${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --version) ]]; then
+            result=ok
+          else
+            result=ko
+          fi
+          version=$(${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --version)
+          echo "result=$result" >> $GITHUB_OUTPUT
+          echo "version=$version" >> $GITHUB_OUTPUT
+      - name: check xvfb
+        id: check-xvfb
+        run: |
+          if [[ "$(xvfb-run echo "dummy test")" == "dummy test" ]]; then
+            result=ok
+          else
+            result=ko
+          fi
+          echo "result=$result" >> $GITHUB_OUTPUT
+          echo "version=N/A" >> $GITHUB_OUTPUT
+  checks-windows:
+    runs-on: [ledger-live, windows]
+    outputs:
+      check-git: ${{ steps.check-git.outputs.result }}
+      check-node: ${{ steps.check-node.outputs.result }}
+      check-pnpm: ${{ steps.check-pnpm.outputs.result }}
+      git-version: ${{ steps.check-git.outputs.version }}
+      node-version: ${{ steps.check-node.outputs.version }}
+      pnpm-version: ${{ steps.check-pnpm.outputs.version }}
+    steps:
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+          dest: ${{ runner.temp }}/setup-pnpm
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+      - name: check git
+        id: check-git
+        shell: bash
+        run: |
+          if [[ $(git --version) ]]; then
+            result=ok
+          else
+            result=ko
+          fi
+          version=$(git --version | awk '{ print $3 }')
+          echo "result=$result" >> $GITHUB_OUTPUT
+          echo "version=$version" >> $GITHUB_OUTPUT
+      - name: check pnpm
+        id: check-pnpm
+        shell: bash
+        run: |
+          if [[ $(pnpm --version) ]]; then
+            result=ok
+          else
+            result=ko
+          fi
+          version=$(pnpm --version)
+          echo "result=$result" >> $GITHUB_OUTPUT
+          echo "version=$version" >> $GITHUB_OUTPUT
+      - name: check node version
+        id: check-node
+        shell: bash
+        run: |
+          if [[ "$(node --version)" == *"v16."* ]]; then
+            result=ok
+          else
+            result=ko
+          fi
+          version=$(node --version)
+          echo "result=$result" >> $GITHUB_OUTPUT
+          echo "version=${version//v}" >> $GITHUB_OUTPUT
+
+  checks-macos:
+    runs-on: [ledger-live, macos]
+    outputs:
+      check-node: ${{ steps.check-node.outputs.result }}
+      check-pnpm: ${{ steps.check-pnpm.outputs.result }}
+      check-ruby: ${{ steps.check-ruby.outputs.result }}
+      node-version: ${{ steps.check-node.outputs.version }}
+      pnpm-version: ${{ steps.check-pnpm.outputs.version }}
+      ruby-version: ${{ steps.check-ruby.outputs.version }}
+    steps:
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+          dest: ${{ runner.temp }}/setup-pnpm
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1.2
+      - name: check pnpm
+        id: check-pnpm
+        shell: bash
+        run: |
+          if [[ $(pnpm --version) ]]; then
+            result=ok
+          else
+            result=ko
+          fi
+          version=$(pnpm --version)
+          echo "result=$result" >> $GITHUB_OUTPUT
+          echo "version=$version" >> $GITHUB_OUTPUT
+      - name: check node version
+        id: check-node
+        shell: bash
+        run: |
+          if [[ "$(node --version)" == *"v16."* ]]; then
+            result=ok
+          else
+            result=ko
+          fi
+          version=$(node --version)
+          echo "result=$result" >> $GITHUB_OUTPUT
+          echo "version=${version//v}" >> $GITHUB_OUTPUT
+      - name: check ruby
+        id: check-ruby
+        run: |
+          if [[ "$(ruby --copyright)" == *"ruby - Copyright (C)"* ]]; then
+            result=ok
+          else
+            result=ko
+          fi
+          version=$(ruby --version | awk '{ print $2 }')
+          echo "result=$result" >> $GITHUB_OUTPUT
+          echo "version=$version" >> $GITHUB_OUTPUT
+  reports:
+    needs: [checks-linux, checks-windows, checks-macos]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: format message
+        uses: actions/github-script@v6
+        if: always()
+        with:
+          script: |
+            const fs = require("fs");
+            const linuxJava = "${{ needs.checks-linux.outputs.check-java }}";
+            const linuxNode = "${{ needs.checks-linux.outputs.check-node }}";
+            const linuxPnpm = "${{ needs.checks-linux.outputs.check-pnpm }}";
+            const linuxPython = "${{ needs.checks-linux.outputs.check-python }}";
+            const linuxRuby = "${{ needs.checks-linux.outputs.check-ruby }}";
+            const linuxAndroid = "${{ needs.checks-linux.outputs.check-android }}";
+            const linuxXvfb = "${{ needs.checks-linux.outputs.check-xvfb }}";
+            const winGit = "${{ needs.checks-windows.outputs.check-git }}";
+            const winNode = "${{ needs.checks-windows.outputs.check-node }}";
+            const winPnpm = "${{ needs.checks-windows.outputs.check-pnpm }}";
+            const macNode = "${{ needs.checks-macos.outputs.check-node }}";
+            const macPnpm = "${{ needs.checks-macos.outputs.check-pnpm }}";
+            const macRuby = "${{ needs.checks-macos.outputs.check-ruby }}";
+            const result = {
+              "text": "scheduled healthechks for ledger live CI runners",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Scheduled healthechks for ledger live CI runners",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": `
+                    Those CI runners Healthchecks will install major software dependencies, and check that every one can be executed without hiccups. If one software fails to install, or a binary cannot be executed, the test will result with a red cross, pinning which dependency has failed.
+                    
+                    Legend :
+
+                    :heavy_check_mark: : The software has been installed and can be executed successfuly
+
+                    :x: The software cannot be executed ; meaning that there is probably an issue with how the runner has been configured.
+                    `
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": `
+                    linux
+                    | java | node | pnpm | python | ruby | android | xvfb |
+                    | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
+                    | ${ linuxJava ==="ok"?":heavy_check_mark:":":x:"} | ${ linuxNode ==="ok"?":heavy_check_mark:":":x:"} | ${ linuxPnpm ==="ok"?":heavy_check_mark:":":x:"} | ${ linuxPython ==="ok"?":heavy_check_mark:":":x:"} | ${ linuxRuby ==="ok"?":heavy_check_mark:":":x:"} | ${ linuxAndroid ==="ok"?":heavy_check_mark:":":x:"} | ${ linuxXvfb ==="ok"?":heavy_check_mark:":":x:"} |
+                    | ${{ needs.checks-linux.outputs.java-version }} | ${{ needs.checks-linux.outputs.node-version }} | ${{ needs.checks-linux.outputs.pnpm-version }} | ${{ needs.checks-linux.outputs.python-version }} | ${{ needs.checks-linux.outputs.ruby-version }} | ${{ needs.checks-linux.outputs.android-version }} | ${{ needs.checks-linux.outputs.xvfb-version }} |
+                    `
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": `
+                    windows
+                    | git | node | pnpm |
+                    | :--: | :--: | :--: |
+                    | ${ winGit ==="ok"?":heavy_check_mark:":":x:"} | ${ winNode ==="ok"?":heavy_check_mark:":":x:"} | ${ winPnpm ==="ok"?":heavy_check_mark:":":x:"} |
+                    | ${{ needs.checks-windows.outputs.git-version }} | ${{ needs.checks-windows.outputs.node-version }} | ${{ needs.checks-windows.outputs.pnpm-version }} |
+                    `
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": `
+                    macos
+                    | node | pnpm | ruby |
+                    | :--: | :--: | :--: |
+                    | ${ macNode ==="ok"?":heavy_check_mark:":":x:"} | ${ macPnpm ==="ok"?":heavy_check_mark:":":x:"} | ${ macRuby ==="ok"?":heavy_check_mark:":":x:"} |
+                    | ${{ needs.checks-macos.outputs.node-version }} | ${{ needs.checks-macos.outputs.pnpm-version }} | ${{ needs.checks-macos.outputs.ruby-version }} |
+                    `
+                  }
+                }
+              ]
+            };
+            fs.writeFileSync(`./payload-slack-content.json`, JSON.stringify(result, null, 2));
+      - name: upload message
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: payload-slack-content.json
+          path: ${{ github.workspace }}/payload-slack-content.json
+      - name: post to a Slack channel
+        id: slack
+        uses: slackapi/slack-github-action@v1.21.0
+        if: failure()
+        with:
+          channel-id: "C04GE8AEN3H"
+          payload-file-path: "./payload-slack-content.json"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
