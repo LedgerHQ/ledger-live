@@ -9,9 +9,9 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ubuntu-latest
     outputs:
-      linux: ${{ steps.output.dummy.ubuntu-latest }}
-      windows: ${{ steps.output.dummy.windows-latest }}
-      mac: ${{ steps.output.dummy.macos-latest }}
+      linux: ${{ steps.output.outputs.ubuntu-latest }}
+      windows: ${{ steps.output.outputs.windows-latest }}
+      mac: ${{ steps.output.outputs.macos-latest }}
     steps:
       - name: Dummy
         id: dummy
@@ -28,6 +28,4 @@ jobs:
     needs: save-outputs
     steps:
       - name: Print Outputs
-        env:
-          NEEDS: ${{ toJSON(needs) }}
-        run: echo "$NEEDS"
+        run: echo ${{ toJSON(needs) }}
