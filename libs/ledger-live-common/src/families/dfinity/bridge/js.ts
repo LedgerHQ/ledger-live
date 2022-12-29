@@ -1,7 +1,7 @@
 import { currencyBridge } from "./currency";
-// import { accountBridge } from "./account";
+import { accountBridge } from "./account";
 
 export default {
   currencyBridge,
-  //   accountBridge,
+  accountBridge,
 };

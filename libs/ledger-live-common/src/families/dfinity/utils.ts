@@ -43,3 +43,7 @@ export const calculateEstimatedFees = (
 export const normalizeEpochTimestamp = (timestamp: number): number => {
   return timestamp / 1e3;
 };
+
+export const validateMemo = (_memo: BigInt) => {
+  return {isValid: true} // TODO: Implement validation
+}

@@ -57,6 +57,7 @@ export const errorInterceptor = (error: AxiosError<any>) => {
     const { data, status } = error.response;
     let msg;
     try {
+      log("warn", "Data: " + String(data));
       if (data && typeof data === "string") {
         msg = extractErrorMessage(data);
       } else if (data && typeof data === "object") {

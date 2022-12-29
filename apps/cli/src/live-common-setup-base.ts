@@ -59,6 +59,7 @@ setSupportedCurrencies([
   "songbird",
   "flare",
   "near",
+  "dfinity",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);
@@ -72,7 +73,10 @@ const { format } = winston;
 const { combine, json } = format;
 const winstonFormatJSON = json();
 const winstonFormatConsole = combine(
-  format(({ type, message, id: _id, date: _date, ...rest }) => ({ ...rest, message: `${type}: ${message}` }) )(),
+  format(({ type, message, id: _id, date: _date, ...rest }) => ({
+    ...rest,
+    message: `${type}: ${message}`,
+  }))(),
   format.colorize(),
   simple()
 );
