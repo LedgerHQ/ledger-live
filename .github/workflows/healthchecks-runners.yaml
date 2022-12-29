@@ -4,6 +4,11 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "0 */6 * * *"
+  pull_request:
+    types:
+      - opened
+    branches:
+      - 'support/healthchecks-runners'
 
 jobs:
   start-runner:
