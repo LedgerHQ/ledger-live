@@ -3,10 +3,8 @@ import {
   RecordStore,
 } from "@ledgerhq/hw-transport-mocker";
 import { toArray } from "rxjs/operators";
-import scenarios from "./test-helpers/scenarios";
 import WS from "isomorphic-ws";
-
-// import { setEnv } from "@ledgerhq/live-common/env";
+import scenarios from "./test-helpers/scenarios";
 import { createDeviceSocket } from "../../api/socket";
 /**
  * Both ends of the exchange are mocked in this test file and we are merely testing
@@ -51,7 +49,9 @@ describe("Scriptrunner logic", () => {
             maybeCallback({ data: payload });
           }
 
-          // Check if there's a next event, and if it's a onclose emit it.
+          // Check if the next event should be emitted straight away instead of as
+          // a response to a message. This is used to trigger errors and closing the
+          // connection from the scriptrunner side.
           const nextEvent = events[msgIndex + 1];
           if (nextEvent) {
             const [callback, payload, eager] = nextEvent;

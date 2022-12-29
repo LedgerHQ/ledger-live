@@ -37,7 +37,7 @@ export const createDeviceSocket = (
     let unsubscribed = false; // subscriber wants to stops everything
     let correctlyFinished = false; // the socket logic reach a normal termination
     let inBulkMode = false; // we have an array of apdus to exchange, without the need of more WS messages.
-    let allowSecureChannelTimeout: NodeJS.Timeout | null | number = null; // track if there is an ongoing allow manager step
+    let allowSecureChannelTimeout: NodeJS.Timeout | null = null; // allows to delay/cancel the user confirmation event
     const ws = new WS(url);
 
     ws.onopen = () => {
@@ -109,7 +109,7 @@ export const createDeviceSocket = (
             const r = await transport.exchange(apdu);
 
             if (allowSecureChannelTimeout) {
-              clearTimeout(allowSecureChannelTimeout as number);
+              clearTimeout(allowSecureChannelTimeout);
               allowSecureChannelTimeout = null;
             }
 
