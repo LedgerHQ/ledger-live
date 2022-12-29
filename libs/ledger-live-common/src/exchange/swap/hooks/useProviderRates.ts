@@ -155,7 +155,6 @@ export const useProviderRates = ({
             } else if (
               rate.error?.name === "SwapExchangeRateAmountTooLowOrTooHigh"
             ) {
-              debugger
               arr.splice(1);
               rateError = rate.error;
             }
