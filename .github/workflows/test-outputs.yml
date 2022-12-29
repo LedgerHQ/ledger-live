@@ -8,6 +8,10 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ubuntu-latest
+    outputs:
+      linux: ${{ steps.output.dummy.ubuntu-latest }}
+      windows: ${{ steps.output.dummy.windows-latest }}
+      mac: ${{ steps.output.dummy.macos-latest }}
     steps:
       - name: Dummy
         id: dummy
