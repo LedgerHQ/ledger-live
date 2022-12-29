@@ -1,16 +1,14 @@
 import { groupedFeatures } from "@ledgerhq/live-common/featureFlags/groupedFeatures";
 import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/provider";
-import { Divider, Flex, Link, Tag, Box, Switch, Text } from "@ledgerhq/react-ui";
+import { Flex, Link, Tag, Box, Switch, Text } from "@ledgerhq/react-ui";
 import { FeatureId } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import FeatureFlagDetails from "./FeatureFlagDetails";
 import { withV2StyleProvider } from "~/renderer/styles/StyleProvider";
 import ButtonV2 from "~/renderer/components/Button";
-import SwitchV2 from "~/renderer/components/Switch";
 
 const OldButton = withV2StyleProvider(ButtonV2);
-const Switch2 = withV2StyleProvider(SwitchV2);
 
 type Props = {
   groupName: string;
@@ -28,13 +26,12 @@ const GroupedFeatures = ({ groupName, focused, setFocusedGroupName, isLast }: Pr
 
   const flagsList = useMemo(
     () =>
-      featureIds.map((flagName, index, arr) => (
+      featureIds.map(flagName => (
         <FeatureFlagDetails
           key={flagName}
           focused={focusedName === flagName}
           flagName={flagName as FeatureId}
           setFocusedName={setFocusedName}
-          //isLast={index === arr.length - 1}
         />
       )),
     [featureIds, focusedName],
@@ -99,7 +96,7 @@ const GroupedFeatures = ({ groupName, focused, setFocusedGroupName, isLast }: Pr
         <Flex pl={6} flexDirection="column">
           {flagsList}
         </Flex>
-      ) : null}{" "}
+      ) : null}
     </>
   );
 };
