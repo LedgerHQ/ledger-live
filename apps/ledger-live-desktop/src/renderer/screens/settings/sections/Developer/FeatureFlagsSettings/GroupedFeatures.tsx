@@ -14,10 +14,9 @@ type Props = {
   groupName: string;
   focused: boolean;
   setFocusedGroupName: (name: string | undefined) => void;
-  isLast: boolean;
 };
 
-const GroupedFeatures = ({ groupName, focused, setFocusedGroupName, isLast }: Props) => {
+const GroupedFeatures = ({ groupName, focused, setFocusedGroupName }: Props) => {
   const [focusedName, setFocusedName] = useState<string | undefined>();
   const { featureIds } = groupedFeatures[groupName];
   const { t } = useTranslation();

@@ -122,13 +122,12 @@ export const FeatureFlagContent = withV3StyleProvider((props: { visible?: boolea
     () =>
       filteredGroups
         .sort()
-        .map((groupName, index, arr) => (
+        .map(groupName => (
           <GroupedFeatures
             key={groupName}
             groupName={groupName}
             focused={focusedGroupName === groupName}
             setFocusedGroupName={setFocusedGroupName}
-            isLast={index === arr.length - 1}
           />
         )),
     [filteredGroups, focusedGroupName],
@@ -179,6 +178,7 @@ export const FeatureFlagContent = withV3StyleProvider((props: { visible?: boolea
             />
           </Flex>
           <Button
+            width={250}
             mt={3}
             variant="color"
             onClick={resetFeatures}
