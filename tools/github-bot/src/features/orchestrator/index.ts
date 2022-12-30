@@ -1,3 +1,5 @@
+import fs from "fs/promises";
+import path from "path";
 import { Probot } from "probot";
 import { GATE_CHECK_RUN_NAME, RUNNERS, WORKFLOWS } from "./const";
 import {
@@ -242,13 +244,28 @@ export function orchestrator(app: Probot) {
 
       const checkRun = checkRuns.data.check_runs[0];
       const output = getGenericOutput(payload.workflow_run.conclusion, summary);
+
+      const tipsFile = workflowFile.replace(".yml", ".md");
+      const p = path.join(__dirname, "..", "..", "..", "tips", tipsFile);
+      let tips = "";
+
+      try {
+        const res = await fs.readFile(p, "utf-8");
+        tips = res;
+      } catch (error) {
+        // ignore error, file is not found
+      }
+
       await octokit.checks.update({
         owner,
         repo,
         check_run_id: checkRun.id,
         status: "completed",
         conclusion: payload.workflow_run.conclusion,
-        output,
+        output: {
+          ...output,
+          text: tips,
+        },
         completed_at: new Date().toISOString(),
         actions,
       });
