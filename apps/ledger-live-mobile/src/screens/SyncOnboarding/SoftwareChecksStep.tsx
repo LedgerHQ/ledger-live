@@ -351,7 +351,21 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
               currentDisplayedDrawer === "unlock-needed" &&
               nextDrawerToDisplay === "unlock-needed"
             }
-            onClose={() => setCurrentDisplayedDrawer(nextDrawerToDisplay)}
+            onClose={() => {
+              // Closing because the condition to be opened are not true anymore
+              if (nextDrawerToDisplay !== "unlock-needed") {
+                setCurrentDisplayedDrawer(nextDrawerToDisplay);
+              }
+              // Closing because the user pressed on close button, and the genuine check is ongoing
+              else if (genuineCheckStatus === "ongoing") {
+                // Fails the genuine check entirely
+                setGenuineCheckStatus("failed");
+              }
+              // Closing because the user pressed on close button, and the firmware check is ongoing
+              else if (firmwareUpdateStatus === "ongoing") {
+                setFirmwareUpdateStatus("failed");
+              }
+            }}
             device={device}
           />
           <AllowManagerDrawer
