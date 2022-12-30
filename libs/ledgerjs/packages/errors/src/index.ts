@@ -323,6 +323,7 @@ export const StatusCodes = {
   SECURITY_STATUS_NOT_SATISFIED: 0x6982,
   TECHNICAL_PROBLEM: 0x6f00,
   UNKNOWN_APDU: 0x6d02,
+  USER_REFUSED_ON_DEVICE: 0x5501,
 };
 
 export function getAltStatusMessage(code: number): string | undefined | null {
