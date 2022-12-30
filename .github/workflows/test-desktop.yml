@@ -333,7 +333,8 @@ jobs:
 
             const output = {
               summary,
-              actions: playwrightSuccess ? [] : [{
+              // actions: playwrightSuccess ? [] : [{
+              actions: [{
                 // 20 chars max
                 label: "Regen. Screenshots",
                 // 20 chars max

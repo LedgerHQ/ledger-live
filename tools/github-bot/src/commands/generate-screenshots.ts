@@ -25,7 +25,8 @@ export function generateScreenshots(app: Probot) {
     return context.octokit.actions.createWorkflowDispatch({
       ...context.repo(),
       workflow_id: "generate-screenshots.yml",
-      ref: "develop",
+      // ref: "develop",
+      ref: "support/granular-ci",
       inputs: {
         number,
         login,
