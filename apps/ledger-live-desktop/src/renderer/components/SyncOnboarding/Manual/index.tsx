@@ -330,6 +330,8 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
     }
   }, [isTroubleshootingDrawerOpen]);
 
+  const displayUnlockOrPlugDeviceAnimation = !device || (lockedDeviceDuringPolling && !stopPolling);
+
   return (
     <Flex bg="background.main" width="100%" height="100%" flexDirection="column">
       <Header onClose={handleClose} onHelp={() => setHelpDrawerOpen(true)} />
@@ -353,7 +355,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
             </Flex>
           </Flex>
           <Flex flex={1} justifyContent="center" alignItems="center">
-            {!device || lockedDeviceDuringPolling ? (
+            {displayUnlockOrPlugDeviceAnimation ? (
               <Animation
                 height="540px"
                 animation={getDeviceAnimation(
