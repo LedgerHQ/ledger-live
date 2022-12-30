@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Box } from "@ledgerhq/react-ui";
 import { useSelector } from "react-redux";
 
@@ -10,7 +10,8 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 
 import SoftwareCheckContent from "./SoftwareCheckContent";
 import GenuineCheckModal from "./GenuineCheckModal";
-import SoftwareCheckAnimationModal from "./SoftwareCheckAnimationModal";
+import SoftwareCheckLockedDeviceModal from "./SoftwareCheckLockedDeviceModal";
+import SoftwareCheckAllowSecureChannelModal from "./SoftwareCheckAllowSecureChannelModal";
 import GenuineCheckCancelModal from "./GenuineCheckCancelModal";
 import GenuineCheckNotGenuineModal from "./GenuineCheckNotGenuineModal";
 import { Status as SoftwareCheckStatus } from "./shared";
@@ -110,13 +111,25 @@ const SoftwareCheckStep = ({ isDisplayed, onComplete, productName, deviceModelId
     }
   }, [isDisplayed, firmwareUpdateStatus, onComplete, status, genuineCheckStatus, latestFirmware]);
 
-  const softwareCheckAnimationModalIsOpen =
-    devicePermissionState === "unlock-needed" ||
-    devicePermissionState === "requested" ||
-    lockedDevice;
+  const lockedDeviceOnClose = useCallback(() => {
+    if (genuineCheckStatus === SoftwareCheckStatus.active) {
+      // Triggers a prompt asking for the user to retry or confirm cancelling
+      setGenuineCheckStatus(SoftwareCheckStatus.cancelled);
+    } else if (firmwareUpdateStatus === SoftwareCheckStatus.active) {
+      // No prompt, directly failed status
+      setFirmwareUpdateStatus(SoftwareCheckStatus.failed);
+    }
+  }, [firmwareUpdateStatus, genuineCheckStatus]);
 
-  const softwareCheckAnimationModalAnimationName =
-    devicePermissionState === "unlock-needed" || lockedDevice ? "enterPinCode" : "allowManager";
+  const lockedDeviceModalIsOpen =
+    (devicePermissionState === "unlock-needed" &&
+      genuineCheckStatus === SoftwareCheckStatus.active) ||
+    (lockedDevice && firmwareUpdateStatus === SoftwareCheckStatus.active);
+
+  const allowSecureChannelIsOpen =
+    devicePermissionState === "requested" &&
+    (genuineCheckStatus === SoftwareCheckStatus.active ||
+      firmwareUpdateStatus === SoftwareCheckStatus.active);
 
   return (
     <Box>
@@ -148,9 +161,14 @@ const SoftwareCheckStep = ({ isDisplayed, onComplete, productName, deviceModelId
           setGenuineCheckStatus(SoftwareCheckStatus.failed);
         }}
       />
-      <SoftwareCheckAnimationModal
-        isOpen={softwareCheckAnimationModalIsOpen}
-        animationName={softwareCheckAnimationModalAnimationName}
+      <SoftwareCheckLockedDeviceModal
+        isOpen={lockedDeviceModalIsOpen}
+        deviceModelId={deviceModelId}
+        productName={productName}
+        onClose={lockedDeviceOnClose}
+      />
+      <SoftwareCheckAllowSecureChannelModal
+        isOpen={allowSecureChannelIsOpen}
         deviceModelId={deviceModelId}
         productName={productName}
       />

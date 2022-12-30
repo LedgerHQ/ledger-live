@@ -1206,13 +1206,11 @@
         "checkDeviceButton": "Run check again",
         "cancelButton": "Maybe later"
       },
-      "softwareCheckAnimationModal": {
-        "allowManager": {
-          "title": "Allow manager on {{deviceName}}"
-        },
-        "enterPinCode": {
-          "title": "Unlock your device"
-        }
+      "softwareCheckAllowSecureChannelModal": {
+        "title": "Allow manager on {{deviceName}}"
+      },
+      "softwareCheckLockedDeviceModal": {
+        "title": "Unlock your device"
       },
       "helpDrawer": {
         "title": "Need some help with your setup manual?",
