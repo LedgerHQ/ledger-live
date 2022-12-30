@@ -12,6 +12,11 @@ on:
       login:
         description: The GitHub username that triggered the workflow
         required: true
+      comment:
+        description: Update the workflow status in a pull request comment
+        type: boolean
+        required: false
+        default: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -21,54 +26,46 @@ env:
   comment_header: <!-- generate-screenshots-report:${{ github.run_id }} -->
 
 jobs:
-  report-start:
-    name: Report start
-    runs-on: "ubuntu-latest"
+  start-runner:
+    name: Start self-hosted EC2 runner
+    runs-on: [ledger-live, linux]
+    outputs:
+      label: ${{ steps.start-ec2-linux-runner.outputs.label }}
+      ec2-instance-id: ${{ steps.start-ec2-linux-runner.outputs.ec2-instance-id }}
     steps:
-      - name: report start
-        uses: actions/github-script@v6
+      - name: Start EC2 Linux Runner
+        id: start-ec2-linux-runner
+        uses: LedgerHQ/actions/ec2-linux-runner@main
         with:
-          result-encoding: string
-          retries: 3
-          script: |
-            const {repo: {owner, repo}, run_id} = context
-            const issue_number = ${{ github.event.inputs.number }}
-            const body = `\
-            ${{ env.comment_header }}
-            @${{ github.event.inputs.login }}
+          mode: start
+          github-token: ${{ secrets.CI_BOT_TOKEN }}
+          project: 2049
+          aws-nfs-logging: true
+          ami-name-filter: ledger-live-runner
+          instance-volume-size: 30
+          instance-type: c5.4xlarge
 
-            [Generating screenshots: workflow started](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-            `
-            await github.rest.issues.createComment({
-              owner,
-              repo,
-              issue_number,
-              body,
-            })
+  stop-runner:
+    name: Stop self-hosted EC2 runner
+    if: ${{ always() && needs.start-runner.result == 'success' }}
+    needs: [start-runner, e2e-tests-linux]
+    runs-on: [ledger-live, linux]
+    steps:
+      - name: Stop EC2 Linux Runner
+        uses: LedgerHQ/actions/ec2-linux-runner@main
+        with:
+          mode: stop
+          github-token: ${{ secrets.CI_BOT_TOKEN }}
+          label: ${{ needs.start-runner.outputs.label }}
+          ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
 
-  pr-is-fork:
-    name: "Check if the PR is a fork"
-    uses: ledgerhq/ledger-live/.github/workflows/pr-is-fork.yml@develop
-    with:
-      non-pr-result: false
-    secrets:
-      token: ${{ secrets.COMMON_READ_ORG }}
-
-  generate-screenshots:
-    needs: [pr-is-fork]
-    if: ${{ !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
+  generate-screenshots-linux:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - ubuntu-latest
-          # - macos-latest
-          - windows-latest
-    runs-on: ${{ matrix.os }}
+    needs: [start-runner]
+    runs-on: ${{ needs.start-runner.outputs.label }}
     steps:
       - uses: actions/checkout@v3
         if: ${{ github.event.inputs.ref != null }}
@@ -99,12 +96,50 @@ jobs:
       - uses: ./tools/actions/composites/update-snapshots-desktop
         id: update-snapshots
         with:
-          os: ${{ matrix.os }}
+          os: ubuntu-latest
           turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
 
-  generate-screenshots-mac-internal:
-    needs: [pr-is-fork]
-    if: ${{ !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
+  # REWORK WINDOWS FOR OWN RUNNERS ? WAITING FOR KUBERNETES SOLUTION FROM INFRA ?
+  generate-screenshots-windows:
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      FORCE_COLOR: 3
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+        if: ${{ github.event.inputs.ref != null }}
+        with:
+          ref: ${{ github.event.inputs.ref }}
+          fetch-depth: 0
+      - uses: actions/checkout@v3
+        if: ${{ !github.event.inputs.ref }}
+        with:
+          fetch-depth: 0
+      - uses: ./tools/actions/composites/setup-test-desktop
+        id: setup-test-desktop
+      - name: Checkout PR
+        if: ${{ github.event.inputs.number != null && github.event.inputs.ref == null }}
+        run: gh pr checkout ${{ github.event.inputs.number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set git user
+        run: |
+          git config user.email "team-live@ledger.fr"
+          git config user.name "Team Live"
+      - name: TurboRepo local caching server
+        id: turborepo-cache-server
+        uses: ./tools/actions/turborepo-gh-cache
+        with:
+          server-token: "yolo"
+          cleanup-cache-folder: "true"
+      - uses: ./tools/actions/composites/update-snapshots-desktop
+        id: update-snapshots
+        with:
+          os: windows-latest
+          turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
+
+  generate-screenshots-mac:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -142,14 +177,41 @@ jobs:
       - uses: ./tools/actions/composites/update-snapshots-desktop
         id: update-snapshots
         with:
-          os: "macos-latest"
+          os: macos-latest
           turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
+
+  report-start:
+    name: Report start
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: report start
+        uses: actions/github-script@v6
+        if: github.event.inputs.comment
+        with:
+          result-encoding: string
+          retries: 3
+          script: |
+            const {repo: {owner, repo}, run_id} = context
+            const issue_number = ${{ github.event.inputs.number }}
+            const body = `\
+            ${{ env.comment_header }}
+            @${{ github.event.inputs.login }}
+
+            [Generating screenshots: workflow started](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            `
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number,
+              body,
+            })
 
   report-end:
     needs:
       [
-        "generate-screenshots",
-        "generate-screenshots-mac-internal",
+        "generate-screenshots-linux",
+        "generate-screenshots-windows",
+        "generate-screenshots-mac",
         "report-start",
       ]
     if: always()
@@ -162,7 +224,8 @@ jobs:
           result-encoding: string
           retries: 3
           script: |
-            const {repo: {owner, repo}} = context
+            const fs = require("fs");
+            const {repo: {owner, repo}} = context;
             const {data: {jobs}} = await github.rest.actions.listJobsForWorkflowRun({
               owner,
               repo,
@@ -185,38 +248,51 @@ jobs:
             ${jobsStatusString}
             `
 
-            const existingComment = await github.paginate(
-              github.rest.issues.listComments,
-              {
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: ${{ github.event.inputs.number }},
-              },
-              (response, done) => {
-                const comments = response.data
-                const existingComment = comments
-                  .find(comment =>
-                    comment.user.login === 'github-actions[bot]' &&
-                    comment.body.startsWith(`${{ env.comment_header }}`));
-                if (existingComment) {
-                  done()
-                  return existingComment;
-                };
-              }
-            ).then(resPerPage => resPerPage.find(res => !!res));
+            const output = {
+              summary: body,
+            };
 
-            if (existingComment) {
-              await github.rest.issues.updateComment({
-                owner,
-                repo,
-                comment_id: existingComment?.id,
-                body
-              });
-            } else {
-              await github.rest.issues.createComment({
-                owner,
-                repo,
-                issue_number: ${{ github.event.inputs.number }},
-                body,
-              })
+            fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
+
+            if(${{ github.event.inputs.comment }}) {
+              const existingComment = await github.paginate(
+                github.rest.issues.listComments,
+                {
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: ${{ github.event.inputs.number }},
+                },
+                (response, done) => {
+                  const comments = response.data
+                  const existingComment = comments
+                    .find(comment =>
+                      comment.user.login === 'github-actions[bot]' &&
+                      comment.body.startsWith(`${{ env.comment_header }}`));
+                  if (existingComment) {
+                    done()
+                    return existingComment;
+                  };
+                }
+              ).then(resPerPage => resPerPage.find(res => !!res));
+
+              if (existingComment) {
+                await github.rest.issues.updateComment({
+                  owner,
+                  repo,
+                  comment_id: existingComment?.id,
+                  body
+                });
+              } else {
+                await github.rest.issues.createComment({
+                  owner,
+                  repo,
+                  issue_number: ${{ github.event.inputs.number }},
+                  body,
+                })
+              }
             }
+      - uses: actions/upload-artifact@v3
+          name: upload summary
+          with:
+            name: summary.json
+            path: ${{ github.workspace }}/summary.json

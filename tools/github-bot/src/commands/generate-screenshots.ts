@@ -1,5 +1,5 @@
 import { Probot, Context } from "probot";
-import { commands } from "./tools";
+import { commands, monitorWorkflow } from "./tools";
 
 // Keep this in sync with the workflow file
 const ACTION_ID = "regen_screenshots";
@@ -15,10 +15,12 @@ export function generateScreenshots(app: Probot) {
     context,
     number,
     login,
+    comment = false,
   }: {
     context: Context;
     number: string;
     login: string;
+    comment?: boolean;
   }) {
     return context.octokit.actions.createWorkflowDispatch({
       ...context.repo(),
@@ -27,6 +29,7 @@ export function generateScreenshots(app: Probot) {
       inputs: {
         number,
         login,
+        comment: comment.toString(),
       },
     });
   }
@@ -46,6 +49,7 @@ export function generateScreenshots(app: Probot) {
       context,
       number: `${data.number}`,
       login: `${payload.comment.user.login}`,
+      comment: true,
     });
   });
 
@@ -64,5 +68,19 @@ export function generateScreenshots(app: Probot) {
       number: `${number}`,
       login,
     });
+  });
+
+  monitorWorkflow(app, {
+    file: "generate-screenshots.yml",
+    checkRunName: "@Desktop • Generate Screenshots",
+    description:
+      "Regenerates playwright screenshots for the Live Desktop app and commit the changes.",
+    summaryFile: "summary.json",
+    getInputs: (payload: any) => {
+      return {
+        sha: payload.workflow_run.head_sha,
+        ref: payload.workflow_run.head_branch,
+      };
+    },
   });
 }

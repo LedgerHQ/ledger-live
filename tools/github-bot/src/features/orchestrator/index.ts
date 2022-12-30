@@ -3,14 +3,13 @@ import path from "path";
 import { Probot } from "probot";
 import { GATE_CHECK_RUN_NAME, RUNNERS, WORKFLOWS } from "./const";
 import {
-  createRunByName,
   downloadArtifact,
   extractWorkflowFile,
   getCheckRunByName,
   getGenericOutput,
-  prIsFork,
-  updateGateCheckRun,
-} from "./tools";
+  createRunByName,
+} from "../../tools";
+import { prIsFork, updateGateCheckRun } from "./tools";
 
 /**
  * Orchestrates workflows.
