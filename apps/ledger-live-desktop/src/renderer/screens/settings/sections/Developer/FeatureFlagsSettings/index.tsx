@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useCallback, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import ButtonV2 from "~/renderer/components/Button";
 import Button from "~/renderer/components/ButtonV3";
 import { useTranslation } from "react-i18next";
@@ -9,7 +10,7 @@ import {
   useFeatureFlags,
   useHasLocallyOverriddenFeatureFlags,
 } from "@ledgerhq/live-common/featureFlags/index";
-import { Flex, SearchInput, Alert, Tag } from "@ledgerhq/react-ui";
+import { Flex, SearchInput, Alert, Tag, Text, Switch } from "@ledgerhq/react-ui";
 import { SettingsSectionRow as Row } from "../../../SettingsSection";
 import { FeatureId } from "@ledgerhq/types-live";
 import { includes, lowerCase, trim } from "lodash";
@@ -17,6 +18,12 @@ import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import FeatureFlagDetails from "./FeatureFlagDetails";
 import GroupedFeatures from "./GroupedFeatures";
 import TabBar from "~/renderer/components/TabBar";
+import { featureFlagsButtonVisibleSelector } from "~/renderer/reducers/settings";
+import { setFeatureFlagsButtonVisible } from "~/renderer/actions/settings";
+
+type FeatureFlagsSettingsProps = {
+  shouldOpenFeatureFlags: boolean;
+};
 
 const addFlagHint = `\
 If a feature flag is defined in the targeted Firebase environment \
@@ -27,6 +34,8 @@ flag name in camelCase without the "feature" prefix.\
 
 export const FeatureFlagContent = withV3StyleProvider((props: { visible?: boolean }) => {
   const { t } = useTranslation();
+  const featureFlagsButtonVisible = useSelector(featureFlagsButtonVisibleSelector);
+  const dispatch = useDispatch();
   const { getFeature, overrideFeature, isFeature, resetFeatures } = useFeatureFlags();
   const [focusedName, setFocusedName] = useState<string | undefined>();
   const [searchInput, setSearchInput] = useState("");
@@ -136,6 +145,10 @@ export const FeatureFlagContent = withV3StyleProvider((props: { visible?: boolea
     setActiveTabIndex(index);
   }, []);
 
+  const setFeatureFlagButtonVisible = useCallback(() => {
+    dispatch(setFeatureFlagsButtonVisible(!featureFlagsButtonVisible));
+  }, [dispatch, featureFlagsButtonVisible]);
+
   return (
     <Flex flexDirection="column" pt={2} rowGap={2} alignSelf="stretch">
       <div onClick={onDescriptionClick}>
@@ -157,7 +170,20 @@ export const FeatureFlagContent = withV3StyleProvider((props: { visible?: boolea
             clearable
           />
           <Alert type="info" title={addFlagHint} showIcon={false} />
-          <Button variant="color" onClick={resetFeatures} disabled={!hasLocallyOverriddenFlags}>
+          <Flex flexDirection="row" justifyContent="space-between" mt={5}>
+            <Text>{t("settings.developer.showButtonDesc")}</Text>
+            <Switch
+              name="button-feature-flags-visibible"
+              checked={featureFlagsButtonVisible}
+              onChange={setFeatureFlagButtonVisible}
+            />
+          </Flex>
+          <Button
+            mt={3}
+            variant="color"
+            onClick={resetFeatures}
+            disabled={!hasLocallyOverriddenFlags}
+          >
             {t("settings.developer.featureFlagsRestoreAll")}
           </Button>
           <Flex height={15} />
@@ -178,9 +204,9 @@ export const FeatureFlagContent = withV3StyleProvider((props: { visible?: boolea
   );
 });
 
-const FeatureFlagsSettings = () => {
+const FeatureFlagsSettings = ({ shouldOpenFeatureFlags }: FeatureFlagsSettingsProps) => {
   const { t } = useTranslation();
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(shouldOpenFeatureFlags);
 
   const handleClick = useCallback(() => {
     setVisible(!visible);

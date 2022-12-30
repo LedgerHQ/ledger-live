@@ -90,7 +90,7 @@ const GroupedFeatures = ({ groupName, focused, setFocusedGroupName, isLast }: Pr
             </Flex>
           </Flex>
         </OldButton>
-        <Switch name="test" checked={allEnabled} onChange={handleSwitchChange} />
+        <Switch name="group-feature-flags" checked={allEnabled} onChange={handleSwitchChange} />
       </Flex>
       {focused ? (
         <Flex pl={6} flexDirection="column">
