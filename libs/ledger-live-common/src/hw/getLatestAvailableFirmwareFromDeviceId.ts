@@ -33,7 +33,8 @@ export const getLatestAvailableFirmwareFromDeviceId = ({
   deviceId,
 }: GetLatestAvailableFirmwareFromDeviceIdArgs): GetLatestAvailableFirmwareFromDeviceIdOutput => {
   return new Observable((subscriber) => {
-    withDevice(deviceId)((t) =>
+    // Returns a Subscription that can be unsubscribed/cleaned
+    return withDevice(deviceId)((t) =>
       from(getDeviceInfo(t)).pipe(
         mergeMap((deviceInfo) => {
           subscriber.next({

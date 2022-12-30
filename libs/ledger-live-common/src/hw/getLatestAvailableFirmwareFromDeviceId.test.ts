@@ -82,7 +82,7 @@ describe("getLatestAvailableFirmwareFromDeviceId", () => {
         aLatestFirmwareContext
       );
 
-      let step = 0;
+      let step = 1;
       getLatestAvailableFirmwareFromDeviceId({
         deviceId: "A_DEVICE_ID",
       }).subscribe({
@@ -93,18 +93,19 @@ describe("getLatestAvailableFirmwareFromDeviceId", () => {
         }: GetLatestAvailableFirmwareFromDeviceIdResult) => {
           try {
             switch (step) {
-              case 0:
+              case 1:
                 expect(firmwareUpdateContext).toBeNull();
                 expect(lockedDevice).toBe(true);
                 expect(status).toBe("started");
+                // No need to advance the timer, as the retry timer is mocked to return directly, without a timeout
                 break;
               // A retry happened, this time with an unlocked device
-              case 1:
+              case 2:
                 expect(firmwareUpdateContext).toBeNull();
                 expect(lockedDevice).toBe(false);
                 expect(status).toBe("started");
                 break;
-              case 2:
+              case 3:
                 expect(firmwareUpdateContext).toEqual(aLatestFirmwareContext);
                 expect(lockedDevice).toBe(false);
                 expect(status).toBe("done");
@@ -115,14 +116,90 @@ describe("getLatestAvailableFirmwareFromDeviceId", () => {
             done(expectError);
           }
 
-          // No need to handle the timer with a specific value as rxjs timer has been mocked
-          // because we could not advance the timer every time the retryWhileErrors is called
-          jest.advanceTimersByTime(1);
           step += 1;
         },
       });
+    });
 
-      jest.advanceTimersByTime(1);
+    describe("And the getLatestAvailableFirmware consumer unsubscribed before unlocking the device", () => {
+      beforeEach(() => {
+        // Mocked timer: pushes and complete after a timeout
+        // Needed so the retry is not triggered before unsubscribing during our test
+        mockedTimer.mockImplementation((dueTime?: number | Date) => {
+          if (typeof dueTime === "number") {
+            return new Observable<number>((subscriber) => {
+              setTimeout(() => {
+                subscriber.next(1);
+              }, dueTime);
+            });
+          } else {
+            return of(1);
+          }
+        });
+      });
+
+      it("should stop completely the getLatestAvailableFirmware flow", (done) => {
+        let count = 0;
+        // Could not simply mockedRejectValueOnce followed by a mockedResolveValueOnce.
+        // Needed to transform getDeviceInfo into an Observable.
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore returning an Observable and not a Promise.
+        mockedGetDeviceInfo.mockImplementation(() => {
+          return new Observable<DeviceInfo>((o) => {
+            if (count < 1) {
+              count++;
+              o.error(new LockedDeviceError("Locked device"));
+            } else {
+              o.next(aDeviceInfo);
+            }
+          });
+        });
+
+        mockedGetLatestFirmwareForDevice.mockResolvedValue(
+          aLatestFirmwareContext
+        );
+
+        let step = 1;
+        const subscriber = getLatestAvailableFirmwareFromDeviceId({
+          deviceId: "A_DEVICE_ID",
+        }).subscribe({
+          next: ({
+            firmwareUpdateContext,
+            lockedDevice,
+            status,
+          }: GetLatestAvailableFirmwareFromDeviceIdResult) => {
+            try {
+              switch (step) {
+                case 1:
+                  expect(firmwareUpdateContext).toBeNull();
+                  expect(lockedDevice).toBe(true);
+                  expect(status).toBe("started");
+                  break;
+                case 2:
+                  done("A retry happened, this should never be reached here");
+                  break;
+              }
+            } catch (expectError) {
+              done(expectError);
+            }
+
+            step += 1;
+          },
+        });
+
+        // Step 1: Starts get latest available firmware, and the device is locked
+        jest.advanceTimersByTime(1);
+
+        // Tries to stop the flow after step 1
+        expect(step).toEqual(2);
+        subscriber.unsubscribe();
+        // Step 2: Triggers any existing retry (if stopped correctly, there should be no retry)
+        jest.runOnlyPendingTimers();
+        // Checks if it was stopped correctly
+        expect(mockedGetDeviceInfo).toBeCalledTimes(1);
+        expect(mockedGetLatestFirmwareForDevice).toBeCalledTimes(0);
+        done();
+      });
     });
   });
 });
