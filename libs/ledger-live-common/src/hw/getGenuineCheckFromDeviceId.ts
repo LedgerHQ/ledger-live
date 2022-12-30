@@ -41,37 +41,39 @@ export const getGenuineCheckFromDeviceId = ({
       subscriber.next({ socketEvent: null, lockedDevice: true });
     }, lockedDeviceTimeoutMs);
 
-    // withDevice handles the unsubscribing cleaning when leaving the useEffect
-    withDevice(deviceId)((t) =>
-      from(getDeviceInfo(t)).pipe(
-        mergeMap((deviceInfo) => {
-          clearTimeout(lockedDeviceTimeout);
-          subscriber.next({ socketEvent: null, lockedDevice: false });
-          return genuineCheck(t, deviceInfo);
-        })
-      )
-    )
-      // Needs to retry with withDevice
-      .pipe(
-        retryWhen(
-          retryWhileErrors((e: Error) => {
-            // Cancels the locked-device unresponsive/timeout strategy if received any response/error
+    // Returns a Subscription that can be unsubscribed/cleaned
+    return (
+      withDevice(deviceId)((t) =>
+        from(getDeviceInfo(t)).pipe(
+          mergeMap((deviceInfo) => {
             clearTimeout(lockedDeviceTimeout);
-
-            if (e instanceof LockedDeviceError) {
-              subscriber.next({ socketEvent: null, lockedDevice: true });
-              return true;
-            }
-
-            return false;
+            subscriber.next({ socketEvent: null, lockedDevice: false });
+            return genuineCheck(t, deviceInfo);
           })
         )
       )
-      .subscribe({
-        next: (socketEvent: SocketEvent) =>
-          subscriber.next({ socketEvent, lockedDevice: false }),
-        error: (e) => subscriber.error(e),
-        complete: () => subscriber.complete(),
-      });
+        // Needs to retry with withDevice
+        .pipe(
+          retryWhen(
+            retryWhileErrors((e: Error) => {
+              // Cancels the locked-device unresponsive/timeout strategy if received any response/error
+              clearTimeout(lockedDeviceTimeout);
+
+              if (e instanceof LockedDeviceError) {
+                subscriber.next({ socketEvent: null, lockedDevice: true });
+                return true;
+              }
+
+              return false;
+            })
+          )
+        )
+        .subscribe({
+          next: (socketEvent: SocketEvent) =>
+            subscriber.next({ socketEvent, lockedDevice: false }),
+          error: (e) => subscriber.error(e),
+          complete: () => subscriber.complete(),
+        })
+    );
   });
 };

@@ -11,6 +11,7 @@ import {
 import { LockedDeviceError } from "@ledgerhq/errors";
 
 jest.useFakeTimers();
+
 // Needs to mock the timer from rxjs used in retryWhileErrors
 jest.mock("rxjs", () => {
   const originalModule = jest.requireActual("rxjs");
@@ -54,6 +55,7 @@ const aDeviceInfo = {
 
 describe("getGenuineCheckFromDeviceId", () => {
   beforeEach(() => {
+    // Mocked timer: directly pushes and complete
     mockedTimer.mockReturnValue(of(1));
   });
 
@@ -81,7 +83,7 @@ describe("getGenuineCheckFromDeviceId", () => {
           })
         );
 
-        let step = 0;
+        let step = 1;
         getGenuineCheckFromDeviceId({
           deviceId: "A_DEVICE_ID",
           lockedDeviceTimeoutMs: 1000,
@@ -92,15 +94,15 @@ describe("getGenuineCheckFromDeviceId", () => {
           }: GetGenuineCheckFromDeviceIdResult) => {
             try {
               switch (step) {
-                case 0:
+                case 1:
                   expect(socketEvent).toBeNull();
                   expect(lockedDevice).toBe(true);
                   break;
-                case 1:
+                case 2:
                   expect(socketEvent).toBeNull();
                   expect(lockedDevice).toBe(false);
                   break;
-                case 2:
+                case 3:
                   expect(socketEvent).toEqual({
                     type: "device-permission-requested",
                     wording: "",
@@ -118,6 +120,7 @@ describe("getGenuineCheckFromDeviceId", () => {
           },
         });
 
+        // Unresponsive timeout is triggered
         jest.advanceTimersByTime(1000);
       });
     });
@@ -147,7 +150,7 @@ describe("getGenuineCheckFromDeviceId", () => {
           })
         );
 
-        let step = 0;
+        let step = 1;
         getGenuineCheckFromDeviceId({
           deviceId: "A_DEVICE_ID",
           lockedDeviceTimeoutMs: 1000,
@@ -158,16 +161,17 @@ describe("getGenuineCheckFromDeviceId", () => {
           }: GetGenuineCheckFromDeviceIdResult) => {
             try {
               switch (step) {
-                case 0:
+                case 1:
                   expect(socketEvent).toBeNull();
                   expect(lockedDevice).toBe(true);
+                  // No need to advance the timer, as the retry timer is mocked to return directly, without a timeout
                   break;
                 // A retry happened, this time with an unlocked device
-                case 1:
+                case 2:
                   expect(socketEvent).toBeNull();
                   expect(lockedDevice).toBe(false);
                   break;
-                case 2:
+                case 3:
                   expect(socketEvent).toEqual({
                     type: "device-permission-requested",
                     wording: "",
@@ -180,14 +184,92 @@ describe("getGenuineCheckFromDeviceId", () => {
               done(expectError);
             }
 
-            // No need to handle the timer with a specific value as rxjs timer has been mocked
-            // because we could not advance the timer every time the retryWhileErrors is called
-            jest.advanceTimersByTime(1);
+            step += 1;
+          },
+        });
+      });
+    });
+
+    describe("And the genuine check consumer unsubscribed before unlocking the device", () => {
+      beforeEach(() => {
+        // Mocked timer: pushes and complete after a timeout
+        // Needed so the retry is not triggered before unsubscribing during our test
+        mockedTimer.mockImplementation((dueTime?: number | Date) => {
+          if (typeof dueTime === "number") {
+            return new Observable<number>((subscriber) => {
+              setTimeout(() => {
+                subscriber.next(1);
+              }, dueTime);
+            });
+          } else {
+            return of(1);
+          }
+        });
+      });
+
+      it("should stop the genuine check flow, to avoid sending an allow-secure-channel request to the device after unlocking it", (done) => {
+        let count = 0;
+        // Could not simply mockedRejectValueOnce followed by a mockedResolveValueOnce.
+        // Needed to transform getDeviceInfo into an Observable.
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore returning an Observable and not a Promise.
+        mockedGetDeviceInfo.mockImplementation(() => {
+          return new Observable<DeviceInfo>((o) => {
+            if (count < 1) {
+              count++;
+              o.error(new LockedDeviceError("Locked device"));
+            } else {
+              o.next(aDeviceInfo);
+            }
+          });
+        });
+
+        mockedGenuineCheck.mockReturnValue(
+          of({
+            type: "device-permission-requested",
+            wording: "",
+          })
+        );
+
+        let step = 1;
+        const subscriber = getGenuineCheckFromDeviceId({
+          deviceId: "A_DEVICE_ID",
+          lockedDeviceTimeoutMs: 1000,
+        }).subscribe({
+          next: ({
+            socketEvent,
+            lockedDevice,
+          }: GetGenuineCheckFromDeviceIdResult) => {
+            try {
+              switch (step) {
+                case 1:
+                  expect(socketEvent).toBeNull();
+                  expect(lockedDevice).toBe(true);
+                  break;
+                case 2:
+                  done("A retry happened, this should never be reached here");
+                  break;
+              }
+            } catch (expectError) {
+              done(expectError);
+            }
+
             step += 1;
           },
         });
 
+        // Step 1: Starts the genuine check, and the device is locked
         jest.advanceTimersByTime(1);
+
+        // Tries to stop the genuine check after step 1
+        expect(step).toEqual(2);
+        subscriber.unsubscribe();
+        // Step 2: Triggers any existing retry (if stopped correctly, there should be no retry)
+        jest.runOnlyPendingTimers();
+        // Checks if it was stopped correctly
+        expect(mockedGetDeviceInfo).toBeCalledTimes(1);
+        expect(mockedGenuineCheck).toBeCalledTimes(0);
+        done();
       });
     });
   });
@@ -212,7 +294,7 @@ describe("getGenuineCheckFromDeviceId", () => {
           });
         });
 
-        let step = 0;
+        let step = 1;
         getGenuineCheckFromDeviceId({
           deviceId: "A_DEVICE_ID",
           lockedDeviceTimeoutMs: 1000,
@@ -224,21 +306,22 @@ describe("getGenuineCheckFromDeviceId", () => {
             try {
               switch (step) {
                 // No locked device at first
-                case 0:
-                  expect(socketEvent).toBeNull();
+                case 1:
                   expect(lockedDevice).toBe(false);
+                  expect(socketEvent).toBeNull();
                   break;
                 // The locked device happens during the genuine check
-                case 1:
+                case 2:
                   expect(socketEvent).toBeNull();
                   expect(lockedDevice).toBe(true);
+                  // No need to advance the timer, as the retry timer is mocked to return directly, without a timeout
                   break;
                 // A retry happened, this time with an unlocked device
-                case 2:
+                case 3:
                   expect(socketEvent).toBeNull();
                   expect(lockedDevice).toBe(false);
                   break;
-                case 3:
+                case 4:
                   expect(socketEvent).toEqual({
                     type: "device-permission-requested",
                     wording: "",
@@ -251,14 +334,9 @@ describe("getGenuineCheckFromDeviceId", () => {
               done(expectError);
             }
 
-            // No need to handle the timer with a specific value as rxjs timer has been mocked
-            // because we could not advance the timer every time the retryWhileErrors is called
-            jest.advanceTimersByTime(1);
             step += 1;
           },
         });
-
-        jest.advanceTimersByTime(1);
       });
     });
   });
