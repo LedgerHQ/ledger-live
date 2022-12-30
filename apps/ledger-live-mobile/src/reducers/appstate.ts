@@ -22,9 +22,15 @@ export const INITIAL_STATE: AppState = {
   hasConnectedDevice: false, // NB for this current session, have we done a device action with a device.
   modalLock: false,
   backgroundEvents: [],
+  debugMenuVisible: false,
 };
 
 const handlers: ReducerMap<AppState, AppStatePayload> = {
+  [AppStateActionTypes.DEBUG_MENU_VISIBLE]: state => ({
+    ...state,
+    debugMenuVisible: true,
+  }),
+
   [AppStateActionTypes.SYNC_IS_CONNECTED]: (state, action) => ({
     ...state,
     isConnected: (action as Action<AppStateIsConnectedPayload>).payload
@@ -67,6 +73,8 @@ const handlers: ReducerMap<AppState, AppStatePayload> = {
 
 // Selectors
 
+export const isDebugMenuVisible = (state: State) =>
+  state.appstate.debugMenuVisible;
 export const isConnectedSelector = (state: State) => state.appstate.isConnected;
 export const isModalLockedSelector = (state: State) => state.appstate.modalLock;
 export const hasConnectedDeviceSelector = (state: State) =>
