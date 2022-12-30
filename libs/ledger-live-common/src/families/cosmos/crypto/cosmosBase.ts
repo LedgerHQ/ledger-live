@@ -1,3 +1,4 @@
+import { CacheRes } from "../../../cache";
 import { CosmosOperationMode, CosmosRewardsState } from "../types";
 
 abstract class cosmosBase {
@@ -18,7 +19,7 @@ abstract class cosmosBase {
     claimReward: 140000,
     claimRewardCompound: 400000,
   };
-  public abstract getRewardsState(): any;
+  public abstract getRewardsState(): CacheRes<[], CosmosRewardsState>;
   public abstract validatorEstimatedRate(
     validatorCommission: number,
     rewardsState: CosmosRewardsState

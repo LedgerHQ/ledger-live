@@ -145,7 +145,7 @@ export const buildTransaction = async (
     case "undelegate":
       if (transaction.validators && transaction.validators.length > 0) {
         const validator = transaction.validators[0];
-        if (validator && validator.address /*&& transaction.amount.gt(0)*/) {
+        if (validator && validator.address && transaction.amount.gt(0)) {
           //todo verify what minimum is required by osmosis to undelegate
           const aminoMsg: AminoMsgUndelegate = {
             type: "cosmos-sdk/MsgUndelegate",

@@ -1,10 +1,10 @@
-import { makeLRUCache } from "../../../cache";
+import { CacheRes, makeLRUCache } from "../../../cache";
 import network from "../../../network";
 import { CosmosRewardsState } from "../types";
-import cosmosBase from "./cosmosBase";
+import CosmosBase from "./cosmosBase";
 import { parseUatomStrAsAtomNumber } from "../logic";
 
-class Cosmos extends cosmosBase {
+class Cosmos extends CosmosBase {
   lcd: string;
   stakingDocUrl: string;
   unbonding_period: number;
@@ -57,7 +57,7 @@ class Cosmos extends cosmosBase {
 
     throw new Error("Unreachable code");
   };
-  public getRewardsState(): any {
+  public getRewardsState(): CacheRes<[], CosmosRewardsState> {
     return makeLRUCache(
       async () => {
         // All obtained values are strings ; so sometimes we will need to parse them as numbers
@@ -86,7 +86,7 @@ class Cosmos extends cosmosBase {
         );
         // Source for seconds per year : https://github.com/gavinly/CosmosParametersWiki/blob/master/Mint.md#notes-3
         //  365.24 (days) * 24 (hours) * 60 (minutes) * 60 (seconds) = 31556736 seconds
-        const assumedTimePerBlock =
+        const assumedSecondsPerBlock =
           31556736.0 /
           parseFloat(inflationParametersData.params.blocks_per_year);
         const communityTaxUrl = `${this.lcd}/cosmos/distribution/${this.version}/params`;
@@ -120,7 +120,7 @@ class Cosmos extends cosmosBase {
         return {
           targetBondedRatio,
           communityPoolCommission,
-          assumedTimePerBlock,
+          assumedSecondsPerBlock,
           inflationRateChange,
           inflationMaxRate,
           inflationMinRate,
@@ -140,7 +140,7 @@ class Cosmos extends cosmosBase {
   ): number {
     // This correction changes how inflation is computed vs. the value the network advertises
     const inexactBlockTimeCorrection =
-      rewardsState.assumedTimePerBlock / rewardsState.averageTimePerBlock;
+      rewardsState.assumedSecondsPerBlock / rewardsState.averageTimePerBlock;
     // This correction assumes a constant bonded_ratio, this changes the yearly inflation
     const yearlyInflation = this.computeAvgYearlyInflation(rewardsState);
     // This correction adds the fees to the rate computation

@@ -1,18 +1,16 @@
-import cosmosBase from "./cosmosBase";
+import CosmosBase from "./cosmosBase";
 import Cosmos from "./Cosmos";
 import Juno from "./Juno";
 import Osmosis from "./Osmosis";
 
-export default function cryptoFactory(currencyId: string): cosmosBase {
-  let res: cosmosBase;
+export default function cryptoFactory(currencyId: string): CosmosBase {
   if (currencyId === "osmosis" || currencyId === "osmo") {
-    res = new Osmosis();
+    return new Osmosis();
   } else if (currencyId === "cosmos") {
-    res = new Cosmos();
+    return new Cosmos();
   } else if (currencyId === "juno") {
-    res = new Juno();
+    return new Juno();
   } else {
     throw new Error(`${currencyId} is not supported`);
   }
-  return res;
 }

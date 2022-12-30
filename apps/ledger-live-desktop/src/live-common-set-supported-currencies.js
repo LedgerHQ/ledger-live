@@ -50,6 +50,5 @@ setSupportedCurrencies([
   "moonbeam",
   "songbird",
   "flare",
-  "juno",
   "near",
 ]);

@@ -1,8 +1,8 @@
-import { makeLRUCache } from "../../../cache";
+import { CacheRes, makeLRUCache } from "../../../cache";
 import { CosmosRewardsState } from "../types";
-import cosmosBase from "./cosmosBase";
+import CosmosBase from "./cosmosBase";
 
-class Juno extends cosmosBase {
+class Juno extends CosmosBase {
   lcd: string;
   stakingDocUrl: string;
   unbonding_period: number;
@@ -14,12 +14,12 @@ class Juno extends cosmosBase {
     this.default_gas = 100000;
     this.unbonding_period = 28;
   }
-  public getRewardsState(): any {
+  public getRewardsState(): CacheRes<[], CosmosRewardsState> {
     return makeLRUCache(
       async () => {
         // Hardcoded mock values
         const targetBondedRatio = 0.1;
-        const assumedTimePerBlock = 7;
+        const assumedSecondsPerBlock = 7;
         const inflationRateChange = 0.01;
         const inflationMaxRate = 0.01;
         const inflationMinRate = 0.01;
@@ -29,7 +29,7 @@ class Juno extends cosmosBase {
         return {
           targetBondedRatio,
           communityPoolCommission: 0.03,
-          assumedTimePerBlock,
+          assumedSecondsPerBlock,
           inflationRateChange,
           inflationMaxRate,
           inflationMinRate,

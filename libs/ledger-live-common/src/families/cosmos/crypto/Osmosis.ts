@@ -1,4 +1,4 @@
-import { makeLRUCache } from "../../../cache";
+import { CacheRes, makeLRUCache } from "../../../cache";
 import network from "../../../network";
 import { parseUatomStrAsAtomNumber } from "../logic";
 import {
@@ -6,9 +6,9 @@ import {
   CosmosPool,
   CosmosRewardsState,
 } from "../types";
-import cosmosBase from "./cosmosBase";
+import CosmosBase from "./cosmosBase";
 
-class Osmosis extends cosmosBase {
+class Osmosis extends CosmosBase {
   lcd: string;
   stakingDocUrl: string;
   unbonding_period: number;
@@ -32,8 +32,7 @@ class Osmosis extends cosmosBase {
       method: "GET",
       url: `${this.lcd}/cosmos/staking/${this.version}/pool`,
     });
-    const { pool } = data;
-    return { ...pool };
+    return data.pool;
   };
 
   private queryDistributionParams =
@@ -42,8 +41,7 @@ class Osmosis extends cosmosBase {
         method: "GET",
         url: `${this.lcd}/cosmos/distribution/${this.version}/params`,
       });
-      const { params } = data;
-      return { ...params };
+      return data.params;
     };
 
   private queryMintParmas = async (): Promise<any> => {
@@ -51,8 +49,7 @@ class Osmosis extends cosmosBase {
       method: "GET",
       url: `${this.lcd}/osmosis/mint/${this.version}/params`,
     });
-    const { params } = data;
-    return { ...params };
+    return data.params;
   };
 
   private queryEpochProvisions = async (): Promise<number> => {
@@ -70,16 +67,13 @@ class Osmosis extends cosmosBase {
       method: "GET",
       url: `${this.lcd}/osmosis/epochs/${this.version}/epochs`,
     });
-    let res = 0;
-    data.epochs.forEach((epoch) => {
-      if (epoch.identifier === epochIdentifier) {
-        res = parseInt(epoch.duration.slice(0, -1));
-      }
-    });
-    return res;
+    const epoch = data.epochs.find(
+      (epoch) => epoch.identifier === epochIdentifier
+    );
+    return epoch ? parseInt(epoch.duration.slice(0, -1)) : 0;
   };
 
-  public getRewardsState(): any {
+  public getRewardsState(): CacheRes<[], CosmosRewardsState> {
     return makeLRUCache(
       async () => {
         const distributionParams = await this.queryDistributionParams();
@@ -98,7 +92,7 @@ class Osmosis extends cosmosBase {
         const epochDuration = await this.queryEpochDuration(epochIdentifier);
         // Hardcoded mock values
         const targetBondedRatio = 0.1;
-        const assumedTimePerBlock = 7;
+        const assumedSecondsPerBlock = 7;
         // refer to https://github.com/chainapsis/keplr-wallet/blob/07673165267d0a29d9ab12303299361bdc2e3338/packages/stores/src/query/cosmos/supply/inflation.ts
         // for osmosis APY and inflation rate calculation
         const inflationRate =
@@ -111,7 +105,7 @@ class Osmosis extends cosmosBase {
         return {
           targetBondedRatio,
           communityPoolCommission,
-          assumedTimePerBlock,
+          assumedSecondsPerBlock,
           inflationRateChange: inflationRate,
           inflationMaxRate: inflationRate,
           inflationMinRate: inflationRate,

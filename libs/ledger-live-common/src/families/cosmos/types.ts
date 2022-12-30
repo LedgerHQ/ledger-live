@@ -81,7 +81,7 @@ export type CosmosValidatorItem = {
 export type CosmosRewardsState = {
   targetBondedRatio: number;
   communityPoolCommission: number;
-  assumedTimePerBlock: number;
+  assumedSecondsPerBlock: number;
   inflationRateChange: number;
   inflationMaxRate: number;
   inflationMinRate: number;
