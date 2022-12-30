@@ -1,5 +1,34 @@
 # @ledgerhq/live-common
 
+## 27.11.0-nightly.2
+
+### Patch Changes
+
+- [#2178](https://github.com/LedgerHQ/ledger-live/pull/2178) [`d4b01dc1b0`](https://github.com/LedgerHQ/ledger-live/commit/d4b01dc1b0f871726c517f9c6e0ebd84e64da2b7) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: cleaning + log in withDevice
+
+  Setting up BLE connection priority inside BleTransport constructor
+  and not in each call to withDevice
+
+* [#2205](https://github.com/LedgerHQ/ledger-live/pull/2205) [`20c5c5e109`](https://github.com/LedgerHQ/ledger-live/commit/20c5c5e1099885173aaa5ea3199052044066ac98) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Better error handling in socket.ts connections to scriptrunners
+
+* Updated dependencies [[`20c5c5e109`](https://github.com/LedgerHQ/ledger-live/commit/20c5c5e1099885173aaa5ea3199052044066ac98)]:
+  - @ledgerhq/errors@6.12.3-nightly.1
+  - @ledgerhq/devices@7.0.7-nightly.1
+  - @ledgerhq/hw-app-algorand@6.27.10-nightly.1
+  - @ledgerhq/hw-app-cosmos@6.27.10-nightly.1
+  - @ledgerhq/hw-app-eth@6.30.4-nightly.1
+  - @ledgerhq/hw-app-near@6.27.5-nightly.1
+  - @ledgerhq/hw-app-polkadot@6.27.10-nightly.1
+  - @ledgerhq/hw-app-solana@7.0.4-nightly.1
+  - @ledgerhq/hw-app-trx@6.27.10-nightly.1
+  - @ledgerhq/hw-transport@6.27.10-nightly.1
+  - @ledgerhq/hw-transport-node-speculos@6.27.10-nightly.1
+  - @ledgerhq/hw-app-btc@9.1.2-nightly.1
+  - @ledgerhq/hw-app-str@6.27.10-nightly.1
+  - @ledgerhq/hw-app-tezos@6.27.10-nightly.1
+  - @ledgerhq/hw-app-xrp@6.27.10-nightly.1
+  - @ledgerhq/hw-transport-mocker@6.27.10-nightly.1
+
 ## 27.11.0-nightly.1
 
 ### Patch Changes

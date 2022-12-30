@@ -1,5 +1,19 @@
 # ledger-live-desktop
 
+## 2.52.0-nightly.3
+
+### Patch Changes
+
+- [#2178](https://github.com/LedgerHQ/ledger-live/pull/2178) [`d4b01dc1b0`](https://github.com/LedgerHQ/ledger-live/commit/d4b01dc1b0f871726c517f9c6e0ebd84e64da2b7) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: removing DeviceBusyIndicator
+
+- Updated dependencies [[`d4b01dc1b0`](https://github.com/LedgerHQ/ledger-live/commit/d4b01dc1b0f871726c517f9c6e0ebd84e64da2b7), [`20c5c5e109`](https://github.com/LedgerHQ/ledger-live/commit/20c5c5e1099885173aaa5ea3199052044066ac98)]:
+  - @ledgerhq/live-common@27.11.0-nightly.2
+  - @ledgerhq/errors@6.12.3-nightly.1
+  - @ledgerhq/devices@7.0.7-nightly.1
+  - @ledgerhq/hw-transport@6.27.10-nightly.1
+  - @ledgerhq/hw-transport-http@6.27.10-nightly.1
+  - @ledgerhq/hw-transport-node-hid-singleton@6.28.7-nightly.1
+
 ## 2.52.0-nightly.2
 
 ### Patch Changes

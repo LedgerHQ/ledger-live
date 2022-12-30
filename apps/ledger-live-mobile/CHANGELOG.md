@@ -1,5 +1,20 @@
 # live-mobile
 
+## 3.13.0-nightly.11
+
+### Patch Changes
+
+- [#2219](https://github.com/LedgerHQ/ledger-live/pull/2219) [`f052a64843`](https://github.com/LedgerHQ/ledger-live/commit/f052a648439ccf5be250f6f7c4bc22084569dd43) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Improve debug theme tool
+
+- Updated dependencies [[`d4b01dc1b0`](https://github.com/LedgerHQ/ledger-live/commit/d4b01dc1b0f871726c517f9c6e0ebd84e64da2b7), [`20c5c5e109`](https://github.com/LedgerHQ/ledger-live/commit/20c5c5e1099885173aaa5ea3199052044066ac98)]:
+  - @ledgerhq/live-common@27.11.0-nightly.2
+  - @ledgerhq/react-native-hw-transport-ble@6.27.13-nightly.1
+  - @ledgerhq/errors@6.12.3-nightly.1
+  - @ledgerhq/devices@7.0.7-nightly.1
+  - @ledgerhq/hw-transport@6.27.10-nightly.1
+  - @ledgerhq/hw-transport-http@6.27.10-nightly.1
+  - @ledgerhq/react-native-hid@6.28.12-nightly.1
+
 ## 3.13.0-nightly.10
 
 ### Patch Changes
