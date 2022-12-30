@@ -246,7 +246,7 @@ export function orchestrator(app: Probot) {
 
       const tipsFile = workflowFile.replace(".yml", ".md");
       const p = path.join(__dirname, "..", "..", "..", "tips", tipsFile);
-      let tips = "";
+      let tips = undefined;
 
       try {
         const res = await fs.readFile(p, "utf-8");

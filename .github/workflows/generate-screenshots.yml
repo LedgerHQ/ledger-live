@@ -48,7 +48,7 @@ jobs:
   stop-runner:
     name: Stop self-hosted EC2 runner
     if: ${{ always() && needs.start-runner.result == 'success' }}
-    needs: [start-runner, e2e-tests-linux]
+    needs: [start-runner, generate-screenshots-linux]
     runs-on: [ledger-live, linux]
     steps:
       - name: Stop EC2 Linux Runner
@@ -78,6 +78,16 @@ jobs:
           fetch-depth: 0
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
+        with:
+          skip_ruby: true
+      - name: Install gh
+        run: |
+          type -p curl >/dev/null || sudo apt install curl -y
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+          && sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
+          && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+          && sudo apt update \
+          && sudo apt install gh -y
       - name: Checkout PR
         if: ${{ github.event.inputs.number != null && github.event.inputs.ref == null }}
         run: gh pr checkout ${{ github.event.inputs.number }}
@@ -292,7 +302,7 @@ jobs:
               }
             }
       - uses: actions/upload-artifact@v3
-          name: upload summary
-          with:
-            name: summary.json
-            path: ${{ github.workspace }}/summary.json
+        name: upload summary
+        with:
+          name: summary.json
+          path: ${{ github.workspace }}/summary.json
