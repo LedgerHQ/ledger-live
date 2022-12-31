@@ -61,6 +61,7 @@ export type FwUpdateBackgroundEvent =
     };
 
 export type AppState = {
+  debugMenuVisible: boolean;
   isConnected: boolean | null;
   hasConnectedDevice: boolean;
   modalLock: boolean;
