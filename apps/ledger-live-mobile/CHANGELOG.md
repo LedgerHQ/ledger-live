@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.13.0-nightly.12
+
+### Patch Changes
+
+- [#2225](https://github.com/LedgerHQ/ledger-live/pull/2225) [`a30a2594af`](https://github.com/LedgerHQ/ledger-live/commit/a30a2594afc597b4de936c08e8367d08dd99054d) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Improve access to debug screens
+
 ## 3.13.0-nightly.11
 
 ### Patch Changes
