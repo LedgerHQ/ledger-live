@@ -131,7 +131,7 @@ const Node = ({ data = {}, path, onEdit }: Props) => {
   );
 };
 
-export default React.memo(Node);
+export default Node;
 
 const styles = StyleSheet.create({
   wrapper: {

@@ -56,7 +56,8 @@ const handlers: ReducerMap<SwapStateType, SwapPayload> = {
   },
 
   [SwapActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (
-    state: SwapStateType,
+    state,
+    action,
   ): SwapStateType => ({
     ...state,
     ...(action as Action<DangerouslyOverrideStatePayload>).payload.swap,
