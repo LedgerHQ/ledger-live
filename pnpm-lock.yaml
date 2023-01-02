@@ -741,6 +741,7 @@ importers:
       react-native-fast-crypto: ^2.2.0
       react-native-fast-image: ^8.5.11
       react-native-flipper: ^0.162.0
+      react-native-flipper-performance-plugin: ^0.3.1
       react-native-gesture-handler: ^2.5.0
       react-native-image-crop-tools: ^1.6.2
       react-native-image-picker: 4.8.5
@@ -993,6 +994,7 @@ importers:
       prettier: 2.7.1
       react-native-debugger-open: 0.3.25
       react-native-flipper: 0.162.0_ondxtwf5lqq5g76dzmsmwamaca
+      react-native-flipper-performance-plugin: 0.3.1
       react-native-performance: 3.1.2_react-native@0.68.5
       react-native-performance-flipper-reporter: 3.0.0_7sc2hkefyiisiq72s7zgx4ldd4
       strip-ansi: 6.0.1
@@ -46905,6 +46907,10 @@ packages:
       react: 17.0.2
       react-native: 0.68.5_qiqqwmyv63yhnuboofexv3s7x4
     dev: false
+
+  /react-native-flipper-performance-plugin/0.3.1:
+    resolution: {integrity: sha512-NDf5VCTqYPUUihvmW5A/scJbjHWZpAxC9FE1kfgFCPsHENjH9EVJxk+7XlLN608dEtHOtZdcWY0HZZT8XLjr6Q==}
+    dev: true
 
   /react-native-flipper/0.162.0_ondxtwf5lqq5g76dzmsmwamaca:
     resolution: {integrity: sha512-htXhzHDKWkMaBivc+SLTxqT1GkJxR2rrXobXlAhFYrvaQ6ws1KA6peqQssEiPSrXQJ2Z2oRXQ+yrlPKaBC/Hjg==}
