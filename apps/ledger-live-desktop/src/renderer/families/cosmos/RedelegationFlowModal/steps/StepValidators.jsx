@@ -27,7 +27,7 @@ import ChevronRight from "~/renderer/icons/ChevronRightSmall";
 import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosFamilyLedgerValidatorIcon";
 import Text from "~/renderer/components/Text";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
-import cryptoFactory from "@ledgerhq/live-common/families/cosmos/crypto/crypto";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
 
 const SelectButton = styled(Base)`
   border-radius: 4px;

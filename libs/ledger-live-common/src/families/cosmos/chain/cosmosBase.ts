@@ -5,7 +5,7 @@ abstract class cosmosBase {
   abstract lcd: string;
   abstract stakingDocUrl: string;
   abstract unbonding_period: number;
-  abstract ledger_validator: string;
+  abstract ledger_validators: string[];
   default_gas = 100000;
   min_gasprice = 0.0025;
   version = "v1beta1";
@@ -25,6 +25,7 @@ abstract class cosmosBase {
     validatorCommission: number,
     rewardsState: CosmosRewardsState
   ): number;
+  public static COSMOS_FAMILY_LEDGER_VALIDATOR_ADDRESSES: string[] = [];
 }
 
 export default cosmosBase;

@@ -9,7 +9,7 @@ import WarnBox from "~/renderer/components/WarnBox";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
-import cryptoFactory from "@ledgerhq/live-common/families/cosmos/crypto/crypto";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
 
 type Props = {
   name?: string,

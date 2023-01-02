@@ -5,7 +5,7 @@ import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { Account } from "@ledgerhq/types-live";
-import cryptoFactory from "@ledgerhq/live-common/families/cosmos/crypto/crypto";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
 import invariant from "invariant";
 import InfoModal from "../../modals/Info";
 import type { ModalInfo } from "../../modals/Info";

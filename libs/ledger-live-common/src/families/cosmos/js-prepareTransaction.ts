@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { getMaxEstimatedBalance } from "./logic";
 import { CacheRes, makeLRUCache } from "../../cache";
 import type { Account } from "@ledgerhq/types-live";
-import cryptoFactory from "./crypto/crypto";
+import cryptoFactory from "./chain/chain";
 
 export const calculateFees: CacheRes<
   Array<{

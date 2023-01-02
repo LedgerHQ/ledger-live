@@ -4,8 +4,8 @@ import { EnvName, EnvValue } from "../../env";
 import { makeLRUCache } from "../../cache";
 import type { CosmosValidatorItem, CosmosRewardsState } from "./types";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import cryptoFactory from "./crypto/crypto";
-import cosmosBase from "./crypto/cosmosBase";
+import cryptoFactory from "./chain/chain";
+import cosmosBase from "./chain/cosmosBase";
 
 export class CosmosValidatorsManager {
   protected _version: string;

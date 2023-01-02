@@ -3,7 +3,7 @@ import network from "../../../network";
 import { patchOperationWithHash } from "../../../operation";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
-import cryptoFactory from "../crypto/crypto";
+import cryptoFactory from "../chain/chain";
 
 export class CosmosAPI {
   protected defaultEndpoint: string;

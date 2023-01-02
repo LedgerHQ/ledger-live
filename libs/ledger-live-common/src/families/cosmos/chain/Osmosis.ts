@@ -12,7 +12,7 @@ class Osmosis extends CosmosBase {
   lcd: string;
   stakingDocUrl: string;
   unbonding_period: number;
-  ledger_validator: string;
+  ledger_validators: string[];
   constructor() {
     super();
     this.unbonding_period = 14;
@@ -27,8 +27,12 @@ class Osmosis extends CosmosBase {
       claimReward: 300000,
       claimRewardCompound: 400000,
     };
-    this.ledger_validator =
-      "osmovaloper17cp6fxccqxrpj4zc00w2c7u6y0umc2jajsyc5t";
+    this.ledger_validators = [
+      "osmovaloper17cp6fxccqxrpj4zc00w2c7u6y0umc2jajsyc5t",
+    ];
+    CosmosBase.COSMOS_FAMILY_LEDGER_VALIDATOR_ADDRESSES.push(
+      ...this.ledger_validators
+    );
   }
   private queryPool = async (): Promise<CosmosPool> => {
     const { data } = await network({
