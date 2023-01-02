@@ -1,9 +1,11 @@
 import React, { memo, useCallback } from "react";
+import { TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components/native";
 
-import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
+import { Flex, InfiniteLoader, Text, Icons } from "@ledgerhq/native-ui";
 
+import { useNavigation } from "@react-navigation/native";
 import WebViewScreen from "../../components/WebViewScreen";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
@@ -17,6 +19,7 @@ export type NavigationProps = StackNavigatorProps<
 function LearnWebView({ route }: NavigationProps) {
   const { uri: uriFromRoute } = route.params;
   const { i18n, t } = useTranslation();
+  const navigation = useNavigation();
   const {
     colors: { type: themeType },
   } = useTheme();
@@ -37,12 +40,53 @@ function LearnWebView({ route }: NavigationProps) {
     [],
   );
 
+  const goBack = useCallback(() => {
+    navigation.navigate(ScreenName.Learn);
+  }, [navigation]);
+
   return (
     <WebViewScreen
       screenName={t("learn.pageTitle")}
       uri={uri}
       trackEventName="Page Learn"
       renderLoading={renderLoading}
+      enableNavigationOverride={false}
+      renderHeader={() => (
+        <Flex
+          flexDirection="row"
+          justifyContent="space-between"
+          alignItems="center"
+          width="100%"
+          height={48}
+          zIndex={1}
+        >
+          <Flex width="20%" />
+          <Flex
+            width="60%"
+            alignItems="center"
+            justifyContent="center"
+            flexDirection="row"
+          >
+            <Icons.LockMedium size={16} color="neutral.c70" />
+            <Text
+              textAlign="center"
+              variant="small"
+              fontWeight="medium"
+              color="neutral.c70"
+              ml={2}
+            >
+              ledger.com/academy
+            </Text>
+          </Flex>
+          <Flex width="20%" alignItems="flex-end">
+            <TouchableOpacity onPress={goBack} style={{ padding: 16 }}>
+              <Text variant="body" fontWeight="semiBold">
+                {t("common.close")}
+              </Text>
+            </TouchableOpacity>
+          </Flex>
+        </Flex>
+      )}
     />
   );
 }
