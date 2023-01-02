@@ -260,6 +260,8 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
     deviceModel
   );
 
+  await transport.requestConnectionPriority("High");
+
   const onDisconnect = (e) => {
     transport.notYetDisconnected = false;
     notif.unsubscribe();
