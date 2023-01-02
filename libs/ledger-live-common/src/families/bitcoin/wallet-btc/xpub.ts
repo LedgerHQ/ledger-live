@@ -229,7 +229,7 @@ class Xpub {
       const opReturnOutput: OutputInfo = {
         script: this.crypto.toOpReturnOutputScript(opReturnData),
         value: new BigNumber(0),
-        address: destAddress,
+        address: null,
         isChange: false,
       };
 

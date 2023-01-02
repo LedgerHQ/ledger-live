@@ -53,6 +53,7 @@ const getTransactionStatus = async (
   let txInputs;
   let txOutputs;
   let estimatedFees = new BigNumber(0);
+  const { opReturnData } = t;
 
   if (!t.feePerByte) {
     errors.feePerByte = new FeeNotLoaded();
@@ -107,7 +108,7 @@ const getTransactionStatus = async (
     `totalSpent ${totalSpent.toString()} amount ${amount.toString()}`
   );
 
-  if (!errors.amount && !amount.gt(0)) {
+  if (!errors.amount && !amount.gt(0) && !opReturnData) {
     errors.amount = useAllAmount
       ? new NotEnoughBalance()
       : new AmountRequired();
@@ -128,8 +129,6 @@ const getTransactionStatus = async (
       errors.dustLimit = new DustLimit();
     }
   }
-
-  const { opReturnData } = t;
 
   return {
     errors,

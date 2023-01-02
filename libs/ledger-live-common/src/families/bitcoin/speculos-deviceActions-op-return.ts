@@ -25,7 +25,10 @@ export const opReturnFlow: DeviceAction<Transaction, any> = deviceActionFlow({
 
         // if there's already one "Address" step done it means we are on the OP_RETURN step
         if (acc.find((step) => step.title === "Address")) {
-          if (account.currency.id === "bitcoin") {
+          if (
+            account.currency.id === "bitcoin" ||
+            account.currency.id === "bitcoin_testnet"
+          ) {
             return `OP_RETURN ${transaction.opReturnData?.toString("hex")}`;
           } else {
             return "OP_RETURN";

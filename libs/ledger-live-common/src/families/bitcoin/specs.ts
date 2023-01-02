@@ -88,16 +88,18 @@ const genericTest = ({
     let expectedSenders = nonDeterministicPicking
       ? operation.senders
       : txInputs.map((t) => t.address).filter(Boolean);
+
     let expectedRecipients = txOutputs
       .filter((o) => o.address && !o.isChange)
-      .map((o) => o.address)
-      .filter(Boolean);
+      .map((o) => o.address);
+
     if (account.currency.id === "bitcoin_cash") {
       expectedSenders = expectedSenders.map(bchToCashaddrAddressWithoutPrefix);
       expectedRecipients = expectedRecipients.map(
         bchToCashaddrAddressWithoutPrefix
       );
     }
+
     expect(asSorted(operation)).toMatchObject(
       asSorted({
         senders: expectedSenders,
@@ -105,6 +107,7 @@ const genericTest = ({
       })
     );
   });
+
   const utxosPicked = (status.txInputs || [])
     .map(({ previousTxHash, previousOutputIndex }) =>
       bitcoinResources.utxos.find(
