@@ -19,6 +19,7 @@
 #import <FlipperKitNetworkPlugin/FlipperKitNetworkPlugin.h>
 #import <FlipperKitReactPlugin/FlipperKitReactPlugin.h>
 #import <FlipperKitUserDefaultsPlugin/FKUserDefaultsPlugin.h>
+#import <FlipperPerformancePlugin.h> // react-native-performance-plugin
 #import <SKIOSNetworkPlugin/SKIOSNetworkAdapter.h>
 #endif
 #endif
@@ -97,6 +98,7 @@
     [client addPlugin: [[FKUserDefaultsPlugin alloc] initWithSuiteName:nil]];
     [client addPlugin: [FlipperKitReactPlugin new]];
     [client addPlugin: [[FlipperKitNetworkPlugin alloc] initWithNetworkAdapter:[SKIOSNetworkAdapter new]]];
+    [client addPlugin: [FlipperPerformancePlugin new]];
     [client start];
   #endif
   #endif
