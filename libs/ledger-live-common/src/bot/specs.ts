@@ -62,6 +62,13 @@ type State<T extends Transaction> = {
   }>;
   currentStep: Step<T> | null | undefined;
 };
+
+export enum SpeculosButton {
+  LEFT = "Ll",
+  RIGHT = "Rr",
+  BOTH = "LRlr",
+}
+
 type Step<T extends Transaction> = {
   title: string;
   stepValueTransform?: (string) => string;
@@ -74,7 +81,7 @@ type Step<T extends Transaction> = {
   ) => string;
   ignoreAssertionFailure?: boolean;
   trimValue?: boolean;
-  button?: string;
+  button?: SpeculosButton | string;
   // action to apply in term of button press
   final?: boolean; // tells if there is no step after that and action should terminate all further action (hack to do deboncing)
   maxY?: number; // check if text is bellow a certains Y coordinate on the screen, it happened that two text have the same content but different positions
@@ -101,7 +108,7 @@ export function deviceActionFlow<T extends Transaction>(
       currentStep: null,
     };
 
-    function runStep(step) {
+    function runStep(step: Step<T>) {
       const { final, title, button } = step;
 
       if (stepValue && step.title !== stepTitle) {
