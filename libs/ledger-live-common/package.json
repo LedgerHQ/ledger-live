@@ -175,7 +175,7 @@
     "@xstate/react": "^1.6.3",
     "@zondax/cbor": "v8.1.0-zondax-no-bigint",
     "@zondax/ledger-filecoin": "^0.11.2",
-    "@zondax/ledger-icp": "^0.6.1",
+    "@zondax/ledger-icp": "0.7.0-beta.2",
     "algo-msgpack-with-bigint": "^2.1.1",
     "algosdk": "1.13.0",
     "async": "^3.2.3",

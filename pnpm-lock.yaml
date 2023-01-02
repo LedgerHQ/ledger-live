@@ -13,24 +13,24 @@ overrides:
   remove-flow-types-loader>loader-utils: '*'
 
 patchedDependencies:
-  react-native-tcp@4.0.0:
-    hash: frdjcnsdohx4blxdmaawwvdihy
-    path: patches/react-native-tcp@4.0.0.patch
-  react-native-video@5.2.0:
-    hash: lojvl6twgoj4rxeqeytmq4uduq
-    path: patches/react-native-video@5.2.0.patch
   rn-fetch-blob@0.12.0:
     hash: n5yzdsrxz654upecs5xliebtmm
     path: patches/rn-fetch-blob@0.12.0.patch
+  react-native-video@5.2.0:
+    hash: lojvl6twgoj4rxeqeytmq4uduq
+    path: patches/react-native-video@5.2.0.patch
   react-native-image-crop-tools@1.6.2:
     hash: ykxjy5s7xujdxmsgrwxo5mh3y4
     path: patches/react-native-image-crop-tools@1.6.2.patch
-  react-native-fast-crypto@2.2.0:
-    hash: jdmv3zyvsaug2f6l23zgrmwdli
-    path: patches/react-native-fast-crypto@2.2.0.patch
   react-native-os@1.2.6:
     hash: 2e25ffb547hjiczrnsjhxl6geu
     path: patches/react-native-os@1.2.6.patch
+  react-native-fast-crypto@2.2.0:
+    hash: jdmv3zyvsaug2f6l23zgrmwdli
+    path: patches/react-native-fast-crypto@2.2.0.patch
+  react-native-tcp@4.0.0:
+    hash: frdjcnsdohx4blxdmaawwvdihy
+    path: patches/react-native-tcp@4.0.0.patch
 
 importers:
 
@@ -1242,7 +1242,7 @@ importers:
       '@xstate/react': ^1.6.3
       '@zondax/cbor': v8.1.0-zondax-no-bigint
       '@zondax/ledger-filecoin': ^0.11.2
-      '@zondax/ledger-icp': ^0.6.1
+      '@zondax/ledger-icp': 0.7.0-beta.2
       algo-msgpack-with-bigint: ^2.1.1
       algosdk: 1.13.0
       async: ^3.2.3
@@ -1417,7 +1417,7 @@ importers:
       '@xstate/react': 1.6.3_trxcr4ukgza3iqpu7qkdqadng4
       '@zondax/cbor': 8.1.0-zondax-no-bigint
       '@zondax/ledger-filecoin': 0.11.2
-      '@zondax/ledger-icp': 0.6.1
+      '@zondax/ledger-icp': 0.7.0-beta.2
       algo-msgpack-with-bigint: 2.1.1
       algosdk: 1.13.0
       async: 3.2.3
@@ -22781,8 +22781,15 @@ packages:
       '@ledgerhq/hw-transport': 5.51.1
     dev: false
 
-  /@zondax/ledger-icp/0.6.1:
-    resolution: {integrity: sha512-w9j2RU7o8TpOaDS0Bv+KD+lqsIrcUTRTOmTNmzEck0r1ezKEOcXI6v8qsSjyGV+DE/VmSmEPYVwZm59P9FI6AA==}
+  /@zondax/ledger-icp/0.7.0-beta.2:
+    resolution: {integrity: sha512-apJRXFNNj1XpNhQpOaXzeco/z5hUgzThn30C1UHg+myv21Z3qH3kUuf5BT27ziaQ3+wJ4vL3JcdbaRy9Ol9WBQ==}
+    dependencies:
+      '@ledgerhq/hw-transport': 6.27.9
+      '@zondax/ledger-js': 0.0.2-beta.8
+    dev: false
+
+  /@zondax/ledger-js/0.0.2-beta.8:
+    resolution: {integrity: sha512-qFBSf20Q+PJykqiI1hRevMfpmv1A64U5yNwFdceCmYmfBrBmcx52R0WGZscLBTEPHO0xanNRZYHwNXaBcI1O0A==}
     dependencies:
       '@ledgerhq/hw-transport': 6.27.9
     dev: false

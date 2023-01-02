@@ -4786,6 +4786,10 @@
       "memoPlaceholder": "Optional",
       "memo": "Memo"
     },
+    "dfinity": {
+      "memoPlaceholder": "Optional, Default: 0",
+      "memo": "Memo"
+    },
     "stellar": {
       "memo": "Memo",
       "memoType": {

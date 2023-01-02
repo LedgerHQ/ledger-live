@@ -11,12 +11,12 @@ type FamilyType = "dfinity";
 export type Transaction = TransactionCommon & {
   family: FamilyType;
   fees: BigNumber;
-  memo: BigInt;
+  memo?: string;
 };
 export type TransactionRaw = TransactionCommonRaw & {
   family: FamilyType;
   fees: string;
-  memo: string;
+  memo?: string;
 };
 
 export type TransactionStatus = TransactionStatusCommon;
