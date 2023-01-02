@@ -3269,7 +3269,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     managerAppName: "InternetComputer",
     ticker: "ICP",
     scheme: "dfinity",
-    color: "#0090ff",
+    color: "#e1effa",
     family: "dfinity",
     units: [
       {
