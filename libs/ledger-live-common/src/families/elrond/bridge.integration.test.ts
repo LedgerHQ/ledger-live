@@ -129,6 +129,7 @@ const elrond: CurrenciesData<Transaction> = {
             amount: "0",
             mode: "send",
             fees: null,
+            gasLimit: 50000000,
           }),
           expectedStatus: (account, _, status) => {
             return {
