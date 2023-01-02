@@ -6,7 +6,7 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
-import { useTheme } from "@react-navigation/native";
+import { useIsFocused, useTheme } from "@react-navigation/native";
 import { prepareCurrency } from "../../bridge/cache";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
@@ -33,6 +33,7 @@ export default function AddAccountsSelectDevice({
   const [device, setDevice] = useState<Device | null>(null);
   const dispatch = useDispatch();
 
+  const isFocused = useIsFocused();
   const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
 
   const onSetDevice = useCallback(
@@ -79,7 +80,10 @@ export default function AddAccountsSelectDevice({
       <SkipSelectDevice route={route} onResult={setDevice} />
       {newDeviceSelectionFeatureFlag?.enabled ? (
         <Flex px={16} py={8} flex={1}>
-          <SelectDevice2 onSelect={setDevice} stopBleScanning={!!device} />
+          <SelectDevice2
+            onSelect={setDevice}
+            stopBleScanning={!!device || !isFocused}
+          />
         </Flex>
       ) : (
         <NavigationScrollView
