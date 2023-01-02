@@ -28,24 +28,20 @@ import {
   getMaxEstimatedBalance,
 } from "./logic";
 import invariant from "invariant";
-import { CosmosAPI, defaultCosmosAPI } from "./api/Cosmos";
+import { CosmosAPI } from "./api/Cosmos";
 import * as bech32 from "bech32";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 export class CosmosTransactionStatusManager {
-  protected _api: CosmosAPI = defaultCosmosAPI;
-  protected _validatorOperatorAddressPrefix = "cosmosvaloper";
+  protected validatorOperatorAddressPrefix = "cosmosvaloper";
 
   constructor(options?: {
     api?: CosmosAPI;
     validatorOperatorAddressPrefix?: string;
   }) {
     if (options?.validatorOperatorAddressPrefix) {
-      this._validatorOperatorAddressPrefix =
+      this.validatorOperatorAddressPrefix =
         options.validatorOperatorAddressPrefix;
-    }
-    if (options?.api) {
-      this._api = options.api;
     }
   }
 
@@ -53,7 +49,6 @@ export class CosmosTransactionStatusManager {
     a: CosmosAccount,
     t: CosmosLikeTransaction
   ): Promise<TransactionStatus> => {
-    this._api = new CosmosAPI(a.currency.id);
     if (t.mode === "send") {
       // We isolate the send transaction that it's a little bit different from the rest
       return await this.getSendTransactionStatus(a, t);
@@ -67,8 +62,7 @@ export class CosmosTransactionStatusManager {
     if (
       t.validators.some(
         (v) =>
-          !v.address ||
-          !v.address.includes(this._validatorOperatorAddressPrefix)
+          !v.address || !v.address.includes(this.validatorOperatorAddressPrefix)
       ) ||
       t.validators.length === 0
     )
@@ -162,8 +156,7 @@ export class CosmosTransactionStatusManager {
     if (
       t.validators.some(
         (v) =>
-          !v.address ||
-          !v.address.includes(this._validatorOperatorAddressPrefix)
+          !v.address || !v.address.includes(this.validatorOperatorAddressPrefix)
       ) ||
       t.validators.length === 0
     )

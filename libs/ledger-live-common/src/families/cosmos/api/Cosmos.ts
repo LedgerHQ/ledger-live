@@ -6,13 +6,13 @@ import { Operation } from "@ledgerhq/types-live";
 import cryptoFactory from "../crypto/crypto";
 
 export class CosmosAPI {
-  protected _defaultEndpoint = "";
-  private _version = "";
+  protected defaultEndpoint: string;
+  private version: string;
 
   constructor(currencyId: string) {
     const crypto = cryptoFactory(currencyId);
-    this._defaultEndpoint = crypto.lcd;
-    this._version = crypto.version;
+    this.defaultEndpoint = crypto.lcd;
+    this.version = crypto.version;
   }
 
   getAccountInfo = async (
@@ -68,7 +68,7 @@ export class CosmosAPI {
     try {
       const { data } = await network({
         method: "GET",
-        url: `${this._defaultEndpoint}/cosmos/auth/${this._version}/accounts/${address}`,
+        url: `${this.defaultEndpoint}/cosmos/auth/${this.version}/accounts/${address}`,
       });
 
       if (data.account.address) {
@@ -90,7 +90,7 @@ export class CosmosAPI {
   getChainId = async (): Promise<string> => {
     const { data } = await network({
       method: "GET",
-      url: `${this._defaultEndpoint}/node_info`,
+      url: `${this.defaultEndpoint}/node_info`,
     });
 
     return data.node_info.network;
@@ -99,7 +99,7 @@ export class CosmosAPI {
   getHeight = async (): Promise<number> => {
     const { data } = await network({
       method: "GET",
-      url: `${this._defaultEndpoint}/cosmos/base/tendermint/${this._version}/blocks/latest`,
+      url: `${this.defaultEndpoint}/cosmos/base/tendermint/${this.version}/blocks/latest`,
     });
 
     return data.block.header.height;
@@ -111,7 +111,7 @@ export class CosmosAPI {
   ): Promise<BigNumber> => {
     const { data } = await network({
       method: "GET",
-      url: `${this._defaultEndpoint}/cosmos/bank/${this._version}/balances/${address}`,
+      url: `${this.defaultEndpoint}/cosmos/bank/${this.version}/balances/${address}`,
     });
 
     let amount = new BigNumber(0);
@@ -132,7 +132,7 @@ export class CosmosAPI {
 
     const { data: data1 } = await network({
       method: "GET",
-      url: `${this._defaultEndpoint}/cosmos/staking/${this._version}/delegations/${address}`,
+      url: `${this.defaultEndpoint}/cosmos/staking/${this.version}/delegations/${address}`,
     });
 
     data1.delegation_responses = data1.delegation_responses.filter(
@@ -149,7 +149,7 @@ export class CosmosAPI {
     for (const d of data1.delegation_responses) {
       const { data: data2 } = await network({
         method: "GET",
-        url: `${this._defaultEndpoint}/cosmos/staking/${this._version}/validators/${d.delegation.validator_address}`,
+        url: `${this.defaultEndpoint}/cosmos/staking/${this.version}/validators/${d.delegation.validator_address}`,
       });
 
       status = statusMap[data2.validator.status] || "unbonded";
@@ -167,7 +167,7 @@ export class CosmosAPI {
 
     const { data: data3 } = await network({
       method: "GET",
-      url: `${this._defaultEndpoint}/cosmos/distribution/${this._version}/delegators/${address}/rewards`,
+      url: `${this.defaultEndpoint}/cosmos/distribution/${this.version}/delegators/${address}/rewards`,
     });
 
     for (const r of data3.rewards) {
@@ -190,7 +190,7 @@ export class CosmosAPI {
 
     const { data } = await network({
       method: "GET",
-      url: `${this._defaultEndpoint}/cosmos/staking/${this._version}/delegators/${address}/redelegations`,
+      url: `${this.defaultEndpoint}/cosmos/staking/${this.version}/delegators/${address}/redelegations`,
     });
 
     for (const r of data.redelegation_responses) {
@@ -212,7 +212,7 @@ export class CosmosAPI {
 
     const { data } = await network({
       method: "GET",
-      url: `${this._defaultEndpoint}/cosmos/staking/${this._version}/delegators/${address}/unbonding_delegations`,
+      url: `${this.defaultEndpoint}/cosmos/staking/${this.version}/delegators/${address}/unbonding_delegations`,
     });
 
     for (const u of data.unbonding_responses) {
@@ -231,7 +231,7 @@ export class CosmosAPI {
   getWithdrawAddress = async (address: string): Promise<string> => {
     const { data } = await network({
       method: "GET",
-      url: `${this._defaultEndpoint}/cosmos/distribution/${this._version}/delegators/${address}/withdraw_address`,
+      url: `${this.defaultEndpoint}/cosmos/distribution/${this.version}/delegators/${address}/withdraw_address`,
     });
 
     return data.withdraw_address;
@@ -241,14 +241,14 @@ export class CosmosAPI {
     const receive = await network({
       method: "GET",
       url:
-        `${this._defaultEndpoint}/cosmos/tx/${this._version}/txs?events=` +
+        `${this.defaultEndpoint}/cosmos/tx/${this.version}/txs?events=` +
         encodeURI(`transfer.recipient='${address}'`),
     });
 
     const send = await network({
       method: "GET",
       url:
-        `${this._defaultEndpoint}/cosmos/tx/${this._version}/txs?events=` +
+        `${this.defaultEndpoint}/cosmos/tx/${this.version}/txs?events=` +
         encodeURI(`message.sender='${address}'`),
     });
     return [...receive.data.tx_responses, ...send.data.tx_responses];
@@ -258,7 +258,7 @@ export class CosmosAPI {
     try {
       const { data } = await network({
         method: "POST",
-        url: `${this._defaultEndpoint}/cosmos/tx/${this._version}/simulate`,
+        url: `${this.defaultEndpoint}/cosmos/tx/${this.version}/simulate`,
         data: {
           tx_bytes: tx_bytes,
         },
@@ -275,7 +275,7 @@ export class CosmosAPI {
   }): Promise<Operation> => {
     const { data } = await network({
       method: "POST",
-      url: `${this._defaultEndpoint}/cosmos/tx/${this._version}/txs`,
+      url: `${this.defaultEndpoint}/cosmos/tx/${this.version}/txs`,
       data: {
         tx_bytes: Array.from(Uint8Array.from(Buffer.from(signature, "hex"))),
         mode: "BROADCAST_MODE_SYNC",
@@ -296,5 +296,3 @@ export class CosmosAPI {
     return patchOperationWithHash(operation, data.tx_response.txhash);
   };
 }
-
-export const defaultCosmosAPI = new CosmosAPI("cosmos");

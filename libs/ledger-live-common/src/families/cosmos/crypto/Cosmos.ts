@@ -8,6 +8,7 @@ class Cosmos extends CosmosBase {
   lcd: string;
   stakingDocUrl: string;
   unbonding_period: number;
+  ledger_validator: string;
   constructor() {
     super();
     this.unbonding_period = 21;
@@ -15,6 +16,8 @@ class Cosmos extends CosmosBase {
     this.stakingDocUrl =
       "https://support.ledger.com/hc/en-us/articles/360014339340-Earn-Cosmos-ATOM-staking-rewards-in-Ledger-Live?docs=true";
     this.min_gasprice = 0.025;
+    this.ledger_validator =
+      "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm";
   }
   private computeAvgYearlyInflation = (rewardsState: CosmosRewardsState) => {
     // Return invalid rewardsState if

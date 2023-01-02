@@ -6,6 +6,7 @@ class Juno extends CosmosBase {
   lcd: string;
   stakingDocUrl: string;
   unbonding_period: number;
+  ledger_validator: string;
   constructor() {
     super();
     this.lcd = "https://lcd-juno.itastakers.com";
@@ -13,6 +14,8 @@ class Juno extends CosmosBase {
       "https://support.ledger.com/hc/en-us/articles/6235986236957-Earn-Osmosis-OSMO-staking-rewards-in-Ledger-Live?docs=true";
     this.default_gas = 100000;
     this.unbonding_period = 28;
+    this.ledger_validator =
+      "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm";
   }
   public getRewardsState(): CacheRes<[], CosmosRewardsState> {
     return makeLRUCache(

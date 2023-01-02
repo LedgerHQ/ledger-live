@@ -5,6 +5,7 @@ abstract class cosmosBase {
   abstract lcd: string;
   abstract stakingDocUrl: string;
   abstract unbonding_period: number;
+  abstract ledger_validator: string;
   default_gas = 100000;
   min_gasprice = 0.0025;
   version = "v1beta1";
