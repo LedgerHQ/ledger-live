@@ -68,4 +68,5 @@ setSupportedCurrencies([
   "moonriver",
   "velas_evm",
   "syscoin",
+  "dfinity",
 ]);
