@@ -1,5 +1,4 @@
 // @flow
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { checkQuote } from "@ledgerhq/live-common/exchange/swap/index";
 import {
   usePollKYCStatus,
@@ -12,12 +11,13 @@ import {
   shouldShowKYCBanner,
   shouldShowLoginBanner,
 } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import React, { useCallback, useEffect, useMemo, useState, useRef } from "react";
+import React, { useCallback, useEffect, useState, useRef, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { setSwapKYCStatus } from "~/renderer/actions/settings";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import {
   providersSelector,
   rateSelector,
@@ -48,6 +48,8 @@ import FormNotAvailable from "./FormNotAvailable";
 import SwapFormSelectors from "./FormSelectors";
 import SwapFormSummary from "./FormSummary";
 import SwapFormRates from "./FormRates";
+import { DEX_PROVIDERS } from "~/renderer/screens/exchange/Swap2/Form/utils";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 const Wrapper: ThemedComponent<{}> = styled(Box).attrs({
   p: 20,
@@ -110,7 +112,7 @@ const SwapForm = () => {
   const { state: locationState } = useLocation();
   const history = useHistory();
   const accounts = useSelector(shallowAccountsSelector);
-  const { storedProviders, providers, providersError } = useProviders();
+  const { storedProviders, providersError } = useProviders();
   const exchangeRate = useSelector(rateSelector);
   const setExchangeRate = useCallback(
     rate => {
@@ -118,12 +120,16 @@ const SwapForm = () => {
     },
     [dispatch],
   );
+  const showDexQuotes: boolean | null = useFeature("swapShowDexQuotes");
+
   const swapTransaction = useSwapTransaction({
     accounts,
     setExchangeRate,
     setIsSendMaxLoading,
     onNoRates: trackNoRates,
     ...locationState,
+    providers: storedProviders,
+    includeDEX: showDexQuotes,
   });
 
   const exchangeRatesState = swapTransaction.swap?.rates;
@@ -392,43 +398,58 @@ const SwapForm = () => {
   };
 
   const sourceAccount = swapTransaction.swap.from.account;
+  const sourceCurrency = swapTransaction.swap.from.currency;
   const sourceParentAccount = swapTransaction.swap.from.parentAccount;
   const targetAccount = swapTransaction.swap.to.account;
   const targetParentAccount = swapTransaction.swap.to.parentAccount;
-  const sourceCurrency = swapTransaction.swap.from.currency;
   const targetCurrency = swapTransaction.swap.to.currency;
 
-  const updateSelection = useCallback(
-    payload => {
-      const { navigation } = payload;
-      if (navigation) {
-        // Means a DEX provider is selected
-        setNavigation(navigation);
-      } else {
-        // Means a CEX provider is selected
-        setNavigation(null);
-        swapTransaction.swap.updateSelectedRate(payload);
-      }
-    },
-    [swapTransaction?.swap],
-  );
-
   // We check if a decentralized swap is available to conditionnaly render an Alert below.
-  // All Ethereum related currencies are considered available
-  const decentralizedSwapAvailable = useMemo(() => {
+  // All Ethereum, Binance and Polygon related currencies are considered available
+  const showNoQuoteDexRate = useMemo(() => {
+    // if we are showing DEX quotes, we don't want to show the link banners
+    if (showDexQuotes) {
+      return false;
+    }
+
     if (sourceAccount && targetAccount) {
       const sourceMainAccount = getMainAccount(sourceAccount, sourceParentAccount);
       const targetMainAccount = getMainAccount(targetAccount, targetParentAccount);
 
+      const dexFamilyList = ["ethereum", "binance", "polygon"];
       if (
-        targetMainAccount.currency.family === "ethereum" &&
-        sourceMainAccount.currency.id === targetMainAccount.currency.id
+        dexFamilyList.includes(targetMainAccount.currency.family) &&
+        sourceMainAccount.currency.id === targetMainAccount.currency.id &&
+        sourceMainAccount.currency.family === targetMainAccount.currency.family
       ) {
         return true;
       }
     }
     return false;
-  }, [sourceAccount, sourceParentAccount, targetAccount, targetParentAccount]);
+  }, [showDexQuotes, sourceAccount, sourceParentAccount, targetAccount, targetParentAccount]);
+
+  useEffect(() => {
+    if (!exchangeRate) {
+      setNavigation(null);
+      swapTransaction.swap.updateSelectedRate({});
+      return;
+    }
+
+    const { providerType } = exchangeRate;
+    if (providerType === "DEX") {
+      const dexProvider = DEX_PROVIDERS.find(d => d.id === exchangeRate.provider);
+      if (dexProvider) {
+        setNavigation(dexProvider.navigation);
+      }
+    }
+
+    if (providerType === "CEX") {
+      setNavigation(null);
+      swapTransaction.swap.updateSelectedRate(exchangeRate);
+    }
+    // suppressing as swapTransaction is not memoized and causes infinite loop
+    // eslint-disable-next-line
+  }, [exchangeRate]);
 
   switch (currentFlow) {
     case "LOGIN":
@@ -486,7 +507,7 @@ const SwapForm = () => {
     swapTransaction.toggleMax(state);
   };
 
-  if (providers?.length)
+  if (storedProviders?.length)
     return (
       <Wrapper>
         <TrackPage category="Swap" name="Form" provider={provider} {...swapDefaultTrack} />
@@ -522,8 +543,7 @@ const SwapForm = () => {
               provider={provider}
               refreshTime={refreshTime}
               countdown={!swapError && !idleState}
-              decentralizedSwapAvailable={decentralizedSwapAvailable}
-              updateSelection={updateSelection}
+              showNoQuoteDexRate={showNoQuoteDexRate}
             />
 
             {currentBanner === "LOGIN" ? (

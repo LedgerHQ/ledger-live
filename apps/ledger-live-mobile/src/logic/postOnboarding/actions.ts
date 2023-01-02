@@ -7,13 +7,12 @@ import { NavigatorName, ScreenName } from "../../const";
 
 export const customImageAction: PostOnboardingAction = {
   id: PostOnboardingActionId.customImage,
-  Icon: Icons.BracketsMedium,
+  Icon: Icons.PhotographMedium,
   featureFlagId: "customImage",
   title: "postOnboarding.actions.customImage.title",
+  titleCompleted: "postOnboarding.actions.customImage.titleCompleted",
   description: "postOnboarding.actions.customImage.description",
   actionCompletedPopupLabel: "postOnboarding.actions.customImage.popupLabel",
-  actionCompletedHubTitle:
-    "postOnboarding.actions.customImage.hubTitleAfterAction",
   navigationParams: [
     NavigatorName.CustomImage,
     {
@@ -23,4 +22,27 @@ export const customImageAction: PostOnboardingAction = {
       },
     },
   ],
+};
+
+export const claimNftAction: PostOnboardingAction = {
+  id: PostOnboardingActionId.claimNft,
+  disabled: true,
+  Icon: Icons.GiftCardMedium,
+  featureFlagId: "postOnboardingClaimNft",
+  title: "postOnboarding.actions.claimNft.title",
+  titleCompleted: "postOnboarding.actions.claimNft.titleCompleted",
+  description: "postOnboarding.actions.claimNft.description",
+  tagLabel: "postOnboarding.actions.claimNft.tagLabel",
+  actionCompletedPopupLabel: "postOnboarding.actions.claimNft.popupLabel",
+};
+
+export const assetsTransferAction: PostOnboardingAction = {
+  id: PostOnboardingActionId.assetsTransfer,
+  disabled: true,
+  featureFlagId: "postOnboardingAssetsTransfer",
+  Icon: Icons.LockClosedMedium,
+  title: "postOnboarding.actions.assetsTransfer.title",
+  titleCompleted: "postOnboarding.actions.assetsTransfer.titleCompleted",
+  description: "postOnboarding.actions.assetsTransfer.description",
+  actionCompletedPopupLabel: "postOnboarding.actions.assetsTransfer.popupLabel",
 };

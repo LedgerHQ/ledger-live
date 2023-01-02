@@ -46,6 +46,9 @@ import type { ElrondDelegationFlowParamList } from "../families/elrond/component
 import type { ElrondUndelegationFlowParamList } from "../families/elrond/components/Flows/Undelegate/types";
 import type { ElrondClaimRewardsFlowParamList } from "../families/elrond/components/Flows/Claim/types";
 import type { ElrondWithdrawFlowParamList } from "../families/elrond/components/Flows/Withdraw/types";
+import type { NearStakingFlowParamList } from "../families/near/StakingFlow/types";
+import type { NearUnstakingFlowParamList } from "../families/near/UnstakingFlow/types";
+import type { NearWithdrawingFlowParamList } from "../families/near/WithdrawingFlow/types";
 import type { OsmosisDelegationFlowParamList } from "../families/osmosis/DelegationFlow/types";
 import type { OsmosisRedelegationFlowParamList } from "../families/osmosis/RedelegationFlow/types";
 import { OsmosisUndelegationFlowParamList } from "../families/osmosis/UndelegationFlow/types";
@@ -168,6 +171,18 @@ type Props =
   | StackNavigatorProps<
       ElrondWithdrawFlowParamList,
       ScreenName.ElrondWithdrawConnectDevice
+    >
+  | StackNavigatorProps<
+      NearStakingFlowParamList,
+      ScreenName.NearStakingConnectDevice
+    >
+  | StackNavigatorProps<
+      NearUnstakingFlowParamList,
+      ScreenName.NearUnstakingConnectDevice
+    >
+  | StackNavigatorProps<
+      NearWithdrawingFlowParamList,
+      ScreenName.NearWithdrawingConnectDevice
     >
   | StackNavigatorProps<
       OsmosisDelegationFlowParamList,
@@ -297,6 +312,6 @@ const edges = ["bottom"] as Edge[];
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: 16,
   },
 });

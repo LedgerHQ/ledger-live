@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import { withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { compose } from "redux";
+import { getEnv } from "@ledgerhq/live-common/env";
 import { privacySelector } from "../../reducers/settings";
 import { SkipLockContext } from "../../components/behaviour/SkipLock";
 import { AUTOLOCK_TIMEOUT } from "../../constants";
@@ -77,11 +78,12 @@ class AuthPass extends PureComponent<Props, State> {
 
   appInBg: number | undefined;
   handleAppStateChange = (nextAppState: string) => {
+    const timeoutValue = getEnv("MOCK") ? 5000 : AUTOLOCK_TIMEOUT;
     if (
       this.state.appState.match(/inactive|background/) &&
       nextAppState === "active" &&
       !!this.appInBg &&
-      this.appInBg + AUTOLOCK_TIMEOUT < Date.now()
+      this.appInBg + timeoutValue < Date.now()
     ) {
       this.lock();
       this.appInBg = Date.now();

@@ -1,5 +1,51 @@
 # @ledgerhq/react-native-hw-transport-ble
 
+## 6.27.12
+
+### Patch Changes
+
+- [#2048](https://github.com/LedgerHQ/ledger-live/pull/2048) [`101e6851ae`](https://github.com/LedgerHQ/ledger-live/commit/101e6851ae76747431b122076dc1752c94ee40d3) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Undo the auto disconnect mechanism, due to regressions
+
+* [#1984](https://github.com/LedgerHQ/ledger-live/pull/1984) [`f1c15446da`](https://github.com/LedgerHQ/ledger-live/commit/f1c15446dabef05bb91dada8d8f53f9bc6474ba5) Thanks [@alexandremgo](https://github.com/alexandremgo)! - New HwTransportError for all the implementations of Transport
+
+* Updated dependencies [[`f1c15446da`](https://github.com/LedgerHQ/ledger-live/commit/f1c15446dabef05bb91dada8d8f53f9bc6474ba5)]:
+  - @ledgerhq/errors@6.12.2
+  - @ledgerhq/hw-transport@6.27.9
+  - @ledgerhq/devices@7.0.6
+
+## 6.27.12-next.0
+
+### Patch Changes
+
+- [#2048](https://github.com/LedgerHQ/ledger-live/pull/2048) [`101e6851ae`](https://github.com/LedgerHQ/ledger-live/commit/101e6851ae76747431b122076dc1752c94ee40d3) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Undo the auto disconnect mechanism, due to regressions
+
+* [#1984](https://github.com/LedgerHQ/ledger-live/pull/1984) [`f1c15446da`](https://github.com/LedgerHQ/ledger-live/commit/f1c15446dabef05bb91dada8d8f53f9bc6474ba5) Thanks [@alexandremgo](https://github.com/alexandremgo)! - New HwTransportError for all the implementations of Transport
+
+* Updated dependencies [[`f1c15446da`](https://github.com/LedgerHQ/ledger-live/commit/f1c15446dabef05bb91dada8d8f53f9bc6474ba5)]:
+  - @ledgerhq/errors@6.12.2-next.0
+  - @ledgerhq/hw-transport@6.27.9-next.0
+  - @ledgerhq/devices@7.0.6-next.0
+
+## 6.27.11
+
+### Patch Changes
+
+- [#2024](https://github.com/LedgerHQ/ledger-live/pull/2024) [`627b46b58e`](https://github.com/LedgerHQ/ledger-live/commit/627b46b58ed83970c69d621303af7a3a7e51850b) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Undo the auto disconnect mechanism, due to regressions
+
+* [#1871](https://github.com/LedgerHQ/ledger-live/pull/1871) [`ff5cb2cb11`](https://github.com/LedgerHQ/ledger-live/commit/ff5cb2cb11a2dcac0f2a65bf3ae4efac512cfe71) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Provide a forceful disconnection mechanism for close request on BleTransport
+
+## 6.27.11-next.1
+
+### Patch Changes
+
+- [#2024](https://github.com/LedgerHQ/ledger-live/pull/2024) [`627b46b58e`](https://github.com/LedgerHQ/ledger-live/commit/627b46b58ed83970c69d621303af7a3a7e51850b) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Undo the auto disconnect mechanism, due to regressions
+
+## 6.27.11-next.0
+
+### Patch Changes
+
+- [#1871](https://github.com/LedgerHQ/ledger-live/pull/1871) [`ff5cb2cb11`](https://github.com/LedgerHQ/ledger-live/commit/ff5cb2cb11a2dcac0f2a65bf3ae4efac512cfe71) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Provide a forceful disconnection mechanism for close request on BleTransport
+
 ## 6.27.10
 
 ### Patch Changes

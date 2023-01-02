@@ -169,7 +169,10 @@
       "WITHDRAW" : "Retirado",
       "REVOKE" : "Revocado",
       "ACTIVATE" : "Activado",
-      "REGISTER" : "Registrado"
+      "REGISTER" : "Registrado",
+      "STAKE" : "En participación",
+      "UNSTAKE" : "Fuera de participación",
+      "WITHDRAW_UNSTAKED" : "Retirado"
     }
   },
   "byteSize" : {
@@ -2075,14 +2078,6 @@
           "dismiss" : "Ahora no",
           "stake" : "Pon en participación con {{provider}}"
         },
-        "ethereum" : {
-          "title" : "Haz crecer tus ETH. Ponlos en participación ahora.",
-          "description" : "Pon tus Ethereum en participación con Lido y gana recompensas diarias. Sin periodo de inmovilización. Sin depósito mínimo.",
-          "kiln" : {
-            "title" : "No hagas HODL. Haz crecer tus ETH.",
-            "description" : "¿Tienes más de 32 ETH? Consigue recompensas pasivas poniendo tu ETH de forma segura en participación con Kiln."
-          }
-        },
         "cosmos" : {
           "title" : "Haz crecer tus ATOM. Ponlos en participación con un validador de Ledger.",
           "description" : "Pon tus ATOM en participación con el validador de confianza de Ledger. Tus monedas seguirán siendo tuyas y estarán respaldadas por la seguridad sin concesiones de Ledger."
@@ -2143,8 +2138,8 @@
         "ethereumGasPrice" : "Precio de gas",
         "ethereumMaxFee" : "Tarifa máxima ({{unitName}})",
         "ethereumPriorityFee" : "Tarifa de prioridad máxima ({{unitName}})",
-        "nextBlock" : "Siguiente bloque: {{nextBaseFee}}",
-        "suggestedPriorityFee" : "Sugerencia: {{lowPriorityFee}} - {{highPriorityFee}} {{unitName}}",
+        "nextBlock" : "Siguiente bloque",
+        "suggested" : "Sugerida",
         "unitPerByte" : "{{unit}} por byte",
         "nft" : "NFT",
         "nftQuantity" : "Cantidad"
@@ -2183,6 +2178,9 @@
   "releaseNotes" : {
     "title" : "Notas de versión",
     "version" : "Ledger Live {{versionNb}}"
+  },
+  "troubleshootNetwork" : {
+    "title" : "Diagnosticar problemas de red"
   },
   "systemLanguageAvailable" : {
     "title" : "¿Deseas cambiar el idioma de tu app?",
@@ -2241,6 +2239,9 @@
     }
   },
   "tron" : {
+    "receive" : {
+      "newAddressTRC20" : "Primero debes enviar al menos 0,1 TRX a esta dirección para activarla."
+    },
     "voting" : {
       "emptyState" : {
         "description" : "Puedes recibir recompensas mediante el inmovilización y la votación.",
@@ -3390,6 +3391,155 @@
       }
     }
   },
+  "ethereum" : {
+    "stake" : {
+      "title" : "Gana Ethereum",
+      "lido" : {
+        "tag" : "Sin mínimos",
+        "description" : "Pon tus Ethereum en participación con Lido y gana recompensas diarias. Sin periodo de inmovilización. Sin mínimos."
+      },
+      "kiln" : {
+        "tag" : "Requiere 32 ETH",
+        "description" : "¿Tienes más de 32 ETH? Gana recompensas diarias poniendo tu ETH en participación de forma segura con Kiln."
+      },
+      "providerTitle" : "Gana con {{provider}}",
+      "providerLink" : "Aprende más sobre {{provider}}"
+    }
+  },
+  "near" : {
+    "account" : {
+      "stakedBalance" : "Saldo en participación",
+      "stakedBalanceTooltip" : "Esta cantidad está en participación con validadores.",
+      "availableBalance" : "Saldo retirable",
+      "availableBalanceTooltip" : "Esta cantidad se ha quitado de participación y se puede retirar.",
+      "pendingBalance" : "Saldo pendiente",
+      "pendingBalanceTooltip" : "Esta cantidad se ha quitado de participación y está pendiente de disponibilidad.",
+      "storageUsageBalance" : "Saldo mínimo",
+      "storageUsageBalanceTooltip" : "Esta cantidad está reservada para almacenamiento y transacciones, y es el saldo mínimo que debe mantener tu cuenta para permanecer activa.",
+      "subHeader" : {
+        "cardTitle" : "Con tecnología de Figment",
+        "moreInfo" : "Más información",
+        "drawerTitle" : "Con tecnología de Figment",
+        "title" : "El token NEAR ya está disponible en Ledger Live",
+        "description" : "Ahora puedes gestionar tus tokens NEAR y protegerlos con Ledger Live.",
+        "description2" : "El token NEAR es nativo de la cadena NEAR y se utiliza para todas las transacciones, puesta en participación y muchas características futuras.",
+        "website" : "Con tecnología de Figment"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "Cantidad en participación"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "Puedes conseguir recompensas en NEAR al poner tus activos en participación.",
+        "info" : "Cómo funciona la participación",
+        "earnRewards" : "Ganar recompensas"
+      },
+      "table" : {
+        "header" : "Posiciones en participación",
+        "stake" : "Agregar",
+        "staked" : "En participación",
+        "pending" : "Pendiente de liberación",
+        "available" : "Puede retirarse"
+      },
+      "unstake" : "Cancelar la puesta en participación",
+      "withdraw" : "Retirar",
+      "activeTooltip" : "Las cantidades en participación generan recompensas",
+      "inactiveTooltip" : "Las cantidades quitadas de participación no generan recompensas",
+      "commission" : "Comisión",
+      "totalStake" : "Participación total",
+      "minSafeWarning" : "No hay fondos suficientes",
+      "flow" : {
+        "title" : "Poner en participación",
+        "steps" : {
+          "starter" : {
+            "description" : "Puedes recibir recompensas poniendo en participación tus activos CELO con un validador.",
+            "bullet" : ["Conservas la propiedad de los activos puestos en participación.", "Pon en participación con tu dispositivo Ledger.", "Los activos estarán disponibles entre 52 y 65 horas después de quitarlos de participación."],
+            "warning" : {
+              "description" : "Elige tu validador con cuidado: Puedes perder definitivamente parte de tus activos puestos en participación si el validador no se comporta apropiadamente."
+            }
+          },
+          "amount" : {
+            "title" : "Importe"
+          },
+          "validator" : {
+            "title" : "Validadores",
+            "ledgerByFigmentTC" : "Términos y condiciones de Ledger by Figment"
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "success" : {
+              "title" : "Has puesto en participación tus activos correctamente",
+              "text" : "El saldo de tu cuenta se actualizará cuando la cadena de bloques confirme la transacción.",
+              "cta" : "Ver detalles"
+            },
+            "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y revisa el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "No hay activos en participación suficientes para quitarlos de participación",
+      "flow" : {
+        "title" : "Cancelar la puesta en participación",
+        "steps" : {
+          "amount" : {
+            "title" : "Importe",
+            "subtitle" : "El proceso de retirada de participación tarda entre <0>52 y 65 horas</0> en finalizar.",
+            "warning" : "Las recompensas se cobran inmediatamente. La cantidad retirada de participación estará disponible para su retirada tras el <0>periodo de inmovilización de 52 a 65 horas</0>.",
+            "fields" : {
+              "validator" : "Validador",
+              "amount" : "Importe de la cancelación de la puesta en participación"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "success" : {
+              "title" : "Has cancelado la puesta en participación de tus activos correctamente",
+              "description" : "<0>{{amount}}</0> se han retirado de participación de <0>{{validator}}</0>",
+              "cta" : "Ver detalles"
+            },
+            "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y revisa el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "disabledTooltip" : "No hay activos suficientes para retirar",
+      "flow" : {
+        "title" : "Retirar",
+        "steps" : {
+          "amount" : {
+            "title" : "Importe",
+            "fields" : {
+              "validator" : "Validador",
+              "amount" : "Importe a retirar"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "success" : {
+              "title" : "Has retirado con éxito tus activos.",
+              "description" : "<0>{{amount}}</0> se retiraron de <0>{{validator}}</0>",
+              "cta" : "Ver detalles"
+            },
+            "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y revisa el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
+    }
+  },
   "delegation" : {
     "title" : "Recibir recompensas",
     "header" : "Delegación",
@@ -3695,6 +3845,11 @@
       "title" : "Guardar registros",
       "desc" : "Puede ser necesario guardar los registros de Ledger Live para solucionar problemas.",
       "btn" : "Guardar"
+    },
+    "troubleshootNetwork" : {
+      "title" : "Diagnosticar problemas de red",
+      "desc" : "Sigue una lista de comprobación para evaluar el estado de la red con fines de diagnóstico de problemas.",
+      "btn" : "Diagnosticar problemas"
     },
     "accounts" : {
       "hideEmptyTokens" : {
@@ -4501,6 +4656,9 @@
       "claimRewardCompound" : "validador que recibirá las recompensas",
       "optIn" : "receptor",
       "nominate" : "validador",
+      "stake" : "validador",
+      "unstake" : "validador",
+      "withdraw" : "validador",
       "erc721" : {
         "transfer" : "receptor"
       },
@@ -4734,6 +4892,10 @@
       "title" : "Parece que tu dispositivo se ha desconectado",
       "description" : "Conéctalo e inténtalo de nuevo."
     },
+    "EConnReset" : {
+      "title" : "No se puede establecer contacto con la tienda de aplicaciones de Ledger",
+      "description" : "Puede que tu conexión a Internet no funcione o que estés usando una configuración inusual. Para comenzar, comprueba si hay algo que esté bloqueando tu conexión (proxy o cortafuegos). Si el problema persiste, haz clic a continuación para ver soluciones o ponte en contacto con nuestro servicio de soporte al cliente."
+    },
     "EnpointConfig" : {
       "title" : "Endpoint inválido.",
       "description" : "Ingresa un endpoint válido."
@@ -4845,6 +5007,10 @@
     },
     "NotEnoughGas" : {
       "title" : "El saldo de la cuenta principal es insuficiente para las comisiones de red"
+    },
+    "OperatingSystemOutdated" : {
+      "title" : "La versión de tu sistema operativo está obsoleta.",
+      "description" : "Actualiza tu sistema operativo e inténtalo de nuevo. Lee el artículo siguiente para saber por qué Ledger Live no es compatible con la versión actual de tu sistema operativo."
     },
     "PasswordsDontMatch" : {
       "title" : "Las contraseñas no coinciden",
@@ -5088,7 +5254,7 @@
       "title" : "El importe a inmovilizar no puede ser inferior a 1"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "Enviar TRC20 a una nueva cuenta no la activará",
+      "title" : "Primero debes enviar al menos 0,1 TRX a esta dirección para activar la recepción de tokens TRC20.",
       "description" : "La cuenta del destinatario debe estar activa antes de enviarle TRC20. Envía TRX o TRC10 a una cuenta para activarla."
     },
     "TronUnexpectedFees" : {
@@ -5102,7 +5268,7 @@
       "description" : "La firma debe realizarse dentro de un período de 30 segundos. Inténtalo de nuevo."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "No hay suficiente Energía para enviar este token"
+      "title" : "La energía es menor que la requerida. Es posible que pagues hasta 20 TRX en tarifas."
     },
     "PairingFailed" : {
       "title" : "Emparejamiento fallido",
@@ -5253,6 +5419,9 @@
     "StellarSourceHasMultiSign" : {
       "title" : "Desactiva la multifirma para realizar transacciones de Stellar."
     },
+    "StellarBurnAddressError" : {
+      "title" : "Se ha producido un problema al intentar agregar una cuenta de Stellar"
+    },
     "HederaAddAccountError" : {
       "title" : "Tu cuenta no ha sido agregada. Inténtalo de nuevo."
     },
@@ -5299,6 +5468,30 @@
     "ImageLoadRefusedOnDevice" : {
       "title" : "Carga de imagen rechazada en el dispositivo (TODO: final wording)",
       "description" : "Si la imagen no era la adecuada, puedes intentarlo de nuevo con una diferente."
+    },
+    "NearNewAccountWarning" : {
+      "title" : "La cuenta del destinatario todavía no está creada. El protocolo requiere una transferencia de {{formattedNewAccountStorageCost}} para crearla."
+    },
+    "NearNewNamedAccountError" : {
+      "title" : "La cuenta del destinatario todavía no está creada. Se debe crear en la billetera de NEAR."
+    },
+    "NearActivationFeeNotCovered" : {
+      "title" : "Esta cantidad no cubre el costo de almacenamiento de {{formattedNewAccountStorageCost}}."
+    },
+    "NearUseAllAmountStakeWarning" : {
+      "title" : "Asegúrate de que tienes un saldo restante suficiente para cubrir las tarifas de transacciones futuras"
+    },
+    "NearNotEnoughStaked" : {
+      "title" : "Saldo puesto en participación insuficiente"
+    },
+    "NearNotEnoughAvailable" : {
+      "title" : "Saldo disponible para retirar insuficiente"
+    },
+    "NearRecommendUnstake" : {
+      "title" : "Quita de participación y retira fondos antes de vaciar la cuenta."
+    },
+    "NearStakingThresholdNotMet" : {
+      "title" : "La cantidad debe ser de {{threshold}} como mínimo."
     },
     "LockedDeviceError" : {
       "title" : "Tu dispositivo está bloqueado",

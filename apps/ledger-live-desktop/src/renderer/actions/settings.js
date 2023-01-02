@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import type { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
-import type { DeviceModelInfo } from "@ledgerhq/types-live";
+import type { DeviceModelInfo, FeatureId, Feature } from "@ledgerhq/types-live";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import type { SettingsState as Settings } from "~/renderer/reducers/settings";
 import {
@@ -119,6 +119,23 @@ export const hideNftCollection = (collectionId: string) => ({
   type: "HIDE_NFT_COLLECTION",
   payload: collectionId,
 });
+export const setLastSeenCustomImage = (lastSeenCustomImage: {
+  imageSize: number,
+  imageHash: string,
+}) => ({
+  type: "SET_LAST_SEEN_CUSTOM_IMAGE",
+  payload: {
+    imageSize: lastSeenCustomImage.imageSize,
+    imageHash: lastSeenCustomImage.imageHash,
+  },
+});
+export const clearLastSeenCustomImage = () => ({
+  type: "SET_LAST_SEEN_CUSTOM_IMAGE",
+  payload: {
+    imageSize: 0,
+    imageHash: "",
+  },
+});
 
 export const swapAcceptProvider = (providerId: string) => ({
   type: "ACCEPT_SWAP_PROVIDER",
@@ -225,4 +242,16 @@ export const removeStarredMarketCoins = (payload: string) => ({
 export const toggleStarredMarketCoins = (payload: string) => ({
   type: "TOGGLE_STARRED_MARKET_COINS",
   payload,
+});
+
+export const setOverriddenFeatureFlag = (key: FeatureId, value: Feature | undefined) => ({
+  type: "SET_OVERRIDDEN_FEATURE_FLAG",
+  payload: { key, value },
+});
+
+export const setOverriddenFeatureFlags = (overriddenFeatureFlags: {
+  [key: FeatureId]: Feature,
+}) => ({
+  type: "SET_OVERRIDDEN_FEATURE_FLAGS",
+  payload: { overriddenFeatureFlags },
 });

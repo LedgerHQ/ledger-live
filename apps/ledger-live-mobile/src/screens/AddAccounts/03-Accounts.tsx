@@ -330,10 +330,11 @@ function AddAccountsAccounts({
     s => s.id === "importable" || s.id === "creatable" || s.id === "migrate",
   );
   const CustomNoAssociatedAccounts =
-    noAssociatedAccountsByFamily[
-      (currency as CryptoCurrency)
-        .family as keyof typeof noAssociatedAccountsByFamily
-    ];
+    currency.type === "CryptoCurrency"
+      ? noAssociatedAccountsByFamily[
+          currency.family as keyof typeof noAssociatedAccountsByFamily
+        ]
+      : null;
   const emptyTexts = {
     creatable: alreadyEmptyAccount ? (
       <LText style={styles.paddingHorizontal}>
@@ -414,10 +415,12 @@ function AddAccountsAccounts({
               {hasMultipleSchemes ? (
                 <View style={styles.moreAddressTypesContainer}>
                   {showAllCreatedAccounts ? (
-                    <AddressTypeTooltip
-                      accountSchemes={newAccountSchemes as DerivationMode[]}
-                      currency={currency as CryptoCurrency}
-                    />
+                    currency.type === "CryptoCurrency" ? (
+                      <AddressTypeTooltip
+                        accountSchemes={newAccountSchemes as DerivationMode[]}
+                        currency={currency}
+                      />
+                    ) : null
                   ) : (
                     <Button
                       event={"AddAccountsMoreAddressType"}

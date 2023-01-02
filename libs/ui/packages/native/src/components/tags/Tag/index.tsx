@@ -8,6 +8,8 @@ import { Box } from "../../Layout";
 export interface TagProps extends FlexBoxProps {
   type?: "shade" | "color" | "warning";
   size?: "small" | "medium";
+  color?: string;
+  textColor?: string;
   Icon?: IconType;
   uppercase?: boolean;
   children?: React.ReactNode;
@@ -24,6 +26,8 @@ const typeColor = {
 export default function Tag({
   type = "shade",
   size = "small",
+  color,
+  textColor,
   uppercase,
   Icon,
   children,
@@ -38,7 +42,7 @@ export default function Tag({
       justifyContent="center"
       flexDirection="row"
       borderRadius={6}
-      bg={typeColor[type]}
+      bg={color || typeColor[type]}
       height={size === "small" ? "18px" : "28px"}
       {...props}
     >
@@ -55,7 +59,7 @@ export default function Tag({
         fontWeight="bold"
         uppercase={uppercase !== false}
         textAlign="center"
-        color={type === "shade" ? "neutral.c90" : "neutral.c00"}
+        color={textColor || (type === "shade" ? "neutral.c90" : "neutral.c00")}
         numberOfLines={numberOfLines}
         ellipsizeMode={ellipsizeMode}
       >

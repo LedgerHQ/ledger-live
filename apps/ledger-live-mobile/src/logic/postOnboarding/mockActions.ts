@@ -10,10 +10,10 @@ export const claimMock: PostOnboardingAction = {
   id: PostOnboardingActionId.claimMock,
   Icon: Icons.GiftCardMedium,
   title: "Claim my NFT",
+  titleCompleted: "NFT Claimed",
   description: "A special NFT for you.",
   tagLabel: "Free",
   actionCompletedPopupLabel: "NFT claimed",
-  actionCompletedHubTitle: "Kickstart your Web3 journey.",
   navigationParams: [
     NavigatorName.PostOnboarding,
     {
@@ -30,10 +30,10 @@ export const personalizeMock: PostOnboardingAction = {
   id: PostOnboardingActionId.personalizeMock,
   Icon: Icons.BracketsMedium,
   featureFlagId: "customImage",
-  title: `Personalize my ${getDeviceModel(DeviceModelId.nanoFTS).productName}`,
+  title: `Personalize my ${getDeviceModel(DeviceModelId.stax).productName}`,
+  titleCompleted: `Device personalized`,
   description: "By customizing the screen.",
   actionCompletedPopupLabel: "Device personalized",
-  actionCompletedHubTitle: "That screen is looking neat.",
   navigationParams: [
     NavigatorName.PostOnboarding,
     {
@@ -50,9 +50,9 @@ export const migrateAssetsMock: PostOnboardingAction = {
   id: PostOnboardingActionId.migrateAssetsMock,
   Icon: Icons.TransferMedium,
   title: "Transfer assets to my Ledger",
+  titleCompleted: "Assets transfered",
   description: "Easily secure assets from coinbase or another exchange.",
   actionCompletedPopupLabel: "Assets transfered",
-  actionCompletedHubTitle: "Something about being a crypto pro.",
   navigationParams: [
     NavigatorName.PostOnboarding,
     {

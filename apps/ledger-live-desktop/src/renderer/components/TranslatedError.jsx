@@ -17,6 +17,8 @@ type Props = {
   error: ?Error,
   t: TFunction,
   field: "title" | "description" | "list",
+  noLink?: boolean,
+  fallback?: React$Node,
 };
 
 class TranslatedError extends PureComponent<Props> {
@@ -25,7 +27,7 @@ class TranslatedError extends PureComponent<Props> {
   };
 
   render() {
-    const { t, error, field } = this.props;
+    const { t, error, field, noLink, fallback } = this.props;
     if (!error) return null;
     if (typeof error !== "object") {
       // this case should not happen (it is supposed to be a ?Error)
@@ -48,7 +50,7 @@ class TranslatedError extends PureComponent<Props> {
           );
         }
 
-        if (urls.errors[error.name]) {
+        if (urls.errors[error.name] && !noLink) {
           return (
             <Text>
               {translation}{" "}
@@ -65,6 +67,8 @@ class TranslatedError extends PureComponent<Props> {
         return translation;
       }
     }
+
+    if (fallback) return fallback;
 
     const genericTranslation = t(`errors.generic.${field}`, arg);
     return genericTranslation === `errors.generic.${field}` ? null : genericTranslation;

@@ -10,6 +10,7 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
+import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
 import { ScreenName, NavigatorName } from "../const";
 import {
   lastSeenDeviceSelector,
@@ -19,7 +20,6 @@ import {
 import { hasConnectedDeviceSelector } from "../reducers/appstate";
 import Button from "./Button";
 import useLatestFirmware from "../hooks/useLatestFirmware";
-import { isFirmwareUpdateVersionSupported } from "../logic/firmwareUpdate";
 
 const FirmwareUpdateBanner = ({
   containerProps,
@@ -89,7 +89,7 @@ const FirmwareUpdateBanner = ({
     : "";
 
   return showBanner && hasCompletedOnboarding && hasConnectedDevice ? (
-    <Flex mt={4} mb={6} mx={6} {...containerProps}>
+    <Flex mt={8} {...containerProps}>
       <Alert type="info" showIcon={false}>
         <Text flexShrink={1} flexGrow={1}>
           {t("FirmwareUpdate.newVersion", {

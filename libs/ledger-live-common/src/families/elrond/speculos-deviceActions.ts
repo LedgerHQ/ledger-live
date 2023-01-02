@@ -1,7 +1,7 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
 import { formatCurrencyUnit } from "../../currencies";
-import { deviceActionFlow } from "../../bot/specs";
+import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
 import { decodeTokenAccountId } from "../../account";
 import BigNumber from "bignumber.js";
 
@@ -17,11 +17,9 @@ export const acceptMoveBalanceTransaction: DeviceAction<Transaction, any> =
         title: "Amount",
         button: "Rr",
         expectedValue: ({ account, status }) => {
-          return formatCurrencyUnit(account.unit, status.amount, {
-            showCode: true,
-            disableRounding: true,
-            joinFragmentsSeparator: " ",
-          }).replace(/\s+/g, " ");
+          return formatDeviceAmount(account.currency, status.amount, {
+            postfixCode: true,
+          });
         },
       },
       {

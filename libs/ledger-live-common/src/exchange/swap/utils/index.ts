@@ -187,6 +187,8 @@ export const getProviderName = (provider: string): string => {
     case "ftx":
     case "ftxus":
       return provider.toUpperCase();
+    case "oneinch":
+      return "1inch";
     default:
       return provider.charAt(0).toUpperCase() + provider.slice(1);
   }

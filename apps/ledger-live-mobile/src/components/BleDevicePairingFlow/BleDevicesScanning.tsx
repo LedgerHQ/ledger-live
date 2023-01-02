@@ -1,11 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { ScrollView } from "react-native";
-import {
-  Flex,
-  InfiniteLoader,
-  ScrollListContainer,
-  Text,
-} from "@ledgerhq/native-ui";
+import { ScrollView, Linking } from "react-native";
+import { Flex, ScrollListContainer, Text } from "@ledgerhq/native-ui";
 import { useBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
 import { HwTransportErrorType } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
@@ -19,8 +14,10 @@ import Animation from "../Animation";
 import DeviceSetupView from "../DeviceSetupView";
 import BleDeviceItem from "./BleDeviceItem";
 import lottie from "./assets/bluetooth.json";
+import { urls } from "../../config/urls";
 
 export type FilterByDeviceModelId = null | DeviceModelId;
+const CANT_SEE_DEVICE_TIMEOUT = 5000;
 
 export type BleDevicesScanningProps = {
   onDeviceSelect: (item: Device) => void;
@@ -54,6 +51,22 @@ const BleDevicesScanning = ({
   const [locationUnauthorizedError, setLocationUnauthorizedError] =
     useState<boolean>(false);
   const [stopBleScanning, setStopBleScanning] = useState<boolean>(false);
+
+  const [isCantSeeDeviceShown, setIsCantSeeDeviceShown] =
+    useState<boolean>(false);
+  useEffect(() => {
+    const cantSeeDeviceTimeout = setTimeout(
+      () => setIsCantSeeDeviceShown(true),
+      CANT_SEE_DEVICE_TIMEOUT,
+    );
+
+    return () => clearTimeout(cantSeeDeviceTimeout);
+  }, []);
+
+  const onCantSeeDevicePress = useCallback(
+    () => Linking.openURL(urls.pairingIssues),
+    [],
+  );
 
   // If we want to filter on known devices:
   const knownDevices = useSelector(knownDevicesSelector);
@@ -125,7 +138,13 @@ const BleDevicesScanning = ({
         <Flex height={180} alignItems="center" justifyContent="center">
           <Animation source={lottie} />
         </Flex>
-        <Text mb={3} textAlign="center" variant="h4" fontWeight="semiBold">
+        <Text
+          mb={3}
+          textAlign="center"
+          variant="h4"
+          fontWeight="semiBold"
+          fontSize={24}
+        >
           {productName
             ? t("blePairingFlow.scanning.withProductName.title", {
                 productName,
@@ -139,50 +158,52 @@ const BleDevicesScanning = ({
           variant="body"
           fontWeight="medium"
         >
-          {productName
-            ? t("blePairingFlow.scanning.withProductName.description", {
-                productName,
-              })
-            : t("blePairingFlow.scanning.withoutProductName.description")}
+          {t("blePairingFlow.scanning.description")}
         </Text>
-        {scannedDevices.length > 0 ? (
-          <Flex flex={1} px={4}>
-            <ScrollView>
-              <Flex pb={10}>
-                {scannedDevices
-                  .map(item => ({
-                    deviceId: item.deviceId,
-                    deviceName: `${item.deviceName}`,
-                    wired: false,
-                    modelId: item.deviceModel.id,
-                    isAlreadyKnown: Boolean(
-                      knownDeviceIds.some(
-                        deviceId => deviceId === item.deviceId,
-                      ),
-                    ),
-                  }))
-                  // unknown devices go first, already known devices go last
-                  .sort((a, b) =>
-                    a.isAlreadyKnown === b.isAlreadyKnown
-                      ? 0
-                      : a.isAlreadyKnown
-                      ? 1
-                      : -1,
-                  )
-                  .map(deviceMeta => (
-                    <BleDeviceItem
-                      onSelect={() => onDeviceSelect(deviceMeta)}
-                      key={deviceMeta.deviceId}
-                      deviceMeta={deviceMeta}
-                    />
-                  ))}
-              </Flex>
-            </ScrollView>
-          </Flex>
-        ) : (
-          <InfiniteLoader />
-        )}
+
+        <Flex flex={1} px={4}>
+          <ScrollView>
+            <Flex pb={10}>
+              {scannedDevices
+                .map(item => ({
+                  deviceId: item.deviceId,
+                  deviceName: `${item.deviceName}`,
+                  wired: false,
+                  modelId: item.deviceModel.id,
+                  isAlreadyKnown: Boolean(
+                    knownDeviceIds.some(deviceId => deviceId === item.deviceId),
+                  ),
+                }))
+                // unknown devices go first, already known devices go last
+                .sort((a, b) =>
+                  a.isAlreadyKnown === b.isAlreadyKnown
+                    ? 0
+                    : a.isAlreadyKnown
+                    ? 1
+                    : -1,
+                )
+                .map(deviceMeta => (
+                  <BleDeviceItem
+                    onSelect={() => onDeviceSelect(deviceMeta)}
+                    key={deviceMeta.deviceId}
+                    deviceMeta={deviceMeta}
+                  />
+                ))}
+            </Flex>
+          </ScrollView>
+        </Flex>
       </ScrollListContainer>
+      {productName !== null && isCantSeeDeviceShown && (
+        <Text
+          textAlign="center"
+          mb={40}
+          fontSize={14}
+          fontWeight="semiBold"
+          onPress={onCantSeeDevicePress}
+        >
+          {t("blePairingFlow.scanning.cantSeeDevice", { productName })}
+        </Text>
+      )}
     </DeviceSetupView>
   );
 };

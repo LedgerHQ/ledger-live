@@ -135,6 +135,7 @@ function DelegationAmount({ navigation, route }: Props) {
     () =>
       max.lt(0) ||
       value.lt(min) ||
+      value.eq(0) ||
       (route.params.transaction.mode === "redelegate" && value.eq(0)),
     [value, max, min, route.params.transaction],
   );
