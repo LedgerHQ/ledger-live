@@ -162,7 +162,7 @@ const inferError = (
 
   // DEX quotes are out of limit scope error
   if (
-    (!minAmountFrom || !minAmountFrom) &&
+    (!minAmountFrom || !maxAmountFrom) &&
     status === "error" &&
     errorCode !== 300
   ) {
