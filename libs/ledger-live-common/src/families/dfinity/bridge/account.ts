@@ -48,7 +48,6 @@ const createTransaction = (): Transaction => {
     fees: getEstimatedFees(),
     recipient: "",
     useAllAmount: false,
-    memo: BigInt(0),
   };
 };
 
@@ -171,27 +170,31 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
           const { id: accountId, balance } = account;
           const { address, derivationPath } = getAddress(account);
 
-          const icp = new ICPApp(transport);
-          const accountInfo = await icp.getAddressAndPubKey(
-            getPath(derivationPath)
-          );
-          const now = new Date();
-
-          const identity = new LedgerIdentity(
-            accountInfo.principalText,
-            getPath(derivationPath),
-            accountInfo.publicKey,
-            transport
-          );
-
-          const request = await createTxnRequest({
-            to: AccountIdentifier.fromHex(transaction.recipient),
-            amount: BigInt(transaction.amount.toString()),
-            memo: BigInt(transaction.memo.toString()),
-          });
-          const requestSerialized = request.serializeBinary();
-
           try {
+            const icp = new ICPApp(transport);
+            const accountInfo = await icp.getAddressAndPubKey(
+              getPath(derivationPath)
+            );
+
+            if (!accountInfo.principalText || !accountInfo.publicKey) {
+              throw Error("Incorrect account info from device.");
+            }
+
+            const now = new Date();
+
+            const identity = new LedgerIdentity(
+              accountInfo.principalText,
+              getPath(derivationPath),
+              accountInfo.publicKey,
+              transport
+            );
+
+            const request = await createTxnRequest({
+              to: AccountIdentifier.fromHex(transaction.recipient),
+              amount: BigInt(transaction.amount.toString()),
+              memo: BigInt(transaction.memo ?? 0),
+            });
+            const requestSerialized = request.serializeBinary();
             o.next({
               type: "device-signature-requested",
             });
@@ -237,7 +240,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
               blockHeight: null,
               date: now,
               extra: {
-                memo: transaction.memo.toString(),
+                memo: transaction.memo,
                 request: Buffer.from(requestSerialized).toString("hex"),
                 pubkey: accountInfo.publicKey.toString("hex"),
                 principalText: accountInfo.principalText,

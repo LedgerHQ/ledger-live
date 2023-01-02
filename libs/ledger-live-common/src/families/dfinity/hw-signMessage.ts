@@ -29,6 +29,9 @@ const signMessage: SignMessage = async (
     ICP_SEND_TXN_TYPE
   );
   isError(r);
+  if (!r.signatureRS) {
+    throw Error("Signing failed");
+  }
 
   return {
     rsv: {

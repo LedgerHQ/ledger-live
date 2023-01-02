@@ -41,9 +41,9 @@ export const calculateEstimatedFees = (
 ): BigNumber => gasFeeCap.multipliedBy(gasLimit);
 
 export const normalizeEpochTimestamp = (timestamp: number): number => {
-  return timestamp / 1e3;
+  return timestamp / 1e6;
 };
 
-export const validateMemo = (_memo: BigInt) => {
-  return {isValid: true} // TODO: Implement validation
-}
+export const validateMemo = (_memo?: string) => {
+  return { isValid: true }; // TODO: Implement validation
+};

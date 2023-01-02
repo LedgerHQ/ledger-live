@@ -14,6 +14,9 @@ const resolver: Resolver = async (transport, { path, verify }) => {
     : await icp.getAddressAndPubKey(getPath(path));
 
   isError(r);
+  if (!r.address || !r.publicKey) {
+    throw Error("Failed to get address from device");
+  }
 
   return {
     path,
