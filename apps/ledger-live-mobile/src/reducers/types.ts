@@ -2,6 +2,8 @@ import type {
   Account,
   DeviceInfo,
   DeviceModelInfo,
+  Feature,
+  FeatureId,
   PortfolioRange,
 } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -59,6 +61,7 @@ export type FwUpdateBackgroundEvent =
     };
 
 export type AppState = {
+  debugMenuVisible: boolean;
   isConnected: boolean | null;
   hasConnectedDevice: boolean;
   modalLock: boolean;
@@ -170,7 +173,6 @@ export type SettingsState = {
   hasInstalledAnyApp: boolean;
   readOnlyModeEnabled: boolean;
   hasOrderedNano: boolean;
-  experimentalUSBEnabled: boolean;
   countervalueFirst: boolean;
   graphCountervalueFirst: boolean;
   hideEmptyTokenAccounts: boolean;
@@ -211,6 +213,8 @@ export type SettingsState = {
   };
   notifications: NotificationsSettings;
   walletTabNavigatorLastVisitedTab: keyof WalletTabNavigatorStackParamList;
+  overriddenFeatureFlags: { [key in FeatureId]?: Feature | undefined };
+  featureFlagsBannerVisible: boolean;
 };
 
 export type NotificationsSettings = {

@@ -64,6 +64,7 @@ export function NftList({ data }: Props) {
             : 1
         }
         mr={(index + 1) % NB_COLUMNS > 0 ? 6 : 0}
+        testID={"wallet-nft-gallery-list-item"}
       >
         {item.id === ADD_NEW.id ? (
           <AddNewItem />
@@ -88,6 +89,7 @@ export function NftList({ data }: Props) {
         initialNumToRender={6}
         windowSize={11}
         contentContainerStyle={{ marginTop: 16 }}
+        testID={"wallet-nft-gallery-list"}
       />
     </>
   );

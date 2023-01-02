@@ -3,7 +3,7 @@ import { Flex } from "@ledgerhq/react-ui";
 import { ImageProcessingError } from "@ledgerhq/live-common/customImage/errors";
 import { createCanvas, scaleDimensions } from "./imageUtils";
 import { ImageBase64Data, ImageDimensions } from "./types";
-import { targetDimensions } from "./shared";
+import { targetDisplayDimensions } from "./shared";
 import ContrastChoice from "./ContrastChoice";
 import FramedImage from "./FramedImage";
 
@@ -22,7 +22,7 @@ const contrasts = [
   { val: 3, color: "neutral.c30" },
 ];
 
-const imageDimensions = scaleDimensions(targetDimensions, 0.45);
+const imageDimensions = scaleDimensions(targetDisplayDimensions, 0.45);
 
 function clamp(val: number, min: number, max: number) {
   return Math.min(max, Math.max(min, val));

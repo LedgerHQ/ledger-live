@@ -44,7 +44,7 @@ export type AppManifest = {
   id: string;
   private?: boolean;
   name: string;
-  url: string;
+  url: string | URL;
   homepageUrl: string;
   supportUrl?: string;
   icon?: string | null;

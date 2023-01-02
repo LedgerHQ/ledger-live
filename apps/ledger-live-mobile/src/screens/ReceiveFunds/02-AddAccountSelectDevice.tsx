@@ -5,7 +5,6 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { useTheme } from "@react-navigation/native";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { prepareCurrency } from "../../bridge/cache";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
@@ -26,6 +25,7 @@ export default function AddAccountsSelectDevice({
   ReceiveFundsStackParamList,
   ScreenName.ReceiveAddAccountSelectDevice
 >) {
+  const { currency } = route.params;
   const { colors } = useTheme();
   const [device, setDevice] = useState<Device | null>(null);
   const dispatch = useDispatch();
@@ -58,10 +58,9 @@ export default function AddAccountsSelectDevice({
 
   useEffect(() => {
     // load ahead of time
-    prepareCurrency(route.params.currency as CryptoCurrency);
-  }, [route.params.currency]);
+    prepareCurrency(currency);
+  }, [currency]);
 
-  const currency = route.params.currency;
   const analyticsPropertyFlow = route.params?.analyticsPropertyFlow;
   return (
     <SafeAreaView
@@ -89,13 +88,7 @@ export default function AddAccountsSelectDevice({
         device={device}
         onResult={onResult}
         onClose={onClose}
-        request={{
-          currency: currency as CryptoCurrency,
-          // FIXME: IT SEEMS TokenCurrency WILL NEVER HAPPEN
-          // currency.type === "TokenCurrency"
-          //   ? currency.parentCurrency
-          //   : currency,
-        }}
+        request={{ currency }}
         onSelectDeviceLink={() => setDevice(null)}
         analyticsPropertyFlow={analyticsPropertyFlow || "add account"}
       />

@@ -24,7 +24,7 @@ import { CustomImageNavigatorParamList } from "../../components/RootNavigator/ty
 import { addKnownDevice } from "../../actions/ble";
 import { lastConnectedDeviceSelector } from "../../reducers/settings";
 
-const deviceModelIds = [DeviceModelId.nanoFTS];
+const deviceModelIds = [DeviceModelId.stax];
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<
@@ -54,7 +54,7 @@ const Step3Transfer = ({ route, navigation }: NavigationProps) => {
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
 
   useEffect(() => {
-    if (!device && lastConnectedDevice?.modelId === DeviceModelId.nanoFTS) {
+    if (!device && lastConnectedDevice?.modelId === DeviceModelId.stax) {
       setDevice(lastConnectedDevice);
     }
   }, [lastConnectedDevice, device]);

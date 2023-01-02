@@ -1,5 +1,9 @@
 [
   {
+    "tag_name": "2.50.1",
+    "body": "\n### 🐛 Fixes\n\n- Sending USDT through Ledger Live would result in the **FAILED -OUT OF ENERGY>** error for some users. We've fixed the issue, and you'll now see a **warning message if your account doesn't have enough energy** to cover the transaction.\n"
+  },
+  {
     "tag_name": "2.50.0",
     "body": "\n### 🚀 Features\n\n- **EIP-1559 is here.** Now you can enjoy **more predictable fees and reduced confirmation delays** for Ethereum-based transactions. You can also avoid overpaying fees—specify the max fee you're willing to pay and get reimbursed if the transaction is processed at a lower price.\n- **Don’t trust, verify.** Ledger now supports the **EIP-712** standard that will display data in signing prompts in a readable format instead of complex hexadecimal strings.\n- **Swap crypto with CIC from the US without leaving Ledger Live.** Access to CIC swapping options to grow and diversify your portfolio from the security of your Ledger Nano.\n\n### 🐛 Fixes\n\n- A sneaky bug caused the value of some Cardano tokens to be displayed incorrectly. This has now been fixed.\n"
   }

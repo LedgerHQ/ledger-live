@@ -1,8 +1,13 @@
 import { ImageDownloadError } from "@ledgerhq/live-common/customImage/errors";
 
-export const targetDimensions = {
-  height: 672,
+export const targetDisplayDimensions = {
   width: 400,
+  height: 670,
+};
+
+export const targetDataDimensions = {
+  width: 400,
+  height: 672,
 };
 
 export async function urlContentToDataUri(url: string): Promise<string> {

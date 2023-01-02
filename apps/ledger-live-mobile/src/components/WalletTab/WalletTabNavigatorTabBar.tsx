@@ -72,7 +72,10 @@ function Tab({
   }, [isActive, navigation, route.key, route.name]);
 
   return (
-    <StyledTouchableOpacity onPress={onPress}>
+    <StyledTouchableOpacity
+      onPress={onPress}
+      testID={`wallet-tab-${route.name}`}
+    >
       <StyledAnimatedView
         backgroundColor={rgba(colors.constant.white, 0.08)}
         borderRadius={2}

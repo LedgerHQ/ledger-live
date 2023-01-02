@@ -4,7 +4,7 @@ export type FeatureId =
   | "brazePushNotifications"
   | "llmNewDeviceSelection"
   | "llmUsbFirmwareUpdate"
-  | "ratings"
+  | "ratingsPrompt"
   | "counterValue"
   | "deviceLocalization"
   | "deviceInitialApps"
@@ -41,7 +41,8 @@ export type FeatureId =
   | "postOnboardingClaimNft"
   | "postOnboardingAssetsTransfer"
   | "firebaseEnvironmentReadOnly"
-  | "protectServicesMobile";
+  | "protectServicesMobile"
+  | "swapShowDexQuotes";
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */

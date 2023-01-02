@@ -24,16 +24,14 @@ export default () => {
   return (
     <Flex>
       <SettingsRow
-        title="Start (mock) post onboarding for nanoFTS"
+        title="Start (mock) post onboarding for stax"
         desc="Pressing this should trigger navigation to the post onboarding hub populated with a list of actions."
-        onPress={() => handleInitPostOnboardingHub(DeviceModelId.nanoFTS, true)}
+        onPress={() => handleInitPostOnboardingHub(DeviceModelId.stax, true)}
       />
       <SettingsRow
-        title="Start post onboarding for nanoFTS"
+        title="Start post onboarding for stax"
         desc="Pressing this should trigger navigation to the post onboarding hub populated with a list of actions."
-        onPress={() =>
-          handleInitPostOnboardingHub(DeviceModelId.nanoFTS, false)
-        }
+        onPress={() => handleInitPostOnboardingHub(DeviceModelId.stax, false)}
       />
       <SettingsRow
         title="Start (mock) post onboarding for nanoX"
