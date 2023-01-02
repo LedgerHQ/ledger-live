@@ -1,6 +1,6 @@
 import { getCurrentCosmosPreloadData } from "./preloadedData";
-import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
 import { canDelegate, canRedelegate } from "./logic";
+import cryptoFactory from "./chain/chain";
 import type { CosmosAccount, CosmosValidatorItem } from "./types";
 
 export interface AccountBannerState {
@@ -27,6 +27,7 @@ export function getAccountBannerState(
   );
   const validatorAdresses = [...delegationAddresses, ...redelegationAddresses];
 
+  const LEDGER_VALIDATOR_ADDRESS = cryptoFactory("cosmos").ledger_validators[0];
   // Get ledger validator data
   const { validators } = getCurrentCosmosPreloadData();
   const ledgerValidator = validators.find(

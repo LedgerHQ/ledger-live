@@ -3,13 +3,14 @@ import * as preloadedData from "./preloadedData";
 import * as logic from "./logic";
 import type { CosmosAccount, CosmosValidatorItem } from "./types";
 import data from "./preloadedData.mock";
-import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
+import cryptoFactory from "./chain/chain";
 import { BigNumber } from "bignumber.js";
 
 jest.mock("./js-prepareTransaction", () => ({
   calculateFees: jest.fn(() => Promise.resolve({})),
 }));
 
+const LEDGER_VALIDATOR_ADDRESS = cryptoFactory("cosmos").ledger_validators[0];
 const ledgerValidator: CosmosValidatorItem | undefined = data.validators.find(
   (x) => x.validatorAddress === LEDGER_VALIDATOR_ADDRESS
 );

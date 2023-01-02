@@ -23,10 +23,7 @@ import {
 } from "./logic";
 import { getAccountUnit } from "../../account";
 import useMemoOnce from "../../hooks/useMemoOnce";
-import {
-  LEDGER_OSMOSIS_VALIDATOR_ADDRESS,
-  LEDGER_VALIDATOR_ADDRESS,
-} from "./utils";
+import cryptoFactory from "./chain/chain";
 
 export function useCosmosFamilyPreloadData(
   _currencyName: string
@@ -194,13 +191,9 @@ export function useLedgerFirstShuffledValidatorsCosmosFamily(
   currencyName: string,
   searchInput?: string
 ): CosmosValidatorItem[] {
-  let ledgerValidatorAddress;
   const data = getCurrentCosmosPreloadData();
-  if (currencyName == "osmosis") {
-    ledgerValidatorAddress = LEDGER_OSMOSIS_VALIDATOR_ADDRESS;
-  } else {
-    ledgerValidatorAddress = LEDGER_VALIDATOR_ADDRESS;
-  }
+  const ledgerValidatorAddress =
+    cryptoFactory(currencyName).ledger_validators[0];
 
   return useMemo(() => {
     return reorderValidators(

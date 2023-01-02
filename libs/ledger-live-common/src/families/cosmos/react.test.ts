@@ -17,7 +17,7 @@ import type {
 import { getCurrentCosmosPreloadData } from "./preloadedData";
 import preloadedMockData from "./preloadedData.mock";
 import * as hooks from "./react";
-import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
+import cryptoFactory from "./chain/chain";
 import { CurrencyBridge } from "@ledgerhq/types-live";
 const localCache = {};
 const cache = makeBridgeCacheSystem({
@@ -205,6 +205,8 @@ describe("cosmos/react", () => {
       const { result } = renderHook(() =>
         hooks.useLedgerFirstShuffledValidatorsCosmosFamily("cosmos")
       );
+      const LEDGER_VALIDATOR_ADDRESS =
+        cryptoFactory("cosmos").ledger_validators[0];
       expect(result.current[0].validatorAddress).toBe(LEDGER_VALIDATOR_ADDRESS);
     });
   });
