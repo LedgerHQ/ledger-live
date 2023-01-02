@@ -340,6 +340,14 @@ describe("swap/utils/getProviderName", () => {
     expect(result).toBe(expectedResult);
   });
 
+  test("should return capitalized provider name for 1inch", () => {
+    const expectedResult = "1inch";
+
+    const result = getProviderName("oneinch");
+
+    expect(result).toBe(expectedResult);
+  });
+
   test("should return capitalized provider name for other provider", () => {
     const expectedResult = "Changelly";
 

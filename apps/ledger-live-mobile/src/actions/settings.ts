@@ -2,7 +2,12 @@ import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { createAction } from "redux-actions";
 import { useDispatch, useSelector } from "react-redux";
-import { DeviceModelInfo, DeviceInfo } from "@ledgerhq/types-live";
+import {
+  DeviceModelInfo,
+  DeviceInfo,
+  FeatureId,
+  Feature,
+} from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { PortfolioRange } from "@ledgerhq/types-live";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
@@ -63,6 +68,9 @@ import {
   SettingsActionTypes,
   SettingsSetWalletTabNavigatorLastVisitedTabPayload,
   SettingsSetDismissedDynamicCardsPayload,
+  SettingsSetOverriddenFeatureFlagPlayload,
+  SettingsSetOverriddenFeatureFlagsPlayload,
+  SettingsSetFeatureFlagsBannerVisiblePayload,
 } from "./types";
 import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
 
@@ -484,6 +492,35 @@ export const setWalletTabNavigatorLastVisitedTab = (
   setWalletTabNavigatorLastVisitedTabAction({
     walletTabNavigatorLastVisitedTab,
   });
+
+const setOverriddenFeatureFlagAction =
+  createAction<SettingsSetOverriddenFeatureFlagPlayload>(
+    SettingsActionTypes.SET_OVERRIDDEN_FEATURE_FLAG,
+  );
+export const setOverriddenFeatureFlag = (
+  id: FeatureId,
+  value: Feature | undefined,
+) =>
+  setOverriddenFeatureFlagAction({
+    id,
+    value,
+  });
+
+const setOverriddenFeatureFlagsAction =
+  createAction<SettingsSetOverriddenFeatureFlagsPlayload>(
+    SettingsActionTypes.SET_OVERRIDDEN_FEATURE_FLAGS,
+  );
+export const setOverriddenFeatureFlags = (overriddenFeatureFlags: {
+  [key in FeatureId]?: Feature;
+}) => setOverriddenFeatureFlagsAction({ overriddenFeatureFlags });
+
+const setFeatureFlagsBannerVisibleAction =
+  createAction<SettingsSetFeatureFlagsBannerVisiblePayload>(
+    SettingsActionTypes.SET_FEATURE_FLAGS_BANNER_VISIBLE,
+  );
+export const setFeatureFlagsBannerVisible = (
+  featureFlagsBannerVisible: boolean,
+) => setFeatureFlagsBannerVisibleAction({ featureFlagsBannerVisible });
 
 const dangerouslyOverrideStateAction =
   createAction<SettingsDangerouslyOverrideStatePayload>(

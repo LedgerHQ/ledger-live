@@ -30,7 +30,7 @@ import {
   importImageFromPhoneGallery,
 } from "../../components/CustomImage/imageUtils";
 import { ImageFileUri } from "../../components/CustomImage/types";
-import { targetDimensions } from "./shared";
+import { targetDisplayDimensions } from "./shared";
 import FramedImage, {
   previewConfig,
 } from "../../components/CustomImage/FramedImage";
@@ -146,7 +146,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   );
 
   useCenteredImage({
-    targetDimensions,
+    targetDimensions: targetDisplayDimensions,
     imageFileUri: loadedImage?.imageFileUri,
     onError: handleResizeError,
     onResult: handleResizeResult,

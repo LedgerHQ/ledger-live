@@ -2,9 +2,10 @@ import React, { ReactNode, useEffect, useState } from "react";
 import remoteConfig from "@react-native-firebase/remote-config";
 import { defaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
 import { reduce, snakeCase } from "lodash";
-import { FeatureId, DefaultFeatures } from "@ledgerhq/types-live";
+import { DefaultFeatures } from "@ledgerhq/types-live";
 
-export const formatFeatureId = (id: FeatureId) => `feature_${snakeCase(id)}`;
+export const formatToFirebaseFeatureId = (id: string) =>
+  `feature_${snakeCase(id)}`;
 
 // Firebase SDK treat JSON values as strings
 const formatDefaultFeatures = (config: DefaultFeatures) =>
@@ -12,7 +13,7 @@ const formatDefaultFeatures = (config: DefaultFeatures) =>
     config,
     (acc, feature, featureId) => ({
       ...acc,
-      [formatFeatureId(featureId as FeatureId)]: JSON.stringify(feature),
+      [formatToFirebaseFeatureId(featureId)]: JSON.stringify(feature),
     }),
     {},
   );

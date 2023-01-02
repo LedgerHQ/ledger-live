@@ -11,7 +11,7 @@ import { withDevice } from "../../hw/deviceAccess";
 /**
  * Serialize a Ledger Live transaction into an hex string
  */
-const getSerializedTransaction = async (
+export const getSerializedTransaction = async (
   account: Account,
   tx: EvmTransaction,
   signature?: Partial<ethers.Signature>
@@ -20,15 +20,39 @@ const getSerializedTransaction = async (
     account,
     tx
   );
-  const unsignedEthersTransaction = transactionToEthersTransaction(
-    unsignedTransaction,
-    account
-  );
+  const unsignedEthersTransaction =
+    transactionToEthersTransaction(unsignedTransaction);
 
   return ethers.utils.serializeTransaction(
     unsignedEthersTransaction,
     signature as ethers.Signature
   );
+};
+
+/**
+ * Transforms the ECDSA signature paremeter v hexadecimal string received
+ * from the nano into an EIP155 compatible number.
+ *
+ * Reminder EIP155 transforms v this way:
+ * v = chainId * 2 + 35
+ * (+ parity 1 or 0)
+ */
+export const applyEIP155 = (vAsHex: string, chainId: number): number => {
+  const v = parseInt(vAsHex, 16);
+
+  if (v === 0 || v === 1) {
+    // if v is 0 or 1, it's already representing parity
+    return chainId * 2 + 35 + v;
+  } else if (v === 27 || v === 28) {
+    const parity = v - 27; // transforming v into 0 or 1 to become the parity
+    return chainId * 2 + 35 + parity;
+  }
+  // When chainId is lower than 109, hw-app-eth *can* return a v with EIP155 already applied
+  // e.g. bsc's chainId is 56 -> v then equals to 147/148
+  //      optimism's chainId is 10 -> v equals to 55/56
+  //      ethereum's chainId is 1 -> v equals to 0/1
+  //      goerli's chainId is 5 -> v equals to 0/1
+  return v;
 };
 
 /**
@@ -67,14 +91,6 @@ export const signOperation = ({
           o.next({ type: "device-signature-granted" }); // Signature is done
 
           const { chainId = 0 } = account.currency.ethereumLikeInfo || {};
-          // Determine in which part of the elliptic curve we are (1 or 0)
-          const parsedV = parseInt(sig.v, 16);
-          const parity =
-            parsedV > 1
-              ? parsedV - 27 // if v isn't 1 or 0 then it should be 27 or 28
-              : parsedV; // else use v as the parity directly
-          // Respecting EIP155
-          const v = chainId * 2 + 35 + parity;
           // Create a new serialized tx with the signature now
           const signature = await getSerializedTransaction(
             account,
@@ -82,7 +98,7 @@ export const signOperation = ({
             {
               r: "0x" + sig.r,
               s: "0x" + sig.s,
-              v,
+              v: applyEIP155(sig.v, chainId),
             }
           );
 

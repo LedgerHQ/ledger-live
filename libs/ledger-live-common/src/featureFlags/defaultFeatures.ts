@@ -74,7 +74,7 @@ export const defaultFeatures: DefaultFeatures = {
   disableNftRaribleOpensea: {
     enabled: false,
   },
-  ratings: {
+  ratingsPrompt: {
     enabled: false,
     params: {
       happy_moments: [
