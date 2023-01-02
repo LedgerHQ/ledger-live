@@ -49,12 +49,6 @@ const CheckTermOfUseUpdateModal = () => {
               <Update>{t("updatedTerms.body.bulletPoints.0")}</Update>
               <Update>{t("updatedTerms.body.bulletPoints.1")}</Update>
               <Update>{t("updatedTerms.body.bulletPoints.2")}</Update>
-              <Update>{t("updatedTerms.body.bulletPoints.3")}</Update>
-              <Update>{t("updatedTerms.body.bulletPoints.4")}</Update>
-              <Update>{t("updatedTerms.body.bulletPoints.5")}</Update>
-              <Update>{t("updatedTerms.body.bulletPoints.6")}</Update>
-              <Update>{t("updatedTerms.body.bulletPoints.7")}</Update>
-              <Update>{t("updatedTerms.body.bulletPoints.8")}</Update>
             </Flex>
             <Description>{t("updatedTerms.body.agreement")}</Description>
           </Flex>
