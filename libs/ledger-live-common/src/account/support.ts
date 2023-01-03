@@ -51,8 +51,6 @@ export function canSend(
   parentAccount: Account | null | undefined,
   currency: CryptoCurrency
 ): boolean {
-  if (currency.id === "avalanchepchain") return false;
-
   try {
     getAccountBridge(account, parentAccount).createTransaction(
       getMainAccount(account, parentAccount)
@@ -62,9 +60,7 @@ export function canSend(
     return false;
   }
 }
-export function canReceive(currency: CryptoCurrency): boolean {
-  return currency.id !== "avalanchepchain";
-}
+
 export function canBeMigrated(account: Account): boolean {
   try {
     const { version } = decodeAccountId(account.id);
