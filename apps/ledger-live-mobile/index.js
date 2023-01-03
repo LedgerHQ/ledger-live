@@ -181,11 +181,6 @@ if (Config.SENTRY_DSN && (!__DEV__ || Config.FORCE_SENTRY) && !Config.MOCK) {
   setInterval(syncTheTags, 60000);
 }
 
-// Fixme: Remove this, as we have LogBox.ignoreAllLogs() in src/index.ts
-if (Config.DISABLE_YELLOW_BOX) {
-  console.disableYellowBox = true; // eslint-disable-line no-console
-}
-
 logReport.logReportInit();
 
 const AppWithSentry = Sentry.wrap(App);

@@ -34,7 +34,6 @@ import IsNewVersion from "~/renderer/components/IsNewVersion";
 import IsSystemLanguageAvailable from "~/renderer/components/IsSystemLanguageAvailable";
 // $FlowFixMe
 import IsTermOfUseUpdated from "./components/IsTermOfUseUpdated";
-import DeviceBusyIndicator from "~/renderer/components/DeviceBusyIndicator";
 import KeyboardContent from "~/renderer/components/KeyboardContent";
 import PerfIndicator from "~/renderer/components/PerfIndicator";
 import MainSideBar from "~/renderer/components/MainSideBar";
@@ -280,7 +279,6 @@ export default function Default() {
                         <NightlyLayer />
                       ) : null}
 
-                      <DeviceBusyIndicator />
                       <KeyboardContent sequence="BJBJBJ">
                         <PerfIndicator />
                       </KeyboardContent>

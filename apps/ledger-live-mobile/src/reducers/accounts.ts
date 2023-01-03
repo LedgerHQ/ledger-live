@@ -242,10 +242,7 @@ export const flattenAccountsByCryptoCurrencySelector = createSelector(
 );
 const emptyArray: AccountLike[] = [];
 export const accountsByCryptoCurrencyScreenSelector =
-  (
-    currency: CryptoCurrency | TokenCurrency,
-    accountIds?: Map<string, boolean>,
-  ) =>
+  (currency: CryptoOrTokenCurrency, accountIds?: Map<string, boolean>) =>
   (state: State) => {
     if (!currency) return emptyArray;
     return accountsTuplesByCurrencySelector(state, { currency, accountIds });
