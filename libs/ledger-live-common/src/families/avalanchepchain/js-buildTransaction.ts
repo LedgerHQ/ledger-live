@@ -3,12 +3,13 @@ import { BN } from "avalanche";
 import { avalancheClient } from "./api/client";
 import { HDHelper } from "./hdhelper";
 import type { Account } from "@ledgerhq/types-live";
+import { UnsignedTx } from "avalanche/dist/apis/platformvm";
 
 const buildTransaction = async (
   account: Account,
   transaction: Transaction,
   hdHelper: HDHelper
-) => {
+): Promise<UnsignedTx> => {
   const { amount } = transaction;
 
   const utxos = await hdHelper.fetchUTXOs();
