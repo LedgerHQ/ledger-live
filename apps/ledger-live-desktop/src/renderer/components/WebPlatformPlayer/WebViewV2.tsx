@@ -550,7 +550,7 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
           /**
            * There seems to be an issue between Electron webview and react
            * Hence, the normal `allowpopups` prop does not work and we need to
-           * explicitly set it's value to "true" as a string
+           * explicitly set its value to "true" as a string
            * cf. https://github.com/electron/electron/issues/6046
            */
           // @ts-expect-error: see above comment
