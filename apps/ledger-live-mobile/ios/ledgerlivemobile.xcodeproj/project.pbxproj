@@ -33,6 +33,7 @@
 		E55EFC09114D43B3AB041882 /* FontAwesome5_Pro_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 991AA9919E4840DBB799E117 /* FontAwesome5_Pro_Solid.ttf */; };
 		E8E0F5A941050BCF166FD663 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3509B77469C50660E4C1A7 /* ExpoModulesProvider.swift */; };
 		F837348722721A48009D747A /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F837348622721A48009D747A /* JavaScriptCore.framework */; };
+		F89A71402964881E002F3DDD /* TimerModule.m in Sources */ = {isa = PBXBuildFile; fileRef = F89A713E2964881D002F3DDD /* TimerModule.m */; };
 		F99BEAC629E8441C83104922 /* FontAwesome5_Pro_Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6D891D99F1084D459DBF667F /* FontAwesome5_Pro_Light.ttf */; };
 /* End PBXBuildFile section */
 
@@ -114,6 +115,8 @@
 		F706F7BE3B5F9DD387AB929A /* Pods-ledgerlivemobile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ledgerlivemobile.debug.xcconfig"; path = "Target Support Files/Pods-ledgerlivemobile/Pods-ledgerlivemobile.debug.xcconfig"; sourceTree = "<group>"; };
 		F77638C1F4BC132FB97FEEAF /* Pods-ledgerlivemobile.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ledgerlivemobile.release.xcconfig"; path = "Target Support Files/Pods-ledgerlivemobile/Pods-ledgerlivemobile.release.xcconfig"; sourceTree = "<group>"; };
 		F837348622721A48009D747A /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		F89A713E2964881D002F3DDD /* TimerModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TimerModule.m; path = ledgerlivemobile/TimerModule.m; sourceTree = "<group>"; };
+		F89A713F2964881E002F3DDD /* TimerModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TimerModule.h; path = ledgerlivemobile/TimerModule.h; sourceTree = "<group>"; };
 		F91D74A42E59456DBB925283 /* Rubik-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-Regular.ttf"; path = "../assets/fonts/Rubik-Regular.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -181,6 +184,8 @@
 				3407D5D8215D2AB800C9D40B /* NeededForBLE.swift */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
+				F89A713F2964881E002F3DDD /* TimerModule.h */,
+				F89A713E2964881D002F3DDD /* TimerModule.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
@@ -672,6 +677,7 @@
 				17F58472269C64670070C475 /* RCTBluetoothHelperModule.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				2A2FAB56B85E5D2BFF574A32 /* ExpoModulesProvider.swift in Sources */,
+				F89A71402964881E002F3DDD /* TimerModule.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

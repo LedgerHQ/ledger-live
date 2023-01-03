@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { StyleSheet, View, AppState } from "react-native";
+import { StyleSheet, View, AppState, NativeModules } from "react-native";
 import type { TFunction } from "i18next";
 import { connect } from "react-redux";
 import { withTranslation } from "react-i18next";
@@ -77,21 +77,23 @@ class AuthPass extends PureComponent<Props, State> {
   }
 
   appInBg: number | undefined;
-  handleAppStateChange = (nextAppState: string) => {
+  handleAppStateChange = async (nextAppState: string) => {
+    // Important: we must NOT use Date.now() because it's not secure enough. User could change the time before coming back to the app to bypass the locking protection.
+    const now = 1000 * (await NativeModules.Timer.getRelativeTime());
     const timeoutValue = getEnv("MOCK") ? 5000 : AUTOLOCK_TIMEOUT;
     if (
       this.state.appState.match(/inactive|background/) &&
       nextAppState === "active" &&
       !!this.appInBg &&
-      this.appInBg + timeoutValue < Date.now()
+      this.appInBg + timeoutValue < now
     ) {
       this.lock();
-      this.appInBg = Date.now();
+      this.appInBg = now;
     } else if (
       nextAppState === "background" ||
       this.state.appState === "active"
     ) {
-      this.appInBg = Date.now();
+      this.appInBg = now;
     }
 
     if (this.state.mounted)
