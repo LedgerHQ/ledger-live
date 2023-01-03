@@ -10,7 +10,6 @@ import { Zilliqa } from "@zilliqa-js/zilliqa";
 import { TxParams } from "@zilliqa-js/account";
 import { RPCMethod } from "@zilliqa-js/core";
 
-const bearerToken = "<insert token>";
 const indexerEndPoint = getEnv("API_ZILLIQA_INDEXER_API_ENDPOINT").replace(
 	/\/$/,
 	""
@@ -73,9 +72,6 @@ export const getAccount = async (addr: string) => {
 			query:
 				"query UserBalance($input: WalletBalanceInput) {\n  getUserBalanceByToken(input: $input) {\n    tokenAddress\n    walletAddress\n    lastBlockID\n    amount\n  }\n}\n",
 		},
-		headers: {
-			authorization: `Bearer ${bearerToken}`,
-		},
 	});
 
 	if (data.data.getUserBalanceByToken === null) {
@@ -112,15 +108,15 @@ function transactionToOperation(
 	const fee = new BigNumber(gasPrice.mul(gasLimit).toString());
 
 	const ret: Operation = {
-		id: encodeOperationId(accountId, transaction.TxId, type),
+		id: encodeOperationId(accountId, transaction.txId, type),
 		accountId,
 		fee: fee,
 		value: BigNumber(transaction.amount),
 		type,
 		// This is where you retrieve the hash of the transaction
-		hash: transaction.TxId,
+		hash: transaction.txId,
 		blockHash: null,
-		blockHeight: parseInt(transaction.blockID),
+		blockHeight: parseInt(transaction.blockId),
 		date: new Date(), // TODO: new Date(transaction.timestamp),
 		extra: {
 			amount: transaction.amount,
@@ -158,10 +154,7 @@ export const getOperations = async (
 					},
 				},
 				query:
-					"query TxDetails($input: TransactionDetailsInput) {\n  getTransactionDetails(input: $input) {\n    list {\n      blockID\n      TxId\n      toAddress\n      fromAddress\n      tokenAddress\n      amount\n      gasAmount\n      gasPrice\n    }\n  }\n}\n",
-			},
-			headers: {
-				authorization: `Bearer ${bearerToken}`,
+					"query TxDetails($input: TransactionDetailsInput) {\n  getTransactionDetails(input: $input) {\n    list {\n      blockId\n      txId\n      toAddress\n      fromAddress\n      tokenAddress\n      amount\n      cumulativeGas\n      gasPrice\n    }\n  }\n}\n",
 			},
 		})
 	).data.data;
@@ -181,10 +174,7 @@ export const getOperations = async (
 					},
 				},
 				query:
-					"query TxDetails($input: TransactionDetailsInput) {\n  getTransactionDetails(input: $input) {\n    list {\n      blockID\n      TxId\n      toAddress\n      fromAddress\n      tokenAddress\n      amount\n      gasAmount\n      gasPrice\n    }\n  }\n}\n",
-			},
-			headers: {
-				authorization: `Bearer ${bearerToken}`,
+					"query TxDetails($input: TransactionDetailsInput) {\n  getTransactionDetails(input: $input) {\n    list {\n      blockId\n      txId\n      toAddress\n      fromAddress\n      tokenAddress\n      amount\n      cumulativeGas\n      gasPrice\n    }\n  }\n}\n",
 			},
 		})
 	).data.data;

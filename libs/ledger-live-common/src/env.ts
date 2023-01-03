@@ -74,7 +74,8 @@ const envDefinitions = {
   },
 
   API_ZILLIQA_INDEXER_API_ENDPOINT: {
-    def: "https://api.zindex.zilliqa.com/zilliqa",
+    def: " http:/maxwell.up/zilliqa/",
+    //    def: "https://api.zindex.zilliqa.com/zilliqa",
     parser: stringParser,
     desc: "Indexer endpoint for Zilliqa",
   },
