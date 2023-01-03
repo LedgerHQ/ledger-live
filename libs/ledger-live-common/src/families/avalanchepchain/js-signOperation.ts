@@ -170,7 +170,7 @@ const signTransactionHash = async <
   return signedTx as SignedTx;
 };
 
-const getCanLedgerParse = (unsignedTx) => {
+const getCanLedgerParse = (unsignedTx: PlatformUnsignedTx) => {
   let canLedgerParse = true;
 
   const txIns = unsignedTx.getTransaction().getIns();
@@ -198,7 +198,11 @@ const pathsToUniqueBipPaths = (paths: string[]) => {
   return bip32Paths;
 };
 
-const getTransactionPathsAndAddresses = (unsignedTx, chainId, pAddresses) => {
+const getTransactionPathsAndAddresses = (
+  unsignedTx: PlatformUnsignedTx,
+  chainId: string,
+  pAddresses: string[]
+): { paths: string[]; addresses: string[] } => {
   unsignedTx.toBuffer();
   const tx = unsignedTx.getTransaction();
 
@@ -207,7 +211,7 @@ const getTransactionPathsAndAddresses = (unsignedTx, chainId, pAddresses) => {
 
   // Try to get operations, it will fail if there are none, ignore and continue
   try {
-    operations = (tx as OperationTx).getOperations();
+    operations = (tx as unknown as OperationTx).getOperations();
     // eslint-disable-next-line no-empty
   } catch (e) {}
 
