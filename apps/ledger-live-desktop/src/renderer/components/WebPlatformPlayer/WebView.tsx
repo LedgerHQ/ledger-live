@@ -406,9 +406,9 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
           src={url.toString()}
           ref={targetRef}
           /**
-           * There seem to be an issue between Electron webview and styled-components
-           * (and React more broadly, cf. comment bellow).
-           * When using a styled webview componennt, the `allowpopups` prop does not
+           * There seems to be an issue between Electron webview and styled-components
+           * (and React more broadly, cf. comment below).
+           * When using a styled webview component, the `allowpopups` prop does not
            * seem to be set
            */
           style={webviewStyle}
