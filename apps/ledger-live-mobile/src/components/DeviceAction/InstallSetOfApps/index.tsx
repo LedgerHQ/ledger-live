@@ -53,27 +53,23 @@ const InstallSetOfApps = ({
 
   const shouldRestoreApps = restore && !!lastSeenDevice;
 
-  const getLastSeenDeviceAppNames = useCallback(() => {
-    if (!lastSeenDevice) {
-      return null;
+  const dependenciesToInstall = useMemo(() => {
+    if (shouldRestoreApps && lastSeenDevice) {
+      return lastSeenDevice.apps.map(app => app.name);
     }
-    return lastSeenDevice.apps.map(app => app.name);
-  }, [lastSeenDevice]);
-
-  const getDependencies = useCallback(() => {
-    if (shouldRestoreApps) {
-      return getLastSeenDeviceAppNames() || [];
+    if (shouldRestoreApps && !lastSeenDevice) {
+      return [];
     }
     return dependencies;
-  }, [dependencies, shouldRestoreApps, getLastSeenDeviceAppNames]);
+  }, [shouldRestoreApps, dependencies, lastSeenDevice]);
 
   const commandRequest = useMemo(
     () => ({
-      dependencies: getDependencies().map(appName => ({ appName })),
+      dependencies: dependenciesToInstall.map(appName => ({ appName })),
       appName: "BOLOS",
       withInlineInstallProgress: true,
     }),
-    [getDependencies],
+    [dependenciesToInstall],
   );
 
   const status = action.useHook(
@@ -125,7 +121,7 @@ const InstallSetOfApps = ({
             )}
           </Text>
           {itemProgress !== undefined
-            ? getDependencies()?.map((appName, i) => (
+            ? dependenciesToInstall?.map((appName, i) => (
                 <Item
                   key={appName}
                   i={i}
