@@ -36,6 +36,7 @@ import {
   renderAllowLanguageInstallation,
   renderInstallingLanguage,
   renderLockedDeviceError,
+  RenderDeviceNotOnboardedError,
 } from "./rendering";
 
 type Props<R, H, P> = {
@@ -277,12 +278,7 @@ export const DeviceActionDefaultRendering = <R, H, P>({
       error instanceof DeviceNotOnboarded ||
       (error instanceof TransportStatusError && error.message.includes("0x6d06"))
     ) {
-      return renderError({
-        t,
-        error: new DeviceNotOnboarded(),
-        withOnboardingCTA: true,
-        info: true,
-      });
+      return <RenderDeviceNotOnboardedError t={t} device={device} />;
     }
 
     if (error instanceof NoSuchAppOnProvider) {

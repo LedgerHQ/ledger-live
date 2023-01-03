@@ -12,7 +12,7 @@ import { ExchangeRate, Exchange } from "@ledgerhq/live-common/exchange/swap/type
 import { getProviderName, getNoticeType } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { WrongDeviceForAccount, UpdateYourApp, LockedDeviceError } from "@ledgerhq/errors";
 
-import { LatestFirmwareVersionRequired } from "@ledgerhq/live-common/errors";
+import { LatestFirmwareVersionRequired, DeviceNotOnboarded } from "@ledgerhq/live-common/errors";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
@@ -49,9 +49,18 @@ import { swapDefaultTrack } from "~/renderer/screens/exchange/Swap2/utils/index"
 import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { DrawerFooter } from "~/renderer/screens/exchange/Swap2/Form/DrawerFooter";
-import { Flex, Icons, Text as TextV3, Log, ProgressLoader, BoxedIcon } from "@ledgerhq/react-ui";
+import {
+  Button as ButtonV3,
+  Flex,
+  Icons,
+  Text as TextV3,
+  Log,
+  ProgressLoader,
+  BoxedIcon,
+} from "@ledgerhq/react-ui";
 import { LockAltMedium } from "@ledgerhq/react-ui/assets/icons";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
+import DeviceIllustration from "~/renderer/components/DeviceIllustration";
 import FramedImage from "../CustomImage/FramedImage";
 
 export const AnimationWrapper = styled.div`
@@ -526,6 +535,45 @@ export const renderLockedDeviceError = ({
   );
 };
 
+export const RenderDeviceNotOnboardedError = ({ t, device }: { t: TFunction; device?: Device }) => {
+  const productName = device ? getDeviceModel(device.modelId).productName : null;
+  const history = useHistory();
+
+  const redirectToOnboarding = useCallback(
+    () => history.push(device?.modelId === "stax" ? "/sync-onboarding/manual" : "/onboarding"),
+    [device?.modelId, history],
+  );
+
+  return (
+    <Wrapper id="error-device-not-onboarded">
+      <Flex mb={5}>
+        <DeviceIllustration deviceId={device.modelId} />
+      </Flex>
+      <TextV3 color="neutral.c100" fontSize={7} mb={2}>
+        {productName
+          ? t("errors.DeviceNotOnboardedError.titleWithProductName", {
+              productName,
+            })
+          : t("errors.DeviceNotOnboardedError.title")}
+      </TextV3>
+      <TextV3 variant="paragraph" color="neutral.c80" fontSize={6} whiteSpace="pre-wrap">
+        {productName
+          ? t("errors.DeviceNotOnboardedError.descriptionWithProductName", {
+              productName,
+            })
+          : t("errors.DeviceNotOnboardedError.description")}
+      </TextV3>
+      <ButtonV3 variant="main" borderRadius="9999px" mt={5} onClick={redirectToOnboarding}>
+        {productName
+          ? t("errors.DeviceNotOnboardedError.goToOnboardingButtonWithProductName", {
+              productName,
+            })
+          : t("errors.DeviceNotOnboardedError.goToOnboardingButton")}
+      </ButtonV3>
+    </Wrapper>
+  );
+};
+
 export const renderError = ({
   error,
   t,
@@ -559,6 +607,8 @@ export const renderError = ({
   // can be used directly by other component
   if (error instanceof LockedDeviceError) {
     return renderLockedDeviceError({ t, onRetry, device });
+  } else if (error instanceof DeviceNotOnboarded) {
+    return <RenderDeviceNotOnboardedError t={t} device={device} />;
   }
 
   return (
