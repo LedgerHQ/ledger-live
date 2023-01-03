@@ -92,6 +92,7 @@ function readPackage(pkg, context) {
       addDependencies("@celo/utils", {
         randombytes: "*",
         rlp: "*",
+        "fp-ts": "*",
       }),
       /*  @cosmjs/* packages */
       addDependencies("@cosmjs/proto-signing", {
