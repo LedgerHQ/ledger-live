@@ -131,7 +131,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blue"
   },
   "operation" : {
@@ -2176,7 +2176,7 @@
     "title" : "Assinar Transação"
   },
   "releaseNotes" : {
-    "title" : "Notas de versão",
+    "title" : "Notas de lançamento",
     "version" : "Ledger Live {{versionNb}}"
   },
   "troubleshootNetwork" : {
@@ -5559,8 +5559,7 @@
     "postOnboarding" : {
       "title" : "Personalizar meu dispositivo",
       "description" : "Customizando a tela",
-      "actionCompletedPopupLabel" : "Dispositivo personalizado",
-      "actionCompletedHubTitle" : "Essa tela ficou demais."
+      "actionCompletedPopupLabel" : "Dispositivo personalizado"
     },
     "customImageSet" : "Imagem personalizada definida",
     "finishCTA" : "Finalizar"
