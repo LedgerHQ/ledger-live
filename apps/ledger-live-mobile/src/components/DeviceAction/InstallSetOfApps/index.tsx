@@ -51,9 +51,7 @@ const InstallSetOfApps = ({
     ? getDeviceModel(lastSeenDevice?.modelId).productName
     : lastSeenDevice?.modelId;
 
-  const shouldRestoreApps = useMemo(() => {
-    return restore && !!lastSeenDevice;
-  }, [restore, lastSeenDevice]);
+  const shouldRestoreApps = restore && !!lastSeenDevice;
 
   const getLastSeenDeviceAppNames = useCallback(() => {
     if (!lastSeenDevice) {
