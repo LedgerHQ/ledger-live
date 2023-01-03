@@ -131,7 +131,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blue"
   },
   "operation" : {
@@ -786,8 +786,8 @@
     "undelegating" : "Délégation interrompue",
     "availableBalanceTooltip" : "Ce montant est disponible.",
     "frozenAssetsTooltip" : "Les actifs gelés sont utilisés pour voter sur TRON. Cela représente votre nombre total de votes.",
-    "bandwidthTooltip" : "Geler des actifs pour gagner de la Bande passante",
-    "energyTooltip" : "Geler des actifs pour gagner de l’Énergie",
+    "bandwidthTooltip" : "Gelez des actifs pour gagner de la Bande passante.",
+    "energyTooltip" : "Gelez des actifs pour gagner de l’Énergie.",
     "delegatedTooltip" : "Les actifs délégués sont utilisés pour voter. Cela représente votre nombre total de votes.",
     "undelegatingTooltip" : "Les actifs dont la délégation est interrompue sont disponibles après {{timelockInDays}} jours.",
     "banner" : {
@@ -1797,7 +1797,7 @@
       },
       "updatable" : {
         "title" : "Mise à jour disponible",
-        "title_plural" : "Mises à jours disponibles",
+        "title_plural" : "Mises à jour disponibles",
         "progressTitle" : "{{number}} mise à jour d’application",
         "progressTitle_plural" : "{{number}} mises à jour d’applications",
         "progressWarning" : "Ne sortez pas de My Ledger pendant la mise à jour.",
@@ -1811,7 +1811,7 @@
         "scheduled" : "En attente",
         "update" : "Mise à jour disponible",
         "updateAll" : "Tout mettre à jour",
-        "updateAllOutOfMemory" : "Espace de stockage insuffisant. Merci de désinstaller des applications",
+        "updateAllOutOfMemory" : "Espace de stockage insuffisant. Veuillez désinstaller des applications.",
         "install" : "Installer",
         "installed" : "Installée",
         "updated" : "Mise à jour",
@@ -5559,8 +5559,7 @@
     "postOnboarding" : {
       "title" : "Personnaliser mon appareil",
       "description" : "Avec un fond d’écran unique",
-      "actionCompletedPopupLabel" : "Appareil personnalisé",
-      "actionCompletedHubTitle" : "Vous avez créé votre style !"
+      "actionCompletedPopupLabel" : "Appareil personnalisé"
     },
     "customImageSet" : "Image définie",
     "finishCTA" : "Terminer"
