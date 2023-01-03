@@ -276,11 +276,7 @@ class Xpub {
         address: utxo.address,
         output_hash: utxo.output_hash,
         output_index: utxo.output_index,
-<<<<<<< HEAD
         sequence,
-=======
-        sequence: sequence,
->>>>>>> 53b82da0c0 (manage op_return tx with an amount)
       };
     });
 
