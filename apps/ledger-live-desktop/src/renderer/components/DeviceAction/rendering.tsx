@@ -25,7 +25,6 @@ import { closeAllModal } from "~/renderer/actions/modals";
 import Animation from "~/renderer/animations";
 import Button from "~/renderer/components/Button";
 import TranslatedError from "~/renderer/components/TranslatedError";
-import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box";
 import BigSpinner from "~/renderer/components/BigSpinner";
 import Alert from "~/renderer/components/Alert";
@@ -53,7 +52,7 @@ import {
   Button as ButtonV3,
   Flex,
   Icons,
-  Text as TextV3,
+  Text,
   Log,
   ProgressLoader,
   BoxedIcon,
@@ -133,7 +132,8 @@ export const Footer = styled.div`
 `;
 
 export const Title = styled(Text).attrs({
-  ff: "Inter|SemiBold",
+  variant: "paragraph",
+  fontWeight: "semiBold",
   color: "palette.text.shade100",
   textAlign: "center",
   fontSize: 5,
@@ -142,7 +142,7 @@ export const Title = styled(Text).attrs({
 `;
 
 export const SubTitle = styled(Text).attrs({
-  ff: "Inter|Regular",
+  variant: "paragraph",
   color: "palette.text.shade100",
   textAlign: "center",
   fontSize: 3,
@@ -151,7 +151,8 @@ export const SubTitle = styled(Text).attrs({
 `;
 
 const ErrorTitle = styled(Text).attrs({
-  ff: "Inter|SemiBold",
+  variant: "paragraph",
+  fontWeight: "semiBold",
   color: "palette.text.shade100",
   textAlign: "center",
   fontSize: 6,
@@ -161,7 +162,7 @@ const ErrorTitle = styled(Text).attrs({
 `;
 
 const ErrorDescription = styled(Text).attrs({
-  ff: "Inter|Regular",
+  variant: "paragraph",
   color: "palette.text.shade60",
   textAlign: "center",
   fontSize: 4,
@@ -549,20 +550,20 @@ export const RenderDeviceNotOnboardedError = ({ t, device }: { t: TFunction; dev
       <Flex mb={5}>
         <DeviceIllustration deviceId={device.modelId} />
       </Flex>
-      <TextV3 color="neutral.c100" fontSize={7} mb={2}>
+      <Text color="neutral.c100" fontSize={7} mb={2}>
         {productName
           ? t("errors.DeviceNotOnboardedError.titleWithProductName", {
               productName,
             })
           : t("errors.DeviceNotOnboardedError.title")}
-      </TextV3>
-      <TextV3 variant="paragraph" color="neutral.c80" fontSize={6} whiteSpace="pre-wrap">
+      </Text>
+      <Text variant="paragraph" color="neutral.c80" fontSize={6} whiteSpace="pre-wrap">
         {productName
           ? t("errors.DeviceNotOnboardedError.descriptionWithProductName", {
               productName,
             })
           : t("errors.DeviceNotOnboardedError.description")}
-      </TextV3>
+      </Text>
       <ButtonV3 variant="main" borderRadius="9999px" mt={5} onClick={redirectToOnboarding}>
         {productName
           ? t("errors.DeviceNotOnboardedError.goToOnboardingButtonWithProductName", {
@@ -846,10 +847,10 @@ export const renderSwapDeviceConfirmation = ({
             (value, key) => {
               return (
                 <Box horizontal justifyContent="space-between" key={key} mb={4}>
-                  <Text ff="Inter|Medium" color="palette.text.shade40" fontSize="14px">
+                  <Text fontWeight="medium" color="palette.text.shade40" fontSize="14px">
                     <Trans i18nKey={`DeviceAction.swap2.${key}`} />
                   </Text>
-                  <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize="14px">
+                  <Text fontWeight="semiBold" color="palette.text.shade100" fontSize="14px">
                     {value}
                   </Text>
                 </Box>
@@ -879,7 +880,7 @@ export const renderSecureTransferDeviceConfirmation = ({
     </Alert>
     {renderVerifyUnwrapped({ modelId, type })}
     <Box alignItems={"center"}>
-      <Text textAlign="center" ff="Inter|SemiBold" color="palette.text.shade100" fontSize={5}>
+      <Text textAlign="center" fontWeight="semiBold" color="palette.text.shade100" fontSize={5}>
         <Trans i18nKey={`DeviceAction.${exchangeType}.confirm`} />
       </Text>
     </Box>
@@ -942,7 +943,7 @@ const ImageLoadingGenericWithoutStyleProvider: React.FC<{
         {top}
       </Flex>
       <Flex flexDirection={"column"} alignItems="center" alignSelf="stretch">
-        <TextV3
+        <Text
           textAlign="center"
           variant="h4Inter"
           fontWeight="semiBold"
@@ -950,7 +951,7 @@ const ImageLoadingGenericWithoutStyleProvider: React.FC<{
           alignSelf="stretch"
         >
           {title}
-        </TextV3>
+        </Text>
         <FramedImage
           src={src}
           loadingProgress={progress}
@@ -1001,9 +1002,9 @@ export const renderLoadingImage = ({
       backgroundPlaceholderText="image loading illustration placeholder"
       bottom={
         <Flex flexDirection="column" flex={1} justifyContent="flex-end" pb={8}>
-          <TextV3 textAlign="center" variant="bodyLineHeight" color="neutral.c60">
+          <Text textAlign="center" variant="bodyLineHeight" color="neutral.c60">
             {t("customImage.steps.transfer.timeDisclaimer")}
-          </TextV3>
+          </Text>
         </Flex>
       }
       testId={`device-action-image-loading-${progress}`}
@@ -1032,9 +1033,9 @@ export const renderImageCommitRequested = ({
           <Flex mb={3} p={4} backgroundColor="neutral.c30" borderRadius={999}>
             <Icons.CheckAloneMedium size={16} color="success.c50" />
           </Flex>
-          <TextV3 textAlign="center" color="neutral.c70" variant="bodyLineHeight">
+          <Text textAlign="center" color="neutral.c70" variant="bodyLineHeight">
             {t("customImage.steps.transfer.pictureLoaded")}
-          </TextV3>
+          </Text>
         </Flex>
       }
       testId="device-action-image-commit-requested"
