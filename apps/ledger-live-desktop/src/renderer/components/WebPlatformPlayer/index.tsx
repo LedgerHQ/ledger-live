@@ -8,12 +8,13 @@ import { WebView as WebViewV1 } from "./WebView";
 interface Props {
   manifest: AppManifest;
   inputs?: Record<string, any>;
+  onClose?: () => void;
 }
 
-export default function WebView({ manifest, inputs }: Props) {
+export default function WebView({ manifest, inputs, onClose }: Props) {
   if (semver.satisfies(WALLET_API_VERSION, manifest.apiVersion)) {
-    return <WebViewV2 manifest={manifest} inputs={inputs} />;
+    return <WebViewV2 manifest={manifest} inputs={inputs} onClose={onClose} />;
   }
 
-  return <WebViewV1 manifest={manifest} inputs={inputs} />;
+  return <WebViewV1 manifest={manifest} inputs={inputs} onClose={onClose} />;
 }
