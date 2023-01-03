@@ -70,8 +70,7 @@ const signOperation = ({
           );
 
           const avalanche: Avalanche = new Avalanche(transport);
-          const config = await avalanche.getLedgerAppConfiguration();
-          const canLedgerParse = getCanLedgerParse(config, unsignedTx);
+          const canLedgerParse = getCanLedgerParse(unsignedTx);
 
           o.next({ type: "device-signature-requested" });
 
@@ -171,8 +170,8 @@ const signTransactionHash = async <
   return signedTx as SignedTx;
 };
 
-const getCanLedgerParse = (config, unsignedTx) => {
-  let canLedgerParse = config.version >= "0.3.1";
+const getCanLedgerParse = (unsignedTx) => {
+  let canLedgerParse = true;
 
   const txIns = unsignedTx.getTransaction().getIns();
 
