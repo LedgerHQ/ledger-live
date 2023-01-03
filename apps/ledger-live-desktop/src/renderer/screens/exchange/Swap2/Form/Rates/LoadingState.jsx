@@ -2,7 +2,6 @@
 import React from "react";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
-import { Trans } from "react-i18next";
 
 function Loader() {
   const [dots, setDots] = React.useState("");

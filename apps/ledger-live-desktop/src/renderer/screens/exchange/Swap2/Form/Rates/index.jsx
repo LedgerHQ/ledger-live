@@ -217,7 +217,7 @@ export default function ProviderRate({
         })}
       </Box>
       {!loading && !filteredRates.length && <EmptyState />}
-      {loading && <LoadingState />}
+      {/*{loading && <LoadingState />}*/}
     </Box>
   );
 }

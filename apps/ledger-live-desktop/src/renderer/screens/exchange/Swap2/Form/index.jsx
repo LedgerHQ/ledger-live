@@ -50,6 +50,7 @@ import SwapFormSummary from "./FormSummary";
 import SwapFormRates from "./FormRates";
 import { DEX_PROVIDERS } from "~/renderer/screens/exchange/Swap2/Form/utils";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import throttle from "lodash/throttle";
 
 const Wrapper: ThemedComponent<{}> = styled(Box).attrs({
   p: 20,
@@ -451,6 +452,17 @@ const SwapForm = () => {
     // eslint-disable-next-line
   }, [exchangeRate]);
 
+  const debouncedSetFromAmount = useMemo(
+    () =>
+      throttle((amount: BigNumber) => {
+        setNavigation(null);
+        setShowDetails(false);
+        swapTransaction.setFromAmount(amount);
+      }, 400),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [swapTransaction.setFromAmount],
+  );
+
   switch (currentFlow) {
     case "LOGIN":
       return <Login provider={provider} onClose={() => setCurrentFlow(null)} />;
@@ -483,12 +495,6 @@ const SwapForm = () => {
     swapTransaction.setFromAccount(currency);
   };
 
-  const setFromAmount = currency => {
-    setNavigation(null);
-    setShowDetails(false);
-    swapTransaction.setFromAmount(currency);
-  };
-
   const setToAccount = account => {
     setNavigation(null);
     setShowDetails(false);
@@ -518,7 +524,7 @@ const SwapForm = () => {
           toCurrency={targetCurrency}
           toAmount={exchangeRate?.toAmount || null}
           setFromAccount={setFromAccount}
-          setFromAmount={setFromAmount}
+          setFromAmount={debouncedSetFromAmount}
           setToAccount={setToAccount}
           setToCurrency={setToCurrency}
           isMaxEnabled={swapTransaction.swap.isMaxEnabled}
