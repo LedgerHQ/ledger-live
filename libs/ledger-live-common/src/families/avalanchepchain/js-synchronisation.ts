@@ -40,11 +40,8 @@ const getAccountShape: GetAccountShape = async (info) => {
   const { balance, stakedBalance, blockHeight } = await getAccount();
   const delegations = await getDelegations();
 
-  let operations = oldOperations;
-
   const newOperations = await getOperations(startAt, accountId);
-
-  operations = mergeOps(operations, newOperations);
+  const operations = mergeOps(oldOperations, newOperations);
 
   const shape = {
     id: accountId,
