@@ -267,7 +267,7 @@ class Xpub {
         address: utxo.address,
         output_hash: utxo.output_hash,
         output_index: utxo.output_index,
-        sequence: sequence,
+        sequence,
       };
     });
 
