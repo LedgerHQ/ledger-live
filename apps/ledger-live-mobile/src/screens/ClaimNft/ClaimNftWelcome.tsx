@@ -9,10 +9,6 @@ import { NavigatorName, ScreenName } from "../../const";
 import Animation from "../../components/Animation";
 import lottie from "../../animations/infinityPassCentered.json";
 
-/*const animation = {
-  infinityPass: require("../../animations/infinityPassCentered.json"),
-};*/
-
 const BulletItem = ({ textKey }: { textKey: string }) => {
   const { t } = useTranslation();
   return (

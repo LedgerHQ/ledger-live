@@ -1,5 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Dimensions, Linking, Platform, StyleSheet } from "react-native";
+import {
+  AppState,
+  Dimensions,
+  Linking,
+  Platform,
+  StyleSheet,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
@@ -11,10 +17,17 @@ import {
   useIsFocused,
   useRoute,
   useNavigation,
+  CompositeNavigationProp,
 } from "@react-navigation/native";
 import { useNavigateToPostOnboardingHubCallback } from "../../logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
 import { urls } from "../../config/urls";
-import FallbackCameraScreen from "../screens/ImportAccounts/FallBackCameraScreen";
+import FallbackCameraScreen from "../ImportAccounts/FallBackCameraScreen";
+import { ClaimNftNavigatorParamList } from "../../components/RootNavigator/types/ClaimNftNavigator";
+import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import {
+  StackNavigatorNavigation,
+  StackNavigatorRoute,
+} from "../../components/RootNavigator/types/helpers";
 
 const cameraBoxDimensions = {
   width: Dimensions.get("screen").width,
@@ -63,8 +76,14 @@ const ClaimNftQrScan = () => {
 
   const isInFocus = useIsFocused();
   const cameraRef = useRef<Camera>(null);
-  const route = useRoute();
-  const navigation = useNavigation();
+  const route = useRoute<StackNavigatorRoute<BaseNavigatorStackParamList>>();
+  const navigation =
+    useNavigation<
+      CompositeNavigationProp<
+        StackNavigatorNavigation<ClaimNftNavigatorParamList>,
+        StackNavigatorNavigation<BaseNavigatorStackParamList>
+      >
+    >();
   const [cameraDimensions, setCameraDimensions] = useState<
     | {
         height: number;
@@ -119,6 +138,25 @@ const ClaimNftQrScan = () => {
 
   useEffect(() => {
     if (!permission?.granted) requestPermission();
+  }, []);
+
+  const appState = useRef(AppState.currentState);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", nextAppState => {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === "active" &&
+        !permission?.granted
+      ) {
+        requestPermission();
+      }
+      appState.current = nextAppState;
+    });
+
+    return () => {
+      subscription.remove();
+    };
   }, [permission?.granted, requestPermission]);
 
   return (

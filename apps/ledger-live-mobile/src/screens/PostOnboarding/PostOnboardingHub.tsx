@@ -30,12 +30,6 @@ import {
 import { PostOnboardingNavigatorParamList } from "../../components/RootNavigator/types/PostOnboardingNavigator";
 import DeviceSetupView from "../../components/DeviceSetupView";
 import { useCompleteActionCallback } from "../../logic/postOnboarding/useCompleteAction";
-/*
-const SafeContainer = styled(SafeAreaView).attrs({
-  edges: ["left", "bottom", "right"],
-})`
-  flex: 1;
-`;*/
 
 const AnimatedFlex = Animated.createAnimatedComponent(Flex);
 
@@ -50,8 +44,6 @@ const PostOnboardingHub = ({ navigation, route }: NavigationProps) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { actionsState, deviceModelId } = usePostOnboardingHubState();
-  // const { lastActionCompleted, actionsState } = usePostOnboardingHubState();
-  //  const { actionCompletedHubTitle } = lastActionCompleted || {};
   const completePostOnboardingAction = useCompleteActionCallback();
 
   const clearLastActionCompleted = useCallback(() => {

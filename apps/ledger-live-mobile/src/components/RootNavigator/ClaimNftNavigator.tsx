@@ -1,7 +1,6 @@
 import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
-import { useTranslation } from "react-i18next";
 import { ScreenName } from "../../const";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import ClaimNftWelcome from "../../screens/ClaimNft/ClaimNftWelcome";
@@ -14,7 +13,6 @@ export default function ClaimNftNavigator() {
     () => getStackNavigatorConfig(colors, true),
     [colors],
   );
-  const { t } = useTranslation();
 
   return (
     <Stack.Navigator screenOptions={stackNavigationConfig}>
