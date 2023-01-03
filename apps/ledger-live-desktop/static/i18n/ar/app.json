@@ -131,7 +131,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blue"
   },
   "operation" : {
@@ -3395,15 +3395,15 @@
     "stake" : {
       "title" : "اكسب إيثريوم",
       "lido" : {
-        "tag" : "دون حد أدنى",
-        "description" : "قم بتكديس إيثريوم خاصتك مع Lido واكسب مكافآت يومية. دون فترة قَفل. دون حد أدنى."
+        "tag" : "ليس هناك حد أدنى",
+        "description" : "قم بتكديس إيثريوم خاصتك مع Lido واكسب مكافآت يومية. ليس هناك فترة قَفل. ليس هناك حد أدنى."
       },
       "kiln" : {
         "tag" : "يتطلب 32 ETH",
-        "description" : "لديك أكثر من 32 ETH؟ اكسب مكافآت يومية عن طريق تكديس ETH خاصتك بأمان مع Kiln."
+        "description" : "لديك أكثر من 32 ETH؟ اكسب مكافآت يومياً عن طريق تكديس ETH خاصتك بأمان مع Kiln."
       },
       "providerTitle" : "اكسب مع {{provider}}",
-      "providerLink" : "معرفة المزيد عن {{provider}}"
+      "providerLink" : "تعرف على المزيد عن {{provider}}"
     }
   },
   "near" : {
@@ -5010,7 +5010,7 @@
     },
     "OperatingSystemOutdated" : {
       "title" : "إصدار نظام التشغيل لديك قديم",
-      "description" : "يُرجى ترقية نظام التشغيل لديك والمحاولة مجدداً. يمكنك الرجوع إلى المقالة أدناه لفهم لماذا Ledger Live غير مدعوم على إصدار نظام التشغيل المثبّت لديك حالياً."
+      "description" : "يُرجى ترقية نظام التشغيل لديك والمحاولة مجدداً. يمكنك الرجوع إلى المقالة أدناه لفهم لماذا Ledger Live غير مدعوم على إصدار نظام التشغيل الحالي لديك."
     },
     "PasswordsDontMatch" : {
       "title" : "كلمات المرور غير متطابقتين",
@@ -5559,8 +5559,7 @@
     "postOnboarding" : {
       "title" : "تخصيص جهازي",
       "description" : "عبر تخصيص الشاشة",
-      "actionCompletedPopupLabel" : "تم تخصيص الجهاز",
-      "actionCompletedHubTitle" : "تلك الشاشة تبدو أنيقة."
+      "actionCompletedPopupLabel" : "تم تخصيص الجهاز"
     },
     "customImageSet" : "تم تعيين الصورة المخصصة",
     "finishCTA" : "إنهاء"
