@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.13.0-nightly.13
+
+### Minor Changes
+
+- [#2154](https://github.com/LedgerHQ/ledger-live/pull/2154) [`1f7f19294f`](https://github.com/LedgerHQ/ledger-live/commit/1f7f19294f5c989a0e29ea1833a73575cb2f595d) Thanks [@grsoares21](https://github.com/grsoares21)! - Small fix on the margins on MyLedger screen for Frimware and Apps update banners
+
+### Patch Changes
+
+- [#2165](https://github.com/LedgerHQ/ledger-live/pull/2165) [`6ae49b03bc`](https://github.com/LedgerHQ/ledger-live/commit/6ae49b03bc5b9c4c262f81654d7f37a20d5ed287) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Fix the back navigation when entering the error screen in the custom lockscreen flow
+
+* [#2128](https://github.com/LedgerHQ/ledger-live/pull/2128) [`98d787335b`](https://github.com/LedgerHQ/ledger-live/commit/98d787335bb62735448b325ff5decd34fef574a3) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix broken scroll UI in MyLedger when "protectServicesMobile" is enabled
+
 ## 3.13.0-nightly.12
 
 ### Patch Changes
