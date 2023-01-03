@@ -20,7 +20,7 @@ type LeafProps = {
   value: unknown;
   path: string;
   label: string;
-  onPress: (key: string, type: string) => void;
+  onPress: (key: string, type?: string) => void;
   icon: React.ReactNode;
 };
 
@@ -60,7 +60,7 @@ const Leaf = ({ path, label, value, onPress, icon }: LeafProps) => (
 type Props = {
   data: Partial<{ [key in keyof State]: unknown }>;
   path?: string;
-  onEdit?: (path: string, type?: string) => void;
+  onEdit: (path: string, type?: string) => void;
 };
 
 // Nb Could be extended to _delete_ entries and _add_ them instead of just modifying
