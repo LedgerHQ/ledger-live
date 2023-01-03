@@ -158,7 +158,7 @@ app.on("ready", async () => {
 
   ipcMain.on("log", (event, { log }) => logger.log(log));
 
-  // To handle openning new windows from webview
+  // To handle opening new windows from webview
   // cf. https://gist.github.com/codebytere/409738fcb7b774387b5287db2ead2ccb
   ipcMain.on("webview-dom-ready", (_, id) => {
     const wc = webContents.fromId(id);
