@@ -5,10 +5,9 @@ import useTheme from "~/renderer/hooks/useTheme";
 
 import { Card } from "~/renderer/components/Box";
 import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
-import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { useSelector } from "react-redux";
+import { useGetManifest } from "./utils";
 
 type Props = {
   match: {
@@ -34,18 +33,8 @@ export default function PlatformApp({ match, appId: propsAppId, location }: Prop
   const history = useHistory();
   const { params: urlParams, search, pathname } = location;
   const appId = propsAppId || match.params?.appId;
-  const sufix = pathname.substr(
-    pathname.indexOf(match.params.appId) + match.params.appId.length + 1,
-  );
 
-  const localManifest = useLocalLiveAppManifest(appId);
-  const remoteManifest = useRemoteLiveAppManifest(appId);
-  const manifest = Object.assign({}, localManifest || remoteManifest);
-  if (sufix !== "") {
-    const dappUrl = manifest?.params?.dappUrl?.split("?");
-    manifest.params.dappUrl =
-      dappUrl.length === 1 ? `${dappUrl[0]}${sufix}` : `${dappUrl[0]}${sufix}?${dappUrl[1]}`;
-  }
+  const manifest = useGetManifest(appId, pathname);
 
   const returnTo = useMemo(() => {
     const params = new URLSearchParams(search);
