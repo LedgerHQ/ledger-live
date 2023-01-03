@@ -39,15 +39,6 @@ export function useCosmosFamilyPreloadData(
   return state;
 }
 
-// export function useCosmosPreloadData(): CosmosPreloadData {
-//   const [state, setState] = useState(getCurrentCosmosPreloadData);
-//   useEffect(() => {
-//     const sub = getCosmosPreloadDataUpdates().subscribe(setState);
-//     return () => sub.unsubscribe();
-//   }, []);
-//   return state;
-// }
-
 export function useCosmosFamilyMappedDelegations(
   account: CosmosAccount,
   mode?: CosmosOperationMode

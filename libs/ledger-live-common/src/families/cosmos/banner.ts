@@ -27,7 +27,8 @@ export function getAccountBannerState(
   );
   const validatorAdresses = [...delegationAddresses, ...redelegationAddresses];
 
-  const LEDGER_VALIDATOR_ADDRESS = cryptoFactory("cosmos").ledger_validators[0];
+  const LEDGER_VALIDATOR_ADDRESS = cryptoFactory(account.currency.id)
+    .ledger_validators[0];
   // Get ledger validator data
   const { validators } = getCurrentCosmosPreloadData();
   const ledgerValidator = validators.find(

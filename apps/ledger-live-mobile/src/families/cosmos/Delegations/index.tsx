@@ -33,7 +33,7 @@ import {
   AccountBannerState,
   getAccountBannerState as getCosmosBannerState,
 } from "@ledgerhq/live-common/families/cosmos/banner";
-import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { AccountLike } from "@ledgerhq/types-live";
@@ -467,7 +467,7 @@ function Delegations({ account }: Props) {
           <ValidatorImage
             isLedger={
               (delegation || undelegation)?.validatorAddress ===
-              LEDGER_VALIDATOR_ADDRESS
+              cryptoFactory(account.currency.id).ledger_validators[0]
             }
             name={
               (delegation || undelegation)?.validator?.name ??

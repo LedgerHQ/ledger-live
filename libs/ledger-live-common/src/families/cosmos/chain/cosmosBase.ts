@@ -20,12 +20,12 @@ abstract class cosmosBase {
     claimReward: 140000,
     claimRewardCompound: 400000,
   };
+  public static COSMOS_FAMILY_LEDGER_VALIDATOR_ADDRESSES: string[] = [];
   public abstract getRewardsState(): CacheRes<[], CosmosRewardsState>;
   public abstract validatorEstimatedRate(
     validatorCommission: number,
     rewardsState: CosmosRewardsState
   ): number;
-  public static COSMOS_FAMILY_LEDGER_VALIDATOR_ADDRESSES: string[] = [];
 }
 
 export default cosmosBase;

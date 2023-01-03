@@ -1,9 +1,8 @@
 // @flow
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
-import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
 import type { CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
-import { LEDGER_OSMOSIS_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/osmosis/utils";
 import type { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 
 import { BigNumber } from "bignumber.js";
@@ -33,8 +32,7 @@ function CosmosFamilyValidatorRow({ validator, active, onClick, unit, currency }
   const currencyName = currency.name.toLowerCase();
   const onExternalLink = useCallback(
     (address: string) => {
-      const ledgerValidator =
-        currencyName === "osmosis" ? LEDGER_OSMOSIS_VALIDATOR_ADDRESS : LEDGER_VALIDATOR_ADDRESS;
+      const ledgerValidator = cryptoFactory(currencyName).ledger_validators[0];
       if (address === ledgerValidator) {
         openURL(urls.ledgerValidator);
       } else {

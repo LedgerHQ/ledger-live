@@ -15,7 +15,7 @@ import {
   CosmosAccount,
   CosmosValidatorItem,
 } from "@ledgerhq/live-common/families/cosmos/types";
-import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
+import cosmosBase from "@ledgerhq/live-common/families/cosmos/chain/cosmosBase";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
@@ -245,10 +245,9 @@ export default function DelegationSummary({ navigation, route }: Props) {
                   }}
                 >
                   <ValidatorImage
-                    isLedger={
-                      chosenValidator.validatorAddress ===
-                      LEDGER_VALIDATOR_ADDRESS
-                    }
+                    isLedger={cosmosBase.COSMOS_FAMILY_LEDGER_VALIDATOR_ADDRESSES.includes(
+                      chosenValidator.validatorAddress,
+                    )}
                     name={
                       chosenValidator?.name ?? chosenValidator?.validatorAddress
                     }

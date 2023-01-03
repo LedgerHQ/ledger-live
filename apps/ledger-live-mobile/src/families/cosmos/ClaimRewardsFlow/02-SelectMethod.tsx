@@ -16,7 +16,7 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useTheme } from "@react-navigation/native";
-import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
+import cosmosBase from "@ledgerhq/live-common/families/cosmos/chain/cosmosBase";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import Button from "../../../components/Button";
 import LText from "../../../components/LText";
@@ -205,10 +205,9 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
           <View style={styles.row}>
             <ValidatorImage
               size={38}
-              isLedger={
-                LEDGER_VALIDATOR_ADDRESS ===
-                route.params.validator?.validatorAddress
-              }
+              isLedger={cosmosBase.COSMOS_FAMILY_LEDGER_VALIDATOR_ADDRESSES.includes(
+                route.params.validator?.validatorAddress,
+              )}
               name={name}
             />
             <LText semiBold style={styles.label}>
