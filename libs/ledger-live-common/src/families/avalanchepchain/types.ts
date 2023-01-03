@@ -26,7 +26,7 @@ export type AvalanchePChainAccountRaw = AccountRaw & {
 export type Transaction = TransactionCommon & {
   family: "avalanchepchain";
   fees: BigNumber | null;
-  mode: string;
+  mode: "delegate";
   startTime: BigNumber | null;
   endTime: BigNumber | null;
   maxEndTime: BigNumber | null;
@@ -35,7 +35,7 @@ export type Transaction = TransactionCommon & {
 export type TransactionRaw = TransactionCommonRaw & {
   family: "avalanchepchain";
   fees: string | null;
-  mode: string;
+  mode: "delegate";
   startTime: string | null;
   endTime: string | null;
   maxEndTime: string | null;
