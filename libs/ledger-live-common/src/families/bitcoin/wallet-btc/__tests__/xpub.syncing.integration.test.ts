@@ -45,7 +45,6 @@ describe("xpub integration sync", () => {
       network: coininfo.digibyte.main.toBitcoinJS(),
       currencyId: "digibyte",
     },
-    /*
     {
       xpub: "xpub6CUGRUonZSQ4TWtTMmzXdrXDtypWKiKrhko4egpiMZbpiaQL2jkwSB1icqYh2cfDfVxdx4df189oLKnC5fSwqPfgyP3hooxujYzAu3fDVmz", // 3000ms
       derivationMode: DerivationModes.LEGACY,
@@ -54,7 +53,6 @@ describe("xpub integration sync", () => {
       network: coininfo.bitcoin.main.toBitcoinJS(),
       currencyId: "bitcoin",
     },
-    */
     {
       xpub: "xpub6D4waFVPfPCpRvPkQd9A6n65z3hTp6TvkjnBHG5j2MCKytMuadKgfTUHqwRH77GQqCKTTsUXSZzGYxMGpWpJBdYAYVH75x7yMnwJvra1BUJ", // 5400ms
       derivationMode: DerivationModes.LEGACY,
@@ -64,14 +62,13 @@ describe("xpub integration sync", () => {
       currencyId: "bitcoin",
     },
     {
-      xpub: "xpub6BvNdfGcyMB9Usq88ibXUt3KhbaEJVLFMbhTSNNfTm8Qf1sX9inTv4xL6pA6KofW4WF9GpdxwGDoYRwRDjHEir3Av23m2wHb7AqhxJ9ohE8",
+      xpub: "xpub6BvNdfGcyMB9Usq88ibXUt3KhbaEJVLFMbhTSNNfTm8Qf1sX9inTv3xL6pA6KofW4WF9GpdxwGDoYRwRDjHEir3Av23m2wHb7AqhxJ9ohE8",
       addresses: 16,
       balance: 360615,
       network: coininfo.bitcoincash.main.toBitcoinJS(),
       derivationMode: DerivationModes.LEGACY,
       currencyId: "bitcoin_cash",
     },
-    /*
     {
       xpub: "xpub6CThYZbX4PTeA7KRYZ8YXP3F6HwT2eVKPQap3Avieds3p1eos35UzSsJtTbJ3vQ8d3fjRwk4bCEz4m4H6mkFW49q29ZZ6gS8tvahs4WCZ9X", // 138sec,
       derivationMode: DerivationModes.LEGACY,
@@ -80,7 +77,6 @@ describe("xpub integration sync", () => {
       network: coininfo.bitcoin.main.toBitcoinJS(),
       currencyId: "bitcoin",
     },
-    */
     {
       xpub: "Ltub2ZgHGhWdGi2jacCdKEy3qddYxH4bpDtmueiPWkG8267Z9K8yQEExapyNi1y4Qp7f79JN8468uE9V3nizpPU27WEDfXrtqpkp84MyhhCDTNk",
       addresses: 5,
