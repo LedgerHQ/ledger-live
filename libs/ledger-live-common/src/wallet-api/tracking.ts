@@ -186,6 +186,24 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
     deviceCloseFail: (manifest: AppManifest) => {
       track("WalletAPI device close fail", getEventData(manifest));
     },
+    bitcoinFamillyAccountXpubRequested: (manifest: AppManifest) => {
+      track(
+        "WalletAPI bitcoin familly account xpub requested",
+        getEventData(manifest)
+      );
+    },
+    bitcoinFamillyAccountXpubFail: (manifest: AppManifest) => {
+      track(
+        "WalletAPI bitcoin familly account xpub fail",
+        getEventData(manifest)
+      );
+    },
+    bitcoinFamillyAccountXpubSuccess: (manifest: AppManifest) => {
+      track(
+        "WalletAPI bitcoin familly account xpub success",
+        getEventData(manifest)
+      );
+    },
   } as const;
 }
 
