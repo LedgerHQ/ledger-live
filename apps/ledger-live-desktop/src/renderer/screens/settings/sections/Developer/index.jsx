@@ -1,6 +1,6 @@
 // @flow
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -16,7 +16,11 @@ import EnableLearnPageStagingUrlToggle from "./EnableLearnPageStagingUrlToggle";
 const SectionDeveloper = () => {
   const { t } = useTranslation();
   const location = useLocation();
-  const shouldOpenFeatureFlags = !!location.state?.shouldOpenFeatureFlags;
+  const [shouldOpenFeatureFlags, setShouldOpenFeatureFlags] = useState(
+    !!location.state?.shouldOpenFeatureFlags,
+  );
+
+  useEffect(() => setShouldOpenFeatureFlags(!!location.state?.shouldOpenFeatureFlags), [location]);
 
   return (
     <>
