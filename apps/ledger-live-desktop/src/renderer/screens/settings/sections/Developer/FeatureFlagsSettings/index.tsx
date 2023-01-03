@@ -105,7 +105,7 @@ export const FeatureFlagContent = withV3StyleProvider((props: { visible?: boolea
     };
   }, [ruleThemAll]);
 
-  const content = useMemo(
+  const flagsList = useMemo(
     () =>
       filteredFlags.map(flagName => (
         <FeatureFlagDetails
@@ -178,7 +178,7 @@ export const FeatureFlagContent = withV3StyleProvider((props: { visible?: boolea
             />
           </Flex>
           <Button
-            width={250}
+            alignSelf={"flex-start"}
             mt={3}
             variant="color"
             onClick={resetFeatures}
@@ -197,7 +197,7 @@ export const FeatureFlagContent = withV3StyleProvider((props: { visible?: boolea
             fontSize={14}
             height={46}
           />
-          {activeTabIndex === 0 ? content : groupsList}
+          {activeTabIndex === 0 ? flagsList : groupsList}
         </>
       )}
     </Flex>

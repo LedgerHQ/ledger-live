@@ -2,4 +2,4 @@
 "ledger-live-desktop": patch
 ---
 
-Improve FF UX in LLD
+Added grouped Feature Flags UX in LLD and a reset all button

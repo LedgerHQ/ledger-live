@@ -16,7 +16,7 @@ import EnableLearnPageStagingUrlToggle from "./EnableLearnPageStagingUrlToggle";
 const SectionDeveloper = () => {
   const { t } = useTranslation();
   const location = useLocation();
-  const shouldOpenFeatureFlags = !!(location.state && location.state.shouldOpenFeatureFlags);
+  const shouldOpenFeatureFlags = !!location.state?.shouldOpenFeatureFlags;
 
   return (
     <>

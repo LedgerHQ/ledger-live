@@ -3716,7 +3716,7 @@
       "featureFlagsRestore": "Restore",
       "featureFlagsOverride": "Override",
       "featureFlagsRestoreAll": "Restore all flags values",
-      "showButtonDesc": "Show banner when flags are overridden",
+      "showButtonDesc": "Always show Feature Flags button",
       "buttonTitle": "Flags overridden locally",
       "firebaseProject": "Firebase project targeted by this build:",
       "addLocalApp": "Add a local app",
