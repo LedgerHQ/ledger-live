@@ -131,7 +131,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blau"
   },
   "operation" : {
@@ -5559,8 +5559,7 @@
     "postOnboarding" : {
       "title" : "Mein Gerät personalisieren",
       "description" : "Durch Anpassen des Bildschirms",
-      "actionCompletedPopupLabel" : "Gerät personalisiert",
-      "actionCompletedHubTitle" : "Dieser Bildschirm sieht gut aus."
+      "actionCompletedPopupLabel" : "Gerät personalisiert"
     },
     "customImageSet" : "Benutzerdefiniertes Bild-Set",
     "finishCTA" : "Beenden"
