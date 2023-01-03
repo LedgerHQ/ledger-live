@@ -49,6 +49,7 @@ const getAccountShape: GetAccountShape = async (info) => {
     spendableBalance: balance,
     operationsCount: operations.length,
     blockHeight,
+    operations,
     avalanchePChainResources: {
       publicKey,
       chainCode,
@@ -57,10 +58,7 @@ const getAccountShape: GetAccountShape = async (info) => {
     },
   };
 
-  return {
-    ...shape,
-    operations,
-  };
+  return shape;
 };
 
 export const scanAccounts = makeScanAccounts({ getAccountShape });
