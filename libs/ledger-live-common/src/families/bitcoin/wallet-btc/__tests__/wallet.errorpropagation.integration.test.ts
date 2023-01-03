@@ -28,8 +28,6 @@ describe("testing resilience of failures", () => {
               currency: "bitcoin",
               network: "mainnet",
               derivationMode: DerivationModes.LEGACY,
-              storage: "mock",
-              storageParams: [],
             },
             getCryptoCurrencyById("bitcoin")
           )

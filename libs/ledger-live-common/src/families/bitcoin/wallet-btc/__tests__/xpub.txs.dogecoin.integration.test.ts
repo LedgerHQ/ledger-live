@@ -83,8 +83,6 @@ describe("testing dogecoin transactions", () => {
         currency: "dogecoin",
         network: "mainnet",
         derivationMode: DerivationModes.LEGACY,
-        storage: "mock",
-        storageParams: [],
       },
       getCryptoCurrencyById("dogecoin")
     );

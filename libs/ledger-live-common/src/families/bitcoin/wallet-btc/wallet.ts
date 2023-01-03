@@ -22,11 +22,10 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 class BitcoinLikeWallet {
   explorers: { [currencyId: string]: IExplorer } = {};
 
-  constructor() {}
+  // Storage id is xpub + currency id
+  storages: { [storageId: string]: BitcoinLikeStorage } = {};
 
-  accountStorages: { [key: string]: (...args: any[]) => IStorage } = {
-    mock: () => new BitcoinLikeStorage(),
-  };
+  constructor() {}
 
   getExplorer(currency: CryptoCurrency) {
     if (!this.explorers[currency.id]) {
@@ -46,21 +45,20 @@ class BitcoinLikeWallet {
       currency: Currency;
       network: "mainnet" | "testnet";
       derivationMode: DerivationModes;
-      storage: "mock";
-      storageParams: any[];
     },
     cryptoCurrency: CryptoCurrency
   ): Promise<Account> {
     const explorerURI = blockchainBaseURL(cryptoCurrency);
     this.explorers[explorerURI] = this.getExplorer(cryptoCurrency);
     const crypto = cryptoFactory(params.currency);
-    const storage = this.accountStorages[params.storage](
-      ...params.storageParams
-    );
+    const storageId = params.xpub + cryptoCurrency.id;
+    if (!this.storages[storageId]) {
+      this.storages[storageId] = new BitcoinLikeStorage();
+    }
     return {
       params,
       xpub: new Xpub({
-        storage,
+        storage: this.storages[storageId],
         explorer: this.explorers[explorerURI],
         crypto,
         xpub: params.xpub,
@@ -342,12 +340,12 @@ class BitcoinLikeWallet {
     const currencyId = account.params.currency;
     const cryptoCurrency = getCryptoCurrencyById(currencyId);
     const crypto = cryptoFactory(currencyId);
-    const storage = this.accountStorages[account.params.storage](
-      ...account.params.storageParams
-    );
-
+    const storageId = account.xpub.xpub + currencyId;
+    if (!this.storages[storageId]) {
+      this.storages[storageId] = new BitcoinLikeStorage();
+    }
     return new Xpub({
-      storage,
+      storage: this.storages[storageId],
       explorer: this.getExplorer(cryptoCurrency),
       crypto,
       xpub: account.xpub.xpub,

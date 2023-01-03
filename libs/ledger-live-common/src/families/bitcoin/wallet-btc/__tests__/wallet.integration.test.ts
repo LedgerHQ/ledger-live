@@ -20,8 +20,6 @@ describe("testing wallet", () => {
         currency: "bitcoin",
         network: "mainnet",
         derivationMode: DerivationModes.LEGACY,
-        storage: "mock",
-        storageParams: [],
       },
       getCryptoCurrencyById("bitcoin")
     );

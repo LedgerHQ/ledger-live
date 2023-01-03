@@ -6,7 +6,6 @@ import { log } from "@ledgerhq/logs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
-import { blockchainBaseURL } from "../../api/Ledger";
 import { encodeAccountId } from "../../account";
 import {
   isSegwitDerivationMode,
@@ -144,8 +143,6 @@ const getAccountShape: GetAccountShape = async (info) => {
         currency: <Currency>currency.id,
         network: walletNetwork,
         derivationMode: walletDerivationMode,
-        storage: "mock",
-        storageParams: [],
       },
       currency
     ));
