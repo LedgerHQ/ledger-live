@@ -131,7 +131,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blue"
   },
   "operation" : {
@@ -4056,7 +4056,7 @@
       "welcome" : {
         "title" : "En güvenli kripto para ve NFT cüzdanı",
         "description" : "Kriptolarınızı ve NFT'lerinizi Ledger Live'da güvenle yönetin, satın alın ve artırın.",
-        "nextButton" : "Başlangıç",
+        "nextButton" : "Devam",
         "noDevice" : "Cihazınız yok mu?",
         "buyLink" : "Cihazınız yok mu? Ledger Nano X satın alın",
         "byTapping" : "“Hemen Başla” butonuna dokunduğunuzda bunlara izin vermiş ve rıza göstermiş olursunuz:",
@@ -4128,10 +4128,10 @@
             }
           },
           "howToGetStarted" : {
-            "title" : "Başlamanın en iyi yolu:",
+            "title" : "Başlamak için en iyi yol:",
             "rules" : {
               "1" : "30 dakika ayırın ve acele etmeyin.",
-              "2" : "Yazmak için bir kalem ve kâğıt alın.",
+              "2" : "Yazmak için bir kalem alın.",
               "3" : "Yalnız kalın ve güvenli ve sessiz bir ortam seçin."
             },
             "buttons" : {
@@ -4171,7 +4171,7 @@
             }
           },
           "deviceHowTo2" : {
-            "title" : "Başlamanın en iyi yolu:",
+            "title" : "Başlamak için en iyi yol:",
             "turnOn" : {
               "title" : "Nano'yu açın",
               "descr" : "Cihazınızı USB kablosuyla bilgisayarınıza bağlayın."
@@ -5559,8 +5559,7 @@
     "postOnboarding" : {
       "title" : "Cihazınızı kişiselleştirin",
       "description" : "Ekranı özelleştirin",
-      "actionCompletedPopupLabel" : "Cihaz kişiselleştirildi",
-      "actionCompletedHubTitle" : "Ekran gayet şık görünüyor."
+      "actionCompletedPopupLabel" : "Cihaz kişiselleştirildi"
     },
     "customImageSet" : "Özel resim ayarlandı",
     "finishCTA" : "Bitir"
