@@ -67,6 +67,7 @@ import type {
   SettingsSetOverriddenFeatureFlagPlayload,
   SettingsSetOverriddenFeatureFlagsPlayload,
   SettingsSetFeatureFlagsBannerVisiblePayload,
+  DangerouslyOverrideStatePayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -377,8 +378,12 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       .payload.hasAvailableUpdate,
   }),
 
-  [SettingsActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (state): SettingsState => ({
+  [SettingsActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (
+    state,
+    action,
+  ): SettingsState => ({
     ...state,
+    ...(action as Action<DangerouslyOverrideStatePayload>).payload.settings,
   }),
 
   [SettingsActionTypes.SETTINGS_SET_THEME]: (state, action) => ({
