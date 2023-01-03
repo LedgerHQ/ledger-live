@@ -41,7 +41,7 @@ const ClaimNftWelcome = () => {
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
       <Flex flex={1}>
         <Flex alignItems="center">
-          <Animation source={lottie as string} />
+          <Animation source={lottie as unknown as string} />
         </Flex>
         <Flex flex={1} px={6} justifyContent="space-evenly">
           <Text variant="h4" fontWeight="semiBold" mt={7} textAlign="center">
