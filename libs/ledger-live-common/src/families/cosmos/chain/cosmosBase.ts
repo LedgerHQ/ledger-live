@@ -4,10 +4,10 @@ import { CosmosOperationMode, CosmosRewardsState } from "../types";
 abstract class cosmosBase {
   abstract lcd: string;
   abstract stakingDocUrl: string;
-  abstract unbonding_period: number;
-  abstract ledger_validators: string[];
-  default_gas = 100000;
-  min_gasprice = 0.0025;
+  abstract unbondingPeriod: number;
+  abstract ledgerValidator: string;
+  defaultGas = 100000;
+  minGasprice = 0.0025;
   version = "v1beta1";
   gas: {
     [Key in CosmosOperationMode]: number;

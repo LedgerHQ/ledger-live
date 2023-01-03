@@ -7,20 +7,19 @@ import { parseUatomStrAsAtomNumber } from "../logic";
 class Cosmos extends CosmosBase {
   lcd: string;
   stakingDocUrl: string;
-  unbonding_period: number;
-  ledger_validators: string[];
+  unbondingPeriod: number;
+  ledgerValidator: string;
   constructor() {
     super();
-    this.unbonding_period = 21;
+    this.unbondingPeriod = 21;
     this.lcd = "https://cosmoshub4.coin.ledger.com";
     this.stakingDocUrl =
       "https://support.ledger.com/hc/en-us/articles/360014339340-Earn-Cosmos-ATOM-staking-rewards-in-Ledger-Live?docs=true";
-    this.min_gasprice = 0.025;
-    this.ledger_validators = [
-      "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
-    ];
+    this.minGasprice = 0.025;
+    this.ledgerValidator =
+      "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm";
     CosmosBase.COSMOS_FAMILY_LEDGER_VALIDATOR_ADDRESSES.push(
-      ...this.ledger_validators
+      this.ledgerValidator
     );
   }
   private computeAvgYearlyInflation = (rewardsState: CosmosRewardsState) => {

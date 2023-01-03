@@ -200,7 +200,7 @@ export default function StepValidators({
       <Alert type="primary">
         <Trans
           i18nKey="cosmos.redelegation.flow.steps.validators.warning"
-          values={{ numberOfDays: crypto.unbonding_period }}
+          values={{ numberOfDays: crypto.unbondingPeriod }}
         >
           <b></b>
         </Trans>

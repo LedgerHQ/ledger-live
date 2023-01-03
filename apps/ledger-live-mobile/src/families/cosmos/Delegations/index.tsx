@@ -467,7 +467,7 @@ function Delegations({ account }: Props) {
           <ValidatorImage
             isLedger={
               (delegation || undelegation)?.validatorAddress ===
-              cryptoFactory(account.currency.id).ledger_validators[0]
+              cryptoFactory(account.currency.id).ledgerValidator
             }
             name={
               (delegation || undelegation)?.validator?.name ??

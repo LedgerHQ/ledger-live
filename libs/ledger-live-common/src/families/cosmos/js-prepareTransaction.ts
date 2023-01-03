@@ -41,11 +41,11 @@ const getEstimatedFees = async (
   transaction: Transaction
 ): Promise<any> => {
   const cosmosCurrency = cryptoFactory(account.currency.id);
-  let estimatedGas = new BigNumber(cosmosCurrency.default_gas);
+  let estimatedGas = new BigNumber(cosmosCurrency.defaultGas);
   if (cosmosCurrency.gas[transaction.mode]) {
     estimatedGas = new BigNumber(cosmosCurrency.gas[transaction.mode]);
   }
-  const estimatedFees = estimatedGas.times(cosmosCurrency.min_gasprice);
+  const estimatedFees = estimatedGas.times(cosmosCurrency.minGasprice);
   return { estimatedFees, estimatedGas };
 };
 

@@ -73,7 +73,7 @@ export default function StepAmount({
         <Text ff="Inter|Medium" fontSize={4}>
           <Trans
             i18nKey={`${currencyName}.undelegation.flow.steps.amount.subtitle`}
-            values={{ numberOfDays: crypto.unbonding_period }}
+            values={{ numberOfDays: crypto.unbondingPeriod }}
           >
             <b></b>
           </Trans>

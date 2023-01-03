@@ -125,7 +125,7 @@ function useInfo(account: Account): Record<InfoName, ModalInfo[]> {
       {
         title: t("cosmos.info.undelegating.title"),
         description: t("cosmos.info.undelegating.description", {
-          numberOfDays: crypto.unbonding_period,
+          numberOfDays: crypto.unbondingPeriod,
         }),
       },
     ],

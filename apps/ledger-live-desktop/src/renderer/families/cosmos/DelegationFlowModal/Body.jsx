@@ -130,7 +130,7 @@ const Body = ({
     const transaction = bridge.updateTransaction(t, {
       mode: "delegate",
       validators: [
-        { address: cryptoFactory(account.currency.id).ledger_validators[0], amount: BigNumber(0) },
+        { address: cryptoFactory(account.currency.id).ledgerValidator, amount: BigNumber(0) },
       ],
       recipient: account.freshAddress,
     });

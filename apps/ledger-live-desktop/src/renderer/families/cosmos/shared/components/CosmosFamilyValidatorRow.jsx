@@ -32,7 +32,7 @@ function CosmosFamilyValidatorRow({ validator, active, onClick, unit, currency }
   const currencyName = currency.name.toLowerCase();
   const onExternalLink = useCallback(
     (address: string) => {
-      const ledgerValidator = cryptoFactory(currencyName).ledger_validators[0];
+      const ledgerValidator = cryptoFactory(currencyName).ledgerValidator;
       if (address === ledgerValidator) {
         openURL(urls.ledgerValidator);
       } else {

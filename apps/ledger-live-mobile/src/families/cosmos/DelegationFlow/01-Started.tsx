@@ -72,7 +72,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
             <Trans i18nKey="cosmos.delegation.flow.steps.starter.steps.0" />,
             <Trans
               i18nKey="cosmos.delegation.flow.steps.starter.steps.1"
-              values={{ numberOfDays: crypto.unbonding_period }}
+              values={{ numberOfDays: crypto.unbondingPeriod }}
             />,
             <Trans i18nKey="cosmos.delegation.flow.steps.starter.steps.2" />,
           ].map(wording => (

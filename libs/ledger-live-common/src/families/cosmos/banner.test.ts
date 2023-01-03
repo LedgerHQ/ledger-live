@@ -10,7 +10,7 @@ jest.mock("./js-prepareTransaction", () => ({
   calculateFees: jest.fn(() => Promise.resolve({})),
 }));
 
-const LEDGER_VALIDATOR_ADDRESS = cryptoFactory("cosmos").ledger_validators[0];
+const LEDGER_VALIDATOR_ADDRESS = cryptoFactory("cosmos").ledgerValidator;
 const ledgerValidator: CosmosValidatorItem | undefined = data.validators.find(
   (x) => x.validatorAddress === LEDGER_VALIDATOR_ADDRESS
 );

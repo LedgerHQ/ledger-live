@@ -46,8 +46,7 @@ export default function DelegationRow({
         <ValidatorImage
           size={42}
           isLedger={
-            validatorAddress ===
-            cryptoFactory(currency.name).ledger_validators[0]
+            validatorAddress === cryptoFactory(currency.name).ledgerValidator
           }
           name={validator?.name ?? validatorAddress ?? ""}
         />

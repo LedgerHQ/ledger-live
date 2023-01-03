@@ -5,19 +5,16 @@ import CosmosBase from "./cosmosBase";
 class Juno extends CosmosBase {
   lcd: string;
   stakingDocUrl: string;
-  unbonding_period: number;
-  ledger_validators: string[];
+  unbondingPeriod: number;
+  ledgerValidator: string;
   constructor() {
     super();
     this.lcd = "https://lcd-juno.itastakers.com";
     this.stakingDocUrl =
       "https://support.ledger.com/hc/en-us/articles/6235986236957-Earn-Osmosis-OSMO-staking-rewards-in-Ledger-Live?docs=true";
-    this.default_gas = 100000;
-    this.unbonding_period = 28;
-    this.ledger_validators = [];
-    CosmosBase.COSMOS_FAMILY_LEDGER_VALIDATOR_ADDRESSES.push(
-      ...this.ledger_validators
-    );
+    this.defaultGas = 100000;
+    this.unbondingPeriod = 28;
+    this.ledgerValidator = "";
   }
   public getRewardsState(): CacheRes<[], CosmosRewardsState> {
     return makeLRUCache(

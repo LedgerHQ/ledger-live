@@ -45,7 +45,7 @@ export default function CosmosEarnRewardsInfoModal({ name, account, parentAccoun
         t("cosmos.delegation.flow.steps.starter.bullet.0"),
         t("cosmos.delegation.flow.steps.starter.bullet.1"),
         t("cosmos.delegation.flow.steps.starter.bullet.2", {
-          numberOfDays: crypto.unbonding_period,
+          numberOfDays: crypto.unbondingPeriod,
         }),
       ]}
       additional={

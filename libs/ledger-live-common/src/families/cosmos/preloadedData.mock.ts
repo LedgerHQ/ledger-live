@@ -1,6 +1,6 @@
 import type { CosmosPreloadData } from "./types";
 import cryptoFactory from "./chain/chain";
-const LEDGER_VALIDATOR_ADDRESS = cryptoFactory("cosmos").ledger_validators[0];
+const LEDGER_VALIDATOR_ADDRESS = cryptoFactory("cosmos").ledgerValidator;
 // Data manually fetched from the network between heights
 // 1685677 and 1685679
 const data: CosmosPreloadData = {

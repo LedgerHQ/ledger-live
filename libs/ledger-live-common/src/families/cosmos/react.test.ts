@@ -205,8 +205,7 @@ describe("cosmos/react", () => {
       const { result } = renderHook(() =>
         hooks.useLedgerFirstShuffledValidatorsCosmosFamily("cosmos")
       );
-      const LEDGER_VALIDATOR_ADDRESS =
-        cryptoFactory("cosmos").ledger_validators[0];
+      const LEDGER_VALIDATOR_ADDRESS = cryptoFactory("cosmos").ledgerValidator;
       expect(result.current[0].validatorAddress).toBe(LEDGER_VALIDATOR_ADDRESS);
     });
   });

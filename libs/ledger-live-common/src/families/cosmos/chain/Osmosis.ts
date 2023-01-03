@@ -11,11 +11,11 @@ import CosmosBase from "./cosmosBase";
 class Osmosis extends CosmosBase {
   lcd: string;
   stakingDocUrl: string;
-  unbonding_period: number;
-  ledger_validators: string[];
+  unbondingPeriod: number;
+  ledgerValidator: string;
   constructor() {
     super();
-    this.unbonding_period = 14;
+    this.unbondingPeriod = 14;
     this.lcd = "https://osmosis.coin.ledger.com/node";
     this.stakingDocUrl =
       "https://support.ledger.com/hc/en-us/articles/6235986236957-Earn-Osmosis-OSMO-staking-rewards-in-Ledger-Live?docs=true";
@@ -27,11 +27,9 @@ class Osmosis extends CosmosBase {
       claimReward: 300000,
       claimRewardCompound: 400000,
     };
-    this.ledger_validators = [
-      "osmovaloper17cp6fxccqxrpj4zc00w2c7u6y0umc2jajsyc5t",
-    ];
+    this.ledgerValidator = "osmovaloper17cp6fxccqxrpj4zc00w2c7u6y0umc2jajsyc5t";
     CosmosBase.COSMOS_FAMILY_LEDGER_VALIDATOR_ADDRESSES.push(
-      ...this.ledger_validators
+      this.ledgerValidator
     );
   }
   private queryPool = async (): Promise<CosmosPool> => {
