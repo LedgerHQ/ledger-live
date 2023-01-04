@@ -235,7 +235,7 @@ declare module "styled-components" {
     style: string;
   }
   export interface DefaultTheme {
-    theme: string;
+    theme: "dark" | "light";
     animations: typeof animations;
     transition: typeof transition;
     overflow: typeof overflow;
