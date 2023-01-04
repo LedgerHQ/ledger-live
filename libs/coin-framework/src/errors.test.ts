@@ -8,7 +8,7 @@ describe("custom errors", () => {
   test("error instanceof", () => {
     try {
       functionA();
-    } catch (e: any) {
+    } catch (e) {
       expect(e).toBeInstanceOf(UnsupportedDerivation);
     }
   });

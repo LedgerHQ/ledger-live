@@ -4,200 +4,44 @@ import type {
   OperationRaw,
   SubAccount,
 } from "@ledgerhq/types-live";
-import { inferFamilyFromAccountId } from "@ledgerhq/coin-framework/lib/account/accountId";
+import {
+  toOperationRaw as coinToOperationRaw,
+  fromOperationRaw as coinFromOperationRaw
+} from "@ledgerhq/coin-framework/lib/serialization/operation";
 import Bridge from "../bridge/new";
+import { inferFamilyFromAccountId } from "@ledgerhq/coin-framework/lib/account";
 
 export const toOperationRaw = (
-  {
-    date,
-    value,
-    fee,
-    subOperations,
-    internalOperations,
-    nftOperations,
-    extra,
-    id,
-    hash,
-    type,
-    senders,
-    recipients,
-    blockHeight,
-    blockHash,
-    transactionSequenceNumber,
-    accountId,
-    hasFailed,
-    contract,
-    operator,
-    standard,
-    tokenId,
-  }: Operation,
+  operation: Operation,
   preserveSubOperation?: boolean
 ): OperationRaw => {
-  let e = extra;
+  let extractExtra: ((e: Record<string, any>) => Record<string, any>) | undefined = undefined;
 
-  if (e) {
-    const family = inferFamilyFromAccountId(accountId);
-
-    if (family) {
-      e = Bridge.getInstance().toOperationExtraRaw(family, e)
-    }
+  const family = inferFamilyFromAccountId(operation.accountId);
+  if (family) {
+    extractExtra = (e: Record<string, any>) => Bridge.getInstance().toOperationExtraRaw(family, e)
   }
 
-  const copy: OperationRaw = {
-    id,
-    hash,
-    type,
-    senders,
-    recipients,
-    accountId,
-    blockHash,
-    blockHeight,
-    extra: e,
-    date: date.toISOString(),
-    value: value.toFixed(),
-    fee: fee.toString(),
-    contract,
-    operator,
-    standard,
-    tokenId,
-  };
-
-  if (transactionSequenceNumber !== undefined) {
-    copy.transactionSequenceNumber = transactionSequenceNumber;
-  }
-
-  if (hasFailed !== undefined) {
-    copy.hasFailed = hasFailed;
-  }
-
-  if (subOperations && preserveSubOperation) {
-    copy.subOperations = subOperations.map((o) => toOperationRaw(o));
-  }
-
-  if (internalOperations) {
-    copy.internalOperations = internalOperations.map((o) => toOperationRaw(o));
-  }
-
-  if (nftOperations) {
-    copy.nftOperations = nftOperations.map((o) => toOperationRaw(o));
-  }
-
-  return copy;
-};
-
-export const inferSubOperations = (
-  txHash: string,
-  subAccounts: SubAccount[]
-): Operation[] => {
-  const all: Operation[] = [];
-
-  for (let i = 0; i < subAccounts.length; i++) {
-    const ta = subAccounts[i];
-
-    for (let j = 0; j < ta.operations.length; j++) {
-      const op = ta.operations[j];
-
-      if (op.hash === txHash) {
-        all.push(op);
-      }
-    }
-
-    for (let j = 0; j < ta.pendingOperations.length; j++) {
-      const op = ta.pendingOperations[j];
-
-      if (op.hash === txHash) {
-        all.push(op);
-      }
-    }
-  }
-
-  return all;
+  return coinToOperationRaw(
+    operation,
+    extractExtra,
+    preserveSubOperation
+  );
 };
 
 export const fromOperationRaw = (
-  {
-    date,
-    value,
-    fee,
-    extra,
-    subOperations,
-    internalOperations,
-    nftOperations,
-    id,
-    hash,
-    type,
-    senders,
-    recipients,
-    blockHeight,
-    blockHash,
-    transactionSequenceNumber,
-    hasFailed,
-    contract,
-    operator,
-    standard,
-    tokenId,
-  }: OperationRaw,
+  operation: OperationRaw,
   accountId: string,
   subAccounts?: SubAccount[] | null | undefined
 ): Operation => {
-  let e = extra;
+  let extractExtra: ((e: Record<string, any>) => Record<string, any>) | undefined = undefined;
 
-  if (e) {
-    const family = inferFamilyFromAccountId(accountId);
-
-    if (family) {
-      e = Bridge.getInstance().fromOperationExtraRaw(family, e)
-    }
+  const family = inferFamilyFromAccountId(operation.accountId);
+  if (family) {
+    extractExtra = (e: Record<string, any>) => Bridge.getInstance().fromOperationExtraRaw(family, e)
   }
 
-  const res: Operation = {
-    id,
-    hash,
-    type,
-    senders,
-    recipients,
-    accountId,
-    blockHash,
-    blockHeight,
-    date: new Date(date),
-    value: new BigNumber(value),
-    fee: new BigNumber(fee),
-    extra: e || {},
-    contract,
-    operator,
-    standard,
-    tokenId,
-  };
-
-  if (transactionSequenceNumber !== undefined) {
-    res.transactionSequenceNumber = transactionSequenceNumber;
-  }
-
-  if (hasFailed !== undefined) {
-    res.hasFailed = hasFailed;
-  }
-
-  if (subAccounts) {
-    res.subOperations = inferSubOperations(hash, subAccounts);
-  } else if (subOperations) {
-    res.subOperations = subOperations.map((o) =>
-      fromOperationRaw(o, o.accountId)
-    );
-  }
-
-  if (internalOperations) {
-    res.internalOperations = internalOperations.map((o) =>
-      fromOperationRaw(o, o.accountId)
-    );
-  }
-
-  if (nftOperations) {
-    res.nftOperations = nftOperations.map((o) =>
-      fromOperationRaw(o, o.accountId)
-    );
-  }
-
-  return res;
+  return coinFromOperationRaw(operation, accountId, extractExtra, subAccounts)
 };
 
 // Moved from exchange/swap/types

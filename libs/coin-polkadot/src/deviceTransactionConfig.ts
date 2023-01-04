@@ -7,7 +7,7 @@ import { isStash } from "./logic";
 
 const currency = getCryptoCurrencyById("polkadot");
 
-type ExtraDeviceTransactionField = {
+export type ExtraDeviceTransactionField = {
   type: "polkadot.validators";
   label: string;
 };

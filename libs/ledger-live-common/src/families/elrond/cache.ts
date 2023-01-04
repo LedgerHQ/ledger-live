@@ -17,6 +17,6 @@ export const getTransactionParams: CacheRes<
   async (): Promise<Record<string, any>> => getNetworkConfig(),
   () => "elrond",
   {
-    maxAge: 5 * 60 * 1000, // 5 minutes
+    ttl: 5 * 60 * 1000, // 5 minutes
   }
 );

@@ -2,14 +2,15 @@ import { makeLRUCache } from "../../../cache";
 import { ChainAPI } from "./chain";
 import hash from "object-hash";
 
-export function seconds(num: number, max = 100): Record<string, any> {
+type CacheOptions = { max: number; ttl: number };
+export function seconds(num: number, max = 100): CacheOptions {
   return {
     max,
-    maxAge: num * 1000,
+    ttl: num * 1000,
   };
 }
 
-export function minutes(num: number, max = 100): Record<string, any> {
+export function minutes(num: number, max = 100): CacheOptions {
   return seconds(num * 60, max);
 }
 

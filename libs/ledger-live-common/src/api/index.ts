@@ -1,4 +1,4 @@
-import { disconnect as polkadotApiDisconnect } from "../families/polkadot/api";
+import { disconnect as polkadotApiDisconnect } from "@ledgerhq/coin-polkadot/lib/api";
 
 export async function disconnectAll(): Promise<void> {
   await polkadotApiDisconnect();

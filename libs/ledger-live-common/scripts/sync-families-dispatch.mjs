@@ -3,20 +3,20 @@ import "zx/globals";
 import rimraf from "rimraf";
 
 const targets = [
-  "customAddressValidation.ts",
-  "hw-getAddress.ts",
-  "hw-signMessage.ts",
-  "transaction.ts",
+  "account.ts",
   "bridge/js.ts",
   "bridge/mock.ts",
   "cli-transaction.ts",
-  "specs.ts",
+  "customAddressValidation.ts",
   "deviceTransactionConfig.ts",
-  "mock.ts",
-  "account.ts",
   "exchange.ts",
+  "hw-getAddress.ts",
+  "hw-signMessage.ts",
+  "mock.ts",
   "presync.ts",
   "platformAdapter.ts",
+  "specs.ts",
+  "transaction.ts",
 ];
 
 cd(path.join(__dirname, "..", "src"));
@@ -63,6 +63,15 @@ async function genTarget(targets, families) {
       }
     }
 
+    const libsDir = path.join(__dirname, "../..");
+    const family = "polkadot";
+    if (fs.existsSync(path.join(libsDir, `coin-${family}/src`, target))) {
+      imports += `import ${family} from "@ledgerhq/coin-${family}/lib/${imprtTarget}";
+`;
+      exprts += `
+  ${family},`;
+    }
+
     exprts += `
 };
 `;
@@ -86,12 +95,22 @@ async function getDeviceTransactionConfig(families) {
         "export type ExtraDeviceTransactionField"
       );
       if (hasExports) {
-        imports += `import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_${family} } from  "../families/${family}/deviceTransactionConfig";
+        imports += `import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_${family} } from "../families/${family}/deviceTransactionConfig";
 `;
         exprts += `
   | ExtraDeviceTransactionField_${family}`;
       }
     }
+  }
+
+  const libsDir = path.join(__dirname, "../..");
+  const family = "polkadot";
+  const target = "deviceTransactionConfig.ts";
+  if (fs.existsSync(path.join(libsDir, `coin-${family}/src`, target))) {
+    imports += `import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_${family} } from "@ledgerhq/coin-${family}/lib/deviceTransactionConfig";
+`;
+    exprts += `
+    | ExtraDeviceTransactionField_${family}`;
   }
 
   const str = `${imports}
@@ -113,6 +132,28 @@ async function genTypesFile(families) {
 import { TransactionRaw as ${family}TransactionRaw } from "../families/${family}/types";
 import { TransactionStatus as ${family}TransactionStatus } from "../families/${family}/types";
 import { TransactionStatusRaw as ${family}TransactionStatusRaw } from "../families/${family}/types";
+`;
+    exprtsT += `
+  | ${family}Transaction`;
+
+    exprtsTRaw += `
+  | ${family}TransactionRaw`;
+
+    exprtsStatus += `
+  | ${family}TransactionStatus`;
+
+    exprtsStatusRaw += `
+  | ${family}TransactionStatusRaw`;
+  }
+
+  const libsDir = path.join(__dirname, "../..");
+  const family = "polkadot";
+  const target = "types.ts";
+  if (fs.existsSync(path.join(libsDir, `coin-${family}/src`, target))) {
+    imprts += `import { Transaction as ${family}Transaction } from "@ledgerhq/coin-${family}/lib/types";
+import { TransactionRaw as ${family}TransactionRaw } from "@ledgerhq/coin-${family}/lib/types";
+import { TransactionStatus as ${family}TransactionStatus } from "@ledgerhq/coin-${family}/lib/types";
+import { TransactionStatusRaw as ${family}TransactionStatusRaw } from "@ledgerhq/coin-${family}/lib/types";
 `;
     exprtsT += `
   | ${family}Transaction`;

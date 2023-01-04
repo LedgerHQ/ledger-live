@@ -3,7 +3,6 @@ import { map } from "rxjs/operators";
 import { getValidators } from "./validators";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
-import type { Transaction } from "../../generated/types";
 import { isAccount } from "@ledgerhq/coin-framework/lib/account/index";
 import { getCryptoCurrencyById, formatCurrencyUnit } from "@ledgerhq/coin-framework/lib/currencies";
 import {
@@ -11,7 +10,7 @@ import {
   SidecarValidatorsParamStatus,
 } from "./api/sidecar.types";
 import { AccountLike } from "@ledgerhq/types-live";
-import { PolkadotAccount } from "./types";
+import { PolkadotAccount, Transaction } from "./types";
 const options = [
   {
     name: "mode",

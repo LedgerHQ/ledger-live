@@ -51,7 +51,10 @@ import {
   CryptoOrgAccountRaw,
 } from "./families/crypto_org/types";
 import { ElrondAccount, ElrondAccountRaw } from "./families/elrond/types";
-import { PolkadotAccount, PolkadotAccountRaw } from "./families/polkadot/types";
+import {
+  PolkadotAccount,
+  PolkadotAccountRaw,
+} from "@ledgerhq/coin-polkadot/lib/types";
 import { SolanaAccount, SolanaAccountRaw } from "./families/solana/types";
 import { TezosAccount, TezosAccountRaw } from "./families/tezos/types";
 import { TronAccount, TronAccountRaw } from "./families/tron/types";

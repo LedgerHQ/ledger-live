@@ -73,7 +73,7 @@ export const getLatestTransactions = makeLRUCache<
       .filter(Boolean) as Operation[];
   },
   (currency, address, accountId) => accountId,
-  { maxAge: 6 * 1000 }
+  { ttl: 6 * 1000 }
 );
 
 export default {

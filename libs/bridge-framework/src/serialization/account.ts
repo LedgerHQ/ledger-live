@@ -14,6 +14,7 @@ import type {
   ScanAccountEventRaw,
   TokenAccount,
   TokenAccountRaw,
+  OperationRaw,
 } from "@ledgerhq/types-live";
 import {
   getCryptoCurrencyById,
@@ -57,7 +58,7 @@ export function fromTokenAccountRaw(raw: TokenAccountRaw): TokenAccount {
   } = raw;
   const token = getTokenById(tokenId);
 
-  const convertOperation = (op) => fromOperationRaw(op, id);
+  const convertOperation = (op: OperationRaw) => fromOperationRaw(op, id);
 
   const res = {
     type: "TokenAccount",
@@ -137,7 +138,7 @@ export function fromChildAccountRaw(raw: ChildAccountRaw): ChildAccount {
   } = raw;
   const currency = getCryptoCurrencyById(currencyId);
 
-  const convertOperation = (op) => fromOperationRaw(op, id);
+  const convertOperation = (op: OperationRaw) => fromOperationRaw(op, id);
 
   const res: ChildAccount = {
     type: "ChildAccount",
@@ -286,7 +287,7 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     currency.units.find((u) => u.magnitude === unitMagnitude) ||
     currency.units[0];
 
-  const convertOperation = (op) =>
+  const convertOperation = (op: OperationRaw) =>
     fromOperationRaw(op, id, subAccounts as SubAccount[]);
 
   let res: Account = {

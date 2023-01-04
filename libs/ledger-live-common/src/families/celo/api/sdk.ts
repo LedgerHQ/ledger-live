@@ -91,6 +91,6 @@ export const voteSignerAccount = makeLRUCache(
   },
   (address) => address,
   {
-    maxAge: 60 * 60 * 1000, // 1 hour
+    ttl: 60 * 60 * 1000, // 1 hour
   }
 );

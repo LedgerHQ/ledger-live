@@ -25,6 +25,7 @@
   "dependencies": {
     "@ledgerhq/compressjs": "github:LedgerHQ/compressjs#d9e8e4d994923e0ea76a32b97289bcccfe71b82e",
     "@ledgerhq/cryptoassets": "workspace:^",
+    "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
@@ -32,11 +33,13 @@
     "@ledgerhq/types-live": "workspace:^",
     "axios": "0.26.1",
     "bignumber.js": "^9.1.0",
+    "expect": "^27.4.6",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "lru-cache": "^7.14.1",
     "minimatch": "^5.1.0",
     "numeral": "^2.0.6",
+    "prando": "^6.0.1",
     "rxjs": "^6.6.7",
     "rxjs-compat": "^6.6.7",
     "utility-types": "^3.10.0"
@@ -51,6 +54,7 @@
     "eslint": "^8.30.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
+    "jest": "^28.1.1",
     "prettier": "^2.8.1",
     "typescript": "^4.9.4"
   },

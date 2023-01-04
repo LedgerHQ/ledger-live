@@ -4,8 +4,6 @@
     "declarationMap": true,
     "sourceMap": true,
     "strict": true,
-    "noImplicitAny": false,
-    "noImplicitThis": false,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "skipLibCheck": true,

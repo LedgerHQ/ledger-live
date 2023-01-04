@@ -105,21 +105,21 @@ function formatAccountSpecifics(account: PolkadotAccount): string {
 }
 
 export function fromOperationExtraRaw(
-  extra: Record<string, any> | null | undefined
-) {
-  if (extra && extra.transferAmount) {
+  extra: Record<string, any>
+): Record<string, any> {
+  if (extra.transferAmount) {
     extra = { ...extra, transferAmount: extra.transferAmount.toString() };
   }
 
-  if (extra && extra.bondedAmount) {
+  if (extra.bondedAmount) {
     return { ...extra, bondedAmount: new BigNumber(extra.bondedAmount) };
   }
 
-  if (extra && extra.unbondedAmount) {
+  if (extra.unbondedAmount) {
     return { ...extra, unbondedAmount: new BigNumber(extra.unbondedAmount) };
   }
 
-  if (extra && extra.withdrawUnbondedAmount) {
+  if (extra.withdrawUnbondedAmount) {
     return {
       ...extra,
       withdrawUnbondedAmount: new BigNumber(extra.withdrawUnbondedAmount),
@@ -127,28 +127,28 @@ export function fromOperationExtraRaw(
   }
 
   // for subscan reward & slash
-  if (extra && extra.amount) {
+  if (extra.amount) {
     return { ...extra, amount: new BigNumber(extra.amount) };
   }
 
   return extra;
 }
 export function toOperationExtraRaw(
-  extra: Record<string, any> | null | undefined
-) {
-  if (extra && extra.transferAmount) {
+  extra: Record<string, any>
+): Record<string, any> {
+  if (extra.transferAmount) {
     extra = { ...extra, transferAmount: extra.transferAmount.toString() };
   }
 
-  if (extra && extra.bondedAmount) {
+  if (extra.bondedAmount) {
     return { ...extra, bondedAmount: extra.bondedAmount.toString() };
   }
 
-  if (extra && extra.unbondedAmount) {
+  if (extra.unbondedAmount) {
     return { ...extra, unbondedAmount: extra.unbondedAmount.toString() };
   }
 
-  if (extra && extra.withdrawUnbondedAmount) {
+  if (extra.withdrawUnbondedAmount) {
     return {
       ...extra,
       withdrawUnbondedAmount: extra.withdrawUnbondedAmount.toString(),
@@ -156,7 +156,7 @@ export function toOperationExtraRaw(
   }
 
   // for subscan reward & slash
-  if (extra && extra.amount) {
+  if (extra.amount) {
     return { ...extra, amount: extra.amount.toString() };
   }
 

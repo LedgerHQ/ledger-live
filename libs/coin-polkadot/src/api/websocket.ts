@@ -21,7 +21,6 @@ import type { PolkadotValidator, PolkadotStakingProgress } from "../types";
 type AsyncApiFunction = (api: typeof ApiPromise) => Promise<any>;
 const VALIDATOR_COMISSION_RATIO = 1000000000;
 
-// @ts-expect-error Generics doesn't work for dynamically added env
 const getWsUrl = () => getEnv("API_POLKADOT_NODE");
 
 const WEBSOCKET_DEBOUNCE_DELAY = 30000;

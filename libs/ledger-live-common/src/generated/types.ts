@@ -54,10 +54,6 @@ import { Transaction as osmosisTransaction } from "../families/osmosis/types";
 import { TransactionRaw as osmosisTransactionRaw } from "../families/osmosis/types";
 import { TransactionStatus as osmosisTransactionStatus } from "../families/osmosis/types";
 import { TransactionStatusRaw as osmosisTransactionStatusRaw } from "../families/osmosis/types";
-import { Transaction as polkadotTransaction } from "../families/polkadot/types";
-import { TransactionRaw as polkadotTransactionRaw } from "../families/polkadot/types";
-import { TransactionStatus as polkadotTransactionStatus } from "../families/polkadot/types";
-import { TransactionStatusRaw as polkadotTransactionStatusRaw } from "../families/polkadot/types";
 import { Transaction as rippleTransaction } from "../families/ripple/types";
 import { TransactionRaw as rippleTransactionRaw } from "../families/ripple/types";
 import { TransactionStatus as rippleTransactionStatus } from "../families/ripple/types";
@@ -78,6 +74,10 @@ import { Transaction as tronTransaction } from "../families/tron/types";
 import { TransactionRaw as tronTransactionRaw } from "../families/tron/types";
 import { TransactionStatus as tronTransactionStatus } from "../families/tron/types";
 import { TransactionStatusRaw as tronTransactionStatusRaw } from "../families/tron/types";
+import { Transaction as polkadotTransaction } from "@ledgerhq/coin-polkadot/lib/types";
+import { TransactionRaw as polkadotTransactionRaw } from "@ledgerhq/coin-polkadot/lib/types";
+import { TransactionStatus as polkadotTransactionStatus } from "@ledgerhq/coin-polkadot/lib/types";
+import { TransactionStatusRaw as polkadotTransactionStatusRaw } from "@ledgerhq/coin-polkadot/lib/types";
 
 export type Transaction =
   | algorandTransaction
@@ -94,12 +94,12 @@ export type Transaction =
   | nearTransaction
   | neoTransaction
   | osmosisTransaction
-  | polkadotTransaction
   | rippleTransaction
   | solanaTransaction
   | stellarTransaction
   | tezosTransaction
-  | tronTransaction;
+  | tronTransaction
+  | polkadotTransaction;
 
 export type TransactionRaw =
   | algorandTransactionRaw
@@ -116,12 +116,12 @@ export type TransactionRaw =
   | nearTransactionRaw
   | neoTransactionRaw
   | osmosisTransactionRaw
-  | polkadotTransactionRaw
   | rippleTransactionRaw
   | solanaTransactionRaw
   | stellarTransactionRaw
   | tezosTransactionRaw
-  | tronTransactionRaw;
+  | tronTransactionRaw
+  | polkadotTransactionRaw;
 
 export type TransactionStatus =
   | algorandTransactionStatus
@@ -138,12 +138,12 @@ export type TransactionStatus =
   | nearTransactionStatus
   | neoTransactionStatus
   | osmosisTransactionStatus
-  | polkadotTransactionStatus
   | rippleTransactionStatus
   | solanaTransactionStatus
   | stellarTransactionStatus
   | tezosTransactionStatus
-  | tronTransactionStatus;
+  | tronTransactionStatus
+  | polkadotTransactionStatus;
 
 export type TransactionStatusRaw =
   | algorandTransactionStatusRaw
@@ -160,9 +160,9 @@ export type TransactionStatusRaw =
   | nearTransactionStatusRaw
   | neoTransactionStatusRaw
   | osmosisTransactionStatusRaw
-  | polkadotTransactionStatusRaw
   | rippleTransactionStatusRaw
   | solanaTransactionStatusRaw
   | stellarTransactionStatusRaw
   | tezosTransactionStatusRaw
-  | tronTransactionStatusRaw;
+  | tronTransactionStatusRaw
+  | polkadotTransactionStatusRaw;

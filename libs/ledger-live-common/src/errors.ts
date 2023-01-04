@@ -223,7 +223,7 @@ export const BluetoothNotSupportedError = createCustomErrorClass(
 export const EConnResetError = createCustomErrorClass("EConnReset");
 
 export * from "@ledgerhq/coin-framework/lib/errors";
-export * from "./families/polkadot/errors";
+export * from "@ledgerhq/coin-polkadot/lib/errors";
 export * from "./families/stellar/errors";
 export * from "./families/solana/errors";
 export * from "./families/cardano/errors";

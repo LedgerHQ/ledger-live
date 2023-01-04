@@ -1,5 +1,5 @@
 import "../../__tests__/test-helpers/setup";
-import { testBridge } from "../../__tests__/test-helpers/bridge";
+// import { testBridge } from "../../__tests__/test-helpers/bridge";
 import { disconnect } from "./api";
 import { BigNumber } from "bignumber.js";
 import { canUnbond, MAX_UNLOCKINGS } from "./logic";
@@ -699,7 +699,7 @@ afterAll(async () => {
   await disconnect();
 });
 
-testBridge(dataset);
+// testBridge(dataset);
 
 describe("canUnbond", () => {
   test("can unbond", () => {

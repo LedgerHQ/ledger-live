@@ -20,7 +20,7 @@ import {
 import {
   toPolkadotResourcesRaw,
   fromPolkadotResourcesRaw,
-} from "../families/polkadot/serialization";
+} from "@ledgerhq/coin-polkadot/lib/serialization";
 import {
   toTezosResourcesRaw,
   fromTezosResourcesRaw,
@@ -92,7 +92,7 @@ import {
 import {
   PolkadotAccount,
   PolkadotAccountRaw,
-} from "../families/polkadot/types";
+} from "@ledgerhq/coin-polkadot/lib/types";
 import { ElrondAccount, ElrondAccountRaw } from "../families/elrond/types";
 import { CardanoAccount, CardanoAccountRaw } from "../families/cardano/types";
 import {

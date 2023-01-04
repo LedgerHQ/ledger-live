@@ -79,7 +79,7 @@ export const getTransactionParams: CacheRes<
   async (): Promise<Record<string, any>> => apiGetTransactionParams(),
   () => "polkadot",
   {
-    maxAge: 5 * 60 * 1000, // 5 minutes
+    ttl: 5 * 60 * 1000, // 5 minutes
   }
 );
 
@@ -110,7 +110,7 @@ export const getPaymentInfo: CacheRes<
   },
   ({ a, t, signedTx }) => hashTransactionParams(a, t, signedTx),
   {
-    maxAge: 5 * 60 * 1000, // 5 minutes
+    ttl: 5 * 60 * 1000, // 5 minutes
   }
 );
 export const getRegistry: CacheRes<
@@ -125,7 +125,7 @@ export const getRegistry: CacheRes<
   },
   () => "polkadot",
   {
-    maxAge: 60 * 60 * 1000, // 1 hour - could be Infinity
+    ttl: 60 * 60 * 1000, // 1 hour - could be Infinity
   }
 );
 
@@ -142,7 +142,7 @@ export const isNewAccount: CacheRes<Array<string>, boolean> = makeLRUCache(
   },
   (address) => address,
   {
-    maxAge: 60 * 1000, // 1 minute
+    ttl: 60 * 1000, // 1 minute
   }
 );
 
@@ -162,7 +162,7 @@ export const isControllerAddress: CacheRes<
   },
   (address) => address,
   {
-    maxAge: 5 * 60 * 1000, // 5 minutes
+    ttl: 5 * 60 * 1000, // 5 minutes
   }
 );
 
@@ -178,7 +178,7 @@ export const isElectionClosed: CacheRes<Array<void>, boolean> = makeLRUCache(
   },
   () => "",
   {
-    maxAge: 60 * 1000, // 1 minute
+    ttl: 60 * 1000, // 1 minute
   }
 );
 
@@ -197,6 +197,6 @@ export const getMinimumBondBalance: CacheRes<
   () => "polkadot",
   {
     max: 1, // Store only one object since we only have polkadot.
-    maxAge: 60 * 60 * 1000, // 1 hour
+    ttl: 60 * 60 * 1000, // 1 hour
   }
 );

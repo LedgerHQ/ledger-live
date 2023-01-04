@@ -2,21 +2,21 @@ import expect from "expect";
 import invariant from "invariant";
 import sampleSize from "lodash/sampleSize";
 import { BigNumber } from "bignumber.js";
-import { getCurrentPolkadotPreloadData } from "../../families/polkadot/preload";
+import { getCurrentPolkadotPreloadData } from "./preload";
 import type {
   PolkadotAccount,
   PolkadotResources,
   Transaction,
-} from "../../families/polkadot/types";
-import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
+} from "./types";
+import { getCryptoCurrencyById, parseCurrencyUnit } from "@ledgerhq/coin-framework/lib/currencies";
 import {
   botTest,
   expectSiblingsHaveSpendablePartGreaterThan,
   genericTestDestination,
   pickSiblings,
-} from "../../bot/specs";
-import type { AppSpec } from "../../bot/types";
-import { toOperationRaw } from "../../account";
+} from "@ledgerhq/coin-framework/lib/bot/specs";
+import type { AppSpec } from "@ledgerhq/coin-framework/lib/bot/types";
+import { toOperationRaw } from "@ledgerhq/coin-framework/lib/serialization/operation";
 import {
   canBond,
   canUnbond,
@@ -24,9 +24,10 @@ import {
   isFirstBond,
   hasMinimumBondBalance,
   getMinimumBalance,
-} from "../../families/polkadot/logic";
+} from "./logic";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { acceptTransaction } from "./speculos-deviceActions";
+import { toOperationExtraRaw } from "./account";
 
 const maxAccounts = 32;
 const currency = getCryptoCurrencyById("polkadot");
@@ -52,14 +53,16 @@ const polkadot: AppSpec<Transaction> = {
   test: ({ operation, optimisticOperation }) => {
     const opExpected: Record<string, any> = toOperationRaw({
       ...optimisticOperation,
-    });
+    },
+    toOperationExtraRaw
+    );
     delete opExpected.value;
     delete opExpected.fee;
     delete opExpected.date;
     delete opExpected.blockHash;
     delete opExpected.blockHeight;
     botTest("optimistic operation matches", () =>
-      expect(toOperationRaw(operation)).toMatchObject(opExpected)
+      expect(toOperationRaw(operation, toOperationExtraRaw)).toMatchObject(opExpected)
     );
   },
   mutations: [
