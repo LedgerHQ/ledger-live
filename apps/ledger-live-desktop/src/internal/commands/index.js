@@ -28,7 +28,7 @@ import scanDescriptors from "./scanDescriptors";
 import installLanguage from "./installLanguage";
 import getAppAndVersion from "./getAppAndVersion";
 import getDeviceInfo from "./getDeviceInfo";
-import ftsLoadImage from "./ftsLoadImage";
+import staxLoadImage from "./staxLoadImage";
 import getOnboardingStatePolling from "./getOnboardingStatePolling";
 import getGenuineCheckFromDeviceId from "./getGenuineCheckFromDeviceId";
 import getLatestAvailableFirmwareFromDeviceId from "./getLatestAvailableFirmwareFromDeviceId";
@@ -65,7 +65,7 @@ export const commandsById = {
   signMessage,
   getAppAndVersion,
   getDeviceInfo,
-  ftsLoadImage,
+  staxLoadImage,
   getOnboardingStatePolling,
   getGenuineCheckFromDeviceId,
   getLatestAvailableFirmwareFromDeviceId,

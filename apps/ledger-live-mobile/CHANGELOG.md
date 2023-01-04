@@ -1,5 +1,164 @@
 # live-mobile
 
+## 3.12.0
+
+### Minor Changes
+
+- [#1831](https://github.com/LedgerHQ/ledger-live/pull/1831) [`8ac70e5cca`](https://github.com/LedgerHQ/ledger-live/commit/8ac70e5ccab58159c646f23694c1da13ebc00248) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - The Carousel section of the wallet page has been replaced by Braze Content Cards which allows us to add or remove them remotely. We also added Content Cards on the Asset page
+
+* [#1817](https://github.com/LedgerHQ/ledger-live/pull/1817) [`57b82ad735`](https://github.com/LedgerHQ/ledger-live/commit/57b82ad7350c6368b2d6a731d7b1c52b759516b0) Thanks [@sarneijim](https://github.com/sarneijim)! - CIC swap integration
+
+- [#1775](https://github.com/LedgerHQ/ledger-live/pull/1775) [`d10c727430`](https://github.com/LedgerHQ/ledger-live/commit/d10c727430ffece743bbb7e703aaff61f97dacc1) Thanks [@nparigi-ledger](https://github.com/nparigi-ledger)! - Add NFT Gallery
+
+* [#1774](https://github.com/LedgerHQ/ledger-live/pull/1774) [`033cfa3611`](https://github.com/LedgerHQ/ledger-live/commit/033cfa3611cb2ee17a71b152fc21475379229055) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Update the custom image flow to include previews and default processing shortcuts
+
+- [#1983](https://github.com/LedgerHQ/ledger-live/pull/1983) [`6eb5e8277c`](https://github.com/LedgerHQ/ledger-live/commit/6eb5e8277cc8a5b4c42293a981952e37fac39682) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Revert mobile usemax key to original
+
+* [#1962](https://github.com/LedgerHQ/ledger-live/pull/1962) [`d96bcf101d`](https://github.com/LedgerHQ/ledger-live/commit/d96bcf101d5f023fd75e8ee6e0bcaebc83cad07d) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - add more explicit error for tron trc20
+
+- [#1746](https://github.com/LedgerHQ/ledger-live/pull/1746) [`b7107fad4d`](https://github.com/LedgerHQ/ledger-live/commit/b7107fad4d62e60377d015e5591728121c64bb38) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Allow custom images to be sourced from an NFT from the users' gallery
+
+* [#1911](https://github.com/LedgerHQ/ledger-live/pull/1911) [`5000d826fb`](https://github.com/LedgerHQ/ledger-live/commit/5000d826fb8bd38e729489ece2c36240a6a69091) Thanks [@grsoares21](https://github.com/grsoares21)! - Auto-select the last connected device for CLS if it is a Nano FTS
+
+### Patch Changes
+
+- [#1859](https://github.com/LedgerHQ/ledger-live/pull/1859) [`a6693e4f69`](https://github.com/LedgerHQ/ledger-live/commit/a6693e4f699a694d555a35e807a2fdbaab0d0d94) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fix debug http transport screen
+
+* [#1904](https://github.com/LedgerHQ/ledger-live/pull/1904) [`159b3f8b05`](https://github.com/LedgerHQ/ledger-live/commit/159b3f8b054b9d2715e36db68e68c0eaec66c270) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix rendering crash in new device selection screen
+
+- [#1801](https://github.com/LedgerHQ/ledger-live/pull/1801) [`c2663f2f05`](https://github.com/LedgerHQ/ledger-live/commit/c2663f2f05b027f20ea5e9e80ee00111bf204ecb) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Feature flag settings: fixed an annoying UI issue when the keyboard is opened. The info box at the bottom would cover most of the screen, making it very unpractical to search/add flags.
+
+* [#1809](https://github.com/LedgerHQ/ledger-live/pull/1809) [`682342a210`](https://github.com/LedgerHQ/ledger-live/commit/682342a2106e841890140c5f6bd4a2df7cefcee8) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix Podfile to disable signing on pods
+
+- [#1801](https://github.com/LedgerHQ/ledger-live/pull/1801) [`c2663f2f05`](https://github.com/LedgerHQ/ledger-live/commit/c2663f2f05b027f20ea5e9e80ee00111bf204ecb) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Adding a flag that allows to easily know which Firebase project/environment is targeted (for that the flag needs to be configured appropriately on the Firebase project, for now this is done for all our existing Firebase projects.). Also adding a UI element to easily visualize this in the Feature Flag settings.
+
+* [#1741](https://github.com/LedgerHQ/ledger-live/pull/1741) [`77056e3692`](https://github.com/LedgerHQ/ledger-live/commit/77056e369256112188c183823a2c3fabfea2cba8) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Fix for locked device error
+
+- [#1975](https://github.com/LedgerHQ/ledger-live/pull/1975) [`ac8bdb8dcf`](https://github.com/LedgerHQ/ledger-live/commit/ac8bdb8dcf19103eea0b881930eef43aacc4e5e7) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Device actions: remove unnecessary padding & replace huge text by smaller text
+
+* [#1759](https://github.com/LedgerHQ/ledger-live/pull/1759) [`77622be003`](https://github.com/LedgerHQ/ledger-live/commit/77622be0033cb7af6ac1284b302ac62e4825652b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Integration of storyly-react-native library
+
+- [#1834](https://github.com/LedgerHQ/ledger-live/pull/1834) [`c5bd929921`](https://github.com/LedgerHQ/ledger-live/commit/c5bd929921661469b86374a4fa72e9df575d4d08) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Redirection CLS from MyLedger
+
+* [#1759](https://github.com/LedgerHQ/ledger-live/pull/1759) [`77622be003`](https://github.com/LedgerHQ/ledger-live/commit/77622be0033cb7af6ac1284b302ac62e4825652b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Integration of a storyly story in the sync onboarding step "secret recovery phrase"
+
+- [#1779](https://github.com/LedgerHQ/ledger-live/pull/1779) [`856f49374e`](https://github.com/LedgerHQ/ledger-live/commit/856f49374ec9b49f005676e270acdb81b78879c8) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Introduce debug screen for custom image backup
+
+* [#1803](https://github.com/LedgerHQ/ledger-live/pull/1803) [`5f71360167`](https://github.com/LedgerHQ/ledger-live/commit/5f71360167f820446fd5f56132e887767aca9905) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix crash at the install apps step of the synchronous onboarding
+
+- [#1803](https://github.com/LedgerHQ/ledger-live/pull/1803) [`5f71360167`](https://github.com/LedgerHQ/ledger-live/commit/5f71360167f820446fd5f56132e887767aca9905) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add a way to activate multiple Feature Flags at once
+
+* [#1833](https://github.com/LedgerHQ/ledger-live/pull/1833) [`447353c463`](https://github.com/LedgerHQ/ledger-live/commit/447353c463caebb94f28775cd24c279a6e463a05) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Android: use StagingRelease buildType for :apk and :apk_local builds
+
+- [#1985](https://github.com/LedgerHQ/ledger-live/pull/1985) [`f268bf4bda`](https://github.com/LedgerHQ/ledger-live/commit/f268bf4bdaf3d3c16ae8f3c06fb202999c5e9491) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Improve Analytics for NFT Gallery
+
+* [#1871](https://github.com/LedgerHQ/ledger-live/pull/1871) [`ff5cb2cb11`](https://github.com/LedgerHQ/ledger-live/commit/ff5cb2cb11a2dcac0f2a65bf3ae4efac512cfe71) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Enabled BLE background capabilities again
+
+- [#1759](https://github.com/LedgerHQ/ledger-live/pull/1759) [`77622be003`](https://github.com/LedgerHQ/ledger-live/commit/77622be0033cb7af6ac1284b302ac62e4825652b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Implementation of a debug screen for storyly stories
+
+* [#2009](https://github.com/LedgerHQ/ledger-live/pull/2009) [`ef13f615d6`](https://github.com/LedgerHQ/ledger-live/commit/ef13f615d663a7d2e37ad70e46ebe5d826d99c09) Thanks [@gre](https://github.com/gre)! - Solve crash when entering token receive flow
+
+- [#1809](https://github.com/LedgerHQ/ledger-live/pull/1809) [`682342a210`](https://github.com/LedgerHQ/ledger-live/commit/682342a2106e841890140c5f6bd4a2df7cefcee8) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix sync onboarding logic when "install set of apps" step is disabled via feature flag.
+
+* [#1840](https://github.com/LedgerHQ/ledger-live/pull/1840) [`601c35ff2e`](https://github.com/LedgerHQ/ledger-live/commit/601c35ff2e9905c1d7869f531d85898436e2e86d) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Fix: improvement on BLE scanning and polling mechanism
+
+- [#1812](https://github.com/LedgerHQ/ledger-live/pull/1812) [`f94772354e`](https://github.com/LedgerHQ/ledger-live/commit/f94772354e18e84dfee20fbb5260f543a1b302b0) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - The push notifications feature flag's key has been modified
+
+* [#1827](https://github.com/LedgerHQ/ledger-live/pull/1827) [`04013a766a`](https://github.com/LedgerHQ/ledger-live/commit/04013a766ae0b1e872a84ebfc8f5a28602a2ee11) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fix navigation lock bug after (un)installing apps, top arrow
+
+- [#1956](https://github.com/LedgerHQ/ledger-live/pull/1956) [`587853bb30`](https://github.com/LedgerHQ/ledger-live/commit/587853bb30232efb0ff9e5b112969b6293a35ad6) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix support link llm
+
+- Updated dependencies [[`627b46b58e`](https://github.com/LedgerHQ/ledger-live/commit/627b46b58ed83970c69d621303af7a3a7e51850b), [`ff5cb2cb11`](https://github.com/LedgerHQ/ledger-live/commit/ff5cb2cb11a2dcac0f2a65bf3ae4efac512cfe71), [`eef8038f61`](https://github.com/LedgerHQ/ledger-live/commit/eef8038f611820efffd3b4834e124be0c29acd39), [`ff5cb2cb11`](https://github.com/LedgerHQ/ledger-live/commit/ff5cb2cb11a2dcac0f2a65bf3ae4efac512cfe71), [`a00544e8de`](https://github.com/LedgerHQ/ledger-live/commit/a00544e8de135285609e9aabc2d4ca354f8ebc2a), [`f29d3d9384`](https://github.com/LedgerHQ/ledger-live/commit/f29d3d9384f57c99c228749673d4f5d840b4bf06), [`8ac70e5cca`](https://github.com/LedgerHQ/ledger-live/commit/8ac70e5ccab58159c646f23694c1da13ebc00248), [`720dc1f58a`](https://github.com/LedgerHQ/ledger-live/commit/720dc1f58a6cea9c8a933139ff94a1d9f1b98129), [`720dc1f58a`](https://github.com/LedgerHQ/ledger-live/commit/720dc1f58a6cea9c8a933139ff94a1d9f1b98129), [`2aa8cc9c33`](https://github.com/LedgerHQ/ledger-live/commit/2aa8cc9c339ce8c9677b24e70218cc45847d799b)]:
+  - @ledgerhq/react-native-hw-transport-ble@6.27.11
+  - @ledgerhq/live-common@27.9.0
+  - @ledgerhq/native-ui@0.13.0
+  - @ledgerhq/types-live@6.27.1
+
+## 3.12.0-next.2
+
+### Patch Changes
+
+- [#2009](https://github.com/LedgerHQ/ledger-live/pull/2009) [`ef13f615d6`](https://github.com/LedgerHQ/ledger-live/commit/ef13f615d663a7d2e37ad70e46ebe5d826d99c09) Thanks [@gre](https://github.com/gre)! - Solve crash when entering token receive flow
+
+## 3.12.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`627b46b58e`](https://github.com/LedgerHQ/ledger-live/commit/627b46b58ed83970c69d621303af7a3a7e51850b)]:
+  - @ledgerhq/react-native-hw-transport-ble@6.27.11-next.1
+
+## 3.12.0-next.0
+
+### Minor Changes
+
+- [#1831](https://github.com/LedgerHQ/ledger-live/pull/1831) [`8ac70e5cca`](https://github.com/LedgerHQ/ledger-live/commit/8ac70e5ccab58159c646f23694c1da13ebc00248) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - The Carousel section of the wallet page has been replaced by Braze Content Cards which allows us to add or remove them remotely. We also added Content Cards on the Asset page
+
+* [#1817](https://github.com/LedgerHQ/ledger-live/pull/1817) [`57b82ad735`](https://github.com/LedgerHQ/ledger-live/commit/57b82ad7350c6368b2d6a731d7b1c52b759516b0) Thanks [@sarneijim](https://github.com/sarneijim)! - CIC swap integration
+
+- [#1775](https://github.com/LedgerHQ/ledger-live/pull/1775) [`d10c727430`](https://github.com/LedgerHQ/ledger-live/commit/d10c727430ffece743bbb7e703aaff61f97dacc1) Thanks [@nparigi-ledger](https://github.com/nparigi-ledger)! - Add NFT Gallery
+
+* [#1774](https://github.com/LedgerHQ/ledger-live/pull/1774) [`033cfa3611`](https://github.com/LedgerHQ/ledger-live/commit/033cfa3611cb2ee17a71b152fc21475379229055) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Update the custom image flow to include previews and default processing shortcuts
+
+- [#1983](https://github.com/LedgerHQ/ledger-live/pull/1983) [`6eb5e8277c`](https://github.com/LedgerHQ/ledger-live/commit/6eb5e8277cc8a5b4c42293a981952e37fac39682) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Revert mobile usemax key to original
+
+* [#1962](https://github.com/LedgerHQ/ledger-live/pull/1962) [`d96bcf101d`](https://github.com/LedgerHQ/ledger-live/commit/d96bcf101d5f023fd75e8ee6e0bcaebc83cad07d) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - add more explicit error for tron trc20
+
+- [#1746](https://github.com/LedgerHQ/ledger-live/pull/1746) [`b7107fad4d`](https://github.com/LedgerHQ/ledger-live/commit/b7107fad4d62e60377d015e5591728121c64bb38) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Allow custom images to be sourced from an NFT from the users' gallery
+
+* [#1911](https://github.com/LedgerHQ/ledger-live/pull/1911) [`5000d826fb`](https://github.com/LedgerHQ/ledger-live/commit/5000d826fb8bd38e729489ece2c36240a6a69091) Thanks [@grsoares21](https://github.com/grsoares21)! - Auto-select the last connected device for CLS if it is a Nano FTS
+
+### Patch Changes
+
+- [#1859](https://github.com/LedgerHQ/ledger-live/pull/1859) [`a6693e4f69`](https://github.com/LedgerHQ/ledger-live/commit/a6693e4f699a694d555a35e807a2fdbaab0d0d94) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fix debug http transport screen
+
+* [#1904](https://github.com/LedgerHQ/ledger-live/pull/1904) [`159b3f8b05`](https://github.com/LedgerHQ/ledger-live/commit/159b3f8b054b9d2715e36db68e68c0eaec66c270) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix rendering crash in new device selection screen
+
+- [#1801](https://github.com/LedgerHQ/ledger-live/pull/1801) [`c2663f2f05`](https://github.com/LedgerHQ/ledger-live/commit/c2663f2f05b027f20ea5e9e80ee00111bf204ecb) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Feature flag settings: fixed an annoying UI issue when the keyboard is opened. The info box at the bottom would cover most of the screen, making it very unpractical to search/add flags.
+
+* [#1809](https://github.com/LedgerHQ/ledger-live/pull/1809) [`682342a210`](https://github.com/LedgerHQ/ledger-live/commit/682342a2106e841890140c5f6bd4a2df7cefcee8) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix Podfile to disable signing on pods
+
+- [#1801](https://github.com/LedgerHQ/ledger-live/pull/1801) [`c2663f2f05`](https://github.com/LedgerHQ/ledger-live/commit/c2663f2f05b027f20ea5e9e80ee00111bf204ecb) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Adding a flag that allows to easily know which Firebase project/environment is targeted (for that the flag needs to be configured appropriately on the Firebase project, for now this is done for all our existing Firebase projects.). Also adding a UI element to easily visualize this in the Feature Flag settings.
+
+* [#1741](https://github.com/LedgerHQ/ledger-live/pull/1741) [`77056e3692`](https://github.com/LedgerHQ/ledger-live/commit/77056e369256112188c183823a2c3fabfea2cba8) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Fix for locked device error
+
+- [#1975](https://github.com/LedgerHQ/ledger-live/pull/1975) [`ac8bdb8dcf`](https://github.com/LedgerHQ/ledger-live/commit/ac8bdb8dcf19103eea0b881930eef43aacc4e5e7) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Device actions: remove unnecessary padding & replace huge text by smaller text
+
+* [#1759](https://github.com/LedgerHQ/ledger-live/pull/1759) [`77622be003`](https://github.com/LedgerHQ/ledger-live/commit/77622be0033cb7af6ac1284b302ac62e4825652b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Integration of storyly-react-native library
+
+- [#1834](https://github.com/LedgerHQ/ledger-live/pull/1834) [`c5bd929921`](https://github.com/LedgerHQ/ledger-live/commit/c5bd929921661469b86374a4fa72e9df575d4d08) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Redirection CLS from MyLedger
+
+* [#1759](https://github.com/LedgerHQ/ledger-live/pull/1759) [`77622be003`](https://github.com/LedgerHQ/ledger-live/commit/77622be0033cb7af6ac1284b302ac62e4825652b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Integration of a storyly story in the sync onboarding step "secret recovery phrase"
+
+- [#1779](https://github.com/LedgerHQ/ledger-live/pull/1779) [`856f49374e`](https://github.com/LedgerHQ/ledger-live/commit/856f49374ec9b49f005676e270acdb81b78879c8) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Introduce debug screen for custom image backup
+
+* [#1803](https://github.com/LedgerHQ/ledger-live/pull/1803) [`5f71360167`](https://github.com/LedgerHQ/ledger-live/commit/5f71360167f820446fd5f56132e887767aca9905) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix crash at the install apps step of the synchronous onboarding
+
+- [#1803](https://github.com/LedgerHQ/ledger-live/pull/1803) [`5f71360167`](https://github.com/LedgerHQ/ledger-live/commit/5f71360167f820446fd5f56132e887767aca9905) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add a way to activate multiple Feature Flags at once
+
+* [#1833](https://github.com/LedgerHQ/ledger-live/pull/1833) [`447353c463`](https://github.com/LedgerHQ/ledger-live/commit/447353c463caebb94f28775cd24c279a6e463a05) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Android: use StagingRelease buildType for :apk and :apk_local builds
+
+- [#1985](https://github.com/LedgerHQ/ledger-live/pull/1985) [`f268bf4bda`](https://github.com/LedgerHQ/ledger-live/commit/f268bf4bdaf3d3c16ae8f3c06fb202999c5e9491) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Improve Analytics for NFT Gallery
+
+* [#1871](https://github.com/LedgerHQ/ledger-live/pull/1871) [`ff5cb2cb11`](https://github.com/LedgerHQ/ledger-live/commit/ff5cb2cb11a2dcac0f2a65bf3ae4efac512cfe71) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Enabled BLE background capabilities again
+
+- [#1759](https://github.com/LedgerHQ/ledger-live/pull/1759) [`77622be003`](https://github.com/LedgerHQ/ledger-live/commit/77622be0033cb7af6ac1284b302ac62e4825652b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Implementation of a debug screen for storyly stories
+
+* [#1809](https://github.com/LedgerHQ/ledger-live/pull/1809) [`682342a210`](https://github.com/LedgerHQ/ledger-live/commit/682342a2106e841890140c5f6bd4a2df7cefcee8) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix sync onboarding logic when "install set of apps" step is disabled via feature flag.
+
+- [#1840](https://github.com/LedgerHQ/ledger-live/pull/1840) [`601c35ff2e`](https://github.com/LedgerHQ/ledger-live/commit/601c35ff2e9905c1d7869f531d85898436e2e86d) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Fix: improvement on BLE scanning and polling mechanism
+
+* [#1812](https://github.com/LedgerHQ/ledger-live/pull/1812) [`f94772354e`](https://github.com/LedgerHQ/ledger-live/commit/f94772354e18e84dfee20fbb5260f543a1b302b0) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - The push notifications feature flag's key has been modified
+
+- [#1827](https://github.com/LedgerHQ/ledger-live/pull/1827) [`04013a766a`](https://github.com/LedgerHQ/ledger-live/commit/04013a766ae0b1e872a84ebfc8f5a28602a2ee11) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fix navigation lock bug after (un)installing apps, top arrow
+
+* [#1956](https://github.com/LedgerHQ/ledger-live/pull/1956) [`587853bb30`](https://github.com/LedgerHQ/ledger-live/commit/587853bb30232efb0ff9e5b112969b6293a35ad6) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix support link llm
+
+* Updated dependencies [[`ff5cb2cb11`](https://github.com/LedgerHQ/ledger-live/commit/ff5cb2cb11a2dcac0f2a65bf3ae4efac512cfe71), [`eef8038f61`](https://github.com/LedgerHQ/ledger-live/commit/eef8038f611820efffd3b4834e124be0c29acd39), [`ff5cb2cb11`](https://github.com/LedgerHQ/ledger-live/commit/ff5cb2cb11a2dcac0f2a65bf3ae4efac512cfe71), [`a00544e8de`](https://github.com/LedgerHQ/ledger-live/commit/a00544e8de135285609e9aabc2d4ca354f8ebc2a), [`f29d3d9384`](https://github.com/LedgerHQ/ledger-live/commit/f29d3d9384f57c99c228749673d4f5d840b4bf06), [`8ac70e5cca`](https://github.com/LedgerHQ/ledger-live/commit/8ac70e5ccab58159c646f23694c1da13ebc00248), [`720dc1f58a`](https://github.com/LedgerHQ/ledger-live/commit/720dc1f58a6cea9c8a933139ff94a1d9f1b98129), [`720dc1f58a`](https://github.com/LedgerHQ/ledger-live/commit/720dc1f58a6cea9c8a933139ff94a1d9f1b98129), [`2aa8cc9c33`](https://github.com/LedgerHQ/ledger-live/commit/2aa8cc9c339ce8c9677b24e70218cc45847d799b)]:
+  - @ledgerhq/live-common@27.9.0-next.0
+  - @ledgerhq/react-native-hw-transport-ble@6.27.11-next.0
+  - @ledgerhq/native-ui@0.13.0-next.0
+  - @ledgerhq/types-live@6.27.1-next.0
+
 ## 3.11.2
 
 ### Patch Changes

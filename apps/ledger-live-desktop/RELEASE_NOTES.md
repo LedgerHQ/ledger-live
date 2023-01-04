@@ -1,3 +1,19 @@
+# 2.51.0
+
+### 🚀 Features
+
+- Ledger Live is no longer compatible with Windows 7.
+
+### 🌷 Improvements
+
+- We've made some tweaks to improve the staking experience for Ethereum (ETH) and make it easier to select and access staking providers.
+
+# 2.50.1
+
+### 🐛 Fixes
+
+- Sending USDT through Ledger Live would result in the **FAILED -OUT OF ENERGY>** error for some users. We've fixed the issue, and you'll now see a **warning message if your account doesn't have enough energy** to cover the transaction.
+
 # 2.50.0
 
 ### 🚀 Features

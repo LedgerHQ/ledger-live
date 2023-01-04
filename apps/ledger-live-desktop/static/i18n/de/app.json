@@ -169,7 +169,10 @@
       "WITHDRAW" : "Ausgezahlt",
       "REVOKE" : "Widerrufen",
       "ACTIVATE" : "Aktiviert",
-      "REGISTER" : "Registriert"
+      "REGISTER" : "Registriert",
+      "STAKE" : "Gestaked",
+      "UNSTAKE" : "Nicht mehr gestaked",
+      "WITHDRAW_UNSTAKED" : "Ausgezahlt"
     }
   },
   "byteSize" : {
@@ -2075,14 +2078,6 @@
           "dismiss" : "Nicht jetzt",
           "stake" : "Staken mit {{provider}}"
         },
-        "ethereum" : {
-          "title" : "Vermehren Sie Ihre ETH. Jetzt staken.",
-          "description" : "Staken Sie Ihr Ethereum mit Lido ein und verdienen Sie täglich Belohnungen. Keine Sperrfrist. Keine Mindesteinzahlung.",
-          "kiln" : {
-            "title" : "HODLen Sie nicht einfach. Vermehren Sie Ihre ETH.",
-            "description" : "Sie haben mehr als 32 ETH? Verdienen Sie passive Belohnungen, indem Sie Ihre ETH sicher mit Kiln staken."
-          }
-        },
         "cosmos" : {
           "title" : "Vermehren Sie Ihre ATOM. Staken mit Ledger Validator.",
           "description" : "Staken Sie Ihre ATOM mit dem vertrauenswürdigen Ledger Validator. Ihre Coins gehören stets Ihnen, unterstützt durch die kompromisslose Sicherheit von Ledger."
@@ -2143,8 +2138,8 @@
         "ethereumGasPrice" : "Gaspreis",
         "ethereumMaxFee" : "Max. Gebühr ({{unitName}})",
         "ethereumPriorityFee" : "Max. Prioritätsgebühr ({{unitName}})",
-        "nextBlock" : "Nächster Block: {{nextBaseFee}}",
-        "suggestedPriorityFee" : "Vorgeschlagen: {{lowPriorityFee}} - {{highPriorityFee}} {{unitName}}",
+        "nextBlock" : "Nächster Block",
+        "suggested" : "Empfohlen",
         "unitPerByte" : "{{unit}} pro Byte",
         "nft" : "NFT",
         "nftQuantity" : "Menge"
@@ -2183,6 +2178,9 @@
   "releaseNotes" : {
     "title" : "Informationen zur Version",
     "version" : "Ledger Live {{versionNb}}"
+  },
+  "troubleshootNetwork" : {
+    "title" : "Fehlersuche im Netzwerk"
   },
   "systemLanguageAvailable" : {
     "title" : "App-Sprache ändern?",
@@ -2241,6 +2239,9 @@
     }
   },
   "tron" : {
+    "receive" : {
+      "newAddressTRC20" : "Sie müssen zuerst mindestens 0,1 TRX an diese Adresse senden, um sie zu aktivieren."
+    },
     "voting" : {
       "emptyState" : {
         "description" : "Sie können jetzt durch Sperren und Abstimmen Prämien verdienen.",
@@ -3390,6 +3391,155 @@
       }
     }
   },
+  "ethereum" : {
+    "stake" : {
+      "title" : "Verdienen Sie Ethereum",
+      "lido" : {
+        "tag" : "Kein Minimum",
+        "description" : "Staken Sie Ihr Ethereum mit Lido und verdienen Sie täglich Belohnungen. Keine Sperrfrist. Kein Minimum"
+      },
+      "kiln" : {
+        "tag" : "Benötigt 32 ETH",
+        "description" : "Haben Sie mehr als 32 ETH? Verdienen Sie täglich Belohnungen, indem Sie Ihre ETH sicher bei Kiln im Staking einsetzen."
+      },
+      "providerTitle" : "Verdienen Sie mit {{provider}}",
+      "providerLink" : "Erfahren Sie mehr über {{provider}}"
+    }
+  },
+  "near" : {
+    "account" : {
+      "stakedBalance" : "Kontostand gestaked",
+      "stakedBalanceTooltip" : "Dieser Betrag ist derzeit mit Validatoren gestaked.",
+      "availableBalance" : "Auszahlbares Guthaben",
+      "availableBalanceTooltip" : "Dieser Betrag wird nicht mehr gestaked und kann derzeit abgehoben werden.",
+      "pendingBalance" : "Ausstehender Saldo",
+      "pendingBalanceTooltip" : "Dieser Betrag wird nicht mehr gestaked, steht aber derzeit noch nicht zur Verfügung.",
+      "storageUsageBalance" : "Minimales Guthaben",
+      "storageUsageBalanceTooltip" : "Dieser Betrag ist für Speicherungen und Transaktionen reserviert und ist das Mindestguthaben, das auf Ihrem Konto verfügbar sein muss, um aktiv zu bleiben.",
+      "subHeader" : {
+        "cardTitle" : "Powered by Figment",
+        "moreInfo" : "Mehr Infos",
+        "drawerTitle" : "Powered by Figment",
+        "title" : "Der NEAR-Token ist jetzt auf Ledger Live verfügbar",
+        "description" : "Sie können jetzt damit beginnen, Ihre NEAR-Token zu verwalten und sie über Ledger Live zu sichern.",
+        "description2" : "Der NEAR-Token ist Teil der NEAR-Blockchain und wird für alle Transaktionen, Einsätze und viele zukünftige Funktionen verwendet.",
+        "website" : "Powered by Figment"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "Betrag gestaked"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "Sie können NEAR-Belohnungen verdienen, indem Sie Ihre Vermögenswerte staken.",
+        "info" : "So funktioniert Staking",
+        "earnRewards" : "Verdienen Sie Belohnungen"
+      },
+      "table" : {
+        "header" : "Position(en) gestaked",
+        "stake" : "Hinzufügen",
+        "staked" : "Gestaked",
+        "pending" : "Freigabe ausstehend",
+        "available" : "Auszahlbar"
+      },
+      "unstake" : "Unstake",
+      "withdraw" : "Abheben",
+      "activeTooltip" : "Beträge, die gestaked wurden, generieren Belohnungen",
+      "inactiveTooltip" : "Beträge, die nicht mehr gestaked werden, generieren keine Belohnungen",
+      "commission" : "Provision",
+      "totalStake" : "Staking-Gesamtbetrag",
+      "minSafeWarning" : "Zu niedriges Guthaben",
+      "flow" : {
+        "title" : "Staken",
+        "steps" : {
+          "starter" : {
+            "description" : "Sie können Belohnungen verdienen, indem Sie Ihre NEAR-Werte mit einen Validator staken.",
+            "bullet" : ["Sie behalten das Eigentum an den im Staking eingesetzten Vermögenswerten.", "Staking mit Ihrem Ledger-Gerät", "Vermögenswerte sind 52 — 65 Stunden nach dem Aufheben des Staking-Prozesses verfügbar."],
+            "warning" : {
+              "description" : "Wählen Sie Ihren Validator mit Bedacht: Ein Teil Ihrer Vermögenswerte, die gestaked sind, kann unwiderruflich verloren gehen, wenn sich der Validator nicht angemessen verhält."
+            }
+          },
+          "amount" : {
+            "title" : "Betrag"
+          },
+          "validator" : {
+            "title" : "Validatoren",
+            "ledgerByFigmentTC" : "Ledger laut Figment AGBs"
+          },
+          "connectDevice" : {
+            "title" : "Gerät"
+          },
+          "confirmation" : {
+            "title" : "Bestätigung",
+            "success" : {
+              "title" : "Sie haben Ihre Vermögenswerte erfolgreich im Staking eingesetzt",
+              "text" : "Ihr Kontostand wird aktualisiert, wenn die Blockchain die Transaktion bestätigt.",
+              "cta" : "Details anzeigen"
+            },
+            "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "Es gibt nicht genug Vermögenswerte, die gestaked sind, um den Staking-Prozess aufzuheben.",
+      "flow" : {
+        "title" : "Unstake",
+        "steps" : {
+          "amount" : {
+            "title" : "Betrag",
+            "subtitle" : "Die Aufhebung des Staking-Prozesses dauert <0>52 bis 65 Stunden</0>.",
+            "warning" : "Die Belohnungen werden sofort eingelöst. Der Betrag, der nicht mehr gestaked wird, steht nach Ablauf der Frist von <0>52 bis 65 Stunden zur Auszahlung zur Verfügung</0>.",
+            "fields" : {
+              "validator" : "Validator",
+              "amount" : "Aufzuhebender Staking-Betrag"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Gerät"
+          },
+          "confirmation" : {
+            "title" : "Bestätigung",
+            "success" : {
+              "title" : "Sie haben erfolgreich das Staking Ihrer Vermögenswerte aufgehoben.",
+              "description" : "<0>{{amount}}</0> von <0>{{validator}}</0> werden nicht mehr gestaked",
+              "cta" : "Details anzeigen"
+            },
+            "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "disabledTooltip" : "Es gibt nicht genügend Vermögenswerte zum Abheben",
+      "flow" : {
+        "title" : "Abheben",
+        "steps" : {
+          "amount" : {
+            "title" : "Betrag",
+            "fields" : {
+              "validator" : "Validator",
+              "amount" : "Abzuhebender Betrag"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Gerät"
+          },
+          "confirmation" : {
+            "title" : "Bestätigung",
+            "success" : {
+              "title" : "Sie haben Ihre Vermögenswerte erfolgreich zurückgezogen.",
+              "description" : "<0>{{amount}}</0> von <0>{{validator}}</0> wurden abgehoben",
+              "cta" : "Details anzeigen"
+            },
+            "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+          }
+        }
+      }
+    }
+  },
   "delegation" : {
     "title" : "Verdienen Sie Belohnungen",
     "header" : "Delegation",
@@ -3695,6 +3845,11 @@
       "title" : "Protokolle speichern",
       "desc" : "Das Speichern von Ledger Live-Logs kann für die Fehlerbehebung erforderlich sein.",
       "btn" : "Speichern"
+    },
+    "troubleshootNetwork" : {
+      "title" : "Fehlersuche im Netzwerk",
+      "desc" : "Führen Sie eine Checkliste aus, um die Netzwerkbedingungen für die Fehlersuche zu bewerten.",
+      "btn" : "Fehlersuche"
     },
     "accounts" : {
       "hideEmptyTokens" : {
@@ -4501,6 +4656,9 @@
       "claimRewardCompound" : "Validator, der die Belohnungen erhält",
       "optIn" : "Empfänger",
       "nominate" : "Validator",
+      "stake" : "Validator",
+      "unstake" : "Validator",
+      "withdraw" : "Validator",
       "erc721" : {
         "transfer" : "Empfänger"
       },
@@ -4734,6 +4892,10 @@
       "title" : "Entschuldigung, es scheint Ihr Gerät ist nicht verbunden",
       "description" : "Bitte neu verbinden und erneut versuchen."
     },
+    "EConnReset" : {
+      "title" : "Der Ledger Application Store kann nicht erreicht werden",
+      "description" : "Ihre Internetverbindung ist möglicherweise ausgefallen oder Sie verwenden eine ungewöhnliche Konfiguration. Überprüfen Sie zunächst, ob Ihre Verbindung blockiert wird (Proxy oder Firewall). Wenn das Problem weiterhin besteht, klicken Sie unten, um Lösungen zu erhalten, oder wenden Sie sich an unseren Kundensupport."
+    },
     "EnpointConfig" : {
       "title" : "Ungültiger Endpunkt",
       "description" : "Bitte geben Sie einen gültigen Endpunkt an"
@@ -4845,6 +5007,10 @@
     },
     "NotEnoughGas" : {
       "title" : "Der übergeordnete Kontostand reicht für Netzwerkgebühren nicht aus"
+    },
+    "OperatingSystemOutdated" : {
+      "title" : "Die Version Ihres Betriebssystems ist veraltet",
+      "description" : "Bitte aktualisieren Sie Ihr Betriebssystem und versuchen Sie es erneut. Sie können im folgenden Artikel nachlesen, warum Ledger Live auf der aktuellen Version Ihres Betriebssystems nicht unterstützt wird."
     },
     "PasswordsDontMatch" : {
       "title" : "Die Passwörter stimmen nicht überein",
@@ -5088,7 +5254,7 @@
       "title" : "Der zu sperrende Betrag kann nicht kleiner als 1 sein"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "Das Senden von TRC20 an ein neues Konto führt nicht zur Aktivierung",
+      "title" : "Sie müssen zuerst mindestens 0,1 TRX an diese Adresse senden, um den Empfang von TRC20-Token zu aktivieren.",
       "description" : "Das Empfängerkonto muss aktiviert werden, bevor Sie TRC20 an dieses senden. Senden Sie entweder TRX oder TRC10 an ein Konto, um es zu aktivieren."
     },
     "TronUnexpectedFees" : {
@@ -5102,7 +5268,7 @@
       "description" : "Die Signatur muss innerhalb von 30 Sekunden angewendet werden. Bitte versuchen Sie es erneut."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Nicht genug Energie zum Senden dieses Tokens"
+      "title" : "Energie ist niedriger als notwendig. Es können bis zu 20TRX an Gebühren anfallen."
     },
     "PairingFailed" : {
       "title" : "Kopplung fehlgeschlagen",
@@ -5253,6 +5419,9 @@
     "StellarSourceHasMultiSign" : {
       "title" : "Bitte deaktivieren Sie Multisign, um Stellar-Transaktionen durchzuführen"
     },
+    "StellarBurnAddressError" : {
+      "title" : "Beim Versuch, ein Stellar-Konto hinzuzufügen, ist ein Problem aufgetreten"
+    },
     "HederaAddAccountError" : {
       "title" : "Ihr Konto wurde nicht hinzugefügt. Bitte versuchen Sie es erneut."
     },
@@ -5299,6 +5468,30 @@
     "ImageLoadRefusedOnDevice" : {
       "title" : "Laden von Bildern auf Gerät verweigert",
       "description" : "Sollte dieses Bild nicht passen, können Sie es mit einem anderen Bild erneut versuchen."
+    },
+    "NearNewAccountWarning" : {
+      "title" : "Das Empfängerkonto wurde noch nicht erstellt. Das Protokoll erfordert einen Transfer von {{formattedNewAccountStorageCost}}, um es zu erstellen."
+    },
+    "NearNewNamedAccountError" : {
+      "title" : "Das Empfängerkonto wurde noch nicht erstellt. Es muss in der NEAR-Wallet erstellt werden."
+    },
+    "NearActivationFeeNotCovered" : {
+      "title" : "Dieser Betrag deckt nicht die Speicherkosten über {{formattedNewAccountStorageCost}} ab."
+    },
+    "NearUseAllAmountStakeWarning" : {
+      "title" : "Stellen Sie sicher, dass Sie genug Guthaben für zukünftige Transaktionsgebühren übrig haben"
+    },
+    "NearNotEnoughStaked" : {
+      "title" : "Unzureichendes Gutaben, welches gestaked wurde"
+    },
+    "NearNotEnoughAvailable" : {
+      "title" : "Unzureichendes abhebbares Guthaben"
+    },
+    "NearRecommendUnstake" : {
+      "title" : "Bitte heben Sie den Staking-Prozess auf und heben Sie Ihre Vermögenswerte ab, bevor Sie das Konto leeren"
+    },
+    "NearStakingThresholdNotMet" : {
+      "title" : "Der Betrag muss mindestens {{threshold}} betragen"
     },
     "LockedDeviceError" : {
       "title" : "Ihr Gerät ist gesperrt",

@@ -102,16 +102,8 @@ class Scan extends PureComponent<
 
   render() {
     const { progress, error } = this.state;
-    const { colors } = this.props;
     return (
-      <View
-        style={[
-          styles.root,
-          {
-            backgroundColor: colors.darkBlue,
-          },
-        ]}
-      >
+      <View style={styles.root}>
         <TrackScreen category="ImportAccounts" name="Scan" />
         <Scanner onResult={this.onBarCodeRead} progress={progress} liveQrCode />
         <GenericErrorBottomModal error={error} onClose={this.onCloseError} />

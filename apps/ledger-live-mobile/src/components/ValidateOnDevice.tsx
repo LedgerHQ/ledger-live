@@ -183,7 +183,7 @@ export default function ValidateOnDevice({
       ? transTitleWording
       : t("ValidateOnDevice.title.send", getDeviceModel(device.modelId));
 
-  const isBigLottie = device.modelId === DeviceModelId.nanoFTS;
+  const isBigLottie = device.modelId === DeviceModelId.stax;
 
   return (
     <Flex flex={1}>
@@ -196,7 +196,7 @@ export default function ValidateOnDevice({
         <Flex alignItems="center">
           <Flex marginBottom={isBigLottie ? 0 : 8}>
             <Animation
-              source={getDeviceAnimation({ device, key: "validate", theme })}
+              source={getDeviceAnimation({ device, key: "sign", theme })}
             />
           </Flex>
           {Title ? (

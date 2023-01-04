@@ -45,12 +45,16 @@ export default function CustomImageNavigator() {
       <Stack.Screen
         name={ScreenName.CustomImageStep3Transfer}
         component={Step3Transfer}
-        options={{ title: "" }}
+        options={{ title: "", headerRight: undefined }}
       />
       <Stack.Screen
         name={ScreenName.CustomImageErrorScreen}
         component={ErrorScreen}
-        options={{ title: "", headerLeft: undefined, gestureEnabled: false }}
+        options={{
+          title: "",
+          headerLeft: undefined,
+          gestureEnabled: false,
+        }}
       />
       <Stack.Screen
         name={ScreenName.CustomImagePreviewPreEdit}

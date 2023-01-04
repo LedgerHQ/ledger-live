@@ -168,7 +168,7 @@ export class DeviceAction {
 
   async confirmImageLoaded() {
     await this.page.evaluate(() => {
-      (window as any).mock.events.mockDeviceEvent({ type: "imageLoaded" });
+      (window as any).mock.events.mockDeviceEvent({ type: "imageLoaded", imageSize: 35305 });
     });
   }
 

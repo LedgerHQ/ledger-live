@@ -6,7 +6,6 @@ import {
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
 import { TokenAccount, AccountLike, ChildAccount } from "@ledgerhq/types-live";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   DerivationMode,
   getTagDerivationMode,
@@ -69,10 +68,8 @@ const AccountRow = ({
     account.type === "Account" &&
     account?.derivationMode !== undefined &&
     account?.derivationMode !== null &&
-    getTagDerivationMode(
-      currency as CryptoCurrency,
-      account.derivationMode as DerivationMode,
-    );
+    currency.type === "CryptoCurrency" &&
+    getTagDerivationMode(currency, account.derivationMode as DerivationMode);
 
   const parentId = (account as TokenAccount)?.parentId;
 

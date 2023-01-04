@@ -21,16 +21,24 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.ExperimentalSettings]: undefined;
   [ScreenName.DeveloperSettings]: undefined;
   [ScreenName.DeveloperCustomManifest]: undefined;
-  [ScreenName.DebugSettings]: undefined;
-  [ScreenName.DebugDevices]: undefined;
-  [ScreenName.DebugFeatureFlags]: undefined;
-  [ScreenName.DebugMocks]:
+  [ScreenName.DebugSettings]:
     | {
         pairedDevice?: Device | null;
       }
     | undefined;
+  [ScreenName.DebugFeatureFlags]: undefined;
+  [ScreenName.DebugInformation]: undefined;
+  [ScreenName.DebugDebugging]: undefined;
+  [ScreenName.DebugConfiguration]: undefined;
+  [ScreenName.DebugFeatures]: undefined;
+  [ScreenName.DebugConnectivity]: undefined;
+  [ScreenName.DebugGenerators]: undefined;
   [ScreenName.DebugMockGenerateAccounts]: undefined;
   [ScreenName.DebugExport]: undefined;
+  [ScreenName.DebugNetwork]: undefined;
+  [ScreenName.DebugCommandSender]: {
+    deviceId: string;
+  };
   [ScreenName.DebugSwap]: undefined;
   [ScreenName.DebugBLE]: {
     deviceId: string;
@@ -43,13 +51,11 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugEnv]: undefined;
   [ScreenName.DebugHttpTransport]: undefined;
   [ScreenName.DebugLogs]: undefined;
-  [ScreenName.DebugIcons]: undefined;
   [ScreenName.DebugLottie]: undefined;
-  [ScreenName.DebugPlayground]: undefined;
   [ScreenName.BenchmarkQRStream]: undefined;
   [ScreenName.OnboardingLanguage]: undefined;
   [ScreenName.PostOnboardingDebugScreen]: undefined;
-  [ScreenName.DebugMultiAppInstall]: undefined;
   [ScreenName.DebugStoryly]: undefined;
   [ScreenName.DebugFetchCustomImage]: undefined;
+  [ScreenName.DebugCustomImageGraphics]: undefined;
 };

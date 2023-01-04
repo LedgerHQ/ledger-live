@@ -66,30 +66,12 @@ import BLUE_LIGHT_allowManager from "~/renderer/animations/blue/5AllowManager/da
 import BLUE_LIGHT_openApp from "~/renderer/animations/blue/6OpenApp/data.json";
 import BLUE_LIGHT_validate from "~/renderer/animations/blue/7Validate/data.json";
 
-// NANO FTS
+// STAX
 
-import NANO_FTS_LIGHT_plugAndPinCode from "~/renderer/animations/nanoFTS/1PlugAndPinCode/light.json";
-import NANO_FTS_DARK_plugAndPinCode from "~/renderer/animations/nanoFTS/1PlugAndPinCode/dark.json";
-import NANO_FTS_LIGHT_enterPinCode from "~/renderer/animations/nanoFTS/3EnterPinCode/light.json";
-import NANO_FTS_DARK_enterPinCode from "~/renderer/animations/nanoFTS/3EnterPinCode/dark.json";
-import NANO_FTS_LIGHT_quitApp from "~/renderer/animations/nanoFTS/4QuitApp/light.json";
-import NANO_FTS_DARK_quitApp from "~/renderer/animations/nanoFTS/4QuitApp/dark.json";
-import NANO_FTS_LIGHT_allowManager from "~/renderer/animations/nanoFTS/5AllowManager/light.json";
-import NANO_FTS_DARK_allowManager from "~/renderer/animations/nanoFTS/5AllowManager/dark.json";
-import NANO_FTS_LIGHT_openApp from "~/renderer/animations/nanoFTS/6OpenApp/light.json";
-import NANO_FTS_DARK_openApp from "~/renderer/animations/nanoFTS/6OpenApp/dark.json";
-import NANO_FTS_LIGHT_validate from "~/renderer/animations/nanoFTS/7Validate/light.json";
-import NANO_FTS_DARK_validate from "~/renderer/animations/nanoFTS/7Validate/dark.json";
-import NANO_FTS_LIGHT_firmwareUpdating from "~/renderer/animations/nanoFTS/2FirmwareUpdating/light.json";
-import NANO_FTS_DARK_firmwareUpdating from "~/renderer/animations/nanoFTS/2FirmwareUpdating/dark.json";
-import NANO_FTS_LIGHT_installLoading from "~/renderer/animations/nanoFTS/8InstallLoading/light.json";
-import NANO_FTS_DARK_installLoading from "~/renderer/animations/nanoFTS/8InstallLoading/dark.json";
-import NANO_FTS_LIGHT_pairingProgress from "~/renderer/animations/nanoFTS/9PairingProgress/light.json";
-import NANO_FTS_DARK_pairingProgress from "~/renderer/animations/nanoFTS/9PairingProgress/dark.json";
-import NANO_FTS_LIGHT_pairingSuccess from "~/renderer/animations/nanoFTS/10PairingSuccess/light.json";
-import NANO_FTS_DARK_pairingSuccess from "~/renderer/animations/nanoFTS/10PairingSuccess/dark.json";
-import NANO_FTS_LIGHT_placeHolder from "~/renderer/animations/nanoFTS/11PlaceHolder/light.json";
-import NANO_FTS_DARK_placeHolder from "~/renderer/animations/nanoFTS/11PlaceHolder/dark.json";
+import STAX_enterPin from "~/renderer/animations/stax/enterPIN.json";
+import STAX_verifyAddress from "~/renderer/animations/stax/verifyAddress.json";
+import STAX_signTransaction from "~/renderer/animations/stax/signTransaction.json";
+import STAX_allowConnection from "~/renderer/animations/stax/allowConnection.json";
 
 /* eslint-enable camelcase */
 
@@ -114,7 +96,11 @@ const nanoS = {
     light: NANO_S_LIGHT_openApp,
     dark: NANO_S_DARK_openApp,
   },
-  validate: {
+  verify: {
+    light: NANO_S_LIGHT_validate,
+    dark: NANO_S_DARK_validate,
+  },
+  sign: {
     light: NANO_S_LIGHT_validate,
     dark: NANO_S_DARK_validate,
   },
@@ -148,7 +134,11 @@ const nanoX = {
     light: NANO_X_LIGHT_openApp,
     dark: NANO_X_DARK_openApp,
   },
-  validate: {
+  verify: {
+    light: NANO_X_LIGHT_validate,
+    dark: NANO_X_DARK_validate,
+  },
+  sign: {
     light: NANO_X_LIGHT_validate,
     dark: NANO_X_DARK_validate,
   },
@@ -183,7 +173,11 @@ const nanoSP = {
     light: NANO_SP_LIGHT_openApp,
     dark: NANO_SP_DARK_openApp,
   },
-  validate: {
+  verify: {
+    light: NANO_SP_LIGHT_validate,
+    dark: NANO_SP_DARK_validate,
+  },
+  sign: {
     light: NANO_SP_LIGHT_validate,
     dark: NANO_SP_DARK_validate,
   },
@@ -197,50 +191,42 @@ const nanoSP = {
   },
 };
 
-const nanoFTS = {
+const stax = {
   plugAndPinCode: {
-    light: NANO_FTS_LIGHT_plugAndPinCode,
-    dark: NANO_FTS_DARK_plugAndPinCode,
+    light: STAX_enterPin,
+    dark: STAX_enterPin,
   },
   enterPinCode: {
-    light: NANO_FTS_LIGHT_enterPinCode,
-    dark: NANO_FTS_DARK_enterPinCode,
+    light: STAX_enterPin,
+    dark: STAX_enterPin,
   },
   quitApp: {
-    light: NANO_FTS_LIGHT_quitApp,
-    dark: NANO_FTS_DARK_quitApp,
+    light: STAX_allowConnection,
+    dark: STAX_allowConnection,
   },
   allowManager: {
-    light: NANO_FTS_LIGHT_allowManager,
-    dark: NANO_FTS_DARK_allowManager,
+    light: STAX_allowConnection,
+    dark: STAX_allowConnection,
   },
   openApp: {
-    light: NANO_FTS_LIGHT_openApp,
-    dark: NANO_FTS_DARK_openApp,
+    light: STAX_allowConnection,
+    dark: STAX_allowConnection,
   },
-  validate: {
-    light: NANO_FTS_LIGHT_validate,
-    dark: NANO_FTS_DARK_validate,
+  verify: {
+    light: STAX_verifyAddress,
+    dark: STAX_verifyAddress,
+  },
+  sign: {
+    light: STAX_signTransaction,
+    dark: STAX_signTransaction,
   },
   firmwareUpdating: {
-    light: NANO_FTS_LIGHT_firmwareUpdating,
-    dark: NANO_FTS_DARK_firmwareUpdating,
+    light: STAX_allowConnection,
+    dark: STAX_allowConnection,
   },
   installLoading: {
-    light: NANO_FTS_LIGHT_installLoading,
-    dark: NANO_FTS_DARK_installLoading,
-  },
-  pairingProgress: {
-    light: NANO_FTS_LIGHT_pairingProgress,
-    dark: NANO_FTS_DARK_pairingProgress,
-  },
-  pairingSuccess: {
-    light: NANO_FTS_LIGHT_pairingSuccess,
-    dark: NANO_FTS_DARK_pairingSuccess,
-  },
-  placeHolder: {
-    light: NANO_FTS_LIGHT_placeHolder,
-    dark: NANO_FTS_DARK_placeHolder,
+    light: STAX_allowConnection,
+    dark: STAX_allowConnection,
   },
 };
 
@@ -260,7 +246,10 @@ const blue = {
   openApp: {
     light: BLUE_LIGHT_openApp,
   },
-  validate: {
+  verify: {
+    light: BLUE_LIGHT_validate,
+  },
+  sign: {
     light: BLUE_LIGHT_validate,
   },
   // Nb We are dropping the assets for blue soon, this is temp
@@ -274,7 +263,7 @@ const blue = {
   },
 };
 
-const animations = { nanoX, nanoS, nanoSP, nanoFTS, blue };
+const animations = { nanoX, nanoS, nanoSP, stax, blue };
 
 type InferredKeys = $Keys<typeof nanoS>;
 

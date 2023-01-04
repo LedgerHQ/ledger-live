@@ -3,16 +3,9 @@ import { Pressable, View } from "react-native";
 import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import type { FeatureId } from "@ledgerhq/types-live";
 
-import { Flex, Box, Tag } from "@ledgerhq/native-ui";
+import { Flex, Divider, Tag } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import FeatureFlagEdit from "./FeatureFlagEdit";
-
-export const Divider = styled(Box).attrs({
-  width: "100%",
-  my: 4,
-  height: 1,
-  bg: "neutral.c50",
-})``;
 
 export const TagEnabled = styled(Tag).attrs({
   bg: "success.c100",

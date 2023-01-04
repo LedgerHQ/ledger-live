@@ -12,7 +12,6 @@ const claimMock: PostOnboardingAction = {
   description: "A special NFT for you.",
   tagLabel: "Free",
   actionCompletedPopupLabel: "NFT claimed",
-  actionCompletedHubTitle: "Kickstart your Web3 journey.",
   startAction: () => setDrawer(PostOnboardingMockAction, { id: PostOnboardingActionId.claimMock }),
 };
 
@@ -20,10 +19,9 @@ const personalizeMock: PostOnboardingAction = {
   id: PostOnboardingActionId.personalizeMock,
   Icon: Icons.BracketsMedium,
   featureFlagId: "customImage",
-  title: `Personalize my ${getDeviceModel(DeviceModelId.nanoFTS).productName}`,
+  title: `Personalize my ${getDeviceModel(DeviceModelId.stax).productName}`,
   description: "By customizing the screen.",
   actionCompletedPopupLabel: "Device personalized",
-  actionCompletedHubTitle: "That screen is looking neat.",
   startAction: () =>
     setDrawer(PostOnboardingMockAction, { id: PostOnboardingActionId.personalizeMock }),
 };
@@ -34,7 +32,6 @@ const migrateAssetsMock: PostOnboardingAction = {
   title: "Transfer assets to my Ledger",
   description: "Easily secure assets from coinbase or another exchange.",
   actionCompletedPopupLabel: "Assets transfered",
-  actionCompletedHubTitle: "Something about being a crypto pro.",
   startAction: () =>
     setDrawer(PostOnboardingMockAction, { id: PostOnboardingActionId.migrateAssetsMock }),
 };
@@ -46,7 +43,6 @@ const customImage: PostOnboardingAction = {
   title: "customImage.postOnboarding.title",
   description: "customImage.postOnboarding.description",
   actionCompletedPopupLabel: "customImage.postOnboarding.actionCompletedPopupLabel",
-  actionCompletedHubTitle: "customImage.postOnboarding.actionCompletedHubTitle",
   startAction: () => setDrawer(CustomImage, { isFromPostOnboardingEntryPoint: true }),
 };
 
@@ -61,9 +57,9 @@ const postOnboardingActions: Record<PostOnboardingActionId, PostOnboardingAction
 };
 
 /**
- * Mock of post onboarding actions for DeviceModelId.nanoFTS
+ * Mock of post onboarding actions for DeviceModelId.stax
  */
-const ftsPostOnboardingActionsMock: PostOnboardingAction[] = [
+const staxPostOnboardingActionsMock: PostOnboardingAction[] = [
   claimMock,
   personalizeMock,
   migrateAssetsMock,
@@ -92,11 +88,11 @@ export function getPostOnboardingActionsForDevice(
     case DeviceModelId.nanoX:
       /** Set here the list of actions for the post onboarding of the Nano X */
       return [];
-    case DeviceModelId.nanoFTS:
-      if (mock) return ftsPostOnboardingActionsMock;
+    case DeviceModelId.stax:
+      if (mock) return staxPostOnboardingActionsMock;
       /**
        * Set here the list of actions for the post onboarding of the
-       * DeviceModelId.nanoFTS
+       * DeviceModelId.stax
        * */
       return [customImage];
     default:

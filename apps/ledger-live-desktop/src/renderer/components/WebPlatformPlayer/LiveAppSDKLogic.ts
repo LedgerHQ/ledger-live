@@ -38,7 +38,16 @@ export const requestAccountLogic = async (
   { currencies, includeTokens }: RequestAccountParams,
 ) => {
   tracking.platformRequestAccountRequested(manifest);
-  const { account, parentAccount } = await selectAccountAndCurrency(currencies, includeTokens);
+
+  /**
+   * make sure currencies are strings
+   * PS: yes `currencies` is properly typed as `string[]` but this typing only
+   * works at build time and the `currencies` array is received at runtime from
+   * JSONRPC requests. So we need to make sure the array is properly typed.
+   */
+  const safeCurrencies = currencies?.filter(c => typeof c === "string") ?? undefined;
+
+  const { account, parentAccount } = await selectAccountAndCurrency(safeCurrencies, includeTokens);
 
   return serializePlatformAccount(accountToPlatformAccount(account, parentAccount));
 };

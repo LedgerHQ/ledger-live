@@ -518,7 +518,7 @@
       "title" : "동결할 금액은 1보다 작을 수 없습니다"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "새 계정에 TRC20을 보내도 계정이 활성화되지 않습니다",
+      "title" : "TRC20 토큰 수령을 활성화하려면 먼저 최소 0.1 TRX를 이 주소로 보내야 합니다.",
       "description" : "계정을 활성화하려면, 우선 계정에 TRX 또는 TRC10을 보내세요. 그 다음에 TRC20을 받을 수 있습니다."
     },
     "TronUnexpectedFees" : {
@@ -1902,6 +1902,9 @@
       "title" : "아직 거래가 없나요?",
       "desc" : "수신 주소로 암호화 자산을 보내고 앱이 동기화를 마칠 때까지 기다리기만 하면 됩니다."
     },
+    "carousel" : {
+      "title" : "고객 맞춤 정보"
+    },
     "recommended" : {
       "title" : "제품 추천"
     },
@@ -2350,8 +2353,8 @@
     "display" : {
       "title" : "일반",
       "desc" : "일반 Ledger Live 설정을 구성하세요.",
-      "carousel" : "슬라이드 활성화",
-      "carouselDesc" : "포트폴리오 화면에서 슬라이드 기능을 활성화합니다.",
+      "carousel" : "추천",
+      "carouselDesc" : "개인 맞춤 팁이 포함된 카드와 귀하만을 위한 최신 오퍼를 안내해드립니다.",
       "language" : "언어 표시하기",
       "languageDesc" : "Ledger Live에 표시되는 언어를 설정하세요.",
       "region" : "지역",
@@ -2486,7 +2489,7 @@
         "title" : "가격 알림",
         "desc" : "시장 흐름을 놓치지 않도록 선호하는 코인의 가격 알림을 설정해 보세요"
       },
-      "disclaimer" : "Ledger는 데이터 프라이버시를 무엇보다 중요하게 생각합니다. 수집된 데이터를 파트너와 공유하는 일은 절대 없습니다."
+      "disclaimer" : "Ledger는 귀하의 데이터 및 개인정보 보호를 중요하게 생각합니다. 수집된 데이터를 파트너와 공유하는 일은 절대 없습니다."
     },
     "help" : {
       "title" : "도움말",
@@ -2568,7 +2571,7 @@
       "featureFlagsDesc" : "앱을 다시 실행하면 재정의된 값이 다시 설정됩니다. 유효한 JSON 문자열만 허용됩니다.",
       "featureFlagsEdit" : "편집",
       "featureFlagsRestore" : "복구",
-      "firebaseProject" : "Firebase project targeted by this build:"
+      "firebaseProject" : "이 빌드에서 대상으로 하는 Firebase 프로젝트:"
     }
   },
   "notifications" : {
@@ -3265,8 +3268,8 @@
       "gasPrice" : "가스 가격(Gas price)",
       "maxFee" : "최대 비용",
       "maxPriorityFee" : "최대 우선 수수료",
-      "nextBlock" : "다음 블록: {{nextBaseFee}}",
-      "suggestedPriorityFee" : "권장: {{lowPriorityFee}} - {{highPriorityFee}}",
+      "nextBlock" : "다음 블록",
+      "suggested" : "권장",
       "maxFees" : "최대 수수료",
       "validateGasLimit" : "가스 제한 검증",
       "fees" : "수수료",
@@ -4690,6 +4693,9 @@
         "title" : "후보자",
         "description" : "전체 토큰 홀더 커뮤니티의 투표로 127명의 개인이 선출되었습니다. 6시간마다 투표의 표본 조사를 실시합니다."
       }
+    },
+    "receive" : {
+      "newAddressTRC20" : "활성화하려면 먼저 이 주소로 최소 0.1 TRX를 보내야 합니다."
     }
   },
   "stellar" : {
@@ -5454,7 +5460,8 @@
     "drawer" : {
       "title" : "이미지 선택",
       "options" : {
-        "uploadFromPhone" : "핸드폰에서 업로드"
+        "uploadFromPhone" : "내 사진 갤러리에서 선택",
+        "selectFromNFTGallery" : "NFT 갤러리에서 선택"
       }
     },
     "cropImage" : "이미지 자르기",
@@ -5475,10 +5482,13 @@
     "customImage" : "커스텀 사진",
     "doThisLater" : "다음에 결정하기",
     "preview" : {
-      "title" : "Preview",
-      "loading" : "Loading preview",
-      "setPicture" : "Set custom picture",
-      "editPicture" : "Edit picture"
+      "title" : "미리보기",
+      "loading" : "미리보기 로드 중",
+      "setPicture" : "커스텀 사진 설정",
+      "editPicture" : "사진 편집"
+    },
+    "nftGallery" : {
+      "title" : "내 NFT"
     }
   },
   "postOnboarding" : {

@@ -99,7 +99,7 @@ export async function updateCheckRun({
       const isFork = pr.head.repo?.fork;
       const prBase = pr.base;
       const prHead = pr.head;
-      const ownerPrefix = isFork ? `${pr.head.repo?.owner}:` : "";
+      const ownerPrefix = isFork ? `${pr.head.repo?.owner.login}:` : "";
 
       const comparison = await octokit.repos.compareCommitsWithBasehead({
         owner,

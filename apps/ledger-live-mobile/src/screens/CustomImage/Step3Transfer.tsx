@@ -24,7 +24,7 @@ import { CustomImageNavigatorParamList } from "../../components/RootNavigator/ty
 import { addKnownDevice } from "../../actions/ble";
 import { lastConnectedDeviceSelector } from "../../reducers/settings";
 
-const deviceModelIds = [DeviceModelId.nanoFTS];
+const deviceModelIds = [DeviceModelId.stax];
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<
@@ -39,7 +39,7 @@ type NavigationProps = BaseComposite<
  * route param.
  *
  * This is meant as a data validation. We want to validate that the raw data
- * (that is eventually what will be transfered) allows to reconstruct exactly
+ * (that is eventually what will be transferred) allows to reconstruct exactly
  * the image previewed on the previous screen.
  *
  * We take this raw data and use it to rebuild the image from scratch, then
@@ -54,7 +54,7 @@ const Step3Transfer = ({ route, navigation }: NavigationProps) => {
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
 
   useEffect(() => {
-    if (!device && lastConnectedDevice?.modelId === DeviceModelId.nanoFTS) {
+    if (!device && lastConnectedDevice?.modelId === DeviceModelId.stax) {
       setDevice(lastConnectedDevice);
     }
   }, [lastConnectedDevice, device]);

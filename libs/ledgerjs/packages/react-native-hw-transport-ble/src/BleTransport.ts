@@ -43,10 +43,17 @@ import { decoratePromiseErrors, remapError } from "./remapErrors";
 let connectOptions: Record<string, unknown> = {
   requestMTU: 156,
   connectionPriority: 1,
-  forceDisconnectTimeout: 4000,
 };
 const transportsCache = {};
-const bleManager = new BleManager();
+let bleManager;
+
+const bleManagerInstance = (): BleManager => {
+  if (!bleManager) {
+    bleManager = new BleManager();
+  }
+
+  return bleManager;
+};
 
 const retrieveInfos = (device) => {
   if (!device || !device.serviceUUIDs) return;
@@ -62,10 +69,12 @@ type ReconnectionConfig = {
   delayAfterFirstPairing: number;
 };
 let reconnectionConfig: ReconnectionConfig | null | undefined = {
-  pairingThreshold: 2000,
+  pairingThreshold: 1000,
   delayAfterFirstPairing: 4000,
 };
-export function setReconnectionConfig(config: ReconnectionConfig | null): void {
+export function setReconnectionConfig(
+  config: ReconnectionConfig | null | undefined
+) {
   reconnectionConfig = config;
 }
 
@@ -77,11 +86,6 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
   if (typeof deviceOrId === "string") {
     if (transportsCache[deviceOrId]) {
       log("ble-verbose", "Transport in cache, using that.");
-      const maybeTimeout = transportsCache[deviceOrId].disconnectTimeout;
-      if (maybeTimeout) {
-        log("ble-verbose", "Clearing queued disconnect");
-        clearTimeout(transportsCache[deviceOrId].disconnectTimeout);
-      }
       return transportsCache[deviceOrId];
     }
 
@@ -90,13 +94,13 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
 
     if (!device) {
       // works for iOS but not Android
-      const devices = await bleManager.devices([deviceOrId]);
+      const devices = await bleManagerInstance().devices([deviceOrId]);
       log("ble-verbose", `found ${devices.length} devices`);
       [device] = devices;
     }
 
     if (!device) {
-      const connectedDevices = await bleManager.connectedDevices(
+      const connectedDevices = await bleManagerInstance().connectedDevices(
         getBluetoothServiceUuids()
       );
       const connectedDevicesFiltered = connectedDevices.filter(
@@ -113,12 +117,15 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
       log("ble-verbose", `connectToDevice(${deviceOrId})`);
 
       try {
-        device = await bleManager.connectToDevice(deviceOrId, connectOptions);
+        device = await bleManagerInstance().connectToDevice(
+          deviceOrId,
+          connectOptions
+        );
       } catch (e: any) {
         if (e.errorCode === BleErrorCode.DeviceMTUChangeFailed) {
           // eslint-disable-next-line require-atomic-updates
           connectOptions = {};
-          device = await bleManager.connectToDevice(deviceOrId);
+          device = await bleManagerInstance().connectToDevice(deviceOrId);
         } else {
           throw e;
         }
@@ -253,6 +260,8 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
     deviceModel
   );
 
+  await transport.requestConnectionPriority("High");
+
   const onDisconnect = (e) => {
     transport.notYetDisconnected = false;
     notif.unsubscribe();
@@ -316,7 +325,7 @@ export default class BluetoothTransport extends Transport {
    *
    */
   static setLogLevel = (level: any) => {
-    bleManager.setLogLevel(level);
+    bleManagerInstance().setLogLevel(level);
   };
 
   /**
@@ -332,7 +341,7 @@ export default class BluetoothTransport extends Transport {
       });
     };
 
-    bleManager.onStateChange(emitFromState, true);
+    bleManagerInstance().onStateChange(emitFromState, true);
     return {
       unsubscribe: () => {},
     };
@@ -352,10 +361,10 @@ export default class BluetoothTransport extends Transport {
 
     let unsubscribed;
 
-    const stateSub = bleManager.onStateChange(async (state) => {
+    const stateSub = bleManagerInstance().onStateChange(async (state) => {
       if (state === "PoweredOn") {
         stateSub.remove();
-        const devices = await bleManager.connectedDevices(
+        const devices = await bleManagerInstance().connectedDevices(
           getBluetoothServiceUuids()
         );
         if (unsubscribed) return;
@@ -365,7 +374,7 @@ export default class BluetoothTransport extends Transport {
           )
         );
         if (unsubscribed) return;
-        bleManager.startDeviceScan(
+        bleManagerInstance().startDeviceScan(
           getBluetoothServiceUuids(),
           null,
           (bleError, device) => {
@@ -392,7 +401,7 @@ export default class BluetoothTransport extends Transport {
 
     const unsubscribe = () => {
       unsubscribed = true;
-      bleManager.stopDeviceScan();
+      bleManagerInstance().stopDeviceScan();
       stateSub.remove();
       log("ble-verbose", "done listening.");
     };
@@ -415,8 +424,7 @@ export default class BluetoothTransport extends Transport {
    */
   static disconnect = async (id: any) => {
     log("ble-verbose", `user disconnect(${id})`);
-    await bleManager.cancelDeviceConnection(id);
-    await delay(1000); // Nb Test to improve stability of re-connections.
+    await bleManagerInstance().cancelDeviceConnection(id);
   };
   id: string;
   device: Device;
@@ -426,7 +434,6 @@ export default class BluetoothTransport extends Transport {
   notifyObservable: Observable<any>;
   deviceModel: DeviceModel;
   notYetDisconnected = true;
-  disconnectTimeout: null | ReturnType<typeof setTimeout> = null;
 
   constructor(
     device: Device,
@@ -466,7 +473,9 @@ export default class BluetoothTransport extends Transport {
 
         if (this.notYetDisconnected) {
           // in such case we will always disconnect because something is bad.
-          await bleManager.cancelDeviceConnection(this.id).catch(() => {}); // but we ignore if disconnect worked.
+          await bleManagerInstance()
+            .cancelDeviceConnection(this.id)
+            .catch(() => {}); // but we ignore if disconnect worked.
         }
 
         throw remapError(e);
@@ -493,7 +502,9 @@ export default class BluetoothTransport extends Transport {
           ).toPromise()) + 3;
       } catch (e: any) {
         log("ble-error", "inferMTU got " + String(e));
-        await bleManager.cancelDeviceConnection(this.id).catch(() => {}); // but we ignore if disconnect worked.
+        await bleManagerInstance()
+          .cancelDeviceConnection(this.id)
+          .catch(() => {}); // but we ignore if disconnect worked.
 
         throw remapError(e);
       }
@@ -547,32 +558,10 @@ export default class BluetoothTransport extends Transport {
     }
   };
 
-  async close(): Promise<void> {
-    // Clear any potential leftover timeouts
-    if (this.disconnectTimeout) {
-      clearTimeout(this.disconnectTimeout);
+  async close() {
+    if (this.exchangeBusyPromise) {
+      await this.exchangeBusyPromise;
     }
-
-    let resolve;
-    const disconnectPromise = new Promise<void>((res) => {
-      resolve = res;
-    });
-
-    // Queue a disconnect
-    this.disconnectTimeout = setTimeout(() => {
-      BluetoothTransport.disconnect(this.id);
-      resolve();
-    }, connectOptions.forceDisconnectTimeout as number);
-
-    // For cases where an exchange hasn't resolve and we triggered a `close` we
-    // introduce a timeout to forcefully disconnect in order to unblock subsequent
-    // usages of the `withDevice` logic.
-    await Promise.race([
-      this.exchangeBusyPromise || Promise.resolve(),
-      disconnectPromise,
-    ]);
-
-    return;
   }
 }
 

@@ -518,7 +518,7 @@
       "title" : "Dondurulacak tutar 1'den küçük olamaz"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "TRC20'yi yeni hesaba göndermek hesabı etkinleştirmez",
+      "title" : "TRC20 token alımını etkinleştirmek için önce bu hesaba en az 0,1 TRX göndermeniz gerekir.",
       "description" : "Hesabı etkinleştirmek için hesaba önce TRX veya TRC10 gönderin. Ardından TRC20 alabilirsiniz."
     },
     "TronUnexpectedFees" : {
@@ -785,25 +785,25 @@
     }
   },
   "location" : {
-    "titleServiceRequired" : "Location services required",
-    "titlePermissionRequired" : "Location permission required",
-    "titlePermissionRequiredPrecise" : "Precise location permission required",
-    "descriptionServiceRequired" : "Ledger Live requires location services to pair your device through Bluetooth.",
-    "descriptionPermissionRequired" : "Ledger Live requires the location permission to pair your device through Bluetooth.",
-    "descriptionPermissionRequiredPrecise" : "Ledger Live requires the precise location permission to pair your device through Bluetooth.",
+    "titleServiceRequired" : "Konum hizmetleri gerekli",
+    "titlePermissionRequired" : "Konum izni gerekiyor",
+    "titlePermissionRequiredPrecise" : "Tam konum izni gerekiyor",
+    "descriptionServiceRequired" : "Ledger Live, cihazınızı Bluetooth üzerinden eşleştirmek için konum hizmetleri gerektirir.",
+    "descriptionPermissionRequired" : "Ledger Live'ın cihazınızı Bluetooth üzerinden eşleştirmesi için konum izni gerekiyor.",
+    "descriptionPermissionRequiredPrecise" : "Ledger Live'ın cihazınızı Bluetooth üzerinden eşleştirmesi için tam konum izni gerekiyor.",
     "open" : "Konum ayarlarını aç",
     "noInfos" : "Ledger konum bilgilerinize erişmez."
   },
   "permissions" : {
     "open" : "Uygulama izinlerini aç",
-    "authorize" : "Authorize",
+    "authorize" : "İzin ver",
     "bluetooth" : {
-      "modalTitle" : "Permission required to pair your Ledger over Bluetooth",
-      "modalDescriptionBase" : "To pair your Ledger over Bluetooth, you must authorize Ledger Live to scan for nearby devices.",
-      "modalDescriptionSettingsVariant" : "To pair your Ledger over Bluetooth, you must authorize Ledger Live to scan for nearby devices in your phone’s settings.",
-      "modalButtonLabelBase" : "Authorize",
-      "modalButtonLabelSettingsVariant" : "Go to settings",
-      "dontPair" : "Don't pair"
+      "modalTitle" : "Ledger'ınızı Bluetooth üzerinden eşleştirmek için izin gerekiyor",
+      "modalDescriptionBase" : "Ledger'ınızı Bluetooth üzerinden eşleştirmek için, Ledger Live'ın yakındaki cihazları taramasına izin vermeniz gerekiyor.",
+      "modalDescriptionSettingsVariant" : "Ledger'ınızı Bluetooth üzerinden eşleştirmek için, telefonunuzun ayarlarından Ledger Live'ın yakındaki cihazları taramasına izin vermeniz gerekiyor.",
+      "modalButtonLabelBase" : "İzin ver",
+      "modalButtonLabelSettingsVariant" : "Ayarlara git",
+      "dontPair" : "Eşleştirme"
     }
   },
   "fees" : {
@@ -1902,6 +1902,9 @@
       "title" : "Henüz işlem yok mu?",
       "desc" : "Kripto varlıklarını alıcı adresinize gönderin ve uygulamanın senkronize olmasını bekleyin."
     },
+    "carousel" : {
+      "title" : "Sizin için"
+    },
     "recommended" : {
       "title" : "Önerilen"
     },
@@ -2350,8 +2353,8 @@
     "display" : {
       "title" : "Genel",
       "desc" : "Ledger Live'ın genel ayarlarını yapılandırın.",
-      "carousel" : "Galeri görünürlüğü",
-      "carouselDesc" : "Portföy sayfasındaki afişin görünürlüğünü etkinleştirin",
+      "carousel" : "Öneriler",
+      "carouselDesc" : "Sadece size özel tekliflerimizi ve kişiselleştirilmiş ipuçlarımızı içeren kartlar göstereceğiz.",
       "language" : "Görüntüleme dili",
       "languageDesc" : "Ledger Live'ın görüntüleneceği dili ayarlayın.",
       "region" : "Bölge",
@@ -2464,7 +2467,7 @@
       },
       "allowed" : {
         "title" : "Bildirimlere izin ver",
-        "desc" : "Kriptolarınız, piyasa eğilimleri ve diğer şeylerle ilgili bildirim alın"
+        "desc" : "Kripto varlıklarınız, piyasa trendleri ve daha pek çok konuda bildirimler alın"
       },
       "transactions" : {
         "title" : "İşlemler",
@@ -2486,7 +2489,7 @@
         "title" : "Fiyat Uyarıları",
         "desc" : "En çok tercih ettiğiniz coin'ler için fiyat uyarıları belirleyerek piyasa hareketlerini kaçırmayın"
       },
-      "disclaimer" : "Ledger'da veri gizliliği her şeyden önce gelir. Toplanan veriler iş ortaklarımızla asla paylaşılmaz."
+      "disclaimer" : "Verilerinizin gizliliği, Ledger'da her şeyden önce gelir. Toplanan veriler iş ortaklarımızla asla paylaşılmaz."
     },
     "help" : {
       "title" : "Yardım",
@@ -2568,7 +2571,7 @@
       "featureFlagsDesc" : "Uygulama yeniden başlatılırsa geçersiz bırakılan değerler sıfırlanacaktır. Sadece geçerli JSON dizeleri kabul edilecektir.",
       "featureFlagsEdit" : "Düzenle",
       "featureFlagsRestore" : "Geri yükle",
-      "firebaseProject" : "Firebase project targeted by this build:"
+      "firebaseProject" : "Bu sürüm tarafından hedeflenen Firebase projesi:"
     }
   },
   "notifications" : {
@@ -3265,8 +3268,8 @@
       "gasPrice" : "Gas ücreti",
       "maxFee" : "Ücret üst limiti",
       "maxPriorityFee" : "Öncelik ücreti üst limiti",
-      "nextBlock" : "Sonraki blok: {{nextBaseFee}}",
-      "suggestedPriorityFee" : "Önerilen: {{lowPriorityFee}} - {{highPriorityFee}}",
+      "nextBlock" : "Sonraki blok",
+      "suggested" : "Önerilen",
       "maxFees" : "Maksimum ücret",
       "validateGasLimit" : "Gas limitini onayla",
       "fees" : "Ücretler",
@@ -4690,6 +4693,9 @@
         "title" : "Adaylar",
         "description" : "Token sahibi topluluğun tamamı tarafından yapılan oylama sonucunda 127 kişi seçilir. Oylar her 6 saatte bir sayılır."
       }
+    },
+    "receive" : {
+      "newAddressTRC20" : "Önce bu hesaba en az 0,1 TRX göndererek hesabı etkinleştirmelisiniz."
     }
   },
   "stellar" : {
@@ -5454,7 +5460,8 @@
     "drawer" : {
       "title" : "Bir görüntü seçin",
       "options" : {
-        "uploadFromPhone" : "Telefonumdan yükle"
+        "uploadFromPhone" : "Resim galerimden seç",
+        "selectFromNFTGallery" : "NFT galerisinden seç"
       }
     },
     "cropImage" : "Görüntüyü kırp",
@@ -5476,9 +5483,12 @@
     "doThisLater" : "Belki sonra",
     "preview" : {
       "title" : "Ön izleme",
-      "loading" : "Loading preview",
+      "loading" : "Ön izleme yükleniyor",
       "setPicture" : "Özel resmi ayarla",
       "editPicture" : "Resmi düzenle"
+    },
+    "nftGallery" : {
+      "title" : "NFT'lerim"
     }
   },
   "postOnboarding" : {

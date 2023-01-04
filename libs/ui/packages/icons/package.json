@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/icons-ui",
   "description": "Icons used by the Ledger design system.",
-  "version": "0.3.1",
+  "version": "0.3.3",
   "license": "MIT",
   "repository": {
     "type": "git",

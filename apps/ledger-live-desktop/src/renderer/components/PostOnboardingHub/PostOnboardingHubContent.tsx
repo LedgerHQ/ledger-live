@@ -3,7 +3,6 @@ import { useDispatch } from "react-redux";
 import { Flex, Link, Text } from "@ledgerhq/react-ui";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { clearPostOnboardingLastActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
 
 import PostOnboardingHub from ".";
@@ -14,9 +13,6 @@ const PostOnboardingHubContent = () => {
   const { t } = useTranslation();
   const history = useHistory();
   const dispatch = useDispatch();
-
-  const { lastActionCompleted } = usePostOnboardingHubState();
-  const { actionCompletedHubTitle } = lastActionCompleted ?? {};
 
   const isInsidePostOnboardingScreen = history.location.pathname === "/post-onboarding";
 
@@ -41,9 +37,7 @@ const PostOnboardingHubContent = () => {
     >
       {!isInsidePostOnboardingScreen && (
         <Text variant="paragraph" fontSize={48} mb={8}>
-          {actionCompletedHubTitle
-            ? t(actionCompletedHubTitle)
-            : t("postOnboarding.postOnboardingContent.title")}
+          {t("postOnboarding.postOnboardingContent.title")}
         </Text>
       )}
       <Text variant="paragraph" fontSize={14} color="neutral.c70" mb={8}>
