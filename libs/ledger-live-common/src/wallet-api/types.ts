@@ -14,6 +14,7 @@ export type {
 } from "@ledgerhq/wallet-api-core";
 
 export {
+  FAMILIES as WalletAPI_FAMILIES,
   CurrencyType as WalletAPICurrencyType,
   TokenStandard as WalletAPITokenStandard,
 } from "@ledgerhq/wallet-api-core";

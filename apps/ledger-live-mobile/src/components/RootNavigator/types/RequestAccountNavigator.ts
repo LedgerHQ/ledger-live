@@ -5,7 +5,7 @@ import type {
 } from "@ledgerhq/types-cryptoassets";
 
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { Observable } from "@ledgerhq/wallet-api-server";
+import { Observable } from "rxjs7";
 import { NavigatorScreenParams } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "../../../const";
 import { AddAccountsNavigatorParamList } from "./AddAccountsNavigator";
