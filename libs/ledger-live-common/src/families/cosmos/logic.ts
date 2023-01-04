@@ -215,7 +215,3 @@ export function getRedelegationCompletionDate(
   const currentRedelegation = getRedelegation(account, delegation);
   return currentRedelegation ? currentRedelegation.completionDate : null;
 }
-
-export const parseUatomStrAsAtomNumber = (uatoms: string): number => {
-  return parseFloat(uatoms) / 1000000.0;
-};

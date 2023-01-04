@@ -1,5 +1,3 @@
-import { CacheRes, makeLRUCache } from "../../../cache";
-import { CosmosRewardsState } from "../types";
 import CosmosBase from "./cosmosBase";
 
 class Juno extends CosmosBase {
@@ -15,41 +13,6 @@ class Juno extends CosmosBase {
     this.defaultGas = 100000;
     this.unbondingPeriod = 28;
     this.ledgerValidator = "";
-  }
-  public getRewardsState(): CacheRes<[], CosmosRewardsState> {
-    return makeLRUCache(
-      async () => {
-        // Hardcoded mock values
-        const targetBondedRatio = 0.1;
-        const assumedSecondsPerBlock = 7;
-        const inflationRateChange = 0.01;
-        const inflationMaxRate = 0.01;
-        const inflationMinRate = 0.01;
-        const averageTimePerBlock = 7;
-        const averageDailyFees = 0;
-        const currentValueInflation = 0.01;
-        return {
-          targetBondedRatio,
-          communityPoolCommission: 0.03,
-          assumedSecondsPerBlock,
-          inflationRateChange,
-          inflationMaxRate,
-          inflationMinRate,
-          actualBondedRatio: 0,
-          averageTimePerBlock,
-          totalSupply: 100000000,
-          averageDailyFees,
-          currentValueInflation,
-        };
-      },
-      () => "juno"
-    );
-  }
-  public validatorEstimatedRate(
-    _validatorCommission: number,
-    _rewardsState: CosmosRewardsState
-  ): number {
-    return 0.15;
   }
 }
 

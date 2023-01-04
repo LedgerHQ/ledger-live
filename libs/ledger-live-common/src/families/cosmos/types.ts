@@ -78,19 +78,6 @@ export type CosmosValidatorItem = {
   estimatedYearlyRewardsRate: number; // value from 0.0 to 1.0 (normalized percentage)
   tokens: number;
 };
-export type CosmosRewardsState = {
-  targetBondedRatio: number;
-  communityPoolCommission: number;
-  assumedSecondsPerBlock: number;
-  inflationRateChange: number;
-  inflationMaxRate: number;
-  inflationMinRate: number;
-  actualBondedRatio: number;
-  averageTimePerBlock: number;
-  totalSupply: number;
-  averageDailyFees: number;
-  currentValueInflation: number;
-};
 // by convention preload would return a Promise of CosmosPreloadData
 export type CosmosPreloadData = {
   validators: CosmosValidatorItem[];

@@ -1,5 +1,4 @@
-import { CacheRes } from "../../../cache";
-import { CosmosOperationMode, CosmosRewardsState } from "../types";
+import { CosmosOperationMode } from "../types";
 
 abstract class cosmosBase {
   abstract lcd: string;
@@ -21,11 +20,6 @@ abstract class cosmosBase {
     claimRewardCompound: 400000,
   };
   public static COSMOS_FAMILY_LEDGER_VALIDATOR_ADDRESSES: string[] = [];
-  public abstract getRewardsState(): CacheRes<[], CosmosRewardsState>;
-  public abstract validatorEstimatedRate(
-    validatorCommission: number,
-    rewardsState: CosmosRewardsState
-  ): number;
 }
 
 export default cosmosBase;

@@ -2,7 +2,7 @@ import network from "../../network";
 import { log } from "@ledgerhq/logs";
 import { EnvName, EnvValue } from "../../env";
 import { makeLRUCache } from "../../cache";
-import type { CosmosValidatorItem, CosmosRewardsState } from "./types";
+import type { CosmosValidatorItem } from "./types";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import cryptoFactory from "./chain/chain";
 import cosmosBase from "./chain/cosmosBase";
@@ -40,7 +40,7 @@ export class CosmosValidatorsManager {
   }
 
   private cacheValidators = makeLRUCache(
-    async (rewardState: CosmosRewardsState): Promise<CosmosValidatorItem[]> => {
+    async (): Promise<CosmosValidatorItem[]> => {
       const url = `${this._endPoint}/cosmos/staking/${this._version}/validators?status=BOND_STATUS_BONDED&pagination.limit=175`;
       const { data } = await network({
         url,
@@ -54,44 +54,20 @@ export class CosmosValidatorsManager {
           validatorAddress: validator.operator_address,
           name: validator.description.moniker,
           tokens: parseFloat(validator.tokens),
-          votingPower: this.validatorVotingPower(validator.tokens, rewardState),
+          votingPower: 0,
           commission,
-          estimatedYearlyRewardsRate: this.validatorEstimatedRate(
-            commission,
-            rewardState
-          ),
+          estimatedYearlyRewardsRate: 0,
         };
       });
       return validators;
     },
-    (_: CosmosRewardsState) => this._currency.id
+    () => this._currency.id
   );
 
   getValidators = async (): Promise<CosmosValidatorItem[]> => {
-    const rewardsState = await this._crypto.getRewardsState()();
     // validators need the rewardsState ONLY to compute voting power as
     // percentage instead of raw uatoms amounts
-    return await this.cacheValidators(rewardsState);
-  };
-
-  validatorVotingPower = (
-    validatorTokens: string,
-    rewardsState: CosmosRewardsState
-  ): number => {
-    return (
-      parseFloat(validatorTokens) /
-      (rewardsState.actualBondedRatio * rewardsState.totalSupply * 1000000) // TODO validate that this is correct for Osmosis. Just because we get a valid number doesn't mean it's correct
-    );
-  };
-
-  validatorEstimatedRate = (
-    validatorCommission: number,
-    rewardsState: CosmosRewardsState
-  ): number => {
-    return this._crypto.validatorEstimatedRate(
-      validatorCommission,
-      rewardsState
-    );
+    return await this.cacheValidators();
   };
 
   hydrateValidators = (validators: CosmosValidatorItem[]): void => {

@@ -206,7 +206,7 @@ function reorderValidators(
         ? validator.name.toLowerCase().includes(searchInput.toLowerCase())
         : true
     )
-    .sort((a, b) => b.votingPower - a.votingPower);
+    .sort((a, b) => b.tokens - a.tokens);
 
   // move Ledger validator to the first position
   const ledgerValidator = sortedValidators.find(
