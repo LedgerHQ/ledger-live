@@ -15,10 +15,13 @@ import PaymentRejectedProtectState from "./Protect/PaymentRejectedProtectState";
 import ActiveProtectState from "./Protect/ActiveProtectState";
 import { ServicesConfig } from "./types";
 import { protectSelector } from "../../reducers/protect";
-import { updateProtectData, updateProtectStatus } from "../../actions/protect";
+import {
+  resetProtectState,
+  updateProtectData,
+  updateProtectStatus,
+} from "../../actions/protect";
 import { formatData, getProtectStatus } from "../../logic/protect";
-import { saveProtect } from "../../db";
-import { ScreenName } from "../../const";
+import { saveProtect, deleteProtect } from "../../db";
 import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { ManagerNavigatorStackParamList } from "../RootNavigator/types/ManagerNavigator";
 
@@ -91,7 +94,8 @@ function ServicesWidget() {
       const res = await refreshToken(data.refreshToken);
 
       if (!res) {
-        navigation.navigate(ScreenName.ProtectLogin);
+        dispatch(resetProtectState());
+        deleteProtect();
         return;
       }
 

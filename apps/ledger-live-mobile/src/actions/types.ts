@@ -546,6 +546,7 @@ export type SwapPayload =
 export enum ProtectActionTypes {
   UPDATE_DATA = "UPDATE_DATA",
   UPDATE_PROTECT_STATUS = "UPDATE_PROTECT_STATUS",
+  RESET_STATE = "RESET_STATE",
 }
 
 export type ProtectDataPayload = Pick<ProtectState, "data">;
