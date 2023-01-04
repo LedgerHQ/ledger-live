@@ -1,5 +1,41 @@
 # ledger-live-desktop
 
+## 2.52.0-nightly.4
+
+### Minor Changes
+
+- [#2049](https://github.com/LedgerHQ/ledger-live/pull/2049) [`f159ba186c`](https://github.com/LedgerHQ/ledger-live/commit/f159ba186c0f1d1b309d50fd4ff4b71220aad9db) Thanks [@gre](https://github.com/gre)! - Electron was upgraded from 15 to 21 as well as "electron-builder"
+
+  - that means we have a new bump of the nodejs version for native module too. So all native library impacted (coins, usb,..)
+  - that means we have a new Chromium version. So the UI is impacted. Screenshots have changed due to this.
+
+  In a breaking change in Electron 18 the nativeWindowOpen web preference (used [here](https://github.com/LedgerHQ/ledger-live/blob/ff2d747c1a3aa6bc779d1987c0f2a5e0369c2d72/apps/ledger-live-desktop/src/renderer/components/WebPlatformPlayer/index.tsx#L416)) have [been removed](https://www.electronjs.org/blog/electron-18-0#removed-nativewindowopen) (cf. [this PR](https://github.com/electron/electron/pull/29405))
+
+  Now, Ledger live does not seem to receive (and handle) new-window events when a live-apps wants to open a new window (regularly used throughout Live Apps to open external contextual info like redirect to Twitter account, open ToS page, etc…)
+
+  `webview` are deprecated and not formerly integrated / maintained in electron.
+  updating electron broke previous handleding of new window opened from a `webview`
+
+  use `setWindowOpenHandler` on the `webview` webContents to handle opening new window.
+  cf. https://github.com/electron/electron/issues/31117#issuecomment-958733861
+
+  also, there seem to be issues between `webview` and React
+  cf. https://github.com/electron/electron/issues/6046
+
+* [#2049](https://github.com/LedgerHQ/ledger-live/pull/2049) [`f159ba186c`](https://github.com/LedgerHQ/ledger-live/commit/f159ba186c0f1d1b309d50fd4ff4b71220aad9db) Thanks [@gre](https://github.com/gre)! - Upgrade from Electron 15 to Electron 22
+
+- [#2190](https://github.com/LedgerHQ/ledger-live/pull/2190) [`7733415c32`](https://github.com/LedgerHQ/ledger-live/commit/7733415c32a5838cb4e6a4735530d507ff6ac405) Thanks [@chabroA](https://github.com/chabroA)! - Handle bitcoin.getXPpub wallet api method
+
+### Patch Changes
+
+- [#2049](https://github.com/LedgerHQ/ledger-live/pull/2049) [`f159ba186c`](https://github.com/LedgerHQ/ledger-live/commit/f159ba186c0f1d1b309d50fd4ff4b71220aad9db) Thanks [@gre](https://github.com/gre)! - fix: webview usage with electron 22
+
+* [#2049](https://github.com/LedgerHQ/ledger-live/pull/2049) [`f159ba186c`](https://github.com/LedgerHQ/ledger-live/commit/f159ba186c0f1d1b309d50fd4ff4b71220aad9db) Thanks [@gre](https://github.com/gre)! - Upgrade Sentry
+
+* Updated dependencies [[`7733415c32`](https://github.com/LedgerHQ/ledger-live/commit/7733415c32a5838cb4e6a4735530d507ff6ac405)]:
+  - @ledgerhq/live-common@27.11.0-nightly.3
+  - @ledgerhq/react-ui@0.10.4-nightly.0
+
 ## 2.52.0-nightly.3
 
 ### Patch Changes

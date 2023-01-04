@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 27.11.0-nightly.3
+
+### Minor Changes
+
+- [#2190](https://github.com/LedgerHQ/ledger-live/pull/2190) [`7733415c32`](https://github.com/LedgerHQ/ledger-live/commit/7733415c32a5838cb4e6a4735530d507ff6ac405) Thanks [@chabroA](https://github.com/chabroA)! - Handle bitcoin.getXPpub wallet api method
+
 ## 27.11.0-nightly.2
 
 ### Patch Changes

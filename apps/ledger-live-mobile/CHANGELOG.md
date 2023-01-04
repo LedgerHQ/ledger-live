@@ -1,5 +1,19 @@
 # live-mobile
 
+## 3.13.0-nightly.14
+
+### Minor Changes
+
+- [#2190](https://github.com/LedgerHQ/ledger-live/pull/2190) [`7733415c32`](https://github.com/LedgerHQ/ledger-live/commit/7733415c32a5838cb4e6a4735530d507ff6ac405) Thanks [@chabroA](https://github.com/chabroA)! - Handle bitcoin.getXPpub wallet api method
+
+### Patch Changes
+
+- [#2227](https://github.com/LedgerHQ/ledger-live/pull/2227) [`7ed4cb7f10`](https://github.com/LedgerHQ/ledger-live/commit/7ed4cb7f109d8fe474050cad2567aa1e04100a6f) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Improvements to the App state debugging tool
+
+- Updated dependencies [[`7733415c32`](https://github.com/LedgerHQ/ledger-live/commit/7733415c32a5838cb4e6a4735530d507ff6ac405)]:
+  - @ledgerhq/live-common@27.11.0-nightly.3
+  - @ledgerhq/native-ui@0.14.1-nightly.0
+
 ## 3.13.0-nightly.13
 
 ### Minor Changes
