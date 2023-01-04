@@ -55,5 +55,5 @@ setSupportedCurrencies([
   "songbird",
   "flare",
   "near",
-  "dfinity",
+  "internet_computer",
 ]);

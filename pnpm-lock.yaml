@@ -1110,6 +1110,7 @@ importers:
       cashaddrjs: ^0.4.4
       coininfo: ^5.1.0
       cosmjs-types: 0.2.1
+      crc: ^4.2.0
       create-hmac: ^1.1.7
       cross-env: ^7.0.3
       crypto-js: ^4.1.1
@@ -1283,6 +1284,7 @@ importers:
       cashaddrjs: 0.4.4
       coininfo: 5.2.1
       cosmjs-types: 0.2.1
+      crc: 4.2.0_buffer@6.0.3
       create-hmac: 1.1.7
       crypto-js: 4.1.1
       eip55: 2.1.0
@@ -21046,11 +21048,11 @@ packages:
   /@zondax/ledger-icp/0.7.0-beta.2:
     resolution: {integrity: sha512-apJRXFNNj1XpNhQpOaXzeco/z5hUgzThn30C1UHg+myv21Z3qH3kUuf5BT27ziaQ3+wJ4vL3JcdbaRy9Ol9WBQ==}
     dependencies:
-      '@zondax/ledger-js': 0.0.2-beta.5
+      '@zondax/ledger-js': 0.0.2-beta.6
     dev: false
 
-  /@zondax/ledger-js/0.0.2-beta.5:
-    resolution: {integrity: sha512-bnmNzCKR9HvbGR1ev5zPyHqpo43S/xBWvo3Ad/R2N63ksVEbsjAtuODKKUZX3VKtXRU73ZufbUk0ScwXVqgD6w==}
+  /@zondax/ledger-js/0.0.2-beta.6:
+    resolution: {integrity: sha512-iuShLFK2eC7OnDqy4pokFoDMblyPlKakIujOPlHeI90IR2wEtXpsOp1EzrviMLfcJH8G/HV5DXXx3vMZhyPlWg==}
     dependencies:
       '@ledgerhq/hw-transport': 6.27.9
     dev: false

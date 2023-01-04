@@ -6,7 +6,7 @@ import {
 } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 
-type FamilyType = "dfinity";
+type FamilyType = "internet_computer";
 
 export type Transaction = TransactionCommon & {
   family: FamilyType;

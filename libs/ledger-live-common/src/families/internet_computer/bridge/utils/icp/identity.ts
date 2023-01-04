@@ -1,8 +1,26 @@
-import { Identity, Signature } from "@dfinity/agent";
+import {
+  Agent,
+  Cbor,
+  HttpAgent,
+  HttpAgentRequest,
+  Identity,
+  Signature,
+} from "@dfinity/agent";
 import ICP from "@zondax/ledger-icp";
 import { Principal } from "@dfinity/principal";
 import { ResponseSign } from "@zondax/ledger-icp";
 import { bufferToArrayBuffer } from "./utils";
+import { ICP_HOST } from "../../../consts";
+import { Secp256k1PublicKey } from "./secp256k1";
+
+export function getAgent(identity: Identity): Agent {
+  const agent = new HttpAgent({
+    host: ICP_HOST,
+    identity: identity,
+  });
+
+  return agent;
+}
 
 export class LedgerIdentity implements Identity {
   protected principal: Principal;
@@ -40,8 +58,8 @@ export class LedgerIdentity implements Identity {
     if (!signatureRS) {
       throw new Error(
         `A ledger error happened during signature:\n` +
-        `Code: ${resp.returnCode}\n` +
-        `Message: ${JSON.stringify(resp.errorMessage)}\n`
+          `Code: ${resp.returnCode}\n` +
+          `Message: ${JSON.stringify(resp.errorMessage)}\n`
       );
     }
 
@@ -54,5 +72,17 @@ export class LedgerIdentity implements Identity {
     return bufferToArrayBuffer(signatureRS) as Signature;
   }
 
-  public async transformRequest() { }
+  public async transformRequest(request: HttpAgentRequest): Promise<any> {
+    const { body, ...fields } = request;
+    const signature = await this.sign(Cbor.encode({ content: body }));
+    const pubKey = Secp256k1PublicKey.fromRaw(this.pubkeyBuf);
+    return {
+      ...fields,
+      body: {
+        content: body,
+        sender_pubkey: pubKey.toDer(),
+        sender_sig: signature,
+      },
+    };
+  }
 }
