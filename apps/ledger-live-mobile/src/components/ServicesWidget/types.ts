@@ -8,6 +8,7 @@ export enum ProtectStateNumberEnum {
 }
 
 export type ServicesConfigParams = {
+  login: Record<string, string>;
   managerStatesData: Record<ProtectStateNumberEnum, Record<string, string>>;
 };
 
