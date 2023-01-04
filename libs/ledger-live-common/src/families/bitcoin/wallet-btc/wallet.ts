@@ -8,7 +8,7 @@ import { TransactionInfo, DerivationModes } from "./types";
 import { Account, SerializedAccount } from "./account";
 import Xpub from "./xpub";
 import { IExplorer } from "./explorer/types";
-import { IStorage, Output } from "./storage/types";
+import { Output } from "./storage/types";
 import BitcoinLikeStorage from "./storage";
 import { PickingStrategy } from "./pickingstrategies/types";
 import * as utils from "./utils";
