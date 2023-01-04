@@ -13,7 +13,7 @@ import { getAccountShape } from "./utils/account";
 import BigNumber from "bignumber.js";
 import { getEstimatedFees } from "./utils/token";
 import { getAddress, validateAddress } from "./utils/addresses";
-import { getPath, validateMemo } from "../utils";
+import { getAccountInfoForPath, getPath } from "../utils";
 import {
   AmountRequired,
   InvalidAddress,
@@ -21,7 +21,6 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import ICPApp from "@zondax/ledger-icp";
 import { Observable } from "rxjs";
 import { withDevice } from "../../../hw/deviceAccess";
 import { close } from "../../../hw";
@@ -43,7 +42,7 @@ const sync = makeSync({ getAccountShape });
 const createTransaction = (): Transaction => {
   // log("debug", "[createTransaction] creating base tx");
   return {
-    family: "dfinity",
+    family: "internet_computer",
     amount: new BigNumber(0),
     fees: getEstimatedFees(),
     recipient: "",
@@ -64,15 +63,14 @@ const prepareTransaction = async (
   // log("debug", "[prepareTransaction] start fn");
 
   const { address } = getAddress(a);
-  const { recipient, memo } = t;
+  const { recipient } = t;
 
   if (recipient && address) {
     // log("debug", "[prepareTransaction] fetching estimated fees");
 
     if (
       validateAddress(recipient).isValid &&
-      validateAddress(address).isValid &&
-      validateMemo(memo).isValid
+      validateAddress(address).isValid
     ) {
       if (t.useAllAmount) {
         t.amount = a.spendableBalance.minus(t.fees);
@@ -171,13 +169,12 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
           const { address, derivationPath } = getAddress(account);
 
           try {
-            const icp = new ICPApp(transport);
-            const accountInfo = await icp.getAddressAndPubKey(
-              getPath(derivationPath)
+            const accountInfo = await getAccountInfoForPath(
+              getPath(derivationPath),
+              transport
             );
-
             if (!accountInfo.principalText || !accountInfo.publicKey) {
-              throw Error("Incorrect account info from device.");
+              throw Error("Failed to get accountInfo from device");
             }
 
             const now = new Date();
@@ -244,6 +241,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
                 request: Buffer.from(requestSerialized).toString("hex"),
                 pubkey: accountInfo.publicKey.toString("hex"),
                 principalText: accountInfo.principalText,
+                deviceId,
               },
             };
 
@@ -301,10 +299,7 @@ const broadcast: BroadcastFnSignature = async ({
 
   await broadcastTxn(submit, transformedRequestFinal);
 
-  // const result = patchOperationWithHash(operation, deploy_hash);
   const result = { ...operation };
-
-  // log("debug", "[broadcast] finish fn");
 
   return result;
 };

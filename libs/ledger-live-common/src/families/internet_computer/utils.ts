@@ -1,3 +1,5 @@
+import Transport from "@ledgerhq/hw-transport";
+import ICP from "@zondax/ledger-icp";
 import { BigNumber } from "bignumber.js";
 
 const validHexRegExp = new RegExp(/[0-9A-Fa-f]{6}/g);
@@ -46,4 +48,14 @@ export const normalizeEpochTimestamp = (timestamp: number): number => {
 
 export const validateMemo = (_memo?: string) => {
   return { isValid: true }; // TODO: Implement validation
+};
+
+export const getAccountInfoForPath = async (
+  derPath: string,
+  transport: Transport
+) => {
+  const icp = new ICP(transport);
+  const accountInfo = await icp.getAddressAndPubKey(derPath);
+
+  return accountInfo;
 };

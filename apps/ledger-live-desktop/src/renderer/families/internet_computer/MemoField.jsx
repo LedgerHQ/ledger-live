@@ -5,7 +5,10 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import Input from "~/renderer/components/Input";
 import invariant from "invariant";
 import type { Account } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/dfinity/types";
+import type {
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/internet_computer/types";
 import { useTranslation } from "react-i18next";
 
 const MemoField = ({
@@ -19,7 +22,7 @@ const MemoField = ({
   transaction: Transaction,
   status: TransactionStatus,
 }) => {
-  invariant(transaction.family === "dfinity", "Memo: dfinity family expected");
+  invariant(transaction.family === "internet_computer", "Memo: Internet Computer family expected");
 
   const { t } = useTranslation();
 
@@ -41,7 +44,7 @@ const MemoField = ({
       warning={status.warnings.transaction}
       error={status.errors.transaction}
       value={transaction.memo ?? ""}
-      placeholder={t("families.dfinity.memoPlaceholder")}
+      placeholder={t("families.internet_computer.memoPlaceholder")}
       onChange={onMemoFieldChange}
       spellCheck="false"
     />

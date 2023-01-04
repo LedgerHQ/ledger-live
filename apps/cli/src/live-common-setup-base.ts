@@ -74,7 +74,7 @@ setSupportedCurrencies([
   "onomy",
   "persistence",
   "quicksilver",
-  "dfinity",
+  "internet_computer",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

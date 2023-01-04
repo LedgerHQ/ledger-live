@@ -22,10 +22,6 @@ import { Transaction as crypto_orgTransaction } from "../families/crypto_org/typ
 import { TransactionRaw as crypto_orgTransactionRaw } from "../families/crypto_org/types";
 import { TransactionStatus as crypto_orgTransactionStatus } from "../families/crypto_org/types";
 import { TransactionStatusRaw as crypto_orgTransactionStatusRaw } from "../families/crypto_org/types";
-import { Transaction as dfinityTransaction } from "../families/dfinity/types";
-import { TransactionRaw as dfinityTransactionRaw } from "../families/dfinity/types";
-import { TransactionStatus as dfinityTransactionStatus } from "../families/dfinity/types";
-import { TransactionStatusRaw as dfinityTransactionStatusRaw } from "../families/dfinity/types";
 import { Transaction as elrondTransaction } from "../families/elrond/types";
 import { TransactionRaw as elrondTransactionRaw } from "../families/elrond/types";
 import { TransactionStatus as elrondTransactionStatus } from "../families/elrond/types";
@@ -46,6 +42,10 @@ import { Transaction as hederaTransaction } from "../families/hedera/types";
 import { TransactionRaw as hederaTransactionRaw } from "../families/hedera/types";
 import { TransactionStatus as hederaTransactionStatus } from "../families/hedera/types";
 import { TransactionStatusRaw as hederaTransactionStatusRaw } from "../families/hedera/types";
+import { Transaction as internet_computerTransaction } from "../families/internet_computer/types";
+import { TransactionRaw as internet_computerTransactionRaw } from "../families/internet_computer/types";
+import { TransactionStatus as internet_computerTransactionStatus } from "../families/internet_computer/types";
+import { TransactionStatusRaw as internet_computerTransactionStatusRaw } from "../families/internet_computer/types";
 import { Transaction as nearTransaction } from "../families/near/types";
 import { TransactionRaw as nearTransactionRaw } from "../families/near/types";
 import { TransactionStatus as nearTransactionStatus } from "../families/near/types";
@@ -82,12 +82,12 @@ export type Transaction =
   | celoTransaction
   | cosmosTransaction
   | crypto_orgTransaction
-  | dfinityTransaction
   | elrondTransaction
   | ethereumTransaction
   | evmTransaction
   | filecoinTransaction
   | hederaTransaction
+  | internet_computerTransaction
   | nearTransaction
   | polkadotTransaction
   | rippleTransaction
@@ -103,12 +103,12 @@ export type TransactionRaw =
   | celoTransactionRaw
   | cosmosTransactionRaw
   | crypto_orgTransactionRaw
-  | dfinityTransactionRaw
   | elrondTransactionRaw
   | ethereumTransactionRaw
   | evmTransactionRaw
   | filecoinTransactionRaw
   | hederaTransactionRaw
+  | internet_computerTransactionRaw
   | nearTransactionRaw
   | polkadotTransactionRaw
   | rippleTransactionRaw
@@ -124,12 +124,12 @@ export type TransactionStatus =
   | celoTransactionStatus
   | cosmosTransactionStatus
   | crypto_orgTransactionStatus
-  | dfinityTransactionStatus
   | elrondTransactionStatus
   | ethereumTransactionStatus
   | evmTransactionStatus
   | filecoinTransactionStatus
   | hederaTransactionStatus
+  | internet_computerTransactionStatus
   | nearTransactionStatus
   | polkadotTransactionStatus
   | rippleTransactionStatus
@@ -145,12 +145,12 @@ export type TransactionStatusRaw =
   | celoTransactionStatusRaw
   | cosmosTransactionStatusRaw
   | crypto_orgTransactionStatusRaw
-  | dfinityTransactionStatusRaw
   | elrondTransactionStatusRaw
   | ethereumTransactionStatusRaw
   | evmTransactionStatusRaw
   | filecoinTransactionStatusRaw
   | hederaTransactionStatusRaw
+  | internet_computerTransactionStatusRaw
   | nearTransactionStatusRaw
   | polkadotTransactionStatusRaw
   | rippleTransactionStatusRaw
