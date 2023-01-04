@@ -3333,16 +3333,16 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
-  dfinity: {
+  internet_computer: {
     type: "CryptoCurrency",
-    id: "dfinity",
+    id: "internet_computer",
     coinType: 223,
-    name: "Dfinity",
+    name: "Internet Computer",
     managerAppName: "InternetComputer",
     ticker: "ICP",
-    scheme: "dfinity",
+    scheme: "internet_computer",
     color: "#e1effa",
-    family: "dfinity",
+    family: "internet_computer",
     units: [
       {
         name: "ICP",

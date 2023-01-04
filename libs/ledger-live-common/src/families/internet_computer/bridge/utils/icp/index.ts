@@ -20,6 +20,7 @@ import {
 } from "../../../consts";
 import { AxiosRequestConfig } from "axios";
 import network from "../../../../../network";
+import { BroadcastResult } from "../types";
 
 export const createTxnRequest = ({
   to,
@@ -156,7 +157,7 @@ export const submitFinalRequest = async (
 export const broadcastTxn = async (
   submit: CallRequest,
   transformedRequest: any
-): Promise<SubmitResponse> => {
+): Promise<BroadcastResult> => {
   try {
     const canisterId = MAINNET_LEDGER_CANISTER_ID;
     const methodName = ICP_LEDGER_CANISTER_TRANSFER_METHOD;
@@ -176,7 +177,11 @@ export const broadcastTxn = async (
       );
     }
 
-    return submitResponse;
+    return {
+      ...submitResponse,
+      // txnHash: txns.transactions[0].transaction.transaction_identifier.hash,
+      // blockHeight,
+    };
   } catch (err) {
     if (err instanceof Error) {
       throw mapTransferProtoError(err);

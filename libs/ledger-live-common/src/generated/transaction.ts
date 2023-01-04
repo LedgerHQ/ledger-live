@@ -4,12 +4,12 @@ import cardano from "../families/cardano/transaction";
 import celo from "../families/celo/transaction";
 import cosmos from "../families/cosmos/transaction";
 import crypto_org from "../families/crypto_org/transaction";
-import dfinity from "../families/dfinity/transaction";
 import elrond from "../families/elrond/transaction";
 import ethereum from "../families/ethereum/transaction";
 import evm from "../families/evm/transaction";
 import filecoin from "../families/filecoin/transaction";
 import hedera from "../families/hedera/transaction";
+import internet_computer from "../families/internet_computer/transaction";
 import near from "../families/near/transaction";
 import neo from "../families/neo/transaction";
 import ripple from "../families/ripple/transaction";
@@ -26,12 +26,12 @@ export default {
   celo,
   cosmos,
   crypto_org,
-  dfinity,
   elrond,
   ethereum,
   evm,
   filecoin,
   hedera,
+  internet_computer,
   near,
   neo,
   ripple,

@@ -1,3 +1,5 @@
+import { SubmitResponse } from "@dfinity/agent";
+
 export interface BlockHeightResponse {
   current_block_identifier: BlockIdentifier;
   current_block_timestamp: number;
@@ -59,4 +61,8 @@ interface Operation {
     address: string;
   };
   amount: Balance;
+}
+export interface BroadcastResult extends SubmitResponse {
+  txnHash?: string;
+  blockHeight?: string;
 }

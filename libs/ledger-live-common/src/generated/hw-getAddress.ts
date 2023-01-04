@@ -4,12 +4,12 @@ import cardano from "../families/cardano/hw-getAddress";
 import celo from "../families/celo/hw-getAddress";
 import cosmos from "../families/cosmos/hw-getAddress";
 import crypto_org from "../families/crypto_org/hw-getAddress";
-import dfinity from "../families/dfinity/hw-getAddress";
 import elrond from "../families/elrond/hw-getAddress";
 import ethereum from "../families/ethereum/hw-getAddress";
 import evm from "../families/evm/hw-getAddress";
 import filecoin from "../families/filecoin/hw-getAddress";
 import hedera from "../families/hedera/hw-getAddress";
+import internet_computer from "../families/internet_computer/hw-getAddress";
 import near from "../families/near/hw-getAddress";
 import neo from "../families/neo/hw-getAddress";
 import ripple from "../families/ripple/hw-getAddress";
@@ -26,12 +26,12 @@ export default {
   celo,
   cosmos,
   crypto_org,
-  dfinity,
   elrond,
   ethereum,
   evm,
   filecoin,
   hedera,
+  internet_computer,
   near,
   neo,
   ripple,
