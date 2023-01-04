@@ -32,8 +32,8 @@ const SectionDeveloper = () => {
         </Row>
 
         <Row
-          title={t("settings.developer.catalogServer")}
-          desc={t("settings.developer.catalogServerDesc")}
+          title={t("settings.developer.catalogUrl")}
+          desc={t("settings.developer.catalogUrlDesc")}
         >
           <CatalogProviderInput />
         </Row>
