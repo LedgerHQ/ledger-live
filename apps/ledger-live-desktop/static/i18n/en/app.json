@@ -1207,8 +1207,11 @@
         "checkDeviceButton": "Run check again",
         "cancelButton": "Maybe later"
       },
-      "genuineCheckAnimationModal": {
-        "message": "Allow manager on {{deviceName}}"
+      "softwareCheckAllowSecureChannelModal": {
+        "title": "Allow manager on {{deviceName}}"
+      },
+      "softwareCheckLockedDeviceModal": {
+        "title": "Unlock your device"
       },
       "helpDrawer": {
         "title": "Need some help with your setup manual?",
