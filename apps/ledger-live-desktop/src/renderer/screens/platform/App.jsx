@@ -31,10 +31,11 @@ type Props = {
 
 export default function PlatformApp({ match, appId: propsAppId, location }: Props) {
   const history = useHistory();
-  const { params: urlParams, search, pathname } = location;
+  const { params: urlParams, search, hash } = location;
+
   const appId = propsAppId || match.params?.appId;
 
-  const manifest = useGetManifest(appId, pathname);
+  const manifest = useGetManifest(appId, hash, search);
 
   const returnTo = useMemo(() => {
     const params = new URLSearchParams(search);

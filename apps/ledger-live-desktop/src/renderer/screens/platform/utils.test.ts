@@ -34,33 +34,38 @@ jest.mock("@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index",
 describe("useGetManifest", () => {
   describe("paraswap", () => {
     it("should fetch basic manifest", async () => {
-      const manifest = useGetManifest("paraswap", "/platform/paraswap");
+      const manifest = useGetManifest("paraswap");
       expect(manifest.params.dappUrl).toBe(
-        "https://embedded.paraswap.io/?referrer=ledger2&embed=true&enableStaking=false&displayMenu=false&enableNetworkSwitch=false",
+        "https://embedded.paraswap.io?referrer=ledger2&embed=true&enableStaking=false&displayMenu=false&enableNetworkSwitch=false",
       );
     });
 
     it("should fetch complex manifest", async () => {
       const manifest = useGetManifest(
         "paraswap",
-        "/platform/paraswap/#/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee-0xdac17f958d2ee523a2206206994597c13d831ec7/4E-7",
+        "#/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee-0xdac17f958d2ee523a2206206994597c13d831ec7/0.004",
+        "?network=1",
       );
       expect(manifest.params.dappUrl).toBe(
-        "https://embedded.paraswap.io/#/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee-0xdac17f958d2ee523a2206206994597c13d831ec7/4E-7?referrer=ledger2&embed=true&enableStaking=false&displayMenu=false&enableNetworkSwitch=false",
+        "https://embedded.paraswap.io#/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee-0xdac17f958d2ee523a2206206994597c13d831ec7/0.004?referrer=ledger2&embed=true&enableStaking=false&displayMenu=false&enableNetworkSwitch=false?network=1",
       );
     });
   });
 
   describe("1inch", () => {
-    it("should fetch complex manifest", async () => {
-      const manifest = useGetManifest("1inch", "/platform/1inch/#/1/unified/swap/eth/usdt");
-      expect(manifest.params.dappUrl).toBe(
-        "https://app.1inch.io/#/1/unified/swap/eth/usdt?ledgerLive=true",
-      );
-    });
     it("should fetch basic manifest", async () => {
-      const manifest = useGetManifest("1inch", "/platform/1inch");
-      expect(manifest.params.dappUrl).toBe("https://app.1inch.io/?ledgerLive=true");
+      const manifest = useGetManifest("1inch");
+      expect(manifest.params.dappUrl).toBe("https://app.1inch.io?ledgerLive=true");
+    });
+    it("should fetch complex manifest", async () => {
+      const manifest = useGetManifest(
+        "1inch",
+        "#/1/unified/swap/eth/usdt",
+        "?sourceTokenAmount=0.04",
+      );
+      expect(manifest.params.dappUrl).toBe(
+        "https://app.1inch.io#/1/unified/swap/eth/usdt?ledgerLive=true?sourceTokenAmount=0.04",
+      );
     });
   });
 });
