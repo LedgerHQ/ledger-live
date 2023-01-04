@@ -22,12 +22,12 @@ import {
 import { useNavigateToPostOnboardingHubCallback } from "../../logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
 import { urls } from "../../config/urls";
 import FallbackCameraScreen from "../ImportAccounts/FallBackCameraScreen";
-import { ClaimNftNavigatorParamList } from "../../components/RootNavigator/types/ClaimNftNavigator";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import {
   StackNavigatorNavigation,
   StackNavigatorRoute,
 } from "../../components/RootNavigator/types/helpers";
+import { ImportAccountsNavigatorParamList } from "../../components/RootNavigator/types/ImportAccountsNavigator";
 
 const cameraBoxDimensions = {
   width: Dimensions.get("screen").width,
@@ -80,7 +80,7 @@ const ClaimNftQrScan = () => {
   const navigation =
     useNavigation<
       CompositeNavigationProp<
-        StackNavigatorNavigation<ClaimNftNavigatorParamList>,
+        StackNavigatorNavigation<ImportAccountsNavigatorParamList>,
         StackNavigatorNavigation<BaseNavigatorStackParamList>
       >
     >();
