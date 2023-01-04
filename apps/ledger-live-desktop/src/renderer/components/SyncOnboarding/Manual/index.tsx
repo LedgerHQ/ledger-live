@@ -360,7 +360,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
                 height="540px"
                 animation={getDeviceAnimation(
                   lastKnownDeviceModelId,
-                  theme.theme as "light" | "dark",
+                  theme.theme,
                   lockedDeviceDuringPolling ? "enterPinCode" : "plugAndPinCode",
                 )}
               />
