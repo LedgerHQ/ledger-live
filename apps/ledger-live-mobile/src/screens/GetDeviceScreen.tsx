@@ -34,6 +34,10 @@ import {
 } from "../components/RootNavigator/types/helpers";
 import { BuyDeviceNavigatorParamList } from "../components/RootNavigator/types/BuyDeviceNavigator";
 import { OnboardingNavigatorParamList } from "../components/RootNavigator/types/OnboardingNavigator";
+import videoSources from "../../../assets/videos";
+
+const sourceDark = videoSources.nanoXDark;
+const sourceLight = videoSources.nanoXLight;
 
 const hitSlop = {
   bottom: 10,
@@ -46,11 +50,6 @@ const StyledSafeAreaView = styled(SafeAreaView)`
   flex: 1;
   background-color: ${p => p.theme.colors.background.main};
 `;
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const sourceDark = require("../../assets/videos/NanoX_LL_Black.mp4");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const sourceLight = require("../../assets/videos/NanoX_LL_White.mp4");
 
 const items = [
   {
