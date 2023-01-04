@@ -468,7 +468,6 @@ const SwapForm = () => {
     // cannot depend on swapTransaction as it'll change when new `rates` are fetched
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
-    [swapTransaction.setFromAmount],
   );
 
   switch (currentFlow) {
