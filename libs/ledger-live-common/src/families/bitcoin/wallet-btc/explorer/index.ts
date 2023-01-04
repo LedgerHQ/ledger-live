@@ -166,8 +166,7 @@ class BitcoinLikeExplorer implements IExplorer {
       batch_size: !this.disableBatchSize ? nbMax : undefined,
       block_hash: undefined,
     };
-    const txs = await this.fetchTxs(address, params);
-    const pendingsTxs = txs.filter((tx) => !tx.block);
+    const pendingsTxs = await this.fetchPendingTxs(address, params);
     pendingsTxs.forEach((tx) => this.hydrateTx(address, tx));
     return pendingsTxs;
   }
