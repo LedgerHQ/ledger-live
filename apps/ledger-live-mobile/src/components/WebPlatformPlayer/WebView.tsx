@@ -71,6 +71,7 @@ import {
   StackNavigatorNavigation,
 } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
+import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 
 const tracking = trackingWrapper(track);
 
@@ -598,13 +599,19 @@ export const WebView = ({ manifest, inputs }: Props) => {
           />
         </View>
       ),
+      headerShown: manifest.id !== "protect",
     });
-  }, [navigation, widgetLoaded, handleReload, isInfoPanelOpened]);
+  }, [navigation, widgetLoaded, handleReload, isInfoPanelOpened, manifest.id]);
   useEffect(() => {
     tracking.platformLoad(manifest);
   }, [manifest]);
   return (
-    <SafeAreaView style={[styles.root]}>
+    <SafeAreaView
+      style={[
+        styles.root,
+        { paddingTop: manifest.id === "protect" ? extraStatusBarPadding : 0 },
+      ]}
+    >
       <InfoPanel
         name={manifest.name}
         icon={manifest.icon}

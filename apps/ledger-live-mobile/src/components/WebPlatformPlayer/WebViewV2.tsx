@@ -39,6 +39,7 @@ import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { analyticsEnabledSelector } from "../../reducers/settings";
 import getOrCreateUser from "../../user";
+import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 
 const wallet = {
   name: "ledger-live-mobile",
@@ -240,6 +241,10 @@ function useWebView({ manifest, inputs }: Pick<Props, "manifest" | "inputs">) {
     setLoadDate(new Date()); // TODO: wtf
   }, [onReloadRaw, setLoadDate]);
 
+  const isProtectPlatform = ["protect", "protect-preprod"].includes(
+    manifest.id,
+  );
+
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -251,8 +256,15 @@ function useWebView({ manifest, inputs }: Pick<Props, "manifest" | "inputs">) {
           />
         </View>
       ),
+      headerShown: !isProtectPlatform,
     });
-  }, [navigation, widgetLoaded, onReload, isInfoPanelOpened]);
+  }, [
+    navigation,
+    widgetLoaded,
+    onReload,
+    isInfoPanelOpened,
+    isProtectPlatform,
+  ]);
 
   return {
     uri: url.toString(),
@@ -262,6 +274,7 @@ function useWebView({ manifest, inputs }: Pick<Props, "manifest" | "inputs">) {
     onLoad,
     onLoadError,
     onMessage,
+    isProtectPlatform,
   };
 }
 
@@ -335,6 +348,7 @@ export function WebView({ manifest, inputs }: Props) {
     onLoad,
     onMessage,
     onLoadError,
+    isProtectPlatform,
   } = useWebView({
     manifest,
     inputs,
@@ -347,7 +361,12 @@ export function WebView({ manifest, inputs }: Props) {
   }, [uri]);
 
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView
+      style={[
+        styles.root,
+        { paddingTop: isProtectPlatform ? extraStatusBarPadding : 0 },
+      ]}
+    >
       <InfoPanel
         name={manifest.name}
         icon={manifest.icon}
