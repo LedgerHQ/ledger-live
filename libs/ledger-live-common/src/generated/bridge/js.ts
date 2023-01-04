@@ -12,12 +12,12 @@ import hedera from "../../families/hedera/bridge/js";
 import near from "../../families/near/bridge/js";
 import neo from "../../families/neo/bridge/js";
 import osmosis from "../../families/osmosis/bridge/js";
+import polkadot from "../../families/polkadot/bridge/js";
 import ripple from "../../families/ripple/bridge/js";
 import solana from "../../families/solana/bridge/js";
 import stellar from "../../families/stellar/bridge/js";
 import tezos from "../../families/tezos/bridge/js";
 import tron from "../../families/tron/bridge/js";
-import polkadot from "@ledgerhq/coin-polkadot/lib/bridge/js";
 
 export default {
   algorand,
@@ -34,10 +34,10 @@ export default {
   near,
   neo,
   osmosis,
+  polkadot,
   ripple,
   solana,
   stellar,
   tezos,
   tron,
-  polkadot,
 };

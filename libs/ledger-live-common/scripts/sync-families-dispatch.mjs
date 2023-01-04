@@ -65,7 +65,10 @@ async function genTarget(targets, families) {
 
     const libsDir = path.join(__dirname, "../..");
     const family = "polkadot";
-    if (fs.existsSync(path.join(libsDir, `coin-${family}/src`, target))) {
+    if (
+      target !== "bridge/js.ts" &&
+      fs.existsSync(path.join(libsDir, `coin-${family}/src`, target))
+    ) {
       imports += `import ${family} from "@ledgerhq/coin-${family}/lib/${imprtTarget}";
 `;
       exprts += `
@@ -128,22 +131,24 @@ async function genTypesFile(families) {
   let exprtsStatus = `export type TransactionStatus =`;
   let exprtsStatusRaw = `export type TransactionStatusRaw =`;
   for (const family of families) {
-    imprts += `import { Transaction as ${family}Transaction } from "../families/${family}/types";
+    if (fs.existsSync(path.join("families", family, "types.ts"))) {
+      imprts += `import { Transaction as ${family}Transaction } from "../families/${family}/types";
 import { TransactionRaw as ${family}TransactionRaw } from "../families/${family}/types";
 import { TransactionStatus as ${family}TransactionStatus } from "../families/${family}/types";
 import { TransactionStatusRaw as ${family}TransactionStatusRaw } from "../families/${family}/types";
 `;
-    exprtsT += `
+      exprtsT += `
   | ${family}Transaction`;
 
-    exprtsTRaw += `
+      exprtsTRaw += `
   | ${family}TransactionRaw`;
 
-    exprtsStatus += `
+      exprtsStatus += `
   | ${family}TransactionStatus`;
 
-    exprtsStatusRaw += `
+      exprtsStatusRaw += `
   | ${family}TransactionStatusRaw`;
+    }
   }
 
   const libsDir = path.join(__dirname, "../..");

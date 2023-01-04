@@ -1,5 +1,3 @@
-import "../../__tests__/test-helpers/setup";
-// import { testBridge } from "../../__tests__/test-helpers/bridge";
 import { disconnect } from "./api";
 import { BigNumber } from "bignumber.js";
 import { canUnbond, MAX_UNLOCKINGS } from "./logic";
@@ -687,7 +685,7 @@ const polkadot: CurrenciesData<Transaction> = {
   ],
 };
 
-const dataset: DatasetTest<Transaction> = {
+export const dataset: DatasetTest<Transaction> = {
   implementations: ["js"],
   currencies: {
     polkadot,
@@ -698,8 +696,6 @@ const dataset: DatasetTest<Transaction> = {
 afterAll(async () => {
   await disconnect();
 });
-
-// testBridge(dataset);
 
 describe("canUnbond", () => {
   test("can unbond", () => {
