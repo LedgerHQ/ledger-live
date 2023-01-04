@@ -93,7 +93,7 @@ describe("testing wallet", () => {
 
     expect(outputs.length).toBe(3);
 
-    const [opReturnOutput] = outputs.filter((output) => output.address === "");
+    const [opReturnOutput] = outputs.filter((output) => output.address === null);
     expect(opReturnOutput).toBeDefined();
 
     const [opType, message] = script.decompile(opReturnOutput.script) as [
