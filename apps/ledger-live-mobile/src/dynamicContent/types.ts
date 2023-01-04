@@ -16,6 +16,7 @@ type ContentCard = {
   link: string;
   image?: string;
   tag: string;
+  createdAt: number;
 };
 
 type WalletContentCard = ContentCard & {
