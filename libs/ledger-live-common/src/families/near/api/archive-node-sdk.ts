@@ -226,7 +226,7 @@ export const getStakingPositions = async (
       pending = new BigNumber(pending);
       rewards = new BigNumber(rawTotal).minus(deposit);
 
-      const stakingThreshold = getYoctoThreshold();
+      const stakingThreshold = await getYoctoThreshold();
 
       if (staked.gte(stakingThreshold)) {
         totalStaked = totalStaked.plus(staked);
@@ -296,11 +296,10 @@ export const getCommission = async (
   const result = data?.result?.result;
 
   if (Array.isArray(result) && result.length) {
-    const parsedResult = JSON.parse(Buffer.from(result).toString());
+    const parsedResult = JSON.parse(String.fromCharCode.apply(null, result));
 
-    return (
-      Math.round((parsedResult.numerator / parsedResult.denominator) * 100) /
-      100
+    return +((parsedResult.numerator / parsedResult.denominator) * 100).toFixed(
+      2
     );
   }
 
