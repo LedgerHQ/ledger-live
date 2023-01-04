@@ -1,6 +1,6 @@
 import * as bech32 from "bech32";
-import { address } from "bitcoinjs-lib";
 import { bech32m } from "../../bech32m";
+
 import * as utils from "../utils";
 import { Currency } from "../crypto/types";
 import cryptoFactory from "../crypto/factory";
@@ -300,7 +300,9 @@ describe("Unit tests for maxTxSize", () => {
     // test address with witness version 16 and witness program [0x01, 0x02] => tb1sqypqyuzpgh
     [
       2,
-      [tr, sh, pkh, wpkh, "tb1sqypqyuzpgh"].map((addr) => btc.toOutputScript(addr)),
+      [tr, sh, pkh, wpkh, "tb1sqypqyuzpgh"].map((addr) =>
+        btc.toOutputScript(addr)
+      ),
       false,
       p2wpkh,
       Math.ceil(10.5 + 68 * 2 + 43 + 32 + 34 + 31 + 13),
