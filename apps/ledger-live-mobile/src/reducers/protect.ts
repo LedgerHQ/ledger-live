@@ -40,6 +40,7 @@ const handlers: ReducerMap<ProtectState, ProtectPayload> = {
     ...state,
     data: (action as Action<ProtectDataPayload>).payload.data,
   }),
+  [ProtectActionTypes.RESET_STATE]: () => INITIAL_STATE,
 };
 
 // Selectors

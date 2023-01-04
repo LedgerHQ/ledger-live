@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { GestureResponderEvent } from "react-native";
 import { useDispatch } from "react-redux";
@@ -13,8 +13,13 @@ import Button from "../../components/wrappedUi/Button";
 import { StackNavigatorNavigation } from "../../components/RootNavigator/types/helpers";
 import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/types/ManagerNavigator";
 import { ScreenName } from "../../const";
-import { updateProtectData, updateProtectStatus } from "../../actions/protect";
+import {
+  resetProtectState,
+  updateProtectData,
+  updateProtectStatus,
+} from "../../actions/protect";
 import { formatData, getProtectStatus } from "../../logic/protect";
+import { deleteProtect } from "../../db";
 
 function Login() {
   const dispatch = useDispatch();
@@ -81,6 +86,11 @@ function Login() {
     },
     [dispatch, email, navigation, password, validateEmail, validatePassword],
   );
+
+  useEffect(() => {
+    dispatch(resetProtectState());
+    deleteProtect();
+  }, [dispatch]);
 
   return (
     <TabBarSafeAreaView
