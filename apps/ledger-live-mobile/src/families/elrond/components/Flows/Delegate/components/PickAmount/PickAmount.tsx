@@ -18,10 +18,6 @@ import estimateMaxSpendable from "@ledgerhq/live-common/families/elrond/js-estim
 import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/elrond/constants";
 
 import type { Transaction } from "@ledgerhq/live-common/families/elrond/types";
-import type {
-  NativeSyntheticEvent,
-  TextInputFocusEventData,
-} from "react-native";
 import type { PickAmountPropsType, RatioType } from "./types";
 
 import { localeSelector } from "../../../../../../../reducers/settings";
