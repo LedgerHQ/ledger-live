@@ -50,7 +50,7 @@ const SoftwareCheckStep = ({ isDisplayed, onComplete, productName, deviceModelId
     deviceId,
   });
 
-  const { latestFirmware /*, error */, status, lockedDevice } = useGetLatestAvailableFirmware({
+  const { latestFirmware, status, lockedDevice } = useGetLatestAvailableFirmware({
     getLatestAvailableFirmwareFromDeviceId: getLatestAvailableFirmwareFromDeviceIdCommand,
     isHookEnabled: firmwareUpdateStatus === SoftwareCheckStatus.active,
     deviceId,
