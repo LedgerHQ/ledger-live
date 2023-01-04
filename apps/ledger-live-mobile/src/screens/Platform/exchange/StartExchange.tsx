@@ -2,6 +2,7 @@ import startExchange from "@ledgerhq/live-common/exchange/platform/startExchange
 import { createAction } from "@ledgerhq/live-common/hw/actions/startExchange";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { useIsFocused } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import React, { useCallback, useState } from "react";
@@ -25,6 +26,7 @@ type Props = StackNavigatorProps<
 const PlatformStartExchange: React.FC<Props> = ({ navigation, route }) => {
   const [device, setDevice] = useState<Device>();
 
+  const isFocused = useIsFocused();
   const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
 
   const onClose = useCallback(() => {
@@ -42,7 +44,10 @@ const PlatformStartExchange: React.FC<Props> = ({ navigation, route }) => {
     <SafeAreaView style={styles.root}>
       {newDeviceSelectionFeatureFlag?.enabled ? (
         <Flex px={16} py={8} flex={1}>
-          <SelectDevice2 onSelect={setDevice} stopBleScanning={!!device} />
+          <SelectDevice2
+            onSelect={setDevice}
+            stopBleScanning={!!device || !isFocused}
+          />
         </Flex>
       ) : (
         <SelectDevice onSelect={setDevice} autoSelectOnAdd />
