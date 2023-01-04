@@ -34,7 +34,7 @@ import {
 } from "../components/RootNavigator/types/helpers";
 import { BuyDeviceNavigatorParamList } from "../components/RootNavigator/types/BuyDeviceNavigator";
 import { OnboardingNavigatorParamList } from "../components/RootNavigator/types/OnboardingNavigator";
-import videoSources from "../../../assets/videos";
+import videoSources from "../../assets/videos";
 
 const sourceDark = videoSources.nanoXDark;
 const sourceLight = videoSources.nanoXLight;

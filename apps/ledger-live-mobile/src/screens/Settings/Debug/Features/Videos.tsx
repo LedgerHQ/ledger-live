@@ -1,5 +1,5 @@
 import React, { ComponentProps, useState } from "react";
-import { StyleSheet, ScrollView, Pressable, Dimensions } from "react-native";
+import { StyleSheet, ScrollView, Pressable } from "react-native";
 import Modal from "react-native-modal";
 import { Edge, SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
@@ -11,20 +11,19 @@ import Touchable from "../../../../components/Touchable";
 import Check from "../../../../icons/Check";
 import videos from "../../../../../assets/videos";
 
-const allKeys = Object.keys(videos);
+const entries = Object.entries(videos);
 const edges: Edge[] = ["bottom"];
 
 type ResizeMode = ComponentProps<typeof Video>["resizeMode"];
 
 const DebugVideos = () => {
   const { colors } = useTheme();
-  const [key, setKey] = useState<string>(allKeys[0]);
+  const [selectedIndex, setKeyIndex] = useState(0);
   const [resizeMode, setResizeMode] = useState<ResizeMode>("contain");
   const [keyModalVisible, setKeyModalVisible] = useState(false);
   const [fullScreen, setFullScreen] = useState(false);
-  const videoSource = videos[key];
-
-  const keyIndex = allKeys.findIndex(k => k === key);
+  const key = entries[selectedIndex][0];
+  const videoSource = entries[selectedIndex][1];
 
   const video = videoSource ? (
     <Video
@@ -80,9 +79,9 @@ const DebugVideos = () => {
         </Flex>
         <Flex mt={3} flexDirection="row">
           <Button
-            disabled={keyIndex === 0}
+            disabled={selectedIndex === 0}
             onPress={() => {
-              setKey(allKeys[Math.max(keyIndex - 1, 0)]);
+              setKeyIndex(Math.max(selectedIndex - 1, 0));
             }}
             type="primary"
             Icon={Icons.ChevronLeftMedium}
@@ -95,9 +94,9 @@ const DebugVideos = () => {
             />
           </Flex>
           <Button
-            disabled={keyIndex === allKeys.length - 1}
+            disabled={selectedIndex === entries.length - 1}
             onPress={() => {
-              setKey(allKeys[Math.min(keyIndex + 1, allKeys.length - 1)]);
+              setKeyIndex(Math.min(selectedIndex + 1, entries.length - 1));
             }}
             type="primary"
             Icon={Icons.ChevronRightMedium}
@@ -109,26 +108,26 @@ const DebugVideos = () => {
         onClose={setKeyModalVisible as () => void}
       >
         <ScrollView style={styles.modal}>
-          {allKeys.map((_key, i) => (
+          {entries.map(([key], i) => (
             <Touchable
-              key={_key + i}
+              key={i}
               onPress={() => {
-                setKey(_key);
+                setKeyIndex(i);
                 setKeyModalVisible(false);
               }}
               style={[styles.button]}
             >
               <Text
-                {...(key === _key
+                {...(selectedIndex === i
                   ? {
                       semiBold: true,
                     }
                   : {})}
                 style={[styles.buttonLabel]}
               >
-                {_key}
+                {key}
               </Text>
-              {key === _key && <Check size={16} color={colors.live} />}
+              {selectedIndex === i && <Check size={16} color={colors.live} />}
             </Touchable>
           ))}
         </ScrollView>
