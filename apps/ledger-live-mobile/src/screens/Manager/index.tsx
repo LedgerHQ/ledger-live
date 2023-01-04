@@ -96,7 +96,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
   if (!isFocused) return null;
 
   return (
-    <Flex flex={1} pb={insets.bottom + TAB_BAR_SAFE_HEIGHT}>
+    <Flex flex={1}>
       <TrackScreen category="Manager" name="ChooseDevice" />
       <Flex mt={100} px={16} mb={8}>
         <Text fontWeight="semiBold" variant="h4">
@@ -104,65 +104,50 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
         </Text>
       </Flex>
       <NavigationScrollView
-        style={[styles.root]}
+        style={{ paddingBottom: insets.bottom + TAB_BAR_SAFE_HEIGHT }}
         contentContainerStyle={styles.scrollContainer}
       >
-        <Flex>
-          {newDeviceSelectionFeatureFlag?.enabled ? (
-            <SelectDevice2
+        {newDeviceSelectionFeatureFlag?.enabled ? (
+          <SelectDevice2 onSelect={onSelectDevice} stopBleScanning={!!device} />
+        ) : (
+          <>
+            <SelectDevice
+              usbOnly={params?.firmwareUpdate}
+              autoSelectOnAdd
               onSelect={onSelectDevice}
-              stopBleScanning={!!device}
+              onBluetoothDeviceAction={onShowMenu}
             />
-          ) : (
-            <>
-              <SelectDevice
-                usbOnly={params?.firmwareUpdate}
-                autoSelectOnAdd
-                onSelect={onSelectDevice}
-                onBluetoothDeviceAction={onShowMenu}
+            {chosenDevice ? (
+              <RemoveDeviceMenu
+                open={showMenu}
+                device={chosenDevice as Device}
+                onHideMenu={onHideMenu}
               />
-              {chosenDevice ? (
-                <RemoveDeviceMenu
-                  open={showMenu}
-                  device={chosenDevice as Device}
-                  onHideMenu={onHideMenu}
-                />
-              ) : null}
-            </>
-          )}
-          <DeviceActionModal
-            onClose={() => onSelectDevice()}
-            device={device}
-            onResult={onSelect}
-            onModalHide={onModalHide}
-            action={action}
-            request={null}
-          />
+            ) : null}
+          </>
+        )}
+        <>
+          <BuyDeviceCTA />
           <ServicesWidget />
-        </Flex>
+        </>
       </NavigationScrollView>
-      <BuyDeviceCTA />
+      <DeviceActionModal
+        onClose={() => onSelectDevice()}
+        device={device}
+        onResult={onSelect}
+        onModalHide={onModalHide}
+        action={action}
+        request={null}
+      />
     </Flex>
   );
 };
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
   scrollContainer: {
     paddingHorizontal: 16,
-  },
-  title: {
-    lineHeight: 27,
-    fontSize: 18,
-    marginVertical: 24,
-  },
-  footerContainer: {
-    flexDirection: "row",
-  },
-  buttonContainer: {
-    flex: 1,
+    flexGrow: 1,
+    justifyContent: "space-between",
   },
 });
 

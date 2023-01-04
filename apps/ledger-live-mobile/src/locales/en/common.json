@@ -1108,7 +1108,7 @@
       },
       "referralProgram": {
         "title": "Refer a friend",
-        "desc": "Earn $10 in BTC when your friend buys a Ledger. "
+        "desc": "When your friend buys a Ledger, you both earn $10 of BTC."
       }
     },
     "comingSoon": "Coming soon",
@@ -2637,7 +2637,12 @@
       "featureFlagsDesc": "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
       "featureFlagsEdit": "Edit",
       "featureFlagsRestore": "Restore",
-      "firebaseProject": "Firebase project targeted by this build:"
+      "featureFlagsRestoreAll": "Restore all flag values",
+      "featureFlagsTabAll": "All",
+      "featureFlagsTabGroups": "Groups",
+      "firebaseProject": "Firebase project targeted by this build:",
+      "showBannerDesc": "Show banner when flags are overridden",
+      "bannerTitle": "Flags overridden locally"
     }
   },
   "notifications": {

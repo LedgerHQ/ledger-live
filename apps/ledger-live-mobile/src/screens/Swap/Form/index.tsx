@@ -121,6 +121,7 @@ export function SwapForm({
     onNoRates: trackNoRates,
     excludeFixedRates: true,
     providers,
+    includeDEX: false,
   });
 
   const exchangeRatesState = swapTransaction.swap?.rates;

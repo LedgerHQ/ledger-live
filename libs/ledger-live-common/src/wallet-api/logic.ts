@@ -194,3 +194,37 @@ export function signMessageLogic(
 
   return uiNavigation(account, formattedMessage);
 }
+
+export const bitcoinFamillyAccountGetXPubLogic = (
+  { manifest, accounts, tracking }: WalletAPIContext,
+  walletAccountId: string
+): Promise<string> => {
+  tracking.bitcoinFamillyAccountXpubRequested(manifest);
+
+  const accountId = getAccountIdFromWalletAccountId(walletAccountId);
+  if (!accountId) {
+    tracking.bitcoinFamillyAccountXpubFail(manifest);
+    return Promise.reject(new Error(`accountId ${walletAccountId} unknown`));
+  }
+
+  const account = accounts.find((account) => account.id === accountId);
+  if (account === undefined) {
+    tracking.bitcoinFamillyAccountXpubFail(manifest);
+    return Promise.reject(new Error("account not found"));
+  }
+
+  if (!isAccount(account) || account.currency.family !== "bitcoin") {
+    tracking.bitcoinFamillyAccountXpubFail(manifest);
+    return Promise.reject(
+      new Error("account requested is not a bitcoin family account")
+    );
+  }
+
+  if (!account.xpub) {
+    tracking.bitcoinFamillyAccountXpubFail(manifest);
+    return Promise.reject(new Error("account xpub not available"));
+  }
+
+  tracking.bitcoinFamillyAccountXpubSuccess(manifest);
+  return Promise.resolve(account.xpub);
+};

@@ -10,8 +10,8 @@ import {
   getFiatCurrencyByTicker,
 } from "@ledgerhq/live-common/currencies/index";
 import type { DeviceModelId } from "@ledgerhq/devices";
+import type { DeviceModelInfo, FeatureId, Feature } from "@ledgerhq/types-live";
 import type { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
-import type { DeviceModelInfo } from "@ledgerhq/types-live";
 import type { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { getLanguages, defaultLocaleForLanguage } from "~/config/languages";
@@ -128,6 +128,8 @@ export type SettingsState = {
     },
   },
   starredMarketCoins: string[],
+  overriddenFeatureFlags: { [key: FeatureId]: Feature },
+  featureFlagsButtonVisible: boolean,
 };
 
 const defaultsForCurrency: Currency => CurrencySettings = crypto => {
@@ -205,6 +207,8 @@ const INITIAL_STATE: SettingsState = {
     KYC: {},
   },
   starredMarketCoins: [],
+  overriddenFeatureFlags: {},
+  featureFlagsButtonVisible: false,
 };
 
 const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
@@ -385,6 +389,21 @@ const handlers: Object = {
       size: payload.imageSize,
       hash: payload.imageHash,
     },
+  }),
+  SET_OVERRIDDEN_FEATURE_FLAG: (state: SettingsState, { payload }) => ({
+    ...state,
+    overriddenFeatureFlags: {
+      ...state.overriddenFeatureFlags,
+      [payload.key]: payload.value,
+    },
+  }),
+  SET_OVERRIDDEN_FEATURE_FLAGS: (state: SettingsState, { payload }) => ({
+    ...state,
+    overriddenFeatureFlags: payload.overriddenFeatureFlags,
+  }),
+  SET_FEATURE_FLAGS_BUTTON_VISIBLE: (state: SettingsState, { payload }) => ({
+    ...state,
+    featureFlagsButtonVisible: payload.featureFlagsButtonVisible,
   }),
 };
 
@@ -601,5 +620,11 @@ export const exportSettingsSelector: OutputSelector<State, void, *> = createSele
 );
 
 export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;
+
+export const overriddenFeatureFlagsSelector = (state: State) =>
+  state.settings.overriddenFeatureFlags;
+
+export const featureFlagsButtonVisibleSelector = (state: State) =>
+  state.settings.featureFlagsButtonVisible;
 
 export default handleActions(handlers, INITIAL_STATE);

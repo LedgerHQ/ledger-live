@@ -39,6 +39,7 @@ export const getMockExchangeRate = ({
     .times(new BigNumber(10).pow(8)),
   rateId: "mockedRateId",
   provider,
+  providerType: "CEX",
   tradeMethod,
 });
 
@@ -98,6 +99,7 @@ export const mockGetExchangeRates = async (
       magnitudeAwareRate,
       rateId: "mockedRateId",
       provider: "ftx",
+      providerType: "CEX",
       expirationDate: new Date(),
       tradeMethod: "fixed",
     },
@@ -107,6 +109,7 @@ export const mockGetExchangeRates = async (
       magnitudeAwareRate,
       rateId: "mockedRateId",
       provider: "ftx",
+      providerType: "CEX",
       expirationDate: new Date(),
       tradeMethod: "float",
     },
