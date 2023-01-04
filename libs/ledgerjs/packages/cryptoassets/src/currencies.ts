@@ -233,16 +233,16 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     ],
     explorerViews: [],
   },
-  avalanchecchain: {
+  avalanche: {
     type: "CryptoCurrency",
-    id: "avalanchecchain",
-    coinType: 60,
-    name: "Avalanche (C-Chain)",
+    id: "avalanche",
+    coinType: 9000,
+    name: "Avalanche",
     managerAppName: "Avalanche",
     ticker: "AVAX",
-    scheme: "avalanchecchain",
+    scheme: "avalanche",
     color: "#E84142",
-    family: "avalanchecchain",
+    family: "avalanche",
     units: [
       {
         name: "AVAX",
