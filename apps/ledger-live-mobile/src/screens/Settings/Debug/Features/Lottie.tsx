@@ -14,6 +14,8 @@ import Touchable from "../../../../components/Touchable";
 import Check from "../../../../icons/Check";
 import { lottieAnimations } from "../../../Onboarding/shared/infoPagesData";
 
+const edges: Edge[] = ["bottom"];
+
 const DebugLottie = () => {
   const { colors } = useTheme();
   const keys = useMemo(
@@ -91,6 +93,7 @@ const DebugLottie = () => {
   const keyIndex = allKeys.findIndex(k => k === key);
   return (
     <SafeAreaView
+      edges={edges}
       style={[
         styles.root,
         {
