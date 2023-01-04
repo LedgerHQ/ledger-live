@@ -27,7 +27,6 @@ import {
   StackNavigatorNavigation,
   StackNavigatorRoute,
 } from "../../components/RootNavigator/types/helpers";
-import { ImportAccountsNavigatorParamList } from "../../components/RootNavigator/types/ImportAccountsNavigator";
 import { ClaimNftNavigatorParamList } from "../../components/RootNavigator/types/ClaimNftNavigator";
 
 const cameraBoxDimensions = {
