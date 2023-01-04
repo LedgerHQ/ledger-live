@@ -134,9 +134,11 @@ const BleDevicesScanning = ({
 
   return (
     <Flex flex={1}>
-      <TouchableOpacity onPress={onGoBack}>
-        <ArrowLeftMedium size={24} />
-      </TouchableOpacity>
+      {onGoBack && (
+        <TouchableOpacity onPress={onGoBack}>
+          <ArrowLeftMedium size={24} />
+        </TouchableOpacity>
+      )}
       <Flex flex={1} px={4}>
         <Flex height={180} alignItems="center" justifyContent="center">
           <Animation source={lottie} />
