@@ -59,8 +59,8 @@ const illustrations: { [key in DeviceModelId]: Illustration } = {
   },
   stax: {
     Illustration: Stax,
-    width: 160.15,
-    height: 250.1,
+    width: 240,
+    height: 240,
   },
   blue: {
     Illustration: NanoS,
