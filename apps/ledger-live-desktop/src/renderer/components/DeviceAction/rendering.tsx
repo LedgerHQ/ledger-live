@@ -552,11 +552,11 @@ export const RenderDeviceNotOnboardedError = ({ t, device }: { t: TFunction; dev
 
   return (
     <Wrapper id="error-device-not-onboarded">
-      {device && (
+      {device ? (
         <Flex mb={5}>
           <DeviceIllustration deviceId={device.modelId} />
         </Flex>
-      )}
+      ) : null}
       <Text color="neutral.c100" fontSize={7} mb={2}>
         {productName
           ? t("errors.DeviceNotOnboardedError.titleWithProductName", {
