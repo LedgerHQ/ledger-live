@@ -28,6 +28,7 @@ import {
   StackNavigatorRoute,
 } from "../../components/RootNavigator/types/helpers";
 import { ImportAccountsNavigatorParamList } from "../../components/RootNavigator/types/ImportAccountsNavigator";
+import { ClaimNftNavigatorParamList } from "../../components/RootNavigator/types/ClaimNftNavigator";
 
 const cameraBoxDimensions = {
   width: Dimensions.get("screen").width,
@@ -80,7 +81,7 @@ const ClaimNftQrScan = () => {
   const navigation =
     useNavigation<
       CompositeNavigationProp<
-        StackNavigatorNavigation<ImportAccountsNavigatorParamList>,
+        StackNavigatorNavigation<ClaimNftNavigatorParamList>,
         StackNavigatorNavigation<BaseNavigatorStackParamList>
       >
     >();
