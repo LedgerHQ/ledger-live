@@ -117,7 +117,7 @@ export class DiscoverPage {
       return (webview as any)
         .executeJavaScript(
           `(function() {
-        return document.querySelector('pre').innerHTML;
+        return document.querySelector('*').innerHTML;
       })();
     `,
         )

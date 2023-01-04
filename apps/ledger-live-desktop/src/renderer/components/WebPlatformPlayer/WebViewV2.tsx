@@ -1,7 +1,7 @@
-import { shell, WebviewTag } from "electron";
+import { WebviewTag } from "electron";
 import semver from "semver";
 import * as remote from "@electron/remote";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Subject } from "rxjs";
@@ -32,6 +32,7 @@ import {
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { ServerError, createCurrencyNotFound, Transport } from "@ledgerhq/wallet-api-core";
 import {
+  bitcoinFamillyAccountGetXPubLogic,
   broadcastTransactionLogic,
   receiveOnAccountLogic,
   signTransactionLogic,
@@ -54,7 +55,7 @@ import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/Sele
 import { track } from "~/renderer/analytics/segment";
 import TopBar from "./TopBar";
 import { TopBarConfig } from "./type";
-import { Container, Wrapper, CustomWebview, Loader } from "./styled";
+import { Container, Wrapper, Loader } from "./styled";
 
 const tracking = trackingWrapper(track);
 
@@ -438,6 +439,10 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
 
         return Promise.resolve(transportId);
       });
+
+      serverRef.current.setHandler("bitcoin.getXPub", ({ accountId }) => {
+        return bitcoinFamillyAccountGetXPubLogic({ manifest, accounts, tracking }, accountId);
+      });
     }
     // Only used to init the server, no update needed
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -485,31 +490,44 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
     };
   }, [manifest, handleMessage]);
 
-  const handleNewWindow = useCallback(async e => {
-    const protocol = new URL(e.url).protocol;
-    if (protocol === "http:" || protocol === "https:") {
-      await shell.openExternal(e.url);
+  const handleDomReady = useCallback(() => {
+    const webview = targetRef.current;
+    if (!webview) {
+      return;
     }
+
+    const id = webview.getWebContentsId();
+
+    // cf. https://gist.github.com/codebytere/409738fcb7b774387b5287db2ead2ccb
+    // @ts-expect-error: missing typings for api
+    window.api.openWindow(id);
   }, []);
 
   useEffect(() => {
     const webview = targetRef.current;
 
     if (webview) {
-      // For mysterious reasons, the webpreferences attribute does not
-      // pass through the styled component when added in the JSX.
-      webview.webpreferences = "nativeWindowOpen=no";
-      webview.addEventListener("new-window", handleNewWindow);
       webview.addEventListener("did-finish-load", handleLoad);
+      webview.addEventListener("dom-ready", handleDomReady);
     }
 
     return () => {
       if (webview) {
-        webview.removeEventListener("new-window", handleNewWindow);
         webview.removeEventListener("did-finish-load", handleLoad);
+        webview.removeEventListener("dom-ready", handleDomReady);
       }
     };
-  }, [handleLoad, handleNewWindow]);
+  }, [handleLoad, handleDomReady]);
+
+  const webviewStyle = useMemo(() => {
+    return {
+      opacity: widgetLoaded ? 1 : 0,
+      border: "none",
+      width: "100%",
+      flex: 1,
+      transition: "opacity 200ms ease-out",
+    };
+  }, [widgetLoaded]);
 
   return (
     <Container>
@@ -523,11 +541,25 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
       />
 
       <Wrapper>
-        <CustomWebview
+        <webview
           src={url.toString()}
           ref={targetRef}
-          style={{ opacity: widgetLoaded ? 1 : 0 }}
+          /**
+           * There seem to be an issue between Electron webview and styled-components
+           * (and React more broadly, cf. comment below).
+           * When using a styled webview componennt, the `allowpopups` prop does not
+           * seem to be set
+           */
+          style={webviewStyle}
           preload={`file://${remote.app.dirname}/webviewPreloader.bundle.js`}
+          /**
+           * There seems to be an issue between Electron webview and react
+           * Hence, the normal `allowpopups` prop does not work and we need to
+           * explicitly set its value to "true" as a string
+           * cf. https://github.com/electron/electron/issues/6046
+           */
+          // @ts-expect-error: see above comment
+          allowpopups="true"
         />
         {!widgetLoaded ? (
           <Loader>
