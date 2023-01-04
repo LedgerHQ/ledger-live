@@ -1,4 +1,4 @@
-name: "[Test] Desktop App (external)"
+name: "@Desktop • Test App (external)"
 
 on:
   workflow_dispatch:

@@ -7,7 +7,7 @@ export enum RUNNERS {
 }
 export const WORKFLOWS = {
   "build-desktop.yml": {
-    checkRunName: "[Desktop] Build the app",
+    checkRunName: "@Desktop • Build App",
     description:
       "Build the Ledger Live Desktop application on all platforms and attach the binaries to the workflow run.",
     runsOn: RUNNERS.internal,
@@ -21,7 +21,7 @@ export const WORKFLOWS = {
     },
   },
   "build-desktop-external.yml": {
-    checkRunName: "[Desktop] Build the app (external)",
+    checkRunName: "@Desktop • Build App (external)",
     description:
       "Build the Ledger Live Desktop application on all platforms and attach the binaries to the workflow run.",
     runsOn: RUNNERS.external,
@@ -35,7 +35,7 @@ export const WORKFLOWS = {
     },
   },
   "test-desktop.yml": {
-    checkRunName: "[Desktop] Run e2e and unit tests",
+    checkRunName: "@Desktop • Test App",
     description:
       "Perform [end to end](https://playwright.dev/) and [unit](https://jestjs.io/fr/) tests, [type checks](https://www.typescriptlang.org/) and run the [linter](https://eslint.org/) on the Ledger Live Desktop application.",
     runsOn: RUNNERS.internal,
@@ -49,7 +49,7 @@ export const WORKFLOWS = {
     },
   },
   "test-desktop-external.yml": {
-    checkRunName: "[Desktop] Run e2e and unit tests (external)",
+    checkRunName: "@Desktop • Test App (external)",
     description:
       "Run end to end tests ([playwright](https://playwright.dev/), unit tests ([jest](https://jestjs.io/fr/)), the [type checker](https://www.typescriptlang.org/) and the [linter](https://eslint.org/) on the Ledger Live Desktop application.",
     runsOn: RUNNERS.external,
@@ -63,7 +63,7 @@ export const WORKFLOWS = {
     },
   },
   "build-mobile.yml": {
-    checkRunName: "[Mobile] Build the app",
+    checkRunName: "@Mobile • Build App",
     description:
       "Build the Ledger Live Mobile application and attach the apk to the workflow run.",
     runsOn: RUNNERS.internal,
@@ -77,7 +77,7 @@ export const WORKFLOWS = {
     },
   },
   "build-mobile-external.yml": {
-    checkRunName: "[Mobile] Build the app (external)",
+    checkRunName: "@Mobile • Build App (external)",
     description:
       "Build the Ledger Live Mobile application and attach the apk to the workflow run.",
     runsOn: RUNNERS.external,
@@ -91,7 +91,7 @@ export const WORKFLOWS = {
     },
   },
   "test-mobile.yml": {
-    checkRunName: "[Mobile] Run tests",
+    checkRunName: "@Mobile • Test App",
     description:
       "Perform [type](https://www.typescriptlang.org/) and [lint](https://eslint.org/) checks on the Ledger Live Mobile application.",
     runsOn: RUNNERS.both,
