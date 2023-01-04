@@ -5516,6 +5516,14 @@
       "title": "Your device is locked",
       "description": "Unlock your device and try again.",
       "descriptionWithProductName": "Unlock your {{ productName }} and try again."
+    },
+    "DeviceNotOnboardedError": {
+      "title": "Your device is not ready to use yet",
+      "titleWithProductName": "{{ productName }} is not ready to use yet",
+      "description": "You need to setup your device first.\nWe will guide you through the setup process.",
+      "descriptionWithProductName": "You need to setup your {{ productName }} first.\nWe will guide you through the setup process.",
+      "goToOnboardingButton": "Set up my device",
+      "goToOnboardingButtonWithProductName": "Set up my {{ productName }}"
     }
   },
   "cryptoOrg": {

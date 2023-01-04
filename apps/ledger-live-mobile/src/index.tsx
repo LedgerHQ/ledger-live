@@ -73,7 +73,7 @@ import LedgerStoreProvider from "./context/LedgerStore";
 import LoadingApp from "./components/LoadingApp";
 import StyledStatusBar from "./components/StyledStatusBar";
 import AnalyticsConsole from "./components/AnalyticsConsole";
-import ThemeDebug from "./components/ThemeDebug";
+import DebugTheme from "./components/DebugTheme";
 import { BridgeSyncProvider } from "./bridge/BridgeSyncContext";
 import useDBSaveEffect from "./components/DBSave";
 import useAppStateListener from "./components/useAppStateListener";
@@ -227,7 +227,7 @@ function App({ importDataString }: AppProps) {
       <RootNavigator importDataString={importDataString} />
 
       <AnalyticsConsole />
-      <ThemeDebug />
+      <DebugTheme />
       <Modals />
     </GestureHandlerRootView>
   );

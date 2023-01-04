@@ -72,7 +72,7 @@ const { format } = winston;
 const { combine, json } = format;
 const winstonFormatJSON = json();
 const winstonFormatConsole = combine(
-  format(({ type: _type, id: _id, date: _date, ...rest }) => rest)(),
+  format(({ type, message, id: _id, date: _date, ...rest }) => ({ ...rest, message: `${type}: ${message}` }) )(),
   format.colorize(),
   simple()
 );
