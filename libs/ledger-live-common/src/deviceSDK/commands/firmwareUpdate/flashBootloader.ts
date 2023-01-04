@@ -3,16 +3,12 @@ import URL from "url";
 import Transport, { TransportStatusError } from "@ledgerhq/hw-transport";
 import type { OsuFirmware } from "@ledgerhq/types-live";
 import type { DeviceInfo, SocketEvent } from "@ledgerhq/types-live";
-import { version as livecommonversion } from "../../../package.json";
-import { getEnv } from "../../env";
-import {
-  createMockSocket,
-  bulkSocketMock,
-  secureChannelMock,
-} from "../../api/socket.mock";
+import { version as livecommonversion } from "../../../../package.json";
+import { getEnv } from "../../../env";
+//import { createMockSocket, bulkSocketMock, secureChannelMock } from "../../api/socket.mock";
 import { log } from "@ledgerhq/logs";
-import { createDeviceSocket } from "../../api/socket";
-import { catchError, map } from "rxjs/operators";
+import { createDeviceSocket } from "../../../api/socket";
+import { catchError, filter, map } from "rxjs/operators";
 import {
   ManagerFirmwareNotEnoughSpaceError,
   UserRefusedFirmwareUpdate,
@@ -24,17 +20,38 @@ export type InstallOsuFirmwareCommandRequest = {
   osuFirmware: OsuFirmware;
 };
 
+const castProgressEvent = (e: SocketEvent) =>
+  e as
+    | {
+        type: "bulk-progress";
+        progress: number;
+        index: number;
+        total: number;
+      }
+    | {
+        type: "device-permission-requested";
+        wording: string;
+      };
+
 // TODO: update SocketEvent as a generic so we can type the result payload
 // TODO: should the mapping into more meaningful events be done here or at the task level?
-export type InstallOsuFirmwareCommandEvent = SocketEvent;
+export type InstallOsuFirmwareCommandEvent =
+  | {
+      type: "progress";
+      progress: number;
+    }
+  | {
+      type: "allowManagerRequested";
+    }
+  | {
+      type: "firmwareUpgradePermissionRequested";
+    };
 
 export function installOsuFirmwareCommand(
   transport: Transport,
   { targetId, osuFirmware }: InstallOsuFirmwareCommandRequest
 ): Observable<InstallOsuFirmwareCommandEvent> {
-  if (getEnv("MOCK")) {
-    return createMockSocket(secureChannelMock(true), bulkSocketMock(3000));
-  }
+  // TODO handle mock
 
   log("device-command", "installOsuFirmware", {
     targetId,
@@ -54,22 +71,31 @@ export function installOsuFirmwareCommand(
     }),
   }).pipe(
     catchError(remapSocketFirmwareError),
+    filter(
+      (e) =>
+        e.type === "bulk-progress" || e.type === "device-permission-requested"
+    ),
+    map(castProgressEvent),
     map((e) => {
-      if (e.type === "result") {
-        return {
-          type: "result",
-          payload: String(e.payload || ""),
-        };
+      if (e.type === "bulk-progress") {
+        return e.index >= e.total - 1
+          ? {
+              type: "firmwareUpgradePermissionRequested",
+            }
+          : {
+              type: "progress",
+              progress: e.progress,
+            };
       }
-
-      return e;
+      // then type is "device-permission-requested"
+      return { type: "allowManagerRequested" };
     })
   );
 }
 
-const remapSocketFirmwareError: (
+const remapSocketFirmwareError: (e: Error) => Observable<never> = (
   e: Error
-) => Observable<InstallOsuFirmwareCommandEvent> = (e: Error) => {
+) => {
   if (!e || !e.message) return throwError(e);
 
   if (e.message.startsWith("invalid literal")) {
