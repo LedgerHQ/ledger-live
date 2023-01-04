@@ -102,6 +102,7 @@
     "addressCopied" : "Adresse kopiert",
     "addressCopiedSuspicious" : "Unstimmigkeit zwischen der kopierten Adresse und der in der Zwischenablage.",
     "experimentalFeature" : "Experimentell",
+    "featureFlags" : "Feature Flags",
     "information" : "Information",
     "search" : "Suche...",
     "searchWithoutEllipsis" : "Suchen nach",
@@ -131,7 +132,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blau"
   },
   "operation" : {
@@ -1206,8 +1207,11 @@
         "checkDeviceButton" : "Überprüfung erneut durchführen",
         "cancelButton" : "Vielleicht später"
       },
-      "genuineCheckAnimationModal" : {
-        "message" : "Manager aktivieren auf {{deviceName}}"
+      "softwareCheckAllowSecureChannelModal" : {
+        "title" : "Allow manager on {{deviceName}}"
+      },
+      "softwareCheckLockedDeviceModal" : {
+        "title" : "Unlock your device"
       },
       "helpDrawer" : {
         "title" : "Benötigen Sie Hilfe mit Ihrem Einrichtungshandbuch?",
@@ -3698,6 +3702,9 @@
       "featureFlagsEdit" : "Bearbeiten",
       "featureFlagsRestore" : "Wiederherstellen",
       "featureFlagsOverride" : "Überschreiben",
+      "featureFlagsRestoreAll" : "Restore all flags values",
+      "showButtonDesc" : "Always display the Feature Flags button in the Sidebar",
+      "buttonTitle" : "Flags overridden locally",
       "firebaseProject" : "Firebase-Projekt, auf das diese Entwicklung abzielt",
       "addLocalApp" : "Lokale App hinzufügen",
       "addLocalAppDesc" : "Durchsuchen Sie lokale Dateien und fügen Sie eine lokale App mit einem lokalen Manifest hinzu",
@@ -5497,6 +5504,14 @@
       "title" : "Ihr Gerät ist gesperrt",
       "description" : "Entsperren Sie Ihr Gerät und versuchen Sie es erneut.",
       "descriptionWithProductName" : "Entsperren Sie Ihr {{ productName }} und versuchen Sie es erneut."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "Your device is not ready to use yet",
+      "titleWithProductName" : "{{ productName }} is not ready to use yet",
+      "description" : "You need to setup your device first.\nWe will guide you through the setup process.",
+      "descriptionWithProductName" : "You need to setup your {{ productName }} first.\nWe will guide you through the setup process.",
+      "goToOnboardingButton" : "Set up my device",
+      "goToOnboardingButtonWithProductName" : "Set up my {{ productName }}"
     }
   },
   "cryptoOrg" : {
@@ -5559,8 +5574,7 @@
     "postOnboarding" : {
       "title" : "Mein Gerät personalisieren",
       "description" : "Durch Anpassen des Bildschirms",
-      "actionCompletedPopupLabel" : "Gerät personalisiert",
-      "actionCompletedHubTitle" : "Dieser Bildschirm sieht gut aus."
+      "actionCompletedPopupLabel" : "Gerät personalisiert"
     },
     "customImageSet" : "Benutzerdefiniertes Bild-Set",
     "finishCTA" : "Beenden"
