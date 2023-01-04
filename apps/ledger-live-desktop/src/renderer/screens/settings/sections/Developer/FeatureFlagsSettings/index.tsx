@@ -1,8 +1,9 @@
-import React, { useState, useMemo, useCallback, useRef } from "react";
+import React, { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ButtonV2 from "~/renderer/components/Button";
 import Button from "~/renderer/components/ButtonV3";
 import { useTranslation } from "react-i18next";
+import { useLocation } from "react-router-dom";
 import {
   defaultFeatures,
   groupedFeatures,
@@ -21,10 +22,6 @@ import TabBar from "~/renderer/components/TabBar";
 import { featureFlagsButtonVisibleSelector } from "~/renderer/reducers/settings";
 import { setFeatureFlagsButtonVisible } from "~/renderer/actions/settings";
 
-type FeatureFlagsSettingsProps = {
-  shouldOpenFeatureFlags: boolean;
-};
-
 const addFlagHint = `\
 If a feature flag is defined in the targeted Firebase environment \
 but it is missing from the following list, you can type its **exact** name in \
@@ -32,7 +29,7 @@ the search input and it will appear in the list. Type the \
 flag name in camelCase without the "feature" prefix.\
 `;
 
-export const FeatureFlagContent = withV3StyleProvider((props: { visible?: boolean }) => {
+export const FeatureFlagContent = withV3StyleProvider((props: { expanded?: boolean }) => {
   const { t } = useTranslation();
   const featureFlagsButtonVisible = useSelector(featureFlagsButtonVisibleSelector);
   const dispatch = useDispatch();
@@ -154,7 +151,7 @@ export const FeatureFlagContent = withV3StyleProvider((props: { visible?: boolea
         {t("settings.developer.featureFlagsDesc")}
         {cheatActivated ? " With great power comes great responsibility." : null}
       </div>
-      {!props.visible ? null : (
+      {!props.expanded ? null : (
         <>
           <Flex flexDirection="row" alignItems="center" columnGap={3}>
             {t("settings.developer.firebaseProject")}
@@ -204,24 +201,29 @@ export const FeatureFlagContent = withV3StyleProvider((props: { visible?: boolea
   );
 });
 
-const FeatureFlagsSettings = ({ shouldOpenFeatureFlags }: FeatureFlagsSettingsProps) => {
+const FeatureFlagsSettings = () => {
   const { t } = useTranslation();
-  const [visible, setVisible] = useState(shouldOpenFeatureFlags);
+  const [contentExpanded, setContentExpanded] = useState(false);
+  const location = useLocation<{ shouldOpenFeatureFlags?: boolean }>();
 
-  const handleClick = useCallback(() => {
-    setVisible(!visible);
-  }, [visible]);
+  useEffect(() => setContentExpanded(Boolean(location.state?.shouldOpenFeatureFlags)), [
+    location.state?.shouldOpenFeatureFlags,
+  ]);
+
+  const toggleContentVisibility = useCallback(() => {
+    setContentExpanded(!contentExpanded);
+  }, [contentExpanded]);
 
   return (
     <Row
       title={t("settings.developer.featureFlagsTitle")}
       descContainerStyle={{ maxWidth: undefined }}
       contentContainerStyle={{ marginRight: 0 }}
-      childrenContainerStyle={{ alignSelf: visible ? "flex-start" : "center" }}
-      desc={<FeatureFlagContent visible={visible} />}
+      childrenContainerStyle={{ alignSelf: contentExpanded ? "flex-start" : "center" }}
+      desc={<FeatureFlagContent expanded={contentExpanded} />}
     >
-      <ButtonV2 small primary onClick={handleClick}>
-        {visible ? "Hide" : "Show"}
+      <ButtonV2 small primary onClick={toggleContentVisibility}>
+        {contentExpanded ? "Hide" : "Show"}
       </ButtonV2>
     </Row>
   );

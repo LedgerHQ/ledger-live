@@ -1,8 +1,7 @@
 // @flow
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation } from "react-router-dom";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../SettingsSection";
 import AllowExperimentalAppsToggle from "./AllowExperimentalAppsToggle";
@@ -15,12 +14,6 @@ import EnableLearnPageStagingUrlToggle from "./EnableLearnPageStagingUrlToggle";
 
 const SectionDeveloper = () => {
   const { t } = useTranslation();
-  const location = useLocation();
-  const [shouldOpenFeatureFlags, setShouldOpenFeatureFlags] = useState(
-    !!location.state?.shouldOpenFeatureFlags,
-  );
-
-  useEffect(() => setShouldOpenFeatureFlags(!!location.state?.shouldOpenFeatureFlags), [location]);
 
   return (
     <>
@@ -51,7 +44,7 @@ const SectionDeveloper = () => {
           <EnablePlatformDevToolsToggle />
         </Row>
         <RunLocalAppButton />
-        <FeatureFlagsSettings shouldOpenFeatureFlags={shouldOpenFeatureFlags} />
+        <FeatureFlagsSettings />
         <Row
           title={t("settings.developer.enableLearnStagingUrl")}
           desc={t("settings.developer.enableLearnStagingUrlDesc")}
