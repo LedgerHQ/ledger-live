@@ -1,4 +1,5 @@
 import { CosmosOperationMode } from "../types";
+import { BigNumber } from "bignumber.js";
 
 abstract class cosmosBase {
   abstract lcd: string;
@@ -7,6 +8,7 @@ abstract class cosmosBase {
   abstract ledgerValidator: string;
   defaultGas = 100000;
   minGasprice = 0.0025;
+  minimalTransactionAmount = new BigNumber(10000);
   version = "v1beta1";
   gas: {
     [Key in CosmosOperationMode]: number;

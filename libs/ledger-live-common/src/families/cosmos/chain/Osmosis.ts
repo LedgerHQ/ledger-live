@@ -1,5 +1,6 @@
 import CosmosBase from "./cosmosBase";
 import { getEnv } from "../../../env";
+import { BigNumber } from "bignumber.js";
 
 class Osmosis extends CosmosBase {
   lcd: string;
@@ -20,6 +21,7 @@ class Osmosis extends CosmosBase {
       claimReward: 300000,
       claimRewardCompound: 400000,
     };
+    this.minimalTransactionAmount = new BigNumber(10);
     this.ledgerValidator = "osmovaloper17cp6fxccqxrpj4zc00w2c7u6y0umc2jajsyc5t";
     CosmosBase.COSMOS_FAMILY_LEDGER_VALIDATOR_ADDRESSES.push(
       this.ledgerValidator
