@@ -1,4 +1,4 @@
-name: "[Build] Desktop App"
+name: "@Desktop • Build App"
 
 on:
   push:

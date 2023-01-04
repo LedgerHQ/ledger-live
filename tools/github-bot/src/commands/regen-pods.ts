@@ -1,5 +1,5 @@
 import { Context, Probot } from "probot";
-import { commands } from "./tools";
+import { commands, monitorWorkflow } from "./tools";
 
 // Keep this in sync with the workflow file
 const ACTION_ID = "regen_pods";
@@ -15,18 +15,22 @@ export function regenPods(app: Probot) {
     context,
     number,
     login,
+    comment = false,
   }: {
     context: Context;
     number: string;
     login: string;
+    comment?: boolean;
   }) {
     await context.octokit.actions.createWorkflowDispatch({
       ...context.repo(),
       workflow_id: "regen-pods.yml",
-      ref: "develop",
+      // ref: "develop",
+      ref: "support/granular-ci",
       inputs: {
         number,
         login,
+        comment: comment.toString(),
       },
     });
   }
@@ -46,6 +50,7 @@ export function regenPods(app: Probot) {
       context,
       number: `${data.number}`,
       login: `${payload.comment.user.login}`,
+      comment: true,
     });
   });
 
@@ -64,5 +69,18 @@ export function regenPods(app: Probot) {
       number: `${number}`,
       login,
     });
+  });
+
+  monitorWorkflow(app, {
+    file: "regen-pods.yml",
+    checkRunName: "@Mobile • Regen Pods",
+    description: "Regenerates iOS podlock file",
+    summaryFile: "summary.json",
+    getInputs: (payload: any) => {
+      return {
+        sha: payload.workflow_run.head_sha,
+        ref: payload.workflow_run.head_branch,
+      };
+    },
   });
 }

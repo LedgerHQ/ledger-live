@@ -1,4 +1,5 @@
-name: Desktop App - Generate Screenshots
+name: "@Desktop • Generate Screenshots"
+run-name: "@${{ inputs.login }} triggered @Desktop • Generate Screenshots ${{ inputs.ref && format('on branch {0}', inputs.ref) || format('on PR {0}', inputs.number) }}"
 
 on:
   workflow_dispatch:
@@ -192,7 +193,7 @@ jobs:
 
   report-start:
     name: Report start
-    runs-on: "ubuntu-latest"
+    runs-on: ubuntu-latest
     steps:
       - name: report start
         uses: actions/github-script@v6
@@ -214,7 +215,7 @@ jobs:
               repo,
               issue_number,
               body,
-            })
+            });
 
   report-end:
     needs:
@@ -241,7 +242,6 @@ jobs:
               repo,
               run_id: ${{ github.run_id }},
             });
-            console.log("jobs", jobs);
 
             const jobsStatusString = jobs
               .filter(job => job.name.startsWith("generate-screenshots"))
@@ -252,7 +252,7 @@ jobs:
             ${{ env.comment_header }}
             @${{ github.event.inputs.login }}
 
-            [Generating screenshots: workflow ended:](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            [Generating screenshots: workflow ended](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
             **Jobs status:**
             ${jobsStatusString}

@@ -1,4 +1,4 @@
-name: "[Build] Desktop App (external)"
+name: "@Desktop • Build App (external)"
 
 on:
   workflow_dispatch:

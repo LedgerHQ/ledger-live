@@ -1,4 +1,4 @@
-name: "[Test] Mobile App End-2-End"
+name: "@Mobile • Test App End-2-End"
 
 on:
   # pull_request:
