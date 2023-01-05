@@ -8,7 +8,7 @@
 
 Ledger Hardware Wallet Zilliqa JavaScript bindings.
 
----
+***
 
 ## Are you adding Ledger support to your software wallet?
 
@@ -16,13 +16,13 @@ You may be using this package to communicate with the Zilliqa Nano App.
 
 For a smooth and quick integration:
 
--   See the developers’ documentation on the
+*   See the developers’ documentation on the
     [Developer Portal](https://developers.ledger.com/docs/transport/overview/)
     and
--   Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with
+*   Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with
     developer support and the developer community.
 
----
+***
 
 ## API
 
@@ -30,12 +30,16 @@ For a smooth and quick integration:
 
 #### Table of Contents
 
--   [Zilliqa](#zilliqa)
-    -   [Parameters](#parameters)
-    -   [Examples](#examples)
-    -   [getAddress](#getaddress)
-        -   [Parameters](#parameters-1)
-        -   [Examples](#examples-1)
+*   [Zilliqa](#zilliqa)
+    *   [Parameters](#parameters)
+    *   [Examples](#examples)
+    *   [getAddress](#getaddress)
+        *   [Parameters](#parameters-1)
+        *   [Examples](#examples-1)
+    *   [signTransaction](#signtransaction)
+        *   [Parameters](#parameters-2)
+    *   [signMessage](#signmessage)
+        *   [Parameters](#parameters-3)
 
 ### Zilliqa
 
@@ -43,16 +47,14 @@ Zilliqa API
 
 #### Parameters
 
--   `transport` **Transport**
--   `scrambleKey`
-    **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
-    (optional, default `APP_KEY`)
+*   `transport` **Transport** 
+*   `scrambleKey` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**  (optional, default `APP_KEY`)
 
 #### Examples
 
 ```javascript
 import Zilliqa from "@ledgerhq/hw-app-zilliqa";
-const zilliqa = new Zilliqa(transport);
+const zilliqa = new Zilliqa(transport)
 ```
 
 #### getAddress
@@ -61,24 +63,34 @@ get Zilliqa address for a given BIP 32 path.
 
 ##### Parameters
 
--   `path`
-    **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
-    a path in BIP 32 format
--   `hrp`
-    **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
-    usually zilliqa
--   `boolDisplay`
-    **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**
+*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
 
 ##### Examples
 
 ```javascript
-zilliqa.getAddress("44'/60'/0'/0/0", "zilliqa").then((o) => o.address);
+zilliqa.getAddress("44'/313'/0'/0/0", "zilliqa").then(o => o.address)
 ```
 
-Returns
-**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{publicKey:
-[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String),
-address:
-[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>**
-an object with a publicKey, address and (optionally) chainCode
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{publicKey: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), address: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** an object with a publicKey, address and (optionally) chainCode
+
+#### signTransaction
+
+Sign a Zilliqa transaction with a given BIP 32 path
+
+##### Parameters
+
+*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
+*   `message` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a raw hex string representing a serialized transaction.
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{signature: (null | [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)), returnCode: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}>** an object with signature and returnCode
+
+#### signMessage
+
+Signs a message with a given BIP 32 path
+
+##### Parameters
+
+*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
+*   `message` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a raw hex string representing a serialized transaction.
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{signature: (null | [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)), returnCode: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}>** an object with signature and returnCode
