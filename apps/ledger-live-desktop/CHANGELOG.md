@@ -1,5 +1,30 @@
 # ledger-live-desktop
 
+## 2.52.0-nightly.5
+
+### Patch Changes
+
+- [#2150](https://github.com/LedgerHQ/ledger-live/pull/2150) [`e7c1eaa6a2`](https://github.com/LedgerHQ/ledger-live/commit/e7c1eaa6a24d36aa535df7a06f17c55858de5475) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: handle locked device during onboarding polling, genuine check and get latest available firmware update
+
+* [#2242](https://github.com/LedgerHQ/ledger-live/pull/2242) [`15ffdd6972`](https://github.com/LedgerHQ/ledger-live/commit/15ffdd6972dcc3bf5de5af34528725fae24120af) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: fix typing of theme "light" | "dark"
+
+  - Removed unneeded "as" type casting, and used newly exported Theme type.
+  - Migrated animations.js to animations.ts
+
+- [#2224](https://github.com/LedgerHQ/ledger-live/pull/2224) [`35f1dfa0ad`](https://github.com/LedgerHQ/ledger-live/commit/35f1dfa0adb17671522f0e0fa87cfdac316b8f04) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Added grouped Feature Flags UX in LLD and a reset all button
+
+* [#2234](https://github.com/LedgerHQ/ledger-live/pull/2234) [`5133382a4e`](https://github.com/LedgerHQ/ledger-live/commit/5133382a4e6cbdff1b6f84d3bd1111ebc5da5ee5) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - New design for the device not onboarded error
+
+- [#2239](https://github.com/LedgerHQ/ledger-live/pull/2239) [`2253c293b1`](https://github.com/LedgerHQ/ledger-live/commit/2253c293b1ca682da0612e0222f6fc3ade8832df) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Fixes close button on Live Apps screen
+
+- Updated dependencies [[`15ffdd6972`](https://github.com/LedgerHQ/ledger-live/commit/15ffdd6972dcc3bf5de5af34528725fae24120af), [`e7c1eaa6a2`](https://github.com/LedgerHQ/ledger-live/commit/e7c1eaa6a24d36aa535df7a06f17c55858de5475), [`e7c1eaa6a2`](https://github.com/LedgerHQ/ledger-live/commit/e7c1eaa6a24d36aa535df7a06f17c55858de5475)]:
+  - @ledgerhq/react-ui@0.10.4-nightly.1
+  - @ledgerhq/live-common@27.11.0-nightly.4
+  - @ledgerhq/devices@7.0.7-nightly.2
+  - @ledgerhq/hw-transport@6.27.10-nightly.2
+  - @ledgerhq/hw-transport-node-hid-singleton@6.28.7-nightly.2
+  - @ledgerhq/hw-transport-http@6.27.10-nightly.2
+
 ## 2.52.0-nightly.4
 
 ### Minor Changes

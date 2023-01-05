@@ -1,5 +1,13 @@
 # @ledgerhq/react-ui
 
+## 0.10.4-nightly.1
+
+### Patch Changes
+
+- [#2242](https://github.com/LedgerHQ/ledger-live/pull/2242) [`15ffdd6972`](https://github.com/LedgerHQ/ledger-live/commit/15ffdd6972dcc3bf5de5af34528725fae24120af) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: narrow-typed theme to "dark"| "light"
+
+  And exported Theme type from react-ui
+
 ## 0.10.4-nightly.0
 
 ### Patch Changes

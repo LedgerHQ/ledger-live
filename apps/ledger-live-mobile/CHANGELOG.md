@@ -1,5 +1,19 @@
 # live-mobile
 
+## 3.13.0-nightly.15
+
+### Patch Changes
+
+- [#2150](https://github.com/LedgerHQ/ledger-live/pull/2150) [`e7c1eaa6a2`](https://github.com/LedgerHQ/ledger-live/commit/e7c1eaa6a24d36aa535df7a06f17c55858de5475) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: handle locked device during genuine check and get latest available firmware update
+
+- Updated dependencies [[`e7c1eaa6a2`](https://github.com/LedgerHQ/ledger-live/commit/e7c1eaa6a24d36aa535df7a06f17c55858de5475), [`e7c1eaa6a2`](https://github.com/LedgerHQ/ledger-live/commit/e7c1eaa6a24d36aa535df7a06f17c55858de5475)]:
+  - @ledgerhq/live-common@27.11.0-nightly.4
+  - @ledgerhq/devices@7.0.7-nightly.2
+  - @ledgerhq/hw-transport@6.27.10-nightly.2
+  - @ledgerhq/react-native-hid@6.28.12-nightly.2
+  - @ledgerhq/react-native-hw-transport-ble@6.27.13-nightly.2
+  - @ledgerhq/hw-transport-http@6.27.10-nightly.2
+
 ## 3.13.0-nightly.14
 
 ### Minor Changes

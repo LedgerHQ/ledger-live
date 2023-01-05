@@ -1,5 +1,11 @@
 # @ledgerhq/devices
 
+## 7.0.7-nightly.2
+
+### Patch Changes
+
+- [#2150](https://github.com/LedgerHQ/ledger-live/pull/2150) [`e7c1eaa6a2`](https://github.com/LedgerHQ/ledger-live/commit/e7c1eaa6a24d36aa535df7a06f17c55858de5475) Thanks [@alexandremgo](https://github.com/alexandremgo)! - support: string to DeviceModelId helper function
+
 ## 7.0.7-nightly.1
 
 ### Patch Changes

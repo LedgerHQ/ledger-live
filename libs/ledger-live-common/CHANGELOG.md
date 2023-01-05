@@ -1,5 +1,28 @@
 # @ledgerhq/live-common
 
+## 27.11.0-nightly.4
+
+### Patch Changes
+
+- [#2150](https://github.com/LedgerHQ/ledger-live/pull/2150) [`e7c1eaa6a2`](https://github.com/LedgerHQ/ledger-live/commit/e7c1eaa6a24d36aa535df7a06f17c55858de5475) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: handle locked device in genuine check, get latest available firmware update, and onboarding polling
+
+- Updated dependencies [[`e7c1eaa6a2`](https://github.com/LedgerHQ/ledger-live/commit/e7c1eaa6a24d36aa535df7a06f17c55858de5475)]:
+  - @ledgerhq/devices@7.0.7-nightly.2
+  - @ledgerhq/hw-transport@6.27.10-nightly.2
+  - @ledgerhq/hw-app-algorand@6.27.10-nightly.2
+  - @ledgerhq/hw-app-btc@9.1.2-nightly.2
+  - @ledgerhq/hw-app-cosmos@6.27.10-nightly.2
+  - @ledgerhq/hw-app-eth@6.30.4-nightly.2
+  - @ledgerhq/hw-app-near@6.27.5-nightly.2
+  - @ledgerhq/hw-app-polkadot@6.27.10-nightly.2
+  - @ledgerhq/hw-app-solana@7.0.4-nightly.2
+  - @ledgerhq/hw-app-str@6.27.10-nightly.2
+  - @ledgerhq/hw-app-tezos@6.27.10-nightly.2
+  - @ledgerhq/hw-app-trx@6.27.10-nightly.2
+  - @ledgerhq/hw-app-xrp@6.27.10-nightly.2
+  - @ledgerhq/hw-transport-mocker@6.27.10-nightly.2
+  - @ledgerhq/hw-transport-node-speculos@6.27.10-nightly.2
+
 ## 27.11.0-nightly.3
 
 ### Minor Changes

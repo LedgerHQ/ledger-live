@@ -1,5 +1,13 @@
 # @ledgerhq/hw-app-eth
 
+## 6.30.4-nightly.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.27.10-nightly.2
+  - @ledgerhq/hw-transport-mocker@6.27.10-nightly.2
+
 ## 6.30.4-nightly.1
 
 ### Patch Changes
