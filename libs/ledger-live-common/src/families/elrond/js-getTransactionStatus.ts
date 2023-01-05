@@ -1,13 +1,13 @@
 import BigNumber from "bignumber.js";
 import {
   NotEnoughBalance,
-  NotEnoughBalanceInParentAccount,
   RecipientRequired,
   InvalidAddress,
   FeeNotLoaded,
   InvalidAddressBecauseDestinationIsAlsoSource,
   FeeTooHigh,
   AmountRequired,
+  NotEnoughGas,
 } from "@ledgerhq/errors";
 import { formatCurrencyUnit } from "../../currencies";
 import { getAccountUnit } from "../../account";
@@ -134,9 +134,10 @@ const getTransactionStatus = async (
   }
 
   if (!errors.amount && totalSpentEgld.gt(a.spendableBalance)) {
-    errors.amount = tokenAccount
-      ? new NotEnoughBalanceInParentAccount()
-      : new NotEnoughBalance();
+    errors.amount =
+      tokenAccount || !["delegate", "send"].includes(t.mode)
+        ? new NotEnoughGas()
+        : new NotEnoughBalance();
   }
 
   return Promise.resolve({
