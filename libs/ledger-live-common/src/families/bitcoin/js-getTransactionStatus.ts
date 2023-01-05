@@ -7,6 +7,7 @@ import {
   DustLimit,
   FeeTooHigh,
   FeeRequired,
+  OpReturnDataSizeLimit,
 } from "@ledgerhq/errors";
 import type { Account } from "@ledgerhq/types-live";
 
@@ -16,13 +17,14 @@ import { TaprootNotActivated } from "./errors";
 import { computeDustAmount } from "./wallet-btc/utils";
 import { Currency } from "./wallet-btc";
 import cryptoFactory from "./wallet-btc/crypto/factory";
+import { OP_RETURN_DATA_SIZE_LIMIT } from "./wallet-btc/crypto/base";
 
 const getTransactionStatus = async (
   a: Account,
   t: Transaction
 ): Promise<TransactionStatus> => {
-  const errors: any = {};
-  const warnings: any = {};
+  const errors: Record<string, Error> = {};
+  const warnings: Record<string, Error> = {};
   const useAllAmount = !!t.useAllAmount;
   const { recipientError, recipientWarning } = await validateRecipient(
     a.currency,
@@ -128,6 +130,10 @@ const getTransactionStatus = async (
     if (amount.gt(0) && amount.lt(dustAmount)) {
       errors.dustLimit = new DustLimit();
     }
+  }
+
+  if (opReturnData && opReturnData.length > OP_RETURN_DATA_SIZE_LIMIT) {
+    errors.opReturnSizeLimit = new OpReturnDataSizeLimit();
   }
 
   return {

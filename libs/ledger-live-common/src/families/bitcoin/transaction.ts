@@ -59,8 +59,10 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
       feeItems: fromFeeItemsRaw(tr.networkInfo.feeItems),
     },
     feesStrategy: tr.feesStrategy,
+    opReturnData: tr.opReturnData,
   };
 };
+
 export const toTransactionRaw = (t: Transaction): TransactionRaw => {
   const common = toTransactionCommonRaw(t);
   return {
@@ -88,6 +90,7 @@ const fromTransactionStatusRaw = (
     txOutputs: tr.txOutputs
       ? tr.txOutputs.map(fromBitcoinOutputRaw)
       : undefined,
+    opReturnData: tr.opReturnData,
   };
 };
 
@@ -97,6 +100,7 @@ const toTransactionStatusRaw = (t: TransactionStatus): TransactionStatusRaw => {
     ...common,
     txInputs: t.txInputs ? t.txInputs.map(toBitcoinInputRaw) : undefined,
     txOutputs: t.txOutputs ? t.txOutputs.map(toBitcoinOutputRaw) : undefined,
+    opReturnData: t.opReturnData,
   };
 };
 

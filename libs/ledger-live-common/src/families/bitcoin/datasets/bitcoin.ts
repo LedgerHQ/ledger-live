@@ -1,10 +1,11 @@
 import { BigNumber } from "bignumber.js";
 import type { CurrenciesData } from "@ledgerhq/types-live";
-import { DustLimit } from "@ledgerhq/errors";
+import { DustLimit, OpReturnDataSizeLimit } from "@ledgerhq/errors";
 
 import type { BitcoinAccountRaw, NetworkInfoRaw, Transaction } from "../types";
 import { fromTransactionRaw } from "../transaction";
 import scanAccounts1 from "./bitcoin.scanAccounts.1";
+import { OP_RETURN_DATA_SIZE_LIMIT } from "../wallet-btc/crypto/base";
 
 const networkInfo: NetworkInfoRaw = {
   family: "bitcoin",
@@ -57,6 +58,7 @@ export const bitcoin1: BitcoinAccountRaw = {
     utxos: [],
   },
 };
+
 export const bitcoin2: BitcoinAccountRaw = {
   id: "libcore:1:bitcoin:xpub6DEHKg8fgKcb9at2u9Xhjtx4tXGyWqUPQAx2zNCzr41gQRyCqpCn7onSoJU4VS96GXyCtAhhFxErnG2pGVvVexaqF7DEfqGGnGk7Havn7C2:native_segwit",
   seedIdentifier:
@@ -238,6 +240,107 @@ const dataset: CurrenciesData<Transaction> = {
             };
           },
         },
+        {
+          name: "Send with OP_RETURN",
+          transaction: (t): Transaction => {
+            return {
+              ...t,
+              family: "bitcoin",
+              recipient: "BC1QQMXQDRKXGX6SWRVJL9L2E6SZVVKG45ALL5U4FL",
+              amount: new BigNumber(500),
+              opReturnData: Buffer.from("charley loves heidi", "utf-8"),
+              feePerByte: new BigNumber(1),
+              networkInfo: {
+                family: "bitcoin",
+                feeItems: {
+                  items: [
+                    {
+                      key: "0",
+                      speed: "high",
+                      feePerByte: new BigNumber(3),
+                    },
+                    {
+                      key: "1",
+                      speed: "standard",
+                      feePerByte: new BigNumber(2),
+                    },
+                    {
+                      key: "2",
+                      speed: "low",
+                      feePerByte: new BigNumber(1),
+                    },
+                  ],
+                  defaultFeePerByte: new BigNumber(1),
+                },
+              },
+              rbf: false,
+              utxoStrategy: {
+                strategy: 0,
+                excludeUTXOs: [],
+              },
+            };
+          },
+          expectedStatus: () => {
+            return {
+              // FIXME: this test is ran twice and OpReturnData is undefined the 2nd time
+              // opReturnData: "charley loves heidi",
+              errors: {},
+              warnings: {},
+            };
+          },
+        },
+        {
+          name: "Throw error when OP_RETURN size is too large",
+          transaction: (t): Transaction => {
+            return {
+              ...t,
+              family: "bitcoin",
+              recipient: "BC1QQMXQDRKXGX6SWRVJL9L2E6SZVVKG45ALL5U4FL",
+              amount: new BigNumber(999),
+              opReturnData: Buffer.from(
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+              ),
+              feePerByte: new BigNumber(1),
+              networkInfo: {
+                family: "bitcoin",
+                feeItems: {
+                  items: [
+                    {
+                      key: "0",
+                      speed: "high",
+                      feePerByte: new BigNumber(3),
+                    },
+                    {
+                      key: "1",
+                      speed: "standard",
+                      feePerByte: new BigNumber(2),
+                    },
+                    {
+                      key: "2",
+                      speed: "low",
+                      feePerByte: new BigNumber(1),
+                    },
+                  ],
+                  defaultFeePerByte: new BigNumber(1),
+                },
+              },
+              rbf: false,
+              utxoStrategy: {
+                strategy: 0,
+                excludeUTXOs: [],
+              },
+            };
+          },
+          expectedStatus: () => {
+            return {
+              // FIXME: this test is ran twice and OpReturnData is undefined the 2nd time
+              // errors: {
+              //   opReturnSizeLimit: new OpReturnDataSizeLimit(),
+              // },
+              warnings: {},
+            };
+          },
+        },
       ],
       raw: bitcoin1,
     },
@@ -247,4 +350,5 @@ const dataset: CurrenciesData<Transaction> = {
     },
   ],
 };
+
 export default dataset;

@@ -18,12 +18,14 @@ export type BitcoinInput = {
   previousTxHash: string | null | undefined;
   previousOutputIndex: number;
 };
+
 export type BitcoinInputRaw = [
   string | null | undefined,
   string | null | undefined,
   string | null | undefined,
   number
 ];
+
 export type BitcoinOutput = {
   hash: string;
   outputIndex: number;
@@ -33,6 +35,7 @@ export type BitcoinOutput = {
   rbf: boolean;
   isChange: boolean;
 };
+
 export type BitcoinOutputRaw = [
   string,
   number,
@@ -42,10 +45,12 @@ export type BitcoinOutputRaw = [
   number, // rbf 0/1 for compression
   number
 ];
+
 export type BitcoinResources = {
   utxos: BitcoinOutput[];
   walletAccount?: WalletAccount;
 };
+
 export type BitcoinResourcesRaw = {
   utxos: BitcoinOutputRaw[];
   walletAccount?: WalletAccountRaw;
@@ -161,6 +166,7 @@ export type TransactionStatus = TransactionStatusCommon & {
 };
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw & {
+  opReturnData?: string;
   txInputs?: BitcoinInputRaw[];
   txOutputs?: BitcoinOutputRaw[];
 };
