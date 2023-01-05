@@ -6,29 +6,29 @@ import type { ZilliqaAccount } from "./types";
 const options = [];
 
 function inferTransactions(
-	transactions: Array<{
-		account: AccountLike;
-		transaction: Transaction;
-	}>,
-	_opts: Record<string, any>
+  transactions: Array<{
+    account: AccountLike;
+    transaction: Transaction;
+  }>,
+  _opts: Record<string, any>
 ): Transaction[] {
-	return flatMap(transactions, ({ transaction, account }) => {
-		invariant(transaction.family === "zilliqa", "zilliqa family");
+  return flatMap(transactions, ({ transaction, account }) => {
+    invariant(transaction.family === "zilliqa", "zilliqa family");
 
-		if (account.type === "Account") {
-			invariant(
-				(account as ZilliqaAccount).zilliqaResources,
-				"unactivated account"
-			);
-		}
+    if (account.type === "Account") {
+      invariant(
+        (account as ZilliqaAccount).zilliqaResources,
+        "unactivated account"
+      );
+    }
 
-		transaction.family = "zilliqa";
+    transaction.family = "zilliqa";
 
-		return transaction;
-	});
+    return transaction;
+  });
 }
 
 export default {
-	options,
-	inferTransactions,
+  options,
+  inferTransactions,
 };

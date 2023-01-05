@@ -4,16 +4,15 @@ import { BigNumber } from "bignumber.js";
 import { BN } from "@zilliqa-js/util";
 
 export const getEstimatedFees = async ({
-	a,
-	t,
+  _a,
+  _t,
 }: {
-	a: ZilliqaAccount;
-	t: Transaction;
+  a: ZilliqaAccount;
+  t: Transaction;
 }): Promise<BigNumber> => {
-	console.log("ZILLIQA: getEstimatedFees.");
-	const gasPrice = await getMinimumGasPrice();
-	const gasLimit = new BN(ZILLIQA_TX_GAS_LIMIT);
-	return new BigNumber(gasPrice.mul(gasLimit).toString());
+  const gasPrice = await getMinimumGasPrice();
+  const gasLimit = new BN(ZILLIQA_TX_GAS_LIMIT);
+  return new BigNumber(gasPrice.mul(gasLimit).toString());
 };
 
 export default getEstimatedFees;

@@ -1,6 +1,5 @@
 import { ZilliqaAccount } from "./types";
 
 export const getNonce = (a: ZilliqaAccount): number => {
-    console.log("ZILLIQA: getNonce.");
-    return a.zilliqaResources ? a.zilliqaResources.nonce : 1;
+  return a.zilliqaResources ? a.zilliqaResources.nonce : 1;
 };
