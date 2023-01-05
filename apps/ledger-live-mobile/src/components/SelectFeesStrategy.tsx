@@ -29,6 +29,8 @@ import TachometerSlow from "../icons/TachometerSlow";
 import TachometerMedium from "../icons/TachometerMedium";
 import TachometerFast from "../icons/TachometerFast";
 import NetworkFeeInfo from "./NetworkFeeInfo";
+import { useAnalytics } from "../analytics";
+import { SWAP_VERSION } from "../screens/Swap/utils";
 
 type Props = {
   strategies: (FeeStrategy & { userGasLimit?: BigNumber })[];
@@ -57,6 +59,7 @@ export default function SelectFeesStrategy({
   forceUnitLabel,
   disabledStrategies,
 }: Props) {
+  const { track } = useAnalytics();
   const { t } = useTranslation();
   const { colors } = useTheme();
   const mainAccount = getMainAccount(account, parentAccount);
@@ -73,6 +76,12 @@ export default function SelectFeesStrategy({
 
   const onPressStrategySelect = useCallback(
     (item: FeeStrategy) => {
+      track("button_clicked", {
+        button: item.label,
+        flow: "swap",
+        page: "Swap quotes",
+        swapVersion: SWAP_VERSION,
+      });
       onStrategySelect({
         amount: item.amount,
         label:
@@ -81,7 +90,7 @@ export default function SelectFeesStrategy({
         txParameters: item.txParameters,
       });
     },
-    [onStrategySelect],
+    [onStrategySelect, track],
   );
 
   const renderItem = ({ item }: ListRenderItemInfo<FeeStrategy>) => (

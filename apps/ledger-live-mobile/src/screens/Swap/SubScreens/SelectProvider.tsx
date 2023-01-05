@@ -10,8 +10,9 @@ import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import { providerIcons } from "../../../icons/swap/index";
 import { SelectProviderParamList } from "../types";
 import CounterValue from "../../../components/CounterValue";
-import { TrackScreen } from "../../../analytics";
+import { TrackScreen, useAnalytics } from "../../../analytics";
 import { ScreenName } from "../../../const";
+import { SWAP_VERSION } from "../utils";
 
 export function SelectProvider({
   navigation,
@@ -23,6 +24,7 @@ export function SelectProvider({
     },
   },
 }: SelectProviderParamList) {
+  const { track } = useAnalytics();
   const { t } = useTranslation();
   const fromUnit = useMemo(
     () => from.account && getAccountUnit(from.account),
@@ -31,10 +33,16 @@ export function SelectProvider({
 
   const onSelect = useCallback(
     (rate: ExchangeRate) => {
+      track("button_clicked", {
+        button: "Partner Chosen",
+        swapType: rate.tradeMethod,
+        flow: "swap",
+        swapVersion: SWAP_VERSION,
+      });
       // @ts-expect-error navigation type is only partially declared
       navigation.navigate(ScreenName.SwapForm, { rate });
     },
-    [navigation],
+    [navigation, track],
   );
 
   if (!rates.value || !fromUnit || !to.currency) {
