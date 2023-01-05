@@ -81,7 +81,7 @@ type Step<T extends Transaction> = {
   ) => string;
   ignoreAssertionFailure?: boolean;
   trimValue?: boolean;
-  button?: SpeculosButton | string;
+  button?: SpeculosButton;
   // action to apply in term of button press
   final?: boolean; // tells if there is no step after that and action should terminate all further action (hack to do deboncing)
   maxY?: number; // check if text is bellow a certains Y coordinate on the screen, it happened that two text have the same content but different positions
