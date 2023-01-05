@@ -1,43 +1,50 @@
-import { DeviceOnDashboardExpected } from "@ledgerhq/errors";
+import { DeviceOnDashboardExpected, LockedDeviceError } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
-import type { DeviceId, DeviceInfo } from "@ledgerhq/types-live";
+import type { DeviceId, DeviceInfo, FirmwareInfo } from "@ledgerhq/types-live";
 
-import { getVersion } from "../commands/getVersion";
+import { getVersion, GetVersionCmdEvent } from "../commands/getVersion";
 import { getAppAndVersion } from "../commands/getAppAndVersion";
 
 import isDevFirmware from "../../hw/isDevFirmware";
 import { isDashboardName } from "../../hw/isDashboardName";
 import { withDevice } from "../../hw/deviceAccess";
 import { PROVIDERS } from "../../manager/provider";
-import { Observable } from "rxjs";
-import { map, filter, switchMap } from "rxjs/operators";
-import { GeneralTaskEvent, wrappedTask } from "./core";
+import { Observable, of } from "rxjs";
+import { map, filter, switchMap, tap } from "rxjs/operators";
+import { SharedTaskEvent, wrappedTask } from "./core";
 
 const ManagerAllowedFlag = 0x08;
 const PinValidatedFlag = 0x80;
 
 export type GetDeviceInfoTaskArgs = { deviceId: DeviceId };
 
-// TODO: check if there's a way to be more specific than that
-// It shoould be: DeviceOnDashboardExpected
-export type GetDeviceInfoTaskError = Error;
+// 👋 hot take: do we really need an Error object ? :
+// - Longer to write a CustomError class that extends Error for each type of error
+// - our createCustomErrorClass function creates Error object that are hard/weird to compare
+//  (instanceOf does not work correctly)
+// I propose to only use a uniont of string literals:
+// - they are errors from the logic of this task, so we know where and why they are thrown
+// - easy to add one, easy to compare
+export type GetDeviceInfoTaskError =
+  | "DeviceOnDashboardExpected"
+  | "AnotherErrorHappeningDuringTheLogicOfThisTask";
 
 export type GetDeviceInfoTaskEvent =
   | { type: "data"; deviceInfo: DeviceInfo }
   | { type: "taskError"; error: GetDeviceInfoTaskError }
-  | GeneralTaskEvent;
+  | SharedTaskEvent;
 
 function internalGetDeviceInfoTask({
   deviceId,
 }: GetDeviceInfoTaskArgs): Observable<GetDeviceInfoTaskEvent> {
   return new Observable((subscriber) => {
-    withDevice(deviceId)((transport) =>
+    return withDevice(deviceId)((transport) =>
       getAppAndVersion(transport).pipe(
-        filter(({ name }) => {
+        filter(({ appAndVersion: { name } }) => {
           if (!isDashboardName(name)) {
             subscriber.next({
               type: "taskError",
-              error: new DeviceOnDashboardExpected(),
+              error: "DeviceOnDashboardExpected",
             });
             return false;
           }
@@ -46,8 +53,13 @@ function internalGetDeviceInfoTask({
         switchMap(() => {
           return getVersion(transport);
         }),
-
         map((value) => {
+          if (value.type === "unresponsive") {
+            return { type: "error" as const, error: new LockedDeviceError() };
+          }
+
+          const { firmwareInfo } = value;
+
           const {
             isBootloader,
             rawVersion,
@@ -61,7 +73,7 @@ function internalGetDeviceInfoTask({
             bootloaderVersion,
             hardwareVersion,
             languageId,
-          } = value;
+          } = firmwareInfo;
 
           const isOSU = rawVersion.includes("-osu");
           const version = rawVersion.replace("-osu", "");
@@ -112,12 +124,15 @@ function internalGetDeviceInfoTask({
             languageId,
           };
 
-          return deviceInfo;
+          return { type: "data" as const, deviceInfo };
         })
       )
     ).subscribe({
-      next: (deviceInfo) => subscriber.next({ type: "data", deviceInfo }),
-      error: (error) => subscriber.error(error), // subscriber.next({ type: "error", error }),
+      next: (event) => subscriber.next(event),
+      error: (error) => {
+        // Any other erro
+        subscriber.next({ type: "error", error });
+      },
       complete: () => subscriber.complete(),
     });
   });
