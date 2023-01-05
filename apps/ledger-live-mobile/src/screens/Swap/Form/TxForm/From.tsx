@@ -17,6 +17,8 @@ import { SwapFormParamList } from "../../types";
 import { fromSelector, pairsSelector } from "../../../../actions/swap";
 import TranslatedError from "../../../../components/TranslatedError";
 import { ScreenName } from "../../../../const";
+import { useAnalytics } from "../../../../analytics";
+import { SWAP_VERSION } from "../../utils";
 
 interface Props {
   provider?: string;
@@ -26,6 +28,7 @@ interface Props {
 }
 
 export function From({ swapTx, provider, swapError, isSendMaxLoading }: Props) {
+  const { track } = useAnalytics();
   const { t } = useTranslation();
   const navigation = useNavigation<SwapFormParamList>();
 
@@ -58,6 +61,11 @@ export function From({ swapTx, provider, swapError, isSendMaxLoading }: Props) {
   const pairs = useSelector(pairsSelector);
 
   const onPress = useCallback(() => {
+    track("button_clicked", {
+      button: "Edit source account",
+      flow: "swap",
+      swapVersion: SWAP_VERSION,
+    });
     // @ts-expect-error navigation type is only partially declared
     navigation.navigate(ScreenName.SwapSelectAccount, {
       target: "from",
@@ -65,7 +73,7 @@ export function From({ swapTx, provider, swapError, isSendMaxLoading }: Props) {
       selectableCurrencyIds: [...new Set(pairs.map(p => p.from))],
       swap: swapTx.swap,
     });
-  }, [navigation, provider, pairs, swapTx.swap]);
+  }, [navigation, provider, pairs, swapTx.swap, track]);
 
   return (
     <Flex

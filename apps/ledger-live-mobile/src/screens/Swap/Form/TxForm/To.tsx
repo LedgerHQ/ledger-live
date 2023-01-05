@@ -16,6 +16,8 @@ import { Selector } from "./Selector";
 import { CurrencyValue } from "./CurrencyValue";
 import { toSelector } from "../../../../actions/swap";
 import { ScreenName } from "../../../../const";
+import { useAnalytics } from "../../../../analytics";
+import { SWAP_VERSION } from "../../utils";
 
 interface Props {
   swapTx: SwapTransactionType;
@@ -24,6 +26,7 @@ interface Props {
 }
 
 export function To({ swapTx, provider, exchangeRate }: Props) {
+  const { track } = useAnalytics();
   const { t } = useTranslation();
   const navigation = useNavigation();
 
@@ -41,12 +44,17 @@ export function To({ swapTx, provider, exchangeRate }: Props) {
   );
 
   const onPress = useCallback(() => {
+    track("button_clicked", {
+      button: "edit target account",
+      flow: "swap",
+      swapVersion: SWAP_VERSION,
+    });
     // @ts-expect-error navigation type is only partially declared
     navigation.navigate(ScreenName.SwapSelectCurrency, {
       currencies,
       provider,
     });
-  }, [navigation, currencies, provider]);
+  }, [navigation, currencies, provider, track]);
 
   return (
     <Flex>
