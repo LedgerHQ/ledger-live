@@ -407,9 +407,8 @@ export function patchAccount(
             cryptoOrgUpdatedRaw.cryptoOrgResources
           ))
       ) {
-        (next as CryptoOrgAccount).cryptoOrgResources = fromCryptoOrgResourcesRaw(
-          cryptoOrgUpdatedRaw.cryptoOrgResources
-        );
+        (next as CryptoOrgAccount).cryptoOrgResources =
+          fromCryptoOrgResourcesRaw(cryptoOrgUpdatedRaw.cryptoOrgResources);
         changed = true;
       }
       break;

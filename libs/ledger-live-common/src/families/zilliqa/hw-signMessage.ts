@@ -3,31 +3,30 @@ import { log } from "@ledgerhq/logs";
 
 import type { SignMessage, Result } from "../../hw/signMessage/types";
 const signMessage: SignMessage = async (
-	transport,
-	{ path, message }
+  transport,
+  { path, message }
 ): Promise<Result> => {
-	console.log("ZILLIQA: signMessage.");
-	log("debug", "start signMessage process");
+  log("debug", "start signMessage process");
 
-	const zilliqa = new Zilliqa(transport);
+  const zilliqa = new Zilliqa(transport);
 
-	if (!message) {
-		throw new Error(`Message cannot be empty`);
-	}
+  if (!message) {
+    throw new Error(`Message cannot be empty`);
+  }
 
-	const r = await zilliqa.signMessage(path, message as string);
+  const r = await zilliqa.signMessage(path, message as string);
 
-	if (r.signature === null) {
-		throw new Error("Failed to sign.");
-	}
-	return {
-		rsv: {
-			r: "",
-			s: "",
-			v: 0,
-		},
-		signature: `0x${r.signature}`,
-	};
+  if (r.signature === null) {
+    throw new Error("Failed to sign.");
+  }
+  return {
+    rsv: {
+      r: "",
+      s: "",
+      v: 0,
+    },
+    signature: `0x${r.signature}`,
+  };
 };
 
 export default { signMessage };

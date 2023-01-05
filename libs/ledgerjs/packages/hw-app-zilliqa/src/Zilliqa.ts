@@ -15,16 +15,11 @@
  *  limitations under the License.
  ********************************************************************************/
 import type Transport from "@ledgerhq/hw-transport";
-import BIPPath from "bip32-path";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 const CHUNK_SIZE = 16;
 
 const CLA = 0xe0;
 const APP_KEY = "ZIL";
-
-const PAYLOAD_TYPE_INIT = 0x00;
-const PAYLOAD_TYPE_ADD = 0x00;
-const PAYLOAD_TYPE_LAST = 0x00;
 
 const INS_GET_VERSION = 0x01;
 const INS_GET_PUBLIC_KEY = 0x02;
@@ -35,9 +30,6 @@ const ADDRESS_ZIL_NATIVE = 0x00;
 
 const HARDEN_CONSTANT = 0x80000000;
 
-const SW_DEVELOPER_ERR = 0x6b00;
-const SW_INVALID_PARAM = 0x6b01;
-const SW_IMPROPER_INIT = 0x6b02;
 const SW_CANCEL = 0x6985;
 const SW_OK = 0x9000;
 
@@ -69,14 +61,6 @@ export default class Zilliqa {
     data: Buffer = Buffer.alloc(0),
     statusList: Array<number> = [SW_OK]
   ): Promise<Buffer> {
-    const input = Buffer.concat([
-      Buffer.from([cla, ins, p1, p2]),
-      Buffer.from([data.length]),
-      data,
-    ]);
-
-    // console.log(`=> ${input.toString("hex")}`);
-
     const result = await this.transport.send(
       cla,
       ins,
