@@ -80,7 +80,7 @@ export const useGenuineCheck = ({
     }).subscribe({
       next: ({
         socketEvent,
-        deviceIsLocked,
+        lockedDevice,
       }: GetGenuineCheckFromDeviceIdResult) => {
         if (socketEvent) {
           switch (socketEvent.type) {
@@ -100,7 +100,7 @@ export const useGenuineCheck = ({
           }
         } else {
           // If no socketEvent, the device is locked or has been unlocked
-          if (deviceIsLocked) {
+          if (lockedDevice) {
             setDevicePermissionState("unlock-needed");
           } else {
             setDevicePermissionState("unlocked");
