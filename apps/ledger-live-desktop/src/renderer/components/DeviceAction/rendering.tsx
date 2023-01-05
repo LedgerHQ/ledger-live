@@ -540,17 +540,23 @@ export const renderLockedDeviceError = ({
 export const RenderDeviceNotOnboardedError = ({ t, device }: { t: TFunction; device?: Device }) => {
   const productName = device ? getDeviceModel(device.modelId).productName : null;
   const history = useHistory();
+  const { setDrawer } = useContext(context);
+  const dispatch = useDispatch();
 
-  const redirectToOnboarding = useCallback(
-    () => history.push(device?.modelId === "stax" ? "/sync-onboarding/manual" : "/onboarding"),
-    [device?.modelId, history],
-  );
+  const redirectToOnboarding = useCallback(() => {
+    setTrackingSource("device action open onboarding button");
+    dispatch(closeAllModal());
+    setDrawer(undefined);
+    history.push(device?.modelId === "stax" ? "/sync-onboarding/manual" : "/onboarding");
+  }, [device?.modelId, dispatch, history, setDrawer]);
 
   return (
     <Wrapper id="error-device-not-onboarded">
-      <Flex mb={5}>
-        <DeviceIllustration deviceId={device.modelId} />
-      </Flex>
+      {device ? (
+        <Flex mb={5}>
+          <DeviceIllustration deviceId={device.modelId} />
+        </Flex>
+      ) : null}
       <Text color="neutral.c100" fontSize={7} mb={2}>
         {productName
           ? t("errors.DeviceNotOnboardedError.titleWithProductName", {
