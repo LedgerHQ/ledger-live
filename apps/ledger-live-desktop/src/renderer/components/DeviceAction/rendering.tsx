@@ -49,6 +49,7 @@ import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { DrawerFooter } from "~/renderer/screens/exchange/Swap2/Form/DrawerFooter";
 import {
+  Theme,
   Button as ButtonV3,
   Flex,
   Icons,
@@ -187,7 +188,7 @@ export const renderRequestQuitApp = ({
   type,
 }: {
   modelId: DeviceModelId;
-  type: "light" | "dark";
+  type: Theme["theme"];
 }) => (
   <Wrapper>
     <Header />
@@ -207,7 +208,7 @@ export const renderVerifyUnwrapped = ({
   type,
 }: {
   modelId: DeviceModelId;
-  type: "light" | "dark";
+  type: Theme["theme"];
 }) => (
   <AnimationWrapper modelId={modelId}>
     <DeviceBlocker />
@@ -310,7 +311,7 @@ export const InstallingApp = ({
   analyticsPropertyFlow = "unknown",
 }: {
   modelId: DeviceModelId;
-  type: "light" | "dark";
+  type: Theme["theme"];
   appName: string;
   progress: number;
   request: any;
@@ -391,7 +392,7 @@ export const renderAllowManager = ({
   wording,
 }: {
   modelId: DeviceModelId;
-  type: "light" | "dark";
+  type: Theme["theme"];
   wording: string;
 }) => (
   <Wrapper>
@@ -414,7 +415,7 @@ export const renderAllowLanguageInstallation = ({
   t,
 }: {
   modelId: DeviceModelId;
-  type: "light" | "dark";
+  type: Theme["theme"];
   t: TFunction;
 }) => (
   <Flex
@@ -442,7 +443,7 @@ export const renderAllowOpeningApp = ({
   isDeviceBlocker,
 }: {
   modelId: DeviceModelId;
-  type: "light" | "dark";
+  type: Theme["theme"];
   wording: string;
   tokenContext?: TokenCurrency;
   isDeviceBlocker?: boolean;
@@ -539,17 +540,23 @@ export const renderLockedDeviceError = ({
 export const RenderDeviceNotOnboardedError = ({ t, device }: { t: TFunction; device?: Device }) => {
   const productName = device ? getDeviceModel(device.modelId).productName : null;
   const history = useHistory();
+  const { setDrawer } = useContext(context);
+  const dispatch = useDispatch();
 
-  const redirectToOnboarding = useCallback(
-    () => history.push(device?.modelId === "stax" ? "/sync-onboarding/manual" : "/onboarding"),
-    [device?.modelId, history],
-  );
+  const redirectToOnboarding = useCallback(() => {
+    setTrackingSource("device action open onboarding button");
+    dispatch(closeAllModal());
+    setDrawer(undefined);
+    history.push(device?.modelId === "stax" ? "/sync-onboarding/manual" : "/onboarding");
+  }, [device?.modelId, dispatch, history, setDrawer]);
 
   return (
     <Wrapper id="error-device-not-onboarded">
-      <Flex mb={5}>
-        <DeviceIllustration deviceId={device.modelId} />
-      </Flex>
+      {device ? (
+        <Flex mb={5}>
+          <DeviceIllustration deviceId={device.modelId} />
+        </Flex>
+      ) : null}
       <Text color="neutral.c100" fontSize={7} mb={2}>
         {productName
           ? t("errors.DeviceNotOnboardedError.titleWithProductName", {
@@ -691,7 +698,7 @@ export const renderConnectYourDevice = ({
   unresponsive,
 }: {
   modelId: DeviceModelId;
-  type: "light" | "dark";
+  type: Theme["theme"];
   onRetry: () => void;
   onRepairModal: () => void;
   device: Device;
@@ -730,7 +737,7 @@ export const renderFirmwareUpdating = ({
   type,
 }: {
   modelId: DeviceModelId;
-  type: "light" | "dark";
+  type: Theme["theme"];
 }) => (
   <Wrapper>
     <Header />
@@ -756,7 +763,7 @@ export const renderSwapDeviceConfirmation = ({
   estimatedFees,
 }: {
   modelId: DeviceModelId;
-  type: "light" | "dark";
+  type: Theme["theme"];
   transaction: Transaction;
   status: TransactionStatus;
   exchangeRate: ExchangeRate;
@@ -872,7 +879,7 @@ export const renderSecureTransferDeviceConfirmation = ({
 }: {
   exchangeType: "sell" | "fund";
   modelId: DeviceModelId;
-  type: "light" | "dark";
+  type: Theme["theme"];
 }) => (
   <>
     <Alert type="primary" learnMoreUrl={urls.swap.learnMore} horizontal={false}>

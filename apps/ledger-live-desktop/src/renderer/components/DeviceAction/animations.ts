@@ -1,7 +1,6 @@
-// @flow
-import type { DeviceModelId } from "@ledgerhq/devices";
-
 /* eslint-disable camelcase */
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import { Theme } from "@ledgerhq/react-ui";
 
 // NANO S
 import NANO_S_LIGHT_plugAndPinCode from "~/renderer/animations/nanoS/1PlugAndPinCode/light.json";
@@ -75,7 +74,20 @@ import STAX_allowConnection from "~/renderer/animations/stax/allowConnection.jso
 
 /* eslint-enable camelcase */
 
-const nanoS = {
+type ThemedAnimation = Record<Theme["theme"], Record<string, unknown>>;
+export type AnimationKey =
+  | "plugAndPinCode"
+  | "enterPinCode"
+  | "quitApp"
+  | "allowManager"
+  | "openApp"
+  | "verify"
+  | "sign"
+  | "firmwareUpdating"
+  | "installLoading";
+type DeviceAnimations = { [key in AnimationKey]: ThemedAnimation };
+
+const nanoS: DeviceAnimations = {
   plugAndPinCode: {
     light: NANO_S_LIGHT_plugAndPinCode,
     dark: NANO_S_DARK_plugAndPinCode,
@@ -113,7 +125,8 @@ const nanoS = {
     dark: NANO_S_DARK_installLoading,
   },
 };
-const nanoX = {
+
+const nanoX: DeviceAnimations = {
   plugAndPinCode: {
     light: NANO_X_LIGHT_plugAndPinCode,
     dark: NANO_X_DARK_plugAndPinCode,
@@ -152,7 +165,7 @@ const nanoX = {
   },
 };
 
-const nanoSP = {
+const nanoSP: DeviceAnimations = {
   plugAndPinCode: {
     light: NANO_SP_LIGHT_plugAndPinCode,
     dark: NANO_SP_DARK_plugAndPinCode,
@@ -191,7 +204,7 @@ const nanoSP = {
   },
 };
 
-const stax = {
+const stax: DeviceAnimations = {
   plugAndPinCode: {
     light: STAX_enterPin,
     dark: STAX_enterPin,
@@ -230,27 +243,34 @@ const stax = {
   },
 };
 
-const blue = {
+const blue: DeviceAnimations = {
   plugAndPinCode: {
     light: BLUE_LIGHT_plugAndPinCode,
+    dark: BLUE_LIGHT_plugAndPinCode,
   },
   enterPinCode: {
     light: BLUE_LIGHT_enterPinCode,
+    dark: BLUE_LIGHT_enterPinCode,
   },
   quitApp: {
     light: BLUE_LIGHT_quitApp,
+    dark: BLUE_LIGHT_quitApp,
   },
   allowManager: {
     light: BLUE_LIGHT_allowManager,
+    dark: BLUE_LIGHT_allowManager,
   },
   openApp: {
     light: BLUE_LIGHT_openApp,
+    dark: BLUE_LIGHT_openApp,
   },
   verify: {
     light: BLUE_LIGHT_validate,
+    dark: BLUE_LIGHT_validate,
   },
   sign: {
     light: BLUE_LIGHT_validate,
+    dark: BLUE_LIGHT_validate,
   },
   // Nb We are dropping the assets for blue soon, this is temp
   firmwareUpdating: {
@@ -263,19 +283,20 @@ const blue = {
   },
 };
 
-const animations = { nanoX, nanoS, nanoSP, stax, blue };
-
-type InferredKeys = $Keys<typeof nanoS>;
+type Animations = {
+  [modelId in DeviceModelId]: DeviceAnimations;
+};
+const animations: Animations = { nanoX, nanoS, nanoSP, stax, blue };
 
 export const getDeviceAnimation = (
   modelId: DeviceModelId,
-  theme: "light" | "dark",
-  key: InferredKeys,
+  theme: Theme["theme"],
+  key: AnimationKey,
 ) => {
-  // $FlowFixMe Ignore the type to allow override from env.
-  modelId = process.env.OVERRIDE_MODEL_ID || modelId;
-  const lvl1 = animations[modelId] || animations.nanoX;
-  const lvl2 = lvl1[key] || animations.nanoX[key];
-  if (theme === "dark" && lvl2.dark) return lvl2.dark;
-  return lvl2.light;
+  const animationModelId = (process.env.OVERRIDE_MODEL_ID as DeviceModelId) || modelId;
+
+  // Handles the case where OVERRIDE_MODEL_ID is incorrect
+  const animation = animations[animationModelId][key][theme] || animations.nanoX[key][theme];
+
+  return animation;
 };

@@ -1,4 +1,5 @@
 export { default as defaultTheme } from "./theme";
+export type { Theme } from "./theme";
 export * from "./helpers";
 export * from "./global";
 export * from "./StyleProvider";

@@ -59,7 +59,7 @@ import { Container, Wrapper, Loader } from "./styled";
 
 const tracking = trackingWrapper(track);
 
-type WebPlatformPlayerConfig = {
+export type WebPlatformPlayerConfig = {
   topBarConfig?: TopBarConfig;
 };
 
