@@ -1,10 +1,11 @@
 import { BigNumber } from "bignumber.js";
 import type { CurrenciesData } from "@ledgerhq/types-live";
-import { DustLimit } from "@ledgerhq/errors";
+import { DustLimit, OpReturnDataSizeLimit } from "@ledgerhq/errors";
 
 import type { BitcoinAccountRaw, NetworkInfoRaw, Transaction } from "../types";
 import { fromTransactionRaw } from "../transaction";
 import scanAccounts1 from "./bitcoin.scanAccounts.1";
+import { OP_RETURN_DATA_SIZE_LIMIT } from "../wallet-btc/crypto/base";
 
 const networkInfo: NetworkInfoRaw = {
   family: "bitcoin",

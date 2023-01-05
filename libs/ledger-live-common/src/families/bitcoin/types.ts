@@ -167,6 +167,7 @@ export type TransactionStatus = TransactionStatusCommon & {
 };
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw & {
+  opReturnData?: string;
   txInputs?: BitcoinInputRaw[];
   txOutputs?: BitcoinOutputRaw[];
   opReturnData?: string;
