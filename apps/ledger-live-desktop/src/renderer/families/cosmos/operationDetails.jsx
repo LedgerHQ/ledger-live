@@ -16,8 +16,7 @@ import type {
 import { mapDelegationInfo } from "@ledgerhq/live-common/families/cosmos/logic";
 import type { Operation, Account } from "@ledgerhq/types-live";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
-
-import { urls } from "~/config/urls";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
 import { openURL } from "~/renderer/linking";
 import {
   OpDetailsTitle,
@@ -35,15 +34,15 @@ import CounterValue from "~/renderer/components/CounterValue";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { localeSelector } from "~/renderer/reducers/settings";
 
-function getURLFeesInfo(op: Operation): ?string {
+function getURLFeesInfo(op: Operation, currencyId: string): ?string {
   if (op.fee.gt(200000)) {
-    return urls.cosmosStakingRewards;
+    return cryptoFactory(currencyId).stakingDocUrl;
   }
 }
 
-function getURLWhatIsThis(op: Operation): ?string {
+function getURLWhatIsThis(op: Operation, currencyId: string): ?string {
   if (op.type !== "IN" && op.type !== "OUT") {
-    return urls.cosmosStakingRewards;
+    return cryptoFactory(currencyId).stakingDocUrl;
   }
 }
 

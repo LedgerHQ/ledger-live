@@ -28,23 +28,11 @@ import {
   getMaxEstimatedBalance,
 } from "./logic";
 import invariant from "invariant";
-import { CosmosAPI } from "./api/Cosmos";
 import * as bech32 from "bech32";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import cryptoFactory from "./chain/chain";
 
 export class CosmosTransactionStatusManager {
-  protected validatorOperatorAddressPrefix = "cosmosvaloper";
-
-  constructor(options?: {
-    api?: CosmosAPI;
-    validatorOperatorAddressPrefix?: string;
-  }) {
-    if (options?.validatorOperatorAddressPrefix) {
-      this.validatorOperatorAddressPrefix =
-        options.validatorOperatorAddressPrefix;
-    }
-  }
-
   getTransactionStatus = async (
     a: CosmosAccount,
     t: CosmosLikeTransaction
@@ -62,7 +50,10 @@ export class CosmosTransactionStatusManager {
     if (
       t.validators.some(
         (v) =>
-          !v.address || !v.address.includes(this.validatorOperatorAddressPrefix)
+          !v.address ||
+          !v.address.includes(
+            cryptoFactory(a.currency.id).validatorOperatorAddressPrefix
+          )
       ) ||
       t.validators.length === 0
     )
@@ -156,7 +147,10 @@ export class CosmosTransactionStatusManager {
     if (
       t.validators.some(
         (v) =>
-          !v.address || !v.address.includes(this.validatorOperatorAddressPrefix)
+          !v.address ||
+          !v.address.includes(
+            cryptoFactory(a.currency.id).validatorOperatorAddressPrefix
+          )
       ) ||
       t.validators.length === 0
     )
@@ -261,7 +255,6 @@ export class CosmosTransactionStatusManager {
     ) {
       warnings.amount = new RecommendUndelegation();
     }
-
     return Promise.resolve({
       errors,
       warnings,

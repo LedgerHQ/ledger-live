@@ -80,14 +80,14 @@ function OperationDetails({ route }: NavigatorProps) {
     specific &&
     (
       specific as typeof specific & {
-        getURLWhatIsThis: (_: Operation) => string;
+        getURLWhatIsThis: (_: Operation, c: string) => string;
       }
     ).getURLWhatIsThis &&
     (
       specific as typeof specific & {
-        getURLWhatIsThis: (_: Operation) => string;
+        getURLWhatIsThis: (_: Operation, c: string) => string;
       }
-    ).getURLWhatIsThis(operation);
+    ).getURLWhatIsThis(operation, mainAccount.currency.id);
   return (
     <SafeAreaView edges={["bottom"]} style={[styles.container]}>
       <TrackScreen category="OperationDetails" />

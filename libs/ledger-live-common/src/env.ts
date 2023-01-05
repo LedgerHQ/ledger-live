@@ -82,21 +82,6 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Node endpoint for cosmos",
   },
-  API_COSMOS_NODE: {
-    def: "STARGATE_NODE",
-    parser: stringParser,
-    desc: "Node API to use for cosmos (COSMOS_NODE or STARGATE_NODE are known)",
-  },
-  API_COSMOS_TESTNET_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
-    def: "https://cosmoshub4.coin.staging.aws.ledger.com",
-    parser: stringParser,
-    desc: "Node endpoint for cosmos",
-  },
-  API_COSMOS_TESTNET_NODE: {
-    def: "STARGATE_NODE",
-    parser: stringParser,
-    desc: "Node API to use for cosmos_testnet (COSMOS_NODE or STARGATE_NODE are known)",
-  },
   API_RIPPLE_RPC: {
     parser: stringParser,
     def: "https://xrplcluster.com/ledgerlive",
@@ -151,11 +136,6 @@ const envDefinitions = {
     def: false,
     parser: boolParser,
     desc: "Static fee for Stellar account",
-  },
-  API_OSMOSIS_INDEXER: {
-    def: "https://osmosis.coin.ledger.com/indexer",
-    parser: stringParser,
-    desc: "Endpoint for Transaction Explorer/Indexer for Osmosis",
   },
   API_OSMOSIS_NODE: {
     def: "https://osmosis.coin.ledger.com/node",
@@ -241,16 +221,6 @@ const envDefinitions = {
     def: "https://api.compound.finance",
     parser: stringParser,
     desc: "location of the compound API",
-  },
-  COSMOS_GAS_AMPLIFIER: {
-    def: 1.4,
-    parser: intParser,
-    desc: "estimate gas multiplier",
-  },
-  COSMOS_GAS_PRICE: {
-    def: 0.025,
-    parser: floatParser,
-    desc: "gasLimit * gasPrice to determine the fees price. A too low GAS_PRICE will get rejected before the transaction is broadcast",
   },
   CRYPTO_ORG_INDEXER: {
     def: "https://cryptoorg-rpc-indexer.coin.ledger.com",

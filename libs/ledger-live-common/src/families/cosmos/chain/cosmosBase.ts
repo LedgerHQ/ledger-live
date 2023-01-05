@@ -6,6 +6,7 @@ abstract class cosmosBase {
   abstract stakingDocUrl: string;
   abstract unbondingPeriod: number;
   abstract ledgerValidator: string;
+  abstract validatorOperatorAddressPrefix: string;
   defaultGas = 100000;
   minGasprice = 0.0025;
   minimalTransactionAmount = new BigNumber(10000);

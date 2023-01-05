@@ -85,8 +85,6 @@ export const urls = {
     "https://support.ledger.com/hc/en-us/articles/360020499920-Celo-CELO-?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=celo&docs=true",
   cosmosStaking:
     "https://www.ledger.com/staking-cosmos?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=cosmos",
-  cosmosStakingRewards:
-    "https://support.ledger.com/hc/en-us/articles/360014339340-Earn-Cosmos-staking-rewards?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=cosmos",
   algorandStaking:
     "https://support.ledger.com/hc/en-us/articles/360015897740?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=algorand",
   polkadotStaking:

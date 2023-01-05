@@ -6,6 +6,7 @@ class Cosmos extends CosmosBase {
   stakingDocUrl: string;
   unbondingPeriod: number;
   ledgerValidator: string;
+  validatorOperatorAddressPrefix: string;
   constructor() {
     super();
     this.unbondingPeriod = 21;
@@ -13,6 +14,7 @@ class Cosmos extends CosmosBase {
     this.stakingDocUrl =
       "https://support.ledger.com/hc/en-us/articles/360014339340-Earn-Cosmos-ATOM-staking-rewards-in-Ledger-Live?docs=true";
     this.minGasprice = 0.025;
+    this.validatorOperatorAddressPrefix = "cosmosvaloper";
     this.ledgerValidator =
       "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm";
     CosmosBase.COSMOS_FAMILY_LEDGER_VALIDATOR_ADDRESSES.push(

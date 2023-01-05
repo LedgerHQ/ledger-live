@@ -29,13 +29,13 @@ import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { urls } from "~/config/urls";
 import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
 
-function getURLFeesInfo(op: Operation): ?string {
+function getURLFeesInfo(op: Operation, currencyId: string): ?string {
   if (op.fee.gt(200000)) {
     return urls.polkadotFeesInfo;
   }
 }
 
-function getURLWhatIsThis(op: Operation): ?string {
+function getURLWhatIsThis(op: Operation, currencyId: string): ?string {
   if (op.type !== "IN" && op.type !== "OUT") {
     return urls.stakingPolkadot;
   }

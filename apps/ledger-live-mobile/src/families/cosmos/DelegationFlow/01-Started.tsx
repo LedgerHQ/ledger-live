@@ -14,7 +14,6 @@ import LText from "../../../components/LText";
 import ExternalLink from "../../../components/ExternalLink";
 import BulletList, { BulletGreenCheck } from "../../../components/BulletList";
 import NavigationScrollView from "../../../components/NavigationScrollView";
-import { urls } from "../../../config/urls";
 import { TrackScreen } from "../../../analytics";
 import Illustration from "../../../images/illustration/Illustration";
 import EarnLight from "../../../images/illustration/Light/_003.png";
@@ -43,7 +42,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   const mainAccount = getMainAccount(account, parentAccount);
   const crypto = cryptoFactory(mainAccount.currency.id);
   const howDelegationWorks = useCallback(() => {
-    Linking.openURL(urls.cosmosStakingRewards);
+    Linking.openURL(cryptoFactory(mainAccount.currency.id).stakingDocUrl);
   }, []);
 
   return (

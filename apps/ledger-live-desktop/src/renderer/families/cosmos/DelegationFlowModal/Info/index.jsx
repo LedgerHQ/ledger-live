@@ -6,7 +6,6 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { openModal, closeModal } from "~/renderer/actions/modals";
 import EarnRewardsInfoModal from "~/renderer/components/EarnRewardsInfoModal";
 import WarnBox from "~/renderer/components/WarnBox";
-import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
@@ -30,8 +29,8 @@ export default function CosmosEarnRewardsInfoModal({ name, account, parentAccoun
     );
   }, [parentAccount, account, dispatch, name]);
 
-  const onLearnMore = useCallback(() => {
-    openURL(urls.cosmosStakingRewards);
+  const onLearnMore = useCallback((currencyId: string) => {
+    openURL(cryptoFactory(currencyId).stakingDocUrl);
   }, []);
   const crypto = cryptoFactory(account.currency.id);
   return (
@@ -51,7 +50,12 @@ export default function CosmosEarnRewardsInfoModal({ name, account, parentAccoun
       additional={
         <WarnBox>{t("cosmos.delegation.flow.steps.starter.warning.description")}</WarnBox>
       }
-      footerLeft={<LinkWithExternalIcon label={t("delegation.howItWorks")} onClick={onLearnMore} />}
+      footerLeft={
+        <LinkWithExternalIcon
+          label={t("delegation.howItWorks")}
+          onClick={onLearnMore(account.currency.id)}
+        />
+      }
     />
   );
 }

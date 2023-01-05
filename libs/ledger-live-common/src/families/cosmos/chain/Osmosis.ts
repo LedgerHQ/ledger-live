@@ -7,6 +7,7 @@ class Osmosis extends CosmosBase {
   stakingDocUrl: string;
   unbondingPeriod: number;
   ledgerValidator: string;
+  validatorOperatorAddressPrefix: string;
   constructor() {
     super();
     this.unbondingPeriod = 14;
@@ -22,6 +23,7 @@ class Osmosis extends CosmosBase {
       claimRewardCompound: 400000,
     };
     this.minimalTransactionAmount = new BigNumber(10);
+    this.validatorOperatorAddressPrefix = "osmovaloper";
     this.ledgerValidator = "osmovaloper17cp6fxccqxrpj4zc00w2c7u6y0umc2jajsyc5t";
     CosmosBase.COSMOS_FAMILY_LEDGER_VALIDATOR_ADDRESSES.push(
       this.ledgerValidator
