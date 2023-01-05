@@ -3,10 +3,11 @@ import type { ZilliqaAccount, Transaction } from "./types";
 import { BigNumber } from "bignumber.js";
 import { BN } from "@zilliqa-js/util";
 
-export const getEstimatedFees = async ({
-  _a,
-  _t,
-}: {
+export const getEstimatedFees = async ({}: /*
+  a,
+  t,
+  */
+{
   a: ZilliqaAccount;
   t: Transaction;
 }): Promise<BigNumber> => {
