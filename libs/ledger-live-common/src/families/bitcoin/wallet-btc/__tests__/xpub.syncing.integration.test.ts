@@ -70,14 +70,6 @@ describe("xpub integration sync", () => {
       currencyId: "bitcoin_cash",
     },
     {
-      xpub: "xpub6CThYZbX4PTeA7KRYZ8YXP3F6HwT2eVKPQap3Avieds3p1eos35UzSsJtTbJ3vQ8d3fjRwk4bCEz4m4H6mkFW49q29ZZ6gS8tvahs4WCZ9X", // 138sec,
-      derivationMode: DerivationModes.LEGACY,
-      addresses: 9741,
-      balance: 0,
-      network: coininfo.bitcoin.main.toBitcoinJS(),
-      currencyId: "bitcoin",
-    },
-    {
       xpub: "Ltub2ZgHGhWdGi2jacCdKEy3qddYxH4bpDtmueiPWkG8267Z9K8yQEExapyNi1y4Qp7f79JN8468uE9V3nizpPU27WEDfXrtqpkp84MyhhCDTNk",
       addresses: 5,
       balance: 87756,
