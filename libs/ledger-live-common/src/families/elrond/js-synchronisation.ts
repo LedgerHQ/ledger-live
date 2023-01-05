@@ -9,10 +9,8 @@ import {
 } from "./api";
 import elrondBuildESDTTokenAccounts from "./js-buildSubAccounts";
 import { reconciliateSubAccounts } from "./js-reconciliation";
-import { FEES_BALANCE } from "./constants";
 import { Operation, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 import { computeDelegationBalance } from "./logic";
-import BigNumber from "bignumber.js";
 
 function pruneOperations(
   operations: Operation[],
@@ -84,9 +82,7 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
   return {
     id: accountId,
     balance: balance.plus(delegationBalance),
-    spendableBalance: balance.gt(FEES_BALANCE)
-      ? balance.minus(FEES_BALANCE)
-      : new BigNumber(0),
+    spendableBalance: balance,
     operationsCount: operations.length,
     blockHeight,
     elrondResources: {
