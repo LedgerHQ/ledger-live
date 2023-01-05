@@ -14,15 +14,13 @@ const indexerEndPoint = getEnv("API_ZILLIQA_INDEXER_API_ENDPOINT").replace(
 	/\/$/,
 	""
 );
-// http://api.zindex.zilliqa.com/
-// TODO: Refactor
 const nodeEndPoint = getEnv("API_ZILLIQA_NODE").replace(/\/$/, "");
 
 const ZILLIQA_MAINNET = 1;
 const ZILLIQA_DEVNET = 333;
 const msgVersion = 1; // current msgVersion
 export const VERSION = bytes.pack(ZILLIQA_MAINNET, msgVersion);
-export const zilliqa = new Zilliqa("https://api.zilliqa.com");
+export const zilliqa = new Zilliqa(nodeEndPoint);
 export const ZILLIQA_TX_GAS_LIMIT = 50; // Gas limit is 50 units according to https://dev.zilliqa.com/basics/basics-zil-gas/?h=gas
 
 export const broadcastTransaction = async (params: TxParams) => {
