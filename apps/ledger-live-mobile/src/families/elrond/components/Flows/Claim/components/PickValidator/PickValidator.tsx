@@ -48,7 +48,7 @@ const PickValidator = (props: PickValidatorPropsType) => {
   const data = useMemo(
     () =>
       delegations.filter(delegation =>
-        new BigNumber(delegation.claimableRewards).gt(0),
+        new BigNumber(delegation.claimableRewards).isGreaterThan(0),
       ),
     [delegations],
   );

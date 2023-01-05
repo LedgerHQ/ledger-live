@@ -87,7 +87,7 @@ const useDrawerActions = (
   const rewardsEnabled = useMemo(
     () =>
       isDelegation && claimableRewards
-        ? new BigNumber(claimableRewards).gt(0)
+        ? new BigNumber(claimableRewards).isGreaterThan(0)
         : 0,
     [isDelegation, claimableRewards],
   );

@@ -64,7 +64,7 @@ const Rewards = (props: RewardsPropsType) => {
    * Don't render anything if the total cumulated rewards from all active delegations is zero.
    */
 
-  if (rewardsAmount.eq(0)) {
+  if (rewardsAmount.isEqualTo(0)) {
     return null;
   }
 

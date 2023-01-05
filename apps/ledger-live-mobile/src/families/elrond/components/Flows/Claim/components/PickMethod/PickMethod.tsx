@@ -11,6 +11,7 @@ import {
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/elrond/constants";
 
 import type { AccountBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -52,20 +53,48 @@ const PickMethod = (props: PickMethodPropsType) => {
     TransactionMethodEnum.reDelegateRewards,
   ];
 
+  const currentDelegation = useMemo(
+    () =>
+      account.elrondResources.delegations.find(
+        delegation => recipient === delegation.contract,
+      ),
+    [account.elrondResources.delegations, recipient],
+  );
+
+  /*
+   * If the claimable reward amount plus the existing delegation doesn't surpass 1 EGLD, disable the compound option.
+   */
+
+  const canCompoundReward = useMemo(
+    () =>
+      currentDelegation
+        ? new BigNumber(currentDelegation.claimableRewards)
+            .plus(currentDelegation.userActiveStake)
+            .isGreaterThanOrEqualTo(MIN_DELEGATION_AMOUNT)
+        : false,
+    [currentDelegation],
+  );
+
   /*
    * Initialize the arrays for the modal data and mode options payload.
    */
 
-  const options: OptionType[] = methods.map(value => ({
-    value,
-    label: <Trans i18nKey={`elrond.claimRewards.flow.steps.method.${value}`} />,
+  const options: OptionType[] = methods.map(method => ({
+    value: method,
+    label: (
+      <Trans i18nKey={`elrond.claimRewards.flow.steps.method.${method}`} />
+    ),
+    disabled:
+      method === TransactionMethodEnum.reDelegateRewards && !canCompoundReward,
   }));
 
-  const modals: ModalType[] = methods.map(value => ({
-    title: <Trans i18nKey={`elrond.claimRewards.flow.steps.method.${value}`} />,
+  const modals: ModalType[] = methods.map(method => ({
+    title: (
+      <Trans i18nKey={`elrond.claimRewards.flow.steps.method.${method}`} />
+    ),
     description: (
       <Trans
-        i18nKey={`elrond.claimRewards.flow.steps.method.${value}Tooltip`}
+        i18nKey={`elrond.claimRewards.flow.steps.method.${method}Tooltip`}
       />
     ),
   }));
