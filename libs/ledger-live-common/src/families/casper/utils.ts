@@ -138,3 +138,9 @@ export function validateTransferId(id?: string): { isValid: boolean } {
 export function getEstimatedFees(): BigNumber {
   return new BigNumber(CASPER_FEES);
 }
+
+export function casperAddressFromPubKey(pubkey: Buffer): string {
+  const checksumed = encode(pubkey)
+
+  return `02${checksumed}`
+}
