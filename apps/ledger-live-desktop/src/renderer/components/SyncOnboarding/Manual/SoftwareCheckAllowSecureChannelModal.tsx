@@ -24,13 +24,7 @@ const SoftwareCheckAllowSecureChannelModal = ({ isOpen, deviceModelId, productNa
             deviceName: productName,
           })}
         </Text>
-        <Animation
-          animation={getDeviceAnimation(
-            deviceModelId,
-            theme.theme as "light" | "dark",
-            "allowManager",
-          )}
-        />
+        <Animation animation={getDeviceAnimation(deviceModelId, theme.theme, "allowManager")} />
       </Flex>
     </Popin>
   );

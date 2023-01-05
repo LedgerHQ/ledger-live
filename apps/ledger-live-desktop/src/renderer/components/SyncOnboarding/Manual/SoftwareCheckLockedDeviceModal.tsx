@@ -28,13 +28,7 @@ const SoftwareCheckLockedDeviceModal = ({ isOpen, deviceModelId, productName, on
             deviceName: productName,
           })}
         </Text>
-        <Animation
-          animation={getDeviceAnimation(
-            deviceModelId,
-            theme.theme as "light" | "dark",
-            "enterPinCode",
-          )}
-        />
+        <Animation animation={getDeviceAnimation(deviceModelId, theme.theme, "enterPinCode")} />
       </Flex>
     </Popin>
   );

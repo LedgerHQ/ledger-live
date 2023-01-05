@@ -3198,6 +3198,7 @@ importers:
       '@ledgerhq/cryptoassets': workspace:^
       '@ledgerhq/devices': workspace:^
       '@ledgerhq/errors': workspace:^
+      '@ledgerhq/hw-app-eth': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/hw-transport-http': workspace:^
       '@ledgerhq/hw-transport-u2f': 5.36.0-deprecated
@@ -3237,6 +3238,7 @@ importers:
       '@ledgerhq/cryptoassets': link:../../libs/ledgerjs/packages/cryptoassets
       '@ledgerhq/devices': link:../../libs/ledgerjs/packages/devices
       '@ledgerhq/errors': link:../../libs/ledgerjs/packages/errors
+      '@ledgerhq/hw-app-eth': link:../../libs/ledgerjs/packages/hw-app-eth
       '@ledgerhq/hw-transport': link:../../libs/ledgerjs/packages/hw-transport
       '@ledgerhq/hw-transport-http': link:../../libs/ledgerjs/packages/hw-transport-http
       '@ledgerhq/hw-transport-u2f': 5.36.0-deprecated
