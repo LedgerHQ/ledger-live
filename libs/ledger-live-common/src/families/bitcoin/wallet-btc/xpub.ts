@@ -6,6 +6,7 @@ import { ICrypto } from "./crypto/types";
 import { PickingStrategy } from "./pickingstrategies/types";
 import { computeDustAmount, maxTxSizeCeil } from "./utils";
 import { TransactionInfo, InputInfo, OutputInfo } from "./types";
+import { promiseAllBatched } from "../../../promise";
 
 // names inside this class and discovery logic respect BIP32 standard
 class Xpub {
@@ -94,8 +95,10 @@ class Xpub {
   }
 
   async checkAddressesBlock(account: number, index: number): Promise<boolean> {
-    const addressesResults = await Promise.all(
-      range(this.GAP).map((_, key) => this.syncAddress(account, index + key))
+    const addressesResults = await promiseAllBatched(
+      3,
+      range(this.GAP),
+      (_, key) => this.syncAddress(account, index + key)
     );
     return some(addressesResults, (lastTx) => !!lastTx);
   }
