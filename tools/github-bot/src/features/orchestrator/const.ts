@@ -105,7 +105,7 @@ export const WORKFLOWS = {
     },
   },
   "test.yml": {
-    checkRunName: "[Libraries] Run tests",
+    checkRunName: "@Libraries • Tests",
     description: "Run the `test` script for affected libraries.",
     runsOn: RUNNERS.both,
     affected: [

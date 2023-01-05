@@ -19,13 +19,20 @@ export const commands = (
   // arguments is a string of arguments separated by a comma ","
   callback: (
     context: any,
-    data: { number: number; name: string; arguments?: string }
+    data: {
+      number: number;
+      name: string;
+      arguments?: string;
+      commentId?: number;
+    }
   ) => {}
 ) => {
   const matcher = /^\/([\w-]+)\b *(.*)?$/m;
 
   app.on(["issue_comment.created" /*, "issues.opened" */], async (context) => {
-    const { payload } = context;
+    if (context.isBot) return;
+
+    const { payload, octokit } = context;
     const isPR = (issue: any) => issue.pull_request !== undefined;
 
     const issue = payload.issue;
@@ -35,23 +42,37 @@ export const commands = (
     if (!isPR(issue)) return;
     if (!command || (command && command[1] !== name)) return;
 
+    await octokit.rest.reactions.createForIssueComment({
+      ...context.repo(),
+      comment_id: comment.id,
+      content: "rocket",
+    });
+
     return callback(context, {
       number: issue.number,
       name: command[1],
       arguments: command[2],
+      commentId: comment.id,
     });
   });
 
   app.on(["pull_request.opened"], async (context) => {
-    const { payload } = context;
+    const { payload, octokit } = context;
     const pr = payload.pull_request;
     const command = pr?.body?.match(matcher);
 
     if (!command || (command && command[1] !== name)) return;
+    const comment = await octokit.rest.issues.createComment({
+      ...context.repo(),
+      issue_number: pr?.number,
+      body: `${payload.sender.login}: \`${name}\` triggered by commit message.`,
+    });
+
     return callback(context, {
       number: pr.number,
       name: command[1],
       arguments: command[2],
+      commentId: comment.data.id,
     });
   });
 };

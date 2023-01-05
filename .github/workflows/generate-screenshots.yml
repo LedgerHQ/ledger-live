@@ -18,6 +18,9 @@ on:
         type: boolean
         required: false
         default: false
+      commentId:
+        description: comment id to update
+        required: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

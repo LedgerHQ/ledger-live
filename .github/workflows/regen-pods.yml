@@ -13,14 +13,9 @@ on:
       login:
         description: The GitHub username that triggered the workflow
         required: true
-      comment:
-        description: Update the workflow status in a pull request comment
-        type: boolean
+      commentId:
+        description: comment id to update
         required: false
-        default: false
-
-env:
-  comment_header: <!-- regen-pods-report:${{ github.run_id }} -->
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -82,38 +77,50 @@ jobs:
           git restore . &&
           git pull --rebase &&
           git push
-      - uses: ./tools/actions/composites/pr-comment
+      - name: create summary (failure)
         if: failure() && github.event.inputs.number != null
+        uses: actions/github-script@v6
         with:
-          number: ${{ github.event.inputs.number }}
-          body: |
-            #### ❌ Podfile regeneration failed
+          script: |
+            const fs = require("fs");
+            const body = `#### ❌ Podfile regeneration failed
 
-            @${{ github.event.inputs.login }}: you can check [the action logs](https://github.com/LedgerHQ/ledger-live/runs/${{ github.run_id }}) for more information.
-      - uses: ./tools/actions/composites/pr-comment
+            @${{ github.event.inputs.login }}: you can check [the action logs](https://github.com/LedgerHQ/ledger-live/runs/${{ github.run_id }}) for more information.`;
+            fs.writeFileSync("summary.txt", body, "utf8");
+      - name: create summary (success)
         if: github.event.inputs.number != null && steps.check-status.outputs.status != 0
+        uses: actions/github-script@v6
         with:
-          number: ${{ github.event.inputs.number }}
-          body: |
-            #### 🚀 Podfile regenerated
+          script: |
+            const fs = require("fs");
+            const body = `#### 🚀 Podfile regenerated
 
-            @${{ github.event.inputs.login }}: the podfile has been regenerated and a commit has been pushed to your branch.
-      - uses: ./tools/actions/composites/pr-comment
+            @${{ github.event.inputs.login }}: the podfile has been regenerated and a commit has been pushed to your branch.`;
+            fs.writeFileSync("summary.txt", body, "utf8");
+      - name: create summary (no change)
         if: github.event.inputs.number != null && steps.check-status.outputs.status == 0
+        uses: actions/github-script@v6
         with:
-          number: ${{ github.event.inputs.number }}
-          body: |
-            #### ✨ No changes detected
+          script: |
+            const fs = require("fs");
+            const body = `#### ✨ No changes detected
 
-            @${{ github.event.inputs.login }}: the podfile is already up to date.
+            @${{ github.event.inputs.login }}: the podfile is already up to date.`;
+            fs.writeFileSync("summary.txt", body, "utf8");
+      - uses: actions/upload-artifact@v3
+        if: always()
+        name: upload summary
+        with:
+          name: summary.txt
+          path: ${{ github.workspace }}/summary.txt
 
   report-start:
     name: Report start
     runs-on: ubuntu-latest
+    if: github.event.inputs.commentId != ''
     steps:
       - name: report start
         uses: actions/github-script@v6
-        if: github.event.inputs.comment
         with:
           result-encoding: string
           retries: 3
@@ -121,16 +128,15 @@ jobs:
             const {repo: {owner, repo}, run_id} = context
             const issue_number = ${{ github.event.inputs.number }}
             const body = `\
-            ${{ env.comment_header }}
-            @${{ github.event.inputs.login }}
+            @${{ github.event.inputs.login }}: triggered \`/regen-pods\`
 
             [Regenerating Pods: workflow started](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-            `
+            `;
 
-            await github.rest.issues.createComment({
+            await github.rest.issues.updateComment({
               owner,
               repo,
-              issue_number,
+              comment_id: "${{ github.event.inputs.commentId }}",
               body,
             });
 
@@ -140,6 +146,10 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/download-artifact@v3
+        name: download summary
+        with:
+          name: summary.txt
       - name: report job status
         uses: actions/github-script@v6
         with:
@@ -148,27 +158,13 @@ jobs:
           script: |
             const fs = require("fs");
             const {repo: {owner, repo}} = context;
-            const {data: {jobs}} = await github.rest.actions.listJobsForWorkflowRun({
-              owner,
-              repo,
-              run_id: ${{ github.run_id }},
-            });
-            console.log("jobs", jobs);
-
-            const jobsStatusString = jobs
-              .filter(job => job.name.startsWith("regen-pods"))
-              .map(job => `${job.conclusion === "success" ? "✅" : "❌"} - [${job.name}](${job.html_url})`)
-              .join("\n")
+            const summary = fs.readFileSync("${{ github.workspace }}/summary.txt", "utf8");
 
             const body = `\
-            ${{ env.comment_header }}
-            @${{ github.event.inputs.login }}
+            ${summary}
 
             [Regenerating Pods: workflow ended](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-
-            **Jobs status:**
-            ${jobsStatusString}
-            `
+            `;
 
             const output = {
               summary: body,
@@ -176,42 +172,13 @@ jobs:
 
             fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
 
-            if(${{ github.event.inputs.comment }}) {
-              const existingComment = await github.paginate(
-                github.rest.issues.listComments,
-                {
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: ${{ github.event.inputs.number }},
-                },
-                (response, done) => {
-                  const comments = response.data
-                  const existingComment = comments
-                    .find(comment =>
-                      comment.user.login === 'github-actions[bot]' &&
-                      comment.body.startsWith(`${{ env.comment_header }}`));
-                  if (existingComment) {
-                    done()
-                    return existingComment;
-                  };
-                }
-              ).then(resPerPage => resPerPage.find(res => !!res));
-
-              if (existingComment) {
-                await github.rest.issues.updateComment({
-                  owner,
-                  repo,
-                  comment_id: existingComment?.id,
-                  body
-                });
-              } else {
-                await github.rest.issues.createComment({
-                  owner,
-                  repo,
-                  issue_number: ${{ github.event.inputs.number }},
-                  body,
-                })
-              }
+            if(${{ github.event.inputs.commentId != '' }}) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: "${{ github.event.inputs.commentId }}",
+                body
+              });
             }
       - uses: actions/upload-artifact@v3
         name: upload summary
