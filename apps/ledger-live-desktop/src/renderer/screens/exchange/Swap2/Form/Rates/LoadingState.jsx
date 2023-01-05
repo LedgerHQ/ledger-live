@@ -49,4 +49,4 @@ function LoadingState() {
   );
 }
 
-export default React.memo<Props>(LoadingState);
+export default LoadingState;

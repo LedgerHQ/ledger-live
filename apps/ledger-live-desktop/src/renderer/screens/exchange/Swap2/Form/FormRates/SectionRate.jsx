@@ -15,6 +15,7 @@ export type SectionRateProps = {
   refreshTime: number,
   countdown: boolean,
   loading: boolean,
+  searchProvided: boolean,
 };
 
 const SectionRate = ({
@@ -25,6 +26,7 @@ const SectionRate = ({
   refreshTime,
   countdown,
   loading,
+  searchProvided,
 }: SectionRateProps) => {
   const rates = ratesState.value;
 
@@ -39,6 +41,7 @@ const SectionRate = ({
           refreshTime,
           countdown,
           loading,
+          searchProvided,
         }}
       />
     </ProvidersSection>

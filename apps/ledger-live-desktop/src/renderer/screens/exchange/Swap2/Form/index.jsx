@@ -51,6 +51,7 @@ import SwapFormRates from "./FormRates";
 import { DEX_PROVIDERS } from "~/renderer/screens/exchange/Swap2/Form/utils";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import throttle from "lodash/throttle";
+import LoadingState from "./Rates/LoadingState";
 
 const Wrapper: ThemedComponent<{}> = styled(Box).attrs({
   p: 20,
@@ -537,40 +538,37 @@ const SwapForm = () => {
           isSendMaxLoading={isSendMaxLoading}
           updateSelectedRate={swapTransaction.swap.updateSelectedRate}
         />
-        {showDetails && (
-          <>
-            <SwapFormSummary
-              swapTransaction={swapTransaction}
-              kycStatus={kycStatus}
-              provider={provider}
-            />
-            <SwapFormRates
-              swap={swapTransaction.swap}
-              provider={provider}
-              refreshTime={refreshTime}
-              countdown={!swapError && !idleState}
-              showNoQuoteDexRate={showNoQuoteDexRate}
-            />
+        <SwapFormSummary
+          swapTransaction={swapTransaction}
+          kycStatus={kycStatus}
+          provider={provider}
+        />
+        <SwapFormRates
+          swap={swapTransaction.swap}
+          provider={provider}
+          refreshTime={refreshTime}
+          countdown={!swapError && !idleState}
+          showNoQuoteDexRate={showNoQuoteDexRate}
+          showDetails={showDetails}
+        />
 
-            {currentBanner === "LOGIN" ? (
-              <FormLoginBanner provider={provider} onClick={() => setCurrentFlow("LOGIN")} />
-            ) : null}
+        {currentBanner === "LOGIN" ? (
+          <FormLoginBanner provider={provider} onClick={() => setCurrentFlow("LOGIN")} />
+        ) : null}
 
-            {currentBanner === "KYC" ? (
-              <FormKYCBanner
-                provider={provider}
-                status={kycStatus}
-                onClick={() => setCurrentFlow("KYC")}
-              />
-            ) : null}
+        {currentBanner === "KYC" ? (
+          <FormKYCBanner
+            provider={provider}
+            status={kycStatus}
+            onClick={() => setCurrentFlow("KYC")}
+          />
+        ) : null}
 
-            {currentBanner === "MFA" ? (
-              <FormMFABanner provider={provider} onClick={() => setCurrentFlow("MFA")} />
-            ) : null}
+        {currentBanner === "MFA" ? (
+          <FormMFABanner provider={provider} onClick={() => setCurrentFlow("MFA")} />
+        ) : null}
 
-            {error ? <FormErrorBanner provider={provider} error={error} /> : null}
-          </>
-        )}
+        {error ? <FormErrorBanner provider={provider} error={error} /> : null}
 
         <Box>
           <Button primary disabled={!isSwapReady} onClick={onSubmit} data-test-id="exchange-button">
