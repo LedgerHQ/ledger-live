@@ -10,6 +10,7 @@ import type {
   AppStatePayload,
   AppStateSetHasConnectedDevicePayload,
   AppStateSetModalLockPayload,
+  DangerouslyOverrideStatePayload,
 } from "../actions/types";
 import { AppStateActionTypes } from "../actions/types";
 
@@ -68,6 +69,14 @@ const handlers: ReducerMap<AppState, AppStatePayload> = {
   [AppStateActionTypes.CLEAR_BACKGROUND_EVENTS]: (state: AppState) => ({
     ...state,
     backgroundEvents: [],
+  }),
+
+  [AppStateActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (
+    state: AppState,
+    action,
+  ): AppState => ({
+    ...state,
+    ...(action as Action<DangerouslyOverrideStatePayload>).payload.appstate,
   }),
 };
 

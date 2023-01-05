@@ -55,6 +55,7 @@ test("Discover", async ({ page }) => {
     await drawer.continue();
     await drawer.waitForDrawerToDisappear(); // macos runner was having screenshot issues here because the drawer wasn't disappearing fast enough
     await discoverPage.waitForLiveAppToLoad(); // let the loading spinner disappear first
+    await discoverPage.waitForCorrectTextInWebview("Ledger Live Dummy Test App");
     await expect.soft(page).toHaveScreenshot("live-disclaimer-accepted.png");
   });
 

@@ -25,11 +25,7 @@ const TroubleshootingDrawer = ({ isOpen, onClose, lastKnownDeviceId }: Props) =>
         <Flex flexDirection="column" flex={1}>
           <Animation
             height="300px"
-            animation={getDeviceAnimation(
-              lastKnownDeviceId,
-              theme.theme as "light" | "dark",
-              "plugAndPinCode",
-            )}
+            animation={getDeviceAnimation(lastKnownDeviceId, theme.theme, "plugAndPinCode")}
           />
           <Text variant="h4Inter" textAlign="center" fontSize={24} fontWeight="semiBold">
             {t("syncOnboarding.manual.troubleshootingDrawer.title")}
