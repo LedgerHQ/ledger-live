@@ -23,7 +23,6 @@ import { LowerThanMinimumRelayFee } from "../../errors";
 import { getMinRelayFee, getUTXOStatus } from "./logic";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { acceptTransaction } from "./speculos-deviceActions";
-import { opReturnFlow } from "./speculos-deviceActions-op-return";
 
 type Arg = Partial<{
   minimalAmount: BigNumber;
@@ -299,7 +298,6 @@ const bitcoinLikeMutations = ({
   {
     name: "send OP_RETURN transaction",
     maxRun: 1,
-    deviceAction: opReturnFlow,
     transaction: ({ account, bridge, siblings, maxSpendable }) => {
       invariant(maxSpendable.gt(minimalAmount), "balance is too low");
       const sibling = pickSiblings(siblings, targetAccountSize);
