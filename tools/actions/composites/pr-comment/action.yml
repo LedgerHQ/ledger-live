@@ -19,4 +19,4 @@ runs:
             owner: "LedgerHQ",
             repo: "ledger-live",
             body: `${{ inputs.body }}`
-          })
+          });

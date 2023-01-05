@@ -1,4 +1,4 @@
-name: "[Test] Libraries"
+name: "@Libraries • Tests"
 
 on:
   push:
