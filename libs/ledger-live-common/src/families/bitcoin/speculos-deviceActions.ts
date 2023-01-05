@@ -30,7 +30,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
               account.currency.id === "bitcoin" ||
               account.currency.id === "bitcoin_testnet"
             ) {
-              return `OP_RETURN ${transaction.opReturnData?.toString("hex")}`;
+              return `OP_RETURN 0x${transaction.opReturnData?.toString("hex")}`;
             } else {
               return "OP_RETURN";
             }
