@@ -48,8 +48,8 @@ describe("xpub integration sync", () => {
     {
       xpub: "xpub6CUGRUonZSQ4TWtTMmzXdrXDtypWKiKrhko4egpiMZbpiaQL2jkwSB1icqYh2cfDfVxdx4df189oLKnC5fSwqPfgyP3hooxujYzAu3fDVmz", // 3000ms
       derivationMode: DerivationModes.LEGACY,
-      addresses: 15,
-      balance: 12688908,
+      addresses: 19,
+      balance: 12706308,
       network: coininfo.bitcoin.main.toBitcoinJS(),
       currencyId: "bitcoin",
     },
