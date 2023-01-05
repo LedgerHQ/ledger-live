@@ -922,7 +922,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     managerAppName: "MultiversX",
     ticker: "EGLD",
     scheme: "elrond",
-    color: "#23F7DD",
+    color: "#000000",
     family: "elrond",
     blockAvgTime: 6,
     deviceTicker: "EGLD",
