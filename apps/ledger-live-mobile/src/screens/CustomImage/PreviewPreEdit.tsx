@@ -131,7 +131,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   const handleResizeError = useCallback(
     (error: Error) => {
       console.error(error);
-      navigation.navigate(ScreenName.CustomImageErrorScreen, { error, device });
+      navigation.replace(ScreenName.CustomImageErrorScreen, { error, device });
     },
     [navigation, device],
   );

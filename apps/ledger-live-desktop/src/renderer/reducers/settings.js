@@ -129,6 +129,7 @@ export type SettingsState = {
   },
   starredMarketCoins: string[],
   overriddenFeatureFlags: { [key: FeatureId]: Feature },
+  featureFlagsButtonVisible: boolean,
 };
 
 const defaultsForCurrency: Currency => CurrencySettings = crypto => {
@@ -207,6 +208,7 @@ const INITIAL_STATE: SettingsState = {
   },
   starredMarketCoins: [],
   overriddenFeatureFlags: {},
+  featureFlagsButtonVisible: false,
 };
 
 const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
@@ -398,6 +400,10 @@ const handlers: Object = {
   SET_OVERRIDDEN_FEATURE_FLAGS: (state: SettingsState, { payload }) => ({
     ...state,
     overriddenFeatureFlags: payload.overriddenFeatureFlags,
+  }),
+  SET_FEATURE_FLAGS_BUTTON_VISIBLE: (state: SettingsState, { payload }) => ({
+    ...state,
+    featureFlagsButtonVisible: payload.featureFlagsButtonVisible,
   }),
 };
 
@@ -617,5 +623,8 @@ export const starredMarketCoinsSelector = (state: State) => state.settings.starr
 
 export const overriddenFeatureFlagsSelector = (state: State) =>
   state.settings.overriddenFeatureFlags;
+
+export const featureFlagsButtonVisibleSelector = (state: State) =>
+  state.settings.featureFlagsButtonVisible;
 
 export default handleActions(handlers, INITIAL_STATE);

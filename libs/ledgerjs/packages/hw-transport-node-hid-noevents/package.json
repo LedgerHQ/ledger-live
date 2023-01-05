@@ -31,7 +31,7 @@
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "node-hid": "2.1.1"
+    "node-hid": "^2.1.2"
   },
   "devDependencies": {
     "@types/node-hid": "^1.3.1"

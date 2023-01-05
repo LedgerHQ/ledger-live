@@ -11,11 +11,11 @@ module.exports = {
       config: "e2e/jest.config.js",
     },
     jest: {
-      setupTimeout: 240000,
+      setupTimeout: 500000,
     },
   },
   logger: {
-    level: process.env.DEBUG_DETOX ? "trace" : "info",
+    level: process.env.DEBUG_DETOX ? "trace" : "debug",
   },
   behavior: {
     // NOTE: https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md#behavior-configuration
