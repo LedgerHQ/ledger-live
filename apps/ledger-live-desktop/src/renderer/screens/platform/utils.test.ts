@@ -14,7 +14,7 @@ jest.mock("@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index",
           url: "https://dapp-browser.apps.ledger.com",
           params: {
             dappUrl:
-              "https://embedded.paraswap.io/?referrer=ledger2&embed=true&enableStaking=false&displayMenu=false&enableNetworkSwitch=false",
+              "https://embedded.paraswap.io?referrer=ledger2&embed=true&enableStaking=false&displayMenu=false&enableNetworkSwitch=false",
           },
         };
       default:
@@ -43,11 +43,11 @@ describe("useGetManifest", () => {
     it("should fetch complex manifest", async () => {
       const manifest = useGetManifest(
         "paraswap",
-        "#/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee-0xdac17f958d2ee523a2206206994597c13d831ec7/0.004",
-        "?network=1",
+        {},
+        "/platform/paraswap/#/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee-0xdac17f958d2ee523a2206206994597c13d831ec7/0.004?network=1",
       );
       expect(manifest.params.dappUrl).toBe(
-        "https://embedded.paraswap.io#/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee-0xdac17f958d2ee523a2206206994597c13d831ec7/0.004?referrer=ledger2&embed=true&enableStaking=false&displayMenu=false&enableNetworkSwitch=false?network=1",
+        "https://embedded.paraswap.io#/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee-0xdac17f958d2ee523a2206206994597c13d831ec7/0.004?referrer=ledger2&embed=true&enableStaking=false&displayMenu=false&enableNetworkSwitch=false&network=1",
       );
     });
   });
@@ -55,16 +55,16 @@ describe("useGetManifest", () => {
   describe("1inch", () => {
     it("should fetch basic manifest", async () => {
       const manifest = useGetManifest("1inch");
-      expect(manifest.params.dappUrl).toBe("https://app.1inch.io?ledgerLive=true");
+      expect(manifest.params.dappUrl).toBe("https://app.1inch.io/?ledgerLive=true");
     });
     it("should fetch complex manifest", async () => {
       const manifest = useGetManifest(
         "1inch",
-        "#/1/unified/swap/eth/usdt",
-        "?sourceTokenAmount=0.04",
+        { theme: "dark" },
+        "/platform/1inch/#/1/unified/swap/eth/usdt?sourceTokenAmount=0.04",
       );
       expect(manifest.params.dappUrl).toBe(
-        "https://app.1inch.io#/1/unified/swap/eth/usdt?ledgerLive=true?sourceTokenAmount=0.04",
+        "https://app.1inch.io#/1/unified/swap/eth/usdt?theme=dark&ledgerLive=true&sourceTokenAmount=0.04",
       );
     });
   });

@@ -31,11 +31,9 @@ type Props = {
 
 export default function PlatformApp({ match, appId: propsAppId, location }: Props) {
   const history = useHistory();
-  const { params: urlParams, search, hash } = location;
+  const { params: urlParams, search, pathname } = location;
 
   const appId = propsAppId || match.params?.appId;
-
-  const manifest = useGetManifest(appId, hash, search);
 
   const returnTo = useMemo(() => {
     const params = new URLSearchParams(search);
@@ -50,6 +48,8 @@ export default function PlatformApp({ match, appId: propsAppId, location }: Prop
     lang,
     ...urlParams,
   };
+
+  const manifest = useGetManifest(appId, params, pathname);
 
   // TODO for next urlscheme evolutions:
   // - check if local settings allow to launch an app from this branch, else display an error

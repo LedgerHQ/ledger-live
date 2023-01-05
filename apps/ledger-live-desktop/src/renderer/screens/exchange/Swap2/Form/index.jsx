@@ -387,18 +387,10 @@ const SwapForm = () => {
       const from = swapTransaction.swap.from;
       const fromAddress = from.parentAccount?.freshAddress || from.account.freshAddress;
       const providerURL =
-        exchangeRate.providerURL || `/platform/${getProviderName(exchangeRate.provider)}`;
-      const { hash, pathname, searchParams } = new URL(`https://www.prefix.com${providerURL}`);
-      const [simplifyHash, query] = hash.split("?");
-      const urlSearchParams = new URLSearchParams(query);
-      const search = {
-        ...Object.fromEntries(urlSearchParams.entries()),
-        ...Object.fromEntries(searchParams),
-      };
+        exchangeRate.providerURL ||
+        `/platform/${getProviderName(exchangeRate.provider).toLowerCase()}`;
       history.push({
-        pathname,
-        hash: simplifyHash,
-        search: new URLSearchParams(search).toString(),
+        pathname: providerURL,
         params: {
           returnTo: "/swap",
           accountId: fromAddress,
