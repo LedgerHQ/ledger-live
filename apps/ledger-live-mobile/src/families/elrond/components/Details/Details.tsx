@@ -32,12 +32,12 @@ const Details = (props: DetailsPropsType) => {
   const locale = useSelector(localeSelector);
   const unit = getAccountUnit(account);
 
+  const contract = operation && operation.contract ? operation.contract : "";
   const data: ElrondPreloadData = useElrondPreloadData();
   const validator = data.validators.find(
     validator => contract === validator.contract,
   );
 
-  const contract = operation && operation.contract ? operation.contract : "";
   const name = validator ? validator.identity.name || validator.contract : "";
   const amount = formatCurrencyUnit(unit, BigNumber(extra.amount), {
     disableRounding: true,
@@ -140,6 +140,38 @@ const Details = (props: DetailsPropsType) => {
             title={t("operationDetails.extra.rewardFrom")}
             onPress={() => openExplorer(contract)}
             value={name}
+          />
+        )}
+
+        {extra.memo && (
+          <Section
+            title={t("operationDetails.extra.memo")}
+            value={extra.memo}
+          />
+        )}
+      </View>
+    );
+  }
+
+  /*
+   * Return the following fragment if the operation type is of withdrawal.
+   */
+
+  if (type === "WITHDRAW_UNBONDED") {
+    return (
+      <View>
+        {Boolean(name) && (
+          <Section
+            title={t("operationDetails.extra.withdrawnFrom")}
+            value={name}
+          />
+        )}
+
+        {Boolean(amount) && (
+          <Section
+            title={t("operationDetails.extra.withdrawnAmount")}
+            value={amount}
+            onPress={() => openExplorer(contract)}
           />
         )}
 
