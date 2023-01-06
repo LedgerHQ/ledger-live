@@ -1,6 +1,7 @@
-import React, { memo } from "react";
+import React, { useCallback, memo } from "react";
 import { Button, IconBox, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
+import { Linking } from "react-native";
 import { BluetoothMedium } from "@ledgerhq/native-ui/assets/icons";
 import styled from "styled-components/native";
 import DeviceSetupView from "../DeviceSetupView";
@@ -14,33 +15,47 @@ const SafeAreaContainer = styled.SafeAreaView`
   margin-right: ${p => `${p.theme.space[6]}px`};
 `;
 
-const BluetoothDisabled: React.FC<{ onRetry?: () => void }> = ({ onRetry }) => {
+type Props = {
+  neverAskAgain?: boolean;
+};
+
+const BluetoothPermissionDenied = ({ neverAskAgain }: Props) => {
   const { t } = useTranslation();
+  const openNativeSettings = useCallback(() => {
+    Linking.openSettings();
+  }, []);
 
   return (
     <DeviceSetupView hasBackButton>
       <SafeAreaContainer>
         <IconBox Icon={BluetoothMedium} iconSize={24} boxSize={64} />
         <Text variant={"h2"} mb={5} mt={7} textAlign="center">
-          {t("bluetooth.required")}
+          {t("permissions.bluetooth.modalTitle")}
         </Text>
         <Text
-          mb={onRetry ? 10 : 0}
+          mb={10}
           variant={"body"}
           fontWeight={"medium"}
           textAlign="center"
           color={"neutral.c80"}
         >
-          {t("bluetooth.checkEnabled")}
+          {neverAskAgain
+            ? t("permissions.bluetooth.modalDescriptionSettingsVariant")
+            : t("permissions.bluetooth.modalDescriptionBase")}
         </Text>
-        {onRetry ? (
-          <Button type="main" alignSelf="stretch" outline onPress={onRetry}>
-            {t("common.retry")}
-          </Button>
-        ) : null}
+        <Button
+          type="main"
+          alignSelf="stretch"
+          outline
+          onPress={openNativeSettings}
+        >
+          {neverAskAgain
+            ? t("permissions.bluetooth.modalButtonLabelSettingsVariant")
+            : t("permissions.bluetooth.modalButtonLabelBase")}
+        </Button>
       </SafeAreaContainer>
     </DeviceSetupView>
   );
 };
 
-export default memo(BluetoothDisabled);
+export default memo(BluetoothPermissionDenied);

@@ -1,18 +1,14 @@
-import React, { useCallback, useState } from "react";
-import { View, StyleSheet, PermissionsAndroid } from "react-native";
+import React, { useCallback } from "react";
+import { View, StyleSheet, PermissionsAndroid, Linking } from "react-native";
 import { useTranslation } from "react-i18next";
-import { Button } from "@ledgerhq/native-ui";
+import { Button, Icons } from "@ledgerhq/native-ui";
 import NoLocationImage from "../../icons/NoLocationImage";
 import LocationServicesButton from "./LocationServicesButton";
-import OpenAppPermissionsSettingsButton from "./OpenAppPermissionsSettingsButton";
 import LText from "../LText";
-import {
+import DeviceSetupView from "../DeviceSetupView";
+import useAndroidLocationPermission, {
   locationPermission,
-  requestLocationPermission,
-  RequestResult,
-} from "../RequiresBLE/androidBlePermissions";
-
-const { RESULTS } = PermissionsAndroid;
+} from "../RequiresBLE/hooks/useAndroidLocationPermission";
 
 type Props = {
   onRetry: () => void;
@@ -20,25 +16,11 @@ type Props = {
 };
 export default function LocationRequired({ errorType, onRetry }: Props) {
   const { t } = useTranslation();
-  const [requestResult, setRequestResult] = useState<RequestResult | null>(
-    null,
-  );
-  const { status } = requestResult || {};
+  const { neverAskAgain } = useAndroidLocationPermission();
 
-  /** https://developer.android.com/about/versions/11/privacy/permissions#dialog-visibility */
-  const neverAskAgain = status === RESULTS.NEVER_ASK_AGAIN;
-
-  const requestPermission = useCallback(async () => {
-    let dead = false;
-    requestLocationPermission().then(res => {
-      if (dead) return;
-      setRequestResult(res);
-      onRetry();
-    });
-    return () => {
-      dead = true;
-    };
-  }, [onRetry]);
+  const openNativeSettings = useCallback(() => {
+    Linking.openSettings();
+  }, []);
 
   const isDisabledErrorType = errorType === "disabled";
   const isFineLocationRequired =
@@ -56,33 +38,42 @@ export default function LocationRequired({ errorType, onRetry }: Props) {
     : t("location.descriptionPermissionRequired");
 
   return (
-    <View style={styles.container}>
-      <NoLocationImage />
-      <View>
-        <LText bold secondary style={styles.title}>
-          {title}
-        </LText>
+    <DeviceSetupView hasBackButton>
+      <View style={styles.container}>
+        <NoLocationImage />
+        <View>
+          <LText bold secondary style={styles.title}>
+            {title}
+          </LText>
+        </View>
+        <View>
+          <LText style={styles.desc} color="grey">
+            {description}
+          </LText>
+          <LText semiBold style={[styles.desc, styles.descPadding]}>
+            {t("location.noInfos")}
+          </LText>
+        </View>
+        <View style={styles.buttonWrapper}>
+          {isDisabledErrorType ? (
+            <LocationServicesButton onRetry={onRetry} />
+          ) : neverAskAgain ? (
+            <Button
+              type="main"
+              onPress={openNativeSettings}
+              Icon={Icons.SettingsMedium}
+              outline
+            >
+              {t("permissions.open")}
+            </Button>
+          ) : (
+            <Button type="main" outline onPress={onRetry}>
+              {t("permissions.authorize")}
+            </Button>
+          )}
+        </View>
       </View>
-      <View>
-        <LText style={styles.desc} color="grey">
-          {description}
-        </LText>
-        <LText semiBold style={[styles.desc, styles.descPadding]}>
-          {t("location.noInfos")}
-        </LText>
-      </View>
-      <View style={styles.buttonWrapper}>
-        {isDisabledErrorType ? (
-          <LocationServicesButton onRetry={onRetry} />
-        ) : neverAskAgain ? (
-          <OpenAppPermissionsSettingsButton onRetry={onRetry} />
-        ) : (
-          <Button type="main" outline onPress={requestPermission}>
-            {t("permissions.authorize")}
-          </Button>
-        )}
-      </View>
-    </View>
+    </DeviceSetupView>
   );
 }
 const styles = StyleSheet.create({
