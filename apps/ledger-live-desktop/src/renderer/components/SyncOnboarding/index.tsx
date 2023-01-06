@@ -5,24 +5,29 @@ import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import SyncOnboardingDeviceConnection, {
   SyncOnboardingDeviceConnectionProps,
 } from "./DeviceConnection";
-import SyncOnboardingManual from "./Manual";
+import SyncOnboardingManual, { SyncOnboardingManualProps } from "./Manual";
 import CompletionScreen from "./Manual/CompletionScreen";
 
-export type SyncOnboardingDeviceConnectionRouteProps = RouteComponentProps<
-  SyncOnboardingDeviceConnectionProps
->;
+export type DeviceConnectionRouteProps = RouteComponentProps<SyncOnboardingDeviceConnectionProps>;
+export type ManualRouteProps = RouteComponentProps<SyncOnboardingManualProps>;
 
 const SyncOnboarding = () => {
   const { path } = useRouteMatch();
   return (
     <Flex width="100%" height="100%" position="relative">
       <Switch>
-        <Route exact path={[`${path}/manual`]} render={() => <SyncOnboardingManual />} />
+        <Route
+          exact
+          path={[`${path}/manual/:deviceModelId`]}
+          render={(routeProps: ManualRouteProps) => (
+            <SyncOnboardingManual {...routeProps.match.params} />
+          )}
+        />
         <Route exact path={`${path}/completion`} render={() => <CompletionScreen />} />
         <Route
           exact
           path={[`${path}/:deviceModelId`, `${path}/connection/:deviceModelId`]}
-          render={(routeProps: SyncOnboardingDeviceConnectionRouteProps) => (
+          render={(routeProps: DeviceConnectionRouteProps) => (
             <SyncOnboardingDeviceConnection {...routeProps.match.params} />
           )}
         />

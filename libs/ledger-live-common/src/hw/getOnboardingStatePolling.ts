@@ -24,6 +24,7 @@ import {
   DisconnectedDevice,
   CantOpenDevice,
   TransportRaceCondition,
+  LockedDeviceError,
 } from "@ledgerhq/errors";
 import { FirmwareInfo } from "@ledgerhq/types-live";
 import {
@@ -34,6 +35,7 @@ import {
 export type OnboardingStatePollingResult = {
   onboardingState: OnboardingState | null;
   allowedError: Error | null;
+  lockedDevice: boolean;
 };
 
 export type GetOnboardingStatePollingResult =
@@ -50,7 +52,10 @@ export type GetOnboardingStatePollingArgs = {
  * @param deviceId A device id
  * @param pollingPeriodMs The period in ms after which the device onboarding state is fetched again
  * @param fetchingTimeoutMs The time to wait while fetching for the device onboarding state before throwing an error, in ms
- * @returns An Observable that polls the device onboarding state
+ * @returns An Observable that polls the device onboarding state and pushes an object containing:
+ * - onboardingState: the device state during the onboarding
+ * - allowedError: any error that is allowed and does not stop the polling
+ * - lockedDevice: a boolean set to true if the device is currently locked, false otherwise
  */
 export const getOnboardingStatePolling = ({
   deviceId,
@@ -94,6 +99,7 @@ export const getOnboardingStatePolling = ({
                 return {
                   onboardingState: null,
                   allowedError: error,
+                  lockedDevice: false,
                 };
               } else {
                 return {
@@ -103,10 +109,15 @@ export const getOnboardingStatePolling = ({
                       error?.name ?? error
                     } ${error?.message}`
                   ),
+                  lockedDevice: false,
                 };
               }
             }
-            return { onboardingState, allowedError: null };
+            return {
+              onboardingState,
+              allowedError: null,
+              lockedDevice: false,
+            };
           })
         );
 
@@ -117,6 +128,7 @@ export const getOnboardingStatePolling = ({
             return {
               onboardingState: null,
               allowedError: allowedError,
+              lockedDevice: allowedError instanceof LockedDeviceError,
             };
           })
         );
@@ -142,7 +154,9 @@ export const isAllowedOnboardingStatePollingError = (
       error instanceof DisconnectedDevice ||
       error instanceof CantOpenDevice ||
       error instanceof TransportRaceCondition ||
-      error instanceof TransportStatusError)
+      error instanceof TransportStatusError ||
+      // A locked device is handled as an allowed error
+      error instanceof LockedDeviceError)
   ) {
     return true;
   }
