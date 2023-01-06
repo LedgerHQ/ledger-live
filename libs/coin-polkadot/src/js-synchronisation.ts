@@ -1,7 +1,7 @@
 import type { Account } from "@ledgerhq/types-live";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import type { GetAccountShape } from "@ledgerhq/coin-framework/lib/bridge/jsHelpers";
-import { mergeOps } from "@ledgerhq/coin-framework/lib/bridge/jsHelpers";
+import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getAccount, getOperations } from "./api";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
 

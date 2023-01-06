@@ -13,9 +13,9 @@ import {
   expectSiblingsHaveSpendablePartGreaterThan,
   genericTestDestination,
   pickSiblings,
-} from "@ledgerhq/coin-framework/lib/bot/specs";
-import type { AppSpec } from "@ledgerhq/coin-framework/lib/bot/types";
-import { toOperationRaw } from "@ledgerhq/coin-framework/lib/serialization/operation";
+} from "@ledgerhq/coin-framework/bot/specs";
+import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
+import { toOperationRaw } from "@ledgerhq/coin-framework/serialization/operation";
 import {
   canBond,
   canUnbond,

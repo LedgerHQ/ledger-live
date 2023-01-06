@@ -17,7 +17,7 @@ import solana from "../families/solana/transaction";
 import stellar from "../families/stellar/transaction";
 import tezos from "../families/tezos/transaction";
 import tron from "../families/tron/transaction";
-import polkadot from "@ledgerhq/coin-polkadot/lib/transaction";
+import polkadot from "@ledgerhq/coin-polkadot/transaction";
 
 export default {
   algorand,

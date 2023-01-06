@@ -1,8 +1,8 @@
 import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
 import { BigNumber } from "bignumber.js";
 import { TypeRegistry } from "@polkadot/types";
-import { makeLRUCache } from "@ledgerhq/coin-framework/lib/cache";
-import type { CacheRes } from "@ledgerhq/coin-framework/lib/cache";
+import { makeLRUCache } from "@ledgerhq/coin-framework/cache";
+import type { CacheRes } from "@ledgerhq/coin-framework/cache";
 import type { PolkadotAccount, Transaction } from "./types";
 import {
   isNewAccount as apiIsNewAccount,

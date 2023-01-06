@@ -6,7 +6,7 @@ import {
   fromTransactionStatusRawCommon as fromTransactionStatusRaw,
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
-} from "@ledgerhq/coin-framework/lib/transaction/common";
+} from "@ledgerhq/coin-framework/transaction/common";
 import type { Account } from "@ledgerhq/types-live";
 import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";

@@ -12,8 +12,8 @@ import type {
   SignOperationEvent,
   SignOperationFnSignature,
 } from "@ledgerhq/types-live";
-import { encodeOperationId } from "@ledgerhq/coin-framework/lib/operation";
-import { DeviceCommunication } from "@ledgerhq/coin-framework/lib/bridge/jsHelpers";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { DeviceCommunication } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { buildTransaction } from "./js-buildTransaction";
 import { calculateAmount, getNonce, isFirstBond } from "./logic";
 const MODE_TO_TYPE = {

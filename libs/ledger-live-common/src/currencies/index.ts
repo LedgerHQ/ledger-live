@@ -34,7 +34,7 @@ import {
   valueFromUnit,
   getCurrencyColor,
   findCurrencyByTicker,
-} from "@ledgerhq/coin-framework/lib/currencies";
+} from "@ledgerhq/coin-framework/currencies/index";
 import { parseCurrencyUnit } from "./parseCurrencyUnit";
 import {
   sortByMarketcap,
@@ -43,7 +43,7 @@ import {
   currenciesByMarketcap,
   useCurrenciesByMarketcap,
 } from "./sortByMarketcap";
-export * from "@ledgerhq/coin-framework/lib/currencies/support";
+export * from "@ledgerhq/coin-framework/currencies/support";
 export * from "./helpers";
 
 export {

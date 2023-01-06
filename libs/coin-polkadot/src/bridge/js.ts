@@ -5,8 +5,8 @@ import type {
   SignedOperation,
 } from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
-import { DeviceCommunication, makeAccountBridgeReceive, makeScanAccounts, makeSync } from "@ledgerhq/coin-framework/lib/bridge/jsHelpers";
-import { patchOperationWithHash } from "@ledgerhq/coin-framework/lib/operation";
+import { DeviceCommunication, makeAccountBridgeReceive, makeScanAccounts, makeSync } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
 import { submitExtrinsic } from "../api";
 import { getPreloadStrategy, preload, hydrate } from "../preload";
 import { getAccountShape } from "../js-synchronisation";

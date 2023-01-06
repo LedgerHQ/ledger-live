@@ -65,6 +65,56 @@
     "./package.json": "./package.json"
   },
   "license": "Apache-2.0",
+  "typesVersions": {
+    "*": {
+      "*.json": [
+        "*.json"
+      ],
+      "*/": [
+        "lib/*/index.d.ts"
+      ],
+      "*": [
+        "lib/*"
+      ],
+      "lib/*/": [
+        "lib/*/index.d.ts"
+      ],
+      "lib/*": [
+        "lib/*"
+      ],
+      "lib-es/*/": [
+        "lib-es/*/index.d.ts"
+      ],
+      "lib-es/*": [
+        "lib-es/*"
+      ]
+    }
+  },
+  "exports": {
+    "./lib/*/": "./lib/*/index.js",
+    "./lib/*": "./lib/*.js",
+    "./lib/*.js": "./lib/*.js",
+    "./lib-es/*/": "./lib-es/*/index.js",
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib-es/*.js": "./lib-es/*.js",
+    "./*/": {
+      "require": "./lib/*/index.js",
+      "default": "./lib-es/*/index.js"
+    },
+    "./*": {
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
+    },
+    "./*.js": {
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
+    },
+    ".": {
+      "require": "./lib/index.js",
+      "default": "./lib-es/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",

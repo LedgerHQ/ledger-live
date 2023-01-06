@@ -1,1 +1,1 @@
-export * from "@ledgerhq/coin-framework/lib/currencies/parseCurrencyUnit";
+export * from "@ledgerhq/coin-framework/currencies/parseCurrencyUnit";

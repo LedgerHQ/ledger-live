@@ -1,5 +1,5 @@
 import Bridge from "../bridge/new";
-import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/lib/transaction/common";
+import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import type { Account, AccountLike, TransactionCommon, TransactionStatusCommon } from "@ledgerhq/types-live";
 
 export function getDeviceTransactionConfig(arg: {

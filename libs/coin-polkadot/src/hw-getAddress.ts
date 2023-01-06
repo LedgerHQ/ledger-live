@@ -1,5 +1,5 @@
 import Polkadot from "@ledgerhq/hw-app-polkadot";
-import type { Resolver } from "@ledgerhq/coin-framework/lib/bridge/getAddressWrapper";
+import type { Resolver } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 
 const resolver: Resolver = async (transport, { path, verify }) => {
   const polkadot = new Polkadot(transport);

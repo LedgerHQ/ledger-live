@@ -3,7 +3,7 @@ import { map } from "rxjs/operators";
 import { getValidators } from "./validators";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
-import { isAccount } from "@ledgerhq/coin-framework/lib/account/index";
+import { isAccount } from "@ledgerhq/coin-framework/account/index";
 import {
   getCryptoCurrencyById,
   formatCurrencyUnit,

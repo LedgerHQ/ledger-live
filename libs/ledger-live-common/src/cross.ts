@@ -1,1 +1,1 @@
-export * from "@ledgerhq/coin-framework/lib/cross";
+export * from "@ledgerhq/coin-framework/cross";

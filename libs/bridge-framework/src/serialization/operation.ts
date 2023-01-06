@@ -7,9 +7,9 @@ import type {
 import {
   toOperationRaw as coinToOperationRaw,
   fromOperationRaw as coinFromOperationRaw
-} from "@ledgerhq/coin-framework/lib/serialization/operation";
+} from "@ledgerhq/coin-framework/serialization/operation";
 import Bridge from "../bridge/new";
-import { inferFamilyFromAccountId } from "@ledgerhq/coin-framework/lib/account";
+import { inferFamilyFromAccountId } from "@ledgerhq/coin-framework/account/index";
 
 export const toOperationRaw = (
   operation: Operation,

@@ -69,7 +69,7 @@ async function genTarget(targets, families) {
       target !== "bridge/js.ts" &&
       fs.existsSync(path.join(libsDir, `coin-${family}/src`, target))
     ) {
-      imports += `import ${family} from "@ledgerhq/coin-${family}/lib/${imprtTarget}";
+      imports += `import ${family} from "@ledgerhq/coin-${family}/${imprtTarget}";
 `;
       exprts += `
   ${family},`;
@@ -110,7 +110,7 @@ async function getDeviceTransactionConfig(families) {
   const family = "polkadot";
   const target = "deviceTransactionConfig.ts";
   if (fs.existsSync(path.join(libsDir, `coin-${family}/src`, target))) {
-    imports += `import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_${family} } from "@ledgerhq/coin-${family}/lib/deviceTransactionConfig";
+    imports += `import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_${family} } from "@ledgerhq/coin-${family}/deviceTransactionConfig";
 `;
     exprts += `
     | ExtraDeviceTransactionField_${family}`;
@@ -159,10 +159,10 @@ import { TransactionStatusRaw as ${family}TransactionStatusRaw } from "../famili
   const family = "polkadot";
   const target = "types.ts";
   if (fs.existsSync(path.join(libsDir, `coin-${family}/src`, target))) {
-    imprts += `import { Transaction as ${family}Transaction } from "@ledgerhq/coin-${family}/lib/types";
-import { TransactionRaw as ${family}TransactionRaw } from "@ledgerhq/coin-${family}/lib/types";
-import { TransactionStatus as ${family}TransactionStatus } from "@ledgerhq/coin-${family}/lib/types";
-import { TransactionStatusRaw as ${family}TransactionStatusRaw } from "@ledgerhq/coin-${family}/lib/types";
+    imprts += `import { Transaction as ${family}Transaction } from "@ledgerhq/coin-${family}/types";
+import { TransactionRaw as ${family}TransactionRaw } from "@ledgerhq/coin-${family}/types";
+import { TransactionStatus as ${family}TransactionStatus } from "@ledgerhq/coin-${family}/types";
+import { TransactionStatusRaw as ${family}TransactionStatusRaw } from "@ledgerhq/coin-${family}/types";
 `;
     exprtsT += `
   | ${family}Transaction`;

@@ -20,12 +20,12 @@ import {
   getCryptoCurrencyById,
   getTokenById,
   findTokenById,
-} from "@ledgerhq/coin-framework/lib/currencies";
-import { isAccountEmpty } from "@ledgerhq/coin-framework/lib/account/helpers";
+} from "@ledgerhq/coin-framework/currencies/index";
+import { isAccountEmpty } from "@ledgerhq/coin-framework/account/helpers";
 import {
   emptyHistoryCache,
   generateHistoryFromOperations,
-} from "@ledgerhq/coin-framework/lib/account/balanceHistoryCache";
+} from "@ledgerhq/coin-framework/account/balanceHistoryCache";
 import { fromOperationRaw, toOperationRaw, fromSwapOperationRaw, toSwapOperationRaw } from "./operation";
 import { fromNFTRaw, toNFTRaw } from "./nft";
 import Bridge from "../bridge/new";

@@ -1,6 +1,6 @@
-// export * from "@ledgerhq/coin-framework/lib/transaction/common";
-// export * from "@ledgerhq/coin-framework/lib/transaction/signOperation";
-// export * from "@ledgerhq/coin-framework/lib/transaction/deviceTransactionConfig";
+// export * from "@ledgerhq/coin-framework/transaction/common";
+// export * from "@ledgerhq/coin-framework/transaction/signOperation";
+// export * from "@ledgerhq/coin-framework/transaction/deviceTransactionConfig";
 // import type {
 //   Transaction,
 //   TransactionRaw,

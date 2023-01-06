@@ -16,7 +16,7 @@ import solana from "../families/solana/specs";
 import stellar from "../families/stellar/specs";
 import tezos from "../families/tezos/specs";
 import tron from "../families/tron/specs";
-import polkadot from "@ledgerhq/coin-polkadot/lib/specs";
+import polkadot from "@ledgerhq/coin-polkadot/specs";
 
 export default {
   algorand,

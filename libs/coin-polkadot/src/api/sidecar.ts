@@ -5,10 +5,10 @@ import { getSpecTypes } from "@polkadot/types-known";
 import { Metadata } from "@polkadot/types/metadata";
 import { expandMetadata } from "@polkadot/types/metadata/decorate";
 import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
-import { makeLRUCache } from "@ledgerhq/coin-framework/lib/cache";
-import type { CacheRes } from "@ledgerhq/coin-framework/lib/cache";
-import { getEnv } from "@ledgerhq/coin-framework/lib/env";
-import network from "@ledgerhq/coin-framework/lib/network";
+import { makeLRUCache } from "@ledgerhq/coin-framework/cache";
+import type { CacheRes } from "@ledgerhq/coin-framework/cache";
+import { getEnv } from "@ledgerhq/coin-framework/env";
+import network from "@ledgerhq/coin-framework/network";
 import type {
   PolkadotValidator,
   PolkadotStakingProgress,

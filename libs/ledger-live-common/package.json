@@ -88,6 +88,8 @@
     "reactNative.js"
   ],
   "peerDependencies": {
+    "@ledgerhq/coin-framework": "workspace:^",
+    "@ledgerhq/coin-polkadot": "workspace:^",
     "@types/react": "*",
     "react": ">=16",
     "react-dom": ">=16",

@@ -74,10 +74,10 @@ import { Transaction as tronTransaction } from "../families/tron/types";
 import { TransactionRaw as tronTransactionRaw } from "../families/tron/types";
 import { TransactionStatus as tronTransactionStatus } from "../families/tron/types";
 import { TransactionStatusRaw as tronTransactionStatusRaw } from "../families/tron/types";
-import { Transaction as polkadotTransaction } from "@ledgerhq/coin-polkadot/lib/types";
-import { TransactionRaw as polkadotTransactionRaw } from "@ledgerhq/coin-polkadot/lib/types";
-import { TransactionStatus as polkadotTransactionStatus } from "@ledgerhq/coin-polkadot/lib/types";
-import { TransactionStatusRaw as polkadotTransactionStatusRaw } from "@ledgerhq/coin-polkadot/lib/types";
+import { Transaction as polkadotTransaction } from "@ledgerhq/coin-polkadot/types";
+import { TransactionRaw as polkadotTransactionRaw } from "@ledgerhq/coin-polkadot/types";
+import { TransactionStatus as polkadotTransactionStatus } from "@ledgerhq/coin-polkadot/types";
+import { TransactionStatusRaw as polkadotTransactionStatusRaw } from "@ledgerhq/coin-polkadot/types";
 
 export type Transaction =
   | algorandTransaction

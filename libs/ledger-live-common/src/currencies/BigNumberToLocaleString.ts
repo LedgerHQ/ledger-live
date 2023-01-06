@@ -1,1 +1,1 @@
-export * from "@ledgerhq/coin-framework/lib/currencies/BigNumberToLocaleString";
+export * from "@ledgerhq/coin-framework/currencies/BigNumberToLocaleString";

@@ -4,13 +4,13 @@ import { useBridgeSync } from "../../bridge/react";
 import {
   getCurrentPolkadotPreloadData,
   getPolkadotPreloadDataUpdates,
-} from "@ledgerhq/coin-polkadot/lib/preload";
+} from "@ledgerhq/coin-polkadot/preload";
 import type {
   PolkadotValidator,
   PolkadotNomination,
   PolkadotSearchFilter,
   PolkadotAccount,
-} from "@ledgerhq/coin-polkadot/lib/types";
+} from "@ledgerhq/coin-polkadot/types";
 const SYNC_REFRESH_RATE = 6000; // 6s - block time
 
 export function usePolkadotPreloadData() {

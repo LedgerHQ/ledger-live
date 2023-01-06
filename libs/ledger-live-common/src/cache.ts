@@ -1,1 +1,1 @@
-export * from "@ledgerhq/coin-framework/lib/cache";
+export * from "@ledgerhq/coin-framework/cache";

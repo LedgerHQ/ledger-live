@@ -1,7 +1,7 @@
 import {
   buildCurrencyBridge,
   buildAccountBridge,
-} from "@ledgerhq/coin-polkadot/lib/bridge/js";
+} from "@ledgerhq/coin-polkadot/bridge/js";
 import { withDevice } from "../../../hw/deviceAccess";
 
 export default {

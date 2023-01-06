@@ -12,7 +12,7 @@ import {
   IterateResultBuilder,
   mergeOps,
   sameOp,
-} from "@ledgerhq/coin-framework/lib/bridge/jsHelpers";
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import {
   getSeedIdentifierDerivation,
   getDerivationModesForCurrency,
@@ -39,7 +39,7 @@ import {
 import {
   FreshAddressIndexInvalid,
   UnsupportedDerivation,
-} from "@ledgerhq/coin-framework/lib/errors";
+} from "@ledgerhq/coin-framework/errors";
 import getAddress from "../hw/getAddress";
 import type { Result, GetAddressOptions } from "../hw/getAddress/types";
 import { withDevice } from "../hw/deviceAccess";

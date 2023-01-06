@@ -1,17 +1,17 @@
 import { CurrencyNotSupported } from "@ledgerhq/errors";
-import { decodeAccountId, getMainAccount } from "@ledgerhq/coin-framework/lib/account";
-import { checkAccountSupported } from "@ledgerhq/coin-framework/lib/account/support";
-import { DeviceCommunication } from "@ledgerhq/coin-framework/lib/bridge/jsHelpers";
-import polkadotBridge from "@ledgerhq/coin-polkadot/lib/bridge/js";
+import { decodeAccountId, getMainAccount } from "@ledgerhq/coin-framework/account/index";
+import { checkAccountSupported } from "@ledgerhq/coin-framework/account/support";
+import { DeviceCommunication } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import polkadotBridge from "@ledgerhq/coin-polkadot/bridge/js";
 import {
   PolkadotAccount,
   PolkadotAccountRaw,
   Transaction as PolkadotTransaction
-} from "@ledgerhq/coin-polkadot/lib/types"
-import * as PolkadotAccountFn from "@ledgerhq/coin-polkadot/lib/account";
-import polkadotDeviceTransactionCfg from "@ledgerhq/coin-polkadot/lib/deviceTransactionConfig";
-import { fromPolkadotResourcesRaw, toPolkadotResourcesRaw } from "@ledgerhq/coin-polkadot/lib/serialization";
-import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/lib/transaction/common";
+} from "@ledgerhq/coin-polkadot/types"
+import * as PolkadotAccountFn from "@ledgerhq/coin-polkadot/account";
+import polkadotDeviceTransactionCfg from "@ledgerhq/coin-polkadot/deviceTransactionConfig";
+import { fromPolkadotResourcesRaw, toPolkadotResourcesRaw } from "@ledgerhq/coin-polkadot/serialization";
+import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   Account,

@@ -6,7 +6,7 @@ import elrond from "../families/elrond/account";
 import filecoin from "../families/filecoin/account";
 import near from "../families/near/account";
 import osmosis from "../families/osmosis/account";
-import polkadot from "@ledgerhq/coin-polkadot/lib/account";
+import polkadot from "@ledgerhq/coin-polkadot/account";
 
 export default {
   algorand,

@@ -1,2 +1,2 @@
 // Encapsulate for LLD et LLM
-export * from "@ledgerhq/coin-polkadot/lib/logic";
+export * from "@ledgerhq/coin-polkadot/logic";

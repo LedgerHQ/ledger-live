@@ -27,7 +27,7 @@ import {
   getOperationConfirmationDisplayableNumber,
   isConfirmedOperation,
   patchOperationWithHash as patchOperationWithHashCoined,
-} from "@ledgerhq/coin-framework/lib/operation";
+} from "@ledgerhq/coin-framework/operation";
 
 export {
   findOperationInAccount,

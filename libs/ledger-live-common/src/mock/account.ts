@@ -28,7 +28,7 @@ import type {
 import { CosmosAccount } from "../families/cosmos/types";
 import { BitcoinAccount } from "../families/bitcoin/types";
 import { AlgorandAccount } from "../families/algorand/types";
-import { PolkadotAccount } from "@ledgerhq/coin-polkadot/lib/types";
+import { PolkadotAccount } from "@ledgerhq/coin-polkadot/types";
 import { TezosAccount } from "../families/tezos/types";
 import { createFixtureNFT, genNFTOperation } from "./fixtures/nfts";
 

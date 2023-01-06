@@ -1,6 +1,6 @@
-import type { DeviceAction } from "@ledgerhq/coin-framework/lib/bot/types";
+import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
 import type { PolkadotAccount, Transaction } from "./types";
-import { deviceActionFlow, formatDeviceAmount, State } from "@ledgerhq/coin-framework/lib/bot/specs";
+import { deviceActionFlow, formatDeviceAmount, State } from "@ledgerhq/coin-framework/bot/specs";
 
 export const acceptTransaction: DeviceAction<Transaction, State<Transaction>> =
   deviceActionFlow({

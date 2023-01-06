@@ -10,9 +10,9 @@ THIS FILE IS UNUSED AND PROVIDED AS EXAMPLE FOR USING SUBSCAN INDEXER.
 import uniqBy from "lodash/uniqBy";
 import camelCase from "lodash/camelCase";
 import type { Operation } from "@ledgerhq/types-live";
-import network from "@ledgerhq/coin-framework/lib/network";
+import network from "@ledgerhq/coin-framework/network";
 import { BigNumber } from "bignumber.js";
-import { getEnv } from "@ledgerhq/coin-framework/lib/env";
+import { getEnv } from "@ledgerhq/coin-framework/env";
 import { encodeAddress } from "@polkadot/util-crypto";
 import { getOperationType } from "./common";
 import type { PolkadotValidator } from "../types";
