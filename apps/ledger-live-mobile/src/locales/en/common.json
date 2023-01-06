@@ -2129,6 +2129,8 @@
       "undelegated": "Undelegated ({{amount}})",
       "undelegatedFrom": "Undelegated from",
       "undelegatedAmount": "Undelegated amount",
+      "withdrawnFrom": "Withdrawn from",
+      "withdrawnAmount": "Withdrawn amount",
       "rewardFrom": "Reward from",
       "rewardAmount": "Amount collected",
       "memo": "Memo",
