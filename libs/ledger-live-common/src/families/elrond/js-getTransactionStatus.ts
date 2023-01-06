@@ -50,7 +50,9 @@ const getTransactionStatus = async (
     !errors.amount &&
     t.amount.eq(0) &&
     !t.useAllAmount &&
-    !["unDelegate", "withdraw", "reDelegateRewards"].includes(t.mode)
+    !["unDelegate", "withdraw", "reDelegateRewards", "claimRewards"].includes(
+      t.mode
+    )
   ) {
     errors.amount = new AmountRequired();
   }
