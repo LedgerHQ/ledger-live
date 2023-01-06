@@ -160,7 +160,7 @@ const inferError = (
     status,
   } = responseData;
 
-  // DEX quotes are out of limit scope error
+  // DEX quotes are out of limits error. We do not know if it is a low or high limit, neither the amount.
   if (
     (!minAmountFrom || !maxAmountFrom) &&
     status === "error" &&
