@@ -1,12 +1,12 @@
 import { isCryptoCurrency, isTokenCurrency } from "../currencies";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import {
-  WalletAPI_FAMILIES,
   WalletAPICurrency,
   WalletAPISupportedCurrency,
   WalletAPIERC20TokenCurrency,
   WalletAPICryptoCurrency,
 } from "./types";
+import { WALLET_API_FAMILIES } from "./constants";
 
 // Small helper to avoid issues with includes and typescript
 // more infos: https://fettblog.eu/typescript-array-includes/
@@ -21,10 +21,10 @@ export function isWalletAPISupportedCurrency(
   currency: Currency
 ): currency is WalletAPISupportedCurrency {
   if (isCryptoCurrency(currency)) {
-    return includes(WalletAPI_FAMILIES, currency.family);
+    return includes(WALLET_API_FAMILIES, currency.family);
   }
   if (isTokenCurrency(currency)) {
-    return includes(WalletAPI_FAMILIES, currency.parentCurrency.family);
+    return includes(WALLET_API_FAMILIES, currency.parentCurrency.family);
   }
   return false;
 }
