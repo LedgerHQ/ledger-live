@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Observable } from "rxjs";
 import TransportBLE from "../../react-native-hw-transport-ble";
-import { usePromptBluetoothCallbackWithState } from "../../logic/usePromptBluetoothCallback";
+import {
+  BluetoothPromptResult,
+  usePromptBluetoothCallbackWithState,
+} from "../../logic/usePromptBluetoothCallback";
 import BluetoothDisabled from "./BluetoothDisabled";
+import BluetoothPermissionDenied from "./BluetoothPermissionDenied";
 
 type Props = {
   children?: React.ReactNode;
@@ -11,7 +15,7 @@ type Props = {
 const RequiresBluetoothEnabled: React.FC<Props> = ({ children }) => {
   const [type, setType] = useState<string>("Unknown");
 
-  const { prompt, bluetoothPromptedOnce, bluetoothPromptSucceeded } =
+  const { prompt, bluetoothPromptedOnce, bluetoothPromptResult } =
     usePromptBluetoothCallbackWithState();
 
   useEffect(() => {
@@ -28,7 +32,9 @@ const RequiresBluetoothEnabled: React.FC<Props> = ({ children }) => {
 
   if (type === "Unknown" || !bluetoothPromptedOnce) return null; // suspense PLZ
 
-  if (!bluetoothPromptSucceeded) return <BluetoothDisabled onRetry={prompt} />;
+  if (bluetoothPromptResult === BluetoothPromptResult.UNAUTHORIZED) {
+    return <BluetoothPermissionDenied />;
+  }
 
   if (type === "PoweredOn") {
     return <>{children}</>;

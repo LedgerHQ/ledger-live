@@ -1,12 +1,6 @@
-import React, { ReactNode, useCallback, useEffect, useState } from "react";
-import { useIsMounted } from "../../helpers/useIsMounted";
+import React, { ReactNode } from "react";
 import LocationRequired from "../LocationRequired";
-import {
-  checkLocationPermission,
-  locationPermission,
-  requestLocationPermission,
-  RequestResult,
-} from "./androidBlePermissions";
+import useAndroidLocationPermission from "./hooks/useAndroidLocationPermission";
 
 /**
  * Renders an error if location is required & not available,
@@ -15,38 +9,15 @@ import {
 const AndroidRequiresLocationPermissions: React.FC<{
   children?: ReactNode | undefined;
 }> = ({ children }) => {
-  const isMounted = useIsMounted();
-  const [requestResult, setRequestResult] = useState<RequestResult | null>(
-    null,
-  );
-  const [checkResult, setCheckResult] = useState<boolean | null>(null);
+  const { renderChildren, hasPermission, checkAgain } =
+    useAndroidLocationPermission();
 
-  const { granted } = requestResult || {};
+  if (hasPermission === undefined) return null; // Prevents blink
 
-  const requestPermission = useCallback(() => {
-    requestLocationPermission().then(res => {
-      if (!isMounted()) return;
-      setRequestResult(res);
-    });
-  }, [isMounted]);
-
-  const checkPermission = useCallback(async () => {
-    checkLocationPermission().then(res => {
-      if (!isMounted()) return;
-      setCheckResult(res);
-    });
-  }, [isMounted]);
-
-  useEffect(() => {
-    requestPermission();
-  }, [requestPermission]);
-
-  if (!locationPermission) return <>{children}</>;
-
-  if (checkResult || granted) return <>{children}</>;
-  if (requestResult === null) return null; // suspense PLZ
-  return (
-    <LocationRequired errorType="unauthorized" onRetry={checkPermission} />
+  return renderChildren ? (
+    <>{children}</>
+  ) : (
+    <LocationRequired errorType="unauthorized" onRetry={checkAgain} />
   );
 };
 
