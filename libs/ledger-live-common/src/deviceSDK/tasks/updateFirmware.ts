@@ -29,7 +29,7 @@ export type UpdateFirmwareTaskEvent =
   | { type: "taskError"; error: UpdateFirmwareTaskError }
   | GeneralTaskEvent;
 
-function internalGetDeviceInfoTask({
+function internalUpdateFirmwareTask({
   deviceId,
   updateContext,
 }: UpdateFirmwareTaskArgs): Observable<UpdateFirmwareTaskEvent> {
@@ -82,4 +82,4 @@ function internalGetDeviceInfoTask({
   });
 }
 
-export const getDeviceInfoTask = wrappedTask(internalGetDeviceInfoTask);
+export const updateFirmwareTask = wrappedTask(internalUpdateFirmwareTask);
