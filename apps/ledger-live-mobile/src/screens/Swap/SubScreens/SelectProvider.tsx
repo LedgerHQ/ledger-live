@@ -38,11 +38,13 @@ export function SelectProvider({
         swapType: rate.tradeMethod,
         flow: "swap",
         swapVersion: SWAP_VERSION,
+        defaultPartner: selectedRate?.provider ?? "missing",
+        totalPartners: rates.value?.length ?? "missing",
       });
       // @ts-expect-error navigation type is only partially declared
       navigation.navigate(ScreenName.SwapForm, { rate });
     },
-    [navigation, track],
+    [navigation, track, selectedRate, rates],
   );
 
   if (!rates.value || !fromUnit || !to.currency) {
@@ -59,6 +61,8 @@ export function SelectProvider({
         provider={provider}
         flow="swap"
         swapVersion={SWAP_VERSION}
+        defaultPartner={selectedRate?.provider ?? "missing"}
+        totalPartners={rates.value.length}
       />
       <Flex flexDirection="row" justifyContent="space-between" paddingY={2}>
         <Text margin={4} color="neutral.c70">
