@@ -7,7 +7,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   FeeTooHigh,
   AmountRequired,
-  NotEnoughGas,
+  NotEnoughBalanceInParentAccount,
 } from "@ledgerhq/errors";
 import { formatCurrencyUnit } from "../../currencies";
 import { getAccountUnit } from "../../account";
@@ -136,7 +136,7 @@ const getTransactionStatus = async (
   if (!errors.amount && totalSpentEgld.gt(a.spendableBalance)) {
     errors.amount =
       tokenAccount || !["delegate", "send"].includes(t.mode)
-        ? new NotEnoughGas()
+        ? new NotEnoughBalanceInParentAccount()
         : new NotEnoughBalance();
   }
 
