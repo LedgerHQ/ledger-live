@@ -1,5 +1,3 @@
-// renders children if BLE is available
-// otherwise render an error
 import React from "react";
 import { Platform } from "react-native";
 import AndroidRequiresBluetoothPermissions from "./AndroidRequiresBluetoothPermissions";
