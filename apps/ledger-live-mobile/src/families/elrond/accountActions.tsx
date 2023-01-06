@@ -32,7 +32,8 @@ const getActions = (props: getActionsType): getActionsReturnType => {
     input: String(account.spendableBalance),
     showLastNonZeroDecimal: true,
   });
-  const delegationEnabled = new BigNumber(balance).gte(1); // FIXME Should use the constant defined in live-common
+
+  const delegationEnabled = new BigNumber(balance).isGreaterThanOrEqualTo(1); // FIXME Should use the constant defined in live-common
 
   /*
    * Get a list of all the providers, randomize, and also the screen, conditionally, based on existing amount of delegations.

@@ -14,14 +14,10 @@ import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
-import estimateMaxSpendable from "@ledgerhq/live-common/families/elrond/js-estimateMaxSpendable";
 import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/elrond/constants";
+import estimateMaxSpendable from "@ledgerhq/live-common/families/elrond/js-estimateMaxSpendable";
 
 import type { Transaction } from "@ledgerhq/live-common/families/elrond/types";
-import type {
-  NativeSyntheticEvent,
-  TextInputFocusEventData,
-} from "react-native";
 import type { PickAmountPropsType, RatioType } from "./types";
 
 import { localeSelector } from "../../../../../../../reducers/settings";
@@ -108,10 +104,10 @@ const PickAmount = (props: PickAmountPropsType) => {
    */
 
   const delegationBelowMinimum = useMemo(() => {
-    const amountBelowMinimum = amount.lt(MIN_DELEGATION_AMOUNT);
-    const balanceBelowMinimum = maxSpendable.lt(MIN_DELEGATION_AMOUNT);
+    const amountBelowMinimum = amount.isLessThan(MIN_DELEGATION_AMOUNT);
+    const balanceBelowMinimum = maxSpendable.isLessThan(MIN_DELEGATION_AMOUNT);
 
-    if (amount.eq(0)) {
+    if (amount.isEqualTo(0)) {
       return false;
     }
 
@@ -123,12 +119,12 @@ const PickAmount = (props: PickAmountPropsType) => {
    */
 
   const delegationAboveMaximum = useMemo(
-    () => amount.gt(maxSpendable),
+    () => amount.isGreaterThan(maxSpendable),
     [amount, maxSpendable],
   );
 
   const showAssetsRemaining =
-    maxSpendable.gt(amount) &&
+    maxSpendable.isGreaterThan(amount) &&
     !delegationAboveMaximum &&
     !delegationBelowMinimum;
 
@@ -182,10 +178,10 @@ const PickAmount = (props: PickAmountPropsType) => {
                     style={[
                       styles.ratioButton,
                       {
-                        backgroundColor: ratio.value.eq(amount)
+                        backgroundColor: ratio.value.isEqualTo(amount)
                           ? colors.primary.c80
                           : undefined,
-                        borderColor: ratio.value.eq(amount)
+                        borderColor: ratio.value.isEqualTo(amount)
                           ? undefined
                           : colors.neutral.c60,
                       },
@@ -194,7 +190,7 @@ const PickAmount = (props: PickAmountPropsType) => {
                     <LText
                       style={styles.ratioLabel}
                       color={
-                        ratio.value.eq(amount)
+                        ratio.value.isEqualTo(amount)
                           ? colors.neutral.c100
                           : colors.neutral.c60
                       }

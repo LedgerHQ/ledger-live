@@ -161,10 +161,6 @@ function getStakingAmount(
         (receiver == address || receiver == ELROND_STAKING_POOL)
     );
 
-  if (!operation) {
-    return new BigNumber(0);
-  }
-
   let dataDecoded;
   switch (transaction.mode) {
     case "send":
@@ -178,7 +174,7 @@ function getStakingAmount(
     case "claimRewards":
     case "withdraw":
     default:
-      return new BigNumber(operation.value);
+      return new BigNumber(operation?.value ?? new BigNumber(0));
   }
 }
 

@@ -51,7 +51,7 @@ const Delegations = (props: DelegationsPropsType) => {
           input: String(account.spendableBalance),
           showLastNonZeroDecimal: true,
         }),
-      ).gte(1),
+      ).isGreaterThanOrEqualTo(1),
     [account.spendableBalance],
   );
 
@@ -108,7 +108,7 @@ const Delegations = (props: DelegationsPropsType) => {
           new BigNumber(delegation.userActiveStake).isGreaterThan(0) ||
           new BigNumber(delegation.claimableRewards).isGreaterThan(0),
       ),
-    [],
+    [delegations],
   );
 
   /*
@@ -123,7 +123,7 @@ const Delegations = (props: DelegationsPropsType) => {
    * Return an introductory panel to delegations if the user hasn't previously delegated.
    */
 
-  if (delegatedAmount.eq(0) && rewardsAmount.eq(0)) {
+  if (delegatedAmount.isEqualTo(0) && rewardsAmount.isEqualTo(0)) {
     return (
       <AccountDelegationInfo
         title={t("account.delegation.info.title")}

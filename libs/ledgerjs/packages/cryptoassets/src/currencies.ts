@@ -3513,8 +3513,8 @@ export function listCryptoCurrencies(
       ? cryptocurrenciesArray
       : prodCryptoArray
     : withDevCrypto
-      ? cryptocurrenciesArrayWithoutTerminated
-      : prodCryptoArrayWithoutTerminated;
+    ? cryptocurrenciesArrayWithoutTerminated
+    : prodCryptoArrayWithoutTerminated;
 }
 
 /**
@@ -3603,7 +3603,7 @@ export const findCryptoCurrencyByManagerAppName = (
     findCryptoCurrency((c) =>
       Boolean(
         c.managerAppName &&
-        c.managerAppName.replace(/ /, "").toLowerCase() === search
+          c.managerAppName.replace(/ /, "").toLowerCase() === search
       )
     )
   );

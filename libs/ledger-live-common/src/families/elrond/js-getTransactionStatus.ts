@@ -1,7 +1,6 @@
 import BigNumber from "bignumber.js";
 import {
   NotEnoughBalance,
-  NotEnoughBalanceInParentAccount,
   RecipientRequired,
   InvalidAddress,
   FeeNotLoaded,
@@ -23,6 +22,7 @@ import {
   ElrondMinDelegatedAmountError,
   ElrondMinUndelegatedAmountError,
   ElrondDelegationBelowMinimumError,
+  NotEnoughEGLDForFees,
 } from "./errors";
 
 const getTransactionStatus = async (
@@ -134,9 +134,10 @@ const getTransactionStatus = async (
   }
 
   if (!errors.amount && totalSpentEgld.gt(a.spendableBalance)) {
-    errors.amount = tokenAccount
-      ? new NotEnoughBalanceInParentAccount()
-      : new NotEnoughBalance();
+    errors.amount =
+      tokenAccount || !["delegate", "send"].includes(t.mode)
+        ? new NotEnoughEGLDForFees()
+        : new NotEnoughBalance();
   }
 
   return Promise.resolve({
