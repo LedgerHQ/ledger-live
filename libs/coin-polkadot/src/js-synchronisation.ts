@@ -1,5 +1,5 @@
 import type { Account } from "@ledgerhq/types-live";
-import { encodeAccountId } from "@ledgerhq/coin-framework/lib/account";
+import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import type { GetAccountShape } from "@ledgerhq/coin-framework/lib/bridge/jsHelpers";
 import { mergeOps } from "@ledgerhq/coin-framework/lib/bridge/jsHelpers";
 import { getAccount, getOperations } from "./api";

@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
-import { getMainAccount } from "@ledgerhq/coin-framework/lib/account";
+import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import type { PolkadotAccount, Transaction } from "./types";
 import { calculateAmount } from "./logic";
 import getEstimatedFees from "./js-getFeesForTransaction";

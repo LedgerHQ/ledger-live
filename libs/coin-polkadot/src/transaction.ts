@@ -8,8 +8,8 @@ import {
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/lib/transaction/common";
 import type { Account } from "@ledgerhq/types-live";
-import { getAccountUnit } from "@ledgerhq/coin-framework/lib/account";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib/currencies";
+import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 export const formatTransaction = (
   { mode, amount, recipient, validators, useAllAmount }: Transaction,
   account: Account

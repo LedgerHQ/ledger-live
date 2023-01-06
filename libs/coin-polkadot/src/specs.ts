@@ -3,12 +3,11 @@ import invariant from "invariant";
 import sampleSize from "lodash/sampleSize";
 import { BigNumber } from "bignumber.js";
 import { getCurrentPolkadotPreloadData } from "./preload";
-import type {
-  PolkadotAccount,
-  PolkadotResources,
-  Transaction,
-} from "./types";
-import { getCryptoCurrencyById, parseCurrencyUnit } from "@ledgerhq/coin-framework/lib/currencies";
+import type { PolkadotAccount, PolkadotResources, Transaction } from "./types";
+import {
+  getCryptoCurrencyById,
+  parseCurrencyUnit,
+} from "@ledgerhq/coin-framework/currencies/index";
 import {
   botTest,
   expectSiblingsHaveSpendablePartGreaterThan,
@@ -51,10 +50,11 @@ const polkadot: AppSpec<Transaction> = {
     invariant(maxSpendable.gt(POLKADOT_MIN_SAFE), "balance is too low");
   },
   test: ({ operation, optimisticOperation }) => {
-    const opExpected: Record<string, any> = toOperationRaw({
-      ...optimisticOperation,
-    },
-    toOperationExtraRaw
+    const opExpected: Record<string, any> = toOperationRaw(
+      {
+        ...optimisticOperation,
+      },
+      toOperationExtraRaw
     );
     delete opExpected.value;
     delete opExpected.fee;
@@ -62,7 +62,9 @@ const polkadot: AppSpec<Transaction> = {
     delete opExpected.blockHash;
     delete opExpected.blockHeight;
     botTest("optimistic operation matches", () =>
-      expect(toOperationRaw(operation, toOperationExtraRaw)).toMatchObject(opExpected)
+      expect(toOperationRaw(operation, toOperationExtraRaw)).toMatchObject(
+        opExpected
+      )
     );
   },
   mutations: [

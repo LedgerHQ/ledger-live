@@ -11,11 +11,7 @@
     "moduleResolution": "node",
     "downlevelIteration": true,
     "resolveJsonModule": true,
-    "composite": true,
-    "lib": [
-      "es2020",
-      "dom"
-    ],
+    "lib": ["es2020", "dom"],
     "outDir": "lib",
     "typeRoots": ["./types", "./node_modules/@types"]
   },

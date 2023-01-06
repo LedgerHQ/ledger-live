@@ -8,7 +8,7 @@ import {
   NotEnoughBalanceBecauseDestinationNotCreated,
   FeeNotLoaded,
 } from "@ledgerhq/errors";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib/currencies";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import type { PolkadotAccount, Transaction, TransactionStatus } from "./types";
 import {
   PolkadotUnauthorizedOperation,

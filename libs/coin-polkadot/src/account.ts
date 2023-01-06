@@ -1,8 +1,8 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import type { Operation } from "@ledgerhq/types-live";
-import { getAccountUnit } from "@ledgerhq/coin-framework/lib/account"
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib/currencies";
+import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { PolkadotAccount, PolkadotResources } from "./types";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 
