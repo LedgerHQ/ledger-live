@@ -65,131 +65,130 @@ const Details = (props: DetailsPropsType) => {
     [account],
   );
 
-  /*
-   * Return the following fragment if the operation type is delegation.
-   */
+  switch (type) {
+    /*
+     * Return the following fragment if the operation type is delegation.
+     */
 
-  if (type === "DELEGATE") {
-    return (
-      <View>
-        {Boolean(name) && (
-          <Section
-            title={t("operationDetails.extra.delegatedTo")}
-            value={name}
-          />
-        )}
+    case "DELEGATE":
+      return (
+        <View>
+          {Boolean(name) && (
+            <Section
+              title={t("operationDetails.extra.delegatedTo")}
+              value={name}
+            />
+          )}
 
-        {Boolean(amount) && (
-          <Section
-            title={t("operationDetails.extra.delegatedAmount")}
-            value={amount}
-          />
-        )}
+          {Boolean(amount) && (
+            <Section
+              title={t("operationDetails.extra.delegatedAmount")}
+              value={amount}
+            />
+          )}
 
-        {extra.memo && (
-          <Section
-            title={t("operationDetails.extra.memo")}
-            value={extra.memo}
-          />
-        )}
-      </View>
-    );
+          {extra.memo && (
+            <Section
+              title={t("operationDetails.extra.memo")}
+              value={extra.memo}
+            />
+          )}
+        </View>
+      );
+
+    /*
+     * Return the following fragment if the operation type is undelegation.
+     */
+
+    case "UNDELEGATE":
+      return (
+        <View>
+          {Boolean(name) && (
+            <Section
+              title={t("operationDetails.extra.undelegatedFrom")}
+              value={name}
+            />
+          )}
+
+          {Boolean(amount) && (
+            <Section
+              title={t("operationDetails.extra.undelegatedAmount")}
+              value={amount}
+              onPress={() => openExplorer(contract)}
+            />
+          )}
+
+          {extra.memo && (
+            <Section
+              title={t("operationDetails.extra.memo")}
+              value={extra.memo}
+            />
+          )}
+        </View>
+      );
+
+    /*
+     * Return the following fragment if the operation type is of claimable rewards.
+     */
+
+    case "REWARD":
+      return (
+        <View>
+          {Boolean(name) && (
+            <Section
+              title={t("operationDetails.extra.rewardFrom")}
+              onPress={() => openExplorer(contract)}
+              value={name}
+            />
+          )}
+
+          {extra.memo && (
+            <Section
+              title={t("operationDetails.extra.memo")}
+              value={extra.memo}
+            />
+          )}
+        </View>
+      );
+
+    /*
+     * Return the following fragment if the operation type is of withdrawal.
+     */
+
+    case "WITHDRAW_UNBONDED":
+      return (
+        <View>
+          {Boolean(name) && (
+            <Section
+              title={t("operationDetails.extra.withdrawnFrom")}
+              value={name}
+            />
+          )}
+
+          {Boolean(amount) && (
+            <Section
+              title={t("operationDetails.extra.withdrawnAmount")}
+              value={amount}
+              onPress={() => openExplorer(contract)}
+            />
+          )}
+
+          {extra.memo && (
+            <Section
+              title={t("operationDetails.extra.memo")}
+              value={extra.memo}
+            />
+          )}
+        </View>
+      );
+
+    /*
+     * Don't return anything in case none of the operation types above matched.
+     */
+
+    default:
+      return null;
   }
-
-  /*
-   * Return the following fragment if the operation type is undelegation.
-   */
-
-  if (type === "UNDELEGATE") {
-    return (
-      <View>
-        {Boolean(name) && (
-          <Section
-            title={t("operationDetails.extra.undelegatedFrom")}
-            value={name}
-          />
-        )}
-
-        {Boolean(amount) && (
-          <Section
-            title={t("operationDetails.extra.undelegatedAmount")}
-            value={amount}
-            onPress={() => openExplorer(contract)}
-          />
-        )}
-
-        {extra.memo && (
-          <Section
-            title={t("operationDetails.extra.memo")}
-            value={extra.memo}
-          />
-        )}
-      </View>
-    );
-  }
-
-  /*
-   * Return the following fragment if the operation type is of claimable rewards.
-   */
-
-  if (type === "REWARD") {
-    return (
-      <View>
-        {Boolean(name) && (
-          <Section
-            title={t("operationDetails.extra.rewardFrom")}
-            onPress={() => openExplorer(contract)}
-            value={name}
-          />
-        )}
-
-        {extra.memo && (
-          <Section
-            title={t("operationDetails.extra.memo")}
-            value={extra.memo}
-          />
-        )}
-      </View>
-    );
-  }
-
-  /*
-   * Return the following fragment if the operation type is of withdrawal.
-   */
-
-  if (type === "WITHDRAW_UNBONDED") {
-    return (
-      <View>
-        {Boolean(name) && (
-          <Section
-            title={t("operationDetails.extra.withdrawnFrom")}
-            value={name}
-          />
-        )}
-
-        {Boolean(amount) && (
-          <Section
-            title={t("operationDetails.extra.withdrawnAmount")}
-            value={amount}
-            onPress={() => openExplorer(contract)}
-          />
-        )}
-
-        {extra.memo && (
-          <Section
-            title={t("operationDetails.extra.memo")}
-            value={extra.memo}
-          />
-        )}
-      </View>
-    );
-  }
-
-  /*
-   * Don't return anything in case none of the operation types above matched.
-   */
-
-  return null;
 };
 
 export default Details;

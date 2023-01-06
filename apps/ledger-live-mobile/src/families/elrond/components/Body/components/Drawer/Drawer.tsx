@@ -45,15 +45,15 @@ const Drawer = (props: DrawerPropsType) => {
       actions={actions}
       account={account}
       data={items}
-      ValidatorImage={image => (
-        <Circle crop={true} size={image.size}>
+      ValidatorImage={({ size }) => (
+        <Circle crop={true} size={size}>
           {ELROND_LEDGER_VALIDATOR_ADDRESS === data.validator.contract ? (
-            <LedgerLogo size={image.size * 0.7} color={colors.text} />
+            <LedgerLogo size={size * 0.7} color={colors.text} />
           ) : (
             <FirstLetterIcon
               label={name || "-"}
               round={true}
-              size={image.size}
+              size={size}
               fontSize={24}
             />
           )}
