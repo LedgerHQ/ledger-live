@@ -111,7 +111,7 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
       };
       serverRef.current = new WalletAPIServer(transportRef.current);
       serverRef.current.setPermissions({
-        currencyIds: manifest.currencies === "*" ? ["*"] : manifest.currencies,
+        currencyIds: manifest.currencies === "*" ? ["**"] : manifest.currencies,
         methodIds: (manifest.permissions as unknown) as string[], // TODO use the new manifest type for v2 as we should avoid as typings
       });
       serverRef.current.setAccounts(walletAPIAccounts);
