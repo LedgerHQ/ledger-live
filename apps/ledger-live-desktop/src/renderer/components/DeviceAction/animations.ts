@@ -296,7 +296,10 @@ export const getDeviceAnimation = (
   const animationModelId = (process.env.OVERRIDE_MODEL_ID as DeviceModelId) || modelId;
 
   // Handles the case where OVERRIDE_MODEL_ID is incorrect
-  const animation = animations[animationModelId][key][theme] || animations.nanoX[key][theme];
-
-  return animation;
+  const animationModel = animations[animationModelId] || animations.nanoX;
+  const animationKey = animationModel[key];
+  if (!animationKey) {
+    return null;
+  }
+  return animationKey[theme];
 };
