@@ -1,8 +1,12 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { Linking } from "react-native";
+import {
+  getAddressExplorer,
+  getDefaultExplorerView,
+} from "@ledgerhq/live-common/explorers";
 
 import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 import type { FieldType } from "../../../../../../../components/DelegationDrawer";
@@ -29,6 +33,24 @@ const useDrawerItems = (
   const [isDelegation, isUndelegation] = useMemo(
     () => [type === "delegation", type === "undelegation"],
     [type],
+  );
+
+  /*
+   * Upon requesting to open the explorer, retrieve the dynamic address, and open the link.
+   */
+
+  const onExplorer = useCallback(
+    (address: string) => {
+      const explorer = getAddressExplorer(
+        getDefaultExplorerView(account.currency),
+        address,
+      );
+
+      if (explorer) {
+        Linking.openURL(explorer);
+      }
+    },
+    [account],
   );
 
   /*
@@ -100,11 +122,7 @@ const useDrawerItems = (
         Component: (
           <Touchable
             event="DelegationOpenExplorer"
-            onPress={() =>
-              Linking.openURL(
-                `https://explorer.elrond.com/providers/${validator.contract}`,
-              )
-            }
+            onPress={() => onExplorer(validator.contract)}
           >
             <LText
               numberOfLines={1}
@@ -147,7 +165,7 @@ const useDrawerItems = (
         ),
       },
     ],
-    [validator, name, t, account.name, type, status],
+    [validator, name, t, account.name, type, status, onExplorer],
   );
 
   /*

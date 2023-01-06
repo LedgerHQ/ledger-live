@@ -20,7 +20,7 @@ import styles from "./styles";
 
 const withSummary =
   (Component: FC<SummaryPropsType>) => (props: SummaryPropsType) =>
-    props.account.balance.gt(0) ? <Component {...props} /> : null;
+    props.account.balance.isGreaterThan(0) ? <Component {...props} /> : null;
 
 /*
  * Handle the component declaration.
@@ -67,7 +67,7 @@ const Summary = (props: SummaryPropsType) => {
         const item: ItemType = Object.assign(current, {
           modal: {
             description: t(current.modal.description),
-            title: t(current.modal.description),
+            title: t(current.modal.title),
           },
         });
 
@@ -129,7 +129,7 @@ const Summary = (props: SummaryPropsType) => {
         },
         {
           title: "account.delegatedAssets",
-          show: delegations.gt(0),
+          show: delegations.isGreaterThan(0),
           value: delegations,
           modal: {
             title: "elrond.info.delegated.title",
@@ -138,7 +138,7 @@ const Summary = (props: SummaryPropsType) => {
         },
         {
           title: "account.undelegating",
-          show: unbondings.gt(0),
+          show: unbondings.isGreaterThan(0),
           value: unbondings,
           modal: {
             title: "elrond.info.undelegating.title",

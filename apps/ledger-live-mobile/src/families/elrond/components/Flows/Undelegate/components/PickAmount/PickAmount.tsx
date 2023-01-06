@@ -75,7 +75,10 @@ const PickAmount = (props: PickAmountPropsType) => {
    * Check if the currently selected amount exceeds the maximum amount of assets available.
    */
 
-  const amountAboveMaximum = useMemo(() => value.gt(amount), [amount, value]);
+  const amountAboveMaximum = useMemo(
+    () => value.isGreaterThan(amount),
+    [amount, value],
+  );
 
   /*
    * Check if all the assets have been chosen for undelegation.
@@ -91,7 +94,8 @@ const PickAmount = (props: PickAmountPropsType) => {
    */
 
   const amountBelowMinimum = useMemo(
-    () => (value.eq(amount) ? false : value.lt(MIN_DELEGATION_AMOUNT)),
+    () =>
+      value.isEqualTo(amount) ? false : value.isLessThan(MIN_DELEGATION_AMOUNT),
     [amount, value],
   );
 
@@ -101,7 +105,7 @@ const PickAmount = (props: PickAmountPropsType) => {
 
   const amountRemainingInvalid = useMemo(
     () =>
-      amount.minus(value).lt(MIN_DELEGATION_AMOUNT) &&
+      amount.minus(value).isLessThan(MIN_DELEGATION_AMOUNT) &&
       !amount.minus(value).isZero(),
     [amount, value],
   );
@@ -122,15 +126,6 @@ const PickAmount = (props: PickAmountPropsType) => {
     denominate({ input: String(MIN_DELEGATION_AMOUNT), decimals: 4 }),
     denominate({ input: String(amount), decimals: 4 }),
   ];
-
-  /*
-   * Handle the ration selection callback.
-   */
-
-  const onRatioPress = useCallback((ratio: RatioType) => {
-    Keyboard.dismiss();
-    updateValue(ratio.value);
-  }, []);
 
   /*
    * Callback running when changing the screen to select the device, passing along the needed data.
@@ -162,6 +157,18 @@ const PickAmount = (props: PickAmountPropsType) => {
   );
 
   /*
+   * Handle the ration selection callback.
+   */
+
+  const onRatioPress = useCallback(
+    (ratio: RatioType) => {
+      Keyboard.dismiss();
+      updateValue(ratio.value);
+    },
+    [updateValue],
+  );
+
+  /*
    * Return the rendered component.
    */
 
@@ -187,10 +194,10 @@ const PickAmount = (props: PickAmountPropsType) => {
                     style={[
                       styles.ratioButton,
                       {
-                        backgroundColor: ratio.value.eq(value)
+                        backgroundColor: ratio.value.isEqualTo(value)
                           ? colors.primary.c80
                           : undefined,
-                        borderColor: ratio.value.eq(value)
+                        borderColor: ratio.value.isEqualTo(value)
                           ? undefined
                           : colors.neutral.c60,
                       },
@@ -200,7 +207,7 @@ const PickAmount = (props: PickAmountPropsType) => {
                     <LText
                       style={styles.ratioLabel}
                       color={
-                        ratio.value.eq(value)
+                        ratio.value.isEqualTo(value)
                           ? colors.neutral.c100
                           : colors.neutral.c60
                       }
