@@ -1,11 +1,23 @@
 import React from "react";
-import { Account } from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { canDelegate } from "@ledgerhq/live-common/families/avalanchepchain/utils";
-
 import { Icons } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 import { AvalanchePChainAccount } from "@ledgerhq/live-common/families/avalanchepchain/types";
 import { NavigatorName, ScreenName } from "../../const";
+
+const getExtraSendActionParams = ({ account }: { account: AccountLike }) => {
+  return {
+    disabled: true,
+    modalOnDisabledClick: null
+  }
+};
+
+const getExtraReceiveActionParams = ({ account }: { account: AccountLike }) => {
+  return {
+    disabled: true
+  }
+};
 
 const getActions = ({ account }: { account: Account }) => {
   const isDelegationDisabled = !canDelegate(account);
@@ -32,4 +44,6 @@ const getActions = ({ account }: { account: Account }) => {
 
 export default {
   getActions,
+  getExtraSendActionParams,
+  getExtraReceiveActionParams
 };
