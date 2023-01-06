@@ -228,8 +228,8 @@ function transactionToEGLDOperation(
       ? fee
       : new BigNumber(0)
     : transaction.mode === "claimRewards"
-      ? delegationAmount.minus(fee)
-      : getEGLDOperationValue(transaction, addr);
+    ? delegationAmount.minus(fee)
+    : getEGLDOperationValue(transaction, addr);
 
   const subOperations = subAccounts
     ? inferSubOperations(transaction.txHash ?? "", subAccounts)
