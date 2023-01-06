@@ -1,70 +1,58 @@
 import { useCallback, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { NativeModules, Platform, ToastAndroid } from "react-native";
+import { NativeModules, Platform } from "react-native";
 
 const { BluetoothHelperModule } = NativeModules;
 
-const {
-  E_ACTIVITY_DOES_NOT_EXIST,
-  E_BLE_CANCELLED,
-  E_ENABLE_BLE_UNKNOWN_RESPONSE,
-  E_SECURITY_EXCEPTION,
-  E_UNKNOWN_ERROR,
-} = BluetoothHelperModule;
+const { E_BLE_CANCELLED } = BluetoothHelperModule;
 
 type AndroidError = {
   code: string;
   message: string;
 };
 
+export enum BluetoothPromptResult {
+  OK,
+  UNAUTHORIZED,
+}
+
 /**
  * @returns a function that turns on bluetooth on the phone
  */
 export function usePromptBluetoothCallback() {
-  const { t } = useTranslation();
-  return useCallback(async (): Promise<boolean> => {
+  return useCallback(async (): Promise<number> => {
     try {
-      return await NativeModules.BluetoothHelperModule.prompt();
+      const result = await NativeModules.BluetoothHelperModule.prompt();
+      return parseInt(result, 10);
     } catch (e) {
-      console.error(e);
       if (Platform.OS === "android") {
         const { code } = e as AndroidError;
-        switch (code) {
-          case E_BLE_CANCELLED: // in case the user didn't turn bluetooth on
-          case E_ACTIVITY_DOES_NOT_EXIST:
-          case E_ENABLE_BLE_UNKNOWN_RESPONSE:
-          case E_SECURITY_EXCEPTION:
-          case E_UNKNOWN_ERROR:
-          default:
-            ToastAndroid.show(
-              t("errors.BluetoothRequired.description"),
-              ToastAndroid.LONG,
-            );
+        if (code === E_BLE_CANCELLED) {
+          return BluetoothPromptResult.OK;
         }
       }
-      throw e;
+      // Technically there could be more errors, but the UI is either
+      // going to show a BluetoothOff + retry, or a missing permission UI.
+      return BluetoothPromptResult.UNAUTHORIZED;
     }
-  }, [t]);
+  }, []);
 }
 
 export function usePromptBluetoothCallbackWithState() {
   const [bluetoothPromptedOnce, setBluetoothPromptedOnce] = useState(false);
-  const [bluetoothPromptSucceeded, setBluetoothPromptSucceeded] =
-    useState(true);
+  const [bluetoothPromptResult, setBluetoothPromptResult] =
+    useState<BluetoothPromptResult>(BluetoothPromptResult.OK);
   const promptBluetoothCallback = usePromptBluetoothCallback();
 
   const prompt = useCallback(() => {
     setBluetoothPromptedOnce(true);
-    promptBluetoothCallback()
-      .then(
-        res =>
-          setBluetoothPromptSucceeded(Platform.OS === "android" ? !!res : true), // on iOS we don't have the actual result so we use an optimistic approach
-      )
-      .catch(() => setBluetoothPromptSucceeded(false));
+    promptBluetoothCallback().then(result => {
+      setBluetoothPromptResult(result);
+    });
   }, [promptBluetoothCallback]);
+
   return {
     bluetoothPromptedOnce,
-    bluetoothPromptSucceeded,
+    bluetoothPromptResult,
     prompt,
   };
 }
