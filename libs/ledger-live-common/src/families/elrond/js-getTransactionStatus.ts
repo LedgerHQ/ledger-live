@@ -7,7 +7,6 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   FeeTooHigh,
   AmountRequired,
-  NotEnoughBalanceInParentAccount,
 } from "@ledgerhq/errors";
 import { formatCurrencyUnit } from "../../currencies";
 import { getAccountUnit } from "../../account";
@@ -23,6 +22,7 @@ import {
   ElrondMinDelegatedAmountError,
   ElrondMinUndelegatedAmountError,
   ElrondDelegationBelowMinimumError,
+  NotEnoughEGLDForFees,
 } from "./errors";
 
 const getTransactionStatus = async (
@@ -136,7 +136,7 @@ const getTransactionStatus = async (
   if (!errors.amount && totalSpentEgld.gt(a.spendableBalance)) {
     errors.amount =
       tokenAccount || !["delegate", "send"].includes(t.mode)
-        ? new NotEnoughBalanceInParentAccount()
+        ? new NotEnoughEGLDForFees()
         : new NotEnoughBalance();
   }
 

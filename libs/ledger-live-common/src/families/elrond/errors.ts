@@ -15,3 +15,7 @@ export const ElrondMinUndelegatedAmountError = createCustomErrorClass(
 export const ElrondDelegationBelowMinimumError = createCustomErrorClass(
   "ElrondDelegationBelowMinimumError"
 );
+
+export const NotEnoughEGLDForFees = createCustomErrorClass(
+  "NotEnoughEGLDForFees"
+);
