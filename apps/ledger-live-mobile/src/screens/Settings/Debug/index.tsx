@@ -92,6 +92,12 @@ export default function DebugSettings({
         iconLeft={<Icons.InfoAltMedium size={24} color="black" />}
         onPress={() => navigate(ScreenName.DebugInformation)}
       />
+      <SettingsRow
+        title="Playground"
+        desc="Easy to access blank debugging screen"
+        iconLeft={<Icons.EmojiHappyMedium size={24} color="black" />}
+        onPress={() => navigate(ScreenName.DebugPlayground)}
+      />
       <TouchableWithoutFeedback onPress={onDebugHiddenPress}>
         <View>
           <PoweredByLedger />
