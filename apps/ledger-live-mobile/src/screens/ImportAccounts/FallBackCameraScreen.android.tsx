@@ -1,13 +1,16 @@
 import React, { PureComponent } from "react";
 import { TFunction, withTranslation } from "react-i18next";
 import { AppState, Linking } from "react-native";
-import { ScreenName } from "../../const";
 import FallbackCameraBody from "../../components/FallbackCameraBody";
-import type { NavigationProps } from "./FallBackCameraScreen";
+import type {
+  NavigationProps,
+  RedirectionScreenProps,
+} from "./FallBackCameraScreen";
 
 type Props = {
   t: TFunction;
-} & NavigationProps;
+} & NavigationProps &
+  RedirectionScreenProps;
 
 type State = {
   appState: string;
@@ -34,14 +37,14 @@ class FallBackCameraScreen extends PureComponent<Props, State> {
 
   handleAppStateChange = (nextAppState: string) => {
     const { appState, openSettingsPressed } = this.state;
-    const { navigation } = this.props;
+    const { navigation, redirectionScreen } = this.props;
 
     if (
       appState.match(/inactive|background/) &&
       nextAppState === "active" &&
       openSettingsPressed
     ) {
-      navigation.replace(ScreenName.ScanAccounts, {});
+      navigation.replace(redirectionScreen, {});
     }
 
     this.setState({

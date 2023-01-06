@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { ScrollView, Linking } from "react-native";
-import { Flex, ScrollListContainer, Text } from "@ledgerhq/native-ui";
+import { ScrollView, Linking, TouchableOpacity } from "react-native";
+import { Flex, Text } from "@ledgerhq/native-ui";
+import { ArrowLeftMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
 import { HwTransportErrorType } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
@@ -11,7 +12,6 @@ import TransportBLE from "../../react-native-hw-transport-ble";
 import { knownDevicesSelector } from "../../reducers/ble";
 import LocationRequired from "../LocationRequired/index";
 import Animation from "../Animation";
-import DeviceSetupView from "../DeviceSetupView";
 import BleDeviceItem from "./BleDeviceItem";
 import lottie from "./assets/bluetooth.json";
 import { urls } from "../../config/urls";
@@ -133,8 +133,13 @@ const BleDevicesScanning = ({
   }
 
   return (
-    <DeviceSetupView onBack={onGoBack}>
-      <ScrollListContainer display="flex" flex={1} px={4}>
+    <Flex flex={1}>
+      {onGoBack && (
+        <TouchableOpacity onPress={onGoBack}>
+          <ArrowLeftMedium size={24} />
+        </TouchableOpacity>
+      )}
+      <Flex flex={1} px={4}>
         <Flex height={180} alignItems="center" justifyContent="center">
           <Animation source={lottie} />
         </Flex>
@@ -161,7 +166,7 @@ const BleDevicesScanning = ({
           {t("blePairingFlow.scanning.description")}
         </Text>
 
-        <Flex flex={1} px={4}>
+        <Flex flex={1}>
           <ScrollView>
             <Flex pb={10}>
               {scannedDevices
@@ -192,7 +197,7 @@ const BleDevicesScanning = ({
             </Flex>
           </ScrollView>
         </Flex>
-      </ScrollListContainer>
+      </Flex>
       {productName !== null && isCantSeeDeviceShown && (
         <Text
           textAlign="center"
@@ -204,7 +209,7 @@ const BleDevicesScanning = ({
           {t("blePairingFlow.scanning.cantSeeDevice", { productName })}
         </Text>
       )}
-    </DeviceSetupView>
+    </Flex>
   );
 };
 
