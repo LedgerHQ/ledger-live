@@ -266,6 +266,18 @@ function useWebView({ manifest, inputs }: Pick<Props, "manifest" | "inputs">) {
     isProtectPlatform,
   ]);
 
+  useEffect(() => {
+    if (!isProtectPlatform) return () => null;
+
+    const unsubcribe = navigation.addListener("beforeRemove", event => {
+      event.preventDefault();
+
+      return false;
+    });
+
+    return unsubcribe;
+  }, [isProtectPlatform, navigation]);
+
   return {
     uri: url.toString(),
     isInfoPanelOpened,

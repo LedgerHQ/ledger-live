@@ -19,3 +19,8 @@ export type RawProtectData = {
   refresh_token: string;
   token_type: string;
 };
+
+export enum ProtectPlatformMessageEnum {
+  PREVENT_GO_BACK = "preventGoBack",
+  ALLOW_GO_BACK = "allowGoBack",
+}
