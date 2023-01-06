@@ -4,7 +4,7 @@ import {
   Platform,
   AppState,
 } from "react-native";
-import { useCallback, useState, useEffect } from "react";
+import { useRef, useCallback, useState, useEffect } from "react";
 
 const { PERMISSIONS, RESULTS } = PermissionsAndroid;
 
@@ -41,9 +41,19 @@ const useAndroidLocationPermission = () => {
   const [check, setCheck] = useState(false);
   const [neverAskAgain, setNeverAskAgain] = useState(false);
   const [retryNonce, setRetryNonce] = useState(0);
+  const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const checkAgain = useCallback(() => {
     setRetryNonce(new Date().getTime());
+  }, []);
+
+  useEffect(() => {
+    // set hasPermission to false after 400ms if it's still undefined.
+    // without this we risk a black screen when this unmounts or a blink
+    // if we ignore it. Feel free to come up with a better way.
+    timeout.current = setTimeout(() => {
+      setHasPermission(false);
+    }, 200);
   }, []);
 
   useEffect(() => {
