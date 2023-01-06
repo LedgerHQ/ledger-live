@@ -131,6 +131,10 @@ async function genTypesFile(families) {
   let exprtsStatus = `export type TransactionStatus =`;
   let exprtsStatusRaw = `export type TransactionStatusRaw =`;
   for (const family of families) {
+    if (family === "polkadot") {
+      continue;
+    }
+
     if (fs.existsSync(path.join("families", family, "types.ts"))) {
       imprts += `import { Transaction as ${family}Transaction } from "../families/${family}/types";
 import { TransactionRaw as ${family}TransactionRaw } from "../families/${family}/types";

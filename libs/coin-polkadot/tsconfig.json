@@ -13,9 +13,10 @@
     "moduleResolution": "node",
     "downlevelIteration": true,
     "resolveJsonModule": true,
+    "composite": true,
     "lib": [
-      "DOM",
-      "ES2017"
+      "es2020",
+      "dom"
     ],
     "outDir": "lib"
   },
