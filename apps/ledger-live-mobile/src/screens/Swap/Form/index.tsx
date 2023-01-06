@@ -418,7 +418,12 @@ export function SwapForm({
       <KeyboardAwareScrollView>
         <Flex flex={1} justifyContent="space-between" padding={6}>
           <Flex flex={1}>
-            <TrackScreen category="Swap Form" providerName={provider} />
+            <TrackScreen
+              category="Swap"
+              providerName={provider}
+              flow="swap"
+              swapVersion={SWAP_VERSION}
+            />
             <TxForm
               swapTx={swapTransaction}
               provider={provider}
