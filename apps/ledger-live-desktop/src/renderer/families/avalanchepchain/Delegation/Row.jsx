@@ -25,14 +25,17 @@ type Props = {
 export function Row({ delegation, account, onExternalLink }: Props) {
   const onExternalLinkClick = () => onExternalLink(delegation.txID);
 
-  const formatAmount = (amount: string) => {
-    const unit = getAccountUnit(account);
-    return formatCurrencyUnit(unit, new BigNumber(amount), {
-      disableRounding: false,
-      alwaysShowSign: false,
-      showCode: true,
-    });
-  };
+  const formatAmount = React.useCallback(
+    (amount: string) => {
+      const unit = getAccountUnit(account);
+      return formatCurrencyUnit(unit, new BigNumber(amount), {
+        disableRounding: false,
+        alwaysShowSign: false,
+        showCode: true,
+      });
+    },
+    [account],
+  );
 
   return (
     <Wrapper>

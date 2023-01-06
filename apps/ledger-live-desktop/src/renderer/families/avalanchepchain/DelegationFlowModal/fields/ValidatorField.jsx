@@ -34,18 +34,21 @@ const ValidatorField = ({ account, status, t, onChangeValidator, chosenVoteAccAd
 
   if (!status) return null;
 
-  const renderItem = (validator: AvalanchePChainValidator) => {
-    return (
-      <ValidatorRow
-        currency={account.currency}
-        key={validator.nodeID}
-        validator={validator}
-        unit={unit}
-        active={chosenVoteAccAddr === validator.nodeID}
-        onClick={onChangeValidator}
-      ></ValidatorRow>
-    );
-  };
+  const renderItem = useCallback(
+    (validator: AvalanchePChainValidator) => {
+      return (
+        <ValidatorRow
+          currency={account.currency}
+          key={validator.nodeID}
+          validator={validator}
+          unit={unit}
+          active={chosenVoteAccAddr === validator.nodeID}
+          onClick={onChangeValidator}
+        ></ValidatorRow>
+      );
+    },
+    [account, unit],
+  );
 
   return (
     <>
