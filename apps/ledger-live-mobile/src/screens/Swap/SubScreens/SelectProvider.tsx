@@ -57,6 +57,8 @@ export function SelectProvider({
         category="Swap Form"
         name="Edit Provider"
         provider={provider}
+        flow="swap"
+        swapVersion={SWAP_VERSION}
       />
       <Flex flexDirection="row" justifyContent="space-between" paddingY={2}>
         <Text margin={4} color="neutral.c70">
