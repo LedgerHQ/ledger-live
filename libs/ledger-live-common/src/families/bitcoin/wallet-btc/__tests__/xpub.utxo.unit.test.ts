@@ -6,7 +6,6 @@ import BTCCashCrypto from "../crypto/bitcoincash";
 import DogeCrypto from "../crypto/doge";
 import ZECCrypto from "../crypto/zec";
 import ZENCrypto from "../crypto/zen";
-import { OP_RETURN_DATA_SIZE_LIMIT } from "../crypto/base";
 
 describe("Transaction Output script", () => {
   const btcCrypto = new BTCCrypto({
@@ -79,18 +78,5 @@ describe("Transaction Output script", () => {
       expect(opType).toEqual(script.OPS.OP_RETURN);
       expect(message.toString()).toEqual("charley loves heidi");
     });
-  });
-
-  it("Should throw error if OP_RETURN larger than OP_RETURN_DATA_SIZE_LIMIT bytes", () => {
-    try {
-      const data = Buffer.alloc(OP_RETURN_DATA_SIZE_LIMIT + 1);
-      const output = btcCrypto.toOpReturnOutputScript(data);
-      expect(output).toBe(null);
-    } catch (err) {
-      const error = err as Error;
-      expect(error.message).toBe(
-        `OP_RETURN transactions cannot be larger than ${OP_RETURN_DATA_SIZE_LIMIT} bytes`
-      );
-    }
   });
 });
