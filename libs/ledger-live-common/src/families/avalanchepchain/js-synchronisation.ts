@@ -6,20 +6,18 @@ import {
   mergeOps,
 } from "../../bridge/jsHelpers";
 import { getAccount, getOperations, getDelegations } from "./api";
-import { HDHelper } from "./hdhelper";
 import { AvalanchePChainAccount } from "./types";
 
 const getAccountShape: GetAccountShape = async (info) => {
   const { address, initialAccount, currency, derivationMode } = info;
 
   const publicKey =
-    info.rest?.publicKey ||
     (info.initialAccount as AvalanchePChainAccount)?.avalanchePChainResources
-      ?.publicKey;
+      ?.publicKey || info.rest?.publicKey;
+
   const chainCode =
-    info.rest?.chainCode ||
     (info.initialAccount as AvalanchePChainAccount)?.avalanchePChainResources
-      ?.chainCode;
+      ?.chainCode || info.rest?.chainCode;
 
   const oldOperations = initialAccount?.operations || [];
 
@@ -35,12 +33,18 @@ const getAccountShape: GetAccountShape = async (info) => {
     derivationMode,
   });
 
-  await HDHelper.instantiate(publicKey, chainCode);
+  const { balance, stakedBalance, blockHeight } = await getAccount(
+    publicKey,
+    chainCode
+  );
+  const delegations = await getDelegations(publicKey, chainCode);
 
-  const { balance, stakedBalance, blockHeight } = await getAccount();
-  const delegations = await getDelegations();
-
-  const newOperations = await getOperations(startAt, accountId);
+  const newOperations = await getOperations(
+    startAt,
+    accountId,
+    publicKey,
+    chainCode
+  );
   const operations = mergeOps(oldOperations, newOperations);
 
   const shape = {

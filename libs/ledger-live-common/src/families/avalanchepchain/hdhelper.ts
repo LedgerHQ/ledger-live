@@ -50,20 +50,9 @@ class HDHelper {
     this.utxoSet = new UTXOSet();
   }
 
-  static async instantiate(publicKey, chainCode): Promise<HDHelper> {
-    if (!this.instance) {
-      this.instance = new this(publicKey, chainCode);
-    }
-
+  static async instantiate(publicKey: string, chainCode: string): Promise<HDHelper> {
+    this.instance = new this(publicKey, chainCode);
     this.instance.hdIndex = await this.instance.findAvailableIndexExplorer();
-    return this.instance;
-  }
-
-  static getInstance(): HDHelper {
-    if (!this.instance) {
-      throw new Error("No HDHelper class has been instantiated.");
-    }
-
     return this.instance;
   }
 

@@ -17,9 +17,11 @@ const getExplorerUrl = (route: string): string =>
 
 export const getOperations = async (
   blockStartHeight: number,
-  accountId: string
+  accountId: string,
+  publicKey: string,
+  chainCode: string
 ): Promise<Operation[]> => {
-  const hdHelper = HDHelper.getInstance();
+  const hdHelper = await HDHelper.instantiate(publicKey, chainCode);
   const addresses = hdHelper.getAllDerivedAddresses();
 
   const operations: Operation[] = await fetchOperations(
@@ -155,8 +157,8 @@ const getPChainOperations = ({ type }) =>
   type === AvalanchePChainTransactions.Export ||
   type === AvalanchePChainTransactions.Delegate;
 
-export const getAccount = async () => {
-  const hdHelper = HDHelper.getInstance();
+export const getAccount = async (publicKey: string, chainCode: string) => {
+  const hdHelper = await HDHelper.instantiate(publicKey, chainCode);
   const { available, locked, lockedStakeable, multisig } =
     await hdHelper.fetchBalances();
   const stakedBalance = await hdHelper.fetchStake();
@@ -170,7 +172,7 @@ export const getAccount = async () => {
   };
 };
 
-export const getDelegations = async () => {
+export const getDelegations = async (publicKey: string, chainCode: string) => {
   const allDelegators: any = [];
   const validators = await getValidators();
 
@@ -180,11 +182,11 @@ export const getDelegations = async () => {
     allDelegators.push(...validator.delegators);
   }
 
-  return getUserDelegations(allDelegators);
+  return getUserDelegations(allDelegators, publicKey, chainCode);
 };
 
-const getUserDelegations = (delegators) => {
-  const hdHelper = HDHelper.getInstance();
+const getUserDelegations = async (delegators, publicKey: string, chainCode: string) => {
+  const hdHelper = await HDHelper.instantiate(publicKey, chainCode);
 
   const userAddresses = hdHelper.getAllDerivedAddresses();
 
