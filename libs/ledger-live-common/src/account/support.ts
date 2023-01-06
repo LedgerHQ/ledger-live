@@ -48,8 +48,7 @@ export const getReceiveFlowError = (
 };
 export function canSend(
   account: AccountLike,
-  parentAccount: Account | null | undefined,
-  currency: CryptoCurrency
+  parentAccount: Account | null | undefined
 ): boolean {
   try {
     getAccountBridge(account, parentAccount).createTransaction(
