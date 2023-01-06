@@ -74,7 +74,10 @@ import STAX_allowConnection from "~/renderer/animations/stax/allowConnection.jso
 
 /* eslint-enable camelcase */
 
-type ThemedAnimation = Record<Theme["theme"], Record<string, unknown>>;
+export type AnimationObject = Record<string, unknown>;
+
+type ThemedAnimation = Record<Theme["theme"], AnimationObject>;
+
 export type AnimationKey =
   | "plugAndPinCode"
   | "enterPinCode"
@@ -292,7 +295,7 @@ export const getDeviceAnimation = (
   modelId: DeviceModelId,
   theme: Theme["theme"],
   key: AnimationKey,
-) => {
+): AnimationObject => {
   const animationModelId = (process.env.OVERRIDE_MODEL_ID as DeviceModelId) || modelId;
 
   // Handles the case where OVERRIDE_MODEL_ID is incorrect
