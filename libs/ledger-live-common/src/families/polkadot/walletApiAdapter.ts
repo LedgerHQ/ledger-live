@@ -1,19 +1,17 @@
-// TODO: to remove once live-app-sdk is depreciated and removed from LL
-
-import { PolkadotTransaction as PlatformTransaction } from "@ledgerhq/live-app-sdk";
+import { PolkadotTransaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
 import { Transaction } from "./types";
 
 const CAN_EDIT_FEES = false;
 
 const convertToLiveTransaction = (
-  tx: PlatformTransaction
+  tx: WalletAPITransaction
 ): Partial<Transaction> => ({
   ...tx,
   era: tx.era ? `${tx.era}` : undefined,
 });
 
-const getPlatformTransactionSignFlowInfos = (
-  tx: PlatformTransaction
+const getWalletAPITransactionSignFlowInfos = (
+  tx: WalletAPITransaction
 ): {
   canEditFees: boolean;
   hasFeesProvided: boolean;
@@ -26,4 +24,4 @@ const getPlatformTransactionSignFlowInfos = (
   };
 };
 
-export default { getPlatformTransactionSignFlowInfos };
+export default { getWalletAPITransactionSignFlowInfos };

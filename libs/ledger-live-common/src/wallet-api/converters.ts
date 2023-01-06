@@ -1,6 +1,6 @@
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { v5 as uuidv5 } from "uuid";
-import byFamily from "../generated/platformAdapter";
+import byFamily from "../generated/walletApiAdapter";
 import type { Transaction } from "../generated/types";
 import { isTokenAccount, isSubAccount } from "../account";
 import {
@@ -105,7 +105,7 @@ export const getWalletAPITransactionSignFlowInfos = (
   const family = byFamily[tx.family];
 
   if (family) {
-    return family.getPlatformTransactionSignFlowInfos(tx);
+    return family.getWalletAPITransactionSignFlowInfos(tx);
   }
 
   return {
