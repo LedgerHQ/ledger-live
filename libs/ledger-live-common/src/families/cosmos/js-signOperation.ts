@@ -39,15 +39,20 @@ const signOperation = ({
           account,
           transaction
         );
-
+        if (!transaction.gas) {
+          throw new Error("transaction.gas is missing");
+        }
+        if (!transaction.fees) {
+          throw new Error("transaction.fees is missing");
+        }
         const feeToEncode = {
           amount: [
             {
               denom: account.currency.units[1].code,
-              amount: (transaction.fees ?? BigNumber(0)).toString(),
+              amount: transaction.fees.toString(),
             },
           ],
-          gas: (transaction.gas ?? BigNumber(0)).toString(),
+          gas: transaction.gas.toString(),
         };
         // Note:
         // Cosmos Nano App sign data in Amino way only, not Protobuf.

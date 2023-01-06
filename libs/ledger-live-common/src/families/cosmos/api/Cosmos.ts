@@ -254,22 +254,6 @@ export class CosmosAPI {
     return [...receive.data.tx_responses, ...send.data.tx_responses];
   };
 
-  simulate = async (tx_bytes: Array<any>): Promise<BigNumber> => {
-    try {
-      const { data } = await network({
-        method: "POST",
-        url: `${this.defaultEndpoint}/cosmos/tx/${this.version}/simulate`,
-        data: {
-          tx_bytes: tx_bytes,
-        },
-      });
-
-      return new BigNumber(data?.gas_info?.gas_used || 0);
-    } catch (e) {
-      return new BigNumber(0);
-    }
-  };
-
   broadcast = async ({
     signedOperation: { operation, signature },
   }): Promise<Operation> => {
