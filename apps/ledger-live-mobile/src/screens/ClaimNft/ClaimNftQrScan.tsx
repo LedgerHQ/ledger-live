@@ -28,6 +28,7 @@ import {
   StackNavigatorRoute,
 } from "../../components/RootNavigator/types/helpers";
 import { ClaimNftNavigatorParamList } from "../../components/RootNavigator/types/ClaimNftNavigator";
+import { ScreenName } from "../../const";
 
 const cameraBoxDimensions = {
   width: Dimensions.get("screen").width,
@@ -165,7 +166,11 @@ const ClaimNftQrScan = () => {
         {!permission?.canAskAgain &&
         !permission?.granted &&
         permission?.status === "denied" ? (
-          <FallbackCameraScreen route={route} navigation={navigation} />
+          <FallbackCameraScreen
+            route={route}
+            navigation={navigation}
+            redirectionScreen={ScreenName.ClaimNftQrScan}
+          />
         ) : (
           <>
             <Flex
