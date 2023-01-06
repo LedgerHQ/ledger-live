@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.52.0-nightly.6
+
+### Patch Changes
+
+- [#2254](https://github.com/LedgerHQ/ledger-live/pull/2254) [`a5aa139c56`](https://github.com/LedgerHQ/ledger-live/commit/a5aa139c56581c9c05480fca4408e13078084d03) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Fix a crash when accessing the manager coming from the animation loading
+
 ## 2.52.0-nightly.5
 
 ### Patch Changes
