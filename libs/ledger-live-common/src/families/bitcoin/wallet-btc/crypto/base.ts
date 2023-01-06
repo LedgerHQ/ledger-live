@@ -186,9 +186,7 @@ class Base implements ICrypto {
 
   toOpReturnOutputScript(data: Buffer): Buffer {
     const script = bjs.payments.embed({ data: [data] });
-    const output = script.output!;
-
-    return output;
+    return script.output!;
   }
 
   validateAddress(address: string): boolean {
