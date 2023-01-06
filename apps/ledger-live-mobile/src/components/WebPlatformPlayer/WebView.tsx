@@ -56,6 +56,7 @@ import {
   usePlatformUrl,
 } from "@ledgerhq/live-common/platform/react";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
+import { MessageHandler } from "@ledgerhq/wallet-api-core";
 import { useTheme } from "styled-components/native";
 import BigNumber from "bignumber.js";
 import { NavigatorName, ScreenName } from "../../const";
@@ -72,6 +73,7 @@ import {
 } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
+import { ProtectPlatformMessageEnum } from "../../types/protect";
 
 const tracking = trackingWrapper(track);
 
@@ -138,6 +140,9 @@ export const WebView = ({ manifest, inputs }: Props) => {
   const [widgetLoaded, setWidgetLoaded] = useState(false);
   const [isInfoPanelOpened, setIsInfoPanelOpened] = useState(false);
   const [device, setDevice] = useState<Device>();
+  const [protectWebViewCanGoBack, setProtectWebViewCanGoBack] = useState(false);
+  const [preventProtectWebViewGoBack, setPreventProtectWebViewGoBack] =
+    useState(true);
   const uri = usePlatformUrl(
     manifest,
     {
@@ -147,6 +152,38 @@ export const WebView = ({ manifest, inputs }: Props) => {
   );
   const listAccounts = useListPlatformAccounts(accounts);
   const listPlatformCurrencies = useListPlatformCurrencies();
+
+  const isProtectPlatform = manifest.id === "protect";
+
+  const onProtectLoadProgress = useCallback(event => {
+    const { nativeEvent } = event;
+    setProtectWebViewCanGoBack(nativeEvent.canGoBack);
+  }, []);
+
+  const onProtectPlatformMessage: MessageHandler = useCallback(message => {
+    switch (message) {
+      case ProtectPlatformMessageEnum.PREVENT_GO_BACK: {
+        setPreventProtectWebViewGoBack(true);
+        break;
+      }
+      case ProtectPlatformMessageEnum.ALLOW_GO_BACK: {
+        // The value is set to `true` on purpose because we can't allow
+        // Protect to go back for now. The value will be set to `false`
+        // when it is ok for Protect to go back.
+        setPreventProtectWebViewGoBack(true);
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+  }, []);
+
+  const injectedJavascriptProtect = `(function() {
+    window.postMessage = function(data) {
+      window.ReactNativeWebView.postMessage(data);
+    };
+  })()`;
 
   const requestAccount = useCallback(
     ({
@@ -565,10 +602,12 @@ export const WebView = ({ manifest, inputs }: Props) => {
       // FIXME: event isn't the same on desktop & mobile
       // if (e.isTrusted && e.origin === manifest.url.origin && e.data) {
       if (e.nativeEvent?.data) {
-        receive(JSON.parse(e.nativeEvent.data));
+        isProtectPlatform
+          ? onProtectPlatformMessage(e.nativeEvent.data)
+          : receive(JSON.parse(e.nativeEvent.data));
       }
     },
-    [receive],
+    [isProtectPlatform, onProtectPlatformMessage, receive],
   );
 
   const handleLoad = useCallback(() => {
@@ -599,17 +638,51 @@ export const WebView = ({ manifest, inputs }: Props) => {
           />
         </View>
       ),
-      headerShown: manifest.id !== "protect",
+      headerShown: !isProtectPlatform,
     });
-  }, [navigation, widgetLoaded, handleReload, isInfoPanelOpened, manifest.id]);
+  }, [
+    navigation,
+    widgetLoaded,
+    handleReload,
+    isInfoPanelOpened,
+    isProtectPlatform,
+  ]);
+
   useEffect(() => {
     tracking.platformLoad(manifest);
   }, [manifest]);
+
+  useEffect(() => {
+    if (!isProtectPlatform) return () => null;
+
+    const unsubcribe = navigation.addListener("beforeRemove", event => {
+      event.preventDefault();
+
+      if (!protectWebViewCanGoBack || preventProtectWebViewGoBack) {
+        return false;
+      }
+
+      if (targetRef.current) {
+        targetRef.current.goBack();
+        return true;
+      }
+
+      return false;
+    });
+
+    return unsubcribe;
+  }, [
+    isProtectPlatform,
+    navigation,
+    preventProtectWebViewGoBack,
+    protectWebViewCanGoBack,
+  ]);
+
   return (
     <SafeAreaView
       style={[
         styles.root,
-        { paddingTop: manifest.id === "protect" ? extraStatusBarPadding : 0 },
+        { paddingTop: isProtectPlatform ? extraStatusBarPadding : 0 },
       ]}
     >
       <InfoPanel
@@ -645,6 +718,10 @@ export const WebView = ({ manifest, inputs }: Props) => {
         automaticallyAdjustContentInsets={false}
         scrollEnabled={true}
         style={styles.webview}
+        onLoadProgress={isProtectPlatform ? onProtectLoadProgress : undefined}
+        injectedJavaScript={
+          isProtectPlatform ? injectedJavascriptProtect : undefined
+        }
       />
     </SafeAreaView>
   );

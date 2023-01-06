@@ -12,6 +12,7 @@ import {
   ServerError,
   createCurrencyNotFound,
   Transport,
+  MessageHandler,
 } from "@ledgerhq/wallet-api-core";
 import { WalletAPIServer } from "@ledgerhq/wallet-api-server";
 import { WebView as RNWebView } from "react-native-webview";
@@ -63,6 +64,7 @@ import prepareSignTransaction from "./liveSDKLogic";
 import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
+import { ProtectPlatformMessageEnum } from "../../types/protect";
 
 const tracking = trackingWrapper(track);
 
@@ -125,6 +127,9 @@ export const WebView = ({ manifest, inputs }: Props) => {
   } = useRef(null);
   const accounts = useSelector(flattenAccountsSelector);
   const navigation = useNavigation();
+  const [protectWebViewCanGoBack, setProtectWebViewCanGoBack] = useState(false);
+  const [preventProtectWebViewGoBack, setPreventProtectWebViewGoBack] =
+    useState(true);
   const [loadDate, setLoadDate] = useState(new Date());
   const [widgetLoaded, setWidgetLoaded] = useState(false);
   const [isInfoPanelOpened, setIsInfoPanelOpened] = useState(false);
@@ -141,6 +146,38 @@ export const WebView = ({ manifest, inputs }: Props) => {
   const serverRef = useRef<WalletAPIServer>();
   const transportRef = useRef<Transport>();
   const transport = useRef<Subject<BidirectionalEvent>>();
+
+  const isProtectPlatform = manifest.id === "protect";
+
+  const onProtectLoadProgress = useCallback(event => {
+    const { nativeEvent } = event;
+    setProtectWebViewCanGoBack(nativeEvent.canGoBack);
+  }, []);
+
+  const onProtectPlatformMessage: MessageHandler = useCallback(message => {
+    switch (message) {
+      case ProtectPlatformMessageEnum.PREVENT_GO_BACK: {
+        setPreventProtectWebViewGoBack(true);
+        break;
+      }
+      case ProtectPlatformMessageEnum.ALLOW_GO_BACK: {
+        // The value is set to `true` on purpose because we can't allow
+        // Protect to go back for now. The value will be set to `false`
+        // when it is ok for Protect to go back.
+        setPreventProtectWebViewGoBack(true);
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+  }, []);
+
+  const injectedJavascriptProtect = `(function() {
+    window.postMessage = function(data) {
+      window.ReactNativeWebView.postMessage(data);
+    };
+  })()`;
 
   useEffect(() => {
     if (targetRef.current) {
@@ -550,11 +587,16 @@ export const WebView = ({ manifest, inputs }: Props) => {
     serverRef.current?.setCurrencies(walletAPICurrencies);
   }, [walletAPICurrencies]);
 
-  const handleMessage = useCallback(e => {
-    if (e.nativeEvent?.data) {
-      transportRef.current?.onMessage?.(e.nativeEvent.data);
-    }
-  }, []);
+  const handleMessage = useCallback(
+    e => {
+      if (e.nativeEvent?.data) {
+        isProtectPlatform
+          ? onProtectPlatformMessage(e.nativeEvent.data)
+          : transportRef.current?.onMessage?.(e.nativeEvent.data);
+      }
+    },
+    [isProtectPlatform, onProtectPlatformMessage],
+  );
 
   const handleLoad = useCallback(() => {
     if (!widgetLoaded) {
@@ -584,19 +626,51 @@ export const WebView = ({ manifest, inputs }: Props) => {
           />
         </View>
       ),
-      headerShown: manifest.id !== "protect",
+      headerShown: !isProtectPlatform,
     });
-  }, [navigation, widgetLoaded, handleReload, isInfoPanelOpened, manifest.id]);
+  }, [
+    navigation,
+    widgetLoaded,
+    handleReload,
+    isInfoPanelOpened,
+    isProtectPlatform,
+  ]);
 
   useEffect(() => {
     tracking.load(manifest);
   }, [manifest]);
 
+  useEffect(() => {
+    if (!isProtectPlatform) return () => null;
+
+    const unsubcribe = navigation.addListener("beforeRemove", event => {
+      event.preventDefault();
+
+      if (!protectWebViewCanGoBack || preventProtectWebViewGoBack) {
+        return false;
+      }
+
+      if (targetRef.current) {
+        targetRef.current.goBack();
+        return true;
+      }
+
+      return false;
+    });
+
+    return unsubcribe;
+  }, [
+    isProtectPlatform,
+    navigation,
+    preventProtectWebViewGoBack,
+    protectWebViewCanGoBack,
+  ]);
+
   return (
     <SafeAreaView
       style={[
         styles.root,
-        { paddingTop: manifest.id === "protect" ? extraStatusBarPadding : 0 },
+        { paddingTop: isProtectPlatform ? extraStatusBarPadding : 0 },
       ]}
     >
       <InfoPanel
@@ -632,6 +706,10 @@ export const WebView = ({ manifest, inputs }: Props) => {
         automaticallyAdjustContentInsets={false}
         scrollEnabled={true}
         style={styles.webview}
+        onLoadProgress={isProtectPlatform ? onProtectLoadProgress : undefined}
+        injectedJavaScript={
+          isProtectPlatform ? injectedJavascriptProtect : undefined
+        }
       />
     </SafeAreaView>
   );
