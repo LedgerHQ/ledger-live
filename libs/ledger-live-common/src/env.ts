@@ -124,7 +124,7 @@ const envDefinitions = {
   },
   API_STACKS_ENDPOINT: {
     parser: stringParser,
-    def: "https://stacks-node-api.mainnet.stacks.co", // FIXME Stacks - Set the correct value for ledger proxy
+    def: "https://stacks.coin.ledger.com",
     desc: "Stacks API url",
   },
   API_POLKADOT_INDEXER: {
