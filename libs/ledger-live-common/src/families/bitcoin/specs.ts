@@ -9,11 +9,16 @@ import type {
   BitcoinOutput,
   BitcoinResources,
   Transaction,
+  TransactionStatus,
 } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
 import { bitcoinPickingStrategy } from "./types";
-import type { MutationSpec, AppSpec } from "../../bot/types";
+import type {
+  MutationSpec,
+  AppSpec,
+  TransactionTestInput,
+} from "../../bot/types";
 import { LowerThanMinimumRelayFee } from "../../errors";
 import { getMinRelayFee, getUTXOStatus } from "./logic";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -56,9 +61,9 @@ const genericTest = ({
   transaction,
   status,
   accountBeforeTransaction,
-}): void => {
+}: TransactionTestInput<Transaction>): void => {
   invariant(
-    Date.now() - operation.date < 1000000,
+    Date.now() - operation.date.getTime() < 1000000,
     "operation time to be recent"
   );
 
@@ -69,10 +74,10 @@ const genericTest = ({
     )
   );
   // inputs outputs
-  const { txInputs, txOutputs } = status;
+  const { txInputs, txOutputs } = status as TransactionStatus;
   invariant(txInputs, "tx inputs defined");
   invariant(txOutputs, "tx outputs defined");
-  const { bitcoinResources } = accountBeforeTransaction;
+  const { bitcoinResources } = accountBeforeTransaction as BitcoinAccount;
   invariant(bitcoinResources, "bitcoin resources");
   const nonDeterministicPicking =
     transaction.utxoStrategy.strategy === bitcoinPickingStrategy.OPTIMIZE_SIZE;
@@ -85,16 +90,16 @@ const genericTest = ({
 
   botTest("operation matches tx senders and recipients", () => {
     if (transaction.opReturnData) {
-      expect(operation.recipients).toContain(transaction.address);
+      expect(operation.recipients).toContain(transaction.recipient);
       expect(operation.recipients.length).toBe(2);
     } else {
       let expectedSenders = nonDeterministicPicking
         ? operation.senders
-        : txInputs.map((t) => t.address).filter(Boolean);
+        : (txInputs!.map((t) => t.address).filter(Boolean) as string[]);
 
-      let expectedRecipients = txOutputs
+      let expectedRecipients = txOutputs!
         .filter((o) => o.address && !o.isChange)
-        .map((o) => o.address);
+        .map((o) => o.address) as string[];
 
       if (account.currency.id === "bitcoin_cash") {
         expectedSenders = expectedSenders.map(
@@ -114,7 +119,7 @@ const genericTest = ({
     }
   });
 
-  const utxosPicked = (status.txInputs || [])
+  const utxosPicked = ((status as TransactionStatus).txInputs || [])
     .map(({ previousTxHash, previousOutputIndex }) =>
       bitcoinResources.utxos.find(
         (u) =>
@@ -126,8 +131,10 @@ const genericTest = ({
   botTest("picked utxo has been consumed", () =>
     expect(
       utxosPicked.filter(
-        (u: BitcoinOutput) =>
-          u.blockHeight && getUTXOStatus(u, transaction.utxoStrategy).excluded
+        (utxo) =>
+          utxo &&
+          utxo.blockHeight &&
+          getUTXOStatus(utxo, transaction.utxoStrategy).excluded
       )
     ).toEqual([])
   );
