@@ -4580,6 +4580,9 @@
     "solana": {
       "memo": "Memo",
       "memoPlaceholder": "Optional"
+    },
+    "nervos": {
+      "sendingMoreAmount": "Warning: Sending {{ differenceAmount }} CKB more because remaining amount in cell can't be less than 61 CKB."
     }
   },
   "errors": {
