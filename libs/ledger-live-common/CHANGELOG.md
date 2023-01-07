@@ -1,5 +1,21 @@
 # @ledgerhq/live-common
 
+## 27.11.0-nightly.5
+
+### Minor Changes
+
+- [#2121](https://github.com/LedgerHQ/ledger-live/pull/2121) [`8aca07c549`](https://github.com/LedgerHQ/ledger-live/commit/8aca07c54935a66163aa89af6e88854742383bea) Thanks [@lvndry](https://github.com/lvndry)! - stakenet (xsn) now unsupported in ledger live
+
+### Patch Changes
+
+- [#2248](https://github.com/LedgerHQ/ledger-live/pull/2248) [`dc1c82be95`](https://github.com/LedgerHQ/ledger-live/commit/dc1c82be95005d0ec00aa849d69a9e77065ea128) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-api): filter currencies families
+
+* [#2131](https://github.com/LedgerHQ/ledger-live/pull/2131) [`7f0ac99dd9`](https://github.com/LedgerHQ/ledger-live/commit/7f0ac99dd9129c2e0833300a3055b90528669485) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Add cache busting strategy for NEAR LLM staking positions, and cover staking edge case where node returns a tiny bit less than what was actually staked.
+
+* Updated dependencies [[`3200794498`](https://github.com/LedgerHQ/ledger-live/commit/32007944989d1e89162a63e9862bd64066d6216b), [`8aca07c549`](https://github.com/LedgerHQ/ledger-live/commit/8aca07c54935a66163aa89af6e88854742383bea)]:
+  - @ledgerhq/cryptoassets@7.2.0-nightly.0
+  - @ledgerhq/hw-app-eth@6.30.4-nightly.3
+
 ## 27.11.0-nightly.4
 
 ### Patch Changes

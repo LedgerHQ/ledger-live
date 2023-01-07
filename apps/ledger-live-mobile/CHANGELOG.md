@@ -1,5 +1,22 @@
 # live-mobile
 
+## 3.13.0-nightly.16
+
+### Minor Changes
+
+- [#2121](https://github.com/LedgerHQ/ledger-live/pull/2121) [`8aca07c549`](https://github.com/LedgerHQ/ledger-live/commit/8aca07c54935a66163aa89af6e88854742383bea) Thanks [@lvndry](https://github.com/lvndry)! - Delist Stakenet (XSN) coin
+
+* [#1932](https://github.com/LedgerHQ/ledger-live/pull/1932) [`fe21b6e0b3`](https://github.com/LedgerHQ/ledger-live/commit/fe21b6e0b34b048046668915b83a5a833ffc3206) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - This PR add the post onboarding claim NFT flow
+
+- [#2214](https://github.com/LedgerHQ/ledger-live/pull/2214) [`3f853fe836`](https://github.com/LedgerHQ/ledger-live/commit/3f853fe83643ad10d7efd4b140fd3d815c29bb08) Thanks [@grsoares21](https://github.com/grsoares21)! - Integrate the new device selection screen everywhere in the app
+
+### Patch Changes
+
+- [#2248](https://github.com/LedgerHQ/ledger-live/pull/2248) [`dc1c82be95`](https://github.com/LedgerHQ/ledger-live/commit/dc1c82be95005d0ec00aa849d69a9e77065ea128) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-api): filter currencies families
+
+- Updated dependencies [[`dc1c82be95`](https://github.com/LedgerHQ/ledger-live/commit/dc1c82be95005d0ec00aa849d69a9e77065ea128), [`8aca07c549`](https://github.com/LedgerHQ/ledger-live/commit/8aca07c54935a66163aa89af6e88854742383bea), [`7f0ac99dd9`](https://github.com/LedgerHQ/ledger-live/commit/7f0ac99dd9129c2e0833300a3055b90528669485)]:
+  - @ledgerhq/live-common@27.11.0-nightly.5
+
 ## 3.13.0-nightly.15
 
 ### Patch Changes
