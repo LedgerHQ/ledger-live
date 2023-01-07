@@ -112,13 +112,6 @@ const initialExplorerConfig: FullConfig = {
       version: "v3",
     },
   },
-  stakenet: {
-    id: "xsn",
-    stable: {
-      base: "EXPLORER",
-      version: "v3",
-    },
-  },
   stratis: {
     id: "strat",
     stable: {
