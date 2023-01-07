@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`zilliqa currency bridge scanAccounts zilliqa seed 1 1`] = `
+Array [
+  Object {
+    "balance": "91870000000000",
+    "currencyId": "zilliqa",
+    "derivationMode": "zilliqaL",
+    "freshAddress": "zil1dtmkpcl30ef5jf06e7qceld6jyhj2lpxdhrcuc",
+    "freshAddressPath": "44'/313'/1'/0'/0'",
+    "freshAddresses": Array [
+      Object {
+        "address": "zil1dtmkpcl30ef5jf06e7qceld6jyhj2lpxdhrcuc",
+        "derivationPath": "44'/313'/1'/0'/0'",
+      },
+    ],
+    "id": "js:2:zilliqa:zil1dtmkpcl30ef5jf06e7qceld6jyhj2lpxdhrcuc:zilliqaL",
+    "index": 1,
+    "name": "Zilliqa 2",
+    "nfts": undefined,
+    "operationsCount": 0,
+    "pendingOperations": Array [],
+    "seedIdentifier": "03fa3bee864530094c637994bd08b45eb1d96e8f3c03e866bc18c7f6b06be15fc7",
+    "spendableBalance": "91870000000000",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 12,
+    "used": true,
+    "zilliqaResources": Object {
+      "nonce": 8,
+      "publicKey": "02d0fa63f917e8c6504c8ed9d28669d6fab0137862c81e355af953cb884a463ab8",
+    },
+  },
+  Object {
+    "balance": "0",
+    "currencyId": "zilliqa",
+    "derivationMode": "zilliqaL",
+    "freshAddress": "zil1gn7279q66rw584f3qz6uajzukcr5v8jfgx422w",
+    "freshAddressPath": "44'/313'/2'/0'/0'",
+    "freshAddresses": Array [
+      Object {
+        "address": "zil1gn7279q66rw584f3qz6uajzukcr5v8jfgx422w",
+        "derivationPath": "44'/313'/2'/0'/0'",
+      },
+    ],
+    "id": "js:2:zilliqa:zil1gn7279q66rw584f3qz6uajzukcr5v8jfgx422w:zilliqaL",
+    "index": 2,
+    "name": "Zilliqa 3",
+    "nfts": undefined,
+    "operationsCount": 0,
+    "pendingOperations": Array [],
+    "seedIdentifier": "03fa3bee864530094c637994bd08b45eb1d96e8f3c03e866bc18c7f6b06be15fc7",
+    "spendableBalance": "0",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 12,
+    "used": false,
+    "zilliqaResources": Object {
+      "nonce": 0,
+      "publicKey": "036c39ae31ef7c4f668a93c0f6343926ab9e635f16fcf6cd30a0ec659d67e7e6f3",
+    },
+  },
+]
+`;
+
+exports[`zilliqa currency bridge scanAccounts zilliqa seed 1 2`] = `
+Array [
+  Array [],
+  Array [],
+]
+`;

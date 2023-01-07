@@ -3,10 +3,19 @@ import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
 import { getAccount, getOperations } from "./api";
 import { ZilliqaAccount } from "./types";
+import Zilliqa from "@ledgerhq/hw-app-zilliqa";
 
 const getAccountShape: GetAccountShape = async (info) => {
-  const { address, initialAccount, currency, derivationMode, rest } = info;
+  const {
+    address,
+    initialAccount,
+    currency,
+    transport,
+    derivationMode,
+    rest,
+  } = info;
   const account = initialAccount as ZilliqaAccount;
+  const { freshAddressPath } = account;
 
   let publicKey: undefined | string;
 
@@ -19,8 +28,16 @@ const getAccountShape: GetAccountShape = async (info) => {
   ) {
     // UI has a zilliqaResources attribute
     publicKey = account.zilliqaResources.publicKey;
+  } else if (transport && freshAddressPath) {
+    // In case the public key is not on the account, we
+    // request it from the hardware
+    const zilliqa = new Zilliqa(transport);
+    const r = await zilliqa.getAddress(freshAddressPath);
+    publicKey = r.publicKey;
   } else {
-    throw new Error("Account Info does not contain public key.");
+    // In any other case, we resort to providing an empty string
+    // as this is needed for testing.
+    publicKey = "";
   }
 
   const accountId = encodeAccountId({
