@@ -1,14 +1,13 @@
 // @flow
 import React, { useCallback, useMemo } from "react";
-import { useHistory, useLocation } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import useTheme from "~/renderer/hooks/useTheme";
 
 import { Card } from "~/renderer/components/Box";
 import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
-import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { useSelector } from "react-redux";
+import { useGetManifest } from "./utils";
 
 type Props = {
   match: {
@@ -20,17 +19,21 @@ type Props = {
     url: string,
   },
   appId?: string,
+  location: {
+    hash: string,
+    params: {
+      [key: string]: string,
+    },
+    pathname: string,
+    search: string,
+  },
 };
 
-export default function PlatformApp({ match, appId: propsAppId }: Props) {
+export default function PlatformApp({ match, appId: propsAppId, location }: Props) {
   const history = useHistory();
-  const { state: urlParams, search } = useLocation();
+  const { params: urlParams, search, pathname } = location;
+
   const appId = propsAppId || match.params?.appId;
-
-  const localManifest = useLocalLiveAppManifest(appId);
-  const remoteManifest = useRemoteLiveAppManifest(appId);
-
-  const manifest = localManifest || remoteManifest;
 
   const returnTo = useMemo(() => {
     const params = new URLSearchParams(search);
@@ -45,6 +48,8 @@ export default function PlatformApp({ match, appId: propsAppId }: Props) {
     lang,
     ...urlParams,
   };
+
+  const manifest = useGetManifest(appId, params, pathname);
 
   // TODO for next urlscheme evolutions:
   // - check if local settings allow to launch an app from this branch, else display an error
