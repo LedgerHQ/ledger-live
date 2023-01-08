@@ -123,6 +123,8 @@
     "https": false
   },
   "dependencies": {
+    "@avalabs/avalanche-wallet-sdk": "^0.19.0-alpha.7",
+    "@avalabs/hw-app-avalanche": "^0.6.8",
     "@cardano-foundation/ledgerjs-hw-app-cardano": "^5.1.0",
     "@celo/connect": "^1.5.2",
     "@celo/contractkit": "^1.5.2",
