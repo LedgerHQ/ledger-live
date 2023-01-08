@@ -175,7 +175,7 @@ const modes = Object.freeze({
     overridesDerivation: "44'/501'/<account>'",
   },
   avalanchepchain: {
-    overridesDerivation: "44'/9000'/0'/0/<account>",
+    overridesDerivation: "m/44'/9000'/0'",
     isNonIterable: true,
   },
   hederaBip44: {
@@ -372,7 +372,7 @@ const seedIdentifierPath = {
   neo: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   filecoin: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   solana: ({ purpose, coinType }) => `${purpose}'/${coinType}'`,
-  avalanchepchain: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
+  avalanchepchain: ({ purpose, coinType }) => `m/${purpose}'/${coinType}'/0'`,
   hedera: ({ purpose, coinType }) => `${purpose}/${coinType}`,
   cardano: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   cardano_testnet: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
