@@ -9,7 +9,6 @@ import type {
 } from "@ledgerhq/types-live";
 import { withDevice } from "../../hw/deviceAccess";
 import buildTransaction from "./js-buildTransaction";
-import Avalanche, { AVAX_BIP32_PREFIX } from "./hw-app-avalanche";
 import { encodeOperationId } from "../../operation";
 import { binTools } from "./utils";
 import { Buffer as AvalancheBuffer } from "avalanche";
@@ -29,8 +28,15 @@ import { HDHelper } from "./hdhelper";
 import { createHash } from "crypto";
 import { AVAX_HRP } from "./utils";
 import { AvalanchePChainAccount } from "./types";
+import {
+  getLedgerProvider,
+  LedgerProvider,
+  getTxOutputAddresses,
+} from "@avalabs/avalanche-wallet-sdk";
+import Transport from "@ledgerhq/hw-transport";
 
 const STAKEABLELOCKINID = 21;
+const AVA_ACCOUNT_PATH = "m/44'/9000'/0'";
 
 const signOperation = ({
   account,
@@ -69,7 +75,6 @@ const signOperation = ({
             extendedPAddresses
           );
 
-          const avalanche: Avalanche = new Avalanche(transport);
           const canLedgerParse = getCanLedgerParse(unsignedTx);
 
           o.next({ type: "device-signature-requested" });
@@ -80,12 +85,12 @@ const signOperation = ({
             signedTx = await signTransactionParsable<
               PlatformUnsignedTx,
               PlatformTx
-            >(unsignedTx, paths, avalanche);
+            >(unsignedTx, paths, transport, hdHelper);
           } else {
             signedTx = await signTransactionHash<
               PlatformUnsignedTx,
               PlatformTx
-            >(unsignedTx, paths, avalanche);
+            >(unsignedTx, paths, transport);
           }
 
           if (cancelled) return;
@@ -123,18 +128,23 @@ const signTransactionParsable = async <
 >(
   unsignedTx: UnsignedTx,
   paths: string[],
-  avalanche
+  transport: Transport,
+  hdHelper: HDHelper
 ): Promise<SignedTx> => {
-  const accountPath = BIPPath.fromString(AVAX_BIP32_PREFIX);
+  const accountPath = BIPPath.fromString(AVA_ACCOUNT_PATH);
   const bip32Paths = pathsToUniqueBipPaths(paths);
   const txbuff = unsignedTx.toBuffer();
-  const changePath = BIPPath.fromString(`${AVAX_BIP32_PREFIX}/0/0`);
+  const outputAddrs = getTxOutputAddresses<UnsignedTx>(unsignedTx);
+  const changePaths = getAddressPaths(outputAddrs, hdHelper);
 
-  const ledgerSignedTx = await avalanche.signTransaction(
+  const provider: LedgerProvider = await getLedgerProvider(transport);
+
+  const ledgerSignedTx = await provider.signTx(
+    transport,
+    Buffer.from(txbuff),
     accountPath,
     bip32Paths,
-    txbuff,
-    changePath
+    changePaths
   );
 
   const sigMap = ledgerSignedTx.signatures;
@@ -153,13 +163,22 @@ const signTransactionHash = async <
 >(
   unsignedTx: UnsignedTx,
   paths: string[],
-  avalanche
+  transport: Transport
 ): Promise<SignedTx> => {
   const txbuff = unsignedTx.toBuffer();
   const msg = Buffer.from(createHash("sha256").update(txbuff).digest());
   const bip32Paths = pathsToUniqueBipPaths(paths);
-  const accountPath = BIPPath.fromString(AVAX_BIP32_PREFIX);
-  const sigMap = await avalanche.signHash(accountPath, bip32Paths, msg);
+  const accountPath = BIPPath.fromString(AVA_ACCOUNT_PATH);
+
+  const provider: LedgerProvider = await getLedgerProvider(transport);
+
+  const sigMap = await provider.signHash(
+    transport,
+    Buffer.from(msg),
+    accountPath,
+    bip32Paths
+  );
+
   const creds: Credential[] = getCredentials<UnsignedTx>(
     unsignedTx,
     paths,
@@ -316,6 +335,24 @@ const getCredentials = <UnsignedTx extends AVMUnsignedTx | PlatformUnsignedTx>(
   }
 
   return creds;
+};
+
+const getAddressPaths = (
+  addresses: string[],
+  hdHelper: HDHelper
+): BIPPath.Bip32Path[] => {
+  const platformAddrs = hdHelper.getAllDerivedAddresses();
+
+  const paths: Set<string> = new Set();
+
+  addresses.forEach((address) => {
+    const platformIndex = platformAddrs.indexOf(address);
+
+    if (platformIndex >= 0) {
+      paths.add(`0/${platformIndex}`);
+    }
+  });
+  return [...paths].map((path) => BIPPath.fromString(path));
 };
 
 const getPathFromAddress = (address: string, pAddresses: string[]) => {
