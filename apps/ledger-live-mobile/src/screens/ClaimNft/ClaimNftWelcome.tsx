@@ -9,11 +9,6 @@ import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { useCompleteActionCallback } from "../../logic/postOnboarding/useCompleteAction";
 import { NavigatorName, ScreenName } from "../../const";
 
-const infinityPassPart01 = require("../../../assets/videos/infinityPassDark/infinityPassPart01.mp4");
-const infinityPassPart02 = require("../../../assets/videos/infinityPassDark/infinityPassPart02.mp4");
-
-const test = require("../../../assets/videos/infinityPassDark/infinityPassCenter.mp4");
-
 const absoluteStyle = {
   position: "absolute" as const,
   bottom: 0,
@@ -37,7 +32,6 @@ const ClaimNftWelcome = () => {
   const navigation = useNavigation();
   const [isFirstVideo, setIsFirstVideo] = useState(true);
   const theme = useTheme();
-  console.log(theme);
   const completePostOnboardingAction = useCompleteActionCallback();
 
   const handleGoToQrScan = useCallback(
@@ -54,57 +48,70 @@ const ClaimNftWelcome = () => {
   }, [completePostOnboardingAction, navigation]);
 
   const handleEndVideo = useCallback(() => {
-    console.log("ok");
     setIsFirstVideo(false);
   }, []);
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
       <Flex flex={1}>
-        <Flex flex={1}>
-          {isFirstVideo ? (
-            <Video
-              style={absoluteStyle}
-              disableFocus
-              source={infinityPassPart01}
-              muted
-              repeat
-              onEnd={handleEndVideo}
-              resizeMode={"contain"}
-            />
-          ) : (
-            <Video
-              style={absoluteStyle}
-              disableFocus
-              source={infinityPassPart02}
-              muted
-              repeat
-              onEnd={handleEndVideo}
-              resizeMode={"contain"}
-            />
-          )}
-        </Flex>
-        <Flex flex={2} px={6} justifyContent="space-evenly">
-          <Text variant="h4" fontWeight="semiBold" mt={7} textAlign="center">
-            {t("claimNft.welcomePage.title")}
-          </Text>
-          <Flex>
-            <Text color="neutral.c70" mb={6}>
-              {t("claimNft.welcomePage.description.title")}
-            </Text>
-            <BulletItem textKey={"claimNft.welcomePage.description.1"} />
-            <BulletItem textKey={"claimNft.welcomePage.description.2"} />
-            <BulletItem textKey={"claimNft.welcomePage.description.3"} />
-          </Flex>
-          <Flex flexDirection="column" justifyContent="flex-end">
-            <Button mb={8} type="main" onPress={handleGoToQrScan}>
-              {t("claimNft.welcomePage.claimButton")}
-            </Button>
-            <Link onPress={handleSkipQrScan}>
-              {t("claimNft.welcomePage.backButton")}
-            </Link>
-          </Flex>
-        </Flex>
+        {isFirstVideo ? (
+          <Video
+            style={absoluteStyle}
+            disableFocus
+            source={
+              theme.dark
+                ? require("../../../assets/videos/infinityPassDark/infinityPassPart01.mp4")
+                : require("../../../assets/videos/infinityPassLight/infinityPassPart01.mp4")
+            }
+            onEnd={handleEndVideo}
+            muted
+            repeat
+            resizeMode={"contain"}
+          />
+        ) : (
+          <>
+            <Flex flex={1}>
+              <Video
+                style={absoluteStyle}
+                disableFocus
+                source={
+                  theme.dark
+                    ? require("../../../assets/videos/infinityPassDark/infinityPassCenter.mp4")
+                    : require("../../../assets/videos/infinityPassLight/infinityPassCenter.mp4")
+                }
+                muted
+                repeat
+                resizeMode={"contain"}
+              />
+            </Flex>
+            <Flex flex={2} px={6} justifyContent="space-evenly">
+              <Text
+                variant="h4"
+                fontWeight="semiBold"
+                mt={7}
+                textAlign="center"
+              >
+                {t("claimNft.welcomePage.title")}
+              </Text>
+              <Flex>
+                <Text color="neutral.c70" mb={6}>
+                  {t("claimNft.welcomePage.description.title")}
+                </Text>
+                <BulletItem textKey={"claimNft.welcomePage.description.1"} />
+                <BulletItem textKey={"claimNft.welcomePage.description.2"} />
+                <BulletItem textKey={"claimNft.welcomePage.description.3"} />
+              </Flex>
+              <Flex flexDirection="column" justifyContent="flex-end">
+                <Button mb={8} type="main" onPress={handleGoToQrScan}>
+                  {t("claimNft.welcomePage.claimButton")}
+                </Button>
+                <Link onPress={handleSkipQrScan}>
+                  {t("claimNft.welcomePage.backButton")}
+                </Link>
+              </Flex>
+            </Flex>
+          </>
+        )}
       </Flex>
     </SafeAreaView>
   );
