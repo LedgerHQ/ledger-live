@@ -41,6 +41,7 @@ export type UseOnboardingStatePollingArgs =
  * - onboardingState: the device state during the onboarding
  * - allowedError: any error that is allowed and does not stop the polling
  * - fatalError: any error that is fatal and stops the polling
+ * - lockedDevice: a boolean set to true if the device is currently locked, false otherwise
  */
 export const useOnboardingStatePolling = ({
   getOnboardingStatePolling = defaultGetOnboardingStatePolling,
@@ -52,6 +53,7 @@ export const useOnboardingStatePolling = ({
     useState<OnboardingState | null>(null);
   const [allowedError, setAllowedError] = useState<Error | null>(null);
   const [fatalError, setFatalError] = useState<Error | null>(null);
+  const [lockedDevice, setLockedDevice] = useState<boolean>(false);
 
   useEffect(() => {
     let onboardingStatePollingSubscription: Subscription;
@@ -66,6 +68,8 @@ export const useOnboardingStatePolling = ({
         next: (onboardingStatePollingResult: OnboardingStatePollingResult) => {
           if (onboardingStatePollingResult) {
             setFatalError(null);
+            setLockedDevice(onboardingStatePollingResult.lockedDevice);
+
             // Only updates if the new allowedError is different
             setAllowedError((prevAllowedError) =>
               getNewAllowedErrorIfChanged(
@@ -88,6 +92,7 @@ export const useOnboardingStatePolling = ({
         },
         error: (error) => {
           setAllowedError(null);
+          setLockedDevice(false);
           setFatalError(
             error instanceof Error
               ? error
@@ -112,7 +117,7 @@ export const useOnboardingStatePolling = ({
     getOnboardingStatePolling,
   ]);
 
-  return { onboardingState, allowedError, fatalError };
+  return { onboardingState, allowedError, fatalError, lockedDevice };
 };
 
 const getNewOnboardingStateIfChanged = (

@@ -45,6 +45,7 @@ export enum AccountsActionTypes {
   UPDATE_ACCOUNT = "UPDATE_ACCOUNT",
   DELETE_ACCOUNT = "DELETE_ACCOUNT",
   CLEAN_CACHE = "CLEAN_CACHE",
+  DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
 }
 
 export type AccountsImportStorePayload = { active: Account[] };
@@ -82,6 +83,7 @@ export enum AppStateActionTypes {
   QUEUE_BACKGROUND_EVENT = "QUEUE_BACKGROUND_EVENT",
   DEQUEUE_BACKGROUND_EVENT = "DEQUEUE_BACKGROUND_EVENT",
   CLEAR_BACKGROUND_EVENTS = "CLEAR_BACKGROUND_EVENTS",
+  DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
 }
 
 export type AppStateIsConnectedPayload = Pick<AppState, "isConnected">;
@@ -107,6 +109,7 @@ export enum BleActionTypes {
   BLE_ADD_DEVICE = "BLE_ADD_DEVICE",
   BLE_IMPORT = "BLE_IMPORT",
   BLE_SAVE_DEVICE_NAME = "BLE_SAVE_DEVICE_NAME",
+  DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
 }
 
 export type BleRemoveKnownDevicePayload = { deviceId: string };
@@ -130,6 +133,7 @@ export enum NotificationsActionTypes {
   NOTIFICATIONS_SET_CURRENT_ROUTE_NAME = "NOTIFICATIONS_SET_CURRENT_ROUTE_NAME",
   NOTIFICATIONS_SET_EVENT_TRIGGERED = "NOTIFICATIONS_SET_EVENT_TRIGGERED",
   NOTIFICATIONS_SET_DATA_OF_USER = "NOTIFICATIONS_SET_DATA_OF_USER",
+  DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
 }
 
 export type NotificationsSetModalOpenPayload = Pick<
@@ -206,6 +210,7 @@ export enum RatingsActionTypes {
   RATINGS_SET_CURRENT_ROUTE_NAME = "RATINGS_SET_CURRENT_ROUTE_NAME",
   RATINGS_SET_HAPPY_MOMENT = "RATINGS_SET_HAPPY_MOMENT",
   RATINGS_SET_DATA_OF_USER = "RATINGS_SET_DATA_OF_USER",
+  DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
 }
 
 export type RatingsSetModalOpenPayload = Pick<
@@ -432,7 +437,7 @@ export type SettingsSetWalletTabNavigatorLastVisitedTabPayload = Pick<
   SettingsState,
   "walletTabNavigatorLastVisitedTab"
 >;
-export type SettingsDangerouslyOverrideStatePayload = State;
+export type DangerouslyOverrideStatePayload = Partial<State>;
 export type SettingsSetOverriddenFeatureFlagPlayload = {
   id: FeatureId;
   value: Feature | undefined;
@@ -488,7 +493,7 @@ export type SettingsPayload =
   | SettingsSetSensitiveAnalyticsPayload
   | SettingsSetFirstConnectHasDeviceUpdatedPayload
   | SettingsSetNotificationsPayload
-  | SettingsDangerouslyOverrideStatePayload
+  | DangerouslyOverrideStatePayload
   | SettingsSetOverriddenFeatureFlagPlayload
   | SettingsSetOverriddenFeatureFlagsPlayload
   | SettingsSetFeatureFlagsBannerVisiblePayload;
@@ -508,6 +513,7 @@ export enum SwapActionTypes {
   UPDATE_PROVIDERS = "UPDATE_PROVIDERS",
   UPDATE_TRANSACTION = "UPDATE_TRANSACTION",
   UPDATE_RATE = "UPDATE_RATE",
+  DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
 }
 
 export type UpdateProvidersPayload = SwapStateType["providers"];

@@ -136,7 +136,9 @@ function PortfolioScreen({ navigation }: NavigationProps) {
 
   const data = useMemo(
     () => [
-      <FirmwareUpdateBanner />,
+      <Flex px={6} py={4}>
+        <FirmwareUpdateBanner />
+      </Flex>,
       <Box mt={3} onLayout={onPortfolioCardLayout}>
         <GraphCardContainer
           counterValueCurrency={counterValueCurrency}

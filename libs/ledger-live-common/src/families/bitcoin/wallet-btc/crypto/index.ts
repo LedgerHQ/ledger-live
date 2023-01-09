@@ -8,7 +8,6 @@ export { default as Dash } from "./dash";
 export { default as Peercoin } from "./peercoin";
 export { default as Komodo } from "./komodo";
 export { default as Pivx } from "./pivx";
-export { default as Stakenet } from "./stakenet";
 export { default as Stealth } from "./stealth";
 export { default as BitcoinGold } from "./bitcoingold";
 export { default as Doge } from "./doge";

@@ -50,6 +50,7 @@ import type { WalletConnectNavigatorParamList } from "./WalletConnectNavigator";
 import type { WalletConnectLiveAppNavigatorParamList } from "./WalletConnectLiveAppNavigator";
 import type { PostOnboardingNavigatorParamList } from "./PostOnboardingNavigator";
 import type { CustomImageNavigatorParamList } from "./CustomImageNavigator";
+import type { ClaimNftNavigatorParamList } from "./ClaimNftNavigator";
 import type { PolkadotSimpleOperationFlowParamList } from "../../../families/polkadot/SimpleOperationFlow/types";
 import type { PolkadotNominateFlowParamList } from "../../../families/polkadot/NominateFlow/types";
 import type { PolkadotUnbondFlowParamList } from "../../../families/polkadot/UnbondFlow/type";
@@ -270,6 +271,7 @@ export type BaseNavigatorStackParamList = {
     WalletConnectNavigatorParamList | WalletConnectLiveAppNavigatorParamList
   >;
   [NavigatorName.CustomImage]: NavigatorScreenParams<CustomImageNavigatorParamList>;
+  [NavigatorName.ClaimNft]: NavigatorScreenParams<ClaimNftNavigatorParamList>;
   [NavigatorName.PostOnboarding]: NavigatorScreenParams<PostOnboardingNavigatorParamList>;
 
   // Polkadot
