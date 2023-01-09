@@ -10,7 +10,7 @@ import { Flex } from "@ledgerhq/native-ui";
 import Button from "../Button";
 
 import NanoS from "../../images/devices/NanoS";
-import NanoFTS from "../../images/devices/NanoFTS";
+import Stax from "../../images/devices/Stax";
 import NanoX from "../../images/devices/NanoX";
 
 import Trash from "../../icons/Trash";
@@ -22,7 +22,7 @@ const illustrations = {
   [DeviceModelId.nanoSP]: NanoS,
   [DeviceModelId.nanoX]: NanoX,
   [DeviceModelId.blue]: NanoS,
-  [DeviceModelId.nanoFTS]: NanoFTS,
+  [DeviceModelId.stax]: Stax,
 };
 
 const RemoveDeviceMenu = ({
@@ -42,6 +42,7 @@ const RemoveDeviceMenu = ({
       (illustrations[device.modelId] ?? NanoX)({
         color: colors.neutral.c100,
         size: 200,
+        theme: colors.type as "light" | "dark",
       }),
     [device.modelId, colors],
   );

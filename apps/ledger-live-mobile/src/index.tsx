@@ -18,6 +18,7 @@ import {
   Appearance,
   AppState,
   Platform,
+  LogBox,
 } from "react-native";
 import SplashScreen from "react-native-splash-screen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -47,6 +48,7 @@ import { LocalLiveAppProvider } from "@ledgerhq/live-common/platform/providers/L
 import { isEqual } from "lodash";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import Braze from "react-native-appboy-sdk";
+import Config from "react-native-config";
 import logger from "./logger";
 import {
   saveAccounts,
@@ -71,7 +73,7 @@ import LedgerStoreProvider from "./context/LedgerStore";
 import LoadingApp from "./components/LoadingApp";
 import StyledStatusBar from "./components/StyledStatusBar";
 import AnalyticsConsole from "./components/AnalyticsConsole";
-import ThemeDebug from "./components/ThemeDebug";
+import DebugTheme from "./components/DebugTheme";
 import { BridgeSyncProvider } from "./bridge/BridgeSyncContext";
 import useDBSaveEffect from "./components/DBSave";
 import useAppStateListener from "./components/useAppStateListener";
@@ -110,6 +112,10 @@ import PostOnboardingProviderWrapped from "./logic/postOnboarding/PostOnboarding
 import { isAcceptedTerms } from "./logic/terms";
 import type { Writeable } from "./types/helpers";
 import HookDynamicContentCards from "./dynamicContent/useContentCards";
+
+if (Config.DISABLE_YELLOW_BOX) {
+  LogBox.ignoreAllLogs();
+}
 
 const themes: {
   [key: string]: Theme;
@@ -221,7 +227,7 @@ function App({ importDataString }: AppProps) {
       <RootNavigator importDataString={importDataString} />
 
       <AnalyticsConsole />
-      <ThemeDebug />
+      <DebugTheme />
       <Modals />
     </GestureHandlerRootView>
   );
@@ -304,6 +310,25 @@ const linkingOptions = {
           [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
 
           [ScreenName.BleDevicePairingFlow]: "sync-onboarding",
+
+          [NavigatorName.PostOnboarding]: {
+            screens: {
+              /**
+               * @params ?completed: boolean
+               * ie: "ledgerlive://post-onboarding/nft-claimed?completed=true" will open the post onboarding hub and complete the Nft claim action
+               */
+              [ScreenName.PostOnboardingHub]: "post-onboarding/nft-claimed",
+            },
+          },
+
+          [NavigatorName.ClaimNft]: {
+            screens: {
+              /**
+               * ie: "ledgerlive://linkdrop-nft-claim/qr-scanning" will redirect to the QR scanning page
+               */
+              [ScreenName.ClaimNftQrScan]: "linkdrop-nft-claim/qr-scanning",
+            },
+          },
 
           /**
            * @params ?platform: string

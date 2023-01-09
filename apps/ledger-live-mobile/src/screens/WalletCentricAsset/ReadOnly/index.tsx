@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import { Flex } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
-import { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useSingleCoinMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import accountSyncRefreshControl from "../../../components/accountSyncRefreshControl";
 import { withDiscreetMode } from "../../../context/DiscreetModeContext";
@@ -124,7 +124,7 @@ const ReadOnlyAssetScreen = ({ route }: NavigationProps) => {
               />
               <Flex minHeight={65}>
                 <MarketPriceSection
-                  currency={currency as CryptoCurrency}
+                  currency={currency}
                   selectedCoinData={selectedCoinData}
                   counterCurrency={counterCurrency}
                 />

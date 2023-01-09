@@ -65,8 +65,8 @@ const GenericErrorView = ({
         <Box mb={7}>
           <Flex
             backgroundColor={iconColor}
-            height={space[10]}
-            width={space[10]}
+            height={space[11]}
+            width={space[11]}
             borderRadius={999}
             justifyContent="center"
             alignItems="center"

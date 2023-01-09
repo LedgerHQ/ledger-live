@@ -1,5 +1,5 @@
 // @flow
-import React, { memo, useState, useCallback, useMemo, useEffect } from "react";
+import React, { memo, useRef, useState, useCallback, useMemo, useEffect } from "react";
 import styled from "styled-components";
 import { withTranslation } from "react-i18next";
 import type { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
@@ -25,7 +25,10 @@ import AppDepsUnInstallModal from "./AppDepsUnInstallModal";
 import ErrorModal from "~/renderer/modals/ErrorModal/index";
 import { setHasInstalledApps, setLastSeenDeviceInfo } from "~/renderer/actions/settings";
 import { useDispatch, useSelector } from "react-redux";
-import { hasInstalledAppsSelector } from "~/renderer/reducers/settings";
+import {
+  hasInstalledAppsSelector,
+  lastSeenCustomImageSelector,
+} from "~/renderer/reducers/settings";
 
 const Container = styled.div`
   display: flex;
@@ -83,6 +86,16 @@ const AppsList = ({
   const isIncomplete = isIncompleteState(state);
   const hasInstalledApps = useSelector(hasInstalledAppsSelector);
   const reduxDispatch = useDispatch();
+
+  const lastSeenCustomImage = useSelector(lastSeenCustomImageSelector);
+  const isFirstCustomImageUpdate = useRef<boolean>(true);
+  useEffect(() => {
+    if (isFirstCustomImageUpdate.current) {
+      isFirstCustomImageUpdate.current = false;
+    } else {
+      dispatch({ type: "setCustomImage", lastSeenCustomImage });
+    }
+  }, [dispatch, lastSeenCustomImage]);
 
   const { installQueue, uninstallQueue, currentError } = state;
 

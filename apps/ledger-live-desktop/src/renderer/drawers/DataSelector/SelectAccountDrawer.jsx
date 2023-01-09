@@ -38,9 +38,14 @@ const HeaderContainer: ThemedComponent<any> = styled.div`
 type SelectAccountDrawerProps = {
   currency: CryptoCurrency | TokenCurrency,
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void,
+  accounts$?: Observable<WalletAPIAccount[]>,
 };
 
-const SelectAccountDrawer = ({ currency, onAccountSelected }: SelectAccountDrawerProps) => {
+const SelectAccountDrawer = ({
+  currency,
+  onAccountSelected,
+  accounts$,
+}: SelectAccountDrawerProps) => {
   const { t } = useTranslation();
 
   const handleAccountSelect = useCallback(
@@ -58,12 +63,17 @@ const SelectAccountDrawer = ({ currency, onAccountSelected }: SelectAccountDrawe
           color="palette.text.shade100"
           fontSize="24px"
           style={{ textTransform: "uppercase" }}
+          data-test-id="select-account-drawer-title"
         >
           {t("drawers.selectAccount.title")}
         </Text>
       </HeaderContainer>
       <SelectorContent>
-        <AccountList currency={currency} onAccountSelect={handleAccountSelect} />
+        <AccountList
+          currency={currency}
+          onAccountSelect={handleAccountSelect}
+          accounts$={accounts$}
+        />
       </SelectorContent>
     </AccountSelectorDrawerContainer>
   );

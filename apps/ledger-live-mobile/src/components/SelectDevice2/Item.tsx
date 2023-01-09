@@ -32,8 +32,8 @@ const Item = ({ device, onPress }: Props) => {
       case DeviceModelId.nanoS:
       case DeviceModelId.nanoSP:
         return <Icons.NanoSFoldedMedium size={24} />;
-      case DeviceModelId.nanoFTS:
-        return <Icons.PowerMedium size={24} />;
+      case DeviceModelId.stax:
+        return <Icons.StaxRegular size={24} />;
       case DeviceModelId.nanoX:
       default:
         return <Icons.NanoXFoldedMedium size={24} />;
@@ -53,8 +53,10 @@ const Item = ({ device, onPress }: Props) => {
         {deviceIcon}
 
         <Flex ml={5} flex={1}>
-          <Text color="neutral.c100">{device.deviceName}</Text>
-          <Text color={color}>
+          <Text color="neutral.c100" fontWeight="semiBold" fontSize="16px">
+            {device.deviceName}
+          </Text>
+          <Text color={color} fontSize="12px">
             <Trans i18nKey={`manager.selectDevice.item.${wording}`} />
           </Text>
         </Flex>

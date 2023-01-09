@@ -8,7 +8,7 @@ import ImageCropper, {
   CropResult,
 } from "../../components/CustomImage/ImageCropper";
 import { ImageDimensions } from "../../components/CustomImage/types";
-import { targetDimensions } from "./shared";
+import { targetDisplayDimensions } from "./shared";
 import Button from "../../components/Button";
 import { ScreenName } from "../../const";
 import BottomContainer from "../../components/CustomImage/BottomButtonsContainer";
@@ -103,7 +103,7 @@ const Step1Cropping = ({ navigation, route }: NavigationProps) => {
           <ImageCropper
             ref={cropperRef}
             imageFileUri={baseImageFile.imageFileUri}
-            aspectRatio={targetDimensions}
+            aspectRatio={targetDisplayDimensions}
             /**
              * this native component needs absolute height & width values to
              * render properly
@@ -149,7 +149,7 @@ const Step1Cropping = ({ navigation, route }: NavigationProps) => {
               onPress={handlePressNext}
               outline={false}
             >
-              {t("common.next")}
+              {t("customImage.confirmCrop")}
             </Button>
           </Flex>
         </BottomContainer>

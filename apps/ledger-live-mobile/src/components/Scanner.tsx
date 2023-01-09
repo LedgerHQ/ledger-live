@@ -19,6 +19,7 @@ import type {
 } from "./RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator";
 import { ImportAccountsNavigatorParamList } from "./RootNavigator/types/ImportAccountsNavigator";
+import { ScreenName } from "../const";
 
 type Props = {
   onResult: (_: string) => void;
@@ -70,9 +71,11 @@ const Scanner = ({ onResult, liveQrCode, progress, instruction }: Props) => {
       return <View />;
     case false:
       return (
-        <View style={styles.container}>
-          <FallbackCameraScreen route={route} navigation={navigation} />
-        </View>
+        <FallbackCameraScreen
+          route={route}
+          navigation={navigation}
+          redirectionScreen={ScreenName.ScanAccounts}
+        />
       );
     default:
       return (

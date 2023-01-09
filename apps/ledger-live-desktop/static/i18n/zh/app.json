@@ -169,7 +169,10 @@
       "WITHDRAW" : "已提取",
       "REVOKE" : "已撤销",
       "ACTIVATE" : "已激活",
-      "REGISTER" : "已注册"
+      "REGISTER" : "已注册",
+      "STAKE" : "已权益质押",
+      "UNSTAKE" : "已解除权益质押",
+      "WITHDRAW_UNSTAKED" : "已提取"
     }
   },
   "byteSize" : {
@@ -2075,14 +2078,6 @@
           "dismiss" : "以后再说",
           "stake" : "使用 {{provider}} 进行权益质押"
         },
-        "ethereum" : {
-          "title" : "增长您的以太币。立即进行权益质押。",
-          "description" : "使用 Lido 权益质押您的以太币，每天赚取奖励。无锁定期。无最低存款限制。",
-          "kiln" : {
-            "title" : "请不要仅仅长期持有。增长您的以太币。",
-            "description" : "有超过 32 个以太币？不妨使用 Kiln 安全权益质押您的以太币来赚取被动奖励。"
-          }
-        },
         "cosmos" : {
           "title" : "增长您的 ATOM。使用 Ledger 验证器进行权益质押。",
           "description" : "使用可信的 Ledger 验证器权益质押您的 ATOM。您的币仍归您所有，由 Ledger 提供妥善的安全防护。"
@@ -2143,8 +2138,8 @@
         "ethereumGasPrice" : "Gas 价格",
         "ethereumMaxFee" : "最高费用 ({{unitName}})",
         "ethereumPriorityFee" : "最高优先费用 ({{unitName}})",
-        "nextBlock" : "下一个区块：{{nextBaseFee}}",
-        "suggestedPriorityFee" : "建议：{{lowPriorityFee}} - {{highPriorityFee}} {{unitName}}",
+        "nextBlock" : "下一个区块",
+        "suggested" : "建议",
         "unitPerByte" : "{{unit}} 每字节",
         "nft" : "NFT",
         "nftQuantity" : "数量"
@@ -2183,6 +2178,9 @@
   "releaseNotes" : {
     "title" : "版本说明",
     "version" : "Ledger Live {{versionNb}}"
+  },
+  "troubleshootNetwork" : {
+    "title" : "排除网络故障"
   },
   "systemLanguageAvailable" : {
     "title" : "更改您应用的语言？",
@@ -2241,6 +2239,9 @@
     }
   },
   "tron" : {
+    "receive" : {
+      "newAddressTRC20" : "您首先需要向该地址发送至少 0.1 TRX 才能将其激活。"
+    },
     "voting" : {
       "emptyState" : {
         "description" : "您现在可以通过冻结资产和投票来赚取奖励。",
@@ -3390,6 +3391,155 @@
       }
     }
   },
+  "ethereum" : {
+    "stake" : {
+      "title" : "赚取以太币",
+      "lido" : {
+        "tag" : "无最低限制",
+        "description" : "使用 Lido 权益质押您的以太币，每天赚取奖励。无锁定期。无最低限制。"
+      },
+      "kiln" : {
+        "tag" : "需要 32 枚以太币",
+        "description" : "有超过 32 枚以太币？不妨使用 Kiln 安全权益质押您的以太币来每天赚取奖励。"
+      },
+      "providerTitle" : "使用 {{provider}} 赚取收益",
+      "providerLink" : "了解关于 {{provider}} 的更多信息..."
+    }
+  },
+  "near" : {
+    "account" : {
+      "stakedBalance" : "已权益质押的余额",
+      "stakedBalanceTooltip" : "此数额目前由验证者权益质押。",
+      "availableBalance" : "可提取余额",
+      "availableBalanceTooltip" : "此数额已解除权益质押，现已可以提取。",
+      "pendingBalance" : "待使用余额",
+      "pendingBalanceTooltip" : "此数额已解除权益质押，目前等待使用。",
+      "storageUsageBalance" : "最低余额",
+      "storageUsageBalanceTooltip" : "此数额是可用于存储和交易的账户保留数额，也是您的账户保持活跃所必须保有的最低余额。",
+      "subHeader" : {
+        "cardTitle" : "由 Figment 提供支持",
+        "moreInfo" : "更多信息",
+        "drawerTitle" : "由 Figment 提供支持",
+        "title" : "Ledger Live 现已支持 NEAR 代币",
+        "description" : "您现在可以开始通过 Ledger Live 管理并保护您的 NEAR 代币。",
+        "description2" : "NEAR 代币是 NEAR 链的原生代币，可用于交易、权益质押以及即将推出的许多功能。",
+        "website" : "由 Figment 提供支持"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "权益质押数额"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "您可以通过权益质押您的资产来赚取 NEAR 奖励。",
+        "info" : "权益质押的运作方式",
+        "earnRewards" : "赚取奖励"
+      },
+      "table" : {
+        "header" : "权益质押持仓",
+        "stake" : "添加",
+        "staked" : "已权益质押",
+        "pending" : "等待解除",
+        "available" : "可提取"
+      },
+      "unstake" : "取消权益质押",
+      "withdraw" : "提取",
+      "activeTooltip" : "权益质押的数额可以产生奖励",
+      "inactiveTooltip" : "解除权益质押的数额不会产生奖励",
+      "commission" : "佣金",
+      "totalStake" : "质押总额",
+      "minSafeWarning" : "资金不足",
+      "flow" : {
+        "title" : "权益质押",
+        "steps" : {
+          "starter" : {
+            "description" : "您可以通过将 NEAR 资产权益质押给验证者来赚取奖励。",
+            "bullet" : ["您仍然保持对已权益质押资产的所有权", "使用 Ledger 设备进行权益质押", "资产将在解除权益质押 52 至 65 小时后可用"],
+            "warning" : {
+              "description" : "明智地选择验证者：如果验证者的行为不当，您可能失去部分权益质押资产并且无法挽回。"
+            }
+          },
+          "amount" : {
+            "title" : "数额"
+          },
+          "validator" : {
+            "title" : "验证者",
+            "ledgerByFigmentTC" : "Figment 在 Ledger 的条款与条件"
+          },
+          "connectDevice" : {
+            "title" : "设备"
+          },
+          "confirmation" : {
+            "title" : "确认",
+            "success" : {
+              "title" : "您已成功权益质押资产",
+              "text" : "该交易一经区块链确认，就会更新您的账户余额。",
+              "cta" : "查看详情"
+            },
+            "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "没有足够的质押资产可以解除权益质押",
+      "flow" : {
+        "title" : "取消权益质押",
+        "steps" : {
+          "amount" : {
+            "title" : "数额",
+            "subtitle" : "解除权益质押流程需要 <0>52 至 65 小时</0>才能完成。",
+            "warning" : "奖励将立即兑现。 解除权益质押的数额在 <0>52 至 65 小时的锁定期</0>结束后才能提取。",
+            "fields" : {
+              "validator" : "验证者",
+              "amount" : "要取消权益质押的数额"
+            }
+          },
+          "connectDevice" : {
+            "title" : "设备"
+          },
+          "confirmation" : {
+            "title" : "确认",
+            "success" : {
+              "title" : "您已成功解除权益质押资产。",
+              "description" : "<0>{{amount}}</0> 已从 <0>{{validator}}</0> 解除权益质押",
+              "cta" : "查看详情"
+            },
+            "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "disabledTooltip" : "没有足够的资产可以提取",
+      "flow" : {
+        "title" : "提取",
+        "steps" : {
+          "amount" : {
+            "title" : "数额",
+            "fields" : {
+              "validator" : "验证者",
+              "amount" : "要提取的金额"
+            }
+          },
+          "connectDevice" : {
+            "title" : "设备"
+          },
+          "confirmation" : {
+            "title" : "确认",
+            "success" : {
+              "title" : "您的资产已成功提取。",
+              "description" : "<0>{{amount}}</0> 已从 <0>{{validator}}</0> 提取",
+              "cta" : "查看详情"
+            },
+            "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
+          }
+        }
+      }
+    }
+  },
   "delegation" : {
     "title" : "赚取奖励",
     "header" : "委托",
@@ -3695,6 +3845,11 @@
       "title" : "保存日志",
       "desc" : "出于排除故障目的所需，可能需要保存 Ledger Live 日志。",
       "btn" : "保存"
+    },
+    "troubleshootNetwork" : {
+      "title" : "排除网络故障",
+      "desc" : "运行检查清单来评估网络状况，以便排除故障。",
+      "btn" : "排除故障"
     },
     "accounts" : {
       "hideEmptyTokens" : {
@@ -4501,6 +4656,9 @@
       "claimRewardCompound" : "将接收奖励的验证者",
       "optIn" : "接收方",
       "nominate" : "验证者",
+      "stake" : "验证者",
+      "unstake" : "验证者",
+      "withdraw" : "验证者",
       "erc721" : {
         "transfer" : "接收方"
       },
@@ -4734,6 +4892,10 @@
       "title" : "抱歉，您的设备似乎已断开连接",
       "description" : "请重新连接并重试。"
     },
+    "EConnReset" : {
+      "title" : "无法访问 Ledger 应用程序商店",
+      "description" : "您的互联网连接可能已断开或使用的配置异常。请先验证是否有任何因素（代理或防火墙）正在阻止您的连接。如果仍存在问题，请联系 Ledger 客服。"
+    },
     "EnpointConfig" : {
       "title" : "端点无效",
       "description" : "请提供有效端点"
@@ -4845,6 +5007,10 @@
     },
     "NotEnoughGas" : {
       "title" : "父账户余额不足以支付网络费用"
+    },
+    "OperatingSystemOutdated" : {
+      "title" : "您的操作系统版本已过时",
+      "description" : "请升级操作系统后重试。查看以下文章，了解为什么您当前的操作系统版本不支持 Ledger Live。"
     },
     "PasswordsDontMatch" : {
       "title" : "密码不匹配",
@@ -5088,7 +5254,7 @@
       "title" : "要冻结的数额不可小于 1"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "发送 TRC20 到新账户并不会将其激活",
+      "title" : "您首先需要向该地址发送至少 0.1 TRX 才能启用 TRC20 代币接收。",
       "description" : "在向其发送 TRC20 之前，必须首先激活接收方账户。无论发送 TRX 还是 TRC10 都可激活该账户。"
     },
     "TronUnexpectedFees" : {
@@ -5102,7 +5268,7 @@
       "description" : "必须在 30 秒内予以签署。请重试。"
     },
     "TronNotEnoughEnergy" : {
-      "title" : "没有足够能量发送该代币"
+      "title" : "能量低于必要值。您可能需要支付高达 20TRX 的费用。"
     },
     "PairingFailed" : {
       "title" : "配对不成功",
@@ -5253,6 +5419,9 @@
     "StellarSourceHasMultiSign" : {
       "title" : "要进行 Stellar（恒星）交易，请禁用多重签名"
     },
+    "StellarBurnAddressError" : {
+      "title" : "尝试添加恒星账户时出现问题"
+    },
     "HederaAddAccountError" : {
       "title" : "您的账户尚未添加。请再次尝试。"
     },
@@ -5299,6 +5468,30 @@
     "ImageLoadRefusedOnDevice" : {
       "title" : "图像加载在设备上被拒绝",
       "description" : "如果这张图片不合适，您可以使用另一张图片重试。"
+    },
+    "NearNewAccountWarning" : {
+      "title" : "尚未创建接收人账户。该协议需要 {{formattedNewAccountStorageCost}} 转账才能创建账户。"
+    },
+    "NearNewNamedAccountError" : {
+      "title" : "尚未创建接收人账户。需要在 NEAR 钱包中创建账户。"
+    },
+    "NearActivationFeeNotCovered" : {
+      "title" : "此数额不包括 {{formattedNewAccountStorageCost}} 存储费用。"
+    },
+    "NearUseAllAmountStakeWarning" : {
+      "title" : "确保您留有足够的余额，以便缴纳未来的交易费"
+    },
+    "NearNotEnoughStaked" : {
+      "title" : "权益质押余额不足"
+    },
+    "NearNotEnoughAvailable" : {
+      "title" : "可提取余额不足"
+    },
+    "NearRecommendUnstake" : {
+      "title" : "清空账户前请解除权益质押并提取资金"
+    },
+    "NearStakingThresholdNotMet" : {
+      "title" : "数额必须至少为 {{threshold}}"
     },
     "LockedDeviceError" : {
       "title" : "您的设备已经锁定",

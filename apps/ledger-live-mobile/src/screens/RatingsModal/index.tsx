@@ -18,6 +18,7 @@ const RatingsModal = () => {
     ratingsInitialStep,
     isRatingsModalOpen,
     setRatingsModalOpen,
+    handleInitNotNow,
   } = useRatings();
 
   useEffect(() => {
@@ -59,6 +60,11 @@ const RatingsModal = () => {
     sharedHeight.value = null;
   }, [ratingsInitialStep, setRatingsModalOpen, sharedHeight]);
 
+  const handleBackdropClose = useCallback(() => {
+    handleInitNotNow();
+    closeModal();
+  }, [handleInitNotNow, closeModal]);
+
   const component = useMemo(() => {
     const components = {
       init: <Init closeModal={closeModal} setStep={setStep} />,
@@ -75,6 +81,9 @@ const RatingsModal = () => {
     <BottomDrawer
       isOpen={isRatingsModalOpen}
       onClose={closeModal}
+      onBackdropPress={handleBackdropClose}
+      onBackButtonPress={handleBackdropClose}
+      onSwipeComplete={handleBackdropClose}
       noCloseButton
     >
       <Animated.ScrollView style={animatedStyle}>

@@ -79,10 +79,12 @@ import CurrencySettings from "../../screens/Settings/CryptoAssets/Currencies/Cur
 import WalletConnectNavigator from "./WalletConnectNavigator";
 import WalletConnectLiveAppNavigator from "./WalletConnectLiveAppNavigator";
 import CustomImageNavigator from "./CustomImageNavigator";
+import ClaimNftNavigator from "./ClaimNftNavigator";
 import PostOnboardingNavigator from "./PostOnboardingNavigator";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { accountsSelector } from "../../reducers/accounts";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
+import DeviceConnect from "../../screens/DeviceConnect";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -554,6 +556,11 @@ export default function BaseNavigator() {
         component={CustomImageNavigator}
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+        name={NavigatorName.ClaimNft}
+        component={ClaimNftNavigator}
+        options={{ headerShown: false }}
+      />
       {/* This is a freaking hack… */}
       {Object.keys(families).map(name => {
         const { component, options } = families[name as keyof typeof families];
@@ -577,6 +584,20 @@ export default function BaseNavigator() {
         name={NavigatorName.PostOnboarding}
         options={{ headerShown: false }}
         component={PostOnboardingNavigator}
+      />
+      <Stack.Screen
+        name={ScreenName.DeviceConnect}
+        component={DeviceConnect}
+        listeners={({ route }) => ({
+          beforeRemove: () => {
+            const onClose =
+              route.params?.onClose ||
+              (route.params as unknown as typeof route)?.params?.onClose;
+            if (onClose && typeof onClose === "function") {
+              onClose();
+            }
+          },
+        })}
       />
     </Stack.Navigator>
   );

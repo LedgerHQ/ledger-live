@@ -1,5 +1,45 @@
 # @ledgerhq/cryptoassets
 
+## 7.1.0
+
+### Minor Changes
+
+- [#1805](https://github.com/LedgerHQ/ledger-live/pull/1805) [`d99aafd1d4`](https://github.com/LedgerHQ/ledger-live/commit/d99aafd1d48336f6b4da3c1d8e7c52dbc1676278) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Explorer views and yoctoNEAR added to NEAR entry
+
+## 7.1.0-next.0
+
+### Minor Changes
+
+- [#1805](https://github.com/LedgerHQ/ledger-live/pull/1805) [`d99aafd1d4`](https://github.com/LedgerHQ/ledger-live/commit/d99aafd1d48336f6b4da3c1d8e7c52dbc1676278) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Explorer views and yoctoNEAR added to NEAR entry
+
+## 7.0.0
+
+### Major Changes
+
+- [#1778](https://github.com/LedgerHQ/ledger-live/pull/1778) [`9100363270`](https://github.com/LedgerHQ/ledger-live/commit/91003632704d11fc327517a582ac6d7009c05bd3) Thanks [@valpinkman](https://github.com/valpinkman)! - Breaking: Moved `data` folder in `src` so it can be compiled by TS (also changed files to Typescript)
+
+### Minor Changes
+
+- [#1845](https://github.com/LedgerHQ/ledger-live/pull/1845) [`82676099c5`](https://github.com/LedgerHQ/ledger-live/commit/82676099c5d99bbe877b92281d29fde040a0285a) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - 20221117 CAL update
+
+* [#1845](https://github.com/LedgerHQ/ledger-live/pull/1845) [`82676099c5`](https://github.com/LedgerHQ/ledger-live/commit/82676099c5d99bbe877b92281d29fde040a0285a) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - CAL update
+
+- [#1845](https://github.com/LedgerHQ/ledger-live/pull/1845) [`82676099c5`](https://github.com/LedgerHQ/ledger-live/commit/82676099c5d99bbe877b92281d29fde040a0285a) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - LIVE-4719 update CAL
+
+## 7.0.0-next.0
+
+### Major Changes
+
+- [#1778](https://github.com/LedgerHQ/ledger-live/pull/1778) [`9100363270`](https://github.com/LedgerHQ/ledger-live/commit/91003632704d11fc327517a582ac6d7009c05bd3) Thanks [@valpinkman](https://github.com/valpinkman)! - Breaking: Moved `data` folder in `src` so it can be compiled by TS (also changed files to Typescript)
+
+### Minor Changes
+
+- [#1845](https://github.com/LedgerHQ/ledger-live/pull/1845) [`82676099c5`](https://github.com/LedgerHQ/ledger-live/commit/82676099c5d99bbe877b92281d29fde040a0285a) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - 20221117 CAL update
+
+* [#1845](https://github.com/LedgerHQ/ledger-live/pull/1845) [`82676099c5`](https://github.com/LedgerHQ/ledger-live/commit/82676099c5d99bbe877b92281d29fde040a0285a) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - CAL update
+
+- [#1845](https://github.com/LedgerHQ/ledger-live/pull/1845) [`82676099c5`](https://github.com/LedgerHQ/ledger-live/commit/82676099c5d99bbe877b92281d29fde040a0285a) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - LIVE-4719 update CAL
+
 ## 6.37.0
 
 ### Minor Changes

@@ -6,6 +6,7 @@ import {
   OnNoRatesCallback,
   ActionRequired,
   ValidCheckQuoteErrorCodes,
+  ValidKYCStatus,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import {
   usePollKYCStatus,
@@ -119,13 +120,15 @@ export function SwapForm({
     setIsSendMaxLoading,
     onNoRates: trackNoRates,
     excludeFixedRates: true,
+    providers,
+    includeDEX: false,
   });
 
   const exchangeRatesState = swapTransaction.swap?.rates;
   const swapKYC = useSelector(swapKYCSelector);
   const provider = exchangeRate?.provider;
   const providerKYC = provider ? swapKYC?.[provider] : undefined;
-  const kycStatus = providerKYC?.status;
+  const kycStatus = providerKYC?.status as ValidKYCStatus | "rejected";
 
   // On provider change, reset banner and flow
   useEffect(() => {
@@ -156,7 +159,6 @@ export function SwapForm({
     // we don't display it if user needs to login first
     if (
       currentBanner !== ActionRequired.Login &&
-      kycStatus &&
       shouldShowKYCBanner({ provider, kycStatus })
     ) {
       setCurrentBanner(ActionRequired.KYC);
@@ -375,7 +377,9 @@ export function SwapForm({
           undefined,
         );
         swapTransaction.setFromAccount(account);
-      } else {
+      }
+
+      if (params.target === "to") {
         swapTransaction.setToAccount(
           swapTransaction.swap.to.currency,
           account,

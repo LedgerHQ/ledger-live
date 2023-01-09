@@ -30,6 +30,7 @@ import MODAL_WALLETCONNECT_PASTE_LINK from "./WalletConnectPasteLink";
 import MODAL_WALLETCONNECT_DEEPLINK from "./WalletConnectDeeplink";
 import MODAL_PLATFORM_EXCHANGE_START from "./Platform/Exchange/StartExchange";
 import MODAL_PLATFORM_EXCHANGE_COMPLETE from "./Platform/Exchange/CompleteExchange";
+import MODAL_CONNECT_DEVICE from "./ConnectDevice";
 
 import MODAL_FULL_NODE from "./FullNode";
 import MODAL_LOTTIE_DEBUGGER from "./LottieDebugger";
@@ -52,6 +53,8 @@ import MODAL_COSMOS_REWARDS_INFO from "../families/cosmos/DelegationFlowModal/In
 import MODAL_COSMOS_CLAIM_REWARDS from "../families/cosmos/ClaimRewardsFlowModal";
 import MODAL_COSMOS_REDELEGATE from "../families/cosmos/RedelegationFlowModal";
 import MODAL_COSMOS_UNDELEGATE from "../families/cosmos/UndelegationFlowModal";
+
+import MODAL_ETH_STAKE from "../families/ethereum/StakeFlowModal";
 
 import MODAL_ALGORAND_OPT_IN from "../families/algorand/OptInFlowModal";
 import MODAL_ALGORAND_CLAIM_REWARDS from "../families/algorand/Rewards/ClaimRewardsFlowModal";
@@ -89,6 +92,11 @@ import MODAL_CELO_SIMPLE_OPERATION from "../families/celo/SimpleOperationFlowMod
 import MODAL_CELO_WITHDRAW from "../families/celo/WithdrawFlowModal";
 import MODAL_CELO_ACTIVATE from "../families/celo/ActivateFlowModal";
 import MODAL_CELO_REVOKE from "../families/celo/RevokeFlowModal";
+
+import MODAL_NEAR_STAKE from "../families/near/StakingFlowModal";
+import MODAL_NEAR_REWARDS_INFO from "../families/near/StakingFlowModal/Info";
+import MODAL_NEAR_UNSTAKE from "../families/near/UnstakingFlowModal";
+import MODAL_NEAR_WITHDRAW from "../families/near/WithdrawingFlowModal";
 
 // Lending
 import MODAL_LEND_MANAGE from "../screens/lend/modals/ManageLend";
@@ -140,6 +148,7 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_COSMOS_CLAIM_REWARDS,
   MODAL_COSMOS_REDELEGATE,
   MODAL_COSMOS_UNDELEGATE,
+  MODAL_ETH_STAKE,
   MODAL_EXCHANGE_CRYPTO_DEVICE,
   MODAL_SELL_CRYPTO_DEVICE,
   MODAL_ALGORAND_OPT_IN,
@@ -171,6 +180,10 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_CELO_WITHDRAW,
   MODAL_CELO_ACTIVATE,
   MODAL_CELO_REVOKE,
+  MODAL_NEAR_STAKE,
+  MODAL_NEAR_REWARDS_INFO,
+  MODAL_NEAR_UNSTAKE,
+  MODAL_NEAR_WITHDRAW,
   MODAL_FULL_NODE,
   MODAL_LOTTIE_DEBUGGER,
   MODAL_STORYLY_DEBUGGER,
@@ -189,6 +202,7 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   // Platform
   MODAL_PLATFORM_EXCHANGE_START,
   MODAL_PLATFORM_EXCHANGE_COMPLETE,
+  MODAL_CONNECT_DEVICE,
 
   // NB We have dettached modals such as the repair modal,
   // in the meantime, we can rely on this to add the backdrop

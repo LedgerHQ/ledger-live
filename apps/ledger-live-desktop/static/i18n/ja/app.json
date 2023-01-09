@@ -169,7 +169,10 @@
       "WITHDRAW" : "引き出し済み",
       "REVOKE" : "取り消されました",
       "ACTIVATE" : "有効化されました",
-      "REGISTER" : "登録されました"
+      "REGISTER" : "登録されました",
+      "STAKE" : "ステーキング済み",
+      "UNSTAKE" : "ステーキング解除済み",
+      "WITHDRAW_UNSTAKED" : "引き出し済み"
     }
   },
   "byteSize" : {
@@ -2075,14 +2078,6 @@
           "dismiss" : "後で",
           "stake" : "{{provider}}でステーキング"
         },
-        "ethereum" : {
-          "title" : "ETHを増やしましょう。今すぐステーキング。",
-          "description" : "LidoでEthereumをステーキングして、毎日報酬を獲得しましょう。ロックアップ（凍結）期間なし。最低入金額なし。",
-          "kiln" : {
-            "title" : "HODLだけではいけません。ETHを増やしましょう。",
-            "description" : "32ETH以上をお持ちですか？KilnでETHを安全にステーキングすることで、受動的な報酬を獲得できます。"
-          }
-        },
         "cosmos" : {
           "title" : "ATOMを増やしましょう。Ledgerバリデーターでステーキング。",
           "description" : "信頼できるLedgerバリデーターでATOMをステーキングします。Ledgerの妥協のないセキュリティで保護されるため、お客様のコインがお客様の元から離れることはありません。"
@@ -2143,8 +2138,8 @@
         "ethereumGasPrice" : "ガス価格",
         "ethereumMaxFee" : "最大手数料 ({{unitName}})",
         "ethereumPriorityFee" : "最大優先手数料 ({{unitName}})",
-        "nextBlock" : "次のブロック: {{nextBaseFee}}",
-        "suggestedPriorityFee" : "推奨: {{lowPriorityFee}} - {{highPriorityFee}} {{unitName}}",
+        "nextBlock" : "次のブロック",
+        "suggested" : "提案済み",
         "unitPerByte" : "1バイトあたり{{unit}}",
         "nft" : "NFT",
         "nftQuantity" : "数量"
@@ -2183,6 +2178,9 @@
   "releaseNotes" : {
     "title" : "リリースノート",
     "version" : "Ledger Live{{versionNb}}"
+  },
+  "troubleshootNetwork" : {
+    "title" : "ネットワークの問題解決"
   },
   "systemLanguageAvailable" : {
     "title" : "アプリの言語を変更しますか？",
@@ -2241,6 +2239,9 @@
     }
   },
   "tron" : {
+    "receive" : {
+      "newAddressTRC20" : "有効化するには、こちらのアドレスに0.1 TRX以上を送る必要があります。"
+    },
     "voting" : {
       "emptyState" : {
         "description" : "資産を凍結し投票することで、報酬を得られるようになりました。",
@@ -3390,6 +3391,155 @@
       }
     }
   },
+  "ethereum" : {
+    "stake" : {
+      "title" : "Ethereumを獲得する",
+      "lido" : {
+        "tag" : "最小数量なし",
+        "description" : "LidoでEthereumをステーキングして、毎日報酬を獲得しましょう。ロックアップ（凍結）期間なし。最小数量なし。"
+      },
+      "kiln" : {
+        "tag" : "32ETHが必要",
+        "description" : "32ETH以上をお持ちですか？KilnでETHを安全にステーキングすることで、毎日報酬を獲得できます。"
+      },
+      "providerTitle" : "{{provider}}で獲得",
+      "providerLink" : "{{provider}}の詳細"
+    }
+  },
+  "near" : {
+    "account" : {
+      "stakedBalance" : "ステーキング済み残高",
+      "stakedBalanceTooltip" : "この量は現在、バリデーターにステーキングされています。",
+      "availableBalance" : "出金可能残高",
+      "availableBalanceTooltip" : "この数量はステーキング解除されており、現在出金可能です。",
+      "pendingBalance" : "保留中残高",
+      "pendingBalanceTooltip" : "この数s量はステーキング解除されており、現在利用可能待ちです。",
+      "storageUsageBalance" : "最低残高",
+      "storageUsageBalanceTooltip" : "この量は保管とトランザクション用に確保されており、アカウントを有効にしておくために維持する必要がある最低残高です。",
+      "subHeader" : {
+        "cardTitle" : "Powered by Figment",
+        "moreInfo" : "詳細はこちら",
+        "drawerTitle" : "Powered by Figment",
+        "title" : "NEARトークンがLedger Liveでご利用可能になりました",
+        "description" : "NEARトークンを管理して、Ledger Liveで保護できるようになりました。",
+        "description2" : "NEARチェーンのネイティブトークンであるNEARトークンは、トランザクション、ステーキングに利用されています。今後さらに多くの機能へ対応予定です。",
+        "website" : "Powered by Figment"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "ステーキング済み量"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "資産をステーキングして、NEARの報酬を獲得できます。",
+        "info" : "ステーキングの仕組み",
+        "earnRewards" : "報酬を獲得する"
+      },
+      "table" : {
+        "header" : "ステーキングポジション",
+        "stake" : "追加",
+        "staked" : "ステーキング済み",
+        "pending" : "リリース保留中",
+        "available" : "引き出し可能"
+      },
+      "unstake" : "ステーキングの解除",
+      "withdraw" : "出金",
+      "activeTooltip" : "ステーキングされた量は報酬を生みます",
+      "inactiveTooltip" : "ステーキング解除された量は報酬を生みません",
+      "commission" : "コミッション",
+      "totalStake" : "合計ステーキング量",
+      "minSafeWarning" : "資金不足",
+      "flow" : {
+        "title" : "ステーキング",
+        "steps" : {
+          "starter" : {
+            "description" : "NEAR資産をバリデーターにステーキングすることで報酬が得られます。",
+            "bullet" : ["ステーキングされた資産の所有権はお客様が保持します", "Ledgerデバイスを使用してステーキング", "資産はステーキング解除後52～65時間で利用可能になります"],
+            "warning" : {
+              "description" : "バリデーターを賢く選択：バリデーターが適切に動作しない場合、ステーキングされた資産の一部が失われて、取り返せない可能性があります。"
+            }
+          },
+          "amount" : {
+            "title" : "数量"
+          },
+          "validator" : {
+            "title" : "バリデーター",
+            "ledgerByFigmentTC" : "Ledger by Figment T&Cs"
+          },
+          "connectDevice" : {
+            "title" : "デバイス"
+          },
+          "confirmation" : {
+            "title" : "確認",
+            "success" : {
+              "title" : "資産が正常にステーキングされました",
+              "text" : "ブロックチェーンがトランザクションを承認後、アカウントの残高が更新されます。",
+              "cta" : "詳細を表示"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "ステーキングを解除するのに十分なステーキング済みの資産がありません",
+      "flow" : {
+        "title" : "ステーキングの解除",
+        "steps" : {
+          "amount" : {
+            "title" : "数量",
+            "subtitle" : "ステーキングの解除プロセスは、完了するまでに <0>52〜65時間</0>かかります。",
+            "warning" : "報酬はすぐにキャッシュインされます。ステーキング解除された資産は、<0>52〜65時間のタイムロック</0>後に引き出し可能となります。",
+            "fields" : {
+              "validator" : "バリデーター",
+              "amount" : "ステーキングを解除する数量"
+            }
+          },
+          "connectDevice" : {
+            "title" : "デバイス"
+          },
+          "confirmation" : {
+            "title" : "確認",
+            "success" : {
+              "title" : "資産のステーキングを正常に解除しました",
+              "description" : "<0>{{amount}}</0>は<0>{{validator}}</0>からステーキング解除されました。",
+              "cta" : "詳細を表示"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "disabledTooltip" : "引き出しに十分な資産がありません",
+      "flow" : {
+        "title" : "出金",
+        "steps" : {
+          "amount" : {
+            "title" : "数量",
+            "fields" : {
+              "validator" : "バリデーター",
+              "amount" : "引き出す数量"
+            }
+          },
+          "connectDevice" : {
+            "title" : "デバイス"
+          },
+          "confirmation" : {
+            "title" : "確認",
+            "success" : {
+              "title" : "資産の引き出しに成功しました。",
+              "description" : "<0>{{amount}}</0>は<0>{{validator}}</0>から引き出されました",
+              "cta" : "詳細を表示"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
+    }
+  },
   "delegation" : {
     "title" : "報酬を獲得する",
     "header" : "デリゲート",
@@ -3695,6 +3845,11 @@
       "title" : "ログを保存",
       "desc" : "トラブルを解決するために、Ledger Liveログの保存が必要になる場合があります。",
       "btn" : "保存"
+    },
+    "troubleshootNetwork" : {
+      "title" : "ネットワークの問題解決",
+      "desc" : "チェックリストを実行して、問題解決の目的でネットワークの状態を評価します。",
+      "btn" : "問題解決"
     },
     "accounts" : {
       "hideEmptyTokens" : {
@@ -4501,6 +4656,9 @@
       "claimRewardCompound" : "報酬を受け取るバリデーター",
       "optIn" : "受取先",
       "nominate" : "バリデーター",
+      "stake" : "バリデーター",
+      "unstake" : "バリデーター",
+      "withdraw" : "バリデーター",
       "erc721" : {
         "transfer" : "受取先"
       },
@@ -4734,6 +4892,10 @@
       "title" : "デバイスの接続が切断されているようです。",
       "description" : "デバイスを再接続して、もう一度お試しください。"
     },
+    "EConnReset" : {
+      "title" : "Ledgerアプリケーションストアに到達できません",
+      "description" : "インターネット接続がダウンしているか、異常が発生している可能性があります。接続をブロックしているもの（プロキシまたはファイアウォール）の確認から始めてください。問題が解決しない場合は、以下をクリックして解決策を確認するか、当社のカスタマーサポートにご連絡ください。"
+    },
     "EnpointConfig" : {
       "title" : "エンドポイントが無効です",
       "description" : "有効なエンドポイントを提供してください"
@@ -4845,6 +5007,10 @@
     },
     "NotEnoughGas" : {
       "title" : "親アカウントで、ネットワーク手数料用の残高が不足しています"
+    },
+    "OperatingSystemOutdated" : {
+      "title" : "お使いのオペレーティングシステムのバージョンが古くなっています",
+      "description" : "オペレーティングシステムをアップグレードして、再試行してください。以下の記事を参照すると、Ledger Liveが現在のオペレーティングシステムのバージョンでサポートされていない理由がわかります。"
     },
     "PasswordsDontMatch" : {
       "title" : "パスワードが一致しません。",
@@ -5088,7 +5254,7 @@
       "title" : "凍結額を1未満にすることはできません。"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "TRC20を新しいアカウントに送付しても、アクティベートされません。",
+      "title" : "TRC20の受け取りを有効化するには、まず新しいアカウントに0.1 TRX以上を送る必要があります。",
       "description" : "受取アカウントは、TRC20を送信する前に有効化する必要があります。有効化するにはTRXまたはTRC10をアカウントに送付してください。"
     },
     "TronUnexpectedFees" : {
@@ -5102,7 +5268,7 @@
       "description" : "トランザクションは、30秒以内に署名する必要があります。もう一度お試しください。"
     },
     "TronNotEnoughEnergy" : {
-      "title" : "このトークンの送金に必要なエネルギーが不足しています。"
+      "title" : "エネルギーが必要額を満たしていません。手数料には最大20TRXが必要となります。"
     },
     "PairingFailed" : {
       "title" : "ペアリングに失敗しました",
@@ -5253,6 +5419,9 @@
     "StellarSourceHasMultiSign" : {
       "title" : "Stellarトランザクションを行うには、マルチシグを無効にしてください"
     },
+    "StellarBurnAddressError" : {
+      "title" : "Stellarアカウントを追加しようとしたときに問題が発生しました"
+    },
     "HederaAddAccountError" : {
       "title" : "アカウントが追加されていません。もう一度お試しください。"
     },
@@ -5299,6 +5468,30 @@
     "ImageLoadRefusedOnDevice" : {
       "title" : "デバイスで画像の読み込みが拒否されました",
       "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。"
+    },
+    "NearNewAccountWarning" : {
+      "title" : "受取人アカウントはまだ作成されていません。このプロトコルでは、作成するのに{{formattedNewAccountStorageCost}}の転送コストが必要です。"
+    },
+    "NearNewNamedAccountError" : {
+      "title" : "受取人アカウントはまだ作成されていません。NEARウォレットで作成する必要があります。"
+    },
+    "NearActivationFeeNotCovered" : {
+      "title" : "この量は、{{formattedNewAccountStorageCost}}の保管コストをカバーしていません。"
+    },
+    "NearUseAllAmountStakeWarning" : {
+      "title" : "今後のトランザクション手数料に十分な残高を、確保しておいてください。"
+    },
+    "NearNotEnoughStaked" : {
+      "title" : "ステーキング済み残高が不十分です"
+    },
+    "NearNotEnoughAvailable" : {
+      "title" : "引き出し可能残高が不十分です"
+    },
+    "NearRecommendUnstake" : {
+      "title" : "アカウントを空にする前に、資金のステーキングを解除して引き出してください"
+    },
+    "NearStakingThresholdNotMet" : {
+      "title" : "{{threshold}}以上の数量が必要です。"
     },
     "LockedDeviceError" : {
       "title" : "デバイスがロックされています。",

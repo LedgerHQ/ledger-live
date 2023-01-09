@@ -1,8 +1,9 @@
 import type { SocketEvent } from "@ledgerhq/types-live";
 import { from, Observable } from "rxjs";
-import { mergeMap } from "rxjs/operators";
+import { mergeMap, retryWhen } from "rxjs/operators";
+import { LockedDeviceError } from "@ledgerhq/errors";
 import getDeviceInfo from "./getDeviceInfo";
-import { withDevice } from "./deviceAccess";
+import { retryWhileErrors, withDevice } from "./deviceAccess";
 import genuineCheck from "./genuineCheck";
 
 export type GetGenuineCheckFromDeviceIdArgs = {
@@ -12,7 +13,7 @@ export type GetGenuineCheckFromDeviceIdArgs = {
 
 export type GetGenuineCheckFromDeviceIdResult = {
   socketEvent: SocketEvent | null;
-  deviceIsLocked: boolean;
+  lockedDevice: boolean;
 };
 
 export type GetGenuineCheckFromDeviceIdOutput =
@@ -25,37 +26,54 @@ export type GetGenuineCheckFromDeviceIdOutput =
  * @returns An Observable pushing objects containing:
  * - socketEvent: a SocketEvent giving the current status of the genuine check,
  *     null if the genuine check process did not reach any state yet
- * - deviceIsLocked: a boolean set to true if the device is currently locked, false otherwise
+ * - lockedDevice: a boolean set to true if the device is currently locked, false otherwise
  */
 export const getGenuineCheckFromDeviceId = ({
   deviceId,
   lockedDeviceTimeoutMs = 1000,
 }: GetGenuineCheckFromDeviceIdArgs): GetGenuineCheckFromDeviceIdOutput => {
-  return new Observable((o) => {
+  return new Observable((subscriber) => {
     // In order to know if a device is locked or not.
     // As we're not timing out inside the genuineCheckObservable flow (with rxjs timeout for ex)
     // once the device is unlock, getDeviceInfo should return the device info and
     // the flow will continue. No need to handle a retry strategy
     const lockedDeviceTimeout = setTimeout(() => {
-      o.next({ socketEvent: null, deviceIsLocked: true });
+      subscriber.next({ socketEvent: null, lockedDevice: true });
     }, lockedDeviceTimeoutMs);
 
-    // withDevice handles the unsubscribing cleaning when leaving the useEffect
-    withDevice(deviceId)((t) =>
-      from(getDeviceInfo(t)).pipe(
-        mergeMap((deviceInfo) => {
-          clearTimeout(lockedDeviceTimeout);
-          o.next({ socketEvent: null, deviceIsLocked: false });
-          return genuineCheck(t, deviceInfo);
-        })
+    // Returns a Subscription that can be unsubscribed/cleaned
+    return (
+      withDevice(deviceId)((t) =>
+        from(getDeviceInfo(t)).pipe(
+          mergeMap((deviceInfo) => {
+            clearTimeout(lockedDeviceTimeout);
+            subscriber.next({ socketEvent: null, lockedDevice: false });
+            return genuineCheck(t, deviceInfo);
+          })
+        )
       )
-    ).subscribe({
-      next: (socketEvent: SocketEvent) => {
-        o.next({ socketEvent, deviceIsLocked: false });
-      },
-      error: (e) => {
-        o.error(e);
-      },
-    });
+        // Needs to retry with withDevice
+        .pipe(
+          retryWhen(
+            retryWhileErrors((e: Error) => {
+              // Cancels the locked-device unresponsive/timeout strategy if received any response/error
+              clearTimeout(lockedDeviceTimeout);
+
+              if (e instanceof LockedDeviceError) {
+                subscriber.next({ socketEvent: null, lockedDevice: true });
+                return true;
+              }
+
+              return false;
+            })
+          )
+        )
+        .subscribe({
+          next: (socketEvent: SocketEvent) =>
+            subscriber.next({ socketEvent, lockedDevice: false }),
+          error: (e) => subscriber.error(e),
+          complete: () => subscriber.complete(),
+        })
+    );
   });
 };

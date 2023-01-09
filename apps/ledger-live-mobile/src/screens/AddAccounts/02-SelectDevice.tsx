@@ -3,13 +3,16 @@ import { StyleSheet, SafeAreaView } from "react-native";
 import { useDispatch } from "react-redux";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
-import { useTheme } from "@react-navigation/native";
+import { useIsFocused, useTheme } from "@react-navigation/native";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
+import { Flex } from "@ledgerhq/native-ui";
 import { prepareCurrency } from "../../bridge/cache";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import SelectDevice from "../../components/SelectDevice";
+import SelectDevice2 from "../../components/SelectDevice2";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import DeviceActionModal from "../../components/DeviceActionModal";
 import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
@@ -31,6 +34,10 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
   const { colors } = useTheme();
   const [device, setDevice] = useState<Device | null | undefined>(null);
   const dispatch = useDispatch();
+
+  const isFocused = useIsFocused();
+  const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
+
   const onSetDevice = useCallback(
     device => {
       dispatch(setLastConnectedDevice(device));
@@ -42,6 +49,7 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
   const onClose = useCallback(() => {
     setDevice(null);
   }, []);
+
   const onResult = useCallback(
     meta => {
       setDevice(null);
@@ -72,18 +80,27 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
         },
       ]}
     >
-      <NavigationScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContainer}
-      >
-        <TrackScreen
-          category="AddAccounts"
-          name="SelectDevice"
-          currencyName={currency?.name}
-        />
-        <SkipSelectDevice route={route} onResult={setDevice} />
-        <SelectDevice onSelect={onSetDevice} />
-      </NavigationScrollView>
+      <SkipSelectDevice route={route} onResult={setDevice} />
+      {newDeviceSelectionFeatureFlag?.enabled ? (
+        <Flex px={16} py={8} flex={1}>
+          <SelectDevice2
+            onSelect={setDevice}
+            stopBleScanning={!!device || !isFocused}
+          />
+        </Flex>
+      ) : (
+        <NavigationScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContainer}
+        >
+          <TrackScreen
+            category="AddAccounts"
+            name="SelectDevice"
+            currencyName={currency?.name}
+          />
+          <SelectDevice onSelect={onSetDevice} />
+        </NavigationScrollView>
+      )}
       <DeviceActionModal
         action={action}
         device={device}

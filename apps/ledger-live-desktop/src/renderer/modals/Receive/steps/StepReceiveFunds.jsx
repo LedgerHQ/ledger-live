@@ -34,6 +34,8 @@ import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivation
 import byFamily from "~/renderer/generated/StepReceiveFunds";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { LOCAL_STORAGE_KEY_PREFIX } from "./StepReceiveStakingFlow";
+import { useDispatch } from "react-redux";
+import { openModal } from "~/renderer/actions/modals";
 
 const Separator = styled.div`
   border-top: 1px solid #99999933;
@@ -142,6 +144,7 @@ const StepReceiveFunds = (props: StepProps) => {
     eventType,
     currencyName,
   } = props;
+  const dispatch = useDispatch();
   const receiveStakingFlowConfig = useFeature("receiveStakingFlowConfigDesktop");
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   invariant(account && mainAccount, "No account given");
@@ -208,14 +211,26 @@ const StepReceiveFunds = (props: StepProps) => {
         modal: "receive",
         account,
       });
-
-      transitionTo("stakingFlow");
+      if (receiveStakingFlowConfig?.params?.[id]?.direct) {
+        dispatch(
+          openModal("MODAL_ETH_STAKE", {
+            account,
+            checkbox: true,
+            singleProviderRedirectMode: false,
+            source: "receive",
+          }),
+        );
+        onClose();
+      } else {
+        transitionTo("stakingFlow");
+      }
     } else {
       onClose();
     }
   }, [
     account,
     currencyName,
+    dispatch,
     onClose,
     receiveStakingFlowConfig?.enabled,
     receiveStakingFlowConfig?.params,

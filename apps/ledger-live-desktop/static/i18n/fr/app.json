@@ -169,7 +169,10 @@
       "WITHDRAW" : "Retiré",
       "REVOKE" : "Révoqué",
       "ACTIVATE" : "Activé",
-      "REGISTER" : "Enregistré"
+      "REGISTER" : "Enregistré",
+      "STAKE" : "Staké",
+      "UNSTAKE" : "Déstaké",
+      "WITHDRAW_UNSTAKED" : "Retiré"
     }
   },
   "byteSize" : {
@@ -2075,14 +2078,6 @@
           "dismiss" : "Pas maintenant",
           "stake" : "Staker avec {{provider}}"
         },
-        "ethereum" : {
-          "title" : "Faites fructifier vos ETH. Stakez maintenant.",
-          "description" : "Stakez vos ETH avec Lido et gagnez des récompenses quotidiennes. Pas de période de blocage. Pas de montant minimum.",
-          "kiln" : {
-            "title" : "Maximisez votre HODL. Faites fructifier vos ETH.",
-            "description" : "Vous avez plus de 32 ETH ? Gagnez des récompenses en toute sécurité en mettant vos ETH en staking avec Kiln."
-          }
-        },
         "cosmos" : {
           "title" : "Faites fructifier vos ATOM. Stakez avec le validateur Ledger.",
           "description" : "Stakez vos ATOM en toute confiance avec le validateur Ledger. Vous restez propriétaire de vos cryptos, tout en bénéficiant de la sécurité inégalée de Ledger."
@@ -2105,7 +2100,7 @@
   "send" : {
     "title" : "Envoyer",
     "titleNft" : "Envoyer le NFT",
-    "totalSpent" : "Total à débiter",
+    "totalSpent" : "Total débité",
     "steps" : {
       "recipient" : {
         "title" : "Bénéficiaire",
@@ -2143,8 +2138,8 @@
         "ethereumGasPrice" : "Prix du gaz",
         "ethereumMaxFee" : "Frais maximaux ({{unitName}})",
         "ethereumPriorityFee" : "Frais de priorité maximaux ({{unitName}})",
-        "nextBlock" : "Bloc suivant : {{nextBaseFee}}",
-        "suggestedPriorityFee" : "Suggérés : {{lowPriorityFee}} - {{highPriorityFee}} {{unitName}}",
+        "nextBlock" : "Bloc suivant",
+        "suggested" : "Suggérés",
         "unitPerByte" : "{{unit}} par byte",
         "nft" : "NFT",
         "nftQuantity" : "Nombre"
@@ -2183,6 +2178,9 @@
   "releaseNotes" : {
     "title" : "Notes de publication",
     "version" : "Ledger Live {{versionNb}}"
+  },
+  "troubleshootNetwork" : {
+    "title" : "Résoudre les problèmes réseau"
   },
   "systemLanguageAvailable" : {
     "title" : "Changer la langue de l’application ?",
@@ -2241,6 +2239,9 @@
     }
   },
   "tron" : {
+    "receive" : {
+      "newAddressTRC20" : "Vous devez d’abord envoyer un minimum de 0,1 TRX à cette adresse pour l’activer."
+    },
     "voting" : {
       "emptyState" : {
         "description" : "Vous pouvez maintenant gagner des récompenses en votant et en gelant vos actifs.",
@@ -3390,6 +3391,155 @@
       }
     }
   },
+  "ethereum" : {
+    "stake" : {
+      "title" : "Gagnez des ETH",
+      "lido" : {
+        "tag" : "Pas de minimum",
+        "description" : "Stakez vos ETH avec Lido et gagnez des récompenses quotidiennes. Pas de période de blocage. Pas de montant minimum."
+      },
+      "kiln" : {
+        "tag" : "32 ETH minimum",
+        "description" : "Vous avez plus de 32 ETH ? Gagnez chaque jour des récompenses en toute sécurité en mettant vos ETH en staking avec Kiln."
+      },
+      "providerTitle" : "Gagnez avec {{provider}}",
+      "providerLink" : "En savoir plus sur {{provider}}"
+    }
+  },
+  "near" : {
+    "account" : {
+      "stakedBalance" : "Solde de staking",
+      "stakedBalanceTooltip" : "Montant actuellement staké auprès de validateurs.",
+      "availableBalance" : "Solde pouvant être retiré",
+      "availableBalanceTooltip" : "Montant des actifs déstakés qui peuvent actuellement être retirés.",
+      "pendingBalance" : "Solde en attente",
+      "pendingBalanceTooltip" : "Montant des actifs déstakés qui seront bientôt disponibles.",
+      "storageUsageBalance" : "Solde minimum",
+      "storageUsageBalanceTooltip" : "Montant réservé pour le stockage et les transactions. Il constitue le solde minimum que votre compte doit contenir pour rester actif.",
+      "subHeader" : {
+        "cardTitle" : "Propulsé par Figment",
+        "moreInfo" : "Plus d’informations",
+        "drawerTitle" : "Propulsé par Figment",
+        "title" : "Le token NEAR désormais disponible sur Ledger Live",
+        "description" : "Vous pouvez maintenant gérer et sécuriser vos tokens NEAR via Ledger Live.",
+        "description2" : "Le token NEAR est natif de la chaîne NEAR. Vous pouvez l’utiliser pour réaliser des transactions, le staking et de nombreuses fonctionnalités à venir.",
+        "website" : "Propulsé par Figment"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "Montant en staking"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "Vous pouvez gagner des récompenses NEAR en stakant vos actifs.",
+        "info" : "Fonctionnement du staking",
+        "earnRewards" : "Gagner des récompenses"
+      },
+      "table" : {
+        "header" : "Position(s) de staking",
+        "stake" : "Ajouter",
+        "staked" : "Staké",
+        "pending" : "En attente de libération",
+        "available" : "Disponible au retrait"
+      },
+      "unstake" : "Déstaker",
+      "withdraw" : "Retirer",
+      "activeTooltip" : "Les montants stakés génèrent des récompenses.",
+      "inactiveTooltip" : "Les montants déstakés ne génèrent plus de récompenses.",
+      "commission" : "Commission",
+      "totalStake" : "Stake total",
+      "minSafeWarning" : "Fonds insuffisants",
+      "flow" : {
+        "title" : "Staker",
+        "steps" : {
+          "starter" : {
+            "description" : "Vous pouvez gagner des récompenses en stakant vos NEAR auprès d’un validateur.",
+            "bullet" : ["Vous gardez la propriété de vos actifs stakés.", "Stakez avec votre appareil Ledger.", "Vos actifs seront disponibles 52 à 65 heures après avoir été déstakés."],
+            "warning" : {
+              "description" : "Choisissez votre validateur avec soin : une partie de vos actifs stakés peut être perdue si le validateur ne respecte pas les règles."
+            }
+          },
+          "amount" : {
+            "title" : "Montant"
+          },
+          "validator" : {
+            "title" : "Validateurs",
+            "ledgerByFigmentTC" : "Conditions d’utilisation de Ledger by Figment"
+          },
+          "connectDevice" : {
+            "title" : "Appareil"
+          },
+          "confirmation" : {
+            "title" : "Confirmation",
+            "success" : {
+              "title" : "Actifs bien stakés",
+              "text" : "Le solde de votre compte sera mis à jour une fois que la blockchain aura confirmé la transaction.",
+              "cta" : "Voir les détails"
+            },
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "Il n’y a pas assez d’actifs stakés à déstaker.",
+      "flow" : {
+        "title" : "Déstaker",
+        "steps" : {
+          "amount" : {
+            "title" : "Montant",
+            "subtitle" : "Le processus de déstaking est finalisé entre <0>52 à 65 heures</0>.",
+            "warning" : "Les récompenses seront immédiatement encaissées. Le montant déstaké sera disponible pour retrait après un <0>délai de 52 à 65 heures</0>.",
+            "fields" : {
+              "validator" : "Validateur",
+              "amount" : "Montant à déstaker"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Appareil"
+          },
+          "confirmation" : {
+            "title" : "Confirmation",
+            "success" : {
+              "title" : "Actifs bien déstakés",
+              "description" : "<0>{{amount}}</0> ont été déstakés de <0>{{validator}}</0>.",
+              "cta" : "Voir les détails"
+            },
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "disabledTooltip" : "Il n’y a pas assez d’actifs à retirer.",
+      "flow" : {
+        "title" : "Retirer",
+        "steps" : {
+          "amount" : {
+            "title" : "Montant",
+            "fields" : {
+              "validator" : "Validateur",
+              "amount" : "Montant à retirer"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Appareil"
+          },
+          "confirmation" : {
+            "title" : "Confirmation",
+            "success" : {
+              "title" : "Retrait des actifs effectué",
+              "description" : "<0>{{amount}}</0> ont été retirés de <0>{{validator}}</0>.",
+              "cta" : "Voir les détails"
+            },
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
+          }
+        }
+      }
+    }
+  },
   "delegation" : {
     "title" : "Gagner des récompenses",
     "header" : "Délégation",
@@ -3582,7 +3732,7 @@
       "analyticsDesc" : "Autoriser les statistiques pour aider Ledger à améliorer l’expérience utilisateur. Ces statistiques comprennent les clics, les visites de pages, les redirections, les actions (envoyer, recevoir, verrouiller, etc.), les défilements en bas de page, les installations, désinstallations et mises à jour des applications, les versions des applications, le nombre de comptes, de crypto-actifs et d’opérations, la durée des sessions, le type d’appareil Ledger et de micrologiciel.",
       "reportErrors" : "Rapports de bugs",
       "reportErrorsDesc" : "Envoyer automatiquement des rapports pour aider Ledger à améliorer ses produits.",
-      "launchOnboarding" : "Configuration de votre appareil",
+      "launchOnboarding" : "Configurer votre appareil",
       "launchOnboardingDesc" : "Configurez un nouvel appareil ou restaurez un appareil existant. Vos comptes et paramètres sont conservés."
     },
     "help" : {
@@ -3695,6 +3845,11 @@
       "title" : "Enregistrer les logs",
       "desc" : "Sauvegarder les logs de Ledger Live peut être nécessaire à des fins de dépannage.",
       "btn" : "Sauvegarder"
+    },
+    "troubleshootNetwork" : {
+      "title" : "Résoudre les problèmes réseau",
+      "desc" : "Réalisez un contrôle pour évaluer l’état du réseau à des fins de diagnostic et dépannage.",
+      "btn" : "Lancer"
     },
     "accounts" : {
       "hideEmptyTokens" : {
@@ -4501,6 +4656,9 @@
       "claimRewardCompound" : "validateur qui recevra les récompenses",
       "optIn" : "bénéficiaire",
       "nominate" : "validateur",
+      "stake" : "validateur",
+      "unstake" : "validateur",
+      "withdraw" : "validateur",
       "erc721" : {
         "transfer" : "bénéficiaire"
       },
@@ -4734,6 +4892,10 @@
       "title" : "Votre appareil semble avoir été déconnecté.",
       "description" : "Reconnectez votre appareil et réessayez."
     },
+    "EConnReset" : {
+      "title" : "Impossible d’accéder au Catalogue d’apps de Ledger",
+      "description" : "Votre connexion Internet a peut-être été interrompue ou utilise une configuration particulière. Commencez par vérifier si votre connexion n’utilise pas un système de blocage (proxy ou pare-feu). Si le problème persiste, cliquez ci-dessous pour obtenir des solutions ou contactez l’Assistance Ledger."
+    },
     "EnpointConfig" : {
       "title" : "Point de terminaison non valide",
       "description" : "Merci de fournir un point de terminaison valide."
@@ -4845,6 +5007,10 @@
     },
     "NotEnoughGas" : {
       "title" : "Solde du compte parent insuffisant pour les frais de réseau"
+    },
+    "OperatingSystemOutdated" : {
+      "title" : "Version de votre système d’exploitation obsolète",
+      "description" : "Veuillez mettre à jour votre système d’exploitation et essayez à nouveau. Pour comprendre pourquoi Ledger Live n’est pas pris en charge par la version actuelle de votre système d’exploitation, consultez l’article ci-dessous."
     },
     "PasswordsDontMatch" : {
       "title" : "Mots de passe non identiques",
@@ -5000,7 +5166,7 @@
       "title" : "Frais de priorité plus élevés que nécessaire. Vous pourriez payer trop cher."
     },
     "MaxFeeTooLow" : {
-      "title" : "Frais max. inférieurs au montant recommandé"
+      "title" : "Les frais maximaux sont inférieurs au montant recommandé"
     },
     "PriorityFeeHigherThanMaxFee" : {
       "title" : "Les frais de priorité max. doivent être inférieurs aux frais max."
@@ -5088,7 +5254,7 @@
       "title" : "Le montant à geler ne peut pas être inférieur à 1."
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "Envoyer des TRC-20 sur un nouveau compte ne l’activera pas.",
+      "title" : "Vous devez d’abord envoyer un minimum de 0,1 TRX à cette adresse avant de recevoir des tokens TRC20.",
       "description" : "Le compte bénéficiaire doit être activé avant de commencer à envoyer des TRC-20 dessus. Pour l’activer, envoyez soit des TRX soit des TRC-10."
     },
     "TronUnexpectedFees" : {
@@ -5102,7 +5268,7 @@
       "description" : "Les transactions doivent être signées dans les 30 secondes. Veuillez réessayer."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Vous n’avez pas assez d’Énergie pour envoyer ce token."
+      "title" : "Énergie inférieure à la quantité requise. Vous pourriez payer des frais allant jusqu’à 20 TRX."
     },
     "PairingFailed" : {
       "title" : "Échec du couplage",
@@ -5253,6 +5419,9 @@
     "StellarSourceHasMultiSign" : {
       "title" : "Désactivez le multisig pour envoyer des transactions Stellar"
     },
+    "StellarBurnAddressError" : {
+      "title" : "Un problème est survenu lors de l’ajout du compte Stellar"
+    },
     "HederaAddAccountError" : {
       "title" : "Votre compte n’a pas été ajouté. Veuillez réessayer."
     },
@@ -5299,6 +5468,30 @@
     "ImageLoadRefusedOnDevice" : {
       "title" : "Chargement de l’image refusé sur votre Ledger (TODO: final wording)",
       "description" : "Si cette image ne vous plaît pas, choisissez une autre image."
+    },
+    "NearNewAccountWarning" : {
+      "title" : "Le compte du bénéficiaire n’a pas encore été créé. Pour le créer, le protocole nécessite un transfert de {{formattedNewAccountStorageCost}}."
+    },
+    "NearNewNamedAccountError" : {
+      "title" : "Le compte du bénéficiaire n’a pas encore été créé. Il doit être créé dans NEAR Wallet."
+    },
+    "NearActivationFeeNotCovered" : {
+      "title" : "Ce montant ne couvre pas le coût de stockage de {{formattedNewAccountStorageCost}}."
+    },
+    "NearUseAllAmountStakeWarning" : {
+      "title" : "Assurez-vous que votre solde disponible est suffisant pour couvrir vos futurs frais de transaction."
+    },
+    "NearNotEnoughStaked" : {
+      "title" : "Solde staké insuffisant"
+    },
+    "NearNotEnoughAvailable" : {
+      "title" : "Solde pouvant être retiré insuffisant"
+    },
+    "NearRecommendUnstake" : {
+      "title" : "Veuillez déstaker et retirer vos fonds avant de vider le compte."
+    },
+    "NearStakingThresholdNotMet" : {
+      "title" : "Le montant doit être d’au moins {{threshold}}"
     },
     "LockedDeviceError" : {
       "title" : "Appareil verrouillé",

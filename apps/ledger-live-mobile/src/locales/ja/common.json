@@ -518,7 +518,7 @@
       "title" : "凍結額を1未満にすることはできません。"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "新しいアカウントにTRC20トークンを送金してもアクティブ化されません。",
+      "title" : "TRC20の受け取りを有効化するには、まず新しいアカウントに0.1 TRX以上を送る必要があります。",
       "description" : "有効化するには、TRXまたはTRC10トークンをアカウントに送金してください。その後、アカウントでTRC20トークンの受取が可能になります。"
     },
     "TronUnexpectedFees" : {
@@ -1902,6 +1902,9 @@
       "title" : "トランザクションがありません。",
       "desc" : "暗号資産を受取アドレスに送金して、アプリが同期するのを待ちましょう。"
     },
+    "carousel" : {
+      "title" : "お客様へ"
+    },
     "recommended" : {
       "title" : "おすすめ"
     },
@@ -2350,8 +2353,8 @@
     "display" : {
       "title" : "一般",
       "desc" : "Ledger Liveの一般設定を変更します。",
-      "carousel" : "カルーセルの表示／非表示",
-      "carouselDesc" : "ポートフォリオ上でカルーセルの表示を有効化",
+      "carousel" : "おすすめ",
+      "carouselDesc" : "お客様用にパーソナライズされたヒントと最新のオファーが記載されたカードをお見せします。",
       "language" : "表示言語",
       "languageDesc" : "Ledger Liveの表示言語を設定。",
       "region" : "地域",
@@ -2464,7 +2467,7 @@
       },
       "allowed" : {
         "title" : "通知を許可",
-        "desc" : "暗号資産、マーケットの傾向に関する通知を受け取る"
+        "desc" : "暗号資産、市場動向などに関する通知を受け取る"
       },
       "transactions" : {
         "title" : "トランザクション",
@@ -2486,7 +2489,7 @@
         "title" : "価格アラート",
         "desc" : "お気に入りのコインの価格アラートを設定して、市場の動きを見逃さないようにしましょう"
       },
-      "disclaimer" : "Ledgerでは、データとプライバシーを最も重視しています。収集されたデータが当社パートナーと共有されることはありません。"
+      "disclaimer" : "お客様のデータとプライバシーは、Ledgerにとって重要です。収集されたデータが当社パートナーと共有されることはありません。"
     },
     "help" : {
       "title" : "ヘルプ",
@@ -3265,8 +3268,8 @@
       "gasPrice" : "ガス価格",
       "maxFee" : "最大手数料",
       "maxPriorityFee" : "最大優先手数料",
-      "nextBlock" : "次のブロック: {{nextBaseFee}}",
-      "suggestedPriorityFee" : "推奨: {{lowPriorityFee}} - {{highPriorityFee}}",
+      "nextBlock" : "次のブロック",
+      "suggested" : "推奨",
       "maxFees" : "最大手数料",
       "validateGasLimit" : "ガスリミットの検証",
       "fees" : "手数料",
@@ -4690,6 +4693,9 @@
         "title" : "候補者",
         "description" : "トークン所有者コミュニティ全体の投票によって123人が選出されました。投票は6時間ごとに集計されます。"
       }
+    },
+    "receive" : {
+      "newAddressTRC20" : "有効化するには、こちらのアドレスに0.1 TRX以上を送る必要があります。"
     }
   },
   "stellar" : {
@@ -5454,7 +5460,8 @@
     "drawer" : {
       "title" : "画像を選択してください",
       "options" : {
-        "uploadFromPhone" : "携帯電話からアップロードする"
+        "uploadFromPhone" : "画像ギャラリーから選択",
+        "selectFromNFTGallery" : "NFTギャラリーから選択"
       }
     },
     "cropImage" : "画像をトリミング",
@@ -5479,6 +5486,9 @@
       "loading" : "プレビューの読み込み中",
       "setPicture" : "カスタム画像を設定する",
       "editPicture" : "画像を編集"
+    },
+    "nftGallery" : {
+      "title" : "私のNFT"
     }
   },
   "postOnboarding" : {
