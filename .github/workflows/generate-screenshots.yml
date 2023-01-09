@@ -97,10 +97,10 @@ jobs:
         run: gh pr checkout ${{ github.event.inputs.number }}
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
-      # - name: Set git user
-      #   run: |
-      #     git config user.email "team-live@ledger.fr"
-      #     git config user.name "Team Live"
+      - name: set git user
+        run: |
+          git config user.email "team-live@ledger.fr"
+          git config user.name "live-github-bot[bot]"
       - name: TurboRepo local caching server
         id: turborepo-cache-server
         uses: ./tools/actions/turborepo-gh-cache
@@ -144,11 +144,11 @@ jobs:
         if: ${{ github.event.inputs.number != null && github.event.inputs.ref == null }}
         run: gh pr checkout ${{ github.event.inputs.number }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Set git user
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+      - name: set git user
         run: |
           git config user.email "team-live@ledger.fr"
-          git config user.name "Team Live"
+          git config user.name "live-github-bot[bot]"
       - name: TurboRepo local caching server
         id: turborepo-cache-server
         uses: ./tools/actions/turborepo-gh-cache
@@ -193,11 +193,11 @@ jobs:
         if: ${{ github.event.inputs.number != null && github.event.inputs.ref == null }}
         run: gh pr checkout ${{ github.event.inputs.number }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Set git user
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+      - name: set git user
         run: |
           git config user.email "team-live@ledger.fr"
-          git config user.name "Team Live"
+          git config user.name "live-github-bot[bot]"
       - name: TurboRepo local caching server
         id: turborepo-cache-server
         uses: ./tools/actions/turborepo-gh-cache

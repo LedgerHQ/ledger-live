@@ -31,6 +31,8 @@ jobs:
   test-docs:
     name: "Test Docs"
     runs-on: ubuntu-latest
+    outputs:
+      fail: ${{ steps.diff.outputs.diff }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -47,14 +49,18 @@ jobs:
         run: pnpm i --filter="!./apps/**" --frozen-lockfile
       - name: run doc
         run: pnpm doc:ljs
-      - name: check if diff
-        run: git diff --exit-code || exit 1
+      - name: get diff
+        id: diff
+        run: |
+          echo "diff=$(git diff --exit-code || 1)" >> $GITHUB_OUTPUT
 
   test-cli:
     name: "Test CLI"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
+    outputs:
+      fail: ${{ steps.diff.outputs.diff }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -72,9 +78,12 @@ jobs:
         run: pnpm i --frozen-lockfile
       - name: build cli
         run: pnpm build:cli
-      - name: check if diff
-        run: git diff --exit-code || exit 1
+      - name: get diff
+        id: diff
+        run: |
+          echo "diff=$(git diff --exit-code || 1)" >> $GITHUB_OUTPUT
 
+  # TODO: SUMMARY OF LIBRARIES TO FINISH WITH ORCHESTRATOR
   test-libraries:
     name: "Test Libraries"
     env:
@@ -148,3 +157,63 @@ jobs:
         run: npx codecov -F test
         env:
           CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
+
+  # TODO: ADD REPORT OF LIBRARIES (EXAMPLE IN TEST DESKTOP FOR MATRIX)
+  report:
+    needs: [test-cli, test-docs, test-libraries]
+    if: always() && !cancelled() && github.event_name == 'workflow_dispatch' && github.event.inputs.sha != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v6
+        name: build summary
+        with:
+          script: |
+            const fs = require("fs");
+            const statuses = {
+              doc: {
+                pass: ${{ needs.test-docs.outputs.fail != '1' }},
+                status: "${{ needs.test-docs.result }}",
+              },
+              cli: {
+                pass: ${{ needs.test-cli.outputs.fail != '1' }},
+                status: "${{ needs.test-docs.result }}",
+              },
+              libraries: {
+                pass: ${{ needs.test-libraries.result == 'success' }},
+                status: "${{ needs.test-libraries.result }}",
+              }
+            };
+
+            const summary = `### Test documentation files
+            ${statuses.doc.pass ? "Documentation files are fine" : "Documentation files are outdated"}
+              - ${statuses.doc.pass ? "✅" : "❌"} **Test documentation files** ended with status \`${statuses.doc.status}\`
+
+            ### Test CLI
+            ${statuses.cli.pass ? "CLI tests are successful" : "CLI tests did not end successfully"}
+              - ${statuses.cli.pass ? "✅" : "❌"} **CLI tests** ended with status \`${statuses.cli.status}\`
+            `;
+
+            const actions = [];
+
+            if (${{ needs.test-docs.outputs.fail == '1' }}) {
+              actions.push({
+                // 20 chars max
+                label: "Regen. Doc Files",
+                // 20 chars max
+                identifier: "regen_doc",
+                // 40 chars max
+                description: "Will regenerate doc files for ljs",
+              });
+            }
+
+            const output = {
+              summary,
+              actions
+            };
+
+            fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
+      - uses: actions/upload-artifact@v3
+        name: Upload output
+        with:
+          path: ${{ github.workspace }}/summary.json
+          name: summary.json
