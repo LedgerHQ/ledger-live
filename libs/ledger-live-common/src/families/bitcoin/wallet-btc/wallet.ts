@@ -156,7 +156,7 @@ class BitcoinLikeWallet {
       utils.maxTxSizeCeil(
         usableUtxoCount,
         outputScripts,
-        outputScripts.length == 0,
+        false,
         account.xpub.crypto,
         account.xpub.derivationMode
       );
