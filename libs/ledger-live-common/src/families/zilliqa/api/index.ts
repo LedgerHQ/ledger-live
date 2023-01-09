@@ -188,5 +188,6 @@ export const getOperations = async (
     transactionToOperation("OUT", accountId, addr, transaction)
   );
   const ret = [...ret1, ...ret2];
+
   return ret;
 };
