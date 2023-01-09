@@ -128,7 +128,7 @@ function transactionToOperation(
     },
     senders: [toBech32(transaction.fromAddress)],
     recipients: transaction.toAddress ? [toBech32(transaction.toAddress)] : [],
-    // hasFailed: !transaction.success, // TODO:
+    hasFailed: false, // TODO:
   };
 
   return ret;
