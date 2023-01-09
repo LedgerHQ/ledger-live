@@ -1,8 +1,10 @@
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
 
 import { Box, Flex, Icons, Link, Text } from "@ledgerhq/react-ui";
+import { hidePostOnboardingWalletEntryPoint } from "@ledgerhq/live-common/postOnboarding/actions";
 import { useNavigateToPostOnboardingHubCallback } from "./logic/useNavigateToPostOnboardingHubCallback";
 import Illustration from "~/renderer/components/Illustration";
 
@@ -19,16 +21,17 @@ const CloseButtonWrapper = styled(Box).attrs(() => ({
 
 const PostOnboardingHubBanner = () => {
   const { t } = useTranslation();
-  const [isVisible, setIsVisible] = useState<boolean>(true);
+  const dispatch = useDispatch();
   const navigateToPostOnboardingHub = useNavigateToPostOnboardingHubCallback();
 
   const handleNavigateToPostOnboardingHub = useCallback(() => navigateToPostOnboardingHub(), [
     navigateToPostOnboardingHub,
   ]);
 
-  const handleHidePostOnboardingHubBanner = useCallback(() => setIsVisible(false), []);
+  const handleHidePostOnboardingHubBanner = useCallback(() => {
+    dispatch(hidePostOnboardingWalletEntryPoint());
+  }, [dispatch]);
 
-  if (!isVisible) return null;
   return (
     <Flex
       backgroundColor="neutral.c100"
