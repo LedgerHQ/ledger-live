@@ -1239,10 +1239,7 @@
       "titleCompleted": "and that's a\nwrap!"
     },
     "postOnboardingContent": {
-      "title": "Nice one.You're all set.",
-      "description": "Here's what you can do next:",
-      "skipLink": "Skip to the app",
-      "skipLinkInDrawer": "I'll do this later"
+      "skipLink": "I'll do this later"
     },
     "postOnboardingBanner": {
       "title": "What's next for your Ledger Stax?",
