@@ -15,12 +15,12 @@ export function generateScreenshots(app: Probot) {
     context,
     number,
     login,
-    comment = false,
+    commentId,
   }: {
     context: Context;
     number: string;
     login: string;
-    comment?: boolean;
+    commentId?: number;
   }) {
     return context.octokit.actions.createWorkflowDispatch({
       ...context.repo(),
@@ -30,27 +30,21 @@ export function generateScreenshots(app: Probot) {
       inputs: {
         number,
         login,
-        comment: comment.toString(),
+        ...(commentId ? { commentId: `${commentId}` } : {}),
       },
     });
   }
 
   commands(app, "generate-screenshots", async (context, data) => {
-    const { octokit, payload } = context;
+    const { payload } = context;
 
     if (context.isBot) return;
-
-    await octokit.rest.reactions.createForIssueComment({
-      ...context.repo(),
-      comment_id: context.payload.comment.id,
-      content: "rocket",
-    });
 
     await triggerWorkflow({
       context,
       number: `${data.number}`,
       login: `${payload.comment.user.login}`,
-      comment: true,
+      commentId: data?.commentId,
     });
   });
 
