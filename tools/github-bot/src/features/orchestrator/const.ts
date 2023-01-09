@@ -1,3 +1,9 @@
+import { Context } from "probot";
+
+type WorkflowRunPayload = Context<"workflow_run">["payload"];
+type CheckRunPayload = Context<"check_run">["payload"];
+type GetInputsPayload = WorkflowRunPayload | CheckRunPayload;
+
 export const BOT_APP_ID = 198164;
 export const GATE_CHECK_RUN_NAME = "The Balrog has been summoned ❤️‍🔥";
 export enum RUNNERS {
@@ -13,11 +19,18 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.internal,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
-    getInputs: (payload: any) => {
-      return {
-        sha: payload.workflow_run.head_sha,
-        ref: payload.workflow_run.head_branch,
-      };
+    getInputs: (payload: GetInputsPayload) => {
+      return "workflow_run" in payload
+        ? {
+            login: payload.workflow_run.actor.login,
+            sha: payload.workflow_run.head_sha,
+            ref: payload.workflow_run.head_branch,
+          }
+        : {
+            login: payload.sender.login,
+            sha: payload.check_run.head_sha,
+            ref: payload.check_run.pull_requests[0]?.head.ref,
+          };
     },
   },
   "build-desktop-external.yml": {
@@ -27,11 +40,18 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.external,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
-    getInputs: (payload: any) => {
-      return {
-        sha: payload.workflow_run.head_sha,
-        ref: payload.workflow_run.head_branch,
-      };
+    getInputs: (payload: GetInputsPayload) => {
+      return "workflow_run" in payload
+        ? {
+            login: payload.workflow_run.actor.login,
+            sha: payload.workflow_run.head_sha,
+            ref: payload.workflow_run.head_branch,
+          }
+        : {
+            login: payload.sender.login,
+            sha: payload.check_run.head_sha,
+            ref: payload.check_run.pull_requests[0]?.head.ref,
+          };
     },
   },
   "test-desktop.yml": {
@@ -41,11 +61,18 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.internal,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
-    getInputs: (payload: any) => {
-      return {
-        sha: payload.workflow_run.head_sha,
-        ref: payload.workflow_run.head_branch,
-      };
+    getInputs: (payload: GetInputsPayload) => {
+      return "workflow_run" in payload
+        ? {
+            login: payload.workflow_run.actor.login,
+            sha: payload.workflow_run.head_sha,
+            ref: payload.workflow_run.head_branch,
+          }
+        : {
+            login: payload.sender.login,
+            sha: payload.check_run.head_sha,
+            ref: payload.check_run.pull_requests[0]?.head.ref,
+          };
     },
   },
   "test-desktop-external.yml": {
@@ -55,11 +82,18 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.external,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
-    getInputs: (payload: any) => {
-      return {
-        sha: payload.workflow_run.head_sha,
-        ref: payload.workflow_run.head_branch,
-      };
+    getInputs: (payload: GetInputsPayload) => {
+      return "workflow_run" in payload
+        ? {
+            login: payload.workflow_run.actor.login,
+            sha: payload.workflow_run.head_sha,
+            ref: payload.workflow_run.head_branch,
+          }
+        : {
+            login: payload.sender.login,
+            sha: payload.check_run.head_sha,
+            ref: payload.check_run.pull_requests[0]?.head.ref,
+          };
     },
   },
   "build-mobile.yml": {
@@ -69,11 +103,18 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.internal,
     affected: ["live-mobile"],
     summaryFile: "summary.json",
-    getInputs: (payload: any) => {
-      return {
-        sha: payload.workflow_run.head_sha,
-        ref: payload.workflow_run.head_branch,
-      };
+    getInputs: (payload: GetInputsPayload) => {
+      return "workflow_run" in payload
+        ? {
+            login: payload.workflow_run.actor.login,
+            sha: payload.workflow_run.head_sha,
+            ref: payload.workflow_run.head_branch,
+          }
+        : {
+            login: payload.sender.login,
+            sha: payload.check_run.head_sha,
+            ref: payload.check_run.pull_requests[0]?.head.ref,
+          };
     },
   },
   "build-mobile-external.yml": {
@@ -83,11 +124,18 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.external,
     affected: ["live-mobile"],
     summaryFile: "summary.json",
-    getInputs: (payload: any) => {
-      return {
-        sha: payload.workflow_run.head_sha,
-        ref: payload.workflow_run.head_branch,
-      };
+    getInputs: (payload: GetInputsPayload) => {
+      return "workflow_run" in payload
+        ? {
+            login: payload.workflow_run.actor.login,
+            sha: payload.workflow_run.head_sha,
+            ref: payload.workflow_run.head_branch,
+          }
+        : {
+            login: payload.sender.login,
+            sha: payload.check_run.head_sha,
+            ref: payload.check_run.pull_requests[0]?.head.ref,
+          };
     },
   },
   "test-mobile.yml": {
@@ -97,11 +145,18 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.both,
     affected: ["live-mobile"],
     summaryFile: "summary.json",
-    getInputs: (payload: any) => {
-      return {
-        sha: payload.workflow_run.head_sha,
-        ref: payload.workflow_run.head_branch,
-      };
+    getInputs: (payload: GetInputsPayload) => {
+      return "workflow_run" in payload
+        ? {
+            login: payload.workflow_run.actor.login,
+            sha: payload.workflow_run.head_sha,
+            ref: payload.workflow_run.head_branch,
+          }
+        : {
+            login: payload.sender.login,
+            sha: payload.check_run.head_sha,
+            ref: payload.check_run.pull_requests[0]?.head.ref,
+          };
     },
   },
   "test.yml": {
@@ -149,13 +204,22 @@ export const WORKFLOWS = {
       "@ledgerhq/ui-shared",
     ],
     summaryFile: "",
-    getInputs: (payload: any) => {
-      return {
-        sha: payload.workflow_run.head_sha,
-        ref: payload.workflow_run.head_branch,
-        since_branch:
-          payload.workflow_run.pull_requests[0]?.base.ref || "develop",
-      };
+    getInputs: (payload: GetInputsPayload) => {
+      return "workflow_run" in payload
+        ? {
+            login: payload.workflow_run.actor.login,
+            sha: payload.workflow_run.head_sha,
+            ref: payload.workflow_run.head_branch,
+            since_branch:
+              payload.workflow_run.pull_requests[0]?.base.ref || "develop",
+          }
+        : {
+            login: payload.sender.login,
+            sha: payload.check_run.head_sha,
+            ref: payload.check_run.pull_requests[0]?.head.ref,
+            since_branch:
+              payload.check_run.pull_requests[0]?.base.ref || "develop",
+          };
     },
   },
 };
