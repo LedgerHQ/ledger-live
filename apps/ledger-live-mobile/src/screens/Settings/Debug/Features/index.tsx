@@ -61,6 +61,13 @@ export default function Debugging() {
         iconLeft={<Icons.PlayMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugStoryly)}
       />
+
+      <SettingsRow
+        title="Terms of Use"
+        desc="Trigger Terms of Use Popup"
+        iconLeft={<Icons.LinkMedium size={32} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugTermsOfUse)}
+      />
     </SettingsNavigationScrollView>
   );
 }
