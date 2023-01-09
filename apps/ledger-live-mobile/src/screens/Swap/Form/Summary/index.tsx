@@ -33,6 +33,8 @@ import {
 } from "../../../../components/RootNavigator/types/helpers";
 import type { SwapNavigatorParamList } from "../../../../components/RootNavigator/types/SwapNavigator";
 import type { SwapFormNavigatorParamList } from "../../../../components/RootNavigator/types/SwapFormNavigator";
+import { useAnalytics } from "../../../../analytics";
+import { sharedSwapTracking } from "../../utils";
 
 interface Props {
   provider?: string;
@@ -50,6 +52,7 @@ export function Summary({
   swapTx: { swap, status, transaction },
   kyc,
 }: Props) {
+  const { track } = useAnalytics();
   const navigation = useNavigation<Navigation["navigation"]>();
   const route = useRoute<Navigation["route"]>();
   const { t } = useTranslation();
@@ -70,14 +73,22 @@ export function Summary({
   const estimatedFees = useMemo(() => status?.estimatedFees ?? "", [status]);
 
   const onEditProvider = useCallback(() => {
+    track("button_clicked", {
+      ...sharedSwapTracking,
+      button: "provider",
+    });
     navigation.navigate(ScreenName.SwapSelectProvider, {
       swap,
       provider,
       selectedRate: exchangeRate,
     });
-  }, [navigation, swap, provider, exchangeRate]);
+  }, [navigation, swap, provider, exchangeRate, track]);
 
   const onAddAccount = useCallback(() => {
+    track("button_clicked", {
+      ...sharedSwapTracking,
+      button: "add account",
+    });
     if (!to.currency) return;
 
     const params = {
@@ -105,7 +116,7 @@ export function Summary({
         },
       });
     }
-  }, [navigation, to]);
+  }, [navigation, to, track]);
 
   const counterValueCurrency = to.currency || rawCounterValueCurrency;
   const effectiveUnit = from.currency?.units[0];
