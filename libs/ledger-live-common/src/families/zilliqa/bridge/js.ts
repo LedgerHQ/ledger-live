@@ -89,8 +89,20 @@ const getTransactionStatus = (account: ZilliqaAccount, t: Transaction) => {
   });
 };
 
-const estimateMaxSpendable = () => {
-  throw new Error("estimateMaxSpendable not implemented");
+const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
+  let { gasPrice, gasLimit } = transaction;
+  if (!gasPrice) {
+    gasPrice = new BN(0);
+  }
+
+  if (!gasLimit) {
+    gasLimit = new BN(ZILLIQA_TX_GAS_LIMIT);
+  }
+
+  const estimatedFees = new BigNumber(gasPrice.mul(gasLimit).toString());
+  return Promise.resolve(
+    BigNumber.max(0, account.balance.minus(estimatedFees))
+  );
 };
 
 const broadcast = async ({
