@@ -2,11 +2,7 @@ import React, { useCallback } from "react";
 import { Flex, Icons, Tag, Text } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-import {
-  PostOnboardingActionState,
-  PostOnboardingAction,
-  PostOnboardingActionId,
-} from "@ledgerhq/types-live";
+import { PostOnboardingActionState, PostOnboardingAction } from "@ledgerhq/types-live";
 import { track } from "~/renderer/analytics/segment";
 
 import styled from "styled-components";
@@ -36,7 +32,6 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
   const handleStartAction = useCallback(() => {
     if (navigationParams) history.push(navigationParams);
     else if (startAction) {
-      console.log(startAction);
       startAction();
       startEvent && track(startEvent, startEventProperties);
     }

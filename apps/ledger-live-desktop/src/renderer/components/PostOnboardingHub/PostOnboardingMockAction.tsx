@@ -1,10 +1,7 @@
 import React, { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { Button, Flex, Text } from "@ledgerhq/react-ui";
-import {
-  setPostOnboardingActionCompleted,
-  clearPostOnboardingLastActionCompleted,
-} from "@ledgerhq/live-common/postOnboarding/actions";
+import { setPostOnboardingActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
 
 import { getPostOnboardingAction } from "./logic";
@@ -19,10 +16,6 @@ const PostOnboardingMockAction = ({ id }: Props) => {
   const dispatch = useDispatch();
   const action = getPostOnboardingAction(id);
   const navigateToPostOnboardingHub = useNavigateToPostOnboardingHubCallback();
-
-  const clearLastActionCompleted = useCallback(() => {
-    dispatch(clearPostOnboardingLastActionCompleted());
-  }, [dispatch]);
 
   const completeAction = useCallback(
     () => dispatch(setPostOnboardingActionCompleted({ actionId: id })),

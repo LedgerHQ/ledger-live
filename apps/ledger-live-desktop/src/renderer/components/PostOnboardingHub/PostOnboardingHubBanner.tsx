@@ -9,8 +9,6 @@ import Illustration from "~/renderer/components/Illustration";
 import bannerStaxLight from "./assets/bannerStaxLight.svg";
 import bannerStaxDark from "./assets/bannerStaxDark.svg";
 
-import { useHistory } from "react-router-dom";
-
 const CloseButtonWrapper = styled(Box).attrs(() => ({
   top: 4,
   right: 4,

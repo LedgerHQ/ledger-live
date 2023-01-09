@@ -1,23 +1,14 @@
 import React, { useCallback } from "react";
-import { useDispatch } from "react-redux";
-import { Flex, Link, Text } from "@ledgerhq/react-ui";
+import { Flex, Link } from "@ledgerhq/react-ui";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { clearPostOnboardingLastActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
 
 import PostOnboardingHub from ".";
-import { setDrawer } from "~/renderer/drawers/Provider";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 
 const PostOnboardingHubContent = () => {
   const { t } = useTranslation();
   const history = useHistory();
-  const dispatch = useDispatch();
-
-  const clearLastActionCompleted = useCallback(() => {
-    dispatch(clearPostOnboardingLastActionCompleted());
-    setDrawer();
-  }, [dispatch]);
 
   const handleSkipButton = useCallback(() => {
     history.push("/");
