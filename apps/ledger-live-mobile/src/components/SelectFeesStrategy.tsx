@@ -30,7 +30,7 @@ import TachometerMedium from "../icons/TachometerMedium";
 import TachometerFast from "../icons/TachometerFast";
 import NetworkFeeInfo from "./NetworkFeeInfo";
 import { useAnalytics } from "../analytics";
-import { SWAP_VERSION } from "../screens/Swap/utils";
+import { sharedSwapTracking } from "../screens/Swap/utils";
 
 type Props = {
   strategies: (FeeStrategy & { userGasLimit?: BigNumber })[];
@@ -77,10 +77,9 @@ export default function SelectFeesStrategy({
   const onPressStrategySelect = useCallback(
     (item: FeeStrategy) => {
       track("button_clicked", {
+        ...sharedSwapTracking,
         button: item.label,
-        flow: "swap",
         page: "Swap quotes",
-        swapVersion: SWAP_VERSION,
       });
       onStrategySelect({
         amount: item.amount,

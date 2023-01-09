@@ -34,7 +34,7 @@ import {
 import type { SwapNavigatorParamList } from "../../../../components/RootNavigator/types/SwapNavigator";
 import type { SwapFormNavigatorParamList } from "../../../../components/RootNavigator/types/SwapFormNavigator";
 import { useAnalytics } from "../../../../analytics";
-import { SWAP_VERSION } from "../../utils";
+import { sharedSwapTracking } from "../../utils";
 
 interface Props {
   provider?: string;
@@ -74,9 +74,8 @@ export function Summary({
 
   const onEditProvider = useCallback(() => {
     track("button_clicked", {
+      ...sharedSwapTracking,
       button: "provider",
-      flow: "swap",
-      swapVersion: SWAP_VERSION,
     });
     navigation.navigate(ScreenName.SwapSelectProvider, {
       swap,
@@ -87,9 +86,8 @@ export function Summary({
 
   const onAddAccount = useCallback(() => {
     track("button_clicked", {
+      ...sharedSwapTracking,
       button: "add account",
-      flow: "swap",
-      swapVersion: SWAP_VERSION,
     });
     if (!to.currency) return;
 

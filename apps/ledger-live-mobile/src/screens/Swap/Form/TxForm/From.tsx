@@ -18,7 +18,7 @@ import { fromSelector, pairsSelector } from "../../../../actions/swap";
 import TranslatedError from "../../../../components/TranslatedError";
 import { ScreenName } from "../../../../const";
 import { useAnalytics } from "../../../../analytics";
-import { SWAP_VERSION } from "../../utils";
+import { sharedSwapTracking } from "../../utils";
 
 interface Props {
   provider?: string;
@@ -62,9 +62,8 @@ export function From({ swapTx, provider, swapError, isSendMaxLoading }: Props) {
 
   const onPress = useCallback(() => {
     track("button_clicked", {
+      ...sharedSwapTracking,
       button: "Edit source account",
-      flow: "swap",
-      swapVersion: SWAP_VERSION,
     });
     // @ts-expect-error navigation type is only partially declared
     navigation.navigate(ScreenName.SwapSelectAccount, {

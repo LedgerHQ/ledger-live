@@ -12,7 +12,7 @@ import { SelectProviderParamList } from "../types";
 import CounterValue from "../../../components/CounterValue";
 import { TrackScreen, useAnalytics } from "../../../analytics";
 import { ScreenName } from "../../../const";
-import { SWAP_VERSION } from "../utils";
+import { sharedSwapTracking, SWAP_VERSION } from "../utils";
 
 export function SelectProvider({
   navigation,
@@ -34,10 +34,9 @@ export function SelectProvider({
   const onSelect = useCallback(
     (rate: ExchangeRate) => {
       track("button_clicked", {
+        ...sharedSwapTracking,
         button: "Partner Chosen",
         swapType: rate.tradeMethod,
-        flow: "swap",
-        swapVersion: SWAP_VERSION,
         defaultPartner: selectedRate?.provider ?? "missing",
         totalPartners: rates.value?.length ?? "missing",
       });

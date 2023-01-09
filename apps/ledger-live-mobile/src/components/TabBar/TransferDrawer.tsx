@@ -23,7 +23,7 @@ import TransferButton from "./TransferButton";
 import BuyDeviceBanner, { IMAGE_PROPS_SMALL_NANO } from "../BuyDeviceBanner";
 import SetupDeviceBanner from "../SetupDeviceBanner";
 import { useAnalytics } from "../../analytics";
-import { SWAP_VERSION } from "../../screens/Swap/utils";
+import { sharedSwapTracking } from "../../screens/Swap/utils";
 
 export default function TransferDrawer({ onClose }: ModalProps) {
   const navigation = useNavigation();
@@ -67,9 +67,8 @@ export default function TransferDrawer({ onClose }: ModalProps) {
   );
   const onSwap = useCallback(() => {
     track("button_clicked", {
+      ...sharedSwapTracking,
       button: "swap",
-      flow: "swap",
-      swapVersion: SWAP_VERSION,
     });
     onNavigate(NavigatorName.Swap, {
       screen: ScreenName.SwapForm,

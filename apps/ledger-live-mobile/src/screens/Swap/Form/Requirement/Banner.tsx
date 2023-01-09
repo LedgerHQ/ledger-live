@@ -6,7 +6,7 @@ import { StackNavigatorNavigation } from "../../../../components/RootNavigator/t
 import { SwapNavigatorParamList } from "../../../../components/RootNavigator/types/SwapNavigator";
 import { ScreenName } from "../../../../const";
 import { useAnalytics } from "../../../../analytics";
-import { SWAP_VERSION } from "../../utils";
+import { sharedSwapTracking } from "../../utils";
 
 interface Props {
   required: ScreenName.SwapLogin | ScreenName.SwapKYC | ScreenName.SwapMFA;
@@ -22,8 +22,7 @@ export function RequirementBanner({ provider, required }: Props) {
   const onPress = useCallback(() => {
     if (provider) {
       track("button_clicked", {
-        swapVersion: SWAP_VERSION,
-        flow: "swap",
+        ...sharedSwapTracking,
         provider,
         button: required,
       });

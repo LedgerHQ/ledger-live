@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Flex, Text, Switch } from "@ledgerhq/native-ui";
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import { useAnalytics } from "../../../analytics";
+import { sharedSwapTracking } from "../utils";
 
 export function Max({ swapTx }: { swapTx: SwapTransactionType }) {
   const { t } = useTranslation();
@@ -10,8 +11,8 @@ export function Max({ swapTx }: { swapTx: SwapTransactionType }) {
 
   const onToggle = (event: boolean) => {
     track("button_clicked", {
+      ...sharedSwapTracking,
       button: "max",
-      flow: "swap",
       state: event,
     });
     swapTx.toggleMax();

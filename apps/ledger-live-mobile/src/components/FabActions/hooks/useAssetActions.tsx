@@ -13,7 +13,7 @@ import {
 } from "../../../reducers/settings";
 import { ActionButtonEvent } from "..";
 import ZeroBalanceDisabledModalContent from "../modals/ZeroBalanceDisabledModalContent";
-import { SWAP_VERSION } from "../../../screens/Swap/utils";
+import { sharedSwapTracking } from "../../../screens/Swap/utils";
 
 type useAssetActionsProps = {
   currency?: CryptoCurrency | TokenCurrency;
@@ -128,9 +128,8 @@ export default function useAssetActions({
                     Icon: iconSwap,
                     event: "button_clicked",
                     eventProperties: {
+                      ...sharedSwapTracking,
                       button: "swap",
-                      flow: "swap",
-                      swapVersion: SWAP_VERSION,
                     },
                     navigationParams: [
                       NavigatorName.Swap,
