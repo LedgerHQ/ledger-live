@@ -1,6 +1,6 @@
 import { DeviceId, DeviceInfo } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
-import { scan, tap } from "rxjs/operators";
+import { scan } from "rxjs/operators";
 import {
   SharedActionState,
   getSharedInitialState,
@@ -29,9 +29,9 @@ export const initialState: GetDeviceInfoActionState = {
 export function getDeviceInfoAction({
   deviceId,
 }: GetDeviceInfoActionArgs): Observable<GetDeviceInfoActionState> {
-  // TODO: what does it looks like with several tasks ?
+  // TODO: to decide: should we push an event if the state is not changing?
+  // For ex: when the device is locked with 0x5515: an event with lockedDevice: true is pushed for each retry
   return getDeviceInfoTask({ deviceId }).pipe(
-    tap((event) => console.log(`🦖 ${JSON.stringify(event)}`)),
     scan(
       (
         currentState: GetDeviceInfoActionState,
