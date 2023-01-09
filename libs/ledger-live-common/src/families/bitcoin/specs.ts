@@ -89,8 +89,6 @@ const genericTest = ({
   });
 
   botTest("operation matches tx senders and recipients", () => {
-    console.log(transaction);
-
     if (transaction.opReturnData) {
       // transaction.recipient has format <coinId>:<address>
       const [, recipientAddress] = transaction.recipient.split(":")[1];
