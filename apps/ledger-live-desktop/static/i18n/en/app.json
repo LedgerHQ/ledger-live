@@ -3782,7 +3782,7 @@
         },
         "experimentalExecutionOnRenderer": {
           "title": "Experimental networking",
-          "description": "Use experimental networking to optimise your Ledger Live experience with your VPN. Activate this only if your current VPN causes system errors."
+          "description": "Use experimental networking to optimize your Ledger Live experience with your VPN. Activate this only if your current VPN causes system errors."
         },
         "experimentalLanguages": {
           "title": "Translation testing",
