@@ -28,21 +28,30 @@ jobs:
     env:
       SKIP_BUNDLE_CHECK: 1
     steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - uses: actions/checkout@v3
         if: ${{ github.event.inputs.ref != null }}
         with:
           ref: ${{ github.event.inputs.ref }}
+          token: ${{ steps.generate-token.outputs.token }}
       - uses: actions/checkout@v3
         if: ${{ !github.event.inputs.ref }}
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
       - name: Checkout PR
         if: ${{ github.event.inputs.number != null }}
         run: gh pr checkout ${{ github.event.inputs.number }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: set git user
-        run: |
-          git config user.email "team-live@ledger.fr"
-          git config user.name "Team Live"
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+      # - name: set git user
+      #   run: |
+      #     git config user.email "team-live@ledger.fr"
+      #     git config user.name "Team Live"
       - uses: pnpm/action-setup@v2
         with:
           version: latest
@@ -81,6 +90,7 @@ jobs:
         if: failure() && github.event.inputs.number != null
         uses: actions/github-script@v6
         with:
+          github-token: ${{ steps.generate-token.outputs.token }}
           script: |
             const fs = require("fs");
             const body = `#### ❌ Podfile regeneration failed
@@ -91,6 +101,7 @@ jobs:
         if: github.event.inputs.number != null && steps.check-status.outputs.status != 0
         uses: actions/github-script@v6
         with:
+          github-token: ${{ steps.generate-token.outputs.token }}
           script: |
             const fs = require("fs");
             const body = `#### 🚀 Podfile regenerated
@@ -101,6 +112,7 @@ jobs:
         if: github.event.inputs.number != null && steps.check-status.outputs.status == 0
         uses: actions/github-script@v6
         with:
+          github-token: ${{ steps.generate-token.outputs.token }}
           script: |
             const fs = require("fs");
             const body = `#### ✨ No changes detected
@@ -119,9 +131,16 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.inputs.commentId != ''
     steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - name: report start
         uses: actions/github-script@v6
         with:
+          github-token: ${{ steps.generate-token.outputs.token }}
           result-encoding: string
           retries: 3
           script: |
@@ -146,6 +165,12 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - uses: actions/download-artifact@v3
         name: download summary
         with:
@@ -153,6 +178,7 @@ jobs:
       - name: report job status
         uses: actions/github-script@v6
         with:
+          github-token: ${{ steps.generate-token.outputs.token }}
           result-encoding: string
           retries: 3
           script: |
