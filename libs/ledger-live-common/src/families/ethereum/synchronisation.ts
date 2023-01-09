@@ -60,15 +60,15 @@ export const getAccountShape: GetAccountShape = async (
       withDelisted: true,
     }).length;
   const outdatedSyncHash = initialAccount?.syncHash !== syncHash;
-  const pullFromBlockHash =
+  const pullFromBlockHeight =
     initialAccount &&
     areAllOperationsLoaded(initialAccount) &&
     mostRecentStableOperation &&
     blockHashExistsOnChain &&
     !outdatedSyncHash
-      ? mostRecentStableOperation.blockHash
+      ? mostRecentStableOperation.blockHeight
       : undefined;
-  const txsP = fetchAllTransactions(api, address, pullFromBlockHash);
+  const txsP = fetchAllTransactions(api, address, pullFromBlockHeight);
   const [txs, currentBlock, balance] = await Promise.all([
     txsP,
     currentBlockP,
@@ -76,7 +76,7 @@ export const getAccountShape: GetAccountShape = async (
   ]);
   const blockHeight = currentBlock.height.toNumber();
 
-  if (!pullFromBlockHash && txs.length === 0) {
+  if (!pullFromBlockHeight && txs.length === 0) {
     log("ethereum", "no ops on " + address);
     return {
       id: accountId,
@@ -582,19 +582,19 @@ const fetchCurrentBlock = ((perCurrencyId) => (currency) => {
 
 // FIXME we need to figure out how to optimize this
 // but nothing can easily be done until we have a better api
-const fetchAllTransactions = async (api: API, address, blockHash) => {
+const fetchAllTransactions = async (api: API, address, blockHeight) => {
   let getTransactionsResult: Tx[];
   let txs: Tx[] = [];
   let maxIteration = 20; // safe limit
 
   do {
-    getTransactionsResult = await api.getTransactions(address, blockHash);
+    getTransactionsResult = await api.getTransactions(address, blockHeight);
     if (getTransactionsResult.length === 0) return txs;
     txs = txs.concat(getTransactionsResult);
-    blockHash = txs[txs.length - 1].block?.hash;
+    blockHeight = txs[txs.length - 1].block?.height;
 
-    if (!blockHash) {
-      log("ethereum", "block.hash missing!");
+    if (!blockHeight) {
+      log("ethereum", "block.height missing!");
       return txs;
     }
   } while (--maxIteration);
