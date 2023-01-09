@@ -63,6 +63,17 @@ function readPackage(pkg, context) {
         { silent: true }
       ),
       /*
+        Fix the unmet peer dep on rxjs for the wallet-api-server
+        Because we're still using rxjs v6 everywhere
+        We only added rxjs v7 as an alias on rxjs7
+      */
+      addDependencies("@ledgerhq/wallet-api-server", {
+        rxjs: pkg.peerDependencies?.rxjs ?? "*",
+      }),
+      removeDependencies("@ledgerhq/wallet-api-server", ["rxjs"], {
+        kind: "peerDependencies",
+      }),
+      /*
         The following packages are broken and do not declare their dependencies properly.
         So we are going to patch these until the maintainers fix their own stuff…
         Feel free to make PRs if you feel like it :).

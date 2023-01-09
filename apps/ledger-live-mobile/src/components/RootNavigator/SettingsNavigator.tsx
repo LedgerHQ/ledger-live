@@ -47,7 +47,6 @@ import ExperimentalSettings from "../../screens/Settings/Experimental";
 import DeveloperSettings, {
   DeveloperCustomManifest,
 } from "../../screens/Settings/Developer";
-import RepairDevice from "../../screens/RepairDevice";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import Button from "../Button";
 import HelpButton from "../../screens/Settings/HelpButton";
@@ -152,13 +151,6 @@ export default function SettingsNavigator() {
           headerRight: undefined,
         })}
         {...noNanoBuyNanoWallScreenOptions}
-      />
-      <Stack.Screen
-        name={ScreenName.RepairDevice}
-        component={RepairDevice}
-        options={{
-          title: t("RepairDevice.title"),
-        }}
       />
       <Stack.Screen
         name={ScreenName.ExperimentalSettings}
