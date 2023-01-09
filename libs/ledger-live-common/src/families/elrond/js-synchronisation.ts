@@ -1,4 +1,4 @@
-import { encodeAccountId, inferSubOperations } from "../../account";
+import { encodeAccountId } from "../../account";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
 import {
@@ -9,29 +9,8 @@ import {
 } from "./api";
 import elrondBuildESDTTokenAccounts from "./js-buildSubAccounts";
 import { reconciliateSubAccounts } from "./js-reconciliation";
-import { Operation, SubAccount, TokenAccount } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
 import { computeDelegationBalance } from "./logic";
-
-function pruneOperations(
-  operations: Operation[],
-  subAccounts: SubAccount[]
-): Operation[] {
-  const allOperations: Operation[] = [];
-  for (const operation of operations) {
-    const subOperations = subAccounts
-      ? inferSubOperations(operation.hash, subAccounts)
-      : undefined;
-
-    if (subOperations?.length !== 0) {
-      //prevent doubled transactions in account history
-      continue;
-    }
-
-    allOperations.push(operation);
-  }
-
-  return allOperations;
-}
 
 const getAccountShape: GetAccountShape = async (info, syncConfig) => {
   const { address, initialAccount, currency, derivationMode } = info;
@@ -90,7 +69,7 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
       delegations,
     },
     subAccounts,
-    operations: pruneOperations(operations, subAccounts),
+    operations,
   };
 };
 
