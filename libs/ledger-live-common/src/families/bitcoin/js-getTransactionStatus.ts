@@ -110,7 +110,7 @@ const getTransactionStatus = async (
     `totalSpent ${totalSpent.toString()} amount ${amount.toString()}`
   );
 
-  if (!errors.amount && !amount.gt(0) && !opReturnData) {
+  if (!errors.amount && !amount.gt(0)) {
     errors.amount = useAllAmount
       ? new NotEnoughBalance()
       : new AmountRequired();
