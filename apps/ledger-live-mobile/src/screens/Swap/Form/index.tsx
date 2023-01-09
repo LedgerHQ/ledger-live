@@ -46,13 +46,13 @@ import {
   updateRateAction,
   updateTransactionAction,
 } from "../../../actions/swap";
-import { TrackScreen, track, useAnalytics } from "../../../analytics";
+import { TrackScreen, useAnalytics } from "../../../analytics";
 import { Loading } from "../Loading";
 import { NotAvailable } from "./NotAvailable";
 import { TxForm } from "./TxForm";
 import { Summary } from "./Summary";
 import { Requirement } from "./Requirement";
-import { trackSwapError, SWAP_VERSION } from "../utils";
+import { SWAP_VERSION, sharedSwapTracking, useTrackSwapError } from "../utils";
 import { Max } from "./Max";
 import { Modal } from "./Modal";
 import { Connect } from "./Connect";
@@ -95,6 +95,7 @@ export function SwapForm({
   ScreenName.SwapForm
 >) {
   const { track } = useAnalytics();
+  const trackSwapError = useTrackSwapError();
   const [currentFlow, setCurrentFlow] = useState<ActionRequired>(
     ActionRequired.None,
   );
@@ -115,11 +116,21 @@ export function SwapForm({
     },
     [dispatch],
   );
+  const onNoRates: OnNoRatesCallback = useCallback(
+    ({ toState }) => {
+      track("error_message", {
+        ...sharedSwapTracking,
+        message: "no_rates",
+        sourceCurrency: toState.currency?.name,
+      });
+    },
+    [track],
+  );
   const swapTransaction = useSwapTransaction({
     accounts,
     setExchangeRate,
     setIsSendMaxLoading,
-    onNoRates: trackNoRates,
+    onNoRates,
     excludeFixedRates: true,
     providers,
     includeDEX: false,
@@ -206,7 +217,6 @@ export function SwapForm({
         trackSwapError(swapError, {
           sourcecurrency: swapTransaction.swap.from.currency?.name,
           provider,
-          swapVersion: SWAP_VERSION,
         });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -484,13 +494,3 @@ export function SwapForm({
 
   return <Loading />;
 }
-
-const trackNoRates: OnNoRatesCallback = ({ toState }) => {
-  track(
-    "Page Swap Form - Error No Rate",
-    {
-      sourceCurrency: toState.currency?.name,
-    },
-    undefined,
-  );
-};
