@@ -6,8 +6,14 @@ import { ZilliqaAccount } from "./types";
 import Zilliqa from "@ledgerhq/hw-app-zilliqa";
 
 const getAccountShape: GetAccountShape = async (info) => {
-  const { address, initialAccount, currency, transport, derivationMode, rest } =
-    info;
+  const {
+    address,
+    initialAccount,
+    currency,
+    transport,
+    derivationMode,
+    rest,
+  } = info;
   const account = initialAccount as ZilliqaAccount;
 
   let publicKey: undefined | string;
@@ -64,7 +70,9 @@ const getAccountShape: GetAccountShape = async (info) => {
     },
   };
 
-  return { ...shape, operations };
+  const pendingOperations = [];
+
+  return { ...shape, operations, pendingOperations };
 };
 
 export const scanAccounts = makeScanAccounts({ getAccountShape });
