@@ -46,7 +46,7 @@ import {
   updateRateAction,
   updateTransactionAction,
 } from "../../../actions/swap";
-import { TrackScreen, track } from "../../../analytics";
+import { TrackScreen, track, useAnalytics } from "../../../analytics";
 import { Loading } from "../Loading";
 import { NotAvailable } from "./NotAvailable";
 import { TxForm } from "./TxForm";
@@ -94,6 +94,7 @@ export function SwapForm({
   SwapFormNavigatorParamList,
   ScreenName.SwapForm
 >) {
+  const { track } = useAnalytics();
   const [currentFlow, setCurrentFlow] = useState<ActionRequired>(
     ActionRequired.None,
   );
@@ -330,17 +331,19 @@ export function SwapForm({
 
   const onSubmit = useCallback(() => {
     track(
-      "Page Swap Form - Request",
+      "button_clicked",
       {
         sourceCurrency: swapTransaction.swap.from.currency?.name,
         targetCurrency: swapTransaction.swap.to.currency?.name,
         provider,
         swapVersion: SWAP_VERSION,
+        flow: "swap",
+        button: "exchange",
       },
       undefined,
     );
     setConfirmed(true);
-  }, [swapTransaction, provider]);
+  }, [swapTransaction, provider, track]);
 
   const onCloseModal = useCallback(() => {
     setConfirmed(false);
@@ -415,7 +418,12 @@ export function SwapForm({
       <KeyboardAwareScrollView>
         <Flex flex={1} justifyContent="space-between" padding={6}>
           <Flex flex={1}>
-            <TrackScreen category="Swap Form" providerName={provider} />
+            <TrackScreen
+              category="Swap"
+              providerName={provider}
+              flow="swap"
+              swapVersion={SWAP_VERSION}
+            />
             <TxForm
               swapTx={swapTransaction}
               provider={provider}
