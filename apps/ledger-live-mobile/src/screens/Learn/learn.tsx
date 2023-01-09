@@ -15,7 +15,7 @@ const keyExtractor = (item: LearnContentCard) => item.id;
 function LearnSection() {
   const { learnCards, trackContentCardEvent } = useDynamicContent();
   const navigation = useNavigation();
-  const { colors } = useTheme();
+  const { colors, space, radii } = useTheme();
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -47,9 +47,9 @@ function LearnSection() {
       <Skeleton
         loading={isLoading}
         height="85px"
-        mx="16px"
-        my="8px"
-        borderRadius="8px"
+        mx={`${space[6]}px`}
+        my={`${space[3]}px`}
+        borderRadius={`${radii[2]}px`}
       >
         <Container
           underlayColor={colors.neutral.c30}
@@ -79,10 +79,10 @@ function LearnSection() {
 }
 
 const Container = styled(TouchableHighlight)`
-  padding-left: 16px;
-  padding-right: 16px;
-  padding-top: 8px;
-  padding-bottom: 8px;
+  padding-left: ${props => props.theme.space[6]};
+  padding-right: ${props => props.theme.space[6]};
+  padding-top: ${props => props.theme.space[3]};
+  padding-bottom: ${props => props.theme.space[3]};
 `;
 
 export default memo(LearnSection);

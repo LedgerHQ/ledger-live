@@ -22,6 +22,7 @@ function LearnWebView({ route }: NavigationProps) {
   const navigation = useNavigation();
   const {
     colors: { type: themeType },
+    space,
   } = useTheme();
 
   const params = new URLSearchParams({
@@ -79,7 +80,7 @@ function LearnWebView({ route }: NavigationProps) {
             </Text>
           </Flex>
           <Flex width="20%" alignItems="flex-end">
-            <TouchableOpacity onPress={goBack} style={{ padding: 16 }}>
+            <TouchableOpacity onPress={goBack} style={{ padding: space[6] }}>
               <Text variant="body" fontWeight="semiBold">
                 {t("common.close")}
               </Text>
