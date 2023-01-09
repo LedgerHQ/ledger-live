@@ -19,7 +19,7 @@ type Props = {
   onDismiss?: () => void;
 };
 
-const CardA = ({
+const FullBackgroundCard = ({
   variant,
   backgroundImage,
   tag,
@@ -65,8 +65,8 @@ const CardA = ({
                 {tag}
               </Text>
             </Flex>
-            <TouchableOpacity onPress={onDismiss}>
-              <Flex bg="neutral.c30" top={-8} right={-8} p="6px" borderRadius={24}>
+            <TouchableOpacity onPress={onDismiss} style={{ top: -8, right: -8 }}>
+              <Flex bg="neutral.c30" p="6px" borderRadius={24}>
                 <Icon name="Close" size={12} color="neutral.c100" />
               </Flex>
             </TouchableOpacity>
@@ -89,4 +89,4 @@ const CardA = ({
   );
 };
 
-export default CardA;
+export default FullBackgroundCard;

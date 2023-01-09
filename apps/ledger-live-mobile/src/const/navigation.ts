@@ -410,7 +410,7 @@ export enum ScreenName {
   WalletConnectScan = "WalletConnectScan",
   WalletConnectConnect = "WalletConnectConnect",
   WalletConnectDeeplinkingSelectAccount = "WalletConnectDeeplinkingSelectAccount",
-  NotificationCenterNews = "NotificationCenterNews",
+  NotificationCenter = "NotificationCenter",
   NotificationCenterStatus = "NotificationCenterStatus",
   SignTransactionSummary = "SignTransactionSummary",
   SignTransactionSelectDevice = "SignTransactionSelectDevice",
