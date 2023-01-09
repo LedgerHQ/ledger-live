@@ -12,7 +12,6 @@ import {
   getMinimumGasPrice,
   ZILLIQA_TX_GAS_LIMIT,
 } from "./api";
-import { toAccountRaw } from "../../account";
 export const buildNativeTransaction = async (
   account: ZilliqaAccount,
   toAddr: string,
@@ -24,10 +23,6 @@ export const buildNativeTransaction = async (
   if (!account.zilliqaResources) {
     throw new Error("Zilliqa resources missing on account.");
   }
-  console.log("ACCOUNT:");
-  console.log(toAccountRaw(account));
-  console.log(account.balance.toString());
-  console.log(account.spendableBalance.toString());
 
   const gasPrice = maybeGasPrice || (await getMinimumGasPrice());
   const gasLimit = new Long(ZILLIQA_TX_GAS_LIMIT);
