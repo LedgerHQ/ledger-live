@@ -73,6 +73,7 @@ const WebViewScreen = ({
       ref.current?.goBack();
     });
 
+    // eslint-disable-next-line consistent-return
     return unsubscribe;
   }, [canGoBack, navigation]);
 
