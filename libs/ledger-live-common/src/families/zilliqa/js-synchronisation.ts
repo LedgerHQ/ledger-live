@@ -15,7 +15,6 @@ const getAccountShape: GetAccountShape = async (info) => {
     rest,
   } = info;
   const account = initialAccount as ZilliqaAccount;
-  const { freshAddressPath } = account;
 
   let publicKey: undefined | string;
 
@@ -28,7 +27,8 @@ const getAccountShape: GetAccountShape = async (info) => {
   ) {
     // UI has a zilliqaResources attribute
     publicKey = account.zilliqaResources.publicKey;
-  } else if (transport && freshAddressPath) {
+  } else if (transport && account && account.freshAddressPath) {
+    const { freshAddressPath } = account;
     // In case the public key is not on the account, we
     // request it from the hardware
     const zilliqa = new Zilliqa(transport);
