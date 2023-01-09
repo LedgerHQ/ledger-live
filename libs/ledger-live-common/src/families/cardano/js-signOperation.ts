@@ -38,6 +38,8 @@ import {
   prepareLedgerInput,
   prepareLedgerOutput,
   prepareStakeRegistrationCertificate,
+  prepareStakeDeRegistrationCertificate,
+  prepareWithdrawal,
 } from "./tx-helpers";
 
 const buildOptimisticOperation = (
@@ -229,10 +231,20 @@ const signOperation = ({
               return prepareStakeDelegationCertificate(
                 rcert as TyphonTypes.StakeDelegationCertificate
               );
+            } else if (
+              rcert.certType ===
+              (CertificateType.STAKE_DEREGISTRATION as number)
+            ) {
+              return prepareStakeDeRegistrationCertificate(
+                rcert as TyphonTypes.StakeDeRegistrationCertificate
+              );
             } else {
               throw new Error("Invalid Certificate type");
             }
           });
+
+          const rawWithdrawals = unsignedTransaction.getWithdrawals();
+          const ledgerWithdrawals = rawWithdrawals.map(prepareWithdrawal);
 
           const auxiliaryDataHashHex =
             unsignedTransaction.getAuxiliaryDataHashHex();
@@ -250,7 +262,7 @@ const signOperation = ({
               inputs: ledgerAppInputs,
               outputs: ledgerAppOutputs,
               certificates: ledgerCertificates,
-              withdrawals: [],
+              withdrawals: ledgerWithdrawals,
               fee: unsignedTransaction.getFee().toString(),
               ttl: unsignedTransaction.getTTL()?.toString(),
               validityIntervalStart: null,

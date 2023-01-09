@@ -327,6 +327,69 @@ const buildDelegateTransaction = async ({
   });
 };
 
+const buildUndelegateTransaction = async ({
+  a,
+  t,
+  typhonTx,
+  changeAddress,
+}: {
+  a: CardanoAccount;
+  t: Transaction;
+  typhonTx: TyphonTransaction;
+  changeAddress: TyphonTypes.CardanoAddress;
+}): Promise<TyphonTransaction> => {
+  const cardanoResources = a.cardanoResources as CardanoResources;
+
+  const stakeCredential = getAccountStakeCredential(a.xpub as string, a.index);
+  const stakeKeyHashCredential: TyphonTypes.HashCredential = {
+    hash: stakeCredential.key,
+    type: TyphonTypes.HashType.ADDRESS,
+    bipPath: stakeCredential.path,
+  };
+
+  if (!cardanoResources.delegation || !cardanoResources.delegation.status) {
+    throw new Error("StakeKey is not registered");
+  }
+
+  const rewardsWithdrawalCertificate = getRewardWithdrawalCertificate(a);
+  if (rewardsWithdrawalCertificate)
+    typhonTx.addWithdrawal(rewardsWithdrawalCertificate);
+
+  const stakeKeyDeRegistrationCertificate: TyphonTypes.StakeDeRegistrationCertificate =
+    {
+      certType: TyphonTypes.CertificateType.STAKE_DE_REGISTRATION,
+      stakeCredential: stakeKeyHashCredential,
+    };
+  typhonTx.addCertificate(stakeKeyDeRegistrationCertificate);
+
+  // sorting utxo from higher to lower ADA value
+  // to minimize the number of utxo use in transaction
+  const sortedUtxos = cardanoResources.utxos.sort((a, b) => {
+    const diff = b.amount.minus(a.amount);
+    return diff.eq(0) ? 0 : diff.lt(0) ? -1 : 1;
+  });
+
+  const transactionInputs: Array<TyphonTypes.Input> = [];
+  const usedUtxoAdaAmount = new BigNumber(0);
+  // Add 10 ADA as buffer for utxo selection to cover the transaction fees.
+  const requiredInputAmount = t.amount.plus(10e6);
+  for (
+    let i = 0;
+    i < sortedUtxos.length && usedUtxoAdaAmount.lte(requiredInputAmount);
+    i++
+  ) {
+    const utxo = sortedUtxos[i];
+    const transactionInput = getTyphonInputFromUtxo(utxo);
+    transactionInputs.push(transactionInput);
+    usedUtxoAdaAmount.plus(transactionInput.amount);
+  }
+
+  return typhonTx.prepareTransaction({
+    inputs: transactionInputs,
+    changeAddress,
+  });
+};
+
 /**
  *
  * @param {CardanoAccount} a
@@ -411,6 +474,8 @@ export const buildTransaction = async (
     });
   } else if (t.mode === "delegate") {
     return buildDelegateTransaction({ a, t, typhonTx, changeAddress });
+  } else if (t.mode === "undelegate") {
+    return buildUndelegateTransaction({ a, t, typhonTx, changeAddress });
   } else {
     throw new Error("Invalid transaction mode");
   }

@@ -158,7 +158,7 @@ export type CardanoResourcesRaw = {
   protocolParams: ProtocolParamsRaw;
 };
 
-export type CardanoOperationMode = "send" | "delegate";
+export type CardanoOperationMode = "send" | "delegate" | "undelegate";
 
 /**
  * Cardano transaction

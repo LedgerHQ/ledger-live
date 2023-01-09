@@ -9,7 +9,7 @@ const options = [
   {
     name: "mode",
     type: String,
-    desc: "mode of transaction: send, delegate",
+    desc: "mode of transaction: send, delegate, undelegate",
   },
   {
     name: "token",

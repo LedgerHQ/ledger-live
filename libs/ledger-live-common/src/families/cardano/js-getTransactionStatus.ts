@@ -152,6 +152,30 @@ async function getDelegateTransactionStatus(
   });
 }
 
+async function getUndelegateTransactionStatus(
+  a: CardanoAccount,
+  t: Transaction
+): Promise<TransactionStatus> {
+  const errors: Record<string, Error> = {};
+  const warnings: Record<string, Error> = {};
+
+  const cardanoResources = a.cardanoResources as CardanoResources;
+
+  const estimatedFees = t.fees || new BigNumber(0);
+
+  if (!cardanoResources.delegation?.status) {
+    throw new Error("StakeKey is not registered");
+  }
+
+  return Promise.resolve({
+    errors,
+    warnings,
+    estimatedFees,
+    amount: new BigNumber(0),
+    totalSpent: estimatedFees,
+  });
+}
+
 const getTransactionStatus = async (
   a: CardanoAccount,
   t: Transaction
@@ -164,6 +188,8 @@ const getTransactionStatus = async (
     return getSendTransactionStatus(a, t);
   } else if (t.mode === "delegate") {
     return getDelegateTransactionStatus(a, t);
+  } else if (t.mode === "undelegate") {
+    return getUndelegateTransactionStatus(a, t);
   } else {
     throw new Error("Invalid transaction mode");
   }
