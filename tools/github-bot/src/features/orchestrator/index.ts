@@ -206,6 +206,7 @@ export function orchestrator(app: Probot) {
       }
 
       let summary = `The **[workflow run](${payload.workflow_run.html_url})** has completed with status \`${payload.workflow_run.conclusion}\`.`;
+      let defaultSummary = true;
       let actions;
       let annotations;
       if (matchedWorkflow.summaryFile) {
@@ -230,6 +231,7 @@ export function orchestrator(app: Probot) {
           const newSummary = JSON.parse(rawSummary.toString());
           if (newSummary.summary) {
             summary = newSummary?.summary;
+            defaultSummary = false;
           }
           actions = newSummary?.actions;
           annotations = newSummary?.annotations;
@@ -237,7 +239,11 @@ export function orchestrator(app: Probot) {
       }
 
       const summaryPrefix = matchedWorkflow.description
-        ? `#### ${matchedWorkflow.description}\n\n`
+        ? `#### ${matchedWorkflow.description}${
+            !defaultSummary
+              ? `\n##### [🔗 Workflow run](${payload.workflow_run.html_url})`
+              : ""
+          }\n\n`
         : "";
       summary = summaryPrefix + summary;
 
