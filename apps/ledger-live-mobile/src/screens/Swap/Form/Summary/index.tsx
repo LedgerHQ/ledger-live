@@ -150,6 +150,23 @@ export function Summary({
     });
   }, [track, navigation, route.params, swap, transaction]);
 
+  const onEditTargetAccount = useCallback(() => {
+    track("button_clicked", {
+      ...sharedSwapTracking,
+      button: "change target account",
+    });
+    const selectableCurrencyIds =
+      to.currency?.type === "TokenCurrency"
+        ? [to.currency.id, to.currency.parentCurrency.id]
+        : [to.currency?.id as string];
+    navigation.navigate(ScreenName.SwapSelectAccount, {
+      target: "to",
+      selectedCurrency: to.currency!,
+      selectableCurrencyIds,
+      swap,
+    });
+  }, [track, navigation, to.currency, swap]);
+
   const fromUnit = from.currency?.units[0];
   const mainFromAccount =
     from.account && getMainAccount(from.account, from.parentAccount);
@@ -225,18 +242,7 @@ export function Summary({
       {to.account ? (
         <Item
           title={t("transfer.swap2.form.details.label.target")}
-          onEdit={() => {
-            const selectableCurrencyIds =
-              to.currency?.type === "TokenCurrency"
-                ? [to.currency.id, to.currency.parentCurrency.id]
-                : [to.currency?.id as string];
-            navigation.navigate(ScreenName.SwapSelectAccount, {
-              target: "to",
-              selectedCurrency: to.currency!,
-              selectableCurrencyIds,
-              swap,
-            });
-          }}
+          onEdit={onEditTargetAccount}
         >
           <Flex flexDirection="row" alignItems="center">
             {<CurrencyIcon size={20} currency={to.currency} />}
