@@ -13,6 +13,8 @@ import BigNumber from "bignumber.js";
 import SelectFeesStrategy from "../../components/SelectFeesStrategy";
 import { SendRowsFeeProps as Props } from "./types";
 import { ScreenName } from "../../const";
+import { useAnalytics } from "../../analytics";
+import { sharedSwapTracking } from "../../screens/Swap/utils";
 
 const getCustomStrategy = (
   transaction: EthereumTransaction,
@@ -41,6 +43,7 @@ export default function EthereumFeesStrategy({
   route,
   ...props
 }: Props<EthereumTransaction>) {
+  const { track } = useAnalytics();
   const { currency } = getMainAccount(account, parentAccount);
 
   const defaultStrategies = useFeesStrategy(transaction);
@@ -80,6 +83,10 @@ export default function EthereumFeesStrategy({
   );
 
   const openCustomFees = useCallback(() => {
+    track("button_clicked", {
+      ...sharedSwapTracking,
+      button: "customize fees",
+    });
     navigation.navigate(ScreenName.EthereumCustomFees, {
       ...route.params,
       accountId: account.id,
@@ -90,10 +97,11 @@ export default function EthereumFeesStrategy({
       setTransaction,
     });
   }, [
+    track,
     navigation,
     route.params,
     account.id,
-    parentAccount,
+    parentAccount?.id,
     transaction,
     setTransaction,
   ]);

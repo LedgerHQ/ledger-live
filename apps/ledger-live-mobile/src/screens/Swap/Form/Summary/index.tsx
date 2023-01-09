@@ -138,6 +138,18 @@ export function Summary({
       : rawCounterValue;
   }, [effectiveUnit, exchangeRate?.magnitudeAwareRate, rawCounterValue]);
 
+  const onEditNetworkFees = useCallback(() => {
+    track("button_clicked", {
+      ...sharedSwapTracking,
+      button: "change network fees",
+    });
+    navigation.navigate(ScreenName.SwapSelectFees, {
+      ...route.params,
+      swap,
+      transaction,
+    });
+  }, [track, navigation, route.params, swap, transaction]);
+
   const fromUnit = from.currency?.units[0];
   const mainFromAccount =
     from.account && getMainAccount(from.account, from.parentAccount);
@@ -203,13 +215,7 @@ export function Summary({
 
       <Item
         title={t("transfer.swap2.form.details.label.fees")}
-        onEdit={() =>
-          navigation.navigate(ScreenName.SwapSelectFees, {
-            ...route.params,
-            transaction,
-            swap,
-          })
-        }
+        onEdit={onEditNetworkFees}
       >
         <Text>
           <CurrencyUnitValue unit={mainAccountUnit} value={estimatedFees} />
