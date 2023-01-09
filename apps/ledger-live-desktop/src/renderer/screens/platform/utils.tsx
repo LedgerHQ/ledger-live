@@ -1,16 +1,28 @@
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 
-export const useGetManifest = (appId, genericParams, newpathname) => {
+const isValidUrl = urlString => {
+  try {
+    return Boolean(new URL(urlString));
+  } catch (e) {
+    return false;
+  }
+};
+
+export const useGetManifest = (appId, genericParams, newpathname = "") => {
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
   const manifest = Object.assign({}, localManifest || remoteManifest);
 
+  const isLocalPath =
+    (typeof newpathname === "string" && newpathname[0] === "/") || newpathname[0] === "#";
   const oldDappUrl = manifest?.params?.dappUrl;
-  const { origin, search } = new URL(oldDappUrl);
-
-  if (newpathname) {
-    const { hash, searchParams } = new URL(`https://www.prefix.com${newpathname}`);
+  const isValidOldUrl = isValidUrl(oldDappUrl);
+  const newUrl = isLocalPath ? `https://www.prefix.com${newpathname}` : "";
+  const isValidNewdUrl = isValidUrl(newUrl);
+  if (isLocalPath && isValidOldUrl && isValidNewdUrl) {
+    const { origin, search } = new URL(oldDappUrl);
+    const { hash, searchParams } = new URL(newUrl);
     const [realHash, query] = hash.split("?");
     const urlSearchParams = new URLSearchParams(query);
     const allParams = {
