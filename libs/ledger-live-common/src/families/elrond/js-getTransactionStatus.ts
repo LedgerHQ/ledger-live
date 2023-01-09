@@ -46,7 +46,14 @@ const getTransactionStatus = async (
     errors.fees = new FeeNotLoaded();
   }
 
-  if (!errors.amount && t.amount.eq(0) && !t.useAllAmount) {
+  if (
+    !errors.amount &&
+    t.amount.eq(0) &&
+    !t.useAllAmount &&
+    !["unDelegate", "withdraw", "reDelegateRewards", "claimRewards"].includes(
+      t.mode
+    )
+  ) {
     errors.amount = new AmountRequired();
   }
 
