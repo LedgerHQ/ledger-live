@@ -5,6 +5,8 @@ import { SharedTaskEvent } from "../tasks/core";
 export type SharedActionErrorType = "SharedError";
 
 // Represents any error that happened during the action: task specific ones, or shared ones
+// 👋 same hot take than in task: do we really need an Error object ?
+// It's going to be an event that is pushed to the consumer, no need for a full Error object
 export type ActionError<ActionErrorType> = {
   type: ActionErrorType;
   message?: string;

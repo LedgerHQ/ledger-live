@@ -1,16 +1,16 @@
-import { DeviceOnDashboardExpected, LockedDeviceError } from "@ledgerhq/errors";
+import { LockedDeviceError } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
-import type { DeviceId, DeviceInfo, FirmwareInfo } from "@ledgerhq/types-live";
+import type { DeviceId, DeviceInfo } from "@ledgerhq/types-live";
 
-import { getVersion, GetVersionCmdEvent } from "../commands/getVersion";
+import { getVersion } from "../commands/getVersion";
 import { getAppAndVersion } from "../commands/getAppAndVersion";
 
 import isDevFirmware from "../../hw/isDevFirmware";
 import { isDashboardName } from "../../hw/isDashboardName";
 import { withDevice } from "../../hw/deviceAccess";
 import { PROVIDERS } from "../../manager/provider";
-import { Observable, of } from "rxjs";
-import { map, filter, switchMap, tap } from "rxjs/operators";
+import { Observable } from "rxjs";
+import { map, filter, switchMap } from "rxjs/operators";
 import { SharedTaskEvent, wrappedTask } from "./core";
 
 const ManagerAllowedFlag = 0x08;
