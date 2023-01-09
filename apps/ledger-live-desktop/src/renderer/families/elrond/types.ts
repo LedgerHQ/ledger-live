@@ -1,5 +1,3 @@
-// @flow
-
 import { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
 
 export interface UnbondingType {

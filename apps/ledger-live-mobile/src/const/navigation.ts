@@ -15,6 +15,8 @@ export enum ScreenName {
   Assets = "Assets",
   BenchmarkQRStream = "BenchmarkQRStream",
   BitcoinEditCustomFees = "BitcoinEditCustomFees",
+  ClaimNftWelcome = "ClaimNftWelcome",
+  ClaimNftQrScan = "ClaimNftQrScan",
   ClaimRewardsConnectDevice = "ClaimRewardsConnectDevice",
   ClaimRewardsSelectDevice = "ClaimRewardsSelectDevice",
   ClaimRewardsValidationError = "ClaimRewardsValidationError",
@@ -492,6 +494,9 @@ export enum ScreenName {
   CustomImagePreviewPostEdit = "CustomImagePreviewPostEdit",
   CustomImageNFTGallery = "CustomImageNFTGallery",
 
+  ClaimNftWelcomeScreen = "ClaimNftWelcomeScreen",
+  ClaimNftQrScanScreen = "ClaimNftQrScanScreen",
+
   PostOnboardingHub = "PostOnboardingHub",
   PostOnboardingDebugScreen = "PostOnboardingDebugScreen",
   PostOnboardingMockActionScreen = "PostOnboardingMockActionScreen",
@@ -592,6 +597,9 @@ export enum NavigatorName {
 
   // Custom Image
   CustomImage = "CustomImage",
+
+  // Claim NFT
+  ClaimNft = "ClaimNft",
 
   WalletConnect = "WalletConnect",
 

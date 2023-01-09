@@ -28,8 +28,11 @@ import {
 } from "../../components/RootNavigator/types/helpers";
 import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/types/ManagerNavigator";
 import ServicesWidget from "../../components/ServicesWidget";
-import BuyDeviceCTA from "../../components/BuyDeviceCTA";
+
 import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/shared";
+
+import { useExperimental } from "../../experimental";
+import { HEIGHT as ExperimentalHeaderHeight } from "../Settings/Experimental/ExperimentalHeader";
 
 const action = createAction(connectManager);
 
@@ -52,6 +55,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const { params } = useRoute<NavigationProps["route"]>();
 
+  const isExperimental = useExperimental();
   const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
 
   const onSelectDevice = (device?: Device) => {
@@ -96,41 +100,38 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
   if (!isFocused) return null;
 
   return (
-    <Flex flex={1}>
+    <Flex flex={1} pt={(isExperimental ? ExperimentalHeaderHeight : 0) + 70}>
       <TrackScreen category="Manager" name="ChooseDevice" />
-      <Flex mt={100} px={16} mb={8}>
+      <Flex px={16} mb={8}>
         <Text fontWeight="semiBold" variant="h4">
           <Trans i18nKey="manager.title" />
         </Text>
       </Flex>
-      <NavigationScrollView
-        style={{ paddingBottom: insets.bottom + TAB_BAR_SAFE_HEIGHT }}
-        contentContainerStyle={styles.scrollContainer}
-      >
-        {newDeviceSelectionFeatureFlag?.enabled ? (
+      {newDeviceSelectionFeatureFlag?.enabled ? (
+        <Flex px={16} flex={1} pb={insets.bottom + TAB_BAR_SAFE_HEIGHT}>
           <SelectDevice2 onSelect={onSelectDevice} stopBleScanning={!!device} />
-        ) : (
-          <>
-            <SelectDevice
-              usbOnly={params?.firmwareUpdate}
-              autoSelectOnAdd
-              onSelect={onSelectDevice}
-              onBluetoothDeviceAction={onShowMenu}
+        </Flex>
+      ) : (
+        <NavigationScrollView
+          style={{ paddingBottom: insets.bottom + TAB_BAR_SAFE_HEIGHT }}
+          contentContainerStyle={styles.scrollContainer}
+        >
+          <SelectDevice
+            usbOnly={params?.firmwareUpdate}
+            autoSelectOnAdd
+            onSelect={onSelectDevice}
+            onBluetoothDeviceAction={onShowMenu}
+          />
+          {chosenDevice ? (
+            <RemoveDeviceMenu
+              open={showMenu}
+              device={chosenDevice as Device}
+              onHideMenu={onHideMenu}
             />
-            {chosenDevice ? (
-              <RemoveDeviceMenu
-                open={showMenu}
-                device={chosenDevice as Device}
-                onHideMenu={onHideMenu}
-              />
-            ) : null}
-          </>
-        )}
-        <>
-          <BuyDeviceCTA />
+          ) : null}
           <ServicesWidget />
-        </>
-      </NavigationScrollView>
+        </NavigationScrollView>
+      )}
       <DeviceActionModal
         onClose={() => onSelectDevice()}
         device={device}

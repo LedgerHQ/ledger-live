@@ -79,6 +79,7 @@ import CurrencySettings from "../../screens/Settings/CryptoAssets/Currencies/Cur
 import WalletConnectNavigator from "./WalletConnectNavigator";
 import WalletConnectLiveAppNavigator from "./WalletConnectLiveAppNavigator";
 import CustomImageNavigator from "./CustomImageNavigator";
+import ClaimNftNavigator from "./ClaimNftNavigator";
 import PostOnboardingNavigator from "./PostOnboardingNavigator";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { accountsSelector } from "../../reducers/accounts";
@@ -553,6 +554,11 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={NavigatorName.CustomImage}
         component={CustomImageNavigator}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name={NavigatorName.ClaimNft}
+        component={ClaimNftNavigator}
         options={{ headerShown: false }}
       />
       {/* This is a freaking hack… */}

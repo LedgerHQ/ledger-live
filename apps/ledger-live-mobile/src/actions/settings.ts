@@ -24,7 +24,7 @@ import {
   SettingsAcceptSwapProviderPayload,
   SettingsAddStarredMarketcoinsPayload,
   SettingsBlacklistTokenPayload,
-  SettingsDangerouslyOverrideStatePayload,
+  DangerouslyOverrideStatePayload,
   SettingsDismissBannerPayload,
   SettingsHideEmptyTokenAccountsPayload,
   SettingsHideNftCollectionPayload,
@@ -523,7 +523,7 @@ export const setFeatureFlagsBannerVisible = (
 ) => setFeatureFlagsBannerVisibleAction({ featureFlagsBannerVisible });
 
 const dangerouslyOverrideStateAction =
-  createAction<SettingsDangerouslyOverrideStatePayload>(
+  createAction<DangerouslyOverrideStatePayload>(
     SettingsActionTypes.DANGEROUSLY_OVERRIDE_STATE,
   );
 export const dangerouslyOverrideState = (s: State) =>

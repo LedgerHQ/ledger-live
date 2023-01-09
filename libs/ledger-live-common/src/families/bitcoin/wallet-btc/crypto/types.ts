@@ -34,7 +34,6 @@ export type Currency =
   | "vertcoin"
   | "peercoin"
   | "viacoin"
-  | "stakenet"
   | "stealthcoin"
   | "decred"
   | "bitcoin_testnet";

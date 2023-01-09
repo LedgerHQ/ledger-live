@@ -255,3 +255,8 @@ export const setOverriddenFeatureFlags = (overriddenFeatureFlags: {
   type: "SET_OVERRIDDEN_FEATURE_FLAGS",
   payload: { overriddenFeatureFlags },
 });
+
+export const setFeatureFlagsButtonVisible = (featureFlagsButtonVisible: boolean) => ({
+  type: "SET_FEATURE_FLAGS_BUTTON_VISIBLE",
+  payload: { featureFlagsButtonVisible },
+});
