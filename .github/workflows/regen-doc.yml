@@ -1,5 +1,5 @@
-name: "@Mobile • Regen Pods"
-run-name: "@${{ inputs.login }} triggered @Mobile • Regen Pods ${{ inputs.ref && format('on branch {0}', inputs.ref) || format('on PR {0}', inputs.number) }}"
+name: "@Libs • Regen Doc Files"
+run-name: "@${{ inputs.login }} triggered @Libs • Regen Doc Files ${{ inputs.ref && format('on branch {0}', inputs.ref) || format('on PR {0}', inputs.number) }}"
 
 on:
   workflow_dispatch:
@@ -22,11 +22,8 @@ concurrency:
   cancel-in-progress: ${{ github.ref_name != 'develop' }}
 
 jobs:
-  regen-pods:
-    runs-on: macos-latest
-    name: "Regenerate Podfile"
-    env:
-      SKIP_BUNDLE_CHECK: 1
+  regen-doc:
+    runs-on: ubuntu-latest
     steps:
       - name: generate token
         id: generate-token
@@ -57,24 +54,13 @@ jobs:
           version: latest
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 16
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.1.2
-      - name: Cache LLM pods
-        uses: actions/cache@v3
-        with:
-          path: |
-            apps/ledger-live-mobile/ios/Pods
-            ~/Library/Caches/CocoaPods
-            ~/.cocoapods
-          key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
-      - name: install dependencies
-        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
-      - name: regenerate pods
-        run: pnpm mobile pod
+      - name: Install dependencies
+        run: pnpm i --filter="!./apps/**" --frozen-lockfile
+      - name: run doc
+        run: pnpm doc:ljs
       - name: status
         id: check-status
         run: echo "status=$(git status --porcelain | wc -l)" >> $GITHUB_OUTPUT
@@ -82,7 +68,7 @@ jobs:
         if: steps.check-status.outputs.status != 0
         run: >
           git add ./apps/ledger-live-mobile/ios &&
-          git commit -m 'chore(🍏): regenerate podfile' &&
+          git commit -m 'chore(📙): regenerate documentation for ledgerjs' &&
           git restore . &&
           git pull --rebase &&
           git push
@@ -93,7 +79,7 @@ jobs:
           github-token: ${{ steps.generate-token.outputs.token }}
           script: |
             const fs = require("fs");
-            const body = `#### ❌ Podfile regeneration failed
+            const body = `#### ❌ Documentation regeneration failed
 
             @${{ github.event.inputs.login }}: you can check [the action logs](https://github.com/LedgerHQ/ledger-live/runs/${{ github.run_id }}) for more information.`;
             fs.writeFileSync("summary.txt", body, "utf8");
@@ -104,9 +90,9 @@ jobs:
           github-token: ${{ steps.generate-token.outputs.token }}
           script: |
             const fs = require("fs");
-            const body = `#### 🚀 Podfile regenerated
+            const body = `#### 🚀 Documentation regenerated
 
-            @${{ github.event.inputs.login }}: the podfile has been regenerated and a commit has been pushed to your branch.`;
+            @${{ github.event.inputs.login }}: the documentation has been regenerated and a commit has been pushed to your branch.`;
             fs.writeFileSync("summary.txt", body, "utf8");
       - name: create summary (no change)
         if: github.event.inputs.number != null && steps.check-status.outputs.status == 0
@@ -117,7 +103,7 @@ jobs:
             const fs = require("fs");
             const body = `#### ✨ No changes detected
 
-            @${{ github.event.inputs.login }}: the podfile is already up to date.`;
+            @${{ github.event.inputs.login }}: the documentation is already up to date.`;
             fs.writeFileSync("summary.txt", body, "utf8");
       - uses: actions/upload-artifact@v3
         if: always()
@@ -149,7 +135,7 @@ jobs:
             const body = `\
             @${{ github.event.inputs.login }}: triggered \`/regen-pods\`
 
-            [Regenerating Pods: workflow started](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            [Regenerating Documentation: workflow started](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
             `;
 
             await github.rest.issues.updateComment({
@@ -161,7 +147,7 @@ jobs:
 
   report-end:
     name: Report end
-    needs: [regen-pods, report-start]
+    needs: [regen-doc, report-start]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -189,7 +175,7 @@ jobs:
             const body = `\
             ${summary}
 
-            [Regenerating Pods: workflow ended](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            [Regenerating Documentation: workflow ended](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
             `;
 
             const output = {

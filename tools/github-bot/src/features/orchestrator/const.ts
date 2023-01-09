@@ -203,7 +203,7 @@ export const WORKFLOWS = {
       "@ledgerhq/react-ui",
       "@ledgerhq/ui-shared",
     ],
-    summaryFile: "",
+    summaryFile: "summary.json",
     getInputs: (payload: GetInputsPayload) => {
       return "workflow_run" in payload
         ? {

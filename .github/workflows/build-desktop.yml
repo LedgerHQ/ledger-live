@@ -208,8 +208,7 @@ jobs:
     if: always() && !cancelled() && github.event_name == 'workflow_dispatch' && github.event.inputs.sha != ''
     steps:
       - uses: actions/github-script@v6
-        name: Get statuses of runs
-        id: status
+        name: build summary
         with:
           script: |
             const fs = require("fs");
