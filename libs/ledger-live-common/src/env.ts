@@ -78,7 +78,7 @@ const envDefinitions = {
     desc: "Node endpoint for celo",
   },
   API_COSMOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
-    def: "https://cosmoshub4.coin.ledger.com/",
+    def: "https://cosmoshub4.coin.ledger.com",
     parser: stringParser,
     desc: "Node endpoint for cosmos",
   },
@@ -138,7 +138,7 @@ const envDefinitions = {
     desc: "Static fee for Stellar account",
   },
   API_OSMOSIS_NODE: {
-    def: "https://osmosis.coin.ledger.com/node",
+    def: "https://osmosis.coin.ledger-stg.com",
     parser: stringParser,
     desc: "Endpoint for Osmosis Node",
   },
