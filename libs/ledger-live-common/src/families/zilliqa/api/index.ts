@@ -101,20 +101,28 @@ function transactionToOperation(
   addr: string,
   transaction: any
 ): Operation {
-  const { gasPrice, gasLimit } = transaction;
-  const fee = new BigNumber(gasPrice.mul(gasLimit).toString());
+  let { gasPrice, cumulativeGas } = transaction;
+  gasPrice = new BN(gasPrice);
+  cumulativeGas = new BN(cumulativeGas);
+
+  const fee = new BigNumber(gasPrice.mul(cumulativeGas).toString());
+  let amount = new BigNumber(transaction.amount);
+
+  if (type === "OUT") {
+    amount = amount.plus(fee);
+  }
 
   const ret: Operation = {
     id: encodeOperationId(accountId, transaction.txId, type),
     accountId,
     fee: fee,
-    value: BigNumber(transaction.amount),
+    value: amount,
     type,
     // This is where you retrieve the hash of the transaction
     hash: transaction.txId,
     blockHash: null,
     blockHeight: parseInt(transaction.blockId),
-    date: new Date(), // TODO: new Date(transaction.timestamp),
+    date: new Date("2023-01-09T14:05:01.967Z"), // TODO: new Date(transaction.timestamp),
     extra: {
       amount: transaction.amount,
     },
@@ -131,7 +139,7 @@ export const getOperations = async (
   addr: string,
   _startAt: number
 ): Promise<Operation[]> => {
-  addr = fromBech32(addr);
+  addr = fromBech32(addr).toLowerCase();
 
   const incoming_res = (
     await network({
