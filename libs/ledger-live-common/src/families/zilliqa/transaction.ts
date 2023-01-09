@@ -18,7 +18,7 @@ SEND ${formatCurrencyUnit(getAccountUnit(account), t.amount, {
 })}
 TO ${t.recipient}`;
 
-const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
+export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
   let gasPrice: BN | undefined = undefined;
   let gasLimit: BN | undefined = undefined;
@@ -36,7 +36,7 @@ const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   };
 };
 
-const toTransactionRaw = (t: Transaction): TransactionRaw => {
+export const toTransactionRaw = (t: Transaction): TransactionRaw => {
   const common = toTransactionCommonRaw(t);
   let gasPrice: string | undefined = undefined;
   let gasLimit: string | undefined = undefined;
