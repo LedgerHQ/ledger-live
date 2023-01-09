@@ -53,45 +53,50 @@ export async function updateGateCheckRun(
     const [
       aggregatedConclusion,
       aggregatedStatus,
-    ] = rawCheckRuns.data.check_runs.reduce(
-      (acc, check_run) => {
-        if (check_run.name === GATE_CHECK_RUN_NAME) {
-          gateId = check_run.id;
-          return acc;
-        }
+    ] = rawCheckRuns.data.check_runs
+      .slice()
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .reduce(
+        (acc, check_run) => {
+          if (check_run.name === GATE_CHECK_RUN_NAME) {
+            gateId = check_run.id;
+            return acc;
+          }
 
-        const workflowMeta = Object.entries(WORKFLOWS).find(
-          ([, w]) => w.checkRunName === check_run.name
-        );
+          const workflowMeta = Object.entries(WORKFLOWS).find(
+            ([, w]) => w.checkRunName === check_run.name
+          );
 
-        if (!workflowMeta) {
-          return acc;
-        }
+          if (!workflowMeta) {
+            return acc;
+          }
 
-        const workflowRun = rawWorkflowRuns.data.workflow_runs.find(
-          (wr) => (wr as any).path === ".github/workflows/" + workflowMeta[0]
-        );
+          const workflowRun = rawWorkflowRuns.data.workflow_runs.find(
+            (wr) => (wr as any).path === ".github/workflows/" + workflowMeta[0]
+          );
 
-        summary += `\n- ${getStatusEmoji(
-          check_run.conclusion || check_run.status
-        )} **[${check_run.name}](${workflowRun?.html_url ||
-          check_run.html_url})**: \`${check_run.conclusion ||
-          check_run.status}\``;
+          summary += `\n- ${getStatusEmoji(
+            check_run.conclusion || check_run.status
+          )} **[${check_run.name}](${workflowRun?.html_url ||
+            check_run.html_url})**: \`${check_run.conclusion ||
+            check_run.status}\``;
 
-        const priority = conclusions.indexOf(check_run.conclusion || "neutral");
-        const accumulatorPriority = conclusions.indexOf(acc[0]);
-        const newPriority =
-          priority > accumulatorPriority
-            ? check_run.conclusion || "neutral"
-            : acc[0];
-        const newStatus =
-          check_run.status === "completed" && acc[1] === "completed"
-            ? "completed"
-            : "in_progress";
-        return [newPriority, newStatus];
-      },
-      ["success", "completed"]
-    );
+          const priority = conclusions.indexOf(
+            check_run.conclusion || "neutral"
+          );
+          const accumulatorPriority = conclusions.indexOf(acc[0]);
+          const newPriority =
+            priority > accumulatorPriority
+              ? check_run.conclusion || "neutral"
+              : acc[0];
+          const newStatus =
+            check_run.status === "completed" && acc[1] === "completed"
+              ? "completed"
+              : "in_progress";
+          return [newPriority, newStatus];
+        },
+        ["success", "completed"]
+      );
 
     if (gateId) {
       if (aggregatedStatus === "completed") {
