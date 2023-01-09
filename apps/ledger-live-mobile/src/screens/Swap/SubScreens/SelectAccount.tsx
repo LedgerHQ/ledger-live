@@ -21,7 +21,7 @@ import {
 import { SelectAccountParamList } from "../types";
 import { NavigatorName, ScreenName } from "../../../const";
 import { accountsSelector } from "../../../reducers/accounts";
-import { SWAP_VERSION } from "../utils";
+import { sharedSwapTracking } from "../utils";
 
 export function SelectAccount({
   navigation,
@@ -131,8 +131,7 @@ export function SelectAccount({
 
   const onAddAccount = useCallback(() => {
     track("button_clicked", {
-      flow: "swap",
-      swapVersion: SWAP_VERSION,
+      ...sharedSwapTracking,
       account: "account",
       button: "new source account",
     });
