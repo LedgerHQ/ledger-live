@@ -89,10 +89,10 @@ const genericTest = ({
   });
 
   botTest("operation matches tx senders and recipients", () => {
-    console.log(transaction);
-
     if (transaction.opReturnData) {
-      expect(operation.recipients).toContain(transaction.recipient);
+      // transaction.recipient has format <coinId>:<address>
+      const [, recipientAddress] = transaction.recipient.split(":")[1];
+      expect(operation.recipients).toContain(recipientAddress);
       expect(operation.recipients.length).toBe(2);
     } else {
       let expectedSenders = nonDeterministicPicking
