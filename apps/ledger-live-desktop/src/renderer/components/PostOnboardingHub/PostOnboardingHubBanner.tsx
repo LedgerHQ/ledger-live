@@ -46,7 +46,11 @@ const PostOnboardingHubBanner = () => {
         <Text mt="8px" mb="18px" color="neutral.c50" whiteSpace="pre-wrap" fontSize="14px">
           {t("postOnboarding.postOnboardingBanner.description")}
         </Text>
-        <Link color="neutral.c00" onClick={handleNavigateToPostOnboardingHub}>
+        <Link
+          color="neutral.c00"
+          onClick={handleNavigateToPostOnboardingHub}
+          data-test-id="postonboarding-banner-entry-point"
+        >
           {t("postOnboarding.postOnboardingBanner.link")}
         </Link>
       </Flex>

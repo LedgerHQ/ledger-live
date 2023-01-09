@@ -24,28 +24,35 @@ test("PostOnboarding", async ({ page }) => {
     await expect(page).toHaveScreenshot("postonboarding-claim-mocked-action.png");
   });
 
-  await test.step("go back to dashboard", async () => {
-    await postOnboarding.goToDashboard();
-    await expect(page).toHaveScreenshot("postonboarding-dashboard-banner.png");
+  await test.step("complete action and go back to dashboard", async () => {
+    await postOnboarding.completeAndGoToHub();
+    await expect(page).toHaveScreenshot("postonboarding-hub-claim-complete.png");
   });
 
-  await test.step("go back to hub from dashboard banner", async () => {
-    await postOnboarding.goPostOnboardingHubFromDashboardBanner();
-    await expect(page).toHaveScreenshot("postonboarding-hub-inside-drawer-1-action-completed.png");
-  });
-
-  await test.step("start migrate assets mocked action from postonboarding drawer", async () => {
-    await postOnboarding.startMigrateAssetsMock();
-    await expect(page).toHaveScreenshot("postonboarding-migrate-assets-mocked-action.png");
-  });
-
-  await test.step("go back to postonboarding hub in drawer", async () => {
-    await postOnboarding.goToHub();
-    await expect(page).toHaveScreenshot("postonboarding-hub-inside-drawer-2-actions-completed.png");
-  });
-
-  await test.step("close post onboarding drawer", async () => {
+  await test.step("go to dashboard with banner", async () => {
     await postOnboarding.skipPostOnboardingHub();
-    await expect(page).toHaveScreenshot("postonboarding-hub-dashboard-no-entry-banner.png");
+    await expect(page).toHaveScreenshot("postonboarding-hub-banner-in-dashboard.png");
+  });
+
+  await test.step("go to post onboarding hub from banner and start migrate asset", async () => {
+    await postOnboarding.goPostOnboardingHubFromDashboardBanner();
+    await postOnboarding.startMigrateAssetsMock();
+    await expect(page).toHaveScreenshot("postonboarding-start-migrate-assets-mocked-action.png");
+  });
+
+  await test.step("complete migrate asset", async () => {
+    await postOnboarding.completeAndGoToHub();
+    await expect(page).toHaveScreenshot("postonboarding-2-actions-completed.png");
+  });
+
+  await test.step("complete personalize mock", async () => {
+    await postOnboarding.startPersonalizeMock();
+    await postOnboarding.completeAndGoToHub();
+    await expect(page).toHaveScreenshot("postonboarding-hub-all-actions-completed.png");
+  });
+
+  await test.step("go to dashboard without banner", async () => {
+    await postOnboarding.skipPostOnboardingHub();
+    await expect(page).toHaveScreenshot("postonboarding-hub-no-banner-in-dashboard.png");
   });
 });

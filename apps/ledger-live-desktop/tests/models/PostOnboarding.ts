@@ -7,10 +7,9 @@ export class PostOnboarding {
   readonly postOnboardingHubActionRowMigrateAssetsMock: Locator;
   readonly postOnboardingHubActionRowPersonalizeMock: Locator;
 
-  readonly goToDashboardButton: Locator;
   readonly goToHubButton: Locator;
   readonly postOnboardingBannerEntryPoint: Locator;
-  readonly postOnboardingHubScreenSkipButton: Locator;
+  readonly postOnboardingHubSkipButton: Locator;
   readonly postOnboardingHubDrawerSkipButton: Locator;
 
   constructor(page: Page) {
@@ -26,16 +25,12 @@ export class PostOnboarding {
     this.postOnboardingHubActionRowPersonalizeMock = page.locator(
       "data-test-id=postonboarding-action-row-personalizeMock",
     );
-    this.goToDashboardButton = page
-      .locator("data-test-id=postonboarding-go-to-dashboard-button")
-      .nth(0);
+
     this.goToHubButton = page.locator("data-test-id=postonboarding-go-to-hub-button").nth(0);
     this.postOnboardingBannerEntryPoint = page.locator(
       "data-test-id=postonboarding-banner-entry-point",
     );
-    this.postOnboardingHubScreenSkipButton = page.locator(
-      "data-test-id=postonboarding-hub-screen-skip-button",
-    );
+    this.postOnboardingHubSkipButton = page.locator("data-test-id=postonboarding-hub-skip-button");
     this.postOnboardingHubDrawerSkipButton = page
       .locator("data-test-id=postonboarding-hub-drawer-skip-button")
       .nth(0);
@@ -61,19 +56,15 @@ export class PostOnboarding {
     await this.postOnboardingHubActionRowPersonalizeMock.click();
   }
 
-  async goToDashboard() {
-    await this.goToDashboardButton.click();
+  async skipPostOnboardingHub() {
+    await this.postOnboardingHubSkipButton.click();
   }
 
-  async goToHub() {
+  async completeAndGoToHub() {
     await this.goToHubButton.click();
   }
 
   async goPostOnboardingHubFromDashboardBanner() {
     await this.postOnboardingBannerEntryPoint.click();
-  }
-
-  async skipPostOnboardingHub() {
-    await this.postOnboardingHubDrawerSkipButton.click();
   }
 }
