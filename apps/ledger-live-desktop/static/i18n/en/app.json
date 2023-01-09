@@ -1235,16 +1235,19 @@
   },
   "postOnboarding": {
     "postOnboardingScreen": {
-      "title": "Nice one.You're all set.",
-      "description": "Cheers for setting up your {{deviceName}}!",
-      "paragraph": "We have prepared for you some steps to start with. If you feel like exploring Ledger Live on your own, don't hesitate to skip this step, you can always come back to it.",
-      "bottomText": "Enjoy your travel into the Web3 securely with Ledger Live."
+      "title": "Next up, use your\nLedger Stax to... ",
+      "titleCompleted": "and that's a\nwrap!"
     },
     "postOnboardingContent": {
       "title": "Nice one.You're all set.",
       "description": "Here's what you can do next:",
       "skipLink": "Skip to the app",
       "skipLinkInDrawer": "I'll do this later"
+    },
+    "postOnboardingBanner": {
+      "title": "What's next for your Ledger Stax?",
+      "description": "Claim the Infinity NFT, customize it's lock screen, or\ntransfer your assets from other exchanges.",
+      "link": "See what's next"
     }
   },
   "hideNftCollection": {
