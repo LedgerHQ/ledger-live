@@ -6,6 +6,7 @@ import { useBrazeContentCard } from "./brazeContentCard";
 import {
   assetsCardsSelector,
   learnCardsSelector,
+  notificationsCardsSelector,
   walletCardsSelector,
 } from "../reducers/dynamicContent";
 import { dismissedDynamicCardsSelector } from "../reducers/settings";
@@ -14,6 +15,7 @@ import {
   Background,
   LearnContentCard,
   LocationContentCard,
+  NotificationContentCard,
   WalletContentCard,
 } from "./types";
 import { track } from "../analytics";
@@ -60,11 +62,28 @@ export const mapAsLearnContentCard = (card: BrazeContentCard) =>
     createdAt: card.created,
   } as LearnContentCard);
 
+export const mapAsNotificationContentCard = (card: BrazeContentCard) =>
+  ({
+    id: card.id,
+    tag: card.extras.tag,
+    title: card.extras.title,
+    description: card.extras.description,
+    location: LocationContentCard.NotificationCenter,
+    link: card.extras.link,
+    cta: card.extras.cta,
+    createdAt: card.created,
+    viewed: card.viewed,
+  } as NotificationContentCard);
+
 const useDynamicContent = () => {
   const dispatch = useDispatch();
-  const { logClickCard, logDismissCard, logImpressionCard } =
-    useBrazeContentCard();
-
+  const {
+    logClickCard,
+    logDismissCard,
+    logImpressionCard,
+    refreshDynamicContent,
+  } = useBrazeContentCard();
+  const notificationCards = useSelector(notificationsCardsSelector);
   const assetsCards = useSelector(assetsCardsSelector);
   const walletCards = useSelector(walletCardsSelector);
   const learnCards = useSelector(learnCardsSelector);
@@ -84,7 +103,14 @@ const useDynamicContent = () => {
       ),
     [assetsCards, hiddenCards],
   );
-
+  const orderedNotificationsCards = useMemo(
+    () =>
+      notificationCards.sort(
+        (notif: NotificationContentCard, nt: NotificationContentCard) =>
+          nt.createdAt - notif.createdAt,
+      ),
+    [notificationCards],
+  );
   const isAWalletCardDisplayed = useMemo(
     () => walletCardsDisplayed.length >= 1,
     [walletCardsDisplayed],
@@ -124,6 +150,7 @@ const useDynamicContent = () => {
         campaign: string;
         screen: string;
         link: string;
+        contentcard?: string;
       },
     ) => {
       track(event, params);
@@ -144,6 +171,9 @@ const useDynamicContent = () => {
     logImpressionCard,
     dismissCard,
     trackContentCardEvent,
+    notificationCards,
+    orderedNotificationsCards,
+    refreshDynamicContent,
   };
 };
 

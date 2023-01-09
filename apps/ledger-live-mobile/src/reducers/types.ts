@@ -24,6 +24,7 @@ import {
   WalletContentCard,
   AssetContentCard,
   LearnContentCard,
+  NotificationContentCard,
 } from "../dynamicContent/types";
 import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
 
@@ -115,6 +116,8 @@ export type DynamicContentState = {
   assetsCards: AssetContentCard[];
   /** Dynamic content cards displayed in Learn Section */
   learnCards: LearnContentCard[];
+  /** Dynamic content cards displayed in Notification Center */
+  notificationCards: NotificationContentCard[];
 };
 
 // === RATINGS STATE ===
@@ -219,6 +222,7 @@ export type SettingsState = {
   };
   notifications: NotificationsSettings;
   walletTabNavigatorLastVisitedTab: keyof WalletTabNavigatorStackParamList;
+  displayStatusCenter: boolean;
   overriddenFeatureFlags: { [key in FeatureId]?: Feature | undefined };
   featureFlagsBannerVisible: boolean;
 };

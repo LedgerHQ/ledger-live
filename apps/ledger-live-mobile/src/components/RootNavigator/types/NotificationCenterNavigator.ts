@@ -1,6 +1,6 @@
 import { ScreenName } from "../../../const";
 
 export type NotificationCenterNavigatorParamList = {
-  [ScreenName.NotificationCenterNews]: undefined;
+  [ScreenName.NotificationCenter]: undefined;
   [ScreenName.NotificationCenterStatus]: undefined;
 };

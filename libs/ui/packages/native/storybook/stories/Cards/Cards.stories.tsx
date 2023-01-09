@@ -1,13 +1,19 @@
 import { storiesOf } from "../storiesOf";
 import React from "react";
-import CardA from "../../../src/components/Cards/CardA";
-import CardB from "../../../src/components/Cards/CardB";
+import FullBackgroundCard from "../../../src/components/Cards/FullBackgroundCard";
+import SideImageCard from "../../../src/components/Cards/SideImageCard";
+import NotificationCard from "../../../src/components/Cards/NotificationCard";
 import InformativeCard from "../../../src/components/Cards/InformativeCard";
 import Flex from "../../../src/components/Layout/Flex";
-import { text, select, number } from "@storybook/addon-knobs";
-import { descriptionCardA, descriptionCardB, descriptionCardD } from "./descriptionsCards";
+import { text, select, number, boolean } from "@storybook/addon-knobs";
+import {
+  descriptionFullBackgroundCard,
+  descriptionSideImageCard,
+  descriptionNotificationCard,
+  descriptionInformativeCard,
+} from "./descriptionsCards";
 
-const CardAStory = () => {
+const FullBackgroundCardStory = () => {
   const variant = select("variant", ["purple", "red"], undefined);
   const tag = text("tag", "Promo");
   const description = text(
@@ -27,7 +33,7 @@ const CardAStory = () => {
   return (
     <Flex width="500px" height="500px" bg="#fff" alignItems="center" justifyContent="center">
       <Flex width="320px">
-        <CardA
+        <FullBackgroundCard
           variant={variant}
           backgroundImage={backgroundImage?.replace(/&amp;/g, "&")}
           tag={tag}
@@ -38,7 +44,7 @@ const CardAStory = () => {
   );
 };
 
-const CardBStory = () => {
+const SideImageCardStory = () => {
   const width = number("Container Width", 350);
   const tag = text("tag", "Promo");
   const title = text(
@@ -59,14 +65,14 @@ const CardBStory = () => {
 
   return (
     <Flex
-      backgroundColor={"primary.c70"}
+      backgroundColor="primary.c70"
       height={300}
       width={width}
       alignItems="center"
-      justifyContent={"center"}
-      p={"16px"}
+      justifyContent="center"
+      p="16px"
     >
-      <CardB
+      <SideImageCard
         tag={tag}
         title={title}
         cta={cta}
@@ -108,21 +114,64 @@ const InformativeCardStory = () => {
   );
 };
 
+const NotificationCardStory = () => {
+  const tag = text("tag", "Promo");
+  const viewed = boolean("Notif has been viewed?", false);
+  const title = text("title", "Free shipping worldwide for 1 week only");
+  const description = text(
+    "description",
+    "Free shipping for all Ledger Nano products is available until 17th of October. Act fast and get your Nano now.",
+  );
+  const cta = text("cta", "Link");
+  const time = text("timer", "2 minutes ago");
+  const hasLink = boolean("show link", true);
+
+  return (
+    <Flex
+      width="500px"
+      height="300px"
+      backgroundColor="neutral.c20"
+      alignItems="center"
+      justifyContent="center"
+      p="16px"
+    >
+      <NotificationCard
+        tag={tag}
+        description={description}
+        cta={cta}
+        time={time}
+        title={title}
+        showLinkCta={hasLink}
+        onClickCard={() => {}}
+        viewed={viewed}
+      />
+    </Flex>
+  );
+};
+
 storiesOf((story) =>
   story("Cards", module)
-    .add("Card A", CardAStory, {
+    .add("Full Background Card", FullBackgroundCardStory, {
       docs: {
-        title: "Card A",
+        title: "Full Background Card",
         description: {
-          component: descriptionCardA,
+          component: descriptionFullBackgroundCard,
         },
       },
     })
-    .add("Card B", CardBStory, {
+    .add("Side Image Card", SideImageCardStory, {
       docs: {
-        title: "Card B",
+        title: "Side Image Card",
         description: {
-          component: descriptionCardB,
+          component: descriptionSideImageCard,
+        },
+      },
+    })
+    .add("Notification Card", NotificationCardStory, {
+      docs: {
+        title: "Notification Card",
+        description: {
+          component: descriptionNotificationCard,
         },
       },
     })
@@ -130,7 +179,7 @@ storiesOf((story) =>
       docs: {
         title: "InformativeCard",
         description: {
-          component: descriptionCardD,
+          component: descriptionInformativeCard,
         },
       },
     }),

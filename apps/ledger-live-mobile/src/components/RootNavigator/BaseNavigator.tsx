@@ -537,12 +537,7 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={NavigatorName.NotificationCenter}
         component={NotificationCenterNavigator}
-        options={({ navigation }) => ({
-          title: t("notificationCenter.title"),
-          headerLeft: () => null,
-          headerRight: () => <CloseButton navigation={navigation} />,
-          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
-        })}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name={NavigatorName.NftNavigator}
