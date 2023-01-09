@@ -176,7 +176,6 @@ describe("Unit tests for various utils functions", () => {
     validateAddrs(["3LQWwDEpgjjQokDusDXtoF9c8on8zr54fT"], "vertcoin", true);
     validateAddrs(["PCYt39DMYuFqUYkP8w6ubZXJbTTL4c9KAV"], "peercoin", true);
     validateAddrs(["ETx91CT52eBFYWbe4Yht5BpZNigWg2EkqJ"], "viacoin", true);
-    validateAddrs(["7i1KkJHUjfw2MrbtXK5DQkhz7zd36st9GR"], "stakenet", true);
     validateAddrs(["S6NMcEfYbavHrP3Uo1wbEUvKhAbKeMuga8"], "stealthcoin", true);
     validateAddrs(["Dso59DoPRkfATcZgHGgfh9mpku7taw9srAv"], "decred", true);
     validateAddrs(["Dcck4QrFF5wuLzQpwxb5evhSRD7ZTsJZwuh"], "decred", true);
@@ -212,7 +211,6 @@ describe("Unit tests for various utils functions", () => {
     validateAddrs(["3LQWwDEpgjjQokDusDXtoF9c8on8zr54ff"], "vertcoin", false);
     validateAddrs(["PCYt39DMYuFqUYkP8w6ubZXJbTTL4c9KAA"], "peercoin", false);
     validateAddrs(["ETx91CT52eBFYWbe4Yht5BpZNigWg2Ekqq"], "viacoin", false);
-    validateAddrs(["7i1KkJHUjfw2MrbtXK5DQkhz7zd36st9GG"], "stakenet", false);
     validateAddrs(["S6NMcEfYbavHrP3Uo1wbEUvKhAbKeMugaa"], "stealthcoin", false);
     validateAddrs(["Dso59DoPRkfATcZgHGgff9mpku7taw9srAv"], "decred", false);
     validateAddrs(["Dcck4QrFF5wuLQzpwxb5evhSRD7ZTsJZwuh"], "decred", false);
