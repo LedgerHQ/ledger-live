@@ -48,7 +48,11 @@ export default function StatusCenter({ onClose, isOpened }: Props) {
 
   return (
     <BottomDrawer isOpen={isOpened} onClose={onPressClose}>
-      <TrackScreen category={DATA_TRACKING_DRAWER_NAME} type="drawer" refreshSource={false} />
+      <TrackScreen
+        category={DATA_TRACKING_DRAWER_NAME}
+        type="drawer"
+        refreshSource={false}
+      />
 
       <Flex
         backgroundColor={colors.neutral.c100a005}

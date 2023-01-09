@@ -501,7 +501,7 @@ export type SettingsPayload =
   | SettingsSetFirstConnectHasDeviceUpdatedPayload
   | SettingsSetNotificationsPayload
   | SettingsDangerouslyOverrideStatePayload
-  | SettingsSetStatusCenterPayload;
+  | SettingsSetStatusCenterPayload
   | DangerouslyOverrideStatePayload
   | SettingsSetOverriddenFeatureFlagPlayload
   | SettingsSetOverriddenFeatureFlagsPlayload
