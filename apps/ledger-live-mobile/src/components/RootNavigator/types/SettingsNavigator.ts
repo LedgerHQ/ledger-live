@@ -17,7 +17,6 @@ export type SettingsNavigatorStackParamList = {
     currencyId: string;
     headerTitle?: string;
   };
-  [ScreenName.RepairDevice]: undefined;
   [ScreenName.ExperimentalSettings]: undefined;
   [ScreenName.DeveloperSettings]: undefined;
   [ScreenName.DeveloperCustomManifest]: undefined;

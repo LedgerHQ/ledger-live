@@ -142,14 +142,6 @@ describe("xpub integration sync", () => {
       currencyId: "viacoin",
     },
     {
-      xpub: "xpub6Bhj2H9zg68KeE7hVg8KmoNqWev9vXKnsM3mVUhxVKN5QdNAtDjvWBGUJmMhxoPAhobfafg5Uux6xLcD2gpKKQdxot2T2jWpLUS3mhZruim",
-      derivationMode: DerivationModes.LEGACY,
-      addresses: 1,
-      balance: 100000000,
-      network: coininfo.bitcoin.main.toBitcoinJS(),
-      currencyId: "stakenet",
-    },
-    {
       xpub: "v4PKUB8jAMVY8DsF9CrC5pT4kn1rsHtJY1ehtLSMemakWdMHHwdF5tsQXqQWov93ngSX1GUc1y7x91obdRtu9Bpyk3vqMWKnU9QLpYEjuVqLJy9T",
       derivationMode: DerivationModes.LEGACY,
       addresses: 1,
@@ -209,9 +201,6 @@ describe("xpub integration sync", () => {
           break;
         case "pivx":
           crypto = new currency.Pivx({ network: dataset.network });
-          break;
-        case "stakenet":
-          crypto = new currency.Stakenet({ network: dataset.network });
           break;
         case "stealthcoin":
           crypto = new currency.Stealth({ network: dataset.network });

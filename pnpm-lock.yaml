@@ -168,8 +168,8 @@ importers:
       '@ledgerhq/types-cryptoassets': workspace:^
       '@ledgerhq/types-devices': workspace:^
       '@ledgerhq/types-live': workspace:^
-      '@ledgerhq/wallet-api-core': ^0.10.0
-      '@ledgerhq/wallet-api-server': ^0.10.0
+      '@ledgerhq/wallet-api-core': ^0.11.0
+      '@ledgerhq/wallet-api-server': ^0.10.1
       '@mapbox/node-pre-gyp': ^1.0.8
       '@octokit/rest': ^18.12.0
       '@playwright/test': 1.27.1
@@ -346,8 +346,8 @@ importers:
       '@ledgerhq/types-cryptoassets': link:../../libs/ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-devices': link:../../libs/ledgerjs/packages/types-devices
       '@ledgerhq/types-live': link:../../libs/ledgerjs/packages/types-live
-      '@ledgerhq/wallet-api-core': 0.10.0
-      '@ledgerhq/wallet-api-server': 0.10.0
+      '@ledgerhq/wallet-api-core': 0.11.0
+      '@ledgerhq/wallet-api-server': 0.10.1
       '@polkadot/react-identicon': 2.9.13_grbnt2wkerwtzf6thy4efz3p5i
       '@sentry/electron': 4.1.2
       '@sentry/node': 7.16.0
@@ -554,10 +554,10 @@ importers:
 
   apps/ledger-live-desktop/tests/utils/dummy-wallet-app:
     specifiers:
-      '@ledgerhq/hw-app-eth': ^6.29.11
-      '@ledgerhq/hw-transport': ^6.27.6
+      '@ledgerhq/hw-app-eth': workspace:*
+      '@ledgerhq/hw-transport': workspace:*
       '@ledgerhq/live-common': workspace:*
-      '@ledgerhq/wallet-api-client': ^0.10.2
+      '@ledgerhq/wallet-api-client': ^0.11.0
       '@types/jest': ^27.0.1
       '@types/node': ^16.7.13
       '@types/react': ^17.0.20
@@ -573,7 +573,7 @@ importers:
       '@ledgerhq/hw-app-eth': link:../../../../../libs/ledgerjs/packages/hw-app-eth
       '@ledgerhq/hw-transport': link:../../../../../libs/ledgerjs/packages/hw-transport
       '@ledgerhq/live-common': link:../../../../../libs/ledger-live-common
-      '@ledgerhq/wallet-api-client': 0.10.2
+      '@ledgerhq/wallet-api-client': 0.11.1
       '@types/jest': 27.5.1
       '@types/node': 16.11.12
       '@types/react': 17.0.45
@@ -614,8 +614,8 @@ importers:
       '@ledgerhq/types-cryptoassets': workspace:^
       '@ledgerhq/types-devices': workspace:^
       '@ledgerhq/types-live': workspace:^
-      '@ledgerhq/wallet-api-core': ^0.10.0
-      '@ledgerhq/wallet-api-server': ^0.10.0
+      '@ledgerhq/wallet-api-core': ^0.11.0
+      '@ledgerhq/wallet-api-server': ^0.10.1
       '@polkadot/reactnative-identicon': 2.9.13
       '@polkadot/x-randomvalues': 10.1.12
       '@react-native-async-storage/async-storage': ^1.15.17
@@ -815,8 +815,8 @@ importers:
       '@ledgerhq/types-cryptoassets': link:../../libs/ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-devices': link:../../libs/ledgerjs/packages/types-devices
       '@ledgerhq/types-live': link:../../libs/ledgerjs/packages/types-live
-      '@ledgerhq/wallet-api-core': 0.10.0
-      '@ledgerhq/wallet-api-server': 0.10.0
+      '@ledgerhq/wallet-api-core': 0.11.0
+      '@ledgerhq/wallet-api-server': 0.10.1
       '@polkadot/reactnative-identicon': 2.9.13_ondxtwf5lqq5g76dzmsmwamaca
       '@polkadot/x-randomvalues': 10.1.12
       '@react-native-async-storage/async-storage': 1.17.4_react-native@0.68.5
@@ -1046,8 +1046,8 @@ importers:
       '@ledgerhq/types-cryptoassets': workspace:^
       '@ledgerhq/types-devices': workspace:^
       '@ledgerhq/types-live': workspace:^
-      '@ledgerhq/wallet-api-core': ^0.10.0
-      '@ledgerhq/wallet-api-server': ^0.10.0
+      '@ledgerhq/wallet-api-core': ^0.11.0
+      '@ledgerhq/wallet-api-server': ^0.10.1
       '@polkadot/types': 9.8.1
       '@polkadot/types-known': 9.8.1
       '@polkadot/util': 10.1.12
@@ -1166,6 +1166,7 @@ importers:
       rlp: ^3.0.0
       rxjs: '6'
       rxjs-compat: ^6.6.7
+      rxjs7: npm:rxjs@^7.8.0
       secp256k1: ^4.0.3
       semver: ^7.3.5
       sha.js: ^2.4.11
@@ -1226,8 +1227,8 @@ importers:
       '@ledgerhq/hw-transport-node-speculos': link:../ledgerjs/packages/hw-transport-node-speculos
       '@ledgerhq/live-app-sdk': 0.8.1
       '@ledgerhq/logs': link:../ledgerjs/packages/logs
-      '@ledgerhq/wallet-api-core': 0.10.0
-      '@ledgerhq/wallet-api-server': 0.10.0
+      '@ledgerhq/wallet-api-core': 0.11.0
+      '@ledgerhq/wallet-api-server': 0.10.1
       '@polkadot/types': 9.8.1
       '@polkadot/types-known': 9.8.1
       '@polkadot/util': 10.1.12
@@ -1304,6 +1305,7 @@ importers:
       rlp: 3.0.0
       rxjs: 6.6.7
       rxjs-compat: 6.6.7_rxjs@6.6.7
+      rxjs7: /rxjs/7.8.0
       secp256k1: 4.0.3
       semver: 7.3.7
       sha.js: 2.4.11
@@ -12462,17 +12464,17 @@ packages:
     resolution: {integrity: sha512-K3SETlNUJAjU/bN6dNJf56gfpxOhGldmClezIU5puw1PcGDvNf4y8vmEouVz5Htc2a/0vetklf0eIQD8Wk3Hww==}
     dev: false
 
-  /@ledgerhq/wallet-api-client/0.10.2:
-    resolution: {integrity: sha512-jAJps6mnBXHgue3IhSyPpQSvisq72iRBga5JowADj+RW8a01wz4bPT5en/YjPHWRu+7gyz4m9z8KqMPhuyXiDA==}
+  /@ledgerhq/wallet-api-client/0.11.1:
+    resolution: {integrity: sha512-s5uHg+2x+HzvM/Go+vx7DoGyh7bgDI1LEKcUBllTsTZBwgMBbgHnpieXylAI4kBySGWUwJTREwDUfY8CmkrsjA==}
     dependencies:
       '@ledgerhq/hw-transport': 6.27.8
-      '@ledgerhq/wallet-api-core': 0.9.2
+      '@ledgerhq/wallet-api-core': 0.11.0
       bignumber.js: 9.1.0
       json-rpc-2.0: 1.1.0
     dev: false
 
-  /@ledgerhq/wallet-api-core/0.10.0:
-    resolution: {integrity: sha512-pjDUfnmQoG2B8qcGYZ+n3crKdh8vNPCWcVIT7eZAgurvdwuAw0Hfy/+CqgIYEkF1bbBVprlyNJPhGvLxc5RsuQ==}
+  /@ledgerhq/wallet-api-core/0.11.0:
+    resolution: {integrity: sha512-SHIdZD/gQJ4dMag5zzmRAAfhkkfiyHFVLHR7xz0Srj2BLdMfQZzXneTSnv7YND4YOZrwHIfBTA68Bim+AiKjwA==}
     dependencies:
       '@ledgerhq/errors': 6.12.1
       bignumber.js: 9.1.0
@@ -12480,19 +12482,10 @@ packages:
       zod: 3.19.1
     dev: false
 
-  /@ledgerhq/wallet-api-core/0.9.2:
-    resolution: {integrity: sha512-lrXegbCHWwbKac/EMnfS4O4J3eTSCOLd4ZlGP8HK7N11/gq9uANfMNhF7pBi1im19wRIaD9W/pj0mj+hOanYBw==}
+  /@ledgerhq/wallet-api-server/0.10.1:
+    resolution: {integrity: sha512-Rq4XtGSPeY/uxG/Jtd5tdWFPqjkfP42yq0zA7OV5uylm/gURXBIodadrnWUASU1Yuh8+tDyXlFRl43aG3J1yUw==}
     dependencies:
-      '@ledgerhq/errors': 6.12.1
-      bignumber.js: 9.1.0
-      uuid: 9.0.0
-      zod: 3.19.1
-    dev: false
-
-  /@ledgerhq/wallet-api-server/0.10.0:
-    resolution: {integrity: sha512-Wd0U1j7dFzd32Drj63knk2rnNWWJPlZJniyPRAfEImKGsF6FPm4RUb8Fjr5VAn3Qd/cvEQZZHM93Q2KN2rRIYg==}
-    dependencies:
-      '@ledgerhq/wallet-api-core': 0.10.0
+      '@ledgerhq/wallet-api-core': 0.11.0
       bignumber.js: 9.1.0
       json-rpc-2.0: 1.1.0
       picomatch: 2.3.1

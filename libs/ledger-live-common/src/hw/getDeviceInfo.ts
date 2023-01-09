@@ -42,7 +42,7 @@ export default async function getDeviceInfo(
   const res = await getVersion(transport).catch((e) => {
     if (e instanceof TransportStatusError) {
       // @ts-expect-error typescript not checking agains the instanceof
-      if (e.statusCode === 0x6d06) {
+      if (e.statusCode === 0x6d06 || e.statusCode === 0x6d07) {
         throw new DeviceNotOnboarded();
       }
     }
