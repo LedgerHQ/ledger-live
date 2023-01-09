@@ -13,11 +13,6 @@ on:
       login:
         description: The GitHub username that triggered the workflow
         required: true
-      comment:
-        description: Update the workflow status in a pull request comment
-        type: boolean
-        required: false
-        default: false
       commentId:
         description: comment id to update
         required: false
@@ -25,9 +20,6 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref_name != 'develop' }}
-
-env:
-  comment_header: <!-- generate-screenshots-report:${{ github.run_id }} -->
 
 jobs:
   start-runner:
@@ -200,7 +192,7 @@ jobs:
     steps:
       - name: report start
         uses: actions/github-script@v6
-        if: github.event.inputs.comment
+        if: github.event.inputs.commentId != ''
         with:
           result-encoding: string
           retries: 3
@@ -208,15 +200,14 @@ jobs:
             const {repo: {owner, repo}, run_id} = context
             const issue_number = ${{ github.event.inputs.number }}
             const body = `\
-            ${{ env.comment_header }}
             @${{ github.event.inputs.login }}
 
             [Generating screenshots: workflow started](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
             `
-            await github.rest.issues.createComment({
+            await github.rest.issues.updateComment({
               owner,
               repo,
-              issue_number,
+              comment_id: "${{ github.event.inputs.commentId }}",
               body,
             });
 
@@ -252,7 +243,6 @@ jobs:
               .join("\n")
 
             const body = `\
-            ${{ env.comment_header }}
             @${{ github.event.inputs.login }}
 
             [Generating screenshots: workflow ended](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
@@ -267,42 +257,13 @@ jobs:
 
             fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
 
-            if(${{ github.event.inputs.comment }}) {
-              const existingComment = await github.paginate(
-                github.rest.issues.listComments,
-                {
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: ${{ github.event.inputs.number }},
-                },
-                (response, done) => {
-                  const comments = response.data
-                  const existingComment = comments
-                    .find(comment =>
-                      comment.user.login === 'github-actions[bot]' &&
-                      comment.body.startsWith(`${{ env.comment_header }}`));
-                  if (existingComment) {
-                    done()
-                    return existingComment;
-                  };
-                }
-              ).then(resPerPage => resPerPage.find(res => !!res));
-
-              if (existingComment) {
-                await github.rest.issues.updateComment({
-                  owner,
-                  repo,
-                  comment_id: existingComment?.id,
-                  body
-                });
-              } else {
-                await github.rest.issues.createComment({
-                  owner,
-                  repo,
-                  issue_number: ${{ github.event.inputs.number }},
-                  body,
-                })
-              }
+            if(${{ github.event.inputs.commentId != '' }}) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: "${{ github.event.inputs.commentId }}",
+                body
+              });
             }
       - uses: actions/upload-artifact@v3
         name: upload summary
