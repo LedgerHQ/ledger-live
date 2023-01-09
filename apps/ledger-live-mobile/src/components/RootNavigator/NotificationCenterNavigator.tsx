@@ -23,7 +23,7 @@ export default function NotificationCenterNavigator() {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const { colors } = useTheme();
+  const { colors, space } = useTheme();
 
   const stackNavConfig = useMemo(
     () => getStackNavigatorConfig(colors),
@@ -60,7 +60,7 @@ export default function NotificationCenterNavigator() {
             <Flex flexDirection="row">
               {incidents.length > 0 && (
                 <TouchableOpacity
-                  style={{ marginRight: 18 }}
+                  style={{ marginRight: space[6] }}
                   onPress={openStatusCenter}
                 >
                   <FullNodeWarning
@@ -72,7 +72,7 @@ export default function NotificationCenterNavigator() {
                 </TouchableOpacity>
               )}
               <TouchableOpacity
-                style={{ marginRight: 18 }}
+                style={{ marginRight: space[6] }}
                 onPress={goToNotificationsSettings}
               >
                 <Icons.SettingsMedium size={24} />

@@ -14,7 +14,7 @@ type Props = {
   onClose: () => void;
 };
 
-const DRAWER = "Notification Center Status";
+const DATA_TRACKING_DRAWER_NAME = "Notification Center Status";
 
 export default function StatusCenter({ onClose, isOpened }: Props) {
   const { t } = useTranslation();
@@ -25,7 +25,7 @@ export default function StatusCenter({ onClose, isOpened }: Props) {
     track("url_clicked", {
       name: "Help center",
       url: urls.supportPage,
-      drawer: DRAWER,
+      drawer: DATA_TRACKING_DRAWER_NAME,
     });
     Linking.openURL(urls.supportPage);
   }, []);
@@ -33,7 +33,7 @@ export default function StatusCenter({ onClose, isOpened }: Props) {
   const onPressClose = useCallback(() => {
     track("button_clicked", {
       button: "Close 'x'",
-      drawer: DRAWER,
+      drawer: DATA_TRACKING_DRAWER_NAME,
     });
     onClose();
   }, [onClose]);
@@ -41,14 +41,14 @@ export default function StatusCenter({ onClose, isOpened }: Props) {
   const onPressOk = useCallback(() => {
     track("button_clicked", {
       button: "Got it",
-      drawer: DRAWER,
+      drawer: DATA_TRACKING_DRAWER_NAME,
     });
     onClose();
   }, [onClose]);
 
   return (
     <BottomDrawer isOpen={isOpened} onClose={onPressClose}>
-      <TrackScreen category={DRAWER} type="drawer" refreshSource={false} />
+      <TrackScreen category={DATA_TRACKING_DRAWER_NAME} type="drawer" refreshSource={false} />
 
       <Flex
         backgroundColor={colors.neutral.c100a005}
