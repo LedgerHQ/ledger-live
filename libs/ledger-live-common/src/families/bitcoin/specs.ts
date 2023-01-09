@@ -89,6 +89,8 @@ const genericTest = ({
   });
 
   botTest("operation matches tx senders and recipients", () => {
+    console.log(transaction);
+
     if (transaction.opReturnData) {
       expect(operation.recipients).toContain(transaction.recipient);
       expect(operation.recipients.length).toBe(2);
