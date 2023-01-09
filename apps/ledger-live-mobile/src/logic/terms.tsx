@@ -54,6 +54,10 @@ export async function isAcceptedLendingTerms() {
   );
 }
 
+export async function unAcceptTerms() {
+  await AsyncStorage.removeItem("acceptedTermsVersion");
+}
+
 export async function acceptTerms() {
   await AsyncStorage.setItem("acceptedTermsVersion", currentTermsRequired);
 }
@@ -74,6 +78,12 @@ export function useLocalizedTermsUrl() {
 export const useTermsAccept = () => {
   const [accepted, setAccepted] = useState(true);
 
+  const unAccept = useCallback(() => {
+    unAcceptTerms().then(() => {
+      setAccepted(false);
+    });
+  }, []);
+
   const accept = useCallback(() => {
     acceptTerms().then(() => {
       setAccepted(true);
@@ -84,5 +94,5 @@ export const useTermsAccept = () => {
     isAcceptedTerms().then(setAccepted);
   }, []);
 
-  return [accepted, accept] as const;
+  return [accepted, accept, unAccept] as const;
 };
