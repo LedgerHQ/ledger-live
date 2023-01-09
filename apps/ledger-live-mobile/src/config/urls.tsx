@@ -199,6 +199,8 @@ export const urls = {
     tellMeMore:
       "https://www.ledger.com/supported-services?utm_source=ledger_live&utm_medium=self_referral&utm_content=discover",
     mint: "ledgerlive://discover/lmarket",
+    linkDrop: "ledgerlive://discover/linkdrop",
+    linkDropStaging: "ledgerlive://discover/linkdrop-staging",
   },
   hedera: {
     supportArticleLink:

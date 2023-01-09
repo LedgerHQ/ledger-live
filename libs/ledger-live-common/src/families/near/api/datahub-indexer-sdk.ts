@@ -13,7 +13,7 @@ const fetchTransactions = async (
   address: string,
   limit: number = DEFAULT_TRANSACTIONS_LIMIT
 ): Promise<NearTransaction[]> => {
-  const route = `/transactions?limit=${limit}&account=${address}`;
+  const route = `/transactions?limit=${limit}&account=${address}&date=${new Date().getTime()}`;
 
   const { data } = await network({
     method: "GET",

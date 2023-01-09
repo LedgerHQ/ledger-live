@@ -6,6 +6,7 @@ import SendRowsFee from "../../../components/SendRowsFee";
 import NavigationScrollView from "../../../components/NavigationScrollView";
 import { TrackScreen } from "../../../analytics";
 import { ScreenName } from "../../../const";
+import { SWAP_VERSION } from "../utils";
 
 export function SelectFees({ navigation, route }: SelectFeesParamList) {
   const { params } = route;
@@ -34,6 +35,8 @@ export function SelectFees({ navigation, route }: SelectFeesParamList) {
         category="Swap Form"
         name="Edit Fees"
         provider={params.provider}
+        flow="swap"
+        swapVersion={SWAP_VERSION}
       />
       <NavigationScrollView contentContainerStyle={styles.scrollView}>
         {account && transaction ? (

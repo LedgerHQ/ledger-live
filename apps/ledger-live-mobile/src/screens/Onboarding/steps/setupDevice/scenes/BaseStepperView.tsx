@@ -24,7 +24,7 @@ const Scene = ({ children }: { children: React.ReactNode }) => (
 
 export type Metadata = {
   id: string;
-  illustration: JSX.Element;
+  illustration: JSX.Element | null;
   drawer: null | { route: string; screen: string };
 };
 
