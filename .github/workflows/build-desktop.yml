@@ -1,4 +1,5 @@
 name: "@Desktop • Build App"
+run-name: "@${{ inputs.login }} triggered @Desktop • Build App ${{ format('on branch {0}', inputs.ref) }}"
 
 on:
   push:
@@ -14,6 +15,9 @@ on:
         required: false
       ref:
         description: the branch which triggered this workflow
+        required: true
+      login:
+        description: The GitHub username that triggered the workflow
         required: true
 
 concurrency:

@@ -1,4 +1,5 @@
 name: "@Mobile • Build App (external)"
+run-name: "@${{ inputs.login }} triggered @Mobile • Build App (external) ${{ format('on branch {0}', inputs.ref) }}"
 
 on:
   workflow_dispatch:
@@ -8,6 +9,9 @@ on:
         required: false
       ref:
         description: the branch which triggered this workflow
+        required: true
+      login:
+        description: The GitHub username that triggered the workflow
         required: true
 
 concurrency:
