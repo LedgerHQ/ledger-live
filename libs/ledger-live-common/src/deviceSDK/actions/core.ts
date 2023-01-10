@@ -1,38 +1,31 @@
 import { LockedDeviceError } from "@ledgerhq/errors";
 import { SharedTaskEvent } from "../tasks/core";
 
-// Representes any error that are not task specific
-export type SharedActionErrorType = "SharedError";
-
-// Represents any error that happened during the action: task specific ones, or shared ones
-// 👋 same hot take than in task: do we really need an Error object ?
-// It's going to be an event that is pushed to the consumer, no need for a full Error object
-export type ActionError<ActionErrorType> = {
-  type: ActionErrorType;
-  message?: string;
-};
-
 // Represents the state that is shared with any action
 // The type of the error prop is specific to the action
-export type SharedActionState<ActionErrorType> = {
+export type SharedActionState = {
   lockedDevice: boolean;
-  error: ActionError<ActionErrorType | SharedActionErrorType> | null;
+  error: { type: "SharedError"; message?: string } | null;
 };
+
+// TODO: comments
+export type FullActionState<SpecificActionState extends { error: unknown }> =
+  Omit<SpecificActionState, "error"> &
+    Omit<SharedActionState, "error"> & {
+      error: SpecificActionState["error"] | SharedActionState["error"] | null;
+    };
 
 /**
  * Handles SharedTaskEvent that are not handled by specific action
  *
- * @param currentState The shared state of the current state
  * @param event The event not handled by the specific action
  * @returns An updated SharedActionState, the shared state of the state
  */
-export function sharedReducer<ActionErrorType>({
-  currentState,
+export function sharedReducer({
   event,
 }: {
-  currentState: SharedActionState<ActionErrorType>;
   event: SharedTaskEvent;
-}): SharedActionState<ActionErrorType> {
+}): Partial<SharedActionState> {
   switch (event.type) {
     // Handles shared errors coming from a task
     case "error": {
@@ -40,12 +33,11 @@ export function sharedReducer<ActionErrorType>({
       const { name, message } = error;
 
       if (error instanceof LockedDeviceError) {
-        return { ...currentState, lockedDevice: true };
+        return { lockedDevice: true };
       }
 
       // Maps any other unhandled error to a SharedError with a specific message
       return {
-        ...currentState,
         error: {
           type: "SharedError",
           message: `${name}: ${message}`,
@@ -53,16 +45,12 @@ export function sharedReducer<ActionErrorType>({
       };
     }
     default:
-      return currentState;
+      return {};
   }
 }
 
 // Instantiates the shared initial state
-export function getSharedInitialState<
-  ActionErrorType
->(): SharedActionState<ActionErrorType> {
-  return {
-    lockedDevice: false,
-    error: null,
-  };
-}
+export const initialSharedActionState: SharedActionState = {
+  lockedDevice: false,
+  error: null,
+};
