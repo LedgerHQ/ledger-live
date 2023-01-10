@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 27.11.0-next.1
+
+### Patch Changes
+
+- [#2280](https://github.com/LedgerHQ/ledger-live/pull/2280) [`a711a20ae8`](https://github.com/LedgerHQ/ledger-live/commit/a711a20ae82c84885705aab7fc6c97f373e973f2) Thanks [@github-actions](https://github.com/apps/github-actions)! - Prevents over usage of erc20.json CDN file
+
 ## 27.11.0-next.0
 
 ### Minor Changes
