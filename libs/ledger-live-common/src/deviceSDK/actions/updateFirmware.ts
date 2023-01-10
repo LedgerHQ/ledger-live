@@ -6,7 +6,11 @@ import {
   updateFirmwareTask,
   UpdateFirmwareTaskEvent,
 } from "../tasks/updateFirmware";
-import { FullActionState, initialSharedActionState } from "./core";
+import {
+  FullActionState,
+  initialSharedActionState,
+  sharedReducer,
+} from "./core";
 
 export type updateFirmwareActionArgs = {
   deviceId: DeviceId;
@@ -34,7 +38,7 @@ export type UpdateFirmwareActionState = FullActionState<{
     | "allowManagerRequested"
     | "preparingUpdate";
   progress: number;
-  error: { type: "UpdateFirmwareError", message?: string }
+  error: { type: "UpdateFirmwareError"; message?: string };
   // TODO: probably we'll need old and new device info here so we can check if we want reinstall language, apps, etc
 }>;
 
@@ -74,11 +78,10 @@ export function updateFirmwareAction({
             // TODO: define a general reducer
             return {
               ...currentState,
-              error: {
-                type: "UpdateFirmwareError",
-                error: event.error.message,
-              },
-            }; // ...generalReducer(currentState, event) };
+              ...sharedReducer({
+                event,
+              }),
+            };
         }
       },
       initialState
