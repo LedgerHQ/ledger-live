@@ -23,6 +23,7 @@ import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/ty
 import {
   WalletContentCard,
   AssetContentCard,
+  LearnContentCard,
   NotificationContentCard,
 } from "../dynamicContent/types";
 import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
@@ -113,6 +114,8 @@ export type DynamicContentState = {
   walletCards: WalletContentCard[];
   /** Dynamic content cards displayed in an Asset Page */
   assetsCards: AssetContentCard[];
+  /** Dynamic content cards displayed in Learn Section */
+  learnCards: LearnContentCard[];
   /** Dynamic content cards displayed in Notification Center */
   notificationCards: NotificationContentCard[];
 };

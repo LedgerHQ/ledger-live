@@ -2,12 +2,14 @@ import { createAction } from "redux-actions";
 import {
   WalletContentCard,
   AssetContentCard,
+  LearnContentCard,
   NotificationContentCard,
 } from "../dynamicContent/types";
 import {
   DynamicContentActionTypes,
   DynamicContentSetWalletCardsPayload,
   DynamicContentSetAssetCardsPayload,
+  DynamicContentSetLearnCardsPayload,
   DynamicContentSetNotificationCardsPayload,
 } from "./types";
 
@@ -31,6 +33,16 @@ const setDynamicContentAssetsCardsAction =
 export const setDynamicContentAssetsCards = (assetsCards: AssetContentCard[]) =>
   setDynamicContentAssetsCardsAction({
     assetsCards,
+  });
+
+const setDynamicContentLearnCardsAction =
+  createAction<DynamicContentSetLearnCardsPayload>(
+    DynamicContentActionTypes.DYNAMIC_CONTENT_SET_LEARN_CARDS,
+  );
+
+export const setDynamicContentLearnCards = (learnCards: LearnContentCard[]) =>
+  setDynamicContentLearnCardsAction({
+    learnCards,
   });
 
 const setDynamicContentNotificationCardsAction =
