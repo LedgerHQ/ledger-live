@@ -66,8 +66,9 @@ export const getAccountBridge = (
   account: AccountLike,
   parentAccount: ?Account,
 ): AccountBridge<any> => {
-  if (getEnv("EXPERIMENTAL_EXECUTION_ON_RENDERER"))
+  if (getEnv("EXPERIMENTAL_EXECUTION_ON_RENDERER")) {
     return bridgeImpl.getAccountBridge(account, parentAccount);
+  }
 
   const sync = (account, syncConfig) => {
     syncs[account.id] = true;

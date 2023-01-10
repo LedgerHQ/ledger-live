@@ -1,8 +1,7 @@
-// @flow
-import { from } from "rxjs";
+import { from, Observable } from "rxjs";
 import { getSecp256k1Instance } from "@ledgerhq/live-common/families/bitcoin/wallet-btc/crypto/secp256k1";
 
-const cmd = ({ publicKey, tweak }) =>
+const cmd = ({ publicKey, tweak }: { publicKey: string; tweak: string }): Observable<string> =>
   from(
     getSecp256k1Instance()
       .publicKeyTweakAdd(

@@ -41,12 +41,9 @@ ipcMain.on("updater", (e, type) => {
 ipcMain.handle(
   "save-logs",
   async (event, path: { canceled: boolean, filePath: string }, experimentalLogs: string | null) =>
-    Promise.resolve().then(
-      () =>
-        !path.canceled &&
-        path.filePath &&
-        fsWriteFile(path.filePath, experimentalLogs || JSON.stringify(loggerTransport.logs)),
-    ),
+    !path.canceled &&
+    path.filePath &&
+    fsWriteFile(path.filePath, experimentalLogs || JSON.stringify(loggerTransport.logs)),
 );
 
 ipcMain.handle(
