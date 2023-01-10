@@ -174,7 +174,6 @@ export const SyncOnboarding = ({
         params: {
           screen: ScreenName.SyncOnboardingCompanion,
           params: {
-            // @ts-expect-error BleDevicePairingFlow will set this param
             device: null,
           },
         },
@@ -305,6 +304,8 @@ export const SyncOnboarding = ({
     switch (deviceOnboardingState?.currentOnboardingStep) {
       case DeviceOnboardingStep.SetupChoice:
       case DeviceOnboardingStep.SafetyWarning:
+        setCompanionStepKey(CompanionStepKey.Seed);
+        break;
       case DeviceOnboardingStep.NewDevice:
       case DeviceOnboardingStep.NewDeviceConfirming:
         setShouldRestoreApps(false);
@@ -328,7 +329,7 @@ export const SyncOnboarding = ({
       default:
         break;
     }
-  }, [deviceOnboardingState]);
+  }, [deviceOnboardingState, shouldRestoreApps]);
 
   // When the user gets close to the seed generation step, sets the lost synchronization delay
   // and timers to a higher value. It avoids having a warning message while the connection is lost
