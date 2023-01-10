@@ -65,7 +65,7 @@ export function NftList({ data }: Props) {
             nft={item}
             onPress={() =>
               isMainNavigatorVisible
-                ? navigateToNftViewer
+                ? navigateToNftViewer(item)
                 : updateListSelect(item)
             }
             selectable={!isMainNavigatorVisible}
@@ -164,6 +164,6 @@ const StyledContainer = styled(Flex)`
 
 const RoundedContainer = styled(Flex)`
   position: absolute;
-  bottom: 10;
+  bottom: 10px;
   z-index: 5;
 `;
