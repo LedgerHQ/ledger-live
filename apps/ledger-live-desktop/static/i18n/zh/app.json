@@ -102,6 +102,7 @@
     "addressCopied" : "地址已复制",
     "addressCopiedSuspicious" : "复制的地址和剪贴板中的地址不匹配。",
     "experimentalFeature" : "实验性功能",
+    "featureFlags" : "Feature Flags",
     "information" : "信息",
     "search" : "搜索中...",
     "searchWithoutEllipsis" : "搜索",
@@ -131,7 +132,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blue"
   },
   "operation" : {
@@ -1206,8 +1207,11 @@
         "checkDeviceButton" : "再次运行检查",
         "cancelButton" : "以后再说"
       },
-      "genuineCheckAnimationModal" : {
-        "message" : "在 {{deviceName}} 上允许使用管理器"
+      "softwareCheckAllowSecureChannelModal" : {
+        "title" : "在 {{deviceName}} 上允许使用管理器"
+      },
+      "softwareCheckLockedDeviceModal" : {
+        "title" : "解锁您的设备"
       },
       "helpDrawer" : {
         "title" : "需要安装手册方面的一些帮助？",
@@ -3698,6 +3702,9 @@
       "featureFlagsEdit" : "编辑",
       "featureFlagsRestore" : "重置",
       "featureFlagsOverride" : "覆盖",
+      "featureFlagsRestoreAll" : "Restore all flags values",
+      "showButtonDesc" : "Always display the Feature Flags button in the Sidebar",
+      "buttonTitle" : "已本地覆盖的标志",
       "firebaseProject" : "此版本支持的 Firebase 项目：",
       "addLocalApp" : "添加一个本地应用程序",
       "addLocalAppDesc" : "浏览本地文件并使用本地清单添加本地应用程序",
@@ -5497,6 +5504,14 @@
       "title" : "您的设备已经锁定",
       "description" : "解锁您的设备并重试。",
       "descriptionWithProductName" : "解锁您的 {{ productName }} 并重试。"
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "您的设备尚未准备好使用",
+      "titleWithProductName" : "{{ productName }} is not ready to use yet",
+      "description" : "You need to setup your device first.\nWe will guide you through the setup process.",
+      "descriptionWithProductName" : "You need to setup your {{ productName }} first.\nWe will guide you through the setup process.",
+      "goToOnboardingButton" : "设置我的设备",
+      "goToOnboardingButtonWithProductName" : "Set up my {{ productName }}"
     }
   },
   "cryptoOrg" : {
@@ -5559,8 +5574,7 @@
     "postOnboarding" : {
       "title" : "个性化我的设备",
       "description" : "通过自定义屏幕",
-      "actionCompletedPopupLabel" : "设备已个性化",
-      "actionCompletedHubTitle" : "那个屏幕看起来很简洁。"
+      "actionCompletedPopupLabel" : "设备已个性化"
     },
     "customImageSet" : "自定义图片集",
     "finishCTA" : "完成"
