@@ -21,10 +21,13 @@ import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import CurrencyIcon from "../CurrencyIcon";
 import NftMedia from "./NftMedia";
 import Skeleton from "../Skeleton";
+import { SelectNft } from "./SelectNft";
 
 type Props = {
   nft: ProtoNFT;
   onPress?: (nft: ProtoNFT, nftMetadata?: NFTMetadata) => void;
+  selectable?: boolean;
+  isSelected?: boolean;
 };
 
 const StyledTouchableOpacity = styled.TouchableOpacity<BaseStyledProps>`
@@ -42,6 +45,8 @@ const NftCardView = ({
   collectionStatus,
   collectionMetadata,
   onPress,
+  selectable = false,
+  isSelected = false,
 }: {
   nft: ProtoNFT;
   status: NFTResource["status"];
@@ -49,6 +54,8 @@ const NftCardView = ({
   collectionStatus: NFTResource["status"];
   collectionMetadata?: NFTCollectionMetadata | null;
   onPress?: () => void;
+  selectable?: boolean;
+  isSelected?: boolean;
 }) => {
   const currency = useMemo(
     () => getCryptoCurrencyById(nft.currencyId),
@@ -64,6 +71,8 @@ const NftCardView = ({
         status={status}
         metadata={metadata}
         nftAmount={nft.standard === "ERC1155" ? nft.amount : undefined}
+        isSelected={isSelected}
+        selectable={selectable}
       />
       <Box mb={7}>
         <Flex flexDirection="column">
@@ -126,7 +135,7 @@ const NftCardView = ({
 const NftCardMemo = memo(NftCardView);
 // this technique of splitting the usage of context and memoing the presentational component is used to prevent
 // the rerender of all NftCards whenever the NFT cache changes (whenever a new NFT is loaded)
-const NftListItem = ({ nft, onPress }: Props) => {
+const NftListItem = ({ nft, onPress, isSelected, selectable }: Props) => {
   const nftMetadata = useNftMetadata(
     nft?.contract,
     nft?.tokenId,
@@ -158,6 +167,8 @@ const NftListItem = ({ nft, onPress }: Props) => {
       collectionStatus={collectionStatus}
       collectionMetadata={collectionMetadata}
       onPress={handlePress}
+      selectable={selectable}
+      isSelected={isSelected}
     />
   );
 };
@@ -167,7 +178,17 @@ type NftMediaProps = {
   metadata: NFTMetadata;
   nftAmount?: ProtoNFT["amount"];
 };
-const NftMediaComponent = ({ status, metadata, nftAmount }: NftMediaProps) => {
+type SelectionProps = {
+  selectable: boolean;
+  isSelected: boolean;
+};
+const NftMediaComponent = ({
+  status,
+  metadata,
+  nftAmount,
+  selectable,
+  isSelected,
+}: NftMediaProps & SelectionProps) => {
   const { t } = useTranslation();
   if (nftAmount && nftAmount.gt(1)) {
     return (
@@ -191,6 +212,23 @@ const NftMediaComponent = ({ status, metadata, nftAmount }: NftMediaProps) => {
       </Box>
     );
   }
+
+  if (selectable) {
+    return (
+      <Box position="relative">
+        <NftMedia
+          style={styles.image}
+          metadata={metadata}
+          mediaFormat="preview"
+          status={status}
+        />
+        <Flex position="absolute" bottom={"20px"} left={"10px"}>
+          <SelectNft isSelected={isSelected} />
+        </Flex>
+      </Box>
+    );
+  }
+
   return (
     <NftMedia
       style={styles.image}

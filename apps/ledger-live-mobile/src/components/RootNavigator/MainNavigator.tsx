@@ -17,6 +17,7 @@ import MarketNavigator from "./MarketNavigator";
 import PortfolioNavigator from "./PortfolioNavigator";
 import {
   hasOrderedNanoSelector,
+  isMainNavigatorVisibleSelector,
   readOnlyModeEnabledSelector,
 } from "../../reducers/settings";
 import ManagerNavigator, { ManagerTabIcon } from "./ManagerNavigator";
@@ -39,7 +40,7 @@ export default function MainNavigator({
   const { colors } = useTheme();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
-
+  const isMainNavigatorVisible = useSelector(isMainNavigatorVisibleSelector);
   const { hideTabNavigation } = params || {};
   const managerNavLockCallback = useManagerNavLockCallback();
 
@@ -47,8 +48,13 @@ export default function MainNavigator({
   const tabBar = useMemo(
     () =>
       ({ ...props }: BottomTabBarProps): JSX.Element =>
-        customTabBar({ ...props, colors, insets }),
-    [insets, colors],
+        customTabBar({
+          ...props,
+          colors,
+          insets,
+          hideTabBar: !isMainNavigatorVisible,
+        }),
+    [colors, insets, isMainNavigatorVisible],
   );
 
   const managerLockAwareCallback = useCallback(

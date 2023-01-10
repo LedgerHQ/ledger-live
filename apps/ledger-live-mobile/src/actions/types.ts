@@ -300,6 +300,7 @@ export enum SettingsActionTypes {
   SET_OVERRIDDEN_FEATURE_FLAG = "SET_OVERRIDDEN_FEATURE_FLAG",
   SET_OVERRIDDEN_FEATURE_FLAGS = "SET_OVERRIDDEN_FEATURE_FLAGS",
   SET_FEATURE_FLAGS_BANNER_VISIBLE = "SET_FEATURE_FLAGS_BANNER_VISIBLE",
+  UPDATE_MAIN_NAVIGATOR_VISIBILITY = "UPDATE_MAIN_NAVIGATOR_VISIBILITY",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -451,6 +452,10 @@ export type SettingsSetStatusCenterPayload = Pick<
   "displayStatusCenter"
 >;
 export type SettingsDangerouslyOverrideStatePayload = State;
+export type SettingsUpdateMainNavigatorVisibility = Pick<
+  SettingsState,
+  "isMainNavigatorVisible"
+>;
 export type DangerouslyOverrideStatePayload = Partial<State>;
 export type SettingsSetOverriddenFeatureFlagPlayload = {
   id: FeatureId;

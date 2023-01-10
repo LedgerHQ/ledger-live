@@ -72,6 +72,7 @@ import {
   SettingsSetOverriddenFeatureFlagPlayload,
   SettingsSetOverriddenFeatureFlagsPlayload,
   SettingsSetFeatureFlagsBannerVisiblePayload,
+  SettingsUpdateMainNavigatorVisibility,
 } from "./types";
 import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
 
@@ -500,6 +501,17 @@ const setStatusCenterAction = createAction<SettingsSetStatusCenterPayload>(
 export const setStatusCenter = (displayStatusCenter: boolean) =>
   setStatusCenterAction({
     displayStatusCenter,
+  });
+
+const updateMainNavigatorVisibilityAction =
+  createAction<SettingsUpdateMainNavigatorVisibility>(
+    SettingsActionTypes.UPDATE_MAIN_NAVIGATOR_VISIBILITY,
+  );
+export const updateMainNavigatorVisibility = (
+  isMainNavigatorVisible: boolean,
+) =>
+  updateMainNavigatorVisibilityAction({
+    isMainNavigatorVisible,
   });
 
 const setOverriddenFeatureFlagAction =
