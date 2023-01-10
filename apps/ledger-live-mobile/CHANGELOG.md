@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.13.0-next.2
+
+### Patch Changes
+
+- [#2280](https://github.com/LedgerHQ/ledger-live/pull/2280) [`bcf6ba2ab8`](https://github.com/LedgerHQ/ledger-live/commit/bcf6ba2ab8408e03a0524c3bed5a613ec4415bec) Thanks [@github-actions](https://github.com/apps/github-actions)! - Sentry: ignore HederaAddAccountError
+
 ## 3.13.0-next.1
 
 ### Patch Changes
