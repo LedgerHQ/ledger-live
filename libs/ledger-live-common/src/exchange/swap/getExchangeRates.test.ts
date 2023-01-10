@@ -230,4 +230,86 @@ describe("swap/getExchangeRates", () => {
       headers: expect.anything(),
     });
   });
+  test("should return correct error SwapExchangeRateAmountTooHigh", async () => {
+    const data = [
+      {
+        provider: "changelly",
+        providerType: "CEX",
+        from: "ethereum",
+        to: "ethereum/erc20/usd_tether__erc20_",
+        amountRequested: "1e-15",
+        minAmountFrom: "0.00000001",
+        maxAmountFrom: "0.00000008",
+        tradeMethod: "fixed",
+        status: "error",
+      },
+    ];
+    const resp = {
+      data,
+      status: 200,
+      statusText: "",
+      headers: {},
+      config: {},
+    };
+
+    mockedAxios.mockResolvedValue(Promise.resolve(resp));
+    mockedProviders.mockResolvedValue(Promise.resolve([]));
+    const res = await getExchangeRates(exchange, transaction);
+    expect(res[0]?.error?.name).toEqual("SwapExchangeRateAmountTooHigh");
+  });
+  test("should return correct error SwapExchangeRateAmountTooLow", async () => {
+    const data = [
+      {
+        provider: "changelly",
+        providerType: "CEX",
+        from: "ethereum",
+        to: "ethereum/erc20/usd_tether__erc20_",
+        amountRequested: "1e-15",
+        minAmountFrom: "0.08045622",
+        maxAmountFrom: "105.00000000",
+        tradeMethod: "fixed",
+        status: "error",
+      },
+    ];
+    const resp = {
+      data,
+      status: 200,
+      statusText: "",
+      headers: {},
+      config: {},
+    };
+
+    mockedAxios.mockResolvedValue(Promise.resolve(resp));
+    mockedProviders.mockResolvedValue(Promise.resolve([]));
+    const res = await getExchangeRates(exchange, transaction);
+    expect(res[0]?.error?.name).toEqual("SwapExchangeRateAmountTooLow");
+  });
+  test("should return correct error SwapExchangeRateAmountTooLowOrTooHigh", async () => {
+    const data = [
+      {
+        provider: "paraswap",
+        providerType: "DEX",
+        from: "ethereum",
+        to: "ethereum/erc20/usd_tether__erc20_",
+        tradeMethod: "float",
+        errorCode: 500,
+        errorMessage: "Failed to get rate for paraswap.",
+        status: "error",
+      },
+    ];
+    const resp = {
+      data,
+      status: 200,
+      statusText: "",
+      headers: {},
+      config: {},
+    };
+
+    mockedAxios.mockResolvedValue(Promise.resolve(resp));
+    mockedProviders.mockResolvedValue(Promise.resolve([]));
+    const res = await getExchangeRates(exchange, transaction);
+    expect(res[0]?.error?.name).toEqual(
+      "SwapExchangeRateAmountTooLowOrTooHigh"
+    );
+  });
 });
