@@ -8,7 +8,9 @@ export type SharedActionState = {
   error: { type: "SharedError"; message?: string } | null;
 };
 
-// TODO: comments
+// Mix the specific action state with the shared state
+// The type of the error prop is the union of the specific action error and the shared error
+// The resulting type contains all the props of the specific action state and the shared state
 export type FullActionState<SpecificActionState extends { error: unknown }> =
   Omit<SpecificActionState, "error"> &
     Omit<SharedActionState, "error"> & {
@@ -19,7 +21,7 @@ export type FullActionState<SpecificActionState extends { error: unknown }> =
  * Handles SharedTaskEvent that are not handled by specific action
  *
  * @param event The event not handled by the specific action
- * @returns An updated SharedActionState, the shared state of the state
+ * @returns An updated partial SharedActionState, the shared state of the state
  */
 export function sharedReducer({
   event,
