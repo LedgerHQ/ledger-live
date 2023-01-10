@@ -22,6 +22,7 @@ import estimateMaxSpendable from "./commands/estimateMaxSpendable";
 import exportAccounts from "./commands/exportAccounts";
 import firmwareRepair from "./commands/firmwareRepair";
 import firmwareUpdate from "./commands/firmwareUpdate";
+import firmwareUpdateAction from "./commands/firmwareUpdateAction";
 import generateTestScanAccounts from "./commands/generateTestScanAccounts";
 import generateTestTransaction from "./commands/generateTestTransaction";
 import genuineCheck from "./commands/genuineCheck";
@@ -82,6 +83,7 @@ export default {
   exportAccounts,
   firmwareRepair,
   firmwareUpdate,
+  firmwareUpdateAction,
   generateTestScanAccounts,
   generateTestTransaction,
   genuineCheck,

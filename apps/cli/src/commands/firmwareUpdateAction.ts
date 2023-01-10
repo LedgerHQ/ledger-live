@@ -10,7 +10,7 @@ import { getProviderId } from "@ledgerhq/live-common/manager/provider";
 import manager from "@ledgerhq/live-common/manager/index";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
-import { installOsuFirmwareCommand } from "@ledgerhq/live-common/deviceSDK/commands/installOsuFirmware";
+import { updateFirmwareAction } from "@ledgerhq/live-common/deviceSDK/actions/updateFirmware";
 import { deviceOpt } from "../scan";
 
 const listFirmwareOSU = async () => {
@@ -103,9 +103,7 @@ export default {
             if (!firmware) return of("already up to date");
             return concat(
               of(`firmware: ${firmware.final.name}\nOSU: ${firmware.osu.name} (hash: ${firmware.osu.hash})`),
-              withDevice(device || "")((transport) =>
-                installOsuFirmwareCommand(transport, { targetId: device || "", osuFirmware: firmware.osu })
-              )
+              updateFirmwareAction({ deviceId: device || "", updateContext: firmware })
             );
           })
         )

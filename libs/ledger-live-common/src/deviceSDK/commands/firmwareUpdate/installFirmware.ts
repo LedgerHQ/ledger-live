@@ -20,20 +20,19 @@ export type InstallFirmwareCommandRequest = {
   firmware: OsuFirmware | FinalFirmware;
 };
 
-const castProgressEvent = (e: SocketEvent) =>
-  e as
-    | {
-        type: "bulk-progress";
-        progress: number;
-        index: number;
-        total: number;
-      }
-    | {
-        type: "device-permission-requested";
-        wording: string;
-      };
+type FilteredSocketEvent =
+  | {
+      type: "bulk-progress";
+      progress: number;
+      index: number;
+      total: number;
+    }
+  | {
+      type: "device-permission-requested";
+      wording: string;
+    };
 
-export type InstallOsuFirmwareCommandEvent =
+export type InstallFirmwareCommandEvent =
   | {
       type: "progress";
       progress: number;
@@ -48,7 +47,7 @@ export type InstallOsuFirmwareCommandEvent =
 export function installFirmwareCommand(
   transport: Transport,
   { targetId, firmware }: InstallFirmwareCommandRequest
-): Observable<InstallOsuFirmwareCommandEvent> {
+): Observable<InstallFirmwareCommandEvent> {
   // TODO handle mock
 
   log("device-command", "installOsuFirmware", {
@@ -69,11 +68,9 @@ export function installFirmwareCommand(
     }),
   }).pipe(
     catchError(remapSocketFirmwareError),
-    filter(
-      (e) =>
-        e.type === "bulk-progress" || e.type === "device-permission-requested"
-    ),
-    map(castProgressEvent),
+    filter<SocketEvent, FilteredSocketEvent>((e): e is FilteredSocketEvent => {
+      return e.type === "bulk-progress" || e.type === "device-permission-requested";
+    }),
     map((e) => {
       if (e.type === "bulk-progress") {
         return e.index >= e.total - 1
@@ -91,9 +88,7 @@ export function installFirmwareCommand(
   );
 }
 
-const remapSocketFirmwareError: (e: Error) => Observable<never> = (
-  e: Error
-) => {
+const remapSocketFirmwareError: (e: Error) => Observable<never> = (e: Error) => {
   if (!e || !e.message) return throwError(e);
 
   if (e.message.startsWith("invalid literal")) {

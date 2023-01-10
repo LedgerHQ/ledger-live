@@ -1,16 +1,21 @@
-import { DeviceOnDashboardExpected } from "@ledgerhq/errors";
+import { DeviceOnDashboardExpected, LockedDeviceError } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
-import type { DeviceId, FirmwareUpdateContext } from "@ledgerhq/types-live";
+import type {
+  DeviceId,
+  FirmwareInfo,
+  FirmwareUpdateContext,
+} from "@ledgerhq/types-live";
 
 import { getVersion } from "../commands/getVersion";
 import { getAppAndVersion } from "../commands/getAppAndVersion";
 
 import { isDashboardName } from "../../hw/isDashboardName";
 import { withDevice } from "../../hw/deviceAccess";
-import { Observable } from "rxjs";
+import { Observable, of } from "rxjs";
 import { filter, switchMap } from "rxjs/operators";
-import { GeneralTaskEvent, wrappedTask } from "./core";
+import { SharedTaskEvent, sharedLogicTaskWrapper } from "./core";
 import { installFirmwareCommand } from "../commands/firmwareUpdate/installFirmware";
+import Transport from "@ledgerhq/hw-transport";
 
 export type UpdateFirmwareTaskArgs = {
   deviceId: DeviceId;
@@ -27,7 +32,7 @@ export type UpdateFirmwareTaskEvent =
   | { type: "installOsuDevicePermissionRequested" }
   | { type: "allowManagerRequested" }
   | { type: "taskError"; error: UpdateFirmwareTaskError }
-  | GeneralTaskEvent;
+  | SharedTaskEvent;
 
 function internalUpdateFirmwareTask({
   deviceId,
@@ -36,7 +41,7 @@ function internalUpdateFirmwareTask({
   return new Observable((subscriber) => {
     withDevice(deviceId)((transport) =>
       getAppAndVersion(transport).pipe(
-        filter(({ name }) => {
+        filter(({ appAndVersion: { name } }) => {
           if (!isDashboardName(name)) {
             subscriber.next({
               type: "taskError",
@@ -49,15 +54,17 @@ function internalUpdateFirmwareTask({
           }
           return true;
         }),
-        switchMap(() => getVersion(transport)),
-        switchMap((firmwareInfo) => {
-          const { targetId } = firmwareInfo;
-          const { osu } = updateContext;
-          log("hw", "initiating osu firmware installation", { targetId, osu });
-          // install OSU firmware
-          return installFirmwareCommand(transport, { targetId, firmware: osu });
+        switchMap(() => getVersion(transport)),        
+        switchMap((value) => {
+          if (value.type === "unresponsive") {
+            return of({
+              type: "error" as const,
+              error: new LockedDeviceError(),
+            });
+          }
+          const { firmwareInfo } = value;
+          return installOsuFirmware({ firmwareInfo, updateContext, transport });
         })
-        // switchMap( // TODO: possible next steps after osu got installed, or maybe that should be in the action?
       )
     ).subscribe({
       next: (event) => {
@@ -78,8 +85,31 @@ function internalUpdateFirmwareTask({
       },
       error: (error) => subscriber.error(error), // subscriber.next({ type: "error", error }),
       complete: () => subscriber.complete(),
+      // TODO: check if flashing mcu and bootloader are needed
+      // do what has to be done to flash them
     });
   });
 }
 
-export const updateFirmwareTask = wrappedTask(internalUpdateFirmwareTask);
+const installOsuFirmware = ({
+  transport,
+  updateContext,
+  firmwareInfo,
+}: {
+  firmwareInfo: FirmwareInfo;
+  updateContext: FirmwareUpdateContext;
+  transport: Transport;
+}) => {
+  const { targetId } = firmwareInfo;
+  const { osu } = updateContext;
+  log("hw", "initiating osu firmware installation", { targetId, osu });
+  // install OSU firmware
+  return installFirmwareCommand(transport, {
+    targetId,
+    firmware: osu,
+  });
+};
+
+export const updateFirmwareTask = sharedLogicTaskWrapper(
+  internalUpdateFirmwareTask
+);
