@@ -47,7 +47,6 @@ import ExperimentalSettings from "../../screens/Settings/Experimental";
 import DeveloperSettings, {
   DeveloperCustomManifest,
 } from "../../screens/Settings/Developer";
-import RepairDevice from "../../screens/RepairDevice";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import Button from "../Button";
 import HelpButton from "../../screens/Settings/HelpButton";
@@ -57,6 +56,7 @@ import HiddenNftCollections from "../../screens/Settings/Accounts/HiddenNftColle
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 import PostOnboardingDebugScreen from "../../screens/PostOnboarding/PostOnboardingDebugScreen";
 import { SettingsNavigatorStackParamList } from "./types/SettingsNavigator";
+import DebugTermsOfUse from "../../screens/Settings/Debug/Features/TermsOfUse";
 
 const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 
@@ -152,13 +152,6 @@ export default function SettingsNavigator() {
           headerRight: undefined,
         })}
         {...noNanoBuyNanoWallScreenOptions}
-      />
-      <Stack.Screen
-        name={ScreenName.RepairDevice}
-        component={RepairDevice}
-        options={{
-          title: t("RepairDevice.title"),
-        }}
       />
       <Stack.Screen
         name={ScreenName.ExperimentalSettings}
@@ -363,6 +356,13 @@ export default function SettingsNavigator() {
         component={DebugStoryly}
         options={{
           title: "Debug Storyly",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugTermsOfUse}
+        component={DebugTermsOfUse}
+        options={{
+          title: "Debug Terms of Use",
         }}
       />
       <Stack.Screen

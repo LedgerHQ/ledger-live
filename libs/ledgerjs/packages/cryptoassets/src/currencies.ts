@@ -2367,6 +2367,9 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     managerAppName: "XSN",
     ticker: "XSN",
     scheme: "xsn",
+    terminated: {
+      link: "https://support.ledger.com/",
+    },
     color: "#141828",
     supportsSegwit: true,
     family: "bitcoin",

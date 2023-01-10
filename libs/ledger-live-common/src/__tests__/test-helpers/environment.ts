@@ -34,7 +34,6 @@ setSupportedCurrencies([
   "vertcoin",
   "peercoin",
   "viacoin",
-  "stakenet",
   "stealthcoin",
   "decred",
   "tron",

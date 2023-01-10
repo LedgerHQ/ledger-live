@@ -179,6 +179,7 @@ export type NotificationsPayload =
 export enum DynamicContentActionTypes {
   DYNAMIC_CONTENT_SET_WALLET_CARDS = "DYNAMIC_CONTENT_SET_WALLET_CARDS",
   DYNAMIC_CONTENT_SET_ASSET_CARDS = "DYNAMIC_CONTENT_SET_ASSET_CARDS",
+  DYNAMIC_CONTENT_SET_NOTIFICATION_CARDS = "DYNAMIC_CONTENT_SET_NOTIFICATION_CARDS",
 }
 
 export type DynamicContentSetWalletCardsPayload = Pick<
@@ -191,9 +192,15 @@ export type DynamicContentSetAssetCardsPayload = Pick<
   "assetsCards"
 >;
 
+export type DynamicContentSetNotificationCardsPayload = Pick<
+  DynamicContentState,
+  "notificationCards"
+>;
+
 export type DynamicContentPayload =
   | DynamicContentSetWalletCardsPayload
-  | DynamicContentSetAssetCardsPayload;
+  | DynamicContentSetAssetCardsPayload
+  | DynamicContentSetNotificationCardsPayload;
 
 // === RATINGS ACTIONS ===
 
@@ -282,6 +289,7 @@ export enum SettingsActionTypes {
   SET_NOTIFICATIONS = "SET_NOTIFICATIONS",
   RESET_SWAP_LOGIN_AND_KYC_DATA = "RESET_SWAP_LOGIN_AND_KYC_DATA",
   WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB = "WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB",
+  SET_STATUS_CENTER = "SET_STATUS_CENTER",
   SET_OVERRIDDEN_FEATURE_FLAG = "SET_OVERRIDDEN_FEATURE_FLAG",
   SET_OVERRIDDEN_FEATURE_FLAGS = "SET_OVERRIDDEN_FEATURE_FLAGS",
   SET_FEATURE_FLAGS_BANNER_VISIBLE = "SET_FEATURE_FLAGS_BANNER_VISIBLE",
@@ -430,6 +438,12 @@ export type SettingsSetWalletTabNavigatorLastVisitedTabPayload = Pick<
   SettingsState,
   "walletTabNavigatorLastVisitedTab"
 >;
+
+export type SettingsSetStatusCenterPayload = Pick<
+  SettingsState,
+  "displayStatusCenter"
+>;
+export type SettingsDangerouslyOverrideStatePayload = State;
 export type DangerouslyOverrideStatePayload = Partial<State>;
 export type SettingsSetOverriddenFeatureFlagPlayload = {
   id: FeatureId;
@@ -486,6 +500,8 @@ export type SettingsPayload =
   | SettingsSetSensitiveAnalyticsPayload
   | SettingsSetFirstConnectHasDeviceUpdatedPayload
   | SettingsSetNotificationsPayload
+  | SettingsDangerouslyOverrideStatePayload
+  | SettingsSetStatusCenterPayload
   | DangerouslyOverrideStatePayload
   | SettingsSetOverriddenFeatureFlagPlayload
   | SettingsSetOverriddenFeatureFlagsPlayload

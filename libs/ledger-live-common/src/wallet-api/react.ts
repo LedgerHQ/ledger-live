@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from "react";
 import { AccountLike } from "@ledgerhq/types-live";
-import { Observable } from "@ledgerhq/wallet-api-server";
+import { Observable } from "rxjs7";
 import {
   accountToWalletAPIAccount,
   currencyToWalletAPICurrency,
