@@ -101,8 +101,6 @@ function readPackage(pkg, context) {
         "web3-utils": pkg.dependencies?.["web3"],
       }),
       addDependencies("@celo/utils", {
-        randombytes: "*",
-        rlp: "*",
         "fp-ts": "*",
       }),
       /*  @cosmjs/* packages */
