@@ -18,6 +18,9 @@ export function useNftList() {
 
   const [nftsToHide, setNftsToHide] = useState<ProtoNFT[]>([]);
 
+  const navigation = useNavigation();
+  const isMainNavigatorVisible = useSelector(isMainNavigatorVisibleSelector);
+
   const onClickHide = useCallback(() => {
     nftsToHide.forEach(nft => {
       const { accountId } = decodeNftId(nft.id ?? "");
@@ -27,9 +30,6 @@ export function useNftList() {
     dispatch(updateMainNavigatorVisibility(true));
     setNftsToHide([]);
   }, [dispatch, nftsToHide]);
-
-  const navigation = useNavigation();
-  const isMainNavigatorVisible = useSelector(isMainNavigatorVisibleSelector);
 
   const cancelAction = useCallback(() => {
     setNftsToHide([]);

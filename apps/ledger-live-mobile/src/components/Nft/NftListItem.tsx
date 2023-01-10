@@ -194,7 +194,10 @@ const NftMediaComponent = ({
     return (
       <Box position="relative">
         <NftMedia
-          style={styles.image}
+          style={[
+            styles.image,
+            { opacity: isSelected ? 0.2 : selectable ? 0.8 : 1 },
+          ]}
           metadata={metadata}
           mediaFormat="preview"
           status={status}
@@ -223,7 +226,10 @@ const NftMediaComponent = ({
     return (
       <Box position="relative">
         <NftMedia
-          style={styles.image}
+          style={[
+            styles.image,
+            { opacity: isSelected ? 0.3 : selectable ? 0.8 : 1 },
+          ]}
           metadata={metadata}
           mediaFormat="preview"
           status={status}
