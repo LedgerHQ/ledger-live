@@ -30,6 +30,7 @@ function LearnSection() {
 
   const onClickItem = useCallback(
     (card: LearnContentCard) => {
+      if (!card.link) return;
       trackContentCardEvent("contentcard_clicked", {
         screen: ScreenName.Learn,
         campaign: card.id,
