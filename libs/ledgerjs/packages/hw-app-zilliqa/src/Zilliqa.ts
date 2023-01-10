@@ -105,7 +105,7 @@ export default class Zilliqa {
 
     const pathParts = path.split("/");
     if (pathParts.length !== 5) {
-      throw Error("Only valid BIP44 paths are supported. Path: " + path);
+      throw Error("Only valid BIP44 paths are supported.");
     }
 
     const [purposeStr, coinStr, accountStr, changeStr, indexStr] = pathParts;
@@ -161,17 +161,11 @@ export default class Zilliqa {
       // By forcing the correct input, we ensure that wallets will be forward
       // comaptible.
       if (index !== HARDEN_CONSTANT) {
-        throw new Error(
-          "Path 'index' must be hardended and equal to zero for versions below v 0.5. Path: " +
-            path
-        );
+        throw new Error("Path 'index' must be hardended and equal to zero");
       }
 
       if (change !== HARDEN_CONSTANT) {
-        throw new Error(
-          "Path 'change' must be hardended and equal to zero for versions below v 0.5. Path: " +
-            path
-        );
+        throw new Error("Path 'change' must be hardended and equal to zero");
       }
     }
 

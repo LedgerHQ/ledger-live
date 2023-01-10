@@ -220,10 +220,8 @@ test("signMessage1", async () => {
   );
   expect(result).toEqual({
     returnCode: 36864,
-    signature: Buffer.from(
+    signature:
       "86f03ee9202704820efbb97c16d64b407393952263be88bfdbf65a58b17b9148a3139db23197f667c6d380de60a602a473b52186230bf94bdafda44a2e88456f",
-      "hex"
-    ),
   });
 });
 
@@ -243,10 +241,8 @@ test("signMessage2", async () => {
   );
   expect(result).toEqual({
     returnCode: 36864,
-    signature: Buffer.from(
+    signature:
       "11b4f7374b937e8742534e46f274e62130bb2853029b29d8bcbb92468f50004c55db9d7451598ea8966c60a9c95ae9dde803556397f3224af6820383f94abd08",
-      "hex"
-    ),
   });
 });
 
@@ -345,10 +341,8 @@ test("signTransaction", async () => {
   );
   expect(result).toEqual({
     returnCode: 36864,
-    signature: Buffer.from(
+    signature:
       "081df589931abc5cfbbdc24b100008531df1e1218b2a47e5752363c58d304552a3a85e6e84af92dd473bcfc3d086e74b7b0eeb9d2e934816c71de955e29b136b",
-      "hex"
-    ),
   });
 });
 
@@ -385,9 +379,7 @@ test("signTransactionDifferentPath", async () => {
   );
   expect(result).toEqual({
     returnCode: 36864,
-    signature: Buffer.from(
+    signature:
       "68e4ebde902ad8b61b5770b7f74c97deb57fa3723afce2992813372948530c6c15c98c807060b047654ef9ac994581f711ae4369f6377db787eef58268779352",
-      "hex"
-    ),
   });
 });
