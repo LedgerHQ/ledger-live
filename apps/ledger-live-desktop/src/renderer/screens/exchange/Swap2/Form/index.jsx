@@ -50,7 +50,7 @@ import SwapFormSummary from "./FormSummary";
 import SwapFormRates from "./FormRates";
 import { DEX_PROVIDERS } from "~/renderer/screens/exchange/Swap2/Form/utils";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import throttle from "lodash/throttle";
+import debounce from "lodash/debounce";
 import LoadingState from "./Rates/LoadingState";
 
 const Wrapper: ThemedComponent<{}> = styled(Box).attrs({
@@ -59,6 +59,21 @@ const Wrapper: ThemedComponent<{}> = styled(Box).attrs({
 })`
   row-gap: 2rem;
   max-width: 37rem;
+`;
+
+const HideComponent: ThemedComponent<{}> = styled.section.attrs(({ ready }) => ({
+  style: ready ? { opacity: 1, maxHeight: "100vh", overflow: "visible" } : {},
+}))`
+  display: grid;
+  row-gap: 1.375rem;
+  color: white;
+  transition: max-height 800ms cubic-bezier(0.47, 0, 0.75, 0.72),
+    opacity 400ms 400ms cubic-bezier(0.47, 0, 0.75, 0.72);
+  transform-origin: top;
+  height: auto;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
 `;
 
 const refreshTime = 30000;
@@ -104,9 +119,9 @@ const SwapForm = () => {
   const [currentFlow, setCurrentFlow] = useState(null);
   const [currentBanner, setCurrentBanner] = useState(null);
   const [isSendMaxLoading, setIsSendMaxLoading] = useState(false);
-  const [showDetails, setShowDetails] = useState(false);
   const [idleState, setIdleState] = useState(false);
   const [firstRateId, setFirstRateId] = useState(null);
+  const [pageState, setPageState] = useState("initial");
 
   const [error, setError] = useState();
   const { t } = useTranslation();
@@ -151,6 +166,9 @@ const SwapForm = () => {
     setCurrentFlow(null);
     setError(undefined);
   }, [provider]);
+
+  console.log("swap transaction");
+  // console.log(swapTransaction);
 
   useEffect(() => {
     // In case of error, don't show  login, kyc or mfa banner
@@ -204,12 +222,30 @@ const SwapForm = () => {
     }, idleTime);
   }, [idleState]);
 
+  // when the user first lands on this screen, they are seeing the initial state
+  // when the user fetches data, they are seeing the loading state
+  // when the first data is returned, they aer seeing the loaded state
+  // when the user fetches different data, they still see the loaded state
+  // when the user fetches data and there is an error, they see the error state?
+  // when the user fetches data and there is no data, they see the empty state
   useEffect(() => {
-    if (!showDetails && swapTransaction.swap.rates.status !== "loading") {
+    if (pageState === "loading" && swapTransaction.swap.rates.status === "success") {
       refreshIdle();
-      setShowDetails(true);
+      setPageState("loaded");
     }
-  }, [refreshIdle, showDetails, swapTransaction.swap.rates.status]);
+
+    if (pageState === "loading" && swapTransaction.swap.rates.status === "error") {
+      setPageState("loaded");
+    }
+
+    if (pageState === "initial" && swapTransaction.swap.rates.status === "loading") {
+      setPageState("loading");
+    }
+
+    if (swapTransaction.swap.from.amount?.isZero() ?? true) {
+      setPageState("initial");
+    }
+  }, [refreshIdle, pageState, swapTransaction.swap.rates.status, swapTransaction.swap.from.amount]);
 
   useEffect(() => {
     dispatch(updateTransactionAction(swapTransaction.transaction));
@@ -455,9 +491,8 @@ const SwapForm = () => {
 
   const debouncedSetFromAmount = useMemo(
     () =>
-      throttle((amount: BigNumber) => {
+      debounce((amount: BigNumber) => {
         setNavigation(null);
-        setShowDetails(false);
         swapTransaction.setFromAmount(amount);
       }, 400),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -492,31 +527,35 @@ const SwapForm = () => {
 
   const setFromAccount = currency => {
     setNavigation(null);
-    setShowDetails(false);
+    setPageState("initial");
     swapTransaction.setFromAccount(currency);
   };
 
   const setToAccount = account => {
     setNavigation(null);
-    setShowDetails(false);
+    setPageState("initial");
     swapTransaction.setToAccount(account);
   };
 
   const setToCurrency = currency => {
     setNavigation(null);
-    setShowDetails(false);
+    setPageState("initial");
     swapTransaction.setToCurrency(currency);
   };
 
   const toggleMax = state => {
+    if (!state) {
+      setPageState("initial");
+    }
+
     setNavigation(null);
-    setShowDetails(false);
     swapTransaction.toggleMax(state);
   };
 
   if (storedProviders?.length)
     return (
       <Wrapper>
+        <div>Page state: {pageState}</div>
         <TrackPage category="Swap" name="Form" provider={provider} {...swapDefaultTrack} />
         <SwapFormSelectors
           fromAccount={sourceAccount}
@@ -538,24 +577,24 @@ const SwapForm = () => {
           isSendMaxLoading={isSendMaxLoading}
           updateSelectedRate={swapTransaction.swap.updateSelectedRate}
         />
-        <SwapFormSummary
-          swapTransaction={swapTransaction}
-          kycStatus={kycStatus}
-          provider={provider}
-        />
-        <SwapFormRates
-          swap={swapTransaction.swap}
-          provider={provider}
-          refreshTime={refreshTime}
-          countdown={!swapError && !idleState}
-          showNoQuoteDexRate={showNoQuoteDexRate}
-          showDetails={showDetails}
-        />
-
+        {pageState === "loading" && <LoadingState />}
+        <HideComponent ready={pageState === "loaded"}>
+          <SwapFormSummary
+            swapTransaction={swapTransaction}
+            kycStatus={kycStatus}
+            provider={provider}
+          />
+          <SwapFormRates
+            swap={swapTransaction.swap}
+            provider={provider}
+            refreshTime={refreshTime}
+            countdown={!swapError && !idleState}
+            showNoQuoteDexRate={showNoQuoteDexRate}
+          />
+        </HideComponent>
         {currentBanner === "LOGIN" ? (
           <FormLoginBanner provider={provider} onClick={() => setCurrentFlow("LOGIN")} />
         ) : null}
-
         {currentBanner === "KYC" ? (
           <FormKYCBanner
             provider={provider}
@@ -563,13 +602,10 @@ const SwapForm = () => {
             onClick={() => setCurrentFlow("KYC")}
           />
         ) : null}
-
         {currentBanner === "MFA" ? (
           <FormMFABanner provider={provider} onClick={() => setCurrentFlow("MFA")} />
         ) : null}
-
         {error ? <FormErrorBanner provider={provider} error={error} /> : null}
-
         <Box>
           <Button primary disabled={!isSwapReady} onClick={onSubmit} data-test-id="exchange-button">
             {t("common.exchange")}

@@ -28,7 +28,6 @@ type SwapFormProvidersProps = {
   refreshTime: number,
   countdown: boolean,
   showNoQuoteDexRate: boolean,
-  showDetails: boolean,
 };
 const SwapFormProviders = ({
   swap,
@@ -36,7 +35,6 @@ const SwapFormProviders = ({
   refreshTime,
   countdown,
   showNoQuoteDexRate,
-  showDetails,
 }: SwapFormProvidersProps) => {
   const { currency: fromCurrency, amount: fromAmount } = swap.from;
   const { currency: toCurrency } = swap.to;
@@ -74,7 +72,7 @@ const SwapFormProviders = ({
   }, [swap.rates, showNoQuoteDexRate]);
 
   const hasRates = ratesState?.value?.length > 0;
-  const loading = !hasRates && ratesState.status === "loading";
+  const loading = ratesState.status === "loading";
 
   return (
     <Form ready={true}>

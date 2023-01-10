@@ -16,7 +16,7 @@ const ratesReducerInitialState: RatesReducerState = {};
 const ratesReducer = (state: RatesReducerState, action): RatesReducerState => {
   switch (action.type) {
     case "set":
-      return { value: action.payload, status: null };
+      return { value: action.payload, status: "success" };
     case "idle":
       return { ...state, status: null };
     case "loading":
@@ -84,7 +84,7 @@ export const useProviderRates = ({
           !fromAccount
         ) {
           setExchangeRate && setExchangeRate();
-          return dispatchRates({ type: "set", payload: [] });
+          return dispatchRates({ type: "idle" });
         }
         dispatchRates({ type: "loading" });
         try {

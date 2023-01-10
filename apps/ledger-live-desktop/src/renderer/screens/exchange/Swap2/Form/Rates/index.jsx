@@ -234,8 +234,7 @@ export default function ProviderRate({
           );
         })}
       </Box>
-      {searchProvided && !loading && !filteredRates.length && <EmptyState />}
-      {loading && !filteredRates.length && <LoadingState />}
+      {!loading && !filteredRates.length && <EmptyState />}
     </Box>
   );
 }
