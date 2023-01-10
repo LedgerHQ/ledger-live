@@ -122,7 +122,7 @@ const CardContainer = (props: CardProps): React.ReactElement => {
   );
 };
 
-const CardB = (props: CardProps): React.ReactElement => {
+const SideImageCard = (props: CardProps): React.ReactElement => {
   return (
     <Base {...props} activeOpacity={0.5}>
       <CardContainer {...props} />
@@ -130,4 +130,4 @@ const CardB = (props: CardProps): React.ReactElement => {
   );
 };
 
-export default CardB;
+export default SideImageCard;
