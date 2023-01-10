@@ -138,8 +138,10 @@ const ClaimNftQrScan = () => {
   }, []);
 
   useEffect(() => {
-    if (!permission?.granted) requestPermission();
-  }, []);
+    if (!permission?.granted) {
+      requestPermission();
+    }
+  }, [requestPermission, permission?.granted]);
 
   const appState = useRef(AppState.currentState);
 
@@ -163,9 +165,7 @@ const ClaimNftQrScan = () => {
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
       <Flex flex={1}>
-        {!permission?.canAskAgain &&
-        !permission?.granted &&
-        permission?.status === "denied" ? (
+        {!permission?.canAskAgain && !permission?.granted ? (
           <FallbackCameraScreen
             route={route}
             navigation={navigation}
@@ -174,13 +174,13 @@ const ClaimNftQrScan = () => {
         ) : (
           <>
             <Flex
-              backgroundColor="neutral.c40"
+              backgroundColor="constant.black"
               alignItems="center"
               justifyContent="center"
               overflow="hidden"
               {...cameraBoxDimensions}
             >
-              {isInFocus ? (
+              {permission?.granted && isInFocus ? (
                 <Camera
                   ref={cameraRef}
                   type={CameraType.back}
