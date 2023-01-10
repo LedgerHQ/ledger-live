@@ -5,14 +5,13 @@ import { useHistory } from "react-router-dom";
 import EthStakeIllustration from "./assets/EthStakeIlustration.tsx";
 import ProviderItem from "./component/ProviderItem";
 import { Flex } from "@ledgerhq/react-ui";
-import styled from "styled-components";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import CheckBox from "~/renderer/components/CheckBox";
 import { track } from "~/renderer/analytics/segment";
 import { LOCAL_STORAGE_KEY_PREFIX } from "~/renderer/modals/Receive/steps/StepReceiveStakingFlow";
 import { useTranslation } from "react-i18next";
 import { openURL } from "~/renderer/linking";
+import { CheckBoxContainer } from "~/renderer/modals/Receive/steps/StepReceiveStakingFlow.tsx";
 
 type Props = {
   onClose: () => void,
@@ -21,21 +20,6 @@ type Props = {
   singleProviderRedirectMode?: boolean,
   source?: string,
 };
-
-export const Separator: ThemedComponent<{}> = styled.div`
-  width: 100%;
-  height: 1px;
-  background-color: ${p => p.theme.colors.palette.divider};
-`;
-export const CheckBoxContainer: ThemedComponent<{}> = styled(Flex)`
-  & > div {
-    column-gap: 15px;
-  }
-  & span {
-    font-size: 14px;
-    line-height: 18px;
-  }
-`;
 
 const Body = ({
   checkbox = false,
@@ -115,30 +99,24 @@ const Body = ({
         <Flex flexDirection={"column"} width="100%">
           {providers.map((item, i) => (
             <Flex key={item.id} width="100%" flexDirection={"column"}>
-              <Flex ml={3} width="auto" flexDirection={"column"}>
-                <ProviderItem
-                  id={item.liveAppId}
-                  name={item.name}
-                  provider={item}
-                  infoOnClick={infoOnClick}
-                  stakeOnClick={stakeOnClick}
-                />
-              </Flex>
-              {i !== providers.length - 1 && <Separator />}
+              <ProviderItem
+                id={item.liveAppId}
+                name={item.name}
+                provider={item}
+                infoOnClick={infoOnClick}
+                stakeOnClick={stakeOnClick}
+              />
             </Flex>
           ))}
         </Flex>
         {checkbox && (
           <CheckBoxContainer
             p={3}
-            borderColor="neutral.c50"
             borderRadius={8}
-            borderWidth={1}
-            borderStyle={"solid"}
+            borderWidth={0}
             width={"100%"}
             onClick={checkBoxOnChange}
             mt={15}
-            style={{ columnGap: 3, color: "red" }}
           >
             <CheckBox isChecked={doNotShowAgain} label={t("receive.steps.staking.notShow")} />
           </CheckBoxContainer>
