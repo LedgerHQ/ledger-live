@@ -1,35 +1,37 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { useAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/index";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import {
   CardMedium,
-  NotificationsMedium,
-  NotificationsOnMedium,
   SettingsMedium,
   WarningMedium,
 } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "styled-components/native";
 import Touchable from "../../components/Touchable";
 import { NavigatorName, ScreenName } from "../../const";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import DiscreetModeButton from "../../components/DiscreetModeButton";
 import { track } from "../../analytics";
+import useDynamicContent from "../../dynamicContent/dynamicContent";
+import Notifications from "../../icons/Notifications";
 
 function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
   const navigation = useNavigation();
+  const { colors } = useTheme();
 
-  const { allIds, seenIds } = useAnnouncements();
+  const { notificationCards } = useDynamicContent();
   const { incidents } = useFilteredServiceStatus();
   const { t } = useTranslation();
 
   const onNotificationButtonPress = useCallback(() => {
     track("button_clicked", {
-      button: "Notification Center",
+      button: "notification bell",
+      screen: ScreenName.Portfolio,
     });
     navigation.navigate(NavigatorName.NotificationCenter, {
-      screen: ScreenName.NotificationCenterNews,
+      screen: ScreenName.NotificationCenter,
     });
   }, [navigation]);
 
@@ -46,14 +48,18 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
     navigation.navigate(NavigatorName.Settings);
   }, [navigation]);
 
-  const onCardButtonPress = useCallback(() => {
+  const onSideImageCardButtonPress = useCallback(() => {
     navigation.navigate(ScreenName.PlatformApp, {
       platform: "cl-card",
       name: "CL Card Powered by Ledger",
     });
   }, [navigation]);
 
-  const notificationsCount = allIds.length - seenIds.length;
+  const notificationsCount = useMemo(
+    () =>
+      notificationCards.length - notificationCards.filter(n => n.viewed).length,
+    [notificationCards],
+  );
 
   return (
     <Flex
@@ -90,17 +96,8 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
       </Flex>
       <Flex flexDirection="row">
         <Flex mr={7}>
-          <Touchable onPress={onNotificationButtonPress}>
-            {notificationsCount > 0 ? (
-              <NotificationsOnMedium size={24} color={"neutral.c100"} />
-            ) : (
-              <NotificationsMedium size={24} color={"neutral.c100"} />
-            )}
-          </Touchable>
-        </Flex>
-        <Flex mr={7}>
           <Touchable
-            onPress={onCardButtonPress}
+            onPress={onSideImageCardButtonPress}
             event="button_clicked"
             eventProperties={{
               button: "card",
@@ -108,6 +105,16 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
             }}
           >
             <CardMedium size={24} color={"neutral.c100"} />
+          </Touchable>
+        </Flex>
+        <Flex mr={7}>
+          <Touchable onPress={onNotificationButtonPress}>
+            <Notifications
+              size={24}
+              color={colors.neutral.c100}
+              dotColor={colors.error.c80}
+              isOn={notificationsCount > 0}
+            />
           </Touchable>
         </Flex>
         <Touchable onPress={onSettingsButtonPress} testID="settings-icon">
