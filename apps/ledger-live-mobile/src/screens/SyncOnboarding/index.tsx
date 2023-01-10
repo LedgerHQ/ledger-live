@@ -116,7 +116,7 @@ export const SyncOnboarding = ({
       if (step === CompanionStepKey.Exit) {
         return CompanionStepKey.Exit;
       }
-      feat/FAT-132-sync-onboarding-restore-apps-llm   let nextStep = step + 1; // by default, just increment the step
+      let nextStep = step + 1; // by default, just increment the step
       if (nextStep === CompanionStepKey.Apps && !deviceInitialApps?.enabled) {
         nextStep += 1; // skip "Apps" step if flag is disabled
       }
