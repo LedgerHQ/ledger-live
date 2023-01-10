@@ -18,8 +18,6 @@ import type { LendingSupplyFlowNavigatorParamList } from "../../components/RootN
 import type { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
 import type { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import type { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
-import { sharedSwapTracking } from "../../screens/Swap/utils";
-import { useAnalytics } from "../../analytics";
 
 type Props = {
   transaction: Transaction;
@@ -61,7 +59,6 @@ export default function BitcoinSendRowsFee({
   ...props
 }: Props) {
   invariant(account.type === "Account", "account not found");
-  const { track } = useAnalytics();
   const defaultStrategies = useFeesStrategy(
     account,
     transaction as BitcoinTransaction,
@@ -95,10 +92,6 @@ export default function BitcoinSendRowsFee({
     [setTransaction, account, parentAccount, transaction],
   );
   const openCustomFees = useCallback(() => {
-    track("button_clicked", {
-      ...sharedSwapTracking,
-      button: "customize fees",
-    });
     navigation.navigate(ScreenName.BitcoinEditCustomFees, {
       ...route.params,
       accountId: account.id,
@@ -108,7 +101,6 @@ export default function BitcoinSendRowsFee({
       setSatPerByte,
     });
   }, [
-    track,
     navigation,
     route.params,
     account.id,
