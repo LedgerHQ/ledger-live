@@ -1,6 +1,7 @@
 enum LocationContentCard {
   Wallet = "wallet",
   Asset = "asset",
+  Learn = "learn",
   NotificationCenter = "notification_center",
 }
 
@@ -16,6 +17,7 @@ type ContentCard = {
   link?: string;
   image?: string;
   tag: string;
+  createdAt: number;
 };
 
 type WalletContentCard = ContentCard & {
@@ -28,6 +30,8 @@ type AssetContentCard = ContentCard & {
   displayOnEveryAssets?: boolean;
 };
 
+type LearnContentCard = ContentCard;
+
 type NotificationContentCard = ContentCard & {
   cta?: string;
   createdAt: number;
@@ -35,9 +39,10 @@ type NotificationContentCard = ContentCard & {
 };
 
 export type {
+  ContentCard,
   AssetContentCard,
   WalletContentCard,
-  ContentCard,
   NotificationContentCard,
+  LearnContentCard,
 };
 export { LocationContentCard, Background };

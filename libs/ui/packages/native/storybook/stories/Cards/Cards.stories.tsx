@@ -3,12 +3,14 @@ import React from "react";
 import FullBackgroundCard from "../../../src/components/Cards/FullBackgroundCard";
 import SideImageCard from "../../../src/components/Cards/SideImageCard";
 import NotificationCard from "../../../src/components/Cards/NotificationCard";
+import InformativeCard from "../../../src/components/Cards/InformativeCard";
 import Flex from "../../../src/components/Layout/Flex";
 import { text, select, number, boolean } from "@storybook/addon-knobs";
 import {
   descriptionFullBackgroundCard,
   descriptionSideImageCard,
   descriptionNotificationCard,
+  descriptionInformativeCard,
 } from "./descriptionsCards";
 
 const FullBackgroundCardStory = () => {
@@ -82,6 +84,36 @@ const SideImageCardStory = () => {
   );
 };
 
+const InformativeCardStory = () => {
+  const tag = text("tag", "Promo");
+  const title = text(
+    "title",
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam tellus risus, pretium a nulla sit amet, porta sollicitudin tortor.",
+  );
+
+  const imageUrl = select(
+    "url Image",
+    [
+      "https://www.cointribune.com/app/uploads/2020/12/LEDGER-Nano-X.jpg?nowebp",
+      "https://cdn.shopify.com/s/files/1/2974/4858/products/01_6.png?v=1647271638",
+    ],
+    "",
+  );
+
+  return (
+    <Flex
+      backgroundColor={"primary.c20"}
+      height={300}
+      width={400}
+      alignItems="center"
+      justifyContent={"center"}
+      p={"16px"}
+    >
+      <InformativeCard tag={tag} title={title} imageUrl={imageUrl?.replace(/&amp;/g, "&")} />
+    </Flex>
+  );
+};
+
 const NotificationCardStory = () => {
   const tag = text("tag", "Promo");
   const viewed = boolean("Notif has been viewed?", false);
@@ -140,6 +172,14 @@ storiesOf((story) =>
         title: "Notification Card",
         description: {
           component: descriptionNotificationCard,
+        },
+      },
+    })
+    .add("InformativeCard", InformativeCardStory, {
+      docs: {
+        title: "InformativeCard",
+        description: {
+          component: descriptionInformativeCard,
         },
       },
     }),
