@@ -1,5 +1,5 @@
 import { from, Observable, of } from "rxjs";
-import { switchMap } from "rxjs/operators";
+import { switchMap, finalize } from "rxjs/operators";
 import { DeviceModelId, identifyTargetId } from "@ledgerhq/devices";
 import Transport from "@ledgerhq/hw-transport";
 import type { FirmwareInfo } from "@ledgerhq/types-live";
@@ -16,6 +16,7 @@ export function getVersion(
 ): Observable<GetVersionCmdEvent> {
   return new Observable((subscriber) => {
     // TODO: defines actual value
+    const oldTimeout = transport.unresponsiveTimeout;
     transport.setExchangeUnresponsiveTimeout(1000);
 
     const unresponsiveCallback = () => {
@@ -160,7 +161,8 @@ export function getVersion(
               languageId,
             },
           });
-        })
+        }),
+        finalize(() => transport.setExchangeUnresponsiveTimeout(oldTimeout))
       )
       .subscribe(subscriber);
   });
