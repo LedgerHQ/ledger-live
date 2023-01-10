@@ -11,6 +11,7 @@ import {
 } from "./account";
 import { genAccount } from "./mocks/account";
 import { Operation, SubAccount } from "@ledgerhq/types-live";
+
 describe("groupAccountOperationsByDay", () => {
   test("basic", () => {
     const account = genAccount("seed_7", {

@@ -1036,6 +1036,7 @@ importers:
       prettier: ^2.8.1
       rxjs: ^6.6.7
       rxjs-compat: ^6.6.7
+      timemachine: ^0.3.2
       ts-jest: ^28.0.5
       typescript: ^4.9.4
       utility-types: ^3.10.0
@@ -1072,6 +1073,7 @@ importers:
       eslint-plugin-prettier: 4.2.1_kl4pe43v5b43npmso5hoplpbyi
       jest: 28.1.3
       prettier: 2.8.1
+      timemachine: 0.3.2
       ts-jest: 28.0.8_ra2f52bqkg4l5hhftg6v7qm6jm
       typescript: 4.9.4
 
