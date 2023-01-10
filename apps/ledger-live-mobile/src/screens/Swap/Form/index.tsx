@@ -52,7 +52,7 @@ import { NotAvailable } from "./NotAvailable";
 import { TxForm } from "./TxForm";
 import { Summary } from "./Summary";
 import { Requirement } from "./Requirement";
-import { SWAP_VERSION, sharedSwapTracking, useTrackSwapError } from "../utils";
+import { sharedSwapTracking, useTrackSwapError } from "../utils";
 import { Max } from "./Max";
 import { Modal } from "./Modal";
 import { Connect } from "./Connect";
@@ -343,11 +343,10 @@ export function SwapForm({
     track(
       "button_clicked",
       {
+        ...sharedSwapTracking,
         sourceCurrency: swapTransaction.swap.from.currency?.name,
         targetCurrency: swapTransaction.swap.to.currency?.name,
         provider,
-        swapVersion: SWAP_VERSION,
-        flow: "swap",
         button: "exchange",
       },
       undefined,
@@ -384,8 +383,8 @@ export function SwapForm({
         track(
           "Page Swap Form - New Source Account",
           {
+            ...sharedSwapTracking,
             provider,
-            swapVersion: SWAP_VERSION,
           },
           undefined,
         );
@@ -431,8 +430,7 @@ export function SwapForm({
             <TrackScreen
               category="Swap"
               providerName={provider}
-              flow="swap"
-              swapVersion={SWAP_VERSION}
+              {...sharedSwapTracking}
             />
             <TxForm
               swapTx={swapTransaction}
