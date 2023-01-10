@@ -564,7 +564,13 @@ export const RenderDeviceNotOnboardedError = ({ t, device }: { t: TFunction; dev
             })
           : t("errors.DeviceNotOnboardedError.title")}
       </Text>
-      <Text variant="paragraph" color="neutral.c80" fontSize={6} whiteSpace="pre-wrap">
+      <Text
+        variant="paragraph"
+        color="neutral.c80"
+        fontSize={6}
+        whiteSpace="pre-wrap"
+        textAlign="center"
+      >
         {productName
           ? t("errors.DeviceNotOnboardedError.descriptionWithProductName", {
               productName,
