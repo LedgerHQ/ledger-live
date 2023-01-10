@@ -13,11 +13,9 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { blockchainBaseURL } from "../../../../api/Ledger";
 
 type ExplorerParams = {
-  no_token?: string;
-  noToken?: string;
   batch_size?: number;
-  block_hash?: string;
-  blockHash?: string;
+  from_height?: number;
+  order?: "ascending" | "descending";
 };
 
 class BitcoinLikeExplorer implements IExplorer {
@@ -162,9 +160,7 @@ class BitcoinLikeExplorer implements IExplorer {
 
   async getPendings(address: Address, nbMax = 1000) {
     const params: ExplorerParams = {
-      no_token: "true",
       batch_size: !this.disableBatchSize ? nbMax : undefined,
-      block_hash: undefined,
     };
     const pendingsTxs = await this.fetchPendingTxs(address, params);
     pendingsTxs.forEach((tx) => this.hydrateTx(address, tx));
@@ -246,10 +242,12 @@ class BitcoinLikeExplorer implements IExplorer {
     lastTx: TX | undefined
   ): Promise<TX[]> {
     const params: ExplorerParams = {
-      no_token: "true",
       batch_size: !this.disableBatchSize ? batchSize : undefined,
-      block_hash: lastTx ? lastTx.block.hash : undefined,
     };
+    if (lastTx) {
+      params.from_height = lastTx.block.height;
+      params.order = "ascending";
+    }
     const txs = await this.fetchTxs(address, params);
 
     const hydratedTxs: TX[] = [];
