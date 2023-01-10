@@ -385,7 +385,7 @@ const SwapForm = () => {
 
     if (exchangeRate.providerType === "DEX") {
       const from = swapTransaction.swap.from;
-      const fromAddress = from.parentAccount?.freshAddress || from.account.freshAddress;
+      const fromAddress = from.parentAccount?.id || from.account.id;
       const providerURL =
         exchangeRate.providerURL ||
         `/platform/${getProviderName(exchangeRate.provider).toLowerCase()}`;
