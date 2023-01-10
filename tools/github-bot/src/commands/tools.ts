@@ -85,6 +85,11 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
       context.log.info(
         `[Monitoring Workflow](workflow_run.requested) ${payload.workflow_run.name}`
       );
+      const workflowUrl = payload.workflow.html_url;
+      const summaryPrefix = workflow.description
+        ? `#### ${workflow.description}\n\n`
+        : "";
+
       // Will trigger the check_run.created event (which will update the gate)
       await octokit.checks.create({
         owner,
@@ -93,6 +98,13 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
         head_sha: payload.workflow_run.head_sha,
         status: "queued",
         started_at: new Date().toISOString(),
+        output: {
+          title: "⏱️ Queued",
+          summary:
+            summaryPrefix +
+            `The **[workflow](${workflowUrl})** is currently queued.`,
+          details_url: workflowUrl,
+        },
       });
     }
   });

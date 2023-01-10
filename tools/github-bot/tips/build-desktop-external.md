@@ -1,6 +1,6 @@
 ## 💡 Basics Tips
 
-##### To share some piece of advice and help the community, please do not hesitate to [edit this file](https://github.com/LedgerHQ/ledger-live/edit/develop/tools/github-bot/tips/build-desktop.md) and submit a pull request. Thank you! 🙏
+##### To share some piece of advice and help the community, please do not hesitate to [edit this file](https://github.com/LedgerHQ/ledger-live/edit/develop/tools/github-bot/tips/build-desktop-external.md) and submit a pull request. Thank you! 🙏
 
 If you're troubleshooting a build failure, here are a few tips to keep in mind.
 
@@ -38,10 +38,12 @@ Check other runs of the same workflow. If other branches are experiencing the sa
 
 ### Review the workflow code.
 
-[The workflow YAML file](https://github.com/LedgerHQ/ledger-live/blob/develop/.github/workflows/build-desktop.yml) provides information about the commands that are run on the continuous integration (CI) environment.
+[The workflow YAML file](https://github.com/LedgerHQ/ledger-live/blob/develop/.github/workflows/build-desktop-external.yml) provides information about the commands that are run on the continuous integration (CI) environment.
 
 You should be able to reproduce locally by simply running the commands in the same order.
 
 ### Infrastucture issues
 
-Consider the possibility of infrastructure issues. If the error appears to be related to a slow network or a physical machine, it's possible that the problem is not related to the code. In this case, wait a bit and restart the job, or contact the infrastructure team if the problem persists.
+Consider the possibility of infrastructure issues.
+
+If the error appears to be related to a slow network or a physical machine, it's possible that the problem is not related to the code. In this case, wait a bit and restart the job, or file an issue if the problem persists.
