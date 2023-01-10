@@ -5730,7 +5730,6 @@
       }
     }
   },
-
   "postOnboarding": {
     "hub": {
       "title": "Next up, use your {{productName}} to...",
@@ -5771,6 +5770,11 @@
       "nft": "NFTs"
     },
     "nftGallery": {
+      "filters": {
+        "selectAndHide": "Select and hide",
+        "hide": "Hide {{count}} NFT",
+        "hide_plural": "Hide {{count}} NFTs"
+      },
       "empty": {
         "title": "No NFTs to show, yet",
         "subtitle": "Get started by receiving your first NFT.",

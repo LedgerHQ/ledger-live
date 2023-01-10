@@ -100,6 +100,7 @@ const lightGradients = [
 
 export type Props = {
   colors: ColorPalette;
+  hideTabBar?: boolean;
 } & BottomTabBarProps;
 
 export default function CustomTabBar({
@@ -108,10 +109,15 @@ export default function CustomTabBar({
   navigation,
   colors,
   insets,
+  hideTabBar = false,
 }: Props): JSX.Element {
   const bgColor = getBgColor(colors);
   const gradients = colors.type === "light" ? lightGradients : darkGradients;
   const { bottom: bottomInset } = insets;
+
+  if (hideTabBar) {
+    return <></>;
+  }
   return (
     <Flex
       width="100%"

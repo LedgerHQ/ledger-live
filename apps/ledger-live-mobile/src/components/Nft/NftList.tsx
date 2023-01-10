@@ -1,16 +1,16 @@
 import React, { useCallback } from "react";
 import { FlatListProps } from "react-native";
-import { NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
-import { Flex } from "@ledgerhq/native-ui";
+import { ProtoNFT } from "@ledgerhq/types-live";
+import { Button, Flex } from "@ledgerhq/native-ui";
 import { BigNumber } from "bignumber.js";
-import { useNavigation } from "@react-navigation/native";
 
+import styled from "styled-components/native";
 import NftListItem from "./NftListItem";
 import { AddNewItem } from "./AddNewItemList";
 import CollapsibleHeaderFlatList from "../WalletTab/CollapsibleHeaderFlatList";
 import globalSyncRefreshControl from "../globalSyncRefreshControl";
-import { track, TrackScreen } from "../../analytics";
-import { NavigatorName, ScreenName } from "../../const";
+import { TrackScreen } from "../../analytics";
+import { useNftList } from "./NftList.hook";
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl<
   FlatListProps<ProtoNFT>
@@ -36,24 +36,16 @@ const keyExtractor = (item: ProtoNFT) => item.id;
 
 export function NftList({ data }: Props) {
   const dataWithAdd = data.concat(ADD_NEW);
-  const navigation = useNavigation();
-
-  const navigateToNftViewer = useCallback(
-    (nft: ProtoNFT, metadata?: NFTMetadata) => {
-      track("NFT_clicked", {
-        NFT_collection: metadata?.tokenName,
-        NFT_title: metadata?.nftName,
-      });
-
-      navigation.navigate(NavigatorName.NftNavigator, {
-        screen: ScreenName.NftViewer,
-        params: {
-          nft,
-        },
-      });
-    },
-    [navigation],
-  );
+  const {
+    triggerMultiSelectHideAction,
+    navigateToNftViewer,
+    nftsToHide,
+    onClickHide,
+    isMainNavigatorVisible,
+    t,
+    cancelAction,
+    updateListSelect,
+  } = useNftList();
 
   const renderItem = useCallback(
     ({ item, index }: { item: ProtoNFT; index: number; count?: number }) => (
@@ -69,28 +61,109 @@ export function NftList({ data }: Props) {
         {item.id === ADD_NEW.id ? (
           <AddNewItem />
         ) : (
-          <NftListItem nft={item} onPress={navigateToNftViewer} />
+          <NftListItem
+            nft={item}
+            onPress={() =>
+              isMainNavigatorVisible
+                ? navigateToNftViewer
+                : updateListSelect(item)
+            }
+            selectable={!isMainNavigatorVisible}
+            isSelected={nftsToHide.includes(item)}
+          />
         )}
       </Flex>
     ),
-    [navigateToNftViewer],
+    [isMainNavigatorVisible, navigateToNftViewer, nftsToHide, updateListSelect],
   );
 
   return (
     <>
       <TrackScreen category="NFT Gallery" NFTs_owned={data.length} />
 
+      {!isMainNavigatorVisible && (
+        <StyledContainer
+          width="100%"
+          flexDirection="row"
+          alignItems="center"
+          justifyContent="flex-start"
+        >
+          <Button
+            onPress={triggerMultiSelectHideAction}
+            type="main"
+            iconName="Close"
+            iconPosition="left"
+            size="small"
+          >
+            {t("common.cancel")}
+          </Button>
+        </StyledContainer>
+      )}
+
       <RefreshableCollapsibleHeaderFlatList
         numColumns={2}
+        ListHeaderComponent={
+          <>
+            {isMainNavigatorVisible && (
+              <Flex
+                width="100%"
+                flexDirection="row"
+                alignItems="center"
+                justifyContent="flex-start"
+              >
+                <StyledButton
+                  onPress={cancelAction}
+                  type="default"
+                  iconName="Tasks"
+                  iconPosition="left"
+                  size="small"
+                >
+                  {t("wallet.nftGallery.filters.selectAndHide")}
+                </StyledButton>
+              </Flex>
+            )}
+          </>
+        }
         data={dataWithAdd}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
         initialNumToRender={6}
         windowSize={11}
-        contentContainerStyle={{ marginTop: 16 }}
+        contentContainerStyle={{ marginTop: 0 }}
         testID={"wallet-nft-gallery-list"}
       />
+
+      {nftsToHide.length > 0 && (
+        <RoundedContainer width="100%">
+          <StyledButton
+            onPress={onClickHide}
+            type="main"
+            iconName="EyeNone"
+            iconPosition="left"
+            size="large"
+          >
+            {t("wallet.nftGallery.filters.hide", { count: nftsToHide.length })}
+          </StyledButton>
+        </RoundedContainer>
+      )}
     </>
   );
 }
+
+const StyledButton = styled(Button)`
+  padding: 0;
+  margin: 0;
+`;
+
+const StyledContainer = styled(Flex)`
+  position: absolute;
+  top: 150;
+  z-index: 5;
+`;
+
+const RoundedContainer = styled(Flex)`
+  position: absolute;
+  bottom: 10;
+  z-index: 5;
+`;
