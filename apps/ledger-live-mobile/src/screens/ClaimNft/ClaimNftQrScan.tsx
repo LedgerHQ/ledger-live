@@ -93,8 +93,10 @@ const ClaimNftQrScan = () => {
     | undefined
   >(Platform.OS === "ios" ? cameraBoxDimensions : undefined);
   const [ratio, setRatio] = useState("1:1");
-  useEffect(() => {
+
+  const handleCameraReady = useCallback(() => {
     if (Platform.OS === "ios") return;
+    if (cameraDimensions) return;
     cameraRef?.current?.getSupportedRatiosAsync().then(res => {
       const ratio = res[0];
       try {
@@ -110,7 +112,7 @@ const ClaimNftQrScan = () => {
         setCameraDimensions(cameraBoxDimensions);
       }
     });
-  });
+  }, [cameraDimensions]);
 
   useEffect(() => {
     const redirectionTimeout = setTimeout(() => navigateToHub(), 120000);
@@ -141,7 +143,9 @@ const ClaimNftQrScan = () => {
     if (!permission?.granted) {
       requestPermission();
     }
-  }, [requestPermission, permission?.granted]);
+    // only execute once at mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const appState = useRef(AppState.currentState);
 
@@ -165,7 +169,9 @@ const ClaimNftQrScan = () => {
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
       <Flex flex={1}>
-        {!permission?.canAskAgain && !permission?.granted ? (
+        {!permission?.canAskAgain &&
+        !permission?.granted &&
+        permission?.status === "denied" ? (
           <FallbackCameraScreen
             route={route}
             navigation={navigation}
@@ -184,6 +190,7 @@ const ClaimNftQrScan = () => {
                 <Camera
                   ref={cameraRef}
                   type={CameraType.back}
+                  onCameraReady={handleCameraReady}
                   style={{
                     ...cameraDimensions,
                     alignSelf: "center",
