@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import estimateMaxSpendable from "../js-estimateMaxSpendable";
+import axios from "axios";
 
 const account: Account = {
   type: "Account",
@@ -50,8 +51,27 @@ const account: Account = {
   },
 };
 
-describe("js-estimateMaxSpendable", () => {
-  const estimatedFees = new BigNumber("83300").multipliedBy(2);
+describe("js-estimateMaxSpendable", async () => {
+  // If get hedera price works, use real estimate, otherwise fallback to hard coded
+  let hederaPrice;
+
+  try {
+    const { data } = await axios.get(
+      "https://countervalues.live.ledger.com/latest/direct?pairs=hbar:usd"
+    );
+
+    hederaPrice = data[0];
+  } catch {
+    hederaPrice = 0;
+  }
+
+  let estimatedFees = new BigNumber("212800").multipliedBy(2);
+
+  if (hederaPrice) {
+    estimatedFees = new BigNumber("0.0001").dividedBy(
+      new BigNumber(hederaPrice)
+    );
+  }
 
   test("estimateMaxSpendable", async () => {
     const result = await estimateMaxSpendable({

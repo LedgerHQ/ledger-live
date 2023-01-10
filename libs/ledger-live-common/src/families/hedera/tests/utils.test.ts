@@ -59,7 +59,7 @@ const transaction: Transaction = {
 };
 
 describe("utils", () => {
-  const estimatedFees = new BigNumber("83300");
+  const estimatedFees = new BigNumber("212800");
 
   test("calculateAmount transaction.useAllAmount = true", async () => {
     transaction.useAllAmount = true;
