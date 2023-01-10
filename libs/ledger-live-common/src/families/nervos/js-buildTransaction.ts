@@ -8,7 +8,7 @@ import {
 import BigNumber from "bignumber.js";
 import type { NervosAccount, Transaction, TransactionStatus } from "./types";
 import { getBalance, getSpendableCells } from "./logic";
-import { NervosAmountTooLow } from "./errors";
+import { NervosAmountTooLow, NervosSendingMoreAmount } from "./errors";
 import {
   EMPTY_SECP_SIG,
   EMPTY_WITNESS_ARGS,
@@ -193,6 +193,7 @@ const buildTransactionSendCKB = async (
     tx.outputs[tx.outputs.length - 1].capacity = `0x${status.amount.toString(
       16
     )}`;
+    status.warnings.amount = new NervosSendingMoreAmount();
   }
   return { tx: { ...tx, witnesses: [] }, status };
 };

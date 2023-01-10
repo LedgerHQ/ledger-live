@@ -4580,9 +4580,6 @@
     "solana": {
       "memo": "Memo",
       "memoPlaceholder": "Optional"
-    },
-    "nervos": {
-      "sendingMoreAmount": "Warning: Sending {{ differenceAmount }} CKB more because remaining amount in cell can't be less than 61 CKB."
     }
   },
   "errors": {
@@ -5316,6 +5313,10 @@
     "NervosAmountTooLow": {
       "title": "Amount Too Low",
       "description": "Amount cannot be less than 61 CKB."
+    },
+    "NervosSendingMoreAmount": {
+      "title": "Sending More Amount",
+      "description": "Warning: Sending a bit more CKB tokens more because remaining amount in cell can't be less than 61 CKB."
     }
   },
   "cryptoOrg": {
