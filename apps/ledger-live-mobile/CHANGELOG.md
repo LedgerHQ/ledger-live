@@ -1,5 +1,23 @@
 # live-mobile
 
+## 3.13.0-nightly.17
+
+### Minor Changes
+
+- [#2081](https://github.com/LedgerHQ/ledger-live/pull/2081) [`87826dce62`](https://github.com/LedgerHQ/ledger-live/commit/87826dce627602cef94cf4831c17251069b92076) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Notification Center revamped and now displaying content cards using braze capabilities
+
+### Patch Changes
+
+- [#2255](https://github.com/LedgerHQ/ledger-live/pull/2255) [`e09a545cb0`](https://github.com/LedgerHQ/ledger-live/commit/e09a545cb04a0ae56681eb1acd9deb73fb56dfee) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Adds in analytics to swap screens on mobile
+
+* [#2203](https://github.com/LedgerHQ/ledger-live/pull/2203) [`0b57f91c4e`](https://github.com/LedgerHQ/ledger-live/commit/0b57f91c4ed02cb8e22d6b55b07de6960f5b0a87) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - 'Terms of Use Update' pop-up issue in some languages
+
+- [#2253](https://github.com/LedgerHQ/ledger-live/pull/2253) [`0493438322`](https://github.com/LedgerHQ/ledger-live/commit/0493438322e08767d5b91b9748c2a33f4a5e3abb) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Handle unseeded Stax error
+
+- Updated dependencies [[`87826dce62`](https://github.com/LedgerHQ/ledger-live/commit/87826dce627602cef94cf4831c17251069b92076), [`0493438322`](https://github.com/LedgerHQ/ledger-live/commit/0493438322e08767d5b91b9748c2a33f4a5e3abb)]:
+  - @ledgerhq/native-ui@0.15.0-nightly.1
+  - @ledgerhq/live-common@27.11.0-nightly.6
+
 ## 3.13.0-nightly.16
 
 ### Minor Changes

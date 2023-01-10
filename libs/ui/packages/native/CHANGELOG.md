@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.15.0-nightly.1
+
+### Minor Changes
+
+- [#2081](https://github.com/LedgerHQ/ledger-live/pull/2081) [`87826dce62`](https://github.com/LedgerHQ/ledger-live/commit/87826dce627602cef94cf4831c17251069b92076) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Native UI - NotificationCard component added to the ui library
+
 ## 0.14.1-nightly.0
 
 ### Patch Changes

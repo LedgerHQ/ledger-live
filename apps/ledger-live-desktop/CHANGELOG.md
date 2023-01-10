@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.52.0-nightly.8
+
+### Patch Changes
+
+- [#2253](https://github.com/LedgerHQ/ledger-live/pull/2253) [`0493438322`](https://github.com/LedgerHQ/ledger-live/commit/0493438322e08767d5b91b9748c2a33f4a5e3abb) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Handle unseeded Stax error
+
+- Updated dependencies [[`0493438322`](https://github.com/LedgerHQ/ledger-live/commit/0493438322e08767d5b91b9748c2a33f4a5e3abb)]:
+  - @ledgerhq/live-common@27.11.0-nightly.6
+
 ## 2.52.0-nightly.7
 
 ### Minor Changes
