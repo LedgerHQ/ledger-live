@@ -64,7 +64,7 @@
     "confirm" : "Confirmar",
     "reject" : "Rejeitar",
     "cancel" : "Cancelar",
-    "getSupport" : "Obter Ajuda",
+    "getSupport" : "Obter suporte",
     "delete" : "Remover conta do portfólio",
     "launch" : "Iniciar",
     "continue" : "Continuar",
@@ -102,6 +102,7 @@
     "addressCopied" : "Endereço Copiado",
     "addressCopiedSuspicious" : "Incompatibilidade entre o endereço copiado e o que está na área de transferência.",
     "experimentalFeature" : "Experimental",
+    "featureFlags" : "Feature Flags",
     "information" : "Informações",
     "search" : "Pesquisar...",
     "searchWithoutEllipsis" : "Pesquisar",
@@ -131,7 +132,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blue"
   },
   "operation" : {
@@ -1114,7 +1115,7 @@
     },
     "helpCenter" : {
       "title" : "Suporte Ledger",
-      "desc" : "Obter Ajuda"
+      "desc" : "Obter ajuda"
     },
     "ledgerAcademy" : {
       "title" : "Ledger Academy",
@@ -1206,8 +1207,11 @@
         "checkDeviceButton" : "Fazer verificação novamente",
         "cancelButton" : "Talvez mais tarde"
       },
-      "genuineCheckAnimationModal" : {
-        "message" : "Permitir Minha Ledger em {{deviceName}}"
+      "softwareCheckAllowSecureChannelModal" : {
+        "title" : "Permitir Minha Ledger em {{deviceName}}"
+      },
+      "softwareCheckLockedDeviceModal" : {
+        "title" : "Desbloqueie seu dispositivo"
       },
       "helpDrawer" : {
         "title" : "Precisa de ajuda com o seu manual de configuração?",
@@ -2176,7 +2180,7 @@
     "title" : "Assinar Transação"
   },
   "releaseNotes" : {
-    "title" : "Notas de versão",
+    "title" : "Notas de lançamento",
     "version" : "Ledger Live {{versionNb}}"
   },
   "troubleshootNetwork" : {
@@ -3698,6 +3702,9 @@
       "featureFlagsEdit" : "Editar",
       "featureFlagsRestore" : "Restaurar",
       "featureFlagsOverride" : "Sobrepor",
+      "featureFlagsRestoreAll" : "Restore all flags values",
+      "showButtonDesc" : "Always display the Feature Flags button in the Sidebar",
+      "buttonTitle" : "Flags overridden locally",
       "firebaseProject" : "Projeto Firebase mirado por esta versão:",
       "addLocalApp" : "Adicionar um aplicativo local",
       "addLocalAppDesc" : "Navegue por arquivos locais e adicione um aplicativo local usando um manifesto local",
@@ -5497,6 +5504,14 @@
       "title" : "Seu dispositivo está bloqueado",
       "description" : "Desbloqueie seu dispositivo e tente novamente.",
       "descriptionWithProductName" : "Desbloqueie sua {{ productName }} e tente novamente."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "Your device is not ready to use yet",
+      "titleWithProductName" : "{{ productName }} is not ready to use yet",
+      "description" : "You need to setup your device first.\nWe will guide you through the setup process.",
+      "descriptionWithProductName" : "You need to setup your {{ productName }} first.\nWe will guide you through the setup process.",
+      "goToOnboardingButton" : "Set up my device",
+      "goToOnboardingButtonWithProductName" : "Set up my {{ productName }}"
     }
   },
   "cryptoOrg" : {
@@ -5559,8 +5574,7 @@
     "postOnboarding" : {
       "title" : "Personalizar meu dispositivo",
       "description" : "Customizando a tela",
-      "actionCompletedPopupLabel" : "Dispositivo personalizado",
-      "actionCompletedHubTitle" : "Essa tela ficou demais."
+      "actionCompletedPopupLabel" : "Dispositivo personalizado"
     },
     "customImageSet" : "Imagem personalizada definida",
     "finishCTA" : "Finalizar"
