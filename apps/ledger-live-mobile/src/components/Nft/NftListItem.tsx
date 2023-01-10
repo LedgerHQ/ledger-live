@@ -209,6 +209,12 @@ const NftMediaComponent = ({
         >
           {t("wallet.nftGallery.media.tag", { count: nftAmount.toNumber() })}
         </Tag>
+
+        {selectable && (
+          <Flex position="absolute" bottom={"20px"} left={"10px"}>
+            <SelectNft isSelected={isSelected} />
+          </Flex>
+        )}
       </Box>
     );
   }
