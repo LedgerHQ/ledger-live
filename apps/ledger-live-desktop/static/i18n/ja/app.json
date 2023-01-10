@@ -102,6 +102,7 @@
     "addressCopied" : "アドレスをコピーしました",
     "addressCopiedSuspicious" : "コピーしたアドレスとクリップボードのアドレスが一致しません。",
     "experimentalFeature" : "試験的",
+    "featureFlags" : "Feature Flags",
     "information" : "インフォメーション",
     "search" : "検索…",
     "searchWithoutEllipsis" : "検索",
@@ -131,7 +132,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blue"
   },
   "operation" : {
@@ -1206,8 +1207,11 @@
         "checkDeviceButton" : "再度チェックを実行する",
         "cancelButton" : "後で"
       },
-      "genuineCheckAnimationModal" : {
-        "message" : "{{deviceName}}でマネージャーを許可する"
+      "softwareCheckAllowSecureChannelModal" : {
+        "title" : "{{deviceName}}でマネージャーを許可する"
+      },
+      "softwareCheckLockedDeviceModal" : {
+        "title" : "デバイスのロックを解除する"
       },
       "helpDrawer" : {
         "title" : "セットアップマニュアルでお困りですか？",
@@ -3698,6 +3702,9 @@
       "featureFlagsEdit" : "編集",
       "featureFlagsRestore" : "復元",
       "featureFlagsOverride" : "上書き",
+      "featureFlagsRestoreAll" : "Restore all flags values",
+      "showButtonDesc" : "Always display the Feature Flags button in the Sidebar",
+      "buttonTitle" : "Flags overridden locally",
       "firebaseProject" : "対象となるFirebaseプロジェクト：",
       "addLocalApp" : "ローカルアプリを追加",
       "addLocalAppDesc" : "ローカルファイルを参照し、ローカルのマニフェストファイルを使用してローカルアプリを追加する",
@@ -3756,6 +3763,10 @@
         "experimentalCurrencies" : {
           "title" : "試験的統合",
           "description" : "利用可能な試験的暗号資産の統合を使用する。"
+        },
+        "experimentalExecutionOnRenderer" : {
+          "title" : "Experimental networking",
+          "description" : "Use experimental networking to optimize your Ledger Live experience with your VPN. Activate this only if your current VPN causes system errors."
         },
         "experimentalLanguages" : {
           "title" : "翻訳テスト",
@@ -5497,6 +5508,14 @@
       "title" : "デバイスがロックされています。",
       "description" : "デバイスのロックを解除して、再度お試しください。",
       "descriptionWithProductName" : "{{ productName }}のロックを解除して、再度お試しください。"
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "Your device is not ready to use yet",
+      "titleWithProductName" : "{{ productName }} is not ready to use yet",
+      "description" : "You need to setup your device first.\nWe will guide you through the setup process.",
+      "descriptionWithProductName" : "You need to setup your {{ productName }} first.\nWe will guide you through the setup process.",
+      "goToOnboardingButton" : "Set up my device",
+      "goToOnboardingButtonWithProductName" : "Set up my {{ productName }}"
     }
   },
   "cryptoOrg" : {
@@ -5559,8 +5578,7 @@
     "postOnboarding" : {
       "title" : "Ledgerデバイスをパーソナライズ",
       "description" : "画面をカスタマイズ",
-      "actionCompletedPopupLabel" : "デバイスがパーソナライズされました",
-      "actionCompletedHubTitle" : "画面状態は良好です。"
+      "actionCompletedPopupLabel" : "デバイスがパーソナライズされました"
     },
     "customImageSet" : "画像セットをカスタマイズ",
     "finishCTA" : "終了する"
