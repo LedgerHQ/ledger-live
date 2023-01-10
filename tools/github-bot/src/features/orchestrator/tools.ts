@@ -1,3 +1,5 @@
+import fs from "fs/promises";
+import path from "path";
 import { ProbotOctokit } from "probot";
 import { formatConclusion, getStatusEmoji } from "../../tools";
 import { BOT_APP_ID, GATE_CHECK_RUN_NAME, WORKFLOWS } from "./const";
@@ -143,4 +145,18 @@ export async function prIsFork(
   });
 
   return !!pr.head.repo?.fork;
+}
+
+export async function getTips(
+  workflowFile: string
+): Promise<string | undefined> {
+  const tipsFile = workflowFile.replace(".yml", ".md");
+  const p = path.join(__dirname, "..", "..", "..", "tips", tipsFile);
+  let tips = undefined;
+  try {
+    tips = await fs.readFile(p, "utf-8");
+  } catch (error) {
+    // ignore error, file is not found
+  }
+  return tips;
 }

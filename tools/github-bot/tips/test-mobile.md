@@ -1,6 +1,6 @@
 ## 💡 Basics Tips
 
-##### To share some piece of advice and help the community, please do not hesitate to [edit this file](https://github.com/LedgerHQ/ledger-live/edit/develop/tools/github-bot/tips/build-desktop.md) and submit a pull request. Thank you! 🙏
+##### To share some piece of advice and help the community, please do not hesitate to [edit this file](https://github.com/LedgerHQ/ledger-live/edit/develop/tools/github-bot/tips/test-mobile.md) and submit a pull request. Thank you! 🙏
 
 If you're troubleshooting a build failure, here are a few tips to keep in mind.
 
@@ -10,27 +10,30 @@ _Note: you should always navigate to the workflow run page linked above to get a
 
 #### Start by carefully reading the logs. In most cases (99% of the time), this will be enough to understand the cause of the failure.
 
-### Determine if the failure is os-specific
-
-LLD is built on Linux, macOS, and Windows, and some errors may only occur on a single platform.
-
 ### Identify the specific step where the error occurred
 
-The LLD build process consists of the following actions that are performed sequentially (in a nutshell):
+The LLM test process consists of the following actions that are performed sequentially (in a nutshell):
 
-- For each os (in parallel):
-  - Checkout the repository
-  - Install the system dependencies
-  - Install the javascript dependencies
-  - Build the native node.js addons
-  - Build all the dependencies required by LLD and belonging to the ledger-live repository
-  - And finally, build the application
+- Checkout the repository
+- Install the system dependencies
+- Install the javascript dependencies
+- Build all the dependencies required by LLM and belonging to the ledger-live repository
+- Run the linter
+- Run the code checker
 
 Look for for the source of the error in the logs.
 
 **Use the keyboard shortcut Cmd + F on macOS or Ctrl + F on Windows and Linux to search for the relevant error message.**
 
-The error could be unrelated to the LLD codebase, but rather related to a dependency like `live-common` or `ledgerjs`.
+The error could be unrelated to the LLM codebase, but rather related to a dependency like `live-common` or `ledgerjs`.
+
+### Lint failure
+
+If the error is related to the linter, you can run `pnpm lint --filter="live-mobile" ` locally to reproduce the error.
+
+### Code checker failure
+
+If the error is related to the code checker, you can run `pnpm typecheck --filter="live-mobile" ` locally to reproduce the error.
 
 ### Check other runs of the same workflow
 
@@ -38,7 +41,7 @@ Check other runs of the same workflow. If other branches are experiencing the sa
 
 ### Review the workflow code.
 
-[The workflow YAML file](https://github.com/LedgerHQ/ledger-live/blob/develop/.github/workflows/build-desktop.yml) provides information about the commands that are run on the continuous integration (CI) environment.
+[The workflow YAML file](https://github.com/LedgerHQ/ledger-live/blob/develop/.github/workflows/test-mobile.yml) provides information about the commands that are run on the continuous integration (CI) environment.
 
 You should be able to reproduce locally by simply running the commands in the same order.
 

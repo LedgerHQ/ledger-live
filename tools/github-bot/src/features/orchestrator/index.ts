@@ -1,5 +1,3 @@
-import fs from "fs/promises";
-import path from "path";
 import { Probot } from "probot";
 import { GATE_CHECK_RUN_NAME, RUNNERS, WORKFLOWS } from "./const";
 import {
@@ -9,7 +7,7 @@ import {
   getGenericOutput,
   createRunByName,
 } from "../../tools";
-import { prIsFork, updateGateCheckRun } from "./tools";
+import { prIsFork, updateGateCheckRun, getTips } from "./tools";
 
 /**
  * Orchestrates workflows.
@@ -36,6 +34,10 @@ export function orchestrator(app: Probot) {
       context.log.info(
         `[Orchestrator](workflow_run.requested) ${payload.workflow_run.name}`
       );
+      const workflowUrl = payload.workflow_run.html_url;
+      const summaryPrefix = matchedWorkflow.description
+        ? `#### ${matchedWorkflow.description}\n\n`
+        : "";
       // Will trigger the check_run.created event (which will update the gate)
       await octokit.checks.create({
         owner,
@@ -44,6 +46,13 @@ export function orchestrator(app: Probot) {
         head_sha: payload.workflow_run.head_sha,
         status: "queued",
         started_at: new Date().toISOString(),
+        output: {
+          title: "⏱️ Queued",
+          summary:
+            summaryPrefix +
+            `The **[workflow](${workflowUrl})** is currently queued.`,
+          details_url: workflowUrl,
+        },
       });
     }
   });
@@ -75,10 +84,12 @@ export function orchestrator(app: Probot) {
       context.log.info(
         `[Orchestrator](workflow_run.in_progress) ${payload.workflow_run.name}`
       );
-      const workflowUrl = `https://github.com/${owner}/${repo}/actions/runs/${payload.workflow_run.id}`;
+      const workflowUrl = payload.workflow_run.html_url;
       const summaryPrefix = matchedWorkflow.description
         ? `#### ${matchedWorkflow.description}\n\n`
         : "";
+      const tips = await getTips(workflowFile);
+
       // Will trigger the check_run.created event (which will update the gate)
       await createRunByName({
         octokit,
@@ -93,6 +104,7 @@ export function orchestrator(app: Probot) {
             summary:
               summaryPrefix +
               `The **[workflow](${workflowUrl})** is currently running.`,
+            text: tips,
             started_at: new Date().toISOString(),
           },
         },
@@ -249,17 +261,7 @@ export function orchestrator(app: Probot) {
 
       const checkRun = checkRuns.data.check_runs[0];
       const output = getGenericOutput(payload.workflow_run.conclusion, summary);
-
-      const tipsFile = workflowFile.replace(".yml", ".md");
-      const p = path.join(__dirname, "..", "..", "..", "tips", tipsFile);
-      let tips = undefined;
-
-      try {
-        const res = await fs.readFile(p, "utf-8");
-        tips = res;
-      } catch (error) {
-        // ignore error, file is not found
-      }
+      const tips = await getTips(workflowFile);
 
       await octokit.checks.update({
         owner,
