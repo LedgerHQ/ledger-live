@@ -5407,7 +5407,7 @@
       "title": "Minimum amount to transfer is 2.5 CSPR"
     },
     "MayBlockAccount": {
-      "title": "Using this amount will leave account in a partially blocked state. Sending tokens after this transfer will not be possible because you need minimum of 2.6 CSPR for send transfer."
+      "title": "Your account will be left with less than the 2.6 CSPR required to perform a send"
     },
     "ETHAddressNonEIP": {
       "title": "Auto-verification not available: carefully verify the address",
