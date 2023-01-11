@@ -172,8 +172,10 @@ export const trackSubject = new ReplaySubject<{
   event: string;
   properties?: Error | Record<string, unknown> | null;
 }>(10);
+
+type EventType = string | "button_clicked" | "error_message";
 export const track = async (
-  event: string,
+  event: EventType,
   properties?: Error | Record<string, unknown> | null,
   mandatory?: boolean | null,
 ) => {
@@ -219,7 +221,7 @@ export const getPageNameFromRoute = (route: RouteProp<ParamListBase>) => {
   return snakeCase(routeName);
 };
 export const trackWithRoute = (
-  event: string,
+  event: EventType,
   route: RouteProp<ParamListBase>,
   properties?: Record<string, unknown> | null,
   mandatory?: boolean | null,
@@ -235,7 +237,7 @@ export const useTrack = () => {
   const route = useRoute();
   const track = useCallback(
     (
-      event: string,
+      event: EventType,
       properties?: Record<string, unknown> | null,
       mandatory?: boolean | null,
     ) => trackWithRoute(event, route, properties, mandatory),

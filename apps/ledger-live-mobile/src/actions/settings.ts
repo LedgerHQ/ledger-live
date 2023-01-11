@@ -24,7 +24,7 @@ import {
   SettingsAcceptSwapProviderPayload,
   SettingsAddStarredMarketcoinsPayload,
   SettingsBlacklistTokenPayload,
-  SettingsDangerouslyOverrideStatePayload,
+  DangerouslyOverrideStatePayload,
   SettingsDismissBannerPayload,
   SettingsHideEmptyTokenAccountsPayload,
   SettingsHideNftCollectionPayload,
@@ -68,6 +68,7 @@ import {
   SettingsActionTypes,
   SettingsSetWalletTabNavigatorLastVisitedTabPayload,
   SettingsSetDismissedDynamicCardsPayload,
+  SettingsSetStatusCenterPayload,
   SettingsSetOverriddenFeatureFlagPlayload,
   SettingsSetOverriddenFeatureFlagsPlayload,
   SettingsSetFeatureFlagsBannerVisiblePayload,
@@ -493,6 +494,14 @@ export const setWalletTabNavigatorLastVisitedTab = (
     walletTabNavigatorLastVisitedTab,
   });
 
+const setStatusCenterAction = createAction<SettingsSetStatusCenterPayload>(
+  SettingsActionTypes.SET_STATUS_CENTER,
+);
+export const setStatusCenter = (displayStatusCenter: boolean) =>
+  setStatusCenterAction({
+    displayStatusCenter,
+  });
+
 const setOverriddenFeatureFlagAction =
   createAction<SettingsSetOverriddenFeatureFlagPlayload>(
     SettingsActionTypes.SET_OVERRIDDEN_FEATURE_FLAG,
@@ -523,7 +532,7 @@ export const setFeatureFlagsBannerVisible = (
 ) => setFeatureFlagsBannerVisibleAction({ featureFlagsBannerVisible });
 
 const dangerouslyOverrideStateAction =
-  createAction<SettingsDangerouslyOverrideStatePayload>(
+  createAction<DangerouslyOverrideStatePayload>(
     SettingsActionTypes.DANGEROUSLY_OVERRIDE_STATE,
   );
 export const dangerouslyOverrideState = (s: State) =>

@@ -10,7 +10,9 @@ export const getStakingDeposits = async (
 ): Promise<NearStakingDeposit[]> => {
   const { data } = await network({
     method: "GET",
-    url: getIndexerUrl(`staking-deposits/${address}`),
+    url: getIndexerUrl(
+      `staking-deposits/${address}?date=${new Date().getTime()}`
+    ),
   });
 
   return Array.isArray(data) ? data : [];

@@ -71,7 +71,8 @@ import ScreenHeader from "../../screens/Exchange/ScreenHeader";
 import ExchangeStackNavigator from "./ExchangeStackNavigator";
 
 import PostBuyDeviceScreen from "../../screens/PostBuyDeviceScreen";
-import Learn from "../../screens/Learn";
+import Learn from "../../screens/Learn/learn";
+import LearnWebView from "../../screens/Learn/index";
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 import PostBuyDeviceSetupNanoWallScreen from "../../screens/PostBuyDeviceSetupNanoWallScreen";
 import MarketDetail from "../../screens/Market/MarketDetail";
@@ -79,6 +80,7 @@ import CurrencySettings from "../../screens/Settings/CryptoAssets/Currencies/Cur
 import WalletConnectNavigator from "./WalletConnectNavigator";
 import WalletConnectLiveAppNavigator from "./WalletConnectLiveAppNavigator";
 import CustomImageNavigator from "./CustomImageNavigator";
+import ClaimNftNavigator from "./ClaimNftNavigator";
 import PostOnboardingNavigator from "./PostOnboardingNavigator";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { accountsSelector } from "../../reducers/accounts";
@@ -193,16 +195,25 @@ export default function BaseNavigator() {
         {...noNanoBuyNanoWallScreenOptions}
       />
       {learn?.enabled ? (
-        <Stack.Screen
-          name={ScreenName.Learn}
-          component={Learn}
-          options={{
-            headerShown: true,
-            animationEnabled: false,
-            headerTitle: "",
-            headerLeft: () => null,
-          }}
-        />
+        <>
+          <Stack.Screen
+            name={ScreenName.Learn}
+            component={Learn}
+            options={({ navigation }) => ({
+              headerShown: true,
+              animationEnabled: false,
+              headerTitle: t("discover.sections.learn.title"),
+              headerLeft: () => <BackButton navigation={navigation} />,
+              headerRight: () => null,
+            })}
+          />
+
+          <Stack.Screen
+            name={ScreenName.LearnWebView}
+            component={LearnWebView}
+            options={{ headerShown: false }}
+          />
+        </>
       ) : null}
       <Stack.Screen
         name={NavigatorName.SignMessage}
@@ -526,12 +537,7 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={NavigatorName.NotificationCenter}
         component={NotificationCenterNavigator}
-        options={({ navigation }) => ({
-          title: t("notificationCenter.title"),
-          headerLeft: () => null,
-          headerRight: () => <CloseButton navigation={navigation} />,
-          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
-        })}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name={NavigatorName.NftNavigator}
@@ -553,6 +559,11 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={NavigatorName.CustomImage}
         component={CustomImageNavigator}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name={NavigatorName.ClaimNft}
+        component={ClaimNftNavigator}
         options={{ headerShown: false }}
       />
       {/* This is a freaking hack… */}

@@ -6,7 +6,7 @@ import {
   WebPlatformContext,
 } from "./logic";
 
-import { AppManifest } from "./types";
+import { LiveAppManifest } from "./types";
 import {
   createFixtureAccount,
   createFixtureTokenAccount,
@@ -657,7 +657,7 @@ describe("signMessageLogic", () => {
   });
 });
 
-function createAppManifest(id = "1"): AppManifest {
+function createAppManifest(id = "1"): LiveAppManifest {
   return {
     id,
     private: false,

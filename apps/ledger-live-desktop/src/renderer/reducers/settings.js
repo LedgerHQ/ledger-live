@@ -129,6 +129,7 @@ export type SettingsState = {
   },
   starredMarketCoins: string[],
   overriddenFeatureFlags: { [key: FeatureId]: Feature },
+  featureFlagsButtonVisible: boolean,
 };
 
 const defaultsForCurrency: Currency => CurrencySettings = crypto => {
@@ -207,6 +208,7 @@ const INITIAL_STATE: SettingsState = {
   },
   starredMarketCoins: [],
   overriddenFeatureFlags: {},
+  featureFlagsButtonVisible: false,
 };
 
 const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
@@ -399,6 +401,10 @@ const handlers: Object = {
     ...state,
     overriddenFeatureFlags: payload.overriddenFeatureFlags,
   }),
+  SET_FEATURE_FLAGS_BUTTON_VISIBLE: (state: SettingsState, { payload }) => ({
+    ...state,
+    featureFlagsButtonVisible: payload.featureFlagsButtonVisible,
+  }),
 };
 
 // TODO refactor selectors to *Selector naming convention
@@ -547,6 +553,7 @@ export const allowDebugAppsSelector = (state: State) => state.settings.allowDebu
 export const allowExperimentalAppsSelector = (state: State) => state.settings.allowExperimentalApps;
 export const enablePlatformDevToolsSelector = (state: State) =>
   state.settings.enablePlatformDevTools;
+
 export const catalogProviderSelector = (state: State) => state.settings.catalogProvider;
 
 export const enableLearnPageStagingUrlSelector = (state: State) =>
@@ -617,5 +624,8 @@ export const starredMarketCoinsSelector = (state: State) => state.settings.starr
 
 export const overriddenFeatureFlagsSelector = (state: State) =>
   state.settings.overriddenFeatureFlags;
+
+export const featureFlagsButtonVisibleSelector = (state: State) =>
+  state.settings.featureFlagsButtonVisible;
 
 export default handleActions(handlers, INITIAL_STATE);

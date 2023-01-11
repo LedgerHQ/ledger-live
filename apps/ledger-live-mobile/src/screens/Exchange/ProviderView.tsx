@@ -4,7 +4,7 @@ import { useTheme } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { mapQueryParamsForProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import { RampLiveAppCatalogEntry } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/types";
-import { AppManifest } from "@ledgerhq/live-common/platform/types";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { languageSelector } from "../../reducers/settings";
 import WebPlatformPlayer from "../../components/WebPlatformPlayer";
 import { TrackScreen } from "../../analytics";
@@ -58,7 +58,10 @@ export default function ProviderView({ route }: Props) {
         trade={trade}
       />
       {manifest ? (
-        <WebPlatformPlayer manifest={manifest as AppManifest} inputs={inputs} />
+        <WebPlatformPlayer
+          manifest={manifest as LiveAppManifest}
+          inputs={inputs}
+        />
       ) : null}
     </>
   );

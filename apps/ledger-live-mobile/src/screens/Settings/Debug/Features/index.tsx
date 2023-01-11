@@ -27,17 +27,18 @@ export default function Debugging() {
         onPress={() => navigation.navigate(ScreenName.DebugExport)}
       />
       <BLEPairingFlow />
+      {/* Split all the custom lockscreen screens into a separate menu maybe? */}
       <CustomImage />
       <SettingsRow
         title="Custom lockscreen fetch"
         desc="Fetch & restore from a connected device"
-        iconLeft={<Icons.LedgerBlueMedium size={32} color="black" />}
-        onPress={() => navigation.navigate(ScreenName.DebugCustomImageGraphics)}
+        iconLeft={<Icons.BracketsMedium size={32} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugFetchCustomImage)}
       />
       <SettingsRow
         title="Custom lockscreen graphics"
         desc="Tool for testing the flow's graphics"
-        iconLeft={<Icons.LedgerBlueMedium size={32} color="black" />}
+        iconLeft={<Icons.BringFrontMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugCustomImageGraphics)}
       />
       <SettingsRow
@@ -59,6 +60,13 @@ export default function Debugging() {
         desc="Remote video slides used on the new onboarding"
         iconLeft={<Icons.PlayMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugStoryly)}
+      />
+
+      <SettingsRow
+        title="Terms of Use"
+        desc="Trigger Terms of Use Popup"
+        iconLeft={<Icons.LinkMedium size={32} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugTermsOfUse)}
       />
     </SettingsNavigationScrollView>
   );

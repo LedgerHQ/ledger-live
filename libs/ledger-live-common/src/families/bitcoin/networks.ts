@@ -318,20 +318,6 @@ export const getNetworkParameters = (
       sigHash: BitcoinLikeSigHashType.SIGHASH_ALL,
       additionalBIPs: [],
     };
-  } else if (networkName === "stakenet") {
-    return {
-      identifier: "xsn",
-      P2PKHVersion: Buffer.from([0x4c]),
-      P2SHVersion: Buffer.from([0x10]),
-      xpubVersion: Buffer.from([0x04, 0x88, 0xb2, 0x1e]),
-      feePolicy: BitcoinLikeFeePolicy.PER_BYTE,
-      dustAmount: new BigNumber(10000),
-      messagePrefix: "Stakenet Signed Message:\n",
-      usesTimestampedTransaction: false,
-      timestampDelay: new BigNumber(0),
-      sigHash: BitcoinLikeSigHashType.SIGHASH_ALL,
-      additionalBIPs: [],
-    };
   }
 
   throw new Error("No network parameters set for " + networkName);
