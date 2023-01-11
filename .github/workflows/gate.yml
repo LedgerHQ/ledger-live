@@ -1,4 +1,4 @@
-name: "@Gate"
+name: "@PR • Gate"
 run-name: "@${{ github.actor }} triggered the @Gate ${{ format('on branch {0}', github.head_ref) }}"
 
 on:

@@ -5,7 +5,7 @@ type CheckRunPayload = Context<"check_run">["payload"];
 type GetInputsPayload = WorkflowRunPayload | CheckRunPayload;
 
 export const BOT_APP_ID = 198164;
-export const GATE_CHECK_RUN_NAME = "The Balrog has been summoned ❤️‍🔥";
+export const GATE_CHECK_RUN_NAME = "@@PR • Watcher 🪬";
 export enum RUNNERS {
   internal,
   external,
