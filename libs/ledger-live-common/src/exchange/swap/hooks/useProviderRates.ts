@@ -88,7 +88,7 @@ export const useProviderRates = ({
           !fromAccount
         ) {
           setExchangeRate && setExchangeRate();
-          return dispatchRates({ type: "idle" });
+          return dispatchRates({ type: "set", payload: [] });
         }
         dispatchRates({ type: "loading" });
         try {

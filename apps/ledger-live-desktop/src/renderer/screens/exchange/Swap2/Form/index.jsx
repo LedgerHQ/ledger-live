@@ -62,21 +62,6 @@ const Wrapper: ThemedComponent<{}> = styled(Box).attrs({
   max-width: 37rem;
 `;
 
-const HideComponent: ThemedComponent<{}> = styled.section.attrs(({ ready }) => ({
-  style: ready ? { opacity: 1, maxHeight: "100vh", overflow: "visible" } : {},
-}))`
-  display: grid;
-  row-gap: 1.375rem;
-  color: white;
-  transition: max-height 800ms cubic-bezier(0.47, 0, 0.75, 0.72),
-    opacity 400ms 400ms cubic-bezier(0.47, 0, 0.75, 0.72);
-  transform-origin: top;
-  height: auto;
-  opacity: 0;
-  max-height: 0;
-  overflow: hidden;
-`;
-
 const refreshTime = 30000;
 const idleTime = 60 * 60000; // 1 hour
 
@@ -115,16 +100,16 @@ export const useProviders = () => {
   };
 };
 
+type PageState = "initial" | "empty" | "loading" | "loaded";
+
 const SwapForm = () => {
   // FIXME: should use enums for Flow and Banner values
   const [currentFlow, setCurrentFlow] = useState(null);
   const [currentBanner, setCurrentBanner] = useState(null);
   const [isSendMaxLoading, setIsSendMaxLoading] = useState(false);
-  const [showDetails, setShowDetails] = useState(false);
-  const [showEmpty, setShowEmpty] = useState(false);
   const [idleState, setIdleState] = useState(false);
   const [firstRateId, setFirstRateId] = useState(null);
-  const [pageState, setPageState] = useState("initial");
+  const [pageState, setPageState] = useState<PageState>("initial");
 
   const [error, setError] = useState();
   const { t } = useTranslation();
@@ -215,7 +200,9 @@ const SwapForm = () => {
   }, [swapError, firstRateId]);
 
   useEffect(() => {
-    setShowEmpty(swapError && swapError?.message.length === 0);
+    if (swapError && swapError?.message.length === 0) {
+      setPageState("empty");
+    }
   }, [swapError]);
 
   const refreshIdle = useCallback(() => {
@@ -235,10 +222,6 @@ const SwapForm = () => {
   useEffect(() => {
     if (pageState === "loading" && swapTransaction.swap.rates.status === "success") {
       refreshIdle();
-      setPageState("loaded");
-    }
-
-    if (pageState === "loading" && swapTransaction.swap.rates.status === "error") {
       setPageState("loaded");
     }
 
@@ -531,27 +514,20 @@ const SwapForm = () => {
 
   const setFromAccount = currency => {
     setNavigation(null);
-    setPageState("initial");
     swapTransaction.setFromAccount(currency);
   };
 
   const setToAccount = account => {
     setNavigation(null);
-    setPageState("initial");
     swapTransaction.setToAccount(account);
   };
 
   const setToCurrency = currency => {
     setNavigation(null);
-    setPageState("initial");
     swapTransaction.setToCurrency(currency);
   };
 
   const toggleMax = state => {
-    if (!state) {
-      setPageState("initial");
-    }
-
     setNavigation(null);
     swapTransaction.toggleMax(state);
   };
@@ -580,22 +556,24 @@ const SwapForm = () => {
           isSendMaxLoading={isSendMaxLoading}
           updateSelectedRate={swapTransaction.swap.updateSelectedRate}
         />
-        {showEmpty && <EmptyState />}
+        {pageState === "empty" && <EmptyState />}
         {pageState === "loading" && <LoadingState />}
-        <HideComponent ready={pageState === "loaded"}>
-          <SwapFormSummary
-            swapTransaction={swapTransaction}
-            kycStatus={kycStatus}
-            provider={provider}
-          />
-          <SwapFormRates
-            swap={swapTransaction.swap}
-            provider={provider}
-            refreshTime={refreshTime}
-            countdown={!swapError && !idleState}
-            showNoQuoteDexRate={showNoQuoteDexRate}
-          />
-        </HideComponent>
+        {pageState === "loaded" && (
+          <>
+            <SwapFormSummary
+              swapTransaction={swapTransaction}
+              kycStatus={kycStatus}
+              provider={provider}
+            />
+            <SwapFormRates
+              swap={swapTransaction.swap}
+              provider={provider}
+              refreshTime={refreshTime}
+              countdown={!swapError && !idleState}
+              showNoQuoteDexRate={showNoQuoteDexRate}
+            />
+          </>
+        )}
         {currentBanner === "LOGIN" ? (
           <FormLoginBanner provider={provider} onClick={() => setCurrentFlow("LOGIN")} />
         ) : null}
