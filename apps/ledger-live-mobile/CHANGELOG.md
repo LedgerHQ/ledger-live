@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.13.0-next.3
+
+### Patch Changes
+
+- [#2280](https://github.com/LedgerHQ/ledger-live/pull/2280) [`0cfcc2decc`](https://github.com/LedgerHQ/ledger-live/commit/0cfcc2decca13b6533485a5840ba6eb1c97356a9) Thanks [@github-actions](https://github.com/apps/github-actions)! - discover learn section navigation fixed
+
 ## 3.13.0-next.2
 
 ### Patch Changes
