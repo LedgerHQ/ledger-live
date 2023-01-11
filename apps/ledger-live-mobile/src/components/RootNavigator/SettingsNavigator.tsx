@@ -31,6 +31,7 @@ import DebugSettings from "../../screens/Settings/Debug";
 import DebugStore from "../../screens/Settings/Debug/Debugging/Store";
 import DebugStoryly from "../../screens/Settings/Debug/Features/Storyly";
 import DebugSwap from "../../screens/Settings/Debug/Features/Swap";
+import DebugVideos from "../../screens/Settings/Debug/Features/Videos";
 
 import Settings from "../../screens/Settings";
 import AccountsSettings from "../../screens/Settings/Accounts";
@@ -335,6 +336,13 @@ export default function SettingsNavigator() {
         component={DebugLottie}
         options={{
           title: "Debug Lottie",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugVideos}
+        component={DebugVideos}
+        options={{
+          title: "Debug Videos",
         }}
       />
       <Stack.Screen
