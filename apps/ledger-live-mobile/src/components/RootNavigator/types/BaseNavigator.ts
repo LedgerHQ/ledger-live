@@ -121,6 +121,9 @@ export type BaseNavigatorStackParamList = {
     defaultTicker?: string;
   };
   [ScreenName.Learn]: undefined;
+  [ScreenName.LearnWebView]: {
+    uri?: string;
+  };
   [ScreenName.SwapOperationDetails]: {
     swapOperation: MappedSwapOperation;
   };

@@ -10,6 +10,7 @@ import { getEnv } from "../../env";
 import {
   SwapExchangeRateAmountTooHigh,
   SwapExchangeRateAmountTooLow,
+  SwapExchangeRateAmountTooLowOrTooHigh,
 } from "../../errors";
 import network from "../../network";
 import type { Transaction } from "../../generated/types";
@@ -146,11 +147,29 @@ const inferError = (
     maxAmountFrom: string;
     errorCode?: number;
     errorMessage?: string;
+    status?: string;
   }
 ): Error | CustomMinOrMaxError | undefined => {
   const tenPowMagnitude = new BigNumber(10).pow(unitFrom.magnitude);
-  const { amountTo, minAmountFrom, maxAmountFrom, errorCode, errorMessage } =
-    responseData;
+  const {
+    amountTo,
+    minAmountFrom,
+    maxAmountFrom,
+    errorCode,
+    errorMessage,
+    status,
+  } = responseData;
+
+  // DEX quotes are out of limits error. We do not know if it is a low or high limit, neither the amount.
+  if (
+    (!minAmountFrom || !maxAmountFrom) &&
+    status === "error" &&
+    errorCode !== 300
+  ) {
+    return new SwapExchangeRateAmountTooLowOrTooHigh(undefined, {
+      message: "",
+    });
+  }
 
   if (!amountTo) {
     // We are in an error case regardless of api version.

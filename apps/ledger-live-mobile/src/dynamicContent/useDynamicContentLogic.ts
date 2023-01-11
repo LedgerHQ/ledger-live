@@ -4,6 +4,7 @@ import {
   setDynamicContentWalletCards,
   setDynamicContentAssetsCards,
   setDynamicContentNotificationCards,
+  setDynamicContentLearnCards,
 } from "../actions/dynamicContent";
 import { useBrazeContentCard } from "./brazeContentCard";
 import {
@@ -11,6 +12,7 @@ import {
   mapAsWalletContentCard,
   mapAsAssetContentCard,
   mapAsNotificationContentCard,
+  mapAsLearnContentCard,
 } from "./dynamicContent";
 import { LocationContentCard } from "./types";
 
@@ -38,9 +40,15 @@ export const useDynamicContentLogic = () => {
       LocationContentCard.NotificationCenter,
     ).map(card => mapAsNotificationContentCard(card));
 
+    const learnCards = filterByPage(
+      contentCards,
+      LocationContentCard.Learn,
+    ).map(card => mapAsLearnContentCard(card));
+
     dispatch(setDynamicContentWalletCards(walletCards));
     dispatch(setDynamicContentAssetsCards(assetCards));
     dispatch(setDynamicContentNotificationCards(notificationCards));
+    dispatch(setDynamicContentLearnCards(learnCards));
   }, [Braze, dispatch]);
 
   return {
