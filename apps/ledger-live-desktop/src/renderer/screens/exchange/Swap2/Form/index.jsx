@@ -215,14 +215,19 @@ const SwapForm = () => {
 
   // when the user first lands on this screen, they are seeing the initial state
   // when the user fetches data, they are seeing the loading state
-  // when the first data is returned, they aer seeing the loaded state
-  // when the user fetches different data, they still see the loaded state
-  // when the user fetches data and there is an error, they see the error state?
+  // when the data is returned, they are seeing the loaded state
+  // when the user updates their search, they still see the loaded state
+  // when the user fetches data and there is an error, they see the empty state
   // when the user fetches data and there is no data, they see the empty state
+  // when the user resets their from search, they see the initial state
   useEffect(() => {
     if (pageState === "loading" && swapTransaction.swap.rates.status === "success") {
       refreshIdle();
       setPageState("loaded");
+    }
+
+    if (pageState === "loading" && swapTransaction.swap.rates.status === "error") {
+      setPageState("empty");
     }
 
     if (pageState === "initial" && swapTransaction.swap.rates.status === "loading") {

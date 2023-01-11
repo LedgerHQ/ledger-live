@@ -7,19 +7,10 @@ import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import SectionRate from "./SectionRate";
 import { BigNumber } from "bignumber.js";
 
-const Form: ThemedComponent<{}> = styled.section.attrs(({ ready }) => ({
-  style: ready ? { opacity: 1, maxHeight: "100vh", overflow: "visible" } : {},
-}))`
+const Form: ThemedComponent<{}> = styled.section`
   display: grid;
   row-gap: 1.375rem;
   color: white;
-  transition: max-height 800ms cubic-bezier(0.47, 0, 0.75, 0.72),
-    opacity 400ms 400ms cubic-bezier(0.47, 0, 0.75, 0.72);
-  transform-origin: top;
-  height: auto;
-  opacity: 0;
-  max-height: 0;
-  overflow: hidden;
 `;
 
 type SwapFormProvidersProps = {
@@ -36,9 +27,8 @@ const SwapFormProviders = ({
   countdown,
   showNoQuoteDexRate,
 }: SwapFormProvidersProps) => {
-  const { currency: fromCurrency, amount: fromAmount } = swap.from;
+  const { currency: fromCurrency } = swap.from;
   const { currency: toCurrency } = swap.to;
-  const ratesState = swap.rates;
 
   const updatedRatesState = useMemo(() => {
     if (showNoQuoteDexRate && swap.rates?.value) {
@@ -71,11 +61,8 @@ const SwapFormProviders = ({
     return swap.rates;
   }, [swap.rates, showNoQuoteDexRate]);
 
-  const hasRates = ratesState?.value?.length > 0;
-  const loading = ratesState.status === "loading";
-
   return (
-    <Form ready={true}>
+    <Form>
       <SectionRate
         provider={provider}
         fromCurrency={fromCurrency}
@@ -83,8 +70,6 @@ const SwapFormProviders = ({
         ratesState={updatedRatesState}
         refreshTime={refreshTime}
         countdown={countdown}
-        loading={loading}
-        searchProvided={fromAmount && fromAmount.gt(0)}
       />
     </Form>
   );

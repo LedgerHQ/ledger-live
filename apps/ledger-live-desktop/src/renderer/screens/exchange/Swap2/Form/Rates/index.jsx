@@ -8,7 +8,6 @@ import Text from "~/renderer/components/Text";
 import NoQuoteSwapRate from "./NoQuoteSwapRate";
 import SwapRate from "./SwapRate";
 import Countdown from "./Countdown";
-import EmptyState from "./EmptyState";
 import Filter from "./Filter";
 import type {
   SwapSelectorStateType,
@@ -21,7 +20,6 @@ import styled from "styled-components";
 import Tooltip from "~/renderer/components/Tooltip";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
 import { filterRates } from "./filterRates";
-import LoadingState from "./LoadingState";
 
 type Props = {
   fromCurrency: $PropertyType<SwapSelectorStateType, "currency">,
@@ -31,8 +29,6 @@ type Props = {
   refreshTime: number,
   updateSelection: () => void,
   countdown: boolean,
-  loading: boolean,
-  searchProvided: boolean,
 };
 
 const TableHeader: ThemedComponent<{}> = styled(Box).attrs({
@@ -58,29 +54,11 @@ export default function ProviderRate({
   provider,
   refreshTime,
   countdown,
-  loading,
-  searchProvided,
 }: Props) {
-  // const loading = true;
   const dispatch = useDispatch();
   const [filter, setFilter] = useState([]);
-  // const [slowLoading, setSlowLoading] = useState(false);
-  // const timeoutRef = React.useRef();
   const selectedRate = useSelector(rateSelector);
   const filteredRates = useMemo(() => filterRates(rates, filter), [rates, filter]);
-
-  // useEffect(() => {
-  //   if (loading) {
-  //     timeoutRef.current = setTimeout(() => {
-  //       if (loading) {
-  //         setSlowLoading(true);
-  //         setTimeout(() => {
-  //           setSlowLoading(false);
-  //         }, 1000);
-  //       }
-  //     }, 300);
-  //   }
-  // }, [loading]);
 
   const updateRate = useCallback(
     rate => {
@@ -234,7 +212,6 @@ export default function ProviderRate({
           );
         })}
       </Box>
-      {!loading && !filteredRates.length && <EmptyState />}
     </Box>
   );
 }
