@@ -20,9 +20,9 @@ function getDeviceTransactionConfig({
 }): Array<DeviceTransactionField> {
   const fields: Array<DeviceTransactionField> = [];
   fields.push({
-    type: "casper.extendedAmount",
-    label: "Amount",
-    value: transaction.amount.toFixed(),
+    type: "text",
+    label: "Type",
+    value: methodToString(0),
   });
   fields.push({
     type: "casper.extendedAmount",
@@ -35,9 +35,9 @@ function getDeviceTransactionConfig({
     value: casperPubKeyToAccountHash(transaction.recipient),
   });
   fields.push({
-    type: "text",
-    label: "Type",
-    value: methodToString(0),
+    type: "casper.extendedAmount",
+    label: "Amount",
+    value: transaction.amount.toFixed(),
   });
 
   log("debug", `Transaction config ${JSON.stringify(fields)}`);
