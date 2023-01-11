@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { useEffect, useReducer, useCallback, useRef, useMemo } from "react";
+import { useEffect, useReducer, useCallback, useRef } from "react";
 import { log } from "@ledgerhq/logs";
 import { getAccountBridge } from ".";
 import { getMainAccount } from "../account";
@@ -236,10 +236,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
   const errorDelay = useRef(INITIAL_ERROR_RETRY_DELAY);
   const statusIsPending = useRef(false); // Stores if status already being processed
 
-  const bridgePending = useMemo(
-    () => transaction !== statusOnTransaction,
-    [transaction, statusOnTransaction]
-  );
+  const bridgePending = transaction !== statusOnTransaction;
   // when transaction changes, prepare the transaction
   useEffect(() => {
     let ignore = false;
@@ -329,10 +326,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
     };
   }, [transaction, mainAccount, bridgePending, dispatch]);
 
-  const bridgeError = useMemo(
-    () => errorAccount || errorStatus,
-    [errorAccount, errorStatus]
-  );
+  const bridgeError = errorAccount || errorStatus;
 
   useEffect(() => {
     if (bridgeError && globalOnBridgeError) {
@@ -340,30 +334,17 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
     }
   }, [bridgeError]);
 
-  return useMemo(
-    () => ({
-      transaction,
-      setTransaction,
-      updateTransaction,
-      status,
-      account,
-      parentAccount,
-      setAccount,
-      bridgeError,
-      bridgePending,
-    }),
-    [
-      account,
-      bridgeError,
-      bridgePending,
-      parentAccount,
-      setAccount,
-      setTransaction,
-      status,
-      transaction,
-      updateTransaction,
-    ]
-  );
+  return {
+    transaction,
+    setTransaction,
+    updateTransaction,
+    status,
+    account,
+    parentAccount,
+    setAccount,
+    bridgeError,
+    bridgePending,
+  };
 };
 
 type GlobalBridgeErrorFn = null | ((error: any) => void);

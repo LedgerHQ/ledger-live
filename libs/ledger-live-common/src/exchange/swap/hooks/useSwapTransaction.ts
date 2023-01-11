@@ -114,53 +114,31 @@ export const useSwapTransaction = ({
     includeDEX,
   });
 
-  return useMemo(
-    () => ({
-      ...bridgeTransaction,
-      swap: {
-        to: toState,
-        from: fromState,
-        isMaxEnabled,
-        isSwapReversable,
-        rates:
-          rates.value && excludeFixedRates
-            ? {
-                ...rates,
-                value: rates.value.filter((v) => v.tradeMethod !== "fixed"),
-              }
-            : rates,
-        refetchRates,
-        updateSelectedRate,
-        targetAccounts,
-      },
-      setFromAmount,
-      toggleMax,
-      fromAmountError,
-      setToAccount,
-      setToCurrency,
-      setFromAccount,
-      setToAmount,
-      reverseSwap,
-    }),
-    [
-      bridgeTransaction,
-      excludeFixedRates,
-      fromAmountError,
-      fromState,
+  return {
+    ...bridgeTransaction,
+    swap: {
+      to: toState,
+      from: fromState,
       isMaxEnabled,
       isSwapReversable,
-      rates,
+      rates:
+        rates.value && excludeFixedRates
+          ? {
+              ...rates,
+              value: rates.value.filter((v) => v.tradeMethod !== "fixed"),
+            }
+          : rates,
       refetchRates,
-      reverseSwap,
-      setFromAccount,
-      setFromAmount,
-      setToAccount,
-      setToAmount,
-      setToCurrency,
-      targetAccounts,
-      toState,
-      toggleMax,
       updateSelectedRate,
-    ]
-  );
+      targetAccounts,
+    },
+    setFromAmount,
+    toggleMax,
+    fromAmountError,
+    setToAccount,
+    setToCurrency,
+    setFromAccount,
+    setToAmount,
+    reverseSwap,
+  };
 };
