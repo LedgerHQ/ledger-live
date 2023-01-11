@@ -73,7 +73,7 @@ import LedgerStoreProvider from "./context/LedgerStore";
 import LoadingApp from "./components/LoadingApp";
 import StyledStatusBar from "./components/StyledStatusBar";
 import AnalyticsConsole from "./components/AnalyticsConsole";
-import ThemeDebug from "./components/ThemeDebug";
+import DebugTheme from "./components/DebugTheme";
 import { BridgeSyncProvider } from "./bridge/BridgeSyncContext";
 import useDBSaveEffect from "./components/DBSave";
 import useAppStateListener from "./components/useAppStateListener";
@@ -227,7 +227,7 @@ function App({ importDataString }: AppProps) {
       <RootNavigator importDataString={importDataString} />
 
       <AnalyticsConsole />
-      <ThemeDebug />
+      <DebugTheme />
       <Modals />
     </GestureHandlerRootView>
   );
@@ -310,6 +310,25 @@ const linkingOptions = {
           [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
 
           [ScreenName.BleDevicePairingFlow]: "sync-onboarding",
+
+          [NavigatorName.PostOnboarding]: {
+            screens: {
+              /**
+               * @params ?completed: boolean
+               * ie: "ledgerlive://post-onboarding/nft-claimed?completed=true" will open the post onboarding hub and complete the Nft claim action
+               */
+              [ScreenName.PostOnboardingHub]: "post-onboarding/nft-claimed",
+            },
+          },
+
+          [NavigatorName.ClaimNft]: {
+            screens: {
+              /**
+               * ie: "ledgerlive://linkdrop-nft-claim/qr-scanning" will redirect to the QR scanning page
+               */
+              [ScreenName.ClaimNftQrScan]: "linkdrop-nft-claim/qr-scanning",
+            },
+          },
 
           /**
            * @params ?platform: string

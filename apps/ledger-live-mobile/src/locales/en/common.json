@@ -547,8 +547,8 @@
       "description": "You rejected the address. If in doubt, please save your logs using the button below and provide them to Ledger Support."
     },
     "UserRefusedDeviceNameChange": {
-      "title": "Rename canceled on device",
-      "description": "You canceled the rename. Please try again."
+      "title": "Renaming was cancelled on {{ productName }}",
+      "description": ""
     },
     "UserRefusedFirmwareUpdate": {
       "title": "Firmware update canceled on device",
@@ -1092,7 +1092,7 @@
     "sections": {
       "learn": {
         "title": "Learn",
-        "desc": "Learn about crypto, and more from experts for free."
+        "desc": "Learn about crypto, web3, digital security and more"
       },
       "ledgerApps": {
         "title": "Apps",
@@ -1108,7 +1108,7 @@
       },
       "referralProgram": {
         "title": "Refer a friend",
-        "desc": "Earn $10 in BTC when your friend buys a Ledger. "
+        "desc": "When your friend buys a Ledger, you both earn $10 of BTC."
       }
     },
     "comingSoon": "Coming soon",
@@ -2637,7 +2637,12 @@
       "featureFlagsDesc": "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
       "featureFlagsEdit": "Edit",
       "featureFlagsRestore": "Restore",
-      "firebaseProject": "Firebase project targeted by this build:"
+      "featureFlagsRestoreAll": "Restore all flag values",
+      "featureFlagsTabAll": "All",
+      "featureFlagsTabGroups": "Groups",
+      "firebaseProject": "Firebase project targeted by this build:",
+      "showBannerDesc": "Show banner when flags are overridden",
+      "bannerTitle": "Flags overridden locally"
     }
   },
   "notifications": {
@@ -3707,7 +3712,9 @@
   "EditDeviceName": {
     "title": "Rename device",
     "charactersRemaining": "{{remainingCount}} characters remaining",
-    "action": "Confirm"
+    "action": "Set name",
+    "rename": "rename",
+    "success": "Device renamed to '{{deviceName}}'"
   },
   "PairDevices": {
     "Paired": {
@@ -5447,15 +5454,38 @@
       "cta": "See details"
     },
     "news": {
-      "title": "News",
-      "titleCount": "News ({{count}})",
+      "title": "Notifications",
       "emptyState": {
-        "title": "No news for the moment",
-        "desc": "You will find here all the news related to Ledger and Ledger Live"
+        "title": "It’s just peace and quiet for now",
+        "desc": "We’ll let you know if anything comes up."
+      },
+      "time": {
+        "second": "1 second ago",
+        "second_plural": "{{count}} seconds ago",
+        "minute": "1 minute ago",
+        "minute_plural": "{{count}} minutes ago",
+        "hour": "1 hour ago",
+        "hour_plural": "{{count}} hours ago",
+        "day": "1 day ago",
+        "day_plural": "{{count}} days ago",
+        "week": "1 week ago",
+        "week_plural": "{{count}} weeks ago",
+        "month": "1 month ago",
+        "month_plural": "{{count}} months ago",
+        "year": "1 year ago",
+        "year_plural": "{{count}} years ago"
       }
     },
     "status": {
-      "title": "Status",
+      "title": "An issue might need your attention",
+      "title_plural": "Some issues might need your attention",
+      "desc": {
+        "0": "They’re being investigated and will be resolved shortly.",
+        "1": "If you’re affected by any of the issues, reach out to our <0>Customer Support</0>"
+      },
+      "cta": {
+        "ok": "Got it"
+      },
       "ok": {
         "title": "Ledger Live is up and running",
         "desc": "<0>Having trouble? Go on our </0><1>help page</1>"
@@ -5674,6 +5704,26 @@
       "title": "My NFTs"
     }
   },
+  "claimNft": {
+    "welcomePage": {
+      "title": "Free access to the Earth's most secure NFT marketplace",
+      "description": {
+        "title": "Ledger Infinity Pass gives you access to:",
+        "1": "First dibs on the latest NFT drops",
+        "2": "The most secure NFT marketplace ever",
+        "3": "A free NFT for you to claim"
+      },
+      "claimButton": "Claim Ledger Market Pass",
+      "backButton": "I've already claimed my Market Pass"
+    },
+    "qrScan": {
+      "title": "Scan QR code on your Ledger Market Pass",
+      "description": {
+        "1": "You will find your exclusive Ledger Market Pass in the box of your Ledger Stax.\n\nStart by positioning the QR code on the back of the Pass in the frame. Use a well lit area and a simple light background."
+      }
+    }
+  },
+
   "postOnboarding": {
     "hub": {
       "title": "Next up, use your {{productName}} to...",

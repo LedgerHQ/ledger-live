@@ -10,10 +10,11 @@ import { getEnv } from "../../env";
 import {
   SwapExchangeRateAmountTooHigh,
   SwapExchangeRateAmountTooLow,
+  SwapExchangeRateAmountTooLowOrTooHigh,
 } from "../../errors";
 import network from "../../network";
 import type { Transaction } from "../../generated/types";
-import { getSwapAPIBaseURL, getSwapAPIError } from "./";
+import { getProviderConfig, getSwapAPIBaseURL, getSwapAPIError } from "./";
 import { mockGetExchangeRates } from "./mock";
 import type {
   CustomMinOrMaxError,
@@ -21,7 +22,6 @@ import type {
   GetExchangeRates,
   AvailableProviderV3,
 } from "./types";
-import { getMainAccount } from "../../account";
 
 const getExchangeRates: GetExchangeRates = async (
   exchange: Exchange,
@@ -43,47 +43,20 @@ const getExchangeRates: GetExchangeRates = async (
   const tenPowMagnitude = new BigNumber(10).pow(unitFrom.magnitude);
   const apiAmount = new BigNumber(amountFrom).div(tenPowMagnitude);
 
-  const dexProviders = ["paraswap", "oneinch"];
-
   const providerList = providers
-    .filter((item) => {
-      const index = item.pairs.findIndex(
-        (pair) =>
-          pair.from === from &&
-          pair.to === to &&
-          (includeDEX || !dexProviders.includes(item.provider))
-      );
-      return index > -1;
+    .filter((provider) => {
+      const validDex = (provider: AvailableProviderV3) =>
+        includeDEX && getProviderConfig(provider.provider).type === "DEX";
+      const validCex = (provider: AvailableProviderV3) => {
+        if (getProviderConfig(provider.provider).type !== "CEX") return false;
+        const index = provider.pairs.findIndex(
+          (pair) => pair.from === from && pair.to === to
+        );
+        return index > -1;
+      };
+      return validDex(provider) || validCex(provider);
     })
     .map((item) => item.provider);
-
-  const decentralizedSwapAvailable = () => {
-    const {
-      fromAccount: sourceAccount,
-      toAccount: targetAccount,
-      fromParentAccount: sourceParentAccount,
-      toParentAccount: targetParentAccount,
-    } = exchange;
-
-    if (sourceAccount && targetAccount) {
-      const sourceMainAccount = getMainAccount(
-        sourceAccount,
-        sourceParentAccount
-      );
-      const targetMainAccount = getMainAccount(
-        targetAccount,
-        targetParentAccount
-      );
-      const dexFamilyList = ["ethereum", "binance", "polygon"];
-      if (
-        dexFamilyList.includes(targetMainAccount.currency.family) &&
-        sourceMainAccount.currency.id === targetMainAccount.currency.id
-      ) {
-        return true;
-      }
-    }
-    return false;
-  };
 
   const request = {
     from,
@@ -106,6 +79,7 @@ const getExchangeRates: GetExchangeRates = async (
       payoutNetworkFees: maybePayoutNetworkFees,
       rateId,
       provider,
+      providerType,
       amountFrom,
       amountTo,
       tradeMethod,
@@ -145,6 +119,7 @@ const getExchangeRates: GetExchangeRates = async (
     const out = {
       magnitudeAwareRate,
       provider,
+      providerType,
       rate,
       rateId,
       toAmount: magnitudeAwareToAmount,
@@ -160,21 +135,6 @@ const getExchangeRates: GetExchangeRates = async (
       };
     }
   });
-  if (includeDEX && decentralizedSwapAvailable()) {
-    dexProviders.filter((dexProvider) => {
-      if (!providerList.includes(dexProvider)) {
-        rates.push({
-          magnitudeAwareRate: undefined,
-          provider: dexProvider,
-          rate: undefined,
-          rateId: undefined,
-          toAmount: undefined,
-          tradeMethod: "float",
-          payoutNetworkFees: undefined,
-        });
-      }
-    });
-  }
   return rates;
 };
 
@@ -187,11 +147,29 @@ const inferError = (
     maxAmountFrom: string;
     errorCode?: number;
     errorMessage?: string;
+    status?: string;
   }
 ): Error | CustomMinOrMaxError | undefined => {
   const tenPowMagnitude = new BigNumber(10).pow(unitFrom.magnitude);
-  const { amountTo, minAmountFrom, maxAmountFrom, errorCode, errorMessage } =
-    responseData;
+  const {
+    amountTo,
+    minAmountFrom,
+    maxAmountFrom,
+    errorCode,
+    errorMessage,
+    status,
+  } = responseData;
+
+  // DEX quotes are out of limits error. We do not know if it is a low or high limit, neither the amount.
+  if (
+    (!minAmountFrom || !maxAmountFrom) &&
+    status === "error" &&
+    errorCode !== 300
+  ) {
+    return new SwapExchangeRateAmountTooLowOrTooHigh(undefined, {
+      message: "",
+    });
+  }
 
   if (!amountTo) {
     // We are in an error case regardless of api version.

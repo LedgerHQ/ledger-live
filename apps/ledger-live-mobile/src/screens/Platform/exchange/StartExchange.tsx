@@ -1,6 +1,9 @@
 import startExchange from "@ledgerhq/live-common/exchange/platform/startExchange";
 import { createAction } from "@ledgerhq/live-common/hw/actions/startExchange";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { useIsFocused } from "@react-navigation/native";
+import { Flex } from "@ledgerhq/native-ui";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import React, { useCallback, useState } from "react";
 import { StyleSheet } from "react-native";
@@ -12,6 +15,7 @@ import {
   ResultStart,
 } from "../../../components/RootNavigator/types/PlatformExchangeNavigator";
 import SelectDevice from "../../../components/SelectDevice";
+import SelectDevice2 from "../../../components/SelectDevice2";
 import { ScreenName } from "../../../const";
 
 type Props = StackNavigatorProps<
@@ -21,6 +25,9 @@ type Props = StackNavigatorProps<
 
 const PlatformStartExchange: React.FC<Props> = ({ navigation, route }) => {
   const [device, setDevice] = useState<Device>();
+
+  const isFocused = useIsFocused();
+  const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
 
   const onClose = useCallback(() => {
     navigation.pop();
@@ -35,7 +42,16 @@ const PlatformStartExchange: React.FC<Props> = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={styles.root}>
-      <SelectDevice onSelect={setDevice} autoSelectOnAdd />
+      {newDeviceSelectionFeatureFlag?.enabled ? (
+        <Flex px={16} py={8} flex={1}>
+          <SelectDevice2
+            onSelect={setDevice}
+            stopBleScanning={!!device || !isFocused}
+          />
+        </Flex>
+      ) : (
+        <SelectDevice onSelect={setDevice} autoSelectOnAdd />
+      )}
       <DeviceActionModal
         device={device}
         action={action}

@@ -1,5 +1,4 @@
 // @flow
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { checkQuote } from "@ledgerhq/live-common/exchange/swap/index";
 import {
   usePollKYCStatus,
@@ -12,12 +11,13 @@ import {
   shouldShowKYCBanner,
   shouldShowLoginBanner,
 } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import React, { useCallback, useEffect, useMemo, useState, useRef } from "react";
+import React, { useCallback, useEffect, useState, useRef, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { setSwapKYCStatus } from "~/renderer/actions/settings";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import {
   providersSelector,
   rateSelector,
@@ -48,6 +48,9 @@ import FormNotAvailable from "./FormNotAvailable";
 import SwapFormSelectors from "./FormSelectors";
 import SwapFormSummary from "./FormSummary";
 import SwapFormRates from "./FormRates";
+import { DEX_PROVIDERS } from "~/renderer/screens/exchange/Swap2/Form/utils";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import EmptyState from "./Rates/EmptyState";
 
 const Wrapper: ThemedComponent<{}> = styled(Box).attrs({
   p: 20,
@@ -101,6 +104,7 @@ const SwapForm = () => {
   const [currentBanner, setCurrentBanner] = useState(null);
   const [isSendMaxLoading, setIsSendMaxLoading] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+  const [showEmpty, setShowEmpty] = useState(false);
   const [idleState, setIdleState] = useState(false);
   const [firstRateId, setFirstRateId] = useState(null);
 
@@ -118,6 +122,8 @@ const SwapForm = () => {
     },
     [dispatch],
   );
+  const showDexQuotes: boolean | null = useFeature("swapShowDexQuotes");
+
   const swapTransaction = useSwapTransaction({
     accounts,
     setExchangeRate,
@@ -125,7 +131,7 @@ const SwapForm = () => {
     onNoRates: trackNoRates,
     ...locationState,
     providers: storedProviders,
-    includeDEX: false,
+    includeDEX: showDexQuotes,
   });
 
   const exchangeRatesState = swapTransaction.swap?.rates;
@@ -189,6 +195,10 @@ const SwapForm = () => {
     }, refreshTime);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [swapError, firstRateId]);
+
+  useEffect(() => {
+    setShowEmpty(swapError && swapError?.message.length === 0);
+  }, [swapError]);
 
   const refreshIdle = useCallback(() => {
     idleState && setIdleState(false);
@@ -394,43 +404,58 @@ const SwapForm = () => {
   };
 
   const sourceAccount = swapTransaction.swap.from.account;
+  const sourceCurrency = swapTransaction.swap.from.currency;
   const sourceParentAccount = swapTransaction.swap.from.parentAccount;
   const targetAccount = swapTransaction.swap.to.account;
   const targetParentAccount = swapTransaction.swap.to.parentAccount;
-  const sourceCurrency = swapTransaction.swap.from.currency;
   const targetCurrency = swapTransaction.swap.to.currency;
 
-  const updateSelection = useCallback(
-    payload => {
-      const { navigation } = payload;
-      if (navigation) {
-        // Means a DEX provider is selected
-        setNavigation(navigation);
-      } else {
-        // Means a CEX provider is selected
-        setNavigation(null);
-        swapTransaction.swap.updateSelectedRate(payload);
-      }
-    },
-    [swapTransaction?.swap],
-  );
-
   // We check if a decentralized swap is available to conditionnaly render an Alert below.
-  // All Ethereum related currencies are considered available
-  const decentralizedSwapAvailable = useMemo(() => {
+  // All Ethereum, Binance and Polygon related currencies are considered available
+  const showNoQuoteDexRate = useMemo(() => {
+    // if we are showing DEX quotes, we don't want to show the link banners
+    if (showDexQuotes) {
+      return false;
+    }
+
     if (sourceAccount && targetAccount) {
       const sourceMainAccount = getMainAccount(sourceAccount, sourceParentAccount);
       const targetMainAccount = getMainAccount(targetAccount, targetParentAccount);
 
+      const dexFamilyList = ["ethereum", "binance", "polygon"];
       if (
-        targetMainAccount.currency.family === "ethereum" &&
-        sourceMainAccount.currency.id === targetMainAccount.currency.id
+        dexFamilyList.includes(targetMainAccount.currency.family) &&
+        sourceMainAccount.currency.id === targetMainAccount.currency.id &&
+        sourceMainAccount.currency.family === targetMainAccount.currency.family
       ) {
         return true;
       }
     }
     return false;
-  }, [sourceAccount, sourceParentAccount, targetAccount, targetParentAccount]);
+  }, [showDexQuotes, sourceAccount, sourceParentAccount, targetAccount, targetParentAccount]);
+
+  useEffect(() => {
+    if (!exchangeRate) {
+      setNavigation(null);
+      swapTransaction.swap.updateSelectedRate({});
+      return;
+    }
+
+    const { providerType } = exchangeRate;
+    if (providerType === "DEX") {
+      const dexProvider = DEX_PROVIDERS.find(d => d.id === exchangeRate.provider);
+      if (dexProvider) {
+        setNavigation(dexProvider.navigation);
+      }
+    }
+
+    if (providerType === "CEX") {
+      setNavigation(null);
+      swapTransaction.swap.updateSelectedRate(exchangeRate);
+    }
+    // suppressing as swapTransaction is not memoized and causes infinite loop
+    // eslint-disable-next-line
+  }, [exchangeRate]);
 
   switch (currentFlow) {
     case "LOGIN":
@@ -512,7 +537,8 @@ const SwapForm = () => {
           isSendMaxLoading={isSendMaxLoading}
           updateSelectedRate={swapTransaction.swap.updateSelectedRate}
         />
-        {showDetails && (
+        {showEmpty && <EmptyState />}
+        {showDetails && !showEmpty && (
           <>
             <SwapFormSummary
               swapTransaction={swapTransaction}
@@ -524,8 +550,7 @@ const SwapForm = () => {
               provider={provider}
               refreshTime={refreshTime}
               countdown={!swapError && !idleState}
-              decentralizedSwapAvailable={decentralizedSwapAvailable}
-              updateSelection={updateSelection}
+              showNoQuoteDexRate={showNoQuoteDexRate}
             />
 
             {currentBanner === "LOGIN" ? (

@@ -64,6 +64,11 @@ import type {
   SettingsUpdateCurrencyPayload,
   SettingsSetSwapSelectableCurrenciesPayload,
   SettingsSetDismissedDynamicCardsPayload,
+  SettingsSetStatusCenterPayload,
+  SettingsSetOverriddenFeatureFlagPlayload,
+  SettingsSetOverriddenFeatureFlagsPlayload,
+  SettingsSetFeatureFlagsBannerVisiblePayload,
+  DangerouslyOverrideStatePayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -155,6 +160,9 @@ export const INITIAL_STATE: SettingsState = {
     recommendationsCategory: true,
   },
   walletTabNavigatorLastVisitedTab: ScreenName.Portfolio,
+  displayStatusCenter: false,
+  overriddenFeatureFlags: {},
+  featureFlagsBannerVisible: false,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -372,8 +380,12 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       .payload.hasAvailableUpdate,
   }),
 
-  [SettingsActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (state): SettingsState => ({
+  [SettingsActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (
+    state,
+    action,
+  ): SettingsState => ({
     ...state,
+    ...(action as Action<DangerouslyOverrideStatePayload>).payload.settings,
   }),
 
   [SettingsActionTypes.SETTINGS_SET_THEME]: (state, action) => ({
@@ -573,6 +585,42 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       action as Action<SettingsSetWalletTabNavigatorLastVisitedTabPayload>
     ).payload.walletTabNavigatorLastVisitedTab,
   }),
+
+  [SettingsActionTypes.SET_STATUS_CENTER]: (state, action) => ({
+    ...state,
+    displayStatusCenter: (action as Action<SettingsSetStatusCenterPayload>)
+      .payload.displayStatusCenter,
+  }),
+  [SettingsActionTypes.SET_OVERRIDDEN_FEATURE_FLAG]: (state, action) => {
+    const {
+      payload: { id, value },
+    } = action as Action<SettingsSetOverriddenFeatureFlagPlayload>;
+    return {
+      ...state,
+      overriddenFeatureFlags: {
+        ...state.overriddenFeatureFlags,
+        [id]: value,
+      },
+    };
+  },
+  [SettingsActionTypes.SET_OVERRIDDEN_FEATURE_FLAGS]: (state, action) => {
+    const {
+      payload: { overriddenFeatureFlags },
+    } = action as Action<SettingsSetOverriddenFeatureFlagsPlayload>;
+    return {
+      ...state,
+      overriddenFeatureFlags,
+    };
+  },
+  [SettingsActionTypes.SET_FEATURE_FLAGS_BANNER_VISIBLE]: (state, action) => {
+    const {
+      payload: { featureFlagsBannerVisible },
+    } = action as Action<SettingsSetFeatureFlagsBannerVisiblePayload>;
+    return {
+      ...state,
+      featureFlagsBannerVisible,
+    };
+  },
 };
 
 export default handleActions<SettingsState, SettingsPayload>(
@@ -794,3 +842,9 @@ export const notificationsSelector = (state: State) =>
   state.settings.notifications;
 export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
   state.settings.walletTabNavigatorLastVisitedTab;
+export const statusCenterSelector = (state: State) =>
+  state.settings.displayStatusCenter;
+export const overriddenFeatureFlagsSelector = (state: State) =>
+  state.settings.overriddenFeatureFlags;
+export const featureFlagsBannerVisibleSelector = (state: State) =>
+  state.settings.featureFlagsBannerVisible;

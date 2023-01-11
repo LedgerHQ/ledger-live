@@ -102,6 +102,7 @@
     "addressCopied": "Address copied",
     "addressCopiedSuspicious": "Mismatch between the copied address and the one in the clipboard.",
     "experimentalFeature": "Experimental",
+    "featureFlags": "Feature Flags",
     "information": "Information",
     "search": "Search...",
     "searchWithoutEllipsis": "Search",
@@ -1206,8 +1207,11 @@
         "checkDeviceButton": "Run check again",
         "cancelButton": "Maybe later"
       },
-      "genuineCheckAnimationModal": {
-        "message": "Allow manager on {{deviceName}}"
+      "softwareCheckAllowSecureChannelModal": {
+        "title": "Allow manager on {{deviceName}}"
+      },
+      "softwareCheckLockedDeviceModal": {
+        "title": "Unlock your device"
       },
       "helpDrawer": {
         "title": "Need some help with your setup manual?",
@@ -3714,6 +3718,9 @@
       "featureFlagsEdit": "Edit",
       "featureFlagsRestore": "Restore",
       "featureFlagsOverride": "Override",
+      "featureFlagsRestoreAll": "Restore all flags values",
+      "showButtonDesc": "Always display the Feature Flags button in the Sidebar",
+      "buttonTitle": "Flags overridden locally",
       "firebaseProject": "Firebase project targeted by this build:",
       "addLocalApp": "Add a local app",
       "addLocalAppDesc": "Browse local files and add a local app using a local manifest",
@@ -3772,6 +3779,10 @@
         "experimentalCurrencies": {
           "title": "Experimental integrations",
           "description": "Use available experimental crypto assets integrations."
+        },
+        "experimentalExecutionOnRenderer": {
+          "title": "Experimental networking",
+          "description": "Use experimental networking to optimize your Ledger Live experience with your VPN. Activate this only if your current VPN causes system errors."
         },
         "experimentalLanguages": {
           "title": "Translation testing",
@@ -5516,6 +5527,14 @@
       "title": "Your device is locked",
       "description": "Unlock your device and try again.",
       "descriptionWithProductName": "Unlock your {{ productName }} and try again."
+    },
+    "DeviceNotOnboardedError": {
+      "title": "Your device is not ready to use yet",
+      "titleWithProductName": "{{ productName }} is not ready to use yet",
+      "description": "You need to setup your device first.\nWe will guide you through the setup process.",
+      "descriptionWithProductName": "You need to setup your {{ productName }} first.\nWe will guide you through the setup process.",
+      "goToOnboardingButton": "Set up my device",
+      "goToOnboardingButtonWithProductName": "Set up my {{ productName }}"
     }
   },
   "cryptoOrg": {

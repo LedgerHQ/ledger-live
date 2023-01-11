@@ -1,10 +1,32 @@
 # @ledgerhq/native-ui
 
+## 0.14.0
+
+### Minor Changes
+
+- [#1802](https://github.com/LedgerHQ/ledger-live/pull/1802) [`b01f9f5c02`](https://github.com/LedgerHQ/ledger-live/commit/b01f9f5c02ef255738b557daba38c1d9f13ee8fe) Thanks [@LFBarreto](https://github.com/LFBarreto)! - NativeUI - add colo and text Color to tag component
+
+### Patch Changes
+
+- Updated dependencies [[`32993aea9a`](https://github.com/LedgerHQ/ledger-live/commit/32993aea9af5dfb7f2519263e5f2a22a88320cdc)]:
+  - @ledgerhq/icons-ui@0.3.3
+
+## 0.14.0-next.0
+
+### Minor Changes
+
+- [#1802](https://github.com/LedgerHQ/ledger-live/pull/1802) [`b01f9f5c02`](https://github.com/LedgerHQ/ledger-live/commit/b01f9f5c02ef255738b557daba38c1d9f13ee8fe) Thanks [@LFBarreto](https://github.com/LFBarreto)! - NativeUI - add colo and text Color to tag component
+
+### Patch Changes
+
+- Updated dependencies [[`32993aea9a`](https://github.com/LedgerHQ/ledger-live/commit/32993aea9af5dfb7f2519263e5f2a22a88320cdc)]:
+  - @ledgerhq/icons-ui@0.3.3-next.0
+
 ## 0.13.0
 
 ### Minor Changes
 
-- [#1831](https://github.com/LedgerHQ/ledger-live/pull/1831) [`8ac70e5cca`](https://github.com/LedgerHQ/ledger-live/commit/8ac70e5ccab58159c646f23694c1da13ebc00248) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Two Cards components (CardA and CardB) added to the native-ui lib
+- [#1831](https://github.com/LedgerHQ/ledger-live/pull/1831) [`8ac70e5cca`](https://github.com/LedgerHQ/ledger-live/commit/8ac70e5ccab58159c646f23694c1da13ebc00248) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Two Cards components (FullBackgroundCard and SideImageCard) added to the native-ui lib
 
 ### Patch Changes
 
@@ -15,7 +37,7 @@
 
 ### Minor Changes
 
-- [#1831](https://github.com/LedgerHQ/ledger-live/pull/1831) [`8ac70e5cca`](https://github.com/LedgerHQ/ledger-live/commit/8ac70e5ccab58159c646f23694c1da13ebc00248) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Two Cards components (CardA and CardB) added to the native-ui lib
+- [#1831](https://github.com/LedgerHQ/ledger-live/pull/1831) [`8ac70e5cca`](https://github.com/LedgerHQ/ledger-live/commit/8ac70e5ccab58159c646f23694c1da13ebc00248) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Two Cards components (FullBackgroundCard and SideImageCard) added to the native-ui lib
 
 ### Patch Changes
 

@@ -65,7 +65,6 @@ setSupportedCurrencies([
   "vertcoin",
   "peercoin",
   "viacoin",
-  "stakenet",
   "bitcoin_testnet",
   "ethereum_ropsten",
   "ethereum_goerli",
