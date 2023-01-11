@@ -257,18 +257,34 @@ jobs:
         with:
           script: |
             const fs = require("fs");
+
+            const [ owner, repo ] = "${{ github.repository }}".split("/");
+
+            const jobs = await github.paginate(github.rest.actions.listJobsForWorkflowRunAttempt, {
+              owner,
+              repo,
+              run_id: "${{ github.run_id }}",
+              attempt_number: "${{ github.run_attempt }}",
+            });
+
+            const findJobUrl = os =>
+              jobs.find(job => job.name == `Live Desktop Tests (${os})`)?.html_url;
+
             const keys = {
               mac: {
                 symbol: "🍏",
-                name: "macOS"
+                name: "macOS",
+                jobUrl: findJobUrl("macOS X")
               },
               windows: {
                 symbol: "🪟",
-                name: "Windows"
+                name: "Windows",
+                jobUrl: findJobUrl("Windows")
               },
               linux: {
                 symbol: "🐧",
-                name: "Linux"
+                name: "Linux",
+                jobUrl: findJobUrl("Linux")
               },
             };
 
@@ -314,7 +330,7 @@ jobs:
             const playwrightSuccess = Object.entries(report).every(([os, values]) => !!values.pass);
 
             reportKeys.forEach((k) => {
-              summary += ` ${keys[k].symbol} ${keys[k].name} |`;
+              summary += ` [${keys[k].symbol} ${keys[k].name}](${keys[k].jobUrl}) |`;
             });
 
             summary += `
@@ -359,7 +375,7 @@ jobs:
     name: "Allure Reports Export on Server"
     needs: [e2e-tests-windows, e2e-tests-linux, e2e-tests-mac]
     runs-on: [ledger-live, linux]
-    if: ${{ always() && !cancelled() }}
+    if: ${{ always() && !cancelled() && github.ref_name == 'develop' }}
     steps:
       - name: checkout
         uses: actions/checkout@v3

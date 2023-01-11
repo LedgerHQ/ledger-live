@@ -212,6 +212,19 @@ jobs:
         with:
           script: |
             const fs = require("fs");
+
+            const [ owner, repo ] = "${{ github.repository }}".split("/");
+
+            const jobs = await github.paginate(github.rest.actions.listJobsForWorkflowRunAttempt, {
+              owner,
+              repo,
+              run_id: "${{ github.run_id }}",
+              attempt_number: "${{ github.run_attempt }}",
+            });
+
+            const findJobUrl = os =>
+              jobs.find(job => job.name == `Build Ledger Live Desktop (${os})`)?.html_url;
+
             const statuses = [
               "${{ needs.build-desktop-app-macos.result }}",
               "${{ needs.build-desktop-app-linux.result }}",
@@ -220,15 +233,18 @@ jobs:
             const keys = {
               mac: {
                 symbol: "🍏",
-                name: "macOS"
+                name: "macOS",
+                jobUrl: findJobUrl("Mac OS X")
               },
               windows: {
                 symbol: "🪟",
-                name: "Windows"
+                name: "Windows",
+                jobUrl: findJobUrl("Windows")
               },
               linux: {
                 symbol: "🐧",
-                name: "Linux"
+                name: "Linux",
+                jobUrl: findJobUrl("Linux")
               },
             };
             const report = {
@@ -255,7 +271,7 @@ jobs:
             const reportKeys = Object.keys(report);
 
             reportKeys.forEach((k) => {
-              summary += ` ${keys[k].symbol} ${keys[k].name} |`;
+              summary += ` [${keys[k].symbol} ${keys[k].name}](${keys[k].jobUrl}) |`;
             });
 
             summary += `
