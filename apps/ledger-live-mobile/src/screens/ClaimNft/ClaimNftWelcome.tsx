@@ -8,6 +8,7 @@ import { useNavigation, useTheme } from "@react-navigation/native";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { useCompleteActionCallback } from "../../logic/postOnboarding/useCompleteAction";
 import { NavigatorName, ScreenName } from "../../const";
+import videoSources from "../../../assets/videos";
 
 const absoluteStyle = {
   position: "absolute" as const,
@@ -71,8 +72,8 @@ const ClaimNftWelcome = () => {
           disableFocus
           source={
             theme.dark
-              ? require("../../../assets/videos/infinityPassDark/infinityPassPart01.mp4")
-              : require("../../../assets/videos/infinityPassLight/infinityPassPart01.mp4")
+              ? videoSources.infinityPassPart01Dark
+              : videoSources.infinityPassPart01Light
           }
           onEnd={handleEndVideo}
           muted
@@ -88,8 +89,8 @@ const ClaimNftWelcome = () => {
           disableFocus
           source={
             theme.dark
-              ? require("../../../assets/videos/infinityPassDark/infinityPassPart02.mp4")
-              : require("../../../assets/videos/infinityPassLight/infinityPassPart02.mp4")
+              ? videoSources.infinityPassPart02Dark
+              : videoSources.infinityPassPart02Light
           }
           muted
           repeat
