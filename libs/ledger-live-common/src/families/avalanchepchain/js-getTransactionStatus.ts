@@ -49,18 +49,18 @@ const getTransactionStatus = async (
     errors.recipient = new RecipientRequired();
   }
 
-  const isBeyondValidStakeTimeRange =
+  const isAfterValidStakeTimeRange =
     transaction.maxEndTime && transaction.endTime?.gt(transaction.maxEndTime);
 
   const twoWeeksAndfiveMinutesFromNow = new BigNumber(
     Math.round(new Date().getTime() / 1000) + TWO_WEEKS + FIVE_MINUTES
   );
 
-  const isUnderValidStakeTimeRange =
+  const isBeforeValidStakeTimeRange =
     transaction.endTime &&
     transaction.endTime?.lt(twoWeeksAndfiveMinutesFromNow);
 
-  if (isBeyondValidStakeTimeRange || isUnderValidStakeTimeRange) {
+  if (isBeforeValidStakeTimeRange || isAfterValidStakeTimeRange) {
     errors.time = new AvalancheInvalidDateTimeError();
   }
 
