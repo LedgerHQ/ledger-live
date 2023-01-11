@@ -293,7 +293,7 @@ jobs:
     name: "Allure Reports Export on Server"
     needs: [test-desktop-app, test-desktop-app-mac-internal, report]
     runs-on: [ledger-live, linux]
-    if: ${{ always() && !cancelled() && needs.is-affected.outputs.is-desktop-affected == 'true' && github.event.pull_request != '' && !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
+    if: ${{ always() && !cancelled() && needs.is-affected.outputs.is-desktop-affected == 'true' && !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) && github.ref_name == 'develop' }}
     steps:
       - name: checkout
         uses: actions/checkout@v3
