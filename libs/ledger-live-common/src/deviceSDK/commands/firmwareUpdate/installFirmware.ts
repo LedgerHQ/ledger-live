@@ -1,4 +1,4 @@
-import { Observable, throwError } from "rxjs";
+import { Observable, of, throwError } from "rxjs";
 import URL from "url";
 import Transport, { TransportStatusError } from "@ledgerhq/hw-transport";
 import type { FinalFirmware, OsuFirmware } from "@ledgerhq/types-live";
@@ -13,7 +13,9 @@ import {
   ManagerFirmwareNotEnoughSpaceError,
   UserRefusedFirmwareUpdate,
   DeviceOnDashboardExpected,
+  ManagerDeviceLockedError,
 } from "@ledgerhq/errors";
+import { UnresponsiveCmdEvent } from "../core";
 
 export type InstallFirmwareCommandRequest = {
   targetId: DeviceInfo["targetId"];
@@ -42,7 +44,8 @@ export type InstallFirmwareCommandEvent =
     }
   | {
       type: "firmwareUpgradePermissionRequested";
-    };
+    }
+  | UnresponsiveCmdEvent;
 
 export function installFirmwareCommand(
   transport: Transport,
@@ -69,9 +72,11 @@ export function installFirmwareCommand(
   }).pipe(
     catchError(remapSocketFirmwareError),
     filter<SocketEvent, FilteredSocketEvent>((e): e is FilteredSocketEvent => {
-      return e.type === "bulk-progress" || e.type === "device-permission-requested";
+      return (
+        e.type === "bulk-progress" || e.type === "device-permission-requested"
+      );
     }),
-    map((e) => {
+    map<FilteredSocketEvent, InstallFirmwareCommandEvent>((e) => {
       if (e.type === "bulk-progress") {
         return e.index >= e.total - 1
           ? {
@@ -84,11 +89,26 @@ export function installFirmwareCommand(
       }
       // then type is "device-permission-requested"
       return { type: "allowManagerRequested" };
-    })
+    }),
+    catchError(remapSocketUnresponsiveError)
   );
 }
 
-const remapSocketFirmwareError: (e: Error) => Observable<never> = (e: Error) => {
+const remapSocketUnresponsiveError: (
+  e: Error
+) => Observable<InstallFirmwareCommandEvent> | Observable<never> = (
+  e: Error
+) => {
+  if (e instanceof ManagerDeviceLockedError) {
+    return of({ type: "unresponsive" });
+  }
+
+  return throwError(e);
+};
+
+const remapSocketFirmwareError: (e: Error) => Observable<never> = (
+  e: Error
+) => {
   if (!e || !e.message) return throwError(e);
 
   if (e.message.startsWith("invalid literal")) {

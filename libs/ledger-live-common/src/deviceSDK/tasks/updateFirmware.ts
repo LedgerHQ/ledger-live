@@ -54,7 +54,7 @@ function internalUpdateFirmwareTask({
           }
           return true;
         }),
-        switchMap(() => getVersion(transport)),        
+        switchMap(() => getVersion(transport)),
         switchMap((value) => {
           if (value.type === "unresponsive") {
             return of({
