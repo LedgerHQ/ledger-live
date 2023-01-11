@@ -1,5 +1,15 @@
 # @ledgerhq/live-common
 
+## 27.11.0-nightly.7
+
+### Patch Changes
+
+- [#2282](https://github.com/LedgerHQ/ledger-live/pull/2282) [`ea6e557506`](https://github.com/LedgerHQ/ledger-live/commit/ea6e5575069f7ce4c9f9ce4983671aa465740fc5) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Prevents over usage of erc20.json CDN file
+
+* [#2272](https://github.com/LedgerHQ/ledger-live/pull/2272) [`b7df09bbc9`](https://github.com/LedgerHQ/ledger-live/commit/b7df09bbc9a07602b326fbbe434c13ec61f276e7) Thanks [@lvndry](https://github.com/lvndry)! - Upgrade @celo/\* to 3.0.1
+
+- [#2189](https://github.com/LedgerHQ/ledger-live/pull/2189) [`d0919b03f4`](https://github.com/LedgerHQ/ledger-live/commit/d0919b03f49d2cfd13e0f476f7b94c54e34be872) Thanks [@sarneijim](https://github.com/sarneijim)! - Add SwapExchangeRateAmountTooLowOrTooHigh error to swap dex quotes
+
 ## 27.11.0-nightly.6
 
 ### Patch Changes

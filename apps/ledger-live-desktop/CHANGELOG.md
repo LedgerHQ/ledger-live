@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 2.52.0-nightly.9
+
+### Patch Changes
+
+- [#2189](https://github.com/LedgerHQ/ledger-live/pull/2189) [`d0919b03f4`](https://github.com/LedgerHQ/ledger-live/commit/d0919b03f49d2cfd13e0f476f7b94c54e34be872) Thanks [@sarneijim](https://github.com/sarneijim)! - Add SwapExchangeRateAmountTooLowOrTooHigh error to swap dex quotes
+
+* [#2212](https://github.com/LedgerHQ/ledger-live/pull/2212) [`cf4cdf3128`](https://github.com/LedgerHQ/ledger-live/commit/cf4cdf312854a4a0b66f3e3a2e40b229d3958ad7) Thanks [@sarneijim](https://github.com/sarneijim)! - Remove stake from binance and polygon
+
+* Updated dependencies [[`ea6e557506`](https://github.com/LedgerHQ/ledger-live/commit/ea6e5575069f7ce4c9f9ce4983671aa465740fc5), [`b7df09bbc9`](https://github.com/LedgerHQ/ledger-live/commit/b7df09bbc9a07602b326fbbe434c13ec61f276e7), [`d0919b03f4`](https://github.com/LedgerHQ/ledger-live/commit/d0919b03f49d2cfd13e0f476f7b94c54e34be872)]:
+  - @ledgerhq/live-common@27.11.0-nightly.7
+
 ## 2.52.0-nightly.8
 
 ### Patch Changes
