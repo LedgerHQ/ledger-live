@@ -282,6 +282,9 @@
     "CasperInvalidTransferId": {
       "title": "Transfer ID should be a positive number smaller than 18446744073709551615"
     },
+    "MayBlockAccount": {
+      "title": "Your account will be left with less than the 2.6 CSPR required to perform a send"
+    },
     "InvalidMinimumAmount": {
       "title": "Minimum amount to transfer is 2.5 CSPR"
     },
