@@ -65,6 +65,7 @@ const excludedErrorName = [
   "AccountNeedResync",
   "DeviceAppVerifyNotSupported",
   "AccountAwaitingSendPendingOperations",
+  "HederaAddAccountError",
   // API issues
   "LedgerAPI4xx",
   "LedgerAPI5xx",
