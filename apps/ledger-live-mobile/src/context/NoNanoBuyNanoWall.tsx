@@ -23,7 +23,7 @@ export const useNoNanoBuyNanoWallScreenOptions = ():
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
 
-  if (!readOnlyModeEnabled) return {};
+  if (true) return {};
   if (hasOrderedNano) {
     return {
       component: PostBuyDeviceSetupNanoWallScreen,

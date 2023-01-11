@@ -1,22 +1,26 @@
 import React from "react";
 import { TouchableOpacity, TouchableOpacityProps } from "react-native";
-import styled, { useTheme } from "styled-components/native";
+import { useTheme } from "styled-components/native";
 import Text from "../../Text";
 import { getLinkColors } from "./getLinkStyle";
 import { ctaIconSize, ctaTextType } from "../getCtaStyle";
+import baseStyled, { BaseStyledProps } from "../../styled";
+import { getButtonColorStyle } from "../Button/getButtonStyle";
+import { ButtonProps } from "../Button";
 
-export type LinkProps = TouchableOpacityProps & {
-  Icon?: React.ComponentType<{ size: number; color: string }>;
-  type?: "main" | "shade" | "color";
-  size?: "small" | "medium" | "large";
-  iconPosition?: "right" | "left";
-  disabled?: boolean;
-  reversed?: boolean;
-  children?: React.ReactNode;
-  numberOfLines?: number;
-};
+export type LinkProps = TouchableOpacityProps &
+  BaseStyledProps & {
+    Icon?: React.ComponentType<{ size: number; color: string }>;
+    type?: "main" | "shade" | "color";
+    size?: "small" | "medium" | "large";
+    iconPosition?: "right" | "left";
+    disabled?: boolean;
+    reversed?: boolean;
+    children?: React.ReactNode;
+    numberOfLines?: number;
+  };
 
-const IconContainer = styled.View<{
+const IconContainer = baseStyled.View<{
   iconPosition: "right" | "left";
   iconLink?: boolean;
 }>`
@@ -24,7 +28,10 @@ const IconContainer = styled.View<{
     p.iconLink ? "" : p.iconPosition === "left" ? `margin-right: 6px;` : `margin-left: 6px;`}
 `;
 
-export const Base = styled(TouchableOpacity)`
+export const Base = baseStyled(TouchableOpacity).attrs<LinkProps>({
+  // Avoid conflict with styled-system's size property by nulling size and renaming it
+  size: undefined,
+})`
   flex-direction: row;
   text-align: center;
   align-items: center;

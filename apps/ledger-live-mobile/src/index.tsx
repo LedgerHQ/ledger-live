@@ -524,7 +524,7 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
   const linking = useMemo<LinkingOptions<ReactNavigation.RootParamList>>(
     () =>
       ({
-        ...(hasCompletedOnboarding
+        ...(true
           ? linkingOptions
           : getOnboardingLinkingOptions(!!userAcceptedTerms)),
         enabled: wcContext.initDone && !wcContext.session.session,
@@ -565,6 +565,7 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
           const url = new URL(`ledgerlive://${path}`);
           const { hostname, pathname } = url;
           const platform = pathname.split("/")[1];
+          console.log("getStateFromPath")
 
           if (hostname === "discover" && platform) {
             /**

@@ -1139,7 +1139,8 @@
       "terms": "By tapping “Get Started” you consent and agree to our",
       "termsLink": "Terms of Service",
       "privacyLink": "Privacy Policy",
-      "and": "and"
+      "and": "and",
+      "protect": "Already subscribed to Protect?"
     },
     "stepDoYouHaveALedgerDevice": {
       "title": "Do you own a Ledger?",

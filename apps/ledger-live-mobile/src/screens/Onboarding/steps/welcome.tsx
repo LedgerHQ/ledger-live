@@ -23,6 +23,7 @@ import {
   BaseComposite,
   StackNavigatorProps,
 } from "../../../components/RootNavigator/types/helpers";
+import Link from "../../../components/wrappedUi/Link";
 
 const source = require("../../../../assets/videos/onboarding.mp4"); // eslint-disable-line @typescript-eslint/no-var-requires
 const sourceStax = require("../../../../assets/videos/onboardingStax.mp4"); // eslint-disable-line @typescript-eslint/no-var-requires
@@ -48,6 +49,9 @@ type NavigationProps = BaseComposite<
 
 function OnboardingStepWelcome({ navigation }: NavigationProps) {
   const dispatch = useDispatch();
+  const servicesConfig = useFeature("protectServicesMobile");
+
+  console.log("servicesConfig", servicesConfig)
   const { t } = useTranslation();
   const [, setAccepted] = useTermsAccept();
 
@@ -92,6 +96,7 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
 
   const handleNavigateToFeatureFlagsSettings = useCallback(
     nb => {
+      console.log("handleNavigateToFeatureFlagsSettings")
       if (nb === "1") countTitle.current++;
       else if (nb === "2") countSubtitle.current++;
       if (countTitle.current > 3 && countSubtitle.current > 5) {
@@ -223,6 +228,14 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
           >
             {t("onboarding.stepWelcome.start")}
           </Button>
+          <Link
+            onPress={() => Linking.openURL("ledgerlive://discover/protect?redirectTo=/account/login&source=welcome")}
+            mb={9}
+            event={"button_clicked"}
+            eventProperties={{ button: "Already subscribe to Protect" }}
+          >
+            {t("onboarding.stepWelcome.protect")}
+          </Link>
           <Text variant="small" textAlign="center" color="neutral.c100">
             {t("onboarding.stepWelcome.terms")}
           </Text>
