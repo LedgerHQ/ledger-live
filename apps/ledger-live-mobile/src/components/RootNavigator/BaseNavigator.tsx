@@ -96,7 +96,6 @@ export default function BaseNavigator() {
     () => getStackNavigatorConfig(colors, true),
     [colors],
   );
-  const learn = useFeature("learn");
   // PTX smart routing feature flag - buy sell live app flag
   const ptxSmartRoutingMobile = useFeature("ptxSmartRoutingMobile");
   const walletConnectLiveApp = useFeature("walletConnectLiveApp");
