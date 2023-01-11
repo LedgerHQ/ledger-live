@@ -199,7 +199,12 @@ export const getNoticeType = (
 ): { message: string; learnMore: boolean } => {
   switch (provider) {
     case "cic":
-      return { message: "cic", learnMore: false };
+      return { message: "provider", learnMore: false };
+    case "changelly":
+      return {
+        message: "provider",
+        learnMore: false,
+      };
     default:
       return { message: "default", learnMore: true };
   }
