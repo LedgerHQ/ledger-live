@@ -1,6 +1,6 @@
 // @flow
 import React, { useCallback, useMemo } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import useTheme from "~/renderer/hooks/useTheme";
 
 import { Card } from "~/renderer/components/Box";
@@ -31,7 +31,8 @@ type Props = {
 
 export default function PlatformApp({ match, appId: propsAppId, location }: Props) {
   const history = useHistory();
-  const { params: urlParams, search, pathname } = location;
+  const { params: internalParams, search, pathname } = location;
+  const { state: urlParams } = useLocation();
 
   const appId = propsAppId || match.params?.appId;
 
@@ -47,6 +48,7 @@ export default function PlatformApp({ match, appId: propsAppId, location }: Prop
     theme: themeType,
     lang,
     ...urlParams,
+    ...internalParams,
   };
 
   const manifest = useGetManifest(appId, params, pathname);

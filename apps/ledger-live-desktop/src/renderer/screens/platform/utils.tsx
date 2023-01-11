@@ -31,7 +31,11 @@ export const useGetManifest = (appId, genericParams, newpathname = "") => {
       ...Object.fromEntries(urlSearchParams.entries()),
       ...Object.fromEntries(searchParams),
     };
-    const newDappUrl = `${origin}${realHash}?${new URLSearchParams(allParams).toString()}`;
+
+    const newDappUrl =
+      appId === "paraswap"
+        ? `${origin}?${new URLSearchParams(allParams).toString()}${realHash}`
+        : `${origin}${realHash}?${new URLSearchParams(allParams).toString()}`;
     if (oldDappUrl !== newDappUrl) {
       manifest.params.dappUrl = newDappUrl;
     }
