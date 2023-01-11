@@ -8,6 +8,7 @@ import Text from "~/renderer/components/Text";
 import NoQuoteSwapRate from "./NoQuoteSwapRate";
 import SwapRate from "./SwapRate";
 import Countdown from "./Countdown";
+import EmptyState from "./EmptyState";
 import Filter from "./Filter";
 import type {
   SwapSelectorStateType,
@@ -212,6 +213,7 @@ export default function ProviderRate({
           );
         })}
       </Box>
+      {!filteredRates.length && <EmptyState />}
     </Box>
   );
 }
