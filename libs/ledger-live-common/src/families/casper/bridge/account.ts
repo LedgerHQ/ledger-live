@@ -41,11 +41,9 @@ import {
   InvalidMinimumAmount,
   NotEnoughBalance,
   RecipientRequired,
-  MayBlockAccount
+  MayBlockAccount,
 } from "@ledgerhq/errors";
-import {
-  broadcastTx,
-} from "./utils/network";
+import { broadcastTx } from "./utils/network";
 import { getMainAccount } from "../../../account/helpers";
 import { createNewDeploy } from "./utils/txn";
 
@@ -140,13 +138,13 @@ const getTransactionStatus = async (
     if (amount.lte(0) || totalSpent.gt(balance)) {
       errors.amount = new NotEnoughBalance();
     }
-  } 
+  }
 
-  if (!useAllAmount){
+  if (!useAllAmount) {
     totalSpent = amount.plus(estimatedFees);
     if (amount.eq(0)) {
       errors.amount = new AmountRequired();
-    } 
+    }
 
     if (totalSpent.gt(a.spendableBalance)) {
       errors.amount = new NotEnoughBalance();
@@ -155,11 +153,14 @@ const getTransactionStatus = async (
 
   if (amount.lt(MINIMUM_VALID_AMOUNT) && !errors.amount)
     errors.amount = new InvalidMinimumAmount();
-  
-  if (spendableBalance.minus(totalSpent).minus(estimatedFees).lt(MINIMUM_VALID_AMOUNT)) 
-    warnings.amount = new MayBlockAccount();
 
-  
+  if (
+    spendableBalance
+      .minus(totalSpent)
+      .minus(estimatedFees)
+      .lt(MINIMUM_VALID_AMOUNT)
+  )
+    warnings.amount = new MayBlockAccount();
 
   // log("debug", "[getTransactionStatus] finish fn");
 
@@ -182,7 +183,7 @@ const estimateMaxSpendable = async ({
   transaction?: Transaction | null | undefined;
 }): Promise<BigNumber> => {
   const a = getMainAccount(account, parentAccount);
-  let balance = a.spendableBalance
+  let balance = a.spendableBalance;
 
   if (balance.eq(0)) return balance;
 
