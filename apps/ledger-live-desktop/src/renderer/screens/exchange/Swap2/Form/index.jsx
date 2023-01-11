@@ -52,6 +52,7 @@ import { DEX_PROVIDERS } from "~/renderer/screens/exchange/Swap2/Form/utils";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import debounce from "lodash/debounce";
 import LoadingState from "./Rates/LoadingState";
+import EmptyState from "./Rates/EmptyState";
 
 const Wrapper: ThemedComponent<{}> = styled(Box).attrs({
   p: 20,
@@ -119,6 +120,8 @@ const SwapForm = () => {
   const [currentFlow, setCurrentFlow] = useState(null);
   const [currentBanner, setCurrentBanner] = useState(null);
   const [isSendMaxLoading, setIsSendMaxLoading] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
+  const [showEmpty, setShowEmpty] = useState(false);
   const [idleState, setIdleState] = useState(false);
   const [firstRateId, setFirstRateId] = useState(null);
   const [pageState, setPageState] = useState("initial");
@@ -167,9 +170,6 @@ const SwapForm = () => {
     setError(undefined);
   }, [provider]);
 
-  console.log("swap transaction");
-  // console.log(swapTransaction);
-
   useEffect(() => {
     // In case of error, don't show  login, kyc or mfa banner
     if (error || navigation) {
@@ -213,6 +213,10 @@ const SwapForm = () => {
     }, refreshTime);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [swapError, firstRateId]);
+
+  useEffect(() => {
+    setShowEmpty(swapError && swapError?.message.length === 0);
+  }, [swapError]);
 
   const refreshIdle = useCallback(() => {
     idleState && setIdleState(false);
@@ -555,7 +559,6 @@ const SwapForm = () => {
   if (storedProviders?.length)
     return (
       <Wrapper>
-        <div>Page state: {pageState}</div>
         <TrackPage category="Swap" name="Form" provider={provider} {...swapDefaultTrack} />
         <SwapFormSelectors
           fromAccount={sourceAccount}
@@ -577,6 +580,7 @@ const SwapForm = () => {
           isSendMaxLoading={isSendMaxLoading}
           updateSelectedRate={swapTransaction.swap.updateSelectedRate}
         />
+        {showEmpty && <EmptyState />}
         {pageState === "loading" && <LoadingState />}
         <HideComponent ready={pageState === "loaded"}>
           <SwapFormSummary

@@ -4,12 +4,13 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { TFunction, useTranslation } from "react-i18next";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
-import { TrackScreen } from "../../../analytics";
+import { TrackScreen, useAnalytics } from "../../../analytics";
 import FilteredSearchBar from "../../../components/FilteredSearchBar";
 import KeyboardView from "../../../components/KeyboardView";
 import CurrencyRow from "../../../components/CurrencyRow";
 import { SelectCurrencyParamList } from "../types";
 import { ScreenName } from "../../../const";
+import { sharedSwapTracking } from "../utils";
 
 export function SelectCurrency({
   navigation,
@@ -18,13 +19,19 @@ export function SelectCurrency({
   },
 }: SelectCurrencyParamList) {
   const { t } = useTranslation();
+  const { track } = useAnalytics();
 
   const onSelect = useCallback(
     (currency: CryptoCurrency | TokenCurrency) => {
+      track("button_clicked", {
+        ...sharedSwapTracking,
+        button: "new target currency",
+        currency: currency.name,
+      });
       // @ts-expect-error navigation type is only partially declared
       navigation.navigate(ScreenName.SwapForm, { currency });
     },
-    [navigation],
+    [track, navigation],
   );
   const sortedCurrencies = useCurrenciesByMarketcap(currencies);
 
