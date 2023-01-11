@@ -16,7 +16,7 @@ const zilliqa: AppSpec<Transaction> = {
   currency,
   appQuery: {
     model: DeviceModelId.nanoS,
-    appName: "ZIL",
+    appName: "Zilliqa",
   },
   genericDeviceAction: acceptTransaction,
   minViableAmount: minAmountCutoff,
