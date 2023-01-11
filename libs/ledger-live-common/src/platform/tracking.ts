@@ -1,4 +1,4 @@
-import type { AppManifest } from "./types";
+import type { LiveAppManifest } from "./types";
 
 /**
  * This signature is to be compatible with track method of `segment.js` file in LLM and LLD
@@ -11,15 +11,15 @@ type TrackPlatform = (
   mandatory: boolean | null
 ) => void;
 
-export type TrackFunction = (manifest: AppManifest) => void;
+export type TrackFunction = (manifest: LiveAppManifest) => void;
 
 /**
  * Obtain Event data from Platform App manifest
  *
- * @param {AppManifest} manifest
+ * @param {LiveAppManifest} manifest
  * @returns Object - event data
  */
-function getEventData(manifest: AppManifest) {
+function getEventData(manifest: LiveAppManifest) {
   return { platform: manifest.name };
 }
 
@@ -36,128 +36,128 @@ export default function trackingWrapper(
 
   return {
     // Failed to load the iframe
-    platformLoad: (manifest: AppManifest) => {
+    platformLoad: (manifest: LiveAppManifest) => {
       track("Platform Load", getEventData(manifest));
     },
 
     // Failed to load the iframe
-    platformReload: (manifest: AppManifest) => {
+    platformReload: (manifest: LiveAppManifest) => {
       track("Platform Reload", getEventData(manifest));
     },
 
     // Failed to load the iframe
-    platformLoadFail: (manifest: AppManifest) => {
+    platformLoadFail: (manifest: LiveAppManifest) => {
       // TODO: handle iframe failed
       track("Platform Load Fail", getEventData(manifest));
     },
 
     // Successfully loaded the iframe
-    platformLoadSuccess: (manifest: AppManifest) => {
+    platformLoadSuccess: (manifest: LiveAppManifest) => {
       track("Platform Load Success", getEventData(manifest));
     },
 
     // Sign transaction modal open
-    platformSignTransactionRequested: (manifest: AppManifest) => {
+    platformSignTransactionRequested: (manifest: LiveAppManifest) => {
       track("Platform SignTransaction", getEventData(manifest));
     },
 
     // Failed to sign transaction (cancel or error)
-    platformSignTransactionFail: (manifest: AppManifest) => {
+    platformSignTransactionFail: (manifest: LiveAppManifest) => {
       track("Platform SignTransaction Fail", getEventData(manifest));
     },
 
     // Successfully signed transaction
-    platformSignTransactionSuccess: (manifest: AppManifest) => {
+    platformSignTransactionSuccess: (manifest: LiveAppManifest) => {
       track("Platform SignTransaction Success", getEventData(manifest));
     },
 
     // Select account modal open
-    platformRequestAccountRequested: (manifest: AppManifest) => {
+    platformRequestAccountRequested: (manifest: LiveAppManifest) => {
       track("Platform RequestAccount", getEventData(manifest));
     },
 
     // Failed to select account (cancel or error)
-    platformRequestAccountFail: (manifest: AppManifest) => {
+    platformRequestAccountFail: (manifest: LiveAppManifest) => {
       track("Platform RequestAccount Fail", getEventData(manifest));
     },
 
     // The user successfully selected an account
-    platformRequestAccountSuccess: (manifest: AppManifest) => {
+    platformRequestAccountSuccess: (manifest: LiveAppManifest) => {
       track("Platform RequestAccount Success", getEventData(manifest));
     },
 
     // Select account modal open
-    platformReceiveRequested: (manifest: AppManifest) => {
+    platformReceiveRequested: (manifest: LiveAppManifest) => {
       track("Platform Receive", getEventData(manifest));
     },
 
     // Failed to select account (cancel or error)
-    platformReceiveFail: (manifest: AppManifest) => {
+    platformReceiveFail: (manifest: LiveAppManifest) => {
       track("Platform Receive Fail", getEventData(manifest));
     },
 
     // The user successfully selected an account
-    platformReceiveSuccess: (manifest: AppManifest) => {
+    platformReceiveSuccess: (manifest: LiveAppManifest) => {
       track("Platform Receive Success", getEventData(manifest));
     },
 
     // Failed to broadcast a signed transaction
-    platformBroadcastFail: (manifest: AppManifest) => {
+    platformBroadcastFail: (manifest: LiveAppManifest) => {
       track("Platform Broadcast Fail", getEventData(manifest));
     },
 
     // Successfully broadcast a signed transaction
-    platformBroadcastSuccess: (manifest: AppManifest) => {
+    platformBroadcastSuccess: (manifest: LiveAppManifest) => {
       track("Platform Broadcast Success", getEventData(manifest));
     },
 
     // Successfully broadcast a signed transaction
-    platformBroadcastOperationDetailsClick: (manifest: AppManifest) => {
+    platformBroadcastOperationDetailsClick: (manifest: LiveAppManifest) => {
       track("Platform Broadcast OpD Clicked", getEventData(manifest));
     },
 
     // Generate Exchange nonce modal open
-    platformStartExchangeRequested: (manifest: AppManifest) => {
+    platformStartExchangeRequested: (manifest: LiveAppManifest) => {
       track("Platform start Exchange Nonce request", getEventData(manifest));
     },
 
     // Successfully generated an Exchange app nonce
-    platformStartExchangeSuccess: (manifest: AppManifest) => {
+    platformStartExchangeSuccess: (manifest: LiveAppManifest) => {
       track("Platform start Exchange Nonce success", getEventData(manifest));
     },
 
     // Failed to generate an Exchange app nonce
-    platformStartExchangeFail: (manifest: AppManifest) => {
+    platformStartExchangeFail: (manifest: LiveAppManifest) => {
       track("Platform start Exchange Nonce fail", getEventData(manifest));
     },
 
-    platformCompleteExchangeRequested: (manifest: AppManifest) => {
+    platformCompleteExchangeRequested: (manifest: LiveAppManifest) => {
       track("Platform complete Exchange requested", getEventData(manifest));
     },
 
     // Successfully completed an Exchange
-    platformCompleteExchangeSuccess: (manifest: AppManifest) => {
+    platformCompleteExchangeSuccess: (manifest: LiveAppManifest) => {
       track("Platform complete Exchange success", getEventData(manifest));
     },
 
     // Failed to complete an Exchange
-    platformCompleteExchangeFail: (manifest: AppManifest) => {
+    platformCompleteExchangeFail: (manifest: LiveAppManifest) => {
       track("Platform complete Exchange Nonce fail", getEventData(manifest));
     },
 
-    platformSignMessageRequested: (manifest: AppManifest) => {
+    platformSignMessageRequested: (manifest: LiveAppManifest) => {
       track("Platform sign message requested", getEventData(manifest));
     },
 
-    platformSignMessageSuccess: (manifest: AppManifest) => {
+    platformSignMessageSuccess: (manifest: LiveAppManifest) => {
       track("Platform sign message success", getEventData(manifest));
     },
 
-    platformSignMessageFail: (manifest: AppManifest) => {
+    platformSignMessageFail: (manifest: LiveAppManifest) => {
       track("Platform sign message fail", getEventData(manifest));
     },
 
-    platformSignMessageUserRefused: (manifest: AppManifest) => {
+    platformSignMessageUserRefused: (manifest: LiveAppManifest) => {
       track("Platform sign message user refused", getEventData(manifest));
     },
   };

@@ -3,7 +3,7 @@
 import React, { useCallback } from "react";
 import styled, { css } from "styled-components";
 
-import type { AppManifest } from "@ledgerhq/live-common/platform/types";
+import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 import { rgba } from "~/renderer/styles/helpers";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
@@ -52,7 +52,7 @@ const Container: ThemedComponent<{ isActive?: boolean, disabled?: boolean }> = s
 `;
 
 type Props = {
-  manifest: AppManifest,
+  manifest: LiveAppManifest,
   onClick: Function,
 };
 
