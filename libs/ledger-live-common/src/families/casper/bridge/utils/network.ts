@@ -19,7 +19,7 @@ import { AccessRights, CLURef, DeployUtil } from "casper-js-sdk";
 import { getEstimatedFees } from "../../utils";
 
 const getCasperLiveURL = (path: string): string => {
-  const baseUrl = getEnv("API_CASPER_LIVE_ENDPOINT");
+  const baseUrl = getEnv("API_CASPER_INDEXER_ENDPOINT");
   if (!baseUrl) throw new Error("API base URL not available");
 
   return `${baseUrl}${path}`;
