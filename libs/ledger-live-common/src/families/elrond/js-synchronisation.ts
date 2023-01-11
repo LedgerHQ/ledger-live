@@ -10,6 +10,7 @@ import {
 import elrondBuildESDTTokenAccounts from "./js-buildSubAccounts";
 import { Operation, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 import { computeDelegationBalance } from "./logic";
+import { reconciliateSubAccounts } from "./js-reconciliation";
 
 function pruneOperations(
   operations: Operation[],
@@ -63,8 +64,7 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
     });
 
     if (tokenAccounts) {
-      subAccounts = tokenAccounts;
-      // reconciliateSubAccounts(tokenAccounts, initialAccount);
+      subAccounts = reconciliateSubAccounts(tokenAccounts, initialAccount);
     }
   }
 
