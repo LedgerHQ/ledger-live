@@ -12,7 +12,7 @@ import { getAppAndVersion } from "../commands/getAppAndVersion";
 import { isDashboardName } from "../../hw/isDashboardName";
 import { withDevice } from "../../hw/deviceAccess";
 import { Observable, of } from "rxjs";
-import { filter, switchMap } from "rxjs/operators";
+import { filter, map, switchMap } from "rxjs/operators";
 import { SharedTaskEvent, sharedLogicTaskWrapper } from "./core";
 import { installFirmwareCommand } from "../commands/firmwareUpdate/installFirmware";
 import Transport from "@ledgerhq/hw-transport";
@@ -63,7 +63,27 @@ function internalUpdateFirmwareTask({
             });
           }
           const { firmwareInfo } = value;
-          return installOsuFirmware({ firmwareInfo, updateContext, transport });
+
+          // TODO: we're repeating the handling of the unresponsive event here... is there a way to make this better
+          // the problem that if we want to change multiple commands that may have unresponsive events
+          // and only continue with the next command if the event is not unresponsive we might have to handle multiple times
+          // the unresponsive event :/
+          return installOsuFirmware({
+            firmwareInfo,
+            updateContext,
+            transport,
+          }).pipe(
+            map((e) => {
+              if (e.type === "unresponsive") {
+                return {
+                  type: "error" as const,
+                  error: new LockedDeviceError(),
+                };
+              }
+
+              return e;
+            })
+          );
         })
       )
     ).subscribe({
@@ -81,9 +101,11 @@ function internalUpdateFirmwareTask({
               progress: event.progress,
             });
             break;
+          default:
+            subscriber.next(event);
         }
       },
-      error: (error) => subscriber.error(error), // subscriber.next({ type: "error", error }),
+      error: (error) => subscriber.next({ type: "error", error }),
       complete: () => subscriber.complete(),
       // TODO: check if flashing mcu and bootloader are needed
       // do what has to be done to flash them
