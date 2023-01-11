@@ -58,6 +58,10 @@ export function declareDep(name: string, dep: string): void {
   ["[ L ] Market", "Ethereum"],
   ["cBridge", "Ethereum"],
   ["Euler", "Ethereum"],
+  ["Cometh", "Ethereum"],
+  ["Harvest", "Ethereum"],
+  ["Nested", "Ethereum"],
+  ["APWine", "Ethereum"],
   ["Staderlabs", "Ethereum"],
 ].forEach(([name, dep]) => declareDep(name, dep));
 export const getDependencies = (appName: string): string[] =>
