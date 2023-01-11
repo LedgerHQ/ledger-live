@@ -1,12 +1,13 @@
 // @flow
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
+import { useTranslation } from "react-i18next";
 
 function Loader() {
-  const [dots, setDots] = React.useState("");
+  const [dots, setDots] = useState("");
 
-  React.useEffect(() => {
+  useEffect(() => {
     const interval = setInterval(() => {
       setDots(dots => (dots.length < 3 ? dots + "." : ""));
     }, 500);
@@ -15,9 +16,9 @@ function Loader() {
 
   return <Text style={{ position: "absolute" }}>{dots}</Text>;
 }
-
-// TODO: translations need adding
 function LoadingState() {
+  const { t } = useTranslation();
+
   return (
     <Box alignItems={"center"}>
       <Text
@@ -31,7 +32,7 @@ function LoadingState() {
         }}
         fontSize={5}
       >
-        Loading quotes
+        {t("swap2.form.rates.loadingQuotes")}
         <Loader />
       </Text>
       <Text
@@ -43,7 +44,7 @@ function LoadingState() {
         }}
         fontSize={4}
       >
-        It will take only a moment to find the best quotes available.
+        {t("swap2.form.rates.loadingDescription")}
       </Text>
     </Box>
   );
