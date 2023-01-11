@@ -257,6 +257,7 @@ describe("swap/getExchangeRates", () => {
     const res = await getExchangeRates(exchange, transaction);
     expect(res[0]?.error?.name).toEqual("SwapExchangeRateAmountTooHigh");
   });
+
   test("should return correct error SwapExchangeRateAmountTooLow", async () => {
     const data = [
       {

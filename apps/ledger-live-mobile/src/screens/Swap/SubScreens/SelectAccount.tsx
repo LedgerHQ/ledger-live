@@ -10,7 +10,7 @@ import {
   flattenAccounts,
 } from "@ledgerhq/live-common/account/index";
 import { accountWithMandatoryTokens } from "@ledgerhq/live-common/account/helpers";
-import { TrackScreen } from "../../../analytics";
+import { TrackScreen, useAnalytics } from "../../../analytics";
 import AccountCard from "../../../components/AccountCard";
 import FilteredSearchBar from "../../../components/FilteredSearchBar";
 import KeyboardView from "../../../components/KeyboardView";
@@ -21,6 +21,7 @@ import {
 import { SelectAccountParamList } from "../types";
 import { NavigatorName, ScreenName } from "../../../const";
 import { accountsSelector } from "../../../reducers/accounts";
+import { sharedSwapTracking } from "../utils";
 
 export function SelectAccount({
   navigation,
@@ -28,6 +29,7 @@ export function SelectAccount({
 }: SelectAccountParamList) {
   const { provider, target, selectableCurrencyIds, selectedCurrency } = params;
 
+  const { track } = useAnalytics();
   const unfilteredAccounts = useSelector(accountsSelector);
 
   const accounts: Account[] = useMemo(
@@ -128,6 +130,11 @@ export function SelectAccount({
   );
 
   const onAddAccount = useCallback(() => {
+    track("button_clicked", {
+      ...sharedSwapTracking,
+      account: "account",
+      button: "new source account",
+    });
     // @ts-expect-error navigation type is only partially declared
     navigation.navigate(NavigatorName.AddAccounts, {
       screen: ScreenName.AddAccountsSelectCrypto,
@@ -140,7 +147,7 @@ export function SelectAccount({
         analyticsPropertyFlow: "swap",
       },
     });
-  }, [navigation, params, selectableCurrencyIds]);
+  }, [navigation, params, selectableCurrencyIds, track]);
 
   const renderList = useCallback(
     items => {
