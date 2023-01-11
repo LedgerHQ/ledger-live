@@ -1,5 +1,15 @@
 import Prando from "prando";
 import { BigNumber } from "bignumber.js";
+import type {
+  Account,
+  AccountLike,
+  Operation,
+  TokenAccount,
+} from "@ledgerhq/types-live";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 import {
   listCryptoCurrencies,
   listTokensForCryptoCurrency,
@@ -16,17 +26,7 @@ import {
 } from "../serialization/operation";
 import { getDerivationScheme, runDerivationScheme } from "../derivation";
 import { genHex, genAddress } from "./helpers";
-import type {
-  Account,
-  AccountLike,
-  Operation,
-  TokenAccount,
-} from "@ledgerhq/types-live";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
-// import { createFixtureNFT, genNFTOperation } from "./fixtures/nfts";
+import { createFixtureNFT, genNFTOperation } from "./fixtures/nfts";
 
 function ensureNoNegative(operations: Operation[]) {
   let total = new BigNumber(0);
@@ -352,7 +352,7 @@ export function genAccount(
   const currency = opts.currency || rng.nextArrayItem(currencies);
   const operationsSize = opts.operationsSize ?? rng.nextInt(1, 200);
   const swapHistorySize = opts.swapHistorySize || 0;
-  // const withNft = opts.withNft ?? false;
+  const withNft = opts.withNft ?? false;
   const address = genAddress(currency, rng);
   const derivationPath = runDerivationScheme(
     getDerivationScheme({
@@ -406,11 +406,11 @@ export function genAccount(
         toAmount: new BigNumber("2000"),
       })),
     balanceHistoryCache: emptyHistoryCache,
-    // ...(withNft && {
-    //   nfts: Array(10)
-    //     .fill(null)
-    //     .map(() => createFixtureNFT(accountId, currency)),
-    // }),
+    ...(withNft && {
+      nfts: Array(10)
+        .fill(null)
+        .map(() => createFixtureNFT(accountId, currency)),
+    }),
   };
 
   if (
@@ -501,29 +501,29 @@ export function genAccount(
       return ops.concat(op);
     }, []);
 
-  // if (withNft) {
-  //   const nftOperations = Array(5)
-  //     .fill(null)
-  //     .reduce((ops: Operation[]) => {
-  //       const index = Math.floor(Math.random() * (5 - 0 + 1) + 0);
+  if (withNft) {
+    const nftOperations = Array(5)
+      .fill(null)
+      .reduce((ops: Operation[]) => {
+        const index = Math.floor(Math.random() * (5 - 0 + 1) + 0);
 
-  //       if (account.nfts && account.nfts[index]) {
-  //         const { tokenId, contract, standard } = account.nfts[index];
-  //         const op = genNFTOperation(
-  //           account,
-  //           account,
-  //           ops,
-  //           rng,
-  //           contract,
-  //           standard,
-  //           tokenId
-  //         );
-  //         return ops.concat(op);
-  //       }
-  //     }, []);
+        if (account.nfts && account.nfts[index]) {
+          const { tokenId, contract, standard } = account.nfts[index];
+          const op = genNFTOperation(
+            account,
+            account,
+            ops,
+            rng,
+            contract,
+            standard,
+            tokenId
+          );
+          return ops.concat(op);
+        }
+      }, []);
 
-  //   account.operations = account.operations.concat(nftOperations);
-  // }
+    account.operations = account.operations.concat(nftOperations);
+  }
 
   account.creationDate =
     account.operations.length > 0
