@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import Video from "react-native-video";
-
+import { Dimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, Flex, Icons, Text, Link } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
@@ -9,14 +9,6 @@ import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { useCompleteActionCallback } from "../../logic/postOnboarding/useCompleteAction";
 import { NavigatorName, ScreenName } from "../../const";
 import videoSources from "../../../assets/videos";
-
-const absoluteStyle = {
-  position: "absolute" as const,
-  bottom: 0,
-  left: 0,
-  top: 0,
-  right: 0,
-};
 
 const BulletItem = ({ textKey }: { textKey: string }) => {
   const { t } = useTranslation();
@@ -33,6 +25,10 @@ const ClaimNftWelcome = () => {
   const navigation = useNavigation();
   const [isFirstVideo, setIsFirstVideo] = useState(true);
   const [firstVideoLoaded, setFirstVideoLoaded] = useState(false);
+  const [videoDimensions, setVideoDimensions] = useState<{
+    width: number;
+    height: number;
+  } | null>(null);
   const theme = useTheme();
   const completePostOnboardingAction = useCompleteActionCallback();
 
@@ -49,15 +45,45 @@ const ClaimNftWelcome = () => {
     navigation.getParent()?.goBack();
   }, [completePostOnboardingAction, navigation]);
 
+  const handleFirstVideoLoaded = useCallback(payload => {
+    const { naturalSize } = payload;
+    const { height, width } = naturalSize;
+    if (!width) return;
+    const heightWidthRatio = (height ?? 0) / width;
+    const windowWidth = Dimensions.get("window").width;
+    setVideoDimensions({
+      width: windowWidth,
+      height: heightWidthRatio * windowWidth,
+    });
+  }, []);
+
+  const handleFirstVideoReadyForDisplay = useCallback(() => {
+    setFirstVideoLoaded(true);
+  }, []);
+
   const handleEndVideo = useCallback(() => {
     setIsFirstVideo(false);
   }, []);
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
-      <Flex flex={1} opacity={firstVideoLoaded ? 1 : 0}>
+      <Flex
+        opacity={firstVideoLoaded ? 1 : 0}
+        marginBottom={
+          videoDimensions?.height ? -0.4 * videoDimensions?.height : 0
+        } // the bottom part of the video is empty space
+      >
+        {/*
+        Here we have two videos that are played back to back:
+        The first video is an "introduction" part where the tickets slides into
+        view, so it's played only once.
+        Then the second video is an animation of that ticket that is getting
+        repeated infinitely.
+         */}
         <Video
-          style={absoluteStyle}
+          style={{
+            ...videoDimensions,
+          }}
           disableFocus
           paused={isFirstVideo}
           source={
@@ -71,15 +97,19 @@ const ClaimNftWelcome = () => {
         />
         {isFirstVideo ? (
           <Video
-            style={absoluteStyle}
+            style={{
+              ...videoDimensions,
+              position: "absolute",
+            }}
             disableFocus
             source={
               theme.dark
-                ? require("../../../assets/videos/infinityPassDark/infinityPassPart01.mp4")
-                : require("../../../assets/videos/infinityPassLight/infinityPassPart01.mp4")
+                ? videoSources.infinityPassPart01Dark
+                : videoSources.infinityPassPart01Light
             }
             onEnd={handleEndVideo}
-            onLoad={() => setFirstVideoLoaded(true)}
+            onLoad={handleFirstVideoLoaded}
+            onReadyForDisplay={handleFirstVideoReadyForDisplay}
             muted
             resizeMode={"contain"}
           />
