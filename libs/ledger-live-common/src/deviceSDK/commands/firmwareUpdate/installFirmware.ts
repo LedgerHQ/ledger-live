@@ -43,7 +43,10 @@ export type InstallFirmwareCommandEvent =
       type: "allowManagerRequested";
     }
   | {
-      type: "firmwareUpgradePermissionRequested";
+      type: "firmwareInstallPermissionRequested";
+    }
+  | {
+      type: "firmwareInstallPermissionGranted";
     }
   | UnresponsiveCmdEvent;
 
@@ -78,9 +81,13 @@ export function installFirmwareCommand(
     }),
     map<FilteredSocketEvent, InstallFirmwareCommandEvent>((e) => {
       if (e.type === "bulk-progress") {
-        return e.index >= e.total - 1
+        return e.index === e.total - 1
           ? {
-              type: "firmwareUpgradePermissionRequested",
+              type: "firmwareInstallPermissionRequested",
+            }
+          : e.index === e.total
+          ? {
+              type: "firmwareInstallPermissionGranted",
             }
           : {
               type: "progress",

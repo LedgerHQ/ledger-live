@@ -1,11 +1,15 @@
 //import { LockedDeviceError } from "@ledgerhq/errors";
 import { DeviceId, FirmwareUpdateContext } from "@ledgerhq/types-live";
-import { Observable } from "rxjs";
+import { concat, Observable } from "rxjs";
 import { scan } from "rxjs/operators";
 import {
   updateFirmwareTask,
   UpdateFirmwareTaskEvent,
 } from "../tasks/updateFirmware";
+// import {
+//   getDeviceInfoTask,
+//   GetDeviceInfoTaskEvent,
+// } from "../tasks/getDeviceInfo";
 import {
   FullActionState,
   initialSharedActionState,
@@ -35,6 +39,7 @@ export type UpdateFirmwareActionState = FullActionState<{
   step:
     | "installingOsu"
     | "installOsuDevicePermissionRequested"
+    | "installOsuDevicePermissionGranted"
     | "allowManagerRequested"
     | "firmwareUpdateCompleted"
     | "preparingUpdate";
@@ -53,8 +58,27 @@ export function updateFirmwareAction({
   deviceId,
   updateContext,
 }: updateFirmwareActionArgs): Observable<UpdateFirmwareActionState> {
-  // TODO: what does it looks like with several tasks ?
-  return updateFirmwareTask({ deviceId, updateContext }).pipe(
+  // let oldDeviceInfo: DeviceInfo | undefined;
+
+  return concat(
+    // Retrieve the device info to store for future usage (i.e. reinstall the previously installed language)
+    // getDeviceInfoTask({ deviceId }).pipe(
+    //   tap((data) => {
+    //     if (data.type === "data") {
+    //       oldDeviceInfo = data.deviceInfo;
+    //     }
+    //   })
+    // ),
+    // update the firmware
+    updateFirmwareTask({ deviceId, updateContext }),
+    // reinstall the language if needed
+    // oldDeviceInfo?.languageId !== undefined && oldDeviceInfo?.languageId !== 0
+    //   ? EMPTY // install language
+    //   : EMPTY
+  ).pipe(
+    // filter out events from the get device info task
+    // filter(isNotGetDeviceInfoEventPredicate),
+    // reconciliate the state according to the events of the firmware update and language install tasks
     scan<UpdateFirmwareTaskEvent, UpdateFirmwareActionState>(
       (currentState, event) => {
         switch (event.type) {
@@ -63,7 +87,7 @@ export function updateFirmwareAction({
               ...initialState,
               error: {
                 type: "UpdateFirmwareError",
-                error: event.error.message,
+                error: event.error,
               },
             };
           case "installingOsu":
@@ -74,6 +98,7 @@ export function updateFirmwareAction({
             };
           case "allowManagerRequested":
           case "installOsuDevicePermissionRequested":
+          case "installOsuDevicePermissionGranted":
           case "firmwareUpdateCompleted":
             return { ...currentState, step: event.type };
           default:
@@ -90,3 +115,9 @@ export function updateFirmwareAction({
     )
   );
 }
+
+// const isNotGetDeviceInfoEventPredicate = (
+//   e: UpdateFirmwareTaskEvent | GetDeviceInfoTaskEvent
+// ): e is UpdateFirmwareTaskEvent => {
+//   return e.type !== "data";
+// };

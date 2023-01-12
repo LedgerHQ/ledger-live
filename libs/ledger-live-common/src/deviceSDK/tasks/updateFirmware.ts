@@ -1,4 +1,4 @@
-import { DeviceOnDashboardExpected, LockedDeviceError } from "@ledgerhq/errors";
+import { LockedDeviceError } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import type {
   DeviceId,
@@ -24,14 +24,13 @@ export type UpdateFirmwareTaskArgs = {
   // TODO: check if we should receive this here or rather retrieve it from the api in the task
 };
 
-// TODO: check if there's a way to be more specific than that
-// It shoould be: DeviceOnDashboardExpected
-export type UpdateFirmwareTaskError = Error;
+export type UpdateFirmwareTaskError = "DeviceOnDashboardExpected";
 
 export type UpdateFirmwareTaskEvent =
   | { type: "installingOsu"; progress: number }
   | { type: "firmwareUpdateCompleted" }
   | { type: "installOsuDevicePermissionRequested" }
+  | { type: "installOsuDevicePermissionGranted" }
   | { type: "allowManagerRequested" }
   | { type: "taskError"; error: UpdateFirmwareTaskError }
   | SharedTaskEvent;
@@ -47,7 +46,7 @@ function internalUpdateFirmwareTask({
           if (!isDashboardName(name)) {
             subscriber.next({
               type: "taskError",
-              error: new DeviceOnDashboardExpected(),
+              error: "DeviceOnDashboardExpected",
             });
             return false;
             // we use filter here to stop the propagation of the event
@@ -94,8 +93,11 @@ function internalUpdateFirmwareTask({
           case "allowManagerRequested":
             subscriber.next(event);
             break;
-          case "firmwareUpgradePermissionRequested":
+          case "firmwareInstallPermissionRequested":
             subscriber.next({ type: "installOsuDevicePermissionRequested" });
+            break;
+          case "firmwareInstallPermissionGranted":
+            subscriber.next({ type: "installOsuDevicePermissionGranted" });
             break;
           case "progress":
             subscriber.next({
@@ -107,7 +109,10 @@ function internalUpdateFirmwareTask({
             subscriber.next(event);
         }
       },
-      error: (error) => subscriber.next({ type: "error", error }),
+      error: (error) => {
+        subscriber.next({ type: "error", error });
+        subscriber.complete();
+      },
       complete: () => {
         // here the user has accepted the firmware installation
         // so we have to poll the device trying to get it's deviceInfo until we have it
@@ -119,7 +124,7 @@ function internalUpdateFirmwareTask({
           // since at this time the device is probably rebooting
         )
           .pipe(
-            concatMap((_deviceInfo) => {
+            concatMap(() => {
               // OSU INSTALL completed
               // TODO: flash mcu and bootloader according to what's needed
               return of<UpdateFirmwareTaskEvent>({
@@ -131,7 +136,10 @@ function internalUpdateFirmwareTask({
           .subscribe({
             next: (event) => subscriber.next(event),
             complete: () => subscriber.complete(),
-            error: (error) => subscriber.next({ type: "error", error }),
+            error: (error: Error) => {
+              subscriber.next({ type: "error", error: error });
+              subscriber.complete();
+            },
           });
       },
       // TODO: check if flashing mcu and bootloader are needed
