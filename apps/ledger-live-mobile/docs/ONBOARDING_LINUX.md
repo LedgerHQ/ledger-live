@@ -32,7 +32,7 @@ Clone the following Ledger Live repositories :
 ## Node.js
 
 You should install a Node version manager, because you will regularly need to switch between node versions with Live.
-Some recommand [NVM](https://github.com/nvm-sh/nvm#installing-and-updating), others recommand [N](https://github.com/tj/n#installation)
+Some recommend [NVM](https://github.com/nvm-sh/nvm#installing-and-updating), others recommend [N](https://github.com/tj/n#installation)
 
 You need to install [Yarn](https://classic.yarnpkg.com/en/), a node packet manager used by Live.
 `npm install --global yarn`
@@ -52,7 +52,7 @@ As an alternative, you can install [Webstorm](https://www.jetbrains.com/fr-fr/we
 
 ### Ubuntu/Debian requirements
 
-First, you need to install theses packages :
+First, you need to install these packages :
 
 - libudev and libusb to communicate with the devices on your system, in our case the Nano.
 -  ruby and ruby-dev to install Bundler.
@@ -102,7 +102,7 @@ We will install all the Android necessary dependencies to build Ledger Live Mobi
 
 In the top navigation bar, open the Tools->SDK Manager.
 In the *SDK Platforms* tab, be sure that at least one SDK is installed (Android 10 ? 11 ? As you wish).
-In the *SDK Tools* tab, be sure sure that these components are installed :
+In the *SDK Tools* tab, be sure that these components are installed :
 - Android SDK Build-Tools
 - NDK
 - CMake
