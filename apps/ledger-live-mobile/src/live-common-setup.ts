@@ -76,6 +76,8 @@ setSupportedCurrencies([
   "moonbeam",
   "songbird",
   "flare",
+  "avalanchepchain",
+  "avalanche",
 ]);
 
 if (Config.VERBOSE) {
