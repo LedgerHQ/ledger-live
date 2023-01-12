@@ -1,14 +1,25 @@
-import { device, expect } from "detox";
-import { stubString } from "lodash/fp";
+import { expect } from "detox";
 import PortfolioPage from "../models/wallet/portfolioPage";
 import SettingsPage from "../models/settings/settingsPage";
 import GeneralSettingsPage from "../models/settings/generalSettingsPage";
 import { loadConfig } from "../bridge/server";
-import { delay } from "../helpers";
 
 let portfolioPage: PortfolioPage;
 let settingsPage: SettingsPage;
 let generalSettingsPage: GeneralSettingsPage;
+
+const verifyLanguageCanBeChanged = (l10n: {
+  lang: string;
+  localization: string;
+}) => {
+  it(`should change selected language to ${l10n.lang}`, async () => {
+    await generalSettingsPage.navigateToLanguageSelect();
+    await generalSettingsPage.selectLanguage(l10n.lang);
+    await expect(
+      generalSettingsPage.isLocalized(l10n.localization),
+    ).toBeVisible();
+  });
+};
 
 describe("Change Language", () => {
   const langButtonText = [
@@ -22,6 +33,7 @@ describe("Change Language", () => {
     { lang: "한국어", localization: "일반" },
     { lang: "日本語", localization: "一般" },
   ];
+
   beforeAll(async () => {
     await loadConfig("1AccountBTC1AccountETH", true);
     portfolioPage = new PortfolioPage();
@@ -41,22 +53,7 @@ describe("Change Language", () => {
     await expect(generalSettingsPage.isEnglish()).toBeVisible();
   });
 
-  describe("should select the language", () => {
-    for (const l10n of langButtonText) {
-      // eslint-disable-next-line no-loop-func
-      it("should open language selection page", async () => {
-        await generalSettingsPage.navigateToLanguageSelect();
-      });
-      // eslint-disable-next-line no-loop-func
-      it(`should select [${l10n.lang}]`, async () => {
-        await generalSettingsPage.selectLanguage(l10n.lang);
-      });
-      // eslint-disable-next-line no-loop-func
-      it(`Settings page should be localized to [${l10n.localization}]`, async () => {
-        await expect(
-          generalSettingsPage.isLocalized(l10n.localization),
-        ).toBeVisible();
-      });
-    }
-  });
+  for (const l10n of langButtonText) {
+    verifyLanguageCanBeChanged(l10n);
+  }
 });
