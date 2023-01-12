@@ -18,14 +18,6 @@ const absoluteStyle = {
   right: 0,
 };
 
-const zIndexAboveStyle = {
-  zIndex: 999,
-};
-
-const zIndexBelowStyle = {
-  zIndex: 20,
-};
-
 const BulletItem = ({ textKey }: { textKey: string }) => {
   const { t } = useTranslation();
   return (
@@ -40,6 +32,7 @@ const ClaimNftWelcome = () => {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const [isFirstVideo, setIsFirstVideo] = useState(true);
+  const [firstVideoLoaded, setFirstVideoLoaded] = useState(false);
   const theme = useTheme();
   const completePostOnboardingAction = useCompleteActionCallback();
 
@@ -62,31 +55,11 @@ const ClaimNftWelcome = () => {
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
-      <Flex flex={1}>
+      <Flex flex={1} opacity={firstVideoLoaded ? 1 : 0}>
         <Video
-          style={
-            isFirstVideo
-              ? { ...absoluteStyle, ...zIndexAboveStyle }
-              : { ...absoluteStyle, ...zIndexBelowStyle }
-          }
+          style={absoluteStyle}
           disableFocus
-          source={
-            theme.dark
-              ? videoSources.infinityPassPart01Dark
-              : videoSources.infinityPassPart01Light
-          }
-          onEnd={handleEndVideo}
-          muted
-          repeat
-          resizeMode={"contain"}
-        />
-        <Video
-          style={
-            isFirstVideo
-              ? { ...absoluteStyle, ...zIndexBelowStyle }
-              : { ...absoluteStyle, ...zIndexAboveStyle }
-          }
-          disableFocus
+          paused={isFirstVideo}
           source={
             theme.dark
               ? videoSources.infinityPassPart02Dark
@@ -96,6 +69,21 @@ const ClaimNftWelcome = () => {
           repeat
           resizeMode={"contain"}
         />
+        {isFirstVideo ? (
+          <Video
+            style={absoluteStyle}
+            disableFocus
+            source={
+              theme.dark
+                ? require("../../../assets/videos/infinityPassDark/infinityPassPart01.mp4")
+                : require("../../../assets/videos/infinityPassLight/infinityPassPart01.mp4")
+            }
+            onEnd={handleEndVideo}
+            onLoad={() => setFirstVideoLoaded(true)}
+            muted
+            resizeMode={"contain"}
+          />
+        ) : null}
       </Flex>
       <Flex flex={2} px={6} justifyContent="space-evenly">
         <Text variant="h4" fontWeight="semiBold" mt={7} textAlign="center">
