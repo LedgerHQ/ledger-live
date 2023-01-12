@@ -32,6 +32,7 @@ export const useGetManifest = (appId, genericParams, newpathname = "") => {
       ...Object.fromEntries(searchParams),
     };
 
+    // paraswap need the hash in the bottom to be connected with ledger wallet.
     const newDappUrl =
       appId === "paraswap"
         ? `${origin}?${new URLSearchParams(allParams).toString()}${realHash}`
