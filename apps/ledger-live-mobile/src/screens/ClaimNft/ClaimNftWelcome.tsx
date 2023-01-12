@@ -24,7 +24,8 @@ const ClaimNftWelcome = () => {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const [isFirstVideo, setIsFirstVideo] = useState(true);
-  const [firstVideoLoaded, setFirstVideoLoaded] = useState(false);
+  const [firstVideoReadyForDisplay, setFirstVideoReadyForDisplay] =
+    useState(false);
   const [videoDimensions, setVideoDimensions] = useState<{
     width: number;
     height: number;
@@ -58,7 +59,7 @@ const ClaimNftWelcome = () => {
   }, []);
 
   const handleFirstVideoReadyForDisplay = useCallback(() => {
-    setFirstVideoLoaded(true);
+    setFirstVideoReadyForDisplay(true);
   }, []);
 
   const handleEndVideo = useCallback(() => {
@@ -68,10 +69,10 @@ const ClaimNftWelcome = () => {
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
       <Flex
-        opacity={firstVideoLoaded ? 1 : 0}
+        opacity={firstVideoReadyForDisplay ? 1 : 0}
         marginBottom={
           videoDimensions?.height ? -0.4 * videoDimensions?.height : 0
-        } // the bottom part of the video is empty space
+        } // the bottom part of the video is empty space so other content can be displayed there
       >
         {/*
         Here we have two videos that are played back to back:
