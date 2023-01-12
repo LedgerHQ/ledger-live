@@ -5612,6 +5612,13 @@
       "descriptionWithProductName": "You need to setup your {{ productName }} first.\nWe will guide you through the setup process.",
       "goToOnboardingButton": "Set up my device",
       "goToOnboardingButtonWithProductName": "Set up my {{ productName }}"
+    },
+    "EtherscanAPIError": {
+      "title": "Fetching transactions failed",
+      "description": "An unexpected error occurred with the explorers. Please try again later"
+    },
+    "GasEstimationError": {
+      "title": "Gas estimation failed"
     }
   },
   "cryptoOrg": {
