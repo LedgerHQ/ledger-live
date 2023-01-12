@@ -36,6 +36,7 @@ interface BalanceType {
 
 const Summary = (props: Props) => {
   const { account } = props;
+  const [balance, setBalance] = useState<BigNumber>(account.spendableBalance);
   const [delegationsResources, setDelegationResources] = useState(
     account.elrondResources ? account.elrondResources.delegations : [],
   );
@@ -45,13 +46,15 @@ const Summary = (props: Props) => {
   const unit = getAccountUnit(account);
 
   const fetchDelegations = useCallback(() => {
+    setBalance(account.spendableBalance);
     setDelegationResources(account.elrondResources ? account.elrondResources.delegations : []);
 
-    return () =>
+    return () => {
+      setBalance(account.spendableBalance);
       setDelegationResources(account.elrondResources ? account.elrondResources.delegations : []);
-  }, [account.elrondResources]);
+    };
+  }, [account.elrondResources, account.spendableBalance]);
 
-  const available = useMemo((): BigNumber => account.spendableBalance, [account.spendableBalance]);
   const delegations = useMemo(
     (): BigNumber =>
       delegationsResources.reduce(
@@ -76,7 +79,7 @@ const Summary = (props: Props) => {
         {
           tooltip: "elrond.summary.availableBalanceTooltip",
           title: "elrond.summary.availableBalance",
-          amount: available,
+          amount: balance,
           show: true,
         },
         {
@@ -92,7 +95,7 @@ const Summary = (props: Props) => {
           show: unbondings.gt(0),
         },
       ].filter(balance => balance.show),
-    [available, delegations, unbondings],
+    [balance, delegations, unbondings],
   );
 
   useEffect(fetchDelegations, [fetchDelegations]);
