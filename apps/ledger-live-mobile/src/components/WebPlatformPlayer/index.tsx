@@ -1,12 +1,12 @@
 import semver from "semver";
-import { AppManifest } from "@ledgerhq/live-common/platform/types";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import React from "react";
 import { WebView as WebViewV2 } from "./WebViewV2";
 import { WebView } from "./WebView";
 
 type Props = {
-  manifest: AppManifest;
+  manifest: LiveAppManifest;
   inputs?: Record<string, string>;
 };
 

@@ -3,14 +3,22 @@ import { getEnv } from "../../../../env";
 import type { RampCatalog } from "../types";
 import mockData from "./mock.json";
 
-export const providers = [
+type RemoteRampProvider = {
+  value: string;
+  url: string;
+  label: string;
+};
+
+export const providers: RemoteRampProvider[] = [
   {
     value: "production",
     url: getEnv("PLATFORM_RAMP_CATALOG_API_URL"),
+    label: "Production",
   },
   {
     value: "staging",
     url: getEnv("PLATFORM_RAMP_CATALOG_STAGING_API_URL"),
+    label: "Staging",
   },
 ];
 

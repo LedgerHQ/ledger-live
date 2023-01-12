@@ -56,9 +56,15 @@ export default function Debugging() {
         onPress={() => navigation.navigate(ScreenName.DebugLottie)}
       />
       <SettingsRow
-        title="Storyly"
-        desc="Remote video slides used on the new onboarding"
+        title="Videos"
+        desc="See all video assets"
         iconLeft={<Icons.PlayMedium size={32} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugVideos)}
+      />
+      <SettingsRow
+        title="Storyly"
+        desc="Remote video slides (stories) used on the new onboarding"
+        iconLeft={<Icons.InstagramMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugStoryly)}
       />
 
