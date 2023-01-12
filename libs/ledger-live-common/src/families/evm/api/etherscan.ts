@@ -69,7 +69,7 @@ export const getLatestTransactions = makeLRUCache<
     });
 
     return ops
-      .map((tx) => etherscanOperationToOperation(accountId, address, tx))
+      .map((tx) => etherscanOperationToOperation(accountId, tx))
       .filter(Boolean) as Operation[];
   },
   (currency, address, accountId) => accountId,
