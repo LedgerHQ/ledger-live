@@ -4,7 +4,7 @@ import { getProviderConfig } from "../";
 import { getAccountCurrency, makeEmptyTokenAccount } from "../../../account";
 import { getEnv } from "../../../env";
 import { Account, SubAccount, AccountLike } from "@ledgerhq/types-live";
-import { CheckQuoteStatus, ExchangeRate, ValidKYCStatus } from "../types";
+import { CheckQuoteStatus, ValidKYCStatus } from "../types";
 
 // Note: looks like we can't use an enum because this is used in LLD js code
 export const KYC_STATUS = {
@@ -208,13 +208,4 @@ export const getNoticeType = (
     default:
       return { message: "default", learnMore: true };
   }
-};
-
-export const getMinimumExpirationTime = (
-  rates: ExchangeRate[]
-): number | undefined => {
-  return rates.reduce((acc, rate) => {
-    if (!rate.expirationTime) return acc;
-    return acc ? Math.min(acc, rate.expirationTime) : rate.expirationTime;
-  }, 0);
 };

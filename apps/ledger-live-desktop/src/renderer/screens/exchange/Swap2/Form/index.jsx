@@ -178,10 +178,10 @@ const SwapForm = () => {
   const { setDrawer } = React.useContext(context);
 
   const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
-  const stopRefreshing = swapError || idleState;
+  const pauseRefreshing = swapError || idleState;
 
   const refreshTime = useRefreshRates(swapTransaction.swap, {
-    stop: stopRefreshing,
+    pause: pauseRefreshing,
   });
 
   useEffect(() => {
@@ -531,7 +531,7 @@ const SwapForm = () => {
               swap={swapTransaction.swap}
               provider={provider}
               refreshTime={refreshTime}
-              countdown={!stopRefreshing}
+              countdown={!pauseRefreshing}
               showNoQuoteDexRate={showNoQuoteDexRate}
             />
 
