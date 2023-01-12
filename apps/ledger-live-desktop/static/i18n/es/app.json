@@ -102,6 +102,7 @@
     "addressCopied" : "Dirección copiada",
     "addressCopiedSuspicious" : "La dirección copiada y la del portapapeles no coinciden.",
     "experimentalFeature" : "Experimental",
+    "featureFlags" : "Marcas de funciones",
     "information" : "Información",
     "search" : "Buscar...",
     "searchWithoutEllipsis" : "Buscar",
@@ -131,7 +132,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blue"
   },
   "operation" : {
@@ -1206,8 +1207,11 @@
         "checkDeviceButton" : "Volver a ejecutar la verificación de autenticidad",
         "cancelButton" : "Quizás más tarde"
       },
-      "genuineCheckAnimationModal" : {
-        "message" : "Permitir manager en {{deviceName}}"
+      "softwareCheckAllowSecureChannelModal" : {
+        "title" : "Permitir manager en {{deviceName}}"
+      },
+      "softwareCheckLockedDeviceModal" : {
+        "title" : "Desbloquea tu dispositivo"
       },
       "helpDrawer" : {
         "title" : "¿Necesitas ayuda con el manual de configuración?",
@@ -3698,6 +3702,9 @@
       "featureFlagsEdit" : "Editar",
       "featureFlagsRestore" : "Restaurar",
       "featureFlagsOverride" : "Anular",
+      "featureFlagsRestoreAll" : "Restaurar los valores de todas las marcas",
+      "showButtonDesc" : "Mostrar siempre el botón Marcas de funciones en la barra lateral",
+      "buttonTitle" : "Señales de alarma anuladas localmente",
       "firebaseProject" : "Proyecto de Firebase al que se refiere esta compilación:",
       "addLocalApp" : "Añadir una aplicación local",
       "addLocalAppDesc" : "Explorar archivos locales y añadir una aplicación local usando un manifiesto local",
@@ -5493,6 +5500,14 @@
       "title" : "Tu dispositivo está bloqueado",
       "description" : "Desbloquea tu dispositivo e inténtalo de nuevo.",
       "descriptionWithProductName" : "Desbloquea tu {{ productName }} e inténtalo de nuevo."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "Tu dispositivo aún no está listo para usar",
+      "titleWithProductName" : "{{ productName }} aún no está listo para que lo uses.",
+      "description" : "Primero debes configurar tu dispositivo.\nTe guiaremos a lo largo del proceso de configuración.",
+      "descriptionWithProductName" : "Primero debes configurar tu {{ productName }}.\nTe guiaremos a lo largo del proceso de configuración.",
+      "goToOnboardingButton" : "Configurar mi dispositivo",
+      "goToOnboardingButtonWithProductName" : "Configurar mi {{ productName }}"
     }
   },
   "cryptoOrg" : {
@@ -5555,8 +5570,7 @@
     "postOnboarding" : {
       "title" : "Personalizar mi dispositivo",
       "description" : "adaptando la pantalla a mis necesidades",
-      "actionCompletedPopupLabel" : "Dispositivo personalizado",
-      "actionCompletedHubTitle" : "Esa pantalla tiene muy buen aspecto."
+      "actionCompletedPopupLabel" : "Dispositivo personalizado"
     },
     "customImageSet" : "Imagen personalizada establecida",
     "finishCTA" : "Finalizar"
