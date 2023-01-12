@@ -8,6 +8,7 @@ import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
+// import { NoSuchAppOnProvider } from "@ledgerhq/live-common/errors";
 
 import { DeviceActionDefaultRendering } from "..";
 import BottomModal from "../../BottomModal";
@@ -51,17 +52,23 @@ const InstallSetOfApps = ({
     ? getDeviceModel(lastSeenDevice?.modelId).productName
     : lastSeenDevice?.modelId;
 
-  const shouldRestoreApps = restore && !!lastSeenDevice;
+  // TODO: uncomment those, only for testing
 
-  const dependenciesToInstall = useMemo(() => {
-    if (shouldRestoreApps && lastSeenDevice) {
-      return lastSeenDevice.apps.map(app => app.name);
-    }
-    if (shouldRestoreApps && !lastSeenDevice) {
-      return [];
-    }
-    return dependencies;
-  }, [shouldRestoreApps, dependencies, lastSeenDevice]);
+  // const shouldRestoreApps = restore && !!lastSeenDevice;
+
+  // const dependenciesToInstall = useMemo(() => {
+  //   if (shouldRestoreApps && lastSeenDevice) {
+  //     return lastSeenDevice.apps.map(app => app.name);
+  //   }
+  //   if (shouldRestoreApps && !lastSeenDevice) {
+  //     return [];
+  //   }
+  //   return dependencies;
+  // }, [shouldRestoreApps, dependencies, lastSeenDevice]);
+
+  const shouldRestoreApps = true;
+
+  const dependenciesToInstall = useMemo(() => ["cosmos", "bitcoin"], []);
 
   const commandRequest = useMemo(
     () => ({
