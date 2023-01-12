@@ -3,8 +3,9 @@ import { useTranslation } from "react-i18next";
 import { Icons, NumberedList } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Linking } from "react-native";
-import Button from "../../../../../components/PreventDoubleClickButton";
 import InfoModal from "../../../../../modals/Info";
+import Button from "../../../../../components/wrappedUi/Button";
+import { TrackScreen } from "../../../../../analytics";
 
 const RestoreWithProtectScene = () => {
   const { t } = useTranslation();
@@ -93,14 +94,29 @@ const Next = ({ onNext }: { onNext: () => void }) => {
                   type="main"
                   size="large"
                   onPress={onManualSteps}
+                  Icon={Icons.ExternalLinkMedium}
                   mt={8}
                   mb={6}
+                  event={"button_clicked"}
+                  eventProperties={{ button: "Go through manual steps" }}
                 >
                   {t("onboarding.stepProtect.extraInfo.cta")}
                 </Button>
-                <Button type="default" size="large" onPress={onSupportLink}>
+                <Button
+                  type="default"
+                  size="large"
+                  onPress={onSupportLink}
+                  Icon={Icons.ExternalLinkMedium}
+                  event={"button_clicked"}
+                  eventProperties={{ button: "Contact Ledger support" }}
+                >
                   {t("onboarding.stepProtect.extraInfo.supportLink")}
                 </Button>
+                <TrackScreen
+                  category="Why can I not see Restore with Protect on my Ledger"
+                  refreshSource={false}
+                  type="drawer"
+                />
               </>
             ),
           },
