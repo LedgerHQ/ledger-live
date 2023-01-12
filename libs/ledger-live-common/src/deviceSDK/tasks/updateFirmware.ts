@@ -10,12 +10,13 @@ import { getVersion } from "../commands/getVersion";
 import { getAppAndVersion } from "../commands/getAppAndVersion";
 
 import { isDashboardName } from "../../hw/isDashboardName";
-import { withDevice } from "../../hw/deviceAccess";
-import { Observable, of } from "rxjs";
-import { filter, map, switchMap } from "rxjs/operators";
+import { withDevice, withDevicePolling } from "../../hw/deviceAccess";
+import { from, Observable, of } from "rxjs";
+import { concatMap, filter, map, switchMap } from "rxjs/operators";
 import { SharedTaskEvent, sharedLogicTaskWrapper } from "./core";
 import { installFirmwareCommand } from "../commands/firmwareUpdate/installFirmware";
 import Transport from "@ledgerhq/hw-transport";
+import getDeviceInfo from "../../hw/getDeviceInfo";
 
 export type UpdateFirmwareTaskArgs = {
   deviceId: DeviceId;
@@ -29,6 +30,7 @@ export type UpdateFirmwareTaskError = Error;
 
 export type UpdateFirmwareTaskEvent =
   | { type: "installingOsu"; progress: number }
+  | { type: "firmwareUpdateCompleted" }
   | { type: "installOsuDevicePermissionRequested" }
   | { type: "allowManagerRequested" }
   | { type: "taskError"; error: UpdateFirmwareTaskError }
@@ -48,9 +50,9 @@ function internalUpdateFirmwareTask({
               error: new DeviceOnDashboardExpected(),
             });
             return false;
-            // use filter here to stop the propagation of the event
-            // we can't really use throw here
-            // TODO: explain why we can't use throw here
+            // we use filter here to stop the propagation of the event
+            // we can't really use throw here cause it would complete the observable and not emit
+            // any more events
           }
           return true;
         }),
@@ -106,7 +108,32 @@ function internalUpdateFirmwareTask({
         }
       },
       error: (error) => subscriber.next({ type: "error", error }),
-      complete: () => subscriber.complete(),
+      complete: () => {
+        // here the user has accepted the firmware installation
+        // so we have to poll the device trying to get it's deviceInfo until we have it
+        // this will mean that the osu has been installed
+        withDevicePolling(deviceId)(
+          (transport) => from(getDeviceInfo(transport)),
+          () => true
+          // accept all errors. we're waiting forever condition that make getDeviceInfo work
+          // since at this time the device is probably rebooting
+        )
+          .pipe(
+            concatMap((_deviceInfo) => {
+              // OSU INSTALL completed
+              // TODO: flash mcu and bootloader according to what's needed
+              return of<UpdateFirmwareTaskEvent>({
+                type: "firmwareUpdateCompleted",
+              });
+              //return EMPTY;
+            })
+          )
+          .subscribe({
+            next: (event) => subscriber.next(event),
+            complete: () => subscriber.complete(),
+            error: (error) => subscriber.next({ type: "error", error }),
+          });
+      },
       // TODO: check if flashing mcu and bootloader are needed
       // do what has to be done to flash them
     });

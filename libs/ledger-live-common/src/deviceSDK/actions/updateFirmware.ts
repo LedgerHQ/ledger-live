@@ -36,6 +36,7 @@ export type UpdateFirmwareActionState = FullActionState<{
     | "installingOsu"
     | "installOsuDevicePermissionRequested"
     | "allowManagerRequested"
+    | "firmwareUpdateCompleted"
     | "preparingUpdate";
   progress: number;
   error: { type: "UpdateFirmwareError"; message?: string };
@@ -73,6 +74,7 @@ export function updateFirmwareAction({
             };
           case "allowManagerRequested":
           case "installOsuDevicePermissionRequested":
+          case "firmwareUpdateCompleted":
             return { ...currentState, step: event.type };
           default:
             // TODO: define a general reducer
