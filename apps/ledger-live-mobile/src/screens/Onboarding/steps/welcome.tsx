@@ -229,7 +229,7 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
             {t("onboarding.stepWelcome.start")}
           </Button>
           <Link
-            onPress={() => Linking.openURL("ledgerlive://discover/protect?redirectTo=/account/login&source=welcome")}
+            onPress={() => Linking.openURL("ledgerlive://discover/protect?redirectTo=/account/login&source=https://www.lemonde.fr")}
             mb={9}
             event={"button_clicked"}
             eventProperties={{ button: "Already subscribe to Protect" }}
