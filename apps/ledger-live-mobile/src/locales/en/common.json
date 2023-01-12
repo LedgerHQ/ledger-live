@@ -5772,7 +5772,9 @@
       "filters": {
         "selectAndHide": "Select and hide",
         "hide": "Hide {{count}} NFT",
-        "hide_plural": "Hide {{count}} NFTs"
+        "hide_plural": "Hide {{count}} NFTs",
+        "alertHide": "1 NFT hidden. Use the filter to display and unhide it at any time",
+        "alertHide_plural": "{{count}} NFTs hidden. Use the filter to display and unhide them at any time"
       },
       "empty": {
         "title": "No NFTs to show, yet",

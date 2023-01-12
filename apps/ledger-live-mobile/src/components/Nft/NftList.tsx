@@ -164,6 +164,6 @@ const StyledContainer = styled(Flex)`
 
 const RoundedContainer = styled(Flex)`
   position: absolute;
-  bottom: 10px;
+  bottom: 15px;
   z-index: 5;
 `;

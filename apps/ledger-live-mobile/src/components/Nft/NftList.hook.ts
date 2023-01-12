@@ -1,4 +1,5 @@
 import { decodeNftId } from "@ledgerhq/live-common/nft/nftId";
+import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { ProtoNFT, NFTMetadata } from "@ledgerhq/types-live";
 import { useNavigation } from "@react-navigation/native";
 import { useCallback, useState } from "react";
@@ -12,24 +13,33 @@ import { track } from "../../analytics";
 import { NavigatorName, ScreenName } from "../../const";
 import { isMainNavigatorVisibleSelector } from "../../reducers/settings";
 
+const TOAST_ID = "SUCCESS_HIDE";
 export function useNftList() {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-
-  const [nftsToHide, setNftsToHide] = useState<ProtoNFT[]>([]);
-
+  const { pushToast } = useToasts();
   const navigation = useNavigation();
   const isMainNavigatorVisible = useSelector(isMainNavigatorVisibleSelector);
 
+  const [nftsToHide, setNftsToHide] = useState<ProtoNFT[]>([]);
+
+  // Multi Select ------------------------
   const onClickHide = useCallback(() => {
     nftsToHide.forEach(nft => {
       const { accountId } = decodeNftId(nft.id ?? "");
       dispatch(hideNftCollection(`${accountId}|${nft.contract}`));
     });
-
-    dispatch(updateMainNavigatorVisibility(true));
+    pushToast({
+      id: TOAST_ID,
+      type: "success",
+      icon: "success",
+      title: t("wallet.nftGallery.filters.alertHide", {
+        count: nftsToHide.length,
+      }),
+    });
     setNftsToHide([]);
-  }, [dispatch, nftsToHide]);
+    dispatch(updateMainNavigatorVisibility(true));
+  }, [dispatch, nftsToHide, pushToast, t]);
 
   const cancelAction = useCallback(() => {
     setNftsToHide([]);
@@ -51,7 +61,9 @@ export function useNftList() {
     },
     [nftsToHide],
   );
+  //  ------------------------
 
+  // Navigation ------------------------
   const navigateToNftViewer = useCallback(
     (nft: ProtoNFT, metadata?: NFTMetadata) => {
       track("NFT_clicked", {
@@ -68,6 +80,7 @@ export function useNftList() {
     },
     [navigation],
   );
+  // ------------------------
 
   return {
     navigateToNftViewer,
