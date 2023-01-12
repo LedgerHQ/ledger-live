@@ -37,6 +37,7 @@ const Summary = (props: SummaryPropsType) => {
    */
 
   const [data, setData] = useState<ItemType["modal"][]>([]);
+  const [balance, setBalance] = useState<BigNumber>(account.spendableBalance);
   const [delegationsResources, setDelegationResources] = useState<
     DelegationType[]
   >(account.elrondResources ? account.elrondResources.delegations : []);
@@ -46,16 +47,18 @@ const Summary = (props: SummaryPropsType) => {
    */
 
   const fetchDelegations = useCallback(() => {
+    setBalance(account.spendableBalance);
     setDelegationResources(
       account.elrondResources ? account.elrondResources.delegations : [],
     );
 
     return () => {
+      setBalance(account.spendableBalance);
       setDelegationResources(
         account.elrondResources ? account.elrondResources.delegations : [],
       );
     };
-  }, [account.elrondResources]);
+  }, [account.elrondResources, account.spendableBalance]);
 
   /*
    * Format the three data items by denominating the value and filtering out zero resources.
@@ -121,7 +124,7 @@ const Summary = (props: SummaryPropsType) => {
         {
           title: "account.availableBalance",
           show: true,
-          value: account.spendableBalance,
+          value: balance,
           modal: {
             title: "elrond.info.available.title",
             description: "elrond.info.available.description",
@@ -146,7 +149,7 @@ const Summary = (props: SummaryPropsType) => {
           },
         },
       ]),
-    [account.spendableBalance, delegations, unbondings, formatItems],
+    [balance, delegations, unbondings, formatItems],
   );
 
   /*
