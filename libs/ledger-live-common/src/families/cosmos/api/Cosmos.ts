@@ -21,7 +21,6 @@ export class CosmosAPI {
   ): Promise<any> => {
     try {
       const [
-        { accountNumber, sequence },
         balances,
         blockHeight,
         txs,
@@ -30,7 +29,6 @@ export class CosmosAPI {
         unbondings,
         withdrawAddress,
       ] = await Promise.all([
-        this.getAccount(address),
         this.getAllBalances(address, currency),
         this.getHeight(),
         this.getTransactions(address),
@@ -48,8 +46,6 @@ export class CosmosAPI {
         redelegations,
         unbondings,
         withdrawAddress,
-        accountNumber,
-        sequence,
       };
     } catch (e: any) {
       throw new Error(`"Error during cosmos synchronization: "${e.message}`);
@@ -58,9 +54,8 @@ export class CosmosAPI {
 
   getAccount = async (
     address: string
-  ): Promise<{ address: string; accountNumber: number; sequence: number }> => {
+  ): Promise<{ accountNumber: number; sequence: number }> => {
     const response = {
-      address: address,
       accountNumber: 0,
       sequence: 0,
     };
@@ -70,10 +65,6 @@ export class CosmosAPI {
         method: "GET",
         url: `${this.defaultEndpoint}/cosmos/auth/${this.version}/accounts/${address}`,
       });
-
-      if (data.account.address) {
-        response.address = data.account.address;
-      }
 
       if (data.account.account_number) {
         response.accountNumber = parseInt(data.account.account_number);

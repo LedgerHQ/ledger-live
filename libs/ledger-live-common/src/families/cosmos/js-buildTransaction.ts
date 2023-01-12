@@ -73,7 +73,6 @@ export const buildTransaction = async (
       if (transaction.validators && transaction.validators.length > 0) {
         const validator = transaction.validators[0];
         if (validator && validator.address && transaction.amount.gt(0)) {
-          //todo this should not be gt0, but the minimum required by osmosis to stake
           const aminoMsg: AminoMsgDelegate = {
             type: "cosmos-sdk/MsgDelegate",
             value: {
@@ -146,7 +145,6 @@ export const buildTransaction = async (
       if (transaction.validators && transaction.validators.length > 0) {
         const validator = transaction.validators[0];
         if (validator && validator.address && transaction.amount.gt(0)) {
-          //todo verify what minimum is required by osmosis to undelegate
           const aminoMsg: AminoMsgUndelegate = {
             type: "cosmos-sdk/MsgUndelegate",
             value: {

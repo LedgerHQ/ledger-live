@@ -78,10 +78,7 @@ export const CosmosDelegateValidatorsField = ({
   field,
 }: FieldComponentProps) => {
   const mainAccount = getMainAccount(account, parentAccount);
-  invariant(
-    transaction.family === "cosmos" || transaction.family === "osmosis",
-    "not a cosmos family transaction",
-  );
+  invariant(transaction.family === "cosmos", "not a cosmos family transaction");
 
   const unit = getAccountUnit(mainAccount);
 
@@ -128,10 +125,7 @@ export const CosmosValidatorNameField = ({
   transaction,
   field,
 }: FieldComponentProps) => {
-  invariant(
-    transaction.family === "cosmos" || transaction.family === "osmosis",
-    "not a cosmos family transaction",
-  );
+  invariant(transaction.family === "cosmos", "not a cosmos family transaction");
   const mainAccount = getMainAccount(account, parentAccount);
   const { validators } = transaction;
   const currencyName = account.currency.name.toLowerCase();
@@ -170,10 +164,7 @@ export const CosmosValidatorAmountField = ({
   field,
 }: FieldComponentProps) => {
   const mainAccount = getMainAccount(account, parentAccount);
-  invariant(
-    transaction.family === "cosmos" || transaction.family === "osmosis",
-    "not a cosmos family transaction",
-  );
+  invariant(transaction.family === "cosmos", "not a cosmos family transaction");
 
   const unit = getAccountUnit(mainAccount);
 
@@ -200,10 +191,7 @@ export const CosmosSourceValidatorField = ({
   transaction,
   field,
 }: FieldComponentProps) => {
-  invariant(
-    transaction.family === "cosmos" || transaction.family === "osmosis",
-    "not a cosmos family transaction",
-  );
+  invariant(transaction.family === "cosmos", "not a cosmos family transaction");
   const mainAccount = getMainAccount(account, parentAccount);
   const { sourceValidator } = transaction;
   const currencyName = account.currency.name.toLowerCase();
@@ -252,11 +240,7 @@ export const Warning = ({
   transaction: Transaction,
   recipientWording: string,
 }) => {
-  invariant(
-    transaction.family === "cosmos" || transaction.family === "osmosis",
-    "not a cosmos family transaction",
-  );
-
+  invariant(transaction.family === "cosmos", "not a cosmos family transaction");
   switch (transaction.mode) {
     case "delegate":
     case "undelegate":
@@ -274,10 +258,7 @@ export const Warning = ({
 };
 
 export const Title = ({ transaction }: { transaction: Transaction }) => {
-  invariant(
-    transaction.family === "cosmos" || transaction.family === "osmosis",
-    "not a cosmos family transaction",
-  );
+  invariant(transaction.family === "cosmos", "not a cosmos family transaction");
 
   return (
     <Info>
