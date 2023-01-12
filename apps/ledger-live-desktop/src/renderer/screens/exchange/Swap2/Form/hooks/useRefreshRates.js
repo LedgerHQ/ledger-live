@@ -1,6 +1,6 @@
 // @flow
 
-import { useRef, useMemo, useEffect, useState } from "react";
+import { useRef, useMemo, useEffect } from "react";
 import { getMinimumExpirationTime } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import type { SwapDataType } from "@ledgerhq/live-common/lib/exchange/swap/types";
 
@@ -8,12 +8,6 @@ const defaultRefreshTime = 30000;
 
 const useRefreshRates = (swap: SwapDataType, { stop }: { stop: boolean }) => {
   const refreshInterval = useRef();
-  const [firstRateId, setFirstRateId] = useState(null);
-
-  useEffect(() => {
-    const newFirstRateId = swap.rates?.value?.length ? swap.rates.value[0].rateId : null;
-    setFirstRateId(newFirstRateId);
-  }, [swap.rates?.value]);
 
   const refreshTime = useMemo(() => {
     const minimumExpirationTime = swap.rates?.value
@@ -26,8 +20,7 @@ const useRefreshRates = (swap: SwapDataType, { stop }: { stop: boolean }) => {
     } else {
       return defaultRefreshTime;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [firstRateId]);
+  }, [swap.rates?.value]);
 
   useEffect(() => {
     refreshInterval.current && clearInterval(refreshInterval.current);
@@ -36,8 +29,7 @@ const useRefreshRates = (swap: SwapDataType, { stop }: { stop: boolean }) => {
         swap.refetchRates();
       }
     }, refreshTime);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stop, firstRateId, swap]);
+  }, [refreshTime, stop, swap, swap.rates.value]);
 
   return refreshTime;
 };
