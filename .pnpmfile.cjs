@@ -93,6 +93,9 @@ function readPackage(pkg, context) {
         randombytes: "*",
         rlp: "*",
       }),
+      addDependencies("@avalabs/avalanche-wallet-sdk", {
+        buffer: "*",
+      }),
       /*  @cosmjs/* packages */
       addDependencies("@cosmjs/proto-signing", {
         "@cosmjs/crypto": pkg.version,
