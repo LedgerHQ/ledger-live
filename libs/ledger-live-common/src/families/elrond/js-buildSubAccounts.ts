@@ -138,6 +138,7 @@ async function elrondBuildESDTTokenAccounts({
           accountAddress
         );
         tokenAccount.balance = new BigNumber(esdt.balance);
+        tokenAccount.spendableBalance = new BigNumber(esdt.balance);
       }
 
       if (tokenAccount) {
