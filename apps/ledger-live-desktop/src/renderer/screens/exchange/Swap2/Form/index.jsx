@@ -230,7 +230,10 @@ const SwapForm = () => {
       setPageState("empty");
     }
 
-    if (pageState === "initial" && swapTransaction.swap.rates.status === "loading") {
+    if (
+      (pageState === "initial" || pageState === "empty") &&
+      swapTransaction.swap.rates.status === "loading"
+    ) {
       setPageState("loading");
     }
 
