@@ -2,7 +2,6 @@ import { ethers } from "ethers";
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "../../currencies";
-import { getTransactionCount } from "./api/rpc";
 import { getAccountUnit } from "../../account";
 import ERC20ABI from "./abis/erc20.abi.json";
 import {
@@ -100,35 +99,18 @@ export const toTransactionRaw = (tx: EvmTransaction): EvmTransactionRaw => {
   }
 
   if (tx.gasPrice) {
-    txRaw.gasPrice = tx.gasPrice?.toFixed();
+    txRaw.gasPrice = tx.gasPrice.toFixed();
   }
 
   if (tx.maxFeePerGas) {
-    txRaw.maxFeePerGas = tx.maxFeePerGas?.toFixed();
+    txRaw.maxFeePerGas = tx.maxFeePerGas.toFixed();
   }
 
   if (tx.maxPriorityFeePerGas) {
-    txRaw.maxPriorityFeePerGas = tx.maxPriorityFeePerGas?.toFixed();
+    txRaw.maxPriorityFeePerGas = tx.maxPriorityFeePerGas.toFixed();
   }
 
   return txRaw as EvmTransactionRaw;
-};
-
-/**
- * Create an unsigned transaction from a Ledger Live transaction.
- * Usually called "buildTransaction"
- */
-export const transactionToUnsignedTransaction = async (
-  account: Account,
-  tx: EvmTransaction
-): Promise<EvmTransaction> => {
-  const { currency, freshAddress } = account;
-  const nonce = await getTransactionCount(currency, freshAddress);
-
-  return {
-    ...tx,
-    nonce,
-  };
 };
 
 /**
@@ -160,8 +142,8 @@ export const getTypedTransaction = (
     delete transaction.gasPrice;
     return {
       ...transaction,
-      maxFeePerGas: feeData.maxFeePerGas || undefined,
-      maxPriorityFeePerGas: feeData.maxPriorityFeePerGas || undefined,
+      maxFeePerGas: feeData.maxFeePerGas,
+      maxPriorityFeePerGas: feeData.maxPriorityFeePerGas,
       type: 2,
     } as EvmTransactionEIP1559;
   }
@@ -181,7 +163,6 @@ export default {
   fromTransactionRaw,
   toTransactionRaw,
   toTransactionStatusRaw,
-  transactionToUnsignedTransaction,
   formatTransactionStatus,
   fromTransactionStatusRaw,
 };
