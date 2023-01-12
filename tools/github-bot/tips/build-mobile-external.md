@@ -15,7 +15,7 @@ _Note: you should always navigate to the workflow run page linked above to get a
 This CI workflow actually build LLM only for the android platform.
 
 Even though there are 2 jobs (macOS -> ios, linux -> android) the macOS job is a dummy one that only bundles the javascript part.
-At some point we could eventually build for ios but this is unlikely given that it is way harder to distribute an `.ipa` compared to an `.apk`.
+Due to current Apple limitations, we cannot build and provide test `.ipa`.
 
 Nevertheless it may be very unlikely but not impossible that producing the javascript bundle fails on macOS but not on linux.
 
