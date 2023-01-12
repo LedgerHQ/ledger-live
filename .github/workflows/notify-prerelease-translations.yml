@@ -17,6 +17,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   release-translation-check:
+    if: ${{ github.actor != 'github-actions' }}
     name: release branch translation check
     runs-on: ubuntu-latest
     steps:
@@ -35,7 +36,7 @@ jobs:
         with:
           script: |
             const fs = require("fs");
-            const text = "Translations files have changed on ${{ github.event.inputs.prNumber || github.event.push.head.ref }}";
+            const text = "Translations files have changed on ${{ github.event.inputs.prNumber || github.event.push.head.ref || github.event.pull_request.number}}";
             const output = {
               text,
               blocks: [
