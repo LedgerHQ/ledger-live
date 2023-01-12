@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from "react";
 import Video from "react-native-video";
 import { Dimensions } from "react-native";
+import Animated, { SlideInDown, SlideInLeft } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, Flex, Icons, Text, Link } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
@@ -9,6 +10,8 @@ import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { useCompleteActionCallback } from "../../logic/postOnboarding/useCompleteAction";
 import { NavigatorName, ScreenName } from "../../const";
 import videoSources from "../../../assets/videos";
+
+const AnimatedFlex = Animated.createAnimatedComponent(Flex);
 
 const BulletItem = ({ textKey }: { textKey: string }) => {
   const { t } = useTranslation();
@@ -116,27 +119,39 @@ const ClaimNftWelcome = () => {
           />
         ) : null}
       </Flex>
-      <Flex flex={2} px={6} justifyContent="space-evenly">
-        <Text variant="h4" fontWeight="semiBold" mt={7} textAlign="center">
-          {t("claimNft.welcomePage.title")}
-        </Text>
-        <Flex>
-          <Text color="neutral.c70" mb={6}>
-            {t("claimNft.welcomePage.description.title")}
-          </Text>
-          <BulletItem textKey={"claimNft.welcomePage.description.1"} />
-          <BulletItem textKey={"claimNft.welcomePage.description.2"} />
-          <BulletItem textKey={"claimNft.welcomePage.description.3"} />
-        </Flex>
-        <Flex flexDirection="column" justifyContent="flex-end">
-          <Button mb={8} type="main" onPress={handleGoToQrScan}>
-            {t("claimNft.welcomePage.claimButton")}
-          </Button>
-          <Link onPress={handleSkipQrScan}>
-            {t("claimNft.welcomePage.backButton")}
-          </Link>
-        </Flex>
-      </Flex>
+      {!isFirstVideo ? (
+        <AnimatedFlex flex={2} px={6} justifyContent="space-evenly">
+          <AnimatedFlex entering={SlideInLeft}>
+            <Text
+              variant="h4"
+              fontWeight="semiBold"
+              mt={7}
+              mb={7}
+              textAlign="center"
+            >
+              {t("claimNft.welcomePage.title")}
+            </Text>
+
+            <Text color="neutral.c70" mb={6}>
+              {t("claimNft.welcomePage.description.title")}
+            </Text>
+            <BulletItem textKey={"claimNft.welcomePage.description.1"} />
+            <BulletItem textKey={"claimNft.welcomePage.description.2"} />
+            <BulletItem textKey={"claimNft.welcomePage.description.3"} />
+          </AnimatedFlex>
+          <AnimatedFlex entering={SlideInDown}>
+            <Flex flexDirection="column" justifyContent="flex-end">
+              <Button mb={8} type="main" onPress={handleGoToQrScan}>
+                {t("claimNft.welcomePage.claimButton")}
+              </Button>
+
+              <Link onPress={handleSkipQrScan}>
+                {t("claimNft.welcomePage.backButton")}
+              </Link>
+            </Flex>
+          </AnimatedFlex>
+        </AnimatedFlex>
+      ) : null}
     </SafeAreaView>
   );
 };
