@@ -291,6 +291,7 @@ export function orchestrator(app: Probot) {
           output: {
             ...output,
             annotations: batch,
+            text: tips,
           },
         });
       }

@@ -214,6 +214,7 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
           output: {
             ...output,
             annotations: batch,
+            text: tips,
           },
         });
       }
