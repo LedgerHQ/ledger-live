@@ -102,6 +102,7 @@
     "addressCopied" : "Адрес скопирован",
     "addressCopiedSuspicious" : "Скопированный адрес не совпадает с адресом в буфере обмена.",
     "experimentalFeature" : "Экспериментальный режим",
+    "featureFlags" : "Фича-флаги (Feature Flags)",
     "information" : "Информация",
     "search" : "Поиск...",
     "searchWithoutEllipsis" : "Поиск",
@@ -131,7 +132,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blue"
   },
   "operation" : {
@@ -1206,8 +1207,11 @@
         "checkDeviceButton" : "Запустите проверку снова",
         "cancelButton" : "Не сейчас"
       },
-      "genuineCheckAnimationModal" : {
-        "message" : "Одобрите работу менеджера «Мой Ledger» на {{deviceName}}"
+      "softwareCheckAllowSecureChannelModal" : {
+        "title" : "Одобрите работу «Мой Ledger» на {{deviceName}}"
+      },
+      "softwareCheckLockedDeviceModal" : {
+        "title" : "Разблокируйте устройство"
       },
       "helpDrawer" : {
         "title" : "Нужна помощь по настройке устройства?",
@@ -3698,6 +3702,9 @@
       "featureFlagsEdit" : "Редактировать",
       "featureFlagsRestore" : "Восстановить",
       "featureFlagsOverride" : "Переопределить",
+      "featureFlagsRestoreAll" : "Восстановить все значения флагов",
+      "showButtonDesc" : "Всегда показывать кнопку Фича-флагов на боковой панели",
+      "buttonTitle" : "Локально переопределённые флаги",
       "firebaseProject" : "Проект Firebase является целевым для этой сборки:",
       "addLocalApp" : "Добавить локальное приложение",
       "addLocalAppDesc" : "Загрузка локального приложения в формате локального манифеста",
@@ -5493,6 +5500,14 @@
       "title" : "Устройство заблокировано",
       "description" : "Разблокируйте устройство и повторите попытку.",
       "descriptionWithProductName" : "Разблокируйте {{ productName }} и повторите попытку."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "Устройство не готово",
+      "titleWithProductName" : "Устройство {{ productName }} не готово",
+      "description" : "Сначала устройство нужно настроить.\nМы поможем вам с этим.",
+      "descriptionWithProductName" : "Сначала {{ productName }} необходимо настроить.\nМы поможем вам с этим.",
+      "goToOnboardingButton" : "Настроить устройство",
+      "goToOnboardingButtonWithProductName" : "Настроить {{ productName }}"
     }
   },
   "cryptoOrg" : {
@@ -5555,8 +5570,7 @@
     "postOnboarding" : {
       "title" : "Персонализируйте устройство",
       "description" : "Благодаря гибким настройкам экрана",
-      "actionCompletedPopupLabel" : "Устройство персонализировано",
-      "actionCompletedHubTitle" : "Ваш экран выглядит восхитительно!"
+      "actionCompletedPopupLabel" : "Устройство персонализировано"
     },
     "customImageSet" : "Пользовательское изображение установлено",
     "finishCTA" : "Завершить"
