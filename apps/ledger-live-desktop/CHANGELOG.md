@@ -1,5 +1,22 @@
 # ledger-live-desktop
 
+## 2.52.0-nightly.10
+
+### Minor Changes
+
+- [#1978](https://github.com/LedgerHQ/ledger-live/pull/1978) [`192b897ce4`](https://github.com/LedgerHQ/ledger-live/commit/192b897ce45635f0d91021a1d4973035f6d9bf72) Thanks [@RamyEB](https://github.com/RamyEB)! - Deletion of an old logic concerning the manifest fetch and filter, and replacement by a new one + added the possibility to give a custom Provider
+
+* [#2292](https://github.com/LedgerHQ/ledger-live/pull/2292) [`a44e1c2d62`](https://github.com/LedgerHQ/ledger-live/commit/a44e1c2d62a5838b7274f16c6fcb2443930966ff) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix: add bsc to dex family list and change family by id in currency validation"
+
+- [#2159](https://github.com/LedgerHQ/ledger-live/pull/2159) [`96458c4f37`](https://github.com/LedgerHQ/ledger-live/commit/96458c4f3777a079e01069005217457f3e6033e2) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Changes swap kyc alert copy for changelly
+
+### Patch Changes
+
+- [#2238](https://github.com/LedgerHQ/ledger-live/pull/2238) [`b625f10ba4`](https://github.com/LedgerHQ/ledger-live/commit/b625f10ba460eff997be3311ede1e84d9a866c41) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Debounces user input on swap form
+
+- Updated dependencies [[`96458c4f37`](https://github.com/LedgerHQ/ledger-live/commit/96458c4f3777a079e01069005217457f3e6033e2), [`192b897ce4`](https://github.com/LedgerHQ/ledger-live/commit/192b897ce45635f0d91021a1d4973035f6d9bf72)]:
+  - @ledgerhq/live-common@27.11.0-nightly.8
+
 ## 2.52.0-nightly.9
 
 ### Patch Changes

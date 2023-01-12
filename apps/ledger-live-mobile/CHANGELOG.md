@@ -1,5 +1,24 @@
 # live-mobile
 
+## 3.13.0-nightly.19
+
+### Minor Changes
+
+- [#2159](https://github.com/LedgerHQ/ledger-live/pull/2159) [`96458c4f37`](https://github.com/LedgerHQ/ledger-live/commit/96458c4f3777a079e01069005217457f3e6033e2) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Changes swap kyc alert copy for changelly
+
+* [#1978](https://github.com/LedgerHQ/ledger-live/pull/1978) [`192b897ce4`](https://github.com/LedgerHQ/ledger-live/commit/192b897ce45635f0d91021a1d4973035f6d9bf72) Thanks [@RamyEB](https://github.com/RamyEB)! - Deletion of an old logic concerning the manifest fetch and filter, and replacement by a new one + added the possibility to give a custom Provider
+
+### Patch Changes
+
+- [#2275](https://github.com/LedgerHQ/ledger-live/pull/2275) [`a1e5c4bf49`](https://github.com/LedgerHQ/ledger-live/commit/a1e5c4bf49eb7e7a6c7eba069dedbfc64ffc59f1) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Adds more analytics to LLM for swap.
+
+* [#2245](https://github.com/LedgerHQ/ledger-live/pull/2245) [`cf7cb5978f`](https://github.com/LedgerHQ/ledger-live/commit/cf7cb5978f161ca628e6805f6b3a309f765d65de) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Convert all video assets to HEVC. Remove unused assets.
+
+- [#2245](https://github.com/LedgerHQ/ledger-live/pull/2245) [`cf7cb5978f`](https://github.com/LedgerHQ/ledger-live/commit/cf7cb5978f161ca628e6805f6b3a309f765d65de) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Implement a video index file to reference all the sources of video assets. Implement a "Debug Videos" screen in the debug menu.
+
+- Updated dependencies [[`96458c4f37`](https://github.com/LedgerHQ/ledger-live/commit/96458c4f3777a079e01069005217457f3e6033e2), [`192b897ce4`](https://github.com/LedgerHQ/ledger-live/commit/192b897ce45635f0d91021a1d4973035f6d9bf72)]:
+  - @ledgerhq/live-common@27.11.0-nightly.8
+
 ## 3.13.0-nightly.18
 
 ### Patch Changes
