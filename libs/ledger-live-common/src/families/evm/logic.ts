@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { Account, SubAccount } from "@ledgerhq/types-live";
-import { mergeOps } from "../../bridge/jsHelpers";
+import { mergeOps } from "../../operation";
 import {
   Transaction as EvmTransaction,
   EvmTransactionEIP1559,
