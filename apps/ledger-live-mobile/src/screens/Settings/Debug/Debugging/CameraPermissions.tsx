@@ -21,7 +21,7 @@ const CameraPermissions: React.FC<never> = () => {
       />
       <Flex mt={10} />
       {mounted ? (
-        <RequiresCameraPermissions optimisticlyMountChildren={optimistic}>
+        <RequiresCameraPermissions optimisticallyMountChildren={optimistic}>
           <CameraPermissionContext.Consumer>
             {({ permissionGranted }) =>
               permissionGranted ? (

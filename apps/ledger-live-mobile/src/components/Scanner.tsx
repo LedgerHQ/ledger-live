@@ -75,7 +75,7 @@ const ScannerWrappedInRequiresCameraPermission: React.FC<Props> = props => {
   }, [colors.neutral.c100, navigation]);
 
   return (
-    <RequiresCameraPermissions optimisticlyMountChildren>
+    <RequiresCameraPermissions optimisticallyMountChildren>
       <Scanner {...props} />
     </RequiresCameraPermissions>
   );

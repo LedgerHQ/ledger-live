@@ -10,9 +10,8 @@ import { Svg, Defs, Rect, Mask } from "react-native-svg";
 import { useIsFocused } from "@react-navigation/native";
 import { useNavigateToPostOnboardingHubCallback } from "../../logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
 import { urls } from "../../config/urls";
-import RequiresCameraPermissions, {
-  CameraPermissionContext,
-} from "../../components/RequiresCameraPermissions";
+import RequiresCameraPermissions from "../../components/RequiresCameraPermissions";
+import CameraPermissionContext from "../../components/RequiresCameraPermissions/CameraPermissionContext";
 
 const cameraBoxDimensions = {
   width: Dimensions.get("screen").width,
@@ -116,7 +115,7 @@ const ClaimNftQrScan = () => {
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
-      <RequiresCameraPermissions optimisticlyMountChildren>
+      <RequiresCameraPermissions optimisticallyMountChildren>
         <CameraPermissionContext.Consumer>
           {({ permissionGranted }) => {
             <Flex flex={1}>
