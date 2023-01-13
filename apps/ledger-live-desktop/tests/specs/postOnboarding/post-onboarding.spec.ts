@@ -51,8 +51,8 @@ test("PostOnboarding", async ({ page }) => {
     await expect(page).toHaveScreenshot("postonboarding-hub-all-actions-completed.png");
   });
 
-  await test.step("go to dashboard without banner", async () => {
-    await postOnboarding.skipPostOnboardingHub();
+  await test.step("go to dashboard with automatic redirection", async () => {
+    await page.waitForTimeout(4500);
     await expect(page).toHaveScreenshot("postonboarding-hub-no-banner-in-dashboard.png");
   });
 });
