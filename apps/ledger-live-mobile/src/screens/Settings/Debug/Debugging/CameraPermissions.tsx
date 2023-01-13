@@ -6,7 +6,7 @@ import { CameraType } from "expo-camera/build/Camera.types";
 import RequiresCameraPermissions from "../../../../components/RequiresCameraPermissions";
 import CameraPermissionContext from "../../../../components/RequiresCameraPermissions/CameraPermissionContext";
 
-const CameraPermissions: React.FC<never> = () => {
+const CameraPermissions: React.FC<{}> = () => {
   const [optimistic, setOptimistic] = useState(false);
   const [mounted, setMounted] = useState(false);
   const isFocused = useIsFocused();
