@@ -117,7 +117,7 @@ const ClaimNftQrScan = () => {
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
       <RequiresCameraPermissions optimisticallyMountChildren>
         <CameraPermissionContext.Consumer>
-          {({ permissionGranted }) => {
+          {({ permissionGranted }) => (
             <Flex flex={1}>
               <Flex
                 backgroundColor="constant.black"
@@ -168,8 +168,8 @@ const ClaimNftQrScan = () => {
                   {t("claimNft.qrScan.description.1")}
                 </Text>
               </Flex>
-            </Flex>;
-          }}
+            </Flex>
+          )}
         </CameraPermissionContext.Consumer>
       </RequiresCameraPermissions>
     </SafeAreaView>
