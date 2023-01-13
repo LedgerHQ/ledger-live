@@ -38,26 +38,26 @@ export async function withApi<T>(
 }
 
 /**
- * Get account balances and nonce
+ * Get account balance and last chain block
  */
-export const getAccount: (
+export const getBalanceAndBlock: (
   currency: CryptoCurrency,
   addr: string
-) => Promise<{ blockHeight: number; balance: BigNumber; nonce: number }> =
-  async (currency, addr) =>
-    withApi(currency, async (api) => {
-      const [balance, nonce, blockHeight] = await Promise.all([
-        getCoinBalance(currency, addr),
-        getTransactionCount(currency, addr),
-        api.getBlockNumber(),
-      ]);
+) => Promise<{ blockHeight: number; balance: BigNumber }> = async (
+  currency,
+  addr
+) =>
+  withApi(currency, async (api) => {
+    const [balance, blockHeight] = await Promise.all([
+      getCoinBalance(currency, addr),
+      api.getBlockNumber(),
+    ]);
 
-      return {
-        blockHeight,
-        balance: new BigNumber(balance.toString()),
-        nonce,
-      };
-    });
+    return {
+      blockHeight,
+      balance: new BigNumber(balance.toString()),
+    };
+  });
 
 /**
  * Get a transaction by hash
@@ -232,7 +232,7 @@ export const getSubAccount: (
 export default {
   DEFAULT_RETRIES_RPC_METHODS,
   withApi,
-  getAccount,
+  getBalanceAndBlock,
   getTransaction,
   getCoinBalance,
   getTransactionCount,

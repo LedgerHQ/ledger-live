@@ -44,9 +44,9 @@ async function fetchWithRetries<T>(
 }
 
 /**
- * Get all the latest "normal" transactions (no tokens / NFTs)
+ * Get all the last "normal" transactions (no tokens / NFTs)
  */
-export const getLatestCoinOperations = makeLRUCache<
+export const getLastCoinOperations = makeLRUCache<
   [
     currency: CryptoCurrency,
     address: string,
@@ -80,9 +80,9 @@ export const getLatestCoinOperations = makeLRUCache<
 );
 
 /**
- * Get all the latest ERC20 transactions
+ * Get all the last ERC20 transactions
  */
-export const getLatestTokenOperations = makeLRUCache<
+export const getLastTokenOperations = makeLRUCache<
   [
     currency: CryptoCurrency,
     address: string,
@@ -108,7 +108,7 @@ export const getLatestTokenOperations = makeLRUCache<
     });
 
     return ops
-      .map((event) => etherscanERC20EventToOperation(accountId, address, event))
+      .map((event) => etherscanERC20EventToOperation(accountId, event))
       .filter(Boolean) as {
       tokenCurrency: TokenCurrency;
       operation: Operation;
@@ -119,6 +119,6 @@ export const getLatestTokenOperations = makeLRUCache<
 );
 
 export default {
-  getLatestCoinOperations,
-  getLatestTokenOperations,
+  getLastCoinOperations,
+  getLastTokenOperations,
 };
