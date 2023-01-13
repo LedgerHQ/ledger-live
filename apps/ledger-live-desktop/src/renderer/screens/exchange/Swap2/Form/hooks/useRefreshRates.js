@@ -16,7 +16,7 @@ const useRefreshRates = (swap: SwapDataType, { pause }: { pause: boolean }) => {
         swap.refetchRates();
       }
     }, refreshTime);
-  }, [refreshTime, pause, swap, swap.rates.value]);
+  }, [refreshTime, pause, swap, swap.rates?.value]);
 
   return refreshTime;
 };
