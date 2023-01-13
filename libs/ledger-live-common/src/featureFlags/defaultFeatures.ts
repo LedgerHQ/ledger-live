@@ -187,4 +187,7 @@ export const defaultFeatures: DefaultFeatures = {
   postOnboardingAssetsTransfer: {
     enabled: false,
   },
+  objkt: {
+    enabled: false,
+  },
 };

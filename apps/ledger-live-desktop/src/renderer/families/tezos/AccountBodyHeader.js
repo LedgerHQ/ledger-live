@@ -1,5 +1,5 @@
 // @flow
 
-import Delegation from "./Delegation";
+import AccountBodyHeader from "./AccountBodyHeader/index";
 
-export default Delegation;
+export default AccountBodyHeader;
