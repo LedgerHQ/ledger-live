@@ -12,7 +12,7 @@ const CameraPermissions: React.FC<never> = () => {
   const [mounted, setMounted] = useState(false);
   const isFocused = useIsFocused();
   return (
-    <Flex p={6}>
+    <Flex flex={1} p={6}>
       <Switch
         checked={optimistic}
         onChange={val => setOptimistic(val)}

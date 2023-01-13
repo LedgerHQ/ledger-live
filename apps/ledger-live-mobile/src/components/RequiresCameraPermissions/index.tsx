@@ -1,13 +1,7 @@
 import React from "react";
-import { Button } from "@ledgerhq/native-ui";
+import { useTranslation } from "react-i18next";
 import useCameraPermissions from "./useCameraPermissions";
-
-type PermissionMissingProps = {
-  onPress: () => void;
-  title: string;
-  description: string;
-  buttonLabel: string;
-};
+import FallbackCameraBody from "./FallbackCameraBody";
 
 type CameraPermissionContext = {
   permissionGranted: boolean | null;
@@ -17,30 +11,14 @@ export const CameraPermissionContext =
     permissionGranted: null,
   });
 
-const PermissionMissingShouldOpenSettings: React.FC<PermissionMissingProps> = ({
-  onPress,
-}) => (
-  <Button type="main" onPress={onPress}>
-    open settings
-  </Button>
-);
-
-const PermissionMissingCanRequest: React.FC<PermissionMissingProps> = ({
-  onPress,
-}) => (
-  <Button type="main" onPress={onPress}>
-    Can request permission
-  </Button>
-);
-
 const RequiresCameraPermissions: React.FC<{
   children?: React.ReactNode | null;
   optimisticlyMountChildren?: boolean;
 }> = ({ children, optimisticlyMountChildren = false }) => {
+  const { t } = useTranslation();
   const {
     permission,
     requestPermission,
-    // checkPermission,
     firstAutomaticRequestCompleted,
     openAppSettings,
     contextValue,
@@ -57,19 +35,21 @@ const RequiresCameraPermissions: React.FC<{
     );
   if (permission?.canAskAgain)
     return (
-      <PermissionMissingCanRequest
+      <FallbackCameraBody
+        event="CameraPressAuthorize"
         onPress={requestPermission}
-        title=""
-        description=""
-        buttonLabel=""
+        title={t("permissions.camera.title")}
+        description={t("permissions.camera.authorizeDescription")}
+        buttonTitle={t("permissions.camera.authorizeButtonTitle")}
       />
     );
   return (
-    <PermissionMissingShouldOpenSettings
+    <FallbackCameraBody
+      event="CameraOpenSettings"
       onPress={openAppSettings}
-      title=""
-      description=""
-      buttonLabel=""
+      title={t("permissions.camera.title")}
+      description={t("permissions.camera.goToSettingsDescription")}
+      buttonTitle={t("permissions.camera.goToSettingsButtonTitle")}
     />
   );
 };

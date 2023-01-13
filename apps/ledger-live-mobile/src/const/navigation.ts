@@ -76,7 +76,6 @@ export enum ScreenName {
   ExchangeSelectCurrency = "ExchangeSelectCurrency",
   ExchangeSell = "ExchangeSell",
   ExperimentalSettings = "ExperimentalSettings",
-  FallBackCameraScreen = "FallBackCameraScreen",
   FirmwareUpdateCheckId = "FirmwareUpdateCheckId",
   FirmwareUpdateConfirmation = "FirmwareUpdateConfirmation",
   FirmwareUpdateFailure = "FirmwareUpdateFailure",
