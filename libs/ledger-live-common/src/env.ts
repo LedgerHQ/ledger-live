@@ -68,7 +68,7 @@ const envDefinitions = {
     desc: "Explorer API for avalanche",
   },
   API_AVALANCHE_NODE: {
-    def: "http://localhost:5555",
+    def: "https://avax.coin.ledger.com/node",
     parser: stringParser,
     desc: "Node endpoint for avalanche",
   },
