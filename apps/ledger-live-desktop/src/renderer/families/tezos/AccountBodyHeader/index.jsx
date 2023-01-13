@@ -35,9 +35,9 @@ const AccountBodyHeader = ({ account, parentAccount }: Props) => {
   const { t } = useTranslation();
 
   const onNFTClick = useCallback(() => {
-    const value = `/platform/objkt`;
+    const pathname = `/platform/objkt`;
     history.push({
-      pathname: value,
+      pathname,
       state: { accountId: account.id },
     });
   }, [history, account.id]);
