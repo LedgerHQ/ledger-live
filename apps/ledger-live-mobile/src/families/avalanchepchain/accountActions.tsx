@@ -9,14 +9,14 @@ import { NavigatorName, ScreenName } from "../../const";
 const getExtraSendActionParams = ({ account }: { account: AccountLike }) => {
   return {
     disabled: true,
-    modalOnDisabledClick: null
-  }
+    modalOnDisabledClick: null,
+  };
 };
 
 const getExtraReceiveActionParams = ({ account }: { account: AccountLike }) => {
   return {
-    disabled: true
-  }
+    disabled: true,
+  };
 };
 
 const getActions = ({ account }: { account: Account }) => {
@@ -29,8 +29,7 @@ const getActions = ({ account }: { account: Account }) => {
         NavigatorName.AvalancheDelegationFlow,
         {
           screen:
-            (account as AvalanchePChainAccount).avalanchePChainResources &&
-            (account as AvalanchePChainAccount).avalanchePChainResources
+            (account as AvalanchePChainAccount)?.avalanchePChainResources
               ?.delegations.length > 0
               ? ScreenName.AvalancheDelegationValidator
               : ScreenName.AvalancheDelegationStarted,
@@ -45,5 +44,5 @@ const getActions = ({ account }: { account: Account }) => {
 export default {
   getActions,
   getExtraSendActionParams,
-  getExtraReceiveActionParams
+  getExtraReceiveActionParams,
 };
