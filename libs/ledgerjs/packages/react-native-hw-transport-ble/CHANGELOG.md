@@ -1,5 +1,23 @@
 # @ledgerhq/react-native-hw-transport-ble
 
+## 6.28.0
+
+### Minor Changes
+
+- [#2002](https://github.com/LedgerHQ/ledger-live/pull/2002) [`b83ff5509c`](https://github.com/LedgerHQ/ledger-live/commit/b83ff5509cf7b66b39642d300b0d7ec5e8582ea7) Thanks [@vivalaakam](https://github.com/vivalaakam)! - create BleManager instance on request
+
+### Patch Changes
+
+- [#2178](https://github.com/LedgerHQ/ledger-live/pull/2178) [`d4b01dc1b0`](https://github.com/LedgerHQ/ledger-live/commit/d4b01dc1b0f871726c517f9c6e0ebd84e64da2b7) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: cleaning + log in withDevice
+
+  Setting up BLE connection priority inside BleTransport constructor
+  and not in each call to withDevice
+
+- Updated dependencies [[`3a267c1424`](https://github.com/LedgerHQ/ledger-live/commit/3a267c14241ebc9184490e7eb81b5d4bcc94b092), [`3df451dafb`](https://github.com/LedgerHQ/ledger-live/commit/3df451dafb7233f5e3f897478aee22e89f6e5339), [`1f65abb76f`](https://github.com/LedgerHQ/ledger-live/commit/1f65abb76f1a36b428b5c33dd3ad6c58b4d96aa2), [`20c5c5e109`](https://github.com/LedgerHQ/ledger-live/commit/20c5c5e1099885173aaa5ea3199052044066ac98), [`e7c1eaa6a2`](https://github.com/LedgerHQ/ledger-live/commit/e7c1eaa6a24d36aa535df7a06f17c55858de5475)]:
+  - @ledgerhq/devices@7.0.7
+  - @ledgerhq/errors@6.12.3
+  - @ledgerhq/hw-transport@6.27.10
+
 ## 6.28.0-next.0
 
 ### Minor Changes
