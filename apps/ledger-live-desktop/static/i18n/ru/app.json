@@ -102,6 +102,7 @@
     "addressCopied" : "Адрес скопирован",
     "addressCopiedSuspicious" : "Скопированный адрес не совпадает с адресом в буфере обмена.",
     "experimentalFeature" : "Экспериментальный режим",
+    "featureFlags" : "Фича-флаги (Feature Flags)",
     "information" : "Информация",
     "search" : "Поиск...",
     "searchWithoutEllipsis" : "Поиск",
@@ -131,7 +132,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blue"
   },
   "operation" : {
@@ -1206,8 +1207,11 @@
         "checkDeviceButton" : "Запустите проверку снова",
         "cancelButton" : "Не сейчас"
       },
-      "genuineCheckAnimationModal" : {
-        "message" : "Одобрите работу менеджера «Мой Ledger» на {{deviceName}}"
+      "softwareCheckAllowSecureChannelModal" : {
+        "title" : "Одобрите работу «Мой Ledger» на {{deviceName}}"
+      },
+      "softwareCheckLockedDeviceModal" : {
+        "title" : "Разблокируйте устройство"
       },
       "helpDrawer" : {
         "title" : "Нужна помощь по настройке устройства?",
@@ -1718,7 +1722,7 @@
     "swap" : {
       "notice" : {
         "default" : "Перед отправкой проверьте сведения об обмене на устройстве. Обмен адресами осуществляется безопасно и не требует проверки.",
-        "cic" : "Перед отправкой проверьте детали обмена на устройстве. CIC может дополнительно проверять некоторые транзакции, что приведёт к задержкам."
+        "provider" : "Перед отправкой проверьте детали обмена на устройстве. {{providerName}} может дополнительно проверять некоторые транзакции, что приведёт к задержкам."
       },
       "confirm" : "Подтвердить обмен",
       "amountSent" : "Сумма к отправке",
@@ -3689,8 +3693,10 @@
       "debugAppsDesc" : "Показывать и открывать отладочные приложения на платформе.",
       "experimentalApps" : "Разрешить экспериментальные приложения",
       "experimentalAppsDesc" : "Показывать и открывать экспериментальные приложения на платформе.",
-      "catalogServer" : "Выбрать поставщика приложений",
-      "catalogServerDesc" : "Переключение между несколькими источниками приложений",
+      "catalogUrl" : "Выберите оператора Каталога приложений",
+      "catalogUrlDesc" : "Введите собственный URL поставщика каталога",
+      "catalogRampServer" : "Выберите оператора услуг покупки/продажи криптоактивов",
+      "catalogRampServerDesc" : "Переключайтесь между несколькими операторами услуг обмена",
       "enablePlatformDevTools" : "Включить инструменты разработчика на платформе",
       "enablePlatformDevToolsDesc" : "Разрешить открывать окно инструментов разработчика на платформе",
       "featureFlagsTitle" : "Определённые фича-флаги (feature flags), используемые в Ledger Live",
@@ -3698,6 +3704,9 @@
       "featureFlagsEdit" : "Редактировать",
       "featureFlagsRestore" : "Восстановить",
       "featureFlagsOverride" : "Переопределить",
+      "featureFlagsRestoreAll" : "Восстановить все значения флагов",
+      "showButtonDesc" : "Всегда показывать кнопку Фича-флагов на боковой панели",
+      "buttonTitle" : "Локально переопределённые флаги",
       "firebaseProject" : "Проект Firebase является целевым для этой сборки:",
       "addLocalApp" : "Добавить локальное приложение",
       "addLocalAppDesc" : "Загрузка локального приложения в формате локального манифеста",
@@ -3756,6 +3765,10 @@
         "experimentalCurrencies" : {
           "title" : "Экспериментальная интеграция",
           "description" : "Использовать доступные экспериментальные интеграции криптовалют."
+        },
+        "experimentalExecutionOnRenderer" : {
+          "title" : "Экспериментальная сеть",
+          "description" : "Используйте экспериментальную сеть для оптимизации взаимодействия с Ledger Live через VPN. Активируйте функцию только в случае возникновения системных ошибок при использовании VPN."
         },
         "experimentalLanguages" : {
           "title" : "Тестирование перевода",
@@ -5497,6 +5510,14 @@
       "title" : "Устройство заблокировано",
       "description" : "Разблокируйте устройство и повторите попытку.",
       "descriptionWithProductName" : "Разблокируйте {{ productName }} и повторите попытку."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "Устройство не готово",
+      "titleWithProductName" : "Устройство {{ productName }} не готово",
+      "description" : "Сначала устройство нужно настроить.\nМы поможем вам с этим.",
+      "descriptionWithProductName" : "Сначала {{ productName }} необходимо настроить.\nМы поможем вам с этим.",
+      "goToOnboardingButton" : "Настроить устройство",
+      "goToOnboardingButtonWithProductName" : "Настроить {{ productName }}"
     }
   },
   "cryptoOrg" : {
@@ -5559,8 +5580,7 @@
     "postOnboarding" : {
       "title" : "Персонализируйте устройство",
       "description" : "Благодаря гибким настройкам экрана",
-      "actionCompletedPopupLabel" : "Устройство персонализировано",
-      "actionCompletedHubTitle" : "Ваш экран выглядит восхитительно!"
+      "actionCompletedPopupLabel" : "Устройство персонализировано"
     },
     "customImageSet" : "Пользовательское изображение установлено",
     "finishCTA" : "Завершить"
