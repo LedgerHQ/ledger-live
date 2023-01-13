@@ -43,7 +43,7 @@ ipcMain.handle(
   async (event, path: { canceled: boolean, filePath: string }, experimentalLogs: string | null) =>
     !path.canceled &&
     path.filePath &&
-    fsWriteFile(path.filePath, experimentalLogs || JSON.stringify(loggerTransport.logs)),
+    fsWriteFile(path.filePath, experimentalLogs || JSON.stringify(loggerTransport.getMemoryLogs())),
 );
 
 ipcMain.handle(
