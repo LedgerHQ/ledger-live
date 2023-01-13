@@ -26,7 +26,7 @@ export class PostOnboarding {
       "data-test-id=postonboarding-action-row-personalizeMock",
     );
 
-    this.goToHubButton = page.locator("data-test-id=postonboarding-go-to-hub-button").nth(0);
+    this.goToHubButton = page.locator("data-test-id=postonboarding-go-to-hub-button");
     this.postOnboardingBannerEntryPoint = page.locator(
       "data-test-id=postonboarding-banner-entry-point",
     );
