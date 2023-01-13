@@ -1,15 +1,8 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import useCameraPermissions from "./useCameraPermissions";
-import FallbackCameraBody from "./FallbackCameraBody";
-
-type CameraPermissionContext = {
-  permissionGranted: boolean | null;
-};
-export const CameraPermissionContext =
-  React.createContext<CameraPermissionContext>({
-    permissionGranted: null,
-  });
+import Fallback from "./Fallback";
+import CameraPermissionContext from "./CameraPermissionContext";
 
 const RequiresCameraPermissions: React.FC<{
   children?: React.ReactNode | null;
@@ -35,7 +28,7 @@ const RequiresCameraPermissions: React.FC<{
     );
   if (permission?.canAskAgain)
     return (
-      <FallbackCameraBody
+      <Fallback
         event="CameraPressAuthorize"
         onPress={requestPermission}
         title={t("permissions.camera.title")}
@@ -44,7 +37,7 @@ const RequiresCameraPermissions: React.FC<{
       />
     );
   return (
-    <FallbackCameraBody
+    <Fallback
       event="CameraOpenSettings"
       onPress={openAppSettings}
       title={t("permissions.camera.title")}

@@ -4,14 +4,13 @@ import { BarCodeScanningResult, Camera } from "expo-camera";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
+import { Flex } from "@ledgerhq/native-ui";
 import StyledStatusBar from "./StyledStatusBar";
 import CameraScreen from "./CameraScreen";
 import HeaderRightClose from "./HeaderRightClose";
 import getWindowDimensions from "../logic/getWindowDimensions";
-import RequiresCameraPermissions, {
-  CameraPermissionContext,
-} from "./RequiresCameraPermissions";
-import HeaderTitle from "./HeaderTitle";
+import RequiresCameraPermissions from "./RequiresCameraPermissions";
+import CameraPermissionContext from "./RequiresCameraPermissions/CameraPermissionContext";
 
 type Props = {
   onResult: (_: string) => void;
@@ -41,7 +40,7 @@ const Scanner = ({ onResult, liveQrCode, progress, instruction }: Props) => {
 
   if (!hasPermission) return <View />;
   return (
-    <View style={styles.container}>
+    <Flex flex={1}>
       <StyledStatusBar barStyle="light-content" />
       <Camera
         style={styles.camera}
@@ -60,7 +59,7 @@ const Scanner = ({ onResult, liveQrCode, progress, instruction }: Props) => {
           instruction={instruction}
         />
       </Camera>
-    </View>
+    </Flex>
   );
 };
 
@@ -84,9 +83,6 @@ const ScannerWrappedInRequiresCameraPermission: React.FC<Props> = props => {
 
 export default ScannerWrappedInRequiresCameraPermission;
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   camera: {
     flex: 1,
   },
