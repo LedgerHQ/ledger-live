@@ -103,7 +103,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
     <Flex flex={1} pt={(isExperimental ? ExperimentalHeaderHeight : 0) + 70}>
       <TrackScreen category="Manager" name="ChooseDevice" />
       <Flex px={16} mb={8}>
-        <Text fontWeight="semiBold" variant="h4">
+        <Text fontWeight="semiBold" variant="h4" testID="manager-title">
           <Trans i18nKey="manager.title" />
         </Text>
       </Flex>

@@ -63,6 +63,7 @@ const Step0Welcome: React.FC<
             size="large"
             type="main"
             onPress={openModal}
+            testID="custom-image-choose-picture-button"
           >
             {t("customImage.landingPage.choosePicture")}
           </Button>
