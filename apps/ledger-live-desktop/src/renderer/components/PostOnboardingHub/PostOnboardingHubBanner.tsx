@@ -37,14 +37,14 @@ const PostOnboardingHubBanner = () => {
       backgroundColor="neutral.c100"
       borderRadius={8}
       justifyContent="space-between"
-      px={40}
-      mb={20}
+      px={6}
+      mb={7}
     >
       <Flex flexDirection="column" justifyContent="center" alignItems="flex-start">
         <Text color="neutral.c00" variant="paragraph" fontSize={6}>
           {t("postOnboarding.postOnboardingBanner.title")}
         </Text>
-        <Text mt={3} mb={18} color="neutral.c50" whiteSpace="pre-wrap" fontSize={14}>
+        <Text mt={3} mb={4} color="neutral.c50" whiteSpace="pre-wrap" fontSize={14}>
           {t("postOnboarding.postOnboardingBanner.description")}
         </Text>
         <Link
