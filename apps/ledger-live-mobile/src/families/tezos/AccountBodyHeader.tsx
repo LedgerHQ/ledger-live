@@ -117,17 +117,6 @@ export default function TezosAccountBodyHeader({
   return (
     <View style={styles.root}>
       <Text variant={"h3"} color={"neutral.c100"}>
-        <Trans i18nKey="NFT" />
-      </Text>
-      <View style={[]}>
-        <Flex flexDirection={"row"} alignItems={"center"} py={6}>
-          <Text variant={"body"}>
-            You can see you Tezos NFTs directly through Objkt inside Ledger
-            Live.
-          </Text>
-        </Flex>
-      </View>
-      <Text variant={"h3"} color={"neutral.c100"}>
         <Trans i18nKey="delegation.delegation" />
       </Text>
 
