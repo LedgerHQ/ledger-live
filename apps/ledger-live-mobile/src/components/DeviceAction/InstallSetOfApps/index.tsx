@@ -68,13 +68,17 @@ const InstallSetOfApps = ({
 
   const shouldRestoreApps = true;
 
-  const dependenciesToInstall = useMemo(() => ["cosmos", "bitcoin"], []);
+  const dependenciesToInstall = useMemo(
+    () => ["Cosmos", "Ethereum", "Bitcoin"],
+    [],
+  );
 
   const commandRequest = useMemo(
     () => ({
       dependencies: dependenciesToInstall.map(appName => ({ appName })),
       appName: "BOLOS",
       withInlineInstallProgress: true,
+      skipAppInstallIfNotFound: true,
     }),
     [dependenciesToInstall],
   );
