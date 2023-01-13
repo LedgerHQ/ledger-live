@@ -3,21 +3,22 @@ import { Account, Operation, SubAccount } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import etherscanLikeApi from "./api/etherscan";
 import { mergeSubAccounts } from "./logic";
+import { mergeOps } from "../../operation";
 import {
   makeSync,
   makeScanAccounts,
-  mergeOps,
   GetAccountShape,
   AccountShapeInfos,
 } from "../../bridge/jsHelpers";
 import {
+  decodeAccountId,
   emptyHistoryCache,
   encodeAccountId,
   encodeTokenAccountId,
   shouldRetainPendingOperation,
 } from "../../account";
 import {
-  getAccount,
+  getBalanceAndBlock,
   getBlock,
   getTokenBalance,
   getTransaction,
@@ -27,7 +28,7 @@ import {
  * Switch to select one of the compatible explorer
  */
 const getExplorerApi = (currency: CryptoCurrency) => {
-  const apiType = currency?.ethereumLikeInfo?.explorer?.type;
+  const apiType = currency.ethereumLikeInfo?.explorer?.type;
 
   switch (apiType) {
     case "etherscan":
@@ -45,7 +46,7 @@ const getExplorerApi = (currency: CryptoCurrency) => {
  */
 export const getAccountShape: GetAccountShape = async (infos) => {
   const { initialAccount, address, derivationMode, currency } = infos;
-  const { blockHeight, balance, nonce } = await getAccount(currency, address);
+  const { blockHeight, balance } = await getBalanceAndBlock(currency, address);
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
@@ -55,7 +56,7 @@ export const getAccountShape: GetAccountShape = async (infos) => {
   });
 
   // Get the latest stored operation to know where to start the new sync
-  const latestCoinOperation =
+  const latestSyncedOperation =
     initialAccount?.operations?.reduce<Operation | null>((acc, curr) => {
       if (!acc) {
         return curr;
@@ -66,12 +67,13 @@ export const getAccountShape: GetAccountShape = async (infos) => {
   // This method could not be working if the integration doesn't have an API to retreive the operations
   const lastCoinOperations = await (async () => {
     try {
-      const { getLatestCoinOperations } = await getExplorerApi(currency);
-      return await getLatestCoinOperations(
+      const { getLastCoinOperations: getLastCoinOperations } =
+        await getExplorerApi(currency);
+      return await getLastCoinOperations(
         currency,
         address,
         accountId,
-        latestCoinOperation?.blockHeight ? latestCoinOperation.blockHeight : 0
+        latestSyncedOperation?.blockHeight || 0
       );
     } catch (e) {
       log("EVM Family", "Failed to get latest transactions", {
@@ -83,7 +85,7 @@ export const getAccountShape: GetAccountShape = async (infos) => {
     }
   })();
 
-  const newSubAccounts = await getSubAccounts(infos, accountId, nonce);
+  const newSubAccounts = await getSubAccounts(infos, accountId);
   // Merging potential new subAccouns while preserving the reference (returned value will be initialAccount.subAccounts)
   const subAccounts = mergeSubAccounts(initialAccount, newSubAccounts);
 
@@ -97,7 +99,6 @@ export const getAccountShape: GetAccountShape = async (infos) => {
   const confirmedOperations = await Promise.all(confirmPendingOperations).then(
     (ops) => ops.filter((op): op is Operation => !!op)
   );
-
   const newOperations = [...confirmedOperations, ...lastCoinOperations];
   const operations = mergeOps(initialAccount?.operations || [], newOperations);
   const lastSyncDate = new Date();
@@ -107,9 +108,9 @@ export const getAccountShape: GetAccountShape = async (infos) => {
     id: accountId,
     balance,
     spendableBalance: balance,
-    operationsCount: nonce,
     blockHeight,
     operations,
+    operationsCount: operations.length,
     subAccounts,
     lastSyncDate,
   } as Partial<Account>;
@@ -120,13 +121,12 @@ export const getAccountShape: GetAccountShape = async (infos) => {
  */
 export const getSubAccounts = async (
   infos: AccountShapeInfos,
-  accountId: string,
-  nonce: number
+  accountId: string
 ): Promise<Partial<SubAccount>[]> => {
   const { initialAccount, address, currency } = infos;
 
-  // Get the latest token operation from all subaccounts
-  const latestTokenOperation = initialAccount?.subAccounts
+  // Get the latest operation from all subaccounts
+  const latestSyncedOperation = initialAccount?.subAccounts
     ?.flatMap(({ operations }) => operations)
     .reduce<Operation | null>((acc, curr) => {
       if (!acc) {
@@ -138,12 +138,12 @@ export const getSubAccounts = async (
   // This method could not be working if the integration doesn't have an API to retreive the operations
   const lastERC20OperationsAndCurrencies = await (async () => {
     try {
-      const { getLatestTokenOperations } = await getExplorerApi(currency);
-      return await getLatestTokenOperations(
+      const { getLastTokenOperations } = await getExplorerApi(currency);
+      return await getLastTokenOperations(
         currency,
         address,
         accountId,
-        latestTokenOperation?.blockHeight ? latestTokenOperation.blockHeight : 0
+        latestSyncedOperation?.blockHeight || 0
       );
     } catch (e) {
       log("EVM Family", "Failed to get latest ERC20 transactions", {
@@ -173,7 +173,7 @@ export const getSubAccounts = async (
   const subAccountsPromises: Promise<Partial<SubAccount>>[] = [];
   for (const [token, ops] of erc20OperationsByToken.entries()) {
     subAccountsPromises.push(
-      getSubAccountShape(currency, accountId, address, token, ops, nonce)
+      getSubAccountShape(currency, accountId, token, ops)
     );
   }
 
@@ -186,11 +186,10 @@ export const getSubAccounts = async (
 export const getSubAccountShape = async (
   currency: CryptoCurrency,
   parentId: string,
-  address: string,
   token: TokenCurrency,
-  operations: Operation[],
-  nonce: number
+  operations: Operation[]
 ): Promise<Partial<SubAccount>> => {
+  const { xpubOrAddress: address } = decodeAccountId(parentId);
   const tokenAccountId = encodeTokenAccountId(parentId, token);
   const balance = await getTokenBalance(
     currency,
@@ -206,8 +205,8 @@ export const getSubAccountShape = async (
     balance,
     spendableBalance: balance,
     creationDate: new Date(),
-    operationsCount: nonce,
     operations,
+    operationsCount: operations.length,
     pendingOperations: [],
     balanceHistoryCache: emptyHistoryCache,
   };
