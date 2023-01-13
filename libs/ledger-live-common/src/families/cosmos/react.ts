@@ -36,6 +36,7 @@ export function useCosmosFamilyPreloadData(
     const sub = getUpdates().subscribe(setState);
     return () => sub.unsubscribe();
   }, [getCurrent, getUpdates]);
+  console.log("==========getting state============");
   return state;
 }
 

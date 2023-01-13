@@ -42,6 +42,12 @@ export function setCosmosPreloadData(data: CosmosPreloadData): void {
 }
 
 export function getCurrentCosmosPreloadData(): CosmosPreloadData {
+  console.log("================validator in memory=======================");
+  console.log(currentCosmosPreloadedData.validators.length);
+  if (currentCosmosPreloadedData.validators.length >0)
+  {
+    console.log(currentCosmosPreloadedData.validators[0]);
+  }
   return currentCosmosPreloadedData;
 }
 
