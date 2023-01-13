@@ -27,7 +27,7 @@ export type FlashMcuCommandEvent = {
   progress: number;
 };
 
-export function installOsuFirmwareCommand(
+export function flashMcuCommand(
   transport: Transport,
   { targetId, mcuVersion }: FlashMcuCommandRequest
 ): Observable<FlashMcuCommandEvent> {

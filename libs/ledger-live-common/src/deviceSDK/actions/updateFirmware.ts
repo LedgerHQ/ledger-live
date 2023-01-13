@@ -38,6 +38,7 @@ export type UpdateFirmwareActionState = FullActionState<{
   // allowManagerRequested: boolean;
   step:
     | "installingOsu"
+    | "flashingMcu"
     | "installOsuDevicePermissionRequested"
     | "installOsuDevicePermissionGranted"
     | "allowManagerRequested"
@@ -70,7 +71,7 @@ export function updateFirmwareAction({
     //   })
     // ),
     // update the firmware
-    updateFirmwareTask({ deviceId, updateContext }),
+    updateFirmwareTask({ deviceId, updateContext })
     // reinstall the language if needed
     // oldDeviceInfo?.languageId !== undefined && oldDeviceInfo?.languageId !== 0
     //   ? EMPTY // install language
@@ -91,9 +92,10 @@ export function updateFirmwareAction({
               },
             };
           case "installingOsu":
+          case "flashingMcu":
             return {
               ...currentState,
-              step: "installingOsu",
+              step: event.type,
               progress: event.progress,
             };
           case "allowManagerRequested":

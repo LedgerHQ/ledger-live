@@ -2,6 +2,7 @@ import { LockedDeviceError } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import type {
   DeviceId,
+  FinalFirmware,
   FirmwareInfo,
   FirmwareUpdateContext,
 } from "@ledgerhq/types-live";
@@ -9,14 +10,20 @@ import type {
 import { getVersion } from "../commands/getVersion";
 import { getAppAndVersion } from "../commands/getAppAndVersion";
 
+import ManagerAPI from "../../api/Manager";
 import { isDashboardName } from "../../hw/isDashboardName";
 import { withDevice, withDevicePolling } from "../../hw/deviceAccess";
-import { from, Observable, of } from "rxjs";
+import { EMPTY, from, Observable, of } from "rxjs";
 import { concatMap, filter, map, switchMap } from "rxjs/operators";
 import { SharedTaskEvent, sharedLogicTaskWrapper } from "./core";
 import { installFirmwareCommand } from "../commands/firmwareUpdate/installFirmware";
 import Transport from "@ledgerhq/hw-transport";
 import getDeviceInfo from "../../hw/getDeviceInfo";
+import { getProviderId } from "../../manager";
+import {
+  flashMcuCommand,
+  FlashMcuCommandEvent,
+} from "../commands/firmwareUpdate/flashMcu";
 
 export type UpdateFirmwareTaskArgs = {
   deviceId: DeviceId;
@@ -28,6 +35,7 @@ export type UpdateFirmwareTaskError = "DeviceOnDashboardExpected";
 
 export type UpdateFirmwareTaskEvent =
   | { type: "installingOsu"; progress: number }
+  | { type: "flashingMcu"; progress: number }
   | { type: "firmwareUpdateCompleted" }
   | { type: "installOsuDevicePermissionRequested" }
   | { type: "installOsuDevicePermissionGranted" }
@@ -124,13 +132,41 @@ function internalUpdateFirmwareTask({
           // since at this time the device is probably rebooting
         )
           .pipe(
-            concatMap(() => {
-              // OSU INSTALL completed
-              // TODO: flash mcu and bootloader according to what's needed
-              return of<UpdateFirmwareTaskEvent>({
-                type: "firmwareUpdateCompleted",
-              });
-              //return EMPTY;
+            concatMap((deviceInfo) => {
+              if (updateContext.shouldFlashMCU) {
+                if (!deviceInfo.isBootloader) return EMPTY; // return throw error, it should be in the bootloader
+
+                return from(retrieveMcuVersion(updateContext.final)).pipe(
+                  concatMap((mcuVersion) => {
+                    if (mcuVersion) {
+                      return withDevice(deviceId)((transport) =>
+                        flashMcuCommand(transport, {
+                          targetId: deviceInfo.targetId,
+                          mcuVersion,
+                        })
+                      );
+                    }
+                    return EMPTY;
+                  }),
+                  map<FlashMcuCommandEvent, UpdateFirmwareTaskEvent>(
+                    (event) => ({
+                      type: "flashingMcu",
+                      progress: event.progress,
+                    })
+                  )
+                  // TODO: find out where to put this correctly
+                  // concatMap(() => {
+                  //   // OSU INSTALL completed
+                  //   // TODO: flash mcu and bootloader according to what's needed
+                  //   return of<UpdateFirmwareTaskEvent>({
+                  //     type: "firmwareUpdateCompleted",
+                  //   });
+                  //   //return EMPTY;
+                  // })
+                );
+              }
+
+              return EMPTY;
             })
           )
           .subscribe({
@@ -147,6 +183,26 @@ function internalUpdateFirmwareTask({
     });
   });
 }
+
+const retrieveMcuVersion = (finalFirmware: FinalFirmware) => {
+  return ManagerAPI.getMcus()
+    .then((mcus) =>
+      mcus.filter((deviceInfo) => {
+        const provider = getProviderId(deviceInfo);
+        return (mcu) => mcu.providers.includes(provider);
+      })
+    )
+    .then((mcus) =>
+      mcus.filter((mcu) => mcu.from_bootloader_version !== "none")
+    )
+    .then((mcus) =>
+      ManagerAPI.findBestMCU(
+        finalFirmware.mcu_versions
+          .map((id) => mcus.find((mcu) => mcu.id === id))
+          .filter(Boolean)
+      )
+    );
+};
 
 const installOsuFirmware = ({
   transport,
