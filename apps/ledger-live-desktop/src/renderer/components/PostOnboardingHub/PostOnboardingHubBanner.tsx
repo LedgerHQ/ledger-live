@@ -44,7 +44,7 @@ const PostOnboardingHubBanner = () => {
         <Text color="neutral.c00" variant="paragraph" fontSize={6}>
           {t("postOnboarding.postOnboardingBanner.title")}
         </Text>
-        <Text mt={3} mb={4} color="neutral.c50" whiteSpace="pre-wrap" fontSize={14}>
+        <Text mt={3} mb={4} color="neutral.c50" whiteSpace="pre-wrap" variant="h5Inter">
           {t("postOnboarding.postOnboardingBanner.description")}
         </Text>
         <Link
