@@ -86,9 +86,17 @@ export type GetAccountShape = (
 ) => Promise<Partial<Account>>;
 type AccountUpdater = (account: Account) => Account;
 
+/**
+ * @WARNING
+ * @DEPRECATED due to circular dependency
+ */
 // compare that two dates are roughly the same date in order to update the case it would have drastically changed
 const sameDate = (a, b) => Math.abs(a - b) < 1000 * 60 * 30;
 
+/**
+ * @WARNING
+ * @DEPRECATED due to circular dependency
+ */
 // an operation is relatively immutable, however we saw that sometimes it can temporarily change due to reorg,..
 export const sameOp = (a: Operation, b: Operation): boolean =>
   a === b ||
@@ -100,6 +108,11 @@ export const sameOp = (a: Operation, b: Operation): boolean =>
     a.blockHeight === b.blockHeight &&
     isEqual(a.senders, b.senders) &&
     isEqual(a.recipients, b.recipients));
+
+/**
+ * @WARNING
+ * @DEPRECATED due to circular dependency
+ */
 // efficiently prepend newFetched operations to existing operations
 export function mergeOps( // existing operations. sorted (newer to older). deduped.
   existing: Operation[], // new fetched operations. not sorted. not deduped. time is allowed to overlap inside existing.

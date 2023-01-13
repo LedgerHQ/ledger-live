@@ -4,6 +4,7 @@ import type {
   NFTStandard,
   Operation,
 } from "@ledgerhq/types-live";
+import { isEqual } from "lodash";
 import { BigNumber } from "bignumber.js";
 import { decodeAccountId } from "./account";
 import { encodeNftId } from "./nft";
@@ -249,3 +250,72 @@ export const isConfirmedOperation = (
   operation.blockHeight
     ? account.blockHeight - operation.blockHeight + 1 >= confirmationsNb
     : false;
+
+/**
+ * @FIXME @FIXME @FIXME
+ * THE FOLLOWING CODE IS DUPLICATED FROM jsHelpers.ts WHICH HAS A CIRCULAR DEPENDECY
+ * EVERY USE OF mergeOps & sameOp SHOULD BE MIGRATED TO THIS ONE TO TEMPORARLY FIX THE ISSUE
+ */
+
+// compare that two dates are roughly the same date in order to update the case it would have drastically changed
+const sameDate = (a, b) => Math.abs(a - b) < 1000 * 60 * 30;
+
+// an operation is relatively immutable, however we saw that sometimes it can temporarily change due to reorg,..
+export const sameOp = (a: Operation, b: Operation): boolean =>
+  a === b ||
+  (a.id === b.id && // hash, accountId, type are in id
+    (a.fee ? a.fee.isEqualTo(b.fee) : a.fee === b.fee) &&
+    (a.value ? a.value.isEqualTo(b.value) : a.value === b.value) &&
+    a.nftOperations?.length === b.nftOperations?.length &&
+    sameDate(a.date, b.date) &&
+    a.blockHeight === b.blockHeight &&
+    isEqual(a.senders, b.senders) &&
+    isEqual(a.recipients, b.recipients));
+// efficiently prepend newFetched operations to existing operations
+
+export function mergeOps( // existing operations. sorted (newer to older). deduped.
+  existing: Operation[], // new fetched operations. not sorted. not deduped. time is allowed to overlap inside existing.
+  newFetched: Operation[]
+): // return a list of operations, deduped and sorted from newer to older
+Operation[] {
+  // there is new fetched
+  if (newFetched.length === 0) return existing;
+  // efficient lookup map of id.
+  const existingIds = {};
+
+  for (const o of existing) {
+    existingIds[o.id] = o;
+  }
+
+  // only keep the newFetched that are not in existing. this array will be mutated
+  let newOps = newFetched
+    .filter((o) => !existingIds[o.id] || !sameOp(existingIds[o.id], o))
+    .sort((a, b) => b.date.valueOf() - a.date.valueOf());
+
+  // Deduplicate new ops to guarantee operations don't have dups
+  const newOpsIds = {};
+  newOps.forEach((op) => {
+    newOpsIds[op.id] = op;
+  });
+  newOps = Object.values(newOpsIds);
+
+  // return existing when there is no real new operations
+  if (newOps.length === 0) return existing;
+  // edge case, existing can be empty. return the sorted list.
+  if (existing.length === 0) return newOps;
+  // building up merging the ops
+  const all: Operation[] = [];
+
+  for (const o of existing) {
+    // prepend all the new ops that have higher date
+    while (newOps.length > 0 && newOps[0].date >= o.date) {
+      all.push(newOps.shift() as Operation);
+    }
+
+    if (!newOpsIds[o.id]) {
+      all.push(o);
+    }
+  }
+
+  return all;
+}
