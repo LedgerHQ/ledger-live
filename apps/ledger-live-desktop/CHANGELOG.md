@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.52.0-nightly.11
+
+### Patch Changes
+
+- [#2294](https://github.com/LedgerHQ/ledger-live/pull/2294) [`0ac0aedd05`](https://github.com/LedgerHQ/ledger-live/commit/0ac0aedd051931add4eee08b3e09d1a4b3c85862) Thanks [@gre](https://github.com/gre)! - Optimize LLD logger
+
+- Updated dependencies [[`9bba7fd8bd`](https://github.com/LedgerHQ/ledger-live/commit/9bba7fd8bd9b55be569fb57367e7debc442af789)]:
+  - @ledgerhq/live-common@27.11.1-nightly.0
+
 ## 2.52.0-nightly.10
 
 ### Minor Changes

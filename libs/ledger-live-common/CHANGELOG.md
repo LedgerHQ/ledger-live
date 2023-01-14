@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 27.11.1-nightly.0
+
+### Patch Changes
+
+- [#2318](https://github.com/LedgerHQ/ledger-live/pull/2318) [`9bba7fd8bd`](https://github.com/LedgerHQ/ledger-live/commit/9bba7fd8bd9b55be569fb57367e7debc442af789) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - bugfix: cosmos delegate/unbond/redelegate tx are wrongly interpreted into claim reward tx
+
 ## 27.11.0
 
 ### Minor Changes
