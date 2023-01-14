@@ -1,6 +1,6 @@
 # @ledgerhq/react-ui
 
-## 0.10.4-nightly.1
+## 0.10.4
 
 ### Patch Changes
 
@@ -8,12 +8,19 @@
 
   And exported Theme type from react-ui
 
-## 0.10.4-nightly.0
+- Updated dependencies [[`5266518d0b`](https://github.com/LedgerHQ/ledger-live/commit/5266518d0baf26258f95a08d7f0a127f1848b38f)]:
+  - @ledgerhq/icons-ui@0.3.4
+
+## 0.10.4-next.0
 
 ### Patch Changes
 
+- [#2242](https://github.com/LedgerHQ/ledger-live/pull/2242) [`15ffdd6972`](https://github.com/LedgerHQ/ledger-live/commit/15ffdd6972dcc3bf5de5af34528725fae24120af) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: narrow-typed theme to "dark"| "light"
+
+  And exported Theme type from react-ui
+
 - Updated dependencies [[`5266518d0b`](https://github.com/LedgerHQ/ledger-live/commit/5266518d0baf26258f95a08d7f0a127f1848b38f)]:
-  - @ledgerhq/icons-ui@0.3.4-nightly.0
+  - @ledgerhq/icons-ui@0.3.4-next.0
 
 ## 0.10.3
 

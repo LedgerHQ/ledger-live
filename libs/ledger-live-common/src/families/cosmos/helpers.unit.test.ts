@@ -1,7 +1,7 @@
 import { getMainMessage } from "./helpers";
 
 describe("getMainMessage", () => {
-  it("should return reward message with delegate and reward messages (claim rewards, compound)", () => {
+  it("should return delegate message with delegate and reward messages (claim rewards, compound)", () => {
     const exec = getMainMessage([
       {
         type: "delegate",
@@ -12,7 +12,7 @@ describe("getMainMessage", () => {
         attributes: {},
       },
     ]);
-    expect(exec.type).toEqual("withdraw_rewards");
+    expect(exec.type).toEqual("delegate");
   });
 
   it("should return unbond message with unbound and transfer messages", () => {

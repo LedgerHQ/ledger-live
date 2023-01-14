@@ -1,25 +1,18 @@
 # @ledgerhq/hw-app-xrp
 
-## 6.27.10-nightly.2
+## 6.27.10
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/hw-transport@6.27.10-nightly.2
+  - @ledgerhq/hw-transport@6.27.10
 
-## 6.27.10-nightly.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.27.10-nightly.1
-
-## 6.27.10-nightly.0
+## 6.27.10-next.0
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/hw-transport@6.27.10-nightly.0
+  - @ledgerhq/hw-transport@6.27.10-next.0
 
 ## 6.27.9
 
