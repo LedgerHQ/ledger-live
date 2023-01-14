@@ -3622,7 +3622,7 @@
       "title" : "在设备上确认互换操作",
       "alert" : {
         "default" : "发送之前请在您的设备上验证互换详情。地址会被安全地交换因此您不必对其进行验证。",
-        "cic" : "在发送之前，请先在您的设备上核实互换详情。CIC 可能需要对某些交易进行额外的验证，从而导致延迟。"
+        "provider" : "发送资金之前，请先在您的设备上核实互换详情。{{providerName}} 可能需要对某些交易进行额外验证，因此导致延迟。"
       },
       "acceptTerms" : "验证此交易，即表示我接受\n<0><0>{{provider}}</0>的使用条款</0>",
       "notice" : "发送之前请在您的设备上验证互换详情。地址会被安全地交换因此您不必对其进行验证。"
@@ -4425,44 +4425,19 @@
       "activatableVotes" : "您有现在可激活的投票。"
     }
   },
-  "osmosis" : {
-    "info" : {
-      "available" : {
-        "title" : "OSMO 现已推出"
-      },
-      "delegated" : {
-        "description" : "委托资产用于 Osmosis 投票。这是您的总得票数。"
-      },
-      "undelegating" : {
-        "description" : "取消委托的资产在 14 天锁定期才能使用。"
-      }
-    },
-    "delegation" : {
-      "flow" : {
-        "steps" : {
-          "starter" : {
-            "description" : "委托 OSMO 可安全赚取奖励，时刻掌控您的资产。",
-            "steps" : {
-              "1" : "取消委托过程必须等待 14 天才能完成。"
-            }
-          }
-        }
-      }
-    }
-  },
   "cosmos" : {
     "info" : {
       "available" : {
-        "title" : "ATOM 可用",
+        "title" : "{{currencyTicker}} 可用",
         "description" : "该数额可自由支配。"
       },
       "delegated" : {
         "title" : "已委托资产",
-        "description" : "已委托的资产被用于 Cosmos 投票。这是您的总票数。"
+        "description" : "委托资产用于 {{currencyName}} 投票。这是您的总得票数。"
       },
       "undelegating" : {
         "title" : "正在解除委托",
-        "description" : "解除委托的资产会有 21 天的时间锁，之后才可用。"
+        "description" : "取消委托的资产在 {{numberOfDays}} 天锁定期后才能使用。"
       },
       "delegationUnavailable" : {
         "title" : "委托不可用",
@@ -4470,7 +4445,7 @@
       }
     },
     "delegation" : {
-      "delegationEarn" : "您可以通过委托资产赚取 ATOM 奖励。",
+      "delegationEarn" : "您可以通过委托资产赚取 {{ticker}} 奖励。",
       "info" : "委托机制如何运作",
       "claimRewards" : "申领奖励",
       "claimAvailableRewards" : "申领 {{amount}}",
@@ -4498,10 +4473,10 @@
       "flow" : {
         "steps" : {
           "starter" : {
-            "description" : "将您的 ATOM 币委托出去从而安全地赚取奖励，同时依旧掌控您的资产。",
+            "description" : "委托 {{ticker}} 可安全赚取奖励，时刻掌控您的资产。",
             "steps" : {
               "0" : "委托出去的资产依旧为您所有。",
-              "1" : "你需要等待 21 天才能完成解除委托流程。",
+              "1" : "取消委托过程必须等待 {{numberOfDays}} 天才能完成。",
               "2" : "使用您的 Ledger 设备安全地进行委托。"
             },
             "warning" : {
