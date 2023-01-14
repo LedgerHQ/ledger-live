@@ -3622,7 +3622,7 @@
       "title" : "장치에서 스왑 거래를 확인하세요",
       "alert" : {
         "default" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다.",
-        "cic" : "장치에서 자금 세부사항을 확인한 후 전송하세요. CIC는 일부 트랜잭션에 대해 추가 확인을 수행해야 하므로 지연이 발생할 수 있습니다."
+        "provider" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 일부 트랜잭션에서 {{providerName}}의 추가 확인 단계가 필요할 수 있어 지연이 발생할 수 있습니다."
       },
       "acceptTerms" : "본인은 이 트랜잭션을 확인함으로써 \n<0><0>{{provider}}</0>의 이용약관</0>을 수락합니다.",
       "notice" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다."
@@ -4425,44 +4425,19 @@
       "activatableVotes" : "현재 활성화할 수 있는 투표가 있습니다."
     }
   },
-  "osmosis" : {
-    "info" : {
-      "available" : {
-        "title" : "OSMO 사용 가능"
-      },
-      "delegated" : {
-        "description" : "위임된 자산은 오스모시스(Osmosis) 투표에 사용됩니다. 이는 사용차의 총 투표 수입니다."
-      },
-      "undelegating" : {
-        "description" : "위임 해제 자산은 14일 후 타임락이 해제되면 사용 가능합니다."
-      }
-    },
-    "delegation" : {
-      "flow" : {
-        "steps" : {
-          "starter" : {
-            "description" : "OSMO를 위임하여 안전하게 보상을 받으면서, 자산에 대한 통제 권한도 유지하세요.",
-            "steps" : {
-              "1" : "위임 해제가 완료되려면 14일을 기다려야 합니다."
-            }
-          }
-        }
-      }
-    }
-  },
   "cosmos" : {
     "info" : {
       "available" : {
-        "title" : "ATOM 이용 가능",
+        "title" : "{{currencyTicker}} 이용 가능",
         "description" : "가처분 금액입니다."
       },
       "delegated" : {
         "title" : "위임된 자산",
-        "description" : "위임된 자산이 Cosmos(코스모스) 투표에 사용됩니다. 사용차의 총 투표 수입니다."
+        "description" : "위임된 자산은 {{currencyName}} 투표에 사용됩니다. 이는 사용차의 총 투표 수입니다."
       },
       "undelegating" : {
         "title" : "위임 해제",
-        "description" : "위임 해제 자산은 21일 후 타임락이 해제되면 사용 가능합니다."
+        "description" : "위임 해제 자산은 {{numberOfDays}}일 후 타임락이 해제되면 사용 가능합니다."
       },
       "delegationUnavailable" : {
         "title" : "위임할 수 없습니다",
@@ -4470,7 +4445,7 @@
       }
     },
     "delegation" : {
-      "delegationEarn" : "자산을 위임하여 ATOM 보상을 받을 수 있습니다.",
+      "delegationEarn" : "자산을 위임하여 {{ticker}} 보상을 받을 수 있습니다.",
       "info" : "위임은 어떤 원리인가요?",
       "claimRewards" : "보상 수령",
       "claimAvailableRewards" : "{{amount}} 수령",
@@ -4498,10 +4473,10 @@
       "flow" : {
         "steps" : {
           "starter" : {
-            "description" : "ATOM을 위임하여 안전하게 보상을 받으면서, 자산에 대한 통제 권한도 유지하세요.",
+            "description" : "{{ticker}}를 위임하여 안전하게 보상을 받으면서, 자산에 대한 통제 권한도 유지하세요.",
             "steps" : {
               "0" : "위임된 자산은 귀하의 소유입니다.",
-              "1" : "위임 해제가 완료되려면 21일을 기다려야 합니다.",
+              "1" : "위임 해제가 완료되려면 {{numberOfDays}}일을 기다려야 합니다.",
               "2" : "Ledger 장치로 안전하게 위임하세요."
             },
             "warning" : {
