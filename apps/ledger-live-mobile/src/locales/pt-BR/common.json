@@ -3622,7 +3622,7 @@
       "title" : "Confirmar a operação de troca no dispositivo",
       "alert" : {
         "default" : "Verifique os detalhes da troca no seu dispositivo antes de enviá-la. Os endereços são comunicados com segurança para que você não precise verificá-los.",
-        "cic" : "Verifique os detalhes da troca no seu dispositivo antes de enviá-la. O CIC pode precisar fazer verificações adicionais para algumas transações, resultando em demora."
+        "provider" : "Verifique os detalhes da troca no seu dispositivo antes de enviá-la. {{providerName}} pode precisar fazer verificações adicionais para algumas transações, resultando em demora."
       },
       "acceptTerms" : "Ao validar esta transação, eu aceito\nos termos de uso da <0><0>{{provider}}</0></0>",
       "notice" : "Verifique os detalhes da troca no seu dispositivo antes de enviá-la. Os endereços são comunicados com segurança para que você não precise verificá-los."
@@ -4425,44 +4425,19 @@
       "activatableVotes" : "Agora você tem votos que podem ser ativados."
     }
   },
-  "osmosis" : {
-    "info" : {
-      "available" : {
-        "title" : "OSMO Disponível"
-      },
-      "delegated" : {
-        "description" : "Os ativos delegados são utilizados para votação na Osmosis. Este é o seu número total de votos."
-      },
-      "undelegating" : {
-        "description" : "Ativos removidos de delegação ficam bloqueados por um período de 14 dias antes de ficarem disponíveis."
-      }
-    },
-    "delegation" : {
-      "flow" : {
-        "steps" : {
-          "starter" : {
-            "description" : "Delegue seu OSMO para ganhar prêmios de forma segura, mantendo o controle dos seus ativos.",
-            "steps" : {
-              "1" : "Você terá que esperar 14 dias para que a desdelegação seja concluída."
-            }
-          }
-        }
-      }
-    }
-  },
   "cosmos" : {
     "info" : {
       "available" : {
-        "title" : "ATOM disponível",
+        "title" : "{{currencyTicker}} disponível",
         "description" : "Esta quantia é descartável."
       },
       "delegated" : {
         "title" : "Ativos Delegados",
-        "description" : "Os ativos delegados são utilizados para a votação na Cosmos. Este é o seu número total de votos."
+        "description" : "Ativos delegados são utilizados para votar em {{currencyName}}. Este é o seu número total de votos."
       },
       "undelegating" : {
         "title" : "Removendo de delegação",
-        "description" : "Ativos removidos de delegação ficam bloqueados por um período de 21 dias antes estarem disponíveis."
+        "description" : "Ativos desdelegados ficam bloqueados por um período de {{numberOfDays}} dias, antes de ficarem disponíveis."
       },
       "delegationUnavailable" : {
         "title" : "Delegação Indisponível",
@@ -4470,7 +4445,7 @@
       }
     },
     "delegation" : {
-      "delegationEarn" : "Você pode ganhar recompensas em ATOM delegando seus ativos.",
+      "delegationEarn" : "Você pode ganhar recompensas em {{ticker}} delegando seus ativos.",
       "info" : "Como funciona a delegação",
       "claimRewards" : "Resgatar Recompensas",
       "claimAvailableRewards" : "Resgatar {{amount}}",
@@ -4498,10 +4473,10 @@
       "flow" : {
         "steps" : {
           "starter" : {
-            "description" : "Delegue seu ATOM para ganhar prêmios de forma segura, mantendo o controle de seus ativos.",
+            "description" : "Delegue seu {{ticker}} para ganhar prêmios de forma segura e sem perder o controle dos seus ativos.",
             "steps" : {
               "0" : "Ativos delegados ainda são seus",
-              "1" : "Você terá que esperar 21 dias para que a interrupção da delegação seja concluída.",
+              "1" : "Você terá que esperar {{numberOfDays}} dias para que a desdelegação seja concluída.",
               "2" : "Delegar com segurança com seu dispositivo Ledger."
             },
             "warning" : {
