@@ -3622,7 +3622,7 @@
       "title" : "Swap-Vorgang auf dem Gerät bestätigen",
       "alert" : {
         "default" : "Überprüfen Sie die Details des Tauschs auf Ihrem Gerät, bevor Sie sie senden. Die Adressen werden sicher ausgetauscht, sodass Sie diese nicht verifizieren müssen.",
-        "cic" : "Verifizieren Sie die Swap-Details auf Ihrem Gerät, bevor Sie diese senden. CIC muss möglicherweise eine zusätzliche Überprüfung für einige Transaktionen durchführen, was zu einer Verzögerung führen kann."
+        "provider" : "Verifizieren Sie die Swap-Details auf Ihrem Gerät, bevor Sie diese senden. {{providerName}} muss möglicherweise eine zusätzliche Überprüfung für einige Transaktionen durchführen, was zu einer Verzögerung führen kann."
       },
       "acceptTerms" : "Durch Validieren dieser Transaktion stimme ich den\n<0>Nutzungsbedingungen von <0>{{provider}}</0> zu</0>",
       "notice" : "Überprüfen Sie die Details des Tauschs auf Ihrem Gerät, bevor Sie sie senden. Die Adressen werden sicher ausgetauscht, sodass Sie diese nicht verifizieren müssen."
@@ -4425,44 +4425,19 @@
       "activatableVotes" : "Sie haben Stimmen, die jetzt aktiviert werden können."
     }
   },
-  "osmosis" : {
-    "info" : {
-      "available" : {
-        "title" : "OSMO verfügbar"
-      },
-      "delegated" : {
-        "description" : "Übertragene Vermögenswerte werden für Osmosis-Abstimmungen verwendet. Dies ist Ihre Gesamtzahl der Stimmen."
-      },
-      "undelegating" : {
-        "description" : "Nicht delegierte Vermögenswerte sind in einer Zeitsperre von 14 Tagen, bevor sie verfügbar sind."
-      }
-    },
-    "delegation" : {
-      "flow" : {
-        "steps" : {
-          "starter" : {
-            "description" : "Delegieren Sie Ihr OSMO, um sicher Prämien zu verdienen und behalten Sie die Kontrolle über Ihr Vermögen.",
-            "steps" : {
-              "1" : "Sie müssen 14 Tage warten, bis die Delegierung vollständig beendet ist."
-            }
-          }
-        }
-      }
-    }
-  },
   "cosmos" : {
     "info" : {
       "available" : {
-        "title" : "ATOM verfügbar",
+        "title" : "{{currencyTicker}} verfügbar",
         "description" : "Dieser Betrag ist verfügbar."
       },
       "delegated" : {
         "title" : "Delegierte Vermögenswerte",
-        "description" : "Übertragene Vermögenswerte werden für Cosmos-Abstimmungen verwendet. Dies ist Ihre Gesamtzahl der Stimmen."
+        "description" : "Delegierte Vermögenswerte werden für {{currencyName}}-Abstimmungen verwendet. Dies ist Ihre Gesamtzahl der Stimmen."
       },
       "undelegating" : {
         "title" : "Delegierung aufheben",
-        "description" : "Nicht delegierte Vermögenswerte sind in einer Zeitsperre von 21 Tagen, bevor sie verfügbar sind."
+        "description" : "Nicht delegierte Vermögenswerte befinden sich in einer Zeitsperre von {{numberOfDays}} Tagen, bevor sie verfügbar sind."
       },
       "delegationUnavailable" : {
         "title" : "Übertragung nicht verfügbar",
@@ -4470,7 +4445,7 @@
       }
     },
     "delegation" : {
-      "delegationEarn" : "Sie können ATOM-Prämien verdienen, indem Sie Ihre Vermögenswerte übertragen.",
+      "delegationEarn" : "Sie können {{ticker}}-Belohnungen erhalten, indem Sie Ihre Vermögenswerte delegieren.",
       "info" : "So funktioniert Delegation",
       "claimRewards" : "Prämien beanspruchen",
       "claimAvailableRewards" : "Anspruch {{amount}}",
@@ -4498,10 +4473,10 @@
       "flow" : {
         "steps" : {
           "starter" : {
-            "description" : "Delegieren Sie Ihr ATOM, um sicher Prämien zu verdienen und behalten Sie die Kontrolle über Ihr Vermögen.",
+            "description" : "Delegieren Sie Ihre {{ticker}}, um sicher Belohnungen zu verdienen und behalten Sie die Kontrolle über Ihre Vermögenswerte.",
             "steps" : {
               "0" : "Delegierte Vermögenswerte bleiben in Ihrem Besitz.",
-              "1" : "Sie müssen 21 Tage warten, bis die Delegierung vollständig beendet ist.",
+              "1" : "Sie müssen {{numberOfDays}} Tage warten, bis die Aufhebung der Delegierung abgeschlossen ist.",
               "2" : "Delegieren Sie sicher mit Ihrem Ledger-Gerät."
             },
             "warning" : {
