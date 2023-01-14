@@ -1,5 +1,31 @@
 # @ledgerhq/native-ui
 
+## 0.15.0
+
+### Minor Changes
+
+- [#2081](https://github.com/LedgerHQ/ledger-live/pull/2081) [`87826dce62`](https://github.com/LedgerHQ/ledger-live/commit/87826dce627602cef94cf4831c17251069b92076) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Native UI - NotificationCard component added to the ui library
+
+### Patch Changes
+
+- [#2071](https://github.com/LedgerHQ/ledger-live/pull/2071) [`cc3c591bdc`](https://github.com/LedgerHQ/ledger-live/commit/cc3c591bdcb31df5882210fa43928603c2bcb200) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - fix ratings modal close behavior
+
+- Updated dependencies [[`5266518d0b`](https://github.com/LedgerHQ/ledger-live/commit/5266518d0baf26258f95a08d7f0a127f1848b38f)]:
+  - @ledgerhq/icons-ui@0.3.4
+
+## 0.15.0-next.0
+
+### Minor Changes
+
+- [#2081](https://github.com/LedgerHQ/ledger-live/pull/2081) [`87826dce62`](https://github.com/LedgerHQ/ledger-live/commit/87826dce627602cef94cf4831c17251069b92076) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Native UI - NotificationCard component added to the ui library
+
+### Patch Changes
+
+- [#2071](https://github.com/LedgerHQ/ledger-live/pull/2071) [`cc3c591bdc`](https://github.com/LedgerHQ/ledger-live/commit/cc3c591bdcb31df5882210fa43928603c2bcb200) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - fix ratings modal close behavior
+
+- Updated dependencies [[`5266518d0b`](https://github.com/LedgerHQ/ledger-live/commit/5266518d0baf26258f95a08d7f0a127f1848b38f)]:
+  - @ledgerhq/icons-ui@0.3.4-next.0
+
 ## 0.14.0
 
 ### Minor Changes

@@ -24,8 +24,7 @@ import {
   StackNavigatorProps,
 } from "../../../components/RootNavigator/types/helpers";
 
-const source = require("../../../../assets/videos/onboarding.mp4"); // eslint-disable-line @typescript-eslint/no-var-requires
-const sourceStax = require("../../../../assets/videos/onboardingStax.mp4"); // eslint-disable-line @typescript-eslint/no-var-requires
+import videoSources from "../../../../assets/videos";
 
 const absoluteStyle = {
   position: "absolute" as const,
@@ -120,8 +119,8 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
   }, []);
 
   const videoSource = useFeature("staxWelcomeScreen")?.enabled
-    ? sourceStax
-    : source;
+    ? videoSources.welcomeScreenStax
+    : videoSources.welcomeScreen;
 
   return (
     <ForceTheme selectedPalette={"dark"}>

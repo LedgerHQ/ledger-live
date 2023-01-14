@@ -1,5 +1,29 @@
 # @ledgerhq/cryptoassets
 
+## 7.2.0
+
+### Minor Changes
+
+- [#2260](https://github.com/LedgerHQ/ledger-live/pull/2260) [`3200794498`](https://github.com/LedgerHQ/ledger-live/commit/32007944989d1e89162a63e9862bd64066d6216b) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - update CAL
+
+* [#2141](https://github.com/LedgerHQ/ledger-live/pull/2141) [`04a939310a`](https://github.com/LedgerHQ/ledger-live/commit/04a939310a52a7e0ebf0814286e6ad135c8c8cfa) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - update CAL
+
+### Patch Changes
+
+- [#2121](https://github.com/LedgerHQ/ledger-live/pull/2121) [`8aca07c549`](https://github.com/LedgerHQ/ledger-live/commit/8aca07c54935a66163aa89af6e88854742383bea) Thanks [@lvndry](https://github.com/lvndry)! - set stakenet as a terminated currency
+
+## 7.2.0-next.0
+
+### Minor Changes
+
+- [#2260](https://github.com/LedgerHQ/ledger-live/pull/2260) [`3200794498`](https://github.com/LedgerHQ/ledger-live/commit/32007944989d1e89162a63e9862bd64066d6216b) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - update CAL
+
+* [#2141](https://github.com/LedgerHQ/ledger-live/pull/2141) [`04a939310a`](https://github.com/LedgerHQ/ledger-live/commit/04a939310a52a7e0ebf0814286e6ad135c8c8cfa) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - update CAL
+
+### Patch Changes
+
+- [#2121](https://github.com/LedgerHQ/ledger-live/pull/2121) [`8aca07c549`](https://github.com/LedgerHQ/ledger-live/commit/8aca07c54935a66163aa89af6e88854742383bea) Thanks [@lvndry](https://github.com/lvndry)! - set stakenet as a terminated currency
+
 ## 7.1.0
 
 ### Minor Changes

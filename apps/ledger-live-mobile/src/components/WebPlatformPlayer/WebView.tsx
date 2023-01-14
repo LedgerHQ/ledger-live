@@ -36,7 +36,7 @@ import {
   listAndFilterCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { AppManifest } from "@ledgerhq/live-common/platform/types";
+import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import {
   broadcastTransactionLogic,
   receiveOnAccountLogic,
@@ -75,7 +75,7 @@ import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigato
 const tracking = trackingWrapper(track);
 
 type Props = {
-  manifest: AppManifest;
+  manifest: LiveAppManifest;
   inputs?: Record<string, string>;
 };
 

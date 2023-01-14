@@ -50,6 +50,8 @@ import SwapFormSummary from "./FormSummary";
 import SwapFormRates from "./FormRates";
 import { DEX_PROVIDERS } from "~/renderer/screens/exchange/Swap2/Form/utils";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import EmptyState from "./Rates/EmptyState";
+import debounce from "lodash/debounce";
 
 const Wrapper: ThemedComponent<{}> = styled(Box).attrs({
   p: 20,
@@ -103,6 +105,7 @@ const SwapForm = () => {
   const [currentBanner, setCurrentBanner] = useState(null);
   const [isSendMaxLoading, setIsSendMaxLoading] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+  const [showEmpty, setShowEmpty] = useState(false);
   const [idleState, setIdleState] = useState(false);
   const [firstRateId, setFirstRateId] = useState(null);
 
@@ -193,6 +196,10 @@ const SwapForm = () => {
     }, refreshTime);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [swapError, firstRateId]);
+
+  useEffect(() => {
+    setShowEmpty(swapError && swapError?.message.length === 0);
+  }, [swapError]);
 
   const refreshIdle = useCallback(() => {
     idleState && setIdleState(false);
@@ -416,9 +423,9 @@ const SwapForm = () => {
       const sourceMainAccount = getMainAccount(sourceAccount, sourceParentAccount);
       const targetMainAccount = getMainAccount(targetAccount, targetParentAccount);
 
-      const dexFamilyList = ["ethereum", "binance", "polygon"];
+      const dexFamilyList = ["ethereum", "bsc", "polygon"];
       if (
-        dexFamilyList.includes(targetMainAccount.currency.family) &&
+        dexFamilyList.includes(targetMainAccount.currency.id) &&
         sourceMainAccount.currency.id === targetMainAccount.currency.id &&
         sourceMainAccount.currency.family === targetMainAccount.currency.family
       ) {
@@ -450,6 +457,18 @@ const SwapForm = () => {
     // suppressing as swapTransaction is not memoized and causes infinite loop
     // eslint-disable-next-line
   }, [exchangeRate]);
+
+  const debouncedSetFromAmount = useMemo(
+    () =>
+      debounce((amount: BigNumber) => {
+        setNavigation(null);
+        setShowDetails(false);
+        swapTransaction.setFromAmount(amount);
+      }, 400),
+    // cannot depend on swapTransaction as it'll change when new `rates` are fetched
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
 
   switch (currentFlow) {
     case "LOGIN":
@@ -483,12 +502,6 @@ const SwapForm = () => {
     swapTransaction.setFromAccount(currency);
   };
 
-  const setFromAmount = currency => {
-    setNavigation(null);
-    setShowDetails(false);
-    swapTransaction.setFromAmount(currency);
-  };
-
   const setToAccount = account => {
     setNavigation(null);
     setShowDetails(false);
@@ -518,7 +531,7 @@ const SwapForm = () => {
           toCurrency={targetCurrency}
           toAmount={exchangeRate?.toAmount || null}
           setFromAccount={setFromAccount}
-          setFromAmount={setFromAmount}
+          setFromAmount={debouncedSetFromAmount}
           setToAccount={setToAccount}
           setToCurrency={setToCurrency}
           isMaxEnabled={swapTransaction.swap.isMaxEnabled}
@@ -531,7 +544,8 @@ const SwapForm = () => {
           isSendMaxLoading={isSendMaxLoading}
           updateSelectedRate={swapTransaction.swap.updateSelectedRate}
         />
-        {showDetails && (
+        {showEmpty && <EmptyState />}
+        {showDetails && !showEmpty && (
           <>
             <SwapFormSummary
               swapTransaction={swapTransaction}
