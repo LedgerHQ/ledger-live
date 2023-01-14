@@ -29,11 +29,8 @@ const currencyBridge: CurrencyBridge = {
     const cosmosValidatorsManager = new CosmosValidatorsManager(
       getCryptoCurrencyById(currency.id)
     );
-    if (currency.id === "cosmos") {
-      console.log("===============getting cosmos validators=================");
-    }
     const validators = await cosmosValidatorsManager.getValidators();
-    setCosmosPreloadData({
+    setCosmosPreloadData(currency.id, {
       validators,
     });
     return Promise.resolve({
@@ -56,7 +53,7 @@ const currencyBridge: CurrencyBridge = {
       getCryptoCurrencyById(currency.id)
     );
     cosmosValidatorsManager.hydrateValidators(validators);
-    setCosmosPreloadData(asSafeCosmosPreloadData(data));
+    setCosmosPreloadData(currency.id, asSafeCosmosPreloadData(data));
   },
   scanAccounts,
 };

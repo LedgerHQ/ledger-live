@@ -37,7 +37,7 @@ describe("cosmos/react", () => {
       const { result } = renderHook(() =>
         hooks.useCosmosFamilyPreloadData("cosmos")
       );
-      const data = getCurrentCosmosPreloadData();
+      const data = getCurrentCosmosPreloadData()["cosmos"];
       expect(result.current).toStrictEqual(data);
       await act(() => prepare());
       expect(result.current).toStrictEqual(preloadedMockData);

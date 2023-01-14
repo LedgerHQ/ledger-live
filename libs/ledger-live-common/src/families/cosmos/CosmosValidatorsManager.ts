@@ -42,7 +42,6 @@ export class CosmosValidatorsManager {
   private cacheValidators = makeLRUCache(
     async (): Promise<CosmosValidatorItem[]> => {
       const url = `${this._endPoint}/cosmos/staking/${this._version}/validators?status=BOND_STATUS_BONDED&pagination.limit=175`;
-      console.log("============https request to get cosmos validators======");
       const { data } = await network({
         url,
         method: "GET",
@@ -60,8 +59,6 @@ export class CosmosValidatorsManager {
           estimatedYearlyRewardsRate: 0,
         };
       });
-      console.log("===============first validator===============================");
-      console.log(validators[0]);
       return validators;
     },
     () => this._currency.id

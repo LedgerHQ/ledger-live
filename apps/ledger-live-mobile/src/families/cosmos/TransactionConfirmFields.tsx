@@ -30,7 +30,7 @@ type FieldProps = {
 function CosmosDelegateValidatorsField({ account, transaction }: FieldProps) {
   const { t } = useTranslation();
   const unit = getAccountUnit(account);
-  const { validators } = useCosmosFamilyPreloadData("cosmos");
+  const { validators } = useCosmosFamilyPreloadData(account.currency.id);
   const mappedDelegations = mapDelegationInfo(
     transaction.validators,
     validators,
@@ -58,8 +58,12 @@ function CosmosDelegateValidatorsField({ account, transaction }: FieldProps) {
   );
 }
 
-function CosmosValidatorNameField({ field, transaction: tx }: FieldProps) {
-  const { validators } = useCosmosFamilyPreloadData("cosmos");
+function CosmosValidatorNameField({
+  account,
+  field,
+  transaction: tx,
+}: FieldProps) {
+  const { validators } = useCosmosFamilyPreloadData(account.currency.id);
   const validator = validators.find(
     v => v.validatorAddress === tx.validators[0].address,
   );
@@ -72,10 +76,11 @@ function CosmosValidatorNameField({ field, transaction: tx }: FieldProps) {
 }
 
 function CosmosSourceValidatorNameField({
+  account,
   field,
   transaction: { sourceValidator },
 }: FieldProps) {
-  const { validators } = useCosmosFamilyPreloadData("cosmos");
+  const { validators } = useCosmosFamilyPreloadData(account.currency.id);
 
   if (!sourceValidator) {
     return null;

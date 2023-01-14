@@ -65,8 +65,10 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
   invariant(account, "account must be defined");
 
-  const validators = useLedgerFirstShuffledValidatorsCosmosFamily("cosmos");
   const mainAccount = getMainAccount(account, parentAccount);
+  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(
+    mainAccount.currency.id,
+  );
   const bridge = getAccountBridge(account, undefined);
 
   const chosenValidator = useMemo(() => {

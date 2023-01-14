@@ -96,6 +96,11 @@ const account: CosmosAccount = {
 };
 
 const validators = [expensiveValidator, cheapValidator, ledgerValidator];
+const validatorsMap = {
+  cosmos: { validators } as {
+    validators: CosmosValidatorItem[];
+  },
+};
 
 describe("cosmos/banner", () => {
   describe("useCosmosFormattedDelegations", () => {
@@ -105,9 +110,7 @@ describe("cosmos/banner", () => {
     it("should not display the banner", async () => {
       jest
         .spyOn(preloadedData, "getCurrentCosmosPreloadData")
-        .mockReturnValue({ validators } as {
-          validators: CosmosValidatorItem[];
-        });
+        .mockReturnValue(validatorsMap);
       jest.spyOn(logic, "canDelegate").mockReturnValue(false);
       jest.spyOn(logic, "canRedelegate").mockReturnValue(false);
       const result = getAccountBannerState(account);
@@ -121,9 +124,7 @@ describe("cosmos/banner", () => {
     it("should return display delegate mode", async () => {
       jest
         .spyOn(preloadedData, "getCurrentCosmosPreloadData")
-        .mockReturnValue({ validators } as {
-          validators: CosmosValidatorItem[];
-        });
+        .mockReturnValue(validatorsMap);
       jest.spyOn(logic, "canDelegate").mockReturnValue(true);
       jest.spyOn(logic, "canRedelegate").mockReturnValue(false);
       const result = getAccountBannerState(account);
@@ -137,9 +138,7 @@ describe("cosmos/banner", () => {
     it("should return display redelegate mode", async () => {
       jest
         .spyOn(preloadedData, "getCurrentCosmosPreloadData")
-        .mockReturnValue({ validators } as {
-          validators: CosmosValidatorItem[];
-        });
+        .mockReturnValue(validatorsMap);
       jest.spyOn(logic, "canDelegate").mockReturnValue(false);
       jest.spyOn(logic, "canRedelegate").mockReturnValue(true);
       account.cosmosResources.redelegations.push({
@@ -163,9 +162,7 @@ describe("cosmos/banner", () => {
     it("should return not display redelegate mode", async () => {
       jest
         .spyOn(preloadedData, "getCurrentCosmosPreloadData")
-        .mockReturnValue({ validators } as {
-          validators: CosmosValidatorItem[];
-        });
+        .mockReturnValue(validatorsMap);
       jest.spyOn(logic, "canDelegate").mockReturnValue(false);
       jest.spyOn(logic, "canRedelegate").mockReturnValue(false);
       account.cosmosResources.redelegations.push({

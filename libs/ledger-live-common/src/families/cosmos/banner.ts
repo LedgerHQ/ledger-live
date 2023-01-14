@@ -31,7 +31,9 @@ export function getAccountBannerState(
     account.currency.id
   ).ledgerValidator;
   // Get ledger validator data
-  const { validators } = getCurrentCosmosPreloadData();
+  const { validators } = getCurrentCosmosPreloadData()[account.currency.id] ?? {
+    validators: [],
+  };
   const ledgerValidator = validators.find(
     (validator) => validator.validatorAddress === LEDGER_VALIDATOR_ADDRESS
   );

@@ -3,12 +3,7 @@ import { BigNumber } from "bignumber.js";
 import { getCurrentCosmosPreloadData } from "./preloadedData";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
-import {
-  CosmosOperation,
-  CosmosExtraTxInfo,
-  CosmosPreloadData,
-  CosmosAccount,
-} from "./types";
+import { CosmosOperation, CosmosExtraTxInfo, CosmosAccount } from "./types";
 import { mapDelegations, mapUnbondings, mapRedelegations } from "./logic";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 
@@ -32,15 +27,12 @@ function formatOperationSpecifics(
     .join("");
 }
 
-function getCurrentCosmosFamilyPreloadData(): CosmosPreloadData {
-  return getCurrentCosmosPreloadData();
-}
-
 export function formatAccountSpecifics(account: CosmosAccount): string {
   const { cosmosResources } = account;
   invariant(cosmosResources, "cosmos account expected");
-  const { validators } = getCurrentCosmosFamilyPreloadData();
-
+  const { validators } = getCurrentCosmosPreloadData()[account.currency.id] ?? {
+    validators: [],
+  };
   const unit = getAccountUnit(account);
   const formatConfig = {
     disableRounding: true,

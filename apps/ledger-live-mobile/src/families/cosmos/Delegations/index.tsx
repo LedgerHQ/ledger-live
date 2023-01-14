@@ -80,7 +80,7 @@ function Delegations({ account }: Props) {
   const unit = getAccountUnit(mainAccount);
   const navigation = useNavigation();
 
-  const { validators } = useCosmosFamilyPreloadData("cosmos");
+  const { validators } = useCosmosFamilyPreloadData(account.currency.id);
 
   const { cosmosResources } = mainAccount;
 

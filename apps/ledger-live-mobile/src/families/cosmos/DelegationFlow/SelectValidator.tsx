@@ -29,7 +29,7 @@ export default function SelectValidator({ navigation, route }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const validators = useLedgerFirstShuffledValidatorsCosmosFamily(
-    "cosmos",
+    account.currency.id,
     searchQuery,
   );
 

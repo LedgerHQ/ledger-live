@@ -165,7 +165,7 @@ function cosmosLikeMutations(currency: string): MutationSpec<Transaction>[] {
           (cosmosResources as CosmosResources).delegations.length < 3,
           "already enough delegations"
         );
-        const data = getCurrentCosmosPreloadData();
+        const data = getCurrentCosmosPreloadData()[account.currency.id];
         const count = 1; // we'r always going to have only one validator because of the new delegation flow.
         let remaining = getMaxDelegationAvailable(
           account as CosmosAccount,

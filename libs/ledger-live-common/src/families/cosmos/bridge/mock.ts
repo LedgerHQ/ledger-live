@@ -131,11 +131,11 @@ const accountBridge: AccountBridge<Transaction> = {
 const currencyBridge: CurrencyBridge = {
   scanAccounts,
   preload: () => {
-    setCosmosPreloadData(mockPreloadedData);
+    setCosmosPreloadData("cosmos", mockPreloadedData);
     return Promise.resolve(mockPreloadedData);
   },
   hydrate: (data: { validators?: CosmosValidatorItem[] }) => {
-    setCosmosPreloadData(asSafeCosmosPreloadData(data));
+    setCosmosPreloadData("cosmos", asSafeCosmosPreloadData(data));
   },
 };
 export default {
