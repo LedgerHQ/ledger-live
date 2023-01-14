@@ -102,6 +102,7 @@
     "addressCopied" : "Dirección copiada",
     "addressCopiedSuspicious" : "La dirección copiada y la del portapapeles no coinciden.",
     "experimentalFeature" : "Experimental",
+    "featureFlags" : "Marcas de funciones",
     "information" : "Información",
     "search" : "Buscar...",
     "searchWithoutEllipsis" : "Buscar",
@@ -131,7 +132,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blue"
   },
   "operation" : {
@@ -1206,8 +1207,11 @@
         "checkDeviceButton" : "Volver a ejecutar la verificación de autenticidad",
         "cancelButton" : "Quizás más tarde"
       },
-      "genuineCheckAnimationModal" : {
-        "message" : "Permitir manager en {{deviceName}}"
+      "softwareCheckAllowSecureChannelModal" : {
+        "title" : "Permitir manager en {{deviceName}}"
+      },
+      "softwareCheckLockedDeviceModal" : {
+        "title" : "Desbloquea tu dispositivo"
       },
       "helpDrawer" : {
         "title" : "¿Necesitas ayuda con el manual de configuración?",
@@ -1718,7 +1722,7 @@
     "swap" : {
       "notice" : {
         "default" : "Verifica los detalles de la permuta en tu dispositivo antes de enviarla. Las direcciones se intercambian de forma segura por lo que no es necesario verificarlas.",
-        "cic" : "Verifica la información de permuta en tu dispositivo antes de enviarlo. CIC tal vez requiera una verificación adicional para algunas transacciones, lo que puede provocar retrasos."
+        "provider" : "Verifica la información de permuta en tu dispositivo antes de enviar la transacción. {{providerName}} tal vez requiera una verificación adicional para algunas transacciones, lo que puede provocar retrasos."
       },
       "confirm" : "Confirmar transacción de permuta",
       "amountSent" : "Importe a enviar",
@@ -2611,7 +2615,7 @@
   "cosmos" : {
     "delegation" : {
       "emptyState" : {
-        "description" : "Puedes recibir recompensas ATOM delegando tu activos.",
+        "description" : "Puedes recibir recompensas en {{currencyTicker}} delegando tu activos.",
         "info" : "Cómo funciona la delegación",
         "delegation" : "Recibir recompensas"
       },
@@ -2636,8 +2640,8 @@
         "title" : "Delegar",
         "steps" : {
           "starter" : {
-            "description" : "Puedes recibir recompensas delegando tus activos ATOM a un validador.",
-            "bullet" : ["Conservas la propiedad de los activos delegados", "Delegar utilizando tu dispositivo Ledger", "Los activos estarán disponibles 21 días después de la desdelegación"],
+            "description" : "Puedes recibir recompensas delegando tus activos {{currencyTicker}} a un validador.",
+            "bullet" : ["Conservas la propiedad de los activos delegados", "Delegar utilizando tu dispositivo Ledger", "Los activos estarán disponibles {{numberOfDays}} días después de la desdelegación."],
             "warning" : {
               "description" : "Elige tu validador con cuidado: Puedes perder definitivamente parte de tus activos delegados si el validador no se comporta apropiadamente."
             }
@@ -2714,7 +2718,7 @@
             "currentDelegation" : "Delegación actual",
             "newDelegation" : "Nueva delegación",
             "chooseValidator" : "Elegir un validador",
-            "warning" : "Deberás esperar <0>21 días</0> para redelegarlas desde el nuevo validador, si cambias de opinión de nuevo.",
+            "warning" : "Deberás esperar <0>{{numberOfDays}}</0> para redelegarlos desde el nuevo validador, si cambias de opinión de nuevo.",
             "amountLabel" : "Importe a redelegar"
           },
           "device" : {
@@ -2741,7 +2745,7 @@
         "steps" : {
           "amount" : {
             "title" : "Importe",
-            "subtitle" : "El proceso de desdelegación tarda <0>21 días</0> en finalizar.",
+            "subtitle" : "El proceso de desdelegación tarda <0>{{numberOfDays}}</0> en finalizar.",
             "warning" : "Las recompensas se cobran inmediatamente. Los montos no delegados volverán al saldo disponible luego del <0>bloqueo de tiempo de 21 días</0>.",
             "fields" : {
               "validator" : "Validador",
@@ -2826,176 +2830,6 @@
             "success" : {
               "title" : "¡Recompensas reclamadas correctamente!",
               "text" : "Tus recompensas fueron añadidas a tu saldo disponible",
-              "cta" : "Ver detalles"
-            },
-            "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
-          }
-        }
-      }
-    }
-  },
-  "osmosis" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Con tecnología de Figment",
-        "moreInfo" : "Más información",
-        "drawerTitle" : "Con tecnología de Figment",
-        "title" : "El token OSMO ya está disponible en Ledger Live",
-        "description" : "Ahora puedes gestionar tus tokens OSMO y protegerlos con Ledger Live.",
-        "description2" : "El token OSMO es nativo de la cadena Osmosis y se utiliza para transacciones, puesta en participación y muchas más opciones próximamente.",
-        "website" : "Con tecnología de Figment"
-      }
-    },
-    "memo" : "Memo",
-    "memoPlaceholder" : "Opcional",
-    "memoWarningText" : "Cuando utilices un memo, asegúrate de que el receptor confirme la información",
-    "delegation" : {
-      "emptyState" : {
-        "description" : "Puedes recibir recompensas OSMO delegando tus activos.",
-        "info" : "Cómo funciona la delegación",
-        "delegation" : "Recibir recompensas"
-      },
-      "commission" : "Comisión",
-      "totalStake" : "Participación total",
-      "claimRewards" : "Reclamar recompensas",
-      "header" : "Delegaciones",
-      "noRewards" : "No hay recompensas disponibles",
-      "delegate" : "Agregar",
-      "undelegate" : "Desdelegar",
-      "redelegate" : "Redelegar",
-      "redelegateDisabledTooltip" : "Puedes volver a delegar <0>{{days}}</0>",
-      "redelegateMaxDisabledTooltip" : "No puedes redelegar más de <0>7</0> validadores a la vez.",
-      "undelegateDisabledTooltip" : "No puedes desdelegar más de <0>7</0> validadores a la vez.",
-      "reward" : "Reclamar recompensas",
-      "currentDelegation" : "Delegado: <0>{{amount}}</0>",
-      "estYield" : "rendimiento est.",
-      "activeTooltip" : "Los importes delegados generan recompensas",
-      "inactiveTooltip" : "Los importes no delegados no generan recompensas",
-      "minSafeWarning" : "No hay fondos suficientes",
-      "flow" : {
-        "title" : "Delegar",
-        "steps" : {
-          "starter" : {
-            "description" : "Puedes recibir recompensas delegando tus activos OSMO a un validador.",
-            "bullet" : ["Conservas la propiedad de los activos delegados", "Delegar utilizando tu dispositivo Ledger", "Los activos estarán disponibles 14 días después de la desdelegación"],
-            "warning" : {
-              "description" : "Elige tu validador con cuidado: Puedes perder irreversiblemente parte de tus activos delegados si el validador no se comporta apropiadamente."
-            }
-          },
-          "amount" : {
-            "title" : "Importe"
-          },
-          "validator" : {
-            "title" : "Validadores"
-          },
-          "connectDevice" : {
-            "title" : "Dispositivo"
-          },
-          "confirmation" : {
-            "title" : "Confirmación",
-            "success" : {
-              "title" : "Has delegado tus activos con éxito",
-              "text" : "El saldo de tu cuenta se actualizará cuando la cadena de bloques confirme la transacción.",
-              "cta" : "Ver detalles"
-            },
-            "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
-          }
-        }
-      }
-    },
-    "claimRewards" : {
-      "flow" : {
-        "title" : "Reclamar recompensas",
-        "steps" : {
-          "claimRewards" : {
-            "title" : "Recompensas",
-            "compound" : "Compound",
-            "claim" : "Cobrar",
-            "compoundOrClaim" : "Compound o cobro",
-            "compoundDescription" : "Se añadirán recompensas al importe delegado",
-            "claimDescription" : "Las recompensas se agregarán al saldo disponible",
-            "compoundInfo" : "Has ganado <0>{{amount}}</0>. Al hacer clic en \"Continuar\", serán reclamados y delegados automáticamente al mismo validador.",
-            "claimInfo" : "Has ganado <0>{{amount}}</0> del siguiente validador. Al hacer clic sobre \"Continuar\", serán reclamados y agregados automáticamente al saldo disponible.",
-            "selectLabel" : "Seleccionar una delegación"
-          },
-          "connectDevice" : {
-            "title" : "Dispositivo"
-          },
-          "confirmation" : {
-            "title" : "Confirmación",
-            "label" : "Confirmación",
-            "success" : {
-              "title" : "Recompensas cobradas con éxito",
-              "titleCompound" : "Recompensas enviadas a Compound con éxito",
-              "text" : "Tus recompensas fueron añadidas a tu saldo disponible",
-              "textCompound" : "Tus recompensas de<0>{{amount}}</0> fueron delegadas automáticamente a <0>{{validator}}</0>",
-              "cta" : "Ver detalles"
-            },
-            "pending" : {
-              "title" : "Transmitiendo transacción..."
-            },
-            "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
-          }
-        }
-      }
-    },
-    "redelegation" : {
-      "flow" : {
-        "title" : "Redelegar activos",
-        "steps" : {
-          "starter" : {
-            "title" : "Redelegación",
-            "description" : "Utiliza la redelegación para cambiar con facilidad de un validador a otro. Aunque debe tener en cuenta de que si cambias de opinión de nuevo, deberás esperar ya que la redelegación genera un bloqueo de 14 días.",
-            "warning" : "Elige tu validador con cuidado: Puedes perder definitivamente parte de tus activos delegados si el validador no se comporta apropiadamente. Puedes tener un máximo de <0>7 redelegaciones pendientes</0>.",
-            "howDelegationWorks" : "¿Cómo funciona la delegación?"
-          },
-          "validators" : {
-            "title" : "Validadores",
-            "currentDelegation" : "Delegación actual",
-            "newDelegation" : "Nueva delegación",
-            "chooseValidator" : "Elegir un validador",
-            "warning" : "Deberás esperar <0>14 días</0> para redelegarlas desde el nuevo validador, si cambias de opinión de nuevo.",
-            "amountLabel" : "Importe a redelegar"
-          },
-          "device" : {
-            "title" : "Dispositivo"
-          },
-          "confirmation" : {
-            "title" : "Confirmación",
-            "success" : {
-              "title" : "Has redelegado tus activos correctamente",
-              "text" : "La redelegación se actualizará una vez que la cadena de bloques haya confirmado la transacción",
-              "cta" : "Ver detalles"
-            },
-            "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
-          }
-        }
-      }
-    },
-    "undelegation" : {
-      "header" : "Desdelegaciones",
-      "headerTooltip" : "Disponible después de un bloqueo temporal de 14 días",
-      "inactiveTooltip" : "Los importes desdelegados no generan recompensas.",
-      "flow" : {
-        "title" : "Desdelegar activos",
-        "steps" : {
-          "amount" : {
-            "title" : "Importe",
-            "subtitle" : "El proceso de desdelegación tarda <0>14 días</0> en finalizar.",
-            "warning" : "Las recompensas se cobran inmediatamente. Los montos no delegados volverán al saldo disponible luego del <0>bloqueo de tiempo de 14 días</0>.",
-            "fields" : {
-              "validator" : "Validador",
-              "amount" : "Importe a desdelegar"
-            }
-          },
-          "device" : {
-            "title" : "Dispositivo"
-          },
-          "confirmation" : {
-            "title" : "Confirmación",
-            "success" : {
-              "title" : "Has desdelegado con éxito tus activos.",
-              "description" : "<0>{{amount}}</0> fueron desdelegados de <0>{{validator}}</0>.",
               "cta" : "Ver detalles"
             },
             "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
@@ -3689,8 +3523,10 @@
       "debugAppsDesc" : "Mostrar y permitir la utilización de aplicaciones de plataforma etiquetadas como de depuración.",
       "experimentalApps" : "Permitir aplicaciones experimentales",
       "experimentalAppsDesc" : "Mostrar y permitir la utilización de aplicaciones de plataforma etiquetadas como experimentales.",
-      "catalogServer" : "Definir el proveedor del catálogo",
-      "catalogServerDesc" : "Cambiar entre distintas fuentes de aplicaciones de plataforma",
+      "catalogUrl" : "Definir el proveedor del catálogo de aplicaciones",
+      "catalogUrlDesc" : "Introduce la URL del proveedor del catálogo personalizado",
+      "catalogRampServer" : "Definir los proveedores de compra y venta",
+      "catalogRampServerDesc" : "Cambiar entre varios proveedores de operaciones",
       "enablePlatformDevTools" : "Habilitar herramientas de desarrollador de plataforma",
       "enablePlatformDevToolsDesc" : "Habilitar ventana de herramientas de desarrollador de aplicaciones de plataforma",
       "featureFlagsTitle" : "Marcas de funciones definidas que se usan en Ledger Live",
@@ -3698,6 +3534,9 @@
       "featureFlagsEdit" : "Editar",
       "featureFlagsRestore" : "Restaurar",
       "featureFlagsOverride" : "Anular",
+      "featureFlagsRestoreAll" : "Restaurar los valores de todas las marcas",
+      "showButtonDesc" : "Mostrar siempre el botón Marcas de funciones en la barra lateral",
+      "buttonTitle" : "Señales de alarma anuladas localmente",
       "firebaseProject" : "Proyecto de Firebase al que se refiere esta compilación:",
       "addLocalApp" : "Añadir una aplicación local",
       "addLocalAppDesc" : "Explorar archivos locales y añadir una aplicación local usando un manifiesto local",
@@ -3756,6 +3595,10 @@
         "experimentalCurrencies" : {
           "title" : "Integraciones experimentales",
           "description" : "Utilizar integraciones experimentales de actrivos cripto disponibles."
+        },
+        "experimentalExecutionOnRenderer" : {
+          "title" : "Redes experimentales",
+          "description" : "Usa las redes experimentales para optimizar tu experiencia con Ledger Live con tu VPN. Activa esta opción solo si tu VPN actual provoca errores del sistema."
         },
         "experimentalLanguages" : {
           "title" : "Probar traducciones",
@@ -5497,6 +5340,14 @@
       "title" : "Tu dispositivo está bloqueado",
       "description" : "Desbloquea tu dispositivo e inténtalo de nuevo.",
       "descriptionWithProductName" : "Desbloquea tu {{ productName }} e inténtalo de nuevo."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "Tu dispositivo aún no está listo para usar",
+      "titleWithProductName" : "{{ productName }} aún no está listo para que lo uses.",
+      "description" : "Primero debes configurar tu dispositivo.\nTe guiaremos a lo largo del proceso de configuración.",
+      "descriptionWithProductName" : "Primero debes configurar tu {{ productName }}.\nTe guiaremos a lo largo del proceso de configuración.",
+      "goToOnboardingButton" : "Configurar mi dispositivo",
+      "goToOnboardingButtonWithProductName" : "Configurar mi {{ productName }}"
     }
   },
   "cryptoOrg" : {
@@ -5559,8 +5410,7 @@
     "postOnboarding" : {
       "title" : "Personalizar mi dispositivo",
       "description" : "adaptando la pantalla a mis necesidades",
-      "actionCompletedPopupLabel" : "Dispositivo personalizado",
-      "actionCompletedHubTitle" : "Esa pantalla tiene muy buen aspecto."
+      "actionCompletedPopupLabel" : "Dispositivo personalizado"
     },
     "customImageSet" : "Imagen personalizada establecida",
     "finishCTA" : "Finalizar"
