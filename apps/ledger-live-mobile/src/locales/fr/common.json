@@ -3622,7 +3622,7 @@
       "title" : "Confirmer l’opération de swap sur l’appareil",
       "alert" : {
         "default" : "Vérifiez les détails de l’échange sur votre appareil avant de l’envoyer. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier.",
-        "cic" : "Vérifiez les détails de l’échange sur votre appareil avant de l’envoyer. Une vérification supplémentaire peut être effectuée par CIC pour certains transactions, entraînant un temps d’attente."
+        "provider" : "Vérifiez les détails de l’échange sur votre appareil avant de l’envoyer. Une vérification supplémentaire peut être effectuée par {{providerName}} pour certaines transactions, entraînant un temps d’attente."
       },
       "acceptTerms" : "En validant cette transaction, j’accepte\n<0>les Conditions d’utilisation de <0>{{provider}}</0></0>.",
       "notice" : "Vérifiez les détails de l’échange sur votre appareil avant de l’envoyer. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier."
@@ -4425,44 +4425,19 @@
       "activatableVotes" : "Vos votes peuvent maintenant être activés."
     }
   },
-  "osmosis" : {
-    "info" : {
-      "available" : {
-        "title" : "OSMO disponibles"
-      },
-      "delegated" : {
-        "description" : "Les actifs délégués sont utilisés pour voter sur Osmosis. Cela représente votre nombre total de votes."
-      },
-      "undelegating" : {
-        "description" : "Les actifs dont la délégation est interrompue sont disponibles après 14 jours."
-      }
-    },
-    "delegation" : {
-      "flow" : {
-        "steps" : {
-          "starter" : {
-            "description" : "Déléguez vos OSMO pour gagner des récompenses en toute sécurité en gardant le contrôle de vos actifs.",
-            "steps" : {
-              "1" : "Vous devrez attendre 14 jours pour que l’interruption de délégation soit terminée."
-            }
-          }
-        }
-      }
-    }
-  },
   "cosmos" : {
     "info" : {
       "available" : {
-        "title" : "ATOM disponible",
+        "title" : "{{currencyTicker}} disponibles",
         "description" : "Ce montant est disponible."
       },
       "delegated" : {
         "title" : "Actifs délégués",
-        "description" : "Les actifs délégués sont utilisés pour voter sur Cosmos. Cela représente votre nombre total de votes."
+        "description" : "Les actifs délégués sont utilisés pour voter sur {{currencyName}}. Cela représente votre nombre total de votes."
       },
       "undelegating" : {
         "title" : "Délégation interrompue",
-        "description" : "Les actifs dont la délégation est interrompue sont disponibles après 21 jours."
+        "description" : "Les actifs dont la délégation est interrompue sont disponibles après {{numberOfDays}} jours."
       },
       "delegationUnavailable" : {
         "title" : "Délégation indisponible",
@@ -4470,7 +4445,7 @@
       }
     },
     "delegation" : {
-      "delegationEarn" : "Vous pouvez gagner des récompenses ATOM en déléguant vos actifs.",
+      "delegationEarn" : "Vous pouvez gagner des récompenses en {{ticker}} en déléguant vos actifs.",
       "info" : "Fonctionnement de la délégation",
       "claimRewards" : "Demander les récompenses",
       "claimAvailableRewards" : "Demander {{amount}}",
@@ -4498,10 +4473,10 @@
       "flow" : {
         "steps" : {
           "starter" : {
-            "description" : "Déléguez vos ATOM pour gagner des récompenses en toute sécurité en gardant le contrôle de vos actifs.",
+            "description" : "Déléguez vos {{ticker}} pour gagner des récompenses en toute sécurité en gardant le contrôle de vos actifs.",
             "steps" : {
               "0" : "Vous conservez la propriété de vos actifs délégués.",
-              "1" : "Vous devrez attendre 21 jours pour que l’interruption de délégation soit terminée.",
+              "1" : "Vous devrez attendre {{numberOfDays}} jours pour que l’interruption de délégation soit terminée.",
               "2" : "Déléguez en toute sécurité avec votre appareil Ledger."
             },
             "warning" : {
