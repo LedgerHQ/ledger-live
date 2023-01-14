@@ -34,12 +34,12 @@ describe("cosmos/react", () => {
   describe("useCosmosFamilyPreloadData", () => {
     it("should return Cosmos preload data and updates", async () => {
       const { prepare } = setup();
+      await act(() => prepare());
       const { result } = renderHook(() =>
         hooks.useCosmosFamilyPreloadData("cosmos")
       );
       const data = getCurrentCosmosPreloadData()["cosmos"];
       expect(result.current).toStrictEqual(data);
-      await act(() => prepare());
       expect(result.current).toStrictEqual(preloadedMockData);
     });
   });
