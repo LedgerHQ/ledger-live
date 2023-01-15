@@ -84,14 +84,14 @@ function Delegations({ account }: Props) {
   }, [onNavigate]);
 
   const onUndelegate = useCallback(() => {
-    // onNavigate({
-    //   route: NavigatorName.CosmosUndelegationFlow,
-    //   screen: ScreenName.CosmosUndelegationAmount,
-    //   params: {
-    //     accountId: account.id,
-    //     delegation,
-    //   },
-    // });
+    onNavigate({
+      route: NavigatorName.CardanoUndelegationFlow,
+      screen: ScreenName.CardanoUndelegationSummary,
+      params: {
+        accountId: account.id,
+        delegation,
+      },
+    });
   }, [onNavigate, delegation, account]);
 
   const onCloseDrawer = useCallback(() => {

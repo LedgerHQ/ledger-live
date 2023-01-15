@@ -4149,6 +4149,11 @@
         "description": "Not enough available balance in your account to start a new delegation."
       }
     },
+    "undelegation": {
+      "undelegate": "Undelegate",
+      "undelegationMessage": "By un-delegating you will not receive any rewards for current and upcoming epochs",
+      "verificationSuccessTitle": "You have successfully undelegated your assets"
+    },
     "delegation": {
       "pool": "Pool",
       "poolId": "Pool Id",
@@ -4160,7 +4165,6 @@
       "info": "How Delegation works",
       "header": "Delegation(s)",
       "delegate": "Delegate",
-      "undelegate": "Undelegate",
       "redelegate": "Redelegate",
       "estYield": "Est. yield",
       "totalStake": "Total Stake",
@@ -4170,6 +4174,7 @@
       "change": "Change",
       "networkFees": "Network Fees",
       "stakeKeyRegistrationDeposit": "Stake Key Registration deposit",
+      "stakeKeyRegistrationDepositRefund": "Stake Key Registration deposit refund",
       "stepperHeader": {
         "starter": "Earn rewards",
         "validator": "Delegate assets",
