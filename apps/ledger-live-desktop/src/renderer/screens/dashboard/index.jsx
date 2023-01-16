@@ -30,6 +30,7 @@ import EmptyStateInstalledApps from "~/renderer/screens/dashboard/EmptyStateInst
 import EmptyStateAccounts from "~/renderer/screens/dashboard/EmptyStateAccounts";
 import { useRefreshAccountsOrderingEffect } from "~/renderer/actions/general";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
+import FeaturedButtons from "~/renderer/screens/dashboard/FeaturedButtons";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer: ThemedComponent<{}> = styled.div`
@@ -112,6 +113,7 @@ export default function DashboardPage() {
           {"THIS IS A PLACE HOLDER TO ACCESS POST ONBOARDING HUB CLICK ME!"}
         </PostOnboardingHubTriggerPlaceHolder>
       )}
+      <FeaturedButtons />
       <TrackPage
         category="Portfolio"
         totalAccounts={totalAccounts}
