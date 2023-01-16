@@ -54,7 +54,7 @@ const Delegation = ({ account, parentAccount }: Props) => {
             <Box mt={2}>
               <LinkWithExternalIcon
                 label={t("delegation.howItWorks")}
-                onClick={() => openURL(urls.stakingTezos)}
+                onClick={() => openURL(urls.cardanoStakingRewards)}
               />
             </Box>
           </Box>

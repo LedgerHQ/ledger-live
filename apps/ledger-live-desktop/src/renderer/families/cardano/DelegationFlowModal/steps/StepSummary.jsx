@@ -5,17 +5,14 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import {
   getAccountCurrency,
-  getAccountName,
   getAccountUnit,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
-import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Text from "~/renderer/components/Text";
-import { rgba } from "~/renderer/styles/helpers";
 import CounterValue from "~/renderer/components/CounterValue";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import type { StepProps } from "../types";
@@ -32,15 +29,13 @@ const Separator: ThemedComponent<{}> = styled.div`
 
 export default class StepSummary extends PureComponent<StepProps> {
   render() {
-    const { account, parentAccount, transaction, currencyName, status, selectedPool } = this.props;
+    const { account, parentAccount, transaction, status, selectedPool } = this.props;
     if (!account) return null;
     const mainAccount = getMainAccount(account, parentAccount);
     if (!transaction) return null;
-    const { estimatedFees, amount, totalSpent, txInputs } = status;
-    const currency = getAccountCurrency(account);
+    const { estimatedFees } = status;
     const feesUnit = getAccountUnit(mainAccount);
     const feesCurrency = getAccountCurrency(mainAccount);
-    const unit = getAccountUnit(account);
 
     const showDeposit = !account.cardanoResources?.delegation?.status;
     const stakeKeyDeposit = account.cardanoResources?.protocolParams.stakeKeyDeposit;
@@ -154,14 +149,10 @@ export function StepSummaryFooter({
   bridgePending,
   transaction,
 }: StepProps) {
-  // invariant(account, "account required");
-  const { errors } = status;
   const canNext = true;
-  // !bridgePending && !errors.validators && transaction && transaction.validators.length > 0;
 
   return (
     <>
-      {/* <AccountFooter parentAccount={parentAccount} account={account} status={status} /> */}
       <Box horizontal>
         <Button mr={1} secondary onClick={() => transitionTo("validator")}>
           <Trans i18nKey="common.back" />

@@ -2,7 +2,6 @@
 import invariant from "invariant";
 import React from "react";
 import { Trans } from "react-i18next";
-import { BigNumber } from "bignumber.js";
 
 import type { StepProps } from "../types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -75,7 +74,7 @@ export function StepDelegationFooter({
 }: StepProps) {
   invariant(account, "account required");
   const { errors } = status;
-  // FIX ME
+
   const canNext = !bridgePending && !errors.validators && transaction;
 
   return (

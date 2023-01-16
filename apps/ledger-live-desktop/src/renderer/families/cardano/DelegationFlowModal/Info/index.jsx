@@ -7,7 +7,6 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 
 import { openModal, closeModal } from "~/renderer/actions/modals";
 import EarnRewardsInfoModal from "~/renderer/components/EarnRewardsInfoModal";
-import WarnBox from "~/renderer/components/WarnBox";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
@@ -45,9 +44,6 @@ export default function CardanoEarnRewardsInfoModal({ name, account, parentAccou
         t("cardano.delegation.flow.steps.starter.bullet.1"),
         t("cardano.delegation.flow.steps.starter.bullet.2"),
       ]}
-      // additional={
-      //   <WarnBox>{t("cardano.delegation.flow.steps.starter.warning.description")}</WarnBox>
-      // }
       footerLeft={<LinkWithExternalIcon label={t("delegation.howItWorks")} onClick={onLearnMore} />}
     />
   );

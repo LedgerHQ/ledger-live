@@ -3,11 +3,18 @@
 import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
+import {
+  getAccountUnit,
+  getMainAccount,
+  getAccountCurrency,
+} from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Text from "~/renderer/components/Text";
+import CounterValue from "~/renderer/components/CounterValue";
+import ErrorBanner from "~/renderer/components/ErrorBanner";
+
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import type { StepProps } from "../types";
 
@@ -22,16 +29,21 @@ const Separator: ThemedComponent<{}> = styled.div`
 
 export default class StepSummary extends PureComponent<StepProps> {
   render() {
-    const { account, parentAccount, transaction } = this.props;
+    const { account, parentAccount, transaction, status, error } = this.props;
+    const { estimatedFees } = status;
+
     if (!account) return null;
     const mainAccount = getMainAccount(account, parentAccount);
     if (!transaction) return null;
     const accountUnit = getAccountUnit(mainAccount);
+    const feesCurrency = getAccountCurrency(mainAccount);
 
     const stakeKeyDeposit = account.cardanoResources?.protocolParams.stakeKeyDeposit;
 
     return (
       <Box flow={4} mx={40}>
+        {error && <ErrorBanner error={error} />}
+
         <FromToWrapper>
           <Box>
             <Box horizontal alignItems="center">
@@ -61,6 +73,34 @@ export default class StepSummary extends PureComponent<StepProps> {
               />
             </Box>
           </Box>
+          <Separator />
+          <Box horizontal justifyContent="space-between">
+            <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
+              <Trans i18nKey="send.steps.details.fees" />
+            </Text>
+            <Box>
+              <FormattedVal
+                color={"palette.text.shade80"}
+                disableRounding
+                unit={accountUnit}
+                alwaysShowValue
+                val={estimatedFees}
+                fontSize={4}
+                inline
+                showCode
+              />
+              <Box textAlign="right">
+                <CounterValue
+                  color={"palette.text.shade60"}
+                  fontSize={3}
+                  currency={feesCurrency}
+                  value={estimatedFees}
+                  alwaysShowSign={false}
+                  alwaysShowValue
+                />
+              </Box>
+            </Box>
+          </Box>
         </FromToWrapper>
       </Box>
     );
@@ -77,7 +117,7 @@ export function StepSummaryFooter({
   transaction,
 }: StepProps) {
   const { errors } = status;
-  const canNext = true;
+  const canNext = !bridgePending && !errors.validators && transaction;
 
   return (
     <>

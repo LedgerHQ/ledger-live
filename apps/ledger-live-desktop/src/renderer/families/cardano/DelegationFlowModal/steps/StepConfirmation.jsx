@@ -14,8 +14,6 @@ import RetryButton from "~/renderer/components/RetryButton";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
-import { OperationDetails } from "~/renderer/drawers/OperationDetails";
-import { setDrawer } from "~/renderer/drawers/Provider";
 
 import type { StepProps } from "../types";
 
