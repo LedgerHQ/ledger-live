@@ -105,7 +105,6 @@ export function orchestrator(app: Probot) {
               summaryPrefix +
               `The **[workflow](${workflowUrl})** is currently running.`,
             text: tips,
-            started_at: new Date().toISOString(),
           },
         },
       });
@@ -320,16 +319,13 @@ export function orchestrator(app: Probot) {
       context.log.info(
         `[Orchestrator](check_run.created) ${payload.check_run.name}`
       );
-      // Create + update gate check run in pending state
+      // (Re)Create gate check run in pending state
       await createRunByName({
         octokit,
         owner,
         repo,
         sha: payload.check_run.head_sha,
         checkName: GATE_CHECK_RUN_NAME,
-        extraFields: {
-          started_at: new Date().toISOString(),
-        },
       });
       await updateGateCheckRun(
         octokit,
