@@ -96,7 +96,7 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
           {chosenDevice ? (
             <RemoveDeviceMenu
               open={showMenu}
-              device={chosenDevice as Device}
+              device={chosenDevice}
               onHideMenu={onHideMenu}
             />
           ) : null}
