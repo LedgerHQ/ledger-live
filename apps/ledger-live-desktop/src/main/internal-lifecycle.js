@@ -9,6 +9,7 @@ import InternalProcess from "./InternalProcess";
 import {
   transportCloseChannel,
   transportExchangeChannel,
+  transportExchangeBulkChannel,
   transportOpenChannel,
 } from "~/config/transportChannels";
 
@@ -183,15 +184,17 @@ ipcMain.on("hydrateCurrencyData", (event, { currencyId, serialized }) => {
   internal.send({ type: "hydrateCurrencyData", serialized, currencyId });
 });
 
-// TODO maybe add a timeout to avoid deadlocks ?
-const internalHandler = channel => {
+// route internal process messages to renderer
+const internalHandlerPromise = channel => {
   ipcMain.on(channel, (event, { data, requestId }) => {
     const replyChannel = `${channel}_RESPONSE_${requestId}`;
     const handler = message => {
       if (message.type === channel && message.requestId === requestId) {
         if (message.error) {
+          // reject
           event.reply(replyChannel, { error: message.error });
         } else {
+          // resolve
           event.reply(replyChannel, { data: message.data });
         }
         internal.process.removeListener("message", handler);
@@ -203,6 +206,31 @@ const internalHandler = channel => {
   });
 };
 
-internalHandler(transportOpenChannel);
-internalHandler(transportExchangeChannel);
-internalHandler(transportCloseChannel);
+// multi event version of internalHandler
+const internalHandlerObservable = channel => {
+  ipcMain.on(channel, (event, { data, requestId }) => {
+    const replyChannel = `${channel}_RESPONSE_${requestId}`;
+    const handler = message => {
+      if (message.type === channel && message.requestId === requestId) {
+        if (message.error) {
+          // error
+          event.reply(replyChannel, { error: message.error });
+        } else if (message.data) {
+          // next
+          event.reply(replyChannel, { data: message.data });
+        } else {
+          // complete
+          event.reply(replyChannel, {});
+          internal.process.removeListener("message", handler);
+        }
+      }
+    };
+    internal.process.on("message", handler);
+    internal.send({ type: channel, data, requestId });
+  });
+};
+
+internalHandlerPromise(transportOpenChannel);
+internalHandlerPromise(transportExchangeChannel);
+internalHandlerPromise(transportCloseChannel);
+internalHandlerObservable(transportExchangeBulkChannel);
