@@ -181,13 +181,29 @@ export const createRunByName = async ({
   checkName: string;
   extraFields?: Record<string, any>;
 }) => {
+  const getResponse = await getCheckRunByName({
+    octokit,
+    owner,
+    repo,
+    ref: sha,
+    checkName,
+  });
+
+  let started_at = new Date().toISOString();
+  if (getResponse.data.total_count > 0) {
+    const existingRun = getResponse.data.check_runs[0];
+    if (existingRun.status === "in_progress" && existingRun.started_at) {
+      started_at = existingRun.started_at;
+    }
+  }
+
   const { data: checkRun } = await octokit.checks.create({
     owner,
     repo,
     name: checkName,
     head_sha: sha,
     status: "in_progress",
-    started_at: new Date().toISOString(),
+    started_at,
     ...extraFields,
   });
 

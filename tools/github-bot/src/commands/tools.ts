@@ -265,7 +265,6 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
             summary:
               summaryPrefix +
               `The **[workflow](${workflowUrl})** is currently running.`,
-            started_at: new Date().toISOString(),
           },
         },
       });
