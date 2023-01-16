@@ -12,7 +12,7 @@ const minAmountCutoff = parseCurrencyUnit(currency.units[0], "0.1");
 const reserve = parseCurrencyUnit(currency.units[0], "20");
 
 const zilliqa: AppSpec<Transaction> = {
-  name: "ZIL",
+  name: "zilliqa",
   currency,
   appQuery: {
     model: DeviceModelId.nanoS,
@@ -49,29 +49,10 @@ const zilliqa: AppSpec<Transaction> = {
             {
               recipient,
             },
-            Math.random() > 0.5
-              ? {
-                  tag: 123,
-                }
-              : null,
           ],
         };
       },
-      test: ({
-        account,
-        /*transaction,*/ accountBeforeTransaction,
-        operation,
-      }) => {
-        /*
-        if (transaction.tag) {
-          botTest("operation tag matches (in extra)", () =>
-            expect(operation.extra).toMatchObject({
-              tag: transaction.tag,
-            })
-          );
-        }
-        */
-
+      test: ({ account, transaction, accountBeforeTransaction, operation }) => {
         botTest("account balance moved with operation.value", () =>
           expect(account.balance.toString()).toBe(
             accountBeforeTransaction.balance.minus(operation.value).toString()
