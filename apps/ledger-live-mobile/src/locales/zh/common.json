@@ -1115,6 +1115,12 @@
     "mostPopular" : "最受欢迎"
   },
   "installSetOfApps" : {
+    "restore" : {
+      "title" : "是否安装与 {{deviceName}} 上相同的应用程序？",
+      "titleNoDeviceName" : "是否安装与上一台 Ledger 设备上相同的应用程序？",
+      "installCTA" : "立即安装",
+      "skipCTA" : "我以后再下载"
+    },
     "landing" : {
       "estimatedTime" : "{{ minutes }} 分钟",
       "title" : "{{ productName }} 使用应用程序完成安全的区块链交易",
@@ -1126,7 +1132,7 @@
       "loading" : "正在加载……",
       "resolving" : "解决依赖关系",
       "progress" : "正在安装应用程序 {{progress}}%",
-      "disclaimer" : "{{ productName }} 上的应用程序用于批准交易。您可以随时添加或删除它们。"
+      "disclaimer" : "随时在 Ledger Live 中添加或删除应用程序。"
     }
   },
   "onboarding" : {
@@ -3622,7 +3628,7 @@
       "title" : "在设备上确认互换操作",
       "alert" : {
         "default" : "发送之前请在您的设备上验证互换详情。地址会被安全地交换因此您不必对其进行验证。",
-        "cic" : "在发送之前，请先在您的设备上核实互换详情。CIC 可能需要对某些交易进行额外的验证，从而导致延迟。"
+        "provider" : "发送资金之前，请先在您的设备上核实互换详情。{{providerName}} 可能需要对某些交易进行额外验证，因此导致延迟。"
       },
       "acceptTerms" : "验证此交易，即表示我接受\n<0><0>{{provider}}</0>的使用条款</0>",
       "notice" : "发送之前请在您的设备上验证互换详情。地址会被安全地交换因此您不必对其进行验证。"
