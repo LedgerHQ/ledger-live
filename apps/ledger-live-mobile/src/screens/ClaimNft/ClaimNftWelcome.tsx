@@ -27,6 +27,7 @@ const ClaimNftWelcome = () => {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const [isFirstVideo, setIsFirstVideo] = useState(true);
+  const [displayContent, setDisplayContent] = useState(false);
   const [firstVideoReadyForDisplay, setFirstVideoReadyForDisplay] =
     useState(false);
   const [videoDimensions, setVideoDimensions] = useState<{
@@ -63,6 +64,7 @@ const ClaimNftWelcome = () => {
 
   const handleFirstVideoReadyForDisplay = useCallback(() => {
     setFirstVideoReadyForDisplay(true);
+    setTimeout(() => setDisplayContent(true), 1800);
   }, []);
 
   const handleEndVideo = useCallback(() => {
@@ -119,7 +121,7 @@ const ClaimNftWelcome = () => {
           />
         ) : null}
       </Flex>
-      {!isFirstVideo ? (
+      {displayContent ? (
         <AnimatedFlex flex={2} px={6} justifyContent="space-evenly">
           <AnimatedFlex entering={SlideInLeft}>
             <Text
