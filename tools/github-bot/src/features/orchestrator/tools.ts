@@ -77,11 +77,15 @@ export async function updateGateCheckRun(
             (wr) => (wr as any).path === ".github/workflows/" + workflowMeta[0]
           );
 
+          const workflowLink =
+            workflowRun?.html_url &&
+            ` _[(workflow)](${workflowRun?.html_url})_`;
+
           summary += `\n- ${getStatusEmoji(
             check_run.conclusion || check_run.status
-          )} **[${check_run.name}](${workflowRun?.html_url ||
-            check_run.html_url})**: \`${check_run.conclusion ||
-            check_run.status}\``;
+          )} **[${check_run.name}](${
+            check_run.html_url
+          })**${workflowLink}: \`${check_run.conclusion || check_run.status}\``;
 
           const priority = conclusions.indexOf(
             check_run.conclusion || "neutral"
