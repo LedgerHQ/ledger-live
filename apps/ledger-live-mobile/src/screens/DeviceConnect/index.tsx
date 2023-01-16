@@ -6,6 +6,7 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppResult, createAction } from "@ledgerhq/live-common/hw/actions/app";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
+import { Flex } from "@ledgerhq/native-ui";
 import { TrackScreen } from "../../analytics";
 import SelectDevice2 from "../../components/SelectDevice2";
 import SelectDevice from "../../components/SelectDevice";
@@ -82,7 +83,9 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
       <TrackScreen category="DeviceConnect" name="ConnectDevice" />
       <SkipSelectDevice onResult={setDevice} />
       {newDeviceSelectionFeatureFlag?.enabled ? (
-        <SelectDevice2 onSelect={setDevice} stopBleScanning={!!device} />
+        <Flex px={16} py={5} flex={1}>
+          <SelectDevice2 onSelect={setDevice} stopBleScanning={!!device} />
+        </Flex>
       ) : (
         <NavigationScrollView
           style={styles.scroll}
