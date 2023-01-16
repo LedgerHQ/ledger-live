@@ -27,6 +27,7 @@ const INS_SIGN_TXN = 0x04;
 const INS_SIGN_HASH = 0x08;
 
 const ADDRESS_ZIL_NATIVE = 0x00;
+const P2_GET_ADDR_NO_VERIFY = 0x02;
 
 const HARDEN_CONSTANT = 0x80000000;
 
@@ -61,6 +62,13 @@ export default class Zilliqa {
     data: Buffer = Buffer.alloc(0),
     statusList: Array<number> = [SW_OK]
   ): Promise<Buffer> {
+    const input = Buffer.concat([
+      Buffer.from([cla, ins, p1, p2]),
+      Buffer.from([data.length]),
+      data,
+    ]);
+
+    console.log(`=> ${input.toString("hex")}`);
     const result = await this.transport.send(
       cla,
       ins,
@@ -70,7 +78,7 @@ export default class Zilliqa {
       statusList
     );
 
-    // console.log(`<= ${result.toString("hex")}`);
+    console.log(`<= ${result.toString("hex")}`);
     return result;
   }
 
@@ -92,7 +100,9 @@ export default class Zilliqa {
     });
   }
 
-  async getPathParametersFromPath(path: string): Promise<{
+  async getPathParametersFromPath(
+    path: string
+  ): Promise<{
     account: number;
     change: number;
     index: number;
@@ -102,7 +112,6 @@ export default class Zilliqa {
     // pnpm build:cli signMessage --currency zilliqa --path "44'/313'/0'/1'/0'" --message "hello world"
     // Validating that initial part of the path is hardened and starts
     // with `44'/313'/n'`.
-
     const pathParts = path.split("/");
     if (pathParts.length !== 5) {
       throw Error("Only valid BIP44 paths are supported.");
@@ -184,14 +193,20 @@ export default class Zilliqa {
    * @example
    * zilliqa.getAddress("44'/313'/0'/0/0", "zilliqa").then(o => o.address)
    */
-  async getAddress(path: string): Promise<{
+  async getAddress(
+    path: string,
+    verify?: boolean
+  ): Promise<{
     publicKey: string;
     address: string;
   }> {
+    console.log("HW GET addr:", path, verify);
+
     // Getting path parameters
     const { account, change, index } = await this.getPathParametersFromPath(
       path
     );
+    console.log("HW A:", account, change, index);
 
     // Preparing payload to send to the wallet app.
     const payload = Buffer.alloc(12);
@@ -204,10 +219,11 @@ export default class Zilliqa {
       CLA,
       INS_GET_PUBLIC_KEY,
       ADDRESS_ZIL_NATIVE,
-      0x0,
+      verify ? 0x0 : P2_GET_ADDR_NO_VERIFY,
       payload,
       [SW_OK]
     );
+
     const address = Buffer.from(response.slice(33, -2)).toString();
     const publicKey = Buffer.from(response.slice(0, 33)).toString("hex");
     return {
@@ -228,8 +244,12 @@ export default class Zilliqa {
     message: string
   ): Promise<{ signature: null | string; returnCode: number }> {
     // Getting path parameters
-    const { account, change, index, fullProtocol } =
-      await this.getPathParametersFromPath(path);
+    const {
+      account,
+      change,
+      index,
+      fullProtocol,
+    } = await this.getPathParametersFromPath(path);
 
     // If we are using the full protocol, we add change and index
     // as well to the parameters. Note that this is unfortunately not backward compatible.
@@ -309,8 +329,12 @@ export default class Zilliqa {
     message: string
   ): Promise<{ signature: null | string; returnCode: number }> {
     // Getting path parameters
-    const { account, change, index, fullProtocol } =
-      await this.getPathParametersFromPath(path);
+    const {
+      account,
+      change,
+      index,
+      fullProtocol,
+    } = await this.getPathParametersFromPath(path);
 
     const params = Buffer.alloc(fullProtocol ? 12 : 4);
     params.writeUInt32LE(account, 0);

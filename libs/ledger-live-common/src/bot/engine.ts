@@ -145,8 +145,7 @@ export async function runWithAppSpec<T extends Transaction>(
 
   // staticly assess if testDestination is necessary
   const mutationThatProducedDestinationsWithoutTests: MutationSpec<any>[] = [];
-  const mutationWithDestinationTestsWithoutDestination: MutationSpec<any>[] =
-    [];
+  const mutationWithDestinationTestsWithoutDestination: MutationSpec<any>[] = [];
 
   try {
     device = await createSpeculosDevice(deviceParams);
@@ -162,6 +161,7 @@ export async function runWithAppSpec<T extends Transaction>(
     // Scan all existing accounts
     const beforeScanTime = now();
     t = now();
+
     let accounts = await bridge
       .scanAccounts({
         currency,
