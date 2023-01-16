@@ -3749,10 +3749,6 @@
     "experimental" : {
       "disclaimer" : "Bu deneysel özellikleri, teknoloji tutkunu topluluğumuzun test edebilmesi için \"olduğu gibi\" sunmaktayız. Herhangi bir zamanda değişebilir, bozulabilir veya kaldırılabilirler. Bu özellikleri etkinleştirdiğinizde tüm riskin size ait olduğunu kabul etmiş olursunuz.",
       "features" : {
-        "apiTrongridProxy" : {
-          "title" : "TronGrid.io kullanın",
-          "description" : "Trongrid'i doğrudan Ledger sunucusu olmadan kullanın"
-        },
         "experimentalCurrencies" : {
           "title" : "Deneysel entegrasyonlar",
           "description" : "Mevcut deneysel kripto varlık entegrasyonlarını kullanın."
