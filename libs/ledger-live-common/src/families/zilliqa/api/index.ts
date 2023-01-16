@@ -112,6 +112,7 @@ function transactionToOperation(
     amount = amount.plus(fee);
   }
 
+  console.log("TRANSACTION", transaction);
   const ret: Operation = {
     id: encodeOperationId(accountId, transaction.txId, type),
     accountId,
@@ -128,7 +129,7 @@ function transactionToOperation(
     },
     senders: [toBech32(transaction.fromAddress)],
     recipients: transaction.toAddress ? [toBech32(transaction.toAddress)] : [],
-    hasFailed: false, // TODO:
+    hasFailed: transaction.accepted === false,
   };
 
   return ret;
@@ -156,7 +157,7 @@ export const getOperations = async (
           },
         },
         query:
-          "query TxDetails($input: TransactionDetailsInput) {\n  getTransactionDetails(input: $input) {\n    list {\n      blockId\n      txId\n      toAddress\n      fromAddress\n      tokenAddress\n      amount\n      cumulativeGas\n      gasPrice\n    }\n  }\n}\n",
+          "query TxDetails($input: TransactionDetailsInput) {\n  getTransactionDetails(input: $input) {\n    list {\n    accepted\n      blockId\n      txId\n      toAddress\n      fromAddress\n      tokenAddress\n      amount\n      cumulativeGas\n      gasPrice\n    }\n  }\n}\n",
       },
     })
   ).data.data;
@@ -175,7 +176,7 @@ export const getOperations = async (
           },
         },
         query:
-          "query TxDetails($input: TransactionDetailsInput) {\n  getTransactionDetails(input: $input) {\n    list {\n      blockId\n      txId\n      toAddress\n      fromAddress\n      tokenAddress\n      amount\n      cumulativeGas\n      gasPrice\n    }\n  }\n}\n",
+          "query TxDetails($input: TransactionDetailsInput) {\n  getTransactionDetails(input: $input) {\n    list {\n    accepted\n      blockId\n      txId\n      toAddress\n      fromAddress\n      tokenAddress\n      amount\n      cumulativeGas\n      gasPrice\n    }\n  }\n}\n",
       },
     })
   ).data.data;
