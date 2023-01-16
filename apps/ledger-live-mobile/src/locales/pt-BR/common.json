@@ -1115,6 +1115,12 @@
     "mostPopular" : "Mais populares"
   },
   "installSetOfApps" : {
+    "restore" : {
+      "title" : "Instalar os mesmos aplicativos da {{deviceName}}?",
+      "titleNoDeviceName" : "Instalar os mesmos aplicativos do dispositivo Ledger anterior?",
+      "installCTA" : "Instalar agora",
+      "skipCTA" : "Farei isso mais tarde."
+    },
     "landing" : {
       "estimatedTime" : "{{ minutes }} min",
       "title" : "A {{ productName }} utiliza aplicativos para permitir transações seguras em blockchains",
@@ -1126,7 +1132,7 @@
       "loading" : "Carregando...",
       "resolving" : "Resolvendo dependências",
       "progress" : "Instalando aplicativos {{progress}}%",
-      "disclaimer" : "Aplicativos da {{ productName }} são usados para aprovar transações. Você pode adicioná-los ou removê-los a qualquer momento."
+      "disclaimer" : "Adicione ou remova aplicativos a qualquer hora com o Ledger Live."
     }
   },
   "onboarding" : {
@@ -3622,7 +3628,7 @@
       "title" : "Confirmar a operação de troca no dispositivo",
       "alert" : {
         "default" : "Verifique os detalhes da troca no seu dispositivo antes de enviá-la. Os endereços são comunicados com segurança para que você não precise verificá-los.",
-        "cic" : "Verifique os detalhes da troca no seu dispositivo antes de enviá-la. O CIC pode precisar fazer verificações adicionais para algumas transações, resultando em demora."
+        "provider" : "Verifique os detalhes da troca no seu dispositivo antes de enviá-la. {{providerName}} pode precisar fazer verificações adicionais para algumas transações, resultando em demora."
       },
       "acceptTerms" : "Ao validar esta transação, eu aceito\nos termos de uso da <0><0>{{provider}}</0></0>",
       "notice" : "Verifique os detalhes da troca no seu dispositivo antes de enviá-la. Os endereços são comunicados com segurança para que você não precise verificá-los."
