@@ -54,4 +54,5 @@ setSupportedCurrencies([
   "songbird",
   "flare",
   "near",
+  "zilliqa",
 ]);
