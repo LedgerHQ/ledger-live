@@ -9,6 +9,7 @@ import type {
   NotificationsSetModalLockedPayload,
   NotificationsSetModalOpenPayload,
   NotificationsSetModalTypePayload,
+  DangerouslyOverrideStatePayload,
 } from "../actions/types";
 import { NotificationsActionTypes } from "../actions/types";
 
@@ -66,6 +67,15 @@ const handlers: ReducerMap<NotificationsState, NotificationsPayload> = {
     ...state,
     dataOfUser: (action as Action<NotificationsSetDataOfUserPayload>).payload
       .dataOfUser,
+  }),
+
+  [NotificationsActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (
+    state: NotificationsState,
+    action,
+  ): NotificationsState => ({
+    ...state,
+    ...(action as Action<DangerouslyOverrideStatePayload>).payload
+      .notifications,
   }),
 };
 

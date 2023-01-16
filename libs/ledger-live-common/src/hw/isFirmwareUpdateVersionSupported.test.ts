@@ -6,14 +6,14 @@ const goodDataset: { [key in DeviceModelId]?: string[] } = {
   nanoS: ["2.0.0", "3.0.0"],
   nanoX: ["1.3.0", "1.3.0-rc1"],
   nanoSP: ["1.0.0", "1.0.0-0", "1.1.1", "1.4.0", "1.1.0-rc1", "1.1.0-rc2"],
-  nanoFTS: ["1.0.0", "1.0.0rc2", "2.0.2-il0", "1.0.0-rc4"],
+  stax: ["1.0.0", "1.0.0rc2", "2.0.2-il0", "1.0.0-rc4"],
 };
 
 const badDataset: { [key in DeviceModelId]?: string[] } = {
   nanoS: ["1.6.0", "1.5.5", "1.5.5-wadus"],
   nanoX: ["1.2.4-5", "1.0.0"],
   nanoSP: ["0.9.9", "0.9.0-rc3"],
-  nanoFTS: ["0.4.6", "0.0.9-rc.2"],
+  stax: ["0.4.6", "0.0.9-rc.2"],
 };
 
 describe("Firmware update version availability checks", () => {

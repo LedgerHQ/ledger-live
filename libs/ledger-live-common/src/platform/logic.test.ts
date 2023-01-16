@@ -6,7 +6,7 @@ import {
   WebPlatformContext,
 } from "./logic";
 
-import { AppManifest } from "./types";
+import { LiveAppManifest } from "./types";
 import {
   createFixtureAccount,
   createFixtureTokenAccount,
@@ -199,7 +199,7 @@ describe("completeExchangeLogic", () => {
           fromAccount,
           fromParentAccount,
           toAccount: undefined,
-          toParentAccount: null,
+          toParentAccount: undefined,
         },
         transaction: expectedTransaction,
         binaryPayload: "binaryPayload",
@@ -257,9 +257,9 @@ describe("completeExchangeLogic", () => {
         provider: "provider",
         exchange: {
           fromAccount,
-          fromParentAccount: null,
+          fromParentAccount: undefined,
           toAccount: undefined,
-          toParentAccount: null,
+          toParentAccount: undefined,
         },
         transaction: expectedTransaction,
         binaryPayload: "binaryPayload",
@@ -657,7 +657,7 @@ describe("signMessageLogic", () => {
   });
 });
 
-function createAppManifest(id = "1"): AppManifest {
+function createAppManifest(id = "1"): LiveAppManifest {
   return {
     id,
     private: false,

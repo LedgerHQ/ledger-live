@@ -1,5 +1,6 @@
 import { handleActions } from "redux-actions";
 import type { Action, ReducerMap } from "redux-actions";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { BleState, State } from "./types";
 import type {
   BleAddKnownDevicePayload,
@@ -8,6 +9,7 @@ import type {
   BleRemoveKnownDevicePayload,
   BleRemoveKnownDevicesPayload,
   BleSaveDeviceNamePayload,
+  DangerouslyOverrideStatePayload,
 } from "../actions/types";
 import { BleActionTypes } from "../actions/types";
 
@@ -54,10 +56,30 @@ const handlers: ReducerMap<BleState, BlePayload> = {
       ),
     };
   },
+
+  [BleActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (
+    state: BleState,
+    action,
+  ): BleState => ({
+    ...state,
+    ...(action as Action<DangerouslyOverrideStatePayload>).payload.ble,
+  }),
 };
 // Selectors
 export const exportSelector = (s: State) => s.ble;
-export const knownDevicesSelector = (s: State) => s.ble.knownDevices;
+export const knownDevicesSelector = (s: State) => {
+  // Nb workaround to prevent crash for dev/qa that have nanoFTS references.
+  // to be removed in a while.
+  return s.ble.knownDevices.map(knownDevice => ({
+    ...knownDevice,
+    modelId:
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      knownDevice.modelId === "nanoFTS"
+        ? DeviceModelId.stax
+        : knownDevice.modelId,
+  }));
+};
 export const deviceNameByDeviceIdSelectorCreator =
   (deviceId: string) => (s: State) => {
     const d = s.ble.knownDevices.find(d => d.id === deviceId);

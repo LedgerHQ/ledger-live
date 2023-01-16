@@ -14,7 +14,7 @@ import { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import { StackNavigationProp } from "@react-navigation/stack";
 import InfoModal from "../InfoModal";
-import { track } from "../../analytics";
+import { useAnalytics } from "../../analytics";
 import { WrappedButtonProps } from "../wrappedUi/Button";
 
 export type ModalOnDisabledClickComponentProps = {
@@ -84,6 +84,7 @@ export const FabButtonBarProvider = ({
   eventProperties?: { [key: string]: unknown };
   children: (value: { quickActions: ActionButtonProps[] }) => ReactNode;
 }) => {
+  const { track } = useAnalytics();
   const [pressedDisabledAction, setPressedDisabledAction] = useState<
     ActionButtonEvent | undefined
   >(undefined);
@@ -140,7 +141,7 @@ export const FabButtonBarProvider = ({
         setIsModalInfoOpened(true);
       }
     },
-    [globalEventProperties, onNavigate],
+    [globalEventProperties, onNavigate, track],
   );
 
   const onContinue = useCallback(() => {

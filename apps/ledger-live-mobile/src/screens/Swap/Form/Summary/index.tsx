@@ -33,6 +33,8 @@ import {
 } from "../../../../components/RootNavigator/types/helpers";
 import type { SwapNavigatorParamList } from "../../../../components/RootNavigator/types/SwapNavigator";
 import type { SwapFormNavigatorParamList } from "../../../../components/RootNavigator/types/SwapFormNavigator";
+import { useAnalytics } from "../../../../analytics";
+import { sharedSwapTracking } from "../../utils";
 
 interface Props {
   provider?: string;
@@ -50,6 +52,7 @@ export function Summary({
   swapTx: { swap, status, transaction },
   kyc,
 }: Props) {
+  const { track } = useAnalytics();
   const navigation = useNavigation<Navigation["navigation"]>();
   const route = useRoute<Navigation["route"]>();
   const { t } = useTranslation();
@@ -70,14 +73,22 @@ export function Summary({
   const estimatedFees = useMemo(() => status?.estimatedFees ?? "", [status]);
 
   const onEditProvider = useCallback(() => {
+    track("button_clicked", {
+      ...sharedSwapTracking,
+      button: "provider",
+    });
     navigation.navigate(ScreenName.SwapSelectProvider, {
       swap,
       provider,
       selectedRate: exchangeRate,
     });
-  }, [navigation, swap, provider, exchangeRate]);
+  }, [navigation, swap, provider, exchangeRate, track]);
 
   const onAddAccount = useCallback(() => {
+    track("button_clicked", {
+      ...sharedSwapTracking,
+      button: "add account",
+    });
     if (!to.currency) return;
 
     const params = {
@@ -105,7 +116,7 @@ export function Summary({
         },
       });
     }
-  }, [navigation, to]);
+  }, [navigation, to, track]);
 
   const counterValueCurrency = to.currency || rawCounterValueCurrency;
   const effectiveUnit = from.currency?.units[0];
@@ -126,6 +137,35 @@ export function Summary({
       ? new BigNumber(rawCounterValue)
       : rawCounterValue;
   }, [effectiveUnit, exchangeRate?.magnitudeAwareRate, rawCounterValue]);
+
+  const onEditNetworkFees = useCallback(() => {
+    track("button_clicked", {
+      ...sharedSwapTracking,
+      button: "change network fees",
+    });
+    navigation.navigate(ScreenName.SwapSelectFees, {
+      ...route.params,
+      swap,
+      transaction,
+    });
+  }, [track, navigation, route.params, swap, transaction]);
+
+  const onEditTargetAccount = useCallback(() => {
+    track("button_clicked", {
+      ...sharedSwapTracking,
+      button: "change target account",
+    });
+    const selectableCurrencyIds =
+      to.currency?.type === "TokenCurrency"
+        ? [to.currency.id, to.currency.parentCurrency.id]
+        : [to.currency?.id as string];
+    navigation.navigate(ScreenName.SwapSelectAccount, {
+      target: "to",
+      selectedCurrency: to.currency!,
+      selectableCurrencyIds,
+      swap,
+    });
+  }, [track, navigation, to.currency, swap]);
 
   const fromUnit = from.currency?.units[0];
   const mainFromAccount =
@@ -192,13 +232,7 @@ export function Summary({
 
       <Item
         title={t("transfer.swap2.form.details.label.fees")}
-        onEdit={() =>
-          navigation.navigate(ScreenName.SwapSelectFees, {
-            ...route.params,
-            transaction,
-            swap,
-          })
-        }
+        onEdit={onEditNetworkFees}
       >
         <Text>
           <CurrencyUnitValue unit={mainAccountUnit} value={estimatedFees} />
@@ -208,18 +242,7 @@ export function Summary({
       {to.account ? (
         <Item
           title={t("transfer.swap2.form.details.label.target")}
-          onEdit={() => {
-            const selectableCurrencyIds =
-              to.currency?.type === "TokenCurrency"
-                ? [to.currency.id, to.currency.parentCurrency.id]
-                : [to.currency?.id as string];
-            navigation.navigate(ScreenName.SwapSelectAccount, {
-              target: "to",
-              selectedCurrency: to.currency!,
-              selectableCurrencyIds,
-              swap,
-            });
-          }}
+          onEdit={onEditTargetAccount}
         >
           <Flex flexDirection="row" alignItems="center">
             {<CurrencyIcon size={20} currency={to.currency} />}

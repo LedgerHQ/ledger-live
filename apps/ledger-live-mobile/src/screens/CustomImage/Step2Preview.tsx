@@ -24,7 +24,7 @@ import ImageProcessor, {
   ProcessorPreviewResult,
   ProcessorRawResult,
 } from "../../components/CustomImage/ImageProcessor";
-import { targetDimensions } from "./shared";
+import { targetDisplayDimensions } from "./shared";
 import BottomButtonsContainer from "../../components/CustomImage/BottomButtonsContainer";
 import ContrastChoice from "../../components/CustomImage/ContrastChoice";
 import { ScreenName } from "../../const";
@@ -116,7 +116,7 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
   );
 
   useResizedImage({
-    targetDimensions,
+    targetDimensions: targetDisplayDimensions,
     imageFileUri: croppedImage?.imageFileUri,
     onError: handleError,
     onResult: handleResizeResult,
@@ -214,7 +214,8 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
             style={{
               width: previewDimensions.width,
               height:
-                (targetDimensions.height / targetDimensions.width) *
+                (targetDisplayDimensions.height /
+                  targetDisplayDimensions.width) *
                 previewDimensions.width,
             }}
             resizeMode="contain"

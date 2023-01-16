@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Flex, Text } from "@ledgerhq/react-ui";
 import { ProcessorResult } from "~/renderer/components/CustomImage/ImageGrayscalePreview";
-import { targetDimensions } from "~/renderer/components/CustomImage/shared";
+import { targetDisplayDimensions } from "~/renderer/components/CustomImage/shared";
 import { ImageBase64Data } from "~/renderer/components/CustomImage/types";
 import { createCanvas } from "~/renderer/components/CustomImage/imageUtils";
 import { ImageProcessingError } from "@ledgerhq/live-common/customImage/errors";
@@ -95,7 +95,7 @@ const TestImage: React.FC<Props> = props => {
         {reconstructedImage ? (
           <img
             src={reconstructedImage?.imageBase64DataUri}
-            style={{ height: targetDimensions.height }}
+            style={{ height: targetDisplayDimensions.height }}
           />
         ) : null}
       </Flex>

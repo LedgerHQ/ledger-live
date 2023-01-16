@@ -34,6 +34,11 @@ jest.mock("../../../network", () => {
 });
 
 describe("fetch ERC20 Tokens", () => {
+  beforeEach(() => {
+    // @ts-expect-error exposed reset method from `makeLRUCache`
+    fetchERC20Tokens.reset();
+  });
+
   it("normal behaviour", async () => {
     expect((await fetchERC20Tokens()).length).toBe(2);
   });

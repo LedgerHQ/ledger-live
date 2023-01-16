@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Flex } from "@ledgerhq/native-ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import {
@@ -15,6 +16,7 @@ import { ScreenName } from "../../const";
 import CustomImageDeviceAction from "../../components/CustomImageDeviceAction";
 import TestImage from "../../components/CustomImage/TestImage";
 import SelectDevice from "../../components/SelectDevice";
+import SelectDevice2 from "../../components/SelectDevice2";
 import { useCompleteActionCallback } from "../../logic/postOnboarding/useCompleteAction";
 import {
   BaseComposite,
@@ -24,7 +26,7 @@ import { CustomImageNavigatorParamList } from "../../components/RootNavigator/ty
 import { addKnownDevice } from "../../actions/ble";
 import { lastConnectedDeviceSelector } from "../../reducers/settings";
 
-const deviceModelIds = [DeviceModelId.nanoFTS];
+const deviceModelIds = [DeviceModelId.stax];
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<
@@ -54,7 +56,7 @@ const Step3Transfer = ({ route, navigation }: NavigationProps) => {
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
 
   useEffect(() => {
-    if (!device && lastConnectedDevice?.modelId === DeviceModelId.nanoFTS) {
+    if (!device && lastConnectedDevice?.modelId === DeviceModelId.stax) {
       setDevice(lastConnectedDevice);
     }
   }, [lastConnectedDevice, device]);
@@ -82,6 +84,8 @@ const Step3Transfer = ({ route, navigation }: NavigationProps) => {
     },
     [dispatch],
   );
+
+  const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
 
   const completeAction = useCompleteActionCallback();
 
@@ -114,6 +118,8 @@ const Step3Transfer = ({ route, navigation }: NavigationProps) => {
             onResult={handleResult}
             onSkip={handleExit}
           />
+        ) : newDeviceSelectionFeatureFlag?.enabled ? (
+          <SelectDevice2 onSelect={setDevice} stopBleScanning={!!device} />
         ) : (
           <Flex flex={1} alignSelf="stretch">
             <SelectDevice

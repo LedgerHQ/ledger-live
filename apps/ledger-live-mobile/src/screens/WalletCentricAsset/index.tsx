@@ -11,11 +11,11 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { Box, Flex, CardB } from "@ledgerhq/native-ui";
+import { Box, Flex, SideImageCard } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 import { useTheme } from "styled-components/native";
-import { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useNavigation } from "@react-navigation/native";
 import { useSingleCoinMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
@@ -153,6 +153,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
 
   const onClickLink = useCallback(() => {
     if (!dynamicContentCard) return;
+    if (!dynamicContentCard.link) return;
 
     trackContentCardEvent("contentcard_clicked", {
       screen: dynamicContentCard.location,
@@ -170,7 +171,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
 
     trackContentCardEvent("contentcard_dismissed", {
       screen: dynamicContentCard.location,
-      link: dynamicContentCard.link,
+      link: dynamicContentCard.link || "",
       campaign: dynamicContentCard.id,
     });
 
@@ -211,7 +212,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
         />
         {!!dynamicContentCard && (
           <Flex mt={6}>
-            <CardB
+            <SideImageCard
               title={dynamicContentCard.title}
               tag={dynamicContentCard.tag}
               cta={dynamicContentCard.cta}
@@ -256,7 +257,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
               />
               <Flex minHeight={65}>
                 <MarketPriceSection
-                  currency={currency as CryptoCurrency}
+                  currency={currency}
                   selectedCoinData={selectedCoinData}
                   counterCurrency={counterCurrency}
                 />

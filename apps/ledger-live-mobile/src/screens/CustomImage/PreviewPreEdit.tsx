@@ -30,7 +30,7 @@ import {
   importImageFromPhoneGallery,
 } from "../../components/CustomImage/imageUtils";
 import { ImageFileUri } from "../../components/CustomImage/types";
-import { targetDimensions } from "./shared";
+import { targetDisplayDimensions } from "./shared";
 import FramedImage, {
   previewConfig,
 } from "../../components/CustomImage/FramedImage";
@@ -131,7 +131,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   const handleResizeError = useCallback(
     (error: Error) => {
       console.error(error);
-      navigation.navigate(ScreenName.CustomImageErrorScreen, { error, device });
+      navigation.replace(ScreenName.CustomImageErrorScreen, { error, device });
     },
     [navigation, device],
   );
@@ -146,7 +146,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   );
 
   useCenteredImage({
-    targetDimensions,
+    targetDimensions: targetDisplayDimensions,
     imageFileUri: loadedImage?.imageFileUri,
     onError: handleResizeError,
     onResult: handleResizeResult,

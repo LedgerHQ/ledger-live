@@ -35,7 +35,7 @@ import { QrCodeMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useNavigation } from "@react-navigation/native";
 import { useTimeRange } from "../actions/settings";
 import Delta from "./Delta";
-import CurrencyUnitValue from "./CurrencyUnitValue";
+import CurrencyUnitValue, { CurrencyUnitValueProps } from "./CurrencyUnitValue";
 import { Item } from "./Graph/types";
 import getWindowDimensions from "../logic/getWindowDimensions";
 import Graph from "./Graph";
@@ -235,10 +235,11 @@ const GraphCardHeader = ({
   parentAccount,
   currency,
 }: HeaderTitleProps) => {
-  const items = [
+  const items: CurrencyUnitValueProps[] = [
     {
       unit: cryptoCurrencyUnit,
       value: item.value,
+      dynamicSignificantDigits: 8,
     },
     {
       unit: counterValueUnit,
@@ -309,10 +310,7 @@ const GraphCardHeader = ({
           numberOfLines={1}
           adjustsFontSizeToFit
         >
-          <CurrencyUnitValue
-            disableRounding={shouldUseCounterValue}
-            {...items[0]}
-          />
+          <CurrencyUnitValue {...items[0]} />
         </Text>
         <Flex flexDirection="row" alignItems="center">
           <Delta percent show0Delta valueChange={valueChange} />

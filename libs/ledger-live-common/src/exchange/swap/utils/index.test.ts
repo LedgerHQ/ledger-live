@@ -340,6 +340,14 @@ describe("swap/utils/getProviderName", () => {
     expect(result).toBe(expectedResult);
   });
 
+  test("should return capitalized provider name for 1inch", () => {
+    const expectedResult = "1inch";
+
+    const result = getProviderName("oneinch");
+
+    expect(result).toBe(expectedResult);
+  });
+
   test("should return capitalized provider name for other provider", () => {
     const expectedResult = "Changelly";
 
@@ -351,7 +359,7 @@ describe("swap/utils/getProviderName", () => {
 
 describe("swap/utils/getNoticeType", function () {
   test("should return notice type for CIC", () => {
-    const expectedResult = { message: "cic", learnMore: false };
+    const expectedResult = { message: "provider", learnMore: false };
 
     const result = getNoticeType("cic");
 
@@ -367,7 +375,7 @@ describe("swap/utils/getNoticeType", function () {
   });
 
   test("should return notice type for Changelly", () => {
-    const expectedResult = { message: "default", learnMore: true };
+    const expectedResult = { message: "provider", learnMore: false };
 
     const result = getNoticeType("changelly");
 

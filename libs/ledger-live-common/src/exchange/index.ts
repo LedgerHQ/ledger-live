@@ -41,7 +41,7 @@ const findExchangeCurrencyConfig = (
     : findProdExchangeCurrencyConfig(id);
 };
 
-export type ExchangeCurrencyNameAndSignature = {
+type ExchangeCurrencyNameAndSignature = {
   config: Buffer;
   signature: Buffer;
 };
@@ -51,7 +51,6 @@ export type ExchangeProviderNameAndSignature = {
 };
 
 export type SwapProviderConfig = ExchangeProviderNameAndSignature & {
-  curve: string;
   needsKYC: boolean;
   needsBearerToken: boolean;
 };
@@ -68,7 +67,7 @@ export const isExchangeSupportedByApp = (
   );
 };
 
-const getCurrencyExchangeConfig = (
+export const getCurrencyExchangeConfig = (
   currency: CryptoCurrency | TokenCurrency
 ): ExchangeCurrencyNameAndSignature => {
   const res = findExchangeCurrencyConfig(currency.id);
@@ -83,10 +82,31 @@ const getCurrencyExchangeConfig = (
   };
 };
 
-const isCurrencyExchangeSupported = (
+export const isCurrencyExchangeSupported = (
   currency: CryptoCurrency | TokenCurrency
 ): boolean => {
   return !!findExchangeCurrencyConfig(currency.id);
 };
 
-export { getCurrencyExchangeConfig, isCurrencyExchangeSupported };
+export const createExchangeProviderNameAndSignature = ({
+  name,
+  publicKey,
+  signature,
+}: {
+  name: string;
+  publicKey: string;
+  signature: string;
+}): ExchangeProviderNameAndSignature => ({
+  /**
+   * nameAndPubkey is the concatenation of:
+   * - an empty buffer of the size of the partner name
+   * - a buffer created from the partner name string in ascii encoding
+   * - a buffer created from the hexadecimal version of the partner public key
+   */
+  nameAndPubkey: Buffer.concat([
+    Buffer.from([name.length]),
+    Buffer.from(name, "ascii"),
+    Buffer.from(publicKey, "hex"),
+  ]),
+  signature: Buffer.from(signature, "hex"),
+});

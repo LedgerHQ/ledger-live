@@ -71,7 +71,8 @@ import ScreenHeader from "../../screens/Exchange/ScreenHeader";
 import ExchangeStackNavigator from "./ExchangeStackNavigator";
 
 import PostBuyDeviceScreen from "../../screens/PostBuyDeviceScreen";
-import Learn from "../../screens/Learn";
+import Learn from "../../screens/Learn/learn";
+import LearnWebView from "../../screens/Learn/index";
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 import PostBuyDeviceSetupNanoWallScreen from "../../screens/PostBuyDeviceSetupNanoWallScreen";
 import MarketDetail from "../../screens/Market/MarketDetail";
@@ -79,10 +80,12 @@ import CurrencySettings from "../../screens/Settings/CryptoAssets/Currencies/Cur
 import WalletConnectNavigator from "./WalletConnectNavigator";
 import WalletConnectLiveAppNavigator from "./WalletConnectLiveAppNavigator";
 import CustomImageNavigator from "./CustomImageNavigator";
+import ClaimNftNavigator from "./ClaimNftNavigator";
 import PostOnboardingNavigator from "./PostOnboardingNavigator";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { accountsSelector } from "../../reducers/accounts";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
+import DeviceConnect from "../../screens/DeviceConnect";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -93,7 +96,6 @@ export default function BaseNavigator() {
     () => getStackNavigatorConfig(colors, true),
     [colors],
   );
-  const learn = useFeature("learn");
   // PTX smart routing feature flag - buy sell live app flag
   const ptxSmartRoutingMobile = useFeature("ptxSmartRoutingMobile");
   const walletConnectLiveApp = useFeature("walletConnectLiveApp");
@@ -191,18 +193,22 @@ export default function BaseNavigator() {
         })}
         {...noNanoBuyNanoWallScreenOptions}
       />
-      {learn?.enabled ? (
-        <Stack.Screen
-          name={ScreenName.Learn}
-          component={Learn}
-          options={{
-            headerShown: true,
-            animationEnabled: false,
-            headerTitle: "",
-            headerLeft: () => null,
-          }}
-        />
-      ) : null}
+      <Stack.Screen
+        name={ScreenName.Learn}
+        component={Learn}
+        options={({ navigation }) => ({
+          headerShown: true,
+          animationEnabled: false,
+          headerTitle: t("discover.sections.learn.title"),
+          headerLeft: () => <BackButton navigation={navigation} />,
+          headerRight: () => null,
+        })}
+      />
+      <Stack.Screen
+        name={ScreenName.LearnWebView}
+        component={LearnWebView}
+        options={{ headerShown: false }}
+      />
       <Stack.Screen
         name={NavigatorName.SignMessage}
         component={SignMessageNavigator}
@@ -525,12 +531,7 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={NavigatorName.NotificationCenter}
         component={NotificationCenterNavigator}
-        options={({ navigation }) => ({
-          title: t("notificationCenter.title"),
-          headerLeft: () => null,
-          headerRight: () => <CloseButton navigation={navigation} />,
-          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
-        })}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name={NavigatorName.NftNavigator}
@@ -552,6 +553,11 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={NavigatorName.CustomImage}
         component={CustomImageNavigator}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name={NavigatorName.ClaimNft}
+        component={ClaimNftNavigator}
         options={{ headerShown: false }}
       />
       {/* This is a freaking hack… */}
@@ -577,6 +583,20 @@ export default function BaseNavigator() {
         name={NavigatorName.PostOnboarding}
         options={{ headerShown: false }}
         component={PostOnboardingNavigator}
+      />
+      <Stack.Screen
+        name={ScreenName.DeviceConnect}
+        component={DeviceConnect}
+        listeners={({ route }) => ({
+          beforeRemove: () => {
+            const onClose =
+              route.params?.onClose ||
+              (route.params as unknown as typeof route)?.params?.onClose;
+            if (onClose && typeof onClose === "function") {
+              onClose();
+            }
+          },
+        })}
       />
     </Stack.Navigator>
   );

@@ -1,5 +1,45 @@
 # @ledgerhq/react-ui
 
+## 0.10.4
+
+### Patch Changes
+
+- [#2242](https://github.com/LedgerHQ/ledger-live/pull/2242) [`15ffdd6972`](https://github.com/LedgerHQ/ledger-live/commit/15ffdd6972dcc3bf5de5af34528725fae24120af) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: narrow-typed theme to "dark"| "light"
+
+  And exported Theme type from react-ui
+
+- Updated dependencies [[`5266518d0b`](https://github.com/LedgerHQ/ledger-live/commit/5266518d0baf26258f95a08d7f0a127f1848b38f)]:
+  - @ledgerhq/icons-ui@0.3.4
+
+## 0.10.4-next.0
+
+### Patch Changes
+
+- [#2242](https://github.com/LedgerHQ/ledger-live/pull/2242) [`15ffdd6972`](https://github.com/LedgerHQ/ledger-live/commit/15ffdd6972dcc3bf5de5af34528725fae24120af) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: narrow-typed theme to "dark"| "light"
+
+  And exported Theme type from react-ui
+
+- Updated dependencies [[`5266518d0b`](https://github.com/LedgerHQ/ledger-live/commit/5266518d0baf26258f95a08d7f0a127f1848b38f)]:
+  - @ledgerhq/icons-ui@0.3.4-next.0
+
+## 0.10.3
+
+### Patch Changes
+
+- [#2062](https://github.com/LedgerHQ/ledger-live/pull/2062) [`32993aea9a`](https://github.com/LedgerHQ/ledger-live/commit/32993aea9af5dfb7f2519263e5f2a22a88320cdc) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - New flags icons. Added 2 new icons to Providers and Payments. Prevented crash when using ProviderIcon with incorrect string in boxed mode
+
+- Updated dependencies [[`32993aea9a`](https://github.com/LedgerHQ/ledger-live/commit/32993aea9af5dfb7f2519263e5f2a22a88320cdc)]:
+  - @ledgerhq/icons-ui@0.3.3
+
+## 0.10.3-next.0
+
+### Patch Changes
+
+- [#2062](https://github.com/LedgerHQ/ledger-live/pull/2062) [`32993aea9a`](https://github.com/LedgerHQ/ledger-live/commit/32993aea9af5dfb7f2519263e5f2a22a88320cdc) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - New flags icons. Added 2 new icons to Providers and Payments. Prevented crash when using ProviderIcon with incorrect string in boxed mode
+
+- Updated dependencies [[`32993aea9a`](https://github.com/LedgerHQ/ledger-live/commit/32993aea9af5dfb7f2519263e5f2a22a88320cdc)]:
+  - @ledgerhq/icons-ui@0.3.3-next.0
+
 ## 0.10.2
 
 ### Patch Changes

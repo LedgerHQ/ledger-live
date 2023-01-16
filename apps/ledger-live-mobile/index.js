@@ -65,6 +65,7 @@ const excludedErrorName = [
   "AccountNeedResync",
   "DeviceAppVerifyNotSupported",
   "AccountAwaitingSendPendingOperations",
+  "HederaAddAccountError",
   // API issues
   "LedgerAPI4xx",
   "LedgerAPI5xx",
@@ -179,10 +180,6 @@ if (Config.SENTRY_DSN && (!__DEV__ || Config.FORCE_SENTRY) && !Config.MOCK) {
   setTimeout(syncTheTags, 5000);
   // We also try to regularly update them so we are sure to get the correct tags (as these are dynamic)
   setInterval(syncTheTags, 60000);
-}
-
-if (Config.DISABLE_YELLOW_BOX) {
-  console.disableYellowBox = true; // eslint-disable-line no-console
 }
 
 logReport.logReportInit();

@@ -7,6 +7,9 @@ export const defaultFeatures: DefaultFeatures = {
   brazePushNotifications: {
     enabled: false,
   },
+  brazeLearn: {
+    enabled: false,
+  },
   deviceLocalization: {
     enabled: false,
   },
@@ -71,7 +74,7 @@ export const defaultFeatures: DefaultFeatures = {
   disableNftRaribleOpensea: {
     enabled: false,
   },
-  ratings: {
+  ratingsPrompt: {
     enabled: false,
     params: {
       happy_moments: [
