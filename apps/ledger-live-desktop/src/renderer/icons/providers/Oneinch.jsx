@@ -3,7 +3,13 @@
 import React from "react";
 
 const Oneinch = ({ size }: { size: number }) => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <g clipPath="url(#clip0_1119_16756)">
       <path
         d="M5.71397 13.2253L6.34895 8.15617L0.841309 4.09363L5.87357 5.90482L7.06202 3.96736L11.4016 1.10626L20.9669 6.70578L21.4627 15.2494L17.2012 21.5416L13.8328 22.09L15.5748 18.7022V15.4406L14.3082 12.8934L13.0213 11.9878L11.0416 14.1562V16.4508L9.49666 17.9878L7.53401 18.2404L6.66474 18.7635L5.23859 18.28L4.64437 16.007L5.71397 14.4087V13.2253Z"
