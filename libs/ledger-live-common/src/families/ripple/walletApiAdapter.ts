@@ -1,23 +1,28 @@
-import { RippleTransaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
+import { RippleTransaction as WalletAPIRippleTransaction } from "@ledgerhq/wallet-api-core";
+import {
+  AreFeesProvided,
+  ConvertToLiveTransaction,
+  GetWalletAPITransactionSignFlowInfos,
+} from "../../wallet-api/types";
+
 import { Transaction } from "./types";
 
 const CAN_EDIT_FEES = true;
 
-const areFeesProvided = (tx: WalletAPITransaction): boolean => !!tx.fee;
+const areFeesProvided: AreFeesProvided<WalletAPIRippleTransaction> = (tx) =>
+  !!tx.fee;
 
-const convertToLiveTransaction = (
-  tx: WalletAPITransaction
-): Partial<Transaction> => {
+const convertToLiveTransaction: ConvertToLiveTransaction<
+  WalletAPIRippleTransaction,
+  Transaction
+> = (tx) => {
   return tx;
 };
 
-const getWalletAPITransactionSignFlowInfos = (
-  tx: WalletAPITransaction
-): {
-  canEditFees: boolean;
-  hasFeesProvided: boolean;
-  liveTx: Partial<Transaction>;
-} => {
+const getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos<
+  WalletAPIRippleTransaction,
+  Transaction
+> = (tx) => {
   return {
     canEditFees: CAN_EDIT_FEES,
     liveTx: convertToLiveTransaction(tx),

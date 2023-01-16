@@ -8,6 +8,7 @@ import {
   WalletAPICurrency,
   WalletAPITransaction,
   WalletAPISupportedCurrency,
+  GetWalletAPITransactionSignFlowInfos,
 } from "./types";
 import { Families } from "@ledgerhq/wallet-api-core";
 
@@ -95,13 +96,10 @@ export function currencyToWalletAPICurrency(
   };
 }
 
-export const getWalletAPITransactionSignFlowInfos = (
-  tx: WalletAPITransaction
-): {
-  canEditFees: boolean;
-  hasFeesProvided: boolean;
-  liveTx: Partial<Transaction>;
-} => {
+export const getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos<
+  WalletAPITransaction,
+  Transaction
+> = (tx) => {
   const family = byFamily[tx.family];
 
   if (family) {

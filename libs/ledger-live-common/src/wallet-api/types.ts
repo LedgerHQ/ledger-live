@@ -62,3 +62,20 @@ export type AppManifest = {
 export type WalletAPISignedTransaction = SignedOperation;
 
 export type WalletAPISupportedCurrency = CryptoCurrency | TokenCurrency;
+
+export type GetWalletAPITransactionSignFlowInfos<
+  WalletAPITransaction,
+  LiveTransaction
+> = (tx: WalletAPITransaction) => {
+  canEditFees: boolean;
+  hasFeesProvided: boolean;
+  liveTx: Partial<LiveTransaction>;
+};
+
+export type AreFeesProvided<WalletAPITransaction> = (
+  tx: WalletAPITransaction
+) => boolean;
+
+export type ConvertToLiveTransaction<WalletAPITransaction, LiveTransaction> = (
+  tx: WalletAPITransaction
+) => Partial<LiveTransaction>;

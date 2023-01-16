@@ -1,13 +1,20 @@
-import { BitcoinTransaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
+import { BitcoinTransaction as WalletAPIBitcoinTransaction } from "@ledgerhq/wallet-api-core";
+import {
+  AreFeesProvided,
+  ConvertToLiveTransaction,
+  GetWalletAPITransactionSignFlowInfos,
+} from "../../wallet-api/types";
 import { Transaction } from "./types";
 
 const CAN_EDIT_FEES = true;
 
-const areFeesProvided = (tx: WalletAPITransaction): boolean => !!tx.feePerByte;
+const areFeesProvided: AreFeesProvided<WalletAPIBitcoinTransaction> = (tx) =>
+  !!tx.feePerByte;
 
-const convertToLiveTransaction = (
-  tx: WalletAPITransaction
-): Partial<Transaction> => {
+const convertToLiveTransaction: ConvertToLiveTransaction<
+  WalletAPIBitcoinTransaction,
+  Transaction
+> = (tx) => {
   const hasFeesProvided = areFeesProvided(tx);
 
   const liveTx: Partial<Transaction> = {
@@ -20,13 +27,10 @@ const convertToLiveTransaction = (
   return hasFeesProvided ? { ...liveTx, feesStrategy: null } : liveTx;
 };
 
-const getWalletAPITransactionSignFlowInfos = (
-  tx: WalletAPITransaction
-): {
-  canEditFees: boolean;
-  hasFeesProvided: boolean;
-  liveTx: Partial<Transaction>;
-} => {
+const getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos<
+  WalletAPIBitcoinTransaction,
+  Transaction
+> = (tx) => {
   return {
     canEditFees: CAN_EDIT_FEES,
     liveTx: convertToLiveTransaction(tx),
