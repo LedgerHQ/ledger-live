@@ -4,7 +4,7 @@ import React, { useCallback, useState, useEffect, useMemo, useRef } from "react"
 import { FlatList, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
-import type { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";
+import type { StakePool, APIGetPoolList } from "@ledgerhq/live-common/families/cardano/api/api-types";
 import { fetchPoolList } from "@ledgerhq/live-common/families/cardano/api/getPools";
 import { TrackScreen } from "../../../analytics";
 import { ScreenName } from "../../../const";
@@ -12,7 +12,6 @@ import { accountScreenSelector } from "../../../reducers/accounts";
 import PoolHead from "../shared/PoolHead";
 import PoolRow from "../shared/PoolRow";
 import SelectPoolSearchBox from "../shared/SearchBox";
-
 
 type Props = {
   navigation: any;
@@ -31,7 +30,7 @@ export default function SelectPool({ navigation, route }: Props) {
   invariant(account, "account must be defined");
   invariant(account.type === "Account", "account must be of type Account");
 
-  const [pools, setPools] = useState([]as Array<any>);
+  const [pools, setPools] = useState([]as Array<StakePool>);
 
   const [searchQuery, setSearchQuery] = useState("");
   const searchRef = useRef(searchQuery);
@@ -42,7 +41,7 @@ export default function SelectPool({ navigation, route }: Props) {
   let isPaginationDisabled = useRef(false);
 
   const loadPage = () => {
-    fetchPoolList(account.currency, searchQuery, pageNo, limit).then((apiRes:any) => {
+    fetchPoolList(account.currency, searchQuery, pageNo, limit).then((apiRes: APIGetPoolList) => {
       setPools(currentPools => {
         return [
           ...currentPools,
@@ -57,7 +56,7 @@ export default function SelectPool({ navigation, route }: Props) {
     pageNo = 1;
 
     const delayDebounceFn = setTimeout(() => {
-      fetchPoolList(account.currency, searchQuery, pageNo, limit).then((apiRes: any) => {
+      fetchPoolList(account.currency, searchQuery, pageNo, limit).then((apiRes: APIGetPoolList) => {
         setPools([
           ...apiRes.pools,
         ]);  
