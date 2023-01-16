@@ -1115,6 +1115,12 @@
     "mostPopular" : "Plus populaire"
   },
   "installSetOfApps" : {
+    "restore" : {
+      "title" : "Installer les mêmes apps que sur {{deviceName}} ?",
+      "titleNoDeviceName" : "Installer les mêmes apps que sur votre Ledger précédent ?",
+      "installCTA" : "Installer maintenant",
+      "skipCTA" : "Plus tard"
+    },
     "landing" : {
       "estimatedTime" : "{{ minutes }} min",
       "title" : "Les apps de votre {{ productName }} vous permettent d’effectuer des transactions sécurisées.",
@@ -1126,7 +1132,7 @@
       "loading" : "Chargement...",
       "resolving" : "Installation des apps requises",
       "progress" : "Installation des apps : {{progress}} %",
-      "disclaimer" : "Les apps sur votre {{ productName }} vous permettent de valider vos opérations. Vous pouvez les ajouter ou supprimer à tout moment."
+      "disclaimer" : "Ajoutez ou supprimez des apps à tout moment depuis Ledger Live."
     }
   },
   "onboarding" : {
@@ -3622,7 +3628,7 @@
       "title" : "Confirmer l’opération de swap sur l’appareil",
       "alert" : {
         "default" : "Vérifiez les détails de l’échange sur votre appareil avant de l’envoyer. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier.",
-        "cic" : "Vérifiez les détails de l’échange sur votre appareil avant de l’envoyer. Une vérification supplémentaire peut être effectuée par CIC pour certains transactions, entraînant un temps d’attente."
+        "provider" : "Vérifiez les détails de l’échange sur votre appareil avant de l’envoyer. Une vérification supplémentaire peut être effectuée par {{providerName}} pour certaines transactions, entraînant un temps d’attente."
       },
       "acceptTerms" : "En validant cette transaction, j’accepte\n<0>les Conditions d’utilisation de <0>{{provider}}</0></0>.",
       "notice" : "Vérifiez les détails de l’échange sur votre appareil avant de l’envoyer. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier."
