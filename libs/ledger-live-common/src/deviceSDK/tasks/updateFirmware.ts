@@ -2,6 +2,7 @@ import { LockedDeviceError } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import type {
   DeviceId,
+  DeviceInfo,
   FinalFirmware,
   FirmwareInfo,
   FirmwareUpdateContext,
@@ -13,17 +14,14 @@ import { getAppAndVersion } from "../commands/getAppAndVersion";
 import ManagerAPI from "../../api/Manager";
 import { isDashboardName } from "../../hw/isDashboardName";
 import { withDevice, withDevicePolling } from "../../hw/deviceAccess";
-import { EMPTY, from, Observable, of } from "rxjs";
-import { concatMap, filter, map, switchMap } from "rxjs/operators";
+import { from, Observable, of, Subscriber } from "rxjs";
+import { filter, map, switchMap } from "rxjs/operators";
 import { SharedTaskEvent, sharedLogicTaskWrapper } from "./core";
 import { installFirmwareCommand } from "../commands/firmwareUpdate/installFirmware";
 import Transport from "@ledgerhq/hw-transport";
 import getDeviceInfo from "../../hw/getDeviceInfo";
 import { getProviderId } from "../../manager";
-import {
-  flashMcuCommand,
-  FlashMcuCommandEvent,
-} from "../commands/firmwareUpdate/flashMcu";
+import { flashMcuCommand } from "../commands/firmwareUpdate/flashMcu";
 
 export type UpdateFirmwareTaskArgs = {
   deviceId: DeviceId;
@@ -31,7 +29,10 @@ export type UpdateFirmwareTaskArgs = {
   // TODO: check if we should receive this here or rather retrieve it from the api in the task
 };
 
-export type UpdateFirmwareTaskError = "DeviceOnDashboardExpected";
+export type UpdateFirmwareTaskError =
+  | "DeviceOnDashboardExpected"
+  | "DeviceOnBootloaderExpected"
+  | "McuVersionNotFound";
 
 export type UpdateFirmwareTaskEvent =
   | { type: "installingOsu"; progress: number }
@@ -125,64 +126,78 @@ function internalUpdateFirmwareTask({
         // here the user has accepted the firmware installation
         // so we have to poll the device trying to get it's deviceInfo until we have it
         // this will mean that the osu has been installed
-        withDevicePolling(deviceId)(
-          (transport) => from(getDeviceInfo(transport)),
-          () => true
-          // accept all errors. we're waiting forever condition that make getDeviceInfo work
-          // since at this time the device is probably rebooting
-        )
-          .pipe(
-            concatMap((deviceInfo) => {
-              if (updateContext.shouldFlashMCU) {
-                if (!deviceInfo.isBootloader) return EMPTY; // return throw error, it should be in the bootloader
-
-                return from(retrieveMcuVersion(updateContext.final)).pipe(
-                  concatMap((mcuVersion) => {
-                    if (mcuVersion) {
-                      return withDevice(deviceId)((transport) =>
-                        flashMcuCommand(transport, {
-                          targetId: deviceInfo.targetId,
-                          mcuVersion,
-                        })
-                      );
-                    }
-                    return EMPTY;
-                  }),
-                  map<FlashMcuCommandEvent, UpdateFirmwareTaskEvent>(
-                    (event) => ({
-                      type: "flashingMcu",
-                      progress: event.progress,
-                    })
-                  )
-                  // TODO: find out where to put this correctly
-                  // concatMap(() => {
-                  //   // OSU INSTALL completed
-                  //   // TODO: flash mcu and bootloader according to what's needed
-                  //   return of<UpdateFirmwareTaskEvent>({
-                  //     type: "firmwareUpdateCompleted",
-                  //   });
-                  //   //return EMPTY;
-                  // })
-                );
-              }
-
-              return EMPTY;
-            })
-          )
-          .subscribe({
-            next: (event) => subscriber.next(event),
-            complete: () => subscriber.complete(),
-            error: (error: Error) => {
-              subscriber.next({ type: "error", error: error });
-              subscriber.complete();
-            },
-          });
+        waitForDeviceInfo(deviceId).then((deviceInfo) => {
+          if (!updateContext.shouldFlashMCU) {
+            // if we don't need to flash the MCU then OSU install was all that was needed
+            // that means that only the Secure Element firmware has been updated, the update is complete
+            subscriber.next({
+              type: "firmwareUpdateCompleted",
+            });
+            subscriber.complete();
+          } else {
+            // if we need to flash the MCU than we have some extra steps to do and it might mean
+            // that we also need to flash the bootloader
+            flashMcuAndBootloader(
+              updateContext,
+              deviceInfo,
+              subscriber,
+              deviceId
+            );
+          }
+        });
       },
-      // TODO: check if flashing mcu and bootloader are needed
-      // do what has to be done to flash them
     });
   });
 }
+
+const flashMcuAndBootloader = (
+  updateContext: FirmwareUpdateContext,
+  deviceInfo: DeviceInfo,
+  subscriber: Subscriber<UpdateFirmwareTaskEvent>,
+  deviceId: string // TODO: is this withing device info?
+) => {
+  if (!deviceInfo.isBootloader) {
+    subscriber.next({
+      type: "taskError",
+      error: "DeviceOnBootloaderExpected",
+    });
+    subscriber.complete();
+  }
+
+  retrieveMcuVersion(updateContext.final).then((mcuVersion) => {
+    if (mcuVersion) {
+      withDevice(deviceId)((transport) =>
+        flashMcuCommand(transport, {
+          targetId: deviceInfo.targetId,
+          mcuVersion,
+        })
+      ).subscribe({
+        next: (event) =>
+          subscriber.next({
+            type: "flashingMcu",
+            progress: event.progress,
+          }),
+        complete: () => {
+          waitForDeviceInfo(deviceId).then((_deviceInfo) => {
+            // TODO: use device info to check if we need to flash the bootloader and do it
+            subscriber.next({ type: "firmwareUpdateCompleted" });
+            subscriber.complete();
+          });
+        },
+        error: (error: Error) => {
+          subscriber.next({ type: "error", error: error });
+          subscriber.complete();
+        },
+      });
+    } else {
+      subscriber.next({
+        type: "taskError",
+        error: "McuVersionNotFound",
+      });
+      subscriber.complete();
+    }
+  });
+};
 
 const retrieveMcuVersion = (finalFirmware: FinalFirmware) => {
   return ManagerAPI.getMcus()
@@ -222,6 +237,17 @@ const installOsuFirmware = ({
     firmware: osu,
   });
 };
+
+const waitForDeviceInfo = (deviceId: string) =>
+  withDevicePolling(deviceId)(
+    (transport) => from(getDeviceInfo(transport)),
+    () => true
+    // accept all errors. we're waiting forever condition that make getDeviceInfo work
+    // since at this time the device is probably rebooting
+  )
+    // we transform this in a promise because it's only gonne emit one value an then complete
+    // so it's easier to handle it with .then() instead of .pipe(concatMap())
+    .toPromise();
 
 export const updateFirmwareTask = sharedLogicTaskWrapper(
   internalUpdateFirmwareTask
