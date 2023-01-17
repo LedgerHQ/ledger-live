@@ -29,7 +29,10 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
     const { payload, octokit } = context;
 
     /* ⚠️ TEMP */
-    if (payload.workflow_run.head_branch !== "support/granular-ci") return;
+    if (
+      payload.workflow_run.pull_requests[0]?.head.ref !== "support/granular-ci"
+    )
+      return;
     /* ⚠️ /TEMP */
 
     const { owner, repo } = context.repo();
@@ -71,7 +74,10 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
     const { payload, octokit } = context;
 
     /* ⚠️ TEMP */
-    if (payload.workflow_run.head_branch !== "support/granular-ci") return;
+    if (
+      payload.workflow_run.pull_requests[0]?.head.ref !== "support/granular-ci"
+    )
+      return;
     /* ⚠️ /TEMP */
 
     const { owner, repo } = context.repo();
@@ -197,7 +203,10 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
     if (context.payload.action !== "in_progress") return;
 
     /* ⚠️ TEMP */
-    if (payload.workflow_run.head_branch !== "support/granular-ci") return;
+    if (
+      payload.workflow_run.pull_requests[0]?.head.ref !== "support/granular-ci"
+    )
+      return;
     /* ⚠️ /TEMP */
 
     const { owner, repo } = context.repo();

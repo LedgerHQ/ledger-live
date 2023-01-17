@@ -75,12 +75,10 @@ export function generateScreenshots(app: Probot) {
     getInputs: (payload) => {
       return "workflow_run" in payload
         ? {
-            sha: payload.workflow_run.head_sha,
-            ref: payload.workflow_run.head_branch,
+            ref: payload.workflow_run.pull_requests[0]?.head.ref,
             login: payload.workflow_run.actor.login,
           }
         : {
-            sha: payload.check_run.head_sha,
             ref: payload.check_run.pull_requests[0]?.head.ref,
             login: payload.sender.login,
           };
