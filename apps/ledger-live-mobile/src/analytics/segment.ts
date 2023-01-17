@@ -203,7 +203,7 @@ function getIsTracking(
     return {
       enabled: false,
       reason:
-        "not track anything in the reborn state post purchase pre device setup",
+        "not tracking anything in the reborn state post purchase pre device setup",
     };
   if (!mandatory && !analyticsEnabled) {
     return {
@@ -231,7 +231,7 @@ export const track = async (
   const isTracking = getIsTracking(state, mandatory);
   if (!isTracking.enabled) {
     if (ANALYTICS_LOGS)
-      console.log("analytics:not tracking because", isTracking.reason);
+      console.log("analytics:track: not tracking because: ", isTracking.reason);
     return;
   }
 
@@ -315,7 +315,10 @@ export const screen = async (
   const isTracking = getIsTracking(state);
   if (!isTracking.enabled) {
     if (ANALYTICS_LOGS)
-      console.log("analytics:not tracking because", isTracking.reason);
+      console.log(
+        "analytics:screen: not tracking because: ",
+        isTracking.reason,
+      );
     return;
   }
 
