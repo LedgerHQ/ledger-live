@@ -107,8 +107,7 @@ const envDefinitions = {
   API_COSMOS_TESTNET_NODE: {
     def: "STARGATE_NODE",
     parser: stringParser,
-    desc:
-      "Node API to use for cosmos_testnet (COSMOS_NODE or STARGATE_NODE are known)",
+    desc: "Node API to use for cosmos_testnet (COSMOS_NODE or STARGATE_NODE are known)",
   },
   API_RIPPLE_RPC: {
     parser: stringParser,
@@ -233,8 +232,7 @@ const envDefinitions = {
   BOT_SPEC_DEFAULT_TIMEOUT: {
     def: 30 * 60 * 1000,
     parser: intParser,
-    desc:
-      "define the default value of spec.skipMutationsTimeout (if not overriden by spec)",
+    desc: "define the default value of spec.skipMutationsTimeout (if not overriden by spec)",
   },
   CARDANO_API_ENDPOINT: {
     def: "https://cardano.coin.ledger.com/api",
@@ -249,8 +247,7 @@ const envDefinitions = {
   COINAPPS: {
     def: "",
     parser: stringParser,
-    desc:
-      "(dev feature) defines the folder for speculos mode that contains Nano apps binaries (.elf) in a specific structure: <device>/<firmware>/<appName>/app_<appVersion>.elf",
+    desc: "(dev feature) defines the folder for speculos mode that contains Nano apps binaries (.elf) in a specific structure: <device>/<firmware>/<appName>/app_<appVersion>.elf",
   },
   COMPOUND_API: {
     def: "https://api.compound.finance",
@@ -265,8 +262,7 @@ const envDefinitions = {
   COSMOS_GAS_PRICE: {
     def: 0.025,
     parser: floatParser,
-    desc:
-      "gasLimit * gasPrice to determine the fees price. A too low GAS_PRICE will get rejected before the transaction is broadcast",
+    desc: "gasLimit * gasPrice to determine the fees price. A too low GAS_PRICE will get rejected before the transaction is broadcast",
   },
   CRYPTO_ORG_INDEXER: {
     def: "https://cryptoorg-rpc-indexer.coin.ledger.com",
@@ -301,8 +297,7 @@ const envDefinitions = {
   DEVICE_CANCEL_APDU_FLUSH_MECHANISM: {
     def: true,
     parser: boolParser,
-    desc:
-      "enable a mechanism that send a 0x00 apdu to force device to awake from its 'Processing' UI state",
+    desc: "enable a mechanism that send a 0x00 apdu to force device to awake from its 'Processing' UI state",
   },
   DEVICE_PROXY_URL: {
     def: "",
@@ -337,20 +332,17 @@ const envDefinitions = {
   EIP1559_MINIMUM_FEES_GATE: {
     def: true,
     parser: boolParser,
-    desc:
-      "prevents the user from doing an EIP1559 transaction with fees too low",
+    desc: "prevents the user from doing an EIP1559 transaction with fees too low",
   },
   EIP1559_PRIORITY_FEE_LOWER_GATE: {
     def: 0.85,
     parser: floatParser,
-    desc:
-      "minimum priority fee percents allowed compared to network conditions allowed when EIP1559_MINIMUM_FEES_GATE is activated",
+    desc: "minimum priority fee percents allowed compared to network conditions allowed when EIP1559_MINIMUM_FEES_GATE is activated",
   },
   ETHEREUM_GAS_LIMIT_AMPLIFIER: {
     def: 1.2,
     parser: floatParser,
-    desc:
-      "Ethereum gasLimit multiplier for contracts to prevent out of gas issue",
+    desc: "Ethereum gasLimit multiplier for contracts to prevent out of gas issue",
   },
   EXPERIMENTAL_BLE: {
     def: false,
@@ -385,8 +377,7 @@ const envDefinitions = {
   EXPERIMENTAL_ROI_CALCULATION: {
     def: false,
     parser: boolParser,
-    desc:
-      "enable an experimental version of the portfolio percentage calculation",
+    desc: "enable an experimental version of the portfolio percentage calculation",
   },
   EXPERIMENTAL_SEND_MAX: {
     def: false,
@@ -406,8 +397,7 @@ const envDefinitions = {
   EXPERIMENTAL_EXECUTION_ON_RENDERER: {
     def: false,
     parser: boolParser,
-    desc:
-      "enable an experimental execution of business logic to run on renderer side (LLD)",
+    desc: "enable an experimental execution of business logic to run on renderer side (LLD)",
   },
   EXPLORER: {
     def: "https://explorers.api.live.ledger.com",
@@ -442,8 +432,7 @@ const envDefinitions = {
   DISABLE_APP_VERSION_REQUIREMENTS: {
     def: false,
     parser: boolParser,
-    desc:
-      "force an old application version to be accepted regardless of its version",
+    desc: "force an old application version to be accepted regardless of its version",
   },
   FORCE_PROVIDER: {
     def: 1,
@@ -498,8 +487,7 @@ const envDefinitions = {
   MANAGER_INSTALL_DELAY: {
     def: 1000,
     parser: intParser,
-    desc:
-      "defines the time to wait before installing apps to prevent known glitch (<=1.5.5) when chaining installs",
+    desc: "defines the time to wait before installing apps to prevent known glitch (<=1.5.5) when chaining installs",
   },
   MAX_ACCOUNT_NAME_SIZE: {
     def: 50,
@@ -509,26 +497,22 @@ const envDefinitions = {
   MOCK: {
     def: "",
     parser: stringParser,
-    desc:
-      "switch the app into a MOCK mode for test purpose, the value will be used as a seed for the rng. Avoid falsy values.",
+    desc: "switch the app into a MOCK mode for test purpose, the value will be used as a seed for the rng. Avoid falsy values.",
   },
   MOCK_COUNTERVALUES: {
     def: "",
     parser: stringParser,
-    desc:
-      "switch the countervalues resolution into a MOCK mode for test purpose",
+    desc: "switch the countervalues resolution into a MOCK mode for test purpose",
   },
   MOCK_SWAP_KYC: {
     def: "",
     parser: stringParser,
-    desc:
-      "mock the server response for the exchange KYC check, options are 'open', 'pending', 'closed' or 'approved'.",
+    desc: "mock the server response for the exchange KYC check, options are 'open', 'pending', 'closed' or 'approved'.",
   },
   MOCK_SWAP_CHECK_QUOTE: {
     def: "",
     parser: stringParser,
-    desc:
-      "mock the server response for the exchange check quote, options are 'RATE_VALID', 'KYC_FAILED', 'KYC_PENDING', 'KYC_UNDEFINED', 'KYC_UPGRADE_REQUIRED', 'MFA_REQUIRED', 'OVER_TRADE_LIMIT', 'UNKNOW_USER' or 'UNKNOWN_ERROR'.",
+    desc: "mock the server response for the exchange check quote, options are 'RATE_VALID', 'KYC_FAILED', 'KYC_PENDING', 'KYC_UNDEFINED', 'KYC_UPGRADE_REQUIRED', 'MFA_REQUIRED', 'OVER_TRADE_LIMIT', 'UNKNOW_USER' or 'UNKNOWN_ERROR'.",
   },
   MOCK_SWAP_WIDGET_BASE_URL: {
     def: "",
@@ -542,8 +526,7 @@ const envDefinitions = {
   MOCK_EXCHANGE_TEST_CONFIG: {
     def: false,
     parser: boolParser,
-    desc:
-      "mock the cryptoassets config and test partner (in the context of app-exchange)",
+    desc: "mock the cryptoassets config and test partner (in the context of app-exchange)",
   },
   MOCK_REMOTE_LIVE_MANIFEST: {
     def: "",
@@ -553,8 +536,7 @@ const envDefinitions = {
   MOCK_OS_VERSION: {
     def: "",
     parser: stringParser,
-    desc:
-      "if defined, overrides the os and version. format: os@version. Example: Windows_NT@6.1.7601",
+    desc: "if defined, overrides the os and version. format: os@version. Example: Windows_NT@6.1.7601",
   },
   NFT_CURRENCIES: {
     def: "ethereum,polygon",
@@ -574,8 +556,7 @@ const envDefinitions = {
   OPERATION_OPTIMISTIC_RETENTION: {
     def: 30 * 60 * 1000,
     parser: intParser,
-    desc:
-      "timeout to keep an optimistic operation that was broadcasted but not yet visible from the coin implementation or the API",
+    desc: "timeout to keep an optimistic operation that was broadcasted but not yet visible from the coin implementation or the API",
   },
   OPERATION_PAGE_SIZE_INITIAL: {
     def: 100,
@@ -585,8 +566,7 @@ const envDefinitions = {
   POLKADOT_ELECTION_STATUS_THRESHOLD: {
     def: 25,
     parser: intParser,
-    desc:
-      "in blocks - number of blocks before Polkadot election effectively opens to consider it as open and disable all staking features",
+    desc: "in blocks - number of blocks before Polkadot election effectively opens to consider it as open and disable all staking features",
   },
   SATSTACK: {
     def: false,
@@ -641,8 +621,7 @@ const envDefinitions = {
   SYNC_MAX_CONCURRENT: {
     def: 4,
     parser: intParser,
-    desc:
-      "maximum limit to synchronize accounts concurrently to limit overload",
+    desc: "maximum limit to synchronize accounts concurrently to limit overload",
   },
   BOT_MAX_CONCURRENT: {
     def: 10,
@@ -652,8 +631,7 @@ const envDefinitions = {
   USER_ID: {
     def: "",
     parser: stringParser,
-    desc:
-      "unique identifier of app instance. used to derivate dissociated ids for difference purposes (e.g. the firmware update incremental deployment).",
+    desc: "unique identifier of app instance. used to derivate dissociated ids for difference purposes (e.g. the firmware update incremental deployment).",
   },
   WALLETCONNECT: {
     def: false,
@@ -688,8 +666,7 @@ const envDefinitions = {
   TEZOS_MAX_TX_QUERIES: {
     def: 100,
     parser: intParser,
-    desc:
-      "safe max on maximum number of queries to synchronize a tezos account",
+    desc: "safe max on maximum number of queries to synchronize a tezos account",
   },
   PLATFORM_DEBUG: {
     def: false,
@@ -699,8 +676,7 @@ const envDefinitions = {
   PLATFORM_EXPERIMENTAL_APPS: {
     def: false,
     parser: boolParser,
-    desc:
-      "enable visibility of experimental apps and tools in Platform Catalog",
+    desc: "enable visibility of experimental apps and tools in Platform Catalog",
   },
   PLATFORM_MANIFEST_API_URL: {
     def: "https://live-app-catalog.ledger.com/api/v1/apps",
@@ -710,8 +686,7 @@ const envDefinitions = {
   PLATFORM_LOCAL_MANIFEST_JSON: {
     def: "",
     parser: stringParser,
-    desc:
-      'json manifest for a local (test) platform app manifests. How to use: PLATFORM_LOCAL_MANIFEST_JSON="$(cat /path/to/file.json)"',
+    desc: 'json manifest for a local (test) platform app manifests. How to use: PLATFORM_LOCAL_MANIFEST_JSON="$(cat /path/to/file.json)"',
   },
   PLATFORM_GLOBAL_CATALOG_API_URL: {
     def: "https://cdn.live.ledger.com/platform/catalog/v1/data.json",
@@ -774,10 +749,10 @@ export const getDefinition = (name: string): EnvDef<any> | null | undefined =>
   envDefinitions[name];
 
 envDefinitions as Record<EnvName, EnvDef<any>>;
-const defaults: Record<EnvName, any> = (mapValues(
+const defaults: Record<EnvName, any> = mapValues(
   envDefinitions,
   (o) => o.def
-) as unknown) as Record<EnvName, any>;
+) as unknown as Record<EnvName, any>;
 // private local state
 const env: Record<EnvName, any> = { ...defaults };
 export const getAllEnvNames = (): EnvName[] =>

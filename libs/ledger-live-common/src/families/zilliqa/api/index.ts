@@ -112,7 +112,6 @@ function transactionToOperation(
     amount = amount.plus(fee);
   }
 
-  console.log("TRANSACTION", transaction);
   const ret: Operation = {
     id: encodeOperationId(accountId, transaction.txId, type),
     accountId,
@@ -141,7 +140,7 @@ export const getOperations = async (
   _startAt: number
 ): Promise<Operation[]> => {
   addr = fromBech32(addr).toLowerCase();
-  console.log("ADDRESS", addr);
+
   const incoming_res = (
     await network({
       method: "POST",
