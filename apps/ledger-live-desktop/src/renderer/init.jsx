@@ -46,6 +46,7 @@ import {
 import ReactRoot from "~/renderer/ReactRoot";
 import AppError from "~/renderer/AppError";
 import { expectOperatingSystemSupportStatus } from "~/support/os";
+import { hydrateCurrency, listCachedCurrencyIds } from "./bridge/cache";
 
 logger.add(loggerInstance);
 
@@ -131,6 +132,13 @@ async function init() {
   setEnvOnAllThreads("HIDE_EMPTY_TOKEN_ACCOUNTS", hideEmptyTokenAccounts);
 
   const isMainWindow = remote.getCurrentWindow().name === "MainWindow";
+
+  // TODO hydrate the store with the bridge/cache
+  listCachedCurrencyIds().then(ids => {
+    ids.forEach(id => {
+      hydrateCurrency(id);
+    });
+  });
 
   let accounts = await getKey("app", "accounts", []);
   if (accounts) {
