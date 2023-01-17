@@ -41,6 +41,7 @@ export function declareDep(name: string, dep: string): void {
   ["APWine", "Ethereum"],
   ["ARTIS sigma1", "Ethereum"],
   ["cBridge", "Ethereum"],
+  ["Cometh", "Ethereum"],
   ["Compound", "Ethereum"],
   ["DODO", "Ethereum"],
   ["EnergyWebChain", "Ethereum"],
