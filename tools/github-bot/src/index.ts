@@ -2,6 +2,7 @@ import { Probot } from "probot";
 import { upToDate } from "./features/upToDate";
 import { orchestrator } from "./features/orchestrator";
 import { autoClose } from "./features/autoClose";
+import { lintCommits } from "./features/lintCommits";
 import { generateScreenshots } from "./commands/generate-screenshots";
 import { regenPods } from "./commands/regen-pods";
 import { regenDoc } from "./commands/regen-doc";
@@ -25,6 +26,8 @@ export default (app: Probot) => {
 
   // Report if PRs are up to date
   upToDate(app);
+  // Lint pull request commits
+  lintCommits(app);
   // Orchestrate
   orchestrator(app);
 };
