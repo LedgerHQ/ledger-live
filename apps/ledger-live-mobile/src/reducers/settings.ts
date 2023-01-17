@@ -158,6 +158,7 @@ export const INITIAL_STATE: SettingsState = {
     areNotificationsAllowed: true,
     announcementsCategory: true,
     recommendationsCategory: true,
+    largeMoverCategory: true,
   },
   walletTabNavigatorLastVisitedTab: ScreenName.Portfolio,
   displayStatusCenter: false,

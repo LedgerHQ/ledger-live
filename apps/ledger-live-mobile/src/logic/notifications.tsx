@@ -80,6 +80,10 @@ const useNotifications = () => {
   const pushNotificationsFeature = useFeature("brazePushNotifications");
   const notifications = useSelector(notificationsSelector);
 
+  const notificationsCategoriesHidden =
+    pushNotificationsFeature?.params?.notificationsCategories
+      ?.filter(notificationsCategory => !notificationsCategory.displayed)
+      .map(notificationsCategory => notificationsCategory.category);
   const isPushNotificationsModalOpen = useSelector(
     notificationsModalOpenSelector,
   );
@@ -273,6 +277,7 @@ const useNotifications = () => {
           areNotificationsAllowed: true,
           announcementsCategory: true,
           recommendationsCategory: true,
+          largeMoverCategory: true,
         }),
       );
     }
@@ -428,6 +433,7 @@ const useNotifications = () => {
     pushNotificationsOldRoute,
     pushNotificationsModalType,
     isPushNotificationsModalOpen,
+    notificationsCategoriesHidden,
     getIsNotifEnabled,
     handlePushNotificationsPermission,
     triggerMarketPushNotificationModal,
