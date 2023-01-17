@@ -37,6 +37,12 @@ export default function Debugging() {
         onPress={() => navigation.navigate(ScreenName.DebugFetchCustomImage)}
       />
       <SettingsRow
+        title="Firmware Update"
+        desc="Test the firmware update feature. USE AT YOUR OWN RISK!"
+        iconLeft={<Icons.NanoFirmwareUpdateMedium size={32} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugFirmwareUpdate)}
+      />
+      <SettingsRow
         title="Custom lockscreen graphics"
         desc="Tool for testing the flow's graphics"
         iconLeft={<Icons.BringFrontMedium size={32} color="black" />}
