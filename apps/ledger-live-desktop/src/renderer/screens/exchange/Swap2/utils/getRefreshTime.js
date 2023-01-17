@@ -2,7 +2,7 @@
 
 import type { ExchangeRate } from "@ledgerhq/live-common/lib/exchange/swap/types";
 
-const defaultRefreshTime = 30 * 1000;
+const defaultRefreshTime = 60 * 1000;
 const getMinimumExpirationTime = (rates: ExchangeRate[]): number => {
   return rates.reduce((acc, rate) => {
     if (!rate.expirationTime) return acc;
