@@ -53,6 +53,7 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import debounce from "lodash/debounce";
 import LoadingState from "./Rates/LoadingState";
 import EmptyState from "./Rates/EmptyState";
+import usePageState from "./hooks/usePageState";
 
 const Wrapper: ThemedComponent<{}> = styled(Box).attrs({
   p: 20,
@@ -100,16 +101,13 @@ export const useProviders = () => {
   };
 };
 
-type PageState = "initial" | "empty" | "loading" | "loaded";
-
 const SwapForm = () => {
   // FIXME: should use enums for Flow and Banner values
   const [currentFlow, setCurrentFlow] = useState(null);
   const [currentBanner, setCurrentBanner] = useState(null);
-  const [isSendMaxLoading, setIsSendMaxLoading] = useState(false);
+
   const [idleState, setIdleState] = useState(false);
   const [firstRateId, setFirstRateId] = useState(null);
-  const [pageState, setPageState] = useState<PageState>("initial");
 
   const [error, setError] = useState();
   const { t } = useTranslation();
@@ -130,12 +128,12 @@ const SwapForm = () => {
   const swapTransaction = useSwapTransaction({
     accounts,
     setExchangeRate,
-    setIsSendMaxLoading,
     onNoRates: trackNoRates,
     ...locationState,
     providers: storedProviders,
     includeDEX: showDexQuotes,
   });
+  const pageState = usePageState(swapTransaction);
 
   const exchangeRatesState = swapTransaction.swap?.rates;
   const swapKYC = useSelector(swapKYCSelector);
@@ -199,12 +197,6 @@ const SwapForm = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [swapError, firstRateId]);
 
-  useEffect(() => {
-    if (swapError && swapError?.message.length === 0) {
-      setPageState("empty");
-    }
-  }, [swapError]);
-
   const refreshIdle = useCallback(() => {
     idleState && setIdleState(false);
     idleTimeout.current && clearInterval(idleTimeout.current);
@@ -213,34 +205,11 @@ const SwapForm = () => {
     }, idleTime);
   }, [idleState]);
 
-  // when the user first lands on this screen, they are seeing the initial state
-  // when the user fetches data, they are seeing the loading state
-  // when the data is returned, they are seeing the loaded state
-  // when the user updates their search, they still see the loaded state
-  // when the user fetches data and there is an error, they see the empty state
-  // when the user fetches data and there is no data, they see the empty state
-  // when the user resets their from search, they see the initial state
   useEffect(() => {
-    if (pageState === "loading" && swapTransaction.swap.rates.status === "success") {
+    if (swapTransaction.swap.rates.status === "success") {
       refreshIdle();
-      setPageState("loaded");
     }
-
-    if (pageState === "loading" && swapTransaction.swap.rates.status === "error") {
-      setPageState("empty");
-    }
-
-    if (
-      (pageState === "initial" || pageState === "empty") &&
-      swapTransaction.swap.rates.status === "loading"
-    ) {
-      setPageState("loading");
-    }
-
-    if (swapTransaction.swap.from.amount?.isZero() ?? true) {
-      setPageState("initial");
-    }
-  }, [refreshIdle, pageState, swapTransaction.swap.rates.status, swapTransaction.swap.from.amount]);
+  }, [refreshIdle, swapTransaction.swap.rates.status]);
 
   useEffect(() => {
     dispatch(updateTransactionAction(swapTransaction.transaction));
@@ -561,7 +530,7 @@ const SwapForm = () => {
           reverseSwap={swapTransaction.reverseSwap}
           provider={provider}
           loadingRates={swapTransaction.swap.rates.status === "loading"}
-          isSendMaxLoading={isSendMaxLoading}
+          isSendMaxLoading={swapTransaction.swap.isMaxLoading}
           updateSelectedRate={swapTransaction.swap.updateSelectedRate}
         />
         {pageState === "empty" && <EmptyState />}

@@ -18,7 +18,7 @@ const ratesReducer = (state: RatesReducerState, action): RatesReducerState => {
     case "set":
       return { value: action.payload, status: "success" };
     case "idle":
-      return { ...state, status: null };
+      return { ...state, status: "idle" };
     case "loading":
       return { ...state, status: "loading" };
     case "error":
@@ -88,7 +88,7 @@ export const useProviderRates = ({
           !fromAccount
         ) {
           setExchangeRate && setExchangeRate();
-          return dispatchRates({ type: "set", payload: [] });
+          return dispatchRates({ type: "idle" });
         }
         dispatchRates({ type: "loading" });
         try {
