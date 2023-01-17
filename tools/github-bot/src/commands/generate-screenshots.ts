@@ -1,5 +1,6 @@
 import { Probot, Context } from "probot";
-import { commands, monitorWorkflow } from "./tools";
+import { monitorWorkflow } from "../tools/monitorWorkflow";
+import { commands } from "./tools";
 
 // Keep this in sync with the workflow file
 const ACTION_ID = "regen_screenshots";
@@ -71,11 +72,18 @@ export function generateScreenshots(app: Probot) {
     description:
       "Regenerates playwright screenshots for the Live Desktop app and commit the changes.",
     summaryFile: "summary.json",
-    getInputs: (payload: any) => {
-      return {
-        sha: payload.workflow_run.head_sha,
-        ref: payload.workflow_run.head_branch,
-      };
+    getInputs: (payload) => {
+      return "workflow_run" in payload
+        ? {
+            sha: payload.workflow_run.head_sha,
+            ref: payload.workflow_run.head_branch,
+            login: payload.workflow_run.actor.login,
+          }
+        : {
+            sha: payload.check_run.head_sha,
+            ref: payload.check_run.pull_requests[0]?.head.ref,
+            login: payload.sender.login,
+          };
     },
   });
 }
