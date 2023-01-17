@@ -132,7 +132,7 @@ const SwapForm = () => {
     onNoRates: trackNoRates,
     ...locationState,
     providers: storedProviders,
-    includeDEX: showDexQuotes,
+    includeDEX: showDexQuotes?.enabled || false,
   });
 
   const exchangeRatesState = swapTransaction.swap?.rates;
@@ -419,7 +419,7 @@ const SwapForm = () => {
   // All Ethereum, Binance and Polygon related currencies are considered available
   const showNoQuoteDexRate = useMemo(() => {
     // if we are showing DEX quotes, we don't want to show the link banners
-    if (showDexQuotes) {
+    if (showDexQuotes?.enabled) {
       return false;
     }
 
