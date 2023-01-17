@@ -27,20 +27,7 @@ const ratesReducer = (state: RatesReducerState, action): RatesReducerState => {
   return state;
 };
 
-/**
- * TODO: this hook is too complex and does too many things, it's logic should be
- * broken down into smaller functions
- */
-/* Fetch and update provider rates. */
-export const useProviderRates = ({
-  fromState,
-  toState,
-  transaction,
-  onNoRates,
-  setExchangeRate,
-  providers,
-  includeDEX,
-}: {
+type UseProviderRates = (args: {
   fromState: SwapSelectorStateType;
   toState: SwapSelectorStateType;
   transaction?: Transaction | null;
@@ -48,11 +35,26 @@ export const useProviderRates = ({
   setExchangeRate?: SetExchangeRateCallback | null | undefined;
   providers?: AvailableProviderV3[];
   includeDEX?: boolean;
-}): {
+}) => {
   rates: RatesReducerState;
   refetchRates: () => void;
   updateSelectedRate: (selected?: ExchangeRate) => void;
-} => {
+};
+
+/**
+ * TODO: this hook is too complex and does too many things, it's logic should be
+ * broken down into smaller functions
+ */
+/* Fetch and update provider rates. */
+export const useProviderRates: UseProviderRates = ({
+  fromState,
+  toState,
+  transaction,
+  onNoRates,
+  setExchangeRate,
+  providers,
+  includeDEX,
+}) => {
   const { account: fromAccount, parentAccount: fromParentAccount } = fromState;
   const {
     currency: toCurrency,

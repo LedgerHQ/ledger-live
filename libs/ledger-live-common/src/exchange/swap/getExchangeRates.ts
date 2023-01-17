@@ -84,6 +84,7 @@ const getExchangeRates: GetExchangeRates = async (
       amountTo,
       tradeMethod,
       providerURL,
+      expirationTime,
     } = responseData;
 
     const error = inferError(apiAmount, unitFrom, responseData);
@@ -123,6 +124,7 @@ const getExchangeRates: GetExchangeRates = async (
       providerType,
       rate,
       rateId,
+      expirationTime,
       toAmount: magnitudeAwareToAmount,
       tradeMethod,
       providerURL,

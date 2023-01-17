@@ -52,6 +52,7 @@ import SwapFormRates from "./FormRates";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import EmptyState from "./Rates/EmptyState";
 import debounce from "lodash/debounce";
+import useRefreshRates from "./hooks/useRefreshRates";
 
 const Wrapper: ThemedComponent<{}> = styled(Box).attrs({
   p: 20,
@@ -61,7 +62,6 @@ const Wrapper: ThemedComponent<{}> = styled(Box).attrs({
   max-width: 37rem;
 `;
 
-const refreshTime = 30000;
 const idleTime = 60 * 60000; // 1 hour
 
 const Button = styled(ButtonBase)`
@@ -107,7 +107,6 @@ const SwapForm = () => {
   const [showDetails, setShowDetails] = useState(false);
   const [showEmpty, setShowEmpty] = useState(false);
   const [idleState, setIdleState] = useState(false);
-  const [firstRateId, setFirstRateId] = useState(null);
 
   const [error, setError] = useState();
   const { t } = useTranslation();
@@ -143,7 +142,6 @@ const SwapForm = () => {
   const kycStatus = providerKYC?.status;
 
   const idleTimeout = useRef();
-  const refreshInterval = useRef();
 
   // On provider change, reset banner and flow
   useEffect(() => {
@@ -180,21 +178,11 @@ const SwapForm = () => {
   const { setDrawer } = React.useContext(context);
 
   const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
+  const stopRefreshing = swapError || idleState;
 
-  useEffect(() => {
-    const newFirstRateId = swapTransaction?.swap?.rates?.value?.length
-      ? swapTransaction.swap.rates.value[0].rateId
-      : null;
-    setFirstRateId(newFirstRateId);
-  }, [swapTransaction]);
-
-  useEffect(() => {
-    refreshInterval.current && clearInterval(refreshInterval.current);
-    refreshInterval.current = setInterval(() => {
-      !swapError && !idleState && swapTransaction?.swap?.refetchRates();
-    }, refreshTime);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [swapError, firstRateId]);
+  const refreshTime = useRefreshRates(swapTransaction.swap, {
+    stop: stopRefreshing,
+  });
 
   useEffect(() => {
     setShowEmpty(swapError && swapError?.message.length === 0);
@@ -543,7 +531,7 @@ const SwapForm = () => {
               swap={swapTransaction.swap}
               provider={provider}
               refreshTime={refreshTime}
-              countdown={!swapError && !idleState}
+              countdown={!stopRefreshing}
               showNoQuoteDexRate={showNoQuoteDexRate}
             />
 

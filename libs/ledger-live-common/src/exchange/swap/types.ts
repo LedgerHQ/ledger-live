@@ -60,6 +60,7 @@ export type ExchangeRate = {
   tradeMethod: "fixed" | "float";
   error?: Error;
   providerURL?: string | null | undefined;
+  expirationTime?: number;
 };
 
 export type TradeMethod = "fixed" | "float";
