@@ -3,12 +3,15 @@ import type {
   CryptoCurrency,
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
+import type { Transaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
+import type { Transaction } from "../generated/types";
+
+export type { WalletAPITransaction };
 
 export type {
   Families as WalletAPIFamilies,
   Account as WalletAPIAccount,
   Currency as WalletAPICurrency,
-  Transaction as WalletAPITransaction,
   CryptoCurrency as WalletAPICryptoCurrency,
   ERC20TokenCurrency as WalletAPIERC20TokenCurrency,
 } from "@ledgerhq/wallet-api-core";
@@ -64,18 +67,19 @@ export type WalletAPISignedTransaction = SignedOperation;
 export type WalletAPISupportedCurrency = CryptoCurrency | TokenCurrency;
 
 export type GetWalletAPITransactionSignFlowInfos<
-  WalletAPITransaction,
-  LiveTransaction
-> = (tx: WalletAPITransaction) => {
+  T extends WalletAPITransaction,
+  U extends Transaction
+> = (tx: T) => {
   canEditFees: boolean;
   hasFeesProvided: boolean;
-  liveTx: Partial<LiveTransaction>;
+  liveTx: Partial<U>;
 };
 
-export type AreFeesProvided<WalletAPITransaction> = (
-  tx: WalletAPITransaction
+export type AreFeesProvided<T extends WalletAPITransaction> = (
+  tx: T
 ) => boolean;
 
-export type ConvertToLiveTransaction<WalletAPITransaction, LiveTransaction> = (
-  tx: WalletAPITransaction
-) => Partial<LiveTransaction>;
+export type ConvertToLiveTransaction<
+  T extends WalletAPITransaction,
+  U extends Transaction
+> = (tx: T) => Partial<U>;
