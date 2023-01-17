@@ -27,7 +27,7 @@ const INS_SIGN_TXN = 0x04;
 const INS_SIGN_HASH = 0x08;
 
 const ADDRESS_ZIL_NATIVE = 0x00;
-const P2_GET_ADDR_NO_VERIFY = 0x02;
+const P2_DISPLAY_NONE = 0x02;
 
 const HARDEN_CONSTANT = 0x80000000;
 
@@ -200,13 +200,13 @@ export default class Zilliqa {
     publicKey: string;
     address: string;
   }> {
-    console.log("HW GET addr:", path, verify);
-
     // Getting path parameters
-    const { account, change, index } = await this.getPathParametersFromPath(
-      path
-    );
-    console.log("HW A:", account, change, index);
+    const {
+      account,
+      change,
+      index,
+      fullProtocol,
+    } = await this.getPathParametersFromPath(path);
 
     // Preparing payload to send to the wallet app.
     const payload = Buffer.alloc(12);
@@ -214,12 +214,17 @@ export default class Zilliqa {
     payload.writeUInt32LE(change, 4);
     payload.writeUInt32LE(index, 8);
 
+    let p2 = 0x0;
+    if (fullProtocol && !verify) {
+      p2 = P2_DISPLAY_NONE;
+    }
+
     // Sending request for key
     const response = await this.send(
       CLA,
       INS_GET_PUBLIC_KEY,
       ADDRESS_ZIL_NATIVE,
-      verify ? 0x0 : P2_GET_ADDR_NO_VERIFY,
+      p2,
       payload,
       [SW_OK]
     );

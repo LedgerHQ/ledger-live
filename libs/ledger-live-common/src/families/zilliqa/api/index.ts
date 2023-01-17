@@ -141,7 +141,7 @@ export const getOperations = async (
   _startAt: number
 ): Promise<Operation[]> => {
   addr = fromBech32(addr).toLowerCase();
-
+  console.log("ADDRESS", addr);
   const incoming_res = (
     await network({
       method: "POST",
