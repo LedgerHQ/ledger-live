@@ -114,6 +114,20 @@ function getDeviceTransactionConfig({
       label: "Delegate stake to",
       value: getBech32PoolId(transaction.poolId as string, account.currency.id),
     });
+  } else if (mode === "undelegate" && account.type === "Account") {
+    const stakeCredential = getAccountStakeCredential(
+      account.xpub as string,
+      account.index
+    );
+    fields.push({
+      type: "text",
+      label: "Staking key",
+      value: getBipPathString({
+        account: stakeCredential.path.account,
+        chain: stakeCredential.path.chain,
+        index: stakeCredential.path.index,
+      }),
+    });
   }
 
   return fields;
