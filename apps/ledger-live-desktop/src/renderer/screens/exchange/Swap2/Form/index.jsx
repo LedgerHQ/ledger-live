@@ -132,7 +132,7 @@ const SwapForm = () => {
     onNoRates: trackNoRates,
     ...locationState,
     providers: storedProviders,
-    includeDEX: showDexQuotes?.enabled | false,
+    includeDEX: showDexQuotes?.enabled || false,
   });
 
   const exchangeRatesState = swapTransaction.swap?.rates;
