@@ -11,7 +11,7 @@ type PageState = "initial" | "empty" | "loading" | "loaded";
 // when the user fetches data and there is an error, they see the empty state
 // when the user fetches data and there is no data, they see the empty state
 // when the user resets their from search, they see the initial state
-const usePageState = (swapTransaction): PageState => {
+const usePageState = (swapTransaction, swapError): PageState => {
   const [pageState, setPageState] = useState("initial");
   const fromFieldIsZero = swapTransaction.swap.from.amount?.isZero() ?? true;
   const isDataLoading =
@@ -20,17 +20,13 @@ const usePageState = (swapTransaction): PageState => {
   useEffect(() => {
     if (pageState === "loading" && swapTransaction.swap.rates.status === "success") {
       setPageState("loaded");
-    }
-
-    if (pageState === "loading" && swapTransaction.swap.rates.status === "error") {
-      setPageState("empty");
-    }
-
-    if ((pageState === "initial" || pageState === "empty") && isDataLoading) {
+    } else if (pageState === "loading" && swapTransaction.swap.rates.status === "error") {
+      setPageState("initial");
+    } else if ((pageState === "initial" || pageState === "empty") && isDataLoading) {
       setPageState("loading");
-    }
-
-    if (fromFieldIsZero && !isDataLoading) {
+    } else if (swapError && swapError?.message.length === 0) {
+      setPageState("empty");
+    } else if (fromFieldIsZero && !isDataLoading) {
       setPageState("initial");
     }
   }, [
@@ -40,6 +36,7 @@ const usePageState = (swapTransaction): PageState => {
     swapTransaction.swap.from.amount,
     swapTransaction.swap.isMaxLoading,
     fromFieldIsZero,
+    swapError,
   ]);
 
   return pageState;

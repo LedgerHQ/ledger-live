@@ -63,6 +63,10 @@ const Wrapper: ThemedComponent<{}> = styled(Box).attrs({
   max-width: 37rem;
 `;
 
+const Hide = styled.div`
+  opacity: 0;
+`;
+
 const refreshTime = 30000;
 const idleTime = 60 * 60000; // 1 hour
 
@@ -133,9 +137,11 @@ const SwapForm = () => {
     providers: storedProviders,
     includeDEX: showDexQuotes?.enabled || false,
   });
-  const pageState = usePageState(swapTransaction);
-
   const exchangeRatesState = swapTransaction.swap?.rates;
+  const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
+
+  const pageState = usePageState(swapTransaction, swapError);
+
   const swapKYC = useSelector(swapKYCSelector);
 
   const provider = exchangeRate?.provider;
@@ -178,8 +184,6 @@ const SwapForm = () => {
   }, [error, provider, providerKYC?.id, kycStatus, currentBanner]);
 
   const { setDrawer } = React.useContext(context);
-
-  const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
 
   useEffect(() => {
     const newFirstRateId = swapTransaction?.swap?.rates?.value?.length
@@ -522,6 +526,12 @@ const SwapForm = () => {
         />
         {pageState === "empty" && <EmptyState />}
         {pageState === "loading" && <LoadingState />}
+        {pageState === "initial" && (
+          <Hide>
+            <LoadingState />
+          </Hide>
+        )}
+
         {pageState === "loaded" && (
           <>
             <SwapFormSummary
