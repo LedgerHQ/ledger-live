@@ -53,9 +53,9 @@ export type DataOfUser = {
 
 export type NotificationCategory = {
   /** Whether or not the category is displayed in the Ledger Live notifications settings */
-  displayed: boolean;
+  displayed?: boolean;
   /** The key of the category */
-  category: string;
+  category?: string;
 };
 
 const pushNotificationsDataOfUserAsyncStorageKey =
@@ -89,8 +89,8 @@ const useNotifications = () => {
 
   const notificationsCategoriesHidden =
     pushNotificationsFeature?.params?.notificationsCategories
-      ?.filter((notificationsCategory: NotificationCategory) => !notificationsCategory.displayed)
-      .map((notificationsCategory: NotificationCategory) => notificationsCategory.category);
+      ?.filter((notificationsCategory: NotificationCategory) => !notificationsCategory?.displayed)
+      .map((notificationsCategory: NotificationCategory) => notificationsCategory?.category || "");
   const isPushNotificationsModalOpen = useSelector(
     notificationsModalOpenSelector,
   );
