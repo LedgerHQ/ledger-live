@@ -29,9 +29,10 @@ export default function useAnalyticsEventsLog() {
     setItems(currentItems => [...currentItems.slice(-9), item]);
   }, []);
   useEffect(() => {
-    trackSubject
+    const subscription = trackSubject
       .pipe(map(item => ({ ...item, id: ++id.current, date: new Date() })))
       .subscribe(addItem);
+    return () => subscription.unsubscribe();
   }, [addItem]);
 
   return {
