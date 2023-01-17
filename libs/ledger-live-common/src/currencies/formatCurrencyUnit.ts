@@ -27,6 +27,7 @@ const defaultFormatOptions = {
   joinFragmentsSeparator: "",
   // Increase the significant digits. Ex: For a value of 1.121212 BTC, dynamicSignificantDigits of 4 => 1.121 / dynamicSignificantDigits of 6 => 1.12121
   dynamicSignificantDigits: 6,
+  staticSignificantDigits: 8,
 };
 
 export type formatCurrencyUnitOptions = Partial<typeof defaultFormatOptions>;
@@ -88,6 +89,7 @@ export function formatCurrencyUnitFragment(
     subMagnitude,
     discreet,
     dynamicSignificantDigits,
+    staticSignificantDigits,
   } = { ...defaultFormatOptions, ...unit, ...options };
   const { magnitude, code } = unit;
   const floatValue = value.div(new BigNumber(10).pow(magnitude));
@@ -103,7 +105,7 @@ export function formatCurrencyUnitFragment(
             dynamicSignificantDigits -
               Math.ceil(Math.log10(floatValueAbs.toNumber())),
             magnitude + subMagnitude,
-            8
+            staticSignificantDigits
           )
         )
       );

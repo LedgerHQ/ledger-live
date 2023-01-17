@@ -20,7 +20,7 @@ import { Step } from "./types";
 import StepContainer from "./StepContainer";
 import StepFooter from "./StepFooter";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import useOpenPostOnboardingDrawerCallback from "~/renderer/hooks/useOpenPostOnboardingDrawerCallback";
+import { useNavigateToPostOnboardingHubCallback } from "~/renderer/components/PostOnboardingHub/logic/useNavigateToPostOnboardingHubCallback";
 
 type Props = {
   imageUri?: string;
@@ -161,7 +161,7 @@ const CustomImage: React.FC<Props> = props => {
 
   const previousStep: Step | undefined = orderedSteps[orderedSteps.findIndex(s => s === step) - 1];
 
-  const openPostOnboarding = useOpenPostOnboardingDrawerCallback();
+  const openPostOnboarding = useNavigateToPostOnboardingHubCallback();
   const dispatch = useDispatch();
 
   useEffect(() => {

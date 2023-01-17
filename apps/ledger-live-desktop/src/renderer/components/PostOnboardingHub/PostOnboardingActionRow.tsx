@@ -29,25 +29,13 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
   const { t } = useTranslation();
   const history = useHistory();
 
-  const isInsidePostOnboardingScreen = history.location.pathname === "/post-onboarding";
-
   const handleStartAction = useCallback(() => {
     if (navigationParams) history.push(navigationParams);
     else if (startAction) {
-      if (isInsidePostOnboardingScreen) {
-        history.push("/");
-      }
       startAction();
       startEvent && track(startEvent, startEventProperties);
     }
-  }, [
-    history,
-    isInsidePostOnboardingScreen,
-    navigationParams,
-    startAction,
-    startEvent,
-    startEventProperties,
-  ]);
+  }, [history, navigationParams, startAction, startEvent, startEventProperties]);
 
   return (
     <ActionRowWrapper
@@ -77,9 +65,11 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
           >
             {t(title)}
           </Text>
-          <Text variant="body" fontWeight="medium" color="neutral.c70">
-            {t(description)}
-          </Text>
+          {!completed ? (
+            <Text variant="body" fontWeight="medium" color="neutral.c70">
+              {t(description)}
+            </Text>
+          ) : null}
         </Flex>
       </Flex>
       <Flex
@@ -98,7 +88,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
         {completed ? (
           <Icons.CheckAloneMedium color="success.c100" size={16} />
         ) : (
-          <Icons.ChevronRightMedium color="primary.c80" size={16} />
+          <Icons.ChevronRightMedium color="neutral.c100" size={16} />
         )}
       </Flex>
     </ActionRowWrapper>

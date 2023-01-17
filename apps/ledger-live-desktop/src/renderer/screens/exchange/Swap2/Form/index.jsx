@@ -10,6 +10,7 @@ import {
   KYC_STATUS,
   shouldShowKYCBanner,
   shouldShowLoginBanner,
+  getProviderName,
 } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import React, { useCallback, useEffect, useState, useRef, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -48,7 +49,6 @@ import FormNotAvailable from "./FormNotAvailable";
 import SwapFormSelectors from "./FormSelectors";
 import SwapFormSummary from "./FormSummary";
 import SwapFormRates from "./FormRates";
-import { DEX_PROVIDERS } from "~/renderer/screens/exchange/Swap2/Form/utils";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import debounce from "lodash/debounce";
 import LoadingState from "./Rates/LoadingState";
@@ -131,13 +131,12 @@ const SwapForm = () => {
     onNoRates: trackNoRates,
     ...locationState,
     providers: storedProviders,
-    includeDEX: showDexQuotes,
+    includeDEX: showDexQuotes?.enabled || false,
   });
   const pageState = usePageState(swapTransaction);
 
   const exchangeRatesState = swapTransaction.swap?.rates;
   const swapKYC = useSelector(swapKYCSelector);
-  const [navigation, setNavigation] = useState(null);
 
   const provider = exchangeRate?.provider;
   const providerKYC = swapKYC?.[provider];
@@ -155,7 +154,7 @@ const SwapForm = () => {
 
   useEffect(() => {
     // In case of error, don't show  login, kyc or mfa banner
-    if (error || navigation) {
+    if (error) {
       // Don't show any flow banner on error to avoid double banner display
       setCurrentBanner(null);
       return;
@@ -176,7 +175,7 @@ const SwapForm = () => {
     if (currentBanner !== "LOGIN" && shouldShowKYCBanner({ provider, kycStatus })) {
       setCurrentBanner("KYC");
     }
-  }, [error, provider, providerKYC?.id, kycStatus, currentBanner, navigation]);
+  }, [error, provider, providerKYC?.id, kycStatus, currentBanner]);
 
   const { setDrawer } = React.useContext(context);
 
@@ -385,14 +384,19 @@ const SwapForm = () => {
       targetCurrency: targetCurrency?.name,
       partner: provider,
     });
-    if (navigation) {
-      const { pathname, params } = navigation;
+
+    if (exchangeRate.providerType === "DEX") {
+      const from = swapTransaction.swap.from;
+      const fromAddress = from.parentAccount?.id || from.account.id;
+      const providerURL =
+        exchangeRate.providerURL ||
+        `/platform/${getProviderName(exchangeRate.provider).toLowerCase()}`;
       history.push({
-        pathname,
-        search: new URLSearchParams({
+        pathname: providerURL,
+        params: {
           returnTo: "/swap",
-          ...params,
-        }).toString(),
+          accountId: fromAddress,
+        },
       });
     } else {
       setDrawer(ExchangeDrawer, { swapTransaction, exchangeRate }, { preventBackdropClick: true });
@@ -410,7 +414,7 @@ const SwapForm = () => {
   // All Ethereum, Binance and Polygon related currencies are considered available
   const showNoQuoteDexRate = useMemo(() => {
     // if we are showing DEX quotes, we don't want to show the link banners
-    if (showDexQuotes) {
+    if (showDexQuotes?.enabled) {
       return false;
     }
 
@@ -432,23 +436,11 @@ const SwapForm = () => {
 
   useEffect(() => {
     if (!exchangeRate) {
-      setNavigation(null);
       swapTransaction.swap.updateSelectedRate({});
       return;
     }
 
-    const { providerType } = exchangeRate;
-    if (providerType === "DEX") {
-      const dexProvider = DEX_PROVIDERS.find(d => d.id === exchangeRate.provider);
-      if (dexProvider) {
-        setNavigation(dexProvider.navigation);
-      }
-    }
-
-    if (providerType === "CEX") {
-      setNavigation(null);
-      swapTransaction.swap.updateSelectedRate(exchangeRate);
-    }
+    swapTransaction.swap.updateSelectedRate(exchangeRate);
     // suppressing as swapTransaction is not memoized and causes infinite loop
     // eslint-disable-next-line
   }, [exchangeRate]);
@@ -456,7 +448,7 @@ const SwapForm = () => {
   const debouncedSetFromAmount = useMemo(
     () =>
       debounce((amount: BigNumber) => {
-        setNavigation(null);
+        setShowDetails(false);
         swapTransaction.setFromAmount(amount);
       }, 400),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -490,22 +482,18 @@ const SwapForm = () => {
   }
 
   const setFromAccount = currency => {
-    setNavigation(null);
     swapTransaction.setFromAccount(currency);
   };
 
   const setToAccount = account => {
-    setNavigation(null);
     swapTransaction.setToAccount(account);
   };
 
   const setToCurrency = currency => {
-    setNavigation(null);
     swapTransaction.setToCurrency(currency);
   };
 
   const toggleMax = state => {
-    setNavigation(null);
     swapTransaction.toggleMax(state);
   };
 
