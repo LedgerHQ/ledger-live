@@ -1,4 +1,4 @@
-import "./Button/Button.stories";
+import "./Cta/Button/Button.stories";
 import "./Text/Text.stories";
 import "./Text/TextOverview.stories";
 import "./Layout/Modal/Modal.stories";
@@ -12,6 +12,7 @@ import "./Layout/List/NumberedList.stories";
 import "./Layout/List/IconBoxList.stories";
 import "./Layout/List/TipList.stories";
 import "./Layout/List/List.stories";
+import "./Layout/List/VerticalTimeline.stories";
 import "./message/Notification/Notification.stories";
 import "./Navigation/SlideIndicator/SlideIndicator.stories";
 import "./Navigation/StoriesIndicator/StoriesIndicator.stories";
@@ -50,3 +51,4 @@ import "./Form/SelectableList.stories";
 import "./Carousel/Carousel.stories";
 import "./ProgressBar/ProgressBar.stories";
 import "./FlowStepper/FlowStepper.stories";
+import "./Cards/Cards.stories";

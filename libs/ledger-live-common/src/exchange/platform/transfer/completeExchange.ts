@@ -56,21 +56,25 @@ const completeExchange = (
           exchangeType,
           rateType
         );
-        const refundAccount = getMainAccount(fromAccount, fromParentAccount);
-        const accountBridge = getAccountBridge(refundAccount);
-        const refundCurrency = getAccountCurrency(refundAccount);
 
-        if (refundCurrency.type !== "CryptoCurrency")
-          throw new Error("This should be a cryptocurrency");
+        const mainAccount = getMainAccount(fromAccount, fromParentAccount);
+        const accountBridge = getAccountBridge(mainAccount);
+        const mainPayoutCurrency = getAccountCurrency(mainAccount);
+        const payoutCurrency = getAccountCurrency(fromAccount);
+
+        if (mainPayoutCurrency.type !== "CryptoCurrency")
+          throw new Error(
+            `This should be a cryptocurrency, got ${mainPayoutCurrency.type}`
+          );
 
         transaction = await accountBridge.prepareTransaction(
-          refundAccount,
+          mainAccount,
           transaction
         );
         if (unsubscribed) return;
 
         const { errors, estimatedFees } =
-          await accountBridge.getTransactionStatus(refundAccount, transaction);
+          await accountBridge.getTransactionStatus(mainAccount, transaction);
         if (unsubscribed) return;
 
         const errorsKeys = Object.keys(errors);
@@ -108,18 +112,17 @@ const completeExchange = (
         if (unsubscribed) return;
 
         const payoutAddressParameters = await perFamily[
-          refundCurrency.family
+          mainPayoutCurrency.family
         ].getSerializedAddressParameters(
-          refundAccount.freshAddressPath,
-          refundAccount.derivationMode,
-          refundCurrency.id
+          mainAccount.freshAddressPath,
+          mainAccount.derivationMode
         );
         if (unsubscribed) return;
 
         const {
           config: payoutAddressConfig,
           signature: payoutAddressConfigSignature,
-        } = getCurrencyExchangeConfig(refundCurrency);
+        } = getCurrencyExchangeConfig(payoutCurrency);
 
         try {
           await exchange.checkPayoutAddress(
@@ -131,7 +134,7 @@ const completeExchange = (
           // @ts-expect-error TransportStatusError to be typed on ledgerjs
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
             throw new WrongDeviceForAccount(undefined, {
-              accountName: refundAccount.name,
+              accountName: mainAccount.name,
             });
           }
 

@@ -93,8 +93,18 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         code: "NEAR",
         magnitude: 24,
       },
+      {
+        name: "yoctoNEAR",
+        code: "yoctoNEAR",
+        magnitude: 0,
+      },
     ],
-    explorerViews: [],
+    explorerViews: [
+      {
+        address: "https://explorer.near.org/accounts/$address",
+        tx: "https://explorer.near.org/transactions/$hash",
+      },
+    ],
     keywords: ["near"],
   },
   aeternity: {
@@ -988,7 +998,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       baseChain: "mainnet",
       chainId: 1,
       networkId: 1,
-      hardfork: "petersburg",
+      hardfork: "london",
     },
     explorerViews: [
       {
@@ -2357,6 +2367,9 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     managerAppName: "XSN",
     ticker: "XSN",
     scheme: "xsn",
+    terminated: {
+      link: "https://support.ledger.com/",
+    },
     color: "#141828",
     supportsSegwit: true,
     family: "bitcoin",
@@ -3093,7 +3106,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       baseChain: "goerli",
       chainId: 5, // goerli
       networkId: 5,
-      hardfork: "petersburg",
+      hardfork: "london",
     },
     explorerViews: [
       {

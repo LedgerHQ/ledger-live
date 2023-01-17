@@ -8,7 +8,13 @@ const QuizzFinalScene = ({ success }: { success: boolean }) => {
 
   return (
     <>
-      <Text variant="h2" color="palette.neutral.c100" mb={3} uppercase>
+      <Text
+        variant="h2"
+        color="palette.neutral.c100"
+        mb={3}
+        uppercase
+        lineHeight="34.8px"
+      >
         {t(`onboarding.quizz.final.${success ? "successTitle" : "failTitle"}`)}
       </Text>
       <Text variant="paragraph" color="palette.neutral.c80" mb={10}>

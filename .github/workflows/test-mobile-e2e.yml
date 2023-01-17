@@ -1,0 +1,237 @@
+name: "[Test] Mobile App End-2-End"
+
+on:
+  # pull_request:
+  # push:
+  #   branches:
+  #     - main
+  #     - develop
+  #     - release
+  #     - hotfix
+  schedule:
+    - cron: "0 0/12 * * *"
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "The branch to run tests on (develop by default)"
+        required: false
+        default: develop
+
+# Uncomment to have log-level: trace on detox run and build
+# (cf: apps/ledger-live-mobile/detox.config.js)
+# env:
+#   DEBUG_DETOX: true
+
+# Ignore while only running every 12 hours on the develop
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref_name != 'develop' || github.ref_name != 'main' }}
+
+jobs:
+  detox-tests-ios:
+    name: "Ledger Live Mobile - iOS Detox Tests"
+    runs-on: [ledger-live, macos]
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      LANG: en_US.UTF-8
+      LANGUAGE: en_US.UTF-8
+      LC_ALL: en_US.UTF-8
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.ref || 'develop' }}
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+
+      - name: Install applesimutils
+        run: |
+          brew update
+          brew tap wix/brew
+          brew install applesimutils
+
+      - name: Cache LLM pods
+        uses: actions/cache@v3
+        with:
+          path: |
+            apps/ledger-live-mobile/ios/Pods
+            ~/Library/Caches/CocoaPods
+            ~/.cocoapods
+          key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
+
+      - name: install dependencies
+        run: |
+          eval "$(rbenv init - bash)"
+          pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+
+      - name: Build dependencies
+        run: |
+          eval "$(rbenv init - bash)"
+          pnpm build:llm:deps
+
+      - name: Build iOS app for Detox test run
+        run: |
+          eval "$(rbenv init - bash)"
+          pnpm mobile e2e:build -c ios.sim.release
+
+      - name: Test iOS app
+        run: |
+          pnpm mobile e2e:test -c ios.sim.release --loglevel verbose --record-logs all --take-screenshots all --record-videos failing --record-performance all --detectOpenHandles --cleanup --headless
+
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: test-ios-artifacts
+          path: apps/ledger-live-mobile/artifacts
+
+      - name: Upload Allure report
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: "allure-ios-reports"
+          path: apps/ledger-live-mobile/allure-results
+
+  allure-report-ios:
+    name: "Allure Reports Export on Server"
+    runs-on: [ledger-live, linux]
+    if: always()
+    needs: [detox-tests-ios]
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.ref || 'develop' }}
+      - uses: ./tools/actions/composites/upload-allure-report
+        with:
+          platform: ios
+          login: ${{ secrets.ALLURE_LOGIN }}
+          password: ${{ secrets.ALLURE_PASSWORD }}
+          path: allure-ios-reports
+
+  detox-tests-android:
+    name: "Ledger Live Mobile - Android Detox Tests"
+    runs-on: [ledger-live, macos]
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      LANG: en_US.UTF-8
+      LANGUAGE: en_US.UTF-8
+      LC_ALL: en_US.UTF-8
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.ref || 'develop' }}
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+
+      - name: setup JDK 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: "zulu"
+          java-version: "11"
+          cache: "gradle"
+
+      - name: Cache LLM pods
+        uses: actions/cache@v3
+        with:
+          path: |
+            apps/ledger-live-mobile/ios/Pods
+            ~/Library/Caches/CocoaPods
+            ~/.cocoapods
+          key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
+
+      - name: setup Android SDK
+        uses: android-actions/setup-android@v2.0.8
+
+      - name: Install dependencies
+        run: |
+          eval "$(rbenv init - bash)"
+          pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+
+      - name: Build dependencies
+        run: |
+          eval "$(rbenv init - bash)"
+          pnpm build:llm:deps
+
+      - name: Gradle cache
+        uses: gradle/gradle-build-action@v2
+
+      - name: create AVD and generate snapshot for caching
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          arch: x86_64
+          target: default
+          avd-name: "Pixel_5_API_31"
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          ram-size: 4096M
+          script: echo "Generated AVD snapshot for caching."
+
+      - name: Build Android app for Detox test run
+        run: |
+          eval "$(rbenv init - bash)"
+          pnpm mobile e2e:build -c android.emu.release
+
+      - name: Run Android tests
+        uses: reactivecircus/android-emulator-runner@v2
+        timeout-minutes: 20
+        with:
+          api-level: 31
+          arch: x86_64
+          target: default
+          avd-name: "Pixel_5_API_31"
+          force-avd-creation: false
+          emulator-options: -verbose -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          ram-size: 4096M
+          script: pnpm mobile e2e:test -c android.emu.release --loglevel verbose --record-logs all --take-screenshots all --record-videos failing --forceExit --detectOpenHandles --cleanup --headless
+
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-android-artifacts
+          path: apps/ledger-live-mobile/artifacts/
+
+      - name: Upload Allure Report
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: "allure-android-reports"
+          path: apps/ledger-live-mobile/allure-results
+
+  allure-report-android:
+    name: "Allure Reports Export on Server"
+    runs-on: [ledger-live, linux]
+    if: always()
+    needs: [detox-tests-android]
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.ref || 'develop' }}
+
+      - uses: ./tools/actions/composites/upload-allure-report
+        with:
+          platform: android
+          login: ${{ secrets.ALLURE_LOGIN }}
+          password: ${{ secrets.ALLURE_PASSWORD }}
+          path: allure-android-reports

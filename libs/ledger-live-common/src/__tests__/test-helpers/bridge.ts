@@ -39,6 +39,7 @@ import type {
   TransactionStatusCommon,
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+
 const warnDev = process.env.CI
   ? (..._args) => {}
   : (...msg) => console.warn(...msg);
@@ -95,6 +96,7 @@ export function testBridge<T extends TransactionCommon>(
       currencyData,
       currency,
     });
+
     const accounts = currencyData.accounts || [];
     accounts.forEach((accountData) =>
       implementations.forEach((impl) => {
@@ -358,6 +360,7 @@ export function testBridge<T extends TransactionCommon>(
       }
     }
   });
+
   accountsRelated
     .map(({ account, ...rest }) => {
       const bridge = getAccountBridge(account, null);
@@ -506,6 +509,7 @@ export function testBridge<T extends TransactionCommon>(
             });
           });
         });
+
         describe("createTransaction", () => {
           makeTest(
             "empty transaction is an object with empty recipient and zero amount",
@@ -538,6 +542,7 @@ export function testBridge<T extends TransactionCommon>(
             }
           );
         });
+
         describe("prepareTransaction", () => {
           // stability: function called twice will return the same object reference (=== convergence so we can stop looping, typically because transaction will be a hook effect dependency of prepareTransaction)
           async function expectStability(account, t) {
@@ -580,10 +585,14 @@ export function testBridge<T extends TransactionCommon>(
             }
           );
         });
+
         describe("getTransactionStatus", () => {
           makeTest("can be called on an empty transaction", async () => {
             const account = await getSynced();
-            const t = bridge.createTransaction(account);
+            const t = {
+              ...bridge.createTransaction(account),
+              feePerByte: new BigNumber(0.0001),
+            };
             const s = await bridge.getTransactionStatus(account, t);
             expect(s).toBeDefined();
             expect(s.errors).toHaveProperty("recipient");
@@ -599,10 +608,10 @@ export function testBridge<T extends TransactionCommon>(
             "can be called on an empty prepared transaction",
             async () => {
               const account = await getSynced();
-              const t = await bridge.prepareTransaction(
-                account,
-                bridge.createTransaction(account)
-              );
+              const t = await bridge.prepareTransaction(account, {
+                ...bridge.createTransaction(account),
+                feePerByte: new BigNumber(0.0001),
+              });
               const s = await bridge.getTransactionStatus(account, t);
               expect(s).toBeDefined(); // FIXME i'm not sure if we can establish more shared properties
             }
@@ -611,7 +620,10 @@ export function testBridge<T extends TransactionCommon>(
             "Default empty recipient have a recipientError",
             async () => {
               const account = await getSynced();
-              const t = { ...bridge.createTransaction(account) };
+              const t = {
+                ...bridge.createTransaction(account),
+                feePerByte: new BigNumber(0.0001),
+              };
               const status = await bridge.getTransactionStatus(account, t);
               expect(status.errors.recipient).toBeInstanceOf(RecipientRequired);
             }
@@ -620,6 +632,7 @@ export function testBridge<T extends TransactionCommon>(
             const account = await getSynced();
             const t = {
               ...bridge.createTransaction(account),
+              feePerByte: new BigNumber(0.0001),
               recipient: "invalidADDRESS",
             };
             const status = await bridge.getTransactionStatus(account, t);
@@ -627,7 +640,10 @@ export function testBridge<T extends TransactionCommon>(
           });
           makeTest("Default empty amount has an amount error", async () => {
             const account = await getSynced();
-            const t = { ...bridge.createTransaction(account) };
+            const t = await bridge.prepareTransaction(account, {
+              ...bridge.createTransaction(account),
+              feePerByte: new BigNumber(0.0001),
+            });
             const status = await bridge.getTransactionStatus(account, t);
             expect(status.errors.amount).toBeInstanceOf(AmountRequired);
           });
@@ -659,7 +675,10 @@ export function testBridge<T extends TransactionCommon>(
                         bridge
                       )
                     : transaction;
-                t = await bridge.prepareTransaction(account, t);
+                t = await bridge.prepareTransaction(account, {
+                  feePerByte: new BigNumber(0.0001),
+                  ...t,
+                });
                 const s = await bridge.getTransactionStatus(account, t);
 
                 if (expectedStatus) {
@@ -668,6 +687,7 @@ export function testBridge<T extends TransactionCommon>(
                       ? expectedStatus(account, t, s)
                       : expectedStatus;
                   const { errors, warnings } = es;
+
                   // we match errors and warnings
                   errors && expect(s.errors).toMatchObject(errors);
                   warnings && expect(s.warnings).toMatchObject(warnings);
@@ -724,7 +744,11 @@ export function testBridge<T extends TransactionCommon>(
                         account: account as AccountLike,
                       };
 
-                  if (typeof t.mode !== "string" || t.mode === "send") {
+                  if (
+                    (typeof t.mode !== "string" || t.mode === "send") &&
+                    t.model &&
+                    t.model.kind !== "stake.createAccount"
+                  ) {
                     const estimation = await bridge.estimateMaxSpendable(obj);
                     expect(estimation.gte(0)).toBe(true);
                     expect(estimation.lte(obj.account.balance)).toBe(true);

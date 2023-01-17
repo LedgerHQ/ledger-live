@@ -1,13 +1,12 @@
 import React, { ReactNode } from "react";
 import { StyleProp, TextStyle, ViewStyle } from "react-native";
-import { Box, Checkbox, Flex, Text } from "@ledgerhq/native-ui";
+import { Box, Checkbox, Flex, Text, Tag } from "@ledgerhq/native-ui";
 import {
   ChevronRightMedium,
   InfoMedium,
 } from "@ledgerhq/native-ui/assets/icons";
 import styled from "styled-components/native";
 import Touchable from "./Touchable";
-import { Tag } from "../../../../libs/ui/packages/native/lib";
 
 const StyledTouchableRow = styled(Touchable)<{ compact?: boolean }>`
   background-color: ${p => p.theme.colors.palette.background.main};
@@ -37,6 +36,7 @@ export default function SettingsRow({
   eventProperties,
   compact,
   label,
+  testID,
 }: {
   onPress?: () => void;
   onHelpPress?: () => void;
@@ -48,15 +48,15 @@ export default function SettingsRow({
   desc?: ReactNode;
   selected?: boolean;
   arrowRight?: boolean;
-  iconLeft?: any;
+  iconLeft?: React.ReactNode;
   centeredIcon?: boolean;
   children?: ReactNode;
   noTextDesc?: boolean;
   event?: string;
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  eventProperties?: Object;
+  eventProperties?: Record<string, unknown>;
   compact?: boolean;
   label?: string;
+  testID?: string;
 }) {
   let title$ = (
     <Flex
@@ -64,7 +64,7 @@ export default function SettingsRow({
       alignItems={"center"}
       style={titleContainerStyle}
     >
-      <Box flexDirection={"row"} alignItems={"center"}>
+      <Flex flexDirection={"row"} alignItems={"center"}>
         <Text
           variant={"large"}
           fontWeight={"semiBold"}
@@ -74,7 +74,7 @@ export default function SettingsRow({
           {title}
         </Text>
         {label ? <Tag ml={3}>{label}</Tag> : null}
-      </Box>
+      </Flex>
       {subtitle && (
         <Text
           variant={"body"}
@@ -104,11 +104,15 @@ export default function SettingsRow({
       eventProperties={eventProperties}
       style={style}
       compact={compact}
+      testID={testID}
     >
       {iconLeft && (
-        <Box paddingRight={6} justifyContent={centeredIcon && "center"}>
+        <Flex
+          paddingRight={6}
+          justifyContent={centeredIcon ? "center" : undefined}
+        >
           {iconLeft}
-        </Box>
+        </Flex>
       )}
       <Box flexShrink={1} paddingRight={6} marginRight={"auto"}>
         {title$}

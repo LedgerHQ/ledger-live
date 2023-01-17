@@ -1,8 +1,8 @@
-import type {
+import {
+  Incident,
   ServiceStatusApi,
   ServiceStatusSummary,
-  Incident,
-} from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
+} from "@ledgerhq/live-common/notifications/ServiceStatusProvider/types";
 
 const statuses = {
   page: {
@@ -479,21 +479,6 @@ const statuses = {
       only_show_if_degraded: false,
     },
     {
-      id: "s0nb6pyz6phc",
-      name: "Stakenet (XSN)",
-      status: "operational",
-      created_at: "2020-06-22T17:56:05.389+02:00",
-      updated_at: "2021-01-02T19:17:16.318+01:00",
-      position: 23,
-      description: null,
-      showcase: true,
-      start_date: null,
-      group_id: "rn7ny8423ghs",
-      page_id: "767c5rcj7z12",
-      group: false,
-      only_show_if_degraded: false,
-    },
-    {
       id: "mqsw7dfk04p6",
       name: "Stealthcoin (XST)",
       status: "operational",
@@ -554,7 +539,7 @@ const statuses = {
       only_show_if_degraded: false,
     },
   ],
-  incidents: [],
+  incidents: [] as Incident[],
   scheduled_maintenances: [],
   status: {
     indicator: "none",
@@ -586,6 +571,9 @@ const mockedIncidents: Incident[] = [
     updated_at: "2021-02-22T17:58:18.792+02:00",
     components: [
       {
+        // FIXME: Is typescript right?
+        // @ts-expect-error id should be defined according to typescript?
+        id: undefined,
         name: "Bitcoin - Btc",
       },
     ],
@@ -637,6 +625,9 @@ const mockedIncidents: Incident[] = [
     updated_at: "2021-02-22T17:58:18.792+02:00",
     components: [
       {
+        // FIXME: Is typescript right?
+        // @ts-expect-error id should be defined according to typescript?
+        id: undefined,
         name: "Ethereum - Eth",
       },
     ],

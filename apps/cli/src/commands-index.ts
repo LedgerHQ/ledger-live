@@ -9,6 +9,7 @@ import botPortfolio from "./commands/botPortfolio";
 import botTransfer from "./commands/botTransfer";
 import broadcast from "./commands/broadcast";
 import cleanSpeculos from "./commands/cleanSpeculos";
+import confirmOp from "./commands/confirmOp";
 import countervalues from "./commands/countervalues";
 import derivation from "./commands/derivation";
 import devDeviceAppsScenario from "./commands/devDeviceAppsScenario";
@@ -25,6 +26,8 @@ import generateTestScanAccounts from "./commands/generateTestScanAccounts";
 import generateTestTransaction from "./commands/generateTestTransaction";
 import genuineCheck from "./commands/genuineCheck";
 import getAddress from "./commands/getAddress";
+import getBatteryStatus from "./commands/getBatteryStatus";
+import getDeviceRunningMode from "./commands/getDeviceRunningMode";
 import getTransactionStatus from "./commands/getTransactionStatus";
 import i18n from "./commands/i18n";
 import liveData from "./commands/liveData";
@@ -40,6 +43,10 @@ import scanDescriptors from "./commands/scanDescriptors";
 import send from "./commands/send";
 import signMessage from "./commands/signMessage";
 import speculosList from "./commands/speculosList";
+import staxFetchAndRestoreDemo from "./commands/staxFetchAndRestoreDemo";
+import staxFetchImage from "./commands/staxFetchImage";
+import staxFetchImageHash from "./commands/staxFetchImageHash";
+import staxLoadImage from "./commands/staxLoadImage";
 import swap from "./commands/swap";
 import sync from "./commands/sync";
 import synchronousOnboarding from "./commands/synchronousOnboarding";
@@ -61,6 +68,7 @@ export default {
   botTransfer,
   broadcast,
   cleanSpeculos,
+  confirmOp,
   countervalues,
   derivation,
   devDeviceAppsScenario,
@@ -77,6 +85,8 @@ export default {
   generateTestTransaction,
   genuineCheck,
   getAddress,
+  getBatteryStatus,
+  getDeviceRunningMode,
   getTransactionStatus,
   i18n,
   liveData,
@@ -92,6 +102,10 @@ export default {
   send,
   signMessage,
   speculosList,
+  staxFetchAndRestoreDemo,
+  staxFetchImage,
+  staxFetchImageHash,
+  staxLoadImage,
   swap,
   sync,
   synchronousOnboarding,

@@ -4,14 +4,15 @@ import { getSecp256k1Instance } from "./secp256k1";
 
 // the BIP32 class is inspired from https://github.com/bitcoinjs/bip32/blob/master/src/bip32.js
 class BIP32 {
-  publicKey: any;
-  chainCode: any;
+  publicKey: Buffer;
+  chainCode: Buffer;
   network: any;
   depth: number;
   index: number;
   constructor(
-    publicKey: any,
-    chainCode: any,
+    publicKey: Buffer,
+    chainCode: Buffer,
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     network: any,
     depth = 0,
     index = 0
@@ -24,7 +25,7 @@ class BIP32 {
     this.depth = depth;
     this.index = index;
   }
-  async derive(index: number) {
+  async derive(index: number): Promise<BIP32> {
     const data = Buffer.allocUnsafe(37);
     this.publicKey.copy(data, 0);
     data.writeUInt32BE(index, 33);

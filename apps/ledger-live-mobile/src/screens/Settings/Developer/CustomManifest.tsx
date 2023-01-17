@@ -1,16 +1,24 @@
 import React, { useState, useMemo, useCallback, useLayoutEffect } from "react";
-import { TextInput, StyleSheet, TouchableOpacity } from "react-native";
-import { useTheme, NavigationProp } from "@react-navigation/native";
+import {
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  TouchableOpacityProps,
+} from "react-native";
+import { useTheme, CompositeScreenProps } from "@react-navigation/native";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
+import { Box } from "@ledgerhq/native-ui";
 import NavigationScrollView from "../../../components/NavigationScrollView";
-import Button from "../../../components/Button";
 import { ScreenName } from "../../../const";
 import KeyboardView from "../../../components/KeyboardView";
 import ImportIcon from "../../../icons/Import";
+import ArrowRight from "../../../icons/ArrowRight";
+import type { SettingsNavigatorStackParamList } from "../../../components/RootNavigator/types/SettingsNavigator";
+import type { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
+import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 
 const DebuggerButton: React.ComponentType<{
-  onPress: (..._: Array<any>) => any;
-  // eslint-disable-next-line react/prop-types
+  onPress: TouchableOpacityProps["onPress"];
 }> = ({ onPress }) => {
   const { colors } = useTheme();
   return (
@@ -20,11 +28,31 @@ const DebuggerButton: React.ComponentType<{
   );
 };
 
-export default function CustomManifest({
-  navigation,
-}: {
-  navigation: NavigationProp;
-}) {
+const OpenButton: React.ComponentType<{
+  onPress: TouchableOpacityProps["onPress"];
+  disabled: boolean;
+}> = ({ onPress, disabled }) => {
+  const { colors } = useTheme();
+  return (
+    <TouchableOpacity
+      style={styles.buttons}
+      onPress={onPress}
+      disabled={disabled}
+    >
+      <ArrowRight size={18} color={colors.black} />
+    </TouchableOpacity>
+  );
+};
+
+type Props = CompositeScreenProps<
+  StackNavigatorProps<
+    SettingsNavigatorStackParamList,
+    ScreenName.DeveloperCustomManifest
+  >,
+  StackNavigatorProps<BaseNavigatorStackParamList>
+>;
+
+export default function CustomManifest({ navigation }: Props) {
   const { colors } = useTheme();
   const { manifest, disabled, addLocalManifest, onChange } =
     useCustomManifest();
@@ -50,9 +78,10 @@ export default function CustomManifest({
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <DebuggerButton
-          onPress={() =>
-            onChange(`
+        <Box flexDirection="row">
+          <DebuggerButton
+            onPress={() =>
+              onChange(`
             {
               "id": "debug",
               "name": "Debugger",
@@ -86,11 +115,13 @@ export default function CustomManifest({
               ]
             }
           `)
-          }
-        />
+            }
+          />
+          <OpenButton disabled={disabled} onPress={onOpen} />
+        </Box>
       ),
     });
-  }, [navigation, onChange]);
+  }, [disabled, navigation, onChange, onOpen]);
   return (
     <KeyboardView>
       <NavigationScrollView>
@@ -107,12 +138,7 @@ export default function CustomManifest({
           placeholder="Paste your manifest json"
           multiline
           autoCorrect={false}
-        />
-        <Button
-          type="primary"
-          title="Open"
-          disabled={disabled}
-          onPress={onOpen}
+          scrollEnabled={false}
         />
       </NavigationScrollView>
     </KeyboardView>

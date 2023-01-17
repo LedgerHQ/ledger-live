@@ -24,28 +24,21 @@ const BuyButton = ({ currency, account }: { currency: CryptoCurrency, account: A
   const onClick = useCallback(() => {
     dispatch(closeAllModal());
     setTrackingSource("send flow");
-    if (ptxSmartRouting?.enabled) {
-      const params = {
-        currency: currency.id,
-        account: account.id,
-        mode: "buy", // buy or sell
-      };
 
-      history.push({
-        // replace 'multibuy' in case live app id changes
-        pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ?? "multibuy"}`,
-        state: params,
-      });
-    } else {
-      history.push({
-        pathname: "/exchange",
-        state: {
-          tab: 0,
-          defaultCurrency: currency,
-          defaultAccount: account,
-        },
-      });
-    }
+    history.push({
+      pathname: "/exchange",
+      state: ptxSmartRouting?.enabled
+        ? {
+            currency: currency.id,
+            account: account.id,
+            mode: "buy", // buy or sell
+          }
+        : {
+            tab: 0,
+            defaultCurrency: currency,
+            defaultAccount: account,
+          },
+    });
   }, [account, currency, dispatch, history, ptxSmartRouting]);
 
   if (!isCurrencySupported("BUY", currency)) {

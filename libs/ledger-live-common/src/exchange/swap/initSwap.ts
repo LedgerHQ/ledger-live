@@ -167,6 +167,12 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
           throw errors[errorsKeys[0]]; // throw the first error
         }
 
+        if (swapProviderConfig.type !== "CEX") {
+          throw new Error(
+            `Unsupported provider type ${swapProviderConfig.type}`
+          );
+        }
+
         // Prepare swap app to receive the tx to forward.
         await swap.setPartnerKey(swapProviderConfig.nameAndPubkey);
         if (unsubscribed) return;

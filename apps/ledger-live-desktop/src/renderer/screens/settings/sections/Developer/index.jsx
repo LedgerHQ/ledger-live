@@ -7,9 +7,10 @@ import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../Se
 import AllowExperimentalAppsToggle from "./AllowExperimentalAppsToggle";
 import AllowDebugAppsToggle from "./AllowDebugAppsToggle";
 import EnablePlatformDevToolsToggle from "./EnablePlatformDevToolsToggle";
-import CatalogProviderSelect from "./CatalogProviderSelect";
+import CatalogProviderInput from "./CatalogProviderInput";
+import CatalogRampProviderSelect from "./CatalogRampProviderSelect";
 import RunLocalAppButton from "./RunLocalAppButton";
-import FeatureFlagsButton from "./FeatureFlagsButton";
+import FeatureFlagsSettings from "./FeatureFlagsSettings";
 import EnableLearnPageStagingUrlToggle from "./EnableLearnPageStagingUrlToggle";
 
 const SectionDeveloper = () => {
@@ -31,10 +32,17 @@ const SectionDeveloper = () => {
         </Row>
 
         <Row
-          title={t("settings.developer.catalogServer")}
-          desc={t("settings.developer.catalogServerDesc")}
+          title={t("settings.developer.catalogUrl")}
+          desc={t("settings.developer.catalogUrlDesc")}
         >
-          <CatalogProviderSelect />
+          <CatalogProviderInput />
+        </Row>
+
+        <Row
+          title={t("settings.developer.catalogRampServer")}
+          desc={t("settings.developer.catalogRampServerDesc")}
+        >
+          <CatalogRampProviderSelect />
         </Row>
 
         <Row
@@ -44,7 +52,7 @@ const SectionDeveloper = () => {
           <EnablePlatformDevToolsToggle />
         </Row>
         <RunLocalAppButton />
-        <FeatureFlagsButton />
+        <FeatureFlagsSettings />
         <Row
           title={t("settings.developer.enableLearnStagingUrl")}
           desc={t("settings.developer.enableLearnStagingUrlDesc")}

@@ -6,6 +6,8 @@ import styled, { useTheme } from "styled-components";
 import { Flex, Text, Icon } from "@ledgerhq/react-ui";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { track } from "~/renderer/analytics/segment";
+import { swapDefaultTrack } from "~/renderer/screens/exchange/Swap2/utils/index";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { TableCell, TableRow } from "./MarketList";
@@ -101,26 +103,21 @@ function MarketRowItem({
       e.stopPropagation();
       setTrackingSource("Page Market");
       // PTX smart routing redirect to live app or to native implementation
-      if (ptxSmartRouting?.enabled && currency?.internalCurrency) {
-        const params = {
-          currency: currency.internalCurrency?.id,
-          mode: "buy", // buy or sell
-        };
 
-        history.push({
-          // replace 'multibuy' in case live app id changes
-          pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ?? "multibuy"}`,
-          state: params,
-        });
-      } else {
-        history.push({
-          pathname: "/exchange",
-          state: {
-            mode: "onRamp",
-            defaultTicker: currency && currency.ticker ? currency.ticker.toUpperCase() : undefined,
-          },
-        });
-      }
+      history.push({
+        pathname: "/exchange",
+        state:
+          ptxSmartRouting?.enabled && currency?.internalCurrency
+            ? {
+                currency: currency.internalCurrency?.id,
+                mode: "buy", // buy or sell
+              }
+            : {
+                mode: "onRamp",
+                defaultTicker:
+                  currency && currency.ticker ? currency.ticker.toUpperCase() : undefined,
+              },
+      });
     },
     [currency, history, ptxSmartRouting],
   );
@@ -130,6 +127,12 @@ function MarketRowItem({
       if (currency?.internalCurrency?.id) {
         e.preventDefault();
         e.stopPropagation();
+        track("button_clicked", {
+          button: "swap",
+          currency: currency?.ticker,
+          page: "Page Market",
+          ...swapDefaultTrack,
+        });
         setTrackingSource("Page Market");
 
         const currencyId = currency?.internalCurrency?.id;
@@ -152,7 +155,7 @@ function MarketRowItem({
         });
       }
     },
-    [currency?.internalCurrency, flattenedAccounts, openAddAccounts, history],
+    [currency?.internalCurrency, currency?.ticker, flattenedAccounts, openAddAccounts, history],
   );
 
   const onStarClick = useCallback(

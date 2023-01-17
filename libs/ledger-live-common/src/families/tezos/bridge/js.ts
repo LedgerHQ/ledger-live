@@ -140,7 +140,10 @@ const getTransactionStatus = async (
     log("taquitoerror", String(t.taquitoError));
 
     // remap taquito errors
-    if (t.taquitoError.endsWith("balance_too_low")) {
+    if (
+      t.taquitoError.endsWith("balance_too_low") ||
+      t.taquitoError.endsWith("subtraction_underflow")
+    ) {
       if (t.mode === "send") {
         resetTotalSpent = true;
         errors.amount = new NotEnoughBalance();
@@ -298,7 +301,7 @@ const prepareTransaction = async (
       // in case of http 400, log & ignore (more case to handle)
       log(
         "taquito-network-error",
-        String((e as { message: string }).message || ""),
+        String((e as unknown as { message: string }).message || ""),
         { transaction: t }
       );
       throw e;

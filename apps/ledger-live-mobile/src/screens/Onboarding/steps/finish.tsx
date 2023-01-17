@@ -9,13 +9,17 @@ import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { TrackScreen } from "../../../analytics";
 import { completeOnboarding } from "../../../actions/settings";
 import { useNavigationInterceptor } from "../onboardingContext";
-import { NavigatorName } from "../../../const";
+import { NavigatorName, ScreenName } from "../../../const";
 
 import Button from "../../../components/wrappedUi/Button";
 import StyledStatusBar from "../../../components/StyledStatusBar";
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const source = require("../../../../assets/videos/onboarding.mp4");
+import {
+  RootComposite,
+  RootNavigation,
+  StackNavigatorProps,
+} from "../../../components/RootNavigator/types/helpers";
+import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
+import videoSources from "../../../../assets/videos";
 
 const StyledSafeAreaView = styled(SafeAreaView)`
   flex: 1;
@@ -23,7 +27,7 @@ const StyledSafeAreaView = styled(SafeAreaView)`
 `;
 
 const absoluteStyle = {
-  position: "absolute",
+  position: "absolute" as const,
   bottom: 0,
   left: 0,
   top: 0,
@@ -53,11 +57,11 @@ const items = [
   },
 ];
 
-type Props = {
-  navigation: any;
-};
+type NavigationProps = RootComposite<
+  StackNavigatorProps<OnboardingNavigatorParamList, ScreenName.OnboardingFinish>
+>;
 
-export default function OnboardingStepFinish({ navigation }: Props) {
+export default function OnboardingStepFinish({ navigation }: NavigationProps) {
   const dispatch = useDispatch();
   const { resetCurrentStep } = useNavigationInterceptor();
   const { t } = useTranslation();
@@ -67,7 +71,7 @@ export default function OnboardingStepFinish({ navigation }: Props) {
     dispatch(completeOnboarding());
     resetCurrentStep();
 
-    const parentNav = navigation.getParent();
+    const parentNav = navigation.getParent<RootNavigation>();
     if (parentNav) {
       parentNav.popToTop();
     }
@@ -82,7 +86,7 @@ export default function OnboardingStepFinish({ navigation }: Props) {
       <TrackScreen category="Onboarding" name="Finish" />
       <StyledStatusBar barStyle="light-content" />
       <Video
-        source={source}
+        source={videoSources.welcomeScreen}
         style={absoluteStyle}
         muted
         repeat

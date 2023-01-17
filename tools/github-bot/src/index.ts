@@ -1,4 +1,5 @@
 import { Probot } from "probot";
+import { upToDate } from "./features/upToDate";
 import { commands, isValidBody, isValidBranchName, isValidUser } from "./tools";
 
 export default (app: Probot) => {
@@ -56,7 +57,14 @@ export default (app: Probot) => {
     const branch = payload.pull_request.head.ref;
     const login = payload.pull_request.user.login;
 
-    if (!isValidUser(login)) return;
+    if (
+      !isValidUser(login) &&
+      // Close automatic PRs from smartling - except the ones triggered manually
+      !/^(smartling-content-updated|smartling-translation-completed)-.+/.test(
+        branch
+      )
+    )
+      return;
 
     const isBranchValid = isValidBranchName(branch);
     const isBodyValid = isValidBody(payload.pull_request.body);
@@ -97,4 +105,7 @@ export default (app: Probot) => {
       state: "closed",
     });
   });
+
+  // Report if PRs are up to date
+  upToDate(app);
 };

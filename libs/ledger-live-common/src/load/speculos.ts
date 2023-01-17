@@ -123,7 +123,12 @@ export async function createSpeculosDevice(
     ...(dependency
       ? [
           "-l",
-          `${dependency}:${`./apps/${reverseModelMap[model]}/${firmware}/${dependency}/app_${appVersion}.elf`}`,
+          `${dependency}:${`./apps/${
+            reverseModelMap[model]
+          }/${firmware}/${dependency.replace(
+            / /g,
+            ""
+          )}/app_${appVersion}.elf`}`,
         ]
       : []),
     ...(sdk ? ["--sdk", sdk] : []),
@@ -417,7 +422,7 @@ function parseAppSearch(query: string):
   let dependency;
 
   if (currency) {
-    dependency = getDependencies(currency.managerAppName)[0];
+    dependency = getDependencies(currency.managerAppName)[0]?.replace(/ /g, "");
   }
 
   return {

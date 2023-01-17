@@ -6,23 +6,34 @@ import HIDTransport from "@ledgerhq/react-native-hid";
 import withStaticURLs from "@ledgerhq/hw-transport-http";
 import { retry } from "@ledgerhq/live-common/promise";
 import { setEnv } from "@ledgerhq/live-common/env";
-import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
+import {
+  getCryptoCurrencyById,
+  setSupportedCurrencies,
+} from "@ledgerhq/live-common/currencies/index";
 import { setPlatformVersion } from "@ledgerhq/live-common/platform/version";
+import { PLATFORM_VERSION } from "@ledgerhq/live-common/platform/constants";
+import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
+import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
 import type { TransportModule } from "@ledgerhq/live-common/hw/index";
 import { setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
+import { getDeviceModel } from "@ledgerhq/devices";
+import { DescriptorEvent } from "@ledgerhq/hw-transport";
 import VersionNumber from "react-native-version-number";
+import type { DeviceModelId } from "@ledgerhq/types-devices";
 import { Platform } from "react-native";
 import axios from "axios";
 import { setSecp256k1Instance } from "@ledgerhq/live-common/families/bitcoin/wallet-btc/crypto/secp256k1";
 import { setGlobalOnBridgeError } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { prepareCurrency } from "./bridge/cache";
 import BluetoothTransport from "./react-native-hw-transport-ble";
 import "./experimental";
 import logger from "./logger";
 
 setGlobalOnBridgeError(e => logger.critical(e));
 setDeviceMode("polling");
-setPlatformVersion("1.1.0");
+setPlatformVersion(PLATFORM_VERSION);
+setWalletAPIVersion(WALLET_API_VERSION);
 setSupportedCurrencies([
   "bitcoin",
   "ethereum",
@@ -54,7 +65,6 @@ setSupportedCurrencies([
   "vertcoin",
   "peercoin",
   "viacoin",
-  "stakenet",
   "bitcoin_testnet",
   "ethereum_ropsten",
   "ethereum_goerli",
@@ -69,6 +79,7 @@ setSupportedCurrencies([
   "moonbeam",
   "songbird",
   "flare",
+  "near",
 ]);
 
 if (Config.VERBOSE) {
@@ -89,7 +100,6 @@ registerTransportModule({
   // prettier-ignore
   // eslint-disable-next-line consistent-return
   open: id => {
-    // eslint-disable-line consistent-return
     if (id.startsWith("usb|")) {
       const devicePath = JSON.parse(id.slice(4));
       return retry(() => HIDTransport.open(devicePath), {
@@ -101,20 +111,23 @@ registerTransportModule({
     id.startsWith("usb|")
       ? Promise.resolve() // nothing to do
       : null,
-  discovery: Observable.create(o => HIDTransport.listen(o)).pipe(
+  discovery: new Observable<DescriptorEvent<string>>(o =>
+    HIDTransport.listen(o),
+  ).pipe(
     map(({ type, descriptor, deviceModel }) => {
-      const name = deviceModel.productName;
+      const name = deviceModel?.productName ?? "";
       return {
         type,
-        deviceModel,
         id: `usb|${JSON.stringify(descriptor)}`,
+        deviceModel,
+        wired: true,
         name,
       };
     }),
   ),
 });
 // Add dev mode support of an http proxy
-let DebugHttpProxy;
+let DebugHttpProxy: ReturnType<typeof withStaticURLs>;
 const httpdebug: TransportModule = {
   id: "httpdebug",
   open: id =>
@@ -127,10 +140,16 @@ const httpdebug: TransportModule = {
 
 if (__DEV__ && Config.DEVICE_PROXY_URL) {
   DebugHttpProxy = withStaticURLs(Config.DEVICE_PROXY_URL.split("|"));
-  httpdebug.discovery = Observable.create(o => DebugHttpProxy.listen(o)).pipe(
+  httpdebug.discovery = new Observable<DescriptorEvent<string>>(o =>
+    DebugHttpProxy.listen(o),
+  ).pipe(
     map(({ type, descriptor }) => ({
       type,
       id: `httpdebug|${descriptor}`,
+      deviceModel: getDeviceModel(
+        (Config?.FALLBACK_DEVICE_MODEL_ID as DeviceModelId) || "nanoX",
+      ),
+      wired: Config?.FALLBACK_DEVICE_WIRED === "YES",
       name: descriptor,
     })),
   );
@@ -155,3 +174,5 @@ if (process.env.NODE_ENV === "production") {
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 setSecp256k1Instance(require("./logic/secp256k1"));
+
+prepareCurrency(getCryptoCurrencyById("ethereum"));

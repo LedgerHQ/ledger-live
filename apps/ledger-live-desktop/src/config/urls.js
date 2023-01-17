@@ -61,19 +61,21 @@ export const urls = {
     en:
       "https://shop.ledger.com/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
     fr:
-      "https://shop.ledger.com/pages/conditions-dutilisation-de-ledger-live?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
-    es:
-      "https://shop.ledger.com/pages/condiciones-de-uso-de-ledger-live?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
+      "https://shop.ledger.com/fr/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
     de:
-      "https://shop.ledger.com/pages/nutzungsbedingungen-von-ledger-live?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
-    ru:
-      "https://shop.ledger.com/ru/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
-    zh:
-      "https://shop.ledger.com/zh-cn/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
+      "https://shop.ledger.com/de/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
+    es:
+      "https://shop.ledger.com/es/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
     tr:
       "https://shop.ledger.com/tr/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
+    ar:
+      "https://shop.ledger.com/ar/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
+    ru:
+      "https://shop.ledger.com/ru/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
     ja:
       "https://shop.ledger.com/ja/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
+    zh:
+      "https://shop.ledger.com/zh-cn/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
     ko:
       "https://shop.ledger.com/ko/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
   },
@@ -110,28 +112,32 @@ export const urls = {
   whatIsARecoveryPhrase: "https://www.ledger.com/academy/crypto/what-is-a-recovery-phrase",
   feesMoreInfo:
     "https://support.ledger.com/hc/en-us/articles/360021039173-Choose-network-fees?docs=true",
+  feesEIP1559MoreInfo: "https://support.ledger.com/hc/en-us/articles/6018110754845?docs=true",
   recipientAddressInfo:
     "https://support.ledger.com/hc/en-us/articles/4404389453841-Receive-crypto-assets?docs=true",
   managerAppLearnMore: "https://support.ledger.com/hc/en-us/categories/4404376139409?docs=true",
   privacyPolicy: {
     en:
-      "https://shop.ledger.com/pages/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+      "https://www.ledger.com/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
     fr:
-      "https://shop.ledger.com/pages/politique-de-confidentialite?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
-    es:
-      "https://shop.ledger.com/pages/politica-de-privacidad?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
-    ru:
-      "https://shop.ledger.com/pages/nasha-politika-konfidentsialnosti?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+      "https://www.ledger.com/fr/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
     de:
-      "https://shop.ledger.com/pages/unsere-datenschutzrichtlinie?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+      "https://www.ledger.com/de/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+    es:
+      "https://www.ledger.com/es/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+    tr:
+      "https://www.ledger.com/tr/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+    ar:
+      "https://www.ledger.com/ar/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+    ja:
+      "https://www.ledger.com/ja/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+    ru:
+      "https://www.ledger.com/ru/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+
     zh:
       "https://www.ledger.com/zh-hans/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
-    tr:
-      "https://www.ledger.com/tr/gizlilik-politikasi?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
-    ja:
-      "https://www.ledger.com/ja/%E3%83%97%E3%83%A9%E3%82%A4%E3%83%90%E3%82%B7%E3%83%BC%E3%83%9D%E3%83%AA%E3%82%B7%E3%83%BC?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
     ko:
-      "https://www.ledger.com/ko/%EA%B0%9C%EC%9D%B8-%EC%A0%95%EB%B3%B4-%EB%B3%B4%ED%98%B8-%EC%A0%95%EC%B1%85?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+      "https://www.ledger.com/ko/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
   },
   troubleshootingUSB:
     "https://support.ledger.com/hc/en-us/articles/115005165269?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=error",
@@ -185,6 +191,8 @@ export const urls = {
   osmosisStakingRewards: "https://support.ledger.com/hc/en-us/articles/6235986236957?docs=true",
   algorandStakingRewards:
     "https://support.ledger.com/hc/en-us/articles/360015897740?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=algorand",
+  nearStakingRewards:
+    "https://support.ledger.com/hc/en-us/articles/360020450619-NEAR-NEAR-?docs=true",
   polkadotFeesInfo:
     "https://support.ledger.com/hc/en-us/articles/360016289919?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=polkadot",
   xpubLearnMore:
@@ -227,6 +235,11 @@ export const urls = {
         tos: "https://changelly.com/terms-of-use",
         support: "https://support.changelly.com/en/support/tickets/new",
       },
+      cic: {
+        main: "https://criptointercambio.com/",
+        tos: "https://criptointercambio.com/terms-of-use",
+        support: "https://criptointercambio.com/en/about",
+      },
       wyre: {
         main: "https://support.sendwyre.com/hc/en-us/requests/new",
         tos: "https://www.sendwyre.com/user-agreement/",
@@ -260,6 +273,11 @@ export const urls = {
     SyncError:
       "https://support.ledger.com/hc/en-us/articles/360012207759-Solve-a-synchronization-error?support=true",
     ServiceStatusWarning: "https://status.ledger.com",
+    EConnReset:
+      "https://support.ledger.com/hc/en-us/articles/6793501085981?support=true&utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=error_connect_manager",
+    TronSendTrc20ToNewAccountForbidden:
+      "https://support.ledger.com/hc/en-us/articles/6516823445533--Sending-TRC20-to-a-new-account-won-t-activate-it-message-in-Ledger-Live?support=true",
+    OperatingSystemOutdated: "https://support.ledger.com/hc/articles/8083692639901?support=true",
   },
   compound:
     "https://support.ledger.com/hc/en-us/articles/360017215099?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=compound",
@@ -292,4 +310,6 @@ export const urls = {
     learnMore:
       "https://support.ledger.com/hc/en-us/articles/360020499920-Celo-CELO-?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=celo",
   },
+  ledgerByFigmentTC:
+    "https://cdn.figment.io/legal/Current%20Ledger_Online%20Staking%20Delgation%20Services%20Agreement.pdf",
 };

@@ -1,11 +1,25 @@
-import { useCallback, useMemo } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useCallback } from "react";
+import { CompositeScreenProps, useNavigation } from "@react-navigation/native";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { filterPlatformApps } from "@ledgerhq/live-common/platform/filters";
-import { getPlatformVersion } from "@ledgerhq/live-common/lib/platform/version";
+import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { NavigatorName, ScreenName } from "../const";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../components/RootNavigator/types/helpers";
+import { MainNavigatorParamList } from "../components/RootNavigator/types/MainNavigator";
+import { ManagerNavigatorStackParamList } from "../components/RootNavigator/types/ManagerNavigator";
 
-function getSettingsScreen(pathname) {
+type Screens =
+  | ScreenName.GeneralSettings
+  | ScreenName.AccountsSettings
+  | ScreenName.AboutSettings
+  | ScreenName.HelpSettings
+  | ScreenName.DeveloperSettings
+  | ScreenName.SettingsScreen;
+
+function getSettingsScreen(pathname: string): Screens {
   const secondPath = pathname.replace(/(^\/+|\/+$)/g, "");
   let screen;
 
@@ -38,23 +52,20 @@ function getSettingsScreen(pathname) {
       screen = ScreenName.SettingsScreen;
   }
 
-  return screen;
+  return screen as Screens;
 }
 
-// To avoid recreating a ref on each render and triggering hooks
-const emptyObject = {};
+type Navigation = BaseComposite<
+  CompositeScreenProps<
+    StackNavigatorProps<ManagerNavigatorStackParamList>,
+    StackNavigatorProps<MainNavigatorParamList>
+  >
+>;
+const emptyObject: LiveAppManifest[] = [];
 export function useDeepLinkHandler() {
-  const { navigate } = useNavigation();
+  const { navigate } = useNavigation<Navigation["navigation"]>();
   const { state } = useRemoteLiveAppContext();
   const manifests = state?.value?.liveAppByIndex || emptyObject;
-  const filteredManifests = useMemo(() => {
-    const branches = ["stable", "soon"];
-    return filterPlatformApps(Array.from(manifests.values()), {
-      version: getPlatformVersion(),
-      platform: "mobile",
-      branches,
-    });
-  }, [manifests]);
   const handler = useCallback(
     (deeplink: string) => {
       const { hostname, searchParams, pathname = "" } = new URL(deeplink);
@@ -64,7 +75,15 @@ export function useDeepLinkHandler() {
 
       switch (hostname) {
         case "accounts":
-          navigate(NavigatorName.Accounts);
+          if (currency) {
+            const c = findCryptoCurrencyById(currency);
+            if (c) {
+              navigate(NavigatorName.Accounts, {
+                screen: ScreenName.Asset,
+                params: { currency: c },
+              });
+            }
+          } else navigate(NavigatorName.Accounts);
           break;
 
         case "buy": {
@@ -95,7 +114,7 @@ export function useDeepLinkHandler() {
 
         case "receive":
           navigate(NavigatorName.ReceiveFunds, {
-            screen: ScreenName.ReceiveSelectAccount,
+            screen: ScreenName.ReceiveSelectCrypto,
             params: {
               currency,
             },
@@ -111,22 +130,24 @@ export function useDeepLinkHandler() {
           });
           break;
 
-        case "settings":
-          navigate(NavigatorName.Settings, {
-            screen: getSettingsScreen(pathname),
-          });
+        case "settings": {
+          const screen = getSettingsScreen(pathname);
+          if (screen) {
+            navigate(NavigatorName.Settings, {
+              screen,
+            });
+          }
           break;
+        }
 
         case "discover": {
-          const dapp =
-            path && filteredManifests.find(m => path.toLowerCase() === m.id);
+          const dapp = path && manifests.find(m => path.toLowerCase() === m.id);
           navigate(NavigatorName.Discover, {
             screen: ScreenName.PlatformCatalog,
             params: dapp
               ? {
                   platform: dapp.id,
                   name: dapp.name,
-                  // $FlowFixMe Nope I want query to be spread last. Sry Flow.
                   ...query,
                 }
               : query,
@@ -134,7 +155,7 @@ export function useDeepLinkHandler() {
           break;
         }
 
-        case "manager": {
+        case "myledger": {
           navigate(NavigatorName.Manager, {
             screen: ScreenName.Manager,
             params: query,
@@ -142,15 +163,25 @@ export function useDeepLinkHandler() {
           break;
         }
 
+        case "add-account": {
+          navigate(NavigatorName.AddAccounts, {
+            screen: ScreenName.AddAccountsSelectCrypto,
+            params: {
+              currency,
+            },
+          });
+          break;
+        }
+
         case "portfolio":
         default:
-          navigate(NavigatorName.Main, {
-            screen: ScreenName.Portfolio,
+          navigate(NavigatorName.Portfolio, {
+            screen: NavigatorName.WalletTab,
           });
           break;
       }
     },
-    [navigate, filteredManifests],
+    [navigate, manifests],
   );
   return {
     handler,

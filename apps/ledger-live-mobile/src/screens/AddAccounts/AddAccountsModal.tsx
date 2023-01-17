@@ -2,10 +2,13 @@ import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { BottomDrawer, Text } from "@ledgerhq/native-ui";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { NavigatorName } from "../../const";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 
+import { track, TrackScreen } from "../../analytics";
 import AddAccountsModalCard from "./AddAccountsModalCard";
+import { BaseNavigation } from "../../components/RootNavigator/types/helpers";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const setupLedgerImg = require("../../images/illustration/Shared/_SetupLedger.png");
 
@@ -13,31 +16,59 @@ const setupLedgerImg = require("../../images/illustration/Shared/_SetupLedger.pn
 const syncCryptoImg = require("../../images/illustration/Shared/_SyncFromDesktop.png");
 
 type Props = {
-  navigation: any;
+  navigation: BaseNavigation;
   isOpened: boolean;
   onClose: () => void;
+  currency?: CryptoCurrency | TokenCurrency | null;
 };
 
 export default function AddAccountsModal({
   navigation,
   onClose,
   isOpened,
+  currency,
 }: Props) {
   const { t } = useTranslation();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
   const onClickAdd = useCallback(() => {
+    track("button_clicked", {
+      button: "With your Ledger",
+      drawer: "AddAccountsModal",
+    });
     navigation.navigate(NavigatorName.AddAccounts);
+    if (currency?.type === "TokenCurrency") {
+      navigation.navigate(NavigatorName.AddAccounts, {
+        token: currency,
+      });
+    } else {
+      navigation.navigate(NavigatorName.AddAccounts, {
+        currency,
+      });
+    }
     onClose();
-  }, [navigation, onClose]);
+  }, [navigation, currency, onClose]);
 
   const onClickImport = useCallback(() => {
+    track("button_clicked", {
+      button: "Import from Desktop",
+      drawer: "AddAccountsModal",
+    });
     navigation.navigate(NavigatorName.ImportAccounts);
     onClose();
   }, [navigation, onClose]);
 
+  const onPressClose = useCallback(() => {
+    track("button_clicked", {
+      button: "Close 'x'",
+      drawer: "AddAccountsModal",
+    });
+    onClose();
+  }, [onClose]);
+
   return (
-    <BottomDrawer testId="AddAccountsModal" isOpen={isOpened} onClose={onClose}>
+    <BottomDrawer isOpen={isOpened} onClose={onPressClose}>
+      <TrackScreen category="Add/Import accounts" type="drawer" />
       <Text variant="h4" fontWeight="semiBold" fontSize="24px" mb={2}>
         {t("addAccountsModal.title")}
       </Text>

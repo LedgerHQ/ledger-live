@@ -1,40 +1,50 @@
 import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import { useDispatch as useReduxDispatch } from "react-redux";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type {
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/generated/types";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useTheme } from "@react-navigation/native";
+import { Flex } from "@ledgerhq/native-ui";
+import { StackScreenProps } from "@react-navigation/stack";
+
 import { TrackScreen } from "../analytics";
 import SelectDeviceComp from "../components/SelectDevice";
+import SelectDeviceComp2 from "../components/SelectDevice2";
 import NavigationScrollView from "../components/NavigationScrollView";
 import { setLastConnectedDevice, setReadOnlyMode } from "../actions/settings";
 import SkipSelectDevice from "./SkipSelectDevice";
+import { AddAccountsNavigatorParamList } from "../components/RootNavigator/types/AddAccountsNavigator";
+import { StackNavigatorProps } from "../components/RootNavigator/types/helpers";
+import { ReceiveFundsStackParamList } from "../components/RootNavigator/types/ReceiveFundsNavigator";
+import { ScreenName } from "../const";
 
-const forceInset = {
-  bottom: "always",
-};
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-    name: string;
-  };
-};
-type RouteParams = {
-  accountId: string;
-  transaction: Transaction;
-  status: TransactionStatus;
-  appName?: string;
-};
-export default function SelectDevice({ navigation, route }: Props) {
+// TODO: FIX THE StackScreenProps<{ [key: string]: object }>
+type SelectDeviceNav =
+  | StackNavigatorProps<
+      AddAccountsNavigatorParamList,
+      ScreenName.AddAccountsSelectDevice
+    >
+  | StackNavigatorProps<
+      ReceiveFundsStackParamList,
+      ScreenName.ReceiveAddAccountSelectDevice
+    >
+  | StackNavigatorProps<
+      ReceiveFundsStackParamList,
+      ScreenName.ReceiveConnectDevice
+    >;
+
+// Called from a bunch of different navigators with different params…
+export default function SelectDevice({
+  navigation,
+  route,
+}: StackScreenProps<{ [key: string]: object }>) {
   const { colors } = useTheme();
   const dispatchRedux = useReduxDispatch();
   const onNavigate = useCallback(
     device => {
+      // Assumes that it will always navigate to a "ConnectDevice"
+      // type of component accepting mostly the same params as this one.
       navigation.navigate(route.name.replace("SelectDevice", "ConnectDevice"), {
         ...route.params,
         device,
@@ -42,6 +52,9 @@ export default function SelectDevice({ navigation, route }: Props) {
     },
     [navigation, route.name, route.params],
   );
+
+  const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
+
   const onSelect = useCallback(
     (device: Device) => {
       dispatchRedux(setLastConnectedDevice(device));
@@ -58,20 +71,28 @@ export default function SelectDevice({ navigation, route }: Props) {
           backgroundColor: colors.background,
         },
       ]}
-      forceInset={forceInset}
     >
-      <NavigationScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContainer}
-        keyboardShouldPersistTaps="handled"
-      >
-        <SkipSelectDevice route={route} onResult={onNavigate} />
-        <TrackScreen
-          category={route.name.replace("SelectDevice", "")}
-          name="SelectDevice"
-        />
-        <SelectDeviceComp onSelect={onSelect} />
-      </NavigationScrollView>
+      <SkipSelectDevice
+        route={route as SelectDeviceNav["route"]}
+        onResult={onNavigate}
+      />
+      <TrackScreen
+        category={route.name.replace("SelectDevice", "")}
+        name="SelectDevice"
+      />
+      {newDeviceSelectionFeatureFlag?.enabled ? (
+        <Flex px={16} pb={8} flex={1}>
+          <SelectDeviceComp2 onSelect={onSelect} />
+        </Flex>
+      ) : (
+        <NavigationScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContainer}
+          keyboardShouldPersistTaps="handled"
+        >
+          <SelectDeviceComp onSelect={onSelect} />
+        </NavigationScrollView>
+      )}
     </SafeAreaView>
   );
 }

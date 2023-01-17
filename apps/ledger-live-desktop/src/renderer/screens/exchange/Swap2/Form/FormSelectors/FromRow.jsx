@@ -18,9 +18,9 @@ import type {
   SwapSelectorStateType,
   SwapTransactionType,
   SwapDataType,
-} from "@ledgerhq/live-common/exchange/swap/hooks/index";
+} from "@ledgerhq/live-common/exchange/swap/types";
 import { track } from "~/renderer/analytics/segment";
-import { SWAP_VERSION } from "../../utils/index";
+import { swapDefaultTrack } from "../../utils/index";
 
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/sortByMarketcap";
 import { listCryptoCurrencies, listTokens } from "@ledgerhq/live-common/currencies/index";
@@ -72,9 +72,10 @@ const InputSection = styled(Box)`
     font-weight: 500;
     font-size: 11px;
     text-align: right;
-    margin-left: calc(calc(100% + 45px) * -1);
+    margin-left: calc(calc(100% + 30px) * -1);
     margin-top: 6px;
     align-self: flex-end;
+    margin-right: -15px;
   }
 `;
 
@@ -95,22 +96,42 @@ function FromRow({
   const { t } = useTranslation();
   usePickDefaultAccount(accounts, fromAccount, setFromAccount);
   const trackEditAccount = () =>
-    track("Page Swap Form - Edit Source Account", {
-      provider,
-      swapVersion: SWAP_VERSION,
+    track("button_clicked", {
+      button: "Edit source account",
+      page: "Page Swap Form",
+      ...swapDefaultTrack,
     });
+
   const setAccountAndTrack = account => {
     updateSelectedRate();
-    track("Page Swap Form - New Source Account", {
-      provider,
-      swapVersion: SWAP_VERSION,
+    track("button_clicked", {
+      button: "New source account",
+      page: "Page Swap Form",
+      ...swapDefaultTrack,
+      account: account,
     });
     setFromAccount(account);
   };
 
   const setValue = fromAmount => {
+    track("button_clicked", {
+      button: "Amount input",
+      page: "Page Swap Form",
+      ...swapDefaultTrack,
+      amount: null,
+    });
     updateSelectedRate();
     setFromAmount(fromAmount);
+  };
+
+  const toggleMaxAndTrack = state => {
+    track("button_clicked", {
+      button: "max",
+      page: "Page Swap Form",
+      ...swapDefaultTrack,
+      state,
+    });
+    toggleMax(state);
   };
 
   return (
@@ -131,7 +152,7 @@ function FromRow({
           <Switch
             small
             isChecked={isMaxEnabled}
-            onChange={toggleMax}
+            onChange={toggleMaxAndTrack}
             disabled={!fromAccount}
             data-test-id="swap-max-spendable-toggle"
           />

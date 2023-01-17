@@ -15,13 +15,40 @@ import {
 import { getSupplyMax } from "./modules/compound";
 import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
-import { getGasLimit } from "./transaction";
+import { EIP1559ShouldBeUsed, getGasLimit } from "./transaction";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { CompoundAccountSummary } from "../../compound/types";
 import { acceptTransaction } from "./speculos-deviceActions";
 
-const testTimeout = 5 * 60 * 1000;
+const testTimeout = 8 * 60 * 1000;
+
+const testBasicMutation = ({
+  account,
+  accountBeforeTransaction,
+  operation,
+  transaction,
+}) => {
+  // workaround for buggy explorer behavior (nodes desync)
+  invariant(
+    Date.now() - operation.date > 60000,
+    "operation time to be older than 60s"
+  );
+  const gasPrice = EIP1559ShouldBeUsed(account.currency)
+    ? transaction.maxFeePerGas
+    : transaction.gasPrice;
+  const estimatedGas = getGasLimit(transaction).times(gasPrice);
+  botTest("operation fee is not exceeding estimated gas", () =>
+    expect(operation.fee.toNumber()).toBeLessThanOrEqual(
+      estimatedGas.toNumber()
+    )
+  );
+  botTest("account balance moved with operation value", () =>
+    expect(account.balance.toString()).toBe(
+      accountBeforeTransaction.balance.minus(operation.value).toString()
+    )
+  );
+};
 
 const ethereumBasicMutations = ({ maxAccount }) => [
   {
@@ -42,26 +69,28 @@ const ethereumBasicMutations = ({ maxAccount }) => [
         ],
       };
     },
-    test: ({ account, accountBeforeTransaction, operation, transaction }) => {
-      // workaround for buggy explorer behavior (nodes desync)
-      invariant(
-        Date.now() - operation.date > 60000,
-        "operation time to be older than 60s"
-      );
-      const estimatedGas = getGasLimit(transaction).times(
-        transaction.gasPrice || 0
-      );
-      botTest("operation fee is not exceeding estimated gas", () =>
-        expect(operation.fee.toNumber()).toBeLessThanOrEqual(
-          estimatedGas.toNumber()
-        )
-      );
-      botTest("account balance moved with operation value", () =>
-        expect(account.balance.toString()).toBe(
-          accountBeforeTransaction.balance.minus(operation.value).toString()
-        )
-      );
+    test: testBasicMutation,
+  },
+  {
+    name: "send max",
+    maxRun: 1,
+    testDestination: genericTestDestination,
+    transaction: ({ account, siblings, bridge }) => {
+      const sibling = pickSiblings(siblings, maxAccount);
+      const recipient = sibling.freshAddress;
+      return {
+        transaction: bridge.createTransaction(account),
+        updates: [
+          {
+            recipient,
+          },
+          {
+            useAllAmount: true,
+          },
+        ],
+      };
     },
+    test: testBasicMutation,
   },
 ];
 
@@ -131,7 +160,7 @@ const ethereum: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
-    appVersion: "1.9.20-dev", // FIXME remove this line once 1.9.20 lands on coin-apps (branch ledger-live-bot)
+    appVersion: "1.10.1",
   },
   genericDeviceAction: acceptTransaction,
   testTimeout,
@@ -403,7 +432,7 @@ const ethereumGoerli: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
-    appVersion: "1.9.20-dev", // FIXME remove this line once 1.9.20 lands on coin-apps (branch ledger-live-bot)
+    appVersion: "1.10.1",
   },
   genericDeviceAction: acceptTransaction,
   testTimeout,

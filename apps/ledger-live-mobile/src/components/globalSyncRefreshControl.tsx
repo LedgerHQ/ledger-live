@@ -1,23 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { RefreshControl } from "react-native";
+import { RefreshControl, RefreshControlProps } from "react-native";
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import { useCountervaluesPolling } from "@ledgerhq/live-common/countervalues/react";
-import { useTheme } from "@react-navigation/native";
+import { useIsFocused, useTheme } from "@react-navigation/native";
 import { SYNC_DELAY } from "../constants";
 
 type Props = {
   error?: Error;
-  isError: boolean;
-  forwardedRef?: any;
-  setSyncBehavior: any;
+  isError?: boolean;
+  forwardedRef?: React.Ref<unknown>;
 };
-export default (ScrollListLike: any) => {
-  function Inner({ forwardedRef, ...scrollListLikeProps }: Props) {
+export default <P,>(
+  ScrollListLike: React.ComponentType<P>,
+  refreshControlprops?: Partial<RefreshControlProps>,
+) => {
+  function Inner({ forwardedRef, ...scrollListLikeProps }: Props & P) {
     const { colors, dark } = useTheme();
     const [refreshing, setRefreshing] = useState(false);
     const setSyncBehavior = useBridgeSync();
     const { poll } = useCountervaluesPolling();
-
+    const IsFocused = useIsFocused();
     function onRefresh() {
       poll();
       setSyncBehavior({
@@ -27,6 +29,10 @@ export default (ScrollListLike: any) => {
       });
       setRefreshing(true);
     }
+
+    useEffect(() => {
+      setRefreshing(false);
+    }, [IsFocused]);
 
     useEffect(() => {
       if (!refreshing) {
@@ -41,9 +47,10 @@ export default (ScrollListLike: any) => {
         clearTimeout(timer);
       };
     }, [refreshing]);
+
     return (
       <ScrollListLike
-        {...scrollListLikeProps}
+        {...(scrollListLikeProps as P)}
         ref={forwardedRef}
         refreshControl={
           <RefreshControl
@@ -52,14 +59,14 @@ export default (ScrollListLike: any) => {
             tintColor={colors.live}
             refreshing={refreshing}
             onRefresh={onRefresh}
+            {...refreshControlprops}
           />
         }
       />
     );
   }
 
-  // $FlowFixMe
-  return React.forwardRef((props, ref) => (
+  return React.forwardRef((props: P & Props, ref) => (
     <Inner {...props} forwardedRef={ref} />
   ));
 };

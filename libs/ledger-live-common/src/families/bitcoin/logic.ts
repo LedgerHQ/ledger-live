@@ -25,7 +25,6 @@ const minFees = {
   bitcoin: 1000,
   bitcoin_gold: 1000,
   pivx: 2000,
-  stakenet: 1000,
   stealthcoin: 2000,
   qtum: 4000,
   stratis: 2000,
@@ -35,7 +34,10 @@ const minFees = {
 };
 export const getMinRelayFee = (currency: CryptoCurrency): number =>
   minFees[currency.id] || 0;
-export const inferFeePerByte = (t: Transaction, networkInfo: NetworkInfo) => {
+export const inferFeePerByte = (
+  t: Transaction,
+  networkInfo: NetworkInfo
+): BigNumber => {
   if (t.feesStrategy) {
     const speed = networkInfo.feeItems.items.find(
       (item) => t.feesStrategy === item.speed
@@ -137,7 +139,7 @@ type CoinLogic = {
   injectGetAddressParams?: (arg0: Account) => any;
 };
 
-export const bchToCashaddrAddressWithoutPrefix = (recipient) =>
+export const bchToCashaddrAddressWithoutPrefix = (recipient): string =>
   recipient ? recipient.substring(recipient.indexOf(":") + 1) : recipient;
 
 export const perCoinLogic: Record<
@@ -196,7 +198,7 @@ export const mapTxToOperations = (
 ): $Shape<Operation[]> => {
   const operations: Operation[] = [];
   const txId = tx.id;
-  const fee = new BigNumber(tx.fees);
+  const fee = new BigNumber(tx.fees ?? 0);
   const blockHeight = tx.block?.height;
   const blockHash = tx.block?.hash;
   const date = new Date(tx.block?.time || tx.received_at);

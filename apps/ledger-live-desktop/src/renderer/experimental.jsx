@@ -86,14 +86,6 @@ export const experimentalFeatures: Feature[] = [
     : []),
   {
     type: "toggle",
-    name: "API_TRONGRID_PROXY",
-    title: <Trans i18nKey="settings.experimental.features.apiTrongridProxy.title" />,
-    description: <Trans i18nKey="settings.experimental.features.apiTrongridProxy.description" />,
-    valueOn: "https://api.trongrid.io",
-    valueOff: "https://tron.coin.ledger.com",
-  },
-  {
-    type: "toggle",
     name: "EXPERIMENTAL_LANGUAGES",
     title: <Trans i18nKey="settings.experimental.features.experimentalLanguages.title" />,
     description: (
@@ -139,6 +131,32 @@ export const experimentalFeatures: Feature[] = [
     title: <Trans i18nKey="settings.experimental.features.forceProvider.title" />,
     description: <Trans i18nKey="settings.experimental.features.forceProvider.description" />,
     minValue: 1,
+  },
+  {
+    type: "toggle",
+    name: "EIP1559_MINIMUM_FEES_GATE",
+    title: <Trans i18nKey="settings.experimental.features.1559DeactivateGate.title" />,
+    description: <Trans i18nKey="settings.experimental.features.1559DeactivateGate.description" />,
+    valueOn: false,
+    valueOff: true,
+  },
+  {
+    type: "integer",
+    name: "EIP1559_PRIORITY_FEE_LOWER_GATE",
+    title: <Trans i18nKey="settings.experimental.features.1559CustomPriorityLowerGate.title" />,
+    description: (
+      <Trans i18nKey="settings.experimental.features.1559CustomPriorityLowerGate.description" />
+    ),
+    minValue: 0,
+    maxValue: 1,
+  },
+  {
+    type: "toggle",
+    name: "EXPERIMENTAL_EXECUTION_ON_RENDERER",
+    title: <Trans i18nKey="settings.experimental.features.experimentalExecutionOnRenderer.title" />,
+    description: (
+      <Trans i18nKey="settings.experimental.features.experimentalExecutionOnRenderer.description" />
+    ),
   },
 ];
 

@@ -1,11 +1,21 @@
-import { Flex, Aside, Logos, Button, Icons, ProgressBar, Drawer, Popin } from "@ledgerhq/react-ui";
-import React, { useCallback, useMemo, useState } from "react";
+import {
+  Flex,
+  Aside,
+  Logos,
+  Button,
+  Icons,
+  ProgressBar,
+  Drawer,
+  InfiniteLoader,
+} from "@ledgerhq/react-ui";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
 import { Switch, Route, useHistory, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
+import { Device } from "@ledgerhq/types-devices";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { ImportYourRecoveryPhrase } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/ImportYourRecoveryPhrase";
 import { DeviceHowTo } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/DeviceHowTo";
@@ -29,6 +39,7 @@ import { QuizFailure } from "~/renderer/components/Onboarding/Screens/Tutorial/s
 import { QuizSuccess } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/QuizSuccess";
 import RecoveryWarning from "../../Help/RecoveryWarning";
 import { QuizzPopin } from "~/renderer/modals/OnboardingQuizz/OnboardingQuizzModal";
+import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 
 import { UseCase } from "../../index";
 
@@ -65,8 +76,9 @@ type FlowStepperProps = {
   AsideFooter?: React.ElementType;
   ProgressBar?: React.ReactNode;
   continueLabel?: string;
+  continueLoading?: boolean;
+  continueDisabled?: boolean;
   backLabel?: string;
-  disableContinue?: boolean;
   disableBack?: boolean;
   children: React.ReactNode;
   handleBack: () => void;
@@ -85,7 +97,8 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
   AsideFooter,
   continueLabel,
   backLabel,
-  disableContinue,
+  continueLoading,
+  continueDisabled,
   disableBack,
   ProgressBar,
   children,
@@ -138,9 +151,10 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
             <Button
               data-test-id="v3-tutorial-continue"
               onClick={handleContinue}
-              disabled={disableContinue}
+              disabled={continueLoading || continueDisabled}
               variant="main"
-              Icon={() => <Icons.ArrowRightMedium size={18} />}
+              iconSize={18}
+              Icon={continueLoading ? InfiniteLoader : Icons.ArrowRightMedium}
             >
               {continueLabel || t("common.continue")}
             </Button>
@@ -214,7 +228,10 @@ export default function Tutorial({ useCase }: Props) {
   const [userUnderstandConsequences, setUserUnderstandConsequences] = useState(false);
   const [userChosePinCodeHimself, setUserChosePinCodeHimself] = useState(false);
 
-  const [connectedDevice, setConnectedDevice] = useState(null);
+  const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
+
+  const [onboardingDone, setOnboardingDone] = useState(false);
+  const handleStartPostOnboarding = useStartPostOnboardingCallback();
 
   const [helpPinCode, setHelpPinCode] = useState(false);
   const [helpRecoveryPhrase, setHelpRecoveryPhrase] = useState(false);
@@ -468,12 +485,41 @@ export default function Tutorial({ useCase }: Props) {
           setConnectedDevice,
         },
         canContinue: !!connectedDevice,
-        next: () => history.push("/"),
+        next: () => {
+          setOnboardingDone(true);
+        },
         previous: () => history.push(`${path}/${ScreenId.pairMyNano}`),
       },
     ],
-    [connectedDevice, history, path, useCase, userChosePinCodeHimself, userUnderstandConsequences],
+    [
+      connectedDevice,
+      history,
+      path,
+      useCase,
+      userChosePinCodeHimself,
+      userUnderstandConsequences,
+      setOnboardingDone,
+    ],
   );
+
+  useEffect(() => {
+    if (onboardingDone) {
+      /**
+       * There is a lag if we call history.push("/") directly.
+       * To improve the UX in that situation, we have to first commit a "loading"
+       * state and then when that state is rendered (which will be when this
+       * block is executed), on the following commit we can call
+       * history.push("/").
+       */
+      const timeout: ReturnType<typeof setTimeout> = setTimeout(() => {
+        if (history.location.pathname !== "/")
+          handleStartPostOnboarding(connectedDevice.modelId, true, () => history.push("/"));
+      }, 0);
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+  }, [connectedDevice?.modelId, handleStartPostOnboarding, history, onboardingDone]);
 
   const steps = useMemo(() => {
     const stepList = [
@@ -635,7 +681,7 @@ export default function Tutorial({ useCase }: Props) {
       <FlowStepper
         illustration={CurrentScreen.Illustration}
         AsideFooter={CurrentScreen.Footer}
-        disableContinue={canContinue === false}
+        continueDisabled={canContinue === false}
         ProgressBar={
           useCase !== UseCase.connectDevice ? (
             <ProgressBar steps={progressSteps} currentIndex={screenStepIndex} />
@@ -644,6 +690,7 @@ export default function Tutorial({ useCase }: Props) {
           )
         }
         continueLabel={CurrentScreen.continueLabel}
+        continueLoading={onboardingDone}
         handleContinue={next}
         handleBack={previous}
       >

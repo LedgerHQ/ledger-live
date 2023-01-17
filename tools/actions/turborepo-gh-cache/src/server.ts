@@ -36,7 +36,11 @@ async function startServer() {
       const filename = artifactId + ".gz";
       const cacheKey = await cache.restoreCache(
         [`${cacheDirectory}/${filename}`],
-        artifactId
+        artifactId,
+        undefined,
+        {
+          timeoutInMs: 5000,
+        }
       );
       if (!cacheKey) {
         console.log(`Artifact ${artifactId} not found.`);
@@ -81,6 +85,11 @@ async function startServer() {
       res.end();
     })
   );
+
+  app.post("/v8/artifacts/events", (req, res) => {
+    // Analytics endpoint, just ignore it
+    res.status(200).send();
+  });
 
   const server = app.disable("etag").listen(0);
   server.once("listening", () => {

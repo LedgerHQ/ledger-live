@@ -6,16 +6,17 @@ import {
   getMainAccount,
   getReceiveFlowError,
 } from "@ledgerhq/live-common/account/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { AccountLike } from "@ledgerhq/types-live";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
+import { Flex } from "@ledgerhq/native-ui";
 
-import { useRoute } from "@react-navigation/native";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import SelectDevice from "../../components/SelectDevice";
+import SelectDevice2 from "../../components/SelectDevice2";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import ReadOnlyWarning from "./ReadOnlyWarning";
@@ -24,37 +25,29 @@ import GenericErrorView from "../../components/GenericErrorView";
 import DeviceActionModal from "../../components/DeviceActionModal";
 import SkipSelectDevice from "../SkipSelectDevice";
 import byFamily from "../../generated/ConnectDevice";
-
-type Props = {
-  navigation: any;
-  route: { params: RouteParams };
-};
-
-type RouteParams = {
-  account?: AccountLike;
-  accountId: string;
-  parentId?: string;
-  notSkippable?: boolean;
-  title: string;
-  appName?: string;
-  onSuccess?: () => void;
-  onError?: () => void;
-};
+import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
+import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
 const action = createAction(connectApp);
 
-export default function ConnectDevice({ navigation, route }: Props) {
+export default function ConnectDevice({
+  navigation,
+  route,
+}: StackNavigatorProps<
+  ReceiveFundsStackParamList,
+  ScreenName.ReceiveConnectDevice
+>) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const [device, setDevice] = useState<Device | undefined>();
-  const routerRoute = useRoute();
+
+  const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
 
   useEffect(() => {
     const readOnlyTitle = "transfer.receive.titleReadOnly";
     if (readOnlyModeEnabled && route.params?.title !== readOnlyTitle) {
       navigation.setParams({
         title: readOnlyTitle,
-        headerRight: null,
       });
     }
   }, [navigation, readOnlyModeEnabled, route.params]);
@@ -65,13 +58,12 @@ export default function ConnectDevice({ navigation, route }: Props) {
   );
 
   const onResult = useCallback(
-    // eslint-disable-next-line consistent-return
     payload => {
       if (!account) {
         return null;
       }
-      setDevice();
-      navigation.navigate(ScreenName.ReceiveVerifyAddress, {
+      setDevice(undefined);
+      return navigation.navigate(ScreenName.ReceiveVerifyAddress, {
         ...route.params,
         ...payload,
       });
@@ -87,7 +79,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
   }, [account, navigation, route.params]);
 
   const onClose = useCallback(() => {
-    setDevice();
+    setDevice(undefined);
   }, []);
 
   if (!account) return null;
@@ -102,11 +94,13 @@ export default function ConnectDevice({ navigation, route }: Props) {
 
   const mainAccount = getMainAccount(account, parentAccount);
   const currency = getAccountCurrency(mainAccount);
+  if (currency.type !== "CryptoCurrency") return null; // this should not happen: currency of main account is a crypto currency
   const tokenCurrency =
-    account && account.type === "TokenAccount" && account.token;
+    account && account.type === "TokenAccount" ? account.token : undefined;
 
   // check for coin specific UI
-  const CustomConnectDevice = byFamily[currency.family];
+  const CustomConnectDevice =
+    byFamily[currency.family as keyof typeof byFamily];
   if (CustomConnectDevice)
     return <CustomConnectDevice {...{ navigation, route }} />;
 
@@ -122,31 +116,32 @@ export default function ConnectDevice({ navigation, route }: Props) {
 
   return (
     <>
-      <TrackScreen
-        category="ReceiveFunds"
-        name="Device Selection"
-        source={routerRoute.name}
-      />
-      <NavigationScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContainer}
-      >
-        <SkipSelectDevice route={route} onResult={setDevice} />
-        <SelectDevice
-          onSelect={setDevice}
-          onWithoutDevice={
-            route.params?.notSkippable ? undefined : onSkipDevice
-          }
-        />
-      </NavigationScrollView>
+      <TrackScreen category="ReceiveFunds" name="Device Selection" />
+      <SkipSelectDevice route={route} onResult={setDevice} />
+      {newDeviceSelectionFeatureFlag?.enabled ? (
+        <Flex px={16} py={5} flex={1}>
+          <SelectDevice2 onSelect={setDevice} stopBleScanning={!!device} />
+        </Flex>
+      ) : (
+        <NavigationScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContainer}
+        >
+          <SelectDevice
+            onSelect={setDevice}
+            onWithoutDevice={
+              route.params?.notSkippable ? undefined : onSkipDevice
+            }
+          />
+        </NavigationScrollView>
+      )}
       <DeviceActionModal
         action={action}
         device={device}
         onResult={onResult}
         onClose={onClose}
         request={{ account: mainAccount, tokenCurrency }}
-        appName={route.params.appName}
-        onSelectDeviceLink={() => setDevice()}
+        onSelectDeviceLink={() => setDevice(undefined)}
         analyticsPropertyFlow="receive"
       />
     </>

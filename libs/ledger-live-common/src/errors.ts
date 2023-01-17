@@ -28,6 +28,18 @@ export const LanguageInstallRefusedOnDevice = createCustomErrorClass(
   "LanguageInstallRefusedOnDevice"
 );
 
+export const ImageLoadRefusedOnDevice = createCustomErrorClass(
+  "ImageLoadRefusedOnDevice"
+);
+
+export const ImageDoesNotExistOnDevice = createCustomErrorClass(
+  "ImageDoesNotExistOnDevice"
+);
+
+export const ImageCommitRefusedOnDevice = createCustomErrorClass(
+  "ImageCommitRefusedOnDevice"
+);
+
 export const LanguageInstallTimeout = createCustomErrorClass(
   "LanguageInstallTimeout"
 );
@@ -154,7 +166,9 @@ export const SwapExchangeRateAmountTooLow = createCustomErrorClass(
 export const SwapExchangeRateAmountTooHigh = createCustomErrorClass(
   "SwapExchangeRateAmountTooHigh"
 );
-
+export const SwapExchangeRateAmountTooLowOrTooHigh = createCustomErrorClass(
+  "SwapExchangeRateAmountTooLowOrTooHigh"
+);
 export const SwapCheckKYCStatusFailed = createCustomErrorClass(
   "SwapCheckKYCStatusFailed"
 );
@@ -215,7 +229,10 @@ export const UnsupportedDerivation = createCustomErrorClass(
   "UnsupportedDerivation"
 );
 
+export const EConnResetError = createCustomErrorClass("EConnReset");
+
 export * from "./families/polkadot/errors";
 export * from "./families/stellar/errors";
 export * from "./families/solana/errors";
 export * from "./families/cardano/errors";
+export * from "./families/near/errors";

@@ -1,5 +1,7 @@
 import React from "react";
 import styled, { DefaultTheme, StyledComponent, ThemeProps } from "styled-components";
+import stax from "~/renderer/images/stax.svg";
+import staxDark from "~/renderer/images/staxDark.svg";
 import nanoX from "~/renderer/images/nanoX.v3.svg";
 import nanoS from "~/renderer/images/nanoS.v3.svg";
 import nanoS2 from "~/renderer/images/nanoS2.v3.svg";
@@ -10,7 +12,7 @@ import nanoS2Dark from "~/renderer/images/nanoS2Dark.v3.svg";
 import { registerAssets } from "~/renderer/components/Onboarding/preloadAssets";
 import { DeviceModelId } from "@ledgerhq/devices";
 
-registerAssets([nanoX, nanoS, nanoS2, nanoXDark, nanoSDark, nanoS2Dark]);
+registerAssets([nanoX, nanoS, nanoS2, nanoXDark, nanoSDark, nanoS2Dark, stax, staxDark]);
 
 const makeAssetSelector = (lightAsset: any, darkAsset: any) => (p: ThemeProps<DefaultTheme>) =>
   p.theme.colors.palette.type === "light" ? lightAsset : darkAsset;
@@ -27,6 +29,10 @@ const NanoSP = styled.div`
 
 const NanoX = styled.div`
   background: url(${p => makeAssetSelector(nanoX, nanoXDark)(p)}) no-repeat center;
+`;
+
+const Stax = styled.div`
+  background: url(${p => makeAssetSelector(stax, staxDark)(p)}) no-repeat center;
 `;
 
 type Illustration = {
@@ -50,6 +56,11 @@ const illustrations: { [key in DeviceModelId]: Illustration } = {
     Illustration: NanoX,
     width: 53.83,
     height: 250.87,
+  },
+  stax: {
+    Illustration: Stax,
+    width: 240,
+    height: 240,
   },
   blue: {
     Illustration: NanoS,

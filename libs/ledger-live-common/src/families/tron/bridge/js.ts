@@ -229,6 +229,15 @@ const signOperation = ({
         };
 
         const extra = getExtra() || {};
+        /**
+         * FIXME
+         *
+         * This is not working and cannot work simply because this "NONE" type doesn't exist during a sync,
+         * as well as subOperations which are never created either.
+         *
+         * And even after fixing this,  we're getting wrong fee estimation for TRC20 transactions
+         * which are considered as 0 all the time, while it always being between 1 and 10 TRX.
+         */
         const operation: Operation = {
           id: `${account.id}-${hash}-${operationType}`,
           hash,
@@ -246,6 +255,9 @@ const signOperation = ({
         };
 
         if (subAccount) {
+          /**
+           * SEE FIXME ABOVE
+           */
           operation.subOperations = [
             {
               id: `${subAccount.id}-${hash}-OUT`,
@@ -451,6 +463,14 @@ const getAccountShape = async (info: GetAccountShapeArg0, syncConfig) => {
       id: `${accountId}-${o.hash}-OUT`,
     }));
   // add them to the parent operations and sort by date desc
+
+  /**
+   * FIXME
+   *
+   * We have a problem here as we're just concatenating ops without ever really linking them.
+   * It means no operation can be "FEES" of a subOp by example. It leads to our issues with TRC10/TRC20
+   * optimistic operation never really existing in the end.
+   */
   const parentOpsAndSubOutOpsWithFee = parentOperations
     .concat(subOutOperationsWithFee)
     .sort((a, b) => b.date.valueOf() - a.date.valueOf());
@@ -744,8 +764,7 @@ const getTransactionStatus = async (
     if (
       account.type === "TokenAccount" &&
       account.token.tokenType === "trc20" &&
-      energy.eq(0) &&
-      a.spendableBalance.lt(1000000)
+      energy.lt(29650) // temporary value corresponding to usdt trc20 energy
     ) {
       const contractUserEnergyConsumption =
         await getContractUserEnergyRatioConsumption(

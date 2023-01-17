@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import {
   BottomDrawer,
@@ -14,49 +13,23 @@ import PromptNotifGenericDark from "../../images/illustration/Dark/_PromptNotifG
 import PromptNotifGenericLight from "../../images/illustration/Light/_PromptNotifGeneric.png";
 import PromptNotifMarketDark from "../../images/illustration/Dark/_PromptNotifMarket.png";
 import PromptNotifMarketLight from "../../images/illustration/Light/_PromptNotifMarket.png";
-import { notificationsSelector } from "../../reducers/settings";
 import { TrackScreen } from "../../analytics";
 
 const PushNotificationsModal = () => {
   const { t } = useTranslation();
   const {
-    initPushNotifications,
     initPushNotificationsData,
-    cleanPushNotifications,
     pushNotificationsModalType,
     isPushNotificationsModalOpen,
     modalAllowNotifications,
     modalDelayLater,
-    getIsNotifEnabled,
-    listenForNotifications,
-    clearNotificationsListeners,
     pushNotificationsOldRoute,
   } = useNotifications();
-  const notificationsSettings = useSelector(notificationsSelector);
-
-  useEffect(() => {
-    initPushNotifications();
-
-    return () => {
-      cleanPushNotifications();
-    };
-  }, [initPushNotifications, cleanPushNotifications]);
 
   useEffect(() => {
     initPushNotificationsData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    getIsNotifEnabled().then(isNotifEnabled => {
-      if (isNotifEnabled) {
-        if (notificationsSettings.allowed) {
-          listenForNotifications();
-        } else {
-          clearNotificationsListeners();
-        }
-      }
-    });
-  }, [notificationsSettings.allowed]);
 
   const NotifIllustration = () =>
     pushNotificationsModalType === "market" ? (
@@ -75,11 +48,7 @@ const PushNotificationsModal = () => {
       />
     );
   return (
-    <BottomDrawer
-      id="PromptNotification"
-      isOpen={isPushNotificationsModalOpen}
-      noCloseButton
-    >
+    <BottomDrawer isOpen={isPushNotificationsModalOpen} noCloseButton>
       <TrackScreen
         category="Notification Prompt"
         name={

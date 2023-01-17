@@ -6,9 +6,14 @@ const basePath = path.join(__dirname, "..");
 const rendererPath = path.join(basePath, "src", "renderer");
 const generatedPath = path.join(rendererPath, "generated");
 
-await rimraf(generatedPath, async e => {
-  if (!!e) return echo(chalk.red(e));
-  await fs.promises.mkdir(generatedPath);
+await new Promise((resolve, reject) => {
+  rimraf(generatedPath, e => {
+    if (e) {
+      echo(chalk.red(e));
+      return reject(e);
+    }
+    return resolve(fs.promises.mkdir(generatedPath));
+  });
 });
 
 const families = await fs.readdir(path.join(rendererPath, "families"));
@@ -33,15 +38,30 @@ async function genTarget(target) {
   let imports = `// @flow`;
   let exprts = `export default {`;
   const outpath = path.join(generatedPath, target);
+  const [targetName, extension] = target.split(".");
 
   for (const family of families) {
     try {
-      await fs.promises.access(
-        path.join(rendererPath, "families", family, target),
-        fs.constants.R_OK,
-      );
+      if (["jsx", "tsx"].includes(extension)) {
+        await Promise.any([
+          fs.promises.access(
+            path.join(rendererPath, "families", family, `${targetName}.jsx`),
+            fs.constants.R_OK,
+          ),
+          fs.promises.access(
+            path.join(rendererPath, "families", family, `${targetName}.tsx`),
+            fs.constants.R_OK,
+          ),
+        ]);
+      } else {
+        await fs.promises.access(
+          path.join(rendererPath, "families", family, target),
+          fs.constants.R_OK,
+        );
+      }
+
       imports += `
-import ${family} from "../families/${family}/${target}";`;
+import ${family} from "../families/${family}/${targetName}";`;
       exprts += `
   ${family},`;
     } catch (error) {}

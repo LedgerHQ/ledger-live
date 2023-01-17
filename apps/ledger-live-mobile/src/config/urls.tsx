@@ -4,18 +4,30 @@ export const urls = {
     "https://support.ledger.com/hc/en-us/requests/new?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=contact",
   terms: {
     en: "https://shop.ledger.com/pages/ledger-live-terms-of-use",
-    fr: "https://shop.ledger.com/pages/conditions-dutilisation-de-ledger-live",
-    es: "https://shop.ledger.com/pages/condiciones-de-uso-de-ledger-live",
-    de: "https://shop.ledger.com/pages/nutzungsbedingungen-von-ledger-live",
+    fr: "https://shop.ledger.com/fr/pages/ledger-live-terms-of-use",
+    de: "https://shop.ledger.com/de/pages/ledger-live-terms-of-use",
+    es: "https://shop.ledger.com/es/pages/ledger-live-terms-of-use",
+    tr: "https://shop.ledger.com/tr/pages/ledger-live-terms-of-use",
+    ar: "https://shop.ledger.com/ar/pages/ledger-live-terms-of-use",
+    ja: "https://shop.ledger.com/ja/pages/ledger-live-terms-of-use",
+    zh: "https://shop.ledger.com/zh-cn/pages/ledger-live-terms-of-use",
+    ko: "https://shop.ledger.com/ko/pages/ledger-live-terms-of-use",
+    ru: "https://shop.ledger.com/ru/pages/ledger-live-terms-of-use",
   },
   privacyPolicy: {
-    en: "https://shop.ledger.com/pages/privacy-policy?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=privacy",
-    fr: "https://shop.ledger.com/pages/politique-de-confidentialite?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=privacy",
-    es: "https://shop.ledger.com/pages/politica-de-privacidad?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=privacy",
-    ru: "https://shop.ledger.com/pages/nasha-politika-konfidentsialnosti?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=privacy",
-    // TODO: Add the correct zh link
-    zh: "https://shop.ledger.com/pages/privacy-policy?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=privacy",
+    en: "https://www.ledger.com/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+    fr: "https://www.ledger.com/fr/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+    de: "https://www.ledger.com/de/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+    es: "https://www.ledger.com/es/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+    tr: "https://www.ledger.com/tr/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+    ar: "https://www.ledger.com/ar/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+    ja: "https://www.ledger.com/ja/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+    zh: "https://www.ledger.com/zh-hans/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+    ko: "https://www.ledger.com/ko/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+    ru: "https://www.ledger.com/ru/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
   },
+  pairingIssues:
+    "https://support.ledger.com/hc/en-us/articles/360025864773-Fix-Bluetooth-pairing-issues?support=true",
   ratingsContact:
     "https://support.ledger.com/hc/en-us/articles/4423020306705-Contact-Us?support=true",
   buyNanoX:
@@ -43,6 +55,8 @@ export const urls = {
       "https://status.ledger.com?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=error_apierrorwithmessage",
     StratisDown2021Warning:
       "https://support.ledger.com/hc/en-us/articles/115005175329",
+    TronSendTrc20ToNewAccountForbidden:
+      "https://support.ledger.com/hc/en-us/articles/6516823445533--Sending-TRC20-to-a-new-account-won-t-activate-it-message-in-Ledger-Live?support=true",
   },
   multipleAddresses:
     "https://support.ledger.com/hc/en-us/articles/360033802154?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=ops_details_change",
@@ -67,6 +81,8 @@ export const urls = {
     bep20:
       "https://support.ledger.com/hc/en-us/articles/4412962166289-Manage-BEP20-tokens?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=receive_account_flow_bep20",
   },
+  celoStakingRewards:
+    "https://support.ledger.com/hc/en-us/articles/360020499920-Celo-CELO-?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=celo&docs=true",
   osmosisStakingRewards:
     "https://support.ledger.com/hc/en-us/sections/4404369637521-Crypto-assets?docs=true",
   cosmosStaking:
@@ -77,6 +93,8 @@ export const urls = {
     "https://support.ledger.com/hc/en-us/articles/360015897740?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=algorand",
   polkadotStaking:
     "https://support.ledger.com/hc/en-us/articles/360018131260-Earning-Polkadot-DOT-bonding-rewards?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=polkadot",
+  nearStakingRewards:
+    "https://support.ledger.com/hc/en-us/articles/360020450619-NEAR-NEAR-?docs=true",
   swap: {
     info: "https://www.ledger.com/swap?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=swap_intro",
     learnMore:
@@ -86,9 +104,24 @@ export const urls = {
         main: "https://changelly.com/",
         tos: "https://changelly.com/terms-of-use",
       },
+      cic: {
+        main: "https://criptointercambio.com/",
+        support: "https://criptointercambio.com/en/about",
+        tos: "https://criptointercambio.com/terms-of-use",
+      },
       wyre: {
         main: "https://support.sendwyre.com/hc/en-us/requests/new",
         tos: "https://www.sendwyre.com/user-agreement/",
+      },
+      ftx: {
+        main: "https://ftx.com",
+        support: "https://ftx.com/support",
+        tos: null,
+      },
+      ftxus: {
+        main: "https://ftx.us/",
+        support: "https://help.ftx.us/hc/en-us",
+        tos: null,
       },
     },
   },
@@ -166,9 +199,16 @@ export const urls = {
     tellMeMore:
       "https://www.ledger.com/supported-services?utm_source=ledger_live&utm_medium=self_referral&utm_content=discover",
     mint: "ledgerlive://discover/lmarket",
+    linkDrop: "ledgerlive://discover/linkdrop",
+    linkDropStaging: "ledgerlive://discover/linkdrop-staging",
   },
   hedera: {
     supportArticleLink:
       "https://launchbadge.com/blog/using-a-ledger-nano-to-create-your-hedera-account",
+  },
+  nft: {
+    supportDisableIos:
+      "https://support.ledger.com/hc/en-us/articles/7572912170653?docs=true",
+    howToSecure: "https://www.ledger.com/academy/how-to-secure-your-nfts",
   },
 };

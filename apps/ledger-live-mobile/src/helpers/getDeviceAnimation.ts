@@ -1,8 +1,21 @@
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { AnimatedLottieViewProps } from "lottie-react-native";
 import Config from "react-native-config";
 
-const animations: { [modelId in DeviceModelId]: any } = {
+type Animation = AnimatedLottieViewProps["source"];
+type AnimationRecord = Record<"light" | "dark", Animation>;
+type S_SP_BLUE =
+  | DeviceModelId.nanoS
+  | DeviceModelId.nanoSP
+  | DeviceModelId.blue;
+export type Animations = {
+  [modelId in S_SP_BLUE]: Record<string, AnimationRecord>;
+} & {
+  [modelId in DeviceModelId]: Record<string, Record<string, AnimationRecord>>;
+};
+
+const animations: Animations = {
   nanoS: {
     plugAndPinCode: {
       light: require("../animations/nanoS/1PlugAndPinCode/light.json"),
@@ -24,7 +37,15 @@ const animations: { [modelId in DeviceModelId]: any } = {
       light: require("../animations/nanoS/6OpenApp/light.json"),
       dark: require("../animations/nanoS/6OpenApp/dark.json"),
     },
-    validate: {
+    verify: {
+      light: require("../animations/nanoS/7Validate/light.json"),
+      dark: require("../animations/nanoS/7Validate/dark.json"),
+    },
+    sign: {
+      light: require("../animations/nanoS/7Validate/light.json"),
+      dark: require("../animations/nanoS/7Validate/dark.json"),
+    },
+    allowUpdate: {
       light: require("../animations/nanoS/7Validate/light.json"),
       dark: require("../animations/nanoS/7Validate/dark.json"),
     },
@@ -50,7 +71,15 @@ const animations: { [modelId in DeviceModelId]: any } = {
       light: require("../animations/nanoSP/6OpenApp/light.json"),
       dark: require("../animations/nanoSP/6OpenApp/dark.json"),
     },
-    validate: {
+    verify: {
+      light: require("../animations/nanoSP/7Validate/light.json"),
+      dark: require("../animations/nanoSP/7Validate/dark.json"),
+    },
+    sign: {
+      light: require("../animations/nanoSP/7Validate/light.json"),
+      dark: require("../animations/nanoSP/7Validate/dark.json"),
+    },
+    allowUpdate: {
       light: require("../animations/nanoSP/7Validate/light.json"),
       dark: require("../animations/nanoSP/7Validate/dark.json"),
     },
@@ -76,7 +105,15 @@ const animations: { [modelId in DeviceModelId]: any } = {
       light: require("../animations/blue/6OpenApp/data.json"),
       dark: require("../animations/blue/6OpenApp/data.json"),
     },
-    validate: {
+    verify: {
+      light: require("../animations/blue/7Validate/data.json"),
+      dark: require("../animations/blue/7Validate/data.json"),
+    },
+    sign: {
+      light: require("../animations/blue/7Validate/data.json"),
+      dark: require("../animations/blue/7Validate/data.json"),
+    },
+    allowUpdate: {
       light: require("../animations/blue/7Validate/data.json"),
       dark: require("../animations/blue/7Validate/data.json"),
     },
@@ -103,7 +140,15 @@ const animations: { [modelId in DeviceModelId]: any } = {
         light: require("../animations/nanoX/wired/6OpenApp/light.json"),
         dark: require("../animations/nanoX/wired/6OpenApp/dark.json"),
       },
-      validate: {
+      verify: {
+        light: require("../animations/nanoX/wired/7Validate/light.json"),
+        dark: require("../animations/nanoX/wired/7Validate/dark.json"),
+      },
+      sign: {
+        light: require("../animations/nanoX/wired/7Validate/light.json"),
+        dark: require("../animations/nanoX/wired/7Validate/dark.json"),
+      },
+      allowUpdate: {
         light: require("../animations/nanoX/wired/7Validate/light.json"),
         dark: require("../animations/nanoX/wired/7Validate/dark.json"),
       },
@@ -129,7 +174,15 @@ const animations: { [modelId in DeviceModelId]: any } = {
         light: require("../animations/nanoX/bluetooth/6OpenApp/light.json"),
         dark: require("../animations/nanoX/bluetooth/6OpenApp/dark.json"),
       },
-      validate: {
+      verify: {
+        light: require("../animations/nanoX/bluetooth/7Validate/light.json"),
+        dark: require("../animations/nanoX/bluetooth/7Validate/dark.json"),
+      },
+      sign: {
+        light: require("../animations/nanoX/bluetooth/7Validate/light.json"),
+        dark: require("../animations/nanoX/bluetooth/7Validate/dark.json"),
+      },
+      allowUpdate: {
         light: require("../animations/nanoX/bluetooth/7Validate/light.json"),
         dark: require("../animations/nanoX/bluetooth/7Validate/dark.json"),
       },
@@ -143,65 +196,81 @@ const animations: { [modelId in DeviceModelId]: any } = {
       },
     },
   },
-  nanoFTS: {
+  stax: {
     wired: {
       plugAndPinCode: {
-        light: require("../animations/nanoFTS/1PlugAndPinCode/light.json"),
-        dark: require("../animations/nanoFTS/1PlugAndPinCode/dark.json"),
+        light: require("../animations/stax/enterPIN.json"),
+        dark: require("../animations/stax/enterPIN.json"),
       },
       enterPinCode: {
-        light: require("../animations/nanoFTS/3EnterPinCode/light.json"),
-        dark: require("../animations/nanoFTS/3EnterPinCode/dark.json"),
+        light: require("../animations/stax/enterPIN.json"),
+        dark: require("../animations/stax/enterPIN.json"),
       },
       quitApp: {
-        light: require("../animations/nanoFTS/4QuitApp/light.json"),
-        dark: require("../animations/nanoFTS/4QuitApp/dark.json"),
+        light: require("../animations/stax/allowConnection.json"),
+        dark: require("../animations/stax/allowConnection.json"),
       },
       allowManager: {
-        light: require("../animations/nanoFTS/5AllowManager/light.json"),
-        dark: require("../animations/nanoFTS/5AllowManager/dark.json"),
+        light: require("../animations/stax/allowConnection.json"),
+        dark: require("../animations/stax/allowConnection.json"),
       },
       openApp: {
-        light: require("../animations/nanoFTS/6OpenApp/light.json"),
-        dark: require("../animations/nanoFTS/6OpenApp/dark.json"),
+        light: require("../animations/stax/allowConnection.json"),
+        dark: require("../animations/stax/allowConnection.json"),
       },
-      validate: {
-        light: require("../animations/nanoFTS/7Validate/light.json"),
-        dark: require("../animations/nanoFTS/7Validate/dark.json"),
+      verify: {
+        light: require("../animations/stax/verifyAddress.json"),
+        dark: require("../animations/stax/verifyAddress.json"),
+      },
+      sign: {
+        light: require("../animations/stax/signTransaction.json"),
+        dark: require("../animations/stax/signTransaction.json"),
+      },
+      allowUpdate: {
+        light: require("../animations/stax/allowConnection.json"),
+        dark: require("../animations/stax/allowConnection.json"),
       },
     },
     bluetooth: {
       plugAndPinCode: {
-        light: require("../animations/nanoFTS/1PlugAndPinCode/light.json"),
-        dark: require("../animations/nanoFTS/1PlugAndPinCode/dark.json"),
+        light: require("../animations/stax/enterPIN.json"),
+        dark: require("../animations/stax/enterPIN.json"),
       },
       enterPinCode: {
-        light: require("../animations/nanoFTS/3EnterPinCode/light.json"),
-        dark: require("../animations/nanoFTS/3EnterPinCode/dark.json"),
+        light: require("../animations/stax/enterPIN.json"),
+        dark: require("../animations/stax/enterPIN.json"),
       },
       quitApp: {
-        light: require("../animations/nanoFTS/4QuitApp/light.json"),
-        dark: require("../animations/nanoFTS/4QuitApp/dark.json"),
+        light: require("../animations/stax/allowConnection.json"),
+        dark: require("../animations/stax/allowConnection.json"),
       },
       allowManager: {
-        light: require("../animations/nanoFTS/5AllowManager/light.json"),
-        dark: require("../animations/nanoFTS/5AllowManager/dark.json"),
+        light: require("../animations/stax/allowConnection.json"),
+        dark: require("../animations/stax/allowConnection.json"),
       },
       openApp: {
-        light: require("../animations/nanoFTS/6OpenApp/light.json"),
-        dark: require("../animations/nanoFTS/6OpenApp/dark.json"),
+        light: require("../animations/stax/allowConnection.json"),
+        dark: require("../animations/stax/allowConnection.json"),
       },
-      validate: {
-        light: require("../animations/nanoFTS/7Validate/light.json"),
-        dark: require("../animations/nanoFTS/7Validate/dark.json"),
+      verify: {
+        light: require("../animations/stax/verifyAddress.json"),
+        dark: require("../animations/stax/verifyAddress.json"),
+      },
+      sign: {
+        light: require("../animations/stax/signTransaction.json"),
+        dark: require("../animations/stax/signTransaction.json"),
+      },
+      allowUpdate: {
+        light: require("../animations/stax/allowConnection.json"),
+        dark: require("../animations/stax/allowConnection.json"),
       },
       blePairing: {
-        light: require("../animations/nanoFTS/BlePairing/light.json"),
-        dark: require("../animations/nanoFTS/BlePairing/dark.json"),
+        light: require("../animations/stax/pairingProgress.json"),
+        dark: require("../animations/stax/pairingProgress.json"),
       },
       blePaired: {
-        light: require("../animations/nanoFTS/BlePaired/light.json"),
-        dark: require("../animations/nanoFTS/BlePaired/dark.json"),
+        light: require("../animations/stax/pairingSuccess.json"),
+        dark: require("../animations/stax/pairingSuccess.json"),
       },
     },
   },
@@ -218,18 +287,18 @@ export function getDeviceAnimation({
   theme = "light",
   key,
   device,
-}: GetDeviceAnimationArgs) {
+}: GetDeviceAnimationArgs): AnimatedLottieViewProps["source"] {
   const modelId = (Config.OVERRIDE_MODEL_ID as DeviceModelId) || device.modelId;
   const wired = Config.OVERRIDE_WIRED || device.wired;
 
-  let animation;
+  let animation: Animation | undefined;
 
   if (
     [DeviceModelId.nanoS, DeviceModelId.nanoSP, DeviceModelId.blue].includes(
       modelId,
     )
   ) {
-    animation = animations[modelId][key][theme];
+    animation = animations[modelId as S_SP_BLUE][key][theme];
   } else {
     animation =
       animations[modelId]?.[wired ? "wired" : "bluetooth"]?.[key][theme];
@@ -237,7 +306,8 @@ export function getDeviceAnimation({
 
   if (!animation) {
     console.error(`No animation for ${modelId} ${key}`);
-    return null;
+    // @ts-expect-error Halp :()
+    return undefined;
   }
 
   return animation;

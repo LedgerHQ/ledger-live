@@ -11,9 +11,12 @@ import { Account, OperationType } from "@ledgerhq/types-live";
 import { useCeloPreloadData } from "@ledgerhq/live-common/families/celo/react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/formatCurrencyUnit";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
-
+import { useRoute } from "@react-navigation/native";
 import Section from "../../screens/OperationDetails/Section";
 import { discreetModeSelector, localeSelector } from "../../reducers/settings";
+import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import { ScreenName } from "../../const";
 
 type Props = {
   extra: {
@@ -25,12 +28,19 @@ type Props = {
   account: Account;
 };
 
+type Navigation = StackNavigatorProps<
+  BaseNavigatorStackParamList,
+  ScreenName.OperationDetails
+>;
+
 const OperationDetailsExtra = ({ extra, type, account }: Props) => {
   const { t } = useTranslation();
   const discreet = useSelector(discreetModeSelector);
   const locale = useSelector(localeSelector);
   const unit = getAccountUnit(account);
   const { validatorGroups: celoValidators } = useCeloPreloadData();
+  const optimisticOperation =
+    useRoute<Navigation["route"]>().params?.operation ?? null;
 
   const redirectAddressCreator = useCallback(
     address => () => {
@@ -52,17 +62,20 @@ const OperationDetailsExtra = ({ extra, type, account }: Props) => {
       )
     : null;
 
-  const formattedAmount = formatCurrencyUnit(
-    unit,
-    new BigNumber(extra.celoOperationValue),
-    {
-      disableRounding: true,
-      alwaysShowSign: false,
-      showCode: true,
-      discreet,
-      locale,
-    },
-  );
+  let opValue = "";
+  if (extra.celoOperationValue != null) {
+    opValue = extra.celoOperationValue;
+  } else if (optimisticOperation.value != null) {
+    opValue = optimisticOperation.value.toString();
+  }
+
+  const formattedAmount = formatCurrencyUnit(unit, new BigNumber(opValue), {
+    disableRounding: true,
+    alwaysShowSign: false,
+    showCode: true,
+    discreet,
+    locale,
+  });
 
   switch (type) {
     case "ACTIVATE":

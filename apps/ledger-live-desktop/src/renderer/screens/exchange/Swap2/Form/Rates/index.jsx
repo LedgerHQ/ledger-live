@@ -1,23 +1,26 @@
 // @flow
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useMemo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Trans } from "react-i18next";
+import { track } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
-import DecentralisedRate from "./DecentralisedRate";
-import CentralisedRate from "./CentralisedRate";
+import NoQuoteSwapRate from "./NoQuoteSwapRate";
+import SwapRate from "./SwapRate";
 import Countdown from "./Countdown";
+import EmptyState from "./EmptyState";
+import Filter from "./Filter";
 import type {
   SwapSelectorStateType,
   RatesReducerState,
-} from "@ledgerhq/live-common/exchange/swap/hooks/index";
+} from "@ledgerhq/live-common/exchange/swap/types";
 import { rateSelector, updateRateAction } from "~/renderer/actions/swap";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { SWAP_VERSION } from "../../utils/index";
+import { swapDefaultTrack } from "../../utils/index";
 import styled from "styled-components";
 import Tooltip from "~/renderer/components/Tooltip";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
-import { DEX_PROVIDERS } from "../utils";
+import { filterRates } from "./filterRates";
 
 type Props = {
   fromCurrency: $PropertyType<SwapSelectorStateType, "currency">,
@@ -27,7 +30,6 @@ type Props = {
   refreshTime: number,
   updateSelection: () => void,
   countdown: boolean,
-  decentralizedSwapAvailable: boolean,
 };
 
 const TableHeader: ThemedComponent<{}> = styled(Box).attrs({
@@ -51,31 +53,63 @@ export default function ProviderRate({
   toCurrency,
   rates,
   provider,
-  updateSelection,
   refreshTime,
   countdown,
-  decentralizedSwapAvailable,
 }: Props) {
   const dispatch = useDispatch();
-  const [dexSelected, setDexSelected] = useState(null);
+  const [filter, setFilter] = useState([]);
   const selectedRate = useSelector(rateSelector);
+  const filteredRates = useMemo(() => filterRates(rates, filter), [rates, filter]);
 
-  const setRate = useCallback(
+  const updateRate = useCallback(
     rate => {
-      setDexSelected(null);
-      updateSelection(rate);
+      const buttonName = rate.providerType === "CEX" ? "Partner Chosen" : "Partner Dex Chosen";
+      const value = rate ?? rate.provider;
+      track("partner_clicked", {
+        button: buttonName,
+        page: "Page Swap Form",
+        ...swapDefaultTrack,
+        swap_type: rate.tradeMethod,
+        value,
+        defaultPartner: rate.provider,
+      });
       dispatch(updateRateAction(rate));
     },
-    [updateSelection, dispatch],
+    [dispatch],
   );
 
-  const setDexRate = useCallback(
-    provider => {
-      setDexSelected(provider);
-      updateSelection(provider);
-    },
-    [updateSelection],
-  );
+  useEffect(() => {
+    // if the selected rate in redux is not in the filtered rates, we need to update it
+    if (
+      selectedRate &&
+      filteredRates.length > 0 &&
+      !filteredRates.some(
+        r => r.provider === selectedRate.provider && r.tradeMethod === selectedRate.tradeMethod,
+      )
+    ) {
+      dispatch(updateRateAction(filteredRates[0]));
+    }
+
+    // if there is no selected rate but there is a filtered rate, we need to update it
+    if (!selectedRate && filteredRates.length > 0) {
+      dispatch(updateRateAction(filteredRates[0]));
+    }
+
+    // if there are no filtered rates, we need to unset the selected rate
+    if (selectedRate && filteredRates.length === 0) {
+      dispatch(updateRateAction(null));
+    }
+  }, [filteredRates, selectedRate, dispatch]);
+
+  const updateFilter = useCallback(newFilter => {
+    track("button_clicked", {
+      button: "Filter selected",
+      page: "Page Swap Form",
+      ...swapDefaultTrack,
+      value: newFilter,
+    });
+    setFilter(newFilter);
+  }, []);
 
   return (
     <Box height="100%" width="100%">
@@ -83,10 +117,14 @@ export default function ProviderRate({
         category="Swap"
         name="Form - Edit Rates"
         provider={provider}
-        swapVersion={SWAP_VERSION}
+        {...swapDefaultTrack}
       />
       <Box horizontal justifyContent="space-between" fontSize={5}>
-        <Text variant="h5" style={{ textTransform: "uppercase", fontFamily: "Alpha" }}>
+        <Text
+          variant="h5"
+          color="neutral.c100"
+          style={{ textTransform: "uppercase", fontFamily: "Alpha" }}
+        >
           <Trans i18nKey="swap2.form.rates.title" />
         </Text>
         {countdown && (
@@ -95,8 +133,9 @@ export default function ProviderRate({
           </Box>
         )}
       </Box>
+      <Filter onClick={updateFilter} />
       <TableHeader>
-        <Box horizontal flex="1" alignItems="center" pr="38px">
+        <Box horizontal width="215px" alignItems="center" pr="38px">
           <Text alignItems="center" display="flex" mr={1}>
             <Trans i18nKey="swap2.form.rates.name.title" />
           </Text>
@@ -110,7 +149,7 @@ export default function ProviderRate({
             <IconInfoCircle size={12} />
           </Tooltip>
         </Box>
-        <Box horizontal flex="1" alignItems="center" justifyContent="center">
+        <Box horizontal flex="1" alignItems="center" justifyContent="flex-start">
           <Text alignItems="center" display="flex" mr={1}>
             <Trans i18nKey="swap2.form.rates.rate.title" />
           </Text>
@@ -128,48 +167,53 @@ export default function ProviderRate({
             <IconInfoCircle size={12} />
           </Tooltip>
         </Box>
-        <Box horizontal flex="1" alignItems="center" justifyContent="flex-end">
+        <Box horizontal flex="1" alignItems="center" justifyContent="flex-end" mr={1}>
           <Text alignItems="center" display="flex" mr={1}>
             <Trans i18nKey="swap2.form.rates.receive.title" />
           </Text>
           <Tooltip
-            placement={"top-end"}
             content={
               <Box style={{ maxWidth: 150 }}>
-                <Text style={{ textAlign: "right" }}>
+                <Text>
                   <Trans i18nKey="swap2.form.rates.receive.tooltip" />
                 </Text>
               </Box>
             }
           >
-            <Box style={{ marginRight: 5 }}>
+            <Box>
               <IconInfoCircle size={12} />
             </Box>
           </Tooltip>
         </Box>
       </TableHeader>
       <Box mt={3}>
-        {rates?.map((rate, index) => (
-          <CentralisedRate
-            key={`${rate.provider}-${rate.tradeMethod}`}
-            value={rate}
-            selected={!dexSelected && rate === selectedRate}
-            onSelect={setRate}
-            fromCurrency={fromCurrency}
-            toCurrency={toCurrency}
-          />
-        ))}
-        {decentralizedSwapAvailable &&
-          DEX_PROVIDERS.map((rate, index) => (
-            <DecentralisedRate
+        {filteredRates.map(rate => {
+          const isSelected =
+            selectedRate &&
+            selectedRate.provider === rate.provider &&
+            selectedRate.tradeMethod === rate.tradeMethod;
+          return rate.providerType === "DEX" && rate.rate === undefined ? (
+            <NoQuoteSwapRate
+              filter={filter}
               key={rate.id}
               value={rate}
-              selected={dexSelected && rate.id === dexSelected.id}
-              onSelect={setDexRate}
-              icon={rate.icon}
+              selected={isSelected}
+              onSelect={updateRate}
+              icon={rate.provider}
             />
-          ))}
+          ) : (
+            <SwapRate
+              key={`${rate.provider}-${rate.tradeMethod}`}
+              value={rate}
+              selected={isSelected}
+              onSelect={updateRate}
+              fromCurrency={fromCurrency}
+              toCurrency={toCurrency}
+            />
+          );
+        })}
       </Box>
+      {!filteredRates.length && <EmptyState />}
     </Box>
   );
 }

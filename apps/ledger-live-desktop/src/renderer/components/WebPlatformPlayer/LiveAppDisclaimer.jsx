@@ -4,7 +4,7 @@ import React from "react";
 import styled, { useTheme } from "styled-components";
 import { useTranslation } from "react-i18next";
 
-import type { AppManifest } from "@ledgerhq/live-common/platform/types";
+import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
 import LiveAppIcon from "~/renderer/components/WebPlatformPlayer/LiveAppIcon";
@@ -16,7 +16,7 @@ import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box";
 
 type Props = {
-  manifest: AppManifest,
+  manifest: LiveAppManifest,
 };
 
 const Head: ThemedComponent<{}> = styled(Box).attrs(p => ({
@@ -93,7 +93,9 @@ export const LiveAppDisclaimer = ({ manifest }: Props) => {
         <LiveAppIcon size={48} name={manifest.name} icon={manifest.icon || ""} />
       </Head>
 
-      <Title>{t("platform.disclaimer.title")}</Title>
+      <Title data-test-id="live-app-disclaimer-drawer-title">
+        {t("platform.disclaimer.title")}
+      </Title>
 
       <Description>{t("platform.disclaimer.description")}</Description>
 

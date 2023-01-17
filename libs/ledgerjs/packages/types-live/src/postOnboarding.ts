@@ -8,7 +8,28 @@ export enum PostOnboardingActionId {
   claimMock = "claimMock",
   migrateAssetsMock = "migrateAssetsMock",
   personalizeMock = "personalizeMock",
+  customImage = "customImage",
+  claimNft = "claimNft",
+  assetsTransfer = "assetsTransfer",
 }
+
+export type WithNavigationParams = {
+  /**
+   * Navigation params when the user presses the button for this action
+   * - In LLM, this will be used like this:
+   *  `navigation.navigate(...navigationParams)`
+   * - In LLD, this will be used like this:
+   *  `history.push(...navigationParams)`
+   */
+  navigationParams?: any[];
+};
+
+type WithStartActionFunction = {
+  /**
+   * The function to call when the user presses the button for this action
+   */
+  startAction: () => void;
+};
 
 /**
  * All necessary information for complete integration of a post onboarding
@@ -18,19 +39,15 @@ export type PostOnboardingAction = {
   id: PostOnboardingActionId;
 
   /**
+   * Allow to display the action without letting the user access its flow
+   */
+  disabled?: boolean;
+
+  /**
    * If this action is linked to a feature that is enabled by a feature flag,
    * use this property to identify the feature flag.
    */
   featureFlagId?: FeatureId;
-
-  /**
-   * Navigation params when the user presses the button for this action
-   * - In LLM, this will be used like this:
-   *  `navigation.navigate(...navigationParams)`
-   * - In LLD, this will be used like this:
-   *  `history.push(...navigationParams)`
-   */
-  navigationParams?: any[];
 
   /**
    * Icon displayed for this action in the post onboarding hub.
@@ -41,6 +58,12 @@ export type PostOnboardingAction = {
    * Title displayed for this action in the post onboarding hub.
    */
   title: string;
+
+  /**
+   * Title displayed for this action in the post onboarding hub when the action
+   * is completed.
+   */
+  titleCompleted: string;
 
   /**
    * Description displayed for this action in the post onboarding hub.
@@ -59,12 +82,6 @@ export type PostOnboardingAction = {
   actionCompletedPopupLabel: string;
 
   /**
-   * Will be used as a title success alert at the bottom of the post-onboarding
-   * hub after completing this action.
-   * */
-  actionCompletedHubTitle: string;
-
-  /**
    * Event that will be dispatched when starting this action.
    */
   startEvent?: string;
@@ -73,7 +90,7 @@ export type PostOnboardingAction = {
    * Event properties that will be dispatched when starting this action.
    */
   startEventProperties?: any;
-};
+} & (WithNavigationParams | WithStartActionFunction);
 
 /**
  * State of a post onboarding action.

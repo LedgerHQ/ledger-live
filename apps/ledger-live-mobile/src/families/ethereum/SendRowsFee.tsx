@@ -1,19 +1,13 @@
 import React from "react";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
-import type { RouteParams } from "../../screens/SendFunds/04-Summary";
+import { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
 import EthereumFeesStrategy from "./EthereumFeesStrategy";
+import { SendRowsFeeProps } from "./types";
 
-type Props = {
-  transaction: Transaction;
-  account: AccountLike;
-  parentAccount: Account | null | undefined;
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-  setTransaction: (..._: Array<any>) => any;
-};
-export default function EthereumSendRowsFee(props: Props) {
-  return <EthereumFeesStrategy {...props} />;
+export default function EthereumSendRowsFee({
+  transaction,
+  ...props
+}: SendRowsFeeProps) {
+  return (
+    <EthereumFeesStrategy transaction={transaction as Transaction} {...props} />
+  );
 }

@@ -7,7 +7,14 @@ import {
   Observable,
   TimeoutError,
 } from "rxjs";
-import { map, catchError, repeat, first, timeout } from "rxjs/operators";
+import {
+  map,
+  catchError,
+  first,
+  timeout,
+  repeatWhen,
+  delay,
+} from "rxjs/operators";
 import getVersion from "./getVersion";
 import { withDevice } from "./deviceAccess";
 import {
@@ -17,6 +24,7 @@ import {
   DisconnectedDevice,
   CantOpenDevice,
   TransportRaceCondition,
+  LockedDeviceError,
 } from "@ledgerhq/errors";
 import { FirmwareInfo } from "@ledgerhq/types-live";
 import {
@@ -27,6 +35,7 @@ import {
 export type OnboardingStatePollingResult = {
   onboardingState: OnboardingState | null;
   allowedError: Error | null;
+  lockedDevice: boolean;
 };
 
 export type GetOnboardingStatePollingResult =
@@ -43,104 +52,96 @@ export type GetOnboardingStatePollingArgs = {
  * @param deviceId A device id
  * @param pollingPeriodMs The period in ms after which the device onboarding state is fetched again
  * @param fetchingTimeoutMs The time to wait while fetching for the device onboarding state before throwing an error, in ms
- * @returns An Observable that polls the device onboarding state
+ * @returns An Observable that polls the device onboarding state and pushes an object containing:
+ * - onboardingState: the device state during the onboarding
+ * - allowedError: any error that is allowed and does not stop the polling
+ * - lockedDevice: a boolean set to true if the device is currently locked, false otherwise
  */
 export const getOnboardingStatePolling = ({
   deviceId,
   pollingPeriodMs,
   fetchingTimeoutMs = pollingPeriodMs,
 }: GetOnboardingStatePollingArgs): GetOnboardingStatePollingResult => {
-  let firstRun = true;
+  const getOnboardingStateOnce =
+    (): Observable<OnboardingStatePollingResult> => {
+      const firmwareInfoOrAllowedErrorObservable = withDevice(deviceId)((t) =>
+        from(getVersion(t))
+      ).pipe(
+        timeout(fetchingTimeoutMs), // Throws a TimeoutError
+        first(),
+        catchError((error: any) => {
+          if (isAllowedOnboardingStatePollingError(error)) {
+            // Pushes the error to the next step to be processed (no retry from the beginning)
+            return of(error);
+          }
 
-  const delayedOnceOnboardingStateObservable: Observable<OnboardingStatePollingResult> =
-    new Observable((subscriber) => {
-      const delayMs = firstRun ? 0 : pollingPeriodMs;
-      firstRun = false;
+          return throwError(error);
+        })
+      );
 
-      const getOnboardingStateOnce = () => {
-        const firmwareInfoOrAllowedErrorObservable = withDevice(deviceId)((t) =>
-          from(getVersion(t))
-        ).pipe(
-          timeout(fetchingTimeoutMs), // Throws a TimeoutError
-          first(),
-          catchError((error: any) => {
-            if (isAllowedOnboardingStatePollingError(error)) {
-              // Pushes the error to the next step to be processed (no retry from the beginning)
-              return of(error);
+      // If an error is catched previously, and this error is "allowed",
+      // the value from the observable is not a FirmwareInfo but an Error
+      const [firmwareInfoObservable, allowedErrorObservable] = partition(
+        firmwareInfoOrAllowedErrorObservable,
+        // TS cannot infer correctly the value given to RxJS partition
+        (value) => Boolean(value?.flags)
+      );
+
+      const onboardingStateFromFirmwareInfoObservable =
+        firmwareInfoObservable.pipe(
+          map((firmwareInfo: FirmwareInfo) => {
+            let onboardingState: OnboardingState | null = null;
+
+            try {
+              onboardingState = extractOnboardingState(firmwareInfo.flags);
+            } catch (error: any) {
+              if (error instanceof DeviceExtractOnboardingStateError) {
+                return {
+                  onboardingState: null,
+                  allowedError: error,
+                  lockedDevice: false,
+                };
+              } else {
+                return {
+                  onboardingState: null,
+                  allowedError: new DeviceOnboardingStatePollingError(
+                    `SyncOnboarding: Unknown error while extracting the onboarding state ${
+                      error?.name ?? error
+                    } ${error?.message}`
+                  ),
+                  lockedDevice: false,
+                };
+              }
             }
-
-            return throwError(error);
+            return {
+              onboardingState,
+              allowedError: null,
+              lockedDevice: false,
+            };
           })
         );
 
-        // If an error is catched previously, and this error is "allowed",
-        // the value from the observable is not a FirmwareInfo but an Error
-        const [firmwareInfoObservable, allowedErrorObservable] = partition(
-          firmwareInfoOrAllowedErrorObservable,
-          // TS cannot infer correctly the value given to RxJS partition
-          (value: any) => Boolean(value?.flags)
+      // Handles the case of an (allowed) Error value
+      const onboardingStateFromAllowedErrorObservable =
+        allowedErrorObservable.pipe(
+          map((allowedError: Error) => {
+            return {
+              onboardingState: null,
+              allowedError: allowedError,
+              lockedDevice: allowedError instanceof LockedDeviceError,
+            };
+          })
         );
 
-        const onboardingStateFromFirmwareInfoObservable =
-          firmwareInfoObservable.pipe(
-            map((firmwareInfo: FirmwareInfo) => {
-              let onboardingState: OnboardingState | null = null;
+      return merge(
+        onboardingStateFromFirmwareInfoObservable,
+        onboardingStateFromAllowedErrorObservable
+      );
+    };
 
-              try {
-                onboardingState = extractOnboardingState(firmwareInfo.flags);
-              } catch (error: any) {
-                if (error instanceof DeviceExtractOnboardingStateError) {
-                  return {
-                    onboardingState: null,
-                    allowedError: error,
-                  };
-                } else {
-                  return {
-                    onboardingState: null,
-                    allowedError: new DeviceOnboardingStatePollingError(
-                      `SyncOnboarding: Unknown error while extracting the onboarding state ${
-                        error?.name ?? error
-                      } ${error?.message}`
-                    ),
-                  };
-                }
-              }
-              return { onboardingState, allowedError: null };
-            })
-          );
-
-        // Handles the case of an (allowed) Error value
-        const onboardingStateFromAllowedErrorObservable =
-          allowedErrorObservable.pipe(
-            map((allowedError: Error) => {
-              return {
-                onboardingState: null,
-                allowedError: allowedError,
-              };
-            })
-          );
-
-        return merge(
-          onboardingStateFromFirmwareInfoObservable,
-          onboardingStateFromAllowedErrorObservable
-        );
-      };
-
-      // Delays the fetch of the onboarding state
-      setTimeout(() => {
-        getOnboardingStateOnce().subscribe({
-          next: (value: OnboardingStatePollingResult) => {
-            subscriber.next(value);
-          },
-          error: (error: any) => {
-            subscriber.error(error);
-          },
-          complete: () => subscriber.complete(),
-        });
-      }, delayMs);
-    });
-
-  return delayedOnceOnboardingStateObservable.pipe(repeat());
+  return getOnboardingStateOnce().pipe(
+    repeatWhen((completed) => completed.pipe(delay(pollingPeriodMs)))
+  );
 };
 
 export const isAllowedOnboardingStatePollingError = (
@@ -153,7 +154,9 @@ export const isAllowedOnboardingStatePollingError = (
       error instanceof DisconnectedDevice ||
       error instanceof CantOpenDevice ||
       error instanceof TransportRaceCondition ||
-      error instanceof TransportStatusError)
+      error instanceof TransportStatusError ||
+      // A locked device is handled as an allowed error
+      error instanceof LockedDeviceError)
   ) {
     return true;
   }

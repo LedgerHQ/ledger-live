@@ -6,6 +6,7 @@ import { getExchangeRates } from "..";
 import {
   SwapExchangeRateAmountTooHigh,
   SwapExchangeRateAmountTooLow,
+  SwapExchangeRateAmountTooLowOrTooHigh,
 } from "../../../errors";
 import { genAccount } from "../../../mock/account";
 import { mockGetExchangeRates } from "../mock";
@@ -168,6 +169,7 @@ describe("useProviderRates", () => {
         toAmount: new BigNumber(1),
         magnitudeAwareRate: new BigNumber(1),
         provider: "ftx",
+        providerType: "CEX",
         tradeMethod: "float",
       });
       result.current.refetchRates();
@@ -257,7 +259,9 @@ describe("useProviderRates", () => {
     });
     await waitForNextUpdate({ timeout: 1000 });
     expect(result.current.rates.status).toBe("error");
-    expect(result.current.rates.error).toBe(swapExchangeRateAmountTooLowError1);
+    expect(result.current.rates.error).toStrictEqual(
+      swapExchangeRateAmountTooLowError1
+    );
     expect(result.current.rates.value).toBeUndefined();
   });
 
@@ -328,6 +332,34 @@ describe("useProviderRates", () => {
     await waitForNextUpdate({ timeout: 1000 });
     expect(result.current.rates.status).toBe("error");
     expect(result.current.rates.error).toBe(SwapExchangeRateAmountTooHighError);
+    expect(result.current.rates.value).toBeUndefined();
+  });
+
+  it("SwapExchangeRateAmountTooLowOrTooHigh should take precedence over SwapExchangeRateAmountTooLow", async () => {
+    const swapExchangeRateAmountTooLowError = new SwapExchangeRateAmountTooLow(
+      undefined,
+      {
+        amount: new BigNumber(1),
+      }
+    );
+
+    const swapExchangeRateAmountTooLowOrTwoHighError =
+      new SwapExchangeRateAmountTooLowOrTooHigh(undefined, {
+        message: "",
+      }) as Error;
+
+    mockedRates[0].error = swapExchangeRateAmountTooLowOrTwoHighError;
+    mockedRates[1].error = swapExchangeRateAmountTooLowError;
+
+    mockedGetExchangeRates.mockResolvedValue(mockedRates);
+    const { result, waitForNextUpdate } = renderHook(useProviderRates, {
+      initialProps: baseInitalProps,
+    });
+    await waitForNextUpdate({ timeout: 1000 });
+    expect(result.current.rates.status).toBe("error");
+    expect(result.current.rates.error).toBe(
+      swapExchangeRateAmountTooLowOrTwoHighError
+    );
     expect(result.current.rates.value).toBeUndefined();
   });
 

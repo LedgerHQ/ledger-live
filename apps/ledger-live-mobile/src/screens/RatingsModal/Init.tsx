@@ -13,8 +13,8 @@ const NotNowButton = styled(TouchableOpacity)`
 `;
 
 type Props = {
-  closeModal: any;
-  setStep: any;
+  closeModal: () => void;
+  setStep: (step: string) => void;
 };
 
 const Init = ({ closeModal, setStep }: Props) => {
@@ -23,6 +23,7 @@ const Init = ({ closeModal, setStep }: Props) => {
     handleRatingsSetDateOfNextAllowedRequest,
     ratingsFeatureParams,
     handleSatisfied,
+    handleInitNotNow,
   } = useRatings();
 
   const goToEnjoy = useCallback(() => {
@@ -71,9 +72,7 @@ const Init = ({ closeModal, setStep }: Props) => {
       source: ratingsHappyMoment?.route_name,
       params: ratingsFeatureParams,
     });
-    handleRatingsSetDateOfNextAllowedRequest(
-      ratingsFeatureParams?.conditions?.not_now_delay,
-    );
+    handleInitNotNow();
   }, [
     closeModal,
     ratingsHappyMoment?.route_name,

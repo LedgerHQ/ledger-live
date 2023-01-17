@@ -1,22 +1,27 @@
 import React, { useCallback } from "react";
-import { Pressable as BasePressable, Switch as NativeSwitch } from "react-native";
+import {
+  Pressable as BasePressable,
+  Switch as NativeSwitch,
+  SwitchProps as NativeSwitchProps,
+} from "react-native";
 import { useTheme } from "styled-components/native";
 import Text from "../../Text";
 import proxyStyled from "../../../components/styled";
 
-type SwitchProps = {
+export type SwitchProps = {
   checked: boolean;
   onChange?: (value: boolean) => void;
   disabled?: boolean;
   label?: string;
-};
+  testID?: string;
+} & Omit<Partial<NativeSwitchProps>, "onChange">;
 
 const Pressable = proxyStyled(BasePressable).attrs({
   flexDirection: "row",
   alignItems: "center",
 })``;
 
-const Switch = ({ checked, onChange, disabled, label }: SwitchProps): JSX.Element => {
+const Switch = ({ checked, onChange, disabled, label, testID }: SwitchProps): JSX.Element => {
   const { colors, space } = useTheme();
 
   const handlePress = useCallback(() => {
@@ -36,6 +41,7 @@ const Switch = ({ checked, onChange, disabled, label }: SwitchProps): JSX.Elemen
         value={checked}
         disabled={disabled}
         ios_backgroundColor={colors.neutral.c50}
+        testID={testID}
       />
       {label ? (
         <Text

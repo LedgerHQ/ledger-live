@@ -10,15 +10,6 @@ const hitSlop = {
   bottom: 0,
 };
 
-type Props = {
-  onPress: (_?: any) => any;
-  iconName: string;
-  title: string;
-  description?: string;
-  event: string;
-  eventProperties?: any;
-};
-
 const Container = styled(Touchable)<{ opacity: number }>`
   flex-direction: row;
   padding-vertical: 15px;
@@ -26,6 +17,15 @@ const Container = styled(Touchable)<{ opacity: number }>`
   align-items: center;
   opacity: ${p => p.opacity};
 `;
+
+type Props = {
+  onPress?: React.ComponentProps<typeof Touchable>["onPress"];
+  iconName: string;
+  title: string;
+  description?: string;
+  event?: string;
+  eventProperties?: React.ComponentProps<typeof Touchable>["eventProperties"];
+};
 
 function BottomModalChoice({
   iconName,

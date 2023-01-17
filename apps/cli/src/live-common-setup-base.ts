@@ -5,8 +5,12 @@ import simple from "@ledgerhq/live-common/logs/simple";
 import { listen } from "@ledgerhq/logs";
 import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { setPlatformVersion } from "@ledgerhq/live-common/platform/version";
+import { PLATFORM_VERSION } from "@ledgerhq/live-common/platform/constants";
+import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
+import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 
-setPlatformVersion("1.1.0");
+setPlatformVersion(PLATFORM_VERSION);
+setWalletAPIVersion(WALLET_API_VERSION);
 
 setSupportedCurrencies([
   "bitcoin",
@@ -37,7 +41,6 @@ setSupportedCurrencies([
   "vertcoin",
   "peercoin",
   "viacoin",
-  "stakenet",
   "bitcoin_testnet",
   "ethereum_ropsten",
   "ethereum_goerli",
@@ -53,7 +56,8 @@ setSupportedCurrencies([
   "moonbeam",
   "cronos",
   "songbird",
-  "flare"
+  "flare",
+  "near",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);
@@ -67,7 +71,7 @@ const { format } = winston;
 const { combine, json } = format;
 const winstonFormatJSON = json();
 const winstonFormatConsole = combine(
-  format(({ type: _type, id: _id, date: _date, ...rest }) => rest)(),
+  format(({ type, message, id: _id, date: _date, ...rest }) => ({ ...rest, message: `${type}: ${message}` }) )(),
   format.colorize(),
   simple()
 );

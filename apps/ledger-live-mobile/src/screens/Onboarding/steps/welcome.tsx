@@ -1,14 +1,15 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Flex, Text, Link as TextLink } from "@ledgerhq/native-ui";
 import { ChevronBottomMedium } from "@ledgerhq/native-ui/assets/icons";
 import Video from "react-native-video";
-import { Linking } from "react-native";
+import { Linking, StyleSheet } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { useDispatch } from "react-redux";
-import { ScreenName } from "../../../const";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { NavigatorName, ScreenName } from "../../../const";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import { urls } from "../../../config/urls";
 import { useTermsAccept } from "../../../logic/terms";
@@ -17,12 +18,16 @@ import useIsAppInBackground from "../../../components/useIsAppInBackground";
 import InvertTheme from "../../../components/theme/InvertTheme";
 import ForceTheme from "../../../components/theme/ForceTheme";
 import Button from "../../../components/wrappedUi/Button";
+import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../../components/RootNavigator/types/helpers";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const source = require("../../../../assets/videos/onboarding.mp4");
+import videoSources from "../../../../assets/videos";
 
 const absoluteStyle = {
-  position: "absolute",
+  position: "absolute" as const,
   bottom: 0,
   left: 0,
   top: 0,
@@ -33,7 +38,14 @@ const SafeFlex = styled(SafeAreaView)`
   padding-top: 24px;
 `;
 
-function OnboardingStepWelcome({ navigation }: any) {
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<
+    OnboardingNavigatorParamList,
+    ScreenName.OnboardingWelcome
+  >
+>;
+
+function OnboardingStepWelcome({ navigation }: NavigationProps) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const [, setAccepted] = useTermsAccept();
@@ -68,10 +80,47 @@ function OnboardingStepWelcome({ navigation }: any) {
     setAccepted();
     dispatch(setAnalytics(true));
 
-    navigation.navigate({ name: ScreenName.OnboardingDoYouHaveALedgerDevice });
+    navigation.navigate(ScreenName.OnboardingDoYouHaveALedgerDevice);
   }, [setAccepted, dispatch, navigation]);
 
   const videoMounted = !useIsAppInBackground();
+
+  const countTitle = useRef(0);
+  const countSubtitle = useRef(0);
+  const timeout = useRef<ReturnType<typeof setTimeout>>();
+
+  const handleNavigateToFeatureFlagsSettings = useCallback(
+    nb => {
+      if (nb === "1") countTitle.current++;
+      else if (nb === "2") countSubtitle.current++;
+      if (countTitle.current > 3 && countSubtitle.current > 5) {
+        countTitle.current = 0;
+        countSubtitle.current = 0;
+        navigation.navigate(NavigatorName.Base, {
+          screen: NavigatorName.Settings,
+          params: {
+            screen: ScreenName.SettingsScreen,
+          },
+        });
+      }
+      if (timeout.current) clearTimeout(timeout.current);
+      timeout.current = setTimeout(() => {
+        countTitle.current = 0;
+        countSubtitle.current = 0;
+      }, 1000);
+    },
+    [navigation],
+  );
+
+  useEffect(() => {
+    return () => {
+      if (timeout.current) clearTimeout(timeout.current);
+    };
+  }, []);
+
+  const videoSource = useFeature("staxWelcomeScreen")?.enabled
+    ? videoSources.welcomeScreenStax
+    : videoSources.welcomeScreen;
 
   return (
     <ForceTheme selectedPalette={"dark"}>
@@ -80,14 +129,22 @@ function OnboardingStepWelcome({ navigation }: any) {
         {videoMounted && (
           <Video
             disableFocus
-            source={source}
+            source={videoSource}
             style={absoluteStyle}
             muted
             repeat
             resizeMode={"cover"}
           />
         )}
-        <Svg style={absoluteStyle} width="100%" height="120%">
+        <Svg
+          style={{
+            ...StyleSheet.absoluteFillObject,
+            top: undefined,
+            bottom: 0,
+          }}
+          width="100%"
+          height="530"
+        >
           <Defs>
             <LinearGradient
               id="myGradient"
@@ -97,7 +154,8 @@ function OnboardingStepWelcome({ navigation }: any) {
               y2="100%"
               gradientUnits="userSpaceOnUse"
             >
-              <Stop offset="30%" stopOpacity={0} stopColor="black" />
+              <Stop offset="0%" stopOpacity={0} stopColor="black" />
+              <Stop offset="47%" stopOpacity={0.8} stopColor="black" />
               <Stop offset="100%" stopOpacity={0.8} stopColor="black" />
             </LinearGradient>
           </Defs>
@@ -115,6 +173,7 @@ function OnboardingStepWelcome({ navigation }: any) {
           flex={1}
           overflow="hidden"
         >
+          {/* @ts-expect-error Bindings for SafeAreaView are not written properly. */}
           <SafeFlex position="absolute" top={0} right={0}>
             <InvertTheme>
               <Button
@@ -132,14 +191,25 @@ function OnboardingStepWelcome({ navigation }: any) {
         </Flex>
         <Flex px={6} py={10}>
           <Text
-            variant="h1"
-            color="neutral.c100"
-            pb={3}
-            style={{ textTransform: "uppercase" }}
+            variant="large"
+            color="neutral.c80"
+            textAlign="center"
+            pb={4}
+            onPress={() => handleNavigateToFeatureFlagsSettings("1")}
+            suppressHighlighting
           >
             {t("onboarding.stepWelcome.title")}
           </Text>
-          <Text variant="large" fontWeight="medium" color="neutral.c80" pb={9}>
+          <Text
+            variant="h4"
+            fontSize="27px"
+            lineHeight="32px"
+            textAlign="center"
+            fontWeight="semiBold"
+            pb={8}
+            onPress={() => handleNavigateToFeatureFlagsSettings("2")}
+            suppressHighlighting
+          >
             {t("onboarding.stepWelcome.subtitle")}
           </Text>
           <Button
@@ -147,11 +217,11 @@ function OnboardingStepWelcome({ navigation }: any) {
             size="large"
             event="Onboarding - Start"
             onPress={next}
+            mt={0}
             mb={7}
           >
             {t("onboarding.stepWelcome.start")}
           </Button>
-
           <Text variant="small" textAlign="center" color="neutral.c100">
             {t("onboarding.stepWelcome.terms")}
           </Text>
@@ -159,6 +229,7 @@ function OnboardingStepWelcome({ navigation }: any) {
             flexDirection="row"
             alignItems="baseline"
             justifyContent="center"
+            flexWrap="wrap"
             pb={6}
           >
             <TextLink type="color" size={"small"} onPress={onTermsLink}>

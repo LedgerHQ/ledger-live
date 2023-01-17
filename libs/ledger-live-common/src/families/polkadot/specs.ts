@@ -68,9 +68,13 @@ const polkadot: AppSpec<Transaction> = {
       maxRun: 4,
       testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge }) => {
-        invariant((account as PolkadotAccount).polkadotResources, "polkadot");
+        invariant(
+          (account as PolkadotAccount).polkadotResources,
+          "polkadot resource"
+        );
         const sibling = pickSiblings(siblings, maxAccounts);
         let amount = account.spendableBalance
+          .minus(EXISTENTIAL_DEPOSIT)
           .div(1.9 + 0.2 * Math.random())
           .integerValue();
 
@@ -81,7 +85,7 @@ const polkadot: AppSpec<Transaction> = {
             ),
             "send is too low to activate account"
           );
-          amount = EXISTENTIAL_DEPOSIT.plus(POLKADOT_MIN_SAFE);
+          amount = EXISTENTIAL_DEPOSIT;
         }
 
         const minimumBalanceExistential = getMinimumBalance(account);
@@ -104,6 +108,30 @@ const polkadot: AppSpec<Transaction> = {
             },
             {
               amount,
+            },
+          ],
+        };
+      },
+    },
+    {
+      name: "send max",
+      maxRun: 1,
+      testDestination: genericTestDestination,
+      transaction: ({ account, siblings, bridge }) => {
+        invariant(
+          (account as PolkadotAccount).polkadotResources,
+          "polkadot resources"
+        );
+        const sibling = pickSiblings(siblings, maxAccounts);
+
+        return {
+          transaction: bridge.createTransaction(account),
+          updates: [
+            {
+              recipient: sibling.freshAddress,
+            },
+            {
+              useAllAmount: true,
             },
           ],
         };
@@ -272,6 +300,7 @@ const polkadot: AppSpec<Transaction> = {
     },
   ],
 };
+
 export default {
   polkadot,
 };

@@ -6,10 +6,14 @@ import SettingsRow from "../../../components/SettingsRow";
 import { ScreenName } from "../../../const";
 import { useLocale } from "../../../context/Locale";
 import { languages } from "../../../languages";
+import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { SettingsNavigatorStackParamList } from "../../../components/RootNavigator/types/SettingsNavigator";
+
+type Navigation = StackNavigatorProps<SettingsNavigatorStackParamList>;
 
 const LanguageSettingsRow = () => {
   const { locale } = useLocale();
-  const { navigate } = useNavigation();
+  const { navigate } = useNavigation<Navigation["navigation"]>();
   const onNavigate = useCallback(() => {
     navigate(ScreenName.OnboardingLanguage);
   }, [navigate]);
@@ -23,6 +27,7 @@ const LanguageSettingsRow = () => {
       desc={t("settings.display.languageDesc")}
       arrowRight
       onPress={onNavigate}
+      testID="language-button"
     >
       <Text variant={"body"} fontWeight={"medium"} color="primary.c80">
         {languages[locale] || locale}

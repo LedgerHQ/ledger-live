@@ -1,11 +1,20 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { BleErrorCode } from "react-native-ble-plx";
+import {
+  BleError,
+  BleError as DeprecatedError,
+  BleErrorCode,
+} from "react-native-ble-plx";
 import { Trans } from "react-i18next";
-import { PairingFailed, GenuineCheckFailed } from "@ledgerhq/errors";
-import { useTheme } from "styled-components/native";
-import { Button, Flex } from "@ledgerhq/native-ui";
-import LocationRequired from "../LocationRequired";
+import {
+  PairingFailed,
+  GenuineCheckFailed,
+  HwTransportError,
+  HwTransportErrorType,
+} from "@ledgerhq/errors";
+import { Flex } from "@ledgerhq/native-ui";
+import { useTheme } from "@react-navigation/native";
+import LocationRequired from "../../components/LocationRequired";
 import { TrackScreen } from "../../analytics";
 import Touchable from "../../components/Touchable";
 import LText from "../../components/LText";
@@ -13,9 +22,10 @@ import GenericErrorView from "../../components/GenericErrorView";
 import HelpLink from "../../components/HelpLink";
 import IconArrowRight from "../../icons/ArrowRight";
 import { urls } from "../../config/urls";
+import Button from "../../components/Button";
 
 type Props = {
-  error: Error;
+  error: HwTransportError | DeprecatedError | Error;
   status: string;
   onRetry: () => void;
   onBypassGenuine: () => void;
@@ -31,13 +41,21 @@ const hitSlop = {
 function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
   const { colors } = useTheme();
 
-  // $FlowFixMe
-  if (error.errorCode === BleErrorCode.LocationServicesDisabled) {
+  if (
+    (error instanceof BleError &&
+      error.errorCode === BleErrorCode.LocationServicesDisabled) ||
+    (error instanceof HwTransportError &&
+      error.type === HwTransportErrorType.BleLocationServicesDisabled)
+  ) {
     return <LocationRequired onRetry={onRetry} errorType="disabled" />;
   }
 
-  // $FlowFixMe
-  if (error.errorCode === BleErrorCode.BluetoothUnauthorized) {
+  if (
+    (error instanceof BleError &&
+      error.errorCode === BleErrorCode.BluetoothUnauthorized) ||
+    (error instanceof HwTransportError &&
+      error.type === HwTransportErrorType.BleBluetoothUnauthorized)
+  ) {
     return <LocationRequired onRetry={onRetry} errorType="unauthorized" />;
   }
 

@@ -6,7 +6,7 @@ import React, {
   useCallback,
 } from "react";
 import { LiveAppRegistry } from "./types";
-import { LiveAppManifest } from "../types";
+import { LiveAppManifest } from "../../types";
 
 const initialState: LiveAppRegistry = {
   liveAppById: {},
@@ -30,11 +30,11 @@ type LiveAppProviderProps = {
 };
 
 export function useLocalLiveAppManifest(
-  appId: string
+  appId?: string
 ): LiveAppManifest | undefined {
   const localLiveAppRegistry = useContext(liveAppContext).state;
 
-  return localLiveAppRegistry.liveAppById[appId];
+  return appId ? localLiveAppRegistry.liveAppById[appId] : undefined;
 }
 
 export function useLocalLiveAppContext(): LiveAppContextType {

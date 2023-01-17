@@ -139,12 +139,7 @@ const DeviceAppStorage = ({
           )}
         </Flex>
       </Flex>
-      <StorageRepartition
-        activeOpacity={1}
-        bg="neutral.c40"
-        style={{ flex: 1 }}
-        event="ManagerAppDeviceGraphClick"
-      >
+      <StorageRepartition bg="neutral.c40" style={{ flex: 1 }}>
         {appSizes.map(({ ratio, color, name }, i) => (
           <Box
             key={`${i}${name}`}
@@ -155,6 +150,7 @@ const DeviceAppStorage = ({
             height={"100%"}
           />
         ))}
+        <Box key={"fix"} flexBasis={"0%"} flexShrink={1} height={"100%"} />
       </StorageRepartition>
     </Box>
   );

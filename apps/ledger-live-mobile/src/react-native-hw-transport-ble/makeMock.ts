@@ -1,11 +1,12 @@
 import Transport from "@ledgerhq/hw-transport";
-import { from } from "rxjs";
+import { from, PartialObserver } from "rxjs";
 import { take, first, filter } from "rxjs/operators";
-import type { Device } from "@ledgerhq/react-native-hw-transport-ble/lib/types";
+import type { Device } from "@ledgerhq/types-devices";
 import type {
   Observer as TransportObserver,
   DescriptorEvent,
 } from "@ledgerhq/hw-transport";
+import { HwTransportError } from "@ledgerhq/errors";
 import type { ApduMock } from "../logic/createAPDUMock";
 import { hookRejections } from "../logic/debugReject";
 import { e2eBridgeSubject } from "../../e2e/bridge/client";
@@ -16,7 +17,11 @@ export type DeviceMock = {
   apduMock: ApduMock;
 };
 type Opts = {
-  createTransportDeviceMock: (id: string, name: string) => DeviceMock;
+  createTransportDeviceMock: (
+    id: string,
+    name: string,
+    serviceUUID: string,
+  ) => DeviceMock;
 };
 const defaultOpts = {
   observeState: from([
@@ -27,37 +32,43 @@ const defaultOpts = {
   ]),
 };
 export default (opts: Opts) => {
-  // $FlowFixMe
   const { observeState, createTransportDeviceMock } = {
     ...defaultOpts,
     ...opts,
   };
   return class BluetoothTransportMock extends Transport {
     static isSupported = (): Promise<boolean> => Promise.resolve(true);
-    static observeState = (o: any) => observeState.subscribe(o);
+    static observeState = (
+      o: PartialObserver<{ type: string; available: boolean }>,
+    ) => observeState.subscribe(o);
     static list = () => Promise.resolve([]);
     static disconnect = (_id: string) => Promise.resolve();
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     static setLogLevel = (_param: string) => {};
 
-    static listen(observer: TransportObserver<DescriptorEvent<Device>>) {
+    static listen(
+      observer: TransportObserver<DescriptorEvent<Device>, HwTransportError>,
+    ) {
       return e2eBridgeSubject
         .pipe(
           filter(msg => msg.type === "add"),
           take(3),
         )
         .subscribe(msg => {
-          observer.next({
-            type: msg.type,
-            descriptor: createTransportDeviceMock(
-              msg.payload.id,
-              msg.payload.name,
-            ),
-          });
+          if (msg.type === "add") {
+            observer.next({
+              type: msg.type,
+              descriptor: createTransportDeviceMock(
+                msg.payload.id,
+                msg.payload.name,
+                msg.payload.serviceUUID,
+              ),
+            });
+          }
         });
     }
 
-    static async open(device: any) {
+    static async open(device: string | Device) {
       await e2eBridgeSubject
         .pipe(
           filter(msg => msg.type === "open"),
@@ -66,7 +77,7 @@ export default (opts: Opts) => {
         .toPromise();
       return new BluetoothTransportMock(
         typeof device === "string"
-          ? createTransportDeviceMock(device, "")
+          ? createTransportDeviceMock(device, "", "")
           : device,
       );
     }

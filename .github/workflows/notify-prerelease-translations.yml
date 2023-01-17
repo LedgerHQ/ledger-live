@@ -1,0 +1,75 @@
+name: "[Release] Check for translations"
+on:
+  pull_request:
+    branches:
+      - main
+      - release
+    paths:
+      - apps/ledger-live-desktop/static/i18n/**
+      - apps/ledger-live-mobile/src/locales/**
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      prNumber:
+        description: name of branch or
+        required: true
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  release-translation-check:
+    name: release branch translation check
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_name != 'release' }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: checkout PR
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          gh pr checkout ${{ github.event.inputs.prNumber }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      #time to slack this bad boï
+      - name: format message
+        uses: actions/github-script@v6
+        id: message
+        with:
+          script: |
+            const fs = require("fs");
+            const text = "Translations files have changed on ${{ github.event.inputs.prNumber || github.event.push.head.ref || github.event.pull_request.number }}";
+            const output = {
+              text,
+              blocks: [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": text,
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": `Please make sure all languages are provided before the release.
+              You can see more informations on the <https://github.com/LedgerHQ/ledger-live/pull/${{ github.event.inputs.prNumber || github.event.pull_request.number }}|Pull Request>
+                    `
+                  }
+                }
+              ]
+            }
+
+            fs.writeFileSync("./payload-slack-content.json", JSON.stringify(output, null, 2));
+      - name: post to a Slack channel
+        id: slack
+        uses: slackapi/slack-github-action@v1.21.0
+        with:
+          channel-id: "C040D9JMVQ8"
+          payload-file-path: "./payload-slack-content.json"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}

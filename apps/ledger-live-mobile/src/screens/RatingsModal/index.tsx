@@ -14,24 +14,16 @@ import DisappointedDone from "./DisappointedDone";
 
 const RatingsModal = () => {
   const {
-    initRatings,
     initRatingsData,
-    cleanRatings,
     ratingsInitialStep,
     isRatingsModalOpen,
     setRatingsModalOpen,
+    handleInitNotNow,
   } = useRatings();
 
   useEffect(() => {
-    initRatings();
-
-    return () => {
-      cleanRatings();
-    };
-  }, [initRatings, cleanRatings]);
-
-  useEffect(() => {
     initRatingsData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [step, setStep] = useState(ratingsInitialStep);
@@ -44,9 +36,12 @@ const RatingsModal = () => {
    * height is stuck at 0.
    */
   const sharedHeight = useSharedValue<number | null>(null);
-  const onLayout = useCallback(({ nativeEvent: { layout } }) => {
-    sharedHeight.value = withTiming(layout.height, { duration: 200 });
-  }, []);
+  const onLayout = useCallback(
+    ({ nativeEvent: { layout } }) => {
+      sharedHeight.value = withTiming(layout.height, { duration: 200 });
+    },
+    [sharedHeight],
+  );
 
   const animatedStyle = useAnimatedStyle(
     () => ({
@@ -65,6 +60,11 @@ const RatingsModal = () => {
     sharedHeight.value = null;
   }, [ratingsInitialStep, setRatingsModalOpen, sharedHeight]);
 
+  const handleBackdropClose = useCallback(() => {
+    handleInitNotNow();
+    closeModal();
+  }, [handleInitNotNow, closeModal]);
+
   const component = useMemo(() => {
     const components = {
       init: <Init closeModal={closeModal} setStep={setStep} />,
@@ -74,13 +74,16 @@ const RatingsModal = () => {
       disappointedDone: <DisappointedDone closeModal={closeModal} />,
     };
 
-    return components[step];
+    return components[step as keyof typeof components];
   }, [closeModal, setStep, step]);
 
   return (
     <BottomDrawer
       isOpen={isRatingsModalOpen}
       onClose={closeModal}
+      onBackdropPress={handleBackdropClose}
+      onBackButtonPress={handleBackdropClose}
+      onSwipeComplete={handleBackdropClose}
       noCloseButton
     >
       <Animated.ScrollView style={animatedStyle}>

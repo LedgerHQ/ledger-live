@@ -34,7 +34,8 @@ export type Props = {
   onMessage?: (_: WebViewMessageEvent) => void;
   renderHeader?: () => ReactNode;
   renderLoading?: () => ReactNode;
-  renderError?: () => ReactNode;
+  renderError?: () => JSX.Element;
+  enableNavigationOverride?: boolean;
 };
 
 const WebViewScreen = ({
@@ -45,6 +46,7 @@ const WebViewScreen = ({
   renderHeader,
   renderLoading,
   renderError,
+  enableNavigationOverride = true,
 }: Props) => {
   const ref = useRef<WebView>(null);
   const navigation = useNavigation();
@@ -63,6 +65,7 @@ const WebViewScreen = ({
   }, [uri, setLoading]);
 
   useEffect(() => {
+    if (!enableNavigationOverride) return;
     const unsubscribe = navigation.addListener("beforeRemove", e => {
       if (canGoBack) return;
       // Prevent default behavior of leaving the screen
@@ -70,6 +73,7 @@ const WebViewScreen = ({
       ref.current?.goBack();
     });
 
+    // eslint-disable-next-line consistent-return
     return unsubscribe;
   }, [canGoBack, navigation]);
 
@@ -101,7 +105,7 @@ const WebViewScreen = ({
               startInLoadingState
               javaScriptCanOpenWindowsAutomatically
               allowsBackForwardNavigationGestures
-              onNavigationStateChange={(navState: any) => {
+              onNavigationStateChange={navState => {
                 setCanGoBack(!navState.canGoBack);
               }}
             />

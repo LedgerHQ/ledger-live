@@ -7,7 +7,7 @@ import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import type { Transaction } from "./types";
 
-const testTimeout = 5 * 60 * 1000;
+const testTimeout = 6 * 60 * 1000;
 
 const transactionCheck =
   (currencyId: string) =>
@@ -60,6 +60,47 @@ const evmBasicMutations = ({ maxAccount }) => [
       );
     },
   },
+  {
+    name: "send max",
+    maxRun: 1,
+    testDestination: genericTestDestination,
+    transaction: ({ account, siblings, bridge }) => {
+      const sibling = pickSiblings(siblings, maxAccount);
+      const recipient = sibling.freshAddress;
+
+      return {
+        transaction: bridge.createTransaction(account),
+        updates: [
+          {
+            recipient,
+          },
+          {
+            useAllAmount: true,
+          },
+        ],
+      };
+    },
+    test: ({ account, accountBeforeTransaction, operation, transaction }) => {
+      // workaround for buggy explorer behavior (nodes desync)
+      invariant(
+        Date.now() - operation.date > 60000,
+        "operation time to be older than 60s"
+      );
+      const estimatedGas = transaction.gasLimit.times(
+        transaction.gasPrice || transaction.maxFeePerGas || 0
+      );
+      botTest("operation fee is not exceeding estimated gas", () =>
+        expect(operation.fee.toNumber()).toBeLessThanOrEqual(
+          estimatedGas.toNumber()
+        )
+      );
+      botTest("account balance moved with operation value", () =>
+        expect(account.balance.toString()).toBe(
+          accountBeforeTransaction.balance.minus(operation.value).toString()
+        )
+      );
+    },
+  },
 ];
 
 const cronos: AppSpec<Transaction> = {
@@ -68,7 +109,7 @@ const cronos: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
-    appVersion: "1.9.20-dev", // FIXME remove this line once 1.9.20 lands on coin-apps (branch ledger-live-bot)
+    appVersion: "1.10.1",
   },
   testTimeout,
   transactionCheck: transactionCheck("cronos"),
@@ -84,7 +125,7 @@ const fantom: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
-    appVersion: "1.9.20-dev", // FIXME remove this line once 1.9.20 lands on coin-apps (branch ledger-live-bot)
+    appVersion: "1.10.1",
   },
   testTimeout,
   transactionCheck: transactionCheck("fantom"),
@@ -100,7 +141,7 @@ const moonbeam: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
-    appVersion: "1.9.20-dev", // FIXME remove this line once 1.9.20 lands on coin-apps (branch ledger-live-bot)
+    appVersion: "1.10.1",
   },
   testTimeout,
   transactionCheck: transactionCheck("moonbeam"),
@@ -116,7 +157,7 @@ const songbird: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
-    appVersion: "1.9.20-dev", // FIXME remove this line once 1.9.20 lands on coin-apps (branch ledger-live-bot)
+    appVersion: "1.10.1",
   },
   testTimeout,
   transactionCheck: transactionCheck("songbird"),
@@ -132,7 +173,7 @@ const flare: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
-    appVersion: "1.9.20-dev", // FIXME remove this line once 1.9.20 lands on coin-apps (branch ledger-live-bot)
+    appVersion: "1.10.1",
   },
   testTimeout,
   transactionCheck: transactionCheck("flare"),

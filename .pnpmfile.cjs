@@ -63,6 +63,17 @@ function readPackage(pkg, context) {
         { silent: true }
       ),
       /*
+        Fix the unmet peer dep on rxjs for the wallet-api-server
+        Because we're still using rxjs v6 everywhere
+        We only added rxjs v7 as an alias on rxjs7
+      */
+      addDependencies("@ledgerhq/wallet-api-server", {
+        rxjs: pkg.peerDependencies?.rxjs ?? "*",
+      }),
+      removeDependencies("@ledgerhq/wallet-api-server", ["rxjs"], {
+        kind: "peerDependencies",
+      }),
+      /*
         The following packages are broken and do not declare their dependencies properly.
         So we are going to patch these until the maintainers fix their own stuff…
         Feel free to make PRs if you feel like it :).
@@ -90,8 +101,7 @@ function readPackage(pkg, context) {
         "web3-utils": pkg.dependencies?.["web3"],
       }),
       addDependencies("@celo/utils", {
-        randombytes: "*",
-        rlp: "*",
+        "fp-ts": "*",
       }),
       /*  @cosmjs/* packages */
       addDependencies("@cosmjs/proto-signing", {
@@ -130,7 +140,7 @@ function readPackage(pkg, context) {
       addPeerDependencies("metro-transform-worker", {
         "metro-minify-uglify": "*",
       }),
-      /* @expo/* packages */
+      /* Expo packages… */
       addDependencies("@expo/webpack-config", {
         "resolve-from": "*",
         "fs-extra": "*",
@@ -143,7 +153,23 @@ function readPackage(pkg, context) {
         "@expo/spawn-async": "*",
         glob: "*",
       }),
+      addPeerDependencies(/^expo-/, {
+        "expo-modules-core": "*",
+        "expo-constants": "*",
+      }),
+      addPeerDependencies("expo-asset", {
+        "expo-file-system": "*",
+      }),
+      addPeerDependencies("expo-font", {
+        "expo-asset": "*",
+      }),
       /* Other packages */
+      addDependencies("detox", {
+        "@jest/reporters": "*",
+        "jest-environment-node": "*",
+        "jest-circus": "*",
+      }),
+      addDependencies("allure-playwright", { "@playwright/test": "*" }),
       addPeerDependencies("@svgr/core", { "@svgr/plugin-svgo": "*" }),
       addDependencies("@sentry/react-native", {
         tslib: "*",
@@ -166,6 +192,9 @@ function readPackage(pkg, context) {
       addPeerDependencies("any-observable", {
         rxjs: "*",
       }),
+      addPeerDependencies("rxjs-compat", {
+        rxjs: "*",
+      }),
       addPeerDependencies("@cspotcode/source-map-support", {
         "source-map-support": "*",
       }),
@@ -179,6 +208,7 @@ function readPackage(pkg, context) {
         "prop-types": "*",
       }),
       addDependencies("@actions/cache", { "@azure/abort-controller": "*" }),
+      addDependencies("rn-fetch-blob", { lodash: "*" }),
       // "dmg-builder" is required to build .dmg electron apps on macs,
       // but is not declared as such by app-builder-lib.
       // I'm not adding it as a dependency because if I did,
@@ -191,10 +221,6 @@ function readPackage(pkg, context) {
       // Try to prevent pnpm-lock.yaml flakiness
       removeDependencies("follow-redirects", ["debug"], {
         kind: "peerDependencies",
-      }),
-      /* Packages that are missing @types/* dependencies */
-      addPeerDependencies("react-native-gesture-handler", {
-        "@types/react": "*",
       }),
     ],
     pkg,

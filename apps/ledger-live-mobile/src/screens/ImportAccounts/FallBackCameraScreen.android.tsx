@@ -1,43 +1,50 @@
 import React, { PureComponent } from "react";
-import { withTranslation } from "react-i18next";
+import { TFunction, withTranslation } from "react-i18next";
 import { AppState, Linking } from "react-native";
-import { ScreenName } from "../../const";
-import type { T } from "../../types/common";
 import FallbackCameraBody from "../../components/FallbackCameraBody";
+import type {
+  NavigationProps,
+  RedirectionScreenProps,
+} from "./FallBackCameraScreen";
 
 type Props = {
-  navigation: any;
-  t: T;
-};
+  t: TFunction;
+} & NavigationProps &
+  RedirectionScreenProps;
+
 type State = {
-  appSTate: string;
+  appState: string;
   openSettingsPressed: boolean;
 };
 
 class FallBackCameraScreen extends PureComponent<Props, State> {
+  listener: ReturnType<typeof AppState.addEventListener> | undefined;
   state = {
     appState: AppState.currentState,
     openSettingsPressed: false,
   };
 
   componentDidMount() {
-    AppState.addEventListener("change", this.handleAppStateChange);
+    this.listener = AppState.addEventListener(
+      "change",
+      this.handleAppStateChange,
+    );
   }
 
   componentWillUnmount() {
-    AppState.removeEventListener("change", this.handleAppStateChange);
+    this.listener?.remove();
   }
 
-  handleAppStateChange = nextAppState => {
+  handleAppStateChange = (nextAppState: string) => {
     const { appState, openSettingsPressed } = this.state;
-    const { navigation } = this.props;
+    const { navigation, redirectionScreen } = this.props;
 
     if (
       appState.match(/inactive|background/) &&
       nextAppState === "active" &&
       openSettingsPressed
     ) {
-      navigation.replace(ScreenName.ScanAccounts);
+      navigation.replace(redirectionScreen, {});
     }
 
     this.setState({

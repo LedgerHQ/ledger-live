@@ -1,32 +1,89 @@
-import React, { PropsWithChildren, useCallback, useState } from "react";
-import { useSelector } from "react-redux";
+import React, { PropsWithChildren, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import isEqual from "lodash/isEqual";
+import semver from "semver";
 import remoteConfig from "@react-native-firebase/remote-config";
+import VersionNumber from "react-native-version-number";
 import {
   FeatureFlagsProvider,
   defaultFeatures,
 } from "@ledgerhq/live-common/featureFlags/index";
 import { FeatureId, Feature } from "@ledgerhq/types-live";
+import { getEnv } from "@ledgerhq/live-common/env";
 
-import { formatFeatureId } from "./FirebaseRemoteConfig";
+import { formatToFirebaseFeatureId } from "./FirebaseRemoteConfig";
+import {
+  languageSelector,
+  overriddenFeatureFlagsSelector,
+} from "../reducers/settings";
+import {
+  setOverriddenFeatureFlag,
+  setOverriddenFeatureFlags,
+} from "../actions/settings";
 
-import { languageSelector } from "../reducers/settings";
+const checkFeatureFlagVersion = (feature: Feature | undefined) => {
+  if (
+    feature &&
+    feature.enabled &&
+    feature.mobile_version &&
+    !semver.satisfies(VersionNumber.appVersion, feature.mobile_version, {
+      includePrerelease: true,
+    })
+  ) {
+    return {
+      enabledOverriddenForCurrentMobileVersion: true,
+      ...feature,
+      enabled: false,
+    };
+  }
+  return feature;
+};
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-type Props = PropsWithChildren<{}>;
+type Props = PropsWithChildren<unknown>;
 
-const getFeature = (
-  key: FeatureId,
-  appLanguage: string,
-  localOverrides?: { [key in FeatureId]?: Feature },
-) => {
+const isFeature = (key: string): boolean => {
   try {
-    // Nb prioritize local overrides
-    if (localOverrides && localOverrides[key]) {
-      return localOverrides[key];
+    const value = remoteConfig().getValue(formatToFirebaseFeatureId(key));
+
+    if (!value || !value.asString()) {
+      return false;
     }
 
-    const value = remoteConfig().getValue(formatFeatureId(key));
+    return true;
+  } catch (error) {
+    console.error(`Failed to check if feature "${key}" exists`);
+    return false;
+  }
+};
+
+const getFeature = (args: {
+  key: FeatureId;
+  appLanguage: string;
+  localOverrides?: { [key in FeatureId]?: Feature };
+  allowOverride?: boolean;
+}) => {
+  const { key, appLanguage, localOverrides, allowOverride = true } = args;
+  try {
+    // Nb prioritize local overrides
+    if (allowOverride && localOverrides && localOverrides[key]) {
+      return checkFeatureFlagVersion(localOverrides[key]);
+    }
+
+    const envFlags = getEnv("FEATURE_FLAGS") as
+      | { [key in FeatureId]?: Feature }
+      | undefined;
+
+    if (allowOverride && envFlags) {
+      const feature = envFlags[key];
+      if (feature)
+        return {
+          ...feature,
+          overridesRemote: true,
+          overriddenByEnv: true,
+        };
+    }
+
+    const value = remoteConfig().getValue(formatToFirebaseFeatureId(key));
     const feature = JSON.parse(value.asString());
 
     if (
@@ -43,7 +100,7 @@ const getFeature = (
       };
     }
 
-    return feature;
+    return checkFeatureFlagVersion(feature);
   } catch (error) {
     console.error(`Failed to retrieve feature "${key}"`);
     return null;
@@ -55,59 +112,63 @@ const getFeature = (
  */
 export const getAllDivergedFlags = (
   appLanguage: string,
-): { [key in FeatureId]: boolean } => {
-  const res: { [key in FeatureId]: boolean } = {};
+): Partial<{ [key in FeatureId]: boolean }> => {
+  const res: Partial<{ [key in FeatureId]: boolean }> = {};
   Object.keys(defaultFeatures).forEach(key => {
-    const value = getFeature(key, appLanguage);
-    if (value && value.enabled !== defaultFeatures[key].enabled) {
-      res[key] = value.enabled;
+    const value = getFeature({ key: key as FeatureId, appLanguage });
+    if (value && value.enabled !== defaultFeatures[key as FeatureId]?.enabled) {
+      res[key as FeatureId] = value.enabled;
     }
   });
   return res;
 };
 
 export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
-  const [localOverrides, setLocalOverrides] = useState({});
+  const localOverrides = useSelector(overriddenFeatureFlagsSelector);
+  const dispatch = useDispatch();
 
   const appLanguage = useSelector(languageSelector);
 
   const overrideFeature = useCallback(
     (key: FeatureId, value: Feature): void => {
-      const actualRemoteValue = getFeature(key, appLanguage);
+      const actualRemoteValue = getFeature({
+        key,
+        appLanguage,
+        allowOverride: false,
+      });
       if (!isEqual(actualRemoteValue, value)) {
-        const overridenValue = { ...value, overridesRemote: true };
-        setLocalOverrides(currentOverrides => ({
-          ...currentOverrides,
-          [key]: overridenValue,
-        }));
+        const { overriddenByEnv: _, ...pureValue } = value;
+        const overridenValue = { ...pureValue, overridesRemote: true };
+        dispatch(setOverriddenFeatureFlag(key, overridenValue));
       } else {
-        setLocalOverrides(currentOverrides => ({
-          ...currentOverrides,
-          [key]: undefined,
-        }));
+        dispatch(setOverriddenFeatureFlag(key, undefined));
       }
     },
-    [appLanguage],
+    [appLanguage, dispatch],
   );
 
   const resetFeature = (key: FeatureId): void => {
-    setLocalOverrides(currentOverrides => ({
-      ...currentOverrides,
-      [key]: undefined,
-    }));
+    dispatch(setOverriddenFeatureFlag(key, undefined));
+  };
+
+  const resetFeatures = (): void => {
+    dispatch(setOverriddenFeatureFlags({}));
   };
 
   // Nb wrapped because the method is also called from outside.
   const wrappedGetFeature = useCallback(
-    (key: FeatureId): Feature => getFeature(key, appLanguage, localOverrides),
+    (key: FeatureId): Feature =>
+      getFeature({ key, appLanguage, localOverrides }),
     [localOverrides, appLanguage],
   );
 
   return (
     <FeatureFlagsProvider
+      isFeature={isFeature}
       getFeature={wrappedGetFeature}
       overrideFeature={overrideFeature}
       resetFeature={resetFeature}
+      resetFeatures={resetFeatures}
     >
       {children}
     </FeatureFlagsProvider>

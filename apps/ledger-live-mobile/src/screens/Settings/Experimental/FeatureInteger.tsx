@@ -1,20 +1,18 @@
 import React, { useCallback, useState, useEffect, useRef } from "react";
 import { TextInput, StyleSheet, Keyboard, Platform } from "react-native";
-import { getEnvDefault } from "@ledgerhq/live-common/env";
+import { EnvName, getEnvDefault } from "@ledgerhq/live-common/env";
 import { useNavigation, useTheme } from "@react-navigation/native";
-
 import { Box, Flex, Switch } from "@ledgerhq/native-ui";
 import Track from "../../../analytics/Track";
-// eslint-disable-next-line import/no-unresolved
 import getFontStyle from "../../../components/LText/getFontStyle";
 
 type Props = {
-  name: any;
+  name: EnvName;
   readOnly: boolean;
-  onChange: (name: string, val: any) => boolean;
+  onChange: (name: EnvName, val: unknown) => boolean;
   value: number;
-  minValue: number;
-  maxValue: number;
+  minValue?: number;
+  maxValue?: number;
   isDefault: boolean;
 };
 
@@ -29,7 +27,7 @@ const FeatureInteger = ({
 }: Props) => {
   const { colors } = useTheme();
   const navigation = useNavigation();
-  const inputRef = useRef(null);
+  const inputRef = useRef<TextInput>(null);
   const constraintValue = useCallback(
     v => {
       let value = v;
@@ -60,16 +58,18 @@ const FeatureInteger = ({
   }, [navigation]);
 
   useEffect(() => {
+    const listeners: ReturnType<typeof Keyboard.addListener>[] = [];
     if (Platform.OS === "android") {
-      Keyboard.addListener("keyboardDidShow", onKeyboardShow);
-      Keyboard.addListener("keyboardDidHide", onKeyboardHide);
+      listeners.push(Keyboard.addListener("keyboardDidShow", onKeyboardShow));
+      listeners.push(Keyboard.addListener("keyboardDidHide", onKeyboardHide));
     }
 
     return () => {
       if (Platform.OS === "android") {
         // Deprecated: https://reactnative.dev/docs/keyboard#removelistener
-        Keyboard.removeListener("keyboardDidShow", onKeyboardShow);
-        Keyboard.removeListener("keyboardDidHide", onKeyboardHide);
+        // Keyboard.removeListener("keyboardDidShow", onKeyboardShow);
+        // Keyboard.removeListener("keyboardDidHide", onKeyboardHide);
+        listeners.forEach(listener => listener.remove());
       }
     };
   }, [onKeyboardShow, onKeyboardHide]);

@@ -13,48 +13,48 @@ import pinCodeNanoSLight from "../assets/nanoS/pinCode/light.json";
 import pinCodeNanoSDark from "../assets/nanoS/pinCode/dark.json";
 import pinCodeNanoSPLight from "../assets/nanoSP/pinCode/light.json";
 import pinCodeNanoSPDark from "../assets/nanoSP/pinCode/dark.json";
-import pinCodeNanoFTSLight from "../assets/nanoFTS/pinCode/light.json";
-import pinCodeNanoFTSDark from "../assets/nanoFTS/pinCode/dark.json";
+import pinCodeStaxLight from "../assets/stax/pinCode/light.json";
+import pinCodeStaxDark from "../assets/stax/pinCode/dark.json";
 import recoverNanoXLight from "../assets/nanoX/recover/light.json";
 import recoverNanoXDark from "../assets/nanoX/recover/dark.json";
 import recoverNanoSLight from "../assets/nanoS/recover/light.json";
 import recoverNanoSDark from "../assets/nanoS/recover/dark.json";
 import recoverNanoSPLight from "../assets/nanoSP/recover/light.json";
 import recoverNanoSPDark from "../assets/nanoSP/recover/dark.json";
-import recoverNanoFTSLight from "../assets/nanoFTS/recover/light.json";
-import recoverNanoFTSDark from "../assets/nanoFTS/recover/dark.json";
+import recoverStaxLight from "../assets/stax/recover/light.json";
+import recoverStaxDark from "../assets/stax/recover/dark.json";
 import confirmWordsNanoXLight from "../assets/nanoX/confirmWords/light.json";
 import confirmWordsNanoXDark from "../assets/nanoX/confirmWords/dark.json";
 import confirmWordsNanoSLight from "../assets/nanoS/confirmWords/light.json";
 import confirmWordsNanoSDark from "../assets/nanoS/confirmWords/dark.json";
 import confirmWordsNanoSPLight from "../assets/nanoSP/confirmWords/light.json";
 import confirmWordsNanoSPDark from "../assets/nanoSP/confirmWords/dark.json";
-import confirmWordsNanoFTSLight from "../assets/nanoFTS/confirmWords/light.json";
-import confirmWordsNanoFTSDark from "../assets/nanoFTS/confirmWords/dark.json";
+import confirmWordsStaxLight from "../assets/stax/confirmWords/light.json";
+import confirmWordsStaxDark from "../assets/stax/confirmWords/dark.json";
 import numberOfWordsNanoXLight from "../assets/nanoX/numberOfWords/light.json";
 import numberOfWordsNanoXDark from "../assets/nanoX/numberOfWords/dark.json";
 import numberOfWordsNanoSLight from "../assets/nanoS/numberOfWords/light.json";
 import numberOfWordsNanoSDark from "../assets/nanoS/numberOfWords/dark.json";
 import numberOfWordsNanoSPLight from "../assets/nanoSP/numberOfWords/light.json";
 import numberOfWordsNanoSPDark from "../assets/nanoSP/numberOfWords/dark.json";
-import numberOfWordsNanoFTSLight from "../assets/nanoFTS/numberOfWords/light.json";
-import numberOfWordsNanoFTSDark from "../assets/nanoFTS/numberOfWords/dark.json";
+import numberOfWordsStaxLight from "../assets/stax/numberOfWords/light.json";
+import numberOfWordsStaxDark from "../assets/stax/numberOfWords/dark.json";
 import powerOnNanoXLight from "../assets/nanoX/powerOn/light.json";
 import powerOnNanoXDark from "../assets/nanoX/powerOn/dark.json";
 import powerOnNanoSLight from "../assets/nanoS/powerOn/light.json";
 import powerOnNanoSDark from "../assets/nanoS/powerOn/dark.json";
 import powerOnNanoSPLight from "../assets/nanoSP/powerOn/light.json";
 import powerOnNanoSPDark from "../assets/nanoSP/powerOn/dark.json";
-import powerOnNanoFTSLight from "../assets/nanoFTS/powerOn/light.json";
-import powerOnNanoFTSDark from "../assets/nanoFTS/powerOn/dark.json";
+import powerOnStaxLight from "../assets/stax/powerOn/light.json";
+import powerOnStaxDark from "../assets/stax/powerOn/dark.json";
 import powerOnRecoveryNanoXLight from "../assets/nanoX/powerOnRecovery/light.json";
 import powerOnRecoveryNanoXDark from "../assets/nanoX/powerOnRecovery/dark.json";
 import powerOnRecoveryNanoSLight from "../assets/nanoS/powerOnRecovery/light.json";
 import powerOnRecoveryNanoSDark from "../assets/nanoS/powerOnRecovery/dark.json";
 import powerOnRecoveryNanoSPLight from "../assets/nanoSP/powerOnRecovery/light.json";
 import powerOnRecoveryNanoSPDark from "../assets/nanoSP/powerOnRecovery/dark.json";
-import powerOnRecoveryNanoFTSLight from "../assets/nanoFTS/powerOnRecovery/light.json";
-import powerOnRecoveryNanoFTSDark from "../assets/nanoFTS/powerOnRecovery/dark.json";
+import powerOnRecoveryStaxLight from "../assets/stax/powerOnRecovery/light.json";
+import powerOnRecoveryStaxDark from "../assets/stax/powerOnRecovery/dark.json";
 import importRecoveryPhrase from "../assets/importRecoveryPhrase.png";
 import syncCryptos from "../assets/syncCryptos.png";
 import onboardingQuizImage from "../assets/onboardingQuiz.png";
@@ -184,30 +184,30 @@ export const lottieAnimations = {
     },
     style: {},
   },
-  nanoFTS: {
+  stax: {
     pinCode: {
-      light: pinCodeNanoFTSLight,
-      dark: pinCodeNanoFTSDark,
+      light: pinCodeStaxLight,
+      dark: pinCodeStaxDark,
     },
     recover: {
-      light: recoverNanoFTSLight,
-      dark: recoverNanoFTSDark,
+      light: recoverStaxLight,
+      dark: recoverStaxDark,
     },
     confirmWords: {
-      light: confirmWordsNanoFTSLight,
-      dark: confirmWordsNanoFTSDark,
+      light: confirmWordsStaxLight,
+      dark: confirmWordsStaxDark,
     },
     numberOfWords: {
-      light: numberOfWordsNanoFTSLight,
-      dark: numberOfWordsNanoFTSDark,
+      light: numberOfWordsStaxLight,
+      dark: numberOfWordsStaxDark,
     },
     powerOn: {
-      light: powerOnNanoFTSLight,
-      dark: powerOnNanoFTSDark,
+      light: powerOnStaxLight,
+      dark: powerOnStaxDark,
     },
     powerOnRecovery: {
-      light: powerOnRecoveryNanoFTSLight,
-      dark: powerOnRecoveryNanoFTSDark,
+      light: powerOnRecoveryStaxLight,
+      dark: powerOnRecoveryStaxDark,
     },
     style: {},
   },
@@ -470,7 +470,10 @@ export const infoModalScenes = {
   pairNewErrorInfoModalProps,
 };
 
-const pinCodeScenes = (deviceModelId, theme: "dark" | "light") => [
+const pinCodeScenes = (
+  deviceModelId: "nanoS" | "nanoSP" | "nanoX" | "blue" | "stax",
+  theme: "dark" | "light",
+) => [
   {
     sceneProps: {
       trackPage: "Pin code step 1",
@@ -485,7 +488,7 @@ const pinCodeScenes = (deviceModelId, theme: "dark" | "light") => [
       },
     },
     sceneInfoKey: "pinCodeInfoModalProps",
-    type: "primary",
+    type: "primary" as "primary" | "secondary",
     id: "pinCode",
   },
   {
@@ -521,13 +524,13 @@ const pinCodeScenes = (deviceModelId, theme: "dark" | "light") => [
       ctaText: <Trans i18nKey="onboarding.stepSetupDevice.pinCodeSetup.cta" />,
     },
     sceneInfoKey: "pinCodeInfoModalProps",
-    type: "secondary",
+    type: "secondary" as "primary" | "secondary",
     id: "pinCodeSetup",
   },
 ];
 
 const getSetupDeviceScenes: (
-  deviceModelId: "nanoS" | "nanoSP" | "nanoX" | "blue" | "nanoFTS",
+  deviceModelId: "nanoS" | "nanoSP" | "nanoX" | "blue" | "stax",
   theme: "dark" | "light",
 ) => OnboardingScene[] = (deviceModelId, theme) => [
   {
@@ -613,7 +616,7 @@ const getSetupDeviceScenes: (
       ],
       ctaText: <Trans i18nKey="onboarding.stepSetupDevice.setup.cta" />,
     },
-    type: "secondary",
+    type: "secondary" as "primary" | "secondary",
     id: "setup",
   },
   ...pinCodeScenes(deviceModelId, theme),
@@ -638,7 +641,7 @@ const getSetupDeviceScenes: (
       },
     },
     sceneInfoKey: "recoveryPhraseInfoModalProps",
-    type: "primary",
+    type: "primary" as "primary" | "secondary",
     id: "recoveryPhrase",
   },
   {
@@ -669,7 +672,7 @@ const getSetupDeviceScenes: (
       ),
     },
     sceneInfoKey: "recoveryPhraseInfoModalProps",
-    type: "secondary",
+    type: "secondary" as "primary" | "secondary",
     id: "recoveryPhraseSetup",
   },
   {
@@ -700,7 +703,7 @@ const getSetupDeviceScenes: (
       ),
     },
     sceneInfoKey: "recoveryPhraseInfoModalProps",
-    type: "secondary",
+    type: "secondary" as "primary" | "secondary",
     id: "recoveryPhraseSetup_1",
   },
   {
@@ -746,13 +749,13 @@ const getSetupDeviceScenes: (
       },
     },
     sceneInfoKey: "hideRecoveryPhraseInfoModalProps",
-    type: "primary",
+    type: "primary" as "primary" | "secondary",
     id: "hideRecoveryPhrase",
   },
 ];
 
 const getRecoveryPhraseScenes = (
-  deviceModelId: string,
+  deviceModelId: keyof typeof lottieAnimations,
   theme: "dark" | "light",
 ) => [
   {
@@ -830,7 +833,7 @@ const getRecoveryPhraseScenes = (
         <Trans i18nKey="onboarding.stepRecoveryPhrase.importRecoveryPhrase.nextStep" />
       ),
     },
-    type: "secondary",
+    type: "secondary" as "primary" | "secondary",
     id: "importRecoveryPhrase_1",
   },
   ...pinCodeScenes(deviceModelId, theme),
@@ -855,7 +858,7 @@ const getRecoveryPhraseScenes = (
       },
     },
     sceneInfoKey: "recoveryPhraseInfoModalProps",
-    type: "primary",
+    type: "primary" as "primary" | "secondary",
     id: "existingRecoveryPhrase",
   },
   {

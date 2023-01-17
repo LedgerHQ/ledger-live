@@ -97,6 +97,10 @@ type SettingsSectionRowProps = {
   children?: any,
   onClick?: () => void,
   inset?: boolean,
+  contentContainerStyle?: React.CSSProperties,
+  descContainerStyle?: React.CSSProperties,
+  childrenContainerStyle?: React.CSSProperties,
+  dataTestId?: string,
 };
 
 export const SettingsSectionRow = ({
@@ -105,9 +109,18 @@ export const SettingsSectionRow = ({
   children = null,
   onClick = null,
   inset = false,
+  contentContainerStyle,
+  descContainerStyle,
+  childrenContainerStyle,
+  dataTestId,
 }: SettingsSectionRowProps) => (
-  <SettingsSectionRowContainer onClick={onClick} tabIndex={-1} inset={inset}>
-    <Box grow shrink style={{ marginRight: "10%" }}>
+  <SettingsSectionRowContainer
+    onClick={onClick}
+    tabIndex={-1}
+    inset={inset}
+    data-test-id={dataTestId}
+  >
+    <Box grow shrink style={{ marginRight: "10%", ...(contentContainerStyle || {}) }}>
       {title && (
         <Box ff="Inter|SemiBold" color="palette.text.shade100" fontSize={14}>
           {title}
@@ -119,11 +132,11 @@ export const SettingsSectionRow = ({
         color="palette.text.shade60"
         mt={1}
         mr={1}
-        style={{ maxWidth: 520 }}
+        style={{ maxWidth: 520, ...(descContainerStyle || {}) }}
       >
         {desc}
       </Box>
     </Box>
-    <Box>{children}</Box>
+    <Box style={childrenContainerStyle}>{children}</Box>
   </SettingsSectionRowContainer>
 );

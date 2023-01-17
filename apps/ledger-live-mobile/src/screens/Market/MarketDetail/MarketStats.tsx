@@ -71,6 +71,12 @@ export default function MarketStats({
   const { t } = useTranslation();
   const { locale } = useLocale();
 
+  let loc = locale;
+  // TEMPORARY : quick win to transform arabic to english
+  if (locale === "ar") {
+    loc = "en";
+  }
+
   const {
     marketcap,
     marketcapRank,
@@ -109,7 +115,7 @@ export default function MarketStats({
           {counterValueFormatter({
             currency: counterCurrency,
             value: price,
-            locale,
+            locale: loc,
             t,
           })}
         </TextLabel>
@@ -127,7 +133,7 @@ export default function MarketStats({
           {counterValueFormatter({
             currency: counterCurrency,
             value: totalVolume,
-            locale,
+            locale: loc,
             t,
           })}
         </TextLabel>
@@ -137,14 +143,14 @@ export default function MarketStats({
           {counterValueFormatter({
             currency: counterCurrency,
             value: low24h,
-            locale,
+            locale: loc,
             t,
           })}{" "}
           /{" "}
           {counterValueFormatter({
             currency: counterCurrency,
             value: high24h,
-            locale,
+            locale: loc,
             t,
           })}
         </TextLabel>
@@ -154,7 +160,7 @@ export default function MarketStats({
           {counterValueFormatter({
             currency: counterCurrency,
             value: ath,
-            locale,
+            locale: loc,
             t,
           })}{" "}
         </TextLabel>
@@ -165,7 +171,7 @@ export default function MarketStats({
           {counterValueFormatter({
             currency: counterCurrency,
             value: atl,
-            locale,
+            locale: loc,
             t,
           })}{" "}
         </TextLabel>
@@ -174,14 +180,16 @@ export default function MarketStats({
       <Separator />
       <Title>{t("market.marketList.marketCap")}</Title>
       <StatRow label={t("market.marketList.marketCap")}>
-        <TextLabel>
-          {counterValueFormatter({
-            currency: counterCurrency,
-            value: marketcap,
-            locale,
-            t,
-          })}
-        </TextLabel>
+        {typeof marketcap === "number" ? (
+          <TextLabel>
+            {counterValueFormatter({
+              currency: counterCurrency,
+              value: marketcap,
+              locale: loc,
+              t,
+            })}
+          </TextLabel>
+        ) : null}
       </StatRow>
       <StatRow label={t("market.detailsPage.marketCapRank")}>
         <TextLabel
@@ -200,7 +208,7 @@ export default function MarketStats({
         <TextLabel>
           {counterValueFormatter({
             value: circulatingSupply,
-            locale,
+            locale: loc,
             t,
           })}
         </TextLabel>
@@ -209,7 +217,7 @@ export default function MarketStats({
         <TextLabel>
           {counterValueFormatter({
             value: totalSupply,
-            locale,
+            locale: loc,
             t,
           })}
         </TextLabel>
@@ -218,7 +226,7 @@ export default function MarketStats({
         <TextLabel>
           {counterValueFormatter({
             value: maxSupply,
-            locale,
+            locale: loc,
             t,
           })}
         </TextLabel>

@@ -1,13 +1,16 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useMemo } from "react";
 import { Platform, SectionList } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import Illustration from "../../../images/illustration/Illustration";
 import { TrackScreen } from "../../../analytics";
 import { ScreenName } from "../../../const";
 import OnboardingView from "../OnboardingView";
 import DiscoverCard from "../../Discover/DiscoverCard";
+import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
 
 // @TODO Replace
 const images = {
@@ -15,35 +18,31 @@ const images = {
     pairNew: require("../../../images/illustration/Light/_ConnectYourNano.png"),
     setupNano: require("../../../images/illustration/Light/_NewNano.png"),
     restoreRecoveryPhrase: require("../../../images/illustration/Light/_RestoreRecoveryPhrase.png"),
+    syncCrypto: require("../../../images/illustration/Light/_SyncCrypto.png"),
+    protect: require("../../../images/illustration/Light/_000_PLACEHOLDER.png"),
   },
   dark: {
     pairNew: require("../../../images/illustration/Dark/_ConnectYourNano.png"),
     setupNano: require("../../../images/illustration/Dark/_NewNano.png"),
     restoreRecoveryPhrase: require("../../../images/illustration/Dark/_RestoreRecoveryPhrase.png"),
+    syncCrypto: require("../../../images/illustration/Dark/_SyncCrypto.png"),
+    protect: require("../../../images/illustration/Dark/_000_PLACEHOLDER.png"),
   },
 };
 
-type CurrentRouteType = RouteProp<
-  { params: { deviceModelId: string } },
-  "params"
+type NavigationProps = StackNavigatorProps<
+  OnboardingNavigatorParamList,
+  ScreenName.OnboardingUseCase
 >;
 
 const OnboardingStepUseCaseSelection = () => {
   const { t } = useTranslation();
-  const route = useRoute<CurrentRouteType>();
-  const navigation = useNavigation();
+  const route = useRoute<NavigationProps["route"]>();
+  const navigation = useNavigation<NavigationProps["navigation"]>();
+
+  const servicesConfig = useFeature("protectServicesMobile");
 
   const deviceModelId = route?.params?.deviceModelId;
-
-  const navigateTo = useCallback(
-    (screen: string, params?: any) => {
-      navigation.navigate(screen, {
-        ...route.params,
-        ...params,
-      });
-    },
-    [navigation, route.params],
-  );
 
   const useCases = useMemo(
     () =>
@@ -54,8 +53,8 @@ const OnboardingStepUseCaseSelection = () => {
               data: [
                 {
                   onPress: () =>
-                    navigateTo(ScreenName.OnboardingImportAccounts, {
-                      showRecoveryWarning: true,
+                    navigation.navigate(ScreenName.OnboardingImportAccounts, {
+                      deviceModelId: route.params.deviceModelId,
                     }),
                   Image: (
                     <Illustration
@@ -77,7 +76,10 @@ const OnboardingStepUseCaseSelection = () => {
               data: [
                 {
                   onPress: () =>
-                    navigateTo(ScreenName.OnboardingModalSetupNewDevice),
+                    navigation.navigate(
+                      ScreenName.OnboardingModalSetupNewDevice,
+                      { deviceModelId: route.params.deviceModelId },
+                    ),
                   Image: (
                     <Illustration
                       size={130}
@@ -96,7 +98,8 @@ const OnboardingStepUseCaseSelection = () => {
               data: [
                 {
                   onPress: () =>
-                    navigateTo(ScreenName.OnboardingPairNew, {
+                    navigation.navigate(ScreenName.OnboardingPairNew, {
+                      deviceModelId: route.params.deviceModelId,
                       showSeedWarning: true,
                     }),
                   Image: (
@@ -111,7 +114,8 @@ const OnboardingStepUseCaseSelection = () => {
                 },
                 {
                   onPress: () =>
-                    navigateTo(ScreenName.OnboardingRecoveryPhrase, {
+                    navigation.navigate(ScreenName.OnboardingRecoveryPhrase, {
+                      deviceModelId: route.params.deviceModelId,
                       showSeedWarning: true,
                     }),
                   Image: (
@@ -125,10 +129,44 @@ const OnboardingStepUseCaseSelection = () => {
                   title: t("onboarding.stepUseCase.restoreDevice.subTitle"),
                   event: "Onboarding - Restore",
                 },
+                ...(servicesConfig?.enabled
+                  ? [
+                      {
+                        disabled: deviceModelId !== "nanoX",
+                        onPress: () => {
+                          if (deviceModelId === "nanoX") {
+                            navigation.navigate(ScreenName.OnboardingPairNew, {
+                              deviceModelId: route.params.deviceModelId,
+                              next: ScreenName.OnboardingProtectFlow,
+                            });
+                          }
+                        },
+                        Image: (
+                          <Illustration
+                            size={130}
+                            darkSource={images.dark.protect}
+                            lightSource={images.light.protect}
+                          />
+                        ),
+                        title: t("onboarding.stepUseCase.protect.subTitle"),
+                        labelBadge:
+                          deviceModelId === "nanoX"
+                            ? t("onboarding.stepUseCase.protect.label")
+                            : undefined,
+                        event: "Onboarding - Restore Protect",
+                      },
+                    ]
+                  : []),
               ],
             },
           ],
-    [deviceModelId, navigateTo, t],
+    [
+      deviceModelId,
+      navigation,
+      route.params.deviceModelId,
+      servicesConfig?.enabled,
+      t,
+    ],
   );
 
   return (

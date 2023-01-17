@@ -1,3 +1,66 @@
+# 2.51.0
+
+### 🚀 Features
+
+- Ledger Live is no longer compatible with Windows 7.
+
+### 🌷 Improvements
+
+- We've made some tweaks to improve the staking experience for Ethereum (ETH) and make it easier to select and access staking providers.
+
+# 2.50.1
+
+### 🐛 Fixes
+
+- Sending USDT through Ledger Live would result in the **FAILED -OUT OF ENERGY>** error for some users. We've fixed the issue, and you'll now see a **warning message if your account doesn't have enough energy** to cover the transaction.
+
+# 2.50.0
+
+### 🚀 Features
+
+- **EIP-1559 is here.** Now you can enjoy **more predictable fees and reduced confirmation delays** for Ethereum-based transactions. You can also avoid overpaying fees—specify the max fee you're willing to pay and get reimbursed if the transaction is processed at a lower price.
+- **Don’t trust, verify.** Ledger now supports the **EIP-712** standard that will display data in signing prompts in a readable format instead of complex hexadecimal strings.
+- **Swap crypto with CIC from the US without leaving Ledger Live.** Access to CIC swapping options to grow and diversify your portfolio from the security of your Ledger Nano.
+
+### 🐛 Fixes
+
+- A sneaky bug caused the value of some Cardano tokens to be displayed incorrectly. This has now been fixed.
+
+# 2.49.2
+
+### 🐛 Fixes
+
+We have fixed a critical issue preventing macOS users from accessing their nano device.
+
+# 2.49.1
+
+We’ve done few small but important changes behind the curtain.
+Don’t forget to update your Ledger Live app so that you can access these new features.
+
+# 2.49.0
+
+A few small but mighty improvements have been made to Ledger Live's swapping capabilities 👇
+
+### 🚀 Features
+
+- You can now filter swap quotes based on floating or fixed rates.
+
+### 🐛 Fixes
+
+- Trying to swap some assets with Changelly, such as GALA and MBOX, may have resulted in the app crashing. We've sorted this out and everything is working as it should now.
+
+# 2.48.0
+
+### 🚀 Features
+
+- Introducing a new way to swap crypto — **compare quotes from different platforms and choose the best offer**. Select the coin you want to swap and explore providers, KYC requirements, exchange rates, and more. In addition, you can now fully leverage DeFi protocols to swap ERC-20 tokens on decentralised exchanges.
+- Olá! From today, **Ledger Live supports Brazilian Portuguese** 🇧🇷 You can change the language in the settings menu under General → Display language.
+- When sending BTC, a **warning message** will alert you if there are any **pending incoming transactions**.
+
+### 🐛 Fixes
+
+We’ve tidied up some bugs that caused issues when sending Zcash and signing transactions. Everything is running smoothly again.
+
 # 2.47.0
 
 Here's a look at what's new in Ledger Live.
@@ -31,9 +94,9 @@ We're back with another roundup of handy new features and improvements.
 
 ### 🚀 Features
 
-**100 native Cardano tokens** made their way to Ledger Live, including WMT, DANA, and ADAX. You can find the full list [here](https://www.ledger.com/supported-crypto-assets).  
-Speaking of new tokens, we’ve added support of USDC on the Stellar blockchain.  
-Looking to send **HBAR** from Ledger Live to an exchange? As of today, Ledger Live allows you to **add a memo** to help identify a transaction and credit the proper account.  
+**100 native Cardano tokens** made their way to Ledger Live, including WMT, DANA, and ADAX. You can find the full list [here](https://www.ledger.com/supported-crypto-assets).
+Speaking of new tokens, we’ve added support of USDC on the Stellar blockchain.
+Looking to send **HBAR** from Ledger Live to an exchange? As of today, Ledger Live allows you to **add a memo** to help identify a transaction and credit the proper account.
 Delegating **Solana** or **Cosmos stake** just got easier—the nifty new search bar helps you **find validators easily and quickly**.
 
 # 2.44.0

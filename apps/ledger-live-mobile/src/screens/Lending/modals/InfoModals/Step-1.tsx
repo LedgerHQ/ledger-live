@@ -3,19 +3,23 @@ import React, { useCallback } from "react";
 import { View, StyleSheet, Image } from "react-native";
 import { Trans } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
+import { StackScreenProps } from "@react-navigation/stack";
 import BaseInfoModal from "../BaseModal";
 import termsImg from "../../../../images/lending-info-1.png";
 import { ScreenName } from "../../../../const";
+import { LendingInfoNavigatorParamList } from "../../../../components/RootNavigator/types/LendingInfoNavigator";
+import { StackNavigatorNavigation } from "../../../../components/RootNavigator/types/helpers";
 
-type Props = {
-  route: {
-    params: {
-      endCallback: () => void;
-    };
-  };
-};
-export default function LendingInfoStep1({ route: { params } }: Props) {
-  const navigation = useNavigation();
+export default function LendingInfoStep1({
+  route: { params },
+}: StackScreenProps<LendingInfoNavigatorParamList, ScreenName.LendingInfo1>) {
+  const navigation =
+    useNavigation<
+      StackNavigatorNavigation<
+        LendingInfoNavigatorParamList,
+        ScreenName.LendingInfo1
+      >
+    >();
   const onNext = useCallback(() => {
     navigation.push(ScreenName.LendingInfo2, params);
   }, [navigation, params]);

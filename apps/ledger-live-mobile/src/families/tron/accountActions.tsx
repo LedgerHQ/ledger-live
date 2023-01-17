@@ -1,31 +1,24 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/types-live";
+import type { TronAccount } from "@ledgerhq/live-common/families/tron/types";
 import { BigNumber } from "bignumber.js";
 import {
   MIN_TRANSACTION_AMOUNT,
   getLastVotedDate,
 } from "@ledgerhq/live-common/families/tron/react";
 import { Icons } from "@ledgerhq/native-ui";
-import FreezeIcon from "../../icons/Freeze";
-import UnfreezeIcon from "../../icons/Unfreeze";
-import VoteIcon from "../../icons/Vote";
-import ClockIcon from "../../icons/Clock";
-import LText from "../../components/LText";
-import DateFromNow from "../../components/DateFromNow";
 import { NavigatorName, ScreenName } from "../../const";
+import { ActionButtonEvent } from "../../components/FabActions";
 
 const getActions = ({
   account,
   parentAccount,
-  colors,
 }: {
   account: Account;
   parentAccount: Account;
-  colors: any;
-}) => {
-  if (!account.tronResources) return null;
+}): ActionButtonEvent[] | null | undefined => {
+  if (!(account as TronAccount).tronResources) return null;
   const {
     spendableBalance,
     tronResources: {
@@ -33,7 +26,7 @@ const getActions = ({
       frozen: { bandwidth, energy } = {},
       frozen,
     } = {},
-  } = account;
+  } = account as TronAccount;
   const accountId = account.id;
   const canFreeze =
     spendableBalance && spendableBalance.gt(MIN_TRANSACTION_AMOUNT);
@@ -51,10 +44,11 @@ const getActions = ({
       .plus((energy && energy.amount) || 0)
       .gt(MIN_TRANSACTION_AMOUNT) &&
     effectiveTimeToUnfreeze < Date.now();
-  const canVote = tronPower > 0;
-  const lastVotedDate = getLastVotedDate(account);
+  const canVote = (tronPower || 0) > 0;
+  const lastVotedDate = getLastVotedDate(account as TronAccount);
   return [
     {
+      id: "stake",
       disabled: !canVote && !canFreeze,
       navigationParams: [
         canVote ? NavigatorName.TronVoteFlow : NavigatorName.Freeze,
@@ -72,6 +66,7 @@ const getActions = ({
       Icon: Icons.ClaimRewardsMedium,
     },
     {
+      id: "freeze",
       disabled: !canFreeze,
       navigationParams: [
         NavigatorName.Freeze,
@@ -84,9 +79,10 @@ const getActions = ({
       ],
       label: <Trans i18nKey="tron.manage.freeze.title" />,
       description: <Trans i18nKey="tron.manage.freeze.description" />,
-      Icon: FreezeIcon,
+      Icon: Icons.FreezeMedium,
     },
     {
+      id: "unfreeze",
       disabled: !canUnfreeze,
       navigationParams: [
         NavigatorName.Unfreeze,
@@ -99,26 +95,14 @@ const getActions = ({
       ],
       label: <Trans i18nKey="tron.manage.unfreeze.title" />,
       description: <Trans i18nKey="tron.manage.unfreeze.description" />,
-      Icon: UnfreezeIcon,
-      extra: !canUnfreeze && effectiveTimeToUnfreeze < Infinity && (
-        <View
-          style={[
-            styles.timeWarn,
-            {
-              backgroundColor: colors.lightFog,
-            },
-          ]}
-        >
-          <ClockIcon color={colors.grey} size={16} />
-          <LText style={styles.timeLabel} semiBold color="grey">
-            <DateFromNow date={effectiveTimeToUnfreeze} />
-          </LText>
-        </View>
-      ),
-      type: "main",
-      outline: false,
+      Icon: Icons.UnfreezeMedium,
+      buttonProps: {
+        type: "main",
+        outline: false,
+      },
     },
     {
+      id: "vote",
       disabled: !canVote,
       navigationParams: [
         NavigatorName.TronVoteFlow,
@@ -131,27 +115,15 @@ const getActions = ({
       ],
       label: <Trans i18nKey="tron.manage.vote.title" />,
       description: <Trans i18nKey="tron.manage.vote.description" />,
-      Icon: VoteIcon,
-      type: "main",
-      outline: false,
+      Icon: Icons.VoteMedium,
+      buttonProps: {
+        type: "main",
+        outline: false,
+      },
     },
   ];
 };
 
-const styles = StyleSheet.create({
-  timeWarn: {
-    flexDirection: "row",
-    alignContent: "center",
-    justifyContent: "flex-end",
-    borderRadius: 4,
-    padding: 8,
-  },
-  timeLabel: {
-    marginLeft: 8,
-    fontSize: 12,
-    lineHeight: 16,
-  },
-});
 export default {
   getActions,
 };

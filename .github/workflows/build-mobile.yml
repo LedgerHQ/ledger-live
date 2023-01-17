@@ -15,11 +15,53 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref_name != 'develop' }}
 
 jobs:
+  is-affected:
+    outputs:
+      is-mobile-affected: ${{ steps.affected.outputs.is-package-affected }}
+    runs-on: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: develop
+          fetch-depth: 0
+      - name: checkout branch (PR)
+        if: ${{ github.event_name == 'pull_request' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr checkout ${{ github.event.pull_request.number }}
+      - name: checkout branch (not PR)
+        if: ${{ github.event_name != 'pull_request' }}
+        run: |
+          git checkout $GITHUB_SHA
+      - uses: ./tools/actions/turbo-affected
+        id: affected
+        with:
+          package: "live-mobile"
+          head-ref: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.event.pull_request.base.ref) || 'HEAD^' }}
+
+  # Run dummy jobs when not affected to pass the required status checks
+  dummy:
+    name: "Build Ledger Live Mobile"
+    needs: is-affected
+    if: ${{ needs.is-affected.outputs.is-mobile-affected != 'true' }}
+    strategy:
+      matrix:
+        names:
+          - Android
+          - Mac OS X
+    runs-on: ubuntu-latest
+    steps:
+      - id: dummy
+        run: exit 0
+
   pr-is-fork:
     name: "Check if the PR is a fork"
+    needs: is-affected
+    if: ${{ needs.is-affected.outputs.is-mobile-affected == 'true' }}
     uses: ./.github/workflows/pr-is-fork.yml
     with:
       non-pr-result: false
@@ -27,25 +69,40 @@ jobs:
       token: ${{ secrets.COMMON_READ_ORG }}
 
   start-runner:
+    name: Start self-hosted EC2 runner
+    runs-on: [ledger-live, linux]
     needs: [pr-is-fork]
     if: ${{ !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
-    name: "start ec2 instance"
-    uses: ledgerhq/ledger-live/.github/workflows/start-linux-runner.yml@develop
-    with:
-      instance-type: c5.4xlarge
-    secrets:
-      CI_BOT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
+    outputs:
+      label: ${{ steps.start-ec2-linux-runner.outputs.label }}
+      ec2-instance-id: ${{ steps.start-ec2-linux-runner.outputs.ec2-instance-id }}
+    steps:
+      - name: Start EC2 Linux Runner
+        id: start-ec2-linux-runner
+        uses: LedgerHQ/actions/ec2-linux-runner@main
+        with:
+          mode: start
+          github-token: ${{ secrets.CI_BOT_TOKEN }}
+          project: 2049
+          aws-nfs-logging: true
+          ami-name-filter: ledger-live-runner
+          instance-volume-size: 30
+          instance-type: c5.4xlarge
 
   stop-runner:
-    name: "stop ec2 instance"
+    name: Stop self-hosted EC2 runner
     if: ${{ always() && needs.start-runner.result == 'success' }}
     needs: [start-runner, build-mobile-app-android]
-    uses: ledgerhq/ledger-live/.github/workflows/stop-linux-runner.yml@develop
-    with:
-      label: ${{ needs.start-runner.outputs.label }}
-      ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
-    secrets:
-      CI_BOT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
+    runs-on: [ledger-live, linux]
+    steps:
+      - name: Stop EC2 Linux Runner
+        if: ${{ always() && needs.start-runner.result == 'success' }}
+        uses: LedgerHQ/actions/ec2-linux-runner@main
+        with:
+          mode: stop
+          github-token: ${{ secrets.CI_BOT_TOKEN }}
+          label: ${{ needs.start-runner.outputs.label }}
+          ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
 
   build-mobile-app-android:
     name: "Build Ledger Live Mobile (Android)"
@@ -55,10 +112,6 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      - name: prepare runner
-        run: |
-          sudo growpart /dev/nvme0n1 1
-          sudo resize2fs /dev/nvme0n1p1
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
@@ -75,11 +128,9 @@ jobs:
           node-version: 16.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
-      - name: bump npm
-        run: npm i -g npm@8.12.2
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7
+          ruby-version: 3.1.2
         env:
           ImageOS: ubuntu20
       - uses: actions/setup-java@v3
@@ -90,17 +141,17 @@ jobs:
         uses: android-actions/setup-android@v2.0.6
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+      - uses: ./tools/actions/get-package-infos
         id: version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: set beta name
-        uses: ledgerhq/ledger-live/tools/actions/change-product-name@develop
+        uses: ./tools/actions/change-product-name
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: Get short SHA
         id: slug
-        run: echo "::set-output name=sha8::$(git rev-parse HEAD)"
+        run: echo "sha8=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       - name: make local version
         env:
           VERSION: ${{ steps.version.outputs.clean }}-sha.${{ steps.slug.outputs.sha8 }}
@@ -118,8 +169,8 @@ jobs:
           ANDROID_KEY_PASS: staging
           NODE_OPTIONS: "--max-old-space-size=7168"
           ANDROID_KEYSTORE_FILE: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/staging.kstr
-        run: pnpm build:llm:android --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+        run: pnpm build-ci:llm:android --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+      - uses: ./tools/actions/get-package-infos
         id: post-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
@@ -127,7 +178,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.post-version.outputs.version }}-release
-          path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/release
+          path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/stagingRelease
 
   build-mobile-app-android-external:
     name: "Build Ledger Live Mobile (Android)"
@@ -152,11 +203,9 @@ jobs:
           node-version: 16.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
-      - name: bump npm
-        run: npm i -g npm@8.12.2
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7
+          ruby-version: 3.1.2
         env:
           ImageOS: ubuntu20
       - uses: actions/setup-java@v3
@@ -167,17 +216,18 @@ jobs:
         uses: android-actions/setup-android@v2.0.6
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+      - uses: ./tools/actions/get-package-infos
         id: version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: set beta name
-        uses: ledgerhq/ledger-live/tools/actions/change-product-name@develop
+        uses: ./tools/actions/change-product-name
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: Get short SHA
         id: slug
-        run: echo "::set-output name=sha8::$(git rev-parse HEAD)"
+        run: echo "sha8=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
       - name: make local version
         env:
           VERSION: ${{ steps.version.outputs.clean }}-sha.${{ steps.slug.outputs.sha8 }}
@@ -196,7 +246,7 @@ jobs:
           NODE_OPTIONS: "--max-old-space-size=7168"
           ANDROID_KEYSTORE_FILE: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/staging.kstr
         run: pnpm build:llm:android --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+      - uses: ./tools/actions/get-package-infos
         id: post-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
@@ -209,6 +259,10 @@ jobs:
   build-mobile-app-ios:
     runs-on: macos-latest
     name: "Build Ledger Live Mobile (Mac OS X)"
+    needs: is-affected
+    if: ${{ needs.is-affected.outputs.is-mobile-affected == 'true' }}
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
       - uses: actions/checkout@v3
         with:
@@ -225,11 +279,9 @@ jobs:
           node-version: 16.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
-      - name: bump npm
-        run: npm i -g npm@8.12.2
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7
+          ruby-version: 3.1.2
       - name: Cache LLM pods
         uses: actions/cache@v3
         with:

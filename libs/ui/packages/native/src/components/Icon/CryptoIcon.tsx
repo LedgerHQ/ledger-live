@@ -47,7 +47,7 @@ const Circle = styled(Flex).attrs((p: { size: number; backgroundColor: string })
   alignItems: "center",
   justifyContent: "center",
   position: "relative",
-  borderRadius: "50%",
+  borderRadius: 50.0,
   backgroundColor: p.backgroundColor,
 }))<{ size: number }>``;
 
@@ -60,7 +60,7 @@ const TokenContainer = styled(Flex).attrs(
     justifyContent: "center",
     heigth: p.size,
     width: p.size,
-    borderRadius: "50%",
+    borderRadius: 50.0,
     border: `2px solid ${p.borderColor}`,
     backgroundColor: p.backgroundColor,
     zIndex: 0,

@@ -6,9 +6,15 @@ try {
   cd(path.join(__dirname, ".."));
 
   const remover = async () => {
-    await rimraf("src/data/icons/react*", (e) => {
-      if (e) echo(chalk.red(e));
-    });
+    await new Promise((resolve, reject) =>
+      rimraf("src/data/icons/react*", (e) => {
+        if (e) {
+          echo(chalk.red(e));
+          return reject(e);
+        }
+        resolve();
+      })
+    );
   };
 
   await remover();

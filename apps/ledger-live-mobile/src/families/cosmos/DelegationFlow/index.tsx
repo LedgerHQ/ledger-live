@@ -15,6 +15,7 @@ import SelectValidator from "./SelectValidator";
 import DelegationSummary from "./02-Summary";
 import DelegationValidationError from "./04-ValidationError";
 import DelegationValidationSuccess from "./04-ValidationSuccess";
+import type { CosmosDelegationFlowParamList } from "./types";
 
 const totalSteps = "3";
 
@@ -77,7 +78,7 @@ function DelegationFlow() {
         }: {
           route: { params: { validator: CosmosValidatorItem } };
         }) => ({
-          headerRight: null,
+          headerRight: undefined,
           headerTitle: () => (
             <StepHeader
               title={
@@ -151,4 +152,4 @@ const options = {
 
 export { DelegationFlow as component, options };
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<CosmosDelegationFlowParamList>();

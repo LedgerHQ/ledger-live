@@ -1,3 +1,4 @@
+// @flow
 import React from "react";
 import styled from "styled-components";
 import Box, { Card } from "~/renderer/components/Box";
@@ -34,7 +35,7 @@ const CustomButton = styled(Button)`
   padding-right: 14px;
 `;
 
-export default function AccountSubHeader({ family, team }) {
+export default function AccountSubHeader({ family, team }: { family: string, team: string }) {
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
   const { t } = useTranslation();
 

@@ -4,16 +4,16 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { urls } from "~/config/urls";
-import { languageSelector } from "~/renderer/reducers/settings";
+import { languageSelector, swapKYCSelector } from "~/renderer/reducers/settings";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import ExportLogsBtn from "~/renderer/components/ExportLogsButton";
+import TroubleshootNetworkBtn from "~/renderer/components/TroubleshootNetworkButton";
 import OpenUserDataDirectoryBtn from "~/renderer/components/OpenUserDataDirectoryBtn";
 import RowItem from "../../RowItem";
 import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../SettingsSection";
 import CleanButton from "./CleanButton";
 import ResetButton from "./ResetButton";
 import ResetKYCButton from "./ResetKYCButton";
-import { swapKYCSelector } from "~/renderer/reducers/settings";
 import RepairDeviceButton from "./RepairDeviceButton";
 import LaunchOnboardingBtn from "./LaunchOnboardingBtn";
 
@@ -41,6 +41,12 @@ const SectionHelp = () => {
         </Row>
         <Row title={t("settings.exportLogs.title")} desc={t("settings.exportLogs.desc")}>
           <ExportLogsBtn />
+        </Row>
+        <Row
+          title={t("settings.troubleshootNetwork.title")}
+          desc={t("settings.troubleshootNetwork.desc")}
+        >
+          <TroubleshootNetworkBtn />
         </Row>
         <Row
           title={t("settings.profile.launchOnboarding")}

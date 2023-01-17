@@ -3,6 +3,7 @@ import { Trans } from "react-i18next";
 import { StyleSheet, View, FlatList, SafeAreaView } from "react-native";
 import type {
   CryptoCurrency,
+  CryptoOrTokenCurrency,
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
 import {
@@ -13,24 +14,27 @@ import {
 } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import CurrencyRow from "../../components/CurrencyRow";
 import LText from "../../components/LText";
+import { AddAccountsNavigatorParamList } from "../../components/RootNavigator/types/AddAccountsNavigator";
+import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
 const SEARCH_KEYS = ["name", "ticker"];
-type Props = {
-  devMode: boolean;
-  navigation: any;
-  route: {
-    params: {
-      filterCurrencyIds?: string[];
-    };
-  };
-};
 
-const keyExtractor = currency => currency.id;
+type NavigationProps = StackNavigatorProps<
+  AddAccountsNavigatorParamList,
+  ScreenName.AddAccountsSelectCrypto
+>;
+
+type Props = {
+  devMode?: boolean;
+} & NavigationProps;
+
+const keyExtractor = (currency: CryptoOrTokenCurrency) => currency.id;
 
 const renderEmptyList = () => (
   <View style={styles.emptySearch}>
@@ -45,7 +49,8 @@ const listSupportedTokens = () =>
 
 export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { filterCurrencyIds = [] } = route.params || {};
+  const devMode = useEnv("MANAGER_DEV_MODE");
+  const { filterCurrencyIds = [], currency } = route.params || {};
 
   const osmo = useFeature("currencyOsmosisMobile");
   const fantom = useFeature("currencyFantomMobile");
@@ -53,6 +58,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const cronos = useFeature("currencyCronosMobile");
   const songbird = useFeature("currencySongbirdMobile");
   const flare = useFeature("currencyFlareMobile");
+  const near = useFeature("currencyNear");
 
   const featureFlaggedCurrencies = useMemo(
     () => ({
@@ -62,8 +68,9 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       cronos,
       songbird,
       flare,
+      near,
     }),
-    [osmo, fantom, moonbeam, cronos, songbird, flare],
+    [osmo, fantom, moonbeam, cronos, songbird, flare, near],
   );
 
   const cryptoCurrencies = useMemo(() => {
@@ -78,8 +85,17 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       .filter(([, feature]) => !feature?.enabled)
       .map(([name]) => name);
 
-    return currencies.filter(c => !deactivatedCurrencies.includes(c.id));
-  }, [featureFlaggedCurrencies, filterCurrencyIds]);
+    const currenciesFiltered = currencies.filter(
+      c => !deactivatedCurrencies.includes(c.id),
+    );
+
+    if (!devMode) {
+      return currenciesFiltered.filter(
+        c => c.type !== "CryptoCurrency" || !c.isTestnetFor,
+      );
+    }
+    return currenciesFiltered;
+  }, [devMode, featureFlaggedCurrencies, filterCurrencyIds]);
 
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
 
@@ -96,7 +112,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
     });
   };
 
-  const onPressItem = (currencyOrToken: CryptoCurrency | TokenCurrency) => {
+  const onPressItem = (currencyOrToken: CryptoOrTokenCurrency) => {
     if (currencyOrToken.type === "TokenCurrency") {
       onPressToken(currencyOrToken);
     } else {
@@ -104,11 +120,11 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
     }
   };
 
-  const renderList = items => (
+  const renderList = (items: CryptoOrTokenCurrency[]) => (
     <FlatList
       contentContainerStyle={styles.list}
       data={items}
-      renderItem={({ item }) => (
+      renderItem={({ item }: { item: CryptoOrTokenCurrency }) => (
         <CurrencyRow currency={item} onPress={onPressItem} />
       )}
       keyExtractor={keyExtractor}
@@ -134,6 +150,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
           list={sortedCryptoCurrencies}
           renderList={renderList}
           renderEmptySearch={renderEmptyList}
+          initialQuery={currency}
         />
       </View>
     </SafeAreaView>

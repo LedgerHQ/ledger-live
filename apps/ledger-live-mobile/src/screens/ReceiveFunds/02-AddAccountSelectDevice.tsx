@@ -1,37 +1,40 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, SafeAreaView } from "react-native";
 import { useDispatch } from "react-redux";
-import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { createAction } from "@ledgerhq/live-common/lib/hw/actions/app";
-import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
-import { useTheme } from "@react-navigation/native";
+import { Flex } from "@ledgerhq/native-ui";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { createAction } from "@ledgerhq/live-common/hw/actions/app";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import connectApp from "@ledgerhq/live-common/hw/connectApp";
+import { useIsFocused, useTheme } from "@react-navigation/native";
 import { prepareCurrency } from "../../bridge/cache";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import SelectDevice from "../../components/SelectDevice";
+import SelectDevice2 from "../../components/SelectDevice2";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import DeviceActionModal from "../../components/DeviceActionModal";
 import SkipSelectDevice from "../SkipSelectDevice";
 import { setLastConnectedDevice } from "../../actions/settings";
-
-type Props = {
-  navigation: any;
-  route: { params: RouteParams };
-};
-
-type RouteParams = {
-  currency: CryptoCurrency;
-  inline?: boolean;
-  analyticsPropertyFlow?: string;
-};
+import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
+import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
 const action = createAction(connectApp);
 
-export default function AddAccountsSelectDevice({ navigation, route }: Props) {
+export default function AddAccountsSelectDevice({
+  navigation,
+  route,
+}: StackNavigatorProps<
+  ReceiveFundsStackParamList,
+  ScreenName.ReceiveAddAccountSelectDevice
+>) {
+  const { currency } = route.params;
   const { colors } = useTheme();
-  const [device, setDevice] = useState<Device | undefined>();
+  const [device, setDevice] = useState<Device | null>(null);
   const dispatch = useDispatch();
+
+  const isFocused = useIsFocused();
+  const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
 
   const onSetDevice = useCallback(
     device => {
@@ -42,12 +45,12 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
   );
 
   const onClose = useCallback(() => {
-    setDevice();
+    setDevice(null);
   }, []);
 
   const onResult = useCallback(
     meta => {
-      setDevice();
+      setDevice(null);
       const { inline } = route.params;
       const arg = { ...route.params, ...meta };
       if (inline) {
@@ -61,10 +64,9 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
 
   useEffect(() => {
     // load ahead of time
-    prepareCurrency(route.params.currency);
-  }, [route.params.currency]);
+    prepareCurrency(currency);
+  }, [currency]);
 
-  const currency = route.params.currency;
   const analyticsPropertyFlow = route.params?.analyticsPropertyFlow;
   return (
     <SafeAreaView
@@ -75,30 +77,34 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
         },
       ]}
     >
-      <NavigationScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContainer}
-      >
-        <TrackScreen
-          category="AddAccounts"
-          name="SelectDevice"
-          currencyName={currency.name}
-        />
-        <SkipSelectDevice route={route} onResult={setDevice} />
-        <SelectDevice onSelect={onSetDevice} />
-      </NavigationScrollView>
+      <SkipSelectDevice route={route} onResult={setDevice} />
+      {newDeviceSelectionFeatureFlag?.enabled ? (
+        <Flex px={16} py={8} flex={1}>
+          <SelectDevice2
+            onSelect={setDevice}
+            stopBleScanning={!!device || !isFocused}
+          />
+        </Flex>
+      ) : (
+        <NavigationScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContainer}
+        >
+          <TrackScreen
+            category="AddAccounts"
+            name="SelectDevice"
+            currencyName={currency.name}
+          />
+          <SelectDevice onSelect={onSetDevice} />
+        </NavigationScrollView>
+      )}
       <DeviceActionModal
         action={action}
         device={device}
         onResult={onResult}
         onClose={onClose}
-        request={{
-          currency:
-            currency.type === "TokenCurrency"
-              ? currency.parentCurrency
-              : currency,
-        }}
-        onSelectDeviceLink={() => setDevice()}
+        request={{ currency }}
+        onSelectDeviceLink={() => setDevice(null)}
         analyticsPropertyFlow={analyticsPropertyFlow || "add account"}
       />
     </SafeAreaView>

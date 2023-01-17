@@ -3,14 +3,22 @@ import { useIsFocused } from "@react-navigation/native";
 // eslint-disable-next-line import/no-cycle
 import { screen } from "./segment";
 
-type Props = Partial<{
-  [key: string]: any;
-}> & {
-  category: string;
+import { previousRouteNameRef, currentRouteNameRef } from "./screenRefs";
+
+type Props = {
+  [key: string]: unknown;
+} & {
+  category?: string;
   name?: string;
+  refreshSource?: boolean;
 };
 
-export default function TrackScreen({ category, name, ...props }: Props) {
+export default function TrackScreen({
+  category,
+  name,
+  refreshSource = true,
+  ...props
+}: Props) {
   const isFocused = useIsFocused();
   const isFocusedRef = useRef<boolean>();
 
@@ -19,10 +27,18 @@ export default function TrackScreen({ category, name, ...props }: Props) {
     if (isFocusedRef.current !== isFocused) {
       isFocusedRef.current = isFocused;
       if (isFocusedRef.current) {
+        if (refreshSource) {
+          previousRouteNameRef.current = currentRouteNameRef.current;
+          currentRouteNameRef.current = `${
+            category + (name ? ` ${name}` : "")
+          }`;
+        } else {
+          previousRouteNameRef.current = currentRouteNameRef.current;
+        }
         screen(category, name, props);
       }
     }
-  }, [category, name, props, isFocused]);
+  }, [category, name, props, isFocused, refreshSource]);
 
   return null;
 }

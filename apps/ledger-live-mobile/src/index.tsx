@@ -8,16 +8,17 @@ import React, {
   useContext,
   useMemo,
   useEffect,
+  useState,
 } from "react";
-import { connect, useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import * as Sentry from "@sentry/react-native";
 import {
   StyleSheet,
-  Text,
   Linking,
   Appearance,
   AppState,
   Platform,
+  LogBox,
 } from "react-native";
 import SplashScreen from "react-native-splash-screen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -32,21 +33,17 @@ import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
-import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { useCountervaluesExport } from "@ledgerhq/live-common/countervalues/react";
 import { pairId } from "@ledgerhq/live-common/countervalues/helpers";
 import { NftMetadataProvider } from "@ledgerhq/live-common/nft/index";
 import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
-import { GlobalCatalogProvider } from "@ledgerhq/live-common/platform/providers/GlobalCatalogProvider/index";
-import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
-import {
-  RemoteLiveAppProvider,
-  useRemoteLiveAppContext,
-} from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { LocalLiveAppProvider } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
+import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 
 import { isEqual } from "lodash";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
+import Braze from "react-native-appboy-sdk";
+import Config from "react-native-config";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import logger from "./logger";
 import {
   saveAccounts,
@@ -71,35 +68,31 @@ import LedgerStoreProvider from "./context/LedgerStore";
 import LoadingApp from "./components/LoadingApp";
 import StyledStatusBar from "./components/StyledStatusBar";
 import AnalyticsConsole from "./components/AnalyticsConsole";
-import ThemeDebug from "./components/ThemeDebug";
+import DebugTheme from "./components/DebugTheme";
 import { BridgeSyncProvider } from "./bridge/BridgeSyncContext";
 import useDBSaveEffect from "./components/DBSave";
 import useAppStateListener from "./components/useAppStateListener";
 import SyncNewAccounts from "./bridge/SyncNewAccounts";
 import { OnboardingContextProvider } from "./screens/Onboarding/onboardingContext";
-
-/* eslint-disable import/named */
 import WalletConnectProvider, {
   context as _wcContext,
 } from "./screens/WalletConnect/Provider";
 
-/* eslint-enable import/named */
-import HookAnalytics from "./analytics/HookAnalytics";
+import AnalyticsProvider from "./analytics/AnalyticsProvider";
 import HookSentry from "./components/HookSentry";
+import HookNotifications from "./notifications/HookNotifications";
 import RootNavigator from "./components/RootNavigator";
 import SetEnvsFromSettings from "./components/SetEnvsFromSettings";
 import CounterValuesProvider from "./components/CounterValuesProvider";
-import type { State } from "./reducers";
+import type { State } from "./reducers/types";
 import { navigationRef, isReadyRef } from "./rootnavigation";
 import { useTrackingPairs } from "./actions/general";
 import { ScreenName, NavigatorName } from "./const";
 import ExperimentalHeader from "./screens/Settings/Experimental/ExperimentalHeader";
-import PushNotificationsModal from "./screens/PushNotificationsModal";
-import RatingsModal from "./screens/RatingsModal";
-import { lightTheme, darkTheme } from "./colors";
+import Modals from "./screens/Modals";
+import { lightTheme, darkTheme, Theme } from "./colors";
 import NotificationsProvider from "./screens/NotificationCenter/NotificationsProvider";
 import SnackbarContainer from "./screens/NotificationCenter/Snackbar/SnackbarContainer";
-// eslint-disable-next-line import/no-unresolved
 import NavBarColorHandler from "./components/NavBarColorHandler";
 import { setOsTheme } from "./actions/settings";
 import { FirebaseRemoteConfigProvider } from "./components/FirebaseRemoteConfig";
@@ -108,11 +101,20 @@ import StyleProvider from "./StyleProvider";
 import MarketDataProvider from "./screens/Market/MarketDataProviderWrapper";
 import AdjustProvider from "./components/AdjustProvider";
 import DelayedTrackingProvider from "./components/DelayedTrackingProvider";
-import { useFilteredManifests } from "./screens/Platform/shared";
 import { setWallectConnectUri } from "./actions/walletconnect";
 import PostOnboardingProviderWrapped from "./logic/postOnboarding/PostOnboardingProviderWrapped";
+import { isAcceptedTerms } from "./logic/terms";
+import type { Writeable } from "./types/helpers";
+import HookDynamicContentCards from "./dynamicContent/useContentCards";
+import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
 
-const themes = {
+if (Config.DISABLE_YELLOW_BOX) {
+  LogBox.ignoreAllLogs();
+}
+
+const themes: {
+  [key: string]: Theme;
+} = {
   light: lightTheme,
   dark: darkTheme,
 };
@@ -121,7 +123,6 @@ checkLibs({
   React,
   log,
   Transport,
-  connect,
 });
 // useScreens();
 const styles = StyleSheet.create({
@@ -129,9 +130,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
-// Fixme until third parties address this themselves, still relevant?
-Text.defaultProps = Text.defaultProps || {};
-Text.defaultProps.allowFontScaling = false;
 
 type AppProps = {
   importDataString?: string;
@@ -224,13 +222,8 @@ function App({ importDataString }: AppProps) {
       <RootNavigator importDataString={importDataString} />
 
       <AnalyticsConsole />
-      <ThemeDebug />
-      <FeatureToggle feature="pushNotifications">
-        <PushNotificationsModal />
-      </FeatureToggle>
-      <FeatureToggle feature="ratings">
-        <RatingsModal />
-      </FeatureToggle>
+      <DebugTheme />
+      <Modals />
     </GestureHandlerRootView>
   );
 }
@@ -277,10 +270,20 @@ function getProxyURL(url: string) {
 }
 
 // DeepLinking
-const linkingOptions: LinkingOptions<ReactNavigation.RootParamList> = {
+const linkingOptions = {
   async getInitialURL() {
     const url = await Linking.getInitialURL();
-    return url && !isInvalidWalletConnectLink(url) ? getProxyURL(url) : null;
+    if (url) {
+      return url && !isInvalidWalletConnectLink(url) ? getProxyURL(url) : null;
+    }
+    const brazeUrl: string = await new Promise(resolve => {
+      Braze.getInitialURL(initialUrl => {
+        resolve(initialUrl);
+      });
+    });
+    return brazeUrl && !isInvalidWalletConnectLink(brazeUrl)
+      ? getProxyURL(brazeUrl)
+      : null;
   },
 
   prefixes: ["ledgerlive://", "https://ledger.com"],
@@ -300,6 +303,27 @@ const linkingOptions: LinkingOptions<ReactNavigation.RootParamList> = {
           },
 
           [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
+
+          [ScreenName.BleDevicePairingFlow]: "sync-onboarding",
+
+          [NavigatorName.PostOnboarding]: {
+            screens: {
+              /**
+               * @params ?completed: boolean
+               * ie: "ledgerlive://post-onboarding/nft-claimed?completed=true" will open the post onboarding hub and complete the Nft claim action
+               */
+              [ScreenName.PostOnboardingHub]: "post-onboarding/nft-claimed",
+            },
+          },
+
+          [NavigatorName.ClaimNft]: {
+            screens: {
+              /**
+               * ie: "ledgerlive://linkdrop-nft-claim/qr-scanning" will redirect to the QR scanning page
+               */
+              [ScreenName.ClaimNftQrScan]: "linkdrop-nft-claim/qr-scanning",
+            },
+          },
 
           /**
            * @params ?platform: string
@@ -348,15 +372,15 @@ const linkingOptions: LinkingOptions<ReactNavigation.RootParamList> = {
               [NavigatorName.Manager]: {
                 screens: {
                   /**
-                   * ie: "ledgerlive://manager" will open the manager
+                   * ie: "ledgerlive://myledger" will open MyLedger page
                    *
                    * @params ?installApp: string
-                   * ie: "ledgerlive://manager?installApp=bitcoin" will open the manager with "bitcoin" prefilled in the search input
+                   * ie: "ledgerlive://myledger?installApp=bitcoin" will open myledger with "bitcoin" prefilled in the search input
                    *
                    * * @params ?searchQuery: string
-                   * ie: "ledgerlive://manager?searchQuery=bitcoin" will open the manager with "bitcoin" prefilled in the search input
+                   * ie: "ledgerlive://myledger?searchQuery=bitcoin" will open myledger with "bitcoin" prefilled in the search input
                    */
-                  [ScreenName.Manager]: "manager",
+                  [ScreenName.Manager]: "myledger",
                 },
               },
             },
@@ -367,7 +391,7 @@ const linkingOptions: LinkingOptions<ReactNavigation.RootParamList> = {
                * @params ?currency: string
                * ie: "ledgerlive://receive?currency=bitcoin" will open the prefilled search account in the receive flow
                */
-              [ScreenName.ReceiveSelectAccount]: "receive",
+              [ScreenName.ReceiveSelectCrypto]: "receive",
             },
           },
           [NavigatorName.Swap]: {
@@ -386,6 +410,29 @@ const linkingOptions: LinkingOptions<ReactNavigation.RootParamList> = {
                * ie: "ledgerlive://send?currency=bitcoin" will open the prefilled search account in the send flow
                */
               [ScreenName.SendCoin]: "send",
+            },
+          },
+
+          [NavigatorName.Accounts]: {
+            screens: {
+              /**
+               * @params ?id: string
+               * ie: "ledgerlive://accounts?currency=ethereum&address={{eth_account_address}}"
+               */
+              [ScreenName.Accounts]: "accounts",
+            },
+          },
+
+          [NavigatorName.AddAccounts]: {
+            screens: {
+              /**
+               * ie: "ledgerlive://add-account" will open the add account flow
+               *
+               * @params ?currency: string
+               * ie: "ledgerlive://add-account?currency=bitcoin" will open the add account flow with "bitcoin" prefilled in the search input
+               *
+               */
+              [ScreenName.AddAccountsSelectCrypto]: "add-account",
             },
           },
 
@@ -419,124 +466,147 @@ const linkingOptions: LinkingOptions<ReactNavigation.RootParamList> = {
               [ScreenName.DeveloperSettings]: "settings/developer",
             },
           },
+
+          [NavigatorName.CustomImage]: {
+            screens: {
+              /**
+               * ie: "ledgerlive://custom-image"
+               */
+              [ScreenName.CustomImageStep0Welcome]: "custom-image",
+            },
+          },
         },
       },
     },
   },
 };
-const linkingOptionsOnboarding = {
+
+const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean) => ({
   ...linkingOptions,
   config: {
-    screens: {
-      [NavigatorName.Base]: {
-        initialRouteName: NavigatorName.Main,
-        screens: {
-          [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
+    screens: !acceptedTermsOfUse
+      ? {}
+      : {
+          [NavigatorName.Base]: {
+            initialRouteName: NavigatorName.Main,
+            screens: {
+              [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
+              [ScreenName.BleDevicePairingFlow]: "sync-onboarding",
+            },
+          },
         },
-      },
-    },
   },
-};
-const platformManifestFilterParams = {
-  private: true,
-  branches: undefined, // will override & having it to undefined makes all branches valid
-};
+});
+
+const emptyObject: LiveAppManifest[] = [];
 
 const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const wcContext = useContext(_wcContext);
-  const { state: remoteLiveAppState } = useRemoteLiveAppContext();
-  const liveAppProviderInitialized =
-    !!remoteLiveAppState.value || !!remoteLiveAppState.error;
-  const filteredManifests = useFilteredManifests(platformManifestFilterParams);
+  const { state } = useRemoteLiveAppContext();
+  const liveAppProviderInitialized = !!state.value || !!state.error;
+  const manifests = state?.value?.liveAppByIndex || emptyObject;
+  // Can be either true, false or null, meaning we don't know yet
+  const [userAcceptedTerms, setUserAcceptedTerms] = useState<boolean | null>(
+    null,
+  );
+
   const linking = useMemo<LinkingOptions<ReactNavigation.RootParamList>>(
-    () => ({
-      ...(hasCompletedOnboarding ? linkingOptions : linkingOptionsOnboarding),
-      enabled: wcContext.initDone && !wcContext.session.session,
-      subscribe(listener) {
-        const sub = Linking.addEventListener("url", ({ url }) => {
-          // Prevent default deeplink if invalid wallet connect link
-          if (isInvalidWalletConnectLink(url)) {
-            return;
-          }
+    () =>
+      ({
+        ...(hasCompletedOnboarding
+          ? linkingOptions
+          : getOnboardingLinkingOptions(!!userAcceptedTerms)),
+        enabled: wcContext.initDone && !wcContext.session.session,
+        subscribe(listener) {
+          const sub = Linking.addEventListener("url", ({ url }) => {
+            // Prevent default deeplink if invalid wallet connect link
+            if (isInvalidWalletConnectLink(url)) {
+              return;
+            }
 
-          // Prevent default deeplink if we're already in a wallet connect route.
-          const route = navigationRef.current?.getCurrentRoute();
-          if (
-            isWalletConnectLink(url) &&
-            route &&
-            [
-              ScreenName.WalletConnectScan,
-              ScreenName.WalletConnectDeeplinkingSelectAccount,
-              ScreenName.WalletConnectConnect,
-            ].includes(route.name)
-          ) {
-            const uri = isWalletConnectUrl(url)
-              ? url
-              : // we know uri exists in the searchParams because we check it in isValidWalletConnectUrl
-                new URL(url).searchParams.get("uri")!;
-            dispatch(setWallectConnectUri(uri));
-            return;
-          }
+            // Prevent default deeplink if we're already in a wallet connect route.
+            const route = navigationRef.current?.getCurrentRoute();
+            if (
+              isWalletConnectLink(url) &&
+              route &&
+              [
+                ScreenName.WalletConnectScan,
+                ScreenName.WalletConnectDeeplinkingSelectAccount,
+                ScreenName.WalletConnectConnect,
+              ].includes(route.name as ScreenName)
+            ) {
+              const uri = isWalletConnectUrl(url)
+                ? url
+                : // we know uri exists in the searchParams because we check it in isValidWalletConnectUrl
+                  new URL(url).searchParams.get("uri")!;
+              dispatch(setWallectConnectUri(uri));
+              return;
+            }
 
-          listener(getProxyURL(url));
-        });
-        // Clean up the event listeners
-        return () => {
-          sub.remove();
-        };
-      },
-      getStateFromPath: (path, config) => {
-        const url = new URL(`ledgerlive://${path}`);
-        const { hostname, pathname } = url;
-        const platform = pathname.split("/")[1];
+            listener(getProxyURL(url));
+          });
+          // Clean up the event listeners
+          return () => {
+            sub.remove();
+          };
+        },
+        getStateFromPath: (path, config) => {
+          const url = new URL(`ledgerlive://${path}`);
+          const { hostname, pathname } = url;
+          const platform = pathname.split("/")[1];
 
-        if (hostname === "discover" && platform) {
-          /**
-           * Upstream validation of "ledgerlive://discover/:platform":
-           *  - checking that a manifest exists
-           *  - adding "name" search param
-           * */
-          if (!liveAppProviderInitialized) {
+          if (hostname === "discover" && platform) {
             /**
-             * The provider isn't initialized yet so the manifest will possibly
-             * not be found.
-             * We redirect because this scenario happens when deep linking
-             * triggers a cold app start. The platform app screen will show an
-             * error in case the app isn't found.
-             */
-            return getStateFromPath(path, config);
+             * Upstream validation of "ledgerlive://discover/:platform":
+             *  - checking that a manifest exists
+             *  - adding "name" search param
+             * */
+            if (!liveAppProviderInitialized) {
+              /**
+               * The provider isn't initialized yet so the manifest will possibly
+               * not be found.
+               * We redirect because this scenario happens when deep linking
+               * triggers a cold app start. The platform app screen will show an
+               * error in case the app isn't found.
+               */
+              return getStateFromPath(path, config);
+            }
+
+            const manifest = manifests.find(
+              m => m.id.toLowerCase() === platform.toLowerCase(),
+            );
+            if (!manifest) return undefined;
+            url.pathname = `/${manifest.id}`;
+            url.searchParams.set("name", manifest.name);
+            return getStateFromPath(url.href?.split("://")[1], config);
           }
 
-          const manifest = filteredManifests.find(
-            m => m.id.toLowerCase() === platform.toLowerCase(),
-          );
-          if (!manifest) return undefined;
-          url.pathname = `/${manifest.id}`;
-          url.searchParams.set("name", manifest.name);
-          return getStateFromPath(url.href?.split("://")[1], config);
-        }
-
-        return getStateFromPath(path, config);
-      },
-    }),
+          return getStateFromPath(path, config);
+        },
+      } as LinkingOptions<ReactNavigation.RootParamList>),
     [
       hasCompletedOnboarding,
       wcContext.initDone,
       wcContext.session.session,
-      filteredManifests,
+      dispatch,
       liveAppProviderInitialized,
+      manifests,
+      userAcceptedTerms,
     ],
   );
   const [isReady, setIsReady] = React.useState(false);
+
   useEffect(() => {
     if (!wcContext.initDone) return;
+    if (userAcceptedTerms === null) return;
     setIsReady(true);
-  }, [wcContext.initDone]);
+  }, [wcContext.initDone, userAcceptedTerms]);
+
   React.useEffect(
     () => () => {
-      isReadyRef.current = false;
+      (isReadyRef as Writeable<typeof isReadyRef>).current = false;
     },
     [],
   );
@@ -549,10 +619,16 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
       dispatch(setOsTheme(currentOsTheme));
     }
   }, [dispatch, osTheme]);
+
+  useEffect(() => {
+    const loadTerms = async () => setUserAcceptedTerms(await isAcceptedTerms());
+    loadTerms();
+  }, []);
+
   useEffect(() => {
     compareOsTheme();
 
-    const osThemeChangeHandler = nextAppState =>
+    const osThemeChangeHandler = (nextAppState: string) =>
       nextAppState === "active" && compareOsTheme();
 
     const sub = AppState.addEventListener("change", osThemeChangeHandler);
@@ -577,7 +653,7 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
         linking={linking}
         ref={navigationRef}
         onReady={() => {
-          isReadyRef.current = true;
+          (isReadyRef as Writeable<typeof isReadyRef>).current = true;
           setTimeout(() => SplashScreen.hide(), 300);
           routingInstrumentation.registerNavigationContainer(navigationRef);
         }}
@@ -588,23 +664,16 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-const AUTO_UPDATE_DEFAULT_DELAY = 1800 * 1000; // 1800 seconds
-
-export default class Root extends Component<
-  {
-    importDataString?: string;
-  },
-  {
-    appState: any;
-  }
-> {
-  initTimeout: any;
+export default class Root extends Component<{
+  importDataString?: string;
+}> {
+  initTimeout: ReturnType<typeof setTimeout> | undefined;
 
   componentWillUnmount() {
     clearTimeout(this.initTimeout);
   }
 
-  componentDidCatch(e: any) {
+  componentDidCatch(e: Error) {
     logger.critical(e);
     throw e;
   }
@@ -618,7 +687,6 @@ export default class Root extends Component<
 
   render() {
     const importDataString = __DEV__ ? this.props.importDataString : "";
-    const provider = __DEV__ ? "staging" : "production";
     return (
       <RebootProvider onRebootStart={this.onRebootStart}>
         <LedgerStoreProvider onInitFinished={this.onInitFinished}>
@@ -629,70 +697,58 @@ export default class Root extends Component<
                 <HookSentry />
                 <AdjustProvider />
                 <DelayedTrackingProvider />
-                <HookAnalytics store={store} />
-                <WalletConnectProvider>
-                  <RemoteLiveAppProvider
-                    provider={provider}
-                    updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
-                  >
-                    <LocalLiveAppProvider>
-                      <GlobalCatalogProvider
-                        provider={provider}
-                        updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
-                      >
-                        <RampCatalogProvider
-                          provider={provider}
-                          updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
-                        >
-                          <FirebaseRemoteConfigProvider>
-                            <FirebaseFeatureFlagsProvider>
-                              <SafeAreaProvider>
-                                <DeepLinkingNavigator>
-                                  <StyledStatusBar />
-                                  <NavBarColorHandler />
-                                  <AuthPass>
-                                    <I18nextProvider i18n={i18n}>
-                                      <LocaleProvider>
-                                        <BridgeSyncProvider>
-                                          <CounterValuesProvider
-                                            initialState={initialCountervalues}
-                                          >
-                                            <ButtonUseTouchable.Provider
-                                              value={true}
-                                            >
-                                              <OnboardingContextProvider>
-                                                <PostOnboardingProviderWrapped>
-                                                  <ToastProvider>
-                                                    <NotificationsProvider>
-                                                      <SnackbarContainer />
-                                                      <NftMetadataProvider>
-                                                        <MarketDataProvider>
-                                                          <App
-                                                            importDataString={
-                                                              importDataString
-                                                            }
-                                                          />
-                                                        </MarketDataProvider>
-                                                      </NftMetadataProvider>
-                                                    </NotificationsProvider>
-                                                  </ToastProvider>
-                                                </PostOnboardingProviderWrapped>
-                                              </OnboardingContextProvider>
-                                            </ButtonUseTouchable.Provider>
-                                          </CounterValuesProvider>
-                                        </BridgeSyncProvider>
-                                      </LocaleProvider>
-                                    </I18nextProvider>
-                                  </AuthPass>
-                                </DeepLinkingNavigator>
-                              </SafeAreaProvider>
-                            </FirebaseFeatureFlagsProvider>
-                          </FirebaseRemoteConfigProvider>
-                        </RampCatalogProvider>
-                      </GlobalCatalogProvider>
-                    </LocalLiveAppProvider>
-                  </RemoteLiveAppProvider>
-                </WalletConnectProvider>
+                <AnalyticsProvider store={store}>
+                  <HookNotifications />
+                  <HookDynamicContentCards />
+                  <WalletConnectProvider>
+                    <PlatformAppProviderWrapper>
+                      <FirebaseRemoteConfigProvider>
+                        <FirebaseFeatureFlagsProvider>
+                          <SafeAreaProvider>
+                            <DeepLinkingNavigator>
+                              <StyledStatusBar />
+                              <NavBarColorHandler />
+                              <AuthPass>
+                                <I18nextProvider i18n={i18n}>
+                                  <LocaleProvider>
+                                    <BridgeSyncProvider>
+                                      <CounterValuesProvider
+                                        initialState={initialCountervalues}
+                                      >
+                                        <ButtonUseTouchable.Provider
+                                          value={true}
+                                        >
+                                          <OnboardingContextProvider>
+                                            <PostOnboardingProviderWrapped>
+                                              <ToastProvider>
+                                                <NotificationsProvider>
+                                                  <SnackbarContainer />
+                                                  <NftMetadataProvider>
+                                                    <MarketDataProvider>
+                                                      <App
+                                                        importDataString={
+                                                          importDataString
+                                                        }
+                                                      />
+                                                    </MarketDataProvider>
+                                                  </NftMetadataProvider>
+                                                </NotificationsProvider>
+                                              </ToastProvider>
+                                            </PostOnboardingProviderWrapped>
+                                          </OnboardingContextProvider>
+                                        </ButtonUseTouchable.Provider>
+                                      </CounterValuesProvider>
+                                    </BridgeSyncProvider>
+                                  </LocaleProvider>
+                                </I18nextProvider>
+                              </AuthPass>
+                            </DeepLinkingNavigator>
+                          </SafeAreaProvider>
+                        </FirebaseFeatureFlagsProvider>
+                      </FirebaseRemoteConfigProvider>
+                    </PlatformAppProviderWrapper>
+                  </WalletConnectProvider>
+                </AnalyticsProvider>
               </>
             ) : (
               <LoadingApp />
@@ -702,8 +758,4 @@ export default class Root extends Component<
       </RebootProvider>
     );
   }
-}
-
-if (__DEV__) {
-  require("./snoopy");
 }

@@ -2,9 +2,8 @@ import React, { useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { StyleSheet, View, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { findTokenAccountByCurrency } from "@ledgerhq/live-common/account/index";
-import { useTheme } from "@react-navigation/native";
+import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { accountsSelector } from "../../reducers/accounts";
 import CurrencyIcon from "../../components/CurrencyIcon";
 import Button from "../../components/Button";
@@ -13,16 +12,21 @@ import LText from "../../components/LText";
 import { urls } from "../../config/urls";
 import { ScreenName, NavigatorName } from "../../const";
 import { TrackScreen } from "../../analytics";
+import { AddAccountsNavigatorParamList } from "../../components/RootNavigator/types/AddAccountsNavigator";
+import {
+  StackNavigatorNavigation,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 
-type RouteParams = {
-  token: TokenCurrency;
-};
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
+type Props = CompositeScreenProps<
+  StackNavigatorProps<
+    AddAccountsNavigatorParamList,
+    ScreenName.AddAccountsTokenCurrencyDisclaimer
+  >,
+  StackNavigatorProps<BaseNavigatorStackParamList>
+>;
+
 export default function AddAccountsTokenCurrencyDisclaimer({
   navigation,
   route,
@@ -36,7 +40,9 @@ export default function AddAccountsTokenCurrencyDisclaimer({
   const accountData = findTokenAccountByCurrency(token, accounts);
   const parentTokenAccount = accountData ? accountData.parentAccount : null;
   const onClose = useCallback(() => {
-    navigation.getParent().pop();
+    navigation
+      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
+      .pop();
   }, [navigation]);
   // specific cta in case of token accounts
   const onTokenCta = useCallback(() => {
@@ -92,7 +98,11 @@ export default function AddAccountsTokenCurrencyDisclaimer({
         <View style={styles.disclaimerWrapper}>
           <Alert
             type="primary"
-            learnMoreUrl={urls.supportLinkByTokenType[token.tokenType]}
+            learnMoreUrl={
+              urls.supportLinkByTokenType[
+                token.tokenType as keyof typeof urls.supportLinkByTokenType
+              ]
+            }
             learnMoreKey={`addAccounts.tokens.${token.tokenType}.learnMore`}
           >
             <Trans

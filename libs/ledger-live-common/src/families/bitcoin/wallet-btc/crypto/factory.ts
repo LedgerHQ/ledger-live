@@ -1,11 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import coininfo from "coininfo";
 import { Currency, ICrypto } from "./types";
 import * as crypto from "./index";
 
-export default function cryptoFactory(currency: Currency) {
+export default function cryptoFactory(currency: Currency): ICrypto {
   let res: ICrypto;
   switch (currency) {
     case "bitcoin": {
@@ -81,11 +78,6 @@ export default function cryptoFactory(currency: Currency) {
     case "viacoin": {
       const network = coininfo.viacoin.main.toBitcoinJS();
       res = new crypto.ViaCoin({ network });
-      break;
-    }
-    case "stakenet": {
-      const network = coininfo.bitcoin.main.toBitcoinJS();
-      res = new crypto.Stakenet({ network });
       break;
     }
     case "stealthcoin": {
