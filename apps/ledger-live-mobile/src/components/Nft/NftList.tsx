@@ -68,13 +68,23 @@ export function NftList({ data }: Props) {
                 ? updateListSelect(item)
                 : navigateToNftViewer(item)
             }
+            onLongPress={() => {
+              multiSelectModeAction();
+              updateListSelect(item);
+            }}
             selectable={onMultiSelectMode}
             isSelected={nftsToHide.includes(item)}
           />
         )}
       </Flex>
     ),
-    [navigateToNftViewer, nftsToHide, onMultiSelectMode, updateListSelect],
+    [
+      multiSelectModeAction,
+      navigateToNftViewer,
+      nftsToHide,
+      onMultiSelectMode,
+      updateListSelect,
+    ],
   );
 
   return (
