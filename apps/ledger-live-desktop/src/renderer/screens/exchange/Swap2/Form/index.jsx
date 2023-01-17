@@ -448,7 +448,6 @@ const SwapForm = () => {
   const debouncedSetFromAmount = useMemo(
     () =>
       debounce((amount: BigNumber) => {
-        setShowDetails(false);
         swapTransaction.setFromAmount(amount);
       }, 400),
     // eslint-disable-next-line react-hooks/exhaustive-deps
