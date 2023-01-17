@@ -1,5 +1,6 @@
 import { Context, Probot } from "probot";
-import { commands, monitorWorkflow } from "./tools";
+import { monitorWorkflow } from "../tools/monitorWorkflow";
+import { commands } from "./tools";
 
 // Keep this in sync with the workflow file
 const ACTION_ID = "regen_pods";
@@ -71,11 +72,16 @@ export function regenPods(app: Probot) {
     checkRunName: "@Mobile • Regen Pods",
     description: "Regenerates iOS podlock file",
     summaryFile: "summary.json",
-    getInputs: (payload: any) => {
-      return {
-        sha: payload.workflow_run.head_sha,
-        ref: payload.workflow_run.head_branch,
-      };
+    getInputs: (payload) => {
+      return "workflow_run" in payload
+        ? {
+            ref: payload.workflow_run.head_branch,
+            login: payload.workflow_run.actor.login,
+          }
+        : {
+            ref: payload.check_run.pull_requests[0]?.head.ref,
+            login: payload.sender.login,
+          };
     },
   });
 }
