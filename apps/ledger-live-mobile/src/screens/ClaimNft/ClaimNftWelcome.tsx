@@ -23,17 +23,18 @@ const BulletItem = ({ textKey }: { textKey: string }) => {
   );
 };
 
+const videoDimensions = {
+  height: Dimensions.get("window").width,
+  width: Dimensions.get("window").width,
+};
+
 const ClaimNftWelcome = () => {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const [isFirstVideo, setIsFirstVideo] = useState(true);
-  const [displayContent, setDisplayContent] = useState(false);
   const [firstVideoReadyForDisplay, setFirstVideoReadyForDisplay] =
     useState(false);
-  const [videoDimensions, setVideoDimensions] = useState<{
-    width: number;
-    height: number;
-  } | null>(null);
+
   const theme = useTheme();
   const completePostOnboardingAction = useCompleteActionCallback();
 
@@ -50,21 +51,8 @@ const ClaimNftWelcome = () => {
     navigation.getParent()?.goBack();
   }, [completePostOnboardingAction, navigation]);
 
-  const handleFirstVideoLoaded = useCallback(payload => {
-    const { naturalSize } = payload;
-    const { height, width } = naturalSize;
-    if (!width) return;
-    const heightWidthRatio = (height ?? 0) / width;
-    const windowWidth = Dimensions.get("window").width;
-    setVideoDimensions({
-      width: windowWidth,
-      height: heightWidthRatio * windowWidth,
-    });
-  }, []);
-
   const handleFirstVideoReadyForDisplay = useCallback(() => {
     setFirstVideoReadyForDisplay(true);
-    setTimeout(() => setDisplayContent(true), 1800);
   }, []);
 
   const handleEndVideo = useCallback(() => {
@@ -114,16 +102,15 @@ const ClaimNftWelcome = () => {
                 : videoSources.infinityPassPart01Light
             }
             onEnd={handleEndVideo}
-            onLoad={handleFirstVideoLoaded}
             onReadyForDisplay={handleFirstVideoReadyForDisplay}
             muted
             resizeMode={"contain"}
           />
         ) : null}
       </Flex>
-      {displayContent ? (
+      {firstVideoReadyForDisplay ? (
         <AnimatedFlex flex={2} px={6} justifyContent="space-evenly">
-          <AnimatedFlex entering={SlideInLeft}>
+          <AnimatedFlex entering={SlideInLeft.delay(1800)}>
             <Text
               variant="h4"
               fontWeight="semiBold"
@@ -141,7 +128,7 @@ const ClaimNftWelcome = () => {
             <BulletItem textKey={"claimNft.welcomePage.description.2"} />
             <BulletItem textKey={"claimNft.welcomePage.description.3"} />
           </AnimatedFlex>
-          <AnimatedFlex entering={SlideInDown}>
+          <AnimatedFlex entering={SlideInDown.delay(1800)}>
             <Flex flexDirection="column" justifyContent="flex-end">
               <Button mb={8} type="main" onPress={handleGoToQrScan}>
                 {t("claimNft.welcomePage.claimButton")}
