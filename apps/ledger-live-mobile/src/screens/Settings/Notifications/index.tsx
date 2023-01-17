@@ -188,18 +188,29 @@ function NotificationsSettings() {
                 : 0.2
             }
           >
-            {!notificationsCategoriesHidden || !notificationsCategoriesHidden.includes("announcementsCategory") ? (<NotificationSettingsRow
-              notificationKey={"announcementsCategory"}
-              disabled={disableSubSettings}
-            />) : null}
-            {!notificationsCategoriesHidden || !notificationsCategoriesHidden.includes("recommendationsCategory") ? (<NotificationSettingsRow
-              notificationKey={"recommendationsCategory"}
-              disabled={disableSubSettings}
-            />) : null}
-            {!notificationsCategoriesHidden || !notificationsCategoriesHidden.includes("largeMoverCategory") ? (<NotificationSettingsRow
-              notificationKey={"largeMoverCategory"}
-              disabled={disableSubSettings}
-            />) : null}
+            {!notificationsCategoriesHidden ||
+            !notificationsCategoriesHidden.includes("announcementsCategory") ? (
+              <NotificationSettingsRow
+                notificationKey={"announcementsCategory"}
+                disabled={disableSubSettings}
+              />
+            ) : null}
+            {!notificationsCategoriesHidden ||
+            !notificationsCategoriesHidden.includes(
+              "recommendationsCategory",
+            ) ? (
+              <NotificationSettingsRow
+                notificationKey={"recommendationsCategory"}
+                disabled={disableSubSettings}
+              />
+            ) : null}
+            {!notificationsCategoriesHidden ||
+            !notificationsCategoriesHidden.includes("largeMoverCategory") ? (
+              <NotificationSettingsRow
+                notificationKey={"largeMoverCategory"}
+                disabled={disableSubSettings}
+              />
+            ) : null}
           </Box>
           <Box m={6}>
             <Text

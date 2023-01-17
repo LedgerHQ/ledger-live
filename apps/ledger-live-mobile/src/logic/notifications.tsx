@@ -89,8 +89,14 @@ const useNotifications = () => {
 
   const notificationsCategoriesHidden =
     pushNotificationsFeature?.params?.notificationsCategories
-      ?.filter((notificationsCategory: NotificationCategory) => !notificationsCategory?.displayed)
-      .map((notificationsCategory: NotificationCategory) => notificationsCategory?.category || "");
+      ?.filter(
+        (notificationsCategory: NotificationCategory) =>
+          !notificationsCategory?.displayed,
+      )
+      .map(
+        (notificationsCategory: NotificationCategory) =>
+          notificationsCategory?.category || "",
+      );
   const isPushNotificationsModalOpen = useSelector(
     notificationsModalOpenSelector,
   );
