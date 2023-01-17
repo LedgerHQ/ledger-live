@@ -1,5 +1,5 @@
 // @flow
-import React, { useState, useCallback, useMemo, useEffect, useRef } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import type { TFunction } from "react-i18next";
 
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
@@ -22,7 +22,6 @@ import {
 
 import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";
 import { LEDGER_POOL_ADDRESSES } from "@ledgerhq/live-common/families/cardano/utils";
-import async from "react-select/async";
 
 type Props = {
   t: TFunction,

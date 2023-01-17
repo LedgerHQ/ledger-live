@@ -40,8 +40,8 @@ function StepConfirmation({
         <TrackPage category="Delegation Cardano" name="Step Confirmed" />
         <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
         <SuccessDisplay
-          title={<Trans i18nKey="cardano.delegation.flow.steps.confirmation.success.title" />}
-          description={multiline(t("cardano.delegation.flow.steps.confirmation.success.text"))}
+          title={<Trans i18nKey="cardano.unDelegation.flow.steps.confirmation.success.title" />}
+          description={multiline(t("cardano.unDelegation.flow.steps.confirmation.success.text"))}
         />
       </Container>
     );
@@ -53,7 +53,7 @@ function StepConfirmation({
         <TrackPage category="Delegation Cardano" name="Step Confirmation Error" />
         {signed ? (
           <BroadcastErrorDisclaimer
-            title={<Trans i18nKey="cardano.delegation.flow.steps.confirmation.broadcastError" />}
+            title={<Trans i18nKey="cardano.unDelegation.flow.steps.confirmation.broadcastError" />}
           />
         ) : null}
         <ErrorDisplay error={error} withExportLogs />

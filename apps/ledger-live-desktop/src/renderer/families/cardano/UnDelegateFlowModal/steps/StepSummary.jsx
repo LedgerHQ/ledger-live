@@ -4,19 +4,19 @@ import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import {
-  getAccountCurrency,
   getAccountUnit,
   getMainAccount,
+  getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
-import Ellipsis from "~/renderer/components/Ellipsis";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Text from "~/renderer/components/Text";
 import CounterValue from "~/renderer/components/CounterValue";
+import ErrorBanner from "~/renderer/components/ErrorBanner";
+
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import type { StepProps } from "../types";
-import CardanoLedgerPoolIcon from "../LedgerPoolIcon";
 
 const FromToWrapper: ThemedComponent<{}> = styled.div``;
 
@@ -29,84 +29,51 @@ const Separator: ThemedComponent<{}> = styled.div`
 
 export default class StepSummary extends PureComponent<StepProps> {
   render() {
-    const { account, parentAccount, transaction, status, selectedPool } = this.props;
+    const { account, parentAccount, transaction, status, error } = this.props;
+    const { estimatedFees } = status;
+
     if (!account) return null;
     const mainAccount = getMainAccount(account, parentAccount);
     if (!transaction) return null;
-    const { estimatedFees } = status;
-    const feesUnit = getAccountUnit(mainAccount);
+    const accountUnit = getAccountUnit(mainAccount);
     const feesCurrency = getAccountCurrency(mainAccount);
 
-    const showDeposit = !account.cardanoResources?.delegation?.status;
     const stakeKeyDeposit = account.cardanoResources?.protocolParams.stakeKeyDeposit;
 
     return (
       <Box flow={4} mx={40}>
+        {error && <ErrorBanner error={error} />}
+
         <FromToWrapper>
           <Box>
             <Box horizontal alignItems="center">
               <Box flex={1}>
-                <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
-                  <Trans i18nKey="cardano.delegation.delegatingTo" />
+                <Text ff="Inter" color="palette.text.shade100" fontSize={4} ml={2}>
+                  <Trans i18nKey="cardano.unDelegation.message" />
                 </Text>
-                <Ellipsis mt={2}>
-                  <Box horizontal alignItems="center">
-                    <CardanoLedgerPoolIcon validator={selectedPool} />
-                    <Text ff="Inter" color="palette.text.shade100" fontSize={4} ml={2}>
-                      {`${selectedPool.name} [${selectedPool.ticker}]`}
-                    </Text>
-                  </Box>
-                </Ellipsis>
               </Box>
             </Box>
           </Box>
+          <Separator />
+
           <Box horizontal justifyContent="space-between" mt={1}>
             <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
-              <Trans i18nKey="cardano.delegation.cost" />
+              <Trans i18nKey="cardano.unDelegation.refund" />
             </Text>
             <Box>
               <FormattedVal
                 color={"palette.text.shade80"}
                 disableRounding
-                unit={feesUnit}
+                unit={accountUnit}
                 alwaysShowValue
-                val={selectedPool.cost}
+                val={stakeKeyDeposit}
                 fontSize={4}
                 inline
                 showCode
               />
             </Box>
           </Box>
-          <Box horizontal justifyContent="space-between" mt={1}>
-            <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
-              <Trans i18nKey="cardano.delegation.commission" />
-            </Text>
-            <Box>
-              <Text ff="Inter|Medium" color="palette.text.shade80" fontSize={4}>
-                {selectedPool.margin} %
-              </Text>
-            </Box>
-          </Box>
           <Separator />
-          {showDeposit ? (
-            <Box horizontal justifyContent="space-between">
-              <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
-                <Trans i18nKey="cardano.delegation.stakeKeyRegistrationDeposit" />
-              </Text>
-              <Box>
-                <FormattedVal
-                  color={"palette.text.shade80"}
-                  disableRounding
-                  unit={feesUnit}
-                  alwaysShowValue
-                  val={stakeKeyDeposit}
-                  fontSize={4}
-                  inline
-                  showCode
-                />
-              </Box>
-            </Box>
-          ) : null}
           <Box horizontal justifyContent="space-between">
             <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
               <Trans i18nKey="send.steps.details.fees" />
@@ -115,7 +82,7 @@ export default class StepSummary extends PureComponent<StepProps> {
               <FormattedVal
                 color={"palette.text.shade80"}
                 disableRounding
-                unit={feesUnit}
+                unit={accountUnit}
                 alwaysShowValue
                 val={estimatedFees}
                 fontSize={4}
@@ -149,14 +116,12 @@ export function StepSummaryFooter({
   bridgePending,
   transaction,
 }: StepProps) {
-  const canNext = true;
+  const { errors } = status;
+  const canNext = !bridgePending && !errors.validators && transaction;
 
   return (
     <>
       <Box horizontal>
-        <Button mr={1} secondary onClick={() => transitionTo("validator")}>
-          <Trans i18nKey="common.back" />
-        </Button>
         <Button
           id="delegate-continue-button"
           disabled={!canNext}

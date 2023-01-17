@@ -2282,6 +2282,30 @@
           }
         }
       }
+    },
+    "unDelegation": {
+      "message": "By un-delegating you will not receive any rewards for current and upcoming epochs",
+      "refund": "Stake Registration Deposit Refund",
+      "flow": {
+        "title": "Undelegate",
+        "steps": {
+          "summary": {
+            "title": "Summary"
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully un delegated",
+              "text": "Your account balance will be updated when the blockchain confirms the transaction.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
     }
   },
   "tron": {
