@@ -3101,6 +3101,16 @@ importers:
       '@actions/github': 5.1.1
       tsup: 6.5.0
 
+  tools/actions/pr-is-fork:
+    specifiers:
+      '@actions/core': ^1.10.0
+      '@actions/github': ^5.1.1
+      '@vercel/ncc': ^0.33.4
+    dependencies:
+      '@actions/core': 1.10.0
+      '@actions/github': 5.1.1
+      '@vercel/ncc': 0.33.4
+
   tools/actions/prepare-comment:
     specifiers:
       '@actions/core': ^1.10.0
