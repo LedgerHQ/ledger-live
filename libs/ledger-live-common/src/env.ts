@@ -63,12 +63,12 @@ const envDefinitions = {
     desc: "Node API endpoint for algorand",
   },
   API_AVALANCHE_INDEXER: {
-    def: "https://avax.coin.ledger.com/indexer",
+    def: "https://avax-indexer.coin.ledger.com",
     parser: stringParser,
     desc: "Explorer API for avalanche",
   },
   API_AVALANCHE_NODE: {
-    def: "https://avax.coin.ledger.com/node",
+    def: "avax-node.coin.ledger.com",
     parser: stringParser,
     desc: "Node endpoint for avalanche",
   },

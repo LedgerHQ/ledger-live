@@ -7,9 +7,7 @@ export const avalancheClient = () => {
   if (!avalanche) {
     const node = `${getEnv("API_AVALANCHE_NODE")}`;
 
-    const url = new URL(node);
-    avalanche = new Avalanche(url.hostname, Number(url.port));
-    avalanche.setNetworkID(1);
+    avalanche = new Avalanche(node, 443, "https", 1);
   }
 
   return avalanche;
