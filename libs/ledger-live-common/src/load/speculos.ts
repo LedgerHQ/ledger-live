@@ -86,15 +86,8 @@ export async function createSpeculosDevice(
   id: string;
   appPath: string;
 }> {
-  const {
-    model,
-    firmware,
-    appName,
-    appVersion,
-    seed,
-    coinapps,
-    dependency,
-  } = arg;
+  const { model, firmware, appName, appVersion, seed, coinapps, dependency } =
+    arg;
   const speculosID = `speculosID-${++idCounter}`;
   const apduPort = 30000 + idCounter;
   const vncPort = 35000 + idCounter;
@@ -384,9 +377,7 @@ export const findAppCandidate = (
   return app;
 };
 
-function eatDevice(
-  parts: string[]
-): {
+function eatDevice(parts: string[]): {
   model?: DeviceModelId;
   firmware?: string;
 } {
@@ -413,9 +404,7 @@ function eatDevice(
   return {};
 }
 
-function parseAppSearch(
-  query: string
-):
+function parseAppSearch(query: string):
   | {
       search: AppSearch;
       appName: string;
@@ -448,9 +437,7 @@ function parseAppSearch(
   };
 }
 
-export async function createImplicitSpeculos(
-  query: string
-): Promise<{
+export async function createImplicitSpeculos(query: string): Promise<{
   device: {
     transport: SpeculosTransport;
     id: string;

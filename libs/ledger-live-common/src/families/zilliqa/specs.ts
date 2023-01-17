@@ -52,7 +52,11 @@ const zilliqa: AppSpec<Transaction> = {
           ],
         };
       },
-      test: ({ account, transaction, accountBeforeTransaction, operation }) => {
+      test: ({
+        account,
+        /*transaction,*/ accountBeforeTransaction,
+        operation,
+      }) => {
         botTest("account balance moved with operation.value", () =>
           expect(account.balance.toString()).toBe(
             accountBeforeTransaction.balance.minus(operation.value).toString()
