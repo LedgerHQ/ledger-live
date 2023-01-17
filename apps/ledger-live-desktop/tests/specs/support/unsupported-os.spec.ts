@@ -15,6 +15,10 @@ test("Unsupported OS", async ({ page }) => {
   await test.step("displays the error page", async () => {
     await layout.renderError.waitFor({ state: "visible" });
     await expect(layout.renderError).toBeVisible();
-    await expect(await layout.page.screenshot()).toMatchSnapshot("error-os-unsupported.png");
+    await expect(
+      await layout.page.screenshot({
+        mask: [page.locator("[data-test-id='stacktrace']")],
+      }),
+    ).toMatchSnapshot("error-os-unsupported.png");
   });
 });

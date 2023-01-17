@@ -110,7 +110,7 @@ export default function RenderError({ error, withoutAppData, children }: Props) 
           />
         </Unsafe>
       </Box>
-      <Box my={6} color="palette.text.shade80">
+      <Box data-test-id="stacktrace" my={6} color="palette.text.shade80">
         <ErrContainer>{printError(error)}</ErrContainer>
       </Box>
       <VersionContainer>{`Ledger Live ${__APP_VERSION__}`}</VersionContainer>
