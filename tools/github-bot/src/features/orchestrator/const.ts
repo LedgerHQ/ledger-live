@@ -24,7 +24,7 @@ export const WORKFLOWS = {
         ? {
             login: payload.workflow_run.actor.login,
             sha: payload.workflow_run.head_sha,
-            ref: payload.workflow_run.head_branch,
+            ref: payload.workflow_run.pull_requests[0]?.head.ref,
           }
         : {
             login: payload.sender.login,
@@ -45,7 +45,7 @@ export const WORKFLOWS = {
         ? {
             login: payload.workflow_run.actor.login,
             sha: payload.workflow_run.head_sha,
-            ref: payload.workflow_run.head_branch,
+            ref: payload.workflow_run.pull_requests[0]?.head.ref,
           }
         : {
             login: payload.sender.login,
@@ -66,7 +66,7 @@ export const WORKFLOWS = {
         ? {
             login: payload.workflow_run.actor.login,
             sha: payload.workflow_run.head_sha,
-            ref: payload.workflow_run.head_branch,
+            ref: payload.workflow_run.pull_requests[0]?.head.ref,
           }
         : {
             login: payload.sender.login,
@@ -87,7 +87,7 @@ export const WORKFLOWS = {
         ? {
             login: payload.workflow_run.actor.login,
             sha: payload.workflow_run.head_sha,
-            ref: payload.workflow_run.head_branch,
+            ref: payload.workflow_run.pull_requests[0]?.head.ref,
           }
         : {
             login: payload.sender.login,
@@ -108,7 +108,7 @@ export const WORKFLOWS = {
         ? {
             login: payload.workflow_run.actor.login,
             sha: payload.workflow_run.head_sha,
-            ref: payload.workflow_run.head_branch,
+            ref: payload.workflow_run.pull_requests[0]?.head.ref,
           }
         : {
             login: payload.sender.login,
@@ -129,7 +129,7 @@ export const WORKFLOWS = {
         ? {
             login: payload.workflow_run.actor.login,
             sha: payload.workflow_run.head_sha,
-            ref: payload.workflow_run.head_branch,
+            ref: payload.workflow_run.pull_requests[0]?.head.ref,
           }
         : {
             login: payload.sender.login,
@@ -150,7 +150,7 @@ export const WORKFLOWS = {
         ? {
             login: payload.workflow_run.actor.login,
             sha: payload.workflow_run.head_sha,
-            ref: payload.workflow_run.head_branch,
+            ref: payload.workflow_run.pull_requests[0]?.head.ref,
           }
         : {
             login: payload.sender.login,
@@ -208,8 +208,8 @@ export const WORKFLOWS = {
       return "workflow_run" in payload
         ? {
             login: payload.workflow_run.actor.login,
-            sha: payload.workflow_run.head_sha,
-            ref: payload.workflow_run.head_branch,
+            sha: payload.workflow_run.pull_requests[0]?.head.sha,
+            ref: payload.workflow_run.pull_requests[0]?.head.ref,
             since_branch:
               payload.workflow_run.pull_requests[0]?.base.ref || "develop",
           }

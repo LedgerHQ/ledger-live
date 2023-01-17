@@ -75,7 +75,7 @@ export function regenPods(app: Probot) {
     getInputs: (payload) => {
       return "workflow_run" in payload
         ? {
-            ref: payload.workflow_run.head_branch,
+            ref: payload.workflow_run.pull_requests[0]?.head.ref,
             login: payload.workflow_run.actor.login,
           }
         : {

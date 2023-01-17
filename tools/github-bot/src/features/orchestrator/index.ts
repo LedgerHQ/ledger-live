@@ -23,7 +23,10 @@ export function orchestrator(app: Probot) {
     const { payload, octokit } = context;
 
     /* ⚠️ TEMP */
-    if (payload.workflow_run.head_branch !== "support/granular-ci") return;
+    if (
+      payload.workflow_run.pull_requests[0]?.head.ref !== "support/granular-ci"
+    )
+      return;
     /* ⚠️ /TEMP */
 
     const { owner, repo } = context.repo();
@@ -73,7 +76,10 @@ export function orchestrator(app: Probot) {
     if (context.payload.action !== "in_progress") return;
 
     /* ⚠️ TEMP */
-    if (payload.workflow_run.head_branch !== "support/granular-ci") return;
+    if (
+      payload.workflow_run.pull_requests[0]?.head.ref !== "support/granular-ci"
+    )
+      return;
     /* ⚠️ /TEMP */
 
     const { owner, repo } = context.repo();
@@ -120,7 +126,10 @@ export function orchestrator(app: Probot) {
     const { payload, octokit } = context;
 
     /* ⚠️ TEMP */
-    if (payload.workflow_run.head_branch !== "support/granular-ci") return;
+    if (
+      payload.workflow_run.pull_requests[0]?.head.ref !== "support/granular-ci"
+    )
+      return;
     /* ⚠️ /TEMP */
 
     const { owner, repo } = context.repo();
@@ -178,7 +187,7 @@ export function orchestrator(app: Probot) {
             owner,
             repo,
             workflow_id: fileName,
-            ref: payload.workflow_run.head_branch,
+            ref: payload.workflow_run.pull_requests[0]?.head.ref,
             inputs: workflow.getInputs(payload),
           });
         }
