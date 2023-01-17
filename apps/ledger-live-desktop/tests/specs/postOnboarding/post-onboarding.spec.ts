@@ -5,7 +5,11 @@ import { SettingsPage } from "../../models/SettingsPage";
 import { Layout } from "../../models/Layout";
 import { PostOnboarding } from "../../models/PostOnboarding";
 
-test.use({ userdata: "skip-onboarding", env: { DEBUG_POSTONBOARDINGHUB: 1 } });
+test.use({
+  userdata: "skip-onboarding",
+  env: { DEBUG_POSTONBOARDINGHUB: 1 },
+  featureFlags: { customImage: { enabled: true } },
+});
 
 test("PostOnboarding", async ({ page }) => {
   const settingsPage = new SettingsPage(page);
