@@ -38,13 +38,12 @@ ipcMain.on("updater", (e, type) => {
   updater(type);
 });
 
-ipcMain.handle("save-logs", async (event, path: { canceled: boolean, filePath: string }) =>
-  Promise.resolve().then(
-    () =>
-      !path.canceled &&
-      path.filePath &&
-      fsWriteFile(path.filePath, JSON.stringify(loggerTransport.logs)),
-  ),
+ipcMain.handle(
+  "save-logs",
+  async (event, path: { canceled: boolean, filePath: string }, experimentalLogs: string | null) =>
+    !path.canceled &&
+    path.filePath &&
+    fsWriteFile(path.filePath, experimentalLogs || JSON.stringify(loggerTransport.getMemoryLogs())),
 );
 
 ipcMain.handle(

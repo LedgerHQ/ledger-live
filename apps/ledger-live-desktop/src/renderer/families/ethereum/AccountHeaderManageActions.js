@@ -22,7 +22,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
     );
   }, [dispatch, account]);
 
-  if (account.type === "Account") {
+  if (account.type === "Account" && account.currency.id === "ethereum") {
     return [
       {
         key: "Stake",

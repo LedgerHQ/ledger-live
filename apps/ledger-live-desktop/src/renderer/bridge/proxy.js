@@ -23,6 +23,7 @@ import { patchAccount } from "@ledgerhq/live-common/reconciliation";
 import { fromScanAccountEventRaw } from "@ledgerhq/live-common/bridge/index";
 import * as bridgeImpl from "@ledgerhq/live-common/bridge/impl";
 import { command } from "~/renderer/commands";
+import { getEnv } from "@ledgerhq/live-common/env";
 
 const scanAccounts = ({ currency, deviceId, syncConfig }) =>
   command("CurrencyScanAccounts")({
@@ -33,6 +34,7 @@ const scanAccounts = ({ currency, deviceId, syncConfig }) =>
 
 export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   const bridge = bridgeImpl.getCurrencyBridge(currency);
+  if (getEnv("EXPERIMENTAL_EXECUTION_ON_RENDERER")) return bridge;
   const bridgeGetPreloadStrategy = bridge.getPreloadStrategy;
   const getPreloadStrategy = bridgeGetPreloadStrategy
     ? currency => bridgeGetPreloadStrategy.call(bridge, currency)
@@ -64,6 +66,10 @@ export const getAccountBridge = (
   account: AccountLike,
   parentAccount: ?Account,
 ): AccountBridge<any> => {
+  if (getEnv("EXPERIMENTAL_EXECUTION_ON_RENDERER")) {
+    return bridgeImpl.getAccountBridge(account, parentAccount);
+  }
+
   const sync = (account, syncConfig) => {
     syncs[account.id] = true;
     const span = startSpan("sync", "toAccountRaw");

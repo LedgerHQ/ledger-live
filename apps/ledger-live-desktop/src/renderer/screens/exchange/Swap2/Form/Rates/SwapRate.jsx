@@ -63,6 +63,7 @@ function SwapRate({ value = {}, selected, onSelect, fromCurrency, toCurrency }: 
               rate={value.magnitudeAwareRate}
               fontWeight="600"
               color="palette.text.shade100"
+              staticSignificantDigits={7}
             />
           </Box>
           <SecondaryText fontSize={3}>
@@ -85,6 +86,7 @@ function SwapRate({ value = {}, selected, onSelect, fromCurrency, toCurrency }: 
             showCode={true}
             color="palette.text.shade100"
             fontWeight="600"
+            staticSignificantDigits={7}
           />
           <StyledCounterValue
             fontSize={3}
