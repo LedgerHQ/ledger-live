@@ -24,7 +24,7 @@ const usePageState = (swapTransaction, swapError): PageState => {
       setPageState("initial");
     } else if ((pageState === "initial" || pageState === "empty") && isDataLoading) {
       setPageState("loading");
-    } else if (swapError && swapError?.message.length === 0) {
+    } else if (swapError && swapError?.message.length === 0 && !isDataLoading) {
       setPageState("empty");
     } else if (fromFieldIsZero && !isDataLoading) {
       setPageState("initial");
