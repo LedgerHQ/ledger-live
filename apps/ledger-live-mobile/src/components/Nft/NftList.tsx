@@ -37,14 +37,14 @@ const keyExtractor = (item: ProtoNFT) => item.id;
 export function NftList({ data }: Props) {
   const dataWithAdd = data.concat(ADD_NEW);
   const {
-    triggerMultiSelectHideAction,
-    navigateToNftViewer,
-    nftsToHide,
-    onClickHide,
-    isMainNavigatorVisible,
     t,
-    cancelAction,
+    multiSelectModeAction,
+    navigateToNftViewer,
+    onClickHide,
+    readOnlyModeAction,
     updateListSelect,
+    nftsToHide,
+    onMultiSelectMode,
   } = useNftList();
 
   const renderItem = useCallback(
@@ -64,24 +64,24 @@ export function NftList({ data }: Props) {
           <NftListItem
             nft={item}
             onPress={() =>
-              isMainNavigatorVisible
-                ? navigateToNftViewer(item)
-                : updateListSelect(item)
+              onMultiSelectMode
+                ? updateListSelect(item)
+                : navigateToNftViewer(item)
             }
-            selectable={!isMainNavigatorVisible}
+            selectable={onMultiSelectMode}
             isSelected={nftsToHide.includes(item)}
           />
         )}
       </Flex>
     ),
-    [isMainNavigatorVisible, navigateToNftViewer, nftsToHide, updateListSelect],
+    [navigateToNftViewer, nftsToHide, onMultiSelectMode, updateListSelect],
   );
 
   return (
     <>
       <TrackScreen category="NFT Gallery" NFTs_owned={data.length} />
 
-      {!isMainNavigatorVisible && (
+      {onMultiSelectMode && (
         <StyledContainer
           width="100%"
           flexDirection="row"
@@ -89,7 +89,7 @@ export function NftList({ data }: Props) {
           justifyContent="flex-start"
         >
           <Button
-            onPress={triggerMultiSelectHideAction}
+            onPress={readOnlyModeAction}
             type="main"
             iconName="Close"
             iconPosition="left"
@@ -104,7 +104,7 @@ export function NftList({ data }: Props) {
         numColumns={2}
         ListHeaderComponent={
           <>
-            {isMainNavigatorVisible && (
+            {!onMultiSelectMode && (
               <Flex
                 width="100%"
                 flexDirection="row"
@@ -112,7 +112,7 @@ export function NftList({ data }: Props) {
                 justifyContent="flex-start"
               >
                 <StyledButton
-                  onPress={cancelAction}
+                  onPress={multiSelectModeAction}
                   type="default"
                   iconName="Tasks"
                   iconPosition="left"
@@ -134,7 +134,7 @@ export function NftList({ data }: Props) {
         testID={"wallet-nft-gallery-list"}
       />
 
-      {nftsToHide.length > 0 && (
+      {nftsToHide.length > 0 && onMultiSelectMode && (
         <RoundedContainer width="100%">
           <StyledButton
             onPress={onClickHide}
