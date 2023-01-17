@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.14.0-nightly.1
+
+### Minor Changes
+
+- [`d26fbee27a`](https://github.com/LedgerHQ/ledger-live/commit/d26fbee27aacd05e2cc5ee0ba3c49492a72f5659) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add a restore from previous device option when installing apps during the sync onboarding
+
+### Patch Changes
+
+- [#2268](https://github.com/LedgerHQ/ledger-live/pull/2268) [`0c479704f5`](https://github.com/LedgerHQ/ledger-live/commit/0c479704f5bcd1a00b4bf5370da32d92f4165e87) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-api): use the newDeviceSelectionFeature on mobile
+
+- Updated dependencies [[`befe0e224a`](https://github.com/LedgerHQ/ledger-live/commit/befe0e224a93fbc3598f4d03b769b9d9e1af721e), [`d26fbee27a`](https://github.com/LedgerHQ/ledger-live/commit/d26fbee27aacd05e2cc5ee0ba3c49492a72f5659), [`7af03d772a`](https://github.com/LedgerHQ/ledger-live/commit/7af03d772a16822024e456224951c48c5e09e45d)]:
+  - @ledgerhq/live-common@27.12.0-nightly.1
+
 ## 3.13.1-nightly.0
 
 ### Patch Changes

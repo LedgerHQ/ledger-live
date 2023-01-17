@@ -1,5 +1,19 @@
 # @ledgerhq/live-common
 
+## 27.12.0-nightly.1
+
+### Minor Changes
+
+- [`7af03d772a`](https://github.com/LedgerHQ/ledger-live/commit/7af03d772a16822024e456224951c48c5e09e45d) Thanks [@sarneijim](https://github.com/sarneijim)! - Add static limit to format value
+
+### Patch Changes
+
+- [`befe0e224a`](https://github.com/LedgerHQ/ledger-live/commit/befe0e224a93fbc3598f4d03b769b9d9e1af721e) Thanks [@sarneijim](https://github.com/sarneijim)! - Add deeplink to dex quotes
+
+* [`d26fbee27a`](https://github.com/LedgerHQ/ledger-live/commit/d26fbee27aacd05e2cc5ee0ba3c49492a72f5659) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - feat: enable skipping any app install if not found
+
+  Added in streamAppInstall: param skipAppInstallIfNotFound, set by default to false.
+
 ## 27.11.1-nightly.0
 
 ### Patch Changes

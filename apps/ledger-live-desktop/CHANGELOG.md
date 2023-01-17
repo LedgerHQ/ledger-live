@@ -1,5 +1,22 @@
 # ledger-live-desktop
 
+## 3.0.0-nightly.12
+
+### Major Changes
+
+- [#2305](https://github.com/LedgerHQ/ledger-live/pull/2305) [`74285a2c2b`](https://github.com/LedgerHQ/ledger-live/commit/74285a2c2b5166df58d547a72ca3fa66d2cec256) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - remove optionnal trongrid on experimental menu
+
+### Patch Changes
+
+- [#2322](https://github.com/LedgerHQ/ledger-live/pull/2322) [`6afa633c2d`](https://github.com/LedgerHQ/ledger-live/commit/6afa633c2ddfa1a602e585351006f07e35ce4637) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Aligns 1inch logo with others when showing swap rates on LLD
+
+* [`7af03d772a`](https://github.com/LedgerHQ/ledger-live/commit/7af03d772a16822024e456224951c48c5e09e45d) Thanks [@sarneijim](https://github.com/sarneijim)! - Add static limit to format value in swap rates
+
+- [`befe0e224a`](https://github.com/LedgerHQ/ledger-live/commit/befe0e224a93fbc3598f4d03b769b9d9e1af721e) Thanks [@sarneijim](https://github.com/sarneijim)! - Add deeplink to dex quotes
+
+- Updated dependencies [[`befe0e224a`](https://github.com/LedgerHQ/ledger-live/commit/befe0e224a93fbc3598f4d03b769b9d9e1af721e), [`d26fbee27a`](https://github.com/LedgerHQ/ledger-live/commit/d26fbee27aacd05e2cc5ee0ba3c49492a72f5659), [`7af03d772a`](https://github.com/LedgerHQ/ledger-live/commit/7af03d772a16822024e456224951c48c5e09e45d)]:
+  - @ledgerhq/live-common@27.12.0-nightly.1
+
 ## 2.52.0-nightly.11
 
 ### Patch Changes
