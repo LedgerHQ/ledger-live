@@ -32,6 +32,8 @@ type Props = {
   fontWeight?: number,
   iconSize?: number,
   placeholder?: React$Node,
+  dynamicSignificantDigits?: number,
+  staticSignificantDigits?: number,
 };
 
 export default function Price({
@@ -50,6 +52,8 @@ export default function Price({
   showAllDigits,
   withIcon = true,
   rate,
+  dynamicSignificantDigits,
+  staticSignificantDigits,
 }: Props) {
   const effectiveUnit = unit || from.units[0];
   const valueNum = 10 ** effectiveUnit.magnitude;
@@ -102,6 +106,8 @@ export default function Price({
         value={counterValue}
         disableRounding={!!subMagnitude}
         subMagnitude={subMagnitude}
+        dynamicSignificantDigits={dynamicSignificantDigits}
+        staticSignificantDigits={staticSignificantDigits}
         showCode
       />
     </PriceWrapper>
