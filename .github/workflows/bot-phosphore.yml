@@ -10,7 +10,6 @@ on:
     branches:
       - support/bot-phosphore
       - support/bot-phosphore-*
-      - feat/LIVE-2572-POC-modularisation-coin-families
 
 concurrency:
   group: bot-seed6
