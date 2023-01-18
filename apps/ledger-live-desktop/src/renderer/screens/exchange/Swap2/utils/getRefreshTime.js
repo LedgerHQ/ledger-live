@@ -14,7 +14,7 @@ export const getRefreshTime = (rates: ExchangeRate[] | undefined) => {
 
   if (minimumExpirationTime) {
     const timeMs = minimumExpirationTime - Date.now();
-    return timeMs > 0 ? timeMs : 0;
+    return Math.min(timeMs, defaultRefreshTime);
   } else {
     return defaultRefreshTime;
   }

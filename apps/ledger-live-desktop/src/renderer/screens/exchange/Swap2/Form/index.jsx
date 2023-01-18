@@ -68,7 +68,6 @@ const Hide = styled.div`
   opacity: 0;
 `;
 
-const refreshTime = 30000;
 const idleTime = 60 * 60000; // 1 hour
 
 const Button = styled(ButtonBase)`
