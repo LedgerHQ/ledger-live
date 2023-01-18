@@ -56,6 +56,7 @@ class LocationHelperModule(private val reactContext: ReactApplicationContext) :
                         locationPromise?.resolve(ERROR_USER_DENIED_LOCATION);
                     }
                 }
+                locationPromise = null;
                 return
             }
             super.onActivityResult(activity, requestCode, resultCode, data)
@@ -63,7 +64,7 @@ class LocationHelperModule(private val reactContext: ReactApplicationContext) :
     }
 
     // Handler to listen to location services updates (turned on/off)
-    private val locationCallback = object : LocationCallback() {
+    private val locationServicesUpdateCallback = object : LocationCallback() {
         override fun onLocationAvailability(p0: LocationAvailability) {
             val isLocationAvailable = p0.isLocationAvailable
 
@@ -89,7 +90,7 @@ class LocationHelperModule(private val reactContext: ReactApplicationContext) :
         // With this setting, the location services are more likely to use GPS to determine the location.
         // The given permissions will also influence the level of precision.
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        // Sets the rate in milliseconds at which your app prefers to receive location updates
+        // Sets the rate in milliseconds at which our app prefers to receive location updates
         locationRequest.interval = 10000
 
         // The fused location provider manages the different location services (GPS and Wi-Fi).
@@ -127,6 +128,7 @@ class LocationHelperModule(private val reactContext: ReactApplicationContext) :
             val locationServiceState = locationSettingsResponse.locationSettingsStates;
             Log.d("LocationHelperModule", "Location service already enabled: $locationServiceState")
             locationPromise?.resolve(SUCCESS_LOCATION_ALREADY_ENABLED);
+            locationPromise = null;
         }
 
         task.addOnFailureListener { exception ->
@@ -140,6 +142,7 @@ class LocationHelperModule(private val reactContext: ReactApplicationContext) :
 
                 if (activity == null) {
                     locationPromise?.resolve(ERROR_ACTIVITY_DOES_NOT_EXIST);
+                    locationPromise = null;
                 } else {
                     Log.d(
                         "LocationHelperModule",
@@ -154,6 +157,7 @@ class LocationHelperModule(private val reactContext: ReactApplicationContext) :
                     "An unknown error happened while trying to request the user to enable their location services: $exception"
                 )
                 locationPromise?.resolve(ERROR_UNKNOWN);
+                locationPromise = null;
             }
         }
     }
@@ -176,13 +180,14 @@ class LocationHelperModule(private val reactContext: ReactApplicationContext) :
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
                 locationPromise?.resolve(ERROR_LOCATION_PERMISSIONS_NEEDED);
+                locationPromise = null;
                 return
             }
 
             Log.d("LocationHelperModule", "Starts listening to location services updates")
             fusedLocationProviderClient.requestLocationUpdates(
                 locationRequest,
-                locationCallback,
+                locationServicesUpdateCallback,
                 null
             )
         }
@@ -195,7 +200,7 @@ class LocationHelperModule(private val reactContext: ReactApplicationContext) :
         listenerCount -= count
         if (listenerCount == 0) {
             Log.d("LocationHelperModule", "Stops listening to location services updates")
-            fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+            fusedLocationProviderClient.removeLocationUpdates(locationServicesUpdateCallback);
         }
     }
 
