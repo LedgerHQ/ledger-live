@@ -67,7 +67,10 @@ const getAdditionalDataForContract = async (
   }
 
   if (shouldResolve.token) {
-    const erc20SignaturesBlob = await findERC20SignaturesInfo(loadConfig);
+    const erc20SignaturesBlob = await findERC20SignaturesInfo(
+      loadConfig,
+      chainIdTruncated
+    );
     const erc20Info = byContractAddressAndChainId(
       contractAddress,
       chainIdTruncated,

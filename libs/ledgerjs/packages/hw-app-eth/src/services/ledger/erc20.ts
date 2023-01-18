@@ -1,21 +1,28 @@
-import blob from "@ledgerhq/cryptoassets/data/erc20-signatures";
-import { log } from "@ledgerhq/logs";
 import axios from "axios";
-import { LoadConfig } from "../types";
+import { log } from "@ledgerhq/logs";
+import { signatures as signaturesByChainId } from "@ledgerhq/cryptoassets/data/evm/index";
 import { getLoadConfig } from "./loadConfig";
+import { LoadConfig } from "../types";
+
+const asContractAddress = (addr: string) => {
+  const a = addr.toLowerCase();
+  return a.startsWith("0x") ? a : "0x" + a;
+};
 
 export const findERC20SignaturesInfo = async (
-  userLoadConfig: LoadConfig
+  userLoadConfig: LoadConfig,
+  chainId: number
 ): Promise<string | undefined> => {
   const { cryptoassetsBaseURL } = getLoadConfig(userLoadConfig);
   if (!cryptoassetsBaseURL) return;
-  const url = `${cryptoassetsBaseURL}/erc20-signatures.json`;
+
+  const url = `${cryptoassetsBaseURL}/evm/${chainId}/erc20-signatures.json`;
   const response = await axios.get<string>(url).catch((e) => {
     log("error", "could not fetch from " + url + ": " + String(e));
     return null;
   });
-  if (!response) return;
-  return response.data;
+
+  return response?.data;
 };
 
 /**
@@ -25,7 +32,7 @@ export const byContractAddressAndChainId = (
   contract: string,
   chainId: number,
   erc20SignaturesBlob?: string
-): TokenInfo | null | undefined => {
+): ReturnType<API["byContractAndChainId"]> => {
   // If we are able to fetch data from s3 bucket that contains dynamic CAL
   if (erc20SignaturesBlob) {
     return parse(erc20SignaturesBlob).byContractAndChainId(
@@ -33,20 +40,12 @@ export const byContractAddressAndChainId = (
       chainId
     );
   }
-  // the static fallback when dynamic cal is not provided
-  return get().byContractAndChainId(asContractAddress(contract), chainId);
-};
 
-/**
- * list all the ERC20 tokens informations
- */
-export const list = (erc20SignaturesBlob?: string): TokenInfo[] => {
-  // If we are able to fetch data from s3 bucket that contains dynamic CAL
-  if (erc20SignaturesBlob) {
-    return parse(erc20SignaturesBlob).list();
-  }
   // the static fallback when dynamic cal is not provided
-  return get().list();
+  return get(chainId)?.byContractAndChainId(
+    asContractAddress(contract),
+    chainId
+  );
 };
 
 export type TokenInfo = {
@@ -65,12 +64,7 @@ export type API = {
   list: () => TokenInfo[];
 };
 
-const asContractAddress = (addr: string) => {
-  const a = addr.toLowerCase();
-  return a.startsWith("0x") ? a : "0x" + a;
-};
-
-const parse = (erc20SignaturesBlob: string) => {
+const parse = (erc20SignaturesBlob: string): API => {
   const buf = Buffer.from(erc20SignaturesBlob, "base64");
   const map = {};
   const entries: TokenInfo[] = [];
@@ -107,21 +101,24 @@ const parse = (erc20SignaturesBlob: string) => {
     i += length;
   }
 
-  const api = {
+  return {
     list: () => entries,
     byContractAndChainId: (contractAddress, chainId) =>
       map[String(chainId) + ":" + contractAddress],
   };
-  return api;
 };
 
 // this internal get() will lazy load and cache the data from the erc20 data blob
-const get: () => API = (() => {
-  let cache: API | undefined;
-  return () => {
-    if (cache) return cache;
-    const api = parse(blob);
-    cache = api;
+const get: (chainId: number) => API | null = (() => {
+  const cache: Record<number, API> = {};
+  return (chainId) => {
+    if (cache[chainId]) return cache[chainId];
+
+    const signatureBlob: string | undefined = signaturesByChainId[chainId];
+    if (!signatureBlob) return null;
+
+    const api = parse(signatureBlob);
+    cache[chainId] = api;
     return api;
   };
 })();
