@@ -7,7 +7,7 @@ import {
 
 export type UseGetDeviceInfoArgs = {
   getDeviceInfoAction?: typeof defaultGetDeviceInfoAction;
-  deviceId: string;
+  deviceId?: string;
 };
 
 export const useGetDeviceInfo = ({
@@ -17,10 +17,11 @@ export const useGetDeviceInfo = ({
   const [state, setState] = useState<GetDeviceInfoActionState>(initialState);
 
   useEffect(() => {
-    console.log("subbing device info")
-    const sub = getDeviceInfoAction({ deviceId }).subscribe(setState);
+    if (deviceId) {
+      const sub = getDeviceInfoAction({ deviceId }).subscribe(setState);
 
-    return () => sub.unsubscribe();
+      return () => sub.unsubscribe();
+    }
   }, [deviceId, getDeviceInfoAction]);
 
   return state;

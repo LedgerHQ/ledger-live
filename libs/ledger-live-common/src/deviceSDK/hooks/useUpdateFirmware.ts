@@ -9,34 +9,49 @@ import { useGetDeviceInfo } from "./getDeviceInfo";
 
 export type UseUpdateFirmwareArgs = {
   updateFirmwareAction?: typeof defaultUpdateFirmwareAction;
-  deviceId: string;
+  deviceId?: string;
 };
+
+// This hook is not yet 100% thought through, it's only here so we can test the new firmware update action
+// without using the CLI. Once we actually intend to integrate the firmware update, we should rethink
+// if this is the best approach
 
 export const useUpdateFirmware = ({
   updateFirmwareAction = defaultUpdateFirmwareAction,
   deviceId,
 }: UseUpdateFirmwareArgs): {
   updateState: UpdateFirmwareActionState;
-  triggerUpdate: () => void;
+  triggerUpdate?: () => void;
 } => {
   const [updateState, setUpdateState] =
     useState<UpdateFirmwareActionState>(initialState);
   const [nonce, setNonce] = useState(0);
+  const [isPerformingTheUpdate, setIsPerformingTheUpdate] = useState(false);
   const { deviceInfo } = useGetDeviceInfo({ deviceId });
   const latestFirmware = useLatestFirmware(deviceInfo);
 
   useEffect(() => {
-    if (latestFirmware && nonce > 0) {
+    if (latestFirmware && nonce > 0 && deviceId) {
+      setIsPerformingTheUpdate(true);
       const sub = updateFirmwareAction({
         deviceId,
         updateContext: latestFirmware,
-      }).subscribe(setUpdateState);
+      }).subscribe({
+        next: setUpdateState,
+        complete: () => setIsPerformingTheUpdate(false),
+      });
 
-      return () => sub.unsubscribe();
+      return () => {
+        setIsPerformingTheUpdate(false);
+        sub.unsubscribe();
+      };
     }
   }, [deviceId, updateFirmwareAction, latestFirmware, nonce]);
 
-  const triggerUpdate = () => setNonce(nonce + 1);
+  const triggerUpdate =
+    isPerformingTheUpdate || !latestFirmware
+      ? undefined
+      : () => setNonce(nonce + 1);
 
   return { updateState, triggerUpdate };
 };
