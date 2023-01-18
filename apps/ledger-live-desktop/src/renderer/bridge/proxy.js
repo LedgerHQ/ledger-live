@@ -98,9 +98,9 @@ export const getAccountBridge = (
       arg,
     });
 
-  const createTransaction = a => bridge.createTransaction(a);
+  const createTransaction = account => bridge.createTransaction(account);
 
-  const updateTransaction = (a, patch) => bridge.updateTransaction(a, patch);
+  const updateTransaction = (account, patch) => bridge.updateTransaction(account, patch);
 
   const prepareTransaction = async (a, t) => {
     const transaction = toTransactionRaw(t);
