@@ -19,7 +19,7 @@ import {
 import { useNftCollectionMetadata, useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { InformativeCard } from "@ledgerhq/native-ui";
+import { Flex, InformativeCard } from "@ledgerhq/native-ui";
 
 import { NavigatorName, ScreenName } from "../../const";
 import LText from "../../components/LText";
@@ -126,6 +126,10 @@ export default function Content({
   const subOperations = operation.subOperations || [];
   const internalOperations = operation.internalOperations || [];
   const shouldDisplayTo = uniqueRecipients.length > 0 && !!uniqueRecipients[0];
+
+  const onEditTxCardClick = () => {
+    navigation.navigate(ScreenName.SendAmountCoin);
+  };
 
   const isConfirmed = isConfirmedOperation(
     operation,
@@ -315,9 +319,26 @@ export default function Content({
         />
       ) : null}
 
+      <Flex
+        backgroundColor={"primary.c80"}
+        width="90%"
+        alignSelf={"center"}
+        borderRadius={8}
+        padding={8}
+      >
+        <InformativeCard
+          tag="Adjust Network fees"
+          title={"Your transaction is ongoing"}
+          onClickCard={onEditTxCardClick}
+        >
+          THIS IS NOT RENDERED
+        </InformativeCard>
+      </Flex>
+
       <InformativeCard>
         <Text>{"Your transaction is ongoing"}</Text>
       </InformativeCard>
+
       {!disableAllLinks ? (
         <Section
           title={t("operationDetails.account")}
