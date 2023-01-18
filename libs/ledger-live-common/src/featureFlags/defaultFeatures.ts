@@ -196,4 +196,7 @@ export const defaultFeatures: DefaultFeatures = {
   objkt: {
     enabled: false,
   },
+  protectServicesDiscoverDesktop: {
+    enabled: false,
+  },
 };
