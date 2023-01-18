@@ -65,11 +65,31 @@ export default handleActions<PostOnboardingState, Payload>(
   initialState
 );
 
+/**
+ * remove this function once we can safely assume no user has a LL holding in
+ * storage a ref to the old identifier "nanoFTS" which was changed in this PR
+ * https://github.com/LedgerHQ/ledger-live/pull/2144
+ * */
+function sanitizeDeviceModelId(
+  deviceModelId: DeviceModelId | null
+): DeviceModelId | null {
+  if (deviceModelId === null) return null;
+  // Nb workaround to prevent crash for dev/qa that have nanoFTS references.
+  // to be removed in a while.
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  if (deviceModelId === "nanoFTS") return DeviceModelId.stax;
+  return deviceModelId;
+}
+
 export const postOnboardingSelector = ({
   postOnboarding,
 }: {
   postOnboarding: PostOnboardingState;
-}): PostOnboardingState => postOnboarding;
+}): PostOnboardingState => ({
+  ...postOnboarding,
+  deviceModelId: sanitizeDeviceModelId(postOnboarding.deviceModelId),
+});
 
 export const hubStateSelector = ({
   postOnboarding,
@@ -88,7 +108,7 @@ export const hubStateSelector = ({
     lastActionCompleted,
   } = postOnboarding;
   return {
-    deviceModelId,
+    deviceModelId: sanitizeDeviceModelId(deviceModelId),
     actionsToComplete,
     actionsCompleted,
     lastActionCompleted,
@@ -99,7 +119,8 @@ export const postOnboardingDeviceModelIdSelector = ({
   postOnboarding,
 }: {
   postOnboarding: PostOnboardingState;
-}): PostOnboardingState["deviceModelId"] => postOnboarding.deviceModelId;
+}): PostOnboardingState["deviceModelId"] =>
+  sanitizeDeviceModelId(postOnboarding.deviceModelId);
 
 export const walletPostOnboardingEntryPointDismissedSelector = ({
   postOnboarding,

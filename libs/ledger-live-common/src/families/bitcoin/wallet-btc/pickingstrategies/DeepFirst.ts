@@ -35,12 +35,12 @@ export class DeepFirst extends PickingStrategy {
         ).length
     );
 
-    const outputAddresses = outputs.map((o) => o.address);
+    const outputScripts = outputs.map((o) => o.script);
     unspentUtxos = sortBy(unspentUtxos, "block_height");
     // https://metamug.com/article/security/bitcoin-transaction-fee-satoshi-per-byte.html
     const txSizeNoInput = utils.maxTxSize(
       0,
-      outputAddresses,
+      outputScripts,
       false,
       this.crypto,
       this.derivationMode
@@ -58,10 +58,10 @@ export class DeepFirst extends PickingStrategy {
       emptyTxSize;
 
     const sizePerOutput =
-      (outputAddresses[0]
+      (outputScripts[0]
         ? utils.maxTxSize(
             0,
-            [outputAddresses[0]],
+            [outputScripts[0]],
             false,
             this.crypto,
             this.derivationMode

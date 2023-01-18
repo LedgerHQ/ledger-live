@@ -5,7 +5,6 @@ import {
   SwapSelectorStateType,
   OnNoRatesCallback,
   SwapTransactionType,
-  SetIsSendMaxLoading,
   AvailableProviderV3,
 } from "../types";
 import useBridgeTransaction from "../../../bridge/useBridgeTransaction";
@@ -42,7 +41,6 @@ export const useFromAmountError = (
 export const useSwapTransaction = ({
   accounts,
   setExchangeRate,
-  setIsSendMaxLoading,
   defaultCurrency = selectorStateDefaultValues.currency,
   defaultAccount = selectorStateDefaultValues.account,
   defaultParentAccount = selectorStateDefaultValues.parentAccount,
@@ -53,7 +51,6 @@ export const useSwapTransaction = ({
 }: {
   accounts?: Account[];
   setExchangeRate?: SetExchangeRateCallback;
-  setIsSendMaxLoading?: SetIsSendMaxLoading;
   defaultCurrency?: SwapSelectorStateType["currency"];
   defaultAccount?: SwapSelectorStateType["account"];
   defaultParentAccount?: SwapSelectorStateType["parentAccount"];
@@ -95,13 +92,12 @@ export const useSwapTransaction = ({
     setToAccount,
   });
 
-  const { isMaxEnabled, toggleMax } = useUpdateMaxAmount({
+  const { isMaxEnabled, toggleMax, isMaxLoading } = useUpdateMaxAmount({
     setFromAmount,
     account: fromAccount,
     parentAccount: fromParentAccount,
     transaction,
     feesStrategy: transaction?.feesStrategy,
-    setIsSendMaxLoading,
   });
 
   const { rates, refetchRates, updateSelectedRate } = useProviderRates({
@@ -120,6 +116,7 @@ export const useSwapTransaction = ({
       to: toState,
       from: fromState,
       isMaxEnabled,
+      isMaxLoading,
       isSwapReversable,
       rates:
         rates.value && excludeFixedRates

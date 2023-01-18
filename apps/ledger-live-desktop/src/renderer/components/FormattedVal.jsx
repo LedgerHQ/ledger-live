@@ -62,6 +62,7 @@ type OwnProps = {
   showAllDigits?: boolean,
   alwaysShowValue?: boolean, // overrides discreet mode
   dynamicSignificantDigits?: number,
+  staticSignificantDigits?: number,
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -96,6 +97,7 @@ function FormattedVal(props: Props) {
     alwaysShowValue,
     discreet,
     dynamicSignificantDigits,
+    staticSignificantDigits,
     ...p
   } = props;
   const valProp = props.val;
@@ -130,6 +132,7 @@ function FormattedVal(props: Props) {
       discreet: alwaysShowValue ? false : discreet,
       showAllDigits,
       dynamicSignificantDigits,
+      staticSignificantDigits,
     });
   }
 

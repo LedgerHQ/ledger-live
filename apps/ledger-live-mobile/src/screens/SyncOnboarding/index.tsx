@@ -161,6 +161,7 @@ export const SyncOnboarding = ({
     useState<boolean>(false);
   const [isDesyncDrawerOpen, setDesyncDrawerOpen] = useState<boolean>(false);
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
+  const [shouldRestoreApps, setShouldRestoreApps] = useState<boolean>(false);
 
   const goBackToPairingFlow = useCallback(() => {
     const navigateInput: NavigateInput<
@@ -303,10 +304,16 @@ export const SyncOnboarding = ({
 
     switch (deviceOnboardingState?.currentOnboardingStep) {
       case DeviceOnboardingStep.SetupChoice:
-      case DeviceOnboardingStep.RestoreSeed:
       case DeviceOnboardingStep.SafetyWarning:
+        setCompanionStepKey(CompanionStepKey.Seed);
+        break;
       case DeviceOnboardingStep.NewDevice:
       case DeviceOnboardingStep.NewDeviceConfirming:
+        setShouldRestoreApps(false);
+        setCompanionStepKey(CompanionStepKey.Seed);
+        break;
+      case DeviceOnboardingStep.RestoreSeed:
+        setShouldRestoreApps(true);
         setCompanionStepKey(CompanionStepKey.Seed);
         break;
       case DeviceOnboardingStep.WelcomeScreen1:
@@ -323,7 +330,7 @@ export const SyncOnboarding = ({
       default:
         break;
     }
-  }, [deviceOnboardingState]);
+  }, [deviceOnboardingState, shouldRestoreApps]);
 
   // When the user gets close to the seed generation step, sets the lost synchronization delay
   // and timers to a higher value. It avoids having a warning message while the connection is lost
@@ -429,9 +436,9 @@ export const SyncOnboarding = ({
               {
                 key: CompanionStepKey.Apps,
                 title: t("syncOnboarding.appsStep.title", { productName }),
-                estimatedTime: 60,
                 renderBody: () => (
                   <InstallSetOfApps
+                    restore={shouldRestoreApps}
                     device={device}
                     onResult={handleInstallAppsComplete}
                     dependencies={initialAppsToInstall}
@@ -463,6 +470,7 @@ export const SyncOnboarding = ({
       handleInstallAppsComplete,
       initialAppsToInstall,
       companionStepKey,
+      shouldRestoreApps,
     ],
   );
 

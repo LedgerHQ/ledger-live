@@ -3,6 +3,7 @@ import BigNumber from "bignumber.js";
 import Btc from "@ledgerhq/hw-app-btc";
 import { log } from "@ledgerhq/logs";
 import { Transaction } from "@ledgerhq/hw-app-btc/types";
+
 import { Currency } from "./crypto/types";
 import { TransactionInfo, DerivationModes } from "./types";
 import { Account, SerializedAccount } from "./account";
@@ -110,12 +111,14 @@ class BitcoinLikeWallet {
     account: Account,
     feePerByte: number,
     excludeUTXOs: Array<{ hash: string; outputIndex: number }>,
-    outputAddresses: string[] = []
+    outputAddresses: string[] = [],
+    opReturnData?: Buffer
   ): Promise<BigNumber> {
     const addresses = await account.xpub.getXpubAddresses();
     const changeAddresses = (await account.xpub.getAccountAddresses(1)).map(
       (item) => item.address
     );
+
     const utxos = flatten(
       await Promise.all(
         addresses.map((address) =>
@@ -123,6 +126,7 @@ class BitcoinLikeWallet {
         )
       )
     );
+
     let balance = new BigNumber(0);
     log("btcwallet", "estimateAccountMaxSpendable utxos", utxos);
     let usableUtxoCount = 0;
@@ -144,13 +148,24 @@ class BitcoinLikeWallet {
         }
       }
     });
+
+    const outputScripts = outputAddresses.map((addr) =>
+      account.xpub.crypto.toOutputScript(addr)
+    );
+
+    if (opReturnData) {
+      outputScripts.push(
+        account.xpub.crypto.toOpReturnOutputScript(opReturnData)
+      );
+    }
+
     // fees if we use all utxo
     const fees =
       feePerByte *
       utils.maxTxSizeCeil(
         usableUtxoCount,
-        outputAddresses,
-        outputAddresses.length == 0,
+        outputScripts,
+        outputScripts.length == 0,
         account.xpub.crypto,
         account.xpub.derivationMode
       );
@@ -182,6 +197,7 @@ class BitcoinLikeWallet {
     feePerByte: number;
     utxoPickingStrategy: PickingStrategy;
     sequence: number;
+    opReturnData?: Buffer;
   }): Promise<TransactionInfo> {
     const changeAddress = await params.fromAccount.xpub.getNewAddress(1, 1);
     const txInfo = await params.fromAccount.xpub.buildTx({
@@ -191,7 +207,9 @@ class BitcoinLikeWallet {
       changeAddress,
       utxoPickingStrategy: params.utxoPickingStrategy,
       sequence: params.sequence,
+      opReturnData: params.opReturnData,
     });
+
     return txInfo;
   }
 

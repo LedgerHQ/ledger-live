@@ -58,16 +58,17 @@ function outputWeight(derivationMode: string): number {
   } else {
     throw UnsupportedDerivation(derivationMode);
   }
+
   return outputSize * 4;
 }
 
-export function outputSize(currency: ICrypto, addr: string): number {
-  const scriptLen = currency.toOutputScript(addr).length;
-  let size = 1 + 8 + scriptLen;
+export function outputSize(currency: ICrypto, outputScript: Buffer): number {
+  let size = 1 + 8 + outputScript.length;
   // More bytes for decred
   if (currency.network.name === "Decred") {
     size += 8;
   }
+
   return size;
 }
 
@@ -108,17 +109,18 @@ export function outputSize(currency: ICrypto, addr: string): number {
  */
 export function maxTxSize(
   inputCount: number,
-  outputAddrs: string[],
+  outputScripts: Buffer[],
   includeChange: boolean,
   currency: ICrypto,
   derivationMode: string
 ): number {
   const fixed = fixedWeight(currency, derivationMode);
 
-  let outputsWeight = byteSize(outputAddrs.length) * baseByte; // Number of outputs;
-  outputAddrs.forEach((addr) => {
-    outputsWeight += outputSize(currency, addr) * baseByte;
+  let outputsWeight = byteSize(outputScripts.length) * baseByte; // Number of outputs;
+  outputScripts.forEach((script) => {
+    outputsWeight += outputSize(currency, script) * baseByte;
   });
+
   if (includeChange) {
     outputsWeight += outputWeight(derivationMode);
   }
@@ -131,23 +133,25 @@ export function maxTxSize(
     inputsWeight += 64 * inputCount;
   }
   const txWeight = fixed + inputsWeight + outputsWeight;
+
   return txWeight / 4;
 }
 
 export function maxTxSizeCeil(
   inputCount: number,
-  outputAddrs: string[],
+  outputScripts: Buffer[],
   includeChange: boolean,
   currency: ICrypto,
   derivationMode: string
 ): number {
   const s = maxTxSize(
     inputCount,
-    outputAddrs,
+    outputScripts,
     includeChange,
     currency,
     derivationMode
   );
+
   return Math.ceil(s);
 }
 

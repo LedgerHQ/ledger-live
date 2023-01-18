@@ -89,6 +89,7 @@ class Xpub {
     if (account === 0 && lastTx) {
       this.freshAddressIndex = Math.max(this.freshAddressIndex, index + 1);
     }
+
     return !!lastTx;
   }
 
@@ -171,6 +172,7 @@ class Xpub {
       account,
       index,
     };
+
     return address;
   }
 
@@ -181,17 +183,28 @@ class Xpub {
     changeAddress: Address;
     utxoPickingStrategy: PickingStrategy;
     sequence: number;
+    opReturnData?: Buffer;
   }): Promise<TransactionInfo> {
     const outputs: OutputInfo[] = [];
+
+    const {
+      amount,
+      opReturnData,
+      destAddress,
+      changeAddress,
+      utxoPickingStrategy,
+      feePerByte,
+      sequence,
+    } = params;
 
     // outputs splitting
     // btc only support value fitting in uint64 and the lib
     // we use to serialize output only take js number in params
     // that are actually even more restricted
-    const desiredOutputLeftToFit = {
-      script: this.crypto.toOutputScript(params.destAddress),
-      value: params.amount,
-      address: params.destAddress,
+    const desiredOutputLeftToFit: OutputInfo = {
+      script: this.crypto.toOutputScript(destAddress),
+      value: amount,
+      address: destAddress,
       isChange: false,
     };
 
@@ -199,9 +212,10 @@ class Xpub {
       outputs.push({
         script: desiredOutputLeftToFit.script,
         value: new BigNumber(this.OUTPUT_VALUE_MAX),
-        address: params.destAddress,
+        address: destAddress,
         isChange: false,
       });
+
       desiredOutputLeftToFit.value = desiredOutputLeftToFit.value.minus(
         this.OUTPUT_VALUE_MAX
       );
@@ -211,16 +225,27 @@ class Xpub {
       outputs.push(desiredOutputLeftToFit);
     }
 
+    if (opReturnData) {
+      const opReturnOutput: OutputInfo = {
+        script: this.crypto.toOpReturnOutputScript(opReturnData),
+        value: new BigNumber(0),
+        address: null,
+        isChange: false,
+      };
+
+      outputs.push(opReturnOutput);
+    }
+
     // now we select only the output needed to cover the amount + fee
     const {
       totalValue: total,
       unspentUtxos: unspentUtxoSelected,
       fee,
       needChangeoutput,
-    } = await params.utxoPickingStrategy.selectUnspentUtxosToUse(
+    } = await utxoPickingStrategy.selectUnspentUtxosToUse(
       this,
       outputs,
-      params.feePerByte
+      feePerByte
     );
 
     const txHexs = await Promise.all(
@@ -242,7 +267,7 @@ class Xpub {
         address: utxo.address,
         output_hash: utxo.output_hash,
         output_index: utxo.output_index,
-        sequence: params.sequence,
+        sequence,
       };
     });
 
@@ -257,23 +282,20 @@ class Xpub {
 
     const txSize = maxTxSizeCeil(
       unspentUtxoSelected.length,
-      outputs.map((o) => o.address),
+      outputs.map((o) => o.script),
       true,
       this.crypto,
       this.derivationMode
     );
 
-    const dustAmount = computeDustAmount(this.crypto, txSize);
+    const dustLimit = computeDustAmount(this.crypto, txSize);
 
     // Abandon the change output if change output amount is less than dust amount
-    if (
-      needChangeoutput &&
-      total.minus(params.amount).minus(fee).gt(dustAmount)
-    ) {
+    if (needChangeoutput && total.minus(amount).minus(fee).gt(dustLimit)) {
       outputs.push({
-        script: this.crypto.toOutputScript(params.changeAddress.address),
-        value: total.minus(params.amount).minus(fee),
-        address: params.changeAddress.address,
+        script: this.crypto.toOutputScript(changeAddress.address),
+        value: total.minus(amount).minus(fee),
+        address: changeAddress.address,
         isChange: true,
       });
     }
@@ -288,7 +310,7 @@ class Xpub {
       associatedDerivations,
       outputs,
       fee: total.minus(outputsValue).toNumber(),
-      changeAddress: params.changeAddress,
+      changeAddress: changeAddress,
     };
   }
 

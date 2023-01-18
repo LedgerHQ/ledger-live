@@ -9,6 +9,9 @@ import bs58 from "bs58";
 import bech32 from "bech32";
 import BIP32 from "./bip32";
 
+// https://developer.bitcoin.org/devguide/transactions.html#null-data
+export const OP_RETURN_DATA_SIZE_LIMIT = 83; // bytes
+
 export function fallbackValidateAddress(address: string): boolean {
   try {
     bjs.address.fromBase58Check(address);
@@ -179,6 +182,11 @@ class Base implements ICrypto {
 
   toOutputScript(address: string): Buffer {
     return toOutputScript(address, this.network);
+  }
+
+  toOpReturnOutputScript(data: Buffer): Buffer {
+    const script = bjs.payments.embed({ data: [data] });
+    return script.output!;
   }
 
   validateAddress(address: string): boolean {

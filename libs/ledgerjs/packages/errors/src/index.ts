@@ -218,7 +218,6 @@ export const CantScanQRCode = createCustomErrorClass("CantScanQRCode");
 export const FeeNotLoaded = createCustomErrorClass("FeeNotLoaded");
 export const FeeRequired = createCustomErrorClass("FeeRequired");
 export const FeeTooHigh = createCustomErrorClass("FeeTooHigh");
-export const DustLimit = createCustomErrorClass("DustLimit");
 export const PendingOperation = createCustomErrorClass("PendingOperation");
 export const SyncError = createCustomErrorClass("SyncError");
 export const PairingFailed = createCustomErrorClass("PairingFailed");
@@ -229,6 +228,12 @@ export const FirmwareOrAppUpdateRequired = createCustomErrorClass(
   "FirmwareOrAppUpdateRequired"
 );
 
+// Bitcoin family
+export const OpReturnDataSizeLimit =
+  createCustomErrorClass("OpReturnSizeLimit");
+export const DustLimit = createCustomErrorClass("DustLimit");
+
+// Language
 export const LanguageNotFound = createCustomErrorClass("LanguageNotFound");
 
 // db stuff, no need to translate

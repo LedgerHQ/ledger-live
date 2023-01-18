@@ -96,6 +96,6 @@ test("Enable password lock", async ({ page, userdataFile }) => {
   });
 
   await test.step("User data shouldn't be encrypted", async () => {
-    expect.poll(() => typeof getUserdata().data.accounts).toBe("object");
+    await expect.poll(() => typeof getUserdata().data.accounts).toBe("object");
   });
 });

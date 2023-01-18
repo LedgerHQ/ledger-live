@@ -17,7 +17,7 @@ import {
   signMessageLogic,
 } from "@ledgerhq/live-common/platform/logic";
 import { serializePlatformSignedTransaction } from "@ledgerhq/live-common/platform/serializers";
-import { AppManifest } from "@ledgerhq/live-common/platform/types";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useJSONRPCServer } from "@ledgerhq/live-common/platform/JSONRPCServer";
 import {
   RawPlatformSignedTransaction,
@@ -53,7 +53,7 @@ type WebPlatformPlayerConfig = {
 };
 
 type Props = {
-  manifest: AppManifest;
+  manifest: LiveAppManifest;
   onClose?: () => void;
   inputs?: Record<string, any>;
   config?: WebPlatformPlayerConfig;

@@ -36,6 +36,7 @@ export default function SettingsRow({
   eventProperties,
   compact,
   label,
+  testID,
 }: {
   onPress?: () => void;
   onHelpPress?: () => void;
@@ -55,6 +56,7 @@ export default function SettingsRow({
   eventProperties?: Record<string, unknown>;
   compact?: boolean;
   label?: string;
+  testID?: string;
 }) {
   let title$ = (
     <Flex
@@ -102,6 +104,7 @@ export default function SettingsRow({
       eventProperties={eventProperties}
       style={style}
       compact={compact}
+      testID={testID}
     >
       {iconLeft && (
         <Flex

@@ -14,6 +14,7 @@ export interface ICrypto {
     index: number
   ): Promise<string>;
   toOutputScript(address: string): Buffer;
+  toOpReturnOutputScript(data: Buffer): Buffer;
   validateAddress(address: string): boolean;
   isTaprootAddress(address: string): boolean;
 }
