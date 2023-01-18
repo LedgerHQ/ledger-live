@@ -1,5 +1,5 @@
 name: "@Desktop • Build App"
-run-name: "@${{ github.event_name == 'workflow_dispatch' && inputs.login || github.actor }} triggered @Desktop • Build App ${{ github.event_name == 'workflow_dispatch' && format('on branch {0}', inputs.ref) || format('on ref {0}', github.ref) }}"
+run-name: "@Desktop • Build App triggered by @${{ github.event_name == 'workflow_dispatch' && inputs.login || github.actor }} ${{ github.event_name == 'workflow_dispatch' && format('on branch {0}', inputs.ref) || format('on ref {0}', github.ref) }}"
 
 on:
   push:
