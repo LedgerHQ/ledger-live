@@ -22,6 +22,8 @@ import MODAL_SETTINGS_ACCOUNT from "./SettingsAccount";
 import MODAL_RELEASE_NOTES from "./ReleaseNotes";
 import MODAL_TROUBLESHOOT_NETWORK from "./TroubleshootNetwork";
 import MODAL_SYSTEM_LANGUAGE_AVAILABLE from "./SystemLanguageAvailable";
+import MODAL_PROTECT_DISCOVER from "./ProtectDiscover";
+
 // $FlowFixMe
 import MODAL_START_STAKE from "./StartStake";
 import MODAL_TERM_OF_USE_UPDATE from "./TermOfUseUpdate";
@@ -204,6 +206,8 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_PLATFORM_EXCHANGE_START,
   MODAL_PLATFORM_EXCHANGE_COMPLETE,
   MODAL_CONNECT_DEVICE,
+  // Protect
+  MODAL_PROTECT_DISCOVER,
 
   // NB We have dettached modals such as the repair modal,
   // in the meantime, we can rely on this to add the backdrop

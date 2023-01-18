@@ -50,7 +50,8 @@ export type FeatureId =
   | "stakePrograms"
   | "portfolioExchangeBanner"
   | "objkt"
-  | "stakeAccountBanner";
+  | "stakeAccountBanner"
+  | "protectServicesDiscoverDesktop";
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */
