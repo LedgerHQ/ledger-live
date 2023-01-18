@@ -1,5 +1,5 @@
 name: "@PR • Lint Commits"
-run-name: "@PR • Lint Commits triggered by @${{ inputs.login }} ${{ format('on branch {0}', inputs.ref) }}"
+run-name: "@PR • Lint Commits triggered by ${{ inputs.login }} ${{ format('on branch {0}', inputs.ref) }}"
 
 on:
   workflow_dispatch:

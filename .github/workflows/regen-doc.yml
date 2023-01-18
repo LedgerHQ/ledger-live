@@ -1,5 +1,5 @@
 name: "@Libs • Regen Doc Files"
-run-name: "@Libs • Regen Doc Files triggered by @${{ inputs.login }} ${{ inputs.ref && format('on branch {0}', inputs.ref) || format('on PR {0}', inputs.number) }}"
+run-name: "@Libs • Regen Doc Files triggered by ${{ inputs.login }} ${{ inputs.ref && format('on branch {0}', inputs.ref) || format('on PR {0}', inputs.number) }}"
 
 on:
   workflow_dispatch:

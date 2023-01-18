@@ -1,5 +1,5 @@
 name: "@Desktop • Generate Screenshots"
-run-name: "@Desktop • Generate Screenshots triggered by @${{ inputs.login }} ${{ inputs.ref && format('on branch {0}', inputs.ref) || format('on PR {0}', inputs.number) }}"
+run-name: "@Desktop • Generate Screenshots triggered by ${{ inputs.login }} ${{ inputs.ref && format('on branch {0}', inputs.ref) || format('on PR {0}', inputs.number) }}"
 
 on:
   workflow_dispatch:
