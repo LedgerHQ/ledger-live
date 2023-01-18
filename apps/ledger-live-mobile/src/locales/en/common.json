@@ -5771,8 +5771,10 @@
     "nftGallery": {
       "filters": {
         "selectAndHide": "Select and hide",
-        "hide": "Hide {{count}} NFT",
-        "hide_plural": "Hide {{count}} NFTs"
+        "hide": "Hide {{count}} Collection",
+        "hide_plural": "Hide {{count}} Collections",
+        "alertHide": "1 Collection hidden. Go to the settings to display and unhide it at any time",
+        "alertHide_plural": "{{count}} Collections hidden. Go to the settings to display and unhide them at any time"
       },
       "empty": {
         "title": "No NFTs to show, yet",

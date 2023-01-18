@@ -1,44 +1,66 @@
 import { decodeNftId } from "@ledgerhq/live-common/nft/nftId";
+import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { ProtoNFT, NFTMetadata } from "@ledgerhq/types-live";
-import { useNavigation } from "@react-navigation/native";
-import { useCallback, useState } from "react";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   hideNftCollection,
   updateMainNavigatorVisibility,
 } from "../../actions/settings";
 import { track } from "../../analytics";
 import { NavigatorName, ScreenName } from "../../const";
-import { isMainNavigatorVisibleSelector } from "../../reducers/settings";
+
+const TOAST_ID = "SUCCESS_HIDE";
 
 export function useNftList() {
+  const isFocused = useIsFocused();
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const { pushToast } = useToasts();
+  const navigation = useNavigation();
+
+  const [onMultiSelectMode, setMultiSelectMode] = useState<boolean>(false);
 
   const [nftsToHide, setNftsToHide] = useState<ProtoNFT[]>([]);
 
-  const navigation = useNavigation();
-  const isMainNavigatorVisible = useSelector(isMainNavigatorVisibleSelector);
+  // Multi Select ------------------------
+
+  const readOnlyModeAction = useCallback(() => {
+    setNftsToHide([]);
+    setMultiSelectMode(false);
+    dispatch(updateMainNavigatorVisibility(true));
+  }, [dispatch]);
+
+  // Detect change of screen
+  useEffect(() => {
+    if (!isFocused) {
+      readOnlyModeAction();
+    }
+  }, [readOnlyModeAction, isFocused]);
 
   const onClickHide = useCallback(() => {
     nftsToHide.forEach(nft => {
       const { accountId } = decodeNftId(nft.id ?? "");
       dispatch(hideNftCollection(`${accountId}|${nft.contract}`));
     });
+    pushToast({
+      id: TOAST_ID,
+      type: "success",
+      icon: "success",
+      title: t("wallet.nftGallery.filters.alertHide", {
+        count: nftsToHide.length,
+      }),
+    });
 
-    dispatch(updateMainNavigatorVisibility(true));
-    setNftsToHide([]);
-  }, [dispatch, nftsToHide]);
+    readOnlyModeAction();
+  }, [readOnlyModeAction, dispatch, nftsToHide, pushToast, t]);
 
-  const cancelAction = useCallback(() => {
+  const multiSelectModeAction = useCallback(() => {
     setNftsToHide([]);
+    setMultiSelectMode(true);
     dispatch(updateMainNavigatorVisibility(false));
-  }, [dispatch]);
-
-  const triggerMultiSelectHideAction = useCallback(() => {
-    setNftsToHide([]);
-    dispatch(updateMainNavigatorVisibility(true));
   }, [dispatch]);
 
   const updateListSelect = useCallback(
@@ -51,7 +73,9 @@ export function useNftList() {
     },
     [nftsToHide],
   );
+  //  ------------------------
 
+  // Navigation ------------------------
   const navigateToNftViewer = useCallback(
     (nft: ProtoNFT, metadata?: NFTMetadata) => {
       track("NFT_clicked", {
@@ -68,15 +92,16 @@ export function useNftList() {
     },
     [navigation],
   );
+  // ------------------------
 
   return {
     navigateToNftViewer,
     updateListSelect,
-    triggerMultiSelectHideAction,
-    nftsToHide,
-    cancelAction,
+    multiSelectModeAction,
+    readOnlyModeAction,
     onClickHide,
     t,
-    isMainNavigatorVisible,
+    nftsToHide,
+    onMultiSelectMode,
   };
 }

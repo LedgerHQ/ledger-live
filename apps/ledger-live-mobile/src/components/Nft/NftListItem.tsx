@@ -26,6 +26,7 @@ import { SelectNft } from "./SelectNft";
 type Props = {
   nft: ProtoNFT;
   onPress?: (nft: ProtoNFT, nftMetadata?: NFTMetadata) => void;
+  onLongPress?: () => void;
   selectable?: boolean;
   isSelected?: boolean;
 };
@@ -45,6 +46,7 @@ const NftCardView = ({
   collectionStatus,
   collectionMetadata,
   onPress,
+  onLongPress,
   selectable = false,
   isSelected = false,
 }: {
@@ -54,6 +56,7 @@ const NftCardView = ({
   collectionStatus: NFTResource["status"];
   collectionMetadata?: NFTCollectionMetadata | null;
   onPress?: () => void;
+  onLongPress?: () => void;
   selectable?: boolean;
   isSelected?: boolean;
 }) => {
@@ -66,7 +69,11 @@ const NftCardView = ({
   const collectionLoading = collectionStatus === "loading";
 
   return (
-    <StyledTouchableOpacity bg="background.main" onPress={onPress}>
+    <StyledTouchableOpacity
+      bg="background.main"
+      onPress={onPress}
+      onLongPress={onLongPress}
+    >
       <NftMediaComponent
         status={status}
         metadata={metadata}
@@ -135,7 +142,13 @@ const NftCardView = ({
 const NftCardMemo = memo(NftCardView);
 // this technique of splitting the usage of context and memoing the presentational component is used to prevent
 // the rerender of all NftCards whenever the NFT cache changes (whenever a new NFT is loaded)
-const NftListItem = ({ nft, onPress, isSelected, selectable }: Props) => {
+const NftListItem = ({
+  nft,
+  onPress,
+  onLongPress,
+  isSelected,
+  selectable,
+}: Props) => {
   const nftMetadata = useNftMetadata(
     nft?.contract,
     nft?.tokenId,
@@ -159,6 +172,12 @@ const NftListItem = ({ nft, onPress, isSelected, selectable }: Props) => {
     }
   }, [onPress, metadata, nft]);
 
+  const handleLongPress = useCallback(() => {
+    if (onLongPress) {
+      onLongPress();
+    }
+  }, [onLongPress]);
+
   return (
     <NftCardMemo
       nft={nft}
@@ -167,6 +186,7 @@ const NftListItem = ({ nft, onPress, isSelected, selectable }: Props) => {
       collectionStatus={collectionStatus}
       collectionMetadata={collectionMetadata}
       onPress={handlePress}
+      onLongPress={handleLongPress}
       selectable={selectable}
       isSelected={isSelected}
     />
