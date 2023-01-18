@@ -1,6 +1,6 @@
-import React, { useMemo } from "react";
-import { StyleSheet, View } from "react-native";
-import { Text, Tag, Flex } from "@ledgerhq/native-ui";
+import React, { useCallback, useMemo, useState } from "react";
+import { Pressable } from "react-native";
+import { Text, Flex } from "@ledgerhq/native-ui";
 import { LoggableEventRenderable } from "./types";
 
 type Props = LoggableEventRenderable & {
@@ -16,9 +16,11 @@ const Event: React.FC<Props> = ({
   showExtraProps = false,
   isLast,
 }) => {
-  const propertiesToDisplay = showExtraProps
-    ? eventProperties
-    : eventPropertiesWithoutExtra;
+  const [forceShowExtra, setForceShowExtra] = useState(false);
+  const propertiesToDisplay =
+    showExtraProps || forceShowExtra
+      ? eventProperties
+      : eventPropertiesWithoutExtra;
   const propertiesText = useMemo(
     () =>
       propertiesToDisplay
@@ -34,22 +36,28 @@ const Event: React.FC<Props> = ({
     [propertiesToDisplay],
   );
 
+  const toggleForceShowExtra = useCallback(() => {
+    setForceShowExtra(!forceShowExtra);
+  }, [forceShowExtra]);
+
   return (
-    <Flex
-      py={3}
-      mx={1}
-      px={1}
-      borderLeftWidth={2}
-      borderLeftColor={isLast ? "black" : "transparent"}
-    >
-      <Flex flexDirection="row">
-        <Text color="black" fontWeight="bold">
-          {eventName}
-        </Text>
-        <Text color="grey"> {date?.toLocaleTimeString()}</Text>
+    <Pressable onPress={toggleForceShowExtra}>
+      <Flex
+        py={3}
+        mx={1}
+        px={1}
+        borderLeftWidth={2}
+        borderLeftColor={isLast ? "black" : "transparent"}
+      >
+        <Flex flexDirection="row" flexWrap="wrap">
+          <Text color="black" fontWeight="bold">
+            {eventName}
+          </Text>
+          <Text color="grey"> {date?.toLocaleTimeString()}</Text>
+        </Flex>
+        <Text color="black">{propertiesText}</Text>
       </Flex>
-      <Text color="black">{propertiesText}</Text>
-    </Flex>
+    </Pressable>
   );
 };
 
