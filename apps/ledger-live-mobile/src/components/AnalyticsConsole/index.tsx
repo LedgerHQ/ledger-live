@@ -1,8 +1,11 @@
 import React, { useCallback, useState } from "react";
 import { StyleSheet, Pressable } from "react-native";
-import { Flex, Switch, Icons, Divider } from "@ledgerhq/native-ui";
+import { Flex, Switch, Icons, Divider, Alert } from "@ledgerhq/native-ui";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import Animated, {
   FadeIn,
   FadeOut,
@@ -13,13 +16,14 @@ import Animated, {
 import FloatingDebugButton from "../FloatingDebugButton";
 import EventList from "./EventList";
 import Status from "./Status";
+import InvertTheme from "../theme/InvertTheme";
 
 const AnimatedFlex = Animated.createAnimatedComponent(Flex);
 
 enum Visibility {
-  opaque,
-  transparent,
-  hidden,
+  opaque = "opaque",
+  transparent = "transparent",
+  hidden = "hidden",
 }
 
 const AnalyticsConsole = () => {
@@ -47,7 +51,9 @@ const AnalyticsConsole = () => {
     setVisibility(Visibility.transparent);
   }, []);
 
-  // if (!render) return null;
+  const { bottom } = useSafeAreaInsets();
+
+  if (!render) return null;
   return (
     <>
       <Flex
@@ -55,14 +61,14 @@ const AnalyticsConsole = () => {
         top={0}
         left={0}
         right={0}
-        bottom={0}
+        bottom={visibility === Visibility.opaque ? 0 : "40%"}
         flex={1}
-        zIndex={999}
+        overflow="hidden"
         opacity={
           visibility === Visibility.opaque
             ? 1
             : visibility === Visibility.transparent
-            ? 0.4
+            ? 0.7
             : 0
         }
         pointerEvents={visibility === Visibility.opaque ? "auto" : "none"}
@@ -101,6 +107,17 @@ const AnalyticsConsole = () => {
           </AnimatedFlex>
         </SafeAreaView>
       </Flex>
+      <AnimatedFlex
+        position={"absolute"}
+        bottom={0}
+        alignSelf="center"
+        key={visibility}
+        entering={FadeOut.delay(2000)}
+        pb={bottom}
+        pointerEvents="none"
+      >
+        <Alert showIcon={false} title={`Analytics console: ${visibility}`} />
+      </AnimatedFlex>
       <FloatingDebugButton
         onPress={onPressDebugButton}
         Icon={Icons.ActivityMedium}
