@@ -106,6 +106,7 @@ function OperationDetails({ route }: NavigatorProps) {
 }
 
 export default withDiscreetMode(OperationDetails);
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
