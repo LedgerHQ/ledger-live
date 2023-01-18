@@ -1,0 +1,383 @@
+INFO    | Android emulator version 31.3.14.0 (build_id 9322596) (CL:N/A)
+INFO    | Found AVD name 'Pixel_5_API_31'
+INFO    | Found AVD target architecture: arm64
+INFO    | argv[0]: '/Users/marco.deidda/Library/Android/sdk/emulator/emulator'; program directory: '/Users/marco.deidda/Library/Android/sdk/emulator'
+VERBOSE |  Found directory: /Users/marco.deidda/Library/Android/sdk/system-images/android-31/default/arm64-v8a/
+emulator: INFO: Found systemPath /Users/marco.deidda/Library/Android/sdk/system-images/android-31/default/arm64-v8a/
+WARNING | unexpected system image feature string, emulator might not function correctly, please try updating the emulator.
+WARNING | cannot add library /Users/marco.deidda/Library/Android/sdk/emulator/qemu/darwin-aarch64/lib64/vulkan/libvulkan.dylib: failed
+INFO    | Duplicate loglines will be removed, if you wish to see each indiviudal line launch with the -log-nofilter flag.
+VERBOSE | autoconfig: -skin 1080x2340
+VERBOSE | autoconfig: -skindir (null)
+VERBOSE | Unexpected feature list:
+VERBOSE | Vulkan
+VERBOSE | autoconfig: -kernel /Users/marco.deidda/Library/Android/sdk/system-images/android-31/default/arm64-v8a//kernel-ranchu
+VERBOSE | Target arch = 'arm64'
+VERBOSE | Auto-detect: Kernel image requires new device naming scheme.
+VERBOSE | Auto-detect: Kernel does not support YAFFS2 partitions.
+VERBOSE | autoconfig: -ramdisk /Users/marco.deidda/Library/Android/sdk/system-images/android-31/default/arm64-v8a//ramdisk.img
+VERBOSE | Using initial system image: /Users/marco.deidda/Library/Android/sdk/system-images/android-31/default/arm64-v8a//system.img
+VERBOSE | Using initial vendor image: /Users/marco.deidda/Library/Android/sdk/system-images/android-31/default/arm64-v8a//vendor.img
+VERBOSE | autoconfig: -data /Users/marco.deidda/.android/avd/Pixel_5_API_31.avd/userdata-qemu.img
+VERBOSE | autoconfig: -initdata /Users/marco.deidda/.android/avd/Pixel_5_API_31.avd/userdata.img
+VERBOSE | autoconfig: -cache /Users/marco.deidda/.android/avd/Pixel_5_API_31.avd/cache.img
+VERBOSE | INFO: ignore sdcard for arm at api level >= 30
+VERBOSE | Physical RAM size: 2536MB
+VERBOSE | VM heap size 256MB is below hardware specified minimum of 576MB,setting it to that value
+VERBOSE | System image is read only
+VERBOSE | Found 2 DNS servers:
+VERBOSE | 	2001:861:3cc0:ee20:9a42:65ff:feed:f9bc
+VERBOSE | 	192.168.1.254
+VERBOSE | found magic skin width=1080 height=2340 bpp=16
+
+VERBOSE | Requested console port 10796: Inferring adb port 10797.
+VERBOSE | CPU Acceleration: working
+VERBOSE | CPU Acceleration status: Hypervisor.Framework OS X Version 12.5
+VERBOSE | handleCpuAcceleration: feature check for hvf
+VERBOSE | Bluetooth requested by guest
+VERBOSE | started modem simulator host server at port: 56123
+INFO    | Warning: QMetaObject::connectSlotsByName: No matching signal for on_new_posture_requested(int) ((null):0, (null))
+
+INFO    | Warning: QMetaObject::connectSlotsByName: No matching signal for on_dismiss_posture_selection_dialog() ((null):0, (null))
+
+INFO    | Warning: QMetaObject::connectSlotsByName: No matching signal for on_new_resizable_requested(PresetEmulatorSizeType) ((null):0, (null))
+
+INFO    | Warning: QMetaObject::connectSlotsByName: No matching signal for on_dismiss_resizable_dialog() ((null):0, (null))
+
+VERBOSE | GPU emulation enabled using 'host' mode
+VERBOSE | Initializing hardware OpenGLES emulation support
+VERBOSE | create display 0
+VERBOSE | setDisplayPose 0 x 0 y 0 w 1080 h 2340 dpi 0
+INFO    | added library /Users/marco.deidda/Library/Android/sdk/emulator/lib64/vulkan/libvulkan.dylib
+INFO    | configAndStartRenderer: setting vsync to 60 hz
+VERBOSE | INFO: ignore sdcard for arm at api level >= 30
+INFO    | Sending adb public key [QAAAAK2f22rb46gGfAEQ/ZO7uxQxS0J1FlYnI1NOXHVGW7i8vrh4BeWao2h/9nKrwNPQ17Vbb8Jv4bHF8x8/87miPQ1uvtOS/kbT0r3q/F9L+BD8w/nX8FQDRYrdHDtCoC1AoRLOhAwhnyIp9DW19peeExV+ZGW3ExdHAfwyukPwslgdNTwtEq0Y2IojOh6e4HY2tyLHHfeJJy99Q4LnShAcXvI4Nd2JJndq04vL7hP9/Pc+m7GwxcqHzbwyM32sY4j0cQoOUc+33KAwNVaCfwSJDVkjXxjYY7nHFU6dJe2J32oAn9Dm+rznS3+VmzECb3cFADJLJmdpwhQ5Wj3glLR1Lcud0ESnrIJ5Q/UdlfqzLBplJHGpwGJS3sIM+8xeH917TvRB0AFh2i+USZTt07/tsxSv5kn8uR1hM1HcjYftJFirsNx8wJgTqxDw9HODSqw0nKpSCDW+l0sRiZbtMnG1YnJLqvogvKezyS+7zZeDrPyqlF/abWNjwXXZCT9M7pzvhGemFyeFWxa4/MZ//Or2jCzN4hUX9uacZcrXmcVUVBCDJEj5ifx23Jb3AdsFpXq+B6K2vb28mkipqwLFaF9ZVHvKXeqj2RMLrXa3hdF5YubDZK6s8kMgMoIfpgdOQG/FbToggTgq/MiarV4NSEa0FVVzs/OM375548FCs/YyFijiByADdwEAAQA= marco.deidda@unknown]
+VERBOSE | Found 2 DNS servers:
+VERBOSE | 	2001:861:3cc0:ee20:9a42:65ff:feed:f9bc
+VERBOSE | 	192.168.1.254
+INFO    | Content of hardware configuration file:
+INFO    | 	hw.cpu.arch = arm64
+INFO    | 	hw.cpu.ncore = 4
+INFO    | 	hw.ramSize = 2536
+INFO    | 	hw.screen = multi-touch
+INFO    | 	hw.mainKeys = false
+INFO    | 	hw.trackBall = false
+INFO    | 	hw.keyboard = true
+INFO    | 	hw.keyboard.lid = false
+INFO    | 	hw.keyboard.charmap = qwerty2
+INFO    | 	hw.dPad = false
+INFO    | 	hw.rotaryInput = false
+INFO    | 	hw.gsmModem = true
+INFO    | 	hw.gps = true
+INFO    | 	hw.battery = true
+INFO    | 	hw.accelerometer = true
+INFO    | 	hw.gyroscope = true
+INFO    | 	hw.audioInput = true
+INFO    | 	hw.audioOutput = true
+INFO    | 	hw.sdCard = true
+INFO    | 	disk.cachePartition = true
+INFO    | 	disk.cachePartition.path = /Users/marco.deidda/.android/avd/Pixel_5_API_31.avd/cache.img
+INFO    | 	disk.cachePartition.size = 66m
+INFO    | 	test.quitAfterBootTimeOut = -1
+INFO    | 	test.delayAdbTillBootComplete = 0
+INFO    | 	test.monitorAdb = 0
+INFO    | 	hw.lcd.width = 1080
+INFO    | 	hw.lcd.height = 2340
+INFO    | 	hw.lcd.depth = 16
+INFO    | 	hw.lcd.density = 440
+INFO    | 	hw.lcd.backlight = true
+INFO    | 	hw.lcd.vsync = 60
+INFO    | 	hw.gltransport = pipe
+INFO    | 	hw.gltransport.asg.writeBufferSize = 1048576
+INFO    | 	hw.gltransport.asg.writeStepSize = 4096
+INFO    | 	hw.gltransport.asg.dataRingSize = 32768
+INFO    | 	hw.gltransport.drawFlushInterval = 800
+INFO    | 	hw.displayRegion.0.1.xOffset = -1
+INFO    | 	hw.displayRegion.0.1.yOffset = -1
+INFO    | 	hw.displayRegion.0.1.width = 0
+INFO    | 	hw.displayRegion.0.1.height = 0
+INFO    | 	hw.displayRegion.0.2.xOffset = -1
+INFO    | 	hw.displayRegion.0.2.yOffset = -1
+INFO    | 	hw.displayRegion.0.2.width = 0
+INFO    | 	hw.displayRegion.0.2.height = 0
+INFO    | 	hw.displayRegion.0.3.xOffset = -1
+INFO    | 	hw.displayRegion.0.3.yOffset = -1
+INFO    | 	hw.displayRegion.0.3.width = 0
+INFO    | 	hw.displayRegion.0.3.height = 0
+INFO    | 	hw.display1.width = 0
+INFO    | 	hw.display1.height = 0
+INFO    | 	hw.display1.density = 0
+INFO    | 	hw.display1.xOffset = -1
+INFO    | 	hw.display1.yOffset = -1
+INFO    | 	hw.display1.flag = 0
+INFO    | 	hw.display2.width = 0
+INFO    | 	hw.display2.height = 0
+INFO    | 	hw.display2.density = 0
+INFO    | 	hw.display2.xOffset = -1
+INFO    | 	hw.display2.yOffset = -1
+INFO    | 	hw.display2.flag = 0
+INFO    | 	hw.display3.width = 0
+INFO    | 	hw.display3.height = 0
+INFO    | 	hw.display3.density = 0
+INFO    | 	hw.display3.xOffset = -1
+INFO    | 	hw.display3.yOffset = -1
+INFO    | 	hw.display3.flag = 0
+INFO    | 	hw.multi_display_window = false
+INFO    | 	hw.gpu.enabled = true
+INFO    | 	hw.gpu.mode = host
+INFO    | 	hw.initialOrientation = Portrait
+INFO    | 	hw.camera.back = virtualscene
+INFO    | 	hw.camera.front = emulated
+INFO    | 	vm.heapSize = 576
+INFO    | 	hw.sensors.light = true
+INFO    | 	hw.sensors.pressure = true
+INFO    | 	hw.sensors.humidity = true
+INFO    | 	hw.sensors.proximity = true
+INFO    | 	hw.sensors.magnetic_field = true
+INFO    | 	hw.sensors.magnetic_field_uncalibrated = true
+INFO    | 	hw.sensors.gyroscope_uncalibrated = true
+INFO    | 	hw.sensors.orientation = true
+INFO    | 	hw.sensors.temperature = true
+INFO    | 	hw.sensors.rgbclight = false
+INFO    | 	hw.sensor.hinge = false
+INFO    | 	hw.sensor.hinge.count = 0
+INFO    | 	hw.sensor.hinge.type = 0
+INFO    | 	hw.sensor.hinge.sub_type = 0
+INFO    | 	hw.sensor.hinge.fold_to_displayRegion.0.1_at_posture = 1
+INFO    | 	hw.sensor.roll = false
+INFO    | 	hw.sensor.roll.count = 0
+INFO    | 	hw.sensor.roll.resize_to_displayRegion.0.1_at_posture = 6
+INFO    | 	hw.sensor.roll.resize_to_displayRegion.0.2_at_posture = 6
+INFO    | 	hw.sensor.roll.resize_to_displayRegion.0.3_at_posture = 6
+INFO    | 	hw.sensors.heart_rate = false
+INFO    | 	hw.sensors.wrist_tilt = false
+INFO    | 	hw.useext4 = true
+INFO    | 	hw.arc = false
+INFO    | 	hw.arc.autologin = false
+INFO    | 	hw.device.name = pixel_5
+INFO    | 	kernel.path = /Users/marco.deidda/Library/Android/sdk/system-images/android-31/default/arm64-v8a//kernel-ranchu
+INFO    | 	kernel.newDeviceNaming = yes
+INFO    | 	kernel.supportsYaffs2 = no
+INFO    | 	disk.ramdisk.path = /Users/marco.deidda/Library/Android/sdk/system-images/android-31/default/arm64-v8a//ramdisk.img
+INFO    | 	disk.systemPartition.initPath = /Users/marco.deidda/Library/Android/sdk/system-images/android-31/default/arm64-v8a//system.img
+INFO    | 	disk.systemPartition.size = 4107m
+INFO    | 	disk.vendorPartition.initPath = /Users/marco.deidda/Library/Android/sdk/system-images/android-31/default/arm64-v8a//vendor.img
+INFO    | 	disk.vendorPartition.size = 800m
+INFO    | 	disk.dataPartition.path = /Users/marco.deidda/.android/avd/Pixel_5_API_31.avd/userdata-qemu.img
+INFO    | 	disk.dataPartition.size = 1800m
+INFO    | 	disk.encryptionKeyPartition.path = /Users/marco.deidda/.android/avd/Pixel_5_API_31.avd/encryptionkey.img
+INFO    | 	PlayStore.enabled = false
+INFO    | 	avd.name = Pixel_5_API_31
+INFO    | 	avd.id = Pixel_5_API_31
+INFO    | 	fastboot.forceColdBoot = false
+INFO    | 	android.sdk.root = /Users/marco.deidda/Library/Android/sdk
+INFO    | 	android.avd.home = /Users/marco.deidda/.android/avd
+INFO    | .
+INFO    | QEMU options list:
+INFO    | 	 argv[00] = "/Users/marco.deidda/Library/Android/sdk/emulator/qemu/darwin-aarch64/qemu-system-aarch64"
+INFO    | 	 argv[01] = "-read-only"
+INFO    | 	 argv[02] = "-dns-server"
+INFO    | 	 argv[03] = "2001:861:3cc0:ee20:9a42:65ff:feed:f9bc,192.168.1.254"
+INFO    | 	 argv[04] = "-no-audio"
+INFO    | 	 argv[05] = "-serial"
+INFO    | 	 argv[06] = "null"
+INFO    | 	 argv[07] = "-android-ports"
+INFO    | 	 argv[08] = "10796,10797"
+INFO    | 	 argv[09] = "-cpu"
+INFO    | 	 argv[10] = "cortex-a53"
+INFO    | 	 argv[11] = "-machine"
+INFO    | 	 argv[12] = "type=virt"
+INFO    | 	 argv[13] = "-enable-hvf"
+INFO    | 	 argv[14] = "-smp"
+INFO    | 	 argv[15] = "cores=4"
+INFO    | 	 argv[16] = "-m"
+INFO    | 	 argv[17] = "2536"
+INFO    | 	 argv[18] = "-lcd-density"
+INFO    | 	 argv[19] = "440"
+INFO    | 	 argv[20] = "-nodefaults"
+INFO    | 	 argv[21] = "-kernel"
+INFO    | 	 argv[22] = "/Users/marco.deidda/Library/Android/sdk/system-images/android-31/default/arm64-v8a//kernel-ranchu"
+INFO    | 	 argv[23] = "-initrd"
+INFO    | 	 argv[24] = "/Users/marco.deidda/.android/avd/Pixel_5_API_31.avd/initrd"
+INFO    | 	 argv[25] = "-drive"
+INFO    | 	 argv[26] = "index=0,id=vendor,if=none,file=/Users/marco.deidda/Library/Android/sdk/system-images/android-31/default/arm64-v8a//vendor.img,read-only"
+INFO    | 	 argv[27] = "-device"
+INFO    | 	 argv[28] = "virtio-blk-device,drive=vendor"
+INFO    | 	 argv[29] = "-drive"
+INFO    | 	 argv[30] = "index=1,id=encrypt,if=none,file=/Users/marco.deidda/.android/avd/Pixel_5_API_31.avd/encryptionkey.img.qcow2,overlap-check=none,cache=unsafe,l2-cache-size=1048576"
+INFO    | 	 argv[31] = "-device"
+INFO    | 	 argv[32] = "virtio-blk-device,drive=encrypt"
+INFO    | 	 argv[33] = "-drive"
+INFO    | 	 argv[34] = "index=2,id=userdata,if=none,file=/Users/marco.deidda/.android/avd/Pixel_5_API_31.avd/userdata-qemu.img.qcow2,overlap-check=none,cache=unsafe,l2-cache-size=1048576"
+INFO    | 	 argv[35] = "-device"
+INFO    | 	 argv[36] = "virtio-blk-device,drive=userdata"
+INFO    | 	 argv[37] = "-drive"
+INFO    | 	 argv[38] = "index=3,id=cache,if=none,file=/Users/marco.deidda/.android/avd/Pixel_5_API_31.avd/cache.img.qcow2,overlap-check=none,cache=unsafe,l2-cache-size=1048576"
+INFO    | 	 argv[39] = "-device"
+INFO    | 	 argv[40] = "virtio-blk-device,drive=cache"
+INFO    | 	 argv[41] = "-drive"
+INFO    | 	 argv[42] = "index=4,id=system,if=none,file=/Users/marco.deidda/Library/Android/sdk/system-images/android-31/default/arm64-v8a//system.img,read-only"
+INFO    | 	 argv[43] = "-device"
+INFO    | 	 argv[44] = "virtio-blk-device,drive=system"
+INFO    | 	 argv[45] = "-netdev"
+INFO    | 	 argv[46] = "user,id=mynet"
+INFO    | 	 argv[47] = "-device"
+INFO    | 	 argv[48] = "virtio-net-device,netdev=mynet"
+INFO    | 	 argv[49] = "-chardev"
+INFO    | 	 argv[50] = "null,id=forhvc0"
+INFO    | 	 argv[51] = "-chardev"
+INFO    | 	 argv[52] = "null,id=forhvc1"
+INFO    | 	 argv[53] = "-device"
+INFO    | 	 argv[54] = "virtio-serial-pci,ioeventfd=off"
+INFO    | 	 argv[55] = "-device"
+INFO    | 	 argv[56] = "virtconsole,chardev=forhvc0"
+INFO    | 	 argv[57] = "-device"
+INFO    | 	 argv[58] = "virtconsole,chardev=forhvc1"
+INFO    | 	 argv[59] = "-chardev"
+INFO    | 	 argv[60] = "rootcanal,id=rootcanal"
+INFO    | 	 argv[61] = "-device"
+INFO    | 	 argv[62] = "virtserialport,chardev=rootcanal,name=bluetooth"
+INFO    | 	 argv[63] = "-device"
+INFO    | 	 argv[64] = "virtio-serial,ioeventfd=off"
+INFO    | 	 argv[65] = "-chardev"
+INFO    | 	 argv[66] = "socket,port=56122,host=::1,nowait,nodelay,ipv6,id=modem"
+INFO    | 	 argv[67] = "-device"
+INFO    | 	 argv[68] = "virtserialport,chardev=modem,name=modem"
+INFO    | 	 argv[69] = "-device"
+INFO    | 	 argv[70] = "virtio-rng-device"
+INFO    | 	 argv[71] = "-show-cursor"
+INFO    | 	 argv[72] = "-device"
+INFO    | 	 argv[73] = "virtio_input_multi_touch_pci_1"
+INFO    | 	 argv[74] = "-device"
+INFO    | 	 argv[75] = "virtio_input_multi_touch_pci_2"
+INFO    | 	 argv[76] = "-device"
+INFO    | 	 argv[77] = "virtio_input_multi_touch_pci_3"
+INFO    | 	 argv[78] = "-device"
+INFO    | 	 argv[79] = "virtio_input_multi_touch_pci_4"
+INFO    | 	 argv[80] = "-device"
+INFO    | 	 argv[81] = "virtio_input_multi_touch_pci_5"
+INFO    | 	 argv[82] = "-device"
+INFO    | 	 argv[83] = "virtio_input_multi_touch_pci_6"
+INFO    | 	 argv[84] = "-device"
+INFO    | 	 argv[85] = "virtio_input_multi_touch_pci_7"
+INFO    | 	 argv[86] = "-device"
+INFO    | 	 argv[87] = "virtio_input_multi_touch_pci_8"
+INFO    | 	 argv[88] = "-device"
+INFO    | 	 argv[89] = "virtio_input_multi_touch_pci_9"
+INFO    | 	 argv[90] = "-device"
+INFO    | 	 argv[91] = "virtio_input_multi_touch_pci_10"
+INFO    | 	 argv[92] = "-device"
+INFO    | 	 argv[93] = "virtio_input_multi_touch_pci_11"
+INFO    | 	 argv[94] = "-device"
+INFO    | 	 argv[95] = "virtio-keyboard-pci"
+INFO    | 	 argv[96] = "-netdev"
+INFO    | 	 argv[97] = "user,id=virtio-wifi,dhcpstart=10.0.2.16"
+INFO    | 	 argv[98] = "-device"
+INFO    | 	 argv[99] = "virtio-wifi-pci,netdev=virtio-wifi"
+INFO    | 	 argv[100] = "-device"
+INFO    | 	 argv[101] = "virtio-vsock-pci,guest-cid=77"
+INFO    | 	 argv[102] = "-L"
+INFO    | 	 argv[103] = "/Users/marco.deidda/Library/Android/sdk/emulator/lib/pc-bios"
+INFO    | 	 argv[104] = "-soundhw"
+INFO    | 	 argv[105] = "hda"
+INFO    | 	 argv[106] = "-append"
+INFO    | 	 argv[107] = "no_timer_check 8250.nr_uarts=1 keep_bootcon earlyprintk=ttyAMA0 console=0 cma=296M@0-4G ndns=2 loop.max_part=7 printk.devkmsg=on bootconfig"
+INFO    | 	 argv[108] = "-android-hw"
+INFO    | 	 argv[109] = "/tmp/android-marco.deidda/emulator-UgMk2w"
+INFO    | Concatenated QEMU options: /Users/marco.deidda/Library/Android/sdk/emulator/qemu/darwin-aarch64/qemu-system-aarch64 -read-only -dns-server 2001:861:3cc0:ee20:9a42:65ff:feed:f9bc,192.168.1.254 -no-audio -serial null -android-ports 10796,10797 -cpu cortex-a53 -machine type=virt -enable-hvf -smp cores=4 -m 2536 -lcd-density 440 -nodefaults -kernel /Users/marco.deidda/Library/Android/sdk/system-images/android-31/default/arm64-v8a//kernel-ranchu -initrd /Users/marco.deidda/.android/avd/Pixel_5_API_31.avd/initrd -drive index=0,id=vendor,if=none,file=/Users/marco.deidda/Library/Android/sdk/system-images/android-31/default/arm64-v8a//vendor.img,read-only -device virtio-blk-device,drive=vendor -drive index=1,id=encrypt,if=none,file=/Users/marco.deidda/.android/avd/Pixel_5_API_31.avd/encryptionkey.img.qcow2,overlap-check=none,cache=unsafe,l2-cache-size=1048576 -device virtio-blk-device,drive=encrypt -drive index=2,id=userdata,if=none,file=/Users/marco.deidda/.android/avd/Pixel_5_API_31.avd/userdata-qemu.img.qcow2,overlap-check=none,cache=unsafe,l2-cache-size=1048576 -device virtio-blk-device,drive=userdata -drive index=3,id=cache,if=none,file=/Users/marco.deidda/.android/avd/Pixel_5_API_31.avd/cache.img.qcow2,overlap-check=none,cache=unsafe,l2-cache-size=1048576 -device virtio-blk-device,drive=cache -drive index=4,id=system,if=none,file=/Users/marco.deidda/Library/Android/sdk/system-images/android-31/default/arm64-v8a//system.img,read-only -device virtio-blk-device,drive=system -netdev user,id=mynet -device virtio-net-device,netdev=mynet -chardev null,id=forhvc0 -chardev null,id=forhvc1 -device virtio-serial-pci,ioeventfd=off -device virtconsole,chardev=forhvc0 -device virtconsole,chardev=forhvc1 -chardev rootcanal,id=rootcanal -device virtserialport,chardev=rootcanal,name=bluetooth -device virtio-serial,ioeventfd=off -chardev socket,port=56122,host=::1,nowait,nodelay,ipv6,id=modem -device virtserialport,chardev=modem,name=modem -device virtio-rng-device -show-cursor -device virtio_input_multi_touch_pci_1 -devic
+VERBOSE | Starting hostapd main loop.
+VERBOSE | Android qemu version 31.3.14.0 (build_id 9322596) (CL:N/A)
+VERBOSE | Starting QEMU main loop
+VERBOSE | registered 'boot-properties' qemud service
+VERBOSE | Adding boot property: 'ro.opengles.version' = '196608'
+VERBOSE | Adding boot property: 'qemu.sf.fake_camera' = 'front'
+VERBOSE | Adding boot property: 'dalvik.vm.heapsize' = '576m'
+VERBOSE | Adding boot property: 'qemu.hw.mainkeys' = '0'
+VERBOSE | Adding boot property: 'qemu.sf.lcd_density' = '440'
+INFO    | injectedQemuChannel!
+INFO    | Informing listeners of injection.
+INFO    | Rootcanal has  been activated.
+VERBOSE | goldfish_events.have-dpad: false
+VERBOSE | goldfish_events.have-trackball: false
+VERBOSE | goldfish_events.have-camera: true
+VERBOSE | goldfish_events.have-keyboard: false
+VERBOSE | goldfish_events.have-lidswitch: false
+VERBOSE | goldfish_events.have-tabletmode: false
+VERBOSE | goldfish_events.have-touch: false
+VERBOSE | goldfish_events.have-multitouch: false
+VERBOSE | Adding boot property: 'net.wifi_mac_prefix' = '10796'
+WARNING | Requested adb port (10797) is outside the recommended range [5555,5586]. ADB may not function properly for the emulator. See -help-port for details.
+VERBOSE | Not using any http proxy
+VERBOSE | Adding boot property: 'qemu.timezone' = 'Europe/Paris'
+VERBOSE | android_hw_fingerprint_init: fingerprint qemud listen service initialized
+VERBOSE | emulator_window_fb_rotate
+INFO    | setDisplayConfigs w 1080 h 2340 dpiX 440 dpiY 440
+VERBOSE | config multidisplay with config.ini 0x0 0x0 0x0
+VERBOSE | Path:/Users/marco.deidda/Library/Android/sdk/platform-tools/adb protocol version: 41
+VERBOSE | Found: 3 adb executables (2x)
+VERBOSE | Found: 3 adb executables
+VERBOSE | Adb: /Users/marco.deidda/Library/Android/sdk/platform-tools/adb
+VERBOSE | Path:/Users/marco.deidda/Library/Android/sdk/platform-tools/adb protocol version: 41 (2x)
+VERBOSE | Path:/Users/marco.deidda/Library/Android/sdk/platform-tools/adb protocol version: 41
+VERBOSE | INFO: ignore sdcard for arm at api level >= 30 (2x)
+VERBOSE | INFO: ignore sdcard for arm at api level >= 30
+VERBOSE | Adding boot property: 'ro.opengles.version' = '196608'
+VERBOSE | Adding boot property: 'qemu.sf.fake_camera' = 'front'
+VERBOSE | Adding boot property: 'dalvik.vm.heapsize' = '576m'
+VERBOSE | Adding boot property: 'qemu.hw.mainkeys' = '0'
+VERBOSE | Adding boot property: 'qemu.sf.lcd_density' = '440'
+VERBOSE | Adding boot property: 'net.wifi_mac_prefix' = '5554'
+VERBOSE | Adding boot property: 'qemu.timezone' = 'Europe/Paris'
+VERBOSE | _hwFingerprint_connect: connect finger print listen is called
+VERBOSE | Registering pipe service multidisplay
+VERBOSE | MultiDisplayPipe created 0x600002bab0c0
+INFO    | Warning: QMetaObject::connectSlotsByName: No matching signal for on_rgbcSensorValueWidget_valueChanged() ((null):0, (null))
+
+INFO    | Warning: QMetaObject::connectSlotsByName: No matching signal for on_posture_valueChanged(int) ((null):0, (null))
+
+INFO    | Wait for emulator (pid 44337) 20 seconds to shutdown gracefully before kill;you can set environment variable ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL(in seconds) to change the default value (20 seconds)
+
+INFO    | Discarding the changed state (command-line flag).
+WARNING | Discarding the changed state (command-line flag).
+INFO    | Info: 
+
+GLImplementation: 
+Surface Type: OpenGL
+Surface Profile: CoreProfile
+Surface Version: 4.1
+Using Default SG Backend: no
+Using Software Dynamic GL: no
+Using Angle: no
+
+Init Parameters:
+  *  application-name Emulator 
+  *  browser-subprocess-path /Users/marco.deidda/Library/Android/sdk/emulator/lib64/qt/libexec/QtWebEngineProcess 
+  *  disable-features DnsOverHttpsUpgrade,ConsolidatedMovementXY,InstalledApp,BackgroundFetch,WebOTP,WebPayments,WebUSB,PictureInPicture 
+  *  disable-gpu  
+  *  disable-speech-api  
+  *  enable-features TracingServiceInProcess 
+  *  enable-threaded-compositing  
+ ((null):0, (null))
+
+INFO    | Warning: No functional TLS backend was found ((null):0, (null))
+
+INFO    | Warning: No functional TLS backend was found ((null):0, (null))
+ (2x)
+INFO    | Warning: No TLS backend is available ((null):0, (null))
+
+INFO    | Warning: No functional TLS backend was found ((null):0, (null))
+
+INFO    | Warning: No functional TLS backend was found ((null):0, (null))
+ (3x)
+INFO    | Warning: No TLS backend is available ((null):0, (null))
+
+INFO    | Warning: No functional TLS backend was found ((null):0, (null))
+
+INFO    | Closing down rootcanal. (2x)
+INFO    | Closing down rootcanal.
+VERBOSE | Done with QEMU main loop
+VERBOSE | User configuration saved to /Users/marco.deidda/.android/avd/Pixel_5_API_31.avd/emulator-user.ini
+VERBOSE | sending STOP to modem simulator host server
+VERBOSE | received exit request from parent process
+VERBOSE | Adb transition disconnected -> disconnected
+VERBOSE | Hostapd main loop has stopped.

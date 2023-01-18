@@ -309,6 +309,7 @@ const GraphCardHeader = ({
           fontSize="32px"
           numberOfLines={1}
           adjustsFontSizeToFit
+          testID="account-graph-currency"
         >
           <CurrencyUnitValue {...items[0]} />
         </Text>

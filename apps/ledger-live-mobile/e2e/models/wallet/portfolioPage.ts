@@ -1,4 +1,4 @@
-import { getElementById, tapByElement } from "../../helpers";
+import { getElementById, getElementByText, tapByElement } from "../../helpers";
 
 export default class PortfolioPage {
   getEmptyPortfolio = () => getElementById("PortfolioEmptyAccount");
@@ -10,5 +10,9 @@ export default class PortfolioPage {
   async navigateToSettings() {
     // FIXME: this is probably better in settings page model ?
     await tapByElement(this.getSettingsButton());
+  }
+
+  async openFamilyAccount(name: string) {
+    await tapByElement(getElementByText(name));
   }
 }
