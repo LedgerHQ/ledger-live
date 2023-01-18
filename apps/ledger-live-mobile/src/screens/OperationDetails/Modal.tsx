@@ -14,8 +14,8 @@ import { urls } from "../../config/urls";
 
 export type Props = {
   isOpened: boolean;
-  onClose: () => void;
   currency: Currency;
+  onClose: () => void;
 };
 
 function Modal({ isOpened, onClose, currency }: Props) {
@@ -79,4 +79,5 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
   },
 });
+
 export default memo<Props>(Modal);
