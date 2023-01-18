@@ -6,14 +6,13 @@ import {
   TouchableWithoutFeedback,
   useWindowDimensions,
 } from "react-native";
-import { useTheme } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import { Flex } from "@ledgerhq/native-ui";
 
 type Props = {
   onPress: () => void;
-  onLongPress: () => void | undefined;
+  onLongPress?: () => void | undefined;
   Icon: IconType;
 };
 
@@ -24,19 +23,22 @@ const FloatingDebugButton: React.FC<Props> = ({
   onLongPress,
   Icon,
 }) => {
-  const pan = useRef(new Animated.ValueXY()).current;
+  const pan = useRef(new Animated.ValueXY({ x: 10000, y: 0 })).current;
   const { height, width } = useWindowDimensions();
 
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: (evt, gestureState) =>
         Math.abs(gestureState.dx) > 5,
+      onPanResponderGrant(e, gestureState) {
+        pan.setOffset({
+          x: gestureState.x0 - boxSize / 2,
+          y: gestureState.y0 - boxSize / 2,
+        });
+      },
       onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }], {
         useNativeDriver: false,
       }),
-      onPanResponderRelease: () => {
-        pan.extractOffset();
-      },
     }),
   ).current;
 
