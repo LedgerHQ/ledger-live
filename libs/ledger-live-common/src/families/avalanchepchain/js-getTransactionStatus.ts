@@ -4,9 +4,8 @@ import {
   RecipientRequired,
   AmountRequired,
   InvalidAddressBecauseDestinationIsAlsoSource,
-  NotEnoughBalanceToDelegate,
 } from "@ledgerhq/errors";
-import { AvalancheInvalidDateTimeError } from "./errors";
+import { AvalancheInvalidDateTimeError, AvalancheMinimumAmountError } from "./errors";
 import { Account } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "./types";
 import { FIVE_MINUTES, TWO_WEEKS, AVAX_MINIMUM_STAKE_AMOUNT } from "./utils";
@@ -32,7 +31,7 @@ const getTransactionStatus = async (
   if (amount.lte(0) && !transaction.useAllAmount) {
     errors.amount = new AmountRequired();
   } else if (amount.lt(AVAX_MINIMUM_STAKE_AMOUNT)) {
-    errors.amount = new NotEnoughBalanceToDelegate();
+    errors.amount = new AvalancheMinimumAmountError();
   }
 
   const totalSpent = amount.plus(estimatedFees);

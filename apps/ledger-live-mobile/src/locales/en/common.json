@@ -681,6 +681,9 @@
     "AvalancheInvalidDateTimeError": {
       "title": "Invalid staking end date selected"
     },
+    "AvalancheMinimumAmountError": {
+      "title": "Minimum amount is 25 AVAX"
+    },
     "CardanoNotEnoughFunds": {
       "title": "Please ensure you have enough funds to pay for fees"
     },

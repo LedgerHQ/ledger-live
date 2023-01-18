@@ -6,10 +6,9 @@ import { BigNumber } from "bignumber.js";
 import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   AmountRequired,
-  NotEnoughBalanceToDelegate,
 } from "@ledgerhq/errors";
 import { FIVE_MINUTES, TWO_WEEKS, AVAX_MINIMUM_STAKE_AMOUNT } from "./utils";
-import { AvalancheInvalidDateTimeError } from "./errors";
+import { AvalancheInvalidDateTimeError, AvalancheMinimumAmountError } from "./errors";
 
 const avalanchepchain: CurrenciesData<Transaction> = {
   scanAccounts: [
@@ -78,7 +77,7 @@ const avalanchepchain: CurrenciesData<Transaction> = {
           }),
           expectedStatus: {
             errors: {
-              amount: new NotEnoughBalanceToDelegate(),
+              amount: new AvalancheMinimumAmountError(),
             },
             warnings: {},
           },

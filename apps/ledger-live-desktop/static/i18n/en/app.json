@@ -5340,6 +5340,9 @@
     "AvalancheInvalidDateTimeError": {
       "title": "Invalid staking end date selected"
     },
+    "AvalancheMinimumAmountError": {
+      "title": "Minimum amount is 25 AVAX"
+    },
     "HederaAddAccountError": {
       "title": "Your account has not been added. Please try again."
     },
