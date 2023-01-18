@@ -6,17 +6,10 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import Animated, {
-  FadeIn,
-  FadeOut,
-  Layout,
-  SlideInUp,
-  SlideOutUp,
-} from "react-native-reanimated";
+import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
 import FloatingDebugButton from "../FloatingDebugButton";
 import EventList from "./EventList";
 import Status from "./Status";
-import InvertTheme from "../theme/InvertTheme";
 
 const AnimatedFlex = Animated.createAnimatedComponent(Flex);
 

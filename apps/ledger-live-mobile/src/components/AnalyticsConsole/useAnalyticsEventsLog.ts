@@ -8,7 +8,7 @@ type FilterFunction = (
   prev: LoggableEventRenderable,
 ) => LoggableEventRenderable;
 
-export default function useAnalyticsEventsLog(limit = 20) {
+export default function useAnalyticsEventsLog(limit = 40) {
   const id = useRef(0);
   const [items, setItems] = useState<LoggableEventRenderable[]>([]);
   const filter: FilterFunction = useCallback((curr, prev) => {
