@@ -1,5 +1,5 @@
 name: "@Mobile • Regen Pods"
-run-name: "@Mobile • Regen Pods triggered by @${{ inputs.login }} ${{ inputs.ref && format('on branch {0}', inputs.ref) || format('on PR {0}', inputs.number) }}"
+run-name: "@Mobile • Regen Pods triggered by ${{ inputs.login }} ${{ inputs.ref && format('on branch {0}', inputs.ref) || format('on PR {0}', inputs.number) }}"
 
 on:
   workflow_dispatch:

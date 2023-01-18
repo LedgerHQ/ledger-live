@@ -1,5 +1,5 @@
 name: "@Desktop • Build App (external)"
-run-name: "@Desktop • Build App (external) triggered by @${{ inputs.login }}  ${{ format('on branch {0}', inputs.ref) }}"
+run-name: "@Desktop • Build App (external) triggered by ${{ inputs.login }}  ${{ format('on branch {0}', inputs.ref) }}"
 
 on:
   workflow_dispatch:

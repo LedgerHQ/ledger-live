@@ -1,5 +1,5 @@
 import { Probot } from "probot";
-import { CheckSuite, GATE_CHECK_RUN_NAME, RUNNERS, WORKFLOWS } from "./const";
+import { GATE_CHECK_RUN_NAME, RUNNERS, WORKFLOWS } from "./const";
 import {
   downloadArtifact,
   extractWorkflowFile,
