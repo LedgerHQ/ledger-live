@@ -52,7 +52,7 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
         owner,
         repo,
         name: workflow.checkRunName,
-        head_sha: payload.workflow_run.head_sha,
+        head_sha: payload.workflow_run.pull_requests[0]?.head.sha,
         status: "queued",
         started_at: new Date().toISOString(),
         output: {
@@ -89,7 +89,7 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
         octokit,
         owner,
         repo,
-        ref: payload.workflow_run.head_sha,
+        ref: payload.workflow_run.pull_requests[0]?.head.sha,
         checkName: workflow.checkRunName,
       });
       if (checkRuns.data.total_count === 0) {
@@ -225,7 +225,7 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
         octokit,
         owner,
         repo,
-        sha: payload.workflow_run.head_sha,
+        sha: payload.workflow_run.pull_requests[0]?.head.sha,
         checkName: workflow.checkRunName,
         extraFields: {
           details_url: workflowUrl,
@@ -259,7 +259,7 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
         owner,
         repo,
         workflow_id: workflow.file,
-        ref: payload.check_run.head_sha,
+        ref: payload.check_run.pull_requests[0].head.ref,
         inputs: workflow.getInputs(payload),
       });
     }

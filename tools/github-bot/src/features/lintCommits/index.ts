@@ -49,12 +49,12 @@ export function lintCommits(app: Probot) {
     getInputs: (payload) => {
       return "workflow_run" in payload
         ? {
-            ref: payload.workflow_run.pull_requests[0]?.head.ref,
+            ref: payload.workflow_run.pull_requests[0]?.head.sha,
             from: payload.workflow_run.pull_requests[0]?.base.ref,
             login: payload.workflow_run.actor.login,
           }
         : {
-            ref: payload.check_run.pull_requests[0]?.head.ref,
+            ref: payload.check_run.head_sha,
             from: payload.check_run.pull_requests[0]?.base.ref,
             login: payload.sender.login,
           };

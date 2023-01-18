@@ -46,7 +46,7 @@ export function orchestrator(app: Probot) {
         owner,
         repo,
         name: matchedWorkflow.checkRunName,
-        head_sha: payload.workflow_run.head_sha,
+        head_sha: payload.workflow_run.pull_requests[0]?.head.sha,
         status: "queued",
         started_at: new Date().toISOString(),
         output: {
@@ -101,7 +101,7 @@ export function orchestrator(app: Probot) {
         octokit,
         owner,
         repo,
-        sha: payload.workflow_run.head_sha,
+        sha: payload.workflow_run.pull_requests[0]?.head.sha,
         checkName: matchedWorkflow.checkRunName,
         extraFields: {
           details_url: workflowUrl,
@@ -198,7 +198,7 @@ export function orchestrator(app: Probot) {
         octokit,
         owner,
         repo,
-        sha: payload.workflow_run.head_sha,
+        sha: payload.workflow_run.pull_requests[0]?.head.sha,
         checkName: GATE_CHECK_RUN_NAME,
       });
 
@@ -218,7 +218,7 @@ export function orchestrator(app: Probot) {
         octokit,
         owner,
         repo,
-        ref: payload.workflow_run.head_sha,
+        ref: payload.workflow_run.pull_requests[0]?.head.sha,
         checkName: matchedWorkflow.checkRunName,
       });
       if (checkRuns.data.total_count === 0) {
@@ -368,7 +368,7 @@ export function orchestrator(app: Probot) {
         owner,
         repo,
         workflow_id: workflowName,
-        ref: payload.check_run.head_sha,
+        ref: payload.check_run.pull_requests[0].head.ref,
         inputs: workflowMeta.getInputs(payload),
       });
     }
