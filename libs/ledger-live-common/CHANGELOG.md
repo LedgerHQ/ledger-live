@@ -1,5 +1,13 @@
 # @ledgerhq/live-common
 
+## 27.12.0-nightly.2
+
+### Minor Changes
+
+- [#2340](https://github.com/LedgerHQ/ledger-live/pull/2340) [`789bfc0fad`](https://github.com/LedgerHQ/ledger-live/commit/789bfc0fadd53c8209a2ad8aa8df6bbf9a2891ab) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - support: add Cometh as dep
+
+* [#2337](https://github.com/LedgerHQ/ledger-live/pull/2337) [`7fef128ffb`](https://github.com/LedgerHQ/ledger-live/commit/7fef128ffba226dd675935c7464db60894f327bb) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - add plugins dependencies
+
 ## 27.12.0-nightly.1
 
 ### Minor Changes

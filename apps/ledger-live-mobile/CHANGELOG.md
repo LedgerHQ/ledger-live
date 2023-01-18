@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.14.0-nightly.2
+
+### Patch Changes
+
+- [#2270](https://github.com/LedgerHQ/ledger-live/pull/2270) [`b3ca8bff8c`](https://github.com/LedgerHQ/ledger-live/commit/b3ca8bff8c90400b302ddf0345df1b83d9ceb3c3) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Add new Infinity Pass assets and debug screen for claim NFT flow
+
+- Updated dependencies [[`789bfc0fad`](https://github.com/LedgerHQ/ledger-live/commit/789bfc0fadd53c8209a2ad8aa8df6bbf9a2891ab), [`7fef128ffb`](https://github.com/LedgerHQ/ledger-live/commit/7fef128ffba226dd675935c7464db60894f327bb)]:
+  - @ledgerhq/live-common@27.12.0-nightly.2
+
 ## 3.14.0-nightly.1
 
 ### Minor Changes
