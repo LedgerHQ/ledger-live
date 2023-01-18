@@ -220,7 +220,8 @@
     "swap": "Swap",
     "lend": "Lend",
     "catalog": "Discover",
-    "market": "Market"
+    "market": "Market",
+    "protect": "Protect"
   },
   "stars": {
     "placeholder": "Star an account to display it here.",
