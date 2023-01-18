@@ -23,8 +23,11 @@ const FloatingDebugButton: React.FC<Props> = ({
   onLongPress,
   Icon,
 }) => {
-  const pan = useRef(new Animated.ValueXY({ x: 10000, y: 0 })).current;
   const { height, width } = useWindowDimensions();
+  const { top, left, right, bottom } = useSafeAreaInsets();
+  const pan = useRef(
+    new Animated.ValueXY({ x: 10000, y: top + 2 * boxSize }),
+  ).current;
 
   const panResponder = useRef(
     PanResponder.create({
@@ -41,8 +44,6 @@ const FloatingDebugButton: React.FC<Props> = ({
       }),
     }),
   ).current;
-
-  const { top, left, right, bottom } = useSafeAreaInsets();
 
   return (
     <Animated.View

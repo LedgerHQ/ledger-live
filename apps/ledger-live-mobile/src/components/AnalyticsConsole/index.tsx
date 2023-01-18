@@ -1,48 +1,20 @@
 import React, { useCallback, useState } from "react";
-import { StyleSheet, ScrollView, Pressable } from "react-native";
+import { StyleSheet, Pressable } from "react-native";
 import { Flex, Switch, Icons, Divider } from "@ledgerhq/native-ui";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, {
+  FadeIn,
+  FadeOut,
   Layout,
-  SlideInLeft,
   SlideInUp,
   SlideOutUp,
 } from "react-native-reanimated";
-import useAnalyticsEventsLog from "./useAnalyticsEventsLog";
-import Event from "./Event";
 import FloatingDebugButton from "../FloatingDebugButton";
+import EventList from "./EventList";
+import Status from "./Status";
 
 const AnimatedFlex = Animated.createAnimatedComponent(Flex);
-
-type ListProps = {
-  showExtraProps: boolean;
-};
-
-const EventList: React.FC<ListProps> = ({ showExtraProps }) => {
-  const { items } = useAnalyticsEventsLog();
-  return (
-    <ScrollView>
-      <AnimatedFlex paddingBottom={100} flexDirection="column-reverse">
-        {items.map(item => {
-          const isLast =
-            Math.abs(
-              item.date.getTime() - items[items.length - 1].date.getTime(),
-            ) < 1000;
-          return (
-            <AnimatedFlex key={item.id} layout={Layout} entering={SlideInLeft}>
-              <Event
-                {...item}
-                showExtraProps={showExtraProps}
-                isLast={isLast}
-              />
-            </AnimatedFlex>
-          );
-        })}
-      </AnimatedFlex>
-    </ScrollView>
-  );
-};
 
 enum Visibility {
   opaque,
@@ -75,8 +47,7 @@ const AnalyticsConsole = () => {
     setVisibility(Visibility.transparent);
   }, []);
 
-  if (!render) return null;
-  // return null;
+  // if (!render) return null;
   return (
     <>
       <Flex
@@ -104,11 +75,12 @@ const AnalyticsConsole = () => {
         <SafeAreaView>
           <AnimatedFlex>
             {visibility === Visibility.opaque ? (
-              <AnimatedFlex entering={SlideInUp} exiting={SlideOutUp}>
+              <AnimatedFlex entering={FadeIn} exiting={FadeOut} p={4}>
                 <Flex
                   flexDirection="row"
                   alignItems="center"
                   justifyContent="space-between"
+                  mb={3}
                 >
                   <Switch
                     checked={showExtraProps}
@@ -119,6 +91,7 @@ const AnalyticsConsole = () => {
                     <Icons.CloseMedium size={25} color="black" />
                   </Pressable>
                 </Flex>
+                <Status />
                 <Divider />
               </AnimatedFlex>
             ) : null}

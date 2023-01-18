@@ -192,7 +192,7 @@ export const trackSubject = new ReplaySubject<LoggableEvent>(30);
 
 type EventType = string | "button_clicked" | "error_message";
 
-function getIsTracking(
+export function getIsTracking(
   state: State | null | undefined,
   mandatory?: boolean | null | undefined,
 ): { enabled: true } | { enabled: false; reason?: string } {
@@ -209,7 +209,7 @@ function getIsTracking(
   if (!mandatory && !analyticsEnabled) {
     return {
       enabled: false,
-      reason: "analytics not enabled and event not mandatory",
+      reason: "analytics not enabled",
     };
   }
   return { enabled: true };
