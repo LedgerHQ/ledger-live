@@ -1,37 +1,5 @@
 # ledger-live-desktop
 
-## 3.0.0-nightly.13
-
-### Minor Changes
-
-- [#2291](https://github.com/LedgerHQ/ledger-live/pull/2291) [`057988a1dc`](https://github.com/LedgerHQ/ledger-live/commit/057988a1dc0e8c210a15be552aa17f7915038568) Thanks [@gre](https://github.com/gre)! - make onboarding not blocking user if genuine check fails (e.g. network issues)
-
-### Patch Changes
-
-- [#2271](https://github.com/LedgerHQ/ledger-live/pull/2271) [`bdae5049b3`](https://github.com/LedgerHQ/ledger-live/commit/bdae5049b39210e95ed282e783d03b51ba9b3c66) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Add final design to the PostOnboarding Hub
-
-* [#2335](https://github.com/LedgerHQ/ledger-live/pull/2335) [`4c8b829ff0`](https://github.com/LedgerHQ/ledger-live/commit/4c8b829ff0cba565f3d80f76355734025ffcae94) Thanks [@sarneijim](https://github.com/sarneijim)! - fix swap show dex quote flag integration
-
-* Updated dependencies [[`789bfc0fad`](https://github.com/LedgerHQ/ledger-live/commit/789bfc0fadd53c8209a2ad8aa8df6bbf9a2891ab), [`7fef128ffb`](https://github.com/LedgerHQ/ledger-live/commit/7fef128ffba226dd675935c7464db60894f327bb)]:
-  - @ledgerhq/live-common@27.12.0-nightly.2
-
-## 3.0.0-nightly.12
-
-### Major Changes
-
-- [#2305](https://github.com/LedgerHQ/ledger-live/pull/2305) [`74285a2c2b`](https://github.com/LedgerHQ/ledger-live/commit/74285a2c2b5166df58d547a72ca3fa66d2cec256) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - remove optionnal trongrid on experimental menu
-
-### Patch Changes
-
-- [#2322](https://github.com/LedgerHQ/ledger-live/pull/2322) [`6afa633c2d`](https://github.com/LedgerHQ/ledger-live/commit/6afa633c2ddfa1a602e585351006f07e35ce4637) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Aligns 1inch logo with others when showing swap rates on LLD
-
-* [`7af03d772a`](https://github.com/LedgerHQ/ledger-live/commit/7af03d772a16822024e456224951c48c5e09e45d) Thanks [@sarneijim](https://github.com/sarneijim)! - Add static limit to format value in swap rates
-
-- [`befe0e224a`](https://github.com/LedgerHQ/ledger-live/commit/befe0e224a93fbc3598f4d03b769b9d9e1af721e) Thanks [@sarneijim](https://github.com/sarneijim)! - Add deeplink to dex quotes
-
-- Updated dependencies [[`befe0e224a`](https://github.com/LedgerHQ/ledger-live/commit/befe0e224a93fbc3598f4d03b769b9d9e1af721e), [`d26fbee27a`](https://github.com/LedgerHQ/ledger-live/commit/d26fbee27aacd05e2cc5ee0ba3c49492a72f5659), [`7af03d772a`](https://github.com/LedgerHQ/ledger-live/commit/7af03d772a16822024e456224951c48c5e09e45d)]:
-  - @ledgerhq/live-common@27.12.0-nightly.1
-
 ## 2.52.0-nightly.11
 
 ### Patch Changes
