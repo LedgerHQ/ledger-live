@@ -5779,5 +5779,12 @@
       "subtitle": "Unlock your {{productName}} and restart the installation.",
       "installCTA": "Restart installation"
     }
+  },
+  "discoverProtect": {
+    "new": "New",
+    "title": "With Protect, never lose access to your assets. Ever.",
+    "description": "Protect takes responsibility for protecting your Recovery Phrase, to prevent any asset loss occurring from the theft or loss of your Recovery Phrase, or your Ledger.",
+    "cta": "Discover the benefits",
+    "downloadLLM": "To subscribe, scan the QR code and download our mobile app"
   }
 }

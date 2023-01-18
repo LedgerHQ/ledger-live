@@ -28,7 +28,6 @@ import { darken, rgba } from "~/renderer/styles/helpers";
 import IconCard from "~/renderer/icons/Card";
 import IconManager from "~/renderer/icons/Manager";
 import IconWallet from "~/renderer/icons/Wallet";
-import IconPortfolio from "~/renderer/icons/Portfolio";
 import IconApps from "~/renderer/icons/Apps";
 import IconReceive from "~/renderer/icons/Receive";
 import IconSend from "~/renderer/icons/Send";
@@ -293,6 +292,11 @@ const MainSideBar = () => {
     maybeRedirectToAccounts();
     dispatch(openModal("MODAL_RECEIVE"));
   }, [dispatch, maybeRedirectToAccounts]);
+
+  const handleOpenProtectDiscoverModal = useCallback(() => {
+    dispatch(openModal("MODAL_PROTECT_DISCOVER"));
+  }, [dispatch]);
+
   return (
     <Transition
       in={!collapsed}
@@ -320,7 +324,8 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"dashboard"}
                   label={t("dashboard.title")}
-                  icon={IconPortfolio}
+                  icon={Icons.HouseMedium}
+                  iconSize={20}
                   iconActiveColor="wallet"
                   onClick={handleClickDashboard}
                   isActive={location.pathname === "/"}
@@ -439,6 +444,17 @@ const MainSideBar = () => {
                   collapsed={secondAnim}
                   disabled={isCardDisabled}
                 />
+                <FeatureToggle feature="protectServicesDiscoverDesktop">
+                  <SideBarListItem
+                    id={"send"}
+                    label={t("sidebar.protect")}
+                    icon={Icons.LockMedium}
+                    iconSize={20}
+                    iconActiveColor="wallet"
+                    onClick={handleOpenProtectDiscoverModal}
+                    collapsed={secondAnim}
+                  />
+                </FeatureToggle>
                 <SideBarListItem
                   id={"manager"}
                   label={t("sidebar.manager")}
