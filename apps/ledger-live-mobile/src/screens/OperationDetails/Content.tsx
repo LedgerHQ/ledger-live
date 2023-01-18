@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { View, StyleSheet, Linking } from "react-native";
+import { View, StyleSheet, Linking, Text } from "react-native";
 import uniq from "lodash/uniq";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
@@ -12,8 +12,6 @@ import type {
   NFTCollectionMetadataResponse,
 } from "@ledgerhq/types-live";
 import {
-  getMainAccount,
-  getAccountCurrency,
   getAccountUnit,
   getAccountName,
   getFeesCurrency,
@@ -26,6 +24,9 @@ import {
 } from "@ledgerhq/live-common/operation";
 import { useNftCollectionMetadata, useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { InformativeCard } from "@ledgerhq/native-ui";
+
 import { NavigatorName, ScreenName } from "../../const";
 import LText from "../../components/LText";
 import OperationIcon from "../../components/OperationIcon";
@@ -75,13 +76,24 @@ type Props = {
   parentAccount?: Account | null;
   operation: Operation;
   disableAllLinks?: boolean;
+  currency: CryptoCurrency | TokenCurrency;
+  mainAccount: Account;
 };
-export default function Content({ account, parentAccount, operation, disableAllLinks }: Props) {
+
+export default function Content({
+  account,
+  mainAccount,
+  parentAccount,
+  operation,
+  disableAllLinks,
+  currency,
+}: Props) {
   const { colors } = useTheme();
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
   const { t } = useTranslation();
   const [isModalOpened, setIsModalOpened] = useState(false);
+
   const onPress = useCallback(() => {
     navigation.navigate(NavigatorName.Accounts, {
       screen: ScreenName.Account,
@@ -91,19 +103,21 @@ export default function Content({ account, parentAccount, operation, disableAllL
       },
     });
   }, [account.id, navigation, parentAccount]);
-  const onPressInfo = useCallback(() => {
+
+  const onPressInfo = () => {
     setIsModalOpened(true);
-  }, []);
-  const onModalClose = useCallback(() => {
+  };
+
+  const onModalClose = () => {
     setIsModalOpened(false);
-  }, []);
-  const mainAccount = getMainAccount(account, parentAccount);
+  };
+
   const currencySettings = useSelector((s: State) =>
     currencySettingsForAccountSelector(s, {
       account: mainAccount,
     }),
   );
-  const currency = getAccountCurrency(account);
+
   const isToken = currency.type === "TokenCurrency";
   const unit = getAccountUnit(account);
   const feeCurrency = getFeesCurrency(mainAccount);
@@ -118,15 +132,18 @@ export default function Content({ account, parentAccount, operation, disableAllL
   const subOperations = operation.subOperations || [];
   const internalOperations = operation.internalOperations || [];
   const shouldDisplayTo = uniqueRecipients.length > 0 && !!uniqueRecipients[0];
+
   const isConfirmed = isConfirmedOperation(
     operation,
     mainAccount,
     currencySettings.confirmationsNb,
   );
+
   const specific =
     byFamiliesOperationDetails[
       mainAccount.currency.family as keyof typeof byFamiliesOperationDetails
     ];
+
   const urlFeesInfo =
     specific &&
     (specific as { getURLFeesInfo: (o: Operation, c: string) => string })?.getURLFeesInfo &&
@@ -147,6 +164,7 @@ export default function Content({ account, parentAccount, operation, disableAllL
           }
         ).OperationDetailsExtra
       : DefaultOperationDetailsExtra;
+
   const isNftOperation =
     ["NFT_IN", "NFT_OUT"].includes(type) && operation.contract && operation.tokenId;
   const { status: collectionStatus, metadata: collectionMetadata } = useNftCollectionMetadata(
@@ -162,6 +180,7 @@ export default function Content({ account, parentAccount, operation, disableAllL
   ) as NFTResource & {
     metadata: NFTMetadataResponse["result"];
   };
+
   return (
     <>
       <View style={styles.header}>
@@ -185,7 +204,6 @@ export default function Content({ account, parentAccount, operation, disableAllL
           metadata={nftMetadata}
           styles={styles}
         />
-
         <View style={styles.confirmationContainer}>
           <View
             style={[
@@ -262,6 +280,7 @@ export default function Content({ account, parentAccount, operation, disableAllL
             if (!opAccount) return null;
             return (
               <View
+                key={op.id}
                 style={{
                   marginHorizontal: 16,
                 }}
@@ -305,6 +324,9 @@ export default function Content({ account, parentAccount, operation, disableAllL
         />
       ) : null}
 
+      <InformativeCard>
+        <Text>{"Your transaction is ongoing"}</Text>
+      </InformativeCard>
       {!disableAllLinks ? (
         <Section
           title={t("operationDetails.account")}
