@@ -2,4 +2,4 @@
 "@ledgerhq/live-common": patch
 ---
 
-changed the File name H3M.svg to hmmm.svg because the currency name is hmmm not H3M.
+changed the name of a crypto icon from H3M.svg to hmmm.svg because the currency name is hmmm not H3M.
