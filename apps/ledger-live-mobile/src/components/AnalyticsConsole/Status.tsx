@@ -2,10 +2,11 @@ import React from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useSelector } from "react-redux";
 import { getIsTracking } from "../../analytics";
+import { State } from "../../reducers/types";
 
-const trackingSelector = state => getIsTracking(state, false);
+const trackingSelector = (state: State) => getIsTracking(state, false);
 
-const Status: React.FC<{}> = () => {
+const Status = () => {
   const isTracking = useSelector(trackingSelector);
   return (
     <Flex>

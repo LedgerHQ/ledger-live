@@ -1,7 +1,7 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
-import { Button, Flex, InfiniteLoader } from "@ledgerhq/native-ui";
+import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import {
   Image,
   ImageErrorEventData,
@@ -25,6 +25,7 @@ import ImageProcessor, {
   ProcessorRawResult,
 } from "../../components/CustomImage/ImageProcessor";
 import { targetDisplayDimensions } from "./shared";
+import Button from "../../components/Button";
 import BottomButtonsContainer from "../../components/CustomImage/BottomButtonsContainer";
 import ContrastChoice from "../../components/CustomImage/ContrastChoice";
 import { ScreenName } from "../../const";
@@ -34,6 +35,7 @@ import {
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
 import ForceTheme from "../../components/theme/ForceTheme";
+import { TrackScreen } from "../../analytics";
 
 export const PreviewImage = styled.Image.attrs({
   resizeMode: "contain",
@@ -67,6 +69,8 @@ const previewDimensions = {
   width: 252,
 };
 
+const analyticsScreenName = "Choose contrast";
+
 type NavigationProps = BaseComposite<
   StackNavigatorProps<
     CustomImageNavigatorParamList,
@@ -81,7 +85,7 @@ type NavigationProps = BaseComposite<
  * Then on confirmation it navigates to the transfer step with the raw hex data
  * of the image & the preview base 64 data URI of the image as params.
  */
-const Step2Preview = ({ navigation, route }: NavigationProps) => {
+const Step2ChooseContrast = ({ navigation, route }: NavigationProps) => {
   const imageProcessorRef = useRef<ImageProcessor>(null);
   const [loading, setLoading] = useState(true);
   const [resizedImage, setResizedImage] = useState<ResizeResult | null>(null);
@@ -188,11 +192,20 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
     width: animSelectedIndex.value * 54,
   }));
 
+  const confirmEventProperties = useMemo(
+    () => ({
+      button: "Confirm contrast",
+      contrast: contrasts[selectedIndex].val,
+    }),
+    [selectedIndex],
+  );
+
   return (
     <SafeAreaView
       edges={["bottom"]}
       style={{ flex: 1, justifyContent: "space-between" }}
     >
+      <TrackScreen category={analyticsScreenName} />
       {resizedImage?.imageBase64DataUri && (
         <ImageProcessor
           ref={imageProcessorRef}
@@ -265,6 +278,8 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
             onPress={requestRawResult}
             pending={rawResultLoading}
             displayContentWhenPending
+            event="button_clicked"
+            eventProperties={confirmEventProperties}
           >
             {t("customImage.confirmContrast")}
           </Button>
@@ -274,4 +289,4 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
   );
 };
 
-export default Step2Preview;
+export default Step2ChooseContrast;

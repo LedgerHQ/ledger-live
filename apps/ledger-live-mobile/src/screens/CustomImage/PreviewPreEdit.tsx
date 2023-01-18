@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Button, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
+import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import {
   ImageMetadataLoadingError,
   ImagePreviewError,
@@ -43,6 +43,9 @@ import useCenteredImage, {
   Params as ImageCentererParams,
   CenteredResult,
 } from "../../components/CustomImage/useCenteredImage";
+import Button from "../../components/Button";
+import { TrackScreen } from "../../analytics";
+import Link from "../../components/wrappedUi/Link";
 
 const DEFAULT_CONTRAST = 1;
 
@@ -52,6 +55,14 @@ type NavigationProps = BaseComposite<
     ScreenName.CustomImagePreviewPreEdit
   >
 >;
+
+const analyticsScreenName = "Preview of the lockscreen picture";
+const analyticsSetLockScreenEventProps = {
+  button: "Set as lock screen",
+};
+const analyticsEditEventProps = {
+  button: "Edit",
+};
 
 const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   const { t } = useTranslation();
@@ -268,6 +279,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
+      <TrackScreen category={analyticsScreenName} />
       {croppedImage?.imageBase64DataUri && (
         <ImageProcessor
           ref={imageProcessorRef}
@@ -312,17 +324,22 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
               pending={rawResultLoading}
               onPress={requestRawResult}
               displayContentWhenPending
+              event="button_clicked"
+              eventProperties={analyticsSetLockScreenEventProps}
             >
               {t("customImage.preview.setPicture")}
             </Button>
-            <Button
-              size="large"
-              mb={8}
-              onPress={handleEditPicture}
-              disabled={previewLoading}
-            >
-              {t("customImage.preview.editPicture")}
-            </Button>
+            <Flex py={6} mb={8}>
+              <Link
+                size="large"
+                onPress={handleEditPicture}
+                disabled={previewLoading}
+                event="button_clicked"
+                eventProperties={analyticsEditEventProps}
+              >
+                {t("customImage.preview.editPicture")}
+              </Link>
+            </Flex>
           </Flex>
         </Flex>
       )}

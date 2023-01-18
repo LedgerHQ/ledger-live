@@ -69,7 +69,7 @@ const AnalyticsConsole = () => {
         <Flex
           style={StyleSheet.absoluteFillObject}
           bg={"white"}
-          opacity={visibility === Visibility.opaque ? 1 : 0.8}
+          opacity={visibility === Visibility.opaque ? 1 : 0.6}
         />
         <SafeAreaView>
           <AnimatedFlex>
