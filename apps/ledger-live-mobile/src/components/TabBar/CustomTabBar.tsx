@@ -4,6 +4,7 @@ import { Dimensions, StyleSheet, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import Svg, { Path, Stop } from "react-native-svg";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+import Animated, { FadeInDown, FadeOutDown } from "react-native-reanimated";
 import { TAB_BAR_HEIGHT, GRADIENT_HEIGHT } from "./shared";
 import BackgroundGradient from "./BackgroundGradient";
 
@@ -103,21 +104,17 @@ export type Props = {
   hideTabBar?: boolean;
 } & BottomTabBarProps;
 
-export default function CustomTabBar({
+const TabBar = ({
   state,
   descriptors,
   navigation,
   colors,
   insets,
-  hideTabBar = false,
-}: Props): JSX.Element {
+}: Props): JSX.Element => {
   const bgColor = getBgColor(colors);
   const gradients = colors.type === "light" ? lightGradients : darkGradients;
   const { bottom: bottomInset } = insets;
 
-  if (hideTabBar) {
-    return <></>;
-  }
   return (
     <Flex
       width="100%"
@@ -218,5 +215,30 @@ export default function CustomTabBar({
         },
       )}
     </Flex>
+  );
+};
+
+export default function CustomTabBar({
+  state,
+  descriptors,
+  navigation,
+  colors,
+  insets,
+  hideTabBar = false,
+}: Props): JSX.Element {
+  return (
+    <Animated.View>
+      {!hideTabBar && (
+        <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
+          <TabBar
+            state={state}
+            descriptors={descriptors}
+            navigation={navigation}
+            colors={colors}
+            insets={insets}
+          />
+        </Animated.View>
+      )}
+    </Animated.View>
   );
 }
