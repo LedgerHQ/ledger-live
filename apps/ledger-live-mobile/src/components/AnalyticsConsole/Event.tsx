@@ -23,14 +23,8 @@ const Event: React.FC<Props> = ({
     () =>
       propertiesToDisplay
         ? JSON.stringify(
-            {
-              ...propertiesToDisplay,
-              source: (propertiesToDisplay as null | Record<string, unknown>)
-                ?.source,
-              screen: (propertiesToDisplay as null | Record<string, unknown>)
-                ?.screen,
-            },
-            null,
+            propertiesToDisplay,
+            Object.keys(propertiesToDisplay).sort(),
             2,
           )
             .split("\n")
@@ -49,12 +43,12 @@ const Event: React.FC<Props> = ({
       borderLeftColor={isLast ? "black" : "transparent"}
     >
       <Flex flexDirection="row">
-        <Text color="constant.black" fontWeight="bold">
+        <Text color="black" fontWeight="bold">
           {eventName}
         </Text>
-        <Text> {date?.toLocaleTimeString()}</Text>
+        <Text color="grey"> {date?.toLocaleTimeString()}</Text>
       </Flex>
-      <Text>{propertiesText}</Text>
+      <Text color="black">{propertiesText}</Text>
     </Flex>
   );
 };
