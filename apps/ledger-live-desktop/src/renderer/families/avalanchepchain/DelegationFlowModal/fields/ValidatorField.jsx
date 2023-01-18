@@ -47,7 +47,7 @@ const ValidatorField = ({ account, status, t, onChangeValidator, chosenVoteAccAd
         ></ValidatorRow>
       );
     },
-    [account, unit],
+    [account, unit, chosenVoteAccAddr],
   );
 
   return (
@@ -59,7 +59,7 @@ const ValidatorField = ({ account, status, t, onChangeValidator, chosenVoteAccAd
             data={
               showAll
                 ? validators
-                : [validators.find(v => v.validatorAddress === chosenVoteAccAddr) || validators[0]]
+                : [validators.find(v => v.nodeID === chosenVoteAccAddr) || validators[0]]
             }
             style={{ flex: showAll ? "1 0 256px" : "1 0 64px", marginBottom: 0, paddingLeft: 0 }}
             renderItem={renderItem}
