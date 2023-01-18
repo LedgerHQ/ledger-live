@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       ref:
-        description: The branch to lint
+        description: The commit/branch to lint
         required: true
       from:
         description: Lower end of the commit range to lint
