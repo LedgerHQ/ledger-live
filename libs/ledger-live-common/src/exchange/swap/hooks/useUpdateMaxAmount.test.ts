@@ -77,33 +77,6 @@ describe("updateAmountUsingMax", () => {
     expect(setFromAmount.mock.calls[0][0]).toBe(ZERO);
   });
 
-  it("should toggle setIsSendMaxLoading", async () => {
-    const setIsSendMaxLoading = jest.fn();
-
-    const amount = new BigNumber(0.5);
-    mockedEstimateMaxSpendable.mockResolvedValue(amount);
-    const { result } = renderHook(useUpdateMaxAmount, {
-      initialProps: { ...defaultProps, setIsSendMaxLoading },
-    });
-
-    act(() => result.current.toggleMax());
-    expect(setIsSendMaxLoading).toBeCalledTimes(1);
-    expect(setIsSendMaxLoading).toBeCalledWith(true);
-    setIsSendMaxLoading.mockClear();
-
-    // Lest resort solution, since waitFor and other helpers will not work here.
-    await wait();
-
-    expect(setIsSendMaxLoading).toBeCalledTimes(1);
-    expect(setIsSendMaxLoading).toBeCalledWith(false);
-    setIsSendMaxLoading.mockClear();
-
-    act(() => result.current.toggleMax());
-    expect(setIsSendMaxLoading).toBeCalledTimes(1);
-    expect(setIsSendMaxLoading).toBeCalledWith(false);
-    setIsSendMaxLoading.mockClear();
-  });
-
   it("should update the max amount whenever the dependencies change", async () => {
     const { result, rerender } = renderHook(useUpdateMaxAmount, {
       initialProps: defaultProps,

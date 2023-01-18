@@ -252,6 +252,8 @@
         "float": "Floating",
         "update": "Rates update in",
         "loading": "Loading...",
+        "loadingQuotes": "Loading quotes now",
+        "loadingDescription": "It will only take a moment to find the best options for you.",
         "name": {
           "title": "Provider",
           "tooltip": "Depending on the provider, you have to register with them by creating an account."
