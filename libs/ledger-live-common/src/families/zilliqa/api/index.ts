@@ -95,15 +95,16 @@ export const getMinimumGasPrice = async () => {
   return new BN(r.result);
 };
 
-function transactionToOperation(
+const transactionToOperation = async (
   type: "IN" | "OUT",
   accountId: string,
   addr: string,
   transaction: any
-): Operation {
+) => {
   let { gasPrice, cumulativeGas } = transaction;
   gasPrice = new BN(gasPrice);
   cumulativeGas = new BN(cumulativeGas);
+  const blockHeight = parseInt(transaction.blockId);
 
   const fee = new BigNumber(gasPrice.mul(cumulativeGas).toString());
   let amount = new BigNumber(transaction.amount);
@@ -112,17 +113,34 @@ function transactionToOperation(
     amount = amount.plus(fee);
   }
 
+  let date = new Date();
+  if (transaction.timestamp) {
+    date = new Date(parseInt(transaction.timestamp) / 1000);
+  } else {
+    // In case timestamp is not present in the indexer, we get the stamp directly
+    // from the node:
+    const block = await zilliqa.blockchain.getTxBlock(blockHeight);
+    if (block.result) {
+      date = new Date(parseInt(block.result.header.Timestamp) / 1000);
+    }
+  }
+
+  let txId = transaction.txId;
+  if (!txId.startsWith("0x")) {
+    txId = "0x" + txId;
+  }
+
   const ret: Operation = {
-    id: encodeOperationId(accountId, transaction.txId, type),
+    id: encodeOperationId(accountId, txId, type),
     accountId,
     fee: fee,
     value: amount,
     type,
     // This is where you retrieve the hash of the transaction
-    hash: transaction.txId,
+    hash: txId,
     blockHash: null,
-    blockHeight: parseInt(transaction.blockId),
-    date: new Date("2023-01-09T14:05:01.967Z"), // TODO: new Date(transaction.timestamp),
+    blockHeight,
+    date,
     extra: {
       amount: transaction.amount,
     },
@@ -132,7 +150,7 @@ function transactionToOperation(
   };
 
   return ret;
-}
+};
 
 export const getOperations = async (
   accountId: string,
@@ -156,7 +174,7 @@ export const getOperations = async (
           },
         },
         query:
-          "query TxDetails($input: TransactionDetailsInput) {\n  getTransactionDetails(input: $input) {\n    list {\n    accepted\n      blockId\n      txId\n      toAddress\n      fromAddress\n      tokenAddress\n      amount\n      cumulativeGas\n      gasPrice\n    }\n  }\n}\n",
+          "query TxDetails($input: TransactionDetailsInput) {\n  getTransactionDetails(input: $input) {\n    list {\n    accepted\n     timestamp\n      blockId\n      txId\n      toAddress\n      fromAddress\n      tokenAddress\n      amount\n      cumulativeGas\n      gasPrice\n    }\n  }\n}\n",
       },
     })
   ).data.data;
@@ -175,7 +193,7 @@ export const getOperations = async (
           },
         },
         query:
-          "query TxDetails($input: TransactionDetailsInput) {\n  getTransactionDetails(input: $input) {\n    list {\n    accepted\n      blockId\n      txId\n      toAddress\n      fromAddress\n      tokenAddress\n      amount\n      cumulativeGas\n      gasPrice\n    }\n  }\n}\n",
+          "query TxDetails($input: TransactionDetailsInput) {\n  getTransactionDetails(input: $input) {\n    list {\n    accepted\n     timestamp\n      blockId\n      txId\n      toAddress\n      fromAddress\n      tokenAddress\n      amount\n      cumulativeGas\n      gasPrice\n    }\n  }\n}\n",
       },
     })
   ).data.data;
@@ -189,13 +207,23 @@ export const getOperations = async (
       ? outgoing_res.getTransactionDetails.list
       : [];
 
-  const ret1: Array<Operation> = incoming.map((transaction) =>
-    transactionToOperation("IN", accountId, addr, transaction)
+  const ret1: Array<Operation> = await Promise.all(
+    incoming.map(
+      async (transaction) =>
+        await transactionToOperation("IN", accountId, addr, transaction)
+    )
   );
-  const ret2: Array<Operation> = outgoing.map((transaction) =>
-    transactionToOperation("OUT", accountId, addr, transaction)
+  const ret2: Array<Operation> = await Promise.all(
+    outgoing.map(
+      async (transaction) =>
+        await transactionToOperation("OUT", accountId, addr, transaction)
+    )
   );
   const ret = [...ret1, ...ret2];
+
+  ret.sort((a, b) => {
+    return a.date < b.date ? -1 : a.date > b.date ? 1 : 0;
+  });
 
   return ret;
 };
