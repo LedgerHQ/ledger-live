@@ -187,4 +187,7 @@ export const defaultFeatures: DefaultFeatures = {
   postOnboardingAssetsTransfer: {
     enabled: false,
   },
+  protectServicesDiscoverDesktop: {
+    enabled: false,
+  },
 };

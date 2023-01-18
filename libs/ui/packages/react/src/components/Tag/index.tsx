@@ -84,7 +84,6 @@ function getTextProps({ size }: TagProps): {
       return {
         variant: "tiny",
         fontWeight: "semiBold",
-        uppercase: true,
       };
     case "large":
     default:
