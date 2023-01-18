@@ -191,7 +191,7 @@
     "bs58check": "^2.1.2",
     "buffer": "^6.0.3",
     "cashaddrjs": "^0.4.4",
-    "casper-js-sdk": "^2.10.1",
+    "casper-js-sdk": "^2.10.2",
     "coininfo": "^5.1.0",
     "cosmjs-types": "0.2.1",
     "create-hmac": "^1.1.7",
