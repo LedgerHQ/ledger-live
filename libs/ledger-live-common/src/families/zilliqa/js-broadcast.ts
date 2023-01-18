@@ -45,6 +45,9 @@ export const broadcast = async ({
   let hash: string;
   try {
     hash = await broadcastTransaction(params);
+    if (!hash.startsWith("0x")) {
+      hash = "0x" + hash;
+    }
   } catch (e) {
     throw Error("Failed to broadcast.");
   }
