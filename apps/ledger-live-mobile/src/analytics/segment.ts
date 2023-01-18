@@ -186,6 +186,7 @@ export type LoggableEvent = {
   eventName: string;
   eventProperties?: Properties;
   eventPropertiesWithoutExtra?: Properties;
+  date: Date;
 };
 export const trackSubject = new ReplaySubject<LoggableEvent>(30);
 
@@ -251,6 +252,7 @@ export const track = async (
     eventName: event,
     eventProperties: allProperties,
     eventPropertiesWithoutExtra: propertiesWithoutExtra,
+    date: new Date(),
   });
   if (!token) return;
   segmentClient?.track(event, allProperties);
@@ -339,6 +341,7 @@ export const screen = async (
     eventName: title,
     eventProperties: allProperties,
     eventPropertiesWithoutExtra,
+    date: new Date(),
   });
   if (!token) return;
   segmentClient?.track(title, allProperties);

@@ -15,13 +15,16 @@ type ListProps = {
 
 const EventList: React.FC<ListProps> = ({ showExtraProps }) => {
   const { items } = useAnalyticsEventsLog();
-  console.log({ items });
   return (
     <AnimatedFlex flexDirection="column-reverse">
       {items.map(item => {
+        const isLast =
+          Math.abs(
+            item.date.getTime() - items[items.length - 1].date.getTime(),
+          ) < 1000;
         return (
           <AnimatedFlex key={item.id} layout={Layout} entering={SlideInLeft}>
-            <Event {...item} showExtraProps={showExtraProps} />
+            <Event {...item} showExtraProps={showExtraProps} isLast={isLast} />
           </AnimatedFlex>
         );
       })}
@@ -31,6 +34,7 @@ const EventList: React.FC<ListProps> = ({ showExtraProps }) => {
 
 const AnalyticsConsole = () => {
   const render = useEnv("ANALYTICS_CONSOLE");
+  const [solid, setSolid] = useState(false);
   const [showExtraProps, setShowExtraProps] = useState(false);
   if (!render) return null;
   return (
@@ -42,12 +46,20 @@ const AnalyticsConsole = () => {
       bottom={0}
       flex={1}
       zIndex={999}
-      opacity={0.4}
-      bg="#fffc"
-      // bg="white"
-      pointerEvents="none"
+      opacity={solid ? 1 : 0.4}
+      bg={solid ? "white" : "#fffc"}
+      pointerEvents={solid ? "auto" : "none"}
     >
       <SafeAreaView>
+        {solid ? (
+          <Flex>
+            <Switch
+              checked={showExtraProps}
+              onChange={setShowExtraProps}
+              label="show extra props"
+            />
+          </Flex>
+        ) : null}
         <EventList showExtraProps={showExtraProps} />
       </SafeAreaView>
     </Flex>

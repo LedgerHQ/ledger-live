@@ -8,7 +8,7 @@ type FilterFunction = (
   prev: LoggableEventRenderable,
 ) => LoggableEventRenderable;
 
-export default function useAnalyticsEventsLog(limit=20) {
+export default function useAnalyticsEventsLog(limit = 20) {
   const id = useRef(0);
   const [items, setItems] = useState<LoggableEventRenderable[]>([]);
   const filter: FilterFunction = useCallback((curr, prev) => {
@@ -24,13 +24,15 @@ export default function useAnalyticsEventsLog(limit=20) {
     );
     return { ...curr, eventProperties };
   }, []);
-  const addItem = useCallback(item => {
-    console.log({ addItem: item });
-    setItems(currentItems => [...currentItems.slice(-(limit - 1)), item]);
-  }, []);
+  const addItem = useCallback(
+    item => {
+      setItems(currentItems => [...currentItems.slice(-(limit - 1)), item]);
+    },
+    [limit],
+  );
   useEffect(() => {
     const subscription = trackSubject
-      .pipe(map(item => ({ ...item, id: ++id.current, date: new Date() })))
+      .pipe(map(item => ({ ...item, id: ++id.current })))
       .subscribe(addItem);
     return () => subscription.unsubscribe();
   }, [addItem]);

@@ -13,7 +13,6 @@ const Event: React.FC<Props> = ({
   eventProperties,
   eventPropertiesWithoutExtra,
   date,
-  id,
   showExtraProps = false,
   isLast,
 }) => {
@@ -42,7 +41,13 @@ const Event: React.FC<Props> = ({
   );
 
   return (
-    <Flex key={id} mb={5} mx={3}>
+    <Flex
+      py={3}
+      mx={1}
+      px={1}
+      borderLeftWidth={2}
+      borderLeftColor={isLast ? "black" : "transparent"}
+    >
       <Flex flexDirection="row">
         <Text color="constant.black" fontWeight="bold">
           {eventName}
