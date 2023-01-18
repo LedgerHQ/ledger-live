@@ -6,8 +6,13 @@ import {
   getDefaultExplorerView,
   getTransactionExplorer,
 } from "@ledgerhq/live-common/explorers";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import {
+  getAccountCurrency,
+  getMainAccount,
+} from "@ledgerhq/live-common/account/index";
 import { Operation } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+
 import byFamiliesOperationDetails from "../../generated/operationDetails";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
@@ -28,13 +33,37 @@ type NavigatorProps = RootComposite<
 
 function OperationDetails({ route }: NavigatorProps) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
-  if (!account) return null;
-  const operation = route.params?.operation;
+
+  if (!account) {
+    return null;
+  }
+
+  // const operation = route.params?.operation;
+  const operation: Operation = {
+    id: "",
+    hash: "",
+    type: "OUT",
+    value: new BigNumber(100000 * 10000 * 99999999),
+    fee: new BigNumber(5 * 2100),
+    senders: ["0xsender"],
+    recipients: ["0xrecipient"],
+    blockHeight: null,
+    blockHash: "",
+    transactionSequenceNumber: 5,
+    accountId: account.id,
+    date: new Date(),
+    extra: {},
+  };
+
   const mainAccount = getMainAccount(account, parentAccount);
   const url = getTransactionExplorer(
     getDefaultExplorerView(mainAccount.currency),
     operation.hash,
   );
+
+  const currency = getAccountCurrency(account);
+  const mainAccountCurrency = getAccountCurrency(mainAccount);
+
   const specific =
     byFamiliesOperationDetails[
       mainAccount.currency.family as keyof typeof byFamiliesOperationDetails
@@ -51,6 +80,7 @@ function OperationDetails({ route }: NavigatorProps) {
         getURLWhatIsThis: (_: Operation, c: string) => string;
       }
     ).getURLWhatIsThis(operation, mainAccount.currency.id);
+
   return (
     <SafeAreaView edges={["bottom"]} style={[styles.container]}>
       <TrackScreen category="OperationDetails" />
@@ -60,11 +90,17 @@ function OperationDetails({ route }: NavigatorProps) {
             account={account}
             parentAccount={parentAccount}
             operation={operation}
+            currency={currency}
+            mainAccount={mainAccount}
             disableAllLinks={route.params?.disableAllLinks}
           />
         </View>
       </NavigationScrollView>
-      <Footer url={url} urlWhatIsThis={urlWhatIsThis} account={mainAccount} />
+      <Footer
+        url={url}
+        urlWhatIsThis={urlWhatIsThis}
+        currency={mainAccountCurrency}
+      />
     </SafeAreaView>
   );
 }
