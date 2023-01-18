@@ -10,7 +10,7 @@ const Status: React.FC<{}> = () => {
   return (
     <Flex>
       <Text color="black">
-        Tracking {isTracking.enabled ? "enabled" : "disabled"}
+        Tracking status: {isTracking.enabled ? "enabled" : "disabled"}
         {!isTracking.enabled ? ": " + isTracking.reason : ""}
       </Text>
     </Flex>
