@@ -65,7 +65,7 @@ describe("useProviderRates", () => {
     // Check result
     const { rates } = result.current;
     expect(rates.error).toBeUndefined();
-    expect(rates.status).toBeNull();
+    expect(rates.status).toBe("success");
     expect(rates.value).toMatchObject(mockedRates);
   });
 
@@ -214,7 +214,7 @@ describe("useProviderRates", () => {
     });
     await waitForNextUpdate({ timeout: 1000 });
     expect(result.current.rates.value).toMatchObject([mockedRates[1]]);
-    expect(result.current.rates.status).toBeNull();
+    expect(result.current.rates.status).toBe("success");
   });
 
   it("should dispatch an error if all the rates contain an error", async () => {
@@ -370,7 +370,7 @@ describe("useProviderRates", () => {
     });
     await waitForNextUpdate({ timeout: 1000 });
     expect(result.current.rates.value).toMatchObject([]);
-    expect(result.current.rates.status).toBeNull();
+    expect(result.current.rates.status).toBe("success");
     expect(onNoRates).toHaveBeenCalledTimes(1);
   });
 });

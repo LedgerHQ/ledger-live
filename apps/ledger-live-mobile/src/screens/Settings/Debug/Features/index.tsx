@@ -5,6 +5,7 @@ import SettingsRow from "../../../../components/SettingsRow";
 import { ScreenName } from "../../../../const";
 import BLEPairingFlow from "./BLEPairingFlow";
 import CustomImage from "./CustomImage";
+import ClaimNftFlowDebug from "./ClaimNftFlowDebug";
 import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
 import { StackNavigatorNavigation } from "../../../../components/RootNavigator/types/helpers";
 import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
@@ -41,6 +42,7 @@ export default function Debugging() {
         iconLeft={<Icons.BringFrontMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugCustomImageGraphics)}
       />
+      <ClaimNftFlowDebug />
       <SettingsRow
         title="Post Onboarding"
         desc="Entry to the post onboarding flow"

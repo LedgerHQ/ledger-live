@@ -17,7 +17,10 @@ const providers = [
     provider: "changelly",
     pairs: [{ from: "bitcoin", to: "ethereum", tradeMethod: "float" }],
   },
-  { provider: "oneinch", pairs: [] },
+  {
+    provider: "oneinch",
+    pairs: [{ from: "bitcoin", to: "ethereum", tradeMethod: "float" }],
+  },
 ];
 
 const bitcoinCurrency = getCryptoCurrencyById("bitcoin");
@@ -225,6 +228,49 @@ describe("swap/getExchangeRates", () => {
         amountFrom: "0.0001",
         from: "bitcoin",
         providers: ["changelly", "oneinch"],
+        to: "ethereum",
+      },
+      headers: expect.anything(),
+    });
+  });
+  test("shout not query for providers which is not compatible with the requested pair", async () => {
+    const providers = [
+      {
+        provider: "changelly",
+        pairs: [{ from: "bitcoin", to: "ethereum", tradeMethod: "float" }],
+      },
+      {
+        provider: "oneinch",
+        pairs: [{ from: "binance", to: "ethereum", tradeMethod: "float" }],
+      },
+    ];
+
+    const resp = {
+      data: [],
+      status: 200,
+      statusText: "",
+      headers: {},
+      config: {},
+    };
+
+    mockedAxios.mockResolvedValue(Promise.resolve(resp));
+    mockedProviders.mockResolvedValue(Promise.resolve([]));
+    const includeDEX = true;
+    await getExchangeRates(
+      exchange,
+      transaction,
+      undefined,
+      undefined,
+      providers,
+      includeDEX
+    );
+    expect(mockedAxios).toHaveBeenCalledWith({
+      method: "POST",
+      url: "https://swap.ledger.com/v4/rate",
+      data: {
+        amountFrom: "0.0001",
+        from: "bitcoin",
+        providers: ["changelly"],
         to: "ethereum",
       },
       headers: expect.anything(),

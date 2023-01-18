@@ -50,9 +50,11 @@ import SwapFormSelectors from "./FormSelectors";
 import SwapFormSummary from "./FormSummary";
 import SwapFormRates from "./FormRates";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import EmptyState from "./Rates/EmptyState";
 import debounce from "lodash/debounce";
 import useRefreshRates from "./hooks/useRefreshRates";
+import LoadingState from "./Rates/LoadingState";
+import EmptyState from "./Rates/EmptyState";
+import usePageState from "./hooks/usePageState";
 
 const Wrapper: ThemedComponent<{}> = styled(Box).attrs({
   p: 20,
@@ -62,6 +64,11 @@ const Wrapper: ThemedComponent<{}> = styled(Box).attrs({
   max-width: 37rem;
 `;
 
+const Hide = styled.div`
+  opacity: 0;
+`;
+
+const refreshTime = 30000;
 const idleTime = 60 * 60000; // 1 hour
 
 const Button = styled(ButtonBase)`
@@ -103,9 +110,7 @@ const SwapForm = () => {
   // FIXME: should use enums for Flow and Banner values
   const [currentFlow, setCurrentFlow] = useState(null);
   const [currentBanner, setCurrentBanner] = useState(null);
-  const [isSendMaxLoading, setIsSendMaxLoading] = useState(false);
-  const [showDetails, setShowDetails] = useState(false);
-  const [showEmpty, setShowEmpty] = useState(false);
+
   const [idleState, setIdleState] = useState(false);
 
   const [error, setError] = useState();
@@ -127,14 +132,16 @@ const SwapForm = () => {
   const swapTransaction = useSwapTransaction({
     accounts,
     setExchangeRate,
-    setIsSendMaxLoading,
     onNoRates: trackNoRates,
     ...locationState,
     providers: storedProviders,
     includeDEX: showDexQuotes?.enabled || false,
   });
-
   const exchangeRatesState = swapTransaction.swap?.rates;
+  const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
+
+  const pageState = usePageState(swapTransaction, swapError);
+
   const swapKYC = useSelector(swapKYCSelector);
 
   const provider = exchangeRate?.provider;
@@ -177,16 +184,11 @@ const SwapForm = () => {
 
   const { setDrawer } = React.useContext(context);
 
-  const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
   const pauseRefreshing = swapError || idleState;
 
   const refreshTime = useRefreshRates(swapTransaction.swap, {
     pause: pauseRefreshing,
   });
-
-  useEffect(() => {
-    setShowEmpty(swapError && swapError?.message.length === 0);
-  }, [swapError]);
 
   const refreshIdle = useCallback(() => {
     idleState && setIdleState(false);
@@ -197,11 +199,10 @@ const SwapForm = () => {
   }, [idleState]);
 
   useEffect(() => {
-    if (!showDetails && swapTransaction.swap.rates.status !== "loading") {
+    if (swapTransaction.swap.rates.status === "success") {
       refreshIdle();
-      setShowDetails(true);
     }
-  }, [refreshIdle, showDetails, swapTransaction.swap.rates.status]);
+  }, [refreshIdle, swapTransaction.swap.rates.status]);
 
   useEffect(() => {
     dispatch(updateTransactionAction(swapTransaction.transaction));
@@ -441,12 +442,10 @@ const SwapForm = () => {
   const debouncedSetFromAmount = useMemo(
     () =>
       debounce((amount: BigNumber) => {
-        setShowDetails(false);
         swapTransaction.setFromAmount(amount);
       }, 400),
-    // cannot depend on swapTransaction as it'll change when new `rates` are fetched
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    [swapTransaction.setFromAmount],
   );
 
   switch (currentFlow) {
@@ -476,22 +475,18 @@ const SwapForm = () => {
   }
 
   const setFromAccount = currency => {
-    setShowDetails(false);
     swapTransaction.setFromAccount(currency);
   };
 
   const setToAccount = account => {
-    setShowDetails(false);
     swapTransaction.setToAccount(account);
   };
 
   const setToCurrency = currency => {
-    setShowDetails(false);
     swapTransaction.setToCurrency(currency);
   };
 
   const toggleMax = state => {
-    setShowDetails(false);
     swapTransaction.toggleMax(state);
   };
 
@@ -516,11 +511,18 @@ const SwapForm = () => {
           reverseSwap={swapTransaction.reverseSwap}
           provider={provider}
           loadingRates={swapTransaction.swap.rates.status === "loading"}
-          isSendMaxLoading={isSendMaxLoading}
+          isSendMaxLoading={swapTransaction.swap.isMaxLoading}
           updateSelectedRate={swapTransaction.swap.updateSelectedRate}
         />
-        {showEmpty && <EmptyState />}
-        {showDetails && !showEmpty && (
+        {pageState === "empty" && <EmptyState />}
+        {pageState === "loading" && <LoadingState />}
+        {pageState === "initial" && (
+          <Hide>
+            <LoadingState />
+          </Hide>
+        )}
+
+        {pageState === "loaded" && (
           <>
             <SwapFormSummary
               swapTransaction={swapTransaction}
@@ -534,27 +536,22 @@ const SwapForm = () => {
               countdown={!pauseRefreshing}
               showNoQuoteDexRate={showNoQuoteDexRate}
             />
-
-            {currentBanner === "LOGIN" ? (
-              <FormLoginBanner provider={provider} onClick={() => setCurrentFlow("LOGIN")} />
-            ) : null}
-
-            {currentBanner === "KYC" ? (
-              <FormKYCBanner
-                provider={provider}
-                status={kycStatus}
-                onClick={() => setCurrentFlow("KYC")}
-              />
-            ) : null}
-
-            {currentBanner === "MFA" ? (
-              <FormMFABanner provider={provider} onClick={() => setCurrentFlow("MFA")} />
-            ) : null}
-
-            {error ? <FormErrorBanner provider={provider} error={error} /> : null}
           </>
         )}
-
+        {currentBanner === "LOGIN" ? (
+          <FormLoginBanner provider={provider} onClick={() => setCurrentFlow("LOGIN")} />
+        ) : null}
+        {currentBanner === "KYC" ? (
+          <FormKYCBanner
+            provider={provider}
+            status={kycStatus}
+            onClick={() => setCurrentFlow("KYC")}
+          />
+        ) : null}
+        {currentBanner === "MFA" ? (
+          <FormMFABanner provider={provider} onClick={() => setCurrentFlow("MFA")} />
+        ) : null}
+        {error ? <FormErrorBanner provider={provider} error={error} /> : null}
         <Box>
           <Button primary disabled={!isSwapReady} onClick={onSubmit} data-test-id="exchange-button">
             {t("common.exchange")}

@@ -318,6 +318,7 @@ export type SwapDataType = {
   from: SwapSelectorStateType;
   to: SwapSelectorStateType;
   isMaxEnabled: boolean;
+  isMaxLoading: boolean;
   isSwapReversable: boolean;
   rates: RatesReducerState;
   refetchRates: () => void;
@@ -340,8 +341,6 @@ export type SwapTransactionType = UseBridgeTransactionResult & {
   reverseSwap: () => void;
   fromAmountError?: Error;
 };
-
-export type SetIsSendMaxLoading = (loading: boolean) => void;
 
 export enum ActionRequired {
   Login = "Login",
