@@ -4,7 +4,7 @@ import { StyleSheet, View, Platform, TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 import type {
   AppBranch,
-  AppManifest,
+  LiveAppManifest,
 } from "@ledgerhq/live-common/platform/types";
 import { translateContent } from "@ledgerhq/live-common/platform/logic";
 import { useLocale } from "../../context/Locale";
@@ -50,8 +50,8 @@ function getBranchStyle(branch: AppBranch, colors: Theme["colors"]) {
 }
 
 type Props = {
-  manifest: AppManifest;
-  onPress: (_: AppManifest) => void;
+  manifest: LiveAppManifest;
+  onPress: (_: LiveAppManifest) => void;
 };
 
 const AppCard = ({ manifest, onPress }: Props) => {

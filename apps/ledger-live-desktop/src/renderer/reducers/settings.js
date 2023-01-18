@@ -553,6 +553,7 @@ export const allowDebugAppsSelector = (state: State) => state.settings.allowDebu
 export const allowExperimentalAppsSelector = (state: State) => state.settings.allowExperimentalApps;
 export const enablePlatformDevToolsSelector = (state: State) =>
   state.settings.enablePlatformDevTools;
+
 export const catalogProviderSelector = (state: State) => state.settings.catalogProvider;
 
 export const enableLearnPageStagingUrlSelector = (state: State) =>

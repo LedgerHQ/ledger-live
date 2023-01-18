@@ -3101,10 +3101,6 @@
     "experimental" : {
       "disclaimer" : "Estes são recursos experimentais que fornecemos \"tal como se encontram\" para serem testados pela nossa comunidade de especialistas em tecnologia. Eles podem mudar, quebrar ou ser removidos a qualquer momento. Ao habilitá-los, você concorda em usá-los por sua conta e risco.",
       "features" : {
-        "apiTrongridProxy" : {
-          "title" : "usar TronGrid.io",
-          "description" : "Use o TronGrid diretamente sem a proxy Ledger"
-        },
         "experimentalCurrencies" : {
           "title" : "Integrações Experimentais",
           "description" : "Use as integrações experimentais de criptoativos disponíveis."

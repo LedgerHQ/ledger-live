@@ -74,6 +74,19 @@ export function From({ swapTx, provider, swapError, isSendMaxLoading }: Props) {
     });
   }, [navigation, provider, pairs, swapTx.swap, track]);
 
+  const onFocus = useCallback(
+    (event: boolean) => {
+      if (event) {
+        track("button_clicked", {
+          ...sharedSwapTracking,
+          button: "Amount input",
+          amount: null,
+        });
+      }
+    },
+    [track],
+  );
+
   return (
     <Flex
       borderBottomWidth={1}
@@ -102,6 +115,7 @@ export function From({ swapTx, provider, swapError, isSendMaxLoading }: Props) {
               loading={isSendMaxLoading}
               unit={unit}
               onChange={swapTx.setFromAmount}
+              onFocus={onFocus}
               error={swapError}
             />
           </Flex>

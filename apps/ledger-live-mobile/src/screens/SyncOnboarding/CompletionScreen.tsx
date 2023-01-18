@@ -13,9 +13,10 @@ import {
   RootNavigation,
 } from "../../components/RootNavigator/types/helpers";
 import useIsAppInBackground from "../../components/useIsAppInBackground";
+import videoSources from "../../../assets/videos";
 
-const sourceLight = require("../../../assets/videos/onboardingTransitionLight.mp4"); // eslint-disable-line @typescript-eslint/no-var-requires
-const sourceDark = require("../../../assets/videos/onboardingTransitionDark.mp4"); // eslint-disable-line @typescript-eslint/no-var-requires
+const sourceLight = videoSources.onboardingSuccessStaxLight;
+const sourceDark = videoSources.onboardingSuccessStaxDark;
 
 const redirectDelay = 5000;
 

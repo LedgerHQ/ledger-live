@@ -96,7 +96,6 @@ export default function BaseNavigator() {
     () => getStackNavigatorConfig(colors, true),
     [colors],
   );
-  const learn = useFeature("learn");
   // PTX smart routing feature flag - buy sell live app flag
   const ptxSmartRoutingMobile = useFeature("ptxSmartRoutingMobile");
   const walletConnectLiveApp = useFeature("walletConnectLiveApp");
@@ -194,27 +193,22 @@ export default function BaseNavigator() {
         })}
         {...noNanoBuyNanoWallScreenOptions}
       />
-      {learn?.enabled ? (
-        <>
-          <Stack.Screen
-            name={ScreenName.Learn}
-            component={Learn}
-            options={({ navigation }) => ({
-              headerShown: true,
-              animationEnabled: false,
-              headerTitle: t("discover.sections.learn.title"),
-              headerLeft: () => <BackButton navigation={navigation} />,
-              headerRight: () => null,
-            })}
-          />
-
-          <Stack.Screen
-            name={ScreenName.LearnWebView}
-            component={LearnWebView}
-            options={{ headerShown: false }}
-          />
-        </>
-      ) : null}
+      <Stack.Screen
+        name={ScreenName.Learn}
+        component={Learn}
+        options={({ navigation }) => ({
+          headerShown: true,
+          animationEnabled: false,
+          headerTitle: t("discover.sections.learn.title"),
+          headerLeft: () => <BackButton navigation={navigation} />,
+          headerRight: () => null,
+        })}
+      />
+      <Stack.Screen
+        name={ScreenName.LearnWebView}
+        component={LearnWebView}
+        options={{ headerShown: false }}
+      />
       <Stack.Screen
         name={NavigatorName.SignMessage}
         component={SignMessageNavigator}

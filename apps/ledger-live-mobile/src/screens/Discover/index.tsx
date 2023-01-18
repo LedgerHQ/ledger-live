@@ -125,8 +125,8 @@ function Discover() {
                 title: t("discover.sections.learn.title"),
                 subTitle: t("discover.sections.learn.desc"),
                 onPress: () => {
-                  readOnlyTrack("Learn");
                   navigation.navigate(ScreenName.Learn);
+                  readOnlyTrack("Learn");
                 },
                 disabled: false,
                 Image: (

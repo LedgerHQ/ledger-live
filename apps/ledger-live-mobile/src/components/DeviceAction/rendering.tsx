@@ -276,7 +276,9 @@ export function renderConfirmSwap({
     <ScrollView>
       <Wrapper width="100%">
         <Alert type="primary" {...alertProperties}>
-          {t(`DeviceAction.confirmSwap.alert.${noticeType.message}`)}
+          {t(`DeviceAction.confirmSwap.alert.${noticeType.message}`, {
+            providerName,
+          })}
         </Alert>
         <AnimationContainer
           marginTop="16px"

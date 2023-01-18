@@ -11,7 +11,7 @@ export default class RendererTransport extends Transport {
   }
 
   getMemoryLogs() {
-    return this.memory.logs;
+    return this.memory.getMemoryLogs();
   }
 
   log(info, callback) {

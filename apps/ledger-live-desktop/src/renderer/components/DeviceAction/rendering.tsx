@@ -802,7 +802,10 @@ export const renderSwapDeviceConfirmation = ({
         />
         <Box flex={0}>
           <Alert type="primary" {...alertProperties} mb={7} mx={4}>
-            <Trans i18nKey={`DeviceAction.swap.notice.${noticeType.message}`} />
+            <Trans
+              i18nKey={`DeviceAction.swap.notice.${noticeType.message}`}
+              values={{ providerName: getProviderName(exchangeRate.provider) }}
+            />
           </Alert>
         </Box>
         <Box mx={6} data-test-id="device-swap-summary">
