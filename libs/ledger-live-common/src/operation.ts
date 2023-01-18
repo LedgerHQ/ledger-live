@@ -249,3 +249,19 @@ export const isConfirmedOperation = (
   operation.blockHeight
     ? account.blockHeight - operation.blockHeight + 1 >= confirmationsNb
     : false;
+
+export const getOperationStatsus = (
+  operation: Operation,
+  account: Account,
+  confirmationsNb: number
+): Operation["status"] => {
+  if (operation.hasFailed) {
+    return "failed";
+  }
+
+  if (isConfirmedOperation(operation, account, confirmationsNb)) {
+    return "confirmed";
+  }
+
+  return "pending";
+};
