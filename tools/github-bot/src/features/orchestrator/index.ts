@@ -1,5 +1,5 @@
 import { Probot } from "probot";
-import { GATE_CHECK_RUN_NAME, RUNNERS, WORKFLOWS } from "./const";
+import { CheckSuite, GATE_CHECK_RUN_NAME, RUNNERS, WORKFLOWS } from "./const";
 import {
   downloadArtifact,
   extractWorkflowFile,
@@ -32,6 +32,11 @@ export function orchestrator(app: Probot) {
     const { owner, repo } = context.repo();
     const workflowFile = extractWorkflowFile(payload);
     const matchedWorkflow = WORKFLOWS[workflowFile as keyof typeof WORKFLOWS];
+    const { data: checkSuite } = await octokit.checks.getSuite({
+      owner,
+      repo,
+      check_suite_id: payload.workflow_run.check_suite_id,
+    });
 
     if (matchedWorkflow) {
       context.log.info(
@@ -46,7 +51,7 @@ export function orchestrator(app: Probot) {
         owner,
         repo,
         name: matchedWorkflow.checkRunName,
-        head_sha: payload.workflow_run.pull_requests[0]?.head.sha,
+        head_sha: checkSuite.head_sha,
         status: "queued",
         started_at: new Date().toISOString(),
         output: {
@@ -85,6 +90,11 @@ export function orchestrator(app: Probot) {
     const { owner, repo } = context.repo();
     const workflowFile = extractWorkflowFile(payload);
     const matchedWorkflow = WORKFLOWS[workflowFile as keyof typeof WORKFLOWS];
+    const { data: checkSuite } = await octokit.checks.getSuite({
+      owner,
+      repo,
+      check_suite_id: payload.workflow_run.check_suite_id,
+    });
 
     if (matchedWorkflow) {
       context.log.info(
@@ -101,7 +111,7 @@ export function orchestrator(app: Probot) {
         octokit,
         owner,
         repo,
-        sha: payload.workflow_run.pull_requests[0]?.head.sha,
+        sha: checkSuite.head_sha,
         checkName: matchedWorkflow.checkRunName,
         extraFields: {
           details_url: workflowUrl,
@@ -135,6 +145,11 @@ export function orchestrator(app: Probot) {
     const { owner, repo } = context.repo();
     const workflowFile = extractWorkflowFile(payload);
     const matchedWorkflow = WORKFLOWS[workflowFile as keyof typeof WORKFLOWS];
+    const { data: checkSuite } = await octokit.checks.getSuite({
+      owner,
+      repo,
+      check_suite_id: payload.workflow_run.check_suite_id,
+    });
 
     if (workflowFile === "gate.yml") {
       if (payload.workflow_run.conclusion !== "success") return;
@@ -188,7 +203,7 @@ export function orchestrator(app: Probot) {
             repo,
             workflow_id: fileName,
             ref: payload.workflow_run.pull_requests[0]?.head.ref,
-            inputs: workflow.getInputs(payload),
+            inputs: workflow.getInputs(payload, checkSuite),
           });
         }
       });
@@ -198,7 +213,7 @@ export function orchestrator(app: Probot) {
         octokit,
         owner,
         repo,
-        sha: payload.workflow_run.pull_requests[0]?.head.sha,
+        sha: checkSuite.head_sha,
         checkName: GATE_CHECK_RUN_NAME,
       });
 
@@ -218,7 +233,7 @@ export function orchestrator(app: Probot) {
         octokit,
         owner,
         repo,
-        ref: payload.workflow_run.pull_requests[0]?.head.sha,
+        ref: checkSuite.head_sha,
         checkName: matchedWorkflow.checkRunName,
       });
       if (checkRuns.data.total_count === 0) {

@@ -9,9 +9,8 @@ import {
   getGenericOutput,
 } from ".";
 
-type WorkflowRunPayload = Context<"workflow_run">["payload"];
 type CheckRunPayload = Context<"check_run">["payload"];
-type GetInputsPayload = WorkflowRunPayload | CheckRunPayload;
+type GetInputsPayload = CheckRunPayload;
 
 type WorkflowDescriptor = {
   file: string;
@@ -37,6 +36,11 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
 
     const { owner, repo } = context.repo();
     const workflowFile = extractWorkflowFile(payload);
+    const { data: checkSuite } = await octokit.checks.getSuite({
+      owner,
+      repo,
+      check_suite_id: payload.workflow_run.check_suite_id,
+    });
 
     if (workflowFile === workflow.file) {
       context.log.info(
@@ -52,7 +56,7 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
         owner,
         repo,
         name: workflow.checkRunName,
-        head_sha: payload.workflow_run.pull_requests[0]?.head.sha,
+        head_sha: checkSuite.head_sha,
         status: "queued",
         started_at: new Date().toISOString(),
         output: {
@@ -82,6 +86,11 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
 
     const { owner, repo } = context.repo();
     const workflowFile = extractWorkflowFile(payload);
+    const { data: checkSuite } = await octokit.checks.getSuite({
+      owner,
+      repo,
+      check_suite_id: payload.workflow_run.check_suite_id,
+    });
 
     if (workflowFile === workflow.file) {
       // Sync the check_run with the conclusion of the workflow
@@ -89,7 +98,7 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
         octokit,
         owner,
         repo,
-        ref: payload.workflow_run.pull_requests[0]?.head.sha,
+        ref: checkSuite.head_sha,
         checkName: workflow.checkRunName,
       });
       if (checkRuns.data.total_count === 0) {
@@ -211,6 +220,11 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
 
     const { owner, repo } = context.repo();
     const workflowFile = extractWorkflowFile(payload);
+    const { data: checkSuite } = await octokit.checks.getSuite({
+      owner,
+      repo,
+      check_suite_id: payload.workflow_run.check_suite_id,
+    });
 
     if (workflow.file === workflowFile) {
       context.log.info(
@@ -225,7 +239,7 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
         octokit,
         owner,
         repo,
-        sha: payload.workflow_run.pull_requests[0]?.head.sha,
+        sha: checkSuite.head_sha,
         checkName: workflow.checkRunName,
         extraFields: {
           details_url: workflowUrl,

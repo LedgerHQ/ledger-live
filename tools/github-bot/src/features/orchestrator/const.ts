@@ -1,8 +1,12 @@
-import { Context } from "probot";
+import { Context, ProbotOctokit } from "probot";
 
 type WorkflowRunPayload = Context<"workflow_run">["payload"];
 type CheckRunPayload = Context<"check_run">["payload"];
 type GetInputsPayload = WorkflowRunPayload | CheckRunPayload;
+type Octokit = InstanceType<typeof ProbotOctokit>;
+export type CheckSuite = Awaited<
+  ReturnType<Octokit["checks"]["getSuite"]>
+>["data"];
 
 export const BOT_APP_ID = 198164;
 export const GATE_CHECK_RUN_NAME = "@@PR • Watcher 🪬";
@@ -19,11 +23,11 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.internal,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
-    getInputs: (payload: GetInputsPayload) => {
+    getInputs: (payload: GetInputsPayload, checkSuite?: CheckSuite) => {
       return "workflow_run" in payload
         ? {
             login: payload.workflow_run.actor.login,
-            sha: payload.workflow_run.pull_requests[0]?.head.sha,
+            sha: checkSuite!.head_sha,
             ref: payload.workflow_run.pull_requests[0]?.head.ref,
           }
         : {
@@ -40,11 +44,11 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.external,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
-    getInputs: (payload: GetInputsPayload) => {
+    getInputs: (payload: GetInputsPayload, checkSuite?: CheckSuite) => {
       return "workflow_run" in payload
         ? {
             login: payload.workflow_run.actor.login,
-            sha: payload.workflow_run.pull_requests[0]?.head.sha,
+            sha: checkSuite!.head_sha,
             ref: payload.workflow_run.pull_requests[0]?.head.ref,
           }
         : {
@@ -61,11 +65,11 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.internal,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
-    getInputs: (payload: GetInputsPayload) => {
+    getInputs: (payload: GetInputsPayload, checkSuite?: CheckSuite) => {
       return "workflow_run" in payload
         ? {
             login: payload.workflow_run.actor.login,
-            sha: payload.workflow_run.pull_requests[0]?.head.sha,
+            sha: checkSuite!.head_sha,
             ref: payload.workflow_run.pull_requests[0]?.head.ref,
           }
         : {
@@ -82,11 +86,11 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.external,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
-    getInputs: (payload: GetInputsPayload) => {
+    getInputs: (payload: GetInputsPayload, checkSuite?: CheckSuite) => {
       return "workflow_run" in payload
         ? {
             login: payload.workflow_run.actor.login,
-            sha: payload.workflow_run.pull_requests[0]?.head.sha,
+            sha: checkSuite!.head_sha,
             ref: payload.workflow_run.pull_requests[0]?.head.ref,
           }
         : {
@@ -103,11 +107,11 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.internal,
     affected: ["live-mobile"],
     summaryFile: "summary.json",
-    getInputs: (payload: GetInputsPayload) => {
+    getInputs: (payload: GetInputsPayload, checkSuite?: CheckSuite) => {
       return "workflow_run" in payload
         ? {
             login: payload.workflow_run.actor.login,
-            sha: payload.workflow_run.pull_requests[0]?.head.sha,
+            sha: checkSuite!.head_sha,
             ref: payload.workflow_run.pull_requests[0]?.head.ref,
           }
         : {
@@ -124,11 +128,11 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.external,
     affected: ["live-mobile"],
     summaryFile: "summary.json",
-    getInputs: (payload: GetInputsPayload) => {
+    getInputs: (payload: GetInputsPayload, checkSuite?: CheckSuite) => {
       return "workflow_run" in payload
         ? {
             login: payload.workflow_run.actor.login,
-            sha: payload.workflow_run.pull_requests[0]?.head.sha,
+            sha: checkSuite!.head_sha,
             ref: payload.workflow_run.pull_requests[0]?.head.ref,
           }
         : {
@@ -145,11 +149,11 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.both,
     affected: ["live-mobile"],
     summaryFile: "summary.json",
-    getInputs: (payload: GetInputsPayload) => {
+    getInputs: (payload: GetInputsPayload, checkSuite?: CheckSuite) => {
       return "workflow_run" in payload
         ? {
             login: payload.workflow_run.actor.login,
-            sha: payload.workflow_run.pull_requests[0]?.head.sha,
+            sha: checkSuite!.head_sha,
             ref: payload.workflow_run.pull_requests[0]?.head.ref,
           }
         : {
@@ -204,11 +208,11 @@ export const WORKFLOWS = {
       "@ledgerhq/ui-shared",
     ],
     summaryFile: "summary.json",
-    getInputs: (payload: GetInputsPayload) => {
+    getInputs: (payload: GetInputsPayload, checkSuite?: CheckSuite) => {
       return "workflow_run" in payload
         ? {
             login: payload.workflow_run.actor.login,
-            sha: payload.workflow_run.pull_requests[0]?.head.sha,
+            sha: checkSuite!.head_sha,
             ref: payload.workflow_run.pull_requests[0]?.head.ref,
             since_branch:
               payload.workflow_run.pull_requests[0]?.base.ref || "develop",
