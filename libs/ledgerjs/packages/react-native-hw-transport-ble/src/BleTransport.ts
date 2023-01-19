@@ -598,10 +598,6 @@ const mapBleErrorToHwTransportError = (
 ): HwTransportError => {
   const message = `${bleError.message}. Origin: ${bleError.errorCode}`;
 
-  console.log(
-    `🤯 mapBleErrorToHwTransportError bleError: ${JSON.stringify(bleError)}`
-  );
-
   const inferedType = bleErrorToHwTransportError.get(bleError.errorCode);
   const type = !inferedType ? HwTransportErrorType.Unknown : inferedType;
 
