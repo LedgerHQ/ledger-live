@@ -34,6 +34,9 @@ class LocationHelperModule(private val reactContext: ReactApplicationContext) :
     private var locationPromise: Promise? = null
 
     // LocationRequest used by both LocationSettings and FusedLocationProviderClient
+    // LocationRequest.create() is deprecated, but LocationRequest.Builder()
+    // is available from `import android.location.LocationRequest` which
+    // requires API level >= 31 (current min is 24)
     private var locationRequest: LocationRequest = LocationRequest.create();
 
     private var fusedLocationProviderClient: FusedLocationProviderClient;
@@ -95,6 +98,9 @@ class LocationHelperModule(private val reactContext: ReactApplicationContext) :
         // PRIORITY_HIGH_ACCURACY:  request the most precise location possible.
         // With this setting, the location services are more likely to use GPS to determine the location.
         // The given permissions will also influence the level of precision.
+        //
+        // LocationRequest.PRIORITY_HIGH_ACCURACY is deprecated
+        // but Priority.PRIORITY_HIGH_ACCURACY seems unavailable on API level 24
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         // Sets the rate in milliseconds at which our app prefers to receive location updates
         locationRequest.interval = 10000
