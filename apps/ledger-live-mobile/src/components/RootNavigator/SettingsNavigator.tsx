@@ -28,7 +28,7 @@ import DebugLottie from "../../screens/Settings/Debug/Features/Lottie";
 import DebugNetwork from "../../screens/Settings/Debug/Debugging/Network";
 import DebugCommandSender from "../../screens/Settings/Debug/Connectivity/CommandSender";
 import DebugPlayground from "../../screens/Settings/Debug/Playground";
-import DebugPermissions from "../../screens/Settings/Debug/Debugging/Permissions";
+import DebugBluetoothAndLocationServices from "../../screens/Settings/Debug/Debugging/BluetoothAndLocationServices";
 import DebugSettings from "../../screens/Settings/Debug";
 import DebugStore from "../../screens/Settings/Debug/Debugging/Store";
 import DebugStoryly from "../../screens/Settings/Debug/Features/Storyly";
@@ -266,10 +266,10 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.DebugPermissions}
-        component={DebugPermissions}
+        name={ScreenName.DebugBluetoothAndLocationServices}
+        component={DebugBluetoothAndLocationServices}
         options={{
-          title: "Permissions",
+          title: "Bluetooth and location services",
         }}
       />
       <Stack.Screen
