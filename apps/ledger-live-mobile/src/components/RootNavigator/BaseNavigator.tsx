@@ -19,7 +19,6 @@ import OperationDetails, {
 import PairDevices from "../../screens/PairDevices";
 import EditDeviceName from "../../screens/EditDeviceName";
 import ScanRecipient from "../../screens/SendFunds/ScanRecipient";
-import FallbackCameraSend from "../FallbackCamera/FallbackCameraSend";
 import Main from "./MainNavigator";
 import { ErrorHeaderInfo } from "./BaseOnboardingNavigator";
 import SettingsNavigator from "./SettingsNavigator";
@@ -518,14 +517,6 @@ export default function BaseNavigator() {
         }
         options={{
           headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.FallbackCameraSend}
-        component={FallbackCameraSend}
-        options={{
-          title: t("send.scan.fallback.header"),
-          headerLeft: () => null,
         }}
       />
       <Stack.Screen
