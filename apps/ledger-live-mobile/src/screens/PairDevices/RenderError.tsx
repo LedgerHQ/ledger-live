@@ -14,7 +14,6 @@ import {
 } from "@ledgerhq/errors";
 import { Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
-import LocationRequired from "../../components/LocationRequired";
 import { TrackScreen } from "../../analytics";
 import Touchable from "../../components/Touchable";
 import LText from "../../components/LText";
@@ -23,6 +22,8 @@ import HelpLink from "../../components/HelpLink";
 import IconArrowRight from "../../icons/ArrowRight";
 import { urls } from "../../config/urls";
 import Button from "../../components/Button";
+import LocationDisabled from "../../components/RequiresLocation/LocationDisabled";
+import LocationPermissionDenied from "../../components/RequiresLocation/LocationPermissionDenied";
 
 type Props = {
   error: HwTransportError | DeprecatedError | Error;
@@ -41,22 +42,25 @@ const hitSlop = {
 function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
   const { colors } = useTheme();
 
+  // Location service is disabled
   if (
     (error instanceof BleError &&
       error.errorCode === BleErrorCode.LocationServicesDisabled) ||
     (error instanceof HwTransportError &&
-      error.type === HwTransportErrorType.BleLocationServicesDisabled)
+      error.type === HwTransportErrorType.LocationServicesDisabled)
   ) {
-    return <LocationRequired onRetry={onRetry} errorType="disabled" />;
+    return <LocationDisabled />;
   }
 
+  // Location has not enough permissions
+  // Indeed BleErrorCode.BluetoothUnauthorized is not the right error code. Legacy code.
   if (
     (error instanceof BleError &&
       error.errorCode === BleErrorCode.BluetoothUnauthorized) ||
     (error instanceof HwTransportError &&
-      error.type === HwTransportErrorType.BleBluetoothUnauthorized)
+      error.type === HwTransportErrorType.LocationServicesUnauthorized)
   ) {
-    return <LocationRequired onRetry={onRetry} errorType="unauthorized" />;
+    return <LocationPermissionDenied />;
   }
 
   const isPairingStatus = status === "pairing";
