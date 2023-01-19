@@ -45,6 +45,16 @@ const DEFAULT_RESTART_SCANNING_TIMEOUT_MS = 4000;
  *
  * Note: if a communication is started with a device, the scanning should be stopped
  *
+ * The scanningBleError will depend on the bleTransportListen function. Some errors might not be thrown.
+ * For ex:
+ * - on Android, using the current Transport from react-native-hw-transport-ble, if the bluetooth is off,
+ * only a BluetoothScanStartFailed error is thrown. But this error could happen for other reason than the BLE being off.
+ * No actual "BluetoothOff" or "BluetoothUnauthorized" error is thrown.
+ * On the other side, if location is off, an error is thrown.
+ * - On iOS, using the current Transport from react-native-hw-transport-ble, if the bluetooth is off, no error is thrown at all.
+ * Hence, handling if the bluetooth is off or not is not handled here. It should be handled by the consumer of this hook.
+ *
+ * @param bleTransportListen The listen function from an implementation of a BLE transport
  * @param filterByDeviceModelIds An array of device model ids to filter on
  * @param filterOutDevicesByDeviceIds An array of device ids to filter out
  * @param stopBleScanning Flag to stop or continue the scanning
@@ -156,7 +166,7 @@ export const useBleDevicesScanning = ({
 
           if (
             error instanceof HwTransportError &&
-            error.type === HwTransportErrorType.BleScanStartFailed
+            error.type === HwTransportErrorType.BluetoothScanStartFailed
           ) {
             setIsRestartNeeded(true);
           }
