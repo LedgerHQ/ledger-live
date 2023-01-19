@@ -37,7 +37,7 @@ runs:
       shell: bash
     - name: status
       id: status
-      run: echo "::set-output name=status::$(git status --porcelain | wc -l)"
+      run: echo "status=$(git status --porcelain | wc -l)" >> $GITHUB_OUTPUT
       shell: bash
     - name: Commit snapshots
       if: steps.status.outputs.status != 0

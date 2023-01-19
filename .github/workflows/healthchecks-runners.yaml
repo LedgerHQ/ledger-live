@@ -566,7 +566,7 @@ jobs:
           path: ${{ github.workspace }}/payload-slack-content.json
       - name: post to a Slack channel
         id: slack
-        uses: slackapi/slack-github-action@v1.21.0
+        uses: slackapi/slack-github-action@v1.23.0
         if: always() && contains(join(needs.*.result, ','), 'failure')
         with:
           channel-id: "C04GE8AEN3H"

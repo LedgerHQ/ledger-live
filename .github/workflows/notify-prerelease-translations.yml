@@ -67,7 +67,7 @@ jobs:
             fs.writeFileSync("./payload-slack-content.json", JSON.stringify(output, null, 2));
       - name: post to a Slack channel
         id: slack
-        uses: slackapi/slack-github-action@v1.21.0
+        uses: slackapi/slack-github-action@v1.23.0
         with:
           channel-id: "C040D9JMVQ8"
           payload-file-path: "./payload-slack-content.json"
