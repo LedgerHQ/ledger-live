@@ -1,3 +1,5 @@
+// TODO: to remove once live-app-sdk is depreciated and removed from LL
+
 import { EthereumTransaction as PlatformTransaction } from "@ledgerhq/live-app-sdk";
 import { Transaction } from "./types";
 

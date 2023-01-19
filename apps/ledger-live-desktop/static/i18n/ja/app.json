@@ -3749,10 +3749,6 @@
     "experimental" : {
       "disclaimer" : "テクノロジーファンのコミュニティ向けに提供される試験的な機能です。これらの機能は随時変更、破損、または削除される可能性があります。このオプションを有効にすると、あなたは自己責任でこれらの機能を使用することに同意したことになります。",
       "features" : {
-        "apiTrongridProxy" : {
-          "title" : "TronGrid.ioを使用",
-          "description" : "LedgerプロキシなしでTronGridを直接を使用する"
-        },
         "experimentalCurrencies" : {
           "title" : "試験的統合",
           "description" : "利用可能な試験的暗号資産の統合を使用する。"

@@ -3,7 +3,12 @@ import {
   PostOnboardingActionId,
   PostOnboardingState,
 } from "@ledgerhq/types-live";
-import reducer, { initialState } from "./reducer";
+import reducer, {
+  hubStateSelector,
+  initialState,
+  postOnboardingDeviceModelIdSelector,
+  postOnboardingSelector,
+} from "./reducer";
 
 import {
   importPostOnboardingState,
@@ -243,5 +248,60 @@ describe("postOnboarding reducer (& action creators)", () => {
     // initializing state with new device & set of actions
     state = reducer(state, initPostOnboarding(...initializationParamsC));
     expect(state).toEqual(stateC0);
+  });
+});
+
+describe("postOnboarding selectors", () => {
+  it("should keep valid device ids", () => {
+    const stateValidDeviceId = {
+      deviceModelId: DeviceModelId.nanoX,
+      walletEntryPointDismissed: false,
+      actionsToComplete: [],
+      actionsCompleted: {},
+      lastActionCompleted: null,
+    };
+    const storeState = { postOnboarding: stateValidDeviceId };
+
+    const postOnboarding = postOnboardingSelector(storeState);
+    expect(postOnboarding).toEqual(stateValidDeviceId);
+
+    const hubState = hubStateSelector(storeState);
+    expect(hubState).toEqual({
+      deviceModelId: stateValidDeviceId.deviceModelId,
+      actionsToComplete: stateValidDeviceId.actionsToComplete,
+      actionsCompleted: stateValidDeviceId.actionsCompleted,
+      lastActionCompleted: stateValidDeviceId.lastActionCompleted,
+    });
+
+    const deviceModelId = postOnboardingDeviceModelIdSelector(storeState);
+    expect(deviceModelId).toEqual(stateValidDeviceId.deviceModelId);
+  });
+
+  it('should sanitize "nanoFTS" device ids to "stax"', () => {
+    const stateValidDeviceId = {
+      deviceModelId: "nanoFTS",
+      walletEntryPointDismissed: false,
+      actionsToComplete: [],
+      actionsCompleted: {},
+      lastActionCompleted: null,
+    } as unknown as PostOnboardingState;
+    const storeState = { postOnboarding: stateValidDeviceId };
+
+    const postOnboarding = postOnboardingSelector(storeState);
+    expect(postOnboarding).toEqual({
+      ...stateValidDeviceId,
+      deviceModelId: DeviceModelId.stax,
+    });
+
+    const hubState = hubStateSelector(storeState);
+    expect(hubState).toEqual({
+      deviceModelId: DeviceModelId.stax,
+      actionsToComplete: stateValidDeviceId.actionsToComplete,
+      actionsCompleted: stateValidDeviceId.actionsCompleted,
+      lastActionCompleted: stateValidDeviceId.lastActionCompleted,
+    });
+
+    const deviceModelId = postOnboardingDeviceModelIdSelector(storeState);
+    expect(deviceModelId).toEqual(DeviceModelId.stax);
   });
 });
