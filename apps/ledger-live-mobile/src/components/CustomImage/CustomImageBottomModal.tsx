@@ -14,7 +14,7 @@ import { TrackScreen } from "../../analytics";
 const analyticsDrawerName = "Choose an image to set as your Stax lockscreen";
 
 const analyticsButtonChoosePhoneGalleryEventProps = {
-  button: "Choose a picture",
+  button: "Choose from my picture gallery",
   drawer: analyticsDrawerName,
 };
 
