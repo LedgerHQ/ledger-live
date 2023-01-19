@@ -9,8 +9,8 @@ const resolver: Resolver = async (transport, { path }) => {
   return {
     path,
     address: "",
-    publicKey: publicKey.toString("hex"),
-    chainCode: chain_code.toString("hex")
+    publicKey: publicKey?.toString("hex"),
+    chainCode: chain_code?.toString("hex")
   };
 };
 
