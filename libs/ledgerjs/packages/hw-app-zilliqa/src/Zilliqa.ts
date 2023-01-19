@@ -97,12 +97,14 @@ export default class Zilliqa {
         major: response[0],
         minor: response[1],
         patch: response[2],
-        fullProtocol: response[0] > 0 || response[1] >= 5,
+        fullProtocol: response[0] > 0,
       };
     });
   }
 
-  async getPathParametersFromPath(path: string): Promise<{
+  async getPathParametersFromPath(
+    path: string
+  ): Promise<{
     account: number;
     change: number;
     index: number;
@@ -161,9 +163,9 @@ export default class Zilliqa {
 
     // Version specific requirements
     const version = await this.send(CLA, INS_GET_VERSION, 0, 0);
-    const fullProtocol = version[0] > 0 || version[1] >= 5;
+    const fullProtocol = version[0] > 0;
 
-    // If less than version 0.5 ...
+    // If less than version 1.0 ...
     if (!fullProtocol) {
       // ... impose stricter requirements on what we can accept
       // for paths. We only accept paths of the form `44'/313'/n'/0'/0'`.
@@ -201,8 +203,12 @@ export default class Zilliqa {
     address: string;
   }> {
     // Getting path parameters
-    const { account, change, index, fullProtocol } =
-      await this.getPathParametersFromPath(path);
+    const {
+      account,
+      change,
+      index,
+      fullProtocol,
+    } = await this.getPathParametersFromPath(path);
 
     // Preparing payload to send to the wallet app.
     const payload = Buffer.alloc(12);
@@ -245,8 +251,12 @@ export default class Zilliqa {
     message: string
   ): Promise<{ signature: null | string; returnCode: number }> {
     // Getting path parameters
-    const { account, change, index, fullProtocol } =
-      await this.getPathParametersFromPath(path);
+    const {
+      account,
+      change,
+      index,
+      fullProtocol,
+    } = await this.getPathParametersFromPath(path);
 
     // If we are using the full protocol, we add change and index
     // as well to the parameters. Note that this is unfortunately not backward compatible.
@@ -326,8 +336,12 @@ export default class Zilliqa {
     message: string
   ): Promise<{ signature: null | string; returnCode: number }> {
     // Getting path parameters
-    const { account, change, index, fullProtocol } =
-      await this.getPathParametersFromPath(path);
+    const {
+      account,
+      change,
+      index,
+      fullProtocol,
+    } = await this.getPathParametersFromPath(path);
 
     const params = Buffer.alloc(fullProtocol ? 12 : 4);
     params.writeUInt32LE(account, 0);
