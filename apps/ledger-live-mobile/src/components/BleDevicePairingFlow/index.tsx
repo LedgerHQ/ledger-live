@@ -87,7 +87,7 @@ const BleDevicePairingFlow = ({
   }, [setDeviceToPair, setPairingFlowStep]);
 
   return (
-    <RequiresBLE hasBackButtonOnError>
+    <RequiresBLE hasBackButtonOnError={false}>
       {pairingFlowStep === "pairing" && deviceToPair !== null ? (
         <BleDevicePairing
           deviceToPair={deviceToPair}
