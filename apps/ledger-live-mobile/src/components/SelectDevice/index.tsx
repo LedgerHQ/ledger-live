@@ -34,7 +34,7 @@ import Button from "../wrappedUi/Button";
 import PairLight from "../../screens/Onboarding/assets/nanoX/pairDevice/light.json";
 import PairDark from "../../screens/Onboarding/assets/nanoX/pairDevice/dark.json";
 import { DeviceLike } from "../../reducers/types";
-import { usePromptBluetoothCallback } from "../../logic/usePromptBluetoothCallback";
+import { usePromptEnableBluetoothCallback } from "../RequiresBLE/hooks/useEnableBluetooth";
 
 type Props = {
   onBluetoothDeviceAction?: (_: Device) => void;
@@ -65,7 +65,7 @@ export default function SelectDevice({
   const knownDevices = useSelector(knownDevicesSelector);
   const dispatch = useDispatch();
   const route = useRoute();
-  const promptBluetooth = usePromptBluetoothCallback();
+  const promptBluetooth = usePromptEnableBluetoothCallback();
 
   const handleOnSelect = useCallback(
     deviceInfo => {
