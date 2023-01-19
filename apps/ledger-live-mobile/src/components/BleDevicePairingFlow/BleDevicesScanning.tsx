@@ -10,11 +10,12 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import TransportBLE from "../../react-native-hw-transport-ble";
 import { knownDevicesSelector } from "../../reducers/ble";
-import LocationRequired from "../LocationRequired/index";
 import Animation from "../Animation";
 import BleDeviceItem from "./BleDeviceItem";
 import lottie from "./assets/bluetooth.json";
 import { urls } from "../../config/urls";
+import LocationPermissionDenied from "../RequiresLocation/LocationPermissionDenied";
+import LocationDisabled from "../RequiresLocation/LocationDisabled";
 
 export type FilterByDeviceModelId = null | DeviceModelId;
 const CANT_SEE_DEVICE_TIMEOUT = 5000;
@@ -28,6 +29,10 @@ export type BleDevicesScanningProps = {
 
 /**
  * Runs a BLE scan and list seen devices
+ *
+ * This components should be wrapped around a RequiresBLE component.
+ * This is the case in the BleDevicePairingFlow component.
+ * If this is not the case, some BLE and locations errors are handled, but not as well as with RequiresBLE.
  *
  * @param onDeviceSelect Function called when the user selects a scanned device
  * @param filterByDeviceModelId The only model of the devices that will be scanned
@@ -96,40 +101,42 @@ const BleDevicesScanning = ({
     filterOutDevicesByDeviceIds,
   });
 
-  // Handles scanning error
+  // Handles some scanning errors.
+  // Only location disabled and BLE unauthorized errors are handled here.
+  // This components should be wrapped around a RequiresBLE component.
+  // If this is the case, such errors should not happen.
   useEffect(() => {
     if (scanningBleError) {
+      // Location disabled
       if (
-        scanningBleError.type ===
-        HwTransportErrorType.BleLocationServicesDisabled
+        scanningBleError.type === HwTransportErrorType.LocationServicesDisabled
       ) {
         setStopBleScanning(true);
         setLocationDisabledError(true);
       }
 
+      // Location unauthorized
       if (
-        scanningBleError.type === HwTransportErrorType.BleBluetoothUnauthorized
+        scanningBleError.type ===
+        HwTransportErrorType.LocationServicesUnauthorized
       ) {
         setStopBleScanning(true);
         setLocationUnauthorizedError(true);
       }
+    } else {
+      setLocationDisabledError(false);
+      setLocationUnauthorizedError(false);
     }
   }, [scanningBleError]);
 
-  const onLocationFixed = useCallback(() => {
-    setLocationDisabledError(false);
-    setLocationUnauthorizedError(false);
-    setStopBleScanning(false);
-  }, [setLocationDisabledError, setLocationUnauthorizedError]);
-
+  // This error should never happen if this component is wrapped around a RequiresBLE component.
   if (locationDisabledError) {
-    return <LocationRequired onRetry={onLocationFixed} errorType="disabled" />;
+    return <LocationDisabled hasBackButton />;
   }
 
+  // This error should never happen if this component is wrapped around a RequiresBLE component.
   if (locationUnauthorizedError) {
-    return (
-      <LocationRequired onRetry={onLocationFixed} errorType="unauthorized" />
-    );
+    return <LocationPermissionDenied hasBackButton />;
   }
 
   return (

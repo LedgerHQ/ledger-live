@@ -574,14 +574,15 @@ export default class BluetoothTransport extends Transport {
 }
 
 const bleErrorToHwTransportError = new Map([
-  [BleErrorCode.ScanStartFailed, HwTransportErrorType.BleScanStartFailed],
+  [BleErrorCode.ScanStartFailed, HwTransportErrorType.BluetoothScanStartFailed],
   [
     BleErrorCode.LocationServicesDisabled,
-    HwTransportErrorType.BleLocationServicesDisabled,
+    HwTransportErrorType.LocationServicesDisabled,
   ],
   [
+    // BluetoothUnauthorized actually represents a location service unauthorized error
     BleErrorCode.BluetoothUnauthorized,
-    HwTransportErrorType.BleBluetoothUnauthorized,
+    HwTransportErrorType.LocationServicesUnauthorized,
   ],
 ]);
 
@@ -589,6 +590,10 @@ const mapBleErrorToHwTransportError = (
   bleError: BleError
 ): HwTransportError => {
   const message = `${bleError.message}. Origin: ${bleError.errorCode}`;
+
+  console.log(
+    `🤯 mapBleErrorToHwTransportError bleError: ${JSON.stringify(bleError)}`
+  );
 
   const inferedType = bleErrorToHwTransportError.get(bleError.errorCode);
   const type = !inferedType ? HwTransportErrorType.Unknown : inferedType;
