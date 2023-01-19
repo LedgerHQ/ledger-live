@@ -1,11 +1,52 @@
-import invariant from "invariant";
-import axios, { AxiosResponse } from "axios";
-import type { AxiosError, AxiosRequestConfig } from "axios";
-import { log } from "@ledgerhq/logs";
-import { NetworkDown, LedgerAPI5xx, LedgerAPI4xx } from "@ledgerhq/errors";
-import { retry } from "./promise";
-import { getEnv } from "./env";
+import wretch from "wretch";
+import AbortAddon from "wretch/addons/abort";
+import QueryStringAddon from "wretch/addons/queryString";
 
+// FIXME how to do without breaking the user land running on the web?
+/*
+if (typeof fetch === "undefined") {
+  wretch.polyfills({
+    fetch: require("node-fetch"),
+  });
+}
+*/
+
+const wretchImplementation = wretch()
+  .addon(AbortAddon())
+  .addon(QueryStringAddon);
+
+// TODO what if we have global ENV that changes and we need to change some of the wretch defaults then?
+// for now, that means we need to getNetwork() again each time :thinking_face:
+
+export function getNetwork(): typeof wretchImplementation {
+  // if we listen to global env changes we could update the wretchImplementation
+
+  return wretchImplementation;
+  /*
+  .middlewares([
+    retry({
+      maxAttempts: getEnv("GET_CALLS_RETRY"),
+      retryOnNetworkError: true,
+    }),
+  ]);
+  */
+
+  // TODO getEnv("GET_CALLS_TIMEOUT") is it possible to set a default mecanism for the setStatus on get calls? – otherwise maybe we don't timeout anymore
+}
+
+// TODO ideally this should be an "env" that this code would "listen" to changes?
+// because other implementation of networking (eg in underlying coin intés) would need to access this too
+export const setGlobalLedgerHeader = (_value: string): void => {
+  /*
+  wretchImplementation = wretchImplementation.headers({
+    ["X-Ledger-Client-Version"]: value,
+  });
+  */
+};
+
+// TODO i didn't recreated this in wretch yet. we may want to rethink this as a whole?
+
+/*
 type Metadata = { startTime: number };
 type ExtendedXHRConfig = AxiosRequestConfig & { metadata?: Metadata };
 
@@ -141,24 +182,64 @@ const extractErrorMessage = (raw: string): string | undefined => {
 
   return;
 };
+*/
 
-const implementation = (arg: AxiosRequestConfig): Promise<any> => {
-  invariant(typeof arg === "object", "network takes an object as parameter");
-  let promise;
+/**
+ * reimplement the old previous interface! the goal would be to kill this function
+ * @deprecated
+ */
+export default async function (arg: {
+  method?: "GET" | "POST";
+  url: string;
+  headers?: Record<string, string>;
+  params?: Record<string, any>;
+  paramsSerializer?: (params: Record<string, any>) => string;
+  transformResponse?: (text: string) => any;
+  data?: any;
+  auth?: { username: string; password: string };
+}): Promise<{ data: any; status: number }> {
+  const {
+    method,
+    url,
+    headers,
+    params,
+    paramsSerializer,
+    transformResponse,
+    data,
+    auth,
+  } = arg;
 
-  if (arg.method === "GET") {
-    if (!("timeout" in arg)) {
-      arg.timeout = getEnv("GET_CALLS_TIMEOUT");
-    }
+  let n = getNetwork();
 
-    promise = retry(() => axios(arg), {
-      maxRetry: getEnv("GET_CALLS_RETRY"),
-    });
-  } else {
-    promise = axios(arg);
+  if (params) {
+    n = n.query(paramsSerializer ? paramsSerializer(params) : params);
   }
 
-  return promise;
-};
+  n = n.url(url);
 
-export default implementation;
+  if (auth) {
+    // TODO
+  }
+
+  if (data) {
+    n = n
+      .headers({
+        "Content-Type": "application/json",
+      })
+      .body(JSON.stringify(data));
+  }
+
+  if (headers) {
+    n = n.headers(headers);
+  }
+
+  const r = method === "POST" ? await n.post() : await n.get();
+
+  const response = await r.res();
+
+  const json = transformResponse
+    ? await response.text().then(transformResponse)
+    : await r.json();
+
+  return { data: json, status: response.status };
+}

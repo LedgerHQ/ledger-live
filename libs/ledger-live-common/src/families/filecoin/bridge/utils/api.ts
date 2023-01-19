@@ -1,6 +1,4 @@
 import { log } from "@ledgerhq/logs";
-import { AxiosRequestConfig, AxiosResponse } from "axios";
-
 import {
   BalanceResponse,
   BroadcastTransactionRequest,
@@ -11,7 +9,7 @@ import {
   TransactionResponse,
   TransactionsResponse,
 } from "./types";
-import network from "../../../../network";
+import { getNetwork } from "../../../../network";
 import { getEnv } from "../../../../env";
 
 const getFilecoinURL = (path?: string): string => {
@@ -21,39 +19,22 @@ const getFilecoinURL = (path?: string): string => {
   return `${baseUrl}${path ? path : ""}`;
 };
 
-const fetch = async <T>(path: string) => {
+const fetch = async <T>(path: string): Promise<T> => {
   const url = getFilecoinURL(path);
-
-  // We force data to this way as network func is not using the correct param type. Changing that func will generate errors in other implementations
-  const opts: AxiosRequestConfig = {
-    method: "GET",
-    url,
-  };
-  const rawResponse = await network(opts);
-
-  // We force data to this way as network func is not using the correct param type. Changing that func will generate errors in other implementations
-  const { data } = rawResponse as AxiosResponse<T>;
-
-  log("http", url);
+  const response = await getNetwork().get(url).res();
+  const data = await response.json();
   return data;
 };
 
-const send = async <T>(path: string, data: Record<string, any>) => {
+const send = async <T>(path: string, data: Record<string, any>): Promise<T> => {
   const url = getFilecoinURL(path);
-
-  const opts: AxiosRequestConfig = {
-    method: "POST",
-    url,
-    data: JSON.stringify(data),
-    headers: { "Content-Type": "application/json" },
-  };
-
-  const rawResponse = await network(opts);
-
-  // We force data to this way as network func is not using generics. Changing that func will generate errors in other implementations
-  const { data: responseData } = rawResponse as AxiosResponse<T>;
-
-  log("http", url);
+  const response = await getNetwork()
+    .headers({
+      "Content-Type": "application/json",
+    })
+    .post(url, JSON.stringify(data))
+    .res();
+  const responseData = await response.json();
   return responseData;
 };
 

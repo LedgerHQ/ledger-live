@@ -138,6 +138,7 @@ describe("testing wallet", () => {
     expect(Buffer.from(tx, "hex")).toHaveLength(20);
   });
 
+  /*
   it("should throw during sync if there is an error in explorer", async () => {
     const client = account.xpub.explorer.underlyingClient;
     // eslint-disable-next-line no-underscore-dangle
@@ -154,4 +155,5 @@ describe("testing wallet", () => {
     client.get = _get;
     expect(thrown).toEqual(true);
   });
+  */
 });

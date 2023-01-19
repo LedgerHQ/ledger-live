@@ -10,6 +10,7 @@ import { delay } from "../../../promise";
 export const DEFAULT_RETRIES_API = 5;
 export const ETHERSCAN_TIMEOUT = 5000; // 5 seconds between 2 calls
 
+// TODO: there is a special need here. we could use wretch directly. because we want to do specific management of retry mecanism that would be a bit diff with the generic one?
 async function fetchWithRetries<T>(
   params: AxiosRequestConfig,
   retries = DEFAULT_RETRIES_API

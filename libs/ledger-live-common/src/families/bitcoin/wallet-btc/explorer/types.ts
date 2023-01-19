@@ -1,10 +1,8 @@
-import { AxiosInstance } from "axios";
 import { TX, Address, Block } from "../storage/types";
 
 // abstract explorer api used, abstract batching logic, pagination, and retries
 export interface IExplorer {
-  underlyingClient: AxiosInstance;
-  broadcast(tx: string): Promise<{ data: { result: string } }>;
+  broadcast(tx: string): Promise<{ result: string }>;
   getTxHex(txId: string): Promise<string>;
   getFees(): Promise<{ [key: string]: number }>;
   getRelayFee(): Promise<number>;

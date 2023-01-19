@@ -1,10 +1,10 @@
 import { WebsocketConnectionError } from "@ledgerhq/errors";
-import axios from "axios";
 import WS from "isomorphic-ws";
 import { Observable } from "rxjs";
 import { getEnv } from "../env";
 import announcementsApi from "../notifications/AnnouncementProvider/api/api";
 import serviceStatusApi from "../notifications/ServiceStatusProvider/api/api";
+import { getNetwork } from "../network";
 
 type TroubleshootStatus = {
   title: string;
@@ -61,7 +61,7 @@ export function troubleshoot(): Troubleshoot[] {
 function httpGet(url) {
   return {
     technicalDescription: "fetching " + url,
-    job: axios.get(url, { timeout: 30000 }),
+    job: getNetwork().url(url).get().setTimeout(30000).res(),
   };
 }
 

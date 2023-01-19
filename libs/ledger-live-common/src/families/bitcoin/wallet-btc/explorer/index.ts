@@ -1,16 +1,8 @@
-import type { AxiosRequestConfig } from "axios";
-import axios, { AxiosInstance } from "axios";
-import axiosRetry, { isNetworkOrIdempotentRequestError } from "axios-retry";
 import BigNumber from "bignumber.js";
-import genericPool, { Pool } from "generic-pool";
 import JSONBigNumber from "@ledgerhq/json-bignumber";
 import { Address, Block, TX } from "../storage/types";
 import { IExplorer } from "./types";
-import {
-  requestInterceptor,
-  responseInterceptor,
-  errorInterceptor,
-} from "../../../../network";
+import { getNetwork } from "../../../../network";
 
 type ExplorerParams = {
   no_token?: string;
@@ -21,9 +13,7 @@ type ExplorerParams = {
 };
 
 class BitcoinLikeExplorer implements IExplorer {
-  client: Pool<{ client: AxiosInstance }>;
-
-  underlyingClient: AxiosInstance;
+  network: ReturnType<typeof getNetwork>;
 
   disableBatchSize = false;
 
@@ -38,104 +28,56 @@ class BitcoinLikeExplorer implements IExplorer {
     explorerVersion: "v2" | "v3";
     disableBatchSize?: boolean;
   }) {
-    const clientParams: AxiosRequestConfig = {
-      baseURL: explorerURI,
-    };
-
-    // not react native
-    if (
-      !(typeof navigator !== "undefined" && navigator.product === "ReactNative")
-    ) {
-      // eslint-disable-next-line global-require,@typescript-eslint/no-var-requires
-      const https = require("https");
-      // uses max 20 keep alive request in parallel
-      clientParams.httpsAgent = new https.Agent({
-        keepAlive: true,
-        maxSockets: 20,
-      });
-    }
-
-    const client = axios.create(clientParams);
-    this.underlyingClient = client;
-    // 3 retries per request
-    axiosRetry(client, {
-      retries: 3,
-      retryCondition: (e) =>
-        isNetworkOrIdempotentRequestError(e) ||
-        // workaround for explorers v3 that sometimes returns 4xx instead of 5xx
-        (e.code !== "ECONNABORTED" &&
-          (!e.response ||
-            (e.response.status >= 400 && e.response.status <= 499))),
-    });
-    // max 20 requests
-    this.client = genericPool.createPool(
-      {
-        create: () => Promise.resolve({ client }),
-        destroy: () => Promise.resolve(),
-      },
-      { max: 20 }
-    );
+    const network = getNetwork().url(explorerURI);
+    this.network = network;
 
     this.explorerVersion = explorerVersion;
     if (disableBatchSize) {
       this.disableBatchSize = disableBatchSize;
     }
-
-    // Logging
-    client.interceptors.request.use(requestInterceptor);
-    client.interceptors.response.use(responseInterceptor, errorInterceptor);
   }
 
-  async broadcast(tx: string): Promise<{ data: { result: string } }> {
+  async broadcast(tx: string): Promise<{ result: string }> {
+    const network = this.network;
     const url = "/transactions/send";
-    const client = await this.client.acquire();
-    const res = await client.client.post(url, { tx });
-    await this.client.release(client);
+    const res = await network
+      .headers({
+        "Content-Type": "application/json",
+      })
+      .post(url, JSON.stringify({ tx }))
+      .json<any>();
     return res;
   }
 
   async getTxHex(txId: string): Promise<string> {
+    const network = this.network;
     const url = `/transactions/${txId}/hex`;
-
-    // TODO add a test for failure (at the sync level)
-    const client = await this.client.acquire();
-    const res: any = (await client.client.get(url)).data;
-    await this.client.release(client);
-
+    const res = await network.get(url).json<any>();
     return res[0].hex;
   }
 
   async getCurrentBlock(): Promise<Block | null> {
+    const network = this.network;
     const url = `/blocks/current`;
-
-    const client = await this.client.acquire();
-    const res: any = (await client.client.get(url)).data;
-    await this.client.release(client);
-
+    const res = await network.get(url).json<any>();
     if (!res) {
       return null;
     }
-
     const block: Block = {
       height: res.height,
       hash: res.hash,
       time: res.time,
     };
-
     return block;
   }
 
   async getBlockByHeight(height: number): Promise<Block | null> {
+    const network = this.network;
     const url = `/blocks/${height}`;
-
-    const client = await this.client.acquire();
-    const res: any = (await client.client.get(url)).data;
-    await this.client.release(client);
-
+    const res = await network.get(url).json<any>();
     if (!res[0]) {
       return null;
     }
-
     const block: Block = {
       height: res[0].height,
       hash: res[0].hash,
@@ -146,20 +88,15 @@ class BitcoinLikeExplorer implements IExplorer {
   }
 
   async getFees(): Promise<{ [key: string]: number }> {
+    const network = this.network;
     const url = `/fees`;
-
-    // TODO add a test for failure (at the sync level)
-    const client = await this.client.acquire();
-    const fees = (await client.client.get(url)).data;
-    await this.client.release(client);
-
+    const fees = await network.get(url).json<any>();
     return fees;
   }
 
   async getRelayFee(): Promise<number> {
-    const client = await this.client.acquire();
-    const fees = (await client.client.get(`/network`)).data;
-    await this.client.release(client);
+    const network = this.network;
+    const fees = await network.get(`/network`).json<any>();
     return parseFloat(fees["relay_fee"]);
   }
 
@@ -185,32 +122,21 @@ class BitcoinLikeExplorer implements IExplorer {
     address: Address,
     params: ExplorerParams
   ): Promise<{ txs: TX[] }> {
+    const network = this.network;
     const url = `/addresses/${address.address}/transactions`;
+    const text = await network.query(params).get(url).text<any>();
 
-    // TODO add a test for failure (at the sync level)
-    const client = await this.client.acquire();
-    let res: { txs: TX[] } = { txs: [] };
-    try {
-      res = (
-        await client.client.get(url, {
-          params,
-          // some altcoin may have outputs with values > MAX_SAFE_INTEGER
-          transformResponse: (string) =>
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            JSONBigNumber.parse(string, (key: string, value: any) => {
-              if (BigNumber.isBigNumber(value)) {
-                if (key === "value") {
-                  return value.toString();
-                }
-                return value.toNumber();
-              }
-              return value;
-            }),
-        })
-      ).data;
-    } finally {
-      await this.client.release(client);
-    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const res = JSONBigNumber.parse(text, (key: string, value: any) => {
+      if (BigNumber.isBigNumber(value)) {
+        if (key === "value") {
+          return value.toString();
+        }
+        return value.toNumber();
+      }
+      return value;
+    });
+
     return res;
   }
 

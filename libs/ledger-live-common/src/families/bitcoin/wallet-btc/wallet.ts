@@ -16,6 +16,7 @@ import { PickingStrategy } from "./pickingstrategies/types";
 import * as utils from "./utils";
 import cryptoFactory from "./crypto/factory";
 import { TX, Address } from "./storage/types";
+import { promiseAllBatched } from "../../../promise";
 
 class BitcoinLikeWallet {
   explorerInstances: { [key: string]: IExplorer } = {};
@@ -183,9 +184,10 @@ class BitcoinLikeWallet {
 
   async getAccountPendings(account: Account): Promise<TX[]> {
     const addresses = await account.xpub.getXpubAddresses();
+
     return flatten(
-      await Promise.all(
-        addresses.map((address) => account.xpub.explorer.getPendings(address))
+      await promiseAllBatched(3, addresses, (address) =>
+        account.xpub.explorer.getPendings(address)
       )
     );
   }

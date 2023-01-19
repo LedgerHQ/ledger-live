@@ -1,8 +1,7 @@
 import { Cluster } from "@solana/web3.js";
-import { AxiosRequestConfig, AxiosResponse } from "axios";
 import { compact } from "lodash/fp";
 import { getEnv } from "../../../env";
-import network from "../../../network";
+import { getNetwork } from "../../../network";
 
 export type ValidatorsAppValidatorRaw = {
   active_stake?: number | null;
@@ -64,16 +63,9 @@ const URLS = {
 export async function getValidators(
   cluster: Extract<Cluster, "mainnet-beta" | "testnet">
 ): Promise<ValidatorsAppValidator[]> {
-  const config: AxiosRequestConfig = {
-    method: "GET",
-    url: URLS.validatorList(cluster),
-  };
+  const response = await getNetwork().get(URLS.validatorList(cluster)).res();
 
-  const response: AxiosResponse<ValidatorsAppValidatorRaw[]> = await network(
-    config
-  );
-
-  const allRawValidators = response.status === 200 ? response.data : [];
+  const allRawValidators = response.status === 200 ? await response.json() : [];
 
   // validators app data is not clean: random properties can randomly contain
   // data, null, undefined
