@@ -1,7 +1,6 @@
 import { Observable } from "rxjs";
 import URL from "url";
 import Transport from "@ledgerhq/hw-transport";
-import type { McuVersion } from "@ledgerhq/types-live";
 import type { DeviceInfo, SocketEvent } from "@ledgerhq/types-live";
 import { version as livecommonversion } from "../../../../package.json";
 import { getEnv } from "../../../env";
@@ -9,9 +8,9 @@ import { log } from "@ledgerhq/logs";
 import { createDeviceSocket } from "../../../api/socket";
 import { filter, map } from "rxjs/operators";
 
-export type FlashMcuCommandRequest = {
+export type FlashMcuOrBootloaderCommandRequest = {
   targetId: DeviceInfo["targetId"];
-  mcuVersion: McuVersion;
+  version: string;
 };
 
 const castProgressEvent = (e: SocketEvent) =>
@@ -27,13 +26,13 @@ export type FlashMcuCommandEvent = {
   progress: number;
 };
 
-export function flashMcuCommand(
+export function flashMcuOrBootloaderCommand(
   transport: Transport,
-  { targetId, mcuVersion }: FlashMcuCommandRequest
+  { targetId, version }: FlashMcuOrBootloaderCommandRequest
 ): Observable<FlashMcuCommandEvent> {
-  log("device-command", "flashMcu", {
+  log("device-command", "flashMcuOrBootloader", {
     targetId,
-    mcuVersion,
+    version,
   });
 
   return createDeviceSocket(transport, {
@@ -42,7 +41,7 @@ export function flashMcuCommand(
       query: {
         targetId,
         livecommonversion,
-        version: mcuVersion.name,
+        version,
       },
     }),
   }).pipe(

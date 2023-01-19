@@ -39,6 +39,7 @@ export type UpdateFirmwareActionState = FullActionState<{
   step:
     | "installingOsu"
     | "flashingMcu"
+    | "flashingBootloader"
     | "installOsuDevicePermissionRequested"
     | "installOsuDevicePermissionGranted"
     | "allowManagerRequested"
@@ -93,6 +94,7 @@ export function updateFirmwareAction({
             };
           case "installingOsu":
           case "flashingMcu":
+          case "flashingBootloader":
             return {
               ...currentState,
               step: event.type,

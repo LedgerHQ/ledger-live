@@ -21,7 +21,7 @@ import { installFirmwareCommand } from "../commands/firmwareUpdate/installFirmwa
 import Transport from "@ledgerhq/hw-transport";
 import getDeviceInfo from "../../hw/getDeviceInfo";
 import { getProviderId } from "../../manager";
-import { flashMcuCommand } from "../commands/firmwareUpdate/flashMcu";
+import { flashMcuOrBootloaderCommand } from "../commands/firmwareUpdate/flashMcuOrBootloader";
 
 export type UpdateFirmwareTaskArgs = {
   deviceId: DeviceId;
@@ -37,6 +37,7 @@ export type UpdateFirmwareTaskError =
 export type UpdateFirmwareTaskEvent =
   | { type: "installingOsu"; progress: number }
   | { type: "flashingMcu"; progress: number }
+  | { type: "flashingBootloader"; progress: number }
   | { type: "firmwareUpdateCompleted" }
   | { type: "installOsuDevicePermissionRequested" }
   | { type: "installOsuDevicePermissionGranted" }
@@ -137,7 +138,7 @@ function internalUpdateFirmwareTask({
           } else {
             // if we need to flash the MCU than we have some extra steps to do and it might mean
             // that we also need to flash the bootloader
-            flashMcuAndBootloader(
+            flashMcuOrBootloader(
               updateContext,
               deviceInfo,
               subscriber,
@@ -150,11 +151,13 @@ function internalUpdateFirmwareTask({
   });
 }
 
-const flashMcuAndBootloader = (
+// recursive loop function that will continue flashing either MCU or the Bootloader, until
+// the device is no longer on bootloader mode
+const flashMcuOrBootloader = (
   updateContext: FirmwareUpdateContext,
   deviceInfo: DeviceInfo,
   subscriber: Subscriber<UpdateFirmwareTaskEvent>,
-  deviceId: string // TODO: is this withing device info?
+  deviceId: string // TODO: is this within device info?
 ) => {
   if (!deviceInfo.isBootloader) {
     subscriber.next({
@@ -164,24 +167,51 @@ const flashMcuAndBootloader = (
     subscriber.complete();
   }
 
+  // TODO:
+  // in the original update code we had the following check
+  // version = deviceInfo.majMin in blVersionAliases ?
+  //  blVersionAliases[deviceInfo.majMin] :
+  //  retrieveMcuVersion()
+  // what does it mean? is still needed for some updates? which ones?
+
   retrieveMcuVersion(updateContext.final).then((mcuVersion) => {
     if (mcuVersion) {
+      const mcuFromBootloader = (mcuVersion.from_bootloader_version || "")
+        .split(".")
+        .slice(0, 2)
+        .join(".");
+
+      // not sure I understand what this means, but it is the check that is used on the legacy
+      // update to decide if we're doing an MCU flash or a Bootloader flash
+      const isMcuUpdate = deviceInfo.majMin === mcuFromBootloader;
       withDevice(deviceId)((transport) =>
-        flashMcuCommand(transport, {
+        flashMcuOrBootloaderCommand(transport, {
           targetId: deviceInfo.targetId,
-          mcuVersion,
+          version: isMcuUpdate ? mcuVersion.name : mcuFromBootloader,
+          // according to the type of update we grab the version from different places on the
+          // mcuVersion object. The rest of the command is completely the same
         })
       ).subscribe({
         next: (event) =>
           subscriber.next({
-            type: "flashingMcu",
+            type: isMcuUpdate ? "flashingMcu" : "flashingBootloader",
             progress: event.progress,
           }),
         complete: () => {
-          waitForDeviceInfo(deviceId).then((_deviceInfo) => {
-            // TODO: use device info to check if we need to flash the bootloader and do it
-            subscriber.next({ type: "firmwareUpdateCompleted" });
-            subscriber.complete();
+          waitForDeviceInfo(deviceId).then((newDeviceInfo) => {
+            if (newDeviceInfo.isBootloader) {
+              // if we're still in the bootloader, it means that we still have things to flash
+              flashMcuOrBootloader(
+                updateContext,
+                newDeviceInfo,
+                subscriber,
+                deviceId
+              );
+            } else {
+              // if we're not in the bootloader anymore, it means that the update has been completed
+              subscriber.next({ type: "firmwareUpdateCompleted" });
+              subscriber.complete();
+            }
           });
         },
         error: (error: Error) => {
