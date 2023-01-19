@@ -303,6 +303,7 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:29.0.3')
 
     implementation 'com.google.firebase:firebase-analytics'
+
     // Needed to enable location services in a native module
     implementation 'com.google.android.gms:play-services-location:21.0.1'
 
