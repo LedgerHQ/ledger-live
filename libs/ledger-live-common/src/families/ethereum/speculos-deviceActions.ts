@@ -33,6 +33,18 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
           return "";
         },
       },
+      // For Avalanche C Chain
+      {
+        title: "Transfer",
+        button: "Rr",
+        expectedValue: ({ account, transaction }) => {
+          const amount = transaction.useAllAmount
+            ? account.spendableBalance
+            : transaction.amount;
+
+          return formatDeviceAmount(account.currency, amount);
+        },
+      },
       {
         title: "Amount",
         button: SpeculosButton.RIGHT,
