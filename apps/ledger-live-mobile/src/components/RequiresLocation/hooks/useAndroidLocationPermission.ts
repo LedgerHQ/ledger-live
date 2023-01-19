@@ -36,26 +36,42 @@ async function requestLocationPermission(): Promise<RequestResult> {
   });
 }
 
-const useAndroidLocationPermission = () => {
+export const useAndroidLocationPermission = () => {
   const [hasPermission, setHasPermission] = useState<boolean | undefined>();
   const [check, setCheck] = useState(false);
   const [neverAskAgain, setNeverAskAgain] = useState(false);
-  const [retryNonce, setRetryNonce] = useState(0);
+  const [retryCheckNonce, setRetryCheckNonce] = useState(0);
+  const [retryRequestNonce, setRetryRequestNonce] = useState(0);
   const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Exposes a retry mechanism only of the permission check
   const checkAgain = useCallback(() => {
-    setRetryNonce(new Date().getTime());
+    setRetryCheckNonce(new Date().getTime());
+  }, []);
+
+  // Exposes a retry mechanism only of the permission request
+  const requestAgain = useCallback(() => {
+    setRetryRequestNonce(new Date().getTime());
   }, []);
 
   useEffect(() => {
-    // set hasPermission to false after 400ms if it's still undefined.
+    // Sets hasPermission to false after 400ms if it's still undefined.
     // without this we risk a black screen when this unmounts or a blink
     // if we ignore it. Feel free to come up with a better way.
     timeout.current = setTimeout(() => {
       setHasPermission(false);
-    }, 200);
+    }, 400);
+
+    return () => {
+      if (timeout.current) clearTimeout(timeout.current);
+    };
   }, []);
 
+  /**
+   * Goes to state="background" when for ex:
+   * - the user enters settings
+   * - the smartphone prompts the user to allow for the permission
+   */
   useEffect(() => {
     const listener = AppState.addEventListener("change", state => {
       if (state === "active") {
@@ -69,9 +85,9 @@ const useAndroidLocationPermission = () => {
   }, [checkAgain]);
 
   /**
-   * Check the permission at launch, allowing for a retry whenever we
-   * come back from the background, also expose the retry mechanism for
-   * manual triggers.
+   * Checks the permission at launch, allowing for a retry whenever we
+   * come back from the background.
+   * Also exposes the retry mechanism (on the permission check, not request) for manual triggers.
    */
   useEffect(() => {
     let cancelled = false;
@@ -88,11 +104,12 @@ const useAndroidLocationPermission = () => {
     return () => {
       cancelled = true;
     };
-  }, [retryNonce]);
+  }, [retryCheckNonce]);
 
   /**
-   * Requesting the permissions is only done on mount, once, note that it
-   * triggers a background/active cycle on the app state which can lead to
+   * Requesting the permissions is only done on mount, once TODO
+   *
+   * Note that it triggers a state "background"/"active" cycle on the app state which can lead to
    * loops if we set the listeners on app state change.
    */
   useEffect(() => {
@@ -112,15 +129,14 @@ const useAndroidLocationPermission = () => {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [retryRequestNonce]);
 
   const renderChildren = !locationPermission || hasPermission || check;
   return {
     renderChildren,
     hasPermission,
-    checkAgain,
     neverAskAgain,
+    checkAgain,
+    requestAgain,
   };
 };
-
-export default useAndroidLocationPermission;
