@@ -133,13 +133,14 @@ async function init() {
 
   const isMainWindow = remote.getCurrentWindow().name === "MainWindow";
 
-  // TODO hydrate the store with the bridge/cache
-  listCachedCurrencyIds().then(ids => {
-    ids.forEach(id => {
-      hydrateCurrency(id);
-    });
-  });
-
+  // hydrate the store with the bridge/cache
+  await Promise.allSettled(
+    listCachedCurrencyIds()
+      .map(id => {
+        const currency = findCryptoCurrencyById(id);
+        return currency ? hydrateCurrency(currency) : null;
+      }),
+  );
   let accounts = await getKey("app", "accounts", []);
   if (accounts) {
     accounts = implicitMigration(accounts);
