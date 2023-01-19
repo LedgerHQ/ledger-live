@@ -252,6 +252,8 @@
         "float": "Floating",
         "update": "Rates update in",
         "loading": "Loading...",
+        "loadingQuotes": "Loading quotes now",
+        "loadingDescription": "It will only take a moment to find the best options for you.",
         "name": {
           "title": "Provider",
           "tooltip": "Depending on the provider, you have to register with them by creating an account."
@@ -1235,16 +1237,16 @@
   },
   "postOnboarding": {
     "postOnboardingScreen": {
-      "title": "Nice one.You're all set.",
-      "description": "Cheers for setting up your {{deviceName}}!",
-      "paragraph": "We have prepared for you some steps to start with. If you feel like exploring Ledger Live on your own, don't hesitate to skip this step, you can always come back to it.",
-      "bottomText": "Enjoy your travel into the Web3 securely with Ledger Live."
+      "title": "Next up, use your\nLedger Stax to... ",
+      "titleCompleted": "and that's a\nwrap!"
     },
     "postOnboardingContent": {
-      "title": "Nice one.You're all set.",
-      "description": "Here's what you can do next:",
-      "skipLink": "Skip to the app",
-      "skipLinkInDrawer": "I'll do this later"
+      "skipLink": "I'll do this later"
+    },
+    "postOnboardingBanner": {
+      "title": "What's next for your Ledger Stax?",
+      "description": "Claim the Infinity NFT, customize it's lock screen, or\ntransfer your assets from other exchanges.",
+      "link": "See what's next"
     }
   },
   "hideNftCollection": {
@@ -2316,6 +2318,15 @@
             }
           }
         }
+      }
+    }
+  },
+  "tezos": {
+    "objkt": {
+      "card": {
+        "title": "NFT (Non Fungible Tokens) collection",
+        "description": "You can see you Tezos NFTs directly through Objkt inside Ledger Live.",
+        "cta": "See my NFTs on Objkt"
       }
     }
   },
@@ -3774,10 +3785,6 @@
     "experimental": {
       "disclaimer": "These are experimental features we provide on an \"as is\" basis for our tech savvy community to test. They may change, break or be removed at any time. By enabling them, you agree to use them at your own risk.",
       "features": {
-        "apiTrongridProxy": {
-          "title": "use TronGrid.io",
-          "description": "Use trongrid directly without ledger proxy"
-        },
         "experimentalCurrencies": {
           "title": "Experimental integrations",
           "description": "Use available experimental crypto assets integrations."

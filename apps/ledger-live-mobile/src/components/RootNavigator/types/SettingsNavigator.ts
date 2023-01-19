@@ -59,4 +59,5 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugStoryly]: undefined;
   [ScreenName.DebugFetchCustomImage]: undefined;
   [ScreenName.DebugCustomImageGraphics]: undefined;
+  [ScreenName.DebugCameraPermissions]: undefined;
 };

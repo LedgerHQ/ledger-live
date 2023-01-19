@@ -16,8 +16,16 @@ import {
   getInfosForServiceUuid,
 } from "@ledgerhq/devices";
 import type { DeviceModel } from "@ledgerhq/devices";
-import { sendAPDU } from "@ledgerhq/devices/ble/sendAPDU";
-import { receiveAPDU } from "@ledgerhq/devices/ble/receiveAPDU";
+// ---------------------------------------------------------------------------------------------
+// Since this is a react-native library and metro bundler does not support
+// package exports yet (see: https://github.com/facebook/metro/issues/670)
+// we need to import the file directly from the lib folder.
+// Otherwise it would force the consumer of the lib to manually "tell" metro to resolve to /lib.
+//
+// TLDR: /!\ Do not remove the /lib part in the import statements below (@ledgerhq/devices/lib) ! /!\
+// See: https://github.com/LedgerHQ/ledger-live/pull/879
+import { sendAPDU } from "@ledgerhq/devices/lib/ble/sendAPDU";
+import { receiveAPDU } from "@ledgerhq/devices/lib/ble/receiveAPDU";
 import { log } from "@ledgerhq/logs";
 import { Observable, defer, merge, from, of, throwError } from "rxjs";
 import {

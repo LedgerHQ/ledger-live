@@ -3749,10 +3749,6 @@
     "experimental" : {
       "disclaimer" : "이는 기술적 관심과 지식이 풍부한 당사 커뮤니티에 \"있는 그대로\" 제공하는 실험적 기능으로, 언제든지 변경, 중단 또는 제거할 수 있습니다. 기능을 활성화할 경우, 온전히 귀하의 책임 하에 해당 기능을 사용한다는 사실에 동의하게 됩니다.",
       "features" : {
-        "apiTrongridProxy" : {
-          "title" : "TronGrid.io 사용",
-          "description" : "원장 프록시 없이 트론 그리드 바로 사용하기"
-        },
         "experimentalCurrencies" : {
           "title" : "실험 통합",
           "description" : "사용 가능한 실험 암호화폐 통합을 사용합니다."

@@ -1,11 +1,9 @@
 import { device } from "detox";
 import { execSync } from "child_process";
 import * as bridge from "./bridge/server";
-// import detoxConfig from "../detox.config";
 
 beforeAll(async () => {
   bridge.init();
-  setDemoMode();
   await device.launchApp({
     languageAndLocale: {
       language: "en-US",
@@ -20,7 +18,7 @@ afterAll(async () => {
 
 // NOTE: https://github.com/wix/Detox/blob/master/docs/APIRef.Screenshots.md
 async function setDemoMode() {
-  // FIXME: commands does nothing (we tried locally), so we commented it out, however
+  // FIXME: commands does nothing and sometimes causes crashes (we tried locally), so we commented it out, however
   // when we start using screenshots for testing, we will probably need to look into itx`
   //
   // if (device.getPlatform() === "ios") {
