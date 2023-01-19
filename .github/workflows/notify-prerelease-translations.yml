@@ -3,6 +3,7 @@ on:
   pull_request:
     branches:
       - main
+      - release
     paths:
       - apps/ledger-live-desktop/static/i18n/**
       - apps/ledger-live-mobile/src/locales/**
@@ -19,6 +20,7 @@ jobs:
   release-translation-check:
     name: release branch translation check
     runs-on: ubuntu-latest
+    if: ${{ github.ref_name != 'release' }}
     steps:
       - uses: actions/checkout@v3
       - name: checkout PR
@@ -35,7 +37,7 @@ jobs:
         with:
           script: |
             const fs = require("fs");
-            const text = "Translations files have changed on ${{ github.event.inputs.prNumber || github.event.push.head.ref }}";
+            const text = "Translations files have changed on ${{ github.event.inputs.prNumber || github.event.push.head.ref || github.event.pull_request.number }}";
             const output = {
               text,
               blocks: [

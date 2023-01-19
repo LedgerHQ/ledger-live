@@ -31,6 +31,7 @@ import DebugSettings from "../../screens/Settings/Debug";
 import DebugStore from "../../screens/Settings/Debug/Debugging/Store";
 import DebugStoryly from "../../screens/Settings/Debug/Features/Storyly";
 import DebugSwap from "../../screens/Settings/Debug/Features/Swap";
+import DebugVideos from "../../screens/Settings/Debug/Features/Videos";
 
 import Settings from "../../screens/Settings";
 import AccountsSettings from "../../screens/Settings/Accounts";
@@ -57,6 +58,7 @@ import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWa
 import PostOnboardingDebugScreen from "../../screens/PostOnboarding/PostOnboardingDebugScreen";
 import { SettingsNavigatorStackParamList } from "./types/SettingsNavigator";
 import DebugTermsOfUse from "../../screens/Settings/Debug/Features/TermsOfUse";
+import CameraPermissions from "../../screens/Settings/Debug/Debugging/CameraPermissions";
 
 const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 
@@ -338,6 +340,13 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
+        name={ScreenName.DebugVideos}
+        component={DebugVideos}
+        options={{
+          title: "Debug Videos",
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.DebugFetchCustomImage}
         component={DebugFetchCustomImage}
         options={{
@@ -384,6 +393,10 @@ export default function SettingsNavigator() {
       <Stack.Screen
         name={ScreenName.PostOnboardingDebugScreen}
         component={PostOnboardingDebugScreen}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugCameraPermissions}
+        component={CameraPermissions}
       />
     </Stack.Navigator>
   );

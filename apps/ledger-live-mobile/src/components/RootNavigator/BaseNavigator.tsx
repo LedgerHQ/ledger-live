@@ -19,7 +19,6 @@ import OperationDetails, {
 import PairDevices from "../../screens/PairDevices";
 import EditDeviceName from "../../screens/EditDeviceName";
 import ScanRecipient from "../../screens/SendFunds/ScanRecipient";
-import FallbackCameraSend from "../FallbackCamera/FallbackCameraSend";
 import Main from "./MainNavigator";
 import { ErrorHeaderInfo } from "./BaseOnboardingNavigator";
 import SettingsNavigator from "./SettingsNavigator";
@@ -96,7 +95,6 @@ export default function BaseNavigator() {
     () => getStackNavigatorConfig(colors, true),
     [colors],
   );
-  const learn = useFeature("learn");
   // PTX smart routing feature flag - buy sell live app flag
   const ptxSmartRoutingMobile = useFeature("ptxSmartRoutingMobile");
   const walletConnectLiveApp = useFeature("walletConnectLiveApp");
@@ -194,27 +192,22 @@ export default function BaseNavigator() {
         })}
         {...noNanoBuyNanoWallScreenOptions}
       />
-      {learn?.enabled ? (
-        <>
-          <Stack.Screen
-            name={ScreenName.Learn}
-            component={Learn}
-            options={({ navigation }) => ({
-              headerShown: true,
-              animationEnabled: false,
-              headerTitle: t("discover.sections.learn.title"),
-              headerLeft: () => <BackButton navigation={navigation} />,
-              headerRight: () => null,
-            })}
-          />
-
-          <Stack.Screen
-            name={ScreenName.LearnWebView}
-            component={LearnWebView}
-            options={{ headerShown: false }}
-          />
-        </>
-      ) : null}
+      <Stack.Screen
+        name={ScreenName.Learn}
+        component={Learn}
+        options={({ navigation }) => ({
+          headerShown: true,
+          animationEnabled: false,
+          headerTitle: t("discover.sections.learn.title"),
+          headerLeft: () => <BackButton navigation={navigation} />,
+          headerRight: () => null,
+        })}
+      />
+      <Stack.Screen
+        name={ScreenName.LearnWebView}
+        component={LearnWebView}
+        options={{ headerShown: false }}
+      />
       <Stack.Screen
         name={NavigatorName.SignMessage}
         component={SignMessageNavigator}
@@ -524,14 +517,6 @@ export default function BaseNavigator() {
         }
         options={{
           headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.FallbackCameraSend}
-        component={FallbackCameraSend}
-        options={{
-          title: t("send.scan.fallback.header"),
-          headerLeft: () => null,
         }}
       />
       <Stack.Screen

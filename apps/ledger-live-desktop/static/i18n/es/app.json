@@ -3749,10 +3749,6 @@
     "experimental" : {
       "disclaimer" : "Estas son funciones experimentales que ofrecemos “tal como están” para que nuestra comunidad de expertos tecnológicos las pruebe. Es posible que fallen, sufran cambios o sean eliminadas en cualquier momento. Al habilitarlas, aceptas usarlas bajo tu responsabilidad.",
       "features" : {
-        "apiTrongridProxy" : {
-          "title" : "Usar TronGrid.io",
-          "description" : "Usar trongrid directamente sin el proxy de Ledger"
-        },
         "experimentalCurrencies" : {
           "title" : "Integraciones experimentales",
           "description" : "Utilizar integraciones experimentales de actrivos cripto disponibles."
