@@ -1,5 +1,21 @@
 # @ledgerhq/live-common
 
+## 27.12.0-nightly.3
+
+### Minor Changes
+
+- [#2191](https://github.com/LedgerHQ/ledger-live/pull/2191) [`efc2b4d4fb`](https://github.com/LedgerHQ/ledger-live/commit/efc2b4d4fb2acb6c63a4c55b5e51e251712dfc5c) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - useSwapTransaction returns when rates are successfully fetched
+
+* [#2162](https://github.com/LedgerHQ/ledger-live/pull/2162) [`97c9cb43a4`](https://github.com/LedgerHQ/ledger-live/commit/97c9cb43a4a4dc2c6369d76f12b4a0c48fe3990a) Thanks [@lvndry](https://github.com/lvndry)! - Ledger Live Common can build transactions including OP_RETURN opcode
+
+- [#2326](https://github.com/LedgerHQ/ledger-live/pull/2326) [`63e63e5fc5`](https://github.com/LedgerHQ/ledger-live/commit/63e63e5fc562c029f1372f664d1a45dc1fda5047) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Only fetches swap rates for supported CEX and DEX providers.
+
+* [#2262](https://github.com/LedgerHQ/ledger-live/pull/2262) [`88d6de464b`](https://github.com/LedgerHQ/ledger-live/commit/88d6de464b475b049aaf1724b28d8a592bfd4676) Thanks [@chabroA](https://github.com/chabroA)! - Add walletApiAdapter files to migrate to wallet-api
+
+### Patch Changes
+
+- [#2334](https://github.com/LedgerHQ/ledger-live/pull/2334) [`75fbe7f3b1`](https://github.com/LedgerHQ/ledger-live/commit/75fbe7f3b1058e6eb6906c0d5fac3fb10eefc3eb) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Prevent crash because of legacy identifier "nanoFTS" in post-onboarding related app data
+
 ## 27.12.0-nightly.2
 
 ### Minor Changes
