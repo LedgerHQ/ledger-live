@@ -3,6 +3,7 @@ import {
   getElementByText,
   tapByElement,
   tapByText,
+  scrollToText,
 } from "../../helpers";
 import { by, waitFor } from "detox";
 
@@ -34,10 +35,7 @@ export default class GeneralSettingsPage {
   }
 
   async selectLanguage(lang: string) {
-    await waitFor(getElementByText(lang))
-      .toBeVisible()
-      .whileElement(by.id("scrollView-language-change")) // where some is your ScrollView testID
-      .scroll(100, "down");
+    await scrollToText(lang, "scrollView-language-change");
     await tapByText(lang);
   }
 }
