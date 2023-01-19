@@ -38,8 +38,10 @@ class LocationHelperModule(private val reactContext: ReactApplicationContext) :
 
     private var fusedLocationProviderClient: FusedLocationProviderClient;
 
-    // Listens to result from the location enable request activity.
-    // Request sent from requestEnableLocation.
+    /**
+     * Listens to result from the location enable request activity.
+     * Request sent from requestEnableLocation.
+     */
     private val activityEventListener = object : BaseActivityEventListener() {
         override fun onActivityResult(
             activity: Activity?,
@@ -63,7 +65,11 @@ class LocationHelperModule(private val reactContext: ReactApplicationContext) :
         }
     }
 
-    // Handler to listen to location services updates (turned on/off)
+    /**
+     * Handler to listen to location services updates (turned on/off)
+     *
+     * Emits an event to JS everytime the state of the location services change
+     */
     private val locationServicesUpdateCallback = object : LocationCallback() {
         override fun onLocationAvailability(p0: LocationAvailability) {
             val isLocationAvailable = p0.isLocationAvailable
@@ -102,12 +108,21 @@ class LocationHelperModule(private val reactContext: ReactApplicationContext) :
         reactContext.addActivityEventListener(activityEventListener)
     }
 
-    // The native module can be accessed in JS:
-    // const { LocationHelperModule } = ReactNative.NativeModules;
+    /**
+     * The native module can be accessed in JS:
+     * ```
+     * const { LocationHelperModule } = ReactNative.NativeModules;
+     * ```
+     */
     override fun getName(): String {
         return "LocationHelperModule"
     }
 
+    /**
+     * Checks if the location services are enabled using SettingsClient
+     * If the services are not enabled, tries to request the user to enable the services.
+     * The result from this request is listened by onActivityResult
+     */
     @ReactMethod
     fun checkAndRequestEnablingLocationServices(promise: Promise) {
         Log.d("LocationHelperModule", "Checking and requesting enabling location services")
@@ -165,7 +180,25 @@ class LocationHelperModule(private val reactContext: ReactApplicationContext) :
 
     private var listenerCount = 0
 
-    // Signature to respect to add a listener from JS to which we can send events
+    /**
+     * Enables JS to register a listener to receive events.
+     * Then on the JS side, the listen can be set up like this:
+     * ```
+     * const eventEmitter = new NativeEventEmitter(
+     *      NativeModules.LocationHelperModule,
+     *    );
+     *    const eventListener = eventEmitter.addListener(
+     *      "LocationServiceUpdated",
+     *      event => {
+     *        // Do whatever
+     *      },
+     *    );
+     * ```
+     * Signature to respect to add a listener, the eventName param is necessary
+     *
+     * The listener will receive events from the FusedLocationProviderClient about the
+     * state of the locations services.
+     */
     @ReactMethod
     fun addListener(eventName: String) {
         // On a first listener, starts listening to location services updates
@@ -195,6 +228,10 @@ class LocationHelperModule(private val reactContext: ReactApplicationContext) :
         listenerCount += 1
     }
 
+    /**
+     * Signature to respect to allow JS to remove several listeners
+     * See addListener above
+     */
     @ReactMethod
     fun removeListeners(count: Int) {
         listenerCount -= count
