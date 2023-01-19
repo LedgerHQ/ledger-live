@@ -1,46 +1,66 @@
-import React, { memo } from "react";
-import { Button, IconBox, Text } from "@ledgerhq/native-ui";
+import React, { useCallback } from "react";
+import { Linking, Platform } from "react-native";
+import { IconBox, Icons } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { BluetoothMedium } from "@ledgerhq/native-ui/assets/icons";
-import styled from "styled-components/native";
-import DeviceSetupView from "../DeviceSetupView";
+import ServiceDisabledView from "../ServiceDisabledView";
 
-const SafeAreaContainer = styled.SafeAreaView`
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  background-color: ${p => p.theme.colors.background.main};
-  margin-left: ${p => `${p.theme.space[6]}px`};
-  margin-right: ${p => `${p.theme.space[6]}px`};
-`;
+export type Props = {
+  hasBackButton?: boolean;
+  onRetry?: () => void;
+  openSettings?: boolean;
+};
 
-const BluetoothDisabled: React.FC<{ onRetry?: () => void }> = ({ onRetry }) => {
+/**
+ * Renders a component that informs the user that they have disabled their bluetooth service.
+ *
+ * @param onRetry A callback for the user to retry enabling the service. If undefined or if openSettings is true,
+ *   the user will be prompted to open the native settings.
+ * @param hasBackButton If true, a back button will be displayed in the header. Default to false.
+ * @param openSettings Used for debug purposes. If true pressing the button will make the user go to the settings. Defaults to false.
+ * @returns
+ */
+const BluetoothDisabled: React.FC<Props> = ({
+  onRetry,
+  hasBackButton = false,
+  openSettings = false,
+}) => {
   const { t } = useTranslation();
 
+  const openNativeBluetoothServiceSettings = useCallback(() => {
+    Platform.OS === "ios"
+      ? Linking.openURL("App-Prefs:Bluetooth")
+      : Linking.sendIntent("android.settings.BLUETOOTH_SETTINGS");
+  }, []);
+
+  let onButtonPress;
+  let ButtonIcon;
+  let buttonLabel;
+  let buttonEvent;
+
+  if (!onRetry || openSettings) {
+    onButtonPress = openNativeBluetoothServiceSettings;
+    ButtonIcon = Icons.SettingsMedium;
+    buttonLabel = t("bluetooth.openSettings");
+    buttonEvent = "BluetoothServiceDisabledOpenSettings";
+  } else {
+    onButtonPress = onRetry;
+    buttonLabel = t("bluetooth.tryEnablingAgain");
+    buttonEvent = "BluetoothServiceDisabledRetryAuthorize";
+  }
+
   return (
-    <DeviceSetupView hasBackButton>
-      <SafeAreaContainer>
-        <IconBox Icon={BluetoothMedium} iconSize={24} boxSize={64} />
-        <Text variant={"h2"} mb={5} mt={7} textAlign="center">
-          {t("bluetooth.required")}
-        </Text>
-        <Text
-          mb={onRetry ? 10 : 0}
-          variant={"body"}
-          fontWeight={"medium"}
-          textAlign="center"
-          color={"neutral.c80"}
-        >
-          {t("bluetooth.checkEnabled")}
-        </Text>
-        {onRetry ? (
-          <Button type="main" alignSelf="stretch" outline onPress={onRetry}>
-            {t("common.retry")}
-          </Button>
-        ) : null}
-      </SafeAreaContainer>
-    </DeviceSetupView>
+    <ServiceDisabledView
+      title={t("bluetooth.required")}
+      TitleIcon={<IconBox Icon={BluetoothMedium} iconSize={24} boxSize={64} />}
+      description={t("bluetooth.checkEnabled")}
+      hasBackButton={hasBackButton}
+      ButtonIcon={ButtonIcon}
+      buttonLabel={buttonLabel}
+      onButtonPress={onButtonPress}
+      buttonEvent={buttonEvent}
+    />
   );
 };
 
-export default memo(BluetoothDisabled);
+export default BluetoothDisabled;
