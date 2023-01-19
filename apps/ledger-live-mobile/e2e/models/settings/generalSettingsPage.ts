@@ -4,6 +4,7 @@ import {
   tapByElement,
   tapByText,
 } from "../../helpers";
+import { by, waitFor } from "detox";
 
 export default class GeneralSettingsPage {
   getPasswordSettingsSwitch = () => getElementById("password-settings-switch");
@@ -33,6 +34,10 @@ export default class GeneralSettingsPage {
   }
 
   async selectLanguage(lang: string) {
+    await waitFor(getElementByText(lang))
+      .toBeVisible()
+      .whileElement(by.id("scrollView-language-change")) // where some is your ScrollView testID
+      .scroll(100, "down");
     await tapByText(lang);
   }
 }
