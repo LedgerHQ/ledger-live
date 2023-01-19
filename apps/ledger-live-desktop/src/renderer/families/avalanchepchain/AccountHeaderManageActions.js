@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
 import { canDelegate } from "@ledgerhq/live-common/families/avalanchepchain/utils";
+import { Trans } from "react-i18next";
 
 type Props = {
   account: AccountLike,
@@ -49,6 +50,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
       icon: IconCoins,
       disabled: !isDelegationEnabled,
       label: t("account.stake"),
+      tooltip: !isDelegationEnabled ? t("avalanchepchain.delegation.notEnoughToDelegate") : null
     },
   ];
 };
