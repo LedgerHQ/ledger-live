@@ -7,7 +7,7 @@ import LocationHelperModule, {
 /**
  * Hook returning a callback that checks the location services state and requests (if necessary) the user to enable them
  *
- * If you want to enable the location services directly and/or keep track of the location services state, 
+ * If you want to enable the location services directly and/or keep track of the location services state,
  * use useAndroidEnableLocation defined below.
  *
  * Only available on Android.
@@ -37,7 +37,7 @@ export type LocationServicesState = "unknown" | "enabled" | "disabled";
  * Hook to enable the locations services
  *
  * A method is exposed to check the location services state and request (if necessary) the user to enable them.
- * This method is called on mounting.
+ * This method is called a first time on mount.
  * It also listens to an update of the location services state from the native module, and updates the state accordingly.
  *
  * Only available on Android.
@@ -67,6 +67,7 @@ export function useAndroidEnableLocation() {
     }
   }, [promptEnableLocation]);
 
+  // Checks and requests on mount
   useEffect(() => {
     checkAndRequestAgain();
   }, [checkAndRequestAgain]);
