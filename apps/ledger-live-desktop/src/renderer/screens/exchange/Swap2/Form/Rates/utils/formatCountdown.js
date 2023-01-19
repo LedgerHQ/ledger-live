@@ -1,7 +1,6 @@
 // @flow
 
-export const formatCountdown = (timeSeconds: number) => {
-  const timeS = Math.abs(timeSeconds);
+export const formatCountdown = (timeS: number) => {
   const minutes = Math.floor(timeS / 60);
   const seconds = timeS % 60;
 
