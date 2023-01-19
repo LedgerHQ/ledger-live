@@ -22,7 +22,7 @@ import {
   StackNavigatorNavigation,
   StackNavigatorRoute,
 } from "../../../../components/RootNavigator/types/helpers";
-import { usePromptBluetoothCallback } from "../../../../logic/usePromptBluetoothCallback";
+import { usePromptEnableBluetoothCallback } from "../../../../components/RequiresBLE/hooks/useEnableBluetooth";
 
 const availableDeviceModelFilter = [
   "none",
@@ -60,7 +60,7 @@ export default () => {
     pairedDevice: null,
   };
 
-  const promptBluetooth = usePromptBluetoothCallback();
+  const promptBluetooth = usePromptEnableBluetoothCallback();
 
   const goToBlePairingFlow = useCallback(() => {
     setIsDrawerOpen(false);

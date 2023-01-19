@@ -8,7 +8,7 @@ import { AddAccountsNavigatorParamList } from "../components/RootNavigator/types
 import { StackNavigatorProps } from "../components/RootNavigator/types/helpers";
 import { ReceiveFundsStackParamList } from "../components/RootNavigator/types/ReceiveFundsNavigator";
 import { ScreenName } from "../const";
-import { usePromptBluetoothCallback } from "../logic/usePromptBluetoothCallback";
+import { usePromptEnableBluetoothCallback } from "../components/RequiresBLE/hooks/useEnableBluetooth";
 
 type Navigation =
   | StackNavigatorProps<
@@ -34,7 +34,7 @@ export default function SkipSelectDevice({ onResult, route }: Props) {
   const [hasUSB, setHasUSB] = useState(false);
   const knownDevices = useSelector(knownDevicesSelector);
   const forceSelectDevice = route?.params?.forceSelectDevice;
-  const promptBluetooth = usePromptBluetoothCallback();
+  const promptBluetooth = usePromptEnableBluetoothCallback();
   useEffect(() => {
     const subscription = discoverDevices(() => true).subscribe(e => {
       setHasUSB(e.id.startsWith("usb|"));
