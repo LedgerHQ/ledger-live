@@ -1,4 +1,4 @@
-import React, { useCallback, memo } from "react";
+import React, { useCallback } from "react";
 import { IconBox, Icons } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { Linking } from "react-native";
