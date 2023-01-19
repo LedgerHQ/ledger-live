@@ -1,61 +1,70 @@
 import React, { useCallback, memo } from "react";
-import { Button, IconBox, Text } from "@ledgerhq/native-ui";
+import { IconBox, Icons } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { Linking } from "react-native";
 import { BluetoothMedium } from "@ledgerhq/native-ui/assets/icons";
-import styled from "styled-components/native";
-import DeviceSetupView from "../DeviceSetupView";
-
-const SafeAreaContainer = styled.SafeAreaView`
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  background-color: ${p => p.theme.colors.background.main};
-  margin-left: ${p => `${p.theme.space[6]}px`};
-  margin-right: ${p => `${p.theme.space[6]}px`};
-`;
+import ServicePermissionDeniedView from "../ServicePermissionDeniedView";
 
 type Props = {
+  onRetry?: () => void;
   neverAskAgain?: boolean;
+  hasBackButton?: boolean;
+  openSettings?: boolean;
 };
 
-const BluetoothPermissionDenied = ({ neverAskAgain }: Props) => {
+/**
+ * Renders a component that informs the user that they have denied the app permission to use Bluetooth.
+ *
+ * If the user has selected/triggered "Don't ask again", the user will be prompted to open the native settings
+ *
+ * @param onRetry A callback for the user to retry allowing the permission, if neverAskAgain and openSettings are false.
+ *   Otherwise, the user will be prompted to open the native settings.
+ * @param hasBackButton If true, a back button will be displayed in the header. Default to false.
+ * @param neverAskAgain If true, the user has denied the app permission to use Bluetooth and has selected "Don't ask again". Default to true.
+ * @param openSettings Used for debug purposes. If true pressing the button will make the user go to the settings. Defaults to false.
+ */
+const BluetoothPermissionDenied: React.FC<Props> = ({
+  onRetry,
+  neverAskAgain = true,
+  hasBackButton = false,
+  openSettings = false,
+}) => {
   const { t } = useTranslation();
   const openNativeSettings = useCallback(() => {
     Linking.openSettings();
   }, []);
 
+  let description;
+  let buttonLabel;
+  let ButtonIcon;
+  let onButtonPress;
+  let buttonEvent;
+
+  if (neverAskAgain || !onRetry || openSettings) {
+    description = t("permissions.bluetooth.modalDescriptionSettingsVariant");
+    buttonLabel = t("permissions.bluetooth.modalButtonLabelSettingsVariant");
+    ButtonIcon = Icons.SettingsMedium;
+    onButtonPress = openNativeSettings;
+    buttonEvent = "BluetoothPermissionDeniedOpenSettings";
+  } else {
+    onButtonPress = onRetry;
+    description = t("permissions.bluetooth.modalDescriptionBase");
+    buttonLabel = t("permissions.bluetooth.modalButtonLabelBase");
+    buttonEvent = "BluetoothPermissionDeniedRetryAuthorize";
+  }
+
   return (
-    <DeviceSetupView hasBackButton>
-      <SafeAreaContainer>
-        <IconBox Icon={BluetoothMedium} iconSize={24} boxSize={64} />
-        <Text variant={"h2"} mb={5} mt={7} textAlign="center">
-          {t("permissions.bluetooth.modalTitle")}
-        </Text>
-        <Text
-          mb={10}
-          variant={"body"}
-          fontWeight={"medium"}
-          textAlign="center"
-          color={"neutral.c80"}
-        >
-          {neverAskAgain
-            ? t("permissions.bluetooth.modalDescriptionSettingsVariant")
-            : t("permissions.bluetooth.modalDescriptionBase")}
-        </Text>
-        <Button
-          type="main"
-          alignSelf="stretch"
-          outline
-          onPress={openNativeSettings}
-        >
-          {neverAskAgain
-            ? t("permissions.bluetooth.modalButtonLabelSettingsVariant")
-            : t("permissions.bluetooth.modalButtonLabelBase")}
-        </Button>
-      </SafeAreaContainer>
-    </DeviceSetupView>
+    <ServicePermissionDeniedView
+      title={t("permissions.bluetooth.modalTitle")}
+      TitleIcon={<IconBox Icon={BluetoothMedium} iconSize={24} boxSize={64} />}
+      description={description}
+      hasBackButton={hasBackButton}
+      ButtonIcon={ButtonIcon}
+      buttonLabel={buttonLabel}
+      onButtonPress={onButtonPress}
+      buttonEvent={buttonEvent}
+    />
   );
 };
 
-export default memo(BluetoothPermissionDenied);
+export default BluetoothPermissionDenied;

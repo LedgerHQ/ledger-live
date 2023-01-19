@@ -7,6 +7,8 @@ import {
 import { useRef, useCallback, useState, useEffect } from "react";
 
 const { PERMISSIONS, RESULTS } = PermissionsAndroid;
+
+// No check is done on iOS here
 export const bluetoothPermissions: Permission[] =
   Platform.OS === "android"
     ? Platform.Version < 31
@@ -14,8 +16,15 @@ export const bluetoothPermissions: Permission[] =
       : [PERMISSIONS.BLUETOOTH_SCAN, PERMISSIONS.BLUETOOTH_CONNECT]
     : [];
 
+/**
+ * Checks if the app has the required permissions to use Bluetooth.
+ *
+ * On Android 11 and above, the app needs to have the BLUETOOTH_SCAN and BLUETOOTH_CONNECT permissions.
+ * On iOS, no check is done and returns true.
+ */
 async function checkBluetoothPermissions() {
   if (bluetoothPermissions.length === 0) return true;
+
   return Promise.all(
     bluetoothPermissions.map(permission =>
       PermissionsAndroid.check(permission),
@@ -28,9 +37,16 @@ type RequestMultipleResult = {
   generalStatus: typeof PermissionsAndroid.RESULTS[number];
 };
 
+/**
+ * Requests the required permissions to use Bluetooth.
+ *
+ * On Android 11 and above, the app needs to have the BLUETOOTH_SCAN and BLUETOOTH_CONNECT permissions.
+ * On iOS, no request is done and returns true.
+ */
 async function requestBluetoothPermissions(): Promise<RequestMultipleResult> {
   if (bluetoothPermissions.length === 0)
     return { allGranted: true, generalStatus: RESULTS.GRANTED };
+
   return PermissionsAndroid.requestMultiple(bluetoothPermissions).then(res => {
     const permissionStatuses = Object.values(res);
     const allGranted = permissionStatuses.every(
@@ -53,15 +69,32 @@ async function requestBluetoothPermissions(): Promise<RequestMultipleResult> {
   });
 }
 
-const useAndroidBLEPermissions = () => {
+/**
+ * Hook to check and request the BLE permission on Android.
+ *
+ * @returns an object with the following properties:
+ * - hasPermission: true if the permission is granted, false if it's denied, undefined if it's still loading
+ * - checkAgain: a function to check (and not request) again the permission
+ * - neverAskAgain: true if the user has checked the "never ask again" checkbox (or on Android 11+ if the user has denied the permission several times)
+ * - renderChildren: a boolean to know if the children should be rendered (permissions are granted) or not
+ */
+export const useAndroidBluetoothPermissions = () => {
   const [hasPermission, setHasPermission] = useState<boolean | undefined>();
   const [check, setCheck] = useState(false);
   const [neverAskAgain, setNeverAskAgain] = useState(false);
-  const [retryNonce, setRetryNonce] = useState(0);
+  const [retryCheckNonce, setRetryCheckNonce] = useState(0);
+  const [retryRequestNonce, setRetryRequestNonce] = useState(0);
   const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Exposes a retry mechanism only of the permission check
   const checkAgain = useCallback(() => {
-    setRetryNonce(new Date().getTime());
+    setRetryCheckNonce(new Date().getTime());
+  }, []);
+
+  // Exposes a retry mechanism only of the permission request
+  const requestAgain = useCallback(() => {
+    setRetryRequestNonce(i => i + 1);
+    // setRetryRequestNonce(new Date().getTime());
   }, []);
 
   useEffect(() => {
@@ -70,9 +103,18 @@ const useAndroidBLEPermissions = () => {
     // if we ignore it. Feel free to come up with a better way.
     timeout.current = setTimeout(() => {
       setHasPermission(false);
-    }, 200);
+    }, 400);
+
+    return () => {
+      if (timeout.current) clearTimeout(timeout.current);
+    };
   }, []);
 
+  /**
+   * Goes to state="background" when for ex:
+   * - the user enters settings
+   * - the smartphone prompts the user to allow for the permission
+   */
   useEffect(() => {
     const listener = AppState.addEventListener("change", state => {
       if (state === "active") {
@@ -105,11 +147,12 @@ const useAndroidBLEPermissions = () => {
     return () => {
       cancelled = true;
     };
-  }, [retryNonce]);
+  }, [retryCheckNonce]);
 
   /**
-   * Requesting the permissions is only done on mount, once, note that it
-   * triggers a background/active cycle on the app state which can lead to
+   * Requesting the permissions is only done on mount, once TODO
+   *
+   * Note that it triggers a background/active cycle on the app state which can lead to
    * loops if we set the listeners on app state change.
    */
   useEffect(() => {
@@ -117,6 +160,7 @@ const useAndroidBLEPermissions = () => {
 
     async function asyncRequestBluetoothPermissions() {
       const res = await requestBluetoothPermissions();
+
       if (!cancelled) {
         if (timeout.current) {
           clearTimeout(timeout.current);
@@ -132,7 +176,7 @@ const useAndroidBLEPermissions = () => {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [retryRequestNonce]);
 
   const renderChildren =
     bluetoothPermissions.length === 0 || hasPermission || check;
@@ -142,7 +186,6 @@ const useAndroidBLEPermissions = () => {
     hasPermission,
     neverAskAgain,
     checkAgain,
+    requestAgain,
   };
 };
-
-export default useAndroidBLEPermissions;
