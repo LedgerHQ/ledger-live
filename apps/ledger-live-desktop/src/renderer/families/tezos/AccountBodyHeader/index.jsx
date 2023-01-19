@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import Delegation from "../Delegation";
 import Box from "~/renderer/components/Box";
 import Card from "~/renderer/components/Box/Card";
-import { Trans, useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import Text from "~/renderer/components/Text";
 import styled from "styled-components";
