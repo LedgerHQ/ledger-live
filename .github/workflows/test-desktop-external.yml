@@ -15,8 +15,8 @@ on:
         required: true
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.inputs.ref }}
-  cancel-in-progress: ${{ github.event.inputs.ref != 'develop' }}
+  group: ${{ github.workflow }}-${{ inputs.ref }}
+  cancel-in-progress: ${{ inputs.ref != 'develop' }}
 
 jobs:
   typecheck:
@@ -29,7 +29,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+          ref: ${{ inputs.sha || inputs.ref || github.ref }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
       - name: TurboRepo local caching server
@@ -55,7 +55,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+          ref: ${{ inputs.sha || inputs.ref || github.ref }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
       - name: TurboRepo local caching server
@@ -86,7 +86,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+          ref: ${{ inputs.sha || inputs.ref || github.ref }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
       - name: Install node-gyp globally
@@ -119,7 +119,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+          ref: ${{ inputs.sha || inputs.ref || github.ref }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
       - name: Install node-gyp globally
@@ -152,7 +152,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+          ref: ${{ inputs.sha || inputs.ref || github.ref }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
       - name: Install node-gyp globally
@@ -174,11 +174,11 @@ jobs:
     needs:
       [typecheck, unit-tests, e2e-tests-linux, e2e-tests-mac, e2e-tests-windows]
     runs-on: ubuntu-latest
-    if: always() && !cancelled() && github.event_name == 'workflow_dispatch' && github.event.inputs.sha != ''
+    if: always() && !cancelled() && github.event_name == 'workflow_dispatch' && inputs.sha != ''
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+          ref: ${{ inputs.sha || inputs.ref || github.ref }}
       - name: download images artifacts
         uses: actions/download-artifact@v3
         with:
@@ -333,7 +333,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+          ref: ${{ inputs.sha || inputs.ref || github.ref }}
       - name: Download Allure Report - Windows
         uses: actions/download-artifact@v3
         with:

@@ -15,8 +15,8 @@ on:
         required: true
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.inputs.ref }}
-  cancel-in-progress: ${{ github.event.inputs.ref != 'develop' }}
+  group: ${{ github.workflow }}-${{ inputs.ref }}
+  cancel-in-progress: ${{ inputs.ref != 'develop' }}
 
 jobs:
   build-desktop-app:
@@ -109,7 +109,7 @@ jobs:
   report:
     needs: build-desktop-app
     runs-on: ubuntu-latest
-    if: always() && !cancelled() && github.event_name == 'workflow_dispatch' && github.event.inputs.sha != ''
+    if: always() && !cancelled() && github.event_name == 'workflow_dispatch' && inputs.sha != ''
     steps:
       - name: Echo outputs
         run: |

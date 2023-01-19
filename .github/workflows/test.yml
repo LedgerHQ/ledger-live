@@ -24,8 +24,8 @@ on:
         required: true
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.inputs.ref || github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ref != 'develop' || github.ref_name != 'develop' }}
+  group: ${{ github.workflow }}-${{ inputs.ref || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'workflow_dispatch' && inputs.ref != 'develop' || github.ref_name != 'develop' }}
 
 jobs:
   test-docs:
@@ -36,7 +36,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+          ref: ${{ inputs.sha || inputs.ref || github.ref }}
       - uses: pnpm/action-setup@v2
         with:
           version: latest
@@ -65,7 +65,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+          ref: ${{ inputs.sha || inputs.ref || github.ref }}
       - uses: pnpm/action-setup@v2
         with:
           version: latest
@@ -105,7 +105,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+          ref: ${{ inputs.sha || inputs.ref || github.ref }}
           fetch-depth: 0
       - uses: pnpm/action-setup@v2
         with:
@@ -131,7 +131,7 @@ jobs:
         run: pnpm i --filter="!./apps/**"
       - name: Build and Test affected libraries
         id: test-libs
-        run: pnpm run test --continue --filter="!./apps/**" --filter="!live-common-tools" --filter="!ledger-live...[${{ github.event.inputs.since_branch && format('origin/{0}', github.event.inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+        run: pnpm run test --continue --filter="!./apps/**" --filter="!live-common-tools" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
         shell: bash
       - name: (On Failure) Upload live-common snapshots and source
         uses: actions/upload-artifact@v3
@@ -164,7 +164,7 @@ jobs:
 
   report:
     needs: [test-cli, test-docs, test-libraries]
-    if: always() && !cancelled() && github.event_name == 'workflow_dispatch' && github.event.inputs.sha != ''
+    if: always() && !cancelled() && github.event_name == 'workflow_dispatch' && inputs.sha != ''
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v3

@@ -21,8 +21,8 @@ on:
         required: true
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.inputs.ref || github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ref != 'develop' || github.ref_name != 'develop' }}
+  group: ${{ github.workflow }}-${{ inputs.ref || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'workflow_dispatch' && inputs.ref != 'develop' || github.ref_name != 'develop' }}
 
 jobs:
   codecheck:
@@ -34,7 +34,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+          ref: ${{ inputs.sha || inputs.ref || github.ref }}
       - uses: pnpm/action-setup@v2
         with:
           version: latest
@@ -66,7 +66,7 @@ jobs:
 
   report:
     needs: codecheck
-    if: always() && !cancelled() && github.event_name == 'workflow_dispatch' && github.event.inputs.sha != ''
+    if: always() && !cancelled() && github.event_name == 'workflow_dispatch' && inputs.sha != ''
     runs-on: ubuntu-latest
     steps:
       - name: "download linter results"

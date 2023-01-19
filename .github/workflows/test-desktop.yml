@@ -21,8 +21,8 @@ on:
         required: true
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.inputs.ref || github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ref != 'develop' || github.ref_name != 'develop' }}
+  group: ${{ github.workflow }}-${{ inputs.ref || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'workflow_dispatch' && inputs.ref != 'develop' || github.ref_name != 'develop' }}
 
 env:
   comment_header: <!-- test-desktop-report -->
@@ -38,7 +38,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+          ref: ${{ inputs.sha || inputs.ref || github.ref }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
       - name: TurboRepo local caching server
@@ -64,7 +64,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+          ref: ${{ inputs.sha || inputs.ref || github.ref }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
       - name: TurboRepo local caching server
@@ -129,7 +129,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+          ref: ${{ inputs.sha || inputs.ref || github.ref }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
       - name: Install node-gyp globally
@@ -164,7 +164,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+          ref: ${{ inputs.sha || inputs.ref || github.ref }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
@@ -197,7 +197,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+          ref: ${{ inputs.sha || inputs.ref || github.ref }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
@@ -219,11 +219,11 @@ jobs:
     needs:
       [typecheck, unit-tests, e2e-tests-linux, e2e-tests-windows, e2e-tests-mac]
     runs-on: ubuntu-latest
-    if: always() && !cancelled() && github.event_name == 'workflow_dispatch' && github.event.inputs.sha != ''
+    if: always() && !cancelled() && github.event_name == 'workflow_dispatch' && inputs.sha != ''
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+          ref: ${{ inputs.sha || inputs.ref || github.ref }}
       - name: download images artifacts
         uses: actions/download-artifact@v3
         with:
@@ -380,7 +380,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.ref }}
+          ref: ${{ inputs.sha || inputs.ref || github.ref }}
       - name: Download Allure Report - Windows
         uses: actions/download-artifact@v3
         with:

@@ -18,7 +18,7 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.ref }}
+          ref: ${{ inputs.ref }}
           token: ${{ secrets.GH_PAT }}
 
       - name: set git user
@@ -54,7 +54,7 @@ jobs:
 
       - name: push changes
         run: |
-          git push origin ${{ github.event.inputs.ref }}
+          git push origin ${{ inputs.ref }}
           git fetch origin
 
       - name: fetch develop and main
@@ -64,7 +64,7 @@ jobs:
       - name: merge into main
         run: |
           git checkout main
-          git merge ${{ github.event.inputs.ref }}
+          git merge ${{ inputs.ref }}
           git push origin main
 
       - name: merge into develop

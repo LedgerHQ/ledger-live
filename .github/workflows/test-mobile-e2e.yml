@@ -40,7 +40,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.ref || 'develop' }}
+          ref: ${{ inputs.ref || 'develop' }}
 
       - uses: pnpm/action-setup@v2
         with:
@@ -109,7 +109,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.ref || 'develop' }}
+          ref: ${{ inputs.ref || 'develop' }}
       - uses: ./tools/actions/composites/upload-allure-report
         with:
           platform: ios
@@ -129,7 +129,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.ref || 'develop' }}
+          ref: ${{ inputs.ref || 'develop' }}
 
       - uses: pnpm/action-setup@v2
         with:
@@ -233,7 +233,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.ref || 'develop' }}
+          ref: ${{ inputs.ref || 'develop' }}
 
       - uses: ./tools/actions/composites/upload-allure-report
         with:

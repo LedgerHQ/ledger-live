@@ -21,8 +21,8 @@ on:
         required: true
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.inputs.ref || github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ref != 'develop' || github.ref_name != 'develop' }}
+  group: ${{ github.workflow }}-${{ inputs.ref || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'workflow_dispatch' && inputs.ref != 'develop' || github.ref_name != 'develop' }}
 
 jobs:
   start-runner:
@@ -68,7 +68,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.event.push.head.sha }}
+          ref: ${{ inputs.sha || inputs.ref || github.event.push.head.sha }}
       - name: set git user
         run: |
           git config user.email "team-live@ledger.fr"
@@ -142,7 +142,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.event.push.head.sha }}
+          ref: ${{ inputs.sha || inputs.ref || github.event.push.head.sha }}
       - name: set git user
         run: |
           git config user.email "team-live@ledger.fr"
@@ -172,7 +172,7 @@ jobs:
   report:
     runs-on: ubuntu-latest
     needs: [build-mobile-app-android, build-mobile-app-ios]
-    if: always() && !cancelled() && github.event_name == 'workflow_dispatch' && github.event.inputs.sha != ''
+    if: always() && !cancelled() && github.event_name == 'workflow_dispatch' && inputs.sha != ''
     steps:
       - uses: actions/github-script@v6
         name: get statuses of runs
