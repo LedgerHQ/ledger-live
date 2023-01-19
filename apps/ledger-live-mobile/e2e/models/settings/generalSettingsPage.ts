@@ -3,7 +3,9 @@ import {
   getElementByText,
   tapByElement,
   tapByText,
+  scrollToText,
 } from "../../helpers";
+import { by, waitFor } from "detox";
 
 export default class GeneralSettingsPage {
   getPasswordSettingsSwitch = () => getElementById("password-settings-switch");
@@ -33,6 +35,7 @@ export default class GeneralSettingsPage {
   }
 
   async selectLanguage(lang: string) {
+    await scrollToText(lang, "scrollView-language-change");
     await tapByText(lang);
   }
 }
