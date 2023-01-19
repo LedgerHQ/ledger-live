@@ -38,8 +38,8 @@ export default function PlatformApp({ match, appId: propsAppId, location }: Prop
 
   const returnTo = useMemo(() => {
     const params = new URLSearchParams(search);
-    return params.get("returnTo");
-  }, [search]);
+    return params.get("returnTo") || internalParams?.returnTo;
+  }, [search, internalParams]);
 
   const handleClose = useCallback(() => history.push(returnTo || `/platform`), [history, returnTo]);
   const themeType = useTheme("colors.palette.type");
