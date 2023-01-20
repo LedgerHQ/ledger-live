@@ -1,16 +1,18 @@
 import React, { useCallback } from "react";
-import { FlatListProps } from "react-native";
+import { FlatListProps, TouchableOpacity } from "react-native";
 import { ProtoNFT } from "@ledgerhq/types-live";
-import { Button, Flex } from "@ledgerhq/native-ui";
+import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { BigNumber } from "bignumber.js";
 
 import styled from "styled-components/native";
+import Animated, { FadeInDown, FadeOutDown } from "react-native-reanimated";
 import NftListItem from "./NftListItem";
 import { AddNewItem } from "./AddNewItemList";
 import CollapsibleHeaderFlatList from "../WalletTab/CollapsibleHeaderFlatList";
 import globalSyncRefreshControl from "../globalSyncRefreshControl";
 import { TrackScreen } from "../../analytics";
 import { useNftList } from "./NftList.hook";
+import Close from "../../icons/Close";
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl<
   FlatListProps<ProtoNFT>
@@ -96,43 +98,47 @@ export function NftList({ data }: Props) {
           width="100%"
           flexDirection="row"
           alignItems="center"
-          justifyContent="flex-start"
+          justifyContent="space-between"
+          bg={"background.drawer"}
         >
-          <Button
-            onPress={readOnlyModeAction}
-            type="main"
-            iconName="Close"
-            iconPosition="left"
-            size="small"
+          <Text
+            variant={"large"}
+            fontWeight={"semiBold"}
+            color={"neutral.c100"}
           >
-            {t("common.cancel")}
-          </Button>
+            {t("wallet.nftGallery.filters.title", { count: nftsToHide.length })}
+          </Text>
+          <TouchableOpacity onPress={readOnlyModeAction}>
+            <Close size={24} color={"white"} />
+          </TouchableOpacity>
         </StyledContainer>
       )}
 
       <RefreshableCollapsibleHeaderFlatList
         numColumns={2}
         ListHeaderComponent={
-          <>
+          <Animated.View>
             {!onMultiSelectMode && (
-              <Flex
-                width="100%"
-                flexDirection="row"
-                alignItems="center"
-                justifyContent="flex-start"
-              >
-                <StyledButton
-                  onPress={multiSelectModeAction}
-                  type="default"
-                  iconName="Tasks"
-                  iconPosition="left"
-                  size="small"
+              <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
+                <Flex
+                  width="100%"
+                  flexDirection="row"
+                  alignItems="center"
+                  justifyContent="flex-start"
                 >
-                  {t("wallet.nftGallery.filters.selectAndHide")}
-                </StyledButton>
-              </Flex>
+                  <StyledButton
+                    onPress={multiSelectModeAction}
+                    type="default"
+                    iconName="Tasks"
+                    iconPosition="left"
+                    size="small"
+                  >
+                    {t("wallet.nftGallery.filters.selectAndHide")}
+                  </StyledButton>
+                </Flex>
+              </Animated.View>
             )}
-          </>
+          </Animated.View>
         }
         data={dataWithAdd}
         renderItem={renderItem}
@@ -140,7 +146,7 @@ export function NftList({ data }: Props) {
         showsVerticalScrollIndicator={false}
         initialNumToRender={6}
         windowSize={11}
-        contentContainerStyle={{ marginTop: 0 }}
+        contentContainerStyle={{ marginTop: 0, marginHorizontal: 18 }}
         testID={"wallet-nft-gallery-list"}
       />
 
@@ -168,12 +174,14 @@ const StyledButton = styled(Button)`
 
 const StyledContainer = styled(Flex)`
   position: absolute;
-  top: 150;
-  z-index: 5;
+  top: 0;
+  z-index: 10;
+  padding: 50px 18px 10px 18px;
 `;
 
 const RoundedContainer = styled(Flex)`
   position: absolute;
   bottom: 15px;
   z-index: 5;
+  padding: 0 18px;
 `;
