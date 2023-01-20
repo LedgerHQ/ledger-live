@@ -22,7 +22,9 @@ export default function PlatformAppProviderWrapper({
     "PLATFORM_DEBUG",
   ) as boolean;
 
-  const provider = __DEV__ ? "staging" : "production";
+  // There is no more staging since migration to manifest API. Everything points to prod by default.
+  // const provider = __DEV__ ? "staging" : "production";
+  const provider = "production";
 
   return (
     <RemoteLiveAppProvider
