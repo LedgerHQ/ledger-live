@@ -109,7 +109,7 @@ export function NftList({ data }: Props) {
             {t("wallet.nftGallery.filters.title", { count: nftsToHide.length })}
           </Text>
           <TouchableOpacity onPress={readOnlyModeAction}>
-            <Close size={24} color={"white"} />
+            <Close size={24} />
           </TouchableOpacity>
         </StyledContainer>
       )}
