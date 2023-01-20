@@ -119,7 +119,6 @@ export default {
                       item.name.toLowerCase() ===
                       inferManagerApp(application).toLowerCase()
                   );
-                  console.log(app);
 
                   if (!app) {
                     throw new Error(
