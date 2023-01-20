@@ -1817,6 +1817,7 @@
         "supported": "Ledger Live supported",
         "not_supported": "Requires 3rd-party wallet",
         "developedBy":"Developed by",
+        "thirdParty": "3rd party",
         "addAccount": "Add account",
         "addAccountTooltip": "Add {{appName}} account",
         "addAccountWarn": "Please wait for processing to finish",
