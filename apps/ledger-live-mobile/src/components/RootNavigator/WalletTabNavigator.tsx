@@ -13,6 +13,7 @@ import WalletNftGallery from "../../screens/Nft/WalletNftGallery";
 import {
   readOnlyModeEnabledSelector,
   walletTabNavigatorLastVisitedTabSelector,
+  isMainNavigatorVisibleSelector,
 } from "../../reducers/settings";
 import { accountsSelector } from "../../reducers/accounts";
 import ReadOnlyPortfolio from "../../screens/Portfolio/ReadOnly";
@@ -39,12 +40,15 @@ export default function WalletTabNavigator() {
   const walletNftGalleryFeature = useFeature("walletNftGallery");
   const dispatch = useDispatch();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+  const isMainNavigatorVisible = useSelector(isMainNavigatorVisibleSelector);
   const accounts = useSelector(accountsSelector);
   const lastVisitedTab = useSelector(walletTabNavigatorLastVisitedTabSelector);
   const { t } = useTranslation();
   const [currentRouteName, setCurrentRouteName] = useState<
     string | undefined
   >();
+
+  const hideHeader = !isMainNavigatorVisible;
 
   return (
     <WalletTabNavigatorScrollManager currentRouteName={currentRouteName}>
@@ -56,7 +60,9 @@ export default function WalletTabNavigator() {
               : ScreenName.Portfolio
           }
           tabBar={
-            walletNftGalleryFeature?.enabled
+            hideHeader
+              ? () => {}
+              : walletNftGalleryFeature?.enabled
               ? tabBarOptions
               : tabBarDisabledOptions
           }
@@ -107,7 +113,7 @@ export default function WalletTabNavigator() {
             />
           )}
         </WalletTab.Navigator>
-        <WalletTabHeader hidePortfolio={false} />
+        {!hideHeader && <WalletTabHeader hidePortfolio={false} />}
       </Box>
     </WalletTabNavigatorScrollManager>
   );
