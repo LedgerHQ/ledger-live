@@ -52,6 +52,11 @@ const getExchangeRates: GetExchangeRates = async (
     )
     .map((item) => item.provider);
 
+  // This if can be removed if includeDex is always true. Prevent a backEnd error.
+  if (providerList.length === 0) {
+    return [];
+  }
+
   const request = {
     from,
     to,

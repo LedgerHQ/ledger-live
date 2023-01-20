@@ -176,14 +176,17 @@ jobs:
       - name: create AVD and generate snapshot for caching
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 30
+          api-level: 31
           arch: x86_64
           target: default
           avd-name: "Pixel_5_API_31"
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: false
+          cores: 4
           ram-size: 4096M
+          heap-size: 512M
+          disk-size: 4096M
           script: echo "Generated AVD snapshot for caching."
 
       - name: Build Android app for Detox test run
@@ -201,7 +204,10 @@ jobs:
           avd-name: "Pixel_5_API_31"
           force-avd-creation: false
           emulator-options: -verbose -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          cores: 4
           ram-size: 4096M
+          heap-size: 512M
+          disk-size: 4096M
           script: pnpm mobile e2e:test -c android.emu.release --loglevel verbose --record-logs all --take-screenshots all --record-videos failing --forceExit --detectOpenHandles --cleanup --headless
 
       - name: Upload test artifacts
