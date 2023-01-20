@@ -1653,6 +1653,10 @@
             "label": "Check whether your Nano X is detected."
           }
         }
+      },
+      "protectConnectionInformationModal": {
+        "title": "Why can I not connect my Ledger?",
+        "description": "If you are experiencing issues connecting to Ledger Live mobile after you have enabled Bluetooth on your Ledger, you can follow the instructions by tapping on the \"Learn how to fix that\" button below"
       }
     },
     "stepImportAccounts": {
