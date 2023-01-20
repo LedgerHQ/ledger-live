@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 2.52.0-nightly.13
+
+### Minor Changes
+
+- [#2325](https://github.com/LedgerHQ/ledger-live/pull/2325) [`16195a130e`](https://github.com/LedgerHQ/ledger-live/commit/16195a130e24b06528b6c2c2551e58be253f94f1) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - add feature flag objkt banner on tezos
+
+### Patch Changes
+
+- Updated dependencies [[`16195a130e`](https://github.com/LedgerHQ/ledger-live/commit/16195a130e24b06528b6c2c2551e58be253f94f1)]:
+  - @ledgerhq/live-common@27.12.0-nightly.4
+
 ## 2.52.0-nightly.12
 
 ### Minor Changes

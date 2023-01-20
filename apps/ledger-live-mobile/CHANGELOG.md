@@ -1,5 +1,20 @@
 # live-mobile
 
+## 3.14.0-nightly.4
+
+### Minor Changes
+
+- [#2338](https://github.com/LedgerHQ/ledger-live/pull/2338) [`70e9db3892`](https://github.com/LedgerHQ/ledger-live/commit/70e9db3892413c7f825cd3eb258e1577e365d6b6) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Large Mover category added in the notifications settings
+
+### Patch Changes
+
+- [#2283](https://github.com/LedgerHQ/ledger-live/pull/2283) [`e4d5c90b53`](https://github.com/LedgerHQ/ledger-live/commit/e4d5c90b532bfa9945a0cb3edecf0178ab0d80ed) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix issue on the NFT claim flow on iOS: camera not displaying right after granting the permission
+
+* [#2283](https://github.com/LedgerHQ/ledger-live/pull/2283) [`e4d5c90b53`](https://github.com/LedgerHQ/ledger-live/commit/e4d5c90b532bfa9945a0cb3edecf0178ab0d80ed) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Replace the FallbackCameraScreen logic by a simple easy to reuse RequiresCameraPermission component
+
+* Updated dependencies [[`16195a130e`](https://github.com/LedgerHQ/ledger-live/commit/16195a130e24b06528b6c2c2551e58be253f94f1)]:
+  - @ledgerhq/live-common@27.12.0-nightly.4
+
 ## 3.14.0-nightly.3
 
 ### Patch Changes
