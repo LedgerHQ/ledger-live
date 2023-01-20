@@ -17,6 +17,7 @@ const targets = [
   "exchange.ts",
   "presync.ts",
   "platformAdapter.ts",
+  "walletApiAdapter.ts",
 ];
 
 cd(path.join(__dirname, "..", "src"));
