@@ -2577,6 +2577,10 @@
         "title": "Recommendations",
         "desc": "Enrich your experience with personalized recommendations and special offers"
       },
+      "largeMover": {
+        "title": "Large Mover",
+        "desc": "You'll be notified of important price movements for BTC and ETH"
+      },
       "price": {
         "title": "Price Alerts",
         "desc": "Set price alerts for your favorite coins so that you don't miss a market move"
