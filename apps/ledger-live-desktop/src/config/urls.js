@@ -195,7 +195,7 @@ export const urls = {
     "https://support.ledger.com/hc/en-us/articles/360020450619-NEAR-NEAR-?docs=true",
   polkadotFeesInfo:
     "https://support.ledger.com/hc/en-us/articles/360016289919?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=polkadot",
-  elrondStaking: "https://everstake.one/elrond",
+  elrondStaking: "https://support.ledger.com/hc/articles/7228337345693?support=true",
   xpubLearnMore:
     "https://support.ledger.com/hc/en-us/articles/360011069619?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=edit_account",
   ledgerValidator: "https://www.ledger.com/staking",
