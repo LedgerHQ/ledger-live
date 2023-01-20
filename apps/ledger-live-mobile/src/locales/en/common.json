@@ -5771,8 +5771,8 @@
     },
     "nftGallery": {
       "filters": {
-        "title": "{{count}} NFT selected",
-        "title_plural": "{{count}} NFTs selected",
+        "title": "{{count}} Collection selected",
+        "title_plural": "{{count}} Collections selected",
         "selectAndHide": "Select and hide",
         "hide": "Hide collection",
         "hide_plural": "Hide collections",
