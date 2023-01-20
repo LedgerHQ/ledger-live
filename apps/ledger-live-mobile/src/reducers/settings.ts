@@ -13,6 +13,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { ValidKYCStatus } from "@ledgerhq/live-common/exchange/swap/types";
 import type { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { CurrencySettings, SettingsState, State } from "./types";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 // eslint-disable-next-line import/no-cycle
@@ -37,7 +38,6 @@ import type {
   SettingsSetCarouselVisibilityPayload,
   SettingsSetCountervaluePayload,
   SettingsSetDiscreetModePayload,
-  SettingsSetExperimentalUsbSupportPayload,
   SettingsSetFirstConnectHasDeviceUpdatedPayload,
   SettingsSetHasOrderedNanoPayload,
   SettingsSetLanguagePayload,
@@ -45,6 +45,7 @@ import type {
   SettingsSetLocalePayload,
   SettingsSetMarketCounterCurrencyPayload,
   SettingsSetCustomImageBackupPayload,
+  SettingsSetLastSeenCustomImagePayload,
   SettingsSetMarketFilterByStarredAccountsPayload,
   SettingsSetMarketRequestParamsPayload,
   SettingsSetNotificationsPayload,
@@ -62,6 +63,12 @@ import type {
   SettingsUnhideNftCollectionPayload,
   SettingsUpdateCurrencyPayload,
   SettingsSetSwapSelectableCurrenciesPayload,
+  SettingsSetDismissedDynamicCardsPayload,
+  SettingsSetStatusCenterPayload,
+  SettingsSetOverriddenFeatureFlagPlayload,
+  SettingsSetOverriddenFeatureFlagsPlayload,
+  SettingsSetFeatureFlagsBannerVisiblePayload,
+  DangerouslyOverrideStatePayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -103,7 +110,6 @@ export const INITIAL_STATE: SettingsState = {
   // readOnlyModeEnabled: !Config.DISABLE_READ_ONLY,
   readOnlyModeEnabled: true,
   hasOrderedNano: false,
-  experimentalUSBEnabled: false,
   countervalueFirst: true,
   graphCountervalueFirst: true,
   hideEmptyTokenAccounts: false,
@@ -114,10 +120,14 @@ export const INITIAL_STATE: SettingsState = {
   theme: "system",
   osTheme: undefined,
   customImageBackup: undefined,
-
+  lastSeenCustomImage: {
+    size: 0,
+    hash: "",
+  },
   carouselVisibility: Object.fromEntries(
     SLIDES.map(slide => [slide.name, true]),
   ),
+  dismissedDynamicCards: [],
   discreetMode: false,
   language: getDefaultLanguageLocale(),
   languageIsSetByUser: false,
@@ -148,8 +158,12 @@ export const INITIAL_STATE: SettingsState = {
     areNotificationsAllowed: true,
     announcementsCategory: true,
     recommendationsCategory: true,
+    largeMoverCategory: true,
   },
   walletTabNavigatorLastVisitedTab: ScreenName.Portfolio,
+  displayStatusCenter: false,
+  overriddenFeatureFlags: {},
+  featureFlagsBannerVisible: false,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -264,6 +278,16 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     hasCompletedCustomImageFlow: true,
   }),
 
+  [SettingsActionTypes.SET_LAST_SEEN_CUSTOM_IMAGE]: (state, action) => ({
+    ...state,
+    lastSeenCustomImage: {
+      size: (action as Action<SettingsSetLastSeenCustomImagePayload>).payload
+        .imageSize,
+      hash: (action as Action<SettingsSetLastSeenCustomImagePayload>).payload
+        .imageHash,
+    },
+  }),
+
   [SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING]: state => ({
     ...state,
     hasCompletedOnboarding: true,
@@ -279,16 +303,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     readOnlyModeEnabled: (action as Action<SettingsSetReadOnlyModePayload>)
       .payload.readOnlyModeEnabled,
-  }),
-
-  [SettingsActionTypes.SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT]: (
-    state,
-    action,
-  ) => ({
-    ...state,
-    experimentalUSBEnabled: (
-      action as Action<SettingsSetExperimentalUsbSupportPayload>
-    ).payload.experimentalUSBEnabled,
   }),
 
   [SettingsActionTypes.SETTINGS_SWITCH_COUNTERVALUE_FIRST]: state => ({
@@ -367,8 +381,12 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       .payload.hasAvailableUpdate,
   }),
 
-  [SettingsActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (state): SettingsState => ({
+  [SettingsActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (
+    state,
+    action,
+  ): SettingsState => ({
     ...state,
+    ...(action as Action<DangerouslyOverrideStatePayload>).payload.settings,
   }),
 
   [SettingsActionTypes.SETTINGS_SET_THEME]: (state, action) => ({
@@ -385,6 +403,16 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     carouselVisibility: (action as Action<SettingsSetCarouselVisibilityPayload>)
       .payload.carouselVisibility,
+  }),
+
+  [SettingsActionTypes.SETTINGS_SET_DISMISSED_DYNAMIC_CARDS]: (
+    state,
+    action,
+  ) => ({
+    ...state,
+    dismissedDynamicCards: (
+      action as Action<SettingsSetDismissedDynamicCardsPayload>
+    ).payload.dismissedDynamicCards,
   }),
 
   [SettingsActionTypes.SETTINGS_SET_DISCREET_MODE]: (state, action) => ({
@@ -558,6 +586,42 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       action as Action<SettingsSetWalletTabNavigatorLastVisitedTabPayload>
     ).payload.walletTabNavigatorLastVisitedTab,
   }),
+
+  [SettingsActionTypes.SET_STATUS_CENTER]: (state, action) => ({
+    ...state,
+    displayStatusCenter: (action as Action<SettingsSetStatusCenterPayload>)
+      .payload.displayStatusCenter,
+  }),
+  [SettingsActionTypes.SET_OVERRIDDEN_FEATURE_FLAG]: (state, action) => {
+    const {
+      payload: { id, value },
+    } = action as Action<SettingsSetOverriddenFeatureFlagPlayload>;
+    return {
+      ...state,
+      overriddenFeatureFlags: {
+        ...state.overriddenFeatureFlags,
+        [id]: value,
+      },
+    };
+  },
+  [SettingsActionTypes.SET_OVERRIDDEN_FEATURE_FLAGS]: (state, action) => {
+    const {
+      payload: { overriddenFeatureFlags },
+    } = action as Action<SettingsSetOverriddenFeatureFlagsPlayload>;
+    return {
+      ...state,
+      overriddenFeatureFlags,
+    };
+  },
+  [SettingsActionTypes.SET_FEATURE_FLAGS_BANNER_VISIBLE]: (state, action) => {
+    const {
+      payload: { featureFlagsBannerVisible },
+    } = action as Action<SettingsSetFeatureFlagsBannerVisiblePayload>;
+    return {
+      ...state,
+      featureFlagsBannerVisible,
+    };
+  },
 };
 
 export default handleActions<SettingsState, SettingsPayload>(
@@ -616,9 +680,9 @@ export const analyticsEnabledSelector = createSelector(
   storeSelector,
   s => s.analyticsEnabled,
 );
-export const experimentalUSBEnabledSelector = createSelector(
+export const lastSeenCustomImageSelector = createSelector(
   storeSelector,
-  s => s.experimentalUSBEnabled,
+  s => s.lastSeenCustomImage,
 );
 export const currencySettingsForAccountSelector = (
   s: State,
@@ -710,6 +774,8 @@ export const carouselVisibilitySelector = (state: State) => {
 
   return settingValue;
 };
+export const dismissedDynamicCardsSelector = (state: State) =>
+  state.settings.dismissedDynamicCards;
 export const discreetModeSelector = (state: State): boolean =>
   state.settings.discreetMode === true;
 
@@ -731,12 +797,32 @@ export const swapSelectableCurrenciesSelector = (state: State) =>
 export const swapAcceptedProvidersSelector = (state: State) =>
   state.settings.swap.acceptedProviders;
 export const swapKYCSelector = (state: State) => state.settings.swap.KYC;
-export const lastSeenDeviceSelector = (state: State) =>
-  state.settings.lastSeenDevice;
+export const lastSeenDeviceSelector = (state: State) => {
+  // Nb workaround to prevent crash for dev/qa that have nanoFTS references.
+  // to be removed in a while.
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  if (state.settings.lastSeenDevice?.modelId === "nanoFTS") {
+    return { ...state.settings.lastSeenDevice, modelId: DeviceModelId.stax };
+  }
+  return state.settings.lastSeenDevice;
+};
 export const starredMarketCoinsSelector = (state: State) =>
   state.settings.starredMarketCoins;
-export const lastConnectedDeviceSelector = (state: State) =>
-  state.settings.lastConnectedDevice;
+export const lastConnectedDeviceSelector = (state: State) => {
+  // Nb workaround to prevent crash for dev/qa that have nanoFTS references.
+  // to be removed in a while.
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  if (state.settings.lastConnectedDevice?.modelId === "nanoFTS") {
+    return {
+      ...state.settings.lastConnectedDevice,
+      modelId: DeviceModelId.stax,
+    };
+  }
+
+  return state.settings.lastConnectedDevice;
+};
 export const hasOrderedNanoSelector = (state: State) =>
   state.settings.hasOrderedNano;
 export const marketRequestParamsSelector = (state: State) =>
@@ -757,3 +843,9 @@ export const notificationsSelector = (state: State) =>
   state.settings.notifications;
 export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
   state.settings.walletTabNavigatorLastVisitedTab;
+export const statusCenterSelector = (state: State) =>
+  state.settings.displayStatusCenter;
+export const overriddenFeatureFlagsSelector = (state: State) =>
+  state.settings.overriddenFeatureFlags;
+export const featureFlagsBannerVisibleSelector = (state: State) =>
+  state.settings.featureFlagsBannerVisible;

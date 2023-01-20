@@ -1,4 +1,5 @@
 import { Probot } from "probot";
+import { upToDate } from "./features/upToDate";
 import { commands, isValidBody, isValidBranchName, isValidUser } from "./tools";
 
 export default (app: Probot) => {
@@ -104,4 +105,7 @@ export default (app: Probot) => {
       state: "closed",
     });
   });
+
+  // Report if PRs are up to date
+  upToDate(app);
 };

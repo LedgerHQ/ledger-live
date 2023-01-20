@@ -1,15 +1,20 @@
 import React, { ComponentProps, useCallback, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { Image } from "react-native";
 import { Link, Flex, Icons } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import withRemountableWrapper from "@ledgerhq/live-common/hoc/withRemountableWrapper";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { createAction } from "@ledgerhq/live-common/hw/actions/ftsLoadImage";
-import loadImage from "@ledgerhq/live-common/hw/ftsLoadImage";
+import { createAction } from "@ledgerhq/live-common/hw/actions/staxLoadImage";
+import loadImage from "@ledgerhq/live-common/hw/staxLoadImage";
 import {
   ImageLoadRefusedOnDevice,
   ImageCommitRefusedOnDevice,
 } from "@ledgerhq/live-common/errors";
+import {
+  setLastSeenCustomImage,
+  clearLastSeenCustomImage,
+} from "../actions/settings";
 import { DeviceActionDefaultRendering } from "./DeviceAction";
 import { ImageSourceContext } from "./CustomImage/FramedImage";
 import { renderError } from "./DeviceAction/rendering";
@@ -21,14 +26,15 @@ type Props = {
   hexImage: string;
   source?: ComponentProps<typeof Image>["source"];
   onStart?: () => void;
-  onResult?: () => void;
+  onResult?: ({
+    imageHash,
+    imageSize,
+  }: {
+    imageHash: string;
+    imageSize: number;
+  }) => void;
   onSkip?: () => void;
 };
-
-const errorNamesRetryAnotherImage = [
-  ImageLoadRefusedOnDevice().name,
-  ImageCommitRefusedOnDevice().name,
-];
 
 const action = createAction(loadImage);
 
@@ -44,6 +50,7 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
   const commandRequest = hexImage;
 
   const { t } = useTranslation();
+  const dispatch = useDispatch();
 
   const status = action?.useHook(device, commandRequest);
   const payload = action?.mapResult(status);
@@ -64,10 +71,26 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
     setIsModalOpened(true);
   }, [setIsModalOpened]);
 
+  const handleResult = useCallback(
+    lastSeenCustomImage => {
+      dispatch(setLastSeenCustomImage(lastSeenCustomImage));
+      onResult && onResult(lastSeenCustomImage);
+    },
+    [dispatch, onResult],
+  );
+
   const { error } = status;
   const isError = !!error;
   const isRefusedOnStaxError =
-    error?.name && errorNamesRetryAnotherImage.includes(error?.name);
+    (error as unknown) instanceof ImageLoadRefusedOnDevice ||
+    (error as unknown) instanceof ImageCommitRefusedOnDevice;
+
+  useEffect(() => {
+    // Once transferred the old image is wiped, we need to clear it from the data.
+    if (error instanceof ImageCommitRefusedOnDevice) {
+      dispatch(clearLastSeenCustomImage());
+    }
+  }, [dispatch, error]);
 
   const handleRetry = useCallback(() => {
     if (isRefusedOnStaxError) openModal();
@@ -111,7 +134,7 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
             device={device}
             request={commandRequest}
             payload={payload}
-            onResult={onResult}
+            onResult={handleResult}
           />
         )}
       </Flex>

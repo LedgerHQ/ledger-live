@@ -12,11 +12,13 @@ interface Props {
   onChange: (_: BigNumber) => void;
   error: Error | undefined;
   loading: boolean;
+  onFocus?: (_: boolean) => void;
 }
 
 export function AmountInput({
   value,
   onChange,
+  onFocus,
   editable,
   unit,
   error,
@@ -37,6 +39,7 @@ export function AmountInput({
           inputStyle={styles.inputText}
           hasError={!!error}
           dynamicFontRatio={0.3}
+          onFocus={onFocus}
         />
       ) : (
         <Text variant="h1" color="neutral.c70">

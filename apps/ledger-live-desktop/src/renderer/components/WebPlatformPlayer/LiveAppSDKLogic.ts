@@ -11,7 +11,7 @@ import { broadcastTransactionLogic as broadcastTransactionCommonLogic } from "@l
 import { RawPlatformSignedTransaction } from "@ledgerhq/live-common/platform/rawTypes";
 import { serializePlatformAccount } from "@ledgerhq/live-common/platform/serializers";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
-import { AppManifest } from "@ledgerhq/live-common/platform/types";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 import { updateAccountWithUpdater } from "../../actions/accounts";
 import { selectAccountAndCurrency } from "../../drawers/DataSelector/logic";
@@ -23,7 +23,7 @@ import { track } from "~/renderer/analytics/segment";
 const tracking = trackingWrapper(track);
 
 type WebPlatformContext = {
-  manifest: AppManifest;
+  manifest: LiveAppManifest;
   dispatch: Dispatch;
   accounts: AccountLike[];
 };
@@ -38,7 +38,16 @@ export const requestAccountLogic = async (
   { currencies, includeTokens }: RequestAccountParams,
 ) => {
   tracking.platformRequestAccountRequested(manifest);
-  const { account, parentAccount } = await selectAccountAndCurrency(currencies, includeTokens);
+
+  /**
+   * make sure currencies are strings
+   * PS: yes `currencies` is properly typed as `string[]` but this typing only
+   * works at build time and the `currencies` array is received at runtime from
+   * JSONRPC requests. So we need to make sure the array is properly typed.
+   */
+  const safeCurrencies = currencies?.filter(c => typeof c === "string") ?? undefined;
+
+  const { account, parentAccount } = await selectAccountAndCurrency(safeCurrencies, includeTokens);
 
   return serializePlatformAccount(accountToPlatformAccount(account, parentAccount));
 };

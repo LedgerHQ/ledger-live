@@ -7,6 +7,7 @@ import {
   LatestFirmwareVersionRequired,
   DeviceNotOnboarded,
   NoSuchAppOnProvider,
+  EConnResetError,
 } from "@ledgerhq/live-common/errors";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { setPreferredDeviceModel, setLastSeenDeviceInfo } from "~/renderer/actions/settings";
@@ -35,6 +36,7 @@ import {
   renderAllowLanguageInstallation,
   renderInstallingLanguage,
   renderLockedDeviceError,
+  RenderDeviceNotOnboardedError,
 } from "./rendering";
 
 type Props<R, H, P> = {
@@ -270,18 +272,14 @@ export const DeviceActionDefaultRendering = <R, H, P>({
       });
     }
 
-    // NB Until we find a better way, remap the error if it's 6d06 and we haven't fallen
+    // NB Until we find a better way, remap the error if it's 6d06 (LNS, LNSP, LNX) or 6d07 (Stax) and we haven't fallen
     // into another handled case.
     if (
       error instanceof DeviceNotOnboarded ||
-      (error instanceof TransportStatusError && error.message.includes("0x6d06"))
+      (error instanceof TransportStatusError &&
+        (error.message.includes("0x6d06") || error.message.includes("0x6d07")))
     ) {
-      return renderError({
-        t,
-        error: new DeviceNotOnboarded(),
-        withOnboardingCTA: true,
-        info: true,
-      });
+      return <RenderDeviceNotOnboardedError t={t} device={device} />;
     }
 
     if (error instanceof NoSuchAppOnProvider) {
@@ -289,6 +287,15 @@ export const DeviceActionDefaultRendering = <R, H, P>({
         t,
         error,
         withOpenManager: true,
+        withExportLogs: true,
+      });
+    }
+
+    // workarround to catch ECONNRESET error and show better message
+    if (error?.message?.includes("ECONNRESET")) {
+      return renderError({
+        error: new EConnResetError(),
+        onRetry,
         withExportLogs: true,
       });
     }

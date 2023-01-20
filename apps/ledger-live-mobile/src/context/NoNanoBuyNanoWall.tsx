@@ -23,6 +23,7 @@ export const useNoNanoBuyNanoWallScreenOptions = ():
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
 
+  if (!readOnlyModeEnabled) return {};
   if (hasOrderedNano) {
     return {
       component: PostBuyDeviceSetupNanoWallScreen,
@@ -40,15 +41,11 @@ export const useNoNanoBuyNanoWallScreenOptions = ():
       },
     };
   }
-  if (readOnlyModeEnabled) {
-    return {
-      component: BuyDeviceNavigator,
-      options: {
-        headerShown: false,
-        cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
-      },
-    };
-  }
-
-  return {};
+  return {
+    component: BuyDeviceNavigator,
+    options: {
+      headerShown: false,
+      cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+    },
+  };
 };

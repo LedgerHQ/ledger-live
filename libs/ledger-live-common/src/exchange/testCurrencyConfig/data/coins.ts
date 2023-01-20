@@ -1,7 +1,7 @@
 /**
  * FIXME:
  * Minimal config for now, need to extend it to match prod config
- * cf. https://github.com/LedgerHQ/ledgerjs/tree/master/packages/cryptoassets/data/exchange
+ * cf. https://github.com/LedgerHQ/ledgerjs/tree/master/packages/cryptoassets/src/data/exchange
  */
 
 const coins = [

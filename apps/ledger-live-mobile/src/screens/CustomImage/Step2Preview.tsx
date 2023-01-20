@@ -24,7 +24,7 @@ import ImageProcessor, {
   ProcessorPreviewResult,
   ProcessorRawResult,
 } from "../../components/CustomImage/ImageProcessor";
-import { targetDimensions } from "./shared";
+import { targetDisplayDimensions } from "./shared";
 import BottomButtonsContainer from "../../components/CustomImage/BottomButtonsContainer";
 import ContrastChoice from "../../components/CustomImage/ContrastChoice";
 import { ScreenName } from "../../const";
@@ -61,6 +61,11 @@ const contrasts = [
     color: { topLeft: "neutral.c70", bottomRight: "neutral.c30" },
   },
 ];
+
+const previewDimensions = {
+  height: 406,
+  width: 252,
+};
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<
@@ -111,7 +116,7 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
   );
 
   useResizedImage({
-    targetDimensions,
+    targetDimensions: targetDisplayDimensions,
     imageFileUri: croppedImage?.imageFileUri,
     onError: handleError,
     onResult: handleResizeResult,
@@ -184,7 +189,10 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
   }));
 
   return (
-    <SafeAreaView edges={["bottom"]} style={{ flex: 1 }}>
+    <SafeAreaView
+      edges={["bottom"]}
+      style={{ flex: 1, justifyContent: "space-between" }}
+    >
       {resizedImage?.imageBase64DataUri && (
         <ImageProcessor
           ref={imageProcessorRef}
@@ -196,14 +204,21 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
         />
       )}
       <Flex
-        flex={1}
         flexDirection="column"
         alignItems="center"
         justifyContent="center"
+        height={previewDimensions.height}
       >
         {processorPreviewImage?.imageBase64DataUri ? (
           <Image
-            style={{ width: 252, height: 406 }}
+            style={{
+              width: previewDimensions.width,
+              height:
+                (targetDisplayDimensions.height /
+                  targetDisplayDimensions.width) *
+                previewDimensions.width,
+            }}
+            resizeMode="contain"
             onError={handlePreviewImageError}
             fadeDuration={0}
             source={{ uri: processorPreviewImage.imageBase64DataUri }}
@@ -212,39 +227,38 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
           <InfiniteLoader />
         )}
       </Flex>
-      <BottomButtonsContainer>
-        {resizedImage?.imageBase64DataUri && (
-          <ForceTheme selectedPalette="dark">
-            <Flex flexDirection="row" my={6}>
-              <Animated.View style={leftBoxAnimatedStyle} />
-              {contrasts.map(({ val, color }, index, arr) => (
-                <Pressable
-                  disabled={loading}
-                  key={val}
-                  onPress={() => {
-                    if (selectedIndex !== index) {
-                      setLoading(true);
-                      setSelectedIndexWrapped(index);
-                    }
-                  }}
-                >
-                  <ContrastChoice
-                    selected={selectedIndex === index}
-                    loading={loading}
-                    color={color}
-                    isFirst={index === 0}
-                    isLast={index === arr.length - 1}
-                  />
-                </Pressable>
-              ))}
-              <Animated.View style={rightBoxAnimatedStyle} />
-            </Flex>
-          </ForceTheme>
-        )}
+      {resizedImage?.imageBase64DataUri && (
+        <ForceTheme selectedPalette="dark">
+          <Flex flexDirection="row" my={6}>
+            <Animated.View style={leftBoxAnimatedStyle} />
+            {contrasts.map(({ val, color }, index, arr) => (
+              <Pressable
+                disabled={loading}
+                key={val}
+                onPress={() => {
+                  if (selectedIndex !== index) {
+                    setLoading(true);
+                    setSelectedIndexWrapped(index);
+                  }
+                }}
+              >
+                <ContrastChoice
+                  selected={selectedIndex === index}
+                  loading={loading}
+                  color={color}
+                  isFirst={index === 0}
+                  isLast={index === arr.length - 1}
+                />
+              </Pressable>
+            ))}
+            <Animated.View style={rightBoxAnimatedStyle} />
+          </Flex>
+        </ForceTheme>
+      )}
+      <BottomButtonsContainer style={{ paddingTop: 0 }}>
         <Flex width="100%">
           <Button
             disabled={!processorPreviewImage?.imageBase64DataUri}
-            mt={6}
             size="large"
             type="main"
             outline={false}
@@ -252,7 +266,7 @@ const Step2Preview = ({ navigation, route }: NavigationProps) => {
             pending={rawResultLoading}
             displayContentWhenPending
           >
-            {t("common.confirm")}
+            {t("customImage.confirmContrast")}
           </Button>
         </Flex>
       </BottomButtonsContainer>

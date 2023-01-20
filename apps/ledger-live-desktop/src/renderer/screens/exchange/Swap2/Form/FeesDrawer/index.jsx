@@ -10,7 +10,7 @@ import type {
 } from "@ledgerhq/live-common/exchange/swap/types";
 import { DrawerTitle } from "../DrawerTitle";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { SWAP_VERSION } from "../../utils/index";
+import { swapDefaultTrack } from "../../utils/index";
 
 type Props = {
   setTransaction: $PropertyType<SwapTransactionType, "setTransaction">,
@@ -43,7 +43,7 @@ export default function FeesDrawer({
         category="Swap"
         name="Form - Edit Fees"
         provider={provider}
-        swapVersion={SWAP_VERSION}
+        {...swapDefaultTrack}
       />
       <DrawerTitle i18nKey="swap2.form.details.label.fees" />
       <Box mt={3} flow={4}>
@@ -55,6 +55,10 @@ export default function FeesDrawer({
             onChange={setTransaction}
             updateTransaction={updateTransaction}
             mapStrategies={mapStrategies}
+            trackProperties={{
+              page: "Swap quotes",
+              ...swapDefaultTrack,
+            }}
           />
         )}
       </Box>

@@ -42,6 +42,7 @@ test.describe.parallel("Onboarding", () => {
       await test.step(`[${nano}] Device genuine check`, async () => {
         expect(await onboardingPage.page.screenshot()).toMatchSnapshot("v3-genuine-check.png");
         await onboardingPage.checkDevice();
+        await onboardingPage.continueButton.isEnabled({ timeout: 10000 });
         expect(await onboardingPage.page.screenshot()).toMatchSnapshot(
           "v3-before-genuine-check.png",
         );

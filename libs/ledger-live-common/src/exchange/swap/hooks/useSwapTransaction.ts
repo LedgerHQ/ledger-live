@@ -5,7 +5,7 @@ import {
   SwapSelectorStateType,
   OnNoRatesCallback,
   SwapTransactionType,
-  SetIsSendMaxLoading,
+  AvailableProviderV3,
 } from "../types";
 import useBridgeTransaction from "../../../bridge/useBridgeTransaction";
 import { useFromState } from "./useFromState";
@@ -41,21 +41,23 @@ export const useFromAmountError = (
 export const useSwapTransaction = ({
   accounts,
   setExchangeRate,
-  setIsSendMaxLoading,
   defaultCurrency = selectorStateDefaultValues.currency,
   defaultAccount = selectorStateDefaultValues.account,
   defaultParentAccount = selectorStateDefaultValues.parentAccount,
   onNoRates,
   excludeFixedRates,
+  providers,
+  includeDEX,
 }: {
   accounts?: Account[];
   setExchangeRate?: SetExchangeRateCallback;
-  setIsSendMaxLoading?: SetIsSendMaxLoading;
   defaultCurrency?: SwapSelectorStateType["currency"];
   defaultAccount?: SwapSelectorStateType["account"];
   defaultParentAccount?: SwapSelectorStateType["parentAccount"];
   onNoRates?: OnNoRatesCallback;
   excludeFixedRates?: boolean;
+  providers?: AvailableProviderV3[];
+  includeDEX?: boolean;
 } = {}): SwapTransactionType => {
   const bridgeTransaction = useBridgeTransaction(() => ({
     account: defaultAccount,
@@ -90,13 +92,12 @@ export const useSwapTransaction = ({
     setToAccount,
   });
 
-  const { isMaxEnabled, toggleMax } = useUpdateMaxAmount({
+  const { isMaxEnabled, toggleMax, isMaxLoading } = useUpdateMaxAmount({
     setFromAmount,
     account: fromAccount,
     parentAccount: fromParentAccount,
     transaction,
     feesStrategy: transaction?.feesStrategy,
-    setIsSendMaxLoading,
   });
 
   const { rates, refetchRates, updateSelectedRate } = useProviderRates({
@@ -105,6 +106,8 @@ export const useSwapTransaction = ({
     transaction,
     onNoRates,
     setExchangeRate,
+    providers,
+    includeDEX,
   });
 
   return {
@@ -113,6 +116,7 @@ export const useSwapTransaction = ({
       to: toState,
       from: fromState,
       isMaxEnabled,
+      isMaxLoading,
       isSwapReversable,
       rates:
         rates.value && excludeFixedRates

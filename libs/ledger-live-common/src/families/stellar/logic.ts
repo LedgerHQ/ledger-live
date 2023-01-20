@@ -25,6 +25,9 @@ import type {
   RawOperation,
 } from "./types";
 
+export const STELLAR_BURN_ADDRESS =
+  "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF";
+
 const currency = getCryptoCurrencyById("stellar");
 
 const getMinimumBalance = (account: ServerApi.AccountRecord): BigNumber => {
@@ -285,6 +288,9 @@ export const isAccountMultiSign = async (
  */
 export const isAddressValid = (address: string): boolean => {
   if (!address) return false;
+
+  // FIXME Workaround for burn address, see https://ledgerhq.atlassian.net/browse/LIVE-4014
+  if (address === STELLAR_BURN_ADDRESS) return false;
 
   try {
     return (

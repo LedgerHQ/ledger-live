@@ -95,6 +95,7 @@ src/generated/
 
 # Detox
 artifacts/
+allure-results/
 
 #CI
 **/vendor/**

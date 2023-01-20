@@ -1,5 +1,81 @@
 # @ledgerhq/react-ui
 
+## 0.10.4
+
+### Patch Changes
+
+- [#2242](https://github.com/LedgerHQ/ledger-live/pull/2242) [`15ffdd6972`](https://github.com/LedgerHQ/ledger-live/commit/15ffdd6972dcc3bf5de5af34528725fae24120af) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: narrow-typed theme to "dark"| "light"
+
+  And exported Theme type from react-ui
+
+- Updated dependencies [[`5266518d0b`](https://github.com/LedgerHQ/ledger-live/commit/5266518d0baf26258f95a08d7f0a127f1848b38f)]:
+  - @ledgerhq/icons-ui@0.3.4
+
+## 0.10.4-next.0
+
+### Patch Changes
+
+- [#2242](https://github.com/LedgerHQ/ledger-live/pull/2242) [`15ffdd6972`](https://github.com/LedgerHQ/ledger-live/commit/15ffdd6972dcc3bf5de5af34528725fae24120af) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: narrow-typed theme to "dark"| "light"
+
+  And exported Theme type from react-ui
+
+- Updated dependencies [[`5266518d0b`](https://github.com/LedgerHQ/ledger-live/commit/5266518d0baf26258f95a08d7f0a127f1848b38f)]:
+  - @ledgerhq/icons-ui@0.3.4-next.0
+
+## 0.10.3
+
+### Patch Changes
+
+- [#2062](https://github.com/LedgerHQ/ledger-live/pull/2062) [`32993aea9a`](https://github.com/LedgerHQ/ledger-live/commit/32993aea9af5dfb7f2519263e5f2a22a88320cdc) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - New flags icons. Added 2 new icons to Providers and Payments. Prevented crash when using ProviderIcon with incorrect string in boxed mode
+
+- Updated dependencies [[`32993aea9a`](https://github.com/LedgerHQ/ledger-live/commit/32993aea9af5dfb7f2519263e5f2a22a88320cdc)]:
+  - @ledgerhq/icons-ui@0.3.3
+
+## 0.10.3-next.0
+
+### Patch Changes
+
+- [#2062](https://github.com/LedgerHQ/ledger-live/pull/2062) [`32993aea9a`](https://github.com/LedgerHQ/ledger-live/commit/32993aea9af5dfb7f2519263e5f2a22a88320cdc) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - New flags icons. Added 2 new icons to Providers and Payments. Prevented crash when using ProviderIcon with incorrect string in boxed mode
+
+- Updated dependencies [[`32993aea9a`](https://github.com/LedgerHQ/ledger-live/commit/32993aea9af5dfb7f2519263e5f2a22a88320cdc)]:
+  - @ledgerhq/icons-ui@0.3.3-next.0
+
+## 0.10.2
+
+### Patch Changes
+
+- [#1998](https://github.com/LedgerHQ/ledger-live/pull/1998) [`1269f149ae`](https://github.com/LedgerHQ/ledger-live/commit/1269f149aef5d842eddd83beb64ae65240c3dc0f) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Updated Payment providers icon : new sources and updated sizes
+
+- Updated dependencies [[`e3222832ba`](https://github.com/LedgerHQ/ledger-live/commit/e3222832ba1fc7f90940fe637bf4a29361a72d94), [`1269f149ae`](https://github.com/LedgerHQ/ledger-live/commit/1269f149aef5d842eddd83beb64ae65240c3dc0f)]:
+  - @ledgerhq/icons-ui@0.3.2
+
+## 0.10.2-next.0
+
+### Patch Changes
+
+- [#1998](https://github.com/LedgerHQ/ledger-live/pull/1998) [`1269f149ae`](https://github.com/LedgerHQ/ledger-live/commit/1269f149aef5d842eddd83beb64ae65240c3dc0f) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Updated Payment providers icon : new sources and updated sizes
+
+- Updated dependencies [[`e3222832ba`](https://github.com/LedgerHQ/ledger-live/commit/e3222832ba1fc7f90940fe637bf4a29361a72d94), [`1269f149ae`](https://github.com/LedgerHQ/ledger-live/commit/1269f149aef5d842eddd83beb64ae65240c3dc0f)]:
+  - @ledgerhq/icons-ui@0.3.2-next.0
+
+## 0.10.1
+
+### Patch Changes
+
+- [#1882](https://github.com/LedgerHQ/ledger-live/pull/1882) [`828af17431`](https://github.com/LedgerHQ/ledger-live/commit/828af1743180ccf0f21a7de143cb910ef7258407) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Fixed naming issues causing error in CSJ. New prefixing system to prevent issues with icon names starting with a number
+
+- Updated dependencies [[`7aa0e616b3`](https://github.com/LedgerHQ/ledger-live/commit/7aa0e616b3dab8e218fea8631c3aa8b894dfc8f1), [`828af17431`](https://github.com/LedgerHQ/ledger-live/commit/828af1743180ccf0f21a7de143cb910ef7258407)]:
+  - @ledgerhq/icons-ui@0.3.1
+
+## 0.10.1-next.0
+
+### Patch Changes
+
+- [#1882](https://github.com/LedgerHQ/ledger-live/pull/1882) [`828af17431`](https://github.com/LedgerHQ/ledger-live/commit/828af1743180ccf0f21a7de143cb910ef7258407) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Fixed naming issues causing error in CSJ. New prefixing system to prevent issues with icon names starting with a number
+
+- Updated dependencies [[`7aa0e616b3`](https://github.com/LedgerHQ/ledger-live/commit/7aa0e616b3dab8e218fea8631c3aa8b894dfc8f1), [`828af17431`](https://github.com/LedgerHQ/ledger-live/commit/828af1743180ccf0f21a7de143cb910ef7258407)]:
+  - @ledgerhq/icons-ui@0.3.1-next.0
+
 ## 0.10.0
 
 ### Minor Changes

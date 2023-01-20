@@ -18,12 +18,7 @@ const UnlockDeviceDrawer = ({ isOpen, device, onClose }: Props) => {
   const theme = colors.type as "dark" | "light";
 
   return (
-    <BottomDrawer
-      isOpen={isOpen}
-      onClose={onClose}
-      preventBackdropClick
-      noCloseButton
-    >
+    <BottomDrawer isOpen={isOpen} onClose={onClose} preventBackdropClick>
       <Flex mb={250} pt={120}>
         <ConnectYourDevice
           t={t}

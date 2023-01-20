@@ -116,6 +116,8 @@ export const signOperation = ({
                 ? m.getResolutionConfig(account, transaction)
                 : {};
 
+              log("rawtx", txHex);
+
               const resolution = await ethLedgerServices.resolveTransaction(
                 txHex,
                 loadConfig,

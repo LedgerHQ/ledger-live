@@ -80,6 +80,20 @@ const dataset: DatasetTest<Transaction> = {
               },
             },
             {
+              name: "Send max",
+              transaction: (t, account) => ({
+                ...t,
+                amount: account.balance,
+                useAllAmount: true,
+                recipient: "tz1VSichevvJSNkSSntgwKDKikWNB6iqNJii",
+              }),
+              expectedStatus: (account) => {
+                return {
+                  amount: account.balance,
+                };
+              },
+            },
+            {
               name: "Amount > spendablebalance",
               transaction: (t, account) => ({
                 ...t,

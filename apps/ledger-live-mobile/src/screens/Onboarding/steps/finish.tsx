@@ -19,9 +19,7 @@ import {
   StackNavigatorProps,
 } from "../../../components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const source = require("../../../../assets/videos/onboarding.mp4");
+import videoSources from "../../../../assets/videos";
 
 const StyledSafeAreaView = styled(SafeAreaView)`
   flex: 1;
@@ -88,7 +86,7 @@ export default function OnboardingStepFinish({ navigation }: NavigationProps) {
       <TrackScreen category="Onboarding" name="Finish" />
       <StyledStatusBar barStyle="light-content" />
       <Video
-        source={source}
+        source={videoSources.welcomeScreen}
         style={absoluteStyle}
         muted
         repeat

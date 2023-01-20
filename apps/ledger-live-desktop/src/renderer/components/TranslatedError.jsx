@@ -8,11 +8,17 @@ import React, { PureComponent } from "react";
 import { withTranslation } from "react-i18next";
 import type { TFunction } from "react-i18next";
 import logger from "~/logger";
+import Text from "./Text";
+import ExternalLink from "./ExternalLink";
+import { openURL } from "~/renderer/linking";
+import { urls } from "~/config/urls";
 
 type Props = {
   error: ?Error,
   t: TFunction,
   field: "title" | "description" | "list",
+  noLink?: boolean,
+  fallback?: React$Node,
 };
 
 class TranslatedError extends PureComponent<Props> {
@@ -21,7 +27,7 @@ class TranslatedError extends PureComponent<Props> {
   };
 
   render() {
-    const { t, error, field } = this.props;
+    const { t, error, field, noLink, fallback } = this.props;
     if (!error) return null;
     if (typeof error !== "object") {
       // this case should not happen (it is supposed to be a ?Error)
@@ -43,9 +49,26 @@ class TranslatedError extends PureComponent<Props> {
             typeof str === "string" ? <li key={key}>{str}</li> : null,
           );
         }
+
+        if (urls.errors[error.name] && !noLink) {
+          return (
+            <Text>
+              {translation}{" "}
+              <Text ff="Inter|SemiBold">
+                <ExternalLink
+                  label={t("common.learnMore")}
+                  onClick={() => openURL(urls.errors[error.name])}
+                />
+              </Text>
+            </Text>
+          );
+        }
+
         return translation;
       }
     }
+
+    if (fallback) return fallback;
 
     const genericTranslation = t(`errors.generic.${field}`, arg);
     return genericTranslation === `errors.generic.${field}` ? null : genericTranslation;

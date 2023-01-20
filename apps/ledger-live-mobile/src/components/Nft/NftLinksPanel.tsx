@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
-import { NFTMediaSize, NFTMetadata } from "@ledgerhq/types-live";
+import { NFTMetadata } from "@ledgerhq/types-live";
 import {
   View,
   StyleSheet,
@@ -12,7 +12,6 @@ import {
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Box, Flex, Icons, Text } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
-import { getMetadataMediaTypes } from "../../logic/nft";
 import { NavigatorName, ScreenName } from "../../const";
 import ExternalLinkIcon from "../../icons/ExternalLink";
 import OpenSeaIcon from "../../icons/OpenSea";
@@ -22,6 +21,7 @@ import BottomModal from "../BottomModal";
 import { rgba } from "../../colors";
 import HideNftDrawer from "./HideNftDrawer";
 import { track, TrackScreen } from "../../analytics";
+import { extractImageUrlFromNftMetadata } from "../CustomImage/imageUtils";
 
 type Props = {
   links?: NFTMetadata["links"] | null;
@@ -94,35 +94,23 @@ const NftLinksPanel = ({
   const areRaribleOpenseaDisabled =
     useFeature("disableNftRaribleOpensea")?.enabled && Platform.OS === "ios";
 
-  const mediaTypes = useMemo(
-    () => (nftMetadata ? getMetadataMediaTypes(nftMetadata) : null),
-    [nftMetadata],
-  );
-  const mediaSizeForCustomImage = mediaTypes
-    ? (["big", "preview"] as NFTMediaSize[]).find(
-        size => mediaTypes[size] === "image",
-      )
-    : null;
-  const customImageUri =
-    (mediaSizeForCustomImage &&
-      nftMetadata?.medias?.[mediaSizeForCustomImage]?.uri) ||
-    null;
+  const customImageUri = extractImageUrlFromNftMetadata(nftMetadata);
 
   const showCustomImageButton = customImage?.enabled && !!customImageUri;
 
   const handleOpenOpenSea = useCallback(() => {
     track("button_clicked", {
       button: "OpenSea",
-      drawer: "NFT settings drawer",
+      drawer: "NFT settings",
       url: links?.opensea,
     });
     links?.opensea && Linking.openURL(links?.opensea);
   }, [links?.opensea]);
 
   const handleOpenRarible = useCallback(() => {
-    track("button_clicked", {
+    track("url_clicked", {
       button: "Rarible",
-      drawer: "NFT settings drawer",
+      drawer: "NFT settings",
       url: links?.rarible,
     });
     links?.rarible && Linking.openURL(links?.rarible);
@@ -131,7 +119,7 @@ const NftLinksPanel = ({
   const handleOpenExplorer = useCallback(() => {
     track("button_clicked", {
       button: "View in Explorer",
-      drawer: "NFT settings drawer",
+      drawer: "NFT settings",
       url: links?.explorer,
     });
     links?.explorer && Linking.openURL(links?.explorer);
@@ -140,13 +128,18 @@ const NftLinksPanel = ({
   const hide = useCallback(() => {
     track("button_clicked", {
       button: "Hide NFT Collection",
-      drawer: "NFT settings drawer",
+      drawer: "NFT settings",
     });
     setBottomHideCollectionOpen(true);
   }, []);
 
   const handlePressCustomImage = useCallback(() => {
     if (!customImageUri) return;
+    track("button_clicked", {
+      button: "Set as Stax Lockscreen",
+      drawer: "NFT settings",
+      url: links?.explorer,
+    });
     navigation.navigate(NavigatorName.CustomImage, {
       screen: ScreenName.CustomImagePreviewPreEdit,
       params: {
@@ -227,7 +220,7 @@ const NftLinksPanel = ({
         ? [
             <NftLink
               primary
-              title={"Custom image"} // TODO: there is no design nor wording for this for now
+              title={t("customImage.nftEntryPointButtonLabel")}
               leftIcon={
                 <View
                   style={[
@@ -298,7 +291,11 @@ const NftLinksPanel = ({
       isOpened={isOpen}
       onClose={onClose}
     >
-      <TrackScreen category="NFT settings drawer" type="drawer" />
+      <TrackScreen
+        category="NFT settings"
+        refreshSource={false}
+        type="drawer"
+      />
       {content}
       <HideNftDrawer
         nftContract={nftContract}

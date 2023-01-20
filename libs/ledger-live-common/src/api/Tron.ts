@@ -119,7 +119,7 @@ export const createTronTransaction = async (
   if (tokenType === "trc20" && tokenId) {
     const txData: SmartContractTransactionData = {
       function_selector: "transfer(address,uint256)",
-      fee_limit: 10000000,
+      fee_limit: 20000000,
       call_value: 0,
       contract_address: decode58Check(tokenId),
       parameter: abiEncodeTrc20Transfer(decode58Check(t.recipient), t.amount),

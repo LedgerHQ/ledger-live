@@ -31,11 +31,14 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       {
         title: "Amount",
         button: "Rr",
-        expectedValue: ({ account: { unit }, transaction: { amount } }) =>
-          formatCurrencyUnit(unit, amount, {
-            disableRounding: true,
-            showAllDigits: true,
-          }) + " hbar",
+        expectedValue: ({ account: { unit }, status: { amount } }) => {
+          return (
+            formatCurrencyUnit(unit, amount, {
+              disableRounding: true,
+              showAllDigits: true,
+            }) + " hbar"
+          );
+        },
       },
       {
         title: "Fee",

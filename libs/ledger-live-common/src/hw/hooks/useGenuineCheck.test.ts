@@ -25,7 +25,7 @@ describe("useGenuineCheck", () => {
       mockedGetGenuineCheckFromDeviceId.mockReturnValue(
         of({
           socketEvent: { type: "device-permission-requested", wording: "" },
-          deviceIsLocked: false,
+          lockedDevice: false,
         })
       );
       const { result } = renderHook(() =>
@@ -48,7 +48,7 @@ describe("useGenuineCheck", () => {
       mockedGetGenuineCheckFromDeviceId.mockReturnValue(
         of({
           socketEvent: { type: "device-permission-granted" },
-          deviceIsLocked: false,
+          lockedDevice: false,
         })
       );
       const { result } = renderHook(() =>
@@ -117,7 +117,7 @@ describe("useGenuineCheck", () => {
         mockedGetGenuineCheckFromDeviceId.mockReturnValue(
           of({
             socketEvent: { type: "result", payload: "0000" },
-            deviceIsLocked: false,
+            lockedDevice: false,
           })
         );
         const { result } = renderHook(() =>
@@ -141,7 +141,7 @@ describe("useGenuineCheck", () => {
         mockedGetGenuineCheckFromDeviceId.mockReturnValue(
           of({
             socketEvent: { type: "result", payload: "1111" },
-            deviceIsLocked: false,
+            lockedDevice: false,
           })
         );
         const { result } = renderHook(() =>
@@ -168,11 +168,11 @@ describe("useGenuineCheck", () => {
         of(
           {
             socketEvent: { type: "device-permission-granted" },
-            deviceIsLocked: false,
+            lockedDevice: false,
           },
           {
             socketEvent: { type: "result", payload: "1111" },
-            deviceIsLocked: false,
+            lockedDevice: false,
           }
         )
       );
@@ -204,12 +204,12 @@ describe("useGenuineCheck", () => {
     });
   });
 
-  describe("When the device is locked before doing a genuine check, and it timed out", () => {
+  describe("When the device is locked during the genuine check", () => {
     it("should notify the hook consumer of the need to unlock the device", async () => {
       mockedGetGenuineCheckFromDeviceId.mockReturnValue(
         of({
           socketEvent: null,
-          deviceIsLocked: true,
+          lockedDevice: true,
         })
       );
 

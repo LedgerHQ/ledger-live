@@ -51,10 +51,19 @@ jobs:
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
           registry-url: "https://registry.npmjs.org"
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.7 # Not needed with a .ruby-version file
-          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+      # - uses: ruby/setup-ruby@v1
+      #   with:
+      #     ruby-version:
+      #       3.1.2 # Not needed with a .ruby-version file
+      #       # runs 'bundle install' and caches installed gems automatically
+      # - name: Cache LLM pods
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: |
+      #       apps/ledger-live-mobile/ios/Pods
+      #       ~/Library/Caches/CocoaPods
+      #       ~/.cocoapods
+      #     key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
       - uses: ./tools/actions/get-package-infos
         id: desktop-version
         with:

@@ -678,6 +678,11 @@ export async function runOnAccount<T extends Transaction>({
           if (mutation.test) mutation.test(arg);
           report.testDuration = now() - testBefore;
         } catch (e) {
+          // this is too critical to "ignore"
+          if (e instanceof TypeError || e instanceof SyntaxError) {
+            report.testDuration = now() - testBefore;
+            throw e;
+          }
           // We never reach the final test success
           if (timedOut) {
             report.testDuration = now() - testBefore;
@@ -729,7 +734,7 @@ export async function runOnAccount<T extends Transaction>({
               invariant(
                 operation,
                 "no operation found with hash %s",
-                operation.hash
+                sendingOperation.hash
               )
           );
           if (!operation) throw new Error();
@@ -745,6 +750,11 @@ export async function runOnAccount<T extends Transaction>({
           botTest("destination", () => testDestination(arg));
           report.testDestinationDuration = now() - ntestBefore;
         } catch (e) {
+          // this is too critical to "ignore"
+          if (e instanceof TypeError || e instanceof SyntaxError) {
+            report.testDuration = now() - testBefore;
+            throw e;
+          }
           // We never reach the final test success
           if (timedOut) {
             report.testDestinationDuration = now() - ntestBefore;

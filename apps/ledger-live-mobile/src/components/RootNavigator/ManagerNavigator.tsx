@@ -17,6 +17,7 @@ import styles from "../../navigation/styles";
 import TabIcon from "../TabIcon";
 import { useIsNavLocked } from "./CustomBlockRouterNavigator";
 import { ManagerNavigatorStackParamList } from "./types/ManagerNavigator";
+import ProtectLogin from "../../screens/Protect/Login";
 
 const BadgeContainer = styled(Flex).attrs({
   position: "absolute",
@@ -71,6 +72,11 @@ export default function ManagerNavigator() {
         component={ManagerMain}
         options={{ title: "" }}
       />
+      <Stack.Screen
+        name={ScreenName.ProtectLogin}
+        component={ProtectLogin}
+        options={{ title: "" }}
+      />
     </Stack.Navigator>
   );
 }
@@ -93,8 +99,8 @@ const DeviceIcon = ({
     case DeviceModelId.nanoSP:
       icon = <Icons.NanoSFoldedMedium size={size} color={color} />;
       break;
-    case DeviceModelId.nanoFTS:
-      icon = <Icons.PowerMedium size={size} color={color} />;
+    case DeviceModelId.stax:
+      icon = <Icons.StaxRegular size={size} color={color} />;
       break;
     case DeviceModelId.nanoX:
     default:

@@ -2,7 +2,7 @@ import invariant from "invariant";
 import React, { useCallback, useMemo } from "react";
 import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Edge, SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { createAction } from "@ledgerhq/live-common/hw/actions/transaction";
@@ -42,6 +42,9 @@ import type { CosmosDelegationFlowParamList } from "../families/cosmos/Delegatio
 import type { CosmosRedelegationFlowParamList } from "../families/cosmos/RedelegationFlow/types";
 import type { CosmosUndelegationFlowParamList } from "../families/cosmos/UndelegationFlow/types";
 import type { CosmosClaimRewardsFlowParamList } from "../families/cosmos/ClaimRewardsFlow/types";
+import type { NearStakingFlowParamList } from "../families/near/StakingFlow/types";
+import type { NearUnstakingFlowParamList } from "../families/near/UnstakingFlow/types";
+import type { NearWithdrawingFlowParamList } from "../families/near/WithdrawingFlow/types";
 import type { OsmosisDelegationFlowParamList } from "../families/osmosis/DelegationFlow/types";
 import type { OsmosisRedelegationFlowParamList } from "../families/osmosis/RedelegationFlow/types";
 import { OsmosisUndelegationFlowParamList } from "../families/osmosis/UndelegationFlow/types";
@@ -150,6 +153,18 @@ type Props =
       ScreenName.CosmosClaimRewardsConnectDevice
     >
   | StackNavigatorProps<
+      NearStakingFlowParamList,
+      ScreenName.NearStakingConnectDevice
+    >
+  | StackNavigatorProps<
+      NearUnstakingFlowParamList,
+      ScreenName.NearUnstakingConnectDevice
+    >
+  | StackNavigatorProps<
+      NearWithdrawingFlowParamList,
+      ScreenName.NearWithdrawingConnectDevice
+    >
+  | StackNavigatorProps<
       OsmosisDelegationFlowParamList,
       ScreenName.OsmosisDelegationConnectDevice
     >
@@ -238,6 +253,7 @@ export default function ConnectDevice({ route, navigation }: Props) {
     () =>
       transaction ? (
         <SafeAreaView
+          edges={edges}
           style={[
             styles.root,
             {
@@ -270,9 +286,12 @@ export default function ConnectDevice({ route, navigation }: Props) {
     [status, transaction, tokenCurrency, route.params.device],
   );
 }
+
+const edges = ["bottom"] as Edge[];
+
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: 16,
   },
 });

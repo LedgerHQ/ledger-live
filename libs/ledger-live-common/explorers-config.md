@@ -18,7 +18,6 @@
 | PivX | PIVX | https://explorers.api.live.ledger.com/blockchain/v3/pivx | N/A |
 | Polygon | MATIC | https://explorers.api.live.ledger.com/blockchain/v3/matic | N/A |
 | Qtum | QTUM | https://explorers.api.live.ledger.com/blockchain/v3/qtum | N/A |
-| Stakenet | XSN | https://explorers.api.live.ledger.com/blockchain/v3/xsn | N/A |
 | Vertcoin | VTC | https://explorers.api.live.ledger.com/blockchain/v3/vtc | N/A |
 | Viacoin | VIA | https://explorers.api.live.ledger.com/blockchain/v3/via | N/A |
 | Zcash | ZEC | https://explorers.api.live.ledger.com/blockchain/v3/zec | N/A |

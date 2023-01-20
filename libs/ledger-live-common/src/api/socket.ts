@@ -16,7 +16,7 @@ import { getEnv } from "../env";
 import type { SocketEvent } from "@ledgerhq/types-live";
 const warningsSubject = new Subject<string>();
 export const warnings: Observable<string> = warningsSubject.asObservable();
-const ALLOW_MANAGER_DELAY = 500;
+const ALLOW_SECURE_CHANNEL_DELAY = 500;
 
 /**
  * use Ledger WebSocket API to exchange data with the device
@@ -33,16 +33,11 @@ export const createDeviceSocket = (
   }
 ): Observable<SocketEvent> =>
   new Observable((o) => {
-    let deviceError: Error | null = null; // the socket was interrupted by device problem
-
+    let deviceError: Error | null = null; // error originating from device (connection/response/rejection...)
     let unsubscribed = false; // subscriber wants to stops everything
-
     let correctlyFinished = false; // the socket logic reach a normal termination
-
-    let inBulk = false; // bulk is a mode where we have many apdu to run on device and no longer need the connection
-
-    let timeoutForAllowManager: NodeJS.Timeout | null | number = null; // track if there is an ongoing allow manager step
-
+    let inBulkMode = false; // we have an array of apdus to exchange, without the need of more WS messages.
+    let allowSecureChannelTimeout: NodeJS.Timeout | null = null; // allows to delay/cancel the user confirmation event
     const ws = new WS(url);
 
     ws.onopen = () => {
@@ -54,7 +49,7 @@ export const createDeviceSocket = (
 
     ws.onerror = (e) => {
       log("socket-error", e.message);
-      if (inBulk) return; // in bulk case, we ignore any network events because we just need to unroll APDUs with the device
+      if (inBulkMode) return; // in bulk case, we ignore any network events because we just need to unroll APDUs with the device
 
       o.error(
         new WebsocketConnectionError(e.message, {
@@ -65,17 +60,20 @@ export const createDeviceSocket = (
 
     ws.onclose = () => {
       log("socket-close");
-      if (inBulk) return; // in bulk case, we ignore any network events because we just need to unroll APDUs with the device
+      if (inBulkMode) return; // in bulk case, we ignore any network events because we just need to unroll APDUs with the device
 
       if (correctlyFinished) {
         o.complete();
       } else {
-        o.error(new WebsocketConnectionError("closed"));
+        // Nb Give priority to the cached error from a device connection, since websocket closes give
+        // us no information on what caused the close.
+        o.error(deviceError || new WebsocketConnectionError("closed"));
       }
     };
 
     ws.onmessage = async (e: any) => {
       if (unsubscribed) return;
+      deviceError = null; // If we continue to receive messages, the cached error is obsolete.
 
       try {
         const input = JSON.parse(e.data);
@@ -91,45 +89,61 @@ export const createDeviceSocket = (
               nonce,
               apdu,
             });
-            // specific logic for detecting allow manager
-            let allowManagerAwaitingUser = false;
+
+            // Detect the specific exchange that triggers the allow secure channel request.
+            let pendingUserAllowSecureChannel = false;
 
             if (apdu.slice(0, 2).toString("hex") === "e051") {
-              timeoutForAllowManager = setTimeout(() => {
+              pendingUserAllowSecureChannel = true;
+              allowSecureChannelTimeout = setTimeout(() => {
                 if (unsubscribed) return;
-                allowManagerAwaitingUser = true;
                 o.next({
                   type: "device-permission-requested",
-                  wording: "Ledger Manager",
+                  wording: "Ledger Manager", // TODO make this dynamic per fw version to match device
                 });
-              }, ALLOW_MANAGER_DELAY);
+                // Nb Permission is only requested once per reboot, delaying the event
+                // prevents the UI from flashing the rendering for allowing.
+              }, ALLOW_SECURE_CHANNEL_DELAY);
             }
 
             const r = await transport.exchange(apdu);
 
-            if (timeoutForAllowManager) {
-              // if the exchange is faster than the timeout, we pass through because it's not "awaiting" user action
-              clearTimeout(timeoutForAllowManager as number);
-              timeoutForAllowManager = null;
+            if (allowSecureChannelTimeout) {
+              clearTimeout(allowSecureChannelTimeout);
+              allowSecureChannelTimeout = null;
             }
 
             if (unsubscribed) return;
             const status = r.readUInt16BE(r.length - 2);
 
-            // Pushes an error on locked device. TransportStatusError will
-            // be remapped to a LockedDeviceError with a correct error message.
-            if (status === StatusCodes.LOCKED_DEVICE) {
-              o.error(new TransportStatusError(status));
-              return;
+            let response;
+            switch (status) {
+              case StatusCodes.OK:
+                response = "success";
+                break;
+
+              case StatusCodes.LOCKED_DEVICE:
+                o.error(new TransportStatusError(status));
+                return;
+
+              case StatusCodes.USER_REFUSED_ON_DEVICE:
+              case StatusCodes.CONDITIONS_OF_USE_NOT_SATISFIED:
+                if (pendingUserAllowSecureChannel) {
+                  o.error(new UserRefusedAllowManager());
+                  return;
+                }
+              // Fallthrough is literally what we want when not allowing a secure channel.
+              // eslint-disable-next-line no-fallthrough
+              default:
+                // Nb Other errors may not throw directly, we will instead keep track of
+                // them and throw them if the next event from the ws connection is a disconnect
+                // otherwise, we clear them.
+                response = "error";
+                deviceError = new TransportStatusError(status);
+                break;
             }
 
-            // if allow manager was requested, we either throw if deny or emit accepted
-            if (allowManagerAwaitingUser) {
-              if (status === 0x6985 || status === 0x5501) {
-                o.error(new UserRefusedAllowManager());
-                return;
-              }
-
+            if (pendingUserAllowSecureChannel) {
               o.next({
                 type: "device-permission-granted",
               });
@@ -143,11 +157,13 @@ export const createDeviceSocket = (
               status,
               data,
             });
+
             const msg = {
               nonce,
-              response: status === 0x9000 ? "success" : "error",
+              response,
               data: data.toString("hex"),
             };
+
             log("socket-out", msg.response);
             const strMsg = JSON.stringify(msg);
             ws.send(strMsg);
@@ -156,7 +172,7 @@ export const createDeviceSocket = (
 
           case "bulk": {
             // in bulk, we just have to unroll a lot of apdus, we no longer need the WS
-            inBulk = true;
+            inBulkMode = true;
             ws.close();
             const { data } = input;
 
@@ -174,8 +190,9 @@ export const createDeviceSocket = (
               const r = await transport.exchange(Buffer.from(data[i], "hex"));
               if (unsubscribed) return;
               const status = r.readUInt16BE(r.length - 2);
-              // any non success intermediary status will interrupt everything
-              if (status !== 0x9000) throw new TransportStatusError(status);
+              if (status !== StatusCodes.OK) {
+                throw new TransportStatusError(status);
+              }
               notify(i + 1);
             }
 
@@ -237,9 +254,10 @@ export const createDeviceSocket = (
     };
 
     const onUnresponsiveDevice = () => {
-      if (inBulk && unresponsiveExpectedDuringBulk) return; // firmware identifier is blocking in bulk
-
-      if (timeoutForAllowManager) return; // allow manager is not a locked case
+      // Nb Don't consider the device as locked if we are in a blocking apdu exchange, ie
+      // one that requires user confirmation to complete.
+      if (inBulkMode && unresponsiveExpectedDuringBulk) return;
+      if (allowSecureChannelTimeout) return;
 
       if (unsubscribed) return;
       o.error(new ManagerDeviceLockedError());
@@ -252,7 +270,7 @@ export const createDeviceSocket = (
       transport.off("disconnect", onDisconnect);
       transport.off("unresponsive", onUnresponsiveDevice);
 
-      if (!correctlyFinished && !deviceError && inBulk) {
+      if (!correctlyFinished && !deviceError && inBulkMode) {
         // if it was not normally ended, we might have to flush it
         if (getEnv("DEVICE_CANCEL_APDU_FLUSH_MECHANISM")) {
           cancelDeviceAction(transport);

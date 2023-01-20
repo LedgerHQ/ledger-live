@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import LedgerLiveApi, { WindowMessageTransport } from "@ledgerhq/live-app-sdk";
 import logo from "./ledger-logo.png";
 import "./App.css";
@@ -18,11 +18,11 @@ const App = () => {
     if (llapi) {
       api.current = llapi;
     }
-    
-    // Cleanup the Ledger Live API on component unmount 
+
+    // Cleanup the Ledger Live API on component unmount
     return () => {
       api.current = undefined;
-      void llapi.disconnect();
+      llapi.disconnect();
     };
   }, []);
 
@@ -41,7 +41,7 @@ const App = () => {
     const action = await api.current.requestAccount().catch(error => console.error({ error }));
     setOutput(action);
   };
-  
+
   const verifyAddress = async () => {
     if (!api.current) {
       return;
@@ -49,7 +49,7 @@ const App = () => {
     const action = await api.current.receive("mock:1:bitcoin:true_bitcoin_0:");
     setOutput(action);
   };
-  
+
   const signTransaction = async () => {
     if (!api.current) {
       return;
@@ -59,18 +59,22 @@ const App = () => {
       recipient: "1Cz2ZXb6Y6AacXJTpo4RBjQMLEmscuxD8e",
       family: "bitcoin",
       feePerByte: 1,
-    }
+    };
 
-    const params: any = {useApp: null};
+    const params: any = { useApp: null };
 
-    const action = await api.current.signTransaction("mock:1:bitcoin:true_bitcoin_0:", transaction, params);
+    const action = await api.current.signTransaction(
+      "mock:1:bitcoin:true_bitcoin_0:",
+      transaction,
+      params,
+    );
     setOutput(action);
   };
 
   const broadcastTransaction = async () => {
-    if (!api.current) {
-      return;
-    }
+    // if (!api.current) {
+    //   return;
+    // }
     // const action = await api.current.broadcastSignedTransaction("mock:1:bitcoin:true_bitcoin_0:", signed tx);
     // setOutput(action)
   };
@@ -80,14 +84,20 @@ const App = () => {
       return;
     }
     const action = await api.current.listCurrencies();
-    setOutput(action)
+    setOutput(action);
   };
 
-  const swap = async () => {};
+  const swap = async () => {
+    // not implemented
+  };
 
-  const fund = async () => {};
+  const fund = async () => {
+    // not implemented
+  };
 
-  const sell = async () => {};
+  const sell = async () => {
+    // not implemented
+  };
 
   return (
     <div className="App">

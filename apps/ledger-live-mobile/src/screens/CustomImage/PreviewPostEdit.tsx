@@ -11,7 +11,9 @@ import {
 } from "../../components/RootNavigator/types/helpers";
 import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
 import { NavigatorName, ScreenName } from "../../const";
-import FramedImage from "../../components/CustomImage/FramedImage";
+import FramedImage, {
+  previewConfig,
+} from "../../components/CustomImage/FramedImage";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<
@@ -85,6 +87,7 @@ const PreviewPostEdit = ({ navigation, route }: NavigationProps) => {
               onError={handlePreviewImageError}
               fadeDuration={0}
               source={{ uri: imagePreview?.imageBase64DataUri }}
+              frameConfig={previewConfig}
             />
           </Flex>
         </Flex>

@@ -25,7 +25,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16.x
-      - uses: pnpm/action-setup@v2.0.1
+      - uses: pnpm/action-setup@v2
         id: pnpm-install
         with:
           version: latest
@@ -51,7 +51,7 @@ jobs:
         run: |
           mkdir cal
           node libs/ledgerjs/script/crypto-assets-importer/index.js $PWD/crypto-assets true
-          mv libs/ledgerjs/packages/cryptoassets/data/**.json cal
+          mv libs/ledgerjs/packages/cryptoassets/src/data/**.json cal
       - name: Deploy json to s3
         run: aws s3 sync ./cal/ s3://ledger-live-cryptoassets-prd/cryptoassets --delete
       - name: Cache invalidate

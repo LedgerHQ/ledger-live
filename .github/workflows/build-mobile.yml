@@ -96,6 +96,7 @@ jobs:
     runs-on: [ledger-live, linux]
     steps:
       - name: Stop EC2 Linux Runner
+        if: ${{ always() && needs.start-runner.result == 'success' }}
         uses: LedgerHQ/actions/ec2-linux-runner@main
         with:
           mode: stop
@@ -129,7 +130,7 @@ jobs:
           cache-dependency-path: "**/pnpm-lock.yaml"
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7
+          ruby-version: 3.1.2
         env:
           ImageOS: ubuntu20
       - uses: actions/setup-java@v3
@@ -204,7 +205,7 @@ jobs:
           cache-dependency-path: "**/pnpm-lock.yaml"
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7
+          ruby-version: 3.1.2
         env:
           ImageOS: ubuntu20
       - uses: actions/setup-java@v3
@@ -280,7 +281,7 @@ jobs:
           cache-dependency-path: "**/pnpm-lock.yaml"
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7
+          ruby-version: 3.1.2
       - name: Cache LLM pods
         uses: actions/cache@v3
         with:

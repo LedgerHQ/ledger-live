@@ -124,12 +124,14 @@
     },
     "exchange" : "تبادل",
     "info" : "معلومات",
-    "connectDevice" : "توصيل جهازك"
+    "connectDevice" : "توصيل جهازك",
+    "add" : "إضافة"
   },
   "devices" : {
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
+    "nanoFTS" : "Nano FTS",
     "blue" : "Blue"
   },
   "operation" : {
@@ -167,7 +169,10 @@
       "WITHDRAW" : "مسحوب",
       "REVOKE" : "مُبطل",
       "ACTIVATE" : "تم التنشيط",
-      "REGISTER" : "مُسجّل"
+      "REGISTER" : "مُسجّل",
+      "STAKE" : "مُكدَّس",
+      "UNSTAKE" : "غير مُكدَّس",
+      "WITHDRAW_UNSTAKED" : "مسحوب"
     }
   },
   "byteSize" : {
@@ -178,6 +183,8 @@
   "time" : {
     "minute" : "دقيقة",
     "minute_plural" : "دقائق",
+    "minute_short" : "دقيقة",
+    "second_short" : "ثانية",
     "hour" : "ساعة",
     "hour_plural" : "ساعات",
     "range" : {
@@ -597,6 +604,12 @@
     }
   },
   "lottieDebugger" : {
+    "buttonTitle" : "اختبر"
+  },
+  "storylyDebugger" : {
+    "buttonTitle" : "اختبر"
+  },
+  "postOnboardingDebugger" : {
     "buttonTitle" : "اختبر"
   },
   "fullNode" : {
@@ -1125,6 +1138,111 @@
     "desc" : "هذا الإجراء سيخفي جميع حسابات <1><0>{{tokenName}}</0></1>، يمكنك إظهارهم مرة أخرى باستخدام <3>الإعدادات</3>",
     "hideCTA" : "إخفاء رمز التوكن"
   },
+  "syncOnboarding" : {
+    "connection" : {
+      "searching" : {
+        "title" : "قم بتوصيل {{deviceModelName}} بالكمبيوتر الخاص بك",
+        "connectionTrouble" : "تواجه مشكلة في توصيل جهازك؟"
+      },
+      "success" : {
+        "title" : "متّصل بـ {{ deviceName }}"
+      }
+    },
+    "manual" : {
+      "title" : "إعداد {{deviceName}}",
+      "pairedContent" : {
+        "title" : "{{deviceName}} متصلة",
+        "description" : "متابعة الإعداد على {{deviceName}}",
+        "text" : "هذه الشاشة ستتغير ديناميكيا لتزويدك بالمعلومات ذات الصلة ينما تقوم بإعداد {{deviceName}} خاصتك"
+      },
+      "pinContent" : {
+        "title" : "إعداد كود PIN خاصتك",
+        "description" : "كود PIN خاصتك يمكن أن يتراوح طوله بين 4 إلى 8 أرقام",
+        "text" : "أي شخص لديه وصول إلى {{deviceName}} وكود PIN خاصتك يمكنه أيضاً الوصول إلى جميع أصولك المشفرة ورموزك غير القابلة للاستبدال (NFT)."
+      },
+      "recoveryContent" : {
+        "title" : "عبارة الاسترداد",
+        "content" : "انقر على مقاطع الفيديو أدناه لتعلُم المزيد عن عبارة الاسترداد السرية خاصتك"
+      },
+      "softwareCheckContent" : {
+        "title" : "التحقق من البرامج",
+        "genuineCheck" : {
+          "active" : "يتم التحقق من {{deviceName}}",
+          "completed" : "{{deviceName}} أصلية"
+        },
+        "firmwareUpdate" : {
+          "inactive" : "التحقق من البرامج",
+          "active" : "يتم التحقق من وجود تحديثات للبرامج",
+          "updateAvailable" : "متوفر تحديث البرامج {{firmwareVersion}}",
+          "recommendation" : "نوصي بتنزيل التحديث الآن",
+          "downloadUpdate" : "تنزيل التحديث",
+          "skipUpdate" : "التخطي في الوقت الحالي",
+          "completed" : "البرامج مُحدثة"
+        }
+      },
+      "installApplications" : {
+        "title" : "نوصي بتنزيل مجموعة محددة من التطبيقات. يُمكنك تنزيل المزيد لاحقاً",
+        "install" : "تثبيت",
+        "skip" : "سأقوم بذلك في وقت لاحق",
+        "info" : "التطبيقات على {{deviceName}} تُستخدم للموافقة على المعاملات. يمكنك إضافتهم أو حذفهم في أي وقت."
+      },
+      "genuineCheckModal" : {
+        "title" : "اختبار الأصالة",
+        "paragraph1" : "دعنا نتأكد من أن {{deviceName}} الخاصة بك أصلية وآمنة للاستخدام",
+        "paragraph2" : "سنُجري فحص للتأكد من أن جهازك لم يتم العبث به. سيجب عليك أن تقبل هذا على {{deviceName}} الخاصة بك.",
+        "checkDeviceButton" : "تحقق من الجهاز"
+      },
+      "genuineCheckCancelModal" : {
+        "title" : "اختبار الأصالة",
+        "paragraph1" : "تم إلغاء اختبار الأصالة",
+        "paragraph2" : "هذا الفحص ضروري للغاية للتأكد أن {{deviceName}} خاصتك آمنة للاستخدام.",
+        "checkDeviceButton" : "إجراء الاختبار مرةً اخرى",
+        "cancelButton" : "ربّما في وقت لاحق"
+      },
+      "genuineCheckNotGenuineModal" : {
+        "title" : "اختبار الأصالة",
+        "paragraph1" : "جهازك غير أصلي",
+        "paragraph2" : "فشل اختبار الأصالة",
+        "checkDeviceButton" : "إجراء الاختبار مرةً أخرى",
+        "cancelButton" : "ربّما في وقت لاحق"
+      },
+      "genuineCheckAnimationModal" : {
+        "message" : "تمكين المدير على {{deviceName}}"
+      },
+      "helpDrawer" : {
+        "title" : "هل تحتاج بعض المساعدة في كُتيّب الإعداد خاصتك؟",
+        "description" : "Lorem Elsass ipsum aliquam bissame Oberschaeffolsheim geht's messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal.",
+        "docButton" : "انتقل إلى الأسئلة الأكثر شيوعاً",
+        "supportButton" : "التحدث مع شخص"
+      },
+      "troubleshootingDrawer" : {
+        "title" : "استكشاف وحل مشكلات اتصال USB",
+        "description" : "يبدو أن هناك مشكلة في الاتصال بجهازك. لا تقلق، يمكنك تجربة حلول مختلفة واحداً تلو الآخر حتى يتصل جهازك!",
+        "fixButton" : "أصلحة",
+        "closeButton" : "إغلاق"
+      },
+      "desyncOverlay" : {
+        "errorMessage" : "يبدو أن الاتصال بـ {{deviceName}} خاصتك قد فُقد. نحن نحاول إعادة الاتصال."
+      },
+      "header" : {
+        "helpButton" : "تحتاج إلى مساعدة؟"
+      }
+    }
+  },
+  "postOnboarding" : {
+    "postOnboardingScreen" : {
+      "title" : "رائع جداً.أنت مستعد.",
+      "description" : "تهانينا على إعداد {{deviceName}} خاصتك!",
+      "paragraph" : "لقد أعددنا لك بضعة خطوات لتبدأ بها. إذا كنت ترغب في استكشاف Ledger Live بنفسك، فلا تتردد في تخطي هذه الخطوة، ويمكنك دوماً العودة إليها.",
+      "bottomText" : "استمتع برحلتك في ويب 3.0 بأمان مع Ledger Live."
+    },
+    "postOnboardingContent" : {
+      "title" : "رائع جداً.أنت مستعد.",
+      "description" : "إليك ما يمكنك فعله بعد ذلك:",
+      "skipLink" : "التخطي إلى التطبيق",
+      "skipLinkInDrawer" : "سأفعل هذا لاحقاً"
+    }
+  },
   "hideNftCollection" : {
     "title" : "إخفاء مجموعة NFT",
     "desc" : "سيقوم هذا الإجراء بإخفاء جميع NFTs من مجموعة <1><0>{{collectionName}}</0></1>، يمكنك عرضهم مرة أخرى باستخدام <3>الإعدادات</3>",
@@ -1199,6 +1317,10 @@
       "sign" : {
         "title" : "جهاز"
       }
+    },
+    "eip712" : {
+      "showFullMessage" : "عرض الرسالة كاملة",
+      "hideFullMessage" : "إخفاء الرسالة بالكامل"
     }
   },
   "walletconnect" : {
@@ -1594,7 +1716,10 @@
     "listApps" : "التحقق من تبعيات التطبيق",
     "listAppsDescription" : "يُرجى الانتظار بينما نتأكد أن لديك جميع التطبيقات المطلوبة",
     "swap" : {
-      "notice" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. يتم تبادل العناوين بشكل آمن حتى لا تضطر إلى التحقق منها.",
+      "notice" : {
+        "default" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. يتم تبادل العناوين بشكل آمن حتى لا تضطر إلى التحقق منهم.",
+        "cic" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. CIC قد تحتاج إلى إجراء تحقق إضافي لبعض المعاملات، مما يؤدي إلى تأخير."
+      },
       "confirm" : "تأكيد معاملة المبادلة",
       "amountSent" : "المبلغ المطلوب إرساله",
       "amountReceived" : "المبلغ المطلوب تلقيه",
@@ -1944,6 +2069,31 @@
         "tezos" : {
           "text" : "المبلغ المستلم في الحساب المفوض سيتم إضافته إلى إجمالي المبلغ المُكدس. اختر حساب آخر إذا كنت تريد تجنب ذلك."
         }
+      },
+      "staking" : {
+        "title" : "اكسب {{currencyName}}",
+        "link" : "تعرّف على المزيد",
+        "notShow" : "عدم إظهار هذا مرة أخرى",
+        "footer" : {
+          "dismiss" : "ليس الآن",
+          "stake" : "التكديس مع {{provider}}"
+        },
+        "cosmos" : {
+          "title" : "قم بتنمية ATOM خاصتك. قم بالتكديس مع مُدقِّق Ledger.",
+          "description" : "قم بتكديس ATOM خاصتك مع مُدقِّق Ledger الموثوق. عملاتك تظل ملكك، ومدعومة من أمان Ledger الذي لا هوادة فيه."
+        },
+        "osmo" : {
+          "title" : "قم بتنمية OSMO خاصتك. قم بالتكديس مع Ledger by Figment.",
+          "description" : "قم بتكديس OSMO خاصتك مع مُدقِّق Ledger by Figment. إنه يوفر أقل رسوم عمولة وضماناً ضد التغريم!"
+        },
+        "solana" : {
+          "title" : "قم بتنمية SOL خاصتك. قم بالتكديس مع Ledger by Figment.",
+          "description" : "قم بتكديس SOL خاصتك مع مُدقِّق Ledger by Figment. عملاتك تظل ملكك، ومدعومة من أمان Ledger الذي لا هوادة فيه."
+        },
+        "celo" : {
+          "title" : "قم بتنمية CELO خاصتك. قم بالتكديس مع Ledger by Figment.",
+          "description" : "قم بتكديس CELO خاصتك مع مُدقِّق Ledger by Figment. إنه يضمن تغطية كاملة ضد التغريم، ومدعوم من أمان Ledger الذي لا هوادة فيه."
+        }
       }
     }
   },
@@ -1959,7 +2109,7 @@
       "amount" : {
         "title" : "المبلغ",
         "banner" : "أقصى مبلغ قابل للإنفاق هو",
-        "fees" : "رسوم",
+        "fees" : "الحد الأقصى للرسوم المُقدرة",
         "standard" : "اعتيادي",
         "advanced" : "متقدم",
         "nftQuantity" : "الكمية"
@@ -1979,11 +2129,17 @@
         "recipientAddress" : "عنوان المستلم",
         "amount" : "المبلغ",
         "fees" : "رسوم الشبكة",
+        "useMax" : "استخدم الحد الأقصى",
         "sendMax" : "إرسال الحد الأقصى",
         "rippleTag" : "علامة",
         "rippleTagPlaceholder" : "اختياري",
+        "edit" : "تعديل",
         "ethereumGasLimit" : "حد الغاز",
         "ethereumGasPrice" : "سعر الغاز",
+        "ethereumMaxFee" : "الحد الأقصى للرسوم ({{unitName}})",
+        "ethereumPriorityFee" : "الحد الأقصى لرسوم الأولوية ({{unitName}})",
+        "nextBlock" : "الكتلة التالية",
+        "suggested" : "مُقترح",
         "unitPerByte" : "{{unit}} لكل بايت",
         "nft" : "NFT",
         "nftQuantity" : "الكمية"
@@ -2022,6 +2178,9 @@
   "releaseNotes" : {
     "title" : "ملاحظات الإصدار",
     "version" : "Ledger Live {{versionNb}}"
+  },
+  "troubleshootNetwork" : {
+    "title" : "استكشاف أخطاء الشبكة وإصلاحها"
   },
   "systemLanguageAvailable" : {
     "title" : "تريد تغير لغة تطبيقك؟",
@@ -2080,6 +2239,9 @@
     }
   },
   "tron" : {
+    "receive" : {
+      "newAddressTRC20" : "تحتاج أولاً إلى إرسال على الأقل 0.1 TRX إلى هذا العنوان لتنشيطه."
+    },
     "voting" : {
       "emptyState" : {
         "description" : "يمكنك الآن كسب مكافآت من خلال التجميد والتصويت.",
@@ -3229,6 +3391,155 @@
       }
     }
   },
+  "ethereum" : {
+    "stake" : {
+      "title" : "اكسب إيثريوم",
+      "lido" : {
+        "tag" : "دون حد أدنى",
+        "description" : "قم بتكديس إيثريوم خاصتك مع Lido واكسب مكافآت يومية. دون فترة قَفل. دون حد أدنى."
+      },
+      "kiln" : {
+        "tag" : "يتطلب 32 ETH",
+        "description" : "لديك أكثر من 32 ETH؟ اكسب مكافآت يومية عن طريق تكديس ETH خاصتك بأمان مع Kiln."
+      },
+      "providerTitle" : "اكسب مع {{provider}}",
+      "providerLink" : "معرفة المزيد عن {{provider}}"
+    }
+  },
+  "near" : {
+    "account" : {
+      "stakedBalance" : "الرصيد المُكدَّس",
+      "stakedBalanceTooltip" : "هذا المبلع مُكدَّس حالياً مع مدققين.",
+      "availableBalance" : "الرصيد القابل للسحب",
+      "availableBalanceTooltip" : "هذا المبلغ تم إلغاء تكديسه وحالياً قابل للسحب.",
+      "pendingBalance" : "الرصيد المُعلَّق",
+      "pendingBalanceTooltip" : "هذا المبلغ تمّ إلغاء تكديسه وحالياً بانتظار الإتاحة.",
+      "storageUsageBalance" : "الحد الأدنى للرصيد",
+      "storageUsageBalanceTooltip" : "هذا المبلغ محجوز للحفظ والمعاملات، وهو الحد الأدنى للرصيد الذي يجب أن يكون في حسابك لكي يظل نشطاً.",
+      "subHeader" : {
+        "cardTitle" : "تعمل بواسطة Figment",
+        "moreInfo" : "مزيد من المعلومات",
+        "drawerTitle" : "تعمل بواسطة Figment",
+        "title" : "رمز NEAR متاح الآن في Ledger Live",
+        "description" : "يمكنك الآن بدء إدارة رموزك NEAR وتأمينها من خلال Ledger Live.",
+        "description2" : "رمز NEAR هو الرمز الأصلي لسلسلة NEAR ويُستخدم في كل شيء مثل المعاملات، والتكديس والعديد من الميزات القادمة.",
+        "website" : "تعمل بواسطة Figment"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "المبلغ المُكدَّس"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "يمكنك كسب مكافآت NEAR عن طريق تكديس أصولك.",
+        "info" : "كيف يعمل التكديس",
+        "earnRewards" : "اكسب المكافآت"
+      },
+      "table" : {
+        "header" : "موضع (أو مواضع) التكديس",
+        "stake" : "إضافة",
+        "staked" : "مُكدَّس",
+        "pending" : "بانتظار الإتاحة",
+        "available" : "قابل للسحب"
+      },
+      "unstake" : "إلغاء التكديس",
+      "withdraw" : "سحب",
+      "activeTooltip" : "المبالغ المُكدَّسة تولِّد مكافآت",
+      "inactiveTooltip" : "المبالغ غير المُكدَّسة لا تولِّد مكافآت",
+      "commission" : "العمولة",
+      "totalStake" : "إجمالي التكديس",
+      "minSafeWarning" : "لا توجد أموال كافية",
+      "flow" : {
+        "title" : "تكديس",
+        "steps" : {
+          "starter" : {
+            "description" : "يمكنك كسب المكافآت عن طريق تكديس أصولك NEAR إلى مدقق.",
+            "bullet" : ["أنت تحتفظ بملكية الأصول المُكدَّسة", "قم بالتكديس باستخدام جهازك Ledger", "الأصول ستكون متاحةً بعد 52 - 65 ساعة من إلغاء التكديس"],
+            "warning" : {
+              "description" : "اختر المدقق بحكمة: فقد يتم فقدان جزء من أصولك المُكدسة بشكل لا رجعة فيه إذا لم يتصرف المدقق بشكل لائق."
+            }
+          },
+          "amount" : {
+            "title" : "المبلغ"
+          },
+          "validator" : {
+            "title" : "المدققون",
+            "ledgerByFigmentTC" : "شروط وأحكام Ledger by Figment"
+          },
+          "connectDevice" : {
+            "title" : "الجهاز"
+          },
+          "confirmation" : {
+            "title" : "تأكيد",
+            "success" : {
+              "title" : "لقد قمت بتكديس أصولك بنجاح",
+              "text" : "سيتم تحديث رصيد حسابك عندما تقوم سلسلة الكتل بتأكيد المعاملة.",
+              "cta" : "رؤية التفاصيل"
+            },
+            "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "لا توجد أصول مُكدَّسة كافية لإلغاء تكديسها",
+      "flow" : {
+        "title" : "إلغاء التكديس",
+        "steps" : {
+          "amount" : {
+            "title" : "المبلغ",
+            "subtitle" : "عملية إلغاء التكديس تستغرق من <0>52 إلى 65 ساعة</0> لتتم.",
+            "warning" : "سيتم تحصيل المكافآت فوراً. المبلغ غير المُكدَّس سيكون متاحاً للسحب بعد <0>الحظر الزمني البالغ 52 إلى 65 ساعة</0>.",
+            "fields" : {
+              "validator" : "المدقق",
+              "amount" : "المبلغ المطلوب إلغاء تكديسه"
+            }
+          },
+          "connectDevice" : {
+            "title" : "الجهاز"
+          },
+          "confirmation" : {
+            "title" : "تأكيد",
+            "success" : {
+              "title" : "لقد قمت بإلغاء تكديس أصولك بنجاح",
+              "description" : "<0>{{amount}}</0> تم إلغاء تفويضهم من <0>{{validator}}</0>",
+              "cta" : "رؤية التفاصيل"
+            },
+            "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "disabledTooltip" : "لا توجد أصول كافية للسحب",
+      "flow" : {
+        "title" : "سحب",
+        "steps" : {
+          "amount" : {
+            "title" : "المبلغ",
+            "fields" : {
+              "validator" : "المدقق",
+              "amount" : "المبلغ المراد سحبه"
+            }
+          },
+          "connectDevice" : {
+            "title" : "الجهاز"
+          },
+          "confirmation" : {
+            "title" : "تأكيد",
+            "success" : {
+              "title" : "لقد قمت بسحب أصولك بنجاح.",
+              "description" : "<0>{{amount}}</0> تم سحبهم من <0>{{validator}}</0>",
+              "cta" : "رؤية التفاصيل"
+            },
+            "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+          }
+        }
+      }
+    }
+  },
   "delegation" : {
     "title" : "اكسب المكافآت",
     "header" : "التفويض",
@@ -3387,6 +3698,7 @@
       "featureFlagsEdit" : "تعديل",
       "featureFlagsRestore" : "استعادة",
       "featureFlagsOverride" : "تجاوز",
+      "firebaseProject" : "مشروع Firebase الذي يستهدفه هذا الإصدار:",
       "addLocalApp" : "إضافة تطبيق محلي",
       "addLocalAppDesc" : "تصفح الملفات المحلية وقم بإضافة تطبيق محلي باستخدام بيان محلي",
       "addLocalAppButton" : "تصفح",
@@ -3437,10 +3749,6 @@
     "experimental" : {
       "disclaimer" : "هذه ميزات تجريبية نقدمها \"كما هي\" لكي يختبرها مجتمعنا المتمرس بالتكنولوجيا. من الممكن أن يتم تغيير هذه الميزات أو تعطيلها أو إزالتها في أي وقت. من خلال تمكينها، فإنك توافق على استخدامها على مسؤوليتك الخاصة.",
       "features" : {
-        "apiTrongridProxy" : {
-          "title" : "استخدم TronGrid.io",
-          "description" : "استخدم trongrid مباشرةً بدون وكيل دفتر الأستاذ الموزع"
-        },
         "experimentalCurrencies" : {
           "title" : "دمج تجريبي",
           "description" : "استخدم عمليات تكامل الأصول المشفرة التجريبية المتاحة."
@@ -3476,6 +3784,22 @@
         "testAnimations" : {
           "title" : "اختبر الرسوم المتحركة Lottie",
           "description" : "اختبر جميع الرسوم المتحركة المستخدمة في Ledger Live"
+        },
+        "testStories" : {
+          "title" : "اختبر قصص Storyly",
+          "description" : "اختبر جميع القصص المستخدمة في Ledger Live"
+        },
+        "testPostonboarding" : {
+          "title" : "اختبر ما بعد التهيئة (post onboarding)",
+          "description" : "اختبر جميع ميزات ما بعد التهيئة (post onboarding)"
+        },
+        "1559DeactivateGate" : {
+          "title" : "إلغاء تنشيط بوابة EIP1559 للحد الأدنى لرسوم الأولوية",
+          "description" : "هذا سيسمح بإرسال معاملة دون أي حد أدنى متوقع لرسوم الأولوية. قد يؤدي هذا إلى أن تُعلّق المعاملات في مجمَع الذاكرة (mempool) إلى الأبد."
+        },
+        "1559CustomPriorityLowerGate" : {
+          "title" : "بوابة رسوم أولوية مخصصة",
+          "description" : "خصِّص النسبة المئوية من الحد الأدنى لرسوم الأولوية المُقدَّرة لدينا المسموح بها لمعاملات EIP1559 المتقدمة"
         }
       }
     },
@@ -3517,6 +3841,11 @@
       "title" : "حفظ السجلات",
       "desc" : "حفظ سجلات Ledger Live يمكن أن يكون مطلوب لأغراض استكشاف الأخطاء وإصلاحها.",
       "btn" : "حفظ"
+    },
+    "troubleshootNetwork" : {
+      "title" : "استكشاف أخطاء الشبكة وإصلاحها",
+      "desc" : "شغّل قائمة فحص لتقييم عمليات الشبكة لأغراض استكشاف الأخطاء وإصلاحها.",
+      "btn" : "استكشاف الأخطاء وإصلاحها"
     },
     "accounts" : {
       "hideEmptyTokens" : {
@@ -4323,6 +4652,9 @@
       "claimRewardCompound" : "المدقق سيتلقى المكافآت",
       "optIn" : "المستلم",
       "nominate" : "المدقق",
+      "stake" : "المدقق",
+      "unstake" : "المدقق",
+      "withdraw" : "المدقق",
       "erc721" : {
         "transfer" : "المستلم"
       },
@@ -4556,6 +4888,10 @@
       "title" : "عذراً، يبدو أنه قد انقطع الاتصال عن جهازك",
       "description" : "يرجى إعادة الاتصال والمحاولة مرة أخرى."
     },
+    "EConnReset" : {
+      "title" : "لا يمكن الوصول إلى متجر تطبيقات Ledger",
+      "description" : "اتصالك بالإنترنت قد يكون مقطوعاً أو يستخدم تكويناً غير معتاد. ابدأ بالتحقق مما إذا كان هناك شيء يحجب اتصالك (وكيل أو جدار حماية). إذا استمرت المشكلة انقر أدناه لإيجاد حلول أو توَاصل مع دعم العملاء لدينا."
+    },
     "EnpointConfig" : {
       "title" : "نقطة نهاية غير صالحة",
       "description" : "يرجى تقديم نقطة نهاية صالحة"
@@ -4667,6 +5003,10 @@
     },
     "NotEnoughGas" : {
       "title" : "رصيد الحساب الأصلي غير كاف لرسوم الشبكة"
+    },
+    "OperatingSystemOutdated" : {
+      "title" : "إصدار نظام التشغيل لديك قديم",
+      "description" : "يُرجى ترقية نظام التشغيل لديك والمحاولة مجدداً. يمكنك الرجوع إلى المقالة أدناه لفهم لماذا Ledger Live غير مدعوم على إصدار نظام التشغيل المثبّت لديك حالياً."
     },
     "PasswordsDontMatch" : {
       "title" : "كلمات المرور غير متطابقتين",
@@ -4815,6 +5155,18 @@
     "GasLessThanEstimate" : {
       "title" : "قد يكون هذا منخفضاً جداً. يرجى زيادته"
     },
+    "PriorityFeeTooLow" : {
+      "title" : "رسوم الأولوية أقل من القيمة الموصى بها"
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "رسوم الأولوية أكثر من المطلوب. قد تكون تدفع مبالغ زائدة"
+    },
+    "MaxFeeTooLow" : {
+      "title" : "الحد الأقصى للرسوم أقل من القيمة الموصى بها"
+    },
+    "PriorityFeeHigherThanMaxFee" : {
+      "title" : "الحد الأقصى لرسوم الأولوية لا يمكن أن يكون أعلى من الحد الأقصى للرسوم"
+    },
     "UnknownMCU" : {
       "title" : "إصدار MCU غير معروف",
       "description" : "يرجى التواصل مع دعم Ledger"
@@ -4898,7 +5250,7 @@
       "title" : "لا يمكن أن يكون المبلغ المراد تجميده أقل من 1"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "إرسال TRC20 إلى حساب جديد لن يؤدي إلى تفعيله",
+      "title" : "تحتاج أولاً إلى إرسال على الأقل 0.1 TRX إلى هذا العنوان لتمكين تلقي رمز TRC20.",
       "description" : "يجب تفعيل حساب المستلم قبل إرسال TRC20 إليه. أرسل أي من TRX أو TRC10 إلى حساب لتفعيله."
     },
     "TronUnexpectedFees" : {
@@ -4912,7 +5264,7 @@
       "description" : "يجب تطبيق التوقيع في غضون 30 ثانية. يرجى إعادة المحاولة مرة أخرى."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "لا توجد طاقة كافية لإرسال رمز التوكن هذا"
+      "title" : "الطاقة أقل من المطلوب. قد تدفع رسوم تصل إلى 20TRX."
     },
     "PairingFailed" : {
       "title" : "لم يتم إجراء الإقران بنجاح",
@@ -4948,6 +5300,9 @@
     },
     "FeeTooHigh" : {
       "title" : "رسوم الشبكة أعلى من %10 من المبلغ"
+    },
+    "DustLimit" : {
+      "title" : "المبلغ أقل من حد الغبار"
     },
     "SourceHasMultiSign" : {
       "title" : "يرجى تعطيل خاصية التوقيع المتعدد لإرسال {{currencyName}}"
@@ -5060,8 +5415,84 @@
     "StellarSourceHasMultiSign" : {
       "title" : "يرجى تعطيل التوقيع المتعدد لإجراء معاملات Stellar"
     },
+    "StellarBurnAddressError" : {
+      "title" : "حدثت مشكلة أثناء محاولة إضافة حساب Stellar"
+    },
     "HederaAddAccountError" : {
       "title" : "لم تتم إضافة حسابك. يرجى إعادة المحاولة."
+    },
+    "ImageIncorrectFileTypeError" : {
+      "title" : "فشل تحميل الصورة من الملف.",
+      "description" : "يُرجى المحاولة مجدداً بصورة."
+    },
+    "ImageLoadFromFileError" : {
+      "title" : "فشل تحميل الصورة من الملف",
+      "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
+    },
+    "ImageDownloadError" : {
+      "title" : "فشل تنزيل الصورة",
+      "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
+    },
+    "ImageMetadataLoadingError" : {
+      "title" : "فشل تحميل البيانات الوصفية للصورة",
+      "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
+    },
+    "ImageTooLargeError" : {
+      "title" : "حجم الصورة كبير جداً",
+      "description" : "يُرجى المحاولة بصورة أصغر"
+    },
+    "ImageCropError" : {
+      "title" : "فشل قص الصورة",
+      "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
+    },
+    "ImageResizeError" : {
+      "title" : "فشل تغيير حجم الصورة",
+      "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
+    },
+    "ImagePreviewError" : {
+      "title" : "فشل عرض الصورة",
+      "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
+    },
+    "ImageProcessingError" : {
+      "title" : "فشل معالجة الصورة",
+      "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
+    },
+    "ImageCommitRefusedOnDevice" : {
+      "title" : "الالتزام بالصورة رُفِض على الجهاز (TODO: final wording)",
+      "description" : "إذا لم تكن هذه الصورة بالمقاس المناسب، يُمكنك المحاولة مرة ثانية مع صورة أخرى."
+    },
+    "ImageLoadRefusedOnDevice" : {
+      "title" : "تحميل الصورة رُفض على الجهاز (TODO: final wording)",
+      "description" : "إذا لم تكن هذه الصورة بالمقاس المناسب، يُمكنك المحاولة مرة ثانية مع صورة أخرى."
+    },
+    "NearNewAccountWarning" : {
+      "title" : "حساب المُستلِم لم يتم إنشاؤه بعد. البروتوكول يتطلب تحويل {{formattedNewAccountStorageCost}} لإنشائه."
+    },
+    "NearNewNamedAccountError" : {
+      "title" : "حساب المُستلِم لم يتم إنشاؤه بعد. يجب أن يتم إنشاؤه في محفظة NEAR."
+    },
+    "NearActivationFeeNotCovered" : {
+      "title" : "هذا المبلغ لا يغطي تكلفة الحفظ {{formattedNewAccountStorageCost}}."
+    },
+    "NearUseAllAmountStakeWarning" : {
+      "title" : "تأكد أن لديك رصيد كافي متبقي لرسوم المعاملات المستقبلية"
+    },
+    "NearNotEnoughStaked" : {
+      "title" : "الرصيد المُكدَّس غير كافٍ"
+    },
+    "NearNotEnoughAvailable" : {
+      "title" : "الرصيد القابل للسحب غير كافٍ"
+    },
+    "NearRecommendUnstake" : {
+      "title" : "يُرجى إلغاء التكديس وسحب الأموال قبل تفريغ الحساب"
+    },
+    "NearStakingThresholdNotMet" : {
+      "title" : "يجب أن يكون المبلغ على الأقل {{threshold}}"
+    },
+    "LockedDeviceError" : {
+      "title" : "جهازك مقفل",
+      "description" : "قم بإلغاء قفل جهازك وحاول مرة أخرى.",
+      "descriptionWithProductName" : "قم بإلغاء قفل {{ productName }} خاصتك وحاول مرة أخرى."
     }
   },
   "cryptoOrg" : {
@@ -5092,5 +5523,42 @@
     "selectAccount" : {
       "title" : "اختر حساب"
     }
+  },
+  "customImage" : {
+    "title" : "صورة مخصصة",
+    "steps" : {
+      "choose" : {
+        "stepLabel" : "اختر صورة",
+        "description" : "اختر صورة لتعيينها على أنها (...)",
+        "pickFromNftGallery" : "اختر من معرض NFT",
+        "upload" : "تحميل من الكمبيوتر الخاص بي"
+      },
+      "adjust" : {
+        "stepLabel" : "ضبط الصورة",
+        "rotate" : "تدوير"
+      },
+      "contrast" : {
+        "stepLabel" : "اختر التباين"
+      },
+      "transfer" : {
+        "stepLabel" : "تحويل",
+        "uploadAnotherImage" : "قم بتحميل صورة أخرى",
+        "allowPreview" : "السماح بعرض الصورة على {{productName}}",
+        "loadingPicture" : "تحميل الصورة على {{productName}}",
+        "pictureLoaded" : "تم تحميل الصورة",
+        "imageLoaded" : "تم تحميل الصورة على {{productName}}",
+        "confirmPicture" : "قم بالتأكيد على {{productName}}",
+        "doThisLater" : "ربّما في وقت لاحق",
+        "timeDisclaimer" : "قد يستغرق هذا حتى 30 ثانية"
+      }
+    },
+    "postOnboarding" : {
+      "title" : "تخصيص جهازي",
+      "description" : "عبر تخصيص الشاشة",
+      "actionCompletedPopupLabel" : "تم تخصيص الجهاز",
+      "actionCompletedHubTitle" : "تلك الشاشة تبدو أنيقة."
+    },
+    "customImageSet" : "تم تعيين الصورة المخصصة",
+    "finishCTA" : "إنهاء"
   }
 }

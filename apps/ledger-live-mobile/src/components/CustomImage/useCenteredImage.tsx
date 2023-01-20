@@ -102,6 +102,7 @@ function useCenteredImage(params: Params) {
           );
         })
         .catch(e => {
+          if (dead) throw new Error("dead hook");
           console.error(e);
           throw new ImageCropError();
         })

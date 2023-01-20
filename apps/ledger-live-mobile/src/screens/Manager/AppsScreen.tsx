@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useMemo, memo } from "react";
 import { FlatList, StyleSheet } from "react-native";
+import { useSelector } from "react-redux";
 import {
   listTokens,
   isCurrencySupported,
@@ -38,6 +39,8 @@ import type {
 } from "../../components/RootNavigator/types/helpers";
 import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/types/ManagerNavigator";
 import { ScreenName } from "../../const";
+import { lastSeenDeviceSelector } from "../../reducers/settings";
+import useLatestFirmware from "../../hooks/useLatestFirmware";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.ManagerMain>
@@ -261,22 +264,16 @@ const AppsScreen = ({
     ],
   );
 
+  const lastSeenDevice = useSelector(lastSeenDeviceSelector);
+  const latestFirmware = useLatestFirmware(lastSeenDevice?.deviceInfo);
+  const showFwUpdateBanner = Boolean(latestFirmware);
+
   const renderList = useCallback(
     (items?: App[]) => (
       <FlatList
         data={items}
         ListHeaderComponent={
-          <>
-            <Flex mt={6} mb={8}>
-              <Text
-                variant={"h1"}
-                fontWeight={"medium"}
-                color={"neutral.c100"}
-                numberOfLines={1}
-              >
-                <Trans i18nKey="manager.title" />
-              </Text>
-            </Flex>
+          <Flex mt={4}>
             <DeviceCard
               distribution={distribution}
               state={state}
@@ -292,13 +289,16 @@ const AppsScreen = ({
               onLanguageChange={onLanguageChange}
             />
             <Benchmarking state={state} />
-            <FirmwareUpdateBanner />
-            <AppUpdateAll
-              state={state}
-              appsToUpdate={update}
-              dispatch={dispatch}
-              isModalOpened={updateModalOpened}
-            />
+            {showFwUpdateBanner ? (
+              <FirmwareUpdateBanner />
+            ) : (
+              <AppUpdateAll
+                state={state}
+                appsToUpdate={update}
+                dispatch={dispatch}
+                isModalOpened={updateModalOpened}
+              />
+            )}
             <Flex
               flexDirection="row"
               mt={8}
@@ -317,7 +317,7 @@ const AppsScreen = ({
                 />
               </Flex>
             </Flex>
-          </>
+          </Flex>
         }
         renderItem={renderRow}
         ListEmptyComponent={renderNoResults}
@@ -340,6 +340,7 @@ const AppsScreen = ({
       device,
       deviceApps,
       onLanguageChange,
+      showFwUpdateBanner,
       update,
       updateModalOpened,
       query,

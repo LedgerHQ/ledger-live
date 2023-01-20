@@ -79,7 +79,7 @@ module.exports = {
     // for importing detox
     "import/no-extraneous-dependencies": [
       "error",
-      { devDependencies: ["e2e/**"] },
+      { devDependencies: ["**/e2e/**"] },
     ],
     // For Link component from native-ui, that is interpreted like a html link, and thus this rule tried to impose a href prop on it
     "jsx-a11y/anchor-is-valid": [
@@ -143,4 +143,20 @@ module.exports = {
     it: false,
     expect: false,
   },
+  overrides: [
+    {
+      files: ["e2e/*.ts"],
+      globals: {
+        fetch: false,
+        it: false,
+        expect: false,
+        waitFor: false,
+        element: false,
+        by: false,
+        beforeAll: false,
+        afterAll: false,
+        device: false,
+      },
+    },
+  ],
 };

@@ -116,7 +116,7 @@ const Body = ({
           </Box>
         ) : (
           <AnimationWrapper>
-            <Animation animation={getDeviceAnimation(deviceModelId, type, "validate")} />
+            <Animation animation={getDeviceAnimation(deviceModelId, type, "verify")} />
           </AnimationWrapper>
         )}
       </>
@@ -143,7 +143,7 @@ const Body = ({
         </Box>
       ) : (
         <AnimationWrapper>
-          <Animation animation={getDeviceAnimation(deviceModelId, type, "validate")} />
+          <Animation animation={getDeviceAnimation(deviceModelId, type, "verify")} />
         </AnimationWrapper>
       )}
     </>

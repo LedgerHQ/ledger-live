@@ -2,8 +2,6 @@ import React, { useCallback, useEffect, useRef } from "react";
 import { Divider, Flex, Icons, Log, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import styled from "styled-components/native";
 import { useFocusEffect } from "@react-navigation/native";
 import Animated, {
   cancelAnimation,
@@ -18,8 +16,11 @@ import {
   useAllPostOnboardingActionsCompleted,
   usePostOnboardingHubState,
 } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { clearPostOnboardingLastActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
 import { useDispatch } from "react-redux";
+import { getDeviceModel } from "@ledgerhq/devices";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import PostOnboardingActionRow from "../../components/PostOnboarding/PostOnboardingActionRow";
 import { NavigatorName, ScreenName } from "../../const";
 import {
@@ -27,12 +28,8 @@ import {
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
 import { PostOnboardingNavigatorParamList } from "../../components/RootNavigator/types/PostOnboardingNavigator";
-
-const SafeContainer = styled(SafeAreaView).attrs({
-  edges: ["left", "bottom", "right"],
-})`
-  flex: 1;
-`;
+import DeviceSetupView from "../../components/DeviceSetupView";
+import { useCompleteActionCallback } from "../../logic/postOnboarding/useCompleteAction";
 
 const AnimatedFlex = Animated.createAnimatedComponent(Flex);
 
@@ -43,11 +40,11 @@ type NavigationProps = BaseComposite<
   >
 >;
 
-const PostOnboardingHub = ({ navigation }: NavigationProps) => {
+const PostOnboardingHub = ({ navigation, route }: NavigationProps) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const { lastActionCompleted, actionsState } = usePostOnboardingHubState();
-  const { actionCompletedHubTitle } = lastActionCompleted || {};
+  const { actionsState, deviceModelId } = usePostOnboardingHubState();
+  const completePostOnboardingAction = useCompleteActionCallback();
 
   const clearLastActionCompleted = useCallback(() => {
     dispatch(clearPostOnboardingLastActionCompleted());
@@ -61,6 +58,20 @@ const PostOnboardingHub = ({ navigation }: NavigationProps) => {
      * */
     () => clearLastActionCompleted,
     [clearLastActionCompleted],
+  );
+
+  useEffect(
+    /**
+     * Complete claim NFT action if the route param completed is true
+     * */
+    () => {
+      route &&
+        route.params &&
+        route.params.completed &&
+        route.params.completed === "true" &&
+        completePostOnboardingAction(PostOnboardingActionId.claimNft);
+    },
+    [clearLastActionCompleted, completePostOnboardingAction, route],
   );
 
   const allowClosingScreen = useRef<boolean>(true);
@@ -83,8 +94,10 @@ const PostOnboardingHub = ({ navigation }: NavigationProps) => {
 
   const animationTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const clearAnimationTimeout = useCallback(() => {
-    animationTimeout.current && clearTimeout(animationTimeout.current);
-  }, [animationTimeout]);
+    !allDone &&
+      animationTimeout.current &&
+      clearTimeout(animationTimeout.current);
+  }, [allDone]);
 
   const triggerEndAnimation = useCallback(() => {
     const onAnimEnd = () => {
@@ -149,18 +162,19 @@ const PostOnboardingHub = ({ navigation }: NavigationProps) => {
     [animDoneValue],
   );
 
+  const productName = getDeviceModel(
+    deviceModelId || DeviceModelId.nanoX,
+  )?.productName;
+
   return (
-    <SafeContainer>
+    <DeviceSetupView hasCloseButton>
       <Flex px={6} py={7} justifyContent="space-between" flex={1}>
         <Text variant="h1Inter" fontWeight="semiBold" mb={8}>
           {allDone
-            ? t("postOnboarding.hub.allDoneTitle")
-            : actionCompletedHubTitle
-            ? t(actionCompletedHubTitle)
-            : t("postOnboarding.hub.title")}
-        </Text>
-        <Text variant="paragraph" mb={4} color="neutral.c70">
-          {t("postOnboarding.hub.subtitle")}
+            ? t("postOnboarding.hub.allDoneTitle", {
+                productName,
+              })
+            : t("postOnboarding.hub.title", { productName })}
         </Text>
         <ScrollView>
           {actionsState.map((action, index, arr) => (
@@ -177,7 +191,7 @@ const PostOnboardingHub = ({ navigation }: NavigationProps) => {
               fontWeight="semiBold"
               alignSelf="center"
               onPress={navigateToMainScreen}
-              color="primary.c80"
+              color="neutral.c100"
             >
               {t("postOnboarding.hub.skip")}
             </Text>
@@ -204,7 +218,7 @@ const PostOnboardingHub = ({ navigation }: NavigationProps) => {
           </AnimatedFlex>
         </AnimatedFlex>
       )}
-    </SafeContainer>
+    </DeviceSetupView>
   );
 };
 

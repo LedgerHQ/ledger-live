@@ -6,7 +6,6 @@ import {
   Icons,
   ProgressBar,
   Drawer,
-  Popin,
   InfiniteLoader,
 } from "@ledgerhq/react-ui";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
@@ -15,7 +14,8 @@ import { urls } from "~/config/urls";
 import { Switch, Route, useHistory, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { Device } from "@ledgerhq/types-devices";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { ImportYourRecoveryPhrase } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/ImportYourRecoveryPhrase";
 import { DeviceHowTo } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/DeviceHowTo";
@@ -39,8 +39,8 @@ import { QuizFailure } from "~/renderer/components/Onboarding/Screens/Tutorial/s
 import { QuizSuccess } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/QuizSuccess";
 import RecoveryWarning from "../../Help/RecoveryWarning";
 import { QuizzPopin } from "~/renderer/modals/OnboardingQuizz/OnboardingQuizzModal";
-import { getPostOnboardingActionsForDevice } from "~/renderer/components/PostOnboardingHub/logic";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import { saveSettings } from "~/renderer/actions/settings";
 
 import { UseCase } from "../../index";
 
@@ -229,7 +229,7 @@ export default function Tutorial({ useCase }: Props) {
   const [userUnderstandConsequences, setUserUnderstandConsequences] = useState(false);
   const [userChosePinCodeHimself, setUserChosePinCodeHimself] = useState(false);
 
-  const [connectedDevice, setConnectedDevice] = useState(null);
+  const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
 
   const [onboardingDone, setOnboardingDone] = useState(false);
   const handleStartPostOnboarding = useStartPostOnboardingCallback();
@@ -242,6 +242,8 @@ export default function Tutorial({ useCase }: Props) {
   const urlSplit = useMemo(() => pathname.split("/"), [pathname]);
   const currentStep = useMemo(() => urlSplit[urlSplit.length - 1], [urlSplit]);
   const path = useMemo(() => urlSplit.slice(0, urlSplit.length - 1).join("/"), [urlSplit]);
+
+  const dispatch = useDispatch();
 
   const screens = useMemo<IScreen[]>(
     () => [
@@ -487,21 +489,22 @@ export default function Tutorial({ useCase }: Props) {
         },
         canContinue: !!connectedDevice,
         next: () => {
+          dispatch(saveSettings({ hasCompletedOnboarding: true }));
+          track("Onboarding - End");
           setOnboardingDone(true);
-          handleStartPostOnboarding(connectedDevice.modelId, true, () => history.push("/"));
         },
         previous: () => history.push(`${path}/${ScreenId.pairMyNano}`),
       },
     ],
     [
       connectedDevice,
-      handleStartPostOnboarding,
       history,
       path,
       useCase,
       userChosePinCodeHimself,
       userUnderstandConsequences,
       setOnboardingDone,
+      dispatch,
     ],
   );
 
@@ -514,14 +517,15 @@ export default function Tutorial({ useCase }: Props) {
        * block is executed), on the following commit we can call
        * history.push("/").
        */
-      const timeout = setTimeout(() => {
-        if (history.location.pathname !== "/") history.push("/");
+      const timeout: ReturnType<typeof setTimeout> = setTimeout(() => {
+        if (history.location.pathname !== "/")
+          handleStartPostOnboarding(connectedDevice.modelId, true, () => history.push("/"));
       }, 0);
       return () => {
         clearTimeout(timeout);
       };
     }
-  }, [history, onboardingDone]);
+  }, [connectedDevice?.modelId, handleStartPostOnboarding, history, onboardingDone]);
 
   const steps = useMemo(() => {
     const stepList = [

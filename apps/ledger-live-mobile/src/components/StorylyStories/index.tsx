@@ -61,7 +61,7 @@ const AnimatedStoryGroupWrapper = Animated.createAnimatedComponent<
 >(
   styled(Flex).attrs<StoryGroupItemWrapperProps>(p => ({
     mr: p.isLast || p.vertical ? 0 : 5,
-    mb: p.isLast || !p.vertical ? 0 : 7,
+    mb: p.isLast || !p.vertical ? 0 : 16,
   }))``,
 );
 
@@ -142,7 +142,7 @@ const Stories: React.FC<Props> = props => {
             storyGroup.stories[0]?.id;
           return (
             <AnimatedStoryGroupWrapper
-              key={storyGroup.id}
+              key={storyGroup.id ?? index}
               layout={Layout.easing(Easing.inOut(Easing.quad)).duration(300)}
               isLast={index === arr.length - 1}
               vertical={vertical}

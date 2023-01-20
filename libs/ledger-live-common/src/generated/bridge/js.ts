@@ -9,6 +9,7 @@ import ethereum from "../../families/ethereum/bridge/js";
 import evm from "../../families/evm/bridge/js";
 import filecoin from "../../families/filecoin/bridge/js";
 import hedera from "../../families/hedera/bridge/js";
+import near from "../../families/near/bridge/js";
 import neo from "../../families/neo/bridge/js";
 import osmosis from "../../families/osmosis/bridge/js";
 import polkadot from "../../families/polkadot/bridge/js";
@@ -30,6 +31,7 @@ export default {
   evm,
   filecoin,
   hedera,
+  near,
   neo,
   osmosis,
   polkadot,

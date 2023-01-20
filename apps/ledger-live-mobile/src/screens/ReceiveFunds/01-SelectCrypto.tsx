@@ -124,7 +124,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
         } else {
           // if we didn't find any account of the parent currency we add and create one
           navigation.navigate(ScreenName.ReceiveAddAccountSelectDevice, {
-            currency,
+            currency: currency.parentCurrency,
             createTokenAccount: true,
           });
         }

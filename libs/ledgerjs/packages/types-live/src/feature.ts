@@ -2,9 +2,10 @@
 export type FeatureId =
   | "learn"
   | "brazePushNotifications"
+  | "brazeLearn"
   | "llmNewDeviceSelection"
   | "llmUsbFirmwareUpdate"
-  | "ratings"
+  | "ratingsPrompt"
   | "counterValue"
   | "deviceLocalization"
   | "deviceInitialApps"
@@ -17,6 +18,7 @@ export type FeatureId =
   | "currencyCronos"
   | "currencySongbird"
   | "currencyFlare"
+  | "currencyNear"
   | "currencyFantomMobile"
   | "currencyMoonbeamMobile"
   | "currencyCronosMobile"
@@ -37,6 +39,13 @@ export type FeatureId =
   | "ethStakingProviders"
   | "storyly"
   | "firebaseEnvironmentReadOnly"
+  | "staxWelcomeScreen"
+  | "postOnboardingClaimNft"
+  | "postOnboardingAssetsTransfer"
+  | "firebaseEnvironmentReadOnly"
+  | "protectServicesMobile"
+  | "swapShowDexQuotes"
+  | "objkt"
   | "appSpecificSupportLink"
   | "appAuthorName";
 

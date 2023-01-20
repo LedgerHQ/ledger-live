@@ -11,8 +11,10 @@ import listenToHidDevices from "./listenToHidDevices";
 import listApps from "./listApps";
 import signMessage from "./signMessage";
 import ping from "./ping";
+import publicKeyTweakAdd from "./publicKeyTweakAdd";
 import connectApp from "./connectApp";
 import connectManager from "./connectManager";
+import networkTroubleshoot from "./networkTroubleshoot";
 import testApdu from "./testApdu";
 import testCrash from "./testCrash";
 import testInterval from "./testInterval";
@@ -27,7 +29,7 @@ import scanDescriptors from "./scanDescriptors";
 import installLanguage from "./installLanguage";
 import getAppAndVersion from "./getAppAndVersion";
 import getDeviceInfo from "./getDeviceInfo";
-import ftsLoadImage from "./ftsLoadImage";
+import staxLoadImage from "./staxLoadImage";
 import getOnboardingStatePolling from "./getOnboardingStatePolling";
 import getGenuineCheckFromDeviceId from "./getGenuineCheckFromDeviceId";
 import getLatestAvailableFirmwareFromDeviceId from "./getLatestAvailableFirmwareFromDeviceId";
@@ -49,6 +51,8 @@ export const commandsById = {
   connectManager,
   listApps,
   ping,
+  publicKeyTweakAdd,
+  networkTroubleshoot,
   testApdu,
   initSwap,
   startExchange,
@@ -63,7 +67,7 @@ export const commandsById = {
   signMessage,
   getAppAndVersion,
   getDeviceInfo,
-  ftsLoadImage,
+  staxLoadImage,
   getOnboardingStatePolling,
   getGenuineCheckFromDeviceId,
   getLatestAvailableFirmwareFromDeviceId,

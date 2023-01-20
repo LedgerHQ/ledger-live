@@ -38,7 +38,7 @@ export function DeviceSelector({ onClick }: DeviceSelectorProps) {
   const devices = syncOnboarding?.enabled
     ? [
         {
-          id: "nanoFTS",
+          id: "stax",
           enabled: true,
         },
       ].concat(allDevices)

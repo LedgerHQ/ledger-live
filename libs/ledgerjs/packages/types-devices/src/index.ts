@@ -6,7 +6,7 @@ export enum DeviceModelId {
   nanoS = "nanoS",
   nanoSP = "nanoSP",
   nanoX = "nanoX",
-  nanoFTS = "nanoFTS",
+  stax = "stax",
 }
 /**
  * a DeviceModel contains all the information of a specific Ledger hardware wallet model.
@@ -26,6 +26,25 @@ export interface DeviceModel {
     writeCmdUuid: string;
     notifyUuid: string;
   }[];
+}
+
+/**
+ *
+ */
+export enum ChargingModes {
+  NONE = 0x00,
+  USB = 0x01,
+  QI = 0x02,
+}
+
+/**
+ * Series of flags to represent the health status of the Ledger hardware wallet battery.
+ */
+export interface BatteryStatusFlags {
+  charging: ChargingModes;
+  issueCharging: boolean;
+  issueTemperature: boolean;
+  issueBattery: boolean;
 }
 
 /**

@@ -218,7 +218,6 @@ export const CantScanQRCode = createCustomErrorClass("CantScanQRCode");
 export const FeeNotLoaded = createCustomErrorClass("FeeNotLoaded");
 export const FeeRequired = createCustomErrorClass("FeeRequired");
 export const FeeTooHigh = createCustomErrorClass("FeeTooHigh");
-export const DustLimit = createCustomErrorClass("DustLimit");
 export const PendingOperation = createCustomErrorClass("PendingOperation");
 export const SyncError = createCustomErrorClass("SyncError");
 export const PairingFailed = createCustomErrorClass("PairingFailed");
@@ -229,12 +228,48 @@ export const FirmwareOrAppUpdateRequired = createCustomErrorClass(
   "FirmwareOrAppUpdateRequired"
 );
 
+// Bitcoin family
+export const OpReturnDataSizeLimit =
+  createCustomErrorClass("OpReturnSizeLimit");
+export const DustLimit = createCustomErrorClass("DustLimit");
+
+// Language
 export const LanguageNotFound = createCustomErrorClass("LanguageNotFound");
 
 // db stuff, no need to translate
 export const NoDBPathGiven = createCustomErrorClass("NoDBPathGiven");
 export const DBWrongPassword = createCustomErrorClass("DBWrongPassword");
 export const DBNotReset = createCustomErrorClass("DBNotReset");
+
+/**
+ * Type of a Transport error used to represent all equivalent errors coming from all possible implementation of Transport
+ */
+export enum HwTransportErrorType {
+  Unknown = 0,
+  BleLocationServicesDisabled = 1,
+  BleBluetoothUnauthorized = 2,
+  BleScanStartFailed = 3,
+}
+
+/**
+ * Represents an error coming from any Transport implementation.
+ *
+ * Needed to map a specific implementation error into an error that
+ * can be managed by any code unaware of the specific Transport implementation
+ * that was used.
+ */
+export class HwTransportError extends Error {
+  type: HwTransportErrorType;
+
+  constructor(type: HwTransportErrorType, message: string) {
+    super(message);
+    this.name = "HwTransportError";
+    this.type = type;
+
+    // Needed as long as we target < ES6
+    Object.setPrototypeOf(this, HwTransportError.prototype);
+  }
+}
 
 /**
  * TransportError is used for any generic transport errors.
@@ -258,40 +293,42 @@ addCustomErrorDeserializer(
 );
 
 export const StatusCodes = {
-  PIN_REMAINING_ATTEMPTS: 0x63c0,
-  INCORRECT_LENGTH: 0x6700,
-  MISSING_CRITICAL_PARAMETER: 0x6800,
+  ACCESS_CONDITION_NOT_FULFILLED: 0x9804,
+  ALGORITHM_NOT_SUPPORTED: 0x9484,
+  CLA_NOT_SUPPORTED: 0x6e00,
+  CODE_BLOCKED: 0x9840,
+  CODE_NOT_INITIALIZED: 0x9802,
   COMMAND_INCOMPATIBLE_FILE_STRUCTURE: 0x6981,
-  SECURITY_STATUS_NOT_SATISFIED: 0x6982,
   CONDITIONS_OF_USE_NOT_SATISFIED: 0x6985,
-  INCORRECT_DATA: 0x6a80,
-  NOT_ENOUGH_MEMORY_SPACE: 0x6a84,
-  REFERENCED_DATA_NOT_FOUND: 0x6a88,
+  CONTRADICTION_INVALIDATION: 0x9810,
+  CONTRADICTION_SECRET_CODE_STATUS: 0x9808,
+  CUSTOM_IMAGE_BOOTLOADER: 0x662f,
+  CUSTOM_IMAGE_EMPTY: 0x662e,
   FILE_ALREADY_EXISTS: 0x6a89,
+  FILE_NOT_FOUND: 0x9404,
+  GP_AUTH_FAILED: 0x6300,
+  HALTED: 0x6faa,
+  INCONSISTENT_FILE: 0x9408,
+  INCORRECT_DATA: 0x6a80,
+  INCORRECT_LENGTH: 0x6700,
   INCORRECT_P1_P2: 0x6b00,
   INS_NOT_SUPPORTED: 0x6d00,
-  CLA_NOT_SUPPORTED: 0x6e00,
-  TECHNICAL_PROBLEM: 0x6f00,
-  OK: 0x9000,
-  MEMORY_PROBLEM: 0x9240,
-  NO_EF_SELECTED: 0x9400,
-  INVALID_OFFSET: 0x9402,
-  FILE_NOT_FOUND: 0x9404,
-  INCONSISTENT_FILE: 0x9408,
-  ALGORITHM_NOT_SUPPORTED: 0x9484,
   INVALID_KCV: 0x9485,
-  CODE_NOT_INITIALIZED: 0x9802,
-  ACCESS_CONDITION_NOT_FULFILLED: 0x9804,
-  CONTRADICTION_SECRET_CODE_STATUS: 0x9808,
-  CONTRADICTION_INVALIDATION: 0x9810,
-  CODE_BLOCKED: 0x9840,
-  MAX_VALUE_REACHED: 0x9850,
-  GP_AUTH_FAILED: 0x6300,
+  INVALID_OFFSET: 0x9402,
   LICENSING: 0x6f42,
-  HALTED: 0x6faa,
   LOCKED_DEVICE: 0x5515,
-  CUSTOM_IMAGE_EMPTY: 0x662e,
-  CUSTOM_IMAGE_BOOTLOADER: 0x662f,
+  MAX_VALUE_REACHED: 0x9850,
+  MEMORY_PROBLEM: 0x9240,
+  MISSING_CRITICAL_PARAMETER: 0x6800,
+  NO_EF_SELECTED: 0x9400,
+  NOT_ENOUGH_MEMORY_SPACE: 0x6a84,
+  OK: 0x9000,
+  PIN_REMAINING_ATTEMPTS: 0x63c0,
+  REFERENCED_DATA_NOT_FOUND: 0x6a88,
+  SECURITY_STATUS_NOT_SATISFIED: 0x6982,
+  TECHNICAL_PROBLEM: 0x6f00,
+  UNKNOWN_APDU: 0x6d02,
+  USER_REFUSED_ON_DEVICE: 0x5501,
 };
 
 export function getAltStatusMessage(code: number): string | undefined | null {

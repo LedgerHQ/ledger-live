@@ -172,6 +172,39 @@ export interface AccountBridge<T extends TransactionCommon> {
 
 type ExpectFn = (...args: Array<any>) => any;
 
+type CurrencyTransaction<T extends TransactionCommon> = {
+  name: string;
+  transaction:
+    | T
+    | ((
+        transaction: T,
+        account: Account,
+        accountBridge: AccountBridge<T>
+      ) => T);
+  expectedStatus?:
+    | Partial<TransactionStatusCommon>
+    | ((
+        account: Account,
+        transaction: T,
+        status: TransactionStatusCommon
+      ) => Partial<TransactionStatusCommon>);
+  test?: (
+    arg0: ExpectFn,
+    arg1: T,
+    arg2: TransactionStatusCommon,
+    arg3: AccountBridge<T>
+  ) => any;
+  apdus?: string;
+  testSignedOperation?: (
+    arg0: ExpectFn,
+    arg1: SignedOperation,
+    arg2: Account,
+    arg3: T,
+    arg4: TransactionStatusCommon,
+    arg5: AccountBridge<T>
+  ) => any;
+};
+
 /**
  *
  */
@@ -194,32 +227,7 @@ export type CurrenciesData<T extends TransactionCommon> = {
     implementations?: string[];
     raw: AccountRaw;
     FIXME_tests?: Array<string | RegExp>;
-    transactions?: Array<{
-      name: string;
-      transaction: T | ((arg0: T, arg1: Account, arg2: AccountBridge<T>) => T);
-      expectedStatus?:
-        | Partial<TransactionStatusCommon>
-        | ((
-            arg0: Account,
-            arg1: T,
-            arg2: TransactionStatusCommon
-          ) => Partial<TransactionStatusCommon>);
-      test?: (
-        arg0: ExpectFn,
-        arg1: T,
-        arg2: TransactionStatusCommon,
-        arg3: AccountBridge<T>
-      ) => any;
-      apdus?: string;
-      testSignedOperation?: (
-        arg0: ExpectFn,
-        arg1: SignedOperation,
-        arg2: Account,
-        arg3: T,
-        arg4: TransactionStatusCommon,
-        arg5: AccountBridge<T>
-      ) => any;
-    }>;
+    transactions?: Array<CurrencyTransaction<T>>;
     test?: (arg0: ExpectFn, arg1: Account, arg2: AccountBridge<T>) => any;
   }>;
   test?: (arg0: ExpectFn, arg1: CurrencyBridge) => any;

@@ -1,6 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Button, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
-import { ImagePreviewError } from "@ledgerhq/live-common/customImage/errors";
+import {
+  ImageMetadataLoadingError,
+  ImagePreviewError,
+} from "@ledgerhq/live-common/customImage/errors";
 import { NativeSyntheticEvent, ImageErrorEventData } from "react-native";
 import { useTranslation } from "react-i18next";
 import {
@@ -11,6 +14,9 @@ import {
 } from "@react-navigation/native";
 import { StackNavigationEventMap } from "@react-navigation/stack";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
+import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
+import { NFTMetadata } from "@ledgerhq/types-live";
 
 import {
   BaseComposite,
@@ -20,11 +26,14 @@ import { CustomImageNavigatorParamList } from "../../components/RootNavigator/ty
 import { NavigatorName, ScreenName } from "../../const";
 import {
   downloadImageToFile,
+  extractImageUrlFromNftMetadata,
   importImageFromPhoneGallery,
 } from "../../components/CustomImage/imageUtils";
 import { ImageFileUri } from "../../components/CustomImage/types";
-import { targetDimensions } from "./shared";
-import FramedImage from "../../components/CustomImage/FramedImage";
+import { targetDisplayDimensions } from "./shared";
+import FramedImage, {
+  previewConfig,
+} from "../../components/CustomImage/FramedImage";
 import ImageProcessor, {
   Props as ImageProcessorProps,
   ProcessorPreviewResult,
@@ -50,23 +59,56 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   const { params } = route;
   const { isPictureFromGallery, device } = params;
 
+  const isNftMetadata = "nftMetadataParams" in params;
+  const isImageUrl = "imageUrl" in params;
+  const isImageFileUri = "imageFileUri" in params;
+
+  const nftMetadataParams = isNftMetadata ? params.nftMetadataParams : [];
+
   const handleError = useCallback(
     (error: Error) => {
       console.error(error);
-      navigation.navigate(ScreenName.CustomImageErrorScreen, { error, device });
+      navigation.replace(ScreenName.CustomImageErrorScreen, { error, device });
     },
     [navigation, device],
   );
 
+  const [contract, tokenId, currencyId] = nftMetadataParams;
+  const nftMetadata = useNftMetadata(contract, tokenId, currencyId);
+
+  const { status, metadata } = nftMetadata as NFTResource & {
+    metadata: NFTMetadata;
+  };
+
+  const nftImageUri = extractImageUrlFromNftMetadata(metadata);
+
+  const imageFileUri = isImageFileUri ? params.imageFileUri : undefined;
+  const imageUrl = nftImageUri || (isImageUrl ? params.imageUrl : undefined);
+
+  useEffect(() => {
+    if (isNftMetadata && ["nodata", "error"].includes(status)) {
+      console.error("Nft metadata loading status", status);
+      navigation.replace(ScreenName.CustomImageErrorScreen, {
+        device,
+        error: new ImageMetadataLoadingError(status),
+      });
+    }
+  }, [device, isNftMetadata, navigation, status]);
+
   /** LOAD SOURCE IMAGE FROM PARAMS */
   useEffect(() => {
     let dead = false;
-    if ("imageFileUri" in params) {
+    if (imageFileUri) {
       setLoadedImage({
-        imageFileUri: params.imageFileUri,
+        imageFileUri,
       });
-    } else {
-      const { resultPromise, cancel } = downloadImageToFile(params);
+    } else if (imageUrl) {
+      if (isNftMetadata && ["loading", "queued"].includes(status)) {
+        return () => {
+          dead = true;
+        };
+      }
+      const { resultPromise, cancel } = downloadImageToFile({ imageUrl });
       resultPromise
         .then(res => {
           if (!dead) setLoadedImage(res);
@@ -82,14 +124,14 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     return () => {
       dead = true;
     };
-  }, [params, setLoadedImage, handleError]);
+  }, [handleError, imageFileUri, imageUrl, status, isNftMetadata]);
 
   const [croppedImage, setCroppedImage] = useState<CenteredResult | null>(null);
 
   const handleResizeError = useCallback(
     (error: Error) => {
       console.error(error);
-      navigation.navigate(ScreenName.CustomImageErrorScreen, { error, device });
+      navigation.replace(ScreenName.CustomImageErrorScreen, { error, device });
     },
     [navigation, device],
   );
@@ -104,7 +146,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   );
 
   useCenteredImage({
-    targetDimensions,
+    targetDimensions: targetDisplayDimensions,
     imageFileUri: loadedImage?.imageFileUri,
     onError: handleResizeError,
     onResult: handleResizeResult,
@@ -256,6 +298,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
                 onError={handlePreviewImageError}
                 fadeDuration={0}
                 source={{ uri: processorPreviewImage?.imageBase64DataUri }}
+                frameConfig={previewConfig}
               />
             </Flex>
           </Flex>

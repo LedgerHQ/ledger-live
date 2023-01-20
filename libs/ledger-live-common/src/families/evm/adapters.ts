@@ -1,7 +1,7 @@
 import eip55 from "eip55";
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
-import { Account, Operation, OperationType } from "@ledgerhq/types-live";
+import { Operation, OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "../../operation";
 import {
   Transaction as EvmTransaction,
@@ -14,13 +14,9 @@ import {
  * Adapter to convert a Ledger Live transaction to an Ethers transaction
  */
 export const transactionToEthersTransaction = (
-  tx: EvmTransaction,
-  // Account is necessary because some RPC nodes need to have the address
-  // into the transaction to estimate its fees or will throw
-  account: Account
+  tx: EvmTransaction
 ): ethers.Transaction => {
   const ethersTx = {
-    from: account.freshAddress,
     to: tx.recipient,
     value: tx.amount
       ? ethers.BigNumber.from(tx.amount.toFixed())

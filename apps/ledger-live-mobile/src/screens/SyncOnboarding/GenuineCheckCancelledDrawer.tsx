@@ -6,7 +6,7 @@ import {
   Flex,
   Text,
 } from "@ledgerhq/native-ui";
-import { ShieldCheckMedium } from "@ledgerhq/native-ui/assets/icons";
+import { WarningSolidMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
 
 export type Props = {
@@ -35,9 +35,9 @@ const GenuineCheckCancelledDrawer = ({
     >
       <Flex justifyContent="center" alignItems="center" flex={1} mt={9} mb={6}>
         <BoxedIcon
-          Icon={<ShieldCheckMedium color="warning.c100" size={24} />}
+          Icon={<WarningSolidMedium color="warning.c80" size={24} />}
           variant="circle"
-          backgroundColor="warning.c30"
+          backgroundColor="neutral.c30"
           borderColor="transparent"
           size={48}
         />

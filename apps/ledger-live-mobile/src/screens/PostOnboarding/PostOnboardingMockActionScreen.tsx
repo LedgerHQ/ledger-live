@@ -10,6 +10,7 @@ import {
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
 import { PostOnboardingNavigatorParamList } from "../../components/RootNavigator/types/PostOnboardingNavigator";
+import DeviceSetupView from "../../components/DeviceSetupView";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<
@@ -52,18 +53,20 @@ const PostOnboardingMockActionScreen = ({
   }, [complete, navigateToHub]);
 
   return (
-    <Flex p={6}>
-      <Text>
-        This is a mock screen for the post onboarding action:{"\n"}
-        <Text fontWeight="bold">{action?.id}</Text>
-      </Text>
-      <Button mt={6} type="main" onPress={handleCompleteAndGoToWallet}>
-        Complete action & go to Wallet
-      </Button>
-      <Button mt={6} type="main" onPress={handleCompleteAndGoToHub}>
-        Complete action & go back to onboarding hub
-      </Button>
-    </Flex>
+    <DeviceSetupView hasBackButton>
+      <Flex p={6}>
+        <Text>
+          This is a mock screen for the post onboarding action:{"\n"}
+          <Text fontWeight="bold">{action?.id}</Text>
+        </Text>
+        <Button mt={6} type="main" onPress={handleCompleteAndGoToWallet}>
+          Complete action & go to Wallet
+        </Button>
+        <Button mt={6} type="main" onPress={handleCompleteAndGoToHub}>
+          Complete action & go back to onboarding hub
+        </Button>
+      </Flex>
+    </DeviceSetupView>
   );
 };
 

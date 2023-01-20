@@ -23,6 +23,10 @@ export const syncIsConnected =
     }
   };
 
+export const openDebugMenu = createAction(
+  AppStateActionTypes.DEBUG_MENU_VISIBLE,
+);
+
 const setHasConnectedDeviceAction =
   createAction<AppStateSetHasConnectedDevicePayload>(
     AppStateActionTypes.HAS_CONNECTED_DEVICE,

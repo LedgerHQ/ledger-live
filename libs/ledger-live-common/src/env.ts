@@ -57,6 +57,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "Show tracking overlays on the app UI",
   },
+  DEBUG_THEME: {
+    def: false,
+    parser: boolParser,
+    desc: "Show theme debug overlay UI",
+  },
   API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
     def: "https://algorand.coin.ledger.com",
     parser: stringParser,
@@ -101,6 +106,21 @@ const envDefinitions = {
     parser: stringParser,
     def: "https://filecoin.coin.ledger.com",
     desc: "Filecoin API url",
+  },
+  API_NEAR_ARCHIVE_NODE: {
+    def: "https://near.coin.ledger.com/node/",
+    parser: stringParser,
+    desc: "Archive node endpoint for NEAR",
+  },
+  API_NEAR_INDEXER: {
+    def: "https://near.coin.ledger.com/indexer/",
+    parser: stringParser,
+    desc: "Datahub Indexer API for NEAR",
+  },
+  API_NEAR_STAKING_POSITIONS_API: {
+    def: "https://validators-near.coin.ledger.com/",
+    parser: stringParser,
+    desc: "NEAR staking positions API",
   },
   API_POLKADOT_INDEXER: {
     parser: stringParser,
@@ -287,6 +307,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "disable a problematic mechanism of our API",
   },
+  DISABLE_FW_UPDATE_VERSION_CHECK: {
+    def: false,
+    parser: boolParser,
+    desc: "disable the version check for firmware update eligibility",
+  },
   EIP1559_ENABLED_CURRENCIES: {
     def: "ethereum,ethereum_goerli,polygon",
     parser: stringArrayParser,
@@ -357,6 +382,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "enable an experimental swap interface",
   },
+  EXPERIMENTAL_EXECUTION_ON_RENDERER: {
+    def: false,
+    parser: boolParser,
+    desc: "enable an experimental execution of business logic to run on renderer side (LLD)",
+  },
   EXPLORER: {
     def: "https://explorers.api.live.ledger.com",
     parser: stringParser,
@@ -376,6 +406,16 @@ const envDefinitions = {
     def: "http://localhost:20000",
     parser: stringParser,
     desc: "Ledger satstack Bitcoin explorer API",
+  },
+  EXPORT_EXCLUDED_LOG_TYPES: {
+    def: "ble-frame",
+    parser: stringParser,
+    desc: "comma-separated list of excluded log types for exported logs",
+  },
+  EXPORT_MAX_LOGS: {
+    def: 5000,
+    parser: intParser,
+    desc: "maximum logs to keep for export",
   },
   DISABLE_APP_VERSION_REQUIREMENTS: {
     def: false,
@@ -480,6 +520,11 @@ const envDefinitions = {
     def: "",
     parser: stringParser,
     desc: "mock remote live app manifest",
+  },
+  MOCK_OS_VERSION: {
+    def: "",
+    parser: stringParser,
+    desc: "if defined, overrides the os and version. format: os@version. Example: Windows_NT@6.1.7601",
   },
   NFT_CURRENCIES: {
     def: "ethereum,polygon",
@@ -622,14 +667,9 @@ const envDefinitions = {
     desc: "enable visibility of experimental apps and tools in Platform Catalog",
   },
   PLATFORM_MANIFEST_API_URL: {
-    def: "https://cdn.live.ledger.com/platform/apps/v1/data.json",
+    def: "https://live-app-catalog.ledger.com/api/v1/apps",
     parser: stringParser,
     desc: "url used to fetch platform app manifests",
-  },
-  PLATFORM_MANIFEST_STAGING_API_URL: {
-    def: "https://cdn.live.ledger-stg.com/platform/apps/v1/data.json",
-    parser: stringParser,
-    desc: "url used to fetch platform app manifests (staging)",
   },
   PLATFORM_LOCAL_MANIFEST_JSON: {
     def: "",
@@ -693,7 +733,7 @@ const envDefinitions = {
   },
 };
 
-const getDefinition = (name: string): EnvDef<any> | null | undefined =>
+export const getDefinition = (name: string): EnvDef<any> | null | undefined =>
   envDefinitions[name];
 
 envDefinitions as Record<EnvName, EnvDef<any>>;

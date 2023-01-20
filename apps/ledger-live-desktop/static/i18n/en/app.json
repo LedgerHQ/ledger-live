@@ -102,6 +102,7 @@
     "addressCopied": "Address copied",
     "addressCopiedSuspicious": "Mismatch between the copied address and the one in the clipboard.",
     "experimentalFeature": "Experimental",
+    "featureFlags": "Feature Flags",
     "information": "Information",
     "search": "Search...",
     "searchWithoutEllipsis": "Search",
@@ -131,7 +132,7 @@
     "nanoS": "Nano S",
     "nanoSP": "Nano S Plus",
     "nanoX": "Nano X",
-    "nanoFTS": "Nano FTS",
+    "stax": "Stax",
     "blue": "Blue"
   },
   "operation": {
@@ -169,7 +170,10 @@
       "WITHDRAW": "Withdrawn",
       "REVOKE": "Revoked",
       "ACTIVATE": "Activated",
-      "REGISTER": "Registered"
+      "REGISTER": "Registered",
+      "STAKE": "Staked",
+      "UNSTAKE": "Unstaked",
+      "WITHDRAW_UNSTAKED": "Withdrawn"
     }
   },
   "byteSize": {
@@ -248,6 +252,8 @@
         "float": "Floating",
         "update": "Rates update in",
         "loading": "Loading...",
+        "loadingQuotes": "Loading quotes now",
+        "loadingDescription": "It will only take a moment to find the best options for you.",
         "name": {
           "title": "Provider",
           "tooltip": "Depending on the provider, you have to register with them by creating an account."
@@ -1203,8 +1209,11 @@
         "checkDeviceButton": "Run check again",
         "cancelButton": "Maybe later"
       },
-      "genuineCheckAnimationModal": {
-        "message": "Allow manager on {{deviceName}}"
+      "softwareCheckAllowSecureChannelModal": {
+        "title": "Allow manager on {{deviceName}}"
+      },
+      "softwareCheckLockedDeviceModal": {
+        "title": "Unlock your device"
       },
       "helpDrawer": {
         "title": "Need some help with your setup manual?",
@@ -1228,16 +1237,16 @@
   },
   "postOnboarding": {
     "postOnboardingScreen": {
-      "title": "Nice one.You're all set.",
-      "description": "Cheers for setting up your {{deviceName}}!",
-      "paragraph": "We have prepared for you some steps to start with. If you feel like exploring Ledger Live on your own, don't hesitate to skip this step, you can always come back to it.",
-      "bottomText": "Enjoy your travel into the Web3 securely with Ledger Live."
+      "title": "Next up, use your\nLedger Stax to... ",
+      "titleCompleted": "and that's a\nwrap!"
     },
     "postOnboardingContent": {
-      "title": "Nice one.You're all set.",
-      "description": "Here's what you can do next:",
-      "skipLink": "Skip to the app",
-      "skipLinkInDrawer": "I'll do this later"
+      "skipLink": "I'll do this later"
+    },
+    "postOnboardingBanner": {
+      "title": "What's next for your Ledger Stax?",
+      "description": "Claim the Infinity NFT, customize it's lock screen, or\ntransfer your assets from other exchanges.",
+      "link": "See what's next"
     }
   },
   "hideNftCollection": {
@@ -1715,7 +1724,7 @@
     "swap": {
       "notice": {
         "default": "Verify the Swap details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them.",
-        "cic": "Verify the Swap details on your device before sending it. CIC may need to perform additional verification for some transactions, resulting in a delay."
+        "provider": "Verify the Swap details on your device before sending it. {{providerName}} may need to perform additional verification for some transactions, resulting in a delay."
       },
       "confirm": "Confirm Swap transaction",
       "amountSent": "Amount to send",
@@ -2077,14 +2086,6 @@
           "dismiss": "Not now",
           "stake": "Stake with {{provider}}"
         },
-        "ethereum": {
-          "title": "Grow your ETH. Stake now.",
-          "description": "Stake your Ethereum with Lido and earn rewards daily. No lock-up period. No minimum deposit.",
-          "kiln": {
-            "title": "Don’t just HODL. Grow your ETH.",
-            "description": "Got more than 32 ETH? Earn passive rewards by securely staking your ETH with Kiln."
-          }
-        },
         "cosmos": {
           "title": "Grow your ATOM. Stake with Ledger validator.",
           "description": "Stake your ATOM with the trusted Ledger validator. Your coins stay yours, backed by Ledger’s uncompromising security."
@@ -2145,8 +2146,8 @@
         "ethereumGasPrice": "Gas price",
         "ethereumMaxFee": "Max Fee ({{unitName}})",
         "ethereumPriorityFee": "Max Priority Fee ({{unitName}})",
-        "nextBlock": "Next block: {{nextBaseFee}}",
-        "suggestedPriorityFee": "Suggested: {{lowPriorityFee}} - {{highPriorityFee}} {{unitName}}",
+        "nextBlock": "Next block",
+        "suggested": "Suggested",
         "unitPerByte": "{{unit}} per byte",
         "nft": "NFT",
         "nftQuantity": "Quantity"
@@ -2185,6 +2186,9 @@
   "releaseNotes": {
     "title": "Release notes",
     "version": "Ledger Live {{versionNb}}"
+  },
+  "troubleshootNetwork": {
+    "title": "Troubleshoot networking"
   },
   "systemLanguageAvailable": {
     "title": "Change your app's language?",
@@ -2243,6 +2247,9 @@
     }
   },
   "tron": {
+    "receive": {
+      "newAddressTRC20": "You first need to send at least 0.1 TRX to this address to activate it."
+    },
     "voting": {
       "emptyState": {
         "description": "You can now earn rewards by freezing and voting.",
@@ -2313,6 +2320,15 @@
             }
           }
         }
+      }
+    }
+  },
+  "tezos": {
+    "objkt": {
+      "card": {
+        "title": "NFT (Non Fungible Tokens) collection",
+        "description": "You can see you Tezos NFTs directly through Objkt inside Ledger Live.",
+        "cta": "See my NFTs on Objkt"
       }
     }
   },
@@ -3404,6 +3420,159 @@
       }
     }
   },
+  "ethereum": {
+    "stake": {
+      "title": "Earn Ethereum",
+      "lido": {
+        "tag": "No minimum",
+        "description": "Stake your Ethereum with Lido and earn rewards daily. No lock-up period. No minimum."
+      },
+      "kiln": {
+        "tag": "Requires 32 ETH",
+        "description": "Got more than 32 ETH? Earn rewards daily by securely staking your ETH with Kiln."
+      },
+      "providerTitle": "Earn with {{provider}}",
+      "providerLink": "Learn more about {{provider}}"
+    }
+  },
+  "near": {
+    "account": {
+      "stakedBalance": "Staked balance",
+      "stakedBalanceTooltip": "This amount is currently staked with validators.",
+      "availableBalance": "Withdawable balance",
+      "availableBalanceTooltip": "This amount has been unstaked and is currently able to be withdrawn.",
+      "pendingBalance": "Pending balance",
+      "pendingBalanceTooltip": "This amount has been unstaked and is currently pending availability.",
+      "storageUsageBalance": "Minimum balance",
+      "storageUsageBalanceTooltip": "This amount is reserved for storage and transactions, and is the minimum balance that your account must maintain to remain active.",
+      "subHeader": {
+        "cardTitle": "Powered by Figment",
+        "moreInfo": "More info",
+        "drawerTitle": "Powered by Figment",
+        "title": "The NEAR token is now available on Ledger Live",
+        "description": "You can now start to manage your NEAR tokens and secure them through Ledger Live.",
+        "description2": "The NEAR token is native to the NEAR chain and is used for everything from transactions, staking and many upcoming features.",
+        "website": "Powered by Figment"
+      }
+    },
+    "operationDetails": {
+      "extra": {
+        "stakedAmount": "Staked amount"
+      }
+    },
+    "stake": {
+      "emptyState": {
+        "description": "You can earn NEAR rewards by staking your assets.",
+        "info": "How Staking Works",
+        "earnRewards": "Earn rewards"
+      },
+      "table": {
+        "header": "Staking Position(s)",
+        "stake": "Add",
+        "staked": "Staked",
+        "pending": "Pending Release",
+        "available": "Withdrawable"
+      },
+      "unstake": "Unstake",
+      "withdraw": "Withdraw",
+      "activeTooltip": "Staked amounts generate rewards",
+      "inactiveTooltip": "Unstaked amounts do not generate rewards",
+      "commission": "Commission",
+      "totalStake": "Total Stake",
+      "minSafeWarning": "Not enough funds",
+      "flow": {
+        "title": "Stake",
+        "steps": {
+          "starter": {
+            "description": "You may earn rewards by staking your NEAR assets to a validator.",
+            "bullet": [
+              "You keep ownership of staked assets",
+              "Stake using your Ledger device",
+              "Assets will be available 52 - 65 hours after unstaking"
+            ],
+            "warning": {
+              "description": "Choose your validator wisely: Part of your staked assets may be irrevocably lost if the validator does not behave appropriately."
+            }
+          },
+          "amount": {
+            "title": "Amount"
+          },
+          "validator": {
+            "title": "Validators",
+            "ledgerByFigmentTC": "Ledger by Figment T&Cs"
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully staked your assets",
+              "text": "Your account balance will be updated when the blockchain confirms the transaction.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "unstake": {
+      "disabledTooltip": "There aren't enough staked assets to unstake",
+      "flow": {
+        "title": "Unstake",
+        "steps": {
+          "amount": {
+            "title": "Amount",
+            "subtitle": "The unstaking process takes <0>52 to 65 hours</0> to finalize.",
+            "warning": "Rewards will be immediately cashed in. The unstaked amount will be available for withdrawal after the <0>52 to 65 hour timelock</0>.",
+            "fields": {
+              "validator": "Validator",
+              "amount": "Amount to unstake"
+            }
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully unstaked your assets.",
+              "description": "<0>{{amount}}</0> were unstaked from <0>{{validator}}</0>",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "withdraw": {
+      "disabledTooltip": "There aren't enough assets to withdraw",
+      "flow": {
+        "title": "Withdraw",
+        "steps": {
+          "amount": {
+            "title": "Amount",
+            "fields": {
+              "validator": "Validator",
+              "amount": "Amount to withdraw"
+            }
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully withdrawn your assets.",
+              "description": "<0>{{amount}}</0> were withdrawn from <0>{{validator}}</0>",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    }
+  },
   "delegation": {
     "title": "Earn rewards",
     "header": "Delegation",
@@ -3553,8 +3722,10 @@
       "debugAppsDesc": "Display and allow opening debug tagged platform apps.",
       "experimentalApps": "Allow experimental apps",
       "experimentalAppsDesc": "Display and allow opening experimental tagged platform apps.",
-      "catalogServer": "Set the catalog provider",
-      "catalogServerDesc": "Switch between multiple platform apps sources",
+      "catalogUrl": "Set the catalog apps provider",
+      "catalogUrlDesc": "Enter your custom catalog provider URL",
+      "catalogRampServer": "Set the buy / sell providers",
+      "catalogRampServerDesc": "Switch between multiple trading providers",
       "enablePlatformDevTools": "Enable platform dev tools",
       "enablePlatformDevToolsDesc": "Enable opening platform apps dev tools window",
       "featureFlagsTitle": "Defined feature flags used in Ledger Live",
@@ -3562,6 +3733,9 @@
       "featureFlagsEdit": "Edit",
       "featureFlagsRestore": "Restore",
       "featureFlagsOverride": "Override",
+      "featureFlagsRestoreAll": "Restore all flags values",
+      "showButtonDesc": "Always display the Feature Flags button in the Sidebar",
+      "buttonTitle": "Flags overridden locally",
       "firebaseProject": "Firebase project targeted by this build:",
       "addLocalApp": "Add a local app",
       "addLocalAppDesc": "Browse local files and add a local app using a local manifest",
@@ -3613,13 +3787,13 @@
     "experimental": {
       "disclaimer": "These are experimental features we provide on an \"as is\" basis for our tech savvy community to test. They may change, break or be removed at any time. By enabling them, you agree to use them at your own risk.",
       "features": {
-        "apiTrongridProxy": {
-          "title": "use TronGrid.io",
-          "description": "Use trongrid directly without ledger proxy"
-        },
         "experimentalCurrencies": {
           "title": "Experimental integrations",
           "description": "Use available experimental crypto assets integrations."
+        },
+        "experimentalExecutionOnRenderer": {
+          "title": "Experimental networking",
+          "description": "Use experimental networking to optimize your Ledger Live experience with your VPN. Activate this only if your current VPN causes system errors."
         },
         "experimentalLanguages": {
           "title": "Translation testing",
@@ -3661,11 +3835,11 @@
           "title": "Test Post Onboarding",
           "description": "Test all post onboarding features"
         },
-        "1559DeactivateGate" : {
+        "1559DeactivateGate": {
           "title": "Deactivate EIP1559 minimum priority fee gate",
           "description": "This will allow a transaction to be sent without any minimum priority fee expected. This may result in a transaction getting stuck in the mempool forever."
         },
-        "1559CustomPriorityLowerGate" : {
+        "1559CustomPriorityLowerGate": {
           "title": "Custom priority fee gate",
           "description": "Customize the percentage of our estimated minimal priority fee allowed for an advanced EIP1559 transaction"
         }
@@ -3709,6 +3883,11 @@
       "title": "Save logs",
       "desc": "Saving Ledger Live logs may be needed for troubleshooting purposes.",
       "btn": "Save"
+    },
+    "troubleshootNetwork": {
+      "title": "Troubleshoot networking",
+      "desc": "Run a checklist to assess networking conditions for troubleshooting purposes.",
+      "btn": "Troubleshoot"
     },
     "accounts": {
       "hideEmptyTokens": {
@@ -4514,6 +4693,9 @@
       "claimRewardCompound": "validator that will receive the rewards",
       "optIn": "recipient",
       "nominate": "validator",
+      "stake": "validator",
+      "unstake": "validator",
+      "withdraw": "validator",
       "erc721": {
         "transfer": "recipient"
       },
@@ -4751,6 +4933,10 @@
       "title": "Sorry, it looks like your device disconnected",
       "description": "Please reconnect and try again."
     },
+    "EConnReset": {
+      "title": "The Ledger application store can't be reached",
+      "description": "Your internet connection may be down or using unusual configuration. Start by verifying if anything is blocking your connection (proxy or firewall). If the problem persists click below for solutions or reach out to our customer support."
+    },
     "EnpointConfig": {
       "title": "Invalid endpoint",
       "description": "Please provide a valid endpoint"
@@ -4862,6 +5048,10 @@
     },
     "NotEnoughGas": {
       "title": "The parent account balance is insufficient for network fees"
+    },
+    "OperatingSystemOutdated": {
+      "title": "Your Operating System version is outdated",
+      "description": "Please upgrade your operating system and retry. You can check the article below to understand why Ledger Live is not supported on your current operating system version."
     },
     "PasswordsDontMatch": {
       "title": "The Passwords don't match",
@@ -5105,7 +5295,7 @@
       "title": "Amount to freeze cannot be lower than 1"
     },
     "TronSendTrc20ToNewAccountForbidden": {
-      "title": "Sending TRC20 to a new account won't activate it",
+      "title": "You first need to send at least 0.1 TRX to this address to enable TRC20 token reception.",
       "description": "The recipient account must be activated prior to sending TRC20 to it. Send either TRX or TRC10 to an account to activate it."
     },
     "TronUnexpectedFees": {
@@ -5119,7 +5309,7 @@
       "description": "Signature must be applied within 30 seconds. Please try again."
     },
     "TronNotEnoughEnergy": {
-      "title": "Not enough Energy to send this token"
+      "title": "Energy is lower than necessary. You might pay up to 20TRX in fees."
     },
     "PairingFailed": {
       "title": "Pairing unsuccessful",
@@ -5270,6 +5460,9 @@
     "StellarSourceHasMultiSign": {
       "title": "Please disable multisign to make Stellar transactions"
     },
+    "StellarBurnAddressError": {
+      "title": "A problem occurred while trying to add a Stellar account"
+    },
     "HederaAddAccountError": {
       "title": "Your account has not been added. Please try again."
     },
@@ -5317,10 +5510,42 @@
       "title": "Image load refused on device (TODO: final wording)",
       "description": "If this image wasn't the right fit, you can try again with another image."
     },
+    "NearNewAccountWarning": {
+      "title": "The recipient account is not created yet. The protocol requires a {{formattedNewAccountStorageCost}} transfer to create it."
+    },
+    "NearNewNamedAccountError": {
+      "title": "The recipient account is not created yet. It needs to be created in the NEAR wallet."
+    },
+    "NearActivationFeeNotCovered": {
+      "title": "This amount doesn't cover the {{formattedNewAccountStorageCost}} storage cost."
+    },
+    "NearUseAllAmountStakeWarning": {
+      "title": "Ensure you have enough balance left for future transaction fees"
+    },
+    "NearNotEnoughStaked": {
+      "title": "Insuffient staked balance"
+    },
+    "NearNotEnoughAvailable": {
+      "title": "Insufficient withdrawable balance"
+    },
+    "NearRecommendUnstake": {
+      "title": "Please unstake and withdraw funds before emptying the account"
+    },
+    "NearStakingThresholdNotMet": {
+      "title": "Amount needs to be at least {{threshold}}"
+    },
     "LockedDeviceError": {
       "title": "Your device is locked",
       "description": "Unlock your device and try again.",
       "descriptionWithProductName": "Unlock your {{ productName }} and try again."
+    },
+    "DeviceNotOnboardedError": {
+      "title": "Your device is not ready to use yet",
+      "titleWithProductName": "{{ productName }} is not ready to use yet",
+      "description": "You need to setup your device first.\nWe will guide you through the setup process.",
+      "descriptionWithProductName": "You need to setup your {{ productName }} first.\nWe will guide you through the setup process.",
+      "goToOnboardingButton": "Set up my device",
+      "goToOnboardingButtonWithProductName": "Set up my {{ productName }}"
     }
   },
   "cryptoOrg": {
@@ -5383,8 +5608,7 @@
     "postOnboarding": {
       "title": "Personalize my device",
       "description": "By customizing the screen",
-      "actionCompletedPopupLabel": "Device personalized",
-      "actionCompletedHubTitle": "That screen is looking neat."
+      "actionCompletedPopupLabel": "Device personalized"
     },
     "customImageSet": "Custom image set",
     "finishCTA": "Finish"

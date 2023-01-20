@@ -7,7 +7,9 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   AmountRequired,
 } from "@ledgerhq/errors";
+
 import { fromTransactionRaw } from "./transaction";
+import { estimatedFeeSafetyRate } from "./utils";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const hedera: CurrenciesData<Transaction> = {
@@ -80,6 +82,24 @@ const hedera: CurrenciesData<Transaction> = {
               amount: new NotEnoughBalance(),
             },
             warnings: {},
+          },
+        },
+        {
+          name: "Send max",
+          transaction: fromTransactionRaw({
+            family: "hedera",
+            recipient: "0.0.751515",
+            amount: "1000000000000000",
+            useAllAmount: true,
+          }),
+          expectedStatus: (account, _, status) => {
+            return {
+              amount: account.balance.minus(
+                status.estimatedFees.toNumber() * estimatedFeeSafetyRate
+              ),
+              errors: {},
+              warnings: {},
+            };
           },
         },
       ],

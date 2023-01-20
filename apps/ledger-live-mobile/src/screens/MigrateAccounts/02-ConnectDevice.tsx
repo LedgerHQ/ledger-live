@@ -4,10 +4,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
+import { Flex } from "@ledgerhq/native-ui";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../analytics";
 import { ScreenName } from "../../const";
 import SelectDevice from "../../components/SelectDevice";
+import SelectDevice2 from "../../components/SelectDevice2";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import DeviceActionModal from "../../components/DeviceActionModal";
 import type { MigrateAccountsNavigatorParamList } from "../../components/RootNavigator/types/MigrateAccountsFlowNavigator";
@@ -22,6 +25,9 @@ type Props = StackNavigatorProps<
 export default function ConnectDevice({ navigation, route }: Props) {
   const { colors } = useTheme();
   const [device, setDevice] = useState<Device | null>(null);
+
+  const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
+
   const onResult = useCallback(
     result => {
       setDevice(null);
@@ -45,12 +51,18 @@ export default function ConnectDevice({ navigation, route }: Props) {
       ]}
     >
       <TrackScreen category="MigrateAccount" name="ConnectDevice" />
-      <NavigationScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContainer}
-      >
-        <SelectDevice onSelect={setDevice} autoSelectOnAdd />
-      </NavigationScrollView>
+      {newDeviceSelectionFeatureFlag?.enabled ? (
+        <Flex px={16} py={8} flex={1}>
+          <SelectDevice2 onSelect={setDevice} stopBleScanning={!!device} />
+        </Flex>
+      ) : (
+        <NavigationScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContainer}
+        >
+          <SelectDevice onSelect={setDevice} autoSelectOnAdd />
+        </NavigationScrollView>
+      )}
       <DeviceActionModal
         action={action}
         device={device}

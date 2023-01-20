@@ -22,7 +22,7 @@ export async function runSignTransaction(
 ): Promise<string> {
   const btcNew = new BtcNew(client);
   // btc is needed to perform some functions like splitTransaction.
-  const btc = new Btc(transport);
+  const btc = new Btc({ transport });
   const accountType = getAccountType(testTx.vin[0], btc);
   const additionals: string[] = [];
   if (accountType == StandardPurpose.p2wpkh) {
@@ -82,9 +82,9 @@ export async function runSignTransaction(
       logCallback("CALLBACK: signature requested"),
     onDeviceStreaming: (arg) => logCallback("CALLBACK: " + JSON.stringify(arg)),
   };
-  logCallback("Start createPaymentTransactionNew");
-  const tx = await btcNew.createPaymentTransactionNew(arg);
-  logCallback("Done createPaymentTransactionNew");
+  logCallback("Start createPaymentTransaction");
+  const tx = await btcNew.createPaymentTransaction(arg);
+  logCallback("Done createPaymentTransaction");
   // console.log(callbacks);
   return tx;
 }
