@@ -324,7 +324,7 @@ dependencies {
     androidTestImplementation('com.wix:detox:+')
     implementation 'com.facebook.soloader:soloader:0.10.4+'
 
-    implementation project(':react-native-video')
+    compile project(':react-native-video')
     implementation "androidx.appcompat:appcompat:1.0.0"
 
     // Adjust
