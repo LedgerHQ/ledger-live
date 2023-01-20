@@ -156,7 +156,7 @@ describe("useProviderRates", () => {
 
     expect(setExchangeRate).toBeCalledWith(
       expect.objectContaining({
-        provider: "ftx",
+        provider: "changelly",
         tradeMethod: "fixed",
       })
     );
@@ -166,7 +166,7 @@ describe("useProviderRates", () => {
         rate: new BigNumber(1),
         toAmount: new BigNumber(1),
         magnitudeAwareRate: new BigNumber(1),
-        provider: "ftx",
+        provider: "changelly",
         providerType: "CEX",
         tradeMethod: "float",
       });
@@ -176,7 +176,7 @@ describe("useProviderRates", () => {
 
     expect(setExchangeRate).toBeCalledWith(
       expect.objectContaining({
-        provider: "ftx",
+        provider: "changelly",
         tradeMethod: "float",
       })
     );
@@ -213,7 +213,10 @@ describe("useProviderRates", () => {
       initialProps: baseInitalProps,
     });
     await waitForNextUpdate({ timeout: 1000 });
-    expect(result.current.rates.value).toMatchObject([mockedRates[1]]);
+    expect(result.current.rates.value).not.toContain(
+      mockedRatesWithSingleError[0]
+    );
+    expect(result.current.rates.value?.length).toEqual(3);
     expect(result.current.rates.status).toBe("success");
   });
 
