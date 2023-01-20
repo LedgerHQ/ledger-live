@@ -59,6 +59,7 @@ const currencyBridge: CurrencyBridge = {
   preload,
   hydrate,
 };
+
 const accountBridge: AccountBridge<Transaction> = {
   estimateMaxSpendable,
   createTransaction,
@@ -76,6 +77,7 @@ const accountBridge: AccountBridge<Transaction> = {
     });
   },
 };
+
 export default {
   currencyBridge,
   accountBridge,

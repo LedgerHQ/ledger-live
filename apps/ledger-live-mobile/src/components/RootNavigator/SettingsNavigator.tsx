@@ -58,6 +58,7 @@ import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWa
 import PostOnboardingDebugScreen from "../../screens/PostOnboarding/PostOnboardingDebugScreen";
 import { SettingsNavigatorStackParamList } from "./types/SettingsNavigator";
 import DebugTermsOfUse from "../../screens/Settings/Debug/Features/TermsOfUse";
+import CameraPermissions from "../../screens/Settings/Debug/Debugging/CameraPermissions";
 
 const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 
@@ -392,6 +393,10 @@ export default function SettingsNavigator() {
       <Stack.Screen
         name={ScreenName.PostOnboardingDebugScreen}
         component={PostOnboardingDebugScreen}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugCameraPermissions}
+        component={CameraPermissions}
       />
     </Stack.Navigator>
   );
