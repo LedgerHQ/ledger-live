@@ -64,6 +64,10 @@ export class SwapPage {
     await this.quoteContainer(providerName, exchangeType).click();
   }
 
+  async waitForExchangeToBeAvailable() {
+    await this.exchangeButton.isEnabled();
+  }
+
   async confirmExchange() {
     await this.exchangeButton.click();
   }

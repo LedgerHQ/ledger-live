@@ -7,10 +7,6 @@ import { Layout } from "../../models/Layout";
 
 test.use({ userdata: "1AccountBTC1AccountETH" });
 
-// process.env.PWDEBUG = "1";
-
-// FIXME: Sometimes, on slow machines, swap mock events are not emitted.
-
 test.describe.parallel("Swap", () => {
   test("Swap with Centralised Exchange", async ({ page }) => {
     const swapPage = new SwapPage(page);
@@ -28,7 +24,8 @@ test.describe.parallel("Swap", () => {
 
     await test.step("Select Max Spendable", async () => {
       await swapPage.sendMax();
-      await layout.waitForLoadingSpinner();
+      await layout.waitForLoadingSpinnerToHaveDisappeared();
+      await swapPage.waitForExchangeToBeAvailable();
       await expect.soft(page).toHaveScreenshot("max-spendable-swap.png");
     });
 
