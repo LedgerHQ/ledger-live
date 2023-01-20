@@ -1,5 +1,6 @@
 import { readFileSync } from "fs";
 import { by, element, expect, waitFor } from "detox";
+import { Direction } from "react-native-modal";
 
 const DEFAULT_TIMEOUT = 60000;
 
@@ -15,7 +16,7 @@ export function waitForElementByText(text: string, timeout?: number) {
     .withTimeout(timeout || DEFAULT_TIMEOUT);
 }
 
-export  function getElementById(id: string) {
+export function getElementById(id: string) {
   return element(by.id(id));
 }
 
@@ -35,10 +36,7 @@ export function tapByText(text: string, index?: number) {
     .tap();
 }
 
-export function tapByElement(
-  elem: Detox.IndexableNativeElement,
-  index = 0,
-) {
+export function tapByElement(elem: Detox.IndexableNativeElement, index = 0) {
   return elem.atIndex(index || 0).tap();
 }
 
@@ -61,14 +59,26 @@ export async function typeTextByElement(
   await elem.typeText(text);
 }
 
+export async function scrollToText(
+  text: string,
+  scrollViewId: string,
+  pixels: number = 100,
+  direction: Direction = "down",
+) {
+  await waitFor(getElementByText(text))
+    .toBeVisible()
+    .whileElement(by.id(scrollViewId)) // where some is your ScrollView testID
+    .scroll(pixels, direction);
+}
+
 /**
  * Waits for a specified amount of time
  * /!\ Do not use it to wait for a specific element, use waitFor instead.
  * @param {number} ms
  */
 export async function delay(ms: number) {
-   return new Promise(resolve => {
-     setTimeout(() => {
+  return new Promise(resolve => {
+    setTimeout(() => {
       resolve("delay complete");
     }, ms);
   });

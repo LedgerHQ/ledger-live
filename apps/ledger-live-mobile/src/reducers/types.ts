@@ -231,6 +231,7 @@ export type NotificationsSettings = {
   areNotificationsAllowed: boolean;
   announcementsCategory: boolean;
   recommendationsCategory: boolean;
+  largeMoverCategory: boolean;
 };
 
 // === WALLET CONNECT STATE ===
