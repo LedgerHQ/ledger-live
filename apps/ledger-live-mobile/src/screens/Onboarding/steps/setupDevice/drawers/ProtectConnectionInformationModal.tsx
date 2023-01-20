@@ -1,16 +1,11 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Linking } from "react-native";
-import {
-  Flex,
-  Button,
-  Icons,
-  ScrollListContainer,
-  Box,
-} from "@ledgerhq/native-ui";
+import { Flex, Icons, ScrollListContainer, Box } from "@ledgerhq/native-ui";
 import { ModalHeader } from "@ledgerhq/native-ui/components/Layout/Modals/BaseModal";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { urls } from "../../../../../config/urls";
+import Button from "../../../../../components/wrappedUi/Button";
 
 const ProtectConnectionInformationModal = () => {
   const { t } = useTranslation();
@@ -48,6 +43,10 @@ const ProtectConnectionInformationModal = () => {
           size="large"
           onPress={handlePressLearnMore}
           Icon={Icons.ExternalLinkMedium}
+          event={"button_clicked"}
+          eventProperties={{
+            button: "Learn more",
+          }}
           mb={3}
         >
           {t("common.learnMore")}
@@ -57,6 +56,10 @@ const ProtectConnectionInformationModal = () => {
           size="large"
           onPress={handlePressContactSupport}
           Icon={Icons.ExternalLinkMedium}
+          event={"link_clicked"}
+          eventProperties={{
+            button: "Contact Ledger Support",
+          }}
         >
           {t("onboarding.stepProtect.extraInfo.supportLink")}
         </Button>
