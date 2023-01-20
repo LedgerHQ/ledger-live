@@ -13,9 +13,6 @@ const useRefreshRates = (swap: SwapDataType, { pause }: { pause: boolean }) => {
     clearTimeout(refreshInterval.current);
 
     refreshInterval.current = setTimeout(() => {
-      console.log("useRefreshRates, calling refetchRates", refreshTime);
-      console.log("useRefreshRates, pause = ", pause);
-
       if (!pause) {
         swap.refetchRates();
       }
