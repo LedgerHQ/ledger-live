@@ -1,10 +1,11 @@
 import React, { memo, useMemo, useCallback } from "react";
 
 import { App } from "@ledgerhq/types-live";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 import { State, Action } from "@ledgerhq/live-common/apps/index";
 import { useNotEnoughMemoryToInstall } from "@ledgerhq/live-common/apps/react";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import AppIcon from "./AppIcon";
@@ -61,15 +62,17 @@ const AppRow = ({
   setStorageWarning,
   optimisticState,
 }: Props) => {
+  const appAuthorNameFeature = useFeature("appAuthorName");
   const { name, bytes, version: appVersion, displayName, authorName } = app;
   const { installed, deviceInfo } = state;
+  const { t } = useTranslation();
 
   const isInstalled = useMemo(
     () => installed.find(i => i.name === name),
     [installed, name],
   );
 
-  const developedBy = authorName ? authorName : " 3rd party";
+  const developedBy = authorName || t("manager.appList.thirdParty");
 
   const version = (isInstalled && isInstalled.version) || appVersion;
   const availableVersion =
@@ -97,9 +100,11 @@ const AppRow = ({
         >
           {displayName}
         </Text>
-        <Text variant="tiny" fontWeight="medium" color="neutral.c70">
-          {"by"+developedBy}
-        </Text>
+        {appAuthorNameFeature?.enabled && (
+           <Text variant="tiny" fontWeight="medium" color="neutral.c70">
+             {`${t('manager.appList.developedBy')} ${developedBy}`}
+           </Text>
+         )}
       </LabelContainer>
       <VersionContainer borderColor="neutral.c40" mx={3}>
         <Text

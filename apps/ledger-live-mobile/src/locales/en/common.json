@@ -3730,7 +3730,9 @@
       "noResultsFound": "No results found",
       "noResultsDesc": "Please verify the spelling and try again",
       "versionNew": "(NEW{{newVersion}})",
-      "searchApps": "Search"
+      "searchApps": "Search",
+      "developedBy": "by",
+      "thirdParty": "3rd party"
     },
     "uninstall": {
       "title": "Uninstall",

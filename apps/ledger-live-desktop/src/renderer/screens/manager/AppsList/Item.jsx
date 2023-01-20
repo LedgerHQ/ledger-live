@@ -6,7 +6,7 @@ import type { App } from "@ledgerhq/types-live";
 import type { State, Action, InstalledItem } from "@ledgerhq/live-common/apps/types";
 
 import styled from "styled-components";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 
 import ByteSize from "~/renderer/components/ByteSize";
 import Text from "~/renderer/components/Text";
@@ -19,6 +19,7 @@ import IconInfoCircleFull from "~/renderer/icons/InfoCircleFull";
 import AppActions from "./AppActions";
 
 import AppIcon from "./AppIcon";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const AppRow = styled.div`
   display: flex;
@@ -70,8 +71,10 @@ const Item: React$ComponentType<Props> = ({
   setAppUninstallDep,
   addAccount,
 }: Props) => {
+  const appAuthorNameFeature = useFeature("appAuthorName");
   const { name, type, authorName } = app;
   const { deviceModel, deviceInfo } = state;
+  const { t } = useTranslation();
 
   const notEnoughMemoryToInstall = useNotEnoughMemoryToInstall(optimisticState, name);
 
@@ -81,8 +84,8 @@ const Item: React$ComponentType<Props> = ({
 
   const currencySupported = !!currency && isCurrencySupported(currency);
   const isLiveSupported = currencySupported || ["swap", "plugin"].includes(type);
-  
-  const developedBy = authorName ? authorName : " 3rd party";
+
+  const developedBy = authorName || t("manager.applist.item.thirdParty");
 
   const onAddAccount = useCallback(() => {
     if (addAccount) addAccount(currency);
@@ -151,14 +154,18 @@ const Item: React$ComponentType<Props> = ({
           </>
         ) : null}
       </Box>
-      <Box flex="0.7" horizontal alignContent="center" justifyContent="flex-start" ml={5}>
-          <>
-            <Ellipsis ml={2} ff="Inter|Regular" color="palette.text.shade60" fontSize={3}>
-              <Trans i18nKey="manager.applist.item.developedBy" />
-              <Text ff="Inter|Bold" color="palette.text.shade100" fontSize={3}>{developedBy}</Text>
-            </Ellipsis>
-          </>
+      {appAuthorNameFeature?.enabled && (
+        <Box flex="0.7" horizontal alignContent="center" justifyContent="flex-start" ml={5}>
+        <>
+          <Ellipsis ml={2} ff="Inter|Regular" color="palette.text.shade60" fontSize={3}>
+            <Trans i18nKey="manager.applist.item.developedBy" />
+            <Text ff="Inter|Bold" color="palette.text.shade100" fontSize={3}>
+              {developedBy}
+            </Text>
+          </Ellipsis>
+        </>
       </Box>
+      )}
       <AppActions
         state={state}
         app={app}

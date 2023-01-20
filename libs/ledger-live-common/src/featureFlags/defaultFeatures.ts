@@ -169,4 +169,10 @@ export const defaultFeatures: DefaultFeatures = {
   walletNftGallery: {
     enabled: false,
   },
+  appSpecificSupportLink: {
+    enabled: true,
+  },
+  appAuthorName: {
+    enabled: true,
+  },
 };

@@ -6,6 +6,7 @@ import manager from "@ledgerhq/live-common/manager/index";
 import { useHistory } from "react-router-dom";
 import type { App } from "@ledgerhq/types-live";
 import type { State, Action, InstalledItem } from "@ledgerhq/live-common/apps/types";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 import styled from "styled-components";
 import { Trans } from "react-i18next";
@@ -86,6 +87,8 @@ const AppActions: React$ComponentType<Props> = React.memo(
     isLiveSupported,
     addAccount,
   }: Props) => {
+    const appSpecificSupportLinkFeature = useFeature("appSpecificSupportLink");
+
     const { name, type, supportURL } = app;
     const history = useHistory();
     const { installedAvailable, installQueue, uninstallQueue, updateAllQueue } = state;
@@ -117,7 +120,9 @@ const AppActions: React$ComponentType<Props> = React.memo(
           history.push("/platform");
           break;
         case "app":
-          supportURL ? openURL(supportURL) : openURL(urls.appSupport[name] || urls.appSupport.default);
+          supportURL && appSpecificSupportLinkFeature?.enabled
+            ? openURL(supportURL || urls.appSupport[name] || urls.appSupport.default)
+            : openURL(urls.appSupport[name] || urls.appSupport.default);
           break;
         case "tool":
           openURL(urls.managerAppLearnMore);
