@@ -379,6 +379,7 @@ export enum ScreenName {
   OnboardingSetupDeviceRecoveryPhrase = "OnboardingSetupDeviceRecoveryPhrase",
   OnboardingGeneralInformation = "OnboardingGeneralInformation",
   OnboardingBluetoothInformation = "OnboardingBluetoothInformation",
+  OnboardingProtectionConnectionInformation = "OnboardingProtectionConnectionInformation",
   OnboardingInfoModal = "OnboardingInfoModal",
   OnboardingRecoveryPhrase = "OnboardingRecoveryPhrase",
   OnboardingPairNew = "OnboardingPairNew",
