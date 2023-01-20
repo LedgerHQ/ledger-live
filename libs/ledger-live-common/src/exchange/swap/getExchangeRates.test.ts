@@ -110,7 +110,14 @@ describe("swap/getExchangeRates", () => {
 
     mockedAxios.mockResolvedValue(Promise.resolve(resp));
     mockedProviders.mockResolvedValue(Promise.resolve([]));
-    const res = await getExchangeRates(exchange, transaction);
+    const res = await getExchangeRates(
+      exchange,
+      transaction,
+      undefined,
+      undefined,
+      providers,
+      true
+    );
 
     const expectedExchangeRate: ExchangeRate = {
       magnitudeAwareRate: new BigNumber("140000000000"),
@@ -153,7 +160,14 @@ describe("swap/getExchangeRates", () => {
 
     mockedAxios.mockResolvedValue(Promise.resolve(resp));
     mockedProviders.mockResolvedValue(Promise.resolve([]));
-    const res = await getExchangeRates(exchange, transaction);
+    const res = await getExchangeRates(
+      exchange,
+      transaction,
+      undefined,
+      undefined,
+      providers,
+      true
+    );
 
     const expectedExchangeRate: ExchangeRate = {
       magnitudeAwareRate: new BigNumber("133913600000"),
@@ -300,7 +314,13 @@ describe("swap/getExchangeRates", () => {
 
     mockedAxios.mockResolvedValue(Promise.resolve(resp));
     mockedProviders.mockResolvedValue(Promise.resolve([]));
-    const res = await getExchangeRates(exchange, transaction);
+    const res = await getExchangeRates(
+      exchange,
+      transaction,
+      undefined,
+      undefined,
+      providers
+    );
     expect(res[0]?.error?.name).toEqual("SwapExchangeRateAmountTooHigh");
   });
 
@@ -328,7 +348,13 @@ describe("swap/getExchangeRates", () => {
 
     mockedAxios.mockResolvedValue(Promise.resolve(resp));
     mockedProviders.mockResolvedValue(Promise.resolve([]));
-    const res = await getExchangeRates(exchange, transaction);
+    const res = await getExchangeRates(
+      exchange,
+      transaction,
+      undefined,
+      undefined,
+      providers
+    );
     expect(res[0]?.error?.name).toEqual("SwapExchangeRateAmountTooLow");
   });
   test("should return correct error SwapExchangeRateAmountTooLowOrTooHigh", async () => {
@@ -354,7 +380,13 @@ describe("swap/getExchangeRates", () => {
 
     mockedAxios.mockResolvedValue(Promise.resolve(resp));
     mockedProviders.mockResolvedValue(Promise.resolve([]));
-    const res = await getExchangeRates(exchange, transaction);
+    const res = await getExchangeRates(
+      exchange,
+      transaction,
+      undefined,
+      undefined,
+      providers
+    );
     expect(res[0]?.error?.name).toEqual(
       "SwapExchangeRateAmountTooLowOrTooHigh"
     );
