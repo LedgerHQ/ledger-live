@@ -156,15 +156,15 @@ const Item: React$ComponentType<Props> = ({
       </Box>
       {appAuthorNameFeature?.enabled && (
         <Box flex="0.7" horizontal alignContent="center" justifyContent="flex-start" ml={5}>
-        <>
-          <Ellipsis ml={2} ff="Inter|Regular" color="palette.text.shade60" fontSize={3}>
-            <Trans i18nKey="manager.applist.item.developedBy" />
-            <Text ff="Inter|Bold" color="palette.text.shade100" fontSize={3}>
-              {developedBy}
-            </Text>
-          </Ellipsis>
-        </>
-      </Box>
+          <>
+            <Ellipsis ml={2} ff="Inter|Regular" color="palette.text.shade60" fontSize={3}>
+              <Trans i18nKey="manager.applist.item.developedBy" />
+              <Text ff="Inter|Bold" color="palette.text.shade100" fontSize={3}>
+                {developedBy}
+              </Text>
+            </Ellipsis>
+          </>
+        </Box>
       )}
       <AppActions
         state={state}

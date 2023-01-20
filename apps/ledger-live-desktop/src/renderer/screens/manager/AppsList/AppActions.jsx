@@ -131,6 +131,7 @@ const AppActions: React$ComponentType<Props> = React.memo(
           history.push("/swap");
           break;
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [name, type, history]);
 
     const updating = useMemo(() => updateAllQueue.includes(name), [updateAllQueue, name]);

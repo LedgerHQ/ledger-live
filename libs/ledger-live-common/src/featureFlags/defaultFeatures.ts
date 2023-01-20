@@ -195,5 +195,5 @@ export const defaultFeatures: DefaultFeatures = {
   },
   appAuthorName: {
     enabled: true,
-  }
+  },
 };
