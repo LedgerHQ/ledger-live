@@ -1,5 +1,17 @@
 # @ledgerhq/live-common
 
+## 27.12.0-nightly.5
+
+### Minor Changes
+
+- [#2351](https://github.com/LedgerHQ/ledger-live/pull/2351) [`f3fd3134a3`](https://github.com/LedgerHQ/ledger-live/commit/f3fd3134a3852f9d872b1be268e60beae8ea3496) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add transactionRaw to Ethereum optimistic operation to allow for resending identical transaction
+
+### Patch Changes
+
+- [#2358](https://github.com/LedgerHQ/ledger-live/pull/2358) [`dcad1bcbdc`](https://github.com/LedgerHQ/ledger-live/commit/dcad1bcbdc6f1674a175f2bca12c85edbdd179e1) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix polygon bug with new backend response in swap
+
+* [#2250](https://github.com/LedgerHQ/ledger-live/pull/2250) [`4e9378d63b`](https://github.com/LedgerHQ/ledger-live/commit/4e9378d63b048fef131ee574220c428456ef42d4) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Remove superfluous apdu in getdevicename command
+
 ## 27.12.0-nightly.4
 
 ### Minor Changes
