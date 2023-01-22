@@ -2,7 +2,6 @@ import BigNumber from "bignumber.js";
 import { useCallback, useEffect, useState } from "react";
 import { getAccountBridge } from "../../../bridge";
 import {
-  SetIsSendMaxLoading,
   SwapDataType,
   SwapSelectorStateType,
   SwapTransactionType,
@@ -17,31 +16,31 @@ export const useUpdateMaxAmount = ({
   parentAccount,
   transaction,
   feesStrategy,
-  setIsSendMaxLoading,
 }: {
   setFromAmount: SwapTransactionType["setFromAmount"];
   account: SwapSelectorStateType["account"];
   parentAccount: SwapSelectorStateType["parentAccount"];
   transaction: SwapTransactionType["transaction"];
   feesStrategy: Transaction["feesStrategy"];
-  setIsSendMaxLoading?: SetIsSendMaxLoading;
 }): {
   isMaxEnabled: SwapDataType["isMaxEnabled"];
   toggleMax: SwapTransactionType["toggleMax"];
+  isMaxLoading: SwapDataType["isMaxLoading"];
 } => {
   const [isMaxEnabled, setIsMaxEnabled] =
     useState<SwapDataType["isMaxEnabled"]>(false);
+  const [isMaxLoading, setIsMaxLoading] = useState(false);
 
   const toggleMax: SwapTransactionType["toggleMax"] = useCallback(
     () =>
       setIsMaxEnabled((previous) => {
         if (previous) {
           setFromAmount(ZERO);
-          setIsSendMaxLoading?.(false);
+          setIsMaxLoading(false);
         }
         return !previous;
       }),
-    [setFromAmount, setIsSendMaxLoading]
+    [setFromAmount]
   );
 
   /* UPDATE from amount to the estimate max spendable on account
@@ -51,13 +50,13 @@ export const useUpdateMaxAmount = ({
       const updateAmountUsingMax = async () => {
         if (!account) return;
         const bridge = getAccountBridge(account, parentAccount);
-        setIsSendMaxLoading?.(true);
+        setIsMaxLoading(true);
         const amount = await bridge.estimateMaxSpendable({
           account,
           parentAccount,
           transaction,
         });
-        setIsSendMaxLoading?.(false);
+        setIsMaxLoading(false);
         setFromAmount(amount);
       };
 
@@ -69,5 +68,5 @@ export const useUpdateMaxAmount = ({
     [setFromAmount, isMaxEnabled, account, parentAccount, feesStrategy]
   );
 
-  return { isMaxEnabled, toggleMax };
+  return { isMaxEnabled, toggleMax, isMaxLoading };
 };

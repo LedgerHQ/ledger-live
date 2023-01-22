@@ -44,7 +44,8 @@ export type FeatureId =
   | "firebaseEnvironmentReadOnly"
   | "protectServicesMobile"
   | "swapShowDexQuotes"
-  | "stakePrograms";
+  | "stakePrograms"
+  | "objkt";
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */

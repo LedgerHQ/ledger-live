@@ -9,5 +9,4 @@ export type ImportAccountsNavigatorParamList = {
     result: ImportAccountsResult;
     onFinish?: () => void;
   };
-  [ScreenName.FallBackCameraScreen]: undefined;
 };
