@@ -831,6 +831,13 @@
       "modalButtonLabelBase": "Authorize",
       "modalButtonLabelSettingsVariant": "Go to settings",
       "dontPair": "Don't pair"
+    },
+    "camera": {
+      "title": "Authorize camera",
+      "authorizeDescription": "Please authorize Camera to scan QR codes.",
+      "authorizeButtonTitle": "Authorize",
+      "goToSettingsDescription": "Please authorize Camera in Settings to scan QR codes.",
+      "goToSettingsButtonTitle": "Go to settings"
     }
   },
   "fees": {
@@ -1115,6 +1122,12 @@
     "mostPopular": "Most popular"
   },
   "installSetOfApps": {
+    "restore": {
+      "title": "Install the same apps as on {{deviceName}}?",
+      "titleNoDeviceName": "Install the same apps as on previous Ledger device?",
+      "installCTA": "Install now",
+      "skipCTA": "I'll do this later"
+    },
     "landing": {
       "estimatedTime": "{{ minutes }} min",
       "title": "{{ productName }} uses apps to enable secure blockchain transactions",
@@ -1126,7 +1139,7 @@
       "loading": "Loading ...",
       "resolving": "Resolving dependencies",
       "progress": "Installing apps {{progress}}%",
-      "disclaimer": "Apps on {{ productName }} are used to approve transactions. You can add or remove them at any time."
+      "disclaimer": "Add or remove apps at any time from Ledger Live."
     }
   },
   "onboarding": {
@@ -2272,12 +2285,6 @@
         "unsupported": "Unsupported",
         "settings": "App settings",
         "includeGeneralSettings": "Import Desktop settings"
-      },
-      "fallback": {
-        "header": "Import account",
-        "title": "Enable camera",
-        "desc": "Please enable Camera in Settings to scan QR codes.",
-        "buttonTitle": "Go to Settings"
       }
     },
     "availableBalance": "Available balance",
@@ -2550,6 +2557,10 @@
       "recommendations": {
         "title": "Recommendations",
         "desc": "Enrich your experience with personalized recommendations and special offers"
+      },
+      "largeMover": {
+        "title": "Large Mover",
+        "desc": "You'll be notified of important price movements for BTC and ETH"
       },
       "price": {
         "title": "Price Alerts",
