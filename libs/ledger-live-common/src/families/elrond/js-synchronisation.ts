@@ -77,7 +77,8 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
     startAt,
     subAccounts
   );
-  const operations = mergeOps(oldOperations, newOperations);
+  let operations = mergeOps(oldOperations, newOperations);
+  operations = pruneOperations(operations, subAccounts);
 
   return {
     id: accountId,
@@ -90,7 +91,7 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
       delegations,
     },
     subAccounts,
-    operations: pruneOperations(operations, subAccounts),
+    operations,
   };
 };
 

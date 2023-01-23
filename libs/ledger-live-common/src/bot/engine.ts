@@ -651,9 +651,21 @@ export async function runOnAccount<T extends Transaction>({
     const timeOut = mutation.testTimeout || spec.testTimeout || 5 * 60 * 1000;
     const step = (account) => {
       const timedOut = now() - testBefore > timeOut;
-      const operation = account.operations.find(
+      let operation = account.operations.find(
         (o) => o.id === optimisticOperation.id
       );
+
+      // look for operations in subAccounts
+      if (!operation) {
+        for (const sa of account.subAccounts) {
+          operation = sa.operations.find(
+            (o) => o.id === optimisticOperation.id
+          );
+          if (operation) {
+            break;
+          }
+        }
+      }
 
       if (timedOut && !operation) {
         botTest("waiting operation id to appear after broadcast", () => {
