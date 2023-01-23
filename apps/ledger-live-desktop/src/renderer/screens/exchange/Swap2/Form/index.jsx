@@ -51,6 +51,7 @@ import SwapFormSummary from "./FormSummary";
 import SwapFormRates from "./FormRates";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import debounce from "lodash/debounce";
+import useRefreshRates from "./hooks/useRefreshRates";
 import LoadingState from "./Rates/LoadingState";
 import EmptyState from "./Rates/EmptyState";
 import usePageState from "./hooks/usePageState";
@@ -67,7 +68,6 @@ const Hide = styled.div`
   opacity: 0;
 `;
 
-const refreshTime = 30000;
 const idleTime = 60 * 60000; // 1 hour
 
 const Button = styled(ButtonBase)`
@@ -111,7 +111,6 @@ const SwapForm = () => {
   const [currentBanner, setCurrentBanner] = useState(null);
 
   const [idleState, setIdleState] = useState(false);
-  const [firstRateId, setFirstRateId] = useState(null);
 
   const [error, setError] = useState();
   const { t } = useTranslation();
@@ -149,7 +148,6 @@ const SwapForm = () => {
   const kycStatus = providerKYC?.status;
 
   const idleTimeout = useRef();
-  const refreshInterval = useRef();
 
   // On provider change, reset banner and flow
   useEffect(() => {
@@ -185,20 +183,11 @@ const SwapForm = () => {
 
   const { setDrawer } = React.useContext(context);
 
-  useEffect(() => {
-    const newFirstRateId = swapTransaction?.swap?.rates?.value?.length
-      ? swapTransaction.swap.rates.value[0].rateId
-      : null;
-    setFirstRateId(newFirstRateId);
-  }, [swapTransaction]);
+  const pauseRefreshing = swapError || idleState;
 
-  useEffect(() => {
-    refreshInterval.current && clearInterval(refreshInterval.current);
-    refreshInterval.current = setInterval(() => {
-      !swapError && !idleState && swapTransaction?.swap?.refetchRates();
-    }, refreshTime);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [swapError, firstRateId]);
+  const refreshTime = useRefreshRates(swapTransaction.swap, {
+    pause: pauseRefreshing,
+  });
 
   const refreshIdle = useCallback(() => {
     idleState && setIdleState(false);
@@ -543,7 +532,7 @@ const SwapForm = () => {
               swap={swapTransaction.swap}
               provider={provider}
               refreshTime={refreshTime}
-              countdown={!swapError && !idleState}
+              countdown={!pauseRefreshing}
               showNoQuoteDexRate={showNoQuoteDexRate}
             />
           </>

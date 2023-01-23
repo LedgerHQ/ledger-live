@@ -53,7 +53,9 @@ const formatOp = (
             .join(":")}`;
     extra += familySpecific(op, unit);
     const head = `${(spaces + amount).padEnd(20)} ${(
-      (op.hasFailed ? "❌" : "") + op.type
+      (op.hasFailed ? "❌" : "") +
+      op.type +
+      " "
     ).padEnd(11)}${extra}`;
     const sub = (op.subOperations || [])
       .concat(op.internalOperations || [])

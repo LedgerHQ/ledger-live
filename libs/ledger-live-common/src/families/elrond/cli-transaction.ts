@@ -7,7 +7,7 @@ const options = [
   {
     name: "mode",
     type: String,
-    desc: "mode of transaction: send",
+    desc: "mode of transaction: send, delegate, unDelegate, claimRewards",
   },
 ];
 
@@ -30,7 +30,10 @@ function inferTransactions(
 
     transaction.family = "elrond";
 
-    return transaction;
+    return {
+      ...transaction,
+      mode: _opts.mode || "send",
+    };
   });
 }
 
