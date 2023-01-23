@@ -1,102 +1,123 @@
 import React, { useCallback } from "react";
-import { Linking, FlatList } from "react-native";
+import { Linking } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
-import type { Incident } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/types";
-import { Alert, Flex, IconBox, Notification, Text } from "@ledgerhq/native-ui";
-import { CheckAloneMedium } from "@ledgerhq/native-ui/assets/icons";
+import { BottomDrawer, Button, Flex, Icons, Text } from "@ledgerhq/native-ui";
+
 import styled, { useTheme } from "styled-components/native";
+
 import { urls } from "../../config/urls";
+import { track, TrackScreen } from "../../analytics";
 
 type Props = {
-  item: Incident;
-  index: number;
+  isOpened: boolean;
+  onClose: () => void;
 };
 
-const MainContainer = styled.SafeAreaView`
-  background-color: ${p => p.theme.colors.background.main};
-  padding: ${p => p.theme.space[6]}px;
-  flex: 1;
-`;
+const DATA_TRACKING_DRAWER_NAME = "Notification Center Status";
 
-const BorderedIncidentContainer = styled.View`
-  border: 1px solid ${p => p.theme.colors.neutral.c40};
-  padding: ${p => p.theme.space[5]}px;
-  margin-bottom: ${p => p.theme.space[5]}px;
-
-  border-radius: 4px;
-`;
-
-const IncidentRow = ({ item }: Props) => {
-  const { t } = useTranslation();
-  const { incident_updates: incidentUpdates, name, shortlink } = item;
-
-  // Todo: Track back StatusLearnMore click event
-  return (
-    <BorderedIncidentContainer>
-      <Notification
-        variant={"secondary"}
-        title={name}
-        subtitle={
-          incidentUpdates && incidentUpdates.length
-            ? incidentUpdates.map(({ body }) => body).join("\n")
-            : ""
-        }
-        {...(!!shortlink && {
-          linkText: t("common.learnMore"),
-          onLinkPress: () => Linking.openURL(shortlink),
-        })}
-      />
-    </BorderedIncidentContainer>
-  );
-};
-
-export default function NotificationCenter() {
+export default function StatusCenter({ onClose, isOpened }: Props) {
   const { t } = useTranslation();
   const { incidents } = useFilteredServiceStatus();
   const { colors } = useTheme();
 
-  const onHelpPageRedirect = useCallback(() => {
-    Linking.openURL(urls.ledgerStatus); // @TODO redirect to correct url
+  const openSupportLink = useCallback(() => {
+    track("url_clicked", {
+      name: "Help center",
+      url: urls.supportPage,
+      drawer: DATA_TRACKING_DRAWER_NAME,
+    });
+    Linking.openURL(urls.supportPage);
   }, []);
 
+  const onPressClose = useCallback(() => {
+    track("button_clicked", {
+      button: "Close 'x'",
+      drawer: DATA_TRACKING_DRAWER_NAME,
+    });
+    onClose();
+  }, [onClose]);
+
+  const onPressOk = useCallback(() => {
+    track("button_clicked", {
+      button: "Got it",
+      drawer: DATA_TRACKING_DRAWER_NAME,
+    });
+    onClose();
+  }, [onClose]);
+
   return (
-    <MainContainer>
-      {incidents.length > 0 ? (
-        <Alert
-          type={"warning"}
-          title={t("notificationCenter.status.error.title")}
-        />
-      ) : (
-        <Flex flex={1} alignItems={"center"} justifyContent={"flex-end"}>
-          <IconBox Icon={CheckAloneMedium} color={colors.palette.success.c80} />
-          <Text variant={"h3"} color={"palette.neutral.c100"} marginTop={6}>
-            <Trans i18nKey="notificationCenter.status.ok.title" />
-          </Text>
-          <Text variant={"paragraph"} color="palette.neutral.c80">
-            <Trans i18nKey="notificationCenter.status.ok.desc">
-              <Text variant={"paragraph"} color="palette.neutral.c80">
-                {""}
-              </Text>
-              <Text
-                variant={"paragraph"}
-                color="palette.neutral.c100"
-                style={{ textDecorationLine: "underline" }}
-                onPress={onHelpPageRedirect}
-              >
-                {""}
-              </Text>
-            </Trans>
-          </Text>
-        </Flex>
-      )}
-      <FlatList
-        contentContainerStyle={{ marginTop: 20 }}
-        style={{ flex: 1 }}
-        data={incidents}
-        renderItem={props => <IncidentRow {...props} />}
-        keyExtractor={(item, index) => item.id + index}
+    <BottomDrawer isOpen={isOpened} onClose={onPressClose}>
+      <TrackScreen
+        category={DATA_TRACKING_DRAWER_NAME}
+        type="drawer"
+        refreshSource={false}
       />
-    </MainContainer>
+
+      <Flex
+        backgroundColor={colors.neutral.c100a005}
+        borderRadius={50}
+        width={64}
+        height={64}
+        alignItems="center"
+        justifyContent="center"
+        alignSelf="center"
+      >
+        <Icons.WarningSolidMedium color={colors.warning.c70} size={32} />
+      </Flex>
+      <Flex mx={7}>
+        <Text variant="h4" fontWeight="semiBold" textAlign="center" my={7}>
+          {t("notificationCenter.status.title", {
+            count: incidents.length,
+          })}
+        </Text>
+        {new Array(incidents.length).fill(null).map((_e, index) => (
+          <Text
+            variant="body"
+            fontWeight="medium"
+            color="neutral.c90"
+            key={index}
+            mb={3}
+          >
+            {`\u2022 ${incidents[index].name}`}
+          </Text>
+        ))}
+
+        <Text
+          variant="body"
+          fontWeight="medium"
+          color="neutral.c70"
+          mt={6}
+          textAlign="center"
+        >
+          {t("notificationCenter.status.desc.0")}
+        </Text>
+
+        <Text
+          variant="body"
+          fontWeight="medium"
+          color="neutral.c70"
+          textAlign="center"
+          justifyContent="center"
+          mt={3}
+        >
+          <Trans i18nKey="notificationCenter.status.desc.1">
+            <Link onPress={openSupportLink} fontWeight="bold">
+              {""}
+            </Link>
+          </Trans>
+        </Text>
+      </Flex>
+
+      <Button type="main" size="large" onPress={onPressOk} mt={8} mb={4}>
+        {t("notificationCenter.status.cta.ok")}
+      </Button>
+    </BottomDrawer>
   );
 }
+
+const Link = styled(Text)`
+  color: ${p => p.theme.colors.neutral.c70};
+  text-decoration: underline;
+  text-decoration-color: ${p => p.theme.colors.neutral.c70};
+`;

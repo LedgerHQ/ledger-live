@@ -3749,10 +3749,6 @@
     "experimental" : {
       "disclaimer" : "这些是我们以“按现状”为基准提供的实验性功能，以供我们的专业爱好者社区测试。这些功能随时可能会更改、中断或删除。启用这些功能，意味着您同意自行承担使用过程中的风险。",
       "features" : {
-        "apiTrongridProxy" : {
-          "title" : "使用 TronGrid.io",
-          "description" : "直接使用 trongrid 而不使用 Ledger 代理"
-        },
         "experimentalCurrencies" : {
           "title" : "实验性集成",
           "description" : "使用可用的实验性加密资产集成。"

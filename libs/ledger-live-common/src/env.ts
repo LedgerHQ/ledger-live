@@ -387,6 +387,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "enable an experimental swap interface",
   },
+  EXPERIMENTAL_EXECUTION_ON_RENDERER: {
+    def: false,
+    parser: boolParser,
+    desc: "enable an experimental execution of business logic to run on renderer side (LLD)",
+  },
   EXPLORER: {
     def: "https://explorers.api.live.ledger.com",
     parser: stringParser,
@@ -667,14 +672,9 @@ const envDefinitions = {
     desc: "enable visibility of experimental apps and tools in Platform Catalog",
   },
   PLATFORM_MANIFEST_API_URL: {
-    def: "https://cdn.live.ledger.com/platform/apps/v1/data.json",
+    def: "https://live-app-catalog.ledger.com/api/v1/apps",
     parser: stringParser,
     desc: "url used to fetch platform app manifests",
-  },
-  PLATFORM_MANIFEST_STAGING_API_URL: {
-    def: "https://cdn.live.ledger-stg.com/platform/apps/v1/data.json",
-    parser: stringParser,
-    desc: "url used to fetch platform app manifests (staging)",
   },
   PLATFORM_LOCAL_MANIFEST_JSON: {
     def: "",

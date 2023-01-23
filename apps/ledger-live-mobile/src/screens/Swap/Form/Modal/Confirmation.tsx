@@ -225,6 +225,7 @@ export function Confirmation({
                     setSwapData(initSwapResult);
                   }
                 }}
+                onError={error => onError({ error })}
                 analyticsPropertyFlow="swap"
               />
             ) : (
@@ -248,6 +249,7 @@ export function Confirmation({
                     setSignedOperation(signedOperation);
                   }
                 }}
+                onError={error => onError({ error })}
                 analyticsPropertyFlow="swap"
               />
             )}

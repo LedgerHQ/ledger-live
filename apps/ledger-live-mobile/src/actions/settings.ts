@@ -68,6 +68,7 @@ import {
   SettingsActionTypes,
   SettingsSetWalletTabNavigatorLastVisitedTabPayload,
   SettingsSetDismissedDynamicCardsPayload,
+  SettingsSetStatusCenterPayload,
   SettingsSetOverriddenFeatureFlagPlayload,
   SettingsSetOverriddenFeatureFlagsPlayload,
   SettingsSetFeatureFlagsBannerVisiblePayload,
@@ -491,6 +492,14 @@ export const setWalletTabNavigatorLastVisitedTab = (
 ) =>
   setWalletTabNavigatorLastVisitedTabAction({
     walletTabNavigatorLastVisitedTab,
+  });
+
+const setStatusCenterAction = createAction<SettingsSetStatusCenterPayload>(
+  SettingsActionTypes.SET_STATUS_CENTER,
+);
+export const setStatusCenter = (displayStatusCenter: boolean) =>
+  setStatusCenterAction({
+    displayStatusCenter,
   });
 
 const setOverriddenFeatureFlagAction =

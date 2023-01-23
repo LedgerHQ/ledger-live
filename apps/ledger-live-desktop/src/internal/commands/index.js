@@ -11,6 +11,7 @@ import listenToHidDevices from "./listenToHidDevices";
 import listApps from "./listApps";
 import signMessage from "./signMessage";
 import ping from "./ping";
+import publicKeyTweakAdd from "./publicKeyTweakAdd";
 import connectApp from "./connectApp";
 import connectManager from "./connectManager";
 import networkTroubleshoot from "./networkTroubleshoot";
@@ -50,6 +51,7 @@ export const commandsById = {
   connectManager,
   listApps,
   ping,
+  publicKeyTweakAdd,
   networkTroubleshoot,
   testApdu,
   initSwap,

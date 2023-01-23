@@ -121,6 +121,9 @@ export type BaseNavigatorStackParamList = {
     defaultTicker?: string;
   };
   [ScreenName.Learn]: undefined;
+  [ScreenName.LearnWebView]: {
+    uri?: string;
+  };
   [ScreenName.SwapOperationDetails]: {
     swapOperation: MappedSwapOperation;
   };
@@ -164,9 +167,6 @@ export type BaseNavigatorStackParamList = {
     parentId?: string;
     transaction?: Transaction;
     justScanned?: boolean;
-  };
-  [ScreenName.FallbackCameraSend]: {
-    screenName: keyof BaseNavigatorStackParamList;
   };
   [ScreenName.BleDevicePairingFlow]: {
     filterByDeviceModelId?: DeviceModelId;

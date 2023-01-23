@@ -68,13 +68,13 @@ test("Discover", async ({ page }) => {
 
   await test.step("Request Account drawer - open", async () => {
     await discoverPage.requestAsset();
-    await expect(await discoverPage.selectAssetTitle.isVisible()).toBe(true);
+    await expect(discoverPage.selectAssetTitle).toBeVisible();
   });
 
   await test.step("Request Account - select asset", async () => {
     await discoverPage.selectAsset();
-    await expect(await discoverPage.selectAccountTitle.isVisible()).toBe(true);
-    await expect(await discoverPage.selectAssetSearchBar.isEnabled()).toBe(true);
+    await expect(discoverPage.selectAccountTitle).toBeVisible();
+    await expect(discoverPage.selectAssetSearchBar).toBeEnabled();
   });
 
   await test.step("Request Account - select BTC", async () => {

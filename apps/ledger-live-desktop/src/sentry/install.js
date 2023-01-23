@@ -58,6 +58,7 @@ const ignoreErrors = [
   "Unexpected ''",
   "Unexpected '<'",
   "Service Unvailable",
+  "HederaAddAccountError",
   // timeouts
   "ERR_CONNECTION_TIMED_OUT",
   "request timed out",

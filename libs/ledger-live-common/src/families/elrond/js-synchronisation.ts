@@ -91,7 +91,7 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
       delegations,
     },
     subAccounts,
-    operations,
+    operations: pruneOperations(operations, subAccounts),
   };
 };
 

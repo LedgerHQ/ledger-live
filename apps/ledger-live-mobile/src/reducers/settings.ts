@@ -64,6 +64,7 @@ import type {
   SettingsUpdateCurrencyPayload,
   SettingsSetSwapSelectableCurrenciesPayload,
   SettingsSetDismissedDynamicCardsPayload,
+  SettingsSetStatusCenterPayload,
   SettingsSetOverriddenFeatureFlagPlayload,
   SettingsSetOverriddenFeatureFlagsPlayload,
   SettingsSetFeatureFlagsBannerVisiblePayload,
@@ -157,8 +158,10 @@ export const INITIAL_STATE: SettingsState = {
     areNotificationsAllowed: true,
     announcementsCategory: true,
     recommendationsCategory: true,
+    largeMoverCategory: true,
   },
   walletTabNavigatorLastVisitedTab: ScreenName.Portfolio,
+  displayStatusCenter: false,
   overriddenFeatureFlags: {},
   featureFlagsBannerVisible: false,
 };
@@ -584,6 +587,11 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ).payload.walletTabNavigatorLastVisitedTab,
   }),
 
+  [SettingsActionTypes.SET_STATUS_CENTER]: (state, action) => ({
+    ...state,
+    displayStatusCenter: (action as Action<SettingsSetStatusCenterPayload>)
+      .payload.displayStatusCenter,
+  }),
   [SettingsActionTypes.SET_OVERRIDDEN_FEATURE_FLAG]: (state, action) => {
     const {
       payload: { id, value },
@@ -835,6 +843,8 @@ export const notificationsSelector = (state: State) =>
   state.settings.notifications;
 export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
   state.settings.walletTabNavigatorLastVisitedTab;
+export const statusCenterSelector = (state: State) =>
+  state.settings.displayStatusCenter;
 export const overriddenFeatureFlagsSelector = (state: State) =>
   state.settings.overriddenFeatureFlags;
 export const featureFlagsBannerVisibleSelector = (state: State) =>

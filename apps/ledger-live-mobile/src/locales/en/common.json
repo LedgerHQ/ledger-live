@@ -848,6 +848,13 @@
       "modalButtonLabelBase": "Authorize",
       "modalButtonLabelSettingsVariant": "Go to settings",
       "dontPair": "Don't pair"
+    },
+    "camera": {
+      "title": "Authorize camera",
+      "authorizeDescription": "Please authorize Camera to scan QR codes.",
+      "authorizeButtonTitle": "Authorize",
+      "goToSettingsDescription": "Please authorize Camera in Settings to scan QR codes.",
+      "goToSettingsButtonTitle": "Go to settings"
     }
   },
   "fees": {
@@ -1109,7 +1116,7 @@
     "sections": {
       "learn": {
         "title": "Learn",
-        "desc": "Learn about crypto, and more from experts for free."
+        "desc": "Learn about crypto, web3, digital security and more"
       },
       "ledgerApps": {
         "title": "Apps",
@@ -1132,6 +1139,12 @@
     "mostPopular": "Most popular"
   },
   "installSetOfApps": {
+    "restore": {
+      "title": "Install the same apps as on {{deviceName}}?",
+      "titleNoDeviceName": "Install the same apps as on previous Ledger device?",
+      "installCTA": "Install now",
+      "skipCTA": "I'll do this later"
+    },
     "landing": {
       "estimatedTime": "{{ minutes }} min",
       "title": "{{ productName }} uses apps to enable secure blockchain transactions",
@@ -1143,7 +1156,7 @@
       "loading": "Loading ...",
       "resolving": "Resolving dependencies",
       "progress": "Installing apps {{progress}}%",
-      "disclaimer": "Apps on {{ productName }} are used to approve transactions. You can add or remove them at any time."
+      "disclaimer": "Add or remove apps at any time from Ledger Live."
     }
   },
   "onboarding": {
@@ -2291,12 +2304,6 @@
         "unsupported": "Unsupported",
         "settings": "App settings",
         "includeGeneralSettings": "Import Desktop settings"
-      },
-      "fallback": {
-        "header": "Import account",
-        "title": "Enable camera",
-        "desc": "Please enable Camera in Settings to scan QR codes.",
-        "buttonTitle": "Go to Settings"
       }
     },
     "availableBalance": "Available balance",
@@ -2569,6 +2576,10 @@
       "recommendations": {
         "title": "Recommendations",
         "desc": "Enrich your experience with personalized recommendations and special offers"
+      },
+      "largeMover": {
+        "title": "Large Mover",
+        "desc": "You'll be notified of important price movements for BTC and ETH"
       },
       "price": {
         "title": "Price Alerts",
@@ -3639,7 +3650,7 @@
       "title": "Confirm swap operation on device",
       "alert": {
         "default": "Verify the Swap details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them.",
-        "cic": "Verify the Swap details on your device before sending it. CIC may need to perform additional verification for some transactions, resulting in a delay."
+        "provider": "Verify the Swap details on your device before sending it. {{providerName}} may need to perform additional verification for some transactions, resulting in a delay."
       },
       "acceptTerms": "By validating this transaction, I accept\n<0><0>{{provider}}</0>'s terms of use</0>",
       "notice": "Verify the Swap details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them."
@@ -5675,15 +5686,38 @@
       "cta": "See details"
     },
     "news": {
-      "title": "News",
-      "titleCount": "News ({{count}})",
+      "title": "Notifications",
       "emptyState": {
-        "title": "No news for the moment",
-        "desc": "You will find here all the news related to Ledger and Ledger Live"
+        "title": "It’s just peace and quiet for now",
+        "desc": "We’ll let you know if anything comes up."
+      },
+      "time": {
+        "second": "1 second ago",
+        "second_plural": "{{count}} seconds ago",
+        "minute": "1 minute ago",
+        "minute_plural": "{{count}} minutes ago",
+        "hour": "1 hour ago",
+        "hour_plural": "{{count}} hours ago",
+        "day": "1 day ago",
+        "day_plural": "{{count}} days ago",
+        "week": "1 week ago",
+        "week_plural": "{{count}} weeks ago",
+        "month": "1 month ago",
+        "month_plural": "{{count}} months ago",
+        "year": "1 year ago",
+        "year_plural": "{{count}} years ago"
       }
     },
     "status": {
-      "title": "Status",
+      "title": "An issue might need your attention",
+      "title_plural": "Some issues might need your attention",
+      "desc": {
+        "0": "They’re being investigated and will be resolved shortly.",
+        "1": "If you’re affected by any of the issues, reach out to our <0>Customer Support</0>"
+      },
+      "cta": {
+        "ok": "Got it"
+      },
       "ok": {
         "title": "Ledger Live is up and running",
         "desc": "<0>Having trouble? Go on our </0><1>help page</1>"
