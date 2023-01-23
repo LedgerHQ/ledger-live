@@ -3,7 +3,6 @@ import { expect } from "@playwright/test";
 import { SwapPage } from "../../models/SwapPage";
 import { DeviceAction } from "../../models/DeviceAction";
 import { Drawer } from "tests/models/Drawer";
-import { Layout } from "../../models/Layout";
 
 test.use({ userdata: "1AccountBTC1AccountETH" });
 
@@ -12,7 +11,6 @@ test.describe.parallel("Swap", () => {
     const swapPage = new SwapPage(page);
     const deviceAction = new DeviceAction(page);
     const drawer = new Drawer(page);
-    const layout = new Layout(page);
 
     let swapId: string;
     let detailsSwapId: string;
@@ -24,7 +22,6 @@ test.describe.parallel("Swap", () => {
 
     await test.step("Select Max Spendable", async () => {
       await swapPage.sendMax();
-      await layout.waitForLoadingSpinnerToHaveDisappeared();
       await swapPage.waitForExchangeToBeAvailable();
       await expect.soft(page).toHaveScreenshot("max-spendable-swap.png");
     });

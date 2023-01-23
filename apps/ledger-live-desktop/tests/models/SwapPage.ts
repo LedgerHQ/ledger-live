@@ -1,4 +1,5 @@
 import { Page, Locator } from "@playwright/test";
+import { waitFor } from "tests/utils/waitFor";
 
 export class SwapPage {
   readonly page: Page;
@@ -42,7 +43,6 @@ export class SwapPage {
 
   async sendMax() {
     await this.maxSpendableToggle.click();
-    await this.exchangeButton.isEnabled();
   }
 
   async openTargetAccountDrawer() {
@@ -65,7 +65,7 @@ export class SwapPage {
   }
 
   async waitForExchangeToBeAvailable() {
-    await this.exchangeButton.isEnabled();
+    return waitFor(() => this.exchangeButton.isEnabled(), 250, 20000);
   }
 
   async confirmExchange() {
