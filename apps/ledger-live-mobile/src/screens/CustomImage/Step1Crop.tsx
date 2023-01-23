@@ -9,7 +9,7 @@ import ImageCropper, {
 } from "../../components/CustomImage/ImageCropper";
 import { ImageDimensions } from "../../components/CustomImage/types";
 import { targetDisplayDimensions } from "./shared";
-import Button from "../../components/Button";
+import Button from "../../components/wrappedUi/Button";
 import { ScreenName } from "../../const";
 import BottomContainer from "../../components/CustomImage/BottomButtonsContainer";
 import Touchable from "../../components/Touchable";

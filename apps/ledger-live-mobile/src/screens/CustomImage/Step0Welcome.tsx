@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { Image, useWindowDimensions } from "react-native";
 import CustomImageBottomModal from "../../components/CustomImage/CustomImageBottomModal";
 import BottomButtonsContainer from "../../components/CustomImage/BottomButtonsContainer";
-import Button from "../../components/Button";
+import Button from "../../components/wrappedUi/Button";
 import { ScreenName } from "../../const";
 import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
 import imageSource from "./assets/welcome.png";

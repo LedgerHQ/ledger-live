@@ -25,7 +25,7 @@ import ImageProcessor, {
   ProcessorRawResult,
 } from "../../components/CustomImage/ImageProcessor";
 import { targetDisplayDimensions } from "./shared";
-import Button from "../../components/Button";
+import Button from "../../components/wrappedUi/Button";
 import BottomButtonsContainer from "../../components/CustomImage/BottomButtonsContainer";
 import ContrastChoice from "../../components/CustomImage/ContrastChoice";
 import { ScreenName } from "../../const";

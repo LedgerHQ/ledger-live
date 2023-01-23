@@ -19,7 +19,7 @@ import { DeviceActionDefaultRendering } from "./DeviceAction";
 import { ImageSourceContext } from "./CustomImage/FramedImage";
 import { renderError } from "./DeviceAction/rendering";
 import CustomImageBottomModal from "./CustomImage/CustomImageBottomModal";
-import Button from "./Button";
+import Button from "./wrappedUi/Button";
 import Link from "./wrappedUi/Link";
 import { screen, TrackScreen } from "../analytics";
 

@@ -43,9 +43,8 @@ import useCenteredImage, {
   Params as ImageCentererParams,
   CenteredResult,
 } from "../../components/CustomImage/useCenteredImage";
-import Button from "../../components/Button";
+import Button from "../../components/wrappedUi/Button";
 import { TrackScreen } from "../../analytics";
-import Link from "../../components/wrappedUi/Link";
 
 const DEFAULT_CONTRAST = 1;
 
@@ -329,17 +328,16 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
             >
               {t("customImage.preview.setPicture")}
             </Button>
-            <Flex py={6} mb={8}>
-              <Link
-                size="large"
-                onPress={handleEditPicture}
-                disabled={previewLoading}
-                event="button_clicked"
-                eventProperties={analyticsEditEventProps}
-              >
-                {t("customImage.preview.editPicture")}
-              </Link>
-            </Flex>
+            <Button
+              size="large"
+              mb={8}
+              onPress={handleEditPicture}
+              disabled={previewLoading}
+              event="button_clicked"
+              eventProperties={analyticsEditEventProps}
+            >
+              {t("customImage.preview.editPicture")}
+            </Button>
           </Flex>
         </Flex>
       )}

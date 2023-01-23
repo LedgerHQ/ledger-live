@@ -115,16 +115,14 @@ const PreviewPostEdit = ({ navigation, route }: NavigationProps) => {
           >
             {t("customImage.preview.setPicture")}
           </Button>
-          <Flex py={6} mb={8}>
-            <Link
-              size="large"
-              onPress={handleEditPicture}
-              event="button_clicked"
-              eventProperties={analyticsEditEventProps}
-            >
-              {t("customImage.preview.editPicture")}
-            </Link>
-          </Flex>
+          <Button
+            size="large"
+            onPress={handleEditPicture}
+            event="button_clicked"
+            eventProperties={analyticsEditEventProps}
+          >
+            {t("customImage.preview.editPicture")}
+          </Button>
         </Flex>
       </Flex>
     </SafeAreaView>
