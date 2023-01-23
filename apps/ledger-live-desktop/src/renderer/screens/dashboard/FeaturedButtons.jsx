@@ -4,8 +4,21 @@ import React from "react";
 import Box from "~/renderer/components/Box";
 import { Flex, Grid } from "@ledgerhq/react-ui";
 import styled from "styled-components";
-import { Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import Text from "~/renderer/components/Text";
+
+const BodyText = styled(Text).attrs(p => ({
+  fontSize: 4,
+  fontWeight: "medium",
+  color: p.theme.colors.neutral.c70,
+}))``;
+
+const TitleText = styled(Text).attrs(p => ({
+  fontSize: 4,
+  fontWeight: "semiBold",
+  color: p.theme.colors.neutral.c100,
+  mb: "2px",
+}))``;
 
 const FeaturedButtonContainer = styled(Flex)`
   flex-grow: 1;
@@ -14,6 +27,20 @@ const FeaturedButtonContainer = styled(Flex)`
   padding: ${p => p.theme.space[3]}px;
   align-items: center;
   gap: ${p => p.theme.space[3]}px;
+
+  &:hover {
+    cursor: pointer;
+    color: ${p => p.theme.colors.primary.c90};
+    background-color: ${p => p.theme.colors.primary.c10};
+
+    ${BodyText} {
+      color: ${p => p.theme.colors.primary.c80};
+    }
+
+    ${TitleText} {
+      color: ${p => p.theme.colors.primary.c90};
+    }
+  }
 `;
 
 const Container = styled(Grid).attrs(() => ({
@@ -29,23 +56,31 @@ const FeaturedButton = ({ title, body }: { title: string, body: string }) => {
     <FeaturedButtonContainer>
       <div>Icon</div>
       <Box shrink>
-        <Text fontSize={4} fontWeight="semiBold" color="palette.neutral.c100" mb="2px">
-          {title}
-        </Text>
-        <Text fontSize={4} fontWeight="medium" color="palette.neutral.c70">
-          {body}
-        </Text>
+        <TitleText>{title}</TitleText>
+        <BodyText>{body}</BodyText>
       </Box>
     </FeaturedButtonContainer>
   );
 };
 
 const FeaturedButtons = () => {
+  const { t } = useTranslation();
+
   return (
     <Container>
-      <FeaturedButton title="Buy / Sell" body="Buy and sell with trusted providers" />
-      <FeaturedButton title="Buy / Sell" body="Buy and sell with trusted providers" />
-      <FeaturedButton title="Buy / Sell" body="Buy and sell with trusted providers" />
+      <FeaturedButton
+        title={t("dashboard.featuredButtons.buySell.title")}
+        body={t("dashboard.featuredButtons.buySell.description")}
+      />
+      <FeaturedButton
+        title={t("dashboard.featuredButtons.swap.title")}
+        body={t("dashboard.featuredButtons.swap.description")}
+        label={t("dashboard.featuredButtons.swap.label")}
+      />
+      <FeaturedButton
+        title={t("dashboard.featuredButtons.earn.title")}
+        body={t("dashboard.featuredButtons.earn.description")}
+      />
     </Container>
   );
 };
