@@ -18,16 +18,29 @@ export function regenDoc(app: Probot) {
     login,
     commentId,
   }: {
-    context: Context;
+    context: Context<"issue_comment.created" | "check_run.requested_action">;
     number: string;
     login: string;
     comment?: boolean;
     commentId?: number;
   }) {
+    // ⚠️ TEMP: Use the ref
+    // const { payload } = context;
+    // let ref;
+    // if ("check_run" in payload) {
+    //   ref = payload.check_run.pull_requests[0]?.head.ref;
+    // } else {
+    //   const { data: prData } = await context.octokit.rest.pulls.get({
+    //     ...context.repo(),
+    //     pull_number: payload.issue.number,
+    //   });
+    //   ref = prData.head.ref;
+    // }
+
     await context.octokit.actions.createWorkflowDispatch({
       ...context.repo(),
       workflow_id: "regen-doc.yml",
-      // ref: "develop",
+      // ref,
       ref: "support/granular-ci",
       inputs: {
         number,

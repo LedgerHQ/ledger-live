@@ -383,7 +383,7 @@ export function orchestrator(app: Probot) {
         owner,
         repo,
         workflow_id: workflowName,
-        ref: payload.check_run.pull_requests[0].head.ref,
+        ref: payload.check_run.pull_requests[0]?.head.ref,
         inputs: workflowMeta.getInputs(payload),
       });
     }

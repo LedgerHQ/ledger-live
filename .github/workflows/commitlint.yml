@@ -25,7 +25,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          ref: ${{ github.event.inputs.ref }}
+          ref: ${{ inputs.ref }}
           fetch-depth: 0
       - uses: pnpm/action-setup@v2
         with:
@@ -40,7 +40,7 @@ jobs:
       - name: Lint commits
         run: |
           set -o pipefail
-          pnpm commitlint --from ${{ github.event.inputs.from && format('origin/{0}', github.event.inputs.from) || 'HEAD^1' }} 2>&1 | tee commitlint.out
+          pnpm commitlint --from ${{ inputs.from && format('origin/{0}', inputs.from) || 'HEAD^1' }} 2>&1 | tee commitlint.out
       - uses: actions/upload-artifact@v3
         name: upload commitlint output
         if: always()

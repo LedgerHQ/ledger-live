@@ -21,8 +21,8 @@ on:
         required: true
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.inputs.ref || github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ref != 'develop' || github.ref_name != 'develop' }}
+  group: ${{ github.workflow }}-${{ inputs.ref || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'workflow_dispatch' && inputs.ref != 'develop' || github.ref_name != 'develop' }}
 
 jobs:
   start-runner:
@@ -72,7 +72,7 @@ jobs:
           echo "${{ github.run_id }}"
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.sha || github.event.inputs.ref || github.event.push.head.sha }}
+          ref: ${{ inputs.sha || inputs.ref || github.event.push.head.sha }}
       - name: Set git user
         run: |
           git config user.email "team-live@ledger.fr"
@@ -116,7 +116,7 @@ jobs:
           echo "${{ github.run_id }}"
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.sha || github.event.inputs.ref  || github.event.push.head.sha }}
+          ref: ${{ inputs.sha || inputs.ref  || github.event.push.head.sha }}
       - name: Update path
         run: |
           echo "C:\Program Files\Git\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
@@ -163,7 +163,7 @@ jobs:
           echo "${{ github.run_id }}"
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.sha || github.event.inputs.ref  || github.event.push.head.sha }}
+          ref: ${{ inputs.sha || inputs.ref  || github.event.push.head.sha }}
           persist-credentials: false
       - name: Set git user
         run: |
@@ -205,7 +205,7 @@ jobs:
         build-desktop-app-windows,
       ]
     runs-on: ubuntu-latest
-    if: always() && !cancelled() && github.event_name == 'workflow_dispatch' && github.event.inputs.sha != ''
+    if: always() && !cancelled() && github.event_name == 'workflow_dispatch' && inputs.sha != ''
     steps:
       - uses: actions/github-script@v6
         name: build summary

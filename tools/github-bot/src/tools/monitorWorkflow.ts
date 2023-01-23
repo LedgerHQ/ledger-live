@@ -273,7 +273,7 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
         owner,
         repo,
         workflow_id: workflow.file,
-        ref: payload.check_run.pull_requests[0].head.ref,
+        ref: payload.check_run.pull_requests[0]?.head.ref,
         inputs: workflow.getInputs(payload),
       });
     }
