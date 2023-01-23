@@ -557,7 +557,7 @@ importers:
       '@ledgerhq/hw-app-eth': workspace:*
       '@ledgerhq/hw-transport': workspace:*
       '@ledgerhq/live-common': workspace:*
-      '@ledgerhq/wallet-api-client': ^0.11.0
+      '@ledgerhq/wallet-api-client': ^0.13.0
       '@types/jest': ^27.0.1
       '@types/node': ^16.7.13
       '@types/react': ^17.0.20
@@ -573,7 +573,7 @@ importers:
       '@ledgerhq/hw-app-eth': link:../../../../../libs/ledgerjs/packages/hw-app-eth
       '@ledgerhq/hw-transport': link:../../../../../libs/ledgerjs/packages/hw-transport
       '@ledgerhq/live-common': link:../../../../../libs/ledger-live-common
-      '@ledgerhq/wallet-api-client': 0.11.1
+      '@ledgerhq/wallet-api-client': 0.13.0_h4vrsnhz7ecrettnky7swl3loi
       '@types/jest': 27.5.1
       '@types/node': 16.11.12
       '@types/react': 17.0.45
@@ -12466,17 +12466,30 @@ packages:
     resolution: {integrity: sha512-K3SETlNUJAjU/bN6dNJf56gfpxOhGldmClezIU5puw1PcGDvNf4y8vmEouVz5Htc2a/0vetklf0eIQD8Wk3Hww==}
     dev: false
 
-  /@ledgerhq/wallet-api-client/0.11.1:
-    resolution: {integrity: sha512-s5uHg+2x+HzvM/Go+vx7DoGyh7bgDI1LEKcUBllTsTZBwgMBbgHnpieXylAI4kBySGWUwJTREwDUfY8CmkrsjA==}
+  /@ledgerhq/wallet-api-client/0.13.0_h4vrsnhz7ecrettnky7swl3loi:
+    resolution: {integrity: sha512-icq81psBepmFqM/ZhBuVx4LqnAMGFRHkp76I2g8Hmgvxpan2Y2kdXbpDtq8u0ADfoO38FCKzAnshPlrZvLUJ2g==}
+    peerDependencies:
+      '@ledgerhq/hw-transport': ^6.x
+    peerDependenciesMeta:
+      '@ledgerhq/hw-transport':
+        optional: true
     dependencies:
-      '@ledgerhq/hw-transport': 6.27.8
-      '@ledgerhq/wallet-api-core': 0.11.0
+      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
+      '@ledgerhq/wallet-api-core': 0.12.0
       bignumber.js: 9.1.0
-      json-rpc-2.0: 1.1.0
     dev: false
 
   /@ledgerhq/wallet-api-core/0.11.0:
     resolution: {integrity: sha512-SHIdZD/gQJ4dMag5zzmRAAfhkkfiyHFVLHR7xz0Srj2BLdMfQZzXneTSnv7YND4YOZrwHIfBTA68Bim+AiKjwA==}
+    dependencies:
+      '@ledgerhq/errors': 6.12.1
+      bignumber.js: 9.1.0
+      uuid: 9.0.0
+      zod: 3.19.1
+    dev: false
+
+  /@ledgerhq/wallet-api-core/0.12.0:
+    resolution: {integrity: sha512-e8V73MgiXa63mUkyF3MqwqjKxYzVVF6lhLHYWtUVJCUDwyXEq7EmuEK9IxYl7o5oxqmXlkxQ6qXjl7aQTT6P8g==}
     dependencies:
       '@ledgerhq/errors': 6.12.1
       bignumber.js: 9.1.0
@@ -13184,10 +13197,11 @@ packages:
       webpack-dev-server: 4.9.3_webpack@5.72.1
     dev: false
 
-  /@polkadot/keyring/10.1.13_rctvuuxcfab7pevo7bnynlzygy:
+  /@polkadot/keyring/10.1.13:
     resolution: {integrity: sha512-O5/sM1cfn/ueT7C6sxqZI9Z18RLOpPovdfZzBlcRAyfs/8uR+UA20r2lGCQdQIzlOeF0XPebIO0lwW+6wPtvtg==}
     engines: {node: '>=14.0.0'}
-    peerDependencies:
+    dependencies:
+      '@babel/runtime': 7.20.1
       '@polkadot/util': 10.1.13
       '@polkadot/util-crypto': 10.1.13_@polkadot+util@10.1.13
     dev: false
@@ -13228,7 +13242,7 @@ packages:
       styled-components: '*'
     dependencies:
       '@babel/runtime': 7.20.1
-      '@polkadot/keyring': 10.1.13_rctvuuxcfab7pevo7bnynlzygy
+      '@polkadot/keyring': 10.1.13
       '@polkadot/ui-settings': 2.9.13
       '@polkadot/ui-shared': 2.9.13_rctvuuxcfab7pevo7bnynlzygy
       '@polkadot/util': 10.1.12
@@ -13252,7 +13266,7 @@ packages:
       '@babel/runtime': 7.20.1
       '@polkadot/ui-shared': 2.9.13_wjlk3ve25xa6jlxvfvd3k2im7y
       '@polkadot/util': 10.1.14
-      '@polkadot/util-crypto': 10.1.14_@polkadot+util@10.1.14
+      '@polkadot/util-crypto': 10.1.14
       react: 17.0.2
       react-native: 0.68.5_qiqqwmyv63yhnuboofexv3s7x4
       react-native-svg: 12.4.4_ondxtwf5lqq5g76dzmsmwamaca
@@ -13303,12 +13317,12 @@ packages:
     engines: {node: '>=14.0.0'}
     dependencies:
       '@babel/runtime': 7.20.1
-      '@polkadot/keyring': 10.1.13_rctvuuxcfab7pevo7bnynlzygy
+      '@polkadot/keyring': 10.1.13
       '@polkadot/types-augment': 9.8.1
       '@polkadot/types-codec': 9.8.1
       '@polkadot/types-create': 9.8.1
       '@polkadot/util': 10.1.14
-      '@polkadot/util-crypto': 10.1.14_@polkadot+util@10.1.14
+      '@polkadot/util-crypto': 10.1.14
       rxjs: 7.5.7
     dev: false
 
@@ -13342,7 +13356,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.20.1
       '@polkadot/util': 10.1.14
-      '@polkadot/util-crypto': 10.1.14_@polkadot+util@10.1.14
+      '@polkadot/util-crypto': 10.1.14
       color: 3.2.1
     dev: false
 
@@ -13384,11 +13398,9 @@ packages:
       tweetnacl: 1.0.3
     dev: false
 
-  /@polkadot/util-crypto/10.1.14_@polkadot+util@10.1.14:
+  /@polkadot/util-crypto/10.1.14:
     resolution: {integrity: sha512-Iq9C0Snv+pScZ9QgJoH7l++x9wdp9vhS3NMLm8ZqlDCNXUUl/3ViafZCfHRILQD9AsLcykE99mNzFDl3u8jZQA==}
     engines: {node: '>=14.0.0'}
-    peerDependencies:
-      '@polkadot/util': 10.1.14
     dependencies:
       '@babel/runtime': 7.20.1
       '@noble/hashes': 1.1.3
@@ -13466,6 +13478,18 @@ packages:
       '@polkadot/x-randomvalues': 10.1.12
     dev: false
 
+  /@polkadot/wasm-bridge/6.3.1_nz7hxxoej7rhwtqhu42recmbci:
+    resolution: {integrity: sha512-1TYkHsb9AEFhU9uZj3biEnN2yKQNzdrwSjiTvfCYnt97pnEkKsZI6cku+YPZQv5w/x9CQa5Yua9e2DVVZSivGA==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      '@polkadot/util': '*'
+      '@polkadot/x-randomvalues': '*'
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@polkadot/util': 10.1.13
+      '@polkadot/x-randomvalues': 10.1.13
+    dev: false
+
   /@polkadot/wasm-crypto-asmjs/6.3.1_@polkadot+util@10.1.12:
     resolution: {integrity: sha512-zbombRfA5v/mUWQQhgg2YwaxhRmxRIrvskw65x+lruax3b6xPBFDs7yplopiJU3r8h2pTgQvX/DUksvqz2TCRQ==}
     engines: {node: '>=14.0.0'}
@@ -13524,6 +13548,21 @@ packages:
       '@polkadot/wasm-crypto-asmjs': 6.3.1_@polkadot+util@10.1.12
       '@polkadot/wasm-crypto-wasm': 6.3.1_@polkadot+util@10.1.12
       '@polkadot/x-randomvalues': 10.1.12
+    dev: false
+
+  /@polkadot/wasm-crypto-init/6.3.1_nz7hxxoej7rhwtqhu42recmbci:
+    resolution: {integrity: sha512-9yaUBcu+snwjJLmPPGl3cyGRQ1afyFGm16qzTM0sgG/ZCfUlK4uk8KWZe+sBUKgoxb2oXY7Y4WklKgQI1YBdfw==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      '@polkadot/util': '*'
+      '@polkadot/x-randomvalues': '*'
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@polkadot/util': 10.1.13
+      '@polkadot/wasm-bridge': 6.3.1_nz7hxxoej7rhwtqhu42recmbci
+      '@polkadot/wasm-crypto-asmjs': 6.3.1_@polkadot+util@10.1.13
+      '@polkadot/wasm-crypto-wasm': 6.3.1_@polkadot+util@10.1.13
+      '@polkadot/x-randomvalues': 10.1.13
     dev: false
 
   /@polkadot/wasm-crypto-wasm/6.3.1_@polkadot+util@10.1.12:
@@ -13591,6 +13630,23 @@ packages:
       '@polkadot/wasm-crypto-wasm': 6.3.1_@polkadot+util@10.1.12
       '@polkadot/wasm-util': 6.3.1_@polkadot+util@10.1.12
       '@polkadot/x-randomvalues': 10.1.12
+    dev: false
+
+  /@polkadot/wasm-crypto/6.3.1_nz7hxxoej7rhwtqhu42recmbci:
+    resolution: {integrity: sha512-OO8h0qeVkqp4xYZaRVl4iuWOEtq282pNBHDKb6SOJuI2g59eWGcKh4EQU9Me2VP6qzojIqptrkrVt7KQXC68gA==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      '@polkadot/util': '*'
+      '@polkadot/x-randomvalues': '*'
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@polkadot/util': 10.1.13
+      '@polkadot/wasm-bridge': 6.3.1_nz7hxxoej7rhwtqhu42recmbci
+      '@polkadot/wasm-crypto-asmjs': 6.3.1_@polkadot+util@10.1.13
+      '@polkadot/wasm-crypto-init': 6.3.1_nz7hxxoej7rhwtqhu42recmbci
+      '@polkadot/wasm-crypto-wasm': 6.3.1_@polkadot+util@10.1.13
+      '@polkadot/wasm-util': 6.3.1_@polkadot+util@10.1.13
+      '@polkadot/x-randomvalues': 10.1.13
     dev: false
 
   /@polkadot/wasm-util/6.3.1_@polkadot+util@10.1.12:
@@ -40714,7 +40770,6 @@ packages:
     peerDependencies:
       '@babel/core': '*'
     dependencies:
-      '@babel/core': 7.18.10
       '@babel/plugin-proposal-class-properties': 7.16.7
       '@babel/plugin-proposal-export-default-from': 7.16.7
       '@babel/plugin-proposal-nullish-coalescing-operator': 7.16.7
