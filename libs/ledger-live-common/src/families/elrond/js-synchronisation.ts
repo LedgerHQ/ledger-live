@@ -1,6 +1,7 @@
+import { TokenAccount } from "@ledgerhq/types-live";
 import { encodeAccountId, inferSubOperations } from "../../account";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
-import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
+import { makeScanAccounts, makeSync, mergeOps } from "../../bridge/jsHelpers";
 import {
   getAccount,
   getAccountDelegations,
@@ -8,9 +9,8 @@ import {
   hasESDTTokens,
 } from "./api";
 import elrondBuildESDTTokenAccounts from "./js-buildSubAccounts";
-import { Operation, SubAccount, TokenAccount } from "@ledgerhq/types-live";
-import { computeDelegationBalance } from "./logic";
 import { reconciliateSubAccounts } from "./js-reconciliation";
+import { computeDelegationBalance } from "./logic";
 
 const getAccountShape: GetAccountShape = async (info, syncConfig) => {
   const { address, initialAccount, currency, derivationMode } = info;
