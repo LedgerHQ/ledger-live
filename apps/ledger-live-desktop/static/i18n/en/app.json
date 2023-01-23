@@ -5780,7 +5780,7 @@
     }
   },
   "customImage": {
-    "title": "Custom image",
+    "title": "Custom lock screen",
     "steps": {
       "choose": {
         "stepLabel": "Choose an image",
@@ -5798,13 +5798,11 @@
       "transfer": {
         "stepLabel": "Transfer",
         "uploadAnotherImage": "Upload another image",
-        "allowPreview": "Allow picture preview on {{productName}}",
-        "loadingPicture": "Loading picture on {{productName}}",
-        "pictureLoaded": "Picture loaded",
+        "allowPreview": "Allow lock screen picture to load on your {{productName}}",
+        "loadingPicture": "Loading...",
         "imageLoaded": "Image loaded on {{productName}}",
-        "confirmPicture": "Confirm on {{productName}}",
-        "doThisLater": "Maybe later",
-        "timeDisclaimer": "This can take up to 30 seconds"
+        "confirmPicture": "Like what you see?\nKeep it!",
+        "doThisLater": "Maybe later"
       }
     },
     "postOnboarding": {
@@ -5812,7 +5810,7 @@
       "description": "By customizing the screen",
       "actionCompletedPopupLabel": "Device personalized"
     },
-    "customImageSet": "Custom image set",
+    "customImageSet": "Lockscreen set",
     "finishCTA": "Finish"
   }
 }
