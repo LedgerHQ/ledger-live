@@ -15,7 +15,6 @@ import { NavigatorName, ScreenName } from "../../const";
 import FramedImage, {
   previewConfig,
 } from "../../components/CustomImage/FramedImage";
-import Link from "../../components/wrappedUi/Link";
 import { TrackScreen } from "../../analytics";
 
 type NavigationProps = BaseComposite<
