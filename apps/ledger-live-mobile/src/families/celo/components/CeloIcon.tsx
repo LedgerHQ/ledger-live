@@ -1,5 +1,3 @@
-// @flow
-
 import React from "react";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 import { useTheme } from "@react-navigation/native";

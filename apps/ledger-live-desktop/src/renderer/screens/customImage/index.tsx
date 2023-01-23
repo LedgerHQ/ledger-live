@@ -209,7 +209,7 @@ const CustomImage: React.FC<Props> = props => {
       px={12}
       data-test-id="custom-image-container"
     >
-      <Text alignSelf="center" variant="h3">
+      <Text alignSelf="center" variant="h3Inter">
         {t("customImage.title")}
       </Text>
       {!transferDone ? (
@@ -296,6 +296,7 @@ const CustomImage: React.FC<Props> = props => {
                   variant: "h5",
                 }}
                 mt={12}
+                width={201}
               >
                 {t("customImage.customImageSet")}
               </Log>

@@ -14,6 +14,7 @@ import {
   inferTokenAccount,
   getGasLimit,
   EIP1559ShouldBeUsed,
+  toTransactionRaw,
 } from "../transaction";
 export type Modes = "send";
 const send: ModeModule = {
@@ -191,6 +192,7 @@ const send: ModeModule = {
           accountId: subAccount.id,
           date: new Date(),
           extra: {},
+          transactionRaw: toTransactionRaw(t),
         },
       ];
     }
