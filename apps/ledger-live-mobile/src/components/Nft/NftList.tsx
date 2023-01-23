@@ -5,7 +5,12 @@ import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { BigNumber } from "bignumber.js";
 
 import styled from "styled-components/native";
-import Animated, { FadeInDown, FadeOutDown } from "react-native-reanimated";
+import Animated, {
+  FadeInDown,
+  FadeInUp,
+  FadeOutDown,
+  FadeOutUp,
+} from "react-native-reanimated";
 import NftListItem from "./NftListItem";
 import { AddNewItem } from "./AddNewItemList";
 import CollapsibleHeaderFlatList from "../WalletTab/CollapsibleHeaderFlatList";
@@ -92,27 +97,28 @@ export function NftList({ data }: Props) {
   return (
     <>
       <TrackScreen category="NFT Gallery" NFTs_owned={data.length} />
-
-      {onMultiSelectMode && (
-        <StyledContainer
-          width="100%"
-          flexDirection="row"
-          alignItems="center"
-          justifyContent="space-between"
-          bg={"background.drawer"}
-        >
-          <Text
-            variant={"large"}
-            fontWeight={"semiBold"}
-            color={"neutral.c100"}
-          >
-            {t("wallet.nftGallery.filters.title", { count: nftsToHide.length })}
-          </Text>
-          <TouchableOpacity onPress={readOnlyModeAction}>
-            <Close size={24} />
-          </TouchableOpacity>
-        </StyledContainer>
-      )}
+      <Animated.View>
+        {onMultiSelectMode && (
+          <Animated.View entering={FadeInUp} exiting={FadeOutUp}>
+            <StyledContainer
+              width="100%"
+              flexDirection="row"
+              alignItems="center"
+              justifyContent="space-between"
+              bg="neutral.c20"
+            >
+              <Text variant="h5" fontWeight="semiBold" color="neutral.c100">
+                {t("wallet.nftGallery.filters.title", {
+                  count: nftsToHide.length,
+                })}
+              </Text>
+              <TouchableOpacity onPress={readOnlyModeAction}>
+                <Close size={24} />
+              </TouchableOpacity>
+            </StyledContainer>
+          </Animated.View>
+        )}
+      </Animated.View>
 
       <RefreshableCollapsibleHeaderFlatList
         numColumns={2}
@@ -149,20 +155,25 @@ export function NftList({ data }: Props) {
         contentContainerStyle={{ marginTop: 0, marginHorizontal: 18 }}
         testID={"wallet-nft-gallery-list"}
       />
-
-      {nftsToHide.length > 0 && onMultiSelectMode && (
-        <RoundedContainer width="100%">
-          <StyledButton
-            onPress={onClickHide}
-            type="main"
-            iconName="EyeNone"
-            iconPosition="left"
-            size="large"
-          >
-            {t("wallet.nftGallery.filters.hide", { count: nftsToHide.length })}
-          </StyledButton>
-        </RoundedContainer>
-      )}
+      <Animated.View>
+        {nftsToHide.length > 0 && onMultiSelectMode && (
+          <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
+            <RoundedContainer width="100%">
+              <StyledButton
+                onPress={onClickHide}
+                type="main"
+                iconName="EyeNone"
+                iconPosition="left"
+                size="large"
+              >
+                {t("wallet.nftGallery.filters.hide", {
+                  count: nftsToHide.length,
+                })}
+              </StyledButton>
+            </RoundedContainer>
+          </Animated.View>
+        )}
+      </Animated.View>
     </>
   );
 }

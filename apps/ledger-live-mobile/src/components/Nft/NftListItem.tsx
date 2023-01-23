@@ -248,7 +248,9 @@ const NftMediaComponent = ({
         <NftMedia
           style={[
             styles.image,
-            { opacity: isSelected ? 0.3 : selectable ? 0.8 : 1 },
+            {
+              opacity: isSelected ? 0.3 : selectable ? 0.8 : 1,
+            },
           ]}
           metadata={metadata}
           mediaFormat="preview"
