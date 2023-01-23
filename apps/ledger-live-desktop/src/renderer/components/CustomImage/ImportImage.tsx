@@ -74,7 +74,7 @@ const ImportImage: React.FC<Props> = ({ setLoading, onResult, onError }) => {
   return (
     <ImportButton
       text={t("customImage.steps.choose.upload")}
-      Icon={Icons.ArrowFromBottomMedium}
+      Icon={Icons.UploadMedium}
       data-test-id="custom-image-import-image-button"
     >
       <ImageInput onChange={onChange} data-test-id="custom-image-import-image-input" />
