@@ -12,27 +12,6 @@ import { Operation, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 import { computeDelegationBalance } from "./logic";
 import { reconciliateSubAccounts } from "./js-reconciliation";
 
-function pruneOperations(
-  operations: Operation[],
-  subAccounts: SubAccount[]
-): Operation[] {
-  const allOperations: Operation[] = [];
-  for (const operation of operations) {
-    const subOperations = subAccounts
-      ? inferSubOperations(operation.hash, subAccounts)
-      : undefined;
-
-    if (subOperations?.length !== 0) {
-      //prevent doubled transactions in account history
-      continue;
-    }
-
-    allOperations.push(operation);
-  }
-
-  return allOperations;
-}
-
 const getAccountShape: GetAccountShape = async (info, syncConfig) => {
   const { address, initialAccount, currency, derivationMode } = info;
   const accountId = encodeAccountId({
@@ -52,7 +31,7 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
 
   const delegations = await getAccountDelegations(address);
 
-  let subAccounts: TokenAccount[] | undefined = [];
+  let subAccounts: TokenAccount[] = [];
   const hasTokens = await hasESDTTokens(address);
   if (hasTokens) {
     const tokenAccounts = await elrondBuildESDTTokenAccounts({
@@ -90,7 +69,14 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
       delegations,
     },
     subAccounts,
-    operations: pruneOperations(operations, subAccounts),
+    operations: operations.map((op) => {
+      const subOperations = inferSubOperations(op.hash, subAccounts);
+
+      return {
+        ...op,
+        subOperations,
+      };
+    }),
   };
 };
 
