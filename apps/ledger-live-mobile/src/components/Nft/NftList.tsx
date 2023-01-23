@@ -66,8 +66,8 @@ export function NftList({ data }: Props) {
         mr={(index + 1) % NB_COLUMNS > 0 ? 6 : 0}
         testID={"wallet-nft-gallery-list-item"}
       >
-        {item.id === ADD_NEW.id && !onMultiSelectMode ? (
-          <AddNewItem />
+        {item.id === ADD_NEW.id ? (
+          <>{!onMultiSelectMode && <AddNewItem />}</>
         ) : (
           <NftListItem
             nft={item}
