@@ -277,7 +277,7 @@ Regenerate data:
     node script/crypto-assets-importer/index.js ~/dev/crypto-assets
     node script/crypto-assets-importer/tron/sync-trc10-tokens.js
 
-NB: currencies, trc20 and asa are currently manually maintained.
+NB: currencies asa, esdt, spl, stellar and trc20 are currently manually maintained.
 
 Update test and snapshots in the monorepo:
 
