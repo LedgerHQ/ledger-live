@@ -4,7 +4,7 @@ import { ProtoNFT } from "@ledgerhq/types-live";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { BigNumber } from "bignumber.js";
 
-import styled from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 import Animated, {
   FadeInDown,
   FadeInUp,
@@ -42,6 +42,7 @@ const NB_COLUMNS = 2;
 const keyExtractor = (item: ProtoNFT) => item.id;
 
 export function NftList({ data }: Props) {
+  const { space } = useTheme();
   const dataWithAdd = data.concat(ADD_NEW);
   const {
     t,
@@ -65,7 +66,7 @@ export function NftList({ data }: Props) {
         mr={(index + 1) % NB_COLUMNS > 0 ? 6 : 0}
         testID={"wallet-nft-gallery-list-item"}
       >
-        {item.id === ADD_NEW.id ? (
+        {item.id === ADD_NEW.id && !onMultiSelectMode ? (
           <AddNewItem />
         ) : (
           <NftListItem
@@ -139,7 +140,9 @@ export function NftList({ data }: Props) {
                     iconPosition="left"
                     size="small"
                   >
-                    {t("wallet.nftGallery.filters.selectAndHide")}
+                    <Text variant="body" fontWeight="semiBold">
+                      {t("wallet.nftGallery.filters.selectAndHide")}
+                    </Text>
                   </StyledButton>
                 </Flex>
               </Animated.View>
@@ -152,8 +155,11 @@ export function NftList({ data }: Props) {
         showsVerticalScrollIndicator={false}
         initialNumToRender={6}
         windowSize={11}
-        contentContainerStyle={{ marginTop: 0, marginHorizontal: 18 }}
+        contentContainerStyle={{ marginTop: 0, marginHorizontal: space[6] }}
         testID={"wallet-nft-gallery-list"}
+        ListHeaderComponentStyle={{
+          marginBottom: space[6],
+        }}
       />
       <Animated.View>
         {nftsToHide.length > 0 && onMultiSelectMode && (
@@ -188,6 +194,7 @@ const StyledContainer = styled(Flex)`
   top: 0;
   z-index: 10;
   padding: 50px 18px 10px 18px;
+  height: 100px;
 `;
 
 const RoundedContainer = styled(Flex)`
