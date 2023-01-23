@@ -14,6 +14,7 @@ const globalImporters = [
   require("./importers/currenciesExchange"),
 ];
 const evmByChainImporter = require("./evm");
+const staticImporter = require("./static");
 
 const outputFolder = path.join(__dirname, "../../packages/cryptoassets/src");
 const inputFolder = process.argv[2];
@@ -64,6 +65,9 @@ axios
 
     // EVM importers will create the definition files and signatures for all ERC20s by chain ID
     evmByChainImporter(inputFolder, outputFolder);
+
+    // Static imports will copy definition files directly to data folder
+    staticImporter(outputFolder);
   });
 
 async function promiseAllBatched(batch, items, fn) {
