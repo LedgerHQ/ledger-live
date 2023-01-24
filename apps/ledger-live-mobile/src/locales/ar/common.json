@@ -803,7 +803,9 @@
     "required" : "عذراً، يبدو أن خاصية البلوتوث مُعطلة",
     "locationRequiredTitle" : "الموقع مطلوب لخدمة Bluetooth LE",
     "locationRequiredMessage" : "مطلوب تصريح المَوقع على أندرويد لعرض قائمة أجهزة Bluetooth LE.",
-    "checkEnabled" : "يرجى تمكين خاصية البلوتوث في إعدادات هاتفك."
+    "checkEnabled" : "يرجى تمكين خاصية البلوتوث في إعدادات هاتفك.",
+    "tryEnablingAgain" : "حاول تمكين البلوتوث مرة أخرى",
+    "openSettings" : "افتح إعدادات البلوتوث"
   },
   "webview" : {
     "noConnectionError" : {
@@ -813,12 +815,10 @@
   },
   "location" : {
     "titleServiceRequired" : "خدمات الموقع مطلوبة",
-    "titlePermissionRequired" : "إذن الموقع مطلوب",
-    "titlePermissionRequiredPrecise" : "إذن الموقع الدقيق مطلوب",
     "descriptionServiceRequired" : "Ledger Live يتطلب خدمات الموقع لإقران جهازك عبر خاصية البلوتوث.",
-    "descriptionPermissionRequired" : "Ledger Live يتطلب إذن الموقع لإقران جهازك عبر البلوتوث.",
-    "descriptionPermissionRequiredPrecise" : "Ledger Live يتطلب إذن الموقع الدقيق لإقران جهازك عبر البلوتوث.",
     "open" : "فتح إعدادات الموقع",
+    "openSettings" : "افتح إعدادات الموقع",
+    "tryEnablingAgain" : "حاول تمكين الموقع مرة أخرى",
     "noInfos" : "Ledger لا تقوم بالوصول إلى معلومات موقعك."
   },
   "permissions" : {
@@ -831,6 +831,19 @@
       "modalButtonLabelBase" : "تصريح",
       "modalButtonLabelSettingsVariant" : "انتقل إلى الإعدادات",
       "dontPair" : "لا تُقرِن"
+    },
+    "location" : {
+      "titlePermissionRequired" : "إذن الموقع مطلوب",
+      "titlePermissionRequiredPrecise" : "إذن الموقع الدقيق مطلوب",
+      "descriptionPermissionRequired" : "Ledger Live يتطلب إذن الموقع لإقران جهازك عبر البلوتوث.",
+      "descriptionPermissionRequiredPrecise" : "Ledger Live يتطلب إذن الموقع الدقيق لإقران جهازك عبر البلوتوث."
+    },
+    "camera" : {
+      "title" : "منح تفويض للكاميرا",
+      "authorizeDescription" : "يُرجى منح تفويض للكاميرا لمسح أكواد QR ضوئياً.",
+      "authorizeButtonTitle" : "تصريح",
+      "goToSettingsDescription" : "يُرجى منح تفويض للكاميرا في الإعدادات لمسح أكواد QR ضوئياً.",
+      "goToSettingsButtonTitle" : "انتقل إلى الإعدادات"
     }
   },
   "fees" : {
@@ -1115,6 +1128,12 @@
     "mostPopular" : "الأكثر شعبية"
   },
   "installSetOfApps" : {
+    "restore" : {
+      "title" : "تثبيت نفس التطبيقات كما في {{deviceName}}؟",
+      "titleNoDeviceName" : "تثبيت نفس التطبيقات كما في جهاز Ledger السابق؟",
+      "installCTA" : "تثبيت الآن",
+      "skipCTA" : "سأفعل هذا لاحقاً"
+    },
     "landing" : {
       "estimatedTime" : "{{ minutes }} دقيقة",
       "title" : "{{ productName }} يستخدم تطبيقات لتمكين المعاملات الآمنة على سلسلة الكتل",
@@ -1126,7 +1145,7 @@
       "loading" : "جاري التحميل ...",
       "resolving" : "حل التبعيات",
       "progress" : "تثبيت التطبيقات %{{progress}}",
-      "disclaimer" : "التطبيقات على {{ productName }} تُستخدم للموافقة على المعاملات. يمكنك إضافتها أو حذفها في أي وقت."
+      "disclaimer" : "قم بإضافة أو حذف التطبيقات في أي وقت من Ledger Live."
     }
   },
   "onboarding" : {
@@ -2272,12 +2291,6 @@
         "unsupported" : "غير مدعوم",
         "settings" : "إعدادات التطبيقات",
         "includeGeneralSettings" : "استيراد إعدادات سطح المكتب"
-      },
-      "fallback" : {
-        "header" : "استيراد الحساب",
-        "title" : "تمكين الكاميرا",
-        "desc" : "يرجى تمكين الكاميرا في الإعدادات لإجراء المسح الضوئي لأكواد QR.",
-        "buttonTitle" : "انتقل إلى الإعدادات"
       }
     },
     "availableBalance" : "الرصيد المتاح",
@@ -3622,7 +3635,7 @@
       "title" : "تأكيد عملية المبادلة على الجهاز",
       "alert" : {
         "default" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. يتم تبادل العناوين بشكل آمن حتى لا تضطر إلى التحقق منهم.",
-        "cic" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. CIC قد تحتاج إلى إجراء تحقق إضافي لبعض المعاملات، مما يؤدي إلى تأخير."
+        "provider" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. {{providerName}} قد يحتاج إلى إجراء تحقق إضافي لبعض المعاملات، ما يؤدي إلى تأخير."
       },
       "acceptTerms" : "بتأكيد صحة هذه المعاملة، أنا أقبل\n<0><0>شروط استخدام</0> {{provider}}</0>",
       "notice" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. يتم تبادل العناوين بشكل آمن حتى لا تضطر إلى التحقق منهم."
