@@ -42,7 +42,7 @@ const NB_COLUMNS = 2;
 const keyExtractor = (item: ProtoNFT) => item.id;
 
 export function NftList({ data }: Props) {
-  const { space } = useTheme();
+  const { space, colors } = useTheme();
   const dataWithAdd = data.concat(ADD_NEW);
   const {
     t,
@@ -111,7 +111,11 @@ export function NftList({ data }: Props) {
             alignItems="center"
             justifyContent="space-between"
             bg="neutral.c20"
-            style={{ zIndex: 15 }}
+            style={{
+              zIndex: 15,
+              borderBottomWidth: 1,
+              borderBottomColor: colors.neutral.c30,
+            }}
           >
             <Text variant="h5" fontWeight="semiBold" color="neutral.c100">
               {t("wallet.nftGallery.filters.title", {
@@ -156,6 +160,9 @@ export function NftList({ data }: Props) {
             )}
           </Animated.View>
         }
+        ListHeaderComponentStyle={{
+          marginBottom: onMultiSelectMode ? -space[8] : space[6],
+        }}
         data={dataWithAdd}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
@@ -164,9 +171,6 @@ export function NftList({ data }: Props) {
         windowSize={11}
         contentContainerStyle={{ marginTop: 0, marginHorizontal: space[6] }}
         testID={"wallet-nft-gallery-list"}
-        ListHeaderComponentStyle={{
-          marginBottom: space[6],
-        }}
       />
       <Animated.View>
         {nftsToHide.length > 0 && onMultiSelectMode && (
