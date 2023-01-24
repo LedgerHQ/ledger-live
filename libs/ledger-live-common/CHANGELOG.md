@@ -1,5 +1,21 @@
 # @ledgerhq/live-common
 
+## 27.12.0-nightly.6
+
+### Minor Changes
+
+- [#2364](https://github.com/LedgerHQ/ledger-live/pull/2364) [`5b4aa38421`](https://github.com/LedgerHQ/ledger-live/commit/5b4aa38421380512fb96ef66e1f3149ce8bfd018) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - update polkadot min version
+
+* [#2313](https://github.com/LedgerHQ/ledger-live/pull/2313) [`0b827ad97a`](https://github.com/LedgerHQ/ledger-live/commit/0b827ad97afb5e12ae0c8d0d1cf3952a6d02ec7c) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Adds expirationTime to exchange rates returned.
+
+- [#1661](https://github.com/LedgerHQ/ledger-live/pull/1661) [`a56ffa948d`](https://github.com/LedgerHQ/ledger-live/commit/a56ffa948defb16ea9f2968d96d4b896f9839145) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - add elrond staking and token
+
+### Patch Changes
+
+- Updated dependencies [[`a56ffa948d`](https://github.com/LedgerHQ/ledger-live/commit/a56ffa948defb16ea9f2968d96d4b896f9839145)]:
+  - @ledgerhq/cryptoassets@7.3.0-nightly.0
+  - @ledgerhq/hw-app-eth@6.30.5-nightly.0
+
 ## 27.12.0-nightly.5
 
 ### Minor Changes

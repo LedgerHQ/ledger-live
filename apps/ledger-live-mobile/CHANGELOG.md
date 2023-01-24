@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.14.0-nightly.6
+
+### Minor Changes
+
+- [#1661](https://github.com/LedgerHQ/ledger-live/pull/1661) [`a56ffa948d`](https://github.com/LedgerHQ/ledger-live/commit/a56ffa948defb16ea9f2968d96d4b896f9839145) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - add elrond staking and token
+
+### Patch Changes
+
+- Updated dependencies [[`53b526847d`](https://github.com/LedgerHQ/ledger-live/commit/53b526847d5478e271e216c7a98d650915b7cb6a), [`5b4aa38421`](https://github.com/LedgerHQ/ledger-live/commit/5b4aa38421380512fb96ef66e1f3149ce8bfd018), [`0b827ad97a`](https://github.com/LedgerHQ/ledger-live/commit/0b827ad97afb5e12ae0c8d0d1cf3952a6d02ec7c), [`a56ffa948d`](https://github.com/LedgerHQ/ledger-live/commit/a56ffa948defb16ea9f2968d96d4b896f9839145)]:
+  - @ledgerhq/types-live@6.29.0-nightly.1
+  - @ledgerhq/live-common@27.12.0-nightly.6
+
 ## 3.14.0-nightly.5
 
 ### Patch Changes

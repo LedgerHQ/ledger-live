@@ -1,5 +1,21 @@
 # ledger-live-desktop
 
+## 2.52.0-nightly.15
+
+### Minor Changes
+
+- [#1661](https://github.com/LedgerHQ/ledger-live/pull/1661) [`a56ffa948d`](https://github.com/LedgerHQ/ledger-live/commit/a56ffa948defb16ea9f2968d96d4b896f9839145) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - elrond staking and token
+
+* [#2313](https://github.com/LedgerHQ/ledger-live/pull/2313) [`0b827ad97a`](https://github.com/LedgerHQ/ledger-live/commit/0b827ad97afb5e12ae0c8d0d1cf3952a6d02ec7c) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - On swap screen, we now refresh rates based on exchange rates available
+
+### Patch Changes
+
+- [#2345](https://github.com/LedgerHQ/ledger-live/pull/2345) [`27a434b645`](https://github.com/LedgerHQ/ledger-live/commit/27a434b64508fa26fe4f6a8e68ea79c9a06c96a5) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Pixel polish on LLD CLS
+
+- Updated dependencies [[`53b526847d`](https://github.com/LedgerHQ/ledger-live/commit/53b526847d5478e271e216c7a98d650915b7cb6a), [`5b4aa38421`](https://github.com/LedgerHQ/ledger-live/commit/5b4aa38421380512fb96ef66e1f3149ce8bfd018), [`0b827ad97a`](https://github.com/LedgerHQ/ledger-live/commit/0b827ad97afb5e12ae0c8d0d1cf3952a6d02ec7c), [`a56ffa948d`](https://github.com/LedgerHQ/ledger-live/commit/a56ffa948defb16ea9f2968d96d4b896f9839145)]:
+  - @ledgerhq/types-live@6.29.0-nightly.1
+  - @ledgerhq/live-common@27.12.0-nightly.6
+
 ## 2.52.0-nightly.14
 
 ### Patch Changes
