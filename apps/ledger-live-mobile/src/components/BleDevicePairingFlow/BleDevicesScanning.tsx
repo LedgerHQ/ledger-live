@@ -31,7 +31,7 @@ export type BleDevicesScanningProps = {
 /**
  * Runs a BLE scan and list seen devices
  *
- * This components should be wrapped around a RequiresBLE component.
+ * This components should be wrapped in a RequiresBLE component.
  * This is the case in the BleDevicePairingFlow component.
  * If this is not the case, some BLE and locations errors are handled, but not as well as with RequiresBLE.
  *
