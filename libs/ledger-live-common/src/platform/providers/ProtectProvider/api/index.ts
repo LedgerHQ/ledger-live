@@ -1,7 +1,7 @@
 import network from "../../../../network";
 import { ProtectData } from "../types";
 
-const ACCOUNT_API_URL = "https://stargate-portal-stg.api.aws.stg.ldg-tech.com";
+const ACCOUNT_API_URL = "https://stargate-portal-sec.api.aws.sec.ldg-tech.com";
 
 export async function login(
   email: string,
