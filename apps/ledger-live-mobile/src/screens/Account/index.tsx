@@ -4,12 +4,7 @@ import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import {
-  Account,
-  AccountLike,
-  Operation,
-  TokenAccount,
-} from "@ledgerhq/types-live";
+import { Account, AccountLike, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { Flex } from "@ledgerhq/native-ui";
 import debounce from "lodash/debounce";
 import { useTranslation } from "react-i18next";
@@ -69,6 +64,8 @@ const AccountScreenInner = ({
   const { t } = useTranslation();
   const { colors } = useTheme();
   const navigation = useNavigation<StackNavigationProp<AccountsNavigatorParamList>>();
+  const editTxNavigation = useNavigation();
+
   const dispatch = useDispatch();
   const range = useSelector(selectedTimeRangeSelector);
   const { countervalueAvailable, countervalueChange, cryptoChange, history } =
@@ -116,12 +113,15 @@ const AccountScreenInner = ({
 
   const { secondaryActions } = useAccountActions({ account, parentAccount });
 
-  const onEditTransactionPress = (latestOperation: Operation) => {
-    navigation.navigate(NavigatorName.EthereumEditTransaction, {
-      screen: ScreenName.EditTransactionOptions,
-      params: { operation: latestOperation },
-    });
-  };
+  const onEditTransactionPress = useCallback(
+    (latestOperation: Operation) => {
+      editTxNavigation.navigate(NavigatorName.EthereumEditTransaction, {
+        screen: ScreenName.EditTransactionOptions,
+        params: { operation: latestOperation },
+      });
+    },
+    [editTxNavigation],
+  );
 
   const { listHeaderComponents } = useMemo(
     () =>
@@ -159,6 +159,7 @@ const AccountScreenInner = ({
       colors,
       secondaryActions,
       t,
+      onEditTransactionPress,
     ],
   );
 
@@ -166,13 +167,13 @@ const AccountScreenInner = ({
     ...listHeaderComponents,
     ...(!isEmpty
       ? [
-          <SectionContainer px={6} isLast>
+          <SectionContainer key={"section-container-accounts"} px={6} isLast>
             <SectionTitle title={t("analytics.operations.title")} />
             <OperationsHistorySection accounts={[account]} />
           </SectionContainer>,
         ]
       : [
-          <Flex px={6}>
+          <Flex key={"section-container-empty"} px={6}>
             <EmptyAccountCard currencyTicker={currency.ticker} />
           </Flex>,
         ]),
