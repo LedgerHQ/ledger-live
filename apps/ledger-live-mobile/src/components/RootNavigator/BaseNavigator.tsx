@@ -88,6 +88,7 @@ import {
 } from "../NavigationHeaderCloseButton";
 import { RedirectToRecoverStaxFlowScreen } from "../../screens/Protect/RedirectToRecoverStaxFlow";
 import { RootDrawer, RootDrawerProps } from "../RootDrawer";
+import EditTransactionNavigator from "./EditTransactionNavigator";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -514,6 +515,7 @@ export default function BaseNavigator() {
             />
           );
         })}
+<<<<<<< HEAD
         <Stack.Screen
           name={ScreenName.BleDevicePairingFlow}
           component={BleDevicePairingFlow}
@@ -568,5 +570,42 @@ export default function BaseNavigator() {
         />
       </Stack.Navigator>
     </>
+=======
+      />
+      <Stack.Screen
+        name={ScreenName.RedirectToOnboardingRecoverFlow}
+        options={{ headerShown: false }}
+        component={RedirectToOnboardingRecoverFlowScreen}
+      />
+      <Stack.Screen
+        name={ScreenName.RedirectToRecoverStaxFlow}
+        options={{ headerShown: false }}
+        component={RedirectToRecoverStaxFlowScreen}
+      />
+      <Stack.Screen
+        name={NavigatorName.NoFundsFlow}
+        component={NoFundsFlowNavigator}
+        options={{
+          ...TransparentHeaderNavigationOptions,
+          headerRight: () => <NavigationHeaderCloseButtonAdvanced preferDismiss={false} />,
+          headerLeft: () => null,
+        }}
+      />
+      <Stack.Screen
+        name={NavigatorName.EthereumEditTransaction}
+        options={{ headerShown: false }}
+        component={EditTransactionNavigator}
+      />
+      <Stack.Screen
+        name={NavigatorName.StakeFlow}
+        component={StakeFlowNavigator}
+        options={{
+          ...TransparentHeaderNavigationOptions,
+          headerRight: () => <NavigationHeaderCloseButtonAdvanced preferDismiss={false} />,
+          headerLeft: () => null,
+        }}
+      />
+    </Stack.Navigator>
+>>>>>>> 7580549af3 (show message in account if pending transaction)
   );
 }
