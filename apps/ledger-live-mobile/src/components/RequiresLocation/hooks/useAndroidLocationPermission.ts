@@ -4,11 +4,17 @@ import {
   Platform,
   AppState,
 } from "react-native";
-import { useRef, useCallback, useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 
 const { PERMISSIONS, RESULTS } = PermissionsAndroid;
 
-// https://developer.android.com/guide/topics/connectivity/bluetooth/permissions#declare
+/**
+ * On Android 9 and before, the app needs to have the ACCESS_COARSE_LOCATION permission. After it needs the ACCESS_FINE_LOCATION permission.
+ *
+ * See https://developer.android.com/guide/topics/connectivity/bluetooth/permissions#declare
+ *
+ * On iOS, no check is done here.
+ */
 export const locationPermission: Permission | undefined =
   Platform.OS === "android"
     ? Platform.Version <= 28
@@ -16,6 +22,9 @@ export const locationPermission: Permission | undefined =
       : PERMISSIONS.ACCESS_FINE_LOCATION
     : undefined;
 
+/**
+ * Checks (without requesting) if the app has the required permissions to use Bluetooth.
+ */
 async function checkLocationPermission() {
   if (!locationPermission) return true;
   return PermissionsAndroid.check(locationPermission);
@@ -26,6 +35,11 @@ type RequestResult = {
   status: typeof RESULTS[number];
 };
 
+/**
+ * Requests the required permission to use location (for the bluetooth scanning)
+ *
+ * If the permission is already granted, the request acts as a check for the user.
+ */
 async function requestLocationPermission(): Promise<RequestResult> {
   if (!locationPermission) return { granted: true, status: RESULTS.GRANTED };
   return PermissionsAndroid.request(locationPermission).then(status => {
@@ -36,58 +50,65 @@ async function requestLocationPermission(): Promise<RequestResult> {
   });
 }
 
+export type PermissionState = "unknown" | "granted" | "denied";
+
+/**
+ * Hook to check and request the location permission on Android.
+ *
+ * On mount, it requests for the location permissions. If they are already granted, the request is only a check
+ * and no prompt is displayed to the user.
+ * If the location permission is not set, the user is prompted to allow the permission,
+ * except if the user had the android option "never ask again" set on this permission.
+ *
+ * When the state of the app ("active", "background" etc.) changes and is back to "active", the location permission is checked again.
+ * This time, it is only a check, not a request, and no prompt will be displayed to the user.
+ *
+ * @returns an object with the following properties:
+ * - hasPermission: "granted" if the location permission is granted, "denied" if it is denied, "unknown" if it is still being checked/requested
+ * - requestForPermissionAgain: a function to request again (and if only granted, only a check without any prompt) the location permission
+ * - neverAskAgain: true if the user has checked the "never ask again" checkbox (or on Android 11+ if the user has denied the permission several times)
+ */
 export const useAndroidLocationPermission = () => {
-  const [hasPermission, setHasPermission] = useState<boolean | undefined>();
-  const [check, setCheck] = useState(false);
+  // If no permission is required, we consider that the permission is granted
+  const [hasPermission, setHasPermission] = useState<PermissionState>(
+    !locationPermission ? "granted" : "unknown",
+  );
   const [neverAskAgain, setNeverAskAgain] = useState(false);
-  const [retryCheckNonce, setRetryCheckNonce] = useState(0);
-  const [retryRequestNonce, setRetryRequestNonce] = useState(0);
-  const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Exposes a retry mechanism only of the permission check
-  const checkAgain = useCallback(() => {
-    setRetryCheckNonce(new Date().getTime());
-  }, []);
+  const [checkPermissionNonce, setCheckPermissionNonce] = useState(0);
+  const [requestPermissionNonce, setRequestPermissionNonce] = useState(0);
 
-  // Exposes a retry mechanism only of the permission request
-  const requestAgain = useCallback(() => {
-    setRetryRequestNonce(new Date().getTime());
-  }, []);
-
-  useEffect(() => {
-    // Sets hasPermission to false after 400ms if it's still undefined.
-    // without this we risk a black screen when this unmounts or a blink
-    // if we ignore it. Feel free to come up with a better way.
-    timeout.current = setTimeout(() => {
-      setHasPermission(false);
-    }, 400);
-
-    return () => {
-      if (timeout.current) clearTimeout(timeout.current);
-    };
+  // Exposes a retry mechanism to request again for permissions
+  const requestForPermissionAgain = useCallback(() => {
+    setRequestPermissionNonce(i => i + 1);
   }, []);
 
   /**
-   * Goes to state="background" when for ex:
+   * Listens to a change in the app state (active/background/inactive/unknown/extension)
+   * and triggers a permission checking if the app comes back to the "active" state.
+   *
+   * The permissions might have changed when the app was in the state "background".
+   * Indeed, the value of the state is set to "background" when for ex:
    * - the user enters settings
    * - the smartphone prompts the user to allow for the permission
    */
   useEffect(() => {
     const listener = AppState.addEventListener("change", state => {
       if (state === "active") {
-        checkAgain();
+        setCheckPermissionNonce(i => i + 1);
       }
     });
 
     return () => {
       listener.remove();
     };
-  }, [checkAgain]);
+  }, []);
 
   /**
-   * Checks the permission at launch, allowing for a retry whenever we
-   * come back from the background.
-   * Also exposes the retry mechanism (on the permission check, not request) for manual triggers.
+   * Checks the location permission when the app state changes back to "active".
+   * Does not check the permissions on mount.
+   *
+   * Handles the check in a useEffect to handle cancellations with the async checking function
    */
   useEffect(() => {
     let cancelled = false;
@@ -95,22 +116,28 @@ export const useAndroidLocationPermission = () => {
     async function asyncCheckLocationPermissions() {
       const res = await checkLocationPermission();
       if (!cancelled) {
-        setCheck(res);
+        setHasPermission(res ? "granted" : "denied");
       }
     }
 
-    asyncCheckLocationPermissions();
+    // Does not check the permissions on mount.
+    // Only when the app state changes.
+    if (checkPermissionNonce > 0) {
+      asyncCheckLocationPermissions();
+    }
 
     return () => {
       cancelled = true;
     };
-  }, [retryCheckNonce]);
+  }, [checkPermissionNonce]);
 
   /**
-   * Requesting the permissions is only done on mount, once TODO
+   * Triggers a request of the location permission: on mount, and every time requestPermissionNonce is updated
    *
-   * Note that it triggers a state "background"/"active" cycle on the app state which can lead to
-   * loops if we set the listeners on app state change.
+   * Handles the request in a useEffect to handle cancellations with the async request function
+   *
+   * Note that it triggers a "background"/"active" cycle of the app state, which can lead to loops if we
+   * incorrectly set the listeners on app state change.
    */
   useEffect(() => {
     let cancelled = false;
@@ -119,8 +146,8 @@ export const useAndroidLocationPermission = () => {
       const res = await requestLocationPermission();
       if (!cancelled) {
         /** https://developer.android.com/about/versions/11/privacy/permissions#dialog-visibility */
-        setHasPermission(res.granted);
         setNeverAskAgain(res.status === RESULTS.NEVER_ASK_AGAIN);
+        setHasPermission(res.granted ? "granted" : "denied");
       }
     }
 
@@ -129,14 +156,11 @@ export const useAndroidLocationPermission = () => {
     return () => {
       cancelled = true;
     };
-  }, [retryRequestNonce]);
+  }, [requestPermissionNonce]);
 
-  const renderChildren = !locationPermission || hasPermission || check;
   return {
-    renderChildren,
     hasPermission,
     neverAskAgain,
-    checkAgain,
-    requestAgain,
+    requestForPermissionAgain,
   };
 };
