@@ -7,7 +7,12 @@ import Animated, {
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
+import {
+  Account,
+  AccountLike,
+  Operation,
+  TokenAccount,
+} from "@ledgerhq/types-live";
 import { Flex } from "@ledgerhq/native-ui";
 import debounce from "lodash/debounce";
 import { useTranslation } from "react-i18next";
@@ -26,7 +31,7 @@ import {
 import { accountScreenSelector } from "../../reducers/accounts";
 import { track, TrackScreen } from "../../analytics";
 import accountSyncRefreshControl from "../../components/accountSyncRefreshControl";
-import { ScreenName } from "../../const";
+import { NavigatorName, ScreenName } from "../../const";
 import CurrencyBackgroundGradient from "../../components/CurrencyBackgroundGradient";
 import AccountHeader from "./AccountHeader";
 import { getListHeaderComponents } from "./ListHeaderComponent";
@@ -120,6 +125,13 @@ const AccountScreenInner = ({
 
   const { secondaryActions } = useAccountActions({ account, parentAccount });
 
+  const onEditTransactionPress = (latestOperation: Operation) => {
+    navigation.navigate(NavigatorName.EthereumEditTransaction, {
+      screen: ScreenName.EditTransactionOptions,
+      params: { operation: latestOperation },
+    });
+  };
+
   const { listHeaderComponents } = useMemo(
     () =>
       getListHeaderComponents({
@@ -138,6 +150,7 @@ const AccountScreenInner = ({
         colors,
         secondaryActions,
         t,
+        onEditTransactionPress,
       }),
     [
       account,
