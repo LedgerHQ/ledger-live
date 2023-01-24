@@ -27,7 +27,7 @@ const FeaturedButtons = () => {
   return (
     <ButtonGrid>
       <EntryButton
-        Icon={Swap}
+        Icon={Exchange}
         title={t("dashboard.featuredButtons.buySell.title")}
         body={t("dashboard.featuredButtons.buySell.description")}
         onClick={() => {
@@ -35,7 +35,7 @@ const FeaturedButtons = () => {
         }}
       />
       <EntryButton
-        Icon={Exchange}
+        Icon={Swap}
         title={t("dashboard.featuredButtons.swap.title")}
         body={t("dashboard.featuredButtons.swap.description")}
         label={t("dashboard.featuredButtons.swap.label")}
