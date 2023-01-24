@@ -803,7 +803,9 @@
     "required" : "Üzgünüz, Bluetooth devre dışı görünüyor",
     "locationRequiredTitle" : "Bluetooth LE için konum gerekli",
     "locationRequiredMessage" : "Bluetooth LE cihazlarını listelemek için Android'de konum izni gerekli.",
-    "checkEnabled" : "Lütfen telefon ayarlarınızdan Bluetooth'u etkinleştirin."
+    "checkEnabled" : "Lütfen telefon ayarlarınızdan Bluetooth'u etkinleştirin.",
+    "tryEnablingAgain" : "Bluetooth'u yeniden etkinleştirmeyi deneyin",
+    "openSettings" : "Bluetooth ayarlarını aç"
   },
   "webview" : {
     "noConnectionError" : {
@@ -813,12 +815,10 @@
   },
   "location" : {
     "titleServiceRequired" : "Konum hizmetleri gerekli",
-    "titlePermissionRequired" : "Konum izni gerekiyor",
-    "titlePermissionRequiredPrecise" : "Tam konum izni gerekiyor",
     "descriptionServiceRequired" : "Ledger Live, cihazınızı Bluetooth üzerinden eşleştirmek için konum hizmetleri gerektirir.",
-    "descriptionPermissionRequired" : "Ledger Live'ın cihazınızı Bluetooth üzerinden eşleştirmesi için konum izni gerekiyor.",
-    "descriptionPermissionRequiredPrecise" : "Ledger Live'ın cihazınızı Bluetooth üzerinden eşleştirmesi için tam konum izni gerekiyor.",
     "open" : "Konum ayarlarını aç",
+    "openSettings" : "Konum ayarlarını aç",
+    "tryEnablingAgain" : "Konumu yeniden etkinleştirmeyi deneyin",
     "noInfos" : "Ledger konum bilgilerinize erişmez."
   },
   "permissions" : {
@@ -831,6 +831,19 @@
       "modalButtonLabelBase" : "İzin ver",
       "modalButtonLabelSettingsVariant" : "Ayarlara git",
       "dontPair" : "Eşleştirme"
+    },
+    "location" : {
+      "titlePermissionRequired" : "Konum izni gerekiyor",
+      "titlePermissionRequiredPrecise" : "Tam konum izni gerekiyor",
+      "descriptionPermissionRequired" : "Ledger Live'ın cihazınızı Bluetooth üzerinden eşleştirmesi için konum izni gerekiyor.",
+      "descriptionPermissionRequiredPrecise" : "Ledger Live'ın cihazınızı Bluetooth üzerinden eşleştirmesi için tam konum izni gerekiyor."
+    },
+    "camera" : {
+      "title" : "Kamera izni",
+      "authorizeDescription" : "QR kodlarını taramak için lütfen Kameraya erişim izni verin.",
+      "authorizeButtonTitle" : "İzin ver",
+      "goToSettingsDescription" : "QR kodlarını taramak için lütfen Ayarlar kısmından Kameraya erişim izni verin.",
+      "goToSettingsButtonTitle" : "Ayarlara git"
     }
   },
   "fees" : {
@@ -1115,6 +1128,12 @@
     "mostPopular" : "En popüler"
   },
   "installSetOfApps" : {
+    "restore" : {
+      "title" : "{{deviceName}} cihazındaki uygulamalar yüklensin mi?",
+      "titleNoDeviceName" : "Eski Ledger cihazındaki uygulamalar yüklensin mi?",
+      "installCTA" : "Şimdi yükle",
+      "skipCTA" : "Daha sonra yapacağım"
+    },
     "landing" : {
       "estimatedTime" : "{{ minutes }} dk.",
       "title" : "{{ productName }}, güvenli blok zinciri işlemleri gerçekleştirmek için uygulamalar kullanmaktadır",
@@ -1126,7 +1145,7 @@
       "loading" : "Yükleniyor...",
       "resolving" : "Gereksinimler çözülüyor",
       "progress" : "Uygulamalar yükleniyor %{{progress}}",
-      "disclaimer" : "{{ productName }} cihazındaki uygulamalar işlemleri onaylamak için kullanılır. İstediğiniz zaman bu uygulamaları ekleyebilir ve silebilirsiniz."
+      "disclaimer" : "Ledger Live üzerinden uygulamaları istediğiniz zaman ekleyip kaldırabilirsiniz."
     }
   },
   "onboarding" : {
@@ -2272,12 +2291,6 @@
         "unsupported" : "Desteklenmiyor",
         "settings" : "Uygulama ayarları",
         "includeGeneralSettings" : "Masaüstü ayarlarını içe aktar"
-      },
-      "fallback" : {
-        "header" : "Hesap içe aktar",
-        "title" : "Kamerayı etkinleştirin",
-        "desc" : "QR kodlarını taramak için lütfen Ayarlardan Kamerayı etkinleştirin.",
-        "buttonTitle" : "Ayarlara Git"
       }
     },
     "availableBalance" : "Mevcut bakiye",
@@ -2555,7 +2568,7 @@
         "title" : "Fiyat Uyarıları",
         "desc" : "En çok tercih ettiğiniz coin'ler için fiyat uyarıları belirleyerek piyasa hareketlerini kaçırmayın"
       },
-      "disclaimer" : "Verilerinizin gizliliği, Ledger'da her şeyden önce gelir. Toplanan veriler iş ortaklarımızla asla paylaşılmaz."
+      "disclaimer" : "Verilerinizin gizliliği, Ledger'da her şeyden önce gelir. Toplanan veriler sağlayıcılarımızla asla paylaşılmaz."
     },
     "help" : {
       "title" : "Yardım",
@@ -2575,7 +2588,7 @@
       "resetThirdPartyData" : "Üçüncü taraf verilerini sıfırla",
       "resetThirdPartyDataDesc" : "Üçüncü taraf işlem sağlayıcısına erişmek için kullanılan tüm yerel üçüncü taraf verilerinizi silin.",
       "resetThirdPartyDataModal" : "Yerel üçüncü taraf verilerinizi silin",
-      "resetThirdPartyDataModalDesc" : "Yerel üçüncü taraf verilerinizi silin. İş ortaklarımız tarafından sağlanan hizmetlere erişmek için KYC'nizi yeniden göndermeniz veya tekrar oturum açmanız gerekebilir.",
+      "resetThirdPartyDataModalDesc" : "Yerel üçüncü taraf verilerinizi silin. Sağlayıcılarımız tarafından sağlanan hizmetlere erişmek için KYC'nizi yeniden göndermeniz veya tekrar oturum açmanız gerekebilir.",
       "hardReset" : "Ledger Live'ı sıfırlayın",
       "hardResetDesc" : "Bunun varlıklarınız üzerinde bir etkisi yoktur. Hesap verileri, işlem geçmişleri ve ayarlar dahil olmak üzere Ledger Live'daki tüm verileri siler. Boş bir Ledger Live'da kripto varlıklarınızı yeniden yüklemek ve yönetmek için Ledger cihazınızı kullanın.",
       "repairDevice" : "Ledger cihazınızı onarın",
@@ -3622,7 +3635,7 @@
       "title" : "Takas işlemini cihazdan onaylayın",
       "alert" : {
         "default" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız.",
-        "cic" : "Göndermeden önce cihazınızdaki Takas bilgilerini doğrulayın. Bazı işlemler için CIC tarafından ek doğrulama adımları gerekebilir ve bu biraz gecikmeye neden olabilir."
+        "provider" : "Göndermeden önce cihazınızdaki Takas bilgilerini doğrulayın. {{providerName}} bazı işlemler için ek doğrulama adımları gerçekleştirmek zorunda kalabilir ve bu, gecikmeye neden olabilir."
       },
       "acceptTerms" : "Bu işlemi onaylayarak,\n<0><0>{{provider}}</0> Kullanım Koşullarını</0> kabul ediyorum.",
       "notice" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız."
