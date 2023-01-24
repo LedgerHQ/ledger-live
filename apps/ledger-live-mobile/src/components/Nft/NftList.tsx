@@ -140,7 +140,7 @@ export function NftList({ data }: Props) {
     <>
       <TrackScreen category="NFT Gallery" NFTs_owned={data.length} />
 
-      {onMultiSelectMode && (
+      {/* {onMultiSelectMode && (
         <Animated.View
           entering={FadeInUp}
           exiting={FadeOutUp}
@@ -172,7 +172,7 @@ export function NftList({ data }: Props) {
             </TouchableOpacity>
           </StyledContainer>
         </Animated.View>
-      )}
+      )} */}
 
       <RefreshableCollapsibleHeaderFlatList
         numColumns={2}
@@ -203,7 +203,7 @@ export function NftList({ data }: Props) {
           </Animated.View>
         }
         ListHeaderComponentStyle={{
-          marginBottom: onMultiSelectMode ? -space[8] : space[6],
+          marginBottom: onMultiSelectMode ? 0 : space[6],
         }}
         data={dataWithAdd}
         renderItem={renderItem}
@@ -215,23 +215,36 @@ export function NftList({ data }: Props) {
         testID={"wallet-nft-gallery-list"}
       />
       <Animated.View>
-        {nftsToHide.length > 0 && onMultiSelectMode && (
+        {onMultiSelectMode && (
           <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
             <BackgroundGradient {...gradients[0]} />
             <BackgroundGradient {...gradients[1]} />
-            <RoundedContainer width="100%">
+            <ButtonsContainer width="100%" justifyContent={"space-between"}>
               <StyledButton
-                onPress={onClickHide}
+                onPress={readOnlyModeAction}
                 type="main"
-                iconName="EyeNone"
                 iconPosition="left"
-                size="large"
+                iconName="Close"
+                size="medium"
+                flexGrow={nftsToHide.length > 0 ? 0.4 : 1}
               >
-                {t("wallet.nftGallery.filters.hide", {
-                  count: nftsToHide.length,
-                })}
+                {t("common.cancel")}
               </StyledButton>
-            </RoundedContainer>
+              {nftsToHide.length > 0 && (
+                <StyledButton
+                  onPress={onClickHide}
+                  type="color"
+                  iconName="EyeNone"
+                  iconPosition="left"
+                  size="medium"
+                  flexGrow={0.5}
+                >
+                  {t("wallet.nftGallery.filters.hide", {
+                    count: nftsToHide.length,
+                  })}
+                </StyledButton>
+              )}
+            </ButtonsContainer>
           </Animated.View>
         )}
       </Animated.View>
@@ -244,16 +257,10 @@ const StyledButton = styled(Button)`
   margin: 0;
 `;
 
-const StyledContainer = styled(Flex)`
-  position: absolute;
-  top: 0;
-  padding: 50px 18px 10px 18px;
-  height: 100px;
-`;
-
-const RoundedContainer = styled(Flex)`
+const ButtonsContainer = styled(Flex)`
   position: absolute;
   bottom: 20px;
   z-index: 5;
   padding: 0 18px;
+  flex-direction: row;
 `;

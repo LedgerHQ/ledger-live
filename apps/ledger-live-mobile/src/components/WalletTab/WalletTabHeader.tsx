@@ -11,30 +11,26 @@ const AnimatedSafeArea = Animated.createAnimatedComponent(SafeAreaView);
 function WalletTabHeader({
   hidePortfolio,
   animated,
-  hideHeader,
 }: {
   hidePortfolio: boolean;
   animated?: boolean;
-  hideHeader?: boolean;
 }) {
   const walletNftGalleryFeature = useFeature("walletNftGallery");
   const { scrollY, headerHeight } = useContext(WalletTabNavigatorScrollContext);
-  const y =
-    animated || hideHeader
-      ? 0
-      : scrollY.interpolate({
-          inputRange: [0, headerHeight],
-          outputRange: [0, -headerHeight],
-          extrapolateRight: "clamp",
-        });
-  const opacity =
-    animated || hideHeader
-      ? 0
-      : scrollY.interpolate({
-          inputRange: [0, headerHeight],
-          outputRange: [1, 0],
-          extrapolateRight: "clamp",
-        });
+  const y = animated
+    ? 0
+    : scrollY.interpolate({
+        inputRange: [0, headerHeight],
+        outputRange: [0, -headerHeight],
+        extrapolateRight: "clamp",
+      });
+  const opacity = animated
+    ? 0
+    : scrollY.interpolate({
+        inputRange: [0, headerHeight],
+        outputRange: [1, 0],
+        extrapolateRight: "clamp",
+      });
 
   return (
     <>
@@ -46,8 +42,6 @@ function WalletTabHeader({
             width: "100%",
             position: "absolute",
             opacity,
-            zIndex: hideHeader ? -1 : 1,
-            elevation: hideHeader ? -10 : 1,
           },
           { transform: [{ translateY: y }] },
         ]}

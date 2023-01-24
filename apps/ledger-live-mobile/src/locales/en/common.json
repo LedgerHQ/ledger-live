@@ -5996,11 +5996,9 @@
     },
     "nftGallery": {
       "filters": {
-        "title": "{{count}} Collection selected",
-        "title_plural": "{{count}} Collections selected",
         "selectAndHide": "Select and hide",
-        "hide": "Hide collection",
-        "hide_plural": "Hide collections",
+        "hide": "Hide {{count}} collection",
+        "hide_plural": "Hide {{count}} collections",
         "alertHide": "1 Collection hidden. Go to the settings to display and unhide it at any time",
         "alertHide_plural": "{{count}} Collections hidden. Go to the settings to display and unhide them at any time"
       },
