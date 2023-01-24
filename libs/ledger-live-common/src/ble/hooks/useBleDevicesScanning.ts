@@ -43,16 +43,20 @@ const DEFAULT_RESTART_SCANNING_TIMEOUT_MS = 4000;
 /**
  * Scans the BLE devices around the user
  *
- * Note: if a communication is started with a device, the scanning should be stopped
+ * Warning: if a communication is started with a device, the scanning should be stopped
  *
- * The scanningBleError will depend on the bleTransportListen function. Some errors might not be thrown.
+ * Warning: handling of bluetooth (and location for Android) permissions and enabling bluetooth (and location) services are not handled here.
+ * They should be handled (with fallback logic) by the consumer of this hook.
+ *
+ * Reason: depending on the bleTransportListen function and the user's operating system, errors related to denied bluetooth (and location for Android) permissions
+ * or related to disabled bluetooth (and location) services might be different.
  * For ex:
  * - on Android, using the current Transport from react-native-hw-transport-ble, if the bluetooth is off,
- * only a BluetoothScanStartFailed error is thrown. But this error could happen for other reason than the BLE being off.
- * No actual "BluetoothOff" or "BluetoothUnauthorized" error is thrown.
- * On the other side, if location is off, an error is thrown.
- * - On iOS, using the current Transport from react-native-hw-transport-ble, if the bluetooth is off, no error is thrown at all.
- * Hence, handling if the bluetooth is off or not is not handled here. It should be handled by the consumer of this hook.
+ *  a BluetoothScanStartFailed error is thrown, not an actual "BluetoothOff" or "BluetoothUnauthorized" error.
+ *  It is a problem because this BluetoothScanStartFailed error could happen for other reason than the BLE being off.
+ *  On the other side, if the location service (needed for Android) is off, an error "LocationServicesDisabled" is thrown.
+ *
+ * - on iOS, using the current Transport from react-native-hw-transport-ble, if the bluetooth is off, no error is thrown at all.
  *
  * @param bleTransportListen The listen function from an implementation of a BLE transport
  * @param filterByDeviceModelIds An array of device model ids to filter on
