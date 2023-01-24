@@ -9,11 +9,12 @@ type Props = {
 };
 
 /**
- * Renders an error if bluetooth is required & its associated permissions are not
- * set. Otherwise renders children.
+ * Renders children if the permissions for the bluetooth are granted.
+ * Otherwise, tries to request the permissions. And if the user denies, renders an error.
  *
  * Should only be used for Android.
  *
+ * @param children The children to render if bluetooth has its associated permissions granted
  * @param hasBackButtonOnDenied If true, the back button will be displayed on the permission denied screen. Defaults to false.
  * @param openSettingsOnErrorButton Used for debug purposes. If true, on a permission denied, pressing the button on
  *   the error component will make the user go to the settings. Otherwise it will try to prompt the user to allow permission
@@ -24,17 +25,16 @@ const AndroidRequiresBluetoothPermissions: React.FC<Props> = ({
   hasBackButtonOnDenied = false,
   openSettingsOnErrorButton = false,
 }) => {
-  // checkAgain is not used because calling it does not prompt the user for permission again
-  const { renderChildren, hasPermission, neverAskAgain, requestAgain } =
+  const { hasPermissions, neverAskAgain, requestForPermissionsAgain } =
     useAndroidBluetoothPermissions();
 
-  if (hasPermission === undefined) return null; // Prevents blink
+  if (hasPermissions === "unknown") return null; // Prevents blink
 
-  return renderChildren ? (
+  return hasPermissions === "granted" ? (
     <>{children}</>
   ) : (
     <BluetoothPermissionDenied
-      onRetry={requestAgain}
+      onRetry={requestForPermissionsAgain}
       neverAskAgain={neverAskAgain}
       hasBackButton={hasBackButtonOnDenied}
       openSettings={openSettingsOnErrorButton}
