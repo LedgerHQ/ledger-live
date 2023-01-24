@@ -31,6 +31,8 @@ import nanoSP from "~/renderer/images/devices/nanoSP.png";
 import nanoSPDark from "~/renderer/images/devices/nanoSP_dark.png";
 import nanoX from "~/renderer/images/devices/nanoX.png";
 import nanoXDark from "~/renderer/images/devices/nanoX_dark.png";
+import stax from "~/renderer/images/devices/stax.png";
+import staxDark from "~/renderer/images/devices/stax_dark.png";
 import blue from "~/renderer/images/devices/blue.png";
 
 import CustomImageManagerButton from "./CustomImageManagerButton";
@@ -50,8 +52,8 @@ const illustrations = {
     dark: nanoXDark,
   },
   stax: {
-    light: nanoS,
-    dark: nanoSDark,
+    light: stax,
+    dark: staxDark,
   },
   blue: {
     light: blue,
@@ -65,7 +67,6 @@ export const DeviceIllustration: ThemedComponent<{}> = styled.img.attrs(p => ({
       p.theme.colors.palette.type || "light"
     ],
 }))`
-  ${p => (p.deviceModel.id === "stax" ? "border: 3px solid red;" : "")}
   position: absolute;
   top: 0;
   left: 50%;
