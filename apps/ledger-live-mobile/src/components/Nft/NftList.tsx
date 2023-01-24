@@ -98,28 +98,35 @@ export function NftList({ data }: Props) {
   return (
     <>
       <TrackScreen category="NFT Gallery" NFTs_owned={data.length} />
-      <Animated.View>
-        {onMultiSelectMode && (
-          <Animated.View entering={FadeInUp} exiting={FadeOutUp}>
-            <StyledContainer
-              width="100%"
-              flexDirection="row"
-              alignItems="center"
-              justifyContent="space-between"
-              bg="neutral.c20"
+
+      {onMultiSelectMode && (
+        <Animated.View
+          entering={FadeInUp}
+          exiting={FadeOutUp}
+          style={{ zIndex: 10 }}
+        >
+          <StyledContainer
+            width="100%"
+            flexDirection="row"
+            alignItems="center"
+            justifyContent="space-between"
+            bg="neutral.c20"
+            style={{ zIndex: 15 }}
+          >
+            <Text variant="h5" fontWeight="semiBold" color="neutral.c100">
+              {t("wallet.nftGallery.filters.title", {
+                count: nftsToHide.length,
+              })}
+            </Text>
+            <TouchableOpacity
+              onPress={readOnlyModeAction}
+              style={{ zIndex: 20, elevation: 20 }}
             >
-              <Text variant="h5" fontWeight="semiBold" color="neutral.c100">
-                {t("wallet.nftGallery.filters.title", {
-                  count: nftsToHide.length,
-                })}
-              </Text>
-              <TouchableOpacity onPress={readOnlyModeAction}>
-                <Close size={24} />
-              </TouchableOpacity>
-            </StyledContainer>
-          </Animated.View>
-        )}
-      </Animated.View>
+              <Close size={24} />
+            </TouchableOpacity>
+          </StyledContainer>
+        </Animated.View>
+      )}
 
       <RefreshableCollapsibleHeaderFlatList
         numColumns={2}
@@ -192,14 +199,13 @@ const StyledButton = styled(Button)`
 const StyledContainer = styled(Flex)`
   position: absolute;
   top: 0;
-  z-index: 10;
   padding: 50px 18px 10px 18px;
   height: 100px;
 `;
 
 const RoundedContainer = styled(Flex)`
   position: absolute;
-  bottom: 15px;
+  bottom: 20px;
   z-index: 5;
   padding: 0 18px;
 `;

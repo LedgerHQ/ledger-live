@@ -113,7 +113,7 @@ export default function WalletTabNavigator() {
             />
           )}
         </WalletTab.Navigator>
-        {!hideHeader && <WalletTabHeader hidePortfolio={false} />}
+        <WalletTabHeader hidePortfolio={false} hideHeader={hideHeader} />
       </Box>
     </WalletTabNavigatorScrollManager>
   );
