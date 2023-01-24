@@ -14,6 +14,7 @@ import {
   emptyHistoryCache,
   encodeAccountId,
   encodeTokenAccountId,
+  shouldRetainPendingOperation,
 } from "../../account";
 import {
   getAccount,
@@ -257,7 +258,45 @@ export const getOperationStatus = async (
   }
 };
 
-const postSync = (initial: Account, synced: Account) => synced;
+/**
+ * After each sync, it might be necessary to remove pending operations
+ * inside of subAccounts.
+ */
+export const postSync = (initial: Account, synced: Account): Account => {
+  // Set of hashes from the pending operations of the main account
+  const coinPendingOperationsHashes = new Set();
+  for (const coinPendingOperation of synced.pendingOperations) {
+    coinPendingOperationsHashes.add(coinPendingOperation.hash);
+  }
+  // Set of ids from the already existing subAccount from previous sync
+  const initialSubAccountsIds = new Set();
+  for (const subAccount of initial.subAccounts || []) {
+    initialSubAccountsIds.add(subAccount.id);
+  }
+
+  return {
+    ...synced,
+    subAccounts: synced.subAccounts?.map((subAccount) => {
+      // If the subAccount is new, just return the freshly synced subAccount
+      if (!initialSubAccountsIds.has(subAccount.id)) return subAccount;
+
+      return {
+        ...subAccount,
+        pendingOperations: subAccount.pendingOperations.filter(
+          (tokenPendingOperation) =>
+            // if the pending operation got removed from the main account, remove it as well
+            coinPendingOperationsHashes.has(tokenPendingOperation.hash) &&
+            // if the transaction has been confirmed, remove it
+            !subAccount.operations.some(
+              (op) => op.hash === tokenPendingOperation.hash
+            ) &&
+            // common rule for pending operations retention in the live
+            shouldRetainPendingOperation(synced, tokenPendingOperation)
+        ),
+      };
+    }),
+  };
+};
 
 export const scanAccounts = makeScanAccounts({ getAccountShape });
 export const sync = makeSync({
