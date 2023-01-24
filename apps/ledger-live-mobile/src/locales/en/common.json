@@ -3313,6 +3313,9 @@
   "scanning": {
     "loading": "Searching devices..."
   },
+  "editTx": {
+    "header": "Edit Transaction"
+  },
   "send": {
     "tooMuchUTXOBottomModal": {
       "cta": "Continue",
