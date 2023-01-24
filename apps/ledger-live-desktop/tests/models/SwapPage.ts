@@ -65,7 +65,7 @@ export class SwapPage {
   }
 
   async waitForExchangeToBeAvailable() {
-    return waitFor(() => this.exchangeButton.isEnabled(), 250, 20000);
+    return waitFor(() => this.exchangeButton.isEnabled(), 250, 10000);
   }
 
   async confirmExchange() {
