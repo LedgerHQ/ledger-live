@@ -68,20 +68,36 @@ const EntryButtonContainer = styled.button`
   }
 `;
 
+const IconWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 100%;
+  background-color: rgba(255, 255, 255, 0.1);
+`;
+
 const EntryButton = ({
   title,
   body,
   onClick,
   disabled,
+  Icon,
 }: {
   title: string,
   body: string,
   onClick: () => void,
   disabled?: boolean,
+  Icon?: React$ComponentType<*>,
 }) => {
   return (
     <EntryButtonContainer onClick={onClick} disabled={disabled}>
-      <div>Icon</div>
+      {Icon ? (
+        <IconWrapper>
+          <Icon />
+        </IconWrapper>
+      ) : null}
       <Box shrink style={{ alignItems: "flex-start" }}>
         <TitleText>{title}</TitleText>
         <BodyText>{body}</BodyText>

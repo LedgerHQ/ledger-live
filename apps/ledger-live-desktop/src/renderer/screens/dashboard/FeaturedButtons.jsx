@@ -5,6 +5,8 @@ import { Grid } from "@ledgerhq/react-ui";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import EntryButton from "~/renderer/components/EntryButton/EntryButton";
+import Swap from "~/renderer/icons/Swap";
+import Exchange from "~/renderer/icons/Exchange";
 
 const ButtonGrid = styled(Grid).attrs(() => ({
   columns: 3,
@@ -20,6 +22,7 @@ const FeaturedButtons = () => {
   return (
     <ButtonGrid>
       <EntryButton
+        Icon={Swap}
         title={t("dashboard.featuredButtons.buySell.title")}
         body={t("dashboard.featuredButtons.buySell.description")}
         onClick={() => {
@@ -27,6 +30,7 @@ const FeaturedButtons = () => {
         }}
       />
       <EntryButton
+        Icon={Exchange}
         title={t("dashboard.featuredButtons.swap.title")}
         body={t("dashboard.featuredButtons.swap.description")}
         label={t("dashboard.featuredButtons.swap.label")}
