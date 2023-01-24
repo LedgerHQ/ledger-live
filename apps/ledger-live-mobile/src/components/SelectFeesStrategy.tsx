@@ -92,66 +92,68 @@ export default function SelectFeesStrategy({
     [onStrategySelect, track],
   );
 
-  const renderItem = ({ item }: ListRenderItemInfo<FeeStrategy>) => (
-    <TouchableOpacity
-      onPress={() => onPressStrategySelect(item)}
-      disabled={
-        disabledStrategies ? disabledStrategies.includes(item.label) : false
-      }
-      style={[
-        styles.feeButton,
-        {
-          borderColor:
-            feesStrategy === item.label ? colors.live : colors.background,
-          backgroundColor:
-            feesStrategy === item.label ? colors.lightLive : colors.lightFog,
-        },
-      ]}
-    >
-      <View
+  const renderItem = ({ item }: ListRenderItemInfo<FeeStrategy>) => {
+    return (
+      <TouchableOpacity
+        onPress={() => onPressStrategySelect(item)}
+        disabled={
+          disabledStrategies ? disabledStrategies.includes(item.label) : false
+        }
         style={[
-          styles.feeStrategyContainer,
+          styles.feeButton,
           {
-            opacity: disabledStrategies?.includes(item.label) ? 0.2 : 1,
+            borderColor:
+              feesStrategy === item.label ? colors.live : colors.background,
+            backgroundColor:
+              feesStrategy === item.label ? colors.lightLive : colors.lightFog,
           },
         ]}
       >
-        <View style={styles.leftBox}>
-          {item.label === "slow" ? (
-            <TachometerSlow size={16} color={colors.grey} />
-          ) : item.label === "medium" ? (
-            <TachometerMedium size={16} color={colors.grey} />
-          ) : (
-            <TachometerFast size={16} color={colors.grey} />
-          )}
-          <LText semiBold style={styles.feeLabel}>
-            {t(`fees.speed.${item.label}`)}
-          </LText>
+        <View
+          style={[
+            styles.feeStrategyContainer,
+            {
+              opacity: disabledStrategies?.includes(item.label) ? 0.2 : 1,
+            },
+          ]}
+        >
+          <View style={styles.leftBox}>
+            {item.label === "slow" ? (
+              <TachometerSlow size={16} color={colors.grey} />
+            ) : item.label === "medium" ? (
+              <TachometerMedium size={16} color={colors.grey} />
+            ) : (
+              <TachometerFast size={16} color={colors.grey} />
+            )}
+            <LText semiBold style={styles.feeLabel}>
+              {t(`fees.speed.${item.label}`)}
+            </LText>
+          </View>
+          <View style={styles.feesAmountContainer}>
+            <LText semiBold style={styles.feesAmount}>
+              <CurrencyUnitValue
+                showCode={!forceUnitLabel}
+                unit={item.unit ?? unit}
+                value={item.displayedAmount ?? item.amount}
+              />
+              {forceUnitLabel ? " " : null}
+              {forceUnitLabel || null}
+            </LText>
+            {item.displayedAmount ? (
+              <CounterValue
+                currency={currency}
+                showCode
+                value={item.displayedAmount}
+                alwaysShowSign={false}
+                withPlaceholder
+                Wrapper={CVWrapper}
+              />
+            ) : null}
+          </View>
         </View>
-        <View style={styles.feesAmountContainer}>
-          <LText semiBold style={styles.feesAmount}>
-            <CurrencyUnitValue
-              showCode={!forceUnitLabel}
-              unit={item.unit ?? unit}
-              value={item.displayedAmount ?? item.amount}
-            />
-            {forceUnitLabel ? " " : null}
-            {forceUnitLabel || null}
-          </LText>
-          {item.displayedAmount ? (
-            <CounterValue
-              currency={currency}
-              showCode
-              value={item.displayedAmount}
-              alwaysShowSign={false}
-              withPlaceholder
-              Wrapper={CVWrapper}
-            />
-          ) : null}
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <>
@@ -202,6 +204,7 @@ export default function SelectFeesStrategy({
     </>
   );
 }
+
 const styles = StyleSheet.create({
   strategiesContainer: {
     flex: 1,
