@@ -6,7 +6,6 @@ import { focusedShadowStyle } from "~/renderer/components/Box/Tabbable";
 import Box from "~/renderer/components/Box";
 import React from "react";
 import ChevronRight from "~/renderer/icons/ChevronRight";
-import { Flex } from "@ledgerhq/react-ui";
 
 const TitleText = styled(Text).attrs(() => ({
   fontSize: 4,
@@ -18,7 +17,6 @@ const BodyText = styled(Text).attrs(p => ({
   fontSize: 4,
   fontWeight: "medium",
   color: p.theme.colors.neutral.c70,
-  textAlign: "left",
 }))``;
 
 const EntryButtonContainer = styled.button`
@@ -28,6 +26,7 @@ const EntryButtonContainer = styled.button`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  text-align: left;
   border: none;
   background-color: ${p => p.theme.colors.palette.background.paper};
   color: ${p => p.theme.colors.neutral.c100};
@@ -84,34 +83,58 @@ const IconWrapper = styled.div`
     p.theme.colors.palette.type === "dark" ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.02)"};}
 `;
 
+const LabelWrapper = styled(Box).attrs(() => ({
+  fontSize: 2,
+  fontWeight: "bold",
+  px: "6px",
+  py: "3px",
+  ml: 1,
+  backgroundColor: "primary.c90",
+  color: "neutral.c00",
+  borderRadius: 1,
+  translateY: "3px",
+  position: "relative",
+  top: "-1px",
+}))`
+  display: inline;
+`;
+
+const Label = ({ label }: { label: string }) => {
+  return <LabelWrapper>{label}</LabelWrapper>;
+};
+
 const EntryButton = ({
   title,
   body,
   onClick,
   disabled,
   Icon,
+  label,
   showChevron,
 }: {
   title: string,
   body: string,
   onClick: () => void,
   disabled?: boolean,
+  label?: string,
   Icon?: React$ComponentType<*>,
   showChevron?: boolean,
 }) => {
   return (
     <EntryButtonContainer onClick={onClick} disabled={disabled}>
-      <Flex flexShrink="initial">
+      <Box horizontal shrink alignItems="center">
         {Icon ? (
           <IconWrapper>
             <Icon />
           </IconWrapper>
         ) : null}
-        <Box shrink style={{ alignItems: "flex-start" }}>
-          <TitleText>{title}</TitleText>
+        <Box shrink alignItems="flex-start">
+          <TitleText>
+            {title} {label ? <Label label={label} /> : null}
+          </TitleText>
           <BodyText>{body}</BodyText>
         </Box>
-      </Flex>
+      </Box>
       {showChevron ? <ChevronRight size={11} /> : null}
     </EntryButtonContainer>
   );
