@@ -557,7 +557,7 @@ importers:
       '@ledgerhq/hw-app-eth': workspace:*
       '@ledgerhq/hw-transport': workspace:*
       '@ledgerhq/live-common': workspace:*
-      '@ledgerhq/wallet-api-client': ^0.11.0
+      '@ledgerhq/wallet-api-client': ^0.13.0
       '@types/jest': ^27.0.1
       '@types/node': ^16.7.13
       '@types/react': ^17.0.20
@@ -573,7 +573,7 @@ importers:
       '@ledgerhq/hw-app-eth': link:../../../../../libs/ledgerjs/packages/hw-app-eth
       '@ledgerhq/hw-transport': link:../../../../../libs/ledgerjs/packages/hw-transport
       '@ledgerhq/live-common': link:../../../../../libs/ledger-live-common
-      '@ledgerhq/wallet-api-client': 0.11.1
+      '@ledgerhq/wallet-api-client': 0.13.0_h4vrsnhz7ecrettnky7swl3loi
       '@types/jest': 27.5.1
       '@types/node': 16.11.12
       '@types/react': 17.0.45
@@ -1019,6 +1019,8 @@ importers:
       '@cosmjs/proto-signing': ^0.26.5
       '@cosmjs/stargate': ^0.26.5
       '@crypto-com/chain-jslib': 0.0.19
+      '@elrondnetwork/erdjs': 11.0.0
+      '@elrondnetwork/erdjs-network-providers': ^1.1.2
       '@ethereumjs/common': ^2.6.2
       '@ethereumjs/tx': ^3.5.0
       '@ethersproject/shims': ^5.7.0
@@ -1204,6 +1206,8 @@ importers:
       '@cosmjs/proto-signing': 0.26.6
       '@cosmjs/stargate': 0.26.6
       '@crypto-com/chain-jslib': 0.0.19
+      '@elrondnetwork/erdjs': 11.0.0
+      '@elrondnetwork/erdjs-network-providers': 1.2.0
       '@ethereumjs/common': 2.6.4
       '@ethereumjs/tx': 3.5.1
       '@ethersproject/shims': 5.7.0
@@ -8125,7 +8129,7 @@ packages:
     resolution: {integrity: sha512-wB6uo+3A50m0sW/EWcU64xpV/8wShZ6bMTa7pF8eYsTrSkQA7oLUIJcs/wb8g4y2Oyq701BaGiO6n/ak5WXO1w==}
     dependencies:
       '@noble/hashes': 1.1.3
-      protobufjs: 6.11.2
+      protobufjs: 6.11.3
     dev: false
 
   /@cosmjs/amino/0.25.0-alpha.2:
@@ -8923,6 +8927,35 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /@elrondnetwork/erdjs-network-providers/1.2.0:
+    resolution: {integrity: sha512-ANh7tDaRohQos9WzZsZS/kyqatUqxY2NqncsKnWhDeSHqYv3RZiwcF3siKsBiWHYiP5hKqIACK1+Wsq3P0ocMg==}
+    dependencies:
+      axios: 0.24.0
+      bech32: 1.1.4
+      bignumber.js: 9.0.1
+      buffer: 6.0.3
+      json-bigint: 1.0.0
+    dev: false
+
+  /@elrondnetwork/erdjs/11.0.0:
+    resolution: {integrity: sha512-XUvWYcEsKp5NKf81Avz0m3yHvHRzkyyztWFH+M/XEDhsPAy7FyZAY0HCH8ri5JvDhDr45IaE3Nlh6oeXqlOc9A==}
+    dependencies:
+      '@elrondnetwork/transaction-decoder': 1.0.0
+      bech32: 1.1.4
+      bignumber.js: 9.0.1
+      blake2b: 2.1.3
+      buffer: 6.0.3
+      json-duplicate-key-handle: 1.0.0
+      keccak: 3.0.2
+      protobufjs: 6.11.3
+    dev: false
+
+  /@elrondnetwork/transaction-decoder/1.0.0:
+    resolution: {integrity: sha512-FFUDXffwDNwo4V6Co+S9ur3OPYyAEzwgen7gh7LtQrG7SNPELFHjl+YssABXI8v1+SWmqcrSxervMggAiDDXkg==}
+    dependencies:
+      bech32: 2.0.0
+    dev: false
 
   /@emotion/babel-plugin/11.9.2:
     resolution: {integrity: sha512-Pr/7HGH6H6yKgnVFNEj2MVlreu3ADqftqjqwUvDy/OJzKFgxKeTQ+eeUf20FOTuHVkDON2iNa25rAXVYtWJCjw==}
@@ -11045,7 +11078,7 @@ packages:
       '@types/long': 4.0.2
       lodash.camelcase: 4.3.0
       long: 4.0.0
-      protobufjs: 6.11.2
+      protobufjs: 6.11.3
       yargs: 16.2.0
     dev: false
 
@@ -11112,7 +11145,7 @@ packages:
     engines: {node: '>=10.0.0'}
     dependencies:
       long: 4.0.0
-      protobufjs: 6.11.2
+      protobufjs: 6.11.3
     dev: false
 
   /@hashgraph/sdk/2.14.2:
@@ -12435,17 +12468,30 @@ packages:
     resolution: {integrity: sha512-K3SETlNUJAjU/bN6dNJf56gfpxOhGldmClezIU5puw1PcGDvNf4y8vmEouVz5Htc2a/0vetklf0eIQD8Wk3Hww==}
     dev: false
 
-  /@ledgerhq/wallet-api-client/0.11.1:
-    resolution: {integrity: sha512-s5uHg+2x+HzvM/Go+vx7DoGyh7bgDI1LEKcUBllTsTZBwgMBbgHnpieXylAI4kBySGWUwJTREwDUfY8CmkrsjA==}
+  /@ledgerhq/wallet-api-client/0.13.0_h4vrsnhz7ecrettnky7swl3loi:
+    resolution: {integrity: sha512-icq81psBepmFqM/ZhBuVx4LqnAMGFRHkp76I2g8Hmgvxpan2Y2kdXbpDtq8u0ADfoO38FCKzAnshPlrZvLUJ2g==}
+    peerDependencies:
+      '@ledgerhq/hw-transport': ^6.x
+    peerDependenciesMeta:
+      '@ledgerhq/hw-transport':
+        optional: true
     dependencies:
-      '@ledgerhq/hw-transport': 6.27.8
-      '@ledgerhq/wallet-api-core': 0.11.0
+      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
+      '@ledgerhq/wallet-api-core': 0.12.0
       bignumber.js: 9.1.0
-      json-rpc-2.0: 1.1.0
     dev: false
 
   /@ledgerhq/wallet-api-core/0.11.0:
     resolution: {integrity: sha512-SHIdZD/gQJ4dMag5zzmRAAfhkkfiyHFVLHR7xz0Srj2BLdMfQZzXneTSnv7YND4YOZrwHIfBTA68Bim+AiKjwA==}
+    dependencies:
+      '@ledgerhq/errors': 6.12.1
+      bignumber.js: 9.1.0
+      uuid: 9.0.0
+      zod: 3.19.1
+    dev: false
+
+  /@ledgerhq/wallet-api-core/0.12.0:
+    resolution: {integrity: sha512-e8V73MgiXa63mUkyF3MqwqjKxYzVVF6lhLHYWtUVJCUDwyXEq7EmuEK9IxYl7o5oxqmXlkxQ6qXjl7aQTT6P8g==}
     dependencies:
       '@ledgerhq/errors': 6.12.1
       bignumber.js: 9.1.0
@@ -13153,10 +13199,11 @@ packages:
       webpack-dev-server: 4.9.3_webpack@5.72.1
     dev: false
 
-  /@polkadot/keyring/10.1.13_rctvuuxcfab7pevo7bnynlzygy:
+  /@polkadot/keyring/10.1.13:
     resolution: {integrity: sha512-O5/sM1cfn/ueT7C6sxqZI9Z18RLOpPovdfZzBlcRAyfs/8uR+UA20r2lGCQdQIzlOeF0XPebIO0lwW+6wPtvtg==}
     engines: {node: '>=14.0.0'}
-    peerDependencies:
+    dependencies:
+      '@babel/runtime': 7.20.1
       '@polkadot/util': 10.1.13
       '@polkadot/util-crypto': 10.1.13_@polkadot+util@10.1.13
     dev: false
@@ -13197,7 +13244,7 @@ packages:
       styled-components: '*'
     dependencies:
       '@babel/runtime': 7.20.1
-      '@polkadot/keyring': 10.1.13_rctvuuxcfab7pevo7bnynlzygy
+      '@polkadot/keyring': 10.1.13
       '@polkadot/ui-settings': 2.9.13
       '@polkadot/ui-shared': 2.9.13_rctvuuxcfab7pevo7bnynlzygy
       '@polkadot/util': 10.1.12
@@ -13272,7 +13319,7 @@ packages:
     engines: {node: '>=14.0.0'}
     dependencies:
       '@babel/runtime': 7.20.1
-      '@polkadot/keyring': 10.1.13_rctvuuxcfab7pevo7bnynlzygy
+      '@polkadot/keyring': 10.1.13
       '@polkadot/types-augment': 9.8.1
       '@polkadot/types-codec': 9.8.1
       '@polkadot/types-create': 9.8.1
@@ -13433,6 +13480,18 @@ packages:
       '@polkadot/x-randomvalues': 10.1.12
     dev: false
 
+  /@polkadot/wasm-bridge/6.3.1_nz7hxxoej7rhwtqhu42recmbci:
+    resolution: {integrity: sha512-1TYkHsb9AEFhU9uZj3biEnN2yKQNzdrwSjiTvfCYnt97pnEkKsZI6cku+YPZQv5w/x9CQa5Yua9e2DVVZSivGA==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      '@polkadot/util': '*'
+      '@polkadot/x-randomvalues': '*'
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@polkadot/util': 10.1.13
+      '@polkadot/x-randomvalues': 10.1.13
+    dev: false
+
   /@polkadot/wasm-crypto-asmjs/6.3.1_@polkadot+util@10.1.12:
     resolution: {integrity: sha512-zbombRfA5v/mUWQQhgg2YwaxhRmxRIrvskw65x+lruax3b6xPBFDs7yplopiJU3r8h2pTgQvX/DUksvqz2TCRQ==}
     engines: {node: '>=14.0.0'}
@@ -13491,6 +13550,21 @@ packages:
       '@polkadot/wasm-crypto-asmjs': 6.3.1_@polkadot+util@10.1.12
       '@polkadot/wasm-crypto-wasm': 6.3.1_@polkadot+util@10.1.12
       '@polkadot/x-randomvalues': 10.1.12
+    dev: false
+
+  /@polkadot/wasm-crypto-init/6.3.1_nz7hxxoej7rhwtqhu42recmbci:
+    resolution: {integrity: sha512-9yaUBcu+snwjJLmPPGl3cyGRQ1afyFGm16qzTM0sgG/ZCfUlK4uk8KWZe+sBUKgoxb2oXY7Y4WklKgQI1YBdfw==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      '@polkadot/util': '*'
+      '@polkadot/x-randomvalues': '*'
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@polkadot/util': 10.1.13
+      '@polkadot/wasm-bridge': 6.3.1_nz7hxxoej7rhwtqhu42recmbci
+      '@polkadot/wasm-crypto-asmjs': 6.3.1_@polkadot+util@10.1.13
+      '@polkadot/wasm-crypto-wasm': 6.3.1_@polkadot+util@10.1.13
+      '@polkadot/x-randomvalues': 10.1.13
     dev: false
 
   /@polkadot/wasm-crypto-wasm/6.3.1_@polkadot+util@10.1.12:
@@ -13558,6 +13632,23 @@ packages:
       '@polkadot/wasm-crypto-wasm': 6.3.1_@polkadot+util@10.1.12
       '@polkadot/wasm-util': 6.3.1_@polkadot+util@10.1.12
       '@polkadot/x-randomvalues': 10.1.12
+    dev: false
+
+  /@polkadot/wasm-crypto/6.3.1_nz7hxxoej7rhwtqhu42recmbci:
+    resolution: {integrity: sha512-OO8h0qeVkqp4xYZaRVl4iuWOEtq282pNBHDKb6SOJuI2g59eWGcKh4EQU9Me2VP6qzojIqptrkrVt7KQXC68gA==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      '@polkadot/util': '*'
+      '@polkadot/x-randomvalues': '*'
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@polkadot/util': 10.1.13
+      '@polkadot/wasm-bridge': 6.3.1_nz7hxxoej7rhwtqhu42recmbci
+      '@polkadot/wasm-crypto-asmjs': 6.3.1_@polkadot+util@10.1.13
+      '@polkadot/wasm-crypto-init': 6.3.1_nz7hxxoej7rhwtqhu42recmbci
+      '@polkadot/wasm-crypto-wasm': 6.3.1_@polkadot+util@10.1.13
+      '@polkadot/wasm-util': 6.3.1_@polkadot+util@10.1.13
+      '@polkadot/x-randomvalues': 10.1.13
     dev: false
 
   /@polkadot/wasm-util/6.3.1_@polkadot+util@10.1.12:
@@ -22185,6 +22276,12 @@ packages:
       follow-redirects: 1.15.0
     dev: false
 
+  /axios/0.24.0:
+    resolution: {integrity: sha512-Q6cWsys88HoPgAaFAVUb0WpPk0O8iTeisR9IMqy9G8AbO4NlpVknrnQS03zzF9PGAWgO3cgletO3VjV/P7VztA==}
+    dependencies:
+      follow-redirects: 1.15.0
+    dev: false
+
   /axios/0.25.0:
     resolution: {integrity: sha512-cD8FOb0tRH3uuEe6+evtAbgJtfxr7ly3fQjYcMcuPlgkwVS9xboaVIpcDV+cYQe+yGykgwZCs1pzjntcGa6l5g==}
     dependencies:
@@ -23235,6 +23332,10 @@ packages:
     resolution: {integrity: sha512-q/UEjfGJ2Cm3oKV71DJz9d25TPnq5rhBVL2Q4fA5wcC3jcrdn7+SssEybFIxwAvvP+YCsCYNKughoF33GxgycQ==}
     hasBin: true
 
+  /backslash/0.2.0:
+    resolution: {integrity: sha512-Avs+8FUZ1HF/VFP4YWwHQZSGzRPm37ukU1JQYQWijuHhtXdOuAzcZ8PcAzfIw898a8PyBzdn+RtnKA6MzW0X2A==}
+    dev: false
+
   /bail/1.0.5:
     resolution: {integrity: sha512-xFbRxM1tahm08yHBP16MMjVUAvDaBMD38zsM9EMAUN61omwLmKlOpB/Zku5QkjZ8TZ4vn53pj+t518cH0S03RQ==}
 
@@ -23398,6 +23499,10 @@ packages:
     resolution: {integrity: sha512-eJzYkFYy9L4JzXsbymsFn3p54D+llV27oTQ+ziJG7WFRheJcNZilgVXMG0LoZtlQSKBsJdWtLFqOD0u+U0jZKA==}
     dev: false
 
+  /bignumber.js/9.0.1:
+    resolution: {integrity: sha512-IdZR9mh6ahOBv/hYGiXyVuyCetmGJhtYkqLBpTStdhEGjegpPlUawydyaF3pbIOFynJTpllEs+NP+CS9jKFLjA==}
+    dev: false
+
   /bignumber.js/9.1.0:
     resolution: {integrity: sha512-4LwHK4nfDOraBCtst+wOWIHbu1vhvAPJK8g8nROd4iuc3PSEjWif/qwbkh8jwCJz6yDBvtU4KPynETgrfh7y3A==}
     dev: false
@@ -23525,11 +23630,24 @@ packages:
       nan: 2.15.0
     dev: false
 
+  /blake2b-wasm/1.1.7:
+    resolution: {integrity: sha512-oFIHvXhlz/DUgF0kq5B1CqxIDjIJwh9iDeUUGQUcvgiGz7Wdw03McEO7CfLBy7QKGdsydcMCgO9jFNBAFCtFcA==}
+    dependencies:
+      nanoassert: 1.1.0
+    dev: false
+
   /blake2b-wasm/2.4.0:
     resolution: {integrity: sha512-S1kwmW2ZhZFFFOghcx73+ZajEfKBqhP82JMssxtLVMxlaPea1p9uoLiUZ5WYyHn0KddwbLc+0vh4wR0KBNoT5w==}
     dependencies:
       b4a: 1.5.0
       nanoassert: 2.0.0
+    dev: false
+
+  /blake2b/2.1.3:
+    resolution: {integrity: sha512-pkDss4xFVbMb4270aCyGD3qLv92314Et+FsKzilCLxDz5DuZ2/1g3w4nmBbu6nKApPspnjG7JcwTjGZnduB1yg==}
+    dependencies:
+      blake2b-wasm: 1.1.7
+      nanoassert: 1.1.0
     dev: false
 
   /blake2b/2.1.4:
@@ -38649,6 +38767,12 @@ packages:
     engines: {node: '>= 4'}
     dev: false
 
+  /json-duplicate-key-handle/1.0.0:
+    resolution: {integrity: sha512-OLIxL+UpfwUsqcLX3i6Z51ChTou/Vje+6bSeGUSubj96dF/SfjObDprLy++ZXYH07KITuEzsXS7PX7e/BGf4jw==}
+    dependencies:
+      backslash: 0.2.0
+    dev: false
+
   /json-parse-better-errors/1.0.2:
     resolution: {integrity: sha512-mrqyZKfX5EhL7hvqcV6WG1yYjnjeuYDzDhhcAAUrq8Po85NBQBJP+ZDUT75qZQ98IkUoBqdkExkukOU7Ts2wrw==}
 
@@ -40648,7 +40772,6 @@ packages:
     peerDependencies:
       '@babel/core': '*'
     dependencies:
-      '@babel/core': 7.18.10
       '@babel/plugin-proposal-class-properties': 7.16.7
       '@babel/plugin-proposal-export-default-from': 7.16.7
       '@babel/plugin-proposal-nullish-coalescing-operator': 7.16.7
@@ -41505,6 +41628,10 @@ packages:
 
   /nano-json-stream-parser/0.1.2:
     resolution: {integrity: sha512-9MqxMH/BSJC7dnLsEMPyfN5Dvoo49IsPFYMcHw3Bcfc2kN0lpHRBSzlMSVx4HGyJ7s9B31CyBTVehWJoQ8Ctew==}
+    dev: false
+
+  /nanoassert/1.1.0:
+    resolution: {integrity: sha512-C40jQ3NzfkP53NsO8kEOFd79p4b9kDXQMwgiY1z8ZwrDZgUyom0AHwGegF4Dm99L+YoYhuaB0ceerUcXmqr1rQ==}
     dev: false
 
   /nanoassert/2.0.0:
@@ -48991,7 +49118,7 @@ packages:
       js-crypto-hkdf: 0.7.3
       miscreant: 0.3.2
       pako: 1.0.11
-      protobufjs: 6.11.2
+      protobufjs: 6.11.3
       secure-random: 1.1.2
     dev: false
 
