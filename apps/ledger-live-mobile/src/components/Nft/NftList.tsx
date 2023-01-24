@@ -3,7 +3,7 @@ import { FlatListProps, TouchableOpacity } from "react-native";
 import { ProtoNFT } from "@ledgerhq/types-live";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { BigNumber } from "bignumber.js";
-
+import { Stop } from "react-native-svg";
 import styled, { useTheme } from "styled-components/native";
 import Animated, {
   FadeInDown,
@@ -18,6 +18,46 @@ import globalSyncRefreshControl from "../globalSyncRefreshControl";
 import { TrackScreen } from "../../analytics";
 import { useNftList } from "./NftList.hook";
 import Close from "../../icons/Close";
+import BackgroundGradient from "../TabBar/BackgroundGradient";
+
+const darkGradients = [
+  {
+    height: 85,
+    opacity: 0.8,
+    stops: [
+      <Stop key="0%" offset="0%" stopOpacity={0} stopColor="#131214" />,
+      <Stop key="100%" offset="100%" stopOpacity={1} stopColor="#131214" />,
+    ],
+  },
+  {
+    height: 85,
+    opacity: 0.8,
+    stops: [
+      <Stop key="0%" offset="0%" stopOpacity={0} stopColor="#131214" />,
+      <Stop key="100%" offset="100%" stopOpacity={1} stopColor="#131214" />,
+    ],
+  },
+];
+
+const lightGradients = [
+  {
+    height: 170,
+    opacity: 1,
+    stops: [
+      <Stop key="0%" offset="0" stopOpacity={0} stopColor="#ffffff" />,
+      <Stop key="100%" offset="100%" stopOpacity={0.8} stopColor="#ffffff" />,
+    ],
+  },
+  {
+    height: 85,
+    opacity: 0.8,
+    stops: [
+      <Stop key="0%" offset="0" stopOpacity={0} stopColor="#ffffff" />,
+      <Stop key="57%" offset="57%" stopOpacity={0.15} stopColor="#000000" />,
+      <Stop key="100%" offset="100%" stopOpacity={0.15} stopColor="#000000" />,
+    ],
+  },
+];
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl<
   FlatListProps<ProtoNFT>
@@ -95,6 +135,7 @@ export function NftList({ data }: Props) {
     ],
   );
 
+  const gradients = colors.type === "light" ? lightGradients : darkGradients;
   return (
     <>
       <TrackScreen category="NFT Gallery" NFTs_owned={data.length} />
@@ -103,7 +144,7 @@ export function NftList({ data }: Props) {
         <Animated.View
           entering={FadeInUp}
           exiting={FadeOutUp}
-          style={{ zIndex: 10 }}
+          style={{ zIndex: 10, elevation: 10 }}
         >
           <StyledContainer
             width="100%"
@@ -113,6 +154,7 @@ export function NftList({ data }: Props) {
             bg="neutral.c20"
             style={{
               zIndex: 15,
+              elevation: 15,
               borderBottomWidth: 1,
               borderBottomColor: colors.neutral.c30,
             }}
@@ -175,6 +217,8 @@ export function NftList({ data }: Props) {
       <Animated.View>
         {nftsToHide.length > 0 && onMultiSelectMode && (
           <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
+            <BackgroundGradient {...gradients[0]} />
+            <BackgroundGradient {...gradients[1]} />
             <RoundedContainer width="100%">
               <StyledButton
                 onPress={onClickHide}

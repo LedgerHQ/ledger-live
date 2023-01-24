@@ -47,6 +47,7 @@ function WalletTabHeader({
             position: "absolute",
             opacity,
             zIndex: hideHeader ? -1 : 1,
+            elevation: hideHeader ? -10 : 1,
           },
           { transform: [{ translateY: y }] },
         ]}
