@@ -15,7 +15,7 @@ abstract class cosmosBase {
     [Key in CosmosOperationMode]: number;
   } = {
     // refer to https://github.com/chainapsis/keplr-wallet/blob/master/packages/stores/src/account/cosmos.ts#L113 for the gas fees
-    send: 80000,
+    send: 90000,
     delegate: 250000,
     undelegate: 250000,
     redelegate: 250000,
