@@ -89,7 +89,14 @@ const TargetAccount = memo(function TargetAccount({
   const Wrapper = setAccount ? AccountWrapper : Box;
 
   return (
-    <Wrapper horizontal p={3} justifyContent="space-between" selected={selected} onClick={onClick}>
+    <Wrapper
+      horizontal
+      p={3}
+      justifyContent="space-between"
+      selected={selected}
+      onClick={onClick}
+      data-test-id={`target-account-container-${account.name}`}
+    >
       <Box horizontal alignItems="center" pl={isChild ? "8px" : 0}>
         {isChild && (
           <Box
