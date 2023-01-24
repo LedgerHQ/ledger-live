@@ -77,6 +77,7 @@ import type { SolanaDelegationFlowParamList } from "../../../families/solana/Del
 import type { StellarAddAssetFlowParamList } from "../../../families/stellar/AddAssetFlow/types";
 import type { TezosDelegationFlowParamList } from "../../../families/tezos/DelegationFlow/types";
 import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/types";
+import { EthereumEditTransactionParamList } from "./EthereumEditTransactionNavigator";
 
 type TradeParams = {
   type: "onRamp" | "offRamp";
@@ -306,6 +307,9 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.CosmosRedelegationFlow]: NavigatorScreenParams<CosmosRedelegationFlowParamList>;
   [NavigatorName.CosmosUndelegationFlow]: NavigatorScreenParams<CosmosUndelegationFlowParamList>;
   [NavigatorName.CosmosClaimRewardsFlow]: NavigatorScreenParams<CosmosClaimRewardsFlowParamList>;
+
+  // Ethereum
+  [NavigatorName.EthereumEditTransaction]: NavigatorScreenParams<EthereumEditTransactionParamList>;
 
   // Osmosis
   [NavigatorName.OsmosisDelegationFlow]: NavigatorScreenParams<OsmosisDelegationFlowParamList>;
