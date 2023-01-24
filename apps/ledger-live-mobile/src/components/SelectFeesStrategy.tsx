@@ -170,7 +170,7 @@ export default function SelectFeesStrategy({
           {null}
         </SummaryRow>
 
-        <SafeAreaView style={styles.strategiesContainer}>
+        <SafeAreaView>
           <FlatList
             data={strategies}
             renderItem={renderItem}

@@ -180,6 +180,7 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SignTransactionSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
+      | ScreenName.SpeedUpTransaction
       | ScreenName.SwapForm;
     nextNavigation:
       | ScreenName.SignTransactionSelectDevice
