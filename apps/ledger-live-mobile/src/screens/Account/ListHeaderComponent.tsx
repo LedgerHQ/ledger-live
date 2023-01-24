@@ -162,13 +162,13 @@ export function getListHeaderComponents({
         gasPrice: {
           initial: new BigNumber(10000),
           min: new BigNumber(34),
-          max: new BigNumber(4564),
+          max: new BigNumber(14000),
           step: new BigNumber(20),
           steps: 8,
         },
       },
       nonce: 6,
-      maxPriorityFeePerGas: new BigNumber(4567),
+      maxPriorityFeePerGas: new BigNumber(25000),
     }),
   };
 
