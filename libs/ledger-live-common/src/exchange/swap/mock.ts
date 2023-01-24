@@ -177,7 +177,7 @@ export const mockGetProviders: GetProviders = async () => {
   ];
 };
 
-// Providers using V4 schema. For some reason it doesn't work though (still requires V3)
+// Providers using V5 schema. For some reason it doesn't work though (still requires V4)
 // return {
 //   currencies: {
 //     7: "ethereum/erc20/usd_tether__erc20_",
