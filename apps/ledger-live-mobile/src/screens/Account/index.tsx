@@ -115,15 +115,12 @@ const AccountScreenInner = ({
 
   const { secondaryActions } = useAccountActions({ account, parentAccount });
 
-  const onEditTransactionPress = useCallback(
-    (latestOperation: Operation) => {
-      editTxNavigation.navigate(NavigatorName.EthereumEditTransaction, {
-        screen: ScreenName.EditTransactionOptions,
-        params: { operation: latestOperation },
-      });
-    },
-    [editTxNavigation],
-  );
+  const onEditTransactionPress = useCallback((latestOperation: Operation) => {
+    editTxNavigation.navigate(NavigatorName.EthereumEditTransaction, {
+      screen: ScreenName.EditTransactionOptions,
+      params: { operation: latestOperation, account },
+    });
+  }, []);
 
   const { listHeaderComponents } = useMemo(
     () =>
