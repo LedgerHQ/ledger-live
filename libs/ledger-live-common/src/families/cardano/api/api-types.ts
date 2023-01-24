@@ -102,3 +102,7 @@ export type APIGetPoolList = {
   count: number;
   pools: Array<StakePool>;
 };
+
+export type APIGetPoolsDetail = {
+  pools: Array<StakePool>;
+};

@@ -1,5 +1,5 @@
 import network from "../../../network";
-import { APIGetPoolList } from "./api-types";
+import { APIGetPoolList, APIGetPoolsDetail } from "./api-types";
 import { isTestnet } from "../logic";
 import {
   CARDANO_API_ENDPOINT,
@@ -26,7 +26,7 @@ export async function fetchPoolList(
 export async function fetchPoolDetails(
   currency: CryptoCurrency,
   poolIds: Array<string>
-): Promise<APIGetPoolList> {
+): Promise<APIGetPoolsDetail> {
   const res = await network({
     method: "GET",
     url: isTestnet(currency)
@@ -34,5 +34,5 @@ export async function fetchPoolDetails(
       : `${CARDANO_API_ENDPOINT}/v1/pool/detail`,
     params: { poolIds },
   });
-  return res && (res.data as APIGetPoolList);
+  return res && (res.data as APIGetPoolsDetail);
 }

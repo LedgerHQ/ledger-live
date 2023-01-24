@@ -41,7 +41,6 @@ const ValidatorField = ({
   selectedPoolId,
 }: Props) => {
   const [search, setSearch] = useState("");
-  const [totalPools, setTotalPools] = useState(0);
   const [ledgerPools, setLedgerPools] = useState([]); // TODO: fetch ledger pools and set it here
   const unit = getAccountUnit(account);
   const [validators, setValidators] = useState([]);
@@ -65,7 +64,6 @@ const ValidatorField = ({
 
   const fetchPools = async () => {
     const apiRes = await fetchPoolList(account.currency, search, pageNo, 50);
-    setTotalPools(apiRes.count);
     if (pageNo === 1) {
       setValidators([...apiRes.pools.filter(p => !poolIdsToFilterFromAllPools.includes(p.poolId))]);
     } else {
