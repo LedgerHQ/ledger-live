@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import EntryButton from "~/renderer/components/EntryButton/EntryButton";
 import Swap from "~/renderer/icons/Swap";
 import Exchange from "~/renderer/icons/Exchange";
+import Growth from "~/renderer/icons/Growth";
 
 const ButtonGrid = styled(Grid).attrs(() => ({
   columns: 3,
@@ -39,6 +40,7 @@ const FeaturedButtons = () => {
         }}
       />
       <EntryButton
+        Icon={Growth}
         title={t("dashboard.featuredButtons.earn.title")}
         body={t("dashboard.featuredButtons.earn.description")}
         disabled={true}
