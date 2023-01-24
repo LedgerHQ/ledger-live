@@ -28,7 +28,7 @@ import { getDerivationScheme, runDerivationScheme } from "../derivation";
 import { genHex, genAddress } from "./helpers";
 import { createFixtureNFT, genNFTOperation } from "./fixtures/nfts";
 
-function ensureNoNegative(operations: Operation[]) {
+export function ensureNoNegative(operations: Operation[]) {
   let total = new BigNumber(0);
 
   for (let i = operations.length - 1; i >= 0; i--) {
@@ -264,34 +264,10 @@ export function genOperation(
 }
 
 /**
- * @memberof mock/account
- */
-// export function genAddingOperationsInAccount(
-//   account: Account,
-//   count: number,
-//   seed: number | string
-// ): Account {
-//   const rng = new Prando(seed);
-//   const copy: Account = { ...account };
-//   copy.operations = Array(count)
-//     .fill(null)
-//     .reduce((ops) => {
-//       const op = genOperation(copy, copy, ops, rng);
-//       return ops.concat(op);
-//     }, copy.operations);
-//   copy.spendableBalance = copy.balance = ensureNoNegative(copy.operations);
-//   const perFamilyOperation = perFamilyMock[account.currency.id];
-//   const postSyncAccount =
-//     perFamilyOperation && perFamilyOperation.postSyncAccount;
-//   if (postSyncAccount) postSyncAccount(copy);
-//   return copy;
-// }
-
-/**
  * @param id is a number or a string, used as an account identifier and as a seed for the generation.
  * @memberof mock/account
  */
-type GenAccountOptions = {
+export type GenAccountOptions = {
   operationsSize?: number;
   currency?: CryptoCurrency;
   subAccountsCount?: number;
@@ -340,12 +316,13 @@ export function genTokenAccount(
   return tokenAccount;
 }
 
-type GenAccountEnhanceOperations = (account: Account, rng: Prando) => Account
+type GenAccountEnhanceOperations =
+  (account: Account, currency: CryptoCurrency, rng: Prando) => void;
 
 export function genAccount(
   id: number | string,
   opts: GenAccountOptions = {},
-  completeResources?: (account: Account) => void,
+  completeResources?: (account: Account, currency: CryptoCurrency, address: string) => void,
   genAccountEnhanceOperations?: GenAccountEnhanceOperations
 ): Account {
   const rng = new Prando(id);
@@ -445,54 +422,7 @@ export function genAccount(
     );
   }
 
-  completeResources?.(account)
-  // if (currency.id === "cosmos") {
-  //   (account as CosmosAccount).cosmosResources = {
-  //     // TODO variation in these
-  //     delegations: [],
-  //     redelegations: [],
-  //     unbondings: [],
-  //     delegatedBalance: new BigNumber(0),
-  //     pendingRewardsBalance: new BigNumber(0),
-  //     unbondingBalance: new BigNumber(0),
-  //     withdrawAddress: address,
-  //   };
-  // }
-
-  // if (currency.family === "bitcoin") {
-  //   (account as BitcoinAccount).bitcoinResources = {
-  //     utxos: [],
-  //     walletAccount: undefined,
-  //   };
-  // }
-
-  // if (currency.family === "algorand") {
-  //   (account as AlgorandAccount).algorandResources = {
-  //     rewards: new BigNumber(0),
-  //     nbAssets: account.subAccounts?.length ?? 0,
-  //   };
-  // }
-
-  // if (currency.family === "polkadot") {
-  //   (account as PolkadotAccount).polkadotResources = {
-  //     stash: null,
-  //     controller: null,
-  //     nonce: 0,
-  //     lockedBalance: new BigNumber(0),
-  //     unlockingBalance: new BigNumber(0),
-  //     unlockedBalance: new BigNumber(0),
-  //     unlockings: [],
-  //     nominations: [],
-  //     numSlashingSpans: 0,
-  //   };
-  // }
-
-  // if (currency.family === "tezos") {
-  //   (account as TezosAccount).tezosResources = {
-  //     revealed: true,
-  //     counter: 0,
-  //   };
-  // }
+  completeResources?.(account, currency, address)
 
   account.operations = Array(operationsSize)
     .fill(null)
@@ -534,7 +464,7 @@ export function genAccount(
     account.operations
   );
   account.used = !isAccountEmpty(account);
-  if (genAccountEnhanceOperations) genAccountEnhanceOperations(account, rng);
+  if (genAccountEnhanceOperations) genAccountEnhanceOperations(account, currency, rng);
   account.balanceHistoryCache = generateHistoryFromOperations(account);
   return account;
 }

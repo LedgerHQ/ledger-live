@@ -11,7 +11,7 @@ import {
   botTest,
   expectSiblingsHaveSpendablePartGreaterThan,
   pickSiblings,
-} from "../../bot/specs";
+} from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec, TransactionDestinationTestInput } from "../../bot/types";
 import { getUnfreezeData, getNextRewardDate } from "./react";
 import { DeviceModelId } from "@ledgerhq/devices";

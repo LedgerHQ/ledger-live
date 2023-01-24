@@ -3,7 +3,11 @@ import invariant from "invariant";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { acceptTransaction } from "./speculos-deviceActions";
-import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
+import {
+  botTest,
+  genericTestDestination,
+  pickSiblings,
+} from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec } from "../../bot/types";
 import type { Transaction } from "./types";
 

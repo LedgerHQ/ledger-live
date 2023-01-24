@@ -1,7 +1,7 @@
 import type { Transaction } from "../../families/elrond/types";
 import invariant from "invariant";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { botTest, pickSiblings } from "../../bot/specs";
+import { botTest, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec, TransactionTestInput } from "../../bot/types";
 import { toOperationRaw } from "../../account";
 import { DeviceModelId } from "@ledgerhq/devices";

@@ -3,7 +3,7 @@ import expect from "expect";
 import { BigNumber } from "bignumber.js";
 import type { Transaction, NearAccount } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { botTest, pickSiblings } from "../../bot/specs";
+import { botTest, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { acceptTransaction } from "./speculos-deviceActions";

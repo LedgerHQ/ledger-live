@@ -18,7 +18,7 @@ import {
   botTest,
   expectSiblingsHaveSpendablePartGreaterThan,
   genericTestDestination,
-} from "../../bot/specs";
+} from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { toOperationRaw } from "../../account";
 import {

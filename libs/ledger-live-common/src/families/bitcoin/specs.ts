@@ -11,7 +11,11 @@ import type {
   Transaction,
 } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
+import {
+  botTest,
+  genericTestDestination,
+  pickSiblings,
+} from "@ledgerhq/coin-framework/bot/specs";
 import { bitcoinPickingStrategy } from "./types";
 import type { MutationSpec, AppSpec } from "../../bot/types";
 import { LowerThanMinimumRelayFee } from "../../errors";

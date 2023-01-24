@@ -1,5 +1,5 @@
 import type { DeviceAction } from "../../bot/types";
-import { deviceActionFlow } from "../../bot/specs";
+import { deviceActionFlow } from "@ledgerhq/coin-framework/bot/specs";
 import type { Transaction } from "./types";
 const typeWording = {
   send: "Send",

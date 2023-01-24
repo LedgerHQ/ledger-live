@@ -1,6 +1,9 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
-import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
+import {
+  deviceActionFlow,
+  formatDeviceAmount,
+} from "@ledgerhq/coin-framework/bot/specs";
 import { perCoinLogic } from "./logic";
 
 export const acceptTransaction: DeviceAction<Transaction, any> =

@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import type { Transaction } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { pickSiblings } from "../../bot/specs";
+import { pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { acceptTransaction } from "./speculos-deviceActions";

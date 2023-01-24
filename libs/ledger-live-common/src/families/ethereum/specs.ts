@@ -13,7 +13,11 @@ import {
   getAccountCapabilities,
 } from "../../compound/logic";
 import { getSupplyMax } from "./modules/compound";
-import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
+import {
+  botTest,
+  genericTestDestination,
+  pickSiblings,
+} from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { EIP1559ShouldBeUsed, getGasLimit } from "./transaction";
 import { DeviceModelId } from "@ledgerhq/devices";

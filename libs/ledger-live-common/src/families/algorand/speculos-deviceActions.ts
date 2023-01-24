@@ -1,7 +1,10 @@
 import type { DeviceAction } from "../../bot/types";
 import type { AlgorandTransaction } from "./types";
 import { findTokenById } from "../../currencies";
-import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
+import {
+  deviceActionFlow,
+  formatDeviceAmount,
+} from "@ledgerhq/coin-framework/bot/specs";
 import { extractTokenId, addPrefixToken } from "./tokens";
 import { displayTokenValue } from "./deviceTransactionConfig";
 

@@ -1,5 +1,8 @@
 import type { DeviceAction } from "../../bot/types";
-import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
+import {
+  deviceActionFlow,
+  formatDeviceAmount,
+} from "@ledgerhq/coin-framework/bot/specs";
 import type { Transaction, Vote } from "./types";
 
 function subAccount(subAccountId, account) {

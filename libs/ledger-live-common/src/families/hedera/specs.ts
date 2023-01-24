@@ -9,7 +9,11 @@ import type {
   TransactionRes,
 } from "../../bot/types";
 import type { Transaction } from "./types";
-import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
+import {
+  botTest,
+  genericTestDestination,
+  pickSiblings,
+} from "@ledgerhq/coin-framework/bot/specs";
 import { isAccountEmpty } from "../../account";
 import { acceptTransaction } from "./speculos-deviceActions";
 

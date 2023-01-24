@@ -4,7 +4,10 @@ import BigNumber from "bignumber.js";
 
 import type { Transaction } from "../../families/filecoin/types";
 import { getCryptoCurrencyById } from "../../currencies";
-import { genericTestDestination, pickSiblings } from "../../bot/specs";
+import {
+  genericTestDestination,
+  pickSiblings,
+} from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { acceptTransaction } from "./speculos-deviceActions";
 

@@ -1,6 +1,9 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
-import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
+import {
+  deviceActionFlow,
+  formatDeviceAmount,
+} from "@ledgerhq/coin-framework/bot/specs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";

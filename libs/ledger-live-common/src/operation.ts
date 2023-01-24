@@ -26,7 +26,7 @@ import {
   getOperationConfirmationNumber,
   getOperationConfirmationDisplayableNumber,
   isConfirmedOperation,
-  patchOperationWithHash as patchOperationWithHashCoined,
+  patchOperationWithHash as commonPatchOperationWithHash,
 } from "@ledgerhq/coin-framework/operation";
 
 export {
@@ -47,22 +47,29 @@ export function patchOperationWithHash(
   operation: Operation,
   hash: string
 ): Operation {
-  return patchOperationWithHashCoined(operation, hash, (nftOp, i) => {
-    const { currencyId } = decodeAccountId(operation.accountId);
-    const nftId = encodeNftId(
-      operation.accountId,
-      nftOp.contract || "",
-      nftOp.tokenId || "",
-      currencyId
-    );
-    const nftOperationIdEncoder =
-      nftOperationIdEncoderPerStandard[nftOp?.standard || ""] ||
-      nftOperationIdEncoderPerStandard.ERC721;
+  const commonOperation = commonPatchOperationWithHash(operation, hash);
 
-    return {
-      ...nftOp,
-      hash,
-      id: nftOperationIdEncoder(nftId, hash, nftOp.type, 0, i),
-    };
-  });
+  return {
+    ...commonOperation,
+    nftOperations:
+      operation.nftOperations &&
+      operation.nftOperations.map((nftOp, i) => {
+        const { currencyId } = decodeAccountId(operation.accountId);
+        const nftId = encodeNftId(
+          operation.accountId,
+          nftOp.contract || "",
+          nftOp.tokenId || "",
+          currencyId
+        );
+        const nftOperationIdEncoder =
+          nftOperationIdEncoderPerStandard[nftOp?.standard || ""] ||
+          nftOperationIdEncoderPerStandard.ERC721;
+
+        return {
+          ...nftOp,
+          hash,
+          id: nftOperationIdEncoder(nftId, hash, nftOp.type, 0, i),
+        };
+      }),
+  };
 }

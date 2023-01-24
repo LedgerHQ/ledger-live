@@ -3,7 +3,10 @@ import sample from "lodash/sample";
 import invariant from "invariant";
 import type { Transaction } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { genericTestDestination, pickSiblings } from "../../bot/specs";
+import {
+  genericTestDestination,
+  pickSiblings,
+} from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { getAccountDelegationSync, isAccountDelegating } from "./bakers";

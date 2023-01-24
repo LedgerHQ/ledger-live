@@ -1,7 +1,11 @@
 import expect from "expect";
 import type { AppSpec } from "../../bot/types";
 import type { CardanoAccount, CardanoResources, Transaction } from "./types";
-import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
+import {
+  botTest,
+  genericTestDestination,
+  pickSiblings,
+} from "@ledgerhq/coin-framework/bot/specs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { DeviceModelId } from "@ledgerhq/devices";
 import BigNumber from "bignumber.js";

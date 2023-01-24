@@ -13,6 +13,7 @@ import {
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
+// Type coming from live-common/src/load/speculos.ts
 export type AppCandidate = {
   path: string;
   model: DeviceModelId;

@@ -99,7 +99,6 @@ export function decodeSubOperationId(id: string): {
 export function patchOperationWithHash(
   operation: Operation,
   hash: string,
-  nftOperationFn?: ((nftOp: Operation, index: number) => Operation)
 ): Operation {
   return {
     ...operation,
@@ -112,9 +111,6 @@ export function patchOperationWithHash(
         hash,
         id: encodeOperationId(op.accountId, hash, op.type),
       })),
-    nftOperations:
-      nftOperationFn &&
-      operation.nftOperations?.map(nftOperationFn),
   };
 }
 

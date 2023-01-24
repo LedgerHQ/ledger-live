@@ -1,7 +1,10 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
 import { formatCurrencyUnit } from "../../currencies";
-import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
+import {
+  deviceActionFlow,
+  formatDeviceAmount,
+} from "@ledgerhq/coin-framework/bot/specs";
 
 const expectedAmount = ({ account, status, transaction }) => {
   if (transaction.assetCode && transaction.assetIssuer) {

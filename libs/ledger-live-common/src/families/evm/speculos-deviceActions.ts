@@ -1,6 +1,9 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
-import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
+import {
+  deviceActionFlow,
+  formatDeviceAmount,
+} from "@ledgerhq/coin-framework/bot/specs";
 
 function subAccount(subAccountId, account) {
   const sub = (account.subAccounts || []).find((a) => a.id === subAccountId);

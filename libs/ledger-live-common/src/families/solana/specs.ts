@@ -7,7 +7,7 @@ import {
   expectSiblingsHaveSpendablePartGreaterThan,
   genericTestDestination,
   pickSiblings,
-} from "../../bot/specs";
+} from "@ledgerhq/coin-framework/bot/specs";
 import { AppSpec, TransactionTestInput } from "../../bot/types";
 import { SolanaAccount, Transaction } from "./types";
 import {

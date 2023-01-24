@@ -3,7 +3,11 @@ import invariant from "invariant";
 import type { AlgorandAccount, AlgorandTransaction } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { isAccountEmpty } from "../../account";
-import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
+import {
+  botTest,
+  genericTestDestination,
+  pickSiblings,
+} from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { BigNumber } from "bignumber.js";
 import sample from "lodash/sample";
