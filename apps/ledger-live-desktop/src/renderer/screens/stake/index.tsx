@@ -13,7 +13,7 @@ type Props = {
   parentAccount?: Account;
 };
 
-const StakeFlow = (props: Props) => {
+const useStakeFlow = (props: Props) => {
   const history = useHistory();
   const [accountSelection, setAccountSelection] = useState({});
   const { enabled: stakeFlag, list: flagList } = useFeature("stakePrograms");
@@ -89,4 +89,4 @@ const StakeFlow = (props: Props) => {
   return getStakeFlow;
 };
 
-export default StakeFlow;
+export default useStakeFlow;
