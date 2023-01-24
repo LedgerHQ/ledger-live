@@ -19,12 +19,12 @@ import TroubleshootingDrawer from "./TroubleshootingDrawer";
 import SoftwareCheckStep from "./SoftwareCheckStep";
 import { DesyncOverlay } from "./DesyncOverlay";
 import RecoveryContent from "./RecoveryContent";
-import ApplicationContent from "./ApplicationContent";
 import { StepText } from "./shared";
 import Header from "./Header";
 import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "../../DeviceAction/animations";
 import DeviceIllustration from "../../DeviceIllustration";
+import OnboardingAppInstallStep from "../../OnboardingAppInstall";
 
 const readyRedirectDelayMs = 2500;
 const pollingPeriodMs = 1000;
@@ -172,7 +172,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
         status: "inactive",
         title: "Nano applications",
         renderBody: () => (
-          <ApplicationContent
+          <OnboardingAppInstallStep
             onComplete={handleInstallRecommendedApplicationComplete}
             productName={productName}
           />
