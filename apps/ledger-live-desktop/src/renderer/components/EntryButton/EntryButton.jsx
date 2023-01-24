@@ -11,13 +11,17 @@ const TitleText = styled(Text).attrs(() => ({
   fontSize: 4,
   fontWeight: "semiBold",
   mb: "2px",
-}))``;
+}))`
+  transition: color ease-in-out 200ms;
+`;
 
 const BodyText = styled(Text).attrs(p => ({
   fontSize: 4,
   fontWeight: "medium",
   color: p.theme.colors.neutral.c70,
-}))``;
+}))`
+  transition: color ease-in-out 200ms;
+`;
 
 const EntryButtonContainer = styled.button`
   cursor: pointer;
@@ -33,6 +37,7 @@ const EntryButtonContainer = styled.button`
   border-radius: 4px;
   padding: ${p => p.theme.space[3]}px;
   gap: ${p => p.theme.space[3]}px;
+  transition: background-color ease-in-out 200ms;
 
   &:disabled {
     cursor: not-allowed;
