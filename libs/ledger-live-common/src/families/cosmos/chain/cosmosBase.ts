@@ -18,7 +18,7 @@ abstract class cosmosBase {
     send: 90000,
     delegate: 250000,
     undelegate: 250000,
-    redelegate: 250000,
+    redelegate: 300000,
     claimReward: 140000,
     claimRewardCompound: 400000,
   };
