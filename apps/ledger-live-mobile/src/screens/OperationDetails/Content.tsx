@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { View, StyleSheet, Linking, Text } from "react-native";
+import { View, StyleSheet, Linking } from "react-native";
 import uniq from "lodash/uniq";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
@@ -145,7 +145,10 @@ export default function Content({
   const shouldDisplayTo = uniqueRecipients.length > 0 && !!uniqueRecipients[0];
 
   const onEditTxCardClick = () => {
-    navigation.navigate(ScreenName.SendAmountCoin);
+    navigation.navigate(NavigatorName.EthereumEditTransaction, {
+      screen: ScreenName.EditTransactionOptions,
+      params: { operation },
+    });
   };
 
   const isConfirmed = isConfirmedOperation(
@@ -351,6 +354,7 @@ export default function Content({
 
       <Flex
         backgroundColor={"primary.c80"}
+        color={"primary.c80"}
         width="90%"
         alignSelf={"center"}
         borderRadius={8}
@@ -360,14 +364,8 @@ export default function Content({
           tag="Adjust Network fees"
           title={"Your transaction is ongoing"}
           onClickCard={onEditTxCardClick}
-        >
-          THIS IS NOT RENDERED
-        </InformativeCard>
+        />
       </Flex>
-
-      <InformativeCard>
-        <Text>{"Your transaction is ongoing"}</Text>
-      </InformativeCard>
 
       {!disableAllLinks ? (
         <Section
