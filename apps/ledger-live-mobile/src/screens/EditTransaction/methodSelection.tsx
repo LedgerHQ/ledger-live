@@ -17,18 +17,20 @@ export function MethodSelection({ navigation, route }: Props) {
     { text: "Cancel", value: "cancel" },
   ] as const;
 
-  const { operation } = route.params;
+  const { operation, account } = route.params;
 
   const onSelect = (option: typeof options[number]["value"]) => {
     switch (option) {
       case "cancel":
         navigation.navigate(ScreenName.CancelTransaction, {
           operation,
+          account,
         });
         break;
       case "speedUp":
         navigation.navigate(ScreenName.SpeedUpTransaction, {
           operation,
+          account,
         });
         break;
       default:
