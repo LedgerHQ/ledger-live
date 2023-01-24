@@ -79,8 +79,7 @@ const IconWrapper = styled.div`
   height: 40px;
   border-radius: 100%;
   margin-right: ${p => p.theme.space[3]}px;
-  background-color: ${p =>
-    p.theme.colors.palette.type === "dark" ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.02)"};}
+  background-color: ${p => p.theme.colors.palette.neutral.c100a005};
 `;
 
 const LabelWrapper = styled(Box).attrs(() => ({
