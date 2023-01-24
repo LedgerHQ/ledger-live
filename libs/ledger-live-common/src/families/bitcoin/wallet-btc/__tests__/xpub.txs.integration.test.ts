@@ -301,8 +301,8 @@ describe.skip("Build transactions", () => {
   const network = coininfo.bitcoin.regtest.toBitcoinJS();
 
   const explorer = new BitcoinLikeExplorer({
-    explorerURI: "http://localhost:20000/blockchain/v3",
-    explorerVersion: "v3",
+    forcedExplorerURI: "http://localhost:20000/blockchain/v3",
+    cryptoCurrency: getCryptoCurrencyById("bitcoin"),
     disableBatchSize: true,
   });
 
