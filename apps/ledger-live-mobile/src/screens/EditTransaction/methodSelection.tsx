@@ -18,6 +18,7 @@ export function MethodSelection({ navigation, route }: Props) {
   ] as const;
 
   const { operation } = route.params;
+
   const onSelect = (option: typeof options[number]["value"]) => {
     switch (option) {
       case "cancel":
@@ -42,7 +43,7 @@ export function MethodSelection({ navigation, route }: Props) {
         name="EthereumEditTransaction"
       />
       <Flex p={6}>
-        <SelectableList onChange={e => console.log(e)}>
+        <SelectableList onChange={onSelect}>
           {options.map(editOption => {
             return (
               <SelectableList.Element value={editOption.value}>
