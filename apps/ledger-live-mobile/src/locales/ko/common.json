@@ -803,7 +803,9 @@
     "required" : "죄송하지만 블루투스가 비활성 상태인 것 같습니다",
     "locationRequiredTitle" : "블루투스 LE 사용을 위해 위치 정보가 필요합니다.",
     "locationRequiredMessage" : "안드로이드에서 블루투스 LE 장치를 열거하려면 위치를 허용해야 합니다.",
-    "checkEnabled" : "휴대폰 설정에서 블루투스를 활성화해주세요."
+    "checkEnabled" : "휴대폰 설정에서 블루투스를 활성화해주세요.",
+    "tryEnablingAgain" : "블루투스를 다시 활성화해보세요",
+    "openSettings" : "블루투스 설정 열기"
   },
   "webview" : {
     "noConnectionError" : {
@@ -813,12 +815,10 @@
   },
   "location" : {
     "titleServiceRequired" : "위치 서비스가 필요합니다",
-    "titlePermissionRequired" : "위치 정보 액세스 권한이 필요합니다",
-    "titlePermissionRequiredPrecise" : "정확한 위치 정보 액세스 권한이 필요합니다",
     "descriptionServiceRequired" : "블루투스로 귀하의 장치를 Ledger Live와 페어링 하려면 위치 서비스가 필요합니다.",
-    "descriptionPermissionRequired" : "블루투스로 귀하의 장치를 Ledger Live와 페어링 하려면 위치 정보 액세스 권한이 필요합니다.",
-    "descriptionPermissionRequiredPrecise" : "블루투스로 귀하의 장치를 Ledger Live와 페어링 하려면 정확한 위치 정보 액세스 권한이 필요합니다.",
     "open" : "위치 설정 열기",
+    "openSettings" : "위치 설정 열기",
+    "tryEnablingAgain" : "위치를 다시 활성화해보세요",
     "noInfos" : "Ledger는 사용자의 위치 정보를 사용하지 않습니다."
   },
   "permissions" : {
@@ -831,6 +831,19 @@
       "modalButtonLabelBase" : "승인",
       "modalButtonLabelSettingsVariant" : "설정으로 이동",
       "dontPair" : "페어링 금지"
+    },
+    "location" : {
+      "titlePermissionRequired" : "위치 정보 액세스 권한이 필요합니다",
+      "titlePermissionRequiredPrecise" : "정확한 위치 정보 액세스 권한이 필요합니다",
+      "descriptionPermissionRequired" : "블루투스로 귀하의 장치를 Ledger Live와 페어링 하려면 위치 정보 액세스 권한이 필요합니다.",
+      "descriptionPermissionRequiredPrecise" : "블루투스로 귀하의 장치를 Ledger Live와 페어링 하려면 정확한 위치 정보 액세스 권한이 필요합니다."
+    },
+    "camera" : {
+      "title" : "Authorize camera",
+      "authorizeDescription" : "Please authorize Camera to scan QR codes.",
+      "authorizeButtonTitle" : "Authorize",
+      "goToSettingsDescription" : "Please authorize Camera in Settings to scan QR codes.",
+      "goToSettingsButtonTitle" : "Go to settings"
     }
   },
   "fees" : {
@@ -1115,6 +1128,12 @@
     "mostPopular" : "인기 항목"
   },
   "installSetOfApps" : {
+    "restore" : {
+      "title" : "{{deviceName}}에서와 동일한 앱을 설치하시겠어요?",
+      "titleNoDeviceName" : "이전 Ledger 장치에서와 동일한 앱을 설치하시겠어요?",
+      "installCTA" : "지금 설치",
+      "skipCTA" : "나중에 할게요"
+    },
     "landing" : {
       "estimatedTime" : "{{ minutes }}분",
       "title" : "{{ productName }} 제품은 앱을 사용하여 안전한 블록체인 트랜잭션을 지원합니다",
@@ -1126,7 +1145,7 @@
       "loading" : "로딩 중...",
       "resolving" : "의존성 해결",
       "progress" : "앱 설치 중 {{progress}}%",
-      "disclaimer" : "{{ productName }}의 앱은 트랜잭션 승인에 사용됩니다. 언제든지 추가나 삭제가 가능합니다."
+      "disclaimer" : "Ledger Live에서 언제든지 앱을 추가하거나 제거하세요."
     }
   },
   "onboarding" : {
@@ -2272,12 +2291,6 @@
         "unsupported" : "지원되지 않음",
         "settings" : "앱 설정",
         "includeGeneralSettings" : "데스크탑 설정 가져오기"
-      },
-      "fallback" : {
-        "header" : "계정 가져오기",
-        "title" : "카메라 활성화",
-        "desc" : "설정에서 카메라의 QR 코드 스캔을 허용하세요.",
-        "buttonTitle" : "설정으로 이동"
       }
     },
     "availableBalance" : "이용 가능 잔액",
@@ -3622,7 +3635,7 @@
       "title" : "장치에서 스왑 거래를 확인하세요",
       "alert" : {
         "default" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다.",
-        "cic" : "장치에서 자금 세부사항을 확인한 후 전송하세요. CIC는 일부 트랜잭션에 대해 추가 확인을 수행해야 하므로 지연이 발생할 수 있습니다."
+        "provider" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 일부 트랜잭션에서 {{providerName}}의 추가 확인 단계가 필요할 수 있어 지연이 발생할 수 있습니다."
       },
       "acceptTerms" : "본인은 이 트랜잭션을 확인함으로써 \n<0><0>{{provider}}</0>의 이용약관</0>을 수락합니다.",
       "notice" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다."
