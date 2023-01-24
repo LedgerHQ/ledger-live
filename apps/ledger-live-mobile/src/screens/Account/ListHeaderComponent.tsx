@@ -9,9 +9,11 @@ import {
   ValueChange,
   PortfolioRange,
   BalanceHistoryWithCountervalue,
+  Operation,
 } from "@ledgerhq/types-live";
 import { Currency } from "@ledgerhq/types-cryptoassets";
-import { Box, ColorPalette } from "@ledgerhq/native-ui";
+import { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
+import { Box, ColorPalette, SideImageCard } from "@ledgerhq/native-ui";
 import { isNFTActive } from "@ledgerhq/live-common/nft/index";
 import { TFunction } from "react-i18next";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
@@ -19,6 +21,8 @@ import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { LayoutChangeEvent } from "react-native";
+import BigNumber from "bignumber.js";
+
 import Header from "./Header";
 import AccountGraphCard from "../../components/AccountGraphCard";
 import SubAccountsList from "./SubAccountsList";
@@ -29,7 +33,6 @@ import perFamilyAccountBodyHeader from "../../generated/AccountBodyHeader";
 import perFamilyAccountBalanceSummaryFooter from "../../generated/AccountBalanceSummaryFooter";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
-
 import {
   FabAccountActions,
   FabAccountMainActions,
@@ -52,7 +55,10 @@ type Props = {
   colors: ColorPalette;
   secondaryActions: ActionButtonEvent[];
   t: TFunction;
+  onEditTransactionPress: (latestOperation: Operation) => void;
 };
+
+const FIVE_MINUTES = 5 * 60 * 1000;
 
 type MaybeComponent =
   | React.FunctionComponent<
@@ -79,6 +85,7 @@ export function getListHeaderComponents({
   colors,
   secondaryActions,
   t,
+  onEditTransactionPress,
 }: Props): {
   listHeaderComponents: ReactNode[];
   stickyHeaderIndices?: number[];
@@ -124,6 +131,46 @@ export function getListHeaderComponents({
     });
 
   const stickyHeaderIndices = empty ? [] : [0];
+  // const { pendingOperations } = account;
+  const mockedOperation: Operation = {
+    id: "",
+    hash: "",
+    type: "OUT",
+    value: new BigNumber(100000 * 10000 * 99999999),
+    fee: new BigNumber(5 * 2100),
+    senders: ["0xsender"],
+    recipients: ["0xrecipient"],
+    blockHeight: null,
+    blockHash: "",
+    transactionSequenceNumber: 5,
+    accountId: account.id,
+    date: new Date(),
+    extra: {},
+  };
+
+  const pendingOperations = [mockedOperation];
+  const [lastOperation] = pendingOperations.sort(
+    (a, b) => a.date.getTime() - b.date.getTime(),
+  );
+
+  const EditTransactionComponent =
+    lastOperation?.date.getTime() > new Date().getTime() - FIVE_MINUTES ? (
+      <SectionContainer px={6}>
+        <SideImageCard
+          title="Your transaction is ongoing. You can replace it with a new one"
+          cta={"Adjust Network Fees"}
+          onPress={() => onEditTransactionPress(lastOperation)}
+        />
+      </SectionContainer>
+    ) : (
+      <SectionContainer px={6}>
+        <SideImageCard
+          title="It looks like your last transaction is stuck."
+          cta={"Adjust Network Fees"}
+          onPress={() => onEditTransactionPress(lastOperation)}
+        />
+      </SectionContainer>
+    );
 
   return {
     listHeaderComponents: [
@@ -148,6 +195,7 @@ export function getListHeaderComponents({
           <AccountSubHeader />
         </Box>
       ),
+      pendingOperations.length ? EditTransactionComponent : null,
       <SectionContainer px={6} bg={colors.background.main}>
         <SectionTitle
           title={t("account.quickActions")}

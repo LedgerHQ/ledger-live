@@ -89,6 +89,7 @@ import {
   NavigationHeaderCloseButtonAdvanced,
 } from "../NavigationHeaderCloseButton";
 import { RedirectToRecoverStaxFlowScreen } from "../../screens/Protect/RedirectToRecoverStaxFlow";
+import EditTransactionNavigator from "./EditTransactionNavigator";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -580,6 +581,11 @@ export default function BaseNavigator() {
           ),
           headerLeft: () => null,
         }}
+      />
+      <Stack.Screen
+        name={NavigatorName.EthereumEditTransaction}
+        options={{ headerShown: false }}
+        component={EditTransactionNavigator}
       />
       <Stack.Screen
         name={NavigatorName.StakeFlow}
