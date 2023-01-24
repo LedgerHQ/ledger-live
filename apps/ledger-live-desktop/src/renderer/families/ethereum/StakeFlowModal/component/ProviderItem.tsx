@@ -4,6 +4,14 @@ import { useTranslation } from "react-i18next";
 import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import styled from "styled-components";
 
+export const Container: ThemedComponent = styled(Flex)`
+  cursor: pointer;
+  border-radius: 8px;
+  :hover {
+    background-color: ${p => p.theme.colors.primary.c10};
+  }
+`;
+
 export const Tag: ThemedComponent = styled(TagCore)`
   padding: 0 5px;
   > span {
@@ -28,7 +36,7 @@ const ProviderItem = ({ id, name, provider, infoOnClick, stakeOnClick }: ItemPro
   );
 
   return (
-    <Flex flow={1} onClick={stakeLink} style={{ cursor: "pointer" }} my={4}>
+    <Container pl={3} flow={1} onClick={stakeLink} py={4}>
       <ProviderIcon name={name} size="S" boxed={true} />
       <Flex flexDirection={"column"} ml={5} flex={"auto"} alignItems="flex-start">
         <Flex alignItems="center" mb={1}>
@@ -64,7 +72,7 @@ const ProviderItem = ({ id, name, provider, infoOnClick, stakeOnClick }: ItemPro
       <Flex width={40} justifyContent="center" alignItems="center">
         <Icon name="ChevronRight" size={25} />
       </Flex>
-    </Flex>
+    </Container>
   );
 };
 

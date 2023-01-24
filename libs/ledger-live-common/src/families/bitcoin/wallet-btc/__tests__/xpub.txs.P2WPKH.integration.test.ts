@@ -170,7 +170,7 @@ describe.skip("testing xpub native segwit transactions", () => {
     expectedFee1 =
       utils.maxTxSizeCeil(
         inputs.length,
-        outputs.map((o) => o.address),
+        outputs.map((o) => o.script),
         false,
         crypto,
         DerivationModes.NATIVE_SEGWIT

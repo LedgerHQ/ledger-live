@@ -19,7 +19,7 @@ import {
   deserializePlatformSignedTransaction,
 } from "./serializers";
 import type { TrackFunction } from "./tracking";
-import { AppManifest, TranslatableString } from "./types";
+import { LiveAppManifest, TranslatableString } from "./types";
 import { isTokenAccount, getMainAccount, isAccount } from "../account/index";
 import { getAccountBridge } from "../bridge/index";
 import { Transaction } from "../generated/types";
@@ -37,7 +37,7 @@ export function translateContent(
 }
 
 export type WebPlatformContext = {
-  manifest: AppManifest;
+  manifest: LiveAppManifest;
   accounts: AccountLike[];
   tracking: Record<string, TrackFunction>;
 };

@@ -802,7 +802,10 @@ export const renderSwapDeviceConfirmation = ({
         />
         <Box flex={0}>
           <Alert type="primary" {...alertProperties} mb={7} mx={4}>
-            <Trans i18nKey={`DeviceAction.swap.notice.${noticeType.message}`} />
+            <Trans
+              i18nKey={`DeviceAction.swap.notice.${noticeType.message}`}
+              values={{ providerName: getProviderName(exchangeRate.provider) }}
+            />
           </Alert>
         </Box>
         <Box mx={6} data-test-id="device-swap-summary">
@@ -1013,13 +1016,6 @@ export const renderLoadingImage = ({
       src={src}
       progress={progress}
       backgroundPlaceholderText="image loading illustration placeholder"
-      bottom={
-        <Flex flexDirection="column" flex={1} justifyContent="flex-end" pb={8}>
-          <Text textAlign="center" variant="bodyLineHeight" color="neutral.c60">
-            {t("customImage.steps.transfer.timeDisclaimer")}
-          </Text>
-        </Flex>
-      }
       testId={`device-action-image-loading-${progress}`}
     />
   );
@@ -1041,16 +1037,6 @@ export const renderImageCommitRequested = ({
       })}
       src={src}
       backgroundPlaceholderText="commit requested illustration placeholder"
-      top={
-        <Flex flex={1} flexDirection="column" justifyContent="center" alignItems="center">
-          <Flex mb={3} p={4} backgroundColor="neutral.c30" borderRadius={999}>
-            <Icons.CheckAloneMedium size={16} color="success.c50" />
-          </Flex>
-          <Text textAlign="center" color="neutral.c70" variant="bodyLineHeight">
-            {t("customImage.steps.transfer.pictureLoaded")}
-          </Text>
-        </Flex>
-      }
       testId="device-action-image-commit-requested"
     />
   );

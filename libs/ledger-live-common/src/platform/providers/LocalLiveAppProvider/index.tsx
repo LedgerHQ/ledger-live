@@ -6,7 +6,7 @@ import React, {
   useCallback,
 } from "react";
 import { LiveAppRegistry } from "./types";
-import { LiveAppManifest } from "../types";
+import { LiveAppManifest } from "../../types";
 
 const initialState: LiveAppRegistry = {
   liveAppById: {},

@@ -4,7 +4,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 
-import type { AppManifest } from "@ledgerhq/live-common/platform/types";
+import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 import Box from "~/renderer/components/Box";
 import LiveAppIcon from "~/renderer/components/WebPlatformPlayer/LiveAppIcon";
@@ -79,7 +79,7 @@ const BranchBadge: ThemedComponent<{}> = styled(Box).attrs(p => ({
 `;
 
 type Props = {
-  manifest: AppManifest,
+  manifest: LiveAppManifest,
 };
 
 const AppDetails = ({ manifest }: Props) => {

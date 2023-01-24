@@ -5,7 +5,7 @@ import React, { RefObject, useCallback, useEffect, useState } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 
-import type { AppManifest } from "@ledgerhq/live-common/platform/types";
+import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 import { rgba } from "~/renderer/styles/helpers";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
@@ -112,7 +112,7 @@ export const Separator: ThemedComponent<*> = styled.div`
 
 export type Props = {
   icon?: boolean,
-  manifest: AppManifest,
+  manifest: LiveAppManifest,
   onReload: Function,
   onClose?: Function,
   onHelp?: Function,

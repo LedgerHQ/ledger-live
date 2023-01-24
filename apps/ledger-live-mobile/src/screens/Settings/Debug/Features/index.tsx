@@ -5,6 +5,7 @@ import SettingsRow from "../../../../components/SettingsRow";
 import { ScreenName } from "../../../../const";
 import BLEPairingFlow from "./BLEPairingFlow";
 import CustomImage from "./CustomImage";
+import ClaimNftFlowDebug from "./ClaimNftFlowDebug";
 import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
 import { StackNavigatorNavigation } from "../../../../components/RootNavigator/types/helpers";
 import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
@@ -41,6 +42,7 @@ export default function Debugging() {
         iconLeft={<Icons.BringFrontMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugCustomImageGraphics)}
       />
+      <ClaimNftFlowDebug />
       <SettingsRow
         title="Post Onboarding"
         desc="Entry to the post onboarding flow"
@@ -56,10 +58,23 @@ export default function Debugging() {
         onPress={() => navigation.navigate(ScreenName.DebugLottie)}
       />
       <SettingsRow
-        title="Storyly"
-        desc="Remote video slides used on the new onboarding"
+        title="Videos"
+        desc="See all video assets"
         iconLeft={<Icons.PlayMedium size={32} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugVideos)}
+      />
+      <SettingsRow
+        title="Storyly"
+        desc="Remote video slides (stories) used on the new onboarding"
+        iconLeft={<Icons.InstagramMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugStoryly)}
+      />
+
+      <SettingsRow
+        title="Terms of Use"
+        desc="Trigger Terms of Use Popup"
+        iconLeft={<Icons.LinkMedium size={32} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugTermsOfUse)}
       />
     </SettingsNavigationScrollView>
   );

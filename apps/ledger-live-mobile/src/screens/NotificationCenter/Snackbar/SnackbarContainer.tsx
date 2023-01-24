@@ -19,7 +19,7 @@ export default function SnackbarContainer() {
       if (toast.type === "announcement" || !toast.type) {
         toasts.forEach(({ id }) => dismissToast(id));
         RootNavigation.navigate(NavigatorName.NotificationCenter, {
-          screen: ScreenName.NotificationCenterNews,
+          screen: ScreenName.NotificationCenter,
         });
       }
     },

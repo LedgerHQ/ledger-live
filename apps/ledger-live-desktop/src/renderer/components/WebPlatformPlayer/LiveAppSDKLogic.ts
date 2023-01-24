@@ -11,7 +11,7 @@ import { broadcastTransactionLogic as broadcastTransactionCommonLogic } from "@l
 import { RawPlatformSignedTransaction } from "@ledgerhq/live-common/platform/rawTypes";
 import { serializePlatformAccount } from "@ledgerhq/live-common/platform/serializers";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
-import { AppManifest } from "@ledgerhq/live-common/platform/types";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 import { updateAccountWithUpdater } from "../../actions/accounts";
 import { selectAccountAndCurrency } from "../../drawers/DataSelector/logic";
@@ -23,7 +23,7 @@ import { track } from "~/renderer/analytics/segment";
 const tracking = trackingWrapper(track);
 
 type WebPlatformContext = {
-  manifest: AppManifest;
+  manifest: LiveAppManifest;
   dispatch: Dispatch;
   accounts: AccountLike[];
 };

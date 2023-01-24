@@ -49,14 +49,6 @@ export const experimentalFeatures: Feature[] = [
     : []),
   {
     type: "toggle",
-    name: "API_TRONGRID_PROXY",
-    title: <Trans i18nKey="settings.experimental.features.apiTrongridProxy.title" />,
-    description: <Trans i18nKey="settings.experimental.features.apiTrongridProxy.description" />,
-    valueOn: "https://api.trongrid.io",
-    valueOff: "https://tron.coin.ledger.com",
-  },
-  {
-    type: "toggle",
     name: "EXPERIMENTAL_LANGUAGES",
     title: <Trans i18nKey="settings.experimental.features.experimentalLanguages.title" />,
     description: (
@@ -120,6 +112,14 @@ export const experimentalFeatures: Feature[] = [
     ),
     minValue: 0,
     maxValue: 1,
+  },
+  {
+    type: "toggle",
+    name: "EXPERIMENTAL_EXECUTION_ON_RENDERER",
+    title: <Trans i18nKey="settings.experimental.features.experimentalExecutionOnRenderer.title" />,
+    description: (
+      <Trans i18nKey="settings.experimental.features.experimentalExecutionOnRenderer.description" />
+    ),
   },
 ];
 

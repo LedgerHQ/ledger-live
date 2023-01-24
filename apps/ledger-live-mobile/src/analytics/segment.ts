@@ -38,6 +38,7 @@ import {
 import { knownDevicesSelector } from "../reducers/ble";
 import { DeviceLike, State } from "../reducers/types";
 import { satisfactionSelector } from "../reducers/ratings";
+import { accountsSelector } from "../reducers/accounts";
 import type { AppStore } from "../reducers";
 import { NavigatorName } from "../const";
 import { previousRouteNameRef, currentRouteNameRef } from "./screenRefs";
@@ -62,6 +63,7 @@ const extraProperties = async (store: AppStore) => {
   const region = sensitiveAnalytics ? null : localeSelector(state);
   const devices = knownDevicesSelector(state);
   const satisfaction = satisfactionSelector(state);
+  const accounts = accountsSelector(state);
   const lastDevice =
     lastSeenDeviceSelector(state) || devices[devices.length - 1];
   const deviceInfo = lastDevice
@@ -86,6 +88,15 @@ const extraProperties = async (store: AppStore) => {
   const firstConnectHasDeviceUpdated =
     firstConnectHasDeviceUpdatedSelector(state);
   const { user } = await getOrCreateUser();
+  const blockchainsWithNftsOwned = accounts
+    ? [
+        ...new Set(
+          accounts
+            .filter(account => account.nfts?.length)
+            .map(account => account.currency.ticker),
+        ),
+      ]
+    : [];
 
   return {
     appVersion,
@@ -111,6 +122,7 @@ const extraProperties = async (store: AppStore) => {
     notificationsAllowed,
     notificationsBlacklisted,
     userId: user?.id,
+    blockchainsWithNftsOwned,
   };
 };
 
@@ -172,8 +184,10 @@ export const trackSubject = new ReplaySubject<{
   event: string;
   properties?: Error | Record<string, unknown> | null;
 }>(10);
+
+type EventType = string | "button_clicked" | "error_message";
 export const track = async (
-  event: string,
+  event: EventType,
   properties?: Error | Record<string, unknown> | null,
   mandatory?: boolean | null,
 ) => {
@@ -219,7 +233,7 @@ export const getPageNameFromRoute = (route: RouteProp<ParamListBase>) => {
   return snakeCase(routeName);
 };
 export const trackWithRoute = (
-  event: string,
+  event: EventType,
   route: RouteProp<ParamListBase>,
   properties?: Record<string, unknown> | null,
   mandatory?: boolean | null,
@@ -235,7 +249,7 @@ export const useTrack = () => {
   const route = useRoute();
   const track = useCallback(
     (
-      event: string,
+      event: EventType,
       properties?: Record<string, unknown> | null,
       mandatory?: boolean | null,
     ) => trackWithRoute(event, route, properties, mandatory),

@@ -17,7 +17,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// FIXME Skipped because Praline required on CI
+// TODO Skipped because Praline required on CI
 describe.skip("testing xpub legacy transactions", () => {
   const network = coininfo.bitcoin.regtest.toBitcoinJS();
 
@@ -147,7 +147,7 @@ describe.skip("testing xpub legacy transactions", () => {
     expectedFee1 =
       utils.maxTxSizeCeil(
         inputs.length,
-        outputs.map((o) => o.address),
+        outputs.map((o) => o.script),
         false,
         crypto,
         DerivationModes.LEGACY
@@ -236,12 +236,14 @@ describe.skip("testing xpub legacy transactions", () => {
         nonWitnessUtxo,
       });
     });
+
     outputs.forEach((output) => {
       psbt.addOutput({
         script: output.script,
         value: output.value.toNumber(),
       });
     });
+
     expect(outputs.length).toEqual(3);
     inputs.forEach((_, i) => {
       psbt.signInput(
@@ -280,7 +282,7 @@ describe.skip("testing xpub legacy transactions", () => {
     expectedFee2 =
       utils.maxTxSizeCeil(
         inputs.length,
-        outputs.map((o) => o.address),
+        outputs.map((o) => o.script),
         false,
         crypto,
         DerivationModes.LEGACY
@@ -292,4 +294,88 @@ describe.skip("testing xpub legacy transactions", () => {
       200000000
     );
   }, 120000);
+});
+
+// TODO: complete when Praline ready
+describe.skip("Build transactions", () => {
+  const network = coininfo.bitcoin.regtest.toBitcoinJS();
+
+  const explorer = new BitcoinLikeExplorer({
+    explorerURI: "http://localhost:20000/blockchain/v3",
+    explorerVersion: "v3",
+    disableBatchSize: true,
+  });
+
+  const crypto = new Crypto({
+    network,
+  });
+
+  const xpubs = [1, 2, 3].map((i) => {
+    const storage = new BitcoinLikeStorage();
+    const seed = bip39.mnemonicToSeedSync(`test${i} test${i} test${i}`);
+    const node = bip32.fromSeed(seed, network);
+    const xpub = new Xpub({
+      storage,
+      explorer,
+      crypto,
+      xpub: node.neutered().toBase58(),
+      derivationMode: DerivationModes.LEGACY,
+    });
+
+    const signer = (account: number, index: number) =>
+      bitcoin.ECPair.fromWIF(
+        node.derive(account).derive(index).toWIF(),
+        network
+      );
+
+    return {
+      storage,
+      seed,
+      node,
+      signer,
+      xpub,
+    };
+  });
+
+  it("should send transaction with one OP_RETURN output", async () => {
+    const { address } = await xpubs[1].xpub.getNewAddress(0, 0);
+    const changeAddress = await xpubs[0].xpub.getNewAddress(1, 0);
+
+    const psbt = new bitcoin.Psbt({ network });
+
+    const utxoPickingStrategy = new Merge(
+      xpubs[0].xpub.crypto,
+      xpubs[0].xpub.derivationMode,
+      []
+    );
+
+    const opReturnData = Buffer.from("charley loves heidi", "utf-8");
+
+    const { inputs, outputs } = await xpubs[0].xpub.buildTx({
+      destAddress: address,
+      amount: new BigNumber(100000000),
+      feePerByte: 100,
+      changeAddress,
+      utxoPickingStrategy,
+      sequence: 0,
+      opReturnData,
+    });
+
+    inputs.forEach((i) => {
+      const nonWitnessUtxo = Buffer.from(i.txHex, "hex");
+      const tx = bitcoin.Transaction.fromHex(i.txHex);
+      psbt.addInput({
+        hash: tx.getId(),
+        index: i.output_index,
+        nonWitnessUtxo,
+      });
+    });
+
+    outputs.forEach((output) => {
+      psbt.addOutput({
+        script: output.script,
+        value: output.value.toNumber(),
+      });
+    });
+  });
 });

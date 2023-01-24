@@ -7,7 +7,7 @@ import React, {
   useCallback,
 } from "react";
 import { RampCatalog } from "./types";
-import { Loadable } from "../types";
+import { Loadable } from "../../types";
 
 import api from "./api";
 
