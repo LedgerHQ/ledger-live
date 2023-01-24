@@ -19,11 +19,8 @@ const useStakeFlow = (props: Props) => {
   const { enabled: stakeFlag, list: flagList } = useFeature("stakePrograms");
   const { account = {}, parentAccount = null } = accountSelection;
   const family = account?.currency?.family || "ethereum";
-  const manage = perFamilyManageActions[family];
-
-  const familyManageActions = useMemo(() => {
-    return manage({ account, parentAccount });
-  }, [account, manage, parentAccount]);
+  const useManage = perFamilyManageActions[family];
+  const familyManageActions = useManage({ account, parentAccount });
 
   const action = useMemo(() => {
     const manageList =
