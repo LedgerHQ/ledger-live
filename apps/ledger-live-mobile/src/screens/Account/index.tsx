@@ -47,7 +47,6 @@ import useAccountActions from "./hooks/useAccountActions";
 import type { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { EthereumEditTransactionParamList } from "../../components/RootNavigator/types/EthereumEditTransactionNavigator";
 
 type Props =
   | StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Account>
@@ -128,12 +127,12 @@ const AccountScreenInner = ({
 
   const { secondaryActions } = useAccountActions({ account, parentAccount });
 
-  const onEditTransactionPress = (latestOperation: Operation) => {
+  const onEditTransactionPress = useCallback((latestOperation: Operation) => {
     editTxNavigation.navigate(NavigatorName.EthereumEditTransaction, {
       screen: ScreenName.EditTransactionOptions,
-      params: { operation: latestOperation },
+      params: { operation: latestOperation, account },
     });
-  };
+  }, []);
 
   const { listHeaderComponents } = useMemo(
     () =>
