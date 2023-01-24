@@ -49,6 +49,7 @@ export type Props = {
   stylesMap: CreateStylesReturnType => CreateStylesReturnType,
   extraRenderers?: { [string]: (props: *) => React$ElementType }, // Allows overriding react-select components. See: https://react-select.com/components
   disabledTooltipText?: string,
+  selectTestId?: string,
 };
 
 const Row = styled.div`
@@ -204,6 +205,7 @@ class Select extends PureComponent<Props> {
       rowHeight = small ? 34 : 48,
       autoFocus,
       extraRenderers,
+      selectTestId,
       ...props
     } = this.props;
 
@@ -257,6 +259,7 @@ class Select extends PureComponent<Props> {
         menuPortalTarget={document.body}
         rowHeight={rowHeight}
         onChange={this.handleChange}
+        data-test-id={selectTestId}
       />
     );
   }

@@ -219,6 +219,7 @@ type OwnProps = {
   placeholder?: string,
   showAddAccount?: boolean,
   disabledTooltipText?: string,
+  selectTestId?: string,
 };
 
 type Props = OwnProps & {
@@ -239,6 +240,7 @@ export const RawSelectAccount = ({
   showAddAccount = false,
   disabledTooltipText,
   t,
+  selectTestId,
   ...props
 }: Props & { t: TFunction }) => {
   const [searchInputValue, setSearchInputValue] = useState("");
@@ -313,6 +315,7 @@ export const RawSelectAccount = ({
       onChange={onChangeCallback}
       extraRenderers={extraRenderers}
       disabledTooltipText={disabledTooltipText}
+      selectTestId={selectTestId}
     />
   );
 };

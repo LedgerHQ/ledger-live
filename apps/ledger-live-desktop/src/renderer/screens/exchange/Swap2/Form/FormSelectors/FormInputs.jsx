@@ -55,7 +55,12 @@ type SwapButtonProps = {
 };
 function SwapButton({ onClick, disabled }: SwapButtonProps): React$Node {
   return (
-    <RoundButton lighterPrimary disabled={disabled} onClick={onClick}>
+    <RoundButton
+      lighterPrimary
+      disabled={disabled}
+      onClick={onClick}
+      data-test-id="swap-reverse-pair-button"
+    >
       <ArrowsUpDown size={14} />
     </RoundButton>
   );
