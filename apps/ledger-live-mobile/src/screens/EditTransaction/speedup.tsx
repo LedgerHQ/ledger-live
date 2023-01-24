@@ -9,8 +9,12 @@ import { fromTransactionRaw } from "@ledgerhq/live-common/families/ethereum/tran
 
 import { ScreenName } from "../../const";
 import { EthereumEditTransactionParamList } from "../../components/RootNavigator/types/EthereumEditTransactionNavigator";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import {
+  StackNavigatorNavigation,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
 import SelectFeesStrategy from "../../components/SelectFeesStrategy";
+import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 
 type Props = StackNavigatorProps<
   EthereumEditTransactionParamList,
@@ -18,7 +22,14 @@ type Props = StackNavigatorProps<
 >;
 
 export function SpeedupTransaction({ route }: Props) {
-  const customFeesNavigation = useNavigation<any>();
+  const customFeesNavigation =
+    useNavigation<
+      StackNavigatorNavigation<
+        SendFundsNavigatorStackParamList,
+        ScreenName.EthereumCustomFees
+      >
+    >();
+
   const { operation, account } = route.params;
 
   const transactionToEdit = fromTransactionRaw(
@@ -27,12 +38,15 @@ export function SpeedupTransaction({ route }: Props) {
 
   const strategies = useFeesStrategy(transactionToEdit);
 
+  const disabledStrategies = strategies
+    .filter(strategy => strategy.amount > transactionToEdit.maxFeePerGas!)
+    .map(strategy => strategy.label);
+
   const openCustomFees = () => {
     return customFeesNavigation.navigate(ScreenName.EthereumCustomFees, {
       ...route.params,
-      account,
       accountId: account.id,
-      parentId: null,
+      parentId: undefined,
       transaction: transactionToEdit,
       currentNavigation: ScreenName.SpeedUpTransaction,
       nextNavigation: ScreenName.SendSelectDevice,
@@ -41,7 +55,7 @@ export function SpeedupTransaction({ route }: Props) {
   };
 
   const onFeeStrategySelected = () => {
-    //
+    // setTransaction
   };
 
   return (
@@ -51,7 +65,7 @@ export function SpeedupTransaction({ route }: Props) {
       transaction={transactionToEdit}
       onStrategySelect={onFeeStrategySelected}
       onCustomFeesPress={openCustomFees}
-      disabledStrategies={["lol"]}
+      disabledStrategies={disabledStrategies}
     />
   );
 }
