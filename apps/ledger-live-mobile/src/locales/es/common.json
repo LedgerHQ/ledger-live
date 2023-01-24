@@ -803,7 +803,9 @@
     "required" : "Parece que tu Bluetooth está deshabilitado",
     "locationRequiredTitle" : "La ubicación es necesaria para Bluetooth LE",
     "locationRequiredMessage" : "Es necesario otorgar permisos de ubicación de Android para mostrar los dispositivos de Bluetooth LE.",
-    "checkEnabled" : "Habilita Bluetooth en los ajustes del teléfono."
+    "checkEnabled" : "Habilita Bluetooth en los ajustes del teléfono.",
+    "tryEnablingAgain" : "Prueba a activar el Bluetooth de nuevo",
+    "openSettings" : "Abrir los ajustes Bluetooth"
   },
   "webview" : {
     "noConnectionError" : {
@@ -813,12 +815,10 @@
   },
   "location" : {
     "titleServiceRequired" : "Son necesarios los servicios de ubicación",
-    "titlePermissionRequired" : "Es necesario el permiso de ubicación",
-    "titlePermissionRequiredPrecise" : "Es necesario el permiso de ubicación precisa",
     "descriptionServiceRequired" : "Ledger Live necesita servicios de ubicación para emparejar tu dispositivo mediante Bluetooth.",
-    "descriptionPermissionRequired" : "Ledger Live necesita el permiso de ubicación para emparejar tu dispositivo mediante Bluetooth.",
-    "descriptionPermissionRequiredPrecise" : "Ledger Live necesita el permiso de ubicación precisa para emparejar tu dispositivo mediante Bluetooth.",
     "open" : "Abrir ajustes de ubicación",
+    "openSettings" : "Abrir ajustes de ubicación",
+    "tryEnablingAgain" : "Prueba a activar la ubicación de nuevo",
     "noInfos" : "Ledger no accederá a tu información de ubicación."
   },
   "permissions" : {
@@ -831,6 +831,19 @@
       "modalButtonLabelBase" : "Autorizar",
       "modalButtonLabelSettingsVariant" : "Ir a Ajustes",
       "dontPair" : "No emparejar"
+    },
+    "location" : {
+      "titlePermissionRequired" : "Es necesario el permiso de ubicación",
+      "titlePermissionRequiredPrecise" : "Es necesario el permiso de ubicación precisa",
+      "descriptionPermissionRequired" : "Ledger Live necesita el permiso de ubicación para emparejar tu dispositivo mediante Bluetooth.",
+      "descriptionPermissionRequiredPrecise" : "Ledger Live necesita el permiso de ubicación precisa para emparejar tu dispositivo mediante Bluetooth."
+    },
+    "camera" : {
+      "title" : "Autorizar cámara",
+      "authorizeDescription" : "Autoriza la cámara para escanear códigos QR.",
+      "authorizeButtonTitle" : "Autorizar",
+      "goToSettingsDescription" : "Autoriza los Ajustes de la cámara para escanear códigos QR.",
+      "goToSettingsButtonTitle" : "Ir a Ajustes"
     }
   },
   "fees" : {
@@ -1115,6 +1128,12 @@
     "mostPopular" : "LO MÁS POPULAR"
   },
   "installSetOfApps" : {
+    "restore" : {
+      "title" : "¿Quieres instalar las mismas aplicaciones que tenías en el {{deviceName}}?",
+      "titleNoDeviceName" : "¿Quieres instalar las mismas aplicaciones que tenías en tu dispositivo Ledger anterior?",
+      "installCTA" : "Instalar ahora",
+      "skipCTA" : "Lo haré más tarde"
+    },
     "landing" : {
       "estimatedTime" : "{{ minutes }} min",
       "title" : "El {{ productName }} usa aplicaciones para posibilitar transacciones seguras en la cadena de bloques",
@@ -1126,7 +1145,7 @@
       "loading" : "Cargando...",
       "resolving" : "Resolviendo dependencias",
       "progress" : "Instalando aplicaciones: {{progress}} %",
-      "disclaimer" : "Las aplicaciones el {{ productName }} se usan para aprobar transacciones. Puedes añadirlas o eliminarlas cuando quieras."
+      "disclaimer" : "Agrega o elimina aplicaciones en cualquier momento desde Ledger Live."
     }
   },
   "onboarding" : {
@@ -2272,12 +2291,6 @@
         "unsupported" : "No compatible",
         "settings" : "Ajustes de aplicación",
         "includeGeneralSettings" : "Importar configuración de Desktop"
-      },
-      "fallback" : {
-        "header" : "Importar cuenta",
-        "title" : "Habilitar cámara",
-        "desc" : "Dentro de Ajustes, habilita la cámara para escanear códigos QR.",
-        "buttonTitle" : "Ir a Ajustes"
       }
     },
     "availableBalance" : "Saldo disponible",
@@ -3085,7 +3098,7 @@
       "actionTitle" : "Prestar",
       "accountActions" : {
         "approve" : "Aprobar",
-        "supply" : "Suministrar",
+        "supply" : "Suministro",
         "withdraw" : "Retirar"
       },
       "highFees" : {
@@ -3129,7 +3142,7 @@
           "INACTIVE" : "Inactivo",
           "SUPPLYING" : "Suministrando",
           "approve" : "Aprobar",
-          "supply" : "Suministrar",
+          "supply" : "Suministro",
           "withdraw" : "Retirar",
           "amountRedeemed" : "Importe retirado",
           "endDate" : "Fecha de finalización"
@@ -3231,7 +3244,7 @@
       },
       "supply" : {
         "stepperHeader" : {
-          "amount" : "Suministrar",
+          "amount" : "Suministro",
           "summary" : "Resumen",
           "selectDevice" : "Seleccionar dispositivo",
           "connectDevice" : "Conectar dispositivo",
@@ -3622,7 +3635,7 @@
       "title" : "Confirma la operación de permuta en tu dispositivo",
       "alert" : {
         "default" : "Verifica los detalles de la permuta en tu dispositivo antes de enviarla. Las direcciones se intercambian de forma segura por lo que no es necesario verificarlas.",
-        "cic" : "Verifica la información de permuta en tu dispositivo antes de enviarlo. CIC tal vez requiera una verificación adicional para algunas transacciones, lo que puede provocar retrasos."
+        "provider" : "Verifica la información de permuta en tu dispositivo antes de enviar la transacción. {{providerName}} tal vez requiera una verificación adicional para algunas transacciones, lo que puede provocar retrasos."
       },
       "acceptTerms" : "Al validar esta transacción, acepto los <0>términos de uso de\n<0> {{provider}}</0>",
       "notice" : "Verifica los detalles de la permuta en tu dispositivo antes de enviarla. Las direcciones se intercambian de forma segura por lo que no es necesario verificarlas."
@@ -5568,7 +5581,7 @@
       "allTimeLow" : "Mínimo histórico",
       "marketCapRank" : "Posición según capitalización de mercado",
       "marketCapDominance" : "Dominio de capitalización de mercado",
-      "supply" : "Suministrar",
+      "supply" : "Suministro",
       "circulatingSupply" : "Suministro circulante",
       "totalSupply" : "Suministro total",
       "maxSupply" : "Suministro máximo",
