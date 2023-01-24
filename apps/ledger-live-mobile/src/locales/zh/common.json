@@ -803,7 +803,9 @@
     "required" : "抱歉，蓝牙似乎被禁用了",
     "locationRequiredTitle" : "Bluetooth LE 需要定位",
     "locationRequiredMessage" : "Android 安卓系统需要开启定位许可，从而显示 Bluetooth LE 蓝牙低功耗设备列表。",
-    "checkEnabled" : "请在您手机的设置中启用蓝牙。"
+    "checkEnabled" : "请在您手机的设置中启用蓝牙。",
+    "tryEnablingAgain" : "重新尝试启用蓝牙",
+    "openSettings" : "打开蓝牙设置选项"
   },
   "webview" : {
     "noConnectionError" : {
@@ -813,12 +815,10 @@
   },
   "location" : {
     "titleServiceRequired" : "需要定位服务",
-    "titlePermissionRequired" : "需要位置权限",
-    "titlePermissionRequiredPrecise" : "需要精确位置权限",
     "descriptionServiceRequired" : "Ledger Live 需要定位服务才能通过蓝牙配对您的设备。",
-    "descriptionPermissionRequired" : "Ledger Live 需要位置权限才能通过蓝牙配对您的设备。",
-    "descriptionPermissionRequiredPrecise" : "Ledger Live 需要精确位置权限才能通过蓝牙配对您的设备。",
     "open" : "打开定位设置选项",
+    "openSettings" : "打开定位设置选项",
+    "tryEnablingAgain" : "重新尝试启用位置",
     "noInfos" : "Ledger 并不会获取您的位置信息。"
   },
   "permissions" : {
@@ -831,6 +831,19 @@
       "modalButtonLabelBase" : "授权",
       "modalButtonLabelSettingsVariant" : "前往设置选项",
       "dontPair" : "不配对"
+    },
+    "location" : {
+      "titlePermissionRequired" : "需要位置权限",
+      "titlePermissionRequiredPrecise" : "需要精确位置权限",
+      "descriptionPermissionRequired" : "Ledger Live 需要位置权限才能通过蓝牙配对您的设备。",
+      "descriptionPermissionRequiredPrecise" : "Ledger Live 需要精确位置权限才能通过蓝牙配对您的设备。"
+    },
+    "camera" : {
+      "title" : "授权相机",
+      "authorizeDescription" : "请授权相机扫描二维码。",
+      "authorizeButtonTitle" : "授权",
+      "goToSettingsDescription" : "请在“设置”中授权相机扫描二维码。",
+      "goToSettingsButtonTitle" : "前往设置选项"
     }
   },
   "fees" : {
@@ -1115,6 +1128,12 @@
     "mostPopular" : "最受欢迎"
   },
   "installSetOfApps" : {
+    "restore" : {
+      "title" : "是否安装与 {{deviceName}} 上相同的应用程序？",
+      "titleNoDeviceName" : "是否安装与上一台 Ledger 设备上相同的应用程序？",
+      "installCTA" : "立即安装",
+      "skipCTA" : "我以后再下载"
+    },
     "landing" : {
       "estimatedTime" : "{{ minutes }} 分钟",
       "title" : "{{ productName }} 使用应用程序完成安全的区块链交易",
@@ -1126,7 +1145,7 @@
       "loading" : "正在加载……",
       "resolving" : "解决依赖关系",
       "progress" : "正在安装应用程序 {{progress}}%",
-      "disclaimer" : "{{ productName }} 上的应用程序用于批准交易。您可以随时添加或删除它们。"
+      "disclaimer" : "随时在 Ledger Live 中添加或删除应用程序。"
     }
   },
   "onboarding" : {
@@ -2272,12 +2291,6 @@
         "unsupported" : "不支持",
         "settings" : "应用程序设置",
         "includeGeneralSettings" : "导入桌面应用程序设置"
-      },
-      "fallback" : {
-        "header" : "导入账户",
-        "title" : "启用摄像头",
-        "desc" : "请在设置中启用摄像头以便扫描二维码。",
-        "buttonTitle" : "前往设置选项"
       }
     },
     "availableBalance" : "可用余额",
@@ -3622,7 +3635,7 @@
       "title" : "在设备上确认互换操作",
       "alert" : {
         "default" : "发送之前请在您的设备上验证互换详情。地址会被安全地交换因此您不必对其进行验证。",
-        "cic" : "在发送之前，请先在您的设备上核实互换详情。CIC 可能需要对某些交易进行额外的验证，从而导致延迟。"
+        "provider" : "发送资金之前，请先在您的设备上核实互换详情。{{providerName}} 可能需要对某些交易进行额外验证，因此导致延迟。"
       },
       "acceptTerms" : "验证此交易，即表示我接受\n<0><0>{{provider}}</0>的使用条款</0>",
       "notice" : "发送之前请在您的设备上验证互换详情。地址会被安全地交换因此您不必对其进行验证。"
