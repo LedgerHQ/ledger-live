@@ -803,7 +803,9 @@
     "required" : "Entschuldigung, es sieht so aus, als ob Bluetooth deaktiviert ist",
     "locationRequiredTitle" : "Standort ist für Bluetooth LE erforderlich",
     "locationRequiredMessage" : "Unter Android ist eine Standortfreigabe erforderlich, um Bluetooth LE-Geräte aufzulisten.",
-    "checkEnabled" : "Bitte aktivieren Sie Bluetooth in den Einstellungen Ihres Telefons."
+    "checkEnabled" : "Bitte aktivieren Sie Bluetooth in den Einstellungen Ihres Telefons.",
+    "tryEnablingAgain" : "Versuchen Sie, Bluetooth erneut zu aktivieren",
+    "openSettings" : "Öffnen Sie die Bluetooth-Einstellungen"
   },
   "webview" : {
     "noConnectionError" : {
@@ -813,12 +815,10 @@
   },
   "location" : {
     "titleServiceRequired" : "Standortdienste erforderlich",
-    "titlePermissionRequired" : "Standortfreigabe erforderlich",
-    "titlePermissionRequiredPrecise" : "Präzise Standortfreigabe erforderlich",
     "descriptionServiceRequired" : "Ledger Live erfordert Standortdienste, um Ihr Gerät über Bluetooth zu koppeln.",
-    "descriptionPermissionRequired" : "Ledger Live benötigt die Standortfreigabe, um Ihr Gerät über Bluetooth zu koppeln.",
-    "descriptionPermissionRequiredPrecise" : "Ledger Live benötigt die präzise Standortfreigabe, um Ihr Gerät über Bluetooth zu verbinden.",
     "open" : "Standort-Einstellungen öffnen",
+    "openSettings" : "Standort-Einstellungen öffnen",
+    "tryEnablingAgain" : "Versuchen Sie, den Standort erneut zu aktivieren",
     "noInfos" : "Ledger greift nicht auf Ihre Standortinformationen zu."
   },
   "permissions" : {
@@ -831,6 +831,19 @@
       "modalButtonLabelBase" : "Autorisieren",
       "modalButtonLabelSettingsVariant" : "Gehen Sie zu Einstellungen",
       "dontPair" : "Nicht verbinden"
+    },
+    "location" : {
+      "titlePermissionRequired" : "Standortfreigabe erforderlich",
+      "titlePermissionRequiredPrecise" : "Präzise Standortfreigabe erforderlich",
+      "descriptionPermissionRequired" : "Ledger Live benötigt die Standortfreigabe, um Ihr Gerät über Bluetooth zu koppeln.",
+      "descriptionPermissionRequiredPrecise" : "Ledger Live benötigt die präzise Standortfreigabe, um Ihr Gerät über Bluetooth zu verbinden."
+    },
+    "camera" : {
+      "title" : "Kamera autorisieren",
+      "authorizeDescription" : "Autorisieren Sie bitte die Kamera zum Scannen von QR-Codes.",
+      "authorizeButtonTitle" : "Autorisieren",
+      "goToSettingsDescription" : "Autorisieren Sie bitte die Kamera in den Einstellungen, um QR-Codes zu scannen.",
+      "goToSettingsButtonTitle" : "Gehen Sie zu Einstellungen"
     }
   },
   "fees" : {
@@ -1115,6 +1128,12 @@
     "mostPopular" : "Am beliebtesten"
   },
   "installSetOfApps" : {
+    "restore" : {
+      "title" : "Die gleichen Apps wie auf {{deviceName}} installieren?",
+      "titleNoDeviceName" : "Die gleichen Apps wie auf dem vorherigen Ledger-Gerät installieren?",
+      "installCTA" : "Jetzt installieren",
+      "skipCTA" : "Ich mache das später"
+    },
     "landing" : {
       "estimatedTime" : "{{ minutes }} Min.",
       "title" : "{{ productName }} nutzt Apps, um sichere Blockchain-Transaktionen zu ermöglichen",
@@ -1126,7 +1145,7 @@
       "loading" : "Lade Daten...",
       "resolving" : "Auflösen von Abhängigkeiten",
       "progress" : "Installieren von Apps {{progress}} %",
-      "disclaimer" : "Apps auf {{ productName }} werden zur Autorisierung von Transaktionen verwendet. Sie können sie jederzeit hinzufügen oder entfernen."
+      "disclaimer" : "Sie können jederzeit Apps aus Ledger Live hinzufügen oder entfernen."
     }
   },
   "onboarding" : {
@@ -2272,12 +2291,6 @@
         "unsupported" : "Nicht unterstützt",
         "settings" : "App-Einstellungen",
         "includeGeneralSettings" : "Desktop-Einstellungen importieren"
-      },
-      "fallback" : {
-        "header" : "Konto importieren",
-        "title" : "Kamera einschalten",
-        "desc" : "Bitte aktivieren Sie die Kamera in den Einstellungen, um QR-Codes zu scannen.",
-        "buttonTitle" : "Gehen Sie zu Einstellungen"
       }
     },
     "availableBalance" : "Verfügbares Guthaben",
@@ -3622,7 +3635,7 @@
       "title" : "Swap-Vorgang auf dem Gerät bestätigen",
       "alert" : {
         "default" : "Überprüfen Sie die Details des Tauschs auf Ihrem Gerät, bevor Sie sie senden. Die Adressen werden sicher ausgetauscht, sodass Sie diese nicht verifizieren müssen.",
-        "cic" : "Verifizieren Sie die Swap-Details auf Ihrem Gerät, bevor Sie diese senden. CIC muss möglicherweise eine zusätzliche Überprüfung für einige Transaktionen durchführen, was zu einer Verzögerung führen kann."
+        "provider" : "Verifizieren Sie die Swap-Details auf Ihrem Gerät, bevor Sie diese senden. {{providerName}} muss möglicherweise eine zusätzliche Überprüfung für einige Transaktionen durchführen, was zu einer Verzögerung führen kann."
       },
       "acceptTerms" : "Durch Validieren dieser Transaktion stimme ich den\n<0>Nutzungsbedingungen von <0>{{provider}}</0> zu</0>",
       "notice" : "Überprüfen Sie die Details des Tauschs auf Ihrem Gerät, bevor Sie sie senden. Die Adressen werden sicher ausgetauscht, sodass Sie diese nicht verifizieren müssen."
