@@ -22,6 +22,7 @@ import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { LayoutChangeEvent } from "react-native";
 import BigNumber from "bignumber.js";
+import { toTransactionRaw } from "@ledgerhq/live-common/families/ethereum/transaction";
 
 import Header from "./Header";
 import AccountGraphCard from "../../components/AccountGraphCard";
@@ -131,6 +132,7 @@ export function getListHeaderComponents({
     });
 
   const stickyHeaderIndices = empty ? [] : [0];
+
   // const { pendingOperations } = account;
   const mockedOperation: Operation = {
     id: "",
@@ -146,6 +148,28 @@ export function getListHeaderComponents({
     accountId: account.id,
     date: new Date(),
     extra: {},
+    transactionRaw: toTransactionRaw({
+      amount: new BigNumber(400000),
+      recipient: "0xlol",
+      useAllAmount: false,
+      family: "ethereum",
+      userGasLimit: new BigNumber(21000),
+      estimatedGasLimit: new BigNumber(21000),
+      mode: "send",
+      feeCustomUnit: { name: "eth", code: "eth", magnitude: 16 },
+      networkInfo: {
+        family: "ethereum",
+        gasPrice: {
+          initial: new BigNumber(10000),
+          min: new BigNumber(34),
+          max: new BigNumber(4564),
+          step: new BigNumber(20),
+          steps: 8,
+        },
+      },
+      nonce: 6,
+      maxPriorityFeePerGas: new BigNumber(4567),
+    }),
   };
 
   const pendingOperations = [mockedOperation];
