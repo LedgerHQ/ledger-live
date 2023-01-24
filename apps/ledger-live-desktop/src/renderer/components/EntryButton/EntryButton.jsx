@@ -127,19 +127,19 @@ const EntryButton = ({
   return (
     <EntryButtonContainer onClick={onClick} disabled={disabled}>
       <Box horizontal shrink alignItems="center">
-        {Icon ? (
+        {Icon && (
           <IconWrapper>
             <Icon />
           </IconWrapper>
-        ) : null}
+        )}
         <Box shrink alignItems="flex-start">
           <TitleText>
-            {title} {label ? <Label label={label} /> : null}
+            {title} {label && <Label label={label} />}
           </TitleText>
           <BodyText>{body}</BodyText>
         </Box>
       </Box>
-      {showChevron ? <ChevronRight size={11} /> : null}
+      {showChevron && <ChevronRight size={11} />}
     </EntryButtonContainer>
   );
 };
