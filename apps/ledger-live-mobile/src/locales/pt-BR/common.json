@@ -803,7 +803,9 @@
     "required" : "Desculpe, parece que o Bluetooth está desabilitado",
     "locationRequiredTitle" : "Localização necessária para Bluetooth LE",
     "locationRequiredMessage" : "No Android é necessária permissão de localização para listar dispositivos Bluetooth LE.",
-    "checkEnabled" : "Ative o Bluetooth nas configurações do seu telefone."
+    "checkEnabled" : "Ative o Bluetooth nas configurações do seu telefone.",
+    "tryEnablingAgain" : "Tente habilitar o Bluetooth novamente",
+    "openSettings" : "Abra as configurações de Bluetooth"
   },
   "webview" : {
     "noConnectionError" : {
@@ -813,12 +815,10 @@
   },
   "location" : {
     "titleServiceRequired" : "Serviços de localização necessários",
-    "titlePermissionRequired" : "Permissão de localização necessária",
-    "titlePermissionRequiredPrecise" : "Permissão de localização precisa necessária",
     "descriptionServiceRequired" : "O Ledger Live requer serviços de localização para emparelhar seu dispositivo por Bluetooth.",
-    "descriptionPermissionRequired" : "O Ledger Live requer a permissão de localização para emparelhar seu dispositivo por Bluetooth.",
-    "descriptionPermissionRequiredPrecise" : "O Ledger Live requer a permissão de localização precisa para emparelhar seu dispositivo por Bluetooth.",
     "open" : "Configurações de local aberto",
+    "openSettings" : "Abra as configurações de localização",
+    "tryEnablingAgain" : "Tente habilitar a localização novamente",
     "noInfos" : "A Ledger não acessa suas informações de localização."
   },
   "permissions" : {
@@ -831,6 +831,19 @@
       "modalButtonLabelBase" : "Autorizar",
       "modalButtonLabelSettingsVariant" : "Ir para Configurações",
       "dontPair" : "Não emparelhar"
+    },
+    "location" : {
+      "titlePermissionRequired" : "Necessário permitir a localização",
+      "titlePermissionRequiredPrecise" : "Necessário permitir a localização precisa",
+      "descriptionPermissionRequired" : "O Ledger Live requer acesso à localização para emparelhar seu dispositivo por Bluetooth.",
+      "descriptionPermissionRequiredPrecise" : "O Ledger Live requer acesso à localização precisa para emparelhar seu dispositivo por Bluetooth."
+    },
+    "camera" : {
+      "title" : "Autorize a câmera",
+      "authorizeDescription" : "Autorize a câmera para escanear QR codes.",
+      "authorizeButtonTitle" : "Autorizar",
+      "goToSettingsDescription" : "Autorize a câmera em Configurações para escanear QR codes.",
+      "goToSettingsButtonTitle" : "Ir para Configurações"
     }
   },
   "fees" : {
@@ -1115,6 +1128,12 @@
     "mostPopular" : "Mais populares"
   },
   "installSetOfApps" : {
+    "restore" : {
+      "title" : "Instalar os mesmos aplicativos da {{deviceName}}?",
+      "titleNoDeviceName" : "Instalar os mesmos aplicativos do dispositivo Ledger anterior?",
+      "installCTA" : "Instalar agora",
+      "skipCTA" : "Farei isso mais tarde."
+    },
     "landing" : {
       "estimatedTime" : "{{ minutes }} min",
       "title" : "A {{ productName }} utiliza aplicativos para permitir transações seguras em blockchains",
@@ -1126,7 +1145,7 @@
       "loading" : "Carregando...",
       "resolving" : "Resolvendo dependências",
       "progress" : "Instalando aplicativos {{progress}}%",
-      "disclaimer" : "Aplicativos da {{ productName }} são usados para aprovar transações. Você pode adicioná-los ou removê-los a qualquer momento."
+      "disclaimer" : "Adicione ou remova aplicativos a qualquer hora com o Ledger Live."
     }
   },
   "onboarding" : {
@@ -2272,12 +2291,6 @@
         "unsupported" : "Incompatível",
         "settings" : "Configurações do aplicativo",
         "includeGeneralSettings" : "Importar configurações de desktop"
-      },
-      "fallback" : {
-        "header" : "Importar conta",
-        "title" : "Habilitar câmera",
-        "desc" : "Habilite a câmera nas Configurações para escanear QR codes.",
-        "buttonTitle" : "Vá para Configurações"
       }
     },
     "availableBalance" : "Saldo disponível",
@@ -3622,7 +3635,7 @@
       "title" : "Confirmar a operação de troca no dispositivo",
       "alert" : {
         "default" : "Verifique os detalhes da troca no seu dispositivo antes de enviá-la. Os endereços são comunicados com segurança para que você não precise verificá-los.",
-        "cic" : "Verifique os detalhes da troca no seu dispositivo antes de enviá-la. O CIC pode precisar fazer verificações adicionais para algumas transações, resultando em demora."
+        "provider" : "Verifique os detalhes da troca no seu dispositivo antes de enviá-la. {{providerName}} pode precisar fazer verificações adicionais para algumas transações, resultando em demora."
       },
       "acceptTerms" : "Ao validar esta transação, eu aceito\nos termos de uso da <0><0>{{provider}}</0></0>",
       "notice" : "Verifique os detalhes da troca no seu dispositivo antes de enviá-la. Os endereços são comunicados com segurança para que você não precise verificá-los."
