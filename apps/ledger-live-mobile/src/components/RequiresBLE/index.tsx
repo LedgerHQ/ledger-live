@@ -1,7 +1,7 @@
 import React from "react";
 import { Platform } from "react-native";
 import AndroidRequiresBluetoothPermissions from "./AndroidRequiresBluetoothPermissions";
-import AndroidRequiresLocationPermissions from "../RequiresLocation/AndroidRequiresLocationPermissions";
+import AndroidRequiresLocationPermission from "../RequiresLocation/AndroidRequiresLocationPermission";
 import RequiresBluetoothEnabled from "./RequiresBluetoothEnabled";
 import AndroidRequiresLocationEnabled from "../RequiresLocation/AndroidRequiresLocationEnabled";
 
@@ -15,7 +15,7 @@ type Props = {
  * Renders children if bluetooth is enabled and its associated needed permissions are set.
  * Otherwise, renders a relevant error component.
  *
- * @param children The children to render if bluetooth is correctly enabled
+ * @param children The children to render if bluetooth (and location on Android) has the correct granted permissions and is enabled
  * @param hasBackButtonOnError If true, the back button will be displayed on the different error component
  * @param openSettingsOnErrorButton Used for debug purposes. If true, on a permission denied or service disabled,
  *   pressing the button on the error component will make the user go to the settings.
@@ -33,7 +33,7 @@ const RequiresBLE: React.FC<Props> = ({
         hasBackButtonOnDenied={hasBackButtonOnError}
         openSettingsOnErrorButton={openSettingsOnErrorButton}
       >
-        <AndroidRequiresLocationPermissions
+        <AndroidRequiresLocationPermission
           hasBackButtonOnDenied={hasBackButtonOnError}
           openSettingsOnErrorButton={openSettingsOnErrorButton}
         >
@@ -48,7 +48,7 @@ const RequiresBLE: React.FC<Props> = ({
               {children}
             </RequiresBluetoothEnabled>
           </AndroidRequiresLocationEnabled>
-        </AndroidRequiresLocationPermissions>
+        </AndroidRequiresLocationPermission>
       </AndroidRequiresBluetoothPermissions>
     );
   }
