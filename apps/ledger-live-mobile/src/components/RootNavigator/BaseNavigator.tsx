@@ -85,6 +85,7 @@ import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { hasNoAccountsSelector } from "../../reducers/accounts";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import DeviceConnect from "../../screens/DeviceConnect";
+import EditTransactionNavigator from "./EditTransactionNavigator";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -588,6 +589,11 @@ export default function BaseNavigator() {
             }
           },
         })}
+      />
+      <Stack.Screen
+        name={NavigatorName.EthereumEditTransaction}
+        options={{ headerShown: false }}
+        component={EditTransactionNavigator}
       />
     </Stack.Navigator>
   );

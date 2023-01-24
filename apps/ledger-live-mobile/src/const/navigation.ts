@@ -69,8 +69,7 @@ export enum ScreenName {
   EditAccountName = "EditAccountName",
   EditAccountUnits = "EditAccountUnits",
   EditDeviceName = "EditDeviceName",
-  EthereumCustomFees = "EthereumCustomFees",
-  EthereumEditGasLimit = "EthereumEditGasLimit",
+  EditTransactionOptions = "EditTransactionOptions",
   Exchange = "Exchange",
   ExchangeBuy = "ExchangeBuy",
   ExchangeHistory = "ExchangeHistory",
@@ -325,6 +324,13 @@ export enum ScreenName {
   AlgorandOptInSummary = "AlgorandOptInValidation",
   AlgorandOptInValidationError = "AlgorandOptInValidationError",
   AlgorandOptInValidationSuccess = "AlgorandOptInValidationSuccess",
+
+  // Ethereum
+  EthereumCustomFees = "EthereumCustomFees",
+  EthereumEditGasLimit = "EthereumEditGasLimit",
+  SpeedUpTransaction = "SpeedUpTransaction",
+  CancelTransaction = "CancelTransaction",
+
   // Polkadot
   PolkadotBondStarted = "PolkadotBondStarted",
   PolkadotBondAmount = "PolkadotBondAmount",
@@ -506,6 +512,7 @@ export enum ScreenName {
   PostOnboardingMockActionScreen = "PostOnboardingMockActionScreen",
   WalletNftGallery = "WalletNftGallery",
 }
+
 export enum NavigatorName {
   // Stack
   // add "Navigator" postfix to distinguish this from ScreenName.Accounts
@@ -566,6 +573,10 @@ export enum NavigatorName {
   SignTransaction = "SignTransaction",
   RequestAccount = "RequestAccount",
   RequestAccountsAddAccounts = "RequestAccountsAddAccounts",
+
+  // Ethereum
+  EthereumEditTransaction = "EthereumEditTransaction",
+
   // Polkadot
   PolkadotBondFlow = "PolkadotBondFlow",
   PolkadotUnbondFlow = "PolkadotUnbondFlow",
