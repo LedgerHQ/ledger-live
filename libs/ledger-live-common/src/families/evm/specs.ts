@@ -105,6 +105,7 @@ const evmBasicMutations = ({ maxAccount }) => [
   {
     name: "move some ERC20",
     maxRun: 1,
+    testDestination: genericTestDestination,
     transaction: ({ account, siblings, bridge }) => {
       const erc20Account = sample(
         (account.subAccounts || []).filter((a) => a.balance.gt(0))
@@ -147,18 +148,6 @@ const evmBasicMutations = ({ maxAccount }) => [
         (s) => s.id === transaction.subAccountId
       );
       invariant(erc20account, "erc20 acc is still here");
-
-      if (transaction.useAllAmount) {
-        botTest("erc20 account is empty", () =>
-          expect(erc20account.balance.toString()).toBe("0")
-        );
-      } else {
-        botTest("account balance moved with tx amount", () =>
-          expect(erc20account.balance.toString()).toBe(
-            erc20accountBefore.balance.minus(transaction.amount).toString()
-          )
-        );
-      }
     },
   },
 ];
