@@ -249,7 +249,7 @@ jobs:
     name: "Build Ledger Live Desktop (Mac OS X)"
     needs: is-affected
     if: ${{ needs.is-affected.outputs.is-desktop-affected == 'true' }}
-    runs-on: [ledger-live, macos]
+    runs-on: [m1, ARM64]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -282,7 +282,6 @@ jobs:
           os: mac
       - name: build the app
         run: |
-          eval "$(rbenv init - bash)"
           pnpm build:lld --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
       - name: upload macOS app
         uses: actions/upload-artifact@v3
