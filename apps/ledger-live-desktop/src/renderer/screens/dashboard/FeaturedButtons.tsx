@@ -33,7 +33,7 @@ const FeaturedButtons = () => {
   }, [history]);
 
   const stakeProgramsFeatureFlag = useFeature("stakePrograms");
-  const stakeDisabled = stakeProgramsFeatureFlag?.params.list.length === 0 ?? true;
+  const stakeDisabled = stakeProgramsFeatureFlag?.params?.list?.length === 0 ?? true;
   const startStakeFlow = useStakeFlow({});
 
   if (!devFeatureFlag) return null;
