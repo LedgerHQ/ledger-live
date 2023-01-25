@@ -1,9 +1,10 @@
 import React, { useCallback } from "react";
-import { Button, Flex, InfiniteLoader } from "@ledgerhq/native-ui";
+import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { ImagePreviewError } from "@ledgerhq/live-common/customImage/errors";
 import { NativeSyntheticEvent, ImageErrorEventData } from "react-native";
 import { useTranslation } from "react-i18next";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Button from "../../components/wrappedUi/Button";
 
 import {
   BaseComposite,
@@ -14,6 +15,7 @@ import { NavigatorName, ScreenName } from "../../const";
 import FramedImage, {
   previewConfig,
 } from "../../components/CustomImage/FramedImage";
+import { TrackScreen } from "../../analytics";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<
@@ -21,6 +23,14 @@ type NavigationProps = BaseComposite<
     ScreenName.CustomImagePreviewPostEdit
   >
 >;
+
+const analyticsScreenName = "Preview of the lockscreen picture";
+const analyticsSetLockScreenEventProps = {
+  button: "Set as lock screen",
+};
+const analyticsEditEventProps = {
+  button: "Edit",
+};
 
 const PreviewPostEdit = ({ navigation, route }: NavigationProps) => {
   const { t } = useTranslation();
@@ -75,6 +85,7 @@ const PreviewPostEdit = ({ navigation, route }: NavigationProps) => {
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
+      <TrackScreen category={analyticsScreenName} />
       <Flex flex={1}>
         <Flex flex={1}>
           <Flex
@@ -92,10 +103,23 @@ const PreviewPostEdit = ({ navigation, route }: NavigationProps) => {
           </Flex>
         </Flex>
         <Flex px={8}>
-          <Button type="main" size="large" mb={4} onPress={handleSetPicture}>
+          <Button
+            type="main"
+            size="large"
+            outline={false}
+            mb={4}
+            onPress={handleSetPicture}
+            event="button_clicked"
+            eventProperties={analyticsSetLockScreenEventProps}
+          >
             {t("customImage.preview.setPicture")}
           </Button>
-          <Button mb={8} size="large" onPress={handleEditPicture}>
+          <Button
+            size="large"
+            onPress={handleEditPicture}
+            event="button_clicked"
+            eventProperties={analyticsEditEventProps}
+          >
             {t("customImage.preview.editPicture")}
           </Button>
         </Flex>
