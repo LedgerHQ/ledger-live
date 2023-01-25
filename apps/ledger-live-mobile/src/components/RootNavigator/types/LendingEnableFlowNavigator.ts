@@ -1,8 +1,7 @@
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account, AccountLike, ProtoNFT } from "@ledgerhq/types-live";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { Operation } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import {
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/generated/types";
 import type { Transaction as EthereumTransaction } from "@ledgerhq/live-common/families/ethereum/types";
 import type {
   CardanoAccount,
@@ -17,6 +16,8 @@ import type {
   AlgorandTransaction,
   TransactionStatus as AlgorandTransactionStatus,
 } from "@ledgerhq/live-common/families/algorand/types";
+import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/ripple/types";
+import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 import {
   CosmosAccount,
   Transaction as CosmosTransaction,
@@ -25,77 +26,76 @@ import {
   CryptoOrgAccount,
   Transaction as CryptoOrgTransaction,
 } from "@ledgerhq/live-common/families/crypto_org/types";
-import { Transaction as HederaTransaction } from "@ledgerhq/live-common/families/hedera/types";
 import {
   SolanaAccount,
   Transaction as SolanaTransaction,
 } from "@ledgerhq/live-common/families/solana/types";
-import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/ripple/types";
-import type { Transaction as ICPTransaction } from "@ledgerhq/live-common/families/internet_computer/types";
-import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
+import { Transaction as HederaTransaction } from "@ledgerhq/live-common/families/hedera/types";
+import { Transaction as ICPTransaction } from "@ledgerhq/live-common/families/internet_computer/types";
+import { Transaction as OsmosisTransaction } from "@ledgerhq/live-common/families/osmosis/types";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import {
+  CryptoOrTokenCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
+import { Account, Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { Result } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { ScreenName } from "../../../const";
 
-export type SendFundsNavigatorStackParamList = {
-  [ScreenName.SendCoin]:
+export type LendingEnableFlowParamsList = {
+  [ScreenName.LendingEnableSelectAccount]: {
+    token: TokenCurrency;
+    currency?: CryptoOrTokenCurrency;
+  };
+  [ScreenName.LendingEnableAmount]:
     | {
-        currency?: string;
-        selectedCurrency?: CryptoCurrency | TokenCurrency;
-        next?: string;
-        category?: string;
-        notEmptyAccounts?: boolean;
-        minBalance?: number;
+        accountId: string;
+        parentId?: string | null;
+        currency?: TokenCurrency;
+        transaction?: Transaction;
       }
     | undefined;
-  [ScreenName.SendCollection]: { account: Account };
-  [ScreenName.SendNft]: { account: Account; collection: ProtoNFT[] };
-  [ScreenName.SendSelectRecipient]: {
+  [ScreenName.LendingEnableAmountAdvanced]: {
     accountId?: string;
-    parentId?: string;
+    parentId?: string | null;
+    transaction?: Transaction | null;
+    currency?: TokenCurrency;
+  };
+  [ScreenName.LendingEnableAmountInput]: {
+    accountId?: string;
     transaction?: Transaction;
-    justScanned?: boolean;
+    currency?: TokenCurrency;
   };
-  [ScreenName.SendAmountCoin]: {
-    accountId: string;
-    parentId?: string;
-    transaction: Transaction;
-  };
-  [ScreenName.SendAmountNft]: {
-    accountId: string;
-    parentId?: string;
-    transaction: Transaction;
-  };
-  [ScreenName.SendSummary]: {
-    accountId: string;
-    parentId?: string;
+  [ScreenName.LendingEnableSummary]: {
+    accountId: string | null;
+    parentId?: string | null;
     deviceId?: string;
-    transaction: Transaction;
+    transaction?: Transaction;
+    overrideAmountLabel?: string;
+    hideTotal?: boolean;
+    appName?: string;
     currentNavigation:
+      | ScreenName.LendingWithdrawSummary
+      | ScreenName.LendingSupplySummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
+      | ScreenName.LendingWithdrawSelectDevice
+      | ScreenName.LendingSupplySelectDevice
       | ScreenName.SignTransactionSelectDevice
+      | ScreenName.LendingEnableSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
-    overrideAmountLabel?: string;
-    hideTotal?: boolean;
-    appName?: string;
   };
-  [ScreenName.SendSelectDevice]: {
-    accountId: string;
-    parentId?: string;
-    transaction: Transaction;
-    status: TransactionStatus;
-    appName?: string;
-  };
-  [ScreenName.SendConnectDevice]: {
+  [ScreenName.LendingEnableSelectDevice]: object;
+  [ScreenName.LendingEnableConnectDevice]: {
     device: Device;
     accountId: string;
-    parentId?: string;
+    parentId?: string | null;
     transaction: Transaction;
     status: TransactionStatus;
     appName?: string;
@@ -103,52 +103,63 @@ export type SendFundsNavigatorStackParamList = {
     onSuccess?: (payload: unknown) => void;
     onError?: (error: Error) => void;
     analyticsPropertyFlow?: string;
-    forceSelectDevice?: boolean;
   };
-  [ScreenName.SendValidationSuccess]: {
+  [ScreenName.LendingEnableValidationSuccess]: {
     accountId: string;
-    parentId?: string;
     deviceId: string;
     transaction: Transaction;
     result: Operation;
+    currency: TokenCurrency;
   };
-  [ScreenName.SendValidationError]:
-    | undefined
-    | {
-        error?: Error;
-        account?: AccountLike;
-        accountId?: string;
-        parentId?: string;
-      };
+  [ScreenName.LendingEnableValidationError]: {
+    accountId: string;
+    parentId: string;
+    deviceId: string;
+    transaction: Transaction;
+    error: Error;
+    currency: TokenCurrency;
+  };
   [ScreenName.AlgorandEditMemo]: {
     accountId?: string;
-    parentId?: string;
+    parentId?: string | null;
     account: AlgorandAccount;
     transaction: AlgorandTransaction;
     status?: AlgorandTransactionStatus;
     currentNavigation:
+      | ScreenName.LendingWithdrawSummary
+      | ScreenName.LendingSupplySummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
+      | ScreenName.LendingWithdrawSelectDevice
+      | ScreenName.LendingSupplySelectDevice
       | ScreenName.SignTransactionSelectDevice
+      | ScreenName.LendingEnableSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
   [ScreenName.BitcoinEditCustomFees]: {
     accountId: string;
-    parentId?: string;
+    parentId?: string | null;
     transaction: BitcoinTransaction;
     status?: BitcoinTransactionStatus;
     currentNavigation:
+      | ScreenName.LendingWithdrawSummary
+      | ScreenName.LendingSupplySummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
+      | ScreenName.LendingWithdrawSelectDevice
+      | ScreenName.LendingSupplySelectDevice
       | ScreenName.SignTransactionSelectDevice
+      | ScreenName.LendingEnableSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
@@ -157,32 +168,43 @@ export type SendFundsNavigatorStackParamList = {
   };
   [ScreenName.CardanoEditMemo]: {
     accountId: string;
-    parentId?: string;
+    parentId?: string | null;
     account: CardanoAccount;
     transaction: CardanoTransaction;
     currentNavigation:
+      | ScreenName.LendingWithdrawSummary
+      | ScreenName.LendingSupplySummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
+      | ScreenName.LendingWithdrawSelectDevice
+      | ScreenName.LendingSupplySelectDevice
       | ScreenName.SignTransactionSelectDevice
+      | ScreenName.LendingEnableSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
   [ScreenName.EthereumCustomFees]: {
     accountId: string;
-    parentId?: string;
+    parentId?: string | null;
     transaction: EthereumTransaction;
-    setTransaction: Result<EthereumTransaction>["setTransaction"];
     currentNavigation:
+      | ScreenName.LendingWithdrawSummary
+      | ScreenName.LendingSupplySummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
+      | ScreenName.LendingWithdrawSelectDevice
+      | ScreenName.LendingSupplySelectDevice
       | ScreenName.SignTransactionSelectDevice
+      | ScreenName.LendingEnableSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
@@ -194,138 +216,192 @@ export type SendFundsNavigatorStackParamList = {
     gasLimit?: BigNumber | null;
     transaction: EthereumTransaction;
     currentNavigation:
+      | ScreenName.LendingWithdrawSummary
+      | ScreenName.LendingSupplySummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
+      | ScreenName.LendingWithdrawSelectDevice
+      | ScreenName.LendingSupplySelectDevice
       | ScreenName.SignTransactionSelectDevice
+      | ScreenName.LendingEnableSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
   [ScreenName.RippleEditFee]: {
     accountId: string;
-    parentId?: string;
+    parentId?: string | null;
     transaction: RippleTransaction;
     currentNavigation:
+      | ScreenName.LendingWithdrawSummary
+      | ScreenName.LendingSupplySummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
+      | ScreenName.LendingWithdrawSelectDevice
+      | ScreenName.LendingSupplySelectDevice
       | ScreenName.SignTransactionSelectDevice
+      | ScreenName.LendingEnableSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
   [ScreenName.StellarEditCustomFees]: {
     accountId: string;
-    parentId?: string;
+    parentId?: string | null;
     transaction: StellarTransaction;
     currentNavigation:
+      | ScreenName.LendingWithdrawSummary
+      | ScreenName.LendingSupplySummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
+      | ScreenName.LendingWithdrawSelectDevice
+      | ScreenName.LendingSupplySelectDevice
       | ScreenName.SignTransactionSelectDevice
+      | ScreenName.LendingEnableSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
   [ScreenName.CosmosFamilyEditMemo]: {
     accountId: string;
-    parentId?: string;
+    parentId?: string | null;
     account: CosmosAccount;
     transaction: CosmosTransaction;
     currentNavigation:
+      | ScreenName.LendingWithdrawSummary
+      | ScreenName.LendingSupplySummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
+      | ScreenName.LendingWithdrawSelectDevice
+      | ScreenName.LendingSupplySelectDevice
       | ScreenName.SignTransactionSelectDevice
+      | ScreenName.LendingEnableSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
   [ScreenName.CryptoOrgEditMemo]: {
     accountId: string;
-    parentId?: string;
+    parentId?: string | null;
     account: CryptoOrgAccount;
     transaction: CryptoOrgTransaction;
     currentNavigation:
+      | ScreenName.LendingWithdrawSummary
+      | ScreenName.LendingSupplySummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
+      | ScreenName.LendingWithdrawSelectDevice
+      | ScreenName.LendingSupplySelectDevice
       | ScreenName.SignTransactionSelectDevice
+      | ScreenName.LendingEnableSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
   [ScreenName.HederaEditMemo]: {
     accountId: string;
-    parentId?: string;
+    parentId?: string | null;
     account: Account;
     transaction: HederaTransaction;
     currentNavigation:
+      | ScreenName.LendingWithdrawSummary
+      | ScreenName.LendingSupplySummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
+      | ScreenName.LendingWithdrawSelectDevice
+      | ScreenName.LendingSupplySelectDevice
       | ScreenName.SignTransactionSelectDevice
+      | ScreenName.LendingEnableSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
   [ScreenName.RippleEditTag]: {
     accountId: string;
-    parentId?: string;
+    parentId?: string | null;
     transaction: RippleTransaction;
     currentNavigation:
+      | ScreenName.LendingWithdrawSummary
+      | ScreenName.LendingSupplySummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
+      | ScreenName.LendingWithdrawSelectDevice
+      | ScreenName.LendingSupplySelectDevice
       | ScreenName.SignTransactionSelectDevice
+      | ScreenName.LendingEnableSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
   [ScreenName.SolanaEditMemo]: {
     accountId: string;
-    parentId?: string;
+    parentId?: string | null;
     account: SolanaAccount;
     transaction: SolanaTransaction;
     currentNavigation:
+      | ScreenName.LendingWithdrawSummary
+      | ScreenName.LendingSupplySummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
+      | ScreenName.LendingWithdrawSelectDevice
+      | ScreenName.LendingSupplySelectDevice
       | ScreenName.SignTransactionSelectDevice
+      | ScreenName.LendingEnableSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
   [ScreenName.StellarEditMemoType]: {
     accountId: string;
-    parentId?: string;
+    parentId?: string | null;
     account: Account;
     transaction: StellarTransaction;
     memoType?: string;
     currentNavigation:
+      | ScreenName.LendingWithdrawSummary
+      | ScreenName.LendingSupplySummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
+      | ScreenName.LendingWithdrawSelectDevice
+      | ScreenName.LendingSupplySelectDevice
       | ScreenName.SignTransactionSelectDevice
+      | ScreenName.LendingEnableSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
