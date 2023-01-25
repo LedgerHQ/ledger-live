@@ -12,6 +12,7 @@ import {
   FirmwareOrAppUpdateRequired,
   TransportStatusError,
   DeviceHalted,
+  PeerRemovedPairing,
 } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { getEnv } from "../env";
@@ -138,6 +139,7 @@ export const withDevice =
           if (e instanceof BluetoothRequired) throw e;
           if (e instanceof TransportWebUSBGestureRequired) throw e;
           if (e instanceof TransportInterfaceNotAvailable) throw e;
+          if (e instanceof PeerRemovedPairing) throw e;
           throw new CantOpenDevice(e.message);
         })
         // Executes the job
