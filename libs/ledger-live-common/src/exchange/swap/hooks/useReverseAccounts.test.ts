@@ -1,7 +1,7 @@
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
 import { renderHook, act } from "@testing-library/react-hooks";
-import { genTokenAccount } from "@ledgerhq/coin-framework/lib/mocks/account";
+import { genTokenAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { genAccount } from "../../../mock/account";
 import { useReverseAccounts } from "./useReverseAccounts";
 

@@ -3,7 +3,7 @@ import Prando from "prando";
 import { Observable, of } from "rxjs";
 import { BigNumber } from "bignumber.js";
 import { SyncError } from "@ledgerhq/errors";
-import { genOperation } from "@ledgerhq/coin-framework/lib/mocks/account";
+import { genOperation } from "@ledgerhq/coin-framework/mocks/account";
 import { genAccount } from "../mock/account";
 import { getOperationAmountNumber } from "../operation";
 import { validateNameEdition } from "../account";

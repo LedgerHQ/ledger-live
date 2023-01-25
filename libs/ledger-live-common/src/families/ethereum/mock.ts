@@ -6,7 +6,7 @@ import type {
   Operation,
   OperationType,
 } from "@ledgerhq/types-live";
-import { genOperation } from "@ledgerhq/coin-framework/lib/mocks/account";
+import { genOperation } from "@ledgerhq/coin-framework/mocks/account";
 import { findCompoundToken } from "../../currencies";
 
 function genBaseOperation({

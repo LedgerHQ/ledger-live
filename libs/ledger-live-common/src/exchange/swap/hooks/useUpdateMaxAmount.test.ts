@@ -3,7 +3,7 @@ import { act, renderHook } from "@testing-library/react-hooks";
 import BigNumber from "bignumber.js";
 import { checkAccountSupported } from "../../../account/support";
 import ethBridge from "../../../families/ethereum/bridge/mock";
-import { genTokenAccount } from "@ledgerhq/coin-framework/lib/mocks/account";
+import { genTokenAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { genAccount } from "../../../mock/account";
 import { useUpdateMaxAmount, ZERO } from "./useUpdateMaxAmount";
 
