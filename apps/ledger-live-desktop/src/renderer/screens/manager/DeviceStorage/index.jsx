@@ -35,6 +35,8 @@ import blue from "~/renderer/images/devices/blue.png";
 
 import CustomImageManagerButton from "./CustomImageManagerButton";
 import DeviceLanguage from "./DeviceLanguage";
+import DeviceName from "./DeviceName";
+import { Icons } from "~/../../../libs/ui/packages/react/lib";
 
 const illustrations = {
   nanoS: {
@@ -79,7 +81,7 @@ export const DeviceIllustration: ThemedComponent<{}> = styled.img.attrs(p => ({
 const Separator = styled.div`
   height: 1px;
   margin: 20px 0px;
-  background: ${p => p.theme.colors.palette.background.default};
+  background: ${p => p.theme.colors.neutral.c40};
   width: 100%;
 `;
 
@@ -279,6 +281,7 @@ export const StorageBar = ({
 type Props = {
   deviceModel: DeviceModel,
   deviceInfo: DeviceInfo,
+  deviceName: string,
   device: Device,
   distribution: AppsDistribution,
   onRefreshDeviceInfo: () => void,
@@ -293,6 +296,7 @@ const DeviceStorage = ({
   deviceModel,
   deviceInfo,
   device,
+  deviceName,
   distribution,
   onRefreshDeviceInfo,
   isIncomplete,
@@ -313,30 +317,36 @@ const DeviceStorage = ({
       </Box>
       <div style={{ flex: 1 }}>
         <Box horizontal alignItems="center">
-          <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={5}>
-            {deviceModel.productName}
-          </Text>
-          <Box ml={2}>
-            <Tooltip content={<Trans i18nKey="manager.deviceStorage.genuine" />}>
-              <IconCheckFull size={18} />
-            </Tooltip>
-          </Box>
+          <DeviceName
+            deviceName={deviceName}
+            deviceInfo={deviceInfo}
+            device={device}
+            onRefreshDeviceInfo={onRefreshDeviceInfo}
+          />
         </Box>
         <Flex justifyContent="space-between" alignItems="center" mt={1}>
-          <Text ff="Inter|SemiBold" color="palette.text.shade40" fontSize={4}>
-            {firmwareOutdated ? (
-              <Trans
-                i18nKey="manager.deviceStorage.firmwareAvailable"
-                values={{ version: deviceInfo.version }}
-              />
-            ) : (
-              <Trans
-                i18nKey="manager.deviceStorage.firmwareUpToDate"
-                values={{ version: deviceInfo.version }}
-              />
-            )}{" "}
-            {<HighlightVersion>{deviceInfo.version}</HighlightVersion>}
-          </Text>
+          <Flex flexDirection="row">
+            <Text ff="Inter|SemiBold" color="palette.text.shade40" fontSize={4}>
+              {firmwareOutdated ? (
+                <Trans
+                  i18nKey="manager.deviceStorage.firmwareAvailable"
+                  values={{ version: deviceInfo.version }}
+                />
+              ) : (
+                <Trans
+                  i18nKey="manager.deviceStorage.firmwareUpToDate"
+                  values={{ version: deviceInfo.version }}
+                />
+              )}{" "}
+              {<HighlightVersion>{deviceInfo.version}</HighlightVersion>}
+            </Text>
+            <Flex ml={2} flexDirection="row">
+              <Icons.CircledCheckSolidMedium size={22} color="success.c100" />
+              <Text ff="Inter|SemiBold" color="palette.text.shade80" ml={1} fontSize={4}>
+                <Trans i18nKey="manager.deviceStorage.genuine" />
+              </Text>
+            </Flex>
+          </Flex>
           <Flex
             data-test-id="device-options-container"
             flexDirection="column"
