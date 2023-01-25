@@ -9,6 +9,7 @@ import Growth from "~/renderer/icons/Growth";
 import { useHistory } from "react-router-dom";
 import useStakeFlow from "~/renderer/screens/stake";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { track } from "~/renderer/analytics/segment";
 
 const ButtonGrid = styled(Grid).attrs(() => ({
   columns: 3,
@@ -18,25 +19,35 @@ const ButtonGrid = styled(Grid).attrs(() => ({
   margin-bottom: ${p => p.theme.space[6]}px;
 `;
 
-const devFeatureFlag = false;
-
 const FeaturedButtons = () => {
   const history = useHistory();
   const { t } = useTranslation();
 
+  const bannerFeatureFlag = useFeature("portfolioExchangeBanner");
+  const stakeProgramsFeatureFlag = useFeature("stakePrograms");
+  const { enabled: bannerEnabled } = bannerFeatureFlag || {};
+  const stakeDisabled = stakeProgramsFeatureFlag?.params?.list?.length === 0 ?? true;
+  const startStakeFlow = useStakeFlow({});
+
   const handleClickExchange = useCallback(() => {
+    track("button_clicked", { button: "buy", flow: "Buy" });
+
     history.push("/exchange");
   }, [history]);
 
   const handleClickSwap = useCallback(() => {
+    track("button_clicked", { button: "swap", flow: "Swap" });
+
     history.push("/swap");
   }, [history]);
 
-  const stakeProgramsFeatureFlag = useFeature("stakePrograms");
-  const stakeDisabled = stakeProgramsFeatureFlag?.params?.list?.length === 0 ?? true;
-  const startStakeFlow = useStakeFlow({});
+  const handleClickStake = useCallback(() => {
+    track("button_clicked", { button: "stake", flow: "stake" });
 
-  if (!devFeatureFlag) return null;
+    startStakeFlow();
+  }, [startStakeFlow]);
+
+  if (!bannerEnabled) return null;
 
   return (
     <ButtonGrid>
@@ -58,7 +69,7 @@ const FeaturedButtons = () => {
         disabled={stakeDisabled}
         title={t("dashboard.featuredButtons.earn.title")}
         body={t("dashboard.featuredButtons.earn.description")}
-        onClick={startStakeFlow}
+        onClick={handleClickStake}
       />
     </ButtonGrid>
   );
