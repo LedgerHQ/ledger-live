@@ -309,6 +309,9 @@ export enum ScreenName {
   OsmosisRedelegationValidationError = "OsmosisRedelegationValidationError",
   OsmosisRedelegationValidationSuccess = "OsmosisRedelegationValidationSuccess",
 
+  // internet_computer
+  InternetComputerEditMemo = "InternetComputerEditMemo",
+
   // crypto_org
   CryptoOrgEditMemo = "CryptoOrgEditMemo",
   AlgorandEditMemo = "AlgorandEditMemo",
