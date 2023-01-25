@@ -1,7 +1,8 @@
 import network from "../../../../network";
 import { ProtectData } from "../types";
+import protectConfig from "../config";
 
-const ACCOUNT_API_URL = "https://stargate-portal-stg.api.aws.stg.ldg-tech.com";
+const { stargatePortalUrl } = protectConfig;
 
 export async function login(
   email: string,
@@ -10,7 +11,7 @@ export async function login(
   try {
     const { data } = await network({
       method: "POST",
-      url: `${ACCOUNT_API_URL}/account/sign-in`,
+      url: `${stargatePortalUrl}/account/sign-in`,
       data: {
         email,
         password,
@@ -29,7 +30,7 @@ export async function refreshToken(
   try {
     const { data } = await network({
       method: "POST",
-      url: `${ACCOUNT_API_URL}/account/refresh-token`,
+      url: `${stargatePortalUrl}/account/refresh-token`,
       data: {
         refresh_token: refreshToken,
       },
@@ -44,7 +45,7 @@ export async function refreshToken(
 export async function forgotPassword(email: string): Promise<any> {
   return await network({
     method: "POST",
-    url: `${ACCOUNT_API_URL}/account/reset-password`,
+    url: `${stargatePortalUrl}/account/reset-password`,
     data: { email },
   });
 }

@@ -11,11 +11,7 @@ type Props = {
   inputs?: Record<string, string>;
 };
 
-const ledgerRecoverIds = [
-  "protect",
-  "ledger-recover",
-  "ledger-recover-preprod",
-];
+const ledgerRecoverIds = ["protect", "protect-preprod"];
 
 const WebViewWrapper = ({ manifest, inputs }: Props) => {
   const isManifestOfLedgerRecover = useMemo(
