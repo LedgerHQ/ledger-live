@@ -169,10 +169,7 @@
       "WITHDRAW" : "출금됨",
       "REVOKE" : "취소",
       "ACTIVATE" : "활성화",
-      "REGISTER" : "등록 완료",
-      "STAKE" : "스테이킹 완료",
-      "UNSTAKE" : "언스테이킹 완료",
-      "WITHDRAW_UNSTAKED" : "출금됨"
+      "REGISTER" : "등록 완료"
     }
   },
   "byteSize" : {
@@ -2078,6 +2075,14 @@
           "dismiss" : "나중에 하기",
           "stake" : "{{provider}}을(를) 통한 스테이킹"
         },
+        "ethereum" : {
+          "title" : "ETH를 성장시켜보세요. 지금 스테이킹하기",
+          "description" : "Lido를 통해 이더리움을 스테이킹하고 매일 보상을 받으세요. 락업 기간 없음. 최소 예치금 없음.",
+          "kiln" : {
+            "title" : "호들만으로는 부족합니다. 보유한 ETH로 더 큰 수익을 가져오세요.",
+            "description" : "ETH를 32개 이상 보유하고 계시나요? Kiln을 통해 ETH를 안전하게 스테이킹하여 불로소득을 올려보세요."
+          }
+        },
         "cosmos" : {
           "title" : "ATOM을 성장시켜보세요. Ledger 검증인을 통한 스테이킹.",
           "description" : "신뢰할 수 있는 Ledger 검증인을 통해 ATOM을 스테이킹하세요. Ledger의 타협 없는 확실한 보안이 자산을 안전하게 보호합니다."
@@ -2138,8 +2143,8 @@
         "ethereumGasPrice" : "가스 가격(Gas price)",
         "ethereumMaxFee" : "최대 비용({{unitName}})",
         "ethereumPriorityFee" : "최대 우선 수수료({{unitName}})",
-        "nextBlock" : "다음 블록",
-        "suggested" : "추천",
+        "nextBlock" : "다음 블록: {{nextBaseFee}}",
+        "suggestedPriorityFee" : "권장: {{lowPriorityFee}} - {{highPriorityFee}} {{unitName}}",
         "unitPerByte" : "바이트당 {{unit}}",
         "nft" : "NFT",
         "nftQuantity" : "수량"
@@ -3391,155 +3396,6 @@
       }
     }
   },
-  "ethereum" : {
-    "stake" : {
-      "title" : "이더리움 받기",
-      "lido" : {
-        "tag" : "최소 한도 없음",
-        "description" : "Lido를 통해 이더리움을 스테이킹하고 매일 보상을 받으세요. 락업 기간 없음. 최소 한도 없음"
-      },
-      "kiln" : {
-        "tag" : "32 ETH 필요",
-        "description" : "ETH를 32개 이상 보유하고 계시나요? Kiln을 통해 ETH를 안전하게 스테이킹하고 매일 보상을 받아보세요."
-      },
-      "providerTitle" : "{{provider}}을 통한 보상 받기",
-      "providerLink" : "{{provider}}에 대해 자세히 알아보기"
-    }
-  },
-  "near" : {
-    "account" : {
-      "stakedBalance" : "스테이킹 잔액",
-      "stakedBalanceTooltip" : "이 금액은 현재 검증인에게 스테이킹되어 있습니다.",
-      "availableBalance" : "출금 가능 잔액",
-      "availableBalanceTooltip" : "이 금액은 언스테이킹되어 현재 출금이 가능합니다.",
-      "pendingBalance" : "승인 대기 잔액",
-      "pendingBalanceTooltip" : "이 금액은 언스테이킹되어 현재 가용성 여부가 보류 상태입니다.",
-      "storageUsageBalance" : "최소 잔액",
-      "storageUsageBalanceTooltip" : "이 금액은 저장 및 트랜잭션용으로 예약된 금액이며 계정이 활성 상태를 유지하기 위해 필요한 최소 잔액입니다.",
-      "subHeader" : {
-        "cardTitle" : "Figment 기반",
-        "moreInfo" : "자세한 정보",
-        "drawerTitle" : "Figment 기반",
-        "title" : "이제 Ledger Live에서 니어 토큰을 사용할 수 있습니다.",
-        "description" : "이제 Ledger Live로 니어 토큰을 관리하고 안전하게 보호할 수 있습니다.",
-        "description2" : "니어 토큰은 니어 체인의 네이티브 토큰이며 트랜잭션과 스테이킹을 비롯하여 앞으로 공개될 다양한 기능에 사용됩니다.",
-        "website" : "Figment 기반"
-      }
-    },
-    "operationDetails" : {
-      "extra" : {
-        "stakedAmount" : "스테이킹 금액"
-      }
-    },
-    "stake" : {
-      "emptyState" : {
-        "description" : "자산을 스테이킹하여 니어 보상을 받을 수 있습니다.",
-        "info" : "스테이킹 작동 방식",
-        "earnRewards" : "보상 받기"
-      },
-      "table" : {
-        "header" : "스테이킹 포지션",
-        "stake" : "추가",
-        "staked" : "스테이킹 완료",
-        "pending" : "보류 중인 릴리스",
-        "available" : "출금 가능"
-      },
-      "unstake" : "언스테이킹",
-      "withdraw" : "출금",
-      "activeTooltip" : "스테이킹된 금액은 보상을 생성합니다",
-      "inactiveTooltip" : "언스테이킹된 금액은 보상을 생성하지 않습니다",
-      "commission" : "커미션",
-      "totalStake" : "총 스테이킹",
-      "minSafeWarning" : "자금이 부족합니다",
-      "flow" : {
-        "title" : "스테이킹",
-        "steps" : {
-          "starter" : {
-            "description" : "니어 암호화폐를 검증인에게 스테이킹하여 보상을 받을 수 있습니다.",
-            "bullet" : ["스테이킹된 자산의 소유권은 귀하에게 있습니다", "Ledger 장치를 사용한 스테이킹", "자산은 언스테이킹 후 52~65시간 후에 이용 가능합니다"],
-            "warning" : {
-              "description" : "검증인을 현명하게 선택하세요. 검증인이 부적절하게 행동하는 경우 일부 스테이킹된 자산이 영구 손실될 수 있습니다."
-            }
-          },
-          "amount" : {
-            "title" : "금액"
-          },
-          "validator" : {
-            "title" : "검증인",
-            "ledgerByFigmentTC" : "Figment 기반 Ledger 이용약관"
-          },
-          "connectDevice" : {
-            "title" : "장치"
-          },
-          "confirmation" : {
-            "title" : "확인",
-            "success" : {
-              "title" : "자산을 성공적으로 스테이킹했습니다.",
-              "text" : "블록체인이 트랜잭션 검증을 완료하면 계정 잔액이 업데이트됩니다.",
-              "cta" : "세부사항 보기"
-            },
-            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
-          }
-        }
-      }
-    },
-    "unstake" : {
-      "disabledTooltip" : "스테이킹된 자산이 충분하지 않아 언스테이킹이 불가능합니다.",
-      "flow" : {
-        "title" : "언스테이킹",
-        "steps" : {
-          "amount" : {
-            "title" : "금액",
-            "subtitle" : "언스테이킹 프로세스는 완료하는 데 <0>52~65시간</0>이 소요됩니다.",
-            "warning" : "보상은 즉시 현금화할 수 있습니다. 언스테이킹된 금액은 <0>52~65시간 타임락</0>후에 출금이 가능합니다.",
-            "fields" : {
-              "validator" : "검증인",
-              "amount" : "언스테이킹할 금액"
-            }
-          },
-          "connectDevice" : {
-            "title" : "장치"
-          },
-          "confirmation" : {
-            "title" : "확인",
-            "success" : {
-              "title" : "자산을 성공적으로 언스테이킹했습니다.",
-              "description" : "<0>{{amount}}</0>가 <0>{{validator}}</0>로부터 언스테이킹되었습니다.",
-              "cta" : "세부사항 보기"
-            },
-            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
-          }
-        }
-      }
-    },
-    "withdraw" : {
-      "disabledTooltip" : "출금할 자산이 충분하지 않습니다.",
-      "flow" : {
-        "title" : "출금",
-        "steps" : {
-          "amount" : {
-            "title" : "금액",
-            "fields" : {
-              "validator" : "검증인",
-              "amount" : "출금 금액"
-            }
-          },
-          "connectDevice" : {
-            "title" : "장치"
-          },
-          "confirmation" : {
-            "title" : "확인",
-            "success" : {
-              "title" : "자산을 성공적으로 출금했습니다.",
-              "description" : "<0>{{amount}}</0>가 <0>{{validator}}</0>에서 출금되었습니다",
-              "cta" : "세부사항 보기"
-            },
-            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
-          }
-        }
-      }
-    }
-  },
   "delegation" : {
     "title" : "보상 받기",
     "header" : "위임",
@@ -3749,6 +3605,10 @@
     "experimental" : {
       "disclaimer" : "이는 기술적 관심과 지식이 풍부한 당사 커뮤니티에 \"있는 그대로\" 제공하는 실험적 기능으로, 언제든지 변경, 중단 또는 제거할 수 있습니다. 기능을 활성화할 경우, 온전히 귀하의 책임 하에 해당 기능을 사용한다는 사실에 동의하게 됩니다.",
       "features" : {
+        "apiTrongridProxy" : {
+          "title" : "TronGrid.io 사용",
+          "description" : "원장 프록시 없이 트론 그리드 바로 사용하기"
+        },
         "experimentalCurrencies" : {
           "title" : "실험 통합",
           "description" : "사용 가능한 실험 암호화폐 통합을 사용합니다."
@@ -4652,9 +4512,6 @@
       "claimRewardCompound" : "보상을 받을 검증인",
       "optIn" : "수령인",
       "nominate" : "검증인",
-      "stake" : "검증인",
-      "unstake" : "검증인",
-      "withdraw" : "검증인",
       "erc721" : {
         "transfer" : "수령인"
       },
@@ -5004,10 +4861,6 @@
     "NotEnoughGas" : {
       "title" : "상위 계정 잔액이 네트워크 수수료에 충분하지 않습니다"
     },
-    "OperatingSystemOutdated" : {
-      "title" : "사용 중이신 운영 시스템이 최신 버전이 아닙니다",
-      "description" : "운영 시스템을 업그레이드하고 다시 시도하세요. 아래의 글을 클릭하여 현재 운영 시스템에서 Ledger Live가 지원되지 않는 이유를 알아보세요."
-    },
     "PasswordsDontMatch" : {
       "title" : "패스워드가 일치하지 않습니다",
       "description" : "다시 시도해주세요"
@@ -5264,7 +5117,7 @@
       "description" : "30초 이내에 서명이 적용되어야 합니다. 다시 시도해 주세요."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 20TRX를 지불할 수 있습니다."
+      "title" : "이 토큰 전송에 필요한 에너지가 부족합니다"
     },
     "PairingFailed" : {
       "title" : "페어링 실패",
@@ -5415,9 +5268,6 @@
     "StellarSourceHasMultiSign" : {
       "title" : "스텔라 트랜잭션을 수행하려면 다중서명을 비활성화하세요"
     },
-    "StellarBurnAddressError" : {
-      "title" : "스텔라 계정을 추가 중 문제가 발생했습니다"
-    },
     "HederaAddAccountError" : {
       "title" : "귀하의 계정이 추가되지 않았습니다. 다시 시도해 주세요."
     },
@@ -5464,30 +5314,6 @@
     "ImageLoadRefusedOnDevice" : {
       "title" : "장치에서 이미지 로드가 거부됨(할 일: 최종 문구)",
       "description" : "적합한 이미지가 아니라면 다른 이미지로 다시 시도해볼 수 있습니다."
-    },
-    "NearNewAccountWarning" : {
-      "title" : "수령인 계정이 아직 생성되지 않았습니다. 프로토콜을 생성하려면 {{formattedNewAccountStorageCost}} 전송이 필요합니다."
-    },
-    "NearNewNamedAccountError" : {
-      "title" : "수령인 계정이 아직 생성되지 않았습니다. 니어 지갑에서 생성해야 합니다."
-    },
-    "NearActivationFeeNotCovered" : {
-      "title" : "이 금액은 {{formattedNewAccountStorageCost}} 스토리지 비용을 포함하지 않습니다."
-    },
-    "NearUseAllAmountStakeWarning" : {
-      "title" : "향후 트랜잭션 수수료 지불에 필요한 잔액을 충분히 남겨 두세요"
-    },
-    "NearNotEnoughStaked" : {
-      "title" : "스테이킹 잔액 부족"
-    },
-    "NearNotEnoughAvailable" : {
-      "title" : "출금 가능 잔액 부족"
-    },
-    "NearRecommendUnstake" : {
-      "title" : "계정을 비우기 전에 자금을 언스테이킹하고 출금하세요."
-    },
-    "NearStakingThresholdNotMet" : {
-      "title" : "금액은 {{threshold}} 이상이어야 합니다."
     },
     "LockedDeviceError" : {
       "title" : "장치가 잠금 상태입니다",
