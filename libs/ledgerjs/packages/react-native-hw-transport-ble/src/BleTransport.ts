@@ -41,6 +41,7 @@ import {
   TransportError,
   DisconnectedDeviceDuringOperation,
   PairingFailed,
+  PeerRemovedPairing,
   HwTransportError,
   HwTransportErrorType,
 } from "@ledgerhq/errors";
@@ -160,12 +161,19 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
     try {
       await device.connect(connectOptions);
     } catch (e: any) {
+      log("ble-verbose", `connect error - ${JSON.stringify(e)}`);
       if (e.errorCode === BleErrorCode.DeviceMTUChangeFailed) {
-        // eslint-disable-next-line require-atomic-updates
+        log("ble-verbose", `device.mtu=${device.mtu}, reconnecting`);
         connectOptions = {};
         await device.connect();
+      } else if (
+        e.iosErrorCode === 14 ||
+        e.reason === "Peer removed pairing information"
+      ) {
+        log("ble-verbose", "iOS broken pairing");
+        throw new PeerRemovedPairing();
       } else {
-        throw e;
+        throw remapError(e);
       }
     }
   }
@@ -275,8 +283,6 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
     deviceModel
   );
 
-  await transport.requestConnectionPriority("High");
-
   const onDisconnect = (e) => {
     transport.notYetDisconnected = false;
     notif.unsubscribe();
@@ -321,6 +327,10 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
     return open(device, false);
   }
 
+  // Nb If this priority request is executed on an unpaired device and we refuse the pairing
+  // it throws an internal crash from BleManager. In order to avoid that, only request the
+  // priority after we know we are paired. Leveraging the inferMTU success here.
+  await transport.requestConnectionPriority("High");
   return transport;
 }
 

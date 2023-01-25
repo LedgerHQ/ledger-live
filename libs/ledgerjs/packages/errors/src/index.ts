@@ -221,6 +221,7 @@ export const FeeTooHigh = createCustomErrorClass("FeeTooHigh");
 export const PendingOperation = createCustomErrorClass("PendingOperation");
 export const SyncError = createCustomErrorClass("SyncError");
 export const PairingFailed = createCustomErrorClass("PairingFailed");
+export const PeerRemovedPairing = createCustomErrorClass("PeerRemovedPairing");
 export const GenuineCheckFailed = createCustomErrorClass("GenuineCheckFailed");
 export const LedgerAPI4xx = createCustomErrorClass("LedgerAPI4xx");
 export const LedgerAPI5xx = createCustomErrorClass("LedgerAPI5xx");
