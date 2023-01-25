@@ -11,6 +11,7 @@ const {
 const path = require("path");
 const { esbuild, NodeExternalsPlugin } = require("esbuild-utils");
 const { createServer } = require("vite");
+const { flipFuses, FuseVersion, FuseV1Options } = require("@electron/fuses");
 
 const { buildMainEnv, buildRendererEnv, buildViteConfig, lldRoot } = require("./utils");
 
