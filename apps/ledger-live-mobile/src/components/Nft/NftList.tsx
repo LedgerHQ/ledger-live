@@ -180,30 +180,30 @@ export function NftList({ data }: Props) {
             <BackgroundGradient {...gradients[0]} />
             <BackgroundGradient {...gradients[1]} />
             <ButtonsContainer width="100%" justifyContent={"space-between"}>
-              <StyledButton
-                onPress={readOnlyModeAction}
-                type="main"
-                iconPosition="left"
-                iconName="Close"
-                size="medium"
-                flexGrow={nftsToHide.length > 0 ? 0.4 : 1}
-              >
-                {t("common.cancel")}
-              </StyledButton>
               {nftsToHide.length > 0 && (
                 <StyledButton
                   onPress={onClickHide}
-                  type="color"
+                  type="main"
                   iconName="EyeNone"
                   iconPosition="left"
                   size="medium"
-                  flexGrow={0.5}
+                  flexGrow={1}
                 >
                   {t("wallet.nftGallery.filters.hide", {
                     count: nftsToHide.length,
                   })}
                 </StyledButton>
               )}
+              <StyledButton
+                onPress={readOnlyModeAction}
+                type="default"
+                iconPosition="left"
+                iconName="Close"
+                size="medium"
+                flexGrow={1}
+              >
+                {t("common.cancel")}
+              </StyledButton>
             </ButtonsContainer>
           </Animated.View>
         )}
@@ -222,5 +222,4 @@ const ButtonsContainer = styled(Flex)`
   bottom: 20px;
   z-index: 5;
   padding: 0 18px;
-  flex-direction: row;
 `;
