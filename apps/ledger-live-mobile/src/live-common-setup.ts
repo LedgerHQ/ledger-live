@@ -81,6 +81,7 @@ setSupportedCurrencies([
   "songbird",
   "flare",
   "near",
+  "internet_computer",
 ]);
 
 if (Config.VERBOSE) {
