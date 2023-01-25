@@ -1,5 +1,5 @@
 import { GetAccountShape } from "../../../../bridge/jsHelpers";
-import { encodeAccountId } from "../../../../account";
+import { decodeAccountId, encodeAccountId } from "../../../../account";
 import { log } from "@ledgerhq/logs";
 import { fetchBalances, fetchBlockHeight, fetchTxns } from "./network";
 import { flatMap } from "lodash";
@@ -32,8 +32,9 @@ const mapTxToOps = (accountId: string, address: string, fee = ICP_FEES) => {
       ? counterOperation.account.address
       : ownerOperation.account.address;
     const memo = txInfo.transaction.metadata.memo;
+    const blockHeight = txInfo.transaction.metadata.block_height;
 
-    const date = new Date(normalizeEpochTimestamp(timeStamp));
+    const date = new Date(normalizeEpochTimestamp(timeStamp.toString()));
     const value = amount.abs();
     const feeToUse = BigNumber(fee);
 
@@ -47,7 +48,7 @@ const mapTxToOps = (accountId: string, address: string, fee = ICP_FEES) => {
         type: "OUT",
         value: value.plus(feeToUse),
         fee: feeToUse,
-        blockHeight: 1,
+        blockHeight,
         blockHash: null,
         accountId,
         senders: [fromAccount],
@@ -66,7 +67,7 @@ const mapTxToOps = (accountId: string, address: string, fee = ICP_FEES) => {
         type: "IN",
         value,
         fee: feeToUse,
-        blockHeight: 1,
+        blockHeight,
         blockHash: null,
         accountId,
         senders: [fromAccount],
@@ -83,13 +84,14 @@ const mapTxToOps = (accountId: string, address: string, fee = ICP_FEES) => {
 };
 
 export const getAccountShape: GetAccountShape = async (info) => {
-  const { address, currency, derivationMode } = info;
+  const { address, currency, derivationMode, rest = {}, initialAccount } = info;
+  const publicKey = reconciliatePublicKey(rest.publicKey, initialAccount);
 
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
     currencyId: currency.id,
-    xpubOrAddress: address,
+    xpubOrAddress: publicKey,
     derivationMode,
   });
 
@@ -100,14 +102,30 @@ export const getAccountShape: GetAccountShape = async (info) => {
   const balance = balanceResp.balances[0];
 
   const txns = await fetchTxns(address);
-
   const result: Partial<Account> = {
     id: accountId,
     balance: BigNumber(balance.value),
     spendableBalance: BigNumber(balance.value),
-    operations: flatMap(txns.transactions, mapTxToOps(accountId, address)),
+    operations: flatMap(
+      txns.transactions.reverse(),
+      mapTxToOps(accountId, address)
+    ),
     blockHeight: blockHeight.current_block_identifier.index,
+    operationsCount: txns.transactions.length,
+    xpub: publicKey,
   };
 
   return result;
 };
+
+function reconciliatePublicKey(
+  publicKey?: string,
+  initialAccount?: Account
+): string {
+  if (publicKey) return publicKey;
+  if (initialAccount) {
+    const { xpubOrAddress } = decodeAccountId(initialAccount.id);
+    return xpubOrAddress;
+  }
+  throw new Error("publicKey wasn't properly restored");
+}
