@@ -16,7 +16,8 @@ type Props = {
 const useStakeFlow = (props: Props) => {
   const history = useHistory();
   const [accountSelection, setAccountSelection] = useState({});
-  const { enabled: stakeFlag, list: flagList } = useFeature("stakePrograms");
+  const { enabled: stakeFlag, params: paramsFlag } = useFeature("stakePrograms");
+  const { list: listFlag } = paramsFlag || {};
   const { account = {}, parentAccount = null } = accountSelection;
   const family = account?.currency?.family || "ethereum";
   const useManage = perFamilyManageActions[family];
@@ -45,7 +46,7 @@ const useStakeFlow = (props: Props) => {
     setDrawer(
       SelectAccountAndCurrencyDrawer,
       {
-        currencies: flagList || [],
+        currencies: listFlag || [],
         onAccountSelected: (account: Account, parentAccount: Account | null = null) => {
           setDrawer();
           setAccountSelection({ account, parentAccount });
