@@ -169,10 +169,7 @@
       "WITHDRAW" : "Çekildi",
       "REVOKE" : "İptal Edildi",
       "ACTIVATE" : "Etkinleştirildi",
-      "REGISTER" : "Kaydedildi",
-      "STAKE" : "Stake edildi",
-      "UNSTAKE" : "Stake iptali",
-      "WITHDRAW_UNSTAKED" : "Çekildi"
+      "REGISTER" : "Kaydedildi"
     }
   },
   "byteSize" : {
@@ -538,7 +535,7 @@
     },
     "resetThirdPartyDataModal" : {
       "title" : "Yerel üçüncü taraf verilerinizi silin",
-      "subtitle" : "Yerel üçüncü taraf verilerinizi silin. İş ortaklarımız tarafından sağlanan hizmetlere erişmek için KYC'nizi yeniden göndermeniz veya tekrar oturum açmanız gerekebilir.",
+      "subtitle" : "Yerel üçüncü taraf verilerinizi silin. Sağlayıcılarımız tarafından sunulan hizmetlere erişmek için KYC'nizi yeniden göndermeniz veya tekrar oturum açmanız gerekebilir.",
       "cta" : "Onayla"
     },
     "modal" : {
@@ -1304,8 +1301,8 @@
       "description" : "BLACKFRIDAY20 promosyon koduyla Ledger donanım cüzdanlarda %40'lık indirimden yararlanın"
     },
     "referralProgram" : {
-      "title" : "Referans verin ve $10 kazanın",
-      "description" : "Bir arkadaşınıza başarıyla referans verdiğinizde, ikiniz de $10 değerinde Bitcoin kazanırsınız."
+      "title" : "Referans olun ve $10 kazanın",
+      "description" : "Bir arkadaşınıza başarıyla referans olduğunuzda, ikiniz de $10 değerinde Bitcoin kazanırsınız."
     }
   },
   "signmessage" : {
@@ -2078,6 +2075,14 @@
           "dismiss" : "Şimdi değil",
           "stake" : "{{provider}} ile stake edin"
         },
+        "ethereum" : {
+          "title" : "ETH varlıklarınızı artırın. Hemen stake edin.",
+          "description" : "Lido ile Ethereum stake edin ve her gün ödül kazanın. Kilitleme süresi yok. Minimum yatırma tutarı yok.",
+          "kiln" : {
+            "title" : "Sadece HODL ile yetinmeyin. ETH varlıklarınızı artırın.",
+            "description" : "32'den fazla ETH'niz mi var? Kiln ile ETH varlıklarınızı güvenle stake ederek pasif ödüller kazanın."
+          }
+        },
         "cosmos" : {
           "title" : "ATOM varlıklarınızı artırın. Ledger doğrulayıcı ile stake edin.",
           "description" : "ATOM varlıklarınızı güvenilir Ledger doğrulayıcı ile stake edin. Coin'leriniz, Ledger'ın taviz vermeyen güvenliği sayesinde size ait olmaya devam eder."
@@ -2138,8 +2143,8 @@
         "ethereumGasPrice" : "Gas ücreti",
         "ethereumMaxFee" : "Ücret Üst Limiti ({{unitName}})",
         "ethereumPriorityFee" : "Öncelik Ücreti Üst Limiti ({{unitName}})",
-        "nextBlock" : "Sonraki blok",
-        "suggested" : "Önerilen",
+        "nextBlock" : "Sonraki blok: {{nextBaseFee}}",
+        "suggestedPriorityFee" : "Önerilen: {{lowPriorityFee}} - {{highPriorityFee}} {{unitName}}",
         "unitPerByte" : "bayt başına {{unit}}",
         "nft" : "NFT",
         "nftQuantity" : "Miktar"
@@ -3391,155 +3396,6 @@
       }
     }
   },
-  "ethereum" : {
-    "stake" : {
-      "title" : "Ethereum Kazanın",
-      "lido" : {
-        "tag" : "Minimum yatırma miktarı yok",
-        "description" : "Ethereum varlıklarınızı Lido ile stake edin ve her gün ödül kazanın. Kilitleme süresi yok. Minimum yatırma miktarı yok."
-      },
-      "kiln" : {
-        "tag" : "32 ETH gerektirir",
-        "description" : "Elinizde en az 32 ETH var mı? ETH varlıklarınızı Kiln üzerinden güvenle stake ederek her gün ödül kazanın."
-      },
-      "providerTitle" : "{{provider}} ile kazanın",
-      "providerLink" : "{{provider}} uygulaması hakkında daha fazla bilgi edinin"
-    }
-  },
-  "near" : {
-    "account" : {
-      "stakedBalance" : "Stake bakiyesi",
-      "stakedBalanceTooltip" : "Doğrulayıcılarla stake edilmiş olan güncel miktar.",
-      "availableBalance" : "Çekilebilir bakiye",
-      "availableBalanceTooltip" : "Stake’i iptal edilmiş ve çekilebilecek olan güncel miktar.",
-      "pendingBalance" : "Bekleyen bakiye",
-      "pendingBalanceTooltip" : "Stake’i iptal edilmiş ve müsait olması beklenen güncel miktar.",
-      "storageUsageBalance" : "Minimum bakiye",
-      "storageUsageBalanceTooltip" : "Saklama ve işlemler için rezerv edilen miktar; hesabınızın aktif kalması için hesabınızda bulunması gereken minimum bakiye.",
-      "subHeader" : {
-        "cardTitle" : "Figment desteğiyle",
-        "moreInfo" : "Daha fazla bilgi",
-        "drawerTitle" : "Figment desteğiyle",
-        "title" : "NEAR token’ı artık Ledger Live’da",
-        "description" : "NEAR token’larınızı yönetmeye başlayabilir ve Ledger Live ile güvenceye alabilirsiniz.",
-        "description2" : "NEAR token, NEAR zincirinin native token'ıdır ve ağ üzerinde işlem yapmak, stake etmek ve yakında çıkacak pek çok özellikten yararlanmak için kullanılır.",
-        "website" : "Figment desteğiyle"
-      }
-    },
-    "operationDetails" : {
-      "extra" : {
-        "stakedAmount" : "Stake edilen miktar"
-      }
-    },
-    "stake" : {
-      "emptyState" : {
-        "description" : "NEAR varlıklarınızı stake ederek NEAR ödülleri kazanabilirsiniz.",
-        "info" : "Staking Nasıl Çalışır?",
-        "earnRewards" : "Ödüller kazanın"
-      },
-      "table" : {
-        "header" : "Staking Pozisyonları",
-        "stake" : "Ekle",
-        "staked" : "Stake edilen",
-        "pending" : "Bırakılmayı bekleyen",
-        "available" : "Çekilebilir bakiye"
-      },
-      "unstake" : "Staking'i iptal et",
-      "withdraw" : "Çek",
-      "activeTooltip" : "Stake edilen miktarlar ödül kazandırır",
-      "inactiveTooltip" : "Stake’i iptal edilen miktarlar ödül kazandırmaz",
-      "commission" : "Komisyon",
-      "totalStake" : "Toplam Stake",
-      "minSafeWarning" : "Yetersiz fon miktarı",
-      "flow" : {
-        "title" : "Stake edin",
-        "steps" : {
-          "starter" : {
-            "description" : "NEAR varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz.",
-            "bullet" : ["Stake ettiğiniz varlıkların mülkiyeti sizde kalır", "Ledger cihazınızı kullanarak stake edin", "Stake'i iptal edilen varlıklar 52 ila 65 saat sonra yeniden kullanılabilir"],
-            "warning" : {
-              "description" : "Doğrulayıcınızı dikkatli seçin! Doğrulayıcının yanlış kararlar vermesi hâlinde stake ettiğiniz varlıkların bir kısmını kalıcı olarak kaybedebilirsiniz."
-            }
-          },
-          "amount" : {
-            "title" : "Tutar"
-          },
-          "validator" : {
-            "title" : "Doğrulayıcılar",
-            "ledgerByFigmentTC" : "Ledger by Figment Hüküm ve Koşulları"
-          },
-          "connectDevice" : {
-            "title" : "Cihaz"
-          },
-          "confirmation" : {
-            "title" : "Onaylayın",
-            "success" : {
-              "title" : "Varlıklarınızı başarıyla stake ettiniz",
-              "text" : "İşlem blok zinciri tarafından onaylandığında hesap bakiyeniz güncellenecek",
-              "cta" : "Ayrıntıları göster"
-            },
-            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
-          }
-        }
-      }
-    },
-    "unstake" : {
-      "disabledTooltip" : "Stake edilen varlık miktarı stake iptali için yeterli değil",
-      "flow" : {
-        "title" : "Staking'i iptal et",
-        "steps" : {
-          "amount" : {
-            "title" : "Tutar",
-            "subtitle" : "Yetki iptali işleminin sonuçlanması <0>52 ila 65 saat</0> sürer.",
-            "warning" : "Ödüller anında hesaba alınır. Stake’i iptal edilen tutar <0>52 ila 65 saatlik zaman kilidinden</0> sonra çekilebilir.",
-            "fields" : {
-              "validator" : "Doğrulayıcı",
-              "amount" : "Staking'i iptal edilecek miktar"
-            }
-          },
-          "connectDevice" : {
-            "title" : "Cihaz"
-          },
-          "confirmation" : {
-            "title" : "Onaylayın",
-            "success" : {
-              "title" : "Varlıklarınızın stake’ini başarıyla iptal ettiniz.",
-              "description" : "<0>{{validator}}</0> doğrulayıcısında <0>{{amount}}</0> tutarındaki stake iptal edildi",
-              "cta" : "Ayrıntıları göster"
-            },
-            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
-          }
-        }
-      }
-    },
-    "withdraw" : {
-      "disabledTooltip" : "Varlık miktarı çekim için yeterli değil",
-      "flow" : {
-        "title" : "Çekim",
-        "steps" : {
-          "amount" : {
-            "title" : "Tutar",
-            "fields" : {
-              "validator" : "Doğrulayıcı",
-              "amount" : "Çekilecek tutar"
-            }
-          },
-          "connectDevice" : {
-            "title" : "Cihaz"
-          },
-          "confirmation" : {
-            "title" : "Onaylayın",
-            "success" : {
-              "title" : "Varlıklarınızı başarıyla çektiniz.",
-              "description" : "<0>{{validator}}</0> doğrulayıcısından <0>{{amount}}</0> tutarında çekim yapıldı",
-              "cta" : "Ayrıntıları göster"
-            },
-            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
-          }
-        }
-      }
-    }
-  },
   "delegation" : {
     "title" : "Ödüller kazanın",
     "header" : "Yetki Devri",
@@ -3749,6 +3605,10 @@
     "experimental" : {
       "disclaimer" : "Bu deneysel özellikleri, teknoloji tutkunu topluluğumuzun test edebilmesi için \"olduğu gibi\" sunmaktayız. Herhangi bir zamanda değişebilir, bozulabilir veya kaldırılabilirler. Bu özellikleri etkinleştirdiğinizde tüm riskin size ait olduğunu kabul etmiş olursunuz.",
       "features" : {
+        "apiTrongridProxy" : {
+          "title" : "TronGrid.io kullanın",
+          "description" : "Trongrid'i doğrudan Ledger sunucusu olmadan kullanın"
+        },
         "experimentalCurrencies" : {
           "title" : "Deneysel entegrasyonlar",
           "description" : "Mevcut deneysel kripto varlık entegrasyonlarını kullanın."
@@ -4052,7 +3912,7 @@
       "welcome" : {
         "title" : "En güvenli kripto para ve NFT cüzdanı",
         "description" : "Kriptolarınızı ve NFT'lerinizi Ledger Live'da güvenle yönetin, satın alın ve artırın.",
-        "nextButton" : "Başlangıç",
+        "nextButton" : "Devam",
         "noDevice" : "Cihazınız yok mu?",
         "buyLink" : "Cihazınız yok mu? Ledger Nano X satın alın",
         "byTapping" : "“Hemen Başla” butonuna dokunduğunuzda bunlara izin vermiş ve rıza göstermiş olursunuz:",
@@ -4124,10 +3984,10 @@
             }
           },
           "howToGetStarted" : {
-            "title" : "Başlamanın en iyi yolu:",
+            "title" : "Başlamak için en iyi yol:",
             "rules" : {
               "1" : "30 dakika ayırın ve acele etmeyin.",
-              "2" : "Yazmak için bir kalem ve kâğıt alın.",
+              "2" : "Yazmak için bir kalem alın.",
               "3" : "Yalnız kalın ve güvenli ve sessiz bir ortam seçin."
             },
             "buttons" : {
@@ -4167,7 +4027,7 @@
             }
           },
           "deviceHowTo2" : {
-            "title" : "Başlamanın en iyi yolu:",
+            "title" : "Başlamak için en iyi yol:",
             "turnOn" : {
               "title" : "Nano'yu açın",
               "descr" : "Cihazınızı USB kablosuyla bilgisayarınıza bağlayın."
@@ -4652,9 +4512,6 @@
       "claimRewardCompound" : "ödülleri alacak olan doğrulayıcı",
       "optIn" : "alıcı",
       "nominate" : "doğrulayıcı",
-      "stake" : "doğrulayıcı",
-      "unstake" : "doğrulayıcı",
-      "withdraw" : "doğrulayıcı",
       "erc721" : {
         "transfer" : "alıcı"
       },
@@ -5004,10 +4861,6 @@
     "NotEnoughGas" : {
       "title" : "Ana hesaptaki bakiye ağ ücretlerini karşılamak için yetersiz"
     },
-    "OperatingSystemOutdated" : {
-      "title" : "İşletim Sisteminizin sürümü eski",
-      "description" : "Lütfen işletim sisteminizi yükseltin ve tekrar deneyin. Mevcut işletim sistemi sürümünüzde Ledger Live uygulamasının neden desteklenmediğini öğrenmek için aşağıdaki makaleyi inceleyebilirsiniz."
-    },
     "PasswordsDontMatch" : {
       "title" : "Parolalar eşleşmiyor",
       "description" : "Lütfen tekrar deneyin"
@@ -5264,7 +5117,7 @@
       "description" : "İmza 30 saniye içinde uygulanmalıdır. Lütfen tekrar deneyin."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Yeterince Enerji mevcut değil. Ağ ücreti 20TRX tutarına ulaşabilir."
+      "title" : "Bu token'ı göndermek için yeterli Enerji yok"
     },
     "PairingFailed" : {
       "title" : "Eşleştirme başarısız",
@@ -5415,9 +5268,6 @@
     "StellarSourceHasMultiSign" : {
       "title" : "Stellar işlemleri yapmak için lütfen çoklu imzayı devre dışı bırakın"
     },
-    "StellarBurnAddressError" : {
-      "title" : "Stellar hesabı eklenmeye çalışırken bir sorun yaşandı"
-    },
     "HederaAddAccountError" : {
       "title" : "Hesabınız eklenemedi. Lütfen tekrar deneyin."
     },
@@ -5464,30 +5314,6 @@
     "ImageLoadRefusedOnDevice" : {
       "title" : "Görüntü yükleme cihazda reddedildi (TODO: final wording)",
       "description" : "Bu resim uygun olmadıysa başka bir resim seçerek tekrar deneyebilirsiniz."
-    },
-    "NearNewAccountWarning" : {
-      "title" : "Alıcı hesabı henüz oluşturulmadı. Bu protokol, alıcı hesabı oluşturmak için {{formattedNewAccountStorageCost}} tutarında bir aktarım yapılmasını gerektiriyor."
-    },
-    "NearNewNamedAccountError" : {
-      "title" : "Alıcı hesabı henüz oluşturulmadı. NEAR cüzdanında oluşturulması gerekiyor."
-    },
-    "NearActivationFeeNotCovered" : {
-      "title" : "Bu miktar, {{formattedNewAccountStorageCost}} depolama ücretini karşılamak için yeterli değil."
-    },
-    "NearUseAllAmountStakeWarning" : {
-      "title" : "Gelecekteki işlem ücretleri için yeterli bakiyenizin kaldığından emin olun"
-    },
-    "NearNotEnoughStaked" : {
-      "title" : "Stake bakiyesi yetersiz"
-    },
-    "NearNotEnoughAvailable" : {
-      "title" : "Çekilebilir bakiye yetersiz"
-    },
-    "NearRecommendUnstake" : {
-      "title" : "Lütfen hesabı boşaltmadan önce stake iptali yapın ve fonları çekin"
-    },
-    "NearStakingThresholdNotMet" : {
-      "title" : "Tutarın en az {{threshold}} olması gerekiyor"
     },
     "LockedDeviceError" : {
       "title" : "Cihazınız kilitlendi",
