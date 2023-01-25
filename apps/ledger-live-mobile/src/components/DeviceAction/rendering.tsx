@@ -2,7 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Platform, ScrollView, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { LockedDeviceError, WrongDeviceForAccount } from "@ledgerhq/errors";
+import {
+  LockedDeviceError,
+  PeerRemovedPairing,
+  WrongDeviceForAccount,
+} from "@ledgerhq/errors";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getDeviceModel } from "@ledgerhq/devices";
@@ -76,7 +80,7 @@ import ModalLock from "../ModalLock";
 import confirmLockscreen from "../../animations/stax/customimage/confirmLockscreen.json";
 import allowConnection from "../../animations/stax/customimage/allowConnection.json";
 
-const Wrapper = styled(Flex).attrs({
+export const Wrapper = styled(Flex).attrs({
   flex: 1,
   alignItems: "center",
   justifyContent: "center",
@@ -652,6 +656,13 @@ export function renderError({
     return renderLockedDeviceError({ t, onRetry, device });
   }
 
+  // TODO Once we have the aligned Error renderings, the CTA list should be determined
+  // by the error class, not patched like here.
+  let showRetryIfAvailable = true;
+  if ((error as unknown) instanceof PeerRemovedPairing) {
+    showRetryIfAvailable = false;
+  }
+
   return (
     <Wrapper>
       <GenericErrorView
@@ -661,7 +672,7 @@ export function renderError({
         Icon={Icon}
         iconColor={iconColor}
       >
-        {onRetry || managerAppName ? (
+        {showRetryIfAvailable && (onRetry || managerAppName) ? (
           <ActionContainer marginBottom={0} marginTop={32}>
             <StyledButton
               event="DeviceActionErrorRetry"

@@ -118,19 +118,9 @@
       "title": "Sorry, Bluetooth is disabled",
       "description": "Please enable Bluetooth in your phone settings. ({{state}} state)"
     },
-    "FwUpdateBluetoothNotSupported": {
-      "title": "Firmware updates are only supported for wired connections"
-    },
-    "BtcUnmatchedApp": {
-      "title": "That's the wrong app",
-      "description": "Please open the {{managerAppName}} app on your device."
-    },
     "CantOpenDevice": {
       "title": "Sorry, connection failed",
       "description": "Your Ledger device must be unlocked and in range to use Bluetooth."
-    },
-    "CantScanQRCode": {
-      "title": "Could not scan this QR code: auto-verification not supported by this address."
     },
     "ConnectAppTimeout": {
       "title": "Sorry, no device found",
@@ -327,11 +317,13 @@
     },
     "ImageCommitRefusedOnDevice": {
       "title": "Lock screen cancelled on Ledger Stax",
-      "description": "If this image wasn't the right fit, you can try again with another image."
+      "description": "If this image wasn't the right fit, you can try again with another image.",
+      "primaryCTA": "Upload another picture"
     },
     "ImageLoadRefusedOnDevice": {
       "title": "Lock screen cancelled on Ledger Stax",
-      "description": "If this image wasn't the right fit, you can try again with another image."
+      "description": "If this image wasn't the right fit, you can try again with another image.",
+      "primaryCTA": "Upload another picture"
     },
     "InvalidAddress": {
       "title": "This is not a valid {{currencyName}} address"
@@ -480,6 +472,10 @@
       "title": "Password does not match",
       "description": "Please try again."
     },
+    "PeerRemovedPairing": {
+      "title": "You need to remove '{{ deviceName }}' from your phone's Bluetooth devices",
+      "description": "Your {{ productName }} changed its Bluetooth configuration. Remove it from your phone settings, then come back to Ledger Live and try pairing again."
+    },
     "SelectExchangesLoadError": {
       "title": "Unable to load",
       "description": "Cannot load the exchanges."
@@ -556,7 +552,8 @@
     },
     "UpdateYourApp": {
       "title": "App update needed",
-      "description": "Please uninstall then reinstall the {{managerAppName}} app in the Manager."
+      "description": "Please uninstall then reinstall the {{managerAppName}} app in the Manager.",
+      "primaryCTA": "Open Manager"
     },
     "UserRefusedAllowManager": {
       "title": "Manager disabled on device",
@@ -675,7 +672,8 @@
     },
     "generic": {
       "title": "{{message}}",
-      "description": "Something went wrong. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
+      "description": "Something went wrong. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support.",
+      "primaryCTA": "Retry"
     },
     "SolanaAccountNotFunded": {
       "title": "Account not funded"
@@ -1840,7 +1838,8 @@
           "title": "Your device is locked",
           "subtitle": "Unlock your {{ productName }} and try again."
         },
-        "retryCta": "Try again"
+        "retryCta": "Retry",
+        "openSettingsCta": "Go to Bluetooth settings"
       }
     }
   },

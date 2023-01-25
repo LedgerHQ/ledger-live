@@ -1,4 +1,8 @@
 import Transport from "@ledgerhq/hw-transport";
+import type {
+  Subscription as TransportSubscription,
+  Observer as TransportObserver,
+} from "@ledgerhq/hw-transport";
 // ---------------------------------------------------------------------------------------------
 // Since this is a react-native library and metro bundler does not support
 // package exports yet (see: https://github.com/facebook/metro/issues/670)
@@ -10,10 +14,6 @@ import Transport from "@ledgerhq/hw-transport";
 import { sendAPDU } from "@ledgerhq/devices/lib/ble/sendAPDU";
 import { receiveAPDU } from "@ledgerhq/devices/lib/ble/receiveAPDU";
 
-import type {
-  Subscription as TransportSubscription,
-  Observer as TransportObserver,
-} from "@ledgerhq/hw-transport";
 import {
   BleManager,
   ConnectionPriority,
@@ -46,14 +46,15 @@ import {
   TransportError,
   DisconnectedDeviceDuringOperation,
   PairingFailed,
+  PeerRemovedPairing,
   HwTransportError,
 } from "@ledgerhq/errors";
 import { monitorCharacteristic } from "./monitorCharacteristic";
 import { awaitsBleOn } from "./awaitsBleOn";
 import {
   decoratePromiseErrors,
-  mapBleErrorToHwTransportError,
   remapError,
+  mapBleErrorToHwTransportError,
 } from "./remapErrors";
 import { ReconnectionConfig } from "./types";
 
@@ -78,6 +79,9 @@ const retrieveInfos = (device: Device | null) => {
   if (!serviceUUID) return;
   const infos = getInfosForServiceUuid(serviceUUID);
   if (!infos) return;
+
+  // If we retrieved information, update the cache
+  bluetoothInfoCache[device.id] = infos;
   return infos;
 };
 
@@ -90,6 +94,7 @@ const delay = (ms: number | undefined) =>
  * @type {Object.<string, BluetoothTransport>}
  */
 const transportsCache: { [deviceId: string]: BleTransport } = {};
+const bluetoothInfoCache: { [deviceUuid: string]: BluetoothInfos } = {}; // Allows us to give more granulary error messages.
 
 // connectOptions is actually used by react-native-ble-plx even if comment above ConnectionOptions says it's not used
 let connectOptions: Record<string, unknown> = {
@@ -191,12 +196,26 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
     try {
       await device.connect(connectOptions);
     } catch (e: any) {
+      log("ble-verbose", `connect error - ${JSON.stringify(e)}`);
       if (e.errorCode === BleErrorCode.DeviceMTUChangeFailed) {
-        // If the MTU update did not work, we try to connect without requesting for a specific MTU
+        log("ble-verbose", `device.mtu=${device.mtu}, reconnecting`);
         connectOptions = {};
         await device.connect();
+      } else if (
+        e.iosErrorCode === 14 ||
+        e.reason === "Peer removed pairing information"
+      ) {
+        log("ble-verbose", "iOS broken pairing");
+        log("ble-verbose", JSON.stringify(device));
+        log("ble-verbose", JSON.stringify(bluetoothInfoCache[device.id]));
+        const { deviceModel } = bluetoothInfoCache[device.id] || {};
+        const { productName } = deviceModel || {};
+        throw new PeerRemovedPairing(undefined, {
+          deviceName: device.name,
+          productName,
+        });
       } else {
-        throw e;
+        throw remapError(e);
       }
     }
   }
@@ -358,6 +377,10 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
     return open(device, false);
   }
 
+  // Nb If this priority request is executed on an unpaired device and we refuse the pairing
+  // it throws an internal crash from BleManager. In order to avoid that, only request the
+  // priority after we know we are paired. Leveraging the inferMTU success here.
+  await transport.requestConnectionPriority("High");
   return transport;
 }
 
@@ -621,7 +644,7 @@ export default class BleTransport extends Transport {
   ): Promise<Device> {
     return await decoratePromiseErrors(
       this.device.requestConnectionPriority(
-        ConnectionPriority[connectionPriority as keyof ConnectionPriority]
+        ConnectionPriority[connectionPriority]
       )
     );
   }

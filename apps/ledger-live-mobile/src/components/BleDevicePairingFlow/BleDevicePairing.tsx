@@ -9,10 +9,12 @@ import {
   CircledCheckSolidMedium,
   CircledCrossSolidMedium,
 } from "@ledgerhq/native-ui/assets/icons";
-import { LockedDeviceError } from "@ledgerhq/errors";
+import { LockedDeviceError, PeerRemovedPairing } from "@ledgerhq/errors";
 import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
 import Animation from "../Animation";
 import { TrackScreen } from "../../analytics";
+import GenericErrorView from "../GenericErrorView";
+import { Wrapper } from "../DeviceAction/rendering";
 
 export type BleDevicePairingProps = {
   onPaired: (device: Device) => void;
@@ -88,11 +90,18 @@ const BleDevicePairing = ({
         />
       </>
     );
+  } else if (pairingError instanceof PeerRemovedPairing) {
+    content = (
+      <Wrapper>
+        <GenericErrorView error={pairingError} withDescription withIcon />
+      </Wrapper>
+    );
   } else if (pairingError) {
+    // TODO refactor this into the generic error rendering when possible.
     let title;
     let subtitle;
 
-    if (pairingError instanceof LockedDeviceError) {
+    if ((pairingError as unknown) instanceof LockedDeviceError) {
       title = t("blePairingFlow.pairing.error.lockedDevice.title");
       subtitle = t("blePairingFlow.pairing.error.lockedDevice.subtitle", {
         productName,
@@ -103,6 +112,7 @@ const BleDevicePairing = ({
         productName,
       });
     }
+
     content = (
       <Flex>
         <TrackScreen category="BT failed to pair" />
