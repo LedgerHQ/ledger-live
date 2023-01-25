@@ -2,22 +2,17 @@ import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { SwapPage } from "../../models/SwapPage";
 import { DeviceAction } from "../../models/DeviceAction";
-import { Drawer } from "tests/models/Drawer";
-import { AccountsPage } from "tests/models/AccountsPage";
-import { AccountPage } from "tests/models/AccountPage";
-import { Layout } from "tests/models/Layout";
-import { Modal } from "tests/models/Modal";
+import { Drawer } from "../../models/Drawer";
+import { AccountsPage } from "../../models/AccountsPage";
+import { AccountPage } from "../../models/AccountPage";
+import { Layout } from "../../models/Layout";
+import { Modal } from "../../models/Modal";
 
-test.use({ userdata: "1AccountBTC1AccountETH", env: { DEV_TOOLS: true } });
-
-process.env.PWDEBUG = "1";
+test.use({ userdata: "1AccountBTC1AccountETH" });
 
 // Tests to cover in Playwright test suite
-// Switch From/To currency
 // Enter specific amount
 // Change network fees
-// Add new account from ‘From’ menu
-// Add new account when ‘To’ account doesn’t exist
 // Filter quotes (centralised, decentralised, etc)
 // Correct fiat currency used
 // Navigate to
@@ -59,17 +54,15 @@ test.describe.parallel("Swap", () => {
     });
 
     await test.step("Add account button appears for missing Destination (To) account", async () => {
-      await page.pause();
       await swapPage.openAccountDropdownByAccountName("Ethereum");
       await swapPage.selectAccountByName("Dogecoin");
-      await swapPage.sendMax();
+      await swapPage.sendMax(); // entering amount in textbox doesn't generate a quote in mock/PW
       await expect.soft(page).toHaveScreenshot("add-to-account-button.png");
     });
 
     await test.step("Add account from missing Destination (To) account", async () => {
-      await page.pause();
-      // await swapPage.addToAccount();
-      await expect.soft(page).toHaveScreenshot("swap-pair-reversed.png");
+      await swapPage.addDestinationAccount();
+      await expect.soft(page).toHaveScreenshot("add-missing-destination-account.png");
     });
   });
 

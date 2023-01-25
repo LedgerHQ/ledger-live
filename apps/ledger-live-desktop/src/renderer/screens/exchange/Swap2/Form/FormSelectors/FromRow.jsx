@@ -172,7 +172,6 @@ function FromRow({
             disabledTooltipText={t("swap2.form.from.currencyDisabledTooltip")}
             renderValue={renderAccountValue}
             onMenuOpen={trackEditAccount}
-            data-test-id="from-currency-select-account-dropdown"
           />
         </Box>
         <InputSection width="50%">
