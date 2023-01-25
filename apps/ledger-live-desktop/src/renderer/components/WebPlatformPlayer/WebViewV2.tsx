@@ -56,6 +56,7 @@ import { track } from "~/renderer/analytics/segment";
 import TopBar from "./TopBar";
 import { TopBarConfig } from "./type";
 import { Container, Wrapper, Loader } from "./styled";
+import { shareAnalyticsSelector } from "~/renderer/reducers/settings";
 
 const tracking = trackingWrapper(track);
 
@@ -96,6 +97,7 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
   const serverRef = useRef<WalletAPIServer>();
   const transportRef = useRef<Transport>();
   const transport = useRef<Subject<BidirectionalEvent>>();
+  const shareAnalytics = useSelector(shareAnalyticsSelector);
 
   useEffect(() => {
     if (targetRef.current) {
@@ -109,7 +111,16 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
           }
         },
       };
-      serverRef.current = new WalletAPIServer(transportRef.current);
+      serverRef.current = new WalletAPIServer(transportRef.current, {
+        userId: getEnv("USER_ID"),
+        tracking: shareAnalytics,
+        appId: manifest.id,
+        wallet: {
+          name: "ledger-live-desktop",
+          // @ts-expect-error this variable is defined globally
+          version: __APP_VERSION__,
+        },
+      });
       serverRef.current.setPermissions({
         currencyIds: manifest.currencies === "*" ? ["**"] : manifest.currencies,
         methodIds: (manifest.permissions as unknown) as string[], // TODO use the new manifest type for v2 as we should avoid as typings
