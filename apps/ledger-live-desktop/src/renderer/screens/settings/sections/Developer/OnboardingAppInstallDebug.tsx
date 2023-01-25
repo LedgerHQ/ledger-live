@@ -1,14 +1,23 @@
 import React, { useCallback, useState } from "react";
 import { Button, Flex, Text, Toggle, VerticalTimeline } from "@ledgerhq/react-ui";
+import { useSelector } from "react-redux";
 
 import ButtonV2 from "~/renderer/components/Button";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import OnboardingAppInstallStep from "~/renderer/components/OnboardingAppInstall";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
+import { getCurrentDevice } from "~/renderer/reducers/devices";
 
 const OnboardingAppInstallDebugScreen = () => {
   const [restore, setRestore] = useState<boolean>(false);
   const [componentKey, setComponentKey] = useState<number>(1);
+  const [installDone, setInstallDone] = useState<boolean>(false);
+  const device = useSelector(getCurrentDevice);
+
+  const handleRemount = useCallback(() => {
+    setComponentKey(prev => prev + 1);
+    setInstallDone(false);
+  }, []);
 
   const steps = [
     {
@@ -19,11 +28,13 @@ const OnboardingAppInstallDebugScreen = () => {
     {
       key: 1,
       estimatedTime: 120,
-      status: "active",
+      status: installDone ? "completed" : "active",
       title: "Install default set of apps",
       renderBody: () => (
         <OnboardingAppInstallStep
           restore={restore}
+          device={device}
+          onComplete={() => setInstallDone(true)}
           productName="Ledger Stax"
           restoreDeviceName="Ledger Nano X"
         />
@@ -31,7 +42,7 @@ const OnboardingAppInstallDebugScreen = () => {
     },
     {
       key: 2,
-      status: "inactive",
+      status: installDone ? "completed" : "inactive",
       title: "Complete onboarding",
     },
   ];
@@ -42,13 +53,8 @@ const OnboardingAppInstallDebugScreen = () => {
         Onboarding apps installer
       </Text>
       <Flex mt={8}>
-        <Button
-          mr={6}
-          variant="main"
-          outline={true}
-          onClick={() => setComponentKey(componentKey + 1)}
-        >
-          Remount component
+        <Button mr={6} variant="main" outline={true} onClick={handleRemount}>
+          Reset component
         </Button>
         <Toggle checked={!restore} onClick={() => setRestore(!restore)}>
           Toggle restore

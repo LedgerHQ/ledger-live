@@ -23,7 +23,12 @@ const AppInstallItem = ({ appName, isActive, installed, itemProgress, index }: P
         bg={colors.neutral.c30}
       >
         {isActive ? (
-          <ProgressLoader showPercentage={false} stroke={2} progress={itemProgress} radius={12} />
+          <ProgressLoader
+            showPercentage={false}
+            stroke={2}
+            progress={(itemProgress || 0) * 100}
+            radius={12}
+          />
         ) : installed ? (
           <Icons.CheckAloneMedium size={18} color="success.c80" />
         ) : (
