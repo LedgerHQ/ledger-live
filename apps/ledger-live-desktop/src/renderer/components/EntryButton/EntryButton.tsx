@@ -1,5 +1,3 @@
-// @flow
-
 import styled from "styled-components";
 import { focusedShadowStyle } from "~/renderer/components/Box/Tabbable";
 import Box from "~/renderer/components/Box";
@@ -89,7 +87,16 @@ const IconWrapper = styled.div`
   background-color: ${p => p.theme.colors.palette.neutral.c100a005};
 `;
 
-const EntryButton = ({
+interface EntryButtonProps {
+  title: string;
+  body: string;
+  onClick: () => void;
+  disabled?: boolean;
+  label?: string;
+  Icon?: React.ComponentType;
+  showChevron?: boolean;
+}
+const EntryButton: React.FC<EntryButtonProps> = ({
   title,
   body,
   onClick,
@@ -97,14 +104,6 @@ const EntryButton = ({
   Icon,
   label,
   showChevron,
-}: {
-  title: string,
-  body: string,
-  onClick: () => void,
-  disabled?: boolean,
-  label?: string,
-  Icon?: React$ComponentType<*>,
-  showChevron?: boolean,
 }) => {
   return (
     <EntryButtonContainer onClick={onClick} disabled={disabled}>
@@ -118,9 +117,11 @@ const EntryButton = ({
           <TitleText>
             {title}
             {label && (
-              <Tag active mx={1} type="opacity" size="small">
-                {label}
-              </Tag>
+              <Text ml={1} fontSize={2}>
+                <Tag active mx={1} type="plain" size="small">
+                  {label}
+                </Tag>
+              </Text>
             )}
           </TitleText>
           <BodyText>{body}</BodyText>

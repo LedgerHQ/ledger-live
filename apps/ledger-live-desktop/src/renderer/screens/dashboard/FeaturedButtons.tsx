@@ -1,5 +1,3 @@
-// @flow
-
 import React from "react";
 import { Grid } from "@ledgerhq/react-ui";
 import styled from "styled-components";
@@ -27,7 +25,7 @@ const FeaturedButtons = () => {
   return (
     <ButtonGrid>
       <EntryButton
-        Icon={Exchange}
+        Icon={() => <Exchange />}
         title={t("dashboard.featuredButtons.buySell.title")}
         body={t("dashboard.featuredButtons.buySell.description")}
         onClick={() => {
@@ -35,7 +33,7 @@ const FeaturedButtons = () => {
         }}
       />
       <EntryButton
-        Icon={Swap}
+        Icon={() => <Swap />}
         title={t("dashboard.featuredButtons.swap.title")}
         body={t("dashboard.featuredButtons.swap.description")}
         label={t("dashboard.featuredButtons.swap.label")}
@@ -44,7 +42,7 @@ const FeaturedButtons = () => {
         }}
       />
       <EntryButton
-        Icon={Growth}
+        Icon={() => <Growth />}
         title={t("dashboard.featuredButtons.earn.title")}
         body={t("dashboard.featuredButtons.earn.description")}
         disabled={true}
