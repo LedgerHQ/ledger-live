@@ -41,6 +41,7 @@ import {
   TransportError,
   DisconnectedDeviceDuringOperation,
   PairingFailed,
+  PeerRemovedPairing,
   HwTransportError,
   HwTransportErrorType,
 } from "@ledgerhq/errors";
@@ -160,10 +161,20 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
     try {
       await device.connect(connectOptions);
     } catch (e: any) {
-      if (e.errorCode === BleErrorCode.DeviceMTUChangeFailed) {
-        // eslint-disable-next-line require-atomic-updates
+      log("ble-verbose", `connect error - ${JSON.stringify(e)}`);
+      if (
+        e.errorCode === BleErrorCode.DeviceMTUChangeFailed ||
+        e.errorCode === BleErrorCode.DeviceDisconnected
+      ) {
+        log("ble-verbose", `device.mtu=${device.mtu}, reconnecting`);
         connectOptions = {};
         await device.connect();
+      } else if (
+        e.iosErrorCode === 14 ||
+        e.reason === "Peer removed pairing information"
+      ) {
+        log("ble-verbose", "iOS broken pairing");
+        throw new PeerRemovedPairing();
       } else {
         throw e;
       }
