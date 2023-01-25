@@ -16,39 +16,22 @@ import BackgroundGradient from "../TabBar/BackgroundGradient";
 
 const darkGradients = [
   {
-    height: 85,
-    opacity: 0.8,
+    height: 130,
+    opacity: 1,
     stops: [
       <Stop key="0%" offset="0%" stopOpacity={0} stopColor="#131214" />,
-      <Stop key="100%" offset="100%" stopOpacity={1} stopColor="#131214" />,
-    ],
-  },
-  {
-    height: 85,
-    opacity: 0.8,
-    stops: [
-      <Stop key="0%" offset="0%" stopOpacity={0} stopColor="#131214" />,
-      <Stop key="100%" offset="100%" stopOpacity={1} stopColor="#131214" />,
+      <Stop key="50%" offset="50%" stopOpacity={1} stopColor="#131214" />,
     ],
   },
 ];
 
 const lightGradients = [
   {
-    height: 170,
+    height: 130,
     opacity: 1,
     stops: [
-      <Stop key="0%" offset="0" stopOpacity={0} stopColor="#ffffff" />,
-      <Stop key="100%" offset="100%" stopOpacity={0.8} stopColor="#ffffff" />,
-    ],
-  },
-  {
-    height: 85,
-    opacity: 0.8,
-    stops: [
-      <Stop key="0%" offset="0" stopOpacity={0} stopColor="#ffffff" />,
-      <Stop key="57%" offset="57%" stopOpacity={0.15} stopColor="#000000" />,
-      <Stop key="100%" offset="100%" stopOpacity={0.15} stopColor="#000000" />,
+      <Stop key="0%" offset="0%" stopOpacity={0} stopColor="#ffffff" />,
+      <Stop key="50%" offset="50%" stopOpacity={1} stopColor="#ffffff" />,
     ],
   },
 ];
@@ -180,25 +163,23 @@ export function NftList({ data }: Props) {
             <BackgroundGradient {...gradients[0]} />
             <BackgroundGradient {...gradients[1]} />
             <ButtonsContainer width="100%" justifyContent={"space-between"}>
-              {nftsToHide.length > 0 && (
-                <StyledButton
-                  onPress={onClickHide}
-                  type="main"
-                  iconName="EyeNone"
-                  iconPosition="left"
-                  size="medium"
-                  flexGrow={1}
-                >
-                  {t("wallet.nftGallery.filters.hide", {
-                    count: nftsToHide.length,
-                  })}
-                </StyledButton>
-              )}
+              <StyledButton
+                onPress={onClickHide}
+                type="main"
+                iconName="EyeNone"
+                iconPosition="left"
+                size="medium"
+                flexGrow={1}
+                disabled={nftsToHide.length === 0}
+              >
+                {t("wallet.nftGallery.filters.hide", {
+                  count: nftsToHide.length,
+                })}
+              </StyledButton>
               <StyledButton
                 onPress={readOnlyModeAction}
                 type="default"
                 iconPosition="left"
-                iconName="Close"
                 size="medium"
                 flexGrow={1}
               >
