@@ -6,6 +6,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import { track } from "~/renderer/analytics/segment";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
+import { setDrawer } from "~/renderer/drawers/Provider";
 import styled from "styled-components";
 
 type Props = {
@@ -31,25 +32,29 @@ const DeviceName: React.FC<Props> = ({
   device,
   onRefreshDeviceInfo,
 }: Props) => {
-  const [isDeviceRenamingOpen, setIsDeviceRenamingOpen] = useState(false);
   const [name, setName] = useState(deviceName);
 
+  const onSuccess = useCallback(() => {
+    track("Page Manager RenamedDevice", { deviceName });
+    onRefreshDeviceInfo();
+  }, [deviceName, onRefreshDeviceInfo]);
+
   const openDeviceRename = useCallback(() => {
-    setIsDeviceRenamingOpen(true);
+    setDrawer(EditDeviceName, {
+      key: name,
+      device,
+      onSetName: setName,
+      deviceName: name,
+      onSuccess,
+    });
     track("Page Manager RenameDeviceEntered");
-  }, []);
+  }, [device, name, onSuccess]);
 
   return (
     <Flex alignItems="center">
       <Flex onClick={openDeviceRename}>
         <Flex mb={2} alignItems="center">
-          <Text
-            ff="Inter|SemiBold"
-            color="palette.text.shade100"
-            fontSize={6}
-            mr={2}
-            onClick={openDeviceRename}
-          >
+          <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={6} mr={3}>
             {name || deviceInfo.version}
           </Text>
           <PenIcon>
@@ -57,18 +62,6 @@ const DeviceName: React.FC<Props> = ({
           </PenIcon>
         </Flex>
       </Flex>
-      <EditDeviceName
-        key={name}
-        isOpen={isDeviceRenamingOpen}
-        onClose={() => setIsDeviceRenamingOpen(false)}
-        device={device}
-        onSetName={setName}
-        deviceName={name}
-        onSuccess={() => {
-          track("Page Manager RenamedDevice", { deviceName });
-          onRefreshDeviceInfo();
-        }}
-      />
     </Flex>
   );
 };

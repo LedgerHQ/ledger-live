@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { Button, Flex, Drawer, Divider, Text, Input, Icons, BoxedIcon } from "@ledgerhq/react-ui";
+import { Button, Flex, Divider, Text, Input, Icons, BoxedIcon } from "@ledgerhq/react-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTranslation } from "react-i18next";
 import { DeviceNameInvalid } from "@ledgerhq/errors";
@@ -10,10 +10,12 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { createAction } from "@ledgerhq/live-common/hw/actions/renameDevice";
 import renameDevice from "@ledgerhq/live-common/hw/renameDevice";
+import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
+
 const action = createAction(renameDevice);
+const MAX_DEVICE_NAME = 20;
 
 type Props = {
-  isOpen: boolean;
   onClose: () => void;
   deviceName: string;
   onSuccess: () => void;
@@ -21,13 +23,7 @@ type Props = {
   device: Device;
 };
 
-const EditDeviceName: React.FC<Props> = ({
-  isOpen,
-  onClose,
-  deviceName,
-  onSetName,
-  device,
-}: Props) => {
+const EditDeviceName: React.FC<Props> = ({ onClose, deviceName, onSetName, device }: Props) => {
   const { t } = useTranslation();
   const productName = device ? getDeviceModel(device.modelId).productName : null;
   const [name, setName] = useState<string>(deviceName);
@@ -50,7 +46,7 @@ const EditDeviceName: React.FC<Props> = ({
       : undefined;
 
     setError(maybeError);
-    setName(name);
+    setName(name.slice(0, MAX_DEVICE_NAME));
   }, []);
 
   const onSubmit = useCallback(async () => {
@@ -68,14 +64,16 @@ const EditDeviceName: React.FC<Props> = ({
   }, []);
 
   return (
-    <Drawer
-      isOpen={isOpen}
-      onClose={onCloseDrawer}
-      extraContainerProps={{ p: 0 }}
-      title={t("deviceRename.title", { productName })}
-      big
+    <Flex
+      flexDirection="column"
+      rowGap={5}
+      height="100%"
+      overflowY="hidden"
+      width="100%"
+      flex={1}
+      data-test-id="device-rename-container"
     >
-      <Flex flex={1} flexDirection="column" justifyContent="space-between">
+      <Flex flex={1} flexDirection="column" justifyContent="space-between" overflowY="hidden">
         {completed ? (
           <Flex
             flex={1}
@@ -113,11 +111,15 @@ const EditDeviceName: React.FC<Props> = ({
             onResult={onSuccess}
           />
         ) : (
-          <Flex px={12} flexDirection="column">
-            <Box flow={1} mb={5}>
-              <Label htmlFor="currentDeviceName">{t("deviceRename.chooseName")}</Label>
+          <Flex px={5} flexDirection="column">
+            <Text alignSelf="center" variant="h3Inter" mb={3}>
+              {t("deviceRename.title", { productName })}
+            </Text>
+            <Box flow={1} mb={5} p={5}>
+              <Label mb={10} htmlFor="currentDeviceName">
+                {t("deviceRename.chooseName")}
+              </Label>
               <Input
-                autoFocus
                 data-test-id="current-device-name-input"
                 onChange={onChangeText}
                 value={name}
@@ -142,8 +144,8 @@ const EditDeviceName: React.FC<Props> = ({
           </Flex>
         )}
       </Flex>
-    </Drawer>
+    </Flex>
   );
 };
 
-export default EditDeviceName;
+export default withV3StyleProvider(EditDeviceName);
