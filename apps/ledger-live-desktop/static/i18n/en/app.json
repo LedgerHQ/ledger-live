@@ -1364,7 +1364,22 @@
     },
     "recentActivity": "Latest operations",
     "totalBalance": "Total balance",
-    "transactionsPendingConfirmation": "Some transactions are not confirmed yet. These will be reflected in your balance and useable after being confirmed."
+    "transactionsPendingConfirmation": "Some transactions are not confirmed yet. These will be reflected in your balance and useable after being confirmed.",
+    "featuredButtons": {
+      "buySell": {
+        "title": "Buy / Sell",
+        "description": "Buy and sell with trusted providers"
+      },
+      "swap": {
+        "title": "Swap",
+        "description": "Convert crypto to crypto securely",
+        "label": "Popular"
+      },
+      "earn": {
+        "title": "Earn",
+        "description": "Grow your crypto with Ledger"
+      }
+    }
   },
   "currentAddress": {
     "title": "Current address",
