@@ -49,7 +49,7 @@ import { expectOperatingSystemSupportStatus } from "~/support/os";
 
 logger.add(loggerInstance);
 
-if (process.env.DEV_TOOLS) {
+if (process.env.VERBOSE) {
   enableDebugLogger();
 }
 
