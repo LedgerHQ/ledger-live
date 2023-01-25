@@ -1,13 +1,14 @@
 // @flow
 
 import styled from "styled-components";
-import Text from "~/renderer/components/Text";
 import { focusedShadowStyle } from "~/renderer/components/Box/Tabbable";
 import Box from "~/renderer/components/Box";
 import React from "react";
 import ChevronRight from "~/renderer/icons/ChevronRight";
+import { Tag, Text } from "@ledgerhq/react-ui";
 
 const TitleText = styled(Text).attrs(() => ({
+  variant: "body",
   fontSize: 4,
   fontWeight: "semiBold",
   mb: "2px",
@@ -16,6 +17,7 @@ const TitleText = styled(Text).attrs(() => ({
 `;
 
 const BodyText = styled(Text).attrs(p => ({
+  variant: "paragraph",
   fontSize: 4,
   fontWeight: "medium",
   color: p.theme.colors.neutral.c70,
@@ -87,26 +89,6 @@ const IconWrapper = styled.div`
   background-color: ${p => p.theme.colors.palette.neutral.c100a005};
 `;
 
-const LabelWrapper = styled(Box).attrs(() => ({
-  fontSize: 2,
-  fontWeight: "bold",
-  px: "6px",
-  py: "3px",
-  ml: 1,
-  backgroundColor: "primary.c90",
-  color: "neutral.c00",
-  borderRadius: 1,
-  translateY: "3px",
-  position: "relative",
-  top: "-1px",
-}))`
-  display: inline;
-`;
-
-const Label = ({ label }: { label: string }) => {
-  return <LabelWrapper>{label}</LabelWrapper>;
-};
-
 const EntryButton = ({
   title,
   body,
@@ -134,7 +116,12 @@ const EntryButton = ({
         )}
         <Box shrink alignItems="flex-start">
           <TitleText>
-            {title} {label && <Label label={label} />}
+            {title}
+            {label && (
+              <Tag active mx={1} type="opacity" size="small">
+                {label}
+              </Tag>
+            )}
           </TitleText>
           <BodyText>{body}</BodyText>
         </Box>

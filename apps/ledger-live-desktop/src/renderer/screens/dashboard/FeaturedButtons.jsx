@@ -17,7 +17,7 @@ const ButtonGrid = styled(Grid).attrs(() => ({
   margin-bottom: ${p => p.theme.space[6]}px;
 `;
 
-const devFeatureFlag = true;
+const devFeatureFlag = false;
 
 const FeaturedButtons = () => {
   const { t } = useTranslation();
