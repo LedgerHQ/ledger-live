@@ -62,6 +62,7 @@ import PreventNativeBack from "../PreventNativeBack";
 import SkipLock from "../behaviour/SkipLock";
 import DeviceActionProgress from "../DeviceActionProgress";
 import { PartialNullable } from "../../types/helpers";
+import { track } from "../../analytics";
 
 type LedgerError = InstanceType<
   LedgerErrorConstructor<{ [key: string]: unknown }>
@@ -235,8 +236,12 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   }, [dispatch, device, deviceInfo]);
 
   useEffect(() => {
-    if (error && onError) {
-      onError(error);
+    if (error) {
+      track("DeviceActionError", error);
+
+      if (onError) {
+        onError(error);
+      }
     }
   }, [error, onError]);
 
