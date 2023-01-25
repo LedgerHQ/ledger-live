@@ -10,16 +10,19 @@ import { track, page } from "~/renderer/analytics/segment";
 
 type Props = {
   account?: Account;
-  parentAccount?: Account;
+  parentAccount?: Account | null;
 };
+
+type CurrencyTypes = keyof typeof perFamilyManageActions;
 
 const useStakeFlow = (props: Props) => {
   const history = useHistory();
-  const [accountSelection, setAccountSelection] = useState({});
-  const { enabled: stakeFlag, params: paramsFlag } = useFeature("stakePrograms");
+  const [accountSelection, setAccountSelection] = useState<Props>({});
+  const stakeProgramsFeatureFlag = useFeature("stakePrograms");
+  const { params: paramsFlag, enabled: stakeProgramsEnabled } = stakeProgramsFeatureFlag || {};
   const { list: listFlag } = paramsFlag || {};
-  const { account = {}, parentAccount = null } = accountSelection;
-  const family = account?.currency?.family || "ethereum";
+  const { account = {} as Account, parentAccount = null } = accountSelection;
+  const family: CurrencyTypes = (account?.currency?.family as CurrencyTypes) || "ethereum";
   const useManage = perFamilyManageActions[family];
   const familyManageActions = useManage({ account, parentAccount });
 
@@ -77,9 +80,9 @@ const useStakeFlow = (props: Props) => {
   };
 
   const getStakeFlow = () => {
-    if (props) {
+    if (props.account && props.parentAccount) {
       setAccountSelection(props);
-    } else if (stakeFlag) {
+    } else if (stakeProgramsEnabled) {
       getStakeDrawer();
     }
   };
