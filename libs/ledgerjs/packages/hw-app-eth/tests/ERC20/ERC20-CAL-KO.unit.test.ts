@@ -1,3 +1,4 @@
+import axios from "axios";
 import fs from "fs/promises";
 import path from "path";
 import {
@@ -15,7 +16,7 @@ jest.mock("@ledgerhq/cryptoassets/data/erc20-signatures", () => "");
 
 describe("ERC20 dynamic cal", () => {
   describe("ERC20 is not in local CAL", () => {
-    test("should be successfully signin transaction from dynamic CAL", async () => {
+    it("should be successfully signin transaction from dynamic CAL", async () => {
       const apdusBuffer = await fs.readFile(
         path.resolve("./tests/fixtures/apdus/ERC20-OK.apdus"),
         "utf-8"
@@ -43,7 +44,7 @@ describe("ERC20 dynamic cal", () => {
       });
     });
 
-    test("should ask for blind sign if not in dynamic & local CAL", async () => {
+    it("should ask for blind sign if not in dynamic & local CAL", async () => {
       const apdusBuffer = await fs.readFile(
         path.resolve("./tests/fixtures/apdus/ERC20-KO.apdus"),
         "utf-8"
@@ -55,6 +56,37 @@ describe("ERC20 dynamic cal", () => {
       const resolution = await ledgerService.resolveTransaction(
         txHex,
         { cryptoassetsBaseURL: "notworking" },
+        resolutionConfig
+      );
+
+      const eth = new Eth(transport);
+
+      try {
+        await eth.signTransaction("44'/60'/0'/0/0", txHex, resolution);
+      } catch (e) {
+        expect(e).toStrictEqual(
+          new EthAppPleaseEnableContractData(
+            "Please enable Blind signing or Contract data in the Ethereum app Settings"
+          )
+        );
+      }
+    });
+
+    it("shouldn't break if the dynamic CAL is malformed", async () => {
+      jest
+        .spyOn(axios, "get")
+        .mockImplementationOnce(async () => ({ data: { 123: "ok" } })); // malformed response. Should be a string but here returning an object imcompatible w/ buffer.from
+      const apdusBuffer = await fs.readFile(
+        path.resolve("./tests/fixtures/apdus/ERC20-KO.apdus"),
+        "utf-8"
+      );
+      const transport = await openTransportReplayer(
+        RecordStore.fromString(`${apdusBuffer}`)
+      );
+      const resolutionConfig = { erc20: true };
+      const resolution = await ledgerService.resolveTransaction(
+        txHex,
+        { cryptoassetsBaseURL: "working" },
         resolutionConfig
       );
 
