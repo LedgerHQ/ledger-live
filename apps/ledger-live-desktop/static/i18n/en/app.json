@@ -606,6 +606,28 @@
       "creditedAmount": "Credited amount"
     }
   },
+  "stake": {
+    "modal": {
+      "title": "Buy, swap or receive",
+      "text": "You do not have available {{coin}} to stake",
+      "description": "No enough fund? Don’t worry, you can securely buy, swap or receive crypto directly in Ledger Live.",
+      "options": {
+        "buy": {
+          "title": "Buy",
+          "body": "Buy with trusted  providers"
+        },
+        "swap": {
+          "title": "Swap",
+          "label": "Popular",
+          "body": "Covert crypto to crypto securely"
+        },
+        "receive": {
+          "title": "Receive",
+          "body": "Receive crypto into your wallet"
+        }
+      }
+    }
+  },
   "lottieDebugger": {
     "buttonTitle": "Test"
   },
