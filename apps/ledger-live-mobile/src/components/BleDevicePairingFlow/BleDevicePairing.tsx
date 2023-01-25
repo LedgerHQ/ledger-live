@@ -1,17 +1,24 @@
 import React, { ReactNode, useCallback, useEffect } from "react";
-import { TouchableOpacity } from "react-native";
+import { Linking, TouchableOpacity } from "react-native";
 import { useTheme } from "styled-components/native";
 import { useBleDevicePairing } from "@ledgerhq/live-common/ble/hooks/useBleDevicePairing";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { Flex, InfiniteLoader, Text, Button } from "@ledgerhq/native-ui";
+import {
+  Flex,
+  InfiniteLoader,
+  Text,
+  Button,
+  BoxedIcon,
+} from "@ledgerhq/native-ui";
 import {
   CircledCheckSolidMedium,
   CircledCrossSolidMedium,
   CloseMedium,
+  WarningSolidMedium,
 } from "@ledgerhq/native-ui/assets/icons";
-import { LockedDeviceError } from "@ledgerhq/errors";
+import { LockedDeviceError, PeerRemovedPairing } from "@ledgerhq/errors";
 import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
 import Animation from "../Animation";
 
@@ -59,6 +66,9 @@ const BleDevicePairing = ({
     }
   }, [isPaired, deviceToPair, onPaired]);
 
+  // Nb can't manage to get anything more specific than this.
+  const onOpenSettings = () => Linking.openSettings();
+
   const handleClose = useCallback(() => {
     if (isPaired) {
       onPaired(deviceToPair);
@@ -102,14 +112,32 @@ const BleDevicePairing = ({
       </>
     );
   } else if (pairingError) {
+    // TODO refactor this into the generic error rendering if possible.
     let title;
     let subtitle;
+    let icon = <CircledCrossSolidMedium color={colors.error.c80} size={56} />;
 
     if (pairingError instanceof LockedDeviceError) {
       title = t("blePairingFlow.pairing.error.lockedDevice.title");
       subtitle = t("blePairingFlow.pairing.error.lockedDevice.subtitle", {
         productName,
       });
+    } else if ((pairingError as unknown) instanceof PeerRemovedPairing) {
+      title = t("errors.PeerRemovedPairing.title", {
+        productName,
+      });
+      subtitle = t("errors.PeerRemovedPairing.description", {
+        productName,
+      });
+      icon = (
+        <BoxedIcon
+          Icon={<WarningSolidMedium color="warning.c80" size={32} />}
+          variant="circle"
+          backgroundColor="neutral.c30"
+          borderColor="transparent"
+          size={56}
+        />
+      );
     } else {
       title = t("blePairingFlow.pairing.error.generic.title");
       subtitle = t("blePairingFlow.pairing.error.generic.subtitle", {
@@ -120,7 +148,7 @@ const BleDevicePairing = ({
       <Flex>
         <Flex flex={1} alignItems="center" justifyContent="center">
           <Flex alignItems="center" justifyContent="center" mb={8}>
-            <CircledCrossSolidMedium color={colors.error.c80} size={56} />
+            {icon}
           </Flex>
           <Text mb={4} textAlign="center" variant="h4" fontWeight="semiBold">
             {title}
@@ -129,9 +157,20 @@ const BleDevicePairing = ({
             {subtitle}
           </Text>
         </Flex>
-        <Button type="main" onPress={onRetry} mb={8}>
-          {t("blePairingFlow.pairing.error.retryCta")}
-        </Button>
+        {pairingError instanceof PeerRemovedPairing ? (
+          <Flex>
+            <Button type="main" onPress={onOpenSettings} mb={2} mt={8}>
+              {t("blePairingFlow.pairing.error.openSettingsCta")}
+            </Button>
+            <Button type="default" onPress={onRetry} mb={8}>
+              {t("blePairingFlow.pairing.error.retryCta")}
+            </Button>
+          </Flex>
+        ) : (
+          <Button type="main" onPress={onRetry} mb={8}>
+            {t("blePairingFlow.pairing.error.retryCta")}
+          </Button>
+        )}
       </Flex>
     );
   } else {
@@ -164,7 +203,7 @@ const BleDevicePairing = ({
           <CloseMedium size={24} />
         </TouchableOpacity>
       </Flex>
-      <Flex flex={1} px={10} pt={36} alignItems="center">
+      <Flex flex={1} px={6} pt={36} alignItems="center">
         {content}
       </Flex>
     </Flex>

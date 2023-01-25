@@ -477,6 +477,10 @@
       "title": "Password does not match",
       "description": "Please try again."
     },
+    "PeerRemovedPairing": {
+      "title": "You need to remove {{ productName }} from your phone's Bluetooth devices",
+      "description": "Your {{ productName }} changed its Bluetooth configuration. Remove it from your phone settings, then come back to Ledger Live and try pairing again."
+    },
     "SelectExchangesLoadError": {
       "title": "Unable to load",
       "description": "Cannot load the exchanges."
@@ -1811,7 +1815,8 @@
           "title": "Your device is locked",
           "subtitle": "Unlock your {{ productName }} and try again."
         },
-        "retryCta": "Try again"
+        "retryCta": "Retry",
+        "openSettingsCta": "Go to Bluetooth settings"
       }
     }
   },
