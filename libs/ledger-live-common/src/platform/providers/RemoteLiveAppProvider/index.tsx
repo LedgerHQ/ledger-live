@@ -1,10 +1,10 @@
 import React, {
   useContext,
-  useEffect,
   createContext,
   useMemo,
   useState,
   useCallback,
+  useEffect,
 } from "react";
 import { LiveAppRegistry } from "./types";
 import { LiveAppManifest, Loadable } from "../../types";
@@ -13,10 +13,19 @@ import api from "./api";
 import { FilterParams } from "../../filters";
 import { getEnv } from "../../../env";
 import useIsMounted from "../../../hooks/useIsMounted";
+import protectConfig from "../ProtectProvider/config";
+
+const { protectId, protectManifest } = protectConfig;
 
 const initialState: Loadable<LiveAppRegistry> = {
   isLoading: false,
-  value: null,
+  value: {
+    liveAppById: {
+      [protectId]: protectManifest,
+    },
+    liveAppByIndex: [protectManifest],
+    liveAppFiltered: [protectManifest],
+  },
   error: null,
 };
 

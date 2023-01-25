@@ -7,6 +7,13 @@ export enum ProtectStateNumberEnum {
   ACTIVE = 1500,
 }
 
+export enum ProtectEnv {
+  PREPROD = "preprod",
+  STAGING = "staging",
+  SIMU = "simu",
+  SEC = "sec",
+}
+
 export type ProtectData = {
   services: {
     Protect: {
