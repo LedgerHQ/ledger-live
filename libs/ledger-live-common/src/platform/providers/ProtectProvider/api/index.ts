@@ -1,7 +1,13 @@
 import network from "../../../../network";
 import { ProtectData } from "../types";
 
-const ACCOUNT_API_URL = "https://stargate-portal-sec.api.aws.sec.ldg-tech.com";
+const ACCOUNT_API_URLS = {
+  STAGING: "https://stargate-portal-stg.api.aws.stg.ldg-tech.com",
+  SIMU: "https://stargate-portal-simu-stg.api.aws.stg.ldg-tech.com",
+  SEC: "https://stargate-portal-sec.api.aws.sec.ldg-tech.com",
+};
+
+const ACCOUNT_API_URL = ACCOUNT_API_URLS.STAGING;
 
 export async function login(
   email: string,

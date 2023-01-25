@@ -12,10 +12,31 @@ import { LiveAppManifest, Loadable } from "../../types";
 import api from "./api";
 import { FilterParams } from "../../filters";
 import { getEnv } from "../../../env";
+import getProtectManifest from "../../getProtectManifest";
+
+const protectManifestStaging = getProtectManifest("staging");
+const protectManifestSimu = getProtectManifest("simu");
+const protectManifestSec = getProtectManifest("sec");
 
 const initialState: Loadable<LiveAppRegistry> = {
   isLoading: false,
-  value: null,
+  value: {
+    liveAppById: {
+      "protect-staging": protectManifestStaging,
+      "protect-simu": protectManifestSimu,
+      protect: protectManifestSec,
+    },
+    liveAppByIndex: [
+      protectManifestSec,
+      protectManifestStaging,
+      protectManifestSimu,
+    ],
+    liveAppFiltered: [
+      protectManifestSec,
+      protectManifestStaging,
+      protectManifestSimu,
+    ],
+  },
   error: null,
 };
 
@@ -132,15 +153,15 @@ export function RemoteLiveAppProvider({
     [state, provider, setProvider, updateManifests]
   );
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      updateManifests();
-    }, updateFrequency);
-    updateManifests();
-    return () => {
-      clearInterval(interval);
-    };
-  }, [updateFrequency, updateManifests]);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     updateManifests();
+  //   }, updateFrequency);
+  //   updateManifests();
+  //   return () => {
+  //     clearInterval(interval);
+  //   };
+  // }, [updateFrequency, updateManifests]);
 
   return (
     <liveAppContext.Provider value={value}>{children}</liveAppContext.Provider>

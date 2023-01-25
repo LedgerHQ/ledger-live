@@ -41,6 +41,51 @@ const checkFeatureFlagVersion = (feature: Feature | undefined) => {
 
 type Props = PropsWithChildren<unknown>;
 
+const getProtectServicesMobileFF = (env: "staging" | "simu" | "sec") => {
+  let id = "protect";
+
+  if (env !== "sec") id = `${id}-${env}`;
+
+  return {
+    enabled: true,
+    params: {
+      onboardingRestore: {
+        restoreInfoDrawer: {
+          enabled: true,
+          manualStepsURI: "",
+          supportLinkURI: "",
+        },
+        postOnboardingURI: `ledgerlive://discover/${id}?redirectTo=/account/login`,
+      },
+      managerStatesData: {
+        "1100": {
+          learnMoreURI: `ledgerlive://discover/${id}?redirectTo=/upsell`,
+          alreadySubscribedURI: `ledgerlive://discover/${id}?redirectTo=/account/login`,
+        },
+        "1200": {
+          confirmNowURI: `ledgerlive://discover/${id}?redirectTo=/live-protect-activate`,
+          viewDetailsURI: `ledgerlive://discover/${id}?redirectTo=/account`,
+        },
+        "1201": {
+          addNowURI: `ledgerlive://discover/${id}?redirectTo=/live-protect-activate`,
+          viewDetailsURI: `ledgerlive://discover/${id}?redirectTo=/account`,
+        },
+        "1300": {
+          editNowURI: "https://chargebee.com",
+          viewDetailsURI: `ledgerlive://discover/${id}?redirectTo=/account`,
+        },
+        "1400": {
+          contactLedgerSupportURI: "",
+          viewDetailsURI: `ledgerlive://discover/${id}?redirectTo=/account`,
+        },
+        "1500": {
+          viewDetailsURI: `ledgerlive://discover/${id}?redirectTo=/account`,
+        },
+      },
+    },
+  };
+};
+
 const isFeature = (key: string): boolean => {
   try {
     const value = remoteConfig().getValue(formatToFirebaseFeatureId(key));
@@ -81,6 +126,10 @@ const getFeature = (args: {
           overridesRemote: true,
           overriddenByEnv: true,
         };
+    }
+
+    if (key === "protectServicesMobile") {
+      return getProtectServicesMobileFF("staging");
     }
 
     const value = remoteConfig().getValue(formatToFirebaseFeatureId(key));

@@ -7,10 +7,23 @@ import React, {
 } from "react";
 import { LiveAppRegistry } from "./types";
 import { LiveAppManifest } from "../../types";
+import getProtectManifest from "../../getProtectManifest";
+
+const protectManifestStaging = getProtectManifest("staging");
+const protectManifestSimu = getProtectManifest("simu");
+const protectManifestSec = getProtectManifest("sec");
 
 const initialState: LiveAppRegistry = {
-  liveAppById: {},
-  liveAppByIndex: [],
+  liveAppById: {
+    "protect-staging": protectManifestStaging,
+    "protect-simu": protectManifestSimu,
+    "protect-sec": protectManifestSec,
+  },
+  liveAppByIndex: [
+    protectManifestSec,
+    protectManifestStaging,
+    protectManifestSimu,
+  ],
 };
 
 type LiveAppContextType = {
