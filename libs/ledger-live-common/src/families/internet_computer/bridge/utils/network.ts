@@ -41,7 +41,7 @@ const fetch = async <T>(path: string, body: any) => {
   return data;
 };
 
-const getICPRosettaNetworkIdentifier = () => {
+export const getICPRosettaNetworkIdentifier = () => {
   return {
     network_identifier: {
       blockchain: ICP_BLK_NAME_ROSETTA,
@@ -83,5 +83,18 @@ export const fetchTxns = async (
     },
   };
   const data = await fetch<GetTxnsHistoryResponse>("search/transactions", body);
+  return data;
+};
+
+export const constructionInvoke = async <TRequest, TResponse>(
+  opts: TRequest,
+  method: string
+): Promise<TResponse> => {
+  const body: TRequest = {
+    ...opts,
+  };
+
+  const data = await fetch<TResponse>(`construction/${method}`, body);
+
   return data;
 };
