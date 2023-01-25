@@ -1846,7 +1846,7 @@
       "used": "Used",
       "firmwareAvailable": "Firmware is outdated:",
       "firmwareUpToDate": "Firmware is up to date:",
-      "genuine": "Device is genuine",
+      "genuine": "Your device is Genuine",
       "incomplete": "Some apps were not recognized. Please uninstall, then reinstall them."
     },
     "applist": {
@@ -2268,6 +2268,12 @@
     },
     "switchButton": "Switch to {{language}}",
     "no": "I prefer not to"
+  },
+  "deviceRename": {
+    "title": "Rename {{ productName }}",
+    "chooseName": "Choose a name",
+    "placeholder": "Tony's Stax",
+    "renamed": "{{ productName }} name changed to “{{ name }}” "
   },
   "deviceLocalization": {
     "language": "Language",
@@ -5697,6 +5703,7 @@
   },
   "customImage": {
     "title": "Custom lock screen",
+    "managerCTA": "Lock screen picture",
     "steps": {
       "choose": {
         "stepLabel": "Choose an image",
