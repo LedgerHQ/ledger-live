@@ -38,6 +38,7 @@ import {
   renderLockedDeviceError,
   RenderDeviceNotOnboardedError,
 } from "./rendering";
+import { track } from "~/renderer/analytics/segment";
 
 type Props<R, H, P> = {
   overridesPreferredDeviceModel?: DeviceModelId;
@@ -129,8 +130,12 @@ export const DeviceActionDefaultRendering = <R, H, P>({
   const { t } = useTranslation();
 
   useEffect(() => {
-    if (error && onError) {
-      onError(error);
+    if (error) {
+      track("DeviceActionError", error);
+
+      if (onError) {
+        onError(error);
+      }
     }
   }, [error, onError]);
 
