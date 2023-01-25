@@ -1,50 +1,152 @@
-import { ICPTs, Subaccount } from "@dfinity/nns/dist/proto/ledger_pb";
-import {
-  NANOSECONDS_PER_MILLISECONDS,
-  REPLICA_PERMITTED_DRIFT_MILLISECONDS,
-} from "./consts";
 import * as cbor from "simple-cbor";
-import { lebEncode } from "@dfinity/candid";
+import {
+  ConstructionCombineRequest,
+  ConstructionPayloadsResponse,
+  Operation,
+} from "../types";
+import { PipeArrayBuffer } from "@dfinity/candid";
+import BigInteger from "big-integer";
+import { Transaction } from "../../../types";
+import { Account } from "@ledgerhq/types-live";
+import { getAddress } from "../addresses";
+import BigNumber from "bignumber.js";
 
-export function bufferToArrayBuffer(buffer: Buffer): ArrayBuffer {
-  return buffer.buffer.slice(
-    buffer.byteOffset,
-    buffer.byteOffset + buffer.byteLength
-  );
+export const generateOperations = (
+  tr: Transaction,
+  a: Account
+): Operation[] => {
+  const { address } = getAddress(a);
+  const currency = {
+    symbol: "ICP",
+    decimals: 8,
+  };
+  const type = "TRANSACTION";
+  const operations: Operation[] = [];
+  operations.push({
+    operation_identifier: {
+      index: 0,
+    },
+    type,
+    account: {
+      address,
+    },
+    amount: {
+      value: `-${tr.amount}`,
+      currency,
+    },
+  });
+
+  operations.push({
+    operation_identifier: {
+      index: 1,
+    },
+    type,
+    account: {
+      address: tr.recipient,
+    },
+    amount: {
+      value: `${tr.amount}`,
+      currency,
+    },
+  });
+
+  operations.push({
+    operation_identifier: {
+      index: 2,
+    },
+    type: "FEE",
+    account: {
+      address,
+    },
+    amount: {
+      value: `-${tr.fees}`,
+      currency,
+    },
+  });
+
+  return operations;
+};
+
+function expiryEncode(val: BigNumber): ArrayBuffer {
+  let value = BigInteger(val.toString());
+
+  if (value < BigInteger(0)) {
+    throw new Error("Cannot leb encode negative values.");
+  }
+
+  const byteLength =
+    (value === BigInteger(0) ? 0 : Math.ceil(Math.log2(Number(value)))) + 1;
+  const pipe = new PipeArrayBuffer(new ArrayBuffer(byteLength), 0);
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const i = Number(value.and(BigInteger(0x7f)));
+    value = value.divide(BigInteger(0x80));
+    if (value.eq(BigInteger(0))) {
+      pipe.write(new Uint8Array([i]));
+      break;
+    } else {
+      pipe.write(new Uint8Array([i | 0x80]));
+    }
+  }
+
+  return pipe.buffer;
 }
 
-export const toICPTs = (amount: bigint): ICPTs => {
-  const result = new ICPTs();
-  result.setE8s(amount.toString(10));
-  return result;
-};
+export class ingressExpiry {
+  value: BigNumber;
 
-export const subAccountNumbersToSubaccount = (
-  subAccountNumbers: number[]
-): Subaccount => {
-  const bytes = new Uint8Array(subAccountNumbers).buffer;
-  const subaccount: Subaccount = new Subaccount();
-  subaccount.setSubAccount(new Uint8Array(bytes));
-  return subaccount;
-};
-
-export class Expiry {
-  private readonly _value: bigint;
-
-  constructor(deltaInMSec: number, date: Date) {
+  constructor(value: BigNumber) {
     // Use bigint because it can overflow the maximum number allowed in a double float.
-    this._value =
-      (BigInt(date.getTime()) +
-        BigInt(deltaInMSec) -
-        REPLICA_PERMITTED_DRIFT_MILLISECONDS) *
-      NANOSECONDS_PER_MILLISECONDS;
+    this.value = value;
   }
 
   public toCBOR(): cbor.CborValue {
-    return cbor.value.u64(this._value.toString(16), 16);
+    return cbor.value.u64(this.value.toString(16), 16);
   }
 
   public toHash(): ArrayBuffer {
-    return lebEncode(this._value);
+    return expiryEncode(this.value);
   }
 }
+
+export const generateSignaturesPayload = (
+  signs: { txnSig: string; readSig: string },
+  payloads: ConstructionPayloadsResponse["payloads"],
+  pubkey: string
+): ConstructionCombineRequest["signatures"] => {
+  const signatures: ConstructionCombineRequest["signatures"] = [];
+  const [txnPayload, readStatePayload] = payloads;
+  signatures.push({
+    signing_payload: {
+      account_identifier: {
+        address: txnPayload.account_identifier.address,
+      },
+      hex_bytes: txnPayload.hex_bytes,
+      signature_type: txnPayload.signature_type,
+    },
+    public_key: {
+      hex_bytes: pubkey,
+      curve_type: "secp256k1",
+    },
+    signature_type: "ecdsa",
+    hex_bytes: signs.txnSig,
+  });
+
+  signatures.push({
+    signing_payload: {
+      account_identifier: {
+        address: readStatePayload.account_identifier.address,
+      },
+      hex_bytes: readStatePayload.hex_bytes,
+      signature_type: readStatePayload.signature_type,
+    },
+    public_key: {
+      hex_bytes: pubkey,
+      curve_type: "secp256k1",
+    },
+    signature_type: "ecdsa",
+    hex_bytes: signs.readSig,
+  });
+
+  return signatures;
+};

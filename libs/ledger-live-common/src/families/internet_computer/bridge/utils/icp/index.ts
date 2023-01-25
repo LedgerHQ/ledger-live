@@ -1,192 +1,180 @@
-import { mapTransferProtoError } from "@dfinity/nns";
+import Transport from "@ledgerhq/hw-transport";
+import { Account } from "@ledgerhq/types-live";
+import { Transaction } from "../../../types";
+import ICP from "@zondax/ledger-icp";
+import { constructionInvoke, getICPRosettaNetworkIdentifier } from "../network";
 import {
-  CallRequest,
-  Cbor,
-  requestIdOf,
-  SubmitRequestType,
-  SubmitResponse,
-} from "@dfinity/agent";
+  ConstructionCombineRequest,
+  ConstructionCombineResponse,
+  ConstructionHashRequest,
+  ConstructionHashResponse,
+  ConstructionPayloadsRequest,
+  ConstructionPayloadsResponse,
+  ConstructionSubmitRequest,
+  ConstructionSubmitResponse,
+} from "../types";
+import {
+  ingressExpiry,
+  generateOperations,
+  generateSignaturesPayload,
+} from "./utils";
+import { Cbor, requestIdOf } from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
+import { isError } from "../../../utils";
+import BigNumber from "bignumber.js";
 
-import { Memo, Payment, SendRequest } from "@dfinity/nns/dist/proto/ledger_pb";
-import { TransferRequest } from "@dfinity/nns/dist/types/types/ledger_converters";
-import { Expiry, subAccountNumbersToSubaccount, toICPTs } from "./utils";
-import {
-  DEFAULT_INGRESS_EXPIRY_DELTA_IN_MSECS,
-  ICP_FEES,
-  ICP_HOST,
-  ICP_LEDGER_CANISTER_TRANSFER_METHOD,
-  MAINNET_LEDGER_CANISTER_ID,
-} from "../../../consts";
-import { AxiosRequestConfig } from "axios";
-import network from "../../../../../network";
-import { BroadcastResult } from "../types";
-
-export const createTxnRequest = ({
-  to,
-  amount,
-  memo,
-  fee,
-  fromSubAccount,
-}: TransferRequest): SendRequest => {
-  const request = new SendRequest();
-  request.setTo(to.toProto());
-
-  const payment = new Payment();
-  payment.setReceiverGets(toICPTs(amount));
-  request.setPayment(payment);
-
-  request.setMaxFee(toICPTs(fee ?? BigInt(ICP_FEES)));
-
-  // Always explicitly set the memo for compatibility with ledger wallet - hardware wallet
-  const requestMemo: Memo = new Memo();
-  requestMemo.setMemo((memo ?? BigInt(0)).toString());
-  request.setMemo(requestMemo);
-
-  if (fromSubAccount !== undefined) {
-    request.setFromSubaccount(subAccountNumbersToSubaccount(fromSubAccount));
-  }
-
-  return request;
-};
-
-export const createTxnOptions = (
-  requestSerialized: Uint8Array
-): {
-  methodName: string;
-  arg: Uint8Array;
-  effectiveCanisterId: string;
-} => {
-  return {
-    methodName: ICP_LEDGER_CANISTER_TRANSFER_METHOD,
-    arg: requestSerialized,
-    effectiveCanisterId: MAINNET_LEDGER_CANISTER_ID,
-  };
-};
-
-export function generateBlobToSign(
-  options: {
-    methodName: string;
-    arg: ArrayBuffer;
-    effectiveCanisterId?: Principal | string;
-  },
-  principalText: string,
-  date: Date
-): { toSign: ArrayBuffer } {
-  const submit: CallRequest = createSubmitRequest(options, principalText, date);
-
-  const toSign = Cbor.encode({ content: submit });
-  return { toSign };
+if (typeof BigInt === "undefined") {
+  global.BigInt = require("big-integer");
 }
 
-export const createSubmitRequest = (
-  options: {
-    methodName: string;
-    arg: ArrayBuffer;
-    effectiveCanisterId?: Principal | string;
-  },
-  principalText: string,
-  date: Date
-): CallRequest => {
-  const canister = Principal.from(MAINNET_LEDGER_CANISTER_ID);
-  const sender: Principal = Principal.fromText(principalText);
-  const ingress_expiry = new Expiry(
-    DEFAULT_INGRESS_EXPIRY_DELTA_IN_MSECS,
-    date
+export const getUnsignedTransaction = async (
+  transaction: Transaction,
+  account: Account
+): Promise<{
+  unsignedTxn: string;
+  payloads: ConstructionPayloadsResponse["payloads"];
+}> => {
+  const ops = generateOperations(transaction, account);
+  const pubkeys = [
+    {
+      hex_bytes: account.xpub ?? "",
+      curve_type: "secp256k1",
+    },
+  ];
+
+  const reqOpts: ConstructionPayloadsRequest = {
+    ...getICPRosettaNetworkIdentifier(),
+    operations: ops,
+    public_keys: pubkeys,
+    metadata: {
+      memo: parseInt(transaction.memo ?? "0"),
+    },
+  };
+  const { payloads, unsigned_transaction } = await constructionInvoke<
+    ConstructionPayloadsRequest,
+    ConstructionPayloadsResponse
+  >(reqOpts, "payloads");
+
+  return { unsignedTxn: unsigned_transaction, payloads };
+};
+
+export const signICPTransaction = async ({
+  unsignedTxn,
+  transport,
+  path,
+  payloads,
+  pubkey,
+}: {
+  unsignedTxn: string;
+  transport: Transport;
+  path: string;
+  payloads: ConstructionPayloadsResponse["payloads"];
+  pubkey: string;
+}): Promise<{
+  signatures: { txnSig: string; readSig: string };
+  signedTxn: string;
+}> => {
+  const icp = new ICP(transport);
+  const decodedTxn: any = Cbor.decode(Buffer.from(unsignedTxn, "hex"));
+  const txnReqFromCbor = decodedTxn.updates[0][1];
+  const expiry = new ingressExpiry(
+    BigNumber(decodedTxn.ingress_expiries[0].toString())
   );
 
-  return {
-    request_type: SubmitRequestType.Call,
-    canister_id: canister,
-    method_name: options.methodName,
-    arg: options.arg,
-    sender,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    ingress_expiry,
-  };
-};
-
-export const createTransformRequest = (submit: CallRequest) => {
-  return {
-    request: {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/cbor",
-      },
-    },
-    endpoint: "call",
-    body: submit,
-  };
-};
-
-export const submitFinalRequest = async (
-  submit: CallRequest,
-  transformedRequest: any
-): Promise<SubmitResponse> => {
-  const body = Cbor.encode(transformedRequest.body);
-
-  // Run both in parallel. The fetch is quite expensive, so we have plenty of time to
-  // calculate the requestId locally.
-
-  const ecid = Principal.from(MAINNET_LEDGER_CANISTER_ID);
-
-  const requestOptions: AxiosRequestConfig = {
-    url: "" + new URL(`/api/v2/canister/${ecid.toText()}/call`, ICP_HOST),
-    ...transformedRequest.request,
-    data: Buffer.from(body),
+  const submitReq = {
+    request_type: "call",
+    canister_id: Principal.fromUint8Array(txnReqFromCbor.canister_id),
+    method_name: txnReqFromCbor.method_name,
+    arg: txnReqFromCbor.arg,
+    sender: Principal.fromUint8Array(txnReqFromCbor.sender),
+    ingress_expiry: expiry,
   };
 
-  const request = network(requestOptions);
+  const txnBlobToSign = Cbor.encode({
+    content: submitReq,
+  });
 
-  const [response, requestId] = await Promise.all([
-    request,
-    requestIdOf(submit),
-  ]);
+  const signedTxnRes = await icp.sign(path, Buffer.from(txnBlobToSign), 0);
+  isError(signedTxnRes);
 
-  return {
-    requestId,
-    response: {
-      ok: response.statusText === "Accepted",
-      status: response.status,
-      statusText: response.statusText,
+  const requestID = requestIdOf(submitReq);
+
+  const readStateRequest = {
+    request_type: "read_state",
+    paths: [[new TextEncoder().encode("request_status"), requestID]],
+    sender: Principal.fromUint8Array(txnReqFromCbor.sender),
+    ingress_expiry: expiry,
+  };
+  const readBlobToSign = Cbor.encode({
+    content: readStateRequest,
+  });
+
+  const signedReadStateRes = await icp.sign(
+    path,
+    Buffer.from(readBlobToSign),
+    0
+  );
+  isError(signedReadStateRes);
+
+  // eslint-disable-next-line no-console
+  console.log(Buffer.from(txnBlobToSign).toString("hex"));
+
+  const result = {
+    signatures: {
+      readSig: Buffer.from(signedReadStateRes.signatureRS ?? "").toString(
+        "hex"
+      ),
+      txnSig: Buffer.from(signedTxnRes.signatureRS ?? "").toString("hex"),
     },
   };
+
+  const signaturesPayload = generateSignaturesPayload(
+    result.signatures,
+    payloads,
+    pubkey
+  );
+
+  const { signed_transaction: signedTxn } = await constructionInvoke<
+    ConstructionCombineRequest,
+    ConstructionCombineResponse
+  >(
+    {
+      ...getICPRosettaNetworkIdentifier(),
+      signatures: signaturesPayload,
+      unsigned_transaction: unsignedTxn,
+    },
+    "combine"
+  );
+
+  return { ...result, signedTxn };
 };
 
-export const broadcastTxn = async (
-  submit: CallRequest,
-  transformedRequest: any
-): Promise<BroadcastResult> => {
-  try {
-    const canisterId = MAINNET_LEDGER_CANISTER_ID;
-    const methodName = ICP_LEDGER_CANISTER_TRANSFER_METHOD;
+export const getTxnMetadata = async (
+  signedTxn: string
+): Promise<{ hash: string }> => {
+  const {
+    transaction_identifier: { hash },
+  } = await constructionInvoke<
+    ConstructionHashRequest,
+    ConstructionHashResponse
+  >(
+    { ...getICPRosettaNetworkIdentifier(), signed_transaction: signedTxn },
+    "hash"
+  );
 
-    const submitResponse = await submitFinalRequest(submit, transformedRequest);
+  return { hash };
+};
 
-    if (!submitResponse.response.ok) {
-      throw new Error(
-        [
-          "Call failed:",
-          `  Method: ${methodName}`,
-          `  Canister ID: ${canisterId}`,
-          `  Request ID: ${submitResponse.requestId}`,
-          `  HTTP status code: ${submitResponse.response.status}`,
-          `  HTTP status text: ${submitResponse.response.statusText}`,
-        ].join("\n")
-      );
-    }
+export const getTxnExpirationDate = (_unsignedTxn: string): Date => {
+  return new Date();
+};
 
-    return {
-      ...submitResponse,
-      // txnHash: txns.transactions[0].transaction.transaction_identifier.hash,
-      // blockHeight,
-    };
-  } catch (err) {
-    if (err instanceof Error) {
-      throw mapTransferProtoError(err);
-    }
-
-    throw err;
-  }
+export const broadcastTxn = async (signedTxn: string) => {
+  await constructionInvoke<
+    ConstructionSubmitRequest,
+    ConstructionSubmitResponse
+  >(
+    { ...getICPRosettaNetworkIdentifier(), signed_transaction: signedTxn },
+    "submit"
+  );
 };

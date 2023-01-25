@@ -13,7 +13,6 @@ import { getAccountShape } from "./utils/account";
 import BigNumber from "bignumber.js";
 import { getEstimatedFees } from "./utils/token";
 import { getAddress, validateAddress } from "./utils/addresses";
-import { getAccountInfoForPath, getPath } from "../utils";
 import {
   AmountRequired,
   InvalidAddress,
@@ -24,18 +23,15 @@ import {
 import { Observable } from "rxjs";
 import { withDevice } from "../../../hw/deviceAccess";
 import { close } from "../../../hw";
+import { encodeOperationId } from "../../../operation";
 import {
   broadcastTxn,
-  createSubmitRequest,
-  createTransformRequest,
-  createTxnOptions,
-  createTxnRequest,
-  generateBlobToSign,
+  getTxnExpirationDate,
+  getTxnMetadata,
+  getUnsignedTransaction,
+  signICPTransaction,
 } from "./utils/icp";
-import { AccountIdentifier } from "@dfinity/nns";
-import { encodeOperationId } from "../../../operation";
-import { LedgerIdentity } from "./utils/icp/identity";
-import { Secp256k1PublicKey } from "./utils/icp/secp256k1";
+import { getPath } from "../utils";
 
 const sync = makeSync({ getAccountShape });
 
@@ -69,8 +65,8 @@ const prepareTransaction = async (
     // log("debug", "[prepareTransaction] fetching estimated fees");
 
     if (
-      validateAddress(recipient).isValid &&
-      validateAddress(address).isValid
+      (await validateAddress(recipient)).isValid &&
+      (await validateAddress(address)).isValid
     ) {
       if (t.useAllAmount) {
         t.amount = a.spendableBalance.minus(t.fees);
@@ -95,12 +91,13 @@ const getTransactionStatus = async (
   let { amount } = t;
 
   if (!recipient) errors.recipient = new RecipientRequired();
-  else if (!validateAddress(recipient).isValid)
+  else if (!(await validateAddress(recipient)).isValid)
     errors.recipient = new InvalidAddress();
   else if (recipient.toLowerCase() === address.toLowerCase())
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
 
-  if (!validateAddress(address).isValid) errors.sender = new InvalidAddress();
+  if (!(await validateAddress(address)).isValid)
+    errors.sender = new InvalidAddress();
 
   // This is the worst case scenario (the tx won't cost more than this value)
   const estimatedFees = t.fees;
@@ -165,68 +162,40 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
 
           const { recipient, useAllAmount } = transaction;
           let { amount } = transaction;
-          const { id: accountId, balance } = account;
+          const { id: accountId, balance, xpub } = account;
           const { address, derivationPath } = getAddress(account);
+          const fee = transaction.fees;
+          if (useAllAmount) amount = balance.minus(fee);
+
+          transaction = { ...transaction, amount };
 
           try {
-            const accountInfo = await getAccountInfoForPath(
-              getPath(derivationPath),
-              transport
-            );
-            if (!accountInfo.principalText || !accountInfo.publicKey) {
-              throw Error("Failed to get accountInfo from device");
-            }
-
-            const now = new Date();
-
-            const identity = new LedgerIdentity(
-              accountInfo.principalText,
-              getPath(derivationPath),
-              accountInfo.publicKey,
-              transport
+            const { unsignedTxn, payloads } = await getUnsignedTransaction(
+              transaction,
+              account
             );
 
-            const request = await createTxnRequest({
-              to: AccountIdentifier.fromHex(transaction.recipient),
-              amount: BigInt(transaction.amount.toString()),
-              memo: BigInt(transaction.memo ?? 0),
-            });
-            const requestSerialized = request.serializeBinary();
             o.next({
               type: "device-signature-requested",
             });
 
-            const fee = transaction.fees;
-            if (useAllAmount) amount = balance.minus(fee);
+            const { signatures, signedTxn } = await signICPTransaction({
+              unsignedTxn,
+              transport,
+              path: getPath(derivationPath),
+              payloads,
+              pubkey: xpub ?? "",
+            });
 
-            transaction = { ...transaction, amount };
-
-            // get blob to sign
-            const { toSign } = generateBlobToSign(
-              createTxnOptions(requestSerialized),
-              accountInfo.principalText,
-              now
-            );
-
-            const signature = await identity.sign(toSign);
-            const signatureString = Buffer.from(signature).toString("hex");
-
-            // Serialize tx
-
-            // log(
-            //   "debug",
-            //   `[signOperation] serialized request: [${Buffer.from(
-            //     request.serializeBinary()
-            //   ).toString()}]`
-            // );
+            const { hash } = await getTxnMetadata(signedTxn);
 
             o.next({
               type: "device-signature-granted",
             });
 
             const operation: Operation = {
-              id: encodeOperationId(accountId, "", "OUT"),
-              hash: "",
+              id: encodeOperationId(accountId, hash, "OUT"),
+              hash,
               type: "OUT",
               senders: [address],
               recipients: [recipient],
@@ -235,13 +204,10 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
               fee,
               blockHash: null,
               blockHeight: null,
-              date: now,
+              date: new Date(),
               extra: {
                 memo: transaction.memo,
-                request: Buffer.from(requestSerialized).toString("hex"),
-                pubkey: accountInfo.publicKey.toString("hex"),
-                principalText: accountInfo.principalText,
-                deviceId,
+                signedTxn,
               },
             };
 
@@ -249,8 +215,8 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
               type: "signed",
               signedOperation: {
                 operation,
-                signature: signatureString,
-                expirationDate: null,
+                signature: signatures.txnSig,
+                expirationDate: getTxnExpirationDate(unsignedTxn),
               },
             });
           } finally {
@@ -270,34 +236,11 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
 const receive = makeAccountBridgeReceive();
 
 const broadcast: BroadcastFnSignature = async ({
-  signedOperation: { operation, signature },
+  signedOperation: { operation },
 }) => {
   // log("debug", "[broadcast] start fn");
 
-  const txSerialized = Buffer.from(operation.extra.request, "hex");
-  const signatureBuf = Buffer.from(signature, "hex");
-  const pubkeyBuf = Buffer.from(operation.extra.pubkey, "hex");
-
-  const options = createTxnOptions(txSerialized);
-  const submit = createSubmitRequest(
-    options,
-    operation.extra.principalText,
-    new Date(operation.date)
-  );
-  const transformedRequest = createTransformRequest(submit);
-  const { body, ...fields } = transformedRequest;
-  const pubKey = Secp256k1PublicKey.fromRaw(pubkeyBuf);
-
-  const transformedRequestFinal = {
-    ...fields,
-    body: {
-      content: body,
-      sender_pubkey: pubKey.toDer(),
-      sender_sig: signatureBuf,
-    },
-  };
-
-  await broadcastTxn(submit, transformedRequestFinal);
+  await broadcastTxn(operation.extra.signedTxn);
 
   const result = { ...operation };
 
