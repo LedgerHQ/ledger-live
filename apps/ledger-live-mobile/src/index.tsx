@@ -1,6 +1,6 @@
 // Always import startupTime first
+//import "./startupTime";
 import "./polyfill";
-import "./startupTime";
 import "./live-common-setup";
 import "../e2e/e2e-bridge-setup";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -109,6 +109,7 @@ import { isAcceptedTerms } from "./logic/terms";
 import type { Writeable } from "./types/helpers";
 import HookDynamicContentCards from "./dynamicContent/useContentCards";
 import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
+import { StartupTime } from "./startupTime";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -220,9 +221,9 @@ function App({ importDataString }: AppProps) {
     <GestureHandlerRootView style={styles.root}>
       <SyncNewAccounts priority={5} />
       <ExperimentalHeader />
-
-      <RootNavigator importDataString={importDataString} />
-
+      <StartupTime>
+        <RootNavigator importDataString={importDataString} />
+      </StartupTime>
       <AnalyticsConsole />
       <DebugTheme />
       <Modals />
