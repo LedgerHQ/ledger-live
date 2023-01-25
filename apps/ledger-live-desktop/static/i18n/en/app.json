@@ -2269,6 +2269,12 @@
     "switchButton": "Switch to {{language}}",
     "no": "I prefer not to"
   },
+  "deviceRename": {
+    "title": "Rename {{ productName }}",
+    "chooseName": "Choose a name",
+    "placeholder": "Tony's Stax",
+    "renamed": "{{ productName }} name changed to “{{ name }}” "
+  },
   "deviceLocalization": {
     "language": "Language",
     "deviceLanguage": "Language",

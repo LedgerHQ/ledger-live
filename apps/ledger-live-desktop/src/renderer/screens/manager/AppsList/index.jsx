@@ -78,6 +78,10 @@ const AppsList = ({
   appsToRestore,
   device,
 }: Props) => {
+  const { deviceName } = result;
+  useEffect(() => {
+    console.log("wadus", { deviceName });
+  }, [deviceName, result]);
   const [state, dispatch] = useAppsRunner(result, exec, appsToRestore);
   const optimisticState = useMemo(() => predictOptimisticState(state), [state]);
 
@@ -175,6 +179,7 @@ const AppsList = ({
           onRefreshDeviceInfo={onRefreshDeviceInfo}
           deviceInfo={deviceInfo}
           device={device}
+          deviceName={deviceName}
           isIncomplete={isIncomplete}
           firmware={firmware}
         />
