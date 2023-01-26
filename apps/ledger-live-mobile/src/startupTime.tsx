@@ -4,22 +4,27 @@ import { View } from "react-native";
 
 export let appStartupTime: number;
 export let appFirstRenderTime: number;
-export let appStartedMark: Date;
 
-getTimeSinceStartup().then(time => {
-  appStartupTime = time;
-  appStartedMark = new Date();
-  if (__DEV__) {
-    // eslint-disable-next-line no-console
-    console.log(`Time since startup: ${time} ms`);
-  }
-});
+// getTimeSinceStartup().then(time => {
+//   appStartupTime = time;
+//   if (__DEV__) {
+//     // eslint-disable-next-line no-console
+//     console.log(`Time since startup: ${time} ms`);
+//   }
+// });
 
 export const StartupTime = ({ children }: { children: React.ReactNode }) => {
   const [layoutComplete, setLayoutComplete] = React.useState(false);
   const onLayout = React.useCallback(() => {
     if (!layoutComplete) {
-      appFirstRenderTime = new Date().getTime() - appStartedMark.getTime();
+      getTimeSinceStartup().then(time => {
+        appStartupTime = time;
+        if (__DEV__) {
+          // eslint-disable-next-line no-console
+          console.log(`Time since startup: ${time} ms`);
+        }
+      });
+      setLayoutComplete(true);
       if (__DEV__) {
         // eslint-disable-next-line no-console
         console.log(
@@ -27,7 +32,6 @@ export const StartupTime = ({ children }: { children: React.ReactNode }) => {
         );
       }
     }
-    setLayoutComplete(true);
   }, [layoutComplete]);
   return (
     <View style={{ flex: 1 }} onLayout={onLayout}>

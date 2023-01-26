@@ -1,5 +1,4 @@
 // Always import startupTime first
-//import "./startupTime";
 //import "./polyfill";
 import "./live-common-setup";
 import "../e2e/e2e-bridge-setup";
