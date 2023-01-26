@@ -21,7 +21,7 @@ export const urls = {
 
   social: {
     twitter: "https://twitter.com/Ledger",
-    github: "https://github.com/LedgerHQ/ledger-live-desktop",
+    github: "https://github.com/LedgerHQ/ledger-live",
     reddit: "https://www.reddit.com/r/ledgerwallet/",
     facebook: "https://www.facebook.com/Ledger/",
   },
@@ -153,7 +153,7 @@ export const urls = {
   coinControl:
     "https://support.ledger.com/hc/en-us/articles/360015996580?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=send_coincontrol",
   githubIssues:
-    "https://github.com/LedgerHQ/ledger-live-desktop/issues?q=is%3Aissue+is%3Aopen+label%3Abug+sort%3Acomments-desc",
+    "https://github.com/LedgerHQ/ledger-live/issues?q=is%3Aissue+is%3Aopen+label%3Abug+sort%3Acomments-desc",
   multipleDestinationAddresses:
     "https://support.ledger.com/hc/en-us/articles/360033802154-Change-addresses?support=true",
   updateDeviceFirmware: {
