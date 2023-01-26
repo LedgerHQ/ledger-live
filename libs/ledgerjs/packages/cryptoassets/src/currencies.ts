@@ -1391,30 +1391,6 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     ],
     explorerViews: [],
   },
-  icp: {
-    type: "CryptoCurrency",
-    id: "icp",
-    coinType: 223,
-    family: "icp",
-    ticker: "ICP",
-    scheme: "icp",
-    color: "#000",
-    managerAppName: "InternetComputer",
-    name: "Internet Computer (ICP)",
-    units: [
-      {
-        name: "ICP",
-        code: "ICP",
-        magnitude: 8,
-      },
-    ],
-    explorerViews: [
-      {
-        address: "https://dashboard.internetcomputer.org/account/$address",
-        tx: "https://dashboard.internetcomputer.org/transaction/$hash",
-      },
-    ],
-  },
   iota: {
     type: "CryptoCurrency",
     id: "iota",

@@ -9,6 +9,7 @@ import ethereum from "../families/ethereum/specs";
 import evm from "../families/evm/specs";
 import filecoin from "../families/filecoin/specs";
 import hedera from "../families/hedera/specs";
+import internet_computer from "../families/internet_computer/specs";
 import near from "../families/near/specs";
 import osmosis from "../families/osmosis/specs";
 import polkadot from "../families/polkadot/specs";
@@ -30,6 +31,7 @@ export default {
   evm,
   filecoin,
   hedera,
+  internet_computer,
   near,
   osmosis,
   polkadot,
