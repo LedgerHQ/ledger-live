@@ -1,6 +1,6 @@
 {
   "engines": {
-    "node": ">=12"
+    "node": ">=18"
   },
   "name": "ledger-live-desktop",
   "productName": "Ledger Live",

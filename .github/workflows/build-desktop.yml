@@ -130,7 +130,7 @@ jobs:
           dest: ${{ runner.temp }}/setup-pnpm
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 18.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - name: TurboRepo local caching server
@@ -179,7 +179,7 @@ jobs:
           dest: ${{ runner.temp }}/setup-pnpm
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 18.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - name: TurboRepo local caching server
@@ -267,7 +267,7 @@ jobs:
           dest: ${{ runner.temp }}/setup-pnpm
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 18.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - name: TurboRepo local caching server

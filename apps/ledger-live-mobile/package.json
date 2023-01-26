@@ -1,6 +1,6 @@
 {
   "engines": {
-    "node": ">=14"
+    "node": ">=18"
   },
   "name": "live-mobile",
   "version": "3.13.1",
