@@ -6,6 +6,7 @@ import { connect, useDispatch, useSelector } from "react-redux";
 import { withTranslation } from "react-i18next";
 import type { TFunction } from "react-i18next";
 import { Redirect } from "react-router";
+import { useHistory, useLocation } from "react-router-dom";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { findCompoundToken } from "@ledgerhq/live-common/currencies/index";
@@ -40,6 +41,7 @@ import TokensList from "./TokensList";
 import CompoundBodyHeader from "~/renderer/screens/lend/Account/AccountBodyHeader";
 import useCompoundAccountEnabled from "~/renderer/screens/lend/useCompoundAccountEnabled";
 import { getBannerProps, AccountBanner } from "./AccountBanner";
+import perFamilyManageActions from "~/renderer/generated/AccountHeaderManageActions";
 
 const mapStateToProps = (
   state,
@@ -90,12 +92,30 @@ const AccountPage = ({
     ? perFamilyAccountSubHeader[mainAccount.currency.family]
     : null;
   const bgColor = useTheme("colors.palette.background.paper");
+  const { state } = useLocation();
+  const history = useHistory();
 
   const isCompoundEnabled = useCompoundAccountEnabled(account, parentAccount);
 
   const [banner, setBanner] = useState({});
 
+  const manage = perFamilyManageActions[mainAccount.currency.family];
+  let manageList = [];
+  if (manage) {
+    const familyManageActions = manage({ account, parentAccount });
+    manageList = familyManageActions && familyManageActions.length > 0 ? familyManageActions : [];
+  }
+
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const stakeAction = manageList && manageList.find(item => item.key === "Stake");
+
+    if (stakeAction && state?.startStake) {
+      history.replace();
+      stakeAction.onClick();
+    }
+  }, [state]);
 
   useEffect(() => {
     if (mainAccount) {
