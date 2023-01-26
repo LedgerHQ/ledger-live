@@ -69,7 +69,6 @@ import type {
   SettingsSetOverriddenFeatureFlagsPlayload,
   SettingsSetFeatureFlagsBannerVisiblePayload,
   DangerouslyOverrideStatePayload,
-  SettingsUpdateMainNavigatorVisibility,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -165,7 +164,6 @@ export const INITIAL_STATE: SettingsState = {
   displayStatusCenter: false,
   overriddenFeatureFlags: {},
   featureFlagsBannerVisible: false,
-  isMainNavigatorVisible: true,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -595,13 +593,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       .payload.displayStatusCenter,
   }),
 
-  [SettingsActionTypes.UPDATE_MAIN_NAVIGATOR_VISIBILITY]: (state, action) => ({
-    ...state,
-    isMainNavigatorVisible: (
-      action as Action<SettingsUpdateMainNavigatorVisibility>
-    ).payload.isMainNavigatorVisible,
-  }),
-
   [SettingsActionTypes.SET_OVERRIDDEN_FEATURE_FLAG]: (state, action) => {
     const {
       payload: { id, value },
@@ -859,5 +850,3 @@ export const overriddenFeatureFlagsSelector = (state: State) =>
   state.settings.overriddenFeatureFlags;
 export const featureFlagsBannerVisibleSelector = (state: State) =>
   state.settings.featureFlagsBannerVisible;
-export const isMainNavigatorVisibleSelector = (state: State) =>
-  state.settings.isMainNavigatorVisible;

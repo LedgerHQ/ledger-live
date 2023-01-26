@@ -17,7 +17,6 @@ import MarketNavigator from "./MarketNavigator";
 import PortfolioNavigator from "./PortfolioNavigator";
 import {
   hasOrderedNanoSelector,
-  isMainNavigatorVisibleSelector,
   readOnlyModeEnabledSelector,
 } from "../../reducers/settings";
 import ManagerNavigator, { ManagerTabIcon } from "./ManagerNavigator";
@@ -26,6 +25,7 @@ import customTabBar from "../TabBar/CustomTabBar";
 import { StackNavigatorProps } from "./types/helpers";
 import { MainNavigatorParamList } from "./types/MainNavigator";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
+import { isMainNavigatorVisibleSelector } from "../../reducers/appstate";
 
 const Tab = createBottomTabNavigator<MainNavigatorParamList>();
 

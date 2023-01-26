@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { Box } from "@ledgerhq/native-ui";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { orderByLastReceived } from "@ledgerhq/live-common/nft/helpers";
 import { decodeNftId } from "@ledgerhq/live-common/nft/nftId";
 import { useTheme } from "styled-components/native";
@@ -9,10 +9,8 @@ import { accountsSelector } from "../../../reducers/accounts";
 import NftGalleryEmptyState from "../NftGallery/NftGalleryEmptyState";
 import CollapsibleHeaderScrollView from "../../../components/WalletTab/CollapsibleHeaderScrollView";
 import { hiddenNftCollectionsSelector } from "../../../reducers/settings";
-import { updateMainNavigatorVisibility } from "../../../actions/settings";
 
 const WalletNftGallery = () => {
-  const dispatch = useDispatch();
   const accounts = useSelector(accountsSelector);
   const nfts = accounts.map(a => a.nfts ?? []).flat();
   const { space } = useTheme();
@@ -29,10 +27,6 @@ const WalletNftGallery = () => {
   }, [accounts, hiddenNftCollections, nfts]);
 
   const hasNFTs = nftsOrdered.length > 0;
-
-  useEffect(() => {
-    dispatch(updateMainNavigatorVisibility(true));
-  }, [dispatch]);
 
   return (
     <>

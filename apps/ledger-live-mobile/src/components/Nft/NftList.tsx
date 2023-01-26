@@ -202,7 +202,7 @@ const StyledButton = styled(Button)`
 
 const ButtonsContainer = styled(Flex)`
   position: absolute;
-  bottom: 0;
+  bottom: 15px;
   z-index: 5;
   padding: 0 ${props => props.theme.space[6]}px;
 `;

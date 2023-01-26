@@ -84,6 +84,7 @@ export enum AppStateActionTypes {
   DEQUEUE_BACKGROUND_EVENT = "DEQUEUE_BACKGROUND_EVENT",
   CLEAR_BACKGROUND_EVENTS = "CLEAR_BACKGROUND_EVENTS",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
+  UPDATE_MAIN_NAVIGATOR_VISIBILITY = "UPDATE_MAIN_NAVIGATOR_VISIBILITY",
 }
 
 export type AppStateIsConnectedPayload = Pick<AppState, "isConnected">;
@@ -95,11 +96,17 @@ export type AppStateSetModalLockPayload = Pick<AppState, "modalLock">;
 export type AppStateAddBackgroundEventPayload = {
   event: FwUpdateBackgroundEvent;
 };
+
+export type AppStateUpdateMainNavigatorVisibilityPayload = Pick<
+  AppState,
+  "isMainNavigatorVisible"
+>;
 export type AppStatePayload =
   | AppStateIsConnectedPayload
   | AppStateSetHasConnectedDevicePayload
   | AppStateSetModalLockPayload
-  | AppStateAddBackgroundEventPayload;
+  | AppStateAddBackgroundEventPayload
+  | AppStateUpdateMainNavigatorVisibilityPayload;
 
 // === BLE ACTIONS ===
 
@@ -300,7 +307,6 @@ export enum SettingsActionTypes {
   SET_OVERRIDDEN_FEATURE_FLAG = "SET_OVERRIDDEN_FEATURE_FLAG",
   SET_OVERRIDDEN_FEATURE_FLAGS = "SET_OVERRIDDEN_FEATURE_FLAGS",
   SET_FEATURE_FLAGS_BANNER_VISIBLE = "SET_FEATURE_FLAGS_BANNER_VISIBLE",
-  UPDATE_MAIN_NAVIGATOR_VISIBILITY = "UPDATE_MAIN_NAVIGATOR_VISIBILITY",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -452,10 +458,6 @@ export type SettingsSetStatusCenterPayload = Pick<
   "displayStatusCenter"
 >;
 export type SettingsDangerouslyOverrideStatePayload = State;
-export type SettingsUpdateMainNavigatorVisibility = Pick<
-  SettingsState,
-  "isMainNavigatorVisible"
->;
 export type DangerouslyOverrideStatePayload = Partial<State>;
 export type SettingsSetOverriddenFeatureFlagPlayload = {
   id: FeatureId;

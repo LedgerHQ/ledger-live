@@ -7,12 +7,10 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { BackHandler } from "react-native";
-import {
-  hideNftCollection,
-  updateMainNavigatorVisibility,
-} from "../../actions/settings";
+import { hideNftCollection } from "../../actions/settings";
 import { track } from "../../analytics";
 import { NavigatorName, ScreenName } from "../../const";
+import { updateMainNavigatorVisibility } from "../../actions/appstate";
 
 const TOAST_ID = "SUCCESS_HIDE";
 
@@ -65,6 +63,7 @@ export function useNftList() {
       const { accountId } = decodeNftId(nft.id ?? "");
       dispatch(hideNftCollection(`${accountId}|${nft.contract}`));
     });
+
     pushToast({
       id: `${TOAST_ID}-${uuid()}`,
       type: "success",
