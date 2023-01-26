@@ -11,6 +11,7 @@ import { track, page } from "~/renderer/analytics/segment";
 type Props = {
   account?: Account;
   parentAccount?: Account | null;
+  currencies?: string[];
 };
 
 type CurrencyTypes = keyof typeof perFamilyManageActions;
@@ -41,25 +42,27 @@ const useStakeFlow = (props: Props) => {
     }
   }, [account.id, action, history]);
 
-  const getStakeDrawer = () => {
+  const getStakeDrawer = currencies => {
     page("Stake", "Drawer - Choose Asset", {
-      page: history.location.pathname,
       ...stakeDefaultTrack,
+      page: history.location.pathname,
+      type: "drawer",
     });
     setDrawer(
       SelectAccountAndCurrencyDrawer,
       {
-        currencies: listFlag || [],
+        currencies: currencies || listFlag || [],
         onAccountSelected: (account: Account, parentAccount: Account | null = null) => {
           setDrawer();
           setAccountSelection({ account, parentAccount });
           track("button_clicked", {
+            ...stakeDefaultTrack,
             button: "asset",
             page: history.location.pathname,
             currency: account?.currency?.family,
             account,
             parentAccount,
-            ...stakeDefaultTrack,
+            drawer: "Select Account And Currency Drawer",
           });
         },
       },
@@ -67,12 +70,12 @@ const useStakeFlow = (props: Props) => {
         onRequestClose: () => {
           setDrawer();
           track("button_clicked", {
+            ...stakeDefaultTrack,
             button: "close",
             page: history.location.pathname,
             currency: account?.currency?.family,
             account,
             parentAccount,
-            ...stakeDefaultTrack,
           });
         },
       },
@@ -80,10 +83,11 @@ const useStakeFlow = (props: Props) => {
   };
 
   const getStakeFlow = () => {
-    if (props.account && props.parentAccount) {
-      setAccountSelection(props);
+    const { account, parentAccount, currencies } = props || {};
+    if (account && parentAccount) {
+      setAccountSelection({ account, parentAccount });
     } else if (stakeProgramsEnabled) {
-      getStakeDrawer();
+      getStakeDrawer(currencies);
     }
   };
 

@@ -18,6 +18,7 @@ import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCat
 import { getAllSupportedCryptoCurrencyTickers } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import Image from "~/renderer/components/Image";
 import NoResultsFound from "~/renderer/images/no-results-found.png";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 export const TableCellBase = styled(Flex).attrs({
   alignItems: "center",
@@ -219,6 +220,10 @@ const CurrencyRow = memo(function CurrencyRowItem({
   const isStarred = currency && starredMarketCoins.includes(currency.id);
   const availableOnBuy = currency && onRampAvailableTickers.includes(currency.ticker.toUpperCase());
   const availableOnSwap = internalCurrency && swapAvailableIds.includes(internalCurrency.id);
+  const stakeProgramsFeatureFlag = useFeature("stakePrograms");
+  const { params: paramsFlag, enabled: stakeProgramsEnabled } = stakeProgramsFeatureFlag || {};
+  const { list: listFlag } = paramsFlag || {};
+  const availableOnStake = stakeProgramsEnabled && listFlag.includes(currency?.id || "");
   return (
     <MarketRowItem
       loading={!currency || (index === data.length && index > 50 && loading)}
@@ -231,6 +236,7 @@ const CurrencyRow = memo(function CurrencyRowItem({
       selectCurrency={selectCurrency}
       availableOnBuy={availableOnBuy}
       availableOnSwap={availableOnSwap}
+      availableOnStake={availableOnStake}
       range={range}
       style={{ ...style }}
     />
