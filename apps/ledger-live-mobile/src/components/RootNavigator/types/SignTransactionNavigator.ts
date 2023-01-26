@@ -56,13 +56,11 @@ export type SignTransactionNavigatorParamList = {
       | ScreenName.LendingSupplySummary
       | ScreenName.SignTransactionSummary
       | ScreenName.LendingEnableSummary
-      | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
       | ScreenName.LendingWithdrawSelectDevice
       | ScreenName.LendingSupplySelectDevice
-      | ScreenName.SignTransactionSelectDevice
       | ScreenName.LendingEnableSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
