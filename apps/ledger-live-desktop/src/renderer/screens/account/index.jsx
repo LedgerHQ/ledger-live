@@ -109,13 +109,15 @@ const AccountPage = ({
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const stakeAction = manageList && manageList.find(item => item.key === "Stake");
+    const stakeAction = manageList.find(item => item.key === "Stake");
 
     if (stakeAction && state?.startStake) {
       history.replace();
       stakeAction.onClick();
     }
-  }, [state]);
+    // ignoring manageList from dependency array
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state, manageList]);
 
   useEffect(() => {
     if (mainAccount) {
