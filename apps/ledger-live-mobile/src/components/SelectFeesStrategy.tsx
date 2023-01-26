@@ -165,7 +165,7 @@ export default function SelectFeesStrategy({
         <NetworkFeeInfo />
       </QueuedDrawer>
 
-      <View>
+      <View style={styles.strategiesContainer}>
         <SectionSeparator lineColor={colors.lightFog} />
         <SummaryRow
           onPress={toggleNetworkFeeHelpModal}
