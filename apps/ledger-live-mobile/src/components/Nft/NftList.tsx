@@ -65,13 +65,13 @@ export function NftList({ data }: Props) {
   const dataWithAdd = data.concat(ADD_NEW);
   const {
     t,
-    multiSelectModeAction,
+    triggerMultiSelectMode,
     navigateToNftViewer,
     onClickHide,
-    readOnlyModeAction,
-    updateListSelect,
+    exitMultiSelectMode,
+    handleSelectableNftPressed,
     nftsToHide,
-    onMultiSelectMode,
+    multiSelectModeEnabled,
   } = useNftList();
 
   const renderItem = useCallback(
@@ -86,31 +86,31 @@ export function NftList({ data }: Props) {
         testID={"wallet-nft-gallery-list-item"}
       >
         {item.id === ADD_NEW.id ? (
-          <>{!onMultiSelectMode && <AddNewItem />}</>
+          <>{!multiSelectModeEnabled && <AddNewItem />}</>
         ) : (
           <NftListItem
             nft={item}
             onPress={() =>
-              onMultiSelectMode
-                ? updateListSelect(item)
+              multiSelectModeEnabled
+                ? handleSelectableNftPressed(item)
                 : navigateToNftViewer(item)
             }
             onLongPress={() => {
-              multiSelectModeAction();
-              updateListSelect(item);
+              triggerMultiSelectMode();
+              handleSelectableNftPressed(item);
             }}
-            selectable={onMultiSelectMode}
+            selectable={multiSelectModeEnabled}
             isSelected={nftsToHide.includes(item)}
           />
         )}
       </Flex>
     ),
     [
-      multiSelectModeAction,
+      triggerMultiSelectMode,
       navigateToNftViewer,
       nftsToHide,
-      onMultiSelectMode,
-      updateListSelect,
+      multiSelectModeEnabled,
+      handleSelectableNftPressed,
     ],
   );
 
@@ -123,7 +123,7 @@ export function NftList({ data }: Props) {
         numColumns={2}
         ListHeaderComponent={
           <Animated.View>
-            {!onMultiSelectMode && (
+            {!multiSelectModeEnabled && (
               <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
                 <Flex
                   width="100%"
@@ -132,7 +132,7 @@ export function NftList({ data }: Props) {
                   justifyContent="flex-start"
                 >
                   <StyledButton
-                    onPress={multiSelectModeAction}
+                    onPress={triggerMultiSelectMode}
                     type="default"
                     iconName="Tasks"
                     iconPosition="left"
@@ -148,7 +148,7 @@ export function NftList({ data }: Props) {
           </Animated.View>
         }
         ListHeaderComponentStyle={{
-          marginBottom: onMultiSelectMode ? 0 : space[6],
+          marginBottom: multiSelectModeEnabled ? 0 : space[6],
         }}
         data={dataWithAdd}
         renderItem={renderItem}
@@ -160,7 +160,7 @@ export function NftList({ data }: Props) {
         testID={"wallet-nft-gallery-list"}
       />
       <Animated.View>
-        {onMultiSelectMode && (
+        {multiSelectModeEnabled && (
           <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
             <BackgroundGradient {...gradients[0]} />
 
@@ -179,7 +179,7 @@ export function NftList({ data }: Props) {
                 })}
               </StyledButton>
               <StyledButton
-                onPress={readOnlyModeAction}
+                onPress={exitMultiSelectMode}
                 type="default"
                 iconPosition="left"
                 size="large"
@@ -202,7 +202,7 @@ const StyledButton = styled(Button)`
 
 const ButtonsContainer = styled(Flex)`
   position: absolute;
-  bottom: 20px;
+  bottom: 0;
   z-index: 5;
-  padding: 0 18px;
+  padding: 0 ${props => props.theme.space[6]}px;
 `;

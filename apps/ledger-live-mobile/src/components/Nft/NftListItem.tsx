@@ -21,7 +21,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import CurrencyIcon from "../CurrencyIcon";
 import NftMedia from "./NftMedia";
 import Skeleton from "../Skeleton";
-import { SelectNft } from "./SelectNft";
+import { NftSelectionCheckbox } from "./NftSelectionCheckbox";
 
 type Props = {
   nft: ProtoNFT;
@@ -172,12 +172,6 @@ const NftListItem = ({
     }
   }, [onPress, metadata, nft]);
 
-  const handleLongPress = useCallback(() => {
-    if (onLongPress) {
-      onLongPress();
-    }
-  }, [onLongPress]);
-
   return (
     <NftCardMemo
       nft={nft}
@@ -186,7 +180,7 @@ const NftListItem = ({
       collectionStatus={collectionStatus}
       collectionMetadata={collectionMetadata}
       onPress={handlePress}
-      onLongPress={handleLongPress}
+      onLongPress={onLongPress}
       selectable={selectable}
       isSelected={isSelected}
     />
@@ -210,18 +204,21 @@ const NftMediaComponent = ({
   isSelected,
 }: NftMediaProps & SelectionProps) => {
   const { t } = useTranslation();
-  if (nftAmount && nftAmount.gt(1)) {
-    return (
-      <Box position="relative">
-        <NftMedia
-          style={[
-            styles.image,
-            { opacity: isSelected ? 0.2 : selectable ? 0.8 : 1 },
-          ]}
-          metadata={metadata}
-          mediaFormat="preview"
-          status={status}
-        />
+
+  return (
+    <Box>
+      <NftMedia
+        style={[
+          styles.image,
+          {
+            opacity: isSelected ? 0.3 : selectable ? 0.7 : 1,
+          },
+        ]}
+        status={status}
+        metadata={metadata}
+        mediaFormat="preview"
+      />
+      {nftAmount && nftAmount.gt(1) ? (
         <Tag
           position="absolute"
           top="10px"
@@ -232,44 +229,14 @@ const NftMediaComponent = ({
         >
           {t("wallet.nftGallery.media.tag", { count: nftAmount.toNumber() })}
         </Tag>
+      ) : null}
 
-        {selectable && (
-          <Flex position="absolute" bottom={"20px"} left={"10px"}>
-            <SelectNft isSelected={isSelected} />
-          </Flex>
-        )}
-      </Box>
-    );
-  }
-
-  if (selectable) {
-    return (
-      <Box position="relative">
-        <NftMedia
-          style={[
-            styles.image,
-            {
-              opacity: isSelected ? 0.3 : selectable ? 0.7 : 1,
-            },
-          ]}
-          metadata={metadata}
-          mediaFormat="preview"
-          status={status}
-        />
+      {selectable && (
         <Flex position="absolute" bottom={"20px"} left={"10px"}>
-          <SelectNft isSelected={isSelected} />
+          <NftSelectionCheckbox isSelected={isSelected} />
         </Flex>
-      </Box>
-    );
-  }
-
-  return (
-    <NftMedia
-      style={styles.image}
-      metadata={metadata}
-      mediaFormat="preview"
-      status={status}
-    />
+      )}
+    </Box>
   );
 };
 

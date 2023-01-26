@@ -28,7 +28,7 @@ type Props = {
   isSelected: boolean;
 };
 
-export const SelectNft = ({ isSelected }: Props) => {
+export const NftSelectionCheckbox = ({ isSelected }: Props) => {
   const { colors } = useTheme();
 
   if (isSelected) {

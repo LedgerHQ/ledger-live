@@ -6,6 +6,7 @@ import { v4 as uuid } from "uuid";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
+import { BackHandler } from "react-native";
 import {
   hideNftCollection,
   updateMainNavigatorVisibility,
@@ -22,13 +23,13 @@ export function useNftList() {
   const { pushToast } = useToasts();
   const navigation = useNavigation();
 
-  const [onMultiSelectMode, setMultiSelectMode] = useState<boolean>(false);
+  const [multiSelectModeEnabled, setMultiSelectMode] = useState<boolean>(false);
 
   const [nftsToHide, setNftsToHide] = useState<ProtoNFT[]>([]);
 
   // Multi Select ------------------------
 
-  const readOnlyModeAction = useCallback(() => {
+  const exitMultiSelectMode = useCallback(() => {
     setNftsToHide([]);
     setMultiSelectMode(false);
     dispatch(updateMainNavigatorVisibility(true));
@@ -37,9 +38,26 @@ export function useNftList() {
   // Detect change of screen
   useEffect(() => {
     if (!isFocused) {
-      readOnlyModeAction();
+      exitMultiSelectMode();
     }
-  }, [readOnlyModeAction, isFocused]);
+
+    return () => {
+      exitMultiSelectMode();
+    };
+  }, [exitMultiSelectMode, isFocused, dispatch]);
+
+  const handleBackPress = useCallback(() => {
+    exitMultiSelectMode();
+    return true;
+  }, [exitMultiSelectMode]);
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      handleBackPress,
+    );
+    return () => backHandler.remove();
+  }, [handleBackPress]);
 
   const onClickHide = useCallback(() => {
     nftsToHide.forEach(nft => {
@@ -55,16 +73,16 @@ export function useNftList() {
       }),
     });
 
-    readOnlyModeAction();
-  }, [readOnlyModeAction, dispatch, nftsToHide, pushToast, t]);
+    exitMultiSelectMode();
+  }, [exitMultiSelectMode, dispatch, nftsToHide, pushToast, t]);
 
-  const multiSelectModeAction = useCallback(() => {
+  const triggerMultiSelectMode = useCallback(() => {
     setNftsToHide([]);
     setMultiSelectMode(true);
     dispatch(updateMainNavigatorVisibility(false));
   }, [dispatch]);
 
-  const updateListSelect = useCallback(
+  const handleSelectableNftPressed = useCallback(
     (item: ProtoNFT) => {
       if (nftsToHide.includes(item)) {
         setNftsToHide(nftsToHide.filter(e => e.id !== item.id));
@@ -97,12 +115,12 @@ export function useNftList() {
 
   return {
     navigateToNftViewer,
-    updateListSelect,
-    multiSelectModeAction,
-    readOnlyModeAction,
+    handleSelectableNftPressed,
+    triggerMultiSelectMode,
+    exitMultiSelectMode,
     onClickHide,
     t,
     nftsToHide,
-    onMultiSelectMode,
+    multiSelectModeEnabled,
   };
 }
