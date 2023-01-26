@@ -1,5 +1,5 @@
 // Always import startupTime first
-//import "./polyfill";
+import "./polyfill";
 import "./live-common-setup";
 import "../e2e/e2e-bridge-setup";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
