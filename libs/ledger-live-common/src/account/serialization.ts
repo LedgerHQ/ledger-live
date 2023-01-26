@@ -141,6 +141,7 @@ export const toOperationRaw = (
     operator,
     standard,
     tokenId,
+    transactionRaw,
   }: Operation,
   preserveSubOperation?: boolean
 ): OperationRaw => {
@@ -175,6 +176,7 @@ export const toOperationRaw = (
     operator,
     standard,
     tokenId,
+    transactionRaw,
   };
 
   if (transactionSequenceNumber !== undefined) {
@@ -249,6 +251,7 @@ export const fromOperationRaw = (
     operator,
     standard,
     tokenId,
+    transactionRaw,
   }: OperationRaw,
   accountId: string,
   subAccounts?: SubAccount[] | null | undefined
@@ -284,6 +287,7 @@ export const fromOperationRaw = (
     operator,
     standard,
     tokenId,
+    transactionRaw,
   };
 
   if (transactionSequenceNumber !== undefined) {

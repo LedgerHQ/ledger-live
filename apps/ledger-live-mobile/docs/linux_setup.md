@@ -167,12 +167,12 @@ export NODE_OPTIONS=--max-old-space-size=8192
 #### Dev on android
 
 You have to setup your device
-- activate developper mode depending on android version and device
+- activate developer mode depending on android version and device
 - accept debug through USB
-- plug your device to you computer
+- plug your device to your computer
 - set the link as a file transfer
 
-Then start you terminal:
+Then start your terminal:
 https://reactnative.dev/docs/running-on-device#method-1-using-adb-reverse-recommended-2
 ```bash
 adb devices

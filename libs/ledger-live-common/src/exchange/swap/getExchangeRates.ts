@@ -17,10 +17,10 @@ import type { Transaction } from "../../generated/types";
 import { getProviderConfig, getSwapAPIBaseURL, getSwapAPIError } from "./";
 import { mockGetExchangeRates } from "./mock";
 import type {
+  AvailableProviderV3,
   CustomMinOrMaxError,
   Exchange,
   GetExchangeRates,
-  AvailableProviderV3,
 } from "./types";
 
 const getExchangeRates: GetExchangeRates = async (
@@ -44,19 +44,18 @@ const getExchangeRates: GetExchangeRates = async (
   const apiAmount = new BigNumber(amountFrom).div(tenPowMagnitude);
 
   const providerList = providers
-    .filter((provider) => {
-      const validDex = (provider: AvailableProviderV3) =>
-        includeDEX && getProviderConfig(provider.provider).type === "DEX";
-      const validCex = (provider: AvailableProviderV3) => {
-        if (getProviderConfig(provider.provider).type !== "CEX") return false;
-        const index = provider.pairs.findIndex(
-          (pair) => pair.from === from && pair.to === to
-        );
-        return index > -1;
-      };
-      return validDex(provider) || validCex(provider);
-    })
+    .filter((provider) =>
+      provider.pairs.some((pair) => pair.from === from && pair.to === to)
+    )
+    .filter((provider) =>
+      includeDEX ? true : !(getProviderConfig(provider.provider).type === "DEX")
+    )
     .map((item) => item.provider);
+
+  // This if can be removed if includeDex is always true. Prevent a backEnd error.
+  if (providerList.length === 0) {
+    return [];
+  }
 
   const request = {
     from,
@@ -84,6 +83,7 @@ const getExchangeRates: GetExchangeRates = async (
       amountTo,
       tradeMethod,
       providerURL,
+      expirationTime,
     } = responseData;
 
     const error = inferError(apiAmount, unitFrom, responseData);
@@ -123,6 +123,7 @@ const getExchangeRates: GetExchangeRates = async (
       providerType,
       rate,
       rateId,
+      expirationTime,
       toAmount: magnitudeAwareToAmount,
       tradeMethod,
       providerURL,

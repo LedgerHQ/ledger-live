@@ -113,7 +113,7 @@ export default function DelegationDrawer({
     </BottomModal>
   );
 }
-type FieldType = {
+export type FieldType = {
   label: React.ReactNode;
   Component: React.ReactNode;
 };
@@ -150,7 +150,7 @@ function DataField({ label, Component, isLast }: DataFieldProps) {
   );
 }
 
-type Action = {
+export type Action = {
   label?: React.ReactNode;
   Icon: string | ComponentType<IconProps>;
   event?: string;
@@ -158,6 +158,7 @@ type Action = {
   disabled?: boolean;
   onPress?: () => void;
 };
+
 export type IconProps = {
   size: number;
   style: StyleProp<ViewStyle>;

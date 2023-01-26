@@ -53,14 +53,21 @@ let connectOptions: Record<string, unknown> = {
   connectionPriority: 1,
 };
 const transportsCache = {};
-let bleManager;
 
+let _bleManager: BleManager | null = null;
+/**
+ * Allows lazy initialization of BleManager
+ * Useful for iOS to only ask for Bluetooth permission when needed
+ *
+ * Do not use _bleManager directly
+ * Only use this instance getter inside BleTransport
+ */
 const bleManagerInstance = (): BleManager => {
-  if (!bleManager) {
-    bleManager = new BleManager();
+  if (!_bleManager) {
+    _bleManager = new BleManager();
   }
 
-  return bleManager;
+  return _bleManager;
 };
 
 const retrieveInfos = (device) => {
@@ -97,8 +104,8 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
       return transportsCache[deviceOrId];
     }
 
-    log("ble-verbose", `open(${deviceOrId})`);
-    await awaitsBleOn(bleManager);
+    log("ble-verbose", `Tries to open device: ${deviceOrId}`);
+    await awaitsBleOn(bleManagerInstance());
 
     if (!device) {
       // works for iOS but not Android
