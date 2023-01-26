@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { FlatListProps, TouchableOpacity } from "react-native";
+import { FlatListProps } from "react-native";
 import { ProtoNFT } from "@ledgerhq/types-live";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { BigNumber } from "bignumber.js";
@@ -16,10 +16,11 @@ import BackgroundGradient from "../TabBar/BackgroundGradient";
 
 const darkGradients = [
   {
-    height: 130,
+    height: 145,
     opacity: 1,
     stops: [
       <Stop key="0%" offset="0%" stopOpacity={0} stopColor="#131214" />,
+      <Stop key="25%" offset="25%" stopOpacity={0.5} stopColor="#131214" />,
       <Stop key="50%" offset="50%" stopOpacity={1} stopColor="#131214" />,
     ],
   },
@@ -27,10 +28,11 @@ const darkGradients = [
 
 const lightGradients = [
   {
-    height: 130,
+    height: 145,
     opacity: 1,
     stops: [
       <Stop key="0%" offset="0%" stopOpacity={0} stopColor="#ffffff" />,
+      <Stop key="25%" offset="25%" stopOpacity={0.5} stopColor="#ffffff" />,
       <Stop key="50%" offset="50%" stopOpacity={1} stopColor="#ffffff" />,
     ],
   },
@@ -161,14 +163,14 @@ export function NftList({ data }: Props) {
         {onMultiSelectMode && (
           <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
             <BackgroundGradient {...gradients[0]} />
-            <BackgroundGradient {...gradients[1]} />
+
             <ButtonsContainer width="100%" justifyContent={"space-between"}>
               <StyledButton
                 onPress={onClickHide}
                 type="main"
                 iconName="EyeNone"
                 iconPosition="left"
-                size="medium"
+                size="large"
                 flexGrow={1}
                 disabled={nftsToHide.length === 0}
               >
@@ -180,7 +182,7 @@ export function NftList({ data }: Props) {
                 onPress={readOnlyModeAction}
                 type="default"
                 iconPosition="left"
-                size="medium"
+                size="large"
                 flexGrow={1}
               >
                 {t("common.cancel")}
