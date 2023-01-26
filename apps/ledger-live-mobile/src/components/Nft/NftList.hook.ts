@@ -47,9 +47,10 @@ export function useNftList() {
   }, [exitMultiSelectMode, isFocused, dispatch]);
 
   const handleBackPress = useCallback(() => {
+    if (!multiSelectModeEnabled) return false;
     exitMultiSelectMode();
     return true;
-  }, [exitMultiSelectMode]);
+  }, [exitMultiSelectMode, multiSelectModeEnabled]);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
