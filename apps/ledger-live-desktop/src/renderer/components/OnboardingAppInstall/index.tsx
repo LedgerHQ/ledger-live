@@ -1,57 +1,54 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { getDeviceModel } from "@ledgerhq/devices";
 
 import Button from "../ButtonV3";
 import DefaultAppsIllustration from "./DefaultAppsIllustration";
 import RestoreAppsIllustration from "./RestoreAppsIllustration";
 import AppInstallItem from "./AppInstallItem";
-import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 
 const DEFAULT_APPS_TO_INSTALL_FALLBACK = ["Ethereum", "Polygon"];
 
 const action = createAction(connectApp);
 
 type Props = {
-  restore?: boolean;
-  productName?: string;
-  device?: Device;
-  restoreDeviceName?: string;
-  onComplete?: () => void;
+  device: Device;
+  restoreDevice?: DeviceModelInfo;
+  onComplete: () => void;
+  onError?: (error: Error) => void;
 };
 
-const OnboardingAppInstallStep = ({
-  restore,
-  productName,
-  device,
-  restoreDeviceName,
-  onComplete,
-}: Props) => {
+const OnboardingAppInstallStep = ({ device, restoreDevice, onComplete, onError }: Props) => {
   const { t } = useTranslation();
 
-  const [dependenciesToInstall] = useState<string[]>(DEFAULT_APPS_TO_INSTALL_FALLBACK);
+  const [dependencies, setDependencies] = useState<string[]>(DEFAULT_APPS_TO_INSTALL_FALLBACK);
   const [inProgress, setInProgress] = useState<boolean>(false);
 
-  // const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(lastSeenDeviceSelector);
-  // const lastDeviceProductName = lastSeenDevice?.modelId
-  //   ? getDeviceModel(lastSeenDevice?.modelId).productName
-  //   : lastSeenDevice?.modelId;
+  const productName = getDeviceModel(device.modelId)?.productName;
 
-  // const shouldRestoreApps = restore && !!lastSeenDevice;
+  useEffect(() => {
+    if (restoreDevice) {
+      setDependencies(restoreDevice.apps.map(app => app.name));
+    }
+  }, [restoreDevice]);
+
+  const restoreDeviceName = restoreDevice?.modelId
+    ? getDeviceModel(restoreDevice?.modelId).productName
+    : restoreDevice?.modelId;
 
   const commandRequest = useMemo(
     () => ({
-      dependencies: dependenciesToInstall.map(appName => ({ appName })),
+      dependencies: dependencies.map(appName => ({ appName })),
       appName: "BOLOS",
       withInlineInstallProgress: true,
       skipAppInstallIfNotFound: true,
     }),
-    [dependenciesToInstall],
+    [dependencies],
   );
 
   const status = action.useHook(inProgress ? device : undefined, commandRequest);
@@ -67,10 +64,6 @@ const OnboardingAppInstallStep = ({
     installQueue,
   } = status;
 
-  const handleInstallDefault = () => {
-    setInProgress(true);
-  };
-
   const handleSkip = () => {
     if (onComplete) {
       onComplete();
@@ -78,6 +71,7 @@ const OnboardingAppInstallStep = ({
   };
 
   if (opened) {
+    setInProgress(false);
     if (onComplete) {
       onComplete();
     }
@@ -102,7 +96,7 @@ const OnboardingAppInstallStep = ({
         </Flex>
         <Flex flexDirection="column" mt={2} mb={4}>
           {itemProgress !== undefined
-            ? dependenciesToInstall.map((appName, index) => (
+            ? dependencies.map((appName, index) => (
                 <AppInstallItem
                   key={appName}
                   appName={appName}
@@ -140,7 +134,7 @@ const OnboardingAppInstallStep = ({
             {t("onboardingAppInstall.restore.skipCTA")}
           </Button>
           <Flex px={2} />
-          <Button flex={1} variant="main" size="small" onClick={handleInstallDefault}>
+          <Button flex={1} variant="main" size="small" onClick={() => setInProgress(true)}>
             {t("onboardingAppInstall.restore.installCTA")}
           </Button>
         </Flex>
@@ -165,7 +159,7 @@ const OnboardingAppInstallStep = ({
             {t("onboardingAppInstall.default.skipCTA")}
           </Button>
           <Flex px={2} />
-          <Button flex={1} variant="main" size="small" onClick={handleInstallDefault}>
+          <Button flex={1} variant="main" size="small" onClick={() => setInProgress(true)}>
             {t("onboardingAppInstall.default.installCTA")}
           </Button>
         </Flex>
@@ -175,7 +169,7 @@ const OnboardingAppInstallStep = ({
 
   return inProgress
     ? renderInstallsInProgress()
-    : restore
+    : restoreDevice
     ? renderRestoreAppsConfirmation()
     : renderDefaultAppsConfirmation();
 };
