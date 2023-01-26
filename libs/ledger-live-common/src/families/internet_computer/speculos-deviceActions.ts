@@ -1,6 +1,6 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
-import { deviceActionFlow } from "../../bot/specs";
+import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
 
 export const acceptTransaction: DeviceAction<Transaction, any> =
   deviceActionFlow({
@@ -8,27 +8,36 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       {
         title: "Transaction type",
         button: "Rr",
-        expectedValue: () => "Send ICP" || "Check status",
       },
       {
         title: "From account",
         button: "Rr",
-        expectedValue: ({ account }) => account.freshAddress,
+        expectedValue: ({ account }) =>
+          account.freshAddress.match(/.{1,8}/g)?.join(" ") ?? "",
       },
       {
         title: "To account",
         button: "Rr",
-        expectedValue: ({ transaction }) => transaction.recipient,
+        expectedValue: ({ transaction }) =>
+          transaction.recipient.match(/.{1,8}/g)?.join(" ") ?? "",
       },
       {
         title: "Payment (ICP)",
         button: "Rr",
-        expectedValue: ({ status }) => status.amount.toString(),
+        expectedValue: ({ status, account }) =>
+          formatDeviceAmount(account.currency, status.amount, {
+            hideCode: true,
+            showAllDigits: false,
+          }),
       },
       {
         title: "Maximum fee (ICP)",
         button: "Rr",
-        expectedValue: ({ status }) => status.estimatedFees.toString(),
+        expectedValue: ({ status, account }) =>
+          formatDeviceAmount(account.currency, status.estimatedFees, {
+            hideCode: true,
+            showAllDigits: false,
+          }),
       },
       {
         title: "Memo",
