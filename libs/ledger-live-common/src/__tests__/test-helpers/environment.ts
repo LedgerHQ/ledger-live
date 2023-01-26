@@ -62,6 +62,7 @@ setSupportedCurrencies([
   "songbird",
   "flare",
   "near",
+  "internet_computer",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

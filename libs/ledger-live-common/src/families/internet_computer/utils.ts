@@ -1,6 +1,7 @@
 import Transport from "@ledgerhq/hw-transport";
 import ICP from "@zondax/ledger-icp";
 import { BigNumber } from "bignumber.js";
+import { ICP_FEES } from "./consts";
 
 const validHexRegExp = new RegExp(/[0-9A-Fa-f]{6}/g);
 const validBase64RegExp = new RegExp(
@@ -55,3 +56,7 @@ export const getAccountInfoForPath = async (
 
   return accountInfo;
 };
+
+export function getEstimatedFees(): BigNumber {
+  return new BigNumber(ICP_FEES);
+}
