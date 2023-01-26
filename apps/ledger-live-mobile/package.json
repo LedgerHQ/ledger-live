@@ -64,11 +64,6 @@
   "dependencies": {
     "@azure/core-asynciterator-polyfill": "^1.0.2",
     "@babel/plugin-transform-named-capturing-groups-regex": "^7.16.8",
-    "@formatjs/intl-datetimeformat": "^5.0.0",
-    "@formatjs/intl-getcanonicallocales": "^1.9.1",
-    "@formatjs/intl-locale": "^2.4.46",
-    "@formatjs/intl-numberformat": "^7.4.2",
-    "@formatjs/intl-pluralrules": "^4.3.2",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
