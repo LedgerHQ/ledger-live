@@ -2,6 +2,7 @@ import { decodeNftId } from "@ledgerhq/live-common/nft/nftId";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { ProtoNFT, NFTMetadata } from "@ledgerhq/types-live";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { v4 as uuid } from "uuid";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
@@ -46,7 +47,7 @@ export function useNftList() {
       dispatch(hideNftCollection(`${accountId}|${nft.contract}`));
     });
     pushToast({
-      id: TOAST_ID,
+      id: `${TOAST_ID}-${uuid()}`,
       type: "success",
       icon: "success",
       title: t("wallet.nftGallery.filters.alertHide", {
