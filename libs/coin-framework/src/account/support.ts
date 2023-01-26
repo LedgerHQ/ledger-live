@@ -46,19 +46,7 @@ export const getReceiveFlowError = (
     return new UnavailableTezosOriginatedAccountReceive("");
   }
 };
-// export function canSend(
-//   account: AccountLike,
-//   parentAccount: Account | null | undefined
-// ): boolean {
-//   try {
-//     getAccountBridge(account, parentAccount).createTransaction(
-//       getMainAccount(account, parentAccount)
-//     );
-//     return true;
-//   } catch (e) {
-//     return false;
-//   }
-// }
+
 export function canBeMigrated(account: Account): boolean {
   try {
     const { version } = decodeAccountId(account.id);

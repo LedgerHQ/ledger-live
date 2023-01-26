@@ -92,14 +92,6 @@ export const getAccountSpendableBalance = (account: AccountLike): BigNumber => {
 };
 
 export const isAccountEmpty = (a: AccountLike): boolean => {
-  // if (a.type === "Account" && a.currency.family === "tron") {
-  //   const tronAcc = a as TronAccount;
-  //   // FIXME: here we compared a BigNumber to a number, would always return false
-  //   return (
-  //     tronAcc.tronResources && tronAcc.tronResources.bandwidth.freeLimit.eq(0)
-  //   );
-  // }
-
   const hasSubAccounts =
     a.type === "Account" && a.subAccounts && a.subAccounts.length;
   return a.operationsCount === 0 && a.balance.isZero() && !hasSubAccounts;
@@ -123,7 +115,10 @@ export const isAccountBalanceSignificant = (a: AccountLike): boolean =>
 // in future, could be a per currency thing
 // clear account to a bare minimal version that can be restored via sync
 // will preserve the balance to avoid user panic
-export function clearAccount<T extends AccountLike>(account: T): T {
+export function clearAccount<T extends AccountLike>(
+  account: T,
+  familyClean?: (account: Account) => void,
+): T {
   if (account.type === "TokenAccount") {
     return {
       ...account,
@@ -150,19 +145,11 @@ export function clearAccount<T extends AccountLike>(account: T): T {
     pendingOperations: [],
     subAccounts:
       (account as Account).subAccounts &&
-      (account as Account).subAccounts?.map(clearAccount),
+      (account as Account).subAccounts?.map( (acc) => clearAccount(acc, familyClean)),
   };
 
-  // if (copy.currency.family === "tron") {
-  //   const tronAcc = copy as TronAccount;
-  //   tronAcc.tronResources = {
-  //     ...tronAcc.tronResources,
-  //     cacheTransactionInfoById: {},
-  //   };
-  // }
-  // if (copy.currency.family === "bitcoin") {
-  //   (copy as BitcoinAccount).bitcoinResources = initialBitcoinResourcesValue;
-  // }
+  familyClean?.(copy);
+
   delete copy.nfts;
   return copy as T;
 }
@@ -235,29 +222,6 @@ export const isUpToDateAccount = (account: Account | null | undefined) => {
     Date.now().valueOf() - (lastSyncDate.valueOf() || 0) >
     blockAvgTime * 1000 + getEnv("SYNC_OUTDATED_CONSIDERED_DELAY");
   return !outdated;
-};
-
-export const getVotesCount = (
-  account: AccountLike,
-  parentAccount?: Account | null | undefined
-): number => {
-  // const mainAccount = getMainAccount(account, parentAccount);
-
-  // FIXME find a way to make it per family?
-  // switch (mainAccount.currency.family) {
-  //   case "tezos":
-  //     return isAccountDelegating(account) ? 1 : 0;
-  //   case "tron":
-  //     return (mainAccount as TronAccount)?.tronResources?.votes.length || 0;
-  //   case "osmosis":
-  //   case "cosmos":
-  //     return (
-  //       (mainAccount as CosmosAccount)?.cosmosResources?.delegations.length || 0
-  //     );
-  //   default:
-  //     return 0;
-  // }
-  return 0;
 };
 
 export const makeEmptyTokenAccount = (
