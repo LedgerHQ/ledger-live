@@ -78,7 +78,7 @@ For instance:
 
 - Github actions will trigger depending on which part of the codebase is impacted.
 - Your PR must pass the required CI actions.
-- Your PR must include a changelog (`pnpm changelog`).
+- Your PR must include a changelog (`pnpm changeset`).
 
 ### Translations
 
