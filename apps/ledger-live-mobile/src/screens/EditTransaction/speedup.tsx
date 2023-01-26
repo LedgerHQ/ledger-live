@@ -5,9 +5,14 @@ import {
   TransactionRaw,
 } from "@ledgerhq/live-common/families/ethereum/types";
 import { useNavigation } from "@react-navigation/native";
-import { fromTransactionRaw } from "@ledgerhq/live-common/families/ethereum/transaction";
+import {
+  EIP1559ShouldBeUsed,
+  fromTransactionRaw,
+} from "@ledgerhq/live-common/families/ethereum/transaction";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Account } from "@ledgerhq/types-live";
 
-import { ScreenName } from "../../const";
+import { NavigatorName, ScreenName } from "../../const";
 import { EthereumEditTransactionParamList } from "../../components/RootNavigator/types/EthereumEditTransactionNavigator";
 import {
   StackNavigatorNavigation,
@@ -15,6 +20,7 @@ import {
 } from "../../components/RootNavigator/types/helpers";
 import SelectFeesStrategy from "../../components/SelectFeesStrategy";
 import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
+import Button from "../../components/Button";
 
 type Props = StackNavigatorProps<
   EthereumEditTransactionParamList,
@@ -30,6 +36,8 @@ export function SpeedupTransaction({ route }: Props) {
       >
     >();
 
+  const sendSummaryNavigation = useNavigation<any>();
+
   const { operation, account } = route.params;
 
   const transactionToEdit = fromTransactionRaw(
@@ -39,7 +47,17 @@ export function SpeedupTransaction({ route }: Props) {
   const strategies = useFeesStrategy(transactionToEdit);
 
   const disabledStrategies = strategies
-    .filter(strategy => strategy.amount > transactionToEdit.maxFeePerGas!)
+    .filter(strategy => {
+      const { currency } = account as Account;
+      if (EIP1559ShouldBeUsed(currency)) {
+        return (
+          strategy.extra!.maxPriorityFeePerGas >
+          transactionToEdit.maxPriorityFeePerGas!
+        );
+      }
+
+      return strategy.amount > transactionToEdit.gasPrice!;
+    })
     .map(strategy => strategy.label);
 
   const openCustomFees = () => {
@@ -58,14 +76,24 @@ export function SpeedupTransaction({ route }: Props) {
     // setTransaction
   };
 
+  const onContinue = () => {
+    // redirect to sign transaction page
+    sendSummaryNavigation.navigate(NavigatorName.SendFunds, {
+      screen: ScreenName.SignTransactionSummary,
+    });
+  };
+
   return (
-    <SelectFeesStrategy
-      strategies={strategies}
-      account={account}
-      transaction={transactionToEdit}
-      onStrategySelect={onFeeStrategySelected}
-      onCustomFeesPress={openCustomFees}
-      disabledStrategies={disabledStrategies}
-    />
+    <SafeAreaView style={{ flex: 1, padding: 16 }}>
+      <SelectFeesStrategy
+        strategies={strategies}
+        account={account}
+        transaction={transactionToEdit}
+        onStrategySelect={onFeeStrategySelected}
+        onCustomFeesPress={openCustomFees}
+        disabledStrategies={disabledStrategies}
+      />
+      <Button onPress={onContinue}>Continue</Button>
+    </SafeAreaView>
   );
 }
