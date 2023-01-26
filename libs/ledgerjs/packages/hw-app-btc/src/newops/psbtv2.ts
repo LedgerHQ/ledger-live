@@ -540,9 +540,12 @@ function createKey(buf: Buffer): Key {
   return new Key(buf.readUInt8(0), buf.slice(1));
 }
 function serializeMap(buf: BufferWriter, map: Map<string, Buffer>) {
-  for (const k in map.keys) {
-    const value = map.get(k)!;
-    const keyPair = new KeyPair(createKey(Buffer.from(k, "hex")), value);
+   for (const k of map.keys()) {
+    const value = map.get(k);
+    if (!value) {
+      throw new Error(`Failed to serialize map. Missing value for key ${k}`)
+    }
+    const keyPair = new KeyPair(createKey(Buffer.from(k, 'hex')), value);
     keyPair.serialize(buf);
   }
   buf.writeUInt8(0);
