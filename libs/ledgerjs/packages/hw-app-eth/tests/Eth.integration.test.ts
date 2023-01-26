@@ -10,7 +10,11 @@ import paraswapJSON from "./paraswap.json";
 
 async function signTxWithResolution(eth, path, tx) {
   const resolution = await ledgerService
-    .resolveTransaction(tx, {}, { externalPlugins: true, erc20: true })
+    .resolveTransaction(
+      tx,
+      {},
+      { externalPlugins: true, erc20: true, nft: true }
+    )
     .catch((e) => {
       console.warn(
         "an error occurred in resolveTransaction => fallback to blind signing: " +
