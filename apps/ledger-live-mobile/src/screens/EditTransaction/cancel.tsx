@@ -1,5 +1,11 @@
 import React from "react";
 import { Flex } from "@ledgerhq/native-ui";
+import BigNumber from "bignumber.js";
+import { fromTransactionRaw } from "@ledgerhq/live-common/families/ethereum/transaction";
+import {
+  Transaction,
+  TransactionRaw,
+} from "@ledgerhq/live-common/families/ethereum/types";
 
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
@@ -12,7 +18,15 @@ type Props = StackNavigatorProps<
   ScreenName.CancelTransaction
 >;
 
-export function CancelTransaction({ navigation, route }: Props) {
+export function CancelTransaction({ route }: Props) {
+  const { operation } = route.params;
+
+  const transactionToEdit = fromTransactionRaw(
+    operation.transactionRaw! as TransactionRaw,
+  ) as Transaction;
+
+  transactionToEdit.amount = new BigNumber(0);
+
   return (
     <Flex flex={1} color="background.main">
       <TrackScreen

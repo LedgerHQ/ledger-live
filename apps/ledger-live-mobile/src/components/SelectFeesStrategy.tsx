@@ -158,7 +158,7 @@ export default function SelectFeesStrategy({
         {NetworkFeesInfoComponent ? <NetworkFeesInfoComponent /> : <NetworkFeeInfo />}
       </QueuedDrawer>
 
-      <View>
+      <View style={styles.strategiesContainer}>
         <SectionSeparator lineColor={colors.lightFog} />
         <SummaryRow
           onPress={toggleNetworkFeeHelpModal}
