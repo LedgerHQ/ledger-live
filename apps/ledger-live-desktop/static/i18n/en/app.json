@@ -609,8 +609,8 @@
   "stake": {
     "modal": {
       "title": "Buy, swap or receive",
-      "text": "You do not have available {{coin}} to stake",
-      "description": "No enough fund? Don’t worry, you can securely buy, swap or receive crypto directly in Ledger Live.",
+      "text": "You do not have enough {{coin}} available to stake",
+      "description": "Not enough funds? Don’t worry, you can securely buy, swap or receive crypto directly in Ledger Live.",
       "options": {
         "buy": {
           "title": "Buy",
@@ -619,11 +619,11 @@
         "swap": {
           "title": "Swap",
           "label": "Popular",
-          "body": "Covert crypto to crypto securely"
+          "body": "Convert crypto to crypto securely"
         },
         "receive": {
           "title": "Receive",
-          "body": "Receive crypto into your wallet"
+          "body": "Receive crypto in your wallet"
         }
       }
     }
