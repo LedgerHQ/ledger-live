@@ -6,12 +6,12 @@ import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
-import { MethodSelection } from "../../screens/EditTransaction/methodSelection";
+import { MethodSelection } from "../../screens/EditTransaction/MethodSelection";
 import { EthereumEditTransactionParamList } from "./types/EthereumEditTransactionNavigator";
-import { SpeedupTransaction } from "../../screens/EditTransaction/speedup";
-import { CancelTransaction } from "../../screens/EditTransaction/cancel";
-
-const totalSteps = "5";
+import { SpeedupTransaction } from "../../screens/EditTransaction/Speedup";
+import { CancelTransaction } from "../../screens/EditTransaction/Cancel";
+// import SendSummary from "../../screens/SendFunds/04-Summary";
+// import SelectDevice from "../SelectDevice";
 
 const Stack = createStackNavigator<EthereumEditTransactionParamList>();
 
@@ -29,47 +29,61 @@ export default function EditTransactionNavigator() {
         name={ScreenName.EditTransactionOptions}
         component={MethodSelection}
         options={{
-          headerTitle: () => (
-            <StepHeader
-              title={t("editTx.header")}
-              subtitle={t("send.stepperHeader.stepRange", {
-                currentStep: "1",
-                totalSteps,
-              })}
-            />
-          ),
+          headerTitle: () => <StepHeader title={t("editTx.header")} />,
         }}
       />
       <Stack.Screen
         name={ScreenName.SpeedUpTransaction}
         component={SpeedupTransaction}
         options={{
-          headerTitle: () => (
-            <StepHeader
-              title={t("editTx.header")}
-              subtitle={t("send.stepperHeader.stepRange", {
-                currentStep: "1",
-                totalSteps,
-              })}
-            />
-          ),
+          headerTitle: () => <StepHeader title={t("editTx.header")} />,
         }}
       />
       <Stack.Screen
         name={ScreenName.CancelTransaction}
         component={CancelTransaction}
         options={{
-          headerTitle: () => (
-            <StepHeader
-              title={t("editTx.header")}
-              subtitle={t("send.stepperHeader.stepRange", {
-                currentStep: "1",
-                totalSteps,
-              })}
-            />
-          ),
+          headerTitle: () => <StepHeader title={t("editTx.header")} />,
         }}
       />
+
+      {/* <Stack.Screen
+        name={ScreenName.SendSummary}
+        component={SendSummary}
+        initialParams={{
+          currentNavigation: ScreenName.SendSummary,
+          nextNavigation: ScreenName.SendSelectDevice,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.SendSelectDevice}
+        component={SelectDevice}
+      />
+      <Stack.Screen
+        name={ScreenName.SendConnectDevice}
+        component={SendConnectDevice}
+        options={{}}
+        initialParams={{
+          analyticsPropertyFlow: "send",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.SendValidationSuccess}
+        component={SendValidationSuccess}
+        options={{
+          headerLeft: undefined,
+          headerShown: false,
+          headerRight: undefined,
+          gestureEnabled: false,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.SendValidationError}
+        component={SendValidationError}
+        options={{
+          headerShown: false,
+        }}
+      /> */}
     </Stack.Navigator>
   );
 }
