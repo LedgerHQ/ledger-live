@@ -33,7 +33,7 @@ In order to interact with any package contained in this repository you will need
 Then, clone the repository and install the dependencies:
 
 ```bash
-git clone git@github.com:LedgerHQ/ledger-live.git
+git clone https://github.com/LedgerHQ/ledger-live
 cd ledger-live
 pnpm i
 # Alternatively, if you want to bypass the postinstall scripts which can be long to run
