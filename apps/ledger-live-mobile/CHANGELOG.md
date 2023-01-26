@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.14.0-nightly.7
+
+### Patch Changes
+
+- [#2350](https://github.com/LedgerHQ/ledger-live/pull/2350) [`de1bf99157`](https://github.com/LedgerHQ/ledger-live/commit/de1bf99157b069f8ae6746172cf0a929c2764d3c) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Implementation of analytics for Custom Lock Screen
+
+* [#2350](https://github.com/LedgerHQ/ledger-live/pull/2350) [`de1bf99157`](https://github.com/LedgerHQ/ledger-live/commit/de1bf99157b069f8ae6746172cf0a929c2764d3c) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Improvements to the UX of the in-app analytics console
+
+* Updated dependencies [[`db03ee7a28`](https://github.com/LedgerHQ/ledger-live/commit/db03ee7a28e832582111eb5ab31ce73694cfb957), [`7eb8b1a39b`](https://github.com/LedgerHQ/ledger-live/commit/7eb8b1a39b36a5b336d95f89a92edf7ee22bcd26), [`de3b0da314`](https://github.com/LedgerHQ/ledger-live/commit/de3b0da31428487e025548abcfa26c0d4dac33f1)]:
+  - @ledgerhq/live-common@27.12.0-nightly.7
+  - @ledgerhq/react-native-hw-transport-ble@6.28.1-nightly.0
+
 ## 3.14.0-nightly.6
 
 ### Minor Changes

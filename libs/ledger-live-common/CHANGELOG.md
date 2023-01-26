@@ -1,5 +1,18 @@
 # @ledgerhq/live-common
 
+## 27.12.0-nightly.7
+
+### Minor Changes
+
+- [#2405](https://github.com/LedgerHQ/ledger-live/pull/2405) [`7eb8b1a39b`](https://github.com/LedgerHQ/ledger-live/commit/7eb8b1a39b36a5b336d95f89a92edf7ee22bcd26) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Make Ethereum family preload resilient to malformed dynamic CAL
+
+### Patch Changes
+
+- [#2293](https://github.com/LedgerHQ/ledger-live/pull/2293) [`db03ee7a28`](https://github.com/LedgerHQ/ledger-live/commit/db03ee7a28e832582111eb5ab31ce73694cfb957) Thanks [@Yahmooo](https://github.com/Yahmooo)! - changed the name of a crypto icon from H3M.svg to hmmm.svg because the currency name is hmmm not H3M.
+
+- Updated dependencies [[`7eb8b1a39b`](https://github.com/LedgerHQ/ledger-live/commit/7eb8b1a39b36a5b336d95f89a92edf7ee22bcd26)]:
+  - @ledgerhq/hw-app-eth@6.31.0-nightly.1
+
 ## 27.12.0-nightly.6
 
 ### Minor Changes

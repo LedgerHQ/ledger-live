@@ -1,5 +1,20 @@
 # ledger-live-desktop
 
+## 2.52.0-nightly.16
+
+### Patch Changes
+
+- [#2403](https://github.com/LedgerHQ/ledger-live/pull/2403) [`35ae3e6282`](https://github.com/LedgerHQ/ledger-live/commit/35ae3e6282dfe63831cd0a2ef4f78ad60b12a5d4) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Changes gitignore
+
+* [#2396](https://github.com/LedgerHQ/ledger-live/pull/2396) [`28b668d1f9`](https://github.com/LedgerHQ/ledger-live/commit/28b668d1f98e4e9aab72252eeec460fc6953c2ca) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Adds new UI elements for the new featured buttons on portfolio screen
+
+- [#2406](https://github.com/LedgerHQ/ledger-live/pull/2406) [`afda2ec326`](https://github.com/LedgerHQ/ledger-live/commit/afda2ec326851f826f769095ddfbea5d3c9ce87f) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Adds link behaviour to new exchange buttons on portfolio screen.
+
+* [#2385](https://github.com/LedgerHQ/ledger-live/pull/2385) [`1fc8d26eb1`](https://github.com/LedgerHQ/ledger-live/commit/1fc8d26eb1fe9094e7fbfc08df04dff08f54609d) Thanks [@sarneijim](https://github.com/sarneijim)! - Add common stake flow for LLD
+
+* Updated dependencies [[`db03ee7a28`](https://github.com/LedgerHQ/ledger-live/commit/db03ee7a28e832582111eb5ab31ce73694cfb957), [`7eb8b1a39b`](https://github.com/LedgerHQ/ledger-live/commit/7eb8b1a39b36a5b336d95f89a92edf7ee22bcd26)]:
+  - @ledgerhq/live-common@27.12.0-nightly.7
+
 ## 2.52.0-nightly.15
 
 ### Minor Changes

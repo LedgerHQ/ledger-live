@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-eth
 
+## 6.31.0-nightly.1
+
+### Minor Changes
+
+- [#2405](https://github.com/LedgerHQ/ledger-live/pull/2405) [`7eb8b1a39b`](https://github.com/LedgerHQ/ledger-live/commit/7eb8b1a39b36a5b336d95f89a92edf7ee22bcd26) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add resilience to malformed dynamic CAL
+
 ## 6.30.5-nightly.0
 
 ### Patch Changes
