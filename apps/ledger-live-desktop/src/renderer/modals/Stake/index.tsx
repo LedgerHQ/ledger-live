@@ -33,16 +33,20 @@ const StakeModal = ({ account, parentAccount }: StakeModalProps) => {
     return getAllSupportedCryptoCurrencyTickers(rampCatalog.value.onRamp);
   }, [rampCatalog.value]);
 
-  const swapAvailableIds =
-    providers || storedProviders
+  const swapAvailableIds = useMemo(() => {
+    return providers || storedProviders
       ? (providers || storedProviders)
-          .map(({ pairs }: any) => pairs.map(({ from, to }: any) => [from, to]))
+          .map(({ pairs }) => pairs.map(({ from, to }) => [from, to]))
           .flat(2)
       : [];
+  }, [providers, storedProviders]);
 
   const currency = parentAccount?.currency || account.currency;
   const availableOnBuy = currency && onRampAvailableTickers.includes(currency.ticker.toUpperCase());
-  const availableOnSwap = currency && swapAvailableIds.includes(currency.id);
+  const availableOnSwap = useMemo(() => {
+    return currency && swapAvailableIds.includes(currency.id);
+  }, [currency, swapAvailableIds]);
+
   const availableOnReceive = true;
 
   const modalName = "MODAL_STAKE";
