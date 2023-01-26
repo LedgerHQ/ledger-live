@@ -45,7 +45,6 @@ export type FeatureId =
   | "protectServicesMobile"
   | "swapShowDexQuotes"
   | "stakePrograms"
-  | "portfolioExchangeBanner"
   | "objkt";
 
 /**  We use objects instead of direct booleans for potential future improvements
