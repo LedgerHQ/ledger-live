@@ -22,7 +22,7 @@ There is a good chance that we will reject feature based PRs based on the fact t
 4. Make your changes.
 5. If you’ve fixed a bug or added code that should be tested, add tests!
 6. If needed, wait for the translations to be provided by the third party service.
-7. Add an entry to the changelog (`pnpm changelog`).
+7. Add an entry to the changelog (`pnpm changeset`).
 8. Make sure that the code passes linter and type checks (`pnpm lint:fix` and `pnpm typecheck`).
 9. Make sure the code passes unit and end to end tests (`pnpm test`).
 10. Cleanup your branch - unless it contains merge commits (perform atomic commits, squash tiny commits…).
