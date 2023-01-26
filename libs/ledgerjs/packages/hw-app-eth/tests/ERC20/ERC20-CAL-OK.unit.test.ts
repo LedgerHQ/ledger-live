@@ -1,3 +1,4 @@
+import axios from "axios";
 import fs from "fs/promises";
 import path from "path";
 import {
@@ -12,7 +13,7 @@ const txHex =
 
 describe("ERC20 dynamic cal", () => {
   describe("ERC20 is in local CAL", () => {
-    test("should be successfully signin transaction from dynamic CAL", async () => {
+    it("should be successfully signin transaction from dynamic CAL", async () => {
       const apdusBuffer = await fs.readFile(
         path.resolve("./tests/fixtures/apdus/ERC20-OK.apdus"),
         "utf-8"
@@ -40,7 +41,7 @@ describe("ERC20 dynamic cal", () => {
       });
     });
 
-    test("should be successfully signin transaction from local CAL", async () => {
+    it("should be successfully signin transaction from local CAL", async () => {
       const apdusBuffer = await fs.readFile(
         path.resolve("./tests/fixtures/apdus/ERC20-OK.apdus"),
         "utf-8"
@@ -56,6 +57,39 @@ describe("ERC20 dynamic cal", () => {
       );
 
       const eth = new Eth(transport);
+      const result = await eth.signTransaction(
+        "44'/60'/0'/0/0",
+        txHex,
+        resolution
+      );
+
+      expect(result).toMatchObject({
+        v: "26",
+        r: "006c000371dc04c5752287a9901b1fac4b069eb1410173db39c407ae725e4a6e",
+        s: "4f445c94cc869f01e194478a3b876052716ae7676247664acec371b6e6ad16e4",
+      });
+    });
+
+    it("shouldn't break if the dynamic CAL is malformed", async () => {
+      jest
+        .spyOn(axios, "get")
+        .mockImplementationOnce(async () => ({ data: { 123: "ok" } })); // malformed response. Should be a string but here returning an object imcompatible w/ buffer.from
+      const apdusBuffer = await fs.readFile(
+        path.resolve("./tests/fixtures/apdus/ERC20-OK.apdus"),
+        "utf-8"
+      );
+      const transport = await openTransportReplayer(
+        RecordStore.fromString(`${apdusBuffer}`)
+      );
+      const resolutionConfig = { erc20: true };
+      const resolution = await ledgerService.resolveTransaction(
+        txHex,
+        { cryptoassetsBaseURL: "working" },
+        resolutionConfig
+      );
+
+      const eth = new Eth(transport);
+
       const result = await eth.signTransaction(
         "44'/60'/0'/0/0",
         txHex,
