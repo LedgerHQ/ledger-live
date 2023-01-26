@@ -21,8 +21,8 @@ import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { LayoutChangeEvent } from "react-native";
-import BigNumber from "bignumber.js";
-import { toTransactionRaw } from "@ledgerhq/live-common/families/ethereum/transaction";
+// import BigNumber from "bignumber.js";
+// import { toTransactionRaw } from "@ledgerhq/live-common/families/ethereum/transaction";
 
 import Header from "./Header";
 import AccountGraphCard from "../../components/AccountGraphCard";
@@ -133,46 +133,46 @@ export function getListHeaderComponents({
 
   const stickyHeaderIndices = empty ? [] : [0];
 
-  // const { pendingOperations } = account;
-  const mockedOperation: Operation = {
-    id: "",
-    hash: "",
-    type: "OUT",
-    value: new BigNumber(100000 * 10000 * 99999999),
-    fee: new BigNumber(5 * 2100),
-    senders: ["0xsender"],
-    recipients: ["0xrecipient"],
-    blockHeight: null,
-    blockHash: "",
-    transactionSequenceNumber: 5,
-    accountId: account.id,
-    date: new Date(),
-    extra: {},
-    transactionRaw: toTransactionRaw({
-      amount: new BigNumber(400000),
-      recipient: "0xlol",
-      useAllAmount: false,
-      family: "ethereum",
-      userGasLimit: new BigNumber(21000),
-      estimatedGasLimit: new BigNumber(21000),
-      mode: "send",
-      feeCustomUnit: { name: "eth", code: "eth", magnitude: 16 },
-      networkInfo: {
-        family: "ethereum",
-        gasPrice: {
-          initial: new BigNumber(10000),
-          min: new BigNumber(34),
-          max: new BigNumber(14000),
-          step: new BigNumber(20),
-          steps: 8,
-        },
-      },
-      nonce: 6,
-      maxPriorityFeePerGas: new BigNumber(25000),
-    }),
-  };
+  const { pendingOperations } = account;
+  // const mockedOperation: Operation = {
+  //   id: "",
+  //   hash: "",
+  //   type: "OUT",
+  //   value: new BigNumber(100000 * 10000 * 99999999),
+  //   fee: new BigNumber(5 * 2100),
+  //   senders: ["0xsender"],
+  //   recipients: ["0xrecipient"],
+  //   blockHeight: null,
+  //   blockHash: "",
+  //   transactionSequenceNumber: 5,
+  //   accountId: account.id,
+  //   date: new Date(),
+  //   extra: {},
+  //   transactionRaw: toTransactionRaw({
+  //     amount: new BigNumber(400000),
+  //     recipient: "0xlol",
+  //     useAllAmount: false,
+  //     family: "ethereum",
+  //     userGasLimit: new BigNumber(21000),
+  //     estimatedGasLimit: new BigNumber(21000),
+  //     mode: "send",
+  //     feeCustomUnit: { name: "eth", code: "eth", magnitude: 16 },
+  //     networkInfo: {
+  //       family: "ethereum",
+  //       gasPrice: {
+  //         initial: new BigNumber(22000),
+  //         min: new BigNumber(21000),
+  //         max: new BigNumber(50000),
+  //         step: new BigNumber(1),
+  //         steps: 8,
+  //       },
+  //     },
+  //     nonce: 6,
+  //     maxPriorityFeePerGas: new BigNumber(25000),
+  //   }),
+  // };
 
-  const pendingOperations = [mockedOperation];
+  // const pendingOperations = [mockedOperation];
   const [lastOperation] = pendingOperations.sort(
     (a, b) => a.date.getTime() - b.date.getTime(),
   );
