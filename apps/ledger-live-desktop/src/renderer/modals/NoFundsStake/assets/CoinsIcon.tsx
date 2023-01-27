@@ -1,5 +1,9 @@
 import React from "react";
-import { IconProps } from "../types";
+
+interface IconProps {
+  size: number;
+  color: string;
+}
 
 const CoinsIcon = ({ size = 150, color = "currentColor" }: IconProps) => (
   <svg
