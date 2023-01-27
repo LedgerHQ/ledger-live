@@ -1,5 +1,6 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Icon, Text } from "@ledgerhq/react-ui";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
@@ -11,14 +12,14 @@ import Modal, { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";
 import EntryButton from "~/renderer/components/EntryButton/EntryButton";
 import CoinsIcon from "./assets/CoinsIcon";
-import { useHistory } from "react-router-dom";
+import { page, track } from "~/renderer/analytics/segment";
 
-interface StakeModalProps {
+interface NoFundsStakeModalProps {
   account: AccountLike;
   parentAccount?: Account;
 }
 
-const StakeModal = ({ account, parentAccount }: StakeModalProps) => {
+const NoFundsStakeModal = ({ account, parentAccount }: NoFundsStakeModalProps) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -49,10 +50,16 @@ const StakeModal = ({ account, parentAccount }: StakeModalProps) => {
 
   const availableOnReceive = true;
 
-  const modalName = "MODAL_STAKE";
+  const modalName = "MODAL_NO_FUNDS_STAKE";
 
   const onBuy = useCallback(() => {
+    track("button_clicked", {
+      button: "buy",
+      page: history.location.pathname,
+    });
+
     dispatch(closeModal(modalName));
+
     history.push({
       pathname: "/exchange",
       state: {
@@ -63,7 +70,13 @@ const StakeModal = ({ account, parentAccount }: StakeModalProps) => {
   }, [currency, history, dispatch]);
 
   const onSwap = useCallback(() => {
+    track("button_clicked", {
+      button: "swap",
+      page: history.location.pathname,
+    });
+
     dispatch(closeModal(modalName));
+
     history.push({
       pathname: "/swap",
       state: {
@@ -75,13 +88,26 @@ const StakeModal = ({ account, parentAccount }: StakeModalProps) => {
   }, [currency, account, parentAccount, history, dispatch]);
 
   const onReceive = useCallback(() => {
+    track("button_clicked", {
+      button: "receive",
+      page: history.location.pathname,
+    });
+
     dispatch(closeModal(modalName));
+
     dispatch(openModal("MODAL_RECEIVE", { parentAccount, account }));
-  }, [parentAccount, account, dispatch]);
+  }, [parentAccount, account, dispatch, history]);
 
   const onClose = useCallback(() => {
     dispatch(closeModal(modalName));
   }, [dispatch]);
+
+  useEffect(() => {
+    page("Stake", "Service_modal", {
+      source: history.location.pathname,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Modal name={modalName} centered>
@@ -136,4 +162,4 @@ const StakeModal = ({ account, parentAccount }: StakeModalProps) => {
   );
 };
 
-export default StakeModal;
+export default NoFundsStakeModal;
