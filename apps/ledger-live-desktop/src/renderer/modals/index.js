@@ -22,6 +22,8 @@ import MODAL_RELEASE_NOTES from "./ReleaseNotes";
 import MODAL_TROUBLESHOOT_NETWORK from "./TroubleshootNetwork";
 import MODAL_SYSTEM_LANGUAGE_AVAILABLE from "./SystemLanguageAvailable";
 // $FlowFixMe
+import MODAL_START_STAKE from "./StartStake";
+import MODAL_NO_FUNDS_STAKE from "./NoFundsStake";
 import MODAL_TERM_OF_USE_UPDATE from "./TermOfUseUpdate";
 import MODAL_EXCHANGE_CRYPTO_DEVICE from "./ExchangeDeviceConfirm";
 import MODAL_SELL_CRYPTO_DEVICE from "./SellDeviceConfirm";
@@ -193,6 +195,8 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_FULL_NODE,
   MODAL_LOTTIE_DEBUGGER,
   MODAL_STORYLY_DEBUGGER,
+  MODAL_START_STAKE,
+  MODAL_NO_FUNDS_STAKE,
   MODAL_RECOVERY_SEED_WARNING,
   // Lending
   MODAL_LEND_MANAGE,

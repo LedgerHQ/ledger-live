@@ -5,10 +5,13 @@ import { Account } from "@ledgerhq/types-live";
 import { useHistory } from "react-router-dom";
 import { stakeDefaultTrack } from "./constants";
 import { track, page } from "~/renderer/analytics/segment";
+import { useDispatch } from "react-redux";
+import { openModal } from "~/renderer/actions/modals";
 
 const useStakeFlow = () => {
   const history = useHistory();
   const stakeProgramsFeatureFlag = useFeature("stakePrograms");
+  const dispatch = useDispatch();
   const { params: paramsFlag } = stakeProgramsFeatureFlag || {};
   const { list: listFlag } = paramsFlag || {};
 
@@ -23,11 +26,9 @@ const useStakeFlow = () => {
         currencies: listFlag || [],
         onAccountSelected: (account: Account, parentAccount: Account | null = null) => {
           setDrawer();
+          dispatch(openModal("MODAL_START_STAKE", { account, parentAccount }));
           history.push({
             pathname: `/account/${account.id}`,
-            state: {
-              startStake: true,
-            },
           });
           track("button_clicked", {
             button: "asset",
