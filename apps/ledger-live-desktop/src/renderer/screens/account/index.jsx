@@ -40,7 +40,6 @@ import TokensList from "./TokensList";
 import CompoundBodyHeader from "~/renderer/screens/lend/Account/AccountBodyHeader";
 import useCompoundAccountEnabled from "~/renderer/screens/lend/useCompoundAccountEnabled";
 import { getBannerProps, AccountBanner } from "./AccountBanner";
-import { useStartStakeFlow } from "~/renderer/screens/account/hooks/useStartStakeFlow";
 
 const mapStateToProps = (
   state,
@@ -95,7 +94,6 @@ const AccountPage = ({
   const isCompoundEnabled = useCompoundAccountEnabled(account, parentAccount);
 
   const [banner, setBanner] = useState({});
-  useStartStakeFlow(account, parentAccount);
 
   const dispatch = useDispatch();
 
