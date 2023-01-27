@@ -102,6 +102,7 @@
     "addressCopied" : "Adres kopyalandı",
     "addressCopiedSuspicious" : "Kopyalanan adres ile panodaki adres arasında uyuşmazlık var.",
     "experimentalFeature" : "Deneysel",
+    "featureFlags" : "Özellik Bayrakları",
     "information" : "Bilgi",
     "search" : "Ara...",
     "searchWithoutEllipsis" : "Ara",
@@ -131,7 +132,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blue"
   },
   "operation" : {
@@ -251,6 +252,8 @@
         "float" : "Dalgalı",
         "update" : "Fiyat güncellemesine kalan süre:",
         "loading" : "Yükleniyor...",
+        "loadingQuotes" : "Teklifler yükleniyor",
+        "loadingDescription" : "Size en uygun seçenekleri hemen bulacağız.",
         "name" : {
           "title" : "Sağlayıcı",
           "tooltip" : "Sağlayıcıya bağlı olarak, hesap oluşturarak kaydolmanız gerekebilir."
@@ -538,7 +541,7 @@
     },
     "resetThirdPartyDataModal" : {
       "title" : "Yerel üçüncü taraf verilerinizi silin",
-      "subtitle" : "Yerel üçüncü taraf verilerinizi silin. İş ortaklarımız tarafından sağlanan hizmetlere erişmek için KYC'nizi yeniden göndermeniz veya tekrar oturum açmanız gerekebilir.",
+      "subtitle" : "Yerel üçüncü taraf verilerinizi silin. Sağlayıcılarımız tarafından sunulan hizmetlere erişmek için KYC'nizi yeniden göndermeniz veya tekrar oturum açmanız gerekebilir.",
       "cta" : "Onayla"
     },
     "modal" : {
@@ -1206,8 +1209,11 @@
         "checkDeviceButton" : "Kontrolü tekrar çalıştırın",
         "cancelButton" : "Belki sonra"
       },
-      "genuineCheckAnimationModal" : {
-        "message" : "{{deviceName}} cihazında yöneticiye izin verin"
+      "softwareCheckAllowSecureChannelModal" : {
+        "title" : "{{deviceName}} cihazında yöneticiye izin verin"
+      },
+      "softwareCheckLockedDeviceModal" : {
+        "title" : "Cihazınızın kilidini açın"
       },
       "helpDrawer" : {
         "title" : "Kurulum kılavuzuyla ilgili yardıma mı ihtiyacınız var?",
@@ -1231,16 +1237,16 @@
   },
   "postOnboarding" : {
     "postOnboardingScreen" : {
-      "title" : "Bravo.\nArtık tamamen hazırsınız.",
-      "description" : "Tebrikler! {{deviceName}} cihazınızı kurdunuz!",
-      "paragraph" : "Başlangıçta size yardımcı olacak bazı adımlar hazırladık. Ledger Live'ı kendiniz keşfetmek istiyorsanız bu adımı atlayabilirsiniz. İstediğiniz zaman buraya geri dönebilirsiniz.",
-      "bottomText" : "Ledger Live ile Web 3.0'a güvenli yolculuğunuzun tadını çıkarın."
+      "title" : "Şimdi Ledger Stax'iniz ile\nşunları yapın... ",
+      "titleCompleted" : "Hepsi\nbu kadar!"
     },
     "postOnboardingContent" : {
-      "title" : "Bravo.\nArtık tamamen hazırsınız.",
-      "description" : "Şimdi şunları yapabilirsiniz:",
-      "skipLink" : "Uygulamaya geç",
-      "skipLinkInDrawer" : "Daha sonra yapacağım"
+      "skipLink" : "Daha sonra yapacağım"
+    },
+    "postOnboardingBanner" : {
+      "title" : "Şimdi Ledger Stax'iniz ile ne mi yapabilirsiniz?",
+      "description" : "Infinity NFT’sini alın, kilit ekranını kişiselleştirin veya\nbaşka borsalardaki varlıklarınızı aktarın.",
+      "link" : "Sırada ne var?"
     }
   },
   "hideNftCollection" : {
@@ -1304,8 +1310,8 @@
       "description" : "BLACKFRIDAY20 promosyon koduyla Ledger donanım cüzdanlarda %40'lık indirimden yararlanın"
     },
     "referralProgram" : {
-      "title" : "Referans verin ve $10 kazanın",
-      "description" : "Bir arkadaşınıza başarıyla referans verdiğinizde, ikiniz de $10 değerinde Bitcoin kazanırsınız."
+      "title" : "Referans olun ve $10 kazanın",
+      "description" : "Bir arkadaşınıza başarıyla referans olduğunuzda, ikiniz de $10 değerinde Bitcoin kazanırsınız."
     }
   },
   "signmessage" : {
@@ -1678,6 +1684,8 @@
       "undelegated" : "Yetki iptal edildi",
       "undelegatedFrom" : "Yetkisi iptal edilen taraf",
       "undelegatedAmount" : "Yetkisi iptal edilen tutar",
+      "withdrawnFrom" : "Şuradan çekildi:",
+      "withdrawnAmount" : "Çekilen Tutar",
       "rewardFrom" : "Ödül kaynağı",
       "memo" : "Memo",
       "assetId" : "Varlık Kimliği",
@@ -1718,7 +1726,7 @@
     "swap" : {
       "notice" : {
         "default" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız.",
-        "cic" : "Göndermeden önce cihazınızdaki Takas bilgilerini doğrulayın. Bazı işlemler için CIC tarafından ek doğrulama adımları gerekebilir ve bu biraz gecikmeye neden olabilir."
+        "provider" : "Göndermeden önce cihazınızdaki Takas bilgilerini doğrulayın. {{providerName}} bazı işlemler için ek doğrulama adımları gerçekleştirmek zorunda kalabilir ve bu, gecikmeye neden olabilir."
       },
       "confirm" : "Takas işlemini onayla",
       "amountSent" : "Gönderilecek tutar",
@@ -2231,6 +2239,187 @@
     "value" : "Değer",
     "header" : "Hesap dağılımı ({{count}})"
   },
+  "elrond" : {
+    "summary" : {
+      "availableBalanceTooltip" : "Bu miktar aktarılabilir.",
+      "availableBalance" : "Mevcut bakiye",
+      "delegatedAssetsTooltip" : "Yetkisi devredilen varlıklar, staking sağlayıcısı tarafından doğrulayıcı node'ları çalıştırmak, işlemleri gerçekleştirmek ve konsensüs mekanizmasına katılarak ağı güvence altına almak amacıyla dolaylı olarak kullanılır.",
+      "delegatedAssets" : "Yetkisi devredilen varlıklar",
+      "undelegatingTooltip" : "Yetkisi iptal edilen varlıklar 10 günlük bir çözülme dönemine tabidir ve sadece bu süre sona erdikten sonra çekilebilir.",
+      "undelegating" : "Bekleyen Çekim İşlemleri"
+    },
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "MultiversX teknolojisiyle",
+        "moreInfo" : "Daha fazla bilgi",
+        "drawerTitle" : "MultiversX entegrasyonu",
+        "title" : "MultiversX eGold (EGLD) token'ı artık Ledger Live'da kullanılabilir",
+        "description" : "eGold (EGLD) token'larınızı artık Ledger Live üzerinden gönül rahatlığıyla güvenceye alabilir ve yönetebilirsiniz.",
+        "description2" : "MultiversX Network'e özgü olan MultiversX eGold (EGLD) Token'ı, bu ağ üzerindeki her türlü işlem, staking, akıllı sözleşme, yönetişim ve doğrulayıcı ödülleri için kullanılır.",
+        "description3" : "MultiversX ekibiyle aktif şekilde çalışarak staking işlemlerini, dahili ESDT (Elrond Standart Dijital Token) desteğini ve diğer birçok işlevi eklemek için çalışıyoruz.",
+        "website" : "İnternet Ölçeğinde Blok Zinciri"
+      }
+    },
+    "delegation" : {
+      "emptyState" : {
+        "description" : "Ağın güvenliğini sağlamak ve ödüllerden payınıza düşeni almak için EGLD'nizin yetkisini devredin.",
+        "info" : "Yetki devretme nedir?",
+        "delegation" : "Ödüller kazanın"
+      },
+      "commission" : "Komisyon",
+      "claimRewards" : "Ödüllerinizi alın",
+      "header" : "Yetki Devirleri",
+      "noRewards" : "Ödül yok",
+      "delegate" : "Yetki Devredin",
+      "undelegate" : "Yetki İptali",
+      "redelegateDisabledTooltip" : "Yetkiyi yeniden devretmek için <0>{{days}}</0> gün beklemelisiniz",
+      "redelegateMaxDisabledTooltip" : "Bir seferde en fazla <0>7</0> doğrulayıcıya yeniden yetki devredebilirsiniz.",
+      "undelegateDisabledTooltip" : "Bir seferde en fazla <0>7</0> doğrulayıcının yetkisini iptal edebilirsiniz.",
+      "reward" : "Ödüllerinizi alın",
+      "currentDelegation" : "Yetkisi devredilen tutar: <0>{{amount}}</0>",
+      "apr" : "Yıllık Faiz Getirisi (APR)",
+      "totalStake" : "Toplam Stake",
+      "activeTooltip" : "Yetkisi devredilen tutarlar üzerinden ödül kazanırsınız",
+      "inactiveTooltip" : "Yetkisi iptal edilen tutarlar üzerinden ödül kazanamazsınız",
+      "minSafeWarning" : "Fonlar yetersiz. En az 1 EGLD'nizin olması gerekiyor.",
+      "flow" : {
+        "title" : "Yetki Devredin",
+        "steps" : {
+          "amount" : {
+            "title" : "Yetki Devredin",
+            "subtitle" : "Varlıklarınızı aşağıdaki Staking Sağlayıcılarından birine stake edin.",
+            "warning" : "Staking Sağlayıcınızı akıllıca seçin! Şu anda tek risk, çeşitli nedenlerden ötürü ödül alamamaktır. Dolayısıyla bir sağlayıcıyı Güvenilirlik, İletişim ve Ekonomi kriterlerine göre seçmelisiniz.",
+            "fields" : {
+              "validator" : "Staking Sağlayıcısı"
+            }
+          },
+          "fields" : {
+            "amount" : "Stake edilecek miktar"
+          },
+          "starter" : {
+            "description" : "EGLD varlıklarınızın yetkisini bir Staking Sağlayıcısına devrederek ödüller kazanabilirsiniz.",
+            "bullet" : ["Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.", "Ledger cihazınızı kullanarak yetki devredin.", "Yetkisi İptal Edilen varlıklar 10 gün sonra yeniden kullanılabilir"],
+            "warning" : {
+              "description" : "Staking Sağlayıcınızı akıllıca seçin! Şu anda tek risk, çeşitli nedenlerden ötürü ödül alamamaktır. Dolayısıyla bir sağlayıcıyı Güvenilirlik, İletişim ve Ekonomi kriterlerine göre seçmelisiniz."
+            }
+          },
+          "validator" : {
+            "title" : "Staking Sağlayıcıları"
+          },
+          "connectDevice" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "success" : {
+              "title" : "Varlıklarınızın yetkisini başarıyla devrettiniz.",
+              "text" : "İşlem blok zinciri tarafından onaylandığında hesap bakiyeniz güncellenecek",
+              "cta" : "Ayrıntıları göster"
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    },
+    "claimRewards" : {
+      "flow" : {
+        "title" : "Ödüllerinizi alın",
+        "steps" : {
+          "claimRewards" : {
+            "title" : "Ödüller",
+            "compound" : "Birleştirme Ödülleri",
+            "claim" : "Ödüllerinizi alın",
+            "compoundOrClaim" : "Ödülleri Birleştirin veya Ödülleri Alın",
+            "compoundDescription" : "Ödüller, yetkisi devredilen tutara eklenecektir.",
+            "claimDescription" : "Ödüller, mevcut bakiyenize eklenecektir.",
+            "compoundInfo" : "<0>{{amount}}</0> kazandınız. Devam butonuna tıklayarak ödülünüzü hemen alın ve otomatik olarak aynı Staking Sağlayıcısına yetki devrini gerçekleştirin.",
+            "claimInfo" : "Aşağıdaki Staking Sağlayıcısından <0>{{amount}}</0> kazandınız. Devam butonuna tıklayarak ödülünüzü hemen alın ve otomatik olarak mevcut bakiyenize ekleyin.",
+            "selectLabel" : "Bir yetkili seçin"
+          },
+          "connectDevice" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "label" : "Onaylayın",
+            "success" : {
+              "title" : "Ödüller başarıyla alındı",
+              "titleCompound" : "Ödüller başarıyla birleştirildi",
+              "text" : "Ödüller mevcut bakiyenize eklendi",
+              "textCompound" : "<0>{{validator}}</0> hesabına <0>{{amount}}</0> EGLD tutarındaki birleştirme ödülü aktarımı başarıyla gerçekleştirildi.",
+              "cta" : "Ayrıntıları göster"
+            },
+            "pending" : {
+              "title" : "İşlem yayınlanıyor..."
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "header" : "Yetki İptalleri",
+      "headerTooltip" : "10 günlük çözülme sürecinden sonra kullanılabilir.",
+      "inactiveTooltip" : "Yetkisi iptal edilen tutarlar üzerinden ödül kazanamazsınız.",
+      "withdraw" : {
+        "cta" : "Çekimi Tamamla"
+      },
+      "flow" : {
+        "title" : "Varlıkların Yetkisini İptal Edin",
+        "steps" : {
+          "amount" : {
+            "title" : "Tutar",
+            "subtitle" : "Yetki iptal etme işleminin sonuçlanması <0>10 gün</0> sürer.",
+            "warning" : "Ödüller otomatik olarak alınacak. Yetki iptali 2 adımlı bir süreçtir: Yetki iptali talebinin ardından <0>10 günlük bir çözülme süreci</0> başlar. Bu sürenin ardından çekim işlemini sonlandırabilirsiniz ve yetkisi iptal edilen tutar mevcut bakiyenize aktarılır.",
+            "fields" : {
+              "validator" : "Staking Sağlayıcısı",
+              "amount" : "Yetkisi iptal edilecek tutar"
+            }
+          },
+          "device" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "success" : {
+              "title" : "Varlıklarınızdaki yetki devrini başarıyla iptal ettiniz.",
+              "description" : "<0>{{validator}}</0> hesabına devredilen <0>{{amount}}</0> tutarındaki yetki iptal edildi.",
+              "cta" : "Ayrıntıları göster"
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "flow" : {
+        "title" : "Çekimi Tamamla",
+        "steps" : {
+          "withdraw" : {
+            "title" : "Çekimi Tamamla",
+            "description" : "<0>{{validator}}</0> hesabına devredilen <0>{{amount}}</0> EGLD tutarındaki yetkiyi iptal ettiniz. Devam butonuna tıklayarak tutarı hemen çekin ve otomatik olarak mevcut bakiyenize geri ekleyin.",
+            "selectLabel" : "Bir yetki iptali seçin"
+          },
+          "connectDevice" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "label" : "Onaylayın",
+            "success" : {
+              "title" : "Fonlar başarıyla çekildi",
+              "text" : "<0>{{amount}}</0> adet varlık çekilerek hesap bakiyenize geri eklendi.",
+              "cta" : "Ayrıntıları göster"
+            },
+            "pending" : {
+              "title" : "İşlem yayınlanıyor..."
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    }
+  },
   "cardano" : {
     "account" : {
       "stakingRewardsBanner" : {
@@ -2312,6 +2501,15 @@
             }
           }
         }
+      }
+    }
+  },
+  "tezos" : {
+    "objkt" : {
+      "card" : {
+        "title" : "NFT (Non Fungible Token) koleksiyonu",
+        "description" : "Tezos NFT'lerinizi doğrudan Ledger Live içerisindeki Objkt üzerinden görebilirsiniz.",
+        "cta" : "Objkt üzerinden NFT'lerimi göster"
       }
     }
   },
@@ -3689,8 +3887,10 @@
       "debugAppsDesc" : "Hata ayıklama etiketli platform uygulamalarını görüntüleme ve açmaya izin verin.",
       "experimentalApps" : "Deneysel uygulamalara izin ver",
       "experimentalAppsDesc" : "Deneysel etiketli platform uygulamalarını görüntüleme ve açmaya izin verin.",
-      "catalogServer" : "Katalog sağlayıcısını belirle",
-      "catalogServerDesc" : "Birden çok platform uygulama kaynağı arasında geçiş yapın",
+      "catalogUrl" : "Katalog uygulama sağlayıcısını belirle",
+      "catalogUrlDesc" : "Özel katalog sağlayıcınızın URL'sini girin",
+      "catalogRampServer" : "Al / sat sağlayıcılarını belirle",
+      "catalogRampServerDesc" : "Farklı alım satım sağlayıcıları arasında geçiş yapın",
       "enablePlatformDevTools" : "Platform geliştirme araçlarını etkinleştirin",
       "enablePlatformDevToolsDesc" : "Platform uygulama geliştirme araçları penceresini açmayı etkinleştirin",
       "featureFlagsTitle" : "Ledger Live'da kullanılan tanımlı özellik bayrakları",
@@ -3698,6 +3898,9 @@
       "featureFlagsEdit" : "Düzenle",
       "featureFlagsRestore" : "Geri yükle",
       "featureFlagsOverride" : "Geçersiz bırak",
+      "featureFlagsRestoreAll" : "Tüm bayrak değerlerini geri yükle",
+      "showButtonDesc" : "Özellik Bayrakları düğmelerini Yan Menüde her zaman göster",
+      "buttonTitle" : "Bayraklar yerel olarak geçersiz bırakıldı",
       "firebaseProject" : "Bu sürüm tarafından hedeflenen Firebase projesi:",
       "addLocalApp" : "Yerel uygulama ekleyin",
       "addLocalAppDesc" : "Yerel dizini kullanarak yerel dosyalara göz atın ve yerel bir uygulama ekleyin",
@@ -3752,6 +3955,10 @@
         "experimentalCurrencies" : {
           "title" : "Deneysel entegrasyonlar",
           "description" : "Mevcut deneysel kripto varlık entegrasyonlarını kullanın."
+        },
+        "experimentalExecutionOnRenderer" : {
+          "title" : "Deneysel ağ iletişimleri",
+          "description" : "VPN ile Ledger Live kullanımını en iyi hâle getirmek için deneysel ağ iletişimlerini kullanın. Bu özelliği sadece kullandığınız VPN, sistem hatalarına neden olursa etkinleştirin."
         },
         "experimentalLanguages" : {
           "title" : "Çeviri testi",
@@ -4052,7 +4259,7 @@
       "welcome" : {
         "title" : "En güvenli kripto para ve NFT cüzdanı",
         "description" : "Kriptolarınızı ve NFT'lerinizi Ledger Live'da güvenle yönetin, satın alın ve artırın.",
-        "nextButton" : "Başlangıç",
+        "nextButton" : "Devam",
         "noDevice" : "Cihazınız yok mu?",
         "buyLink" : "Cihazınız yok mu? Ledger Nano X satın alın",
         "byTapping" : "“Hemen Başla” butonuna dokunduğunuzda bunlara izin vermiş ve rıza göstermiş olursunuz:",
@@ -4124,10 +4331,10 @@
             }
           },
           "howToGetStarted" : {
-            "title" : "Başlamanın en iyi yolu:",
+            "title" : "Başlamak için en iyi yol:",
             "rules" : {
               "1" : "30 dakika ayırın ve acele etmeyin.",
-              "2" : "Yazmak için bir kalem ve kâğıt alın.",
+              "2" : "Yazmak için bir kalem alın.",
               "3" : "Yalnız kalın ve güvenli ve sessiz bir ortam seçin."
             },
             "buttons" : {
@@ -4167,7 +4374,7 @@
             }
           },
           "deviceHowTo2" : {
-            "title" : "Başlamanın en iyi yolu:",
+            "title" : "Başlamak için en iyi yol:",
             "turnOn" : {
               "title" : "Nano'yu açın",
               "descr" : "Cihazınızı USB kablosuyla bilgisayarınıza bağlayın."
@@ -4994,6 +5201,23 @@
       "title" : "Üzgünüz, hesap bulunamadı",
       "description" : "Adres hesaplamasında bir hata oluştu; tekrar deneyin veya Ledger Destek ile iletişime geçin"
     },
+    "ElrondDecimalsLimitReached" : {
+      "title" : "Maksimum ondalık basamağı sınırına ulaşıldı",
+      "description" : "Lütfen belirtilen tutarın 18 ondalık basamağının olduğundan emin olun."
+    },
+    "ElrondMinDelegatedAmountError" : {
+      "title" : "Yetkisi devredilen miktar en az {{formattedAmount}} olmalıdır"
+    },
+    "ElrondMinUndelegatedAmountError" : {
+      "title" : "Yetki devri iptal edilen miktar en az {{formattedAmount}} olmalıdır"
+    },
+    "ElrondDelegationBelowMinimumError" : {
+      "title" : "Kalan yetki devri miktarı en az {{formattedAmount}} olmalıdır"
+    },
+    "NotEnoughEGLDForFees" : {
+      "title" : "İşlem ücretlerini ödemek için yeterli EGLD yok",
+      "description" : "İşlem ücretlerini ödemek için lütfen hesabınıza bir miktar EGLD gönderin."
+    },
     "NotEnoughBalance" : {
       "title" : "Üzgünüz, fon miktarı yetersiz",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
@@ -5493,6 +5717,14 @@
       "title" : "Cihazınız kilitlendi",
       "description" : "Cihazınızın kilidini açın ve tekrar deneyin.",
       "descriptionWithProductName" : "{{ productName }} cihazınızın kilidini açın ve tekrar deneyin."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "Cihazınız henüz kullanıma hazır değil",
+      "titleWithProductName" : "{{ productName }} henüz kullanıma hazır değil",
+      "description" : "Öncelikle cihazınızın kurulumunu yapmanız gerekiyor.\nKurulum sürecinde size yardımcı olacağız.",
+      "descriptionWithProductName" : "Öncelikle {{ productName }} cihazınızın kurulumunu yapmanız gerekiyor.\nKurulum sürecinde size yardımcı olacağız.",
+      "goToOnboardingButton" : "Cihazımı kur",
+      "goToOnboardingButtonWithProductName" : "{{ productName }} cihazımı kur"
     }
   },
   "cryptoOrg" : {
@@ -5525,7 +5757,7 @@
     }
   },
   "customImage" : {
-    "title" : "Özel görüntü",
+    "title" : "Özel kilitli ekran",
     "steps" : {
       "choose" : {
         "stepLabel" : "Bir görüntü seçin",
@@ -5543,22 +5775,19 @@
       "transfer" : {
         "stepLabel" : "Transfer",
         "uploadAnotherImage" : "Başka bir görsel yükleyin",
-        "allowPreview" : "{{productName}} cihazında resim ön izlemesine izin ver",
-        "loadingPicture" : "{{productName}} cihazında resim yükleniyor",
-        "pictureLoaded" : "Resim yüklendi",
+        "allowPreview" : "{{productName}} cihazınızda kilitli ekran resminin yüklenmesine izin verin",
+        "loadingPicture" : "Yükleniyor...",
         "imageLoaded" : "Görsel {{productName}} cihazına yüklendi",
-        "confirmPicture" : "{{productName}} cihazında onaylayın",
-        "doThisLater" : "Belki sonra",
-        "timeDisclaimer" : "Bu, 30 saniyeye kadar sürebilir"
+        "confirmPicture" : "Gördüğünüz şey hoşunuza gitti mi?\nO zaman böyle kalsın!",
+        "doThisLater" : "Belki sonra"
       }
     },
     "postOnboarding" : {
       "title" : "Cihazınızı kişiselleştirin",
       "description" : "Ekranı özelleştirin",
-      "actionCompletedPopupLabel" : "Cihaz kişiselleştirildi",
-      "actionCompletedHubTitle" : "Ekran gayet şık görünüyor."
+      "actionCompletedPopupLabel" : "Cihaz kişiselleştirildi"
     },
-    "customImageSet" : "Özel resim ayarlandı",
+    "customImageSet" : "Kilitli ekran resmi belirlendi",
     "finishCTA" : "Bitir"
   }
 }
