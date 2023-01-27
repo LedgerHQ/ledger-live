@@ -28,7 +28,7 @@ const FeaturedButtons = () => {
   const { enabled: bannerEnabled } = bannerFeatureFlag || { enabled: false };
 
   const stakeDisabled = stakeProgramsFeatureFlag?.params?.list?.length === 0 ?? true;
-  const startStakeFlow = useStakeFlow({});
+  const startStakeFlow = useStakeFlow();
 
   const handleClickExchange = useCallback(() => {
     track("button_clicked", { button: "buy", flow: "Buy" });

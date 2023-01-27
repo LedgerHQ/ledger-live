@@ -18,7 +18,7 @@ describe("walletconnect", () => {
     currency: getCryptoCurrencyById("ethereum"),
     seedIdentifier: "",
     index: 0,
-    freshAddress: "",
+    freshAddress: "0xCA220B75b7aF206bFCc67E2EcE06E2e144FA294a",
     freshAddresses: [],
     name: "test",
     starred: false,
@@ -148,15 +148,12 @@ describe("walletconnect", () => {
     let transaction = bridge.createTransaction(account);
     transaction = bridge.updateTransaction(transaction, {
       data: Buffer.from(raw.data.slice(2), "hex"),
-      // $FlowFixMe
       amount: new BigNumber(raw.value as string, 16),
       recipient: raw.to,
-      // $FlowFixMe
       gasPrice: new BigNumber(raw.gasPrice as string, 16),
       nonce: raw.nonce,
     });
     transaction = bridge.updateTransaction(transaction, {
-      // $FlowFixMe
       userGasLimit: new BigNumber(raw.gas as string, 16),
     });
     transaction = await bridge.prepareTransaction(account, transaction);
@@ -190,15 +187,12 @@ describe("walletconnect", () => {
     let transaction = bridge.createTransaction(account);
     transaction = bridge.updateTransaction(transaction, {
       data: Buffer.from(raw.data.slice(2), "hex"),
-      // $FlowFixMe
       amount: new BigNumber(raw.value as string, 16),
       recipient: eip55.encode(raw.to as string),
-      // $FlowFixMe
       gasPrice: new BigNumber(raw.gasPrice as string, 16),
       nonce: raw.nonce,
     });
     transaction = bridge.updateTransaction(transaction, {
-      // $FlowFixMe
       userGasLimit: new BigNumber(raw.gas as string, 16),
     });
     transaction = await bridge.prepareTransaction(account, transaction);

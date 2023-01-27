@@ -4,7 +4,9 @@ import { genAccount } from "../mock/account";
 import { getCryptoCurrencyById } from "../currencies";
 import { accountsOpToCSV } from "../csvExport";
 import { initialState, loadCountervalues } from "../countervalues/logic";
-import { getFiatCurrencyByTicker } from "../currencies";
+import { getFiatCurrencyByTicker, setSupportedCurrencies } from "../currencies";
+
+setSupportedCurrencies(["ethereum", "ripple"]);
 setEnv("MOCK", "1");
 setEnv("MOCK_COUNTERVALUES", "1");
 test("export CSV", async () => {
