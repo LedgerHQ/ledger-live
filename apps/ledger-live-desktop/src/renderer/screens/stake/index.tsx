@@ -12,14 +12,14 @@ type Props = {
   currencies?: string[];
 };
 
-const useStakeFlow = (props: Props) => {
+const useStakeFlow = ({ currencies }: Props = {}) => {
   const history = useHistory();
   const stakeProgramsFeatureFlag = useFeature("stakePrograms");
   const dispatch = useDispatch();
   const { params: paramsFlag } = stakeProgramsFeatureFlag || {};
   const { list: listFlag } = paramsFlag || {};
 
-  const getStakeDrawer = currencies => {
+  const getStakeDrawer = () => {
     page("Stake", "Drawer - Choose Asset", {
       ...stakeDefaultTrack,
       page: history.location.pathname,
@@ -60,8 +60,7 @@ const useStakeFlow = (props: Props) => {
   };
 
   const getStakeFlow = () => {
-    const { currencies } = props || {};
-    getStakeDrawer(currencies);
+    getStakeDrawer();
   };
 
   return getStakeFlow;
