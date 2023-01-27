@@ -112,7 +112,7 @@ const NoFundsStakeModal = ({ account, parentAccount }: NoFundsStakeModalProps) =
   return (
     <Modal name={modalName} centered>
       <ModalBody
-        title={t("stake.modal.title")}
+        title={t("stake.no_funds_modal.title")}
         onClose={onClose}
         render={() => (
           <Box paddingX={20}>
@@ -120,18 +120,20 @@ const NoFundsStakeModal = ({ account, parentAccount }: NoFundsStakeModalProps) =
               <CoinsIcon />
             </Box>
             <Box textAlign="center" mb={16}>
-              <Text fontWeight="semiBold">{t("stake.modal.text", { coin: currency.ticker })}</Text>
+              <Text fontWeight="semiBold">
+                {t("stake.no_funds_modal.text", { coin: currency.ticker })}
+              </Text>
             </Box>
             <Box textAlign="center" mb={24}>
               <Text fontSize={13} fontWeight="regular" color="neutral.c70">
-                {t("stake.modal.description")}
+                {t("stake.no_funds_modal.description")}
               </Text>
             </Box>
             {availableOnBuy && (
               <EntryButton
                 Icon={() => <Icon name="BuyCryptoAlt" />}
-                title={t("stake.modal.options.buy.title")}
-                body={t("stake.modal.options.buy.body")}
+                title={t("stake.no_funds_modal.options.buy.title")}
+                body={t("stake.no_funds_modal.options.buy.body")}
                 onClick={onBuy}
                 showChevron
               />
@@ -139,9 +141,9 @@ const NoFundsStakeModal = ({ account, parentAccount }: NoFundsStakeModalProps) =
             {availableOnSwap && (
               <EntryButton
                 Icon={() => <Icon name="BuyCrypto" />}
-                title={t("stake.modal.options.swap.title")}
-                label={t("stake.modal.options.swap.label")}
-                body={t("stake.modal.options.swap.body")}
+                title={t("stake.no_funds_modal.options.swap.title")}
+                label={t("stake.no_funds_modal.options.swap.label")}
+                body={t("stake.no_funds_modal.options.swap.body")}
                 onClick={onSwap}
                 showChevron
               />
@@ -149,8 +151,8 @@ const NoFundsStakeModal = ({ account, parentAccount }: NoFundsStakeModalProps) =
             {availableOnReceive && (
               <EntryButton
                 Icon={() => <Icon name="ArrowToBottom" />}
-                title={t("stake.modal.options.receive.title")}
-                body={t("stake.modal.options.receive.body")}
+                title={t("stake.no_funds_modal.options.receive.title")}
+                body={t("stake.no_funds_modal.options.receive.body")}
                 onClick={onReceive}
                 showChevron
               />
