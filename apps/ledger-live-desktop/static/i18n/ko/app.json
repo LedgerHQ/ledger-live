@@ -606,6 +606,28 @@
       "creditedAmount" : "적립 금액"
     }
   },
+  "stake" : {
+    "noFundsModal" : {
+      "title" : "Buy, swap or receive",
+      "text" : "You do not have enough {{coin}} available to stake",
+      "description" : "Not enough funds? Don’t worry, you can securely buy, swap or receive crypto directly in Ledger Live.",
+      "options" : {
+        "buy" : {
+          "title" : "Buy",
+          "body" : "Buy with trusted  providers"
+        },
+        "swap" : {
+          "title" : "Swap",
+          "label" : "Popular",
+          "body" : "Convert crypto to crypto securely"
+        },
+        "receive" : {
+          "title" : "Receive",
+          "body" : "Receive crypto in your wallet"
+        }
+      }
+    }
+  },
   "lottieDebugger" : {
     "buttonTitle" : "테스트"
   },
@@ -1364,7 +1386,22 @@
     },
     "recentActivity" : "최신 운영",
     "totalBalance" : "총 잔액",
-    "transactionsPendingConfirmation" : "일부 트랜잭션이 아직 확인되지 않았습니다. 트랜잭션이 확인된 후 잔액에 반영되며 사용이 가능합니다."
+    "transactionsPendingConfirmation" : "일부 트랜잭션이 아직 확인되지 않았습니다. 트랜잭션이 확인된 후 잔액에 반영되며 사용이 가능합니다.",
+    "featuredButtons" : {
+      "buySell" : {
+        "title" : "Buy / Sell",
+        "description" : "Buy and sell with trusted providers"
+      },
+      "swap" : {
+        "title" : "Swap",
+        "description" : "Convert crypto to crypto securely",
+        "label" : "Popular"
+      },
+      "earn" : {
+        "title" : "Earn",
+        "description" : "Grow your crypto with Ledger"
+      }
+    }
   },
   "currentAddress" : {
     "title" : "현재 주소",
@@ -5725,6 +5762,13 @@
       "descriptionWithProductName" : "먼저 {{ productName }} 장치 설정이 필요합니다.\n설정 절차를 안내해드리겠습니다.",
       "goToOnboardingButton" : "내 장치 설정",
       "goToOnboardingButtonWithProductName" : "내 {{ productName }} 설정"
+    },
+    "EtherscanAPIError" : {
+      "title" : "트랜잭션을 가져오지 못했습니다",
+      "description" : "탐색기에서 예상하지 못한 오류가 발생했습니다. 나중에 다시 시도해 주세요"
+    },
+    "GasEstimationError" : {
+      "title" : "가스비를 추정하지 못했습니다"
     }
   },
   "cryptoOrg" : {
