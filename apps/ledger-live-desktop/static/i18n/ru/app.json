@@ -606,6 +606,28 @@
       "creditedAmount" : "Внесённая сумма"
     }
   },
+  "stake" : {
+    "noFundsModal" : {
+      "title" : "Buy, swap or receive",
+      "text" : "You do not have enough {{coin}} available to stake",
+      "description" : "Not enough funds? Don’t worry, you can securely buy, swap or receive crypto directly in Ledger Live.",
+      "options" : {
+        "buy" : {
+          "title" : "Buy",
+          "body" : "Buy with trusted  providers"
+        },
+        "swap" : {
+          "title" : "Swap",
+          "label" : "Popular",
+          "body" : "Convert crypto to crypto securely"
+        },
+        "receive" : {
+          "title" : "Receive",
+          "body" : "Receive crypto in your wallet"
+        }
+      }
+    }
+  },
   "lottieDebugger" : {
     "buttonTitle" : "Протестировать"
   },
@@ -1364,7 +1386,22 @@
     },
     "recentActivity" : "Последние операции",
     "totalBalance" : "Общий баланс",
-    "transactionsPendingConfirmation" : "Некоторые транзакции ещё не подтверждены. Они будут отражены на вашем балансе и доступны для использования после подтверждения."
+    "transactionsPendingConfirmation" : "Некоторые транзакции ещё не подтверждены. Они будут отражены на вашем балансе и доступны для использования после подтверждения.",
+    "featuredButtons" : {
+      "buySell" : {
+        "title" : "Покупка/Продажа",
+        "description" : "Покупайте и продавайте с операторами, которым можно доверять"
+      },
+      "swap" : {
+        "title" : "Обмен",
+        "description" : "Переводите криптоактивы в полной безопасности",
+        "label" : "Популярно"
+      },
+      "earn" : {
+        "title" : "Приумножить",
+        "description" : "Приумножайте криптовалюты вместе с Ledger"
+      }
+    }
   },
   "currentAddress" : {
     "title" : "Текущий адрес",
@@ -5725,6 +5762,13 @@
       "descriptionWithProductName" : "Сначала {{ productName }} необходимо настроить.\nМы поможем вам с этим.",
       "goToOnboardingButton" : "Настроить устройство",
       "goToOnboardingButtonWithProductName" : "Настроить {{ productName }}"
+    },
+    "EtherscanAPIError" : {
+      "title" : "Сбой при загрузке транзакций",
+      "description" : "Произошла непредвиденная ошибка с обозревателями. Повторите попытку позже"
+    },
+    "GasEstimationError" : {
+      "title" : "Сбой расчёта стоимости Газа"
     }
   },
   "cryptoOrg" : {
