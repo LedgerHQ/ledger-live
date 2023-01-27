@@ -606,6 +606,28 @@
       "creditedAmount" : "贷记额"
     }
   },
+  "stake" : {
+    "noFundsModal" : {
+      "title" : "Buy, swap or receive",
+      "text" : "You do not have enough {{coin}} available to stake",
+      "description" : "Not enough funds? Don’t worry, you can securely buy, swap or receive crypto directly in Ledger Live.",
+      "options" : {
+        "buy" : {
+          "title" : "Buy",
+          "body" : "Buy with trusted  providers"
+        },
+        "swap" : {
+          "title" : "Swap",
+          "label" : "Popular",
+          "body" : "Convert crypto to crypto securely"
+        },
+        "receive" : {
+          "title" : "Receive",
+          "body" : "Receive crypto in your wallet"
+        }
+      }
+    }
+  },
   "lottieDebugger" : {
     "buttonTitle" : "测试"
   },
@@ -1364,7 +1386,22 @@
     },
     "recentActivity" : "近期操作",
     "totalBalance" : "总余额",
-    "transactionsPendingConfirmation" : "有些交易尚未确认。这些交易将反映在您的余额中，并在确认后可用。"
+    "transactionsPendingConfirmation" : "有些交易尚未确认。这些交易将反映在您的余额中，并在确认后可用。",
+    "featuredButtons" : {
+      "buySell" : {
+        "title" : "买入 / 卖出",
+        "description" : "Buy and sell with trusted providers"
+      },
+      "swap" : {
+        "title" : "互换",
+        "description" : "Convert crypto to crypto securely",
+        "label" : "热门"
+      },
+      "earn" : {
+        "title" : "赚取",
+        "description" : "Grow your crypto with Ledger"
+      }
+    }
   },
   "currentAddress" : {
     "title" : "当前地址",
@@ -5725,6 +5762,13 @@
       "descriptionWithProductName" : "您需要先设置 {{ productName }}。\n我们将引导您完成设置流程。",
       "goToOnboardingButton" : "设置我的设备",
       "goToOnboardingButtonWithProductName" : "设置我的 {{ productName }}"
+    },
+    "EtherscanAPIError" : {
+      "title" : "未能提取交易",
+      "description" : "浏览器出现意外错误。请重试"
+    },
+    "GasEstimationError" : {
+      "title" : "未能估计 Gas 费用"
     }
   },
   "cryptoOrg" : {
