@@ -42,6 +42,10 @@ import type { CosmosDelegationFlowParamList } from "../families/cosmos/Delegatio
 import type { CosmosRedelegationFlowParamList } from "../families/cosmos/RedelegationFlow/types";
 import type { CosmosUndelegationFlowParamList } from "../families/cosmos/UndelegationFlow/types";
 import type { CosmosClaimRewardsFlowParamList } from "../families/cosmos/ClaimRewardsFlow/types";
+import type { ElrondDelegationFlowParamList } from "../families/elrond/components/Flows/Delegate/types";
+import type { ElrondUndelegationFlowParamList } from "../families/elrond/components/Flows/Undelegate/types";
+import type { ElrondClaimRewardsFlowParamList } from "../families/elrond/components/Flows/Claim/types";
+import type { ElrondWithdrawFlowParamList } from "../families/elrond/components/Flows/Withdraw/types";
 import type { NearStakingFlowParamList } from "../families/near/StakingFlow/types";
 import type { NearUnstakingFlowParamList } from "../families/near/UnstakingFlow/types";
 import type { NearWithdrawingFlowParamList } from "../families/near/WithdrawingFlow/types";
@@ -147,6 +151,22 @@ type Props =
   | StackNavigatorProps<
       CosmosClaimRewardsFlowParamList,
       ScreenName.CosmosClaimRewardsConnectDevice
+    >
+  | StackNavigatorProps<
+      ElrondDelegationFlowParamList,
+      ScreenName.ElrondDelegationConnectDevice
+    >
+  | StackNavigatorProps<
+      ElrondUndelegationFlowParamList,
+      ScreenName.ElrondUndelegationConnectDevice
+    >
+  | StackNavigatorProps<
+      ElrondClaimRewardsFlowParamList,
+      ScreenName.ElrondClaimRewardsConnectDevice
+    >
+  | StackNavigatorProps<
+      ElrondWithdrawFlowParamList,
+      ScreenName.ElrondWithdrawConnectDevice
     >
   | StackNavigatorProps<
       NearStakingFlowParamList,

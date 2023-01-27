@@ -102,7 +102,6 @@ export function SwapForm({
   const [currentBanner, setCurrentBanner] = useState<ActionRequired>(
     ActionRequired.None,
   );
-  const [isSendMaxLoading, setIsSendMaxLoading] = useState(false);
 
   const [error, setError] = useState<ValidCheckQuoteErrorCodes>();
   const { t } = useTranslation();
@@ -129,7 +128,6 @@ export function SwapForm({
   const swapTransaction = useSwapTransaction({
     accounts,
     setExchangeRate,
-    setIsSendMaxLoading,
     onNoRates,
     excludeFixedRates: true,
     providers,
@@ -437,7 +435,7 @@ export function SwapForm({
               provider={provider}
               exchangeRate={exchangeRate}
               swapError={swapError}
-              isSendMaxLoading={isSendMaxLoading}
+              isSendMaxLoading={swapTransaction.swap.isMaxLoading}
             />
 
             {swapTransaction.swap.rates.status === "loading" ? (

@@ -164,9 +164,6 @@ export type BaseNavigatorStackParamList = {
     transaction?: Transaction;
     justScanned?: boolean;
   };
-  [ScreenName.FallbackCameraSend]: {
-    screenName: keyof BaseNavigatorStackParamList;
-  };
   [ScreenName.BleDevicePairingFlow]: {
     filterByDeviceModelId?: DeviceModelId;
     areKnownDevicesDisplayed?: boolean;

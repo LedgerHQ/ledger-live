@@ -1,5 +1,17 @@
 # @ledgerhq/react-native-hw-transport-ble
 
+## 6.28.1
+
+### Patch Changes
+
+- [#2413](https://github.com/LedgerHQ/ledger-live/pull/2413) [`e7bf251ba4`](https://github.com/LedgerHQ/ledger-live/commit/e7bf251ba488a9f38731db58b1d2d69d8fc802ea) Thanks [@github-actions](https://github.com/apps/github-actions)! - Fix: incorrect usage of bleManager instance inside BleTransport
+
+## 6.28.1-hotfix.0
+
+### Patch Changes
+
+- [#2413](https://github.com/LedgerHQ/ledger-live/pull/2413) [`e7bf251ba4`](https://github.com/LedgerHQ/ledger-live/commit/e7bf251ba488a9f38731db58b1d2d69d8fc802ea) Thanks [@github-actions](https://github.com/apps/github-actions)! - Fix: incorrect usage of bleManager instance inside BleTransport
+
 ## 6.28.0
 
 ### Minor Changes

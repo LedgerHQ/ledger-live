@@ -5,4 +5,8 @@ export default {
   welcomeScreenStax: require("./onboardingStax.mp4"),
   onboardingSuccessStaxDark: require("./onboardingTransitionDark.mp4"),
   onboardingSuccessStaxLight: require("./onboardingTransitionLight.mp4"),
+  infinityPassPart01Dark: require("./infinityPassDark/infinityPassPart01.mp4"),
+  infinityPassPart01Light: require("./infinityPassLight/infinityPassPart01.mp4"),
+  infinityPassPart02Dark: require("./infinityPassDark/infinityPassPart02.mp4"),
+  infinityPassPart02Light: require("./infinityPassLight/infinityPassPart02.mp4"),
 };

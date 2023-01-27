@@ -46,6 +46,7 @@ function Item({
     [onSelect, validator, value],
   );
   const isDisabled = (!value || value.gt(0)) && disabled;
+
   return (
     <TouchableOpacity
       onPress={select}

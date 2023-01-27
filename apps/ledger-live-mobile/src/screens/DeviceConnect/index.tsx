@@ -4,9 +4,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppResult, createAction } from "@ledgerhq/live-common/hw/actions/app";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
+import { Flex } from "@ledgerhq/native-ui";
 import { TrackScreen } from "../../analytics";
+import SelectDevice2 from "../../components/SelectDevice2";
 import SelectDevice from "../../components/SelectDevice";
+import RemoveDeviceMenu from "../../components/SelectDevice2/RemoveDeviceMenu";
 import DeviceActionModal from "../../components/DeviceActionModal";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import {
@@ -29,6 +33,18 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
   const { colors } = useTheme();
   const [device, setDevice] = useState<Device | null | undefined>();
   const { appName = "BOLOS", onSuccess, onError, onClose } = route.params;
+
+  const [chosenDevice, setChosenDevice] = useState<Device | null>();
+  const [showMenu, setShowMenu] = useState<boolean>(false);
+
+  const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
+
+  const onShowMenu = (device: Device) => {
+    setChosenDevice(device);
+    setShowMenu(true);
+  };
+
+  const onHideMenu = () => setShowMenu(false);
 
   const onDone = useCallback(() => {
     const n =
@@ -65,13 +81,30 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
       ]}
     >
       <TrackScreen category="DeviceConnect" name="ConnectDevice" />
-      <NavigationScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContainer}
-      >
-        <SkipSelectDevice onResult={setDevice} />
-        <SelectDevice onSelect={setDevice} />
-      </NavigationScrollView>
+      <SkipSelectDevice onResult={setDevice} />
+      {newDeviceSelectionFeatureFlag?.enabled ? (
+        <Flex px={16} py={5} flex={1}>
+          <SelectDevice2 onSelect={setDevice} stopBleScanning={!!device} />
+        </Flex>
+      ) : (
+        <NavigationScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContainer}
+        >
+          <SelectDevice
+            autoSelectOnAdd
+            onSelect={setDevice}
+            onBluetoothDeviceAction={onShowMenu}
+          />
+          {chosenDevice ? (
+            <RemoveDeviceMenu
+              open={showMenu}
+              device={chosenDevice}
+              onHideMenu={onHideMenu}
+            />
+          ) : null}
+        </NavigationScrollView>
+      )}
       <DeviceActionModal
         action={action}
         device={device}

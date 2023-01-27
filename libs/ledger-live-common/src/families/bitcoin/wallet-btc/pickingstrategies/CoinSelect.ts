@@ -45,13 +45,13 @@ export class CoinSelect extends PickingStrategy {
       this.crypto,
       this.derivationMode
     );
-    const outputAddresses = outputs.map((o) => o.address);
+    const outputScripts = outputs.map((o) => o.script);
     // Size of only 1 output (without fixed size)
     const oneOutputSize =
-      outputAddresses.length > 0
+      outputScripts.length > 0
         ? utils.maxTxSize(
             0,
-            [outputAddresses[0]],
+            [outputScripts[0]],
             false,
             this.crypto,
             this.derivationMode
@@ -124,7 +124,7 @@ export class CoinSelect extends PickingStrategy {
             feePerByte *
             utils.maxTxSizeCeil(
               nbInput,
-              outputAddresses,
+              outputScripts,
               true,
               this.crypto,
               this.derivationMode
@@ -136,7 +136,7 @@ export class CoinSelect extends PickingStrategy {
             feePerByte *
               utils.maxTxSizeCeil(
                 nbInput,
-                outputAddresses,
+                outputScripts,
                 false,
                 this.crypto,
                 this.derivationMode
@@ -194,7 +194,7 @@ export class CoinSelect extends PickingStrategy {
         feePerByte *
         utils.maxTxSizeCeil(
           unspentUtxoSelected.length,
-          outputAddresses,
+          outputScripts,
           bestSelectionNeedChangeoutput,
           this.crypto,
           this.derivationMode
