@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 7.3.0
+
+### Minor Changes
+
+- [#1661](https://github.com/LedgerHQ/ledger-live/pull/1661) [`a56ffa948d`](https://github.com/LedgerHQ/ledger-live/commit/a56ffa948defb16ea9f2968d96d4b896f9839145) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add ESDT UTK token.
+
 ## 7.3.0-next.0
 
 ### Minor Changes
