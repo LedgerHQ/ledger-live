@@ -3,8 +3,8 @@ import { NavigationProp } from "@react-navigation/native";
 
 // A state that resets to its default value when the screen gets the focus from the navigation mechanism
 export function useResetOnNavigationFocusState<
-  ValueType,
   NavigationType extends NavigationProp<Record<string, unknown>>,
+  ValueType,
 >(
   navigation: NavigationType,
   defaultValue: ValueType,
