@@ -302,7 +302,6 @@ const getAccountShape: GetAccountShape = async (
       nbAssets,
     },
   };
-
   return shape;
 };
 
