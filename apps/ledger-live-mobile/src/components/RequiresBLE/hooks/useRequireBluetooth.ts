@@ -4,11 +4,14 @@ import { Platform } from "react-native";
 import { useEnableBluetooth } from "./useEnableBluetooth";
 // import { useAndroidLocationPermission } from "../../RequiresLocation/hooks/useAndroidLocationPermission";
 import { useAndroidEnableLocation } from "../../RequiresLocation/hooks/useAndroidEnableLocation";
+import { useAndroidBluetoothPermissions } from "./useAndroidBluetoothPermissions";
 
 export type BluetoothRequirementsState =
   | "unknown"
   | "bluetooth disabled"
   | "location disabled"
+  | "bluetooth permissions ungranted"
+  | "location permissions ungranted"
   | "all respected";
 
 export type UseRequireBluetoothArgs = {
@@ -47,16 +50,37 @@ export const useRequireBluetooth = ({
   //   requestForPermissionsAgain: requestForBluetoothPermissionsAgain,
   // } = useAndroidBluetoothPermissions();
 
-  const isEnableBluetoothHookEnabled = isHookEnabled;
-  const isAndroidEnableLocationHookEnabled =
-    isHookEnabled && type === "scanning" && Platform.OS === "android";
+  // TODO: the order is important
 
+  const isAndroidBluetoothPermissionsHookEnabled =
+    isHookEnabled && Platform.OS === "android";
+
+  const {
+    hasPermissions: androidHasBluetoothPermissions,
+    neverAskAgain: androidBluetoothPermissionsNeverAskAgain,
+    requestForPermissionsAgain:
+      androidBluetoothPermissionsRequestForPermissionsAgain,
+  } = useAndroidBluetoothPermissions({
+    isHookEnabled: isAndroidBluetoothPermissionsHookEnabled,
+  });
+
+  const isEnableBluetoothHookEnabled =
+    isHookEnabled &&
+    (Platform.OS === "ios" || androidHasBluetoothPermissions === "granted");
+
+  // TODO: handle case of iOS and bluetooth permission
   const {
     bluetoothServiceState,
     checkAndRequestAgain: enableBluetoothCheckAndRequestAgain,
   } = useEnableBluetooth({
     isHookEnabled: isEnableBluetoothHookEnabled,
   });
+
+  const isAndroidEnableLocationHookEnabled =
+    isHookEnabled &&
+    type === "scanning" &&
+    Platform.OS === "android" &&
+    bluetoothServiceState === "enabled";
 
   const {
     locationServicesState,
@@ -68,7 +92,14 @@ export const useRequireBluetooth = ({
   let bluetoothRequirementsState = "unknown";
   let handleRetryOnIssue = null;
 
-  if (bluetoothServiceState === "disabled") {
+  // TODO: should also include check if hook enabled ?
+  if (
+    isAndroidBluetoothPermissionsHookEnabled &&
+    androidHasBluetoothPermissions === "denied"
+  ) {
+    bluetoothRequirementsState = "bluetooth permissions ungranted";
+    handleRetryOnIssue = androidBluetoothPermissionsRequestForPermissionsAgain;
+  } else if (bluetoothServiceState === "disabled") {
     bluetoothRequirementsState = "bluetooth disabled";
     handleRetryOnIssue = enableBluetoothCheckAndRequestAgain;
   } else if (locationServicesState === "disabled") {

@@ -1,5 +1,5 @@
 import React from "react";
-
+import { Text } from "@ledgerhq/native-ui";
 import BottomModal from "../BottomModal";
 import { BluetoothRequirementsState } from "./hooks/useRequireBluetooth";
 import BluetoothDisabled from "./BluetoothDisabled";
@@ -14,7 +14,7 @@ export type RequiresBluetoothBottomModalProps = {
 };
 
 /**
- * Drawer depends on the result from useRequireBluetooth hook.
+ * Drawer to use with the hook useRequireBluetooth hook.
  *
  * @param param0
  * @returns
@@ -24,7 +24,9 @@ const RequiresBluetoothBottomModal = ({
   bluetoothRequirementsState,
   handleRetryOnIssue,
 }: RequiresBluetoothBottomModalProps) => {
-  console.log(`🦖 RequiresBluetoothBottomModal bluetoothRequirementsState: ${bluetoothRequirementsState}`);
+  console.log(
+    `🦖 RequiresBluetoothBottomModal bluetoothRequirementsState: ${bluetoothRequirementsState}`,
+  );
 
   const onClose = () => {
     console.log(`🦖 RequiresBluetoothBottomModal onClose`);
@@ -33,6 +35,10 @@ const RequiresBluetoothBottomModal = ({
   let content = null;
 
   switch (bluetoothRequirementsState) {
+    case "bluetooth permissions ungranted":
+      // eslint-disable-next-line react/jsx-no-undef
+      content = <Text>bluetooth permissions denied ❌</Text>;
+      break;
     case "bluetooth disabled":
       content = (
         <BluetoothDisabled
