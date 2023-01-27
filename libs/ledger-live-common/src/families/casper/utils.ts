@@ -140,7 +140,7 @@ export function getEstimatedFees(): BigNumber {
 }
 
 export function casperAddressFromPubKey(pubkey: Buffer): string {
-  const checksumed = encode(pubkey)
+  const checksumed = encode(pubkey);
 
-  return `02${checksumed}`
+  return `02${checksumed}`;
 }

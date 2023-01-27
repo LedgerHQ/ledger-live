@@ -15,7 +15,7 @@ import {
 } from "./addresses";
 import { LTxnHistoryData } from "./types";
 
-export const getUnit = (): Unit => getCryptoCurrencyById("filecoin").units[0];
+export const getUnit = (): Unit => getCryptoCurrencyById("casper").units[0];
 
 export function mapTxToOps(
   accountId: string,
