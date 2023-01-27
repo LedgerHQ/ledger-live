@@ -57,7 +57,7 @@ export function usePromptEnableBluetoothCallback() {
   }, []);
 }
 
-export type BluetoothEnableState =
+export type BluetoothServiceState =
   | "unknown"
   | "enabled"
   | "disabled"
@@ -79,7 +79,7 @@ export type BluetoothEnableState =
  *
  * @returns an object containing:
  * - checkAndRequestAgain: a function that checks the bluetooth service state and requests (if necessary) the user to enable it
- * - bluetoothEnableState: a state that indicates if bluetooth is enabled or not
+ * - bluetoothServiceState: a state that indicates if bluetooth is enabled or not
  */
 export function useEnableBluetooth() {
   const [observedTransportState, setObservedTransportState] =
@@ -109,27 +109,27 @@ export function useEnableBluetooth() {
     return () => sub.unsubscribe();
   }, []);
 
-  let bluetoothEnableState: BluetoothEnableState = "disabled";
+  let bluetoothServiceState: BluetoothServiceState = "disabled";
 
   if (observedTransportState === "PoweredOn") {
-    bluetoothEnableState = "enabled";
+    bluetoothServiceState = "enabled";
   } else if (observedTransportState === "PoweredOff") {
-    bluetoothEnableState = "disabled";
+    bluetoothServiceState = "disabled";
   } else if (
     observedTransportState === "Unauthorized"
     // bluetoothPromptResult === BluetoothPromptResult.BLE_CANNOT_BE_ENABLED
   ) {
-    bluetoothEnableState = "unauthorized";
+    bluetoothServiceState = "unauthorized";
   } else if (
     observedTransportState === "Unknown"
     // !bluetoothPromptedOnce
     // bluetoothPromptResult === BluetoothPromptResult.BLE_UNKWOWN_STATE
   ) {
-    bluetoothEnableState = "unknown";
+    bluetoothServiceState = "unknown";
   }
 
   return {
     checkAndRequestAgain,
-    bluetoothEnableState,
+    bluetoothServiceState,
   };
 }
