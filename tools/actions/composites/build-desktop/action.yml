@@ -25,7 +25,6 @@ runs:
         LC_ALL: en_US.UTF-8
         LANG: en_US.UTF-8
       run: |
-        eval "$(rbenv init - bash)"
         pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" -frozen-lockfile --unsafe-perm
       shell: bash
     - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop

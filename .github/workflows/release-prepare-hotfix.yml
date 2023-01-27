@@ -47,14 +47,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm changeset version
 
-      - name: Update changeset config
-        uses: jossef/action-set-json-field@v2
-        with:
-          file: .changeset/config.json
-          field: ignore
-          value: "[]"
-          parse_json: true
-
       - name: commit
         run: |
           git add .
@@ -76,7 +68,85 @@ jobs:
           git push origin main
 
       - name: merge into develop
+        id: merge-develop
         run: |
           git checkout develop
-          git merge ${{ github.event.inputs.ref }}
-          git push origin develop
+          if [[ git merge ${{ github.event.inputs.ref }} ]]
+          then
+            git push origin develop
+            echo "create-pr=0" >> $GITHUB_OUTPUT
+          else
+            git checkout ${{ github.event.inputs.ref }}
+            git checkout -b support/hotfix-merge-conflicts
+            git push origin support/hotfix-merge-conflicts
+            echo "create-pr=1" >> $GITHUB_OUTPUT
+          fi
+
+      - name: merge into release if present
+        id: merge-release
+        run: |
+          if [[ git checkout release ]]
+          then
+            if [[ git merge ${{ github.event.inputs.ref }} ]]
+            then
+              git push origin release
+              echo "create-pr=0" >> $GITHUB_OUTPUT
+            else
+              git checkout ${{ github.event.inputs.ref }}
+              git checkout -b support/hotfix-release-merge-conflicts
+              git push origin support/hotfix-release-merge-conflicts
+              echo "create-pr=1" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "create-pr=0" >> $GITHUB_OUTPUT
+          fi
+
+      - uses: actions/github-script@v6
+        name: create PR for develop
+        if: ${{ steps.merge-develop.outputs.create-pr == 1 }}
+        with:
+          github-token: ${{ secrets.GH_PAT }}
+          script: |
+            github.rest.pulls.create({
+              owner: "ledgerhq",
+              repo: "ledger-live",
+              head: "support/hotfix-merge-conflicts",
+              base: "develop",
+              title: ":rotating_light: Hotfix merge conflicts",
+              body: `# The hotfix had some merge conflicts :rotating_light:
+              
+              This pull request was created in order to resolve the merge conflicts between the hotfix and develop branches. 
+              
+              ## Checklist
+              
+              To be ready to be merged, we must comply with all theses checks:
+              
+              - [ ] all CI checks have passed
+              - [ ] reviews of the code owners impacted by the conflict
+              `
+            });
+
+      - uses: actions/github-script@v6
+        name: create PR for release
+        if: ${{ steps.merge-release.outputs.create-pr == 1 }}
+        with:
+          github-token: ${{ secrets.GH_PAT }}
+          script: |
+            github.rest.pulls.create({
+              owner: "ledgerhq",
+              repo: "ledger-live",
+              head: "support/hotfix-release-merge-conflicts",
+              base: "release",
+              title: ":rotating_light: Hotfix Release merge conflicts",
+              body: `# The hotfix had some merge conflicts :rotating_light:
+              
+              This pull request was created in order to resolve the merge conflicts between the hotfix and release branches. 
+              
+              ## Checklist
+              
+              To be ready to be merged, we must comply with all theses checks:
+              
+              - [ ] all CI checks have passed
+              - [ ] reviews of the code owners impacted by the conflict
+              `
+            });

@@ -136,9 +136,8 @@ const NftLinksPanel = ({
   const handlePressCustomImage = useCallback(() => {
     if (!customImageUri) return;
     track("button_clicked", {
-      button: "Set as Stax Lockscreen",
+      button: "Set as Ledger Stax lockscreen picture",
       drawer: "NFT settings",
-      url: links?.explorer,
     });
     navigation.navigate(NavigatorName.CustomImage, {
       screen: ScreenName.CustomImagePreviewPreEdit,
