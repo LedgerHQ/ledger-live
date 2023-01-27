@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Observable } from "rxjs";
+import { Observable, Subscription } from "rxjs";
 import { NativeModules, Platform } from "react-native";
 import TransportBLE from "../../../react-native-hw-transport-ble";
 
@@ -63,6 +63,10 @@ export type BluetoothServiceState =
   | "disabled"
   | "unauthorized";
 
+export type UseEnableBluetoothArgs = {
+  isHookEnabled?: boolean;
+};
+
 /**
  * Hook to enable the bluetooth service
  *
@@ -81,7 +85,9 @@ export type BluetoothServiceState =
  * - checkAndRequestAgain: a function that checks the bluetooth service state and requests (if necessary) the user to enable it
  * - bluetoothServiceState: a state that indicates if bluetooth is enabled or not
  */
-export function useEnableBluetooth() {
+export function useEnableBluetooth({
+  isHookEnabled = true,
+}: UseEnableBluetoothArgs) {
   const [observedTransportState, setObservedTransportState] =
     useState<string>("Unknown");
 
@@ -95,19 +101,29 @@ export function useEnableBluetooth() {
 
   // Checks and requests on mount
   useEffect(() => {
+    if (!isHookEnabled) return;
+
     checkAndRequestAgain();
-  }, [checkAndRequestAgain]);
+  }, [checkAndRequestAgain, isHookEnabled]);
 
   // Not Transport agnostic.
   // To be Transport agnostic: a re-write of the native module for both iOS and Android is needed,
   // so it would emit events on bluetooth service changes
   // Observes the bluetooth state (if powered on or not)
   useEffect(() => {
-    const sub = new Observable(TransportBLE.observeState).subscribe({
-      next: ({ type }: { type: string }) => setObservedTransportState(type),
-    });
-    return () => sub.unsubscribe();
-  }, []);
+    let sub: null | Subscription;
+
+    if (isHookEnabled) {
+      sub = new Observable(TransportBLE.observeState).subscribe({
+        next: ({ type }: { type: string }) => setObservedTransportState(type),
+      });
+    }
+    return () => {
+      if (sub) {
+        sub.unsubscribe();
+      }
+    };
+  }, [isHookEnabled]);
 
   let bluetoothServiceState: BluetoothServiceState = "disabled";
 
