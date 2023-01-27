@@ -34,9 +34,9 @@ const PurchaseDevice = () => {
     if (!url || url.includes(appTrackingParam)) {
       return url;
     } else if (url.includes("?")) {
-      return url.concat("&").concat(appTrackingParam);
+      return url.concat(`&${appTrackingParam}`);
     } else {
-      return url.concat("?").concat(appTrackingParam);
+      return url.concat(`?${appTrackingParam}`);
     }
   }, [url]);
   const [message, setMessage] = useState<PurchaseMessage | null>(null);
