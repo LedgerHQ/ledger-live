@@ -606,6 +606,28 @@
       "creditedAmount" : "Gutschrift"
     }
   },
+  "stake" : {
+    "noFundsModal" : {
+      "title" : "Buy, swap or receive",
+      "text" : "You do not have enough {{coin}} available to stake",
+      "description" : "Not enough funds? Don’t worry, you can securely buy, swap or receive crypto directly in Ledger Live.",
+      "options" : {
+        "buy" : {
+          "title" : "Buy",
+          "body" : "Buy with trusted  providers"
+        },
+        "swap" : {
+          "title" : "Swap",
+          "label" : "Popular",
+          "body" : "Convert crypto to crypto securely"
+        },
+        "receive" : {
+          "title" : "Receive",
+          "body" : "Receive crypto in your wallet"
+        }
+      }
+    }
+  },
   "lottieDebugger" : {
     "buttonTitle" : "Testen"
   },
@@ -1364,7 +1386,22 @@
     },
     "recentActivity" : "Letzte Aktionen",
     "totalBalance" : "Gesamtsaldo",
-    "transactionsPendingConfirmation" : "Einige Transaktionen sind noch nicht bestätigt. Diese werden in Ihrem Guthaben angezeigt und können nach der Bestätigung verwendet werden."
+    "transactionsPendingConfirmation" : "Einige Transaktionen sind noch nicht bestätigt. Diese werden in Ihrem Guthaben angezeigt und können nach der Bestätigung verwendet werden.",
+    "featuredButtons" : {
+      "buySell" : {
+        "title" : "Kaufen / Verkaufen",
+        "description" : "Kaufen und verkaufen Sie bei vertrauenswürdigen Anbietern"
+      },
+      "swap" : {
+        "title" : "Umtauschen",
+        "description" : "Sicheres Konvertieren von Krypto in Krypto",
+        "label" : "beliebt"
+      },
+      "earn" : {
+        "title" : "Verdienen",
+        "description" : "Vermehren Sie Ihre Kryptowährungen mit Ledger"
+      }
+    }
   },
   "currentAddress" : {
     "title" : "Aktuelle Adresse",
@@ -5725,6 +5762,13 @@
       "descriptionWithProductName" : "Sie müssen Ihr {{ productName }} zuerst einrichten.\nWir führen Sie durch den Einrichtungsprozess.",
       "goToOnboardingButton" : "Mein Gerät einrichten",
       "goToOnboardingButtonWithProductName" : "Mein {{ productName }} einrichten"
+    },
+    "EtherscanAPIError" : {
+      "title" : "Abruf der Transaktionen fehlgeschlagen",
+      "description" : "Bei den Explorern ist ein unerwarteter Fehler aufgetreten. Versuchen Sie es bitte später noch einmal"
+    },
+    "GasEstimationError" : {
+      "title" : "Gasgebührenschätzung fehlgeschlagen"
     }
   },
   "cryptoOrg" : {
