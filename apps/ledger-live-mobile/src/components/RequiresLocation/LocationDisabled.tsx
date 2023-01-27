@@ -5,11 +5,13 @@ import LocationServicesDialogBox from "react-native-android-location-services-di
 
 import NoLocationImage from "../../icons/NoLocationImage";
 import ServiceDisabledView from "../ServiceDisabledView";
+import GenericDrawerContent from "../GenericDrawerContent";
 
 type Props = {
-  onRetry?: () => void;
+  onRetry?: (() => void) | null;
   hasBackButton?: boolean;
   openSettings?: boolean;
+  componentType?: "drawer" | "view";
 };
 
 /**
@@ -28,6 +30,7 @@ const LocationDisabled: React.FC<Props> = ({
   onRetry,
   hasBackButton = false,
   openSettings = false,
+  componentType = "view",
 }) => {
   const { t } = useTranslation();
 
@@ -58,6 +61,19 @@ const LocationDisabled: React.FC<Props> = ({
     onButtonPress = onRetry;
     buttonLabel = t("location.tryEnablingAgain");
     buttonEvent = "LocationServicesDisabledRetryAuthorize";
+  }
+
+  if (componentType === "drawer") {
+    return (
+      <GenericDrawerContent
+        iconType="error"
+        title={t("location.titleServiceRequired")}
+        description={t("location.descriptionServiceRequired")}
+        primaryButtonLabel={buttonLabel}
+        onPrimaryButtonPress={onButtonPress}
+        primaryButtonEvent={buttonEvent}
+      />
+    );
   }
 
   return (
