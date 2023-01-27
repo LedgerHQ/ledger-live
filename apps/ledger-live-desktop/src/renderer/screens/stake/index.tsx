@@ -30,11 +30,6 @@ const useStakeFlow = (props: Props) => {
       {
         currencies: currencies || listFlag || [],
         onAccountSelected: (account: Account, parentAccount: Account | null = null) => {
-          setDrawer();
-          dispatch(openModal("MODAL_START_STAKE", { account, parentAccount }));
-          history.push({
-            pathname: `/account/${account.id}`,
-          });
           track("button_clicked", {
             ...stakeDefaultTrack,
             button: "asset",
@@ -43,6 +38,11 @@ const useStakeFlow = (props: Props) => {
             account,
             parentAccount,
             drawer: "Select Account And Currency Drawer",
+          });
+          setDrawer();
+          dispatch(openModal("MODAL_START_STAKE", { account, parentAccount }));
+          history.push({
+            pathname: `/account/${account.id}`,
           });
         },
       },
@@ -53,7 +53,6 @@ const useStakeFlow = (props: Props) => {
             ...stakeDefaultTrack,
             button: "close",
             page: history.location.pathname,
-            ...stakeDefaultTrack,
           });
         },
       },
