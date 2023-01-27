@@ -162,41 +162,41 @@ export interface AccountBridge<T extends TransactionCommon> {
     transaction?: T | null | undefined;
   }): Promise<BigNumber>;
   /**
-  * This function applies the change from moving from "account" to an updated version ("updatedRow").
-  * It returns a boolean value indicating if something changed in the "next" Account that possibly gets mutated in-place.
-  *
-  * @param {Account} account - The original account object.
-  * @param {AccountRaw} updatedRaw - The updated version of the account in its serialized form.
-  * @param {Account} next - The updated account object.
-  * @returns {boolean} - Indicates if something changed in the "next" account.
-  */
+   * This function applies the change from moving from "account" to an updated version ("updatedRow").
+   * It returns a boolean value indicating if something changed in the "next" Account that possibly gets mutated in-place.
+   *
+   * @param {Account} account - The original account object.
+   * @param {AccountRaw} updatedRaw - The updated version of the account in its serialized form.
+   * @param {Account} next - The updated account object.
+   * @returns {boolean} - Indicates if something changed in the "next" account.
+   */
   applyReconciliation?: (
     account: Account,
     updatedRaw: AccountRaw,
     next: Account
   ) => boolean;
   /**
-  * This function mutates the 'accountRaw' object in-place to add any extra fields that the coin may need to set.
-  * It is called during the serialization mechanism, for instance bitcoinResources need to be serialized.
-  *
-  * @param {Account} account - The original account object.
-  * @param {AccountRaw} accountRaw - The account in its serialized form.
-  */
+   * This function mutates the 'accountRaw' object in-place to add any extra fields that the coin may need to set.
+   * It is called during the serialization mechanism, for instance bitcoinResources need to be serialized.
+   *
+   * @param {Account} account - The original account object.
+   * @param {AccountRaw} accountRaw - The account in its serialized form.
+   */
   assignToAccountRaw?: (account: Account, accountRaw: AccountRaw) => void;
   /**
-  * This function mutates the 'account' object in-place to add any extra fields that the coin may need to set.
-  * It is called during the deserialization mechanism, for instance bitcoinResources need to be deserialized.
-  *
-  * @param {AccountRaw} accountRaw - The account in its serialized form.
-  * @param {Account} account - The original account object.
-  */
+   * This function mutates the 'account' object in-place to add any extra fields that the coin may need to set.
+   * It is called during the deserialization mechanism, for instance bitcoinResources need to be deserialized.
+   *
+   * @param {AccountRaw} accountRaw - The account in its serialized form.
+   * @param {Account} account - The original account object.
+   */
   assignFromAccountRaw?: (accountRaw: AccountRaw, account: Account) => void;
   /**
-  * This function mutates the 'account' object to extend it with any extra fields of the coin.
-  * For instance bitcoinResources needs to be created.
-  *
-  * @param {Account} account - The original account object to mutates in-place.
-  */
+   * This function mutates the 'account' object to extend it with any extra fields of the coin.
+   * For instance bitcoinResources needs to be created.
+   *
+   * @param {Account} account - The original account object to mutates in-place.
+   */
   initAccount?: (account: Account) => void;
   // finalizing a transaction by signing it with the ledger device
   // This results of a "signed" event with a signedOperation
