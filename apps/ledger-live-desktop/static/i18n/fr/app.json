@@ -606,6 +606,28 @@
       "creditedAmount" : "Montant crédité"
     }
   },
+  "stake" : {
+    "noFundsModal" : {
+      "title" : "Buy, swap or receive",
+      "text" : "You do not have enough {{coin}} available to stake",
+      "description" : "Not enough funds? Don’t worry, you can securely buy, swap or receive crypto directly in Ledger Live.",
+      "options" : {
+        "buy" : {
+          "title" : "Acheter",
+          "body" : "Buy with trusted  providers"
+        },
+        "swap" : {
+          "title" : "Échanger",
+          "label" : "Populaire",
+          "body" : "Convertissez vos cryptos en cryptos en toute sécurité."
+        },
+        "receive" : {
+          "title" : "Recevoir",
+          "body" : "Receive crypto in your wallet"
+        }
+      }
+    }
+  },
   "lottieDebugger" : {
     "buttonTitle" : "Tester"
   },
@@ -1364,7 +1386,22 @@
     },
     "recentActivity" : "Dernières opérations",
     "totalBalance" : "Solde total",
-    "transactionsPendingConfirmation" : "Certaines transactions ne sont pas encore confirmées. Elles apparaîtront dans votre solde et seront disponibles une fois confirmées."
+    "transactionsPendingConfirmation" : "Certaines transactions ne sont pas encore confirmées. Elles apparaîtront dans votre solde et seront disponibles une fois confirmées.",
+    "featuredButtons" : {
+      "buySell" : {
+        "title" : "Acheter / Vendre",
+        "description" : "Achetez et vendez avec des prestataires de confiance."
+      },
+      "swap" : {
+        "title" : "Swap",
+        "description" : "Convertissez vos cryptos en cryptos en toute sécurité.",
+        "label" : "Populaire"
+      },
+      "earn" : {
+        "title" : "Gagner",
+        "description" : "Faites fructifier vos crypto-actifs via Ledger."
+      }
+    }
   },
   "currentAddress" : {
     "title" : "Adresse actuelle",
@@ -5725,6 +5762,13 @@
       "descriptionWithProductName" : "Vous devez d’abord configurer votre {{ productName }}.\nNous vous guiderons à chaque étape.",
       "goToOnboardingButton" : "Configurer mon appareil",
       "goToOnboardingButtonWithProductName" : "Configurer mon {{ productName }}"
+    },
+    "EtherscanAPIError" : {
+      "title" : "Échec de la récupération des transactions",
+      "description" : "Une erreur s’est produite avec les explorateurs. Veuillez réessayer plus tard."
+    },
+    "GasEstimationError" : {
+      "title" : "Échec de l’estimation du prix du gaz"
     }
   },
   "cryptoOrg" : {
