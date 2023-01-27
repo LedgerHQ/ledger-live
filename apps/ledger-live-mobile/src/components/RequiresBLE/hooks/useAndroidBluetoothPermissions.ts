@@ -3,6 +3,7 @@ import {
   PermissionsAndroid,
   Platform,
   AppState,
+  NativeEventSubscription,
 } from "react-native";
 import { useCallback, useState, useEffect } from "react";
 
@@ -71,6 +72,10 @@ async function requestBluetoothPermissions(): Promise<RequestMultipleResult> {
 
 export type PermissionsState = "unknown" | "granted" | "denied";
 
+export type UseAndroidBluetoothPermissionsArgs = {
+  isHookEnabled?: boolean;
+};
+
 /**
  * Hook to check and request the BLE permissions on Android.
  *
@@ -87,7 +92,9 @@ export type PermissionsState = "unknown" | "granted" | "denied";
  * - requestForPermissionsAgain: a function to request again (and if only granted, only a check without any prompt) the BLE permissions
  * - neverAskAgain: true if the user has checked the "never ask again" checkbox (or on Android 11+ if the user has denied the permission several times)
  */
-export const useAndroidBluetoothPermissions = () => {
+export const useAndroidBluetoothPermissions = ({
+  isHookEnabled = true,
+}: UseAndroidBluetoothPermissionsArgs) => {
   // If no permissions are required, we consider that the permissions are granted
   const [hasPermissions, setHasPermissions] = useState<PermissionsState>(
     bluetoothPermissions.length === 0 ? "granted" : "unknown",
@@ -111,16 +118,22 @@ export const useAndroidBluetoothPermissions = () => {
    * - the smartphone prompts the user to allow for the permission
    */
   useEffect(() => {
-    const listener = AppState.addEventListener("change", state => {
-      if (state === "active") {
-        setCheckPermissionsNonce(i => i + 1);
-      }
-    });
+    let listener: NativeEventSubscription | null;
+
+    if (isHookEnabled) {
+      listener = AppState.addEventListener("change", state => {
+        if (state === "active") {
+          setCheckPermissionsNonce(i => i + 1);
+        }
+      });
+    }
 
     return () => {
-      listener.remove();
+      if (listener) {
+        listener.remove();
+      }
     };
-  }, []);
+  }, [isHookEnabled]);
 
   /**
    * Checks the bluetooth permissions when the app state changes back to "active".
@@ -130,6 +143,7 @@ export const useAndroidBluetoothPermissions = () => {
    */
   useEffect(() => {
     let cancelled = false;
+
     async function asyncCheckBluetoothPermissions() {
       const res = await checkBluetoothPermissions();
       if (!cancelled) {
@@ -137,16 +151,18 @@ export const useAndroidBluetoothPermissions = () => {
       }
     }
 
-    // Does not check the permissions on mount.
-    // Only when the app state changes.
-    if (checkPermissionsNonce > 0) {
-      asyncCheckBluetoothPermissions();
+    if (isHookEnabled) {
+      // Does not check the permissions on mount.
+      // Only when the app state changes.
+      if (checkPermissionsNonce > 0) {
+        asyncCheckBluetoothPermissions();
+      }
     }
 
     return () => {
       cancelled = true;
     };
-  }, [checkPermissionsNonce]);
+  }, [checkPermissionsNonce, isHookEnabled]);
 
   /**
    * Triggers a request of the bluetooth permissions: on mount, and every time requestPermissionsNonce is updated
@@ -169,12 +185,14 @@ export const useAndroidBluetoothPermissions = () => {
       }
     }
 
-    asyncRequestBluetoothPermissions();
+    if (isHookEnabled) {
+      asyncRequestBluetoothPermissions();
+    }
 
     return () => {
       cancelled = true;
     };
-  }, [requestPermissionsNonce]);
+  }, [isHookEnabled, requestPermissionsNonce]);
 
   return {
     hasPermissions,
