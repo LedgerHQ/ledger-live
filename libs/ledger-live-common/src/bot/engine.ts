@@ -16,7 +16,12 @@ import {
 import { log } from "@ledgerhq/logs";
 import { getCurrencyBridge, getAccountBridge } from "../bridge";
 import { promiseAllBatched } from "../promise";
-import { isAccountEmpty, formatAccount } from "../account";
+import {
+  isAccountEmpty,
+  formatAccount,
+  fromAccountRaw,
+  toAccountRaw,
+} from "../account";
 import { getOperationConfirmationNumber } from "../operation";
 import { getEnv } from "../env";
 import { delay } from "../promise";
@@ -423,7 +428,8 @@ export async function runOnAccount<T extends Transaction>({
 
   try {
     const accountBridge = getAccountBridge(account);
-    const accountBeforeTransaction = account;
+    // Creating a deep copy of the account to prevent errors on potential deep mutations
+    const accountBeforeTransaction = fromAccountRaw(toAccountRaw(account));
     report.account = account;
     log("engine", `spec ${spec.name}/${account.name}`);
     const maxSpendable = await accountBridge.estimateMaxSpendable({
