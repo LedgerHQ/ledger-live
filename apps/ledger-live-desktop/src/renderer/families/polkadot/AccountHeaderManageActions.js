@@ -65,7 +65,7 @@ const AccountHeaderManageActions = ({ account }: Props) => {
 
   return [
     {
-      key: "polkadot",
+      key: "Stake",
       onClick: onClick,
       icon: IconCoins,
       disabled: !manageEnabled,
