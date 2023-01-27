@@ -18,6 +18,7 @@ import { Box, Flex, Tag, Text } from "@ledgerhq/native-ui";
 import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import { useTranslation } from "react-i18next";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { useTheme } from "styled-components/native";
 import CurrencyIcon from "../CurrencyIcon";
 import NftMedia from "./NftMedia";
 import Skeleton from "../Skeleton";
@@ -204,7 +205,7 @@ const NftMediaComponent = ({
   isSelected,
 }: NftMediaProps & SelectionProps) => {
   const { t } = useTranslation();
-
+  const { space } = useTheme();
   return (
     <Box>
       <NftMedia
@@ -232,7 +233,11 @@ const NftMediaComponent = ({
       ) : null}
 
       {selectable && (
-        <Flex position="absolute" bottom={"20px"} left={"10px"}>
+        <Flex
+          position="absolute"
+          bottom={`${space[7]}px`}
+          left={`${space[4]}px`}
+        >
           <NftSelectionCheckbox isSelected={isSelected} />
         </Flex>
       )}

@@ -14,7 +14,7 @@ import { updateMainNavigatorVisibility } from "../../actions/appstate";
 
 const TOAST_ID = "SUCCESS_HIDE";
 
-export function useNftList() {
+export function useNftList({ nftList }: { nftList?: ProtoNFT[] }) {
   const isFocused = useIsFocused();
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -59,6 +59,7 @@ export function useNftList() {
   }, [handleBackPress]);
 
   const onClickHide = useCallback(() => {
+    exitMultiSelectMode();
     nftsToHide.forEach(nft => {
       const { accountId } = decodeNftId(nft.id ?? "");
       dispatch(hideNftCollection(`${accountId}|${nft.contract}`));
@@ -72,8 +73,6 @@ export function useNftList() {
         count: nftsToHide.length,
       }),
     });
-
-    exitMultiSelectMode();
   }, [exitMultiSelectMode, dispatch, nftsToHide, pushToast, t]);
 
   const triggerMultiSelectMode = useCallback(() => {
@@ -84,13 +83,17 @@ export function useNftList() {
 
   const handleSelectableNftPressed = useCallback(
     (item: ProtoNFT) => {
-      if (nftsToHide.includes(item)) {
-        setNftsToHide(nftsToHide.filter(e => e.id !== item.id));
-      } else {
-        setNftsToHide([...nftsToHide, item]);
-      }
+      const collection = nftList?.filter(d => d.contract === item.contract);
+
+      collection?.forEach(nft => {
+        if (nftsToHide.includes(nft)) {
+          setNftsToHide(nftsToHide.filter(e => e.contract !== nft.contract));
+        } else {
+          setNftsToHide([...nftsToHide, nft]);
+        }
+      });
     },
-    [nftsToHide],
+    [nftList, nftsToHide],
   );
   //  ------------------------
 

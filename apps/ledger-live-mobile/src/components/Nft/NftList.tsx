@@ -72,7 +72,7 @@ export function NftList({ data }: Props) {
     handleSelectableNftPressed,
     nftsToHide,
     multiSelectModeEnabled,
-  } = useNftList();
+  } = useNftList({ nftList: data });
 
   const renderItem = useCallback(
     ({ item, index }: { item: ProtoNFT; index: number; count?: number }) => (
@@ -100,17 +100,17 @@ export function NftList({ data }: Props) {
               handleSelectableNftPressed(item);
             }}
             selectable={multiSelectModeEnabled}
-            isSelected={nftsToHide.includes(item)}
+            isSelected={nftsToHide.map(n => n.contract).includes(item.contract)}
           />
         )}
       </Flex>
     ),
     [
-      triggerMultiSelectMode,
-      navigateToNftViewer,
-      nftsToHide,
       multiSelectModeEnabled,
+      nftsToHide,
       handleSelectableNftPressed,
+      navigateToNftViewer,
+      triggerMultiSelectMode,
     ],
   );
 
@@ -148,7 +148,7 @@ export function NftList({ data }: Props) {
           </Animated.View>
         }
         ListHeaderComponentStyle={{
-          marginBottom: multiSelectModeEnabled ? 0 : space[6],
+          marginBottom: multiSelectModeEnabled ? 0 : space[3],
         }}
         data={dataWithAdd}
         renderItem={renderItem}
@@ -175,7 +175,7 @@ export function NftList({ data }: Props) {
                 disabled={nftsToHide.length === 0}
               >
                 {t("wallet.nftGallery.filters.hide", {
-                  count: nftsToHide.length,
+                  count: [...new Set(nftsToHide.map(n => n.contract))].length,
                 })}
               </StyledButton>
               <StyledButton
