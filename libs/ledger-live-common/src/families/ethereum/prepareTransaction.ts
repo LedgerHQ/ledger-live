@@ -75,10 +75,10 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
 
       estimatedGasLimit = await estimateGasLimit(
         account,
-        protoTransaction.to!.toString(),
         // Those are the only elements from a transaction necessary to estimate the gas limit
         {
           from: account.freshAddress,
+          to: protoTransaction.to!.toString(),
           value: "0x" + (protoTransaction.value.toString(16) || "00"),
           data: protoTransaction.data
             ? `0x${protoTransaction.data.toString("hex")}`

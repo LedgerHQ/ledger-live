@@ -10,6 +10,7 @@ import Litecoin from "../crypto/litecoin";
 import BitcoinLikeExplorer from "../explorer";
 import BitcoinLikeStorage from "../storage";
 import { Merge } from "../pickingstrategies/Merge";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -20,8 +21,7 @@ TICKER=ltc TAG=latest LOG_LEVEL=debug docker-compose -f ./environments/explorer-
 // FIXME Skipped because Praline required on CI
 describe.skip("testing xpub legacy litecoin transactions", () => {
   const explorer = new BitcoinLikeExplorer({
-    explorerURI: "http://localhost:20000/blockchain/v3",
-    explorerVersion: "v3",
+    cryptoCurrency: getCryptoCurrencyById("litecoin"),
     disableBatchSize: true, // https://ledgerhq.atlassian.net/browse/BACK-2191
   });
 
