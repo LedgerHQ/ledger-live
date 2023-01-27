@@ -606,6 +606,28 @@
       "creditedAmount" : "Importe acreditado"
     }
   },
+  "stake" : {
+    "noFundsModal" : {
+      "title" : "Buy, swap or receive",
+      "text" : "You do not have enough {{coin}} available to stake",
+      "description" : "Not enough funds? Don’t worry, you can securely buy, swap or receive crypto directly in Ledger Live.",
+      "options" : {
+        "buy" : {
+          "title" : "Buy",
+          "body" : "Buy with trusted  providers"
+        },
+        "swap" : {
+          "title" : "Swap",
+          "label" : "Popular",
+          "body" : "Convert crypto to crypto securely"
+        },
+        "receive" : {
+          "title" : "Receive",
+          "body" : "Receive crypto in your wallet"
+        }
+      }
+    }
+  },
   "lottieDebugger" : {
     "buttonTitle" : "Prueba"
   },
@@ -1364,7 +1386,22 @@
     },
     "recentActivity" : "Operaciones recientes",
     "totalBalance" : "Saldo total",
-    "transactionsPendingConfirmation" : "Algunas transacciones aún no están confirmadas. Las mismas se reflejarán en tu saldo y quedarán disponibles después de ser confirmadas."
+    "transactionsPendingConfirmation" : "Algunas transacciones aún no están confirmadas. Las mismas se reflejarán en tu saldo y quedarán disponibles después de ser confirmadas.",
+    "featuredButtons" : {
+      "buySell" : {
+        "title" : "Buy / Sell",
+        "description" : "Buy and sell with trusted providers"
+      },
+      "swap" : {
+        "title" : "Swap",
+        "description" : "Convert crypto to crypto securely",
+        "label" : "Popular"
+      },
+      "earn" : {
+        "title" : "Earn",
+        "description" : "Grow your crypto with Ledger"
+      }
+    }
   },
   "currentAddress" : {
     "title" : "Dirección actual",
@@ -5725,6 +5762,13 @@
       "descriptionWithProductName" : "Primero debes configurar tu {{ productName }}.\nTe guiaremos a lo largo del proceso de configuración.",
       "goToOnboardingButton" : "Configurar mi dispositivo",
       "goToOnboardingButtonWithProductName" : "Configurar mi {{ productName }}"
+    },
+    "EtherscanAPIError" : {
+      "title" : "Se produjo un fallo al recuperar las transacciones",
+      "description" : "Se produjo un error inesperado con los exploradores. Inténtalo de nuevo más tarde"
+    },
+    "GasEstimationError" : {
+      "title" : "Se produjo un fallo en la estimación del gas"
     }
   },
   "cryptoOrg" : {
