@@ -26,9 +26,9 @@ const RequiresBluetoothEnabled: React.FC<Props> = ({
   hasBackButtonOnError = false,
   openSettingsOnErrorButton = false,
 }) => {
-  const { bluetoothEnableState, checkAndRequestAgain } = useEnableBluetooth();
+  const { bluetoothServiceState, checkAndRequestAgain } = useEnableBluetooth();
 
-  switch (bluetoothEnableState) {
+  switch (bluetoothServiceState) {
     case "unknown":
       // As long as we don't know the state of bluetooth, we don't render anything
       return null;
