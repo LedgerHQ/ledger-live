@@ -102,6 +102,7 @@
     "addressCopied" : "Dirección copiada",
     "addressCopiedSuspicious" : "La dirección copiada y la del portapapeles no coinciden.",
     "experimentalFeature" : "Experimental",
+    "featureFlags" : "Marcas de funciones",
     "information" : "Información",
     "search" : "Buscar...",
     "searchWithoutEllipsis" : "Buscar",
@@ -131,7 +132,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blue"
   },
   "operation" : {
@@ -251,6 +252,8 @@
         "float" : "Variables",
         "update" : "Las tasas se actualizarán en",
         "loading" : "Cargando...",
+        "loadingQuotes" : "Se están cargando las cotizaciones",
+        "loadingDescription" : "En unos momentos podrás ver las mejores opciones para ti.",
         "name" : {
           "title" : "Proveedor",
           "tooltip" : "Dependiendo del proveedor, es posible que tengas que registrarte para iniciar sesión."
@@ -1206,8 +1209,11 @@
         "checkDeviceButton" : "Volver a ejecutar la verificación de autenticidad",
         "cancelButton" : "Quizás más tarde"
       },
-      "genuineCheckAnimationModal" : {
-        "message" : "Permitir manager en {{deviceName}}"
+      "softwareCheckAllowSecureChannelModal" : {
+        "title" : "Permitir manager en {{deviceName}}"
+      },
+      "softwareCheckLockedDeviceModal" : {
+        "title" : "Desbloquea tu dispositivo"
       },
       "helpDrawer" : {
         "title" : "¿Necesitas ayuda con el manual de configuración?",
@@ -1231,16 +1237,16 @@
   },
   "postOnboarding" : {
     "postOnboardingScreen" : {
-      "title" : "Muy bien. Todo listo.",
-      "description" : "¡Enhorabuena por configurar tu {{deviceName}}!",
-      "paragraph" : "Te hemos preparado algunos pasos con los que puedes empezar. Si prefieres explorar Ledger Live por tu cuenta, omite este paso; siempre puedes volver aquí más tarde.",
-      "bottomText" : "Disfruta de tu viaje por la Web3 de forma segura con Ledger Live."
+      "title" : "A continuación, usa tu\nLedger Stax para... ",
+      "titleCompleted" : "¡y eso es\ntodo!"
     },
     "postOnboardingContent" : {
-      "title" : "Muy bien. Todo listo.",
-      "description" : "Esto es lo que puedes hacer a continuación:",
-      "skipLink" : "Ir a la aplicación",
-      "skipLinkInDrawer" : "Lo haré más tarde"
+      "skipLink" : "Lo haré más tarde"
+    },
+    "postOnboardingBanner" : {
+      "title" : "¿Qué es lo siguiente con tu Ledger Stax?",
+      "description" : "Reclama el NFT Infinity, personaliza su pantalla de bloqueo o\ntransfiere tus activos desde otros exchanges.",
+      "link" : "Mira lo que puedes hacer ahora"
     }
   },
   "hideNftCollection" : {
@@ -1678,6 +1684,8 @@
       "undelegated" : "Desdelegado",
       "undelegatedFrom" : "Desdelegado de",
       "undelegatedAmount" : "Importe desdelegado",
+      "withdrawnFrom" : "Retirado de",
+      "withdrawnAmount" : "Importe retirado",
       "rewardFrom" : "Recompensa de",
       "memo" : "Memo",
       "assetId" : "ID de activo",
@@ -1718,7 +1726,7 @@
     "swap" : {
       "notice" : {
         "default" : "Verifica los detalles de la permuta en tu dispositivo antes de enviarla. Las direcciones se intercambian de forma segura por lo que no es necesario verificarlas.",
-        "cic" : "Verifica la información de permuta en tu dispositivo antes de enviarlo. CIC tal vez requiera una verificación adicional para algunas transacciones, lo que puede provocar retrasos."
+        "provider" : "Verifica la información de permuta en tu dispositivo antes de enviar la transacción. {{providerName}} tal vez requiera una verificación adicional para algunas transacciones, lo que puede provocar retrasos."
       },
       "confirm" : "Confirmar transacción de permuta",
       "amountSent" : "Importe a enviar",
@@ -2231,6 +2239,187 @@
     "value" : "Valor",
     "header" : "Asignación de cuenta ({{count}})"
   },
+  "elrond" : {
+    "summary" : {
+      "availableBalanceTooltip" : "Este importe se puede transferir.",
+      "availableBalance" : "Saldo disponible",
+      "delegatedAssetsTooltip" : "El proveedor de puesta en participación utiliza indirectamente activos delegados para gestionar nodos validadores, procesar transacciones y proteger la red al participar del mecanismo de consenso.",
+      "delegatedAssets" : "Activos delegados",
+      "undelegatingTooltip" : "Tras desdelegar un activo, hay que esperar un período de desvinculación de 10 días para retirarlo.",
+      "undelegating" : "Retiros pendientes"
+    },
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Con tecnología de MultiversX",
+        "moreInfo" : "Más información",
+        "drawerTitle" : "Integración con MultiversX",
+        "title" : "El token eGold (EGLD) de MultiversX ya está disponible en Ledger Live",
+        "description" : "Ahora puedes proteger de forma segura tus tokens eGold (EGLD) y administrarlos a través de Ledger Live.",
+        "description2" : "El token eGold (EGLD) de MultiversX es nativo de la red MultiversX y se utiliza para todo tipo de acciones, desde transacciones, puesta en participación y contratos inteligentes, hasta gobernanza y recompensas de validadores.",
+        "description3" : "Estamos trabajando activamente con el equipo de MultiversX para agregar más funcionalidades, como la puesta en participación, compatibilidad con ESDT (Elrond Standard Digital Token) nativo y más.",
+        "website" : "La cadena de bloques de Internet Scale"
+      }
+    },
+    "delegation" : {
+      "emptyState" : {
+        "description" : "Delega tus EGLD para proteger la red y obtener tu parte de las recompensas.",
+        "info" : "¿Qué es una delegación?",
+        "delegation" : "Recibir recompensas"
+      },
+      "commission" : "Comisión",
+      "claimRewards" : "Reclamar recompensas",
+      "header" : "Delegaciones",
+      "noRewards" : "No hay recompensas disponibles",
+      "delegate" : "Delegar",
+      "undelegate" : "Desdelegar",
+      "redelegateDisabledTooltip" : "Puedes volver a delegar <0>{{days}}</0>",
+      "redelegateMaxDisabledTooltip" : "No puedes redelegar más de <0>7</0> validadores a la vez.",
+      "undelegateDisabledTooltip" : "No puedes desdelegar más de <0>7</0> validadores a la vez.",
+      "reward" : "Reclamar recompensas",
+      "currentDelegation" : "Delegado: <0>{{amount}}</0>",
+      "apr" : "Tasa porcentual anual (APR)",
+      "totalStake" : "Participación total",
+      "activeTooltip" : "Los importes delegados generan recompensas",
+      "inactiveTooltip" : "Los importes no delegados no generan recompensas",
+      "minSafeWarning" : "No hay fondos suficientes. Necesitas al menos 1 EGLD disponible.",
+      "flow" : {
+        "title" : "Delegar",
+        "steps" : {
+          "amount" : {
+            "title" : "Delegar",
+            "subtitle" : "Pon en participación tus activos con uno de los siguientes proveedores de puesta en participación.",
+            "warning" : "Escoge tu proveedor de puesta en participación con cuidado: en la actualidad, el único riesgo es no obtener recompensas por diversas razones, por lo que debes basar tu elección en factores económicos, de fiabilidad y de comunicación.",
+            "fields" : {
+              "validator" : "Proveedor de puesta en participación"
+            }
+          },
+          "fields" : {
+            "amount" : "Importe a poner en participación"
+          },
+          "starter" : {
+            "description" : "Puedes ganar recompensas delegando tus activos EGLD a un proveedor de puesta en participación.",
+            "bullet" : ["Conservas la propiedad de los activos delegados", "Delegar utilizando tu dispositivo Ledger", "Los activos estarán disponibles 10 días después de la desdelegación"],
+            "warning" : {
+              "description" : "Escoge tu proveedor de puesta en participación con cuidado: en la actualidad, el único riesgo es no obtener recompensas por diversas razones, por lo que debes basar tu elección en factores económicos, de fiabilidad y de comunicación."
+            }
+          },
+          "validator" : {
+            "title" : "Proveedores de puesta en participación"
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "success" : {
+              "title" : "Has delegado tus activos correctamente.",
+              "text" : "El saldo de tu cuenta se actualizará cuando la cadena de bloques confirme la transacción.",
+              "cta" : "Ver detalles"
+            },
+            "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
+    },
+    "claimRewards" : {
+      "flow" : {
+        "title" : "Reclamar recompensas",
+        "steps" : {
+          "claimRewards" : {
+            "title" : "Recompensas",
+            "compound" : "Enviar recompensas a recibir intereses compuestos",
+            "claim" : "Reclamar recompensas",
+            "compoundOrClaim" : "Reclamar recompensas o enviarlas a recibir intereses compuestos",
+            "compoundDescription" : "Tus recompensas se agregarán al importe delegado.",
+            "claimDescription" : "Las recompensas se agregarán a tu saldo disponible.",
+            "compoundInfo" : "Has ganado <0>{{amount}}</0>. Al hacer clic en Continuar, serán reclamados y automáticamente delegados al mismo proveedor de puesta en participación.",
+            "claimInfo" : "Has ganado <0>{{amount}}</0> con el siguiente proveedor de puesta en participación. Al hacer clic en Continuar, serán reclamados y agregados automáticamente al saldo disponible.",
+            "selectLabel" : "Seleccionar una delegación"
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "label" : "Confirmación",
+            "success" : {
+              "title" : "Las recompensas se han reclamado correctamente",
+              "titleCompound" : "Recompensas enviadas a generar interés compuesto con éxito",
+              "text" : "Las recompensas se han agregado a tu saldo disponible",
+              "textCompound" : "Tu transacción de recompensas en intereses compuestos de <0>{{amount}}</0> EGLD a <0>{{validator}}</0> se ha procesado correctamente.",
+              "cta" : "Ver detalles"
+            },
+            "pending" : {
+              "title" : "Transmitiendo transacción..."
+            },
+            "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "header" : "Desdelegaciones",
+      "headerTooltip" : "Disponible después del período de desvinculación de 10 días.",
+      "inactiveTooltip" : "Los importes desdelegados no generan recompensas.",
+      "withdraw" : {
+        "cta" : "Finalizar retiro"
+      },
+      "flow" : {
+        "title" : "Desdelegar activos",
+        "steps" : {
+          "amount" : {
+            "title" : "Importe",
+            "subtitle" : "El proceso de desdelegación tarda <0>10 días</0> en finalizar.",
+            "warning" : "Las recompensas se reclamarán automáticamente. La desdelegación es un proceso de dos pasos: la solicitud de desdelegación, seguida de un <0>período de desvinculación de 10 días<0> tras el cual puedes finalizar el retiro, con lo que el importe desdelegado se transferirá a tu saldo disponible.",
+            "fields" : {
+              "validator" : "Proveedor de puesta en participación",
+              "amount" : "Importe a desdelegar"
+            }
+          },
+          "device" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "success" : {
+              "title" : "Has desdelegado con éxito tus activos.",
+              "description" : "Se ha desdelegado <0>{{amount}}</0> de <0>{{validator}}</0>.",
+              "cta" : "Ver detalles"
+            },
+            "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "flow" : {
+        "title" : "Finalizar retiro",
+        "steps" : {
+          "withdraw" : {
+            "title" : "Finalizar retiro",
+            "description" : "Has desdelegado <0>{{amount}}</0> EGLD de <0>{{validator}}</0>. Al hacer clic en Continuar, serán retirados y automáticamente agregados a tu saldo disponible.",
+            "selectLabel" : "Selecciona una desdelegación"
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "label" : "Confirmación",
+            "success" : {
+              "title" : "Fondos retirados correctamente",
+              "text" : "Se ha retirado al saldo de tu cuenta un importe de <0>{{amount}}</0>.",
+              "cta" : "Ver detalles"
+            },
+            "pending" : {
+              "title" : "Transmitiendo transacción..."
+            },
+            "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
+    }
+  },
   "cardano" : {
     "account" : {
       "stakingRewardsBanner" : {
@@ -2312,6 +2501,15 @@
             }
           }
         }
+      }
+    }
+  },
+  "tezos" : {
+    "objkt" : {
+      "card" : {
+        "title" : "Colección NFT (tokens no fungibles)",
+        "description" : "Puedes ver tus NFTs de Tezos directamente con Objkt en Ledger Live.",
+        "cta" : "Ver mis NFTs en Objkt"
       }
     }
   },
@@ -3689,8 +3887,10 @@
       "debugAppsDesc" : "Mostrar y permitir la utilización de aplicaciones de plataforma etiquetadas como de depuración.",
       "experimentalApps" : "Permitir aplicaciones experimentales",
       "experimentalAppsDesc" : "Mostrar y permitir la utilización de aplicaciones de plataforma etiquetadas como experimentales.",
-      "catalogServer" : "Definir el proveedor del catálogo",
-      "catalogServerDesc" : "Cambiar entre distintas fuentes de aplicaciones de plataforma",
+      "catalogUrl" : "Definir el proveedor del catálogo de aplicaciones",
+      "catalogUrlDesc" : "Introduce la URL del proveedor del catálogo personalizado",
+      "catalogRampServer" : "Definir los proveedores de compra y venta",
+      "catalogRampServerDesc" : "Cambiar entre varios proveedores de operaciones",
       "enablePlatformDevTools" : "Habilitar herramientas de desarrollador de plataforma",
       "enablePlatformDevToolsDesc" : "Habilitar ventana de herramientas de desarrollador de aplicaciones de plataforma",
       "featureFlagsTitle" : "Marcas de funciones definidas que se usan en Ledger Live",
@@ -3698,6 +3898,9 @@
       "featureFlagsEdit" : "Editar",
       "featureFlagsRestore" : "Restaurar",
       "featureFlagsOverride" : "Anular",
+      "featureFlagsRestoreAll" : "Restaurar los valores de todas las marcas",
+      "showButtonDesc" : "Mostrar siempre el botón Marcas de funciones en la barra lateral",
+      "buttonTitle" : "Señales de alarma anuladas localmente",
       "firebaseProject" : "Proyecto de Firebase al que se refiere esta compilación:",
       "addLocalApp" : "Añadir una aplicación local",
       "addLocalAppDesc" : "Explorar archivos locales y añadir una aplicación local usando un manifiesto local",
@@ -3752,6 +3955,10 @@
         "experimentalCurrencies" : {
           "title" : "Integraciones experimentales",
           "description" : "Utilizar integraciones experimentales de actrivos cripto disponibles."
+        },
+        "experimentalExecutionOnRenderer" : {
+          "title" : "Redes experimentales",
+          "description" : "Usa las redes experimentales para optimizar tu experiencia con Ledger Live con tu VPN. Activa esta opción solo si tu VPN actual provoca errores del sistema."
         },
         "experimentalLanguages" : {
           "title" : "Probar traducciones",
@@ -4994,6 +5201,23 @@
       "title" : "No se encontró ninguna cuenta",
       "description" : "Algo ha salido mal con el cálculo de la dirección, inténtalo de nuevo o contacta al Soporte de Ledger"
     },
+    "ElrondDecimalsLimitReached" : {
+      "title" : "Límite máximo de decimales alcanzado",
+      "description" : "Asegúrate de que el importe proporcionado tenga 18 decimales."
+    },
+    "ElrondMinDelegatedAmountError" : {
+      "title" : "La cantidad delegada debe ser al menos {{formattedAmount}}"
+    },
+    "ElrondMinUndelegatedAmountError" : {
+      "title" : "La cantidad desdelegada debe ser al menos {{formattedAmount}}"
+    },
+    "ElrondDelegationBelowMinimumError" : {
+      "title" : "La delegación restante no puede ser menor a {{formattedAmount}}"
+    },
+    "NotEnoughEGLDForFees" : {
+      "title" : "EGLD insuficientes para pagar las tarifas de transacción",
+      "description" : "Envía EGLD a tu cuenta para pagar las transacciones."
+    },
     "NotEnoughBalance" : {
       "title" : "Fondos insuficientes",
       "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
@@ -5493,6 +5717,21 @@
       "title" : "Tu dispositivo está bloqueado",
       "description" : "Desbloquea tu dispositivo e inténtalo de nuevo.",
       "descriptionWithProductName" : "Desbloquea tu {{ productName }} e inténtalo de nuevo."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "Tu dispositivo aún no está listo para usar",
+      "titleWithProductName" : "{{ productName }} aún no está listo para que lo uses.",
+      "description" : "Primero debes configurar tu dispositivo.\nTe guiaremos a lo largo del proceso de configuración.",
+      "descriptionWithProductName" : "Primero debes configurar tu {{ productName }}.\nTe guiaremos a lo largo del proceso de configuración.",
+      "goToOnboardingButton" : "Configurar mi dispositivo",
+      "goToOnboardingButtonWithProductName" : "Configurar mi {{ productName }}"
+    },
+    "EtherscanAPIError" : {
+      "title" : "Se produjo un fallo al recuperar las transacciones",
+      "description" : "Se produjo un error inesperado con los exploradores. Inténtalo de nuevo más tarde"
+    },
+    "GasEstimationError" : {
+      "title" : "Se produjo un fallo en la estimación del gas"
     }
   },
   "cryptoOrg" : {
@@ -5525,7 +5764,7 @@
     }
   },
   "customImage" : {
-    "title" : "Imagen personalizada",
+    "title" : "Custom lock screen",
     "steps" : {
       "choose" : {
         "stepLabel" : "Elige una imagen",
@@ -5543,22 +5782,19 @@
       "transfer" : {
         "stepLabel" : "Transferir",
         "uploadAnotherImage" : "Cargar otra imagen",
-        "allowPreview" : "Permitir vista previa de la imagen en {{productName}}",
-        "loadingPicture" : "Cargando imagen en {{productName}}",
-        "pictureLoaded" : "Imagen cargada",
+        "allowPreview" : "Permite que la imagen de la pantalla de bloqueo se cargue en tu {{productName}}",
+        "loadingPicture" : "Cargando...",
         "imageLoaded" : "Imagen cargada en {{productName}}",
-        "confirmPicture" : "Confirmar en {{productName}}",
-        "doThisLater" : "Quizás más tarde",
-        "timeDisclaimer" : "Puede tardar hasta 30 segundos"
+        "confirmPicture" : "¿Te gusta lo que ves?\n¡Pues consérvalo!",
+        "doThisLater" : "Quizás más tarde"
       }
     },
     "postOnboarding" : {
       "title" : "Personalizar mi dispositivo",
       "description" : "adaptando la pantalla a mis necesidades",
-      "actionCompletedPopupLabel" : "Dispositivo personalizado",
-      "actionCompletedHubTitle" : "Esa pantalla tiene muy buen aspecto."
+      "actionCompletedPopupLabel" : "Dispositivo personalizado"
     },
-    "customImageSet" : "Imagen personalizada establecida",
+    "customImageSet" : "Pantalla de bloqueo establecida",
     "finishCTA" : "Finalizar"
   }
 }
