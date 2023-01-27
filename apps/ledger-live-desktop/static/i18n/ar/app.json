@@ -606,6 +606,28 @@
       "creditedAmount" : "المبلغ المضاف"
     }
   },
+  "stake" : {
+    "noFundsModal" : {
+      "title" : "Buy, swap or receive",
+      "text" : "You do not have enough {{coin}} available to stake",
+      "description" : "Not enough funds? Don’t worry, you can securely buy, swap or receive crypto directly in Ledger Live.",
+      "options" : {
+        "buy" : {
+          "title" : "Buy",
+          "body" : "Buy with trusted  providers"
+        },
+        "swap" : {
+          "title" : "Swap",
+          "label" : "Popular",
+          "body" : "Convert crypto to crypto securely"
+        },
+        "receive" : {
+          "title" : "Receive",
+          "body" : "Receive crypto in your wallet"
+        }
+      }
+    }
+  },
   "lottieDebugger" : {
     "buttonTitle" : "اختبر"
   },
@@ -1364,7 +1386,22 @@
     },
     "recentActivity" : "أحدث العمليات",
     "totalBalance" : "إجمالي الرصيد",
-    "transactionsPendingConfirmation" : "لم يتم تأكيد بعض المعاملات بعد. ستظهر هذه في رصيدك ويمكن استخدامها بعد تأكيدها."
+    "transactionsPendingConfirmation" : "لم يتم تأكيد بعض المعاملات بعد. ستظهر هذه في رصيدك ويمكن استخدامها بعد تأكيدها.",
+    "featuredButtons" : {
+      "buySell" : {
+        "title" : "شراء / بيع",
+        "description" : "Buy and sell with trusted providers"
+      },
+      "swap" : {
+        "title" : "مبادلة",
+        "description" : "Convert crypto to crypto securely",
+        "label" : "شائع"
+      },
+      "earn" : {
+        "title" : "اكسب",
+        "description" : "Grow your crypto with Ledger"
+      }
+    }
   },
   "currentAddress" : {
     "title" : "العنوان الحالي",
@@ -5725,6 +5762,13 @@
       "descriptionWithProductName" : "يجب أن تقوم بإعداد {{ productName }} خاصتك أولاً.\nسنرشدك خلال عملية الإعداد.",
       "goToOnboardingButton" : "إعداد جهازي",
       "goToOnboardingButtonWithProductName" : "إعداد {{ productName }}"
+    },
+    "EtherscanAPIError" : {
+      "title" : "فشل إحضار المعاملات",
+      "description" : "حدث خطأ غير متوقع مع المستكشفات. يُرجى إعادة المحاولة لاحقاً"
+    },
+    "GasEstimationError" : {
+      "title" : "فشل تقدير الغاز"
     }
   },
   "cryptoOrg" : {
