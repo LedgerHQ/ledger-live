@@ -75,7 +75,7 @@ function MarketRowItem({
 
   // PTX smart routing feature flag - buy sell live app flag
   const ptxSmartRouting = useFeature("ptxSmartRouting");
-  const stakeFlow = useStakeFlow;
+  const startStakeFlow = useStakeFlow({ currencies: [currency?.id] });
 
   const openAddAccounts = useCallback(() => {
     if (currency)
@@ -103,7 +103,7 @@ function MarketRowItem({
   }, [currency, history, range, selectCurrency]);
 
   const onBuy = useCallback(
-    (e: any) => {
+    (e: React.ChangeEvent<HTMLInputElement>) => {
       e.preventDefault();
       e.stopPropagation();
       setTrackingSource("Page Market");
@@ -128,7 +128,7 @@ function MarketRowItem({
   );
 
   const onSwap = useCallback(
-    (e: any) => {
+    (e: React.ChangeEvent<HTMLInputElement>) => {
       if (currency?.internalCurrency?.id) {
         e.preventDefault();
         e.stopPropagation();
@@ -163,20 +163,24 @@ function MarketRowItem({
     [currency?.internalCurrency, currency?.ticker, flattenedAccounts, openAddAccounts, history],
   );
 
-  const onStake = event => {
-    event.preventDefault();
-    event.stopPropagation();
-    track("button_clicked", {
-      button: "stake",
-      currency: currency?.ticker,
-      page: "Page Market",
-      ...stakeDefaultTrack,
-    });
-    setTrackingSource("Page Market");
-  };
+  const onStake = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+      track("button_clicked", {
+        button: "stake",
+        currency: currency?.ticker,
+        page: "Page Market",
+        ...stakeDefaultTrack,
+      });
+      startStakeFlow();
+      setTrackingSource("Page Market");
+    },
+    [currency?.ticker, startStakeFlow],
+  );
 
   const onStarClick = useCallback(
-    (e: any) => {
+    (e: React.ChangeEvent<HTMLInputElement>) => {
       e.preventDefault();
       e.stopPropagation();
       toggleStar();
@@ -252,15 +256,13 @@ function MarketRowItem({
                   </Button>
                 )}
                 {availableOnStake && (
-                  <Box onClick={e => onStake(e)}>
-                    <Button
-                      data-test-id={`market-${currency?.ticker}-stake-button`}
-                      variant="color"
-                      onClick={stakeFlow({ currencies: [currency?.id] })}
-                    >
-                      {t("accounts.contextMenu.stake")}
-                    </Button>
-                  </Box>
+                  <Button
+                    data-test-id={`market-${currency?.ticker}-stake-button`}
+                    variant="color"
+                    onClick={e => onStake(e)}
+                  >
+                    {t("accounts.contextMenu.stake")}
+                  </Button>
                 )}
               </Flex>
             ) : null}
