@@ -57,6 +57,7 @@ import TopBar from "./TopBar";
 import { TopBarConfig } from "./type";
 import { Container, Wrapper, Loader } from "./styled";
 import { shareAnalyticsSelector } from "~/renderer/reducers/settings";
+import { setKey, getKey } from "~/renderer/storage";
 
 const tracking = trackingWrapper(track);
 
@@ -229,6 +230,16 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
               );
             }),
         );
+      });
+
+      serverRef.current.setHandler("storage.get", ({ key, storeId }) => {
+        const namespace = `wallet-api/${storeId}`;
+        return getKey(namespace, key);
+      });
+
+      serverRef.current.setHandler("storage.set", ({ key, value, storeId }) => {
+        const namespace = `wallet-api/${storeId}`;
+        setKey(namespace, key, value);
       });
 
       serverRef.current.setHandler(
