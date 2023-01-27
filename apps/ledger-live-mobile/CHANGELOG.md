@@ -1,89 +1,18 @@
 # live-mobile
 
-## 3.14.0-nightly.7
+## 3.13.1
 
 ### Patch Changes
 
-- [#2350](https://github.com/LedgerHQ/ledger-live/pull/2350) [`de1bf99157`](https://github.com/LedgerHQ/ledger-live/commit/de1bf99157b069f8ae6746172cf0a929c2764d3c) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Implementation of analytics for Custom Lock Screen
+- Updated dependencies [[`e7bf251ba4`](https://github.com/LedgerHQ/ledger-live/commit/e7bf251ba488a9f38731db58b1d2d69d8fc802ea)]:
+  - @ledgerhq/react-native-hw-transport-ble@6.28.1
 
-* [#2350](https://github.com/LedgerHQ/ledger-live/pull/2350) [`de1bf99157`](https://github.com/LedgerHQ/ledger-live/commit/de1bf99157b069f8ae6746172cf0a929c2764d3c) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Improvements to the UX of the in-app analytics console
-
-* Updated dependencies [[`db03ee7a28`](https://github.com/LedgerHQ/ledger-live/commit/db03ee7a28e832582111eb5ab31ce73694cfb957), [`7eb8b1a39b`](https://github.com/LedgerHQ/ledger-live/commit/7eb8b1a39b36a5b336d95f89a92edf7ee22bcd26), [`de3b0da314`](https://github.com/LedgerHQ/ledger-live/commit/de3b0da31428487e025548abcfa26c0d4dac33f1)]:
-  - @ledgerhq/live-common@27.12.0-nightly.7
-  - @ledgerhq/react-native-hw-transport-ble@6.28.1-nightly.0
-
-## 3.14.0-nightly.6
-
-### Minor Changes
-
-- [#1661](https://github.com/LedgerHQ/ledger-live/pull/1661) [`a56ffa948d`](https://github.com/LedgerHQ/ledger-live/commit/a56ffa948defb16ea9f2968d96d4b896f9839145) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - add elrond staking and token
+## 3.13.1-hotfix.0
 
 ### Patch Changes
 
-- Updated dependencies [[`53b526847d`](https://github.com/LedgerHQ/ledger-live/commit/53b526847d5478e271e216c7a98d650915b7cb6a), [`5b4aa38421`](https://github.com/LedgerHQ/ledger-live/commit/5b4aa38421380512fb96ef66e1f3149ce8bfd018), [`0b827ad97a`](https://github.com/LedgerHQ/ledger-live/commit/0b827ad97afb5e12ae0c8d0d1cf3952a6d02ec7c), [`a56ffa948d`](https://github.com/LedgerHQ/ledger-live/commit/a56ffa948defb16ea9f2968d96d4b896f9839145)]:
-  - @ledgerhq/types-live@6.29.0-nightly.1
-  - @ledgerhq/live-common@27.12.0-nightly.6
-
-## 3.14.0-nightly.5
-
-### Patch Changes
-
-- Updated dependencies [[`f3fd3134a3`](https://github.com/LedgerHQ/ledger-live/commit/f3fd3134a3852f9d872b1be268e60beae8ea3496), [`dcad1bcbdc`](https://github.com/LedgerHQ/ledger-live/commit/dcad1bcbdc6f1674a175f2bca12c85edbdd179e1), [`4e9378d63b`](https://github.com/LedgerHQ/ledger-live/commit/4e9378d63b048fef131ee574220c428456ef42d4), [`f3fd3134a3`](https://github.com/LedgerHQ/ledger-live/commit/f3fd3134a3852f9d872b1be268e60beae8ea3496)]:
-  - @ledgerhq/types-live@6.29.0-nightly.0
-  - @ledgerhq/live-common@27.12.0-nightly.5
-
-## 3.14.0-nightly.4
-
-### Minor Changes
-
-- [#2338](https://github.com/LedgerHQ/ledger-live/pull/2338) [`70e9db3892`](https://github.com/LedgerHQ/ledger-live/commit/70e9db3892413c7f825cd3eb258e1577e365d6b6) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Large Mover category added in the notifications settings
-
-### Patch Changes
-
-- [#2283](https://github.com/LedgerHQ/ledger-live/pull/2283) [`e4d5c90b53`](https://github.com/LedgerHQ/ledger-live/commit/e4d5c90b532bfa9945a0cb3edecf0178ab0d80ed) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix issue on the NFT claim flow on iOS: camera not displaying right after granting the permission
-
-* [#2283](https://github.com/LedgerHQ/ledger-live/pull/2283) [`e4d5c90b53`](https://github.com/LedgerHQ/ledger-live/commit/e4d5c90b532bfa9945a0cb3edecf0178ab0d80ed) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Replace the FallbackCameraScreen logic by a simple easy to reuse RequiresCameraPermission component
-
-* Updated dependencies [[`16195a130e`](https://github.com/LedgerHQ/ledger-live/commit/16195a130e24b06528b6c2c2551e58be253f94f1)]:
-  - @ledgerhq/live-common@27.12.0-nightly.4
-
-## 3.14.0-nightly.3
-
-### Patch Changes
-
-- [#2191](https://github.com/LedgerHQ/ledger-live/pull/2191) [`efc2b4d4fb`](https://github.com/LedgerHQ/ledger-live/commit/efc2b4d4fb2acb6c63a4c55b5e51e251712dfc5c) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Refactors swap screen on mobile to remove max loading state.
-
-- Updated dependencies [[`efc2b4d4fb`](https://github.com/LedgerHQ/ledger-live/commit/efc2b4d4fb2acb6c63a4c55b5e51e251712dfc5c), [`97c9cb43a4`](https://github.com/LedgerHQ/ledger-live/commit/97c9cb43a4a4dc2c6369d76f12b4a0c48fe3990a), [`75fbe7f3b1`](https://github.com/LedgerHQ/ledger-live/commit/75fbe7f3b1058e6eb6906c0d5fac3fb10eefc3eb), [`63e63e5fc5`](https://github.com/LedgerHQ/ledger-live/commit/63e63e5fc562c029f1372f664d1a45dc1fda5047), [`88d6de464b`](https://github.com/LedgerHQ/ledger-live/commit/88d6de464b475b049aaf1724b28d8a592bfd4676)]:
-  - @ledgerhq/live-common@27.12.0-nightly.3
-
-## 3.14.0-nightly.2
-
-### Patch Changes
-
-- [#2270](https://github.com/LedgerHQ/ledger-live/pull/2270) [`b3ca8bff8c`](https://github.com/LedgerHQ/ledger-live/commit/b3ca8bff8c90400b302ddf0345df1b83d9ceb3c3) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Add new Infinity Pass assets and debug screen for claim NFT flow
-
-- Updated dependencies [[`789bfc0fad`](https://github.com/LedgerHQ/ledger-live/commit/789bfc0fadd53c8209a2ad8aa8df6bbf9a2891ab), [`7fef128ffb`](https://github.com/LedgerHQ/ledger-live/commit/7fef128ffba226dd675935c7464db60894f327bb)]:
-  - @ledgerhq/live-common@27.12.0-nightly.2
-
-## 3.14.0-nightly.1
-
-### Minor Changes
-
-- [`d26fbee27a`](https://github.com/LedgerHQ/ledger-live/commit/d26fbee27aacd05e2cc5ee0ba3c49492a72f5659) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add a restore from previous device option when installing apps during the sync onboarding
-
-### Patch Changes
-
-- [#2268](https://github.com/LedgerHQ/ledger-live/pull/2268) [`0c479704f5`](https://github.com/LedgerHQ/ledger-live/commit/0c479704f5bcd1a00b4bf5370da32d92f4165e87) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-api): use the newDeviceSelectionFeature on mobile
-
-- Updated dependencies [[`befe0e224a`](https://github.com/LedgerHQ/ledger-live/commit/befe0e224a93fbc3598f4d03b769b9d9e1af721e), [`d26fbee27a`](https://github.com/LedgerHQ/ledger-live/commit/d26fbee27aacd05e2cc5ee0ba3c49492a72f5659), [`7af03d772a`](https://github.com/LedgerHQ/ledger-live/commit/7af03d772a16822024e456224951c48c5e09e45d)]:
-  - @ledgerhq/live-common@27.12.0-nightly.1
-
-## 3.13.1-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`9bba7fd8bd`](https://github.com/LedgerHQ/ledger-live/commit/9bba7fd8bd9b55be569fb57367e7debc442af789)]:
-  - @ledgerhq/live-common@27.11.1-nightly.0
+- Updated dependencies [[`e7bf251ba4`](https://github.com/LedgerHQ/ledger-live/commit/e7bf251ba488a9f38731db58b1d2d69d8fc802ea)]:
+  - @ledgerhq/react-native-hw-transport-ble@6.28.1-hotfix.0
 
 ## 3.13.0
 
