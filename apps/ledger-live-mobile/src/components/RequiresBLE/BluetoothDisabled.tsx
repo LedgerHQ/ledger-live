@@ -4,11 +4,13 @@ import { IconBox, Icons } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { BluetoothMedium } from "@ledgerhq/native-ui/assets/icons";
 import ServiceDisabledView from "../ServiceDisabledView";
+import GenericDrawerContent from "../GenericDrawerContent";
 
 export type Props = {
   hasBackButton?: boolean;
-  onRetry?: () => void;
+  onRetry?: (() => void) | null;
   openSettings?: boolean;
+  componentType?: "drawer" | "view";
 };
 
 /**
@@ -24,6 +26,7 @@ const BluetoothDisabled: React.FC<Props> = ({
   onRetry,
   hasBackButton = false,
   openSettings = false,
+  componentType = "view",
 }) => {
   const { t } = useTranslation();
 
@@ -47,6 +50,19 @@ const BluetoothDisabled: React.FC<Props> = ({
     onButtonPress = onRetry;
     buttonLabel = t("bluetooth.tryEnablingAgain");
     buttonEvent = "BluetoothServiceDisabledRetryAuthorize";
+  }
+
+  if (componentType === "drawer") {
+    return (
+      <GenericDrawerContent
+        iconType="error"
+        title={t("bluetooth.required")}
+        description={t("bluetooth.checkEnabled")}
+        primaryButtonLabel={buttonLabel}
+        onPrimaryButtonPress={onButtonPress}
+        primaryButtonEvent={buttonEvent}
+      />
+    );
   }
 
   return (
