@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
-import { NativeEventEmitter, NativeModules, Platform } from "react-native";
+import {
+  EmitterSubscription,
+  NativeEventEmitter,
+  NativeModules,
+  Platform,
+} from "react-native";
 import LocationHelperModule, {
   CheckAndRequestResponse,
 } from "../../../native-modules/LocationHelperModule";
@@ -33,6 +38,10 @@ export function useAndroidPromptEnableLocationCallback() {
 
 export type LocationServicesState = "unknown" | "enabled" | "disabled";
 
+export type UseAndroidEnableLocationArgs = {
+  isHookEnabled?: boolean;
+};
+
 /**
  * Hook to enable the locations services
  *
@@ -46,7 +55,9 @@ export type LocationServicesState = "unknown" | "enabled" | "disabled";
  * - checkAndRequestAgain: a function that checks the location services state and requests (if necessary) the user to enable them
  * - locationServicesState: a state that indicates if the location services are enabled or not
  */
-export function useAndroidEnableLocation() {
+export function useAndroidEnableLocation({
+  isHookEnabled = true,
+}: UseAndroidEnableLocationArgs) {
   const promptEnableLocation = useAndroidPromptEnableLocationCallback();
 
   const [locationServicesState, setLocationServicesState] =
@@ -69,30 +80,38 @@ export function useAndroidEnableLocation() {
 
   // Checks and requests on mount
   useEffect(() => {
+    if (!isHookEnabled) return;
+
     checkAndRequestAgain();
-  }, [checkAndRequestAgain]);
+  }, [checkAndRequestAgain, isHookEnabled]);
 
   // Listens to an update of the locations services state from the native module.
   // Second way to update locationServicesState.
   useEffect(() => {
-    const eventEmitter = new NativeEventEmitter(
-      NativeModules.LocationHelperModule,
-    );
-    const eventListener = eventEmitter.addListener(
-      "LocationServiceUpdated",
-      event => {
-        if (event?.service === "enabled") {
-          setLocationServicesState("enabled");
-        } else if (event?.service === "disabled") {
-          setLocationServicesState("disabled");
-        }
-      },
-    );
+    let eventListener: null | EmitterSubscription;
+
+    if (isHookEnabled) {
+      const eventEmitter = new NativeEventEmitter(
+        NativeModules.LocationHelperModule,
+      );
+      eventListener = eventEmitter.addListener(
+        "LocationServiceUpdated",
+        event => {
+          if (event?.service === "enabled") {
+            setLocationServicesState("enabled");
+          } else if (event?.service === "disabled") {
+            setLocationServicesState("disabled");
+          }
+        },
+      );
+    }
 
     return () => {
-      eventListener.remove();
+      if (eventListener) {
+        eventListener.remove();
+      }
     };
-  }, []);
+  }, [isHookEnabled]);
 
   return { locationServicesState, checkAndRequestAgain };
 }
