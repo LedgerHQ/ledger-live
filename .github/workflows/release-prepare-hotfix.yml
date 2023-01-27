@@ -71,7 +71,7 @@ jobs:
         id: merge-develop
         run: |
           git checkout develop
-          if [[ git merge ${{ github.event.inputs.ref }} ]]
+          if git merge ${{ github.event.inputs.ref }}
           then
             git push origin develop
             echo "create-pr=0" >> $GITHUB_OUTPUT
@@ -85,9 +85,9 @@ jobs:
       - name: merge into release if present
         id: merge-release
         run: |
-          if [[ git checkout release ]]
+          if git checkout release
           then
-            if [[ git merge ${{ github.event.inputs.ref }} ]]
+            if git merge ${{ github.event.inputs.ref }}
             then
               git push origin release
               echo "create-pr=0" >> $GITHUB_OUTPUT

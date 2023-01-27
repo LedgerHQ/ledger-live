@@ -71,7 +71,7 @@ jobs:
         id: merge-develop
         run: |
           git checkout develop
-          if [[ git merge ${{ github.event.inputs.ref }} ]]
+          if git merge ${{ github.event.inputs.ref }}
           then
             git push origin develop
             echo "create-pr=0" >> $GITHUB_OUTPUT
