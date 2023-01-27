@@ -1,5 +1,15 @@
 # @ledgerhq/live-common
 
+## 27.12.0-nightly.8
+
+### Patch Changes
+
+- [#2410](https://github.com/LedgerHQ/ledger-live/pull/2410) [`0839f0886f`](https://github.com/LedgerHQ/ledger-live/commit/0839f0886f3acd544ae21d3c9c3c7a607662303b) Thanks [@chabroA](https://github.com/chabroA)! - Update wallet-api error formatting
+
+- Updated dependencies [[`0e7ff249f7`](https://github.com/LedgerHQ/ledger-live/commit/0e7ff249f7e1160ff3888e52767ef91151efbedd)]:
+  - @ledgerhq/cryptoassets@7.3.0-nightly.1
+  - @ledgerhq/hw-app-eth@6.31.0-nightly.2
+
 ## 27.12.0-nightly.7
 
 ### Minor Changes

@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.52.0-nightly.17
+
+### Patch Changes
+
+- [#2417](https://github.com/LedgerHQ/ledger-live/pull/2417) [`763690846d`](https://github.com/LedgerHQ/ledger-live/commit/763690846dbf87a4794ef654fc7f6df43574a0c9) Thanks [@gre](https://github.com/gre)! - fixes old link to old repository
+
+- Updated dependencies [[`0839f0886f`](https://github.com/LedgerHQ/ledger-live/commit/0839f0886f3acd544ae21d3c9c3c7a607662303b)]:
+  - @ledgerhq/live-common@27.12.0-nightly.8
+
 ## 2.52.0-nightly.16
 
 ### Patch Changes
