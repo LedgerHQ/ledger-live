@@ -4,11 +4,7 @@ import axiosRetry, { isNetworkOrIdempotentRequestError } from "axios-retry";
 import genericPool, { Pool } from "generic-pool";
 import { Address, Block, TX } from "../storage/types";
 import { IExplorer } from "./types";
-import {
-  requestInterceptor,
-  responseInterceptor,
-  errorInterceptor,
-} from "../../../../network";
+import { errorInterceptor } from "../../../../network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { blockchainBaseURL } from "../../../../api/Ledger";
 
@@ -78,8 +74,7 @@ class BitcoinLikeExplorer implements IExplorer {
     }
 
     // Logging
-    client.interceptors.request.use(requestInterceptor);
-    client.interceptors.response.use(responseInterceptor, errorInterceptor);
+    client.interceptors.response.use(undefined, errorInterceptor);
   }
 
   async broadcast(tx: string): Promise<{ data: { result: string } }> {
