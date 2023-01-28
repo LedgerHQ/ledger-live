@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { RefreshControl } from "react-native";
+import { RefreshControl, RefreshControlProps } from "react-native";
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import { useCountervaluesPolling } from "@ledgerhq/live-common/countervalues/react";
-import { useTheme } from "@react-navigation/native";
+import { useIsFocused, useTheme } from "@react-navigation/native";
 import { SYNC_DELAY } from "../constants";
 
 type Props = {
@@ -10,13 +10,16 @@ type Props = {
   isError?: boolean;
   forwardedRef?: React.Ref<unknown>;
 };
-export default <P,>(ScrollListLike: React.ComponentType<P>) => {
+export default <P,>(
+  ScrollListLike: React.ComponentType<P>,
+  refreshControlprops?: Partial<RefreshControlProps>,
+) => {
   function Inner({ forwardedRef, ...scrollListLikeProps }: Props & P) {
     const { colors, dark } = useTheme();
     const [refreshing, setRefreshing] = useState(false);
     const setSyncBehavior = useBridgeSync();
     const { poll } = useCountervaluesPolling();
-
+    const IsFocused = useIsFocused();
     function onRefresh() {
       poll();
       setSyncBehavior({
@@ -26,6 +29,10 @@ export default <P,>(ScrollListLike: React.ComponentType<P>) => {
       });
       setRefreshing(true);
     }
+
+    useEffect(() => {
+      setRefreshing(false);
+    }, [IsFocused]);
 
     useEffect(() => {
       if (!refreshing) {
@@ -40,6 +47,7 @@ export default <P,>(ScrollListLike: React.ComponentType<P>) => {
         clearTimeout(timer);
       };
     }, [refreshing]);
+
     return (
       <ScrollListLike
         {...(scrollListLikeProps as P)}
@@ -51,6 +59,7 @@ export default <P,>(ScrollListLike: React.ComponentType<P>) => {
             tintColor={colors.live}
             refreshing={refreshing}
             onRefresh={onRefresh}
+            {...refreshControlprops}
           />
         }
       />

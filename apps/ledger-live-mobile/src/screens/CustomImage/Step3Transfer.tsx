@@ -1,24 +1,32 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ScrollView } from "react-native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Flex } from "@ledgerhq/native-ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
-import { completeCustomImageFlow } from "../../actions/settings";
+import {
+  completeCustomImageFlow,
+  setLastConnectedDevice,
+  setReadOnlyMode,
+} from "../../actions/settings";
 import { ScreenName } from "../../const";
 import CustomImageDeviceAction from "../../components/CustomImageDeviceAction";
 import TestImage from "../../components/CustomImage/TestImage";
 import SelectDevice from "../../components/SelectDevice";
+import SelectDevice2 from "../../components/SelectDevice2";
 import { useCompleteActionCallback } from "../../logic/postOnboarding/useCompleteAction";
 import {
   BaseComposite,
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
 import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
+import { addKnownDevice } from "../../actions/ble";
+import { lastConnectedDeviceSelector } from "../../reducers/settings";
 
-const deviceModelIds = [DeviceModelId.nanoFTS];
+const deviceModelIds = [DeviceModelId.stax];
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<
@@ -33,7 +41,7 @@ type NavigationProps = BaseComposite<
  * route param.
  *
  * This is meant as a data validation. We want to validate that the raw data
- * (that is eventually what will be transfered) allows to reconstruct exactly
+ * (that is eventually what will be transferred) allows to reconstruct exactly
  * the image previewed on the previous screen.
  *
  * We take this raw data and use it to rebuild the image from scratch, then
@@ -43,7 +51,15 @@ type NavigationProps = BaseComposite<
 const Step3Transfer = ({ route, navigation }: NavigationProps) => {
   const dispatch = useDispatch();
   const { rawData, device: deviceFromRoute, previewData } = route.params;
+
   const [device, setDevice] = useState<Device | null>(deviceFromRoute);
+  const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
+
+  useEffect(() => {
+    if (!device && lastConnectedDevice?.modelId === DeviceModelId.stax) {
+      setDevice(lastConnectedDevice);
+    }
+  }, [lastConnectedDevice, device]);
 
   const handleError = useCallback(
     (error: Error) => {
@@ -52,6 +68,24 @@ const Step3Transfer = ({ route, navigation }: NavigationProps) => {
     },
     [navigation, device],
   );
+
+  const handleDeviceSelected = useCallback(
+    (device: Device) => {
+      dispatch(setReadOnlyMode(false));
+      dispatch(
+        addKnownDevice({
+          ...device,
+          id: device.deviceId,
+          name: device.deviceName || "",
+        }),
+      );
+      dispatch(setLastConnectedDevice(device));
+      setDevice(device);
+    },
+    [dispatch],
+  );
+
+  const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
 
   const completeAction = useCompleteActionCallback();
 
@@ -84,10 +118,12 @@ const Step3Transfer = ({ route, navigation }: NavigationProps) => {
             onResult={handleResult}
             onSkip={handleExit}
           />
+        ) : newDeviceSelectionFeatureFlag?.enabled ? (
+          <SelectDevice2 onSelect={setDevice} stopBleScanning={!!device} />
         ) : (
           <Flex flex={1} alignSelf="stretch">
             <SelectDevice
-              onSelect={setDevice}
+              onSelect={handleDeviceSelected}
               deviceModelIds={deviceModelIds}
               autoSelectOnAdd
             />

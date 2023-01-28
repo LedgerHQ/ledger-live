@@ -6,20 +6,33 @@ import {
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
-import BenchmarkQRStream from "../../screens/BenchmarkQRStream";
-import DebugSwap from "../../screens/DebugSwap";
-import DebugBLE from "../../screens/DebugBLE";
-import DebugBLEBenchmark from "../../screens/DebugBLEBenchmark";
-import DebugCrash from "../../screens/DebugCrash";
-import DebugHttpTransport from "../../screens/DebugHttpTransport";
+
+import DebugBenchmarkQRStream from "../../screens/Settings/Debug/Broken/BenchmarkQRStream";
+import DebugBLE from "../../screens/Settings/Debug/Connectivity/BLE";
+import DebugBLEBenchmark from "../../screens/Settings/Debug/Connectivity/BLEBenchmark";
+import DebugConfiguration from "../../screens/Settings/Debug/Configuration";
+import DebugConnectivity from "../../screens/Settings/Debug/Connectivity";
+import DebugCrash from "../../screens/Settings/Debug/Debugging/Crashes";
+import DebugCustomImageGraphics from "../../screens/Settings/Debug/Features/CustomImageGraphics";
+import DebugDebugging from "../../screens/Settings/Debug/Debugging";
+import DebugEnv from "../../screens/Settings/Debug/Configuration/DebugEnv";
+import DebugExport from "../../screens/Settings/Debug/Features/ExportAccounts";
 import DebugFeatureFlags from "../../screens/FeatureFlagsSettings";
-import DebugIcons from "../../screens/DebugIcons";
-import DebugLottie from "../../screens/DebugLottie";
-import DebugMultiAppInstall from "../../screens/DebugMultiAppInstall";
-import DebugLogs from "../../screens/DebugLogs";
-import DebugStore from "../../screens/DebugStore";
-import DebugEnv from "../../screens/DebugEnv";
-import DebugPlayground from "../../screens/DebugPlayground";
+import DebugFeatures from "../../screens/Settings/Debug/Features";
+import DebugFetchCustomImage from "../../screens/Settings/Debug/Features/FetchCustomImage";
+import DebugGenerators from "../../screens/Settings/Debug/Generators";
+import DebugHttpTransport from "../../screens/Settings/Debug/Connectivity/DebugHttpTransport";
+import DebugInformation from "../../screens/Settings/Debug/Information";
+import DebugLogs from "../../screens/Settings/Debug/Debugging/Logs";
+import DebugLottie from "../../screens/Settings/Debug/Features/Lottie";
+import DebugNetwork from "../../screens/Settings/Debug/Debugging/Network";
+import DebugCommandSender from "../../screens/Settings/Debug/Connectivity/CommandSender";
+import DebugSettings from "../../screens/Settings/Debug";
+import DebugStore from "../../screens/Settings/Debug/Debugging/Store";
+import DebugStoryly from "../../screens/Settings/Debug/Features/Storyly";
+import DebugSwap from "../../screens/Settings/Debug/Features/Swap";
+import DebugVideos from "../../screens/Settings/Debug/Features/Videos";
+
 import Settings from "../../screens/Settings";
 import AccountsSettings from "../../screens/Settings/Accounts";
 import AboutSettings from "../../screens/Settings/About";
@@ -31,26 +44,21 @@ import HelpSettings from "../../screens/Settings/Help";
 import RegionSettings from "../../screens/Settings/General/Region";
 import CurrenciesList from "../../screens/Settings/CryptoAssets/Currencies/CurrenciesList";
 import CurrencySettings from "../../screens/Settings/CryptoAssets/Currencies/CurrencySettings";
-import DebugSettings, {
-  DebugDevices,
-  DebugMocks,
-} from "../../screens/Settings/Debug";
-import DebugExport from "../../screens/Settings/Debug/ExportAccounts";
 import ExperimentalSettings from "../../screens/Settings/Experimental";
 import DeveloperSettings, {
   DeveloperCustomManifest,
 } from "../../screens/Settings/Developer";
-import RepairDevice from "../../screens/RepairDevice";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import Button from "../Button";
 import HelpButton from "../../screens/Settings/HelpButton";
 import OnboardingStepLanguage from "../../screens/Onboarding/steps/language";
-import { GenerateMockAccountSelectScreen } from "../../screens/Settings/Debug/GenerateMockAccountsSelect";
+import { GenerateMockAccountSelectScreen } from "../../screens/Settings/Debug/Generators/GenerateMockAccountsSelect";
 import HiddenNftCollections from "../../screens/Settings/Accounts/HiddenNftCollections";
-import DebugStoryly from "../../screens/DebugStoryly";
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 import PostOnboardingDebugScreen from "../../screens/PostOnboarding/PostOnboardingDebugScreen";
 import { SettingsNavigatorStackParamList } from "./types/SettingsNavigator";
+import DebugTermsOfUse from "../../screens/Settings/Debug/Features/TermsOfUse";
+import CameraPermissions from "../../screens/Settings/Debug/Debugging/CameraPermissions";
 
 const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 
@@ -148,13 +156,6 @@ export default function SettingsNavigator() {
         {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
-        name={ScreenName.RepairDevice}
-        component={RepairDevice}
-        options={{
-          title: t("RepairDevice.title"),
-        }}
-      />
-      <Stack.Screen
         name={ScreenName.ExperimentalSettings}
         component={ExperimentalSettings}
         options={{
@@ -186,24 +187,59 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.DebugDevices}
-        component={DebugDevices}
+        name={ScreenName.DebugNetwork}
+        component={DebugNetwork}
         options={{
-          title: "Debug Devices",
+          title: "Network",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugConfiguration}
+        component={DebugConfiguration}
+        options={{
+          title: "Configuration",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugDebugging}
+        component={DebugDebugging}
+        options={{
+          title: "Debugging",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugInformation}
+        component={DebugInformation}
+        options={{
+          title: "Information",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugGenerators}
+        component={DebugGenerators}
+        options={{
+          title: "Generators",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugConnectivity}
+        component={DebugConnectivity}
+        options={{
+          title: "Connectivity",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugFeatures}
+        component={DebugFeatures}
+        options={{
+          title: "Features",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugFeatureFlags}
         component={DebugFeatureFlags}
         options={{
-          title: "Debug Feature Flags",
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.DebugMocks}
-        component={DebugMocks}
-        options={{
-          title: "Mock & Test",
+          title: "Feature Flags",
         }}
       />
       <Stack.Screen
@@ -217,21 +253,21 @@ export default function SettingsNavigator() {
         name={ScreenName.DebugExport}
         component={DebugExport}
         options={{
-          title: "Export Accounts",
+          title: "Export Accounts and Settings",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugSwap}
         component={DebugSwap}
         options={{
-          title: "Debug Swap",
+          title: "Swap",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugBLE}
         component={DebugBLE}
         options={({ route, navigation }) => ({
-          title: "Debug BLE",
+          title: "BLE Debugging",
           headerRight: () => (
             <Button
               event="DebugBLEBenchmark"
@@ -248,6 +284,13 @@ export default function SettingsNavigator() {
         })}
       />
       <Stack.Screen
+        name={ScreenName.DebugCommandSender}
+        component={DebugCommandSender}
+        options={{
+          title: "Command Sender",
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.DebugBLEBenchmark}
         component={DebugBLEBenchmark}
         options={{
@@ -258,42 +301,35 @@ export default function SettingsNavigator() {
         name={ScreenName.DebugCrash}
         component={DebugCrash}
         options={{
-          title: "Debug Crash",
+          title: "Errors and crashes",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugStore}
         component={DebugStore}
         options={{
-          title: "Debug Store",
+          title: "Application state",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugEnv}
         component={DebugEnv}
         options={{
-          title: "Debug Env",
+          title: "Environment Variables",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugHttpTransport}
         component={DebugHttpTransport}
         options={{
-          title: "Debug Http Transport",
+          title: "HTTP Transport",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugLogs}
         component={DebugLogs}
         options={{
-          title: "Debug Logs",
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.DebugIcons}
-        component={DebugIcons}
-        options={{
-          title: "Debug Icons",
+          title: "Logs",
         }}
       />
       <Stack.Screen
@@ -304,10 +340,24 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.DebugMultiAppInstall}
-        component={DebugMultiAppInstall}
+        name={ScreenName.DebugVideos}
+        component={DebugVideos}
         options={{
-          title: "Debug MultiAppInstall",
+          title: "Debug Videos",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugFetchCustomImage}
+        component={DebugFetchCustomImage}
+        options={{
+          title: "Debug FetchCustomImage",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugCustomImageGraphics}
+        component={DebugCustomImageGraphics}
+        options={{
+          title: "Custom image graphics",
         }}
       />
       <Stack.Screen
@@ -318,15 +368,15 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.DebugPlayground}
-        component={DebugPlayground}
+        name={ScreenName.DebugTermsOfUse}
+        component={DebugTermsOfUse}
         options={{
-          title: "Playground for testing",
+          title: "Debug Terms of Use",
         }}
       />
       <Stack.Screen
         name={ScreenName.BenchmarkQRStream}
-        component={BenchmarkQRStream}
+        component={DebugBenchmarkQRStream}
         options={{
           title: "Benchmark QRStream",
         }}
@@ -343,6 +393,10 @@ export default function SettingsNavigator() {
       <Stack.Screen
         name={ScreenName.PostOnboardingDebugScreen}
         component={PostOnboardingDebugScreen}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugCameraPermissions}
+        component={CameraPermissions}
       />
     </Stack.Navigator>
   );

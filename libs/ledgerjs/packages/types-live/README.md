@@ -42,6 +42,14 @@ Ledger Live main types.
 *   [SignOperationFnSignature](#signoperationfnsignature)
 *   [CurrencyBridge](#currencybridge)
 *   [AccountBridge](#accountbridge)
+    *   [applyReconciliation](#applyreconciliation)
+        *   [Parameters](#parameters)
+    *   [assignToAccountRaw](#assigntoaccountraw)
+        *   [Parameters](#parameters-1)
+    *   [assignFromAccountRaw](#assignfromaccountraw)
+        *   [Parameters](#parameters-2)
+    *   [initAccount](#initaccount)
+        *   [Parameters](#parameters-3)
 *   [CurrenciesData](#currenciesdata)
     *   [Properties](#properties-11)
 *   [DatasetTest](#datasettest)
@@ -147,13 +155,14 @@ Ledger Live main types.
 *   [navigationParams](#navigationparams)
 *   [startAction](#startaction)
 *   [PostOnboardingAction](#postonboardingaction)
+    *   [disabled](#disabled)
     *   [featureFlagId](#featureflagid)
     *   [Icon](#icon)
     *   [title](#title)
+    *   [titleCompleted](#titlecompleted)
     *   [description](#description)
     *   [tagLabel](#taglabel)
     *   [actionCompletedPopupLabel](#actioncompletedpopuplabel)
-    *   [actionCompletedHubTitle](#actioncompletedhubtitle)
     *   [startEvent](#startevent)
     *   [startEventProperties](#starteventproperties)
 *   [PostOnboardingActionState](#postonboardingactionstate)
@@ -458,9 +467,59 @@ Abstraction related to a currency
 
 Abstraction related to an account
 
+#### applyReconciliation
+
+This function applies the change from moving from "account" to an updated version ("updatedRow").
+It returns a boolean value indicating if something changed in the "next" Account that possibly gets mutated in-place.
+
+Type: function (account: [Account](#account), updatedRaw: [AccountRaw](#accountraw), next: [Account](#account)): [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+
+##### Parameters
+
+*   `account` **[Account](#account)** The original account object.
+*   `updatedRaw` **[AccountRaw](#accountraw)** The updated version of the account in its serialized form.
+*   `next` **[Account](#account)** The updated account object.
+
+Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Indicates if something changed in the "next" account.
+
+#### assignToAccountRaw
+
+This function mutates the 'accountRaw' object in-place to add any extra fields that the coin may need to set.
+It is called during the serialization mechanism, for instance bitcoinResources need to be serialized.
+
+Type: function (account: [Account](#account), accountRaw: [AccountRaw](#accountraw)): void
+
+##### Parameters
+
+*   `account` **[Account](#account)** The original account object.
+*   `accountRaw` **[AccountRaw](#accountraw)** The account in its serialized form.
+
+#### assignFromAccountRaw
+
+This function mutates the 'account' object in-place to add any extra fields that the coin may need to set.
+It is called during the deserialization mechanism, for instance bitcoinResources need to be deserialized.
+
+Type: function (accountRaw: [AccountRaw](#accountraw), account: [Account](#account)): void
+
+##### Parameters
+
+*   `accountRaw` **[AccountRaw](#accountraw)** The account in its serialized form.
+*   `account` **[Account](#account)** The original account object.
+
+#### initAccount
+
+This function mutates the 'account' object to extend it with any extra fields of the coin.
+For instance bitcoinResources needs to be created.
+
+Type: function (account: [Account](#account)): void
+
+##### Parameters
+
+*   `account` **[Account](#account)** The original account object to mutates in-place.
+
 ### CurrenciesData
 
-Type: {FIXME_ignoreAccountFields: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?, FIXME_ignoreOperationFields: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?, FIXME_ignorePreloadFields: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?, mockDeviceOptions: any?, scanAccounts: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{name: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), apdus: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), unstableAccounts: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, test: function (expect: ExpectFn, scanned: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Account](#account)>, bridge: [CurrencyBridge](#currencybridge)): any?}>?, accounts: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{implementations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?, raw: [AccountRaw](#accountraw), FIXME_tests: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [RegExp](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/RegExp))>?, transactions: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{name: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), transaction: (T | function (arg0: T, arg1: [Account](#account), arg2: [AccountBridge](#accountbridge)\<T>): T), expectedStatus: (Partial<[TransactionStatusCommon](#transactionstatuscommon)> | function (arg0: [Account](#account), arg1: T, arg2: [TransactionStatusCommon](#transactionstatuscommon)): Partial<[TransactionStatusCommon](#transactionstatuscommon)>)?, test: function (arg0: ExpectFn, arg1: T, arg2: [TransactionStatusCommon](#transactionstatuscommon), arg3: [AccountBridge](#accountbridge)\<T>): any?, apdus: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, testSignedOperation: function (arg0: ExpectFn, arg1: [SignedOperation](#signedoperation), arg2: [Account](#account), arg3: T, arg4: [TransactionStatusCommon](#transactionstatuscommon), arg5: [AccountBridge](#accountbridge)\<T>): any?}>?, test: function (arg0: ExpectFn, arg1: [Account](#account), arg2: [AccountBridge](#accountbridge)\<T>): any?}>?, test: function (arg0: ExpectFn, arg1: [CurrencyBridge](#currencybridge)): any?}
+Type: {FIXME_ignoreAccountFields: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?, FIXME_ignoreOperationFields: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?, FIXME_ignorePreloadFields: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?, mockDeviceOptions: any?, scanAccounts: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{name: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), apdus: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), unstableAccounts: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, test: function (expect: ExpectFn, scanned: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Account](#account)>, bridge: [CurrencyBridge](#currencybridge)): any?}>?, accounts: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{implementations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?, raw: [AccountRaw](#accountraw), FIXME_tests: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [RegExp](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/RegExp))>?, transactions: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<CurrencyTransaction\<T>>?, test: function (arg0: ExpectFn, arg1: [Account](#account), arg2: [AccountBridge](#accountbridge)\<T>): any?}>?, test: function (arg0: ExpectFn, arg1: [CurrencyBridge](#currencybridge)): any?}
 
 #### Properties
 
@@ -469,7 +528,7 @@ Type: {FIXME_ignoreAccountFields: [Array](https://developer.mozilla.org/docs/Web
 *   `FIXME_ignorePreloadFields` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?** 
 *   `mockDeviceOptions` **any?** 
 *   `scanAccounts` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{name: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), apdus: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), unstableAccounts: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, test: function (expect: ExpectFn, scanned: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Account](#account)>, bridge: [CurrencyBridge](#currencybridge)): any?}>?** 
-*   `accounts` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{implementations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?, raw: [AccountRaw](#accountraw), FIXME_tests: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [RegExp](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/RegExp))>?, transactions: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{name: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), transaction: (T | function (arg0: T, arg1: [Account](#account), arg2: [AccountBridge](#accountbridge)\<T>): T), expectedStatus: (Partial<[TransactionStatusCommon](#transactionstatuscommon)> | function (arg0: [Account](#account), arg1: T, arg2: [TransactionStatusCommon](#transactionstatuscommon)): Partial<[TransactionStatusCommon](#transactionstatuscommon)>)?, test: function (arg0: ExpectFn, arg1: T, arg2: [TransactionStatusCommon](#transactionstatuscommon), arg3: [AccountBridge](#accountbridge)\<T>): any?, apdus: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, testSignedOperation: function (arg0: ExpectFn, arg1: [SignedOperation](#signedoperation), arg2: [Account](#account), arg3: T, arg4: [TransactionStatusCommon](#transactionstatuscommon), arg5: [AccountBridge](#accountbridge)\<T>): any?}>?, test: function (arg0: ExpectFn, arg1: [Account](#account), arg2: [AccountBridge](#accountbridge)\<T>): any?}>?** 
+*   `accounts` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{implementations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?, raw: [AccountRaw](#accountraw), FIXME_tests: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [RegExp](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/RegExp))>?, transactions: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<CurrencyTransaction\<T>>?, test: function (arg0: ExpectFn, arg1: [Account](#account), arg2: [AccountBridge](#accountbridge)\<T>): any?}>?** 
 *   `test` **function (arg0: ExpectFn, arg1: [CurrencyBridge](#currencybridge)): any?** 
 
 ### DatasetTest
@@ -491,7 +550,7 @@ Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 Add others with union (e.g. "learn" | "market" | "foo")
 
-Type: (`"learn"` | `"brazePushNotifications"` | `"llmNewDeviceSelection"` | `"llmUsbFirmwareUpdate"` | `"ratings"` | `"counterValue"` | `"deviceLocalization"` | `"deviceInitialApps"` | `"buyDeviceFromLive"` | `"ptxSmartRouting"` | `"currencyOsmosis"` | `"currencyOsmosisMobile"` | `"currencyFantom"` | `"currencyMoonbeam"` | `"currencyCronos"` | `"currencySongbird"` | `"currencyFlare"` | `"currencyFantomMobile"` | `"currencyMoonbeamMobile"` | `"currencyCronosMobile"` | `"currencySongbirdMobile"` | `"currencyFlareMobile"` | `"ptxSmartRoutingMobile"` | `"mockFeature"` | `"syncOnboarding"` | `"walletConnectLiveApp"` | `"customImage"` | `"referralProgramDiscoverCard"` | `"referralProgramDesktopBanner"` | `"disableNftSend"` | `"disableNftLedgerMarket"` | `"disableNftRaribleOpensea"` | `"receiveStakingFlowConfigDesktop"` | `"ethStakingProviders"` | `"storyly"`)
+Type: (`"learn"` | `"brazePushNotifications"` | `"brazeLearn"` | `"llmNewDeviceSelection"` | `"llmUsbFirmwareUpdate"` | `"ratingsPrompt"` | `"counterValue"` | `"deviceLocalization"` | `"deviceInitialApps"` | `"buyDeviceFromLive"` | `"ptxSmartRouting"` | `"currencyOsmosis"` | `"currencyOsmosisMobile"` | `"currencyFantom"` | `"currencyMoonbeam"` | `"currencyCronos"` | `"currencySongbird"` | `"currencyFlare"` | `"currencyNear"` | `"currencyFantomMobile"` | `"currencyMoonbeamMobile"` | `"currencyCronosMobile"` | `"currencySongbirdMobile"` | `"currencyFlareMobile"` | `"ptxSmartRoutingMobile"` | `"mockFeature"` | `"syncOnboarding"` | `"walletConnectLiveApp"` | `"customImage"` | `"referralProgramDiscoverCard"` | `"referralProgramDesktopBanner"` | `"disableNftSend"` | `"disableNftLedgerMarket"` | `"disableNftRaribleOpensea"` | `"walletNftGallery"` | `"receiveStakingFlowConfigDesktop"` | `"ethStakingProviders"` | `"storyly"` | `"staxWelcomeScreen"` | `"postOnboardingClaimNft"` | `"postOnboardingAssetsTransfer"` | `"firebaseEnvironmentReadOnly"` | `"protectServicesMobile"` | `"swapShowDexQuotes"` | `"stakePrograms"` | `"portfolioExchangeBanner"` | `"objkt"`)
 
 ### Feature
 
@@ -935,11 +994,11 @@ Type: {ticker: [string](https://developer.mozilla.org/docs/Web/JavaScript/Refere
 
 ### OperationType
 
-Type: (`"IN"` | `"OUT"` | `"NONE"` | `"CREATE"` | `"REVEAL"` | `"DELEGATE"` | `"UNDELEGATE"` | `"REDELEGATE"` | `"REWARD"` | `"FEES"` | `"FREEZE"` | `"UNFREEZE"` | `"VOTE"` | `"REWARD_PAYOUT"` | `"BOND"` | `"UNBOND"` | `"WITHDRAW_UNBONDED"` | `"SET_CONTROLLER"` | `"SLASH"` | `"NOMINATE"` | `"CHILL"` | `"SUPPLY"` | `"REDEEM"` | `"APPROVE"` | `"OPT_IN"` | `"OPT_OUT"` | `"LOCK"` | `"UNLOCK"` | `"WITHDRAW"` | `"REVOKE"` | `"ACTIVATE"` | `"REGISTER"` | `"NFT_IN"` | `"NFT_OUT"`)
+Type: (`"IN"` | `"OUT"` | `"NONE"` | `"CREATE"` | `"REVEAL"` | `"DELEGATE"` | `"UNDELEGATE"` | `"REDELEGATE"` | `"REWARD"` | `"FEES"` | `"FREEZE"` | `"UNFREEZE"` | `"VOTE"` | `"REWARD_PAYOUT"` | `"BOND"` | `"UNBOND"` | `"WITHDRAW_UNBONDED"` | `"SET_CONTROLLER"` | `"SLASH"` | `"NOMINATE"` | `"CHILL"` | `"SUPPLY"` | `"REDEEM"` | `"APPROVE"` | `"OPT_IN"` | `"OPT_OUT"` | `"LOCK"` | `"UNLOCK"` | `"WITHDRAW"` | `"REVOKE"` | `"ACTIVATE"` | `"REGISTER"` | `"NFT_IN"` | `"NFT_OUT"` | `"STAKE"` | `"UNSTAKE"` | `"WITHDRAW_UNSTAKED"`)
 
 ### Operation
 
-Type: {id: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), hash: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), type: [OperationType](#operationtype), value: BigNumber, fee: BigNumber, senders: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>, recipients: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>, blockHeight: ([number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined)), blockHash: ([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined)), transactionSequenceNumber: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?, accountId: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), standard: ([NFTStandard](#nftstandard) | [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))?, operator: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, contract: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, tokenId: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, date: [Date](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date), extra: Record<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), any>, hasFailed: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, subOperations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Operation](#operation)>?, internalOperations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Operation](#operation)>?, nftOperations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Operation](#operation)>?}
+Type: {id: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), hash: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), type: [OperationType](#operationtype), value: BigNumber, fee: BigNumber, senders: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>, recipients: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>, blockHeight: ([number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined)), blockHash: ([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined)), transactionSequenceNumber: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?, accountId: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), standard: ([NFTStandard](#nftstandard) | [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))?, operator: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, contract: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, tokenId: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, date: [Date](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date), extra: Record<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), any>, hasFailed: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, subOperations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Operation](#operation)>?, internalOperations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Operation](#operation)>?, nftOperations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Operation](#operation)>?, transactionRaw: [TransactionCommonRaw](#transactioncommonraw)?}
 
 #### Properties
 
@@ -964,10 +1023,11 @@ Type: {id: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 *   `subOperations` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Operation](#operation)>?** 
 *   `internalOperations` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Operation](#operation)>?** 
 *   `nftOperations` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Operation](#operation)>?** 
+*   `transactionRaw` **[TransactionCommonRaw](#transactioncommonraw)?** 
 
 ### OperationRaw
 
-Type: {id: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), hash: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), type: [OperationType](#operationtype), value: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), fee: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), senders: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>, recipients: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>, blockHeight: ([number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined)), blockHash: ([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined)), transactionSequenceNumber: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?, accountId: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), hasFailed: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, standard: ([NFTStandard](#nftstandard) | [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))?, operator: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, contract: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, tokenId: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, date: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), extra: Record<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), any>, subOperations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[OperationRaw](#operationraw)>?, internalOperations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[OperationRaw](#operationraw)>?, nftOperations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[OperationRaw](#operationraw)>?}
+Type: {id: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), hash: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), type: [OperationType](#operationtype), value: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), fee: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), senders: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>, recipients: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>, blockHeight: ([number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined)), blockHash: ([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined)), transactionSequenceNumber: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?, accountId: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), hasFailed: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, standard: ([NFTStandard](#nftstandard) | [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))?, operator: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, contract: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, tokenId: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, date: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), extra: Record<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), any>, subOperations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[OperationRaw](#operationraw)>?, internalOperations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[OperationRaw](#operationraw)>?, nftOperations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[OperationRaw](#operationraw)>?, transactionRaw: [TransactionCommonRaw](#transactioncommonraw)?}
 
 #### Properties
 
@@ -992,6 +1052,7 @@ Type: {id: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 *   `subOperations` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[OperationRaw](#operationraw)>?** 
 *   `internalOperations` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[OperationRaw](#operationraw)>?** 
 *   `nftOperations` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[OperationRaw](#operationraw)>?** 
+*   `transactionRaw` **[TransactionCommonRaw](#transactioncommonraw)?** 
 
 ### DailyOperationsSection
 
@@ -1165,6 +1226,12 @@ action.
 
 Type: any
 
+#### disabled
+
+Allow to display the action without letting the user access its flow
+
+Type: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+
 #### featureFlagId
 
 If this action is linked to a feature that is enabled by a feature flag,
@@ -1184,6 +1251,13 @@ Title displayed for this action in the post onboarding hub.
 
 Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
 
+#### titleCompleted
+
+Title displayed for this action in the post onboarding hub when the action
+is completed.
+
+Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
 #### description
 
 Description displayed for this action in the post onboarding hub.
@@ -1200,13 +1274,6 @@ Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 Will appear in an success alert at the bottom of the post-onboarding hub
 after completing this action.
-
-Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
-
-#### actionCompletedHubTitle
-
-Will be used as a title success alert at the bottom of the post-onboarding
-hub after completing this action.
 
 Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
 

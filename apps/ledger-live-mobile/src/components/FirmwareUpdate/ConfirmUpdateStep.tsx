@@ -25,7 +25,7 @@ const ConfirmUpdateStep = ({ device, deviceInfo, latestFirmware }: Props) => {
       <Animation
         source={getDeviceAnimation({
           device,
-          key: "validate",
+          key: "allowUpdate",
           theme: theme as "light" | "dark" | undefined,
         })}
       />

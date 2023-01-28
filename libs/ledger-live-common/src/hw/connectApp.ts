@@ -10,6 +10,7 @@ import {
   DisconnectedDeviceDuringOperation,
   DisconnectedDevice,
   StatusCodes,
+  LockedDeviceError,
 } from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
 import type { DeviceModelId } from "@ledgerhq/devices";
@@ -46,6 +47,7 @@ export type Input = {
   dependencies?: string[];
   requireLatestFirmware?: boolean;
   outdatedApp?: AppAndVersion;
+  skipAppInstallIfNotFound?: boolean;
 };
 export type AppAndVersion = {
   name: string;
@@ -161,12 +163,12 @@ export const openAppFromDashboard = (
                   case StatusCodes.CONDITIONS_OF_USE_NOT_SATISFIED:
                   case 0x5501: // No StatusCodes definition
                     return throwError(new UserRefusedOnDevice());
-                  // openAppFromDashboard is exported, so LOCKED_DEVICE should be handled too
-                  case StatusCodes.LOCKED_DEVICE:
-                    return of({
-                      type: "lockedDevice",
-                    } as ConnectAppEvent);
                 }
+              } else if (e instanceof LockedDeviceError) {
+                // openAppFromDashboard is exported, so LockedDeviceError should be handled here too
+                return of({
+                  type: "lockedDevice",
+                } as ConnectAppEvent);
               }
 
               return throwError(e);
@@ -253,19 +255,23 @@ const derivationLogic = (
           case StatusCodes.INS_NOT_SUPPORTED:
             // this is likely because it's the wrong app (LNS 1.3.1)
             return attemptToQuitApp(transport, appAndVersion);
-          // derivationLogic is also called inside the catchError of cmd below
-          // so it needs to handle LOCKED_DEVICE
-          case StatusCodes.LOCKED_DEVICE:
-            return of({
-              type: "lockedDevice",
-            } as ConnectAppEvent);
         }
+      } else if (e instanceof LockedDeviceError) {
+        // derivationLogic is also called inside the catchError of cmd below
+        // so it needs to handle LockedDeviceError too
+        return of({
+          type: "lockedDevice",
+        } as ConnectAppEvent);
       }
 
       return throwError(e);
     })
   );
 
+/**
+ * @param skipAppInstallIfNotFound If some dependencies need to be installed, and if set to true,
+ *   skip any app install if the app is not found from the provider.
+ */
 const cmd = ({
   modelId,
   devicePath,
@@ -274,6 +280,7 @@ const cmd = ({
   dependencies,
   requireLatestFirmware,
   outdatedApp,
+  skipAppInstallIfNotFound = false,
 }: Input): Observable<ConnectAppEvent> =>
   withDevice(devicePath)(
     (transport) =>
@@ -375,6 +382,7 @@ const cmd = ({
                         appName,
                       }); // NB without deps
                     },
+                    skipAppInstallIfNotFound,
                   });
                 }
 
@@ -457,11 +465,11 @@ const cmd = ({
                       requiresDerivation,
                       appName,
                     });
-                  case StatusCodes.LOCKED_DEVICE:
-                    return of({
-                      type: "lockedDevice",
-                    } as ConnectAppEvent);
                 }
+              } else if (e instanceof LockedDeviceError) {
+                return of({
+                  type: "lockedDevice",
+                } as ConnectAppEvent);
               }
 
               return throwError(e);

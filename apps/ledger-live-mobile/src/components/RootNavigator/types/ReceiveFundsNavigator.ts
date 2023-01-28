@@ -21,7 +21,7 @@ export type ReceiveFundsStackParamList = {
   [ScreenName.ReceiveAddAccountSelectDevice]: {
     accountId?: string;
     parentId?: string;
-    currency: CryptoCurrency | TokenCurrency;
+    currency: CryptoCurrency;
     inline?: boolean;
     analyticsPropertyFlow?: string;
     createTokenAccount?: boolean;

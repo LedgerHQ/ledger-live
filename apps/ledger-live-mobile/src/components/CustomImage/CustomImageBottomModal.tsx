@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
+import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/types-devices";
 import { NavigatorName, ScreenName } from "../../const";
 import BottomModal, { Props as BottomModalProps } from "../BottomModal";
@@ -9,6 +9,19 @@ import ModalChoice from "./ModalChoice";
 import { importImageFromPhoneGallery } from "./imageUtils";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
+import { TrackScreen } from "../../analytics";
+
+const analyticsDrawerName = "Choose an image to set as your Stax lockscreen";
+
+const analyticsButtonChoosePhoneGalleryEventProps = {
+  button: "Choose from my picture gallery",
+  drawer: analyticsDrawerName,
+};
+
+const analyticsButtonChooseNFTGalleryEventProps = {
+  button: "Choose from NFT gallery",
+  drawer: analyticsDrawerName,
+};
 
 type Props = {
   isOpened?: boolean;
@@ -22,13 +35,14 @@ const CustomImageBottomModal: React.FC<Props> = props => {
   const { t } = useTranslation();
   const navigation =
     useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
+
   const handleUploadFromPhone = useCallback(async () => {
     try {
       setIsLoading(true);
       const importResult = await importImageFromPhoneGallery();
       if (importResult !== null) {
         navigation.navigate(NavigatorName.CustomImage, {
-          screen: ScreenName.CustomImageStep1Crop,
+          screen: ScreenName.CustomImagePreviewPreEdit,
           params: {
             ...importResult,
             isPictureFromGallery: true,
@@ -47,11 +61,21 @@ const CustomImageBottomModal: React.FC<Props> = props => {
     onClose && onClose();
   }, [navigation, onClose, setIsLoading, device]);
 
+  const handleSelectFromNFTGallery = useCallback(() => {
+    navigation.navigate(NavigatorName.CustomImage, {
+      screen: ScreenName.CustomImageNFTGallery,
+      params: { device },
+    });
+    onClose && onClose();
+  }, [navigation, device, onClose]);
+
   return (
     <BottomModal isOpened={isOpened} onClose={onClose}>
-      <Text variant="h4" fontWeight="semiBold" pb={5}>
-        {t("customImage.drawer.title")}
-      </Text>
+      <TrackScreen
+        category={analyticsDrawerName}
+        type="drawer"
+        refreshSource={false}
+      />
       {isLoading ? (
         <Flex m={10}>
           <InfiniteLoader />
@@ -61,8 +85,17 @@ const CustomImageBottomModal: React.FC<Props> = props => {
           <ModalChoice
             onPress={handleUploadFromPhone}
             title={t("customImage.drawer.options.uploadFromPhone")}
-            iconName={"ArrowFromBottom"}
-            event=""
+            iconName={"Upload"}
+            event="button_clicked"
+            eventProperties={analyticsButtonChoosePhoneGalleryEventProps}
+          />
+          <Flex mt={6} />
+          <ModalChoice
+            onPress={handleSelectFromNFTGallery}
+            title={t("customImage.drawer.options.selectFromNFTGallery")}
+            iconName={"Ticket"}
+            event="button_clicked"
+            eventProperties={analyticsButtonChooseNFTGalleryEventProps}
           />
         </>
       )}

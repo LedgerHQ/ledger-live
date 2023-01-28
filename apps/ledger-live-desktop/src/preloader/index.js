@@ -32,9 +32,13 @@ const appLoaded = () => {
 
 const reloadRenderer = () => ipcRenderer.invoke("reloadRenderer");
 
+// cf. https://gist.github.com/codebytere/409738fcb7b774387b5287db2ead2ccb
+const openWindow = id => ipcRenderer.send("webview-dom-ready", id);
+
 window.api = {
   appLoaded,
   reloadRenderer,
+  openWindow,
 };
 
 /**

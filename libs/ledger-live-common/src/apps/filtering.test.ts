@@ -4,8 +4,12 @@ import type { FilterOptions, SortOptions } from "./filtering";
 import { sortFilterApps } from "./filtering";
 import { setSupportedCurrencies } from "../currencies/support";
 import { setPlatformVersion } from "../platform/version";
+import { PLATFORM_VERSION } from "../platform/constants";
+import { WALLET_API_VERSION } from "../wallet-api/constants";
+import { setWalletAPIVersion } from "../wallet-api/version";
 
-setPlatformVersion("1.1.0");
+setPlatformVersion(PLATFORM_VERSION);
+setWalletAPIVersion(WALLET_API_VERSION);
 
 type FilteringScenario = {
   name: string;

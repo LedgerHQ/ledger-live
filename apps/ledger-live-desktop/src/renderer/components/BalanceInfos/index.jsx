@@ -9,6 +9,7 @@ import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import PillsDaysCount from "~/renderer/components/PillsDaysCount";
 import TransactionsPendingConfirmationWarning from "~/renderer/components/TransactionsPendingConfirmationWarning";
+import { swapDefaultTrack } from "~/renderer/screens/exchange/Swap2/utils/index";
 import { PlaceholderLine } from "./Placeholder";
 
 // $FlowFixMe
@@ -32,6 +33,7 @@ type BalanceTotalProps = {
   showCryptoEvenIfNotAvailable?: boolean,
   account?: AccountLike,
   withTransactionsPendingConfirmationWarning?: boolean,
+  dynamicSignificantDigits?: number,
 };
 
 type Props = {
@@ -77,6 +79,7 @@ export function BalanceTotal({
   children = null,
   withTransactionsPendingConfirmationWarning,
   account,
+  dynamicSignificantDigits,
   ...boxProps
 }: BalanceTotalProps) {
   return (
@@ -94,6 +97,7 @@ export function BalanceTotal({
               fontSize={8}
               showCode
               val={totalBalance}
+              dynamicSignificantDigits={dynamicSignificantDigits}
               data-test-id="total-balance"
             />
           )}
@@ -116,26 +120,19 @@ export default function BalanceInfos({ totalBalance, valueChange, isAvailable, u
 
   const onBuy = useCallback(() => {
     setTrackingSource("Page Portfolio");
-    // PTX smart routing redirect to live app or to native implementation
-    if (ptxSmartRouting?.enabled) {
-      const params = {
-        mode: "buy", // buy or sell
-      };
 
-      history.push({
-        // replace 'multibuy' in case live app id changes
-        pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ?? "multibuy"}`,
-        state: params,
-      });
-    } else {
-      history.push({
-        pathname: "/exchange",
-      });
-    }
+    history.push({
+      pathname: "/exchange",
+      state: ptxSmartRouting?.enabled
+        ? {
+            mode: "buy", // buy or sell
+          }
+        : undefined,
+    });
   }, [history, ptxSmartRouting]);
 
   const onSwap = useCallback(() => {
-    setTrackingSource("Page Market");
+    setTrackingSource("Page Portfolio");
 
     history.push({
       pathname: "/swap",
@@ -157,7 +154,17 @@ export default function BalanceInfos({ totalBalance, valueChange, isAvailable, u
           {t("accounts.contextMenu.buy")}
         </Button>
 
-        <Button data-test-id="portfolio-swap-button" variant="color" onClick={onSwap}>
+        <Button
+          data-test-id="portfolio-swap-button"
+          variant="color"
+          event="button_clicked"
+          eventProperties={{
+            button: "swap",
+            page: "Page Portfolio",
+            ...swapDefaultTrack,
+          }}
+          onClick={onSwap}
+        >
           {t("accounts.contextMenu.swap")}
         </Button>
       </Box>

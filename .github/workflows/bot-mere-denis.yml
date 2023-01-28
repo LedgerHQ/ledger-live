@@ -1,4 +1,5 @@
 name: "[Bot] Testing with 'Mère Denis'"
+run-name: Test with 🤖 Mère Denis by @${{github.actor}} with ${{inputs.family}}
 on:
   workflow_dispatch:
     inputs:
@@ -39,6 +40,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Stop EC2 Linux Runner
+        if: ${{ always() && needs.start-runner.result == 'success' }}
         uses: LedgerHQ/actions/ec2-linux-runner@main
         with:
           mode: stop
@@ -54,7 +56,7 @@ jobs:
       - name: Retrieving coin apps
         uses: actions/checkout@v3
         with:
-          ref: ledger-live-bot
+          ref: generated/ledger-live-bot
           repository: LedgerHQ/coin-apps
           token: ${{ secrets.GH_PAT }}
           path: coin-apps

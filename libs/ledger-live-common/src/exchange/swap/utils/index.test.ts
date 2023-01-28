@@ -12,6 +12,7 @@ import {
   getAvailableAccountsById,
   isRegistrationRequired,
   getProviderName,
+  getNoticeType,
   shouldShowKYCBanner,
   shouldShowLoginBanner,
 } from "./index";
@@ -339,11 +340,45 @@ describe("swap/utils/getProviderName", () => {
     expect(result).toBe(expectedResult);
   });
 
+  test("should return capitalized provider name for 1inch", () => {
+    const expectedResult = "1inch";
+
+    const result = getProviderName("oneinch");
+
+    expect(result).toBe(expectedResult);
+  });
+
   test("should return capitalized provider name for other provider", () => {
     const expectedResult = "Changelly";
 
     const result = getProviderName("changelly");
 
     expect(result).toBe(expectedResult);
+  });
+});
+
+describe("swap/utils/getNoticeType", function () {
+  test("should return notice type for CIC", () => {
+    const expectedResult = { message: "provider", learnMore: false };
+
+    const result = getNoticeType("cic");
+
+    expect(result).toEqual(expectedResult);
+  });
+
+  test("should return notice type for ftx", () => {
+    const expectedResult = { message: "default", learnMore: true };
+
+    const result = getNoticeType("ftx");
+
+    expect(result).toEqual(expectedResult);
+  });
+
+  test("should return notice type for Changelly", () => {
+    const expectedResult = { message: "provider", learnMore: false };
+
+    const result = getNoticeType("changelly");
+
+    expect(result).toEqual(expectedResult);
   });
 });

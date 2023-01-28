@@ -135,6 +135,7 @@ function DelegationAmount({ navigation, route }: Props) {
     () =>
       max.lt(0) ||
       value.lt(min) ||
+      value.eq(0) ||
       (route.params.transaction.mode === "redelegate" && value.eq(0)),
     [value, max, min, route.params.transaction],
   );
@@ -213,7 +214,7 @@ function DelegationAmount({ navigation, route }: Props) {
                   >
                     <Trans
                       i18nKey={
-                        value.lt(min)
+                        value.gte(min)
                           ? "cosmos.delegation.flow.steps.amount.minAmount"
                           : "cosmos.delegation.flow.steps.amount.incorrectAmount"
                       }

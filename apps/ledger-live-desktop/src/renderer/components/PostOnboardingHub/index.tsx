@@ -6,11 +6,11 @@ import PostOnboardingActionRow from "./PostOnboardingActionRow";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 
 const PostOnboardingHub = () => {
-  const { lastActionCompleted, actionsState } = usePostOnboardingHubState();
+  const { actionsState } = usePostOnboardingHubState();
 
   const postOnboardingRows = useMemo(
     () =>
-      actionsState.map((action, index, arr) => (
+      actionsState.map((action, index) => (
         <React.Fragment key={index}>
           <PostOnboardingActionRow {...action} />
         </React.Fragment>

@@ -73,6 +73,10 @@ const completeExchange = (
         const errorsKeys = Object.keys(errors);
         if (errorsKeys.length > 0) throw errors[errorsKeys[0]]; // throw the first error
 
+        if (providerConfig.type !== "CEX") {
+          throw new Error(`Unsupported provider type ${providerConfig.type}`);
+        }
+
         await exchange.setPartnerKey(providerConfig.nameAndPubkey);
         if (unsubscribed) return;
 

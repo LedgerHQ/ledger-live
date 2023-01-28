@@ -6,7 +6,7 @@ import BigNumber from "bignumber.js";
 
 export default function prepareSignTransaction(
   account: AccountLike,
-  parentAccount: Account | null,
+  parentAccount: Account | undefined,
   liveTx: Partial<Transaction & { gasLimit: BigNumber }>,
 ): TransactionCommon {
   const bridge = getAccountBridge(account, parentAccount);

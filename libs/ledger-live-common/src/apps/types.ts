@@ -40,6 +40,7 @@ export type ListAppsResult = {
   deviceInfo: DeviceInfo;
   deviceModelId: DeviceModelId;
   firmware: FinalFirmware | null | undefined;
+  customImageBlocks: number;
 };
 export type State = {
   deviceInfo: DeviceInfo;
@@ -47,6 +48,7 @@ export type State = {
   firmware: FinalFirmware | null | undefined;
   appByName: Record<string, App>;
   apps: App[];
+  customImageBlocks: number;
   installedAvailable: boolean;
   installed: InstalledItem[];
   recentlyInstalledApps: string[];
@@ -93,6 +95,13 @@ export type Action =  // recover from an error
       type: "updateAll";
     } // action to run after an update was done on the device (uninstall/install)
   | {
+      type: "setCustomImage";
+      lastSeenCustomImage: {
+        hash: string;
+        size: number;
+      };
+    } // action to run after a successful custom image flow, to update the UI accordingly
+  | {
       type: "onRunnerEvent";
       event: RunnerEvent;
     };
@@ -138,4 +147,5 @@ export type AppsDistribution = {
   freeSpaceBlocks: number;
   freeSpaceBytes: number;
   shouldWarnMemory: boolean;
+  customImageBlocks: number;
 };

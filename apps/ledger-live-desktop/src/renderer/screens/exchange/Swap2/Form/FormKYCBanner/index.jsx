@@ -5,7 +5,9 @@ import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
+import { track } from "~/renderer/analytics/segment";
 import SectionInformative from "~/renderer/screens/exchange/Swap2/Form/FormSummary/SectionInformative";
+import { swapDefaultTrack } from "../../utils/index";
 
 const FormKYCBanner = ({
   provider,
@@ -25,11 +27,20 @@ const FormKYCBanner = ({
     openURL(urls.swap.providers[provider]?.support);
   }, [provider]);
 
+  let onClickAction = useCallback(() => {
+    track("button_clicked", {
+      button: "KYC",
+      page: "Page Swap Form",
+      ...swapDefaultTrack,
+      provider,
+      status,
+    });
+    onClick();
+  }, [onClick, provider, status]);
+
   // we render the component only if KYC is rejected or need to be upgraded
   // i.e: we don't render it if the KYC is "pending".
   if (!provider || (status && status === KYC_STATUS.pending)) return null;
-
-  let onClickAction = onClick;
 
   let { message, cta } = (() => {
     switch (status) {

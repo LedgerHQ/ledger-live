@@ -19,7 +19,6 @@ import {
   fromTronResourcesRaw,
   fromCosmosResourcesRaw,
   fromBitcoinResourcesRaw,
-  fromAlgorandResourcesRaw,
   fromCardanoResourceRaw,
   fromPolkadotResourcesRaw,
   fromTezosResourcesRaw,
@@ -27,10 +26,10 @@ import {
   fromCryptoOrgResourcesRaw,
   fromSolanaResourcesRaw,
   fromCeloResourcesRaw,
+  fromNearResourcesRaw,
   fromNFTRaw,
   toTronResourcesRaw,
   toCosmosResourcesRaw,
-  toAlgorandResourcesRaw,
   toCardanoResourceRaw,
   toPolkadotResourcesRaw,
   toTezosResourcesRaw,
@@ -38,9 +37,9 @@ import {
   toCryptoOrgResourcesRaw,
   toSolanaResourcesRaw,
   toCeloResourcesRaw,
+  toNearResourcesRaw,
 } from "./account";
 import consoleWarnExpectToEqual from "./consoleWarnExpectToEqual";
-import { AlgorandAccount, AlgorandAccountRaw } from "./families/algorand/types";
 import { BitcoinAccount, BitcoinAccountRaw } from "./families/bitcoin/types";
 import { CardanoAccount, CardanoAccountRaw } from "./families/cardano/types";
 import { CosmosAccount, CosmosAccountRaw } from "./families/cosmos/types";
@@ -54,6 +53,8 @@ import { SolanaAccount, SolanaAccountRaw } from "./families/solana/types";
 import { TezosAccount, TezosAccountRaw } from "./families/tezos/types";
 import { TronAccount, TronAccountRaw } from "./families/tron/types";
 import { CeloAccount, CeloAccountRaw } from "./families/celo/types";
+import { getAccountBridge } from "./bridge";
+import { NearAccount, NearAccountRaw } from "./families/near/types";
 
 // aim to build operations with the minimal diff & call to coin implementation possible
 export async function minimalOperationsBuilder<CO>(
@@ -359,24 +360,6 @@ export function patchAccount(
       }
       break;
     }
-    case "algorand": {
-      const algorandAcc = account as AlgorandAccount;
-      const algorandUpdatedRaw = updatedRaw as AlgorandAccountRaw;
-      if (
-        algorandUpdatedRaw.algorandResources &&
-        (!algorandAcc.algorandResources ||
-          !areSameResources(
-            toAlgorandResourcesRaw(algorandAcc.algorandResources),
-            algorandUpdatedRaw.algorandResources
-          ))
-      ) {
-        (next as AlgorandAccount).algorandResources = fromAlgorandResourcesRaw(
-          algorandUpdatedRaw.algorandResources
-        );
-        changed = true;
-      }
-      break;
-    }
     case "bitcoin": {
       if (shouldRefreshBitcoinResources(updatedRaw, account)) {
         (next as BitcoinAccount).bitcoinResources = fromBitcoinResourcesRaw(
@@ -493,24 +476,51 @@ export function patchAccount(
       }
       break;
     }
-    case "celo": {
-      const celoAcc = account as CeloAccount;
-      const celoUpdatedRaw = updatedRaw as CeloAccountRaw;
+    case "celo":
+      {
+        const celoAcc = account as CeloAccount;
+        const celoUpdatedRaw = updatedRaw as CeloAccountRaw;
+
+        if (
+          celoUpdatedRaw.celoResources &&
+          (!celoAcc.celoResources ||
+            !areSameResources(
+              toCeloResourcesRaw(celoAcc.celoResources),
+              celoUpdatedRaw.celoResources
+            ))
+        ) {
+          (next as CeloAccount).celoResources = fromCeloResourcesRaw(
+            celoUpdatedRaw.celoResources
+          );
+          changed = true;
+        }
+      }
+      break;
+    case "near": {
+      const nearAcc = account as NearAccount;
+      const nearUpdatedRaw = updatedRaw as NearAccountRaw;
 
       if (
-        celoUpdatedRaw.celoResources &&
-        (!celoAcc.celoResources ||
+        nearUpdatedRaw.nearResources &&
+        (!nearAcc.nearResources ||
           !areSameResources(
-            toCeloResourcesRaw(celoAcc.celoResources),
-            celoUpdatedRaw.celoResources
+            toNearResourcesRaw(nearAcc.nearResources),
+            nearUpdatedRaw.nearResources
           ))
       ) {
-        (next as CeloAccount).celoResources = fromCeloResourcesRaw(
-          celoUpdatedRaw.celoResources
+        (next as NearAccount).nearResources = fromNearResourcesRaw(
+          nearUpdatedRaw.nearResources
         );
         changed = true;
       }
       break;
+    }
+    default: {
+      const bridge = getAccountBridge(account);
+      const applyReconciliation = bridge.applyReconciliation;
+      if (applyReconciliation) {
+        changed = changed || applyReconciliation(account, updatedRaw, next);
+      }
     }
   }
 

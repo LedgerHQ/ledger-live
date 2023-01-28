@@ -27,9 +27,10 @@ import type {
 } from "@ledgerhq/types-cryptoassets";
 import { CosmosAccount } from "../families/cosmos/types";
 import { BitcoinAccount } from "../families/bitcoin/types";
-import { AlgorandAccount } from "../families/algorand/types";
 import { PolkadotAccount } from "../families/polkadot/types";
 import { TezosAccount } from "../families/tezos/types";
+import { getAccountBridge } from "../bridge";
+import { createFixtureNFT, genNFTOperation } from "./fixtures/nfts";
 
 function ensureNoNegative(operations) {
   let total = new BigNumber(0);
@@ -299,6 +300,7 @@ type GenAccountOptions = {
   currency?: CryptoCurrency;
   subAccountsCount?: number;
   swapHistorySize?: number;
+  withNft?: boolean;
 };
 
 export function genTokenAccount(
@@ -350,6 +352,7 @@ export function genAccount(
   const currency = opts.currency || rng.nextArrayItem(currencies);
   const operationsSize = opts.operationsSize ?? rng.nextInt(1, 200);
   const swapHistorySize = opts.swapHistorySize || 0;
+  const withNft = opts.withNft ?? false;
   const address = genAddress(currency, rng);
   const derivationPath = runDerivationScheme(
     getDerivationScheme({
@@ -366,9 +369,10 @@ export function genAccount(
   const outdated =
     ["ethereum_classic", "dogecoin"].includes(currency.id) &&
     `${id}`.endsWith("_2");
+  const accountId = `mock:${outdated ? 0 : 1}:${currency.id}:${id}:`;
   const account: Account = {
     type: "Account",
-    id: `mock:${outdated ? 0 : 1}:${currency.id}:${id}:`,
+    id: accountId,
     seedIdentifier: "mock",
     derivationMode: "",
     xpub: genHex(64, rng),
@@ -402,6 +406,11 @@ export function genAccount(
         toAmount: new BigNumber("2000"),
       })),
     balanceHistoryCache: emptyHistoryCache,
+    ...(withNft && {
+      nfts: Array(10)
+        .fill(null)
+        .map(() => createFixtureNFT(accountId, currency)),
+    }),
   };
 
   if (
@@ -436,52 +445,55 @@ export function genAccount(
     );
   }
 
-  if (currency.id === "cosmos") {
-    (account as CosmosAccount).cosmosResources = {
-      // TODO variation in these
-      delegations: [],
-      redelegations: [],
-      unbondings: [],
-      delegatedBalance: new BigNumber(0),
-      pendingRewardsBalance: new BigNumber(0),
-      unbondingBalance: new BigNumber(0),
-      withdrawAddress: address,
-    };
-  }
-
-  if (currency.family === "bitcoin") {
-    (account as BitcoinAccount).bitcoinResources = {
-      utxos: [],
-      walletAccount: undefined,
-    };
-  }
-
-  if (currency.family === "algorand") {
-    (account as AlgorandAccount).algorandResources = {
-      rewards: new BigNumber(0),
-      nbAssets: account.subAccounts?.length ?? 0,
-    };
-  }
-
-  if (currency.family === "polkadot") {
-    (account as PolkadotAccount).polkadotResources = {
-      stash: null,
-      controller: null,
-      nonce: 0,
-      lockedBalance: new BigNumber(0),
-      unlockingBalance: new BigNumber(0),
-      unlockedBalance: new BigNumber(0),
-      unlockings: [],
-      nominations: [],
-      numSlashingSpans: 0,
-    };
-  }
-
-  if (currency.family === "tezos") {
-    (account as TezosAccount).tezosResources = {
-      revealed: true,
-      counter: 0,
-    };
+  switch (currency.family) {
+    case "cosmos":
+      (account as CosmosAccount).cosmosResources = {
+        // TODO variation in these
+        delegations: [],
+        redelegations: [],
+        unbondings: [],
+        delegatedBalance: new BigNumber(0),
+        pendingRewardsBalance: new BigNumber(0),
+        unbondingBalance: new BigNumber(0),
+        withdrawAddress: address,
+      };
+      break;
+    case "bitcoin":
+      (account as BitcoinAccount).bitcoinResources = {
+        utxos: [],
+        walletAccount: undefined,
+      };
+      break;
+    case "polkadot":
+      (account as PolkadotAccount).polkadotResources = {
+        stash: null,
+        controller: null,
+        nonce: 0,
+        lockedBalance: new BigNumber(0),
+        unlockingBalance: new BigNumber(0),
+        unlockedBalance: new BigNumber(0),
+        unlockings: [],
+        nominations: [],
+        numSlashingSpans: 0,
+      };
+      break;
+    case "tezos":
+      (account as TezosAccount).tezosResources = {
+        revealed: true,
+        counter: 0,
+      };
+      break;
+    default: {
+      try {
+        const bridge = getAccountBridge(account);
+        const initAccount = bridge.initAccount;
+        if (initAccount) {
+          initAccount(account);
+        }
+      } catch (e: any) {
+        // to fix /src/__tests__/cross.ts, skip bridge error if there is no bridge in such currency
+      }
+    }
   }
 
   account.operations = Array(operationsSize)
@@ -490,6 +502,31 @@ export function genAccount(
       const op = genOperation(account, account, ops, rng);
       return ops.concat(op);
     }, []);
+
+  if (withNft) {
+    const nftOperations = Array(5)
+      .fill(null)
+      .reduce((ops: Operation[]) => {
+        const index = Math.floor(Math.random() * (5 - 0 + 1) + 0);
+
+        if (account.nfts && account.nfts[index]) {
+          const { tokenId, contract, standard } = account.nfts[index];
+          const op = genNFTOperation(
+            account,
+            account,
+            ops,
+            rng,
+            contract,
+            standard,
+            tokenId
+          );
+          return ops.concat(op);
+        }
+      }, []);
+
+    account.operations = account.operations.concat(nftOperations);
+  }
+
   account.creationDate =
     account.operations.length > 0
       ? account.operations[account.operations.length - 1].date

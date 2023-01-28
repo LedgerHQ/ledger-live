@@ -11,10 +11,6 @@ type Props = {
   eventProperties?: TouchableProps["eventProperties"];
 };
 
-const StyledTouchable = styled(Touchable)`
-  margin-top: 16px;
-`;
-
 const Container = styled(Flex).attrs({
   backgroundColor: "neutral.c30",
   flexDirection: "row",
@@ -28,7 +24,7 @@ const Container = styled(Flex).attrs({
 const ModalChoice: React.FC<Props> = props => {
   const { iconName, title, onPress, event, eventProperties } = props;
   return (
-    <StyledTouchable
+    <Touchable
       onPress={onPress}
       event={event}
       eventProperties={eventProperties}
@@ -38,9 +34,9 @@ const ModalChoice: React.FC<Props> = props => {
           {title}
         </Text>
         <Flex
-          height={48}
-          width={48}
-          borderRadius={24}
+          height={44}
+          width={44}
+          borderRadius={22}
           backgroundColor="primary.c20"
           alignItems="center"
           justifyContent="center"
@@ -50,7 +46,7 @@ const ModalChoice: React.FC<Props> = props => {
           ) : null}
         </Flex>
       </Container>
-    </StyledTouchable>
+    </Touchable>
   );
 };
 

@@ -20,7 +20,7 @@ export type BaseOnboardingNavigatorParamList = {
     deviceModelIds?: DeviceModelId[];
   };
   [ScreenName.EditDeviceName]: {
-    deviceId: string;
+    device: Device;
     deviceName: string;
   };
   [NavigatorName.PasswordAddFlow]: NavigatorScreenParams<PasswordAddFlowParamList>;

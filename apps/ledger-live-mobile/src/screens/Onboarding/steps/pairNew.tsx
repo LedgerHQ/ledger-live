@@ -3,6 +3,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import { useDispatch } from "react-redux";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { NavigatorName, ScreenName } from "../../../const";
 import BaseStepperView, { PairNew, ConnectNano } from "./setupDevice/scenes";
@@ -34,7 +35,7 @@ const images = {
 
 type Metadata = {
   id: string;
-  illustration: JSX.Element;
+  illustration: JSX.Element | null;
   drawer: null | { route: string; screen: string };
 };
 
@@ -57,7 +58,9 @@ function OnboardingStepPairNew() {
     useNotifications();
   const { resetCurrentStep } = useNavigationInterceptor();
 
-  const { deviceModelId, showSeedWarning } = route.params;
+  const { deviceModelId, showSeedWarning, next } = route.params;
+
+  const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
 
   const metadata: Array<Metadata> = useMemo(
     () => [
@@ -77,7 +80,7 @@ function OnboardingStepPairNew() {
       },
       {
         id: ConnectNano.id,
-        illustration: (
+        illustration: newDeviceSelectionFeatureFlag?.enabled ? null : (
           <StepLottieAnimation
             stepId="pinCode"
             deviceModelId={deviceModelId}
@@ -90,12 +93,19 @@ function OnboardingStepPairNew() {
         },
       },
     ],
-    [deviceModelId, theme],
+    [deviceModelId, theme, newDeviceSelectionFeatureFlag?.enabled],
   );
 
   const startPostOnboarding = useStartPostOnboardingCallback();
 
   const onFinish = useCallback(() => {
+    if (next) {
+      // only used for protect for now
+      navigation.navigate(next as ScreenName.OnboardingProtectFlow, {
+        deviceModelId,
+      });
+      return;
+    }
     dispatch(completeOnboarding());
     resetCurrentStep();
 
@@ -128,6 +138,7 @@ function OnboardingStepPairNew() {
     startPostOnboarding,
     deviceModelId,
     triggerJustFinishedOnboardingNewDevicePushNotificationModal,
+    next,
   ]);
 
   const nextPage = useCallback(() => {

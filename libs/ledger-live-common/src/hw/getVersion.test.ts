@@ -3,7 +3,7 @@ import {
   isBootloaderVersionSupported,
   isHardwareVersionSupported,
 } from "./getVersion";
-const { nanoS, nanoSP, nanoX, nanoFTS } = DeviceModelId;
+const { nanoS, nanoSP, nanoX, stax } = DeviceModelId;
 
 test("isBootloaderVersionSupported", () => {
   /**
@@ -52,10 +52,10 @@ test("isBootloaderVersionSupported", () => {
   expect(isBootloaderVersionSupported("1.0.0-whatever0", nanoSP)).toBe(true);
 
   /**
-   * Nano FTS
+   * Stax
    * */
-  expect(isBootloaderVersionSupported("1.0.0", nanoFTS)).toBe(false);
-  expect(isBootloaderVersionSupported("1.0.0-whatever0", nanoFTS)).toBe(false);
+  expect(isBootloaderVersionSupported("1.0.0", stax)).toBe(false);
+  expect(isBootloaderVersionSupported("1.0.0-whatever0", stax)).toBe(false);
 });
 
 test("isHardwareVersionSupported", () => {
@@ -87,8 +87,8 @@ test("isHardwareVersionSupported", () => {
   expect(isHardwareVersionSupported("2.0.0-whatever0", nanoSP)).toBe(false);
 
   /**
-   * Nano FTS
+   * Stax
    * */
-  expect(isHardwareVersionSupported("2.0.0", nanoFTS)).toBe(false);
-  expect(isHardwareVersionSupported("2.0.0-whatever0", nanoFTS)).toBe(false);
+  expect(isHardwareVersionSupported("2.0.0", stax)).toBe(false);
+  expect(isHardwareVersionSupported("2.0.0-whatever0", stax)).toBe(false);
 });

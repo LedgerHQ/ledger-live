@@ -2,9 +2,12 @@ import BigNumber from "bignumber.js";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import signOperation, {
+  applyEIP155,
+  getSerializedTransaction,
+} from "../signOperation";
 import { Transaction as EvmTransaction } from "../types";
 import * as Device from "../../../hw/deviceAccess";
-import signOperation from "../signOperation";
 import { getEstimatedFees } from "../logic";
 import { makeAccount } from "../testUtils";
 import * as API from "../api/rpc.common";
@@ -20,7 +23,23 @@ const account: Account = makeAccount(
   "0x7265a60acAeaf3A5E18E10BC1128e72F27B2e176", // trump.eth
   currency
 );
-const transaction: EvmTransaction = {
+
+const transactionLegacy: EvmTransaction = {
+  amount: new BigNumber(100),
+  useAllAmount: false,
+  subAccountId: "id",
+  recipient: "0x6775e49108cb77cda06Fc3BEF51bcD497602aD88", // obama.eth
+  feesStrategy: "custom",
+  family: "evm",
+  mode: "send",
+  nonce: 0,
+  gasLimit: new BigNumber(21000),
+  chainId: 1,
+  gasPrice: new BigNumber(100),
+  type: 0,
+};
+
+const transactionEIP1559: EvmTransaction = {
   amount: new BigNumber(100),
   useAllAmount: false,
   subAccountId: "id",
@@ -35,7 +54,7 @@ const transaction: EvmTransaction = {
   maxPriorityFeePerGas: new BigNumber(100),
   type: 2,
 };
-const estimatedFees = getEstimatedFees(transaction);
+const estimatedFees = getEstimatedFees(transactionEIP1559);
 
 // Mocking here in order to be ack by the signOperation.ts file
 jest.mock(
@@ -71,7 +90,7 @@ describe("EVM Family", () => {
       it("should return an optimistic operation and a signed hash based on hardware ECDSA signatures returned by the app bindings", (done) => {
         const signOpObservable = signOperation({
           account,
-          transaction,
+          transaction: transactionEIP1559,
           deviceId: "",
         });
 
@@ -90,7 +109,7 @@ describe("EVM Family", () => {
               blockHash: null,
               blockHeight: null,
               senders: [account.freshAddress],
-              recipients: [transaction.recipient],
+              recipients: [transactionEIP1559.recipient],
               accountId: account.id,
               transactionSequenceNumber: 0,
               date: expect.any(Date),
@@ -101,6 +120,74 @@ describe("EVM Family", () => {
             );
             done();
           }
+        });
+      });
+    });
+
+    describe("getSerializedTransaction", () => {
+      beforeAll(() => {
+        jest
+          .spyOn(API, "getTransactionCount")
+          .mockImplementation(() => Promise.resolve(0));
+      });
+
+      it("should serialize a type 0 transaction", async () => {
+        const serializedTx = await getSerializedTransaction(
+          account,
+          transactionLegacy
+        );
+
+        expect(serializedTx).toBe(
+          "0xdf8064825208946775e49108cb77cda06fc3bef51bcd497602ad886480018080"
+        );
+      });
+
+      it("should serialize a type 2 transaction", async () => {
+        const serializedTx = await getSerializedTransaction(
+          account,
+          transactionEIP1559
+        );
+
+        expect(serializedTx).toBe(
+          "0x02df01806464825208946775e49108cb77cda06fc3bef51bcd497602ad886480c0"
+        );
+      });
+    });
+
+    describe("applyEIP155", () => {
+      const chainIds = [
+        1, //ethereum
+        5, // goerli
+        10, // optimism
+        14, // flare
+        19, // songbird
+        56, // bsc
+        137, // polygon
+        250, // fantom
+        1284, // moonbeam
+      ];
+      const possibleHexV = [
+        "00", // 0 - ethereum + testnets should always retrun 0/1 from hw-app-eth
+        "01", // 1
+        "1b", // 27 - type 0 transactions from other chains (when chain id > 109) shoud always return 27/28
+        "1c", // 28
+      ];
+
+      chainIds.forEach((chainId) => {
+        possibleHexV.forEach((v) => {
+          it(`should return an EIP155 compatible v for chain id ${chainId} with v = ${parseInt(
+            v,
+            16
+          )}`, () => {
+            const eip155Logic = chainId * 2 + 35;
+            expect(
+              [eip155Logic, eip155Logic + 1] // eip155 + parity
+            ).toContain(applyEIP155(v, chainId));
+          });
+        });
+
+        it("should return the value given by the nano as is if we can't figure out parity from it", () => {
+          expect(applyEIP155("1b39", chainId)).toBe(6969);
         });
       });
     });

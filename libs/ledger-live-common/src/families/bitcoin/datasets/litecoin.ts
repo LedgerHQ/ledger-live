@@ -3,6 +3,7 @@ import type { CurrenciesData } from "@ledgerhq/types-live";
 import type { NetworkInfoRaw, Transaction, BitcoinAccountRaw } from "../types";
 import { fromTransactionRaw } from "../transaction";
 import scanAccounts1 from "./litecoin.scanAccounts.1";
+
 const networkInfo: NetworkInfoRaw = {
   family: "bitcoin",
   feeItems: {
@@ -53,8 +54,7 @@ const dataset: CurrenciesData<Transaction> = {
           expectedStatus: {
             errors: {},
             warnings: {},
-            //  estimatedFees: new BigNumber("5694"),
-            amount: new BigNumber("200000"), //  totalSpent: new BigNumber("205694")
+            amount: new BigNumber("200000"),
           },
         },
         {
@@ -97,8 +97,30 @@ const dataset: CurrenciesData<Transaction> = {
           expectedStatus: {
             errors: {},
             warnings: {},
-            //  estimatedFees: new BigNumber("5694"),
-            amount: new BigNumber("205273"), //  totalSpent: new BigNumber("210967")
+            amount: new BigNumber("205273"),
+          },
+        },
+        {
+          name: "Send max",
+          transaction: fromTransactionRaw({
+            amount: "0",
+            recipient: "ltc1qd2x2x0wf3wgkka87qlm8772tuw6yx6fl9j07ag",
+            useAllAmount: true,
+            family: "bitcoin",
+            feePerByte: "39",
+            networkInfo,
+            rbf: false,
+            utxoStrategy: {
+              strategy: 0,
+              excludeUTXOs: [],
+            },
+          }),
+          expectedStatus: (account, tx, status) => {
+            return {
+              amount: account.spendableBalance.minus(status.estimatedFees),
+              warnings: {},
+              errors: {},
+            };
           },
         },
       ],

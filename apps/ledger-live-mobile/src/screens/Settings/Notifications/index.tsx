@@ -24,6 +24,7 @@ const notificationsMapping = {
   areNotificationsAllowed: "allowed",
   announcementsCategory: "announcements",
   recommendationsCategory: "recommendations",
+  largeMoverCategory: "largeMover",
 };
 
 type NotificationRowProps = {
@@ -85,6 +86,7 @@ function NotificationsSettings() {
     getIsNotifEnabled,
     handlePushNotificationsPermission,
     pushNotificationsOldRoute,
+    notificationsCategoriesHidden,
   } = useNotifications();
   const [isNotifPermissionEnabled, setIsNotifPermissionEnabled] = useState<
     boolean | undefined
@@ -186,14 +188,29 @@ function NotificationsSettings() {
                 : 0.2
             }
           >
-            <NotificationSettingsRow
-              notificationKey={"announcementsCategory"}
-              disabled={disableSubSettings}
-            />
-            <NotificationSettingsRow
-              notificationKey={"recommendationsCategory"}
-              disabled={disableSubSettings}
-            />
+            {!notificationsCategoriesHidden ||
+            !notificationsCategoriesHidden.includes("announcementsCategory") ? (
+              <NotificationSettingsRow
+                notificationKey={"announcementsCategory"}
+                disabled={disableSubSettings}
+              />
+            ) : null}
+            {!notificationsCategoriesHidden ||
+            !notificationsCategoriesHidden.includes(
+              "recommendationsCategory",
+            ) ? (
+              <NotificationSettingsRow
+                notificationKey={"recommendationsCategory"}
+                disabled={disableSubSettings}
+              />
+            ) : null}
+            {!notificationsCategoriesHidden ||
+            !notificationsCategoriesHidden.includes("largeMoverCategory") ? (
+              <NotificationSettingsRow
+                notificationKey={"largeMoverCategory"}
+                disabled={disableSubSettings}
+              />
+            ) : null}
           </Box>
           <Box m={6}>
             <Text
@@ -202,7 +219,7 @@ function NotificationsSettings() {
                   ? "neutral.c40"
                   : "neutral.c70"
               }
-              variant={"bodyLineHeight"}
+              variant={"small"}
               textAlign="center"
             >
               {t("settings.notifications.disclaimer")}

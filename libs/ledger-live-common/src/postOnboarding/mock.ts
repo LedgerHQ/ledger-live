@@ -14,10 +14,10 @@ export const claimTestMock: PostOnboardingAction = {
   id: PostOnboardingActionId.claimMock,
   Icon: MockIcon,
   title: "Claim my NFT",
+  titleCompleted: "Claim my NFT",
   description: "A special NFT for you.",
   tagLabel: "Free",
   actionCompletedPopupLabel: "NFT claimed",
-  actionCompletedHubTitle: "Kickstart your Web3 journey.",
   navigationParams: [],
 };
 
@@ -26,9 +26,9 @@ export const personalizeTestMock: PostOnboardingAction = {
   Icon: MockIcon,
   featureFlagId: mockedFeatureIdToTest,
   title: `Personalize my device`,
+  titleCompleted: `Personalize my device`,
   description: "By customizing the screen.",
   actionCompletedPopupLabel: "Device personalized",
-  actionCompletedHubTitle: "That screen is looking neat.",
   navigationParams: [],
 };
 
@@ -36,9 +36,9 @@ export const migrateAssetsTestMock: PostOnboardingAction = {
   id: PostOnboardingActionId.migrateAssetsMock,
   Icon: MockIcon,
   title: "Transfer assets to my Ledger",
+  titleCompleted: "Transfer assets to my Ledger",
   description: "Easily secure assets from coinbase or another exchange.",
   actionCompletedPopupLabel: "Assets transfered",
-  actionCompletedHubTitle: "Something about being a crypto pro.",
   navigationParams: [],
 };
 

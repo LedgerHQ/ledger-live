@@ -15,7 +15,7 @@ import IconCheck from "~/renderer/icons/Check";
 import IconClock from "~/renderer/icons/Clock";
 import Button from "~/renderer/components/Button";
 import InfoCircle from "~/renderer/icons/InfoCircle";
-import { SWAP_VERSION } from "../../utils/index";
+import { swapDefaultTrack } from "../../utils/index";
 
 export const CircleWrapper: ThemedComponent<{}> = styled.div`
   border-radius: 50%;
@@ -78,7 +78,7 @@ const Pending = ({ onClose }: { onClose: Function }) => {
         </Text>
         <InfoCircle size={13} />
       </InfoTag>
-      <TrackPage category="Swap" name="KYC Pending" swapVersion={SWAP_VERSION} />
+      <TrackPage category="Swap" name="KYC Pending" {...swapDefaultTrack} />
       <CircleWrapper size={50}>
         <IconCheck size={25} />
         <WrapperClock>

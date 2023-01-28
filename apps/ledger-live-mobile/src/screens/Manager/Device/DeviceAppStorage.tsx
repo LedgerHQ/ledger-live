@@ -150,6 +150,7 @@ const DeviceAppStorage = ({
             height={"100%"}
           />
         ))}
+        <Box key={"fix"} flexBasis={"0%"} flexShrink={1} height={"100%"} />
       </StorageRepartition>
     </Box>
   );

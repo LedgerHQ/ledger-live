@@ -35,10 +35,10 @@ For a smooth and quick integration:
     *   [getWalletPublicKey](#getwalletpublickey)
         *   [Parameters](#parameters-2)
         *   [Examples](#examples-1)
-    *   [signMessageNew](#signmessagenew)
+    *   [signMessage](#signmessage)
         *   [Parameters](#parameters-3)
         *   [Examples](#examples-2)
-    *   [createPaymentTransactionNew](#createpaymenttransactionnew)
+    *   [createPaymentTransaction](#createpaymenttransaction)
         *   [Parameters](#parameters-4)
         *   [Examples](#examples-3)
     *   [signP2SHTransaction](#signp2shtransaction)
@@ -50,14 +50,13 @@ For a smooth and quick integration:
     *   [serializeTransactionOutputs](#serializetransactionoutputs)
         *   [Parameters](#parameters-7)
         *   [Examples](#examples-6)
-*   [impl](#impl)
 *   [BtcNew](#btcnew)
     *   [Parameters](#parameters-8)
     *   [getWalletXpub](#getwalletxpub-1)
         *   [Parameters](#parameters-9)
     *   [getWalletPublicKey](#getwalletpublickey-1)
         *   [Parameters](#parameters-10)
-    *   [createPaymentTransactionNew](#createpaymenttransactionnew-1)
+    *   [createPaymentTransaction](#createpaymenttransaction-1)
         *   [Parameters](#parameters-11)
 *   [BtcOld](#btcold)
     *   [Parameters](#parameters-12)
@@ -65,53 +64,47 @@ For a smooth and quick integration:
     *   [getWalletPublicKey](#getwalletpublickey-2)
         *   [Parameters](#parameters-13)
         *   [Examples](#examples-8)
-    *   [signMessageNew](#signmessagenew-1)
+    *   [createPaymentTransaction](#createpaymenttransaction-2)
         *   [Parameters](#parameters-14)
         *   [Examples](#examples-9)
-    *   [createPaymentTransactionNew](#createpaymenttransactionnew-2)
-        *   [Parameters](#parameters-15)
-        *   [Examples](#examples-10)
-    *   [signP2SHTransaction](#signp2shtransaction-1)
-        *   [Parameters](#parameters-16)
-        *   [Examples](#examples-11)
 *   [CreateTransactionArg](#createtransactionarg)
     *   [Properties](#properties)
 *   [AddressFormat](#addressformat)
 *   [AccountType](#accounttype)
     *   [spendingCondition](#spendingcondition)
-        *   [Parameters](#parameters-17)
+        *   [Parameters](#parameters-15)
     *   [setInput](#setinput)
-        *   [Parameters](#parameters-18)
+        *   [Parameters](#parameters-16)
     *   [setOwnOutput](#setownoutput)
-        *   [Parameters](#parameters-19)
+        *   [Parameters](#parameters-17)
     *   [getDescriptorTemplate](#getdescriptortemplate)
 *   [SingleKeyAccount](#singlekeyaccount)
 *   [getTaprootOutputKey](#gettaprootoutputkey)
-    *   [Parameters](#parameters-20)
+    *   [Parameters](#parameters-18)
 *   [AppClient](#appclient)
-    *   [Parameters](#parameters-21)
+    *   [Parameters](#parameters-19)
 *   [ClientCommandInterpreter](#clientcommandinterpreter)
-    *   [Parameters](#parameters-22)
+    *   [Parameters](#parameters-20)
 *   [MerkelizedPsbt](#merkelizedpsbt)
-    *   [Parameters](#parameters-23)
+    *   [Parameters](#parameters-21)
 *   [Merkle](#merkle)
-    *   [Parameters](#parameters-24)
+    *   [Parameters](#parameters-22)
 *   [MerkleMap](#merklemap)
-    *   [Parameters](#parameters-25)
+    *   [Parameters](#parameters-23)
 *   [WalletPolicy](#walletpolicy)
-    *   [Parameters](#parameters-26)
+    *   [Parameters](#parameters-24)
 *   [extract](#extract)
-    *   [Parameters](#parameters-27)
+    *   [Parameters](#parameters-25)
 *   [finalize](#finalize)
-    *   [Parameters](#parameters-28)
+    *   [Parameters](#parameters-26)
 *   [clearFinalizedInput](#clearfinalizedinput)
-    *   [Parameters](#parameters-29)
+    *   [Parameters](#parameters-27)
 *   [writePush](#writepush)
-    *   [Parameters](#parameters-30)
+    *   [Parameters](#parameters-28)
 *   [PsbtV2](#psbtv2)
 *   [serializeTransactionOutputs](#serializetransactionoutputs-1)
-    *   [Parameters](#parameters-31)
-    *   [Examples](#examples-12)
+    *   [Parameters](#parameters-29)
+    *   [Examples](#examples-10)
 *   [SignP2SHTransactionArg](#signp2shtransactionarg)
     *   [Properties](#properties-1)
 *   [TransactionInput](#transactioninput)
@@ -124,14 +117,17 @@ Bitcoin API.
 
 #### Parameters
 
-*   `transport` **Transport** 
-*   `scrambleKey`   (optional, default `"BTC"`)
+*   `$0` **{transport: Transport, scrambleKey: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, currency: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?}** 
+
+    *   `$0.transport`  
+    *   `$0.scrambleKey`   (optional, default `"BTC"`)
+    *   `$0.currency`   (optional, default `"bitcoin"`)
 
 #### Examples
 
 ```javascript
 import Btc from "@ledgerhq/hw-app-btc";
-const btc = new Btc(transport)
+const btc = new Btc({ transport, currency: "bitcoin" });
 ```
 
 #### getWalletXpub
@@ -170,7 +166,7 @@ btc.getWalletPublicKey("49'/0'/0'/0/0", { format: "p2sh" }).then(o => o.bitcoinA
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{publicKey: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), bitcoinAddress: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), chainCode: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** 
 
-#### signMessageNew
+#### signMessage
 
 You can sign a message according to the Bitcoin Signature format and retrieve v, r, s given the message and the BIP 32 path of the account to sign.
 
@@ -182,7 +178,7 @@ You can sign a message according to the Bitcoin Signature format and retrieve v,
 ##### Examples
 
 ```javascript
-btc.signMessageNew_async("44'/60'/0'/0'/0", Buffer.from("test").toString("hex")).then(function(result) {
+btc.signMessage("44'/60'/0'/0'/0", Buffer.from("test").toString("hex")).then(function(result) {
 var v = result['v'] + 27 + 4;
 var signature = Buffer.from(v.toString(16) + result['r'] + result['s'], 'hex').toString('base64');
 console.log("Signature : " + signature);
@@ -191,7 +187,7 @@ console.log("Signature : " + signature);
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{v: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), r: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), s: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** 
 
-#### createPaymentTransactionNew
+#### createPaymentTransaction
 
 To sign a transaction involving standard (P2PKH) inputs, call createTransaction with the following parameters
 
@@ -293,31 +289,6 @@ const outputScript = btc.serializeTransactionOutputs(tx1).toString('hex');
 
 Returns **[Buffer](https://nodejs.org/api/buffer.html)** 
 
-### impl
-
-Definition: A "normal path" is a prefix of a standard path where all
-the hardened steps of the standard path are included. For example, the
-paths m/44'/1'/17' and m/44'/1'/17'/1 are normal paths, but m/44'/1'
-is not. m/'199/1'/17'/0/1 is not a normal path either.
-
-There's a compatiblity issue between old and new app: When exporting
-the key of a non-normal path with verify=false, the new app would
-return an error, whereas the old app would return the key.
-
-See
-https://github.com/LedgerHQ/app-bitcoin-new/blob/master/doc/bitcoin.md#get_extended_pubkey
-
-If format bech32m is used, we'll not use old, because it doesn't
-support it.
-
-When to use new (given the app supports it)
-
-*   format is bech32m or
-*   path is normal or
-*   verify is true
-
-Otherwise use old.
-
 ### BtcNew
 
 This class implements the same interface as BtcOld (formerly
@@ -391,9 +362,9 @@ will be the empty string "", see this.getWalletAddress() for details.
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{publicKey: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), bitcoinAddress: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), chainCode: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** 
 
-#### createPaymentTransactionNew
+#### createPaymentTransaction
 
-Build and sign a transaction. See Btc.createPaymentTransactionNew for
+Build and sign a transaction. See Btc.createPaymentTransaction for
 details on how to use this method.
 
 This method will convert the legacy arguments, CreateTransactionArg, into
@@ -418,7 +389,7 @@ Bitcoin API.
 
 ```javascript
 import Btc from "@ledgerhq/hw-app-btc";
-const btc = new Btc(transport)
+const btc = new Btc({ transport, currency: "zcash" });
 ```
 
 #### getWalletPublicKey
@@ -446,28 +417,7 @@ btc.getWalletPublicKey("49'/0'/0'/0/0", { format: "p2sh" }).then(o => o.bitcoinA
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{publicKey: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), bitcoinAddress: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), chainCode: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** 
 
-#### signMessageNew
-
-You can sign a message according to the Bitcoin Signature format and retrieve v, r, s given the message and the BIP 32 path of the account to sign.
-
-##### Parameters
-
-*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
-*   `messageHex` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
-
-##### Examples
-
-```javascript
-btc.signMessageNew_async("44'/60'/0'/0'/0", Buffer.from("test").toString("hex")).then(function(result) {
-var v = result['v'] + 27 + 4;
-var signature = Buffer.from(v.toString(16) + result['r'] + result['s'], 'hex').toString('base64');
-console.log("Signature : " + signature);
-}).catch(function(ex) {console.log(ex);});
-```
-
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{v: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), r: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), s: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** 
-
-#### createPaymentTransactionNew
+#### createPaymentTransaction
 
 To sign a transaction involving standard (P2PKH) inputs, call createTransaction with the following parameters
 
@@ -504,34 +454,6 @@ outputScriptHex: "01905f0100000000001976a91472a5d75c8d2d0565b656a5232703b167d50d
 ```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** the signed transaction ready to be broadcast
-
-#### signP2SHTransaction
-
-To obtain the signature of multisignature (P2SH) inputs, call signP2SHTransaction_async with the folowing parameters
-
-##### Parameters
-
-*   `arg` **[SignP2SHTransactionArg](#signp2shtransactionarg)** 
-*   `inputs`  is an array of \[ transaction, output_index, redeem script, optional sequence ] where*   transaction is the previously computed transaction object for this UTXO
-    *   output_index is the output in the transaction used as input for this UTXO (counting from 0)
-    *   redeem script is the mandatory redeem script associated to the current P2SH input
-    *   sequence is the sequence number to use for this input (when using RBF), or non present
-*   `associatedKeysets`  is an array of BIP 32 paths pointing to the path to the private key used for each UTXO
-*   `outputScriptHex`  is the hexadecimal serialized outputs of the transaction to sign
-*   `lockTime`  is the optional lockTime of the transaction to sign, or default (0)
-*   `sigHashType`  is the hash type of the transaction to sign, or default (all)
-
-##### Examples
-
-```javascript
-btc.signP2SHTransaction({
-inputs: [ [tx, 1, "52210289b4a3ad52a919abd2bdd6920d8a6879b1e788c38aa76f0440a6f32a9f1996d02103a3393b1439d1693b063482c04bd40142db97bdf139eedd1b51ffb7070a37eac321030b9a409a1e476b0d5d17b804fcdb81cf30f9b99c6f3ae1178206e08bc500639853ae"] ],
-associatedKeysets: ["0'/0/0"],
-outputScriptHex: "01905f0100000000001976a91472a5d75c8d2d0565b656a5232703b167d50d5a2b88ac"
-}).then(result => ...);
-```
-
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>>** the signed transaction ready to be broadcast
 
 ### CreateTransactionArg
 

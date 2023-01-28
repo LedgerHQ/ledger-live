@@ -188,6 +188,7 @@ export function mockListAppsResult(
     firmware: firmware155,
     installed,
     installedAvailable: true,
+    customImageBlocks: 0,
   };
 }
 

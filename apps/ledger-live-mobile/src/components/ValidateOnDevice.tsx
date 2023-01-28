@@ -21,12 +21,14 @@ import { getDeviceModel } from "@ledgerhq/devices";
 
 import { useTheme } from "@react-navigation/native";
 import styled from "styled-components/native";
-import { Flex, Log } from "@ledgerhq/native-ui";
+import { Flex } from "@ledgerhq/native-ui";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import Alert from "./Alert";
 import perFamilyTransactionConfirmFields from "../generated/TransactionConfirmFields";
 import { DataRowUnitValue, TextValueField } from "./ValidateOnDeviceDataRow";
 import Animation from "./Animation";
 import { getDeviceAnimation } from "../helpers/getDeviceAnimation";
+import { TitleText } from "./DeviceAction/rendering";
 
 export type FieldComponentProps = {
   account: AccountLike;
@@ -181,15 +183,22 @@ export default function ValidateOnDevice({
       ? transTitleWording
       : t("ValidateOnDevice.title.send", getDeviceModel(device.modelId));
 
+  const isBigLottie = device.modelId === DeviceModelId.stax;
+
   return (
-    <RootContainer>
-      <ScrollContainer>
-        <InnerContainer>
-          <AnimationContainer>
+    <Flex flex={1}>
+      <ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: "center",
+        }}
+      >
+        <Flex alignItems="center">
+          <Flex marginBottom={isBigLottie ? 0 : 8}>
             <Animation
-              source={getDeviceAnimation({ device, key: "validate", theme })}
+              source={getDeviceAnimation({ device, key: "sign", theme })}
             />
-          </AnimationContainer>
+          </Flex>
           {Title ? (
             <Title
               account={account}
@@ -234,54 +243,20 @@ export default function ValidateOnDevice({
               />
             ) : null}
           </DataRowsContainer>
-        </InnerContainer>
-      </ScrollContainer>
+        </Flex>
+      </ScrollView>
       {Footer ? (
         <Footer transaction={transaction} recipientWording={recipientWording} />
       ) : (
-        <FooterContainer>
+        <Flex>
           <Alert type="help">{recipientWording}</Alert>
-        </FooterContainer>
+        </Flex>
       )}
-    </RootContainer>
+    </Flex>
   );
 }
 
-const RootContainer = styled(Flex).attrs({
-  flex: 1,
-})``;
-
 const DataRowsContainer = styled(Flex).attrs({
-  marginVertical: 24,
+  my: 7,
   alignSelf: "stretch",
 })``;
-
-const InnerContainer = styled(Flex).attrs({
-  flexDirection: "column",
-  justifyContent: "center",
-  alignItems: "center",
-  flex: 1,
-})``;
-
-const FooterContainer = styled(Flex).attrs({
-  padding: 16,
-})``;
-
-const AnimationContainer = styled(Flex).attrs({
-  marginBottom: 40,
-})``;
-
-const ScrollContainer = styled(ScrollView)`
-  flex: 1;
-  padding: 16px;
-`;
-
-const TitleContainer = styled(Flex).attrs({
-  py: 8,
-})``;
-
-const TitleText = ({ children }: { children: React.ReactNode }) => (
-  <TitleContainer>
-    <Log>{children}</Log>
-  </TitleContainer>
-);

@@ -102,6 +102,7 @@
     "addressCopied" : "アドレスをコピーしました",
     "addressCopiedSuspicious" : "コピーしたアドレスとクリップボードのアドレスが一致しません。",
     "experimentalFeature" : "試験的",
+    "featureFlags" : "機能フラグ",
     "information" : "インフォメーション",
     "search" : "検索…",
     "searchWithoutEllipsis" : "検索",
@@ -124,12 +125,14 @@
     },
     "exchange" : "取引",
     "info" : "情報",
-    "connectDevice" : "デバイスを接続"
+    "connectDevice" : "デバイスを接続",
+    "add" : "追加"
   },
   "devices" : {
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
+    "stax" : "Stax",
     "blue" : "Blue"
   },
   "operation" : {
@@ -167,7 +170,10 @@
       "WITHDRAW" : "引き出し済み",
       "REVOKE" : "取り消されました",
       "ACTIVATE" : "有効化されました",
-      "REGISTER" : "登録されました"
+      "REGISTER" : "登録されました",
+      "STAKE" : "ステーキング済み",
+      "UNSTAKE" : "ステーキング解除済み",
+      "WITHDRAW_UNSTAKED" : "引き出し済み"
     }
   },
   "byteSize" : {
@@ -178,6 +184,8 @@
   "time" : {
     "minute" : "分",
     "minute_plural" : "分",
+    "minute_short" : "分",
+    "second_short" : "秒",
     "hour" : "時間",
     "hour_plural" : "時間",
     "range" : {
@@ -244,6 +252,8 @@
         "float" : "変動",
         "update" : "次のレート更新",
         "loading" : "読み込み中...",
+        "loadingQuotes" : "見積もりを読み込み中",
+        "loadingDescription" : "お客様に最適なオプションを見つけるのに少々お時間がかかります。",
         "name" : {
           "title" : "プロバイダー",
           "tooltip" : "プロバイダーによっては、アカウントを作成し、プロバイダーに登録する必要があります。"
@@ -597,6 +607,12 @@
     }
   },
   "lottieDebugger" : {
+    "buttonTitle" : "テスト"
+  },
+  "storylyDebugger" : {
+    "buttonTitle" : "テスト"
+  },
+  "postOnboardingDebugger" : {
     "buttonTitle" : "テスト"
   },
   "fullNode" : {
@@ -1125,6 +1141,114 @@
     "desc" : "この操作により、すべての<1><0>{{tokenName}}</0></1>アカウントが非表示になります。<3>設定</3>から再度表示可能です。",
     "hideCTA" : "トークンを非表示"
   },
+  "syncOnboarding" : {
+    "connection" : {
+      "searching" : {
+        "title" : "{{deviceModelName}}をコンピュータに接続",
+        "connectionTrouble" : "デバイスの接続に問題がありますか？"
+      },
+      "success" : {
+        "title" : "{{ deviceName }}を接続"
+      }
+    },
+    "manual" : {
+      "title" : "{{deviceName}}をセットアップ",
+      "pairedContent" : {
+        "title" : "{{deviceName}}接続済み",
+        "description" : "{{deviceName}}でセットアップを続行する",
+        "text" : "こちらの画面は、{{deviceName}}のセットアップ中に動的に変化し、関連情報をご提供します。"
+      },
+      "pinContent" : {
+        "title" : "PINコードを設定する",
+        "description" : "PINコードの長さは4～8桁で設定可能です",
+        "text" : "お客様の{{deviceName}}とPINコードにアクセスできる人は誰でも、お客様の暗号資産とNFT資産すべてにアクセスできます。"
+      },
+      "recoveryContent" : {
+        "title" : "リカバリーフレーズ",
+        "content" : "下の動画をタップして、秘密のリカバリーフレーズを詳しく学ぶ"
+      },
+      "softwareCheckContent" : {
+        "title" : "ソフトウェアのチェック",
+        "genuineCheck" : {
+          "active" : "{{deviceName}}をチェックしています",
+          "completed" : "{{deviceName}}は正規品です"
+        },
+        "firmwareUpdate" : {
+          "inactive" : "ソフトウェアのチェック",
+          "active" : "ソフトウェアの更新をチェックしています",
+          "updateAvailable" : "ソフトウェアのアップデートが利用可能です{{firmwareVersion}}",
+          "recommendation" : "今すぐアップデートをダウンロードすることをお勧めします",
+          "downloadUpdate" : "アップデートをダウンロード",
+          "skipUpdate" : "今はしない",
+          "completed" : "ソフトウェアは最新です"
+        }
+      },
+      "installApplications" : {
+        "title" : "既定のアプリ一式をダウンロードすることをお勧めします。ダウンロードは後でさらに可能です",
+        "install" : "インストール",
+        "skip" : "後で",
+        "info" : "{{deviceName}}のアプリはトランザクションの承認に使用されます。これはいつでも追加、または削除できます。"
+      },
+      "genuineCheckModal" : {
+        "title" : "真正性確認",
+        "paragraph1" : "{{deviceName}}が正規品で安全に使用できることを確認しましょう",
+        "paragraph2" : "お客様のデバイスが改ざんされていないことを確認するためのチェックを行います。お使いの{{deviceName}}でこれを承諾していただく必要があります。",
+        "checkDeviceButton" : "デバイスをチェック"
+      },
+      "genuineCheckCancelModal" : {
+        "title" : "正規品チェック",
+        "paragraph1" : "正規品チェックがキャンセルされました",
+        "paragraph2" : "このチェックは、お客様の{{deviceName}}が安全に使用できることを確認するために重要です。",
+        "checkDeviceButton" : "再度チェックを実行する",
+        "cancelButton" : "後で"
+      },
+      "genuineCheckNotGenuineModal" : {
+        "title" : "正規品チェック",
+        "paragraph1" : "お使いのデバイスは正規品ではありません",
+        "paragraph2" : "真正性チェックに失敗しました",
+        "checkDeviceButton" : "再度チェックを実行する",
+        "cancelButton" : "後で"
+      },
+      "softwareCheckAllowSecureChannelModal" : {
+        "title" : "{{deviceName}}でマネージャーを許可する"
+      },
+      "softwareCheckLockedDeviceModal" : {
+        "title" : "デバイスのロックを解除する"
+      },
+      "helpDrawer" : {
+        "title" : "セットアップマニュアルでお困りですか？",
+        "description" : "Lorem Elsass ipsum aliquam bissame Oberschaeffolsheim geht's messti de Bischheim tellus blottkopf, dui sed libero.hopla libero, placerat leo eget Gal.",
+        "docButton" : "よくあるご質問（FAQ）に移動",
+        "supportButton" : "人と話す"
+      },
+      "troubleshootingDrawer" : {
+        "title" : "USB接続のトラブル解決",
+        "description" : "デバイスとの接続に問題があるようですが、ご心配なく。デバイスが正常に接続されるまで、いろいろな解決策を1つずつお試しいただけます！",
+        "fixButton" : "修正する",
+        "closeButton" : "閉じる"
+      },
+      "desyncOverlay" : {
+        "errorMessage" : "{{deviceName}}との接続が失われたようです。再接続を試みています。"
+      },
+      "header" : {
+        "helpButton" : "お困りですか？"
+      }
+    }
+  },
+  "postOnboarding" : {
+    "postOnboardingScreen" : {
+      "title" : "次に、Ledger Staxを\n使用して... ",
+      "titleCompleted" : "はい、\n終わり！"
+    },
+    "postOnboardingContent" : {
+      "skipLink" : "後で行う"
+    },
+    "postOnboardingBanner" : {
+      "title" : "Ledger Staxの次は何ですか？",
+      "description" : "Infinity NFTを獲得したり、ロック画面をカスタマイズしたり、\n他の取引所から資産を転送したりできます。",
+      "link" : "次のステップを見る"
+    }
+  },
   "hideNftCollection" : {
     "title" : "NFTコレクションを非表示",
     "desc" : "この操作により、すべての<1><0>{{collectionName}}</0></1>アカウントが非表示になります。<3>設定</3>から再度表示可能です。",
@@ -1199,6 +1323,10 @@
       "sign" : {
         "title" : "デバイス"
       }
+    },
+    "eip712" : {
+      "showFullMessage" : "メッセージ全体を表示する",
+      "hideFullMessage" : "メッセージ全体を非表示にする"
     }
   },
   "walletconnect" : {
@@ -1556,6 +1684,8 @@
       "undelegated" : "デリゲート解除済み",
       "undelegatedFrom" : "デリゲート解除元",
       "undelegatedAmount" : "デリゲート解除数",
+      "withdrawnFrom" : "引き出し済み：",
+      "withdrawnAmount" : "引き出し数量",
       "rewardFrom" : "報酬元",
       "memo" : "メモ",
       "assetId" : "Asset ID",
@@ -1594,7 +1724,10 @@
     "listApps" : "アプリの依存関係を確認しています。",
     "listAppsDescription" : "必要な全てのアプリを確認中です。しばらくお待ちください。",
     "swap" : {
-      "notice" : "送付する前に、スワップの詳細をデバイス上で確認してください。アドレスは安全にやりとりされるため、確認の必要はありません。",
+      "notice" : {
+        "default" : "送付する前に、スワップの詳細をデバイス上で確認してください。アドレスは安全にやりとりされるため、確認の必要はありません。",
+        "provider" : "送付前に、スワップの詳細をデバイス上で確認してください。{{providerName}}では、一部のトランザクションに対して追加の検証を実行する必要があり、遅延が発生する場合があります。"
+      },
       "confirm" : "スワップ取引を確定",
       "amountSent" : "送付額",
       "amountReceived" : "受取額",
@@ -1944,6 +2077,31 @@
         "tezos" : {
           "text" : "デリゲートアカウントで受け取った額は、合計ステーキング額に加算されます。これを回避したい場合は、別のアカウントを選択してください。"
         }
+      },
+      "staking" : {
+        "title" : "{{currencyName}}を獲得",
+        "link" : "詳細はこちら",
+        "notShow" : "今後は表示しない",
+        "footer" : {
+          "dismiss" : "後で",
+          "stake" : "{{provider}}でステーキング"
+        },
+        "cosmos" : {
+          "title" : "ATOMを増やしましょう。Ledgerバリデーターでステーキング。",
+          "description" : "信頼できるLedgerバリデーターでATOMをステーキングします。Ledgerの妥協のないセキュリティで保護されるため、お客様のコインがお客様の元から離れることはありません。"
+        },
+        "osmo" : {
+          "title" : "OSMOを増やしましょう。Ledger by Figmentでステーキング。",
+          "description" : "Ledger by FigmentバリデーターでOSMOをステーキングします。最安値の手数料と、スラッシングに対する保証をご提供します！"
+        },
+        "solana" : {
+          "title" : "SOLを増やしましょう。Ledger by Figmentでステーキング。",
+          "description" : "Ledger by FigmentバリデーターでSOLをステーキングします。Ledgerの妥協のないセキュリティで保護されるため、お客様のコインがお客様の元から離れることはありません。"
+        },
+        "celo" : {
+          "title" : "CELOを増やしましょう。Ledger by Figmentでステーキング。",
+          "description" : "Ledger by FigmentバリデーターでCELOをステーキングします。Ledgerの妥協のないセキュリティで保護することで、スラッシング（自己資産が削られる）に対する完全な保証をご提供します。"
+        }
       }
     }
   },
@@ -1959,7 +2117,7 @@
       "amount" : {
         "title" : "数量",
         "banner" : "最大利用可能額は",
-        "fees" : "手数料",
+        "fees" : "最大推定手数料",
         "standard" : "標準",
         "advanced" : "アドバンス",
         "nftQuantity" : "数量"
@@ -1979,11 +2137,17 @@
         "recipientAddress" : "送付先アドレス",
         "amount" : "数量",
         "fees" : "ネットワーク手数料",
-        "useMax" : "最大数量を送付",
+        "useMax" : "全額を選択",
+        "sendMax" : "最大数量を送付",
         "rippleTag" : "タグ",
         "rippleTagPlaceholder" : "任意",
+        "edit" : "編集",
         "ethereumGasLimit" : "ガスリミット",
         "ethereumGasPrice" : "ガス価格",
+        "ethereumMaxFee" : "最大手数料 ({{unitName}})",
+        "ethereumPriorityFee" : "最大優先手数料 ({{unitName}})",
+        "nextBlock" : "次のブロック",
+        "suggested" : "提案済み",
         "unitPerByte" : "1バイトあたり{{unit}}",
         "nft" : "NFT",
         "nftQuantity" : "数量"
@@ -2022,6 +2186,9 @@
   "releaseNotes" : {
     "title" : "リリースノート",
     "version" : "Ledger Live{{versionNb}}"
+  },
+  "troubleshootNetwork" : {
+    "title" : "ネットワークの問題解決"
   },
   "systemLanguageAvailable" : {
     "title" : "アプリの言語を変更しますか？",
@@ -2072,6 +2239,187 @@
     "value" : "価値",
     "header" : "アカウント配分({{count}})"
   },
+  "elrond" : {
+    "summary" : {
+      "availableBalanceTooltip" : "この額は送金可能です。",
+      "availableBalance" : "利用可能残高",
+      "delegatedAssetsTooltip" : "デリゲートされた資産は、ステーキングプロバイダーによって間接的に使用され、バリデーターノードを操作し、トランザクションを処理し、コンセンサスメカニズムに参加することでネットワークを保護します。",
+      "delegatedAssets" : "デリゲートされた資産",
+      "undelegatingTooltip" : "デリゲートされていない資産は、10日間のボンド解除期間の対象となり、その後引き出しができるようになります。",
+      "undelegating" : "保留中の引き出し"
+    },
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Powered by MultiversX",
+        "moreInfo" : "詳細はこちら",
+        "drawerTitle" : "MultiversX統合",
+        "title" : "Ledger Liveは、MultiversX eGold (EGLD) トークンに対応するようになりました。",
+        "description" : "Ledger Liveで、eGold（EGLD）トークンを安全に保管・管理できるようになりました。",
+        "description2" : "MultiversX eGold (EGLD) トークンは、MultiversX Networkのネイティブトークンであり、トランザクション、ステーキング、スマートコントラクト、ガバナンス、バリデーターの報酬など、さまざまな用途に使用されます。",
+        "description3" : "LedgerはMultiversXチームと積極的に協力し、ステーキングやESDT (Elrond Standard Digital Token) のネイティブサポートなどの機能を追加していく予定です。",
+        "website" : "The Internet Scale Blockchain"
+      }
+    },
+    "delegation" : {
+      "emptyState" : {
+        "description" : "EGLDをデリゲートしてネットワークを保護し、報酬のシェアを獲得します。",
+        "info" : "デリゲートとは？",
+        "delegation" : "報酬を獲得する"
+      },
+      "commission" : "コミッション",
+      "claimRewards" : "報酬獲得を申請",
+      "header" : "デリゲート",
+      "noRewards" : "受け取れる報酬はありません。",
+      "delegate" : "デリゲート",
+      "undelegate" : "デリゲート解除",
+      "redelegateDisabledTooltip" : "<0>{{days}}</0>後に再デリゲート可能です",
+      "redelegateMaxDisabledTooltip" : "一度に<0>7</0>件以上のバリデーターを再デリゲートすることはできません。",
+      "undelegateDisabledTooltip" : "一度に<0>7</0>件以上のバリデーターのデリゲートを解除することはできません。",
+      "reward" : "報酬獲得を申請",
+      "currentDelegation" : "デリゲート: <0>{{amount}}</0>",
+      "apr" : "APR",
+      "totalStake" : "合計ステーキング量",
+      "activeTooltip" : "デリゲートして報酬を得る",
+      "inactiveTooltip" : "デリゲートしていない金額は報酬を生成しません",
+      "minSafeWarning" : "資金不足です。少なくとも1EGLDが使用可能である必要があります。",
+      "flow" : {
+        "title" : "デリゲート",
+        "steps" : {
+          "amount" : {
+            "title" : "デリゲート",
+            "subtitle" : "次のステーキングプロバイダーのいずれかに資産をステーキングします。",
+            "warning" : "ステーキングプロバイダーを賢く選択してください。現在、唯一のリスクは、さまざまな理由で報酬を得られないことです。そのため、信頼性、コミュニケーション、および経済性に基づいてプロバイダーを選択する必要があります。",
+            "fields" : {
+              "validator" : "ステーキングプロバイダー"
+            }
+          },
+          "fields" : {
+            "amount" : "ステーキングする量"
+          },
+          "starter" : {
+            "description" : "EGLD資産をステーキングプロバイダーにデリゲートすることで、報酬を獲得できます。",
+            "bullet" : ["デリゲートされた資産の所有権を保持する", "Ledgerデバイスを使ってデリゲートしましょう", "資産はデリゲート解除から10日後に利用可能になります"],
+            "warning" : {
+              "description" : "ステーキングプロバイダーを賢く選択してください。現在、唯一のリスクは、さまざまな理由で報酬を得られないことです。そのため、信頼性、コミュニケーション、および経済性に基づいてプロバイダーを選択する必要があります。"
+            }
+          },
+          "validator" : {
+            "title" : "ステーキングプロバイダー"
+          },
+          "connectDevice" : {
+            "title" : "デバイス"
+          },
+          "confirmation" : {
+            "title" : "確認",
+            "success" : {
+              "title" : "資産が正常にデリゲートされました。",
+              "text" : "ブロックチェーンがトランザクションを承認後、アカウントの残高が更新されます。",
+              "cta" : "詳細を表示"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
+    },
+    "claimRewards" : {
+      "flow" : {
+        "title" : "報酬獲得を申請",
+        "steps" : {
+          "claimRewards" : {
+            "title" : "報酬",
+            "compound" : "報酬をコンパウンド",
+            "claim" : "報酬獲得を申請",
+            "compoundOrClaim" : "報酬をコンパウンドまたは獲得",
+            "compoundDescription" : "報酬はデリゲート量に加算されます。",
+            "claimDescription" : "報酬は利用可能残高に加算されます。",
+            "compoundInfo" : "<0>{{amount}}</0>を獲得しました。続行をクリックすると、獲得した報酬が自動的に同じステーキングプロバイダーにデリゲートされます。",
+            "claimInfo" : "以下のステーキングプロバイダーから<0>{{amount}}</0>を獲得しました。続行をクリックすると、獲得した報酬が自動的に利用可能残高に加算されます。",
+            "selectLabel" : "デリゲートを選択"
+          },
+          "connectDevice" : {
+            "title" : "デバイス"
+          },
+          "confirmation" : {
+            "title" : "確認",
+            "label" : "確認",
+            "success" : {
+              "title" : "報酬の獲得に成功しました",
+              "titleCompound" : "報酬が正常にコンパウンドされました",
+              "text" : "報酬は利用可能残高に加算されました。",
+              "textCompound" : "<0>{{amount}}EGLDから<0>{{validator}}へのコンパウンド報酬トランザクションは正常に処理されました。",
+              "cta" : "詳細を表示"
+            },
+            "pending" : {
+              "title" : "トランザクションをブロードキャスト中…"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "header" : "デリゲート解除",
+      "headerTooltip" : "ボンド解除から10日後に引き出しができます。",
+      "inactiveTooltip" : "デリゲートされていない金額は報酬を生成しません。",
+      "withdraw" : {
+        "cta" : "引き出しを確定"
+      },
+      "flow" : {
+        "title" : "資産のデリゲートを解除",
+        "steps" : {
+          "amount" : {
+            "title" : "数量",
+            "subtitle" : "デリゲートの解除完了には、<0>10日</0>かかります。",
+            "warning" : "報酬は自動的に獲得されます。デリゲートの解除は2段階のプロセスです。デリゲート解除のリクエスト後、<0>10日間のボンド解除期間が続き、その後、引き出しを完了でき、デリゲートされていない量が利用可能残高に送られます。",
+            "fields" : {
+              "validator" : "ステーキングプロバイダー",
+              "amount" : "デリゲート解除額"
+            }
+          },
+          "device" : {
+            "title" : "デバイス"
+          },
+          "confirmation" : {
+            "title" : "確認",
+            "success" : {
+              "title" : "資産のデリゲートを正常に解除しました。",
+              "description" : "<0>{{amount}}</0>が<0>{{validator}}</0>からデリゲート解除されました。",
+              "cta" : "詳細を表示"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "flow" : {
+        "title" : "引き出しを確定",
+        "steps" : {
+          "withdraw" : {
+            "title" : "引き出しを確定",
+            "description" : "<0>{{validator}}</0>から{{amount}}</0>EGLDをデリゲート解除しました。続行をクリックすると、引き出した報酬が自動的に利用可能残高に追加されます。",
+            "selectLabel" : "デリゲート解除を選択"
+          },
+          "connectDevice" : {
+            "title" : "デバイス"
+          },
+          "confirmation" : {
+            "title" : "確認",
+            "label" : "確認",
+            "success" : {
+              "title" : "資金が正常に引き出されました",
+              "text" : "<0>{{amount}}</0>が利用可能残高に引き出されました。",
+              "cta" : "詳細を表示"
+            },
+            "pending" : {
+              "title" : "トランザクションをブロードキャスト中…"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
+    }
+  },
   "cardano" : {
     "account" : {
       "stakingRewardsBanner" : {
@@ -2080,6 +2428,9 @@
     }
   },
   "tron" : {
+    "receive" : {
+      "newAddressTRC20" : "有効化するには、こちらのアドレスに0.1 TRX以上を送る必要があります。"
+    },
     "voting" : {
       "emptyState" : {
         "description" : "資産を凍結し投票することで、報酬を得られるようになりました。",
@@ -2150,6 +2501,15 @@
             }
           }
         }
+      }
+    }
+  },
+  "tezos" : {
+    "objkt" : {
+      "card" : {
+        "title" : "NFT（非代替性トークン）コレクション",
+        "description" : "Ledger Live内のObjktからTezos NFTを直接見ることが可能です。",
+        "cta" : "ObjktでNFTを見る"
       }
     }
   },
@@ -3229,6 +3589,155 @@
       }
     }
   },
+  "ethereum" : {
+    "stake" : {
+      "title" : "Ethereumを獲得する",
+      "lido" : {
+        "tag" : "最小数量なし",
+        "description" : "LidoでEthereumをステーキングして、毎日報酬を獲得しましょう。ロックアップ（凍結）期間なし。最小数量なし。"
+      },
+      "kiln" : {
+        "tag" : "32ETHが必要",
+        "description" : "32ETH以上をお持ちですか？KilnでETHを安全にステーキングすることで、毎日報酬を獲得できます。"
+      },
+      "providerTitle" : "{{provider}}で獲得",
+      "providerLink" : "{{provider}}の詳細"
+    }
+  },
+  "near" : {
+    "account" : {
+      "stakedBalance" : "ステーキング済み残高",
+      "stakedBalanceTooltip" : "この量は現在、バリデーターにステーキングされています。",
+      "availableBalance" : "出金可能残高",
+      "availableBalanceTooltip" : "この数量はステーキング解除されており、現在出金可能です。",
+      "pendingBalance" : "保留中残高",
+      "pendingBalanceTooltip" : "この数s量はステーキング解除されており、現在利用可能待ちです。",
+      "storageUsageBalance" : "最低残高",
+      "storageUsageBalanceTooltip" : "この量は保管とトランザクション用に確保されており、アカウントを有効にしておくために維持する必要がある最低残高です。",
+      "subHeader" : {
+        "cardTitle" : "Powered by Figment",
+        "moreInfo" : "詳細はこちら",
+        "drawerTitle" : "Powered by Figment",
+        "title" : "NEARトークンがLedger Liveでご利用可能になりました",
+        "description" : "NEARトークンを管理して、Ledger Liveで保護できるようになりました。",
+        "description2" : "NEARチェーンのネイティブトークンであるNEARトークンは、トランザクション、ステーキングに利用されています。今後さらに多くの機能へ対応予定です。",
+        "website" : "Powered by Figment"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "ステーキング済み量"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "資産をステーキングして、NEARの報酬を獲得できます。",
+        "info" : "ステーキングの仕組み",
+        "earnRewards" : "報酬を獲得する"
+      },
+      "table" : {
+        "header" : "ステーキングポジション",
+        "stake" : "追加",
+        "staked" : "ステーキング済み",
+        "pending" : "リリース保留中",
+        "available" : "引き出し可能"
+      },
+      "unstake" : "ステーキングの解除",
+      "withdraw" : "出金",
+      "activeTooltip" : "ステーキングされた量は報酬を生みます",
+      "inactiveTooltip" : "ステーキング解除された量は報酬を生みません",
+      "commission" : "コミッション",
+      "totalStake" : "合計ステーキング量",
+      "minSafeWarning" : "資金不足",
+      "flow" : {
+        "title" : "ステーキング",
+        "steps" : {
+          "starter" : {
+            "description" : "NEAR資産をバリデーターにステーキングすることで報酬が得られます。",
+            "bullet" : ["ステーキングされた資産の所有権はお客様が保持します", "Ledgerデバイスを使用してステーキング", "資産はステーキング解除後52～65時間で利用可能になります"],
+            "warning" : {
+              "description" : "バリデーターを賢く選択：バリデーターが適切に動作しない場合、ステーキングされた資産の一部が失われて、取り返せない可能性があります。"
+            }
+          },
+          "amount" : {
+            "title" : "数量"
+          },
+          "validator" : {
+            "title" : "バリデーター",
+            "ledgerByFigmentTC" : "Ledger by Figment T&Cs"
+          },
+          "connectDevice" : {
+            "title" : "デバイス"
+          },
+          "confirmation" : {
+            "title" : "確認",
+            "success" : {
+              "title" : "資産が正常にステーキングされました",
+              "text" : "ブロックチェーンがトランザクションを承認後、アカウントの残高が更新されます。",
+              "cta" : "詳細を表示"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "ステーキングを解除するのに十分なステーキング済みの資産がありません",
+      "flow" : {
+        "title" : "ステーキングの解除",
+        "steps" : {
+          "amount" : {
+            "title" : "数量",
+            "subtitle" : "ステーキングの解除プロセスは、完了するまでに <0>52〜65時間</0>かかります。",
+            "warning" : "報酬はすぐにキャッシュインされます。ステーキング解除された資産は、<0>52〜65時間のタイムロック</0>後に引き出し可能となります。",
+            "fields" : {
+              "validator" : "バリデーター",
+              "amount" : "ステーキングを解除する数量"
+            }
+          },
+          "connectDevice" : {
+            "title" : "デバイス"
+          },
+          "confirmation" : {
+            "title" : "確認",
+            "success" : {
+              "title" : "資産のステーキングを正常に解除しました",
+              "description" : "<0>{{amount}}</0>は<0>{{validator}}</0>からステーキング解除されました。",
+              "cta" : "詳細を表示"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "disabledTooltip" : "引き出しに十分な資産がありません",
+      "flow" : {
+        "title" : "出金",
+        "steps" : {
+          "amount" : {
+            "title" : "数量",
+            "fields" : {
+              "validator" : "バリデーター",
+              "amount" : "引き出す数量"
+            }
+          },
+          "connectDevice" : {
+            "title" : "デバイス"
+          },
+          "confirmation" : {
+            "title" : "確認",
+            "success" : {
+              "title" : "資産の引き出しに成功しました。",
+              "description" : "<0>{{amount}}</0>は<0>{{validator}}</0>から引き出されました",
+              "cta" : "詳細を表示"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
+    }
+  },
   "delegation" : {
     "title" : "報酬を獲得する",
     "header" : "デリゲート",
@@ -3378,8 +3887,10 @@
       "debugAppsDesc" : "デバッグとしてタグ付けされたプラットフォームアプリの表示と実行を許可します。",
       "experimentalApps" : "試験的なアプリを許可する",
       "experimentalAppsDesc" : "試験的とタグ付けされたプラットフォームアプリの表示と実行を許可する",
-      "catalogServer" : "カタログプロバイダーの設定",
-      "catalogServerDesc" : "複数のプラットフォームアプリのソースを切り替える",
+      "catalogUrl" : "Set the catalog apps provider",
+      "catalogUrlDesc" : "Enter your custom catalog provider URL",
+      "catalogRampServer" : "Set the buy / sell providers",
+      "catalogRampServerDesc" : "Switch between multiple trading providers",
       "enablePlatformDevTools" : "プラットフォーム開発ツールの有効化",
       "enablePlatformDevToolsDesc" : "プラットフォームアプリの開発ツールウィンドウ表示を有効化",
       "featureFlagsTitle" : "Ledger Liveで使用される定義済みの機能フラグ",
@@ -3387,6 +3898,10 @@
       "featureFlagsEdit" : "編集",
       "featureFlagsRestore" : "復元",
       "featureFlagsOverride" : "上書き",
+      "featureFlagsRestoreAll" : "すべてのフラグ値を復元する",
+      "showButtonDesc" : "サイドバーに常に機能フラグボタンを表示する",
+      "buttonTitle" : "フラグがローカルでオーバーライドされています",
+      "firebaseProject" : "対象となるFirebaseプロジェクト：",
       "addLocalApp" : "ローカルアプリを追加",
       "addLocalAppDesc" : "ローカルファイルを参照し、ローカルのマニフェストファイルを使用してローカルアプリを追加する",
       "addLocalAppButton" : "画面をチェックする",
@@ -3437,13 +3952,13 @@
     "experimental" : {
       "disclaimer" : "テクノロジーファンのコミュニティ向けに提供される試験的な機能です。これらの機能は随時変更、破損、または削除される可能性があります。このオプションを有効にすると、あなたは自己責任でこれらの機能を使用することに同意したことになります。",
       "features" : {
-        "apiTrongridProxy" : {
-          "title" : "TronGrid.ioを使用",
-          "description" : "LedgerプロキシなしでTronGridを直接を使用する"
-        },
         "experimentalCurrencies" : {
           "title" : "試験的統合",
           "description" : "利用可能な試験的暗号資産の統合を使用する。"
+        },
+        "experimentalExecutionOnRenderer" : {
+          "title" : "試験的ネットワーキング",
+          "description" : "試験的ネットワーキングを使用して、VPNでのLedger Liveエクスペリエンスを最適化します。現在のVPNでシステムエラーが発生する場合にのみ、有効化してください。"
         },
         "experimentalLanguages" : {
           "title" : "翻訳テスト",
@@ -3476,6 +3991,22 @@
         "testAnimations" : {
           "title" : "Lottieアニメーションのテスト",
           "description" : "Ledger Liveで使用される全アニメーションをテストする"
+        },
+        "testStories" : {
+          "title" : "Storylyストーリーをテストする",
+          "description" : "Ledger Liveで使用される全ストーリーをテストする"
+        },
+        "testPostonboarding" : {
+          "title" : "ポストオンボーディングをテストする",
+          "description" : "すべてのポストオンボーディング機能をテストする"
+        },
+        "1559DeactivateGate" : {
+          "title" : "EIP1559最低優先手数料ゲートを無効にする",
+          "description" : "最低優先手数料なしでトランザクションを送信できます。これにより、トランザクションがメモリプールに永久にスタック（停滞）する可能性があります。"
+        },
+        "1559CustomPriorityLowerGate" : {
+          "title" : "カスタム優先手数料ゲート",
+          "description" : "高度なEIP1559トランザクションで許可される、当社の推定最小優先手数料の割合をカスタマイズします"
         }
       }
     },
@@ -3517,6 +4048,11 @@
       "title" : "ログを保存",
       "desc" : "トラブルを解決するために、Ledger Liveログの保存が必要になる場合があります。",
       "btn" : "保存"
+    },
+    "troubleshootNetwork" : {
+      "title" : "ネットワークの問題解決",
+      "desc" : "チェックリストを実行して、問題解決の目的でネットワークの状態を評価します。",
+      "btn" : "問題解決"
     },
     "accounts" : {
       "hideEmptyTokens" : {
@@ -4323,6 +4859,9 @@
       "claimRewardCompound" : "報酬を受け取るバリデーター",
       "optIn" : "受取先",
       "nominate" : "バリデーター",
+      "stake" : "バリデーター",
+      "unstake" : "バリデーター",
+      "withdraw" : "バリデーター",
       "erc721" : {
         "transfer" : "受取先"
       },
@@ -4556,6 +5095,10 @@
       "title" : "デバイスの接続が切断されているようです。",
       "description" : "デバイスを再接続して、もう一度お試しください。"
     },
+    "EConnReset" : {
+      "title" : "Ledgerアプリケーションストアに到達できません",
+      "description" : "インターネット接続がダウンしているか、異常が発生している可能性があります。接続をブロックしているもの（プロキシまたはファイアウォール）の確認から始めてください。問題が解決しない場合は、以下をクリックして解決策を確認するか、当社のカスタマーサポートにご連絡ください。"
+    },
     "EnpointConfig" : {
       "title" : "エンドポイントが無効です",
       "description" : "有効なエンドポイントを提供してください"
@@ -4658,6 +5201,23 @@
       "title" : "アカウントが見つかりませんでした。",
       "description" : "アドレス計算時に問題が発生しました。再試行するか、Ledgerサポートにお問い合わせください。"
     },
+    "ElrondDecimalsLimitReached" : {
+      "title" : "小数点以下の最大桁数に達しました",
+      "description" : "指定された量の小数点以下が18桁であることをご確認ください。"
+    },
+    "ElrondMinDelegatedAmountError" : {
+      "title" : "デリゲート済み数量は{{formattedAmount}}以上必要です"
+    },
+    "ElrondMinUndelegatedAmountError" : {
+      "title" : "デリゲート解除の数量は{{formattedAmount}}以上必要です"
+    },
+    "ElrondDelegationBelowMinimumError" : {
+      "title" : "残りのデリゲートは{{formattedAmount}}を下回ることはできません"
+    },
+    "NotEnoughEGLDForFees" : {
+      "title" : "トランザクション手数料の支払いに十分なEGLDがありません",
+      "description" : "EGLDをアカウントに送付し、トランザクションの支払いを行ってください。"
+    },
     "NotEnoughBalance" : {
       "title" : "資金が不足しています。",
       "description" : "アカウントに十分な資金があることを確認してください。"
@@ -4667,6 +5227,10 @@
     },
     "NotEnoughGas" : {
       "title" : "親アカウントで、ネットワーク手数料用の残高が不足しています"
+    },
+    "OperatingSystemOutdated" : {
+      "title" : "お使いのオペレーティングシステムのバージョンが古くなっています",
+      "description" : "オペレーティングシステムをアップグレードして、再試行してください。以下の記事を参照すると、Ledger Liveが現在のオペレーティングシステムのバージョンでサポートされていない理由がわかります。"
     },
     "PasswordsDontMatch" : {
       "title" : "パスワードが一致しません。",
@@ -4815,6 +5379,18 @@
     "GasLessThanEstimate" : {
       "title" : "低すぎる可能性があります。増やしてください"
     },
+    "PriorityFeeTooLow" : {
+      "title" : "優先手数料が推奨手数料より低額です"
+    },
+    "PriorityFeeTooHigh" : {
+      "title" : "優先手数料が必要以上に高額です。お支払い額が多すぎるかもしれません"
+    },
+    "MaxFeeTooLow" : {
+      "title" : "最大手数料が推奨手数料より低額です"
+    },
+    "PriorityFeeHigherThanMaxFee" : {
+      "title" : "最大優先手数料は、最大手数料より高くすることはできません"
+    },
     "UnknownMCU" : {
       "title" : "不明なMCUバージョンです。",
       "description" : "Ledgerサポートにお問合せください。"
@@ -4898,7 +5474,7 @@
       "title" : "凍結額を1未満にすることはできません。"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "TRC20を新しいアカウントに送付しても、アクティベートされません。",
+      "title" : "TRC20の受け取りを有効化するには、まず新しいアカウントに0.1 TRX以上を送る必要があります。",
       "description" : "受取アカウントは、TRC20を送信する前に有効化する必要があります。有効化するにはTRXまたはTRC10をアカウントに送付してください。"
     },
     "TronUnexpectedFees" : {
@@ -4912,7 +5488,7 @@
       "description" : "トランザクションは、30秒以内に署名する必要があります。もう一度お試しください。"
     },
     "TronNotEnoughEnergy" : {
-      "title" : "このトークンの送金に必要なエネルギーが不足しています。"
+      "title" : "エネルギーが必要額を満たしていません。手数料には最大20TRXが必要となります。"
     },
     "PairingFailed" : {
       "title" : "ペアリングに失敗しました",
@@ -4948,6 +5524,9 @@
     },
     "FeeTooHigh" : {
       "title" : "ネットワーク手数料が10%を超えています。"
+    },
+    "DustLimit" : {
+      "title" : "金額がダスト制限を下回っています"
     },
     "SourceHasMultiSign" : {
       "title" : "{{currencyName}}を送付するにはマルチシグを無効にしてください。"
@@ -5060,8 +5639,92 @@
     "StellarSourceHasMultiSign" : {
       "title" : "Stellarトランザクションを行うには、マルチシグを無効にしてください"
     },
+    "StellarBurnAddressError" : {
+      "title" : "Stellarアカウントを追加しようとしたときに問題が発生しました"
+    },
     "HederaAddAccountError" : {
       "title" : "アカウントが追加されていません。もう一度お試しください。"
+    },
+    "ImageIncorrectFileTypeError" : {
+      "title" : "ファイルからの画像の読み込みに失敗しました。",
+      "description" : "画像でもう一度お試しください。"
+    },
+    "ImageLoadFromFileError" : {
+      "title" : "ファイルからの画像の読み込みに失敗しました",
+      "description" : "別の画像でもう一度お試しください"
+    },
+    "ImageDownloadError" : {
+      "title" : "画像のダウンロードに失敗しました",
+      "description" : "別の画像でもう一度お試しください"
+    },
+    "ImageMetadataLoadingError" : {
+      "title" : "画像メタデータの読み込みに失敗しました",
+      "description" : "別の画像でもう一度お試しください"
+    },
+    "ImageTooLargeError" : {
+      "title" : "画像が大きすぎます",
+      "description" : "小さい画像でもう一度お試しください"
+    },
+    "ImageCropError" : {
+      "title" : "画像のトリミングに失敗しました",
+      "description" : "別の画像でもう一度お試しください"
+    },
+    "ImageResizeError" : {
+      "title" : "画像のサイズ変更に失敗しました",
+      "description" : "別の画像でもう一度お試しください"
+    },
+    "ImagePreviewError" : {
+      "title" : "画像のプレビューに失敗しました",
+      "description" : "別の画像でもう一度お試しください"
+    },
+    "ImageProcessingError" : {
+      "title" : "画像の処理に失敗しました",
+      "description" : "別の画像でもう一度お試しください"
+    },
+    "ImageCommitRefusedOnDevice" : {
+      "title" : "デバイスで画像のコミットが拒否されました",
+      "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。"
+    },
+    "ImageLoadRefusedOnDevice" : {
+      "title" : "デバイスで画像の読み込みが拒否されました",
+      "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。"
+    },
+    "NearNewAccountWarning" : {
+      "title" : "受取人アカウントはまだ作成されていません。このプロトコルでは、作成するのに{{formattedNewAccountStorageCost}}の転送コストが必要です。"
+    },
+    "NearNewNamedAccountError" : {
+      "title" : "受取人アカウントはまだ作成されていません。NEARウォレットで作成する必要があります。"
+    },
+    "NearActivationFeeNotCovered" : {
+      "title" : "この量は、{{formattedNewAccountStorageCost}}の保管コストをカバーしていません。"
+    },
+    "NearUseAllAmountStakeWarning" : {
+      "title" : "今後のトランザクション手数料に十分な残高を、確保しておいてください。"
+    },
+    "NearNotEnoughStaked" : {
+      "title" : "ステーキング済み残高が不十分です"
+    },
+    "NearNotEnoughAvailable" : {
+      "title" : "引き出し可能残高が不十分です"
+    },
+    "NearRecommendUnstake" : {
+      "title" : "アカウントを空にする前に、資金のステーキングを解除して引き出してください"
+    },
+    "NearStakingThresholdNotMet" : {
+      "title" : "{{threshold}}以上の数量が必要です。"
+    },
+    "LockedDeviceError" : {
+      "title" : "デバイスがロックされています。",
+      "description" : "デバイスのロックを解除して、再度お試しください。",
+      "descriptionWithProductName" : "{{ productName }}のロックを解除して、再度お試しください。"
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "お使いのデバイスはまだ使用できません",
+      "titleWithProductName" : "{{ productName }}はまだ使用準備ができていません",
+      "description" : "最初にデバイスをセットアップする必要があります。\nセットアッププロセスをご案内します。",
+      "descriptionWithProductName" : "最初に{{ productName }}をセットアップする必要があります。\nセットアッププロセスをご案内します。",
+      "goToOnboardingButton" : "デバイスをセットアップ",
+      "goToOnboardingButtonWithProductName" : "{{ productName }}をセットアップする"
     }
   },
   "cryptoOrg" : {
@@ -5092,5 +5755,39 @@
     "selectAccount" : {
       "title" : "アカウントを選択"
     }
+  },
+  "customImage" : {
+    "title" : "Custom lock screen",
+    "steps" : {
+      "choose" : {
+        "stepLabel" : "画像を選択してください",
+        "description" : "(...) として設定する画像を選択",
+        "pickFromNftGallery" : "NFTギャラリーから選択",
+        "upload" : "パソコンからアップロード"
+      },
+      "adjust" : {
+        "stepLabel" : "画像を調整",
+        "rotate" : "回転"
+      },
+      "contrast" : {
+        "stepLabel" : "コントラストを選択"
+      },
+      "transfer" : {
+        "stepLabel" : "送金",
+        "uploadAnotherImage" : "他の画像をアップロードする",
+        "allowPreview" : "{{productName}}でのロック画面の画像の読み込みを許可します",
+        "loadingPicture" : "読み込み中...",
+        "imageLoaded" : "{{productName}}に画像が読み込まれました",
+        "confirmPicture" : "気に入りましたか？\n",
+        "doThisLater" : "後で"
+      }
+    },
+    "postOnboarding" : {
+      "title" : "Ledgerデバイスをパーソナライズ",
+      "description" : "画面をカスタマイズ",
+      "actionCompletedPopupLabel" : "デバイスがパーソナライズされました"
+    },
+    "customImageSet" : "ロック画面が設定されました",
+    "finishCTA" : "終了する"
   }
 }

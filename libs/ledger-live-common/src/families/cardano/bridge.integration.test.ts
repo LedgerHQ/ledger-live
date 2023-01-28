@@ -40,13 +40,13 @@ const dataset: DatasetTest<Transaction> = {
                 family: "cardano",
                 recipient:
                   "addr_test1qpl90kc2jl5kr9tev0s7vays9yhwcdnq8nlylyk4dqsdq3g466elxnxwrzwq72pvp5akenj30t5s9et7frfvrxxx8xcsxrzs87",
-                amount: "5000000001",
+                amount: "101",
                 subAccountId:
-                  "js:2:cardano_testnet:a902bc61a79256e1d5858d2ba49cab7011a26ad49580daace7412e255e818b1c1eba2defa321ff2937deba397f639f5bbabb0f0064516301fa4d08663c83f5b2:+cardano_testnet%2Fnative%2F581684861359b6d4d00594073a9aa4223c6fc24d24da05e1b34fb865544553545f544f4b454e",
+                  "js:2:cardano_testnet:806499588e0c4a58f4119f7e6e096bf42c3f774a528d2acec9e82ceebf87d1ceb3d4f3622dd2c77c65cc89c123f79337db22cf8a69f122e36dab1bf5083bf82d:cardano+cardano_testnet%2Fnative%2F47be64fcc8a7fe5321b976282ce4e43e4d29015f6613cfabcea28eab54657374",
                 mode: "send",
               }),
               expectedStatus: {
-                amount: new BigNumber("5000000001"),
+                amount: new BigNumber("101"),
                 errors: {
                   amount: new NotEnoughBalance(),
                 },
@@ -60,13 +60,13 @@ const dataset: DatasetTest<Transaction> = {
                   "addr_test1qpl90kc2jl5kr9tev0s7vays9yhwcdnq8nlylyk4dqsdq3g466elxnxwrzwq72pvp5akenj30t5s9et7frfvrxxx8xcsxrzs87",
                 amount: "0",
                 subAccountId:
-                  "js:2:cardano_testnet:a902bc61a79256e1d5858d2ba49cab7011a26ad49580daace7412e255e818b1c1eba2defa321ff2937deba397f639f5bbabb0f0064516301fa4d08663c83f5b2:+cardano_testnet%2Fnative%2F581684861359b6d4d00594073a9aa4223c6fc24d24da05e1b34fb865544553545f544f4b454e",
+                  "js:2:cardano_testnet:806499588e0c4a58f4119f7e6e096bf42c3f774a528d2acec9e82ceebf87d1ceb3d4f3622dd2c77c65cc89c123f79337db22cf8a69f122e36dab1bf5083bf82d:cardano+cardano_testnet%2Fnative%2F47be64fcc8a7fe5321b976282ce4e43e4d29015f6613cfabcea28eab54657374",
                 mode: "send",
                 useAllAmount: true,
               }),
               expectedStatus: {
-                amount: new BigNumber("5000000000"),
-                totalSpent: new BigNumber("5000000000"),
+                amount: new BigNumber("100"),
+                totalSpent: new BigNumber("100"),
                 errors: {},
                 warnings: {},
               },

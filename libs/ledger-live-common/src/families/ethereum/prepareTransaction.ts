@@ -11,6 +11,7 @@ import { isEthereumAddress } from "./logic";
 import { NetworkInfo, Transaction } from "./types";
 import { buildEthereumTx, EIP1559ShouldBeUsed } from "./transaction";
 import { prepareTransaction as prepareTransactionModules } from "./modules";
+import { findSubAccountById } from "../../account";
 
 export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] =
   async (account, tx) => {
@@ -49,22 +50,38 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
 
     let estimatedGasLimit;
     if (isEthereumAddress(tx.recipient)) {
-      const { tx: transaction } = buildEthereumTx(
-        account,
-        tx,
-        account.operationsCount
-      );
-      invariant(transaction.to, "ethereum transaction has no recipient");
+      // building a bear minimum transaction for gas estimation
+      const protoTransaction = (() => {
+        try {
+          return buildEthereumTx(account, tx, account.operationsCount).tx;
+        } catch (e) {
+          // fallback in case @ethereumjs/tx breaks on building a potentially partial transaction
+          const subAccount = tx.subAccountId
+            ? findSubAccountById(account, tx.subAccountId)
+            : null;
+          const recipient =
+            subAccount?.type === "TokenAccount"
+              ? subAccount.token.contractAddress
+              : tx.recipient;
+          return {
+            from: account.freshAddress,
+            to: recipient,
+            data: undefined,
+            value: tx.amount,
+          };
+        }
+      })();
+      invariant(protoTransaction.to, "ethereum transaction has no recipient");
 
       estimatedGasLimit = await estimateGasLimit(
         account,
-        transaction.to!.toString(),
         // Those are the only elements from a transaction necessary to estimate the gas limit
         {
           from: account.freshAddress,
-          value: "0x" + (transaction.value.toString(16) || "00"),
-          data: transaction.data
-            ? `0x${transaction.data.toString("hex")}`
+          to: protoTransaction.to!.toString(),
+          value: "0x" + (protoTransaction.value.toString(16) || "00"),
+          data: protoTransaction.data
+            ? `0x${protoTransaction.data.toString("hex")}`
             : "0x",
         }
       );

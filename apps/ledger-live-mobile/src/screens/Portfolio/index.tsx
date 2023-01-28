@@ -1,11 +1,7 @@
-import React, { useCallback, useMemo, useState, memo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
-import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
-import Animated, {
-  useAnimatedScrollHandler,
-  useSharedValue,
-} from "react-native-reanimated";
-import { createNativeWrapper } from "react-native-gesture-handler";
+import { LayoutChangeEvent, ListRenderItemInfo } from "react-native";
+import { useSharedValue } from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
@@ -14,7 +10,6 @@ import { Box, Flex, Button, Icons } from "@ledgerhq/native-ui";
 
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "styled-components/native";
-import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import {
   useDistribution,
@@ -24,27 +19,18 @@ import { accountsSelector } from "../../reducers/accounts";
 import {
   discreetModeSelector,
   counterValueCurrencySelector,
-  carouselVisibilitySelector,
   blacklistedTokenIdsSelector,
 } from "../../reducers/settings";
-import { usePortfolio } from "../../hooks/portfolio";
-import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
-import BackgroundGradient from "../../components/BackgroundGradient";
 
 import GraphCardContainer from "./GraphCardContainer";
 import Carousel from "../../components/Carousel";
-import Header from "./Header";
 import TrackScreen from "../../analytics/TrackScreen";
 import MigrateAccountsBanner from "../MigrateAccounts/Banner";
 import { NavigatorName, ScreenName } from "../../const";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
 import Assets from "./Assets";
-import AddAccountsModal from "../AddAccounts/AddAccountsModal";
 import CheckLanguageAvailability from "../../components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "../../components/CheckTermOfUseUpdate";
-import TabBarSafeAreaView, {
-  TAB_BAR_SAFE_HEIGHT,
-} from "../../components/TabBar/TabBarSafeAreaView";
 import { useProviders } from "../Swap/Form/index";
 import PortfolioEmptyState from "./PortfolioEmptyState";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
@@ -52,40 +38,34 @@ import SectionContainer from "../WalletCentricSections/SectionContainer";
 import AllocationsSection from "../WalletCentricSections/Allocations";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 import { track } from "../../analytics";
-import PostOnboardingEntryPointCard from "../../components/PostOnboarding/PostOnboardingEntryPointCard";
-import { PortfolioNavigatorStackParamList } from "../../components/RootNavigator/types/PortfolioNavigator";
 import {
   BaseComposite,
   BaseNavigation,
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
+import { usePortfolio } from "../../hooks/portfolio";
+import { WalletTabNavigatorStackParamList } from "../../components/RootNavigator/types/WalletTabNavigator";
+import AddAccountsModal from "../AddAccounts/AddAccountsModal";
+import CollapsibleHeaderFlatList from "../../components/WalletTab/CollapsibleHeaderFlatList";
+import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
+import useDynamicContent from "../../dynamicContent/dynamicContent";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
-const AnimatedFlatListWithRefreshControl = createNativeWrapper(
-  Animated.createAnimatedComponent(globalSyncRefreshControl(FlatList)),
-  {
-    disallowInterruption: true,
-    shouldCancelWhenOutside: false,
-  },
-);
-
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<PortfolioNavigatorStackParamList, ScreenName.Portfolio>
+  StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
 >;
 
 const maxAssetsToDisplay = 5;
 
+const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(
+  CollapsibleHeaderFlatList,
+  { progressViewOffset: 64 },
+);
+
 function PortfolioScreen({ navigation }: NavigationProps) {
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
-
   const { t } = useTranslation();
-  const carouselVisibility = useSelector(carouselVisibilitySelector);
-  const showCarousel = useMemo(
-    () => Object.values(carouselVisibility).some(Boolean),
-    [carouselVisibility],
-  );
-
   const distribution = useDistribution({
     showEmptyAccounts: true,
     hideEmptyTokenAccount,
@@ -99,6 +79,8 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   const discreetMode = useSelector(discreetModeSelector);
   const [isAddModalOpened, setAddModalOpened] = useState(false);
   const { colors } = useTheme();
+  const { isAWalletCardDisplayed } = useDynamicContent();
+
   const openAddModal = useCallback(() => {
     track("button_clicked", {
       button: "Add Account",
@@ -116,9 +98,6 @@ function PortfolioScreen({ navigation }: NavigationProps) {
 
   const [graphCardEndPosition, setGraphCardEndPosition] = useState(0);
   const currentPositionY = useSharedValue(0);
-  const handleScroll = useAnimatedScrollHandler(event => {
-    currentPositionY.value = event.contentOffset.y;
-  });
 
   const onPortfolioCardLayout = useCallback((event: LayoutChangeEvent) => {
     const { y, height } = event.nativeEvent.layout;
@@ -155,15 +134,11 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     [distribution, blacklistedTokenIds],
   );
 
-  const postOnboardingVisible = usePostOnboardingEntryPointVisibleOnWallet();
-
   const data = useMemo(
     () => [
-      postOnboardingVisible && (
-        <Box m={6}>
-          <PostOnboardingEntryPointCard />
-        </Box>
-      ),
+      <Flex px={6} py={4}>
+        <FirmwareUpdateBanner />
+      </Flex>,
       <Box mt={3} onLayout={onPortfolioCardLayout}>
         <GraphCardContainer
           counterValueCurrency={counterValueCurrency}
@@ -204,15 +179,15 @@ function PortfolioScreen({ navigation }: NavigationProps) {
             </Box>,
           ]
         : []),
-      ...(showAssets && showCarousel
+      ...(showAssets && isAWalletCardDisplayed
         ? [
             <Box background={colors.background.main}>
               <SectionContainer px={0} minHeight={240}>
                 <SectionTitle
-                  title={t("portfolio.recommended.title")}
+                  title={t("portfolio.carousel.title")}
                   containerProps={{ mb: 7, mx: 6 }}
                 />
-                <Carousel cardsVisibility={carouselVisibility} />
+                <Carousel />
               </SectionContainer>
             </Box>,
           ]
@@ -232,9 +207,9 @@ function PortfolioScreen({ navigation }: NavigationProps) {
           ]
         : [
             // If the user has no accounts we display an empty state
-            <Flex flex={1} mt={12}>
+            <Box mx={6} mt={12}>
               <PortfolioEmptyState openAddAccountModal={openAddModal} />
-            </Flex>,
+            </Box>,
           ]),
     ],
     [
@@ -250,62 +225,35 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       assetsToDisplay,
       distribution.list.length,
       openAddModal,
-      showCarousel,
-      carouselVisibility,
+      isAWalletCardDisplayed,
       accounts,
       goToAssets,
-      postOnboardingVisible,
     ],
   );
 
   return (
     <>
-      <TabBarSafeAreaView
-        style={{
-          flex: 1,
-          paddingTop: 48,
+      <CheckLanguageAvailability />
+      <CheckTermOfUseUpdate />
+      <TrackScreen
+        category="Wallet"
+        accountsLength={distribution.list && distribution.list.length}
+        discreet={discreetMode}
+      />
+      <RefreshableCollapsibleHeaderFlatList
+        data={data}
+        renderItem={({ item }: ListRenderItemInfo<unknown>) => {
+          return item as JSX.Element;
         }}
-      >
-        <CheckLanguageAvailability />
-        <CheckTermOfUseUpdate />
-        <TrackScreen
-          category="Wallet"
-          accountsLength={distribution.list && distribution.list.length}
-          discreet={discreetMode}
-        />
-        <BackgroundGradient
-          currentPositionY={currentPositionY}
-          graphCardEndPosition={graphCardEndPosition}
-        />
-        <FirmwareUpdateBanner containerProps={{ mt: 9, mb: 0 }} />
-        <AnimatedFlatListWithRefreshControl
-          data={data}
-          style={{
-            flex: 1,
-          }}
-          contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
-          renderItem={({ item }: ListRenderItemInfo<unknown>) =>
-            item as JSX.Element
-          }
-          keyExtractor={(_: unknown, index: number) => String(index)}
-          showsVerticalScrollIndicator={false}
-          onScroll={handleScroll}
-          testID={
-            distribution.list && distribution.list.length
-              ? "PortfolioAccountsList"
-              : "PortfolioEmptyAccount"
-          }
-        />
-        <MigrateAccountsBanner />
-        <Header
-          counterValueCurrency={counterValueCurrency}
-          portfolio={portfolio}
-          currentPositionY={currentPositionY}
-          graphCardEndPosition={graphCardEndPosition}
-          hidePortfolio={areAccountsEmpty}
-        />
-      </TabBarSafeAreaView>
-
+        keyExtractor={(_: unknown, index: number) => String(index)}
+        showsVerticalScrollIndicator={false}
+        testID={
+          distribution.list && distribution.list.length
+            ? "PortfolioAccountsList"
+            : "PortfolioEmptyAccount"
+        }
+      />
+      <MigrateAccountsBanner />
       <AddAccountsModal
         navigation={navigation as unknown as BaseNavigation}
         isOpened={isAddModalOpened}
@@ -315,4 +263,4 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   );
 }
 
-export default memo(PortfolioScreen);
+export default PortfolioScreen;

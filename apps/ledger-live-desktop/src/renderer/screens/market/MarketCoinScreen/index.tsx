@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Flex, Text, Icon } from "@ledgerhq/react-ui";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
@@ -10,6 +10,8 @@ import styled, { useTheme } from "styled-components";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import { addStarredMarketCoins, removeStarredMarketCoins } from "~/renderer/actions/settings";
+import { track } from "~/renderer/analytics/segment";
+import { swapDefaultTrack } from "~/renderer/screens/exchange/Swap2/utils/index";
 import { Button } from "..";
 import MarketCoinChart from "./MarketCoinChart";
 import MarketInfo from "./MarketInfo";
@@ -86,7 +88,6 @@ export default function MarketCoinScreen() {
     counterCurrency,
     setCounterCurrency,
     supportedCounterCurrencies,
-    selectCurrency,
   } = useSingleCoinMarketData(currencyId);
 
   const rampCatalog = useRampCatalog();
@@ -135,27 +136,21 @@ export default function MarketCoinScreen() {
       e.preventDefault();
       e.stopPropagation();
       setTrackingSource("Page Market Coin");
-      // PTX smart routing redirect to live app or to native implementation
-      if (ptxSmartRouting?.enabled && currency?.internalCurrency) {
-        const params = {
-          currency: currency.internalCurrency?.id,
-          mode: "buy", // buy or sell
-        };
 
-        history.push({
-          // replace 'multibuy' in case live app id changes
-          pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ?? "multibuy"}`,
-          state: params,
-        });
-      } else {
-        history.push({
-          pathname: "/exchange",
-          state: {
-            mode: "onRamp",
-            defaultTicker: currency && currency.ticker ? currency.ticker.toUpperCase() : undefined,
-          },
-        });
-      }
+      history.push({
+        pathname: "/exchange",
+        state:
+          ptxSmartRouting?.enabled && currency?.internalCurrency
+            ? {
+                currency: currency.internalCurrency?.id,
+                mode: "buy", // buy or sell
+              }
+            : {
+                mode: "onRamp",
+                defaultTicker:
+                  currency && currency.ticker ? currency.ticker.toUpperCase() : undefined,
+              },
+      });
     },
     [currency, history, ptxSmartRouting],
   );
@@ -175,7 +170,13 @@ export default function MarketCoinScreen() {
       if (currency?.internalCurrency?.id) {
         e.preventDefault();
         e.stopPropagation();
-        setTrackingSource("Page Market");
+        track("button_clicked", {
+          button: "swap",
+          currency: currency?.ticker,
+          page: "Page Maket Coin",
+          ...swapDefaultTrack,
+        });
+        setTrackingSource("Page Maket Coin");
 
         const currencyId = currency?.internalCurrency?.id;
 
@@ -197,7 +198,7 @@ export default function MarketCoinScreen() {
         });
       }
     },
-    [currency?.internalCurrency, flattenedAccounts, history, openAddAccounts],
+    [currency?.internalCurrency, currency?.ticker, flattenedAccounts, history, openAddAccounts],
   );
 
   const toggleStar = useCallback(() => {

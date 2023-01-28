@@ -6,14 +6,17 @@ const idFromFolderAndFile = (folder, id) =>
 
 module.exports = {
   paths: ["coins"],
-  output: (toJSON) => `data/exchange/coins.js${toJSON ? "on" : ""}`,
+  output: (toJSON) => `data/exchange/coins.${toJSON ? "json" : "ts"}`,
   outputTemplate: (data, toJSON) =>
     toJSON
       ? JSON.stringify(data)
-      : "module.exports = [" +
-        data.map((item) => JSON.stringify(item)).join(",\n\t") +
-        "];\n",
+      : `export type Exchange = [string, string, string];
+const exchanges: Exchange[] = [
+  ${data.map((item) => JSON.stringify(item)).join(",\n\t")}
+];
 
+export default exchanges;
+`,
   loader: ({ signatureFolder, folder, id }) =>
     Promise.all([
       readFileJSON(path.join(signatureFolder, id, "exchange_signature.json")),

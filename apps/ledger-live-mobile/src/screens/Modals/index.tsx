@@ -28,7 +28,7 @@ const Modals = () => {
   const pushNotificationsFeature = useFeature("brazePushNotifications");
   const { onPushNotificationsRouteChange } = useNotifications();
 
-  const ratingsFeature = useFeature("ratings");
+  const ratingsFeature = useFeature("ratingsPrompt");
   const { onRatingsRouteChange } = useRatings();
 
   const onRouteChange = useCallback(
@@ -76,7 +76,7 @@ const Modals = () => {
       <FeatureToggle feature="brazePushNotifications">
         <PushNotificationsModal />
       </FeatureToggle>
-      <FeatureToggle feature="ratings">
+      <FeatureToggle feature="ratingsPrompt">
         <RatingsModal />
       </FeatureToggle>
     </>

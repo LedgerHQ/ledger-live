@@ -13,7 +13,7 @@ import type {
 import { Announcement } from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
 import store from "./logic/storeWrapper";
 import type { User } from "./types/store";
-import type { BleState, SettingsState } from "./reducers/types";
+import type { BleState, ProtectState, SettingsState } from "./reducers/types";
 
 export type Notifications = {
   announcements: Announcement[];
@@ -280,4 +280,13 @@ export async function savePostOnboardingState(
   obj: PostOnboardingState,
 ): Promise<void> {
   await store.save("postOnboarding", obj);
+}
+
+export async function getProtect(): Promise<ProtectState> {
+  const protect = (await store.get("protect")) as ProtectState;
+  return protect;
+}
+
+export async function saveProtect(obj: ProtectState): Promise<void> {
+  await store.save("protect", obj);
 }

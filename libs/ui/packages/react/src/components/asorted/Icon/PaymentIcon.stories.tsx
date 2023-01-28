@@ -43,21 +43,14 @@ const Story = {
     size: {
       type: "enum",
       description: "Icon size",
-      defaultValue: "L",
+      defaultValue: "S",
       control: {
         options: Object.keys(flagSizes),
       },
     },
     name: {
       type: "string",
-      // defaultValue: "France",
-      // description: "[Only for single icon], Icon name",
-      // control: {
-      //   options: iconNames,
-      //   control: {
-      //     type: "select",
-      //   },
-      // },
+      defaultValue: "Ach",
     },
   },
 };
@@ -72,7 +65,7 @@ const ListTemplate = (args: PaymentIconProps) => {
     <Container>
       <SearchInput value={search} onChange={setSearch} />
       <ScrollArea
-        gridTemplateColumns="repeat(auto-fill, 100px);"
+        gridTemplateColumns="repeat(auto-fill, 120px);"
         gridTemplateRows="repeat(auto-fill, 100px);"
         gridGap={4}
         mt={4}

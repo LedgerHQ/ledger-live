@@ -1,11 +1,9 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
-import type {
-  CryptoCurrency,
-  CryptoOrTokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
+import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
 import { Icons } from "@ledgerhq/native-ui";
 import { ScreenName, NavigatorName } from "../../const";
 import { rgba } from "../../colors";
@@ -90,7 +88,7 @@ function CurrencySuccess({ currency }: CurrencySuccessProps) {
       style={[
         styles.currencySuccess,
         {
-          backgroundColor: rgba((currency as CryptoCurrency).color, 0.14),
+          backgroundColor: rgba(getCurrencyColor(currency), 0.14),
         },
       ]}
     >

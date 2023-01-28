@@ -27,5 +27,4 @@ runs:
     - uses: ruby/setup-ruby@v1
       if: ${{ !inputs.skip_ruby }}
       with:
-        ruby-version: 2.7
-        bundler-cache: true
+        ruby-version: 3.1.2

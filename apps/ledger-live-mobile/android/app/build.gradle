@@ -281,6 +281,7 @@ android {
         release {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
             matchingFallbacks = ['debug']
         }
         stagingRelease {
@@ -321,6 +322,7 @@ dependencies {
     releaseImplementation files(hermesPath + "hermes-release.aar")
 
     androidTestImplementation('com.wix:detox:+')
+    implementation 'com.facebook.soloader:soloader:0.10.4+'
 
     compile project(':react-native-video')
     implementation "androidx.appcompat:appcompat:1.0.0"

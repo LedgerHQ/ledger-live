@@ -5,6 +5,7 @@ import Text from "~/renderer/components/Text";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { useGetAccountIds } from "@ledgerhq/live-common/wallet-api/react";
 import { useSelector, useDispatch } from "react-redux";
 import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { accountsSelector } from "~/renderer/reducers/accounts";
@@ -32,15 +33,17 @@ const AddIconContainer = styled.div`
 type Props = {
   currency: CryptoCurrency | TokenCurrency,
   onAccountSelect: (account: AccountLike, parentAccount?: Account) => void,
+  accounts$?: Observable<WalletAPIAccount[]>,
 };
 
-export function AccountList({ currency, onAccountSelect }: Props) {
+export function AccountList({ currency, onAccountSelect, accounts$ }: Props) {
   const dispatch = useDispatch();
 
+  const accountIds = useGetAccountIds(accounts$);
   const nestedAccounts = useSelector(accountsSelector);
   const accountTuples = useMemo(() => {
-    return getAccountTuplesForCurrency(currency, nestedAccounts, false);
-  }, [nestedAccounts, currency]);
+    return getAccountTuplesForCurrency(currency, nestedAccounts, false, accountIds);
+  }, [nestedAccounts, currency, accountIds]);
 
   const openAddAccounts = useCallback(() => {
     dispatch(

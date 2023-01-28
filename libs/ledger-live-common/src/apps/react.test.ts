@@ -10,20 +10,27 @@ import {
 } from "./react";
 import { useNotEnoughMemoryToInstall } from "./react";
 import { AppType, SortOptions } from "./filtering";
+import { calculateDependencies } from "./polyfill";
 
+calculateDependencies();
 const mockedState = initState(
   mockListAppsResult(
-    "Bitcoin, Ethereum, Litecoin, Dogecoin, Ethereum Classic, XRP, Bitcoin Cash, Decred",
+    "Bitcoin, Bitcoin Legacy, Ethereum, Litecoin, Dogecoin, Ethereum Classic, XRP, Bitcoin Cash, Decred",
     "Litecoin (outdated), Ethereum, Ethereum Classic",
     deviceInfo155
   )
 );
-test("Apps hooks - useAppInstallNeedsDeps - Expect dep apps", () => {
+test("Apps hooks - useAppInstallNeedsDeps - Expect Bitcoin cash to depend on bitcoin legacy", () => {
   const { result = <any>{} } = renderHook(() =>
     useAppInstallNeedsDeps(mockedState, mockedState.appByName["Bitcoin Cash"])
   );
   expect(result?.current.dependencies.length).toBe(1);
   expect(result?.current.dependencies[0].name).toBe("Bitcoin");
+  //TODO: Reactivate the following code after new bitcoin nano app 2.1.0
+  /*
+  expect(result?.current.dependencies.length).toBe(1);
+  expect(result?.current.dependencies[0].name).toBe("Bitcoin Legacy");
+  */
 });
 test("Apps hooks - useAppInstallNeedsDeps - Expect Decred to not depend on bitcoin", () => {
   const { result = <any>{} } = renderHook(() =>
@@ -142,7 +149,7 @@ test("Apps hooks - useAppsSections - Correct number of catalog apps", () => {
       },
     })
   );
-  expect(result.current.catalog.length).toBe(8);
+  expect(result.current.catalog.length).toBe(9);
 });
 test("Apps hooks - useAppsSections - Correct number of catalog apps with query", () => {
   const { result } = renderHook(() =>
@@ -155,7 +162,7 @@ test("Apps hooks - useAppsSections - Correct number of catalog apps with query",
       },
     })
   );
-  expect(result.current.catalog.length).toBe(4);
+  expect(result.current.catalog.length).toBe(5);
 });
 test("Apps hooks - useAppsSections - Correct number of installed apps with query", () => {
   const { result } = renderHook(() =>
@@ -174,7 +181,7 @@ test("Apps hooks - useAppsSections - Correct number of installed apps with query
 const mockedStateWithInstallQueue = {
   ...initState(
     mockListAppsResult(
-      "Bitcoin, Ethereum, Litecoin, Dogecoin, Ethereum Classic, XRP, Bitcoin Cash, Decred",
+      "Bitcoin, Bitcoin Legacy, Ethereum, Litecoin, Dogecoin, Ethereum Classic, XRP, Bitcoin Cash, Decred",
       "Litecoin (outdated), Ethereum, Ethereum Classic",
       deviceInfo155
     )

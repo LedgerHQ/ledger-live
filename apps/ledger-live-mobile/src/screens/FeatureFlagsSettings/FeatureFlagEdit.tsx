@@ -94,10 +94,11 @@ const FeatureFlagEdit: React.FC<{
         )}
       />
       <Flex flexDirection="row" mt={3}>
-        <Button type="main" outline onPress={handleRestoreFeature}>
+        <Button size="small" type="main" outline onPress={handleRestoreFeature}>
           {t("settings.debug.featureFlagsRestore")}
         </Button>
         <Button
+          size="small"
           disabled={!inputValue}
           type="main"
           onPress={handleOverrideFeature}

@@ -24,7 +24,7 @@ const UnlockDeviceDrawer = ({ isOpen, device, onClose }: Props) => {
       preventBackdropClick
       noCloseButton
     >
-      <Flex mb={200} pt={50}>
+      <Flex mb={260} pt={110}>
         <AllowManager
           t={t}
           wording={t(

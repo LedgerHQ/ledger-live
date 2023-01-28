@@ -12,6 +12,8 @@ Ledger types for devices and transport.
 
 *   [DeviceModelId](#devicemodelid)
 *   [DeviceModel](#devicemodel)
+*   [ChargingModes](#chargingmodes)
+*   [BatteryStatusFlags](#batterystatusflags)
 *   [BluetoothInfos](#bluetoothinfos)
 *   [Subscription](#subscription)
     *   [Properties](#properties)
@@ -31,6 +33,12 @@ DeviceModelId is a unique identifier to identify the model of a Ledger hardware 
 ### DeviceModel
 
 a DeviceModel contains all the information of a specific Ledger hardware wallet model.
+
+### ChargingModes
+
+### BatteryStatusFlags
+
+Series of flags to represent the health status of the Ledger hardware wallet battery.
 
 ### BluetoothInfos
 

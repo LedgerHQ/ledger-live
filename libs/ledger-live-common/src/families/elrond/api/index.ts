@@ -1,8 +1,13 @@
 export {
   getAccount,
   getNetworkConfig,
-  getValidators,
-  getOperations,
+  getProviders,
+  getEGLDOperations,
   getFees,
   broadcastTransaction,
+  getAccountESDTTokens,
+  getAccountDelegations,
+  getESDTOperations,
+  hasESDTTokens,
+  getAccountNonce,
 } from "./sdk";

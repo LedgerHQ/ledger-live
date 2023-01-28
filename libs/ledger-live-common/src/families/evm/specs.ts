@@ -60,6 +60,47 @@ const evmBasicMutations = ({ maxAccount }) => [
       );
     },
   },
+  {
+    name: "send max",
+    maxRun: 1,
+    testDestination: genericTestDestination,
+    transaction: ({ account, siblings, bridge }) => {
+      const sibling = pickSiblings(siblings, maxAccount);
+      const recipient = sibling.freshAddress;
+
+      return {
+        transaction: bridge.createTransaction(account),
+        updates: [
+          {
+            recipient,
+          },
+          {
+            useAllAmount: true,
+          },
+        ],
+      };
+    },
+    test: ({ account, accountBeforeTransaction, operation, transaction }) => {
+      // workaround for buggy explorer behavior (nodes desync)
+      invariant(
+        Date.now() - operation.date > 60000,
+        "operation time to be older than 60s"
+      );
+      const estimatedGas = transaction.gasLimit.times(
+        transaction.gasPrice || transaction.maxFeePerGas || 0
+      );
+      botTest("operation fee is not exceeding estimated gas", () =>
+        expect(operation.fee.toNumber()).toBeLessThanOrEqual(
+          estimatedGas.toNumber()
+        )
+      );
+      botTest("account balance moved with operation value", () =>
+        expect(account.balance.toString()).toBe(
+          accountBeforeTransaction.balance.minus(operation.value).toString()
+        )
+      );
+    },
+  },
 ];
 
 const cronos: AppSpec<Transaction> = {

@@ -38,6 +38,7 @@ import {
 import { knownDevicesSelector } from "../reducers/ble";
 import { DeviceLike, State } from "../reducers/types";
 import { satisfactionSelector } from "../reducers/ratings";
+import { accountsSelector } from "../reducers/accounts";
 import type { AppStore } from "../reducers";
 import { NavigatorName } from "../const";
 import { previousRouteNameRef, currentRouteNameRef } from "./screenRefs";
@@ -52,7 +53,7 @@ const { ANALYTICS_LOGS, ANALYTICS_TOKEN } = Config;
 
 export const updateSessionId = () => (sessionId = uuid());
 
-const extraProperties = (store: AppStore) => {
+const extraProperties = async (store: AppStore) => {
   const state: State = store.getState();
   const sensitiveAnalytics = sensitiveAnalyticsSelector(state);
   const systemLanguage = sensitiveAnalytics
@@ -62,6 +63,7 @@ const extraProperties = (store: AppStore) => {
   const region = sensitiveAnalytics ? null : localeSelector(state);
   const devices = knownDevicesSelector(state);
   const satisfaction = satisfactionSelector(state);
+  const accounts = accountsSelector(state);
   const lastDevice =
     lastSeenDeviceSelector(state) || devices[devices.length - 1];
   const deviceInfo = lastDevice
@@ -85,6 +87,16 @@ const extraProperties = (store: AppStore) => {
     .map(([key]) => key);
   const firstConnectHasDeviceUpdated =
     firstConnectHasDeviceUpdatedSelector(state);
+  const { user } = await getOrCreateUser();
+  const blockchainsWithNftsOwned = accounts
+    ? [
+        ...new Set(
+          accounts
+            .filter(account => account.nfts?.length)
+            .map(account => account.currency.ticker),
+        ),
+      ]
+    : [];
 
   return {
     appVersion,
@@ -109,6 +121,8 @@ const extraProperties = (store: AppStore) => {
     ...deviceInfo,
     notificationsAllowed,
     notificationsBlacklisted,
+    userId: user?.id,
+    blockchainsWithNftsOwned,
   };
 };
 
@@ -129,6 +143,7 @@ export const start = async (
   }
 
   console.log("START ANALYTICS", ANALYTICS_LOGS);
+  const userExtraProperties = await extraProperties(store);
   if (token) {
     segmentClient = createClient({
       writeKey: token,
@@ -139,11 +154,11 @@ export const start = async (
 
     if (created) {
       segmentClient.reset();
-      segmentClient.identify(user.id, extraProperties(store));
     }
+    segmentClient.identify(user.id, userExtraProperties);
   }
 
-  track("Start", extraProperties(store), true);
+  track("Start", userExtraProperties, true);
   return segmentClient;
 };
 export const updateIdentify = async () => {
@@ -156,56 +171,88 @@ export const updateIdentify = async () => {
     return;
   }
 
-  if (ANALYTICS_LOGS)
-    console.log("analytics:identify", extraProperties(storeInstance));
+  const userExtraProperties = await extraProperties(storeInstance);
+  if (ANALYTICS_LOGS) console.log("analytics:identify", userExtraProperties);
   if (!token) return;
-  const { user } = await getOrCreateUser();
-  segmentClient?.identify(user.id, extraProperties(storeInstance));
+  segmentClient?.identify(userExtraProperties.userId, userExtraProperties);
 };
 export const stop = () => {
   if (ANALYTICS_LOGS) console.log("analytics:stop");
   storeInstance = null;
 };
-export const trackSubject = new ReplaySubject<{
-  event: string;
-  properties?: Error | Record<string, unknown> | null;
-}>(10);
-export const track = (
-  event: string,
-  properties?: Error | Record<string, unknown> | null,
+
+type Properties = Error | Record<string, unknown> | null;
+export type LoggableEvent = {
+  eventName: string;
+  eventProperties?: Properties;
+  eventPropertiesWithoutExtra?: Properties;
+  date: Date;
+};
+export const trackSubject = new ReplaySubject<LoggableEvent>(30);
+
+type EventType = string | "button_clicked" | "error_message";
+
+export function getIsTracking(
+  state: State | null | undefined,
+  mandatory?: boolean | null | undefined,
+): { enabled: true } | { enabled: false; reason?: string } {
+  if (!state) return { enabled: false, reason: "store not initialised" };
+  const readOnlyMode = state && readOnlyModeEnabledSelector(state);
+  const hasOrderedNano = state && hasOrderedNanoSelector(state);
+  const analyticsEnabled = state && analyticsEnabledSelector(state);
+  if (readOnlyMode && hasOrderedNano)
+    return {
+      enabled: false,
+      reason:
+        "not tracking anything in the reborn state post purchase pre device setup",
+    };
+  if (!mandatory && !analyticsEnabled) {
+    return {
+      enabled: false,
+      reason: "analytics not enabled",
+    };
+  }
+  return { enabled: true };
+}
+
+export const track = async (
+  event: EventType,
+  eventProperties?: Error | Record<string, unknown> | null,
   mandatory?: boolean | null,
 ) => {
   Sentry.addBreadcrumb({
     message: event,
     category: "track",
-    data: properties || undefined,
+    data: eventProperties || undefined,
     level: "debug",
   });
 
   const state = storeInstance && storeInstance.getState();
 
-  const readOnlyMode = state && readOnlyModeEnabledSelector(state);
-  const hasOrderedNano = state && hasOrderedNanoSelector(state);
-
-  if (
-    !state ||
-    (!mandatory && !analyticsEnabledSelector(state)) ||
-    (readOnlyMode && hasOrderedNano) // do not track anything in the reborn state post purchase pre device setup
-  ) {
+  const isTracking = getIsTracking(state, mandatory);
+  if (!isTracking.enabled) {
+    if (ANALYTICS_LOGS)
+      console.log("analytics:track: not tracking because: ", isTracking.reason);
     return;
   }
 
   const screen = currentRouteNameRef.current;
 
-  const allProperties = {
+  const userExtraProperties = await extraProperties(storeInstance as AppStore);
+  const propertiesWithoutExtra = {
     screen,
-    ...extraProperties(storeInstance as AppStore),
-    ...properties,
+    ...eventProperties,
+  };
+  const allProperties = {
+    ...propertiesWithoutExtra,
+    ...userExtraProperties,
   };
   if (ANALYTICS_LOGS) console.log("analytics:track", event, allProperties);
   trackSubject.next({
-    event,
-    properties: allProperties,
+    eventName: event,
+    eventProperties: allProperties,
+    eventPropertiesWithoutExtra: propertiesWithoutExtra,
+    date: new Date(),
   });
   if (!token) return;
   segmentClient?.track(event, allProperties);
@@ -216,7 +263,7 @@ export const getPageNameFromRoute = (route: RouteProp<ParamListBase>) => {
   return snakeCase(routeName);
 };
 export const trackWithRoute = (
-  event: string,
+  event: EventType,
   route: RouteProp<ParamListBase>,
   properties?: Record<string, unknown> | null,
   mandatory?: boolean | null,
@@ -232,7 +279,7 @@ export const useTrack = () => {
   const route = useRoute();
   const track = useCallback(
     (
-      event: string,
+      event: EventType,
       properties?: Record<string, unknown> | null,
       mandatory?: boolean | null,
     ) => trackWithRoute(event, route, properties, mandatory),
@@ -252,7 +299,7 @@ export const useAnalytics = () => {
     page,
   };
 };
-export const screen = (
+export const screen = async (
   category?: string,
   name?: string | null,
   properties?: Record<string, unknown> | null | undefined,
@@ -267,29 +314,34 @@ export const screen = (
 
   const state = storeInstance && storeInstance.getState();
 
-  const readOnlyMode = state && readOnlyModeEnabledSelector(state);
-  const hasOrderedNano = state && hasOrderedNanoSelector(state);
-
-  if (
-    !state ||
-    !analyticsEnabledSelector(state) ||
-    (readOnlyMode && hasOrderedNano) // do not track anything in the reborn state post purchase pre device setup
-  ) {
+  const isTracking = getIsTracking(state);
+  if (!isTracking.enabled) {
+    if (ANALYTICS_LOGS)
+      console.log(
+        "analytics:screen: not tracking because: ",
+        isTracking.reason,
+      );
     return;
   }
 
   const source = previousRouteNameRef.current;
 
-  const allProperties = {
+  const userExtraProperties = await extraProperties(storeInstance as AppStore);
+  const eventPropertiesWithoutExtra = {
     source,
-    ...extraProperties(storeInstance as AppStore),
     ...properties,
+  };
+  const allProperties = {
+    ...eventPropertiesWithoutExtra,
+    ...userExtraProperties,
   };
   if (ANALYTICS_LOGS)
     console.log("analytics:screen", category, name, allProperties);
   trackSubject.next({
-    event: title,
-    properties: allProperties,
+    eventName: title,
+    eventProperties: allProperties,
+    eventPropertiesWithoutExtra,
+    date: new Date(),
   });
   if (!token) return;
   segmentClient?.track(title, allProperties);

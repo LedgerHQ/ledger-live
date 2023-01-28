@@ -107,7 +107,6 @@ describe("EVM Family", () => {
     describe("transactionToEthersTransaction", () => {
       it("should build convert an EIP1559 ledger live transaction to an ethers transaction", () => {
         const ethers1559Tx: ethers.Transaction = {
-          from: "0xBob",
           to: "0xkvn",
           nonce: 0,
           gasLimit: ethers.BigNumber.from(21000),
@@ -119,14 +118,11 @@ describe("EVM Family", () => {
           maxPriorityFeePerGas: ethers.BigNumber.from(10000),
         };
 
-        expect(transactionToEthersTransaction(eip1559Tx, fakeAccount)).toEqual(
-          ethers1559Tx
-        );
+        expect(transactionToEthersTransaction(eip1559Tx)).toEqual(ethers1559Tx);
       });
 
       it("should build convert an legacy ledger live transaction to an ethers transaction", () => {
         const legacyEthersTx: ethers.Transaction = {
-          from: "0xBob",
           to: "0xkvn",
           nonce: 0,
           gasLimit: ethers.BigNumber.from(21000),
@@ -137,7 +133,7 @@ describe("EVM Family", () => {
           gasPrice: ethers.BigNumber.from(10000),
         };
 
-        expect(transactionToEthersTransaction(legacyTx, fakeAccount)).toEqual(
+        expect(transactionToEthersTransaction(legacyTx)).toEqual(
           legacyEthersTx
         );
       });

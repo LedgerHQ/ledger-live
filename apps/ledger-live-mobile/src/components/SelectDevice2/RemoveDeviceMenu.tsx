@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { DeviceModelId } from "@ledgerhq/devices";
 import { disconnect } from "@ledgerhq/live-common/hw/index";
 import { useTheme } from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
@@ -9,7 +10,7 @@ import { Flex } from "@ledgerhq/native-ui";
 import Button from "../Button";
 
 import NanoS from "../../images/devices/NanoS";
-import NanoFTS from "../../images/devices/NanoFTS";
+import Stax from "../../images/devices/Stax";
 import NanoX from "../../images/devices/NanoX";
 
 import Trash from "../../icons/Trash";
@@ -17,11 +18,11 @@ import BottomModal from "../BottomModal";
 import { removeKnownDevice } from "../../actions/ble";
 
 const illustrations = {
-  nanoS: NanoS,
-  nanoSP: NanoS,
-  nanoX: NanoX,
-  blue: NanoS,
-  nanoFTS: NanoFTS,
+  [DeviceModelId.nanoS]: NanoS,
+  [DeviceModelId.nanoSP]: NanoS,
+  [DeviceModelId.nanoX]: NanoX,
+  [DeviceModelId.blue]: NanoS,
+  [DeviceModelId.stax]: Stax,
 };
 
 const RemoveDeviceMenu = ({
@@ -38,7 +39,11 @@ const RemoveDeviceMenu = ({
 
   const illustration = useMemo(
     () =>
-      illustrations[device.modelId]({ color: colors.neutral.c100, size: 200 }),
+      (illustrations[device.modelId] ?? NanoX)({
+        color: colors.neutral.c100,
+        size: 200,
+        theme: colors.type as "light" | "dark",
+      }),
     [device.modelId, colors],
   );
 

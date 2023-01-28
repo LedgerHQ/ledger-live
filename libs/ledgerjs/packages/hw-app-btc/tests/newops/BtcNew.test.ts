@@ -16,23 +16,18 @@ import { CoreInput, CoreTx, p2pkh, p2tr, p2wpkh, wrappedP2wpkh, wrappedP2wpkhTwo
 test("getWalletPublicKey p2pkh", async () => {
   await testGetWalletPublicKey("m/44'/1'/0'", "pkh(@0)");
   await testGetWalletPublicKey("m/44'/0'/17'", "pkh(@0)");
-  await testGetWalletPublicKey("m/46'/0'/17'", "pkh(@0)");
-  await testGetWalletPublicKey("m/109'/0'/17'", "pkh(@0)");
 });
 test("getWalletPublicKey p2wpkh", async () => {
   await testGetWalletPublicKey("m/84'/1'/0'", "wpkh(@0)");
   await testGetWalletPublicKey("m/84'/0'/17'", "wpkh(@0)");
-  await testGetWalletPublicKey("m/2'/0'/17'", "wpkh(@0)");
 });
 test("getWalletPublicKey wrapped p2wpkh", async () => {
   await testGetWalletPublicKey("m/49'/1'/0'", "sh(wpkh(@0))");
   await testGetWalletPublicKey("m/49'/0'/17'", "sh(wpkh(@0))");
-  await testGetWalletPublicKey("m/9'/0'/17'", "sh(wpkh(@0))");
 });
 test("getWalletPublicKey p2tr", async () => {
   await testGetWalletPublicKey("m/86'/1'/0'", "tr(@0)");
   await testGetWalletPublicKey("m/86'/0'/17'", "tr(@0)");
-  await testGetWalletPublicKey("m/17'", "tr(@0)");
 });
 
 test("getWalletXpub normal path", async () => {

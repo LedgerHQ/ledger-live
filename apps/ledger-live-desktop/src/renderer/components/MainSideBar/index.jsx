@@ -15,7 +15,12 @@ import {
   starredAccountsSelector,
   hasLendEnabledAccountsSelector,
 } from "~/renderer/reducers/accounts";
-import { sidebarCollapsedSelector, lastSeenDeviceSelector } from "~/renderer/reducers/settings";
+import {
+  sidebarCollapsedSelector,
+  lastSeenDeviceSelector,
+  featureFlagsButtonVisibleSelector,
+  overriddenFeatureFlagsSelector,
+} from "~/renderer/reducers/settings";
 import { isNavigationLocked } from "~/renderer/reducers/application";
 
 import { openModal } from "~/renderer/actions/modals";
@@ -184,7 +189,7 @@ const SideBarScrollContainer = styled(Box)`
   }
 `;
 
-const TagContainer = ({ collapsed }: { collapsed: boolean }) => {
+const TagContainerExperimental = ({ collapsed }: { collapsed: boolean }) => {
   const isExperimental = useExperimental();
   const hasFullNodeConfigured = useEnv("SATSTACK"); // NB remove once full node is not experimental
 
@@ -198,6 +203,24 @@ const TagContainer = ({ collapsed }: { collapsed: boolean }) => {
     >
       <IconExperimental width={16} height={16} />
       <TagText collapsed={collapsed}>{t("common.experimentalFeature")}</TagText>
+    </Tag>
+  ) : null;
+};
+
+const TagContainerFeatureFlags = ({ collapsed }: { collapsed: boolean }) => {
+  const isFeatureFlagsButtonVisible = useSelector(featureFlagsButtonVisibleSelector);
+  const overriddenFeatureFlags = useSelector(overriddenFeatureFlagsSelector);
+
+  const { t } = useTranslation();
+
+  return isFeatureFlagsButtonVisible || Object.keys(overriddenFeatureFlags).length !== 0 ? (
+    <Tag
+      data-test-id="drawer-feature-flags-button"
+      to={{ pathname: "/settings/developer", state: { shouldOpenFeatureFlags: true } }}
+      onClick={() => setTrackingSource("sidebar")}
+    >
+      <Icons.ChartNetworkMedium width={16} height={16} />
+      <TagText collapsed={collapsed}>{t("common.featureFlags")}</TagText>
     </Tag>
   ) : null;
 };
@@ -454,7 +477,8 @@ const MainSideBar = () => {
                 </SideBarList>
               </Box>
               <Space of={30} grow />
-              <TagContainer collapsed={!secondAnim} />
+              <TagContainerExperimental collapsed={!secondAnim} />
+              <TagContainerFeatureFlags collapsed={!secondAnim} />
             </SideBarScrollContainer>
           </SideBar>
         );

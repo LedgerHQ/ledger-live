@@ -1,5 +1,5 @@
-import invariant from "invariant";
 import { RecipientRequired } from "@ledgerhq/errors";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   SyncOneAccountOnMount,
@@ -7,35 +7,36 @@ import {
 } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
-import React, { useCallback, useRef, useEffect, useState } from "react";
+import Clipboard from "@react-native-community/clipboard";
+import { useTheme } from "@react-navigation/native";
+import invariant from "invariant";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Platform, StyleSheet, View } from "react-native";
-import Clipboard from "@react-native-community/clipboard";
-import Icon from "react-native-vector-icons/FontAwesome";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Icon from "react-native-vector-icons/FontAwesome";
 import { useSelector } from "react-redux";
-import { useTheme } from "@react-navigation/native";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { track, TrackScreen } from "../../analytics";
-import { ScreenName } from "../../const";
-import { accountScreenSelector } from "../../reducers/accounts";
-import Button from "../../components/Button";
-import KeyboardView from "../../components/KeyboardView";
-import LText from "../../components/LText";
 import Alert from "../../components/Alert";
-import TranslatedError from "../../components/TranslatedError";
-import RetryButton from "../../components/RetryButton";
+import Button from "../../components/Button";
 import CancelButton from "../../components/CancelButton";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
+import KeyboardView from "../../components/KeyboardView";
+import LText from "../../components/LText";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import RecipientInput from "../../components/RecipientInput";
+import RetryButton from "../../components/RetryButton";
 import {
   BaseComposite,
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
+import SupportLinkError from "../../components/SupportLinkError";
+import TranslatedError from "../../components/TranslatedError";
+import { ScreenName } from "../../const";
+import { accountScreenSelector } from "../../reducers/accounts";
 
-const withoutHiddenError = (error: Error) =>
+const withoutHiddenError = (error: Error): Error | null =>
   error instanceof RecipientRequired ? null : error;
 
 type Props = BaseComposite<
@@ -225,12 +226,22 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
               />
             </View>
             {(error || warning) && (
-              <LText
-                style={[styles.warningBox]}
-                color={error ? "alert" : warning ? "orange" : "darkBlue"}
-              >
-                <TranslatedError error={error || warning} />
-              </LText>
+              <>
+                <LText
+                  style={[styles.warningBox]}
+                  color={error ? "alert" : warning ? "orange" : "darkBlue"}
+                >
+                  <TranslatedError error={error || warning} />
+                </LText>
+                <View
+                  style={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                  }}
+                >
+                  <SupportLinkError error={error} type="alert" />
+                </View>
+              </>
             )}
           </NavigationScrollView>
           <View style={styles.container}>

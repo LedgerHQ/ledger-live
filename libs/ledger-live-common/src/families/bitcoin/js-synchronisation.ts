@@ -6,7 +6,6 @@ import { log } from "@ledgerhq/logs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
-import { findCurrencyExplorer } from "../../api/Ledger";
 import { encodeAccountId } from "../../account";
 import {
   isSegwitDerivationMode,
@@ -17,7 +16,7 @@ import {
 import { BitcoinAccount, BitcoinOutput } from "./types";
 import { perCoinLogic } from "./logic";
 import wallet from "./wallet-btc";
-import { getAddressWithBtcInstance } from "./hw-getAddress";
+import { getAddress } from "./hw-getAddress";
 import { mapTxToOperations } from "./logic";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { decodeAccountId } from "../../account/accountId";
@@ -109,8 +108,8 @@ const getAccountShape: GetAccountShape = async (info) => {
       // hwapp not provided
       throw new Error("hwapp required to generate the xpub");
     }
-    const btc = new Btc(transport);
     const { bitcoinLikeInfo } = currency;
+    const btc = new Btc({ transport, currency: currency.id });
     const { XPUBVersion: xpubVersion } = bitcoinLikeInfo as {
       // FIXME It's supposed to be optional
       //XPUBVersion?: number;
@@ -132,29 +131,21 @@ const getAccountShape: GetAccountShape = async (info) => {
   const walletDerivationMode = toWalletDerivationMode(
     derivationMode as DerivationMode
   );
-  const explorer = findCurrencyExplorer(currency);
-  if (!explorer) {
-    throw new Error(`No explorer found for currency ${currency.name}`);
-  }
-  if (explorer.version !== "v2" && explorer.version !== "v3") {
-    throw new Error(`Unsupported explorer version ${explorer.version}`);
-  }
 
   span = startSpan("sync", "generateAccount");
   const walletAccount =
     (initialAccount as BitcoinAccount)?.bitcoinResources?.walletAccount ||
-    (await wallet.generateAccount({
-      xpub,
-      path: rootPath,
-      index,
-      currency: <Currency>currency.id,
-      network: walletNetwork,
-      derivationMode: walletDerivationMode,
-      explorer: `ledger${explorer.version}`,
-      explorerURI: `${explorer.endpoint}/blockchain/${explorer.version}/${explorer.id}`,
-      storage: "mock",
-      storageParams: [],
-    }));
+    (await wallet.generateAccount(
+      {
+        xpub,
+        path: rootPath,
+        index,
+        currency: <Currency>currency.id,
+        network: walletNetwork,
+        derivationMode: walletDerivationMode,
+      },
+      currency
+    ));
   span.finish();
 
   const oldOperations = initialAccount?.operations || [];
@@ -260,8 +251,7 @@ const postSync = (initial: Account, synced: Account) => {
 };
 
 const getAddressFn = (transport) => {
-  const btc = new Btc(transport);
-  return (opts) => getAddressWithBtcInstance(transport, btc, opts);
+  return (opts) => getAddress(transport, opts);
 };
 
 export const scanAccounts = makeScanAccounts({

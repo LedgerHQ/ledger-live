@@ -7,11 +7,13 @@ import type {
   BalanceHistoryWithCountervalue,
 } from "@ledgerhq/live-common/portfolio/v2/types";
 import { setCountervalueFirst } from "~/renderer/actions/settings";
+import { track } from "~/renderer/analytics/segment";
 import { BalanceTotal, BalanceDiff } from "~/renderer/components/BalanceInfos";
 import Box, { Tabbable } from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Price from "~/renderer/components/Price";
 import PillsDaysCount from "~/renderer/components/PillsDaysCount";
+import { swapDefaultTrack } from "~/renderer/screens/exchange/Swap2/utils/index";
 import styled from "styled-components";
 import Swap from "~/renderer/icons/Swap";
 
@@ -100,31 +102,29 @@ export default function AssetBalanceSummaryHeader({
 
   const onBuy = useCallback(() => {
     setTrackingSource("asset header actions");
-    // PTX smart routing redirect to live app or to native implementation
-    if (ptxSmartRouting?.enabled) {
-      const params = {
-        currency: currency?.id,
-        mode: "buy", // buy or sell
-      };
 
-      history.push({
-        // replace 'multibuy' in case live app id changes
-        pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ?? "multibuy"}`,
-        state: params,
-      });
-    } else {
-      history.push({
-        pathname: "/exchange",
-        state: {
-          mode: "onRamp",
-          currencyId: currency.id,
-        },
-      });
-    }
+    history.push({
+      pathname: "/exchange",
+      state: ptxSmartRouting?.enabled
+        ? {
+            currency: currency?.id,
+            mode: "buy", // buy or sell
+          }
+        : {
+            mode: "onRamp",
+            currencyId: currency.id,
+          },
+    });
   }, [currency.id, history, ptxSmartRouting]);
 
   const onSwap = useCallback(() => {
-    setTrackingSource("asset header actions");
+    track("button_clicked", {
+      button: "swap",
+      currency: currency?.ticker,
+      page: "Page Asset",
+      ...swapDefaultTrack,
+    });
+    setTrackingSource("Page Asset");
     history.push({
       pathname: "/swap",
       state: {

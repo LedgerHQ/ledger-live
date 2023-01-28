@@ -1,12 +1,14 @@
-import React, { useCallback, useState, ReactNode } from "react";
+import React, { useCallback, ReactNode } from "react";
 import isEqual from "lodash/isEqual";
 import semver from "semver";
+import { useDispatch, useSelector } from "react-redux";
 import { FeatureFlagsProvider } from "@ledgerhq/live-common/featureFlags/index";
 import { Feature, FeatureId } from "@ledgerhq/types-live";
 import { getValue } from "firebase/remote-config";
-
-import { formatFeatureId, useFirebaseRemoteConfig } from "./FirebaseRemoteConfig";
 import { getEnv } from "@ledgerhq/live-common/env";
+import { formatToFirebaseFeatureId, useFirebaseRemoteConfig } from "./FirebaseRemoteConfig";
+import { overriddenFeatureFlagsSelector } from "../reducers/settings";
+import { setOverriddenFeatureFlag, setOverriddenFeatureFlags } from "../actions/settings";
 
 const checkFeatureFlagVersion = (feature: Feature) => {
   if (
@@ -29,7 +31,27 @@ type Props = {
 
 export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element => {
   const remoteConfig = useFirebaseRemoteConfig();
-  const [localOverrides, setLocalOverrides] = useState({});
+
+  const localOverrides = useSelector(overriddenFeatureFlagsSelector);
+  const dispatch = useDispatch();
+
+  const isFeature = (key: string): boolean => {
+    if (!remoteConfig) {
+      return false;
+    }
+
+    try {
+      const value = getValue(remoteConfig, formatToFirebaseFeatureId(key));
+
+      if (!value || !value.asString()) {
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.error(`Failed to check if feature "${key}" exists`);
+      return false;
+    }
+  };
 
   const getFeature = useCallback(
     (key: FeatureId, allowOverride = true): Feature | null => {
@@ -54,7 +76,7 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
             };
         }
 
-        const value = getValue(remoteConfig, formatFeatureId(key));
+        const value = getValue(remoteConfig, formatToFirebaseFeatureId(key));
         const feature: Feature = JSON.parse(value.asString());
 
         return checkFeatureFlagVersion(feature);
@@ -72,23 +94,29 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
       if (!isEqual(actualRemoteValue, value)) {
         const { overriddenByEnv, ...pureValue } = value; // eslint-disable-line
         const overridenValue = { ...pureValue, overridesRemote: true };
-        setLocalOverrides(currentOverrides => ({ ...currentOverrides, [key]: overridenValue }));
+        dispatch(setOverriddenFeatureFlag(key, overridenValue));
       } else {
-        setLocalOverrides(currentOverrides => ({ ...currentOverrides, [key]: undefined }));
+        dispatch(setOverriddenFeatureFlag(key, undefined));
       }
     },
-    [getFeature],
+    [dispatch, getFeature],
   );
 
   const resetFeature = (key: FeatureId): void => {
-    setLocalOverrides(currentOverrides => ({ ...currentOverrides, [key]: undefined }));
+    dispatch(setOverriddenFeatureFlag(key, undefined));
+  };
+
+  const resetFeatures = (): void => {
+    dispatch(setOverriddenFeatureFlags({}));
   };
 
   return (
     <FeatureFlagsProvider
+      isFeature={isFeature}
       getFeature={getFeature}
       overrideFeature={overrideFeature}
       resetFeature={resetFeature}
+      resetFeatures={resetFeatures}
     >
       {children}
     </FeatureFlagsProvider>

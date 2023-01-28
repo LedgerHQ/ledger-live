@@ -12,6 +12,7 @@ import MODAL_RECEIVE from "./Receive";
 import MODAL_SEND from "./Send";
 import MODAL_SIGN_MESSAGE from "./SignMessage";
 import MODAL_SIGN_TRANSACTION from "./SignTransaction";
+import MODAL_NO_FUNDS_STAKE from "./NoFundsStake";
 import MODAL_UPDATE_FIRMWARE from "./UpdateFirmwareModal";
 import MODAL_MIGRATE_ACCOUNTS from "./MigrateAccounts";
 import MODAL_EXPORT_ACCOUNTS from "./ExportAccounts";
@@ -19,8 +20,10 @@ import MODAL_TECHNICAL_DATA from "./TechnicalData";
 import MODAL_SHARE_ANALYTICS from "./ShareAnalytics";
 import MODAL_SETTINGS_ACCOUNT from "./SettingsAccount";
 import MODAL_RELEASE_NOTES from "./ReleaseNotes";
+import MODAL_TROUBLESHOOT_NETWORK from "./TroubleshootNetwork";
 import MODAL_SYSTEM_LANGUAGE_AVAILABLE from "./SystemLanguageAvailable";
 // $FlowFixMe
+import MODAL_START_STAKE from "./StartStake";
 import MODAL_TERM_OF_USE_UPDATE from "./TermOfUseUpdate";
 import MODAL_EXCHANGE_CRYPTO_DEVICE from "./ExchangeDeviceConfirm";
 import MODAL_SELL_CRYPTO_DEVICE from "./SellDeviceConfirm";
@@ -29,6 +32,7 @@ import MODAL_WALLETCONNECT_PASTE_LINK from "./WalletConnectPasteLink";
 import MODAL_WALLETCONNECT_DEEPLINK from "./WalletConnectDeeplink";
 import MODAL_PLATFORM_EXCHANGE_START from "./Platform/Exchange/StartExchange";
 import MODAL_PLATFORM_EXCHANGE_COMPLETE from "./Platform/Exchange/CompleteExchange";
+import MODAL_CONNECT_DEVICE from "./ConnectDevice";
 
 import MODAL_FULL_NODE from "./FullNode";
 import MODAL_LOTTIE_DEBUGGER from "./LottieDebugger";
@@ -43,11 +47,19 @@ import MODAL_VOTE_TRON_INFO from "./VoteTron/Info";
 import MODAL_BLACKLIST_TOKEN from "./BlacklistToken";
 import MODAL_HIDE_NFT_COLLECTION from "./HideNftCollection";
 
+import MODAL_ELROND_DELEGATE from "../families/elrond/components/Modals/Delegate";
+import MODAL_ELROND_REWARDS_INFO from "../families/elrond/components/Modals/Delegate/Info";
+import MODAL_ELROND_UNDELEGATE from "../families/elrond/components/Modals/Undelegate";
+import MODAL_ELROND_CLAIM_REWARDS from "../families/elrond/components/Modals/Claim";
+import MODAL_ELROND_WITHDRAW from "../families/elrond/components/Modals/Withdraw";
+
 import MODAL_COSMOS_DELEGATE from "../families/cosmos/DelegationFlowModal";
 import MODAL_COSMOS_REWARDS_INFO from "../families/cosmos/DelegationFlowModal/Info";
 import MODAL_COSMOS_CLAIM_REWARDS from "../families/cosmos/ClaimRewardsFlowModal";
 import MODAL_COSMOS_REDELEGATE from "../families/cosmos/RedelegationFlowModal";
 import MODAL_COSMOS_UNDELEGATE from "../families/cosmos/UndelegationFlowModal";
+
+import MODAL_ETH_STAKE from "../families/ethereum/StakeFlowModal";
 
 import MODAL_ALGORAND_OPT_IN from "../families/algorand/OptInFlowModal";
 import MODAL_ALGORAND_CLAIM_REWARDS from "../families/algorand/Rewards/ClaimRewardsFlowModal";
@@ -86,6 +98,11 @@ import MODAL_CELO_WITHDRAW from "../families/celo/WithdrawFlowModal";
 import MODAL_CELO_ACTIVATE from "../families/celo/ActivateFlowModal";
 import MODAL_CELO_REVOKE from "../families/celo/RevokeFlowModal";
 
+import MODAL_NEAR_STAKE from "../families/near/StakingFlowModal";
+import MODAL_NEAR_REWARDS_INFO from "../families/near/StakingFlowModal/Info";
+import MODAL_NEAR_UNSTAKE from "../families/near/UnstakingFlowModal";
+import MODAL_NEAR_WITHDRAW from "../families/near/WithdrawingFlowModal";
+
 // Lending
 import MODAL_LEND_MANAGE from "../screens/lend/modals/ManageLend";
 import MODAL_LEND_ENABLE_INFO from "../screens/lend/modals/EnableInfoModal";
@@ -110,6 +127,7 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_SEND,
   MODAL_SIGN_MESSAGE,
   MODAL_SIGN_TRANSACTION,
+  MODAL_NO_FUNDS_STAKE,
   MODAL_UPDATE_FIRMWARE,
   MODAL_DELEGATE,
   MODAL_MIGRATE_ACCOUNTS,
@@ -118,6 +136,7 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_SHARE_ANALYTICS,
   MODAL_SETTINGS_ACCOUNT,
   MODAL_RELEASE_NOTES,
+  MODAL_TROUBLESHOOT_NETWORK,
   MODAL_SYSTEM_LANGUAGE_AVAILABLE,
   MODAL_TERM_OF_USE_UPDATE,
   MODAL_CLAIM_REWARDS,
@@ -128,11 +147,17 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_VOTE_TRON_INFO,
   MODAL_BLACKLIST_TOKEN,
   MODAL_HIDE_NFT_COLLECTION,
+  MODAL_ELROND_DELEGATE,
+  MODAL_ELROND_REWARDS_INFO,
+  MODAL_ELROND_UNDELEGATE,
+  MODAL_ELROND_CLAIM_REWARDS,
+  MODAL_ELROND_WITHDRAW,
   MODAL_COSMOS_DELEGATE,
   MODAL_COSMOS_REWARDS_INFO,
   MODAL_COSMOS_CLAIM_REWARDS,
   MODAL_COSMOS_REDELEGATE,
   MODAL_COSMOS_UNDELEGATE,
+  MODAL_ETH_STAKE,
   MODAL_EXCHANGE_CRYPTO_DEVICE,
   MODAL_SELL_CRYPTO_DEVICE,
   MODAL_ALGORAND_OPT_IN,
@@ -164,9 +189,14 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_CELO_WITHDRAW,
   MODAL_CELO_ACTIVATE,
   MODAL_CELO_REVOKE,
+  MODAL_NEAR_STAKE,
+  MODAL_NEAR_REWARDS_INFO,
+  MODAL_NEAR_UNSTAKE,
+  MODAL_NEAR_WITHDRAW,
   MODAL_FULL_NODE,
   MODAL_LOTTIE_DEBUGGER,
   MODAL_STORYLY_DEBUGGER,
+  MODAL_START_STAKE,
   MODAL_RECOVERY_SEED_WARNING,
   // Lending
   MODAL_LEND_MANAGE,
@@ -182,6 +212,7 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   // Platform
   MODAL_PLATFORM_EXCHANGE_START,
   MODAL_PLATFORM_EXCHANGE_COMPLETE,
+  MODAL_CONNECT_DEVICE,
 
   // NB We have dettached modals such as the repair modal,
   // in the meantime, we can rely on this to add the backdrop

@@ -173,7 +173,7 @@ export default function MainNavigator({
           tabPress: e => {
             e.preventDefault();
             managerLockAwareCallback(() => {
-              if (hasOrderedNano) {
+              if (readOnlyModeEnabled && hasOrderedNano) {
                 navigation.navigate(
                   ScreenName.PostBuyDeviceSetupNanoWallScreen,
                 );

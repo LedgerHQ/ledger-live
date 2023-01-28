@@ -10,7 +10,7 @@ export class AnonymousIpPlugin extends Plugin {
   execute(event: SegmentEvent) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    if (event?.context?.ip) {
+    if (event?.context) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       // eslint-disable-next-line no-param-reassign

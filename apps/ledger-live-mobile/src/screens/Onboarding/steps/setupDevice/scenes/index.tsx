@@ -18,4 +18,6 @@ export { default as ExistingRecovery } from "./ExistingRecoveryPhrase";
 export { default as ExistingRecoveryStep1 } from "./ExistingRecoveryPhraseStep1";
 export { default as ExistingRecoveryStep2 } from "./ExistingRecoveryPhraseStep2";
 
+export { default as RestoreWithProtect } from "./RestoreWithProtect";
+
 export { default, type Metadata } from "./BaseStepperView";

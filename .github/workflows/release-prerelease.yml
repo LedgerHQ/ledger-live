@@ -17,17 +17,6 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      - uses: 8BitJonny/gh-get-current-pr@2.1.1
-        id: PR
-        with:
-          github-token: ${{ github.token }}
-          # Verbose setting SHA when using Pull_Request event trigger to fix #16. (For push even trigger this is not necessary.)
-          sha: ${{ github.event.pull_request.head.sha }}
-          # Only return if PR is still open. (By default it returns PRs in any state.)
-          filterOutClosed: true
-          # Only return if PR is not in draft state. (By default it returns PRs in any state.)
-          filterOutDraft: true
-
       - uses: actions/checkout@v3
         if: ${{ github.event_name == 'push' }}
         with:
@@ -51,10 +40,19 @@ jobs:
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
           registry-url: "https://registry.npmjs.org"
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.7 # Not needed with a .ruby-version file
-          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+      # - uses: ruby/setup-ruby@v1
+      #   with:
+      #     ruby-version:
+      #       3.1.2 # Not needed with a .ruby-version file
+      #       # runs 'bundle install' and caches installed gems automatically
+      # - name: Cache LLM pods
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: |
+      #       apps/ledger-live-mobile/ios/Pods
+      #       ~/Library/Caches/CocoaPods
+      #       ~/.cocoapods
+      #     key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
       - uses: ./tools/actions/get-package-infos
         id: desktop-version
         with:
@@ -67,26 +65,7 @@ jobs:
         run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli" --frozen-lockfile
       - name: build libs
         run: pnpm run build:libs
-      - name: Get changeset ignore value
-        id: get-ignore
-        uses: notiz-dev/github-action-json-property@release
-        with:
-          path: ".changeset/config.json"
-          prop_path: "ignore.0"
-      - name: versioning desktop
-        if: ${{ contains(steps.PR.outputs.pr_title, 'LLD') }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          [[ "${{ steps.get-ignore.outputs.prop }}" = "live-mobile" ]] && pnpm changeset version || pnpm changeset version --ignore live-mobile
-      - name: versioning mobile
-        if: ${{ contains(steps.PR.outputs.pr_title, 'LLM') }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          [[ "${{ steps.get-ignore.outputs.prop }}" = "ledger-live-desktop" ]] && pnpm changeset version || pnpm changeset version --ignore ledger-live-desktop
-      - name: versioning all
-        if: ${{ !contains(steps.PR.outputs.pr_title, 'LLD') && !contains(steps.PR.outputs.pr_title, 'LLM') }}
+      - name: versioning
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm changeset version
@@ -105,7 +84,7 @@ jobs:
           LLM: LLM(${{ steps.post-mobile-version.outputs.version }})
         run: |
           git add . &&
-          git commit -m ":rocket: release prerelease [${{ contains(steps.PR.outputs.pr_title, 'LLD') && env.LLD || env.LLM }}]" ||
+          git commit -m ":rocket: release prerelease [${{ env.LLD }}, ${{ env.LLM }}]" ||
           echo ""
       - name: commit (from hotfix branch)
         if: ${{ startsWith(github.ref_name, 'hotfix') }}
@@ -114,7 +93,7 @@ jobs:
           LLM: LLM(${{ steps.post-mobile-version.outputs.version }})
         run: |
           git add . &&
-          git commit -m ":fire: hotfix prerelease [${{ contains(steps.PR.outputs.pr_title, 'LLD') && env.LLD || env.LLM }}]" ||
+          git commit -m ":fire: hotfix prerelease [${{ env.LLD }}, ${{ env.LLM }}]" ||
           echo ""
       - name: commit (from ${{ github.event.inputs.ref }} branch) workflow dispatch
         if: ${{ github.event_name == 'workflow_dispatch' }}

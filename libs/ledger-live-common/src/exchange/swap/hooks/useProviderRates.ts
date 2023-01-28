@@ -8,6 +8,7 @@ import {
   SwapSelectorStateType,
   RatesReducerState,
   CustomMinOrMaxError,
+  AvailableProviderV3,
 } from "../types";
 import { SetExchangeRateCallback } from "./useSwapTransaction";
 
@@ -15,9 +16,9 @@ const ratesReducerInitialState: RatesReducerState = {};
 const ratesReducer = (state: RatesReducerState, action): RatesReducerState => {
   switch (action.type) {
     case "set":
-      return { value: action.payload, status: null };
+      return { value: action.payload, status: "success" };
     case "idle":
-      return { ...state, status: null };
+      return { ...state, status: "idle" };
     case "loading":
       return { ...state, status: "loading" };
     case "error":
@@ -26,26 +27,41 @@ const ratesReducer = (state: RatesReducerState, action): RatesReducerState => {
   return state;
 };
 
-/* Fetch and update provider rates. */
-export const useProviderRates = ({
-  fromState,
-  toState,
-  transaction,
-  onNoRates,
-  setExchangeRate,
-}: {
+type UseProviderRates = (args: {
   fromState: SwapSelectorStateType;
   toState: SwapSelectorStateType;
   transaction?: Transaction | null;
   onNoRates?: OnNoRatesCallback;
   setExchangeRate?: SetExchangeRateCallback | null | undefined;
-}): {
+  providers?: AvailableProviderV3[];
+  includeDEX?: boolean;
+}) => {
   rates: RatesReducerState;
   refetchRates: () => void;
   updateSelectedRate: (selected?: ExchangeRate) => void;
-} => {
-  const { account: fromAccount } = fromState;
-  const { currency: toCurrency } = toState;
+};
+
+/**
+ * TODO: this hook is too complex and does too many things, it's logic should be
+ * broken down into smaller functions
+ */
+/* Fetch and update provider rates. */
+export const useProviderRates: UseProviderRates = ({
+  fromState,
+  toState,
+  transaction,
+  onNoRates,
+  setExchangeRate,
+  providers,
+  includeDEX,
+}) => {
+  const { account: fromAccount, parentAccount: fromParentAccount } = fromState;
+  const {
+    currency: toCurrency,
+    parentAccount: toParentAccount,
+    account: toAccount,
+  } = toState;
+
   const [rates, dispatchRates] = useReducer(
     ratesReducer,
     ratesReducerInitialState
@@ -74,15 +90,22 @@ export const useProviderRates = ({
           !fromAccount
         ) {
           setExchangeRate && setExchangeRate();
-          return dispatchRates({ type: "set", payload: [] });
+          return dispatchRates({ type: "idle" });
         }
         dispatchRates({ type: "loading" });
         try {
           let rates: ExchangeRate[] = await getExchangeRates(
-            { fromAccount } as Exchange,
+            {
+              fromAccount,
+              toAccount,
+              fromParentAccount,
+              toParentAccount,
+            } as Exchange,
             transaction,
             undefined,
-            toCurrency
+            toCurrency,
+            providers,
+            includeDEX
           );
 
           if (abort) return;
@@ -94,12 +117,35 @@ export const useProviderRates = ({
           let rateError: Error | CustomMinOrMaxError | null | undefined = null;
           rates = rates.reduce<ExchangeRate[]>((acc, rate) => {
             rateError = rateError ?? rate.error;
-
             /**
              * If we have an error linked to the ammount, this error takes
              * precedence over the other (like a "CurrencyNotSupportedError" one
              * for example)
+             * Limit Order: SwapExchangeRateAmountTooLowOrTooHigh > SwapExchangeRateAmountTooHigh > SwapExchangeRateAmountTooLow
              */
+
+            /**
+             * Since SwapExchangeRateAmountTooLowOrTooHigh takes precedence over SwapExchangeRateAmountTooHigh and SwapExchangeRateAmountTooLow,
+             * we can early return if we have already encountered this error
+             */
+            if (rateError?.name === "SwapExchangeRateAmountTooLowOrTooHigh") {
+              return acc;
+            }
+
+            /**
+             * Since SwapExchangeRateAmountTooLowOrTooHigh takes precedence over SwapExchangeRateAmountTooHigh and SwapExchangeRateAmountTooLow,
+             * we can early return after setting rateError accordingly if we encounter this error
+             */
+            if (rate.error?.name === "SwapExchangeRateAmountTooLowOrTooHigh") {
+              rateError = rate.error;
+              return acc;
+            }
+
+            /**
+             * At this stage, we know that we don't have a SwapExchangeRateAmountTooLowOrTooHigh error,
+             * so we can perform the comparaison logic between SwapExchangeRateAmountTooLow and SwapExchangeRateAmountTooHigh
+             */
+
             if (
               rateError?.name !== rate.error?.name &&
               (rate.error?.name === "SwapExchangeRateAmountTooLow" ||
@@ -118,6 +164,7 @@ export const useProviderRates = ({
                * If the order is ascending, the pivot is -1, otherwise it's 1
                * Based on returns from https://mikemcl.github.io/bignumber.js/#cmp
                */
+
               const cmp =
                 rateError?.name === "SwapExchangeRateAmountTooLow" ? -1 : 1;
 
@@ -168,7 +215,7 @@ export const useProviderRates = ({
         }
       }
 
-      getRates();
+      void getRates();
 
       return () => {
         abort = true;

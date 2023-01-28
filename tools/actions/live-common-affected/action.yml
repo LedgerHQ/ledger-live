@@ -1,0 +1,21 @@
+name: live-common-affected
+description: Returns a list of main live-common paths affected by code changes
+author: gre
+inputs:
+  ref:
+    description: "name of branch or ref to compare with (defaults to 'develop'). Git syntax allowed (HEAD^1)"
+    default: develop
+    required: false
+outputs:
+  is-affected:
+    description: "boolean that tells if code changed"
+  paths:
+    description: "a list of main directories"
+
+runs:
+  using: node16
+  main: build/main.js
+
+branding:
+  icon: shuffle
+  color: green

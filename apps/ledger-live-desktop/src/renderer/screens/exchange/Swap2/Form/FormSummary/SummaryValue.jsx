@@ -53,7 +53,11 @@ const SummaryValue = ({
     <Container>
       {children}
       {value && <Text>{value}</Text>}
-      {handleChange ? <Button onClick={handleChange}>{t("swap2.form.changeCTA")}</Button> : null}
+      {handleChange ? (
+        <Button onClick={handleChange} data-test-id="change-exchange-details-button">
+          {t("swap2.form.changeCTA")}
+        </Button>
+      ) : null}
     </Container>
   );
 };

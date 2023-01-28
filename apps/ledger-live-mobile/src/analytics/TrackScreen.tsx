@@ -10,9 +10,15 @@ type Props = {
 } & {
   category?: string;
   name?: string;
+  refreshSource?: boolean;
 };
 
-export default function TrackScreen({ category, name, ...props }: Props) {
+export default function TrackScreen({
+  category,
+  name,
+  refreshSource = true,
+  ...props
+}: Props) {
   const isFocused = useIsFocused();
   const isFocusedRef = useRef<boolean>();
 
@@ -21,12 +27,18 @@ export default function TrackScreen({ category, name, ...props }: Props) {
     if (isFocusedRef.current !== isFocused) {
       isFocusedRef.current = isFocused;
       if (isFocusedRef.current) {
-        previousRouteNameRef.current = currentRouteNameRef.current;
-        currentRouteNameRef.current = `${category + (name ? ` ${name}` : "")}`;
+        if (refreshSource) {
+          previousRouteNameRef.current = currentRouteNameRef.current;
+          currentRouteNameRef.current = `${
+            category + (name ? ` ${name}` : "")
+          }`;
+        } else {
+          previousRouteNameRef.current = currentRouteNameRef.current;
+        }
         screen(category, name, props);
       }
     }
-  }, [category, name, props, isFocused]);
+  }, [category, name, props, isFocused, refreshSource]);
 
   return null;
 }
