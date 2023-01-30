@@ -15,8 +15,8 @@ export type BluetoothRequirementsState =
   | "all respected";
 
 export type UseRequireBluetoothArgs = {
+  requiredFor: "scanning" | "connecting";
   isHookEnabled?: boolean;
-  type?: "scanning" | "connecting";
 };
 
 export type UseRequireBluetoothOutput = {
@@ -25,16 +25,16 @@ export type UseRequireBluetoothOutput = {
 };
 
 export const useRequireBluetooth = ({
-  type = "scanning",
+  requiredFor,
   isHookEnabled = true,
 }: UseRequireBluetoothArgs): UseRequireBluetoothOutput => {
-  console.log(`🧠 useRequireBluetooth: ${type} ${isHookEnabled}`);
+  console.log(`🧠 useRequireBluetooth: ${requiredFor} ${isHookEnabled}`);
 
   // const [bluetoothRequirementsState, setBluetoothRequirementsState] =
   //   useState<BluetoothRequirementsState>("unknown");
 
   // isAndroidLocationPermissionHookEnabled =
-  //   isHookEnabled && type === "scanning" && Platform.OS === "android";
+  //   isHookEnabled && requiredFor === "scanning" && Platform.OS === "android";
 
   // const {
   //   hasPermission: hasLocationPermission,
@@ -78,7 +78,7 @@ export const useRequireBluetooth = ({
 
   const isAndroidEnableLocationHookEnabled =
     isHookEnabled &&
-    type === "scanning" &&
+    requiredFor === "scanning" &&
     Platform.OS === "android" &&
     bluetoothServicesState === "enabled";
 
