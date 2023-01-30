@@ -102,6 +102,7 @@
     "addressCopied" : "تم نسخ العنوان",
     "addressCopiedSuspicious" : "عدم تطابق العنوان المنسوخ والعنوان الموجود في ذاكرة النصوص.",
     "experimentalFeature" : "تجريبي",
+    "featureFlags" : "علامات الميزة",
     "information" : "معلومات",
     "search" : "جارٍ البحث...",
     "searchWithoutEllipsis" : "بحث",
@@ -131,7 +132,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blue"
   },
   "operation" : {
@@ -251,6 +252,8 @@
         "float" : "مُتغيّر",
         "update" : "تم تحديث المُعدلات في",
         "loading" : "جاري التحميل ...",
+        "loadingQuotes" : "جارٍ تحميل عروض الأسعار الآن",
+        "loadingDescription" : "لن يستغرق الأمر سوى لحظة للعثور على أفضل الخيارات لك.",
         "name" : {
           "title" : "المزود",
           "tooltip" : "اعتماداً على المزوّد، يتعين عليك تسجيل الدخول لديهم من خلال إنشاء حساب."
@@ -601,6 +604,28 @@
       "toProvider" : "عنوان المزود",
       "initialAmount" : "المبلغ الأولي",
       "creditedAmount" : "المبلغ المضاف"
+    }
+  },
+  "stake" : {
+    "noFundsModal" : {
+      "title" : "Buy, swap or receive",
+      "text" : "You do not have enough {{coin}} available to stake",
+      "description" : "Not enough funds? Don’t worry, you can securely buy, swap or receive crypto directly in Ledger Live.",
+      "options" : {
+        "buy" : {
+          "title" : "Buy",
+          "body" : "Buy with trusted  providers"
+        },
+        "swap" : {
+          "title" : "Swap",
+          "label" : "Popular",
+          "body" : "Convert crypto to crypto securely"
+        },
+        "receive" : {
+          "title" : "Receive",
+          "body" : "Receive crypto in your wallet"
+        }
+      }
     }
   },
   "lottieDebugger" : {
@@ -1096,6 +1121,7 @@
       "receive" : "تلقي",
       "send" : "إرسال",
       "swap" : "مبادلة",
+      "stake" : "Stake",
       "buy" : "شراء",
       "sell" : "بيع",
       "edit" : "تعديل الحساب",
@@ -1206,8 +1232,11 @@
         "checkDeviceButton" : "إجراء الاختبار مرةً أخرى",
         "cancelButton" : "ربّما في وقت لاحق"
       },
-      "genuineCheckAnimationModal" : {
-        "message" : "تمكين المدير على {{deviceName}}"
+      "softwareCheckAllowSecureChannelModal" : {
+        "title" : "قم بتمكين المدير على {{deviceName}}"
+      },
+      "softwareCheckLockedDeviceModal" : {
+        "title" : "قم بإلغاء قفل جهازك"
       },
       "helpDrawer" : {
         "title" : "هل تحتاج بعض المساعدة في كُتيّب الإعداد خاصتك؟",
@@ -1231,16 +1260,16 @@
   },
   "postOnboarding" : {
     "postOnboardingScreen" : {
-      "title" : "رائع جداً.أنت مستعد.",
-      "description" : "تهانينا على إعداد {{deviceName}} خاصتك!",
-      "paragraph" : "لقد أعددنا لك بضعة خطوات لتبدأ بها. إذا كنت ترغب في استكشاف Ledger Live بنفسك، فلا تتردد في تخطي هذه الخطوة، ويمكنك دوماً العودة إليها.",
-      "bottomText" : "استمتع برحلتك في ويب 3.0 بأمان مع Ledger Live."
+      "title" : "التالي، استخدم جهازك \nLedger Stax من أجل... ",
+      "titleCompleted" : "وهذا\nكل شيء!"
     },
     "postOnboardingContent" : {
-      "title" : "رائع جداً.أنت مستعد.",
-      "description" : "إليك ما يمكنك فعله بعد ذلك:",
-      "skipLink" : "التخطي إلى التطبيق",
-      "skipLinkInDrawer" : "سأفعل هذا لاحقاً"
+      "skipLink" : "سأقوم بذلك في وقت لاحق"
+    },
+    "postOnboardingBanner" : {
+      "title" : "ما التالي لجهازك Ledger Stax؟",
+      "description" : "قم بالمطالبة برمز Infinity غير القابل للاستبدال، أو قم بتخصيص شاشة القَفل الخاصة به،\n و قم بتحويل أصولك من منصات تداول أخرى.",
+      "link" : "تعرف على التالي"
     }
   },
   "hideNftCollection" : {
@@ -1358,7 +1387,22 @@
     },
     "recentActivity" : "أحدث العمليات",
     "totalBalance" : "إجمالي الرصيد",
-    "transactionsPendingConfirmation" : "لم يتم تأكيد بعض المعاملات بعد. ستظهر هذه في رصيدك ويمكن استخدامها بعد تأكيدها."
+    "transactionsPendingConfirmation" : "لم يتم تأكيد بعض المعاملات بعد. ستظهر هذه في رصيدك ويمكن استخدامها بعد تأكيدها.",
+    "featuredButtons" : {
+      "buySell" : {
+        "title" : "شراء / بيع",
+        "description" : "Buy and sell with trusted providers"
+      },
+      "swap" : {
+        "title" : "مبادلة",
+        "description" : "Convert crypto to crypto securely",
+        "label" : "شائع"
+      },
+      "earn" : {
+        "title" : "اكسب",
+        "description" : "Grow your crypto with Ledger"
+      }
+    }
   },
   "currentAddress" : {
     "title" : "العنوان الحالي",
@@ -1678,6 +1722,8 @@
       "undelegated" : "غير مفوّض",
       "undelegatedFrom" : "تم إلغاء التفويض من",
       "undelegatedAmount" : "المبلغ غير المفوض",
+      "withdrawnFrom" : "مسحوب من",
+      "withdrawnAmount" : "المبلغ المسحوب",
       "rewardFrom" : "مكافأة من",
       "memo" : "ملاحظة (تسمية الوجهة)",
       "assetId" : "معرّف الأصل",
@@ -1718,7 +1764,7 @@
     "swap" : {
       "notice" : {
         "default" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. يتم تبادل العناوين بشكل آمن حتى لا تضطر إلى التحقق منهم.",
-        "cic" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. CIC قد تحتاج إلى إجراء تحقق إضافي لبعض المعاملات، مما يؤدي إلى تأخير."
+        "provider" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. {{providerName}} قد يحتاج إلى إجراء تحقق إضافي لبعض المعاملات، ما يؤدي إلى تأخير."
       },
       "confirm" : "تأكيد معاملة المبادلة",
       "amountSent" : "المبلغ المطلوب إرساله",
@@ -2231,6 +2277,187 @@
     "value" : "القيمة",
     "header" : "تخصيص الحساب ({{count}})"
   },
+  "elrond" : {
+    "summary" : {
+      "availableBalanceTooltip" : "هذا المبلغ يُمكن تحويله.",
+      "availableBalance" : "الرصيد المتاح",
+      "delegatedAssetsTooltip" : "الأصول المُفوَّضة تُستخدم بشكل غير مباشر من قِبل مزود التكديس لتشغيل عُقد المدقق ومعالجة المعاملات وتأمين الشبكة من خلال المشاركة في آلية الإجماع.",
+      "delegatedAssets" : "الأصول المفوضة",
+      "undelegatingTooltip" : "الأصول المُلغى تفويضها تخضع لفترة إلغاء تقييد مدتها 10 أيام قبل التمكن من سحبها.",
+      "undelegating" : "عمليات السحب المُعلَّقة"
+    },
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "تعمل بواسطة MultiversX",
+        "moreInfo" : "مزيد من المعلومات",
+        "drawerTitle" : "دمج MultiversX",
+        "title" : "رمز MultiversX eGold (EGLD) متاح الآن على Ledger Live",
+        "description" : "يمكنك الآن تأمين رموزك eGold (EGLD) بشكل آمن وإدارتها من خلال Ledger Live.",
+        "description2" : "رمز MultiversX eGold (EGLD) هو رمز أصلي لشبكة MultiversX وسيُستخدم لكل شيء بدءاً من المعاملات والتكديس والعقود الذكية والحوكمة ومكافآت المدقق.",
+        "description3" : "نحن نعمل بنشاط مع فريق MultiversX لإضافة المزيد من الوظائف، مثل التكديس، دعم ESDT الأصلي (رمز Elrond الرقمي القياسي)، وأكثر من ذلك.",
+        "website" : "سلسلة كتل الإنترنت القابلة للتوسع"
+      }
+    },
+    "delegation" : {
+      "emptyState" : {
+        "description" : "قم بتفويض EGLD خاصتك لتأمين الشبكة واقتنص حصتك من المكافآت.",
+        "info" : "ما هو التفويض؟",
+        "delegation" : "اكسب المكافآت"
+      },
+      "commission" : "العمولة",
+      "claimRewards" : "المطالبة بالمكافآت",
+      "header" : "التفويض (التفويضات)",
+      "noRewards" : "لا توجد مكافآت متاحة",
+      "delegate" : "تفويض",
+      "undelegate" : "إلغاء التفويض",
+      "redelegateDisabledTooltip" : "يمكنك اعادة التفويض مرة أخرى <0>{{days}}</0>",
+      "redelegateMaxDisabledTooltip" : "لا يمكنك إعادة تفويض أكثر من <0>7</0> مدققين في كل مرة",
+      "undelegateDisabledTooltip" : "لا يمكنك إلغاء تفويض أكثر من <0>7</0> مدققين في كل مرة",
+      "reward" : "المطالبة بالمكافآت",
+      "currentDelegation" : "مُفوض: <0>{{amount}}</0>",
+      "apr" : "معدل النسبة السنوي (APR)",
+      "totalStake" : "إجمالي التكديس",
+      "activeTooltip" : "المبالغ المفوضة تولد المكافآت",
+      "inactiveTooltip" : "المبالغ غير المفوضة لا تولد مكافآت",
+      "minSafeWarning" : "لا توجد أموال كافية. أنت بحاجة إلى 1 EGLD على الأقل.",
+      "flow" : {
+        "title" : "تفويض",
+        "steps" : {
+          "amount" : {
+            "title" : "تفويض",
+            "subtitle" : "قم بتكديس أصولك إلى واحد من مزودي التكديس التاليين.",
+            "warning" : "اختر مزود التكديس بحكمة: حالياً، الخطر الوحيد هو عدم الحصول على المكافآت لأسباب متعددة، لذا يجب عليك اختيار المزود بناءً على الموثوقية والتواصل والاقتصاد.",
+            "fields" : {
+              "validator" : "مزود التكديس"
+            }
+          },
+          "fields" : {
+            "amount" : "المبلغ المطلوب تكديسه"
+          },
+          "starter" : {
+            "description" : "يمكنك كسب مكافآت عن طريق تفويض أصولك EGLD إلى مزود تكديس.",
+            "bullet" : ["أنت تحتفظ بملكية الأصول المفوضة", "قم بالتفويض باستخدام جهازك Ledger", "الأصول ستكون متاحة بعد 10 أيام من إلغاء التفويض"],
+            "warning" : {
+              "description" : "اختر مزود التكديس بحكمة: حالياً، الخطر الوحيد هو عدم الحصول على المكافآت لأسباب متعددة، لذا يجب عليك اختيار المزود بناءً على الموثوقية والتواصل والاقتصاد."
+            }
+          },
+          "validator" : {
+            "title" : "مزودي التكديس"
+          },
+          "connectDevice" : {
+            "title" : "الجهاز"
+          },
+          "confirmation" : {
+            "title" : "تأكيد",
+            "success" : {
+              "title" : "لقد فوّضت أصولك بنجاح.",
+              "text" : "سيتم تحديث رصيد حسابك عندما تقوم سلسلة الكتل بتأكيد المعاملة.",
+              "cta" : "رؤية التفاصيل"
+            },
+            "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+          }
+        }
+      }
+    },
+    "claimRewards" : {
+      "flow" : {
+        "title" : "المطالبة بالمكافآت",
+        "steps" : {
+          "claimRewards" : {
+            "title" : "المكافآت",
+            "compound" : "تجميع المكافآت",
+            "claim" : "المطالبة بالمكافآت",
+            "compoundOrClaim" : "تجميع المكافآت أو المطالبة بالمكافآت",
+            "compoundDescription" : "ستتم إضافة المكافآت إلى المبلغ المفوَّض.",
+            "claimDescription" : "ستتم إضافة المكافآت إلى رصيدك المتاح.",
+            "compoundInfo" : "لقد كسبت <0>{{amount}}</0>. بالنقر على متابعة، ستتم المطالبة بهم الآن وتفويضهم تلقائياً إلى نفس مزود التكديس.",
+            "claimInfo" : "لقد كسبت <0>{{amount}}</0> من مزود التكديس أدناه. بالنقر على متابعة، ستتم المطالبة بهم الآن وتفويضهم تلقائياً إلى الرصيد المتاح.",
+            "selectLabel" : "اختر تفويض"
+          },
+          "connectDevice" : {
+            "title" : "الجهاز"
+          },
+          "confirmation" : {
+            "title" : "تأكيد",
+            "label" : "تأكيد",
+            "success" : {
+              "title" : "نجحت المطالبة بالمكافآت",
+              "titleCompound" : "تم تجميع المكافآت بنجاح",
+              "text" : "المكافآت تمت إضافتها إلى رصيدك المتاح",
+              "textCompound" : "معاملتك لتجميع المكافآت البالغة <0>{{amount}}</0> من EGLD إلى <0>{{validator}}</0> تمت معالجتها بنجاح.",
+              "cta" : "رؤية التفاصيل"
+            },
+            "pending" : {
+              "title" : "جاري بث المعاملة..."
+            },
+            "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "header" : "إلغاء التفويض (إلغاء التفويضات)",
+      "headerTooltip" : "متاحة بعد فترة إلغاء التقييد البالغة 10 أيام.",
+      "inactiveTooltip" : "المبالغ غير المفوضة لا تولد مكافآت.",
+      "withdraw" : {
+        "cta" : "إنهاء السحب"
+      },
+      "flow" : {
+        "title" : "إلغاء تفويض الأصول",
+        "steps" : {
+          "amount" : {
+            "title" : "المبلغ",
+            "subtitle" : "عملية إلغاء التفويض تستغرق <0>10 أيام</0> لإتمامها.",
+            "warning" : "المكافآت ستتم المطالبة بها تلقائياً. إلغاء التفويض هي عملية من خطوتين: طلب إلغاء التفويض، متبوعاً <0>بفترة إلغاء تفويض مدتها 10 أيام</0> بعدها يمكنك إتمام السحب وسيتم تحويل المبلغ المُفوَّض إلى رصيدك.",
+            "fields" : {
+              "validator" : "مزود التكديس",
+              "amount" : "المبلغ المراد إلغاء تفويضه"
+            }
+          },
+          "device" : {
+            "title" : "الجهاز"
+          },
+          "confirmation" : {
+            "title" : "تأكيد",
+            "success" : {
+              "title" : "لقد قمت بإلغاء تفويض أصولك بنجاح.",
+              "description" : "<0>{{amount}}</0> تم إلغاء تفويضهم من <0>{{validator}}</0>.",
+              "cta" : "رؤية التفاصيل"
+            },
+            "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "flow" : {
+        "title" : "إنهاء السحب",
+        "steps" : {
+          "withdraw" : {
+            "title" : "إنهاء السحب",
+            "description" : "لقد ألغيت تفويض <0>{{amount}}</0> EGLD من <0>{{validator}}</0>. بالنقر على متابعة، سيتم سحبهم الآن وإضافتهم تلقائياً إلى الرصيد المتاح.",
+            "selectLabel" : "اختر إلغاء تفويض"
+          },
+          "connectDevice" : {
+            "title" : "الجهاز"
+          },
+          "confirmation" : {
+            "title" : "تأكيد",
+            "label" : "تأكيد",
+            "success" : {
+              "title" : "تم سحب الأموال بنجاح",
+              "text" : "مبلغ <0>{{amount}}</0> تم سحبه إلى رصيد حسابك.",
+              "cta" : "رؤية التفاصيل"
+            },
+            "pending" : {
+              "title" : "جاري بث المعاملة..."
+            },
+            "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+          }
+        }
+      }
+    }
+  },
   "cardano" : {
     "account" : {
       "stakingRewardsBanner" : {
@@ -2312,6 +2539,15 @@
             }
           }
         }
+      }
+    }
+  },
+  "tezos" : {
+    "objkt" : {
+      "card" : {
+        "title" : "مجموعة الرموز غير القابلة للاستبدال (NFT)",
+        "description" : "يمكنك رؤيتك رموز Tezos غير القابلة للاستبدال مباشرةً من خلال Objkt داخل Ledger Live.",
+        "cta" : "رؤية رموزي غير القابلة للاستبدال على Objkt"
       }
     }
   },
@@ -3395,15 +3631,15 @@
     "stake" : {
       "title" : "اكسب إيثريوم",
       "lido" : {
-        "tag" : "دون حد أدنى",
-        "description" : "قم بتكديس إيثريوم خاصتك مع Lido واكسب مكافآت يومية. دون فترة قَفل. دون حد أدنى."
+        "tag" : "ليس هناك حد أدنى",
+        "description" : "قم بتكديس إيثريوم خاصتك مع Lido واكسب مكافآت يومية. ليس هناك فترة قَفل. ليس هناك حد أدنى."
       },
       "kiln" : {
         "tag" : "يتطلب 32 ETH",
-        "description" : "لديك أكثر من 32 ETH؟ اكسب مكافآت يومية عن طريق تكديس ETH خاصتك بأمان مع Kiln."
+        "description" : "لديك أكثر من 32 ETH؟ اكسب مكافآت يومياً عن طريق تكديس ETH خاصتك بأمان مع Kiln."
       },
       "providerTitle" : "اكسب مع {{provider}}",
-      "providerLink" : "معرفة المزيد عن {{provider}}"
+      "providerLink" : "تعرف على المزيد عن {{provider}}"
     }
   },
   "near" : {
@@ -3689,8 +3925,10 @@
       "debugAppsDesc" : "عرض تطبيقات المنصة لتصحيح الأخطاء والسماح بفتحها.",
       "experimentalApps" : "السماح بالتطبيقات التجريبية",
       "experimentalAppsDesc" : "عرض تطبيقات المنصة التجريبية والسماح بفتحها.",
-      "catalogServer" : "تعيين مزود الكتالوج",
-      "catalogServerDesc" : "التبديل بين مصادر تطبيقات المنصة المتعددة",
+      "catalogUrl" : "تعيين مزود تطبيقات الكتالوج",
+      "catalogUrlDesc" : "أدخِل رابط URL لمزود الكتالوج المخصص لديك",
+      "catalogRampServer" : "تعيين مزودي الشراء / البيع",
+      "catalogRampServerDesc" : "التبديل بين مزودي تداول متعددين",
       "enablePlatformDevTools" : "تمكين أدوات تطوير المنصة",
       "enablePlatformDevToolsDesc" : "تمكين فتح نافذة أدوات تطوير تطبيقات المنصة",
       "featureFlagsTitle" : "علامات الميزة المحددة المستخدمة في Ledger Live",
@@ -3698,6 +3936,9 @@
       "featureFlagsEdit" : "تعديل",
       "featureFlagsRestore" : "استعادة",
       "featureFlagsOverride" : "تجاوز",
+      "featureFlagsRestoreAll" : "استعادة جميع قيم العلامات",
+      "showButtonDesc" : "عرض زر علامات الميزة في الشريط الجانبي دائماً",
+      "buttonTitle" : "تم تجاوز العلامات محلياً",
       "firebaseProject" : "مشروع Firebase الذي يستهدفه هذا الإصدار:",
       "addLocalApp" : "إضافة تطبيق محلي",
       "addLocalAppDesc" : "تصفح الملفات المحلية وقم بإضافة تطبيق محلي باستخدام بيان محلي",
@@ -3752,6 +3993,10 @@
         "experimentalCurrencies" : {
           "title" : "دمج تجريبي",
           "description" : "استخدم عمليات تكامل الأصول المشفرة التجريبية المتاحة."
+        },
+        "experimentalExecutionOnRenderer" : {
+          "title" : "الشبكات التجريبية",
+          "description" : "استخدم الشبكات التجريبية لتحسين تجربتك مع Ledger Live عن طريق الشبكة الافتراضية الخاصة (VPN) لديك. قم بتنشيط هذا فقط في حالة تسببت الشبكة الافتراضية الخاصة (VPN) التي تستخدمها حالياً في أخطاء بالنظام."
         },
         "experimentalLanguages" : {
           "title" : "اختبار الترجمة",
@@ -4994,6 +5239,23 @@
       "title" : "عذراً، لم يتم العثور على حسابات",
       "description" : "حدث خطأ ما في حساب العنوان، حاول مرة أخرى أو قم بالتواصل مع دعم Ledger"
     },
+    "ElrondDecimalsLimitReached" : {
+      "title" : "تم الوصول إلى الحد الأقصى من الكسور العشرية",
+      "description" : "يُرجى التأكد من أن المبلغ المُقدَّم به 18 كسراً عشرياً."
+    },
+    "ElrondMinDelegatedAmountError" : {
+      "title" : "يجب أن يكون المبلغ المفوض على الأقل {{formattedAmount}}"
+    },
+    "ElrondMinUndelegatedAmountError" : {
+      "title" : "يجب أن يكون المبلغ غير المفوض على الأقل {{formattedAmount}}"
+    },
+    "ElrondDelegationBelowMinimumError" : {
+      "title" : "لا يمكن أن يكون التفويض المتبقي أقل من {{formattedAmount}}"
+    },
+    "NotEnoughEGLDForFees" : {
+      "title" : "لا يوجد ما يكفي من EGLD لدفع رسوم المعاملة",
+      "description" : "يُرجى إرسال بعض EGLD إلى حسابك للدفع مقابل المعاملات."
+    },
     "NotEnoughBalance" : {
       "title" : "عفواً، الأموال المتوفرة غير كافية",
       "description" : "يرجى التأكد من أن الحساب به أموال كافية."
@@ -5006,7 +5268,7 @@
     },
     "OperatingSystemOutdated" : {
       "title" : "إصدار نظام التشغيل لديك قديم",
-      "description" : "يُرجى ترقية نظام التشغيل لديك والمحاولة مجدداً. يمكنك الرجوع إلى المقالة أدناه لفهم لماذا Ledger Live غير مدعوم على إصدار نظام التشغيل المثبّت لديك حالياً."
+      "description" : "يُرجى ترقية نظام التشغيل لديك والمحاولة مجدداً. يمكنك الرجوع إلى المقالة أدناه لفهم لماذا Ledger Live غير مدعوم على إصدار نظام التشغيل الحالي لديك."
     },
     "PasswordsDontMatch" : {
       "title" : "كلمات المرور غير متطابقتين",
@@ -5338,7 +5600,7 @@
       "title" : "يجب عليك تقييد على الأقل {{minimumBondAmount}}."
     },
     "PolkadotBondMinimumAmountWarning" : {
-      "title" : "ينبغي ألا يقل رصيدك المُقيّد عن {{minimumBondBalance}}."
+      "title" : "يجب ألا يقل رصيدك المُقيّد عن {{minimumBondBalance}}."
     },
     "PolkadotMaxUnbonding" : {
       "title" : "لقد تجاوزت الحد المسموح به لإلغاء التقيد"
@@ -5493,6 +5755,14 @@
       "title" : "جهازك مقفل",
       "description" : "قم بإلغاء قفل جهازك وحاول مرة أخرى.",
       "descriptionWithProductName" : "قم بإلغاء قفل {{ productName }} خاصتك وحاول مرة أخرى."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "جهازك غير مُستعد للاستخدام بعد",
+      "titleWithProductName" : "{{ productName }} غير جاهز للاستخدام بعد",
+      "description" : "يجب أن تقوم بإعداد جهازك أولاً.\nسنرشدك خلال عملية الإعداد.",
+      "descriptionWithProductName" : "يجب أن تقوم بإعداد {{ productName }} خاصتك أولاً.\nسنرشدك خلال عملية الإعداد.",
+      "goToOnboardingButton" : "إعداد جهازي",
+      "goToOnboardingButtonWithProductName" : "إعداد {{ productName }}"
     }
   },
   "cryptoOrg" : {
@@ -5525,7 +5795,7 @@
     }
   },
   "customImage" : {
-    "title" : "صورة مخصصة",
+    "title" : "Custom lock screen",
     "steps" : {
       "choose" : {
         "stepLabel" : "اختر صورة",
@@ -5543,22 +5813,19 @@
       "transfer" : {
         "stepLabel" : "تحويل",
         "uploadAnotherImage" : "قم بتحميل صورة أخرى",
-        "allowPreview" : "السماح بعرض الصورة على {{productName}}",
-        "loadingPicture" : "تحميل الصورة على {{productName}}",
-        "pictureLoaded" : "تم تحميل الصورة",
+        "allowPreview" : "اسمح لصورة شاشة القَفل بالتحميل على {{productName}} الخاص بك",
+        "loadingPicture" : "جاري التحميل ...",
         "imageLoaded" : "تم تحميل الصورة على {{productName}}",
-        "confirmPicture" : "قم بالتأكيد على {{productName}}",
-        "doThisLater" : "ربّما في وقت لاحق",
-        "timeDisclaimer" : "قد يستغرق هذا حتى 30 ثانية"
+        "confirmPicture" : "يُعجبك ما تراه؟\nاحتفظ بها!",
+        "doThisLater" : "ربّما في وقت لاحق"
       }
     },
     "postOnboarding" : {
       "title" : "تخصيص جهازي",
       "description" : "عبر تخصيص الشاشة",
-      "actionCompletedPopupLabel" : "تم تخصيص الجهاز",
-      "actionCompletedHubTitle" : "تلك الشاشة تبدو أنيقة."
+      "actionCompletedPopupLabel" : "تم تخصيص الجهاز"
     },
-    "customImageSet" : "تم تعيين الصورة المخصصة",
+    "customImageSet" : "تم إعداد شاشة القَفل",
     "finishCTA" : "إنهاء"
   }
 }
