@@ -1,11 +1,11 @@
-import React, { useMemo } from "react";
-import { Platform, SectionList } from "react-native";
+import React, { useCallback, useMemo, useState } from "react";
+import { Linking, Platform, SectionList } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { BottomDrawer, Button, Flex, Tag, Text } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import Illustration from "../../../images/illustration/Illustration";
-import { TrackScreen } from "../../../analytics";
+import { TrackScreen, track } from "../../../analytics";
 import { ScreenName } from "../../../const";
 import OnboardingView from "../OnboardingView";
 import DiscoverCard from "../../Discover/DiscoverCard";
@@ -39,6 +39,8 @@ const OnboardingStepUseCaseSelection = () => {
   const { t } = useTranslation();
   const route = useRoute<NavigationProps["route"]>();
   const navigation = useNavigation<NavigationProps["navigation"]>();
+
+  const [isProtectDrawerOpen, setIsProtectDrawerOpen] = useState(false);
 
   const servicesConfig = useFeature("protectServicesMobile");
 
@@ -132,14 +134,21 @@ const OnboardingStepUseCaseSelection = () => {
                 ...(servicesConfig?.enabled
                   ? [
                       {
-                        disabled: deviceModelId !== "nanoX",
                         onPress: () => {
                           if (deviceModelId === "nanoX") {
                             navigation.navigate(ScreenName.OnboardingPairNew, {
                               deviceModelId: route.params.deviceModelId,
                               next: ScreenName.OnboardingProtectFlow,
                             });
+                          } else {
+                            setIsProtectDrawerOpen(true);
                           }
+
+                          track("button_clicked", {
+                            button: "Restore with Protect",
+                            screen: "UseCase",
+                            timestamp: Date.now(),
+                          });
                         },
                         Image: (
                           <Illustration
@@ -169,6 +178,32 @@ const OnboardingStepUseCaseSelection = () => {
     ],
   );
 
+  const onCloseProtectDrawer = useCallback(() => {
+    setIsProtectDrawerOpen(false);
+  }, []);
+
+  const onBuyNanoX = useCallback(() => {
+    Linking.openURL("https://shop.ledger.com/pages/ledger-nano-x");
+
+    track("button_clicked", {
+      button: "Get a Ledger Nano X",
+      screen: "UseCase",
+      timestamp: Date.now(),
+      drawer: "Protect is available only on Nano X",
+    });
+  }, []);
+
+  const onDiscoverBenefits = useCallback(() => {
+    Linking.openURL("http://ledger.com");
+
+    track("link_clicked", {
+      link: "Discover the benefits",
+      screen: "UseCase",
+      timestamp: Date.now(),
+      drawer: "Protect is available only on Nano X",
+    });
+  }, []);
+
   return (
     <OnboardingView hasBackButton>
       <SectionList
@@ -191,6 +226,40 @@ const OnboardingStepUseCaseSelection = () => {
         stickySectionHeadersEnabled={false}
       />
       <TrackScreen category="Onboarding" name="UseCase" />
+
+      <BottomDrawer isOpen={isProtectDrawerOpen} onClose={onCloseProtectDrawer}>
+        <Flex>
+          <Tag uppercase={false} mx="auto" mb={8}>
+            {t("onboarding.stepUseCase.protect.drawer.comingSoon")}
+          </Tag>
+          <Text variant="h4" textAlign="center" mb={6}>
+            {t("onboarding.stepUseCase.protect.drawer.title")}
+          </Text>
+          <Text variant="body" textAlign="center" color="neutral.c80" mb={8}>
+            {t("onboarding.stepUseCase.protect.drawer.desc")}
+          </Text>
+
+          <Button
+            type="main"
+            outline={false}
+            iconPosition="right"
+            iconName="ExternalLink"
+            onPress={onBuyNanoX}
+            mb={6}
+          >
+            {t("onboarding.stepUseCase.protect.drawer.buyNanoX")}
+          </Button>
+          <Button
+            type="default"
+            outline={false}
+            iconPosition="right"
+            iconName="ExternalLink"
+            onPress={onDiscoverBenefits}
+          >
+            {t("onboarding.stepUseCase.protect.drawer.discoverBenefits")}
+          </Button>
+        </Flex>
+      </BottomDrawer>
     </OnboardingView>
   );
 };
