@@ -7,7 +7,6 @@ import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
 import { useDelegation } from "@ledgerhq/live-common/families/tezos/bakers";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
   account: AccountLike,
@@ -18,11 +17,9 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const delegation = useDelegation(account);
-  const stakeProgramsFeatureFlag = useFeature("stakePrograms");
-  const showNoFundsModal = stakeProgramsFeatureFlag.enabled;
 
   const onClick = useCallback(() => {
-    if (isAccountEmpty(account) && showNoFundsModal) {
+    if (isAccountEmpty(account)) {
       dispatch(
         openModal("MODAL_NO_FUNDS_STAKE", {
           account,
@@ -44,7 +41,7 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
           account,
         };
     dispatch(openModal("MODAL_DELEGATE", options));
-  }, [account, showNoFundsModal, delegation, parentAccount, dispatch]);
+  }, [account, delegation, parentAccount, dispatch]);
 
   if (parentAccount) return null;
 

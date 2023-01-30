@@ -13,7 +13,6 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import IconCoins from "~/renderer/icons/Coins";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { BigNumber } from "bignumber.js";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
   account: AccountLike,
@@ -23,8 +22,6 @@ type Props = {
 const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const stakeProgramsFeatureFlag = useFeature("stakePrograms");
-  const showNoFundsModal = stakeProgramsFeatureFlag.enabled;
 
   const locale = useSelector(localeSelector);
   const unit = getAccountUnit(account);
@@ -36,7 +33,7 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
   const earnRewardDisabled = tronPower === 0 && spendableBalance.lt(minAmount);
 
   const onClick = useCallback(() => {
-    if (isAccountEmpty(account) && showNoFundsModal) {
+    if (isAccountEmpty(account)) {
       dispatch(
         openModal("MODAL_NO_FUNDS_STAKE", {
           account,
@@ -58,7 +55,7 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
         }),
       );
     }
-  }, [account, showNoFundsModal, tronPower, dispatch, parentAccount]);
+  }, [account, tronPower, dispatch, parentAccount]);
 
   if (parentAccount) return null;
 

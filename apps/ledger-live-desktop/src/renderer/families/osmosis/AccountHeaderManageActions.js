@@ -8,7 +8,6 @@ import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
   account: AccountLike,
@@ -19,8 +18,6 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const mainAccount = getMainAccount(account, parentAccount);
-  const stakeProgramsFeatureFlag = useFeature("stakePrograms");
-  const showNoFundsModal = stakeProgramsFeatureFlag.enabled;
 
   const { cosmosResources } = mainAccount;
   invariant(cosmosResources, "Osmosis account with cosmosResources expected");
@@ -29,7 +26,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const hasDelegations = cosmosResources.delegations.length > 0;
 
   const onClick = useCallback(() => {
-    if (isAccountEmpty(account) && showNoFundsModal) {
+    if (isAccountEmpty(account)) {
       dispatch(
         openModal("MODAL_NO_FUNDS_STAKE", {
           account,
@@ -49,7 +46,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
         }),
       );
     }
-  }, [showNoFundsModal, hasDelegations, dispatch, account, parentAccount]);
+  }, [hasDelegations, dispatch, account, parentAccount]);
 
   if (parentAccount) return null;
 
