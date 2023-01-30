@@ -76,6 +76,7 @@ jobs:
             git push origin develop
             echo "create-pr=0" >> $GITHUB_OUTPUT
           else
+            git merge --abort
             git checkout ${{ github.event.inputs.ref }}
             git checkout -b support/hotfix-merge-conflicts
             git push origin support/hotfix-merge-conflicts
@@ -92,6 +93,7 @@ jobs:
               git push origin release
               echo "create-pr=0" >> $GITHUB_OUTPUT
             else
+              git merge --abort
               git checkout ${{ github.event.inputs.ref }}
               git checkout -b support/hotfix-release-merge-conflicts
               git push origin support/hotfix-release-merge-conflicts

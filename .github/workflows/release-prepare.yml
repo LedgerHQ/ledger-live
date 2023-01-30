@@ -76,6 +76,7 @@ jobs:
             git push origin develop
             echo "create-pr=0" >> $GITHUB_OUTPUT
           else
+            git merge --abort
             git checkout ${{ github.event.inputs.ref }}
             git checkout -b support/release-merge-conflicts
             git push origin support/release-merge-conflicts
