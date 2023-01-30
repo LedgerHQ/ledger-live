@@ -2,6 +2,10 @@ import "./test-helpers/staticTime";
 import { genAccount } from "../mock/account";
 import { patchAccount } from "../reconciliation";
 import { toAccountRaw } from "../account";
+import { setSupportedCurrencies } from "../currencies";
+
+setSupportedCurrencies(["ripple", "ethereum_classic"]);
+
 const accounts = Array(50)
   .fill(null)
   .map((_, j) => genAccount("seed_" + j));

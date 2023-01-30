@@ -42,6 +42,14 @@ Ledger Live main types.
 *   [SignOperationFnSignature](#signoperationfnsignature)
 *   [CurrencyBridge](#currencybridge)
 *   [AccountBridge](#accountbridge)
+    *   [applyReconciliation](#applyreconciliation)
+        *   [Parameters](#parameters)
+    *   [assignToAccountRaw](#assigntoaccountraw)
+        *   [Parameters](#parameters-1)
+    *   [assignFromAccountRaw](#assignfromaccountraw)
+        *   [Parameters](#parameters-2)
+    *   [initAccount](#initaccount)
+        *   [Parameters](#parameters-3)
 *   [CurrenciesData](#currenciesdata)
     *   [Properties](#properties-11)
 *   [DatasetTest](#datasettest)
@@ -458,6 +466,56 @@ Abstraction related to a currency
 ### AccountBridge
 
 Abstraction related to an account
+
+#### applyReconciliation
+
+This function applies the change from moving from "account" to an updated version ("updatedRow").
+It returns a boolean value indicating if something changed in the "next" Account that possibly gets mutated in-place.
+
+Type: function (account: [Account](#account), updatedRaw: [AccountRaw](#accountraw), next: [Account](#account)): [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+
+##### Parameters
+
+*   `account` **[Account](#account)** The original account object.
+*   `updatedRaw` **[AccountRaw](#accountraw)** The updated version of the account in its serialized form.
+*   `next` **[Account](#account)** The updated account object.
+
+Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Indicates if something changed in the "next" account.
+
+#### assignToAccountRaw
+
+This function mutates the 'accountRaw' object in-place to add any extra fields that the coin may need to set.
+It is called during the serialization mechanism, for instance bitcoinResources need to be serialized.
+
+Type: function (account: [Account](#account), accountRaw: [AccountRaw](#accountraw)): void
+
+##### Parameters
+
+*   `account` **[Account](#account)** The original account object.
+*   `accountRaw` **[AccountRaw](#accountraw)** The account in its serialized form.
+
+#### assignFromAccountRaw
+
+This function mutates the 'account' object in-place to add any extra fields that the coin may need to set.
+It is called during the deserialization mechanism, for instance bitcoinResources need to be deserialized.
+
+Type: function (accountRaw: [AccountRaw](#accountraw), account: [Account](#account)): void
+
+##### Parameters
+
+*   `accountRaw` **[AccountRaw](#accountraw)** The account in its serialized form.
+*   `account` **[Account](#account)** The original account object.
+
+#### initAccount
+
+This function mutates the 'account' object to extend it with any extra fields of the coin.
+For instance bitcoinResources needs to be created.
+
+Type: function (account: [Account](#account)): void
+
+##### Parameters
+
+*   `account` **[Account](#account)** The original account object to mutates in-place.
 
 ### CurrenciesData
 

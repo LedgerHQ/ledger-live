@@ -1,10 +1,8 @@
 import { BigNumber } from "bignumber.js";
-import type {
-  TronAccount,
-  TronAccountRaw,
-  TronResources,
-  TronResourcesRaw,
-} from "../families/tron/types";
+import {
+  toTronResourcesRaw,
+  fromTronResourcesRaw,
+} from "../families/tron/serialization";
 import {
   toBitcoinResourcesRaw,
   fromBitcoinResourcesRaw,
@@ -13,10 +11,6 @@ import {
   toCosmosResourcesRaw,
   fromCosmosResourcesRaw,
 } from "../families/cosmos/serialization";
-import {
-  toAlgorandResourcesRaw,
-  fromAlgorandResourcesRaw,
-} from "../families/algorand/serialization";
 import {
   toPolkadotResourcesRaw,
   fromPolkadotResourcesRaw,
@@ -65,6 +59,7 @@ import {
   fromCardanoResourceRaw,
   toCardanoResourceRaw,
 } from "../families/cardano/serialization";
+
 import type {
   Account,
   AccountLike,
@@ -86,10 +81,6 @@ import type {
 import { CosmosAccount, CosmosAccountRaw } from "../families/cosmos/types";
 import { BitcoinAccount, BitcoinAccountRaw } from "../families/bitcoin/types";
 import {
-  AlgorandAccount,
-  AlgorandAccountRaw,
-} from "../families/algorand/types";
-import {
   PolkadotAccount,
   PolkadotAccountRaw,
 } from "../families/polkadot/types";
@@ -102,10 +93,11 @@ import {
 import { SolanaAccount, SolanaAccountRaw } from "../families/solana/types";
 import { TezosAccount, TezosAccountRaw } from "../families/tezos/types";
 import { CeloAccount, CeloAccountRaw } from "../families/celo/types";
+import type { TronAccount, TronAccountRaw } from "../families/tron/types";
+import { getAccountBridge } from "../bridge";
 import { NearAccount, NearAccountRaw } from "../families/near/types";
 
 export { toCosmosResourcesRaw, fromCosmosResourcesRaw };
-export { toAlgorandResourcesRaw, fromAlgorandResourcesRaw };
 export { toBitcoinResourcesRaw, fromBitcoinResourcesRaw };
 export { toPolkadotResourcesRaw, fromPolkadotResourcesRaw };
 export { toTezosResourcesRaw, fromTezosResourcesRaw };
@@ -113,6 +105,7 @@ export { toElrondResourcesRaw, fromElrondResourcesRaw };
 export { toCryptoOrgResourcesRaw, fromCryptoOrgResourcesRaw };
 export { toCardanoResourceRaw, fromCardanoResourceRaw };
 export { toSolanaResourcesRaw, fromSolanaResourcesRaw };
+export { toTronResourcesRaw, fromTronResourcesRaw };
 export { toCeloResourcesRaw, fromCeloResourcesRaw };
 export { toNearResourcesRaw, fromNearResourcesRaw };
 
@@ -327,153 +320,7 @@ export const fromOperationRaw = (
 
   return res;
 };
-export const toTronResourcesRaw = ({
-  frozen,
-  delegatedFrozen,
-  votes,
-  tronPower,
-  energy,
-  bandwidth,
-  unwithdrawnReward,
-  lastWithdrawnRewardDate,
-  lastVotedDate,
-  cacheTransactionInfoById: cacheTx,
-}: TronResources): TronResourcesRaw => {
-  const frozenBandwidth = frozen.bandwidth;
-  const frozenEnergy = frozen.energy;
-  const delegatedFrozenBandwidth = delegatedFrozen.bandwidth;
-  const delegatedFrozenEnergy = delegatedFrozen.energy;
-  const cacheTransactionInfoById = {};
 
-  for (const k in cacheTx) {
-    const { fee, blockNumber, withdraw_amount, unfreeze_amount } = cacheTx[k];
-    cacheTransactionInfoById[k] = [
-      fee,
-      blockNumber,
-      withdraw_amount,
-      unfreeze_amount,
-    ];
-  }
-
-  return {
-    frozen: {
-      bandwidth: frozenBandwidth
-        ? {
-            amount: frozenBandwidth.amount.toString(),
-            expiredAt: frozenBandwidth.expiredAt.toISOString(),
-          }
-        : undefined,
-      energy: frozenEnergy
-        ? {
-            amount: frozenEnergy.amount.toString(),
-            expiredAt: frozenEnergy.expiredAt.toISOString(),
-          }
-        : undefined,
-    },
-    delegatedFrozen: {
-      bandwidth: delegatedFrozenBandwidth
-        ? {
-            amount: delegatedFrozenBandwidth.amount.toString(),
-          }
-        : undefined,
-      energy: delegatedFrozenEnergy
-        ? {
-            amount: delegatedFrozenEnergy.amount.toString(),
-          }
-        : undefined,
-    },
-    votes,
-    tronPower,
-    energy: energy.toString(),
-    bandwidth: {
-      freeUsed: bandwidth.freeUsed.toString(),
-      freeLimit: bandwidth.freeLimit.toString(),
-      gainedUsed: bandwidth.gainedUsed.toString(),
-      gainedLimit: bandwidth.gainedLimit.toString(),
-    },
-    unwithdrawnReward: unwithdrawnReward.toString(),
-    lastWithdrawnRewardDate: lastWithdrawnRewardDate
-      ? lastWithdrawnRewardDate.toISOString()
-      : undefined,
-    lastVotedDate: lastVotedDate ? lastVotedDate.toISOString() : undefined,
-    cacheTransactionInfoById,
-  };
-};
-export const fromTronResourcesRaw = ({
-  frozen,
-  delegatedFrozen,
-  votes,
-  tronPower,
-  energy,
-  bandwidth,
-  unwithdrawnReward,
-  lastWithdrawnRewardDate,
-  lastVotedDate,
-  cacheTransactionInfoById: cacheTransactionInfoByIdRaw,
-}: TronResourcesRaw): TronResources => {
-  const frozenBandwidth = frozen.bandwidth;
-  const frozenEnergy = frozen.energy;
-  const delegatedFrozenBandwidth = delegatedFrozen.bandwidth;
-  const delegatedFrozenEnergy = delegatedFrozen.energy;
-  const cacheTransactionInfoById = {};
-
-  if (cacheTransactionInfoByIdRaw) {
-    for (const k in cacheTransactionInfoByIdRaw) {
-      const [fee, blockNumber, withdraw_amount, unfreeze_amount] =
-        cacheTransactionInfoByIdRaw[k];
-      cacheTransactionInfoById[k] = {
-        fee,
-        blockNumber,
-        withdraw_amount,
-        unfreeze_amount,
-      };
-    }
-  }
-
-  return {
-    frozen: {
-      bandwidth: frozenBandwidth
-        ? {
-            amount: new BigNumber(frozenBandwidth.amount),
-            expiredAt: new Date(frozenBandwidth.expiredAt),
-          }
-        : undefined,
-      energy: frozenEnergy
-        ? {
-            amount: new BigNumber(frozenEnergy.amount),
-            expiredAt: new Date(frozenEnergy.expiredAt),
-          }
-        : undefined,
-    },
-    delegatedFrozen: {
-      bandwidth: delegatedFrozenBandwidth
-        ? {
-            amount: new BigNumber(delegatedFrozenBandwidth.amount),
-          }
-        : undefined,
-      energy: delegatedFrozenEnergy
-        ? {
-            amount: new BigNumber(delegatedFrozenEnergy.amount),
-          }
-        : undefined,
-    },
-    votes,
-    tronPower,
-    energy: new BigNumber(energy),
-    bandwidth: {
-      freeUsed: new BigNumber(bandwidth.freeUsed),
-      freeLimit: new BigNumber(bandwidth.freeLimit),
-      gainedUsed: new BigNumber(bandwidth.gainedUsed),
-      gainedLimit: new BigNumber(bandwidth.gainedLimit),
-    },
-    unwithdrawnReward: new BigNumber(unwithdrawnReward),
-    lastWithdrawnRewardDate: lastWithdrawnRewardDate
-      ? new Date(lastWithdrawnRewardDate)
-      : undefined,
-    lastVotedDate: lastVotedDate ? new Date(lastVotedDate) : undefined,
-    cacheTransactionInfoById,
-  };
-};
 export function fromSwapOperationRaw(raw: SwapOperationRaw): SwapOperation {
   const { fromAmount, toAmount } = raw;
   return {
@@ -717,6 +564,7 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     syncHash,
     nfts,
   } = rawAccount;
+
   const subAccounts =
     subAccountsRaw &&
     subAccountsRaw
@@ -825,14 +673,6 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
           fromBitcoinResourcesRaw(bitcoinResourcesRaw);
       break;
     }
-    case "algorand": {
-      const algoResourcesRaw = (rawAccount as AlgorandAccountRaw)
-        .algorandResources;
-      if (algoResourcesRaw)
-        (res as AlgorandAccount).algorandResources =
-          fromAlgorandResourcesRaw(algoResourcesRaw);
-      break;
-    }
     case "polkadot": {
       const polkadotResourcesRaw = (rawAccount as PolkadotAccountRaw)
         .polkadotResources;
@@ -887,6 +727,13 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
           fromNearResourcesRaw(nearResourcesRaw);
       break;
     }
+    default: {
+      const bridge = getAccountBridge(res);
+      const assignFromAccountRaw = bridge.assignFromAccountRaw;
+      if (assignFromAccountRaw) {
+        assignFromAccountRaw(rawAccount, res);
+      }
+    }
   }
 
   if (swapHistory) {
@@ -925,7 +772,6 @@ export function toAccountRaw(account: Account): AccountRaw {
     syncHash,
     nfts,
   } = account;
-
   const res: AccountRaw = {
     id,
     seedIdentifier,
@@ -1013,15 +859,6 @@ export function toAccountRaw(account: Account): AccountRaw {
       }
       break;
     }
-    case "algorand": {
-      const algorandAccount = account as AlgorandAccount;
-      if (algorandAccount.algorandResources) {
-        (res as AlgorandAccountRaw).algorandResources = toAlgorandResourcesRaw(
-          algorandAccount.algorandResources
-        );
-      }
-      break;
-    }
     case "polkadot": {
       const polkadotAccount = account as PolkadotAccount;
       if (polkadotAccount.polkadotResources) {
@@ -1082,6 +919,13 @@ export function toAccountRaw(account: Account): AccountRaw {
         );
       }
       break;
+    }
+    default: {
+      const bridge = getAccountBridge(account);
+      const assignToAccountRaw = bridge.assignToAccountRaw;
+      if (assignToAccountRaw) {
+        assignToAccountRaw(account, res);
+      }
     }
   }
 
