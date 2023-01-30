@@ -87,6 +87,9 @@ export type UseAndroidBluetoothPermissionsArgs = {
  * When the state of the app ("active", "background" etc.) changes and is back to "active", the permissions are checked again.
  * This time, it is only a check, not a request, and no prompt will be displayed to the user.
  *
+ * @param isHookEnabled if false, the hook will not check/requests for the permissions and will not listen to the app state changes.
+ *   Defaults to true.
+ *
  * @returns an object with the following properties:
  * - hasPermissions: "granted" if the permissions are granted, "denied" if they are denied, "unknown" if they are still being checked/requested
  * - requestForPermissionsAgain: a function to request again (and if only granted, only a check without any prompt) the BLE permissions

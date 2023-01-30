@@ -43,13 +43,16 @@ export type UseAndroidEnableLocationArgs = {
 };
 
 /**
- * Hook to enable the locations services
+ * Hook to enable the locations services.
  *
  * A method is exposed to check the location services state and request (if necessary) the user to enable them.
  * This method is called a first time on mount.
  * It also listens to an update of the location services state from the native module, and updates the state accordingly.
  *
  * Only available on Android.
+ *
+ * @param isHookEnabled if false, the hook will not check/request the location services, and will not listen to an update
+ * of the locations services state from the native module. Defaults to true.
  *
  * @returns an object containing:
  * - checkAndRequestAgain: a function that checks the location services state and requests (if necessary) the user to enable them
@@ -66,6 +69,8 @@ export function useAndroidEnableLocation({
   // Exposes a check and request enabling location services again (if needed)
   // First way to update locationServicesState.
   const checkAndRequestAgain = useCallback(async () => {
+    if (!isHookEnabled) return;
+
     const response = await promptEnableLocation();
 
     if (
@@ -76,7 +81,7 @@ export function useAndroidEnableLocation({
     } else {
       setLocationServicesState("disabled");
     }
-  }, [promptEnableLocation]);
+  }, [isHookEnabled, promptEnableLocation]);
 
   // Checks and requests on mount
   useEffect(() => {
