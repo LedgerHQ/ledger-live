@@ -1121,6 +1121,7 @@
       "receive": "Receive",
       "send": "Send",
       "swap": "Swap",
+      "stake": "Stake",
       "buy": "Buy",
       "sell": "Sell",
       "edit": "Edit account",
