@@ -1,21 +1,26 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
+import { useSelector } from "react-redux";
+import invariant from "invariant";
 import { Trans, useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { Alert, Button, Flex, Text } from "@ledgerhq/native-ui";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
+
+import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { ScreenName } from "../../../const";
 import LText from "../../../components/LText";
 
 import ExternalLink from "../../../components/ExternalLink";
 import BulletList, { BulletGreenCheck } from "../../../components/BulletList";
 import NavigationScrollView from "../../../components/NavigationScrollView";
-import { urls } from "../../../config/urls";
 import { TrackScreen } from "../../../analytics";
 import Illustration from "../../../images/illustration/Illustration";
 import EarnLight from "../../../images/illustration/Light/_003.png";
 import EarnDark from "../../../images/illustration/Dark/_003.png";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import { CosmosDelegationFlowParamList } from "./types";
+import { accountScreenSelector } from "../../../reducers/accounts";
 
 type Props = StackNavigatorProps<
   CosmosDelegationFlowParamList,
@@ -31,8 +36,13 @@ export default function DelegationStarted({ navigation, route }: Props) {
     });
   }, [navigation, route.params]);
 
+  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  invariant(account, "account must be defined");
+
+  const mainAccount = getMainAccount(account, parentAccount);
+  const crypto = cryptoFactory(mainAccount.currency.id);
   const howDelegationWorks = useCallback(() => {
-    Linking.openURL(urls.cosmosStakingRewards);
+    Linking.openURL(cryptoFactory(mainAccount.currency.id).stakingDocUrl);
   }, []);
 
   return (
@@ -50,13 +60,19 @@ export default function DelegationStarted({ navigation, route }: Props) {
           />
         </Flex>
         <Text fontWeight="semiBold" style={styles.description}>
-          <Trans i18nKey="cosmos.delegation.flow.steps.starter.description" />
+          <Trans
+            i18nKey="cosmos.delegation.flow.steps.starter.description"
+            values={{ ticker: mainAccount.currency.ticker }}
+          />
         </Text>
         <BulletList
           Bullet={BulletGreenCheck}
           list={[
             <Trans i18nKey="cosmos.delegation.flow.steps.starter.steps.0" />,
-            <Trans i18nKey="cosmos.delegation.flow.steps.starter.steps.1" />,
+            <Trans
+              i18nKey="cosmos.delegation.flow.steps.starter.steps.1"
+              values={{ numberOfDays: crypto.unbondingPeriod }}
+            />,
             <Trans i18nKey="cosmos.delegation.flow.steps.starter.steps.2" />,
           ].map(wording => (
             <LText semiBold>{wording}</LText>

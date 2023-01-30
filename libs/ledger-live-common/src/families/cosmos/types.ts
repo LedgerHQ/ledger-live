@@ -78,19 +78,6 @@ export type CosmosValidatorItem = {
   estimatedYearlyRewardsRate: number; // value from 0.0 to 1.0 (normalized percentage)
   tokens: number;
 };
-export type CosmosRewardsState = {
-  targetBondedRatio: number;
-  communityPoolCommission: number;
-  assumedTimePerBlock: number;
-  inflationRateChange: number;
-  inflationMaxRate: number;
-  inflationMinRate: number;
-  actualBondedRatio: number;
-  averageTimePerBlock: number;
-  totalSupply: number;
-  averageDailyFees: number;
-  currentValueInflation: number;
-};
 // by convention preload would return a Promise of CosmosPreloadData
 export type CosmosPreloadData = {
   validators: CosmosValidatorItem[];
@@ -160,7 +147,7 @@ export type CosmosLikeTransaction = TransactionCommon & {
 };
 
 export type Transaction = CosmosLikeTransaction & {
-  family: "cosmos" | "osmosis";
+  family: "cosmos";
   networkInfo: NetworkInfo | null | undefined;
 };
 
@@ -176,7 +163,7 @@ export type CosmosLikeTransactionRaw = TransactionCommonRaw & {
 };
 
 export type TransactionRaw = CosmosLikeTransactionRaw & {
-  family: "cosmos" | "osmosis";
+  family: "cosmos";
   networkInfo: NetworkInfoRaw | null | undefined;
 };
 
@@ -225,3 +212,20 @@ export type CosmosAccountRaw = AccountRaw & {
 export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
+
+export type CosmosTotalSupply = {
+  denom: string;
+  amount: string;
+};
+
+export type CosmosPool = {
+  not_bonded_tokens: string;
+  bonded_tokens: string;
+};
+
+export type CosmosDistributionParams = {
+  community_tax: string;
+  base_proposer_reward: string;
+  bonus_proposer_reward: string;
+  withdraw_addr_enabled: boolean;
+};
