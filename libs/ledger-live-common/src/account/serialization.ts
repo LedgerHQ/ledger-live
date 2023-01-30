@@ -655,7 +655,6 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
           fromTronResourcesRaw(tronResourcesRaw);
       break;
     }
-    case "osmosis":
     case "cosmos": {
       const cosmosResourcesRaw = (rawAccount as CosmosAccountRaw)
         .cosmosResources;
@@ -825,15 +824,6 @@ export function toAccountRaw(account: Account): AccountRaw {
       if (tronAccount.tronResources) {
         (res as TronAccountRaw).tronResources = toTronResourcesRaw(
           tronAccount.tronResources
-        );
-      }
-      break;
-    }
-    case "osmosis": {
-      const cosmosAccount = account as CosmosAccount;
-      if (cosmosAccount.cosmosResources) {
-        (res as CosmosAccountRaw).cosmosResources = toCosmosResourcesRaw(
-          cosmosAccount.cosmosResources
         );
       }
       break;

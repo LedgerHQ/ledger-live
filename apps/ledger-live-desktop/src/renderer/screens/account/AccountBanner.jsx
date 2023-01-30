@@ -9,8 +9,7 @@ import { getAccountBannerState as getCosmosBannerState } from "@ledgerhq/live-co
 import { getAccountBannerProps as getCosmosBannerProps } from "~/renderer/families/cosmos/utils";
 
 const getBannerProps = (account: Account, hooks) => {
-  const id = account.currency.id;
-  switch (id) {
+  switch (account.currency.family) {
     case "cosmos": {
       const state = getCosmosBannerState(account);
       const props = getCosmosBannerProps(state, account, hooks);
