@@ -39,6 +39,7 @@ const keyExtractor = (item: ProtoNFT) => item.id;
 export function NftList({ data }: Props) {
   const { space, colors } = useTheme();
   const dataWithAdd = data.concat(ADD_NEW);
+
   const {
     t,
     triggerMultiSelectMode,
@@ -50,32 +51,30 @@ export function NftList({ data }: Props) {
     multiSelectModeEnabled,
   } = useNftList({ nftList: data });
 
-  const gradients = [
-    {
-      height: 145,
-      opacity: 1,
-      stops: [
-        <Stop
-          key="0%"
-          offset="0%"
-          stopOpacity={0}
-          stopColor={colors.background.main}
-        />,
-        <Stop
-          key="25%"
-          offset="25%"
-          stopOpacity={0.5}
-          stopColor={colors.background.main}
-        />,
-        <Stop
-          key="50%"
-          offset="50%"
-          stopOpacity={1}
-          stopColor={colors.background.main}
-        />,
-      ],
-    },
-  ];
+  const gradient = {
+    height: 145,
+    opacity: 1,
+    stops: [
+      <Stop
+        key="0%"
+        offset="0%"
+        stopOpacity={0}
+        stopColor={colors.background.main}
+      />,
+      <Stop
+        key="25%"
+        offset="25%"
+        stopOpacity={0.5}
+        stopColor={colors.background.main}
+      />,
+      <Stop
+        key="50%"
+        offset="50%"
+        stopOpacity={1}
+        stopColor={colors.background.main}
+      />,
+    ],
+  };
 
   const renderItem = useCallback(
     ({ item, index }: { item: ProtoNFT; index: number; count?: number }) => (
@@ -169,7 +168,7 @@ export function NftList({ data }: Props) {
       <Animated.View>
         {multiSelectModeEnabled && (
           <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
-            <BackgroundGradient {...gradients[0]} />
+            <BackgroundGradient {...gradient} />
 
             <ButtonsContainer width="100%" justifyContent={"space-between"}>
               <StyledButton
