@@ -3,6 +3,7 @@ import {
   PermissionsAndroid,
   Platform,
   AppState,
+  NativeEventSubscription,
 } from "react-native";
 import { useCallback, useState, useEffect } from "react";
 
@@ -52,6 +53,10 @@ async function requestLocationPermission(): Promise<RequestResult> {
 
 export type PermissionState = "unknown" | "granted" | "denied";
 
+export type UseAndroidLocationPermissionArgs = {
+  isHookEnabled?: boolean;
+};
+
 /**
  * Hook to check and request the location permission on Android.
  *
@@ -63,12 +68,19 @@ export type PermissionState = "unknown" | "granted" | "denied";
  * When the state of the app ("active", "background" etc.) changes and is back to "active", the location permission is checked again.
  * This time, it is only a check, not a request, and no prompt will be displayed to the user.
  *
+ * @param isHookEnabled if false, the hook will not check/requests for the permissions and will not listen to the app state changes.
+ *   Defaults to true.
+ *
  * @returns an object with the following properties:
  * - hasPermission: "granted" if the location permission is granted, "denied" if it is denied, "unknown" if it is still being checked/requested
  * - requestForPermissionAgain: a function to request again (and if only granted, only a check without any prompt) the location permission
  * - neverAskAgain: true if the user has checked the "never ask again" checkbox (or on Android 11+ if the user has denied the permission several times)
  */
-export const useAndroidLocationPermission = () => {
+export const useAndroidLocationPermission = (
+  { isHookEnabled = true }: UseAndroidLocationPermissionArgs = {
+    isHookEnabled: true,
+  },
+) => {
   // If no permission is required, we consider that the permission is granted
   const [hasPermission, setHasPermission] = useState<PermissionState>(
     !locationPermission ? "granted" : "unknown",
@@ -93,16 +105,22 @@ export const useAndroidLocationPermission = () => {
    * - the smartphone prompts the user to allow for the permission
    */
   useEffect(() => {
-    const listener = AppState.addEventListener("change", state => {
-      if (state === "active") {
-        setCheckPermissionNonce(i => i + 1);
-      }
-    });
+    let listener: NativeEventSubscription | null;
+
+    if (isHookEnabled) {
+      listener = AppState.addEventListener("change", state => {
+        if (state === "active") {
+          setCheckPermissionNonce(i => i + 1);
+        }
+      });
+    }
 
     return () => {
-      listener.remove();
+      if (listener) {
+        listener.remove();
+      }
     };
-  }, []);
+  }, [isHookEnabled]);
 
   /**
    * Checks the location permission when the app state changes back to "active".
@@ -120,16 +138,18 @@ export const useAndroidLocationPermission = () => {
       }
     }
 
-    // Does not check the permissions on mount.
-    // Only when the app state changes.
-    if (checkPermissionNonce > 0) {
-      asyncCheckLocationPermissions();
+    if (isHookEnabled) {
+      // Does not check the permissions on mount.
+      // Only when the app state changes.
+      if (checkPermissionNonce > 0) {
+        asyncCheckLocationPermissions();
+      }
     }
 
     return () => {
       cancelled = true;
     };
-  }, [checkPermissionNonce]);
+  }, [checkPermissionNonce, isHookEnabled]);
 
   /**
    * Triggers a request of the location permission: on mount, and every time requestPermissionNonce is updated
@@ -151,12 +171,14 @@ export const useAndroidLocationPermission = () => {
       }
     }
 
-    asyncRequestLocationPermission();
+    if (isHookEnabled) {
+      asyncRequestLocationPermission();
+    }
 
     return () => {
       cancelled = true;
     };
-  }, [requestPermissionNonce]);
+  }, [isHookEnabled, requestPermissionNonce]);
 
   return {
     hasPermission,
