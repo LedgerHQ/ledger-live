@@ -4,7 +4,7 @@ import { IconBox, Icons } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { BluetoothMedium } from "@ledgerhq/native-ui/assets/icons";
 import ServiceDisabledView from "../ServiceDisabledView";
-import GenericDrawerContent from "../GenericDrawerContent";
+import InformationalMessageDrawerContent from "../InformationalMessageDrawerContent";
 
 export type Props = {
   hasBackButton?: boolean;
@@ -54,7 +54,7 @@ const BluetoothDisabled: React.FC<Props> = ({
 
   if (componentType === "drawer") {
     return (
-      <GenericDrawerContent
+      <InformationalMessageDrawerContent
         iconType="error"
         title={t("bluetooth.required")}
         description={t("bluetooth.checkEnabled")}

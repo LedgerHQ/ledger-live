@@ -5,7 +5,7 @@ import LocationServicesDialogBox from "react-native-android-location-services-di
 
 import NoLocationImage from "../../icons/NoLocationImage";
 import ServiceDisabledView from "../ServiceDisabledView";
-import GenericDrawerContent from "../GenericDrawerContent";
+import InformationalMessageDrawerContent from "../InformationalMessageDrawerContent";
 
 type Props = {
   onRetry?: (() => void) | null;
@@ -65,7 +65,7 @@ const LocationDisabled: React.FC<Props> = ({
 
   if (componentType === "drawer") {
     return (
-      <GenericDrawerContent
+      <InformationalMessageDrawerContent
         iconType="error"
         title={t("location.titleServiceRequired")}
         description={t("location.descriptionServiceRequired")}
