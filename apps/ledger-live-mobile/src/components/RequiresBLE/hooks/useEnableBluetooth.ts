@@ -81,6 +81,9 @@ export type UseEnableBluetoothArgs = {
  *
  * Not Transport agnostic. It uses @ledgerhq/react-native-hw-transport-ble.
  *
+ * @param isHookEnabled if false, the hook will not check/request the bluetooth service, and will not listen to the
+ *   the bluetooth service state from BleTransport. Defaults to true.
+ *
  * @returns an object containing:
  * - checkAndRequestAgain: a function that checks the bluetooth service state and requests (if necessary) the user to enable it
  * - bluetoothServiceState: a state that indicates if bluetooth is enabled or not
@@ -95,9 +98,11 @@ export function useEnableBluetooth({
 
   // Exposes a check and request enabling bluetooth service again (if needed)
   const checkAndRequestAgain = useCallback(async () => {
+    if (!isHookEnabled) return;
+
     // We actually can't do anything with the result, as on iOS it will always be BLE_UNKWOWN_STATE
     await promptBluetoothCallback();
-  }, [promptBluetoothCallback]);
+  }, [isHookEnabled, promptBluetoothCallback]);
 
   // Checks and requests on mount
   useEffect(() => {
