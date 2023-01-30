@@ -3,7 +3,7 @@ import { Account, NFTStandard, ProtoNFT } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { genAccount } from "../mock/account";
 import {
-  getNFTByTokenId,
+  getNFT,
   getNftCollectionKey,
   getNftKey,
   groupByCurrency,
@@ -73,8 +73,8 @@ describe("helpers", () => {
       "currencyId-contract"
     );
   });
-  it("getNFTByTokenId", () => {
-    expect(getNFTByTokenId("nft.tokenId", NFTs)).toEqual(NFT_1);
+  it("getNFTById", () => {
+    expect(getNFT("contract", "nft.tokenId", NFTs)).toEqual(NFT_1);
   });
 
   it("groupByCurrency", () => {
