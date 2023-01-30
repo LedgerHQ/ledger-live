@@ -40,8 +40,8 @@ const AccountHeaderManageActions = ({ account, parentAccount }: Props) => {
   }, [account, dispatch, parentAccount]);
 
   const disabledLabel = isRegistrationPending
-    ? ""
-    : `${t("celo.manage.titleWhenPendingRegistration")}`;
+    ? `${t("celo.manage.titleWhenPendingRegistration")}`
+    : "";
 
   return [
     {
