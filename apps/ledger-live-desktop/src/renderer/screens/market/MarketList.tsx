@@ -221,8 +221,8 @@ const CurrencyRow = memo(function CurrencyRowItem({
   const availableOnBuy = currency && onRampAvailableTickers.includes(currency.ticker.toUpperCase());
   const availableOnSwap = internalCurrency && swapAvailableIds.includes(internalCurrency.id);
   const stakeProgramsFeatureFlag = useFeature("stakePrograms");
-  const { params: paramsFlag, enabled: stakeProgramsEnabled } = stakeProgramsFeatureFlag || {};
-  const { list: listFlag } = paramsFlag || {};
+  const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
+  const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;
   const availableOnStake = stakeProgramsEnabled && listFlag.includes(currency?.id || "");
   return (
     <MarketRowItem
