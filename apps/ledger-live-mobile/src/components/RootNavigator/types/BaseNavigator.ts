@@ -69,10 +69,6 @@ import type { CosmosDelegationFlowParamList } from "../../../families/cosmos/Del
 import type { CosmosRedelegationFlowParamList } from "../../../families/cosmos/RedelegationFlow/types";
 import type { CosmosUndelegationFlowParamList } from "../../../families/cosmos/UndelegationFlow/types";
 import type { CosmosClaimRewardsFlowParamList } from "../../../families/cosmos/ClaimRewardsFlow/types";
-import type { OsmosisDelegationFlowParamList } from "../../../families/osmosis/DelegationFlow/types";
-import type { OsmosisRedelegationFlowParamList } from "../../../families/osmosis/RedelegationFlow/types";
-import type { OsmosisUndelegationFlowParamList } from "../../../families/osmosis/UndelegationFlow/types";
-import type { OsmosisClaimRewardsFlowParamList } from "../../../families/osmosis/ClaimRewardsFlow/types";
 import type { SolanaDelegationFlowParamList } from "../../../families/solana/DelegationFlow/types";
 import type { StellarAddAssetFlowParamList } from "../../../families/stellar/AddAssetFlow/types";
 import type { TezosDelegationFlowParamList } from "../../../families/tezos/DelegationFlow/types";
@@ -306,12 +302,6 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.CosmosRedelegationFlow]: NavigatorScreenParams<CosmosRedelegationFlowParamList>;
   [NavigatorName.CosmosUndelegationFlow]: NavigatorScreenParams<CosmosUndelegationFlowParamList>;
   [NavigatorName.CosmosClaimRewardsFlow]: NavigatorScreenParams<CosmosClaimRewardsFlowParamList>;
-
-  // Osmosis
-  [NavigatorName.OsmosisDelegationFlow]: NavigatorScreenParams<OsmosisDelegationFlowParamList>;
-  [NavigatorName.OsmosisRedelegationFlow]: NavigatorScreenParams<OsmosisRedelegationFlowParamList>;
-  [NavigatorName.OsmosisUndelegationFlow]: NavigatorScreenParams<OsmosisUndelegationFlowParamList>;
-  [NavigatorName.OsmosisClaimRewardsFlow]: NavigatorScreenParams<OsmosisClaimRewardsFlowParamList>;
 
   // Solana
   [NavigatorName.SolanaDelegationFlow]: NavigatorScreenParams<SolanaDelegationFlowParamList>;

@@ -28,6 +28,7 @@ function LearnWebView({ route }: NavigationProps) {
   const params = new URLSearchParams({
     theme: themeType,
     lang: i18n.languages[0],
+    apptracking: "false",
   });
 
   const uri = `${uriFromRoute}?${params.toString()}`;

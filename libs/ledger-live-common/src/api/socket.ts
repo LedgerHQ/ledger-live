@@ -35,6 +35,7 @@ export const createDeviceSocket = (
   new Observable((o) => {
     let deviceError: Error | null = null; // error originating from device (connection/response/rejection...)
     let unsubscribed = false; // subscriber wants to stops everything
+    let bulkSubscription: null | { unsubscribe: () => void } = null; // subscription to the bulk observable
     let correctlyFinished = false; // the socket logic reach a normal termination
     let inBulkMode = false; // we have an array of apdus to exchange, without the need of more WS messages.
     let allowSecureChannelTimeout: NodeJS.Timeout | null = null; // allows to delay/cancel the user confirmation event
@@ -184,16 +185,25 @@ export const createDeviceSocket = (
                 total: data.length,
               });
 
-            notify(0);
-
-            for (let i = 0; i < data.length; i++) {
-              const r = await transport.exchange(Buffer.from(data[i], "hex"));
-              if (unsubscribed) return;
-              const status = r.readUInt16BE(r.length - 2);
-              if (status !== StatusCodes.OK) {
-                throw new TransportStatusError(status);
-              }
-              notify(i + 1);
+            // we use a promise to wait for the bulk to finish
+            await new Promise((resolve, reject) => {
+              let i = 0;
+              notify(0);
+              // we also use a subscription to be able to cancel the bulk if the user unsubscribes
+              bulkSubscription = transport.exchangeBulk(
+                data.map((d) => Buffer.from(d, "hex")),
+                {
+                  next: () => {
+                    notify(++i);
+                  },
+                  error: (e) => reject(e),
+                  complete: () => resolve(null),
+                }
+              );
+            });
+            if (unsubscribed) {
+              log("socket", "unsubscribed before end of bulk");
+              return;
             }
 
             correctlyFinished = true;
@@ -267,6 +277,9 @@ export const createDeviceSocket = (
     transport.on("unresponsive", onUnresponsiveDevice);
     return () => {
       unsubscribed = true;
+      if (bulkSubscription) {
+        bulkSubscription.unsubscribe();
+      }
       transport.off("disconnect", onDisconnect);
       transport.off("unresponsive", onUnresponsiveDevice);
 

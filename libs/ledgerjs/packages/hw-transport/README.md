@@ -22,31 +22,33 @@
 *   [Transport](#transport)
     *   [exchange](#exchange)
         *   [Parameters](#parameters)
-    *   [setScrambleKey](#setscramblekey)
+    *   [exchangeBulk](#exchangebulk)
         *   [Parameters](#parameters-1)
+    *   [setScrambleKey](#setscramblekey)
+        *   [Parameters](#parameters-2)
     *   [close](#close)
     *   [on](#on)
-        *   [Parameters](#parameters-2)
-    *   [off](#off)
         *   [Parameters](#parameters-3)
+    *   [off](#off)
+        *   [Parameters](#parameters-4)
     *   [setDebugMode](#setdebugmode)
     *   [setExchangeTimeout](#setexchangetimeout)
-        *   [Parameters](#parameters-4)
-    *   [setExchangeUnresponsiveTimeout](#setexchangeunresponsivetimeout)
         *   [Parameters](#parameters-5)
-    *   [send](#send)
+    *   [setExchangeUnresponsiveTimeout](#setexchangeunresponsivetimeout)
         *   [Parameters](#parameters-6)
+    *   [send](#send)
+        *   [Parameters](#parameters-7)
     *   [isSupported](#issupported)
     *   [list](#list)
         *   [Examples](#examples)
     *   [listen](#listen)
-        *   [Parameters](#parameters-7)
+        *   [Parameters](#parameters-8)
         *   [Examples](#examples-1)
     *   [open](#open)
-        *   [Parameters](#parameters-8)
+        *   [Parameters](#parameters-9)
         *   [Examples](#examples-2)
     *   [create](#create)
-        *   [Parameters](#parameters-9)
+        *   [Parameters](#parameters-10)
         *   [Examples](#examples-3)
 
 ### Subscription
@@ -92,6 +94,18 @@ It's recommended to use the "send" method for a higher level API.
 *   `apdu` **[Buffer](https://nodejs.org/api/buffer.html)** The data to send.
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Buffer](https://nodejs.org/api/buffer.html)>** A promise that resolves with the response data from the device.
+
+#### exchangeBulk
+
+Send apdus in batch to the device using a low level API.
+The default implementation is to call exchange for each apdu.
+
+##### Parameters
+
+*   `apdus` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Buffer](https://nodejs.org/api/buffer.html)>** array of apdus to send.
+*   `observer` **[Observer](#observer)<[Buffer](https://nodejs.org/api/buffer.html)>** an observer that will receive the response of each apdu.
+
+Returns **[Subscription](#subscription)** A Subscription object on which you can call ".unsubscribe()" to stop sending apdus.
 
 #### setScrambleKey
 
