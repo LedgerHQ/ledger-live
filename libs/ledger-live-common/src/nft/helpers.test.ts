@@ -73,7 +73,7 @@ describe("helpers", () => {
       "currencyId-contract"
     );
   });
-  it("getNFTById", () => {
+  it("getNFT", () => {
     expect(getNFT("contract", "nft.tokenId", NFTs)).toEqual(NFT_1);
   });
 
