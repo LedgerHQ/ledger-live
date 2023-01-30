@@ -1,7 +1,7 @@
 import { IconBoxList, Icons, Tag, Divider } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Linking } from "react-native";
+import { GestureResponderEvent, Linking } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Button from "../../Button";
 import { ScreenName } from "../../../const/navigation";
@@ -41,6 +41,10 @@ function NewProtectState({ params }: { params: Record<string, string> }) {
     navigation.navigate(ScreenName.ProtectLogin);
   }, [navigation]);
 
+  const onPressInAlreadySubscribed = useCallback((e: GestureResponderEvent) => {
+    e.stopPropagation();
+  }, []);
+
   return (
     <>
       <Divider my={8} />
@@ -53,7 +57,12 @@ function NewProtectState({ params }: { params: Record<string, string> }) {
       <Button type="main" outline={false} onPress={onLearnMore} mb={6}>
         {t(`servicesWidget.protect.status.new.actions.learnMore`)}
       </Button>
-      <Button type="default" outline={false} onPress={onAlreadySubscribe}>
+      <Button
+        type="default"
+        outline={false}
+        onPressIn={onPressInAlreadySubscribed}
+        onPress={onAlreadySubscribe}
+      >
         {t(`servicesWidget.protect.status.new.actions.alreadySubscribed`)}
       </Button>
     </>
