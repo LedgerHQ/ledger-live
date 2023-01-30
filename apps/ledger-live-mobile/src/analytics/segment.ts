@@ -158,7 +158,7 @@ export const start = async (
     await segmentClient.identify(user.id, userExtraProperties);
   }
   await track("Start", userExtraProperties, true);
-  
+
   return segmentClient;
 };
 export const updateIdentify = async () => {
@@ -174,7 +174,10 @@ export const updateIdentify = async () => {
   const userExtraProperties = await extraProperties(storeInstance);
   if (ANALYTICS_LOGS) console.log("analytics:identify", userExtraProperties);
   if (!token) return;
-  await segmentClient?.identify(userExtraProperties.userId, userExtraProperties);
+  await segmentClient?.identify(
+    userExtraProperties.userId,
+    userExtraProperties,
+  );
 };
 export const stop = () => {
   if (ANALYTICS_LOGS) console.log("analytics:stop");
