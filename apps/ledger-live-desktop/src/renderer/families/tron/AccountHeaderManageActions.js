@@ -33,7 +33,7 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
   const earnRewardDisabled = tronPower === 0 && spendableBalance.lt(minAmount);
 
   const onClick = useCallback(() => {
-    if (isAccountEmpty(account)) {
+    if (isAccountEmpty(account) || earnRewardDisabled) {
       dispatch(
         openModal("MODAL_NO_FUNDS_STAKE", {
           account,
@@ -55,7 +55,7 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
         }),
       );
     }
-  }, [account, tronPower, dispatch, parentAccount]);
+  }, [account, earnRewardDisabled, tronPower, dispatch, parentAccount]);
 
   if (parentAccount) return null;
 
@@ -74,7 +74,6 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
     {
       key: "Stake",
       onClick: onClick,
-      disabled: earnRewardDisabled,
       icon: IconCoins,
       label: t("account.stake"),
       tooltip: disabledLabel,
