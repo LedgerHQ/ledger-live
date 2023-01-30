@@ -5,6 +5,9 @@ import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import IconCoins from "~/renderer/icons/ClaimReward";
 import { openModal } from "~/renderer/actions/modals";
+import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+
 type Props = {
   account: AccountLike,
   parentAccount: ?Account,
@@ -13,14 +16,25 @@ type Props = {
 const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const stakeProgramsFeatureFlag = useFeature("stakePrograms");
+  const showNoFundsModal = stakeProgramsFeatureFlag.enabled;
 
   const onClick = useCallback(() => {
-    dispatch(
-      openModal("MODAL_ETH_STAKE", {
-        account,
-      }),
-    );
-  }, [dispatch, account]);
+    if (isAccountEmpty(account) && showNoFundsModal) {
+      dispatch(
+        openModal("MODAL_NO_FUNDS_STAKE", {
+          account,
+          parentAccount,
+        }),
+      );
+    } else {
+      dispatch(
+        openModal("MODAL_ETH_STAKE", {
+          account,
+        }),
+      );
+    }
+  }, [account, showNoFundsModal, dispatch, parentAccount]);
 
   if (account.type === "Account" && account.currency.id === "ethereum") {
     return [

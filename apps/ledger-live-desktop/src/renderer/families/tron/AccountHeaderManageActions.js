@@ -1,5 +1,9 @@
 // @flow
-import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
+import {
+  getAccountUnit,
+  getMainAccount,
+  isAccountEmpty,
+} from "@ledgerhq/live-common/account/index";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
@@ -9,6 +13,7 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import IconCoins from "~/renderer/icons/Coins";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { BigNumber } from "bignumber.js";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
   account: AccountLike,
@@ -18,6 +23,9 @@ type Props = {
 const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const stakeProgramsFeatureFlag = useFeature("stakePrograms");
+  const showNoFundsModal = stakeProgramsFeatureFlag.enabled;
+
   const locale = useSelector(localeSelector);
   const unit = getAccountUnit(account);
   const mainAccount = getMainAccount(account, parentAccount);
@@ -28,7 +36,14 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
   const earnRewardDisabled = tronPower === 0 && spendableBalance.lt(minAmount);
 
   const onClick = useCallback(() => {
-    if (tronPower > 0) {
+    if (isAccountEmpty(account) && showNoFundsModal) {
+      dispatch(
+        openModal("MODAL_NO_FUNDS_STAKE", {
+          account,
+          parentAccount,
+        }),
+      );
+    } else if (tronPower > 0) {
       dispatch(
         openModal("MODAL_MANAGE_TRON", {
           parentAccount,
@@ -43,7 +58,7 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
         }),
       );
     }
-  }, [dispatch, tronPower, account, parentAccount]);
+  }, [account, showNoFundsModal, tronPower, dispatch, parentAccount]);
 
   if (parentAccount) return null;
 

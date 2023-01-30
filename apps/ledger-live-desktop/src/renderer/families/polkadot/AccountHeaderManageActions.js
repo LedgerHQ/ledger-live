@@ -10,17 +10,22 @@ import {
   hasExternalStash,
   hasPendingOperationType,
 } from "@ledgerhq/live-common/families/polkadot/logic";
+import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
 
 type Props = {
   account: Account,
+  parentAccount: ?Account,
 };
 
-const AccountHeaderManageActions = ({ account }: Props) => {
+const AccountHeaderManageActions = ({ account, parentAccount }: Props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const stakeProgramsFeatureFlag = useFeature("stakePrograms");
+  const showNoFundsModal = stakeProgramsFeatureFlag.enabled;
 
   const { polkadotResources } = account;
   invariant(polkadotResources, "polkadot account expected");
@@ -29,7 +34,14 @@ const AccountHeaderManageActions = ({ account }: Props) => {
   const hasPendingBondOperation = hasPendingOperationType(account, "BOND");
 
   const onClick = useCallback(() => {
-    if (hasBondedBalance || hasPendingBondOperation) {
+    if (isAccountEmpty(account) && showNoFundsModal) {
+      dispatch(
+        openModal("MODAL_NO_FUNDS_STAKE", {
+          account,
+          parentAccount,
+        }),
+      );
+    } else if (hasBondedBalance || hasPendingBondOperation) {
       dispatch(
         openModal("MODAL_POLKADOT_MANAGE", {
           account,
@@ -42,7 +54,14 @@ const AccountHeaderManageActions = ({ account }: Props) => {
         }),
       );
     }
-  }, [dispatch, account, hasBondedBalance, hasPendingBondOperation]);
+  }, [
+    account,
+    showNoFundsModal,
+    hasBondedBalance,
+    hasPendingBondOperation,
+    dispatch,
+    parentAccount,
+  ]);
 
   const _hasExternalController = hasExternalController(account);
   const _hasExternalStash = hasExternalStash(account);

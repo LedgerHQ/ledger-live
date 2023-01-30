@@ -8,24 +8,39 @@ import { accountsSelector } from "~/renderer/reducers/accounts";
 import { openModal } from "~/renderer/actions/modals";
 import Icon from "./Icon";
 import type { Account } from "@ledgerhq/types-live";
+import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
   account: Account,
+  parentAccount: ?Account,
 };
 
-const AccountHeaderManageActions = ({ account }: Props) => {
+const AccountHeaderManageActions = ({ account, parentAccount }: Props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const accounts = useSelector(accountsSelector);
+  const stakeProgramsFeatureFlag = useFeature("stakePrograms");
+  const showNoFundsModal = stakeProgramsFeatureFlag.enabled;
+
   const isRegistrationPending = isAccountRegistrationPending(account.id, accounts);
 
   const onClick = useCallback(() => {
-    dispatch(
-      openModal("MODAL_CELO_MANAGE", {
-        account,
-      }),
-    );
-  }, [dispatch, account]);
+    if (isAccountEmpty(account) && showNoFundsModal) {
+      dispatch(
+        openModal("MODAL_NO_FUNDS_STAKE", {
+          account,
+          parentAccount,
+        }),
+      );
+    } else {
+      dispatch(
+        openModal("MODAL_CELO_MANAGE", {
+          account,
+        }),
+      );
+    }
+  }, [account, showNoFundsModal, dispatch, parentAccount]);
 
   return [
     {

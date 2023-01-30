@@ -1,5 +1,5 @@
 // @flow
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
 import { useDelegation } from "@ledgerhq/live-common/families/tezos/bakers";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
   account: AccountLike,
@@ -17,8 +18,20 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const delegation = useDelegation(account);
+  const stakeProgramsFeatureFlag = useFeature("stakePrograms");
+  const showNoFundsModal = stakeProgramsFeatureFlag.enabled;
 
   const onClick = useCallback(() => {
+    if (isAccountEmpty(account) && showNoFundsModal) {
+      dispatch(
+        openModal("MODAL_NO_FUNDS_STAKE", {
+          account,
+          parentAccount,
+        }),
+      );
+      return;
+    }
+
     const options = delegation
       ? {
           parentAccount,
@@ -31,7 +44,7 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
           account,
         };
     dispatch(openModal("MODAL_DELEGATE", options));
-  }, [dispatch, account, parentAccount, delegation]);
+  }, [account, showNoFundsModal, delegation, parentAccount, dispatch]);
 
   if (parentAccount) return null;
 

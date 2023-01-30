@@ -1,5 +1,5 @@
 // @flow
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { canDelegate } from "@ledgerhq/live-common/families/cosmos/logic";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import invariant from "invariant";
@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
   account: AccountLike,
@@ -17,6 +18,8 @@ type Props = {
 const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const stakeProgramsFeatureFlag = useFeature("stakePrograms");
+  const showNoFundsModal = stakeProgramsFeatureFlag.enabled;
   const mainAccount = getMainAccount(account, parentAccount);
 
   const { cosmosResources } = mainAccount;
@@ -26,7 +29,14 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const hasDelegations = cosmosResources.delegations.length > 0;
 
   const onClick = useCallback(() => {
-    if (hasDelegations) {
+    if (isAccountEmpty(account) && showNoFundsModal) {
+      dispatch(
+        openModal("MODAL_NO_FUNDS_STAKE", {
+          account,
+          parentAccount,
+        }),
+      );
+    } else if (hasDelegations) {
       dispatch(
         openModal("MODAL_COSMOS_DELEGATE", {
           account,
@@ -39,7 +49,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
         }),
       );
     }
-  }, [dispatch, account, hasDelegations]);
+  }, [account, showNoFundsModal, hasDelegations, dispatch, parentAccount]);
 
   if (parentAccount) return null;
 
