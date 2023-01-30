@@ -17,18 +17,18 @@ type Props = {
  *
  * @param hasBackButtonOnError If true, the back button will be displayed on the permission denied or disabled error screens.
  * Defaults to false.
- * @param openSettingsOnErrorButton Used for debug purposes. If true, on a bluetooth service disabled, pressing the button on
+ * @param openSettingsOnErrorButton Used for debug purposes. If true, on a bluetooth services disabled, pressing the button on
  *   the error component will make the user go to the settings. Otherwise it will try to prompt the user to enable their bluetooth
- *   service if possible. Defaults to false.
+ *   services if possible. Defaults to false.
  */
 const RequiresBluetoothEnabled: React.FC<Props> = ({
   children,
   hasBackButtonOnError = false,
   openSettingsOnErrorButton = false,
 }) => {
-  const { bluetoothServiceState, checkAndRequestAgain } = useEnableBluetooth();
+  const { bluetoothServicesState, checkAndRequestAgain } = useEnableBluetooth();
 
-  switch (bluetoothServiceState) {
+  switch (bluetoothServicesState) {
     case "unknown":
       // As long as we don't know the state of bluetooth, we don't render anything
       return null;
