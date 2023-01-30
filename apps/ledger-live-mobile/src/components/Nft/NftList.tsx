@@ -14,30 +14,6 @@ import { TrackScreen } from "../../analytics";
 import { useNftList } from "./NftList.hook";
 import BackgroundGradient from "../TabBar/BackgroundGradient";
 
-const darkGradients = [
-  {
-    height: 145,
-    opacity: 1,
-    stops: [
-      <Stop key="0%" offset="0%" stopOpacity={0} stopColor="#131214" />,
-      <Stop key="25%" offset="25%" stopOpacity={0.5} stopColor="#131214" />,
-      <Stop key="50%" offset="50%" stopOpacity={1} stopColor="#131214" />,
-    ],
-  },
-];
-
-const lightGradients = [
-  {
-    height: 145,
-    opacity: 1,
-    stops: [
-      <Stop key="0%" offset="0%" stopOpacity={0} stopColor="#ffffff" />,
-      <Stop key="25%" offset="25%" stopOpacity={0.5} stopColor="#ffffff" />,
-      <Stop key="50%" offset="50%" stopOpacity={1} stopColor="#ffffff" />,
-    ],
-  },
-];
-
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl<
   FlatListProps<ProtoNFT>
 >(CollapsibleHeaderFlatList, { progressViewOffset: 64 });
@@ -73,6 +49,33 @@ export function NftList({ data }: Props) {
     nftsToHide,
     multiSelectModeEnabled,
   } = useNftList({ nftList: data });
+
+  const gradients = [
+    {
+      height: 145,
+      opacity: 1,
+      stops: [
+        <Stop
+          key="0%"
+          offset="0%"
+          stopOpacity={0}
+          stopColor={colors.background.main}
+        />,
+        <Stop
+          key="25%"
+          offset="25%"
+          stopOpacity={0.5}
+          stopColor={colors.background.main}
+        />,
+        <Stop
+          key="50%"
+          offset="50%"
+          stopOpacity={1}
+          stopColor={colors.background.main}
+        />,
+      ],
+    },
+  ];
 
   const renderItem = useCallback(
     ({ item, index }: { item: ProtoNFT; index: number; count?: number }) => (
@@ -119,7 +122,6 @@ export function NftList({ data }: Props) {
     [nftsToHide],
   );
 
-  const gradients = colors.type === "light" ? lightGradients : darkGradients;
   return (
     <>
       <TrackScreen category="NFT Gallery" NFTs_owned={data.length} />
