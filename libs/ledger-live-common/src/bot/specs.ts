@@ -259,18 +259,10 @@ export const genericTestDestination = <T>({
   sendingOperation,
 }: TransactionDestinationTestInput<T>): void => {
   const amount = sendingOperation.value.minus(sendingOperation.fee);
-  botTest(
-    "account balance increased with transaction amount. Destination balance: " +
-      destination.balance.toString() +
-      " destination balance before transaction: " +
-      destinationBeforeTransaction.balance.toString() +
-      " transaction amount: " +
-      amount.toString(),
-    () => {
-      expect(destination.balance.toString()).toBe(
-        destinationBeforeTransaction.balance.plus(amount).toString()
-      );
-    }
+  botTest("account balance increased with transaction amount", () =>
+    expect(destination.balance.toString()).toBe(
+      destinationBeforeTransaction.balance.plus(amount).toString()
+    )
   );
   botTest("operation amount is consistent with sendingOperation", () =>
     expect({

@@ -648,21 +648,17 @@ export async function runOnAccount<T extends Transaction>({
     // wait the condition are good (operation confirmed)
     // test() is run over and over until either timeout is reach OR success
     const testBefore = now();
-    log(
-      "bot",
-      "Nb of operations before mutation: " + account.operations.length
-    );
     const timeOut = mutation.testTimeout || spec.testTimeout || 5 * 60 * 1000;
     const step = (account) => {
-      const isTimedOut = now() - testBefore > timeOut;
+      const timedOut = now() - testBefore > timeOut;
       const operation = account.operations.find(
         (o) => o.id === optimisticOperation.id
       );
 
-      if (isTimedOut) {
+      if (timedOut && !operation) {
         botTest("waiting operation id to appear after broadcast", () => {
           throw new Error(
-            "waiting operation timeout: " + timeOut + " milliseconds"
+            "could not find optimisticOperation " + optimisticOperation.id
           );
         });
       }
@@ -688,7 +684,7 @@ export async function runOnAccount<T extends Transaction>({
             throw e;
           }
           // We never reach the final test success
-          if (isTimedOut) {
+          if (timedOut) {
             report.testDuration = now() - testBefore;
             throw e;
           }
@@ -697,16 +693,6 @@ export async function runOnAccount<T extends Transaction>({
           // We will try again
           return;
         }
-      } else {
-        botTest("waiting operation id to appear after broadcast", () => {
-          log(
-            "bot",
-            "Nb of operations after mutation: " + account.operations.length
-          );
-          throw new Error(
-            "could not find optimisticOperation " + optimisticOperation.id
-          );
-        });
       }
 
       return operation;
