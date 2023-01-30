@@ -189,7 +189,10 @@ const envDefinitions = {
   },
   API_TRONGRID_PROXY: {
     parser: stringParser,
-    def: "https://tron.coin.ledger.com",
+    //def: "https://tron.coin.ledger.com",
+    // FIXME Temporary workaround for https://ledgerhq.atlassian.net/browse/LIVE-5316
+    // Some rate limiting is triggered when targeting Trongrid through Ledger's RP
+    def: "https://api.trongrid.io",
     desc: "proxy url for trongrid API",
   },
   API_SOLANA_PROXY: {
