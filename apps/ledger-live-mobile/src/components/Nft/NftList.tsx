@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { FlatListProps } from "react-native";
 import { ProtoNFT } from "@ledgerhq/types-live";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
@@ -114,6 +114,11 @@ export function NftList({ data }: Props) {
     ],
   );
 
+  const total = useMemo(
+    () => [...new Set(nftsToHide.map(n => n.contract))].length,
+    [nftsToHide],
+  );
+
   const gradients = colors.type === "light" ? lightGradients : darkGradients;
   return (
     <>
@@ -175,7 +180,7 @@ export function NftList({ data }: Props) {
                 disabled={nftsToHide.length === 0}
               >
                 {t("wallet.nftGallery.filters.hide", {
-                  count: [...new Set(nftsToHide.map(n => n.contract))].length,
+                  count: total,
                 })}
               </StyledButton>
               <StyledButton
