@@ -5,14 +5,15 @@ import { useEnableBluetooth } from "./useEnableBluetooth";
 // import { useAndroidLocationPermission } from "../../RequiresLocation/hooks/useAndroidLocationPermission";
 import { useAndroidEnableLocation } from "../../RequiresLocation/hooks/useAndroidEnableLocation";
 import { useAndroidBluetoothPermissions } from "./useAndroidBluetoothPermissions";
+import { useAndroidLocationPermission } from "../../RequiresLocation/hooks/useAndroidLocationPermission";
 
 export type BluetoothRequirementsState =
   | "unknown"
-  | "bluetooth disabled"
-  | "location disabled"
-  | "bluetooth permissions ungranted"
-  | "location permissions ungranted"
-  | "all respected";
+  | "bluetooth_disabled"
+  | "location_disabled"
+  | "bluetooth_permissions_ungranted"
+  | "location_permission_ungranted"
+  | "all_respected";
 
 export type UseRequireBluetoothArgs = {
   requiredFor: "scanning" | "connecting";
@@ -52,6 +53,9 @@ export const useRequireBluetooth = ({
 
   // TODO: the order is important
 
+  // Handles bluetooth and location permissions first because there is more chance that the user enable/disable
+  // a service during runtime than changing the permissions.
+  // If the permissions are handled after, each time there is a change on the services enabling/disabling.
   const isAndroidBluetoothPermissionsHookEnabled =
     isHookEnabled && Platform.OS === "android";
 
@@ -64,9 +68,29 @@ export const useRequireBluetooth = ({
     isHookEnabled: isAndroidBluetoothPermissionsHookEnabled,
   });
 
+  // Handles location permission if necessary and once bluetooth permisions are granted
+  const isAndroidLocationPermissionHookEnabled =
+    isHookEnabled &&
+    Platform.OS === "android" &&
+    requiredFor === "scanning" &&
+    androidHasBluetoothPermissions === "granted";
+
+  const {
+    hasPermission: androidHasLocationPermission,
+    neverAskAgain: androidLocationPermissionNeverAskAgain,
+    requestForPermissionAgain:
+      androidLocationPermissionRequestForPermissionsAgain,
+  } = useAndroidLocationPermission({
+    isHookEnabled: isAndroidLocationPermissionHookEnabled,
+  });
+
+  // Handles bluetooth services once all necessary permissions are granted
   const isEnableBluetoothHookEnabled =
     isHookEnabled &&
-    (Platform.OS === "ios" || androidHasBluetoothPermissions === "granted");
+    (Platform.OS === "ios" ||
+      (androidHasBluetoothPermissions === "granted" &&
+        (requiredFor === "connecting" ||
+          androidHasLocationPermission === "granted")));
 
   // TODO: handle case of iOS and bluetooth permission
   const {
@@ -76,6 +100,7 @@ export const useRequireBluetooth = ({
     isHookEnabled: isEnableBluetoothHookEnabled,
   });
 
+  // Handles location services if necessary and once bluetooth is enabled
   const isAndroidEnableLocationHookEnabled =
     isHookEnabled &&
     requiredFor === "scanning" &&
@@ -89,27 +114,47 @@ export const useRequireBluetooth = ({
     isHookEnabled: isAndroidEnableLocationHookEnabled,
   });
 
-  let bluetoothRequirementsState = "unknown";
+  console.log(
+    `🧠 isHookEnabled: ${JSON.stringify({
+      isAndroidBluetoothPermissionsHookEnabled,
+      isAndroidLocationPermissionHookEnabled,
+      isEnableBluetoothHookEnabled,
+      isAndroidEnableLocationHookEnabled,
+    })} `,
+  );
+
+  let bluetoothRequirementsState: BluetoothRequirementsState = "unknown";
   let handleRetryOnIssue = null;
 
-  // TODO: should also include check if associated hook enabled ?
+  // Logic to determine the state of the bluetooth requirements, and the action to perform to retry
   if (
     isAndroidBluetoothPermissionsHookEnabled &&
     androidHasBluetoothPermissions === "denied"
   ) {
-    bluetoothRequirementsState = "bluetooth permissions ungranted";
+    bluetoothRequirementsState = "bluetooth_permissions_ungranted";
     handleRetryOnIssue = androidBluetoothPermissionsRequestForPermissionsAgain;
-  } else if (bluetoothServicesState === "disabled") {
-    bluetoothRequirementsState = "bluetooth disabled";
+  } else if (
+    isAndroidLocationPermissionHookEnabled &&
+    androidHasLocationPermission === "denied"
+  ) {
+    bluetoothRequirementsState = "location_permission_ungranted";
+    handleRetryOnIssue = androidLocationPermissionRequestForPermissionsAgain;
+  } else if (
+    isEnableBluetoothHookEnabled &&
+    bluetoothServicesState === "disabled"
+  ) {
+    bluetoothRequirementsState = "bluetooth_disabled";
     handleRetryOnIssue = enableBluetoothCheckAndRequestAgain;
-  } else if (locationServicesState === "disabled") {
-    bluetoothRequirementsState = "location disabled";
+  } else if (
+    isAndroidEnableLocationHookEnabled &&
+    locationServicesState === "disabled"
+  ) {
+    bluetoothRequirementsState = "location_disabled";
     handleRetryOnIssue = androidEnableLocationCheckAndRequestAgain;
   }
 
   return {
-    bluetoothRequirementsState:
-      bluetoothRequirementsState as BluetoothRequirementsState,
+    bluetoothRequirementsState,
     handleRetryOnIssue,
   };
 };
