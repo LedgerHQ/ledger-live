@@ -19,12 +19,12 @@ export enum BluetoothPromptResult {
 }
 
 /**
- * Hook returning a callback that checks the bluetooth service state and requests (if necessary) the user to enable them
+ * Hook returning a callback that checks the bluetooth services state and requests (if necessary) the user to enable them
  *
  * Works for both iOS and Android.
  * But on iOS the prompt will return an undefined value, which will result in a BLE_UNKWOWN_STATE.
  *
- * If you want to enable the bluetooth service directly and/or keep track of the bluetooth service state,
+ * If you want to enable the bluetooth services directly and/or keep track of the bluetooth services state,
  * use useEnableBluetooth defined below.
  */
 export function usePromptEnableBluetoothCallback() {
@@ -57,7 +57,7 @@ export function usePromptEnableBluetoothCallback() {
   }, []);
 }
 
-export type BluetoothServiceState =
+export type BluetoothServicesState =
   | "unknown"
   | "enabled"
   | "disabled"
@@ -68,11 +68,11 @@ export type UseEnableBluetoothArgs = {
 };
 
 /**
- * Hook to enable the bluetooth service
+ * Hook to enable the bluetooth services
  *
- * A method is exposed to check the bluetooth service state and request (if necessary) the user to enable it.
+ * A method is exposed to check the bluetooth services state and request (if necessary) the user to enable it.
  * This method is called a first time on mount.
- * It also listens to an update of the bluetooth service state from BleTransport, and updates the state accordingly.
+ * It also listens to an update of the bluetooth services state from BleTransport, and updates the state accordingly.
  *
  * It can also indicate if bluetooth has enough permissions to be enabled.
  * Useful for iOS as we don't have an easy way to implement a useIosBluetoothPermissions currently.
@@ -81,22 +81,24 @@ export type UseEnableBluetoothArgs = {
  *
  * Not Transport agnostic. It uses @ledgerhq/react-native-hw-transport-ble.
  *
- * @param isHookEnabled if false, the hook will not check/request the bluetooth service, and will not listen to the
- *   the bluetooth service state from BleTransport. Defaults to true.
+ * @param isHookEnabled if false, the hook will not check/request the bluetooth services, and will not listen to the
+ *   the bluetooth services state from BleTransport. Defaults to true.
  *
  * @returns an object containing:
- * - checkAndRequestAgain: a function that checks the bluetooth service state and requests (if necessary) the user to enable it
- * - bluetoothServiceState: a state that indicates if bluetooth is enabled or not
+ * - checkAndRequestAgain: a function that checks the bluetooth services state and requests (if necessary) the user to enable it
+ * - bluetoothServicesState: a state that indicates if bluetooth is enabled or not
  */
-export function useEnableBluetooth({
-  isHookEnabled = true,
-}: UseEnableBluetoothArgs) {
+export function useEnableBluetooth(
+  { isHookEnabled = true }: UseEnableBluetoothArgs = {
+    isHookEnabled: true,
+  },
+) {
   const [observedTransportState, setObservedTransportState] =
     useState<string>("Unknown");
 
   const promptBluetoothCallback = usePromptEnableBluetoothCallback();
 
-  // Exposes a check and request enabling bluetooth service again (if needed)
+  // Exposes a check and request enabling bluetooth services again (if needed)
   const checkAndRequestAgain = useCallback(async () => {
     if (!isHookEnabled) return;
 
@@ -113,7 +115,7 @@ export function useEnableBluetooth({
 
   // Not Transport agnostic.
   // To be Transport agnostic: a re-write of the native module for both iOS and Android is needed,
-  // so it would emit events on bluetooth service changes
+  // so it would emit events on bluetooth services changes
   // Observes the bluetooth state (if powered on or not)
   useEffect(() => {
     let sub: null | Subscription;
@@ -130,27 +132,27 @@ export function useEnableBluetooth({
     };
   }, [isHookEnabled]);
 
-  let bluetoothServiceState: BluetoothServiceState = "disabled";
+  let bluetoothServicesState: BluetoothServicesState = "disabled";
 
   if (observedTransportState === "PoweredOn") {
-    bluetoothServiceState = "enabled";
+    bluetoothServicesState = "enabled";
   } else if (observedTransportState === "PoweredOff") {
-    bluetoothServiceState = "disabled";
+    bluetoothServicesState = "disabled";
   } else if (
     observedTransportState === "Unauthorized"
     // bluetoothPromptResult === BluetoothPromptResult.BLE_CANNOT_BE_ENABLED
   ) {
-    bluetoothServiceState = "unauthorized";
+    bluetoothServicesState = "unauthorized";
   } else if (
     observedTransportState === "Unknown"
     // !bluetoothPromptedOnce
     // bluetoothPromptResult === BluetoothPromptResult.BLE_UNKWOWN_STATE
   ) {
-    bluetoothServiceState = "unknown";
+    bluetoothServicesState = "unknown";
   }
 
   return {
     checkAndRequestAgain,
-    bluetoothServiceState,
+    bluetoothServicesState,
   };
 }
