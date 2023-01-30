@@ -35,11 +35,15 @@ const RequiresBluetoothBottomModal = ({
   let content = null;
 
   switch (bluetoothRequirementsState) {
-    case "bluetooth permissions ungranted":
+    case "bluetooth_permissions_ungranted":
       // eslint-disable-next-line react/jsx-no-undef
       content = <Text>bluetooth permissions denied ❌</Text>;
       break;
-    case "bluetooth disabled":
+    case "location_permission_ungranted":
+      // eslint-disable-next-line react/jsx-no-undef
+      content = <Text>location permissions denied ❌</Text>;
+      break;
+    case "bluetooth_disabled":
       content = (
         <BluetoothDisabled
           componentType="drawer"
@@ -47,7 +51,7 @@ const RequiresBluetoothBottomModal = ({
         />
       );
       break;
-    case "location disabled":
+    case "location_disabled":
       content = (
         <LocationDisabled componentType="drawer" onRetry={handleRetryOnIssue} />
       );
