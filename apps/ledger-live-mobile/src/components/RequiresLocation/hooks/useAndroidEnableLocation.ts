@@ -58,9 +58,11 @@ export type UseAndroidEnableLocationArgs = {
  * - checkAndRequestAgain: a function that checks the location services state and requests (if necessary) the user to enable them
  * - locationServicesState: a state that indicates if the location services are enabled or not
  */
-export function useAndroidEnableLocation({
-  isHookEnabled = true,
-}: UseAndroidEnableLocationArgs) {
+export function useAndroidEnableLocation(
+  { isHookEnabled = true }: UseAndroidEnableLocationArgs = {
+    isHookEnabled: true,
+  },
+) {
   const promptEnableLocation = useAndroidPromptEnableLocationCallback();
 
   const [locationServicesState, setLocationServicesState] =
