@@ -95,9 +95,11 @@ export type UseAndroidBluetoothPermissionsArgs = {
  * - requestForPermissionsAgain: a function to request again (and if only granted, only a check without any prompt) the BLE permissions
  * - neverAskAgain: true if the user has checked the "never ask again" checkbox (or on Android 11+ if the user has denied the permission several times)
  */
-export const useAndroidBluetoothPermissions = ({
-  isHookEnabled = true,
-}: UseAndroidBluetoothPermissionsArgs) => {
+export const useAndroidBluetoothPermissions = (
+  { isHookEnabled = true }: UseAndroidBluetoothPermissionsArgs = {
+    isHookEnabled: true,
+  },
+) => {
   // If no permissions are required, we consider that the permissions are granted
   const [hasPermissions, setHasPermissions] = useState<PermissionsState>(
     bluetoothPermissions.length === 0 ? "granted" : "unknown",
