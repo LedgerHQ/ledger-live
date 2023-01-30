@@ -60,15 +60,15 @@ export const getAccountShape: GetAccountShape = async (
       withDelisted: true,
     }).length;
   const outdatedSyncHash = initialAccount?.syncHash !== syncHash;
-  const pullFromBlockHash =
+  const pullFromBlockHeight =
     initialAccount &&
     areAllOperationsLoaded(initialAccount) &&
     mostRecentStableOperation &&
     blockHashExistsOnChain &&
     !outdatedSyncHash
-      ? mostRecentStableOperation.blockHash
+      ? mostRecentStableOperation.blockHeight
       : undefined;
-  const txsP = fetchAllTransactions(api, address, pullFromBlockHash);
+  const txsP = fetchAllTransactions(api, address, pullFromBlockHeight);
   const [txs, currentBlock, balance] = await Promise.all([
     txsP,
     currentBlockP,
@@ -76,7 +76,7 @@ export const getAccountShape: GetAccountShape = async (
   ]);
   const blockHeight = currentBlock.height.toNumber();
 
-  if (!pullFromBlockHash && txs.length === 0) {
+  if (!pullFromBlockHeight && txs.length === 0) {
     log("ethereum", "no ops on " + address);
     return {
       id: accountId,
@@ -232,7 +232,7 @@ const txToOps =
     const value = new BigNumber(tx.value);
     const fee = new BigNumber(tx.gas_price).times(tx.gas_used || 0);
     const hasFailed = new BigNumber(tx.status || 0).eq(0);
-    const blockHeight = block && block.height.toNumber();
+    const blockHeight = block && block.height;
     const blockHash = block && block.hash;
     const date = tx.received_at ? new Date(tx.received_at) : new Date();
     const transactionSequenceNumber = parseInt(tx.nonce);
@@ -243,6 +243,7 @@ const txToOps =
           .map((action, i) => {
             const actionFrom = safeEncodeEIP55(action.from);
             const actionTo = safeEncodeEIP55(action.to);
+            const actionValue = new BigNumber(action.value);
 
             // Since explorer is considering also wrapping tx as an internal action,
             // we must filter it by considering that only internal action with same data,
@@ -250,13 +251,12 @@ const txToOps =
             if (
               actionFrom === from &&
               actionTo === to &&
-              tx.value.eq(action.value)
+              value.eq(actionValue)
             ) {
               return;
             }
 
             const receiving = addr === actionTo;
-            const value = action.value;
             const fee = new BigNumber(0);
 
             if (receiving) {
@@ -264,7 +264,7 @@ const txToOps =
                 id: `${id}-${hash}-i${i}`,
                 hash,
                 type: "IN",
-                value,
+                value: actionValue,
                 fee,
                 blockHeight,
                 blockHash,
@@ -281,7 +281,7 @@ const txToOps =
     // We are putting the sub operations in place for now, but they will later be exploded out of the operations back to their token accounts
     const subOperations = !transfer_events
       ? []
-      : flatMap(transfer_events.list, (event, i) => {
+      : flatMap(transfer_events, (event, i) => {
           const from = safeEncodeEIP55(event.from);
           const to = safeEncodeEIP55(event.to);
           const sending = addr === from;
@@ -297,7 +297,7 @@ const txToOps =
           );
           if (!token) return [];
           const accountId = encodeTokenAccountId(id, token);
-          const value = event.count;
+          const value = new BigNumber(event.count);
           const all: Operation[] = [];
 
           if (sending) {
@@ -582,19 +582,19 @@ const fetchCurrentBlock = ((perCurrencyId) => (currency) => {
 
 // FIXME we need to figure out how to optimize this
 // but nothing can easily be done until we have a better api
-const fetchAllTransactions = async (api: API, address, blockHash) => {
-  let r;
+const fetchAllTransactions = async (api: API, address, blockHeight) => {
+  let getTransactionsResult: Tx[];
   let txs: Tx[] = [];
   let maxIteration = 20; // safe limit
 
   do {
-    r = await api.getTransactions(address, blockHash);
-    if (r.txs.length === 0) return txs;
-    txs = txs.concat(r.txs);
-    blockHash = txs[txs.length - 1].block?.hash;
+    getTransactionsResult = await api.getTransactions(address, blockHeight);
+    if (getTransactionsResult.length === 0) return txs;
+    txs = txs.concat(getTransactionsResult);
+    blockHeight = txs[txs.length - 1].block?.height;
 
-    if (!blockHash) {
-      log("ethereum", "block.hash missing!");
+    if (!blockHeight) {
+      log("ethereum", "block.height missing!");
       return txs;
     }
   } while (--maxIteration);

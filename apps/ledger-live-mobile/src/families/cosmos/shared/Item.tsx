@@ -9,7 +9,7 @@ import type {
 } from "@ledgerhq/live-common/families/cosmos/types";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
-import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
+import cosmosBase from "@ledgerhq/live-common/families/cosmos/chain/cosmosBase";
 import LText from "../../../components/LText";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import ArrowRight from "../../../icons/ArrowRight";
@@ -56,7 +56,12 @@ function Item({
       <View style={[styles.iconWrapper]}>
         <ValidatorImage
           size={32}
-          isLedger={validatorAddress === LEDGER_VALIDATOR_ADDRESS}
+          isLedger={
+            validatorAddress !== undefined &&
+            cosmosBase.COSMOS_FAMILY_LEDGER_VALIDATOR_ADDRESSES.includes(
+              validatorAddress,
+            )
+          }
           name={name || validatorAddress}
         />
       </View>

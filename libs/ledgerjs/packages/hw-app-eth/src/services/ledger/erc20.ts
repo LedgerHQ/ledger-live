@@ -6,16 +6,25 @@ import { getLoadConfig } from "./loadConfig";
 
 export const findERC20SignaturesInfo = async (
   userLoadConfig: LoadConfig
-): Promise<string | undefined> => {
+): Promise<string | null> => {
   const { cryptoassetsBaseURL } = getLoadConfig(userLoadConfig);
-  if (!cryptoassetsBaseURL) return;
+  if (!cryptoassetsBaseURL) return null;
+
   const url = `${cryptoassetsBaseURL}/erc20-signatures.json`;
-  const response = await axios.get<string>(url).catch((e) => {
-    log("error", "could not fetch from " + url + ": " + String(e));
-    return null;
-  });
-  if (!response) return;
-  return response.data;
+  const blob = await axios
+    .get<string>(url)
+    .then(({ data }) => {
+      if (!data || typeof data !== "string") {
+        throw new Error(`ERC20 signatures file is malformed ${url}`);
+      }
+      return data;
+    })
+    .catch((e) => {
+      log("error", "could not fetch from " + url + ": " + String(e));
+      return null;
+    });
+
+  return blob;
 };
 
 /**
@@ -24,14 +33,18 @@ export const findERC20SignaturesInfo = async (
 export const byContractAddressAndChainId = (
   contract: string,
   chainId: number,
-  erc20SignaturesBlob?: string
+  erc20SignaturesBlob?: string | null
 ): TokenInfo | null | undefined => {
   // If we are able to fetch data from s3 bucket that contains dynamic CAL
   if (erc20SignaturesBlob) {
-    return parse(erc20SignaturesBlob).byContractAndChainId(
-      asContractAddress(contract),
-      chainId
-    );
+    try {
+      return parse(erc20SignaturesBlob).byContractAndChainId(
+        asContractAddress(contract),
+        chainId
+      );
+    } catch (e) {
+      return get().byContractAndChainId(asContractAddress(contract), chainId);
+    }
   }
   // the static fallback when dynamic cal is not provided
   return get().byContractAndChainId(asContractAddress(contract), chainId);
@@ -43,7 +56,11 @@ export const byContractAddressAndChainId = (
 export const list = (erc20SignaturesBlob?: string): TokenInfo[] => {
   // If we are able to fetch data from s3 bucket that contains dynamic CAL
   if (erc20SignaturesBlob) {
-    return parse(erc20SignaturesBlob).list();
+    try {
+      return parse(erc20SignaturesBlob).list();
+    } catch (e) {
+      return get().list();
+    }
   }
   // the static fallback when dynamic cal is not provided
   return get().list();

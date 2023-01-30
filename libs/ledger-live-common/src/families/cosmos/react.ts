@@ -23,46 +23,25 @@ import {
 } from "./logic";
 import { getAccountUnit } from "../../account";
 import useMemoOnce from "../../hooks/useMemoOnce";
-import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
-
-// Add Cosmos-families imports below:
-import {
-  getCurrentOsmosisPreloadData,
-  getOsmosisPreloadDataUpdates,
-} from "../osmosis/preloadedData";
-import { LEDGER_OSMOSIS_VALIDATOR_ADDRESS } from "../osmosis/utils";
+import cryptoFactory from "./chain/chain";
 
 export function useCosmosFamilyPreloadData(
   currencyName: string
 ): CosmosPreloadData {
-  let getCurrent;
-  let getUpdates;
-
-  if (currencyName == "cosmos") {
-    getCurrent = getCurrentCosmosPreloadData;
-    getUpdates = getCosmosPreloadDataUpdates;
-  }
-  if (currencyName == "osmosis") {
-    getCurrent = getCurrentOsmosisPreloadData;
-    getUpdates = getOsmosisPreloadDataUpdates;
-  }
+  const getCurrent = getCurrentCosmosPreloadData;
+  const getUpdates = getCosmosPreloadDataUpdates;
 
   const [state, setState] = useState(getCurrent);
   useEffect(() => {
     const sub = getUpdates().subscribe(setState);
     return () => sub.unsubscribe();
   }, [getCurrent, getUpdates]);
-  return state;
+  return (
+    state[currencyName === "osmosis" ? "osmo" : currencyName] ?? {
+      validators: [], // NB initial state because UI need to work even if it's currently "loading", typically after clear cache
+    }
+  );
 }
-
-// export function useCosmosPreloadData(): CosmosPreloadData {
-//   const [state, setState] = useState(getCurrentCosmosPreloadData);
-//   useEffect(() => {
-//     const sub = getCosmosPreloadDataUpdates().subscribe(setState);
-//     return () => sub.unsubscribe();
-//   }, []);
-//   return state;
-// }
 
 export function useCosmosFamilyMappedDelegations(
   account: CosmosAccount,
@@ -186,7 +165,9 @@ export function useMappedExtraOperationDetails({
   account: CosmosAccount;
   extra: CosmosExtraTxInfo;
 }): CosmosExtraTxInfo {
-  const { validators } = useCosmosFamilyPreloadData("cosmos");
+  const { validators } = useCosmosFamilyPreloadData(
+    account.currency.name.toLowerCase()
+  );
   const unit = getAccountUnit(account);
   return {
     validators: extra.validators
@@ -207,15 +188,11 @@ export function useLedgerFirstShuffledValidatorsCosmosFamily(
   currencyName: string,
   searchInput?: string
 ): CosmosValidatorItem[] {
-  let data;
-  let ledgerValidatorAddress;
-  if (currencyName == "osmosis") {
-    data = getCurrentOsmosisPreloadData();
-    ledgerValidatorAddress = LEDGER_OSMOSIS_VALIDATOR_ADDRESS;
-  } else {
-    data = getCurrentCosmosPreloadData();
-    ledgerValidatorAddress = LEDGER_VALIDATOR_ADDRESS;
-  }
+  const data =
+    getCurrentCosmosPreloadData()[
+      currencyName === "osmosis" ? "osmo" : currencyName
+    ];
+  const ledgerValidatorAddress = cryptoFactory(currencyName).ledgerValidator;
 
   return useMemo(() => {
     return reorderValidators(
@@ -238,7 +215,7 @@ function reorderValidators(
         ? validator.name.toLowerCase().includes(searchInput.toLowerCase())
         : true
     )
-    .sort((a, b) => b.votingPower - a.votingPower);
+    .sort((a, b) => b.tokens - a.tokens);
 
   // move Ledger validator to the first position
   const ledgerValidator = sortedValidators.find(
