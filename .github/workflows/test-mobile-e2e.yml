@@ -178,45 +178,11 @@ jobs:
           cache: "gradle"
       - name: setup Android SDK
         uses: android-actions/setup-android@v2.0.8
-      # - name: Create SDK
-      #   env:
-      #     DEVICE_NAME: Pixel_5_API_31
-      #   run: |
-      #     sdkmanager --install "system-images;android-31;default;x86_64" "build-tools;33.0.0" platform-tools "platforms;android-31"
-      #     yes | sdkmanager --licenses
-      #     sdkmanager --install emulator
-      #     avdmanager create avd --force --name $DEVICE_NAME --abi x86_64 --device "pixel" --package "system-images;android-31;default;x86_64"
-      #     avdmanager list avd
-      #     echo "hw.lcd.density=440" >> $ANDROID_AVD_HOME/$DEVICE_NAME.avd/config.ini
-      #     echo "hw.lcd.height=2340" >> $ANDROID_AVD_HOME/$DEVICE_NAME.avd/config.ini
-      #     echo "hw.lcd.width=1080" >> $ANDROID_AVD_HOME/$DEVICE_NAME.avd/config.ini
-      #     echo "vm.heapSize=576M" >> $ANDROID_AVD_HOME/$DEVICE_NAME.avd/config.ini
-      #     echo "hw.ramSize=4096M" >> $ANDROID_AVD_HOME/$DEVICE_NAME.avd/config.ini
-      #     echo "hw.cpu.ncore=4" >> $ANDROID_AVD_HOME/$DEVICE_NAME.avd/config.ini
-      #     echo "disk.dataPartition.size=4096M" >> $ANDROID_AVD_HOME/$DEVICE_NAME.avd/config.ini
-      #     cat $ANDROID_AVD_HOME/$DEVICE_NAME.avd/config.ini
-      # - name: install libpulse0
-      #   run: |
-      #     apt-get install libpulse0 -y
-      # - name: Create Emulator
-      #   run: |
-      #     ls $ANDROID_HOME
-      #     $ANDROID_HOME/emulator/emulator --verbose --no-boot-anim --no-audio --no-window --gpu swiftshader_indirect --camera-back none @Pixel_5_API_31 &
-      #     booted=0
-      #     while [ "$booted" != "1" ]
-      #     do
-      #       echo "Waiting for emulator..."
-      #       booted=`adb shell getprop dev.bootcomplete`
-      #       sleep 1
-      #     done
-      #     adb shell top
-      #     adb shell settings put system show_touches 1
-      #     adb shell settings put system pointer_location 1
-      #     adb root
+      - name: export HOME env
+        run: |
+          echo "HOME=/root" >> $GITHUB_ENV
       - name: create AVD and generate snapshot for caching
         uses: reactivecircus/android-emulator-runner@v2.27.0
-        env:
-          HOME: /root
         with:
           api-level: 31
           arch: x86_64
