@@ -205,6 +205,7 @@ export default class Eth {
         .resolveTransaction(rawTxHex, this.loadConfig, {
           externalPlugins: true,
           erc20: true,
+          nft: true,
         })
         .catch((e) => {
           console.warn(
