@@ -213,14 +213,6 @@ jobs:
       #     adb shell settings put system show_touches 1
       #     adb shell settings put system pointer_location 1
       #     adb root
-      # - name: Install dependencies
-      #   run: |
-      #     pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
-      # - name: Build dependencies
-      #   run: |
-      #     pnpm build:llm:deps
-      # - name: Gradle cache
-      #   uses: gradle/gradle-build-action@v2
       - name: create AVD and generate snapshot for caching
         uses: reactivecircus/android-emulator-runner@v2.27.0
         env:
@@ -239,30 +231,38 @@ jobs:
           disk-size: 4096M
           script: |
             echo "Generated AVD snapshot for caching."
-      # - name: Build Android app for Detox test run
-      #   run: |
-      #     pnpm mobile e2e:build -c android.emu.release
-      # - name: Run Android tests
-      #   uses: reactivecircus/android-emulator-runner@v2
-      #   timeout-minutes: 20
-      #   with:
-      #     api-level: 31
-      #     arch: x86_64
-      #     target: default
-      #     avd-name: "Pixel_5_API_31"
-      #     force-avd-creation: false
-      #     emulator-options: -verbose -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-      #     cores: 4
-      #     ram-size: 4096M
-      #     heap-size: 512M
-      #     disk-size: 4096M
-      #     script: pnpm mobile e2e:test -c android.emu.release --loglevel verbose --record-logs all --take-screenshots all --record-videos failing --forceExit --detectOpenHandles --cleanup --headless
+      - name: Install dependencies
+        run: |
+          pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+      - name: Build dependencies
+        run: |
+          pnpm build:llm:deps
+      - name: Gradle cache
+        uses: gradle/gradle-build-action@v2
+      - name: Build Android app for Detox test run
+        run: |
+          pnpm mobile e2e:build -c android.emu.release
+      - name: Run Android tests
+        uses: reactivecircus/android-emulator-runner@v2
+        timeout-minutes: 20
+        with:
+          api-level: 31
+          arch: x86_64
+          target: default
+          avd-name: "Pixel_5_API_31"
+          force-avd-creation: false
+          emulator-options: -verbose -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          cores: 4
+          ram-size: 4096M
+          heap-size: 512M
+          disk-size: 4096M
+          script: pnpm mobile e2e:test -c android.emu.release --loglevel verbose --record-logs all --take-screenshots all --record-videos failing --forceExit --detectOpenHandles --cleanup --headless
       # - name: Run Android tests
       #   run: |
       #     pnpm mobile e2e:test -c android.emu.release --record-logs all --take-screenshots all --record-videos failing --forceExit --detectOpenHandles --cleanup --headless
-      - name: Close the emulator
-        run: |
-          killall qemu-system-x86_64-headless
+      # - name: Close the emulator
+      #   run: |
+      #     killall qemu-system-x86_64-headless
       # - name: Upload test artifacts
       #   if: always()
       #   uses: actions/upload-artifact@v2
