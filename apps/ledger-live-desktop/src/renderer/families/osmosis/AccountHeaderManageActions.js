@@ -26,20 +26,29 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const hasDelegations = cosmosResources.delegations.length > 0;
 
   const onClick = useCallback(() => {
-    if (hasDelegations) {
-      dispatch(
-        openModal("MODAL_OSMOSIS_DELEGATE", {
-          account,
-        }),
-      );
+    if (earnRewardEnabled) {
+      if (hasDelegations) {
+        dispatch(
+          openModal("MODAL_OSMOSIS_DELEGATE", {
+            account,
+          }),
+        );
+      } else {
+        dispatch(
+          openModal("MODAL_OSMOSIS_REWARDS_INFO", {
+            account,
+          }),
+        );
+      }
     } else {
       dispatch(
-        openModal("MODAL_OSMOSIS_REWARDS_INFO", {
+        openModal("MODAL_NO_FUNDS_STAKE", {
           account,
+          parentAccount,
         }),
       );
     }
-  }, [dispatch, account, hasDelegations]);
+  }, [earnRewardEnabled, hasDelegations, dispatch, account, parentAccount]);
 
   if (parentAccount) return null;
 
@@ -50,7 +59,6 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
       key: "Stake",
       onClick: onClick,
       icon: IconCoins,
-      disabled: !earnRewardEnabled,
       label: t("account.stake"),
       tooltip: disabledLabel,
     },

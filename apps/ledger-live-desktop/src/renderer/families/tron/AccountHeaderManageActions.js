@@ -28,22 +28,31 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
   const earnRewardDisabled = tronPower === 0 && spendableBalance.lt(minAmount);
 
   const onClick = useCallback(() => {
-    if (tronPower > 0) {
-      dispatch(
-        openModal("MODAL_MANAGE_TRON", {
-          parentAccount,
-          account,
-        }),
-      );
+    if (earnRewardDisabled) {
+      if (tronPower > 0) {
+        dispatch(
+          openModal("MODAL_MANAGE_TRON", {
+            parentAccount,
+            account,
+          }),
+        );
+      } else {
+        dispatch(
+          openModal("MODAL_TRON_REWARDS_INFO", {
+            parentAccount,
+            account,
+          }),
+        );
+      }
     } else {
       dispatch(
-        openModal("MODAL_TRON_REWARDS_INFO", {
-          parentAccount,
+        openModal("MODAL_NO_FUNDS_STAKE", {
           account,
+          parentAccount,
         }),
       );
     }
-  }, [dispatch, tronPower, account, parentAccount]);
+  }, [earnRewardDisabled, tronPower, dispatch, parentAccount, account]);
 
   if (parentAccount) return null;
 

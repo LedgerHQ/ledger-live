@@ -27,15 +27,18 @@ const AccountHeaderManageActions = ({ account }: Props) => {
     );
   }, [dispatch, account]);
 
+  const disabledLabel = isRegistrationPending
+    ? ""
+    : `${t("celo.manage.titleWhenPendingRegistration")}`;
+
   return [
     {
       key: "Stake",
       onClick: onClick,
       icon: (props: *) => <Icon {...props} isDisabled={isRegistrationPending} />,
       disabled: isRegistrationPending,
-      label: isRegistrationPending
-        ? t("celo.manage.titleWhenPendingRegistration")
-        : t("celo.manage.title"),
+      label: t("account.stake"),
+      tooltip: disabledLabel,
     },
   ];
 };
