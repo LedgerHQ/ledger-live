@@ -176,7 +176,6 @@ export const toOperationRaw = (
     operator,
     standard,
     tokenId,
-    transactionRaw,
   };
 
   if (transactionSequenceNumber !== undefined) {
@@ -197,6 +196,10 @@ export const toOperationRaw = (
 
   if (nftOperations) {
     copy.nftOperations = nftOperations.map((o) => toOperationRaw(o));
+  }
+
+  if (transactionRaw !== undefined) {
+    copy.transactionRaw = transactionRaw;
   }
 
   return copy;
@@ -287,7 +290,6 @@ export const fromOperationRaw = (
     operator,
     standard,
     tokenId,
-    transactionRaw,
   };
 
   if (transactionSequenceNumber !== undefined) {
@@ -316,6 +318,10 @@ export const fromOperationRaw = (
     res.nftOperations = nftOperations.map((o) =>
       fromOperationRaw(o, o.accountId)
     );
+  }
+
+  if (transactionRaw !== undefined) {
+    res.transactionRaw = transactionRaw;
   }
 
   return res;
