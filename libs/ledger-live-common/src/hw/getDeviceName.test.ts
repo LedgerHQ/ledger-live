@@ -1,6 +1,6 @@
 import getDeviceName from "./getDeviceName";
 
-const mockTransportGenerator = (out) => ({ send: () => out });
+const mockTransportGenerator = (out) => ({ send: async () => out });
 
 describe("getDeviceName", () => {
   test("should return name if available", async () => {
