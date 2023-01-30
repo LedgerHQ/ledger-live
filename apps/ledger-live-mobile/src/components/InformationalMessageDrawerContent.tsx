@@ -2,7 +2,7 @@ import React from "react";
 import { Flex, Text, Icon } from "@ledgerhq/native-ui";
 import Button from "./Button";
 
-export type GenericBottomModalContentIconType =
+export type InformationalMessageIconType =
   | "error"
   | "success"
   | "warning"
@@ -10,17 +10,24 @@ export type GenericBottomModalContentIconType =
 
 type Props = {
   title: string;
-  iconType?: GenericBottomModalContentIconType;
+  iconType?: InformationalMessageIconType;
   description: string;
   primaryButtonLabel?: string;
-  onPrimaryButtonPress: () => void;
+  onPrimaryButtonPress?: () => void;
   primaryButtonEvent?: string;
 };
 
 /**
- * Renders the content that is rendered inside a bottom modal/drawer.
+ * Renders an informational message (error, warning, success or info) to be rendered as the content inside a drawer.
+ *
+ * @param title The title of the informational message to be displayed
+ * @param iconType The type of icon to display. Defaults to undefined.
+ * @param description The description of the informational message to be displayed
+ * @param primaryButtonLabel The label of the primary button. Defaults to undefined.
+ * @param onPrimaryButtonPress The callback to be called when the primary button is pressed. Defaults to undefined.
+ * @param primaryButtonEvent The event name to be sent when the primary button is pressed. Defaults to undefined.
  */
-function GenericDrawerContent({
+function InformationalMessageDrawerContent({
   title,
   iconType,
   description,
@@ -87,4 +94,4 @@ function GenericDrawerContent({
   );
 }
 
-export default GenericDrawerContent;
+export default InformationalMessageDrawerContent;
