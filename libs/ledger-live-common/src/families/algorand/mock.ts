@@ -1,12 +1,12 @@
 import Prando from "prando";
 import { BigNumber } from "bignumber.js";
 import { genHex, genAddress } from "../../mock/helpers";
-import { AlgorandAccount } from "./types";
 import { Account, Operation, OperationType } from "@ledgerhq/types-live";
+import type { AlgorandAccount } from "./types";
 
-function setAlgorandResources(account: AlgorandAccount): AlgorandAccount {
+function setAlgorandResources(account: Account): Account {
   /** format algorandResources given the new delegations */
-  account.algorandResources = {
+  (account as AlgorandAccount).algorandResources = {
     rewards: account.balance.multipliedBy(0.01),
     nbAssets: account.subAccounts?.length ?? 0,
   };
@@ -14,7 +14,7 @@ function setAlgorandResources(account: AlgorandAccount): AlgorandAccount {
 }
 
 function genBaseOperation(
-  account: AlgorandAccount,
+  account: Account,
   rng: Prando,
   type: OperationType,
   index: number
@@ -51,7 +51,7 @@ function genBaseOperation(
   };
 }
 
-function addOptIn(account: AlgorandAccount, rng: Prando): Account {
+function addOptIn(account: Account, rng: Prando): Account {
   /** select position on the operation stack where we will insert the new claim rewards */
   const opIndex = rng.next(0, 10);
   const opt = genBaseOperation(account, rng, "OPT_IN", opIndex);
@@ -61,7 +61,7 @@ function addOptIn(account: AlgorandAccount, rng: Prando): Account {
   return account;
 }
 
-function addOptOut(account: AlgorandAccount, rng: Prando): Account {
+function addOptOut(account: Account, rng: Prando): Account {
   /** select position on the operation stack where we will insert the new claim rewards */
   const opIndex = rng.next(0, 10);
   const opt = genBaseOperation(account, rng, "OPT_OUT", opIndex);
@@ -77,10 +77,7 @@ function addOptOut(account: AlgorandAccount, rng: Prando): Account {
  * @param {Account} account
  * @param {Prando} rng
  */
-function genAccountEnhanceOperations(
-  account: AlgorandAccount,
-  rng: Prando
-): Account {
+function genAccountEnhanceOperations(account: Account, rng: Prando): Account {
   addOptIn(account, rng);
   addOptOut(account, rng);
   setAlgorandResources(account);
@@ -92,8 +89,10 @@ function genAccountEnhanceOperations(
  * @memberof algorand/mock
  * @param {Account} account
  */
-function postSyncAccount(account: AlgorandAccount): Account {
-  const algorandResources = account.algorandResources || { rewards: undefined };
+function postSyncAccount(account: Account): Account {
+  const algorandResources = (account as AlgorandAccount).algorandResources || {
+    rewards: undefined,
+  };
   const rewards = algorandResources.rewards || new BigNumber(0);
   account.spendableBalance = account.balance.plus(rewards);
   return account;
@@ -106,7 +105,7 @@ function postSyncAccount(account: AlgorandAccount): Account {
  * @param {AlgorandAccount} account
  */
 function postScanAccount(
-  account: AlgorandAccount,
+  account: Account,
   {
     isEmpty,
   }: {
@@ -114,7 +113,7 @@ function postScanAccount(
   }
 ): Account {
   if (isEmpty) {
-    account.algorandResources = {
+    (account as AlgorandAccount).algorandResources = {
       rewards: new BigNumber(0),
       nbAssets: account.subAccounts?.length ?? 0,
     };

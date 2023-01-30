@@ -37,7 +37,7 @@ const EntryButtonContainer = styled.button`
   border-radius: 4px;
   padding: ${p => p.theme.space[3]}px;
   gap: ${p => p.theme.space[3]}px;
-  transition: background-color ease-in-out 200ms;
+  transition: ease-in-out 200ms;
 
   &:disabled {
     cursor: not-allowed;
