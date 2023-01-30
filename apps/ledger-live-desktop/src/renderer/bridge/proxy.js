@@ -42,14 +42,14 @@ export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   const b: CurrencyBridge = {
     preload: async () => {
       const value = await command("CurrencyPreload")({ currencyId: currency.id }).toPromise();
-      bridgeImpl.getCurrencyBridge(currency).hydrate(value, currency);
+      bridge.hydrate(value, currency);
       return value;
     },
 
-    hydrate: value => bridgeImpl.getCurrencyBridge(currency).hydrate(value, currency),
+    hydrate: value => bridge.hydrate(value, currency),
 
     scanAccounts,
-    nftResolvers: bridgeImpl.getCurrencyBridge(currency).nftResolvers,
+    nftResolvers: bridge.nftResolvers,
   };
 
   if (getPreloadStrategy) {
@@ -91,18 +91,16 @@ export const getAccountBridge = (
       }),
     );
   };
-
+  const bridge = bridgeImpl.getAccountBridge(account, parentAccount);
   const receive = (account, arg) =>
     command("AccountReceive")({
       account: toAccountRaw(account),
       arg,
     });
 
-  const createTransaction = a =>
-    bridgeImpl.getAccountBridge(account, parentAccount).createTransaction(a);
+  const createTransaction = account => bridge.createTransaction(account);
 
-  const updateTransaction = (a, patch) =>
-    bridgeImpl.getAccountBridge(account, parentAccount).updateTransaction(a, patch);
+  const updateTransaction = (account, patch) => bridge.updateTransaction(account, patch);
 
   const prepareTransaction = async (a, t) => {
     const transaction = toTransactionRaw(t);
@@ -158,6 +156,10 @@ export const getAccountBridge = (
     prepareTransaction,
     sync,
     receive,
+    applyReconciliation: bridge.applyReconciliation,
+    assignToAccountRaw: bridge.assignToAccountRaw,
+    assignFromAccountRaw: bridge.assignFromAccountRaw,
+    initAccount: bridge.initAccount,
     signOperation,
     broadcast,
     estimateMaxSpendable,

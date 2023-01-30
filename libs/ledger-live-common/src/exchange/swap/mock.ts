@@ -97,24 +97,45 @@ export const mockGetExchangeRates = async (
       rate: new BigNumber("1"),
       toAmount: amount.times(magnitudeAwareRate),
       magnitudeAwareRate,
-      rateId: "mockedRateId",
-      provider: "ftx",
+      rateId: "mockedRateId1",
+      provider: "changelly",
       providerType: "CEX",
       expirationDate: new Date(),
       tradeMethod: "fixed",
     },
     {
-      rate: new BigNumber("1"),
+      rate: new BigNumber("1.1"),
       toAmount: amount.times(magnitudeAwareRate),
       magnitudeAwareRate,
-      rateId: "mockedRateId",
-      provider: "ftx",
+      rateId: "mockedRateId2",
+      provider: "changelly",
       providerType: "CEX",
+      expirationDate: new Date(),
+      tradeMethod: "float",
+    },
+    {
+      rate: new BigNumber("0.9"),
+      toAmount: amount.times(magnitudeAwareRate),
+      magnitudeAwareRate,
+      rateId: "mockedRateId3",
+      provider: "cic",
+      providerType: "CEX",
+      expirationDate: new Date(),
+      tradeMethod: "float",
+    },
+    {
+      rate: new BigNumber("0.95"),
+      toAmount: amount.times(magnitudeAwareRate),
+      magnitudeAwareRate,
+      rateId: "mockedRateId4",
+      provider: "oneinch",
+      providerType: "DEX",
       expirationDate: new Date(),
       tradeMethod: "float",
     },
   ];
 };
+
 export const mockInitSwap = (
   exchange: Exchange,
   exchangeRate: ExchangeRate,
@@ -128,13 +149,15 @@ export const mockInitSwap = (
     },
   });
 };
+
+// Need to understand how and why this gets used
 export const mockGetProviders: GetProviders = async () => {
   //Fake delay to show loading UI
   await new Promise((r) => setTimeout(r, 800));
 
   return [
     {
-      provider: "ftx",
+      provider: "changelly",
       pairs: [
         { from: "bitcoin", to: "ethereum", tradeMethod: "float" },
         { from: "bitcoin", to: "ethereum", tradeMethod: "fixed" },
@@ -143,7 +166,7 @@ export const mockGetProviders: GetProviders = async () => {
       ],
     },
     {
-      provider: "wyre",
+      provider: "cic",
       pairs: [
         { from: "bitcoin", to: "ethereum", tradeMethod: "float" },
         { from: "bitcoin", to: "ethereum", tradeMethod: "fixed" },
@@ -153,6 +176,56 @@ export const mockGetProviders: GetProviders = async () => {
     },
   ];
 };
+
+// Providers using V5 schema. For some reason it doesn't work though (still requires V4)
+// return {
+//   currencies: {
+//     7: "ethereum/erc20/usd_tether__erc20_",
+//     8: "bitcoin",
+//     149: "ethereum",
+//   },
+//   providers: {
+//     changelly: [
+//       {
+//         methods: ["fixed", "float"],
+//         pairs: {
+//           7: [8, 149],
+//           8: [7, 149],
+//           149: [7, 8],
+//         },
+//       },
+//     ],
+//     cic: [
+//       {
+//         methods: ["fixed", "float"],
+//         pairs: {
+//           7: [8, 149],
+//           8: [7, 149],
+//           149: [7, 8],
+//         },
+//       },
+//     ],
+//     oneinch: [
+//       {
+//         methods: ["float"],
+//         pairs: {
+//           7: [149],
+//           149: [7],
+//         },
+//       },
+//     ],
+//     paraswap: [
+//       {
+//         methods: ["float"],
+//         pairs: {
+//           7: [149],
+//           149: [7],
+//         },
+//       },
+//     ],
+//   },
+// };
+
 export const mockGetStatus: GetMultipleStatus = async (statusList) => {
   //Fake delay to show loading UI
   await new Promise((r) => setTimeout(r, 800));

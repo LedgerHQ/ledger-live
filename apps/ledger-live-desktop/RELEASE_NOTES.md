@@ -1,3 +1,19 @@
+# 2.52.0
+
+### 🚀 Features
+
+- Starting today, you can **stake MultiversX (EGLD)** through Ledger Live and earn rewards. In addition, we've added **support for** 3 MultiversX tokens—**Tether (USDT), Holoride (RIDE) and Maiar DEX (MEX)**.
+- Swapping crypto? Now you can **compare quotes from ParaSwap and 1inch** for 200 tokens and select the best offer.
+
+### 🗑 Removed features
+
+- Ledger Live no longer supports the **XSN network**.
+- **TronGrid** has been removed from the Experimental features.
+
+### 🐛 Fixes
+
+- The delegated ATOM wasn’t visible in the account or transaction history. We’ve fixed this.
+
 # 2.51.0
 
 ### 🚀 Features

@@ -56,7 +56,14 @@ function Rate({
   const handleSelection = useCallback(() => onSelect(value), [value, onSelect]);
   const ProviderIcon = iconByProviderName[icon];
   return (
-    <ProviderContainer p={3} mb={3} fontWeight="500" selected={selected} onClick={handleSelection}>
+    <ProviderContainer
+      p={3}
+      mb={3}
+      fontWeight="500"
+      selected={selected}
+      onClick={handleSelection}
+      data-test-id={`quote-container-${value.provider}-${value.tradeMethod}`}
+    >
       {icon && (
         <Box mr={2}>
           <ProviderIcon size={28} />

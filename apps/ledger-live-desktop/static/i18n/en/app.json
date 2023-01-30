@@ -606,6 +606,28 @@
       "creditedAmount": "Credited amount"
     }
   },
+  "stake": {
+    "noFundsModal": {
+      "title": "Buy, swap or receive",
+      "text": "You do not have enough {{coin}} available to stake",
+      "description": "Not enough funds? Don’t worry, you can securely buy, swap or receive crypto directly in Ledger Live.",
+      "options": {
+        "buy": {
+          "title": "Buy",
+          "body": "Buy with trusted  providers"
+        },
+        "swap": {
+          "title": "Swap",
+          "label": "Popular",
+          "body": "Convert crypto to crypto securely"
+        },
+        "receive": {
+          "title": "Receive",
+          "body": "Receive crypto in your wallet"
+        }
+      }
+    }
+  },
   "lottieDebugger": {
     "buttonTitle": "Test"
   },
@@ -1099,6 +1121,7 @@
       "receive": "Receive",
       "send": "Send",
       "swap": "Swap",
+      "stake": "Stake",
       "buy": "Buy",
       "sell": "Sell",
       "edit": "Edit account",
@@ -1364,7 +1387,22 @@
     },
     "recentActivity": "Latest operations",
     "totalBalance": "Total balance",
-    "transactionsPendingConfirmation": "Some transactions are not confirmed yet. These will be reflected in your balance and useable after being confirmed."
+    "transactionsPendingConfirmation": "Some transactions are not confirmed yet. These will be reflected in your balance and useable after being confirmed.",
+    "featuredButtons": {
+      "buySell": {
+        "title": "Buy / Sell",
+        "description": "Buy and sell with trusted providers"
+      },
+      "swap": {
+        "title": "Swap",
+        "description": "Convert crypto to crypto securely",
+        "label": "Popular"
+      },
+      "earn": {
+        "title": "Earn",
+        "description": "Grow your crypto with Ledger"
+      }
+    }
   },
   "currentAddress": {
     "title": "Current address",
@@ -5780,7 +5818,7 @@
     }
   },
   "customImage": {
-    "title": "Custom image",
+    "title": "Custom lock screen",
     "steps": {
       "choose": {
         "stepLabel": "Choose an image",
@@ -5798,13 +5836,11 @@
       "transfer": {
         "stepLabel": "Transfer",
         "uploadAnotherImage": "Upload another image",
-        "allowPreview": "Allow picture preview on {{productName}}",
-        "loadingPicture": "Loading picture on {{productName}}",
-        "pictureLoaded": "Picture loaded",
+        "allowPreview": "Allow lock screen picture to load on your {{productName}}",
+        "loadingPicture": "Loading...",
         "imageLoaded": "Image loaded on {{productName}}",
-        "confirmPicture": "Confirm on {{productName}}",
-        "doThisLater": "Maybe later",
-        "timeDisclaimer": "This can take up to 30 seconds"
+        "confirmPicture": "Like what you see?\nKeep it!",
+        "doThisLater": "Maybe later"
       }
     },
     "postOnboarding": {
@@ -5812,7 +5848,7 @@
       "description": "By customizing the screen",
       "actionCompletedPopupLabel": "Device personalized"
     },
-    "customImageSet": "Custom image set",
+    "customImageSet": "Lockscreen set",
     "finishCTA": "Finish"
   }
 }
