@@ -43,7 +43,6 @@ import { Result } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { ScreenName } from "../../../const";
 
 export type SendFundsNavigatorStackParamList = {
-  [ScreenName.EditTransactionOptions]: { transaction: EthereumTransaction };
   [ScreenName.SendCoin]:
     | {
         currency?: string;
