@@ -1,41 +1,64 @@
-import React from "react";
-import { Flex } from "@ledgerhq/native-ui";
-import BigNumber from "bignumber.js";
 import { fromTransactionRaw } from "@ledgerhq/live-common/families/ethereum/transaction";
 import {
   Transaction,
   TransactionRaw,
 } from "@ledgerhq/live-common/families/ethereum/types";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
+import { Account } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { useEffect } from "react";
 
 import { ScreenName } from "../../../const";
-import { TrackScreen } from "../../../analytics";
 import { EthereumEditTransactionParamList } from "../../../components/RootNavigator/types/EthereumEditTransactionNavigator";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import LText from "../../../components/LText";
 
 type Props = StackNavigatorProps<
   EthereumEditTransactionParamList,
   ScreenName.CancelTransaction
 >;
 
-export function CancelTransaction({ route }: Props) {
-  const { operation } = route.params;
+export function CancelTransaction({ route, navigation }: Props) {
+  const { operation, account, parentAccount } = route.params;
+  const bridge = getAccountBridge(account, parentAccount as Account);
 
   const transactionToEdit = fromTransactionRaw(
     operation.transactionRaw! as TransactionRaw,
   ) as Transaction;
 
-  transactionToEdit.amount = new BigNumber(0);
+  const { transaction, setTransaction, status } =
+    useBridgeTransaction<Transaction>(() => {
+      return {
+        account,
+        parentAccount: parentAccount as Account,
+        transaction: transactionToEdit,
+      };
+    });
 
-  return (
-    <Flex flex={1} color="background.main">
-      <TrackScreen
-        category="EthereumEditTransaction"
-        name="EthereumEditTransaction"
-      />
-      <Flex p={6}>
-        <LText>Hello world</LText>
-      </Flex>
-    </Flex>
-  );
+  useEffect(() => {
+    transactionToEdit.amount = new BigNumber(0);
+
+    if (transactionToEdit.maxPriorityFeePerGas) {
+      transactionToEdit.maxPriorityFeePerGas = new BigNumber(
+        transactionToEdit.maxPriorityFeePerGas.toNumber() * 1.1,
+      );
+    }
+
+    if (transactionToEdit.maxFeePerGas) {
+      transactionToEdit.maxFeePerGas = new BigNumber(
+        transactionToEdit.maxFeePerGas.toNumber() * 1.3,
+      );
+    }
+
+    setTransaction(bridge.updateTransaction(transaction, transactionToEdit));
+
+    navigation.navigate(ScreenName.SendSelectDevice, {
+      accountId: account.id,
+      parentId: parentAccount?.id,
+      transaction: transactionToEdit,
+      status,
+    });
+  }, []);
+
+  return null;
 }
