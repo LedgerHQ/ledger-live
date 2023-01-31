@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useSelector } from "react-redux";
+
 import { ScreenName, NavigatorName } from "../../const";
 import * as families from "../../families";
 import OperationDetails, {
@@ -78,11 +79,11 @@ import { hasNoAccountsSelector } from "../../reducers/accounts";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import DeviceConnect from "../../screens/DeviceConnect";
 import ExploreTabNavigator from "./ExploreTabNavigator";
-import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
 import StakeFlowNavigator from "./StakeFlowNavigator";
 import { RecoverPlayer } from "../../screens/Protect/Player";
 import { RedirectToOnboardingRecoverFlowScreen } from "../../screens/Protect/RedirectToOnboardingRecoverFlow";
 import EditTransactionNavigator from "./EditTransactionNavigator";
+import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 

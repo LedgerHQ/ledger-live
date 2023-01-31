@@ -6,9 +6,10 @@ import {
 } from "@ledgerhq/live-common/families/ethereum/types";
 import { useNavigation } from "@react-navigation/native";
 import { fromTransactionRaw } from "@ledgerhq/live-common/families/ethereum/transaction";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { Account } from "@ledgerhq/types-live";
+import { StyleSheet, View } from "react-native";
 
 import { ScreenName } from "../../../const";
 import { EthereumEditTransactionParamList } from "../../../components/RootNavigator/types/EthereumEditTransactionNavigator";
@@ -36,8 +37,9 @@ export function SpeedupTransaction({ route }: Props) {
       >
   >();
 
-  const { operation, account } = route.params;
-  const bridge = getAccountBridge(account, null);
+  const { operation, account, parentAccount } = route.params;
+
+  const bridge = getAccountBridge(account, parentAccount as Account);
 
   const transactionToEdit = fromTransactionRaw(
     operation.transactionRaw! as TransactionRaw,
@@ -47,7 +49,7 @@ export function SpeedupTransaction({ route }: Props) {
     () => {
       return {
         account,
-        parentAccount: null,
+        parentAccount: parentAccount as Account,
         transaction: transactionToEdit,
       };
     },
@@ -80,7 +82,7 @@ export function SpeedupTransaction({ route }: Props) {
     setTransaction(bridge.updateTransaction(transaction, transactionToEdit));
     navigation.navigate(ScreenName.SendSummary, {
       accountId: account.id,
-      parentId: undefined,
+      parentId: parentAccount?.id,
       transaction: transactionToEdit,
       currentNavigation: ScreenName.SpeedUpTransaction,
       nextNavigation: ScreenName.SendSelectDevice,
@@ -93,16 +95,51 @@ export function SpeedupTransaction({ route }: Props) {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, padding: 16 }}>
+    <>
       <SelectFeesStrategy
         strategies={strategies}
         account={account}
+        parentAccount={parentAccount as Account}
         transaction={transactionToEdit}
         onStrategySelect={onFeeStrategySelected}
         onCustomFeesPress={openCustomFees}
         disabledStrategies={disabledStrategies}
       />
-      <Button onPress={onContinue}>Continue</Button>
-    </SafeAreaView>
+
+      <View style={styles.flex}>
+        <Button
+          type="main"
+          containerStyle={{ flexGrow: 1 }}
+          onPress={onContinue}
+        >
+          Continue
+        </Button>
+      </View>
+    </>
   );
 }
+
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    padding: 16,
+    justifyContent: "flex-start",
+    flexDirection: "column",
+  },
+  container: {
+    flex: 1,
+  },
+  sectionSeparator: {
+    marginTop: 16,
+  },
+  accountContainer: {
+    flex: 1,
+    flexDirection: "row",
+  },
+  flex: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "flex-end",
+    paddingBottom: 16,
+  },
+});
