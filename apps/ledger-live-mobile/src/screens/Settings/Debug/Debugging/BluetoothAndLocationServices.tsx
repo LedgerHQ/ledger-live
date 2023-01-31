@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Flex, Alert, Switch } from "@ledgerhq/native-ui";
 import NavigationScrollView from "../../../../components/NavigationScrollView";
 import RequiresBLE from "../../../../components/RequiresBLE";
@@ -32,6 +32,10 @@ export default function DebugBluetoothAndLocationServices() {
       setIsBleRequired(false);
     }
   }, [useCustomizedRequirements, isBleRequired]);
+
+  const onUserClose = useCallback(() => {
+    setIsBleRequired(false);
+  }, []);
 
   const {
     bluetoothRequirementsState,
@@ -76,9 +80,10 @@ export default function DebugBluetoothAndLocationServices() {
 
             <Flex mt={5}>
               <RequiresBluetoothDrawer
+                isOpen={isRequireCustomizedBluetoothEnabled}
+                onUserClose={onUserClose}
                 bluetoothRequirementsState={bluetoothRequirementsState}
                 retryRequestOnIssue={retryRequestOnIssue}
-                isOpen={isRequireCustomizedBluetoothEnabled}
                 cannotRetryRequest={cannotRetryRequest}
               />
 
