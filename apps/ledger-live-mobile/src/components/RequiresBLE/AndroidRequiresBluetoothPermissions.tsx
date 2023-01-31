@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import BluetoothPermissionDenied from "./BluetoothPermissionDenied";
+import BluetoothPermissionsDenied from "./BluetoothPermissionsDenied";
 import { useAndroidBluetoothPermissions } from "./hooks/useAndroidBluetoothPermissions";
 
 type Props = {
@@ -33,7 +33,7 @@ const AndroidRequiresBluetoothPermissions: React.FC<Props> = ({
   return hasPermissions === "granted" ? (
     <>{children}</>
   ) : (
-    <BluetoothPermissionDenied
+    <BluetoothPermissionsDenied
       onRetry={requestForPermissionsAgain}
       neverAskAgain={neverAskAgain}
       hasBackButton={hasBackButtonOnDenied}

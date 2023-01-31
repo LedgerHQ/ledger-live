@@ -4,7 +4,7 @@ import BottomModal from "../BottomModal";
 import { BluetoothRequirementsState } from "./hooks/useRequireBluetooth";
 import BluetoothDisabled from "./BluetoothDisabled";
 import LocationDisabled from "../RequiresLocation/LocationDisabled";
-import BluetoothPermissionDenied from "./BluetoothPermissionDenied";
+import BluetoothPermissionsDenied from "./BluetoothPermissionsDenied";
 import LocationPermissionDenied from "../RequiresLocation/LocationPermissionDenied";
 
 export type BleRequirementsState = "unknown" | "respected" | "not_respected";
@@ -45,7 +45,7 @@ const RequiresBluetoothDrawer = ({
     case "bluetooth_permissions_ungranted":
       // TODO: need to pass never ask again prop
       content = (
-        <BluetoothPermissionDenied
+        <BluetoothPermissionsDenied
           componentType="drawer"
           onRetry={retryRequestOnIssue}
           neverAskAgain={cannotRetryRequest}
