@@ -13,7 +13,6 @@ import {
 import { ParamListBase, useTheme } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Operation } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
 
 import byFamiliesOperationDetails from "../../generated/operationDetails";
 import { accountScreenSelector } from "../../reducers/accounts";
