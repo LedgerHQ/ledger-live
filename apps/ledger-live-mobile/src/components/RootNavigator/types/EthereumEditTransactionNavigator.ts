@@ -18,27 +18,23 @@ export type EthereumEditTransactionParamList = {
     operation: Operation;
     account: AccountLike;
   };
+  [ScreenName.EthereumCustomFees]: {
+    accountId: string;
+    parentId?: string;
+    transaction: Transaction;
+    currentNavigation: ScreenName.SpeedUpTransaction;
+    nextNavigation: ScreenName.SendSelectDevice;
+    setTransaction: () => void;
+  };
   [ScreenName.SendSummary]: {
     accountId: string;
     parentId?: string;
     deviceId?: string;
     transaction: Transaction;
-    currentNavigation:
-      | ScreenName.LendingWithdrawSummary
-      | ScreenName.LendingSupplySummary
-      | ScreenName.SignTransactionSummary
-      | ScreenName.LendingEnableSummary
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
+    currentNavigation: ScreenName.SpeedUpTransaction | ScreenName.SendSummary;
     nextNavigation:
-      | ScreenName.LendingWithdrawSelectDevice
-      | ScreenName.LendingSupplySelectDevice
       | ScreenName.SignTransactionSelectDevice
-      | ScreenName.LendingEnableSelectDevice
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice
-      | ScreenName.SwapForm;
+      | ScreenName.SendSelectDevice;
     overrideAmountLabel?: string;
     hideTotal?: boolean;
     hideFees?: boolean;
