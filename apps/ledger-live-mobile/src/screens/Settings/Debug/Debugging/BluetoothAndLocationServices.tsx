@@ -48,36 +48,44 @@ export default function DebugBluetoothAndLocationServices() {
 
   return (
     <NavigationScrollView>
-      <Flex p="2">
-        <Switch
-          checked={useCustomizedRequirements}
-          onChange={val => setUseCustomizedRequirements(val)}
-          label={
-            "Use customizable bluetooth requirements - a drawer is used to display issues"
-          }
-        />
-        <Switch
-          checked={openSettings}
-          onChange={val => setOpenSettings(val)}
-          label={
-            "Open settings: on a permission denied or service disabled, go to settings and does not prompt the user"
-          }
-        />
+      <Flex p="4">
+        <Flex mb="2">
+          <Switch
+            checked={useCustomizedRequirements}
+            onChange={val => setUseCustomizedRequirements(val)}
+            label={
+              "Use customizable bluetooth requirements - a drawer is used to display issues"
+            }
+          />
+        </Flex>
+        <Flex mb="2">
+          <Switch
+            checked={openSettings}
+            onChange={val => setOpenSettings(val)}
+            label={
+              "Open settings: on a permission denied or service disabled, go to settings and does not prompt the user"
+            }
+          />
+        </Flex>
         {useCustomizedRequirements ? (
           <>
-            <Switch
-              checked={isBleRequired}
-              onChange={val => setIsBleRequired(val)}
-              label={`Need bluetooth ${isBleRequired ? "🔵" : "🔴"}`}
-            />
-            <Switch
-              checked={doesBleNeedScanning}
-              onChange={val => setDoesBleNeedScanning(val)}
-              label={`Need bluetooth for scanning ? ${
-                doesBleNeedScanning ? "📡" : "🗣"
-              }`}
-            />
+            <Flex mb="4">
+              <Switch
+                checked={isBleRequired}
+                onChange={val => setIsBleRequired(val)}
+                label={`Need bluetooth ${isBleRequired ? "🔵" : "🔴"}`}
+              />
+            </Flex>
 
+            <Flex mb="2">
+              <Switch
+                checked={doesBleNeedScanning}
+                onChange={val => setDoesBleNeedScanning(val)}
+                label={`Need bluetooth for scanning ? ${
+                  doesBleNeedScanning ? "📡" : "🗣"
+                }`}
+              />
+            </Flex>
             <Flex mt={5}>
               <RequiresBluetoothDrawer
                 isOpen={isRequireCustomizedBluetoothEnabled}
