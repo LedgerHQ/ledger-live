@@ -19,6 +19,7 @@ import type { BaseNavigatorStackParamList } from "../../components/RootNavigator
 import { ScreenName } from "../../const";
 import type { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import type { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
+import type { EthereumEditTransactionParamList } from "../../components/RootNavigator/types/EthereumEditTransactionNavigator";
 
 type Props = {
   transaction: Transaction;
@@ -26,10 +27,12 @@ type Props = {
   parentAccount?: Account | null;
 } & CompositeScreenProps<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
+  | StackNavigatorProps<EthereumEditTransactionParamList, ScreenName.SendSummary>
   | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
+
 export default function AlgorandFeeRow({ account, parentAccount, transaction }: Props) {
   const { colors } = useTheme();
   const extraInfoFees = useCallback(() => {
@@ -39,6 +42,7 @@ export default function AlgorandFeeRow({ account, parentAccount, transaction }: 
   const mainAccount = getMainAccount(account, parentAccount);
   const unit = getAccountUnit(mainAccount);
   const currency = getAccountCurrency(account);
+
   return (
     <SummaryRow
       onPress={extraInfoFees}
