@@ -189,7 +189,8 @@ jobs:
           rm ./apps/ledger-live-mobile/node_modules/detox/src/devices/common/drivers/android/exec/ADB.js
 
           echo "moving file"
-          mv ADB.js ./apps/ledger-live-mobile/node_modules/detox/src/devices/common/drivers/android/exec/ADB.js
+          ls
+          mv ./ADB.js ./apps/ledger-live-mobile/node_modules/detox/src/devices/common/drivers/android/exec/ADB.js
           echo "done"
       - name: Build dependencies
         run: |
