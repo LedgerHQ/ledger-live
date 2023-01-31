@@ -89,7 +89,8 @@ export function SpeedupTransaction({ route }: Props) {
     setTransaction(
       bridge.updateTransaction(transaction, {
         feesStrategy: strategy.label,
-        feePerByte: strategy.amount,
+        maxFeePerGas: strategy.extra?.maxFeePerGas,
+        maxPriorityFeePerGas: strategy.extra?.maxPriorityFeePerGas,
       }),
     );
   };
