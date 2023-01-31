@@ -10,15 +10,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
-import { NavigatorName, ScreenName } from "../../const";
-import { EthereumEditTransactionParamList } from "../../components/RootNavigator/types/EthereumEditTransactionNavigator";
+import { ScreenName } from "../../../const";
+import { EthereumEditTransactionParamList } from "../../../components/RootNavigator/types/EthereumEditTransactionNavigator";
 import {
   StackNavigatorNavigation,
   StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import SelectFeesStrategy from "../../components/SelectFeesStrategy";
-import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import Button from "../../components/Button";
+} from "../../../components/RootNavigator/types/helpers";
+import SelectFeesStrategy from "../../../components/SelectFeesStrategy";
+import Button from "../../../components/Button";
 
 type Props = StackNavigatorProps<
   EthereumEditTransactionParamList,
@@ -26,15 +25,16 @@ type Props = StackNavigatorProps<
 >;
 
 export function SpeedupTransaction({ route }: Props) {
-  const customFeesNavigation =
-    useNavigation<
-      StackNavigatorNavigation<
-        SendFundsNavigatorStackParamList,
+  const navigation = useNavigation<
+    | StackNavigatorNavigation<
+        EthereumEditTransactionParamList,
         ScreenName.EthereumCustomFees
       >
-    >();
-
-  const sendSummaryNavigation = useNavigation<any>();
+    | StackNavigatorNavigation<
+        EthereumEditTransactionParamList,
+        ScreenName.SendSummary
+      >
+  >();
 
   const { operation, account } = route.params;
   const bridge = getAccountBridge(account, null);
@@ -65,7 +65,7 @@ export function SpeedupTransaction({ route }: Props) {
     .map(strategy => strategy.label);
 
   const openCustomFees = () => {
-    customFeesNavigation.navigate(ScreenName.EthereumCustomFees, {
+    navigation.navigate(ScreenName.EthereumCustomFees, {
       ...route.params,
       accountId: account.id,
       parentId: undefined,
@@ -78,10 +78,11 @@ export function SpeedupTransaction({ route }: Props) {
 
   const onFeeStrategySelected = () => {
     setTransaction(bridge.updateTransaction(transaction, transactionToEdit));
-    sendSummaryNavigation.navigate(ScreenName.SendSummary, {
+    navigation.navigate(ScreenName.SendSummary, {
       accountId: account.id,
       parentId: undefined,
       transaction: transactionToEdit,
+      currentNavigation: ScreenName.SpeedUpTransaction,
       nextNavigation: ScreenName.SendSelectDevice,
       hideFees: true,
     });
