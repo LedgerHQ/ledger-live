@@ -5,9 +5,9 @@ index cd92a6c011d33c4fdb45ef3e519dc8b71c0c7951..00add2841a14141fb210a4f035323c3d
 @@ -8,7 +8,7 @@ const { escape } = require('../../../../../utils/pipeCommands');
  const DeviceHandle = require('../tools/DeviceHandle');
  const EmulatorHandle = require('../tools/EmulatorHandle');
- 
+
 -const INSTALL_TIMEOUT = 45000; // TODO Double check 45s makes sense
-+const INSTALL_TIMEOUT = 120000; // TODO Double check 45s makes sense
- 
++const INSTALL_TIMEOUT = 300000; // TODO Double check 45s makes sense
+
  class ADB {
    constructor() {
