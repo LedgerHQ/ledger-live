@@ -22,9 +22,23 @@ export type UseRequireBluetoothArgs = {
 
 export type UseRequireBluetoothOutput = {
   bluetoothRequirementsState: BluetoothRequirementsState;
-  handleRetryOnIssue: (() => void) | null;
+  retryRequestOnIssue: (() => void) | null;
+  cannotRetryRequest: boolean;
 };
 
+/**
+ * Handles the logic making sure all bluetooth requirements are respected depending on the usage and the user OS.
+ *
+ * @param requiredFor The usage of bluetooth. Can be "scanning" or "connecting".
+ * @param isHookEnabled Whether the the processes to check and request for bluetooth requirements should be enabled or not.
+ *   Useful to disable the hook when the user does not need bluetooth yet.
+ * @returns an object containing:
+ * - bluetoothRequirementsState: the state of the bluetooth requirements.
+ * - retryRequestOnIssue: a function to retry the process to check/request for the currently failed bluetooth requirement.
+ * - cannotRetryRequest: whether the consumer of this hook can use the retry function retryRequestOnIssue.
+ *   For example, for permissions on Android, it is only possible to retry to request directly the user (and not make them
+ *   go to the settings) if the user has not checked/triggered the "never ask again".
+ */
 export const useRequireBluetooth = ({
   requiredFor,
   isHookEnabled = true,
@@ -114,6 +128,8 @@ export const useRequireBluetooth = ({
     isHookEnabled: isAndroidEnableLocationHookEnabled,
   });
 
+  console.log(`🧠 androidBluetoothPermissionsNeverAskAgain: ${androidBluetoothPermissionsNeverAskAgain}`);
+
   console.log(
     `🧠 isHookEnabled: ${JSON.stringify({
       isAndroidBluetoothPermissionsHookEnabled,
@@ -124,7 +140,8 @@ export const useRequireBluetooth = ({
   );
 
   let bluetoothRequirementsState: BluetoothRequirementsState = "unknown";
-  let handleRetryOnIssue = null;
+  let retryRequestOnIssue = null;
+  let cannotRetryRequest = false;
 
   // Logic to determine the state of the bluetooth requirements, and the action to perform to retry
   if (
@@ -132,29 +149,32 @@ export const useRequireBluetooth = ({
     androidHasBluetoothPermissions === "denied"
   ) {
     bluetoothRequirementsState = "bluetooth_permissions_ungranted";
-    handleRetryOnIssue = androidBluetoothPermissionsRequestForPermissionsAgain;
+    retryRequestOnIssue = androidBluetoothPermissionsRequestForPermissionsAgain;
+    cannotRetryRequest = androidBluetoothPermissionsNeverAskAgain;
   } else if (
     isAndroidLocationPermissionHookEnabled &&
     androidHasLocationPermission === "denied"
   ) {
     bluetoothRequirementsState = "location_permission_ungranted";
-    handleRetryOnIssue = androidLocationPermissionRequestForPermissionsAgain;
+    retryRequestOnIssue = androidLocationPermissionRequestForPermissionsAgain;
+    cannotRetryRequest = androidLocationPermissionNeverAskAgain;
   } else if (
     isEnableBluetoothHookEnabled &&
     bluetoothServicesState === "disabled"
   ) {
     bluetoothRequirementsState = "bluetooth_disabled";
-    handleRetryOnIssue = enableBluetoothCheckAndRequestAgain;
+    retryRequestOnIssue = enableBluetoothCheckAndRequestAgain;
   } else if (
     isAndroidEnableLocationHookEnabled &&
     locationServicesState === "disabled"
   ) {
     bluetoothRequirementsState = "location_disabled";
-    handleRetryOnIssue = androidEnableLocationCheckAndRequestAgain;
+    retryRequestOnIssue = androidEnableLocationCheckAndRequestAgain;
   }
 
   return {
     bluetoothRequirementsState,
-    handleRetryOnIssue,
+    retryRequestOnIssue,
+    cannotRetryRequest,
   };
 };
