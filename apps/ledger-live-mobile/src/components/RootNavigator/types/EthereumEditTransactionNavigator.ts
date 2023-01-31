@@ -27,7 +27,7 @@ export type EthereumEditTransactionParamList = {
     transaction: Transaction;
     currentNavigation: ScreenName.SpeedUpTransaction;
     nextNavigation: ScreenName.SendSelectDevice;
-    setTransaction: () => void;
+    setTransaction: (transaction: Transaction) => void;
   };
   [ScreenName.SendSummary]: {
     accountId: string;
