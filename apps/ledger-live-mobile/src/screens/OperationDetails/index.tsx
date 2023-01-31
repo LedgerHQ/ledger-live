@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 import { getDefaultExplorerView, getTransactionExplorer } from "@ledgerhq/live-common/explorers";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { Operation } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
 
 import byFamiliesOperationDetails from "../../generated/operationDetails";
 import { accountScreenSelector } from "../../reducers/accounts";
