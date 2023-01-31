@@ -16,8 +16,6 @@ import SendConnectDevice from "../../screens/ConnectDevice";
 import SendValidationSuccess from "../../screens/SendFunds/07-ValidationSuccess";
 import SendValidationError from "../../screens/SendFunds/07-ValidationError";
 
-// import SelectDevice from "../SelectDevice";
-
 const Stack = createStackNavigator<EthereumEditTransactionParamList>();
 
 export default function EditTransactionNavigator() {
@@ -31,7 +29,7 @@ export default function EditTransactionNavigator() {
   return (
     <Stack.Navigator screenOptions={stackNavigationConfig}>
       <Stack.Screen
-        name={ScreenName.EditTransactionOptions}
+        name={ScreenName.EditEthereumTransactionMethodSelection}
         component={MethodSelection}
         options={{
           headerTitle: () => <StepHeader title={t("editTx.header")} />,
