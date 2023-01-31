@@ -59,6 +59,8 @@ const excludedErrorName = [
   "GetAppAndVersionUnsupportedFormat",
   "BluetoothRequired",
   "ManagerDeviceLocked",
+  // errors coming from the usage of a Transport implementation
+  "HwTransportError",
   // other
   "InvalidAddressError",
   "SwapNoAvailableProviders",

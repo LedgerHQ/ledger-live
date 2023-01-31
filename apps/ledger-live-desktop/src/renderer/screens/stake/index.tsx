@@ -8,7 +8,11 @@ import { track, page } from "~/renderer/analytics/segment";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 
-const useStakeFlow = () => {
+type Props = {
+  currencies?: string[];
+};
+
+const useStakeFlow = ({ currencies }: Props = {}) => {
   const history = useHistory();
   const stakeProgramsFeatureFlag = useFeature("stakePrograms");
   const dispatch = useDispatch();
@@ -17,26 +21,28 @@ const useStakeFlow = () => {
 
   const getStakeDrawer = () => {
     page("Stake", "Drawer - Choose Asset", {
-      page: history.location.pathname,
       ...stakeDefaultTrack,
+      page: history.location.pathname,
+      type: "drawer",
     });
     setDrawer(
       SelectAccountAndCurrencyDrawer,
       {
-        currencies: listFlag || [],
+        currencies: currencies || listFlag || [],
         onAccountSelected: (account: Account, parentAccount: Account | null = null) => {
-          setDrawer();
-          dispatch(openModal("MODAL_START_STAKE", { account, parentAccount }));
-          history.push({
-            pathname: `/account/${account.id}`,
-          });
           track("button_clicked", {
+            ...stakeDefaultTrack,
             button: "asset",
             page: history.location.pathname,
             currency: account?.currency?.family,
             account,
             parentAccount,
-            ...stakeDefaultTrack,
+            drawer: "Select Account And Currency Drawer",
+          });
+          setDrawer();
+          dispatch(openModal("MODAL_START_STAKE", { account, parentAccount }));
+          history.push({
+            pathname: `/account/${account.id}`,
           });
         },
       },
@@ -44,9 +50,9 @@ const useStakeFlow = () => {
         onRequestClose: () => {
           setDrawer();
           track("button_clicked", {
+            ...stakeDefaultTrack,
             button: "close",
             page: history.location.pathname,
-            ...stakeDefaultTrack,
           });
         },
       },

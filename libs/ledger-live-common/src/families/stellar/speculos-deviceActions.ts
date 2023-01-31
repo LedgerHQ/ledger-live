@@ -1,7 +1,11 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
 import { formatCurrencyUnit } from "../../currencies";
-import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
+import {
+  deviceActionFlow,
+  formatDeviceAmount,
+  SpeculosButton,
+} from "../../bot/specs";
 
 const expectedAmount = ({ account, status, transaction }) => {
   if (transaction.assetCode && transaction.assetIssuer) {
@@ -29,16 +33,16 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
     steps: [
       {
         title: "Review",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Memo Text",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => transaction.memoValue || "",
       },
       {
         title: "Max Fee",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account, status }) =>
           formatCurrencyUnit(account.unit, status.estimatedFees, {
             disableRounding: true,
@@ -46,23 +50,23 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Sequence Num",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Tx Source",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account }) => truncateAddress(account.freshAddress),
       },
       {
         title: "Operation Type",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         // Operation type can be Payment (or Create Account) or Change Trust.
         // Create Account type is coming from operation, not transaction.
         // Testing in `specs.ts`.
       },
       {
         title: "Change Trust",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) =>
           `${transaction.assetCode || ""}@${truncateAddress(
             transaction.assetIssuer || "",
@@ -73,39 +77,39 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Create Account",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => transaction.recipient,
         maxY: 5,
       },
       {
         title: "Send",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: expectedAmount,
       },
       {
         title: "Destination",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => transaction.recipient,
       },
       {
         title: "Finalize",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
       },
       {
         title: "Starting Balance",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Network",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Valid Before (UTC)",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Valid After (UTC)",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
     ],
   });

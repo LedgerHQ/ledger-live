@@ -176,7 +176,6 @@ export const toOperationRaw = (
     operator,
     standard,
     tokenId,
-    transactionRaw,
   };
 
   if (transactionSequenceNumber !== undefined) {
@@ -197,6 +196,10 @@ export const toOperationRaw = (
 
   if (nftOperations) {
     copy.nftOperations = nftOperations.map((o) => toOperationRaw(o));
+  }
+
+  if (transactionRaw !== undefined) {
+    copy.transactionRaw = transactionRaw;
   }
 
   return copy;
@@ -287,7 +290,6 @@ export const fromOperationRaw = (
     operator,
     standard,
     tokenId,
-    transactionRaw,
   };
 
   if (transactionSequenceNumber !== undefined) {
@@ -316,6 +318,10 @@ export const fromOperationRaw = (
     res.nftOperations = nftOperations.map((o) =>
       fromOperationRaw(o, o.accountId)
     );
+  }
+
+  if (transactionRaw !== undefined) {
+    res.transactionRaw = transactionRaw;
   }
 
   return res;
@@ -649,7 +655,6 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
           fromTronResourcesRaw(tronResourcesRaw);
       break;
     }
-    case "osmosis":
     case "cosmos": {
       const cosmosResourcesRaw = (rawAccount as CosmosAccountRaw)
         .cosmosResources;
@@ -819,15 +824,6 @@ export function toAccountRaw(account: Account): AccountRaw {
       if (tronAccount.tronResources) {
         (res as TronAccountRaw).tronResources = toTronResourcesRaw(
           tronAccount.tronResources
-        );
-      }
-      break;
-    }
-    case "osmosis": {
-      const cosmosAccount = account as CosmosAccount;
-      if (cosmosAccount.cosmosResources) {
-        (res as CosmosAccountRaw).cosmosResources = toCosmosResourcesRaw(
-          cosmosAccount.cosmosResources
         );
       }
       break;

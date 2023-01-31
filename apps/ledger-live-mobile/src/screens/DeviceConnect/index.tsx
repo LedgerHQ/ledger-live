@@ -20,7 +20,6 @@ import {
 } from "../../components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "../../const";
-import SkipSelectDevice from "../SkipSelectDevice";
 import { RootStackParamList } from "../../components/RootNavigator/types/RootNavigator";
 
 const action = createAction(connectApp);
@@ -81,7 +80,6 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
       ]}
     >
       <TrackScreen category="DeviceConnect" name="ConnectDevice" />
-      <SkipSelectDevice onResult={setDevice} />
       {newDeviceSelectionFeatureFlag?.enabled ? (
         <Flex px={16} py={5} flex={1}>
           <SelectDevice2 onSelect={setDevice} stopBleScanning={!!device} />

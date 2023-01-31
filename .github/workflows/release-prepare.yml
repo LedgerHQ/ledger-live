@@ -68,41 +68,17 @@ jobs:
           git push origin main
 
       - name: merge into develop
-        id: merge-develop
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           git checkout develop
-          if [[ git merge ${{ github.event.inputs.ref }} ]]
+          if git merge ${{ github.event.inputs.ref }}
           then
             git push origin develop
-            echo "create-pr=0" >> $GITHUB_OUTPUT
           else
+            git merge --abort
             git checkout ${{ github.event.inputs.ref }}
             git checkout -b support/release-merge-conflicts
             git push origin support/release-merge-conflicts
-            echo "create-pr=1" >> $GITHUB_OUTPUT
+            gh pr create --title ":rotating_light: Release merge conflicts" -F .github/templates/release-conflicts.md --base develop --head support/release-merge-conflicts
           fi
-
-      - uses: actions/github-script@v6
-        name: create PR
-        if: ${{ steps.merge-develop.outputs.create-pr == 1 }}
-        with:
-          github-token: ${{ secrets.GH_PAT }}
-          script: |
-            github.rest.pulls.create({
-              owner: "ledgerhq",
-              repo: "ledger-live",
-              head: "support/release-merge-conflicts",
-              base: "develop",
-              title: ":rotating_light: Release merge conflicts",
-              body: `# The release had some merge conflicts :rotating_light:
-              
-              This pull request was created in order to resolve the merge conflicts between the release and develop branches. 
-              
-              ## Checklist
-              
-              To be ready to be merged, we must comply with all theses checks:
-              
-              - [ ] all CI checks have passed
-              - [ ] reviews of the code owners impacted by the conflict
-              `
-            });

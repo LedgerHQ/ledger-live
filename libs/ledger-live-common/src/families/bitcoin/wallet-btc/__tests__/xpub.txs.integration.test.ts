@@ -26,6 +26,7 @@ describe.skip("testing xpub legacy transactions", () => {
     forcedExplorerURI: "http://localhost:20000/blockchain/v3",
     disableBatchSize: true, // https://ledgerhq.atlassian.net/browse/BACK-2191
   });
+
   const crypto = new Crypto({
     network,
   });
