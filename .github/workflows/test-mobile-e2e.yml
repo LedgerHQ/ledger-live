@@ -161,15 +161,15 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.ref || 'develop' }}
+          ref: ${{ github.event.inputs.ref || github.ref_name }}
       - uses: pnpm/action-setup@v2
         with:
           version: latest
       - uses: actions/setup-node@v3
         with:
           node-version: 16.x
-          # cache: pnpm
-          # cache-dependency-path: "**/pnpm-lock.yaml"
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
       - name: setup JDK 11
         uses: actions/setup-java@v3
         with:
@@ -184,14 +184,9 @@ jobs:
       - name: Install dependencies
         run: |
           pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
-          pnpm why -r detox
-          echo "removing file"
-          rm ./apps/ledger-live-mobile/node_modules/detox/src/devices/common/drivers/android/exec/ADB.js
-
-          echo "moving file"
-          ls
-          mv ./ADB.js ./apps/ledger-live-mobile/node_modules/detox/src/devices/common/drivers/android/exec/ADB.js
-          echo "done"
+          echo "======== cat ADB.js ========"
+          cat ./apps/ledger-live-mobile/node_modules/detox/src/devices/common/drivers/android/exec/ADB.js
+          echo "======== end ADB.js ========"
       - name: Build dependencies
         run: |
           pnpm build:llm:deps
