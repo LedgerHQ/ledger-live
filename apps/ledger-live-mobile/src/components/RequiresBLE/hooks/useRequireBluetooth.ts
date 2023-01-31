@@ -86,7 +86,6 @@ export const useRequireBluetooth = ({
         (requiredFor === "connecting" ||
           androidHasLocationPermission === "granted")));
 
-  // TODO: handle case of iOS and bluetooth permission
   const {
     bluetoothServicesState,
     checkAndRequestAgain: enableBluetoothCheckAndRequestAgain,

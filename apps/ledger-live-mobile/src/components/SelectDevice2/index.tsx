@@ -30,6 +30,9 @@ import { MainNavigatorParamList } from "../RootNavigator/types/MainNavigator";
 import PostOnboardingEntryPointCard from "../PostOnboarding/PostOnboardingEntryPointCard";
 import BleDevicePairingFlow from "../BleDevicePairingFlow";
 import BuyDeviceCTA from "../BuyDeviceCTA";
+import { useResetOnNavigationFocusState } from "../../helpers/useResetOnNavigationFocusState";
+import { useRequireBluetooth } from "../RequiresBLE/hooks/useRequireBluetooth";
+import RequiresBluetoothDrawer from "../RequiresBLE/RequiresBluetoothDrawer";
 import QueuedDrawer from "../QueuedDrawer";
 import ServicesWidget from "../ServicesWidget";
 
@@ -74,6 +77,36 @@ export default function SelectDevice({
     stopBleScanning,
   });
 
+  // Each time the user navigates back to the screen the BLE requirements are not enforced
+  const [isBleRequired, setIsBleRequired] = useResetOnNavigationFocusState(
+    navigation,
+    false,
+  );
+
+  // To be able to triggers the device selection once all the bluetooth requirements are respected
+  const [
+    lastSelectedDeviceBeforeRequireBluetoothCheck,
+    setLastSelectedDeviceBeforeRequireBluetoothCheck,
+  ] = useState<Device | null>(null);
+
+  // Enforces the BLE requirements for a "connecting" action. The requirements are only enforced
+  // if the bluetooth is needed (isBleRequired is true).
+  const {
+    bluetoothRequirementsState,
+    retryRequestOnIssue,
+    cannotRetryRequest,
+  } = useRequireBluetooth({
+    requiredFor: "connecting",
+    isHookEnabled: isBleRequired,
+  });
+
+  // If the user tries to close the drawer displaying issues on BLE requirements,
+  // this cancels the requirements checking and does not do anything in order to stop the
+  // connection with a device via BLE
+  const onUserCloseRequireBluetoothDrawer = useCallback(() => {
+    setIsBleRequired(false);
+  }, [setIsBleRequired]);
+
   const handleOnSelect = useCallback(
     (device: Device) => {
       const { modelId, wired } = device;
@@ -82,6 +115,23 @@ export default function SelectDevice({
         connectionType: wired ? "USB" : "BLE",
       });
 
+      // If not wired, bluetooth is required
+      if (!wired) {
+        if (!isBleRequired) {
+          setLastSelectedDeviceBeforeRequireBluetoothCheck(device);
+          setIsBleRequired(true);
+          return;
+        }
+
+        // Normally, if isBleRequired is true, and the user managed to click to select a device
+        // then all the bluetooth requirements should be respected. But to be sure no UI glitch
+        // happened, checks the bluetoothRequirementsState
+        if (bluetoothRequirementsState !== "all_respected") {
+          setLastSelectedDeviceBeforeRequireBluetoothCheck(device);
+          return;
+        }
+      }
+
       setIsPairingDevices(false);
 
       dispatch(setLastConnectedDevice(device));
@@ -89,8 +139,29 @@ export default function SelectDevice({
       onSelect(device);
       dispatch(setReadOnlyMode(false));
     },
-    [dispatch, onSelect],
+    [
+      bluetoothRequirementsState,
+      dispatch,
+      isBleRequired,
+      onSelect,
+      setIsBleRequired,
+    ],
   );
+
+  // Once all the bluetooth requirements are respected, the device selection is triggered
+  useEffect(() => {
+    if (
+      bluetoothRequirementsState === "all_respected" &&
+      lastSelectedDeviceBeforeRequireBluetoothCheck
+    ) {
+      handleOnSelect(lastSelectedDeviceBeforeRequireBluetoothCheck);
+      setLastSelectedDeviceBeforeRequireBluetoothCheck(null);
+    }
+  }, [
+    bluetoothRequirementsState,
+    lastSelectedDeviceBeforeRequireBluetoothCheck,
+    handleOnSelect,
+  ]);
 
   useEffect(() => {
     const filter = ({ id }: { id: string }) =>
@@ -185,6 +256,14 @@ export default function SelectDevice({
   }, [navigation]);
 
   return (
+    <>
+      <RequiresBluetoothDrawer
+        isOpen={isBleRequired}
+        onUserClose={onUserCloseRequireBluetoothDrawer}
+        bluetoothRequirementsState={bluetoothRequirementsState}
+        retryRequestOnIssue={retryRequestOnIssue}
+        cannotRetryRequest={cannotRetryRequest}
+      />
     <Flex flex={1}>
       {isPairingDevices ? (
         <BleDevicePairingFlow
@@ -349,12 +428,12 @@ export default function SelectDevice({
                       </Flex>
                     </Flex>
                   </Flex>
-                </Flex>
-              </Touchable>
-            </Flex>
-          </QueuedDrawer>
-        </>
-      )}
-    </Flex>
+                </Touchable>
+              </Flex>
+            </QueuedDrawer>
+          </>
+        )}
+      </Flex>
+    </>
   );
 }
