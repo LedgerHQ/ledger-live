@@ -32,12 +32,14 @@ import NetworkFeeInfo from "./NetworkFeeInfo";
 import { useAnalytics } from "../analytics";
 import { sharedSwapTracking } from "../screens/Swap/utils";
 
+export type SelectFeeStrategy = FeeStrategy & { userGasLimit?: BigNumber };
+
 type Props = {
-  strategies: (FeeStrategy & { userGasLimit?: BigNumber })[];
+  strategies: SelectFeeStrategy[];
   account: AccountLike;
   parentAccount?: Account | null;
   transaction: Transaction;
-  onStrategySelect: (_: FeeStrategy & { userGasLimit?: BigNumber }) => void;
+  onStrategySelect: (_: SelectFeeStrategy) => void;
   onCustomFeesPress: TouchableOpacityProps["onPress"];
   forceUnitLabel?: boolean | React.ReactNode;
   disabledStrategies?: Array<string>;
