@@ -1,10 +1,10 @@
 import React from "react";
 import { Flex, SelectableList } from "@ledgerhq/native-ui";
 
-import { ScreenName } from "../../const";
-import { TrackScreen } from "../../analytics";
-import { EthereumEditTransactionParamList } from "../../components/RootNavigator/types/EthereumEditTransactionNavigator";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { ScreenName } from "../../../const";
+import { TrackScreen } from "../../../analytics";
+import { EthereumEditTransactionParamList } from "../../../components/RootNavigator/types/EthereumEditTransactionNavigator";
+import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 
 type Props = StackNavigatorProps<
   EthereumEditTransactionParamList,
