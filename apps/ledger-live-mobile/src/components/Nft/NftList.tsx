@@ -10,9 +10,10 @@ import NftListItem from "./NftListItem";
 import { AddNewItem } from "./AddNewItemList";
 import CollapsibleHeaderFlatList from "../WalletTab/CollapsibleHeaderFlatList";
 import globalSyncRefreshControl from "../globalSyncRefreshControl";
-import { TrackScreen } from "../../analytics";
+import { TrackScreen, track } from "../../analytics";
 import { useNftList } from "./NftList.hook";
 import BackgroundGradient from "../TabBar/BackgroundGradient";
+import { ScreenName } from "../../const/navigation";
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl<
   FlatListProps<ProtoNFT>
@@ -50,6 +51,30 @@ export function NftList({ data }: Props) {
     nftsToHide,
     multiSelectModeEnabled,
   } = useNftList({ nftList: data });
+
+  const onPressMultiselect = useCallback(() => {
+    track("button_clicked", {
+      button: "Hide NFTs",
+      screen: ScreenName.WalletNftGallery,
+    });
+    triggerMultiSelectMode();
+  }, [triggerMultiSelectMode]);
+
+  const onPressHide = useCallback(() => {
+    track("button_clicked", {
+      button: "Multi Hide NFTs",
+      screen: ScreenName.WalletNftGallery,
+    });
+    onClickHide();
+  }, [onClickHide]);
+
+  const onCancelHide = useCallback(() => {
+    track("button_clicked", {
+      button: "Cancel  Hide NFTs",
+      screen: ScreenName.WalletNftGallery,
+    });
+    exitMultiSelectMode();
+  }, [exitMultiSelectMode]);
 
   const gradient = {
     height: 145,
@@ -138,7 +163,7 @@ export function NftList({ data }: Props) {
                   justifyContent="flex-start"
                 >
                   <StyledButton
-                    onPress={triggerMultiSelectMode}
+                    onPress={onPressMultiselect}
                     type="default"
                     iconName="Tasks"
                     iconPosition="left"
@@ -172,7 +197,7 @@ export function NftList({ data }: Props) {
 
             <ButtonsContainer width="100%" justifyContent={"space-between"}>
               <StyledButton
-                onPress={onClickHide}
+                onPress={onPressHide}
                 type="main"
                 iconName="EyeNone"
                 iconPosition="left"
@@ -185,7 +210,7 @@ export function NftList({ data }: Props) {
                 })}
               </StyledButton>
               <StyledButton
-                onPress={exitMultiSelectMode}
+                onPress={onCancelHide}
                 type="default"
                 iconPosition="left"
                 size="large"
