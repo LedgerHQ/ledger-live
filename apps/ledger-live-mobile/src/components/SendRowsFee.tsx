@@ -7,6 +7,7 @@ import type {
 } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as BitcoinTransaction } from "@ledgerhq/live-common/families/bitcoin/types";
 import { CompositeScreenProps } from "@react-navigation/native";
+
 import perFamily from "../generated/SendRowsFee";
 import type { StackNavigatorProps } from "./RootNavigator/types/helpers";
 import type { SendFundsNavigatorStackParamList } from "./RootNavigator/types/SendFundsNavigator";
@@ -16,6 +17,7 @@ import type { LendingSupplyFlowNavigatorParamList } from "./RootNavigator/types/
 import type { LendingWithdrawFlowNavigatorParamList } from "./RootNavigator/types/LendingWithdrawFlowNavigator";
 import type { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator";
 import type { SwapNavigatorParamList } from "./RootNavigator/types/SwapNavigator";
+import { EthereumEditTransactionParamList } from "./RootNavigator/types/EthereumEditTransactionNavigator";
 import { ScreenName } from "../const";
 
 type Props = {
@@ -47,7 +49,11 @@ type Props = {
       ScreenName.LendingWithdrawSummary
     >
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
-  StackNavigatorProps<BaseNavigatorStackParamList>
+  | StackNavigatorProps<BaseNavigatorStackParamList>
+  | StackNavigatorProps<
+      EthereumEditTransactionParamList,
+      ScreenName.SendSummary
+    >
 >;
 
 export default ({
