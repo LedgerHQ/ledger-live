@@ -78,8 +78,6 @@ const dataset: DatasetTest<Transaction> = {
                 family: "zilliqa",
                 recipient: `${TEST_ADDRESS}`,
                 amount: "100000000",
-                mode: "send",
-                fees: null,
               }),
               expectedStatus: {
                 amount: new BigNumber("100000000"),
@@ -95,8 +93,6 @@ const dataset: DatasetTest<Transaction> = {
                 family: "zilliqa",
                 recipient: "zilliqa_invalid_addr",
                 amount: "100000000",
-                mode: "send",
-                fees: null,
               }),
               expectedStatus: {
                 errors: {
@@ -111,8 +107,6 @@ const dataset: DatasetTest<Transaction> = {
                 family: "zilliqa",
                 recipient: `${TEST_RECV_ADDRESS}`,
                 amount: "1000000000000000000000000",
-                mode: "send",
-                fees: null,
               }),
               expectedStatus: {
                 errors: {
@@ -128,8 +122,6 @@ const dataset: DatasetTest<Transaction> = {
                 recipient: `${TEST_RECV_ADDRESS}`,
                 useAllAmount: true,
                 amount: "0",
-                mode: "send",
-                fees: null,
               }),
               expectedStatus: (account, _, status) => {
                 return {
