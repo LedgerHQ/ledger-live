@@ -37,7 +37,7 @@ function OperationDetails({ route }: NavigatorProps) {
     return null;
   }
 
-  const operation = route.params?.operation;
+  const { operation } = route.params;
 
   const mainAccount = getMainAccount(account, parentAccount);
   const url = getTransactionExplorer(
