@@ -47,30 +47,6 @@ export const useRequireBluetooth = ({
   requiredFor,
   isHookEnabled = true,
 }: UseRequireBluetoothArgs): UseRequireBluetoothOutput => {
-  console.log(`🧠 useRequireBluetooth: ${requiredFor} ${isHookEnabled}`);
-
-  // const [bluetoothRequirementsState, setBluetoothRequirementsState] =
-  //   useState<BluetoothRequirementsState>("unknown");
-
-  // isAndroidLocationPermissionHookEnabled =
-  //   isHookEnabled && requiredFor === "scanning" && Platform.OS === "android";
-
-  // const {
-  //   hasPermission: hasLocationPermission,
-  //   neverAskAgain: neverAskAgainLocationPermission,
-  //   requestForPermissionAgain: requestForLocationPermissionAgain,
-  // } = useAndroidLocationPermission({
-  //   isHookEnabled: isAndroidLocationPermissionHookEnabled,
-  // });
-
-  // const {
-  //   hasPermissions: hasBluetoothPermissions,
-  //   neverAskAgain: neverAskAgainBluetoothPermissions,
-  //   requestForPermissionsAgain: requestForBluetoothPermissionsAgain,
-  // } = useAndroidBluetoothPermissions();
-
-  // TODO: the order is important
-
   // Handles bluetooth and location permissions first because there is more chance that the user enable/disable
   // a service during runtime than changing the permissions.
   // If the permissions are handled after, each time there is a change on the services enabling/disabling.
@@ -118,12 +94,13 @@ export const useRequireBluetooth = ({
     isHookEnabled: isEnableBluetoothHookEnabled,
   });
 
-  // Handles location services if necessary and once bluetooth is enabled
+  // Handles location services if necessary and once bluetooth is enabled and location permission is granted
   const isAndroidEnableLocationHookEnabled =
     isHookEnabled &&
     requiredFor === "scanning" &&
     Platform.OS === "android" &&
-    bluetoothServicesState === "enabled";
+    bluetoothServicesState === "enabled" &&
+    androidHasLocationPermission === "granted";
 
   const {
     locationServicesState,
@@ -131,19 +108,6 @@ export const useRequireBluetooth = ({
   } = useAndroidEnableLocation({
     isHookEnabled: isAndroidEnableLocationHookEnabled,
   });
-
-  console.log(
-    `🧠 androidBluetoothPermissionsNeverAskAgain: ${androidBluetoothPermissionsNeverAskAgain}`,
-  );
-
-  console.log(
-    `🧠 isHookEnabled: ${JSON.stringify({
-      isAndroidBluetoothPermissionsHookEnabled,
-      isAndroidLocationPermissionHookEnabled,
-      isEnableBluetoothHookEnabled,
-      isAndroidEnableLocationHookEnabled,
-    })} `,
-  );
 
   let bluetoothRequirementsState: BluetoothRequirementsState = "unknown";
   let retryRequestOnIssue = null;
