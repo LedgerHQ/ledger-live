@@ -38,9 +38,7 @@ const buildOptimisticOperation = (
     accountId: account.id,
     transactionSequenceNumber: getNonce(account as ZilliqaAccount),
     date: new Date(),
-    extra: {
-      amount: transaction.amount,
-    },
+    extra: {},
   };
 
   return operation;

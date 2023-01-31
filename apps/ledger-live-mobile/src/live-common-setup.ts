@@ -70,6 +70,7 @@ setSupportedCurrencies([
   "ethereum_goerli",
   "cosmos_testnet",
   "elrond",
+  "zilliqa",
   "hedera",
   "cardano",
   "osmosis",

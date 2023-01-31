@@ -17,6 +17,7 @@ import solana from "../families/solana/deviceTransactionConfig";
 import stellar from "../families/stellar/deviceTransactionConfig";
 import tezos from "../families/tezos/deviceTransactionConfig";
 import tron from "../families/tron/deviceTransactionConfig";
+import zilliqa from "../families/zilliqa/deviceTransactionConfig";
 
 export default {
   algorand,
@@ -38,6 +39,7 @@ export default {
   stellar,
   tezos,
   tron,
+  zilliqa,
 };
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_cosmos } from  "../families/cosmos/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_filecoin } from  "../families/filecoin/deviceTransactionConfig";

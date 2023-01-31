@@ -98,8 +98,9 @@ const modes = Object.freeze({
     overridesDerivation: "44'/1729'/<account>'/0'/0'",
   },
   zilliqaL: {
-    tag: "legacy",
-    startsAt: 1,
+    // In time, this derivation pattern will be deprecated in favour of BIP-44.
+    // When that time comes, add:
+    // tag: "legacy",
     overridesDerivation: "44'/313'/<account>'/0'/0'",
   },
 

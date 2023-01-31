@@ -7,7 +7,7 @@ const rendererPath = path.join(basePath, "src", "renderer");
 const generatedPath = path.join(rendererPath, "generated");
 
 await new Promise((resolve, reject) => {
-  rimraf(generatedPath, e => {
+  rimraf(generatedPath, (e) => {
     if (e) {
       echo(chalk.red(e));
       return reject(e);

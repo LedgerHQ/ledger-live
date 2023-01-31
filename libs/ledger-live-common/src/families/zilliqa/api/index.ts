@@ -142,7 +142,7 @@ const transactionToOperation = async (
     blockHeight,
     date,
     extra: {
-      amount: transaction.amount,
+      //      amount: transaction.amount,
     },
     senders: [toBech32(transaction.fromAddress)],
     recipients: transaction.toAddress ? [toBech32(transaction.toAddress)] : [],
