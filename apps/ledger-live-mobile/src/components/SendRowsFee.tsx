@@ -4,12 +4,14 @@ import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as BitcoinTransaction } from "@ledgerhq/live-common/families/bitcoin/types";
 import { CompositeScreenProps } from "@react-navigation/native";
+
 import perFamily from "../generated/SendRowsFee";
 import type { StackNavigatorProps } from "./RootNavigator/types/helpers";
 import type { SendFundsNavigatorStackParamList } from "./RootNavigator/types/SendFundsNavigator";
 import type { SignTransactionNavigatorParamList } from "./RootNavigator/types/SignTransactionNavigator";
 import type { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator";
 import type { SwapNavigatorParamList } from "./RootNavigator/types/SwapNavigator";
+import { EthereumEditTransactionParamList } from "./RootNavigator/types/EthereumEditTransactionNavigator";
 import { ScreenName } from "../const";
 
 type Props = {
@@ -23,7 +25,11 @@ type Props = {
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
   | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
-  StackNavigatorProps<BaseNavigatorStackParamList>
+  | StackNavigatorProps<BaseNavigatorStackParamList>
+  | StackNavigatorProps<
+      EthereumEditTransactionParamList,
+      ScreenName.SendSummary
+    >
 >;
 
 export default ({
