@@ -20,7 +20,8 @@ export type Props = {
  *   the user will be prompted to open the native settings.
  * @param hasBackButton If true, a back button will be displayed in the header. Default to false.
  * @param openSettings Used for debug purposes. If true pressing the button will make the user go to the settings. Defaults to false.
- * @returns
+ * @param componentType If "drawer", the component will be rendered as a content to be rendered in a drawer.
+ *   If "view", the component will be rendered as a view. Defaults to "view".
  */
 const BluetoothDisabled: React.FC<Props> = ({
   onRetry,
