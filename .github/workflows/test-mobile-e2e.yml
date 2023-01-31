@@ -168,8 +168,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16.x
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
+          # cache: pnpm
+          # cache-dependency-path: "**/pnpm-lock.yaml"
       - name: setup JDK 11
         uses: actions/setup-java@v3
         with:
