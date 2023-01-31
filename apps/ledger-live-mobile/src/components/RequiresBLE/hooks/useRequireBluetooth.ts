@@ -142,6 +142,11 @@ export const useRequireBluetooth = ({
     if (bluetoothServicesState === "disabled") {
       bluetoothRequirementsState = "bluetooth_disabled";
       retryRequestOnIssue = enableBluetoothCheckAndRequestAgain;
+    } 
+    // Happens on iOS when user did not grant bluetooth permissions
+    // No retry function on iOS because there is currently no way to request bluetooth permissions directly
+    else if (bluetoothServicesState === "unauthorized") {
+      bluetoothRequirementsState = "bluetooth_permissions_ungranted";
     } else if (bluetoothServicesState !== "enabled") {
       someUnknown = true;
     }
