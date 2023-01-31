@@ -5,6 +5,7 @@ import { BluetoothRequirementsState } from "./hooks/useRequireBluetooth";
 import BluetoothDisabled from "./BluetoothDisabled";
 import LocationDisabled from "../RequiresLocation/LocationDisabled";
 import BluetoothPermissionDenied from "./BluetoothPermissionDenied";
+import LocationPermissionDenied from "../RequiresLocation/LocationPermissionDenied";
 
 export type BleRequirementsState = "unknown" | "respected" | "not_respected";
 
@@ -52,8 +53,13 @@ const RequiresBluetoothDrawer = ({
       );
       break;
     case "location_permission_ungranted":
-      // eslint-disable-next-line react/jsx-no-undef
-      content = <Text>location permissions denied ❌</Text>;
+      content = (
+        <LocationPermissionDenied
+          componentType="drawer"
+          onRetry={retryRequestOnIssue}
+          neverAskAgain={cannotRetryRequest}
+        />
+      );
       break;
     case "bluetooth_disabled":
       content = (
@@ -65,7 +71,10 @@ const RequiresBluetoothDrawer = ({
       break;
     case "location_disabled":
       content = (
-        <LocationDisabled componentType="drawer" onRetry={retryRequestOnIssue} />
+        <LocationDisabled
+          componentType="drawer"
+          onRetry={retryRequestOnIssue}
+        />
       );
       break;
     default:
