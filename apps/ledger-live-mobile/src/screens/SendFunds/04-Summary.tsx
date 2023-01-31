@@ -198,9 +198,12 @@ function SendSummary({ navigation, route }: Props) {
       },
     });
   }, [navigation, account?.id, currencyOrToken?.id]);
+
   // FIXME: why is recipient sometimes empty?
-  if (!account || !transaction || !transaction.recipient || !currencyOrToken)
+  if (!account || !transaction || !transaction.recipient || !currencyOrToken) {
     return null;
+  }
+
   return (
     <SafeAreaView
       style={[
