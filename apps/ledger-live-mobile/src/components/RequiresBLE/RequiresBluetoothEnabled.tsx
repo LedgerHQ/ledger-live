@@ -1,7 +1,7 @@
 import React from "react";
 import { useEnableBluetooth } from "./hooks/useEnableBluetooth";
 import BluetoothDisabled from "./BluetoothDisabled";
-import BluetoothPermissionDenied from "./BluetoothPermissionDenied";
+import BluetoothPermissionsDenied from "./BluetoothPermissionsDenied";
 
 type Props = {
   children?: React.ReactNode;
@@ -35,7 +35,7 @@ const RequiresBluetoothEnabled: React.FC<Props> = ({
     case "enabled":
       return <>{children}</>;
     case "unauthorized":
-      return <BluetoothPermissionDenied hasBackButton={hasBackButtonOnError} />;
+      return <BluetoothPermissionsDenied hasBackButton={hasBackButtonOnError} />;
     default:
     case "disabled":
       return (
