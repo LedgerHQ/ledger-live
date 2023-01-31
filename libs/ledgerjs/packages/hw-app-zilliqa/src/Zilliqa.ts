@@ -34,6 +34,9 @@ const HARDEN_CONSTANT = 0x80000000;
 const SW_CANCEL = 0x6985;
 const SW_OK = 0x9000;
 
+const FEATURE_NO_DISPLAY = 0x1;
+const FEATURE_BIP44 = 0x2;
+
 /**
  * Zilliqa API
  *
@@ -62,15 +65,14 @@ export default class Zilliqa {
     data: Buffer = Buffer.alloc(0),
     statusList: Array<number> = [SW_OK]
   ): Promise<Buffer> {
-    /*
     const input = Buffer.concat([
       Buffer.from([cla, ins, p1, p2]),
       Buffer.from([data.length]),
       data,
     ]);
 
-    console log(`=> ${input.toString("hex")}`);
-    */
+    console.log(`=> ${input.toString("hex")}`);
+
     const result = await this.transport.send(
       cla,
       ins,
@@ -80,33 +82,50 @@ export default class Zilliqa {
       statusList
     );
 
-    // console log(`<= ${result.toString("hex")}`);
+    console.log(`<= ${result.toString("hex")}`);
     return result;
   }
+  async getAppConfigurationInternal(): Promise<{
+    version: string;
+    major: number;
+    minor: number;
+    patch: number;
+    protocolFeatures: number;
+  }> {
+    const response = await this.send(CLA, INS_GET_VERSION, 0, 0);
+    return {
+      version: "" + response[0] + "." + response[1] + "." + response[2],
+      major: response[0],
+      minor: response[1],
+      patch: response[2],
+      protocolFeatures:
+        response[0] > 0
+          ? FEATURE_BIP44 | FEATURE_NO_DISPLAY
+          : response[1] > 4
+          ? FEATURE_NO_DISPLAY
+          : 0,
+    };
+  }
 
+  /*
   getAppConfiguration(): Promise<{
     version: string;
     major: number;
     minor: number;
     patch: number;
-    fullProtocol: boolean;
+    protocolFeatures: number;
   }> {
-    return this.send(CLA, INS_GET_VERSION, 0, 0).then((response) => {
-      return {
-        version: "" + response[0] + "." + response[1] + "." + response[2],
-        major: response[0],
-        minor: response[1],
-        patch: response[2],
-        fullProtocol: response[0] > 0,
-      };
-    });
+    return this.getAppConfigurationInternal();
   }
+  */
 
-  async getPathParametersFromPath(path: string): Promise<{
+  async getPathParametersFromPath(
+    path: string
+  ): Promise<{
     account: number;
     change: number;
     index: number;
-    fullProtocol: boolean;
+    protocolFeatures: number;
   }> {
     // Test with: pnpm build:cli getAddress --currency zilliqa --path "44'/313'/0'/1'/0'" --derivationMode "zilliqaL"
     // pnpm build:cli signMessage --currency zilliqa --path "44'/313'/0'/1'/0'" --message "hello world"
@@ -119,14 +138,19 @@ export default class Zilliqa {
 
     const [purposeStr, coinStr, accountStr, changeStr, indexStr] = pathParts;
     if (purposeStr !== "44'") {
+      console.error("Exit 1");
       throw Error("Only wallets with hardened purpose 44 are supported.");
     }
 
     if (coinStr !== "313'") {
+      console.error("Exit 2");
+
       throw Error("Only coin 313' is supported.");
     }
 
     if (!accountStr.endsWith("'")) {
+      console.error("Exit 3");
+
       throw Error(
         "Wallet does not allow softened accounts. Please harden by adding '."
       );
@@ -160,11 +184,14 @@ export default class Zilliqa {
     }
 
     // Version specific requirements
-    const version = await this.send(CLA, INS_GET_VERSION, 0, 0);
-    const fullProtocol = version[0] > 0;
+    const data = await this.getAppConfigurationInternal();
+    //const data = await this.getAppConfiguration();
+    const { protocolFeatures } = data;
 
-    // If less than version 1.0 ...
-    if (!fullProtocol) {
+    const bip44_support = (protocolFeatures & FEATURE_BIP44) != 0;
+
+    // If no BIP44 support avaible ...
+    if (!bip44_support) {
       // ... impose stricter requirements on what we can accept
       // for paths. We only accept paths of the form `44'/313'/n'/0'/0'`.
       // By forcing the correct input, we ensure that wallets will be forward
@@ -182,7 +209,7 @@ export default class Zilliqa {
       account,
       change,
       index,
-      fullProtocol,
+      protocolFeatures,
     };
   }
 
@@ -201,17 +228,24 @@ export default class Zilliqa {
     address: string;
   }> {
     // Getting path parameters
-    const { account, change, index, fullProtocol } =
-      await this.getPathParametersFromPath(path);
-
+    const {
+      account,
+      change,
+      index,
+      protocolFeatures,
+    } = await this.getPathParametersFromPath(path);
     // Preparing payload to send to the wallet app.
-    const payload = Buffer.alloc(12);
+
+    const bip44_support = (protocolFeatures & FEATURE_BIP44) != 0;
+    const payload = Buffer.alloc(bip44_support ? 12 : 4);
     payload.writeUInt32LE(account, 0);
-    payload.writeUInt32LE(change, 4);
-    payload.writeUInt32LE(index, 8);
+    if (bip44_support) {
+      payload.writeUInt32LE(change, 4);
+      payload.writeUInt32LE(index, 8);
+    }
 
     let p2 = 0x0;
-    if (fullProtocol && !verify) {
+    if ((protocolFeatures & FEATURE_NO_DISPLAY) != 0) {
       p2 = P2_DISPLAY_NONE;
     }
 
@@ -245,12 +279,17 @@ export default class Zilliqa {
     message: string
   ): Promise<{ signature: null | string; returnCode: number }> {
     // Getting path parameters
-    const { account, change, index, fullProtocol } =
-      await this.getPathParametersFromPath(path);
+    const {
+      account,
+      change,
+      index,
+      protocolFeatures,
+    } = await this.getPathParametersFromPath(path);
 
     // If we are using the full protocol, we add change and index
     // as well to the parameters. Note that this is unfortunately not backward compatible.
-    const params: number[] = fullProtocol
+    const bip44_support = (protocolFeatures & FEATURE_BIP44) != 0;
+    const params: number[] = bip44_support
       ? [account, change, index]
       : [account];
 
@@ -326,15 +365,20 @@ export default class Zilliqa {
     message: string
   ): Promise<{ signature: null | string; returnCode: number }> {
     // Getting path parameters
-    const { account, change, index, fullProtocol } =
-      await this.getPathParametersFromPath(path);
+    const {
+      account,
+      change,
+      index,
+      protocolFeatures,
+    } = await this.getPathParametersFromPath(path);
 
-    const params = Buffer.alloc(fullProtocol ? 12 : 4);
+    const bip44_support = (protocolFeatures & FEATURE_BIP44) != 0;
+    const params = Buffer.alloc(bip44_support ? 12 : 4);
     params.writeUInt32LE(account, 0);
 
-    // If we are using the full protocol, we add change and index
+    // If we are using the BIP 44 support, we add change and index
     // as well to the parameters. Note that this is unfortunately not backward compatible.
-    if (fullProtocol) {
+    if (bip44_support) {
       // TOOD: Untested
       params.writeUInt32LE(change, 4);
       params.writeUInt32LE(index, 8);

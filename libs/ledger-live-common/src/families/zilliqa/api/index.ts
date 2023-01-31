@@ -23,6 +23,7 @@ export const zilliqa = new Zilliqa(nodeEndPoint);
 export const ZILLIQA_TX_GAS_LIMIT = 50; // Gas limit is 50 units according to https://dev.zilliqa.com/basics/basics-zil-gas/?h=gas
 
 export const broadcastTransaction = async (params: TxParams) => {
+  console.log("BROADCASTING");
   const response = await zilliqa.blockchain.provider.send(
     RPCMethod.CreateTransaction,
     {
@@ -32,6 +33,7 @@ export const broadcastTransaction = async (params: TxParams) => {
   );
 
   if (response.error) {
+    console.log("ERROR:", response.error);
     throw response.error;
   }
 

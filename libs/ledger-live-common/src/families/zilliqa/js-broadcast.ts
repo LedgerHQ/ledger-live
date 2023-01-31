@@ -38,7 +38,14 @@ export const broadcast = async ({
   if (operation.type === "OUT") {
     amount = amount.minus(operation.fee);
   }
-
+  console.log("Details", {
+    account,
+    toAddr,
+    nonce: getNonce(account),
+    amount: new BN(amount.toString()),
+    gasPrice,
+    sign,
+  });
   const tx = await buildNativeTransaction(
     account,
     toAddr,
