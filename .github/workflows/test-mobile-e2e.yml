@@ -183,11 +183,14 @@ jobs:
           echo "HOME=/root" >> $GITHUB_ENV
       - name: Install dependencies
         run: |
-          pnpm i --filter="live-mobile..." --filter="ledger-live" --unsafe-perm
+          pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
           pnpm why -r detox
-          cat ./apps/ledger-live-mobile/node_modules/detox/src/devices/common/drivers/android/exec/ADB.js
+          echo "removing file"
           rm ./apps/ledger-live-mobile/node_modules/detox/src/devices/common/drivers/android/exec/ADB.js
-          mv ./ADB.js ./apps/ledger-live-mobile/node_modules/detox/src/devices/common/drivers/android/exec/ADB.js
+
+          echo "moving file"
+          mv ADB.js ./apps/ledger-live-mobile/node_modules/detox/src/devices/common/drivers/android/exec/ADB.js
+          echo "done"
       - name: Build dependencies
         run: |
           pnpm build:llm:deps
