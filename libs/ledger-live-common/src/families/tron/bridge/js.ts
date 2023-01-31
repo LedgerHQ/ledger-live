@@ -117,9 +117,11 @@ const signOperation = ({
         const balance = subAccount
           ? subAccount.balance
           : BigNumber.max(0, account.spendableBalance.minus(fee));
-        transaction.amount = transaction.useAllAmount
-          ? balance
-          : transaction.amount;
+
+        if (transaction.useAllAmount) {
+          transaction = { ...transaction }; // transaction object must not be mutated
+          transaction.amount = balance; // force the amount to be the max
+        }
 
         // send trc20 to a new account is forbidden by us (because it will not activate the account)
         if (
