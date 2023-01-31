@@ -38,16 +38,11 @@ import type { SendFundsNavigatorStackParamList } from "../../components/RootNavi
 import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
-import { EthereumEditTransactionParamList } from "../../components/RootNavigator/types/EthereumEditTransactionNavigator";
 
 type Navigation = BaseComposite<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
   | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
-  | StackNavigatorProps<
-      EthereumEditTransactionParamList,
-      ScreenName.SendSummary
-    >
 >;
 
 type Props = Navigation;
@@ -56,8 +51,7 @@ const WARN_FROM_UTXO_COUNT = 50;
 
 function SendSummary({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { nextNavigation, overrideAmountLabel, hideTotal, hideFees } =
-    route.params;
+  const { nextNavigation, overrideAmountLabel, hideTotal, hideFees } = route.params;
 
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is missing");
@@ -153,8 +147,12 @@ function SendSummary({ navigation, route }: Props) {
       },
     });
   }, [navigation, account?.id, currencyOrToken?.id]);
+
   // FIXME: why is recipient sometimes empty?
-  if (!account || !transaction || !transaction.recipient || !currencyOrToken) return null;
+  if (!account || !transaction || !transaction.recipient || !currencyOrToken) {
+    return null;
+  }
+
   return (
     <SafeAreaView
       style={[
