@@ -30,11 +30,20 @@ export const broadcast = async ({
   // Reconstructing the transaction
   const toAddr = fromBech32(operation.recipients[0]);
   const gasPrice = await getMinimumGasPrice();
+  let amount = operation.value;
+
+  // Computing the amount without TX fees. TX fees are included
+  // in the value for outgoing transactions as to ensure that
+  // the account balances correctly
+  if (operation.type === "OUT") {
+    amount = amount.minus(operation.fee);
+  }
+
   const tx = await buildNativeTransaction(
     account,
     toAddr,
     getNonce(account),
-    new BN(operation.extra.amount.toString()),
+    new BN(amount.toString()),
     gasPrice,
     sign
   );
