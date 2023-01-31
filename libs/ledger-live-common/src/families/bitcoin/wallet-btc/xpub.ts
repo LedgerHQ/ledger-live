@@ -221,17 +221,8 @@ class Xpub {
       );
     }
 
-    while (desiredOutputLeftToFit.value.gt(this.OUTPUT_VALUE_MAX)) {
-      outputs.push({
-        script: desiredOutputLeftToFit.script,
-        value: new BigNumber(this.OUTPUT_VALUE_MAX),
-        address: destAddress,
-        isChange: false,
-      });
-
-      desiredOutputLeftToFit.value = desiredOutputLeftToFit.value.minus(
-        this.OUTPUT_VALUE_MAX
-      );
+    if (desiredOutputLeftToFit.value.gt(0)) {
+      outputs.push(desiredOutputLeftToFit);
     }
 
     if (opReturnData) {
