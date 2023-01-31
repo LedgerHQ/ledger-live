@@ -22,6 +22,7 @@ import type { BaseNavigatorStackParamList } from "../../components/RootNavigator
 import { ScreenName } from "../../const";
 import type { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import type { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
+import type { EthereumEditTransactionParamList } from "../../components/RootNavigator/types/EthereumEditTransactionNavigator";
 
 type Props = {
   transaction: Transaction;
@@ -33,12 +34,17 @@ type Props = {
       ScreenName.SendSummary
     >
   | StackNavigatorProps<
+      EthereumEditTransactionParamList,
+      ScreenName.SendSummary
+    >
+  | StackNavigatorProps<
       SignTransactionNavigatorParamList,
       ScreenName.SignTransactionSummary
     >
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
+
 export default function AlgorandFeeRow({
   account,
   parentAccount,
@@ -52,6 +58,7 @@ export default function AlgorandFeeRow({
   const mainAccount = getMainAccount(account, parentAccount);
   const unit = getAccountUnit(mainAccount);
   const currency = getAccountCurrency(account);
+
   return (
     <SummaryRow
       onPress={extraInfoFees}

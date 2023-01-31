@@ -65,7 +65,7 @@ export function SpeedupTransaction({ route }: Props) {
     .map(strategy => strategy.label);
 
   const openCustomFees = () => {
-    return customFeesNavigation.navigate(ScreenName.EthereumCustomFees, {
+    customFeesNavigation.navigate(ScreenName.EthereumCustomFees, {
       ...route.params,
       accountId: account.id,
       parentId: undefined,
@@ -78,13 +78,17 @@ export function SpeedupTransaction({ route }: Props) {
 
   const onFeeStrategySelected = () => {
     setTransaction(bridge.updateTransaction(transaction, transactionToEdit));
+    sendSummaryNavigation.navigate(ScreenName.SendSummary, {
+      accountId: account.id,
+      parentId: undefined,
+      transaction: transactionToEdit,
+      nextNavigation: ScreenName.SendSelectDevice,
+      hideFees: true,
+    });
   };
 
   const onContinue = () => {
     // redirect to sign transaction page
-    sendSummaryNavigation.navigate(NavigatorName.SendFunds, {
-      screen: ScreenName.SignTransactionSummary,
-    });
   };
 
   return (
