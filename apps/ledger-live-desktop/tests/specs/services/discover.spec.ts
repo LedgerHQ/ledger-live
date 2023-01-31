@@ -2,9 +2,9 @@ import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { DiscoverPage } from "../../models/DiscoverPage";
 import { Layout } from "../../models/Layout";
-import { Drawer } from "tests/models/Drawer";
-import { Modal } from "tests/models/Modal";
-import { DeviceAction } from "tests/models/DeviceAction";
+import { Drawer } from "../../models/Drawer";
+import { Modal } from "../../models/Modal";
+import { DeviceAction } from "../../models/DeviceAction";
 import * as server from "../../utils/serve-dummy-app";
 
 // Comment out to disable recorder
