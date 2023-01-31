@@ -1,3 +1,4 @@
+// TODO: this file will be moved to a @ledgerhq/env library
 import mapValues from "lodash/mapValues";
 // set and get environment & config variables
 import { Subject } from "rxjs";
