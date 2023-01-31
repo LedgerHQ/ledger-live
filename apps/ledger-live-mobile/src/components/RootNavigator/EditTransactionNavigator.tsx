@@ -10,7 +10,7 @@ import { MethodSelection } from "../../screens/EditTransaction/MethodSelection";
 import { EthereumEditTransactionParamList } from "./types/EthereumEditTransactionNavigator";
 import { SpeedupTransaction } from "../../screens/EditTransaction/Speedup";
 import { CancelTransaction } from "../../screens/EditTransaction/Cancel";
-// import SendSummary from "../../screens/SendFunds/04-Summary";
+import SendSummary from "../../screens/SendFunds/04-Summary";
 // import SelectDevice from "../SelectDevice";
 
 const Stack = createStackNavigator<EthereumEditTransactionParamList>();
@@ -47,7 +47,7 @@ export default function EditTransactionNavigator() {
         }}
       />
 
-      {/* <Stack.Screen
+      <Stack.Screen
         name={ScreenName.SendSummary}
         component={SendSummary}
         initialParams={{
@@ -55,7 +55,7 @@ export default function EditTransactionNavigator() {
           nextNavigation: ScreenName.SendSelectDevice,
         }}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name={ScreenName.SendSelectDevice}
         component={SelectDevice}
       />

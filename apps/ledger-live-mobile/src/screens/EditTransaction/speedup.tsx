@@ -5,12 +5,10 @@ import {
   TransactionRaw,
 } from "@ledgerhq/live-common/families/ethereum/types";
 import { useNavigation } from "@react-navigation/native";
-import {
-  EIP1559ShouldBeUsed,
-  fromTransactionRaw,
-} from "@ledgerhq/live-common/families/ethereum/transaction";
+import { fromTransactionRaw } from "@ledgerhq/live-common/families/ethereum/transaction";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Account } from "@ledgerhq/types-live";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
 import { NavigatorName, ScreenName } from "../../const";
 import { EthereumEditTransactionParamList } from "../../components/RootNavigator/types/EthereumEditTransactionNavigator";
@@ -39,24 +37,30 @@ export function SpeedupTransaction({ route }: Props) {
   const sendSummaryNavigation = useNavigation<any>();
 
   const { operation, account } = route.params;
+  const bridge = getAccountBridge(account, null);
 
   const transactionToEdit = fromTransactionRaw(
     operation.transactionRaw! as TransactionRaw,
   ) as Transaction;
 
+  const { transaction, setTransaction } = useBridgeTransaction<Transaction>(
+    () => {
+      return {
+        account,
+        parentAccount: null,
+        transaction: transactionToEdit,
+      };
+    },
+  );
+
   const strategies = useFeesStrategy(transactionToEdit);
 
   const disabledStrategies = strategies
     .filter(strategy => {
-      const { currency } = account as Account;
-      if (EIP1559ShouldBeUsed(currency)) {
-        return (
-          strategy.extra!.maxPriorityFeePerGas >
-          transactionToEdit.maxPriorityFeePerGas!
-        );
-      }
-
-      return strategy.amount > transactionToEdit.gasPrice!;
+      return (
+        strategy.extra!.maxPriorityFeePerGas >
+        transactionToEdit.maxPriorityFeePerGas!
+      );
     })
     .map(strategy => strategy.label);
 
@@ -73,7 +77,7 @@ export function SpeedupTransaction({ route }: Props) {
   };
 
   const onFeeStrategySelected = () => {
-    // setTransaction
+    setTransaction(bridge.updateTransaction(transaction, transactionToEdit));
   };
 
   const onContinue = () => {
