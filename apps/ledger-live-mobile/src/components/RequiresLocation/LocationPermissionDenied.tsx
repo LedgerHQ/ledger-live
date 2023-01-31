@@ -6,12 +6,14 @@ import { Icons } from "@ledgerhq/native-ui";
 import ServicePermissionDeniedView from "../ServicePermissionDeniedView";
 import { locationPermission } from "./hooks/useAndroidLocationPermission";
 import NoLocationImage from "../../icons/NoLocationImage";
+import InformationalMessageDrawerContent from "../InformationalMessageDrawerContent";
 
 type Props = {
-  onRetry?: () => void;
+  onRetry?: (() => void) | null;
   neverAskAgain?: boolean;
   hasBackButton?: boolean;
   openSettings?: boolean;
+  componentType?: "drawer" | "view";
 };
 
 /**
@@ -24,12 +26,15 @@ type Props = {
  * @param hasBackButton If true, a back button will be displayed in the header. Default to false.
  * @param neverAskAgain If true, the user has denied the app permission to use its location and has selected "Don't ask again". Default to true.
  * @param openSettings Used for debug purposes. If true pressing the button will make the user go to the settings. Defaults to false.
+ * @param componentType If "drawer", the component will be rendered as a content to be rendered in a drawer.
+ *   If "view", the component will be rendered as a view. Defaults to "view".
  */
 const LocationPermissionDenied: React.FC<Props> = ({
   onRetry,
   neverAskAgain = true,
   hasBackButton = false,
   openSettings = false,
+  componentType = "view",
 }) => {
   const { t } = useTranslation();
 
@@ -61,6 +66,19 @@ const LocationPermissionDenied: React.FC<Props> = ({
     onButtonPress = onRetry;
     buttonLabel = t("permissions.authorize");
     buttonEvent = "LocationPermissionDeniedRetryAuthorize";
+  }
+
+  if (componentType === "drawer") {
+    return (
+      <InformationalMessageDrawerContent
+        iconType="error"
+        title={title}
+        description={description}
+        primaryButtonLabel={buttonLabel}
+        onPrimaryButtonPress={onButtonPress}
+        primaryButtonEvent={buttonEvent}
+      />
+    );
   }
 
   return (
