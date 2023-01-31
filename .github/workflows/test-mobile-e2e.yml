@@ -161,7 +161,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.ref || github.ref_name }}
+          ref: ${{ github.event.inputs.ref || github.event.pull_request.head.ref || 'develop' }}
       - uses: pnpm/action-setup@v2
         with:
           version: latest
