@@ -74,6 +74,12 @@ export default function SelectDevice({
     false,
   );
 
+  // To be able to triggers the device selection once all the bluetooth requirements are respected
+  const [
+    lastSelectedDeviceBeforeRequireBluetoothCheck,
+    setLastSelectedDeviceBeforeRequireBluetoothCheck,
+  ] = useState<Device | null>(null);
+
   // Enforces the BLE requirements for a "connecting" action. The requirements are only enforced
   // if the bluetooth is needed (isBleRequired is true).
   const {
@@ -86,7 +92,7 @@ export default function SelectDevice({
   });
 
   // If the user tries to close the drawer displaying issues on BLE requirements,
-  // cancels the requirements checking and does not do anything in order to stop the
+  // this cancels the requirements checking and does not do anything in order to stop the
   // connection with a device via BLE
   const onUserCloseRequireBluetoothDrawer = useCallback(() => {
     setIsBleRequired(false);
@@ -106,25 +112,33 @@ export default function SelectDevice({
         dispatch(setHasConnectedDevice(true));
         onSelect(deviceInfo);
         dispatch(setReadOnlyMode(false));
+        return;
       }
+
       // If not wired, bluetooth is required
-      else if (!isBleRequired) {
+      if (!isBleRequired) {
+        setLastSelectedDeviceBeforeRequireBluetoothCheck(deviceInfo);
         setIsBleRequired(true);
+        return;
       }
+
       // Normally, if isBleRequired is true, and the user managed to click to select a device
       // then all the bluetooth requirements should be respected. But to be sure no UI glitch
       // happened, checks the bluetoothRequirementsState
-      else if (bluetoothRequirementsState === "all_respected") {
-        track("Device selection", {
-          modelId,
-          connectionType: "BLE",
-        });
-
-        // Nb consider a device selection enough to show the fw update banner in portfolio
-        dispatch(setHasConnectedDevice(true));
-        onSelect(deviceInfo);
-        dispatch(setReadOnlyMode(false));
+      if (bluetoothRequirementsState !== "all_respected") {
+        setLastSelectedDeviceBeforeRequireBluetoothCheck(deviceInfo);
+        return;
       }
+
+      track("Device selection", {
+        modelId,
+        connectionType: "BLE",
+      });
+
+      // Nb consider a device selection enough to show the fw update banner in portfolio
+      dispatch(setHasConnectedDevice(true));
+      onSelect(deviceInfo);
+      dispatch(setReadOnlyMode(false));
     },
     [
       bluetoothRequirementsState,
@@ -134,6 +148,21 @@ export default function SelectDevice({
       setIsBleRequired,
     ],
   );
+
+  // Once all the bluetooth requirements are respected, the device selection is triggered
+  useEffect(() => {
+    if (
+      bluetoothRequirementsState === "all_respected" &&
+      lastSelectedDeviceBeforeRequireBluetoothCheck
+    ) {
+      handleOnSelect(lastSelectedDeviceBeforeRequireBluetoothCheck);
+      setLastSelectedDeviceBeforeRequireBluetoothCheck(null);
+    }
+  }, [
+    bluetoothRequirementsState,
+    lastSelectedDeviceBeforeRequireBluetoothCheck,
+    handleOnSelect,
+  ]);
 
   const [devices, setDevices] = useState<Device[]>([]);
 
