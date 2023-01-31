@@ -2,6 +2,9 @@ import React from "react";
 import { getTimeSinceStartup } from "react-native-startup-time";
 import { View } from "react-native";
 
+/**
+ * Time from app cold start to first render of a screen.
+ */
 export let appStartupTime: number;
 
 // Store time from app launch to first React render
