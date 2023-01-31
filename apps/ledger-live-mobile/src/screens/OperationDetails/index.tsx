@@ -38,22 +38,7 @@ function OperationDetails({ route }: NavigatorProps) {
     return null;
   }
 
-  // const operation = route.params?.operation;
-  const operation: Operation = {
-    id: "",
-    hash: "",
-    type: "OUT",
-    value: new BigNumber(100000 * 10000 * 99999999),
-    fee: new BigNumber(5 * 2100),
-    senders: ["0xsender"],
-    recipients: ["0xrecipient"],
-    blockHeight: null,
-    blockHash: "",
-    transactionSequenceNumber: 5,
-    accountId: account.id,
-    date: new Date(),
-    extra: {},
-  };
+  const operation = route.params?.operation;
 
   const mainAccount = getMainAccount(account, parentAccount);
   const url = getTransactionExplorer(
