@@ -17,7 +17,9 @@ import {
   StackNavigatorNavigation,
   StackNavigatorProps,
 } from "../../../components/RootNavigator/types/helpers";
-import SelectFeesStrategy from "../../../components/SelectFeesStrategy";
+import SelectFeesStrategy, {
+  SelectFeeStrategy,
+} from "../../../components/SelectFeesStrategy";
 import Button from "../../../components/Button";
 
 type Props = StackNavigatorProps<
@@ -57,10 +59,15 @@ export function SpeedupTransaction({ route }: Props) {
 
   const strategies = useFeesStrategy(transactionToEdit);
 
+  if (!transaction) {
+    return null;
+  }
+
   const disabledStrategies = strategies
     .filter(strategy => {
+      // TODO: define what is the correct calculation for this
       return (
-        strategy.extra!.maxPriorityFeePerGas >
+        strategy.extra!.maxPriorityFeePerGas <
         transactionToEdit.maxPriorityFeePerGas!
       );
     })
@@ -70,37 +77,41 @@ export function SpeedupTransaction({ route }: Props) {
     navigation.navigate(ScreenName.EthereumCustomFees, {
       ...route.params,
       accountId: account.id,
-      parentId: undefined,
-      transaction: transactionToEdit,
+      parentId: parentAccount?.id,
+      transaction,
       currentNavigation: ScreenName.SpeedUpTransaction,
       nextNavigation: ScreenName.SendSelectDevice,
-      setTransaction: () => null,
+      setTransaction,
     });
   };
 
-  const onFeeStrategySelected = () => {
-    setTransaction(bridge.updateTransaction(transaction, transactionToEdit));
+  const onFeeStrategySelected = (strategy: SelectFeeStrategy) => {
+    setTransaction(
+      bridge.updateTransaction(transaction, {
+        feesStrategy: strategy.label,
+        feePerByte: strategy.amount,
+      }),
+    );
+  };
+
+  const onContinue = () => {
     navigation.navigate(ScreenName.SendSummary, {
       accountId: account.id,
       parentId: parentAccount?.id,
-      transaction: transactionToEdit,
+      transaction,
       currentNavigation: ScreenName.SpeedUpTransaction,
       nextNavigation: ScreenName.SendSelectDevice,
       hideFees: true,
     });
   };
 
-  const onContinue = () => {
-    // redirect to sign transaction page
-  };
-
-  return (
+  return transaction ? (
     <>
       <SelectFeesStrategy
         strategies={strategies}
         account={account}
         parentAccount={parentAccount as Account}
-        transaction={transactionToEdit}
+        transaction={transaction}
         onStrategySelect={onFeeStrategySelected}
         onCustomFeesPress={openCustomFees}
         disabledStrategies={disabledStrategies}
@@ -116,7 +127,7 @@ export function SpeedupTransaction({ route }: Props) {
         </Button>
       </View>
     </>
-  );
+  ) : null;
 }
 
 const styles = StyleSheet.create({
