@@ -6,17 +6,20 @@ import { AccountLike, Operation } from "@ledgerhq/types-live";
 import { ScreenName } from "../../../const";
 
 export type EthereumEditTransactionParamList = {
-  [ScreenName.EditTransactionOptions]: {
+  [ScreenName.EditEthereumTransactionMethodSelection]: {
     operation: Operation;
     account: AccountLike;
+    parentAccount: AccountLike | undefined | null;
   };
   [ScreenName.CancelTransaction]: {
     operation: Operation;
     account: AccountLike;
+    parentAccount: AccountLike | undefined | null;
   };
   [ScreenName.SpeedUpTransaction]: {
     operation: Operation;
     account: AccountLike;
+    parentAccount: AccountLike | undefined | null;
   };
   [ScreenName.EthereumCustomFees]: {
     accountId: string;

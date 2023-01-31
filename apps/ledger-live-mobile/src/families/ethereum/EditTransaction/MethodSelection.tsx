@@ -8,7 +8,7 @@ import { StackNavigatorProps } from "../../../components/RootNavigator/types/hel
 
 type Props = StackNavigatorProps<
   EthereumEditTransactionParamList,
-  ScreenName.EditTransactionOptions
+  ScreenName.EditEthereumTransactionMethodSelection
 >;
 
 export function MethodSelection({ navigation, route }: Props) {
@@ -17,7 +17,7 @@ export function MethodSelection({ navigation, route }: Props) {
     { text: "Cancel", value: "cancel" },
   ] as const;
 
-  const { operation, account } = route.params;
+  const { operation, account, parentAccount } = route.params;
 
   const onSelect = (option: typeof options[number]["value"]) => {
     switch (option) {
@@ -25,12 +25,14 @@ export function MethodSelection({ navigation, route }: Props) {
         navigation.navigate(ScreenName.CancelTransaction, {
           operation,
           account,
+          parentAccount,
         });
         break;
       case "speedUp":
         navigation.navigate(ScreenName.SpeedUpTransaction, {
           operation,
           account,
+          parentAccount,
         });
         break;
       default:
