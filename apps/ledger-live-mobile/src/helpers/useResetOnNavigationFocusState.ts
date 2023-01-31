@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { NavigationProp } from "@react-navigation/native";
+import { NavigationProp, ParamListBase } from "@react-navigation/native";
 
 // A state that resets to its default value when the screen gets the focus from the navigation mechanism
 export function useResetOnNavigationFocusState<
-  NavigationType extends NavigationProp<Record<string, unknown>>,
+  NavigationType extends NavigationProp<ParamListBase>,
   ValueType,
 >(
   navigation: NavigationType,
