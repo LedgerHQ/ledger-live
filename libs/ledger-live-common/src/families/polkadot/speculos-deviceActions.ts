@@ -1,26 +1,30 @@
 import type { DeviceAction } from "../../bot/types";
 import type { PolkadotAccount, Transaction } from "./types";
-import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
+import {
+  deviceActionFlow,
+  formatDeviceAmount,
+  SpeculosButton,
+} from "../../bot/specs";
 
 export const acceptTransaction: DeviceAction<Transaction, any> =
   deviceActionFlow({
     steps: [
       {
         title: "Staking",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Balances",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Dest",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => transaction.recipient,
       },
       {
         title: "Amount",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account, status }) => {
           return formatDeviceAmount(account.currency, status.amount, {
             forceFloating: true,
@@ -29,12 +33,12 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Chain",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: () => "Polkadot",
       },
       {
         title: "Nonce",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account }) =>
           (
             (account as PolkadotAccount).polkadotResources?.nonce || 0
@@ -42,39 +46,39 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Tip",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Controller",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Payee",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Max additional",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Targets",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Era Phase",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Era Period",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Block",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "APPROVE",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
       },
     ],
   });

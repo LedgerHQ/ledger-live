@@ -1,28 +1,32 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
-import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
+import {
+  deviceActionFlow,
+  formatDeviceAmount,
+  SpeculosButton,
+} from "../../bot/specs";
 
 export const acceptTransaction: DeviceAction<Transaction, any> =
   deviceActionFlow({
     steps: [
       {
         title: "To",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => transaction.recipient,
       },
       {
         title: "From",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account }) => account.freshAddress,
       },
       {
         title: "Nonce",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => transaction.nonce.toString(),
       },
       {
         title: "Value",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account, status }) =>
           formatDeviceAmount(account.currency, status.amount, {
             hideCode: true,
@@ -31,12 +35,12 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Gas Limit",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => transaction.gasLimit.toFixed(),
       },
       {
         title: "Gas Premium",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account, transaction }) =>
           formatDeviceAmount(account.currency, transaction.gasPremium, {
             hideCode: true,
@@ -45,7 +49,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Gas Fee Cap",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account, transaction }) =>
           formatDeviceAmount(account.currency, transaction.gasFeeCap, {
             hideCode: true,
@@ -54,12 +58,12 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Method",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: () => "Transfer",
       },
       {
         title: "APPROVE",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
       },
     ],
   });

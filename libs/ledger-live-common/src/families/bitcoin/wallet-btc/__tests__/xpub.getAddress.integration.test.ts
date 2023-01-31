@@ -1,4 +1,5 @@
 import coininfo from "coininfo";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 import { DerivationModes } from "..";
 import BitcoinLikeStorage from "../storage";
@@ -6,7 +7,6 @@ import BitcoinLikeExplorer from "../explorer";
 import Xpub from "../xpub";
 import BCHCrypto from "../crypto/bitcoincash";
 import BTCCrypto from "../crypto/bitcoin";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 describe("Unit tests for getAddress", () => {
   it("Test getAddress for bch and btc", async () => {
