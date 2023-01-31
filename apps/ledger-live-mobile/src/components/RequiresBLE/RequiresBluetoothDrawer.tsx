@@ -17,13 +17,22 @@ export type RequiresBluetoothBottomModalProps = {
 };
 
 /**
- * Drawer to use with the hook useRequireBluetooth hook.
+ * Bottom drawer displaying issues with the different bluetooth requirements.
+ * To use with the hook useRequireBluetooth hook.
  *
- * @param param0
+ * Useful to display fined grained issues with bluetooth requirements.
+ *
+ * If there is no issue, the drawer will not be displayed.
+ *
+ * The drawer can be closed by the user, but this does not resolve the requirements issue.
+ * The associated hook useRequireBluetooth will still return the same state.
+ *
+ * @param isOpen Whether the bottom drawer is open or not.
+ * @param bluetoothRequirementsState The bluetooth requirements state coming from useRequireBluetooth.
+ * @param retryRequestOnIssue A function to retry the process to check/request for the currently failed bluetooth requirement.
  * @param cannotRetryRequest Whether the retry function retryRequestOnIssue can be called.
  *   For example, for permissions on Android, it is only possible to retry to request directly the user (and not make them
  *   go to the settings) if the user has not checked/triggered the "never ask again".
- * @returns
  */
 const RequiresBluetoothDrawer = ({
   isOpen = true,
@@ -36,6 +45,7 @@ const RequiresBluetoothDrawer = ({
   );
 
   const onClose = () => {
+    // TODO !
     console.log(`🦖 RequiresBluetoothDrawer onClose`);
   };
 
@@ -43,7 +53,6 @@ const RequiresBluetoothDrawer = ({
 
   switch (bluetoothRequirementsState) {
     case "bluetooth_permissions_ungranted":
-      // TODO: need to pass never ask again prop
       content = (
         <BluetoothPermissionsDenied
           componentType="drawer"
@@ -81,14 +90,10 @@ const RequiresBluetoothDrawer = ({
       break;
   }
 
-  const bottomModalIsOpen = isOpen && content !== null;
+  const drawerIsOpen = isOpen && content !== null;
 
   return (
-    <BottomModal
-      onClose={onClose}
-      isOpen={bottomModalIsOpen}
-      preventBackdropClick
-    >
+    <BottomModal onClose={onClose} isOpen={drawerIsOpen} preventBackdropClick>
       {content}
     </BottomModal>
   );
