@@ -25,7 +25,7 @@ export enum CoinType {
   DOGE = 3,
   ELASTOS = 2305,
   ELLAISM = 163,
-  ELROND = 508,
+  MULTIVERSX = 508,
   ENERGY_WEB_CHAIN = 246,
   EOS = 194,
   ETH = 60,

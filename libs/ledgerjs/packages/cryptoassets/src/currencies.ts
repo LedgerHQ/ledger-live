@@ -282,6 +282,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
     keywords: ["avax", "avalanche", "c-chain"],
+    explorerId: "avax",
   },
   banano: {
     type: "CryptoCurrency",
@@ -936,7 +937,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   elrond: {
     type: "CryptoCurrency",
     id: "elrond",
-    coinType: 508,
+    coinType: CoinType.MULTIVERSX,
     name: "MultiversX",
     managerAppName: "MultiversX",
     ticker: "EGLD",
@@ -2569,7 +2570,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   juno: {
     type: "CryptoCurrency",
     id: "juno",
-    coinType: 118,
+    coinType: CoinType.ATOM,
     name: "Juno",
     managerAppName: "Cosmos",
     ticker: "JUNO",
