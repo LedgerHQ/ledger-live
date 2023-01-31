@@ -23,13 +23,10 @@ type Props = {
   disabledStrategies?: Array<string>;
 } & CompositeScreenProps<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
+  | StackNavigatorProps<EthereumEditTransactionParamList, ScreenName.SendSummary>
   | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
-  | StackNavigatorProps<BaseNavigatorStackParamList>
-  | StackNavigatorProps<
-      EthereumEditTransactionParamList,
-      ScreenName.SendSummary
-    >
+  StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
 export default ({
