@@ -48,12 +48,12 @@ type Props = {
       LendingWithdrawFlowNavigatorParamList,
       ScreenName.LendingWithdrawSummary
     >
-  | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
-  | StackNavigatorProps<BaseNavigatorStackParamList>
+  | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
   | StackNavigatorProps<
       EthereumEditTransactionParamList,
       ScreenName.SendSummary
-    >
+    >,
+  StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
 export default ({
