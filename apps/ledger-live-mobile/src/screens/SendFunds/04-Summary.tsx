@@ -82,7 +82,9 @@ const WARN_FROM_UTXO_COUNT = 50;
 
 function SendSummary({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { nextNavigation, overrideAmountLabel, hideTotal } = route.params;
+  const { nextNavigation, overrideAmountLabel, hideTotal, hideFees } =
+    route.params;
+
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const { transaction, setTransaction, status, bridgePending } =
     useBridgeTransaction(() => ({
@@ -256,15 +258,17 @@ function SendSummary({ navigation, route }: Props) {
             overrideAmountLabel={overrideAmountLabel}
           />
         )}
-        <SendRowsFee
-          setTransaction={setTransaction}
-          status={status}
-          account={account}
-          parentAccount={parentAccount}
-          transaction={transaction}
-          navigation={navigation}
-          route={route}
-        />
+        {!hideFees && (
+          <SendRowsFee
+            setTransaction={setTransaction}
+            status={status}
+            account={account}
+            parentAccount={parentAccount}
+            transaction={transaction}
+            navigation={navigation}
+            route={route}
+          />
+        )}
         {error ? (
           <View style={styles.gasPriceError}>
             <View
