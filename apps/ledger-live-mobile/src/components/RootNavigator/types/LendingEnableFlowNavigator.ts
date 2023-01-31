@@ -69,6 +69,7 @@ export type LendingEnableFlowParamsList = {
     accountId: string | null;
     parentId?: string | null;
     deviceId?: string;
+    hideFees?: boolean;
     transaction?: Transaction;
     overrideAmountLabel?: string;
     hideTotal?: boolean;

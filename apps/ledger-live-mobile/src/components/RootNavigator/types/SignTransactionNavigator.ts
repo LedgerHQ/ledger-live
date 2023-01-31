@@ -47,6 +47,7 @@ export type SignTransactionNavigatorParamList = {
     accountId: string;
     parentId?: string;
     deviceId?: string;
+    hideFees?: boolean;
     transaction?: Transaction;
     overrideAmountLabel?: string;
     hideTotal?: boolean;

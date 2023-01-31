@@ -77,6 +77,7 @@ export type SwapNavigatorParamList = {
     transaction?: Transaction | null;
     overrideAmountLabel?: string;
     hideTotal?: boolean;
+    hideFees?: boolean;
     currentNavigation:
       | ScreenName.LendingWithdrawSummary
       | ScreenName.LendingSupplySummary
