@@ -12,8 +12,10 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { Account, Operation, AccountLike } from "@ledgerhq/types-live";
 import { Box, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
+import { WarningLight } from "@ledgerhq/native-ui/assets/icons";
 import debounce from "lodash/debounce";
 import { isEqual } from "lodash";
+
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
 import OperationIcon from "./OperationIcon";
@@ -150,11 +152,14 @@ function OperationRow({
 
   const text = <Trans i18nKey={`operations.types.${operation.type}`} />;
   const isOptimistic = operation.blockHeight === null;
-  const spinner = (
-    <SpinnerContainer>
-      <InfiniteLoader size={10} />
-    </SpinnerContainer>
-  );
+  const spinner =
+    currency.id === "ethereum" && isOptimistic ? (
+      <WarningLight />
+    ) : (
+      <SpinnerContainer>
+        <InfiniteLoader size={10} />
+      </SpinnerContainer>
+    );
 
   return (
     <ContainerTouchable

@@ -21,8 +21,6 @@ import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { LayoutChangeEvent } from "react-native";
-// import BigNumber from "bignumber.js";
-// import { toTransactionRaw } from "@ledgerhq/live-common/families/ethereum/transaction";
 
 import Header from "./Header";
 import AccountGraphCard from "../../components/AccountGraphCard";
