@@ -4,40 +4,52 @@ import BottomModal from "../BottomModal";
 import { BluetoothRequirementsState } from "./hooks/useRequireBluetooth";
 import BluetoothDisabled from "./BluetoothDisabled";
 import LocationDisabled from "../RequiresLocation/LocationDisabled";
+import BluetoothPermissionDenied from "./BluetoothPermissionDenied";
 
 export type BleRequirementsState = "unknown" | "respected" | "not_respected";
 
 export type RequiresBluetoothBottomModalProps = {
   isOpen?: boolean;
   bluetoothRequirementsState: BluetoothRequirementsState;
-  handleRetryOnIssue: (() => void) | null;
+  retryRequestOnIssue: (() => void) | null;
+  cannotRetryRequest?: boolean;
 };
 
 /**
  * Drawer to use with the hook useRequireBluetooth hook.
  *
  * @param param0
+ * @param cannotRetryRequest Whether the retry function retryRequestOnIssue can be called.
+ *   For example, for permissions on Android, it is only possible to retry to request directly the user (and not make them
+ *   go to the settings) if the user has not checked/triggered the "never ask again".
  * @returns
  */
-const RequiresBluetoothBottomModal = ({
+const RequiresBluetoothDrawer = ({
   isOpen = true,
   bluetoothRequirementsState,
-  handleRetryOnIssue,
+  retryRequestOnIssue,
+  cannotRetryRequest = true,
 }: RequiresBluetoothBottomModalProps) => {
   console.log(
-    `🦖 RequiresBluetoothBottomModal bluetoothRequirementsState: ${bluetoothRequirementsState}`,
+    `🦖 RequiresBluetoothDrawer bluetoothRequirementsState: ${bluetoothRequirementsState}, cannotRetryRequest: ${cannotRetryRequest}`,
   );
 
   const onClose = () => {
-    console.log(`🦖 RequiresBluetoothBottomModal onClose`);
+    console.log(`🦖 RequiresBluetoothDrawer onClose`);
   };
 
   let content = null;
 
   switch (bluetoothRequirementsState) {
     case "bluetooth_permissions_ungranted":
-      // eslint-disable-next-line react/jsx-no-undef
-      content = <Text>bluetooth permissions denied ❌</Text>;
+      // TODO: need to pass never ask again prop
+      content = (
+        <BluetoothPermissionDenied
+          componentType="drawer"
+          onRetry={retryRequestOnIssue}
+          neverAskAgain={cannotRetryRequest}
+        />
+      );
       break;
     case "location_permission_ungranted":
       // eslint-disable-next-line react/jsx-no-undef
@@ -47,13 +59,13 @@ const RequiresBluetoothBottomModal = ({
       content = (
         <BluetoothDisabled
           componentType="drawer"
-          onRetry={handleRetryOnIssue}
+          onRetry={retryRequestOnIssue}
         />
       );
       break;
     case "location_disabled":
       content = (
-        <LocationDisabled componentType="drawer" onRetry={handleRetryOnIssue} />
+        <LocationDisabled componentType="drawer" onRetry={retryRequestOnIssue} />
       );
       break;
     default:
@@ -73,4 +85,4 @@ const RequiresBluetoothBottomModal = ({
   );
 };
 
-export default RequiresBluetoothBottomModal;
+export default RequiresBluetoothDrawer;
