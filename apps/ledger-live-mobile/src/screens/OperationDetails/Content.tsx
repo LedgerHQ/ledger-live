@@ -146,8 +146,8 @@ export default function Content({
 
   const onEditTxCardClick = () => {
     navigation.navigate(NavigatorName.EthereumEditTransaction, {
-      screen: ScreenName.EditTransactionOptions,
-      params: { operation },
+      screen: ScreenName.EditEthereumTransactionMethodSelection,
+      params: { operation, account, parentAccount },
     });
   };
 
