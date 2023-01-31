@@ -44,6 +44,7 @@ import {
 } from "../../components/RootNavigator/types/helpers";
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
+import { EthereumEditTransactionParamList } from "../../components/RootNavigator/types/EthereumEditTransactionNavigator";
 
 type Navigation = BaseComposite<
   | StackNavigatorProps<
@@ -55,6 +56,10 @@ type Navigation = BaseComposite<
       ScreenName.SignTransactionSummary
     >
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
+  | StackNavigatorProps<
+      EthereumEditTransactionParamList,
+      ScreenName.SendSummary
+    >
 >;
 
 type Props = Navigation;
