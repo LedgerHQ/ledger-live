@@ -4,6 +4,7 @@ import {
   NotEnoughBalance,
   RecipientRequired,
   InvalidAddress,
+  InvalidAddressBecauseDestinationIsAlsoSource,
   AmountRequired,
   FeeTooHigh,
 } from "@ledgerhq/errors";
@@ -52,6 +53,8 @@ export const getTransactionStatus = (
 
   if (!t.recipient) {
     errors.recipient = new RecipientRequired();
+  } else if (t.recipient === account.freshAddress) {
+    errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   } else if (isInvalidRecipient(t.recipient)) {
     errors.recipient = new InvalidAddress();
   }
