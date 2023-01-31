@@ -29,6 +29,10 @@ export type UseRequireBluetoothOutput = {
 /**
  * Handles the logic making sure all bluetooth requirements are respected depending on the usage and the user OS.
  *
+ * Useful to enforce only bluetooth requirements.
+ *
+ * To use with RequiresBluetoothDrawer to display issues on specific requirements.
+ *
  * @param requiredFor The usage of bluetooth. Can be "scanning" or "connecting".
  * @param isHookEnabled Whether the the processes to check and request for bluetooth requirements should be enabled or not.
  *   Useful to disable the hook when the user does not need bluetooth yet.
@@ -128,7 +132,9 @@ export const useRequireBluetooth = ({
     isHookEnabled: isAndroidEnableLocationHookEnabled,
   });
 
-  console.log(`🧠 androidBluetoothPermissionsNeverAskAgain: ${androidBluetoothPermissionsNeverAskAgain}`);
+  console.log(
+    `🧠 androidBluetoothPermissionsNeverAskAgain: ${androidBluetoothPermissionsNeverAskAgain}`,
+  );
 
   console.log(
     `🧠 isHookEnabled: ${JSON.stringify({
@@ -143,33 +149,55 @@ export const useRequireBluetooth = ({
   let retryRequestOnIssue = null;
   let cannotRetryRequest = false;
 
+  let someUnknown = false;
+
   // Logic to determine the state of the bluetooth requirements, and the action to perform to retry
+  // Because we check if each hook is enabled, we don't need to respect a specific order of checks
+  if (isAndroidBluetoothPermissionsHookEnabled) {
+    if (androidHasBluetoothPermissions === "denied") {
+      bluetoothRequirementsState = "bluetooth_permissions_ungranted";
+      retryRequestOnIssue =
+        androidBluetoothPermissionsRequestForPermissionsAgain;
+      cannotRetryRequest = androidBluetoothPermissionsNeverAskAgain;
+    } else if (androidHasBluetoothPermissions !== "granted") {
+      someUnknown = true;
+    }
+  }
+
+  if (isAndroidLocationPermissionHookEnabled) {
+    if (androidHasLocationPermission === "denied") {
+      bluetoothRequirementsState = "location_permission_ungranted";
+      retryRequestOnIssue = androidLocationPermissionRequestForPermissionsAgain;
+      cannotRetryRequest = androidLocationPermissionNeverAskAgain;
+    } else if (androidHasLocationPermission !== "granted") {
+      someUnknown = true;
+    }
+  }
+
+  if (isEnableBluetoothHookEnabled) {
+    if (bluetoothServicesState === "disabled") {
+      bluetoothRequirementsState = "bluetooth_disabled";
+      retryRequestOnIssue = enableBluetoothCheckAndRequestAgain;
+    } else if (bluetoothServicesState !== "enabled") {
+      someUnknown = true;
+    }
+  }
+
+  if (isAndroidEnableLocationHookEnabled) {
+    if (locationServicesState === "disabled") {
+      bluetoothRequirementsState = "location_disabled";
+      retryRequestOnIssue = androidEnableLocationCheckAndRequestAgain;
+    } else if (locationServicesState !== "enabled") {
+      someUnknown = true;
+    }
+  }
+
   if (
-    isAndroidBluetoothPermissionsHookEnabled &&
-    androidHasBluetoothPermissions === "denied"
+    isHookEnabled &&
+    !someUnknown &&
+    bluetoothRequirementsState === "unknown"
   ) {
-    bluetoothRequirementsState = "bluetooth_permissions_ungranted";
-    retryRequestOnIssue = androidBluetoothPermissionsRequestForPermissionsAgain;
-    cannotRetryRequest = androidBluetoothPermissionsNeverAskAgain;
-  } else if (
-    isAndroidLocationPermissionHookEnabled &&
-    androidHasLocationPermission === "denied"
-  ) {
-    bluetoothRequirementsState = "location_permission_ungranted";
-    retryRequestOnIssue = androidLocationPermissionRequestForPermissionsAgain;
-    cannotRetryRequest = androidLocationPermissionNeverAskAgain;
-  } else if (
-    isEnableBluetoothHookEnabled &&
-    bluetoothServicesState === "disabled"
-  ) {
-    bluetoothRequirementsState = "bluetooth_disabled";
-    retryRequestOnIssue = enableBluetoothCheckAndRequestAgain;
-  } else if (
-    isAndroidEnableLocationHookEnabled &&
-    locationServicesState === "disabled"
-  ) {
-    bluetoothRequirementsState = "location_disabled";
-    retryRequestOnIssue = androidEnableLocationCheckAndRequestAgain;
+    bluetoothRequirementsState = "all_respected";
   }
 
   return {
