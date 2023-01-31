@@ -74,3 +74,17 @@ describe("Dependency resolution for standalone currency apps", () => {
     expect(getDependencies(app.name, app.version)).toEqual([]);
   });
 });
+
+describe("Backwards compatibility, when not providing an app version", () => {
+  test("Dogecoin should have Bitcoin as dependency", () => {
+    const app: App = { ...baseSampleApp };
+    expect(getDependencies(app.name, undefined)).toEqual(["Bitcoin"]);
+  });
+  test("Polygon should have Ethereum as dependency, even when providing a version", () => {
+    // If this one is failing it means we've implemented a standalone polygon or a
+    // version exemption like for Bitcoin, in that case we can drop this test.
+    const app: App = { ...baseSampleApp, name: "Polygon" };
+    expect(getDependencies(app.name, undefined)).toEqual(["Ethereum"]);
+    expect(getDependencies(app.name, "4.3.2")).toEqual(["Ethereum"]);
+  });
+});

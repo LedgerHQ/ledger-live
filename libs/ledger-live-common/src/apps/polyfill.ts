@@ -68,6 +68,9 @@ export function declareDep(name: string, dep: string): void {
   ["Yearn", "Ethereum"],
 ].forEach(([name, dep]) => declareDep(name, dep));
 
+// Nb Starting on version 2.1.0 Bitcoin family apps no longer depend on
+// Bitcoin as a library. We will soon have the dependencies resolved from
+// back-end but until then we need to manually remove them.
 const versionBasedWhitelistDependencies = {
   Bitcoin: "2.1.0",
 };
@@ -76,18 +79,18 @@ export const getDependencies = (
   appName: string,
   appVersion?: string
 ): string[] => {
-  const maybeDirectDep = directDep[appName];
-  if (!maybeDirectDep) return [];
+  const maybeDirectDep = directDep[appName] || [];
 
-  // Nb Starting on version 2.1.0 Bitcoin family apps no longer depend on
-  // Bitcoin as a library. We will soon have the dependencies resolved from
-  // back-end but until then we need to manually remove them.
-  return (
-    maybeDirectDep.filter((dep) => {
-      const maybeDep = versionBasedWhitelistDependencies[dep];
-      return !maybeDep || semver.lt(semver.coerce(appVersion) || "", maybeDep);
-    }) || []
-  );
+  if (!appVersion || !maybeDirectDep.length) {
+    return maybeDirectDep;
+  }
+
+  // If we don't have any direct dependencies, or the caller didn't
+  // provide `appVersion` to compare against, we can skip the filter
+  return maybeDirectDep.filter((dep: string) => {
+    const maybeDep = versionBasedWhitelistDependencies[dep];
+    return !maybeDep || semver.lt(semver.coerce(appVersion) ?? "", maybeDep);
+  });
 };
 
 export const getDependents = (appName: string): string[] =>
