@@ -184,8 +184,10 @@ jobs:
       - name: Install dependencies
         run: |
           pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+          pnpm why -r detox
           cat ./apps/ledger-live-mobile/node_modules/detox/src/devices/common/drivers/android/exec/ADB.js
-          mv -f ADB.js ./apps/ledger-live-mobile/node_modules/detox/src/devices/common/drivers/android/exec/ADB.js
+          rm ./apps/ledger-live-mobile/node_modules/detox/src/devices/common/drivers/android/exec/ADB.js
+          mv ADB.js ./apps/ledger-live-mobile/node_modules/detox/src/devices/common/drivers/android/exec/ADB.js
       - name: Build dependencies
         run: |
           pnpm build:llm:deps
