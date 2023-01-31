@@ -32,17 +32,21 @@ import NetworkFeeInfo from "./NetworkFeeInfo";
 import { useAnalytics } from "../analytics";
 import { sharedSwapTracking } from "../screens/Swap/utils";
 
-export type SelectFeeStrategy = FeeStrategy & { userGasLimit?: BigNumber };
+export type SelectFeeStrategy = FeeStrategy & {
+  userGasLimit?: BigNumber;
+  forceValueLabel?: string;
+};
 
 type Props = {
   strategies: SelectFeeStrategy[];
   account: AccountLike;
   parentAccount?: Account | null;
   transaction: Transaction;
-  onStrategySelect: (_: SelectFeeStrategy) => void;
+  onStrategySelect: (stategy: SelectFeeStrategy) => void;
   onCustomFeesPress: TouchableOpacityProps["onPress"];
   forceUnitLabel?: boolean | React.ReactNode;
   disabledStrategies?: Array<string>;
+  forceValueLabel?: string;
 };
 
 const CVWrapper = ({ children }: { children?: React.ReactNode }) => (
@@ -56,10 +60,10 @@ export default function SelectFeesStrategy({
   account,
   parentAccount,
   transaction,
-  onStrategySelect,
-  onCustomFeesPress,
   forceUnitLabel,
   disabledStrategies,
+  onStrategySelect,
+  onCustomFeesPress,
 }: Props) {
   const { track } = useAnalytics();
   const { t } = useTranslation();
@@ -77,30 +81,31 @@ export default function SelectFeesStrategy({
   const closeNetworkFeeHelpModal = () => setNetworkFeeHelpOpened(false);
 
   const onPressStrategySelect = useCallback(
-    (item: FeeStrategy) => {
+    (item: SelectFeeStrategy) => {
       track("button_clicked", {
         ...sharedSwapTracking,
         button: item.label,
         page: "Swap quotes",
       });
+
       onStrategySelect({
         amount: item.amount,
-        label:
-          (item as { forceValueLabel?: string }).forceValueLabel ?? item.label,
-        userGasLimit: (item as { userGasLimit?: BigNumber }).userGasLimit,
+        label: item.forceValueLabel ?? item.label,
+        userGasLimit: item.userGasLimit,
         txParameters: item.txParameters,
+        extra: item.extra,
       });
     },
     [onStrategySelect, track],
   );
 
-  const renderItem = ({ item }: ListRenderItemInfo<FeeStrategy>) => {
+  const renderItem = ({ item }: ListRenderItemInfo<SelectFeeStrategy>) => {
+    const isDisabled = disabledStrategies?.includes(item.label);
+
     return (
       <TouchableOpacity
         onPress={() => onPressStrategySelect(item)}
-        disabled={
-          disabledStrategies ? disabledStrategies.includes(item.label) : false
-        }
+        disabled={isDisabled}
         style={[
           styles.feeButton,
           {
@@ -115,7 +120,7 @@ export default function SelectFeesStrategy({
           style={[
             styles.feeStrategyContainer,
             {
-              opacity: disabledStrategies?.includes(item.label) ? 0.2 : 1,
+              opacity: isDisabled ? 0.2 : 1,
             },
           ]}
         >
