@@ -15,11 +15,11 @@ type Props = {
 };
 
 /**
- * Renders a component that informs the user that they have denied the app permission to use Bluetooth.
+ * Renders a component that informs the user that they have denied the app permissions to use Bluetooth.
  *
  * If the user has selected/triggered "Don't ask again", the user will be prompted to open the native settings
  *
- * @param onRetry A callback for the user to retry allowing the permission, if neverAskAgain and openSettings are false.
+ * @param onRetry A callback for the user to retry allowing the permissions, if neverAskAgain and openSettings are false.
  *   Otherwise, the user will be prompted to open the native settings.
  * @param hasBackButton If true, a back button will be displayed in the header. Default to false.
  * @param neverAskAgain If true, the user has denied the app permission to use Bluetooth and has selected "Don't ask again". Default to true.
@@ -27,7 +27,7 @@ type Props = {
  * @param componentType If "drawer", the component will be rendered as a content to be rendered in a drawer.
  *   If "view", the component will be rendered as a view. Defaults to "view".
  */
-const BluetoothPermissionDenied: React.FC<Props> = ({
+const BluetoothPermissionsDenied: React.FC<Props> = ({
   onRetry,
   neverAskAgain = true,
   hasBackButton = false,
@@ -85,4 +85,4 @@ const BluetoothPermissionDenied: React.FC<Props> = ({
   );
 };
 
-export default BluetoothPermissionDenied;
+export default BluetoothPermissionsDenied;
