@@ -7,11 +7,11 @@ import {
   TransactionRaw,
 } from "@ledgerhq/live-common/families/ethereum/types";
 
-import { ScreenName } from "../../const";
-import { TrackScreen } from "../../analytics";
-import { EthereumEditTransactionParamList } from "../../components/RootNavigator/types/EthereumEditTransactionNavigator";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import LText from "../../components/LText";
+import { ScreenName } from "../../../const";
+import { TrackScreen } from "../../../analytics";
+import { EthereumEditTransactionParamList } from "../../../components/RootNavigator/types/EthereumEditTransactionNavigator";
+import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import LText from "../../../components/LText";
 
 type Props = StackNavigatorProps<
   EthereumEditTransactionParamList,
