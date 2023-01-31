@@ -1,5 +1,4 @@
 import React from "react";
-import { Text } from "@ledgerhq/native-ui";
 import BottomModal from "../BottomModal";
 import { BluetoothRequirementsState } from "./hooks/useRequireBluetooth";
 import BluetoothDisabled from "./BluetoothDisabled";
@@ -10,7 +9,8 @@ import LocationPermissionDenied from "../RequiresLocation/LocationPermissionDeni
 export type BleRequirementsState = "unknown" | "respected" | "not_respected";
 
 export type RequiresBluetoothBottomModalProps = {
-  isOpen?: boolean;
+  isOpen: boolean;
+  onUserClose: () => void;
   bluetoothRequirementsState: BluetoothRequirementsState;
   retryRequestOnIssue: (() => void) | null;
   cannotRetryRequest?: boolean;
@@ -28,6 +28,9 @@ export type RequiresBluetoothBottomModalProps = {
  * The associated hook useRequireBluetooth will still return the same state.
  *
  * @param isOpen Whether the bottom drawer is open or not.
+ * @param onUserClose A callback when the user tries to close the bottom drawer.
+ *   This is mandatory as the drawer does not close by itself, until the requirements are respected.
+ *   To close the drawer, update isOpen to false and update accordingly your logic as the requirements are not respected.
  * @param bluetoothRequirementsState The bluetooth requirements state coming from useRequireBluetooth.
  * @param retryRequestOnIssue A function to retry the process to check/request for the currently failed bluetooth requirement.
  * @param cannotRetryRequest Whether the retry function retryRequestOnIssue can be called.
@@ -35,7 +38,8 @@ export type RequiresBluetoothBottomModalProps = {
  *   go to the settings) if the user has not checked/triggered the "never ask again".
  */
 const RequiresBluetoothDrawer = ({
-  isOpen = true,
+  isOpen,
+  onUserClose,
   bluetoothRequirementsState,
   retryRequestOnIssue,
   cannotRetryRequest = true,
@@ -45,8 +49,10 @@ const RequiresBluetoothDrawer = ({
   );
 
   const onClose = () => {
-    // TODO !
-    console.log(`🦖 RequiresBluetoothDrawer onClose`);
+    // If all the requireements are not respected, it means the user tried to close the drawer by pressing on the close button
+    if (bluetoothRequirementsState !== "all_respected") {
+      onUserClose();
+    }
   };
 
   let content = null;
