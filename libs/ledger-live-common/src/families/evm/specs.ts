@@ -2,11 +2,10 @@ import expect from "expect";
 import invariant from "invariant";
 import sample from "lodash/sample";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { acceptTransaction } from "./speculos-deviceActions";
 import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
-import type { AppSpec } from "../../bot/types";
-import type { Transaction } from "./types";
 
 const testTimeout = 6 * 60 * 1000;
 
@@ -163,90 +162,23 @@ const evmBasicMutations = ({ maxAccount }) => [
   },
 ];
 
-const cronos: AppSpec<Transaction> = {
-  name: "Cronos",
-  currency: getCryptoCurrencyById("cronos"),
-  appQuery: {
-    model: DeviceModelId.nanoS,
-    appName: "Ethereum",
-    appVersion: "1.10.1",
-  },
-  testTimeout,
-  transactionCheck: transactionCheck("cronos"),
-  mutations: evmBasicMutations({
-    maxAccount: 3,
-  }),
-  genericDeviceAction: acceptTransaction,
-};
-
-const fantom: AppSpec<Transaction> = {
-  name: "Fantom",
-  currency: getCryptoCurrencyById("fantom"),
-  appQuery: {
-    model: DeviceModelId.nanoS,
-    appName: "Ethereum",
-    appVersion: "1.10.1",
-  },
-  testTimeout,
-  transactionCheck: transactionCheck("fantom"),
-  mutations: evmBasicMutations({
-    maxAccount: 3,
-  }),
-  genericDeviceAction: acceptTransaction,
-};
-
-const moonbeam: AppSpec<Transaction> = {
-  name: "Moonbeam",
-  currency: getCryptoCurrencyById("moonbeam"),
-  appQuery: {
-    model: DeviceModelId.nanoS,
-    appName: "Ethereum",
-    appVersion: "1.10.1",
-  },
-  testTimeout,
-  transactionCheck: transactionCheck("moonbeam"),
-  mutations: evmBasicMutations({
-    maxAccount: 3,
-  }),
-  genericDeviceAction: acceptTransaction,
-};
-
-const songbird: AppSpec<Transaction> = {
-  name: "Songbird",
-  currency: getCryptoCurrencyById("songbird"),
-  appQuery: {
-    model: DeviceModelId.nanoS,
-    appName: "Ethereum",
-    appVersion: "1.10.1",
-  },
-  testTimeout,
-  transactionCheck: transactionCheck("songbird"),
-  mutations: evmBasicMutations({
-    maxAccount: 3,
-  }),
-  genericDeviceAction: acceptTransaction,
-};
-
-const flare: AppSpec<Transaction> = {
-  name: "Flare",
-  currency: getCryptoCurrencyById("flare"),
-  appQuery: {
-    model: DeviceModelId.nanoS,
-    appName: "Ethereum",
-    appVersion: "1.10.1",
-  },
-  testTimeout,
-  transactionCheck: transactionCheck("flare"),
-  mutations: evmBasicMutations({
-    maxAccount: 3,
-  }),
-  genericDeviceAction: acceptTransaction,
-};
-
-export default {
-  cronos,
-  fantom,
-  moonbeam,
-  songbird,
-  flare,
-};
+export default Object.values(cryptocurrenciesById)
+  .filter((currency) => currency.family === "evm")
+  .reduce((acc, currency) => {
+    acc[currency.id] = {
+      name: currency.name,
+      currency,
+      appQuery: {
+        model: DeviceModelId.nanoS,
+        appName: "Ethereum",
+        appVersion: "1.10.1",
+      },
+      testTimeout,
+      transactionCheck: transactionCheck(currency.id),
+      mutations: evmBasicMutations({
+        maxAccount: 3,
+      }),
+      genericDeviceAction: acceptTransaction,
+    };
+    return acc;
+  }, {});
