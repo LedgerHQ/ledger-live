@@ -30,6 +30,26 @@ const CustomTest = ({ name }: { name: string }) => {
 };
 
 describe("useNamingService", () => {
+  test("should be an error", async () => {
+    mockedGetAddressByName.mockImplementation(async () => {
+      throw new LedgerAPI4xx();
+    });
+
+    render(
+      <NamingServiceProvider>
+        <CustomTest name="notavalideth" />
+      </NamingServiceProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("status").textContent).not.toBe("loading");
+    });
+
+    // this test should be first otherwise mock call will be more than 0
+    expect(mockedGetAddressByName).toBeCalledTimes(0);
+    expect(screen.getByTestId("status").textContent).toBe("error");
+  });
+
   test("should be queue", () => {
     const { result } = renderHook(useNamingService, {
       initialProps: "vitalik.eth",
@@ -67,24 +87,6 @@ describe("useNamingService", () => {
     render(
       <NamingServiceProvider>
         <CustomTest name="vitalik.eth" />
-      </NamingServiceProvider>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByTestId("status").textContent).not.toBe("loading");
-    });
-
-    expect(screen.getByTestId("status").textContent).toBe("error");
-  });
-
-  test("should be an error", async () => {
-    mockedGetAddressByName.mockImplementation(async () => {
-      throw new LedgerAPI4xx();
-    });
-
-    render(
-      <NamingServiceProvider>
-        <CustomTest name="notavalideth" />
       </NamingServiceProvider>
     );
 
