@@ -11,10 +11,10 @@ export class UserIdPlugin extends Plugin {
   async execute(event: SegmentEvent) {
     const { user } = await getOrCreateUser();
 
-    if (!user || !event) return event;
-
-    // eslint-disable-next-line no-param-reassign
-    event.userId = user.id;
+    if (user && event) {
+      // eslint-disable-next-line no-param-reassign
+      event.userId = user.id;
+    }
     return event;
   }
 }
