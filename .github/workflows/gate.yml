@@ -33,7 +33,6 @@ jobs:
         with:
           repo-token: "${{ steps.generate-token.outputs.token }}"
       - uses: actions/github-script@v6
-        # need to fix with PR is fork ?
         if: github.event.pull_request.head.repo.fork
         with:
           github-token: ${{ steps.generate-token.outputs.token }}

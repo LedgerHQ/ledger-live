@@ -184,7 +184,9 @@ export function orchestrator(app: Probot) {
         repo,
         artifactId
       );
-      const affected = new Set(JSON.parse(rawAffected.toString()));
+      const affected: Record<string, { path: string }> = JSON.parse(
+        rawAffected.toString()
+      );
 
       let affectedWorkflows = 0;
       // For each workflow…
@@ -192,7 +194,13 @@ export function orchestrator(app: Probot) {
         if (isFork && workflow.runsOn === RUNNERS.internal) return;
         if (!isFork && workflow.runsOn === RUNNERS.external) return;
         // Determine if the workflow is affected
-        const isAffected = workflow.affected.some((pkg) => affected.has(pkg));
+        const isAffected = workflow.affected.some((specifier) => {
+          return typeof specifier === "string"
+            ? affected[specifier]
+            : Object.values(affected).some(({ path }: { path: string }) =>
+                specifier.test(path)
+              );
+        });
         if (isAffected) {
           affectedWorkflows++;
           // Trigger the associated workflow.
