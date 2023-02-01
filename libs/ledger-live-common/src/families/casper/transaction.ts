@@ -33,7 +33,6 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
   return {
     ...common,
-    deploy: tr.deploy ? DeployUtil.deployFromJson(tr.deploy).unwrap() : null,
     family: tr.family,
     fees: new BigNumber(tr.fees),
     amount: new BigNumber(tr.amount),
@@ -49,7 +48,6 @@ const toTransactionRaw = (t: Transaction): TransactionRaw => {
     family: t.family,
     amount: t.amount.toFixed(),
     fees: t.fees.toString(),
-    deploy: t.deploy ? DeployUtil.deployToJson(t.deploy) : null,
     transferId: t.transferId,
   };
 };

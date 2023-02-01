@@ -61,7 +61,6 @@ const casper: CurrenciesData<Transaction> = {
             recipient: "novalidaddress",
             fees: getEstimatedFees().toString(),
             amount: "1000",
-            deploy: null,
           }),
           expectedStatus: {
             errors: {
@@ -77,7 +76,6 @@ const casper: CurrenciesData<Transaction> = {
             recipient: ACCOUNT_2,
             fees: getEstimatedFees().toString(),
             amount: (300 * 1e9).toString(),
-            deploy: null,
           }),
           expectedStatus: {
             errors: {
@@ -93,7 +91,6 @@ const casper: CurrenciesData<Transaction> = {
             recipient: ACCOUNT_2,
             amount: "0",
             fees: getEstimatedFees().toString(),
-            deploy: null,
           }),
           expectedStatus: {
             errors: {
@@ -109,7 +106,6 @@ const casper: CurrenciesData<Transaction> = {
             fees: getEstimatedFees().toString(),
             recipient: ACCOUNT_2,
             amount: "1",
-            deploy: null,
           }),
 
           expectedStatus: {
@@ -125,7 +121,6 @@ const casper: CurrenciesData<Transaction> = {
             family: "casper",
             recipient: ACCOUNT_2,
             amount: "3",
-            deploy: null,
             fees: getEstimatedFees().toString(),
           }),
           expectedStatus: {
@@ -142,7 +137,6 @@ const casper: CurrenciesData<Transaction> = {
             fees: getEstimatedFees().toString(),
             amount: "3",
             transferId: "afdsaf1",
-            deploy: null,
           }),
           expectedStatus: {
             amount: new BigNumber("3"),
