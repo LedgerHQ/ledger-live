@@ -66,7 +66,6 @@ export type LendingSupplyFlowNavigatorParamList = {
       | ScreenName.SwapForm;
     overrideAmountLabel?: string;
     hideTotal?: boolean;
-    hideFees?: boolean;
     appName?: string;
   };
   [ScreenName.LendingSupplySelectDevice]: object;

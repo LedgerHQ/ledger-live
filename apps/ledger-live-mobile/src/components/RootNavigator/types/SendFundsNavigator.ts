@@ -69,7 +69,6 @@ export type SendFundsNavigatorStackParamList = {
     accountId: string;
     parentId?: string;
     deviceId?: string;
-    hideFees?: boolean;
     transaction: Transaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
