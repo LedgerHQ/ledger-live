@@ -12,11 +12,12 @@ import { Transaction, TransactionStatus } from "../types";
 import { getAccountShape } from "./utils/account";
 import BigNumber from "bignumber.js";
 import { getEstimatedFees } from "./utils/token";
-import { getAddress, validateAddress } from "./utils/addresses";
+import { getAddress, validateAddress, validateMemo } from "./utils/addresses";
 import {
   AmountRequired,
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
+  InvalidMemoICP,
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
@@ -98,6 +99,8 @@ const getTransactionStatus = async (
 
   if (!(await validateAddress(address)).isValid)
     errors.sender = new InvalidAddress();
+
+  if (!validateMemo(t.memo).isValid) errors.transaction = new InvalidMemoICP();
 
   // This is the worst case scenario (the tx won't cost more than this value)
   const estimatedFees = t.fees;

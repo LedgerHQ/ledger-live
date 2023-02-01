@@ -1,5 +1,7 @@
 import { log } from "@ledgerhq/logs";
 import { Account, Address } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { MAX_MEMO_VALUE } from "../../consts";
 import { fetchBalances } from "./network";
 
 export const getAddress = (a: Account): Address =>
@@ -18,4 +20,14 @@ export async function validateAddress(
     log("error", e.message ?? "Failed to validate address");
     return { isValid: false };
   }
+}
+
+export function validateMemo(memo?: string): { isValid: boolean } {
+  const res = BigNumber(memo ?? 0);
+
+  if (res.isNaN() || res.gt(BigNumber(MAX_MEMO_VALUE))) {
+    return { isValid: false };
+  }
+
+  return { isValid: true };
 }

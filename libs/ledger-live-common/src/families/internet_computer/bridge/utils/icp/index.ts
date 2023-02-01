@@ -18,7 +18,7 @@ import {
   generateOperations,
   generateSignaturesPayload,
 } from "./utils";
-import { Cbor, requestIdOf } from "@dfinity/agent";
+import { Cbor } from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
 import { isError } from "../../../utils";
 import BigNumber from "bignumber.js";
@@ -97,33 +97,9 @@ export const signICPTransaction = async ({
   const signedTxnRes = await icp.sign(path, Buffer.from(txnBlobToSign), 0);
   isError(signedTxnRes);
 
-  const requestID = requestIdOf(submitReq);
-
-  const readStateRequest = {
-    request_type: "read_state",
-    paths: [[new TextEncoder().encode("request_status"), requestID]],
-    sender: Principal.fromUint8Array(txnReqFromCbor.sender),
-    ingress_expiry: expiry,
-  };
-  const readBlobToSign = Cbor.encode({
-    content: readStateRequest,
-  });
-
-  const signedReadStateRes = await icp.sign(
-    path,
-    Buffer.from(readBlobToSign),
-    0
-  );
-  isError(signedReadStateRes);
-
-  // eslint-disable-next-line no-console
-  console.log(Buffer.from(txnBlobToSign).toString("hex"));
-
   const result = {
     signatures: {
-      readSig: Buffer.from(signedReadStateRes.signatureRS ?? "").toString(
-        "hex"
-      ),
+      readSig: "",
       txnSig: Buffer.from(signedTxnRes.signatureRS ?? "").toString("hex"),
     },
   };
