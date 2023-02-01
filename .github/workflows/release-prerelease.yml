@@ -17,20 +17,26 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - uses: actions/checkout@v3
         if: ${{ github.event_name == 'push' }}
         with:
-          token: ${{ secrets.GH_PAT }}
+          token: ${{ steps.generate-token.outputs.token }}
       - uses: actions/checkout@v3
         if: ${{ github.event_name == 'workflow_dispatch' }}
         with:
           ref: ${{ inputs.ref }}
-          token: ${{ secrets.GH_PAT }}
+          token: ${{ steps.generate-token.outputs.token }}
 
       - name: set git user
         run: |
           git config user.email "team-live@ledger.fr"
-          git config user.name "Team Live"
+          git config user.name "live-github-bot[bot]"
       - uses: pnpm/action-setup@v2
         with:
           version: latest
@@ -127,7 +133,7 @@ jobs:
         name: trigger prerelease build for desktop
         if: ${{ steps.desktop-version.outputs.version != steps.post-desktop-version.outputs.version }}
         with:
-          github-token: ${{ secrets.GH_PAT }}
+          github-token: ${{ steps.generate-token.outputs.token }}
           script: |
             github.rest.actions.createWorkflowDispatch({
               owner: "ledgerhq",
@@ -142,7 +148,7 @@ jobs:
         name: trigger prerelease build of mobile
         if: ${{ steps.mobile-version.outputs.version != steps.post-mobile-version.outputs.version }}
         with:
-          github-token: ${{ secrets.GH_PAT }}
+          github-token: ${{ steps.generate-token.outputs.token }}
           script: |
             github.rest.actions.createWorkflowDispatch({
               owner: "ledgerhq",
