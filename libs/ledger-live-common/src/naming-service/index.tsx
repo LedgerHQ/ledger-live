@@ -20,8 +20,10 @@ const NamingServiceContext = createContext<NamingServiceContextType>({
   clearCache: () => {},
 });
 
-const isNameValid = (name: string | undefined): boolean =>
-  !!(name && name?.match(/[.*]\w{1,}/g) !== null);
+const isNameValid = (name: string | undefined): boolean => {
+  const regex = /[.*]\w{1,}/g;
+  return regex.test(name);
+}
 
 export const useNamingServiceAPI = (
   name: string | undefined
