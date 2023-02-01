@@ -13,9 +13,6 @@ on:
   #   - cron: "0 0/12 * * *"
   workflow_dispatch:
     inputs:
-      sha:
-        description: the head sha to target the correct check run
-        required: false
       ref:
         description: the branch which triggered this workflow
         required: true
@@ -46,7 +43,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ inputs.sha || inputs.ref || github.ref }}
+          ref: ${{ inputs.ref || github.ref }}
       - uses: pnpm/action-setup@v2
         with:
           version: latest
@@ -112,7 +109,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ inputs.sha || inputs.ref || github.ref }}
+          ref: ${{ inputs.ref || github.ref }}
       - uses: ./tools/actions/composites/upload-allure-report
         with:
           platform: ios
@@ -232,11 +229,11 @@ jobs:
   report:
     needs: [detox-tests-ios]
     runs-on: ubuntu-latest
-    if: always() && !cancelled() && github.event_name == 'workflow_dispatch' && inputs.sha != ''
+    if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ inputs.sha || inputs.ref || github.ref }}
+          ref: ${{ inputs.ref || github.ref }}
       - uses: actions/github-script@v6
         name: prepare status
         id: status

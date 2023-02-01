@@ -4,9 +4,6 @@ run-name: "@Desktop • Test App (external) triggered by ${{ inputs.login }} ${{
 on:
   workflow_dispatch:
     inputs:
-      sha:
-        description: the head sha to target the correct check run
-        required: false
       ref:
         description: the branch which triggered this workflow
         required: true
@@ -29,7 +26,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ inputs.sha || inputs.ref || github.ref }}
+          ref: ${{ inputs.ref || github.ref }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
       - name: TurboRepo local caching server
@@ -55,7 +52,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ inputs.sha || inputs.ref || github.ref }}
+          ref: ${{ inputs.ref || github.ref }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
       - name: TurboRepo local caching server
@@ -86,7 +83,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ inputs.sha || inputs.ref || github.ref }}
+          ref: ${{ inputs.ref || github.ref }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
       - name: Install node-gyp globally
@@ -119,7 +116,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ inputs.sha || inputs.ref || github.ref }}
+          ref: ${{ inputs.ref || github.ref }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
       - name: Install node-gyp globally
@@ -152,7 +149,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ inputs.sha || inputs.ref || github.ref }}
+          ref: ${{ inputs.ref || github.ref }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
       - name: Install node-gyp globally
@@ -174,11 +171,11 @@ jobs:
     needs:
       [typecheck, unit-tests, e2e-tests-linux, e2e-tests-mac, e2e-tests-windows]
     runs-on: ubuntu-latest
-    if: always() && !cancelled() && github.event_name == 'workflow_dispatch' && inputs.sha != ''
+    if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ inputs.sha || inputs.ref || github.ref }}
+          ref: ${{ inputs.ref || github.ref }}
       - name: download images artifacts
         uses: actions/download-artifact@v3
         with:
@@ -333,7 +330,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3
         with:
-          ref: ${{ inputs.sha || inputs.ref || github.ref }}
+          ref: ${{ inputs.ref || github.ref }}
       - name: Download Allure Report - Windows
         uses: actions/download-artifact@v3
         with:

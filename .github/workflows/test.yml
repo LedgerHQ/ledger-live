@@ -13,9 +13,6 @@ on:
       since_branch:
         description: The branch that turborepo will check when diffing.
         default: "develop"
-      sha:
-        description: the head sha to target the correct check run
-        required: false
       ref:
         description: the branch which triggered this workflow
         required: true
@@ -36,7 +33,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ inputs.sha || inputs.ref || github.ref }}
+          ref: ${{ inputs.ref || github.ref }}
       - uses: pnpm/action-setup@v2
         with:
           version: latest
@@ -65,7 +62,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ inputs.sha || inputs.ref || github.ref }}
+          ref: ${{ inputs.ref || github.ref }}
       - uses: pnpm/action-setup@v2
         with:
           version: latest
@@ -105,7 +102,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ inputs.sha || inputs.ref || github.ref }}
+          ref: ${{ inputs.ref || github.ref }}
           fetch-depth: 0
       - uses: pnpm/action-setup@v2
         with:
@@ -164,7 +161,7 @@ jobs:
 
   report:
     needs: [test-cli, test-docs, test-libraries]
-    if: always() && !cancelled() && github.event_name == 'workflow_dispatch' && inputs.sha != ''
+    if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v3

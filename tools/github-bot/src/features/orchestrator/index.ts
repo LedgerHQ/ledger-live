@@ -211,7 +211,7 @@ export function orchestrator(app: Probot) {
             repo,
             workflow_id: fileName,
             ref: payload.workflow_run.pull_requests[0]?.head.ref,
-            inputs: workflow.getInputs(payload, checkSuite),
+            inputs: workflow.getInputs(payload),
           });
         }
       });
