@@ -8,7 +8,7 @@ export function isOutdated(resource: NamingServiceStatus): boolean {
 
   switch (resource.status) {
     case "loaded": {
-      return now - resource.updatedAt >  60 * 1000; // 1 minute
+      return now - resource.updatedAt > 60 * 1000; // 1 minute
     }
     case "error": {
       return now - resource.updatedAt > 1 * 1000; // 1 second
