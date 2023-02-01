@@ -1,6 +1,7 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
 import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
+import { methodToString } from "./utils";
 
 export const acceptTransaction: DeviceAction<Transaction, any> =
   deviceActionFlow({
@@ -8,6 +9,9 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       {
         title: "Transaction type",
         button: "Rr",
+        expectedValue: () => {
+          return methodToString(0);
+        },
       },
       {
         title: "From account",
