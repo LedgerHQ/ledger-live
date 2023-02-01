@@ -2,12 +2,34 @@ import estimateMaxSpendable from "./js-estimateMaxSpendable";
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
+import axios from "axios";
 
-// NOTE: Hedera declares stable fees in USD
-//       If we can get the current USD/HBAR price here..
-//       > transfer fee is 0.0001 USD
-export const estimatedFees = new BigNumber("83300"); // 0.000833 ℏ (as of 2021-09-20)
 export const estimatedFeeSafetyRate = 2;
+
+export async function getEstimatedFees(): Promise<BigNumber> {
+  // If get hedera price works, use real estimate, otherwise fallback to hard coded
+  let hederaPrice;
+
+  try {
+    const { data } = await axios.get(
+      "https://countervalues.live.ledger.com/latest/direct?pairs=hbar:usd"
+    );
+
+    hederaPrice = data[0];
+  } catch {
+    hederaPrice = 0;
+  }
+
+  let estimatedFees = new BigNumber("212800"); // 0.002128 ℏ (as of 2023-01-09)
+
+  if (hederaPrice) {
+    estimatedFees = new BigNumber("0.0001").dividedBy(
+      new BigNumber(hederaPrice)
+    );
+  }
+
+  return estimatedFees;
+}
 
 export async function calculateAmount({
   account,
