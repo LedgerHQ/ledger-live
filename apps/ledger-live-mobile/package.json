@@ -53,7 +53,7 @@
     "test:env": "node ./scripts/mobile-env-md.mjs",
     "sync-locales": "./scripts/sync-locales.sh",
     "test-deep-links": "ws --spa ./deep-links-test-page.html",
-    "download-hermes-profile": "./scripts/download-hermes-profile.sh"
+    "download-hermes-profile": "zx ./scripts/download-hermes-profile.mjs"
   },
   "jest": {
     "preset": "react-native",
