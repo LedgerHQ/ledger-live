@@ -2,6 +2,7 @@ import React, { ReactNode } from "react";
 import {
   isAccountEmpty,
   getMainAccount,
+  groupAccountOperationsByDay,
 } from "@ledgerhq/live-common/account/index";
 import {
   AccountLike,
@@ -131,18 +132,14 @@ export function getListHeaderComponents({
 
   const stickyHeaderIndices = empty ? [] : [0];
 
-  const { pendingOperations, operations } = account;
-
-  const [lastOperation] = operations.sort(
-    (a, b) => b.date.getTime() - a.date.getTime(),
-  );
+  const [latestOperation] = groupAccountOperationsByDay(account, {
+    count: 2,
+  }).sections[0].data.filter(operation => operation.type === "OUT");
 
   const shouldRenderEditTxModal =
     mainAccount.currency.family === "ethereum" &&
-    pendingOperations.find(
-      operation => operation.hash === lastOperation.hash,
-    ) &&
-    lastOperation?.date.getTime() < new Date().getTime() - FIVE_MINUTES;
+    latestOperation.blockHeight === null;
+  latestOperation?.date.getTime() < new Date().getTime() - FIVE_MINUTES;
 
   return {
     listHeaderComponents: [
@@ -172,7 +169,7 @@ export function getListHeaderComponents({
           <SideImageCard
             title={t("editTransaction.stuckTx")}
             cta={t("editTransaction.speedupOrCancel")}
-            onPress={() => onEditTransactionPress(lastOperation)}
+            onPress={() => onEditTransactionPress(latestOperation)}
           />
         </SectionContainer>
       ) : null,
