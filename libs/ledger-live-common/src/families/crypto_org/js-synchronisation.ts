@@ -21,16 +21,14 @@ const getAccountShape: GetAccountShape = async (info) => {
     xpubOrAddress: address,
     derivationMode,
   });
-  // Needed for incremental synchronisation
-  const startAt = oldOperations.length
-    ? Math.floor(oldOperations[0].date.valueOf() / 1000)
-    : 0;
+  // FIXME startAt is hardcoded, no incremental sync available with current API?
+  let startAt = 0;
   let maxIteration = 20;
   let operations = oldOperations;
   let newOperations = await getOperations(
     accountId,
     address,
-    startAt,
+    startAt++,
     currency.id
   );
 
@@ -39,7 +37,7 @@ const getAccountShape: GetAccountShape = async (info) => {
     newOperations = await getOperations(
       accountId,
       address,
-      startAt,
+      startAt++,
       currency.id
     );
   } while (--maxIteration && newOperations.length != 0);

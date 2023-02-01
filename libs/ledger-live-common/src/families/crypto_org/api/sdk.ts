@@ -184,9 +184,9 @@ export const getOperations = async (
     : getEnv("CRYPTO_ORG_INDEXER");
   const { data } = await network({
     method: "GET",
-    url: `${crypto_org_indexer}/api/v1/accounts/${addr}/transactions?pagination=offset&current_page=${
-    startAt + 1
-  }&limit=${PAGINATION_LIMIT}`,
+    url: `${crypto_org_indexer}/api/v1/accounts/${addr}/transactions?pagination=offset&page=${
+      startAt + 1
+    }&limit=${PAGINATION_LIMIT}`,
   });
   const accountTransactions: CryptoOrgAccountTransaction[] = data.result;
 
