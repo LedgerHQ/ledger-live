@@ -56,6 +56,8 @@ import type {
 } from "../../components/RootNavigator/types/helpers";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 
+const FIVE_MINUTES = 5 * 60 * 1000;
+
 type HelpLinkProps = {
   event: string;
   title: React.ReactNode;
@@ -143,6 +145,9 @@ export default function Content({
   const subOperations = operation.subOperations || [];
   const internalOperations = operation.internalOperations || [];
   const shouldDisplayTo = uniqueRecipients.length > 0 && !!uniqueRecipients[0];
+
+  const isOperationStuck =
+    operation.date.getTime() <= new Date().getTime() - FIVE_MINUTES;
 
   const onEditTxCardClick = () => {
     navigation.navigate(NavigatorName.EthereumEditTransaction, {
@@ -353,18 +358,26 @@ export default function Content({
       ) : null}
 
       <Flex
-        backgroundColor={"primary.c80"}
+        backgroundColor={isOperationStuck ? "primary.c80" : "primary.c80"}
         color={"primary.c80"}
         width="90%"
         alignSelf={"center"}
         borderRadius={8}
         padding={8}
       >
-        <InformativeCard
-          tag="Adjust Network fees"
-          title={"Your transaction is ongoing"}
-          onClickCard={onEditTxCardClick}
-        />
+        {isOperationStuck ? (
+          <InformativeCard
+            title={t("editTransaction.stuckTx")}
+            tag={t("editTransaction.speedupOrCancel")}
+            onClickCard={onEditTxCardClick}
+          />
+        ) : (
+          <InformativeCard
+            title={t("editTransaction.speedUpTxMessage")}
+            tag={t("editTransaction.speedupOrCancel")}
+            onClickCard={onEditTxCardClick}
+          />
+        )}
       </Flex>
 
       {!disableAllLinks ? (
