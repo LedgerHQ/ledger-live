@@ -42,7 +42,7 @@ jobs:
   #     - name: checkout
   #       uses: actions/checkout@v3
   #       with:
-  #         ref: ${{ github.event.inputs.ref || 'develop' }}
+  #         ref: ${{ github.event.inputs.ref || github.event.pull_request.head.ref || 'develop' }}
   #     - uses: pnpm/action-setup@v2
   #       with:
   #         version: latest
@@ -114,49 +114,49 @@ jobs:
   #         login: ${{ secrets.ALLURE_LOGIN }}
   #         password: ${{ secrets.ALLURE_PASSWORD }}
   #         path: allure-ios-reports
-  start-runner:
-    name: Start self-hosted EC2 runner
-    runs-on: [ledger-live, linux]
-    outputs:
-      label: ${{ steps.start-ec2-linux-runner.outputs.label }}
-      ec2-instance-id: ${{ steps.start-ec2-linux-runner.outputs.ec2-instance-id }}
-    steps:
-      - name: Start EC2 Linux Runner
-        id: start-ec2-linux-runner
-        uses: LedgerHQ/actions/ec2-linux-runner@main
-        with:
-          mode: start
-          github-token: ${{ secrets.CI_BOT_TOKEN }}
-          project: 2049
-          aws-nfs-logging: true
-          ami-name-filter: ledger-live-runner
-          instance-volume-size: 40
-          instance-type: c5.4xlarge
+  # start-runner:
+  #   name: Start self-hosted EC2 runner
+  #   runs-on: [ledger-live, linux]
+  #   outputs:
+  #     label: ${{ steps.start-ec2-linux-runner.outputs.label }}
+  #     ec2-instance-id: ${{ steps.start-ec2-linux-runner.outputs.ec2-instance-id }}
+  #   steps:
+  #     - name: Start EC2 Linux Runner
+  #       id: start-ec2-linux-runner
+  #       uses: LedgerHQ/actions/ec2-linux-runner@main
+  #       with:
+  #         mode: start
+  #         github-token: ${{ secrets.CI_BOT_TOKEN }}
+  #         project: 2049
+  #         aws-nfs-logging: true
+  #         ami-name-filter: ledger-live-runner
+  #         instance-volume-size: 40
+  #         instance-type: c5.4xlarge
 
-  stop-runner:
-    name: Stop self-hosted EC2 runner
-    if: ${{ always() && needs.start-runner.result == 'success' }}
-    needs: [start-runner, detox-tests-android]
-    runs-on: [ledger-live, linux]
-    steps:
-      - name: Stop EC2 Linux Runner
-        if: ${{ always() && needs.start-runner.result == 'success' }}
-        uses: LedgerHQ/actions/ec2-linux-runner@main
-        with:
-          mode: stop
-          github-token: ${{ secrets.CI_BOT_TOKEN }}
-          label: ${{ needs.start-runner.outputs.label }}
-          ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
+  # stop-runner:
+  #   name: Stop self-hosted EC2 runner
+  #   if: ${{ always() && needs.start-runner.result == 'success' }}
+  #   needs: [start-runner, detox-tests-android]
+  #   runs-on: [ledger-live, linux]
+  #   steps:
+  #     - name: Stop EC2 Linux Runner
+  #       if: ${{ always() && needs.start-runner.result == 'success' }}
+  #       uses: LedgerHQ/actions/ec2-linux-runner@main
+  #       with:
+  #         mode: stop
+  #         github-token: ${{ secrets.CI_BOT_TOKEN }}
+  #         label: ${{ needs.start-runner.outputs.label }}
+  #         ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
 
   detox-tests-android:
     name: "Ledger Live Mobile - Android Detox Tests"
-    runs-on: ${{ needs.start-runner.outputs.label }}
-    needs: [start-runner]
+    runs-on: [m1, ARM64]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
+      SKIP_BUNDLE_CHECK: 1
     steps:
       - name: checkout
         uses: actions/checkout@v3
@@ -178,15 +178,12 @@ jobs:
           cache: "gradle"
       - name: setup Android SDK
         uses: android-actions/setup-android@v2.0.8
-      - name: export HOME env
-        run: |
-          echo "HOME=/root" >> $GITHUB_ENV
+      # - name: export HOME env
+      #   run: |
+      #     echo "HOME=/root" >> $GITHUB_ENV
       - name: Install dependencies
         run: |
           pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
-          echo "======== cat ADB.js ========"
-          cat ./apps/ledger-live-mobile/node_modules/detox/src/devices/common/drivers/android/exec/ADB.js
-          echo "======== end ADB.js ========"
       - name: Build dependencies
         run: |
           pnpm build:llm:deps
@@ -201,7 +198,7 @@ jobs:
           target: default
           avd-name: "Pixel_5_API_31"
           force-avd-creation: true
-          emulator-options: -verbose -no-snapshot-save -no-window -noaudio -no-boot-anim -camera-back none
+          emulator-options: -verbose -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           cores: 4
           ram-size: 4096M
           heap-size: 512M
@@ -219,7 +216,7 @@ jobs:
           target: default
           avd-name: "Pixel_5_API_31"
           force-avd-creation: false
-          emulator-options: -verbose -no-snapshot-save -no-window -noaudio -no-boot-anim -camera-back none
+          emulator-options: -verbose -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           cores: 4
           ram-size: 4096M
           heap-size: 512M
