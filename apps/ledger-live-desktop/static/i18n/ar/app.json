@@ -102,6 +102,7 @@
     "addressCopied" : "تم نسخ العنوان",
     "addressCopiedSuspicious" : "عدم تطابق العنوان المنسوخ والعنوان الموجود في ذاكرة النصوص.",
     "experimentalFeature" : "تجريبي",
+    "featureFlags" : "علامات الميزة",
     "information" : "معلومات",
     "search" : "جارٍ البحث...",
     "searchWithoutEllipsis" : "بحث",
@@ -131,7 +132,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blue"
   },
   "operation" : {
@@ -217,7 +218,8 @@
     "swap" : "مبادلة",
     "lend" : "إقراض",
     "catalog" : "Discover",
-    "market" : "السوق"
+    "market" : "السوق",
+    "protect" : "Protect"
   },
   "stars" : {
     "placeholder" : "قم بتفضيل حساب لعرضه هنا.",
@@ -1206,8 +1208,11 @@
         "checkDeviceButton" : "إجراء الاختبار مرةً أخرى",
         "cancelButton" : "ربّما في وقت لاحق"
       },
-      "genuineCheckAnimationModal" : {
-        "message" : "تمكين المدير على {{deviceName}}"
+      "softwareCheckAllowSecureChannelModal" : {
+        "title" : "قم بتمكين المدير على {{deviceName}}"
+      },
+      "softwareCheckLockedDeviceModal" : {
+        "title" : "قم بإلغاء قفل جهازك"
       },
       "helpDrawer" : {
         "title" : "هل تحتاج بعض المساعدة في كُتيّب الإعداد خاصتك؟",
@@ -1718,7 +1723,7 @@
     "swap" : {
       "notice" : {
         "default" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. يتم تبادل العناوين بشكل آمن حتى لا تضطر إلى التحقق منهم.",
-        "cic" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. CIC قد تحتاج إلى إجراء تحقق إضافي لبعض المعاملات، مما يؤدي إلى تأخير."
+        "provider" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. {{providerName}} قد يحتاج إلى إجراء تحقق إضافي لبعض المعاملات، ما يؤدي إلى تأخير."
       },
       "confirm" : "تأكيد معاملة المبادلة",
       "amountSent" : "المبلغ المطلوب إرساله",
@@ -3395,15 +3400,15 @@
     "stake" : {
       "title" : "اكسب إيثريوم",
       "lido" : {
-        "tag" : "دون حد أدنى",
-        "description" : "قم بتكديس إيثريوم خاصتك مع Lido واكسب مكافآت يومية. دون فترة قَفل. دون حد أدنى."
+        "tag" : "ليس هناك حد أدنى",
+        "description" : "قم بتكديس إيثريوم خاصتك مع Lido واكسب مكافآت يومية. ليس هناك فترة قَفل. ليس هناك حد أدنى."
       },
       "kiln" : {
         "tag" : "يتطلب 32 ETH",
-        "description" : "لديك أكثر من 32 ETH؟ اكسب مكافآت يومية عن طريق تكديس ETH خاصتك بأمان مع Kiln."
+        "description" : "لديك أكثر من 32 ETH؟ اكسب مكافآت يومياً عن طريق تكديس ETH خاصتك بأمان مع Kiln."
       },
       "providerTitle" : "اكسب مع {{provider}}",
-      "providerLink" : "معرفة المزيد عن {{provider}}"
+      "providerLink" : "تعرف على المزيد عن {{provider}}"
     }
   },
   "near" : {
@@ -3689,8 +3694,10 @@
       "debugAppsDesc" : "عرض تطبيقات المنصة لتصحيح الأخطاء والسماح بفتحها.",
       "experimentalApps" : "السماح بالتطبيقات التجريبية",
       "experimentalAppsDesc" : "عرض تطبيقات المنصة التجريبية والسماح بفتحها.",
-      "catalogServer" : "تعيين مزود الكتالوج",
-      "catalogServerDesc" : "التبديل بين مصادر تطبيقات المنصة المتعددة",
+      "catalogUrl" : "تعيين مزود تطبيقات الكتالوج",
+      "catalogUrlDesc" : "أدخِل رابط URL لمزود الكتالوج المخصص لديك",
+      "catalogRampServer" : "تعيين مزودي الشراء / البيع",
+      "catalogRampServerDesc" : "التبديل بين مزودي تداول متعددين",
       "enablePlatformDevTools" : "تمكين أدوات تطوير المنصة",
       "enablePlatformDevToolsDesc" : "تمكين فتح نافذة أدوات تطوير تطبيقات المنصة",
       "featureFlagsTitle" : "علامات الميزة المحددة المستخدمة في Ledger Live",
@@ -3698,6 +3705,9 @@
       "featureFlagsEdit" : "تعديل",
       "featureFlagsRestore" : "استعادة",
       "featureFlagsOverride" : "تجاوز",
+      "featureFlagsRestoreAll" : "استعادة جميع قيم العلامات",
+      "showButtonDesc" : "عرض زر علامات الميزة في الشريط الجانبي دائماً",
+      "buttonTitle" : "تم تجاوز العلامات محلياً",
       "firebaseProject" : "مشروع Firebase الذي يستهدفه هذا الإصدار:",
       "addLocalApp" : "إضافة تطبيق محلي",
       "addLocalAppDesc" : "تصفح الملفات المحلية وقم بإضافة تطبيق محلي باستخدام بيان محلي",
@@ -3756,6 +3766,10 @@
         "experimentalCurrencies" : {
           "title" : "دمج تجريبي",
           "description" : "استخدم عمليات تكامل الأصول المشفرة التجريبية المتاحة."
+        },
+        "experimentalExecutionOnRenderer" : {
+          "title" : "الشبكات التجريبية",
+          "description" : "استخدم الشبكات التجريبية لتحسين تجربتك مع Ledger Live عن طريق الشبكة الافتراضية الخاصة (VPN) لديك. قم بتنشيط هذا فقط في حالة تسببت الشبكة الافتراضية الخاصة (VPN) التي تستخدمها حالياً في أخطاء بالنظام."
         },
         "experimentalLanguages" : {
           "title" : "اختبار الترجمة",
@@ -5010,7 +5024,7 @@
     },
     "OperatingSystemOutdated" : {
       "title" : "إصدار نظام التشغيل لديك قديم",
-      "description" : "يُرجى ترقية نظام التشغيل لديك والمحاولة مجدداً. يمكنك الرجوع إلى المقالة أدناه لفهم لماذا Ledger Live غير مدعوم على إصدار نظام التشغيل المثبّت لديك حالياً."
+      "description" : "يُرجى ترقية نظام التشغيل لديك والمحاولة مجدداً. يمكنك الرجوع إلى المقالة أدناه لفهم لماذا Ledger Live غير مدعوم على إصدار نظام التشغيل الحالي لديك."
     },
     "PasswordsDontMatch" : {
       "title" : "كلمات المرور غير متطابقتين",
@@ -5497,6 +5511,14 @@
       "title" : "جهازك مقفل",
       "description" : "قم بإلغاء قفل جهازك وحاول مرة أخرى.",
       "descriptionWithProductName" : "قم بإلغاء قفل {{ productName }} خاصتك وحاول مرة أخرى."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "جهازك غير مُستعد للاستخدام بعد",
+      "titleWithProductName" : "{{ productName }} غير جاهز للاستخدام بعد",
+      "description" : "يجب أن تقوم بإعداد جهازك أولاً.\nسنرشدك خلال عملية الإعداد.",
+      "descriptionWithProductName" : "يجب أن تقوم بإعداد {{ productName }} خاصتك أولاً.\nسنرشدك خلال عملية الإعداد.",
+      "goToOnboardingButton" : "إعداد جهازي",
+      "goToOnboardingButtonWithProductName" : "إعداد {{ productName }}"
     }
   },
   "cryptoOrg" : {
@@ -5559,10 +5581,16 @@
     "postOnboarding" : {
       "title" : "تخصيص جهازي",
       "description" : "عبر تخصيص الشاشة",
-      "actionCompletedPopupLabel" : "تم تخصيص الجهاز",
-      "actionCompletedHubTitle" : "تلك الشاشة تبدو أنيقة."
+      "actionCompletedPopupLabel" : "تم تخصيص الجهاز"
     },
     "customImageSet" : "تم تعيين الصورة المخصصة",
     "finishCTA" : "إنهاء"
+  },
+  "discoverProtect" : {
+    "new" : "جديد",
+    "title" : "مع Protect، لا تفقد الوصول إلى أصولك أبداً. أبدًا.",
+    "description" : "Protect تتحمل مسؤولية حماية عبارة الاسترداد الخاصة بك، وذلك لمنع أي خسارة بالأصول تحدث بسبب سرقة أو فقدان عبارة الاسترداد الخاصة بك أو جهازك Ledger.",
+    "cta" : "اكتشاف المزايا",
+    "downloadLLM" : "للاشتراك، امسح ضوئياً كود QR وقم بتنزيل تطبيق الجوَّال الخاص بنا"
   }
 }
