@@ -102,6 +102,7 @@
     "addressCopied" : "アドレスをコピーしました",
     "addressCopiedSuspicious" : "コピーしたアドレスとクリップボードのアドレスが一致しません。",
     "experimentalFeature" : "試験的",
+    "featureFlags" : "機能フラグ",
     "information" : "インフォメーション",
     "search" : "検索…",
     "searchWithoutEllipsis" : "検索",
@@ -131,7 +132,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blue"
   },
   "operation" : {
@@ -217,7 +218,8 @@
     "swap" : "スワップ",
     "lend" : "レンディング",
     "catalog" : "Discover",
-    "market" : "マーケット"
+    "market" : "マーケット",
+    "protect" : "Protect（プロテクト）"
   },
   "stars" : {
     "placeholder" : "お気に入りに登録したアカウントは、こちらに表示されます。",
@@ -1206,8 +1208,11 @@
         "checkDeviceButton" : "再度チェックを実行する",
         "cancelButton" : "後で"
       },
-      "genuineCheckAnimationModal" : {
-        "message" : "{{deviceName}}でマネージャーを許可する"
+      "softwareCheckAllowSecureChannelModal" : {
+        "title" : "{{deviceName}}でマネージャーを許可する"
+      },
+      "softwareCheckLockedDeviceModal" : {
+        "title" : "デバイスのロックを解除する"
       },
       "helpDrawer" : {
         "title" : "セットアップマニュアルでお困りですか？",
@@ -1718,7 +1723,7 @@
     "swap" : {
       "notice" : {
         "default" : "送付する前に、スワップの詳細をデバイス上で確認してください。アドレスは安全にやりとりされるため、確認の必要はありません。",
-        "cic" : "送付する前に、スワップの詳細をデバイス上で確認してください。CICでは、一部のトランザクションに対して追加の検証を実行する必要があり、遅延が発生する場合があります。"
+        "provider" : "送付前に、スワップの詳細をデバイス上で確認してください。{{providerName}}では、一部のトランザクションに対して追加の検証を実行する必要があり、遅延が発生する場合があります。"
       },
       "confirm" : "スワップ取引を確定",
       "amountSent" : "送付額",
@@ -3689,8 +3694,10 @@
       "debugAppsDesc" : "デバッグとしてタグ付けされたプラットフォームアプリの表示と実行を許可します。",
       "experimentalApps" : "試験的なアプリを許可する",
       "experimentalAppsDesc" : "試験的とタグ付けされたプラットフォームアプリの表示と実行を許可する",
-      "catalogServer" : "カタログプロバイダーの設定",
-      "catalogServerDesc" : "複数のプラットフォームアプリのソースを切り替える",
+      "catalogUrl" : "カタログアプリプロバイダーを設定",
+      "catalogUrlDesc" : "カスタムカタログプロバイダーのURLを入力",
+      "catalogRampServer" : "購入/売却プロバイダーを設定",
+      "catalogRampServerDesc" : "複数のトレードプロバイダーを切り替える",
       "enablePlatformDevTools" : "プラットフォーム開発ツールの有効化",
       "enablePlatformDevToolsDesc" : "プラットフォームアプリの開発ツールウィンドウ表示を有効化",
       "featureFlagsTitle" : "Ledger Liveで使用される定義済みの機能フラグ",
@@ -3698,6 +3705,9 @@
       "featureFlagsEdit" : "編集",
       "featureFlagsRestore" : "復元",
       "featureFlagsOverride" : "上書き",
+      "featureFlagsRestoreAll" : "すべてのフラグ値を復元する",
+      "showButtonDesc" : "サイドバーに常に機能フラグボタンを表示する",
+      "buttonTitle" : "フラグがローカルでオーバーライドされています",
       "firebaseProject" : "対象となるFirebaseプロジェクト：",
       "addLocalApp" : "ローカルアプリを追加",
       "addLocalAppDesc" : "ローカルファイルを参照し、ローカルのマニフェストファイルを使用してローカルアプリを追加する",
@@ -3756,6 +3766,10 @@
         "experimentalCurrencies" : {
           "title" : "試験的統合",
           "description" : "利用可能な試験的暗号資産の統合を使用する。"
+        },
+        "experimentalExecutionOnRenderer" : {
+          "title" : "試験的ネットワーキング",
+          "description" : "試験的ネットワーキングを使用して、VPNでのLedger Liveエクスペリエンスを最適化します。現在のVPNでシステムエラーが発生する場合にのみ、有効化してください。"
         },
         "experimentalLanguages" : {
           "title" : "翻訳テスト",
@@ -5497,6 +5511,14 @@
       "title" : "デバイスがロックされています。",
       "description" : "デバイスのロックを解除して、再度お試しください。",
       "descriptionWithProductName" : "{{ productName }}のロックを解除して、再度お試しください。"
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "お使いのデバイスはまだ使用できません",
+      "titleWithProductName" : "{{ productName }}はまだ使用準備ができていません",
+      "description" : "最初にデバイスをセットアップする必要があります。\nセットアッププロセスをご案内します。",
+      "descriptionWithProductName" : "最初に{{ productName }}をセットアップする必要があります。\nセットアッププロセスをご案内します。",
+      "goToOnboardingButton" : "デバイスをセットアップ",
+      "goToOnboardingButtonWithProductName" : "{{ productName }}をセットアップする"
     }
   },
   "cryptoOrg" : {
@@ -5559,10 +5581,16 @@
     "postOnboarding" : {
       "title" : "Ledgerデバイスをパーソナライズ",
       "description" : "画面をカスタマイズ",
-      "actionCompletedPopupLabel" : "デバイスがパーソナライズされました",
-      "actionCompletedHubTitle" : "画面状態は良好です。"
+      "actionCompletedPopupLabel" : "デバイスがパーソナライズされました"
     },
     "customImageSet" : "画像セットをカスタマイズ",
     "finishCTA" : "終了する"
+  },
+  "discoverProtect" : {
+    "new" : "新商品",
+    "title" : "Protectなら、資産へのアクセスを失うことはありません。絶対に。",
+    "description" : "Protectは、責任を持ってお客様のリカバリーフレーズを保護します。つまり、お客様のリカバリーフレーズ、あるいはLedgerの盗難や紛失による資産の損失を防ぎます。",
+    "cta" : "メリット",
+    "downloadLLM" : "登録の際は、QRコードをスキャンしてモバイルアプリをダウンロードしてください"
   }
 }
