@@ -102,6 +102,7 @@
     "addressCopied" : "주소 복사됨",
     "addressCopiedSuspicious" : "복사된 주소와 클립보드 주소가 일치하지 않습니다.",
     "experimentalFeature" : "실험",
+    "featureFlags" : "기능 플래그",
     "information" : "정보",
     "search" : "검색 중...",
     "searchWithoutEllipsis" : "검색",
@@ -131,7 +132,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blue"
   },
   "operation" : {
@@ -217,7 +218,8 @@
     "swap" : "스왑",
     "lend" : "대출",
     "catalog" : "탐색",
-    "market" : "마켓"
+    "market" : "마켓",
+    "protect" : "Protect"
   },
   "stars" : {
     "placeholder" : "계정을 즐겨찾기 하여 여기서 바로 확인하세요.",
@@ -1206,8 +1208,11 @@
         "checkDeviceButton" : "확인 절차를 다시 실행하세요",
         "cancelButton" : "다음에 결정하기"
       },
-      "genuineCheckAnimationModal" : {
-        "message" : "{{deviceName}}에서 관리자 허용"
+      "softwareCheckAllowSecureChannelModal" : {
+        "title" : "{{deviceName}}에서 관리자 허용"
+      },
+      "softwareCheckLockedDeviceModal" : {
+        "title" : "장치를 잠금 해제하세요"
       },
       "helpDrawer" : {
         "title" : "설정 안내와 관련하 도움이 필요하신가요?",
@@ -1718,7 +1723,7 @@
     "swap" : {
       "notice" : {
         "default" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다.",
-        "cic" : "장치에서 자금 세부사항을 확인한 후 전송하세요. CIC는 일부 트랜잭션에 대해 추가 확인을 수행해야 하므로 지연이 발생할 수 있습니다."
+        "provider" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 일부 트랜잭션에서 {{providerName}}의 추가 확인 단계가 필요할 수 있어 지연이 발생할 수 있습니다."
       },
       "confirm" : "스왑 트랜잭션을 검증하세요",
       "amountSent" : "전송 금액",
@@ -3689,8 +3694,10 @@
       "debugAppsDesc" : "디버그 태그된 플랫폼 앱 열기를 표시하고 허용하세요.",
       "experimentalApps" : "실험적 앱 허용",
       "experimentalAppsDesc" : "실험적이라 태그 된 플랫폼 앱을 표시하고 허용하세요.",
-      "catalogServer" : "카탈로그 공급자 설정",
-      "catalogServerDesc" : "다중 플랫폼 앱 소스 간 전환",
+      "catalogUrl" : "카탈로그 앱 공급자 설정",
+      "catalogUrlDesc" : "사용자 지정 카탈로그 제공자 URL를 입력하세요",
+      "catalogRampServer" : "구매 / 매도 공급자 설정",
+      "catalogRampServerDesc" : "다중 거래 공급자 간 전환",
       "enablePlatformDevTools" : "플랫폼 개발자 도구 사용",
       "enablePlatformDevToolsDesc" : "개방형 플랫폼 앱 개발자 도구 창 사용",
       "featureFlagsTitle" : "Ledger Live에서 사용되는 정의된 기능 플래그",
@@ -3698,6 +3705,9 @@
       "featureFlagsEdit" : "편집",
       "featureFlagsRestore" : "복구",
       "featureFlagsOverride" : "재정의",
+      "featureFlagsRestoreAll" : "모든 플래그 값 복원",
+      "showButtonDesc" : "사이드바에 항상 기능 플래그 버튼 표시",
+      "buttonTitle" : "플래그가 로컬로 재정의되었습니다",
       "firebaseProject" : "이 빌드에서 대상으로 하는 Firebase 프로젝트:",
       "addLocalApp" : "로컬 앱 추가",
       "addLocalAppDesc" : "로컬 매니페스트 기능으로 로컬 파일을 둘러보고 로컬 앱 추가하기",
@@ -3756,6 +3766,10 @@
         "experimentalCurrencies" : {
           "title" : "실험 통합",
           "description" : "사용 가능한 실험 암호화폐 통합을 사용합니다."
+        },
+        "experimentalExecutionOnRenderer" : {
+          "title" : "실험 네트워킹",
+          "description" : "실험 네트워킹을 통해 VPN으로 Ledger Live 경험을 최적화하세요. 현재 사용 중인 VPN이 시스템 오류를 일으키는 경우에만 활성화하세요."
         },
         "experimentalLanguages" : {
           "title" : "번역 테스팅",
@@ -5497,6 +5511,14 @@
       "title" : "장치가 잠금 상태입니다",
       "description" : "장치의 잠금을 해제하고 다시 시도하세요.",
       "descriptionWithProductName" : "{{ productName }}의 잠금을 해제하고 다시 시도하세요."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "귀하의 장치가 아직 사용될 준비가 되지 않았습니다",
+      "titleWithProductName" : "{{ productName }} 장치는 아직 사용 준비가 되지 않았습니다.",
+      "description" : "먼저 장치 설정이 필요합니다.\n설정 절차를 안내해드리겠습니다.",
+      "descriptionWithProductName" : "먼저 {{ productName }} 장치 설정이 필요합니다.\n설정 절차를 안내해드리겠습니다.",
+      "goToOnboardingButton" : "내 장치 설정",
+      "goToOnboardingButtonWithProductName" : "내 {{ productName }} 설정"
     }
   },
   "cryptoOrg" : {
@@ -5559,10 +5581,16 @@
     "postOnboarding" : {
       "title" : "내 장치 커스텀",
       "description" : "화면 커스텀을 통해",
-      "actionCompletedPopupLabel" : "장치 커스텀 완료",
-      "actionCompletedHubTitle" : "더욱 깔끔한 화면을 즐길 수 있습니다."
+      "actionCompletedPopupLabel" : "장치 커스텀 완료"
     },
     "customImageSet" : "맞춤 이미지 세트",
     "finishCTA" : "완료"
+  },
+  "discoverProtect" : {
+    "new" : "신규",
+    "title" : "Protect의 보호 기능이 자산에 대한 액세스 권한을 지켜줍니다 철통같이 말이죠.",
+    "description" : "Protect는 복구 문구를 보호하여, 해당 문구 및 Ledger 장치의 도난이나 분실로 인한 자산 손실을 예방합니다.",
+    "cta" : "이점 알아보기",
+    "downloadLLM" : "구독하려면 QR 코드를 스캔하고 모바일 앱을 다운로드하세요"
   }
 }
