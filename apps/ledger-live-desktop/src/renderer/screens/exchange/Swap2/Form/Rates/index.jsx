@@ -16,7 +16,7 @@ import type {
 } from "@ledgerhq/live-common/exchange/swap/types";
 import { rateSelector, updateRateAction } from "~/renderer/actions/swap";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { swapDefaultTrack } from "../../utils/index";
+import { useGetSwapTrackingProperties } from "../../utils/index";
 import styled from "styled-components";
 import Tooltip from "~/renderer/components/Tooltip";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
@@ -56,6 +56,8 @@ export default function ProviderRate({
   refreshTime,
   countdown,
 }: Props) {
+  const swapDefaultTrack = useGetSwapTrackingProperties();
+
   const dispatch = useDispatch();
   const [filter, setFilter] = useState([]);
   const selectedRate = useSelector(rateSelector);
@@ -75,7 +77,7 @@ export default function ProviderRate({
       });
       dispatch(updateRateAction(rate));
     },
-    [dispatch],
+    [dispatch, swapDefaultTrack],
   );
 
   useEffect(() => {
@@ -101,15 +103,18 @@ export default function ProviderRate({
     }
   }, [filteredRates, selectedRate, dispatch]);
 
-  const updateFilter = useCallback(newFilter => {
-    track("button_clicked", {
-      button: "Filter selected",
-      page: "Page Swap Form",
-      ...swapDefaultTrack,
-      value: newFilter,
-    });
-    setFilter(newFilter);
-  }, []);
+  const updateFilter = useCallback(
+    newFilter => {
+      track("button_clicked", {
+        button: "Filter selected",
+        page: "Page Swap Form",
+        ...swapDefaultTrack,
+        value: newFilter,
+      });
+      setFilter(newFilter);
+    },
+    [swapDefaultTrack],
+  );
 
   return (
     <Box height="100%" width="100%">

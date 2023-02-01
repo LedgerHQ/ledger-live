@@ -11,7 +11,7 @@ import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import { addStarredMarketCoins, removeStarredMarketCoins } from "~/renderer/actions/settings";
 import { track } from "~/renderer/analytics/segment";
-import { swapDefaultTrack } from "~/renderer/screens/exchange/Swap2/utils/index";
+import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
 import { Button } from "..";
 import MarketCoinChart from "./MarketCoinChart";
 import MarketInfo from "./MarketInfo";
@@ -69,6 +69,8 @@ export default function MarketCoinScreen() {
   const allAccounts = useSelector(accountsSelector);
   const flattenedAccounts = flattenAccounts(allAccounts);
   const { providers, storedProviders } = useProviders();
+  const swapDefaultTrack = useGetSwapTrackingProperties();
+
   const swapAvailableIds = useMemo(() => {
     return providers || storedProviders
       ? (providers || storedProviders)
@@ -207,7 +209,14 @@ export default function MarketCoinScreen() {
         });
       }
     },
-    [currency?.internalCurrency, currency?.ticker, flattenedAccounts, history, openAddAccounts],
+    [
+      currency.internalCurrency,
+      currency?.ticker,
+      flattenedAccounts,
+      history,
+      openAddAccounts,
+      swapDefaultTrack,
+    ],
   );
 
   const onStake = useCallback(
@@ -224,7 +233,7 @@ export default function MarketCoinScreen() {
 
       startStakeFlow();
     },
-    [currency?.ticker, startStakeFlow],
+    [currency?.ticker, startStakeFlow, swapDefaultTrack],
   );
 
   const toggleStar = useCallback(() => {

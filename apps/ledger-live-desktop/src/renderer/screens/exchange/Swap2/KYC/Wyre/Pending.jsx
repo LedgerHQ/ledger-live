@@ -15,7 +15,7 @@ import IconCheck from "~/renderer/icons/Check";
 import IconClock from "~/renderer/icons/Clock";
 import Button from "~/renderer/components/Button";
 import InfoCircle from "~/renderer/icons/InfoCircle";
-import { swapDefaultTrack } from "../../utils/index";
+import { useGetSwapTrackingProperties } from "../../utils/index";
 
 export const CircleWrapper: ThemedComponent<{}> = styled.div`
   border-radius: 50%;
@@ -66,6 +66,7 @@ const InfoTag = styled.div`
 `;
 
 const Pending = ({ onClose }: { onClose: Function }) => {
+  const swapDefaultTrack = useGetSwapTrackingProperties();
   const onLearnMore = useCallback(() => {
     openURL(urls.swap.providers.wyre.kyc);
   }, []);

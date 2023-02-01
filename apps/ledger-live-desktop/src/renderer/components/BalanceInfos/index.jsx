@@ -9,7 +9,7 @@ import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import PillsDaysCount from "~/renderer/components/PillsDaysCount";
 import TransactionsPendingConfirmationWarning from "~/renderer/components/TransactionsPendingConfirmationWarning";
-import { swapDefaultTrack } from "~/renderer/screens/exchange/Swap2/utils/index";
+import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
 import { PlaceholderLine } from "./Placeholder";
 
 // $FlowFixMe
@@ -112,6 +112,7 @@ export function BalanceTotal({
 }
 
 export default function BalanceInfos({ totalBalance, valueChange, isAvailable, unit }: Props) {
+  const swapDefaultTrack = useGetSwapTrackingProperties();
   const { t } = useTranslation();
   const history = useHistory();
 
