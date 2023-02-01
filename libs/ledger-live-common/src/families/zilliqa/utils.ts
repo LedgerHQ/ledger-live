@@ -1,4 +1,5 @@
 import { toChecksumAddress } from "@zilliqa-js/crypto";
+
 import * as bech32 from "bech32";
 const HRP = "zil";
 

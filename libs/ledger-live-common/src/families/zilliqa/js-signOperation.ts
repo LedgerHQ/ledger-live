@@ -16,11 +16,11 @@ import Zilliqa from "@ledgerhq/hw-app-zilliqa";
 import { buildTransaction } from "./js-buildTransaction";
 import { getNonce } from "./logic";
 
-const buildOptimisticOperation = (
+const buildOptimisticOperation = async (
   account: Account,
   transaction: Transaction,
   fee: BigNumber
-): Operation => {
+): Promise<Operation> => {
   const type = "OUT";
 
   const value = BigNumber(transaction.amount).plus(fee);
@@ -36,7 +36,7 @@ const buildOptimisticOperation = (
     senders: [account.freshAddress],
     recipients: [transaction.recipient].filter(Boolean),
     accountId: account.id,
-    transactionSequenceNumber: getNonce(account as ZilliqaAccount),
+    transactionSequenceNumber: await getNonce(account as ZilliqaAccount),
     date: new Date(),
     extra: {},
   };
@@ -74,11 +74,32 @@ const signOperation = ({
           throw new FeeNotLoaded();
         }
 
+        // Sign by device
+        const zilliqa = new Zilliqa(transport);
+
+        // Ensuring that the public key is on the account. Otherwise we fetch it.
+        let publicKey = account.zilliqaResources
+          ? account.zilliqaResources.publicKey
+          : "";
+
+        if (!publicKey || publicKey === "") {
+          const r = await zilliqa.getAddress(account.freshAddressPath);
+          publicKey = r.publicKey;
+        }
+
+        // Ensuring the nonce is set correctly
+        let nonce = account.zilliqaResources
+          ? account.zilliqaResources.nonce
+          : 0;
+        if (!nonce) {
+          nonce = await getNonce(account);
+        }
+
+        account.zilliqaResources = { publicKey, nonce };
+
         // Creating unsigned transaction
         const unsigned = await buildTransaction(account, transaction);
 
-        // Sign by device
-        const zilliqa = new Zilliqa(transport);
         const r = await zilliqa.signTransaction(
           account.freshAddressPath,
           unsigned
@@ -90,7 +111,11 @@ const signOperation = ({
 
         const { gasPrice, gasLimit } = transaction;
         const fee = new BigNumber(gasPrice.mul(gasLimit).toString());
-        const operation = buildOptimisticOperation(account, transaction, fee);
+        const operation = await buildOptimisticOperation(
+          account,
+          transaction,
+          fee
+        );
 
         o.next({
           type: "signed",
