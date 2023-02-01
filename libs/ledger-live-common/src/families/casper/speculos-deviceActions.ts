@@ -1,7 +1,7 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
 import { deviceActionFlow } from "../../bot/specs";
-import { casperPubKeyToAccountHash, deployHashToString } from "./utils";
+import { casperPubKeyToAccountHash } from "./utils";
 
 export const acceptTransaction: DeviceAction<Transaction, any> =
   deviceActionFlow({
@@ -13,11 +13,6 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       {
         title: "Txn hash",
         button: "Rr",
-        expectedValue: ({ transaction }) => {
-          if (transaction.deploy)
-            return deployHashToString(transaction.deploy.hash);
-          return "";
-        },
       },
       {
         title: "Type",
