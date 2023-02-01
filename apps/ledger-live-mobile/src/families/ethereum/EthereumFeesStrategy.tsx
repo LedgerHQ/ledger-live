@@ -51,6 +51,12 @@ export default function EthereumFeesStrategy({
     [defaultStrategies, customStrategy],
   );
 
+  const disabledStrategies = strategies
+    .filter(strategy => {
+      return strategy.extra!.maxPriorityFeePerGas.isLessThan(transaction.maxPriorityFeePerGas!);
+    })
+    .map(strategy => strategy.label);
+
   useEffect(() => {
     const newCustomStrategy = getCustomStrategy(transaction, currency);
 
@@ -97,6 +103,7 @@ export default function EthereumFeesStrategy({
       parentAccount={parentAccount}
       transaction={transaction}
       NetworkFeesInfoComponent={EthereumNetworkFeeInfo}
+      disabledStrategies={disabledStrategies}
     />
   );
 }

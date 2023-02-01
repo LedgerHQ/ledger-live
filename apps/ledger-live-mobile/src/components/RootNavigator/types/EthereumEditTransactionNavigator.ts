@@ -34,13 +34,15 @@ export type EthereumEditTransactionParamList = {
     parentId?: string;
     deviceId?: string;
     transaction: Transaction;
-    currentNavigation: ScreenName.SpeedUpTransaction | ScreenName.SendSummary;
+    currentNavigation:
+      | ScreenName.SpeedUpTransaction
+      | ScreenName.SendSummary
+      | ScreenName.EditEthereumTransactionMethodSelection;
     nextNavigation:
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice;
     overrideAmountLabel?: string;
     hideTotal?: boolean;
-    hideFees?: boolean;
     appName?: string;
   };
   [ScreenName.SendSelectDevice]: {
