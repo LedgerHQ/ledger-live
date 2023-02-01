@@ -76,6 +76,7 @@ export const FirmwareNotRecognized = createCustomErrorClass(
 export const HardResetFail = createCustomErrorClass("HardResetFail");
 export const InvalidXRPTag = createCustomErrorClass("InvalidXRPTag");
 export const InvalidAddress = createCustomErrorClass("InvalidAddress");
+export const InvalidMemoICP = createCustomErrorClass("InvalidMemoICP");
 export const InvalidAddressBecauseDestinationIsAlsoSource =
   createCustomErrorClass("InvalidAddressBecauseDestinationIsAlsoSource");
 export const LatestMCUInstalledError = createCustomErrorClass(
