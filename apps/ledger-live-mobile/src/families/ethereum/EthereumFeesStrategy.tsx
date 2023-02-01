@@ -52,9 +52,7 @@ export default function EthereumFeesStrategy({
 
   const disabledStrategies = strategies
     .filter(strategy => {
-      return strategy.extra!.maxPriorityFeePerGas.isLessThan(
-        transaction.maxPriorityFeePerGas!,
-      );
+      return strategy.extra?.maxPriorityFeePerGas.isLessThan(transaction.maxPriorityFeePerGas!);
     })
     .map(strategy => strategy.label);
 
