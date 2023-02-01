@@ -137,24 +137,10 @@ export function getListHeaderComponents({
     (a, b) => a.date.getTime() - b.date.getTime(),
   );
 
-  const EditTransactionComponent =
-    lastOperation?.date.getTime() > new Date().getTime() - FIVE_MINUTES ? (
-      <SectionContainer px={6}>
-        <SideImageCard
-          title={t("editTransaction.speedupTxMessage")}
-          cta={t("editTransaction.adjustFees")}
-          onPress={() => onEditTransactionPress(lastOperation)}
-        />
-      </SectionContainer>
-    ) : (
-      <SectionContainer px={6}>
-        <SideImageCard
-          title={t("editTransaction.stuckTx")}
-          cta={t("editTransaction.adjustFees")}
-          onPress={() => onEditTransactionPress(lastOperation)}
-        />
-      </SectionContainer>
-    );
+  const shouldRenderEditTxModal =
+    pendingOperations.length > 0 &&
+    mainAccount.currency.family === "ethereum" &&
+    lastOperation?.date.getTime() < new Date().getTime() - FIVE_MINUTES;
 
   return {
     listHeaderComponents: [
@@ -179,7 +165,15 @@ export function getListHeaderComponents({
           <AccountSubHeader />
         </Box>
       ),
-      pendingOperations.length ? EditTransactionComponent : null,
+      shouldRenderEditTxModal ? (
+        <SectionContainer px={6}>
+          <SideImageCard
+            title={t("editTransaction.stuckTx")}
+            cta={t("editTransaction.speedupOrCancel")}
+            onPress={() => onEditTransactionPress(lastOperation)}
+          />
+        </SectionContainer>
+      ) : null,
       <SectionContainer px={6} bg={colors.background.main}>
         <SectionTitle
           title={t("account.quickActions")}
