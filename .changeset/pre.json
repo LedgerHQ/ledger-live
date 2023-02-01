@@ -82,6 +82,7 @@
     "pnpm-utils": "1.0.1"
   },
   "changesets": [
+    "blue-jars-shop",
     "breezy-hotels-yell",
     "clever-games-leave",
     "clever-lamps-sin",
@@ -118,6 +119,7 @@
     "swift-phones-marry",
     "tender-bats-join",
     "thin-pugs-enjoy",
+    "three-clocks-boil",
     "tricky-oranges-sort",
     "wild-news-exist"
   ]

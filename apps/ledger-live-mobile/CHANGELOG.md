@@ -1,5 +1,13 @@
 # live-mobile
 
+## 3.15.0-next.1
+
+### Patch Changes
+
+- [#2492](https://github.com/LedgerHQ/ledger-live/pull/2492) [`eca1fc0a76`](https://github.com/LedgerHQ/ledger-live/commit/eca1fc0a764e3895a392a1a0bd09d52987524351) Thanks [@chabroA](https://github.com/chabroA)! - Second tentative to fix the analytics missing equipment id for some users
+
+* [#2492](https://github.com/LedgerHQ/ledger-live/pull/2492) [`eca1fc0a76`](https://github.com/LedgerHQ/ledger-live/commit/eca1fc0a764e3895a392a1a0bd09d52987524351) Thanks [@chabroA](https://github.com/chabroA)! - Added tracking to NFT Hide Multiselect feature
+
 ## 3.15.0-next.0
 
 ### Minor Changes
