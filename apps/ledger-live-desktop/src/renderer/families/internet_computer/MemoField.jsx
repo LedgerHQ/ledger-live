@@ -30,7 +30,6 @@ const MemoField = ({
 
   const onMemoFieldChange = useCallback(
     (value: string) => {
-      value = value.replace(/\D/g, "");
       if (value !== "") onChange(bridge.updateTransaction(transaction, { memo: value }));
       else onChange(bridge.updateTransaction(transaction, { memo: undefined }));
     },
