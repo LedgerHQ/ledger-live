@@ -45,36 +45,13 @@ export function NftList({ data }: Props) {
     t,
     triggerMultiSelectMode,
     navigateToNftViewer,
-    onClickHide,
-    exitMultiSelectMode,
+    onPressMultiselect,
+    onPressHide,
+    onCancelHide,
     handleSelectableNftPressed,
     nftsToHide,
     multiSelectModeEnabled,
   } = useNftList({ nftList: data });
-
-  const onPressMultiselect = useCallback(() => {
-    track("button_clicked", {
-      button: "Hide NFTs",
-      screen: ScreenName.WalletNftGallery,
-    });
-    triggerMultiSelectMode();
-  }, [triggerMultiSelectMode]);
-
-  const onPressHide = useCallback(() => {
-    track("button_clicked", {
-      button: "Multi Hide NFTs",
-      screen: ScreenName.WalletNftGallery,
-    });
-    onClickHide();
-  }, [onClickHide]);
-
-  const onCancelHide = useCallback(() => {
-    track("button_clicked", {
-      button: "Cancel  Hide NFTs",
-      screen: ScreenName.WalletNftGallery,
-    });
-    exitMultiSelectMode();
-  }, [exitMultiSelectMode]);
 
   const gradient = {
     height: 145,
