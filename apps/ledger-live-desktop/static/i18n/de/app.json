@@ -102,6 +102,7 @@
     "addressCopied" : "Adresse kopiert",
     "addressCopiedSuspicious" : "Unstimmigkeit zwischen der kopierten Adresse und der in der Zwischenablage.",
     "experimentalFeature" : "Experimentell",
+    "featureFlags" : "Feature-Flags",
     "information" : "Information",
     "search" : "Suche...",
     "searchWithoutEllipsis" : "Suchen nach",
@@ -131,7 +132,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blau"
   },
   "operation" : {
@@ -217,7 +218,8 @@
     "swap" : "Umtauschen",
     "lend" : "Leihen",
     "catalog" : "Entdecken",
-    "market" : "Markt"
+    "market" : "Markt",
+    "protect" : "Protect"
   },
   "stars" : {
     "placeholder" : "Geben Sie einem Konto einen Stern, um es hier anzuzeigen.",
@@ -1206,8 +1208,11 @@
         "checkDeviceButton" : "Überprüfung erneut durchführen",
         "cancelButton" : "Vielleicht später"
       },
-      "genuineCheckAnimationModal" : {
-        "message" : "Manager aktivieren auf {{deviceName}}"
+      "softwareCheckAllowSecureChannelModal" : {
+        "title" : "Manager aktivieren auf {{deviceName}}"
+      },
+      "softwareCheckLockedDeviceModal" : {
+        "title" : "Entsperren Sie Ihr Gerät"
       },
       "helpDrawer" : {
         "title" : "Benötigen Sie Hilfe mit Ihrem Einrichtungshandbuch?",
@@ -1718,7 +1723,7 @@
     "swap" : {
       "notice" : {
         "default" : "Überprüfen Sie die Details des Tauschs auf Ihrem Gerät, bevor Sie sie senden. Die Adressen werden sicher ausgetauscht, sodass Sie diese nicht verifizieren müssen.",
-        "cic" : "Verifizieren Sie die Swap-Details auf Ihrem Gerät, bevor Sie diese senden. CIC muss möglicherweise eine zusätzliche Überprüfung für einige Transaktionen durchführen, was zu einer Verzögerung führen kann."
+        "provider" : "Verifizieren Sie die Swap-Details auf Ihrem Gerät, bevor Sie diese senden. {{providerName}} muss möglicherweise eine zusätzliche Überprüfung für einige Transaktionen durchführen, was zu einer Verzögerung führen kann."
       },
       "confirm" : "Swap-Transaktion bestätigen",
       "amountSent" : "Zu sendender Betrag",
@@ -3689,8 +3694,10 @@
       "debugAppsDesc" : "Anzeigen und Öffnen von Debug-getaggten Plattform-Apps erlauben.",
       "experimentalApps" : "Experimentelle Apps erlauben",
       "experimentalAppsDesc" : "Anzeigen und Öffnen von Debug-getaggten Plattform-Apps erlauben.",
-      "catalogServer" : "Einstellen des Kataloganbieters",
-      "catalogServerDesc" : "Wechseln Sie zwischen mehreren Plattform-App-Quellen",
+      "catalogUrl" : "Anbieter Katalog-Apps festlegen",
+      "catalogUrlDesc" : "Geben Sie die benutzerdefinierte URL Ihres Kataloganbieters ein",
+      "catalogRampServer" : "Anbieter Kaufen/Verkaufen festlegen",
+      "catalogRampServerDesc" : "Zwischen mehreren Handelsanbietern wechseln",
       "enablePlatformDevTools" : "Plattform-Entwicklungswerkzeuge aktivieren",
       "enablePlatformDevToolsDesc" : "Aktivieren Sie das Öffnen des Entwicklerwerkzeug-Fensters für Plattform-Apps",
       "featureFlagsTitle" : "In Ledger Live verwendete definierte Feature-Flags",
@@ -3698,6 +3705,9 @@
       "featureFlagsEdit" : "Bearbeiten",
       "featureFlagsRestore" : "Wiederherstellen",
       "featureFlagsOverride" : "Überschreiben",
+      "featureFlagsRestoreAll" : "Alle Flag-Werte wiederherstellen",
+      "showButtonDesc" : "Die Schaltfläche „Feature-Flags“ immer in der Seitenleiste anzeigen",
+      "buttonTitle" : "Flags lokal überschrieben",
       "firebaseProject" : "Firebase-Projekt, auf das diese Entwicklung abzielt",
       "addLocalApp" : "Lokale App hinzufügen",
       "addLocalAppDesc" : "Durchsuchen Sie lokale Dateien und fügen Sie eine lokale App mit einem lokalen Manifest hinzu",
@@ -3756,6 +3766,10 @@
         "experimentalCurrencies" : {
           "title" : "Experimentelle Integrationen",
           "description" : "Verwenden Sie verfügbare experimentelle Integrationen für Krypto-Werte."
+        },
+        "experimentalExecutionOnRenderer" : {
+          "title" : "Experimentelle Netzwerke",
+          "description" : "Nutzen Sie experimentelle Netzwerke, um Ihr Ledger Live-Erlebnis mit Ihrem VPN zu optimieren. Aktivieren Sie diese Option nur, wenn Ihr aktuelles VPN Systemfehler verursacht."
         },
         "experimentalLanguages" : {
           "title" : "Testen der Übersetzung",
@@ -5497,6 +5511,14 @@
       "title" : "Ihr Gerät ist gesperrt",
       "description" : "Entsperren Sie Ihr Gerät und versuchen Sie es erneut.",
       "descriptionWithProductName" : "Entsperren Sie Ihr {{ productName }} und versuchen Sie es erneut."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "Ihr Gerät kann noch nicht verwendet werden",
+      "titleWithProductName" : "{{ productName }} kann noch nicht verwendet werden",
+      "description" : "Sie müssen Ihr Gerät zuerst einrichten.\nWir führen Sie durch den Einrichtungsprozess.",
+      "descriptionWithProductName" : "Sie müssen Ihr {{ productName }} zuerst einrichten.\nWir führen Sie durch den Einrichtungsprozess.",
+      "goToOnboardingButton" : "Mein Gerät einrichten",
+      "goToOnboardingButtonWithProductName" : "Mein {{ productName }} einrichten"
     }
   },
   "cryptoOrg" : {
@@ -5559,10 +5581,16 @@
     "postOnboarding" : {
       "title" : "Mein Gerät personalisieren",
       "description" : "Durch Anpassen des Bildschirms",
-      "actionCompletedPopupLabel" : "Gerät personalisiert",
-      "actionCompletedHubTitle" : "Dieser Bildschirm sieht gut aus."
+      "actionCompletedPopupLabel" : "Gerät personalisiert"
     },
     "customImageSet" : "Benutzerdefiniertes Bild-Set",
     "finishCTA" : "Beenden"
+  },
+  "discoverProtect" : {
+    "new" : "Neu",
+    "title" : "Mit Protect verlieren Sie nie den Zugriff auf Ihre Krypto-Werte. Niemals.",
+    "description" : "Protect übernimmt die Verantwortung für den Schutz Ihrer Wiederherstellungsphrase, um zu verhindern, dass durch Diebstahl oder Verlust Ihrer Wiederherstellungsphrase oder Ihres Ledgers ein Vermögensverlust entsteht.",
+    "cta" : "Entdecken Sie die Vorteile",
+    "downloadLLM" : "Um sich anzumelden, scannen Sie den QR-Code und laden Sie unsere mobile App herunter"
   }
 }
