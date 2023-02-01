@@ -10,6 +10,7 @@ import erc20tokens, { ERC20Token } from "./data/erc20";
 import esdttokens, { ElrondESDTToken } from "./data/esdt";
 import polygonTokens, { PolygonERC20Token } from "./data/polygon-erc20";
 import stellarTokens, { StellarToken } from "./data/stellar";
+import icpTokens, { ICPToken } from "./data/internet_computer";
 import trc10tokens, { TRC10Token } from "./data/trc10";
 import trc20tokens, { TRC20Token } from "./data/trc20";
 //import spltokens from "../data/spl";
@@ -31,6 +32,7 @@ addTokens(asatokens.map(convertAlgorandASATokens));
 addTokens(esdttokens.map(convertElrondESDTTokens));
 addTokens(cardanoNativeTokens.map(convertCardanoNativeTokens));
 addTokens(stellarTokens.map(convertStellarTokens));
+addTokens(icpTokens.map(convertICPTokens));
 //addTokens(spltokens.map(convertSplTokens));
 type TokensListOptions = {
   withDelisted: boolean;
@@ -426,6 +428,33 @@ function convertStellarTokens([
     id: `stellar/asset/${assetCode}:${assetIssuer}`,
     contractAddress: assetIssuer,
     parentCurrency: getCryptoCurrencyById("stellar"),
+    tokenType: assetType,
+    name,
+    ticker: assetCode,
+    disableCountervalue: !enableCountervalues,
+    units: [
+      {
+        name,
+        code: assetCode,
+        magnitude: precision,
+      },
+    ],
+  };
+}
+
+function convertICPTokens([
+  assetCode,
+  assetIssuer,
+  assetType,
+  name,
+  precision,
+  enableCountervalues,
+]: ICPToken): TokenCurrency {
+  return {
+    type: "TokenCurrency",
+    id: `icp/asset/${assetCode}:${assetIssuer}`,
+    contractAddress: assetIssuer,
+    parentCurrency: getCryptoCurrencyById("internet_computer"),
     tokenType: assetType,
     name,
     ticker: assetCode,
