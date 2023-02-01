@@ -52,7 +52,7 @@ export const buildTransaction = async (a: ZilliqaAccount, t: Transaction) => {
   const tx = await buildNativeTransaction(
     a,
     t.recipient,
-    getNonce(a),
+    await getNonce(a),
     new BN(t.amount.toString()),
     await getMinimumGasPrice()
   );

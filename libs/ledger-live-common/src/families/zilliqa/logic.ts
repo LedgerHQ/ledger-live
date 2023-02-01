@@ -1,5 +1,8 @@
 import { ZilliqaAccount } from "./types";
+import { getAccount } from "./api";
 
-export const getNonce = (a: ZilliqaAccount): number => {
-  return a.zilliqaResources ? a.zilliqaResources.nonce : 1;
+export const getNonce = async (a: ZilliqaAccount): Promise<number> => {
+  return a.zilliqaResources
+    ? a.zilliqaResources.nonce
+    : (await getAccount(a.freshAddress)).nonce;
 };

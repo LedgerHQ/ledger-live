@@ -1,6 +1,11 @@
 import { getMainAccount } from "../../account";
 import type { DeviceTransactionField } from "../../transaction";
-import type { AccountLike, Account } from "@ledgerhq/types-live";
+import type {
+  AccountLike,
+  TokenAccount,
+  ChildAccount,
+  Account,
+} from "@ledgerhq/types-live";
 import type { TransactionStatus } from "./types";
 
 function getDeviceTransactionConfig({
