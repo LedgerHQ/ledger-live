@@ -10,10 +10,9 @@ import NftListItem from "./NftListItem";
 import { AddNewItem } from "./AddNewItemList";
 import CollapsibleHeaderFlatList from "../WalletTab/CollapsibleHeaderFlatList";
 import globalSyncRefreshControl from "../globalSyncRefreshControl";
-import { TrackScreen, track } from "../../analytics";
+import { TrackScreen } from "../../analytics";
 import { useNftList } from "./NftList.hook";
 import BackgroundGradient from "../TabBar/BackgroundGradient";
-import { ScreenName } from "../../const/navigation";
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl<
   FlatListProps<ProtoNFT>
