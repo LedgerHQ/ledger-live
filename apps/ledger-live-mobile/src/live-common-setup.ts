@@ -79,6 +79,19 @@ setSupportedCurrencies([
   "songbird",
   "flare",
   "near",
+  "optimism",
+  "arbitrum",
+  "rsk",
+  "bittorrent",
+  "kava_evm",
+  "evmos_evm",
+  "energy_web",
+  "astar",
+  "metis",
+  "boba",
+  "moonriver",
+  "velas_evm",
+  "syscoin",
 ]);
 
 if (Config.VERBOSE) {
