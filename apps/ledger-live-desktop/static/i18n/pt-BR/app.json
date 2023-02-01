@@ -64,7 +64,7 @@
     "confirm" : "Confirmar",
     "reject" : "Rejeitar",
     "cancel" : "Cancelar",
-    "getSupport" : "Obter Ajuda",
+    "getSupport" : "Obter suporte",
     "delete" : "Remover conta do portfólio",
     "launch" : "Iniciar",
     "continue" : "Continuar",
@@ -102,6 +102,7 @@
     "addressCopied" : "Endereço Copiado",
     "addressCopiedSuspicious" : "Incompatibilidade entre o endereço copiado e o que está na área de transferência.",
     "experimentalFeature" : "Experimental",
+    "featureFlags" : "Incluir Marcadores",
     "information" : "Informações",
     "search" : "Pesquisar...",
     "searchWithoutEllipsis" : "Pesquisar",
@@ -131,7 +132,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blue"
   },
   "operation" : {
@@ -217,7 +218,8 @@
     "swap" : "Trocar",
     "lend" : "Emprestar",
     "catalog" : "Discover",
-    "market" : "Mercado"
+    "market" : "Mercado",
+    "protect" : "Protect"
   },
   "stars" : {
     "placeholder" : "Veja suas contas favoritas aqui",
@@ -1114,7 +1116,7 @@
     },
     "helpCenter" : {
       "title" : "Suporte Ledger",
-      "desc" : "Obter Ajuda"
+      "desc" : "Obter ajuda"
     },
     "ledgerAcademy" : {
       "title" : "Ledger Academy",
@@ -1206,8 +1208,11 @@
         "checkDeviceButton" : "Fazer verificação novamente",
         "cancelButton" : "Talvez mais tarde"
       },
-      "genuineCheckAnimationModal" : {
-        "message" : "Permitir Minha Ledger em {{deviceName}}"
+      "softwareCheckAllowSecureChannelModal" : {
+        "title" : "Permitir Minha Ledger em {{deviceName}}"
+      },
+      "softwareCheckLockedDeviceModal" : {
+        "title" : "Desbloqueie seu dispositivo"
       },
       "helpDrawer" : {
         "title" : "Precisa de ajuda com o seu manual de configuração?",
@@ -1423,12 +1428,12 @@
     "detailsPage" : {
       "priceStatistics" : "Estatísticas de preço",
       "tradingVolume" : "Volume de negociação",
-      "24hLowHight" : "Mínomo em 24h / Máximo em 24h",
+      "24hLowHight" : "Mínimo em 24h / Máximo em 24h",
       "7dLowHigh" : "Mínimo em 7d / Máximo em 7d",
       "allTimeHigh" : "Máxima Histórica",
       "allTimeLow" : "Mínima Histórica",
-      "marketCapRank" : "Posição em capitalização de mercado",
-      "marketCapDominance" : "Dominância da capitalização de mercado",
+      "marketCapRank" : "Posição (cap. de mercado)",
+      "marketCapDominance" : "Dominância (cap. de mercado)",
       "supply" : "Oferta",
       "circulatingSupply" : "Oferta em circulação",
       "totalSupply" : "Oferta Total",
@@ -1718,7 +1723,7 @@
     "swap" : {
       "notice" : {
         "default" : "Verifique os detalhes da troca no seu dispositivo antes de enviá-la. Os endereços são comunicados com segurança para que você não precise verificá-los.",
-        "cic" : "Verifique os detalhes da troca no seu dispositivo antes de enviá-la. O CIC pode precisar fazer verificações adicionais para algumas transações, resultando em demora."
+        "provider" : "Verifique os detalhes da troca no seu dispositivo antes de enviá-la. {{providerName}} pode precisar fazer verificações adicionais para algumas transações, resultando em demora."
       },
       "confirm" : "Confirmar transação de troca",
       "amountSent" : "Quantia a enviar",
@@ -2176,7 +2181,7 @@
     "title" : "Assinar Transação"
   },
   "releaseNotes" : {
-    "title" : "Notas de versão",
+    "title" : "Notas de lançamento",
     "version" : "Ledger Live {{versionNb}}"
   },
   "troubleshootNetwork" : {
@@ -3689,8 +3694,10 @@
       "debugAppsDesc" : "Exibir e permitir a abertura de aplicativos da plataforma etiquetados como de debug",
       "experimentalApps" : "Permitir aplicativos experimentais",
       "experimentalAppsDesc" : "Exibir e permitir a abertura de aplicativos da plataforma etiquetados como experimentais.",
-      "catalogServer" : "Definir o fornecedor do catálogo",
-      "catalogServerDesc" : "Alterne entre múltiplas fontes de aplicativos da plataforma",
+      "catalogUrl" : "Definir o provedor do catálogo de aplicativos",
+      "catalogUrlDesc" : "Inserir a URL personalizada do seu provedor de catálogo",
+      "catalogRampServer" : "Definir os provedores de compra e venda",
+      "catalogRampServerDesc" : "Alternar entre vários provedores de negociação",
       "enablePlatformDevTools" : "Habilitar ferramentas de desenvolvedor da plataforma",
       "enablePlatformDevToolsDesc" : "Habilitar a abertura da janela de ferramentas de desenvolvedor de aplicativos da plataforma",
       "featureFlagsTitle" : "Marcadores definidos usados no Ledger Live",
@@ -3698,6 +3705,9 @@
       "featureFlagsEdit" : "Editar",
       "featureFlagsRestore" : "Restaurar",
       "featureFlagsOverride" : "Sobrepor",
+      "featureFlagsRestoreAll" : "Restaurar valores de todos os marcadores",
+      "showButtonDesc" : "Sempre exibir o botão Incluir Marcadores na barra lateral",
+      "buttonTitle" : "Marcadores desativados localmente",
       "firebaseProject" : "Projeto Firebase mirado por esta versão:",
       "addLocalApp" : "Adicionar um aplicativo local",
       "addLocalAppDesc" : "Navegue por arquivos locais e adicione um aplicativo local usando um manifesto local",
@@ -3756,6 +3766,10 @@
         "experimentalCurrencies" : {
           "title" : "Integrações Experimentais",
           "description" : "Use as integrações experimentais de criptoativos disponíveis."
+        },
+        "experimentalExecutionOnRenderer" : {
+          "title" : "Rede experimental",
+          "description" : "Use a rede experimental para otimizar sua experiência no Ledger Live com a sua VPN. Ative apensas se a sua VPN atual estiver causando erros de sistema."
         },
         "experimentalLanguages" : {
           "title" : "Teste de tradução",
@@ -5497,6 +5511,14 @@
       "title" : "Seu dispositivo está bloqueado",
       "description" : "Desbloqueie seu dispositivo e tente novamente.",
       "descriptionWithProductName" : "Desbloqueie sua {{ productName }} e tente novamente."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "Seu dispositivo ainda não está pronto para ser usado",
+      "titleWithProductName" : "{{ productName }} ainda não está pronta para ser usada",
+      "description" : "Você precisa configurar seu dispositivo primeiro.\nVamos guiar você pelo processo de configuração.",
+      "descriptionWithProductName" : "Você precisa configurar sua {{ productName }} primeiro.\nVamos guiar você pelo processo de configuração.",
+      "goToOnboardingButton" : "Configurar meu dispositivo",
+      "goToOnboardingButtonWithProductName" : "Configurar minha {{ productName }}"
     }
   },
   "cryptoOrg" : {
@@ -5559,10 +5581,16 @@
     "postOnboarding" : {
       "title" : "Personalizar meu dispositivo",
       "description" : "Customizando a tela",
-      "actionCompletedPopupLabel" : "Dispositivo personalizado",
-      "actionCompletedHubTitle" : "Essa tela ficou demais."
+      "actionCompletedPopupLabel" : "Dispositivo personalizado"
     },
     "customImageSet" : "Imagem personalizada definida",
     "finishCTA" : "Finalizar"
+  },
+  "discoverProtect" : {
+    "new" : "Novidade",
+    "title" : "Nunca perca acesso aos seus ativos com o Protect. Nunca.",
+    "description" : "O Protect assume a responsabilidade de proteger a sua Frase de recuperação, para prevenir quaisquer perdas de ativos decorrentes do roubo ou perda da sua Frase de recuperação ou da sua Ledger.",
+    "cta" : "Descubra os benefícios",
+    "downloadLLM" : "Para se inscrever, escaneie nosso QR code e baixe nosso aplicativo móvel."
   }
 }
