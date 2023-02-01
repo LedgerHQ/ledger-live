@@ -38,6 +38,19 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const flare = useFeature("currencyFlare");
   const near = useFeature("currencyNear");
   const avaxCChain = useFeature("currencyAvalancheCChain");
+  const optimism = useFeature("currencyOptimism");
+  const arbitrum = useFeature("currencyArbitrum");
+  const rsk = useFeature("currencyRsk");
+  const bittorrent = useFeature("currencyBittorrent");
+  const kavaEvm = useFeature("currencyKavaEvm");
+  const evmosEvm = useFeature("currencyEvmosEvm");
+  const energyWeb = useFeature("currencyEnergyWeb");
+  const astar = useFeature("currencyAstar");
+  const metis = useFeature("currencyMetis");
+  const boba = useFeature("currencyBoba");
+  const moonriver = useFeature("currencyMoonriver");
+  const velasEvm = useFeature("currencyVelasEvm");
+  const syscoin = useFeature("currencySyscoin");
 
   const featureFlaggedCurrencies = useMemo(
     () => ({
@@ -49,8 +62,43 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       flare,
       near,
       avalanche_c_chain: avaxCChain,
+      optimism,
+      arbitrum,
+      rsk,
+      bittorrent,
+      kava_evm: kavaEvm,
+      evmos_evm: evmosEvm,
+      energy_web: energyWeb,
+      astar,
+      metis,
+      boba,
+      moonriver,
+      velas_evm: velasEvm,
+      syscoin,
     }),
-    [osmo, fantom, moonbeam, cronos, songbird, flare, near, avaxCChain],
+    [
+      osmo,
+      fantom,
+      moonbeam,
+      cronos,
+      songbird,
+      flare,
+      near,
+      avaxCChain,
+      optimism,
+      arbitrum,
+      rsk,
+      bittorrent,
+      kavaEvm,
+      evmosEvm,
+      energyWeb,
+      astar,
+      metis,
+      boba,
+      moonriver,
+      velasEvm,
+      syscoin,
+    ],
   );
 
   const currencies = useMemo(() => {

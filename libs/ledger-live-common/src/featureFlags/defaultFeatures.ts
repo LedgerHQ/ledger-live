@@ -44,6 +44,45 @@ export const defaultFeatures: DefaultFeatures = {
   currencyFlare: {
     enabled: false,
   },
+  currencyOptimism: {
+    enabled: false,
+  },
+  currencyArbitrum: {
+    enabled: false,
+  },
+  currencyRsk: {
+    enabled: false,
+  },
+  currencyBittorrent: {
+    enabled: false,
+  },
+  currencyKavaEvm: {
+    enabled: false,
+  },
+  currencyEvmosEvm: {
+    enabled: false,
+  },
+  currencyEnergyWeb: {
+    enabled: false,
+  },
+  currencyAstar: {
+    enabled: false,
+  },
+  currencyMetis: {
+    enabled: false,
+  },
+  currencyBoba: {
+    enabled: false,
+  },
+  currencyMoonriver: {
+    enabled: false,
+  },
+  currencyVelasEvm: {
+    enabled: false,
+  },
+  currencySyscoin: {
+    enabled: false,
+  },
   currencyOsmosisMobile: {
     enabled: false,
   },
