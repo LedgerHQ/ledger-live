@@ -131,15 +131,17 @@ export function getListHeaderComponents({
 
   const stickyHeaderIndices = empty ? [] : [0];
 
-  const { pendingOperations } = account;
+  const { pendingOperations, operations } = account;
 
-  const [lastOperation] = pendingOperations.sort(
-    (a, b) => a.date.getTime() - b.date.getTime(),
+  const [lastOperation] = operations.sort(
+    (a, b) => b.date.getTime() - a.date.getTime(),
   );
 
   const shouldRenderEditTxModal =
-    pendingOperations.length > 0 &&
     mainAccount.currency.family === "ethereum" &&
+    pendingOperations.find(
+      operation => operation.hash === lastOperation.hash,
+    ) &&
     lastOperation?.date.getTime() < new Date().getTime() - FIVE_MINUTES;
 
   return {
