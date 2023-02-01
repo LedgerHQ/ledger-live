@@ -4,7 +4,7 @@ import React, { useMemo, useCallback, memo } from "react";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, ProtoNFT } from "@ledgerhq/types-live";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { getNFTById } from "~/renderer/reducers/accounts";
 import Box, { Card } from "~/renderer/components/Box";
@@ -60,9 +60,17 @@ type Props = {
   mode: "grid" | "list",
   withContextMenu?: boolean,
   onHideCollection?: () => void,
+  overloadOnItemClick?: (nftMetadata: NFTMetadata) => void,
 };
 
-const NftCard = ({ id, mode, account, withContextMenu = false, onHideCollection }: Props) => {
+const NftCard = ({
+  id,
+  mode,
+  account,
+  withContextMenu = false,
+  onHideCollection,
+  overloadOnItemClick,
+}: Props) => {
   const nft = useSelector(state => getNFTById(state, { nftId: id }));
   const { status, metadata } = useNftMetadata(nft.contract, nft.tokenId, nft.currencyId);
   const { nftName } = metadata || {};
@@ -94,14 +102,14 @@ const NftCard = ({ id, mode, account, withContextMenu = false, onHideCollection 
         className={show || process.env.ALWAYS_SHOW_SKELETONS ? "disabled" : ""}
         horizontal={!isGrid}
         alignItems={!isGrid ? "center" : undefined}
-        onClick={onItemClick}
+        onClick={overloadOnItemClick ? () => overloadOnItemClick(metadata) : onItemClick}
       >
         <Skeleton width={40} minHeight={40} full={isGrid} show={show}>
           <Media
             metadata={metadata}
             tokenId={nft.tokenId}
-            size={40}
-            full={isGrid}
+            size={overloadOnItemClick ? 180 : 40}
+            full={overloadOnItemClick ? false : isGrid}
             mediaFormat="preview"
           />
         </Skeleton>
