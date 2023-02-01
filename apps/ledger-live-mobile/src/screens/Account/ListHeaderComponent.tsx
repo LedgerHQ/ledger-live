@@ -1,5 +1,9 @@
 import React, { ReactNode } from "react";
-import { isAccountEmpty, getMainAccount } from "@ledgerhq/live-common/account/index";
+import {
+  isAccountEmpty,
+  getMainAccount,
+  groupAccountOperationsByDay,
+} from "@ledgerhq/live-common/account/index";
 import {
   AccountLike,
   Account,
@@ -9,7 +13,6 @@ import {
   Operation,
 } from "@ledgerhq/types-live";
 import { Currency } from "@ledgerhq/types-cryptoassets";
-import { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
 import { Box, ColorPalette, SideImageCard } from "@ledgerhq/native-ui";
 import { isNFTActive } from "@ledgerhq/live-common/nft/index";
 import { TFunction } from "react-i18next";
@@ -116,18 +119,13 @@ export function getListHeaderComponents({
 
   const stickyHeaderIndices = empty ? [] : [0];
 
-  const { pendingOperations, operations } = account;
-
-  const [lastOperation] = operations.sort(
-    (a, b) => b.date.getTime() - a.date.getTime(),
-  );
+  const [latestOperation] = groupAccountOperationsByDay(account, {
+    count: 2,
+  }).sections[0].data.filter(operation => operation.type === "OUT");
 
   const shouldRenderEditTxModal =
-    mainAccount.currency.family === "ethereum" &&
-    pendingOperations.find(
-      operation => operation.hash === lastOperation.hash,
-    ) &&
-    lastOperation?.date.getTime() < new Date().getTime() - FIVE_MINUTES;
+    mainAccount.currency.family === "ethereum" && latestOperation.blockHeight === null;
+  latestOperation?.date.getTime() < new Date().getTime() - FIVE_MINUTES;
 
   return {
     listHeaderComponents: [
@@ -155,7 +153,7 @@ export function getListHeaderComponents({
           <SideImageCard
             title={t("editTransaction.stuckTx")}
             cta={t("editTransaction.speedupOrCancel")}
-            onPress={() => onEditTransactionPress(lastOperation)}
+            onPress={() => onEditTransactionPress(latestOperation)}
           />
         </SectionContainer>
       ) : null,

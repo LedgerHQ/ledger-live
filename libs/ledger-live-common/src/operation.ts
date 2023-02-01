@@ -1,4 +1,4 @@
-import type { NFTStandard, Operation, AccountLike } from "@ledgerhq/types-live";
+import type { NFTStandard, Operation } from "@ledgerhq/types-live";
 import { decodeAccountId } from "./account";
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { encodeERC1155OperationId, encodeERC721OperationId } from "./nft/nftOperationId";
@@ -66,6 +66,7 @@ export function patchOperationWithHash(operation: Operation, hash: string): Oper
       }),
   };
 }
+<<<<<<< HEAD
 
 export function isEditableOperation(account: AccountLike, operation: Operation): boolean {
   let isEthFamily = false;
@@ -76,3 +77,5 @@ export function isEditableOperation(account: AccountLike, operation: Operation):
   }
   return isEthFamily && operation.blockHeight === null && !!operation.transactionRaw;
 }
+=======
+>>>>>>> 4a5b257168 (remove useless status attribute in operation)
