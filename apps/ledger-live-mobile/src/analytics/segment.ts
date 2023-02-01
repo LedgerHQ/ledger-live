@@ -43,6 +43,7 @@ import type { AppStore } from "../reducers";
 import { NavigatorName } from "../const";
 import { previousRouteNameRef, currentRouteNameRef } from "./screenRefs";
 import { AnonymousIpPlugin } from "./AnonymousIpPlugin";
+import { UserIdPlugin } from "./UserIdPlugin";
 import { Maybe } from "../types/helpers";
 
 let sessionId = uuid();
@@ -151,6 +152,8 @@ export const start = async (
     });
     // This allows us to not retrieve users ip addresses for privacy reasons
     segmentClient.add({ plugin: new AnonymousIpPlugin() });
+    // This allows us to make sure we are adding the userId to the event
+    segmentClient.add({ plugin: new UserIdPlugin() });
 
     if (created) {
       segmentClient.reset();
