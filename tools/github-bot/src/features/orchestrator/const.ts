@@ -163,6 +163,26 @@ export const WORKFLOWS = {
           };
     },
   },
+  "test-mobile-e2e.yml": {
+    checkRunName: "@Mobile • Test App End-2-End",
+    description: "Run Detox e2e tests on Ledger Live Mobile",
+    runsOn: RUNNERS.internal,
+    affected: ["live-mobile"],
+    summaryFile: "summary.json",
+    getInputs: (payload: GetInputsPayload, checkSuite?: CheckSuite) => {
+      return "workflow_run" in payload
+        ? {
+            login: payload.workflow_run.actor.login,
+            sha: checkSuite!.head_sha,
+            ref: payload.workflow_run.pull_requests[0]?.head.ref,
+          }
+        : {
+            login: payload.sender.login,
+            sha: payload.check_run.head_sha,
+            ref: payload.check_run.pull_requests[0]?.head.ref,
+          };
+    },
+  },
   "test.yml": {
     checkRunName: "@Libraries • Tests",
     description: "Run the `test` script for affected libraries.",
