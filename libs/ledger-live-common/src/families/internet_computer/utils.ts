@@ -25,7 +25,7 @@ export const isError = (r: { returnCode: number; errorMessage?: string }) => {
 export const methodToString = (method: number): string => {
   switch (method) {
     case 0:
-      return "Transfer";
+      return "Send ICP";
     default:
       return "Unknown";
   }
