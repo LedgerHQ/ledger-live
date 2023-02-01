@@ -44,8 +44,9 @@ export function NftList({ data }: Props) {
     t,
     triggerMultiSelectMode,
     navigateToNftViewer,
-    onClickHide,
-    exitMultiSelectMode,
+    onPressMultiselect,
+    onPressHide,
+    onCancelHide,
     handleSelectableNftPressed,
     nftsToHide,
     multiSelectModeEnabled,
@@ -138,7 +139,7 @@ export function NftList({ data }: Props) {
                   justifyContent="flex-start"
                 >
                   <StyledButton
-                    onPress={triggerMultiSelectMode}
+                    onPress={onPressMultiselect}
                     type="default"
                     iconName="Tasks"
                     iconPosition="left"
@@ -172,7 +173,7 @@ export function NftList({ data }: Props) {
 
             <ButtonsContainer width="100%" justifyContent={"space-between"}>
               <StyledButton
-                onPress={onClickHide}
+                onPress={onPressHide}
                 type="main"
                 iconName="EyeNone"
                 iconPosition="left"
@@ -185,7 +186,7 @@ export function NftList({ data }: Props) {
                 })}
               </StyledButton>
               <StyledButton
-                onPress={exitMultiSelectMode}
+                onPress={onCancelHide}
                 type="default"
                 iconPosition="left"
                 size="large"
