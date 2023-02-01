@@ -83,6 +83,8 @@ const placeholderProps = {
   containerHeight: 20,
 };
 
+const FIVE_MINUTES = 5 * 60 * 1000;
+
 export default function OperationRow({
   account,
   parentAccount,
@@ -152,7 +154,9 @@ export default function OperationRow({
   const text = <Trans i18nKey={`operations.types.${operation.type}`} />;
   const isOptimistic = operation.blockHeight === null;
   const spinner =
-    currency.id === "ethereum" && isOptimistic ? (
+    currency.id === "ethereum" &&
+    isOptimistic &&
+    operation.date.getTime() <= new Date().getTime() - FIVE_MINUTES ? (
       <WarningLight />
     ) : (
       <SpinnerContainer>
