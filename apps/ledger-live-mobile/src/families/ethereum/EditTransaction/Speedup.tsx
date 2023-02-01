@@ -67,9 +67,8 @@ export function SpeedupTransaction({ route }: Props) {
   const disabledStrategies = strategies
     .filter(strategy => {
       // TODO: define what is the correct calculation for this
-      return (
-        strategy.extra!.maxPriorityFeePerGas <
-        transactionToEdit.maxPriorityFeePerGas!
+      return strategy.extra!.maxPriorityFeePerGas.isLessThan(
+        transactionToEdit.maxPriorityFeePerGas!,
       );
     })
     .map(strategy => strategy.label);
