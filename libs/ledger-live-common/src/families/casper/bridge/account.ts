@@ -54,7 +54,6 @@ const createTransaction = (): Transaction => {
 
   return {
     family: "casper",
-    deploy: null,
     amount: new BigNumber(0),
     fees: getEstimatedFees(),
     recipient: "",
@@ -89,13 +88,7 @@ const prepareTransaction = async (
         t.amount = a.spendableBalance.minus(t.fees);
       }
 
-      t.deploy = createNewDeploy(
-        address,
-        recipient,
-        t.amount,
-        t.fees,
-        t.transferId
-      );
+      // t.deploy =
     }
   }
 
@@ -217,23 +210,29 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
           const casper = new CasperApp(transport);
 
           try {
-            o.next({
-              type: "device-signature-requested",
-            });
-
             const fee = transaction.fees;
             if (useAllAmount) amount = balance.minus(fee);
 
             transaction = { ...transaction, amount };
 
-            if (!transaction.deploy) throw o.error("Deploy missing");
+            const deploy = createNewDeploy(
+              address,
+              recipient,
+              transaction.amount,
+              transaction.fees,
+              transaction.transferId
+            );
             // Serialize tx
-            const deployBytes = DeployUtil.deployToBytes(transaction.deploy);
+            const deployBytes = DeployUtil.deployToBytes(deploy);
 
             log(
               "debug",
               `[signOperation] serialized deploy: [${deployBytes.toString()}]`
             );
+
+            o.next({
+              type: "device-signature-requested",
+            });
 
             // Sign by device
             const result = await casper.sign(
@@ -247,10 +246,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
             });
 
             // signature verification
-            const deployHash = deployHashToString(
-              transaction.deploy.hash,
-              true
-            );
+            const deployHash = deployHashToString(deploy.hash, true);
             const signature = result.signatureRS;
 
             const pkBuffer = Buffer.from(
@@ -259,11 +255,10 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
             );
             // sign deploy object
             const signedDeploy = DeployUtil.setSignature(
-              transaction.deploy,
+              deploy,
               signature,
               new CLPublicKey(pkBuffer, getPubKeySignature(address))
             );
-            transaction.deploy = signedDeploy;
 
             const operation: Operation = {
               id: encodeOperationId(accountId, deployHash, "OUT"),
@@ -278,7 +273,6 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
               blockHeight: null,
               date: new Date(),
               extra: {
-                deploy: DeployUtil.deployToJson(transaction.deploy),
                 transferId: transaction.transferId,
               },
             };
@@ -287,7 +281,9 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
               type: "signed",
               signedOperation: {
                 operation,
-                signature,
+                signature: JSON.stringify(
+                  DeployUtil.deployToJson(signedDeploy)
+                ),
                 expirationDate: null,
               },
             });
@@ -306,11 +302,11 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
   );
 
 const broadcast: BroadcastFnSignature = async ({
-  signedOperation: { operation },
+  signedOperation: { signature, operation },
 }) => {
   // log("debug", "[broadcast] start fn");
 
-  const tx = DeployUtil.deployFromJson(operation.extra.deploy).unwrap();
+  const tx = DeployUtil.deployFromJson(JSON.parse(signature)).unwrap();
 
   // log("debug", `[broadcast] isDeployOk ${DeployUtil.validateDeploy(tx).ok}`);
   const resp = await broadcastTx(tx);
