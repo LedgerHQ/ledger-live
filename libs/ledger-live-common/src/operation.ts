@@ -70,3 +70,13 @@ export function patchOperationWithHash(operation: Operation, hash: string): Oper
       }),
   };
 }
+
+export function isEditableOperation(account: AccountLike, operation: Operation): boolean {
+  let isEthFamily = false;
+  if (account.type === "Account") {
+    isEthFamily = account.currency.family === "ethereum";
+  } else if (account.type === "TokenAccount") {
+    isEthFamily = account.token.parentCurrency.family === "ethereum";
+  }
+  return isEthFamily && operation.blockHeight === null && !!operation.transactionRaw;
+}

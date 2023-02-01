@@ -147,7 +147,7 @@ export default function Content({
 
   const isEditable =
     mainAccount.currency.family === "ethereum" &&
-    isConfirmed &&
+    !isConfirmed &&
     operation.type === "OUT";
 
   const specific =
