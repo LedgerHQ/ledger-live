@@ -10,11 +10,11 @@ describe("Naming service api", () => {
 
   it("Error 4xx with invalid name address", async () => {
     try {
-      await getAddressByName("notanaddress");
+      await getAddressByName("notagoodname");
     } catch (e) {
       expect(e).toEqual(
         new LedgerAPI4xx(
-          'Invalid value for: path parameter name (expected value to pass validation, but got: "notanaddress")'
+          'Invalid value for: path parameter name (expected value to pass validation, but got: "notagoodname")'
         )
       );
     }

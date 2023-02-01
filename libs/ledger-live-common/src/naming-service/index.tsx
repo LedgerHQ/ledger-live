@@ -5,6 +5,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { isOutdated } from "./logic";
 import { getAddressByName } from "./api";
 import {
   NamingServiceContextAPI,
@@ -19,20 +20,30 @@ const NamingServiceContext = createContext<NamingServiceContextType>({
   clearCache: () => {},
 });
 
+const isNameValid = (name: string | undefined): boolean =>
+  !!(name && name?.match(/[.*]\w{1,}/g) !== null);
+
 export const useNamingServiceAPI = (
   name: string | undefined
 ): NamingServiceStatus => {
   const { cache, loadNamingServiceAPI } = useContext(NamingServiceContext);
-  const cachedData = name && name?.match(/[.*]\w{1,}/g) !== null && cache[name];
+  const cachedData = name && cache[name];
 
   useEffect(() => {
-    if (name && name?.match(/[.*]\w{1,}/g) !== null) {
+    if (!name || !isNameValid(name)) return;
+    if (!cachedData || isOutdated(cachedData)) {
       loadNamingServiceAPI(name);
     }
-  }, [loadNamingServiceAPI, name]);
+  }, [loadNamingServiceAPI, name, cachedData]);
 
   if (cachedData) {
     return cachedData;
+  } else if (!isNameValid(name)) {
+    return {
+      status: "error",
+      error: new Error("Invalid name format"),
+      updatedAt: Date.now(),
+    };
   } else {
     return { status: "queued" };
   }

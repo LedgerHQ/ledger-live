@@ -76,4 +76,22 @@ describe("useNamingService", () => {
 
     expect(screen.getByTestId("status").textContent).toBe("error");
   });
+
+  test("should be an error", async () => {
+    mockedGetAddressByName.mockImplementation(async () => {
+      throw new LedgerAPI4xx();
+    });
+
+    render(
+      <NamingServiceProvider>
+        <CustomTest name="notavalideth" />
+      </NamingServiceProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("status").textContent).not.toBe("loading");
+    });
+
+    expect(screen.getByTestId("status").textContent).toBe("error");
+  });
 });
