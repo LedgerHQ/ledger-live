@@ -102,6 +102,7 @@
     "addressCopied" : "Adres kopyalandı",
     "addressCopiedSuspicious" : "Kopyalanan adres ile panodaki adres arasında uyuşmazlık var.",
     "experimentalFeature" : "Deneysel",
+    "featureFlags" : "Özellik Bayrakları",
     "information" : "Bilgi",
     "search" : "Ara...",
     "searchWithoutEllipsis" : "Ara",
@@ -131,7 +132,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blue"
   },
   "operation" : {
@@ -217,7 +218,8 @@
     "swap" : "Takas et",
     "lend" : "Borç ver",
     "catalog" : "Keşfet",
-    "market" : "Piyasa"
+    "market" : "Piyasa",
+    "protect" : "Protect"
   },
   "stars" : {
     "placeholder" : "Favori hesaplarınızı yıldızlayarak burada görüntüleyebilirsiniz.",
@@ -538,7 +540,7 @@
     },
     "resetThirdPartyDataModal" : {
       "title" : "Yerel üçüncü taraf verilerinizi silin",
-      "subtitle" : "Yerel üçüncü taraf verilerinizi silin. İş ortaklarımız tarafından sağlanan hizmetlere erişmek için KYC'nizi yeniden göndermeniz veya tekrar oturum açmanız gerekebilir.",
+      "subtitle" : "Yerel üçüncü taraf verilerinizi silin. Sağlayıcılarımız tarafından sunulan hizmetlere erişmek için KYC'nizi yeniden göndermeniz veya tekrar oturum açmanız gerekebilir.",
       "cta" : "Onayla"
     },
     "modal" : {
@@ -1206,8 +1208,11 @@
         "checkDeviceButton" : "Kontrolü tekrar çalıştırın",
         "cancelButton" : "Belki sonra"
       },
-      "genuineCheckAnimationModal" : {
-        "message" : "{{deviceName}} cihazında yöneticiye izin verin"
+      "softwareCheckAllowSecureChannelModal" : {
+        "title" : "{{deviceName}} cihazında yöneticiye izin verin"
+      },
+      "softwareCheckLockedDeviceModal" : {
+        "title" : "Cihazınızın kilidini açın"
       },
       "helpDrawer" : {
         "title" : "Kurulum kılavuzuyla ilgili yardıma mı ihtiyacınız var?",
@@ -1304,8 +1309,8 @@
       "description" : "BLACKFRIDAY20 promosyon koduyla Ledger donanım cüzdanlarda %40'lık indirimden yararlanın"
     },
     "referralProgram" : {
-      "title" : "Referans verin ve $10 kazanın",
-      "description" : "Bir arkadaşınıza başarıyla referans verdiğinizde, ikiniz de $10 değerinde Bitcoin kazanırsınız."
+      "title" : "Referans olun ve $10 kazanın",
+      "description" : "Bir arkadaşınıza başarıyla referans olduğunuzda, ikiniz de $10 değerinde Bitcoin kazanırsınız."
     }
   },
   "signmessage" : {
@@ -1718,7 +1723,7 @@
     "swap" : {
       "notice" : {
         "default" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız.",
-        "cic" : "Göndermeden önce cihazınızdaki Takas bilgilerini doğrulayın. Bazı işlemler için CIC tarafından ek doğrulama adımları gerekebilir ve bu biraz gecikmeye neden olabilir."
+        "provider" : "Göndermeden önce cihazınızdaki Takas bilgilerini doğrulayın. {{providerName}} bazı işlemler için ek doğrulama adımları gerçekleştirmek zorunda kalabilir ve bu, gecikmeye neden olabilir."
       },
       "confirm" : "Takas işlemini onayla",
       "amountSent" : "Gönderilecek tutar",
@@ -3689,8 +3694,10 @@
       "debugAppsDesc" : "Hata ayıklama etiketli platform uygulamalarını görüntüleme ve açmaya izin verin.",
       "experimentalApps" : "Deneysel uygulamalara izin ver",
       "experimentalAppsDesc" : "Deneysel etiketli platform uygulamalarını görüntüleme ve açmaya izin verin.",
-      "catalogServer" : "Katalog sağlayıcısını belirle",
-      "catalogServerDesc" : "Birden çok platform uygulama kaynağı arasında geçiş yapın",
+      "catalogUrl" : "Katalog uygulama sağlayıcısını belirle",
+      "catalogUrlDesc" : "Özel katalog sağlayıcınızın URL'sini girin",
+      "catalogRampServer" : "Al / sat sağlayıcılarını belirle",
+      "catalogRampServerDesc" : "Farklı alım satım sağlayıcıları arasında geçiş yapın",
       "enablePlatformDevTools" : "Platform geliştirme araçlarını etkinleştirin",
       "enablePlatformDevToolsDesc" : "Platform uygulama geliştirme araçları penceresini açmayı etkinleştirin",
       "featureFlagsTitle" : "Ledger Live'da kullanılan tanımlı özellik bayrakları",
@@ -3698,6 +3705,9 @@
       "featureFlagsEdit" : "Düzenle",
       "featureFlagsRestore" : "Geri yükle",
       "featureFlagsOverride" : "Geçersiz bırak",
+      "featureFlagsRestoreAll" : "Tüm bayrak değerlerini geri yükle",
+      "showButtonDesc" : "Özellik Bayrakları düğmelerini Yan Menüde her zaman göster",
+      "buttonTitle" : "Bayraklar yerel olarak geçersiz bırakıldı",
       "firebaseProject" : "Bu sürüm tarafından hedeflenen Firebase projesi:",
       "addLocalApp" : "Yerel uygulama ekleyin",
       "addLocalAppDesc" : "Yerel dizini kullanarak yerel dosyalara göz atın ve yerel bir uygulama ekleyin",
@@ -3756,6 +3766,10 @@
         "experimentalCurrencies" : {
           "title" : "Deneysel entegrasyonlar",
           "description" : "Mevcut deneysel kripto varlık entegrasyonlarını kullanın."
+        },
+        "experimentalExecutionOnRenderer" : {
+          "title" : "Deneysel ağ iletişimleri",
+          "description" : "VPN ile Ledger Live kullanımını en iyi hâle getirmek için deneysel ağ iletişimlerini kullanın. Bu özelliği sadece kullandığınız VPN, sistem hatalarına neden olursa etkinleştirin."
         },
         "experimentalLanguages" : {
           "title" : "Çeviri testi",
@@ -4056,7 +4070,7 @@
       "welcome" : {
         "title" : "En güvenli kripto para ve NFT cüzdanı",
         "description" : "Kriptolarınızı ve NFT'lerinizi Ledger Live'da güvenle yönetin, satın alın ve artırın.",
-        "nextButton" : "Başlangıç",
+        "nextButton" : "Devam",
         "noDevice" : "Cihazınız yok mu?",
         "buyLink" : "Cihazınız yok mu? Ledger Nano X satın alın",
         "byTapping" : "“Hemen Başla” butonuna dokunduğunuzda bunlara izin vermiş ve rıza göstermiş olursunuz:",
@@ -4128,10 +4142,10 @@
             }
           },
           "howToGetStarted" : {
-            "title" : "Başlamanın en iyi yolu:",
+            "title" : "Başlamak için en iyi yol:",
             "rules" : {
               "1" : "30 dakika ayırın ve acele etmeyin.",
-              "2" : "Yazmak için bir kalem ve kâğıt alın.",
+              "2" : "Yazmak için bir kalem alın.",
               "3" : "Yalnız kalın ve güvenli ve sessiz bir ortam seçin."
             },
             "buttons" : {
@@ -4171,7 +4185,7 @@
             }
           },
           "deviceHowTo2" : {
-            "title" : "Başlamanın en iyi yolu:",
+            "title" : "Başlamak için en iyi yol:",
             "turnOn" : {
               "title" : "Nano'yu açın",
               "descr" : "Cihazınızı USB kablosuyla bilgisayarınıza bağlayın."
@@ -5497,6 +5511,14 @@
       "title" : "Cihazınız kilitlendi",
       "description" : "Cihazınızın kilidini açın ve tekrar deneyin.",
       "descriptionWithProductName" : "{{ productName }} cihazınızın kilidini açın ve tekrar deneyin."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "Cihazınız henüz kullanıma hazır değil",
+      "titleWithProductName" : "{{ productName }} henüz kullanıma hazır değil",
+      "description" : "Öncelikle cihazınızın kurulumunu yapmanız gerekiyor.\nKurulum sürecinde size yardımcı olacağız.",
+      "descriptionWithProductName" : "Öncelikle {{ productName }} cihazınızın kurulumunu yapmanız gerekiyor.\nKurulum sürecinde size yardımcı olacağız.",
+      "goToOnboardingButton" : "Cihazımı kur",
+      "goToOnboardingButtonWithProductName" : "{{ productName }} cihazımı kur"
     }
   },
   "cryptoOrg" : {
@@ -5559,10 +5581,16 @@
     "postOnboarding" : {
       "title" : "Cihazınızı kişiselleştirin",
       "description" : "Ekranı özelleştirin",
-      "actionCompletedPopupLabel" : "Cihaz kişiselleştirildi",
-      "actionCompletedHubTitle" : "Ekran gayet şık görünüyor."
+      "actionCompletedPopupLabel" : "Cihaz kişiselleştirildi"
     },
     "customImageSet" : "Özel resim ayarlandı",
     "finishCTA" : "Bitir"
+  },
+  "discoverProtect" : {
+    "new" : "Yeni",
+    "title" : "Protect ile varlıklara erişiminizi hiçbir zaman yitirmeyin. Asla ve katiyen.",
+    "description" : "Protect, Kurtarma İfadenizin veya Ledger'ınızın çalınması ya da kaybolması durumunda hiçbir varlığınızı kaybetmemeniz için Kurtarma İfadenizi koruma sorumluluğunu üstlenir.",
+    "cta" : "Avantajlarını keşfedin",
+    "downloadLLM" : "Abone olmak için QR kodunu tarayıp mobil uygulamamızı indirin"
   }
 }
