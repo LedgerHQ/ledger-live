@@ -23,16 +23,14 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.internal,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
-    getInputs: (payload: GetInputsPayload, checkSuite?: CheckSuite) => {
+    getInputs: (payload: GetInputsPayload) => {
       return "workflow_run" in payload
         ? {
             login: payload.workflow_run.actor.login,
-            sha: checkSuite!.head_sha,
             ref: payload.workflow_run.pull_requests[0]?.head.ref,
           }
         : {
             login: payload.sender.login,
-            sha: payload.check_run.head_sha,
             ref: payload.check_run.pull_requests[0]?.head.ref,
           };
     },
@@ -44,16 +42,14 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.external,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
-    getInputs: (payload: GetInputsPayload, checkSuite?: CheckSuite) => {
+    getInputs: (payload: GetInputsPayload) => {
       return "workflow_run" in payload
         ? {
             login: payload.workflow_run.actor.login,
-            sha: checkSuite!.head_sha,
             ref: payload.workflow_run.pull_requests[0]?.head.ref,
           }
         : {
             login: payload.sender.login,
-            sha: payload.check_run.head_sha,
             ref: payload.check_run.pull_requests[0]?.head.ref,
           };
     },
@@ -65,16 +61,14 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.internal,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
-    getInputs: (payload: GetInputsPayload, checkSuite?: CheckSuite) => {
+    getInputs: (payload: GetInputsPayload) => {
       return "workflow_run" in payload
         ? {
             login: payload.workflow_run.actor.login,
-            sha: checkSuite!.head_sha,
             ref: payload.workflow_run.pull_requests[0]?.head.ref,
           }
         : {
             login: payload.sender.login,
-            sha: payload.check_run.head_sha,
             ref: payload.check_run.pull_requests[0]?.head.ref,
           };
     },
@@ -86,16 +80,14 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.external,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
-    getInputs: (payload: GetInputsPayload, checkSuite?: CheckSuite) => {
+    getInputs: (payload: GetInputsPayload) => {
       return "workflow_run" in payload
         ? {
             login: payload.workflow_run.actor.login,
-            sha: checkSuite!.head_sha,
             ref: payload.workflow_run.pull_requests[0]?.head.ref,
           }
         : {
             login: payload.sender.login,
-            sha: payload.check_run.head_sha,
             ref: payload.check_run.pull_requests[0]?.head.ref,
           };
     },
@@ -107,16 +99,14 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.internal,
     affected: ["live-mobile"],
     summaryFile: "summary.json",
-    getInputs: (payload: GetInputsPayload, checkSuite?: CheckSuite) => {
+    getInputs: (payload: GetInputsPayload) => {
       return "workflow_run" in payload
         ? {
             login: payload.workflow_run.actor.login,
-            sha: checkSuite!.head_sha,
             ref: payload.workflow_run.pull_requests[0]?.head.ref,
           }
         : {
             login: payload.sender.login,
-            sha: payload.check_run.head_sha,
             ref: payload.check_run.pull_requests[0]?.head.ref,
           };
     },
@@ -128,16 +118,14 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.external,
     affected: ["live-mobile"],
     summaryFile: "summary.json",
-    getInputs: (payload: GetInputsPayload, checkSuite?: CheckSuite) => {
+    getInputs: (payload: GetInputsPayload) => {
       return "workflow_run" in payload
         ? {
             login: payload.workflow_run.actor.login,
-            sha: checkSuite!.head_sha,
             ref: payload.workflow_run.pull_requests[0]?.head.ref,
           }
         : {
             login: payload.sender.login,
-            sha: payload.check_run.head_sha,
             ref: payload.check_run.pull_requests[0]?.head.ref,
           };
     },
@@ -149,16 +137,14 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.both,
     affected: ["live-mobile"],
     summaryFile: "summary.json",
-    getInputs: (payload: GetInputsPayload, checkSuite?: CheckSuite) => {
+    getInputs: (payload: GetInputsPayload) => {
       return "workflow_run" in payload
         ? {
             login: payload.workflow_run.actor.login,
-            sha: checkSuite!.head_sha,
             ref: payload.workflow_run.pull_requests[0]?.head.ref,
           }
         : {
             login: payload.sender.login,
-            sha: payload.check_run.head_sha,
             ref: payload.check_run.pull_requests[0]?.head.ref,
           };
     },
@@ -169,16 +155,14 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.internal,
     affected: ["live-mobile"],
     summaryFile: "summary.json",
-    getInputs: (payload: GetInputsPayload, checkSuite?: CheckSuite) => {
+    getInputs: (payload: GetInputsPayload) => {
       return "workflow_run" in payload
         ? {
             login: payload.workflow_run.actor.login,
-            sha: checkSuite!.head_sha,
             ref: payload.workflow_run.pull_requests[0]?.head.ref,
           }
         : {
             login: payload.sender.login,
-            sha: payload.check_run.head_sha,
             ref: payload.check_run.pull_requests[0]?.head.ref,
           };
     },
@@ -189,18 +173,16 @@ export const WORKFLOWS = {
     runsOn: RUNNERS.both,
     affected: [/^libs\/.*/],
     summaryFile: "summary.json",
-    getInputs: (payload: GetInputsPayload, checkSuite?: CheckSuite) => {
+    getInputs: (payload: GetInputsPayload) => {
       return "workflow_run" in payload
         ? {
             login: payload.workflow_run.actor.login,
-            sha: checkSuite!.head_sha,
             ref: payload.workflow_run.pull_requests[0]?.head.ref,
             since_branch:
               payload.workflow_run.pull_requests[0]?.base.ref || "develop",
           }
         : {
             login: payload.sender.login,
-            sha: payload.check_run.head_sha,
             ref: payload.check_run.pull_requests[0]?.head.ref,
             since_branch:
               payload.check_run.pull_requests[0]?.base.ref || "develop",

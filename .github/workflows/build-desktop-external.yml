@@ -4,9 +4,6 @@ run-name: "@Desktop • Build App (external) triggered by ${{ inputs.login }}  $
 on:
   workflow_dispatch:
     inputs:
-      sha:
-        description: the head sha to target the correct check run
-        required: false
       ref:
         description: the branch which triggered this workflow
         required: true
@@ -109,7 +106,7 @@ jobs:
   report:
     needs: build-desktop-app
     runs-on: ubuntu-latest
-    if: always() && !cancelled() && github.event_name == 'workflow_dispatch' && inputs.sha != ''
+    if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
     steps:
       - name: Echo outputs
         run: |

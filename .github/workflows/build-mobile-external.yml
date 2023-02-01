@@ -4,9 +4,6 @@ run-name: "@Mobile • Build App (external) triggered by ${{ inputs.login }} ${{
 on:
   workflow_dispatch:
     inputs:
-      sha:
-        description: the head sha to target the correct check run
-        required: false
       ref:
         description: the branch which triggered this workflow
         required: true
@@ -101,7 +98,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ inputs.sha || inputs.ref || github.event.push.head.sha }}
+          ref: ${{ inputs.ref || github.event.push.head.sha }}
       - name: set git user
         run: |
           git config user.email "team-live@ledger.fr"
@@ -131,7 +128,7 @@ jobs:
   report:
     runs-on: ubuntu-latest
     needs: [build-mobile-app-android, build-mobile-app-ios]
-    if: always() && !cancelled() && github.event_name == 'workflow_dispatch' && inputs.sha != ''
+    if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
     steps:
       - uses: actions/github-script@v6
         name: get statuses of runs
