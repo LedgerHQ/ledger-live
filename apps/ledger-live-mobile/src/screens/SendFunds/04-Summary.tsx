@@ -68,8 +68,7 @@ const WARN_FROM_UTXO_COUNT = 50;
 
 function SendSummary({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { nextNavigation, overrideAmountLabel, hideTotal, hideFees } =
-    route.params;
+  const { nextNavigation, overrideAmountLabel, hideTotal } = route.params;
 
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is missing");
@@ -174,6 +173,7 @@ function SendSummary({ navigation, route }: Props) {
     account &&
     account.type === "Account" &&
     (account.subAccounts || []).some(subAccount => subAccount.balance.gt(0));
+
   const onBuyEth = useCallback(() => {
     navigation.navigate(NavigatorName.Exchange, {
       screen: ScreenName.ExchangeBuy,
@@ -254,17 +254,15 @@ function SendSummary({ navigation, route }: Props) {
             overrideAmountLabel={overrideAmountLabel}
           />
         )}
-        {!hideFees && (
-          <SendRowsFee
-            setTransaction={setTransaction}
-            status={status}
-            account={account}
-            parentAccount={parentAccount}
-            transaction={transaction}
-            navigation={navigation}
-            route={route}
-          />
-        )}
+        <SendRowsFee
+          setTransaction={setTransaction}
+          status={status}
+          account={account}
+          parentAccount={parentAccount}
+          transaction={transaction}
+          navigation={navigation}
+          route={route}
+        />
         {error ? (
           <View style={styles.gasPriceError}>
             <View
