@@ -102,6 +102,7 @@
     "addressCopied" : "Adresse copiée",
     "addressCopiedSuspicious" : "Différence entre l’adresse copiée et celle dans le presse-papiers.",
     "experimentalFeature" : "Expérimental",
+    "featureFlags" : "Feature Flags",
     "information" : "Informations",
     "search" : "Rechercher...",
     "searchWithoutEllipsis" : "Rechercher",
@@ -131,7 +132,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blue"
   },
   "operation" : {
@@ -217,7 +218,8 @@
     "swap" : "Swap",
     "lend" : "Prêter",
     "catalog" : "Discover",
-    "market" : "Marché"
+    "market" : "Marché",
+    "protect" : "Protect"
   },
   "stars" : {
     "placeholder" : "Mettez une étoile sur un compte pour l’afficher ici.",
@@ -786,8 +788,8 @@
     "undelegating" : "Délégation interrompue",
     "availableBalanceTooltip" : "Ce montant est disponible.",
     "frozenAssetsTooltip" : "Les actifs gelés sont utilisés pour voter sur TRON. Cela représente votre nombre total de votes.",
-    "bandwidthTooltip" : "Geler des actifs pour gagner de la Bande passante",
-    "energyTooltip" : "Geler des actifs pour gagner de l’Énergie",
+    "bandwidthTooltip" : "Gelez des actifs pour gagner de la Bande passante.",
+    "energyTooltip" : "Gelez des actifs pour gagner de l’Énergie.",
     "delegatedTooltip" : "Les actifs délégués sont utilisés pour voter. Cela représente votre nombre total de votes.",
     "undelegatingTooltip" : "Les actifs dont la délégation est interrompue sont disponibles après {{timelockInDays}} jours.",
     "banner" : {
@@ -1206,8 +1208,11 @@
         "checkDeviceButton" : "Exécuter à nouveau la vérification",
         "cancelButton" : "Pas maintenant"
       },
-      "genuineCheckAnimationModal" : {
-        "message" : "Autorisez le Manager sur {{deviceName}}"
+      "softwareCheckAllowSecureChannelModal" : {
+        "title" : "Autorisez le Manager sur {{deviceName}}"
+      },
+      "softwareCheckLockedDeviceModal" : {
+        "title" : "Déverrouillez votre appareil."
       },
       "helpDrawer" : {
         "title" : "Besoin d’aide pour configurer votre Ledger ?",
@@ -1244,9 +1249,9 @@
     }
   },
   "hideNftCollection" : {
-    "title" : "Cacher la collection de NFT",
+    "title" : "Masquer la collection de NFT",
     "desc" : "Vous vous apprêtez à cacher tous les NFT de la collection <1><0>{{collectionName}}</0></1>. Vous pouvez restaurer leur visibilité à tout moment à partir des <3>Paramètres</3>.",
-    "hideCTA" : "Cacher la collection de NFT"
+    "hideCTA" : "Masquer la collection de NFT"
   },
   "banners" : {
     "cleanCache" : {
@@ -1718,7 +1723,7 @@
     "swap" : {
       "notice" : {
         "default" : "Vérifiez les détails de l’échange sur votre appareil avant de l’envoyer. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier.",
-        "cic" : "Vérifiez les détails de l’échange sur votre appareil avant de l’envoyer. Une vérification supplémentaire peut être effectuée par CIC pour certains transactions, entraînant un temps d’attente."
+        "provider" : "Vérifiez les détails de l’échange sur votre appareil avant de l’envoyer. Une vérification supplémentaire peut être effectuée par {{providerName}} pour certaines transactions, entraînant un temps d’attente."
       },
       "confirm" : "Confirmer l’échange",
       "amountSent" : "Montant à envoyer",
@@ -1797,7 +1802,7 @@
       },
       "updatable" : {
         "title" : "Mise à jour disponible",
-        "title_plural" : "Mises à jours disponibles",
+        "title_plural" : "Mises à jour disponibles",
         "progressTitle" : "{{number}} mise à jour d’application",
         "progressTitle_plural" : "{{number}} mises à jour d’applications",
         "progressWarning" : "Ne sortez pas de My Ledger pendant la mise à jour.",
@@ -1811,7 +1816,7 @@
         "scheduled" : "En attente",
         "update" : "Mise à jour disponible",
         "updateAll" : "Tout mettre à jour",
-        "updateAllOutOfMemory" : "Espace de stockage insuffisant. Merci de désinstaller des applications",
+        "updateAllOutOfMemory" : "Espace de stockage insuffisant. Veuillez désinstaller des applications.",
         "install" : "Installer",
         "installed" : "Installée",
         "updated" : "Mise à jour",
@@ -3659,7 +3664,7 @@
       },
       "modal" : {
         "button" : "Terminé",
-        "title" : "Scanner pour exporter vers Ledger Live pour le mobile.",
+        "title" : "Scannez pour exporter vers Ledger Live mobile",
         "listTitle" : "Sur l’application Ledger Live pour le mobile :",
         "step1" : "Appuyez sur <highlight><icon>+</icon></highlight> dans <highlight>Comptes</highlight>.",
         "step2" : "Appuyez sur <highlight>Importer les comptes de l’ordinateur</highlight>.",
@@ -3689,8 +3694,10 @@
       "debugAppsDesc" : "Affichez et autorisez l’ouverture des Platform Apps \"Debug\".",
       "experimentalApps" : "Autoriser les Apps Expérimentales",
       "experimentalAppsDesc" : "Affichez et autorisez l’ouverture des Platform Apps \"Expérimentales\".",
-      "catalogServer" : "Définir le fournisseur du Catalogue",
-      "catalogServerDesc" : "Choisissez entre plusieurs sources pour les Platform Apps.",
+      "catalogUrl" : "Définir le fournisseur du Catalogue d’applications",
+      "catalogUrlDesc" : "Saisissez l’URL de votre fournisseur du Catalogue personnalisé.",
+      "catalogRampServer" : "Définir les prestataires d’achat / vente",
+      "catalogRampServerDesc" : "Choisissez entre plusieurs prestataires de trading.",
       "enablePlatformDevTools" : "Activer les Outils de développement Platform",
       "enablePlatformDevToolsDesc" : "Autorisez la fenêtre Outils de développement Platform.",
       "featureFlagsTitle" : "Indicateurs de fonctionnalités (feature flags) définis et utilisés dans Ledger Live",
@@ -3698,6 +3705,9 @@
       "featureFlagsEdit" : "Modifier",
       "featureFlagsRestore" : "Restaurer",
       "featureFlagsOverride" : "Remplacer",
+      "featureFlagsRestoreAll" : "Restaurer les valeurs de tous les indicateurs",
+      "showButtonDesc" : "Toujours afficher le bouton Feature Flags dans la barre latérale.",
+      "buttonTitle" : "Indicateurs remplacés localement",
       "firebaseProject" : "Projet Firebase ciblé par ce build :",
       "addLocalApp" : "Ajouter une app locale",
       "addLocalAppDesc" : "Parcourez vos fichiers et ajoutez une app locale avec un manifeste local.",
@@ -3756,6 +3766,10 @@
         "experimentalCurrencies" : {
           "title" : "Intégrations expérimentales",
           "description" : "Utilisez les intégrations expérimentales disponibles pour les crypto-actifs concernés."
+        },
+        "experimentalExecutionOnRenderer" : {
+          "title" : "Mise en réseau expérimentale",
+          "description" : "Utilisez l’accès réseau expérimental pour optimiser votre expérience Ledger Live avec votre VPN. Activez cette option uniquement si votre VPN actuel provoque des erreurs système."
         },
         "experimentalLanguages" : {
           "title" : "Tester les traductions",
@@ -3863,8 +3877,8 @@
         "count_plural" : "{{count}} tokens"
       },
       "hiddenNftCollections" : {
-        "title" : "Collections de NFT cachées",
-        "desc" : "Vous pouvez masquer des collections NFT en faisant un clic droit sur le nom de la collection et sélectionnant Cacher la collection de NFT.",
+        "title" : "Collections de NFT masquées",
+        "desc" : "Vous pouvez cacher des collections NFT en faisant un clic droit sur le nom de la collection et sélectionnant Masquer la collection de NFT.",
         "count" : "{{count}} collection",
         "count_plural" : "{{count}} collections"
       },
@@ -5497,6 +5511,14 @@
       "title" : "Appareil verrouillé",
       "description" : "Déverrouillez votre appareil et réessayez.",
       "descriptionWithProductName" : "Déverrouillez votre {{ productName }} et réessayez."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "Votre appareil n’est pas encore prêt à être utilisé.",
+      "titleWithProductName" : "Votre {{ productName }} n’est pas encore prêt à être utilisé",
+      "description" : "Vous devez d’abord configurer votre appareil.\nNous vous guiderons à chaque étape.",
+      "descriptionWithProductName" : "Vous devez d’abord configurer votre {{ productName }}.\nNous vous guiderons à chaque étape.",
+      "goToOnboardingButton" : "Configurer mon appareil",
+      "goToOnboardingButtonWithProductName" : "Configurer mon {{ productName }}"
     }
   },
   "cryptoOrg" : {
@@ -5559,10 +5581,16 @@
     "postOnboarding" : {
       "title" : "Personnaliser mon appareil",
       "description" : "Avec un fond d’écran unique",
-      "actionCompletedPopupLabel" : "Appareil personnalisé",
-      "actionCompletedHubTitle" : "Vous avez créé votre style !"
+      "actionCompletedPopupLabel" : "Appareil personnalisé"
     },
     "customImageSet" : "Image définie",
     "finishCTA" : "Terminer"
+  },
+  "discoverProtect" : {
+    "new" : "Nouveau",
+    "title" : "Avec Protect, ne perdez jamais l’accès à vos actifs. Jamais.",
+    "description" : "Protect se charge de protéger votre phrase de récupération, afin d’éviter toute perte d’actifs si vous vous faites voler/perdez votre phrase ou votre Ledger.",
+    "cta" : "Découvrir les avantages",
+    "downloadLLM" : "Pour vous abonner, scannez le code QR et téléchargez notre app mobile."
   }
 }
