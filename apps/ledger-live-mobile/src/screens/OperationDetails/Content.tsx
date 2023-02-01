@@ -135,9 +135,6 @@ export default function Content({
   const internalOperations = operation.internalOperations || [];
   const shouldDisplayTo = uniqueRecipients.length > 0 && !!uniqueRecipients[0];
 
-  const isOperationStuck =
-    operation.date.getTime() <= new Date().getTime() - FIVE_MINUTES;
-
   const onEditTxCardClick = () => {
     navigation.navigate(NavigatorName.EthereumEditTransaction, {
       screen: ScreenName.EditEthereumTransactionMethodSelection,
@@ -150,6 +147,14 @@ export default function Content({
     mainAccount,
     currencySettings.confirmationsNb,
   );
+
+  const isOperationStuck =
+    operation.date.getTime() <= new Date().getTime() - FIVE_MINUTES;
+
+  const isEditable =
+    mainAccount.currency.family === "ethereum" &&
+    isConfirmed &&
+    operation.type === "OUT";
 
   const specific =
     byFamiliesOperationDetails[
@@ -336,28 +341,30 @@ export default function Content({
         />
       ) : null}
 
-      <Flex
-        backgroundColor={isOperationStuck ? "primary.c80" : "primary.c80"}
-        color={"primary.c80"}
-        width="90%"
-        alignSelf={"center"}
-        borderRadius={8}
-        padding={8}
-      >
-        {isOperationStuck ? (
-          <InformativeCard
-            title={t("editTransaction.stuckTx")}
-            tag={t("editTransaction.speedupOrCancel")}
-            onClickCard={onEditTxCardClick}
-          />
-        ) : (
-          <InformativeCard
-            title={t("editTransaction.speedUpTxMessage")}
-            tag={t("editTransaction.speedupOrCancel")}
-            onClickCard={onEditTxCardClick}
-          />
-        )}
-      </Flex>
+      {isEditable && (
+        <Flex
+          backgroundColor={isOperationStuck ? "primary.c80" : "primary.c80"}
+          color={"primary.c80"}
+          width="90%"
+          alignSelf={"center"}
+          borderRadius={8}
+          padding={8}
+        >
+          {isOperationStuck ? (
+            <InformativeCard
+              title={t("editTransaction.stuckTx")}
+              tag={t("editTransaction.speedupOrCancel")}
+              onClickCard={onEditTxCardClick}
+            />
+          ) : (
+            <InformativeCard
+              title={t("editTransaction.speedUpTxMessage")}
+              tag={t("editTransaction.speedupOrCancel")}
+              onClickCard={onEditTxCardClick}
+            />
+          )}
+        </Flex>
+      )}
 
       {!disableAllLinks ? (
         <Section
