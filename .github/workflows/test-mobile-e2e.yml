@@ -42,7 +42,7 @@ jobs:
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
     outputs:
-      status: ${{ step.detox.outcome }}
+      status: ${{ steps.detox.outcome }}
     steps:
       - uses: actions/checkout@v3
         with:

@@ -181,7 +181,7 @@ jobs:
 
   e2e-tests-mac:
     name: "Live Desktop Tests (macOS X)"
-    runs-on: [ledger-live, macos]
+    runs-on: [m1, ARM64]
     outputs:
       status: ${{ steps.test-desktop.outputs.outcome }}
     env:

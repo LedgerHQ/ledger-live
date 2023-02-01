@@ -165,7 +165,7 @@ export const WORKFLOWS = {
   },
   "test-mobile-e2e.yml": {
     checkRunName: "@Mobile • Test App End-2-End",
-    description: "Run Detox e2e tests on Ledger Live Mobile",
+    description: "Run Detox end-to-end tests on Ledger Live Mobile",
     runsOn: RUNNERS.internal,
     affected: ["live-mobile"],
     summaryFile: "summary.json",
