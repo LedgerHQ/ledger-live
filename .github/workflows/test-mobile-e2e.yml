@@ -301,10 +301,6 @@ jobs:
               summary += ` ${values.pass ? "✅" : "❌"} (${values.status}) |`;
             });
 
-            summary += `
-            ${{ steps.comment.outputs.body }}
-            `
-
             const output = {
               summary
             };
