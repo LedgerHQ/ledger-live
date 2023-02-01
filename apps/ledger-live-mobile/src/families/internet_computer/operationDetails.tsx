@@ -14,7 +14,7 @@ function OperationDetailsExtra({ extra }: Props) {
     <>
       {extra.transferId && (
         <Section
-          title={t("operationDetails.extra.transferId")}
+          title={t("operationDetails.extra.memo")}
           value={extra.transferId}
         />
       )}
