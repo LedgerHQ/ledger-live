@@ -64,7 +64,7 @@ export default function StacksMemoRow({ account, transaction }: Props) {
     <View>
       {!memo ? (
         <SummaryRow
-          title={<Trans i18nKey="send.summary.memo" />}
+          title={<Trans i18nKey="send.summary.memo.title" />}
           onPress={editMemo}
         >
           <LText
