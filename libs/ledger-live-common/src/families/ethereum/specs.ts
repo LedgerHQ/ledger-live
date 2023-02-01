@@ -20,6 +20,7 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { CompoundAccountSummary } from "../../compound/types";
 import { acceptTransaction } from "./speculos-deviceActions";
+import { avalancheSpeculosDeviceAction } from "./speculos-deviceActions-avalanche";
 
 const testTimeout = 8 * 60 * 1000;
 
@@ -552,7 +553,7 @@ const avalanche_c_chain: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Avalanche",
   },
-  genericDeviceAction: acceptTransaction,
+  genericDeviceAction: avalancheSpeculosDeviceAction,
   testTimeout,
   minViableAmount: minAmountAVAXC,
   transactionCheck: ({ maxSpendable }) => {

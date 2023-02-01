@@ -16,7 +16,7 @@ function subAccount(subAccountId, account) {
 const maxFeesExpectedValue = ({ account, status }) =>
   formatDeviceAmount(account.currency, status.estimatedFees);
 
-export const acceptTransaction: DeviceAction<Transaction, any> =
+export const avalancheSpeculosDeviceAction: DeviceAction<Transaction, any> =
   deviceActionFlow({
     steps: [
       {
@@ -31,6 +31,18 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
           if (transaction.mode === "compound.supply") return "Lend Assets";
           if (transaction.mode === "compound.withdraw") return "Redeem Assets";
           return "";
+        },
+      },
+      // For Avalanche C Chain
+      {
+        title: "Transfer",
+        button: SpeculosButton.RIGHT,
+        expectedValue: ({ account, transaction }) => {
+          const amount = transaction.useAllAmount
+            ? account.spendableBalance
+            : transaction.amount;
+
+          return formatDeviceAmount(account.currency, amount);
         },
       },
       {
@@ -92,9 +104,8 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
         expectedValue: maxFeesExpectedValue,
       },
       {
-        title: "Address",
+        title: "To",
         button: SpeculosButton.RIGHT,
-        expectedValue: ({ transaction }) => transaction.recipient,
       },
       {
         title: "Accept",
