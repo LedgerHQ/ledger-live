@@ -10,6 +10,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Account } from "@ledgerhq/types-live";
 import { StyleSheet, View } from "react-native";
+import { Trans } from "react-i18next";
 
 import { ScreenName } from "../../../const";
 import { EthereumEditTransactionParamList } from "../../../components/RootNavigator/types/EthereumEditTransactionNavigator";
@@ -124,7 +125,7 @@ export function SpeedupTransaction({ route }: Props) {
           containerStyle={{ flexGrow: 1 }}
           onPress={onContinue}
         >
-          Continue
+          <Trans i18nKey={"common.continue"} />
         </Button>
       </View>
     </>
