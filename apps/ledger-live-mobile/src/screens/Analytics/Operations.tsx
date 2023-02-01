@@ -34,6 +34,7 @@ import { TrackScreen } from "../../analytics";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { slice } from "lodash";
 
 type Props = StackNavigatorProps<
   BaseNavigatorStackParamList,
