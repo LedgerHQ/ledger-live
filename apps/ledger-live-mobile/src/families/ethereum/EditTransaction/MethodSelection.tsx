@@ -1,5 +1,6 @@
 import React from "react";
 import { Flex, SelectableList } from "@ledgerhq/native-ui";
+import { Trans } from "react-i18next";
 
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
@@ -13,8 +14,8 @@ type Props = StackNavigatorProps<
 
 export function MethodSelection({ navigation, route }: Props) {
   const options = [
-    { text: "Speed up", value: "speedUp" },
-    { text: "Cancel", value: "cancel" },
+    { i18nKey: "editTransaction.speedUp", value: "speedUp" },
+    { i18nKey: "common.cancel", value: "cancel" },
   ] as const;
 
   const { operation, account, parentAccount } = route.params;
@@ -51,7 +52,7 @@ export function MethodSelection({ navigation, route }: Props) {
           {options.map(editOption => {
             return (
               <SelectableList.Element value={editOption.value}>
-                {editOption.text}
+                <Trans i18nKey={editOption.i18nKey} />
               </SelectableList.Element>
             );
           })}

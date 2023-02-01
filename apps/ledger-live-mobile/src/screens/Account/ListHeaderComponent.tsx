@@ -141,16 +141,16 @@ export function getListHeaderComponents({
     lastOperation?.date.getTime() > new Date().getTime() - FIVE_MINUTES ? (
       <SectionContainer px={6}>
         <SideImageCard
-          title="Your transaction is ongoing. You can replace it with a new one"
-          cta={"Adjust Network Fees"}
+          title={t("editTransaction.speedupTxMessage")}
+          cta={t("editTransaction.adjustFees")}
           onPress={() => onEditTransactionPress(lastOperation)}
         />
       </SectionContainer>
     ) : (
       <SectionContainer px={6}>
         <SideImageCard
-          title="It looks like your last transaction is stuck."
-          cta={"Adjust Network Fees"}
+          title={t("editTransaction.stuckTx")}
+          cta={t("editTransaction.adjustFees")}
           onPress={() => onEditTransactionPress(lastOperation)}
         />
       </SectionContainer>
