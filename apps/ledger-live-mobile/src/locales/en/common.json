@@ -3481,6 +3481,12 @@
       }
     }
   },
+  "editTransaction": {
+    "stuckTx": "It looks like your last transaction is stuck.",
+    "adjustFees": "Adjust Network Fees",
+    "speedupTxMessage": "Your transaction is ongoing. You can replace it with a new one.",
+    "speedUp": "Speed Up"
+  },
   "requestAccount": {
     "stepperHeader": {
       "selectCrypto": "Select crypto",
