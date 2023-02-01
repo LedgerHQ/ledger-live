@@ -26,6 +26,7 @@ import perFamilyOperationDetails from "../generated/operationDetails";
 import { track } from "../analytics";
 import { UnionToIntersection } from "../types/helpers";
 import { BaseNavigation } from "./RootNavigator/types/helpers";
+import { getEnv } from "@ledgerhq/live-common/env";
 
 type FamilyOperationDetailsIntersection = UnionToIntersection<
   typeof perFamilyOperationDetails[keyof typeof perFamilyOperationDetails]
@@ -153,7 +154,10 @@ function OperationRow({
   const text = <Trans i18nKey={`operations.types.${operation.type}`} />;
   const isOptimistic = operation.blockHeight === null;
   const spinner =
-    currency.id === "ethereum" && isOptimistic ? (
+    currency.id === "ethereum" &&
+    isOptimistic &&
+    operation.date.getTime() <=
+      new Date().getTime() - getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT") ? (
       <WarningLight />
     ) : (
       <SpinnerContainer>
