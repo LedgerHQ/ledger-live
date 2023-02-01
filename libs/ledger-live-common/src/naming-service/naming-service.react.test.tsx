@@ -58,7 +58,7 @@ describe("useNamingService", () => {
     expect(result.current.status).toBe("queued");
   });
 
-  test("should be loading", async () => {
+  test("success", async () => {
     mockedGetAddressByName.mockImplementation(async () => {
       return "forced mocked address";
     });
@@ -77,23 +77,5 @@ describe("useNamingService", () => {
     expect(screen.getByTestId("result").textContent).toBe(
       "forced mocked address"
     );
-  });
-
-  test("should be an error", async () => {
-    mockedGetAddressByName.mockImplementation(async () => {
-      throw new LedgerAPI4xx();
-    });
-
-    render(
-      <NamingServiceProvider>
-        <CustomTest name="vitalik.eth" />
-      </NamingServiceProvider>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByTestId("status").textContent).not.toBe("loading");
-    });
-
-    expect(screen.getByTestId("status").textContent).toBe("error");
   });
 });

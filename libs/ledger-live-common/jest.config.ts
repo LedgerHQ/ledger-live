@@ -20,14 +20,14 @@ if (process.env.CI) {
   reporters.push("github-actions");
 }
 
-export default {
+const defaultConfig = {
   preset: "ts-jest",
   globals: {
     "ts-jest": {
       isolatedModules: true,
     },
   },
-  testEnvironment: "jsdom",
+  testEnvironment: "node",
   coverageDirectory: "./coverage/",
   coverageReporters: ["json", "lcov", "clover"],
   reporters,
@@ -41,4 +41,22 @@ export default {
   testRegex,
   transformIgnorePatterns: ["/node_modules/(?!|@babel/runtime/helpers/esm/)"],
   moduleDirectories: ["node_modules", "cli/node_modules"],
+};
+
+export default {
+  projects: [
+    {
+      ...defaultConfig,
+      testPathIgnorePatterns: [
+        ...testPathIgnorePatterns,
+        "(/__tests__/.*|(\\.|/)react\\.(test|spec))\\.[jt]sx?$",
+      ],
+    },
+    {
+      ...defaultConfig,
+      displayName: "dom",
+      testEnvironment: "jsdom",
+      testRegex: "(/__tests__/.*|(\\.|/)react\\.test|spec)\\.tsx?$",
+    },
+  ],
 };

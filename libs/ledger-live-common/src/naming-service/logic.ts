@@ -16,3 +16,8 @@ export function isOutdated(resource: NamingServiceStatus): boolean {
   }
   return false;
 }
+
+export const isNameValid = (name: string | undefined): boolean => {
+  const regex = /[.*]\w{1,}/g;
+  return !!(name && regex.test(name));
+};

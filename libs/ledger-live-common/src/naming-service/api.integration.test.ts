@@ -11,6 +11,7 @@ describe("Naming service api", () => {
   it("Error 4xx with invalid name address", async () => {
     try {
       await getAddressByName("notagoodname");
+      fail("Promise should have failed with an invalid name");
     } catch (e) {
       expect(e).toEqual(
         new LedgerAPI4xx(
@@ -23,6 +24,7 @@ describe("Naming service api", () => {
   it("Error 4xx with invalid name address", async () => {
     try {
       await getAddressByName("notvitalikgoodaddress.eth");
+      fail("Promise should have failed with an not found");
     } catch (e) {
       expect(e).toEqual(new LedgerAPI4xx("API HTTP 404"));
     }

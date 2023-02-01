@@ -5,7 +5,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { isOutdated } from "./logic";
+import { isNameValid, isOutdated } from "./logic";
 import { getAddressByName } from "./api";
 import {
   NamingServiceContextAPI,
@@ -19,11 +19,6 @@ const NamingServiceContext = createContext<NamingServiceContextType>({
   loadNamingServiceAPI: () => Promise.resolve(),
   clearCache: () => {},
 });
-
-const isNameValid = (name: string | undefined): boolean => {
-  const regex = /[.*]\w{1,}/g;
-  return !!(name && regex.test(name));
-};
 
 export const useNamingServiceAPI = (
   name: string | undefined
