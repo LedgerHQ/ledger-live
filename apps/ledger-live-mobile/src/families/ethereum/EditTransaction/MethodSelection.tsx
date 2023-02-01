@@ -6,6 +6,7 @@ import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
 import { EthereumEditTransactionParamList } from "../../../components/RootNavigator/types/EthereumEditTransactionNavigator";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import LText from "../../../components/LText";
 
 type Props = StackNavigatorProps<
   EthereumEditTransactionParamList,
@@ -14,7 +15,7 @@ type Props = StackNavigatorProps<
 
 export function MethodSelection({ navigation, route }: Props) {
   const options = [
-    { i18nKey: "editTransaction.speedUp", value: "speedUp" },
+    { i18nKey: "editTransaction.speedup", value: "speedup" },
     { i18nKey: "common.cancel", value: "cancel" },
   ] as const;
 
@@ -29,7 +30,7 @@ export function MethodSelection({ navigation, route }: Props) {
           parentAccount,
         });
         break;
-      case "speedUp":
+      case "speedup":
         navigation.navigate(ScreenName.SpeedUpTransaction, {
           operation,
           account,
@@ -53,6 +54,18 @@ export function MethodSelection({ navigation, route }: Props) {
             return (
               <SelectableList.Element value={editOption.value}>
                 <Trans i18nKey={editOption.i18nKey} />
+
+                <Flex>
+                  <LText style={{ marginTop: 15, marginBottom: 0 }}>
+                    <Trans
+                      i18nKey={
+                        editOption.value === "speedup"
+                          ? "editTransaction.resubmitTxDescription"
+                          : "editTransaction.cancelTxDescription"
+                      }
+                    />
+                  </LText>
+                </Flex>
               </SelectableList.Element>
             );
           })}
