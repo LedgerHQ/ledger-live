@@ -132,7 +132,7 @@ jobs:
           aws-nfs-logging: true
           ami-name-filter: ledger-live-runner
           instance-volume-size: 40
-          instance-type: a1.metal
+          instance-type: c5.4xlarge
 
   stop-runner:
     name: Stop self-hosted EC2 runner
