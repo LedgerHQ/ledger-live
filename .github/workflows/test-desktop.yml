@@ -24,9 +24,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ inputs.ref || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'workflow_dispatch' && inputs.ref != 'develop' || github.ref_name != 'develop' }}
 
-env:
-  comment_header: <!-- test-desktop-report -->
-
 jobs:
   typecheck:
     name: "Ledger Live Desktop TypeCheck"
