@@ -27,7 +27,7 @@ export default {
       isolatedModules: true,
     },
   },
-  testEnvironment: "node",
+  testEnvironment: "jsdom",
   coverageDirectory: "./coverage/",
   coverageReporters: ["json", "lcov", "clover"],
   reporters,
