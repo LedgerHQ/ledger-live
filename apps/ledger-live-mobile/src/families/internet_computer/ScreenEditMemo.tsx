@@ -107,7 +107,7 @@ function InternetComputerEditMemo({ navigation, route }: NavigationProps) {
 }
 
 const options = {
-  title: i18next.t("send.summary.memo"),
+  title: i18next.t("send.summary.memo.value"),
   headerLeft: undefined,
 };
 export { InternetComputerEditMemo as component, options };

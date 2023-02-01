@@ -4,7 +4,7 @@ import Section from "../../screens/OperationDetails/Section";
 
 type Props = {
   extra: {
-    transferId?: string;
+    memo?: string;
   };
 };
 
@@ -12,11 +12,8 @@ function OperationDetailsExtra({ extra }: Props) {
   const { t } = useTranslation();
   return (
     <>
-      {extra.transferId && (
-        <Section
-          title={t("operationDetails.extra.memo")}
-          value={extra.transferId}
-        />
+      {extra.memo && (
+        <Section title={t("operationDetails.extra.memo")} value={extra.memo} />
       )}
     </>
   );
