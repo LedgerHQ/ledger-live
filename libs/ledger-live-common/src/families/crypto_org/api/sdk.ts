@@ -184,9 +184,9 @@ export const getOperations = async (
     : getEnv("CRYPTO_ORG_INDEXER");
   const { data } = await network({
     method: "GET",
-    url: `${crypto_org_indexer}/api/v1/accounts/${addr}/transactions?pagination=offset&page=${
-      startAt + 1
-    }&limit=${PAGINATION_LIMIT}`,
+    url: `${crypto_org_indexer}/api/v1/accounts/${addr}/transactions?pagination=offset&current_page=${
+    startAt + 1
+  }&limit=${PAGINATION_LIMIT}`,
   });
   const accountTransactions: CryptoOrgAccountTransaction[] = data.result;
 
@@ -196,23 +196,19 @@ export const getOperations = async (
     const memoTransaction = memo || "";
 
     for (let j = 0; j < msgs.length; j++) {
-      switch (msgs[j].type) {
-        case CryptoOrgAccountTransactionTypeEnum.MsgSend: {
-          const msgSend: CryptoOrgMsgSendContent = msgs[j].content;
-          rawTransactions.push(
-            convertSendTransactionToOperation(
-              accountId,
-              addr,
-              msgSend,
-              accountTransactions[i],
-              currencyId,
-              memoTransaction
-            )
-          );
-          break;
-        }
-
-        default:
+      const msgType: string = msgs[j].type;
+      if (msgType.includes(CryptoOrgAccountTransactionTypeEnum.MsgSend)) {
+        const msgSend: CryptoOrgMsgSendContent = msgs[j].content;
+        rawTransactions.push(
+          convertSendTransactionToOperation(
+            accountId,
+            addr,
+            msgSend,
+            accountTransactions[i],
+            currencyId,
+            memoTransaction
+          )
+        );
       }
     }
   }
