@@ -153,14 +153,10 @@ jobs:
 
   build-desktop-app-macos:
     name: "Build Ledger Live Desktop (Mac OS X)"
-    runs-on: [ledger-live, macos]
+    runs-on: [m1, ARM64]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      - name: Job id
-        run: |
-          echo "${{ github.job }}"
-          echo "${{ github.run_id }}"
       - uses: actions/checkout@v3
         with:
           ref: ${{ inputs.sha || inputs.ref  || github.event.push.head.sha }}
