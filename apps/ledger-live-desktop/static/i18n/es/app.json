@@ -102,6 +102,7 @@
     "addressCopied" : "Dirección copiada",
     "addressCopiedSuspicious" : "La dirección copiada y la del portapapeles no coinciden.",
     "experimentalFeature" : "Experimental",
+    "featureFlags" : "Marcas de funciones",
     "information" : "Información",
     "search" : "Buscar...",
     "searchWithoutEllipsis" : "Buscar",
@@ -131,7 +132,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blue"
   },
   "operation" : {
@@ -217,7 +218,8 @@
     "swap" : "Permutar",
     "lend" : "Prestar",
     "catalog" : "Discover",
-    "market" : "Mercado"
+    "market" : "Mercado",
+    "protect" : "Protect"
   },
   "stars" : {
     "placeholder" : "Tus cuentas favoritas aparecerán aquí.",
@@ -1206,8 +1208,11 @@
         "checkDeviceButton" : "Volver a ejecutar la verificación de autenticidad",
         "cancelButton" : "Quizás más tarde"
       },
-      "genuineCheckAnimationModal" : {
-        "message" : "Permitir manager en {{deviceName}}"
+      "softwareCheckAllowSecureChannelModal" : {
+        "title" : "Permitir manager en {{deviceName}}"
+      },
+      "softwareCheckLockedDeviceModal" : {
+        "title" : "Desbloquea tu dispositivo"
       },
       "helpDrawer" : {
         "title" : "¿Necesitas ayuda con el manual de configuración?",
@@ -1718,7 +1723,7 @@
     "swap" : {
       "notice" : {
         "default" : "Verifica los detalles de la permuta en tu dispositivo antes de enviarla. Las direcciones se intercambian de forma segura por lo que no es necesario verificarlas.",
-        "cic" : "Verifica la información de permuta en tu dispositivo antes de enviarlo. CIC tal vez requiera una verificación adicional para algunas transacciones, lo que puede provocar retrasos."
+        "provider" : "Verifica la información de permuta en tu dispositivo antes de enviar la transacción. {{providerName}} tal vez requiera una verificación adicional para algunas transacciones, lo que puede provocar retrasos."
       },
       "confirm" : "Confirmar transacción de permuta",
       "amountSent" : "Importe a enviar",
@@ -3689,8 +3694,10 @@
       "debugAppsDesc" : "Mostrar y permitir la utilización de aplicaciones de plataforma etiquetadas como de depuración.",
       "experimentalApps" : "Permitir aplicaciones experimentales",
       "experimentalAppsDesc" : "Mostrar y permitir la utilización de aplicaciones de plataforma etiquetadas como experimentales.",
-      "catalogServer" : "Definir el proveedor del catálogo",
-      "catalogServerDesc" : "Cambiar entre distintas fuentes de aplicaciones de plataforma",
+      "catalogUrl" : "Definir el proveedor del catálogo de aplicaciones",
+      "catalogUrlDesc" : "Introduce la URL del proveedor del catálogo personalizado",
+      "catalogRampServer" : "Definir los proveedores de compra y venta",
+      "catalogRampServerDesc" : "Cambiar entre varios proveedores de operaciones",
       "enablePlatformDevTools" : "Habilitar herramientas de desarrollador de plataforma",
       "enablePlatformDevToolsDesc" : "Habilitar ventana de herramientas de desarrollador de aplicaciones de plataforma",
       "featureFlagsTitle" : "Marcas de funciones definidas que se usan en Ledger Live",
@@ -3698,6 +3705,9 @@
       "featureFlagsEdit" : "Editar",
       "featureFlagsRestore" : "Restaurar",
       "featureFlagsOverride" : "Anular",
+      "featureFlagsRestoreAll" : "Restaurar los valores de todas las marcas",
+      "showButtonDesc" : "Mostrar siempre el botón Marcas de funciones en la barra lateral",
+      "buttonTitle" : "Señales de alarma anuladas localmente",
       "firebaseProject" : "Proyecto de Firebase al que se refiere esta compilación:",
       "addLocalApp" : "Añadir una aplicación local",
       "addLocalAppDesc" : "Explorar archivos locales y añadir una aplicación local usando un manifiesto local",
@@ -3756,6 +3766,10 @@
         "experimentalCurrencies" : {
           "title" : "Integraciones experimentales",
           "description" : "Utilizar integraciones experimentales de actrivos cripto disponibles."
+        },
+        "experimentalExecutionOnRenderer" : {
+          "title" : "Redes experimentales",
+          "description" : "Usa las redes experimentales para optimizar tu experiencia con Ledger Live con tu VPN. Activa esta opción solo si tu VPN actual provoca errores del sistema."
         },
         "experimentalLanguages" : {
           "title" : "Probar traducciones",
@@ -5497,6 +5511,14 @@
       "title" : "Tu dispositivo está bloqueado",
       "description" : "Desbloquea tu dispositivo e inténtalo de nuevo.",
       "descriptionWithProductName" : "Desbloquea tu {{ productName }} e inténtalo de nuevo."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "Tu dispositivo aún no está listo para usar",
+      "titleWithProductName" : "{{ productName }} aún no está listo para que lo uses.",
+      "description" : "Primero debes configurar tu dispositivo.\nTe guiaremos a lo largo del proceso de configuración.",
+      "descriptionWithProductName" : "Primero debes configurar tu {{ productName }}.\nTe guiaremos a lo largo del proceso de configuración.",
+      "goToOnboardingButton" : "Configurar mi dispositivo",
+      "goToOnboardingButtonWithProductName" : "Configurar mi {{ productName }}"
     }
   },
   "cryptoOrg" : {
@@ -5559,10 +5581,16 @@
     "postOnboarding" : {
       "title" : "Personalizar mi dispositivo",
       "description" : "adaptando la pantalla a mis necesidades",
-      "actionCompletedPopupLabel" : "Dispositivo personalizado",
-      "actionCompletedHubTitle" : "Esa pantalla tiene muy buen aspecto."
+      "actionCompletedPopupLabel" : "Dispositivo personalizado"
     },
     "customImageSet" : "Imagen personalizada establecida",
     "finishCTA" : "Finalizar"
+  },
+  "discoverProtect" : {
+    "new" : "Nuevo",
+    "title" : "Con Protect nunca perderás el acceso a tus activos. Jamás.",
+    "description" : "Protect se encarga de proteger tu Frase de recuperación para evitar pérdidas de activos derivadas del robo o la pérdida de tu frase de recuperación o tu Ledger.",
+    "cta" : "Descubre las ventajas",
+    "downloadLLM" : "Para suscribirte, escanea el código QR y descarga la aplicación Mobile"
   }
 }
