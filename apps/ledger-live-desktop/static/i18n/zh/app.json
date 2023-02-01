@@ -102,6 +102,7 @@
     "addressCopied" : "地址已复制",
     "addressCopiedSuspicious" : "复制的地址和剪贴板中的地址不匹配。",
     "experimentalFeature" : "实验性功能",
+    "featureFlags" : "功能标志",
     "information" : "信息",
     "search" : "搜索中...",
     "searchWithoutEllipsis" : "搜索",
@@ -131,7 +132,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blue"
   },
   "operation" : {
@@ -217,7 +218,8 @@
     "swap" : "互换",
     "lend" : "借出",
     "catalog" : "发现",
-    "market" : "市场"
+    "market" : "市场",
+    "protect" : "保护"
   },
   "stars" : {
     "placeholder" : "星标账户以在此显示。",
@@ -1206,8 +1208,11 @@
         "checkDeviceButton" : "再次运行检查",
         "cancelButton" : "以后再说"
       },
-      "genuineCheckAnimationModal" : {
-        "message" : "在 {{deviceName}} 上允许使用管理器"
+      "softwareCheckAllowSecureChannelModal" : {
+        "title" : "在 {{deviceName}} 上允许使用管理器"
+      },
+      "softwareCheckLockedDeviceModal" : {
+        "title" : "解锁您的设备"
       },
       "helpDrawer" : {
         "title" : "需要安装手册方面的一些帮助？",
@@ -1718,7 +1723,7 @@
     "swap" : {
       "notice" : {
         "default" : "发送之前请在您的设备上验证互换详情。地址会被安全地交换因此您不必对其进行验证。",
-        "cic" : "在发送之前，请先在您的设备上核实互换详情。CIC 可能需要对某些交易进行额外的验证，从而导致延迟。"
+        "provider" : "发送资金之前，请先在您的设备上核实互换详情。{{providerName}} 可能需要对某些交易进行额外验证，因此导致延迟。"
       },
       "confirm" : "确认互换交易",
       "amountSent" : "发送数额",
@@ -3689,8 +3694,10 @@
       "debugAppsDesc" : "显示并允许打开调试标记的平台应用程序。",
       "experimentalApps" : "允许实验性应用程序",
       "experimentalAppsDesc" : "显示并允许打开实验性标记的平台应用程序。",
-      "catalogServer" : "设置目录供应方",
-      "catalogServerDesc" : "在多个平台应用源之间切换",
+      "catalogUrl" : "设置目录应用程序提供商",
+      "catalogUrlDesc" : "输入您的自定义目录提供方网址",
+      "catalogRampServer" : "设置买入/卖出服务提供商",
+      "catalogRampServerDesc" : "在多个交易提供商之间切换",
       "enablePlatformDevTools" : "启用平台开发工具",
       "enablePlatformDevToolsDesc" : "启用打开平台应用程序开发工具的窗口",
       "featureFlagsTitle" : "Ledger Live 中使用的已定义功能标志",
@@ -3698,6 +3705,9 @@
       "featureFlagsEdit" : "编辑",
       "featureFlagsRestore" : "重置",
       "featureFlagsOverride" : "覆盖",
+      "featureFlagsRestoreAll" : "重置所有标志值",
+      "showButtonDesc" : "始终在侧边栏中显示功能标志按钮",
+      "buttonTitle" : "已本地覆盖的标志",
       "firebaseProject" : "此版本支持的 Firebase 项目：",
       "addLocalApp" : "添加一个本地应用程序",
       "addLocalAppDesc" : "浏览本地文件并使用本地清单添加本地应用程序",
@@ -3756,6 +3766,10 @@
         "experimentalCurrencies" : {
           "title" : "实验性集成",
           "description" : "使用可用的实验性加密资产集成。"
+        },
+        "experimentalExecutionOnRenderer" : {
+          "title" : "实验性网络",
+          "description" : "借助实验性网络优化您通过 VPN 使用 Ledger Live 的体验。仅在您当前使用的 VPN 导致系统错误时激活此功能。"
         },
         "experimentalLanguages" : {
           "title" : "翻译测试",
@@ -5497,6 +5511,14 @@
       "title" : "您的设备已经锁定",
       "description" : "解锁您的设备并重试。",
       "descriptionWithProductName" : "解锁您的 {{ productName }} 并重试。"
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "您的设备尚未准备好使用",
+      "titleWithProductName" : "{{ productName }} 设备尚未准备就绪",
+      "description" : "您需要先设置您的设备。\n我们将引导您完成设置流程。",
+      "descriptionWithProductName" : "您需要先设置 {{ productName }}。\n我们将引导您完成设置流程。",
+      "goToOnboardingButton" : "设置我的设备",
+      "goToOnboardingButtonWithProductName" : "设置我的 {{ productName }}"
     }
   },
   "cryptoOrg" : {
@@ -5559,10 +5581,16 @@
     "postOnboarding" : {
       "title" : "个性化我的设备",
       "description" : "通过自定义屏幕",
-      "actionCompletedPopupLabel" : "设备已个性化",
-      "actionCompletedHubTitle" : "那个屏幕看起来很简洁。"
+      "actionCompletedPopupLabel" : "设备已个性化"
     },
     "customImageSet" : "自定义图片集",
     "finishCTA" : "完成"
+  },
+  "discoverProtect" : {
+    "new" : "新",
+    "title" : "利用 Protect，永不失去资产的访问权限。永远。",
+    "description" : "Protect 负责保护您的恢复短语，以防因您的恢复短语或 Ledger 设备被盗或丢失而造成任何资产损失。",
+    "cta" : "了解优势",
+    "downloadLLM" : "要订阅，请扫描二维码并下载我们的移动应用"
   }
 }
