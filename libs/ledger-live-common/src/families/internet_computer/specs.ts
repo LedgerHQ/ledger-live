@@ -27,7 +27,7 @@ const internetComputerSpecs: AppSpec<Transaction> = {
   },
   mutations: [
     {
-      name: "Send minimum",
+      name: "Send really small",
       maxRun: 1,
       testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge }) => {
