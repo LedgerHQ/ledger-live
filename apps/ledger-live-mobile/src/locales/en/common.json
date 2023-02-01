@@ -3482,9 +3482,9 @@
     }
   },
   "editTransaction": {
-    "stuckTx": "It looks like your last transaction is stuck.",
-    "adjustFees": "Adjust Network Fees",
-    "speedupTxMessage": "Your transaction is ongoing. You can replace it with a new one.",
+    "stuckTx": "Your most recent 'send' transaction is stuck. Speed up the transaction with a higher network fee or cancel it.",
+    "speedupTxMessage": "Your transaction is ongoing. You can speed it up with a higher network fee or cancel it.",
+    "speedupOrCancel": "Speed up or Cancel",
     "speedUp": "Speed Up"
   },
   "requestAccount": {
