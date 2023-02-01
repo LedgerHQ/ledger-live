@@ -59,4 +59,6 @@ export function SpeedupTransaction({ route }: Props) {
     currentNavigation: ScreenName.EditEthereumTransactionMethodSelection,
     nextNavigation: ScreenName.SendSelectDevice,
   });
+
+  return null;
 }
