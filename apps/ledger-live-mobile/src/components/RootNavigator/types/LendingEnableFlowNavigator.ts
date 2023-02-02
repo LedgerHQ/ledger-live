@@ -71,6 +71,7 @@ export type LendingEnableFlowParamsList = {
     transaction?: Transaction;
     overrideAmountLabel?: string;
     hideTotal?: boolean;
+    isEdit?: boolean;
     appName?: string;
     currentNavigation:
       | ScreenName.LendingWithdrawSummary
