@@ -94,6 +94,7 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SwapForm;
     overrideAmountLabel?: string;
     hideTotal?: boolean;
+    isEdit?: string;
     appName?: string;
   };
   [ScreenName.SendSelectDevice]: {
