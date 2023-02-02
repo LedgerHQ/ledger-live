@@ -124,6 +124,8 @@ export default function SelectDevice({ onSelect, stopBleScanning }: Props) {
           setLastSelectedDeviceBeforeRequireBluetoothCheck(device);
           return;
         }
+      } else {
+        setIsBleRequired(false);
       }
 
       setIsPairingDevices(false);
