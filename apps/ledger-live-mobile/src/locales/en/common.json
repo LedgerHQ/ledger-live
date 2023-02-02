@@ -3483,7 +3483,6 @@
     "stuckTx": "Your most recent 'send' transaction is stuck. Speed up the transaction with a higher network fee or cancel it.",
     "speedupTxMessage": "Your transaction is ongoing. You can speed it up with a higher network fee or cancel it.",
     "speedupOrCancel": "Speed up or Cancel",
-    "speedup": "Speed Up",
     "resubmitTxDescription": "Resubmit this transaction on a higher network fee.",
     "cancelTxDescription": "Sending 0 ETH to your own address. To ensure cancellation, the network fee is 10-30% higher than the fee of the transaction meant to be cancelled.",
     "currentNetworkFee": "Current network fee = {{amount}} ETH"
