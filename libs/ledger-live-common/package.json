@@ -122,12 +122,6 @@
   "react-native": {
     "https": false
   },
-  "pnpm": {
-    "overrides": {
-      "@ledgerhq/hw-transport": "workspace:^",
-      "@ledgerhq/devices": "workspace:^"
-    }
-  },
   "dependencies": {
     "@avalabs/avalanche-wallet-sdk": "^0.19.1",
     "@avalabs/hw-app-avalanche": "^0.7.0",
