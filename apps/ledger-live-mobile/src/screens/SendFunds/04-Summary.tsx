@@ -14,6 +14,9 @@ import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
 import { NotEnoughGas } from "@ledgerhq/errors";
 import { useTheme } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName, NavigatorName } from "../../const";
 import { TrackScreen } from "../../analytics";
@@ -47,6 +50,7 @@ import { LendingSupplyFlowNavigatorParamList } from "../../components/RootNaviga
 import { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 import { EthereumEditTransactionParamList } from "../../components/RootNavigator/types/EthereumEditTransactionNavigator";
+import { getCustomStrategy } from "../../families/ethereum/EthereumFeesStrategy";
 
 type Navigation = BaseComposite<
   | StackNavigatorProps<
@@ -270,6 +274,14 @@ function SendSummary({ navigation, route }: Props) {
           navigation={navigation}
           route={route}
         />
+
+        {currency.id === "ethereum" && (
+          <CurrentNetworkFee
+            transaction={transaction as Transaction}
+            currency={currency}
+          />
+        )}
+
         {error ? (
           <View style={styles.gasPriceError}>
             <View
@@ -345,6 +357,29 @@ function SendSummary({ navigation, route }: Props) {
     </SafeAreaView>
   );
 }
+
+const CurrentNetworkFee = ({
+  transaction,
+  currency,
+}: {
+  transaction: Transaction;
+  currency: CryptoCurrency;
+}) => {
+  const fee = getCustomStrategy(transaction, currency);
+  const feeAmount = fee?.amount.toNumber();
+
+  return (
+    feeAmount &&
+    feeAmount > 0 && (
+      <Alert type="hint">
+        <Trans
+          i18nKey={"editTransaction.currentNetworkFee"}
+          values={{ amount: fee ? fee.amount.toNumber() / 10 ** 13 : 0 }}
+        />
+      </Alert>
+    )
+  );
+};
 
 const styles = StyleSheet.create({
   root: {
