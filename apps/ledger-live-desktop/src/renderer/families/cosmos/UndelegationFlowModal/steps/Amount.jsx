@@ -26,8 +26,6 @@ export default function StepAmount({
   validatorAddress,
 }: StepProps) {
   invariant(account && transaction && transaction.validators, "account and transaction required");
-
-  const currencyName = account.currency.name.toLowerCase();
   const bridge = getAccountBridge(account);
 
   const updateValidator = useCallback(
@@ -72,7 +70,7 @@ export default function StepAmount({
       <Box horizontal justifyContent="center" mb={2}>
         <Text ff="Inter|Medium" fontSize={4}>
           <Trans
-            i18nKey={`${currencyName}.undelegation.flow.steps.amount.subtitle`}
+            i18nKey={"cosmos.undelegation.flow.steps.amount.subtitle"}
             values={{ numberOfDays: crypto.unbondingPeriod }}
           >
             <b></b>
@@ -86,10 +84,13 @@ export default function StepAmount({
         account={account}
         status={status}
         onChange={onChangeAmount}
-        label={<Trans i18nKey={`${currencyName}.undelegation.flow.steps.amount.fields.amount`} />}
+        label={<Trans i18nKey={"cosmos.undelegation.flow.steps.amount.fields.amount"} />}
       />
       <Alert info="primary" mt={2}>
-        <Trans i18nKey={`${currencyName}.undelegation.flow.steps.amount.warning`}>
+        <Trans
+          i18nKey={"cosmos.undelegation.flow.steps.amount.warning"}
+          values={{ numberOfDays: crypto.unbondingPeriod }}
+        >
           <b></b>
         </Trans>
       </Alert>
@@ -104,7 +105,6 @@ export function StepAmountFooter({
   onClose,
   status,
   bridgePending,
-  transaction,
 }: StepProps) {
   const { t } = useTranslation();
 
