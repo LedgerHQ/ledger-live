@@ -3,7 +3,7 @@ import React, { useState, useCallback, Component, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import {
   getMainAccount,
   getAccountCurrency,
@@ -15,7 +15,7 @@ import { NotEnoughGas } from "@ledgerhq/errors";
 import { useTheme } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName, NavigatorName } from "../../const";
@@ -365,20 +365,19 @@ const CurrentNetworkFee = ({
   transaction: Transaction;
   currency: CryptoCurrency;
 }) => {
+  const { t } = useTranslation();
   const fee = getCustomStrategy(transaction, currency);
   const feeAmount = fee?.amount.toNumber();
 
-  return (
-    feeAmount &&
-    feeAmount > 0 && (
-      <Alert type="hint">
-        <Trans
-          i18nKey={"editTransaction.currentNetworkFee"}
-          values={{ amount: fee ? fee.amount.toNumber() / 10 ** 13 : 0 }}
-        />
-      </Alert>
-    )
-  );
+  return !!feeAmount && feeAmount > 0 ? (
+    <Alert type="hint">
+      <LText>
+        {t("editTransaction.currentNetworkFee", {
+          amount: fee ? fee.amount.toNumber() / 10 ** 13 : 0,
+        })}
+      </LText>
+    </Alert>
+  ) : null;
 };
 
 const styles = StyleSheet.create({
