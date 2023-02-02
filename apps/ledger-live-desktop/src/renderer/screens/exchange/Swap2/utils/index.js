@@ -18,7 +18,7 @@ export const useGetSwapTrackingProperties = () => {
       flow: "swap",
       isDexEnabled: swapShowDexQuotes.enabled ?? false,
     }),
-    [swapShowDexQuotes.enabled],
+    [swapShowDexQuotes?.enabled],
   );
 };
 

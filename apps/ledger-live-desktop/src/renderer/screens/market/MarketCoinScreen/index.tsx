@@ -26,6 +26,7 @@ import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import useStakeFlow from "../../stake";
+import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 
 const CryptoCurrencyIconWrapper = styled.div`
   height: 56px;
@@ -227,7 +228,7 @@ export default function MarketCoinScreen() {
         button: "stake",
         currency: currency?.ticker,
         page: "Page Market Coin",
-        ...swapDefaultTrack,
+        ...stakeDefaultTrack,
       });
       setTrackingSource("Page Market Coin");
 
