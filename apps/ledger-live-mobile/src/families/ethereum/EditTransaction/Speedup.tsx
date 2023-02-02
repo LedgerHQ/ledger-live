@@ -55,6 +55,7 @@ export function SpeedupTransaction({ route }: Props) {
   navigation.navigate(ScreenName.SendSummary, {
     accountId: account.id,
     parentId: parentAccount?.id,
+    isEdit: true,
     transaction,
     currentNavigation: ScreenName.EditEthereumTransactionMethodSelection,
     nextNavigation: ScreenName.SendSelectDevice,
