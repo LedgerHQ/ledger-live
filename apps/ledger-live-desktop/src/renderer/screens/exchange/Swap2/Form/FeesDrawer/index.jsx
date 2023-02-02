@@ -25,7 +25,6 @@ export default function FeesDrawer({
   setTransaction,
   updateTransaction,
   mainAccount,
-  currency,
   status,
   provider,
   disableSlowStrategy = false,
