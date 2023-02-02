@@ -6,6 +6,31 @@
 | --- | --- |
 | <img src="./assets/dopplegangers.png" width="400" /> | <img src="./assets/clean_checks.png" width="400" /> |
 
+## In a nutshell 🌰
+
+### What?
+
+- The Continuous Integration (CI) is now managed by a Github App (or Bot) hosted on Vercel
+- Instead of having X required checks, we now have a single required check run that is updated with the status of the workflows
+- Workflows are not triggered directly by Github but by the App
+
+### Why?
+
+- Github required checks are great but were too rigid and not adapted to our needs
+- Because of this we used to need to spawn every possible combination of workflows to please Github's required checks
+- It swarmed the Pull Requests checks list with useless checks and made it hard to understand what was going on
+
+### How?
+
+- The Bot listens to webhook events sent by Github to trigger workflows and update check runs
+- The required check status is computed from and kept in sync with the status of the workflows spawned by the bot
+
+### Then?
+
+- Now we are smarter and only run workflows that are needed by the PR changes
+- We populate check runs with useful information related to the workflow run and provide call-to-action buttons to fix issues
+- We save time and energy
+
 ## Intro
 
 Previously, we had a strict set of checks that needed to pass before a pull request (PR) could be merged. This ensured that the code was of a certain quality before it was merged.
