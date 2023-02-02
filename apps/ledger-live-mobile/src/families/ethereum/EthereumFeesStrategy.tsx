@@ -57,29 +57,33 @@ export default function EthereumFeesStrategy({
     [defaultStrategies, customStrategy],
   );
 
-  const disabledStrategies = route.params.isEdit
-    ? strategies
-        .filter(strategy => {
-          if (EIP1559ShouldBeUsed(currency)) {
-            const lessMaxFeePerGas = strategy.extra?.maxFeePerGas.isLessThan(
-              transaction.maxFeePerGas!,
-            );
-
-            const lessMaxPriorityFeePerGas =
-              strategy.extra?.maxFeePerGas.isEqualTo(
+  const disabledStrategies = useMemo(() => {
+    return route.params.isEdit
+      ? strategies
+          .filter(strategy => {
+            if (EIP1559ShouldBeUsed(currency)) {
+              const lessMaxFeePerGas = strategy.extra?.maxFeePerGas.isLessThan(
                 transaction.maxFeePerGas!,
-              ) &&
-              strategy.extra?.maxPriorityFeePerGas.isLessThan(
-                transaction.maxPriorityFeePerGas!,
               );
 
-            return lessMaxFeePerGas || lessMaxPriorityFeePerGas;
-          }
+              const lessMaxPriorityFeePerGas =
+                strategy.extra?.maxFeePerGas.isEqualTo(
+                  transaction.maxFeePerGas!,
+                ) &&
+                strategy.extra?.maxPriorityFeePerGas.isLessThan(
+                  transaction.maxPriorityFeePerGas!,
+                );
 
-          return strategy.extra?.gasPrice.isLessThan(transaction.gasPrice ?? 0);
-        })
-        .map(strategy => strategy.label)
-    : [];
+              return lessMaxFeePerGas || lessMaxPriorityFeePerGas;
+            }
+
+            return strategy.extra?.gasPrice.isLessThan(
+              transaction.gasPrice ?? 0,
+            );
+          })
+          .map(strategy => strategy.label)
+      : [];
+  }, [route.params.isEdit]);
 
   useEffect(() => {
     const newCustomStrategy = getCustomStrategy(transaction, currency);
