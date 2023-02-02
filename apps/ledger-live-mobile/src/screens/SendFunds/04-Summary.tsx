@@ -275,9 +275,9 @@ function SendSummary({ navigation, route }: Props) {
           route={route}
         />
 
-        {currency.id === "ethereum" && (
+        {currency.id === "ethereum" && currency.type === "CryptoCurrency" && (
           <CurrentNetworkFee
-            transaction={transaction as Transaction}
+            transaction={route.params.transaction as Transaction}
             currency={currency}
           />
         )}
