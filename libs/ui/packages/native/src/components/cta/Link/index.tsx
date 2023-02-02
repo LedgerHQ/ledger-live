@@ -21,7 +21,7 @@ const IconContainer = styled.View<{
   iconLink?: boolean;
 }>`
   ${(p) =>
-    p.iconLink ? "" : p.iconPosition === "left" ? `margin-right: 6px;` : `margin-left: 6px;`}
+    p.iconLink ? "" : p.iconPosition === "left" ? `margin-right: 4px;` : `margin-left: 4px;`}
 `;
 
 export const Base = styled(TouchableOpacity)`
