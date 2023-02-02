@@ -79,27 +79,64 @@ jobs:
       # DEBUG_LOGS: 1
     runs-on: ubuntu-latest
     outputs:
-      status: ${{ steps.test-desktop.outputs.outcome-linux }}
+      status: ${{ steps.tests.outcome }}
     steps:
       - uses: actions/checkout@v3
         with:
           ref: ${{ inputs.ref || github.ref }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
-      - name: Install node-gyp globally
-        run: |
-          pnpm add -g node-gyp
+        with:
+          skip_python: true
+          skip_ruby: true
       - name: TurboRepo local caching server
         id: turborepo-cache-server
         uses: ./tools/actions/turborepo-gh-cache
         with:
           server-token: "yolo"
           cleanup-cache-folder: "true"
-      - uses: ./tools/actions/composites/test-desktop
-        id: test-desktop
+      - name: Build dependencies
+        env:
+          GOGC: 75
+        run: |
+          pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+          pnpm desktop build:testing
+      - name: Build Dummy SDK app for testing
+        run: pnpm --filter="dummy-live-app" i && pnpm --filter="dummy-live-app" build
+      - name: Run playwright tests [Linux => xvfb-run]
+        id: tests
+        run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
+      - name: upload diffs to imgur
+        if: always() && !cancelled()
+        uses: ./tools/actions/upload-images
+        id: imgur
         with:
+          path: apps/ledger-live-desktop/tests/artifacts/test-results
+          workspace: ${{ github.workspace }}
           os: linux
-          turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
+      - name: upload ci suggested screenshots
+        if: always() && !cancelled()
+        uses: actions/upload-artifact@v3
+        with:
+          name: images
+          path: images-linux.json
+      - name: Upload playwright test results [On Failure]
+        uses: actions/upload-artifact@v3
+        if: failure() && !cancelled()
+        with:
+          name: playwright-results-linux
+          path: |
+            apps/ledger-live-desktop/tests/artifacts/test-results
+            apps/ledger-live-desktop/tests/artifacts/html-report
+            apps/ledger-live-desktop/tests/artifacts/coverage
+            apps/ledger-live-desktop/tests/artifacts/videos
+            apps/ledger-live-desktop/tests/artifacts/logs
+      - name: Upload Allure Report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: allure-results-linux
+          path: apps/ledger-live-desktop/allure-results
 
   e2e-tests-mac:
     name: "Live Desktop Tests (macOS X)"
@@ -112,27 +149,64 @@ jobs:
       # DEBUG_LOGS: 1
     runs-on: macos-latest
     outputs:
-      status: ${{ steps.test-desktop.outputs.outcome }}
+      status: ${{ steps.tests.outcome }}
     steps:
       - uses: actions/checkout@v3
         with:
           ref: ${{ inputs.ref || github.ref }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
-      - name: Install node-gyp globally
-        run: |
-          pnpm add -g node-gyp
+        with:
+          skip_python: true
+          skip_ruby: true
       - name: TurboRepo local caching server
         id: turborepo-cache-server
         uses: ./tools/actions/turborepo-gh-cache
         with:
           server-token: "yolo"
           cleanup-cache-folder: "true"
-      - uses: ./tools/actions/composites/test-desktop
-        id: test-desktop
+      - name: Build dependencies
+        env:
+          GOGC: 75
+        run: |
+          pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+          pnpm desktop build:testing
+      - name: Build Dummy SDK app for testing
+        run: pnpm --filter="dummy-live-app" i && pnpm --filter="dummy-live-app" build
+      - name: Run playwright tests
+        id: tests
+        run: pnpm desktop test:playwright
+      - name: upload diffs to imgur
+        if: always() && !cancelled()
+        uses: ./tools/actions/upload-images
+        id: imgur
         with:
+          path: apps/ledger-live-desktop/tests/artifacts/test-results
+          workspace: ${{ github.workspace }}
           os: macos
-          turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
+      - name: upload ci suggested screenshots
+        if: always() && !cancelled()
+        uses: actions/upload-artifact@v3
+        with:
+          name: images
+          path: images-macos.json
+      - name: Upload playwright test results [On Failure]
+        uses: actions/upload-artifact@v3
+        if: failure() && !cancelled()
+        with:
+          name: playwright-results-macos
+          path: |
+            apps/ledger-live-desktop/tests/artifacts/test-results
+            apps/ledger-live-desktop/tests/artifacts/html-report
+            apps/ledger-live-desktop/tests/artifacts/coverage
+            apps/ledger-live-desktop/tests/artifacts/videos
+            apps/ledger-live-desktop/tests/artifacts/logs
+      - name: Upload Allure Report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: allure-results-macos
+          path: apps/ledger-live-desktop/allure-results
 
   e2e-tests-windows:
     name: "Live Desktop Tests (Windows)"
@@ -145,27 +219,63 @@ jobs:
       # DEBUG_LOGS: 1
     runs-on: windows-latest
     outputs:
-      status: ${{ steps.test-desktop.outputs.outcome }}
+      status: ${{ steps.tests.outcome }}
     steps:
       - uses: actions/checkout@v3
         with:
           ref: ${{ inputs.ref || github.ref }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
-      - name: Install node-gyp globally
-        run: |
-          pnpm add -g node-gyp
+        with:
+          install_node_gyp: true
       - name: TurboRepo local caching server
         id: turborepo-cache-server
         uses: ./tools/actions/turborepo-gh-cache
         with:
           server-token: "yolo"
           cleanup-cache-folder: "true"
-      - uses: ./tools/actions/composites/test-desktop
-        id: test-desktop
+      - name: Build dependencies
+        env:
+          GOGC: 75
+        run: |
+          pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+          pnpm desktop build:testing
+      - name: Build Dummy SDK app for testing
+        run: pnpm --filter="dummy-live-app" i && pnpm --filter="dummy-live-app" build
+      - name: Run playwright tests
+        id: tests
+        run: pnpm desktop test:playwright
+      - name: upload diffs to imgur
+        if: always() && !cancelled()
+        uses: ./tools/actions/upload-images
+        id: imgur
         with:
+          path: apps/ledger-live-desktop/tests/artifacts/test-results
+          workspace: ${{ github.workspace }}
           os: windows
-          turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
+      - name: upload ci suggested screenshots
+        if: always() && !cancelled()
+        uses: actions/upload-artifact@v3
+        with:
+          name: images
+          path: images-windows.json
+      - name: Upload playwright test results [On Failure]
+        uses: actions/upload-artifact@v3
+        if: failure() && !cancelled()
+        with:
+          name: playwright-results-windows
+          path: |
+            apps/ledger-live-desktop/tests/artifacts/test-results
+            apps/ledger-live-desktop/tests/artifacts/html-report
+            apps/ledger-live-desktop/tests/artifacts/coverage
+            apps/ledger-live-desktop/tests/artifacts/videos
+            apps/ledger-live-desktop/tests/artifacts/logs
+      - name: Upload Allure Report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: allure-results-windows
+          path: apps/ledger-live-desktop/allure-results
 
   report:
     needs:

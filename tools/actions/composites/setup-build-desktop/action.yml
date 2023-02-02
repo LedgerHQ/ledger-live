@@ -1,4 +1,4 @@
-name: "Build Ledger Live Desktop"
+name: "Setup Build Ledger Live Desktop"
 description: "Composite job to build Ledger Live Desktop"
 inputs:
   os:
@@ -27,12 +27,12 @@ runs:
       run: |
         pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" -frozen-lockfile --unsafe-perm
       shell: bash
-    - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+    - uses: ./tools/actions/get-package-infos
       id: version
       with:
         path: ${{ github.workspace }}/apps/ledger-live-desktop
     - name: set beta name
-      uses: ledgerhq/ledger-live/tools/actions/change-product-name@develop
+      uses: ./tools/actions/change-product-name
       with:
         path: ${{ github.workspace }}/apps/ledger-live-desktop
     - name: make local version (workflow dispatch)
@@ -53,7 +53,7 @@ runs:
         VERSION: ${{ steps.version.outputs.clean }}-sha.${{ github.sha }}
       run: cd apps/ledger-live-desktop && npm version $VERSION
       shell: bash
-    - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+    - uses: ./tools/actions/get-package-infos
       id: post-version
       with:
         path: ${{ github.workspace }}/apps/ledger-live-desktop

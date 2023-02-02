@@ -89,7 +89,7 @@ jobs:
         with:
           server-token: "yolo"
           cleanup-cache-folder: "true"
-      - uses: ./tools/actions/composites/build-desktop
+      - uses: ./tools/actions/composites/setup-build-desktop
         id: build-desktop
         with:
           os: linux
@@ -134,7 +134,7 @@ jobs:
         with:
           server-token: "yolo"
           cleanup-cache-folder: "true"
-      - uses: ./tools/actions/composites/build-desktop
+      - uses: ./tools/actions/composites/setup-build-desktop
         id: build-desktop
         with:
           os: win
@@ -177,7 +177,7 @@ jobs:
         with:
           server-token: "yolo"
           cleanup-cache-folder: "true"
-      - uses: ./tools/actions/composites/build-desktop
+      - uses: ./tools/actions/composites/setup-build-desktop
         id: build-desktop
         with:
           os: mac

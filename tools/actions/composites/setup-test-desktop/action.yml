@@ -7,6 +7,9 @@ inputs:
   skip_ruby:
     description: "skip the step to setup ruby"
     required: false
+  install_node_gyp:
+    description: "install node-gyp"
+    required: false
 
 runs:
   using: "composite"
@@ -28,3 +31,14 @@ runs:
       if: ${{ !inputs.skip_ruby }}
       with:
         ruby-version: 3.1.2
+    - name: Install node-gyp globally
+      if: ${{ inputs.install_node_gyp }}
+      run: |
+        pnpm add -g node-gyp
+      shell: bash
+    - name: Install dependencies
+      run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
+      shell: bash
+    - name: Install playwright dependencies
+      run: npx playwright@1.27.1 install --with-deps chromium
+      shell: bash
