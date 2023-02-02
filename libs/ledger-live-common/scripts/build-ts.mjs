@@ -4,13 +4,15 @@ import rimraf from "rimraf";
 
 cd(path.join(__dirname, ".."));
 
-await rimraf([
-  "lib",
-  "src/data/icons/react",
-  "src/data/icons/reactNative",
-  "src/data/flags/react",
-  "src/data/flags/reactNative",
-]);
+if (!process.env.CI) {
+  await rimraf([
+    "lib",
+    "src/data/icons/react",
+    "src/data/icons/reactNative",
+    "src/data/flags/react",
+    "src/data/flags/reactNative",
+  ]);
+}
 
 await $`zx ./scripts/sync-families-dispatch.mjs`;
 
