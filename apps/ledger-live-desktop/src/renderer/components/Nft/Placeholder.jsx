@@ -14,7 +14,7 @@ type Props = {
 // TODO Figure out if we really need this once we know who creates/processes the media.
 const StyledPlaceholder: ThemedComponent<Props> = styled.div`
   --hue: ${p => (p?.tokenId || "abcdefg").substr(-8) % 360};
-  background-image: url(${Fallback});
+  background-image: url('${Fallback}');
   background-size: contain;
   border-radius: 4px;
   width: 100%;
