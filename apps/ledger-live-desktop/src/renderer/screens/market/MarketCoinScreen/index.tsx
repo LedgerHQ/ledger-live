@@ -234,7 +234,7 @@ export default function MarketCoinScreen() {
 
       startStakeFlow();
     },
-    [currency?.ticker, startStakeFlow, swapDefaultTrack],
+    [currency?.ticker, startStakeFlow],
   );
 
   const toggleStar = useCallback(() => {
