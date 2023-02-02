@@ -53,11 +53,13 @@ export default function EthereumFeesStrategy({
     [defaultStrategies, customStrategy],
   );
 
-  const disabledStrategies = strategies
-    .filter(strategy => {
-      return strategy.extra?.maxPriorityFeePerGas.isLessThan(transaction.maxPriorityFeePerGas!);
-    })
-    .map(strategy => strategy.label);
+  const disabledStrategies = route.params.isEdit
+    ? strategies
+        .filter(strategy => {
+          return strategy.extra?.maxPriorityFeePerGas.isLessThan(transaction.maxPriorityFeePerGas!);
+        })
+        .map(strategy => strategy.label)
+    : [];
 
   useEffect(() => {
     const newCustomStrategy = getCustomStrategy(transaction, currency);

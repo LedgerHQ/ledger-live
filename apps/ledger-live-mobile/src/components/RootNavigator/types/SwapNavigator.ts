@@ -72,6 +72,7 @@ export type SwapNavigatorParamList = {
     transaction?: Transaction | null;
     overrideAmountLabel?: string;
     hideTotal?: boolean;
+    isEdit?: boolean;
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SignTransactionSummary
