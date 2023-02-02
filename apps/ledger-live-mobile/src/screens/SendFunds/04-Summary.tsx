@@ -367,13 +367,13 @@ const CurrentNetworkFee = ({
 }) => {
   const { t } = useTranslation();
   const fee = getCustomStrategy(transaction, currency);
-  const feeAmount = fee?.amount.toNumber();
+  const feeAmount = fee?.displayedAmount?.toNumber();
 
   return !!feeAmount && feeAmount > 0 ? (
     <Alert type="hint">
       <LText>
         {t("editTransaction.currentNetworkFee", {
-          amount: fee ? fee.amount.toNumber() / 10 ** 13 : 0,
+          amount: feeAmount / 10 ** 18, // feeAmount is in wei
         })}
       </LText>
     </Alert>
