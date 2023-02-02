@@ -3,7 +3,7 @@ import React, { useState, useCallback, Component, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import {
   getMainAccount,
   getAccountCurrency,
