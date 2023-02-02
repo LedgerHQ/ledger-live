@@ -831,6 +831,13 @@
       "modalButtonLabelBase" : "승인",
       "modalButtonLabelSettingsVariant" : "설정으로 이동",
       "dontPair" : "페어링 금지"
+    },
+    "camera" : {
+      "title" : "카메라 허용",
+      "authorizeDescription" : "QR 코드를 스캔하려면 카메라를 허용하세요.",
+      "authorizeButtonTitle" : "승인",
+      "goToSettingsDescription" : "QR 코드 스캔를 스캔하려면 설정에서 카메라를 허용하세요.",
+      "goToSettingsButtonTitle" : "설정으로 이동"
     }
   },
   "fees" : {
@@ -1115,6 +1122,12 @@
     "mostPopular" : "인기 항목"
   },
   "installSetOfApps" : {
+    "restore" : {
+      "title" : "{{deviceName}}에서와 동일한 앱을 설치하시겠어요?",
+      "titleNoDeviceName" : "이전 Ledger 장치에서와 동일한 앱을 설치하시겠어요?",
+      "installCTA" : "지금 설치",
+      "skipCTA" : "나중에 할게요"
+    },
     "landing" : {
       "estimatedTime" : "{{ minutes }}분",
       "title" : "{{ productName }} 제품은 앱을 사용하여 안전한 블록체인 트랜잭션을 지원합니다",
@@ -1126,7 +1139,7 @@
       "loading" : "로딩 중...",
       "resolving" : "의존성 해결",
       "progress" : "앱 설치 중 {{progress}}%",
-      "disclaimer" : "{{ productName }}의 앱은 트랜잭션 승인에 사용됩니다. 언제든지 추가나 삭제가 가능합니다."
+      "disclaimer" : "Ledger Live에서 언제든지 앱을 추가하거나 제거하세요."
     }
   },
   "onboarding" : {
@@ -1623,6 +1636,10 @@
             "label" : "Nano X가 감지되는지 확인하세요."
           }
         }
+      },
+      "protectConnectionInformationModal" : {
+        "title" : "Ledger를 연결할 수 없는 이유가 무엇인가요?",
+        "description" : "Ledger에서 블루투스를 활성화한 후에 Ledger Live 모바일과 연결 문제가 발생한 경우 아래의 \"해결 방법 알아보기\" 버튼을 눌러서 안내에 따라 문제를 해결할 수 있습니다."
       }
     },
     "stepImportAccounts" : {
@@ -2272,12 +2289,6 @@
         "unsupported" : "지원되지 않음",
         "settings" : "앱 설정",
         "includeGeneralSettings" : "데스크탑 설정 가져오기"
-      },
-      "fallback" : {
-        "header" : "계정 가져오기",
-        "title" : "카메라 활성화",
-        "desc" : "설정에서 카메라의 QR 코드 스캔을 허용하세요.",
-        "buttonTitle" : "설정으로 이동"
       }
     },
     "availableBalance" : "이용 가능 잔액",
@@ -3622,7 +3633,7 @@
       "title" : "장치에서 스왑 거래를 확인하세요",
       "alert" : {
         "default" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다.",
-        "cic" : "장치에서 자금 세부사항을 확인한 후 전송하세요. CIC는 일부 트랜잭션에 대해 추가 확인을 수행해야 하므로 지연이 발생할 수 있습니다."
+        "provider" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 일부 트랜잭션에서 {{providerName}}의 추가 확인 단계가 필요할 수 있어 지연이 발생할 수 있습니다."
       },
       "acceptTerms" : "본인은 이 트랜잭션을 확인함으로써 \n<0><0>{{provider}}</0>의 이용약관</0>을 수락합니다.",
       "notice" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다."
