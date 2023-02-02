@@ -2,7 +2,6 @@ import {
   Transaction,
   TransactionRaw,
 } from "@ledgerhq/live-common/families/ethereum/types";
-import { useNavigation } from "@react-navigation/native";
 import { fromTransactionRaw } from "@ledgerhq/live-common/families/ethereum/transaction";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Account } from "@ledgerhq/types-live";
@@ -10,27 +9,16 @@ import invariant from "invariant";
 
 import { ScreenName } from "../../../const";
 import { EthereumEditTransactionParamList } from "../../../components/RootNavigator/types/EthereumEditTransactionNavigator";
-import {
-  StackNavigatorNavigation,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
+import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 
 type Props = StackNavigatorProps<
   EthereumEditTransactionParamList,
   ScreenName.SpeedUpTransaction
 >;
 
-export function SpeedupTransaction({ route }: Props) {
-  const navigation = useNavigation<
-    | StackNavigatorNavigation<
-        EthereumEditTransactionParamList,
-        ScreenName.EthereumCustomFees
-      >
-    | StackNavigatorNavigation<
-        EthereumEditTransactionParamList,
-        ScreenName.SendSummary
-      >
-  >();
+export function SpeedupTransaction({ route, navigation }: Props) {
+  // hack to bypass this page when coming from the SendSummary screen
+  navigation.goBack();
 
   const { operation, account, parentAccount } = route.params;
 
