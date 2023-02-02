@@ -3,7 +3,7 @@ import React, { useState, useCallback, Component, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import {
   getMainAccount,
   getAccountCurrency,
@@ -359,15 +359,17 @@ const CurrentNetworkFee = ({
   transaction: Transaction;
   currency: CryptoCurrency;
 }) => {
+  const { t } = useTranslation();
   const fee = getCustomStrategy(transaction, currency);
-  const feeAmount = fee?.amount.toNumber();
+  const feeAmount = fee?.displayedAmount?.toNumber();
 
   return feeAmount && feeAmount > 0 ? (
     <Alert type="hint">
-      <Trans
-        i18nKey={"editTransaction.currentNetworkFee"}
-        values={{ amount: fee ? fee.amount.toNumber() / 10 ** 13 : 0 }}
-      />
+      <LText>
+        {t("editTransaction.currentNetworkFee", {
+          amount: feeAmount / 10 ** 18, // feeAmount is in wei
+        })}
+      </LText>
     </Alert>
   ) : null;
 };
