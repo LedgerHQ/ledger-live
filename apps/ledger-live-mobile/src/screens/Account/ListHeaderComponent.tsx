@@ -138,7 +138,7 @@ export function getListHeaderComponents({
 
   const shouldRenderEditTxModal =
     mainAccount.currency.family === "ethereum" &&
-    latestOperation.blockHeight === null;
+    latestOperation?.blockHeight === null;
   latestOperation?.date.getTime() < new Date().getTime() - FIVE_MINUTES;
 
   return {
