@@ -54,7 +54,6 @@ export function MethodSelection({ navigation, route }: Props) {
             return (
               <SelectableList.Element value={editOption.value}>
                 <Trans i18nKey={editOption.i18nKey} />
-
                 <Flex>
                   <LText style={{ marginTop: 15, marginBottom: 0 }}>
                     <Trans

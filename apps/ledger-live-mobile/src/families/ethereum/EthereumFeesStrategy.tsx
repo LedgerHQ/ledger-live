@@ -14,7 +14,7 @@ import SelectFeesStrategy from "../../components/SelectFeesStrategy";
 import { SendRowsFeeProps as Props } from "./types";
 import { ScreenName } from "../../const";
 
-const getCustomStrategy = (
+export const getCustomStrategy = (
   transaction: EthereumTransaction,
   currency: CryptoCurrency,
 ): (FeeStrategy & { userGasLimit?: BigNumber }) | null => {
@@ -44,7 +44,9 @@ export default function EthereumFeesStrategy({
   const { currency } = getMainAccount(account, parentAccount);
 
   const defaultStrategies = useFeesStrategy(transaction);
+
   const [customStrategy, setCustomStrategy] = useState(getCustomStrategy(transaction, currency));
+
   const strategies = useMemo(
     () => (customStrategy ? [...defaultStrategies, customStrategy] : defaultStrategies),
     [defaultStrategies, customStrategy],
