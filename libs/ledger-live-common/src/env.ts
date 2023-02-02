@@ -422,6 +422,11 @@ const envDefinitions = {
     parser: intParser,
     desc: "overrides the gap limit specified by BIP44 (default to 20)",
   },
+  LEDGER_CLIENT_VERSION: {
+    def: "",
+    parser: stringParser,
+    desc: "the 'X-Ledger-Client-Version' HTTP header to use for queries to Ledger APIs",
+  },
   LEDGER_COUNTERVALUES_API: {
     def: "https://countervalues.live.ledger.com",
     parser: stringParser,

@@ -1,7 +1,6 @@
 // @flow
 import "./env";
-import axios from "axios";
-
+import { setEnv } from "@ledgerhq/live-common/env";
 import { listen as listenLogs } from "@ledgerhq/logs";
 import logger from "./logger";
 
@@ -11,5 +10,6 @@ listenLogs(({ id, date, ...log }) => {
 });
 
 if (process.env.NODE_ENV === "production") {
-  axios.defaults.headers.common["User-Agent"] = `Live-Desktop/${__APP_VERSION__}`;
+  const value = `lld/${__APP_VERSION__}`;
+  setEnv("LEDGER_CLIENT_VERSION", value);
 }
