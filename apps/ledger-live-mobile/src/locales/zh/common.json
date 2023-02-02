@@ -831,6 +831,13 @@
       "modalButtonLabelBase" : "授权",
       "modalButtonLabelSettingsVariant" : "前往设置选项",
       "dontPair" : "不配对"
+    },
+    "camera" : {
+      "title" : "授权相机",
+      "authorizeDescription" : "请授权相机扫描二维码。",
+      "authorizeButtonTitle" : "授权",
+      "goToSettingsDescription" : "请在“设置”中授权相机扫描二维码。",
+      "goToSettingsButtonTitle" : "前往设置选项"
     }
   },
   "fees" : {
@@ -1115,6 +1122,12 @@
     "mostPopular" : "最受欢迎"
   },
   "installSetOfApps" : {
+    "restore" : {
+      "title" : "是否安装与 {{deviceName}} 上相同的应用程序？",
+      "titleNoDeviceName" : "是否安装与上一台 Ledger 设备上相同的应用程序？",
+      "installCTA" : "立即安装",
+      "skipCTA" : "我以后再下载"
+    },
     "landing" : {
       "estimatedTime" : "{{ minutes }} 分钟",
       "title" : "{{ productName }} 使用应用程序完成安全的区块链交易",
@@ -1126,7 +1139,7 @@
       "loading" : "正在加载……",
       "resolving" : "解决依赖关系",
       "progress" : "正在安装应用程序 {{progress}}%",
-      "disclaimer" : "{{ productName }} 上的应用程序用于批准交易。您可以随时添加或删除它们。"
+      "disclaimer" : "随时在 Ledger Live 中添加或删除应用程序。"
     }
   },
   "onboarding" : {
@@ -1623,6 +1636,10 @@
             "label" : "检查您的 Nano X 是否已被检测到。"
           }
         }
+      },
+      "protectConnectionInformationModal" : {
+        "title" : "为什么无法连接我的 Ledger 设备？",
+        "description" : "如果您在 Ledger 设备上启用蓝牙后，连接 Ledger Live 手机应用程序时遇到了问题，您可以点按下方的 “Learn how to fix that”（了解如何修复此问题）按钮，按以下说明操作"
       }
     },
     "stepImportAccounts" : {
@@ -2272,12 +2289,6 @@
         "unsupported" : "不支持",
         "settings" : "应用程序设置",
         "includeGeneralSettings" : "导入桌面应用程序设置"
-      },
-      "fallback" : {
-        "header" : "导入账户",
-        "title" : "启用摄像头",
-        "desc" : "请在设置中启用摄像头以便扫描二维码。",
-        "buttonTitle" : "前往设置选项"
       }
     },
     "availableBalance" : "可用余额",
@@ -3622,7 +3633,7 @@
       "title" : "在设备上确认互换操作",
       "alert" : {
         "default" : "发送之前请在您的设备上验证互换详情。地址会被安全地交换因此您不必对其进行验证。",
-        "cic" : "在发送之前，请先在您的设备上核实互换详情。CIC 可能需要对某些交易进行额外的验证，从而导致延迟。"
+        "provider" : "发送资金之前，请先在您的设备上核实互换详情。{{providerName}} 可能需要对某些交易进行额外验证，因此导致延迟。"
       },
       "acceptTerms" : "验证此交易，即表示我接受\n<0><0>{{provider}}</0>的使用条款</0>",
       "notice" : "发送之前请在您的设备上验证互换详情。地址会被安全地交换因此您不必对其进行验证。"
