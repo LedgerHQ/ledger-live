@@ -1,5 +1,5 @@
-import React from "react";
-import BottomModal from "../BottomModal";
+import React, { useCallback } from "react";
+import QueuedDrawer from "../QueuedDrawer";
 import { BluetoothRequirementsState } from "./hooks/useRequireBluetooth";
 import BluetoothDisabled from "./BluetoothDisabled";
 import LocationDisabled from "../RequiresLocation/LocationDisabled";
@@ -27,6 +27,8 @@ export type RequiresBluetoothBottomModalProps = {
  * The drawer can be closed by the user, but this does not resolve the requirements issue.
  * The associated hook useRequireBluetooth will still return the same state.
  *
+ * Note: never conditionally render this component. Always render it and use isOpen to control its visibility.
+ *
  * @param isOpen Whether the bottom drawer is open or not.
  * @param onUserClose A callback when the user tries to close the bottom drawer.
  *   This is mandatory as the drawer does not close by itself, until the requirements are respected.
@@ -37,6 +39,7 @@ export type RequiresBluetoothBottomModalProps = {
  *   For example, for permissions on Android, it is only possible to retry to request directly the user (and not make them
  *   go to the settings) if the user has not checked/triggered the "never ask again".
  */
+// TODO: isOpen should be named isOpenOnIssue or similar, because we don't open the drawer if there is no issue
 const RequiresBluetoothDrawer = ({
   isOpen,
   onUserClose,
@@ -44,16 +47,18 @@ const RequiresBluetoothDrawer = ({
   retryRequestOnIssue,
   cannotRetryRequest = true,
 }: RequiresBluetoothBottomModalProps) => {
-  console.log(
-    `🦖 RequiresBluetoothDrawer bluetoothRequirementsState: ${bluetoothRequirementsState}, cannotRetryRequest: ${cannotRetryRequest}`,
-  );
-
-  const onClose = () => {
+  const onClose = useCallback(() => {
     // If all the requireements are not respected, it means the user tried to close the drawer by pressing on the close button
     if (bluetoothRequirementsState !== "all_respected") {
       onUserClose();
     }
-  };
+  }, [bluetoothRequirementsState, onUserClose]);
+
+  // const onModalHide = useCallback(() => {
+  //   if (onDrawerHide) {
+  //     onDrawerHide();
+  //   }
+  // }, [onDrawerHide]);
 
   let content = null;
 
@@ -99,9 +104,13 @@ const RequiresBluetoothDrawer = ({
   const drawerIsOpen = isOpen && content !== null;
 
   return (
-    <BottomModal onClose={onClose} isOpen={drawerIsOpen} preventBackdropClick>
+    <QueuedDrawer
+      onClose={onClose}
+      isRequestingToBeOpened={drawerIsOpen}
+      preventBackdropClick
+    >
       {content}
-    </BottomModal>
+    </QueuedDrawer>
   );
 };
 
