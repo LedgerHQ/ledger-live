@@ -4,6 +4,11 @@ import * as bridge from "./bridge/server";
 
 beforeAll(async () => {
   bridge.init();
+
+  // Certain setups might need the following 2 lines to work in debug mode
+  // await device.reverseTcpPort(8081);
+  // await device.reverseTcpPort(8099);
+
   await device.launchApp({
     languageAndLocale: {
       language: "en-US",

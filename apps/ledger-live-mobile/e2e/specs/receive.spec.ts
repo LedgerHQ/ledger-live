@@ -1,30 +1,51 @@
-import { expect } from "detox";
+import { waitFor } from "detox";
 import PortfolioPage from "../models/wallet/portfolioPage";
+import OnboardingSteps from "../models/onboarding/onboardingSteps";
+import * as bridge from "../bridge/server";
+
 import { loadConfig } from "../bridge/server";
 
+let onboardingSteps: OnboardingSteps;
 let portfolioPage: PortfolioPage;
 
-
-describe("Change Language", () => {
-  const langButtonText = [
-    { lang: "Français", localization: "Général" },
-    { lang: "Español", localization: "General" },
-    { lang: "Русский", localization: "Общие" },
-    { lang: "Deutsch", localization: "Allgemeines" },
-    { lang: "Português", localization: "Geral" },
-    { lang: "Türkçe", localization: "Genel" },
-    { lang: "简体中文", localization: "一般条款" },
-    { lang: "한국어", localization: "일반" },
-    { lang: "日本語", localization: "一般" },
-  ];
+describe("Receive BTC", () => {
 
   beforeAll(async () => {
     await loadConfig("1AccountBTC1AccountETH", true);
     portfolioPage = new PortfolioPage();
+    onboardingSteps = new OnboardingSteps();
   });
 
-  it("should tap Main Button", async () => {
+  it("should tap main Button and add a Device", async () => {
     await portfolioPage.tapMainButton();
+    await portfolioPage.tapSetupDeviceCta();
+    await onboardingSteps.selectYourDevice("Ledger\u00A0Nano\u00A0X");
+    await onboardingSteps.chooseToConnectYourNano();
+    await onboardingSteps.verifyContentsOfBoxAreChecked();
+    await onboardingSteps.chooseToPairMyNano();
+    await onboardingSteps.selectPairWithBluetooth();
+
+    onboardingSteps.bridgeAddDevices();
+    await waitFor(onboardingSteps.getNanoDevice("David"))
+      .toExist()
+      .withTimeout(3000);
+    await onboardingSteps.addDeviceViaBluetooth("David");
+    
+    await waitFor(onboardingSteps.getContinue()).toExist().withTimeout(3000);
+    await onboardingSteps.openLedgerLive();
+  });
+  
+  it("should start receive device action", async () => {
+    await portfolioPage.tapMainButton();
+    await portfolioPage.tapReceiveButton();
+    await portfolioPage.tapBitcoinOption();
+    await portfolioPage.tapBitcoinAccount();
+    await portfolioPage.tapVerifyAddress();
+
+    bridge.createMock();
+    bridge.open();
     await new Promise((resolve) => setTimeout(() => resolve("a"), 100000))
   });
+
 });
+  

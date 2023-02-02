@@ -182,6 +182,7 @@ export default function BuyDeviceBanner({
             Icon={Icons.ArrowRightMedium}
             iconPosition="right"
             onPress={pressMessage}
+            testID="SetupDeviceCta"
           >
             {t("buyDevice.setupCta")}
           </Link>
