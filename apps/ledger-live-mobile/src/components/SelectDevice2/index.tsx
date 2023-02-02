@@ -130,6 +130,8 @@ export default function SelectDevice({
           setLastSelectedDeviceBeforeRequireBluetoothCheck(device);
           return;
         }
+      } else {
+        setIsBleRequired(false);
       }
 
       setIsPairingDevices(false);
