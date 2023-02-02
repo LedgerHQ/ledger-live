@@ -49,6 +49,7 @@ export type SignTransactionNavigatorParamList = {
     transaction?: Transaction;
     overrideAmountLabel?: string;
     hideTotal?: boolean;
+    isEdit?: boolean;
     appName?: string;
     currentNavigation:
       | ScreenName.SignTransactionSummary
