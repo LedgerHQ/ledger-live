@@ -57,8 +57,6 @@ type Props = {
   onEditTransactionPress: (latestOperation: Operation) => void;
 };
 
-const FIVE_MINUTES = 5 * 60 * 1000;
-
 type MaybeComponent =
   | React.FunctionComponent<
       Partial<{
@@ -125,7 +123,6 @@ export function getListHeaderComponents({
 
   const shouldRenderEditTxModal =
     mainAccount.currency.family === "ethereum" && latestOperation.blockHeight === null;
-  latestOperation?.date.getTime() < new Date().getTime() - FIVE_MINUTES;
 
   return {
     listHeaderComponents: [
