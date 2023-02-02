@@ -296,7 +296,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         address: "https://subnets.avax.network/validators/$address",
       },
     ],
-    keywords: ["avax", "avalanche", "p-chain"],
+    keywords: ["avax-p-chain", "avalanche-p-chain]", "p-chain"],
   },
   banano: {
     type: "CryptoCurrency",
