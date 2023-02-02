@@ -32,8 +32,6 @@ const ValidatorField = ({ account, status, t, onChangeValidator, chosenVoteAccAd
   const validators = useAvalancheFilteredValidators(search);
   const onSearch = useCallback(e => setSearch(e.target.value), [setSearch]);
 
-  if (!status) return null;
-
   const renderItem = useCallback(
     (validator: AvalanchePChainValidator) => {
       return (
@@ -47,8 +45,10 @@ const ValidatorField = ({ account, status, t, onChangeValidator, chosenVoteAccAd
         ></ValidatorRow>
       );
     },
-    [account, unit],
+    [account, unit, chosenVoteAccAddr, onChangeValidator],
   );
+
+  if (!status) return null;
 
   return (
     <>
