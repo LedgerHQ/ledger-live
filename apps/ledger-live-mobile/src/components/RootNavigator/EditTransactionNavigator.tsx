@@ -32,40 +32,44 @@ export default function EditTransactionNavigator() {
         name={ScreenName.EditEthereumTransactionMethodSelection}
         component={MethodSelection}
         options={{
-          headerTitle: () => <StepHeader title={t("editTx.header")} />,
+          headerTitle: () => <StepHeader title={t("editTransaction.header")} />,
         }}
       />
       <Stack.Screen
         name={ScreenName.SpeedUpTransaction}
         component={SpeedupTransaction}
         options={{
-          headerTitle: () => <StepHeader title={t("editTx.header")} />,
+          headerTitle: () => <StepHeader title={t("editTransaction.header")} />,
         }}
       />
       <Stack.Screen
         name={ScreenName.CancelTransaction}
         component={CancelTransaction}
         options={{
-          headerTitle: () => <StepHeader title={t("editTx.header")} />,
+          headerTitle: () => <StepHeader title={t("editTransaction.header")} />,
         }}
       />
 
       <Stack.Screen
         name={ScreenName.SendSummary}
         component={SendSummary}
-        initialParams={{
-          currentNavigation: ScreenName.SendSummary,
-          nextNavigation: ScreenName.SendSelectDevice,
+        options={{
+          headerTitle: () => <StepHeader title={t("editTransaction.header")} />,
         }}
       />
       <Stack.Screen
         name={ScreenName.SendSelectDevice}
         component={SelectDevice}
+        options={{
+          headerTitle: () => <StepHeader title={t("editTransaction.header")} />,
+        }}
       />
       <Stack.Screen
         name={ScreenName.SendConnectDevice}
         component={SendConnectDevice}
-        options={{}}
+        options={{
+          headerTitle: () => <StepHeader title={t("editTransaction.header")} />,
+        }}
         initialParams={{
           analyticsPropertyFlow: "send",
         }}
@@ -78,6 +82,7 @@ export default function EditTransactionNavigator() {
           headerShown: false,
           headerRight: undefined,
           gestureEnabled: false,
+          headerTitle: () => <StepHeader title={t("editTransaction.header")} />,
         }}
       />
       <Stack.Screen
@@ -85,6 +90,7 @@ export default function EditTransactionNavigator() {
         component={SendValidationError}
         options={{
           headerShown: false,
+          headerTitle: () => <StepHeader title={t("editTransaction.header")} />,
         }}
       />
     </Stack.Navigator>
