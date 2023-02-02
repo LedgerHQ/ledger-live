@@ -28,7 +28,7 @@ import {
 } from "@ledgerhq/live-common/nft/index";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Flex, InformativeCard } from "@ledgerhq/native-ui";
+import { Box, Flex, Link } from "@ledgerhq/native-ui";
 
 import { NavigatorName, ScreenName } from "../../const";
 import LText from "../../components/LText";
@@ -146,7 +146,7 @@ export default function Content({
   const internalOperations = operation.internalOperations || [];
   const shouldDisplayTo = uniqueRecipients.length > 0 && !!uniqueRecipients[0];
 
-  const onEditTxCardClick = () => {
+  const onEditTxPress = () => {
     navigation.navigate(NavigatorName.EthereumEditTransaction, {
       screen: ScreenName.EditEthereumTransactionMethodSelection,
       params: { operation, account, parentAccount },
@@ -364,25 +364,50 @@ export default function Content({
 
       {isEditable && (
         <Flex
-          backgroundColor={isOperationStuck ? "primary.c80" : "primary.c80"}
+          backgroundColor={isOperationStuck ? "warning.c70" : "primary.c80"}
           color={"primary.c80"}
-          width="90%"
+          width="95%"
           alignSelf={"center"}
+          alignContent={"flex-end"}
           borderRadius={8}
           padding={8}
         >
           {isOperationStuck ? (
-            <InformativeCard
-              title={t("editTransaction.stuckTx")}
-              tag={t("editTransaction.speedupOrCancel")}
-              onClickCard={onEditTxCardClick}
-            />
+            <Box>
+              <LText marginLeft={2} color="neutral.c20">
+                {t("editTransaction.stuckTx")}
+              </LText>
+              <LText marginTop={4}>
+                <Link onPress={onEditTxPress}>
+                  <LText
+                    color="neutral.c20"
+                    style={{ textDecorationLine: "underline" }}
+                    marginTop={4}
+                  >
+                    {t("editTransaction.speedupOrCancel")}
+                  </LText>
+                </Link>
+              </LText>
+            </Box>
           ) : (
-            <InformativeCard
-              title={t("editTransaction.speedUpTxMessage")}
-              tag={t("editTransaction.speedupOrCancel")}
-              onClickCard={onEditTxCardClick}
-            />
+            <>
+              <Box>
+                <LText marginLeft={2} color="neutral.c20">
+                  {t("editTransaction.speedUpTxMessage")}
+                </LText>
+                <LText marginTop={4}>
+                  <Link onPress={onEditTxPress}>
+                    <LText
+                      color="neutral.c20"
+                      style={{ textDecorationLine: "underline" }}
+                      marginTop={4}
+                    >
+                      {t("editTransaction.speedupOrCancel")}
+                    </LText>
+                  </Link>
+                </LText>
+              </Box>
+            </>
           )}
         </Flex>
       )}
