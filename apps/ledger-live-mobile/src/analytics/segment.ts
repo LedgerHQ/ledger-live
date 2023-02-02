@@ -98,7 +98,7 @@ const extraProperties = async (store: AppStore) => {
     ? [
         ...new Set(
           accounts
-            .filter(account => account?.balance.isGreaterThan(0) > 0)
+            .filter(account => account?.balance.isGreaterThan(0))
             .map(account => account?.currency?.ticker),
         ),
       ]
