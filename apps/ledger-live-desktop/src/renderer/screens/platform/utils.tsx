@@ -12,7 +12,7 @@ const isValidUrl = urlString => {
 export const useGetManifest = (appId, genericParams, newpathname = "") => {
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
-  const manifest = Object.assign({}, localManifest || remoteManifest);
+  const manifest = localManifest || remoteManifest;
 
   const isLocalPath =
     (typeof newpathname === "string" && newpathname[0] === "/") || newpathname[0] === "#";
@@ -21,6 +21,7 @@ export const useGetManifest = (appId, genericParams, newpathname = "") => {
   const newUrl = isLocalPath ? `https://www.prefix.com${newpathname}` : "";
   const isValidNewdUrl = isValidUrl(newUrl);
   if (isLocalPath && isValidOldUrl && isValidNewdUrl) {
+    const manifestClone = Object.assign({}, manifest);
     const { origin, search } = new URL(oldDappUrl);
     const { hash, searchParams } = new URL(newUrl);
     const [realHash, query] = hash.split("?");
@@ -38,8 +39,9 @@ export const useGetManifest = (appId, genericParams, newpathname = "") => {
         ? `${origin}?${new URLSearchParams(allParams).toString()}${realHash}`
         : `${origin}${realHash}?${new URLSearchParams(allParams).toString()}`;
     if (oldDappUrl !== newDappUrl) {
-      manifest.params.dappUrl = newDappUrl;
+      manifestClone.params.dappUrl = newDappUrl;
     }
+    return manifestClone;
   }
 
   return manifest;
