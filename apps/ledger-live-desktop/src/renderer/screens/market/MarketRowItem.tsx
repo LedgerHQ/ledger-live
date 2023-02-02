@@ -162,7 +162,7 @@ function MarketRowItem({
       }
     },
     [
-      currency.internalCurrency,
+      currency?.internalCurrency,
       currency?.ticker,
       swapDefaultTrack,
       flattenedAccounts,

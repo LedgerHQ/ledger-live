@@ -211,7 +211,7 @@ export default function MarketCoinScreen() {
       }
     },
     [
-      currency.internalCurrency,
+      currency?.internalCurrency,
       currency?.ticker,
       flattenedAccounts,
       history,
