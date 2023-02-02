@@ -15,6 +15,9 @@ import { NotEnoughGas } from "@ledgerhq/errors";
 import { useTheme } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import invariant from "invariant";
+import { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName, NavigatorName } from "../../const";
 import { TrackScreen } from "../../analytics";
@@ -45,6 +48,7 @@ import {
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 import { EthereumEditTransactionParamList } from "../../components/RootNavigator/types/EthereumEditTransactionNavigator";
+import { getCustomStrategy } from "../../families/ethereum/EthereumFeesStrategy";
 
 type Navigation = BaseComposite<
   | StackNavigatorProps<
@@ -263,6 +267,14 @@ function SendSummary({ navigation, route }: Props) {
           navigation={navigation}
           route={route}
         />
+
+        {currencyOrToken.id === "ethereum" && (
+          <CurrentNetworkFee
+            transaction={transaction as Transaction}
+            currency={currencyOrToken as CryptoCurrency}
+          />
+        )}
+
         {error ? (
           <View style={styles.gasPriceError}>
             <View
@@ -338,6 +350,26 @@ function SendSummary({ navigation, route }: Props) {
     </SafeAreaView>
   );
 }
+
+const CurrentNetworkFee = ({
+  transaction,
+  currency,
+}: {
+  transaction: Transaction;
+  currency: CryptoCurrency;
+}) => {
+  const fee = getCustomStrategy(transaction, currency);
+  const feeAmount = fee?.amount.toNumber();
+
+  return feeAmount && feeAmount > 0 ? (
+    <Alert type="hint">
+      <Trans
+        i18nKey={"editTransaction.currentNetworkFee"}
+        values={{ amount: fee ? fee.amount.toNumber() / 10 ** 13 : 0 }}
+      />
+    </Alert>
+  ) : null;
+};
 
 const styles = StyleSheet.create({
   root: {
