@@ -66,6 +66,7 @@ export type LendingWithdrawFlowNavigatorParamList = {
       | ScreenName.SwapForm;
     overrideAmountLabel?: string;
     hideTotal?: boolean;
+    isEdit?: boolean;
     appName?: string;
   };
   [ScreenName.LendingWithdrawSelectDevice]: object;
