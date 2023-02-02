@@ -60,9 +60,23 @@ export default function EthereumFeesStrategy({
   const disabledStrategies = route.params.isEdit
     ? strategies
         .filter(strategy => {
-          return strategy.extra?.maxPriorityFeePerGas.isLessThan(
-            transaction.maxPriorityFeePerGas!,
-          );
+          if (EIP1559ShouldBeUsed(currency)) {
+            const lessMaxFeePerGas = strategy.extra?.maxFeePerGas.isLessThan(
+              transaction.maxFeePerGas!,
+            );
+
+            const lessMaxPriorityFeePerGas =
+              strategy.extra?.maxFeePerGas.isEqualTo(
+                transaction.maxFeePerGas!,
+              ) &&
+              strategy.extra?.maxPriorityFeePerGas.isLessThan(
+                transaction.maxPriorityFeePerGas!,
+              );
+
+            return lessMaxFeePerGas || lessMaxPriorityFeePerGas;
+          }
+
+          return strategy.extra?.gasPrice.isLessThan(transaction.gasPrice ?? 0);
         })
         .map(strategy => strategy.label)
     : [];
