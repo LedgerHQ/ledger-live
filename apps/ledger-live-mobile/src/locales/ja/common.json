@@ -547,7 +547,7 @@
       "description" : "アドレスを拒否しました。不審な点がある場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。"
     },
     "UserRefusedDeviceNameChange" : {
-      "title" : "Renaming was cancelled on {{ productName }}",
+      "title" : "{{ productName }}の名前変更がキャンセルされました",
       "description" : ""
     },
     "UserRefusedFirmwareUpdate" : {
@@ -831,6 +831,13 @@
       "modalButtonLabelBase" : "許可する",
       "modalButtonLabelSettingsVariant" : "設定を開く",
       "dontPair" : "ペアリングしない"
+    },
+    "camera" : {
+      "title" : "カメラを許可",
+      "authorizeDescription" : "カメラにQRコードのスキャンを許可してください。",
+      "authorizeButtonTitle" : "許可する",
+      "goToSettingsDescription" : "QRコードをスキャンするには、設定でカメラを許可してください。",
+      "goToSettingsButtonTitle" : "設定を開く"
     }
   },
   "fees" : {
@@ -1115,6 +1122,12 @@
     "mostPopular" : "一番人気"
   },
   "installSetOfApps" : {
+    "restore" : {
+      "title" : "{{deviceName}}と同じアプリをインストールしますか？",
+      "titleNoDeviceName" : "前のLedgerデバイスと同じアプリをインストールしますか？",
+      "installCTA" : "今すぐインストールする",
+      "skipCTA" : "後で行う"
+    },
     "landing" : {
       "estimatedTime" : "{{ minutes }}分",
       "title" : "{{ productName }} はアプリを使用し、安全なブロックチェーントランザクションを有効にします",
@@ -1126,7 +1139,7 @@
       "loading" : "読み込み中...",
       "resolving" : "依存関係を解決しています",
       "progress" : "アプリのインストール中{{progress}}%",
-      "disclaimer" : "{{ productName }}のアプリはトランザクションの承認に使用されます。これはいつでも追加、または削除できます。"
+      "disclaimer" : "Ledger Liveからいつでもアプリを追加または削除できます。"
     }
   },
   "onboarding" : {
@@ -1623,6 +1636,10 @@
             "label" : "Nano Xが認識されるかどうかを確認します。"
           }
         }
+      },
+      "protectConnectionInformationModal" : {
+        "title" : "Ledgerを接続できないのはなぜですか？",
+        "description" : "LedgerでBluetoothを有効にした後、Ledger Live Mobileへの接続に問題が発生した場合は、下の「問題の修正方法を学ぶ（Learn how to fix that）」ボタンをタップして指示に従ってください。"
       }
     },
     "stepImportAccounts" : {
@@ -2272,12 +2289,6 @@
         "unsupported" : "未サポート",
         "settings" : "アプリ設定",
         "includeGeneralSettings" : "デスクトップ設定のインポート"
-      },
-      "fallback" : {
-        "header" : "アカウントのインポート",
-        "title" : "カメラの有効化",
-        "desc" : "QRコードをスキャンするには、設定でカメラを有効にしてください。",
-        "buttonTitle" : "設定を開く"
       }
     },
     "availableBalance" : "利用可能残高",
@@ -3622,7 +3633,7 @@
       "title" : "スワップ処理をデバイス上で確認する",
       "alert" : {
         "default" : "送付する前に、スワップの詳細をデバイス上で確認してください。アドレスは安全にやりとりされるため、確認の必要はありません。",
-        "cic" : "送付する前に、スワップの詳細をデバイス上で確認してください。CICでは、一部のトランザクションに対して追加の検証を実行する必要があり、遅延が発生する場合があります。"
+        "provider" : "送付前に、スワップの詳細をデバイス上で確認してください。{{providerName}}では、一部のトランザクションに対して追加の検証を実行する必要があり、遅延が発生する場合があります。"
       },
       "acceptTerms" : "このトランザクションを検証することにより、私は\n<0><0>{{provider}}</0>の利用規約</0>に同意します",
       "notice" : "送付する前に、スワップの詳細をデバイス上で確認してください。アドレスは安全にやりとりされるため、確認の必要はありません。"
@@ -3714,9 +3725,9 @@
   "EditDeviceName" : {
     "title" : "デバイス名の変更",
     "charactersRemaining" : "残り{{remainingCount}}文字",
-    "action" : "Set name",
-    "rename" : "rename",
-    "success" : "Device renamed to '{{deviceName}}'"
+    "action" : "名前を設定",
+    "rename" : "名前の変更",
+    "success" : "デバイスの名前が「{{deviceName}}に変更されました"
   },
   "PairDevices" : {
     "Paired" : {
