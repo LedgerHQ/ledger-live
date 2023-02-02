@@ -1,0 +1,48 @@
+{
+  "name": "@ledgerhq/hw-app-near",
+  "version": "6.27.5",
+  "description": "Ledger Hardware Wallet Near Application API",
+  "keywords": [
+    "Ledger",
+    "LedgerWallet",
+    "near",
+    "NEAR",
+    "NanoS",
+    "Blue",
+    "Hardware Wallet"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-app-near",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "lib/Near.js",
+  "module": "lib-es/Near.js",
+  "types": "lib/Near.d.ts",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:^",
+    "near-api-js": "^0.44.2"
+  },
+  "devDependencies": {
+    "@ledgerhq/hw-transport-mocker": "workspace:^"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch",
+    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest"
+  },
+  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec"
+}

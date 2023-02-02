@@ -1,5 +1,5 @@
 import type { DeviceAction } from "../../bot/types";
-import { deviceActionFlow } from "../../bot/specs";
+import { deviceActionFlow, SpeculosButton } from "../../bot/specs";
 import type { Transaction } from "./types";
 import { BigNumber } from "bignumber.js";
 import { formatCurrencyUnit } from "../../currencies";
@@ -12,16 +12,16 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
     steps: [
       {
         title: "Sign",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Validator",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => transaction.recipient,
       },
       {
         title: "Start time",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => {
           const unix = (transaction.startTime as BigNumber)
             .times(1000)
@@ -35,7 +35,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "End time",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => {
           const unix = (transaction.endTime as BigNumber)
             .times(1000)
@@ -49,7 +49,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Total Stake",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction, account }) => {
           return formatCurrencyUnit(
             getAccountUnit(account),
@@ -63,23 +63,23 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Reject",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Next",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
       },
       {
         title: "Stake",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Rewards To",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Fee",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction, account }) => {
           return formatCurrencyUnit(
             getAccountUnit(account),
@@ -93,15 +93,15 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Finalize",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Transaction",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Accept",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
         final: true,
       },
     ],

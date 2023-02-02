@@ -57,6 +57,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "Show tracking overlays on the app UI",
   },
+  DEBUG_THEME: {
+    def: false,
+    parser: boolParser,
+    desc: "Show theme debug overlay UI",
+  },
   API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
     def: "https://algorand.coin.ledger.com",
     parser: stringParser,
@@ -88,24 +93,9 @@ const envDefinitions = {
     desc: "Node endpoint for celo",
   },
   API_COSMOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
-    def: "https://cosmoshub4.coin.ledger.com/",
+    def: "https://cosmoshub4.coin.ledger.com",
     parser: stringParser,
     desc: "Node endpoint for cosmos",
-  },
-  API_COSMOS_NODE: {
-    def: "STARGATE_NODE",
-    parser: stringParser,
-    desc: "Node API to use for cosmos (COSMOS_NODE or STARGATE_NODE are known)",
-  },
-  API_COSMOS_TESTNET_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
-    def: "https://cosmoshub4.coin.staging.aws.ledger.com",
-    parser: stringParser,
-    desc: "Node endpoint for cosmos",
-  },
-  API_COSMOS_TESTNET_NODE: {
-    def: "STARGATE_NODE",
-    parser: stringParser,
-    desc: "Node API to use for cosmos_testnet (COSMOS_NODE or STARGATE_NODE are known)",
   },
   API_RIPPLE_RPC: {
     parser: stringParser,
@@ -116,6 +106,21 @@ const envDefinitions = {
     parser: stringParser,
     def: "https://filecoin.coin.ledger.com",
     desc: "Filecoin API url",
+  },
+  API_NEAR_ARCHIVE_NODE: {
+    def: "https://near.coin.ledger.com/node/",
+    parser: stringParser,
+    desc: "Archive node endpoint for NEAR",
+  },
+  API_NEAR_INDEXER: {
+    def: "https://near.coin.ledger.com/indexer/",
+    parser: stringParser,
+    desc: "Datahub Indexer API for NEAR",
+  },
+  API_NEAR_STAKING_POSITIONS_API: {
+    def: "https://validators-near.coin.ledger.com/",
+    parser: stringParser,
+    desc: "NEAR staking positions API",
   },
   API_POLKADOT_INDEXER: {
     parser: stringParser,
@@ -132,6 +137,11 @@ const envDefinitions = {
     def: "https://elrond.coin.ledger.com",
     desc: "Elrond API url",
   },
+  ELROND_DELEGATION_API_ENDPOINT: {
+    parser: stringParser,
+    def: "https://delegations-elrond.coin.ledger.com",
+    desc: "Elrond DELEGATION API url",
+  },
   API_STELLAR_HORIZON: {
     parser: stringParser,
     def: "https://stellar.coin.ledger.com",
@@ -147,13 +157,8 @@ const envDefinitions = {
     parser: boolParser,
     desc: "Static fee for Stellar account",
   },
-  API_OSMOSIS_INDEXER: {
-    def: "https://osmosis.coin.ledger.com/indexer",
-    parser: stringParser,
-    desc: "Endpoint for Transaction Explorer/Indexer for Osmosis",
-  },
   API_OSMOSIS_NODE: {
-    def: "https://osmosis.coin.ledger.com/node",
+    def: "https://osmosis.coin.ledger-stg.com",
     parser: stringParser,
     desc: "Endpoint for Osmosis Node",
   },
@@ -237,16 +242,6 @@ const envDefinitions = {
     parser: stringParser,
     desc: "location of the compound API",
   },
-  COSMOS_GAS_AMPLIFIER: {
-    def: 1.4,
-    parser: intParser,
-    desc: "estimate gas multiplier",
-  },
-  COSMOS_GAS_PRICE: {
-    def: 0.025,
-    parser: floatParser,
-    desc: "gasLimit * gasPrice to determine the fees price. A too low GAS_PRICE will get rejected before the transaction is broadcast",
-  },
   CRYPTO_ORG_INDEXER: {
     def: "https://cryptoorg-rpc-indexer.coin.ledger.com",
     parser: stringParser,
@@ -301,6 +296,11 @@ const envDefinitions = {
     def: true,
     parser: boolParser,
     desc: "disable a problematic mechanism of our API",
+  },
+  DISABLE_FW_UPDATE_VERSION_CHECK: {
+    def: false,
+    parser: boolParser,
+    desc: "disable the version check for firmware update eligibility",
   },
   EIP1559_ENABLED_CURRENCIES: {
     def: "ethereum,ethereum_goerli,polygon",
@@ -372,6 +372,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "enable an experimental swap interface",
   },
+  EXPERIMENTAL_EXECUTION_ON_RENDERER: {
+    def: false,
+    parser: boolParser,
+    desc: "enable an experimental execution of business logic to run on renderer side (LLD)",
+  },
   EXPLORER: {
     def: "https://explorers.api.live.ledger.com",
     parser: stringParser,
@@ -391,6 +396,16 @@ const envDefinitions = {
     def: "http://localhost:20000",
     parser: stringParser,
     desc: "Ledger satstack Bitcoin explorer API",
+  },
+  EXPORT_EXCLUDED_LOG_TYPES: {
+    def: "ble-frame",
+    parser: stringParser,
+    desc: "comma-separated list of excluded log types for exported logs",
+  },
+  EXPORT_MAX_LOGS: {
+    def: 5000,
+    parser: intParser,
+    desc: "maximum logs to keep for export",
   },
   DISABLE_APP_VERSION_REQUIREMENTS: {
     def: false,
@@ -495,6 +510,11 @@ const envDefinitions = {
     def: "",
     parser: stringParser,
     desc: "mock remote live app manifest",
+  },
+  MOCK_OS_VERSION: {
+    def: "",
+    parser: stringParser,
+    desc: "if defined, overrides the os and version. format: os@version. Example: Windows_NT@6.1.7601",
   },
   NFT_CURRENCIES: {
     def: "ethereum,polygon",
@@ -637,14 +657,9 @@ const envDefinitions = {
     desc: "enable visibility of experimental apps and tools in Platform Catalog",
   },
   PLATFORM_MANIFEST_API_URL: {
-    def: "https://cdn.live.ledger.com/platform/apps/v1/data.json",
+    def: "https://live-app-catalog.ledger.com/api/v1/apps",
     parser: stringParser,
     desc: "url used to fetch platform app manifests",
-  },
-  PLATFORM_MANIFEST_STAGING_API_URL: {
-    def: "https://cdn.live.ledger-stg.com/platform/apps/v1/data.json",
-    parser: stringParser,
-    desc: "url used to fetch platform app manifests (staging)",
   },
   PLATFORM_LOCAL_MANIFEST_JSON: {
     def: "",
@@ -708,7 +723,7 @@ const envDefinitions = {
   },
 };
 
-const getDefinition = (name: string): EnvDef<any> | null | undefined =>
+export const getDefinition = (name: string): EnvDef<any> | null | undefined =>
   envDefinitions[name];
 
 envDefinitions as Record<EnvName, EnvDef<any>>;

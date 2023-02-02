@@ -17,6 +17,8 @@ import { isNFTActive } from "@ledgerhq/live-common/nft/index";
 import { TFunction } from "react-i18next";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
+import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+import { NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { LayoutChangeEvent } from "react-native";
 import Header from "./Header";
 import AccountGraphCard from "../../components/AccountGraphCard";
@@ -119,7 +121,11 @@ export function getListHeaderComponents({
   const AccountBalanceSummaryFooterRendered =
     AccountBalanceSummaryFooter &&
     AccountBalanceSummaryFooter({
-      account: account as Account & CosmosAccount & PolkadotAccount,
+      account: account as Account &
+        CosmosAccount &
+        PolkadotAccount &
+        ElrondAccount &
+        NearAccount,
     });
 
   const stickyHeaderIndices = empty ? [] : [0];
@@ -175,9 +181,7 @@ export function getListHeaderComponents({
                   </Box>
                 )}
                 {AccountBalanceSummaryFooterRendered && (
-                  <>
-                    <Box mb={6}>{AccountBalanceSummaryFooterRendered}</Box>
-                  </>
+                  <Box mb={6}>{AccountBalanceSummaryFooterRendered}</Box>
                 )}
                 {compoundSummary && account.type === "TokenAccount" && (
                   <Box>

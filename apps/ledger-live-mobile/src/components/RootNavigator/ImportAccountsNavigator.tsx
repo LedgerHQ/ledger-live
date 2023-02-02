@@ -6,7 +6,6 @@ import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
 import ScanAccounts from "../../screens/ImportAccounts/Scan";
 import DisplayResult from "../../screens/ImportAccounts/DisplayResult";
-import FallBackCameraScreen from "../../screens/ImportAccounts/FallBackCameraScreen";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import TransparentHeaderNavigationOptions from "../../navigation/TransparentHeaderNavigationOptions";
 import type { ImportAccountsNavigatorParamList } from "./types/ImportAccountsNavigator";
@@ -28,7 +27,7 @@ export default function ImportAccountsNavigator() {
           ...TransparentHeaderNavigationOptions,
           headerShown: true,
           headerTitle: () => (
-            <Text variant="h3" color="constant.white" uppercase>
+            <Text variant="h3" uppercase>
               {t("account.import.scan.title")}
             </Text>
           ),
@@ -41,13 +40,6 @@ export default function ImportAccountsNavigator() {
         component={DisplayResult}
         options={{
           title: t("account.import.result.title"),
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.FallBackCameraScreen}
-        component={FallBackCameraScreen}
-        options={{
-          headerTitle: "",
         }}
       />
     </Stack.Navigator>

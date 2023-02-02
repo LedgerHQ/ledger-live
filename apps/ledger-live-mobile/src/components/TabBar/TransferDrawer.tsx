@@ -23,12 +23,13 @@ import TransferButton from "./TransferButton";
 import BuyDeviceBanner, { IMAGE_PROPS_SMALL_NANO } from "../BuyDeviceBanner";
 import SetupDeviceBanner from "../SetupDeviceBanner";
 import { useAnalytics } from "../../analytics";
+import { sharedSwapTracking } from "../../screens/Swap/utils";
 
 export default function TransferDrawer({ onClose }: ModalProps) {
   const navigation = useNavigation();
   const { t } = useTranslation();
 
-  const { page } = useAnalytics();
+  const { page, track } = useAnalytics();
 
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const accountsCount: number = useSelector(accountsCountSelector);
@@ -64,13 +65,15 @@ export default function TransferDrawer({ onClose }: ModalProps) {
     () => onNavigate(NavigatorName.ReceiveFunds),
     [onNavigate],
   );
-  const onSwap = useCallback(
-    () =>
-      onNavigate(NavigatorName.Swap, {
-        screen: ScreenName.SwapForm,
-      }),
-    [onNavigate],
-  );
+  const onSwap = useCallback(() => {
+    track("button_clicked", {
+      ...sharedSwapTracking,
+      button: "swap",
+    });
+    onNavigate(NavigatorName.Swap, {
+      screen: ScreenName.SwapForm,
+    });
+  }, [onNavigate, track]);
   const onBuy = useCallback(
     () =>
       onNavigate(NavigatorName.Exchange, { screen: ScreenName.ExchangeBuy }),

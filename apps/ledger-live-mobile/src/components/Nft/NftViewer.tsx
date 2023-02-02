@@ -210,6 +210,7 @@ const NftViewer = ({ route }: Props) => {
   const closeModal = () => {
     track("button_clicked", {
       button: "Close 'x'",
+      drawer: "NFT settings",
     });
     setBottomModalOpen(false);
   };
@@ -334,7 +335,10 @@ const NftViewer = ({ route }: Props) => {
         onClose={onCloseModal}
         data={notAvailableModalInfo}
       />
-      <ScrollView contentContainerStyle={styles.scrollView}>
+      <ScrollView
+        contentContainerStyle={styles.scrollView}
+        testID={"nft-viewer-page-scrollview"}
+      >
         <Box mx={6}>
           <Flex flexDirection={"row"} alignItems={"center"}>
             <CurrencyIcon currency={currency} size={20} />

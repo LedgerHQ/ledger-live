@@ -46,14 +46,14 @@ import { Transaction as hederaTransaction } from "../families/hedera/types";
 import { TransactionRaw as hederaTransactionRaw } from "../families/hedera/types";
 import { TransactionStatus as hederaTransactionStatus } from "../families/hedera/types";
 import { TransactionStatusRaw as hederaTransactionStatusRaw } from "../families/hedera/types";
+import { Transaction as nearTransaction } from "../families/near/types";
+import { TransactionRaw as nearTransactionRaw } from "../families/near/types";
+import { TransactionStatus as nearTransactionStatus } from "../families/near/types";
+import { TransactionStatusRaw as nearTransactionStatusRaw } from "../families/near/types";
 import { Transaction as neoTransaction } from "../families/neo/types";
 import { TransactionRaw as neoTransactionRaw } from "../families/neo/types";
 import { TransactionStatus as neoTransactionStatus } from "../families/neo/types";
 import { TransactionStatusRaw as neoTransactionStatusRaw } from "../families/neo/types";
-import { Transaction as osmosisTransaction } from "../families/osmosis/types";
-import { TransactionRaw as osmosisTransactionRaw } from "../families/osmosis/types";
-import { TransactionStatus as osmosisTransactionStatus } from "../families/osmosis/types";
-import { TransactionStatusRaw as osmosisTransactionStatusRaw } from "../families/osmosis/types";
 import { Transaction as polkadotTransaction } from "../families/polkadot/types";
 import { TransactionRaw as polkadotTransactionRaw } from "../families/polkadot/types";
 import { TransactionStatus as polkadotTransactionStatus } from "../families/polkadot/types";
@@ -92,8 +92,8 @@ export type Transaction =
   | evmTransaction
   | filecoinTransaction
   | hederaTransaction
+  | nearTransaction
   | neoTransaction
-  | osmosisTransaction
   | polkadotTransaction
   | rippleTransaction
   | solanaTransaction
@@ -114,8 +114,8 @@ export type TransactionRaw =
   | evmTransactionRaw
   | filecoinTransactionRaw
   | hederaTransactionRaw
+  | nearTransactionRaw
   | neoTransactionRaw
-  | osmosisTransactionRaw
   | polkadotTransactionRaw
   | rippleTransactionRaw
   | solanaTransactionRaw
@@ -136,8 +136,8 @@ export type TransactionStatus =
   | evmTransactionStatus
   | filecoinTransactionStatus
   | hederaTransactionStatus
+  | nearTransactionStatus
   | neoTransactionStatus
-  | osmosisTransactionStatus
   | polkadotTransactionStatus
   | rippleTransactionStatus
   | solanaTransactionStatus
@@ -158,8 +158,8 @@ export type TransactionStatusRaw =
   | evmTransactionStatusRaw
   | filecoinTransactionStatusRaw
   | hederaTransactionStatusRaw
+  | nearTransactionStatusRaw
   | neoTransactionStatusRaw
-  | osmosisTransactionStatusRaw
   | polkadotTransactionStatusRaw
   | rippleTransactionStatusRaw
   | solanaTransactionStatusRaw

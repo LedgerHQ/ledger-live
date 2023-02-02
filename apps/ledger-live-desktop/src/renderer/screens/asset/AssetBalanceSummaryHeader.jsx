@@ -7,11 +7,13 @@ import type {
   BalanceHistoryWithCountervalue,
 } from "@ledgerhq/live-common/portfolio/v2/types";
 import { setCountervalueFirst } from "~/renderer/actions/settings";
+import { track } from "~/renderer/analytics/segment";
 import { BalanceTotal, BalanceDiff } from "~/renderer/components/BalanceInfos";
 import Box, { Tabbable } from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Price from "~/renderer/components/Price";
 import PillsDaysCount from "~/renderer/components/PillsDaysCount";
+import { swapDefaultTrack } from "~/renderer/screens/exchange/Swap2/utils/index";
 import styled from "styled-components";
 import Swap from "~/renderer/icons/Swap";
 
@@ -116,7 +118,13 @@ export default function AssetBalanceSummaryHeader({
   }, [currency.id, history, ptxSmartRouting]);
 
   const onSwap = useCallback(() => {
-    setTrackingSource("asset header actions");
+    track("button_clicked", {
+      button: "swap",
+      currency: currency?.ticker,
+      page: "Page Asset",
+      ...swapDefaultTrack,
+    });
+    setTrackingSource("Page Asset");
     history.push({
       pathname: "/swap",
       state: {

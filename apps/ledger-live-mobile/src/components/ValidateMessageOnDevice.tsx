@@ -73,7 +73,7 @@ export default function ValidateOnDevice({
             <Animation
               source={getDeviceAnimation({
                 device,
-                key: "validate",
+                key: "sign",
               })}
             />
           </View>

@@ -1,7 +1,7 @@
 import React from "react";
 import Svg, { G, Path, Rect } from "react-native-svg";
 
-export default function FallbackCamera() {
+export default function FallbackCamera({ color }: { color: string }) {
   return (
     <Svg width="116" height="116">
       <G stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
@@ -25,13 +25,13 @@ export default function FallbackCamera() {
               <G transform="translate(72.000000, 0.000000)">
                 <Path
                   d="M20,42 C7.8497355,42 -2,32.1502645 -2,20 C-2,7.8497355 7.8497355,-2 20,-2 C32.1502645,-2 42,7.8497355 42,20 C42,32.1502645 32.1502645,42 20,42 Z"
-                  stroke="#FFFFFF"
+                  stroke={color}
                   strokeWidth="4"
                   fill="#EA2E49"
                 />
                 <Path
                   d="M21.4171429,22.498321 L18.6285714,22.498321 L18.0457143,12 L22,12 L21.4171429,22.498321 Z M18,26.1732707 C18,25.5715215 18.1714269,25.1166346 18.5142857,24.8085964 C18.8571446,24.5005581 19.3561872,24.3465413 20.0114286,24.3465413 C20.6438127,24.3465413 21.1333316,24.5041399 21.48,24.8193418 C21.8266684,25.1345438 22,25.5858489 22,26.1732707 C22,26.7392014 21.8247637,27.1851338 21.4742857,27.5110813 C21.1238078,27.8370287 20.6361936,28 20.0114286,28 C19.3714254,28 18.8761922,27.8406105 18.5257143,27.5218267 C18.1752363,27.203043 18,26.7535288 18,26.1732707 Z"
-                  fill="#FFFFFF"
+                  fill={color}
                 />
               </G>
             </G>

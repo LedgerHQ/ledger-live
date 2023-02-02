@@ -474,6 +474,7 @@ export type ListInstalledAppsEvent =
       payload: Array<{
         hash: string;
         name: string;
+        hash_code_data?: string;
       }>;
     };
 
@@ -520,12 +521,13 @@ const listInstalledApps = (
               typeof a === "object" && a,
               "payload array item are objects"
             );
-            const { hash, name } = a;
+            const { hash, name, hash_code_data } = a;
             invariant(typeof hash === "string", "hash is defined");
             invariant(typeof name === "string", "name is defined");
             return {
               hash,
               name,
+              hash_code_data,
             };
           }),
         };

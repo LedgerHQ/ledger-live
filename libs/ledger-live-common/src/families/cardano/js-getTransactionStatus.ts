@@ -4,6 +4,7 @@ import {
   FeeNotLoaded,
   InvalidAddress,
   AmountRequired,
+  NotEnoughBalance,
 } from "@ledgerhq/errors";
 import type {
   CardanoAccount,
@@ -101,7 +102,7 @@ const getTransactionStatus = async (
       ? totalSpent.gt(tokenAccount.balance)
       : totalSpent.gt(a.balance)
   ) {
-    errors.amount = new CardanoNotEnoughFunds();
+    errors.amount = new NotEnoughBalance();
   } else {
     try {
       await buildTransaction(a, t);

@@ -1,42 +1,46 @@
 // @flow
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
-import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
+import {
+  deviceActionFlow,
+  formatDeviceAmount,
+  SpeculosButton,
+} from "../../bot/specs";
 
 export const acceptTransaction: DeviceAction<Transaction, any> =
   deviceActionFlow({
     steps: [
       {
         title: "Review",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Withdraw",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Custom Delegate",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         // device sometimes know the text of a given delegator, we're not validating the actual text
         title: "Delegate",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Delegate Name",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Confirm",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => {
           return transaction.mode === "send" ? "Transaction" : "Delegation";
         },
       },
       {
         title: "Amount",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account, transaction }) =>
           formatDeviceAmount(account.currency, transaction.amount, {
             hideCode: true,
@@ -44,7 +48,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Fee",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account, status }) =>
           formatDeviceAmount(account.currency, status.estimatedFees, {
             hideCode: true,
@@ -52,27 +56,27 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Source",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account }) => account.freshAddress,
       },
       {
         title: "Destination",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => transaction.recipient,
       },
       {
         title: "Storage Limit",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) =>
           transaction.storageLimit?.toString() || "",
       },
       {
         title: "Reject",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Accept",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
       },
     ],
   });

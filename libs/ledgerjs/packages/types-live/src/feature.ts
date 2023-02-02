@@ -2,9 +2,10 @@
 export type FeatureId =
   | "learn"
   | "brazePushNotifications"
+  | "brazeLearn"
   | "llmNewDeviceSelection"
   | "llmUsbFirmwareUpdate"
-  | "ratings"
+  | "ratingsPrompt"
   | "counterValue"
   | "deviceLocalization"
   | "deviceInitialApps"
@@ -17,6 +18,7 @@ export type FeatureId =
   | "currencyCronos"
   | "currencySongbird"
   | "currencyFlare"
+  | "currencyNear"
   | "currencyFantomMobile"
   | "currencyMoonbeamMobile"
   | "currencyCronosMobile"
@@ -36,7 +38,15 @@ export type FeatureId =
   | "receiveStakingFlowConfigDesktop"
   | "ethStakingProviders"
   | "storyly"
-  | "firebaseEnvironmentReadOnly";
+  | "staxWelcomeScreen"
+  | "postOnboardingClaimNft"
+  | "postOnboardingAssetsTransfer"
+  | "firebaseEnvironmentReadOnly"
+  | "protectServicesMobile"
+  | "swapShowDexQuotes"
+  | "stakePrograms"
+  | "portfolioExchangeBanner"
+  | "objkt";
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */

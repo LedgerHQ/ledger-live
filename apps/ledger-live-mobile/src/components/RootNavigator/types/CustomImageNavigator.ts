@@ -6,7 +6,7 @@ import {
   ProcessorPreviewResult,
   ProcessorRawResult,
 } from "../../CustomImage/ImageProcessor";
-import { ImageFileUri, ImageUrl } from "../../CustomImage/types";
+import { GalleryNFT, ImageFileUri, ImageUrl } from "../../CustomImage/types";
 
 type BaseParams = {
   device: Device | null;
@@ -27,7 +27,7 @@ export type CustomImageNavigatorParamList = {
   };
   [ScreenName.CustomImageErrorScreen]: BaseParams & { error: Error };
   [ScreenName.CustomImagePreviewPreEdit]: BaseParams &
-    (ImageUrl | ImageFileUri) & {
+    (ImageUrl | ImageFileUri | GalleryNFT) & {
       isPictureFromGallery?: boolean;
     };
   [ScreenName.CustomImagePreviewPostEdit]: BaseParams & {
@@ -35,4 +35,5 @@ export type CustomImageNavigatorParamList = {
     imageData: ProcessorRawResult;
     imagePreview: ProcessorPreviewResult;
   };
+  [ScreenName.CustomImageNFTGallery]: BaseParams;
 };

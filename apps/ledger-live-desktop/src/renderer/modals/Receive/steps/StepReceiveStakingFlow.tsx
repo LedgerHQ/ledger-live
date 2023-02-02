@@ -1,5 +1,6 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import styled from "styled-components";
 
 import { Flex, Text, Icons, Link } from "@ledgerhq/react-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -15,6 +16,21 @@ import CheckBox from "~/renderer/components/CheckBox";
 import perFamilyManageActions from "~/renderer/generated/AccountHeaderManageActions";
 
 export const LOCAL_STORAGE_KEY_PREFIX = "receive_staking_";
+
+export const CheckBoxContainer: ThemedComponent<{ state: string }> = styled(Flex)`
+  & > div {
+    column-gap: 15px;
+  }
+  & span {
+    font-size: 14px;
+    line-height: 18px;
+  }
+  border-radius: 8px;
+  background-color: ${p => p.theme.colors.neutral.c30};
+  :hover {
+    background-color: ${p => p.theme.colors.primary.c10};
+  }
+`;
 
 const StepReceiveStakingFlow = (props: StepProps) => {
   const { t } = useTranslation();
@@ -34,18 +50,8 @@ const StepReceiveStakingFlow = (props: StepProps) => {
     const manageList =
       familyManageActions && familyManageActions.length > 0 ? familyManageActions : [];
     const newAction = manageList && manageList.find(item => item.key === "Stake");
-
-    const provider = newAction?.provider?.liveAppId ? newAction?.provider?.liveAppId : "ledger";
-    const altTitle = t(`receive.steps.staking.${id}.${provider}.title`);
-    const newTitle =
-      altTitle === `receive.steps.staking.${id}.${provider}.title`
-        ? t(`receive.steps.staking.${id}.title`)
-        : altTitle;
-    const altDescription = t(`receive.steps.staking.${id}.${provider}.description`);
-    const newDescription =
-      altDescription === `receive.steps.staking.${id}.${provider}.description`
-        ? t(`receive.steps.staking.${id}.description`)
-        : altDescription;
+    const newTitle = t(`receive.steps.staking.${id}.title`);
+    const newDescription = t(`receive.steps.staking.${id}.description`);
     if (JSON.stringify(title) !== JSON.stringify(newTitle)) {
       setTitle(newTitle);
     }
@@ -102,16 +108,9 @@ const StepReceiveStakingFlow = (props: StepProps) => {
           {t("receive.steps.staking.link")}
         </Link>
       )}
-      <Flex
-        p={6}
-        borderColor="neutral.c50"
-        borderRadius={2}
-        borderWidth={1}
-        borderStyle={"solid"}
-        onClick={onChange}
-      >
+      <CheckBoxContainer p={6} borderRadius={8} borderWidth={0} width={"100%"} onClick={onChange}>
         <CheckBox isChecked={doNotShowAgain} label={t("receive.steps.staking.notShow")} />
-      </Flex>
+      </CheckBoxContainer>
     </Flex>
   );
 };

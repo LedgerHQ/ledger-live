@@ -42,6 +42,9 @@ const iconsComponent = {
   UNLOCK: Icons.UnlockMedium,
   REVOKE: Icons.VoteNoneMedium,
   REGISTER: Icons.PlusMedium,
+  STAKE: Icons.HandshakeMedium,
+  UNSTAKE: Icons.UndelegateMedium,
+  WITHDRAW_UNSTAKED: Icons.CoinsMedium,
 };
 
 const OperationStatusIcon = ({

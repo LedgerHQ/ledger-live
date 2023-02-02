@@ -161,6 +161,43 @@ export interface AccountBridge<T extends TransactionCommon> {
     parentAccount?: Account | null | undefined;
     transaction?: T | null | undefined;
   }): Promise<BigNumber>;
+  /**
+   * This function applies the change from moving from "account" to an updated version ("updatedRow").
+   * It returns a boolean value indicating if something changed in the "next" Account that possibly gets mutated in-place.
+   *
+   * @param {Account} account - The original account object.
+   * @param {AccountRaw} updatedRaw - The updated version of the account in its serialized form.
+   * @param {Account} next - The updated account object.
+   * @returns {boolean} - Indicates if something changed in the "next" account.
+   */
+  applyReconciliation?: (
+    account: Account,
+    updatedRaw: AccountRaw,
+    next: Account
+  ) => boolean;
+  /**
+   * This function mutates the 'accountRaw' object in-place to add any extra fields that the coin may need to set.
+   * It is called during the serialization mechanism, for instance bitcoinResources need to be serialized.
+   *
+   * @param {Account} account - The original account object.
+   * @param {AccountRaw} accountRaw - The account in its serialized form.
+   */
+  assignToAccountRaw?: (account: Account, accountRaw: AccountRaw) => void;
+  /**
+   * This function mutates the 'account' object in-place to add any extra fields that the coin may need to set.
+   * It is called during the deserialization mechanism, for instance bitcoinResources need to be deserialized.
+   *
+   * @param {AccountRaw} accountRaw - The account in its serialized form.
+   * @param {Account} account - The original account object.
+   */
+  assignFromAccountRaw?: (accountRaw: AccountRaw, account: Account) => void;
+  /**
+   * This function mutates the 'account' object to extend it with any extra fields of the coin.
+   * For instance bitcoinResources needs to be created.
+   *
+   * @param {Account} account - The original account object to mutates in-place.
+   */
+  initAccount?: (account: Account) => void;
   // finalizing a transaction by signing it with the ledger device
   // This results of a "signed" event with a signedOperation
   // than can be locally saved and later broadcasted
@@ -171,6 +208,39 @@ export interface AccountBridge<T extends TransactionCommon> {
 }
 
 type ExpectFn = (...args: Array<any>) => any;
+
+type CurrencyTransaction<T extends TransactionCommon> = {
+  name: string;
+  transaction:
+    | T
+    | ((
+        transaction: T,
+        account: Account,
+        accountBridge: AccountBridge<T>
+      ) => T);
+  expectedStatus?:
+    | Partial<TransactionStatusCommon>
+    | ((
+        account: Account,
+        transaction: T,
+        status: TransactionStatusCommon
+      ) => Partial<TransactionStatusCommon>);
+  test?: (
+    arg0: ExpectFn,
+    arg1: T,
+    arg2: TransactionStatusCommon,
+    arg3: AccountBridge<T>
+  ) => any;
+  apdus?: string;
+  testSignedOperation?: (
+    arg0: ExpectFn,
+    arg1: SignedOperation,
+    arg2: Account,
+    arg3: T,
+    arg4: TransactionStatusCommon,
+    arg5: AccountBridge<T>
+  ) => any;
+};
 
 /**
  *
@@ -194,32 +264,7 @@ export type CurrenciesData<T extends TransactionCommon> = {
     implementations?: string[];
     raw: AccountRaw;
     FIXME_tests?: Array<string | RegExp>;
-    transactions?: Array<{
-      name: string;
-      transaction: T | ((arg0: T, arg1: Account, arg2: AccountBridge<T>) => T);
-      expectedStatus?:
-        | Partial<TransactionStatusCommon>
-        | ((
-            arg0: Account,
-            arg1: T,
-            arg2: TransactionStatusCommon
-          ) => Partial<TransactionStatusCommon>);
-      test?: (
-        arg0: ExpectFn,
-        arg1: T,
-        arg2: TransactionStatusCommon,
-        arg3: AccountBridge<T>
-      ) => any;
-      apdus?: string;
-      testSignedOperation?: (
-        arg0: ExpectFn,
-        arg1: SignedOperation,
-        arg2: Account,
-        arg3: T,
-        arg4: TransactionStatusCommon,
-        arg5: AccountBridge<T>
-      ) => any;
-    }>;
+    transactions?: Array<CurrencyTransaction<T>>;
     test?: (arg0: ExpectFn, arg1: Account, arg2: AccountBridge<T>) => any;
   }>;
   test?: (arg0: ExpectFn, arg1: CurrencyBridge) => any;

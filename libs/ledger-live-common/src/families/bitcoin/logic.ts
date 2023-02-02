@@ -25,7 +25,6 @@ const minFees = {
   bitcoin: 1000,
   bitcoin_gold: 1000,
   pivx: 2000,
-  stakenet: 1000,
   stealthcoin: 2000,
   qtum: 4000,
   stratis: 2000,

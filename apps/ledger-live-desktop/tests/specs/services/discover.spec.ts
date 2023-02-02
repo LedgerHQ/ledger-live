@@ -2,9 +2,9 @@ import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { DiscoverPage } from "../../models/DiscoverPage";
 import { Layout } from "../../models/Layout";
-import { Drawer } from "tests/models/Drawer";
-import { Modal } from "tests/models/Modal";
-import { DeviceAction } from "tests/models/DeviceAction";
+import { Drawer } from "../../models/Drawer";
+import { Modal } from "../../models/Modal";
+import { DeviceAction } from "../../models/DeviceAction";
 import * as server from "../../utils/serve-dummy-app";
 
 // Comment out to disable recorder
@@ -39,7 +39,7 @@ test.afterAll(() => {
 });
 
 // Due to flakiness on different OS's and CI, we won't run the screenshots where unncessary for testing
-test.skip("Discover", async ({ page }) => {
+test("Discover", async ({ page }) => {
   // Don't run test if server is not running
   if (!continueTest) return;
 
@@ -49,45 +49,44 @@ test.skip("Discover", async ({ page }) => {
   const layout = new Layout(page);
   const deviceAction = new DeviceAction(page);
 
-  await test.step("Navigate to catalog", async () => {
+  await test.step("Navigate to dummy live app", async () => {
     await layout.goToDiscover();
-    await expect.soft(page).toHaveScreenshot("catalog.png");
-  });
-
-  await test.step("Open Test App", async () => {
     await discoverPage.openTestApp();
-    await expect.soft(drawer.content).toContainText("External Application");
-  });
-
-  await test.step("Accept Live App Disclaimer", async () => {
     await drawer.continue();
     await drawer.waitForDrawerToDisappear(); // macos runner was having screenshot issues here because the drawer wasn't disappearing fast enough
-    await layout.waitForLoadingSpinnerToHaveDisappeared();
+    await discoverPage.waitForLiveAppToLoad(); // let the loading spinner disappear first
+    await discoverPage.waitForCorrectTextInWebview("Ledger Live Dummy Test App");
     await expect.soft(page).toHaveScreenshot("live-disclaimer-accepted.png");
   });
 
   await test.step("List all accounts", async () => {
     await discoverPage.getAccountsList();
+    await discoverPage.waitForCorrectTextInWebview("mock:1:bitcoin:true_bitcoin_0:");
+    await discoverPage.waitForCorrectTextInWebview("mock:1:bitcoin:true_bitcoin_1:");
     await expect.soft(page).toHaveScreenshot("live-app-list-all-accounts.png");
   });
 
   await test.step("Request Account drawer - open", async () => {
-    await discoverPage.requestAccount();
-    await expect.soft(page).toHaveScreenshot("live-app-request-account-drawer.png");
+    await discoverPage.requestAsset();
+    await expect(discoverPage.selectAssetTitle).toBeVisible();
   });
 
   await test.step("Request Account - select asset", async () => {
     await discoverPage.selectAsset();
-    await expect.soft(page).toHaveScreenshot("live-app-request-account-select-account.png");
+    await expect(discoverPage.selectAccountTitle).toBeVisible();
+    await expect(discoverPage.selectAssetSearchBar).toBeEnabled();
   });
 
   await test.step("Request Account - select BTC", async () => {
     await discoverPage.selectAccount();
+    await drawer.waitForDrawerToDisappear();
+    await discoverPage.waitForCorrectTextInWebview("mock:1:bitcoin:true_bitcoin_0:");
     await expect.soft(page).toHaveScreenshot("live-app-request-account-output.png");
   });
 
   await test.step("List currencies", async () => {
     await discoverPage.listCurrencies();
+    await discoverPage.waitForCorrectTextInWebview("CryptoCurrency");
     await expect.soft(page).toHaveScreenshot("live-app-list-currencies.png");
   });
 
@@ -99,6 +98,7 @@ test.skip("Discover", async ({ page }) => {
 
   await test.step("Verify Address - address output", async () => {
     await modal.waitForModalToDisappear();
+    await discoverPage.waitForCorrectTextInWebview("1xey");
     await expect.soft(page).toHaveScreenshot("live-app-verify-address-output.png");
   });
 
@@ -118,6 +118,7 @@ test.skip("Discover", async ({ page }) => {
 
   await test.step("Sign Transaction - signature output", async () => {
     await modal.waitForModalToDisappear();
+    await discoverPage.waitForCorrectTextInWebview("mock_op_100");
     await expect.soft(page).toHaveScreenshot("live-app-sign-transaction-output.png");
   });
 });

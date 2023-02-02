@@ -4,7 +4,7 @@ require("@electron/remote/main").initialize();
 
 /* eslint-disable import/first */
 import "./setup";
-import { app, Menu, ipcMain, session } from "electron";
+import { app, Menu, ipcMain, session, webContents, shell } from "electron";
 import menu from "./menu";
 import {
   createMainWindow,
@@ -157,6 +157,19 @@ app.on("ready", async () => {
   });
 
   ipcMain.on("log", (event, { log }) => logger.log(log));
+
+  // To handle opening new windows from webview
+  // cf. https://gist.github.com/codebytere/409738fcb7b774387b5287db2ead2ccb
+  ipcMain.on("webview-dom-ready", (_, id) => {
+    const wc = webContents.fromId(id);
+    wc.setWindowOpenHandler(({ url }) => {
+      const protocol = new URL(url).protocol;
+      if (["https:", "http:"].includes(protocol)) {
+        shell.openExternal(url);
+      }
+      return { action: "deny" };
+    });
+  });
 
   Menu.setApplicationMenu(menu);
 

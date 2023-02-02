@@ -2,6 +2,8 @@ import type {
   Account,
   DeviceInfo,
   DeviceModelInfo,
+  Feature,
+  FeatureId,
   PortfolioRange,
 } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -18,6 +20,13 @@ import { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { EventTrigger, DataOfUser } from "../logic/notifications";
 import type { RatingsHappyMoment, RatingsDataOfUser } from "../logic/ratings";
 import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
+import {
+  WalletContentCard,
+  AssetContentCard,
+  LearnContentCard,
+  NotificationContentCard,
+} from "../dynamicContent/types";
+import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
 
 // === ACCOUNT STATE ===
 
@@ -57,10 +66,12 @@ export type FwUpdateBackgroundEvent =
     };
 
 export type AppState = {
+  debugMenuVisible: boolean;
   isConnected: boolean | null;
   hasConnectedDevice: boolean;
   modalLock: boolean;
   backgroundEvents: Array<FwUpdateBackgroundEvent>;
+  isMainNavigatorVisible: boolean;
 };
 
 // === BLE STATE ===
@@ -95,6 +106,19 @@ export type NotificationsState = {
    * If true, it means another modal is already opened or being opened
    */
   isPushNotificationsModalLocked: boolean;
+};
+
+// === DYNAMIC CONTENT STATE ===
+
+export type DynamicContentState = {
+  /** Dynamic content cards displayed in the Wallet Page */
+  walletCards: WalletContentCard[];
+  /** Dynamic content cards displayed in an Asset Page */
+  assetsCards: AssetContentCard[];
+  /** Dynamic content cards displayed in Learn Section */
+  learnCards: LearnContentCard[];
+  /** Dynamic content cards displayed in Notification Center */
+  notificationCards: NotificationContentCard[];
 };
 
 // === RATINGS STATE ===
@@ -159,7 +183,6 @@ export type SettingsState = {
   hasInstalledAnyApp: boolean;
   readOnlyModeEnabled: boolean;
   hasOrderedNano: boolean;
-  experimentalUSBEnabled: boolean;
   countervalueFirst: boolean;
   graphCountervalueFirst: boolean;
   hideEmptyTokenAccounts: boolean;
@@ -170,6 +193,7 @@ export type SettingsState = {
   theme: Theme;
   osTheme: string | null | undefined;
   carouselVisibility: number | Record<string, boolean>;
+  dismissedDynamicCards: string[];
   // number is the legacy type from LLM V2
   discreetMode: boolean;
   language: string;
@@ -193,14 +217,22 @@ export type SettingsState = {
   firstConnectionHasDevice: boolean | null;
   firstConnectHasDeviceUpdated: boolean | null;
   customImageBackup?: { hex: string; hash: string };
+  lastSeenCustomImage: {
+    size: number;
+    hash: string;
+  };
   notifications: NotificationsSettings;
   walletTabNavigatorLastVisitedTab: keyof WalletTabNavigatorStackParamList;
+  displayStatusCenter: boolean;
+  overriddenFeatureFlags: { [key in FeatureId]?: Feature | undefined };
+  featureFlagsBannerVisible: boolean;
 };
 
 export type NotificationsSettings = {
   areNotificationsAllowed: boolean;
   announcementsCategory: boolean;
   recommendationsCategory: boolean;
+  largeMoverCategory: boolean;
 };
 
 // === WALLET CONNECT STATE ===
@@ -219,6 +251,30 @@ export type SwapStateType = {
   exchangeRateExpiration?: Date;
 };
 
+// === PROTECT STATE ===
+
+export type ProtectData = {
+  services: {
+    Protect: {
+      available: boolean;
+      active: boolean;
+      paymentDue: boolean;
+      subscribedAt: number;
+      lastPaymentDate: number;
+    };
+  };
+  accessToken: string;
+  expiresIn: number;
+  refreshExpiresIn: number;
+  refreshToken: string;
+  tokenType: string;
+};
+
+export type ProtectState = {
+  data: ProtectData;
+  protectStatus: ProtectStateNumberEnum;
+};
+
 // === ROOT STATE ===
 
 export type State = {
@@ -227,8 +283,10 @@ export type State = {
   appstate: AppState;
   ble: BleState;
   ratings: RatingsState;
+  dynamicContent: DynamicContentState;
   notifications: NotificationsState;
   swap: SwapStateType;
   walletconnect: WalletConnectState;
   postOnboarding: PostOnboardingState;
+  protect: ProtectState;
 };

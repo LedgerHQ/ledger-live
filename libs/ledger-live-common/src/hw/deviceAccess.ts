@@ -13,10 +13,9 @@ import {
   TransportStatusError,
   DeviceHalted,
 } from "@ledgerhq/errors";
+import { log } from "@ledgerhq/logs";
 import { getEnv } from "../env";
 import { open, close, setAllowAutoDisconnect } from ".";
-
-export type AccessHook = () => () => void;
 
 const initialErrorRemapping = (error) =>
   throwError(
@@ -30,13 +29,8 @@ const initialErrorRemapping = (error) =>
       : error
   );
 
-const accessHooks: AccessHook[] = [];
-
 let errorRemapping = (e) => throwError(e);
 
-export const addAccessHook = (accessHook: AccessHook): void => {
-  accessHooks.push(accessHook);
-};
 export const setErrorRemapping = (
   f: (arg0: Error) => Observable<never>
 ): void => {
@@ -74,16 +68,29 @@ const transportFinally =
 const identifyTransport = (t) => (typeof t.id === "string" ? t.id : "");
 
 const needsCleanup = {};
-// when a series of APDUs are interrupted, this is called
+// When a series of APDUs are interrupted, this is called
 // so we don't forget to cleanup on the next withDevice
 export const cancelDeviceAction = (transport: Transport): void => {
   needsCleanup[identifyTransport(transport)] = true;
 };
-const deviceQueues = {};
+
+// The devicesQueues object only stores, for each device, the latest void promise that will resolve when the device is ready to be opened again.
+// They are scheduled to resolve whenever the job associated to the device is finished.
+// When calling withDevice several times, the new promise will be chained to the "then" of the previous promise:
+// open(device) -> execute job -> clean connection -> resolve promise -> next promise can start: open(device) -> etc.
+// So a queue is indeed created for each device, by creating a chain of promises, but only the end of the queue is stored for each device.
+const deviceQueues: { [deviceId: string]: Promise<void> } = {};
+
+// To be able to differentiate withDevice calls in our logs
+let withDeviceNonce = 0;
+
 export const withDevice =
   (deviceId: string) =>
   <T>(job: (t: Transport) => Observable<T>): Observable<T> =>
     new Observable((o) => {
+      const nonce = withDeviceNonce++;
+      log("withDevice", `${nonce}: New job: deviceId=${deviceId || "USB"}`);
+
       let unsubscribed;
       let sub;
       const deviceQueue = deviceQueues[deviceId] || Promise.resolve();
@@ -97,20 +104,25 @@ export const withDevice =
           });
       };
 
-      // when we'll finish all the current job, we'll call finish
-      let finish;
-      // this new promise is the next exec queue
+      // When we'll finish all the current job, we'll call finish
+      let resolveQueuedDevice;
+      // This new promise is the next exec queue
       deviceQueues[deviceId] = new Promise((resolve) => {
-        finish = resolve;
+        resolveQueuedDevice = resolve;
       });
-      // for any new job, we'll now wait the exec queue to be available
+
+      log("withDevice", `${nonce}: Waiting for queue to complete`, {
+        deviceQueue,
+      });
+      // For any new job, we'll now wait the exec queue to be available
       deviceQueue
         .then(() => open(deviceId)) // open the transport
         .then(async (transport) => {
+          log("withDevice", `${nonce}: Starting job`);
           setAllowAutoDisconnect(transport, deviceId, false);
           if (unsubscribed) {
-            // it was unsubscribed prematurely
-            return finalize(transport, [finish]);
+            // It was unsubscribed prematurely
+            return finalize(transport, [resolveQueuedDevice]);
           }
 
           if (needsCleanup[identifyTransport(transport)]) {
@@ -118,42 +130,42 @@ export const withDevice =
             await transport.send(0, 0, 0, 0).catch(() => {});
           }
 
-          if (
-            transport.requestConnectionPriority &&
-            typeof transport.requestConnectionPriority === "function"
-          ) {
-            await transport.requestConnectionPriority("High");
-          }
-
           return transport;
         })
+        // This catch is here only for errors that might happen at open or at clean up of the transport before doing the job
         .catch((e) => {
-          finish();
+          resolveQueuedDevice();
           if (e instanceof BluetoothRequired) throw e;
           if (e instanceof TransportWebUSBGestureRequired) throw e;
           if (e instanceof TransportInterfaceNotAvailable) throw e;
           throw new CantOpenDevice(e.message);
         })
+        // Executes the job
         .then((transport) => {
           if (!transport) return;
 
           if (unsubscribed) {
-            // it was unsubscribed prematurely
-            return finalize(transport, [finish]);
+            // It was unsubscribed prematurely
+            return finalize(transport, [resolveQueuedDevice]);
           }
 
-          const cleanups = accessHooks.map((hook) => hook());
-          sub = job(transport) // $FlowFixMe
+          sub = job(transport)
             .pipe(
               catchError(initialErrorRemapping),
               catchError(errorRemapping), // close the transport and clean up everything
-              // $FlowFixMe
-              transportFinally(() => finalize(transport, [...cleanups, finish]))
+              transportFinally(() => {
+                log("withDevice", `${nonce}: job fully completed`);
+                return finalize(transport, [resolveQueuedDevice]);
+              })
             )
             .subscribe(o);
         })
         .catch((error) => o.error(error));
+
+      // Returns function to unsubscribe from the job if we don't need it anymore.
+      // This will prevent us from executing the job unnecessarily later on
       return () => {
+        log("withDevice", `${nonce}: Unsubscribing job: ${!!sub}`);
         unsubscribed = true;
         if (sub) sub.unsubscribe();
       };

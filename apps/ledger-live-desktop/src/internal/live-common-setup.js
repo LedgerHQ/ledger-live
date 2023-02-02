@@ -1,9 +1,8 @@
 // @flow
 import "~/live-common-setup";
 import { throwError } from "rxjs";
-import throttle from "lodash/throttle";
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
-import { addAccessHook, setErrorRemapping } from "@ledgerhq/live-common/hw/deviceAccess";
+import { setErrorRemapping } from "@ledgerhq/live-common/hw/deviceAccess";
 import { setEnvUnsafe, getEnv } from "@ledgerhq/live-common/env";
 import { retry } from "@ledgerhq/live-common/promise";
 import TransportNodeHidSingleton from "@ledgerhq/hw-transport-node-hid-singleton";
@@ -15,26 +14,6 @@ for (const k in process.env) {
   setEnvUnsafe(k, process.env[k]);
 }
 /* eslint-enable guard-for-in */
-
-let busy = false;
-
-const refreshBusyUIState = throttle(() => {
-  if (process.env.CLI) return;
-  // $FlowFixMe TODO
-  process.send({
-    type: "setDeviceBusy",
-    busy,
-  });
-}, 100);
-
-addAccessHook(() => {
-  busy = true;
-  refreshBusyUIState();
-  return () => {
-    busy = false;
-    refreshBusyUIState();
-  };
-});
 
 setErrorRemapping(e => {
   // NB ideally we should solve it in ledgerjs

@@ -12,7 +12,6 @@ import {
   getTagDerivationMode,
 } from "@ledgerhq/live-common/derivation";
 import { AccountLike } from "@ledgerhq/types-live";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Flex, Tag, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -47,10 +46,8 @@ const AccountCard = ({
     account.type === "Account" &&
     account?.derivationMode !== undefined &&
     account?.derivationMode !== null &&
-    getTagDerivationMode(
-      currency as CryptoCurrency,
-      account.derivationMode as DerivationMode,
-    );
+    currency.type === "CryptoCurrency" &&
+    getTagDerivationMode(currency, account.derivationMode as DerivationMode);
 
   return (
     <TouchableOpacity disabled={disabled} onPress={onPress}>

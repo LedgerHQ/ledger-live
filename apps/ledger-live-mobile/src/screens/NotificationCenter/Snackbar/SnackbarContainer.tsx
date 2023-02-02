@@ -19,7 +19,7 @@ export default function SnackbarContainer() {
       if (toast.type === "announcement" || !toast.type) {
         toasts.forEach(({ id }) => dismissToast(id));
         RootNavigation.navigate(NavigatorName.NotificationCenter, {
-          screen: ScreenName.NotificationCenterNews,
+          screen: ScreenName.NotificationCenter,
         });
       }
     },
@@ -81,7 +81,8 @@ const styles = StyleSheet.create({
     left: 0,
     height: "auto",
     width: "100%",
-    zIndex: 100,
+    zIndex: 150,
+    elevation: 150,
     paddingHorizontal: 16,
   },
 });

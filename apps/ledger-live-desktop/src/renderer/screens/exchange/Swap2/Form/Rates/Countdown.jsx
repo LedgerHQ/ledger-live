@@ -7,6 +7,7 @@ import type { RatesReducerState } from "@ledgerhq/live-common/exchange/swap/hook
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import AnimatedCountdown from "~/renderer/components/AnimatedCountdown";
+import { formatCountdown } from "~/renderer/screens/exchange/Swap2/Form/Rates/utils/formatCountdown";
 
 export type Props = {
   rates: $PropertyType<RatesReducerState, "value">,
@@ -48,7 +49,7 @@ export default function Countdown({ refreshTime, rates }: Props) {
             <AnimatedCountdown size={15} duration={refreshTime} />
           </Box>
           <Box color="neutral.c100" style={{ width: "28px" }}>
-            00:{Math.abs(countdown).toLocaleString("en-US", { minimumIntegerDigits: 2 })}
+            {formatCountdown(countdown)}
           </Box>
         </Box>
       ) : (

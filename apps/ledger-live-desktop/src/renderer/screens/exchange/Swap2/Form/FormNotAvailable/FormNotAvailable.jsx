@@ -7,7 +7,7 @@ import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box";
 import SwapCircle from "~/renderer/icons/SwapCircle";
 
-import { SWAP_VERSION } from "../../utils/index";
+import { swapDefaultTrack } from "../../utils/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 
 const Body = styled(Box).attrs({
@@ -31,7 +31,7 @@ const FormNotAvailable = () => {
 
   return (
     <Box justifyContent="center" alignItems="center">
-      <TrackPage category="Swap" name="NotAvailable" swapVersion={SWAP_VERSION} />
+      <TrackPage category="Swap" name="NotAvailable" {...swapDefaultTrack} />
       <Body>
         <IconContainer>
           <SwapCircle size={70} />

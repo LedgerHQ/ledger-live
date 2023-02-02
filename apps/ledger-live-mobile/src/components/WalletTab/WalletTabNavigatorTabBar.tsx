@@ -12,6 +12,7 @@ import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManag
 import WalletTabBackgroundGradient from "./WalletTabBackgroundGradient";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { accountsSelector } from "../../reducers/accounts";
+import { ScreenName } from "../../const";
 
 const StyledTouchableOpacity = styled.TouchableOpacity`
   height: 32px;
@@ -64,14 +65,17 @@ function Tab({
 
     if (!isActive && !event.defaultPrevented) {
       track("tab_clicked", {
-        tab: route.name,
+        tab: route.name === ScreenName.WalletNftGallery ? "NFTs" : "Crypto",
       });
       navigation.navigate(route.name);
     }
   }, [isActive, navigation, route.key, route.name]);
 
   return (
-    <StyledTouchableOpacity onPress={onPress}>
+    <StyledTouchableOpacity
+      onPress={onPress}
+      testID={`wallet-tab-${route.name}`}
+    >
       <StyledAnimatedView
         backgroundColor={rgba(colors.constant.white, 0.08)}
         borderRadius={2}

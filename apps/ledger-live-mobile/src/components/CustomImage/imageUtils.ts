@@ -7,7 +7,9 @@ import {
   ImageMetadataLoadingError,
   ImageTooLargeError,
 } from "@ledgerhq/live-common/customImage/errors";
+import { NFTMediaSize, NFTMetadata } from "@ledgerhq/types-live";
 import { ImageDimensions, ImageFileUri, ImageUrl } from "./types";
+import { getMetadataMediaTypes } from "../../logic/nft";
 
 /**
  * Call this to prompt the user to pick an image from its phone.
@@ -55,6 +57,20 @@ export async function importImageFromPhoneGallery(): Promise<ImageFileUri | null
     console.error(e);
     throw new ImageLoadFromGalleryError();
   }
+}
+
+export function extractImageUrlFromNftMetadata(
+  nftMetadata?: NFTMetadata,
+): string | null {
+  const nftMediaTypes = nftMetadata ? getMetadataMediaTypes(nftMetadata) : null;
+  const nftMediaSize = nftMediaTypes
+    ? (["big", "preview"] as NFTMediaSize[]).find(
+        size => nftMediaTypes[size] === "image",
+      )
+    : null;
+  const nftImageUri = nftMediaSize && nftMetadata?.medias?.[nftMediaSize]?.uri;
+
+  return nftImageUri || null;
 }
 
 type CancellablePromise<T> = {

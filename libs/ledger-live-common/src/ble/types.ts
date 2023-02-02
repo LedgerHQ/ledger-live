@@ -25,6 +25,8 @@ export type TransportBleDevice = {
 // BleError should be an error class which is guaranteed to be thrown by all functions
 // by our different implementations of Transport or at least of ble implementation of Transport
 // TODO: BleError should probably be a class and update after BIM transport is finished
+// HwTransportError exists now, and should be used.
+// But we need to map all the errors coming from withDevice to HwTransportError.
 export type BleError = Error & {
   // Platform independent error code.
   // It is defined as an enum named BleErrorCode in react-native-ble-plx

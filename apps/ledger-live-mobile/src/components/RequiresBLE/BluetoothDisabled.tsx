@@ -1,47 +1,43 @@
-import React, { memo, useEffect } from "react";
-import { Trans } from "react-i18next";
-import { IconBox, Text } from "@ledgerhq/native-ui";
+import React, { memo } from "react";
+import { Button, IconBox, Text } from "@ledgerhq/native-ui";
+import { useTranslation } from "react-i18next";
 import { BluetoothMedium } from "@ledgerhq/native-ui/assets/icons";
 import styled from "styled-components/native";
-import { deviceNames } from "../../wording";
-import { usePromptBluetoothCallback } from "../../logic/usePromptBluetoothCallback";
 
 const SafeAreaContainer = styled.SafeAreaView`
   flex: 1;
   align-items: center;
   justify-content: center;
   background-color: ${p => p.theme.colors.background.main};
-  margin-left: ${p => `${p.theme.space[4]}px`};
-  margin-right: ${p => `${p.theme.space[4]}px`};
+  margin-left: ${p => `${p.theme.space[6]}px`};
+  margin-right: ${p => `${p.theme.space[6]}px`};
 `;
 
-function BluetoothDisabled() {
-  const promptBluetooth = usePromptBluetoothCallback();
-
-  useEffect(() => {
-    // Prompts the user to enable bluetooth using native api calls when the component gets initially rendered.
-    promptBluetooth().catch(() => {
-      /* ignore */
-    });
-  }, [promptBluetooth]);
+const BluetoothDisabled: React.FC<{ onRetry?: () => void }> = ({ onRetry }) => {
+  const { t } = useTranslation();
 
   return (
     <SafeAreaContainer>
       <IconBox Icon={BluetoothMedium} iconSize={24} boxSize={64} />
       <Text variant={"h2"} mb={5} mt={7} textAlign="center">
-        <Trans i18nKey="bluetooth.required" />
+        {t("bluetooth.required")}
       </Text>
       <Text
+        mb={onRetry ? 10 : 0}
         variant={"body"}
         fontWeight={"medium"}
         textAlign="center"
         color={"neutral.c80"}
       >
-        <Trans i18nKey="bluetooth.checkEnabled" values={deviceNames.nanoX} />
+        {t("bluetooth.checkEnabled")}
       </Text>
+      {onRetry ? (
+        <Button type="main" alignSelf="stretch" outline onPress={onRetry}>
+          {t("common.retry")}
+        </Button>
+      ) : null}
     </SafeAreaContainer>
   );
-}
+};
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export default memo<{}>(BluetoothDisabled);
+export default memo(BluetoothDisabled);

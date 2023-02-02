@@ -15,7 +15,7 @@ import {
   addExtraSessionTrackingPair,
 } from "../actions/general";
 import CurrencyUnitValue from "./CurrencyUnitValue";
-import type { Props as CurrencyUnitValueProps } from "./CurrencyUnitValue";
+import type { CurrencyUnitValueProps } from "./CurrencyUnitValue";
 import LText from "./LText";
 import Circle from "./Circle";
 import IconHelp from "../icons/Info";

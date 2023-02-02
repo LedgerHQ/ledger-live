@@ -32,6 +32,7 @@
       "preferredDeviceModel": "nanoS",
       "hasInstalledApps": true,
       "carouselVisibility": 0,
+      "dismissedDynamicCards": [],
       "lastSeenDevice": null,
       "latestFirmware": null,
       "blacklistedTokenIds": [],

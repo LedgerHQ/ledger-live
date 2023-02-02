@@ -8,8 +8,8 @@ import {
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import { useTranslation, Trans } from "react-i18next";
-import { Account, FeeStrategy } from "@ledgerhq/types-live";
-import { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
+import { Account, AccountLike, FeeStrategy } from "@ledgerhq/types-live";
+import { Transaction as EthereumTransaction } from "@ledgerhq/live-common/families/ethereum/types";
 import TachometerMedium from "~/renderer/icons/TachometerMedium";
 import CounterValue from "~/renderer/components/CounterValue";
 import FormattedVal from "~/renderer/components/FormattedVal";
@@ -27,9 +27,9 @@ type OnClickType = {
 
 type Props = {
   onClick: (arg: OnClickType) => void;
-  transaction: Transaction;
-  account: Account;
-  parentAccount?: Account | undefined;
+  transaction: EthereumTransaction;
+  account: AccountLike;
+  parentAccount: Account | null | undefined;
   strategies: FeeStrategy[];
   mapStrategies?: (arg: FeeStrategy) => FeeStrategy;
   suffixPerByte?: boolean;
@@ -68,6 +68,7 @@ const FeesHeader = styled(Box)`
 const FeesValue = styled(Box)`
   flex-direction: column;
   align-items: center;
+  text-align: center;
 `;
 
 const ApproximateTransactionTime = styled(Box)`

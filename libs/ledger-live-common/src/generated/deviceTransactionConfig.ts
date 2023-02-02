@@ -10,7 +10,7 @@ import ethereum from "../families/ethereum/deviceTransactionConfig";
 import evm from "../families/evm/deviceTransactionConfig";
 import filecoin from "../families/filecoin/deviceTransactionConfig";
 import hedera from "../families/hedera/deviceTransactionConfig";
-import osmosis from "../families/osmosis/deviceTransactionConfig";
+import near from "../families/near/deviceTransactionConfig";
 import polkadot from "../families/polkadot/deviceTransactionConfig";
 import ripple from "../families/ripple/deviceTransactionConfig";
 import solana from "../families/solana/deviceTransactionConfig";
@@ -31,7 +31,7 @@ export default {
   evm,
   filecoin,
   hedera,
-  osmosis,
+  near,
   polkadot,
   ripple,
   solana,
@@ -42,7 +42,6 @@ export default {
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_avalanchepchain } from  "../families/avalanchepchain/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_cosmos } from  "../families/cosmos/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_filecoin } from  "../families/filecoin/deviceTransactionConfig";
-import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_osmosis } from  "../families/osmosis/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_polkadot } from  "../families/polkadot/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_stellar } from  "../families/stellar/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_tezos } from  "../families/tezos/deviceTransactionConfig";
@@ -52,7 +51,6 @@ export type ExtraDeviceTransactionField =
   | ExtraDeviceTransactionField_avalanchepchain
   | ExtraDeviceTransactionField_cosmos
   | ExtraDeviceTransactionField_filecoin
-  | ExtraDeviceTransactionField_osmosis
   | ExtraDeviceTransactionField_polkadot
   | ExtraDeviceTransactionField_stellar
   | ExtraDeviceTransactionField_tezos

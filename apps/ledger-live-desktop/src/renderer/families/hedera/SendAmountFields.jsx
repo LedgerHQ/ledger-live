@@ -8,10 +8,10 @@ import type { SendAmountProps } from "./types";
 import Box from "~/renderer/components/Box";
 import MemoField from "./MemoField";
 
-const Root = ({ status, account, transaction, onChange }: SendAmountProps) => {
+const Root = (props: SendAmountProps) => {
   return (
     <Box flow={1}>
-      <MemoField status={status} account={account} transaction={transaction} onChange={onChange} />
+      <MemoField {...props} />
     </Box>
   );
 };

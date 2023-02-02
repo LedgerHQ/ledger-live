@@ -64,3 +64,9 @@ runs:
           apps/ledger-live-desktop/tests/artifacts/coverage
           apps/ledger-live-desktop/tests/artifacts/videos
           apps/ledger-live-desktop/tests/artifacts/logs
+    - name: Upload Allure Report
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: "allure-results-${{ inputs.os }}"
+        path: apps/ledger-live-desktop/allure-results

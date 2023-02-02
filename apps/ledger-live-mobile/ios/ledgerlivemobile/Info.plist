@@ -2,6 +2,11 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>Braze</key>
+	<dict>
+		<key>Endpoint</key>
+		<string>sdk.fra-02.braze.eu</string>
+	</dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -20,11 +25,11 @@
 	<string>3.3.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
-	<key>NSCameraUsageDescription</key>
-	<string>The Ledger Live app needs access to your camera to scan QR codes</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Allow $(PRODUCT_NAME) to use the microphone</string>
-	<key>NSPhotoLibraryUsageDescription</key>
+	<key>NSCameraUsageDescription</key>	
+	<string>The Ledger Live app needs access to your camera to scan QR codes</string>	
+	<key>NSMicrophoneUsageDescription</key>	
+	<string>Allow $(PRODUCT_NAME) to use the microphone</string>	
+	<key>NSPhotoLibraryUsageDescription</key>	
 	<string>Allow $(PRODUCT_NAME) to access your photos</string>
 	<key>CFBundleURLTypes</key>
 	<array>
@@ -103,6 +108,7 @@
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>
+		<string>bluetooth-central</string>
 		<string>fetch</string>
 		<string>remote-notification</string>
 	</array>
@@ -118,10 +124,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>Braze</key>
-	<dict>
-		<key>Endpoint</key>
-		<string>sdk.fra-02.braze.eu</string>
-	</dict>
 </dict>
 </plist>

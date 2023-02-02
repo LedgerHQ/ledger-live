@@ -148,8 +148,8 @@ export default function BaseModal({
 
   return (
     <ReactNativeModal
-      {...rest}
       {...backDropProps}
+      {...rest}
       isVisible={isOpen}
       deviceWidth={width}
       deviceHeight={height}

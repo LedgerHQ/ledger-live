@@ -9,11 +9,11 @@ import { findCurrencyExplorer } from "@ledgerhq/live-common/api/Ledger";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 const command = async (transport, currencyId, hash) => {
-  const btc = new Btc(transport);
   const currency = findCryptoCurrencyById(currencyId);
   invariant(currency, "currency not found");
   if (!currency) throw new Error("currency not found");
   const { bitcoinLikeInfo } = currency;
+  const btc = new Btc({ transport, currency: currency?.id });
   invariant(
     currency.family === "bitcoin" && bitcoinLikeInfo,
     "currency of bitcoin family only"

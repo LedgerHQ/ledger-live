@@ -170,7 +170,7 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
   return (
     <>
       <Flex flex={1} p={6}>
-        <ScrollView>
+        <ScrollView testID="scrollView-language-change">
           <Flex mb={4}>
             <SelectableList
               currentValue={currentLocale}

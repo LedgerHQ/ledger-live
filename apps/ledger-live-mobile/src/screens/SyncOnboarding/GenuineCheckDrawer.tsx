@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  BottomDrawer,
-  BoxedIcon,
-  Button,
-  Flex,
-  Text,
-} from "@ledgerhq/native-ui";
-import { ShieldCheckMedium } from "@ledgerhq/native-ui/assets/icons";
+import { BottomDrawer, Button, Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 
 export type Props = {
@@ -32,15 +25,14 @@ const GenuineCheckDrawer = ({
       noCloseButton
     >
       <Flex justifyContent="center" alignItems="center" flex={1} mt={9} mb={6}>
-        <BoxedIcon
-          Icon={<ShieldCheckMedium color="primary.c90" size={24} />}
-          variant="circle"
-          backgroundColor="primary.c30"
-          borderColor="transparent"
-          size={48}
-        />
+        <Icons.LedgerLogoRegular size={28} color="primary.c80" />
       </Flex>
-      <Text textAlign="center" variant="h4" fontWeight="semiBold" mb={8} mt={8}>
+      <Text variant="paragraph" color="primary.c80" textAlign="center">
+        {t(
+          "syncOnboarding.softwareChecksSteps.genuineCheckRequestDrawer.iconText",
+        )}
+      </Text>
+      <Text textAlign="center" variant="h4" mb={8} mt={8}>
         {t(
           "syncOnboarding.softwareChecksSteps.genuineCheckRequestDrawer.title",
           { productName },

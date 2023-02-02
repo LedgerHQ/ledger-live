@@ -3,7 +3,7 @@
 import React from "react";
 
 const Cic = ({ size }: { size: number }) => (
-  <svg width={size} height={size}>
+  <svg viewBox="0 0 32 32" width={size} height={size}>
     <g clipPath="url(#clip0_2553_24519)">
       <path
         fillRule="evenodd"

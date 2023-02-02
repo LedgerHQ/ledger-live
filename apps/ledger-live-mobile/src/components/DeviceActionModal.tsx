@@ -49,10 +49,16 @@ export default function DeviceActionModal<Req, Stt, Res>({
     }
   }, [onModalHide, onResult, result]);
 
+  const handleClose = useCallback(() => {
+    if (onClose && !result) {
+      onClose();
+    }
+  }, [onClose, result]);
+
   return (
     <BottomModal
       isOpened={result ? false : !!device}
-      onClose={result ? undefined : onClose}
+      onClose={handleClose}
       onModalHide={handleModalHide}
     >
       {onResult && result

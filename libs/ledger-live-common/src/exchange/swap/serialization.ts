@@ -53,10 +53,16 @@ export const toExchangeRateRaw = (
     toAmount,
     rateId,
     provider,
+    providerType,
     providerURL,
     tradeMethod,
     error,
   } = exchangeRate;
+
+  if (!rate) {
+    throw new Error("rate is required");
+  }
+
   return {
     rate: rate.toString(),
     magnitudeAwareRate: magnitudeAwareRate.toString(),
@@ -64,6 +70,7 @@ export const toExchangeRateRaw = (
     toAmount: toAmount.toString(),
     rateId,
     provider,
+    providerType,
     providerURL,
     tradeMethod,
     error: error ? JSON.stringify(serializeError(error)) : undefined,
@@ -80,6 +87,7 @@ export const fromExchangeRateRaw = (
     toAmount,
     rateId,
     provider,
+    providerType,
     providerURL,
     tradeMethod,
     error,
@@ -93,6 +101,7 @@ export const fromExchangeRateRaw = (
     toAmount: new BigNumber(toAmount),
     rateId,
     provider,
+    providerType,
     providerURL,
     tradeMethod,
     error: error ? deserializeError(JSON.parse(error)) : undefined,

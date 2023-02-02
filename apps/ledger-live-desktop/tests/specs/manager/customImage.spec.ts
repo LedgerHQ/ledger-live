@@ -33,7 +33,7 @@ test("Custom image", async ({ page }) => {
 
   await test.step("Access manager", async () => {
     await layout.goToManager();
-    await deviceAction.accessManager("", "", DeviceModelId.nanoFTS);
+    await deviceAction.accessManager("", "", DeviceModelId.stax);
     await managerPage.customImageButton.waitFor({ state: "visible" });
   });
 

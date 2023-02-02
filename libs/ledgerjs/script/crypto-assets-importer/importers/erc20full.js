@@ -29,7 +29,7 @@ module.exports = {
     "tokens/ethereum_ropsten/erc20",
     "tokens/ethereum_sepolia/erc20",
   ],
-  output: (toJSON) => `data/erc20.js${toJSON ? "on" : ""}`,
+  output: (toJSON) => `data/erc20.${toJSON ? "json" : "ts"}`,
 
   validate: (everything, countervaluesTickers) =>
     [
@@ -99,7 +99,20 @@ module.exports = {
   outputTemplate: (data, toJSON) =>
     toJSON
       ? JSON.stringify(data)
-      : `module.exports = [
+      : `export type ERC20Token = [
+  string,
+  string,
+  string,
+  number,
+  string,
+  string,
+  string,
+  boolean,
+  boolean,
+  string?,
+  string?
+];
+const tokens: ERC20Token[] = [
 ${data
   .map(
     (item) =>
@@ -112,7 +125,10 @@ ${data
       "]"
   )
   .join(",\n")}
-];`,
+];
+
+export default tokens;
+`,
 
   loader: ({ signatureFolder, folder, id }) =>
     Promise.all([

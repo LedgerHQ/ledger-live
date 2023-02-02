@@ -54,6 +54,7 @@ type Step = {
   key: CompanionStepKey;
   status: StepStatus;
   title: string;
+  doneTitle?: string;
   estimatedTime?: number;
   renderBody?: (isDisplayed?: boolean) => ReactNode;
 };
@@ -160,6 +161,7 @@ export const SyncOnboarding = ({
     useState<boolean>(false);
   const [isDesyncDrawerOpen, setDesyncDrawerOpen] = useState<boolean>(false);
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
+  const [shouldRestoreApps, setShouldRestoreApps] = useState<boolean>(false);
 
   const goBackToPairingFlow = useCallback(() => {
     const navigateInput: NavigateInput<
@@ -184,7 +186,7 @@ export const SyncOnboarding = ({
     navigation.navigate(NavigatorName.Base, {
       screen: ScreenName.BleDevicePairingFlow,
       params: {
-        // TODO: For now, don't do that because nanoFTS shows up as nanoX
+        // TODO: For now, don't do that because stax shows up as nanoX
         // filterByDeviceModelId: device.modelId,
         areKnownDevicesDisplayed: true,
         onSuccessAddToKnownDevices: false,
@@ -225,9 +227,9 @@ export const SyncOnboarding = ({
   }, []);
 
   const handleDesyncRetry = useCallback(() => {
+    // handleDesyncClose is then called
     setDesyncDrawerOpen(false);
-    goBackToPairingFlow();
-  }, [goBackToPairingFlow]);
+  }, []);
 
   const handleDesyncClose = useCallback(() => {
     setDesyncDrawerOpen(false);
@@ -302,10 +304,16 @@ export const SyncOnboarding = ({
 
     switch (deviceOnboardingState?.currentOnboardingStep) {
       case DeviceOnboardingStep.SetupChoice:
-      case DeviceOnboardingStep.RestoreSeed:
       case DeviceOnboardingStep.SafetyWarning:
+        setCompanionStepKey(CompanionStepKey.Seed);
+        break;
       case DeviceOnboardingStep.NewDevice:
       case DeviceOnboardingStep.NewDeviceConfirming:
+        setShouldRestoreApps(false);
+        setCompanionStepKey(CompanionStepKey.Seed);
+        break;
+      case DeviceOnboardingStep.RestoreSeed:
+        setShouldRestoreApps(true);
         setCompanionStepKey(CompanionStepKey.Seed);
         break;
       case DeviceOnboardingStep.WelcomeScreen1:
@@ -322,7 +330,7 @@ export const SyncOnboarding = ({
       default:
         break;
     }
-  }, [deviceOnboardingState]);
+  }, [deviceOnboardingState, shouldRestoreApps]);
 
   // When the user gets close to the seed generation step, sets the lost synchronization delay
   // and timers to a higher value. It avoids having a warning message while the connection is lost
@@ -384,14 +392,12 @@ export const SyncOnboarding = ({
         {
           key: CompanionStepKey.Pin,
           title: t("syncOnboarding.pinStep.title"),
+          doneTitle: t("syncOnboarding.pinStep.doneTitle"),
           estimatedTime: 120,
           renderBody: () => (
             <Flex>
-              <Text variant="bodyLineHeight" mb={6}>
-                {t("syncOnboarding.pinStep.description", { productName })}
-              </Text>
               <Text variant="bodyLineHeight">
-                {t("syncOnboarding.pinStep.warning", { productName })}
+                {t("syncOnboarding.pinStep.description", { productName })}
               </Text>
             </Flex>
           ),
@@ -399,12 +405,10 @@ export const SyncOnboarding = ({
         {
           key: CompanionStepKey.Seed,
           title: t("syncOnboarding.seedStep.title"),
+          doneTitle: t("syncOnboarding.seedStep.doneTitle"),
           estimatedTime: 300,
           renderBody: () => (
             <Flex pb={1}>
-              <Text variant="bodyLineHeight" mb={6}>
-                {t("syncOnboarding.seedStep.description", { productName })}
-              </Text>
               <Stories
                 instanceID={StorylyInstanceID.recoverySeed}
                 vertical
@@ -416,6 +420,9 @@ export const SyncOnboarding = ({
         {
           key: CompanionStepKey.SoftwareCheck,
           title: t("syncOnboarding.softwareChecksSteps.title"),
+          doneTitle: t("syncOnboarding.softwareChecksSteps.doneTitle", {
+            productName,
+          }),
           renderBody: (isDisplayed?: boolean) => (
             <SoftwareChecksStep
               device={device}
@@ -429,9 +436,9 @@ export const SyncOnboarding = ({
               {
                 key: CompanionStepKey.Apps,
                 title: t("syncOnboarding.appsStep.title", { productName }),
-                estimatedTime: 60,
                 renderBody: () => (
                   <InstallSetOfApps
+                    restore={shouldRestoreApps}
                     device={device}
                     onResult={handleInstallAppsComplete}
                     dependencies={initialAppsToInstall}
@@ -442,7 +449,8 @@ export const SyncOnboarding = ({
           : []),
         {
           key: CompanionStepKey.Ready,
-          title: t("syncOnboarding.readyStep.title", { productName }),
+          title: t("syncOnboarding.readyStep.title"),
+          doneTitle: t("syncOnboarding.readyStep.doneTitle", { productName }),
         },
       ].map(step => ({
         ...step,
@@ -462,6 +470,7 @@ export const SyncOnboarding = ({
       handleInstallAppsComplete,
       initialAppsToInstall,
       companionStepKey,
+      shouldRestoreApps,
     ],
   );
 

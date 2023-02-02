@@ -23,14 +23,15 @@ import { ledgerService as ethLedgerServices } from "@ledgerhq/hw-app-eth";
 import { erc20SignatureInfo } from "./modules/erc20";
 import { apiForCurrency } from "../../api/Ethereum";
 import { withDevice } from "../../hw/deviceAccess";
+import type { Transaction } from "./types";
 import { isNFTActive } from "../../nft";
 import { getEnv } from "../../env";
 import { modes } from "./modules";
-import type { Transaction } from "./types";
 import {
   getGasLimit,
   buildEthereumTx,
   EIP1559ShouldBeUsed,
+  toTransactionRaw,
 } from "./transaction";
 
 export const signOperation = ({
@@ -115,6 +116,8 @@ export const signOperation = ({
               const resolutionConfig = m.getResolutionConfig
                 ? m.getResolutionConfig(account, transaction)
                 : {};
+
+              log("rawtx", txHex);
 
               const resolution = await ethLedgerServices.resolveTransaction(
                 txHex,
@@ -209,6 +212,7 @@ export const signOperation = ({
                 accountId,
                 date: new Date(),
                 extra: {},
+                transactionRaw: toTransactionRaw(transaction),
               };
               m.fillOptimisticOperation(account, transaction, operation);
               o.next({

@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { NativeModules, Platform, ToastAndroid } from "react-native";
 
@@ -7,7 +7,6 @@ const { BluetoothHelperModule } = NativeModules;
 const {
   E_ACTIVITY_DOES_NOT_EXIST,
   E_BLE_CANCELLED,
-  E_BLE_PERMISSIONS_DENIED,
   E_ENABLE_BLE_UNKNOWN_RESPONSE,
   E_SECURITY_EXCEPTION,
   E_UNKNOWN_ERROR,
@@ -19,8 +18,7 @@ type AndroidError = {
 };
 
 /**
- * @returns a function that turns on bluetooth on the phone and requests the
- * permissions to do so if needed.
+ * @returns a function that turns on bluetooth on the phone
  */
 export function usePromptBluetoothCallback() {
   const { t } = useTranslation();
@@ -32,12 +30,6 @@ export function usePromptBluetoothCallback() {
       if (Platform.OS === "android") {
         const { code } = e as AndroidError;
         switch (code) {
-          case E_BLE_PERMISSIONS_DENIED: // in case the user denied the permissions
-            ToastAndroid.show(
-              t("permissions.nearbyDevicesPermissionDenied"),
-              ToastAndroid.LONG,
-            );
-            break;
           case E_BLE_CANCELLED: // in case the user didn't turn bluetooth on
           case E_ACTIVITY_DOES_NOT_EXIST:
           case E_ENABLE_BLE_UNKNOWN_RESPONSE:
@@ -53,4 +45,26 @@ export function usePromptBluetoothCallback() {
       throw e;
     }
   }, [t]);
+}
+
+export function usePromptBluetoothCallbackWithState() {
+  const [bluetoothPromptedOnce, setBluetoothPromptedOnce] = useState(false);
+  const [bluetoothPromptSucceeded, setBluetoothPromptSucceeded] =
+    useState(true);
+  const promptBluetoothCallback = usePromptBluetoothCallback();
+
+  const prompt = useCallback(() => {
+    setBluetoothPromptedOnce(true);
+    promptBluetoothCallback()
+      .then(
+        res =>
+          setBluetoothPromptSucceeded(Platform.OS === "android" ? !!res : true), // on iOS we don't have the actual result so we use an optimistic approach
+      )
+      .catch(() => setBluetoothPromptSucceeded(false));
+  }, [promptBluetoothCallback]);
+  return {
+    bluetoothPromptedOnce,
+    bluetoothPromptSucceeded,
+    prompt,
+  };
 }

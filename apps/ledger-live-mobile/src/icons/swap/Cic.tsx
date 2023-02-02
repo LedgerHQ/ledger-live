@@ -2,7 +2,7 @@ import React from "react";
 import Svg, { G, Path } from "react-native-svg";
 
 export const Cic = React.memo(({ size }: { size: number }) => (
-  <Svg width={size} height={size}>
+  <Svg width={size} height={size} viewBox="0 0 32 32">
     <G clipPath="url(#clip0_2553_24519)">
       <Path
         fillRule="evenodd"

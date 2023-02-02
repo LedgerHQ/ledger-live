@@ -14,6 +14,7 @@ import {
   inferTokenAccount,
   getGasLimit,
   EIP1559ShouldBeUsed,
+  toTransactionRaw,
 } from "../transaction";
 export type Modes = "send";
 const send: ModeModule = {
@@ -87,7 +88,11 @@ const send: ModeModule = {
         const feePerGas = EIP1559ShouldBeUsed(a.currency)
           ? t.maxFeePerGas
           : t.gasPrice;
-        amount = a.spendableBalance.minus(gasLimit.times(feePerGas || 0));
+        // Prevents a send max with a negative amount
+        amount = BigNumber.maximum(
+          a.spendableBalance.minus(gasLimit.times(feePerGas || 0)),
+          0
+        );
       } else {
         invariant(t.amount, "amount is missing");
         amount = t.amount;
@@ -187,6 +192,7 @@ const send: ModeModule = {
           accountId: subAccount.id,
           date: new Date(),
           extra: {},
+          transactionRaw: toTransactionRaw(t),
         },
       ];
     }

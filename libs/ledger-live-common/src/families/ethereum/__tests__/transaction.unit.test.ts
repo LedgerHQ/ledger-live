@@ -5,6 +5,9 @@ import { Transaction } from "../types";
 import { modes } from "../modules";
 import { fail } from "assert";
 import BigNumber from "bignumber.js";
+import { setSupportedCurrencies } from "../../../currencies";
+
+setSupportedCurrencies(["ethereum", "bsc"]);
 
 const ethAccount = fromAccountRaw(ethereum1);
 const bscAccount = fromAccountRaw({
@@ -69,6 +72,29 @@ describe("Ethereum transaction tests", () => {
 
           expect(txData).toEqual({
             value: "0xde0a39a35d9b000", // 999979000000000000 (1000000000000000000 - (21000 * 1000000000))
+            to: sendMaxTransaction.recipient,
+          });
+        });
+
+        it("should not return a negative amount for a send max", () => {
+          const ethEmptyAccount = {
+            ...ethAccount,
+            spendableBalance: new BigNumber(0), // empty account
+            balance: new BigNumber(0), // empty account
+          };
+          const sendMaxTransaction = {
+            ...createTransaction(),
+            recipient: "0xc3f95102D5c8F2c83e49Ce3Acfb905eDfb7f37dE",
+            useAllAmount: true,
+            maxFeePerGas: new BigNumber(1000000000), // 1 Gwei
+            useGasLimit: new BigNumber(21000),
+          };
+          const txData = {};
+
+          mode.fillTransactionData(ethEmptyAccount, sendMaxTransaction, txData);
+
+          expect(txData).toEqual({
+            value: "0x0", // theorically this should be negative as the account has 0 ETH but transaction still has fees
             to: sendMaxTransaction.recipient,
           });
         });

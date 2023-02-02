@@ -49,7 +49,7 @@ const illustrations = {
     light: nanoX,
     dark: nanoXDark,
   },
-  nanoFTS: {
+  stax: {
     light: nanoS,
     dark: nanoSDark,
   },
@@ -65,7 +65,7 @@ export const DeviceIllustration: ThemedComponent<{}> = styled.img.attrs(p => ({
       p.theme.colors.palette.type || "light"
     ],
 }))`
-  ${p => (p.deviceModel.id === "nanoFTS" ? "border: 3px solid red;" : "")}
+  ${p => (p.deviceModel.id === "stax" ? "border: 3px solid red;" : "")}
   position: absolute;
   top: 0;
   left: 50%;
@@ -345,7 +345,7 @@ const DeviceStorage = ({
             alignItems="flex-end"
             rowGap={3}
           >
-            {deviceModel.id === DeviceModelId.nanoFTS ? (
+            {deviceModel.id === DeviceModelId.stax ? (
               <FeatureToggle feature="customImage">
                 <CustomImageManagerButton />
               </FeatureToggle>

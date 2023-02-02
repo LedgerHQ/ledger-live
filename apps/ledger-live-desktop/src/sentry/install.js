@@ -58,6 +58,7 @@ const ignoreErrors = [
   "Unexpected ''",
   "Unexpected '<'",
   "Service Unvailable",
+  "HederaAddAccountError",
   // timeouts
   "ERR_CONNECTION_TIMED_OUT",
   "request timed out",
@@ -83,6 +84,8 @@ const ignoreErrors = [
   "ManagerDeviceLocked",
   "PairingFailed",
   "Ledger device: UNKNOWN_ERROR",
+  // errors coming from the usage of a Transport implementation
+  "HwTransportError",
   // other
   "AccountAwaitingSendPendingOperations",
   "AccountNeedResync",

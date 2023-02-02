@@ -7,4 +7,5 @@ export type SendAmountProps = {
   transaction: Transaction,
   status: TransactionStatus,
   onChange: Transaction => void,
+  trackProperties?: object,
 };

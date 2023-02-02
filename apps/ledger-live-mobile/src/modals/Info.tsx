@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import BottomModal from "../components/BottomModal";
-import LText from "../components/LText";
+import LText, { Opts } from "../components/LText";
 
 type Props = {
   data: ModalInfo[];
@@ -9,33 +9,54 @@ type Props = {
   onClose: () => void;
 };
 export type ModalInfo = {
-  description: React.ReactNode;
+  description?: React.ReactNode;
   Icon?: () => React.ReactElement<
     React.ComponentProps<React.ElementType>,
     React.ElementType
   >;
-  title: React.ReactNode;
+  title?: React.ReactNode;
   footer?: React.ReactNode;
+  titleProps?: Opts;
+  descriptionProps?: Opts;
 };
 export default function InfoModal({ data, isOpened, onClose }: Props) {
   return (
     <BottomModal style={styles.root} isOpened={isOpened} onClose={onClose}>
-      {data.map(({ description, Icon, title, footer }, i) => (
-        <View style={styles.section} key={i}>
-          <View style={styles.header}>
-            {Icon && (
-              <View style={styles.iconWrapper}>
-                <Icon />
-              </View>
-            )}
-            <LText style={styles.title} semiBold secondary>
-              {title}
-            </LText>
+      {data.map(
+        (
+          {
+            description,
+            Icon,
+            title,
+            footer,
+            titleProps = {},
+            descriptionProps = {},
+          },
+          i,
+        ) => (
+          <View style={styles.section} key={i}>
+            <View style={styles.header}>
+              {Icon && (
+                <View style={styles.iconWrapper}>
+                  <Icon />
+                </View>
+              )}
+              {title ? (
+                <LText style={styles.title} semiBold secondary {...titleProps}>
+                  {title}
+                </LText>
+              ) : null}
+            </View>
+            {description ? (
+              <LText color="grey" {...descriptionProps}>
+                {description}
+              </LText>
+            ) : null}
+
+            {footer ? <View style={styles.footer}>{footer}</View> : null}
           </View>
-          <LText color="grey">{description}</LText>
-          {footer ? <View style={styles.footer}>{footer}</View> : null}
-        </View>
-      ))}
+        ),
+      )}
     </BottomModal>
   );
 }
@@ -49,6 +70,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     marginBottom: 12,
   },
   iconWrapper: {
@@ -56,6 +78,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
+    flex: 1,
   },
   footer: {
     marginTop: 12,

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
@@ -10,6 +11,7 @@ import type { RampCatalog } from "@ledgerhq/live-common/platform/providers/RampC
 import Box from "~/renderer/components/Box";
 import Card from "~/renderer/components/Box/Card";
 import TabBar from "~/renderer/components/TabBar";
+import { languageSelector } from "~/renderer/reducers/settings";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import OnRamp from "./Buy";
 import { useExchangeProvider } from "./hooks";
@@ -58,6 +60,7 @@ const DEFAULT_MULTIBUY_APP_ID = "multibuy";
 // Exchange (Buy / Sell) as a live app screen
 const LiveAppExchange = ({ appId }: { appId: string }) => {
   const { state: urlParams } = useLocation();
+  const locale = useSelector(languageSelector);
 
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
@@ -81,6 +84,7 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
           inputs={{
             theme: themeType,
             ...urlParams,
+            lang: locale,
           }}
         />
       ) : null}

@@ -250,3 +250,5 @@ export const decodeAccountsModel = (raws: *) => (raws || []).map(accountModel.de
 export const encodeAccountsModel = (accounts: *) => (accounts || []).map(accountModel.encode);
 
 export default handleActions(handlers, state);
+
+export const flattenAccountsSelector = createSelector(accountsSelector, flattenAccounts);

@@ -10,28 +10,30 @@ import { getEnv } from "../../env";
 import {
   SwapExchangeRateAmountTooHigh,
   SwapExchangeRateAmountTooLow,
+  SwapExchangeRateAmountTooLowOrTooHigh,
 } from "../../errors";
 import network from "../../network";
 import type { Transaction } from "../../generated/types";
-import {
-  getAvailableProviders,
-  getSwapAPIBaseURL,
-  getSwapAPIError,
-  getSwapAPIVersion,
-} from "./";
+import { getProviderConfig, getSwapAPIBaseURL, getSwapAPIError } from "./";
 import { mockGetExchangeRates } from "./mock";
-import type { CustomMinOrMaxError, Exchange, GetExchangeRates } from "./types";
+import type {
+  AvailableProviderV3,
+  CustomMinOrMaxError,
+  Exchange,
+  GetExchangeRates,
+} from "./types";
 
 const getExchangeRates: GetExchangeRates = async (
   exchange: Exchange,
   transaction: Transaction,
   userId?: string, // TODO remove when wyre doesn't require this for rates
-  currencyTo?: TokenCurrency | CryptoCurrency | undefined | null
+  currencyTo?: TokenCurrency | CryptoCurrency | undefined | null,
+  providers: AvailableProviderV3[] = [],
+  includeDEX = false
 ) => {
   if (getEnv("MOCK"))
     return mockGetExchangeRates(exchange, transaction, currencyTo);
 
-  const usesV3 = getSwapAPIVersion() >= 3;
   const from = getAccountCurrency(exchange.fromAccount).id;
   const unitFrom = getAccountUnit(exchange.fromAccount);
   const unitTo =
@@ -40,11 +42,26 @@ const getExchangeRates: GetExchangeRates = async (
   const amountFrom = transaction.amount;
   const tenPowMagnitude = new BigNumber(10).pow(unitFrom.magnitude);
   const apiAmount = new BigNumber(amountFrom).div(tenPowMagnitude);
+
+  const providerList = providers
+    .filter((provider) =>
+      provider.pairs.some((pair) => pair.from === from && pair.to === to)
+    )
+    .filter((provider) =>
+      includeDEX ? true : !(getProviderConfig(provider.provider).type === "DEX")
+    )
+    .map((item) => item.provider);
+
+  // This if can be removed if includeDex is always true. Prevent a backEnd error.
+  if (providerList.length === 0) {
+    return [];
+  }
+
   const request = {
     from,
     to,
     amountFrom: apiAmount.toString(),
-    providers: usesV3 ? getAvailableProviders() : undefined,
+    providers: providerList,
   };
   const res = await network({
     method: "POST",
@@ -52,18 +69,21 @@ const getExchangeRates: GetExchangeRates = async (
     headers: {
       ...(userId ? { userId } : {}),
     },
-    data: usesV3 ? request : [request],
+    data: request,
   });
 
-  return res.data.map((responseData) => {
+  const rates = res.data.map((responseData) => {
     const {
       rate: maybeRate,
       payoutNetworkFees: maybePayoutNetworkFees,
       rateId,
       provider,
+      providerType,
       amountFrom,
       amountTo,
       tradeMethod,
+      providerURL,
+      expirationTime,
     } = responseData;
 
     const error = inferError(apiAmount, unitFrom, responseData);
@@ -100,10 +120,13 @@ const getExchangeRates: GetExchangeRates = async (
     const out = {
       magnitudeAwareRate,
       provider,
+      providerType,
       rate,
       rateId,
+      expirationTime,
       toAmount: magnitudeAwareToAmount,
       tradeMethod,
+      providerURL,
     };
 
     if (tradeMethod === "fixed") {
@@ -115,6 +138,7 @@ const getExchangeRates: GetExchangeRates = async (
       };
     }
   });
+  return rates;
 };
 
 const inferError = (
@@ -126,11 +150,29 @@ const inferError = (
     maxAmountFrom: string;
     errorCode?: number;
     errorMessage?: string;
+    status?: string;
   }
 ): Error | CustomMinOrMaxError | undefined => {
   const tenPowMagnitude = new BigNumber(10).pow(unitFrom.magnitude);
-  const { amountTo, minAmountFrom, maxAmountFrom, errorCode, errorMessage } =
-    responseData;
+  const {
+    amountTo,
+    minAmountFrom,
+    maxAmountFrom,
+    errorCode,
+    errorMessage,
+    status,
+  } = responseData;
+
+  // DEX quotes are out of limits error. We do not know if it is a low or high limit, neither the amount.
+  if (
+    (!minAmountFrom || !maxAmountFrom) &&
+    status === "error" &&
+    errorCode !== 300
+  ) {
+    return new SwapExchangeRateAmountTooLowOrTooHigh(undefined, {
+      message: "",
+    });
+  }
 
   if (!amountTo) {
     // We are in an error case regardless of api version.

@@ -1,27 +1,33 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Switch } from "@ledgerhq/native-ui";
 import SettingsRow from "../../../components/SettingsRow";
-import { carouselVisibilitySelector } from "../../../reducers/settings";
-import { setCarouselVisibility } from "../../../actions/settings";
-import { SLIDES } from "../../../components/Carousel/shared";
+import { setDismissedDynamicCards } from "../../../actions/settings";
+import useDynamicContent from "../../../dynamicContent/dynamicContent";
+import { track } from "../../../analytics";
+import { ScreenName } from "../../../const";
 
 const CarouselRow = () => {
   const { t } = useTranslation();
+  const { walletCards, assetsCards, isAtLeastOneCardDisplayed } =
+    useDynamicContent();
 
   const dispatch = useDispatch();
-  const carouselVisibility = useSelector(carouselVisibilitySelector);
-  const onSetCarouselVisibility = useCallback(
-    checked =>
+  const onSetDynamicCardsVisibility = useCallback(
+    checked => {
       dispatch(
-        setCarouselVisibility(
-          checked
-            ? Object.fromEntries(SLIDES.map(slide => [slide.name, true]))
-            : Object.fromEntries(SLIDES.map(slide => [slide.name, false])),
+        setDismissedDynamicCards(
+          checked ? [] : [...walletCards, ...assetsCards].map(card => card.id),
         ),
-      ),
-    [dispatch],
+      );
+      track("toggle_clicked", {
+        toggle: "Content Cards",
+        enabled: checked,
+        screen: ScreenName.GeneralSettings,
+      }); // TODO Handle Analytics correclty
+    },
+    [dispatch, walletCards, assetsCards],
   );
 
   return (
@@ -31,10 +37,8 @@ const CarouselRow = () => {
       desc={t("settings.display.carouselDesc")}
     >
       <Switch
-        checked={Object.values(carouselVisibility).some(
-          cardVisible => cardVisible,
-        )}
-        onChange={onSetCarouselVisibility}
+        checked={isAtLeastOneCardDisplayed}
+        onChange={onSetDynamicCardsVisibility}
       />
     </SettingsRow>
   );

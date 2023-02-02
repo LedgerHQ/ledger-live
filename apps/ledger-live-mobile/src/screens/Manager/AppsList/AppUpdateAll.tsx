@@ -34,7 +34,7 @@ const AppUpdateAll = ({
   }, [dispatch]);
 
   return (
-    <Flex>
+    <Flex mt={5}>
       <AppUpdateStepper state={state} />
       {appsToUpdate.length > 0 && updateAllQueue.length <= 0 && (
         <Flex

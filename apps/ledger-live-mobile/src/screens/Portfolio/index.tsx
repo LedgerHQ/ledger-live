@@ -10,7 +10,6 @@ import { Box, Flex, Button, Icons } from "@ledgerhq/native-ui";
 
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "styled-components/native";
-import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import {
   useDistribution,
@@ -20,7 +19,6 @@ import { accountsSelector } from "../../reducers/accounts";
 import {
   discreetModeSelector,
   counterValueCurrencySelector,
-  carouselVisibilitySelector,
   blacklistedTokenIdsSelector,
 } from "../../reducers/settings";
 
@@ -40,7 +38,6 @@ import SectionContainer from "../WalletCentricSections/SectionContainer";
 import AllocationsSection from "../WalletCentricSections/Allocations";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 import { track } from "../../analytics";
-import PostOnboardingEntryPointCard from "../../components/PostOnboarding/PostOnboardingEntryPointCard";
 import {
   BaseComposite,
   BaseNavigation,
@@ -51,6 +48,7 @@ import { WalletTabNavigatorStackParamList } from "../../components/RootNavigator
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
 import CollapsibleHeaderFlatList from "../../components/WalletTab/CollapsibleHeaderFlatList";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
+import useDynamicContent from "../../dynamicContent/dynamicContent";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -67,14 +65,7 @@ const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(
 
 function PortfolioScreen({ navigation }: NavigationProps) {
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
-
   const { t } = useTranslation();
-  const carouselVisibility = useSelector(carouselVisibilitySelector);
-  const showCarousel = useMemo(
-    () => Object.values(carouselVisibility).some(Boolean),
-    [carouselVisibility],
-  );
-
   const distribution = useDistribution({
     showEmptyAccounts: true,
     hideEmptyTokenAccount,
@@ -88,6 +79,8 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   const discreetMode = useSelector(discreetModeSelector);
   const [isAddModalOpened, setAddModalOpened] = useState(false);
   const { colors } = useTheme();
+  const { isAWalletCardDisplayed } = useDynamicContent();
+
   const openAddModal = useCallback(() => {
     track("button_clicked", {
       button: "Add Account",
@@ -141,16 +134,11 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     [distribution, blacklistedTokenIds],
   );
 
-  const postOnboardingVisible = usePostOnboardingEntryPointVisibleOnWallet();
-
   const data = useMemo(
     () => [
-      <FirmwareUpdateBanner />,
-      postOnboardingVisible && (
-        <Box m={6}>
-          <PostOnboardingEntryPointCard />
-        </Box>
-      ),
+      <Flex px={6} py={4}>
+        <FirmwareUpdateBanner />
+      </Flex>,
       <Box mt={3} onLayout={onPortfolioCardLayout}>
         <GraphCardContainer
           counterValueCurrency={counterValueCurrency}
@@ -191,15 +179,15 @@ function PortfolioScreen({ navigation }: NavigationProps) {
             </Box>,
           ]
         : []),
-      ...(showAssets && showCarousel
+      ...(showAssets && isAWalletCardDisplayed
         ? [
             <Box background={colors.background.main}>
               <SectionContainer px={0} minHeight={240}>
                 <SectionTitle
-                  title={t("portfolio.recommended.title")}
+                  title={t("portfolio.carousel.title")}
                   containerProps={{ mb: 7, mx: 6 }}
                 />
-                <Carousel cardsVisibility={carouselVisibility} />
+                <Carousel />
               </SectionContainer>
             </Box>,
           ]
@@ -237,11 +225,9 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       assetsToDisplay,
       distribution.list.length,
       openAddModal,
-      showCarousel,
-      carouselVisibility,
+      isAWalletCardDisplayed,
       accounts,
       goToAssets,
-      postOnboardingVisible,
     ],
   );
 

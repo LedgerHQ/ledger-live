@@ -2,10 +2,12 @@
 import React, { useMemo } from "react";
 
 import { useLocation, useHistory } from "react-router-dom";
+import { track } from "~/renderer/analytics/segment";
 import TabBar from "~/renderer/components/TabBar";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import { swapDefaultTrack } from "~/renderer/screens/exchange/Swap2/utils/index";
 import swapRoutes from "./routes.json";
 
 const Nav: ThemedComponent<{}> = styled.nav`
@@ -34,6 +36,11 @@ const Navbar = () => {
   );
 
   const onWrappedTabChange = nextIndex => {
+    track("button_clicked", {
+      button: `${swapRoutes[nextIndex].name} Tab`,
+      page: "Page Swap Form",
+      ...swapDefaultTrack,
+    });
     if (currentIndex === nextIndex) return;
     const nextPathname = swapRoutes[nextIndex].path;
     history.push({ pathname: nextPathname });

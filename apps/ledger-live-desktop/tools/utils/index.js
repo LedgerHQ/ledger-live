@@ -11,10 +11,14 @@ const SENTRY_URL = process.env?.SENTRY_URL;
 const pkg = require("../../package.json");
 const lldRoot = path.resolve(__dirname, "..", "..");
 
-const GIT_REVISION = childProcess
-  .execSync("git rev-parse --short HEAD")
-  .toString("utf8")
-  .trim();
+let GIT_REVISION = process.env?.GIT_REVISION;
+
+if (!GIT_REVISION) {
+  GIT_REVISION = childProcess
+    .execSync("git rev-parse --short HEAD")
+    .toString("utf8")
+    .trim();
+}
 
 const parsed = prerelease(pkg.version);
 let PRERELEASE = false;
@@ -93,25 +97,7 @@ const buildViteConfig = argv =>
     },
     optimizeDeps: {
       // The common.js dependencies and files need to be force-added below:
-      include: [
-        "@ledgerhq/live-common > @ledgerhq/cryptoassets",
-        "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/asa.js",
-        "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/bep20.js",
-        "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/erc20-signatures.js",
-        "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/erc20.js",
-        "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/eip712.js",
-        "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/esdt.js",
-        "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/polygon-erc20.js",
-        "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/spl.js",
-        "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/trc10.js",
-        "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/trc20.js",
-        "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/exchange/coins.js",
-        "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/exchange/erc20.js",
-        "@ledgerhq/cryptoassets",
-        "@ledgerhq/cryptoassets/data/erc20-signatures",
-        "@ledgerhq/cryptoassets/data/eip712",
-        "@ledgerhq/hw-app-eth/erc20",
-      ],
+      include: ["@ledgerhq/hw-app-eth/erc20"],
       esbuildOptions: {
         target: ["es2020"],
         plugins: [
