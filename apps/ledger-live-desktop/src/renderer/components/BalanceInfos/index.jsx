@@ -117,6 +117,8 @@ export default function BalanceInfos({ totalBalance, valueChange, isAvailable, u
 
   // PTX smart routing feature flag - buy sell live app flag
   const ptxSmartRouting = useFeature("ptxSmartRouting");
+  // Remove "SWAP" and "BUY" redundant buttons when portafolio exchange banner is available
+  const portfolioExchangeBanner = useFeature("portfolioExchangeBanner");
 
   const onBuy = useCallback(() => {
     setTrackingSource("Page Portfolio");
@@ -150,23 +152,26 @@ export default function BalanceInfos({ totalBalance, valueChange, isAvailable, u
         >
           <Sub>{t("dashboard.totalBalance")}</Sub>
         </BalanceTotal>
-        <Button data-test-id="portfolio-buy-button" variant="color" mr={1} onClick={onBuy}>
-          {t("accounts.contextMenu.buy")}
-        </Button>
-
-        <Button
-          data-test-id="portfolio-swap-button"
-          variant="color"
-          event="button_clicked"
-          eventProperties={{
-            button: "swap",
-            page: "Page Portfolio",
-            ...swapDefaultTrack,
-          }}
-          onClick={onSwap}
-        >
-          {t("accounts.contextMenu.swap")}
-        </Button>
+        {!portfolioExchangeBanner?.enabled && (
+          <>
+            <Button data-test-id="portfolio-buy-button" variant="color" mr={1} onClick={onBuy}>
+              {t("accounts.contextMenu.buy")}
+            </Button>
+            <Button
+              data-test-id="portfolio-swap-button"
+              variant="color"
+              event="button_clicked"
+              eventProperties={{
+                button: "swap",
+                page: "Page Portfolio",
+                ...swapDefaultTrack,
+              }}
+              onClick={onSwap}
+            >
+              {t("accounts.contextMenu.swap")}
+            </Button>
+          </>
+        )}
       </Box>
       <Box horizontal alignItems="center" justifyContent="space-between">
         <BalanceDiff
