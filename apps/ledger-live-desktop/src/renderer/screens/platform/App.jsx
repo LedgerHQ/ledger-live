@@ -9,6 +9,7 @@ import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/provide
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { useSelector } from "react-redux";
+import { getCustomDappUrl } from "./utils";
 
 type Props = {
   match: {
@@ -27,11 +28,6 @@ export default function PlatformApp({ match, appId: propsAppId }: Props) {
   const { state: urlParams, search } = useLocation();
   const appId = propsAppId || match.params?.appId;
 
-  const localManifest = useLocalLiveAppManifest(appId);
-  const remoteManifest = useRemoteLiveAppManifest(appId);
-
-  const manifest = localManifest || remoteManifest;
-
   const returnTo = useMemo(() => {
     const params = new URLSearchParams(search);
     return params.get("returnTo");
@@ -45,6 +41,15 @@ export default function PlatformApp({ match, appId: propsAppId }: Props) {
     lang,
     ...urlParams,
   };
+
+  const localManifest = useLocalLiveAppManifest(appId);
+  const remoteManifest = useRemoteLiveAppManifest(appId);
+  let manifest = localManifest || remoteManifest;
+
+  const customDappUrl = getCustomDappUrl(manifest, appId, params, pathname);
+  if (customDappUrl) {
+    manifest = { ...manifest, params: { ...manifest.params, dappUrl: customDappUrl } };
+  }
 
   // TODO for next urlscheme evolutions:
   // - check if local settings allow to launch an app from this branch, else display an error
