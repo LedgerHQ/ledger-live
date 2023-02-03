@@ -49,6 +49,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
       icon: IconCoins,
       disabled: !isDelegationEnabled,
       label: t("account.stake"),
+      tooltip: !isDelegationEnabled ? t("avalanchepchain.delegation.notEnoughToDelegate") : null
     },
   ];
 };

@@ -5599,6 +5599,9 @@
     "StellarBurnAddressError": {
       "title": "A problem occurred while trying to add a Stellar account"
     },
+    "AvalancheMinimumAmountError": {
+      "title": "Minimum amount is 25 AVAX"
+    },
     "HederaAddAccountError": {
       "title": "Your account has not been added. Please try again."
     },
