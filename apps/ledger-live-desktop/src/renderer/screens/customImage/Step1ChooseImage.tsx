@@ -14,16 +14,19 @@ import {
   ImageLoadFromNftError,
   ImageDownloadError,
 } from "@ledgerhq/live-common/customImage/errors";
+import { urlContentToDataUri } from "~/renderer/components/CustomImage/shared";
 
 type Props = StepProps & {
   onResult: (res: ImageBase64Data) => void;
   setLoading: (_: boolean) => void;
 };
 
+const defaultMediaTypes = ["original", "big", "preview"];
+
 const extractNftBase64 = (metadata: NFTMetadata) => {
   const mediaTypes = metadata ? getMetadataMediaTypes(metadata) : null;
   const mediaSizeForCustomImage = mediaTypes
-    ? ["original", "big", "preview"].find(size => mediaTypes[size] === "image")
+    ? defaultMediaTypes.find(size => mediaTypes[size] === "image")
     : null;
   const customImageUri =
     (mediaSizeForCustomImage && metadata?.medias?.[mediaSizeForCustomImage]?.uri) || null;
@@ -51,17 +54,7 @@ const StepChooseImage: React.FC<Props> = props => {
   const handlePickNft = useCallback(
     (nftMetadata: NFTMetadata) => {
       const uri = extractNftBase64(nftMetadata);
-      fetch(uri)
-        .then(response => response.blob())
-        .then(
-          blob =>
-            new Promise((resolve, reject) => {
-              const reader = new FileReader();
-              reader.onloadend = () => resolve(reader.result);
-              reader.onerror = reject;
-              reader.readAsDataURL(blob);
-            }),
-        )
+      urlContentToDataUri(uri)
         .then(res => setCurrentBase64({ imageBase64DataUri: res as string }))
         .catch(() => {
           onError(new ImageDownloadError());

@@ -69,7 +69,7 @@ const NFTGallerySelector = ({ handlePickNft }: Props) => {
                   mode={"grid"}
                   id={nftsOrdered[rowIndex * 2 + columnIndex].id}
                   account={accounts[0]}
-                  overloadOnItemClick={handlePickNft}
+                  onItemClick={handlePickNft}
                 />
               </div>
             );
