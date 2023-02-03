@@ -6,7 +6,7 @@ import { App } from "@ledgerhq/types-live";
 import styled from "styled-components/native";
 import { Flex, Icons, Text, Button } from "@ledgerhq/native-ui";
 
-import BottomModal from "../../../components/BottomModal";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 
 import AppIcon from "../AppsList/AppIcon";
 import ByteSize from "../../../components/ByteSize";
@@ -152,7 +152,7 @@ const UpdateAllModal = ({
   );
 
   return (
-    <BottomModal isOpened={!!isOpened} onClose={onClose}>
+    <QueuedDrawer isRequestingToBeOpened={!!isOpened} onClose={onClose}>
       <Flex alignItems="center">
         <IconContainer borderColor="neutral.c40">
           <Icons.RefreshMedium size={24} color="neutral.c100" />
@@ -177,7 +177,7 @@ const UpdateAllModal = ({
           </Button>
         </ButtonsContainer>
       </Flex>
-    </BottomModal>
+    </QueuedDrawer>
   );
 };
 

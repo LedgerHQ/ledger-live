@@ -23,7 +23,7 @@ import SummaryRow from "../screens/SendFunds/SummaryRow";
 import CounterValue from "./CounterValue";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import SectionSeparator from "./SectionSeparator";
-import BottomModal from "./BottomModal";
+import QueuedDrawer from "./QueuedDrawer";
 import Info from "../icons/Info";
 import TachometerSlow from "../icons/TachometerSlow";
 import TachometerMedium from "../icons/TachometerMedium";
@@ -155,13 +155,13 @@ export default function SelectFeesStrategy({
 
   return (
     <>
-      <BottomModal
-        isOpened={isNetworkFeeHelpOpened}
+      <QueuedDrawer
+        isRequestingToBeOpened={isNetworkFeeHelpOpened}
         preventBackdropClick={false}
         onClose={closeNetworkFeeHelpModal}
       >
         <NetworkFeeInfo />
-      </BottomModal>
+      </QueuedDrawer>
 
       <View>
         <SectionSeparator lineColor={colors.lightFog} />

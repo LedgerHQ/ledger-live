@@ -2,7 +2,7 @@ import React from "react";
 import { BoxedIcon, Button, Flex, Text } from "@ledgerhq/native-ui";
 import { WarningSolidMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
-import BottomModal from "../../components/BottomModal";
+import QueuedDrawer from "../../components/QueuedDrawer";
 
 export type Props = {
   isOpen: boolean;
@@ -22,8 +22,8 @@ const GenuineCheckCancelledDrawer = ({
   const { t } = useTranslation();
 
   return (
-    <BottomModal
-      isOpened={isOpen}
+    <QueuedDrawer
+      isRequestingToBeOpened={isOpen}
       onClose={onClose}
       preventBackdropClick
       noCloseButton
@@ -63,7 +63,7 @@ const GenuineCheckCancelledDrawer = ({
           "syncOnboarding.softwareChecksSteps.genuineCheckCancelledDrawer.skipCta",
         )}
       </Button>
-    </BottomModal>
+    </QueuedDrawer>
   );
 };
 

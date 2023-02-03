@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, Alert, Switch, Button, Text } from "@ledgerhq/native-ui";
-import BottomModal from "../../../../components/BottomModal";
+import QueuedDrawer from "../../../../components/QueuedDrawer";
 import { StackNavigatorNavigation } from "../../../../components/RootNavigator/types/helpers";
 import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
 import { ScreenName } from "../../../../const";
@@ -86,35 +86,35 @@ export default function DebugDrawers() {
         </Flex>
       </Flex>
 
-      <BottomModal
-        isOpened={isDrawer1Open}
+      <QueuedDrawer
+        isRequestingToBeOpened={isDrawer1Open}
         onClose={handleDrawer1Close}
         preventBackdropClick
       >
         <Flex p="4">
           <Alert type="info" title="1st drawer" />
         </Flex>
-      </BottomModal>
+      </QueuedDrawer>
 
-      <BottomModal
-        isOpened={isDrawer2Open}
+      <QueuedDrawer
+        isRequestingToBeOpened={isDrawer2Open}
         onClose={handleDrawer2Close}
         preventBackdropClick
       >
         <Flex p="4">
           <Alert type="info" title="2nd drawer" />
         </Flex>
-      </BottomModal>
+      </QueuedDrawer>
 
-      <BottomModal
-        isOpened={isDrawer3Open}
+      <QueuedDrawer
+        isRequestingToBeOpened={isDrawer3Open}
         onClose={handleDrawer3Close}
         preventBackdropClick
       >
         <Flex p="4">
           <Alert type="info" title="3rd drawer" />
         </Flex>
-      </BottomModal>
+      </QueuedDrawer>
     </>
   );
 }

@@ -10,7 +10,7 @@ import { Merge } from "../types/helpers";
 export type Props = Merge<
   BaseModalProps,
   {
-    isOpened?: boolean;
+    isRequestingToBeOpened: boolean;
     style?: StyleProp<ViewStyle>;
     containerStyle?: StyleProp<ViewStyle>;
   }
@@ -23,27 +23,33 @@ export type Props = Merge<
  * is not displayed anymore (hidden), the next drawer in the queue is notified, and it updates its state
  * to be make itself visible.
  *
- * Setting to true the isOpened prop will add the drawer to the queue. Setting to false will remove it from the queue.
+ * Setting to true the isRequestingToBeOpened prop will add the drawer to the queue. Setting to false will remove it from the queue.
  *
  * The queue is cleaned when its associated screen loses its navigation focus.
  *
- * Note: never conditionally render this component. Always render it and use isOpened to control its visibility.
+ * Note: avoid conditionally render this component. Always render it and use isRequestingToBeOpened to control its visibility.
  * Note: to avoid a UI glitch on Android, do not put this drawer inside NavigationScrollView (and probably any other ScrollView)
  *
- * @param isOpened: to use in place of isOpen. The wording isOpened is misleading.
- *   In the future, to rename to isRequestingToBeOpened
- * @returns
+ * @param isRequestingToBeOpened: to use in place of isOpen. Setting to true will add the drawer to the queue.
+ *   Setting to false will remove it from the queue.
+ * @param onClose: when the user closes the drawer (by clicking on the backdrop or the close button) + when the drawer is hidden
+ *   (this is currently due to a legacy behavior of the BaseModal component. It might change in the future)
+ * @param onModalHide: when the drawer is fully hidden
+ * @param noCloseButton: whether to display the close button or not
+ * @param preventBackdropClick: whether to prevent the user from closing the drawer by clicking somewhere on the screen
+ *   or on the back button
+ * @params all other props are passed to the BaseModal component. Double check the behavior of the props you pass
+ *   before using them in production. Do not use the isOpen prop.
  */
-const BottomModal = ({
-  isOpened,
+const QueuedDrawer = ({
+  isRequestingToBeOpened,
   onClose,
-  children,
-  style,
-  preventBackdropClick,
   onModalHide,
-  containerStyle,
   noCloseButton,
-  isOpen,
+  preventBackdropClick,
+  style,
+  containerStyle,
+  children,
   ...rest
 }: Props) => {
   const modalLock = useSelector(isModalLockedSelector);
@@ -81,7 +87,7 @@ const BottomModal = ({
   useEffect(() => {
     let id: number | undefined;
 
-    if (isOpened) {
+    if (isRequestingToBeOpened) {
       id = addToWaitingDrawers(() => {
         setIsDisplayed(true);
       });
@@ -93,7 +99,7 @@ const BottomModal = ({
         setIsDisplayed(false);
       }
     };
-  }, [isOpened]);
+  }, [isRequestingToBeOpened]);
 
   return (
     <BottomDrawer
@@ -111,7 +117,7 @@ const BottomModal = ({
   );
 };
 
-export default BottomModal;
+export default QueuedDrawer;
 
 type WaitingDrawer = {
   id: number;
@@ -126,7 +132,7 @@ const waitingDrawers: WaitingDrawer[] = [];
  * Adds a drawer to the waiting list. If there is no currently displayed drawer,
  * it will be displayed by calling notifyNextDrawer.
  *
- * This function is used internally by BottomModal and should not be used directly.
+ * This function is used internally by QueuedDrawer and should not be used directly.
  *
  * @param onDrawerReady callback to call when it's the turn of this drawer to be displayed.
  *   It should set a state that makes the drawer visible.
@@ -147,7 +153,7 @@ function addToWaitingDrawers(onDrawerReady: WaitingDrawer["onDrawerReady"]) {
 /**
  * Removes the drawer from the waiting list. If it's the currently displayed drawer, nothing is done.
  *
- * This function is used internally by BottomModal and should not be used directly.
+ * This function is used internally by QueuedDrawer and should not be used directly.
  *
  * @param id the id of the drawer to remove
  */
@@ -172,7 +178,7 @@ function removeFromWaitingDrawers(id: WaitingDrawer["id"]) {
  *
  * If there is no drawer in the waiting list, it sets the counter of drawers to 0.
  *
- * This function is used internally by BottomModal and should not be used directly.
+ * This function is used internally by QueuedDrawer and should not be used directly.
  */
 function notifyNextDrawer() {
   const nextDrawer = waitingDrawers.shift();
@@ -191,7 +197,7 @@ function notifyNextDrawer() {
 /**
  * Helper function to clean the waiting list of drawers.
  *
- * This function is used internally by BottomModal and should not be used directly.
+ * This function is used internally by QueuedDrawer and should not be used directly.
  */
 function cleanWaitingDrawers() {
   waitingDrawers.splice(0, waitingDrawers.length);

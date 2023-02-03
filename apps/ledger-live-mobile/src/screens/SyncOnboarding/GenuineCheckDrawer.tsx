@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import BottomModal from "../../components/BottomModal";
+import QueuedDrawer from "../../components/QueuedDrawer";
 
 export type Props = {
   isOpen: boolean;
@@ -19,9 +19,9 @@ const GenuineCheckDrawer = ({
   const { t } = useTranslation();
 
   return (
-    <BottomModal
+    <QueuedDrawer
       onClose={onClose}
-      isOpened={isOpen}
+      isRequestingToBeOpened={isOpen}
       preventBackdropClick
       noCloseButton
     >
@@ -44,7 +44,7 @@ const GenuineCheckDrawer = ({
           "syncOnboarding.softwareChecksSteps.genuineCheckRequestDrawer.checkCta",
         )}
       </Button>
-    </BottomModal>
+    </QueuedDrawer>
   );
 };
 

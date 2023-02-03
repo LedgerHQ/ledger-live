@@ -14,7 +14,7 @@ import { NavigatorName, ScreenName } from "../../../const";
 
 import AppIcon from "../AppsList/AppIcon";
 
-import BottomModal from "../../../components/BottomModal";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 import type {
   BaseComposite,
   StackNavigatorProps,
@@ -101,7 +101,10 @@ const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
   const onClose = useCallback(() => setHasBeenShown(true), []);
 
   return (
-    <BottomModal isOpened={successInstalls.length >= 1} onClose={onClose}>
+    <QueuedDrawer
+      isRequestingToBeOpened={successInstalls.length >= 1}
+      onClose={onClose}
+    >
       <Flex alignItems="center">
         {app && <AppIcon app={app} size={48} radius={14} />}
         <TextContainer>
@@ -131,7 +134,7 @@ const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
           )}
         </ButtonsContainer>
       </Flex>
-    </BottomModal>
+    </QueuedDrawer>
   );
 };
 

@@ -10,7 +10,7 @@ import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import AppTree from "../../../icons/AppTree";
 import AppIcon from "../AppsList/AppIcon";
 
-import BottomModal from "../../../components/BottomModal";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 import CollapsibleList from "../../../components/CollapsibleList";
 import ListTreeLine from "../../../icons/ListTreeLine";
 
@@ -91,7 +91,7 @@ const UninstallDependenciesModal = ({
     [colors.grey],
   );
   return (
-    <BottomModal isOpened={!!app} onClose={onClose}>
+    <QueuedDrawer isRequestingToBeOpened={!!app} onClose={onClose}>
       <Flex alignItems="center">
         {app && dependents.length && (
           <View style={{ width: "100%" }}>
@@ -137,7 +137,7 @@ const UninstallDependenciesModal = ({
           </View>
         )}
       </Flex>
-    </BottomModal>
+    </QueuedDrawer>
   );
 };
 

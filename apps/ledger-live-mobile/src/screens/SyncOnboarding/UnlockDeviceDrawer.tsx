@@ -4,7 +4,7 @@ import { Flex } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTheme } from "styled-components/native";
 import { renderConnectYourDevice as ConnectYourDevice } from "../../components/DeviceAction/rendering";
-import BottomModal from "../../components/BottomModal";
+import QueuedDrawer from "../../components/QueuedDrawer";
 
 export type Props = {
   isOpen: boolean;
@@ -19,7 +19,11 @@ const UnlockDeviceDrawer = ({ isOpen, device, onClose }: Props) => {
   const theme = colors.type as "dark" | "light";
 
   return (
-    <BottomModal isOpened={isOpen} onClose={onClose} preventBackdropClick>
+    <QueuedDrawer
+      isRequestingToBeOpened={isOpen}
+      onClose={onClose}
+      preventBackdropClick
+    >
       <Flex mb={250} pt={120}>
         <ConnectYourDevice
           t={t}
@@ -28,7 +32,7 @@ const UnlockDeviceDrawer = ({ isOpen, device, onClose }: Props) => {
           theme={theme}
         />
       </Flex>
-    </BottomModal>
+    </QueuedDrawer>
   );
 };
 

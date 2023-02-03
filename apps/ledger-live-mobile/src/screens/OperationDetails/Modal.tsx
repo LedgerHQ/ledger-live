@@ -4,7 +4,7 @@ import { Trans } from "react-i18next";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import { Currency } from "@ledgerhq/types-cryptoassets";
-import BottomModal from "../../components/BottomModal";
+import QueuedDrawer from "../../components/QueuedDrawer";
 import Circle from "../../components/Circle";
 import IconInfo from "../../icons/Info";
 import LText from "../../components/LText";
@@ -23,7 +23,7 @@ function Modal({ isOpened, onClose, currency }: Props) {
   const tokenType =
     currency.type === "TokenCurrency" ? currency.tokenType : "erc20";
   return (
-    <BottomModal isOpened={isOpened} onClose={onClose}>
+    <QueuedDrawer isRequestingToBeOpened={isOpened} onClose={onClose}>
       <SafeAreaView style={styles.modal}>
         <Circle bg={rgba(colors.live, 0.1)} size={56}>
           <IconInfo size={24} color={colors.live} />
@@ -54,7 +54,7 @@ function Modal({ isOpened, onClose, currency }: Props) {
           />
         </View>
       </SafeAreaView>
-    </BottomModal>
+    </QueuedDrawer>
   );
 }
 

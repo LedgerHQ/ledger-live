@@ -3,7 +3,7 @@ import { Trans } from "react-i18next";
 import styled from "styled-components/native";
 import { Text, Flex, Icons, Button } from "@ledgerhq/native-ui";
 
-import BottomModal from "../../../components/BottomModal";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 
 type Props = {
   warning: string | null;
@@ -36,7 +36,7 @@ const ButtonsContainer = styled(Flex).attrs({
 })``;
 
 const StorageWarningModal = ({ warning, onClose }: Props) => (
-  <BottomModal isOpened={!!warning} onClose={onClose}>
+  <QueuedDrawer isRequestingToBeOpened={!!warning} onClose={onClose}>
     <Flex alignItems="center">
       <IconContainer borderColor="neutral.c40">
         <Icons.StorageMedium size={24} color="error.c100" />
@@ -58,7 +58,7 @@ const StorageWarningModal = ({ warning, onClose }: Props) => (
         </Button>
       </ButtonsContainer>
     </Flex>
-  </BottomModal>
+  </QueuedDrawer>
 );
 
 export default memo(StorageWarningModal);
