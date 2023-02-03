@@ -37,10 +37,6 @@ import {
   toCeloResourcesRaw,
   fromCeloResourcesRaw,
 } from "../families/celo/serialization";
-import {
-  toNearResourcesRaw,
-  fromNearResourcesRaw,
-} from "../families/near/serialization";
 
 import {
   getCryptoCurrencyById,
@@ -94,7 +90,6 @@ import { TezosAccount, TezosAccountRaw } from "../families/tezos/types";
 import { CeloAccount, CeloAccountRaw } from "../families/celo/types";
 import type { TronAccount, TronAccountRaw } from "../families/tron/types";
 import { getAccountBridge } from "../bridge";
-import { NearAccount, NearAccountRaw } from "../families/near/types";
 
 export { toCosmosResourcesRaw, fromCosmosResourcesRaw };
 export { toBitcoinResourcesRaw, fromBitcoinResourcesRaw };
@@ -106,7 +101,6 @@ export { toCardanoResourceRaw, fromCardanoResourceRaw };
 export { toSolanaResourcesRaw, fromSolanaResourcesRaw };
 export { toTronResourcesRaw, fromTronResourcesRaw };
 export { toCeloResourcesRaw, fromCeloResourcesRaw };
-export { toNearResourcesRaw, fromNearResourcesRaw };
 
 export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
   return b.map(({ date, value }) => [date.toISOString(), value.toString()]);
@@ -716,13 +710,6 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
           fromCeloResourcesRaw(celoResourcesRaw);
       break;
     }
-    case "near": {
-      const nearResourcesRaw = (rawAccount as NearAccountRaw).nearResources;
-      if (nearResourcesRaw)
-        (res as NearAccount).nearResources =
-          fromNearResourcesRaw(nearResourcesRaw);
-      break;
-    }
     default: {
       const bridge = getAccountBridge(res);
       const assignFromAccountRaw = bridge.assignFromAccountRaw;
@@ -887,15 +874,6 @@ export function toAccountRaw(account: Account): AccountRaw {
         (res as CeloAccountRaw).celoResources = toCeloResourcesRaw(
           celoAccount.celoResources
         );
-      break;
-    }
-    case "near": {
-      const nearAccount = account as NearAccount;
-      if (nearAccount.nearResources) {
-        (res as NearAccountRaw).nearResources = toNearResourcesRaw(
-          nearAccount.nearResources
-        );
-      }
       break;
     }
     default: {
