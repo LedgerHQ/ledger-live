@@ -66,7 +66,7 @@ export const avalancheSpeculosDeviceAction: DeviceAction<Transaction, any> =
         button: SpeculosButton.BOTH,
       },
       {
-        title: "Approve",
+        title: "APPROVE",
         button: SpeculosButton.BOTH,
       },
     ],
