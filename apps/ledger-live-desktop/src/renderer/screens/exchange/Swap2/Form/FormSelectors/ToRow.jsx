@@ -25,7 +25,7 @@ import {
 import styled from "styled-components";
 import CounterValue from "~/renderer/components/CounterValue";
 import { track } from "~/renderer/analytics/segment";
-import { swapDefaultTrack } from "../../utils/index";
+import { useGetSwapTrackingProperties } from "../../utils/index";
 
 type Props = {
   fromAccount: $PropertyType<SwapSelectorStateType, "account">,
@@ -65,6 +65,7 @@ function ToRow({
   updateSelectedRate,
 }: Props) {
   const fromCurrencyId = fromAccount ? getAccountCurrency(fromAccount).id : null;
+  const swapDefaultTrack = useGetSwapTrackingProperties();
   const allCurrencies = useSelector(toSelector)(fromCurrencyId);
   const currencies = useSelectableCurrencies({ allCurrencies });
   const unit = toCurrency?.units[0];
