@@ -122,7 +122,7 @@ const BottomModal = ({
       modalStyle={style}
       containerStyle={containerStyle}
       isOpen={isDisplayed}
-      // {...rest}
+      {...rest}
     >
       {children}
     </BottomDrawer>
