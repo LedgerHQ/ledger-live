@@ -1,6 +1,10 @@
 import React, { useCallback, useState } from "react";
-import { Flex, Alert, Switch } from "@ledgerhq/native-ui";
+import { useNavigation } from "@react-navigation/native";
+import { Flex, Alert, Switch, Button, Text } from "@ledgerhq/native-ui";
 import BottomModal from "../../../../components/BottomModal";
+import { StackNavigatorNavigation } from "../../../../components/RootNavigator/types/helpers";
+import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
+import { ScreenName } from "../../../../const";
 
 /**
  * Debugging screen to test:
@@ -9,6 +13,9 @@ import BottomModal from "../../../../components/BottomModal";
  * - opening/closing drawers after navigating and coming back
  */
 export default function DebugDrawers() {
+  const navigation =
+    useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
+
   const [isDrawer1Open, setIsDrawer1Open] = useState(false);
   const [isDrawer2Open, setIsDrawer2Open] = useState(false);
   const [isDrawer3Open, setIsDrawer3Open] = useState(false);
@@ -60,6 +67,23 @@ export default function DebugDrawers() {
           type="info"
           title="Hey 🧙‍♀️ Test successive opening/closing drawers !"
         />
+        <Flex mt="6">
+          <Text>
+            Also, try navigating to a new screen by clicking on the button and
+            come back here with the back arrow. To check if the drawers are
+            still working.
+          </Text>
+
+          <Button
+            type="main"
+            onPress={() => navigation.navigate(ScreenName.DebugLottie)}
+            mt="4"
+            size="small"
+            outline
+          >
+            Navigate somewhere 🧞‍♂️
+          </Button>
+        </Flex>
       </Flex>
 
       <BottomModal
