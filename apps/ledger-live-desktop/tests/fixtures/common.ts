@@ -17,6 +17,7 @@ type TestFixtures = {
   userdataOriginalFile: string;
   userdataFile: any;
   env: Record<string, any>;
+  deeplink: string;
   page: Page;
   featureFlags: { [key in FeatureId]?: Feature };
 };
@@ -27,6 +28,7 @@ const test = base.extend<TestFixtures>({
   theme: "dark",
   userdata: undefined,
   featureFlags: undefined,
+  deeplink: undefined,
   userdataDestinationPath: async ({}, use) => {
     use(path.join(__dirname, "../artifacts/userdata", generateUUID()));
   },
@@ -46,6 +48,7 @@ const test = base.extend<TestFixtures>({
       userdataOriginalFile,
       env,
       featureFlags,
+      deeplink,
     }: TestFixtures,
     use: (page: Page) => void,
   ) => {
@@ -76,6 +79,8 @@ const test = base.extend<TestFixtures>({
     // launch app
     const windowSize = { width: 1024, height: 768 };
 
+    console.log("deeplink", deeplink);
+
     const electronApp: ElectronApplication = await electron.launch({
       args: [
         `${path.join(__dirname, "../../.webpack/main.bundle.js")}`,
@@ -86,6 +91,7 @@ const test = base.extend<TestFixtures>({
         // "--use-gl=swiftshader"
         "--no-sandbox",
         "--enable-logging",
+        `${deeplink}`,
       ],
       recordVideo: {
         dir: `${path.join(__dirname, "../artifacts/videos/")}`,
