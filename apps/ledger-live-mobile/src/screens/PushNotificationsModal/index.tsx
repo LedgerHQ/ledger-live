@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  BottomDrawer,
   Flex,
   Text,
   Link as TextLink,
@@ -14,6 +13,7 @@ import PromptNotifGenericLight from "../../images/illustration/Light/_PromptNoti
 import PromptNotifMarketDark from "../../images/illustration/Dark/_PromptNotifMarket.png";
 import PromptNotifMarketLight from "../../images/illustration/Light/_PromptNotifMarket.png";
 import { TrackScreen } from "../../analytics";
+import QueuedDrawer from "../../components/QueuedDrawer";
 
 const PushNotificationsModal = () => {
   const { t } = useTranslation();
@@ -48,7 +48,7 @@ const PushNotificationsModal = () => {
       />
     );
   return (
-    <BottomDrawer isOpen={isPushNotificationsModalOpen} noCloseButton>
+    <QueuedDrawer isRequestingToBeOpened={isPushNotificationsModalOpen} noCloseButton>
       <TrackScreen
         category="Notification Prompt"
         name={
@@ -82,7 +82,7 @@ const PushNotificationsModal = () => {
           {t("notifications.prompt.later")}
         </TextLink>
       </Flex>
-    </BottomDrawer>
+    </QueuedDrawer>
   );
 };
 

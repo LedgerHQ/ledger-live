@@ -8,7 +8,6 @@ import {
   Text,
   Flex,
   Icons,
-  BottomDrawer,
   Box,
   ScrollContainer,
 } from "@ledgerhq/native-ui";
@@ -37,6 +36,7 @@ import { MainNavigatorParamList } from "../RootNavigator/types/MainNavigator";
 import PostOnboardingEntryPointCard from "../PostOnboarding/PostOnboardingEntryPointCard";
 import BleDevicePairingFlow from "../BleDevicePairingFlow";
 import BuyDeviceCTA from "../BuyDeviceCTA";
+import QueuedDrawer from "../QueuedDrawer";
 
 type Navigation = BaseComposite<
   CompositeScreenProps<
@@ -271,8 +271,8 @@ export default function SelectDevice({ onSelect, stopBleScanning }: Props) {
               )}
           </ScrollContainer>
           <BuyDeviceCTA />
-          <BottomDrawer
-            isOpen={isAddNewDrawerOpen}
+          <QueuedDrawer
+            isRequestingToBeOpened={isAddNewDrawerOpen}
             onClose={() => setIsAddNewDrawerOpen(false)}
           >
             <Flex>
@@ -346,7 +346,7 @@ export default function SelectDevice({ onSelect, stopBleScanning }: Props) {
                 </Flex>
               </Touchable>
             </Flex>
-          </BottomDrawer>
+          </QueuedDrawer>
         </>
       )}
     </Flex>

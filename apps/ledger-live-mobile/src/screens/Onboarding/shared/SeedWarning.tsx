@@ -5,7 +5,6 @@ import { Trans } from "react-i18next";
 import { getDeviceModel, DeviceModelId } from "@ledgerhq/devices";
 import {
   Text,
-  BottomDrawer,
   Button,
   Alert,
   Flex,
@@ -13,6 +12,7 @@ import {
   Icons,
 } from "@ledgerhq/native-ui";
 import { urls } from "../../../config/urls";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 
 const SeedWarning = ({ deviceModelId }: { deviceModelId: DeviceModelId }) => {
   const deviceName = getDeviceModel(deviceModelId).productName;
@@ -23,7 +23,7 @@ const SeedWarning = ({ deviceModelId }: { deviceModelId: DeviceModelId }) => {
   }, []);
 
   return (
-    <BottomDrawer isOpen={isOpened} onClose={() => setIsOpened(false)}>
+    <QueuedDrawer isRequestingToBeOpened={isOpened} onClose={() => setIsOpened(false)}>
       <Flex alignItems="center">
         <IconBox
           Icon={Icons.WarningMedium}
@@ -55,7 +55,7 @@ const SeedWarning = ({ deviceModelId }: { deviceModelId: DeviceModelId }) => {
       <Button type="default" outline={false} onPress={onContactSupport}>
         <Trans i18nKey="onboarding.warning.seed.contactSupportCTA" />
       </Button>
-    </BottomDrawer>
+    </QueuedDrawer>
   );
 };
 

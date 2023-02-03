@@ -2,7 +2,6 @@ import React, { useCallback } from "react";
 
 import { useDispatch } from "react-redux";
 import {
-  BottomDrawer,
   Text,
   Icons,
   BoxedIcon,
@@ -12,6 +11,7 @@ import {
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { hideNftCollection } from "../../actions/settings";
+import QueuedDrawer from "../QueuedDrawer";
 
 type Props = {
   isOpen: boolean;
@@ -35,7 +35,7 @@ const NftCollectionOptionsMenu = ({
   }, [dispatch, account.id, collection, onClose]);
 
   return (
-    <BottomDrawer isOpen={isOpen} onClose={onClose}>
+    <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose}>
       <Flex alignItems="center">
         <BoxedIcon Icon={Icons.EyeNoneMedium} size={48} />
         <Text variant="h1" mt={20}>
@@ -51,7 +51,7 @@ const NftCollectionOptionsMenu = ({
           {t("common.cancel")}
         </Button>
       </Flex>
-    </BottomDrawer>
+    </QueuedDrawer>
   );
 };
 
