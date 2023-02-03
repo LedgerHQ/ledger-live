@@ -6,13 +6,6 @@ import {
   SpeculosButton,
 } from "../../bot/specs";
 
-function subAccount(subAccountId, account) {
-  const sub = (account.subAccounts || []).find((a) => a.id === subAccountId);
-  if (!sub || sub.type !== "TokenAccount")
-    throw new Error("expected sub account id " + String(subAccountId));
-  return sub;
-}
-
 const maxFeesExpectedValue = ({ account, status }) =>
   formatDeviceAmount(account.currency, status.estimatedFees);
 
@@ -28,12 +21,9 @@ export const avalancheSpeculosDeviceAction: DeviceAction<Transaction, any> =
         button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => {
           if (transaction.mode === "erc20.approve") return "Approve";
-          if (transaction.mode === "compound.supply") return "Lend Assets";
-          if (transaction.mode === "compound.withdraw") return "Redeem Assets";
           return "";
         },
       },
-      // For Avalanche C Chain
       {
         title: "Transfer",
         button: SpeculosButton.RIGHT,
@@ -48,38 +38,8 @@ export const avalancheSpeculosDeviceAction: DeviceAction<Transaction, any> =
       {
         title: "Amount",
         button: SpeculosButton.RIGHT,
-        expectedValue: ({ account, status, transaction }) => {
-          const a = transaction.subAccountId
-            ? subAccount(transaction.subAccountId, account)
-            : null;
-
-          if (
-            transaction.mode === "erc20.approve" &&
-            transaction.useAllAmount &&
-            a
-          ) {
-            return "Unlimited " + a.token.ticker;
-          }
-
-          const amount =
-            a &&
-            a.compoundBalance &&
-            transaction.mode === "compound.withdraw" &&
-            transaction.useAllAmount
-              ? a.compoundBalance
-              : status.amount;
-
-          if (
-            a &&
-            transaction.mode === "compound.withdraw" &&
-            transaction.useAllAmount
-          ) {
-            return formatDeviceAmount(a.compoundBalance, amount);
-          }
-
-          if (a) {
-            return formatDeviceAmount(a.token, amount);
-          }
+        expectedValue: ({ account, status }) => {
+          const amount = status.amount;
 
           return formatDeviceAmount(account.currency, amount);
         },
@@ -93,13 +53,7 @@ export const avalancheSpeculosDeviceAction: DeviceAction<Transaction, any> =
         button: SpeculosButton.RIGHT,
       },
       {
-        title: "Max fees",
-        button: SpeculosButton.RIGHT,
-        expectedValue: maxFeesExpectedValue,
-      },
-      {
-        // Legacy (ETC..)
-        title: "Max Fees",
+        title: "Fee(GWEI)",
         button: SpeculosButton.RIGHT,
         expectedValue: maxFeesExpectedValue,
       },
