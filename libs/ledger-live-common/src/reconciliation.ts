@@ -19,14 +19,12 @@ import {
   fromCosmosResourcesRaw,
   fromBitcoinResourcesRaw,
   fromPolkadotResourcesRaw,
-  fromTezosResourcesRaw,
   fromElrondResourcesRaw,
   fromCryptoOrgResourcesRaw,
   fromSolanaResourcesRaw,
   fromNFTRaw,
   toCosmosResourcesRaw,
   toPolkadotResourcesRaw,
-  toTezosResourcesRaw,
   toElrondResourcesRaw,
   toCryptoOrgResourcesRaw,
   toSolanaResourcesRaw,
@@ -41,7 +39,6 @@ import {
 import { ElrondAccount, ElrondAccountRaw } from "./families/elrond/types";
 import { PolkadotAccount, PolkadotAccountRaw } from "./families/polkadot/types";
 import { SolanaAccount, SolanaAccountRaw } from "./families/solana/types";
-import { TezosAccount, TezosAccountRaw } from "./families/tezos/types";
 import { getAccountBridge } from "./bridge";
 
 // aim to build operations with the minimal diff & call to coin implementation possible
@@ -332,24 +329,6 @@ export function patchAccount(
       ) {
         (next as PolkadotAccount).polkadotResources = fromPolkadotResourcesRaw(
           polkadotUpdatedRaw.polkadotResources
-        );
-        changed = true;
-      }
-      break;
-    }
-    case "tezos": {
-      const tezosAcc = account as TezosAccount;
-      const tezosUpdatedRaw = updatedRaw as TezosAccountRaw;
-      if (
-        tezosUpdatedRaw.tezosResources &&
-        (!tezosAcc.tezosResources ||
-          !areSameResources(
-            toTezosResourcesRaw(tezosAcc.tezosResources),
-            tezosUpdatedRaw.tezosResources
-          ))
-      ) {
-        (next as TezosAccount).tezosResources = fromTezosResourcesRaw(
-          tezosUpdatedRaw.tezosResources
         );
         changed = true;
       }

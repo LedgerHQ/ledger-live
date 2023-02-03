@@ -12,10 +12,6 @@ import {
   fromPolkadotResourcesRaw,
 } from "@ledgerhq/coin-polkadot/serialization";
 import {
-  toTezosResourcesRaw,
-  fromTezosResourcesRaw,
-} from "../families/tezos/serialization";
-import {
   toElrondResourcesRaw,
   fromElrondResourcesRaw,
 } from "../families/elrond/serialization";
@@ -81,13 +77,11 @@ import {
   CryptoOrgAccountRaw,
 } from "../families/crypto_org/types";
 import { SolanaAccount, SolanaAccountRaw } from "../families/solana/types";
-import { TezosAccount, TezosAccountRaw } from "../families/tezos/types";
 import { getAccountBridge } from "../bridge";
 
 export { toCosmosResourcesRaw, fromCosmosResourcesRaw };
 export { toBitcoinResourcesRaw, fromBitcoinResourcesRaw };
 export { toPolkadotResourcesRaw, fromPolkadotResourcesRaw };
-export { toTezosResourcesRaw, fromTezosResourcesRaw };
 export { toElrondResourcesRaw, fromElrondResourcesRaw };
 export { toCryptoOrgResourcesRaw, fromCryptoOrgResourcesRaw };
 export { toCardanoResourceRaw, fromCardanoResourceRaw };
@@ -490,13 +484,6 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
           fromCosmosResourcesRaw(cosmosResourcesRaw);
       break;
     }
-    case "tezos": {
-      const tezosResourcesRaw = (rawAccount as TezosAccountRaw).tezosResources;
-      if (tezosResourcesRaw)
-        (res as TezosAccount).tezosResources =
-          fromTezosResourcesRaw(tezosResourcesRaw);
-      break;
-    }
     case "bitcoin": {
       const bitcoinResourcesRaw = (rawAccount as BitcoinAccountRaw)
         .bitcoinResources;
@@ -629,15 +616,6 @@ export function toAccountRaw(account: Account): AccountRaw {
       if (cosmosAccount.cosmosResources) {
         (res as CosmosAccountRaw).cosmosResources = toCosmosResourcesRaw(
           cosmosAccount.cosmosResources
-        );
-      }
-      break;
-    }
-    case "tezos": {
-      const tezosAccount = account as TezosAccount;
-      if (tezosAccount.tezosResources) {
-        (res as TezosAccountRaw).tezosResources = toTezosResourcesRaw(
-          tezosAccount.tezosResources
         );
       }
       break;
