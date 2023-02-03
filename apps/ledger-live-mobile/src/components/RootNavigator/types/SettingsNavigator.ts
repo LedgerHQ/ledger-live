@@ -61,5 +61,5 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugFetchCustomImage]: undefined;
   [ScreenName.DebugCustomImageGraphics]: undefined;
   [ScreenName.DebugCameraPermissions]: undefined;
-  [ScreenName.DebugDrawers]: undefined;
+  [ScreenName.DebugQueuedDrawers]: undefined;
 };

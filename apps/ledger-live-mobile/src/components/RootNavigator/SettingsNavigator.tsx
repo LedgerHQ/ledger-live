@@ -60,7 +60,7 @@ import PostOnboardingDebugScreen from "../../screens/PostOnboarding/PostOnboardi
 import { SettingsNavigatorStackParamList } from "./types/SettingsNavigator";
 import DebugTermsOfUse from "../../screens/Settings/Debug/Features/TermsOfUse";
 import CameraPermissions from "../../screens/Settings/Debug/Debugging/CameraPermissions";
-import DebugDrawers from "../../screens/Settings/Debug/Features/Drawers";
+import DebugQueuedDrawers from "../../screens/Settings/Debug/Features/QueuedDrawers";
 
 const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 
@@ -408,8 +408,8 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.DebugDrawers}
-        component={DebugDrawers}
+        name={ScreenName.DebugQueuedDrawers}
+        component={DebugQueuedDrawers}
         options={{
           title: "Debug bottom drawers",
         }}

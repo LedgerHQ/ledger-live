@@ -12,7 +12,7 @@ import { ScreenName } from "../../../../const";
  * - opening/closing successive drawers
  * - opening/closing drawers after navigating and coming back
  */
-export default function DebugDrawers() {
+export default function DebugQueuedDrawers() {
   const navigation =
     useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
 
