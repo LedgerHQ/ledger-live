@@ -1,7 +1,8 @@
 import expect from "expect";
 import invariant from "invariant";
-import sample from "lodash/sample";
+import BigNumber from "bignumber.js";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { acceptTransaction } from "./speculos-deviceActions";
@@ -9,12 +10,26 @@ import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
 
 const testTimeout = 6 * 60 * 1000;
 
+const ETH_UNIT = { code: "ETH", name: "ETH", magnitude: 18 };
+const MBTC_UNIT = { name: "mBTC", code: "mBTC", magnitude: 5 };
+
+const minBalancePerCurrencyId: Record<CryptoCurrency["id"], BigNumber> = {
+  arbitrum: parseCurrencyUnit(ETH_UNIT, "0.001"),
+  optimisim: parseCurrencyUnit(ETH_UNIT, "0.001"),
+  boba: parseCurrencyUnit(ETH_UNIT, "0.001"),
+  metis: parseCurrencyUnit(ETH_UNIT, "0.01"),
+  moonriver: parseCurrencyUnit(ETH_UNIT, "0.1"),
+  rsk: parseCurrencyUnit(MBTC_UNIT, "0.05"),
+};
+
 const transactionCheck =
   (currencyId: string) =>
   ({ maxSpendable }) => {
+    const currency = getCryptoCurrencyById(currencyId);
     invariant(
       maxSpendable.gt(
-        parseCurrencyUnit(getCryptoCurrencyById(currencyId).units[0], "1")
+        minBalancePerCurrencyId[currency.id] ||
+          parseCurrencyUnit(currency.units[0], "1")
       ),
       `${currencyId} balance is too low`
     );
@@ -171,7 +186,7 @@ export default Object.values(cryptocurrenciesById)
       appQuery: {
         model: DeviceModelId.nanoS,
         appName: "Ethereum",
-        appVersion: "1.10.1",
+        appVersion: "1.10.2",
       },
       testTimeout,
       transactionCheck: transactionCheck(currency.id),
