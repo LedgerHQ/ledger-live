@@ -661,6 +661,11 @@ const envDefinitions = {
     parser: intParser,
     desc: "safe max on maximum number of queries to synchronize a tezos account",
   },
+  PERFORMANCE_CONSOLE: {
+    def: false,
+    parser: boolParser,
+    desc: "Show a performance overlay on the app UI",
+  },
   PLATFORM_DEBUG: {
     def: false,
     parser: boolParser,

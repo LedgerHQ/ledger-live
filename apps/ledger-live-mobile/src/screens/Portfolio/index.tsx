@@ -1,6 +1,10 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
-import { LayoutChangeEvent, ListRenderItemInfo } from "react-native";
+import {
+  GestureResponderEvent,
+  LayoutChangeEvent,
+  ListRenderItemInfo,
+} from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
@@ -11,6 +15,8 @@ import { Box, Flex, Button, Icons } from "@ledgerhq/native-ui";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "styled-components/native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
+import { useStartProfiler } from "@shopify/react-native-performance";
 import {
   useDistribution,
   useRefreshAccountsOrdering,
@@ -64,6 +70,7 @@ const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(
 );
 
 function PortfolioScreen({ navigation }: NavigationProps) {
+  const startNavigationTTITimer = useStartProfiler();
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
   const { t } = useTranslation();
   const distribution = useDistribution({
@@ -104,11 +111,15 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     setGraphCardEndPosition(y + height / 10);
   }, []);
 
-  const goToAssets = useCallback(() => {
-    navigation.navigate(NavigatorName.Accounts, {
-      screen: ScreenName.Assets,
-    });
-  }, [navigation]);
+  const goToAssets = useCallback(
+    (uiEvent: GestureResponderEvent) => {
+      startNavigationTTITimer({ source: ScreenName.Portfolio, uiEvent });
+      navigation.navigate(NavigatorName.Accounts, {
+        screen: ScreenName.Assets,
+      });
+    },
+    [startNavigationTTITimer, navigation],
+  );
 
   const areAccountsEmpty = useMemo(
     () =>
@@ -232,7 +243,10 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   );
 
   return (
-    <>
+    <ReactNavigationPerformanceView
+      screenName={ScreenName.Portfolio}
+      interactive
+    >
       <CheckLanguageAvailability />
       <CheckTermOfUseUpdate />
       <TrackScreen
@@ -259,7 +273,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
         isOpened={isAddModalOpened}
         onClose={closeAddModal}
       />
-    </>
+    </ReactNavigationPerformanceView>
   );
 }
 

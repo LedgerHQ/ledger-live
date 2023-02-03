@@ -1,6 +1,8 @@
 import React, { useCallback } from "react";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { BigNumber } from "bignumber.js";
+import { GestureResponderEvent } from "react-native";
+import { useStartProfiler } from "@shopify/react-native-performance";
 import { NavigatorName, ScreenName } from "../../const";
 import { usePortfolio } from "../../hooks/portfolio";
 import AssetRowLayout from "../../components/AssetRowLayout";
@@ -24,6 +26,7 @@ type Props = {
   hideDelta?: boolean;
   topLink?: boolean;
   bottomLink?: boolean;
+  sourceScreenName: ScreenName;
 };
 
 const AssetRow = ({
@@ -32,26 +35,35 @@ const AssetRow = ({
   hideDelta,
   topLink,
   bottomLink,
+  sourceScreenName,
 }: Props) => {
   // makes it refresh if this changes
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
+  const startNavigationTTITimer = useStartProfiler();
   const currency = asset.currency;
   const name = currency.name;
   const unit = currency.units[0];
 
   const { countervalueChange } = usePortfolio(asset.accounts);
 
-  const onAssetPress = useCallback(() => {
-    track("asset_clicked", {
-      asset: currency.name,
-    });
-    navigation.navigate(NavigatorName.Accounts, {
-      screen: ScreenName.Asset,
-      params: {
-        currency,
-      },
-    });
-  }, [currency, navigation]);
+  const onAssetPress = useCallback(
+    (uiEvent: GestureResponderEvent) => {
+      track("asset_clicked", {
+        asset: currency.name,
+      });
+      startNavigationTTITimer({
+        source: sourceScreenName,
+        uiEvent,
+      });
+      navigation.navigate(NavigatorName.Accounts, {
+        screen: ScreenName.Asset,
+        params: {
+          currency,
+        },
+      });
+    },
+    [currency, navigation, sourceScreenName, startNavigationTTITimer],
+  );
 
   return (
     <AssetRowLayout

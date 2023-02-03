@@ -19,6 +19,7 @@ import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useNavigation } from "@react-navigation/native";
 import { useSingleCoinMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
+import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
 import accountSyncRefreshControl from "../../components/accountSyncRefreshControl";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import TabBarSafeAreaView, {
@@ -297,34 +298,36 @@ const AssetScreen = ({ route }: NavigationProps) => {
   );
 
   return (
-    <TabBarSafeAreaView edges={["bottom", "left", "right"]}>
-      <TrackScreen category="Asset" currency={currency.name} />
-      <CurrencyBackgroundGradient
-        currentPositionY={currentPositionY}
-        graphCardEndPosition={graphCardEndPosition}
-        gradientColor={getCurrencyColor(currency) || colors.primary.c80}
-      />
-      <AnimatedFlatListWithRefreshControl
-        style={{ flex: 1, paddingTop: 48 }}
-        contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
-        data={data}
-        renderItem={({ item }: ListRenderItemInfo<unknown>) =>
-          item as JSX.Element
-        }
-        keyExtractor={(_: unknown, index: number) => String(index)}
-        showsVerticalScrollIndicator={false}
-        onScroll={handleScroll}
-      />
-      <Header
-        currentPositionY={currentPositionY}
-        graphCardEndPosition={graphCardEndPosition}
-        currency={currency}
-        useCounterValue={useCounterValue}
-        assetPortfolio={assetPortfolio}
-        currencyBalance={currencyBalance}
-        counterValueCurrency={counterValueCurrency}
-      />
-    </TabBarSafeAreaView>
+    <ReactNavigationPerformanceView screenName={ScreenName.Asset} interactive>
+      <TabBarSafeAreaView edges={["bottom", "left", "right"]}>
+        <TrackScreen category="Asset" currency={currency.name} />
+        <CurrencyBackgroundGradient
+          currentPositionY={currentPositionY}
+          graphCardEndPosition={graphCardEndPosition}
+          gradientColor={getCurrencyColor(currency) || colors.primary.c80}
+        />
+        <AnimatedFlatListWithRefreshControl
+          style={{ flex: 1, paddingTop: 48 }}
+          contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
+          data={data}
+          renderItem={({ item }: ListRenderItemInfo<unknown>) =>
+            item as JSX.Element
+          }
+          keyExtractor={(_: unknown, index: number) => String(index)}
+          showsVerticalScrollIndicator={false}
+          onScroll={handleScroll}
+        />
+        <Header
+          currentPositionY={currentPositionY}
+          graphCardEndPosition={graphCardEndPosition}
+          currency={currency}
+          useCounterValue={useCounterValue}
+          assetPortfolio={assetPortfolio}
+          currencyBalance={currencyBalance}
+          counterValueCurrency={counterValueCurrency}
+        />
+      </TabBarSafeAreaView>
+    </ReactNavigationPerformanceView>
   );
 };
 
