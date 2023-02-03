@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.52.1-hotfix.0
+
+### Patch Changes
+
+- [#2523](https://github.com/LedgerHQ/ledger-live/pull/2523) [`e26155d3b2`](https://github.com/LedgerHQ/ledger-live/commit/e26155d3b2f9611923b1008c928f9fb1fc18f351) Thanks [@sarneijim](https://github.com/sarneijim)! - Deep link support hotfix
+
 ## 2.52.0
 
 ### Minor Changes
