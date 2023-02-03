@@ -13,7 +13,6 @@ export type Props = Merge<
     isOpened?: boolean;
     style?: StyleProp<ViewStyle>;
     containerStyle?: StyleProp<ViewStyle>;
-    debugName?: string;
   }
 >;
 
@@ -45,7 +44,6 @@ const BottomModal = ({
   containerStyle,
   noCloseButton,
   isOpen,
-  debugName,
   ...rest
 }: Props) => {
   const modalLock = useSelector(isModalLockedSelector);
@@ -57,13 +55,10 @@ const BottomModal = ({
   useFocusEffect(
     useCallback(() => {
       return () => {
-        console.log(
-          `🦕 BottomModal ${debugName}: cleaning onBottomDrawerFocus 🧹`,
-        );
         setIsDisplayed(false);
         cleanWaitingDrawers();
       };
-    }, [debugName]),
+    }, []),
   );
 
   const handleClose = useCallback(() => {
@@ -74,44 +69,31 @@ const BottomModal = ({
       setOnCloseAlreadyCalled(false);
       return;
     }
-    console.log(`🦕 👋 BottomModal onClose`);
     setOnCloseAlreadyCalled(true);
     onClose && onClose();
   }, [modalLock, onClose, onCloseAlreadyCalled]);
 
   const handleModalHide = useCallback(() => {
-    console.log(`🦕 ✅ BottomModal ${debugName}: onBottomDrawerHide`);
     onModalHide && onModalHide();
     notifyNextDrawer();
-  }, [onModalHide, debugName]);
+  }, [onModalHide]);
 
   useEffect(() => {
     let id: number | undefined;
 
     if (isOpened) {
-      console.log(
-        `🦕 BottomModal: ${debugName} adding to waiting list of drawer ...`,
-      );
       id = addToWaitingDrawers(() => {
         setIsDisplayed(true);
       });
     }
 
     return () => {
-      console.log(
-        `🦕 BottomModal: ${debugName} cleanup id=${id} wasOpened=${isOpened}`,
-      );
-
       if (id !== undefined) {
         removeFromWaitingDrawers(id);
         setIsDisplayed(false);
       }
     };
-  }, [debugName, isOpened]);
-
-  console.log(
-    `🦕🔥 BottomModal: isOpened: ${isOpened} isDisplayed: ${isDisplayed}`,
-  );
+  }, [isOpened]);
 
   return (
     <BottomDrawer
@@ -180,7 +162,6 @@ function removeFromWaitingDrawers(id: WaitingDrawer["id"]) {
     waitingDrawer => waitingDrawer.id === id,
   );
 
-  console.log(`🤝 removeFromWaitingDrawers index:${index}`);
   if (index >= 0) {
     waitingDrawers.splice(index, 1);
   }
