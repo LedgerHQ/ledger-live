@@ -60,7 +60,7 @@ type Props = {
   mode: "grid" | "list",
   withContextMenu?: boolean,
   onHideCollection?: () => void,
-  overloadOnItemClick?: (nftMetadata: NFTMetadata) => void,
+  onItemClick?: (nftMetadata: NFTMetadata) => void,
 };
 
 const NftCard = ({
@@ -69,7 +69,7 @@ const NftCard = ({
   account,
   withContextMenu = false,
   onHideCollection,
-  overloadOnItemClick,
+  onItemClick,
 }: Props) => {
   const nft = useSelector(state => getNFTById(state, { nftId: id }));
   const { status, metadata } = useNftMetadata(nft.contract, nft.tokenId, nft.currencyId);
@@ -77,7 +77,7 @@ const NftCard = ({
   const show = useMemo(() => status === "loading", [status]);
   const isGrid = mode === "grid";
 
-  const onItemClick = useCallback(() => {
+  const defaultOnItemClick = useCallback(() => {
     setDrawer(NFTViewerDrawer, {
       account,
       nftId: id,
@@ -102,14 +102,14 @@ const NftCard = ({
         className={show || process.env.ALWAYS_SHOW_SKELETONS ? "disabled" : ""}
         horizontal={!isGrid}
         alignItems={!isGrid ? "center" : undefined}
-        onClick={overloadOnItemClick ? () => overloadOnItemClick(metadata) : onItemClick}
+        onClick={onItemClick ? () => onItemClick(metadata) : defaultOnItemClick}
       >
         <Skeleton width={40} minHeight={40} full={isGrid} show={show}>
           <Media
             metadata={metadata}
             tokenId={nft.tokenId}
-            size={overloadOnItemClick ? 180 : 40}
-            full={overloadOnItemClick ? false : isGrid}
+            size={onItemClick ? 180 : 40}
+            full={onItemClick ? false : isGrid}
             mediaFormat="preview"
           />
         </Skeleton>
