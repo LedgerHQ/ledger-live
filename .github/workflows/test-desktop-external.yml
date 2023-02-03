@@ -29,16 +29,8 @@ jobs:
           ref: ${{ inputs.ref || github.ref }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-gh-cache
         with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
-      - name: Install dependencies
-        run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
-      - name: Build dependencies
-        run: pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+          skip_builds: true
       - name: Run code checkers
         run: pnpm desktop test:codecheck
 
@@ -55,16 +47,8 @@ jobs:
           ref: ${{ inputs.ref || github.ref }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-gh-cache
         with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
-      - name: Install dependencies
-        run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
-      - name: Build dependencies
-        run: pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+          skip_builds: true
       - name: Run unit tests
         run: pnpm desktop test:jest
 
@@ -89,20 +73,6 @@ jobs:
         with:
           skip_python: true
           skip_ruby: true
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-gh-cache
-        with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
-      - name: Build dependencies
-        env:
-          GOGC: 75
-        run: |
-          pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
-          pnpm desktop build:testing
-      - name: Build Dummy SDK app for testing
-        run: pnpm --filter="dummy-live-app" i && pnpm --filter="dummy-live-app" build
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
         run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
@@ -159,20 +129,6 @@ jobs:
         with:
           skip_python: true
           skip_ruby: true
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-gh-cache
-        with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
-      - name: Build dependencies
-        env:
-          GOGC: 75
-        run: |
-          pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
-          pnpm desktop build:testing
-      - name: Build Dummy SDK app for testing
-        run: pnpm --filter="dummy-live-app" i && pnpm --filter="dummy-live-app" build
       - name: Run playwright tests
         id: tests
         run: pnpm desktop test:playwright
@@ -228,20 +184,6 @@ jobs:
         id: setup-test-desktop
         with:
           install_node_gyp: true
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-gh-cache
-        with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
-      - name: Build dependencies
-        env:
-          GOGC: 75
-        run: |
-          pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
-          pnpm desktop build:testing
-      - name: Build Dummy SDK app for testing
-        run: pnpm --filter="dummy-live-app" i && pnpm --filter="dummy-live-app" build
       - name: Run playwright tests
         id: tests
         run: pnpm desktop test:playwright
