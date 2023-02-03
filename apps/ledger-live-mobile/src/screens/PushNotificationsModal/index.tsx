@@ -1,11 +1,6 @@
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Flex,
-  Text,
-  Link as TextLink,
-  Button,
-} from "@ledgerhq/native-ui";
+import { Flex, Text, Link as TextLink, Button } from "@ledgerhq/native-ui";
 import useNotifications from "../../logic/notifications";
 import Illustration from "../../images/illustration/Illustration";
 import PromptNotifGenericDark from "../../images/illustration/Dark/_PromptNotifGeneric.png";
@@ -48,7 +43,10 @@ const PushNotificationsModal = () => {
       />
     );
   return (
-    <QueuedDrawer isRequestingToBeOpened={isPushNotificationsModalOpen} noCloseButton>
+    <QueuedDrawer
+      isRequestingToBeOpened={isPushNotificationsModalOpen}
+      noCloseButton
+    >
       <TrackScreen
         category="Notification Prompt"
         name={

@@ -145,7 +145,10 @@ export default () => {
         pairedDevice?.deviceName ?? pairedDevice?.deviceId ?? "no device"
       }`}
     >
-      <QueuedDrawer isRequestingToBeOpened={isDrawerOpen} onClose={onCloseDrawer}>
+      <QueuedDrawer
+        isRequestingToBeOpened={isDrawerOpen}
+        onClose={onCloseDrawer}
+      >
         <Flex mb="8">
           <Text variant="body" mb="8">
             Choose which device model to filter on:

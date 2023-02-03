@@ -1,13 +1,7 @@
 import React, { useCallback } from "react";
 
 import { useDispatch } from "react-redux";
-import {
-  Text,
-  Icons,
-  BoxedIcon,
-  Button,
-  Flex,
-} from "@ledgerhq/native-ui";
+import { Text, Icons, BoxedIcon, Button, Flex } from "@ledgerhq/native-ui";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { hideNftCollection } from "../../actions/settings";
