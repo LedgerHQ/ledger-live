@@ -6,9 +6,6 @@ import {
   SpeculosButton,
 } from "../../bot/specs";
 
-const maxFeesExpectedValue = ({ account, status }) =>
-  formatDeviceAmount(account.currency, status.estimatedFees);
-
 export const avalancheSpeculosDeviceAction: DeviceAction<Transaction, any> =
   deviceActionFlow({
     steps: [
@@ -55,7 +52,9 @@ export const avalancheSpeculosDeviceAction: DeviceAction<Transaction, any> =
       {
         title: "Fee(GWEI)",
         button: SpeculosButton.RIGHT,
-        expectedValue: maxFeesExpectedValue,
+        expectedValue: ({ status }) => {
+          return status.estimatedFees.toString();
+        },
       },
       {
         title: "To",
