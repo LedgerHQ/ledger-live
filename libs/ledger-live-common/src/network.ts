@@ -4,7 +4,7 @@ import type { AxiosError, AxiosRequestConfig } from "axios";
 import { log } from "@ledgerhq/logs";
 import { NetworkDown, LedgerAPI5xx, LedgerAPI4xx } from "@ledgerhq/errors";
 import { retry } from "./promise";
-import { getEnv } from "./env";
+import { getEnv, changes } from "./env";
 
 export const errorInterceptor = (error: AxiosError<any>): AxiosError<any> => {
   const config = error?.response?.config || null;
@@ -111,5 +111,20 @@ const implementation = (arg: AxiosRequestConfig): Promise<any> => {
 
   return promise;
 };
+
+// attach the env "LEDGER_CLIENT_VERSION" to set the header globally for axios
+function setAxiosLedgerClientVersionHeader(value: string) {
+  if (value) {
+    axios.defaults.headers.common["X-Ledger-Client-Version"] = value;
+  } else {
+    delete axios.defaults.headers.common["X-Ledger-Client-Version"];
+  }
+}
+setAxiosLedgerClientVersionHeader(getEnv("LEDGER_CLIENT_VERSION"));
+changes.subscribe((e) => {
+  if (e.name === "LEDGER_CLIENT_VERSION") {
+    setAxiosLedgerClientVersionHeader(e.value);
+  }
+});
 
 export default implementation;

@@ -7,7 +7,7 @@ import TabBar from "~/renderer/components/TabBar";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
-import { swapDefaultTrack } from "~/renderer/screens/exchange/Swap2/utils/index";
+import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
 import swapRoutes from "./routes.json";
 
 const Nav: ThemedComponent<{}> = styled.nav`
@@ -25,6 +25,7 @@ const Navbar = () => {
   const { pathname } = useLocation();
   const history = useHistory();
   const { t } = useTranslation();
+  const swapDefaultTrack = useGetSwapTrackingProperties();
 
   const currentIndex = useMemo(() => {
     return swapRoutes.findIndex(route => route.path === pathname);

@@ -11,7 +11,8 @@
     "start": "react-native start",
     "ios": "react-native run-ios",
     "android": "react-native run-android --appIdSuffix=debug",
-    "android:hermes": "export HERMES_ENABLED_ANDROID=true && yarn android",
+    "android:gradleClean": "cd android && ./gradlew clean",
+    "android:bundleInDebug": "ANDROID_BUNDLE_IN_DEBUG=true pnpm android",
     "detox": "./node_modules/.bin/detox",
     "e2e:build": "pnpm detox build",
     "e2e:test": "pnpm detox test",
@@ -51,7 +52,8 @@
     "test": "pnpm test:env",
     "test:env": "node ./scripts/mobile-env-md.mjs",
     "sync-locales": "./scripts/sync-locales.sh",
-    "test-deep-links": "ws --spa ./deep-links-test-page.html"
+    "test-deep-links": "ws --spa ./deep-links-test-page.html",
+    "download-hermes-profile": "zx ./scripts/download-hermes-profile.mjs"
   },
   "jest": {
     "preset": "react-native",

@@ -20,7 +20,7 @@ import {
 } from "~/renderer/components/DeviceAction/rendering";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { swapDefaultTrack, useRedirectToSwapHistory } from "../../utils/index";
+import { useGetSwapTrackingProperties, useRedirectToSwapHistory } from "../../utils/index";
 import { DrawerTitle } from "../DrawerTitle";
 import { Separator } from "../Separator";
 import SwapAction from "./SwapAction";
@@ -44,6 +44,7 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
   const dispatch = useDispatch();
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
+  const swapDefaultTrack = useGetSwapTrackingProperties();
   const redirectToHistory = useRedirectToSwapHistory();
   const {
     transaction,
@@ -76,7 +77,7 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
       });
       setError(error);
     },
-    [exchangeRate],
+    [exchangeRate.provider, swapDefaultTrack],
   );
 
   const onCompletion = useCallback(
