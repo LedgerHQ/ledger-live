@@ -26,7 +26,7 @@ Type of a Transport error used to represent all equivalent errors coming from al
 
 **Extends Error**
 
-Represents an error coming from any Transport implementation.
+Represents an error coming from the usage of any Transport implementation.
 
 Needed to map a specific implementation error into an error that
 can be managed by any code unaware of the specific Transport implementation

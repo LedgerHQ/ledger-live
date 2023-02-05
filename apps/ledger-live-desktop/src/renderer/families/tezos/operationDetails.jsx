@@ -5,13 +5,13 @@ import type { Operation } from "@ledgerhq/types-live";
 
 const helpURL = "https://support.ledger.com/hc/en-us/articles/360010653260";
 
-function getURLFeesInfo(op: Operation): ?string {
+function getURLFeesInfo(op: Operation, currencyId: string): ?string {
   if (op.fee.gt(200000)) {
     return helpURL;
   }
 }
 
-function getURLWhatIsThis(op: Operation): ?string {
+function getURLWhatIsThis(op: Operation, currencyId: string): ?string {
   if (op.type !== "IN" && op.type !== "OUT") {
     return helpURL;
   }

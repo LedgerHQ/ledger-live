@@ -11,7 +11,7 @@ import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import { addStarredMarketCoins, removeStarredMarketCoins } from "~/renderer/actions/settings";
 import { track } from "~/renderer/analytics/segment";
-import { swapDefaultTrack } from "~/renderer/screens/exchange/Swap2/utils/index";
+import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
 import { Button } from "..";
 import MarketCoinChart from "./MarketCoinChart";
 import MarketInfo from "./MarketInfo";
@@ -25,6 +25,8 @@ import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCat
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import useStakeFlow from "../../stake";
+import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 
 const CryptoCurrencyIconWrapper = styled.div`
   height: 56px;
@@ -68,6 +70,8 @@ export default function MarketCoinScreen() {
   const allAccounts = useSelector(accountsSelector);
   const flattenedAccounts = flattenAccounts(allAccounts);
   const { providers, storedProviders } = useProviders();
+  const swapDefaultTrack = useGetSwapTrackingProperties();
+
   const swapAvailableIds = useMemo(() => {
     return providers || storedProviders
       ? (providers || storedProviders)
@@ -126,13 +130,21 @@ export default function MarketCoinScreen() {
   const availableOnBuy =
     currency && currency.ticker && onRampAvailableTickers.includes(currency.ticker?.toUpperCase());
   const availableOnSwap = internalCurrency && swapAvailableIds.includes(internalCurrency.id);
+  const stakeProgramsFeatureFlag = useFeature("stakePrograms");
+  const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
+  const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;
+  const availableOnStake =
+    stakeProgramsEnabled && currency && listFlag.includes(currency?.internalCurrency?.id);
+  const startStakeFlow = useStakeFlow({
+    currencies: currency ? [currency?.internalCurrency?.id] : [],
+  });
 
   const color = internalCurrency
     ? getCurrencyColor(internalCurrency, colors.background.main)
     : colors.primary.c80;
 
   const onBuy = useCallback(
-    (e: any) => {
+    (e: React.ChangeEvent<HTMLInputElement>) => {
       e.preventDefault();
       e.stopPropagation();
       setTrackingSource("Page Market Coin");
@@ -166,17 +178,17 @@ export default function MarketCoinScreen() {
   }, [dispatch, currency]);
 
   const onSwap = useCallback(
-    (e: any) => {
+    (e: React.ChangeEvent<HTMLInputElement>) => {
       if (currency?.internalCurrency?.id) {
         e.preventDefault();
         e.stopPropagation();
         track("button_clicked", {
           button: "swap",
           currency: currency?.ticker,
-          page: "Page Maket Coin",
+          page: "Page Market Coin",
           ...swapDefaultTrack,
         });
-        setTrackingSource("Page Maket Coin");
+        setTrackingSource("Page Market Coin");
 
         const currencyId = currency?.internalCurrency?.id;
 
@@ -198,7 +210,31 @@ export default function MarketCoinScreen() {
         });
       }
     },
-    [currency?.internalCurrency, currency?.ticker, flattenedAccounts, history, openAddAccounts],
+    [
+      currency?.internalCurrency,
+      currency?.ticker,
+      flattenedAccounts,
+      history,
+      openAddAccounts,
+      swapDefaultTrack,
+    ],
+  );
+
+  const onStake = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+      track("button_clicked", {
+        button: "stake",
+        currency: currency?.ticker,
+        page: "Page Market Coin",
+        ...stakeDefaultTrack,
+      });
+      setTrackingSource("Page Market Coin");
+
+      startStakeFlow();
+    },
+    [currency?.ticker, startStakeFlow],
   );
 
   const toggleStar = useCallback(() => {
@@ -260,8 +296,18 @@ export default function MarketCoinScreen() {
                 </Button>
               )}
               {availableOnSwap && (
-                <Button data-test-id="market-coin-swap-button" variant="color" onClick={onSwap}>
+                <Button
+                  data-test-id="market-coin-swap-button"
+                  variant="color"
+                  onClick={onSwap}
+                  mr={1}
+                >
                   {t("accounts.contextMenu.swap")}
+                </Button>
+              )}
+              {availableOnStake && (
+                <Button variant="color" onClick={onStake}>
+                  {t("accounts.contextMenu.stake")}
                 </Button>
               )}
             </>

@@ -29,6 +29,8 @@ import type {
   AccountLike,
   PortfolioRange,
 } from "@ledgerhq/types-live";
+import { setSupportedCurrencies } from "../currencies";
+setSupportedCurrencies(["ethereum", "ethereum_classic", "ripple"]);
 
 setEnv("MOCK", "1");
 setEnv("MOCK_COUNTERVALUES", "1");

@@ -5,6 +5,8 @@ import { getEnv, setEnv } from "../../env";
 import { findCryptoCurrencyById } from "../../currencies";
 import { canBeMigrated } from "../../account";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { setSupportedCurrencies } from "../../currencies";
+setSupportedCurrencies(["ethereum", "ethereum_classic", "ripple"]);
 
 test("generate an account from seed", () => {
   const a = genAccount("seed");

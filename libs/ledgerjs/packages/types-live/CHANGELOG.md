@@ -1,5 +1,25 @@
 # @ledgerhq/types-live
 
+## 6.29.0
+
+### Minor Changes
+
+- [#2351](https://github.com/LedgerHQ/ledger-live/pull/2351) [`f3fd3134a3`](https://github.com/LedgerHQ/ledger-live/commit/f3fd3134a3852f9d872b1be268e60beae8ea3496) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add transactionRaw to Operation type
+
+### Patch Changes
+
+- [#2332](https://github.com/LedgerHQ/ledger-live/pull/2332) [`53b526847d`](https://github.com/LedgerHQ/ledger-live/commit/53b526847d5478e271e216c7a98d650915b7cb6a) Thanks [@sarneijim](https://github.com/sarneijim)! - Add stakePrograms flag
+
+## 6.29.0-next.0
+
+### Minor Changes
+
+- [#2351](https://github.com/LedgerHQ/ledger-live/pull/2351) [`f3fd3134a3`](https://github.com/LedgerHQ/ledger-live/commit/f3fd3134a3852f9d872b1be268e60beae8ea3496) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add transactionRaw to Operation type
+
+### Patch Changes
+
+- [#2332](https://github.com/LedgerHQ/ledger-live/pull/2332) [`53b526847d`](https://github.com/LedgerHQ/ledger-live/commit/53b526847d5478e271e216c7a98d650915b7cb6a) Thanks [@sarneijim](https://github.com/sarneijim)! - Add stakePrograms flag
+
 ## 6.28.1
 
 ### Patch Changes

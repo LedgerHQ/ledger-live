@@ -1,5 +1,5 @@
 // @flow
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
@@ -19,17 +19,26 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const { solanaResources } = mainAccount;
 
   const onClick = useCallback(() => {
-    dispatch(
-      openModal(
-        solanaResources && solanaResources.stakes.length > 0
-          ? "MODAL_SOLANA_DELEGATE"
-          : "MODAL_SOLANA_REWARDS_INFO",
-        {
+    if (isAccountEmpty(account)) {
+      dispatch(
+        openModal("MODAL_NO_FUNDS_STAKE", {
           account,
-        },
-      ),
-    );
-  }, [dispatch, account, solanaResources]);
+          parentAccount,
+        }),
+      );
+    } else {
+      dispatch(
+        openModal(
+          solanaResources && solanaResources.stakes.length > 0
+            ? "MODAL_SOLANA_DELEGATE"
+            : "MODAL_SOLANA_REWARDS_INFO",
+          {
+            account,
+          },
+        ),
+      );
+    }
+  }, [account, dispatch, parentAccount, solanaResources]);
 
   return [
     {

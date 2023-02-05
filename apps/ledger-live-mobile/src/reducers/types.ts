@@ -71,6 +71,7 @@ export type AppState = {
   hasConnectedDevice: boolean;
   modalLock: boolean;
   backgroundEvents: Array<FwUpdateBackgroundEvent>;
+  isMainNavigatorVisible: boolean;
 };
 
 // === BLE STATE ===
@@ -231,6 +232,7 @@ export type NotificationsSettings = {
   areNotificationsAllowed: boolean;
   announcementsCategory: boolean;
   recommendationsCategory: boolean;
+  largeMoverCategory: boolean;
 };
 
 // === WALLET CONNECT STATE ===

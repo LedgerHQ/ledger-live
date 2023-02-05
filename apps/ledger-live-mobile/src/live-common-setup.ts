@@ -22,7 +22,6 @@ import { DescriptorEvent } from "@ledgerhq/hw-transport";
 import VersionNumber from "react-native-version-number";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import { Platform } from "react-native";
-import axios from "axios";
 import { setSecp256k1Instance } from "@ledgerhq/live-common/families/bitcoin/wallet-btc/crypto/secp256k1";
 import { setGlobalOnBridgeError } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { prepareCurrency } from "./bridge/cache";
@@ -166,10 +165,11 @@ registerTransportModule({
 });
 
 if (process.env.NODE_ENV === "production") {
-  axios.defaults.headers.common["User-Agent"] =
+  const value =
     Platform.OS === "ios"
-      ? `Live-IOS/${VersionNumber.appVersion}`
-      : `Live-Android/${VersionNumber.appVersion}`;
+      ? `llm-ios/${VersionNumber.appVersion}`
+      : `llm-android/${VersionNumber.appVersion}`;
+  setEnv("LEDGER_CLIENT_VERSION", value);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires

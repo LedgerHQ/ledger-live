@@ -8,12 +8,12 @@ import BitcoinLikeStorage from "../storage";
 import { Merge } from "../pickingstrategies/Merge";
 import BitcoinLikeWallet from "../wallet";
 import MockBtc from "../../mockBtc";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 describe("testing dogecoin transactions", () => {
   const wallet = new BitcoinLikeWallet();
   const explorer = new BitcoinLikeExplorer({
-    explorerURI: "https://explorers.api.vault.ledger.com/blockchain/v3/doge",
-    explorerVersion: "v3",
+    cryptoCurrency: getCryptoCurrencyById("dogecoin"),
     disableBatchSize: true,
   });
 
@@ -75,18 +75,17 @@ describe("testing dogecoin transactions", () => {
       utxoPickingStrategy,
       sequence: 0,
     });
-    const account = await wallet.generateAccount({
-      xpub: xpub.xpub,
-      path: "44'/0'",
-      index: 0,
-      currency: "dogecoin",
-      network: "mainnet",
-      derivationMode: DerivationModes.LEGACY,
-      explorer: "ledgerv3",
-      explorerURI: "https://explorers.api.vault.ledger.com/blockchain/v3/doge",
-      storage: "mock",
-      storageParams: [],
-    });
+    const account = await wallet.generateAccount(
+      {
+        xpub: xpub.xpub,
+        path: "44'/0'",
+        index: 0,
+        currency: "dogecoin",
+        network: "mainnet",
+        derivationMode: DerivationModes.LEGACY,
+      },
+      getCryptoCurrencyById("dogecoin")
+    );
     await wallet.signAccountTx({
       btc: new MockBtc(),
       fromAccount: account,

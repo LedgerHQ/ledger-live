@@ -1,9 +1,8 @@
 // @flow
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
-import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
 import type { CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
-import { LEDGER_OSMOSIS_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/osmosis/utils";
 import type { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 
 import { BigNumber } from "bignumber.js";
@@ -33,8 +32,7 @@ function CosmosFamilyValidatorRow({ validator, active, onClick, unit, currency }
   const currencyName = currency.name.toLowerCase();
   const onExternalLink = useCallback(
     (address: string) => {
-      const ledgerValidator =
-        currencyName === "osmosis" ? LEDGER_OSMOSIS_VALIDATOR_ADDRESS : LEDGER_VALIDATOR_ADDRESS;
+      const ledgerValidator = cryptoFactory(currencyName).ledgerValidator;
       if (address === ledgerValidator) {
         openURL(urls.ledgerValidator);
       } else {
@@ -64,10 +62,7 @@ function CosmosFamilyValidatorRow({ validator, active, onClick, unit, currency }
               })}
             </Text>
             <Text fontSize={2} textAlign="right">
-              <Trans
-                color="palette.text.shade50"
-                i18nKey={`${currencyName}.delegation.totalStake`}
-              />
+              <Trans color="palette.text.shade50" i18nKey={`cosmos.delegation.totalStake`} />
             </Text>
           </Box>
           <Box ml={2} justifyContent="center" alignContent="center">
@@ -78,7 +73,7 @@ function CosmosFamilyValidatorRow({ validator, active, onClick, unit, currency }
       subtitle={
         <Box>
           <Text ff="Inter|Medium" fontSize={2} color="palette.text.shade50">
-            <Trans i18nKey={`${currencyName}.delegation.commission`} />{" "}
+            <Trans i18nKey={`cosmos.delegation.commission`} />{" "}
             {`${Math.round(validator.commission * 10000) / 100} %`}
           </Text>
         </Box>
