@@ -89,24 +89,9 @@ const envDefinitions = {
   },
 
   API_COSMOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
-    def: "https://cosmoshub4.coin.ledger.com/",
+    def: "https://cosmoshub4.coin.ledger.com",
     parser: stringParser,
     desc: "Node endpoint for cosmos",
-  },
-  API_COSMOS_NODE: {
-    def: "STARGATE_NODE",
-    parser: stringParser,
-    desc: "Node API to use for cosmos (COSMOS_NODE or STARGATE_NODE are known)",
-  },
-  API_COSMOS_TESTNET_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
-    def: "https://cosmoshub4.coin.staging.aws.ledger.com",
-    parser: stringParser,
-    desc: "Node endpoint for cosmos",
-  },
-  API_COSMOS_TESTNET_NODE: {
-    def: "STARGATE_NODE",
-    parser: stringParser,
-    desc: "Node API to use for cosmos_testnet (COSMOS_NODE or STARGATE_NODE are known)",
   },
   API_RIPPLE_RPC: {
     parser: stringParser,
@@ -148,6 +133,11 @@ const envDefinitions = {
     def: "https://elrond.coin.ledger.com",
     desc: "Elrond API url",
   },
+  ELROND_DELEGATION_API_ENDPOINT: {
+    parser: stringParser,
+    def: "https://delegations-elrond.coin.ledger.com",
+    desc: "Elrond DELEGATION API url",
+  },
   API_STELLAR_HORIZON: {
     parser: stringParser,
     def: "https://stellar.coin.ledger.com",
@@ -163,13 +153,8 @@ const envDefinitions = {
     parser: boolParser,
     desc: "Static fee for Stellar account",
   },
-  API_OSMOSIS_INDEXER: {
-    def: "https://osmosis.coin.ledger.com/indexer",
-    parser: stringParser,
-    desc: "Endpoint for Transaction Explorer/Indexer for Osmosis",
-  },
   API_OSMOSIS_NODE: {
-    def: "https://osmosis.coin.ledger.com/node",
+    def: "https://osmosis.coin.ledger-stg.com",
     parser: stringParser,
     desc: "Endpoint for Osmosis Node",
   },
@@ -252,16 +237,6 @@ const envDefinitions = {
     def: "https://api.compound.finance",
     parser: stringParser,
     desc: "location of the compound API",
-  },
-  COSMOS_GAS_AMPLIFIER: {
-    def: 1.4,
-    parser: intParser,
-    desc: "estimate gas multiplier",
-  },
-  COSMOS_GAS_PRICE: {
-    def: 0.025,
-    parser: floatParser,
-    desc: "gasLimit * gasPrice to determine the fees price. A too low GAS_PRICE will get rejected before the transaction is broadcast",
   },
   CRYPTO_ORG_INDEXER: {
     def: "https://cryptoorg-rpc-indexer.coin.ledger.com",
@@ -457,6 +432,11 @@ const envDefinitions = {
     def: 0,
     parser: intParser,
     desc: "overrides the gap limit specified by BIP44 (default to 20)",
+  },
+  LEDGER_CLIENT_VERSION: {
+    def: "",
+    parser: stringParser,
+    desc: "the 'X-Ledger-Client-Version' HTTP header to use for queries to Ledger APIs",
   },
   LEDGER_COUNTERVALUES_API: {
     def: "https://countervalues.live.ledger.com",

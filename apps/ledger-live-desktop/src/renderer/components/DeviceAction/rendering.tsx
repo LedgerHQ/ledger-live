@@ -44,7 +44,7 @@ import ProgressCircle from "~/renderer/components/ProgressCircle";
 import CrossCircle from "~/renderer/icons/CrossCircle";
 import { getProviderIcon } from "~/renderer/screens/exchange/Swap2/utils";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
-import { swapDefaultTrack } from "~/renderer/screens/exchange/Swap2/utils/index";
+import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
 import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { DrawerFooter } from "~/renderer/screens/exchange/Swap2/Form/DrawerFooter";
@@ -767,6 +767,7 @@ export const renderSwapDeviceConfirmation = ({
   exchange,
   amountExpectedTo,
   estimatedFees,
+  swapDefaultTrack,
 }: {
   modelId: DeviceModelId;
   type: Theme["theme"];
@@ -776,6 +777,7 @@ export const renderSwapDeviceConfirmation = ({
   exchange: Exchange;
   amountExpectedTo?: string;
   estimatedFees?: string;
+  swapDefaultTrack: Record<string, string>;
 }) => {
   const ProviderIcon = getProviderIcon(exchangeRate);
   const [sourceAccountName, sourceAccountCurrency] = [
@@ -1016,13 +1018,6 @@ export const renderLoadingImage = ({
       src={src}
       progress={progress}
       backgroundPlaceholderText="image loading illustration placeholder"
-      bottom={
-        <Flex flexDirection="column" flex={1} justifyContent="flex-end" pb={8}>
-          <Text textAlign="center" variant="bodyLineHeight" color="neutral.c60">
-            {t("customImage.steps.transfer.timeDisclaimer")}
-          </Text>
-        </Flex>
-      }
       testId={`device-action-image-loading-${progress}`}
     />
   );
@@ -1044,16 +1039,6 @@ export const renderImageCommitRequested = ({
       })}
       src={src}
       backgroundPlaceholderText="commit requested illustration placeholder"
-      top={
-        <Flex flex={1} flexDirection="column" justifyContent="center" alignItems="center">
-          <Flex mb={3} p={4} backgroundColor="neutral.c30" borderRadius={999}>
-            <Icons.CheckAloneMedium size={16} color="success.c50" />
-          </Flex>
-          <Text textAlign="center" color="neutral.c70" variant="bodyLineHeight">
-            {t("customImage.steps.transfer.pictureLoaded")}
-          </Text>
-        </Flex>
-      }
       testId="device-action-image-commit-requested"
     />
   );

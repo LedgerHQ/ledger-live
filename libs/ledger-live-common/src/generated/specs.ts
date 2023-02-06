@@ -10,7 +10,6 @@ import evm from "../families/evm/specs";
 import filecoin from "../families/filecoin/specs";
 import hedera from "../families/hedera/specs";
 import near from "../families/near/specs";
-import osmosis from "../families/osmosis/specs";
 import polkadot from "../families/polkadot/specs";
 import ripple from "../families/ripple/specs";
 import solana from "../families/solana/specs";
@@ -32,7 +31,6 @@ export default {
   filecoin,
   hedera,
   near,
-  osmosis,
   polkadot,
   ripple,
   solana,

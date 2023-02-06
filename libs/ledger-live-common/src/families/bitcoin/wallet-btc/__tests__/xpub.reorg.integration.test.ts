@@ -10,6 +10,7 @@ import Xpub from "../xpub";
 import Crypto from "../crypto/bitcoin";
 import Explorer from "../explorer";
 import BitcoinLikeStorage from "../storage";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -18,8 +19,8 @@ describe.skip("testing xpub reorg management", () => {
   const network = coininfo.bitcoin.test.toBitcoinJS();
 
   const explorer = new Explorer({
-    explorerURI: "http://localhost:20000/blockchain/v3",
-    explorerVersion: "v3",
+    cryptoCurrency: getCryptoCurrencyById("bitcoin_testnet"),
+    forcedExplorerURI: "http://localhost:20000/blockchain/v3",
     disableBatchSize: true, // https://ledgerhq.atlassian.net/browse/BACK-2191
   });
   const crypto = new Crypto({

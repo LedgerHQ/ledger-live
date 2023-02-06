@@ -15,7 +15,6 @@ import {
   getReservedBalance,
 } from "../logic";
 import { NetworkDown, LedgerAPI4xx, LedgerAPI5xx } from "@ledgerhq/errors";
-import { requestInterceptor, responseInterceptor } from "../../../network";
 import type { BalanceAsset } from "../types";
 import { NetworkCongestionLevel, Signer } from "../types";
 
@@ -31,11 +30,7 @@ export const BASE_RESERVE = 0.5;
 export const BASE_RESERVE_MIN_COUNT = 2;
 export const MIN_BALANCE = 1;
 
-StellarSdk.HorizonAxiosClient.interceptors.request.use(requestInterceptor);
-
 StellarSdk.HorizonAxiosClient.interceptors.response.use((response) => {
-  responseInterceptor(response);
-
   // FIXME: workaround for the Stellar SDK not using the correct URL: the "next" URL
   // included in server responses points to the node itself instead of our reverse proxy...
   // (https://github.com/stellar/js-stellar-sdk/issues/637)

@@ -11,7 +11,6 @@ import filecoin from "../families/filecoin/hw-getAddress";
 import hedera from "../families/hedera/hw-getAddress";
 import near from "../families/near/hw-getAddress";
 import neo from "../families/neo/hw-getAddress";
-import osmosis from "../families/osmosis/hw-getAddress";
 import polkadot from "../families/polkadot/hw-getAddress";
 import ripple from "../families/ripple/hw-getAddress";
 import solana from "../families/solana/hw-getAddress";
@@ -34,7 +33,6 @@ export default {
   hedera,
   near,
   neo,
-  osmosis,
   polkadot,
   ripple,
   solana,

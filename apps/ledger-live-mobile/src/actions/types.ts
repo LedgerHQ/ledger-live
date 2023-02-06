@@ -84,6 +84,7 @@ export enum AppStateActionTypes {
   DEQUEUE_BACKGROUND_EVENT = "DEQUEUE_BACKGROUND_EVENT",
   CLEAR_BACKGROUND_EVENTS = "CLEAR_BACKGROUND_EVENTS",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
+  UPDATE_MAIN_NAVIGATOR_VISIBILITY = "UPDATE_MAIN_NAVIGATOR_VISIBILITY",
 }
 
 export type AppStateIsConnectedPayload = Pick<AppState, "isConnected">;
@@ -95,11 +96,17 @@ export type AppStateSetModalLockPayload = Pick<AppState, "modalLock">;
 export type AppStateAddBackgroundEventPayload = {
   event: FwUpdateBackgroundEvent;
 };
+
+export type AppStateUpdateMainNavigatorVisibilityPayload = Pick<
+  AppState,
+  "isMainNavigatorVisible"
+>;
 export type AppStatePayload =
   | AppStateIsConnectedPayload
   | AppStateSetHasConnectedDevicePayload
   | AppStateSetModalLockPayload
-  | AppStateAddBackgroundEventPayload;
+  | AppStateAddBackgroundEventPayload
+  | AppStateUpdateMainNavigatorVisibilityPayload;
 
 // === BLE ACTIONS ===
 

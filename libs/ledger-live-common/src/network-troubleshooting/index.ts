@@ -33,11 +33,11 @@ export function troubleshoot(): Troubleshoot[] {
     },
     {
       title: "Bitcoin explorers",
-      ...httpGet(getEnv("EXPLORER") + "/blockchain/v3/btc/blocks/current"),
+      ...httpGet(getEnv("EXPLORER") + "/blockchain/v4/btc/block/current"),
     },
     {
       title: "Ethereum explorers",
-      ...httpGet(getEnv("EXPLORER") + "/blockchain/v3/eth/blocks/current"),
+      ...httpGet(getEnv("EXPLORER") + "/blockchain/v4/eth/block/current"),
     },
     {
       title: "Countervalues API",

@@ -3,6 +3,7 @@ import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
+import { TrackScreen } from "../../analytics";
 import Button from "../../components/Button";
 import CustomImageBottomModal from "../../components/CustomImage/CustomImageBottomModal";
 import GenericErrorView from "../../components/GenericErrorView";
@@ -26,6 +27,10 @@ type NavigationProps = BaseComposite<
   >
 >;
 
+const buttonClickedEventProperties = {
+  button: "upload another image",
+};
+
 const ErrorScreen = ({ route }: NavigationProps) => {
   const [isModalOpened, setIsModalOpened] = useState(false);
   const { params } = route;
@@ -41,8 +46,11 @@ const ErrorScreen = ({ route }: NavigationProps) => {
     setIsModalOpened(true);
   }, [setIsModalOpened]);
 
+  const screenName = "Error: " + error.name;
+
   return (
     <Container>
+      <TrackScreen category={screenName} />
       <CustomImageBottomModal
         isOpened={isModalOpened}
         onClose={closeModal}
@@ -58,6 +66,8 @@ const ErrorScreen = ({ route }: NavigationProps) => {
           size="large"
           outline={false}
           onPress={openModal}
+          event="button_clicked"
+          eventProperties={buttonClickedEventProperties}
         >
           {t("customImage.uploadAnotherImage")}
         </Button>
