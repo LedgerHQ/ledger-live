@@ -48,14 +48,8 @@ const usd = getFiatCurrencyByTicker("USD");
 function convertMutation<T extends Transaction>(
   report: MutationReport<T>
 ): MinimalSerializedMutationReport {
-  const {
-    appCandidate,
-    mutation,
-    account,
-    destination,
-    error,
-    operation,
-  } = report;
+  const { appCandidate, mutation, account, destination, error, operation } =
+    report;
   return {
     appCandidate,
     mutationName: mutation?.name,
