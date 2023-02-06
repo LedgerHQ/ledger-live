@@ -21,7 +21,7 @@ const msgVersion = 1; // current msgVersion
 export const VERSION = bytes.pack(ZILLIQA_MAINNET, msgVersion);
 export const zilliqa = new Zilliqa(nodeEndPoint);
 export const ZILLIQA_TX_GAS_LIMIT = 50; // Gas limit is 50 units according to https://dev.zilliqa.com/basics/basics-zil-gas/?h=gas
-
+export const ZILLIQA_TX_GAS_PRICE = 2000000000;
 export const broadcastTransaction = async (params: TxParams) => {
   const response = await zilliqa.blockchain.provider.send(
     RPCMethod.CreateTransaction,
@@ -107,7 +107,7 @@ const transactionToOperation = async (
   const blockHeight = parseInt(transaction.blockId);
 
   const fee = new BigNumber(gasPrice.mul(cumulativeGas).toString());
-  let amount = new BigNumber(transaction.amount);
+  let amount = new BigNumber(transaction.amount ? transaction.amount : 0);
 
   if (type === "OUT") {
     amount = amount.plus(fee);

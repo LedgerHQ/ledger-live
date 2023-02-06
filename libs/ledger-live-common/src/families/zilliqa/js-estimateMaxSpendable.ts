@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { BN } from "@zilliqa-js/util";
-import { ZILLIQA_TX_GAS_LIMIT } from "./api";
+import { ZILLIQA_TX_GAS_LIMIT, ZILLIQA_TX_GAS_PRICE } from "./api";
 
 export const estimateMaxSpendable = ({
   account,
@@ -19,7 +19,7 @@ export const estimateMaxSpendable = ({
   }
 
   if (!gasPrice) {
-    gasPrice = new BN(0);
+    gasPrice = new BN(ZILLIQA_TX_GAS_PRICE);
   }
 
   if (!gasLimit) {
