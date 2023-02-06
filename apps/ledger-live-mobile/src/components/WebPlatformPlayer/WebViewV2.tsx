@@ -52,6 +52,7 @@ import { firstValueFrom } from "rxjs7";
 import { useTheme } from "styled-components/native";
 import BigNumber from "bignumber.js";
 import { first } from "rxjs/operators";
+import getOrCreateUser from "../../user";
 import { NavigatorName, ScreenName } from "../../const";
 import { broadcastSignedTx } from "../../logic/screenTransactionHooks";
 import { flattenAccountsSelector } from "../../reducers/accounts";
@@ -62,6 +63,7 @@ import { track } from "../../analytics/segment";
 import prepareSignTransaction from "./liveSDKLogic";
 import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
+import { analyticsEnabledSelector } from "../../reducers/settings";
 
 const tracking = trackingWrapper(track);
 
@@ -123,6 +125,7 @@ export const WebView = ({ manifest, inputs }: Props) => {
     current: null | RNWebView;
   } = useRef(null);
   const accounts = useSelector(flattenAccountsSelector);
+  const analyticsEnabled = useSelector(analyticsEnabledSelector);
   const navigation = useNavigation();
   const [loadDate, setLoadDate] = useState(new Date());
   const [widgetLoaded, setWidgetLoaded] = useState(false);
@@ -142,401 +145,423 @@ export const WebView = ({ manifest, inputs }: Props) => {
   const transport = useRef<Subject<BidirectionalEvent>>();
 
   useEffect(() => {
-    if (targetRef.current) {
-      transportRef.current = {
-        onMessage: undefined,
-        send: message => {
-          targetRef.current?.postMessage(message);
-        },
-      };
-      serverRef.current = new WalletAPIServer(transportRef.current);
-      serverRef.current.setPermissions({
-        currencyIds: manifest.currencies === "*" ? ["**"] : manifest.currencies,
-        methodIds: manifest.permissions as unknown as string[], // TODO use the new manifest type for v2 as we should avoid as typings
-      });
-      serverRef.current.setAccounts(walletAPIAccounts);
-      serverRef.current.setCurrencies(walletAPICurrencies);
+    const asyncFunction = async () => {
+      if (targetRef.current) {
+        transportRef.current = {
+          onMessage: undefined,
+          send: message => {
+            targetRef.current?.postMessage(message);
+          },
+        };
 
-      serverRef.current.setHandler(
-        "account.request",
-        async ({ accounts$, currencies$ }) => {
-          tracking.requestAccountRequested(manifest);
-          const currencies = await firstValueFrom(currencies$);
+        const { user } = await getOrCreateUser();
 
-          return new Promise((resolve, reject) => {
-            // handle no curencies selected case
-            const cryptoCurrencyIds = currencies.map(({ id }) => id);
+        serverRef.current = new WalletAPIServer(transportRef.current, {
+          userId: user.id,
+          tracking: analyticsEnabled,
+          appId: manifest.id,
+          wallet: {
+            name: "ledger-live-mobile",
+            version: getEnv("LEDGER_CLIENT_VERSION"),
+          },
+        });
+        serverRef.current.setPermissions({
+          currencyIds:
+            manifest.currencies === "*" ? ["**"] : manifest.currencies,
+          methodIds: manifest.permissions as unknown as string[], // TODO use the new manifest type for v2 as we should avoid as typings
+        });
+        serverRef.current.setAccounts(walletAPIAccounts);
+        serverRef.current.setCurrencies(walletAPICurrencies);
 
-            const onSuccess = (
-              account: AccountLike,
-              parentAccount?: Account,
-            ) => {
-              tracking.requestAccountSuccess(manifest);
-              resolve(accountToWalletAPIAccount(account, parentAccount));
-            };
+        serverRef.current.setHandler(
+          "account.request",
+          async ({ accounts$, currencies$ }) => {
+            tracking.requestAccountRequested(manifest);
+            const currencies = await firstValueFrom(currencies$);
 
-            const onError = (error: Error) => {
-              tracking.requestAccountFail(manifest);
-              reject(error);
-            };
+            return new Promise((resolve, reject) => {
+              // handle no curencies selected case
+              const cryptoCurrencyIds = currencies.map(({ id }) => id);
 
-            // if single currency available redirect to select account directly
-            if (cryptoCurrencyIds.length === 1) {
-              const currency = findCryptoCurrencyById(cryptoCurrencyIds[0]);
+              const onSuccess = (
+                account: AccountLike,
+                parentAccount?: Account,
+              ) => {
+                tracking.requestAccountSuccess(manifest);
+                resolve(accountToWalletAPIAccount(account, parentAccount));
+              };
 
-              if (!currency) {
+              const onError = (error: Error) => {
                 tracking.requestAccountFail(manifest);
-                reject(
-                  new ServerError(createCurrencyNotFound(cryptoCurrencyIds[0])),
+                reject(error);
+              };
+
+              // if single currency available redirect to select account directly
+              if (cryptoCurrencyIds.length === 1) {
+                const currency = findCryptoCurrencyById(cryptoCurrencyIds[0]);
+
+                if (!currency) {
+                  tracking.requestAccountFail(manifest);
+                  reject(
+                    new ServerError(
+                      createCurrencyNotFound(cryptoCurrencyIds[0]),
+                    ),
+                  );
+                  return;
+                }
+
+                navigation.navigate(NavigatorName.RequestAccount, {
+                  screen: ScreenName.RequestAccountsSelectAccount,
+                  params: {
+                    accounts$,
+                    currency,
+                    allowAddAccount: true,
+                    onSuccess,
+                    onError,
+                  },
+                });
+              } else {
+                const LLCurrencies = listSupportedCurrencies().filter(
+                  ({ id }) => cryptoCurrencyIds.includes(id),
                 );
-                return;
+
+                navigation.navigate(NavigatorName.RequestAccount, {
+                  screen: ScreenName.RequestAccountsSelectCrypto,
+                  params: {
+                    accounts$,
+                    currencies: LLCurrencies,
+                    allowAddAccount: true,
+                    onSuccess,
+                    onError,
+                  },
+                });
               }
+            });
+          },
+        );
 
-              navigation.navigate(NavigatorName.RequestAccount, {
-                screen: ScreenName.RequestAccountsSelectAccount,
-                params: {
-                  accounts$,
-                  currency,
-                  allowAddAccount: true,
-                  onSuccess,
-                  onError,
-                },
-              });
-            } else {
-              const LLCurrencies = listSupportedCurrencies().filter(({ id }) =>
-                cryptoCurrencyIds.includes(id),
-              );
+        serverRef.current.setHandler("account.receive", ({ account }) => {
+          return receiveOnAccountLogic(
+            { manifest, accounts, tracking },
+            account.id,
+            (account, parentAccount, accountAddress) =>
+              new Promise((resolve, reject) => {
+                navigation.navigate(ScreenName.VerifyAccount, {
+                  account,
+                  parentId: parentAccount ? parentAccount.id : undefined,
+                  onSuccess: (_account: AccountLike) => {
+                    tracking.receiveSuccess(manifest);
+                    resolve(accountAddress);
+                  },
+                  onClose: () => {
+                    tracking.receiveFail(manifest);
+                    reject(new Error("User cancelled"));
+                  },
+                  onError: (error: Error) => {
+                    tracking.receiveFail(manifest);
+                    // @TODO put in correct error text maybe
+                    reject(error);
+                  },
+                });
+              }),
+          );
+        });
 
-              navigation.navigate(NavigatorName.RequestAccount, {
-                screen: ScreenName.RequestAccountsSelectCrypto,
-                params: {
-                  accounts$,
-                  currencies: LLCurrencies,
-                  allowAddAccount: true,
-                  onSuccess,
-                  onError,
-                },
-              });
+        serverRef.current.setHandler("message.sign", ({ account, message }) => {
+          return signMessageLogic(
+            { manifest, accounts, tracking },
+            account.id,
+            message.toString("hex"),
+            ({ id: accountId }, message) =>
+              new Promise((resolve, reject) => {
+                navigation.navigate(NavigatorName.SignMessage, {
+                  screen: ScreenName.SignSummary,
+                  params: {
+                    message,
+                    accountId,
+                    onConfirmationHandler: (message: string) => {
+                      tracking.signMessageSuccess(manifest);
+                      resolve(Buffer.from(message));
+                    },
+                    onFailHandler: (error: Error) => {
+                      tracking.signMessageFail(manifest);
+                      reject(error);
+                    },
+                  },
+                  onClose: () => {
+                    tracking.signMessageUserRefused(manifest);
+                    reject(UserRefusedOnDevice());
+                  },
+                });
+              }),
+          );
+        });
+
+        serverRef.current.setHandler(
+          "transaction.sign",
+          async ({ account, transaction, options }) => {
+            const signedOperation = await signTransactionLogic(
+              { manifest, accounts, tracking },
+              account.id,
+              transaction,
+              (account, parentAccount, { liveTx }) => {
+                const tx = prepareSignTransaction(
+                  account,
+                  parentAccount,
+                  liveTx as Partial<Transaction & { gasLimit: BigNumber }>,
+                );
+
+                return new Promise((resolve, reject) => {
+                  navigation.navigate(NavigatorName.SignTransaction, {
+                    screen: ScreenName.SignTransactionSummary,
+                    params: {
+                      currentNavigation: ScreenName.SignTransactionSummary,
+                      nextNavigation: ScreenName.SignTransactionSelectDevice,
+                      transaction: tx as Transaction,
+                      accountId: account.id,
+                      parentId: parentAccount ? parentAccount.id : undefined,
+                      appName: options?.hwAppId,
+                      onSuccess: ({
+                        signedOperation,
+                        transactionSignError,
+                      }: {
+                        signedOperation: SignedOperation;
+                        transactionSignError: Error;
+                      }) => {
+                        if (transactionSignError) {
+                          tracking.signTransactionFail(manifest);
+                          reject(transactionSignError);
+                        } else {
+                          tracking.signTransactionSuccess(manifest);
+                          resolve(signedOperation);
+                          const n =
+                            navigation.getParent<
+                              StackNavigatorNavigation<BaseNavigatorStackParamList>
+                            >() || navigation;
+                          n.pop();
+                        }
+                      },
+                      onError: (error: Error) => {
+                        tracking.signTransactionFail(manifest);
+                        reject(error);
+                      },
+                    },
+                  });
+                });
+              },
+            );
+
+            return Buffer.from(signedOperation.signature);
+          },
+        );
+
+        serverRef.current.setHandler(
+          "transaction.signAndBroadcast",
+          async ({ account, transaction, options }) => {
+            // TODO try to avoid duplicated signTransactionLogic & UI code
+            const signedOperation = await signTransactionLogic(
+              { manifest, accounts, tracking },
+              account.id,
+              transaction,
+              (account, parentAccount, { liveTx }) => {
+                const tx = prepareSignTransaction(
+                  account,
+                  parentAccount,
+                  liveTx as Partial<Transaction & { gasLimit: BigNumber }>,
+                );
+
+                return new Promise((resolve, reject) => {
+                  navigation.navigate(NavigatorName.SignTransaction, {
+                    screen: ScreenName.SignTransactionSummary,
+                    params: {
+                      currentNavigation: ScreenName.SignTransactionSummary,
+                      nextNavigation: ScreenName.SignTransactionSelectDevice,
+                      transaction: tx as Transaction,
+                      accountId: account.id,
+                      parentId: parentAccount ? parentAccount.id : undefined,
+                      appName: options?.hwAppId,
+                      onSuccess: ({
+                        signedOperation,
+                        transactionSignError,
+                      }: {
+                        signedOperation: SignedOperation;
+                        transactionSignError: Error;
+                      }) => {
+                        if (transactionSignError) {
+                          tracking.signTransactionFail(manifest);
+                          reject(transactionSignError);
+                        } else {
+                          tracking.signTransactionSuccess(manifest);
+                          resolve(signedOperation);
+                          const n =
+                            navigation.getParent<
+                              StackNavigatorNavigation<BaseNavigatorStackParamList>
+                            >() || navigation;
+                          n.pop();
+                        }
+                      },
+                      onError: (error: Error) => {
+                        tracking.signTransactionFail(manifest);
+                        reject(error);
+                      },
+                    },
+                  });
+                });
+              },
+            );
+
+            return broadcastTransactionLogic(
+              { manifest, accounts, tracking },
+              account.id,
+              signedOperation,
+              async (account, parentAccount, signedOperation) => {
+                let optimisticOperation: Operation = signedOperation.operation;
+
+                if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+                  try {
+                    optimisticOperation = await broadcastSignedTx(
+                      account,
+                      parentAccount,
+                      signedOperation,
+                    );
+                    tracking.broadcastSuccess(manifest);
+                  } catch (error) {
+                    tracking.broadcastFail(manifest);
+                    throw error;
+                  }
+                }
+
+                return optimisticOperation.hash;
+              },
+            );
+          },
+        );
+
+        serverRef.current.setHandler(
+          "device.transport",
+          ({ appName, appVersionRange, devices }) => {
+            if (transport.current) {
+              return Promise.reject(new Error("Device already opened"));
             }
-          });
-        },
-      );
 
-      serverRef.current.setHandler("account.receive", ({ account }) => {
-        return receiveOnAccountLogic(
-          { manifest, accounts, tracking },
-          account.id,
-          (account, parentAccount, accountAddress) =>
-            new Promise((resolve, reject) => {
-              navigation.navigate(ScreenName.VerifyAccount, {
-                account,
-                parentId: parentAccount ? parentAccount.id : undefined,
-                onSuccess: (_account: AccountLike) => {
-                  tracking.receiveSuccess(manifest);
-                  resolve(accountAddress);
+            tracking.deviceTransportRequested(manifest);
+
+            return new Promise((resolve, reject) => {
+              navigation.navigate(ScreenName.DeviceConnect, {
+                appName,
+                onSuccess: ({ device, appAndVersion }) => {
+                  tracking.deviceTransportSuccess(manifest);
+                  if (!device) {
+                    reject(new Error("No device"));
+                    return;
+                  }
+
+                  if (devices && !devices.includes(device.modelId)) {
+                    reject(new Error("Device not in the devices list"));
+                    return;
+                  }
+
+                  if (
+                    appVersionRange &&
+                    appAndVersion &&
+                    semver.satisfies(appAndVersion.version, appVersionRange)
+                  ) {
+                    reject(
+                      new Error("App version doesn't satisfies the range"),
+                    );
+                    return;
+                  }
+
+                  // TODO handle appFirmwareRange & seeded params
+
+                  const { deviceId } = device;
+
+                  transport.current = openTransportAsSubject({
+                    deviceId,
+                  });
+
+                  // Clean the ref on completion
+                  transport.current.subscribe({
+                    complete: () => {
+                      transport.current = undefined;
+                    },
+                  });
+                  resolve("1");
+                },
+                onError: error => {
+                  tracking.deviceTransportFail(manifest);
+                  reject(error);
                 },
                 onClose: () => {
-                  tracking.receiveFail(manifest);
+                  tracking.deviceTransportFail(manifest);
                   reject(new Error("User cancelled"));
                 },
-                onError: (error: Error) => {
-                  tracking.receiveFail(manifest);
-                  // @TODO put in correct error text maybe
+              });
+            });
+          },
+        );
+
+        serverRef.current.setHandler("device.exchange", ({ apduHex }) => {
+          if (!transport.current) {
+            return Promise.reject(new Error("No device opened"));
+          }
+
+          tracking.deviceExchangeRequested(manifest);
+
+          const subject$ = transport.current;
+
+          return new Promise((resolve, reject) => {
+            subject$
+              .pipe(
+                first(e => e.type === "device-response" || e.type === "error"),
+              )
+              .subscribe({
+                next: e => {
+                  if (e.type === "device-response") {
+                    tracking.deviceExchangeSuccess(manifest);
+                    resolve(e.data);
+                    return;
+                  }
+                  if (e.type === "error") {
+                    tracking.deviceExchangeFail(manifest);
+                    reject(
+                      e.error || new Error("deviceExchange: unknown error"),
+                    );
+                  }
+                },
+                error: error => {
+                  tracking.deviceExchangeFail(manifest);
                   reject(error);
                 },
               });
-            }),
-        );
-      });
+            subject$.next({ type: "input-frame", apduHex });
+          });
+        });
 
-      serverRef.current.setHandler("message.sign", ({ account, message }) => {
-        return signMessageLogic(
-          { manifest, accounts, tracking },
-          account.id,
-          message.toString("hex"),
-          ({ id: accountId }, message) =>
-            new Promise((resolve, reject) => {
-              navigation.navigate(NavigatorName.SignMessage, {
-                screen: ScreenName.SignSummary,
-                params: {
-                  message,
-                  accountId,
-                  onConfirmationHandler: (message: string) => {
-                    tracking.signMessageSuccess(manifest);
-                    resolve(Buffer.from(message));
-                  },
-                  onFailHandler: (error: Error) => {
-                    tracking.signMessageFail(manifest);
-                    reject(error);
-                  },
-                },
-                onClose: () => {
-                  tracking.signMessageUserRefused(manifest);
-                  reject(UserRefusedOnDevice());
-                },
-              });
-            }),
-        );
-      });
-
-      serverRef.current.setHandler(
-        "transaction.sign",
-        async ({ account, transaction, options }) => {
-          const signedOperation = await signTransactionLogic(
-            { manifest, accounts, tracking },
-            account.id,
-            transaction,
-            (account, parentAccount, { liveTx }) => {
-              const tx = prepareSignTransaction(
-                account,
-                parentAccount,
-                liveTx as Partial<Transaction & { gasLimit: BigNumber }>,
-              );
-
-              return new Promise((resolve, reject) => {
-                navigation.navigate(NavigatorName.SignTransaction, {
-                  screen: ScreenName.SignTransactionSummary,
-                  params: {
-                    currentNavigation: ScreenName.SignTransactionSummary,
-                    nextNavigation: ScreenName.SignTransactionSelectDevice,
-                    transaction: tx as Transaction,
-                    accountId: account.id,
-                    parentId: parentAccount ? parentAccount.id : undefined,
-                    appName: options?.hwAppId,
-                    onSuccess: ({
-                      signedOperation,
-                      transactionSignError,
-                    }: {
-                      signedOperation: SignedOperation;
-                      transactionSignError: Error;
-                    }) => {
-                      if (transactionSignError) {
-                        tracking.signTransactionFail(manifest);
-                        reject(transactionSignError);
-                      } else {
-                        tracking.signTransactionSuccess(manifest);
-                        resolve(signedOperation);
-                        const n =
-                          navigation.getParent<
-                            StackNavigatorNavigation<BaseNavigatorStackParamList>
-                          >() || navigation;
-                        n.pop();
-                      }
-                    },
-                    onError: (error: Error) => {
-                      tracking.signTransactionFail(manifest);
-                      reject(error);
-                    },
-                  },
-                });
-              });
-            },
-          );
-
-          return Buffer.from(signedOperation.signature);
-        },
-      );
-
-      serverRef.current.setHandler(
-        "transaction.signAndBroadcast",
-        async ({ account, transaction, options }) => {
-          // TODO try to avoid duplicated signTransactionLogic & UI code
-          const signedOperation = await signTransactionLogic(
-            { manifest, accounts, tracking },
-            account.id,
-            transaction,
-            (account, parentAccount, { liveTx }) => {
-              const tx = prepareSignTransaction(
-                account,
-                parentAccount,
-                liveTx as Partial<Transaction & { gasLimit: BigNumber }>,
-              );
-
-              return new Promise((resolve, reject) => {
-                navigation.navigate(NavigatorName.SignTransaction, {
-                  screen: ScreenName.SignTransactionSummary,
-                  params: {
-                    currentNavigation: ScreenName.SignTransactionSummary,
-                    nextNavigation: ScreenName.SignTransactionSelectDevice,
-                    transaction: tx as Transaction,
-                    accountId: account.id,
-                    parentId: parentAccount ? parentAccount.id : undefined,
-                    appName: options?.hwAppId,
-                    onSuccess: ({
-                      signedOperation,
-                      transactionSignError,
-                    }: {
-                      signedOperation: SignedOperation;
-                      transactionSignError: Error;
-                    }) => {
-                      if (transactionSignError) {
-                        tracking.signTransactionFail(manifest);
-                        reject(transactionSignError);
-                      } else {
-                        tracking.signTransactionSuccess(manifest);
-                        resolve(signedOperation);
-                        const n =
-                          navigation.getParent<
-                            StackNavigatorNavigation<BaseNavigatorStackParamList>
-                          >() || navigation;
-                        n.pop();
-                      }
-                    },
-                    onError: (error: Error) => {
-                      tracking.signTransactionFail(manifest);
-                      reject(error);
-                    },
-                  },
-                });
-              });
-            },
-          );
-
-          return broadcastTransactionLogic(
-            { manifest, accounts, tracking },
-            account.id,
-            signedOperation,
-            async (account, parentAccount, signedOperation) => {
-              let optimisticOperation: Operation = signedOperation.operation;
-
-              if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
-                try {
-                  optimisticOperation = await broadcastSignedTx(
-                    account,
-                    parentAccount,
-                    signedOperation,
-                  );
-                  tracking.broadcastSuccess(manifest);
-                } catch (error) {
-                  tracking.broadcastFail(manifest);
-                  throw error;
-                }
-              }
-
-              return optimisticOperation.hash;
-            },
-          );
-        },
-      );
-
-      serverRef.current.setHandler(
-        "device.transport",
-        ({ appName, appVersionRange, devices }) => {
-          if (transport.current) {
-            return Promise.reject(new Error("Device already opened"));
+        serverRef.current.setHandler("device.close", ({ transportId }) => {
+          if (!transport.current) {
+            return Promise.reject(new Error("No device opened"));
           }
 
-          tracking.deviceTransportRequested(manifest);
+          tracking.deviceCloseRequested(manifest);
 
-          return new Promise((resolve, reject) => {
-            navigation.navigate(ScreenName.DeviceConnect, {
-              appName,
-              onSuccess: ({ device, appAndVersion }) => {
-                tracking.deviceTransportSuccess(manifest);
-                if (!device) {
-                  reject(new Error("No device"));
-                  return;
-                }
+          transport.current.complete();
 
-                if (devices && !devices.includes(device.modelId)) {
-                  reject(new Error("Device not in the devices list"));
-                  return;
-                }
+          tracking.deviceCloseSuccess(manifest);
 
-                if (
-                  appVersionRange &&
-                  appAndVersion &&
-                  semver.satisfies(appAndVersion.version, appVersionRange)
-                ) {
-                  reject(new Error("App version doesn't satisfies the range"));
-                  return;
-                }
-
-                // TODO handle appFirmwareRange & seeded params
-
-                const { deviceId } = device;
-
-                transport.current = openTransportAsSubject({
-                  deviceId,
-                });
-
-                // Clean the ref on completion
-                transport.current.subscribe({
-                  complete: () => {
-                    transport.current = undefined;
-                  },
-                });
-                resolve("1");
-              },
-              onError: error => {
-                tracking.deviceTransportFail(manifest);
-                reject(error);
-              },
-              onClose: () => {
-                tracking.deviceTransportFail(manifest);
-                reject(new Error("User cancelled"));
-              },
-            });
-          });
-        },
-      );
-
-      serverRef.current.setHandler("device.exchange", ({ apduHex }) => {
-        if (!transport.current) {
-          return Promise.reject(new Error("No device opened"));
-        }
-
-        tracking.deviceExchangeRequested(manifest);
-
-        const subject$ = transport.current;
-
-        return new Promise((resolve, reject) => {
-          subject$
-            .pipe(
-              first(e => e.type === "device-response" || e.type === "error"),
-            )
-            .subscribe({
-              next: e => {
-                if (e.type === "device-response") {
-                  tracking.deviceExchangeSuccess(manifest);
-                  resolve(e.data);
-                  return;
-                }
-                if (e.type === "error") {
-                  tracking.deviceExchangeFail(manifest);
-                  reject(e.error || new Error("deviceExchange: unknown error"));
-                }
-              },
-              error: error => {
-                tracking.deviceExchangeFail(manifest);
-                reject(error);
-              },
-            });
-          subject$.next({ type: "input-frame", apduHex });
+          return Promise.resolve(transportId);
         });
-      });
 
-      serverRef.current.setHandler("device.close", ({ transportId }) => {
-        if (!transport.current) {
-          return Promise.reject(new Error("No device opened"));
-        }
+        serverRef.current.setHandler("bitcoin.getXPub", ({ accountId }) => {
+          return bitcoinFamillyAccountGetXPubLogic(
+            { manifest, accounts, tracking },
+            accountId,
+          );
+        });
+      }
+    };
+    asyncFunction();
 
-        tracking.deviceCloseRequested(manifest);
-
-        transport.current.complete();
-
-        tracking.deviceCloseSuccess(manifest);
-
-        return Promise.resolve(transportId);
-      });
-
-      serverRef.current.setHandler("bitcoin.getXPub", ({ accountId }) => {
-        return bitcoinFamillyAccountGetXPubLogic(
-          { manifest, accounts, tracking },
-          accountId,
-        );
-      });
-    }
     // Only used to init the server, no update needed
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
