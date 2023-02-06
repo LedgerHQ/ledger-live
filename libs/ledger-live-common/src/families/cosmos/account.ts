@@ -3,14 +3,8 @@ import { BigNumber } from "bignumber.js";
 import { getCurrentCosmosPreloadData } from "./preloadedData";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
-import {
-  CosmosOperation,
-  CosmosExtraTxInfo,
-  CosmosPreloadData,
-  CosmosAccount,
-} from "./types";
+import { CosmosOperation, CosmosExtraTxInfo, CosmosAccount } from "./types";
 import { mapDelegations, mapUnbondings, mapRedelegations } from "./logic";
-import { getCurrentOsmosisPreloadData } from "../osmosis/preloadedData";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 
 function formatOperationSpecifics(
@@ -33,22 +27,12 @@ function formatOperationSpecifics(
     .join("");
 }
 
-function getCurrentCosmosFamilyPreloadData(
-  currencyName: string
-): CosmosPreloadData {
-  if (currencyName === "osmosis") {
-    return getCurrentOsmosisPreloadData();
-  } else {
-    return getCurrentCosmosPreloadData();
-  }
-}
-
 export function formatAccountSpecifics(account: CosmosAccount): string {
   const { cosmosResources } = account;
   invariant(cosmosResources, "cosmos account expected");
-  const currencyName = account.currency.name.toLowerCase();
-  const { validators } = getCurrentCosmosFamilyPreloadData(currencyName);
-
+  const { validators } = getCurrentCosmosPreloadData()[account.currency.id] ?? {
+    validators: [],
+  };
   const unit = getAccountUnit(account);
   const formatConfig = {
     disableRounding: true,

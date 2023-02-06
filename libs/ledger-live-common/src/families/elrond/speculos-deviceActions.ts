@@ -1,21 +1,25 @@
+import BigNumber from "bignumber.js";
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
 import { formatCurrencyUnit } from "../../currencies";
-import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
+import {
+  deviceActionFlow,
+  formatDeviceAmount,
+  SpeculosButton,
+} from "../../bot/specs";
 import { decodeTokenAccountId } from "../../account";
-import BigNumber from "bignumber.js";
 
 export const acceptMoveBalanceTransaction: DeviceAction<Transaction, any> =
   deviceActionFlow({
     steps: [
       {
         title: "Receiver",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => transaction.recipient,
       },
       {
         title: "Amount",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account, status }) => {
           return formatDeviceAmount(account.currency, status.amount, {
             postfixCode: true,
@@ -24,7 +28,7 @@ export const acceptMoveBalanceTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Fee",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account, transaction }) =>
           formatCurrencyUnit(
             account.unit,
@@ -38,16 +42,16 @@ export const acceptMoveBalanceTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Data",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Sign",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
         final: true,
       },
       {
         title: "Network",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: () => "Mainnet",
       },
     ],
@@ -58,12 +62,12 @@ export const acceptDelegateTransaction: DeviceAction<Transaction, any> =
     steps: [
       {
         title: "Receiver",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => transaction.recipient,
       },
       {
         title: "Amount",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account, transaction }) =>
           formatCurrencyUnit(account.unit, transaction.amount, {
             showCode: true,
@@ -73,7 +77,7 @@ export const acceptDelegateTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Fee",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account, transaction }) =>
           formatCurrencyUnit(
             account.unit,
@@ -87,17 +91,17 @@ export const acceptDelegateTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Data",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: () => "[Size:       8] delegate",
       },
       {
         title: "Sign",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
         final: true,
       },
       {
         title: "Network",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: () => "Mainnet",
       },
     ],
@@ -108,12 +112,12 @@ export const acceptUndelegateTransaction: DeviceAction<Transaction, any> =
     steps: [
       {
         title: "Receiver",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => transaction.recipient,
       },
       {
         title: "Amount",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account }) =>
           formatCurrencyUnit(account.unit, new BigNumber(0), {
             showCode: true,
@@ -123,7 +127,7 @@ export const acceptUndelegateTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Fee",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account, transaction }) =>
           formatCurrencyUnit(
             account.unit,
@@ -137,16 +141,16 @@ export const acceptUndelegateTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Data",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Sign",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
         final: true,
       },
       {
         title: "Network",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: () => "Mainnet",
       },
     ],
@@ -157,12 +161,12 @@ export const acceptWithdrawTransaction: DeviceAction<Transaction, any> =
     steps: [
       {
         title: "Receiver",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => transaction.recipient,
       },
       {
         title: "Amount",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account }) =>
           formatCurrencyUnit(account.unit, new BigNumber(0), {
             showCode: true,
@@ -172,7 +176,7 @@ export const acceptWithdrawTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Fee",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account, transaction }) =>
           formatCurrencyUnit(
             account.unit,
@@ -186,16 +190,16 @@ export const acceptWithdrawTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Data",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Sign",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
         final: true,
       },
       {
         title: "Network",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: () => "Mainnet",
       },
     ],
@@ -206,7 +210,7 @@ export const acceptEsdtTransferTransaction: DeviceAction<Transaction, any> =
     steps: [
       {
         title: "Token",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account, transaction }) => {
           const { subAccounts } = account;
           const { subAccountId } = transaction;
@@ -225,7 +229,7 @@ export const acceptEsdtTransferTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Value",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account, transaction }) => {
           const { subAccounts } = account;
           const { subAccountId } = transaction;
@@ -251,12 +255,12 @@ export const acceptEsdtTransferTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Receiver",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => transaction.recipient,
       },
       {
         title: "Fee",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account, transaction }) =>
           formatCurrencyUnit(
             account.unit,
@@ -270,16 +274,17 @@ export const acceptEsdtTransferTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Confirm transfer",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
         final: true,
       },
       {
         title: "Network",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: () => "Mainnet",
       },
     ],
   });
+
 export default {
   acceptMoveBalanceTransaction,
   acceptEsdtTransferTransaction,

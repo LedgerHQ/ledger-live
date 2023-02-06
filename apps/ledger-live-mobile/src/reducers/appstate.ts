@@ -10,6 +10,7 @@ import type {
   AppStatePayload,
   AppStateSetHasConnectedDevicePayload,
   AppStateSetModalLockPayload,
+  AppStateUpdateMainNavigatorVisibilityPayload,
   DangerouslyOverrideStatePayload,
 } from "../actions/types";
 import { AppStateActionTypes } from "../actions/types";
@@ -24,6 +25,7 @@ export const INITIAL_STATE: AppState = {
   modalLock: false,
   backgroundEvents: [],
   debugMenuVisible: false,
+  isMainNavigatorVisible: true,
 };
 
 const handlers: ReducerMap<AppState, AppStatePayload> = {
@@ -78,6 +80,13 @@ const handlers: ReducerMap<AppState, AppStatePayload> = {
     ...state,
     ...(action as Action<DangerouslyOverrideStatePayload>).payload.appstate,
   }),
+
+  [AppStateActionTypes.UPDATE_MAIN_NAVIGATOR_VISIBILITY]: (state, action) => ({
+    ...state,
+    isMainNavigatorVisible: (
+      action as Action<AppStateUpdateMainNavigatorVisibilityPayload>
+    ).payload.isMainNavigatorVisible,
+  }),
 };
 
 // Selectors
@@ -94,6 +103,9 @@ export const backgroundEventsSelector = (state: State) =>
 
 export const nextBackgroundEventSelector = (state: State) =>
   state.appstate.backgroundEvents[0];
+
+export const isMainNavigatorVisibleSelector = (state: State) =>
+  state.appstate.isMainNavigatorVisible;
 
 const globalNetworkDown = new NetworkDown();
 

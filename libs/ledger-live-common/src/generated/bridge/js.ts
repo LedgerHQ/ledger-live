@@ -11,7 +11,6 @@ import filecoin from "../../families/filecoin/bridge/js";
 import hedera from "../../families/hedera/bridge/js";
 import near from "../../families/near/bridge/js";
 import neo from "../../families/neo/bridge/js";
-import osmosis from "../../families/osmosis/bridge/js";
 import polkadot from "../../families/polkadot/bridge/js";
 import ripple from "../../families/ripple/bridge/js";
 import solana from "../../families/solana/bridge/js";
@@ -33,7 +32,6 @@ export default {
   hedera,
   near,
   neo,
-  osmosis,
   polkadot,
   ripple,
   solana,

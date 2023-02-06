@@ -294,11 +294,7 @@ export const listApps = (
         sortedCryptoCurrencies,
       ] = await Promise.all([
         installedP,
-        ManagerAPI.listApps().then((apps) =>
-          apps.map((app) => {
-            return polyfillApplication(app, provider);
-          })
-        ),
+        ManagerAPI.listApps().then((apps) => apps.map(polyfillApplication)),
         applicationsByDeviceP,
         firmwareP,
         currenciesByMarketcap(

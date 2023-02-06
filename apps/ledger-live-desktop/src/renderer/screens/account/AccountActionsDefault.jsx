@@ -16,6 +16,7 @@ type Props = {
   event?: string,
   eventProperties?: Object,
   disabled?: boolean,
+  accountActionsTestId?: string,
 };
 
 export const ActionDefault = ({
@@ -25,6 +26,7 @@ export const ActionDefault = ({
   event,
   eventProperties,
   disabled,
+  accountActionsTestId,
 }: Props) => (
   <Button
     variant="color"
@@ -32,6 +34,7 @@ export const ActionDefault = ({
     event={event}
     eventProperties={eventProperties}
     disabled={disabled}
+    data-test-id={accountActionsTestId}
   >
     <Flex flexDirection="row" alignItems="center">
       {iconComponent ? <Flex mr="8px">{iconComponent}</Flex> : null} {labelComponent}
@@ -61,6 +64,7 @@ export const SwapActionDefault = ({ onClick }: { onClick: () => void }) => {
       onClick={onClick}
       iconComponent={<IconSwap size={14} />}
       labelComponent={<Trans i18nKey="sidebar.swap" />}
+      accountActionsTestId="swap-account-action-button"
     />
   );
 };

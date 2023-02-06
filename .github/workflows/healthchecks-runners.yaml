@@ -252,7 +252,7 @@ jobs:
           ref: main
           token: ${{ secrets.GH_PAT }}
   checks-macos:
-    runs-on: [ledger-live, macos]
+    runs-on: [m1, ARM64]
     outputs:
       check-node: ${{ steps.check-node.outputs.result }}
       check-pnpm: ${{ steps.check-pnpm.outputs.result }}

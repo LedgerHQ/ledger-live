@@ -592,6 +592,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     displayStatusCenter: (action as Action<SettingsSetStatusCenterPayload>)
       .payload.displayStatusCenter,
   }),
+
   [SettingsActionTypes.SET_OVERRIDDEN_FEATURE_FLAG]: (state, action) => {
     const {
       payload: { id, value },
