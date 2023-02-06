@@ -2,6 +2,8 @@ import { Server } from "ws";
 import path from "path";
 import fs from "fs";
 import { NavigatorName } from "../../src/const";
+import { UpdateDeviceActionStateMessage } from "./deviceActionMocks";
+import { MessageData } from "./client";
 
 let wss: Server;
 
@@ -60,7 +62,8 @@ export function addDevices(
   deviceNames.forEach((name, i) => {
     postMessage({
       type: "add",
-      payload: { id: `mock_${i + 1}`, name, serviceUUID: `uuid_${i + 1}` },
+      payload: { id: `mock_${i + 1}`, name, serviceUUID: "13d63400-2c97-0004-0000-4c6564676572" },
+      // Nano X UUID
     });
   });
   return deviceNames;
@@ -74,7 +77,19 @@ export function setInstalledApps(apps: string[] = []) {
 }
 
 export function open() {
-  postMessage({ type: "open", payload: null });
+  postMessage({ type: "open" });
+}
+
+export function mockDeviceAction(
+  deviceActionToMock: UpdateDeviceActionStateMessage["deviceAction"],
+) {
+  postMessage({ type: "mockDeviceAction", payload: { deviceActionToMock } });
+}
+
+export function updateDeviceActionState(
+  payload: UpdateDeviceActionStateMessage,
+) {
+  postMessage({ type: "newDeviceActionSate", payload });
 }
 
 function onMessage(messageStr: string) {
@@ -93,10 +108,10 @@ function log(message: string) {
 }
 
 function acceptTerms() {
-  postMessage({ type: "acceptTerms", payload: null });
+  postMessage({ type: "acceptTerms" });
 }
 
-function postMessage(message: { type: string; payload: unknown }) {
+function postMessage(message: MessageData) {
   for (const ws of wss.clients.values()) {
     ws.send(JSON.stringify(message));
   }

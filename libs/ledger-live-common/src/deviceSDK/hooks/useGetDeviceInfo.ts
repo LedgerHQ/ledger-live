@@ -10,9 +10,18 @@ export type UseGetDeviceInfoArgs = {
   deviceId?: string;
 };
 
+// to be used in an E2E test context
+let mockedGetDeviceInfoAction: typeof defaultGetDeviceInfoAction | undefined;
+
+export function mockGetDeviceInfoAction(
+  mockedAction: typeof defaultGetDeviceInfoAction
+) {
+  mockedGetDeviceInfoAction = mockedAction;
+}
+
 export const useGetDeviceInfo = ({
   deviceId,
-  getDeviceInfoAction = defaultGetDeviceInfoAction,
+  getDeviceInfoAction = mockedGetDeviceInfoAction ?? defaultGetDeviceInfoAction,
 }: UseGetDeviceInfoArgs): GetDeviceInfoActionState => {
   const [state, setState] = useState<GetDeviceInfoActionState>(initialState);
 

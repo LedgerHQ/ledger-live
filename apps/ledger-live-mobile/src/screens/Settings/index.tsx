@@ -52,7 +52,7 @@ export default function Settings({
   }, [dispatch]);
 
   return (
-    <SettingsNavigationScrollView>
+    <SettingsNavigationScrollView testID="SettingsScrollView">
       <TrackScreen category="Settings" />
       <SettingsCard
         title={t("settings.display.title")}

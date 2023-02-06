@@ -20,7 +20,7 @@ import {
   GetLatestFirmwareTaskErrorEvent,
 } from "../tasks/getLatestFirmware";
 
-export type updateFirmwareActionArgs = {
+export type UpdateFirmwareActionArgs = {
   deviceId: DeviceId;
 };
 
@@ -50,7 +50,7 @@ export const initialState: UpdateFirmwareActionState = {
 
 export function updateFirmwareAction({
   deviceId,
-}: updateFirmwareActionArgs): Observable<UpdateFirmwareActionState> {
+}: UpdateFirmwareActionArgs): Observable<UpdateFirmwareActionState> {
   //let oldDeviceInfo: DeviceInfo | undefined;
 
   return getDeviceInfoTask({ deviceId })
