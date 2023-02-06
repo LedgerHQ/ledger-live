@@ -52,9 +52,6 @@ export const avalancheSpeculosDeviceAction: DeviceAction<Transaction, any> =
       {
         title: "Fee(GWEI)",
         button: SpeculosButton.RIGHT,
-        expectedValue: ({ status }) => {
-          return status.estimatedFees.toString();
-        },
       },
       {
         title: "To",
