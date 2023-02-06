@@ -26,7 +26,7 @@ import {
 import { AccountLike } from "@ledgerhq/live-common/types/index";
 import type { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";
 import type { CardanoDelegation, Transaction } from "@ledgerhq/live-common/families/cardano/types";
-import { LEDGER_POOL_ADDRESSES } from "@ledgerhq/live-common/families/cardano/utils";
+import { LEDGER_POOL_IDS } from "@ledgerhq/live-common/families/cardano/utils";
 import { fetchPoolDetails } from "@ledgerhq/live-common/families/cardano/api/getPools";
 import Button from "../../../components/Button";
 import Skeleton from "../../../components/Skeleton";
@@ -69,12 +69,12 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const [ledgerPools, setLedgerPools] = useState([]);
 
   useEffect(()=>{
-    if (LEDGER_POOL_ADDRESSES.includes(currentDelegation?.poolId)) {
+    if (LEDGER_POOL_IDS.includes(currentDelegation?.poolId)) {
       setIsFetchingPoolDetails(false);
       return;
     }
 
-    fetchPoolDetails(account.currency, LEDGER_POOL_ADDRESSES).then((apiRes:any)=> {
+    fetchPoolDetails(account.currency, LEDGER_POOL_IDS).then((apiRes:any)=> {
       setLedgerPools(apiRes.pools);
     }).finally(() => {
       setIsFetchingPoolDetails(false);
@@ -386,9 +386,9 @@ function SummaryWords({
                 ]}
               >
                 <PoolImage
-                  size={ LEDGER_POOL_ADDRESSES.includes(currentDelegation?.poolId) ? 40: 50}
+                  size={ LEDGER_POOL_IDS.includes(currentDelegation?.poolId) ? 40: 50}
                   isLedger={
-                    LEDGER_POOL_ADDRESSES.includes(currentDelegation?.poolId)
+                    LEDGER_POOL_IDS.includes(currentDelegation?.poolId)
                   }
                   name={
                     currentDelegation?.name ?? currentDelegation?.poolId
@@ -447,9 +447,9 @@ function SummaryWords({
                       {
                         chosenPool ?
                         <PoolImage
-                          size={LEDGER_POOL_ADDRESSES.includes(chosenPool?.poolId)? 40: 50}
+                          size={LEDGER_POOL_IDS.includes(chosenPool?.poolId)? 40: 50}
                           isLedger={
-                            LEDGER_POOL_ADDRESSES.includes(chosenPool?.poolId)
+                            LEDGER_POOL_IDS.includes(chosenPool?.poolId)
                           }
                           name={
                             chosenPool?.name ?? chosenPool?.poolId

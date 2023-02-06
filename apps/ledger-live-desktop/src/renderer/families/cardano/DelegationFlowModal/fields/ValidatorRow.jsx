@@ -35,10 +35,9 @@ function CardanoPoolRow({ pool, active, onClick, unit, currency, disabled }: Pro
   const locale = useSelector(localeSelector);
 
   const explorerView = getDefaultExplorerView(currency);
-  // TODO: remove hard coded explorer view
   const onExternalLink = useCallback(
-    (address: string) => {
-      const srURL = explorerView && getStakePoolExplorer(explorerView, address);
+    (poolId: string) => {
+      const srURL = explorerView && getStakePoolExplorer(explorerView, poolId);
       if (srURL) openURL(srURL);
     },
     [explorerView],

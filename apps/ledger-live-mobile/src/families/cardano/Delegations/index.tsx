@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import type { Account } from "@ledgerhq/live-common/types/index";
 import type { CardanoDelegation } from "@ledgerhq/live-common/families/cardano/types";
-import { LEDGER_POOL_ADDRESSES } from "@ledgerhq/live-common/families/cardano/utils";
+import { LEDGER_POOL_IDS } from "@ledgerhq/live-common/families/cardano/utils";
 
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import AccountSectionLabel from "../../../components/AccountSectionLabel";
@@ -244,7 +244,7 @@ function Delegations({ account }: Props) {
         account={account}
         ValidatorImage={({ size }) => (
           <PoolImage
-            isLedger={LEDGER_POOL_ADDRESSES.includes(delegation?.poolId)}
+            isLedger={LEDGER_POOL_IDS.includes(delegation?.poolId)}
             name={
               delegation?.name ??
               delegation?.poolId ??
