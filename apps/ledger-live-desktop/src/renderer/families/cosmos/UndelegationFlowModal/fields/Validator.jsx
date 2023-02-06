@@ -25,11 +25,9 @@ export default function ValidatorField({ account, transaction, onChange }: Props
     account,
     transaction,
   );
-  const currencyName = account.currency.name.toLowerCase();
-
   return (
     <Box mb={4}>
-      <Label>{t(`${currencyName}.undelegation.flow.steps.amount.fields.validator`)}</Label>
+      <Label>{t("cosmos.undelegation.flow.steps.amount.fields.validator")}</Label>
       <Select
         value={value}
         options={options}

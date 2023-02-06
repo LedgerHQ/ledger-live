@@ -2958,7 +2958,7 @@
             "currentDelegation": "Current delegation",
             "newDelegation": "New delegation",
             "chooseValidator": "Choose a validator",
-            "warning": "You will have to wait <0>{{numberOfDays}}</0> to redelegate from the new validator, if you change your mind again",
+            "warning": "You will have to wait <0>{{numberOfDays}} days</0> to redelegate from the new validator, if you change your mind again",
             "amountLabel": "Amount to redelegate"
           },
           "device": {
@@ -2985,8 +2985,8 @@
         "steps": {
           "amount": {
             "title": "Amount",
-            "subtitle": "The undelegation process takes <0>{{numberOfDays}}</0> to finalize.",
-            "warning": "Rewards will be immediately cashed in. The undelegated amount will be back in the available balance after the <0>21-day timelock</0>.",
+            "subtitle": "The undelegation process takes <0>{{numberOfDays}} days</0> to finalize.",
+            "warning": "Rewards will be immediately cashed in. The undelegated amount will be back in the available balance after the <0>{{numberOfDays}}-day timelock</0>.",
             "fields": {
               "validator": "Validator",
               "amount": "Amount to undelegate"

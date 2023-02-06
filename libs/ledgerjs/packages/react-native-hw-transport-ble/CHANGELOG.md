@@ -1,5 +1,23 @@
 # @ledgerhq/react-native-hw-transport-ble
 
+## 6.28.2
+
+### Patch Changes
+
+- [#2376](https://github.com/LedgerHQ/ledger-live/pull/2376) [`de3b0da314`](https://github.com/LedgerHQ/ledger-live/commit/de3b0da31428487e025548abcfa26c0d4dac33f1) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Fix: incorrect usage of bleManager instance inside BleTransport
+
+- Updated dependencies [[`c2779b1cab`](https://github.com/LedgerHQ/ledger-live/commit/c2779b1cab18a1d5747ca955f5ceee86db920f57)]:
+  - @ledgerhq/hw-transport@6.28.0
+
+## 6.28.2-next.0
+
+### Patch Changes
+
+- [#2376](https://github.com/LedgerHQ/ledger-live/pull/2376) [`de3b0da314`](https://github.com/LedgerHQ/ledger-live/commit/de3b0da31428487e025548abcfa26c0d4dac33f1) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Fix: incorrect usage of bleManager instance inside BleTransport
+
+- Updated dependencies [[`c2779b1cab`](https://github.com/LedgerHQ/ledger-live/commit/c2779b1cab18a1d5747ca955f5ceee86db920f57)]:
+  - @ledgerhq/hw-transport@6.28.0-next.0
+
 ## 6.28.1
 
 ### Patch Changes

@@ -1,5 +1,21 @@
 # @ledgerhq/hw-transport-node-hid-singleton
 
+## 6.28.8
+
+### Patch Changes
+
+- Updated dependencies [[`c2779b1cab`](https://github.com/LedgerHQ/ledger-live/commit/c2779b1cab18a1d5747ca955f5ceee86db920f57)]:
+  - @ledgerhq/hw-transport@6.28.0
+  - @ledgerhq/hw-transport-node-hid-noevents@6.27.11
+
+## 6.28.8-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`c2779b1cab`](https://github.com/LedgerHQ/ledger-live/commit/c2779b1cab18a1d5747ca955f5ceee86db920f57)]:
+  - @ledgerhq/hw-transport@6.28.0-next.0
+  - @ledgerhq/hw-transport-node-hid-noevents@6.27.11-next.0
+
 ## 6.28.7
 
 ### Patch Changes
