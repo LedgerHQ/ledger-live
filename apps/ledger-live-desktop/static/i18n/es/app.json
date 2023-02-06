@@ -5488,7 +5488,7 @@
       "description" : "La firma debe realizarse dentro de un período de 30 segundos. Inténtalo de nuevo."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "La energía es menor que la requerida. Es posible que pagues hasta 20 TRX en tarifas."
+      "title" : "La energía es menor que la requerida. Es posible que pagues hasta 30 TRX en tarifas."
     },
     "PairingFailed" : {
       "title" : "Emparejamiento fallido",
