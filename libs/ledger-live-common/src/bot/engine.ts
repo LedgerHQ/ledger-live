@@ -142,8 +142,7 @@ export async function runWithAppSpec<T extends Transaction>(
 
   // staticly assess if testDestination is necessary
   const mutationThatProducedDestinationsWithoutTests: MutationSpec<any>[] = [];
-  const mutationWithDestinationTestsWithoutDestination: MutationSpec<any>[] =
-    [];
+  const mutationWithDestinationTestsWithoutDestination: MutationSpec<any>[] = [];
 
   try {
     device = await createSpeculosDevice(deviceParams);

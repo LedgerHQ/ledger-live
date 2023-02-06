@@ -65,13 +65,15 @@ export default class Zilliqa {
     data: Buffer = Buffer.alloc(0),
     statusList: Array<number> = [SW_OK]
   ): Promise<Buffer> {
+    /*
     const input = Buffer.concat([
       Buffer.from([cla, ins, p1, p2]),
       Buffer.from([data.length]),
       data,
     ]);
 
-    console.log(`=> ${input.toString("hex")}`);
+    console .log(`=> ${input.toString("hex")}`);
+    */
 
     const result = await this.transport.send(
       cla,
@@ -82,7 +84,7 @@ export default class Zilliqa {
       statusList
     );
 
-    console.log(`<= ${result.toString("hex")}`);
+    // console .log(`<= ${result.toString("hex")}`);
     return result;
   }
   async getAppConfigurationInternal(): Promise<{
@@ -107,8 +109,7 @@ export default class Zilliqa {
     };
   }
 
-  /*
-  getAppConfiguration(): Promise<{
+  async getAppConfiguration(): Promise<{
     version: string;
     major: number;
     minor: number;
@@ -117,7 +118,6 @@ export default class Zilliqa {
   }> {
     return this.getAppConfigurationInternal();
   }
-  */
 
   async getPathParametersFromPath(
     path: string
@@ -138,19 +138,14 @@ export default class Zilliqa {
 
     const [purposeStr, coinStr, accountStr, changeStr, indexStr] = pathParts;
     if (purposeStr !== "44'") {
-      console.error("Exit 1");
       throw Error("Only wallets with hardened purpose 44 are supported.");
     }
 
     if (coinStr !== "313'") {
-      console.error("Exit 2");
-
       throw Error("Only coin 313' is supported.");
     }
 
     if (!accountStr.endsWith("'")) {
-      console.error("Exit 3");
-
       throw Error(
         "Wallet does not allow softened accounts. Please harden by adding '."
       );

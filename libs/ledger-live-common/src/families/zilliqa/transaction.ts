@@ -11,12 +11,13 @@ import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import { BN } from "@zilliqa-js/util";
 
-export const formatTransaction = (t: Transaction, account: Account): string => `
-SEND ${formatCurrencyUnit(getAccountUnit(account), t.amount, {
-  showCode: true,
-  disableRounding: true,
-})}
+export const formatTransaction = (t: Transaction, account: Account): string => {
+  return `SEND ${formatCurrencyUnit(getAccountUnit(account), t.amount, {
+    showCode: true,
+    disableRounding: true,
+  })}
 TO ${t.recipient}`;
+};
 
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);

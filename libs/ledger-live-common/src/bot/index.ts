@@ -48,8 +48,14 @@ const usd = getFiatCurrencyByTicker("USD");
 function convertMutation<T extends Transaction>(
   report: MutationReport<T>
 ): MinimalSerializedMutationReport {
-  const { appCandidate, mutation, account, destination, error, operation } =
-    report;
+  const {
+    appCandidate,
+    mutation,
+    account,
+    destination,
+    error,
+    operation,
+  } = report;
   return {
     appCandidate,
     mutationName: mutation?.name,
@@ -189,6 +195,7 @@ export async function bot({
   const portfolio = countervaluesState
     ? getPortfolio(allAccountsAfter, period, countervaluesState, usd)
     : null;
+
   const totalUSD = portfolio
     ? formatCurrencyUnit(
         usd.units[0],
