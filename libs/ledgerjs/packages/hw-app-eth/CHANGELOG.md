@@ -1,5 +1,31 @@
 # @ledgerhq/hw-app-eth
 
+## 6.31.0
+
+### Minor Changes
+
+- [#2405](https://github.com/LedgerHQ/ledger-live/pull/2405) [`7eb8b1a39b`](https://github.com/LedgerHQ/ledger-live/commit/7eb8b1a39b36a5b336d95f89a92edf7ee22bcd26) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add resilience to malformed dynamic CAL
+
+### Patch Changes
+
+- Updated dependencies [[`3ca4c9763d`](https://github.com/LedgerHQ/ledger-live/commit/3ca4c9763dd7c7ab7891efbd3cb6785cda2d038f), [`0e7ff249f7`](https://github.com/LedgerHQ/ledger-live/commit/0e7ff249f7e1160ff3888e52767ef91151efbedd), [`dcfeef0a2c`](https://github.com/LedgerHQ/ledger-live/commit/dcfeef0a2c0f8c3d344d2943b3d21654f15ae184), [`c2779b1cab`](https://github.com/LedgerHQ/ledger-live/commit/c2779b1cab18a1d5747ca955f5ceee86db920f57)]:
+  - @ledgerhq/cryptoassets@8.0.0
+  - @ledgerhq/hw-transport@6.28.0
+  - @ledgerhq/hw-transport-mocker@6.27.11
+
+## 6.31.0-next.0
+
+### Minor Changes
+
+- [#2405](https://github.com/LedgerHQ/ledger-live/pull/2405) [`7eb8b1a39b`](https://github.com/LedgerHQ/ledger-live/commit/7eb8b1a39b36a5b336d95f89a92edf7ee22bcd26) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add resilience to malformed dynamic CAL
+
+### Patch Changes
+
+- Updated dependencies [[`3ca4c9763d`](https://github.com/LedgerHQ/ledger-live/commit/3ca4c9763dd7c7ab7891efbd3cb6785cda2d038f), [`0e7ff249f7`](https://github.com/LedgerHQ/ledger-live/commit/0e7ff249f7e1160ff3888e52767ef91151efbedd), [`dcfeef0a2c`](https://github.com/LedgerHQ/ledger-live/commit/dcfeef0a2c0f8c3d344d2943b3d21654f15ae184), [`c2779b1cab`](https://github.com/LedgerHQ/ledger-live/commit/c2779b1cab18a1d5747ca955f5ceee86db920f57)]:
+  - @ledgerhq/cryptoassets@8.0.0-next.0
+  - @ledgerhq/hw-transport@6.28.0-next.0
+  - @ledgerhq/hw-transport-mocker@6.27.11-next.0
+
 ## 6.30.5
 
 ### Patch Changes

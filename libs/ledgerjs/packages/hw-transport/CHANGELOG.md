@@ -1,5 +1,17 @@
 # @ledgerhq/hw-transport
 
+## 6.28.0
+
+### Minor Changes
+
+- [#2342](https://github.com/LedgerHQ/ledger-live/pull/2342) [`c2779b1cab`](https://github.com/LedgerHQ/ledger-live/commit/c2779b1cab18a1d5747ca955f5ceee86db920f57) Thanks [@gre](https://github.com/gre)! - Add Transport#exchangeBulk method to have a native batched mecanism to send a lot of APDU at once & in order to do it performantly.
+
+## 6.28.0-next.0
+
+### Minor Changes
+
+- [#2342](https://github.com/LedgerHQ/ledger-live/pull/2342) [`c2779b1cab`](https://github.com/LedgerHQ/ledger-live/commit/c2779b1cab18a1d5747ca955f5ceee86db920f57) Thanks [@gre](https://github.com/gre)! - Add Transport#exchangeBulk method to have a native batched mecanism to send a lot of APDU at once & in order to do it performantly.
+
 ## 6.27.10
 
 ### Patch Changes
