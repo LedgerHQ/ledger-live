@@ -30,6 +30,8 @@ export type Props = Merge<
  * Note: avoid conditionally render this component. Always render it and use isRequestingToBeOpened to control its visibility.
  * Note: to avoid a UI glitch on Android, do not put this drawer inside NavigationScrollView (and probably any other ScrollView)
  *
+ * Dev: internal functions can be wrapped in useCallback once BottomDrawer and BaseModal are memoized components
+ *
  * @param isRequestingToBeOpened: to use in place of isOpen. Setting to true will add the drawer to the queue.
  *   Setting to false will remove it from the queue.
  * @param onClose: when the user closes the drawer (by clicking on the backdrop or the close button) + when the drawer is hidden
@@ -57,6 +59,7 @@ const QueuedDrawer = ({
   const [isDisplayed, setIsDisplayed] = useState(false);
 
   // Makes sure that the drawer system is cleaned when navigating to a new (or back to a) screen
+  // According to reactnavigation documentation, a useCallback should wrap the function passed to useFocusEffect
   useFocusEffect(
     useCallback(() => {
       return () => {
@@ -66,17 +69,17 @@ const QueuedDrawer = ({
     }, []),
   );
 
-  const handleClose = useCallback(() => {
-    // Blocks the closing of the modal
+  const handleClose = () => {
+    // Blocks the drawer from closing
     if (modalLock) return;
 
     onClose && onClose();
-  }, [modalLock, onClose]);
+  };
 
-  const handleModalHide = useCallback(() => {
+  const handleModalHide = () => {
     onModalHide && onModalHide();
     notifyNextDrawer();
-  }, [onModalHide]);
+  };
 
   useEffect(() => {
     let id: number | undefined;
