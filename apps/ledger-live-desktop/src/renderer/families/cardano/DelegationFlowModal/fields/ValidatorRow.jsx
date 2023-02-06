@@ -1,6 +1,6 @@
 // @flow
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView, getStakePoolExplorer } from "@ledgerhq/live-common/explorers";
 import type { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import { useSelector } from "react-redux";
 
@@ -38,8 +38,7 @@ function CardanoPoolRow({ pool, active, onClick, unit, currency, disabled }: Pro
   // TODO: remove hard coded explorer view
   const onExternalLink = useCallback(
     (address: string) => {
-      // const srURL = explorerView && getAddressExplorer(explorerView, address);
-      const srURL = "https://preprod.cardanoscan.io/pool/" + address;
+      const srURL = explorerView && getStakePoolExplorer(explorerView, address);
       if (srURL) openURL(srURL);
     },
     [explorerView],
