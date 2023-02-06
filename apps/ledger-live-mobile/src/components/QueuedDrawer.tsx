@@ -55,7 +55,6 @@ const QueuedDrawer = ({
   const modalLock = useSelector(isModalLockedSelector);
   // Actual state that choses if the drawer is displayed or not
   const [isDisplayed, setIsDisplayed] = useState(false);
-  const [onCloseAlreadyCalled, setOnCloseAlreadyCalled] = useState(false);
 
   // Makes sure that the drawer system is cleaned when navigating to a new (or back to a) screen
   useFocusEffect(
@@ -71,13 +70,8 @@ const QueuedDrawer = ({
     // Blocks the closing of the modal
     if (modalLock) return;
 
-    if (onCloseAlreadyCalled) {
-      setOnCloseAlreadyCalled(false);
-      return;
-    }
-    setOnCloseAlreadyCalled(true);
     onClose && onClose();
-  }, [modalLock, onClose, onCloseAlreadyCalled]);
+  }, [modalLock, onClose]);
 
   const handleModalHide = useCallback(() => {
     onModalHide && onModalHide();
