@@ -12,7 +12,7 @@ const ACTION_ID = "regen_screenshots";
  * @param app The Probot application.
  */
 export function generateScreenshots(app: Probot) {
-  function triggerWorkflow({
+  async function triggerWorkflow({
     context,
     number,
     login,
@@ -23,25 +23,22 @@ export function generateScreenshots(app: Probot) {
     login: string;
     commentId?: number;
   }) {
-    // ⚠️ TEMP: Use the ref
-    // const { payload } = context;
-    // let ref;
-    // if ("check_run" in payload) {
-    //   ref = payload.check_run.pull_requests[0]?.head.ref;
-    // } else {
-    //   const { data: prData } = await context.octokit.rest.pulls.get({
-    //     ...context.repo(),
-    //     pull_number: payload.issue.number,
-    //   });
-    //   ref = prData.head.ref;
-    // }
+    const { payload } = context;
+    let ref;
+    if ("check_run" in payload) {
+      ref = payload.check_run.pull_requests[0]?.head.ref;
+    } else {
+      const { data: prData } = await context.octokit.rest.pulls.get({
+        ...context.repo(),
+        pull_number: payload.issue.number,
+      });
+      ref = prData.head.ref;
+    }
 
     return context.octokit.actions.createWorkflowDispatch({
       ...context.repo(),
       workflow_id: "generate-screenshots.yml",
-      // ⚠️ TEMP: Use the ref
-      // ref,
-      ref: "support/granular-ci",
+      ref,
       inputs: {
         number,
         login,

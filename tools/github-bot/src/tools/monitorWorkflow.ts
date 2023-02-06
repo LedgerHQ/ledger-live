@@ -27,13 +27,6 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
   app.on("workflow_run.requested", async (context) => {
     const { payload, octokit } = context;
 
-    /* ⚠️ TEMP */
-    if (
-      payload.workflow_run.pull_requests[0]?.head.ref !== "support/granular-ci"
-    )
-      return;
-    /* ⚠️ /TEMP */
-
     const { owner, repo } = context.repo();
     const workflowFile = extractWorkflowFile(payload);
     const { data: checkSuite } = await octokit.checks.getSuite({
@@ -76,13 +69,6 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
    */
   app.on("workflow_run.completed", async (context) => {
     const { payload, octokit } = context;
-
-    /* ⚠️ TEMP */
-    if (
-      payload.workflow_run.pull_requests[0]?.head.ref !== "support/granular-ci"
-    )
-      return;
-    /* ⚠️ /TEMP */
 
     const { owner, repo } = context.repo();
     const workflowFile = extractWorkflowFile(payload);
@@ -211,13 +197,6 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
     // @ts-expect-error Expected because probot does not declare this webhook event even though it exists.
     if (context.payload.action !== "in_progress") return;
 
-    /* ⚠️ TEMP */
-    if (
-      payload.workflow_run.pull_requests[0]?.head.ref !== "support/granular-ci"
-    )
-      return;
-    /* ⚠️ /TEMP */
-
     const { owner, repo } = context.repo();
     const workflowFile = extractWorkflowFile(payload);
     const { data: checkSuite } = await octokit.checks.getSuite({
@@ -260,11 +239,6 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
    */
   app.on(["check_run.rerequested"], async (context) => {
     const { payload, octokit } = context;
-
-    /* ⚠️ TEMP */
-    if (payload.check_run.pull_requests.every((pr) => pr.number !== 1991))
-      return;
-    /* ⚠️ /TEMP */
 
     const { owner, repo } = context.repo();
 
