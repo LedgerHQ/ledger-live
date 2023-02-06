@@ -7,8 +7,9 @@ import { useSelector } from "react-redux";
 import { isModalLockedSelector } from "../reducers/appstate";
 import { Merge } from "../types/helpers";
 
+// Purposefully removes isOpen prop so consumers can't use it directly
 export type Props = Merge<
-  BaseModalProps,
+  Omit<BaseModalProps, "isOpen">,
   {
     isRequestingToBeOpened: boolean;
     style?: StyleProp<ViewStyle>;
