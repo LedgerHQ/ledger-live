@@ -49,14 +49,14 @@ export default {
       ...defaultConfig,
       testPathIgnorePatterns: [
         ...testPathIgnorePatterns,
-        "(/__tests__/.*|(\\.|/)react\\.(test|spec))\\.[jt]sx?$",
+        "(/__tests__/.*|(\\.|/)react\\.test|spec)\\.tsx",
       ],
     },
     {
       ...defaultConfig,
       displayName: "dom",
       testEnvironment: "jsdom",
-      testRegex: "(/__tests__/.*|(\\.|/)react\\.test|spec)\\.tsx?$",
+      testRegex: "(/__tests__/.*|(\\.|/)react\\.test|spec)\\.tsx",
     },
   ],
 };
