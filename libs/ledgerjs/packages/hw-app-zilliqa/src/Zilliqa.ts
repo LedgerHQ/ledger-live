@@ -72,7 +72,7 @@ export default class Zilliqa {
       data,
     ]);
 
-    console .log(`=> ${input.toString("hex")}`);
+    console log(`=> ${input.toString("hex")}`);
     */
 
     const result = await this.transport.send(
@@ -84,7 +84,7 @@ export default class Zilliqa {
       statusList
     );
 
-    // console .log(`<= ${result.toString("hex")}`);
+    // console log(`<= ${result.toString("hex")}`);
     return result;
   }
   async getAppConfigurationInternal(): Promise<{
@@ -95,7 +95,7 @@ export default class Zilliqa {
     protocolFeatures: number;
   }> {
     const response = await this.send(CLA, INS_GET_VERSION, 0, 0);
-    return {
+    const ret = {
       version: "" + response[0] + "." + response[1] + "." + response[2],
       major: response[0],
       minor: response[1],
@@ -107,6 +107,8 @@ export default class Zilliqa {
           ? FEATURE_NO_DISPLAY
           : 0,
     };
+
+    return ret;
   }
 
   async getAppConfiguration(): Promise<{
