@@ -44,6 +44,7 @@ import { NavigatorName } from "../const";
 import { previousRouteNameRef, currentRouteNameRef } from "./screenRefs";
 import { AnonymousIpPlugin } from "./AnonymousIpPlugin";
 import { Maybe } from "../types/helpers";
+import { appStartupTime } from "../StartupTimeMarker";
 
 let sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${
@@ -123,6 +124,7 @@ const extraProperties = async (store: AppStore) => {
     notificationsBlacklisted,
     userId: user?.id,
     blockchainsWithNftsOwned,
+    appRenderCompleteTimeMilliseconds: appStartupTime,
   };
 };
 
