@@ -1,3 +1,13 @@
+# 2.53.1
+
+### 🌷 Improvements
+
+- Following the latest TRON network update, we've raised the fee limit to 30 TRC to prevent failed transactions.
+
+### 🐛 Fixes
+
+- Accessing Ledger Live from market.ledger.com would cause the app to crash. We've fixed this.
+
 # 2.52.0
 
 ### 🚀 Features
