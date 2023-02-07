@@ -11,7 +11,8 @@ import { Merge } from "../types/helpers";
 export type Props = Merge<
   Omit<BaseModalProps, "isOpen">,
   {
-    isRequestingToBeOpened: boolean;
+    isRequestingToBeOpened?: boolean;
+    isForcingToBeOpened?: boolean;
     style?: StyleProp<ViewStyle>;
     containerStyle?: StyleProp<ViewStyle>;
   }
@@ -26,7 +27,11 @@ export type Props = Merge<
  *
  * Setting to true the isRequestingToBeOpened prop will add the drawer to the queue. Setting to false will remove it from the queue.
  *
- * The queue is cleaned when its associated screen loses its navigation focus.
+ * A new drawer can bypass the queue and forcefully close the currently displayed drawer by setting the isForcingToBeOpened prop
+ * to true. This entirely cleans the drawers queue. It notifies the removed drawers by calling their onClose prop.
+ *
+ * The queue is cleaned when its associated screen loses its navigation focus. If a drawer is requesting to be opened while
+ * its associated screen has not the focus, it is not added to the queue and its onClose prop is called.
  *
  * Note: avoid conditionally render this component. Always render it and use isRequestingToBeOpened to control its visibility.
  * Note: to avoid a UI glitch on Android, do not put this drawer inside NavigationScrollView (and probably any other ScrollView)
@@ -34,7 +39,10 @@ export type Props = Merge<
  * Dev: internal functions can be wrapped in useCallback once BottomDrawer and BaseModal are memoized components
  *
  * @param isRequestingToBeOpened: to use in place of isOpen. Setting to true will add the drawer to the queue.
- *   Setting to false will remove it from the queue.
+ *   Setting to false will remove it from the queue. Default to false.
+ * @param isForcingToBeOpened: when set to true, forcefully cleans the existing drawers queue, closes the currently displayed drawer,
+ *   and displays itself. It should only be used when the drawer has priority over the other drawers in the queue.
+ *   Prefer using isRequestingToBeOpened insted to respect the queue order. Default to false.
  * @param onClose: when the user closes the drawer (by clicking on the backdrop or the close button) + when the drawer is hidden
  *   (this is currently due to a legacy behavior of the BaseModal component. It might change in the future)
  * @param onModalHide: when the drawer is fully hidden
@@ -45,7 +53,8 @@ export type Props = Merge<
  *   before using them in production. Do not use the isOpen prop.
  */
 const QueuedDrawer = ({
-  isRequestingToBeOpened,
+  isRequestingToBeOpened = false,
+  isForcingToBeOpened = false,
   onClose,
   onModalHide,
   noCloseButton,
@@ -56,16 +65,22 @@ const QueuedDrawer = ({
   ...rest
 }: Props) => {
   const modalLock = useSelector(isModalLockedSelector);
+  const [hasFocus, setHasFocus] = useState(false);
   // Actual state that choses if the drawer is displayed or not
   const [isDisplayed, setIsDisplayed] = useState(false);
+  const [wasForcefullyCleaned, setWasForcefullyCleaned] = useState(false);
 
   // Makes sure that the drawer system is cleaned when navigating to a new (or back to a) screen
   // According to reactnavigation documentation, a useCallback should wrap the function passed to useFocusEffect
   useFocusEffect(
     useCallback(() => {
+      setHasFocus(true);
+
       return () => {
         setIsDisplayed(false);
+        setHasFocus(false);
         cleanWaitingDrawers();
+        cleanCurrentDisplayedDrawer();
       };
     }, []),
   );
@@ -85,10 +100,34 @@ const QueuedDrawer = ({
   useEffect(() => {
     let id: number | undefined;
 
-    if (isRequestingToBeOpened) {
-      id = addToWaitingDrawers(() => {
-        setIsDisplayed(true);
-      });
+    // Protects against adding a drawer to the queue when its associated screen has not the focus
+    if (!hasFocus) {
+      setWasForcefullyCleaned(true);
+    } else {
+      // If the drawer is forcing to be opened, first clean the waiting queue
+      if (isForcingToBeOpened) {
+        cleanWaitingDrawers(true);
+      }
+
+      const isADrawerAlreadyDisplayed = checkCurrentDisplayedDrawer();
+
+      // Adds the drawer to the waiting queue if it is requesting or forcing to be opened
+      if (isRequestingToBeOpened || isForcingToBeOpened) {
+        id = addToWaitingDrawers(event => {
+          setIsDisplayed(event === "canBeDisplayed");
+
+          if (event === "wasForcefullyCleaned") {
+            setWasForcefullyCleaned(true);
+          }
+        });
+      }
+
+      // Finally, if the drawer is forcing to be opened, clean the currently displayed drawer
+      // If there was no currently displayed drawer, the new drawer is already set to be displayed after calling addToWaitingDrawers above
+      // If there were a currently displayed drawer, it will be closed, which triggers handleHideModal, which calls notifyNextDrawer
+      if (isForcingToBeOpened && isADrawerAlreadyDisplayed) {
+        cleanCurrentDisplayedDrawer();
+      }
     }
 
     return () => {
@@ -97,7 +136,17 @@ const QueuedDrawer = ({
         setIsDisplayed(false);
       }
     };
-  }, [isRequestingToBeOpened]);
+  }, [hasFocus, isForcingToBeOpened, isRequestingToBeOpened]);
+
+  // Handles the case where the drawer has been removed forcefully from the queue by another drawer
+  // or where the displayed drawer was forcefully closed.
+  // Handled separatly to avoid calling addToWaitingDrawers on every onClose changes (if not memoized).
+  useEffect(() => {
+    if (wasForcefullyCleaned) {
+      onClose && onClose();
+      setWasForcefullyCleaned(false);
+    }
+  }, [wasForcefullyCleaned, onClose]);
 
   return (
     <BottomDrawer
@@ -117,14 +166,14 @@ const QueuedDrawer = ({
 
 export default QueuedDrawer;
 
-type WaitingDrawer = {
+type ToBeDisplayedDrawer = {
   id: number;
-  onDrawerReady: () => void;
+  onNotifyDrawer: (event: "canBeDisplayed" | "wasForcefullyCleaned") => void;
 };
 
-let currentDisplayedDrawerId: number | null = null;
+let currentDisplayedDrawer: ToBeDisplayedDrawer | null = null;
 let drawersCounter = 0;
-const waitingDrawers: WaitingDrawer[] = [];
+const waitingDrawers: ToBeDisplayedDrawer[] = [];
 
 /**
  * Adds a drawer to the waiting list. If there is no currently displayed drawer,
@@ -132,16 +181,18 @@ const waitingDrawers: WaitingDrawer[] = [];
  *
  * This function is used internally by QueuedDrawer and should not be used directly.
  *
- * @param onDrawerReady callback to call when it's the turn of this drawer to be displayed.
- *   It should set a state that makes the drawer visible.
+ * @param onDisplayStateUpdate callback called when the display state of the drawer is updated.
+ *   It should set a state that makes the drawer visible/not visible.
  * @returns the id of the drawer
  */
-function addToWaitingDrawers(onDrawerReady: WaitingDrawer["onDrawerReady"]) {
+function addToWaitingDrawers(
+  onNotifyDrawer: ToBeDisplayedDrawer["onNotifyDrawer"],
+) {
   const id = drawersCounter++;
 
-  waitingDrawers.push({ id, onDrawerReady });
+  waitingDrawers.push({ id, onNotifyDrawer });
 
-  if (currentDisplayedDrawerId === null) {
+  if (currentDisplayedDrawer === null) {
     notifyNextDrawer();
   }
 
@@ -155,10 +206,10 @@ function addToWaitingDrawers(onDrawerReady: WaitingDrawer["onDrawerReady"]) {
  *
  * @param id the id of the drawer to remove
  */
-function removeFromWaitingDrawers(id: WaitingDrawer["id"]) {
+function removeFromWaitingDrawers(id: ToBeDisplayedDrawer["id"]) {
   // Does not remove the currently displayed drawer
   // T_is drawer will be cleaned up when onModalHide is triggered
-  if (currentDisplayedDrawerId === id) {
+  if (currentDisplayedDrawer?.id === id) {
     return;
   }
 
@@ -182,11 +233,11 @@ function notifyNextDrawer() {
   const nextDrawer = waitingDrawers.shift();
 
   if (nextDrawer) {
-    currentDisplayedDrawerId = nextDrawer.id;
-    nextDrawer.onDrawerReady();
+    currentDisplayedDrawer = nextDrawer;
+    nextDrawer.onNotifyDrawer("canBeDisplayed");
   } else {
     // No more drawer to display
-    currentDisplayedDrawerId = null;
+    currentDisplayedDrawer = null;
     // Not necessary, but avoids increasing infinitely the counter
     drawersCounter = 0;
   }
@@ -196,9 +247,38 @@ function notifyNextDrawer() {
  * Helper function to clean the waiting list of drawers.
  *
  * This function is used internally by QueuedDrawer and should not be used directly.
+ *
+ * @param areDrawersForcefullyCleaned if true, the drawers will be notified that they were forcefully removed from the queue
  */
-function cleanWaitingDrawers() {
+function cleanWaitingDrawers(areDrawersForcefullyCleaned = false) {
+  if (areDrawersForcefullyCleaned) {
+    for (const waitingDrawer of waitingDrawers) {
+      waitingDrawer.onNotifyDrawer("wasForcefullyCleaned");
+    }
+  }
+
   waitingDrawers.splice(0, waitingDrawers.length);
-  currentDisplayedDrawerId = null;
-  drawersCounter = 0;
+
+  // Cannot reset drawersCounter to 0 here because currentDisplayedDrawer still has a valid id
+}
+
+/**
+ * Helper function to notify the displayed drawer that it should close, and clean the currently displayed drawer.
+ *
+ * This function is used internally by QueuedDrawer and should not be used directly.
+ */
+function cleanCurrentDisplayedDrawer() {
+  if (currentDisplayedDrawer) {
+    currentDisplayedDrawer.onNotifyDrawer("wasForcefullyCleaned");
+    currentDisplayedDrawer = null;
+  }
+}
+
+/**
+ * Helper function to check if there is a currently displayed drawer.
+ *
+ * This function is used internally by QueuedDrawer and should not be used directly.
+ */
+function checkCurrentDisplayedDrawer() {
+  return !!currentDisplayedDrawer;
 }
