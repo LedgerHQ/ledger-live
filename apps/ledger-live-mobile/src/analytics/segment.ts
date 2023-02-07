@@ -50,6 +50,7 @@ import {
   INFINITY_PASS_COLLECTION_CONTRACT,
   hasNftInAccounts,
 } from "../helpers/nfts";
+import { appStartupTime } from "../StartupTimeMarker";
 
 let sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${
@@ -149,6 +150,7 @@ const extraProperties = async (store: AppStore) => {
     blockchainsWithNftsOwned,
     hasGenesisPass,
     hasInfinityPass,
+    appTimeToInteractiveMilliseconds: appStartupTime,
   };
 };
 
