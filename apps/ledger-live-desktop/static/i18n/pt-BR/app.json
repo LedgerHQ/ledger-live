@@ -5488,7 +5488,7 @@
       "description" : "A assinatura deve ser aplicada dentro de 30 segundos. Tente Novamente."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "A Energia está abaixo do necessário. Você pode pagar até 20 TRX em taxas."
+      "title" : "A Energia está abaixo do necessário. Você pode pagar até 30 TRX em taxas."
     },
     "PairingFailed" : {
       "title" : "Emparelhamento sem sucesso",

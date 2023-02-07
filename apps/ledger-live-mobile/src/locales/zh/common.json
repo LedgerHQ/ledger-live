@@ -549,7 +549,7 @@
       "description" : "必须在 30 秒内签署交易。请重试。"
     },
     "TronNotEnoughEnergy" : {
-      "title" : "能量低于必要值。您可能需要支付高达 20TRX 的费用。"
+      "title" : "能量低于必要值。您可能需要支付高达 30TRX 的费用。"
     },
     "UpdateYourApp" : {
       "title" : "需要更新应用程序",
