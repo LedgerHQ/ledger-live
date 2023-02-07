@@ -3,15 +3,14 @@ import { log } from "@ledgerhq/logs";
 import type { DeviceId, DeviceInfo } from "@ledgerhq/types-live";
 
 import { getVersion } from "../commands/getVersion";
-import { getAppAndVersion } from "../commands/getAppAndVersion";
 
 import isDevFirmware from "../../hw/isDevFirmware";
-import { isDashboardName } from "../../hw/isDashboardName";
 import { withDevice } from "../../hw/deviceAccess";
 import { PROVIDERS } from "../../manager/provider";
 import { Observable } from "rxjs";
-import { map, filter, switchMap } from "rxjs/operators";
+import { map, switchMap } from "rxjs/operators";
 import { SharedTaskEvent, sharedLogicTaskWrapper } from "./core";
+import { quitApp } from "../commands/quitApp";
 
 const ManagerAllowedFlag = 0x08;
 const PinValidatedFlag = 0x80;
@@ -40,17 +39,7 @@ function internalGetDeviceInfoTask({
   return new Observable((subscriber) => {
     return (
       withDevice(deviceId)((transport) =>
-        getAppAndVersion(transport).pipe(
-          filter(({ appAndVersion: { name } }) => {
-            if (!isDashboardName(name)) {
-              subscriber.next({
-                type: "taskError",
-                error: "DeviceOnDashboardExpected",
-              });
-              return false;
-            }
-            return true;
-          }),
+        quitApp(transport).pipe(          
           switchMap(() => {
             return getVersion(transport);
           }),

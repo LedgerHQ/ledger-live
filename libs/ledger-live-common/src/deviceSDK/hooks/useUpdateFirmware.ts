@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
-import useLatestFirmware from "../../hooks/useLatestFirmware";
 import {
   updateFirmwareAction as defaultUpdateFirmwareAction,
   UpdateFirmwareActionState,
   initialState,
 } from "../actions/updateFirmware";
-import { useGetDeviceInfo } from "./getDeviceInfo";
 
 export type UseUpdateFirmwareArgs = {
   updateFirmwareAction?: typeof defaultUpdateFirmwareAction;
@@ -27,15 +25,12 @@ export const useUpdateFirmware = ({
     useState<UpdateFirmwareActionState>(initialState);
   const [nonce, setNonce] = useState(0);
   const [isPerformingTheUpdate, setIsPerformingTheUpdate] = useState(false);
-  const { deviceInfo } = useGetDeviceInfo({ deviceId });
-  const latestFirmware = useLatestFirmware(deviceInfo);
 
   useEffect(() => {
-    if (latestFirmware && nonce > 0 && deviceId) {
+    if (nonce > 0 && deviceId) {
       setIsPerformingTheUpdate(true);
       const sub = updateFirmwareAction({
-        deviceId,
-        updateContext: latestFirmware,
+        deviceId
       }).subscribe({
         next: setUpdateState,
         complete: () => setIsPerformingTheUpdate(false),
@@ -46,10 +41,10 @@ export const useUpdateFirmware = ({
         sub.unsubscribe();
       };
     }
-  }, [deviceId, updateFirmwareAction, latestFirmware, nonce]);
+  }, [deviceId, updateFirmwareAction, nonce]);
 
   const triggerUpdate =
-    isPerformingTheUpdate || !latestFirmware
+    isPerformingTheUpdate
       ? undefined
       : () => setNonce(nonce + 1);
 

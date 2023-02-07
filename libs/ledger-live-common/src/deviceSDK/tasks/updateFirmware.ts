@@ -9,19 +9,18 @@ import type {
 } from "@ledgerhq/types-live";
 
 import { getVersion } from "../commands/getVersion";
-import { getAppAndVersion } from "../commands/getAppAndVersion";
 
 import ManagerAPI from "../../api/Manager";
-import { isDashboardName } from "../../hw/isDashboardName";
 import { withDevice, withDevicePolling } from "../../hw/deviceAccess";
 import { from, Observable, of, Subscriber } from "rxjs";
-import { filter, map, switchMap } from "rxjs/operators";
+import { map, switchMap } from "rxjs/operators";
 import { SharedTaskEvent, sharedLogicTaskWrapper } from "./core";
 import { installFirmwareCommand } from "../commands/firmwareUpdate/installFirmware";
 import Transport from "@ledgerhq/hw-transport";
 import getDeviceInfo from "../../hw/getDeviceInfo";
 import { getProviderId } from "../../manager";
 import { flashMcuOrBootloaderCommand } from "../commands/firmwareUpdate/flashMcuOrBootloader";
+import { quitApp } from "../commands/quitApp";
 
 export type UpdateFirmwareTaskArgs = {
   deviceId: DeviceId;
@@ -51,20 +50,7 @@ function internalUpdateFirmwareTask({
 }: UpdateFirmwareTaskArgs): Observable<UpdateFirmwareTaskEvent> {
   return new Observable((subscriber) => {
     withDevice(deviceId)((transport) =>
-      getAppAndVersion(transport).pipe(
-        filter(({ appAndVersion: { name } }) => {
-          if (!isDashboardName(name)) {
-            subscriber.next({
-              type: "taskError",
-              error: "DeviceOnDashboardExpected",
-            });
-            return false;
-            // we use filter here to stop the propagation of the event
-            // we can't really use throw here cause it would complete the observable and not emit
-            // any more events
-          }
-          return true;
-        }),
+      quitApp(transport).pipe(        
         switchMap(() => getVersion(transport)),
         switchMap((value) => {
           if (value.type === "unresponsive") {

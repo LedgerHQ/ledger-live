@@ -94,16 +94,10 @@ export default {
     listOSUs
       ? from(listFirmwareOSU()).pipe(mergeMap((d) => from(d.map((d) => d.name))))
       : withDevice(device || "")((t) => from(getDeviceInfo(t))).pipe(
-          mergeMap(
-            osuVersion
-              ? (deviceInfo) => customGetLatestFirmwareForDevice(deviceInfo, osuVersion)
-              : manager.getLatestFirmwareForDevice
-          ),
-          mergeMap((firmware) => {
-            if (!firmware) return of("already up to date");
+          mergeMap(() => {
             return concat(
-              of(`firmware: ${firmware.final.name}\nOSU: ${firmware.osu.name} (hash: ${firmware.osu.hash})`),
-              updateFirmwareAction({ deviceId: device || "", updateContext: firmware })
+              of(`Attempting to install firmware`),
+              updateFirmwareAction({ deviceId: device || "" })
             );
           })
         )
