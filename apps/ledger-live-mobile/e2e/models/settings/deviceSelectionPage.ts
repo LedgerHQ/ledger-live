@@ -6,6 +6,7 @@ import {
 export default class DeviceSelectionPage {
   getAddWithBluetoothButton = () => getElementByText("Add with Bluetooth");
   getConnectAnExistingLedger = () => getElementByText("Connect an existing Ledger");
+  getPairingWithNanoXText = (name: string) => getElementByText(`Pairing with Nano X de ${name}...`);
   getNanoXByName = (name: string) => getElementByText(`Nano X de ${name}`)
 
   async tapAddWithBluetooth() {

@@ -27,15 +27,21 @@ export default function DebugFirmwareUpdate() {
             </Button>
             <Text variant="h1">Update State:</Text>
             <Text variant="h4">Step:</Text>
-            <Text variant="paragraph">{updateState.step}</Text>
+            <Text variant="paragraph" testID="UpdateStep">
+              {updateState.step}
+            </Text>
             <Text variant="h4">Progress:</Text>
-            <Text variant="paragraph">{updateState.progress}</Text>
+            <Text variant="paragraph" testID="UpdateProgress">
+              {updateState.progress}
+            </Text>
             <Text variant="h4">Locked device:</Text>
-            <Text variant="paragraph">
+            <Text variant="paragraph" testID="UpdateLockedDevice">
               {updateState.lockedDevice.toString()}
             </Text>
             <Text variant="h4">Error:</Text>
-            <Text variant="paragraph">{JSON.stringify(updateState.error)}</Text>
+            <Text variant="paragraph" testID="UpdateError">
+              {JSON.stringify(updateState.error)}
+            </Text>
           </Flex>
         </NavigationScrollView>
       ) : (

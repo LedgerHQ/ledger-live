@@ -1,6 +1,5 @@
-import { waitFor } from "detox";
+import { waitFor, expect } from "detox";
 import PortfolioPage from "../models/wallet/portfolioPage";
-import OnboardingSteps from "../models/onboarding/onboardingSteps";
 import * as bridge from "../bridge/server";
 
 import { loadConfig } from "../bridge/server";
@@ -74,6 +73,10 @@ describe("Receive BTC", () => {
 
     await deviceSelectionPage.tapNanoXByName("David");
 
+    await waitFor(deviceSelectionPage.getPairingWithNanoXText("David"))
+      .toExist()
+      .withTimeout(10000);
+
     bridge.open();
 
     await waitFor(debugSettingsPage.getTriggerUpdateButton())
@@ -89,8 +92,6 @@ describe("Receive BTC", () => {
       },
     });
 
-    await new Promise(resolve => setTimeout(() => resolve(""), 10000));
-
     await debugSettingsPage.tapTriggerUpdate();
   });
 
@@ -105,6 +106,9 @@ describe("Receive BTC", () => {
       },
     });
 
-    await new Promise(resolve => setTimeout(() => resolve(""), 10000));
+    await expect(debugSettingsPage.getUpdateProgress()).toHaveText("0.5");
+    await expect(debugSettingsPage.getUpdateLockedDevice()).toHaveText("false");
+    await expect(debugSettingsPage.getUpdateStep()).toHaveText("installingOsu");
+    await expect(debugSettingsPage.getUpdateError()).toHaveText("null");
   });
 });
