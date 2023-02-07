@@ -133,6 +133,7 @@ const QueuedDrawer = ({
     return () => {
       if (id !== undefined) {
         removeFromWaitingDrawers(id);
+        // If this was the currently displayed drawer, only notifyNextDrawer once the drawer is hidden
         setIsDisplayed(false);
       }
     };
@@ -208,7 +209,7 @@ function addToWaitingDrawers(
  */
 function removeFromWaitingDrawers(id: ToBeDisplayedDrawer["id"]) {
   // Does not remove the currently displayed drawer
-  // T_is drawer will be cleaned up when onModalHide is triggered
+  // This drawer will be cleaned up when onModalHide is triggered
   if (currentDisplayedDrawer?.id === id) {
     return;
   }
