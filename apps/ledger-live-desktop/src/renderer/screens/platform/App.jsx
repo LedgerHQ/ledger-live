@@ -9,7 +9,7 @@ import { languageSelector } from "~/renderer/reducers/settings";
 import { useSelector } from "react-redux";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
-import { getCustomDappUrl } from "./utils";
+// import { getCustomDappUrl } from "./utils";
 
 type Props = {
   match: {
@@ -33,7 +33,7 @@ type Props = {
 
 export default function PlatformApp({ match, appId: propsAppId, location }: Props) {
   const history = useHistory();
-  const { params: internalParams, search, pathname } = location;
+  const { params: internalParams, search } = location;
   const { state: urlParams } = useLocation();
 
   const appId = propsAppId || match.params?.appId;
@@ -55,7 +55,7 @@ export default function PlatformApp({ match, appId: propsAppId, location }: Prop
 
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
-  let manifest = localManifest || remoteManifest;
+  const manifest = localManifest || remoteManifest;
 
   // TODO - Need to fix to support SWAP deep link
   // const customDappUrl = getCustomDappUrl(manifest, appId, params, pathname);
