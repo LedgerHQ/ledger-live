@@ -56,6 +56,7 @@ import { CARD_APP_ID } from "~/renderer/screens/card";
 
 import TopGradient from "./TopGradient";
 import Hide from "./Hide";
+import { track } from "~/renderer/analytics/segment";
 
 const MAIN_SIDEBAR_WIDTH = 230;
 
@@ -315,6 +316,9 @@ const MainSideBar = () => {
   }, [dispatch, maybeRedirectToAccounts]);
 
   const handleOpenProtectDiscoverModal = useCallback(() => {
+    track("button_clicked", {
+      button: "Protect",
+    });
     dispatch(openModal("MODAL_PROTECT_DISCOVER"));
   }, [dispatch]);
 
