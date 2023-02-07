@@ -5356,7 +5356,7 @@
       "description" : "İmza 30 saniye içinde uygulanmalıdır. Lütfen tekrar deneyin."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Yeterince Enerji mevcut değil. Ağ ücreti 30TRX tutarına ulaşabilir."
+      "title" : "Yeterince Enerji mevcut değil. Ağ ücreti 50TRX tutarına ulaşabilir."
     },
     "PairingFailed" : {
       "title" : "Eşleştirme başarısız",

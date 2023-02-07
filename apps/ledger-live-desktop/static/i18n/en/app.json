@@ -5375,7 +5375,7 @@
       "description": "Signature must be applied within 30 seconds. Please try again."
     },
     "TronNotEnoughEnergy": {
-      "title": "Energy is lower than necessary. You might pay up to 30 TRX in fees."
+      "title": "Energy is lower than necessary. You might pay up to 50 TRX in fees."
     },
     "PairingFailed": {
       "title": "Pairing unsuccessful",

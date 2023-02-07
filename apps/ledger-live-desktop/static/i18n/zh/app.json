@@ -5356,7 +5356,7 @@
       "description" : "必须在 30 秒内予以签署。请重试。"
     },
     "TronNotEnoughEnergy" : {
-      "title" : "能量低于必要值。您可能需要支付高达 30TRX 的费用。"
+      "title" : "能量低于必要值。您可能需要支付高达 50TRX 的费用。"
     },
     "PairingFailed" : {
       "title" : "配对不成功",
