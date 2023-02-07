@@ -14,6 +14,7 @@ import {
   getMandatoryEmptyAccountSkip,
   getDerivationModeStartsAt,
   DerivationMode,
+  GetAddressOptions,
 } from "../derivation";
 import {
   getAccountPlaceholderName,
@@ -612,7 +613,7 @@ export function makeAccountBridgeReceive(
     };
     return deviceCommunication(deviceId)((transport: Transport) =>
       from(
-        getAddressWrapper(getAddressFn)(transport, arg).then((r) => {
+        getAddressFn(transport, arg).then((r) => {
           const accountAddress = freshAddress
             ? freshAddress.address
             : account.freshAddress;

@@ -17,6 +17,7 @@ import estimateMaxSpendable from "../js-estimateMaxSpendable";
 import buildSignOperation from "../js-signOperation";
 import getAddress from "../hw-getAddress";
 import { loadPolkadotCrypto } from "../polkadot-crypto";
+import getAddressWrapper from "@ledgerhq/coin-framework/lib/bridge/getAddressWrapper";
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
 
@@ -46,7 +47,7 @@ export function buildCurrencyBridge(deviceCommunication: DeviceCommunication): C
 }
 
 export function buildAccountBridge(deviceCommunication: DeviceCommunication): AccountBridge<Transaction> {
-  const receive = makeAccountBridgeReceive(getAddress, deviceCommunication);
+  const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress), deviceCommunication);
   const signOperation = buildSignOperation(deviceCommunication);
   const sync = makeSync({ getAccountShape });
 

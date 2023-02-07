@@ -685,7 +685,7 @@ const polkadot: CurrenciesData<Transaction> = {
   ],
 };
 
-const dataset: DatasetTest<Transaction> = {
+export const dataset: DatasetTest<Transaction> = {
   implementations: ["js"],
   currencies: {
     polkadot,

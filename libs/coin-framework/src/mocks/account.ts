@@ -26,7 +26,7 @@ import type {
 } from "@ledgerhq/types-cryptoassets";
 import { createFixtureNFT, genNFTOperation } from "./fixtures/nfts";
 
-function ensureNoNegative(operations: Operation[]) {
+export function ensureNoNegative(operations: Operation[]) {
   let total = new BigNumber(0);
 
   for (let i = operations.length - 1; i >= 0; i--) {
@@ -265,7 +265,7 @@ export function genOperation(
  * @param id is a number or a string, used as an account identifier and as a seed for the generation.
  * @memberof mock/account
  */
-type GenAccountOptions = {
+export type GenAccountOptions = {
   operationsSize?: number;
   currency?: CryptoCurrency;
   subAccountsCount?: number;

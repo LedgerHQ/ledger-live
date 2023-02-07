@@ -50,10 +50,6 @@ import { Transaction as neoTransaction } from "../families/neo/types";
 import { TransactionRaw as neoTransactionRaw } from "../families/neo/types";
 import { TransactionStatus as neoTransactionStatus } from "../families/neo/types";
 import { TransactionStatusRaw as neoTransactionStatusRaw } from "../families/neo/types";
-import { Transaction as polkadotTransaction } from "../families/polkadot/types";
-import { TransactionRaw as polkadotTransactionRaw } from "../families/polkadot/types";
-import { TransactionStatus as polkadotTransactionStatus } from "../families/polkadot/types";
-import { TransactionStatusRaw as polkadotTransactionStatusRaw } from "../families/polkadot/types";
 import { Transaction as rippleTransaction } from "../families/ripple/types";
 import { TransactionRaw as rippleTransactionRaw } from "../families/ripple/types";
 import { TransactionStatus as rippleTransactionStatus } from "../families/ripple/types";
@@ -74,6 +70,10 @@ import { Transaction as tronTransaction } from "../families/tron/types";
 import { TransactionRaw as tronTransactionRaw } from "../families/tron/types";
 import { TransactionStatus as tronTransactionStatus } from "../families/tron/types";
 import { TransactionStatusRaw as tronTransactionStatusRaw } from "../families/tron/types";
+import { Transaction as polkadotTransaction } from "@ledgerhq/coin-polkadot/types";
+import { TransactionRaw as polkadotTransactionRaw } from "@ledgerhq/coin-polkadot/types";
+import { TransactionStatus as polkadotTransactionStatus } from "@ledgerhq/coin-polkadot/types";
+import { TransactionStatusRaw as polkadotTransactionStatusRaw } from "@ledgerhq/coin-polkadot/types";
 
 export type Transaction =
   | algorandTransaction
@@ -89,12 +89,12 @@ export type Transaction =
   | hederaTransaction
   | nearTransaction
   | neoTransaction
-  | polkadotTransaction
   | rippleTransaction
   | solanaTransaction
   | stellarTransaction
   | tezosTransaction
-  | tronTransaction;
+  | tronTransaction
+  | polkadotTransaction;
 
 export type TransactionRaw =
   | algorandTransactionRaw
@@ -110,12 +110,12 @@ export type TransactionRaw =
   | hederaTransactionRaw
   | nearTransactionRaw
   | neoTransactionRaw
-  | polkadotTransactionRaw
   | rippleTransactionRaw
   | solanaTransactionRaw
   | stellarTransactionRaw
   | tezosTransactionRaw
-  | tronTransactionRaw;
+  | tronTransactionRaw
+  | polkadotTransactionRaw;
 
 export type TransactionStatus =
   | algorandTransactionStatus
@@ -131,12 +131,12 @@ export type TransactionStatus =
   | hederaTransactionStatus
   | nearTransactionStatus
   | neoTransactionStatus
-  | polkadotTransactionStatus
   | rippleTransactionStatus
   | solanaTransactionStatus
   | stellarTransactionStatus
   | tezosTransactionStatus
-  | tronTransactionStatus;
+  | tronTransactionStatus
+  | polkadotTransactionStatus;
 
 export type TransactionStatusRaw =
   | algorandTransactionStatusRaw
@@ -152,9 +152,9 @@ export type TransactionStatusRaw =
   | hederaTransactionStatusRaw
   | nearTransactionStatusRaw
   | neoTransactionStatusRaw
-  | polkadotTransactionStatusRaw
   | rippleTransactionStatusRaw
   | solanaTransactionStatusRaw
   | stellarTransactionStatusRaw
   | tezosTransactionStatusRaw
-  | tronTransactionStatusRaw;
+  | tronTransactionStatusRaw
+  | polkadotTransactionStatusRaw;

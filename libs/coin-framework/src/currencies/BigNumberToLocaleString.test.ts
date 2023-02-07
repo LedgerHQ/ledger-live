@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { toLocaleString } from "../currencies/BigNumberToLocaleString";
+import { toLocaleString } from "./BigNumberToLocaleString";
 test("basic toLocaleString usage", () => {
   expect(toLocaleString(new BigNumber(0))).toBe("0");
   expect(toLocaleString(new BigNumber(8))).toBe("8");
