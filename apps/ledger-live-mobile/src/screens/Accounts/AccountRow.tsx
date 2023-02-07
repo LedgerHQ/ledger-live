@@ -44,6 +44,7 @@ type Props = {
   hideDelta?: boolean;
   topLink?: boolean;
   bottomLink?: boolean;
+  sourceScreenName: ScreenName;
 };
 
 const AccountRow = ({
@@ -55,6 +56,7 @@ const AccountRow = ({
   topLink,
   bottomLink,
   isLast,
+  sourceScreenName,
 }: Props) => {
   const startNavigationTTITimer = useStartProfiler();
   // makes it refresh if this changes
@@ -87,16 +89,16 @@ const AccountRow = ({
         currency: currency.name,
       });
       if (navigationParams) {
-        startNavigationTTITimer({ source: ScreenName.Asset, uiEvent });
+        startNavigationTTITimer({ source: sourceScreenName, uiEvent });
         // @ts-expect-error navigagtion spread, ask your mom about it
         navigation.navigate(...navigationParams);
       } else if (account.type === "Account") {
-        startNavigationTTITimer({ source: ScreenName.Asset, uiEvent });
+        startNavigationTTITimer({ source: sourceScreenName, uiEvent });
         navigation.navigate(ScreenName.Account, {
           accountId,
         });
       } else if (account.type === "TokenAccount") {
-        startNavigationTTITimer({ source: ScreenName.Asset, uiEvent });
+        startNavigationTTITimer({ source: sourceScreenName, uiEvent });
         navigation.navigate(NavigatorName.Accounts, {
           screen: ScreenName.Account,
           params: {

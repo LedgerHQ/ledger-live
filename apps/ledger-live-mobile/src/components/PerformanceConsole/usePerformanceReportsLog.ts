@@ -44,7 +44,6 @@ export function getNavigationVitalsStatusStyle(
 }
 
 export default function usePerformanceReportsLog(limit = 40) {
-  // const id = useRef(0);
   const [items, setItems] = useState<PerformanceEventRenderable[]>([]);
   const [lastCompleteRenderPassReport, setLastCompleteRenderPassReport] =
     useState<RenderPassReport>();
@@ -63,9 +62,7 @@ export default function usePerformanceReportsLog(limit = 40) {
     [limit],
   );
   useEffect(() => {
-    const subscription = performanceReportSubject
-      // .pipe(map(item => ({ ...item, id: ++id.current })))
-      .subscribe(addItem);
+    const subscription = performanceReportSubject.subscribe(addItem);
     return () => subscription.unsubscribe();
   }, [addItem]);
 

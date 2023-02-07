@@ -146,7 +146,7 @@ const PerformanceConsole = () => {
         mb={bottom}
         pointerEvents="none"
       >
-        <Alert showIcon={false} title={`Analytics console: ${visibility}`} />
+        <Alert showIcon={false} title={`Performance console: ${visibility}`} />
       </AnimatedFlex>
       <FloatingPerformanceButton onPress={onPressPerformanceButton} />
     </>

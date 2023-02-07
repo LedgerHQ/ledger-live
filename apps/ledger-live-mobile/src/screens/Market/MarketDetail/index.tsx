@@ -1,14 +1,14 @@
-import React, { useMemo, useCallback, useState, useEffect, memo } from "react";
+import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useTheme } from "styled-components/native";
-import { Flex, Text, ScrollContainerHeader, Icons } from "@ledgerhq/native-ui";
+import { Flex, Icons, ScrollContainerHeader, Text } from "@ledgerhq/native-ui";
 import { FlatList, Image, RefreshControl } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useSingleCoinMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { AccountLike, SubAccount } from "@ledgerhq/types-live";
 import {
-  starredMarketCoinsSelector,
   readOnlyModeEnabledSelector,
+  starredMarketCoinsSelector,
 } from "../../../reducers/settings";
 import { useLocale } from "../../../context/Locale";
 import CircleCurrencyIcon from "../../../components/CircleCurrencyIcon";
@@ -22,7 +22,7 @@ import {
 import MarketStats from "./MarketStats";
 import { flattenAccountsByCryptoCurrencyScreenSelector } from "../../../reducers/accounts";
 import AccountRow from "../../Accounts/AccountRow";
-import { track, screen } from "../../../analytics";
+import { screen, track } from "../../../analytics";
 import Button from "../../../components/wrappedUi/Button";
 import MarketGraph from "./MarketGraph";
 import { ScreenName } from "../../../const";
@@ -150,6 +150,7 @@ function MarketDetail({ navigation, route }: NavigationProps) {
         accountId={item.id}
         isLast={index === allAccounts.length - 1}
         hideDelta
+        sourceScreenName={ScreenName.MarketDetail}
       />
     ),
     [navigation, allAccounts.length],
