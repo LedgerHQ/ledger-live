@@ -33,15 +33,6 @@ export const avalancheSpeculosDeviceAction: DeviceAction<Transaction, any> =
         },
       },
       {
-        title: "Amount",
-        button: SpeculosButton.RIGHT,
-        expectedValue: ({ account, status }) => {
-          const amount = status.amount;
-
-          return formatDeviceAmount(account.currency, amount);
-        },
-      },
-      {
         title: "Contract",
         button: SpeculosButton.RIGHT,
       },
