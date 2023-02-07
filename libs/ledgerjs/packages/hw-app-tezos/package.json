@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-tezos",
-  "version": "6.27.10",
+  "version": "6.27.11",
   "description": "Ledger Hardware Wallet Tezos Application API",
   "keywords": [
     "Ledger",

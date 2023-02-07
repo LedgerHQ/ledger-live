@@ -23,7 +23,7 @@ import { rgba } from "~/renderer/styles/helpers";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
-import { swapDefaultTrack } from "../../utils/index";
+import { useGetSwapTrackingProperties } from "../../utils/index";
 
 const AccountWrapper = styled(Tabbable)`
   cursor: pointer;
@@ -63,6 +63,7 @@ const TargetAccount = memo(function TargetAccount({
   setAccount?: $PropertyType<Props, "setToAccount">,
   isChild?: boolean,
 }) {
+  const swapDefaultTrack = useGetSwapTrackingProperties();
   const allAccounts = useSelector(shallowAccountsSelector);
   const theme = useTheme();
   const currency = getAccountCurrency(account);
@@ -84,7 +85,7 @@ const TargetAccount = memo(function TargetAccount({
       parentAccount,
     });
     setAccount && setAccount(currency, account, parentAccount);
-  }, [setAccount, currency, account, parentAccount]);
+  }, [swapDefaultTrack, currency, account, parentAccount, setAccount]);
 
   const Wrapper = setAccount ? AccountWrapper : Box;
 
@@ -145,6 +146,7 @@ export default function TargetAccountDrawer({
   setToAccount,
   setDrawerStateRef,
 }: Props) {
+  const swapDefaultTrack = useGetSwapTrackingProperties();
   const allAccounts = useSelector(shallowAccountsSelector);
   const dispatch = useDispatch();
   const { setDrawer } = React.useContext(context);
