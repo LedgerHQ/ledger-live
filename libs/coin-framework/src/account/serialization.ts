@@ -30,6 +30,7 @@ export const toOperationRaw = (
     operator,
     standard,
     tokenId,
+    transactionRaw,
   }: Operation,
   extractExtra?: ExtractExtraFn,
   preserveSubOperation?: boolean
@@ -79,9 +80,40 @@ export const toOperationRaw = (
     copy.nftOperations = nftOperations.map((o) => toOperationRaw(o, extractExtra));
   }
 
+  if (transactionRaw !== undefined) {
+    copy.transactionRaw = transactionRaw;
+  }
+  
   return copy;
 };
+export const inferSubOperations = (
+  txHash: string,
+  subAccounts: SubAccount[]
+): Operation[] => {
+  const all: Operation[] = [];
 
+  for (let i = 0; i < subAccounts.length; i++) {
+    const ta = subAccounts[i];
+
+    for (let j = 0; j < ta.operations.length; j++) {
+      const op = ta.operations[j];
+
+      if (op.hash === txHash) {
+        all.push(op);
+      }
+    }
+
+    for (let j = 0; j < ta.pendingOperations.length; j++) {
+      const op = ta.pendingOperations[j];
+
+      if (op.hash === txHash) {
+        all.push(op);
+      }
+    }
+  }
+
+  return all;
+};
 export const fromOperationRaw = (
   {
     date,
@@ -104,6 +136,7 @@ export const fromOperationRaw = (
     operator,
     standard,
     tokenId,
+    transactionRaw,
   }: OperationRaw,
   accountId: string,
   extractExtra?: ExtractExtraFn,
@@ -162,34 +195,9 @@ export const fromOperationRaw = (
     );
   }
 
-  return res;
-};
-
-export const inferSubOperations = (
-  txHash: string,
-  subAccounts: SubAccount[]
-): Operation[] => {
-  const all: Operation[] = [];
-
-  for (let i = 0; i < subAccounts.length; i++) {
-    const ta = subAccounts[i];
-
-    for (let j = 0; j < ta.operations.length; j++) {
-      const op = ta.operations[j];
-
-      if (op.hash === txHash) {
-        all.push(op);
-      }
-    }
-
-    for (let j = 0; j < ta.pendingOperations.length; j++) {
-      const op = ta.pendingOperations[j];
-
-      if (op.hash === txHash) {
-        all.push(op);
-      }
-    }
+  if (transactionRaw !== undefined) {
+    res.transactionRaw = transactionRaw;
   }
 
-  return all;
+  return res;
 };

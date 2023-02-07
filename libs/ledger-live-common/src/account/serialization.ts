@@ -47,6 +47,8 @@ import {
   getTokenById,
   findTokenById,
 } from "../currencies";
+import { inferFamilyFromAccountId } from "./index";
+import accountByFamily from "../generated/account";
 import { isAccountEmpty } from "./helpers";
 import type { SwapOperation, SwapOperationRaw } from "../exchange/swap/types";
 import {
@@ -77,9 +79,8 @@ import type {
   TokenAccountRaw,
 } from "@ledgerhq/types-live";
 import {
-  toOperationRaw,
-  fromOperationRaw,
-  inferSubOperations,
+  toOperationRaw as commonToOperationRaw,
+  fromOperationRaw as commonFromOperationRaw,
 } from "@ledgerhq/coin-framework/account/serialization";
 import { CosmosAccount, CosmosAccountRaw } from "../families/cosmos/types";
 import { BitcoinAccount, BitcoinAccountRaw } from "../families/bitcoin/types";
@@ -121,8 +122,49 @@ export function fromBalanceHistoryRaw(b: BalanceHistoryRaw): BalanceHistory {
     value: parseFloat(value),
   }));
 }
-export { toOperationRaw, fromOperationRaw, inferSubOperations };
+export const toOperationRaw = (
+  operation: Operation,
+  preserveSubOperation?: boolean
+): OperationRaw => {
+  const extractExtra = (extra: Record<string, any>): Record<string, any> => {
+    const family = inferFamilyFromAccountId(operation.accountId);
+    if (family) {
+      const abf = accountByFamily[family];
 
+      if (abf && abf.toOperationExtraRaw) {
+        extra = abf.toOperationExtraRaw(extra);
+      }
+    }
+    return extra;
+  };
+
+  return commonToOperationRaw(operation, extractExtra, preserveSubOperation);
+};
+export { inferSubOperations } from "@ledgerhq/coin-framework/account/serialization";
+export const fromOperationRaw = (
+  operation: OperationRaw,
+  accountId: string,
+  subAccounts?: SubAccount[] | null | undefined
+): Operation => {
+  const extractExtra = (extra: Record<string, any>): Record<string, any> => {
+    const family = inferFamilyFromAccountId(operation.accountId);
+    if (family) {
+      const abf = accountByFamily[family];
+
+      if (abf && abf.toOperationExtraRaw) {
+        extra = abf.fromOperationExtraRaw(extra);
+      }
+    }
+    return extra;
+  };
+
+  return commonFromOperationRaw(
+    operation,
+    accountId,
+    extractExtra,
+    subAccounts
+  );
+};
 export function fromSwapOperationRaw(raw: SwapOperationRaw): SwapOperation {
   const { fromAmount, toAmount } = raw;
   return {
