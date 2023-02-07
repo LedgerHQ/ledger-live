@@ -168,7 +168,7 @@ export default function DebugQueuedDrawers() {
               setIsDrawer5Started(val);
             }}
             label={
-              "Open a 5th drawer after 3sec that forces all the other open drawers to close ⚔️"
+              "Open a 5th drawer after 3sec that forces all the other opened drawers to close ⚔️"
             }
           />
         </Flex>
@@ -187,8 +187,9 @@ export default function DebugQueuedDrawers() {
         />
         <Flex mt="8">
           <Text>
-            Also, try navigating to a new screen by clicking on one of the buttons below and
-            come back here with the back arrow. To check if the drawers are still working.
+            Also, try navigating to a new screen by clicking on one of the
+            buttons below and come back here with the back arrow. To check if
+            the drawers are still working.
           </Text>
 
           <Button
