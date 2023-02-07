@@ -4453,44 +4453,19 @@
       "activatableVotes": "You have votes that can now be activated."
     }
   },
-  "osmosis": {
-    "info": {
-      "available": {
-        "title": "OSMO available"
-      },
-      "delegated": {
-        "description": "Delegated assets are used for Osmosis voting. This is your total number of votes."
-      },
-      "undelegating": {
-        "description": "Undelegated assets are in a timelock of 14 days, before being available."
-      }
-    },
-    "delegation": {
-      "flow": {
-        "steps": {
-          "starter": {
-            "description": "Delegate your OSMO to earn rewards securely, keeping control of your assets.",
-            "steps": {
-              "1": "You will have to wait 14 days for the undelegation to complete."
-            }
-          }
-        }
-      }
-    }
-  },
   "cosmos": {
     "info": {
       "available": {
-        "title": "ATOM available",
+        "title": "{{currencyTicker}} available",
         "description": "This amount is disposable."
       },
       "delegated": {
         "title": "Delegated assets",
-        "description": "Delegated assets are used for Cosmos voting. This is your total number of votes."
+        "description": "Delegated assets are used for {{currencyName}} voting. This is your total number of votes."
       },
       "undelegating": {
         "title": "Undelegating",
-        "description": "Undelegated assets are in a timelock of 21 days, before being available."
+        "description": "Undelegated assets are in a timelock of {{numberOfDays}} days, before being available."
       },
       "delegationUnavailable": {
         "title": "Delegation unavailable",
@@ -4498,7 +4473,7 @@
       }
     },
     "delegation": {
-      "delegationEarn": "You can earn ATOM rewards by delegating your assets.",
+      "delegationEarn": "You can earn {{ticker}} rewards by delegating your assets.",
       "info": "How Delegation works",
       "claimRewards": "Claim rewards",
       "claimAvailableRewards": "Claim {{amount}}",
@@ -4526,10 +4501,10 @@
       "flow": {
         "steps": {
           "starter": {
-            "description": "Delegate your ATOM to earn rewards securely, keeping control of your assets.",
+            "description": "Delegate your {{ticker}} to earn rewards securely, keeping control of your assets.",
             "steps": {
               "0": "Delegated assets remain yours.",
-              "1": "You will have to wait 21 days for the undelegation to complete.",
+              "1": "You will have to wait {{numberOfDays}} days for the undelegation to complete.",
               "2": "Delegate securely with your Ledger device."
             },
             "warning": {
@@ -5955,7 +5930,6 @@
       }
     }
   },
-
   "postOnboarding": {
     "hub": {
       "title": "Next up, use your {{productName}} to...",
@@ -5996,6 +5970,13 @@
       "nft": "NFTs"
     },
     "nftGallery": {
+      "filters": {
+        "selectAndHide": "Select and hide",
+        "hide": "Hide {{count}} collection",
+        "hide_plural": "Hide {{count}} collections",
+        "alertHide": "1 Collection hidden. Go to the settings to display and unhide it at any time",
+        "alertHide_plural": "{{count}} Collections hidden. Go to the settings to display and unhide them at any time"
+      },
       "empty": {
         "title": "No NFTs to show, yet",
         "subtitle": "Get started by receiving your first NFT.",

@@ -2536,7 +2536,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     ticker: "OSMO",
     scheme: "osmo",
     color: "#493c9b",
-    family: "osmosis",
+    family: "cosmos",
     units: [
       {
         name: "Osmosis",
@@ -2553,6 +2553,35 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       {
         tx: "https://www.mintscan.io/osmosis/txs/$hash",
         address: "https://www.mintscan.io/osmosis/validators/$address",
+      },
+    ],
+  },
+  juno: {
+    type: "CryptoCurrency",
+    id: "juno",
+    coinType: 118,
+    name: "Juno",
+    managerAppName: "Cosmos",
+    ticker: "JUNO",
+    scheme: "juno",
+    color: "#493c9b",
+    family: "cosmos",
+    units: [
+      {
+        name: "Juno",
+        code: "JUNO",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-JUNO",
+        code: "ujuno",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/juno/txs/$hash",
+        address: "https://www.mintscan.io/juno/validators/$address",
       },
     ],
   },

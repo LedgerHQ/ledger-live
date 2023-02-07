@@ -49,8 +49,11 @@ import { makeBridgeCacheSystem } from "../bridge/cache";
 import { accountDataToAccount, accountToAccountData } from "../cross";
 import type {
   Account,
+  AccountLike,
   Operation,
+  SignedOperation,
   SignOperationEvent,
+  TransactionCommon,
 } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "../generated/types";
 import { botTest } from "./bot-test-context";
@@ -72,8 +75,8 @@ const cache = makeBridgeCacheSystem({
 // simulate the export/inport of an account
 async function crossAccount(account: Account): Promise<Account> {
   const a = accountDataToAccount(accountToAccountData(account));
+  a.name += " cross";
   const synced = await syncAccount(a);
-  synced.name += " cross";
   return synced;
 }
 
@@ -171,7 +174,7 @@ export async function runWithAppSpec<T extends Transaction>(
           spec.scanAccountsRetries || defaultScanAccountsRetries
         ),
         filter((e) => e.type === "discovered"),
-        map((e) => e.account),
+        map((e) => deepFreezeAccount(e.account)),
         reduce<Account, Account[]>((all, a) => all.concat(a), []),
         timeoutWith(
           getEnv("BOT_TIMEOUT_SCAN_ACCOUNTS"),
@@ -494,6 +497,7 @@ export async function runOnAccount<T extends Transaction>({
     let status;
     let errors = [];
     let transaction: T = await accountBridge.prepareTransaction(account, tx);
+    deepFreezeTransaction(transaction);
 
     for (const patch of updates) {
       if (patch) {
@@ -506,6 +510,7 @@ export async function runOnAccount<T extends Transaction>({
           account,
           transaction
         );
+        deepFreezeTransaction(transaction);
       }
     }
 
@@ -515,9 +520,11 @@ export async function runOnAccount<T extends Transaction>({
       accounts.find((a) => a.freshAddress === transaction.recipient);
     report.destination = destination;
     status = await accountBridge.getTransactionStatus(account, transaction);
+    errors = Object.values(status.errors);
+
+    deepFreezeStatus(status);
     report.status = status;
     report.statusTime = now();
-    errors = Object.values(status.errors);
     const warnings = Object.values(status.warnings);
 
     if (mutation.recoverBadTransactionStatus) {
@@ -531,6 +538,7 @@ export async function runOnAccount<T extends Transaction>({
         });
 
         if (recovered && recovered !== transaction) {
+          deepFreezeTransaction(recovered);
           report.recoveredFromTransactionStatus = {
             transaction,
             status,
@@ -540,6 +548,8 @@ export async function runOnAccount<T extends Transaction>({
             account,
             transaction
           );
+          errors = Object.values(status.errors);
+          deepFreezeStatus(status);
           report.status = status;
           report.statusTime = now();
         }
@@ -613,6 +623,8 @@ export async function runOnAccount<T extends Transaction>({
         )
       )
       .toPromise();
+    deepFreezeSignedOperation(signedOperation);
+
     report.signedOperation = signedOperation;
     report.signedTime = now();
 
@@ -638,6 +650,8 @@ export async function runOnAccount<T extends Transaction>({
               throw e;
             });
           });
+
+    deepFreezeOperation(optimisticOperation);
     report.optimisticOperation = optimisticOperation;
     report.broadcastedTime = now();
     log(
@@ -801,7 +815,7 @@ async function syncAccount(initialAccount: Account): Promise<Account> {
       )
     )
     .toPromise();
-  return acc;
+  return deepFreezeAccount(acc);
 }
 
 export function autoSignTransaction<T extends Transaction>({
@@ -991,4 +1005,63 @@ function transactionTest<T>({
         accountBeforeTransaction.operations.length + 1
       )
   );
+}
+
+/*
+function deepFreeze(object, path: string[] = []) {
+  // Retrieve the property names defined on object
+  const propNames = Reflect.ownKeys(object);
+
+  // Freeze properties before freezing self
+  for (const name of propNames) {
+    const value = object[name];
+
+    if (value && typeof value === "object") {
+      deepFreeze(value, [...path, name.toString()]);
+    }
+  }
+
+  try {
+    return Object.freeze(object);
+  } catch (e) {
+    console.warn("Can't freeze at " + path.join("."));
+  }
+}
+*/
+
+// deepFreeze logic specialized to freeze an account (it's too problematic to deep freeze all objects of Account too deeply)
+function deepFreezeAccount<T extends AccountLike>(account: T): T {
+  Object.freeze(account);
+  if (account.type === "Account") {
+    account.subAccounts?.forEach(deepFreezeAccount);
+    account.nfts?.forEach(Object.freeze);
+  }
+  account.operations.forEach(deepFreezeOperation);
+  account.pendingOperations.forEach(deepFreezeOperation);
+  return account;
+}
+
+function deepFreezeOperation(operation: Operation): Operation {
+  Object.freeze(operation);
+  return operation;
+}
+
+function deepFreezeSignedOperation(
+  signedOperation: SignedOperation
+): SignedOperation {
+  Object.freeze(signedOperation);
+  Object.freeze(signedOperation.operation);
+  return signedOperation;
+}
+
+function deepFreezeStatus(
+  transactionStatus: TransactionStatus
+): TransactionStatus {
+  Object.freeze(transactionStatus);
+  return transactionStatus;
+}
+
+function deepFreezeTransaction<T extends TransactionCommon>(transaction: T): T {
+  Object.freeze(transaction);
+  return transaction;
 }

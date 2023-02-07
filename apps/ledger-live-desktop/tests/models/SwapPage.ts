@@ -5,6 +5,10 @@ export class SwapPage {
   readonly page: Page;
   readonly swapMenuButton: Locator;
   readonly maxSpendableToggle: Locator;
+  readonly accountByName: Function;
+  readonly accountDropdownAddAccountButton: Locator;
+  readonly reverseSwapPairButton: Locator;
+  readonly addToAccountButton: Locator;
   readonly exchangeButton: Locator;
   readonly swapId: Locator;
   readonly seeDetailsButton: Locator;
@@ -19,6 +23,10 @@ export class SwapPage {
     this.page = page;
     this.swapMenuButton = page.locator("data-test-id=drawer-swap-button");
     this.maxSpendableToggle = page.locator("data-test-id=swap-max-spendable-toggle");
+    this.accountByName = (accountName: string) => page.getByText(accountName);
+    this.accountDropdownAddAccountButton = page.getByText("Add account");
+    this.reverseSwapPairButton = page.locator("data-test-id=swap-reverse-pair-button");
+    this.addToAccountButton = page.locator("data-test-id=add-destination-account-button");
     this.exchangeButton = page.locator("data-test-id=exchange-button");
     this.swapId = page.locator("data-test-id=swap-id");
     this.seeDetailsButton = page.locator('button:has-text("See details")');
@@ -43,6 +51,26 @@ export class SwapPage {
 
   async sendMax() {
     await this.maxSpendableToggle.click();
+  }
+
+  async openAccountDropdownByAccountName(accountName: string) {
+    await this.accountByName(accountName).click();
+  }
+
+  async selectAccountByName(accountName: string) {
+    await this.accountByName(accountName).click();
+  }
+
+  async addAccountFromAccountDropdown() {
+    await this.accountDropdownAddAccountButton.click();
+  }
+
+  async reverseSwapPair() {
+    await this.reverseSwapPairButton.click();
+  }
+
+  async addDestinationAccount() {
+    await this.addToAccountButton.click();
   }
 
   async openTargetAccountDrawer() {

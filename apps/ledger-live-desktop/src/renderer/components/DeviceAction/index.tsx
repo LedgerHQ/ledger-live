@@ -38,6 +38,7 @@ import {
   renderLockedDeviceError,
   RenderDeviceNotOnboardedError,
 } from "./rendering";
+import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils";
 
 type Props<R, H, P> = {
   overridesPreferredDeviceModel?: DeviceModelId;
@@ -116,6 +117,7 @@ export const DeviceActionDefaultRendering = <R, H, P>({
 
   const dispatch = useDispatch();
   const preferredDeviceModel = useSelector(preferredDeviceModelSelector);
+  const swapDefaultTrack = useGetSwapTrackingProperties();
 
   const type = useTheme("colors.palette.type");
 
@@ -223,6 +225,7 @@ export const DeviceActionDefaultRendering = <R, H, P>({
       status,
       amountExpectedTo,
       estimatedFees,
+      swapDefaultTrack,
     });
   }
 
