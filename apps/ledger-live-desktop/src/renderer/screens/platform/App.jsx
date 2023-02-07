@@ -57,10 +57,11 @@ export default function PlatformApp({ match, appId: propsAppId, location }: Prop
   const remoteManifest = useRemoteLiveAppManifest(appId);
   let manifest = localManifest || remoteManifest;
 
-  const customDappUrl = getCustomDappUrl(manifest, appId, params, pathname);
-  if (customDappUrl) {
-    manifest = { ...manifest, params: { ...manifest.params, dappUrl: customDappUrl } };
-  }
+  // TODO - Need to fix to support SWAP deep link
+  // const customDappUrl = getCustomDappUrl(manifest, appId, params, pathname);
+  // if (customDappUrl) {
+  //   manifest = { ...manifest, params: { ...manifest.params, dappUrl: customDappUrl } };
+  // }
 
   // TODO for next urlscheme evolutions:
   // - check if local settings allow to launch an app from this branch, else display an error
