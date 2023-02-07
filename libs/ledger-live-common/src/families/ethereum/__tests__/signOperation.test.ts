@@ -11,6 +11,9 @@ import { ethereum1 } from "../datasets/ethereum1";
 import { signOperation } from "../signOperation";
 import { setEnv } from "../../../env";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { setSupportedCurrencies } from "../../../currencies";
+
+setSupportedCurrencies(["ethereum", "bsc"]);
 
 const signTransaction = jest.fn(() => {
   return Promise.resolve({
@@ -47,6 +50,7 @@ describe("signOperation", () => {
         "ethereum",
         "ethereum_goerli",
         "polygon",
+        "avalanche_c_chain",
       ];
 
       beforeAll(() => {
