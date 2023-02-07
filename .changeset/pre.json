@@ -82,6 +82,7 @@
     "pnpm-utils": "1.0.1"
   },
   "changesets": [
-    "brave-kids-poke"
+    "brave-kids-poke",
+    "silly-singers-jam"
   ]
 }

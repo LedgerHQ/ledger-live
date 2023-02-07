@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 28.0.1-hotfix.0
+
+### Patch Changes
+
+- [#2532](https://github.com/LedgerHQ/ledger-live/pull/2532) [`31f13e8ac2`](https://github.com/LedgerHQ/ledger-live/commit/31f13e8ac2272c54621d2b83f8b17ab5350ce918) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Tron fee limit upgrade to 30
+
 ## 28.0.0
 
 ### Major Changes
