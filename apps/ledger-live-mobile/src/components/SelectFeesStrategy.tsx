@@ -28,7 +28,7 @@ import NetworkFeeInfo from "./NetworkFeeInfo";
 import { useAnalytics } from "../analytics";
 import { sharedSwapTracking } from "../screens/Swap/utils";
 
-export type SelectFeeStrategy = FeeStrategy & {
+type SelectFeeStrategy = FeeStrategy & {
   userGasLimit?: BigNumber;
   forceValueLabel?: string;
 };
@@ -168,7 +168,7 @@ export default function SelectFeesStrategy({
         {NetworkFeesInfoComponent ? <NetworkFeesInfoComponent /> : <NetworkFeeInfo />}
       </QueuedDrawer>
 
-      <View style={styles.strategiesContainer}>
+      <View>
         <SectionSeparator lineColor={colors.lightFog} />
         <SummaryRow
           onPress={toggleNetworkFeeHelpModal}
