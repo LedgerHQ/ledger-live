@@ -11,6 +11,8 @@ import {
   getDates,
 } from "@ledgerhq/coin-framework/rangeDates";
 
+export { getDates, getRanges } from "@ledgerhq/coin-framework/rangeDates";
+
 export const defaultAssetsDistribution = {
   minShowFirst: 1,
   maxShowFirst: 6,

@@ -20,7 +20,7 @@ import {
   encodeAccountId,
   decodeAccountId,
 } from "@ledgerhq/live-common/lib/account/index";
-import { emptyHistoryCache } from "@ledgerhq/live-common/lib/account/balanceHistoryCache";
+import { emptyHistoryCache } from "@ledgerhq/live-common/lib/account/index";
 import {
   fromAccountRaw,
 } from "@ledgerhq/live-common/lib/account/serialization";
