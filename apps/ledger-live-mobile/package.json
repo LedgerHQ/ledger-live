@@ -151,6 +151,7 @@
     "react-native-ble-plx": "2.0.3",
     "react-native-codegen": "^0.0.7",
     "react-native-config": "1.4.4",
+    "react-native-device-uptime": "^1.0.0",
     "react-native-easy-markdown": "^2.0.0",
     "react-native-extra-dimensions-android": "^1.2.5",
     "react-native-fast-crypto": "^2.2.0",
