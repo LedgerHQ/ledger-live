@@ -24,20 +24,11 @@
       "*.json": [
         "*.json"
       ],
-      "*/": [
-        "lib/*/index.d.ts"
-      ],
       "*": [
         "lib/*"
       ],
-      "lib/*/": [
-        "lib/*/index.d.ts"
-      ],
       "lib/*": [
         "lib/*"
-      ],
-      "lib-es/*/": [
-        "lib-es/*/index.d.ts"
       ],
       "lib-es/*": [
         "lib-es/*"
