@@ -1399,7 +1399,7 @@
         "label" : "Populaire"
       },
       "earn" : {
-        "title" : "Gagner",
+        "title" : "Staker",
         "description" : "Faites fructifier vos crypto-actifs via Ledger."
       }
     }
@@ -5356,7 +5356,7 @@
       "description" : "Les transactions doivent être signées dans les 30 secondes. Veuillez réessayer."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Énergie inférieure à la quantité requise. Vous pourriez payer des frais allant jusqu’à 50 TRX."
+      "title" : "Energy is lower than necessary. You might pay up to 50 TRX in fees."
     },
     "PairingFailed" : {
       "title" : "Échec du couplage",
