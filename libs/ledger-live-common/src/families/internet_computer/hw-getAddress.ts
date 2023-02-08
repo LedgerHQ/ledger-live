@@ -7,7 +7,7 @@ import { getPath, isError } from "./utils";
 const resolver: Resolver = async (transport, { path, verify }) => {
   log("debug", "start getAddress process");
 
-  const icp = new ICP(transport);
+  const icp = new ICP(transport as any);
 
   const r = verify
     ? await icp.showAddressAndPubKey(getPath(path))

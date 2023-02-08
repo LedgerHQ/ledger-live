@@ -19,7 +19,7 @@ const signMessage: SignMessage = async (
 ): Promise<Result> => {
   log("debug", "start signMessage process");
 
-  const icp = new ICP(transport);
+  const icp = new ICP(transport as any);
 
   if (!message) throw new Error(`Message cannot be empty`);
 

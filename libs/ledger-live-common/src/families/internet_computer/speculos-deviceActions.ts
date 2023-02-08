@@ -1,6 +1,10 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
-import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
+import {
+  deviceActionFlow,
+  formatDeviceAmount,
+  SpeculosButton,
+} from "../../bot/specs";
 import { methodToString } from "./utils";
 
 export const acceptTransaction: DeviceAction<Transaction, any> =
@@ -8,26 +12,26 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
     steps: [
       {
         title: "Transaction type",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: () => {
           return methodToString(0);
         },
       },
       {
         title: "From account",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account }) =>
           account.freshAddress.match(/.{1,8}/g)?.join(" ") ?? "",
       },
       {
         title: "To account",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) =>
           transaction.recipient.match(/.{1,8}/g)?.join(" ") ?? "",
       },
       {
         title: "Payment (ICP)",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ status, account }) =>
           formatDeviceAmount(account.currency, status.amount, {
             hideCode: true,
@@ -36,7 +40,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Maximum fee (ICP)",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ status, account }) =>
           formatDeviceAmount(account.currency, status.estimatedFees, {
             hideCode: true,
@@ -45,12 +49,12 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Memo",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => transaction.memo ?? "0",
       },
       {
         title: "APPROVE",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
       },
     ],
   });
