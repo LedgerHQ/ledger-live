@@ -178,6 +178,9 @@ export const defaultFeatures: DefaultFeatures = {
   walletNftGallery: {
     enabled: false,
   },
+  walletConnectEntryPoint: {
+    enabled: false,
+  },
   staxWelcomeScreen: {
     enabled: false,
   },
