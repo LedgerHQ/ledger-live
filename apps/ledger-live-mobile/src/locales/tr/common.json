@@ -549,7 +549,7 @@
       "description" : "İşlemlerin 30 saniye içinde imzalanması gerekir. Lütfen tekrar deneyin."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Yeterince Enerji mevcut değil. Ağ ücreti 50TRX tutarına ulaşabilir."
+      "title" : "Energy is lower than necessary. You might pay up to 50TRX in fees."
     },
     "UpdateYourApp" : {
       "title" : "Uygulama güncellemesi gerekiyor",
@@ -820,7 +820,9 @@
     "required" : "Üzgünüz, Bluetooth devre dışı görünüyor",
     "locationRequiredTitle" : "Bluetooth LE için konum gerekli",
     "locationRequiredMessage" : "Bluetooth LE cihazlarını listelemek için Android'de konum izni gerekli.",
-    "checkEnabled" : "Lütfen telefon ayarlarınızdan Bluetooth'u etkinleştirin."
+    "checkEnabled" : "Lütfen telefon ayarlarınızdan Bluetooth'u etkinleştirin.",
+    "tryEnablingAgain" : "Bluetooth'u yeniden etkinleştirmeyi deneyin",
+    "openSettings" : "Bluetooth ayarlarını aç"
   },
   "webview" : {
     "noConnectionError" : {
@@ -830,12 +832,10 @@
   },
   "location" : {
     "titleServiceRequired" : "Konum hizmetleri gerekli",
-    "titlePermissionRequired" : "Konum izni gerekiyor",
-    "titlePermissionRequiredPrecise" : "Tam konum izni gerekiyor",
     "descriptionServiceRequired" : "Ledger Live, cihazınızı Bluetooth üzerinden eşleştirmek için konum hizmetleri gerektirir.",
-    "descriptionPermissionRequired" : "Ledger Live'ın cihazınızı Bluetooth üzerinden eşleştirmesi için konum izni gerekiyor.",
-    "descriptionPermissionRequiredPrecise" : "Ledger Live'ın cihazınızı Bluetooth üzerinden eşleştirmesi için tam konum izni gerekiyor.",
     "open" : "Konum ayarlarını aç",
+    "openSettings" : "Konum ayarlarını aç",
+    "tryEnablingAgain" : "Konumu yeniden etkinleştirmeyi deneyin",
     "noInfos" : "Ledger konum bilgilerinize erişmez."
   },
   "permissions" : {
@@ -848,6 +848,12 @@
       "modalButtonLabelBase" : "İzin ver",
       "modalButtonLabelSettingsVariant" : "Ayarlara git",
       "dontPair" : "Eşleştirme"
+    },
+    "location" : {
+      "titlePermissionRequired" : "Konum izni gerekiyor",
+      "titlePermissionRequiredPrecise" : "Tam konum izni gerekiyor",
+      "descriptionPermissionRequired" : "Ledger Live'ın cihazınızı Bluetooth üzerinden eşleştirmesi için konum izni gerekiyor.",
+      "descriptionPermissionRequiredPrecise" : "Ledger Live'ın cihazınızı Bluetooth üzerinden eşleştirmesi için tam konum izni gerekiyor."
     },
     "camera" : {
       "title" : "Kamera izni",
