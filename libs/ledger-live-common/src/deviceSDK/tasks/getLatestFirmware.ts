@@ -21,7 +21,10 @@ export type GetLatestFirmwareTaskError =
   | "FailedToRetrieveFirmwareUpdateInfo"
   | "FirmwareUpToDate";
 
-export type GetLatestFirmwareTaskErrorEvent = { type: "taskError"; error: GetLatestFirmwareTaskError }
+export type GetLatestFirmwareTaskErrorEvent = {
+  type: "taskError";
+  error: GetLatestFirmwareTaskError;
+};
 
 export type GetLatestFirmwareTaskEvent =
   | { type: "data"; firmwareUpdateContext: FirmwareUpdateContext }

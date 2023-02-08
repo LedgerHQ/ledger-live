@@ -30,7 +30,7 @@ export const useUpdateFirmware = ({
     if (nonce > 0 && deviceId) {
       setIsPerformingTheUpdate(true);
       const sub = updateFirmwareAction({
-        deviceId
+        deviceId,
       }).subscribe({
         next: setUpdateState,
         complete: () => setIsPerformingTheUpdate(false),
@@ -43,10 +43,9 @@ export const useUpdateFirmware = ({
     }
   }, [deviceId, updateFirmwareAction, nonce]);
 
-  const triggerUpdate =
-    isPerformingTheUpdate
-      ? undefined
-      : () => setNonce(nonce + 1);
+  const triggerUpdate = isPerformingTheUpdate
+    ? undefined
+    : () => setNonce(nonce + 1);
 
   return { updateState, triggerUpdate };
 };

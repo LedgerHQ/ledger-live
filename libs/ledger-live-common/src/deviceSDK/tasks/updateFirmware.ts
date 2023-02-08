@@ -50,7 +50,7 @@ function internalUpdateFirmwareTask({
 }: UpdateFirmwareTaskArgs): Observable<UpdateFirmwareTaskEvent> {
   return new Observable((subscriber) => {
     withDevice(deviceId)((transport) =>
-      quitApp(transport).pipe(        
+      quitApp(transport).pipe(
         switchMap(() => getVersion(transport)),
         switchMap((value) => {
           if (value.type === "unresponsive") {
@@ -137,6 +137,34 @@ function internalUpdateFirmwareTask({
   });
 }
 
+/**
+ * The final MCU version that is retrieved from the API has the information on which bootloader it
+ * can be installed on. Therefore if the device is in bootloader mode, but its bootloader version
+ * (deviceInfo.majMin) is NOT the version for on which the MCU should be installed
+ * (majMin !== mcuVersion.from_bootloader_version), this means that we should first install a new
+ * bootloader version before installing the MCU. We return this information (isMcuUpdate as false)
+ * and the majMin formatted version of which bootloader should be installedb (bootloaderVersion).
+ * Otherwise, if the current majMin version is indeed the bootloader version on which this MCU can
+ * be installed, it means that we can directly install the MCU (isMcuUpdate as true)
+ * @param deviceMajMin the current majMin version present in the device
+ * @param mcuFromBootloaderVersion  the bootloader on which the MCU is able to be installed
+ * @returns the formatted bootloader version to be installed and if it's actually needed
+ */
+export function getFlashMcuOrBootloaderDetails(
+  deviceMajMin: string,
+  mcuFromBootloaderVersion: string
+): { bootloaderVersion: string; isMcuUpdate: boolean } {
+  // converts the version into the majMin format
+  const bootloaderVersion = (mcuFromBootloaderVersion || "")
+    .split(".")
+    .slice(0, 2)
+    .join(".");
+
+  const isMcuUpdate = deviceMajMin === bootloaderVersion;
+
+  return { bootloaderVersion, isMcuUpdate };
+}
+
 // recursive loop function that will continue flashing either MCU or the Bootloader, until
 // the device is no longer on bootloader mode
 const flashMcuOrBootloader = (
@@ -153,29 +181,19 @@ const flashMcuOrBootloader = (
     subscriber.complete();
   }
 
-  // TODO:
-  // in the original update code we had the following check
-  // version = deviceInfo.majMin in blVersionAliases ?
-  //  blVersionAliases[deviceInfo.majMin] :
-  //  retrieveMcuVersion()
-  // what does it mean? is still needed for some updates? which ones?
-
   retrieveMcuVersion(updateContext.final).then((mcuVersion) => {
     if (mcuVersion) {
-      const mcuFromBootloader = (mcuVersion.from_bootloader_version || "")
-        .split(".")
-        .slice(0, 2)
-        .join(".");
+      const { bootloaderVersion, isMcuUpdate } = getFlashMcuOrBootloaderDetails(
+        deviceInfo.majMin,
+        mcuVersion.from_bootloader_version
+      );
 
-      // not sure I understand what this means, but it is the check that is used on the legacy
-      // update to decide if we're doing an MCU flash or a Bootloader flash
-      const isMcuUpdate = deviceInfo.majMin === mcuFromBootloader;
       withDevice(deviceId)((transport) =>
         flashMcuOrBootloaderCommand(transport, {
           targetId: deviceInfo.targetId,
-          version: isMcuUpdate ? mcuVersion.name : mcuFromBootloader,
-          // according to the type of update we grab the version from different places on the
-          // mcuVersion object. The rest of the command is completely the same
+          version: isMcuUpdate ? mcuVersion.name : bootloaderVersion,
+          // whether this is an mcu update or a bootloader one is decided by the isMcuUpdate variable
+          // we only need to use the correct version here to flash the right thing
         })
       ).subscribe({
         next: (event) =>
