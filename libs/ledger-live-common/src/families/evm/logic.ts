@@ -1,6 +1,9 @@
+import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
 import { Account, SubAccount } from "@ledgerhq/types-live";
-import { mergeOps } from "../../bridge/jsHelpers";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/tokens";
 import {
   Transaction as EvmTransaction,
   EvmTransactionEIP1559,
@@ -102,4 +105,24 @@ export const mergeSubAccounts = (
   }
   const updatedSubAccounts = Object.values(oldSubAccountsById);
   return [...updatedSubAccounts, ...newSubAccountsToAdd];
+};
+
+/**
+ * Method creating a hash that will help triggering or not a full synchronization on an account.
+ * As of now, it's checking if a token has been added, removed of changed regarding important properties
+ */
+export const getSyncHash = (currency: CryptoCurrency): string => {
+  const tokens = listTokensForCryptoCurrency(currency);
+  const basicTokensListString = tokens
+    .map(
+      (token) =>
+        token.id +
+        token.contractAddress +
+        token.name +
+        token.ticker +
+        token.delisted
+    )
+    .join("");
+
+  return ethers.utils.sha256(Buffer.from(basicTokensListString));
 };
