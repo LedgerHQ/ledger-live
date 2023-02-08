@@ -26,7 +26,7 @@ export const avalancheSpeculosDeviceAction: DeviceAction<Transaction, any> =
         button: SpeculosButton.RIGHT,
         expectedValue: ({ account, transaction, status }) => {
           const amount = transaction.useAllAmount
-            ? status.totalSpent
+            ? status.amount
             : transaction.amount;
 
           return formatDeviceAmount(account.currency, amount);
