@@ -549,7 +549,7 @@
       "description" : "必须在 30 秒内签署交易。请重试。"
     },
     "TronNotEnoughEnergy" : {
-      "title" : "能量低于必要值。您可能需要支付高达 50TRX 的费用。"
+      "title" : "Energy is lower than necessary. You might pay up to 50TRX in fees."
     },
     "UpdateYourApp" : {
       "title" : "需要更新应用程序",
@@ -820,7 +820,9 @@
     "required" : "抱歉，蓝牙似乎被禁用了",
     "locationRequiredTitle" : "Bluetooth LE 需要定位",
     "locationRequiredMessage" : "Android 安卓系统需要开启定位许可，从而显示 Bluetooth LE 蓝牙低功耗设备列表。",
-    "checkEnabled" : "请在您手机的设置中启用蓝牙。"
+    "checkEnabled" : "请在您手机的设置中启用蓝牙。",
+    "tryEnablingAgain" : "重新尝试启用蓝牙",
+    "openSettings" : "打开蓝牙设置选项"
   },
   "webview" : {
     "noConnectionError" : {
@@ -830,12 +832,10 @@
   },
   "location" : {
     "titleServiceRequired" : "需要定位服务",
-    "titlePermissionRequired" : "需要位置权限",
-    "titlePermissionRequiredPrecise" : "需要精确位置权限",
     "descriptionServiceRequired" : "Ledger Live 需要定位服务才能通过蓝牙配对您的设备。",
-    "descriptionPermissionRequired" : "Ledger Live 需要位置权限才能通过蓝牙配对您的设备。",
-    "descriptionPermissionRequiredPrecise" : "Ledger Live 需要精确位置权限才能通过蓝牙配对您的设备。",
     "open" : "打开定位设置选项",
+    "openSettings" : "打开定位设置选项",
+    "tryEnablingAgain" : "重新尝试启用位置",
     "noInfos" : "Ledger 并不会获取您的位置信息。"
   },
   "permissions" : {
@@ -848,6 +848,12 @@
       "modalButtonLabelBase" : "授权",
       "modalButtonLabelSettingsVariant" : "前往设置选项",
       "dontPair" : "不配对"
+    },
+    "location" : {
+      "titlePermissionRequired" : "需要位置权限",
+      "titlePermissionRequiredPrecise" : "需要精确位置权限",
+      "descriptionPermissionRequired" : "Ledger Live 需要位置权限才能通过蓝牙配对您的设备。",
+      "descriptionPermissionRequiredPrecise" : "Ledger Live 需要精确位置权限才能通过蓝牙配对您的设备。"
     },
     "camera" : {
       "title" : "授权相机",
