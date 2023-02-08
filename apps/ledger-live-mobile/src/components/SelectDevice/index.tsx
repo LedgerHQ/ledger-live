@@ -239,7 +239,7 @@ export default function SelectDevice({
   return (
     <>
       <RequiresBluetoothDrawer
-        isOpen={isBleRequired}
+        isOpenedOnIssue={isBleRequired}
         onUserClose={onUserCloseRequireBluetoothDrawer}
         bluetoothRequirementsState={bluetoothRequirementsState}
         retryRequestOnIssue={retryRequestOnIssue}

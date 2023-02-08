@@ -88,7 +88,7 @@ export default function DebugBluetoothAndLocationServices() {
             </Flex>
             <Flex mt={5}>
               <RequiresBluetoothDrawer
-                isOpen={isRequireCustomizedBluetoothEnabled}
+                isOpenedOnIssue={isRequireCustomizedBluetoothEnabled}
                 onUserClose={onUserClose}
                 bluetoothRequirementsState={bluetoothRequirementsState}
                 retryRequestOnIssue={retryRequestOnIssue}
