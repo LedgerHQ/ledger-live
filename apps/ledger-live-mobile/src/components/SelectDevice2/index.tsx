@@ -254,7 +254,7 @@ export default function SelectDevice({ onSelect, stopBleScanning }: Props) {
   return (
     <>
       <RequiresBluetoothDrawer
-        isOpen={isBleRequired}
+        isOpenedOnIssue={isBleRequired}
         onUserClose={onUserCloseRequireBluetoothDrawer}
         bluetoothRequirementsState={bluetoothRequirementsState}
         retryRequestOnIssue={retryRequestOnIssue}
