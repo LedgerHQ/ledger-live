@@ -4,7 +4,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { View } from "react-native";
 
 import { Icons } from "@ledgerhq/native-ui";
-import BottomModal from "./BottomModal";
+import QueuedDrawer from "./QueuedDrawer";
 import ModalBottomAction from "./ModalBottomAction";
 import {
   languageSelector,
@@ -59,7 +59,7 @@ export default function CheckLanguageAvailability() {
         event={`Discoverability - Prompt - ${defaultLanguage}`}
         eventProperties={{ language: defaultLanguage }}
       />
-      <BottomModal isOpened onClose={onRequestClose}>
+      <QueuedDrawer isRequestingToBeOpened onClose={onRequestClose}>
         <ModalBottomAction
           title={<Trans i18nKey="systemLanguageAvailable.title" />}
           icon={<Icons.LanguageMedium color="primary.c80" size={50} />}
@@ -103,7 +103,7 @@ export default function CheckLanguageAvailability() {
             </View>
           }
         />
-      </BottomModal>
+      </QueuedDrawer>
     </>
   );
 }

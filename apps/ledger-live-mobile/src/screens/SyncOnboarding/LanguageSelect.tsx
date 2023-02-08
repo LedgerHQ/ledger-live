@@ -1,12 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { ScrollView } from "react-native";
-import {
-  BottomDrawer,
-  Button,
-  Flex,
-  SelectableList,
-  Text,
-} from "@ledgerhq/native-ui";
+import { Button, Flex, SelectableList, Text } from "@ledgerhq/native-ui";
 import { useDispatch } from "react-redux";
 import {
   ArrowLeftMedium,
@@ -24,6 +18,7 @@ import Illustration from "../../images/illustration/Illustration";
 import DeviceDark from "../../images/illustration/Dark/_FamilyPackX.png";
 import DeviceLight from "../../images/illustration/Light/_FamilyPackX.png";
 import { updateIdentify } from "../../analytics";
+import QueuedDrawer from "../../components/QueuedDrawer";
 
 type UiDrawerStatus =
   | "none"
@@ -51,9 +46,6 @@ const LanguageSelect = ({ device, productName }: Props) => {
   const dispatch = useDispatch();
   const { availableLanguages: firmwareAvailableLanguages, loaded } =
     useAvailableLanguagesForDevice(device);
-
-  const [currentDisplayedDrawer, setCurrentDisplayedDrawer] =
-    useState<UiDrawerStatus>("none");
 
   // Will be computed depending on the states. Updating nextDrawerToDisplay
   // triggers the current displayed drawer to close
@@ -109,18 +101,10 @@ const LanguageSelect = ({ device, productName }: Props) => {
   } else {
     nextDrawerToDisplay = "none";
 
-    // Resets entirely the drawer mechanism
-    if (currentDisplayedDrawer !== "none") {
-      setCurrentDisplayedDrawer("none");
-    }
-  }
-
-  // If there is already a displayed drawer, the currentDisplayedDrawer would be
-  // synchronized with nextDrawerToDisplay during the displayed drawer onClose event.
-  // Otherwise, currentDisplayDrawer needs to be set to nextDrawerToDisplay outside of
-  // the onClose event (that does not exist, because there is no current displayed drawer).
-  if (currentDisplayedDrawer === "none" && nextDrawerToDisplay !== "none") {
-    setCurrentDisplayedDrawer(nextDrawerToDisplay);
+    // // Resets entirely the drawer mechanism
+    // if (currentDisplayedDrawer !== "none") {
+    //   setCurrentDisplayedDrawer("none");
+    // }
   }
 
   return (
@@ -135,14 +119,10 @@ const LanguageSelect = ({ device, productName }: Props) => {
       >
         {currentLocale.toLocaleUpperCase()}
       </Button>
-      <BottomDrawer
+      <QueuedDrawer
         noCloseButton
         preventBackdropClick
-        isOpen={
-          currentDisplayedDrawer === "language-selection" &&
-          nextDrawerToDisplay === "language-selection"
-        }
-        onClose={() => setCurrentDisplayedDrawer(nextDrawerToDisplay)}
+        isRequestingToBeOpened={nextDrawerToDisplay === "language-selection"}
       >
         <Flex
           mb={4}
@@ -150,6 +130,7 @@ const LanguageSelect = ({ device, productName }: Props) => {
           alignItems="center"
           justifyContent="space-between"
         >
+          <Text>Hola</Text>
           <Flex flex={1}>
             <Button
               Icon={ArrowLeftMedium}
@@ -175,11 +156,10 @@ const LanguageSelect = ({ device, productName }: Props) => {
             </SelectableList>
           </Flex>
         </ScrollViewContainer>
-      </BottomDrawer>
-      <BottomDrawer
+      </QueuedDrawer>
+      <QueuedDrawer
         preventBackdropClick
-        isOpen={
-          currentDisplayedDrawer === "firmware-language-update" &&
+        isRequestingToBeOpened={
           nextDrawerToDisplay === "firmware-language-update"
         }
         onClose={handleFirmwareLanguageCancel}
@@ -208,7 +188,7 @@ const LanguageSelect = ({ device, productName }: Props) => {
         <Button onPress={handleFirmwareLanguageCancel}>
           {t("syncOnboarding.firmwareLanguageUpdateDrawer.cancelCta")}
         </Button>
-      </BottomDrawer>
+      </QueuedDrawer>
     </Flex>
   );
 };

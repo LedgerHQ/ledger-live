@@ -16,7 +16,7 @@ import {
   clearBackgroundEvents,
   dequeueBackgroundEvent,
 } from "../../actions/appstate";
-import BottomModal from "../BottomModal";
+import QueuedDrawer from "../QueuedDrawer";
 import GenericErrorView from "../GenericErrorView";
 import useLatestFirmware from "../../hooks/useLatestFirmware";
 import ConfirmRecoveryStep from "./ConfirmRecoveryStep";
@@ -194,9 +194,9 @@ export default function FirmwareUpdate({
   const firmwareVersion = latestFirmware?.final?.name ?? "";
 
   return (
-    <BottomModal
+    <QueuedDrawer
       noCloseButton={!canClose}
-      isOpened={isOpen}
+      isRequestingToBeOpened={isOpen}
       onClose={onCloseSilently}
       onModalHide={onCloseSilently}
     >
@@ -269,6 +269,6 @@ export default function FirmwareUpdate({
       {step === "downloadingUpdate" && (
         <DownloadingUpdateStep progress={progress} />
       )}
-    </BottomModal>
+    </QueuedDrawer>
   );
 }

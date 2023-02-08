@@ -60,6 +60,7 @@ import PostOnboardingDebugScreen from "../../screens/PostOnboarding/PostOnboardi
 import { SettingsNavigatorStackParamList } from "./types/SettingsNavigator";
 import DebugTermsOfUse from "../../screens/Settings/Debug/Features/TermsOfUse";
 import CameraPermissions from "../../screens/Settings/Debug/Debugging/CameraPermissions";
+import DebugQueuedDrawers from "../../screens/Settings/Debug/Features/QueuedDrawers";
 
 const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 
@@ -404,6 +405,13 @@ export default function SettingsNavigator() {
         component={DebugPerformance}
         options={{
           title: "Performance",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugQueuedDrawers}
+        component={DebugQueuedDrawers}
+        options={{
+          title: "Debug bottom drawers",
         }}
       />
     </Stack.Navigator>

@@ -11,7 +11,7 @@ import SummaryRow from "./SummaryRow";
 import CounterValue from "../../components/CounterValue";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import LText from "../../components/LText";
-import BottomModal from "../../components/BottomModal";
+import QueuedDrawer from "../../components/QueuedDrawer";
 import ModalBottomAction from "../../components/ModalBottomAction";
 import Button from "../../components/Button";
 import Circle from "../../components/Circle";
@@ -77,7 +77,10 @@ class SummaryTotalSection extends PureComponent<Props, State> {
             </LText>
           </View>
         </SummaryRow>
-        <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
+        <QueuedDrawer
+          isRequestingToBeOpened={isModalOpened}
+          onClose={this.onRequestClose}
+        >
           <ModalBottomAction
             title={<Trans i18nKey="send.summary.infoTotalTitle" />}
             icon={
@@ -97,7 +100,7 @@ class SummaryTotalSection extends PureComponent<Props, State> {
               </View>
             }
           />
-        </BottomModal>
+        </QueuedDrawer>
       </>
     );
   }

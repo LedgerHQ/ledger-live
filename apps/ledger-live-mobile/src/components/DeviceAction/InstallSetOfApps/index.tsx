@@ -10,7 +10,7 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
 
 import { DeviceActionDefaultRendering } from "..";
-import BottomModal from "../../BottomModal";
+import QueuedDrawer from "../../QueuedDrawer";
 
 import Item from "./Item";
 import Confirmation from "./Confirmation";
@@ -30,7 +30,7 @@ const action = createAction(connectApp);
 /**
  * This component overrides the default rendering for device actions in some
  * cases, falling back to the default one for the rest. Actions such as user blocking
- * requests, errors and such will be rendered in a BottomModal whereas installation
+ * requests, errors and such will be rendered in a QueuedDrawer whereas installation
  * progress and loading states will be handled inline as part of the screen where this
  * this is rendered.
  */
@@ -140,8 +140,8 @@ const InstallSetOfApps = ({
       <Text variant="paragraphLineHeight" color="neutral.c70">
         <Trans i18nKey="installSetOfApps.ongoing.disclaimer" />
       </Text>
-      <BottomModal
-        isOpened={!!allowManagerRequestedWording || !!error}
+      <QueuedDrawer
+        isRequestingToBeOpened={!!allowManagerRequestedWording || !!error}
         onClose={onWrappedError}
         onModalHide={onWrappedError}
       >
@@ -153,7 +153,7 @@ const InstallSetOfApps = ({
             />
           </Flex>
         </Flex>
-      </BottomModal>
+      </QueuedDrawer>
     </Flex>
   ) : shouldRestoreApps ? (
     <Restore
