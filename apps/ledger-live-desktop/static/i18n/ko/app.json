@@ -606,6 +606,28 @@
       "creditedAmount" : "적립 금액"
     }
   },
+  "stake" : {
+    "noFundsModal" : {
+      "title" : "구매, 스왑 또는 수령",
+      "text" : "스테이킹에 가용한 {{coin}} 잔액이 충분하지 않습니다",
+      "description" : "자금이 부족하신가요? 걱정하지 마세요. Ledger Live에서 바로 암호화폐 구매, 스왑, 또는 수령이 가능합니다.",
+      "options" : {
+        "buy" : {
+          "title" : "구매",
+          "body" : "신뢰할 수 있는 공급자를 통한 구매"
+        },
+        "swap" : {
+          "title" : "스왑",
+          "label" : "인기 있는",
+          "body" : "암호화폐 간 안전한 전환"
+        },
+        "receive" : {
+          "title" : "수령",
+          "body" : "본인 지갑에서 암호화폐 수령"
+        }
+      }
+    }
+  },
   "lottieDebugger" : {
     "buttonTitle" : "테스트"
   },
@@ -1099,6 +1121,7 @@
       "receive" : "수령",
       "send" : "전송",
       "swap" : "스왑",
+      "stake" : "스테이킹",
       "buy" : "구매",
       "sell" : "판매",
       "edit" : "계정 편집",
@@ -1364,7 +1387,22 @@
     },
     "recentActivity" : "최신 운영",
     "totalBalance" : "총 잔액",
-    "transactionsPendingConfirmation" : "일부 트랜잭션이 아직 확인되지 않았습니다. 트랜잭션이 확인된 후 잔액에 반영되며 사용이 가능합니다."
+    "transactionsPendingConfirmation" : "일부 트랜잭션이 아직 확인되지 않았습니다. 트랜잭션이 확인된 후 잔액에 반영되며 사용이 가능합니다.",
+    "featuredButtons" : {
+      "buySell" : {
+        "title" : "매수 / 매도",
+        "description" : "신뢰할 수 있는 공급자와 거래"
+      },
+      "swap" : {
+        "title" : "스왑",
+        "description" : "암호화폐 간 안전한 전환",
+        "label" : "인기 있는"
+      },
+      "earn" : {
+        "title" : "수익",
+        "description" : "Ledger와 함께 암호화폐 수익 실현"
+      }
+    }
   },
   "currentAddress" : {
     "title" : "현재 주소",
@@ -2809,7 +2847,7 @@
   "cosmos" : {
     "delegation" : {
       "emptyState" : {
-        "description" : "자산을 위임하여 ATOM 보상을 받을 수 있습니다.",
+        "description" : "자산을 위임하여 {{currencyTicker}} 보상을 받을 수 있습니다.",
         "info" : "위임은 어떤 원리인가요?",
         "delegation" : "보상 받기"
       },
@@ -2834,8 +2872,8 @@
         "title" : "위임하기",
         "steps" : {
           "starter" : {
-            "description" : "ATOM 자산을 검증인에게 위임하여 보상을 받을 수 있습니다.",
-            "bullet" : ["위임된 자산의 소유권은 귀하가 갖습니다", "Ledger 장치를 이용하여 위임하세요", "자산은 위임 해제 21일 후에 이용 가능합니다"],
+            "description" : "{{currencyTicker}} 암호화폐를 검증인에게 위임하여 보상을 받을 수 있습니다.",
+            "bullet" : ["위임된 자산의 소유권은 귀하가 갖습니다", "Ledger 장치를 이용하여 위임하세요", "자산은 위임 해제 {{numberOfDays}}일 후에 이용 가능합니다"],
             "warning" : {
               "description" : "검증인을 현명하게 선택하세요. 검증인이 부적절한 행동을 하는 경우 위임된 자산의 일부가 영구 손실될 수 있습니다."
             }
@@ -2912,7 +2950,7 @@
             "currentDelegation" : "현재 위임",
             "newDelegation" : "새로운 위임",
             "chooseValidator" : "검증인 선택",
-            "warning" : "다시 마음이 바뀌어 새로운 검증인 교체하고 재위임하려면 <0>21 days</0>일을 기다려야 합니다",
+            "warning" : "다시 마음이 바뀌어 새로운 검증인 교체하고 재위임하려면 <0>{{numberOfDays}}일</0>을 기다려야 합니다",
             "amountLabel" : "재위임할 금액"
           },
           "device" : {
@@ -2939,8 +2977,8 @@
         "steps" : {
           "amount" : {
             "title" : "금액",
-            "subtitle" : "위임 해제 절차 완료까지 <0>21일</0>이 소요됩니다.",
-            "warning" : "보상은 즉시 현금화할 수 있습니다. 위임 해제 금액은 <0>21일 시간 잠금</0> 후에 가용 잔금으로 되돌아옵니다.",
+            "subtitle" : "위임 해제 절차 완료까지 <0>{{numberOfDays}}일</0>이 소요됩니다.",
+            "warning" : "보상은 즉시 현금화할 수 있습니다. 위임 해제 금액은 <0>{{numberOfDays}}일 시간 잠금</0> 후에 이용 가능한 잔액으로 되돌아옵니다.",
             "fields" : {
               "validator" : "검증인",
               "amount" : "위임 해제 금액"
@@ -3024,176 +3062,6 @@
             "success" : {
               "title" : "보상을 성공적으로 수령했습니다!",
               "text" : "보상이 가용 잔금에 추가되었습니다",
-              "cta" : "세부사항 보기"
-            },
-            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
-          }
-        }
-      }
-    }
-  },
-  "osmosis" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Figment 기반",
-        "moreInfo" : "자세한 정보",
-        "drawerTitle" : "Figment 기반",
-        "title" : "이제 Ledger Live에서 OSMO 토큰을 사용할 수 있습니다.",
-        "description" : "이제 Ledger Live로 OSMO 토큰을 관리하고 안전하게 보호할 수 있습니다.",
-        "description2" : "OSMO 토큰은 OSMO 체인의 네이티브 토큰이며 트랜잭션과 스테이킹을 비롯하여 앞으로 공개될 다양한 기능에 사용됩니다.",
-        "website" : "Figment 기반"
-      }
-    },
-    "memo" : "메모",
-    "memoPlaceholder" : "선택 사항",
-    "memoWarningText" : "메모 기능을 사용할 때는 관련 정보를 수령인과 신중하게 확인하세요",
-    "delegation" : {
-      "emptyState" : {
-        "description" : "자산을 위임하여 OSMO 보상을 받을 수 있습니다.",
-        "info" : "위임은 어떤 원리인가요?",
-        "delegation" : "보상 받기"
-      },
-      "commission" : "커미션",
-      "totalStake" : "총 스테이킹",
-      "claimRewards" : "보상 수령",
-      "header" : "위임",
-      "noRewards" : "이용 가능한 보상이 없습니다",
-      "delegate" : "추가",
-      "undelegate" : "위임 해제",
-      "redelegate" : "재위임",
-      "redelegateDisabledTooltip" : "<0>{{days}}</0>에 재위임할 수 있습니다",
-      "redelegateMaxDisabledTooltip" : "한 번에 <0>7</0>명 이상의 검증인을 재위임할 수 없습니다",
-      "undelegateDisabledTooltip" : "한 번에 <0>7</0>명 이상의 검증인을 위임 해제할 수 없습니다",
-      "reward" : "보상 수령",
-      "currentDelegation" : "위임됨: <0>{{amount}}</0>",
-      "estYield" : "추산 수익",
-      "activeTooltip" : "위임된 금액이 보상을 생성합니다",
-      "inactiveTooltip" : "위임되지 않은 금액은 보상을 생성하지 않습니다",
-      "minSafeWarning" : "자금이 부족합니다",
-      "flow" : {
-        "title" : "위임하기",
-        "steps" : {
-          "starter" : {
-            "description" : "OSMO 암호화폐를 검증인에게 위임하여 보상을 받을 수 있습니다.",
-            "bullet" : ["위임된 자산의 소유권은 귀하가 갖습니다", "Ledger 장치를 이용하여 위임하세요", "자산은 위임 해제 14일 후에 이용 가능합니다"],
-            "warning" : {
-              "description" : "검증인을 현명하게 선택하세요. 검증인이 부적절한 행동을 하는 경우 위임된 자산의 일부가 영구 손실될 수 있습니다."
-            }
-          },
-          "amount" : {
-            "title" : "금액"
-          },
-          "validator" : {
-            "title" : "검증인"
-          },
-          "connectDevice" : {
-            "title" : "장치"
-          },
-          "confirmation" : {
-            "title" : "확인",
-            "success" : {
-              "title" : "자산을 성공적으로 위임했습니다",
-              "text" : "블록체인이 트랜잭션 검증을 완료하면 계정 잔금이 업데이트됩니다.",
-              "cta" : "세부사항 보기"
-            },
-            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
-          }
-        }
-      }
-    },
-    "claimRewards" : {
-      "flow" : {
-        "title" : "보상 수령",
-        "steps" : {
-          "claimRewards" : {
-            "title" : "보상",
-            "compound" : "컴파운드",
-            "claim" : "현금화",
-            "compoundOrClaim" : "컴파운드 또는 현금화",
-            "compoundDescription" : "위임된 금액에 보상이 추가됩니다",
-            "claimDescription" : "보상이 이용 가능 잔금에 추가됩니다",
-            "compoundInfo" : "<0>{{amount}}</0>의 보상을 획득했습니다. '계속'을 클릭하면, 바로 보상을 수령하고 동일한 검증인에게 자동 위임합니다.",
-            "claimInfo" : "아래 검증인으로부터 <0>{{amount}}</0>의 수익을 획득했습니다. '계속'을 클릭하면, 바로 보상을 수령하고 이용 가능 잔액에 자동 추가됩니다.",
-            "selectLabel" : "위임 선택"
-          },
-          "connectDevice" : {
-            "title" : "장치"
-          },
-          "confirmation" : {
-            "title" : "확인",
-            "label" : "확인",
-            "success" : {
-              "title" : "보상을 성공적으로 현금화 했습니다",
-              "titleCompound" : "성공적으로 보상에 복리를 적용했습니다.",
-              "text" : "보상이 이용 가능 잔액에 추가되었습니다",
-              "textCompound" : "귀하의 보상이 <0>{{amount}}</0>자동으로 <0>{{validator}}</0>에게 위임되었습니다",
-              "cta" : "세부사항 보기"
-            },
-            "pending" : {
-              "title" : "트랜잭션 브로드캐스팅 중..."
-            },
-            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
-          }
-        }
-      }
-    },
-    "redelegation" : {
-      "flow" : {
-        "title" : "자산 재위임",
-        "steps" : {
-          "starter" : {
-            "title" : "재위임",
-            "description" : "재위임 기능을 이용해 손쉽게 검증인을 변경하세요. 하지만 재위임 시 14일 타임 락이 적용되기 때문에, 다시 변경을 원하는 경우 14일을 기다려야 합니다.",
-            "warning" : "검증인을 현명하게 선택하세요. 검증인이 부적절한 행동을 하는 경우 위임된 자산의 일부가 영구 손실될 수 있습니다. 최대 <0>7개의 대기 중 재위임</0>이 있을 수 있습니다.",
-            "howDelegationWorks" : "위임은 어떤 원리인가요?"
-          },
-          "validators" : {
-            "title" : "검증인",
-            "currentDelegation" : "현재 위임",
-            "newDelegation" : "새로운 위임",
-            "chooseValidator" : "검증인 선택",
-            "warning" : "다시 마음이 바뀌어 새로운 검증인 교체하고 재위임하려면 <0>14일</0>을 기다려야 합니다",
-            "amountLabel" : "재위임할 금액"
-          },
-          "device" : {
-            "title" : "장치"
-          },
-          "confirmation" : {
-            "title" : "확인",
-            "success" : {
-              "title" : "귀하의 자산을 성공적으로 재위임했습니다",
-              "text" : "블록체인이 트랜잭션 확인을 마치고 나면 재위임이 업데이트됩니다.",
-              "cta" : "세부사항 보기"
-            },
-            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
-          }
-        }
-      }
-    },
-    "undelegation" : {
-      "header" : "위임 해제",
-      "headerTooltip" : "141일 타임 락이 끝나면 이용할 수 있습니다",
-      "inactiveTooltip" : "위임되지 않은 금액은 보상을 생성하지 않습니다",
-      "flow" : {
-        "title" : "위임 해제 자산",
-        "steps" : {
-          "amount" : {
-            "title" : "금액",
-            "subtitle" : "위임 해제 절차 완료까지 <0>14일</0>이 소요됩니다.",
-            "warning" : "보상은 즉시 현금화할 수 있습니다. 위임 해제 금액은 <0>14일 시간 잠금 후에 가용 잔금으로 되돌아옵니다.",
-            "fields" : {
-              "validator" : "검증인",
-              "amount" : "위임 해제 금액"
-            }
-          },
-          "device" : {
-            "title" : "장치"
-          },
-          "confirmation" : {
-            "title" : "확인",
-            "success" : {
-              "title" : "귀하의 자산을 성공적으로 위임 해제했습니다.",
-              "description" : "<0>{{amount}}</0>가 <0>{{validator}}</0>로부터 위임 해제되었습니다",
               "cta" : "세부사항 보기"
             },
             "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
@@ -5488,7 +5356,7 @@
       "description" : "30초 이내에 서명이 적용되어야 합니다. 다시 시도해 주세요."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 20TRX를 지불할 수 있습니다."
+      "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 30TRX를 지불할 수 있습니다."
     },
     "PairingFailed" : {
       "title" : "페어링 실패",
