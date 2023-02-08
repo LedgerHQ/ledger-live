@@ -34,7 +34,7 @@ export type UPDATE_PROVIDERS_TYPE = {
 const updateProviders = (state: SwapStateType, { payload: providers }: UPDATE_PROVIDERS_TYPE) => {
   const pairs = providers.reduce(flattenPairs, []);
 
-  return { ...initialState, providers: providers, pairs };
+  return { ...state, providers: providers, pairs };
 };
 
 const handlers = {

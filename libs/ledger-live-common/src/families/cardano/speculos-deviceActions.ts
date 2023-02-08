@@ -1,6 +1,10 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
-import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
+import {
+  deviceActionFlow,
+  formatDeviceAmount,
+  SpeculosButton,
+} from "../../bot/specs";
 
 export const acceptTransaction: DeviceAction<Transaction, any> =
   deviceActionFlow({
@@ -10,50 +14,50 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "ordinary transaction?",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Auxiliary data hash",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
       },
       {
         title: "Send to address",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
         ignoreAssertionFailure: true,
         expectedValue: ({ transaction }) => transaction.recipient,
       },
       {
         title: "Send",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
         ignoreAssertionFailure: true,
         expectedValue: ({ account, status }) =>
           formatDeviceAmount(account.currency, status.amount),
       },
       {
         title: "Asset fingerprint",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
       },
       {
         title: "Token amount",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
       },
       {
         title: "Confirm",
       },
       {
         title: "output?",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Transaction fee",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
         ignoreAssertionFailure: true,
         expectedValue: ({ account, status }) =>
           formatDeviceAmount(account.currency, status.estimatedFees),
       },
       {
         title: "Transaction TTL",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
       },
       {
         title: "...",
@@ -63,7 +67,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "transaction?",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
     ],
   });

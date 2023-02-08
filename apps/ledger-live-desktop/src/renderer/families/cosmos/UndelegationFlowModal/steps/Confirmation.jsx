@@ -55,11 +55,11 @@ export default function StepConfirmation({
           accountId={optimisticOperation.accountId}
         />
         <SuccessDisplay
-          title={t(`${currencyName}.undelegation.flow.steps.confirmation.success.title`)}
+          title={t("cosmos.undelegation.flow.steps.confirmation.success.title")}
           description={
             <div>
               <Trans
-                i18nKey={`${currencyName}.undelegation.flow.steps.confirmation.success.description`}
+                i18nKey={"cosmos.undelegation.flow.steps.confirmation.success.description"}
                 values={{
                   amount,
                   validator: v && v.name,
@@ -80,7 +80,7 @@ export default function StepConfirmation({
         <TrackPage category="Undelegation Cosmos Flow" name="Step Confirmation Error" />
         {signed ? (
           <BroadcastErrorDisclaimer
-            title={t(`${currencyName}.undelegation.flow.steps.confirmation.broadcastError`)}
+            title={t("cosmos.undelegation.flow.steps.confirmation.broadcastError")}
           />
         ) : null}
         <ErrorDisplay error={error} withExportLogs />
@@ -141,7 +141,7 @@ export function StepConfirmationFooter({
           event={`Undelegation ${currencyName} Flow Step 3 View OpD Clicked`}
           onClick={onViewDetails}
         >
-          {t(`${currencyName.toLowerCase()}.undelegation.flow.steps.confirmation.success.cta`)}
+          {t("cosmos.undelegation.flow.steps.confirmation.success.cta")}
         </Button>
       ) : error ? (
         <RetryButton primary ml={2} onClick={onRetry} />

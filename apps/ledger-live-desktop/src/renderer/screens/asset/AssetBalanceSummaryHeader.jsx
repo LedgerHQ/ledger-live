@@ -13,7 +13,7 @@ import Box, { Tabbable } from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Price from "~/renderer/components/Price";
 import PillsDaysCount from "~/renderer/components/PillsDaysCount";
-import { swapDefaultTrack } from "~/renderer/screens/exchange/Swap2/utils/index";
+import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
 import styled from "styled-components";
 import Swap from "~/renderer/icons/Swap";
 
@@ -50,6 +50,7 @@ export default function AssetBalanceSummaryHeader({
 
   unit,
 }: Props) {
+  const swapDefaultTrack = useGetSwapTrackingProperties();
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const history = useHistory();
@@ -131,7 +132,7 @@ export default function AssetBalanceSummaryHeader({
         defaultCurrency: currency,
       },
     });
-  }, [currency, history]);
+  }, [currency, history, swapDefaultTrack]);
 
   return (
     <Box flow={5}>

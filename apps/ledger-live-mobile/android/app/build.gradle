@@ -85,13 +85,12 @@ apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
  * ]
  */
 
+/**
+  * Clean and rebuild if changing
+  */
 project.ext.react = [
-    /**
-     * Clean and rebuild if changing
-     * The following env var is not read from ../.env, you need to export this var like this: `export HERMES_ENABLED_ANDROID=true`
-     */
     enableHermes: true,
-    // bundleInDebug: true, // Uncomment this to debug java without having to deal with JS dev server (metro)
+    bundleInDebug: System.getenv("ANDROID_BUNDLE_IN_DEBUG") != null, // Generates JS bundle and sourcemap at build time
 ]
 project.ext.sentryCli = [
     logLevel: "debug"

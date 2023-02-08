@@ -19,7 +19,7 @@ import {
   expectSiblingsHaveSpendablePartGreaterThan,
   genericTestDestination,
 } from "../../bot/specs";
-import type { AppSpec } from "../../bot/types";
+import type { AppSpec, MutationSpec } from "../../bot/types";
 import { toOperationRaw } from "../../account";
 import {
   canDelegate,
@@ -29,9 +29,10 @@ import {
 } from "./logic";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { acceptTransaction } from "./speculos-deviceActions";
+import cryptoFactory from "./chain/chain";
+import { Account, Operation } from "@ledgerhq/types-live";
 
-const minAmount = new BigNumber(10000);
-const maxAccounts = 32;
+const maxAccounts = 16;
 
 // amounts of delegation are not exact so we are applying an approximation
 function approximateValue(value) {
@@ -51,50 +52,48 @@ function approximateExtra(extra) {
   return extra;
 }
 
-const cosmos: AppSpec<Transaction> = {
-  name: "Cosmos",
-  currency: getCryptoCurrencyById("cosmos"),
-  appQuery: {
-    model: DeviceModelId.nanoS,
-    appName: "Cosmos",
-  },
-  genericDeviceAction: acceptTransaction,
-  testTimeout: 2 * 60 * 1000,
-  minViableAmount: minAmount,
-  transactionCheck: ({ maxSpendable }) => {
-    invariant(maxSpendable.gt(minAmount), "balance is too low");
-  },
-  test: ({ account, operation, optimisticOperation }) => {
-    const allOperationsMatchingId = account.operations.filter(
-      (op) => op.id === operation.id
-    );
-    if (allOperationsMatchingId.length > 1) {
-      console.warn(allOperationsMatchingId);
-    }
-    botTest("only one operation resulted", () =>
-      expect({ allOperationsMatchingId }).toEqual({
-        allOperationsMatchingId: [operation],
-      })
-    );
-    const opExpected: Record<string, any> = toOperationRaw({
-      ...optimisticOperation,
-    });
-    delete opExpected.value;
-    delete opExpected.fee;
-    delete opExpected.date;
-    delete opExpected.blockHash;
-    delete opExpected.blockHeight;
-    const extra = opExpected.extra;
-    delete opExpected.extra;
-    const op = toOperationRaw(operation);
-    botTest("optimistic operation matches", () =>
-      expect(op).toMatchObject(opExpected)
-    );
-    botTest("optimistic operation extra matches", () =>
-      expect(approximateExtra(op.extra)).toMatchObject(approximateExtra(extra))
-    );
-  },
-  mutations: [
+const cosmosLikeTest: ({
+  account,
+  operation,
+  optimisticOperation,
+}: {
+  account: Account;
+  operation: Operation;
+  optimisticOperation: Operation;
+}) => void = ({ account, operation, optimisticOperation }) => {
+  const allOperationsMatchingId = account.operations.filter(
+    (op) => op.id === operation.id
+  );
+  if (allOperationsMatchingId.length > 1) {
+    console.warn(allOperationsMatchingId);
+  }
+  botTest("only one operation emerged on the tx id", () =>
+    expect({ allOperationsMatchingId }).toEqual({
+      allOperationsMatchingId: [operation],
+    })
+  );
+  const opExpected: Record<string, any> = toOperationRaw({
+    ...optimisticOperation,
+  });
+  delete opExpected.value;
+  delete opExpected.fee;
+  delete opExpected.date;
+  delete opExpected.blockHash;
+  delete opExpected.blockHeight;
+  const extra = opExpected.extra;
+  delete opExpected.extra;
+  delete opExpected.transactionSequenceNumber;
+  const op = toOperationRaw(operation);
+  botTest("optimistic operation matches op", () =>
+    expect(op).toMatchObject(opExpected)
+  );
+  botTest("operation extra matches", () =>
+    expect(approximateExtra(op.extra)).toMatchObject(approximateExtra(extra))
+  );
+};
+
+function cosmosLikeMutations(currency: string): MutationSpec<Transaction>[] {
+  return [
     {
       name: "send some",
       maxRun: 2,
@@ -166,13 +165,13 @@ const cosmos: AppSpec<Transaction> = {
           (cosmosResources as CosmosResources).delegations.length < 3,
           "already enough delegations"
         );
-        const data = getCurrentCosmosPreloadData();
+        const data = getCurrentCosmosPreloadData()[account.currency.id];
         const count = 1; // we'r always going to have only one validator because of the new delegation flow.
         let remaining = getMaxDelegationAvailable(
           account as CosmosAccount,
           count
         )
-          .minus(minAmount.times(2))
+          .minus(cryptoFactory(currency).minimalTransactionAmount.times(2))
           .times(0.1 * Math.random());
         invariant(remaining.gt(0), "not enough funds in account for delegate");
         const all = data.validators.filter(
@@ -429,8 +428,50 @@ const cosmos: AppSpec<Transaction> = {
         });
       },
     },
-  ],
+  ];
+}
+
+const cosmos: AppSpec<Transaction> = {
+  name: "Cosmos",
+  currency: getCryptoCurrencyById("cosmos"),
+  appQuery: {
+    model: DeviceModelId.nanoS,
+    appName: "Cosmos",
+  },
+  genericDeviceAction: acceptTransaction,
+  testTimeout: 2 * 60 * 1000,
+  minViableAmount: cryptoFactory("cosmos").minimalTransactionAmount,
+  transactionCheck: ({ maxSpendable }) => {
+    invariant(
+      maxSpendable.gt(cryptoFactory("cosmos").minimalTransactionAmount),
+      "balance is too low"
+    );
+  },
+  test: cosmosLikeTest,
+  mutations: cosmosLikeMutations("cosmos"),
 };
+
+const osmosis: AppSpec<Transaction> = {
+  name: "Osmosis",
+  currency: getCryptoCurrencyById("osmosis"),
+  appQuery: {
+    model: DeviceModelId.nanoS,
+    appName: "Cosmos",
+  },
+  genericDeviceAction: acceptTransaction,
+  testTimeout: 8 * 60 * 1000,
+  minViableAmount: cryptoFactory("osmosis").minimalTransactionAmount,
+  transactionCheck: ({ maxSpendable }) => {
+    invariant(
+      maxSpendable.gt(cryptoFactory("osmosis").minimalTransactionAmount),
+      "balance is too low"
+    );
+  },
+  test: cosmosLikeTest,
+  mutations: cosmosLikeMutations("osmosis"),
+};
+
 export default {
   cosmos,
+  osmosis,
 };

@@ -1,5 +1,5 @@
 // @flow
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { canDelegate } from "@ledgerhq/live-common/families/cosmos/logic";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import invariant from "invariant";
@@ -26,7 +26,14 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const hasDelegations = cosmosResources.delegations.length > 0;
 
   const onClick = useCallback(() => {
-    if (hasDelegations) {
+    if (isAccountEmpty(account) || !earnRewardEnabled) {
+      dispatch(
+        openModal("MODAL_NO_FUNDS_STAKE", {
+          account,
+          parentAccount,
+        }),
+      );
+    } else if (hasDelegations) {
       dispatch(
         openModal("MODAL_COSMOS_DELEGATE", {
           account,
@@ -39,7 +46,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
         }),
       );
     }
-  }, [dispatch, account, hasDelegations]);
+  }, [account, earnRewardEnabled, hasDelegations, dispatch, parentAccount]);
 
   if (parentAccount) return null;
 
@@ -50,7 +57,6 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
       key: "Stake",
       onClick: onClick,
       icon: IconCoins,
-      disabled: !earnRewardEnabled,
       label: t("account.stake"),
       tooltip: disabledLabel,
     },

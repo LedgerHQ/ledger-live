@@ -6,6 +6,7 @@ import { EnvName, setEnvUnsafe } from "../../env";
 import { setWalletAPIVersion } from "../../wallet-api/version";
 import { WALLET_API_VERSION } from "../../wallet-api/constants";
 import { PLATFORM_VERSION } from "../../platform/constants";
+import { setEnv } from "../../env";
 
 setPlatformVersion(PLATFORM_VERSION);
 setWalletAPIVersion(WALLET_API_VERSION);
@@ -98,3 +99,6 @@ listen(({ type, message, ...rest }) => {
     ...rest,
   });
 });
+
+const value = "ll-ci/0.0.0";
+setEnv("LEDGER_CLIENT_VERSION", value);

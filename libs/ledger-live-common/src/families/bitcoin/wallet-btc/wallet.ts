@@ -3,6 +3,8 @@ import BigNumber from "bignumber.js";
 import Btc from "@ledgerhq/hw-app-btc";
 import { log } from "@ledgerhq/logs";
 import { Transaction } from "@ledgerhq/hw-app-btc/types";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 import { Currency } from "./crypto/types";
 import { TransactionInfo, DerivationModes } from "./types";
@@ -17,8 +19,6 @@ import cryptoFactory from "./crypto/factory";
 import BitcoinLikeExplorer from "./explorer";
 import { TX, Address } from "./storage/types";
 import { blockchainBaseURL } from "../../../api/Ledger";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 class BitcoinLikeWallet {
   explorers: { [currencyId: string]: IExplorer } = {};

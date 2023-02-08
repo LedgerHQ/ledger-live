@@ -9,7 +9,7 @@ const getAccountBannerProps = (state, account, { t, dispatch }) => {
   const description = redelegate
     ? t("account.banner.redelegation.description")
     : t("account.banner.delegation.description", {
-        asset: "ATOM",
+        asset: account.currency.ticker,
         commission: ledgerValidator?.commission * 100 || 1,
       });
   const cta = redelegate

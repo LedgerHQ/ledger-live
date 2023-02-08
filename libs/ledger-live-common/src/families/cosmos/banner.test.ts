@@ -3,13 +3,14 @@ import * as preloadedData from "./preloadedData";
 import * as logic from "./logic";
 import type { CosmosAccount, CosmosValidatorItem } from "./types";
 import data from "./preloadedData.mock";
-import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
+import cryptoFactory from "./chain/chain";
 import { BigNumber } from "bignumber.js";
 
 jest.mock("./js-prepareTransaction", () => ({
   calculateFees: jest.fn(() => Promise.resolve({})),
 }));
 
+const LEDGER_VALIDATOR_ADDRESS = cryptoFactory("cosmos").ledgerValidator;
 const ledgerValidator: CosmosValidatorItem | undefined = data.validators.find(
   (x) => x.validatorAddress === LEDGER_VALIDATOR_ADDRESS
 );
@@ -95,6 +96,11 @@ const account: CosmosAccount = {
 };
 
 const validators = [expensiveValidator, cheapValidator, ledgerValidator];
+const validatorsMap = {
+  cosmos: { validators } as {
+    validators: CosmosValidatorItem[];
+  },
+};
 
 describe("cosmos/banner", () => {
   describe("useCosmosFormattedDelegations", () => {
@@ -104,9 +110,7 @@ describe("cosmos/banner", () => {
     it("should not display the banner", async () => {
       jest
         .spyOn(preloadedData, "getCurrentCosmosPreloadData")
-        .mockReturnValue({ validators } as {
-          validators: CosmosValidatorItem[];
-        });
+        .mockReturnValue(validatorsMap);
       jest.spyOn(logic, "canDelegate").mockReturnValue(false);
       jest.spyOn(logic, "canRedelegate").mockReturnValue(false);
       const result = getAccountBannerState(account);
@@ -120,9 +124,7 @@ describe("cosmos/banner", () => {
     it("should return display delegate mode", async () => {
       jest
         .spyOn(preloadedData, "getCurrentCosmosPreloadData")
-        .mockReturnValue({ validators } as {
-          validators: CosmosValidatorItem[];
-        });
+        .mockReturnValue(validatorsMap);
       jest.spyOn(logic, "canDelegate").mockReturnValue(true);
       jest.spyOn(logic, "canRedelegate").mockReturnValue(false);
       const result = getAccountBannerState(account);
@@ -136,9 +138,7 @@ describe("cosmos/banner", () => {
     it("should return display redelegate mode", async () => {
       jest
         .spyOn(preloadedData, "getCurrentCosmosPreloadData")
-        .mockReturnValue({ validators } as {
-          validators: CosmosValidatorItem[];
-        });
+        .mockReturnValue(validatorsMap);
       jest.spyOn(logic, "canDelegate").mockReturnValue(false);
       jest.spyOn(logic, "canRedelegate").mockReturnValue(true);
       account.cosmosResources.redelegations.push({
@@ -162,9 +162,7 @@ describe("cosmos/banner", () => {
     it("should return not display redelegate mode", async () => {
       jest
         .spyOn(preloadedData, "getCurrentCosmosPreloadData")
-        .mockReturnValue({ validators } as {
-          validators: CosmosValidatorItem[];
-        });
+        .mockReturnValue(validatorsMap);
       jest.spyOn(logic, "canDelegate").mockReturnValue(false);
       jest.spyOn(logic, "canRedelegate").mockReturnValue(false);
       account.cosmosResources.redelegations.push({

@@ -11,7 +11,7 @@ export default function Performance() {
       <SettingsRow
         title={"App startup time"}
         desc={
-          "Time from app startup to first react render (flawed if app fast restarted in dev mode)"
+          "Time from app startup to first react render (flawed if app was reloaded in dev mode)"
         }
       >
         <Text variant={"body"} fontWeight={"medium"} color={"primary.c80"}>

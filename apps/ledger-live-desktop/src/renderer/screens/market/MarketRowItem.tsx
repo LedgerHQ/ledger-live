@@ -7,7 +7,7 @@ import { Flex, Text, Icon, Box } from "@ledgerhq/react-ui";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
-import { swapDefaultTrack } from "~/renderer/screens/exchange/Swap2/utils/index";
+import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { TableCell, TableRow } from "./MarketList";
@@ -72,10 +72,11 @@ function MarketRowItem({
 }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const swapDefaultTrack = useGetSwapTrackingProperties();
 
   // PTX smart routing feature flag - buy sell live app flag
   const ptxSmartRouting = useFeature("ptxSmartRouting");
-  const startStakeFlow = useStakeFlow({ currencies: [currency?.id] });
+  const startStakeFlow = useStakeFlow({ currencies: [currency?.internalCurrency?.id] });
 
   const openAddAccounts = useCallback(() => {
     if (currency)
@@ -160,7 +161,14 @@ function MarketRowItem({
         });
       }
     },
-    [currency?.internalCurrency, currency?.ticker, flattenedAccounts, openAddAccounts, history],
+    [
+      currency?.internalCurrency,
+      currency?.ticker,
+      swapDefaultTrack,
+      flattenedAccounts,
+      openAddAccounts,
+      history,
+    ],
   );
 
   const onStake = useCallback(
