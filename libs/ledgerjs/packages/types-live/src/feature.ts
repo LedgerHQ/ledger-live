@@ -30,6 +30,7 @@ export type FeatureId =
   | "multibuyNavigation"
   | "syncOnboarding"
   | "walletConnectLiveApp"
+  | "walletConnectEntryPoint"
   | "customImage"
   | "referralProgramDiscoverCard"
   | "referralProgramDesktopBanner"

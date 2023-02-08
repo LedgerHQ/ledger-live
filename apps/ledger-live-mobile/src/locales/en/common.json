@@ -3305,6 +3305,10 @@
           }
         }
       }
+    },
+    "walletConnect": {
+      "title": "WalletConnect",
+      "description": "Connect your wallet to dapps"
     }
   },
   "signMessage": {
