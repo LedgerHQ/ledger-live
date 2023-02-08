@@ -232,9 +232,13 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
         );
       });
 
-      serverRef.current.setHandler("storage.get", ({ key, storeId }) => {
+      serverRef.current.setHandler("storage.get", async ({ key, storeId }) => {
         const namespace = `wallet-api/${storeId}`;
-        return getKey(namespace, key);
+        try {
+          return await getKey(namespace, key);
+        } catch (error) {
+          return undefined;
+        }
       });
 
       serverRef.current.setHandler("storage.set", ({ key, value, storeId }) => {
