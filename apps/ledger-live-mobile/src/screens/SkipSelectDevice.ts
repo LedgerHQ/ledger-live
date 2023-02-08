@@ -29,6 +29,13 @@ type Props = {
   route?: Navigation["route"] & { params: { forceSelectDevice?: boolean } };
 };
 let usbTimeout: ReturnType<typeof setTimeout>;
+
+/**
+ * Component (defined as a screen) to skip the selection of a device
+ * TODO: explain what are the conditions
+ *
+ * @param onResult callback to call when a device is chosen and selected
+ */
 export default function SkipSelectDevice({ onResult, route }: Props) {
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   const [hasUSB, setHasUSB] = useState(false);
@@ -49,6 +56,7 @@ export default function SkipSelectDevice({ onResult, route }: Props) {
       lastConnectedDevice
     ) {
       // timeout so we have the time to detect usb connection
+      // TODO: need to read and removes this so USB can be used without prompting for bluetooth
       usbTimeout = setTimeout(() => {
         promptBluetooth()
           .then(() => onResult(lastConnectedDevice))
