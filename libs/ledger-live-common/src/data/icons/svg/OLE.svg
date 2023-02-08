@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>16x16_OLE_Token Logo</title>
+    <defs>
+        <polygon id="path-1" points="6.5480995 0.0376205128 0 6.45723077 0 9.20108718 2.77854726 9.20553846 9.28889552 2.78291282 9.28889552 0.0483897436"></polygon>
+        <linearGradient x1="93.4969137%" y1="4.45177089%" x2="-5.91043236%" y2="108.511279%" id="linearGradient-3">
+            <stop stop-color="#FF1C7C" offset="0%"></stop>
+            <stop stop-color="#4D7EE9" offset="100%"></stop>
+        </linearGradient>
+        <path d="M0.0437292287,4.46707692 C0.0352437811,4.4758359 4.51830846,4.45300513 4.51830846,4.45300513 L4.51830846,4.45300513 C4.53070647,4.45329231 4.54045771,4.44338462 4.5401791,4.43046154 L4.5401791,4.43046154 L4.5401791,4.43046154 L4.55257711,0.0101948718 C4.55257711,0.0101948718 4.55257711,0.0101948718 4.55257711,0.0101948718 L4.55257711,0.0101948718 C4.53906468,0.010625641 0.0437292287,4.46707692 0.0437292287,4.46707692" id="path-4"></path>
+        <linearGradient x1="52.0149203%" y1="94.6075042%" x2="47.4151912%" y2="-7.3115748%" id="linearGradient-6">
+            <stop stop-color="#4D7EE9" offset="0%"></stop>
+            <stop stop-color="#FF1C7C" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="16x16_OLE_Token-Logo" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="OLE">
+            <path d="M8,0 C3.581722,0 0,3.581722 0,8 C0,12.418278 3.581722,16 8,16 C12.418278,16 16,12.418278 16,8 C16,3.581722 12.418278,0 8,0 Z" id="Path" fill="#FFFFFF" fill-rule="nonzero"></path>
+            <g id="logo" transform="translate(2.666667, 2.666667)">
+                <g id="group-">
+                    <mask id="mask-2" fill="white">
+                        <use xlink:href="#path-1"></use>
+                    </mask>
+                    <g id="Clip-6"></g>
+                    <polygon id="Fill-5" fill="url(#linearGradient-3)" mask="url(#mask-2)" points="6.5480995 0.0376205128 0 6.45723077 0 9.20108718 2.77854726 9.20553846 9.28889552 2.78291282 9.28889552 0.0483897436"></polygon>
+                </g>
+                <g id="group-" transform="translate(4.736318, 4.738462)">
+                    <mask id="mask-5" fill="white">
+                        <use xlink:href="#path-4"></use>
+                    </mask>
+                    <g id="Clip-8"></g>
+                    <path d="M0.0437292287,4.46707692 C0.0352437811,4.4758359 4.51830846,4.45300513 4.51830846,4.45300513 L4.51830846,4.45300513 C4.53070647,4.45329231 4.54045771,4.44338462 4.5401791,4.43046154 L4.5401791,4.43046154 L4.5401791,4.43046154 L4.55257711,0.0101948718 C4.55257711,0.0101948718 4.55257711,0.0101948718 4.55257711,0.0101948718 L4.55257711,0.0101948718 C4.53906468,0.010625641 0.0437292287,4.46707692 0.0437292287,4.46707692" id="Fill-7" fill="url(#linearGradient-6)" mask="url(#mask-5)"></path>
+                </g>
+                <polygon id="Fill-9" fill-opacity="0.4" fill="#FFFFFF" points="2.78606965e-05 6.45724513 2.78606965e-05 9.20110154 9.28892338 0.0484041026 6.54812736 0.0376348718"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>
