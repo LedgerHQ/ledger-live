@@ -21,15 +21,7 @@ const targets = [
 ];
 
 cd(path.join(__dirname, "..", "src"));
-await new Promise((resolve, reject) =>
-  rimraf("generated", (e) => {
-    if (e) {
-      echo(chalk.red(e));
-      return reject(e);
-    }
-    resolve();
-  })
-);
+await rimraf("generated");
 await fs.promises.mkdir("generated");
 await fs.promises.mkdir("generated/bridge");
 

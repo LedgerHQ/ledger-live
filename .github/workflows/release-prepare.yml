@@ -15,16 +15,22 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - name: Checkout Repo
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.ref }}
-          token: ${{ secrets.GH_PAT }}
+          ref: ${{ inputs.ref }}
+          token: ${{ steps.generate-token.outputs.token }}
 
       - name: set git user
         run: |
           git config user.email "team-live@ledger.fr"
-          git config user.name "Team Live"
+          git config user.name "live-github-bot[bot]"
 
       - uses: pnpm/action-setup@v2
         with:
@@ -54,7 +60,7 @@ jobs:
 
       - name: push changes
         run: |
-          git push origin ${{ github.event.inputs.ref }}
+          git push origin ${{ inputs.ref }}
           git fetch origin
 
       - name: fetch develop and main
@@ -64,12 +70,12 @@ jobs:
       - name: merge into main
         run: |
           git checkout main
-          git merge ${{ github.event.inputs.ref }}
+          git merge ${{ inputs.ref }}
           git push origin main
 
       - name: merge into develop
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
           git checkout develop
           if git merge ${{ github.event.inputs.ref }}

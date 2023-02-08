@@ -6,7 +6,7 @@ import { isAccountBalanceUnconfirmed } from "@ledgerhq/live-common/account/index
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { accountsSelector } from "../reducers/accounts";
-import BottomModal from "./BottomModal";
+import QueuedDrawer from "./QueuedDrawer";
 import LText from "./LText";
 import Circle from "./Circle";
 import ClockIcon from "../icons/Clock";
@@ -37,9 +37,9 @@ const TransactionsPendingConfirmationWarning = ({
       >
         <ClockIcon color={colors.grey} size={12} />
       </TouchableOpacity>
-      <BottomModal
+      <QueuedDrawer
         style={styles.modal}
-        isOpened={isModalOpened}
+        isRequestingToBeOpened={isModalOpened}
         onClose={() => setIsModalOpened(false)}
       >
         <Circle style={styles.circle} bg={rgba(colors.live, 0.1)} size={56}>
@@ -51,7 +51,7 @@ const TransactionsPendingConfirmationWarning = ({
         <LText style={styles.modalDesc} color="smoke">
           <Trans i18nKey={"portfolio.transactionsPendingConfirmation.desc"} />
         </LText>
-      </BottomModal>
+      </QueuedDrawer>
     </View>
   ) : null;
 };

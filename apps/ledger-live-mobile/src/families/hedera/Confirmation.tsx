@@ -19,7 +19,7 @@ import PreventNativeBack from "../../components/PreventNativeBack";
 import LText from "../../components/LText/index";
 import DisplayAddress from "../../components/DisplayAddress";
 import Alert from "../../components/Alert";
-import BottomModal from "../../components/BottomModal";
+import QueuedDrawer from "../../components/QueuedDrawer";
 import Close from "../../icons/Close";
 import QRcodeZoom from "../../icons/QRcodeZoom";
 import Touchable from "../../components/Touchable";
@@ -235,8 +235,8 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
           <QRCode size={width - 66} value={address} ecl="H" />
         </View>
       </ReactNativeModal>
-      <BottomModal
-        isOpened={isModalOpened}
+      <QueuedDrawer
+        isRequestingToBeOpened={isModalOpened}
         onClose={onModalClose}
         onModalHide={onModalHide.current}
       >
@@ -261,7 +261,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
         >
           <Close color={colors.fog} size={20} />
         </Touchable>
-      </BottomModal>
+      </QueuedDrawer>
     </SafeAreaView>
   );
 }

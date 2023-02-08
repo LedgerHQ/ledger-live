@@ -17,7 +17,7 @@ import { SettingsNavigatorStackParamList } from "../../../../components/RootNavi
 
 import NavigationScrollView from "../../../../components/NavigationScrollView";
 import LText from "../../../../components/LText";
-import BottomModal from "../../../../components/BottomModal";
+import QueuedDrawer from "../../../../components/QueuedDrawer";
 
 const commandsById: { [key: string]: (transport: Transport) => unknown } = {
   getDeviceInfo,
@@ -92,8 +92,8 @@ const CommandSender = ({ route }: Props) => {
             {"Show commands"}
           </Button>
         ) : null}
-        <BottomModal
-          isOpened={modalVisible}
+        <QueuedDrawer
+          isRequestingToBeOpened={modalVisible}
           onClose={setModalVisible as () => void}
         >
           <ScrollView>
@@ -111,7 +111,7 @@ const CommandSender = ({ route }: Props) => {
               </Button>
             ))}
           </ScrollView>
-        </BottomModal>
+        </QueuedDrawer>
       </Flex>
     </NavigationScrollView>
   );

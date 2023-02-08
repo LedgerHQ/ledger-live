@@ -7,7 +7,9 @@ import { Card } from "~/renderer/components/Box";
 import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { useSelector } from "react-redux";
-import { useGetManifest } from "./utils";
+import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
+// import { getCustomDappUrl } from "./utils";
 
 type Props = {
   match: {
@@ -31,7 +33,7 @@ type Props = {
 
 export default function PlatformApp({ match, appId: propsAppId, location }: Props) {
   const history = useHistory();
-  const { params: internalParams, search, pathname } = location;
+  const { params: internalParams, search } = location;
   const { state: urlParams } = useLocation();
 
   const appId = propsAppId || match.params?.appId;
@@ -51,7 +53,15 @@ export default function PlatformApp({ match, appId: propsAppId, location }: Prop
     ...internalParams,
   };
 
-  const manifest = useGetManifest(appId, params, pathname);
+  const localManifest = useLocalLiveAppManifest(appId);
+  const remoteManifest = useRemoteLiveAppManifest(appId);
+  const manifest = localManifest || remoteManifest;
+
+  // TODO - Need to fix to support SWAP deep link
+  // const customDappUrl = getCustomDappUrl(manifest, appId, params, pathname);
+  // if (customDappUrl) {
+  //   manifest = { ...manifest, params: { ...manifest.params, dappUrl: customDappUrl } };
+  // }
 
   // TODO for next urlscheme evolutions:
   // - check if local settings allow to launch an app from this branch, else display an error

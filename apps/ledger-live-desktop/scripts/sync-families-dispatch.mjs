@@ -6,15 +6,8 @@ const basePath = path.join(__dirname, "..");
 const rendererPath = path.join(basePath, "src", "renderer");
 const generatedPath = path.join(rendererPath, "generated");
 
-await new Promise((resolve, reject) => {
-  rimraf(generatedPath, e => {
-    if (e) {
-      echo(chalk.red(e));
-      return reject(e);
-    }
-    return resolve(fs.promises.mkdir(generatedPath));
-  });
-});
+await rimraf(generatedPath);
+await fs.promises.mkdir(generatedPath);
 
 const families = await fs.readdir(path.join(rendererPath, "families"));
 const targets = [

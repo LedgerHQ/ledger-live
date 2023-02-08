@@ -5,19 +5,12 @@ import rimraf from "rimraf";
 try {
   cd(path.join(__dirname, ".."));
 
-  const remover = async () => {
-    await new Promise((resolve, reject) =>
-      rimraf("src/data/icons/react*", (e) => {
-        if (e) {
-          echo(chalk.red(e));
-          return reject(e);
-        }
-        resolve();
-      })
-    );
-  };
-
-  await remover();
+  await rimraf([
+    "src/data/icons/react",
+    "src/data/icons/reactNative",
+    "src/data/flags/react",
+    "src/data/flags/reactNative",
+  ]);
 
   await $`zx ./scripts/sync-families-dispatch.mjs`;
 

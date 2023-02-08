@@ -606,6 +606,28 @@
       "creditedAmount" : "Importe acreditado"
     }
   },
+  "stake" : {
+    "noFundsModal" : {
+      "title" : "Compra, permuta o recibe",
+      "text" : "No tienes suficientes {{coin}} disponibles para poner en participación",
+      "description" : "¿No tienes fondos suficientes? No te preocupes, puedes comprar, permutar o recibir cripto de forma segura directamente en Ledger Live.",
+      "options" : {
+        "buy" : {
+          "title" : "Comprar",
+          "body" : "Compra a proveedores de confianza"
+        },
+        "swap" : {
+          "title" : "Permutar",
+          "label" : "Popular",
+          "body" : "Convierte de una cripto a otra de manera segura"
+        },
+        "receive" : {
+          "title" : "Recibir",
+          "body" : "Recibe cripto en tu billetera"
+        }
+      }
+    }
+  },
   "lottieDebugger" : {
     "buttonTitle" : "Prueba"
   },
@@ -1099,6 +1121,7 @@
       "receive" : "Recibir",
       "send" : "Enviar",
       "swap" : "Permutar",
+      "stake" : "Poner en participación",
       "buy" : "Comprar",
       "sell" : "Vender",
       "edit" : "Editar cuenta",
@@ -1364,7 +1387,22 @@
     },
     "recentActivity" : "Operaciones recientes",
     "totalBalance" : "Saldo total",
-    "transactionsPendingConfirmation" : "Algunas transacciones aún no están confirmadas. Las mismas se reflejarán en tu saldo y quedarán disponibles después de ser confirmadas."
+    "transactionsPendingConfirmation" : "Algunas transacciones aún no están confirmadas. Las mismas se reflejarán en tu saldo y quedarán disponibles después de ser confirmadas.",
+    "featuredButtons" : {
+      "buySell" : {
+        "title" : "Comprar / Vender",
+        "description" : "Compra y vende con proveedores de confianza"
+      },
+      "swap" : {
+        "title" : "Permutar",
+        "description" : "Convierte de una cripto a otra de manera segura",
+        "label" : "Popular"
+      },
+      "earn" : {
+        "title" : "Gana",
+        "description" : "Haz crecer tus cripto con Ledger"
+      }
+    }
   },
   "currentAddress" : {
     "title" : "Dirección actual",
@@ -2809,7 +2847,7 @@
   "cosmos" : {
     "delegation" : {
       "emptyState" : {
-        "description" : "Puedes recibir recompensas ATOM delegando tu activos.",
+        "description" : "Puedes recibir recompensas en {{currencyTicker}} delegando tu activos.",
         "info" : "Cómo funciona la delegación",
         "delegation" : "Recibir recompensas"
       },
@@ -2834,8 +2872,8 @@
         "title" : "Delegar",
         "steps" : {
           "starter" : {
-            "description" : "Puedes recibir recompensas delegando tus activos ATOM a un validador.",
-            "bullet" : ["Conservas la propiedad de los activos delegados", "Delegar utilizando tu dispositivo Ledger", "Los activos estarán disponibles 21 días después de la desdelegación"],
+            "description" : "Puedes recibir recompensas delegando tus activos {{currencyTicker}} a un validador.",
+            "bullet" : ["Conservas la propiedad de los activos delegados", "Delegar utilizando tu dispositivo Ledger", "Los activos estarán disponibles {{numberOfDays}} días después de la desdelegación."],
             "warning" : {
               "description" : "Elige tu validador con cuidado: Puedes perder definitivamente parte de tus activos delegados si el validador no se comporta apropiadamente."
             }
@@ -2912,7 +2950,7 @@
             "currentDelegation" : "Delegación actual",
             "newDelegation" : "Nueva delegación",
             "chooseValidator" : "Elegir un validador",
-            "warning" : "Deberás esperar <0>21 días</0> para redelegarlas desde el nuevo validador, si cambias de opinión de nuevo.",
+            "warning" : "Deberás esperar <0>{{numberOfDays}} días</0> para redelegarlas desde el nuevo validador, si cambias de opinión de nuevo.",
             "amountLabel" : "Importe a redelegar"
           },
           "device" : {
@@ -2939,8 +2977,8 @@
         "steps" : {
           "amount" : {
             "title" : "Importe",
-            "subtitle" : "El proceso de desdelegación tarda <0>21 días</0> en finalizar.",
-            "warning" : "Las recompensas se cobran inmediatamente. Los montos no delegados volverán al saldo disponible luego del <0>bloqueo de tiempo de 21 días</0>.",
+            "subtitle" : "El proceso de desdelegación tarda <0>{{numberOfDays}} días</0> en finalizar.",
+            "warning" : "Las recompensas se cobran inmediatamente. Los montos no delegados volverán al saldo disponible luego del <0>bloqueo de tiempo de {{numberOfDays}} días</0>.",
             "fields" : {
               "validator" : "Validador",
               "amount" : "Importe a desdelegar"
@@ -3024,176 +3062,6 @@
             "success" : {
               "title" : "¡Recompensas reclamadas correctamente!",
               "text" : "Tus recompensas fueron añadidas a tu saldo disponible",
-              "cta" : "Ver detalles"
-            },
-            "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
-          }
-        }
-      }
-    }
-  },
-  "osmosis" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Con tecnología de Figment",
-        "moreInfo" : "Más información",
-        "drawerTitle" : "Con tecnología de Figment",
-        "title" : "El token OSMO ya está disponible en Ledger Live",
-        "description" : "Ahora puedes gestionar tus tokens OSMO y protegerlos con Ledger Live.",
-        "description2" : "El token OSMO es nativo de la cadena Osmosis y se utiliza para transacciones, puesta en participación y muchas más opciones próximamente.",
-        "website" : "Con tecnología de Figment"
-      }
-    },
-    "memo" : "Memo",
-    "memoPlaceholder" : "Opcional",
-    "memoWarningText" : "Cuando utilices un memo, asegúrate de que el receptor confirme la información",
-    "delegation" : {
-      "emptyState" : {
-        "description" : "Puedes recibir recompensas OSMO delegando tus activos.",
-        "info" : "Cómo funciona la delegación",
-        "delegation" : "Recibir recompensas"
-      },
-      "commission" : "Comisión",
-      "totalStake" : "Participación total",
-      "claimRewards" : "Reclamar recompensas",
-      "header" : "Delegaciones",
-      "noRewards" : "No hay recompensas disponibles",
-      "delegate" : "Agregar",
-      "undelegate" : "Desdelegar",
-      "redelegate" : "Redelegar",
-      "redelegateDisabledTooltip" : "Puedes volver a delegar <0>{{days}}</0>",
-      "redelegateMaxDisabledTooltip" : "No puedes redelegar más de <0>7</0> validadores a la vez.",
-      "undelegateDisabledTooltip" : "No puedes desdelegar más de <0>7</0> validadores a la vez.",
-      "reward" : "Reclamar recompensas",
-      "currentDelegation" : "Delegado: <0>{{amount}}</0>",
-      "estYield" : "rendimiento est.",
-      "activeTooltip" : "Los importes delegados generan recompensas",
-      "inactiveTooltip" : "Los importes no delegados no generan recompensas",
-      "minSafeWarning" : "No hay fondos suficientes",
-      "flow" : {
-        "title" : "Delegar",
-        "steps" : {
-          "starter" : {
-            "description" : "Puedes recibir recompensas delegando tus activos OSMO a un validador.",
-            "bullet" : ["Conservas la propiedad de los activos delegados", "Delegar utilizando tu dispositivo Ledger", "Los activos estarán disponibles 14 días después de la desdelegación"],
-            "warning" : {
-              "description" : "Elige tu validador con cuidado: Puedes perder irreversiblemente parte de tus activos delegados si el validador no se comporta apropiadamente."
-            }
-          },
-          "amount" : {
-            "title" : "Importe"
-          },
-          "validator" : {
-            "title" : "Validadores"
-          },
-          "connectDevice" : {
-            "title" : "Dispositivo"
-          },
-          "confirmation" : {
-            "title" : "Confirmación",
-            "success" : {
-              "title" : "Has delegado tus activos con éxito",
-              "text" : "El saldo de tu cuenta se actualizará cuando la cadena de bloques confirme la transacción.",
-              "cta" : "Ver detalles"
-            },
-            "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
-          }
-        }
-      }
-    },
-    "claimRewards" : {
-      "flow" : {
-        "title" : "Reclamar recompensas",
-        "steps" : {
-          "claimRewards" : {
-            "title" : "Recompensas",
-            "compound" : "Compound",
-            "claim" : "Cobrar",
-            "compoundOrClaim" : "Compound o cobro",
-            "compoundDescription" : "Se añadirán recompensas al importe delegado",
-            "claimDescription" : "Las recompensas se agregarán al saldo disponible",
-            "compoundInfo" : "Has ganado <0>{{amount}}</0>. Al hacer clic en \"Continuar\", serán reclamados y delegados automáticamente al mismo validador.",
-            "claimInfo" : "Has ganado <0>{{amount}}</0> del siguiente validador. Al hacer clic sobre \"Continuar\", serán reclamados y agregados automáticamente al saldo disponible.",
-            "selectLabel" : "Seleccionar una delegación"
-          },
-          "connectDevice" : {
-            "title" : "Dispositivo"
-          },
-          "confirmation" : {
-            "title" : "Confirmación",
-            "label" : "Confirmación",
-            "success" : {
-              "title" : "Recompensas cobradas con éxito",
-              "titleCompound" : "Recompensas enviadas a Compound con éxito",
-              "text" : "Tus recompensas fueron añadidas a tu saldo disponible",
-              "textCompound" : "Tus recompensas de<0>{{amount}}</0> fueron delegadas automáticamente a <0>{{validator}}</0>",
-              "cta" : "Ver detalles"
-            },
-            "pending" : {
-              "title" : "Transmitiendo transacción..."
-            },
-            "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
-          }
-        }
-      }
-    },
-    "redelegation" : {
-      "flow" : {
-        "title" : "Redelegar activos",
-        "steps" : {
-          "starter" : {
-            "title" : "Redelegación",
-            "description" : "Utiliza la redelegación para cambiar con facilidad de un validador a otro. Aunque debe tener en cuenta de que si cambias de opinión de nuevo, deberás esperar ya que la redelegación genera un bloqueo de 14 días.",
-            "warning" : "Elige tu validador con cuidado: Puedes perder definitivamente parte de tus activos delegados si el validador no se comporta apropiadamente. Puedes tener un máximo de <0>7 redelegaciones pendientes</0>.",
-            "howDelegationWorks" : "¿Cómo funciona la delegación?"
-          },
-          "validators" : {
-            "title" : "Validadores",
-            "currentDelegation" : "Delegación actual",
-            "newDelegation" : "Nueva delegación",
-            "chooseValidator" : "Elegir un validador",
-            "warning" : "Deberás esperar <0>14 días</0> para redelegarlas desde el nuevo validador, si cambias de opinión de nuevo.",
-            "amountLabel" : "Importe a redelegar"
-          },
-          "device" : {
-            "title" : "Dispositivo"
-          },
-          "confirmation" : {
-            "title" : "Confirmación",
-            "success" : {
-              "title" : "Has redelegado tus activos correctamente",
-              "text" : "La redelegación se actualizará una vez que la cadena de bloques haya confirmado la transacción",
-              "cta" : "Ver detalles"
-            },
-            "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
-          }
-        }
-      }
-    },
-    "undelegation" : {
-      "header" : "Desdelegaciones",
-      "headerTooltip" : "Disponible después de un bloqueo temporal de 14 días",
-      "inactiveTooltip" : "Los importes desdelegados no generan recompensas.",
-      "flow" : {
-        "title" : "Desdelegar activos",
-        "steps" : {
-          "amount" : {
-            "title" : "Importe",
-            "subtitle" : "El proceso de desdelegación tarda <0>14 días</0> en finalizar.",
-            "warning" : "Las recompensas se cobran inmediatamente. Los montos no delegados volverán al saldo disponible luego del <0>bloqueo de tiempo de 14 días</0>.",
-            "fields" : {
-              "validator" : "Validador",
-              "amount" : "Importe a desdelegar"
-            }
-          },
-          "device" : {
-            "title" : "Dispositivo"
-          },
-          "confirmation" : {
-            "title" : "Confirmación",
-            "success" : {
-              "title" : "Has desdelegado con éxito tus activos.",
-              "description" : "<0>{{amount}}</0> fueron desdelegados de <0>{{validator}}</0>.",
               "cta" : "Ver detalles"
             },
             "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
@@ -5488,7 +5356,7 @@
       "description" : "La firma debe realizarse dentro de un período de 30 segundos. Inténtalo de nuevo."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "La energía es menor que la requerida. Es posible que pagues hasta 20 TRX en tarifas."
+      "title" : "La energía es menor que la requerida. Es posible que pagues hasta 50 TRX en tarifas."
     },
     "PairingFailed" : {
       "title" : "Emparejamiento fallido",
@@ -5757,7 +5625,7 @@
     }
   },
   "customImage" : {
-    "title" : "Custom lock screen",
+    "title" : "Pantalla de bloqueo personalizada",
     "steps" : {
       "choose" : {
         "stepLabel" : "Elige una imagen",

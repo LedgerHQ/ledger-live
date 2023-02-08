@@ -25,7 +25,7 @@ const Wrapper: ThemedComponent<{}> = styled(Label).attrs(props => ({
   }
 
   &:after {
-    -webkit-mask: url(${externalLink});
+    -webkit-mask: url('${externalLink}');
     -webkit-mask-size: cover;
     width: 12px;
     height: 12px;
