@@ -549,7 +549,7 @@
       "description" : "Les transactions doivent être signées dans les 30 secondes. Veuillez réessayer."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Énergie inférieure à la quantité requise. Vous pourriez payer des frais allant jusqu’à 50 TRX."
+      "title" : "Energy is lower than necessary. You might pay up to 50TRX in fees."
     },
     "UpdateYourApp" : {
       "title" : "Mise à jour de l’app nécessaire",
@@ -820,7 +820,9 @@
     "required" : "Le Bluetooth semble être désactivé.",
     "locationRequiredTitle" : "La localisation est requise pour le Bluetooth LE.",
     "locationRequiredMessage" : "Sur Android, il faut autoriser l’accès à la localisation pour afficher les appareils en Bluetooth LE.",
-    "checkEnabled" : "Merci d’activer le Bluetooth dans les Paramètres de votre téléphone."
+    "checkEnabled" : "Merci d’activer le Bluetooth dans les Paramètres de votre téléphone.",
+    "tryEnablingAgain" : "Réessayez d’activer le Bluetooth",
+    "openSettings" : "Ouvrir les Paramètres Bluetooth"
   },
   "webview" : {
     "noConnectionError" : {
@@ -830,12 +832,10 @@
   },
   "location" : {
     "titleServiceRequired" : "Localisation requise",
-    "titlePermissionRequired" : "Accès à la localisation requis",
-    "titlePermissionRequiredPrecise" : "Accès à la localisation précise requis",
     "descriptionServiceRequired" : "Ledger Live a besoin des services de localisation pour coupler votre appareil en Bluetooth.",
-    "descriptionPermissionRequired" : "Ledger Live a besoin de l’autorisation d’accéder à la position pour coupler votre appareil via Bluetooth.",
-    "descriptionPermissionRequiredPrecise" : "Ledger Live a besoin de l’autorisation d’accéder à la position précise pour coupler votre appareil via Bluetooth.",
     "open" : "Ouvrir les paramètres de localisation",
+    "openSettings" : "Ouvrir les paramètres de localisation",
+    "tryEnablingAgain" : "Réessayez d’autoriser la localisation",
     "noInfos" : "Ledger n’utilise pas vos données de localisation."
   },
   "permissions" : {
@@ -848,6 +848,12 @@
       "modalButtonLabelBase" : "Autoriser",
       "modalButtonLabelSettingsVariant" : "Accéder aux Paramètres",
       "dontPair" : "Ne pas coupler"
+    },
+    "location" : {
+      "titlePermissionRequired" : "Accès à la localisation requis",
+      "titlePermissionRequiredPrecise" : "Accès à la localisation précise requis",
+      "descriptionPermissionRequired" : "Ledger Live a besoin de l’autorisation d’accéder à la position pour coupler votre appareil via Bluetooth.",
+      "descriptionPermissionRequiredPrecise" : "Ledger Live a besoin de l’autorisation d’accéder à la position précise pour coupler votre appareil via Bluetooth."
     },
     "camera" : {
       "title" : "Autoriser l’appareil photo",
