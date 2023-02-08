@@ -549,7 +549,7 @@
       "description" : "Транзакции необходимо подписать в течение 30 секунд. Пожалуйста, попробуйте ещё раз."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Не хватает баллов Энергии. Вы можете заплатить комиссию до 50 TRX."
+      "title" : "Energy is lower than necessary. You might pay up to 50TRX in fees."
     },
     "UpdateYourApp" : {
       "title" : "Необходимо обновить приложения",
@@ -820,7 +820,9 @@
     "required" : "Похоже, Bluetooth отключён",
     "locationRequiredTitle" : "Для Bluetooth LE необходимо включить функцию геолокации",
     "locationRequiredMessage" : "Для вывода списка устройств Bluetooth LE на Android-устройствах потребуется разрешить функцию геолокации.",
-    "checkEnabled" : "Пожалуйста, включите Bluetooth в настройках телефона."
+    "checkEnabled" : "Пожалуйста, включите Bluetooth в настройках телефона.",
+    "tryEnablingAgain" : "Попробуйте снова включить Bluetooth",
+    "openSettings" : "Открыть настройки Bluetooth"
   },
   "webview" : {
     "noConnectionError" : {
@@ -830,12 +832,10 @@
   },
   "location" : {
     "titleServiceRequired" : "Требуется функция геолокации",
-    "titlePermissionRequired" : "Требуется использование геолокации",
-    "titlePermissionRequiredPrecise" : "Требуется использование точной геолокации",
     "descriptionServiceRequired" : "Для подключения устройства через Bluetooth Ledger Live требуется функция геолокации.",
-    "descriptionPermissionRequired" : "Для подключения устройства через Bluetooth Ledger Live требуется разрешение на использование геолокации.",
-    "descriptionPermissionRequiredPrecise" : "Для подключения устройства через Bluetooth Ledger Live требуется разрешение на использование точной геолокации.",
     "open" : "Открыть настройки геолокации",
+    "openSettings" : "Открыть настройки геолокации",
+    "tryEnablingAgain" : "Попробуйте снова включить геолокацию",
     "noInfos" : "Ledger не имеет доступа к информации о вашем местоположении."
   },
   "permissions" : {
@@ -848,6 +848,12 @@
       "modalButtonLabelBase" : "Разрешить",
       "modalButtonLabelSettingsVariant" : "Перейти в Настройки",
       "dontPair" : "Не подключать"
+    },
+    "location" : {
+      "titlePermissionRequired" : "Требуется использование геолокации",
+      "titlePermissionRequiredPrecise" : "Требуется использование точной геолокации",
+      "descriptionPermissionRequired" : "Для подключения устройства через Bluetooth Ledger Live требуется разрешение на использование геолокации.",
+      "descriptionPermissionRequiredPrecise" : "Для подключения устройства через Bluetooth Ledger Live требуется разрешение на использование точной геолокации."
     },
     "camera" : {
       "title" : "Разрешите доступ к камере",
