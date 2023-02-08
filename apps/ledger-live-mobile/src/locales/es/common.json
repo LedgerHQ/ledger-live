@@ -549,7 +549,7 @@
       "description" : "Es necesario firmar las transacciones en menos de 30 segundos. Inténtalo de nuevo."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "La energía es menor que la requerida. Es posible que pagues hasta 50 TRX en tarifas."
+      "title" : "Energy is lower than necessary. You might pay up to 50TRX in fees."
     },
     "UpdateYourApp" : {
       "title" : "Es necesario actualizar la aplicación",
@@ -820,7 +820,9 @@
     "required" : "Parece que tu Bluetooth está deshabilitado",
     "locationRequiredTitle" : "La ubicación es necesaria para Bluetooth LE",
     "locationRequiredMessage" : "Es necesario otorgar permisos de ubicación de Android para mostrar los dispositivos de Bluetooth LE.",
-    "checkEnabled" : "Habilita Bluetooth en los ajustes del teléfono."
+    "checkEnabled" : "Habilita Bluetooth en los ajustes del teléfono.",
+    "tryEnablingAgain" : "Prueba a activar el Bluetooth de nuevo",
+    "openSettings" : "Abrir los ajustes Bluetooth"
   },
   "webview" : {
     "noConnectionError" : {
@@ -830,12 +832,10 @@
   },
   "location" : {
     "titleServiceRequired" : "Son necesarios los servicios de ubicación",
-    "titlePermissionRequired" : "Es necesario el permiso de ubicación",
-    "titlePermissionRequiredPrecise" : "Es necesario el permiso de ubicación precisa",
     "descriptionServiceRequired" : "Ledger Live necesita servicios de ubicación para emparejar tu dispositivo mediante Bluetooth.",
-    "descriptionPermissionRequired" : "Ledger Live necesita el permiso de ubicación para emparejar tu dispositivo mediante Bluetooth.",
-    "descriptionPermissionRequiredPrecise" : "Ledger Live necesita el permiso de ubicación precisa para emparejar tu dispositivo mediante Bluetooth.",
     "open" : "Abrir ajustes de ubicación",
+    "openSettings" : "Abrir ajustes de ubicación",
+    "tryEnablingAgain" : "Prueba a activar la ubicación de nuevo",
     "noInfos" : "Ledger no accederá a tu información de ubicación."
   },
   "permissions" : {
@@ -848,6 +848,12 @@
       "modalButtonLabelBase" : "Autorizar",
       "modalButtonLabelSettingsVariant" : "Ir a Ajustes",
       "dontPair" : "No emparejar"
+    },
+    "location" : {
+      "titlePermissionRequired" : "Es necesario el permiso de ubicación",
+      "titlePermissionRequiredPrecise" : "Es necesario el permiso de ubicación precisa",
+      "descriptionPermissionRequired" : "Ledger Live necesita el permiso de ubicación para emparejar tu dispositivo mediante Bluetooth.",
+      "descriptionPermissionRequiredPrecise" : "Ledger Live necesita el permiso de ubicación precisa para emparejar tu dispositivo mediante Bluetooth."
     },
     "camera" : {
       "title" : "Autorizar cámara",
