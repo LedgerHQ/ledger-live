@@ -84,6 +84,7 @@ jobs:
         id: setup-test-desktop
         with:
           skip_ruby: true
+          install_playwright: true
       - name: Install gh
         run: |
           type -p curl >/dev/null || sudo apt install curl -y
@@ -133,6 +134,8 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
+        with:
+          install_playwright: true
       - name: Checkout PR
         if: ${{ inputs.number != null && inputs.ref == null }}
         run: gh pr checkout ${{ inputs.number }}
@@ -175,6 +178,7 @@ jobs:
         with:
           skip_python: true
           skip_ruby: true
+          install_playwright: true
       - name: Checkout PR
         if: ${{ inputs.number != null && inputs.ref == null }}
         run: gh pr checkout ${{ inputs.number }}

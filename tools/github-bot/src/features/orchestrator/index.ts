@@ -22,13 +22,6 @@ export function orchestrator(app: Probot) {
   app.on("workflow_run.requested", async (context) => {
     const { payload, octokit } = context;
 
-    /* ⚠️ TEMP */
-    if (
-      payload.workflow_run.pull_requests[0]?.head.ref !== "support/granular-ci"
-    )
-      return;
-    /* ⚠️ /TEMP */
-
     const { owner, repo } = context.repo();
     const workflowFile = extractWorkflowFile(payload);
     const matchedWorkflow = WORKFLOWS[workflowFile as keyof typeof WORKFLOWS];
@@ -80,13 +73,6 @@ export function orchestrator(app: Probot) {
     // @ts-expect-error Expected because probot does not declare this webhook event even though it exists.
     if (context.payload.action !== "in_progress") return;
 
-    /* ⚠️ TEMP */
-    if (
-      payload.workflow_run.pull_requests[0]?.head.ref !== "support/granular-ci"
-    )
-      return;
-    /* ⚠️ /TEMP */
-
     const { owner, repo } = context.repo();
     const workflowFile = extractWorkflowFile(payload);
     const matchedWorkflow = WORKFLOWS[workflowFile as keyof typeof WORKFLOWS];
@@ -134,13 +120,6 @@ export function orchestrator(app: Probot) {
    */
   app.on("workflow_run.completed", async (context) => {
     const { payload, octokit } = context;
-
-    /* ⚠️ TEMP */
-    if (
-      payload.workflow_run.pull_requests[0]?.head.ref !== "support/granular-ci"
-    )
-      return;
-    /* ⚠️ /TEMP */
 
     const { owner, repo } = context.repo();
     const workflowFile = extractWorkflowFile(payload);
@@ -337,11 +316,6 @@ export function orchestrator(app: Probot) {
   app.on(["check_run.created"], async (context) => {
     const { payload, octokit } = context;
 
-    /* ⚠️ TEMP */
-    if (payload.check_run.pull_requests.every((pr) => pr.number !== 1991))
-      return;
-    /* ⚠️ /TEMP */
-
     const { owner, repo } = context.repo();
     const matchedWorkflow = Object.values(WORKFLOWS).find(
       (w) => w.checkRunName === payload.check_run.name
@@ -375,11 +349,6 @@ export function orchestrator(app: Probot) {
   app.on(["check_run.rerequested"], async (context) => {
     const { payload, octokit } = context;
 
-    /* ⚠️ TEMP */
-    if (payload.check_run.pull_requests.every((pr) => pr.number !== 1991))
-      return;
-    /* ⚠️ /TEMP */
-
     const { owner, repo } = context.repo();
     const workflow = Object.entries(WORKFLOWS).find(
       ([, w]) => w.checkRunName === payload.check_run.name
@@ -403,11 +372,6 @@ export function orchestrator(app: Probot) {
    */
   app.on("check_run.completed", async (context) => {
     const { payload, octokit } = context;
-
-    /* ⚠️ TEMP */
-    if (payload.check_run.pull_requests.every((pr) => pr.number !== 1991))
-      return;
-    /* ⚠️ /TEMP */
 
     const { owner, repo } = context.repo();
     const matchedWorkflow = Object.values(WORKFLOWS).find(

@@ -22,10 +22,6 @@ export function lintCommits(app: Probot) {
       const { owner, repo } = context.repo();
       const login = payload.sender.login;
 
-      /* ⚠️ TEMP */
-      if (payload.pull_request.head.ref !== "support/granular-ci") return;
-      /* ⚠️ /TEMP */
-
       await octokit.actions.createWorkflowDispatch({
         owner,
         repo,

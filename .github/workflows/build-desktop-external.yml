@@ -48,7 +48,7 @@ jobs:
       - name: Set git user
         run: |
           git config user.email "team-live@ledger.fr"
-          git config user.name "Team Live"
+          git config user.name "live-github-bot[bot]"
       - uses: actions/setup-python@v4
         with:
           python-version: "3.x"
@@ -102,9 +102,6 @@ jobs:
     runs-on: ubuntu-latest
     if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
     steps:
-      - name: Echo outputs
-        run: |
-          echo "${{ toJSON(needs.build-desktop-app) }}"
       - uses: actions/github-script@v6
         name: Get statuses of runs
         id: status

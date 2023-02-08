@@ -2,9 +2,8 @@ name: "[Release](Prerelease) Publish packages and apps"
 on:
   push:
     branches:
-      - "release"
-      - "releases/**"
-      - "hotfix"
+      - release
+      - hotfix
   workflow_dispatch:
     inputs:
       ref:

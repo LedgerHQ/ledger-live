@@ -112,6 +112,7 @@ jobs:
         id: setup-test-desktop
         with:
           install_node_gyp: true
+          install_playwright: true
       - name: Run playwright tests
         id: tests
         run: pnpm desktop test:playwright
@@ -170,6 +171,7 @@ jobs:
         with:
           skip_python: true
           skip_ruby: true
+          install_playwright: true
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
         run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
@@ -226,6 +228,7 @@ jobs:
         with:
           skip_python: true
           skip_ruby: true
+          install_playwright: true
       - name: Run playwright tests
         id: tests
         run: pnpm desktop test:playwright
