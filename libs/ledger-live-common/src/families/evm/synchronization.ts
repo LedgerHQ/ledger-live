@@ -1,8 +1,8 @@
 import { log } from "@ledgerhq/logs";
 import { Account, Operation, SubAccount } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getSyncHash, mergeSubAccounts } from "./logic";
 import etherscanLikeApi from "./api/etherscan";
-import { mergeSubAccounts } from "./logic";
 import {
   mergeOps,
   makeSync,
@@ -54,21 +54,24 @@ export const getAccountShape: GetAccountShape = async (infos) => {
     xpubOrAddress: address,
     derivationMode,
   });
+  const syncHash = getSyncHash(currency);
+  // Due to some changes (as of now: new/updated tokens) we could need to force a sync from 0
+  const shouldSyncFromScratch = syncHash !== initialAccount?.syncHash;
 
   // Get the latest stored operation to know where to start the new sync
-  const latestSyncedOperation =
-    initialAccount?.operations?.reduce<Operation | null>((acc, curr) => {
-      if (!acc) {
-        return curr;
-      }
-      return (acc?.blockHeight || 0) > (curr?.blockHeight || 0) ? acc : curr;
-    }, null);
+  const latestSyncedOperation = shouldSyncFromScratch
+    ? null
+    : initialAccount?.operations?.reduce<Operation | null>((acc, curr) => {
+        if (!acc) {
+          return curr;
+        }
+        return (acc?.blockHeight || 0) > (curr?.blockHeight || 0) ? acc : curr;
+      }, null);
 
   // This method could not be working if the integration doesn't have an API to retreive the operations
   const lastCoinOperations = await (async () => {
     try {
-      const { getLastCoinOperations: getLastCoinOperations } =
-        await getExplorerApi(currency);
+      const { getLastCoinOperations } = getExplorerApi(currency);
       return await getLastCoinOperations(
         currency,
         address,
@@ -85,7 +88,11 @@ export const getAccountShape: GetAccountShape = async (infos) => {
     }
   })();
 
-  const newSubAccounts = await getSubAccounts(infos, accountId);
+  const newSubAccounts = await getSubAccounts(
+    infos,
+    accountId,
+    shouldSyncFromScratch
+  );
   // Merging potential new subAccouns while preserving the reference (returned value will be initialAccount.subAccounts)
   const subAccounts = mergeSubAccounts(initialAccount, newSubAccounts);
 
@@ -106,6 +113,7 @@ export const getAccountShape: GetAccountShape = async (infos) => {
   return {
     type: "Account",
     id: accountId,
+    syncHash,
     balance,
     spendableBalance: balance,
     blockHeight,
@@ -121,24 +129,29 @@ export const getAccountShape: GetAccountShape = async (infos) => {
  */
 export const getSubAccounts = async (
   infos: AccountShapeInfo,
-  accountId: string
+  accountId: string,
+  shouldSyncFromScratch = false
 ): Promise<Partial<SubAccount>[]> => {
   const { initialAccount, address, currency } = infos;
 
   // Get the latest operation from all subaccounts
-  const latestSyncedOperation = initialAccount?.subAccounts
-    ?.flatMap(({ operations }) => operations)
-    .reduce<Operation | null>((acc, curr) => {
-      if (!acc) {
-        return curr;
-      }
-      return (acc?.blockHeight || 0) > (curr?.blockHeight || 0) ? acc : curr;
-    }, null);
+  const latestSyncedOperation = shouldSyncFromScratch
+    ? null
+    : initialAccount?.subAccounts
+        ?.flatMap(({ operations }) => operations)
+        .reduce<Operation | null>((acc, curr) => {
+          if (!acc) {
+            return curr;
+          }
+          return (acc?.blockHeight || 0) > (curr?.blockHeight || 0)
+            ? acc
+            : curr;
+        }, null);
 
   // This method could not be working if the integration doesn't have an API to retreive the operations
   const lastERC20OperationsAndCurrencies = await (async () => {
     try {
-      const { getLastTokenOperations } = await getExplorerApi(currency);
+      const { getLastTokenOperations } = getExplorerApi(currency);
       return await getLastTokenOperations(
         currency,
         address,

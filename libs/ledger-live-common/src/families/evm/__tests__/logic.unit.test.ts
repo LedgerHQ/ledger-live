@@ -1,10 +1,13 @@
 import BigNumber from "bignumber.js";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import * as cryptoAssetsTokens from "@ledgerhq/cryptoassets/tokens";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../types";
 import { makeAccount, makeOperation, makeTokenAccount } from "../testUtils";
 import {
   eip1559TransactionHasFees,
   getEstimatedFees,
+  getSyncHash,
   legacyTransactionHasFees,
   mergeSubAccounts,
 } from "../logic";
@@ -289,6 +292,83 @@ describe("EVM Family", () => {
           { ...tokenAccount },
         ]);
         expect(newSubAccounts).toEqual([tokenAccount]);
+      });
+    });
+
+    describe("getSyncHash", () => {
+      const currency = getCryptoCurrencyById("ethereum");
+
+      afterEach(() => {
+        jest.restoreAllMocks();
+      });
+
+      it("should provide a valid sha256 hash", () => {
+        expect(getSyncHash(currency)).toStrictEqual(
+          expect.stringMatching(/^0x[A-Fa-f0-9]{64}$/)
+        );
+      });
+
+      it("should provide a hash not dependent on reference", () => {
+        jest
+          .spyOn(cryptoAssetsTokens, "listTokensForCryptoCurrency")
+          .mockImplementationOnce((currency) => {
+            const { listTokensForCryptoCurrency } = jest.requireActual(
+              "@ledgerhq/cryptoassets/tokens"
+            );
+            return listTokensForCryptoCurrency(currency).map((t) => ({ ...t }));
+          });
+        expect(getSyncHash(currency)).toEqual(getSyncHash(currency));
+      });
+
+      it("should provide a new hash if a token is removed", () => {
+        jest
+          .spyOn(cryptoAssetsTokens, "listTokensForCryptoCurrency")
+          .mockImplementationOnce((currency) => {
+            const { listTokensForCryptoCurrency } = jest.requireActual(
+              "@ledgerhq/cryptoassets/tokens"
+            );
+            const list: TokenCurrency[] = listTokensForCryptoCurrency(currency);
+            return list.slice(0, list.length - 2);
+          });
+        expect(getSyncHash(currency)).not.toEqual(getSyncHash(currency));
+      });
+
+      it("should provide a new hash if a token is modified", () => {
+        jest
+          .spyOn(cryptoAssetsTokens, "listTokensForCryptoCurrency")
+          .mockImplementationOnce((currency) => {
+            const { listTokensForCryptoCurrency } = jest.requireActual(
+              "@ledgerhq/cryptoassets/tokens"
+            );
+            const [first, ...rest]: TokenCurrency[] =
+              listTokensForCryptoCurrency(currency);
+            const modifedFirst = { ...first, delisted: !first.delisted };
+            return [modifedFirst, ...rest];
+          });
+
+        expect(getSyncHash(currency)).not.toEqual(getSyncHash(currency));
+      });
+
+      it("should provide a new hash if a token is added", () => {
+        jest
+          .spyOn(cryptoAssetsTokens, "listTokensForCryptoCurrency")
+          .mockImplementationOnce((currency) => {
+            const { listTokensForCryptoCurrency } = jest.requireActual(
+              "@ledgerhq/cryptoassets/tokens"
+            );
+            return [
+              ...listTokensForCryptoCurrency(currency),
+              {
+                type: "TokenCurrency",
+                id: "test",
+                ledgerSignature: "string",
+                contractAddress: "0x123",
+                parentCurrency: currency,
+                tokenType: "erc20",
+              } as TokenCurrency,
+            ];
+          });
+        expect(getSyncHash(currency)).not.toEqual(getSyncHash(currency));
       });
     });
   });
