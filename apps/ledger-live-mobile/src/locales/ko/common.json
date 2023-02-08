@@ -549,7 +549,7 @@
       "description" : "트랜잭션은 30초 이내에 서명을 완료해야 합니다. 다시 시도해 주세요."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 30TRX를 지불할 수 있습니다."
+      "title" : "Energy is lower than necessary. You might pay up to 50TRX in fees."
     },
     "UpdateYourApp" : {
       "title" : "앱 업데이트 필요",
@@ -820,7 +820,9 @@
     "required" : "죄송하지만 블루투스가 비활성 상태인 것 같습니다",
     "locationRequiredTitle" : "블루투스 LE 사용을 위해 위치 정보가 필요합니다.",
     "locationRequiredMessage" : "안드로이드에서 블루투스 LE 장치를 열거하려면 위치를 허용해야 합니다.",
-    "checkEnabled" : "휴대폰 설정에서 블루투스를 활성화해주세요."
+    "checkEnabled" : "휴대폰 설정에서 블루투스를 활성화해주세요.",
+    "tryEnablingAgain" : "블루투스를 다시 활성화해보세요",
+    "openSettings" : "블루투스 설정 열기"
   },
   "webview" : {
     "noConnectionError" : {
@@ -830,12 +832,10 @@
   },
   "location" : {
     "titleServiceRequired" : "위치 서비스가 필요합니다",
-    "titlePermissionRequired" : "위치 정보 액세스 권한이 필요합니다",
-    "titlePermissionRequiredPrecise" : "정확한 위치 정보 액세스 권한이 필요합니다",
     "descriptionServiceRequired" : "블루투스로 귀하의 장치를 Ledger Live와 페어링 하려면 위치 서비스가 필요합니다.",
-    "descriptionPermissionRequired" : "블루투스로 귀하의 장치를 Ledger Live와 페어링 하려면 위치 정보 액세스 권한이 필요합니다.",
-    "descriptionPermissionRequiredPrecise" : "블루투스로 귀하의 장치를 Ledger Live와 페어링 하려면 정확한 위치 정보 액세스 권한이 필요합니다.",
     "open" : "위치 설정 열기",
+    "openSettings" : "위치 설정 열기",
+    "tryEnablingAgain" : "위치를 다시 활성화해보세요",
     "noInfos" : "Ledger는 사용자의 위치 정보를 사용하지 않습니다."
   },
   "permissions" : {
@@ -848,6 +848,12 @@
       "modalButtonLabelBase" : "승인",
       "modalButtonLabelSettingsVariant" : "설정으로 이동",
       "dontPair" : "페어링 금지"
+    },
+    "location" : {
+      "titlePermissionRequired" : "위치 정보 액세스 권한이 필요합니다",
+      "titlePermissionRequiredPrecise" : "정확한 위치 정보 액세스 권한이 필요합니다",
+      "descriptionPermissionRequired" : "블루투스로 귀하의 장치를 Ledger Live와 페어링 하려면 위치 정보 액세스 권한이 필요합니다.",
+      "descriptionPermissionRequiredPrecise" : "블루투스로 귀하의 장치를 Ledger Live와 페어링 하려면 정확한 위치 정보 액세스 권한이 필요합니다."
     },
     "camera" : {
       "title" : "카메라 허용",
