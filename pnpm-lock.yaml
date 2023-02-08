@@ -13,24 +13,24 @@ overrides:
   remove-flow-types-loader>loader-utils: '*'
 
 patchedDependencies:
-  react-native-fast-crypto@2.2.0:
-    hash: jdmv3zyvsaug2f6l23zgrmwdli
-    path: patches/react-native-fast-crypto@2.2.0.patch
-  react-native-image-crop-tools@1.6.2:
-    hash: ykxjy5s7xujdxmsgrwxo5mh3y4
-    path: patches/react-native-image-crop-tools@1.6.2.patch
-  rn-fetch-blob@0.12.0:
-    hash: n5yzdsrxz654upecs5xliebtmm
-    path: patches/rn-fetch-blob@0.12.0.patch
   react-native-video@5.2.0:
     hash: lojvl6twgoj4rxeqeytmq4uduq
     path: patches/react-native-video@5.2.0.patch
+  react-native-fast-crypto@2.2.0:
+    hash: jdmv3zyvsaug2f6l23zgrmwdli
+    path: patches/react-native-fast-crypto@2.2.0.patch
   react-native-tcp@4.0.0:
     hash: frdjcnsdohx4blxdmaawwvdihy
     path: patches/react-native-tcp@4.0.0.patch
+  react-native-image-crop-tools@1.6.2:
+    hash: ykxjy5s7xujdxmsgrwxo5mh3y4
+    path: patches/react-native-image-crop-tools@1.6.2.patch
   react-native-os@1.2.6:
     hash: 2e25ffb547hjiczrnsjhxl6geu
     path: patches/react-native-os@1.2.6.patch
+  rn-fetch-blob@0.12.0:
+    hash: n5yzdsrxz654upecs5xliebtmm
+    path: patches/rn-fetch-blob@0.12.0.patch
 
 importers:
 
@@ -1242,7 +1242,7 @@ importers:
       '@xstate/react': ^1.6.3
       '@zondax/cbor': v8.1.0-zondax-no-bigint
       '@zondax/ledger-filecoin': ^0.11.2
-      '@zondax/ledger-icp': 0.7.0-beta.2
+      '@zondax/ledger-icp': ^0.7.0
       algo-msgpack-with-bigint: ^2.1.1
       algosdk: 1.13.0
       async: ^3.2.3
@@ -1252,6 +1252,7 @@ importers:
       bchaddrjs: ^0.5.2
       bech32: ^1.1.3
       benchmark: ^2.1.4
+      big-integer: ^1.6.51
       bignumber.js: ^9.1.0
       bip32: ^2.0.6
       bip32-path: ^0.4.2
@@ -1418,7 +1419,7 @@ importers:
       '@xstate/react': 1.6.3_trxcr4ukgza3iqpu7qkdqadng4
       '@zondax/cbor': 8.1.0-zondax-no-bigint
       '@zondax/ledger-filecoin': 0.11.2
-      '@zondax/ledger-icp': 0.7.0-beta.2
+      '@zondax/ledger-icp': 0.7.0
       algo-msgpack-with-bigint: 2.1.1
       algosdk: 1.13.0
       async: 3.2.3
@@ -1427,6 +1428,7 @@ importers:
       base32-decode: 1.0.0
       bchaddrjs: 0.5.2
       bech32: 1.1.4
+      big-integer: 1.6.51
       bignumber.js: 9.1.0
       bip32: 2.0.6
       bip32-path: 0.4.2
@@ -22783,15 +22785,15 @@ packages:
       '@ledgerhq/hw-transport': 5.51.1
     dev: false
 
-  /@zondax/ledger-icp/0.7.0-beta.2:
-    resolution: {integrity: sha512-apJRXFNNj1XpNhQpOaXzeco/z5hUgzThn30C1UHg+myv21Z3qH3kUuf5BT27ziaQ3+wJ4vL3JcdbaRy9Ol9WBQ==}
+  /@zondax/ledger-icp/0.7.0:
+    resolution: {integrity: sha512-kJhGUQJZGA0iRYmUag5PMkcQyG0zFFn3nCfvhhV6E+J9aYJ2KgCGJE+2lbnoeKMhsy1EOJrIKPvpG23Pt4l0Qg==}
     dependencies:
       '@ledgerhq/hw-transport': 6.27.9
-      '@zondax/ledger-js': 0.0.2-beta.8
+      '@zondax/ledger-js': 0.2.1
     dev: false
 
-  /@zondax/ledger-js/0.0.2-beta.8:
-    resolution: {integrity: sha512-qFBSf20Q+PJykqiI1hRevMfpmv1A64U5yNwFdceCmYmfBrBmcx52R0WGZscLBTEPHO0xanNRZYHwNXaBcI1O0A==}
+  /@zondax/ledger-js/0.2.1:
+    resolution: {integrity: sha512-zhvw2fb6yuegVpKVrvWIVHfZCn3SV9dA+XZFkL8tUf+1fvCGM388yOlmcxRSlKnI7+h7yGy6fgTYuKxvMgkp7w==}
     dependencies:
       '@ledgerhq/hw-transport': 6.27.9
     dev: false

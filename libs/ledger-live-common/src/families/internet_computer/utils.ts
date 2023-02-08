@@ -1,5 +1,3 @@
-import Transport from "@ledgerhq/hw-transport";
-import ICP from "@zondax/ledger-icp";
 import { BigNumber } from "bignumber.js";
 import { ICP_FEES } from "./consts";
 
@@ -45,16 +43,6 @@ export const calculateEstimatedFees = (
 
 export const normalizeEpochTimestamp = (timestamp: string): number => {
   return parseInt(timestamp.slice(0, 13));
-};
-
-export const getAccountInfoForPath = async (
-  derPath: string,
-  transport: Transport
-) => {
-  const icp = new ICP(transport);
-  const accountInfo = await icp.getAddressAndPubKey(derPath);
-
-  return accountInfo;
 };
 
 export function getEstimatedFees(): BigNumber {

@@ -74,7 +74,7 @@ export const signICPTransaction = async ({
   signatures: { txnSig: string; readSig: string };
   signedTxn: string;
 }> => {
-  const icp = new ICP(transport);
+  const icp = new ICP(transport as any);
   const decodedTxn: any = Cbor.decode(Buffer.from(unsignedTxn, "hex"));
   const txnReqFromCbor = decodedTxn.updates[0][1];
   const expiry = new ingressExpiry(
