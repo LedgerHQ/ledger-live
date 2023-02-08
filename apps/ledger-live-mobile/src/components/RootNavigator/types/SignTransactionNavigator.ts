@@ -30,7 +30,6 @@ import {
 } from "@ledgerhq/live-common/families/solana/types";
 import { Transaction as HederaTransaction } from "@ledgerhq/live-common/families/hedera/types";
 import type { Transaction as ICPTransaction } from "@ledgerhq/live-common/families/internet_computer/types";
-import { Transaction as OsmosisTransaction } from "@ledgerhq/live-common/families/osmosis/types";
 import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/ripple/types";
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
