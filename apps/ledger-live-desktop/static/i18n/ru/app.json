@@ -1399,7 +1399,7 @@
         "label" : "Популярно"
       },
       "earn" : {
-        "title" : "Приумножить",
+        "title" : "Стейкинг",
         "description" : "Приумножайте криптовалюты вместе с Ledger"
       }
     }
@@ -5356,7 +5356,7 @@
       "description" : "Транзакцию необходимо подписать в течение 30 секунд. Пожалуйста, попробуйте ещё раз."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Не хватает баллов Энергии. Вы можете заплатить комиссию до 50 TRX."
+      "title" : "Energy is lower than necessary. You might pay up to 50 TRX in fees."
     },
     "PairingFailed" : {
       "title" : "Не удалось подключить устройство",
