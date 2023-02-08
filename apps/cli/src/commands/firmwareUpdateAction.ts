@@ -7,7 +7,6 @@ import ManagerAPI from "@ledgerhq/live-common/api/Manager";
 import network from "@ledgerhq/live-common/network";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { getProviderId } from "@ledgerhq/live-common/manager/provider";
-import manager from "@ledgerhq/live-common/manager/index";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { updateFirmwareAction } from "@ledgerhq/live-common/deviceSDK/actions/updateFirmware";

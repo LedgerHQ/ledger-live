@@ -5,7 +5,6 @@ import type { FinalFirmware, OsuFirmware } from "@ledgerhq/types-live";
 import type { DeviceInfo, SocketEvent } from "@ledgerhq/types-live";
 import { version as livecommonversion } from "../../../../package.json";
 import { getEnv } from "../../../env";
-//import { createMockSocket, bulkSocketMock, secureChannelMock } from "../../api/socket.mock";
 import { log } from "@ledgerhq/logs";
 import { createDeviceSocket } from "../../../api/socket";
 import { catchError, filter, map } from "rxjs/operators";
@@ -40,7 +39,7 @@ export type InstallFirmwareCommandEvent =
       progress: number;
     }
   | {
-      type: "allowManagerRequested";
+      type: "allowSecureChannelRequested";
     }
   | {
       type: "firmwareInstallPermissionRequested";
@@ -50,6 +49,16 @@ export type InstallFirmwareCommandEvent =
     }
   | UnresponsiveCmdEvent;
 
+/**
+ * Creates a scriptrunner connection with the /install API endpoint of the HSM in order to install
+ * an OSU (operating system updater).
+ * This is the same endpoint that is used to install applications, however the parameters that are
+ * passed are different. Besides that, the emitted events are semantically different. This is why
+ * this is a dedicated command to OSU installations.
+ * @param transport The transport object to contact the device
+ * @param param1 The firmware details to be installed
+ * @returns An observable that emits the events according to the progression of the firmware installation
+ */
 export function installFirmwareCommand(
   transport: Transport,
   { targetId, firmware }: InstallFirmwareCommandRequest
@@ -83,10 +92,14 @@ export function installFirmwareCommand(
       if (e.type === "bulk-progress") {
         return e.index === e.total - 1
           ? {
+              // the penultimate APDU of the bulk part of the installation is a blocking apdu and
+              // requires user validation
               type: "firmwareInstallPermissionRequested",
             }
           : e.index === e.total
           ? {
+              // the last APDU of the bulk part of the instalation means that the user validated
+              // the installation of the OSU firmware
               type: "firmwareInstallPermissionGranted",
             }
           : {
@@ -95,7 +108,7 @@ export function installFirmwareCommand(
             };
       }
       // then type is "device-permission-requested"
-      return { type: "allowManagerRequested" };
+      return { type: "allowSecureChannelRequested" };
     }),
     catchError(remapSocketUnresponsiveError)
   );

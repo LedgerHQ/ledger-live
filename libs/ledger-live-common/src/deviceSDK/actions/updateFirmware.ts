@@ -1,7 +1,7 @@
 //import { LockedDeviceError } from "@ledgerhq/errors";
 import { DeviceId, DeviceInfo } from "@ledgerhq/types-live";
 import { Observable, of } from "rxjs";
-import { filter, scan, switchMap, tap } from "rxjs/operators";
+import { filter, scan, switchMap } from "rxjs/operators";
 import {
   updateFirmwareTask,
   UpdateFirmwareTaskEvent,
@@ -27,14 +27,14 @@ export type updateFirmwareActionArgs = {
 export type UpdateFirmwareActionState = FullActionState<{
   // installingOsu: boolean;
   // installOsuDevicePermissionRequested: boolean; // TODO: should this all be booleans or maybe a single prop called "step"?
-  // allowManagerRequested: boolean;
+  // allowSecureChannelRequested: boolean;
   step:
     | "installingOsu"
     | "flashingMcu"
     | "flashingBootloader"
     | "installOsuDevicePermissionRequested"
     | "installOsuDevicePermissionGranted"
-    | "allowManagerRequested"
+    | "allowSecureChannelRequested"
     | "firmwareUpdateCompleted"
     | "preparingUpdate";
   progress: number;
@@ -100,13 +100,12 @@ export function updateFirmwareAction({
               step: event.type,
               progress: event.progress,
             };
-          case "allowManagerRequested":
+          case "allowSecureChannelRequested":
           case "installOsuDevicePermissionRequested":
           case "installOsuDevicePermissionGranted":
           case "firmwareUpdateCompleted":
             return { ...currentState, step: event.type };
           default:
-            // TODO: define a general reducer
             return {
               ...currentState,
               ...sharedReducer({

@@ -40,7 +40,7 @@ export type UpdateFirmwareTaskEvent =
   | { type: "firmwareUpdateCompleted" }
   | { type: "installOsuDevicePermissionRequested" }
   | { type: "installOsuDevicePermissionGranted" }
-  | { type: "allowManagerRequested" }
+  | { type: "allowSecureChannelRequested" }
   | { type: "taskError"; error: UpdateFirmwareTaskError }
   | SharedTaskEvent;
 
@@ -86,7 +86,7 @@ function internalUpdateFirmwareTask({
     ).subscribe({
       next: (event) => {
         switch (event.type) {
-          case "allowManagerRequested":
+          case "allowSecureChannelRequested":
             subscriber.next(event);
             break;
           case "firmwareInstallPermissionRequested":

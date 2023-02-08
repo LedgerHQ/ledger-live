@@ -13,19 +13,28 @@ export type FlashMcuOrBootloaderCommandRequest = {
   version: string;
 };
 
-const castProgressEvent = (e: SocketEvent) =>
-  e as {
-    type: "bulk-progress";
-    progress: number;
-    index: number;
-    total: number;
-  };
+type ProgressEvent = {
+  type: "bulk-progress";
+  progress: number;
+  index: number;
+  total: number;
+};
+
+const filterProgressEvent = (e: SocketEvent): e is ProgressEvent =>
+  e.type === "bulk-progress";
 
 export type FlashMcuCommandEvent = {
   type: "progress";
   progress: number;
 };
 
+/**
+ * Creates a scriptrunner connection with the /mcu API endpoint of the HSM in order to flash the MCU
+ * or the Bootloader of a device (both use the same endpoint with version different parameters)
+ * @param transport The transport object to contact the device
+ * @param param1 The versions details of the MCU or Bootloader to be installed
+ * @returns An observable that emits the events according to the progression of the firmware installation
+ */
 export function flashMcuOrBootloaderCommand(
   transport: Transport,
   { targetId, version }: FlashMcuOrBootloaderCommandRequest
@@ -45,8 +54,7 @@ export function flashMcuOrBootloaderCommand(
       },
     }),
   }).pipe(
-    filter((e) => e.type === "bulk-progress"),
-    map(castProgressEvent),
+    filter<SocketEvent, ProgressEvent>(filterProgressEvent),
     map((e) => ({
       type: "progress",
       progress: e.progress,
