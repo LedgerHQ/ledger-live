@@ -1,7 +1,7 @@
 // @flow
 
 import React from "react";
-import { Flex, Alert, Text } from "@ledgerhq/react-ui";
+import {Flex, Alert, Text, Link} from "@ledgerhq/react-ui";
 import Button from "~/renderer/components/ButtonV3";
 import type { Account } from "@ledgerhq/live-common/types/index";
 import { openURL } from "~/renderer/linking";
@@ -30,7 +30,6 @@ const getBannerProps = (account: Account, hooks) => {
   }
 };
 
-// optional prop in flow
 type BannerProps = {
   title: string,
   linkText?: string,
@@ -55,13 +54,13 @@ const AccountBanner = ({ title, description, cta, onClick, linkUrl, linkText }: 
             <Text color="inherit" variant="body" fontSize="14px" style={{ marginTop: "10px" }}>
               {description}{" "}
               {linkUrl && linkText && (
-                <Text
+                <Link
                   color="inherit"
                   variant="body"
                   fontSize="14px"
-                  style={{ marginTop: "10px", textDecoration: "underline", cursor: "pointer" }}
+                  style={{ marginTop: "10px", textDecoration: "underline" }}
                   onClick={() => openURL(linkUrl)}
-                >{`${linkText}`}</Text>
+                >{`${linkText}`}</Link>
               )}
             </Text>
           </Flex>

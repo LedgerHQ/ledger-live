@@ -19,20 +19,13 @@ const getAccountBannerProps = (
 ) => {
   const { stakeProvider } = state;
 
-  console.log(ethStakingProviders);
   const stakeOnClick = (providerLiveAppId: string) => {
-    // tracking goes here.no
+    // tracking goes here
     history.push({
       pathname: `/platform/${providerLiveAppId}`,
-      params: { //todo: fix this type issue
-        returnTo: `/account/${account.id}`,
-      },
-      state: { accountId: account.id },
+      state: { accountId: account.id, returnTo: `/account/${account.id}` },
     });
   };
-
-  // const lidoStakeProvider = ethStakingProviders?.listProvider?.find(
-  //   provider => provider.
 
   const title =
     stakeProvider === "kiln"
