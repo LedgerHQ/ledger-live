@@ -17,7 +17,7 @@ import estimateMaxSpendable from "../js-estimateMaxSpendable";
 import buildSignOperation from "../js-signOperation";
 import getAddress from "../hw-getAddress";
 import { loadPolkadotCrypto } from "../polkadot-crypto";
-import getAddressWrapper from "@ledgerhq/coin-framework/lib/bridge/getAddressWrapper";
+import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
 

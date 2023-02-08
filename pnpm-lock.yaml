@@ -617,7 +617,7 @@ importers:
       '@ledgerhq/wallet-api-core': ^0.11.0
       '@ledgerhq/wallet-api-server': ^0.10.1
       '@polkadot/reactnative-identicon': 2.9.13
-      '@polkadot/x-randomvalues': 10.1.12
+      '@polkadot/x-randomvalues': 10.1.14
       '@react-native-async-storage/async-storage': ^1.15.17
       '@react-native-community/cli': ^7.0.1
       '@react-native-community/cli-platform-android': ^7.0.1
@@ -818,7 +818,7 @@ importers:
       '@ledgerhq/wallet-api-core': 0.11.0
       '@ledgerhq/wallet-api-server': 0.10.1
       '@polkadot/reactnative-identicon': 2.9.13_ondxtwf5lqq5g76dzmsmwamaca
-      '@polkadot/x-randomvalues': 10.1.12
+      '@polkadot/x-randomvalues': 10.1.14
       '@react-native-async-storage/async-storage': 1.17.4_react-native@0.68.5
       '@react-native-community/cli': 7.0.4_4bco2uivkunuhrlwlwyjelbvu4
       '@react-native-community/cli-platform-android': 7.0.1
@@ -46466,7 +46466,7 @@ packages:
       object-assign: 4.1.1
       promise: 8.2.0
       raf: 3.4.1
-      regenerator-runtime: 0.13.9
+      regenerator-runtime: 0.13.11
       whatwg-fetch: 3.6.2
     dev: false
 
