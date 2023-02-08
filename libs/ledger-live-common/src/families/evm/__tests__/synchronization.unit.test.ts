@@ -9,6 +9,7 @@ import { decodeAccountId } from "../../../account";
 import * as etherscanAPI from "../api/etherscan";
 import * as rpcAPI from "../api/rpc.common";
 import { getEnv } from "../../../env";
+import * as logic from "../logic";
 
 jest.useFakeTimers().setSystemTime(new Date("2014-04-21"));
 
@@ -33,7 +34,10 @@ const getAccountShapeParameters: AccountShapeInfos = {
 const tokenCurrency1 = getTokenById("ethereum/erc20/usd__coin");
 const tokenCurrency2 = getTokenById("ethereum/erc20/usd_tether__erc20_");
 const tokenAccount = makeTokenAccount("0xkvn", tokenCurrency1);
-const account = makeAccount("0xkvn", currency, [tokenAccount]);
+const account = {
+  ...makeAccount("0xkvn", currency, [tokenAccount]),
+  syncHash: logic.getSyncHash(currency),
+};
 const coinOperation1 = makeOperation({
   hash: "0xH4sH",
   accountId: "js:2:ethereum:0xkvn:",
@@ -253,6 +257,76 @@ describe("EVM Family", () => {
             tokenOperations
           );
         });
+
+        it("should do a full sync when syncHash changes", async () => {
+          jest
+            .spyOn(logic, "getSyncHash")
+            .mockImplementationOnce(() => "0xNope");
+
+          await synchronization.getAccountShape(
+            {
+              ...getAccountShapeParameters,
+              initialAccount: {
+                ...account,
+                operations: [coinOperation1],
+                subAccounts: [
+                  { ...tokenAccount, operations: [tokenOperation1] },
+                ],
+              },
+            },
+            {} as any
+          );
+
+          expect(
+            etherscanAPI?.default.getLastCoinOperations
+          ).toHaveBeenCalledWith(
+            getAccountShapeParameters.currency,
+            getAccountShapeParameters.address,
+            account.id,
+            0
+          );
+          expect(
+            etherscanAPI?.default.getLastTokenOperations
+          ).toHaveBeenCalledWith(
+            getAccountShapeParameters.currency,
+            getAccountShapeParameters.address,
+            account.id,
+            0
+          );
+        });
+
+        it("should do a full sync when syncHash changes", async () => {
+          await synchronization.getAccountShape(
+            {
+              ...getAccountShapeParameters,
+              initialAccount: {
+                ...account,
+                operations: [coinOperation1],
+                subAccounts: [
+                  { ...tokenAccount, operations: [tokenOperation1] },
+                ],
+              },
+            },
+            {} as any
+          );
+
+          expect(
+            etherscanAPI?.default.getLastCoinOperations
+          ).toHaveBeenCalledWith(
+            getAccountShapeParameters.currency,
+            getAccountShapeParameters.address,
+            account.id,
+            coinOperation1.blockHeight
+          );
+          expect(
+            etherscanAPI?.default.getLastTokenOperations
+          ).toHaveBeenCalledWith(
+            getAccountShapeParameters.currency,
+            getAccountShapeParameters.address,
+            account.id,
+            tokenOperation1.blockHeight
+          );
+        });
       });
 
       describe("With transactions fetched", () => {
@@ -329,6 +403,7 @@ describe("EVM Family", () => {
           expect(accountShape).toEqual({
             type: "Account",
             id: account.id,
+            syncHash: expect.stringMatching(/^0x[A-Fa-f0-9]{64}$/), // matching a sha256 hex
             balance: new BigNumber(100),
             spendableBalance: new BigNumber(100),
             blockHeight: 10,
