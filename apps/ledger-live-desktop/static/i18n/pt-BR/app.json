@@ -1399,7 +1399,7 @@
         "label" : "Populares"
       },
       "earn" : {
-        "title" : "Ganhar",
+        "title" : "Stake",
         "description" : "Cresça suas criptos com a Ledger"
       }
     }
@@ -5356,7 +5356,7 @@
       "description" : "A assinatura deve ser aplicada dentro de 30 segundos. Tente Novamente."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "A Energia está abaixo do necessário. Você pode pagar até 50 TRX em taxas."
+      "title" : "Energy is lower than necessary. You might pay up to 50 TRX in fees."
     },
     "PairingFailed" : {
       "title" : "Emparelhamento sem sucesso",
@@ -5593,6 +5593,13 @@
       "descriptionWithProductName" : "Você precisa configurar sua {{ productName }} primeiro.\nVamos guiar você pelo processo de configuração.",
       "goToOnboardingButton" : "Configurar meu dispositivo",
       "goToOnboardingButtonWithProductName" : "Configurar minha {{ productName }}"
+    },
+    "EtherscanAPIError" : {
+      "title" : "Falha em buscar transações",
+      "description" : "Ocorreu um erro inesperado com os exploradores. Tente novamente mais tarde"
+    },
+    "GasEstimationError" : {
+      "title" : "Falha em estimar o gás"
     }
   },
   "cryptoOrg" : {
