@@ -9,11 +9,12 @@ import LocationPermissionDenied from "../RequiresLocation/LocationPermissionDeni
 export type BleRequirementsState = "unknown" | "respected" | "not_respected";
 
 export type RequiresBluetoothBottomModalProps = {
-  isOpen: boolean;
+  isOpenedOnIssue: boolean;
   onUserClose: () => void;
   bluetoothRequirementsState: BluetoothRequirementsState;
   retryRequestOnIssue: (() => void) | null;
   cannotRetryRequest?: boolean;
+  onDrawerHide?: () => void;
 };
 
 /**
@@ -27,25 +28,28 @@ export type RequiresBluetoothBottomModalProps = {
  * The drawer can be closed by the user, but this does not resolve the requirements issue.
  * The associated hook useRequireBluetooth will still return the same state.
  *
- * Note: never conditionally render this component. Always render it and use isOpen to control its visibility.
+ * Note: never conditionally render this component. Always render it and use isOpenedOnIssue to control its visibility.
  *
- * @param isOpen Whether the bottom drawer is open or not.
- * @param onUserClose A callback when the user tries to close the bottom drawer.
- *   This is mandatory as the drawer does not close by itself, until the requirements are respected.
- *   To close the drawer, update isOpen to false and update accordingly your logic as the requirements are not respected.
+ * @param isOpenedOnIssue Whether the bottom drawer should be opened when an issue occurred on the bluetooth requirements.
+ *   If bluetoothRequirementsState is "all_respected", the drawer will not be opened.
  * @param bluetoothRequirementsState The bluetooth requirements state coming from useRequireBluetooth.
  * @param retryRequestOnIssue A function to retry the process to check/request for the currently failed bluetooth requirement.
  * @param cannotRetryRequest Whether the retry function retryRequestOnIssue can be called.
  *   For example, for permissions on Android, it is only possible to retry to request directly the user (and not make them
  *   go to the settings) if the user has not checked/triggered the "never ask again".
+ * @param onUserClose A callback when the user tries to close the bottom drawer while all requirements are not respected.
+ *   This is a mandatory prop as, until all the requirements are respected, the drawer does not normally close itself .
+ *   To hide the drawer, update isOpen to false and update accordingly your logic as the requirements are not respected.
+ * @param onDrawerHide A callback when the drawer is completely hidden. Don't use this to know if all requirements are respected,
+ *   you should use bluetoothRequirementsState from useRequireBluetooth for that.
  */
-// TODO: isOpen should be named isOpenOnIssue or similar, because we don't open the drawer if there is no issue
 const RequiresBluetoothDrawer = ({
-  isOpen,
-  onUserClose,
+  isOpenedOnIssue,
   bluetoothRequirementsState,
   retryRequestOnIssue,
   cannotRetryRequest = true,
+  onUserClose,
+  onDrawerHide,
 }: RequiresBluetoothBottomModalProps) => {
   const onClose = useCallback(() => {
     // If all the requireements are not respected, it means the user tried to close the drawer by pressing on the close button
@@ -53,12 +57,6 @@ const RequiresBluetoothDrawer = ({
       onUserClose();
     }
   }, [bluetoothRequirementsState, onUserClose]);
-
-  // const onModalHide = useCallback(() => {
-  //   if (onDrawerHide) {
-  //     onDrawerHide();
-  //   }
-  // }, [onDrawerHide]);
 
   let content = null;
 
@@ -101,13 +99,14 @@ const RequiresBluetoothDrawer = ({
       break;
   }
 
-  const drawerIsOpen = isOpen && content !== null;
+  const isRequestingToBeOpened = isOpenedOnIssue && content !== null;
 
   return (
     <QueuedDrawer
+      isRequestingToBeOpened={isRequestingToBeOpened}
       onClose={onClose}
-      isRequestingToBeOpened={drawerIsOpen}
       preventBackdropClick
+      onModalHide={onDrawerHide}
     >
       {content}
     </QueuedDrawer>
