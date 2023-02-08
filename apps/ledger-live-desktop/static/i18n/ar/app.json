@@ -1399,7 +1399,7 @@
         "label" : "شائع"
       },
       "earn" : {
-        "title" : "اكسب",
+        "title" : "Stake",
         "description" : "قم بتنمية أصولك المشفرة مع Ledger"
       }
     }
@@ -5356,7 +5356,7 @@
       "description" : "يجب تطبيق التوقيع في غضون 30 ثانية. يرجى إعادة المحاولة مرة أخرى."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "الطاقة أقل من المطلوب. قد تدفع رسوم تصل إلى 50TRX."
+      "title" : "Energy is lower than necessary. You might pay up to 50 TRX in fees."
     },
     "PairingFailed" : {
       "title" : "لم يتم إجراء الإقران بنجاح",
@@ -5593,6 +5593,13 @@
       "descriptionWithProductName" : "يجب أن تقوم بإعداد {{ productName }} خاصتك أولاً.\nسنرشدك خلال عملية الإعداد.",
       "goToOnboardingButton" : "إعداد جهازي",
       "goToOnboardingButtonWithProductName" : "إعداد {{ productName }}"
+    },
+    "EtherscanAPIError" : {
+      "title" : "فشل إحضار المعاملات",
+      "description" : "حدث خطأ غير متوقع مع المستكشفات. يُرجى إعادة المحاولة لاحقاً"
+    },
+    "GasEstimationError" : {
+      "title" : "فشل تقدير الغاز"
     }
   },
   "cryptoOrg" : {
