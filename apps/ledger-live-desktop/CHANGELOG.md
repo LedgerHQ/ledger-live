@@ -1,5 +1,12 @@
 # ledger-live-desktop
 
+## 2.53.1-hotfix.2
+
+### Patch Changes
+
+- Updated dependencies [[`61c7aafb21`](https://github.com/LedgerHQ/ledger-live/commit/61c7aafb216099692fad27621fff167f1ba4c840)]:
+  - @ledgerhq/live-common@28.0.1-hotfix.1
+
 ## 2.53.1-hotfix.1
 
 ### Patch Changes
