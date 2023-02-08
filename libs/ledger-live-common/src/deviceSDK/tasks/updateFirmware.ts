@@ -31,7 +31,8 @@ export type UpdateFirmwareTaskArgs = {
 export type UpdateFirmwareTaskError =
   | "DeviceOnDashboardExpected"
   | "DeviceOnBootloaderExpected"
-  | "McuVersionNotFound";
+  | "McuVersionNotFound"
+  | "TooManyMcuOrBootloaderFlashes";
 
 export type UpdateFirmwareTaskEvent =
   | { type: "installingOsu"; progress: number }
@@ -165,13 +166,16 @@ export function getFlashMcuOrBootloaderDetails(
   return { bootloaderVersion, isMcuUpdate };
 }
 
+const MAX_FLASH_REPETITIONS = 5;
+
 // recursive loop function that will continue flashing either MCU or the Bootloader, until
 // the device is no longer on bootloader mode
 const flashMcuOrBootloader = (
   updateContext: FirmwareUpdateContext,
   deviceInfo: DeviceInfo,
   subscriber: Subscriber<UpdateFirmwareTaskEvent>,
-  deviceId: string // TODO: is this within device info?
+  deviceId: string,
+  repetitions = 0
 ) => {
   if (!deviceInfo.isBootloader) {
     subscriber.next({
@@ -205,12 +209,25 @@ const flashMcuOrBootloader = (
           waitForDeviceInfo(deviceId).then((newDeviceInfo) => {
             if (newDeviceInfo.isBootloader) {
               // if we're still in the bootloader, it means that we still have things to flash
-              flashMcuOrBootloader(
-                updateContext,
-                newDeviceInfo,
-                subscriber,
-                deviceId
-              );
+
+              // if we've already flashed too many times, we're probably stuck in an infinite loop
+              // this should never happen, but in case it happens, it's better to warn the user
+              // and track the issue rather than keep in an infinite loop
+              if (repetitions > MAX_FLASH_REPETITIONS) {
+                subscriber.next({
+                  type: "taskError",
+                  error: "TooManyMcuOrBootloaderFlashes",
+                });
+                subscriber.complete();
+              } else {
+                flashMcuOrBootloader(
+                  updateContext,
+                  newDeviceInfo,
+                  subscriber,
+                  deviceId,
+                  repetitions + 1
+                );
+              }
             } else {
               // if we're not in the bootloader anymore, it means that the update has been completed
               subscriber.next({ type: "firmwareUpdateCompleted" });
