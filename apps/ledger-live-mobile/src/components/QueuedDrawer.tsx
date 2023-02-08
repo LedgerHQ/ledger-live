@@ -101,9 +101,9 @@ const QueuedDrawer = ({
     let id: number | undefined;
 
     // Protects against adding a drawer to the queue when its associated screen has not the focus
-    if (!hasFocus) {
+    if (!hasFocus && (isRequestingToBeOpened || isForcingToBeOpened)) {
       setWasForcefullyCleaned(true);
-    } else {
+    } else if (hasFocus) {
       // If the drawer is forcing to be opened, first clean the waiting queue
       if (isForcingToBeOpened) {
         cleanWaitingDrawers(true);
