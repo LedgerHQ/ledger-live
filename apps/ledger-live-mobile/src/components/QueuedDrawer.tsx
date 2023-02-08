@@ -44,7 +44,9 @@ export type Props = Merge<
  *   and displays itself. It should only be used when the drawer has priority over the other drawers in the queue.
  *   Prefer using isRequestingToBeOpened insted to respect the queue order. Default to false.
  * @param onClose: when the user closes the drawer (by clicking on the backdrop or the close button) + when the drawer is hidden
- *   (this is currently due to a legacy behavior of the BaseModal component. It might change in the future)
+ *   (this is currently due to a legacy behavior of the BaseModal component. It might change in the future).
+ *   Even if you set noCloseButton, the drawer can be closed for other reasons (lost screen focus, other drawer forced it to close).
+ *   It is a good practice to always clean the state that tried to open the drawer when onClose is called.
  * @param onModalHide: when the drawer is fully hidden
  * @param noCloseButton: whether to display the close button or not
  * @param preventBackdropClick: whether to prevent the user from closing the drawer by clicking somewhere on the screen
