@@ -85,7 +85,6 @@ import {
   PolkadotAccountRaw,
 } from "../families/polkadot/types";
 import { ElrondAccount, ElrondAccountRaw } from "../families/elrond/types";
-import { CardanoAccount, CardanoAccountRaw } from "../families/cardano/types";
 import {
   CryptoOrgAccount,
   CryptoOrgAccountRaw,
@@ -694,14 +693,6 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
           fromElrondResourcesRaw(elrondResourcesRaw);
       break;
     }
-    case "cardano": {
-      const cardanoResourcesRaw = (rawAccount as CardanoAccountRaw)
-        .cardanoResources;
-      if (cardanoResourcesRaw)
-        (res as CardanoAccount).cardanoResources =
-          fromCardanoResourceRaw(cardanoResourcesRaw);
-      break;
-    }
     case "solana": {
       const solanaResourcesRaw = (rawAccount as SolanaAccountRaw)
         .solanaResources;
@@ -869,15 +860,6 @@ export function toAccountRaw(account: Account): AccountRaw {
       if (elrondAccount.elrondResources) {
         (res as ElrondAccountRaw).elrondResources = toElrondResourcesRaw(
           elrondAccount.elrondResources
-        );
-      }
-      break;
-    }
-    case "cardano": {
-      const cardanoAccount = account as CardanoAccount;
-      if (cardanoAccount.cardanoResources) {
-        (res as CardanoAccountRaw).cardanoResources = toCardanoResourceRaw(
-          cardanoAccount.cardanoResources
         );
       }
       break;
