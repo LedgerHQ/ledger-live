@@ -549,7 +549,7 @@
       "description" : "トランザクションは、30秒以内に署名する必要があります。もう一度お試しください。"
     },
     "TronNotEnoughEnergy" : {
-      "title" : "エネルギーが必要額を満たしていません。手数料には最大30TRXが必要となります。"
+      "title" : "Energy is lower than necessary. You might pay up to 50TRX in fees."
     },
     "UpdateYourApp" : {
       "title" : "アプリのアップデートが必要です。",
@@ -820,7 +820,9 @@
     "required" : "Bluetoothが無効になっているようです。",
     "locationRequiredTitle" : "Bluetooth LEには位置情報が必要です。",
     "locationRequiredMessage" : "AndroidでBluetooth LEデバイスを一覧表示するには、位置情報サービスへのアクセスが必要です。",
-    "checkEnabled" : "スマートフォンの設定でBluetoothを有効にしてください。"
+    "checkEnabled" : "スマートフォンの設定でBluetoothを有効にしてください。",
+    "tryEnablingAgain" : "Bluetoothを再度有効にしてみてください",
+    "openSettings" : "Bluetooth設定を開く"
   },
   "webview" : {
     "noConnectionError" : {
@@ -830,12 +832,10 @@
   },
   "location" : {
     "titleServiceRequired" : "位置情報サービスが必要です",
-    "titlePermissionRequired" : "位置情報の許可が必要です",
-    "titlePermissionRequiredPrecise" : "正確な位置情報の許可が必要です",
     "descriptionServiceRequired" : "Ledger Liveは、Bluetoothでデバイスをペアリングするために、位置情報サービスへのアクセスが必要です。",
-    "descriptionPermissionRequired" : "Ledger Liveは、Bluetoothでデバイスをペアリングするために、位置情報の許可が必要です。",
-    "descriptionPermissionRequiredPrecise" : "Ledger Liveは、Bluetoothでデバイスをペアリングするために、位置情報の許可が必要です。",
     "open" : "位置情報の設定を開く",
+    "openSettings" : "位置情報の設定を開く",
+    "tryEnablingAgain" : "位置情報を再度有効にしてみてください",
     "noInfos" : "Ledgerがあなたの位置情報にアクセスすることはありません。"
   },
   "permissions" : {
@@ -848,6 +848,12 @@
       "modalButtonLabelBase" : "許可する",
       "modalButtonLabelSettingsVariant" : "設定を開く",
       "dontPair" : "ペアリングしない"
+    },
+    "location" : {
+      "titlePermissionRequired" : "位置情報の許可が必要です",
+      "titlePermissionRequiredPrecise" : "正確な位置情報の許可が必要です",
+      "descriptionPermissionRequired" : "Ledger Liveは、Bluetoothでデバイスをペアリングするために、位置情報の許可が必要です。",
+      "descriptionPermissionRequiredPrecise" : "Ledger Liveは、Bluetoothでデバイスをペアリングするために、位置情報の許可が必要です。"
     },
     "camera" : {
       "title" : "カメラを許可",
