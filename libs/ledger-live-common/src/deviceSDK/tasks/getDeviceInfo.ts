@@ -39,7 +39,7 @@ function internalGetDeviceInfoTask({
   return new Observable((subscriber) => {
     return (
       withDevice(deviceId)((transport) =>
-        quitApp(transport).pipe(          
+        quitApp(transport).pipe(
           switchMap(() => {
             return getVersion(transport);
           }),
