@@ -73,7 +73,7 @@ const envDefinitions = {
     desc: "Explorer API for celo",
   },
   API_ICP_ENDPOINT: {
-    def: "https://api.zondax.dev/icp/node/mainnet/",
+    def: "https://icp.api.live.ledger.com/",
     parser: stringParser,
     desc: "Rosetta API for ICP",
   },

@@ -182,7 +182,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
               type: "device-signature-requested",
             });
 
-            const { signatures, signedTxn } = await signICPTransaction({
+            const { signedTxn } = await signICPTransaction({
               unsignedTxn,
               transport,
               path: getPath(derivationPath),
@@ -210,7 +210,6 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
               date: new Date(),
               extra: {
                 memo: transaction.memo,
-                signedTxn,
               },
             };
 
@@ -218,7 +217,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
               type: "signed",
               signedOperation: {
                 operation,
-                signature: signatures.txnSig,
+                signature: signedTxn,
                 expirationDate: getTxnExpirationDate(unsignedTxn),
               },
             });
@@ -239,11 +238,11 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
 const receive = makeAccountBridgeReceive();
 
 const broadcast: BroadcastFnSignature = async ({
-  signedOperation: { operation },
+  signedOperation: { signature, operation },
 }) => {
   // log("debug", "[broadcast] start fn");
 
-  await broadcastTxn(operation.extra.signedTxn);
+  await broadcastTxn(signature);
 
   const result = { ...operation };
 
