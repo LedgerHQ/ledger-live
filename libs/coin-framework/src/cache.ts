@@ -11,7 +11,7 @@ export const makeLRUCache = <A extends Array<any>, T>(
   keyExtractor: (...args: A) => string = () => "",
   lruOpts: LRU.Options<string, any> = {
     max: 100,
-    maxAge: 5 * 60 * 1000,
+    ttl: 5 * 60 * 1000,
   }
 ): CacheRes<A, T> => {
   const cache = new LRU(lruOpts);

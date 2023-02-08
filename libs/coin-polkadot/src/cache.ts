@@ -197,6 +197,6 @@ export const getMinimumBondBalance: CacheRes<
   () => "polkadot",
   {
     max: 1, // Store only one object since we only have polkadot.
-    maxAge: 60 * 60 * 1000, // 1 hour
+    ttl: 60 * 60 * 1000, // 1 hour
   }
 );
