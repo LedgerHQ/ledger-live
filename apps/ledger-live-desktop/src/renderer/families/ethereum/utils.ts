@@ -1,15 +1,8 @@
 import { AccountBannerState } from "@ledgerhq/live-common/lib/families/ethereum/banner";
 import { Account } from "@ledgerhq/types-live";
-import { useHistory } from "react-router";
-import { TFunction } from "react-i18next";
 import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
-
-type Hooks = {
-  t: TFunction;
-  ethStakingProviders: null | { params: { listProvider: { name: string; liveAppId: string }[] } };
-  history: ReturnType<typeof useHistory>;
-};
+import { Hooks } from "~/renderer/screens/account/useGetBannerProps";
 
 const kilnAppId = "kiln";
 const lidoAppId = "lido";

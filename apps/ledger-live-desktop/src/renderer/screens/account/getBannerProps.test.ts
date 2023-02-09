@@ -1,4 +1,4 @@
-import { getBannerProps } from "~/renderer/screens/account/getBannerProps";
+import { useGetBannerProps } from "~/renderer/screens/account/useGetBannerProps";
 import BigNumber from "bignumber.js";
 import { Account } from "@ledgerhq/types-live";
 
@@ -21,7 +21,7 @@ describe("getAccountProps", () => {
 
   describe("ethereum", () => {
     it("gets banner props for ethereum account below 32 ETH", () => {
-      const bannerProps = getBannerProps(
+      const bannerProps = useGetBannerProps(
         {
           currency: {
             family: "ethereum",
@@ -51,7 +51,7 @@ describe("getAccountProps", () => {
     });
 
     it("gets banner props for ethereum account above 32 ETH", () => {
-      const bannerProps = getBannerProps(
+      const bannerProps = useGetBannerProps(
         {
           currency: {
             id: "ethereum",
