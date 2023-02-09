@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { StyleSheet, View, AppState } from "react-native";
+import { StyleSheet, View, AppState, NativeModules } from "react-native";
 import type { TFunction } from "i18next";
 import { connect } from "react-redux";
 import { withTranslation } from "react-i18next";
@@ -80,7 +80,10 @@ class AuthPass extends PureComponent<Props, State> {
   appInBg: number | undefined;
   handleAppStateChange = async (nextAppState: string) => {
     const timeoutValue = getEnv("MOCK") ? 5000 : AUTOLOCK_TIMEOUT;
-    const uptime = parseInt(await DeviceUptime.getUptime(), 10) * 1000;
+    const uptime =
+      parseInt(await NativeModules.Timer.GetRelativeTime(), 10) * 1000;
+
+    console.debug(uptime, this.appInBg);
 
     // Check wether the app has been in the background for more than timeout value.
     //! !\\ DO NOT USE DATE.NOW(), if users antedate their device local time, they can bypass the auth.

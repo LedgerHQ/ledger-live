@@ -23,6 +23,7 @@ public class NativeModulesPackage implements ReactPackage {
         List<NativeModule> modules = new ArrayList<>();
         modules.add(new BluetoothHelperModule(reactContext));
         modules.add(new ImagePickerModule(reactContext));
+        modules.add(new TimerModule(reactContext));
         return modules;
     }
 
