@@ -2,10 +2,10 @@ name: "Checkout and merge"
 description: "Composite job to checkout base/head refs and produce a merge commit"
 inputs:
   ref:
-    description: "The head ref to merge. If base is not provided, this ref will be checked out."
+    description: "The head ref that will get merged into base. If base is not provided, this ref will be checked out instead."
     default: ""
   base:
-    description: "The base ref to check out and merge the head into."
+    description: "The base ref to check out and merge the head into. If not provided, the head ref will be checked out instead."
   # For the rest of the options, see: https://github.com/actions/checkout#usage
   # Only the ones that are useful for this composite action are exposed
   persist-credentials:
@@ -28,6 +28,7 @@ runs:
         token: ${{ inputs.token }}
     - name: "Merge head into base"
       if: inputs.base && inputs.ref
+      shell: bash
       run: |
         git fetch origin ${{ inputs.ref }}
         git merge FETCH_HEAD --no-edit
