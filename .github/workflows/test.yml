@@ -31,7 +31,7 @@ jobs:
     outputs:
       fail: ${{ steps.diff.outputs.diff }}
     steps:
-      - uses: ./tools/actions/composites/checkout-merge
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@support/ci-merge-checkout
         with:
           ref: ${{ inputs.ref || github.ref }}
           base: ${{ inputs.since_branch }}
@@ -61,7 +61,7 @@ jobs:
       fail: ${{ steps.diff.outputs.diff }}
     runs-on: ubuntu-latest
     steps:
-      - uses: ./tools/actions/composites/checkout-merge
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@support/ci-merge-checkout
         with:
           ref: ${{ inputs.ref || github.ref }}
           base: ${{ inputs.since_branch }}
@@ -102,7 +102,7 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: ./tools/actions/composites/checkout-merge
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@support/ci-merge-checkout
         with:
           ref: ${{ inputs.ref || github.ref }}
           base: ${{ inputs.since_branch }}
