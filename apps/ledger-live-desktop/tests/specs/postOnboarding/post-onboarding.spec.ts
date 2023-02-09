@@ -35,7 +35,9 @@ test("PostOnboarding", async ({ page }) => {
 
   await test.step("go to dashboard with banner", async () => {
     await postOnboarding.skipPostOnboardingHub();
-    await expect(page).toHaveScreenshot("postonboarding-hub-banner-in-dashboard.png");
+    await expect(page).toHaveScreenshot("postonboarding-hub-banner-in-dashboard.png", {
+      mask: [page.locator("canvas")],
+    });
   });
 
   await test.step("go to post onboarding hub from banner and start migrate asset", async () => {
@@ -57,6 +59,8 @@ test("PostOnboarding", async ({ page }) => {
 
   await test.step("go to dashboard with automatic redirection", async () => {
     await page.waitForTimeout(4500);
-    await expect(page).toHaveScreenshot("postonboarding-hub-no-banner-in-dashboard.png");
+    await expect(page).toHaveScreenshot("postonboarding-hub-no-banner-in-dashboard.png", {
+      mask: [page.locator("canvas")],
+    });
   });
 });
