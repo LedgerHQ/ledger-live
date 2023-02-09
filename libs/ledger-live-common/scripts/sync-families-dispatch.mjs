@@ -20,6 +20,8 @@ const targets = [
   "walletApiAdapter.ts",
 ];
 
+const familiesWPackage = ["polkadot"];
+
 cd(path.join(__dirname, "..", "src"));
 await rimraf("generated");
 await fs.promises.mkdir("generated");
@@ -57,15 +59,16 @@ async function genTarget(targets, families) {
     }
 
     const libsDir = path.join(__dirname, "../..");
-    const family = "polkadot";
-    if (
-      target !== "bridge/js.ts" &&
-      fs.existsSync(path.join(libsDir, `coin-${family}/src`, target))
-    ) {
-      imports += `import ${family} from "@ledgerhq/coin-${family}/${imprtTarget}";
+    for (const family of familiesWPackage) {
+      if (
+        target !== "bridge/js.ts" &&
+        fs.existsSync(path.join(libsDir, `coin-${family}/src`, target))
+      ) {
+        imports += `import ${family} from "@ledgerhq/coin-${family}/${imprtTarget}";
 `;
-      exprts += `
+        exprts += `
   ${family},`;
+      }
     }
 
     exprts += `
@@ -124,38 +127,14 @@ async function genTypesFile(families) {
   let exprtsStatus = `export type TransactionStatus =`;
   let exprtsStatusRaw = `export type TransactionStatusRaw =`;
   for (const family of families) {
-    if (family === "polkadot") {
-      continue;
-    }
+    const importPath = familiesWPackage.includes(family)
+      ? "@ledgerhq/coin-"
+      : "../families/";
 
-    if (fs.existsSync(path.join("families", family, "types.ts"))) {
-      imprts += `import { Transaction as ${family}Transaction } from "../families/${family}/types";
-import { TransactionRaw as ${family}TransactionRaw } from "../families/${family}/types";
-import { TransactionStatus as ${family}TransactionStatus } from "../families/${family}/types";
-import { TransactionStatusRaw as ${family}TransactionStatusRaw } from "../families/${family}/types";
-`;
-      exprtsT += `
-  | ${family}Transaction`;
-
-      exprtsTRaw += `
-  | ${family}TransactionRaw`;
-
-      exprtsStatus += `
-  | ${family}TransactionStatus`;
-
-      exprtsStatusRaw += `
-  | ${family}TransactionStatusRaw`;
-    }
-  }
-
-  const libsDir = path.join(__dirname, "../..");
-  const family = "polkadot";
-  const target = "types.ts";
-  if (fs.existsSync(path.join(libsDir, `coin-${family}/src`, target))) {
-    imprts += `import { Transaction as ${family}Transaction } from "@ledgerhq/coin-${family}/types";
-import { TransactionRaw as ${family}TransactionRaw } from "@ledgerhq/coin-${family}/types";
-import { TransactionStatus as ${family}TransactionStatus } from "@ledgerhq/coin-${family}/types";
-import { TransactionStatusRaw as ${family}TransactionStatusRaw } from "@ledgerhq/coin-${family}/types";
+    imprts += `import { Transaction as ${family}Transaction } from "${importPath}${family}/types";
+import { TransactionRaw as ${family}TransactionRaw } from "${importPath}${family}/types";
+import { TransactionStatus as ${family}TransactionStatus } from "${importPath}${family}/types";
+import { TransactionStatusRaw as ${family}TransactionStatusRaw } from "${importPath}${family}/types";
 `;
     exprtsT += `
   | ${family}Transaction`;
