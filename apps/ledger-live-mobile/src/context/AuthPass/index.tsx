@@ -80,7 +80,7 @@ class AuthPass extends PureComponent<Props, State> {
   handleAppStateChange = async (nextAppState: string) => {
     const timeoutValue = getEnv("MOCK") ? 5000 : AUTOLOCK_TIMEOUT;
     const uptime =
-      parseInt(await NativeModules.Timer.GetRelativeTime(), 10) * 1000;
+      parseInt(await NativeModules.Timer.getRelativeTime(), 10) * 1000;
 
     // Check wether the app has been in the background for more than timeout value.
     //! !\\ DO NOT USE DATE.NOW(), if users antedate their device local time, they can bypass the auth.
