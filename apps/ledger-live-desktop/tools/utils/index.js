@@ -22,7 +22,7 @@ if (!GIT_REVISION) {
 
 const parsed = prerelease(pkg.version);
 let PRERELEASE = false;
-let CHANNEL;
+let CHANNEL = null;
 if (parsed) {
   PRERELEASE = !!(parsed && parsed.length);
   CHANNEL = parsed[0];
@@ -45,7 +45,7 @@ const buildMainEnv = (mode, argv) => {
     __GIT_REVISION__: JSON.stringify(GIT_REVISION),
     __SENTRY_URL__: JSON.stringify(SENTRY_URL || null),
     // See: https://github.com/node-formidable/formidable/issues/337
-    "global.GENTLY": false,
+    "global.GENTLY": JSON.stringify(false),
     __PRERELEASE__: JSON.stringify(PRERELEASE),
     __CHANNEL__: JSON.stringify(CHANNEL),
   };

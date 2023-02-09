@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { I18nManager, ScrollView } from "react-native";
 import { Trans } from "react-i18next";
-import { Flex, SelectableList, BottomDrawer } from "@ledgerhq/native-ui";
+import { Flex, SelectableList } from "@ledgerhq/native-ui";
 import i18next from "i18next";
 import RNRestart from "react-native-restart";
 import { useDispatch, useSelector } from "react-redux";
@@ -37,6 +37,7 @@ import {
 import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
 import { BaseOnboardingNavigatorParamList } from "../../../components/RootNavigator/types/BaseOnboardingNavigator";
 import Button from "../../../components/Button";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 
 type NavigationProps = CompositeScreenProps<
   StackNavigatorProps<
@@ -185,8 +186,8 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
           </Flex>
         </ScrollView>
       </Flex>
-      <BottomDrawer
-        isOpen={isDeviceLanguagePromptOpen}
+      <QueuedDrawer
+        isRequestingToBeOpened={isDeviceLanguagePromptOpen}
         onClose={closeDeviceLanguagePrompt}
         preventBackdropClick={preventPromptBackdropClick}
       >
@@ -226,9 +227,9 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
             />
           )}
         </Flex>
-      </BottomDrawer>
-      <BottomDrawer
-        isOpen={isRestartPromptOpened}
+      </QueuedDrawer>
+      <QueuedDrawer
+        isRequestingToBeOpened={isRestartPromptOpened}
         preventBackdropClick={false}
         title={<Trans i18nKey={"onboarding.stepLanguage.RestartModal.title"} />}
         description={
@@ -253,7 +254,7 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
             onPress={changeLanguageRTL}
           />
         </Flex>
-      </BottomDrawer>
+      </QueuedDrawer>
     </>
   );
 }

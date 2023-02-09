@@ -34,6 +34,7 @@ export enum ScreenName {
   DebugCrash = "DebugCrash",
   DebugCustomImageGraphics = "DebugCustomImageGraphics",
   DebugDebugging = "DebugDebugging",
+  DebugQueuedDrawers = "DebugQueuedDrawers",
   DebugEnv = "DebugEnv",
   DebugExport = "DebugExport",
   DebugFeatureFlags = "DebugFeatureFlags",

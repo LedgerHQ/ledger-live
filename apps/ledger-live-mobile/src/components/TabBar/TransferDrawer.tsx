@@ -18,14 +18,16 @@ import {
   hasOrderedNanoSelector,
   readOnlyModeEnabledSelector,
 } from "../../reducers/settings";
-import { Props as ModalProps } from "../BottomModal";
+import { Props as ModalProps } from "../QueuedDrawer";
 import TransferButton from "./TransferButton";
 import BuyDeviceBanner, { IMAGE_PROPS_SMALL_NANO } from "../BuyDeviceBanner";
 import SetupDeviceBanner from "../SetupDeviceBanner";
 import { useAnalytics } from "../../analytics";
 import { sharedSwapTracking } from "../../screens/Swap/utils";
 
-export default function TransferDrawer({ onClose }: ModalProps) {
+export default function TransferDrawer({
+  onClose,
+}: Omit<ModalProps, "isRequestingToBeOpened">) {
   const navigation = useNavigation();
   const { t } = useTranslation();
 

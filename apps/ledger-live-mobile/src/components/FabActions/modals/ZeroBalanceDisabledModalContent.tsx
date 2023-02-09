@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { BottomDrawer, Flex } from "@ledgerhq/native-ui";
+import { Flex } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useNavigation } from "@react-navigation/native";
@@ -13,6 +13,7 @@ import {
   StackNavigatorNavigation,
 } from "../../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../../RootNavigator/types/BaseNavigator";
+import QueuedDrawer from "../../QueuedDrawer";
 
 function ZeroBalanceDisabledModalContent({
   account,
@@ -67,8 +68,8 @@ function ZeroBalanceDisabledModalContent({
   }, [account, parentAccount?.id, actionCurrency, navigation, onClose]);
 
   return (
-    <BottomDrawer
-      isOpen={isOpen}
+    <QueuedDrawer
+      isRequestingToBeOpened={!!isOpen}
       onClose={onClose}
       title={t("account.modals.zeroBalanceDisabledAction.title", {
         currencyTicker: actionCurrency?.ticker,
@@ -102,7 +103,7 @@ function ZeroBalanceDisabledModalContent({
           {t("account.receive")}
         </Button>
       </Flex>
-    </BottomDrawer>
+    </QueuedDrawer>
   );
 }
 

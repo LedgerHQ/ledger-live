@@ -7,7 +7,7 @@ import { Flex, Switch, BaseInput, Text, Icons } from "@ledgerhq/native-ui";
 import { TouchableOpacity } from "react-native";
 import { InputRenderRightContainer } from "@ledgerhq/native-ui/components/Form/Input/BaseInput";
 import { CameraType } from "expo-camera/build/Camera.types";
-import BottomModal from "../BottomModal";
+import QueuedDrawer from "../QueuedDrawer";
 
 type Props = {
   instanceID: StorylyInstanceID;
@@ -105,8 +105,8 @@ const StoriesConfig: React.FC<Props> = ({ instanceID }) => {
         }
         value={token}
       />
-      <BottomModal
-        isOpen={showCameraModal}
+      <QueuedDrawer
+        isRequestingToBeOpened={showCameraModal}
         onClose={() => setShowCameraModal(false)}
       >
         <Flex>
@@ -121,7 +121,7 @@ const StoriesConfig: React.FC<Props> = ({ instanceID }) => {
             onBarCodeScanned={handleBarCodeScanned}
           />
         </Flex>
-      </BottomModal>
+      </QueuedDrawer>
     </Flex>
   );
 };

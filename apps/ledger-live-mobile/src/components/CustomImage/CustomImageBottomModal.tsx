@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/types-devices";
 import { NavigatorName, ScreenName } from "../../const";
-import BottomModal, { Props as BottomModalProps } from "../BottomModal";
+import QueuedDrawer, { Props as BottomModalProps } from "../QueuedDrawer";
 import ModalChoice from "./ModalChoice";
 import { importImageFromPhoneGallery } from "./imageUtils";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
@@ -70,7 +70,7 @@ const CustomImageBottomModal: React.FC<Props> = props => {
   }, [navigation, device, onClose]);
 
   return (
-    <BottomModal isOpened={isOpened} onClose={onClose}>
+    <QueuedDrawer isRequestingToBeOpened={!!isOpened} onClose={onClose}>
       <TrackScreen
         category={analyticsDrawerName}
         type="drawer"
@@ -99,7 +99,7 @@ const CustomImageBottomModal: React.FC<Props> = props => {
           />
         </>
       )}
-    </BottomModal>
+    </QueuedDrawer>
   );
 };
 

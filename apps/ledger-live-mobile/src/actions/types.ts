@@ -307,6 +307,7 @@ export enum SettingsActionTypes {
   SET_OVERRIDDEN_FEATURE_FLAG = "SET_OVERRIDDEN_FEATURE_FLAG",
   SET_OVERRIDDEN_FEATURE_FLAGS = "SET_OVERRIDDEN_FEATURE_FLAGS",
   SET_FEATURE_FLAGS_BANNER_VISIBLE = "SET_FEATURE_FLAGS_BANNER_VISIBLE",
+  SET_DEBUG_APP_LEVEL_DRAWER_OPENED = "SET_DEBUG_APP_LEVEL_DRAWER_OPENED",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -471,6 +472,11 @@ export type SettingsSetFeatureFlagsBannerVisiblePayload = Pick<
   SettingsState,
   "featureFlagsBannerVisible"
 >;
+export type SettingsSetDebugAppLevelDrawerOpenedPayload = Pick<
+  SettingsState,
+  "debugAppLevelDrawerOpened"
+>;
+
 export type SettingsPayload =
   | SettingsImportPayload
   | SettingsImportDesktopPayload
@@ -519,7 +525,8 @@ export type SettingsPayload =
   | DangerouslyOverrideStatePayload
   | SettingsSetOverriddenFeatureFlagPlayload
   | SettingsSetOverriddenFeatureFlagsPlayload
-  | SettingsSetFeatureFlagsBannerVisiblePayload;
+  | SettingsSetFeatureFlagsBannerVisiblePayload
+  | SettingsSetDebugAppLevelDrawerOpenedPayload;
 
 // === WALLET CONNECT ACTIONS ===
 

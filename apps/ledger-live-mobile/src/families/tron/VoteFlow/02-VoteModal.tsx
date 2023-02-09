@@ -3,7 +3,7 @@ import { View, StyleSheet, TextInput } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { Vote } from "@ledgerhq/live-common/families/tron/types";
 import { useTheme } from "@react-navigation/native";
-import { BottomDrawer, Flex, Link } from "@ledgerhq/native-ui";
+import { Flex, Link } from "@ledgerhq/native-ui";
 import { TrashMedium } from "@ledgerhq/native-ui/assets/icons";
 import Switch from "../../../components/Switch";
 import LText from "../../../components/LText";
@@ -12,6 +12,7 @@ import getFontStyle from "../../../components/LText/getFontStyle";
 import KeyboardView from "../../../components/KeyboardView";
 
 import Button from "../../../components/wrappedUi/Button";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 
 type Props = {
   vote: Vote;
@@ -81,8 +82,8 @@ const VoteModal = ({
   const error = value <= 0 || value > votesAvailable;
 
   return (
-    <BottomDrawer
-      isOpen={!!vote}
+    <QueuedDrawer
+      isRequestingToBeOpened={!!vote}
       onClose={onClose}
       onModalShow={focusInput}
       title={name || address}
@@ -193,7 +194,7 @@ const VoteModal = ({
           </View>
         </KeyboardView>
       </View>
-    </BottomDrawer>
+    </QueuedDrawer>
   );
 };
 

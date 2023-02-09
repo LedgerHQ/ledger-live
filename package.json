@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "private": true,
-  "packageManager": "pnpm@7.14.0",
+  "packageManager": "pnpm@7.20.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -17,10 +17,9 @@
     "bump": "changeset version",
     "prerelease": "pnpm run build:libs",
     "release": "changeset publish",
-    "build": "pnpm turbo build --no-daemon --ignore=apps/* --ignore=apps\\* --ignore=tools/actions/* --ignore=tools\\actions\\* --no-deps",
-    "build:libs": "pnpm turbo build --no-daemon --filter=\"!./apps/**\" --scope=@ledgerhq/* --include-dependencies --no-deps",
-    "build:libs:force": "pnpm -r --filter=\"!./apps/**\" --filter=\"!ledger-live\" build",
-    "build:actions": "pnpm turbo build --filter=@actions/* --no-deps",
+    "build:libs": "pnpm turbo build --no-daemon --filter=\"./libs/**\"",
+    "build:libs:force": "pnpm -r --filter=\"./libs/**\" build",
+    "build:actions": "pnpm turbo build --filter=@actions/*",
     "build:cli": "pnpm turbo build --no-daemon --filter=live-cli",
     "build:llc": "pnpm turbo build --no-daemon --filter=\"live-common\"",
     "build:lld": "pnpm turbo build --no-daemon --filter=ledger-live-desktop",
@@ -41,7 +40,7 @@
     "dev:llm": "pnpm turbo start --no-daemon --filter=live-mobile",
     "release:lld": "pnpm turbo release --no-daemon --filter=ledger-live-desktop",
     "pre:lld": "pnpm turbo pre-build --no-daemon --filter=ledger-live-desktop",
-    "nightly": "pnpm turbo nightly --no-daemon --include-dependencies --no-deps",
+    "nightly": "pnpm turbo nightly --no-daemon",
     "nightly:lld": "pnpm turbo nightly --no-daemon --filter=ledger-live-desktop",
     "test": "pnpm turbo test --no-daemon --concurrency=100%",
     "run:cli": "./apps/cli/bin/index.js",
@@ -94,14 +93,17 @@
     "actions": "pnpm --filter @actions/*"
   },
   "devDependencies": {
-    "@changesets/changelog-github": "^0.4.6",
-    "@changesets/cli": "^2.24.3",
+    "@changesets/changelog-github": "^0.4.8",
+    "@changesets/cli": "^2.26.0",
+    "@commitlint/cli": "^17.4.2",
+    "@commitlint/config-conventional": "^17.4.2",
+    "@commitlint/prompt-cli": "^17.4.2",
     "create-release-hash": "workspace:*",
     "migrate-branch": "workspace:*",
     "pnpm-utils": "workspace:*",
-    "rimraf": "^3.0.2",
-    "turbo": "^1.6.1",
-    "zx": "^7.0.7"
+    "rimraf": "^4.1.2",
+    "turbo": "^1.7.2",
+    "zx": "^7.1.1"
   },
   "pnpm": {
     "overrides": {

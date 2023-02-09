@@ -6,7 +6,7 @@ import { useTheme } from "@react-navigation/native";
 import Video from "react-native-video";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import Button from "../../../../components/Button";
-import BottomModal from "../../../../components/BottomModal";
+import QueuedDrawer from "../../../../components/QueuedDrawer";
 import Touchable from "../../../../components/Touchable";
 import Check from "../../../../icons/Check";
 import videos from "../../../../../assets/videos";
@@ -103,8 +103,8 @@ const DebugVideos = () => {
           />
         </Flex>
       </Flex>
-      <BottomModal
-        isOpened={keyModalVisible}
+      <QueuedDrawer
+        isRequestingToBeOpened={keyModalVisible}
         onClose={setKeyModalVisible as () => void}
       >
         <ScrollView style={styles.modal}>
@@ -131,7 +131,7 @@ const DebugVideos = () => {
             </Touchable>
           ))}
         </ScrollView>
-      </BottomModal>
+      </QueuedDrawer>
     </SafeAreaView>
   );
 };
