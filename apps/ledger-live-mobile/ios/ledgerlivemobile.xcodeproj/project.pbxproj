@@ -18,6 +18,8 @@
 		2A2FAB56B85E5D2BFF574A32 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BC9C5402323A57C5327727 /* ExpoModulesProvider.swift */; };
 		3407D5D9215D2AB800C9D40B /* NeededForBLE.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3407D5D8215D2AB800C9D40B /* NeededForBLE.swift */; };
 		515E9C2C8C0049EC992210D9 /* Inter-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3B6982A2E67F482A8069215B /* Inter-Medium.otf */; };
+		5FD59D432995A4D400F69302 /* TimerModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FD59D412995A4D300F69302 /* TimerModule.m */; };
+		5FD59D442995A4D400F69302 /* TimerModule.h in Sources */ = {isa = PBXBuildFile; fileRef = 5FD59D422995A4D300F69302 /* TimerModule.h */; };
 		7930A1FF82816135F015ED1B /* libPods-ledgerlivemobileTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 854A3B027231E885CAD3722D /* libPods-ledgerlivemobileTests.a */; };
 		AD6EE26071FA4673B5C89936 /* FontAwesome5_Pro_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4BD106EA37CA467F9525D699 /* FontAwesome5_Pro_Brands.ttf */; };
 		AD7A77B84DF3487C812B091B /* FontAwesome5_Pro_Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 668E26194DD94B6D8F10D450 /* FontAwesome5_Pro_Regular.ttf */; };
@@ -84,6 +86,8 @@
 		57675DE3CEFA48B4AEFB711C /* OpenSans-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Bold.ttf"; path = "../assets/fonts/OpenSans-Bold.ttf"; sourceTree = "<group>"; };
 		5BA10A22A99ED68BAF7C0035 /* Pods-ledgerlivemobileTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ledgerlivemobileTests.debug.xcconfig"; path = "Target Support Files/Pods-ledgerlivemobileTests/Pods-ledgerlivemobileTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5F63C9E4AC284203A95B417E /* libz.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		5FD59D412995A4D300F69302 /* TimerModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = TimerModule.m; path = ledgerlivemobile/TimerModule.m; sourceTree = "<group>"; };
+		5FD59D422995A4D300F69302 /* TimerModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TimerModule.h; path = ledgerlivemobile/TimerModule.h; sourceTree = "<group>"; };
 		612C2DE49D8C4046AE4FF442 /* Lottie.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = Lottie.framework; path = System/Library/Frameworks/Lottie.framework; sourceTree = SDKROOT; };
 		61C9A3D5E8F7421487C85E86 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		668E26194DD94B6D8F10D450 /* FontAwesome5_Pro_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Pro_Regular.ttf; path = ../assets/fonts/FontAwesome5_Pro_Regular.ttf; sourceTree = "<group>"; };
@@ -258,6 +262,8 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				5FD59D422995A4D300F69302 /* TimerModule.h */,
+				5FD59D412995A4D300F69302 /* TimerModule.m */,
 				BAE7948F27D7C46A00C465F5 /* GoogleService-Info.plist */,
 				BA451DE627CE516700AAB209 /* GoogleService-Info-Production.plist */,
 				BA451DE727CE516700AAB209 /* GoogleService-Info-Staging.plist */,
@@ -667,6 +673,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5FD59D432995A4D400F69302 /* TimerModule.m in Sources */,
+				5FD59D442995A4D400F69302 /* TimerModule.h in Sources */,
 				3407D5D9215D2AB800C9D40B /* NeededForBLE.swift in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				17F58472269C64670070C475 /* RCTBluetoothHelperModule.m in Sources */,
