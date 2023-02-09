@@ -31,28 +31,22 @@ export const useUpdateFirmware = ({
   const [updateState, setUpdateState] =
     useState<UpdateFirmwareActionState>(initialState);
   const [nonce, setNonce] = useState(0);
-  const [isPerformingTheUpdate, setIsPerformingTheUpdate] = useState(false);
 
   useEffect(() => {
     if (nonce > 0 && deviceId) {
-      setIsPerformingTheUpdate(true);
       const sub = updateFirmwareAction({
         deviceId,
       }).subscribe({
         next: setUpdateState,
-        complete: () => setIsPerformingTheUpdate(false),
       });
 
       return () => {
-        setIsPerformingTheUpdate(false);
         sub.unsubscribe();
       };
     }
   }, [deviceId, updateFirmwareAction, nonce]);
 
-  const triggerUpdate = isPerformingTheUpdate
-    ? undefined
-    : () => setNonce(nonce + 1);
+  const triggerUpdate = () => setNonce(nonce + 1);
 
   return { updateState, triggerUpdate };
 };

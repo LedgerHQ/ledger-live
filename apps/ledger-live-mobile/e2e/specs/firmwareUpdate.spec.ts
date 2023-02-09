@@ -55,7 +55,6 @@ describe("Receive BTC", () => {
 
   it("should navigate to Firmware update flow", async () => {
     bridge.mockDeviceAction("updateFirmware");
-    bridge.mockDeviceAction("getDeviceInfo");
 
     await debugSettingsPage.tapFeaturesDebugFlow();
     await debugSettingsPage.tapFirmwareUpdateFlow();
@@ -83,15 +82,6 @@ describe("Receive BTC", () => {
       .toExist()
       .withTimeout(10000);
 
-    bridge.updateDeviceActionState({
-      deviceAction: "getDeviceInfo",
-      newState: {
-        deviceInfo: updatableDeviceInfo,
-        error: null,
-        lockedDevice: false,
-      },
-    });
-
     await debugSettingsPage.tapTriggerUpdate();
   });
 
@@ -110,5 +100,7 @@ describe("Receive BTC", () => {
     await expect(debugSettingsPage.getUpdateLockedDevice()).toHaveText("false");
     await expect(debugSettingsPage.getUpdateStep()).toHaveText("installingOsu");
     await expect(debugSettingsPage.getUpdateError()).toHaveText("null");
+
+    await new Promise((resolve) => setTimeout(() => resolve("a"), 10000));
   });
 });
