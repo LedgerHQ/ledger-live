@@ -34,7 +34,6 @@ import {
 } from "./formatCurrencyUnit";
 import { formatShort } from "./formatShort";
 import { valueFromUnit } from "./valueFromUnit";
-import { getCurrencyColor } from "./color";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 
 const findCurrencyByTicker = (ticker: string): Currency | null | undefined =>
@@ -73,7 +72,6 @@ export {
   decodeURIScheme,
   valueFromUnit,
   sanitizeValueString,
-  getCurrencyColor,
   findCompoundToken,
   listTokens,
   addTokens,

@@ -32,9 +32,9 @@ import {
   formatCurrencyUnitFragment,
   formatShort,
   valueFromUnit,
-  getCurrencyColor,
   findCurrencyByTicker,
 } from "@ledgerhq/coin-framework/currencies/index";
+import { getCurrencyColor } from "./color";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurrencyUnit";
 import {
   sortByMarketcap,
