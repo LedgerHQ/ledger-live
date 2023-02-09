@@ -1,5 +1,7 @@
 import { getEnv } from "@ledgerhq/live-common/env";
 
+console.log("yolo");
+
 if (getEnv("PLAYWRIGHT_RUN")) {
   const timemachine = require("timemachine");
   timemachine.config({
