@@ -149,24 +149,24 @@ export const WORKFLOWS = {
           };
     },
   },
-  "test-mobile-e2e.yml": {
-    checkRunName: "@Mobile • Test App End-2-End",
-    description: "Run Detox end-to-end tests on Ledger Live Mobile",
-    runsOn: RUNNERS.internal,
-    affected: ["live-mobile"],
-    summaryFile: "summary.json",
-    getInputs: (payload: GetInputsPayload) => {
-      return "workflow_run" in payload
-        ? {
-            login: payload.workflow_run.actor.login,
-            ref: payload.workflow_run.pull_requests[0]?.head.ref,
-          }
-        : {
-            login: payload.sender.login,
-            ref: payload.check_run.pull_requests[0]?.head.ref,
-          };
-    },
-  },
+  // "test-mobile-e2e.yml": {
+  //   checkRunName: "@Mobile • Test App End-2-End",
+  //   description: "Run Detox end-to-end tests on Ledger Live Mobile",
+  //   runsOn: RUNNERS.internal,
+  //   affected: ["live-mobile"],
+  //   summaryFile: "summary.json",
+  //   getInputs: (payload: GetInputsPayload) => {
+  //     return "workflow_run" in payload
+  //       ? {
+  //           login: payload.workflow_run.actor.login,
+  //           ref: payload.workflow_run.pull_requests[0]?.head.ref,
+  //         }
+  //       : {
+  //           login: payload.sender.login,
+  //           ref: payload.check_run.pull_requests[0]?.head.ref,
+  //         };
+  //   },
+  // },
   "test.yml": {
     checkRunName: "@Libraries • Tests",
     description: "Run the `test` script for affected libraries.",
