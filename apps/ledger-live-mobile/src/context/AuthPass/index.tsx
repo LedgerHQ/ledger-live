@@ -6,6 +6,7 @@ import { withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { compose } from "redux";
 import { getEnv } from "@ledgerhq/live-common/env";
+import DeviceUptime from "react-native-device-uptime";
 import { privacySelector } from "../../reducers/settings";
 import { SkipLockContext } from "../../components/behaviour/SkipLock";
 import { AUTOLOCK_TIMEOUT } from "../../constants";
@@ -77,21 +78,25 @@ class AuthPass extends PureComponent<Props, State> {
   }
 
   appInBg: number | undefined;
-  handleAppStateChange = (nextAppState: string) => {
+  handleAppStateChange = async (nextAppState: string) => {
     const timeoutValue = getEnv("MOCK") ? 5000 : AUTOLOCK_TIMEOUT;
+    const uptime = parseInt(await DeviceUptime.getUptime(), 10) * 1000;
+
+    // Check wether the app has been in the background for more than timeout value.
+    //! !\\ DO NOT USE DATE.NOW(), if users antedate their device local time, they can bypass the auth.
     if (
       this.state.appState.match(/inactive|background/) &&
       nextAppState === "active" &&
       !!this.appInBg &&
-      this.appInBg + timeoutValue < Date.now()
+      this.appInBg + timeoutValue < uptime
     ) {
       this.lock();
-      this.appInBg = Date.now();
+      this.appInBg = uptime;
     } else if (
       nextAppState === "background" ||
       this.state.appState === "active"
     ) {
-      this.appInBg = Date.now();
+      this.appInBg = uptime;
     }
 
     if (this.state.mounted)
