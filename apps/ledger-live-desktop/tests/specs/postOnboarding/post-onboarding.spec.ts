@@ -6,7 +6,7 @@ import { Layout } from "../../models/Layout";
 import { PostOnboarding } from "../../models/PostOnboarding";
 
 test.use({
-  userdata: "1AccountBTC1AccountETHwCarousel",
+  userdata: "1AccountBTC1AccountETHwCarousel", // to have a non empty portfolio page and potentially detect layout issues with the post onboarding banner
   env: { DEBUG_POSTONBOARDINGHUB: 1 },
   featureFlags: { customImage: { enabled: true } },
 });
