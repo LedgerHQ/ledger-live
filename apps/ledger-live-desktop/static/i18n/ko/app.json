@@ -1399,7 +1399,7 @@
         "label" : "인기 있는"
       },
       "earn" : {
-        "title" : "수익",
+        "title" : "스테이킹",
         "description" : "Ledger와 함께 암호화폐 수익 실현"
       }
     }
@@ -5356,7 +5356,7 @@
       "description" : "30초 이내에 서명이 적용되어야 합니다. 다시 시도해 주세요."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 30TRX를 지불할 수 있습니다."
+      "title" : "Energy is lower than necessary. You might pay up to 50 TRX in fees."
     },
     "PairingFailed" : {
       "title" : "페어링 실패",
