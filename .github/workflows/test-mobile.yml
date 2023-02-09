@@ -16,6 +16,8 @@ on:
       login:
         description: The GitHub username that triggered the workflow
         required: true
+      base_ref:
+        description: The base branch to merge the head into when checking out the code
 
 concurrency:
   group: ${{ github.workflow }}-${{ inputs.ref || github.ref }}
@@ -29,9 +31,10 @@ jobs:
       FORCE_COLOR: 3
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
           ref: ${{ inputs.ref || github.ref }}
+          base: ${{ inputs.base_ref }}
       - uses: pnpm/action-setup@v2
         with:
           version: latest

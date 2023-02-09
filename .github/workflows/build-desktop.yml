@@ -16,6 +16,8 @@ on:
       login:
         description: The GitHub username that triggered the workflow
         required: true
+      base_ref:
+        description: The base branch to merge the head into when checking out the code
 
 concurrency:
   group: ${{ github.workflow }}-${{ inputs.ref || github.ref }}
@@ -63,9 +65,10 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      - uses: actions/checkout@v3
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
           ref: ${{ inputs.ref || github.event.push.head.sha }}
+          base: ${{ inputs.base_ref }}
       - name: Set git user
         run: |
           git config user.email "team-live@ledger.fr"
@@ -97,12 +100,13 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: ${{ inputs.ref  || github.event.push.head.sha }}
       - name: Update path
         run: |
           echo "C:\Program Files\Git\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+        with:
+          ref: ${{ inputs.ref || github.event.push.head.sha }}
+          base: ${{ inputs.base_ref }}
       - uses: actions/setup-dotnet@v2
         with:
           dotnet-version: 2.1.816
@@ -134,9 +138,10 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      - uses: actions/checkout@v3
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ inputs.ref  || github.event.push.head.sha }}
+          ref: ${{ inputs.ref || github.event.push.head.sha }}
+          base: ${{ inputs.base_ref }}
           persist-credentials: false
       - name: Set git user
         run: |
