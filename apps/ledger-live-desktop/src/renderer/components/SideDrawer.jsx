@@ -123,6 +123,7 @@ export type DrawerProps = {
   paper?: boolean,
   title?: string,
   preventBackdropClick?: boolean,
+  forceDisableFocusTrap?: boolean,
 };
 
 const domNode = document.getElementById("modals");
@@ -135,6 +136,7 @@ export function SideDrawer({
   direction = "right",
   title,
   preventBackdropClick = false,
+  forceDisableFocusTrap = false,
   ...props
 }: DrawerProps) {
   const onKeyPress = useCallback(
@@ -163,6 +165,10 @@ export function SideDrawer({
   );
 
   useEffect(() => {
+    if (forceDisableFocusTrap) {
+      return;
+    }
+
     if (isOpen && focusTrapElem.current && !shouldDisableFocusTrap) {
       focusTrap.current = createFocusTrap(focusTrapElem.current, {
         fallbackFocus: focusTrapElem.current,
@@ -180,7 +186,7 @@ export function SideDrawer({
       focusTrap.current?.deactivate();
       focusTrap.current = null;
     };
-  }, [isOpen, shouldDisableFocusTrap]);
+  }, [isOpen, shouldDisableFocusTrap, forceDisableFocusTrap]);
 
   return domNode
     ? createPortal(

@@ -139,7 +139,11 @@ const StyledOnboardingAppInstallDebugScreen = withV3StyleProvider(OnboardingAppI
 
 const OnboardingAppInstallDebugButton = () => {
   const handleOpenDebugScreen = useCallback(() => {
-    setDrawer(StyledOnboardingAppInstallDebugScreen, {}, { style: { maxWidth: "640px" } });
+    setDrawer(
+      StyledOnboardingAppInstallDebugScreen,
+      {},
+      { style: { maxWidth: "640px" }, forceDisableFocusTrap: true },
+    );
   }, []);
 
   return (
