@@ -47,7 +47,7 @@ const getAccountBannerProps = (
     stakeProvider === "kiln" ? () => stakeOnClick(kilnAppId) : () => stakeOnClick(lidoAppId);
 
   const display = ethStakingProviders?.params?.listProvider?.some(
-    provider => provider.liveAppId === stakeProvider,
+    (provider: { liveAppId: string }) => provider.liveAppId === stakeProvider,
   );
 
   return {
