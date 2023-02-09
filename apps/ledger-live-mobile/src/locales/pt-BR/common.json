@@ -549,7 +549,7 @@
       "description" : "Transações devem ser assinadas em até 30 segundos. Tente Novamente."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "A Energia está abaixo do necessário. Você pode pagar até 50 TRX em taxas."
+      "title" : "Energy is lower than necessary. You might pay up to 50TRX in fees."
     },
     "UpdateYourApp" : {
       "title" : "Atualização de aplicativo necessária",
