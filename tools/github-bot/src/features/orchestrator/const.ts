@@ -21,6 +21,7 @@ export const WORKFLOWS = {
     description:
       "Build the Ledger Live Desktop application on all platforms and attach the binaries to the workflow run.",
     runsOn: RUNNERS.internal,
+    required: true,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
     getInputs: (payload: GetInputsPayload) => {
@@ -40,6 +41,7 @@ export const WORKFLOWS = {
     description:
       "Build the Ledger Live Desktop application on all platforms and attach the binaries to the workflow run.",
     runsOn: RUNNERS.external,
+    required: true,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
     getInputs: (payload: GetInputsPayload) => {
@@ -59,6 +61,7 @@ export const WORKFLOWS = {
     description:
       "Perform [end to end](https://playwright.dev/) and [unit](https://jestjs.io/fr/) tests, [type checks](https://www.typescriptlang.org/) and run the [linter](https://eslint.org/) on the Ledger Live Desktop application.",
     runsOn: RUNNERS.internal,
+    required: true,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
     getInputs: (payload: GetInputsPayload) => {
@@ -78,6 +81,7 @@ export const WORKFLOWS = {
     description:
       "Run end to end tests ([playwright](https://playwright.dev/), unit tests ([jest](https://jestjs.io/fr/)), the [type checker](https://www.typescriptlang.org/) and the [linter](https://eslint.org/) on the Ledger Live Desktop application.",
     runsOn: RUNNERS.external,
+    required: true,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
     getInputs: (payload: GetInputsPayload) => {
@@ -97,6 +101,7 @@ export const WORKFLOWS = {
     description:
       "Build the Ledger Live Mobile application and attach the apk to the workflow run.",
     runsOn: RUNNERS.internal,
+    required: true,
     affected: ["live-mobile"],
     summaryFile: "summary.json",
     getInputs: (payload: GetInputsPayload) => {
@@ -116,6 +121,7 @@ export const WORKFLOWS = {
     description:
       "Build the Ledger Live Mobile application and attach the apk to the workflow run.",
     runsOn: RUNNERS.external,
+    required: true,
     affected: ["live-mobile"],
     summaryFile: "summary.json",
     getInputs: (payload: GetInputsPayload) => {
@@ -135,6 +141,7 @@ export const WORKFLOWS = {
     description:
       "Perform [type](https://www.typescriptlang.org/) and [lint](https://eslint.org/) checks on the Ledger Live Mobile application.",
     runsOn: RUNNERS.both,
+    required: true,
     affected: ["live-mobile"],
     summaryFile: "summary.json",
     getInputs: (payload: GetInputsPayload) => {
@@ -149,28 +156,30 @@ export const WORKFLOWS = {
           };
     },
   },
-  // "test-mobile-e2e.yml": {
-  //   checkRunName: "@Mobile • Test App End-2-End",
-  //   description: "Run Detox end-to-end tests on Ledger Live Mobile",
-  //   runsOn: RUNNERS.internal,
-  //   affected: ["live-mobile"],
-  //   summaryFile: "summary.json",
-  //   getInputs: (payload: GetInputsPayload) => {
-  //     return "workflow_run" in payload
-  //       ? {
-  //           login: payload.workflow_run.actor.login,
-  //           ref: payload.workflow_run.pull_requests[0]?.head.ref,
-  //         }
-  //       : {
-  //           login: payload.sender.login,
-  //           ref: payload.check_run.pull_requests[0]?.head.ref,
-  //         };
-  //   },
-  // },
+  "test-mobile-e2e.yml": {
+    checkRunName: "@Mobile • Test App End-2-End",
+    description: "Run Detox end-to-end tests on Ledger Live Mobile",
+    runsOn: RUNNERS.internal,
+    required: false,
+    affected: ["live-mobile"],
+    summaryFile: "summary.json",
+    getInputs: (payload: GetInputsPayload) => {
+      return "workflow_run" in payload
+        ? {
+            login: payload.workflow_run.actor.login,
+            ref: payload.workflow_run.pull_requests[0]?.head.ref,
+          }
+        : {
+            login: payload.sender.login,
+            ref: payload.check_run.pull_requests[0]?.head.ref,
+          };
+    },
+  },
   "test.yml": {
     checkRunName: "@Libraries • Tests",
     description: "Run the `test` script for affected libraries.",
     runsOn: RUNNERS.both,
+    required: true,
     affected: [/^libs\/.*/],
     summaryFile: "summary.json",
     getInputs: (payload: GetInputsPayload) => {
