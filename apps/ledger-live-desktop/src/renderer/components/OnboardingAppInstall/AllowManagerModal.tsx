@@ -16,7 +16,7 @@ type Props = {
   request: AppRequest;
 };
 
-const OnboardingAppInstallModal = ({ isOpen, status, request }: Props) => {
+const AllowManagerModal = ({ isOpen, status, request }: Props) => {
   return (
     <AppInstallPopin isOpen={isOpen}>
       <DeviceActionDefaultRendering status={status} request={request} />
@@ -24,4 +24,4 @@ const OnboardingAppInstallModal = ({ isOpen, status, request }: Props) => {
   );
 };
 
-export default OnboardingAppInstallModal;
+export default AllowManagerModal;

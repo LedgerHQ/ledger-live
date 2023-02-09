@@ -15,7 +15,7 @@ type Props = {
   onSkip?: () => void;
 };
 
-const InstallCancelledModal = ({ isOpen, productName, onRetry, onSkip }: Props) => {
+const CancelModal = ({ isOpen, productName, onRetry, onSkip }: Props) => {
   const { t } = useTranslation();
 
   return (
@@ -36,7 +36,7 @@ const InstallCancelledModal = ({ isOpen, productName, onRetry, onSkip }: Props) 
           <Button size="large" variant="main" width="100%" onClick={onRetry} mb={8}>
             {t("onboardingAppInstall.cancelled.installCTA")}
           </Button>
-          <Button size="large" width="100%" onClick={() => console.log("helllo")}>
+          <Button size="large" width="100%" onClick={onSkip}>
             {t("onboardingAppInstall.cancelled.skipCTA")}
           </Button>
         </Flex>
@@ -45,4 +45,4 @@ const InstallCancelledModal = ({ isOpen, productName, onRetry, onSkip }: Props) 
   );
 };
 
-export default InstallCancelledModal;
+export default CancelModal;
