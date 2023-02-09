@@ -32,15 +32,8 @@ export const toOperationRaw = (
     tokenId,
     transactionRaw,
   }: Operation,
-  extractExtra?: ExtractExtraFn,
   preserveSubOperation?: boolean
 ): OperationRaw => {
-  let e = extra;
-
-  if (extractExtra) {
-    e = extractExtra(e)
-  }
-
   const copy: OperationRaw = {
     id,
     hash,
@@ -50,7 +43,7 @@ export const toOperationRaw = (
     accountId,
     blockHash,
     blockHeight,
-    extra: e,
+    extra,
     date: date.toISOString(),
     value: value.toFixed(),
     fee: fee.toString(),
@@ -69,15 +62,15 @@ export const toOperationRaw = (
   }
 
   if (subOperations && preserveSubOperation) {
-    copy.subOperations = subOperations.map((o) => toOperationRaw(o, extractExtra));
+    copy.subOperations = subOperations.map((o: Operation) => toOperationRaw(o));
   }
 
   if (internalOperations) {
-    copy.internalOperations = internalOperations.map((o) => toOperationRaw(o, extractExtra));
+    copy.internalOperations = internalOperations.map((o: Operation) => toOperationRaw(o));
   }
 
   if (nftOperations) {
-    copy.nftOperations = nftOperations.map((o) => toOperationRaw(o, extractExtra));
+    copy.nftOperations = nftOperations.map((o: Operation) => toOperationRaw(o));
   }
 
   if (transactionRaw !== undefined) {
@@ -139,15 +132,8 @@ export const fromOperationRaw = (
     transactionRaw,
   }: OperationRaw,
   accountId: string,
-  extractExtra?: ExtractExtraFn,
   subAccounts?: SubAccount[] | null | undefined
 ): Operation => {
-  let e = extra;
-
-  if (extractExtra) {
-    e = extractExtra(e)
-  }
-
   const res: Operation = {
     id,
     hash,
@@ -160,7 +146,7 @@ export const fromOperationRaw = (
     date: new Date(date),
     value: new BigNumber(value),
     fee: new BigNumber(fee),
-    extra: e || {},
+    extra,
     contract,
     operator,
     standard,
@@ -178,20 +164,20 @@ export const fromOperationRaw = (
   if (subAccounts) {
     res.subOperations = inferSubOperations(hash, subAccounts);
   } else if (subOperations) {
-    res.subOperations = subOperations.map((o) =>
-      fromOperationRaw(o, o.accountId, extractExtra)
+    res.subOperations = subOperations.map((o: OperationRaw) =>
+      fromOperationRaw(o, o.accountId)
     );
   }
 
   if (internalOperations) {
-    res.internalOperations = internalOperations.map((o) =>
-      fromOperationRaw(o, o.accountId, extractExtra)
+    res.internalOperations = internalOperations.map((o: OperationRaw) =>
+      fromOperationRaw(o, o.accountId)
     );
   }
 
   if (nftOperations) {
-    res.nftOperations = nftOperations.map((o) =>
-      fromOperationRaw(o, o.accountId, extractExtra)
+    res.nftOperations = nftOperations.map((o: OperationRaw) =>
+      fromOperationRaw(o, o.accountId)
     );
   }
 

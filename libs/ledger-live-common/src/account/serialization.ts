@@ -125,19 +125,29 @@ export const toOperationRaw = (
   operation: Operation,
   preserveSubOperation?: boolean
 ): OperationRaw => {
-  const extractExtra = (extra: Record<string, any>): Record<string, any> => {
-    const family = inferFamilyFromAccountId(operation.accountId);
+  const copy: OperationRaw = commonToOperationRaw(
+    operation,
+    preserveSubOperation
+  );
+
+  let e = copy.extra;
+
+  if (e) {
+    const family = inferFamilyFromAccountId(copy.accountId);
+
     if (family) {
       const abf = accountByFamily[family];
 
       if (abf && abf.toOperationExtraRaw) {
-        extra = abf.toOperationExtraRaw(extra);
+        e = abf.toOperationExtraRaw(e);
       }
     }
-    return extra;
-  };
+  }
 
-  return commonToOperationRaw(operation, extractExtra, preserveSubOperation);
+  return {
+    ...copy,
+    extra: e,
+  };
 };
 export { inferSubOperations } from "@ledgerhq/coin-framework/account/serialization";
 export const fromOperationRaw = (
@@ -145,24 +155,30 @@ export const fromOperationRaw = (
   accountId: string,
   subAccounts?: SubAccount[] | null | undefined
 ): Operation => {
-  const extractExtra = (extra: Record<string, any>): Record<string, any> => {
-    const family = inferFamilyFromAccountId(operation.accountId);
+  const res: Operation = commonFromOperationRaw(
+    operation,
+    accountId,
+    subAccounts
+  );
+
+  let e = res.extra;
+
+  if (e) {
+    const family = inferFamilyFromAccountId(res.accountId);
+
     if (family) {
       const abf = accountByFamily[family];
 
-      if (abf && abf.toOperationExtraRaw) {
-        extra = abf.fromOperationExtraRaw(extra);
+      if (abf && abf.fromOperationExtraRaw) {
+        e = abf.fromOperationExtraRaw(e);
       }
     }
-    return extra;
-  };
+  }
 
-  return commonFromOperationRaw(
-    operation,
-    accountId,
-    extractExtra,
-    subAccounts
-  );
+  return {
+    ...res,
+    extra: e || {},
+  };
 };
 export function fromSwapOperationRaw(raw: SwapOperationRaw): SwapOperation {
   const { fromAmount, toAmount } = raw;
