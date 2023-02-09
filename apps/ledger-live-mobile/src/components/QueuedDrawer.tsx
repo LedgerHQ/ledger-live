@@ -143,7 +143,7 @@ const QueuedDrawer = ({
 
   // Handles the case where the drawer has been removed forcefully from the queue by another drawer
   // or where the displayed drawer was forcefully closed.
-  // Handled separatly to avoid calling addToWaitingDrawers on every onClose changes (if not memoized).
+  // Handled separately to avoid calling addToWaitingDrawers on every onClose changes (if not memoized).
   useEffect(() => {
     if (wasForcefullyCleaned) {
       onClose && onClose();
