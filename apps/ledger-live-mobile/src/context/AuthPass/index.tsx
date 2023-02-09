@@ -6,7 +6,6 @@ import { withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { compose } from "redux";
 import { getEnv } from "@ledgerhq/live-common/env";
-import DeviceUptime from "react-native-device-uptime";
 import { privacySelector } from "../../reducers/settings";
 import { SkipLockContext } from "../../components/behaviour/SkipLock";
 import { AUTOLOCK_TIMEOUT } from "../../constants";
@@ -82,8 +81,6 @@ class AuthPass extends PureComponent<Props, State> {
     const timeoutValue = getEnv("MOCK") ? 5000 : AUTOLOCK_TIMEOUT;
     const uptime =
       parseInt(await NativeModules.Timer.GetRelativeTime(), 10) * 1000;
-
-    console.debug(uptime, this.appInBg);
 
     // Check wether the app has been in the background for more than timeout value.
     //! !\\ DO NOT USE DATE.NOW(), if users antedate their device local time, they can bypass the auth.
