@@ -23,20 +23,11 @@
   "types": "lib/index.d.ts",
   "typesVersions": {
     "*": {
-      "lib/*/": [
-        "lib/*/index.d.ts"
-      ],
       "lib/*": [
         "lib/*"
       ],
-      "lib-es/*/": [
-        "lib-es/*/index.d.ts"
-      ],
       "lib-es/*": [
         "lib-es/*"
-      ],
-      "*/": [
-        "lib/*/index.d.ts"
       ],
       "*": [
         "lib/*"
@@ -44,14 +35,8 @@
     }
   },
   "exports": {
-    "./lib/*/": "./lib/*/index.js",
     "./lib/*": "./lib/*.js",
-    "./lib-es/*/": "./lib-es/*/index.js",
     "./lib-es/*": "./lib-es/*.js",
-    "./*/": {
-      "require": "./lib/*/index.js",
-      "default": "./lib-es/*/index.js"
-    },
     "./*": {
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
