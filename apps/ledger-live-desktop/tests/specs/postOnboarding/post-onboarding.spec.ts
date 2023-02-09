@@ -6,7 +6,7 @@ import { Layout } from "../../models/Layout";
 import { PostOnboarding } from "../../models/PostOnboarding";
 
 test.use({
-  userdata: "skip-onboarding",
+  userdata: "1AccountBTC1AccountETHwCarousel",
   env: { DEBUG_POSTONBOARDINGHUB: 1 },
   featureFlags: { customImage: { enabled: true } },
 });
