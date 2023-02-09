@@ -12,9 +12,9 @@
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
   "scripts": {
+    "bump": "changeset version",
     "changelog": "changeset add",
     "clean": "git clean -fdX",
-    "bump": "changeset version",
     "prerelease": "pnpm run build:libs",
     "release": "changeset publish",
     "build:libs": "pnpm turbo build --no-daemon --filter=\"./libs/**\"",
