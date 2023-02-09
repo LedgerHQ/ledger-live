@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
@@ -21,7 +21,6 @@ type Props = {
 
 const InstallSetOfApps = ({ device, dependencies, onComplete, onCancel, onError }: Props) => {
   const { t } = useTranslation();
-  const [isAllowManagerModalOpen, setAllowManagerModalOpen] = useState<boolean>(false);
 
   const request = useMemo(
     () => ({
@@ -36,7 +35,8 @@ const InstallSetOfApps = ({ device, dependencies, onComplete, onCancel, onError 
   const status = action.useHook(device, request);
 
   const {
-    allowManagerRequestedWording,
+    isLoading,
+    allowManagerGranted,
     listingApps,
     error,
     currentAppOp,
@@ -55,12 +55,6 @@ const InstallSetOfApps = ({ device, dependencies, onComplete, onCancel, onError 
   }, [error, onError, onCancel]);
 
   useEffect(() => {
-    if (allowManagerRequestedWording) {
-      setAllowManagerModalOpen(true);
-    }
-  }, [allowManagerRequestedWording]);
-
-  useEffect(() => {
     if (opened) {
       onComplete();
     }
@@ -72,7 +66,11 @@ const InstallSetOfApps = ({ device, dependencies, onComplete, onCancel, onError 
 
   return (
     <>
-      <AllowManagerModal isOpen={isAllowManagerModalOpen} status={status} request={request} />
+      <AllowManagerModal
+        isOpen={!isLoading && !allowManagerGranted && !error}
+        status={status}
+        request={request}
+      />
       <Flex height="100%" flexDirection="column">
         <Flex flex={1} alignItems="center">
           <Flex mb={2} alignSelf="flex-start">

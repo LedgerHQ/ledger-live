@@ -45,7 +45,6 @@ const OnboardingAppInstallStep = ({ device, restoreDevice, onComplete, onError }
 
   const handleRetry = useCallback(() => {
     setCancelModalOpen(false);
-    setInProgress(true);
   }, []);
 
   const handleSkip = useCallback(() => {
