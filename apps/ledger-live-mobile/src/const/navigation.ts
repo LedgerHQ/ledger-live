@@ -489,6 +489,8 @@ export enum ScreenName {
   NearWithdrawingValidationError = "NearWithdrawingValidationError",
   NearWithdrawingValidationSuccess = "NearWithdrawingValidationSuccess",
 
+  Newsfeed = "Newsfeed",
+
   CustomImageStep0Welcome = "CustomImageStep0Welcome",
   CustomImageStep1Crop = "CustomImageStep1Crop",
   CustomImageStep2Preview = "CustomImageStep2Preview",
@@ -595,6 +597,7 @@ export enum NavigatorName {
   // Tab
   Main = "Main",
   WalletTab = "WalletTabNavigator",
+  ExploreTab = "ExploreTabNavigator",
   // Root
   RootNavigator = "RootNavigator",
   Discover = "Discover",

@@ -125,7 +125,7 @@ function Discover() {
                 title: t("discover.sections.learn.title"),
                 subTitle: t("discover.sections.learn.desc"),
                 onPress: () => {
-                  navigation.navigate(ScreenName.Learn);
+                  navigation.navigate(NavigatorName.ExploreTab);
                   readOnlyTrack("Learn");
                 },
                 disabled: false,

@@ -85,6 +85,7 @@ import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { accountsSelector } from "../../reducers/accounts";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import DeviceConnect from "../../screens/DeviceConnect";
+import ExploreTabNavigator from "./ExploreTabNavigator";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -193,8 +194,13 @@ export default function BaseNavigator() {
         {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
-        name={ScreenName.Learn}
-        component={Learn}
+        name={ScreenName.LearnWebView}
+        component={LearnWebView}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name={NavigatorName.ExploreTab}
+        component={ExploreTabNavigator}
         options={({ navigation }) => ({
           headerShown: true,
           animationEnabled: false,
@@ -202,11 +208,6 @@ export default function BaseNavigator() {
           headerLeft: () => <BackButton navigation={navigation} />,
           headerRight: () => null,
         })}
-      />
-      <Stack.Screen
-        name={ScreenName.LearnWebView}
-        component={LearnWebView}
-        options={{ headerShown: false }}
       />
       <Stack.Screen
         name={NavigatorName.SignMessage}
