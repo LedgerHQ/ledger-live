@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
@@ -6,18 +6,22 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
+import { useDispatch } from "react-redux";
+import { UserRefusedAllowManager } from "@ledgerhq/errors";
 
 import Button from "../ButtonV3";
 import DefaultAppsIllustration from "./DefaultAppsIllustration";
 import RestoreAppsIllustration from "./RestoreAppsIllustration";
 import AppInstallItem from "./AppInstallItem";
+import OnboardingAppInstallModal from "./OnboardingAppInstallModal";
+import InstallCancelledModal from "./InstallCancelledModal";
 
 const DEFAULT_APPS_TO_INSTALL_FALLBACK = ["Ethereum", "Polygon"];
 
 const action = createAction(connectApp);
 
 type Props = {
-  device: Device;
+  device?: Device;
   restoreDevice?: DeviceModelInfo;
   onComplete: () => void;
   onError?: (error: Error) => void;
@@ -25,11 +29,14 @@ type Props = {
 
 const OnboardingAppInstallStep = ({ device, restoreDevice, onComplete, onError }: Props) => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
 
   const [dependencies, setDependencies] = useState<string[]>(DEFAULT_APPS_TO_INSTALL_FALLBACK);
   const [inProgress, setInProgress] = useState<boolean>(false);
+  const [isAllowManagerModalOpen, setAllowManagerModalOpen] = useState<boolean>(false);
+  const [isInstallCancelledModalOpen, setInstallCancelledModalOpen] = useState<boolean>(false);
 
-  const productName = getDeviceModel(device.modelId)?.productName;
+  const productName = device ? getDeviceModel(device.modelId)?.productName : "Ledger Device";
 
   useEffect(() => {
     if (restoreDevice) {
@@ -64,11 +71,37 @@ const OnboardingAppInstallStep = ({ device, restoreDevice, onComplete, onError }
     installQueue,
   } = status;
 
-  const handleSkip = () => {
+  const handleCancel = useCallback(() => {
+    setInProgress(false);
+    setAllowManagerModalOpen(false);
+    setInstallCancelledModalOpen(true);
+  }, []);
+
+  const handleRetry = useCallback(() => {
+    setInstallCancelledModalOpen(false);
+    setInProgress(true);
+  }, []);
+
+  useEffect(() => {
+    if (error instanceof UserRefusedAllowManager) {
+      handleCancel();
+    } else if (onError && error) {
+      onError(error);
+    }
+  }, [dispatch, error, onError, handleCancel]);
+
+  useEffect(() => {
+    if (allowManagerRequestedWording) {
+      setAllowManagerModalOpen(true);
+    }
+  }, [allowManagerRequestedWording]);
+
+  const handleSkip = useCallback(() => {
+    setInstallCancelledModalOpen(false);
     if (onComplete) {
       onComplete();
     }
-  };
+  }, [onComplete]);
 
   if (opened) {
     setInProgress(false);
@@ -167,11 +200,26 @@ const OnboardingAppInstallStep = ({ device, restoreDevice, onComplete, onError }
     );
   };
 
-  return inProgress
-    ? renderInstallsInProgress()
-    : restoreDevice
-    ? renderRestoreAppsConfirmation()
-    : renderDefaultAppsConfirmation();
+  return (
+    <>
+      <OnboardingAppInstallModal
+        isOpen={isAllowManagerModalOpen}
+        status={status}
+        request={commandRequest}
+      />
+      <InstallCancelledModal
+        isOpen={isInstallCancelledModalOpen}
+        productName={productName}
+        onRetry={handleRetry}
+        onSkip={handleSkip}
+      />
+      {inProgress
+        ? renderInstallsInProgress()
+        : restoreDevice
+        ? renderRestoreAppsConfirmation()
+        : renderDefaultAppsConfirmation()}
+    </>
+  );
 };
 
 export default OnboardingAppInstallStep;

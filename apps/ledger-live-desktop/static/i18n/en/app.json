@@ -5728,6 +5728,12 @@
       "resolving": "Resolving dependencies",
       "progress": "Installing apps {{progress}}%",
       "disclaimer": "Add or remove apps at any time from Ledger Live."
+    },
+    "cancelled": {
+      "title": "App installation was cancelled on {{productName}}",
+      "subtitle": "{{productName}} needs blockchain apps to approve your crypto and NFT transactions.",
+      "installCTA": "Install now",
+      "skipCTA": "I'll do this later"
     }
   }
 }

@@ -63,8 +63,6 @@ const OnboardingAppInstallDebugScreen = () => {
     }
   }, [selectedRestoreDeviceOption]);
 
-  console.log(selectedRestoreDeviceOption);
-
   const handleRemount = useCallback(() => {
     setComponentKey(prev => prev + 1);
     setInstallDone(false);
