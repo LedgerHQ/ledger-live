@@ -61,6 +61,7 @@ const DEFAULT_MULTIBUY_APP_ID = "multibuy";
 const LiveAppExchange = ({ appId }: { appId: string }) => {
   const { state: urlParams } = useLocation();
   const locale = useSelector(languageSelector);
+  const activateNavigation = useFeature("activateNavigation");
 
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
@@ -77,7 +78,7 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
               shouldDisplayName: false,
               shouldDisplayInfo: false,
               shouldDisplayClose: false,
-              shouldDisplayNavigation: false,
+              shouldDisplayNavigation: activateNavigation,
             },
           }}
           manifest={manifest}

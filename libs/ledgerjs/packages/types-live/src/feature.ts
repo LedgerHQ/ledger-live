@@ -1,5 +1,6 @@
 /**  Add others with union (e.g. "learn" | "market" | "foo") */
 export type FeatureId =
+  | "activateNavigation"
   | "learn"
   | "brazePushNotifications"
   | "brazeLearn"
