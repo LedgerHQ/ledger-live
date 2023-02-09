@@ -10,6 +10,8 @@ on:
       login:
         description: The GitHub username that triggered the workflow
         required: true
+      base_ref:
+        description: The base branch to merge the head into when checking out the code
 
 concurrency:
   group: ${{ github.workflow }}-${{ inputs.ref || github.ref }}
@@ -22,9 +24,10 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      - uses: actions/checkout@v3
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@support/required-test-watcher
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
+          ref: ${{ inputs.ref || github.event.push.head.sha }}
+          base_ref: ${{ inputs.base_ref }}
       - name: set git user
         run: |
           git config user.email "team-live@ledger.fr"
@@ -96,9 +99,10 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      - uses: actions/checkout@v3
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@support/required-test-watcher
         with:
           ref: ${{ inputs.ref || github.event.push.head.sha }}
+          base_ref: ${{ inputs.base_ref }}
       - name: set git user
         run: |
           git config user.email "team-live@ledger.fr"

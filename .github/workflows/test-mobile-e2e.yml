@@ -19,6 +19,8 @@ on:
       login:
         description: The GitHub username that triggered the workflow
         required: true
+      base_ref:
+        description: The base branch to merge the head into when checking out the code
 
 # Uncomment to have log-level: trace on detox run and build
 # (cf: apps/ledger-live-mobile/detox.config.js)
@@ -41,9 +43,10 @@ jobs:
     outputs:
       status: ${{ steps.detox.outcome }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@support/required-test-watcher
         with:
           ref: ${{ inputs.ref || github.ref }}
+          base: ${{ inputs.base_ref }}
       - uses: pnpm/action-setup@v2
         with:
           version: latest
@@ -107,9 +110,10 @@ jobs:
     if: always()
     needs: [detox-tests-ios]
     steps:
-      - uses: actions/checkout@v3
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@support/required-test-watcher
         with:
           ref: ${{ inputs.ref || github.ref }}
+          base: ${{ inputs.base_ref }}
       - uses: ./tools/actions/composites/upload-allure-report
         with:
           platform: ios
@@ -231,9 +235,10 @@ jobs:
     runs-on: ubuntu-latest
     if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
     steps:
-      - uses: actions/checkout@v3
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@support/required-test-watcher
         with:
           ref: ${{ inputs.ref || github.ref }}
+          base: ${{ inputs.base_ref }}
       - uses: actions/github-script@v6
         name: prepare status
         id: status

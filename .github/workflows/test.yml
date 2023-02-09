@@ -31,9 +31,10 @@ jobs:
     outputs:
       fail: ${{ steps.diff.outputs.diff }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@support/required-test-watcher
         with:
           ref: ${{ inputs.ref || github.ref }}
+          base: ${{ inputs.since_branch }}
       - uses: pnpm/action-setup@v2
         with:
           version: latest
@@ -60,9 +61,10 @@ jobs:
       fail: ${{ steps.diff.outputs.diff }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@support/required-test-watcher
         with:
           ref: ${{ inputs.ref || github.ref }}
+          base: ${{ inputs.since_branch }}
       - uses: pnpm/action-setup@v2
         with:
           version: latest
@@ -100,9 +102,10 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@support/required-test-watcher
         with:
           ref: ${{ inputs.ref || github.ref }}
+          base: ${{ inputs.since_branch }}
           fetch-depth: 0
       - uses: pnpm/action-setup@v2
         with:
