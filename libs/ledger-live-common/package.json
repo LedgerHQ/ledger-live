@@ -295,6 +295,7 @@
     "typescript": "^4.8.3",
     "typescript-eslint-parser": "^22.0.0",
     "uuid": "^8.3.2",
-    "ws": "7"
+    "ws": "7",
+    "mkdirp": "*"
   }
 }

@@ -16,12 +16,12 @@ patchedDependencies:
   react-native-fast-crypto@2.2.0:
     hash: jdmv3zyvsaug2f6l23zgrmwdli
     path: patches/react-native-fast-crypto@2.2.0.patch
-  react-native-video@5.2.0:
-    hash: lojvl6twgoj4rxeqeytmq4uduq
-    path: patches/react-native-video@5.2.0.patch
   react-native-image-crop-tools@1.6.2:
     hash: ykxjy5s7xujdxmsgrwxo5mh3y4
     path: patches/react-native-image-crop-tools@1.6.2.patch
+  react-native-video@5.2.0:
+    hash: lojvl6twgoj4rxeqeytmq4uduq
+    path: patches/react-native-video@5.2.0.patch
   rn-fetch-blob@0.12.0:
     hash: n5yzdsrxz654upecs5xliebtmm
     path: patches/rn-fetch-blob@0.12.0.patch
@@ -1152,6 +1152,7 @@ importers:
       long: ^4.0.0
       lru-cache: 5.1.1
       minimatch: ^5.1.0
+      mkdirp: '*'
       near-api-js: ^0.44.2
       numeral: ^2.0.6
       object-hash: ^2.2.0
@@ -1369,6 +1370,7 @@ importers:
       jest-environment-jsdom: 28.1.3
       jest-file-snapshot: 0.5.0
       long: 4.0.0
+      mkdirp: 1.0.4
       prettier: 2.3.2
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
@@ -37596,7 +37598,7 @@ packages:
       pretty-format: 28.1.3
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_apjxfgsonp5vzn5ucv2l752xgq
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -48143,7 +48145,7 @@ packages:
       metro-react-native-babel-transformer: 0.67.0_@babel+core@7.17.10
       metro-runtime: 0.67.0
       metro-source-map: 0.67.0
-      mkdirp: 0.5.6
+      mkdirp: 1.0.4
       nullthrows: 1.1.1
       pretty-format: 26.6.2
       promise: 8.2.0
@@ -48196,7 +48198,7 @@ packages:
       metro-react-native-babel-transformer: 0.67.0_@babel+core@7.17.10
       metro-runtime: 0.67.0
       metro-source-map: 0.67.0
-      mkdirp: 0.5.6
+      mkdirp: 1.0.4
       nullthrows: 1.1.1
       pretty-format: 26.6.2
       promise: 8.2.0
