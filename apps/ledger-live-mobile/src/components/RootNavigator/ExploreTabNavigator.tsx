@@ -25,7 +25,7 @@ const tabBarDisabledOptions = (props: MaterialTopTabBarProps) => (
 );
 
 export default function ExploreTabNavigator() {
-  //const newsfeedPageFeature = useFeature("newsfeedPage");
+  // const newsfeedPageFeature = useFeature("newsfeedPage");
   const newsfeedPageFeature = { enabled: true };
   const { t } = useTranslation();
 

@@ -1,18 +1,18 @@
 import { InformativeCard, Flex } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
-import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
-import { SafeAreaView, FlatList } from "react-native";
+import React, { memo, useCallback } from "react";
+import { FlatList } from "react-native";
 import { TouchableHighlight } from "react-native-gesture-handler";
 import styled, { useTheme } from "styled-components/native";
 import { TrackScreen } from "../../analytics";
 import { ScreenName } from "../../const";
-import useDynamicContent from "../../dynamicContent/dynamicContent";
-import { LearnContentCard } from "../../dynamicContent/types";
+import { CryptopanicNewsWithMetadata } from "../../hooks/newsfeed/cryptopanicApi";
+import FormatDate from "../../components/FormatDate";
 
-const keyExtractor = (item: LearnContentCard) => item.slug;
+const keyExtractor = (item: CryptopanicNewsWithMetadata) => item.slug;
 
 function NewsfeedPage() {
-  const news = [
+  const news: CryptopanicNewsWithMetadata[] = [
     {
       kind: "news",
       domain: "journalducoin.com",
@@ -26,6 +26,9 @@ function NewsfeedPage() {
         "Gagner du bitcoin (BTC) sur les réseaux sociaux ? Le pari fou de Damus",
       published_at: "2023-02-08T14:00:00Z",
       slug: "Gagner-du-bitcoin-BTC-sur-les-reseaux-sociaux-Le-pari-fou-de-Damus",
+      description: "test",
+      image:
+        "https://journalducoin-com.exactdn.com/app/uploads/2021/10/BTC-BitcoinFeu-brule-1.jpg?strip=all&lossy=1&quality=66&resize=1160%2C653&ssl=1",
       currencies: [
         {
           code: "BTC",
@@ -48,8 +51,11 @@ function NewsfeedPage() {
         path: null,
       },
       title: "Découvrez le nouveau réseau de paiements Web3 de Fuse Network",
-      published_at: "2023-02-08T14:00:00Z",
+      published_at: "2023-02-08T13:00:00Z",
       slug: "Decouvrez-le-nouveau-reseau-de-paiements-Web3-de-Fuse-Network",
+      description: "test",
+      image:
+        "https://journalducoin-com.exactdn.com/app/uploads/2022/10/uniswap-1.jpg?strip=all&lossy=1&quality=66&resize=1160%2C653&ssl=1",
       currencies: [
         {
           code: "ETH",
@@ -60,37 +66,46 @@ function NewsfeedPage() {
       ],
       id: 17586444,
       url: "https://cryptopanic.com/news/17586444/Decouvrez-le-nouveau-reseau-de-paiements-Web3-de-Fuse-Network",
-      created_at: "2023-02-08T14:00:00Z",
+      created_at: "2023-02-08T13:00:00Z",
     },
   ];
 
   const navigation = useNavigation();
-  const { colors, space, radii } = useTheme();
+  const { colors } = useTheme();
 
   const onClickItem = useCallback(
-    (card: LearnContentCard) => {
-      console.log("card", card);
+    (news: CryptopanicNewsWithMetadata) => {
+      console.log("news", news);
       navigation.navigate(ScreenName.LearnWebView, {
-        uri: card.url,
+        uri: news.url,
       });
     },
     [navigation],
   );
 
-  const renderItem = ({ item: news }: { item: any }) => {
-    return (
+  const renderItem = useCallback(
+    ({ item }: { item: CryptopanicNewsWithMetadata }) => (
       <Container
         underlayColor={colors.neutral.c30}
-        onPress={() => onClickItem(news)}
+        onPress={() => onClickItem(item)}
       >
         <InformativeCard
-          imageUrl={"https://risibank.fr/cache/medias/0/0/2/224/full.png"}
-          tag={news.domain}
-          title={news.title}
+          imageUrl={item.image}
+          tag={
+            <>
+              {item.source.title}{" "}•{" "}
+              <FormatDate date={new Date(item.published_at)} withHoursMinutes />
+            </>
+          }
+          title={item.title}
+          imageProps={{
+            style: { width: 90, height: 75 },
+          }}
         />
       </Container>
-    );
-  };
+    ),
+    [colors.neutral.c30, onClickItem],
+  );
 
   return (
     <Flex>

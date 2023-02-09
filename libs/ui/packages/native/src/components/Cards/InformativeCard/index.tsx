@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchableOpacityProps, TouchableOpacity, Image } from "react-native";
+import { TouchableOpacityProps, TouchableOpacity, Image, ImageProps } from "react-native";
 import styled from "styled-components/native";
 
 import Text from "../../Text";
@@ -7,9 +7,10 @@ import Flex from "../../Layout/Flex";
 
 export type CardProps = TouchableOpacityProps & {
   tag?: string;
-  title?: string;
+  title?: React.ReactNode;
   imageUrl?: string;
   onClickCard?: () => void;
+  imageProps?: ImageProps;
 };
 
 const Base = styled(TouchableOpacity)``;
@@ -18,7 +19,7 @@ const ImageContent = styled(Image)`
 `;
 
 const CardContainer = (props: CardProps): React.ReactElement => {
-  const { imageUrl, title, tag } = props;
+  const { imageUrl, title, tag, imageProps } = props;
 
   return (
     <Flex flexDirection="row">
@@ -31,14 +32,13 @@ const CardContainer = (props: CardProps): React.ReactElement => {
         </Text>
       </Flex>
 
-      <Flex width={100} height={75}>
-        <ImageContent
-          source={{
-            uri: imageUrl,
-          }}
-          style={{ width: "100%", height: "100%" }}
-        />
-      </Flex>
+      <ImageContent
+        source={{
+          uri: imageUrl,
+        }}
+        style={{ width: 100, height: 75 }}
+        {...imageProps}
+      />
     </Flex>
   );
 };

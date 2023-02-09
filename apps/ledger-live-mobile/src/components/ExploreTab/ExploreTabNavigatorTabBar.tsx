@@ -1,10 +1,9 @@
 import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
 import React, { memo, useCallback } from "react";
 import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
-import { Box, Flex, Text } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { TouchableOpacity } from "react-native";
-import { FlexProps } from "styled-system";
 import { track } from "../../analytics";
 import { rgba } from "../../colors";
 
