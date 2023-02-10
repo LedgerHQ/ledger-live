@@ -26,6 +26,11 @@ import { getAccountShapeWithAPI } from "../js-synchronization";
 import type { SolanaAccount, Transaction } from "../types";
 import { endpointByCurrencyId } from "../utils";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import {
+  assignToAccountRaw,
+  applyReconciliation,
+  assignFromAccountRaw,
+} from "../serialization";
 
 function makePrepare(getChainAPI: (config: Config) => Promise<ChainAPI>) {
   async function prepareTransaction(
@@ -167,6 +172,9 @@ export function makeBridges({
     prepareTransaction: makePrepare(getQueuedAndCachedAPI),
     broadcast: makeBroadcast(getAPI),
     signOperation: makeSign(getAPI),
+    applyReconciliation,
+    assignFromAccountRaw,
+    assignToAccountRaw,
   };
 
   const currencyBridge: CurrencyBridge = {
