@@ -1399,7 +1399,7 @@
         "label" : "Популярно"
       },
       "earn" : {
-        "title" : "Приумножить",
+        "title" : "Стейкинг",
         "description" : "Приумножайте криптовалюты вместе с Ledger"
       }
     }
@@ -5593,6 +5593,13 @@
       "descriptionWithProductName" : "Сначала {{ productName }} необходимо настроить.\nМы поможем вам с этим.",
       "goToOnboardingButton" : "Настроить устройство",
       "goToOnboardingButtonWithProductName" : "Настроить {{ productName }}"
+    },
+    "EtherscanAPIError" : {
+      "title" : "Сбой при загрузке транзакций",
+      "description" : "Произошла непредвиденная ошибка с обозревателями. Повторите попытку позже"
+    },
+    "GasEstimationError" : {
+      "title" : "Сбой расчёта стоимости Газа"
     }
   },
   "cryptoOrg" : {
