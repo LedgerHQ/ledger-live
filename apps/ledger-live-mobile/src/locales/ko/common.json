@@ -549,7 +549,7 @@
       "description" : "트랜잭션은 30초 이내에 서명을 완료해야 합니다. 다시 시도해 주세요."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 30TRX를 지불할 수 있습니다."
+      "title" : "Energy is lower than necessary. You might pay up to 50TRX in fees."
     },
     "UpdateYourApp" : {
       "title" : "앱 업데이트 필요",
@@ -811,6 +811,13 @@
       "title" : "장치가 잠금 상태입니다",
       "description" : "장치의 잠금을 해제하고 다시 시도하세요.",
       "descriptionWithProductName" : "{{ productName }}의 잠금을 해제하고 다시 시도하세요."
+    },
+    "EtherscanAPIError" : {
+      "title" : "트랜잭션을 가져오지 못했습니다",
+      "description" : "탐색기에서 예상하지 못한 오류가 발생했습니다. 나중에 다시 시도해 주세요"
+    },
+    "GasEstimationError" : {
+      "title" : "가스비를 추정하지 못했습니다"
     }
   },
   "crash" : {
