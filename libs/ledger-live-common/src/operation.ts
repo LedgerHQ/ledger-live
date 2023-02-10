@@ -249,3 +249,11 @@ export const isConfirmedOperation = (
   operation.blockHeight
     ? account.blockHeight - operation.blockHeight + 1 >= confirmationsNb
     : false;
+
+export const isEditableOperation = (
+  account: Account,
+  operation: Operation
+): boolean =>
+  account.currency.family === "ethereum" &&
+  operation.blockHeight === null &&
+  (operation.type === "OUT" || operation.type === "NFT_OUT");

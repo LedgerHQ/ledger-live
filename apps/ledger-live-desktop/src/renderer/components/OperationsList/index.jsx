@@ -12,6 +12,7 @@ import {
   groupAccountOperationsByDay,
   groupAccountsOperationsByDay,
   flattenAccounts,
+  getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import logger from "~/logger";
 import { openModal } from "~/renderer/actions/modals";
@@ -26,6 +27,9 @@ import OperationC from "./Operation";
 import TableContainer, { TableHeader } from "../TableContainer";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
+import EditOperationPanel from "./EditOperationPanel";
+import { FIVE_MINUTES_IN_MS } from "~/config/constants";
+import { isEditableOperation } from "@ledgerhq/live-common/operation";
 
 const ShowMore = styled(Box).attrs(() => ({
   horizontal: true,
@@ -114,11 +118,34 @@ export class OperationsList extends PureComponent<Props, State> {
           filterOperation,
         });
 
+    // Scan all the transaction of the account to get the stuck transaction with lowest nonce if any
+    const mainAccount = account ? getMainAccount(account, parentAccount) : null;
+    let stuckOperation = null;
+    if (mainAccount && mainAccount.currency.family === "ethereum") {
+      mainAccount.pendingOperations.forEach(operation => {
+        if (isEditableOperation(mainAccount, operation)) {
+          if (
+            (!stuckOperation ||
+              operation.transactionSequenceNumber < stuckOperation.transactionSequenceNumber) &&
+            new Date() - operation.date > FIVE_MINUTES_IN_MS
+          ) {
+            stuckOperation = operation;
+          }
+        }
+      });
+    }
+
     const all = flattenAccounts(accounts || []).concat([account, parentAccount].filter(Boolean));
     const accountsMap = keyBy(all, "id");
-
     return (
       <>
+        {stuckOperation && (
+          <EditOperationPanel
+            operation={stuckOperation}
+            account={account}
+            parentAccount={parentAccount}
+          />
+        )}
         <TableContainer id="operation-list">
           {title && (
             <TableHeader title={title} titleProps={{ "data-e2e": "dashboard_OperationList" }} />
@@ -156,6 +183,7 @@ export class OperationsList extends PureComponent<Props, State> {
                       onOperationClick={this.handleClickOperation}
                       t={t}
                       withAccount={withAccount}
+                      editable={mainAccount && isEditableOperation(mainAccount, operation)}
                     />
                   );
                 })}

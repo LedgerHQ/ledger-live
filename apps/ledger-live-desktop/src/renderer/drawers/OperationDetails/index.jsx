@@ -1,7 +1,7 @@
 // @flow
 
 import React, { useMemo, Component, useCallback } from "react";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { Trans, withTranslation } from "react-i18next";
 import type { TFunction } from "react-i18next";
@@ -9,6 +9,7 @@ import styled from "styled-components";
 import uniq from "lodash/uniq";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { colors } from "~/renderer/styles/theme";
+import Alert from "~/renderer/components/Alert";
 
 import {
   findSubAccountById,
@@ -23,6 +24,7 @@ import {
   getOperationAmountNumber,
   getOperationConfirmationDisplayableNumber,
   isConfirmedOperation,
+  isEditableOperation,
 } from "@ledgerhq/live-common/operation";
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { useNftMetadata } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
@@ -34,8 +36,8 @@ import Box from "~/renderer/components/Box";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
 import CounterValue from "~/renderer/components/CounterValue";
-import Ellipsis from "~/renderer/components/Ellipsis";
 import FakeLink from "~/renderer/components/FakeLink";
+import Ellipsis from "~/renderer/components/Ellipsis";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import LabelInfoTooltip from "~/renderer/components/LabelInfoTooltip";
 import Link from "~/renderer/components/Link";
@@ -74,6 +76,8 @@ import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import AmountDetails from "./AmountDetails";
 import NFTOperationDetails from "./NFTOperationDetails";
+import { openModal } from "~/renderer/actions/modals";
+import { FIVE_MINUTES_IN_MS } from "~/config/constants";
 
 const mapStateToProps = (state, { operationId, accountId, parentId }) => {
   const marketIndicator = marketIndicatorSelector(state);
@@ -238,7 +242,25 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
       ? currency.parentCurrency.name
       : currency.name
     : undefined;
+  const editable = isEditableOperation(mainAccount, operation);
 
+  const dispatch = useDispatch();
+  const handleOpenEditModal = useCallback(
+    (account, parentAccount, transactionRaw, transactionSequenceNumber, isNftOperation) => {
+      dispatch(
+        openModal("MODAL_EDIT_TRANSACTION", {
+          account,
+          parentAccount,
+          transactionRaw,
+          transactionSequenceNumber,
+          isNftOperation,
+        }),
+      );
+    },
+    [dispatch],
+  );
+  // pending transactions that exceeds 5 minutes are considered as stuck transactions
+  const isStuck = new Date() - operation.date > FIVE_MINUTES_IN_MS;
   return (
     <Box flow={3} px={20} mt={20}>
       <TrackPage
@@ -273,6 +295,7 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
             }}
             type={type}
             withTooltip={false}
+            editable={editable}
           />
         )}
       </Box>
@@ -284,7 +307,7 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
         mt={0}
         mb={1}
       >
-        <Trans i18nKey={`operation.type.${operation.type}`} />
+        <Trans i18nKey={`operation.type.${editable ? "SENDING" : operation.type}`} />
       </Text>
       {/* TODO clean up these conditional components into currency specific blocks */}
       {!isNftOperation ? (
@@ -345,6 +368,29 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
             label={t("operationDetails.viewOperation")}
           />
         </Box>
+      ) : null}
+      {editable ? (
+        <Alert type={isStuck ? "warning" : "primary"}>
+          <Trans
+            i18nKey={isStuck ? "operation.edit.stuckDescription" : "operation.edit.description"}
+          />
+          <div>
+            <Link
+              style={{ textDecoration: "underline", fontSize: "13px" }}
+              onClick={() => {
+                handleOpenEditModal(
+                  account,
+                  parentAccount,
+                  operation.transactionRaw,
+                  operation.transactionSequenceNumber,
+                  isNftOperation,
+                );
+              }}
+            >
+              <Trans i18nKey="operation.edit.title" />
+            </Link>
+          </div>
+        </Alert>
       ) : null}
       {!isNftOperation ? (
         <OpDetailsSection>

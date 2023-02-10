@@ -266,6 +266,11 @@ export class StepSummaryFooter extends PureComponent<StepProps> {
     const canNext = !bridgePending && !Object.keys(errors).length;
     return (
       <>
+        {Object.keys(errors).length > 0 ? (
+          <Alert type={"error"} style={{ height: "20px" }}>
+            <TranslatedError error={errors[Object.keys(errors)[0]]} />
+          </Alert>
+        ) : null}
         <Button
           id={"send-summary-continue-button"}
           primary

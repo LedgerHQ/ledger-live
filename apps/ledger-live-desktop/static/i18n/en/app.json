@@ -173,7 +173,43 @@
       "REGISTER": "Registered",
       "STAKE": "Staked",
       "UNSTAKE": "Unstaked",
-      "WITHDRAW_UNSTAKED": "Withdrawn"
+      "WITHDRAW_UNSTAKED": "Withdrawn",
+      "SENDING": "Sending"
+    },
+    "edit": {
+      "title": "Speed up or Cancel",
+      "description": "Your transaction is ongoing. You can speed it up with a higher network fee, or cancel it.",
+      "stuckDescription": "Your transaction is stuck. Speed it up with a higher network fee, or cancel it.",
+      "previousFeesInfo": "Your previous transaction had a network fee of",
+      "panel": {
+        "title": "Speed up or Cancel",
+        "description": "Your most recent 'send' transaction is stuck. Speed up the transaction with a higher network fee, or cancel it."
+      },
+      "speedUp": {
+        "title": "Speed Up",
+        "description": "Re-submit the transaction with a higher network fee."
+      },
+      "cancel": {
+        "title": "Cancel",
+        "description": "Sending 0 {{ticker}} to your own address with a higher fee."
+      },
+      "steps": {
+        "method": {
+          "title": "Method"
+        },
+        "fees": {
+          "title": "Fees"
+        },
+        "summary": {
+          "title": "Summary"
+        },
+        "device": {
+          "title": "Device"
+        },
+        "confirmation": {
+          "title": "Confirmation"
+        }
+      }
     }
   },
   "byteSize": {

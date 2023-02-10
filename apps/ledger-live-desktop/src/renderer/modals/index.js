@@ -3,6 +3,7 @@ import MODAL_WEBSOCKET_BRIDGE from "./WebSocketBridge";
 import MODAL_DELEGATE from "../families/tezos/DelegateFlowModal";
 import MODAL_TRON_REWARDS_INFO from "../families/tron/EarnRewardsInfoModal";
 import MODAL_EXPORT_OPERATIONS from "./ExportOperations";
+import MODAL_EDIT_TRANSACTION from "./EditTransaction";
 import MODAL_CONFIRM from "./ConfirmModal";
 import MODAL_MANAGE_TRON from "./ManageTron";
 import MODAL_PASSWORD from "./PasswordModal";
@@ -115,6 +116,7 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_WEBSOCKET_BRIDGE,
   MODAL_EXPORT_OPERATIONS,
   MODAL_CONFIRM,
+  MODAL_EDIT_TRANSACTION,
   MODAL_MANAGE_TRON,
   MODAL_PASSWORD,
   MODAL_DISABLE_PASSWORD,

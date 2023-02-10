@@ -1,5 +1,4 @@
-import React, { memo } from "react";
-
+import React, { memo, useEffect } from "react";
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
 import {
@@ -9,7 +8,10 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { useTranslation, Trans } from "react-i18next";
 import { Account, AccountLike, FeeStrategy } from "@ledgerhq/types-live";
-import { Transaction as EthereumTransaction } from "@ledgerhq/live-common/families/ethereum/types";
+import {
+  Transaction as EthereumTransaction,
+  TransactionRaw,
+} from "@ledgerhq/live-common/families/ethereum/types";
 import TachometerMedium from "~/renderer/icons/TachometerMedium";
 import CounterValue from "~/renderer/components/CounterValue";
 import FormattedVal from "~/renderer/components/FormattedVal";
@@ -18,6 +20,7 @@ import TachometerLow from "~/renderer/icons/TachometerLow";
 import Box, { Tabbable } from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Clock from "~/renderer/icons/Clock";
+import { EIP1559ShouldBeUsed } from "@ledgerhq/live-common/families/ethereum/transaction";
 
 type OnClickType = {
   amount: BigNumber;
@@ -33,6 +36,7 @@ type Props = {
   strategies: FeeStrategy[];
   mapStrategies?: (arg: FeeStrategy) => FeeStrategy;
   suffixPerByte?: boolean;
+  transactionRaw?: TransactionRaw;
 };
 
 const FeesWrapper = styled(Tabbable)`
@@ -88,19 +92,50 @@ const SelectFeeStrategy = ({
   strategies,
   mapStrategies,
   suffixPerByte,
+  transactionRaw,
 }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const accountUnit = getAccountUnit(mainAccount);
   const feesCurrency = getAccountCurrency(mainAccount);
   const { t } = useTranslation();
   strategies = mapStrategies ? strategies.map(mapStrategies) : strategies;
+  if (transactionRaw) {
+    // disable low transaction fee options in case of edit transaction modal
+    if (EIP1559ShouldBeUsed(mainAccount.currency)) {
+      const oldMaxPriorityFeePerGas = transactionRaw.maxPriorityFeePerGas;
+      const oldMaxFeePerGas = transactionRaw.maxFeePerGas;
+      strategies.forEach(strategy => {
+        const strategyMaxPriorityFeePerGas = strategy.extra?.maxPriorityFeePerGas;
+        const strategyMaxFeePerGas = strategy.extra?.maxFeePerGas;
+        if (
+          oldMaxPriorityFeePerGas &&
+          strategyMaxPriorityFeePerGas &&
+          oldMaxFeePerGas &&
+          strategyMaxFeePerGas
+        ) {
+          strategy.disabled =
+            strategy.disabled ||
+            (strategyMaxPriorityFeePerGas.isLessThanOrEqualTo(BigNumber(oldMaxPriorityFeePerGas)) &&
+              strategyMaxFeePerGas.isLessThanOrEqualTo(BigNumber(oldMaxFeePerGas)));
+        }
+      });
+    } else {
+      const oldGasPrice = transactionRaw.gasPrice;
+      if (oldGasPrice) {
+        strategies.forEach(strategy => {
+          strategy.disabled =
+            strategy.disabled || strategy.amount.isLessThanOrEqualTo(BigNumber(oldGasPrice));
+        });
+      }
+    }
+  }
 
   return (
     <Box horizontal justifyContent="center" flexWrap="wrap" gap="16px">
       {strategies.map(strategy => {
-        const selected = transaction.feesStrategy === strategy.label;
         const amount = strategy.displayedAmount || strategy.amount;
         const { label, disabled } = strategy;
+        const selected = transaction.feesStrategy === strategy.label && !disabled;
         return (
           <FeesWrapper
             key={strategy.label}
