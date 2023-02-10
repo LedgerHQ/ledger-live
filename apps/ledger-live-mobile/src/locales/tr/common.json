@@ -549,7 +549,7 @@
       "description" : "İşlemlerin 30 saniye içinde imzalanması gerekir. Lütfen tekrar deneyin."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Yeterince Enerji mevcut değil. Ağ ücreti 50TRX tutarına ulaşabilir."
+      "title" : "Energy is lower than necessary. You might pay up to 50TRX in fees."
     },
     "UpdateYourApp" : {
       "title" : "Uygulama güncellemesi gerekiyor",
@@ -1653,6 +1653,10 @@
             "label" : "Nano X'inizin tespit edilip edilmediğini kontrol edin."
           }
         }
+      },
+      "protectConnectionInformationModal" : {
+        "title" : "Ledger cihazımı neden bağlayamıyorum?",
+        "description" : "Ledger cihazınızda Bluetooth'u etkinleştirdikten sonra Ledger Live Mobile uygulamasına bağlanmada sorun yaşıyorsanız aşağıdaki \"Bu sorunu nasıl düzelteceğinizi öğrenin\" düğmesine dokunarak gösterilen yönergeleri uygulayabilirsiniz"
       }
     },
     "stepImportAccounts" : {
