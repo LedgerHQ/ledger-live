@@ -93,6 +93,11 @@ const LanguageSelect = ({ device, productName }: Props) => {
     setLanguageSelectStatus("completed");
   }, []);
 
+  // Needed because the drawer can close if it loses the screen focus, or another drawer forces it to close
+  const handleLanguageSelectOnClose = useCallback(() => {
+    setLanguageSelectStatus("unrequested");
+  }, []);
+
   // Handles the UI logic
   if (languageSelectStatus === "language-selection-requested") {
     nextDrawerToDisplay = "language-selection";
@@ -123,6 +128,7 @@ const LanguageSelect = ({ device, productName }: Props) => {
         noCloseButton
         preventBackdropClick
         isRequestingToBeOpened={nextDrawerToDisplay === "language-selection"}
+        onClose={handleLanguageSelectOnClose}
       >
         <Flex
           mb={4}
@@ -130,7 +136,6 @@ const LanguageSelect = ({ device, productName }: Props) => {
           alignItems="center"
           justifyContent="space-between"
         >
-          <Text>Hola</Text>
           <Flex flex={1}>
             <Button
               Icon={ArrowLeftMedium}
