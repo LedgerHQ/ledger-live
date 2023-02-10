@@ -549,7 +549,7 @@
       "description" : "必须在 30 秒内签署交易。请重试。"
     },
     "TronNotEnoughEnergy" : {
-      "title" : "能量低于必要值。您可能需要支付高达 50TRX 的费用。"
+      "title" : "Energy is lower than necessary. You might pay up to 50TRX in fees."
     },
     "UpdateYourApp" : {
       "title" : "需要更新应用程序",
@@ -811,6 +811,13 @@
       "title" : "您的设备已经锁定",
       "description" : "解锁您的设备并重试。",
       "descriptionWithProductName" : "解锁您的 {{ productName }} 并重试。"
+    },
+    "EtherscanAPIError" : {
+      "title" : "未能提取交易",
+      "description" : "浏览器出现意外错误。请重试"
+    },
+    "GasEstimationError" : {
+      "title" : "未能估计 Gas 费用"
     }
   },
   "crash" : {
