@@ -73,14 +73,14 @@ jobs:
           npm link
       - name: bot transfer
         env:
-          SEED: ${{ secrets[format('SEED{0}', github.event.inputs.origin)] }}
-          SEED_RECIPIENT: ${{ secrets[format('SEED{0}', github.event.inputs.recipient)] }}
+          SEED: ${{ secrets[format('SEED{0}', inputs.origin)] }}
+          SEED_RECIPIENT: ${{ secrets[format('SEED{0}', inputs.recipient)] }}
           VERBOSE_FILE: bot-transfer.txt
         run: COINAPPS=$PWD/coin-apps ledger-live botTransfer
         timeout-minutes: 120
       - name: upload logs
         if: failure() || success()
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: bot-transfer.txt
           path: bot-transfer.txt

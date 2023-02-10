@@ -12,7 +12,6 @@ import {
   getDefaultExplorerView,
 } from "@ledgerhq/live-common/explorers";
 import { createStructuredSelector } from "reselect";
-import { BottomDrawer } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import LText from "../../../components/LText";
 import { blacklistToken } from "../../../actions/settings";
@@ -25,6 +24,7 @@ import { NavigatorName } from "../../../const";
 import { StackNavigatorNavigation } from "../../../components/RootNavigator/types/helpers";
 import { PortfolioNavigatorStackParamList } from "../../../components/RootNavigator/types/PortfolioNavigator";
 import { State } from "../../../reducers/types";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 
 const mapDispatchToProps = {
   blacklistToken,
@@ -74,8 +74,8 @@ const TokenContextualModal = ({
     ? getAccountContractExplorer(explorerView, account, parentAccount!)
     : null;
   return (
-    <BottomDrawer
-      isOpen={isOpened}
+    <QueuedDrawer
+      isRequestingToBeOpened={isOpened}
       preventBackdropClick={false}
       Icon={
         showingContextMenu ? (
@@ -148,7 +148,7 @@ const TokenContextualModal = ({
           )}
         </>
       )}
-    </BottomDrawer>
+    </QueuedDrawer>
   );
 };
 

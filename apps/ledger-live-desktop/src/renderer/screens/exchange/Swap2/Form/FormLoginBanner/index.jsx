@@ -3,10 +3,11 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { track } from "~/renderer/analytics/segment";
 import SectionInformative from "~/renderer/screens/exchange/Swap2/Form/FormSummary/SectionInformative";
-import { swapDefaultTrack } from "../../utils/index";
+import { useGetSwapTrackingProperties } from "../../utils/index";
 
 const FormLoginBanner = ({ provider, onClick }: { provider?: string, onClick: Function }) => {
   const { t } = useTranslation();
+  const swapDefaultTrack = useGetSwapTrackingProperties();
 
   if (!provider) return null;
 

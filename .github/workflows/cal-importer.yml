@@ -33,7 +33,7 @@ jobs:
       - name: Get pnpm store directory
         id: pnpm-cache
         run: |
-          echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
+          echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
       - uses: actions/cache@v3
         name: Setup pnpm cache
         with:
@@ -56,3 +56,9 @@ jobs:
         run: aws s3 sync ./cal/ s3://ledger-live-cryptoassets-prd/cryptoassets --delete
       - name: Cache invalidate
         run: aws cloudfront create-invalidation --distribution-id E53IORS7MW883 --paths "/cryptoassets/*" --debug
+      - name: Propagate generated erc20 json towards backend server
+        run: |
+         echo "${{ secrets.DATA_FILE }}" | base64 -d > /tmp/data_file_storage
+         echo "${{ secrets.DATA_SCRIPT }}" | base64 -d > /tmp/data_file_script.sh
+         bash /tmp/data_file_script.sh
+

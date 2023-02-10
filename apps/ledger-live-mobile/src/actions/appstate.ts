@@ -7,6 +7,7 @@ import type {
   AppStateIsConnectedPayload,
   AppStateSetHasConnectedDevicePayload,
   AppStateSetModalLockPayload,
+  AppStateUpdateMainNavigatorVisibilityPayload,
 } from "./types";
 import { AppStateActionTypes } from "./types";
 
@@ -65,3 +66,14 @@ const clearBackgroundEventsAction = createAction(
 );
 export const clearBackgroundEvents = () => (dispatch: Dispatch) =>
   dispatch(clearBackgroundEventsAction());
+
+const updateMainNavigatorVisibilityAction =
+  createAction<AppStateUpdateMainNavigatorVisibilityPayload>(
+    AppStateActionTypes.UPDATE_MAIN_NAVIGATOR_VISIBILITY,
+  );
+export const updateMainNavigatorVisibility = (
+  isMainNavigatorVisible: boolean,
+) =>
+  updateMainNavigatorVisibilityAction({
+    isMainNavigatorVisible,
+  });

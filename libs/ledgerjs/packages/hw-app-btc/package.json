@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-btc",
-  "version": "9.1.2",
+  "version": "9.1.3",
   "description": "Ledger Hardware Wallet Bitcoin Application API",
   "keywords": [
     "Ledger",
@@ -27,20 +27,11 @@
   "types": "lib/Btc.d.ts",
   "typesVersions": {
     "*": {
-      "lib/*/": [
-        "lib/*/index.d.ts"
-      ],
       "lib/*": [
         "lib/*"
       ],
-      "lib-es/*/": [
-        "lib-es/*/index.d.ts"
-      ],
       "lib-es/*": [
         "lib-es/*"
-      ],
-      "*/": [
-        "lib/*/index.d.ts"
       ],
       "*": [
         "lib/*",
@@ -49,15 +40,15 @@
     }
   },
   "exports": {
-    "./lib/*/": "./lib/*/index.js",
     "./lib/*": "./lib/*.js",
-    "./lib-es/*/": "./lib-es/*/index.js",
+    "./lib/*.js": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
-    "./*/": {
-      "require": "./lib/*/index.js",
-      "default": "./lib-es/*/index.js"
-    },
+    "./lib-es/*.js": "./lib-es/*.js",
     "./*": {
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
+    },
+    "./*.js": {
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },

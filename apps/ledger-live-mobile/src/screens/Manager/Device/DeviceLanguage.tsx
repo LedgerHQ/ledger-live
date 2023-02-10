@@ -5,7 +5,7 @@ import { Language, DeviceInfo } from "@ledgerhq/types-live";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import DeviceLanguageSelection from "./DeviceLanguageSelection";
-import BottomModal from "../../../components/BottomModal";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 import ChangeDeviceLanguageActionModal from "../../../components/ChangeDeviceLanguageActionModal";
 import { track } from "../../../analytics";
 import DeviceOptionRow from "./DeviceOptionRow";
@@ -87,8 +87,8 @@ const DeviceLanguage: React.FC<Props> = ({
           )
         }
       />
-      <BottomModal
-        isOpened={isChangeLanguageOpen}
+      <QueuedDrawer
+        isRequestingToBeOpened={isChangeLanguageOpen}
         onClose={closeChangeLanguageModal}
         onModalHide={openDeviceActionModal}
       >
@@ -100,7 +100,7 @@ const DeviceLanguage: React.FC<Props> = ({
           onConfirmInstall={confirmInstall}
           availableLanguages={availableLanguages}
         />
-      </BottomModal>
+      </QueuedDrawer>
       <ChangeDeviceLanguageActionModal
         onClose={closeDeviceActionModal}
         device={deviceForActionModal}

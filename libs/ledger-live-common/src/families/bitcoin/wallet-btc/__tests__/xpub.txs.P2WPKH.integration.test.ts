@@ -13,6 +13,7 @@ import BitcoinLikeExplorer from "../explorer";
 import BitcoinLikeStorage from "../storage";
 import { Merge } from "../pickingstrategies/Merge";
 import * as utils from "../utils";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -21,8 +22,8 @@ describe.skip("testing xpub native segwit transactions", () => {
   const network = coininfo.bitcoin.regtest.toBitcoinJS();
 
   const explorer = new BitcoinLikeExplorer({
-    explorerURI: "http://localhost:20000/blockchain/v3",
-    explorerVersion: "v3",
+    cryptoCurrency: getCryptoCurrencyById("bitcoin"),
+    forcedExplorerURI: "http://localhost:20000/blockchain/v3",
     disableBatchSize: true, // https://ledgerhq.atlassian.net/browse/BACK-2191
   });
   const crypto = new Crypto({

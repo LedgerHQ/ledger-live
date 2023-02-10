@@ -75,10 +75,12 @@ async function syncESDTTokenAccountOperations(
   );
   const operations = mergeOps(oldOperations, newOperations);
 
-  tokenAccount.operations = operations;
-  tokenAccount.operationsCount = operations.length;
+  if (operations === oldOperations) return tokenAccount;
 
-  return tokenAccount;
+  const copy = { ...tokenAccount };
+  copy.operations = operations;
+  copy.operationsCount = operations.length;
+  return copy;
 }
 
 async function elrondBuildESDTTokenAccounts({
@@ -133,12 +135,20 @@ async function elrondBuildESDTTokenAccounts({
           balance: new BigNumber(esdt.balance),
         });
       } else {
+        const inputTokenAccount = tokenAccount;
         tokenAccount = await syncESDTTokenAccountOperations(
-          tokenAccount,
+          inputTokenAccount,
           accountAddress
         );
-        tokenAccount.balance = new BigNumber(esdt.balance);
-        tokenAccount.spendableBalance = new BigNumber(esdt.balance);
+        const balance = new BigNumber(esdt.balance);
+        if (!balance.eq(tokenAccount.balance)) {
+          // only recreate the object if balance changed
+          if (inputTokenAccount === tokenAccount) {
+            tokenAccount = { ...tokenAccount };
+          }
+          tokenAccount.balance = balance;
+          tokenAccount.spendableBalance = balance;
+        }
       }
 
       if (tokenAccount) {

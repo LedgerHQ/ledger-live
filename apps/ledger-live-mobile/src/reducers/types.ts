@@ -71,6 +71,7 @@ export type AppState = {
   hasConnectedDevice: boolean;
   modalLock: boolean;
   backgroundEvents: Array<FwUpdateBackgroundEvent>;
+  isMainNavigatorVisible: boolean;
 };
 
 // === BLE STATE ===
@@ -225,6 +226,7 @@ export type SettingsState = {
   displayStatusCenter: boolean;
   overriddenFeatureFlags: { [key in FeatureId]?: Feature | undefined };
   featureFlagsBannerVisible: boolean;
+  debugAppLevelDrawerOpened: boolean;
 };
 
 export type NotificationsSettings = {

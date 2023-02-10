@@ -170,8 +170,13 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
     specific && specific.amountTooltip ? specific.amountTooltip[operation.type] : null;
 
   const urlWhatIsThis =
-    specific && specific.getURLWhatIsThis && specific.getURLWhatIsThis(operation);
-  const urlFeesInfo = specific && specific.getURLFeesInfo && specific.getURLFeesInfo(operation);
+    specific &&
+    specific.getURLWhatIsThis &&
+    specific.getURLWhatIsThis(operation, mainAccount.currency.id);
+  const urlFeesInfo =
+    specific &&
+    specific.getURLFeesInfo &&
+    specific.getURLFeesInfo(operation, mainAccount.currency.id);
   const url = getTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation.hash);
   const uniqueSenders = uniq(senders);
 

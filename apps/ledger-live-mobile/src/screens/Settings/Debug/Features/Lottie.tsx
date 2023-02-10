@@ -9,7 +9,7 @@ import Button from "../../../../components/Button";
 import LText from "../../../../components/LText";
 import Animation from "../../../../components/Animation";
 import { getDeviceAnimation } from "../../../../helpers/getDeviceAnimation";
-import BottomModal from "../../../../components/BottomModal";
+import QueuedDrawer from "../../../../components/QueuedDrawer";
 import Touchable from "../../../../components/Touchable";
 import Check from "../../../../icons/Check";
 import { lottieAnimations } from "../../../Onboarding/shared/infoPagesData";
@@ -196,8 +196,8 @@ const DebugLottie = () => {
           Icon={Icons.ChevronRightMedium}
         />
       </Flex>
-      <BottomModal
-        isOpened={keyModalVisible}
+      <QueuedDrawer
+        isRequestingToBeOpened={keyModalVisible}
         onClose={setKeyModalVisible as () => void}
       >
         <ScrollView style={styles.modal}>
@@ -229,7 +229,7 @@ const DebugLottie = () => {
             </Touchable>
           ))}
         </ScrollView>
-      </BottomModal>
+      </QueuedDrawer>
     </SafeAreaView>
   );
 };

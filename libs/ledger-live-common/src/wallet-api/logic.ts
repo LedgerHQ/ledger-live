@@ -105,13 +105,14 @@ export function signTransactionLogic(
 
   const parentAccount = getParentAccount(account, accounts);
 
-  if (
-    (isTokenAccount(account)
-      ? parentAccount?.currency.family
-      : account.currency.family) !== transaction.family
-  ) {
+  const accountFamily = isTokenAccount(account)
+    ? parentAccount?.currency.family
+    : account.currency.family;
+
+  if (accountFamily !== transaction.family) {
     return Promise.reject(
-      new Error("Transaction family not matching account currency family")
+      new Error(`Transaction family not matching account currency family. Account family: ${accountFamily}, Transaction family: ${transaction.family}
+      `)
     );
   }
 

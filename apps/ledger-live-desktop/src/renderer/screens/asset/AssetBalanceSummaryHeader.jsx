@@ -13,7 +13,7 @@ import Box, { Tabbable } from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Price from "~/renderer/components/Price";
 import PillsDaysCount from "~/renderer/components/PillsDaysCount";
-import { swapDefaultTrack } from "~/renderer/screens/exchange/Swap2/utils/index";
+import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
 import styled from "styled-components";
 import Swap from "~/renderer/icons/Swap";
 
@@ -27,6 +27,8 @@ import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform
 import { useProviders } from "../exchange/Swap2/Form";
 
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import useStakeFlow from "~/renderer/screens/stake";
+import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 
 type Props = {
   isAvailable: boolean,
@@ -47,9 +49,9 @@ export default function AssetBalanceSummaryHeader({
   countervalueChange,
   countervalueFirst,
   currency,
-
   unit,
 }: Props) {
+  const swapDefaultTrack = useGetSwapTrackingProperties();
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const history = useHistory();
@@ -94,6 +96,11 @@ export default function AssetBalanceSummaryHeader({
 
   const { providers, storedProviders } = useProviders();
 
+  const startStakeFlow = useStakeFlow({ currencies: [currency?.id] });
+  const stakeProgramsFeatureFlag = useFeature("stakePrograms");
+  const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
+  const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;
+  const availableOnStake = stakeProgramsEnabled && currency && listFlag.includes(currency?.id);
   const availableOnSwap =
     (providers || storedProviders) &&
     !!(providers || storedProviders).find(({ pairs }) => {
@@ -131,7 +138,18 @@ export default function AssetBalanceSummaryHeader({
         defaultCurrency: currency,
       },
     });
-  }, [currency, history]);
+  }, [currency, history, swapDefaultTrack]);
+
+  const onStake = useCallback(() => {
+    track("button_clicked", {
+      button: "stake",
+      currency: currency?.ticker,
+      page: "Page Asset",
+      ...stakeDefaultTrack,
+    });
+    setTrackingSource("Page Asset");
+    startStakeFlow();
+  }, [currency?.ticker, startStakeFlow]);
 
   return (
     <Box flow={5}>
@@ -188,8 +206,14 @@ export default function AssetBalanceSummaryHeader({
         )}
 
         {availableOnSwap && (
-          <Button data-test-id="portfolio-swap-button" variant="color" onClick={onSwap}>
+          <Button data-test-id="portfolio-swap-button" variant="color" mr={1} onClick={onSwap}>
             {t("accounts.contextMenu.swap")}
+          </Button>
+        )}
+
+        {availableOnStake && (
+          <Button variant="color" onClick={onStake}>
+            {t("accounts.contextMenu.stake")}
           </Button>
         )}
       </Box>

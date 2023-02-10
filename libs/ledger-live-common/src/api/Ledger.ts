@@ -1,7 +1,6 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import invariant from "invariant";
 import { getEnv } from "../env";
-import { getExplorerConfig } from "./explorerConfig";
 
 type LedgerExplorer = {
   version: string;
@@ -12,9 +11,6 @@ type LedgerExplorer = {
 export const findCurrencyExplorer = (
   currency: CryptoCurrency
 ): LedgerExplorer | null | undefined => {
-  const config = getExplorerConfig()[currency.id];
-  if (!config) return;
-  const { id } = config;
   if (getEnv("SATSTACK") && currency.id === "bitcoin") {
     return {
       endpoint: getEnv("EXPLORER_SATSTACK"),
@@ -22,26 +18,17 @@ export const findCurrencyExplorer = (
       version: "v3",
     };
   }
-  if (config.experimental && getEnv("EXPERIMENTAL_EXPLORERS")) {
-    const base = config.experimental.base;
-    const version = config.experimental.version;
-    return {
-      endpoint: getEnv(base),
-      id,
-      version,
-    };
+
+  if (currency.explorerId == null) {
+    console.warn("no explorerId for", currency.id);
   }
 
-  const { base, version } = config.stable;
   return {
-    endpoint: getEnv(base),
-    id,
-    version,
+    endpoint: getEnv("EXPLORER"),
+    id: currency.explorerId ?? currency.id,
+    version: "v4",
   };
 };
-
-export const hasCurrencyExplorer = (currency: CryptoCurrency): boolean =>
-  !!findCurrencyExplorer(currency);
 
 export const getCurrencyExplorer = (
   currency: CryptoCurrency

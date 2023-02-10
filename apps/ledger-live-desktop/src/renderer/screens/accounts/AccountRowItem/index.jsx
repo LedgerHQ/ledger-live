@@ -259,6 +259,7 @@ class AccountRowItem extends PureComponent<Props, State> {
               className="accounts-account-row-item-content"
               isSubAccountsExpanded={showTokensIndicator && expanded}
               onClick={this.onClick}
+              data-test-id={`account-component-${account.name}`}
             >
               <Header account={account} name={mainAccount.name} />
               <Box flex="12%">

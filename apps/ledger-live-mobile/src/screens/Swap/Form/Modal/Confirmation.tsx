@@ -38,7 +38,7 @@ import { InstalledItem } from "@ledgerhq/live-common/apps/types";
 import { renderLoading } from "../../../../components/DeviceAction/rendering";
 import { updateAccountWithUpdater } from "../../../../actions/accounts";
 import DeviceAction from "../../../../components/DeviceAction";
-import BottomModal from "../../../../components/BottomModal";
+import QueuedDrawer from "../../../../components/QueuedDrawer";
 import ModalBottomAction from "../../../../components/ModalBottomAction";
 import { useBroadcast } from "../../../../components/useBroadcast";
 import { swapKYCSelector } from "../../../../reducers/settings";
@@ -198,7 +198,11 @@ export function Confirmation({
   const { t } = useTranslation();
 
   return (
-    <BottomModal isOpened={isOpen} preventBackdropClick onClose={onCancel}>
+    <QueuedDrawer
+      isRequestingToBeOpened={isOpen}
+      preventBackdropClick
+      onClose={onCancel}
+    >
       <SyncSkipUnderPriority priority={100} />
       <ModalBottomAction
         footer={
@@ -256,7 +260,7 @@ export function Confirmation({
           </View>
         }
       />
-    </BottomModal>
+    </QueuedDrawer>
   );
 }
 

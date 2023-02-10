@@ -145,7 +145,7 @@ function Body({
   }
 
   const stepperProps = {
-    title: t(`${currencyName}.undelegation.flow.title`),
+    title: t("cosmos.undelegation.flow.title"),
     device,
     account,
     transaction,

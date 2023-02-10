@@ -71,7 +71,6 @@ function expectCorrectOptimisticOperation(
   const opExpected: Record<string, any> = toOperationRaw({
     ...optimisticOperation,
   });
-  operation.extra = opExpected.extra;
   delete opExpected.value;
   delete opExpected.fee;
   delete opExpected.date;

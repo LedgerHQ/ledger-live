@@ -77,8 +77,8 @@ const FullBackgroundCard = ({
               fontWeight="semiBold"
               color="neutral.c100"
               numberOfLines={3}
-              height="84px"
-              lineHeight="28px"
+              height="96px"
+              lineHeight="32.4px"
             >
               {highlight(description, "h4")}
             </Text>
