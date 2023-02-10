@@ -251,9 +251,18 @@ export const isConfirmedOperation = (
     : false;
 
 export const isEditableOperation = (
-  account: Account,
+  account: AccountLike,
   operation: Operation
-): boolean =>
-  account.currency.family === "ethereum" &&
-  operation.blockHeight === null &&
-  (operation.type === "OUT" || operation.type === "NFT_OUT");
+): boolean => {
+  let isEthFamily = false;
+  if (account.type === "Account") {
+    isEthFamily = account.currency.family === "ethereum";
+  } else if (account.type === "TokenAccount") {
+    isEthFamily = account.token.parentCurrency.family === "ethereum";
+  }
+  return (
+    isEthFamily &&
+    operation.blockHeight === null &&
+    (operation.type === "OUT" || operation.type === "NFT_OUT")
+  );
+};

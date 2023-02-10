@@ -116,13 +116,17 @@ export class StepMethodFooter extends PureComponent<StepProps> {
                   nonce: transactionSequenceNumber,
                   recipient: transactionRaw.recipient,
                   mode: transactionRaw.mode,
+                  networkInfo: null, // force to update network fee
+                  feesStrategy: "fast", // set "fast" as default option for speedup flow
+                  maxFeePerGas: null,
+                  maxPriorityFeePerGas: null,
+                  gasPrice: null,
                 }),
               );
             } else {
               updateTransaction(tx =>
                 bridge.updateTransaction(tx, {
-                  amount: new BigNumber(0),
-                  allowZeroAmount: true,
+                  amount: new BigNumber(1), // send a very little amout of fund to your own account. TODO: Fix Can't set 0 here because of NotEnoughBalance error is thrown from getTransactionStatus
                   nonce: transactionSequenceNumber,
                   mode: "send",
                   recipient: account.freshAddress ?? parentAccount.freshAddress,

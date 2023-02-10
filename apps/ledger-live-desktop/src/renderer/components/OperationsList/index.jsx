@@ -121,8 +121,8 @@ export class OperationsList extends PureComponent<Props, State> {
     // Scan all the transaction of the account to get the stuck transaction with lowest nonce if any
     const mainAccount = account ? getMainAccount(account, parentAccount) : null;
     let stuckOperation = null;
-    if (mainAccount && mainAccount.currency.family === "ethereum") {
-      mainAccount.pendingOperations.forEach(operation => {
+    if (account && mainAccount.currency.family === "ethereum") {
+      account.pendingOperations.forEach(operation => {
         if (isEditableOperation(mainAccount, operation)) {
           if (
             (!stuckOperation ||
@@ -183,7 +183,7 @@ export class OperationsList extends PureComponent<Props, State> {
                       onOperationClick={this.handleClickOperation}
                       t={t}
                       withAccount={withAccount}
-                      editable={mainAccount && isEditableOperation(mainAccount, operation)}
+                      editable={account && isEditableOperation(account, operation)}
                     />
                   );
                 })}
