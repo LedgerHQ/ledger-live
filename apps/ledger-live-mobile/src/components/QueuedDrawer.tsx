@@ -77,7 +77,7 @@ const QueuedDrawer = ({
   /**
    * Makes sure that the drawer system is cleaned when navigating to a new (or back to a) screen
    *
-   * According to reactnavigation documentation, a useCallback should wrap the function passed to useFocusEffect
+   * According to react-navigation documentation, a useCallback should wrap the function passed to useFocusEffect
    * useFocusEffect is called each time a dependency of the callback changes, necessary to keep this dependency array empty
    *
    * useFocusEffect (return) clean up function is the last function to be called if a navigation change occurs and the
@@ -100,8 +100,8 @@ const QueuedDrawer = ({
         cleanWaitingDrawers();
         cleanCurrentDisplayedDrawer();
 
-        // If a navigation occured and the drawer was not closed, this won't trigger any useEffect depending on wasForcefullyCleaned.
-        // But necessary if the navigation occured and the drawer, coming from the previous screen, tries to be opened.
+        // If a navigation occurred and the drawer was not closed, this won't trigger any useEffect depending on wasForcefullyCleaned.
+        // But necessary if the navigation occurred and the drawer, coming from the previous screen, tries to be opened.
         // This will call its onClose function and clean the state that tried to open it.
         setWasForcefullyCleaned(true);
       };
