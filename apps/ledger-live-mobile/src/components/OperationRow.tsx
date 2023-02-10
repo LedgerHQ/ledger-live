@@ -14,6 +14,7 @@ import { Account, Operation, AccountLike } from "@ledgerhq/types-live";
 import { Box, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { WarningLight } from "@ledgerhq/native-ui/assets/icons";
 import debounce from "lodash/debounce";
+import { getEnv } from "@ledgerhq/live-common/env";
 
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
@@ -82,8 +83,6 @@ const placeholderProps = {
   width: 40,
   containerHeight: 20,
 };
-
-const FIVE_MINUTES = 5 * 60 * 1000;
 
 export default function OperationRow({
   account,
@@ -156,7 +155,8 @@ export default function OperationRow({
   const spinner =
     currency.id === "ethereum" &&
     isOptimistic &&
-    operation.date.getTime() <= new Date().getTime() - FIVE_MINUTES ? (
+    operation.date.getTime() <=
+      new Date().getTime() - getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT") ? (
       <WarningLight />
     ) : (
       <SpinnerContainer>
