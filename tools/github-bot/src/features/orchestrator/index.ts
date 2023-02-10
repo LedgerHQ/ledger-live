@@ -1,5 +1,10 @@
 import { Probot } from "probot";
-import { GATE_CHECK_RUN_NAME, RUNNERS, WORKFLOWS } from "./const";
+import {
+  GATE_CHECK_RUN_NAME,
+  PullRequestMetadata,
+  RUNNERS,
+  WORKFLOWS,
+} from "./const";
 import {
   downloadArtifact,
   extractWorkflowFile,
@@ -137,35 +142,48 @@ export function orchestrator(app: Probot) {
         `[Orchestrator](workflow_run.completed) ${payload.workflow_run.name}`
       );
 
-      const isFork = await prIsFork(
-        octokit,
-        repo,
-        owner,
-        payload.workflow_run.pull_requests[0]?.number
-      );
-
-      // Get the artifact named affected.json
       const artifacts = await octokit.actions.listWorkflowRunArtifacts({
         owner,
         repo,
         run_id: payload.workflow_run.id,
       });
 
-      const artifactId = artifacts.data.artifacts.find(
-        (artifact) => artifact.name === "affected.json"
-      )?.id;
+      // Get the affected / metadata artifacts
+      const [affected, metadata] = (await Promise.all(
+        ["affected.json", "pr_metadata.json"].map(
+          async (
+            fileName: string
+          ): Promise<
+            Record<string, { path: string }> | PullRequestMetadata | undefined
+          > => {
+            const artifactId = artifacts.data.artifacts.find(
+              (artifact) => artifact.name === fileName
+            )?.id;
 
-      if (!artifactId) return;
+            if (!artifactId) return undefined;
 
-      const rawAffected = await downloadArtifact(
-        octokit,
-        owner,
-        repo,
-        artifactId
-      );
-      const affected: Record<string, { path: string }> = JSON.parse(
-        rawAffected.toString()
-      );
+            const raw = await downloadArtifact(
+              octokit,
+              owner,
+              repo,
+              artifactId
+            );
+
+            return JSON.parse(raw.toString());
+          }
+        )
+      )) as [Record<string, { path: string }>?, PullRequestMetadata?];
+
+      if (!affected) return;
+
+      const isFork =
+        metadata?.number !== -1 &&
+        (await prIsFork(
+          octokit,
+          repo,
+          owner,
+          metadata?.number || payload.workflow_run.pull_requests[0]?.number
+        ));
 
       let affectedWorkflows = 0;
       // For each workflow…
@@ -189,8 +207,10 @@ export function orchestrator(app: Probot) {
             owner,
             repo,
             workflow_id: fileName,
-            ref: payload.workflow_run.pull_requests[0]?.head.ref,
-            inputs: workflow.getInputs(payload),
+            ref:
+              metadata?.head_branch ||
+              payload.workflow_run.pull_requests[0]?.head.ref,
+            inputs: workflow.getInputs(payload, metadata),
           });
         }
       });
