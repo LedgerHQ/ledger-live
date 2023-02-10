@@ -229,9 +229,6 @@ const OnboardingStepUseCaseSelection = () => {
 
       <BottomDrawer isOpen={isProtectDrawerOpen} onClose={onCloseProtectDrawer}>
         <Flex>
-          <Tag uppercase={false} mx="auto" mb={8}>
-            {t("onboarding.stepUseCase.protect.drawer.comingSoon")}
-          </Tag>
           <Text variant="h4" textAlign="center" mb={6}>
             {t("onboarding.stepUseCase.protect.drawer.title")}
           </Text>
