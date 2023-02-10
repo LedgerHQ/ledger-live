@@ -1668,8 +1668,9 @@
         }
       },
       "protectConnectionInformationModal": {
-        "title": "Why can I not connect my Ledger?",
-        "description": "If you are experiencing issues connecting to Ledger Live mobile after you have enabled Bluetooth on your Ledger, you can follow the instructions by tapping on the \"Learn how to fix that\" button below"
+        "title": "Ledger Nano X connection",
+        "description": "Make sure your Ledger is close to your phone and try again. <LinkBluethooth>Bluetooth® connection issues\u2028\n</LinkBluethooth>.\nIf Bluetooth® is working, you might need to update Ledger’s OS. Try updating the OS, or contact Ledger Support for assistance. ",
+        "learnHowToUpdate": "Learn how to update"
       }
     },
     "stepImportAccounts": {
