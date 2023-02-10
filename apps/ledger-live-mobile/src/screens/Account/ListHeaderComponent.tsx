@@ -122,7 +122,7 @@ export function getListHeaderComponents({
   }).sections[0].data.filter(operation => operation.type === "OUT");
 
   const shouldRenderEditTxModal =
-    mainAccount.currency.family === "ethereum" && latestOperation.blockHeight === null;
+    mainAccount.currency.family === "ethereum" && latestOperation?.blockHeight === null;
 
   return {
     listHeaderComponents: [
