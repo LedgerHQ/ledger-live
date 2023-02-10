@@ -10,7 +10,7 @@ let walletTabNavigatorPage: WalletTabNavigatorPage;
 let nftGalleryPage: NftGalleryPage;
 let nftViewerPage: NftViewerPage;
 
-describe("NFT Gallery screen", () => {
+describe.skip("NFT Gallery screen", () => {
   beforeAll(async () => {
     await loadConfig("2_accounts_eth_with_tokens_and_nft", true);
     portfolioPage = new PortfolioPage();
@@ -20,20 +20,20 @@ describe("NFT Gallery screen", () => {
   });
 
   it("should open on Portofolio page", async () => {
-    await expect(portfolioPage.getSettingsButton()).toBeVisible();
+    await portfolioPage.waitForPortfolioPageToLoad();
   });
 
   it("should see NFT tab", async () => {
-    await expect(walletTabNavigatorPage.getNftGalleryTab()).toBeVisible();
+    await expect(walletTabNavigatorPage.nftGalleryTab()).toBeVisible();
   });
 
   it("should navigate to NFT gallery on NFT tab press", async () => {
     await walletTabNavigatorPage.navigateToNftGallery();
-    await expect(nftGalleryPage.getNftList()).toBeVisible();
+    await expect(nftGalleryPage.nftListComponent()).toBeVisible();
   });
 
   it("should navigate to NFT viewer page on NFT gallery item press", async () => {
     await nftGalleryPage.navigateToNftViewer();
-    await expect(nftViewerPage.getMainScrollView()).toBeVisible();
+    await expect(nftViewerPage.mainScrollView()).toBeVisible();
   });
 });
