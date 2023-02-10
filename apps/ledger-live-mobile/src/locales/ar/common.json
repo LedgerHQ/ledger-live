@@ -549,7 +549,7 @@
       "description" : "يجب توقيع المعاملات في غضون 30 ثانية. يرجى المحاولة مرة أخرى."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "الطاقة أقل من المطلوب. قد تدفع رسوم تصل إلى 50TRX."
+      "title" : "Energy is lower than necessary. You might pay up to 50TRX in fees."
     },
     "UpdateYourApp" : {
       "title" : "مطلوب تحديث للتطبيق",
@@ -811,6 +811,13 @@
       "title" : "جهازك مقفل",
       "description" : "قم بإلغاء قفل جهازك وحاول مرة أخرى.",
       "descriptionWithProductName" : "قم بإلغاء قفل {{ productName }} خاصتك وحاول مرة أخرى."
+    },
+    "EtherscanAPIError" : {
+      "title" : "فشل إحضار المعاملات",
+      "description" : "حدث خطأ غير متوقع مع المستكشفات. يُرجى إعادة المحاولة لاحقاً"
+    },
+    "GasEstimationError" : {
+      "title" : "فشل تقدير الغاز"
     }
   },
   "crash" : {
