@@ -38,7 +38,7 @@ const PostOnboardingMockAction = ({ id }: Props) => {
         mt={6}
         variant="main"
         onClick={handleCompleteAndGoToHub}
-        data-test-id={"postonboarding-go-to-hub-button"}
+        data-test-id={"postonboarding-complete-action-button"}
       >
         Complete action & go back to onboarding hub
       </Button>
