@@ -1028,6 +1028,7 @@ importers:
       '@typescript-eslint/parser': ^5.46.1
       axios: 0.26.1
       bignumber.js: ^9.1.0
+      cross-env: ^7.0.3
       eslint: ^8.30.0
       eslint-config-prettier: ^8.5.0
       eslint-plugin-prettier: ^4.2.1
@@ -1074,6 +1075,7 @@ importers:
       '@types/numeral': 2.0.2
       '@typescript-eslint/eslint-plugin': 5.50.0_go4drrxstycfikanvu45pi4vgq
       '@typescript-eslint/parser': 5.50.0_4vsywjlpuriuw3tl5oq6zy5a64
+      cross-env: 7.0.3
       eslint: 8.33.0
       eslint-config-prettier: 8.5.0_eslint@8.33.0
       eslint-plugin-prettier: 4.2.1_6szgnv26mlwjcnkli62b775hwe
