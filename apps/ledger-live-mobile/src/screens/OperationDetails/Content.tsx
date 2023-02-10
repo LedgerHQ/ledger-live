@@ -29,6 +29,7 @@ import {
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Box, Flex, Link } from "@ledgerhq/native-ui";
+import { getEnv } from "@ledgerhq/live-common/env";
 
 import { NavigatorName, ScreenName } from "../../const";
 import LText from "../../components/LText";
@@ -55,8 +56,6 @@ import type {
   StackNavigatorNavigation,
 } from "../../components/RootNavigator/types/helpers";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-
-const FIVE_MINUTES = 5 * 60 * 1000;
 
 type HelpLinkProps = {
   event: string;
@@ -160,7 +159,8 @@ export default function Content({
   );
 
   const isOperationStuck =
-    operation.date.getTime() <= new Date().getTime() - FIVE_MINUTES;
+    operation.date.getTime() <=
+    new Date().getTime() - getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
 
   const isEditable =
     mainAccount.currency.family === "ethereum" &&
