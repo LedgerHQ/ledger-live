@@ -153,7 +153,7 @@ export const WebView = ({ manifest, inputs }: Props) => {
   const listAccounts = useListPlatformAccounts(accounts);
   const listPlatformCurrencies = useListPlatformCurrencies();
 
-  const isProtectPlatform = manifest.id === "protect";
+  const isProtectPlatform = ["protect", "protect-preprod"].includes(manifest.id);
 
   const onProtectLoadProgress = useCallback(event => {
     const { nativeEvent } = event;
