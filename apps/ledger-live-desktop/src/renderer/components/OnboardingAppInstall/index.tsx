@@ -14,8 +14,8 @@ import InstallSetOfApps from "./InstallSetOfApps";
 const fallbackDefaultAppsToInstall = ["Bitcoin", "Ethereum", "Polygon"];
 
 type Props = {
-  device: Device;
-  restoreDevice?: DeviceModelInfo;
+  device?: Device | null | undefined;
+  restoreDevice?: DeviceModelInfo | null | undefined;
   onComplete?: () => void;
   onError?: (error: Error) => void;
 };
@@ -81,7 +81,7 @@ const OnboardingAppInstallStep = ({ device, restoreDevice, onComplete, onError }
         onRetry={handleRetry}
         onSkip={handleSkip}
       />
-      {inProgress ? (
+      {inProgress && device ? (
         <InstallSetOfApps
           device={device}
           dependencies={dependencies}
