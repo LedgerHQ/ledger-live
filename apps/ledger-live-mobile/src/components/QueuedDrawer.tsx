@@ -72,40 +72,59 @@ const QueuedDrawer = ({
   const [isDisplayed, setIsDisplayed] = useState(false);
   const [wasForcefullyCleaned, setWasForcefullyCleaned] = useState(false);
 
-  // Makes sure that the drawer system is cleaned when navigating to a new (or back to a) screen
-  // According to reactnavigation documentation, a useCallback should wrap the function passed to useFocusEffect
+  const [drawerId, setDrawerId] = useState<number | null>(null);
+
+  /**
+   * Makes sure that the drawer system is cleaned when navigating to a new (or back to a) screen
+   *
+   * According to reactnavigation documentation, a useCallback should wrap the function passed to useFocusEffect
+   * useFocusEffect is called each time a dependency of the callback changes, necessary to keep this dependency array empty
+   *
+   * useFocusEffect (return) clean up function is the last function to be called if a navigation change occurs and the
+   * drawer was not closed.
+   * If a state was updated (for ex hasFocus) and it was expected to trigger some cleaning, it would actually not happen.
+   * This explains why all the cleaning is done in the return function of useFocusEffect.
+   * Also it could explain why useIsFocused() is not updating correctly in certain cases (when a navigation change occurs)
+   */
   useFocusEffect(
     useCallback(() => {
+      // hasFocus is true, even if the drawer is not trying to be opened
       setHasFocus(true);
 
       return () => {
-        setIsDisplayed(false);
         setHasFocus(false);
+
+        setIsDisplayed(false);
+        setDrawerId(null);
+
         cleanWaitingDrawers();
         cleanCurrentDisplayedDrawer();
+
+        // If a navigation occured and the drawer was not closed, this won't trigger any useEffect depending on wasForcefullyCleaned.
+        // But necessary if the navigation occured and the drawer, coming from the previous screen, tries to be opened.
+        // This will call its onClose function and clean the state that tried to open it.
+        setWasForcefullyCleaned(true);
       };
     }, []),
   );
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     // Blocks the drawer from closing
     if (modalLock) return;
 
     onClose && onClose();
-  };
+  }, [modalLock, onClose]);
 
-  const handleModalHide = () => {
+  const handleModalHide = useCallback(() => {
     onModalHide && onModalHide();
     notifyNextDrawer();
-  };
+  }, [onModalHide]);
 
   useEffect(() => {
     let id: number | undefined;
 
     // Protects against adding a drawer to the queue when its associated screen has not the focus
-    if (!hasFocus && (isRequestingToBeOpened || isForcingToBeOpened)) {
-      setWasForcefullyCleaned(true);
-    } else if (hasFocus) {
+    if (hasFocus && drawerId === null) {
       // If the drawer is forcing to be opened, first clean the waiting queue
       if (isForcingToBeOpened) {
         cleanWaitingDrawers(true);
@@ -122,6 +141,7 @@ const QueuedDrawer = ({
             setWasForcefullyCleaned(true);
           }
         });
+        setDrawerId(id);
       }
 
       // Finally, if the drawer is forcing to be opened, clean the currently displayed drawer
@@ -132,18 +152,25 @@ const QueuedDrawer = ({
       }
     }
 
-    return () => {
-      if (id !== undefined) {
-        removeFromWaitingDrawers(id);
-        // If this was the currently displayed drawer, only notifyNextDrawer once the drawer is hidden
-        setIsDisplayed(false);
-      }
-    };
-  }, [hasFocus, isForcingToBeOpened, isRequestingToBeOpened]);
+    // As it cannot be known which state triggered the useEffect to be cleaned (hasFocus, or isRequestingToBeOpened, or isForcingToBeOpened ?),
+    // the cleaning is done in 2 other useEffect:
+    // - useFocusEffect if hasFocus was lost
+    // - a useEffect if isRequestingToBeOpened or isForcingToBeOpened are false
+  }, [drawerId, hasFocus, isForcingToBeOpened, isRequestingToBeOpened]);
+
+  // Cleans the drawer if it tries to close itself: isRequestingToBeOpened and isForcingToBeOpened are false
+  useEffect(() => {
+    if (!isRequestingToBeOpened && !isForcingToBeOpened && drawerId !== null) {
+      removeFromWaitingDrawers(drawerId);
+      setDrawerId(null);
+      // If this was the currently displayed drawer, only notifyNextDrawer once the drawer is hidden
+      setIsDisplayed(false);
+    }
+  }, [drawerId, isForcingToBeOpened, isRequestingToBeOpened]);
 
   // Handles the case where the drawer has been removed forcefully from the queue by another drawer
-  // or where the displayed drawer was forcefully closed.
-  // Handled separately to avoid calling addToWaitingDrawers on every onClose changes (if not memoized).
+  // or where it tries to be opened while it does not have the focus.
+  // Handled separately to avoid calling addToWaitingDrawers or triggering useFocusEffect on every onClose changes (if not memoized).
   useEffect(() => {
     if (wasForcefullyCleaned) {
       onClose && onClose();
@@ -211,7 +238,7 @@ function addToWaitingDrawers(
  */
 function removeFromWaitingDrawers(id: ToBeDisplayedDrawer["id"]) {
   // Does not remove the currently displayed drawer
-  // This drawer will be cleaned up when onModalHide is triggered
+  // This drawer will be cleaned up once onModalHide is triggered
   if (currentDisplayedDrawer?.id === id) {
     return;
   }
