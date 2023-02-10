@@ -22,6 +22,7 @@ import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { LayoutChangeEvent } from "react-native";
+import { getEnv } from "@ledgerhq/live-common/env";
 
 import Header from "./Header";
 import AccountGraphCard from "../../components/AccountGraphCard";
@@ -60,8 +61,6 @@ type Props = {
   t: TFunction;
   onEditTransactionPress: (latestOperation: Operation) => void;
 };
-
-const FIVE_MINUTES = 5 * 60 * 1000;
 
 type MaybeComponent =
   | React.FunctionComponent<
@@ -143,7 +142,8 @@ export function getListHeaderComponents({
   const shouldRenderEditTxModal =
     mainAccount.currency.family === "ethereum" &&
     latestOperation?.blockHeight === null;
-  latestOperation?.date.getTime() < new Date().getTime() - FIVE_MINUTES;
+  latestOperation?.date.getTime() <
+    new Date().getTime() - getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
 
   return {
     listHeaderComponents: [

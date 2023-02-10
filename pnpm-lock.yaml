@@ -8166,7 +8166,23 @@ packages:
       '@babel/core': 7.9.0
       '@babel/helper-plugin-utils': 7.20.2
 
+<<<<<<< HEAD
   /@babel/plugin-transform-react-jsx@7.17.3(@babel/core@7.17.10):
+=======
+  /@babel/plugin-transform-react-jsx/7.17.3:
+    resolution: {integrity: sha512-9tjBm4O07f7mzKSIlEmPdiE6ub7kfIe6Cd+w+oQebpATfTQMAgW+YOuWxogbKVTulA+MEO7byMeIUtQ1z+z+ZQ==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    dependencies:
+      '@babel/helper-annotate-as-pure': 7.18.6
+      '@babel/helper-module-imports': 7.18.6
+      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/plugin-syntax-jsx': 7.18.6
+      '@babel/types': 7.20.7
+
+  /@babel/plugin-transform-react-jsx/7.17.3_@babel+core@7.17.10:
+>>>>>>> 60df27f7a1 (add optimistic operation timeout in env variables)
     resolution: {integrity: sha512-9tjBm4O07f7mzKSIlEmPdiE6ub7kfIe6Cd+w+oQebpATfTQMAgW+YOuWxogbKVTulA+MEO7byMeIUtQ1z+z+ZQ==}
     engines: {node: '>=6.9.0'}
     peerDependencies:
@@ -8175,11 +8191,44 @@ packages:
       '@babel/core': 7.17.10
       '@babel/helper-annotate-as-pure': 7.18.6
       '@babel/helper-module-imports': 7.18.6
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
       '@babel/plugin-syntax-jsx': 7.18.6(@babel/core@7.17.10)
       '@babel/types': 7.20.7
 
   /@babel/plugin-transform-react-jsx@7.18.10(@babel/core@7.17.10):
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/plugin-syntax-jsx': 7.18.6_@babel+core@7.17.10
+      '@babel/types': 7.20.7
+
+  /@babel/plugin-transform-react-jsx/7.17.3_@babel+core@7.20.12:
+    resolution: {integrity: sha512-9tjBm4O07f7mzKSIlEmPdiE6ub7kfIe6Cd+w+oQebpATfTQMAgW+YOuWxogbKVTulA+MEO7byMeIUtQ1z+z+ZQ==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    dependencies:
+      '@babel/core': 7.20.12
+      '@babel/helper-annotate-as-pure': 7.18.6
+      '@babel/helper-module-imports': 7.18.6
+      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/plugin-syntax-jsx': 7.18.6_@babel+core@7.20.12
+      '@babel/types': 7.20.7
+
+  /@babel/plugin-transform-react-jsx/7.18.10:
+    resolution: {integrity: sha512-gCy7Iikrpu3IZjYZolFE4M1Sm+nrh1/6za2Ewj77Z+XirT4TsbJcvOFOyF+fRPwU6AKKK136CZxx6L8AbSFG6A==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    dependencies:
+      '@babel/helper-annotate-as-pure': 7.18.6
+      '@babel/helper-module-imports': 7.18.6
+      '@babel/helper-plugin-utils': 7.20.2
+      '@babel/plugin-syntax-jsx': 7.18.6
+      '@babel/types': 7.20.7
+
+  /@babel/plugin-transform-react-jsx/7.18.10_@babel+core@7.17.10:
+>>>>>>> 60df27f7a1 (add optimistic operation timeout in env variables)
     resolution: {integrity: sha512-gCy7Iikrpu3IZjYZolFE4M1Sm+nrh1/6za2Ewj77Z+XirT4TsbJcvOFOyF+fRPwU6AKKK136CZxx6L8AbSFG6A==}
     engines: {node: '>=6.9.0'}
     peerDependencies:
@@ -12511,7 +12560,7 @@ packages:
       expo-pwa: 0.0.124(expo-constants@13.2.4)(expo-modules-core@0.6.5)(expo@45.0.8)
       file-loader: 6.0.0(webpack@4.43.0)
       find-yarn-workspace-root: 2.0.0
-      fs-extra: 10.1.0
+      fs-extra: 11.1.0
       getenv: 1.0.0
       html-loader: 1.1.0(webpack@4.43.0)
       html-webpack-plugin: 4.3.0(webpack@4.43.0)
@@ -25498,8 +25547,13 @@ packages:
     resolution: {integrity: sha512-j4dx+Fb0URmzbwwMUrhqWM2BEWHdFGx+qZ9qqASHRPqvTYdqvWnHg0H1hIbcyLnvgnoNAVMlwkepyqM3DaIFUg==}
     dev: true
 
+<<<<<<< HEAD
   /concat-map@0.0.1:
     resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
+=======
+  /concat-map/0.0.1:
+    resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
+>>>>>>> 60df27f7a1 (add optimistic operation timeout in env variables)
 
   /concat-stream@1.5.2:
     resolution: {integrity: sha512-H6xsIBfQ94aESBG8jGHXQ7i5AEpy5ZeVaLDOisDICiTCKpqEfr34/KmTrspKQNoLKNu9gTkovlpQcUi630AKiQ==}
@@ -47597,7 +47651,7 @@ packages:
     dependencies:
       jszip: 3.9.1
       tmp: 0.2.1
-      ws: 7.5.7
+      ws: 8.6.0
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
