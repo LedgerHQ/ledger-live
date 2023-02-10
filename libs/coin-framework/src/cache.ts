@@ -17,11 +17,14 @@ export const makeLRUCache = <A extends Array<any>, T>(
   // LRU-Cache is written in JS and do not enforce in its code the type checking.
   // Regarding its [documentation](https://github.com/isaacs/node-lru-cache/#ttl), `max` or `ttlAutopurge` must be set.
   // As the code in live use sometimes `max` property with `ttl`, we check it's defined in `lruOpts` to add or not `ttlAutopurge`.
+  // eslint-disable-next-line
   // @ts-ignore: TS-2339
-  lruOpts = lruOpts.max ? lruOpts : {
-    ...lruOpts,
-    ttlAutopurge: true,
-  };
+  lruOpts = lruOpts.max
+    ? lruOpts
+    : {
+        ...lruOpts,
+        ttlAutopurge: true,
+      };
   const cache = new LRU(lruOpts);
 
   const result = (...args: A) => {

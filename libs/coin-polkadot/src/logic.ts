@@ -8,6 +8,7 @@ export const EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN = new BigNumber(1000000000);
 export const MAX_NOMINATIONS = 16;
 export const MAX_UNLOCKINGS = 32;
 export const PRELOAD_MAX_AGE = 60 * 1000;
+// eslint-disable-next-line @typescript-eslint/no-loss-of-precision
 export const MAX_AMOUNT_INPUT = 0xffffffffffffffff;
 export const FEES_SAFETY_BUFFER = new BigNumber(1000000000); // Arbitrary buffer for paying fees of next transactions
 

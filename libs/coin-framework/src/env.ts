@@ -52,7 +52,10 @@ const stringArrayParser = (v: any): string[] | null | undefined => {
   if (Array.isArray(v_array) && v_array.length > 0) return v_array;
 };
 
-const envDefinitions: Record<string, EnvDef<boolean | string | number | string[] | unknown>> = {
+const envDefinitions: Record<
+  string,
+  EnvDef<boolean | string | number | string[] | unknown>
+> = {
   ANALYTICS_CONSOLE: {
     def: false,
     parser: boolParser,

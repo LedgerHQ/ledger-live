@@ -117,7 +117,7 @@ export const isAccountBalanceSignificant = (a: AccountLike): boolean =>
 // will preserve the balance to avoid user panic
 export function clearAccount<T extends AccountLike>(
   account: T,
-  familyClean?: (account: Account) => void,
+  familyClean?: (account: Account) => void
 ): T {
   if (account.type === "TokenAccount") {
     return {
@@ -145,11 +145,13 @@ export function clearAccount<T extends AccountLike>(
     pendingOperations: [],
     subAccounts:
       (account as Account).subAccounts &&
-      (account as Account).subAccounts?.map( (acc) => clearAccount(acc, familyClean)),
+      (account as Account).subAccounts?.map((acc) =>
+        clearAccount(acc, familyClean)
+      ),
   };
 
   familyClean?.(copy);
-  
+
   delete copy.nfts;
   return copy as T;
 }

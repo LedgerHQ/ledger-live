@@ -3,12 +3,11 @@ import invariant from "invariant";
 import sampleSize from "lodash/sampleSize";
 import { BigNumber } from "bignumber.js";
 import { getCurrentPolkadotPreloadData } from "./preload";
-import type {
-  PolkadotAccount,
-  PolkadotResources,
-  Transaction,
-} from "./types";
-import { getCryptoCurrencyById, parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import type { PolkadotAccount, PolkadotResources, Transaction } from "./types";
+import {
+  getCryptoCurrencyById,
+  parseCurrencyUnit,
+} from "@ledgerhq/coin-framework/currencies/index";
 import {
   botTest,
   expectSiblingsHaveSpendablePartGreaterThan,

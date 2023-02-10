@@ -5,7 +5,12 @@ import type {
   SignedOperation,
 } from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
-import { DeviceCommunication, makeAccountBridgeReceive, makeScanAccounts, makeSync } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import {
+  DeviceCommunication,
+  makeAccountBridgeReceive,
+  makeScanAccounts,
+  makeSync,
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
 import { submitExtrinsic } from "../api";
 import { getPreloadStrategy, preload, hydrate } from "../preload";
@@ -35,19 +40,30 @@ const broadcast = async ({
   return patchOperationWithHash(operation, hash);
 };
 
-export function buildCurrencyBridge(deviceCommunication: DeviceCommunication): CurrencyBridge {
-  const scanAccounts = makeScanAccounts({ getAccountShape, deviceCommunication, getAddressFn: getAddress });
+export function buildCurrencyBridge(
+  deviceCommunication: DeviceCommunication
+): CurrencyBridge {
+  const scanAccounts = makeScanAccounts({
+    getAccountShape,
+    deviceCommunication,
+    getAddressFn: getAddress,
+  });
 
   return {
     getPreloadStrategy,
     preload,
     hydrate,
     scanAccounts,
-  }
+  };
 }
 
-export function buildAccountBridge(deviceCommunication: DeviceCommunication): AccountBridge<Transaction> {
-  const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress), deviceCommunication);
+export function buildAccountBridge(
+  deviceCommunication: DeviceCommunication
+): AccountBridge<Transaction> {
+  const receive = makeAccountBridgeReceive(
+    getAddressWrapper(getAddress),
+    deviceCommunication
+  );
   const signOperation = buildSignOperation(deviceCommunication);
   const sync = makeSync({ getAccountShape });
 
@@ -61,5 +77,5 @@ export function buildAccountBridge(deviceCommunication: DeviceCommunication): Ac
     receive,
     signOperation,
     broadcast,
-  }
+  };
 }

@@ -47,7 +47,12 @@ export const errorInterceptor = (error: AxiosError<any>): AxiosError<any> => {
 
 axios.interceptors.response.use(undefined, errorInterceptor);
 
-const makeError = (msg: string, status: number, url: string | undefined, method: Method | "") => {
+const makeError = (
+  msg: string,
+  status: number,
+  url: string | undefined,
+  method: Method | ""
+) => {
   const obj = {
     status,
     url,

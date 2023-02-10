@@ -387,7 +387,7 @@ const disableBIP44: Record<string, boolean> = {
 type SeedInfo = {
   purpose: number;
   coinType: number;
-}
+};
 type SeedPathFn = (info: SeedInfo) => string;
 const seedIdentifierPath: Record<string, SeedPathFn> = {
   neo: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,

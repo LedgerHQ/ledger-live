@@ -1,9 +1,4 @@
-import type {
-  Account,
-  AccountLike,
-  NFTStandard,
-  Operation,
-} from "@ledgerhq/types-live";
+import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 
 export function findOperationInAccount(

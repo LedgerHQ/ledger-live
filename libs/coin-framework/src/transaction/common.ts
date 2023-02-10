@@ -34,7 +34,7 @@ export type CommonDeviceTransactionField =
       tooltipI18nKey?: string;
       tooltipI18nArgs?: tooltipArgs;
     };
-    
+
 export const fromTransactionCommonRaw = (
   raw: TransactionCommonRaw
 ): TransactionCommon => {

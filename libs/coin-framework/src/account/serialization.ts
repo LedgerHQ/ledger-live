@@ -1,11 +1,9 @@
 import { BigNumber } from "bignumber.js";
-import type {
-  Operation,
-  OperationRaw,
-  SubAccount,
-} from "@ledgerhq/types-live";
+import type { Operation, OperationRaw, SubAccount } from "@ledgerhq/types-live";
 
-export type ExtractExtraFn = (extra: Record<string, any>) => Record<string, any>
+export type ExtractExtraFn = (
+  extra: Record<string, any>
+) => Record<string, any>;
 
 export const toOperationRaw = (
   {
@@ -66,7 +64,9 @@ export const toOperationRaw = (
   }
 
   if (internalOperations) {
-    copy.internalOperations = internalOperations.map((o: Operation) => toOperationRaw(o));
+    copy.internalOperations = internalOperations.map((o: Operation) =>
+      toOperationRaw(o)
+    );
   }
 
   if (nftOperations) {
@@ -76,7 +76,7 @@ export const toOperationRaw = (
   if (transactionRaw !== undefined) {
     copy.transactionRaw = transactionRaw;
   }
-  
+
   return copy;
 };
 export const inferSubOperations = (

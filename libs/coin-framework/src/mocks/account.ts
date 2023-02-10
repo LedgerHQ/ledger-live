@@ -314,13 +314,20 @@ export function genTokenAccount(
   return tokenAccount;
 }
 
-type GenAccountEnhanceOperations =
-  (account: Account, currency: CryptoCurrency, rng: Prando) => void;
+type GenAccountEnhanceOperations = (
+  account: Account,
+  currency: CryptoCurrency,
+  rng: Prando
+) => void;
 
 export function genAccount(
   id: number | string,
   opts: GenAccountOptions = {},
-  completeResources?: (account: Account, currency: CryptoCurrency, address: string) => void,
+  completeResources?: (
+    account: Account,
+    currency: CryptoCurrency,
+    address: string
+  ) => void,
   genAccountEnhanceOperations?: GenAccountEnhanceOperations
 ): Account {
   const rng = new Prando(id);
@@ -462,7 +469,8 @@ export function genAccount(
     account.operations
   );
   account.used = !isAccountEmpty(account);
-  if (genAccountEnhanceOperations) genAccountEnhanceOperations(account, currency, rng);
+  if (genAccountEnhanceOperations)
+    genAccountEnhanceOperations(account, currency, rng);
   account.balanceHistoryCache = generateHistoryFromOperations(account);
   return account;
 }

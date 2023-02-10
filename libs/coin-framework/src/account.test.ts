@@ -1,7 +1,11 @@
 import "./test-helpers/staticTime";
 import { BigNumber } from "bignumber.js";
 import flatMap from "lodash/flatMap";
-import { getCryptoCurrencyById, getTokenById, setSupportedCurrencies } from "./currencies";
+import {
+  getCryptoCurrencyById,
+  getTokenById,
+  setSupportedCurrencies,
+} from "./currencies";
 import {
   groupAccountOperationsByDay,
   groupAccountsOperationsByDay,

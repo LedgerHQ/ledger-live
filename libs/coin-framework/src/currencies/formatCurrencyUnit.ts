@@ -70,15 +70,18 @@ export function formatCurrencyUnitFragment(
     return [];
   }
 
-  const options: Record<string, formatCurrencyUnitOptions[keyof formatCurrencyUnitOptions]> = {};
+  const options: Record<
+    string,
+    formatCurrencyUnitOptions[keyof formatCurrencyUnitOptions]
+  > = {};
 
   if (_options) {
     let k: keyof formatCurrencyUnitOptions;
     for (k in _options) {
       // sanitize the undefined value
-      const value = _options[k]
+      const value = _options[k];
       if (value !== undefined) {
-          options[k] = value;
+        options[k] = value;
       }
     }
   }

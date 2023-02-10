@@ -4,7 +4,10 @@ import { getValidators } from "./validators";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 import { isAccount } from "@ledgerhq/coin-framework/account/index";
-import { getCryptoCurrencyById, formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import {
+  getCryptoCurrencyById,
+  formatCurrencyUnit,
+} from "@ledgerhq/coin-framework/currencies/index";
 import {
   SidecarValidatorsParamAddresses,
   SidecarValidatorsParamStatus,

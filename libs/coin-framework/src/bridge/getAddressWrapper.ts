@@ -11,31 +11,30 @@ export type Resolver = (
   addressOpt: GetAddressOptions
 ) => Promise<Result>;
 
-const getAddressWrapper = (getAddressFn: Resolver) => (transport: Transport, opts: GetAddressOptions) => {
-  const { currency, path, verify } = opts;
-  return getAddressFn(transport, opts)
-    .then((result) => {
-      log("hw", `getAddress ${currency.id} on ${path}`, result);
-      return result;
-    })
-    .catch((e) => {
-      log(
-        "hw",
-        `getAddress ${currency.id} on ${path} FAILED ${String(e)}`
-      );
+const getAddressWrapper =
+  (getAddressFn: Resolver) =>
+  (transport: Transport, opts: GetAddressOptions) => {
+    const { currency, path, verify } = opts;
+    return getAddressFn(transport, opts)
+      .then((result) => {
+        log("hw", `getAddress ${currency.id} on ${path}`, result);
+        return result;
+      })
+      .catch((e) => {
+        log("hw", `getAddress ${currency.id} on ${path} FAILED ${String(e)}`);
 
-      if (e && e.name === "TransportStatusError") {
-        if (e.statusCode === 0x6b00 && verify) {
-          throw new DeviceAppVerifyNotSupported();
+        if (e && e.name === "TransportStatusError") {
+          if (e.statusCode === 0x6b00 && verify) {
+            throw new DeviceAppVerifyNotSupported();
+          }
+
+          if (e.statusCode === 0x6985 || e.statusCode === 0x5501) {
+            throw new UserRefusedAddress();
+          }
         }
 
-        if (e.statusCode === 0x6985 || e.statusCode === 0x5501) {
-          throw new UserRefusedAddress();
-        }
-      }
-
-      throw e;
-    });
-};
+        throw e;
+      });
+  };
 
 export default getAddressWrapper;

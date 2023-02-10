@@ -153,78 +153,80 @@ export const fakeSignExtrinsic = async (
 /**
  * Sign Transaction with Ledger hardware
  */
-const buildSignOperation = (withDevice: DeviceCommunication): SignOperationFnSignature<Transaction> => ({
-  account,
-  deviceId,
-  transaction,
-}: {
-  account: Account;
-  deviceId: any;
-  transaction: Transaction;
-}): Observable<SignOperationEvent> =>
-  withDevice(deviceId)(
-    (transport) =>
-      new Observable((o) => {
-        async function main() {
-          o.next({
-            type: "device-signature-requested",
-          });
+const buildSignOperation =
+  (withDevice: DeviceCommunication): SignOperationFnSignature<Transaction> =>
+  ({
+    account,
+    deviceId,
+    transaction,
+  }: {
+    account: Account;
+    deviceId: any;
+    transaction: Transaction;
+  }): Observable<SignOperationEvent> =>
+    withDevice(deviceId)(
+      (transport) =>
+        new Observable((o) => {
+          async function main() {
+            o.next({
+              type: "device-signature-requested",
+            });
 
-          if (!transaction.fees) {
-            throw new FeeNotLoaded();
+            if (!transaction.fees) {
+              throw new FeeNotLoaded();
+            }
+
+            // Ensure amount is filled when useAllAmount
+            const transactionToSign = {
+              ...transaction,
+              amount: calculateAmount({
+                a: account as PolkadotAccount,
+                t: transaction,
+              }),
+            };
+            const { unsigned, registry } = await buildTransaction(
+              account as PolkadotAccount,
+              transactionToSign,
+              true
+            );
+            const payload = registry
+              .createType("ExtrinsicPayload", unsigned, {
+                version: unsigned.version,
+              })
+              .toU8a({
+                method: true,
+              });
+            // Sign by device
+            const polkadot = new Polkadot(transport);
+            // FIXME: the type of payload Uint8Array is not compatible with the signature of sign which accept a string
+            const r = await polkadot.sign(
+              account.freshAddressPath,
+              payload as any
+            );
+            const signed = await signExtrinsic(unsigned, r.signature, registry);
+            o.next({
+              type: "device-signature-granted",
+            });
+            const operation = buildOptimisticOperation(
+              account as PolkadotAccount,
+              transactionToSign,
+              transactionToSign.fees ?? new BigNumber(0)
+            );
+            o.next({
+              type: "signed",
+              signedOperation: {
+                operation,
+                signature: signed,
+                expirationDate: null,
+              },
+            });
           }
 
-          // Ensure amount is filled when useAllAmount
-          const transactionToSign = {
-            ...transaction,
-            amount: calculateAmount({
-              a: account as PolkadotAccount,
-              t: transaction,
-            }),
-          };
-          const { unsigned, registry } = await buildTransaction(
-            account as PolkadotAccount,
-            transactionToSign,
-            true
+          main().then(
+            () => o.complete(),
+            (e) => o.error(e)
           );
-          const payload = registry
-            .createType("ExtrinsicPayload", unsigned, {
-              version: unsigned.version,
-            })
-            .toU8a({
-              method: true,
-            });
-          // Sign by device
-          const polkadot = new Polkadot(transport);
-          // FIXME: the type of payload Uint8Array is not compatible with the signature of sign which accept a string
-          const r = await polkadot.sign(
-            account.freshAddressPath,
-            payload as any
-          );
-          const signed = await signExtrinsic(unsigned, r.signature, registry);
-          o.next({
-            type: "device-signature-granted",
-          });
-          const operation = buildOptimisticOperation(
-            account as PolkadotAccount,
-            transactionToSign,
-            transactionToSign.fees ?? new BigNumber(0)
-          );
-          o.next({
-            type: "signed",
-            signedOperation: {
-              operation,
-              signature: signed,
-              expirationDate: null,
-            },
-          });
-        }
-
-        main().then(
-          () => o.complete(),
-          (e) => o.error(e)
-        );
-      })
-  );
+        })
+    );
 
 export default buildSignOperation;
