@@ -38,12 +38,12 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
 
   const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
 
-  const onShowMenu = (device: Device) => {
+  const onShowMenu = useCallback((device: Device) => {
     setChosenDevice(device);
     setShowMenu(true);
-  };
+  }, []);
 
-  const onHideMenu = () => setShowMenu(false);
+  const onHideMenu = useCallback(() => setShowMenu(false), []);
 
   const onDone = useCallback(() => {
     const n =
@@ -57,9 +57,6 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
   const handleSuccess = useCallback(
     (result: AppResult) => {
       onSuccess(result);
-      // Resets the device to avoid having
-      // the bottom modal popping up again
-      setDevice(undefined);
       onDone();
     },
     [onDone, onSuccess],
