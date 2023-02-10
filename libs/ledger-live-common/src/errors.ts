@@ -222,7 +222,6 @@ export const BluetoothNotSupportedError = createCustomErrorClass(
   "FwUpdateBluetoothNotSupported"
 );
 
-
 export const EConnResetError = createCustomErrorClass("EConnReset");
 
 export * from "@ledgerhq/coin-framework/errors";
