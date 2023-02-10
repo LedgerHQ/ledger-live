@@ -23,21 +23,30 @@
   "types": "lib/index.d.ts",
   "typesVersions": {
     "*": {
+      "*.json": [
+        "*.json"
+      ],
+      "*": [
+        "lib/*"
+      ],
       "lib/*": [
         "lib/*"
       ],
       "lib-es/*": [
         "lib-es/*"
-      ],
-      "*": [
-        "lib/*"
       ]
     }
   },
   "exports": {
     "./lib/*": "./lib/*.js",
+    "./lib/*.js": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
+    "./lib-es/*.js": "./lib-es/*.js",
     "./*": {
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
+    },
+    "./*.js": {
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },
@@ -47,6 +56,11 @@
     },
     "./package.json": "./package.json"
   },
+  "files": [
+    "lib",
+    "lib-es",
+    "src"
+  ],
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/compressjs": "github:LedgerHQ/compressjs#d9e8e4d994923e0ea76a32b97289bcccfe71b82e",
