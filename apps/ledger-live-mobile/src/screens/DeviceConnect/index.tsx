@@ -31,7 +31,7 @@ type NavigationProps = RootComposite<
 export default function DeviceConnect({ navigation, route }: NavigationProps) {
   const { colors } = useTheme();
   const [device, setDevice] = useState<Device | null | undefined>();
-  const { appName = "BOLOS", onSuccess, onError, onClose } = route.params;
+  const { appName = "BOLOS", onSuccess, onError } = route.params;
 
   const [chosenDevice, setChosenDevice] = useState<Device | null>();
   const [showMenu, setShowMenu] = useState<boolean>(false);
@@ -62,10 +62,9 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
     [onDone, onSuccess],
   );
 
-  const handleClose = useCallback(() => {
-    onClose();
-    onDone();
-  }, [onClose, onDone]);
+  const resetDevice = useCallback(() => {
+    setDevice(undefined);
+  }, []);
 
   return (
     <SafeAreaView
@@ -104,7 +103,7 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
         action={action}
         device={device}
         onResult={handleSuccess}
-        onClose={handleClose}
+        onClose={resetDevice}
         onError={onError}
         request={{
           appName,
