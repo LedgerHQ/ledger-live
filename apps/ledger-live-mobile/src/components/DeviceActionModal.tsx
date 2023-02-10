@@ -40,24 +40,27 @@ export default function DeviceActionModal<Req, Stt, Res>({
   const { t } = useTranslation();
   const showAlert = !device?.wired;
   const [result, setResult] = useState<Res | null>(null);
+  const [forceClose, setForceClose] = useState(false);
 
   const handleModalHide = useCallback(() => {
     if (onModalHide) onModalHide();
     if (onResult && result) {
       onResult(result);
-      setResult(null);
     }
-  }, [onModalHide, onResult, result]);
-
-  const handleClose = useCallback(() => {
+    // DeviceActionModal onClose prop called in handleModalHide
+    // to avoid calling it twice if placed in the QueuedDrawer onClose prop
     if (onClose && !result) {
       onClose();
     }
-  }, [onClose, result]);
+  }, [onClose, onModalHide, onResult, result]);
+
+  const handleClose = useCallback(() => {
+    setForceClose(true);
+  }, []);
 
   return (
     <QueuedDrawer
-      isRequestingToBeOpened={result ? false : !!device}
+      isRequestingToBeOpened={result || forceClose ? false : !!device}
       onClose={handleClose}
       onModalHide={handleModalHide}
     >
