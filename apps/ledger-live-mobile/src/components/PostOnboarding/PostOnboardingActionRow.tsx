@@ -25,10 +25,9 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     titleCompleted,
     description,
     tagLabel,
-    startEvent,
-    startEventProperties,
     completed,
     disabled,
+    buttonLabelForAnalyticsEvent,
   } = props;
   const { t } = useTranslation();
   const navigation =
@@ -41,9 +40,10 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
   const handlePress = useCallback(() => {
     if (navigationParams) {
       navigation.navigate(...navigationParams);
-      startEvent && track(startEvent, startEventProperties);
+      buttonLabelForAnalyticsEvent &&
+        track("button_clicked", { button: buttonLabelForAnalyticsEvent });
     }
-  }, [navigationParams, navigation, startEvent, startEventProperties]);
+  }, [navigationParams, navigation, buttonLabelForAnalyticsEvent]);
 
   return (
     <Touchable

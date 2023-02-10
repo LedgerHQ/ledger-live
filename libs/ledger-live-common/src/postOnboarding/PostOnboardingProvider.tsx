@@ -14,7 +14,7 @@ export type PostOnboardingDependencies = {
    * */
   getPostOnboardingAction?: (
     id: PostOnboardingActionId
-  ) => PostOnboardingAction;
+  ) => PostOnboardingAction | undefined;
   /**
    * function that returns an array of `PostOnboardingAction` for the given
    * `DeviceModelId` parameter.
