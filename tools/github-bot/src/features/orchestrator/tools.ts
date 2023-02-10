@@ -85,20 +85,30 @@ export async function updateGateCheckRun(
             check_run.conclusion || check_run.status
           )} **[${check_run.name}](${
             check_run.html_url
-          })**${workflowLink}: \`${check_run.conclusion || check_run.status}\``;
+          })**${workflowLink}: \`${check_run.conclusion ||
+            check_run.status}\` ${
+            workflowMeta[1].required ? "(required)" : "(optional)"
+          }`;
+          let newPriority;
 
           const priority = conclusions.indexOf(
             check_run.conclusion || "neutral"
           );
           const accumulatorPriority = conclusions.indexOf(acc[0]);
-          const newPriority =
-            priority > accumulatorPriority
-              ? check_run.conclusion || "neutral"
-              : acc[0];
           const newStatus =
             check_run.status === "completed" && acc[1] === "completed"
               ? "completed"
               : "in_progress";
+
+          if (workflowMeta[1].required) {
+            newPriority =
+              priority > accumulatorPriority
+                ? check_run.conclusion || "neutral"
+                : acc[0];
+          } else {
+            newPriority = acc[0];
+          }
+
           return [newPriority, newStatus];
         },
         ["success", "completed"]
