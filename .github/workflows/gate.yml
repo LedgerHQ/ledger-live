@@ -8,6 +8,9 @@ on:
       - main
       - release
       - hotfix
+      # TODO: remove me
+      - support/merge_groups
+  merge_group:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -41,3 +44,19 @@ jobs:
         with:
           name: affected.json
           path: affected.json
+      - uses: actions/github-script@v6
+        name: create output file ("pr_metadata.json")
+        with:
+          script: |
+            const fs = require("fs");
+            fs.writeFileSync("pr_metadata.json", JSON.stringify({
+              number: ${{ github.event_name == 'pull_request' && github.event.pull_request.number || -1 }},
+              head_sha: "${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.event.merge_group.head_sha }}",
+              head_branch: "${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.event.merge_group.head_ref }}",
+              base_sha: "${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.merge_group.base_sha }}",
+              base_branch: "${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || github.event.merge_group.base_ref }}"
+            }), "utf-8");
+      - uses: actions/upload-artifact@v3
+        with:
+          name: pr_metadata.json
+          path: pr_metadata.json
