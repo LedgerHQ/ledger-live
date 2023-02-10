@@ -549,7 +549,7 @@
       "description" : "Les transactions doivent être signées dans les 30 secondes. Veuillez réessayer."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Énergie inférieure à la quantité requise. Vous pourriez payer des frais allant jusqu’à 50 TRX."
+      "title" : "Énergie inférieure à la quantité requise. Vous pourriez payer des frais allant jusqu’à 50 TRX."
     },
     "UpdateYourApp" : {
       "title" : "Mise à jour de l’app nécessaire",
@@ -1141,7 +1141,7 @@
   "installSetOfApps" : {
     "restore" : {
       "title" : "Installer les mêmes apps que sur {{deviceName}} ?",
-      "titleNoDeviceName" : "Installer les mêmes apps que sur votre Ledger précédent ?",
+      "titleNoDeviceName" : "Installer les mêmes apps que sur votre autre Ledger ?",
       "installCTA" : "Installer maintenant",
       "skipCTA" : "Plus tard"
     },
@@ -1653,6 +1653,10 @@
             "label" : "Vérifiez si votre Nano X est bien détecté."
           }
         }
+      },
+      "protectConnectionInformationModal" : {
+        "title" : "Je n’arrive pas à connecter mon Ledger. Pourquoi ?",
+        "description" : "Si vous rencontrez des problèmes de connexion à Ledger Live pour le mobile après avoir activé le Bluetooth sur votre Ledger, appuyez sur le bouton \"En savoir plus\", et suivez les instructions."
       }
     },
     "stepImportAccounts" : {
