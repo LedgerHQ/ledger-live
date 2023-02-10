@@ -549,7 +549,7 @@
       "description" : "Transaktionen müssen innerhalb von 30 Sekunden signiert werden. Bitte versuchen Sie es erneut."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Energie ist niedriger als notwendig. Es können bis zu 50TRX an Gebühren anfallen."
+      "title" : "Energy is lower than necessary. You might pay up to 50TRX in fees."
     },
     "UpdateYourApp" : {
       "title" : "App-Update erforderlich",
@@ -1653,6 +1653,10 @@
             "label" : "Prüfen Sie, ob Ihr Nano X erkannt wird."
           }
         }
+      },
+      "protectConnectionInformationModal" : {
+        "title" : "Warum kann ich mein Ledger-Gerät nicht verbinden?",
+        "description" : "Wenn Sie Probleme haben, sich mit Ledger Live Mobile zu verbinden, nachdem Sie Bluetooth auf Ihrem Ledger-Gerät aktiviert haben, können Sie die Anweisungen befolgen, indem Sie auf die Schaltfläche \"Learn how to fix that\" (Erfahren, wie man das behebt) weiter unten tippen"
       }
     },
     "stepImportAccounts" : {
