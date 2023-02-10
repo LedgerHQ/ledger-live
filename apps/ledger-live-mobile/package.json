@@ -210,6 +210,7 @@
     "@babel/runtime": "^7.12.5",
     "@jest/reporters": "^29.3.1",
     "@react-native-community/eslint-config": "^2.0.0",
+    "@testing-library/react-native": "^11.5.2",
     "@types/color": "^3.0.3",
     "@types/d3-array": "~2.3.0",
     "@types/d3-scale": "^3.2.1",

@@ -15,6 +15,7 @@ import { Box, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { WarningLight } from "@ledgerhq/native-ui/assets/icons";
 import debounce from "lodash/debounce";
 import { isEqual } from "lodash";
+import { getEnv } from "@ledgerhq/live-common/env";
 
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
@@ -26,7 +27,6 @@ import perFamilyOperationDetails from "../generated/operationDetails";
 import { track } from "../analytics";
 import { UnionToIntersection } from "../types/helpers";
 import { BaseNavigation } from "./RootNavigator/types/helpers";
-import { getEnv } from "@ledgerhq/live-common/env";
 
 type FamilyOperationDetailsIntersection = UnionToIntersection<
   typeof perFamilyOperationDetails[keyof typeof perFamilyOperationDetails]
