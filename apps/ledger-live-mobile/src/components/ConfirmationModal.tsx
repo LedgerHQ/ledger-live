@@ -2,10 +2,10 @@ import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import { View, StyleSheet, Image } from "react-native";
 import { rgba, Theme, withTheme } from "../colors";
-import BottomModal from "./BottomModal";
+import QueuedDrawer from "./QueuedDrawer";
 import LText from "./LText";
 import Button, { BaseButtonProps } from "./Button";
-import type { Props as BottomModalProps } from "./BottomModal";
+import type { Props as BottomModalProps } from "./QueuedDrawer";
 
 type Props = {
   isOpened: boolean;
@@ -51,8 +51,8 @@ class ConfirmationModal extends PureComponent<Props> {
     } = this.props;
     const iColor = iconColor || colors.live;
     return (
-      <BottomModal
-        isOpened={isOpened}
+      <QueuedDrawer
+        isRequestingToBeOpened={isOpened}
         onClose={onClose}
         style={styles.confirmationModal}
         {...rest}
@@ -107,7 +107,7 @@ class ConfirmationModal extends PureComponent<Props> {
             onPress={onConfirm}
           />
         </View>
-      </BottomModal>
+      </QueuedDrawer>
     );
   }
 }

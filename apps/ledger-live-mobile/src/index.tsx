@@ -218,9 +218,7 @@ function App({ importDataString }: AppProps) {
     <GestureHandlerRootView style={styles.root}>
       <SyncNewAccounts priority={5} />
       <ExperimentalHeader />
-
       <RootNavigator importDataString={importDataString} />
-
       <AnalyticsConsole />
       <DebugTheme />
       <Modals />

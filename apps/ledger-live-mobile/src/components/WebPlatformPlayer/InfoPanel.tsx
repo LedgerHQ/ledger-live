@@ -8,7 +8,7 @@ import type { TranslatableString } from "@ledgerhq/live-common/platform/types";
 import { languageSelector } from "../../reducers/settings";
 import ExternalLinkIcon from "../../icons/ExternalLink";
 import AppIcon from "../../screens/Platform/AppIcon";
-import BottomModal from "../BottomModal";
+import QueuedDrawer from "../QueuedDrawer";
 import LText from "../LText";
 
 type Props = {
@@ -39,9 +39,9 @@ const InfoPanel = ({
     Linking.openURL(url);
   }, []);
   return (
-    <BottomModal
+    <QueuedDrawer
       style={{ ...styles.root, backgroundColor: colors.card }}
-      isOpened={isOpened}
+      isRequestingToBeOpened={isOpened}
       onClose={onClose}
     >
       <View style={{ ...styles.flexRow, ...styles.titleContainer }}>
@@ -107,7 +107,7 @@ const InfoPanel = ({
           </TouchableOpacity>
         </>
       ) : null}
-    </BottomModal>
+    </QueuedDrawer>
   );
 };
 

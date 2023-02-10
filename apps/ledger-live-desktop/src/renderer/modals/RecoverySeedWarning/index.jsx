@@ -20,7 +20,7 @@ type Props = {
 };
 
 const Illustration = styled.div`
-  background-image: url(${p => p.image});
+  background-image: url('${p => p.image}');
   background-size: contain;
   background-position: center center;
   background-repeat: no-repeat;

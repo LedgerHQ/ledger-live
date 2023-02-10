@@ -19,7 +19,6 @@ import {
   fromTronResourcesRaw,
   fromCosmosResourcesRaw,
   fromBitcoinResourcesRaw,
-  fromCardanoResourceRaw,
   fromPolkadotResourcesRaw,
   fromTezosResourcesRaw,
   fromElrondResourcesRaw,
@@ -31,7 +30,6 @@ import {
   fromNFTRaw,
   toTronResourcesRaw,
   toCosmosResourcesRaw,
-  toCardanoResourceRaw,
   toPolkadotResourcesRaw,
   toTezosResourcesRaw,
   toElrondResourcesRaw,
@@ -43,7 +41,6 @@ import {
 } from "./account";
 import consoleWarnExpectToEqual from "./consoleWarnExpectToEqual";
 import { BitcoinAccount, BitcoinAccountRaw } from "./families/bitcoin/types";
-import { CardanoAccount, CardanoAccountRaw } from "./families/cardano/types";
 import { CosmosAccount, CosmosAccountRaw } from "./families/cosmos/types";
 import {
   CryptoOrgAccount,
@@ -426,24 +423,6 @@ export function patchAccount(
       break;
     }
 
-    case "cardano": {
-      const cardanoAcc = account as CardanoAccount;
-      const cardanoUpdatedRaw = updatedRaw as CardanoAccountRaw;
-      if (
-        cardanoUpdatedRaw.cardanoResources &&
-        (!cardanoAcc.cardanoResources ||
-          !areSameResources(
-            toCardanoResourceRaw(cardanoAcc.cardanoResources),
-            cardanoUpdatedRaw.cardanoResources
-          ))
-      ) {
-        (next as CardanoAccount).cardanoResources = fromCardanoResourceRaw(
-          cardanoUpdatedRaw.cardanoResources
-        );
-        changed = true;
-      }
-      break;
-    }
     case "crypto_org": {
       const cryptoOrgAcc = account as CryptoOrgAccount;
       const cryptoOrgUpdatedRaw = updatedRaw as CryptoOrgAccountRaw;

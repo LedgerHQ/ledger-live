@@ -69,6 +69,7 @@ import type {
   SettingsSetOverriddenFeatureFlagsPlayload,
   SettingsSetFeatureFlagsBannerVisiblePayload,
   DangerouslyOverrideStatePayload,
+  SettingsSetDebugAppLevelDrawerOpenedPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -164,6 +165,7 @@ export const INITIAL_STATE: SettingsState = {
   displayStatusCenter: false,
   overriddenFeatureFlags: {},
   featureFlagsBannerVisible: false,
+  debugAppLevelDrawerOpened: false,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -623,6 +625,15 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       featureFlagsBannerVisible,
     };
   },
+  [SettingsActionTypes.SET_DEBUG_APP_LEVEL_DRAWER_OPENED]: (state, action) => {
+    const {
+      payload: { debugAppLevelDrawerOpened },
+    } = action as Action<SettingsSetDebugAppLevelDrawerOpenedPayload>;
+    return {
+      ...state,
+      debugAppLevelDrawerOpened,
+    };
+  },
 };
 
 export default handleActions<SettingsState, SettingsPayload>(
@@ -850,3 +861,5 @@ export const overriddenFeatureFlagsSelector = (state: State) =>
   state.settings.overriddenFeatureFlags;
 export const featureFlagsBannerVisibleSelector = (state: State) =>
   state.settings.featureFlagsBannerVisible;
+export const debugAppLevelDrawerOpenedSelector = (state: State) =>
+  state.settings.debugAppLevelDrawerOpened;

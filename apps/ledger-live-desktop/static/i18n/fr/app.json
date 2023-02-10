@@ -606,6 +606,28 @@
       "creditedAmount" : "Montant crédité"
     }
   },
+  "stake" : {
+    "noFundsModal" : {
+      "title" : "Acheter, échanger ou recevoir",
+      "text" : "Votre solde de {{coin}} est insuffisant pour staker",
+      "description" : "Ne vous inquiétez pas. Vous pouvez acheter, échanger ou recevoir des cryptos en toute sécurité via Ledger Live.",
+      "options" : {
+        "buy" : {
+          "title" : "Acheter",
+          "body" : "Achetez auprès de prestataires de confiance."
+        },
+        "swap" : {
+          "title" : "Échanger",
+          "label" : "Populaire",
+          "body" : "Convertissez vos cryptos en toute sécurité."
+        },
+        "receive" : {
+          "title" : "Recevoir",
+          "body" : "Recevez des cryptos dans votre wallet."
+        }
+      }
+    }
+  },
   "lottieDebugger" : {
     "buttonTitle" : "Tester"
   },
@@ -1099,6 +1121,7 @@
       "receive" : "Recevoir",
       "send" : "Envoyer",
       "swap" : "Swap",
+      "stake" : "Staker",
       "buy" : "Acheter",
       "sell" : "Vendre",
       "edit" : "Modifier le compte",
@@ -1364,7 +1387,22 @@
     },
     "recentActivity" : "Dernières opérations",
     "totalBalance" : "Solde total",
-    "transactionsPendingConfirmation" : "Certaines transactions ne sont pas encore confirmées. Elles apparaîtront dans votre solde et seront disponibles une fois confirmées."
+    "transactionsPendingConfirmation" : "Certaines transactions ne sont pas encore confirmées. Elles apparaîtront dans votre solde et seront disponibles une fois confirmées.",
+    "featuredButtons" : {
+      "buySell" : {
+        "title" : "Acheter / Vendre",
+        "description" : "Achetez et vendez avec des prestataires de confiance."
+      },
+      "swap" : {
+        "title" : "Swap",
+        "description" : "Convertissez vos cryptos en cryptos en toute sécurité.",
+        "label" : "Populaire"
+      },
+      "earn" : {
+        "title" : "Gagner",
+        "description" : "Faites fructifier vos crypto-actifs via Ledger."
+      }
+    }
   },
   "currentAddress" : {
     "title" : "Adresse actuelle",
@@ -2809,7 +2847,7 @@
   "cosmos" : {
     "delegation" : {
       "emptyState" : {
-        "description" : "Vous pouvez gagner des récompenses ATOM en déléguant vos actifs.",
+        "description" : "Vous pouvez gagner des récompenses en {{currencyTicker}} en déléguant vos actifs.",
         "info" : "Fonctionnement de la délégation",
         "delegation" : "Gagner des récompenses"
       },
@@ -2834,8 +2872,8 @@
         "title" : "Déléguer",
         "steps" : {
           "starter" : {
-            "description" : "Vous pouvez gagner des récompenses en déléguant vos ATOM à un validateur.",
-            "bullet" : ["Vous gardez la propriété de vos actifs délégués.", "Déléguez avec votre appareil Ledger.", "Les actifs seront disponibles 21 jours après avoir mis fin à la délégation."],
+            "description" : "Vous pouvez gagner des récompenses en déléguant vos {{currencyTicker}} à un validateur.",
+            "bullet" : ["Vous gardez la propriété de vos actifs délégués.", "Déléguez avec votre appareil Ledger.", "Les actifs seront disponibles {{numberOfDays}} jours après avoir mis fin à la délégation."],
             "warning" : {
               "description" : "Choisissez votre validateur judicieusement : vous pouvez perdre une partie de vos actifs délégués si le validateur ne respecte pas les règles."
             }
@@ -2912,7 +2950,7 @@
             "currentDelegation" : "Délégation en cours",
             "newDelegation" : "Nouvelle délégation",
             "chooseValidator" : "Choisir un validateur",
-            "warning" : "Si vous changez à nouveau d’avis, vous devrez attendre <0>21 jours</0> pour redéléguer à un autre validateur.",
+            "warning" : "Si vous changez à nouveau d’avis, vous devrez attendre <0>{{numberOfDays}} jours</0> pour redéléguer à un autre validateur.",
             "amountLabel" : "Montant à redéléguer"
           },
           "device" : {
@@ -2939,8 +2977,8 @@
         "steps" : {
           "amount" : {
             "title" : "Montant",
-            "subtitle" : "L’interruption de délégation est finalisée après <0>21 jours</0>.",
-            "warning" : "Les récompenses seront immédiatement encaissées. Le montant de délégation interrompue sera versé sur votre solde disponible après la période de <0>verrouillage de 21 jours</0>.",
+            "subtitle" : "L’interruption de délégation est finalisée après <0>{{numberOfDays}} jours</0>.",
+            "warning" : "Les récompenses seront immédiatement encaissées. Le montant qui n’est plus délégué sera versé sur votre solde disponible après la période de <0>verrouillage de {{numberOfDays}} jours</0>.",
             "fields" : {
               "validator" : "Validateur",
               "amount" : "Montant à interrompre"
@@ -3024,176 +3062,6 @@
             "success" : {
               "title" : "Récompenses bien demandées",
               "text" : "Vos récompenses ont été ajoutées à votre solde disponible.",
-              "cta" : "Voir les détails"
-            },
-            "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
-          }
-        }
-      }
-    }
-  },
-  "osmosis" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Propulsé par Figment",
-        "moreInfo" : "Plus d’informations",
-        "drawerTitle" : "Propulsé par Figment",
-        "title" : "Le token OSMO désormais disponible sur Ledger Live",
-        "description" : "Vous pouvez maintenant gérer et sécuriser vos tokens OSMO via Ledger Live.",
-        "description2" : "Le token OSMO est natif de la chaîne Osmosis. Vous pouvez l’utiliser pour réaliser des transactions, le staking et de nombreuses fonctionnalités à venir.",
-        "website" : "Propulsé par Figment"
-      }
-    },
-    "memo" : "Mémo",
-    "memoPlaceholder" : "Facultatif",
-    "memoWarningText" : "Lorsque vous utilisez un mémo, vérifiez soigneusement les informations auprès du bénéficiaire.",
-    "delegation" : {
-      "emptyState" : {
-        "description" : "Vous pouvez gagner des récompenses OSMO en déléguant vos actifs.",
-        "info" : "Fonctionnement de la délégation",
-        "delegation" : "Gagner des récompenses"
-      },
-      "commission" : "Commission",
-      "totalStake" : "Stake total",
-      "claimRewards" : "Demander les récompenses",
-      "header" : "Délégation(s)",
-      "noRewards" : "Aucune récompense disponible",
-      "delegate" : "Ajouter",
-      "undelegate" : "Interrompre la délégation",
-      "redelegate" : "Redéléguer",
-      "redelegateDisabledTooltip" : "Vous pouvez redéléguer dans <0>{{days}}</0>.",
-      "redelegateMaxDisabledTooltip" : "Vous ne pouvez pas redéléguer à plus de <0>7</0> validateurs à la fois.",
-      "undelegateDisabledTooltip" : "Vous ne pouvez pas interrompre la délégation de plus de <0>7</0> validateurs à la fois.",
-      "reward" : "Demander les récompenses",
-      "currentDelegation" : "Délégué : <0>{{amount}}</0>",
-      "estYield" : "rendement estimé",
-      "activeTooltip" : "Les montants délégués génèrent des récompenses.",
-      "inactiveTooltip" : "Les montants dont la délégation est interrompue ne génèrent plus de récompenses.",
-      "minSafeWarning" : "Fonds insuffisants",
-      "flow" : {
-        "title" : "Déléguer",
-        "steps" : {
-          "starter" : {
-            "description" : "Vous pouvez gagner des récompenses en déléguant vos OSMO à un validateur.",
-            "bullet" : ["Vous gardez la propriété de vos actifs délégués.", "Déléguez avec votre appareil Ledger.", "Les actifs seront disponibles 14 jours après avoir mis fin à la délégation."],
-            "warning" : {
-              "description" : "Choisissez votre validateur judicieusement : vous pouvez perdre une partie de vos actifs délégués si le validateur ne respecte pas les règles."
-            }
-          },
-          "amount" : {
-            "title" : "Montant"
-          },
-          "validator" : {
-            "title" : "Validateurs"
-          },
-          "connectDevice" : {
-            "title" : "Appareil"
-          },
-          "confirmation" : {
-            "title" : "Confirmation",
-            "success" : {
-              "title" : "Actifs bien délégués",
-              "text" : "Le solde de votre compte sera mis à jour une fois que la blockchain aura confirmé la transaction.",
-              "cta" : "Voir les détails"
-            },
-            "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
-          }
-        }
-      }
-    },
-    "claimRewards" : {
-      "flow" : {
-        "title" : "Demander les récompenses",
-        "steps" : {
-          "claimRewards" : {
-            "title" : "Récompenses",
-            "compound" : "Capitaliser",
-            "claim" : "Encaisser",
-            "compoundOrClaim" : "Capitaliser ou encaisser",
-            "compoundDescription" : "Les récompenses seront ajoutées au montant délégué.",
-            "claimDescription" : "Les récompenses seront ajoutées au solde disponible.",
-            "compoundInfo" : "Vous avez gagné <0>{{amount}}</0>. En choisissant Continuer, vous demanderez à percevoir immédiatement ce montant et il sera automatiquement délégué au même validateur.",
-            "claimInfo" : "Vous avez gagné <0>{{amount}}</0> avec le validateur ci-dessous. En choisissant Continuer, vous demanderez à percevoir immédiatement ce montant et il sera automatiquement ajouté à votre solde disponible.",
-            "selectLabel" : "Sélectionner une délégation"
-          },
-          "connectDevice" : {
-            "title" : "Appareil"
-          },
-          "confirmation" : {
-            "title" : "Confirmation",
-            "label" : "Confirmation",
-            "success" : {
-              "title" : "Récompenses bien encaissées",
-              "titleCompound" : "Récompenses bien capitalisées",
-              "text" : "Vos récompenses ont été ajoutées à votre solde disponible.",
-              "textCompound" : "Vos récompenses <0>{{amount}}</0> ont été automatiquement déléguées à <0>{{validator}}</0>.",
-              "cta" : "Voir les détails"
-            },
-            "pending" : {
-              "title" : "Diffusion de la transaction..."
-            },
-            "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
-          }
-        }
-      }
-    },
-    "redelegation" : {
-      "flow" : {
-        "title" : "Redéléguer des actifs",
-        "steps" : {
-          "starter" : {
-            "title" : "Redélégation",
-            "description" : "Redéléguez pour passer facilement d’un validateur à un autre. Notez que si vous changez à nouveau d’avis, vous devrez patienter. Lorsque vous redéléguez, vos actifs sont immobilisés pendant 14 jours.",
-            "warning" : "Choisissez votre validateur judicieusement : vous pouvez perdre une partie de vos actifs délégués si le validateur ne respecte pas les règles. Vous pouvez avoir un maximum de <0>7 redélégations en attente</0>.",
-            "howDelegationWorks" : "Fonctionnement de la délégation"
-          },
-          "validators" : {
-            "title" : "Validateurs",
-            "currentDelegation" : "Délégation en cours",
-            "newDelegation" : "Nouvelle délégation",
-            "chooseValidator" : "Choisir un validateur",
-            "warning" : "Si vous changez à nouveau d’avis, vous devrez attendre <0>14 jours</0> pour redéléguer à un autre validateur.",
-            "amountLabel" : "Montant à redéléguer"
-          },
-          "device" : {
-            "title" : "Appareil"
-          },
-          "confirmation" : {
-            "title" : "Confirmation",
-            "success" : {
-              "title" : "Actifs bien redélégués",
-              "text" : "La redélégation sera mise à jour une fois que la blockchain aura confirmé la transaction.",
-              "cta" : "Voir les détails"
-            },
-            "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
-          }
-        }
-      }
-    },
-    "undelegation" : {
-      "header" : "Délégation(s) interrompue(s)",
-      "headerTooltip" : "Disponible après le verrouillage de 14 jours",
-      "inactiveTooltip" : "Les montants dont la délégation est interrompue ne génèrent plus de récompenses.",
-      "flow" : {
-        "title" : "Interrompre la délégation des actifs",
-        "steps" : {
-          "amount" : {
-            "title" : "Montant",
-            "subtitle" : "L’interruption de délégation est finalisée après <0>14 jours</0>.",
-            "warning" : "Les récompenses seront immédiatement encaissées. Le montant de délégation interrompue sera versé sur votre solde disponible après la période de <0>verrouillage de 14 jours</0>.",
-            "fields" : {
-              "validator" : "Validateur",
-              "amount" : "Montant à interrompre"
-            }
-          },
-          "device" : {
-            "title" : "Appareil"
-          },
-          "confirmation" : {
-            "title" : "Confirmation",
-            "success" : {
-              "title" : "Délégation des actifs bien interrompue",
-              "description" : "<0>{{amount}}</0> ne sont plus délégués à <0>{{validator}}</0>.",
               "cta" : "Voir les détails"
             },
             "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
@@ -5488,7 +5356,7 @@
       "description" : "Les transactions doivent être signées dans les 30 secondes. Veuillez réessayer."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Énergie inférieure à la quantité requise. Vous pourriez payer des frais allant jusqu’à 20 TRX."
+      "title" : "Énergie inférieure à la quantité requise. Vous pourriez payer des frais allant jusqu’à 50 TRX."
     },
     "PairingFailed" : {
       "title" : "Échec du couplage",

@@ -72,6 +72,7 @@ import {
   SettingsSetOverriddenFeatureFlagPlayload,
   SettingsSetOverriddenFeatureFlagsPlayload,
   SettingsSetFeatureFlagsBannerVisiblePayload,
+  SettingsSetDebugAppLevelDrawerOpenedPayload,
 } from "./types";
 import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
 
@@ -530,6 +531,14 @@ const setFeatureFlagsBannerVisibleAction =
 export const setFeatureFlagsBannerVisible = (
   featureFlagsBannerVisible: boolean,
 ) => setFeatureFlagsBannerVisibleAction({ featureFlagsBannerVisible });
+
+const setDebugAppLevelDrawerOpenedAction =
+  createAction<SettingsSetDebugAppLevelDrawerOpenedPayload>(
+    SettingsActionTypes.SET_DEBUG_APP_LEVEL_DRAWER_OPENED,
+  );
+export const setDebugAppLelevelDrawerOpened = (
+  debugAppLevelDrawerOpened: boolean,
+) => setDebugAppLevelDrawerOpenedAction({ debugAppLevelDrawerOpened });
 
 const dangerouslyOverrideStateAction =
   createAction<DangerouslyOverrideStatePayload>(

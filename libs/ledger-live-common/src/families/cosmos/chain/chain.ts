@@ -23,4 +23,5 @@ export default function cryptoFactory(currencyId: string): CosmosBase {
   } else {
     throw new Error(`${currencyId} is not supported`);
   }
+  // TODO: Currently, all cosmos currencies included setSupportedCurrencies must be supported here. We are working on a new way to support/enable new currencies
 }

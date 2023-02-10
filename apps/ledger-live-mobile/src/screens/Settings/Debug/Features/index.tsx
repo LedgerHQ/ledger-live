@@ -76,6 +76,13 @@ export default function Debugging() {
         iconLeft={<Icons.LinkMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugTermsOfUse)}
       />
+
+      <SettingsRow
+        title="Successive drawers opening/closing"
+        desc="Open and close several bottom drawers"
+        iconLeft={<Icons.LayersMedium size={32} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugQueuedDrawers)}
+      />
     </SettingsNavigationScrollView>
   );
 }

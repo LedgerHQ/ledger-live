@@ -1,11 +1,12 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { BottomDrawer, Text } from "@ledgerhq/native-ui";
+import { Text } from "@ledgerhq/native-ui";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { NavigatorName } from "../../const";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 
+import QueuedDrawer from "../../components/QueuedDrawer";
 import { track, TrackScreen } from "../../analytics";
 import AddAccountsModalCard from "./AddAccountsModalCard";
 import { BaseNavigation } from "../../components/RootNavigator/types/helpers";
@@ -67,7 +68,7 @@ export default function AddAccountsModal({
   }, [onClose]);
 
   return (
-    <BottomDrawer isOpen={isOpened} onClose={onPressClose}>
+    <QueuedDrawer isRequestingToBeOpened={isOpened} onClose={onPressClose}>
       <TrackScreen category="Add/Import accounts" type="drawer" />
       <Text variant="h4" fontWeight="semiBold" fontSize="24px" mb={2}>
         {t("addAccountsModal.title")}
@@ -98,6 +99,6 @@ export default function AddAccountsModal({
         onPress={onClickImport}
         imageSource={syncCryptoImg}
       />
-    </BottomDrawer>
+    </QueuedDrawer>
   );
 }
