@@ -1,4 +1,6 @@
-export const inAppBrowserDefaultParams = theme => {
+import { Theme } from "@ledgerhq/native-ui/styles/theme";
+
+export const inAppBrowserDefaultParams = (theme: Theme) => {
   return {
     // iOS Properties
     dismissButtonStyle: "close",
