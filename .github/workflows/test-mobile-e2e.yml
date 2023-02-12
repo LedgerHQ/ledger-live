@@ -19,6 +19,8 @@ on:
       login:
         description: The GitHub username that triggered the workflow
         required: true
+      base_ref:
+        description: The base branch to merge the head into when checking out the code
 
 # Uncomment to have log-level: trace on detox run and build
 # (cf: apps/ledger-live-mobile/detox.config.js)
@@ -26,8 +28,9 @@ on:
 #   DEBUG_DETOX: true
 
 concurrency:
-  group: ${{ github.workflow }}-${{ inputs.ref || github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'workflow_dispatch' && inputs.ref != 'develop' || github.ref_name != 'develop' }}
+  # See: https://github.com/orgs/community/discussions/35341
+  group: ${{ github.workflow }}-${{ github.event.inputs.ref || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ref != 'develop' || github.ref_name != 'develop' }}
 
 jobs:
   detox-tests-ios:
@@ -41,9 +44,10 @@ jobs:
     outputs:
       status: ${{ steps.detox.outcome }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
           ref: ${{ inputs.ref || github.ref }}
+          base: ${{ inputs.base_ref }}
       - uses: pnpm/action-setup@v2
         with:
           version: latest
@@ -231,9 +235,10 @@ jobs:
     runs-on: ubuntu-latest
     if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
     steps:
-      - uses: actions/checkout@v3
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
           ref: ${{ inputs.ref || github.ref }}
+          base: ${{ inputs.base_ref }}
       - uses: actions/github-script@v6
         name: prepare status
         id: status

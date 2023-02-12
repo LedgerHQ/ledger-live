@@ -542,6 +542,12 @@ export const WebView = ({ manifest, inputs }: Props) => {
   }, []);
 
   useEffect(() => {
+    return () => {
+      transport.current?.complete();
+    };
+  }, []);
+
+  useEffect(() => {
     serverRef.current?.setAccounts(walletAPIAccounts);
   }, [walletAPIAccounts]);
 

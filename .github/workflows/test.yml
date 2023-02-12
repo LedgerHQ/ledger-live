@@ -21,8 +21,9 @@ on:
         required: true
 
 concurrency:
-  group: ${{ github.workflow }}-${{ inputs.ref || github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'workflow_dispatch' && inputs.ref != 'develop' || github.ref_name != 'develop' }}
+  # See: https://github.com/orgs/community/discussions/35341
+  group: ${{ github.workflow }}-${{ github.event.inputs.ref || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ref != 'develop' || github.ref_name != 'develop' }}
 
 jobs:
   test-docs:
@@ -31,9 +32,10 @@ jobs:
     outputs:
       fail: ${{ steps.diff.outputs.diff }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
           ref: ${{ inputs.ref || github.ref }}
+          base: ${{ inputs.since_branch }}
       - uses: pnpm/action-setup@v2
         with:
           version: latest
@@ -60,9 +62,10 @@ jobs:
       fail: ${{ steps.diff.outputs.diff }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
           ref: ${{ inputs.ref || github.ref }}
+          base: ${{ inputs.since_branch }}
       - uses: pnpm/action-setup@v2
         with:
           version: latest
@@ -100,9 +103,10 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
           ref: ${{ inputs.ref || github.ref }}
+          base: ${{ inputs.since_branch }}
           fetch-depth: 0
       - uses: pnpm/action-setup@v2
         with:
