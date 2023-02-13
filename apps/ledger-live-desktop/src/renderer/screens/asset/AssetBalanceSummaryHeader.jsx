@@ -212,7 +212,7 @@ export default function AssetBalanceSummaryHeader({
         )}
 
         {availableOnStake && (
-          <Button variant="color" onClick={onStake}>
+          <Button variant="color" onClick={onStake} data-test-id="asset-page-stake-button">
             {t("accounts.contextMenu.stake")}
           </Button>
         )}

@@ -253,6 +253,7 @@ export function SideDrawer({
               <DrawerBackdrop
                 state={state}
                 onClick={preventBackdropClick ? undefined : onRequestClose}
+                data-test-id="drawer-overlay"
               />
             </DrawerContainer>
           )}

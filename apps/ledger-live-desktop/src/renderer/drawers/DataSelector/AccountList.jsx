@@ -76,6 +76,7 @@ export function AccountList({ currency, onAccountSelect, accounts$ }: Props) {
           <RowContainer
             key={account.id}
             id={`account-${accountCurrency.name}-${index}`}
+            data-test-id={`account-${accountCurrency.name.toLowerCase()}-${index}`}
             onClick={() => {
               if (subAccount) {
                 onAccountSelect(subAccount, account);
