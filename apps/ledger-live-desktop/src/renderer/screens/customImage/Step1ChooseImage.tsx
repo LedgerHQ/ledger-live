@@ -4,21 +4,24 @@ import { NFTMetadata } from "@ledgerhq/types-live";
 import { getMetadataMediaTypes } from "~/helpers/nft";
 import { ImageBase64Data } from "~/renderer/components/CustomImage/types";
 import ImportImage from "~/renderer/components/CustomImage/ImportImage";
-import ImportNFT from "~/renderer/components/CustomImage/ImportNFT";
+import ImportNFTButton from "~/renderer/components/CustomImage/ImportNFTButton";
 import NFTGallerySelector from "~/renderer/components/CustomImage/NFTGallerySelector";
 import { StepProps } from "./types";
 import StepContainer from "./StepContainer";
-import { Box } from "@ledgerhq/react-ui";
+import { Flex } from "@ledgerhq/react-ui";
 import StepFooter from "./StepFooter";
 import {
   ImageLoadFromNftError,
   ImageDownloadError,
 } from "@ledgerhq/live-common/customImage/errors";
 import { urlContentToDataUri } from "~/renderer/components/CustomImage/shared";
+import { useIsMounted } from "~/renderer/hooks/useIsMounted";
 
 type Props = StepProps & {
   onResult: (res: ImageBase64Data) => void;
   setLoading: (_: boolean) => void;
+  isShowingNftGallery?: boolean;
+  setIsShowingNftGallery: (_: boolean) => void;
 };
 
 const defaultMediaTypes = ["original", "big", "preview"];
@@ -34,33 +37,53 @@ const extractNftBase64 = (metadata: NFTMetadata) => {
 };
 
 const StepChooseImage: React.FC<Props> = props => {
-  const { setLoading, onResult, onError } = props;
+  const { setLoading, onResult, onError, isShowingNftGallery, setIsShowingNftGallery } = props;
+  const isMounted = useIsMounted();
   const { t } = useTranslation();
 
-  const [isShowingNftGallery, setIsShowingNftGallery] = useState<boolean>(false);
-  const [currentBase64, setCurrentBase64] = useState<ImageBase64Data | null>(null);
+  const [selectedNftId, setSelectedNftId] = useState<string>();
+  const [selectedNftBase64Data, setSelectedNftBase64] = useState<ImageBase64Data | null>(null);
 
   const handleClickNext = useCallback(() => {
-    if (!currentBase64) {
+    if (!selectedNftBase64Data) {
       onError(new ImageLoadFromNftError());
-    } else onResult(currentBase64);
-  }, [currentBase64, onError, onResult]);
+    } else onResult(selectedNftBase64Data);
+  }, [selectedNftBase64Data, onError, onResult]);
 
   const handleClickPrevious = useCallback(() => {
-    setCurrentBase64(null);
+    setSelectedNftBase64(null);
+    setSelectedNftId(undefined);
     setIsShowingNftGallery(false);
-  }, []);
+  }, [setIsShowingNftGallery]);
 
   const handlePickNft = useCallback(
-    (nftMetadata: NFTMetadata) => {
+    (id: string, nftMetadata: NFTMetadata) => {
+      if (selectedNftId === id) {
+        setSelectedNftId(undefined);
+        setSelectedNftBase64(null);
+        return;
+      } else if (selectedNftId) {
+        setSelectedNftBase64(null);
+      }
+      setSelectedNftId(id);
       const uri = extractNftBase64(nftMetadata);
+      const t1 = Date.now();
       urlContentToDataUri(uri)
-        .then(res => setCurrentBase64({ imageBase64DataUri: res as string }))
+        .then(res => {
+          /**
+           * virtual delay to ensure showing loading state at least 400ms so
+           * it doesn't look glitchy if it's too fast
+           */
+          setTimeout(() => {
+            if (!isMounted()) return;
+            setSelectedNftBase64({ imageBase64DataUri: res as string });
+          }, Math.max(0, 400 - (Date.now() - t1)));
+        })
         .catch(() => {
           onError(new ImageDownloadError());
         });
     },
-    [onError],
+    [isMounted, onError, selectedNftId],
   );
 
   return (
@@ -68,25 +91,25 @@ const StepChooseImage: React.FC<Props> = props => {
       footer={
         isShowingNftGallery ? (
           <StepFooter
-            nextDisabled={!currentBase64}
+            nextDisabled={!selectedNftBase64Data}
+            nextLoading={Boolean(selectedNftId && !selectedNftBase64Data)}
             nextLabel={t("customImage.steps.choose.selectNft")}
-            previousLabel={t("customImage.steps.choose.previousSelectNft")}
+            previousLabel={t("common.previous")}
             onClickNext={handleClickNext}
             onClickPrevious={handleClickPrevious}
-            nextTestId="custom-image-select-nft-button"
+            previousTestId="custom-image-nft-previous-button"
+            nextTestId="custom-image-nft-continue-button"
           />
         ) : null
       }
     >
       {!isShowingNftGallery ? (
-        <>
+        <Flex flexDirection="column" rowGap={6} px={12}>
           <ImportImage setLoading={setLoading} onResult={onResult} onError={onError} />
-          <Box mt={6} onClick={() => setIsShowingNftGallery(true)}>
-            <ImportNFT />
-          </Box>
-        </>
+          <ImportNFTButton onClick={() => setIsShowingNftGallery(true)} />
+        </Flex>
       ) : (
-        <NFTGallerySelector handlePickNft={handlePickNft} />
+        <NFTGallerySelector handlePickNft={handlePickNft} selectedNftId={selectedNftId} />
       )}
     </StepContainer>
   );

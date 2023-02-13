@@ -21,7 +21,6 @@ const ImageInput = styled.input.attrs({
   title: "",
   value: "",
 })`
-  cursor: pointer;
   position: absolute;
   top: 0;
   bottom: 0;
