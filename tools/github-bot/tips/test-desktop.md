@@ -19,7 +19,7 @@ LLD is tested on Linux, macOS, and Windows, and some errors may only occur on a 
 The LLD test process consists of the following actions that are performed (in a nutshell):
 
 - **Unit testing**
-  - Checkout the repository
+  - Checkout the repository. ℹ️ For pull requests, it does a checkout of the branch targeted by the pull request, merges the pull request branch into it and then runs the tests from that merge commit. It does NOT run at the HEAD commit of the pull request branch. So if you have different results locally make sure to checkout, fetch and pull the target branch and rebase your branch onto it.
   - Install the system dependencies
   - Install the javascript dependencies
   - Build the dependencies of LLD from source
