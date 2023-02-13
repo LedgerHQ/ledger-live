@@ -64,13 +64,17 @@ export function useWalletAPIAccounts(
 }
 
 export function useWalletAPICurrencies(): WalletAPICurrency[] {
-  return useMemo(
-    () =>
-      listCurrencies(true)
-        .filter(isWalletAPISupportedCurrency)
-        .map(currencyToWalletAPICurrency),
-    []
-  );
+  return useMemo(() => {
+    return listCurrencies(true).reduce<WalletAPICurrency[]>(
+      (filtered, currency) => {
+        if (isWalletAPISupportedCurrency(currency)) {
+          filtered.push(currencyToWalletAPICurrency(currency));
+        }
+        return filtered;
+      },
+      []
+    );
+  }, []);
 }
 
 export function useGetAccountIds(
