@@ -1399,7 +1399,7 @@
         "label" : "beliebt"
       },
       "earn" : {
-        "title" : "Verdienen",
+        "title" : "Staken",
         "description" : "Vermehren Sie Ihre Kryptowährungen mit Ledger"
       }
     }
@@ -5593,6 +5593,13 @@
       "descriptionWithProductName" : "Sie müssen Ihr {{ productName }} zuerst einrichten.\nWir führen Sie durch den Einrichtungsprozess.",
       "goToOnboardingButton" : "Mein Gerät einrichten",
       "goToOnboardingButtonWithProductName" : "Mein {{ productName }} einrichten"
+    },
+    "EtherscanAPIError" : {
+      "title" : "Abruf der Transaktionen fehlgeschlagen",
+      "description" : "Bei den Explorern ist ein unerwarteter Fehler aufgetreten. Versuchen Sie es bitte später noch einmal"
+    },
+    "GasEstimationError" : {
+      "title" : "Gasgebührenschätzung fehlgeschlagen"
     }
   },
   "cryptoOrg" : {
