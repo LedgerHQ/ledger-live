@@ -8,6 +8,7 @@ import { TrackScreen } from "../../analytics";
 import { CryptopanicNewsWithMetadata } from "../../hooks/newsfeed/cryptopanicApi";
 import FormatDate from "../../components/FormatDate";
 import { inAppBrowserDefaultParams } from "../../components/InAppBrowser";
+import { useLocale } from "../../context/Locale";
 
 const keyExtractor = (item: CryptopanicNewsWithMetadata) => item.slug;
 
@@ -73,6 +74,9 @@ function NewsfeedPage() {
   const theme = useTheme();
   const { colors } = theme;
   const inApppBrowserParams = inAppBrowserDefaultParams(theme);
+  const locale = useLocale();
+
+  console.log(locale.locale);
 
   // logic to move to the hook
   const onClickItem = useCallback(

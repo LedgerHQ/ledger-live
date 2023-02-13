@@ -1,19 +1,23 @@
-type CryptopanicAvailableRegions =
-  | "en"
-  | "de"
-  | "nl"
-  | "es"
-  | "fr"
-  | "it"
-  | "pt"
-  | "ru";
+export const cryptopanicAvailableRegions = [
+  "en",
+  "de",
+  "nl",
+  "es",
+  "fr",
+  "it",
+  "pt",
+  "ru",
+] as const;
+
+export type CryptopanicAvailableRegionsType =
+  typeof cryptopanicAvailableRegions[number];
 
 export type CryptopanicNews = {
   kind: "news";
   domain: string;
   source: {
     title: string;
-    region: CryptopanicAvailableRegions;
+    region: CryptopanicAvailableRegionsType;
     domain: string;
     path: string | null;
   };
@@ -59,7 +63,7 @@ export type CryptopanicGetParams = {
     | "lol";
   public?: boolean;
   currencies?: [string];
-  regions?: [CryptopanicAvailableRegions];
+  regions?: [CryptopanicAvailableRegionsType];
   metadata?: boolean;
   approved?: boolean;
   page?: number;
