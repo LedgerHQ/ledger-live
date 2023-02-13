@@ -38,6 +38,8 @@ describe("prepareSignTransaction", () => {
       recipient: "0x0123456",
       subAccountId: "ethereumjs:2:ethereum:0x022:",
       useAllAmount: false,
+      maxFeePerGas: null,
+      maxPriorityFeePerGas: null,
     };
 
     // When
@@ -57,7 +59,6 @@ describe("prepareSignTransaction", () => {
 // *** UTIL FUNCTIONS ***
 function createEtherumTransaction(): PlatformTransaction {
   return {
-    // @ts-expect-error SDK does not expose the right type here
     family: "ethereum",
     amount: new BigNumber("1000"),
     recipient: "0x0123456",
