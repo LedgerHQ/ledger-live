@@ -51,7 +51,7 @@ export function pickSiblings(siblings: Account[], maxAccount = 5): Account {
   return maybeAccount;
 }
 
-export type State<T extends TransactionCommon> = {
+type State<T extends TransactionCommon> = {
   finalState: boolean;
   stepTitle: string;
   stepValue: string;
@@ -98,7 +98,7 @@ export function deviceActionFlow<T extends TransactionCommon>(
       arg.appCandidate.model === "nanoS",
       "FIXME: stepper logic is only implemented for Nano S"
     );
-    const { transport, event, state } = arg;
+    const { transport, event, state, disableStrictStepValueValidation } = arg;
     let { finalState, stepTitle, stepValue, acc, currentStep } = state || {
       finalState: false,
       stepTitle: "",
@@ -117,7 +117,7 @@ export function deviceActionFlow<T extends TransactionCommon>(
           const stepValueTransform =
             currentStep.stepValueTransform || stepValueTransformDefault;
 
-          if (!ignoreAssertionFailure) {
+          if (!ignoreAssertionFailure && !disableStrictStepValueValidation) {
             botTest("deviceAction confirm step '" + stepTitle + "'", () =>
               expect({
                 [stepTitle]: stepValueTransform(stepValue),
