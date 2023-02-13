@@ -15,7 +15,7 @@ _Note: you should always navigate to the workflow run page linked above to get a
 The test process consists of the following tasks that are performed in parallel (in a nutshell):
 
 - **Library tests** (On macOS and linux - windows is disabled for the moment)
-  - Checkout the repository. ℹ️ For pull requests, it does a checkout of the branch targeted by the pull request, merges the pull request branch into it and then runs the tests from that merge commit. It does NOT run at the HEAD commit of the pull request branch. So if you have different results locally make sure to checkout, fetch and pull the target branch and rebase your branch onto it.
+  - Checkout the repository. ℹ️ For pull requests, it does a checkout of the branch targeted by the pull request, merges the pull request branch into it and then runs the workflow from that merge commit. It does NOT run at the HEAD commit of the pull request branch. So if you have different results locally make sure to checkout, fetch and pull the target branch and rebase your branch onto it.
   - Install the system dependencies
   - Install the javascript dependencies
   - Build affected libraries and their workspace dependencies.
