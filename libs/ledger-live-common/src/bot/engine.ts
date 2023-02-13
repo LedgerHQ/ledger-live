@@ -56,7 +56,7 @@ import type {
   TransactionCommon,
 } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "../generated/types";
-import { botTest } from "./bot-test-context";
+import { botTest } from "@ledgerhq/coin-framework/bot/bot-test-context";
 import { retryWithDelay } from "../rxjs/operators/retryWithDelay";
 
 let appCandidates;

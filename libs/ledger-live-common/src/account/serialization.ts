@@ -14,7 +14,7 @@ import {
 import {
   toPolkadotResourcesRaw,
   fromPolkadotResourcesRaw,
-} from "../families/polkadot/serialization";
+} from "@ledgerhq/coin-polkadot/serialization";
 import {
   toTezosResourcesRaw,
   fromTezosResourcesRaw,
@@ -43,14 +43,14 @@ import {
   getTokenById,
   findTokenById,
 } from "../currencies";
-import { inferFamilyFromAccountId } from "./accountId";
+import { inferFamilyFromAccountId } from "./index";
 import accountByFamily from "../generated/account";
 import { isAccountEmpty } from "./helpers";
 import type { SwapOperation, SwapOperationRaw } from "../exchange/swap/types";
 import {
   emptyHistoryCache,
   generateHistoryFromOperations,
-} from "./balanceHistoryCache";
+} from "@ledgerhq/coin-framework/account/balanceHistoryCache";
 import {
   fromCardanoResourceRaw,
   toCardanoResourceRaw,
@@ -74,12 +74,16 @@ import type {
   TokenAccount,
   TokenAccountRaw,
 } from "@ledgerhq/types-live";
+import {
+  toOperationRaw as commonToOperationRaw,
+  fromOperationRaw as commonFromOperationRaw,
+} from "@ledgerhq/coin-framework/account/serialization";
 import { CosmosAccount, CosmosAccountRaw } from "../families/cosmos/types";
 import { BitcoinAccount, BitcoinAccountRaw } from "../families/bitcoin/types";
 import {
   PolkadotAccount,
   PolkadotAccountRaw,
-} from "../families/polkadot/types";
+} from "@ledgerhq/coin-polkadot/types";
 import { ElrondAccount, ElrondAccountRaw } from "../families/elrond/types";
 import {
   CryptoOrgAccount,
@@ -112,36 +116,18 @@ export function fromBalanceHistoryRaw(b: BalanceHistoryRaw): BalanceHistory {
   }));
 }
 export const toOperationRaw = (
-  {
-    date,
-    value,
-    fee,
-    subOperations,
-    internalOperations,
-    nftOperations,
-    extra,
-    id,
-    hash,
-    type,
-    senders,
-    recipients,
-    blockHeight,
-    blockHash,
-    transactionSequenceNumber,
-    accountId,
-    hasFailed,
-    contract,
-    operator,
-    standard,
-    tokenId,
-    transactionRaw,
-  }: Operation,
+  operation: Operation,
   preserveSubOperation?: boolean
 ): OperationRaw => {
-  let e = extra;
+  const copy: OperationRaw = commonToOperationRaw(
+    operation,
+    preserveSubOperation
+  );
+
+  let e = copy.extra;
 
   if (e) {
-    const family = inferFamilyFromAccountId(accountId);
+    const family = inferFamilyFromAccountId(copy.accountId);
 
     if (family) {
       const abf = accountByFamily[family];
@@ -152,110 +138,27 @@ export const toOperationRaw = (
     }
   }
 
-  const copy: OperationRaw = {
-    id,
-    hash,
-    type,
-    senders,
-    recipients,
-    accountId,
-    blockHash,
-    blockHeight,
+  return {
+    ...copy,
     extra: e,
-    date: date.toISOString(),
-    value: value.toFixed(),
-    fee: fee.toString(),
-    contract,
-    operator,
-    standard,
-    tokenId,
   };
-
-  if (transactionSequenceNumber !== undefined) {
-    copy.transactionSequenceNumber = transactionSequenceNumber;
-  }
-
-  if (hasFailed !== undefined) {
-    copy.hasFailed = hasFailed;
-  }
-
-  if (subOperations && preserveSubOperation) {
-    copy.subOperations = subOperations.map((o) => toOperationRaw(o));
-  }
-
-  if (internalOperations) {
-    copy.internalOperations = internalOperations.map((o) => toOperationRaw(o));
-  }
-
-  if (nftOperations) {
-    copy.nftOperations = nftOperations.map((o) => toOperationRaw(o));
-  }
-
-  if (transactionRaw !== undefined) {
-    copy.transactionRaw = transactionRaw;
-  }
-
-  return copy;
 };
-export const inferSubOperations = (
-  txHash: string,
-  subAccounts: SubAccount[]
-): Operation[] => {
-  const all: Operation[] = [];
-
-  for (let i = 0; i < subAccounts.length; i++) {
-    const ta = subAccounts[i];
-
-    for (let j = 0; j < ta.operations.length; j++) {
-      const op = ta.operations[j];
-
-      if (op.hash === txHash) {
-        all.push(op);
-      }
-    }
-
-    for (let j = 0; j < ta.pendingOperations.length; j++) {
-      const op = ta.pendingOperations[j];
-
-      if (op.hash === txHash) {
-        all.push(op);
-      }
-    }
-  }
-
-  return all;
-};
+export { inferSubOperations } from "@ledgerhq/coin-framework/account/serialization";
 export const fromOperationRaw = (
-  {
-    date,
-    value,
-    fee,
-    extra,
-    subOperations,
-    internalOperations,
-    nftOperations,
-    id,
-    hash,
-    type,
-    senders,
-    recipients,
-    blockHeight,
-    blockHash,
-    transactionSequenceNumber,
-    hasFailed,
-    contract,
-    operator,
-    standard,
-    tokenId,
-    transactionRaw,
-  }: OperationRaw,
+  operation: OperationRaw,
   accountId: string,
   subAccounts?: SubAccount[] | null | undefined
 ): Operation => {
-  let e = extra;
+  const res: Operation = commonFromOperationRaw(
+    operation,
+    accountId,
+    subAccounts
+  );
+
+  let e = res.extra;
 
   if (e) {
-    const family = inferFamilyFromAccountId(accountId);
+    const family = inferFamilyFromAccountId(res.accountId);
 
     if (family) {
       const abf = accountByFamily[family];
@@ -266,60 +169,11 @@ export const fromOperationRaw = (
     }
   }
 
-  const res: Operation = {
-    id,
-    hash,
-    type,
-    senders,
-    recipients,
-    accountId,
-    blockHash,
-    blockHeight,
-    date: new Date(date),
-    value: new BigNumber(value),
-    fee: new BigNumber(fee),
+  return {
+    ...res,
     extra: e || {},
-    contract,
-    operator,
-    standard,
-    tokenId,
   };
-
-  if (transactionSequenceNumber !== undefined) {
-    res.transactionSequenceNumber = transactionSequenceNumber;
-  }
-
-  if (hasFailed !== undefined) {
-    res.hasFailed = hasFailed;
-  }
-
-  if (subAccounts) {
-    res.subOperations = inferSubOperations(hash, subAccounts);
-  } else if (subOperations) {
-    res.subOperations = subOperations.map((o) =>
-      fromOperationRaw(o, o.accountId)
-    );
-  }
-
-  if (internalOperations) {
-    res.internalOperations = internalOperations.map((o) =>
-      fromOperationRaw(o, o.accountId)
-    );
-  }
-
-  if (nftOperations) {
-    res.nftOperations = nftOperations.map((o) =>
-      fromOperationRaw(o, o.accountId)
-    );
-  }
-
-  if (transactionRaw !== undefined) {
-    res.transactionRaw = transactionRaw;
-  }
-
-  return res;
 };
-
 export function fromSwapOperationRaw(raw: SwapOperationRaw): SwapOperation {
   const { fromAmount, toAmount } = raw;
   return {

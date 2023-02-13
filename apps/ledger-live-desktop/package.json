@@ -63,7 +63,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/wallet-api-core": "^0.11.0",
     "@ledgerhq/wallet-api-server": "^0.10.1",
-    "@polkadot/react-identicon": "2.9.13",
+    "@polkadot/react-identicon": "2.11.1",
     "@sentry/electron": "^4.1.2",
     "@sentry/node": "7.16.0",
     "@sentry/tracing": "7.16.0",
