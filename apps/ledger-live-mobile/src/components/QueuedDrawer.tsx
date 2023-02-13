@@ -173,10 +173,19 @@ const QueuedDrawer = ({
   // Handled separately to avoid calling addToWaitingDrawers or triggering useFocusEffect on every onClose changes (if not memoized).
   useEffect(() => {
     if (wasForcefullyCleaned) {
-      onClose && onClose();
       setWasForcefullyCleaned(false);
+
+      // Only call onClose if the drawer was trying to be opened
+      if (isRequestingToBeOpened || isForcingToBeOpened) {
+        onClose && onClose();
+      }
     }
-  }, [wasForcefullyCleaned, onClose]);
+  }, [
+    wasForcefullyCleaned,
+    onClose,
+    isRequestingToBeOpened,
+    isForcingToBeOpened,
+  ]);
 
   return (
     <BottomDrawer
