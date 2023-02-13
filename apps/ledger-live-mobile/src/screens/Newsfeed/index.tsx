@@ -1,13 +1,13 @@
 import { InformativeCard, Flex } from "@ledgerhq/native-ui";
-import { useNavigation } from "@react-navigation/native";
 import React, { memo, useCallback } from "react";
-import { FlatList } from "react-native";
+import { FlatList, Linking, Platform } from "react-native";
 import { TouchableHighlight } from "react-native-gesture-handler";
 import styled, { useTheme } from "styled-components/native";
+import { InAppBrowser } from "react-native-inappbrowser-reborn";
 import { TrackScreen } from "../../analytics";
-import { ScreenName } from "../../const";
 import { CryptopanicNewsWithMetadata } from "../../hooks/newsfeed/cryptopanicApi";
 import FormatDate from "../../components/FormatDate";
+import { inAppBrowserDefaultParams } from "../../components/InAppBrowser";
 
 const keyExtractor = (item: CryptopanicNewsWithMetadata) => item.slug;
 
@@ -70,17 +70,22 @@ function NewsfeedPage() {
     },
   ];
 
-  const navigation = useNavigation();
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const { colors } = theme;
+  const inApppBrowserParams = inAppBrowserDefaultParams(theme);
 
+  // logic to move to the hook
   const onClickItem = useCallback(
-    (news: CryptopanicNewsWithMetadata) => {
-      console.log("news", news);
-      navigation.navigate(ScreenName.LearnWebView, {
-        uri: news.url,
-      });
+    async (news: CryptopanicNewsWithMetadata) => {
+      if (await InAppBrowser.isAvailable()) {
+        await InAppBrowser.open(news.url, {
+          ...inApppBrowserParams,
+        });
+      } else {
+        Linking.openURL(news.url);
+      }
     },
-    [navigation],
+    [inApppBrowserParams],
   );
 
   const renderItem = useCallback(
@@ -93,7 +98,7 @@ function NewsfeedPage() {
           imageUrl={item.image}
           tag={
             <>
-              {item.source.title}{" "}•{" "}
+              {item.source.title} •{" "}
               <FormatDate date={new Date(item.published_at)} withHoursMinutes />
             </>
           }
