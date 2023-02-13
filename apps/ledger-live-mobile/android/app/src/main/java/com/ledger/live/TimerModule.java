@@ -22,7 +22,7 @@ public class TimerModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void getRelativeTime(Promise promise) {
         // System time in milliseconds
-        long time = android.os.SystemClock.uptimeMillis();
+        long time = android.os.SystemClock.elapsedRealtime();
 
         // React Native bridge complains if we try to pass back a long directly
         promise.resolve(Long.toString(time / 1000));
