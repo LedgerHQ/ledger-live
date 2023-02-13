@@ -1399,7 +1399,7 @@
         "label" : "Populares"
       },
       "earn" : {
-        "title" : "Ganhar",
+        "title" : "Aplicar",
         "description" : "Cresça suas criptos com a Ledger"
       }
     }
@@ -5593,6 +5593,13 @@
       "descriptionWithProductName" : "Você precisa configurar sua {{ productName }} primeiro.\nVamos guiar você pelo processo de configuração.",
       "goToOnboardingButton" : "Configurar meu dispositivo",
       "goToOnboardingButtonWithProductName" : "Configurar minha {{ productName }}"
+    },
+    "EtherscanAPIError" : {
+      "title" : "Falha em buscar transações",
+      "description" : "Ocorreu um erro inesperado com os exploradores. Tente novamente mais tarde"
+    },
+    "GasEstimationError" : {
+      "title" : "Falha em estimar o gás"
     }
   },
   "cryptoOrg" : {
