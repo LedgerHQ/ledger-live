@@ -17,16 +17,16 @@ import debounce from "lodash/debounce";
 import { isEqual } from "lodash";
 import { getEnv } from "@ledgerhq/live-common/env";
 
-import CurrencyUnitValue from "./CurrencyUnitValue";
-import CounterValue from "./CounterValue";
-import OperationIcon from "./OperationIcon";
-import { ScreenName } from "../const";
-import OperationRowDate from "./OperationRowDate";
-import OperationRowNftName from "./OperationRowNftName";
-import perFamilyOperationDetails from "../generated/operationDetails";
-import { track } from "../analytics";
-import { UnionToIntersection } from "../types/helpers";
-import { BaseNavigation } from "./RootNavigator/types/helpers";
+import CurrencyUnitValue from "../CurrencyUnitValue";
+import CounterValue from "../CounterValue";
+import OperationIcon from "../OperationIcon";
+import { ScreenName } from "../../const";
+import OperationRowDate from "../OperationRowDate";
+import OperationRowNftName from "../OperationRowNftName";
+import perFamilyOperationDetails from "../../generated/operationDetails";
+import { track } from "../../analytics";
+import { UnionToIntersection } from "../../types/helpers";
+import { BaseNavigation } from "../RootNavigator/types/helpers";
 
 type FamilyOperationDetailsIntersection = UnionToIntersection<
   typeof perFamilyOperationDetails[keyof typeof perFamilyOperationDetails]
