@@ -38,6 +38,9 @@ export default function DebugQueuedDrawers() {
 
   const [isNavigatingAfter3s, setIsNavigatingAfter3s] = useState(false);
 
+  const [isDrawer6AOpen, setIsDrawer6AOpen] = useState(false);
+  const [isDrawer6BOpen, setIsDrawer6BOpen] = useState(false);
+
   // Handles 4th drawer opening after x seconds
   useEffect(() => {
     let timeoutId: NodeJS.Timeout | null = null;
@@ -105,6 +108,15 @@ export default function DebugQueuedDrawers() {
   const handleDrawer5Close = useCallback(() => {
     // Updating isDrawer5ForcingToBeOpened is handled in the useEffect
     setIsDrawer5Started(false);
+  }, []);
+
+  const handleDrawer6AClose = useCallback(() => {
+    setIsDrawer6AOpen(false);
+    setIsDrawer6BOpen(true);
+  }, []);
+
+  const handleDrawer6BClose = useCallback(() => {
+    setIsDrawer6BOpen(false);
   }, []);
 
   const isDebugAppLevelDrawerOpened = useSelector(
@@ -177,7 +189,19 @@ export default function DebugQueuedDrawers() {
             checked={isDebugAppLevelDrawerOpened}
             onChange={handleDebugAppLevelDrawerOpenedChange}
             label={
-              "Open a a drawer equivalent to the notification or ratings drawer 📲"
+              "Open a drawer equivalent to the notification or ratings drawer 📲"
+            }
+          />
+        </Flex>
+        <Flex mb="6">
+          <Switch
+            checked={isDrawer6AOpen || isDrawer6BOpen}
+            onChange={val => {
+              // Only opens the 1st drawer, the 2nd one will be opened on user close
+              setIsDrawer6AOpen(val);
+            }}
+            label={
+              "Open a 1st drawer, and on user close, open a 2nd drawer after closing the 1st one. To test on iOS"
             }
           />
         </Flex>
@@ -263,6 +287,26 @@ export default function DebugQueuedDrawers() {
       >
         <Flex p="4">
           <Alert type="info" title="5th drawer forced its way up here ⚔️" />
+        </Flex>
+      </QueuedDrawer>
+
+      <QueuedDrawer
+        isRequestingToBeOpened={isDrawer6AOpen}
+        onClose={handleDrawer6AClose}
+        preventBackdropClick
+      >
+        <Flex p="4">
+          <Alert type="info" title="Drawer A" />
+        </Flex>
+      </QueuedDrawer>
+
+      <QueuedDrawer
+        isRequestingToBeOpened={isDrawer6BOpen}
+        onClose={handleDrawer6BClose}
+        preventBackdropClick
+      >
+        <Flex p="4">
+          <Alert type="info" title="Drawer B 🥳" />
         </Flex>
       </QueuedDrawer>
     </>

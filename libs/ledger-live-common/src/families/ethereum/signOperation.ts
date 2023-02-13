@@ -33,6 +33,7 @@ import {
   EIP1559ShouldBeUsed,
   toTransactionRaw,
 } from "./transaction";
+import { padHexString } from "./logic";
 
 export const signOperation = ({
   account,
@@ -85,12 +86,13 @@ export const signOperation = ({
 
               const { ethTxObject, tx, common, fillTransactionDataResult } =
                 buildEthereumTx(account, transaction, nonce);
+
               const to = eip55.encode((tx.to || "").toString());
               const value = new BigNumber(
                 "0x" + (tx.value.toString("hex") || "0")
               );
 
-              // rawData Format: `rlp([nonce, gasPrice, gasLimit, to, value, data, v, r, s])`
+              // rawData Format: type 0 `rlp([nonce, gasPrice, gasLimit, to, value, data, v, r, s])`
               // EIP1559 Format: type 2 || rlp([chainId, nonce, maxPriorityFeePerGas, maxFeePerGas, gasLimit, destination, amount, data, access_list, v, r, s])
               const txHex = (() => {
                 if (EIP1559ShouldBeUsed(account.currency)) {
@@ -98,7 +100,11 @@ export const signOperation = ({
                 }
 
                 const rawData = tx.raw();
-                rawData[6] = Buffer.from([common.chainIdBN().toNumber()]);
+                rawData[6] = Buffer.from(
+                  padHexString(common.chainIdBN().toString("hex")),
+                  "hex"
+                );
+
                 return Buffer.from(encode(rawData)).toString("hex");
               })();
 

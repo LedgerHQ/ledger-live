@@ -11,7 +11,12 @@ const PostOnboardingScreen = () => {
   const allDone = useAllPostOnboardingActionsCompleted();
 
   return (
-    <Flex flexDirection="row" width="100%" height="100%">
+    <Flex
+      flexDirection="row"
+      width="100%"
+      height="100%"
+      data-test-id="post-onboarding-hub-container"
+    >
       <Flex
         justifyContent="center"
         flex={1}
