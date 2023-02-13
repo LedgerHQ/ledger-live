@@ -391,8 +391,6 @@ const SwapForm = () => {
         pathname: providerURL,
         state: {
           returnTo: "/swap",
-        },
-        params: {
           accountId: fromAddress,
         },
       });
