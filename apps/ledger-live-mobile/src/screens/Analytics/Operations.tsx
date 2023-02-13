@@ -25,7 +25,7 @@ import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
 
 import EmptyStatePortfolio from "../Portfolio/EmptyStatePortfolio";
 import NoOpStatePortfolio from "../Portfolio/NoOpStatePortfolio";
-import OperationRow from "../../components/OperationRow";
+import OperationRow from "../../components/OperationRow/OperationRow";
 import SectionHeader from "../../components/SectionHeader";
 import LoadingFooter from "../../components/LoadingFooter";
 import Button from "../../components/Button";

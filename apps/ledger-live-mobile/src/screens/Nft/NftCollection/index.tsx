@@ -25,7 +25,7 @@ import NoMoreOperationFooter from "../../../components/NoMoreOperationFooter";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import LoadingFooter from "../../../components/LoadingFooter";
 import SectionHeader from "../../../components/SectionHeader";
-import OperationRow from "../../../components/OperationRow";
+import OperationRow from "../../../components/OperationRow/OperationRow";
 import { NavigatorName, ScreenName } from "../../../const";
 import NftCard from "../../../components/Nft/NftCard";
 import Button from "../../../components/Button";

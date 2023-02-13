@@ -13,7 +13,7 @@ import { ScreenName } from "../../../const";
 import { useFlattenSortAccounts } from "../../../actions/general";
 import TrackScreen from "../../../analytics/TrackScreen";
 import EmptyState from "../shared/EmptyState";
-import OperationRow from "../../../components/OperationRow";
+import OperationRow from "../../../components/OperationRow/OperationRow";
 import SectionHeader from "../../../components/SectionHeader";
 import NoMoreOperationFooter from "../../../components/NoMoreOperationFooter";
 import LoadingFooter from "../../../components/LoadingFooter";

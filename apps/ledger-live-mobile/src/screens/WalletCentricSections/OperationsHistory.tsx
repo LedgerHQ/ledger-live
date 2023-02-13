@@ -11,7 +11,7 @@ import {
   Operation,
   SubAccount,
 } from "@ledgerhq/types-live";
-import OperationRow from "../../components/OperationRow";
+import OperationRow from "../../components/OperationRow/OperationRow";
 import SectionHeader from "../../components/SectionHeader";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import { ScreenName } from "../../const";

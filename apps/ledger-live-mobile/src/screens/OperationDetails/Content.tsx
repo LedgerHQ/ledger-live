@@ -32,7 +32,7 @@ import { getEnv } from "@ledgerhq/live-common/env";
 import { NavigatorName, ScreenName } from "../../const";
 import LText from "../../components/LText";
 import OperationIcon from "../../components/OperationIcon";
-import OperationRow from "../../components/OperationRow";
+import OperationRow from "../../components/OperationRow/OperationRow";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
 import Touchable from "../../components/Touchable";
