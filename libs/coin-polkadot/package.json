@@ -43,10 +43,6 @@
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },
-    ".": {
-      "require": "./lib/index.js",
-      "default": "./lib-es/index.js"
-    },
     "./package.json": "./package.json"
   },
   "license": "Apache-2.0",
@@ -97,4 +93,3 @@
   },
   "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec"
 }
-

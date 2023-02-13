@@ -9,11 +9,8 @@ import { withDevice } from "../hw/deviceAccess";
 import { Account, CurrencyBridge } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
 import Transport from "@ledgerhq/hw-transport";
-import {
-  GetAddressOptions,
-  Result,
-} from "@ledgerhq/coin-framework/lib/derivation";
-import { Resolver } from "@ledgerhq/coin-framework/lib/bridge/getAddressWrapper";
+import { GetAddressOptions, Result } from "@ledgerhq/coin-framework/derivation";
+import { Resolver } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 
 export {
   AccountShapeInfo as GetAccountShapeArg0,

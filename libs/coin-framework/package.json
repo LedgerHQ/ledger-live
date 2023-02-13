@@ -50,10 +50,6 @@
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },
-    ".": {
-      "require": "./lib/index.js",
-      "default": "./lib-es/index.js"
-    },
     "./package.json": "./package.json"
   },
   "files": [
@@ -115,4 +111,3 @@
     "test": "cross-env TZ=America/New_York jest"
   }
 }
-
