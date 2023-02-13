@@ -19,12 +19,10 @@ import {
   fromCosmosResourcesRaw,
   fromBitcoinResourcesRaw,
   fromPolkadotResourcesRaw,
-  fromElrondResourcesRaw,
   fromCryptoOrgResourcesRaw,
   fromNFTRaw,
   toCosmosResourcesRaw,
   toPolkadotResourcesRaw,
-  toElrondResourcesRaw,
   toCryptoOrgResourcesRaw,
 } from "./account";
 import consoleWarnExpectToEqual from "./consoleWarnExpectToEqual";
@@ -34,7 +32,6 @@ import {
   CryptoOrgAccount,
   CryptoOrgAccountRaw,
 } from "./families/crypto_org/types";
-import { ElrondAccount, ElrondAccountRaw } from "./families/elrond/types";
 import { PolkadotAccount, PolkadotAccountRaw } from "./families/polkadot/types";
 import { getAccountBridge } from "./bridge";
 
@@ -326,24 +323,6 @@ export function patchAccount(
       ) {
         (next as PolkadotAccount).polkadotResources = fromPolkadotResourcesRaw(
           polkadotUpdatedRaw.polkadotResources
-        );
-        changed = true;
-      }
-      break;
-    }
-    case "elrond": {
-      const elrondAcc = account as ElrondAccount;
-      const elrondUpdatedRaw = updatedRaw as ElrondAccountRaw;
-      if (
-        elrondUpdatedRaw.elrondResources &&
-        (!elrondAcc.elrondResources ||
-          !areSameResources(
-            toElrondResourcesRaw(elrondAcc.elrondResources),
-            elrondUpdatedRaw.elrondResources
-          ))
-      ) {
-        (next as ElrondAccount).elrondResources = fromElrondResourcesRaw(
-          elrondUpdatedRaw.elrondResources
         );
         changed = true;
       }

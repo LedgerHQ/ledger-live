@@ -12,10 +12,6 @@ import {
   fromPolkadotResourcesRaw,
 } from "@ledgerhq/coin-polkadot/serialization";
 import {
-  toElrondResourcesRaw,
-  fromElrondResourcesRaw,
-} from "../families/elrond/serialization";
-import {
   toCryptoOrgResourcesRaw,
   fromCryptoOrgResourcesRaw,
 } from "../families/crypto_org/serialization";
@@ -65,7 +61,6 @@ import {
   PolkadotAccount,
   PolkadotAccountRaw,
 } from "@ledgerhq/coin-polkadot/types";
-import { ElrondAccount, ElrondAccountRaw } from "../families/elrond/types";
 import {
   CryptoOrgAccount,
   CryptoOrgAccountRaw,
@@ -75,7 +70,6 @@ import { getAccountBridge } from "../bridge";
 export { toCosmosResourcesRaw, fromCosmosResourcesRaw };
 export { toBitcoinResourcesRaw, fromBitcoinResourcesRaw };
 export { toPolkadotResourcesRaw, fromPolkadotResourcesRaw };
-export { toElrondResourcesRaw, fromElrondResourcesRaw };
 export { toCryptoOrgResourcesRaw, fromCryptoOrgResourcesRaw };
 export { toCardanoResourceRaw, fromCardanoResourceRaw };
 
@@ -492,14 +486,6 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
           fromPolkadotResourcesRaw(polkadotResourcesRaw);
       break;
     }
-    case "elrond": {
-      const elrondResourcesRaw = (rawAccount as ElrondAccountRaw)
-        .elrondResources;
-      if (elrondResourcesRaw)
-        (res as ElrondAccount).elrondResources =
-          fromElrondResourcesRaw(elrondResourcesRaw);
-      break;
-    }
     case "crypto_org": {
       const cryptoOrgResourcesRaw = (rawAccount as CryptoOrgAccountRaw)
         .cryptoOrgResources;
@@ -618,15 +604,6 @@ export function toAccountRaw(account: Account): AccountRaw {
       if (polkadotAccount.polkadotResources) {
         (res as PolkadotAccountRaw).polkadotResources = toPolkadotResourcesRaw(
           polkadotAccount.polkadotResources
-        );
-      }
-      break;
-    }
-    case "elrond": {
-      const elrondAccount = account as ElrondAccount;
-      if (elrondAccount.elrondResources) {
-        (res as ElrondAccountRaw).elrondResources = toElrondResourcesRaw(
-          elrondAccount.elrondResources
         );
       }
       break;
