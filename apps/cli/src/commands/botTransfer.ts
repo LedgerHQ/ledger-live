@@ -32,21 +32,35 @@ import {
   initialState,
   loadCountervalues,
 } from "@ledgerhq/live-common/countervalues/logic";
-import type { Account } from "@ledgerhq/types-live";
+import { Account, TransactionCommon } from "@ledgerhq/types-live";
 import { AppSpec } from "@ledgerhq/live-common/lib/bot/types";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
-const CONCURRENT = 3;
+const CONCURRENT = parseInt(process.env.CONCURRENCY || "2", 10);
+const ONLY_CURRENCIES = process.env.ONLY_CURRENCIES
+  ? process.env.ONLY_CURRENCIES.split(",")
+      .map((c) => c.trim())
+      .filter(Boolean)
+  : null;
 
 // TODO improve botTransfer by only using "allSpecs" and introduce a "transferMutation" in the specs for all spec to define how to transfer funds out (as well as UNDELEGATING funds)
 
-function getImplicitDeviceAction(currency) {
+function getImplicitDeviceAction(currency, forSubAccount) {
   for (const k in allSpecs) {
-    const spec: AppSpec<any> = allSpecs[k];
-    if (spec.currency === currency) {
-      return spec.genericDeviceAction;
+    const familySpec = allSpecs[k];
+    for (const c in familySpec) {
+      const spec: AppSpec<any> = familySpec[c];
+      if (spec.currency === currency) {
+        if (forSubAccount && spec.genericDeviceActionForSubAccountTransfers) {
+          return spec.genericDeviceActionForSubAccountTransfers;
+        }
+        return spec.genericDeviceAction;
+      }
     }
   }
 }
+
+const split = process.env.FUNDS_SPLIT && parseInt(process.env.FUNDS_SPLIT, 10);
 
 export default {
   description:
@@ -64,112 +78,101 @@ export default {
       },
     });
 
-    async function getAllRecipients() {
+    async function getAllRecipients(currencies: CryptoCurrency[]) {
       const prevSeed = getEnv("SEED");
       const { SEED_RECIPIENT } = process.env;
       setEnv("SEED", SEED_RECIPIENT);
       const recipientsPerCurrencyId: Map<string, string> = new Map();
-      await promiseAllBatched(
-        CONCURRENT,
-        listSupportedCurrencies(),
-        async (currency) => {
-          let device;
-          try {
-            const r = await createImplicitSpeculos(
-              `speculos:nanos:${currency.id}`
-            );
-            if (!r) return;
-            device = r.device;
-            await cache.prepareCurrency(currency);
-            const maybeAddress = await getCurrencyBridge(currency)
-              .scanAccounts({
-                currency,
-                deviceId: device.id,
-                syncConfig: {
-                  paginationConfig: {},
-                },
+      await promiseAllBatched(CONCURRENT, currencies, async (currency) => {
+        let device;
+        try {
+          const r = await createImplicitSpeculos(
+            `speculos:nanos:${currency.id}`
+          );
+          if (!r) return;
+          device = r.device;
+          await cache.prepareCurrency(currency);
+          const maybeAddress = await getCurrencyBridge(currency)
+            .scanAccounts({
+              currency,
+              deviceId: device.id,
+              syncConfig: {
+                paginationConfig: {},
+              },
+            })
+            .pipe(
+              filter((e) => e.type === "discovered"),
+              first(),
+              timeoutWith(
+                getEnv("BOT_TIMEOUT_SCAN_ACCOUNTS"),
+                throwError(new Error("scan account timeout"))
+              ),
+              map((e) => e.account.freshAddress),
+              catchError((err) => {
+                console.error(
+                  "couldn't infer address for a " + currency.id + " account",
+                  err
+                );
+                return of(null);
               })
-              .pipe(
-                filter((e) => e.type === "discovered"),
-                first(),
-                timeoutWith(
-                  120 * 1000,
-                  throwError(new Error("scan account timeout"))
-                ),
-                map((e) => e.account.freshAddress),
-                catchError((err) => {
-                  console.error(
-                    "couldn't infer address for a " + currency.id + " account",
-                    err
-                  );
-                  return of(null);
-                })
-              )
-              .toPromise();
-            if (maybeAddress) {
-              recipientsPerCurrencyId.set(currency.id, maybeAddress);
-            }
-          } catch (e) {
-            console.error(
-              "Something went wrong on sending on " + currency.id,
-              e
-            );
-          } finally {
-            if (device) releaseSpeculosDevice(device.id);
+            )
+            .toPromise();
+          if (maybeAddress) {
+            recipientsPerCurrencyId.set(currency.id, maybeAddress);
           }
+        } catch (e) {
+          console.error("Something went wrong on sending on " + currency.id, e);
+        } finally {
+          if (device) releaseSpeculosDevice(device.id);
         }
-      );
+      });
       setEnv("SEED", prevSeed);
       return recipientsPerCurrencyId;
     }
 
-    async function botPortfolio() {
+    async function botPortfolio(currencies: CryptoCurrency[]) {
       const accounts: Account[] = [];
-      await promiseAllBatched(
-        CONCURRENT,
-        listSupportedCurrencies(),
-        async (currency) => {
-          let device;
-          try {
-            const r = await createImplicitSpeculos(
-              `speculos:nanos:${currency.id}`
-            );
-            if (!r) return;
-            device = r.device;
-            await getCurrencyBridge(currency)
-              .scanAccounts({
-                currency,
-                deviceId: r.device.id,
-                syncConfig: {
-                  paginationConfig: {},
-                },
+      await promiseAllBatched(CONCURRENT, currencies, async (currency) => {
+        let device;
+        try {
+          const r = await createImplicitSpeculos(
+            `speculos:nanos:${currency.id}`
+          );
+          if (!r) return;
+          device = r.device;
+          await getCurrencyBridge(currency)
+            .scanAccounts({
+              currency,
+              deviceId: r.device.id,
+              syncConfig: {
+                paginationConfig: {},
+              },
+            })
+            .pipe(
+              timeoutWith(
+                getEnv("BOT_TIMEOUT_SCAN_ACCOUNTS"),
+                throwError(new Error("scan account timeout"))
+              ),
+              catchError((e) => {
+                console.error("scan accounts failed for " + currency.id, e);
+                return from([]);
+              }),
+              tap((e) => {
+                if (e.type === "discovered") {
+                  accounts.push(e.account);
+                }
               })
-              .pipe(
-                timeoutWith(
-                  200 * 1000,
-                  throwError(new Error("scan account timeout"))
-                ),
-                catchError((e) => {
-                  console.error("scan accounts failed for " + currency.id, e);
-                  return from([]);
-                }),
-                tap((e) => {
-                  if (e.type === "discovered") {
-                    accounts.push(e.account);
-                  }
-                })
-              )
-              .toPromise();
-          } catch (e) {
-            console.error(
-              "Something went wrong on portfolio of " + currency.id,
-              e
-            );
-          } finally {
-            if (device) releaseSpeculosDevice(device.id);
-          }
+            )
+            .toPromise();
+        } catch (e) {
+          console.error(
+            "Something went wrong on portfolio of " + currency.id,
+            e
+          );
+        } finally {
+          if (device) releaseSpeculosDevice(device.id);
         }
-      );
+      });
       return accounts;
     }
 
@@ -204,7 +207,7 @@ export default {
         const accountBridge = getAccountBridge(account);
 
         // TODO in case of cosmos & other funds that can be delegated, we need to also schedule these txs first..
-        const plannedTransactions: any[] = [];
+        const plannedTransactions: TransactionCommon[] = [];
 
         // FIXME better value than this arbitrary one: calc countervalues
         account.subAccounts?.forEach((subAccount) => {
@@ -219,7 +222,11 @@ export default {
                 accountBridge.createTransaction(account),
                 {
                   recipient,
-                  useAllAmount: true,
+                  ...(split && split > 1
+                    ? {
+                        amount: subAccount.balance.div(split).integerValue(),
+                      }
+                    : { useAllAmount: true }),
                   subAccountId: subAccount.id,
                 }
               )
@@ -232,7 +239,9 @@ export default {
             accountBridge.createTransaction(account),
             {
               recipient,
-              useAllAmount: true,
+              ...(split && split > 1
+                ? { amount: account.spendableBalance.div(split).integerValue() }
+                : { useAllAmount: true }),
             }
           )
         );
@@ -242,72 +251,82 @@ export default {
           const r = await createImplicitSpeculos(
             `speculos:nanos:${currency.id}`
           );
+          if (!r) {
+            console.warn(
+              "couldn't create a speculos transport for " + currency.id
+            );
+            return;
+          }
+          device = r.device;
 
           for (const tx of plannedTransactions) {
-            const transaction = await accountBridge.prepareTransaction(
-              account,
-              tx
-            );
-            const statusCommon = await accountBridge.getTransactionStatus(
-              account,
-              transaction
-            );
-
-            if (Object.keys(statusCommon.errors).length !== 0) {
-              continue;
-            }
-
-            const status = { ...statusCommon, family: transaction.family };
-
-            if (!r) {
-              console.warn(
-                "couldn't create a speculos transport for " + currency.id
+            try {
+              const deviceAction = getImplicitDeviceAction(
+                account.currency,
+                "subAccountId" in tx
               );
-              return;
-            }
-            device = r.device;
+              if (!deviceAction) {
+                throw new Error(
+                  "no spec found for currency " + account.currency.id
+                );
+              }
 
-            const deviceAction = getImplicitDeviceAction(account.currency);
-            if (!deviceAction) {
-              throw new Error(
-                "no spec found for currency " + account.currency.id
-              );
-            }
-
-            const signedOperation = await accountBridge
-              .signOperation({
+              const transaction = await accountBridge.prepareTransaction(
                 account,
-                transaction,
-                deviceId: device.id,
-              })
-              .pipe(
-                autoSignTransaction({
-                  transport: device.transport,
-                  deviceAction,
-                  appCandidate: r.appCandidate,
+                tx
+              );
+              const statusCommon = await accountBridge.getTransactionStatus(
+                account,
+                transaction
+              );
+
+              if (Object.keys(statusCommon.errors).length !== 0) {
+                continue;
+              }
+
+              const status = { ...statusCommon, family: transaction.family };
+
+              const signedOperation = await accountBridge
+                .signOperation({
                   account,
                   transaction,
-                  status,
-                }),
-                first((e: any) => e.type === "signed"),
-                map((e) => e.signedOperation)
+                  deviceId: device.id,
+                })
+                .pipe(
+                  autoSignTransaction({
+                    transport: device.transport,
+                    deviceAction,
+                    appCandidate: r.appCandidate,
+                    account,
+                    transaction,
+                    status,
+                    disableStrictStepValueValidation: true, // we transfer the funds without validating the field values
+                  }),
+                  first((e: any) => e.type === "signed"),
+                  map((e) => e.signedOperation)
+                )
+                .toPromise();
+
+              const optimisticOperation = getEnv(
+                "DISABLE_TRANSACTION_BROADCAST"
               )
-              .toPromise();
+                ? signedOperation.operation
+                : await accountBridge.broadcast({
+                    account,
+                    signedOperation,
+                  });
 
-            const optimisticOperation = getEnv("DISABLE_TRANSACTION_BROADCAST")
-              ? signedOperation.operation
-              : await accountBridge.broadcast({
-                  account,
-                  signedOperation,
-                });
-
-            console.log(formatOperation(account)(optimisticOperation));
+              console.log(formatOperation(account)(optimisticOperation));
+            } catch (e) {
+              console.error(
+                "Something went wrong on trying to send from " + account.id,
+                tx,
+                e
+              );
+            }
           }
         } catch (e) {
-          console.error(
-            "Something went wrong on sending on account " + account.id,
-            e
-          );
+          console.error("Something went wrong on account " + account.id, e);
         } finally {
           if (device) releaseSpeculosDevice(device.id);
         }
@@ -315,12 +334,17 @@ export default {
     }
 
     async function main() {
-      const recipientsPerCurrencyId = await getAllRecipients();
+      let currencies = listSupportedCurrencies();
+      if (ONLY_CURRENCIES) {
+        currencies = currencies.filter((c) => ONLY_CURRENCIES.includes(c.id));
+      }
+      currencies.sort(() => Math.random() - 0.5);
+      const recipientsPerCurrencyId = await getAllRecipients(currencies);
       console.log(
         Array.from(recipientsPerCurrencyId.keys()).length +
           " RECIPIENTS FETCHED"
       );
-      const accounts = await botPortfolio();
+      const accounts = await botPortfolio(currencies);
       console.log(`BOT PORTFOLIO FETCHED ${accounts.length} accounts`);
       await sendAllFunds(accounts, recipientsPerCurrencyId);
     }
