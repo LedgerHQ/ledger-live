@@ -3,16 +3,22 @@ import { Alert, Flex, Link, Text } from "@ledgerhq/react-ui";
 import Button from "~/renderer/components/ButtonV3";
 import { openURL } from "~/renderer/linking";
 
-export type BannerProps = {
-  title: string;
-  linkText?: string;
-  linkUrl?: string;
-  description: string;
-  cta: string;
-  onClick: () => void;
-};
+export type BannerProps =
+  | {
+      title: string;
+      linkText?: string;
+      linkUrl?: string;
+      description: string;
+      cta: string;
+      onClick: () => void;
+      display: true;
+    }
+  | { display: false };
 
-const AccountBanner = ({ title, description, cta, onClick, linkUrl, linkText }: BannerProps) => {
+const AccountBanner = (props: BannerProps) => {
+  if (!props.display) return null;
+  const { title, linkText, linkUrl, description, cta, onClick } = props;
+
   return (
     <Alert
       type="info"

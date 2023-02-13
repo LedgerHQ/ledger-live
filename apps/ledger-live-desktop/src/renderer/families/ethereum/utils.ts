@@ -3,6 +3,7 @@ import { Account } from "@ledgerhq/types-live";
 import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { Hooks } from "~/renderer/screens/account/useGetBannerProps";
+import { BannerProps } from "~/renderer/screens/account/AccountBanner";
 
 const kilnAppId = "kiln";
 const lidoAppId = "lido";
@@ -10,9 +11,12 @@ const lidoAppId = "lido";
 const getAccountBannerProps = (
   state: AccountBannerState,
   account: Account,
-  { t, ethStakingProviders, history }: Hooks,
-) => {
+  { t, ethStakingProviders, history, stakeAccountBannerParams }: Hooks,
+): BannerProps | { display: false } => {
   const { stakeProvider } = state;
+
+  if (stakeProvider === "lido" && !stakeAccountBannerParams?.eth?.lido) return { display: false };
+  if (stakeProvider === "kiln" && !stakeAccountBannerParams?.eth?.kiln) return { display: false };
 
   const stakeOnClick = (providerLiveAppId: string) => {
     track("button_clicked", {
