@@ -107,3 +107,6 @@ allure-results/
 
 # temp directory
 /temp
+
+# coverage
+coverage/
