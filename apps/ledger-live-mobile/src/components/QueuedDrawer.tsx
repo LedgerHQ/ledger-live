@@ -180,12 +180,10 @@ const QueuedDrawer = ({
         onClose && onClose();
       }
     }
-  }, [
-    wasForcefullyCleaned,
-    onClose,
-    isRequestingToBeOpened,
-    isForcingToBeOpened,
-  ]);
+    // Only needs to be triggered when wasForcefullyCleaned is set to true.
+    // Avoids triggering when isRequestingToBeOpened or isForcingToBeOpened change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wasForcefullyCleaned, onClose]);
 
   return (
     <BottomDrawer
