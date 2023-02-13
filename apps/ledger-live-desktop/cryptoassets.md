@@ -3956,7 +3956,7 @@
 | Ethereum | IIC | 0x16662F73dF3e79e54c6c5938b4313f92C524C120 | IIC | countervalues disabled | ethereum/erc20/iic |
 | Ethereum | IKB | 0x88AE96845e157558ef59e9Ff90E766E22E480390 | IKB |  | ethereum/erc20/ikb |
 | Ethereum | IKOMP | 0x6a625DDb2e2A2de0257C5129364dd80Bb4AfA3B9 | IKOMP |  | ethereum/erc20/ikomp |
-| Ethereum | IMPT | 0x04C17b9D3b29A78F7Bd062a57CF44FC633e71f85 | IMPT | countervalues disabled | ethereum/erc20/impt |
+| Ethereum | IMPT | 0x04C17b9D3b29A78F7Bd062a57CF44FC633e71f85 | IMPT |  | ethereum/erc20/impt |
 | Ethereum | I7 | 0x560cC7De81B2A594F6518713cBE122bCF297A6E8 | IMPULSEVEN |  | ethereum/erc20/impulseven |
 | Ethereum | IMSMART | 0xBfE03707aDb75b478Add9A01978057803F480E44 | IMSMART |  | ethereum/erc20/imsmart |
 | Ethereum | IMS | 0x3c4030839708a20fd2fb379cf11810dde4888d93 | IMSWallet |  | ethereum/erc20/imswallet |

@@ -13,7 +13,7 @@ import { GetAddressOptions, Result } from "@ledgerhq/coin-framework/derivation";
 import { Resolver } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 
 export {
-  AccountShapeInfo as GetAccountShapeArg0,
+  AccountShapeInfo,
   GetAccountShape,
   IterateResultBuilder,
   makeSync,

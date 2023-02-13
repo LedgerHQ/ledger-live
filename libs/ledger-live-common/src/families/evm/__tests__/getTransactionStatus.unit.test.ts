@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import BigNumber from "bignumber.js";
-import { Account } from "@ledgerhq/types-live";
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import {
   NotEnoughGas,
   FeeNotLoaded,
@@ -14,14 +13,17 @@ import {
 } from "@ledgerhq/errors";
 import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../types";
 import getTransactionStatus from "../getTransactionStatus";
-import { makeAccount } from "../testUtils";
+import { makeAccount, makeTokenAccount } from "../testUtils";
 
 const recipient = "0xe2ca7390e76c5A992749bB622087310d2e63ca29"; // rambo.eth
 const testData = Buffer.from("testBufferString").toString("hex");
-const account: Account = makeAccount(
+const tokenAccount = makeTokenAccount(
   "0xkvn",
-  findCryptoCurrencyById("ethereum")!
+  getTokenById("ethereum/erc20/usd__coin")
 );
+const account = makeAccount("0xkvn", getCryptoCurrencyById("ethereum"), [
+  tokenAccount,
+]);
 const legacyTx: EvmTransactionLegacy = {
   amount: new BigNumber(100),
   useAllAmount: false,
@@ -107,8 +109,12 @@ describe("EVM Family", () => {
 
     describe("Amount", () => {
       it("should detect tx without amount and have an error", async () => {
-        const tx = { ...eip1559Tx, amount: undefined };
-        const res = await getTransactionStatus(account, tx as any);
+        const tx = {
+          ...eip1559Tx,
+          amount: new BigNumber(0),
+          data: undefined,
+        };
+        const res = await getTransactionStatus(account, tx);
 
         expect(res.errors).toEqual(
           expect.objectContaining({
@@ -117,10 +123,47 @@ describe("EVM Family", () => {
         );
       });
 
+      it("should detect tx without amount but with data and not return error", async () => {
+        const tx = {
+          ...eip1559Tx,
+          amount: new BigNumber(0),
+        };
+        const res = await getTransactionStatus(
+          { ...account, balance: new BigNumber(10000000) },
+          tx
+        );
+
+        expect(res.errors).toEqual({});
+      });
+
+      it("should detect tx without amount (because of useAllAmount) but from tokenAccount and not return error", async () => {
+        const tx = {
+          ...eip1559Tx,
+          amount: new BigNumber(0),
+          useAllAmount: true,
+          subAccountId: tokenAccount.id,
+        };
+        const res = await getTransactionStatus(
+          {
+            ...account,
+            balance: new BigNumber(10000000),
+            subAccounts: [
+              {
+                ...tokenAccount,
+                balance: new BigNumber(10),
+              },
+            ],
+          },
+          tx
+        );
+
+        expect(res.errors).toEqual({});
+      });
+
       it("should detect account not having enough balance for a tx and have an error", async () => {
         const res = await getTransactionStatus(
           { ...account, balance: new BigNumber(0) },
-          eip1559Tx as any
+          eip1559Tx
         );
 
         expect(res.errors).toEqual(
@@ -156,7 +199,7 @@ describe("EVM Family", () => {
 
       it("should detect gas limit being too low in a tx and have an error", async () => {
         const tx = { ...eip1559Tx, gasLimit: new BigNumber(20000) }; // min should be 21000
-        const res = await getTransactionStatus(account, tx as any);
+        const res = await getTransactionStatus(account, tx);
 
         expect(res.errors).toEqual(
           expect.objectContaining({
@@ -277,8 +320,8 @@ describe("EVM Family", () => {
             useAllAmount: true,
           }
         );
-
         const estimatedFees = new BigNumber(2100000);
+
         expect(res).toEqual(
           expect.objectContaining({
             errors: expect.any(Object),
