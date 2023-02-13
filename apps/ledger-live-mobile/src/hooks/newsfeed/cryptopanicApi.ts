@@ -48,7 +48,7 @@ type CryptopanicPostsResponse = {
   results: CryptopanicNewsWithMetadata[];
 };
 
-export function getPosts(_: {
+export type CryptopanicGetParams = {
   filter?:
     | "rising"
     | "hot"
@@ -62,6 +62,11 @@ export function getPosts(_: {
   regions?: [CryptopanicAvailableRegions];
   metadata?: boolean;
   approved?: boolean;
-}) {
+  page?: number;
+};
+
+export async function getPosts(
+  _: CryptopanicGetParams,
+): Promise<CryptopanicPostsResponse> {
   return null;
 }
