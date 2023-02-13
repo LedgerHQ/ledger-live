@@ -17,12 +17,13 @@ import {
   releaseSpeculosDevice,
 } from "../../load/speculos";
 import { makeBridgeCacheSystem } from "../../bridge/cache";
-import { getCurrencyBridge } from "../../bridge";
+import { getAccountBridge, getCurrencyBridge } from "../../bridge";
 import { filter, map, reduce, timeoutWith } from "rxjs/operators";
 import { getEnv } from "../../env";
 import { throwError } from "rxjs";
 import { AuditResult, NetworkAuditResult, Report } from "./types";
 import { toAccountRaw } from "../../account";
+import { promiseAllBatched } from "../../promise";
 
 const bootTime = Date.now() - parseInt(process.env.START_TIME || "0", 10);
 
@@ -123,6 +124,26 @@ async function main(): Promise<Report> {
 
     audit.end();
 
+    const syncAccount = async (account: Account) => {
+      const bridge = getAccountBridge(account);
+      const syncConfig = {
+        paginationConfig: {},
+        blacklistedTokenIds: [],
+      };
+      const observable = bridge.sync(account, syncConfig);
+      const reduced = observable.pipe(reduce((a, f) => f(a), account));
+      const synced = await reduced.toPromise();
+      return synced;
+    };
+
+    const incrementalAudit = new Audit(bootTime);
+    await promiseAllBatched(
+      getEnv("SYNC_MAX_CONCURRENT"),
+      accounts,
+      syncAccount
+    );
+    incrementalAudit.end();
+
     const accountsRaw = JSON.stringify(accounts.map(toAccountRaw));
     const preloadJSON = JSON.stringify(localCache);
     audit.setAccountsJSONSize(accountsRaw.length);
@@ -140,6 +161,7 @@ async function main(): Promise<Report> {
     report.accountBalances = accounts.map((a) => a.balance.toString());
     report.accountOperationsLength = accounts.map((a) => a.operations.length);
     report.auditResult = audit.result();
+    report.incrementalAuditResult = incrementalAudit.result();
   } finally {
     await releaseSpeculosDevice(device.id);
   }

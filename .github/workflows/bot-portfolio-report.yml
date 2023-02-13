@@ -85,7 +85,7 @@ jobs:
           FILTER_CURRENCIES: ${{ github.event.inputs.currencies }}
           FILTER_FAMILIES: ${{ github.event.inputs.families }}
           FILTER_SEEDS: ${{ github.event.inputs.seeds }}
-          DEFAULT_FILTER_SEEDS: "2,3,4,5"
+          DEFAULT_FILTER_SEEDS: "1"
           PARALLEL: 6
           NODE_OPTIONS: "--max-old-space-size=7168"
           REPORT_FOLDER: reports

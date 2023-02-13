@@ -29,6 +29,7 @@ export type Report = {
   accountBalances?: string[];
   accountOperationsLength?: number[];
   auditResult?: AuditResult;
+  incrementalAuditResult?: AuditResult;
 };
 
 export type SpecPerBot = {

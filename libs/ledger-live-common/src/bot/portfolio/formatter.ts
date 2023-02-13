@@ -145,17 +145,19 @@ export function finalReport(
   });
   */
 
+  /*
   md += table({
     title: "Memory RSS",
     lenseValue: (d) => d.report?.auditResult?.memoryEnd.rss,
     formatValue: (v) => formatSize(v),
   });
-
+  
   md += table({
     title: "JS Boot Time",
     lenseValue: (d) => d.report?.auditResult?.jsBootTime,
     formatValue: (v) => formatTime(v),
   });
+  */
 
   md += table<{ count: number; duration: number } | undefined>({
     title: "JS Slow Frames",
@@ -174,6 +176,63 @@ export function finalReport(
           ? "✅"
           : `${v.count} (${formatTime(v.duration)})`
         : "",
+    totalPerCurrency: true,
+    totalPerSeed: true,
+    totalPerFamily: true,
+  });
+
+  md += title("Incremental Sync");
+
+  function percentage(value, reference) {
+    if (!reference) return "N/A";
+    return `${Math.round(((value || 0) / reference) * 1000) / 10}%`;
+  }
+
+  const percentageReduce = (d, map) =>
+    d.reduce(
+      ([a, b], r) => {
+        const v = map(r);
+        return [a + (v[0] || 0), b + (v[1] || 0)];
+      },
+      [0, 0]
+    );
+
+  md += table({
+    title: "HTTP Calls Count (% of full sync)",
+    reduce: percentageReduce,
+    lenseValue: (d) => [
+      d.report?.incrementalAuditResult?.network.totalCount,
+      d.report?.auditResult?.network.totalCount,
+    ],
+    formatValue: (v) => percentage(v[0], v[1]),
+    totalPerCurrency: true,
+    totalPerSeed: true,
+    totalPerFamily: true,
+  });
+
+  md += table({
+    title: "HTTP Bandwidth (% of full sync)",
+    reduce: percentageReduce,
+    lenseValue: (d) => [
+      d.report?.incrementalAuditResult?.network.totalResponseSize,
+      d.report?.auditResult?.network.totalResponseSize,
+    ],
+    formatValue: (v) => percentage(v[0], v[1]),
+
+    totalPerCurrency: true,
+    totalPerSeed: true,
+    totalPerFamily: true,
+  });
+
+  md += table({
+    title: "CPU user time (% of full sync)",
+    reduce: percentageReduce,
+    lenseValue: (d) => [
+      d.report?.incrementalAuditResult?.cpuUserTime,
+      d.report?.auditResult?.cpuUserTime,
+    ],
+    formatValue: (v) => percentage(v[0], v[1]),
+
     totalPerCurrency: true,
     totalPerSeed: true,
     totalPerFamily: true,
