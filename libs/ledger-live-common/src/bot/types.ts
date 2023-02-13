@@ -45,6 +45,7 @@ export type DeviceActionArg<T extends Transaction, S> = {
   };
   event: DeviceActionEvent;
   state: S;
+  disableStrictStepValueValidation?: boolean;
 };
 export type DeviceAction<T extends Transaction, S> = (
   arg0: DeviceActionArg<T, S>
@@ -127,6 +128,8 @@ export type AppSpec<T extends Transaction> = {
   test?: (arg0: TransactionTestInput<T>) => void;
   // Express the device actions to do (buttons,..) and validate the device screen
   genericDeviceAction: DeviceAction<T, any>;
+  // typically for 'botTransfer' we need to be able to override the preferred way to transfer a sub account
+  genericDeviceActionForSubAccountTransfers?: DeviceAction<T, any>;
   // indicates to the engine what's the generally minimal amount we use to opt out from doing a transaction
   // NB: at the moment it's purely informative and help inferring good "hints", but we could eventually automate it
   minViableAmount?: BigNumber;

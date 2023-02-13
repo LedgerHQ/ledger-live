@@ -99,7 +99,7 @@ export function deviceActionFlow<T extends Transaction>(
       arg.appCandidate.model === "nanoS",
       "FIXME: stepper logic is only implemented for Nano S"
     );
-    const { transport, event, state } = arg;
+    const { transport, event, state, disableStrictStepValueValidation } = arg;
     let { finalState, stepTitle, stepValue, acc, currentStep } = state || {
       finalState: false,
       stepTitle: "",
@@ -118,7 +118,7 @@ export function deviceActionFlow<T extends Transaction>(
           const stepValueTransform =
             currentStep.stepValueTransform || stepValueTransformDefault;
 
-          if (!ignoreAssertionFailure) {
+          if (!ignoreAssertionFailure && !disableStrictStepValueValidation) {
             botTest("deviceAction confirm step '" + stepTitle + "'", () =>
               expect({
                 [stepTitle]: stepValueTransform(stepValue),
