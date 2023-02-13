@@ -825,7 +825,7 @@
         "title": "In case you didn’t know...",
         "description": "The Ledger validator stakes your {{asset}} at a commission of {{commission}}%.",
         "cta": "Stake with Ledger",
-        "learnMore": "Learn more",
+        "linkText": "Learn more",
         "ethereum": {
           "lido": {
             "title": "In case you didn’t know...",

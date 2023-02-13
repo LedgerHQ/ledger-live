@@ -60,7 +60,7 @@ const getAccountBannerProps = (
     cta,
     onClick,
     display,
-    linkText: "Learn more",
+    linkText: t("account.banner.delegation.linkText"),
     linkUrl: "https://www.ledger.com/staking-ethereum",
   };
 };
