@@ -2,6 +2,8 @@ import { AccountBannerState } from "@ledgerhq/live-common/lib/families/ethereum/
 import { Account } from "@ledgerhq/types-live";
 import { useHistory } from "react-router";
 import { TFunction } from "react-i18next";
+import { track } from "~/renderer/analytics/segment";
+import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 
 type Hooks = {
   t: TFunction;
@@ -20,7 +22,14 @@ const getAccountBannerProps = (
   const { stakeProvider } = state;
 
   const stakeOnClick = (providerLiveAppId: string) => {
-    // tracking goes here
+    track("button_clicked", {
+      ...stakeDefaultTrack,
+      delegation: "stake",
+      page: "Page Account",
+      button: "delegate",
+      provider: stakeProvider,
+      token: "ETH",
+    });
     history.push({
       pathname: `/platform/${providerLiveAppId}`,
       state: { accountId: account.id, returnTo: `/account/${account.id}` },

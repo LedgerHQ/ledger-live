@@ -5,7 +5,7 @@ import { compose } from "redux";
 import { connect, useDispatch, useSelector } from "react-redux";
 import { withTranslation } from "react-i18next";
 import type { TFunction } from "react-i18next";
-import {Redirect, useHistory} from "react-router";
+import { Redirect, useHistory } from "react-router";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { findCompoundToken } from "@ledgerhq/live-common/currencies/index";
@@ -39,7 +39,8 @@ import EmptyStateAccount from "./EmptyStateAccount";
 import TokensList from "./TokensList";
 import CompoundBodyHeader from "~/renderer/screens/lend/Account/AccountBodyHeader";
 import useCompoundAccountEnabled from "~/renderer/screens/lend/useCompoundAccountEnabled";
-import { getBannerProps, AccountBanner } from "./AccountBanner";
+import { AccountBanner } from "./AccountBanner";
+import { getBannerProps } from "./getBannerProps";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const mapStateToProps = (
@@ -102,10 +103,15 @@ const AccountPage = ({
 
   useEffect(() => {
     if (mainAccount) {
-      const bannerProps = getBannerProps(mainAccount, { t, dispatch, ethStakingProviders, history });
+      const bannerProps = getBannerProps(mainAccount, {
+        t,
+        dispatch,
+        ethStakingProviders,
+        history,
+      });
       setBanner(bannerProps);
     }
-  }, [mainAccount, t, dispatch]);
+  }, [mainAccount, t, dispatch, ethStakingProviders, history]);
 
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
   const filterOperations = useCallback(
