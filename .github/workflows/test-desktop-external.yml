@@ -14,8 +14,9 @@ on:
         description: The base branch to merge the head into when checking out the code
 
 concurrency:
-  group: ${{ github.workflow }}-${{ inputs.ref }}
-  cancel-in-progress: ${{ inputs.ref != 'develop' }}
+  # See: https://github.com/orgs/community/discussions/35341
+  group: ${{ github.workflow }}-${{ github.event.inputs.ref }}
+  cancel-in-progress: ${{ github.event.inputs.ref != 'develop' }}
 
 jobs:
   typecheck:
