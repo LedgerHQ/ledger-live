@@ -79,7 +79,9 @@ module.exports = {
     // for importing detox
     "import/no-extraneous-dependencies": [
       "error",
-      { devDependencies: ["**/e2e/**"] },
+      {
+        devDependencies: ["**/e2e/**", "**/*.test.{ts,tsx}"],
+      },
     ],
     // For Link component from native-ui, that is interpreted like a html link, and thus this rule tried to impose a href prop on it
     "jsx-a11y/anchor-is-valid": [
@@ -99,7 +101,6 @@ module.exports = {
     "react/state-in-constructor": 0,
     "react/static-property-placement": 0,
     "react/default-props-match-prop-types": 0,
-    "jsx-a11y/anchor-is-valid": 0, // this is not valid in react native as we don't have href
     "@typescript-eslint/no-non-null-assertion": 0,
     "react-native/no-inline-styles": 0,
     "react/prop-types": 0, // causes issues with typescript, reports false positives
