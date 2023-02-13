@@ -811,6 +811,13 @@
       "title" : "جهازك مقفل",
       "description" : "قم بإلغاء قفل جهازك وحاول مرة أخرى.",
       "descriptionWithProductName" : "قم بإلغاء قفل {{ productName }} خاصتك وحاول مرة أخرى."
+    },
+    "EtherscanAPIError" : {
+      "title" : "فشل إحضار المعاملات",
+      "description" : "حدث خطأ غير متوقع مع المستكشفات. يُرجى إعادة المحاولة لاحقاً"
+    },
+    "GasEstimationError" : {
+      "title" : "فشل تقدير الغاز"
     }
   },
   "crash" : {
