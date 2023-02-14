@@ -42,8 +42,6 @@ import Chevron from "../../icons/Chevron";
 import Info from "../../icons/Info";
 import Spinning from "../../components/Spinning";
 import LText from "../../components/LText";
-import RetryButton from "../../components/RetryButton";
-import CancelButton from "../../components/CancelButton";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import { prepareCurrency } from "../../bridge/cache";
@@ -460,15 +458,8 @@ function AddAccountsAccounts({
       <GenericErrorBottomModal
         error={error}
         onModalHide={onModalHide}
-        footerButtons={
-          <>
-            <CancelButton containerStyle={styles.button} onPress={onCancel} />
-            <RetryButton
-              containerStyle={[styles.button, styles.buttonRight]}
-              onPress={restartSubscription}
-            />
-          </>
-        }
+        onClose={onCancel}
+        onPrimaryPress={restartSubscription}
       />
     </SafeAreaView>
   );

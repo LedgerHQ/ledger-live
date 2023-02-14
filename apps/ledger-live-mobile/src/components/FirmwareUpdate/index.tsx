@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { NativeModules } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { Button, Icons } from "@ledgerhq/native-ui";
+import { Button } from "@ledgerhq/native-ui";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import { BluetoothNotSupportedError } from "@ledgerhq/live-common/errors";
 import {
@@ -229,17 +229,6 @@ export default function FirmwareUpdate({
             withDescription={
               error instanceof DisconnectedDevice ||
               error! instanceof DisconnectedDeviceDuringOperation
-            }
-            hasExportLogButton={!(error instanceof BluetoothNotSupportedError)}
-            Icon={
-              error instanceof BluetoothNotSupportedError
-                ? Icons.UsbMedium
-                : undefined
-            }
-            iconColor={
-              error instanceof BluetoothNotSupportedError
-                ? "neutral.c100"
-                : undefined
             }
           />
           {!(

@@ -77,7 +77,6 @@ function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
           error={error}
           outerError={outerError}
           withDescription
-          withIcon
         />
         <Flex mt={30} flexDirection={"row"}>
           <Button

@@ -49,6 +49,7 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugCrash]: undefined;
   [ScreenName.DebugStore]: undefined;
   [ScreenName.DebugEnv]: undefined;
+  [ScreenName.DebugErrors]: undefined;
   [ScreenName.DebugHttpTransport]: undefined;
   [ScreenName.DebugLogs]: undefined;
   [ScreenName.DebugLottie]: undefined;
