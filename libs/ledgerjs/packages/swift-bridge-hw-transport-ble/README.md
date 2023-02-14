@@ -15,9 +15,9 @@
 
 #### Table of Contents
 
-- [TransportBLESwift](#TransportBLESwift)
-  - [exchange](#exchange)
-    - [Parameters](#parameters)
+*   [TransportBLESwift](#transportbleswift)
+    *   [exchange](#exchange)
+        *   [Parameters](#parameters)
 
 ### TransportBLESwift
 
@@ -31,6 +31,6 @@ communicate with a BLE transport
 
 ##### Parameters
 
-- `apdu` **[Buffer](https://nodejs.org/api/buffer.html)**
+*   `apdu` **[Buffer](https://nodejs.org/api/buffer.html)**&#x20;
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Buffer](https://nodejs.org/api/buffer.html)>**
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Buffer](https://nodejs.org/api/buffer.html)>**&#x20;

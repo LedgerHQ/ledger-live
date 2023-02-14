@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/swift-bridge-hw-transport-ble",
   "version": "6.31.0",
-  "description": "Ledger Hardware Wallet Bluetooth BLE transport for the Swift Native Module",
+  "description": "Package to expose the Swift BLE transport to JS",
   "keywords": [
     "Ledger",
     "LedgerWallet",
