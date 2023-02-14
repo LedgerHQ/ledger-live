@@ -12,8 +12,8 @@ const getAccountBannerProps = (
   const { display, redelegate, ledgerValidator, validatorSrcAddress } = state;
 
   if (!display) return { display: false };
-  if (redelegate && !stakeAccountBannerParams?.cosmos.redelegate) return { display: false };
-  if (!redelegate && !stakeAccountBannerParams?.cosmos.delegegate) return { display: false };
+  if (redelegate && !stakeAccountBannerParams?.cosmos?.redelegate) return { display: false };
+  if (!redelegate && !stakeAccountBannerParams?.cosmos?.delegate) return { display: false };
 
   const commission = ledgerValidator?.commission ? ledgerValidator?.commission * 100 : 1;
   const title = redelegate

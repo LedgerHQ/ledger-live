@@ -13,16 +13,34 @@ describe("getAccountBannerProps", () => {
     expect(props.display).toBe(false);
   });
 
-  it("should hide the  delegation banner with comsos when disabled via the feature flag", () => {
+  it("should hide the redelegation banner with comsos when feature flag is missing", () => {
     const props = getAccountBannerProps(
-      { display: true, redelegate: false } as AccountBannerState,
+      { display: true, redelegate: true } as AccountBannerState,
       {} as CosmosAccount,
-      { stakeAccountBannerParams: { cosmos: { delegegate: false } } } as Hooks,
+      { stakeAccountBannerParams: { cosmos: undefined } } as Hooks,
     );
     expect(props.display).toBe(false);
   });
 
-  it("should hide the  redelegation banner with comsos when disabled via the feature flag", () => {
+  it("should hide the delegation banner with comsos when feature flag is missing", () => {
+    const props = getAccountBannerProps(
+      { display: true, redelegate: false } as AccountBannerState,
+      {} as CosmosAccount,
+      { stakeAccountBannerParams: { cosmos: undefined } } as Hooks,
+    );
+    expect(props.display).toBe(false);
+  });
+
+  it("should hide the delegation banner with comsos when disabled via the feature flag", () => {
+    const props = getAccountBannerProps(
+      { display: true, redelegate: false } as AccountBannerState,
+      {} as CosmosAccount,
+      { stakeAccountBannerParams: { cosmos: { delegate: false } } } as Hooks,
+    );
+    expect(props.display).toBe(false);
+  });
+
+  it("should hide the redelegation banner with comsos when disabled via the feature flag", () => {
     const props = getAccountBannerProps(
       { display: true, redelegate: true } as AccountBannerState,
       {} as CosmosAccount,
@@ -37,7 +55,7 @@ describe("getAccountBannerProps", () => {
       { currency: { ticker: "currency-ticker" } } as CosmosAccount,
       {
         t: (input: string) => input,
-        stakeAccountBannerParams: { cosmos: { delegegate: true } },
+        stakeAccountBannerParams: { cosmos: { delegate: true } },
       } as Hooks,
     );
     if (!props.display) throw new Error("display should be true");

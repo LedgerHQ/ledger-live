@@ -11,21 +11,21 @@ import { CosmosAccount } from "@ledgerhq/live-common/lib/families/cosmos/types";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 type StakeAccountBannerParams = {
-  solana: {
+  solana?: {
     redelegate: boolean;
-    delegegate: boolean;
+    delegate: boolean;
   };
-  eth: {
+  eth?: {
     kiln: boolean;
     lido: boolean;
   };
-  osmos: {
+  osmos?: {
     redelegate: boolean;
-    delegegate: boolean;
+    delegate: boolean;
   };
-  cosmos: {
+  cosmos?: {
     redelegate: boolean;
-    delegegate: boolean;
+    delegate: boolean;
   };
 };
 
