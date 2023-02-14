@@ -190,7 +190,7 @@ export const accountsCountSelector = createSelector(
   accountsSelector,
   acc => acc.length,
 );
-/** Returns a boolean that is true if and only if all accounts are empty */
+/** Returns a boolean that is true if and only if there is no account */
 export const hasNoAccountsSelector = createSelector(
   accountsSelector,
   acc => acc.length <= 0,
