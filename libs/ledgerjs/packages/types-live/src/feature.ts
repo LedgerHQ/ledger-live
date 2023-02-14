@@ -27,6 +27,7 @@ export type FeatureId =
   | "currencyFlareMobile"
   | "ptxSmartRoutingMobile"
   | "mockFeature"
+  | "multibuyNavigation"
   | "syncOnboarding"
   | "walletConnectLiveApp"
   | "customImage"
