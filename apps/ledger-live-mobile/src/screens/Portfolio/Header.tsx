@@ -1,12 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import {
-  CardMedium,
-  SettingsMedium,
-  WarningMedium,
-} from "@ledgerhq/native-ui/assets/icons";
+import { CardMedium, SettingsMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import Touchable from "../../components/Touchable";
@@ -22,7 +17,6 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
   const { colors } = useTheme();
 
   const { notificationCards } = useDynamicContent();
-  const { incidents } = useFilteredServiceStatus();
   const { t } = useTranslation();
 
   const onNotificationButtonPress = useCallback(() => {
@@ -35,11 +29,6 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
     });
   }, [navigation]);
 
-  const onStatusErrorButtonPress = useCallback(() => {
-    navigation.navigate(NavigatorName.NotificationCenter, {
-      screen: ScreenName.NotificationCenterStatus,
-    });
-  }, [navigation]);
   const onSettingsButtonPress = useCallback(() => {
     track("button_clicked", {
       button: "Settings",
@@ -86,13 +75,6 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
           {t("tabs.portfolio")}
         </Text>
         {!hidePortfolio && <DiscreetModeButton size={20} />}
-        {incidents.length > 0 && (
-          <Flex pl={2}>
-            <Touchable onPress={onStatusErrorButtonPress}>
-              <WarningMedium size={24} color={"warning.c100"} />
-            </Touchable>
-          </Flex>
-        )}
       </Flex>
       <Flex flexDirection="row">
         <Flex mr={7}>
