@@ -811,6 +811,13 @@
       "title" : "Seu dispositivo está bloqueado",
       "description" : "Desbloqueie seu dispositivo e tente novamente.",
       "descriptionWithProductName" : "Desbloqueie sua {{ productName }} e tente novamente."
+    },
+    "EtherscanAPIError" : {
+      "title" : "Falha em buscar transações",
+      "description" : "Ocorreu um erro inesperado com os exploradores. Tente novamente mais tarde"
+    },
+    "GasEstimationError" : {
+      "title" : "Falha em estimar o gás"
     }
   },
   "crash" : {
@@ -3298,6 +3305,10 @@
           }
         }
       }
+    },
+    "walletConnect" : {
+      "title" : "WalletConnect",
+      "description" : "Conectar sua carteira a DApps"
     }
   },
   "signMessage" : {
