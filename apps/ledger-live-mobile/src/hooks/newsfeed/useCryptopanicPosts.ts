@@ -5,7 +5,7 @@ import {
   getPosts,
 } from "./cryptopanicApi";
 
-export async function useCryptopanicPosts(params: CryptopanicGetParams) {
+export function useCryptopanicPosts(params: CryptopanicGetParams) {
   const [isLoading, setIsLoading] = useState(false);
   const [ready, setReady] = useState(false);
   const [posts, setPosts] = useState<CryptopanicNewsWithMetadata[]>([]);
@@ -36,8 +36,9 @@ export async function useCryptopanicPosts(params: CryptopanicGetParams) {
 
   // Init
   useEffect(() => {
-    if (ready || isLoading) return;
-    getCryptoPanicPosts({ page: 1 });
+    if (!ready && !isLoading) {
+      getCryptoPanicPosts({ page: 1 });
+    }
   }, [getCryptoPanicPosts, isLoading, ready]);
 
   const refresh = useCallback(async () => {
