@@ -173,7 +173,43 @@
       "REGISTER" : "Registrado",
       "STAKE" : "En participación",
       "UNSTAKE" : "Fuera de participación",
-      "WITHDRAW_UNSTAKED" : "Retirado"
+      "WITHDRAW_UNSTAKED" : "Retirado",
+      "SENDING" : "Enviando"
+    },
+    "edit" : {
+      "title" : "Acelerar o cancelar",
+      "description" : "Tu transacción está en curso. Puedes acelerarla con una tarifa de red más alta o cancelarla.",
+      "stuckDescription" : "Tu transacción se ha quedado atascada. Acelérala con una tarifa de red más alta o cancélala.",
+      "previousFeesInfo" : "Tu anterior transacción tenía una tarifa de red de",
+      "panel" : {
+        "title" : "Acelerar o cancelar",
+        "description" : "Tu transacción de envío más reciente se ha quedado atascada. Acelera la transacción con una tarifa de red más alta o cancélala."
+      },
+      "speedUp" : {
+        "title" : "Acelerar",
+        "description" : "Vuelve a enviar la transacción con una tarifa de red mayor."
+      },
+      "cancel" : {
+        "title" : "Cancelar",
+        "description" : "Enviando 0 {{ticker}} a tu propia dirección con una tarifa mayor."
+      },
+      "steps" : {
+        "method" : {
+          "title" : "Método"
+        },
+        "fees" : {
+          "title" : "Tarifas"
+        },
+        "summary" : {
+          "title" : "Resumen"
+        },
+        "device" : {
+          "title" : "Dispositivo"
+        },
+        "confirmation" : {
+          "title" : "Confirmación"
+        }
+      }
     }
   },
   "byteSize" : {
@@ -1399,7 +1435,7 @@
         "label" : "Popular"
       },
       "earn" : {
-        "title" : "Gana",
+        "title" : "Poner en participación",
         "description" : "Haz crecer tus cripto con Ledger"
       }
     }
