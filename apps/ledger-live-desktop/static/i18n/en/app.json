@@ -5540,6 +5540,10 @@
       "title": "Image loading from file failed",
       "description": "Please try again with another image"
     },
+    "ImageLoadFromNftError": {
+      "title": "Image loading from NFT failed",
+      "description": "Please try again with another NFT"
+    },
     "ImageDownloadError": {
       "title": "Image download failed",
       "description": "Please try again with another image"
@@ -5657,7 +5661,13 @@
         "stepLabel": "Choose an image",
         "description": "Choose an image to set as (...)",
         "pickFromNftGallery": "Select from my NFT gallery",
-        "upload": "Upload from my computer"
+        "myNfts": "My NFTs",
+        "upload": "Upload from my computer",
+        "chooseNft": "Choose an NFT",
+        "selectNft": "Choose NFT",
+        "previousSelectNft": "back",
+        "nftEmptyStateTitle": "No NFT's to show yet",
+        "nftEmptyStateDescription": "Get started by adding NFTs to your wallet."
       },
       "adjust": {
         "stepLabel": "Adjust image",
