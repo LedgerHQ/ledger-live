@@ -11,6 +11,7 @@ import {
   getCheckRunByName,
   getGenericOutput,
   createRunByName,
+  listWorkflowRunArtifacts,
 } from "../../tools";
 import { prIsFork, updateWatcherCheckRun, getTips } from "./tools";
 
@@ -142,11 +143,12 @@ export function orchestrator(app: Probot) {
         `[Orchestrator](workflow_run.completed) ${payload.workflow_run.name}`
       );
 
-      const artifacts = await octokit.actions.listWorkflowRunArtifacts({
+      const artifacts = await listWorkflowRunArtifacts(
+        octokit,
         owner,
         repo,
-        run_id: payload.workflow_run.id,
-      });
+        payload.workflow_run.id
+      );
 
       // Get the affected / metadata artifacts
       const [affected, metadata] = (await Promise.all(
@@ -262,11 +264,12 @@ export function orchestrator(app: Probot) {
       let annotations;
       if (matchedWorkflow.summaryFile) {
         // Get the summary artifact
-        const artifacts = await octokit.actions.listWorkflowRunArtifacts({
+        const artifacts = await listWorkflowRunArtifacts(
+          octokit,
           owner,
           repo,
-          run_id: payload.workflow_run.id,
-        });
+          payload.workflow_run.id
+        );
 
         const artifactId = artifacts.data.artifacts.find(
           (artifact) => artifact.name === matchedWorkflow.summaryFile
