@@ -108,19 +108,26 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
         )?.id;
 
         if (artifactId) {
-          const rawSummary = await downloadArtifact(
-            octokit,
-            owner,
-            repo,
-            artifactId
-          );
-          const newSummary = JSON.parse(rawSummary.toString());
-          if (newSummary.summary) {
-            summary = newSummary?.summary;
-            defaultSummary = false;
+          try {
+            const rawSummary = await downloadArtifact(
+              octokit,
+              owner,
+              repo,
+              artifactId
+            );
+            const newSummary = JSON.parse(rawSummary.toString());
+            if (newSummary.summary) {
+              summary = newSummary?.summary;
+              defaultSummary = false;
+            }
+            actions = newSummary?.actions;
+            annotations = newSummary?.annotations;
+          } catch (e) {
+            context.log.error(
+              `[Monitoring Workflow](downloadArtifact) Error while downloading / parsing artifact: ${workflow.summaryFile} @ artifactId: ${artifactId} & workflow_run.id: ${payload.workflow_run.id}`
+            );
+            context.log.error(e as Error);
           }
-          actions = newSummary?.actions;
-          annotations = newSummary?.annotations;
         }
       }
 

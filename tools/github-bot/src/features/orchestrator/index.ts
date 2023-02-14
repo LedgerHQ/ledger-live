@@ -171,6 +171,10 @@ export function orchestrator(app: Probot) {
               );
               return JSON.parse(raw.toString());
             } catch (e) {
+              context.log.error(
+                `[Orchestrator](downloadArtifact) Error while downloading / parsing artifact: ${fileName} @ artifactId: ${artifactId} & workflow_run.id: ${payload.workflow_run.id}`
+              );
+              context.log.error(e as Error);
               return undefined;
             }
           }
@@ -269,19 +273,26 @@ export function orchestrator(app: Probot) {
         )?.id;
 
         if (artifactId) {
-          const rawSummary = await downloadArtifact(
-            octokit,
-            owner,
-            repo,
-            artifactId
-          );
-          const newSummary = JSON.parse(rawSummary.toString());
-          if (newSummary.summary) {
-            summary = newSummary?.summary;
-            defaultSummary = false;
+          try {
+            const rawSummary = await downloadArtifact(
+              octokit,
+              owner,
+              repo,
+              artifactId
+            );
+            const newSummary = JSON.parse(rawSummary.toString());
+            if (newSummary.summary) {
+              summary = newSummary?.summary;
+              defaultSummary = false;
+            }
+            actions = newSummary?.actions;
+            annotations = newSummary?.annotations;
+          } catch (e) {
+            context.log.error(
+              `[Orchestrator](downloadArtifact) Error while downloading / parsing artifact: ${matchedWorkflow.summaryFile} @ artifactId: ${artifactId} & workflow_run.id: ${payload.workflow_run.id}`
+            );
+            context.log.error(e as Error);
           }
-          actions = newSummary?.actions;
-          annotations = newSummary?.annotations;
         }
       }
 
