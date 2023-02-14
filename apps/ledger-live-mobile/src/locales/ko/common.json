@@ -549,7 +549,7 @@
       "description" : "트랜잭션은 30초 이내에 서명을 완료해야 합니다. 다시 시도해 주세요."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 30TRX를 지불할 수 있습니다."
+      "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 50 TRX를 지불할 수 있습니다."
     },
     "UpdateYourApp" : {
       "title" : "앱 업데이트 필요",
@@ -3419,6 +3419,15 @@
         "description" : "최대 사용 가능 금액은 한 트랜잭션에 보낼 수 있는 계정의 총 잔금입니다."
       }
     }
+  },
+  "editTransaction" : {
+    "header" : "트랜잭션 수정",
+    "stuckTx" : "가장 최근 실행한 '전송' 트랜잭션이 중단되었습니다. 트랜잭션을 취소하거나 네트워크 수수료를 올려 속도를 높일 수 있습니다.",
+    "speedupTxMessage" : "트랜잭션이 진행 중입니다. 트랜잭션을 취소하거나 네트워크 수수료를 올려 속도를 높일 수 있습니다.",
+    "speedupOrCancel" : "속도 올리기 또는 취소",
+    "resubmitTxDescription" : "네트워크 수수료를 올려 해당 트랜잭션을 다시 제출하세요.",
+    "cancelTxDescription" : "0 ETH를 본인 주소로 전송하기 취소를 담보하기 위해 네트워크 수수료는 취소하려는 트랜잭션 수수료보다 10-30% 더 높습니다.",
+    "currentNetworkFee" : "현재 네트워크 수수료 = {{amount}} ETH"
   },
   "requestAccount" : {
     "stepperHeader" : {
