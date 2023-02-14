@@ -29,6 +29,7 @@ const AnalyticsConsole = () => {
   const [transparentHeightPercentage, setTransparentHeightPercentage] =
     useState(60);
   const [showExtraProps, setShowExtraProps] = useState(false);
+  const [hideSyncEvents, setHideSyncEvents] = useState(false);
   const onPressDebugButton = useCallback(() => {
     switch (visibility) {
       case Visibility.hidden:
@@ -111,6 +112,11 @@ const AnalyticsConsole = () => {
                   </Pressable>
                 </Flex>
                 <Flex>
+                  <Switch
+                    checked={hideSyncEvents}
+                    onChange={setHideSyncEvents}
+                    label="Hide Sync* events"
+                  />
                   <Text>Height of the transparent overlay:</Text>
                   <Slider
                     step={1}
@@ -128,7 +134,10 @@ const AnalyticsConsole = () => {
             ) : null}
           </AnimatedFlex>
           <AnimatedFlex flexShrink={1} layout={Layout}>
-            <EventList showExtraProps={showExtraProps} />
+            <EventList
+              showExtraProps={showExtraProps}
+              hideSyncEvents={hideSyncEvents}
+            />
           </AnimatedFlex>
         </SafeAreaView>
       </Flex>
