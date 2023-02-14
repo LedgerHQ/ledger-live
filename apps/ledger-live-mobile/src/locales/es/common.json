@@ -3420,6 +3420,15 @@
       }
     }
   },
+  "editTransaction" : {
+    "header" : "Editar transacción",
+    "stuckTx" : "Tu transacción de envío más reciente ha quedado atascada. Acelera la transacción con una tarifa de red más alta o cancélala.",
+    "speedupTxMessage" : "Tu transacción está en curso. Puedes acelerarla con una tarifa de red más alta o cancelarla.",
+    "speedupOrCancel" : "Acelerar o cancelar",
+    "resubmitTxDescription" : "Vuelve a enviar la transacción con una tarifa de red mayor.",
+    "cancelTxDescription" : "Enviando 0 ETH a tu propia dirección. Para garantizar la cancelación, la tarifa de red es un 10-30% más alta que la tarifa de la transacción que se pretende cancelar.",
+    "currentNetworkFee" : "Tarifa de red actual = {{amount}} ETH"
+  },
   "requestAccount" : {
     "stepperHeader" : {
       "selectCrypto" : "Seleccionar cripto",
