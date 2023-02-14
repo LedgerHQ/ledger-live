@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  RatesReducerState,
-  SwapTransactionType,
-} from "@ledgerhq/live-common/lib/exchange/swap/types";
+import { RatesReducerState, SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 
 type PageState = "initial" | "empty" | "loading" | "loaded";
 
@@ -19,7 +16,7 @@ const usePageState = (
   swapTransaction: SwapTransactionType,
   swapError: SwapError | undefined,
 ): PageState => {
-  const [pageState, setPageState] = useState("initial");
+  const [pageState, setPageState] = useState<PageState>("initial");
   const fromFieldIsZero = swapTransaction.swap.from.amount?.isZero() ?? true;
   const isDataLoading =
     swapTransaction.swap.isMaxLoading || swapTransaction.swap.rates.status === "loading";
