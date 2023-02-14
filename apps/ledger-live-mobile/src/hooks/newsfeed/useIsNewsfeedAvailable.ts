@@ -11,8 +11,10 @@ export function useIsNewsfeedAvailable() {
 
   return (
     newsfeedPageFeature?.enabled &&
+    newsfeedPageFeature?.params?.cryptopanicApiKey &&
     cryptopanicAvailableRegions.includes(
       locale as CryptopanicAvailableRegionsType,
-    )
+    ) &&
+    newsfeedPageFeature?.params?.whitelistedLocales?.includes(locale)
   );
 }

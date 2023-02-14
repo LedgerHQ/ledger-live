@@ -12,6 +12,7 @@ import { BackButton } from "../../screens/OperationDetails";
 import Learn from "../../screens/Learn/learn";
 import ExploreTabNavigatorTabBar from "../ExploreTab/ExploreTabNavigatorTabBar";
 import ExploreTabNavigatorTabBarDisabled from "../ExploreTab/ExploreTabNavigatorTabBarDisabled";
+import { useIsNewsfeedAvailable } from "../../hooks/newsfeed/useIsNewsfeedAvailable";
 
 const ExploreTab =
   createMaterialTopTabNavigator<ExploreTabNavigatorStackParamList>();
@@ -25,33 +26,38 @@ const tabBarDisabledOptions = (props: MaterialTopTabBarProps) => (
 );
 
 export default function ExploreTabNavigator() {
-  const newsfeedPageFeatureA = useFeature("newsfeedPage");
-  const newsfeedPageFeature = { enabled: true };
   const { t } = useTranslation();
+  const brazeLearnFeature = useFeature("brazeLearn");
+  const isNewsfeedAvailable = useIsNewsfeedAvailable();
 
-  console.log("newsfeedPageFeatureA", newsfeedPageFeatureA)
+  if (!brazeLearnFeature?.enabled && !isNewsfeedAvailable) return null;
 
   return (
     <ExploreTab.Navigator
       initialRouteName={ScreenName.Newsfeed}
       tabBar={
-        newsfeedPageFeature?.enabled ? tabBarOptions : tabBarDisabledOptions
+        isNewsfeedAvailable && brazeLearnFeature?.enabled
+          ? tabBarOptions
+          : tabBarDisabledOptions
       }
       style={{ backgroundColor: "transparent" }}
       sceneContainerStyle={{ backgroundColor: "transparent" }}
     >
-      <ExploreTab.Screen
-        name={ScreenName.Learn}
-        component={Learn}
-        options={({ navigation }) => ({
-          title: t("discover.sections.learn.title"),
-          headerShown: true,
-          animationEnabled: false,
-          headerLeft: () => <BackButton navigation={navigation} />,
-          headerRight: () => null,
-        })}
-      />
-      {newsfeedPageFeature?.enabled && (
+      {brazeLearnFeature?.enabled && (
+        <ExploreTab.Screen
+          name={ScreenName.Learn}
+          component={Learn}
+          options={({ navigation }) => ({
+            title: t("discover.sections.learn.title"),
+            headerShown: true,
+            animationEnabled: false,
+            headerLeft: () => <BackButton navigation={navigation} />,
+            headerRight: () => null,
+          })}
+        />
+      )}
+
+      {isNewsfeedAvailable && (
         <ExploreTab.Screen
           name={ScreenName.Newsfeed}
           component={NewsfeedPage}

@@ -1,22 +1,44 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import {
+  cryptopanicAvailableRegions,
+  CryptopanicAvailableRegionsType,
   CryptopanicGetParams,
   CryptopanicNewsWithMetadata,
   getPosts,
 } from "./cryptopanicApi";
+import { useLocale } from "../../context/Locale";
 
 export async function useCryptopanicPosts(params: CryptopanicGetParams) {
+  const { locale } = useLocale();
+  const newsfeedPageFeature = useFeature("newsfeedPage");
   const [isLoading, setIsLoading] = useState(false);
   const [ready, setReady] = useState(false);
   const [posts, setPosts] = useState<CryptopanicNewsWithMetadata[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
+  const cryptopanicLocale = useMemo(
+    () =>
+      cryptopanicAvailableRegions.includes(
+        locale as CryptopanicAvailableRegionsType,
+      )
+        ? locale
+        : undefined,
+    [locale],
+  );
+
   const getCryptoPanicPosts = useCallback(
     async ({ page = 1, concatPosts = false }) => {
       try {
         setIsLoading(true);
-        const apiResult = await getPosts({ ...params, page });
+        const apiResult = await getPosts({
+          ...params,
+          page,
+          regions: cryptopanicLocale && [
+            cryptopanicLocale as CryptopanicAvailableRegionsType,
+          ],
+        });
         if (concatPosts) {
           setPosts(currentPosts => currentPosts.concat(apiResult.results));
         } else {
@@ -31,7 +53,7 @@ export async function useCryptopanicPosts(params: CryptopanicGetParams) {
       setReady(true);
     },
     // maybe spread params object to array to reduce re-render
-    [params],
+    [cryptopanicLocale, params],
   );
 
   // Init
