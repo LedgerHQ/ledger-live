@@ -41,7 +41,7 @@ const ProviderItem = ({ id, name, provider, infoOnClick, stakeOnClick }: ItemPro
       flow={1}
       onClick={stakeLink}
       py={4}
-      data-test-id={`stake-provider-container-${provider.name.toLowerCase()}`}
+      data-test-id={`stake-provider-container-${provider?.name?.toLowerCase()}`}
     >
       <ProviderIcon name={name} size="S" boxed={true} />
       <Flex flexDirection={"column"} ml={5} flex={"auto"} alignItems="flex-start">
