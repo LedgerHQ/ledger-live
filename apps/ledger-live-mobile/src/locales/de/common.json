@@ -549,7 +549,7 @@
       "description" : "Transaktionen müssen innerhalb von 30 Sekunden signiert werden. Bitte versuchen Sie es erneut."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Energie ist niedriger als notwendig. Es können bis zu 50TRX an Gebühren anfallen."
+      "title" : "Energie ist niedriger als notwendig. Es können bis zu 50 TRX an Gebühren anfallen."
     },
     "UpdateYourApp" : {
       "title" : "App-Update erforderlich",
@@ -3419,6 +3419,15 @@
         "description" : "Der maximal ausgabefähige Betrag ist das gesamte Guthaben auf einem Konto, das zum Senden in einer Transaktion zur Verfügung steht."
       }
     }
+  },
+  "editTransaction" : {
+    "header" : "Transaktion bearbeiten",
+    "stuckTx" : "Ihre zuletzt „gesendete“ Transaktion ist stecken geblieben. Sie können die Transaktion mit einer höheren Netzwerkgebühr beschleunigen, oder sie abbrechen.",
+    "speedupTxMessage" : "Ihre Transaktion ist noch nicht abgeschlossen. Sie können sie mit einer höheren Netzwerkgebühr beschleunigen, oder sie abbrechen.",
+    "speedupOrCancel" : "Beschleunigen oder Abbrechen",
+    "resubmitTxDescription" : "Reichen Sie die Transaktion mit einer höheren Netzwerkgebühr erneut ein.",
+    "cancelTxDescription" : "Sendet 0 ETH an Ihre eigene Adresse. Um die Stornierung zu gewährleisten, ist die Netzwerkgebühr 10-30 % höher als die Gebühr für die zu stornierende Transaktion.",
+    "currentNetworkFee" : "Aktuelle Netzwerkgebühr = {{amount}} ETH"
   },
   "requestAccount" : {
     "stepperHeader" : {
