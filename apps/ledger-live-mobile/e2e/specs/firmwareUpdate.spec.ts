@@ -35,7 +35,7 @@ const updatableDeviceInfo = {
   version: "2.0.0",
 };
 
-describe("Receive BTC", () => {
+describe("Firmware update", () => {
   beforeAll(async () => {
     await loadConfig("1AccountBTC1AccountETH", true);
     portfolioPage = new PortfolioPage();
