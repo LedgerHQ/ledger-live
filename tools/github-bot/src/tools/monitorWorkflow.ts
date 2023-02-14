@@ -7,6 +7,7 @@ import {
   extractWorkflowFile,
   getCheckRunByName,
   getGenericOutput,
+  listWorkflowRunArtifacts,
 } from ".";
 
 type CheckRunPayload = Context<"check_run">["payload"];
@@ -97,11 +98,12 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
       let annotations;
       if (workflow.summaryFile) {
         // Get the summary artifact
-        const artifacts = await octokit.actions.listWorkflowRunArtifacts({
+        const artifacts = await listWorkflowRunArtifacts(
+          octokit,
           owner,
           repo,
-          run_id: payload.workflow_run.id,
-        });
+          payload.workflow_run.id
+        );
 
         const artifactId = artifacts.data.artifacts.find(
           (artifact) => artifact.name === workflow.summaryFile
