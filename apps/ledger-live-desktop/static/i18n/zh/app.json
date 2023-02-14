@@ -173,7 +173,43 @@
       "REGISTER" : "已注册",
       "STAKE" : "已权益质押",
       "UNSTAKE" : "已解除权益质押",
-      "WITHDRAW_UNSTAKED" : "已提取"
+      "WITHDRAW_UNSTAKED" : "已提取",
+      "SENDING" : "发送"
+    },
+    "edit" : {
+      "title" : "加速或取消",
+      "description" : "您的交易正在进行。您可使用较高的网络费用加速交易，或取消交易。",
+      "stuckDescription" : "您的交易已停滞。使用较高的网络费用加速交易，或取消交易。",
+      "previousFeesInfo" : "您之前的交易网络费用为 ",
+      "panel" : {
+        "title" : "加速或取消",
+        "description" : "您最近的一次“发送”交易已停滞。使用较高的网络费用加速交易，或取消交易。"
+      },
+      "speedUp" : {
+        "title" : "加快速度",
+        "description" : "使用较高的网络费用重新提交交易。"
+      },
+      "cancel" : {
+        "title" : "取消",
+        "description" : "使用较高的费用发送 0 {{ticker}} 到您自己的地址。"
+      },
+      "steps" : {
+        "method" : {
+          "title" : "方法"
+        },
+        "fees" : {
+          "title" : "费用"
+        },
+        "summary" : {
+          "title" : "概要"
+        },
+        "device" : {
+          "title" : "设备"
+        },
+        "confirmation" : {
+          "title" : "确认"
+        }
+      }
     }
   },
   "byteSize" : {
@@ -608,13 +644,13 @@
   },
   "stake" : {
     "noFundsModal" : {
-      "title" : "Buy, swap or receive",
-      "text" : "You do not have enough {{coin}} available to stake",
-      "description" : "Not enough funds? Don’t worry, you can securely buy, swap or receive crypto directly in Ledger Live.",
+      "title" : "买入、互换或接收",
+      "text" : "您没有足够的 {{coin}} 可供权益质押",
+      "description" : "资金不足？别担心，您可以直接在 Ledger Live 中买入、互换或接收加密货币。",
       "options" : {
         "buy" : {
           "title" : "买入",
-          "body" : "Buy with trusted  providers"
+          "body" : "通过值得信赖的服务提供商买入"
         },
         "swap" : {
           "title" : "互换",
@@ -623,7 +659,7 @@
         },
         "receive" : {
           "title" : "接收",
-          "body" : "Receive crypto in your wallet"
+          "body" : "在您的钱包中接收加密货币"
         }
       }
     }
@@ -1399,7 +1435,7 @@
         "label" : "热门"
       },
       "earn" : {
-        "title" : "赚取",
+        "title" : "权益质押",
         "description" : "通过 Ledger 增长加密资产"
       }
     }
@@ -5356,7 +5392,7 @@
       "description" : "必须在 30 秒内予以签署。请重试。"
     },
     "TronNotEnoughEnergy" : {
-      "title" : "能量低于必要值。您可能需要支付高达 50TRX 的费用。"
+      "title" : "能量低于必要值。您可能需要支付高达 50 TRX 的费用。"
     },
     "PairingFailed" : {
       "title" : "配对不成功",
