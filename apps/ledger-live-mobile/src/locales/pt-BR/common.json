@@ -811,6 +811,13 @@
       "title" : "Seu dispositivo está bloqueado",
       "description" : "Desbloqueie seu dispositivo e tente novamente.",
       "descriptionWithProductName" : "Desbloqueie sua {{ productName }} e tente novamente."
+    },
+    "EtherscanAPIError" : {
+      "title" : "Falha em buscar transações",
+      "description" : "Ocorreu um erro inesperado com os exploradores. Tente novamente mais tarde"
+    },
+    "GasEstimationError" : {
+      "title" : "Falha em estimar o gás"
     }
   },
   "crash" : {
@@ -1110,7 +1117,7 @@
     "desc" : "Seu pedido está sendo processado.\nVocê receberá sua Ledger em breve. Verifique seu e-mail para a confirmação de seu pedido."
   },
   "discover" : {
-    "title" : "Discover",
+    "title" : "Descobrir",
     "desc" : "Explore o mundo da Web3 com segurança",
     "link" : "Fale mais",
     "sections" : {
@@ -1949,7 +1956,7 @@
     "manager" : "Minha Ledger",
     "settings" : "Configurações",
     "platform" : "Live Apps",
-    "discover" : "Discover",
+    "discover" : "Descobrir",
     "nanoX" : "Nano X",
     "market" : "Mercado",
     "learn" : "Aprender"
@@ -2941,7 +2948,7 @@
         "balance" : "Saldo <0>123</0>",
         "fromAccount" : "Selecionar Conta",
         "toAccount" : "Selecionar Conta",
-        "paraswapCTA" : "Procurando pelo Paraswap? Ele foi movido para a aba Discover!",
+        "paraswapCTA" : "Procurando pelo ParaSwap? Ele foi movido para a aba Descobrir!",
         "quote" : "Cotação",
         "receive" : "Receber",
         "amount" : {
@@ -3298,6 +3305,10 @@
           }
         }
       }
+    },
+    "walletConnect" : {
+      "title" : "WalletConnect",
+      "description" : "Conectar sua carteira a DApps"
     }
   },
   "signMessage" : {
