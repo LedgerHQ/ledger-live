@@ -116,9 +116,10 @@ export type BlockByHashOutput = {
 export type API = {
   getTransactions: (
     address: string,
-    blockHeight: number | null | undefined,
-    batchSize?: number
-  ) => Promise<Tx[]>;
+    blockHeight?: number | null,
+    batchSize?: number,
+    token?: string
+  ) => Promise<{ txs: Tx[]; nextPageToken: string | undefined }>;
   getCurrentBlock: () => Promise<Block>;
   getAccountNonce: (address: string) => Promise<number>;
   broadcastTransaction: (signedTransaction: string) => Promise<string>;
@@ -169,8 +170,9 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
     async getTransactions(
       address,
       blockHeight,
-      batchSize = 2000
-    ): Promise<Tx[]> {
+      batchSize = 2000,
+      token
+    ): Promise<{ txs: Tx[]; nextPageToken: string | undefined }> {
       const query: any = {
         batch_size: batchSize,
         filtering: true,
@@ -179,6 +181,9 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
         query.block_height = blockHeight;
         query.order = "descending";
       }
+      if (token) {
+        query.token = token;
+      }
       const txData = await network({
         method: "GET",
         url: URL.format({
@@ -186,7 +191,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
           query,
         }),
       });
-      return txData.data.data;
+      return { txs: txData.data.data, nextPageToken: txData.data.token };
     },
 
     async getCurrentBlock(): Promise<Block> {
