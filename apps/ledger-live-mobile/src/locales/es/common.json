@@ -3298,6 +3298,10 @@
           }
         }
       }
+    },
+    "walletConnect" : {
+      "title" : "WalletConnect",
+      "description" : "Conecta tu billetera a dApps"
     }
   },
   "signMessage" : {
