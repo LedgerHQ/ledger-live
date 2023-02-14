@@ -51,7 +51,6 @@ export type CryptoCurrencyId =
   | "hpb"
   | "hycon"
   | "icon"
-  | "icp"
   | "iota"
   | "juno"
   | "iov"
@@ -125,6 +124,7 @@ export type CryptoCurrencyId =
   | "flare"
   | "songbird"
   | "moonbeam"
+  | "internet_computer"
   | "near";
 
 /**
