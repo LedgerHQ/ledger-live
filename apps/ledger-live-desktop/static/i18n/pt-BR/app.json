@@ -24,14 +24,14 @@
       }
     },
     "catalog" : {
-      "title" : "Discover",
+      "title" : "Explorar",
       "branch" : {
         "soon" : "em breve",
         "experimental" : "experimental",
         "debug" : "debugar"
       },
       "banner" : {
-        "title" : "Descubra nosso Catálogo Live de aplicativos",
+        "title" : "Explore nosso Catálogo Live de aplicativos",
         "description" : "Estamos trabalhando duro para oferecer um acesso seguro ao mundo dos NFTs, DeFi e muito mais no Ledger Live!"
       },
       "twitterBanner" : {
@@ -217,7 +217,7 @@
     "exchange" : "Comprar / Vender",
     "swap" : "Trocar",
     "lend" : "Emprestar",
-    "catalog" : "Discover",
+    "catalog" : "Explorar",
     "market" : "Mercado"
   },
   "stars" : {
@@ -394,10 +394,10 @@
     "title" : "Trocar",
     "titleCrypto" : "Trocar {{currency}}",
     "whatIsSwap" : "O que é Troca (Swap)",
-    "decentralizedSwapAvailable" : "Para algumas transações, você pode considerar fazer trocas (swap) em protocolos descentralizados. Descubra o <0>ParaSwap</0> e o <1>1inch</1>.",
+    "decentralizedSwapAvailable" : "Para algumas transações, considere usar corretoras descentralizadas. Descubra o <0>ParaSwap</0> e o <1>1inch</1>.",
     "paraswap" : {
       "cta" : " Confira",
-      "description" : "Procurando pelo Paraswap? Ele foi movido para a aba Discover."
+      "description" : "Procurando pelo ParaSwap? Ele foi movido para a aba Explorar."
     },
     "tabs" : {
       "exchange" : "Negociar",
@@ -1399,7 +1399,7 @@
         "label" : "Populares"
       },
       "earn" : {
-        "title" : "Ganhar",
+        "title" : "Aplicar",
         "description" : "Cresça suas criptos com a Ledger"
       }
     }
@@ -5521,6 +5521,10 @@
       "title" : "Falha no carregamento da imagem do arquivo",
       "description" : "Tente novamente com outra imagem"
     },
+    "ImageLoadFromNftError" : {
+      "title" : "Falha no carregamento da imagem do NFT",
+      "description" : "Tente novamente com outro NFT"
+    },
     "ImageDownloadError" : {
       "title" : "Falha m baixar a imagem",
       "description" : "Tente novamente com outra imagem"
@@ -5593,6 +5597,13 @@
       "descriptionWithProductName" : "Você precisa configurar sua {{ productName }} primeiro.\nVamos guiar você pelo processo de configuração.",
       "goToOnboardingButton" : "Configurar meu dispositivo",
       "goToOnboardingButtonWithProductName" : "Configurar minha {{ productName }}"
+    },
+    "EtherscanAPIError" : {
+      "title" : "Falha em buscar transações",
+      "description" : "Ocorreu um erro inesperado com os exploradores. Tente novamente mais tarde"
+    },
+    "GasEstimationError" : {
+      "title" : "Falha em estimar o gás"
     }
   },
   "cryptoOrg" : {
@@ -5631,7 +5642,13 @@
         "stepLabel" : "Escolha uma imagem",
         "description" : "Escolha uma imagem para definir como (...)",
         "pickFromNftGallery" : "Selecionar na minha galeria de NFTs",
-        "upload" : "Carregar do meu computador"
+        "myNfts" : "Meus NFTs",
+        "upload" : "Carregar do meu computador",
+        "chooseNft" : "Escolha um NFT",
+        "selectNft" : "Escolher NFT",
+        "previousSelectNft" : "voltar",
+        "nftEmptyStateTitle" : "Sem NFTs para mostrar ainda",
+        "nftEmptyStateDescription" : "Comece adicionando NFTs à sua carteira."
       },
       "adjust" : {
         "stepLabel" : "Ajustar imagem",
