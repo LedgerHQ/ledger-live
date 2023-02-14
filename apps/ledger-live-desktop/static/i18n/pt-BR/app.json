@@ -173,7 +173,43 @@
       "REGISTER" : "Registrado",
       "STAKE" : "Aplicado",
       "UNSTAKE" : "Desaplicado",
-      "WITHDRAW_UNSTAKED" : "Sacado"
+      "WITHDRAW_UNSTAKED" : "Sacado",
+      "SENDING" : "Enviando"
+    },
+    "edit" : {
+      "title" : "Acelerar ou Cancelar",
+      "description" : "A transação está em andamento. Você pode acelerar a transação com uma taxa de rede maior ou cancelá-la.",
+      "stuckDescription" : "Sua transação está travada. Acelere-a com uma taxa de rede maior ou cancele-a.",
+      "previousFeesInfo" : "Sua transação anterior teve uma taxa de rede de",
+      "panel" : {
+        "title" : "Acelerar ou Cancelar",
+        "description" : "A sua transação de \"envio\" mais recente está travada. Acelere a transação com uma taxa de rede maior ou cancele-a."
+      },
+      "speedUp" : {
+        "title" : "Acelerar",
+        "description" : "Reenviar a transação com uma taxa de rede maior."
+      },
+      "cancel" : {
+        "title" : "Cancelar",
+        "description" : "Enviando 0 {{ticker}} para seu próprio endereço com uma taxa maior."
+      },
+      "steps" : {
+        "method" : {
+          "title" : "Método"
+        },
+        "fees" : {
+          "title" : "Taxas"
+        },
+        "summary" : {
+          "title" : "Resumo"
+        },
+        "device" : {
+          "title" : "Dispositivo"
+        },
+        "confirmation" : {
+          "title" : "Confirmação"
+        }
+      }
     }
   },
   "byteSize" : {
@@ -1399,7 +1435,7 @@
         "label" : "Populares"
       },
       "earn" : {
-        "title" : "Ganhar",
+        "title" : "Aplicar",
         "description" : "Cresça suas criptos com a Ledger"
       }
     }
