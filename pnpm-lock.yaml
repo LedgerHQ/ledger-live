@@ -2600,6 +2600,28 @@ importers:
       ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
       typescript: 4.6.4
 
+  libs/ledgerjs/packages/swift-bridge-hw-app-eth:
+    specifiers:
+      '@ledgerhq/hw-app-eth': workspace:^
+      '@ledgerhq/swift-bridge-hw-transport-ble': workspace:^
+    dependencies:
+      '@ledgerhq/hw-app-eth': link:../hw-app-eth
+      '@ledgerhq/swift-bridge-hw-transport-ble': link:../swift-bridge-hw-transport-ble
+
+  libs/ledgerjs/packages/swift-bridge-hw-app-solana:
+    specifiers:
+      '@ledgerhq/hw-app-solana': workspace:^
+      '@ledgerhq/swift-bridge-hw-transport-ble': workspace:^
+    dependencies:
+      '@ledgerhq/hw-app-solana': link:../hw-app-solana
+      '@ledgerhq/swift-bridge-hw-transport-ble': link:../swift-bridge-hw-transport-ble
+
+  libs/ledgerjs/packages/swift-bridge-hw-transport-ble:
+    specifiers:
+      '@ledgerhq/hw-transport': workspace:^
+    dependencies:
+      '@ledgerhq/hw-transport': link:../hw-transport
+
   libs/ledgerjs/packages/types-cryptoassets:
     specifiers:
       '@types/jest': '*'
