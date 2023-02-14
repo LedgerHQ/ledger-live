@@ -1,6 +1,6 @@
 import { Probot } from "probot";
 import {
-  GATE_CHECK_RUN_NAME,
+  WATCHER_CHECK_RUN_NAME,
   PullRequestMetadata,
   RUNNERS,
   WORKFLOWS,
@@ -12,7 +12,7 @@ import {
   getGenericOutput,
   createRunByName,
 } from "../../tools";
-import { prIsFork, updateGateCheckRun, getTips } from "./tools";
+import { prIsFork, updateWatcherCheckRun, getTips } from "./tools";
 
 /**
  * Orchestrates workflows.
@@ -44,7 +44,7 @@ export function orchestrator(app: Probot) {
       const summaryPrefix = matchedWorkflow.description
         ? `#### ${matchedWorkflow.description}\n\n`
         : "";
-      // Will trigger the check_run.created event (which will update the gate)
+      // Will trigger the check_run.created event (which will update the watcher)
       await octokit.checks.create({
         owner,
         repo,
@@ -97,7 +97,7 @@ export function orchestrator(app: Probot) {
         : "";
       const tips = await getTips(workflowFile);
 
-      // Will trigger the check_run.created event (which will update the gate)
+      // Will trigger the check_run.created event (which will update the watcher)
       await createRunByName({
         octokit,
         owner,
@@ -162,19 +162,20 @@ export function orchestrator(app: Probot) {
 
             if (!artifactId) return undefined;
 
-            const raw = await downloadArtifact(
-              octokit,
-              owner,
-              repo,
-              artifactId
-            );
-
-            return JSON.parse(raw.toString());
+            try {
+              const raw = await downloadArtifact(
+                octokit,
+                owner,
+                repo,
+                artifactId
+              );
+              return JSON.parse(raw.toString());
+            } catch (e) {
+              return undefined;
+            }
           }
         )
       )) as [Record<string, { path: string }>?, PullRequestMetadata?];
-
-      if (!affected) return;
 
       const isFork =
         metadata?.number !== -1 &&
@@ -187,44 +188,48 @@ export function orchestrator(app: Probot) {
 
       let affectedWorkflows = 0;
       // For each workflow…
-      Object.entries(WORKFLOWS).forEach(([fileName, workflow]) => {
-        if (isFork && workflow.runsOn === RUNNERS.internal) return;
-        if (!isFork && workflow.runsOn === RUNNERS.external) return;
-        // Determine if the workflow is affected
-        const isAffected = workflow.affected.some((specifier) => {
-          return typeof specifier === "string"
-            ? affected[specifier]
-            : Object.values(affected).some(({ path }: { path: string }) =>
-                specifier.test(path)
-              );
-        });
-        if (isAffected) {
-          affectedWorkflows++;
-          // Trigger the associated workflow.
-          // This will trigger the workflow_run.requested event,
-          // which will create/recreate the check run and update the gate.
-          octokit.actions.createWorkflowDispatch({
-            owner,
-            repo,
-            workflow_id: fileName,
-            ref:
-              metadata?.head_branch ||
-              payload.workflow_run.pull_requests[0]?.head.ref,
-            inputs: workflow.getInputs(payload, metadata),
-          });
-        }
-      });
+      await Promise.all(
+        Object.entries(WORKFLOWS).map(async ([fileName, workflow]) => {
+          if (isFork && workflow.runsOn === RUNNERS.internal) return;
+          if (!isFork && workflow.runsOn === RUNNERS.external) return;
+          // Determine if the workflow is affected
+          const isAffected =
+            !affected ||
+            workflow.affected.some((specifier) => {
+              return typeof specifier === "string"
+                ? affected[specifier]
+                : Object.values(affected).some(({ path }: { path: string }) =>
+                    specifier.test(path)
+                  );
+            });
+          if (isAffected) {
+            affectedWorkflows++;
+            // Trigger the associated workflow.
+            // This will trigger the workflow_run.requested event,
+            // which will create/recreate the check run and update the watcher.
+            await octokit.actions.createWorkflowDispatch({
+              owner,
+              repo,
+              workflow_id: fileName,
+              ref:
+                metadata?.head_branch ||
+                payload.workflow_run.pull_requests[0]?.head.ref,
+              inputs: workflow.getInputs(payload, metadata),
+            });
+          }
+        })
+      );
 
-      // Create or recreate the Gate check run
+      // Create or recreate the Watcher check run
       const checkRun = await createRunByName({
         octokit,
         owner,
         repo,
         sha: checkSuite.head_sha,
-        checkName: GATE_CHECK_RUN_NAME,
+        checkName: WATCHER_CHECK_RUN_NAME,
       });
 
-      // If there are no affected workflows, update the gate to success.
+      // If there are no affected workflows, update the watcher to success.
       if (checkRun && affectedWorkflows < 1) {
         await octokit.checks.update({
           owner,
@@ -330,7 +335,7 @@ export function orchestrator(app: Probot) {
 
   /**
    * When a check run is created:
-   * - Create the gate check run
+   * - Create the watcher check run
    * - Update it with the right status based on the other check runs of the suite
    */
   app.on(["check_run.created"], async (context) => {
@@ -345,15 +350,15 @@ export function orchestrator(app: Probot) {
       context.log.info(
         `[Orchestrator](check_run.created) ${payload.check_run.name}`
       );
-      // (Re)Create gate check run in pending state
+      // (Re)Create watcher check run in pending state
       await createRunByName({
         octokit,
         owner,
         repo,
         sha: payload.check_run.head_sha,
-        checkName: GATE_CHECK_RUN_NAME,
+        checkName: WATCHER_CHECK_RUN_NAME,
       });
-      await updateGateCheckRun(
+      await updateWatcherCheckRun(
         octokit,
         owner,
         repo,
@@ -388,7 +393,7 @@ export function orchestrator(app: Probot) {
 
   /**
    * When a check run is completed:
-   * - Update the gate with the right status based on the other check runs of the suite
+   * - Update the watcher with the right status based on the other check runs of the suite
    */
   app.on("check_run.completed", async (context) => {
     const { payload, octokit } = context;
@@ -402,7 +407,7 @@ export function orchestrator(app: Probot) {
       context.log.info(
         `[Orchestrator](check_run.completed) ${payload.check_run.name}`
       );
-      await updateGateCheckRun(
+      await updateWatcherCheckRun(
         octokit,
         owner,
         repo,

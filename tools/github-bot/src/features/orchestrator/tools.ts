@@ -2,11 +2,11 @@ import fs from "fs/promises";
 import path from "path";
 import { ProbotOctokit } from "probot";
 import { formatConclusion, getStatusEmoji } from "../../tools";
-import { BOT_APP_ID, GATE_CHECK_RUN_NAME, WORKFLOWS } from "./const";
+import { BOT_APP_ID, WATCHER_CHECK_RUN_NAME, WORKFLOWS } from "./const";
 
 type Octokit = InstanceType<typeof ProbotOctokit>;
 
-export async function updateGateCheckRun(
+export async function updateWatcherCheckRun(
   octokit: Octokit,
   owner: string,
   repo: string,
@@ -60,7 +60,7 @@ export async function updateGateCheckRun(
       .sort((a, b) => a.name.localeCompare(b.name))
       .reduce(
         (acc, check_run) => {
-          if (check_run.name === GATE_CHECK_RUN_NAME) {
+          if (check_run.name === WATCHER_CHECK_RUN_NAME) {
             gateId = check_run.id;
             return acc;
           }
