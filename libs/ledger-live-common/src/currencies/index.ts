@@ -34,7 +34,7 @@ import {
   valueFromUnit,
   findCurrencyByTicker,
 } from "@ledgerhq/coin-framework/currencies/index";
-import { getCurrencyColor } from "./color";
+import { getCurrencyColor, ColorableCurrency } from "./color";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurrencyUnit";
 import {
   sortByMarketcap,
@@ -83,6 +83,7 @@ export {
   valueFromUnit,
   sanitizeValueString,
   getCurrencyColor,
+  ColorableCurrency,
   findCompoundToken,
   listTokens,
   addTokens,
