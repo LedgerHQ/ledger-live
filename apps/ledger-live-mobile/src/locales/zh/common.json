@@ -549,7 +549,7 @@
       "description" : "必须在 30 秒内签署交易。请重试。"
     },
     "TronNotEnoughEnergy" : {
-      "title" : "能量低于必要值。您可能需要支付高达 50TRX 的费用。"
+      "title" : "能量低于必要值。您可能需要支付高达 50 TRX 的费用。"
     },
     "UpdateYourApp" : {
       "title" : "需要更新应用程序",
@@ -3419,6 +3419,15 @@
         "description" : "最大可支出数额指的是一个账户可通过一个交易发送的总余额。"
       }
     }
+  },
+  "editTransaction" : {
+    "header" : "编辑交易",
+    "stuckTx" : "您最近的一次“发送”交易已停滞。使用较高的网络费用加速交易，或取消交易。",
+    "speedupTxMessage" : "您的交易正在进行。您可使用较高的网络费用加速交易，或取消交易。",
+    "speedupOrCancel" : "加速或取消",
+    "resubmitTxDescription" : "使用较高的网络费用重新提交此交易。",
+    "cancelTxDescription" : "发送 0 以太币到您自己的地址。为确保取消交易，网络费用比将要取消的交易费用高 10%-30%。",
+    "currentNetworkFee" : "当前网络费用 = {{amount}} 以太币"
   },
   "requestAccount" : {
     "stepperHeader" : {
