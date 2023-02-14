@@ -43,7 +43,7 @@ function NewsfeedPage() {
         onPress={() => onClickItem(item)}
       >
         <InformativeCard
-          imageUrl={item.metadata.image}
+          imageUrl={item?.metadata?.image || undefined}
           tag={
             <>
               {item.source.title} •{" "}
