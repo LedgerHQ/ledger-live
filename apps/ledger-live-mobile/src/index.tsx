@@ -108,7 +108,7 @@ import type { Writeable } from "./types/helpers";
 import HookDynamicContentCards from "./dynamicContent/useContentCards";
 import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
 
-console.log("YOLO");
+console.log("YOLO"); // eslint-disable-line no-console
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
