@@ -51,7 +51,9 @@ jobs:
       - name: get diff
         id: diff
         run: |
-          echo "diff=$(git diff --exit-code || 1)" >> $GITHUB_OUTPUT
+          diff=$(git diff --exit-code > /dev/null && echo 0 || echo 1)
+          echo "diff=$diff" >> $GITHUB_OUTPUT
+          exit $diff
 
   test-cli:
     name: "Test CLI"
@@ -83,7 +85,9 @@ jobs:
       - name: get diff
         id: diff
         run: |
-          echo "diff=$(git diff --exit-code || 1)" >> $GITHUB_OUTPUT
+          diff=$(git diff --exit-code > /dev/null && echo 0 || echo 1)
+          echo "diff=$diff" >> $GITHUB_OUTPUT
+          exit $diff
 
   test-libraries:
     name: "Test Libraries"
