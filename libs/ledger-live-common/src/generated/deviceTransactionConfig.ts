@@ -42,11 +42,10 @@ export default {
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_casper } from "../families/casper/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_cosmos } from "../families/cosmos/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_filecoin } from "../families/filecoin/deviceTransactionConfig";
-import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_osmosis } from "../families/osmosis/deviceTransactionConfig";
-import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_polkadot } from "@ledgerhq/coin-polkadot/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_stellar } from "../families/stellar/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_tezos } from "../families/tezos/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_tron } from "../families/tron/deviceTransactionConfig";
+import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_polkadot } from "@ledgerhq/coin-polkadot/deviceTransactionConfig";
 
 export type ExtraDeviceTransactionField =
   | ExtraDeviceTransactionField_casper
@@ -55,4 +54,4 @@ export type ExtraDeviceTransactionField =
   | ExtraDeviceTransactionField_stellar
   | ExtraDeviceTransactionField_tezos
   | ExtraDeviceTransactionField_tron
-  | ExtraDeviceTransactionField_polkadot;
+    | ExtraDeviceTransactionField_polkadot;

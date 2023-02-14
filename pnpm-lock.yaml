@@ -1261,7 +1261,7 @@ importers:
       buffer: ^6.0.3
       camelcase: ^6.2.1
       cashaddrjs: ^0.4.4
-      casper-js-sdk: ^2.10.1
+      casper-js-sdk: 2.10.2
       coininfo: ^5.1.0
       cosmjs-types: 0.2.1
       create-hmac: ^1.1.7
@@ -1429,7 +1429,7 @@ importers:
       bs58check: 2.1.2
       buffer: 6.0.3
       cashaddrjs: 0.4.4
-      casper-js-sdk: 2.11.0
+      casper-js-sdk: 2.10.2_24nbwbg7kfd7ynd7y3crveli54
       coininfo: 5.2.1
       cosmjs-types: 0.2.1
       create-hmac: 1.1.7
@@ -20827,6 +20827,7 @@ packages:
 
   /@types/tough-cookie/4.0.2:
     resolution: {integrity: sha512-Q5vtl1W5ue16D+nIaW8JWebSSraJVlK+EthKn7e7UcD4KWsaSJ8BqGPXNaPghgtcn/fhvrN17Tv8ksUsQpiplw==}
+    dev: true
 
   /@types/trusted-types/2.0.2:
     resolution: {integrity: sha512-F5DIZ36YVLE+PN+Zwws4kJogq47hNgX3Nx6WyDJ3kcplxyke3XIzB8uK5n/Lpm1HBsbGzd6nmGehL8cPekP+Tg==}
@@ -23007,10 +23008,6 @@ packages:
 
   /alphanum-sort/1.0.2:
     resolution: {integrity: sha1-l6ERlkmyEa0zaR2fn0hqjsn74KM=}
-
-  /already/2.2.1:
-    resolution: {integrity: sha512-qk6RIVMS/R1yTvBzfIL1T76PsIL7DIVCINoLuFw2YXKLpLtsTobqdChMs8m3OhuPS3CEE3+Ra5ibYiqdyogbsQ==}
-    dev: false
 
   /animated/0.2.2_sfoxds7t5ydpegc3knd667wn6m:
     resolution: {integrity: sha512-7pMzS0Sk2lA6/JT6he+apuy3GnDWUWVCurHMrpsbT9ugeLe80kpDQWjZQvkFiU9o7LsPGydPnoZpJsmt1HPPMA==}
@@ -26031,10 +26028,6 @@ packages:
     dependencies:
       caller-callsite: 2.0.0
 
-  /callguard/2.0.0:
-    resolution: {integrity: sha512-I3nd+fuj20FK1qu00ImrbH+II+8ULS6ioYr9igqR1xyqySoqc3DiHEyUM0mkoAdKeLGg2CtGnO8R3VRQX5krpQ==}
-    dev: false
-
   /callsite/1.0.0:
     resolution: {integrity: sha512-0vdNRFXn5q+dtOqjfFtmtlI9N2eVZ7LMyEV2iKC5mEEFvSg/69Ml6b/WU2qF8W1nLRa0wiSrDT3Y5jOHZCwKPQ==}
     dev: true
@@ -26137,8 +26130,8 @@ packages:
       big-integer: 1.6.36
     dev: false
 
-  /casper-js-sdk/2.11.0:
-    resolution: {integrity: sha512-rA3O6MiifcH1fZu2daNlYL67U3Lp/oyBs21hb/PmHfCTHrlqS5wJccGnh3X592fuOkT/WmVgYyG1qAfAkNKE3Q==}
+  /casper-js-sdk/2.10.2_24nbwbg7kfd7ynd7y3crveli54:
+    resolution: {integrity: sha512-/HEztcdxFZtqJ3Jz1fiZu6QilDosBbuhyau4qiA1trNeywg8vY2TrF+/A12N+JEXL9T5xcNxJG605d3rfBBAhQ==}
     dependencies:
       '@ethersproject/bignumber': 5.7.0
       '@ethersproject/bytes': 5.7.0
@@ -26148,8 +26141,8 @@ packages:
       '@types/ws': 8.5.3
       blakejs: 1.2.1
       eccrypto: 1.1.6
+      eslint-plugin-prettier: 3.4.1_24nbwbg7kfd7ynd7y3crveli54
       ethereum-cryptography: 0.1.3
-      fetch-h2: 3.0.2
       glob: 7.2.3
       humanize-duration: 3.28.0
       key-encoder: 2.0.3
@@ -26164,7 +26157,10 @@ packages:
       - bufferutil
       - encoding
       - esbuild
+      - eslint
+      - eslint-config-prettier
       - metro
+      - prettier
       - uglify-js
       - utf-8-validate
       - webpack-cli
@@ -30548,7 +30544,6 @@ packages:
       eslint: '>=7.0.0'
     dependencies:
       eslint: 7.32.0
-    dev: true
 
   /eslint-config-prettier/8.5.0_eslint@8.15.0:
     resolution: {integrity: sha512-obmWKLUNCnhtQRKc+tmnYuQl0pFU1ibYJQ5BGhTVB08bHe9wC8qUeG7c08dj9XX+AuPj1YSGSQIHl1pnDHZR0Q==}
@@ -31358,7 +31353,6 @@ packages:
       eslint-config-prettier: 8.5.0_eslint@7.32.0
       prettier: 2.3.2
       prettier-linter-helpers: 1.0.0
-    dev: true
 
   /eslint-plugin-prettier/3.4.1_evcial7aw3q6fcauxv2c7fxuoe:
     resolution: {integrity: sha512-htg25EUYUeIhKHXjOinK4BgCcDwtLHjqaxCDsMy5nbnUMkKFvIhMVCp+5GFUXQ4Nr8lBsPqtGAqBenbpFqAA2g==}
@@ -33613,7 +33607,6 @@ packages:
 
   /fast-diff/1.2.0:
     resolution: {integrity: sha512-xJuoT5+L99XlZ8twedaRf6Ax2TgQVxvgZOYoPKqZufmJib0tL2tegPBOZb1pVNgIhlqDlA0eO0c3wBvQcmzx4w==}
-    dev: true
 
   /fast-glob/2.2.7:
     resolution: {integrity: sha512-g1KuQwHOZAmOZMuBtHdxDtju+T2RT8jgCC9aANsbpdiDDTSnjgfuVsIBNKbUeJI3oKMRExcfNDtJl4OhbffMsw==}
@@ -33758,19 +33751,6 @@ packages:
       node-domexception: 1.0.0
       web-streams-polyfill: 3.2.1
     dev: true
-
-  /fetch-h2/3.0.2:
-    resolution: {integrity: sha512-Lo6UPdMKKc9Ond7yjG2vq0mnocspOLh1oV6+XZdtfdexacvMSz5xm3WoQhTAdoR2+UqPlyMNqcqfecipoD+l/A==}
-    engines: {node: '>=12'}
-    dependencies:
-      '@types/tough-cookie': 4.0.2
-      already: 2.2.1
-      callguard: 2.0.0
-      get-stream: 6.0.1
-      through2: 4.0.2
-      to-arraybuffer: 1.0.1
-      tough-cookie: 4.0.0
-    dev: false
 
   /fetch-retry/4.1.1:
     resolution: {integrity: sha512-e6eB7zN6UBSwGVwrbWVH+gdLnkW9WwHhmq2YDK1Sh30pzx1onRVGBvogTlUeWxwTa+L86NYdo4hFkh7O8ZjSnA==}
@@ -47116,7 +47096,6 @@ packages:
     engines: {node: '>=6.0.0'}
     dependencies:
       fast-diff: 1.2.0
-    dev: true
 
   /prettier/1.19.1:
     resolution: {integrity: sha512-s7PoyDv/II1ObgQunCbB9PdLmUcBZcnWOcxDh7O0N/UwDEsHyqkW+Qh28jW+mVuCdx7gLB0BotYI1Y6uI9iyew==}
@@ -47134,7 +47113,6 @@ packages:
     resolution: {integrity: sha512-lnJzDfJ66zkMy58OL5/NY5zp70S7Nz6KqcKkXYzn2tMVrNxvbqaBpg7H3qHaLxCJ5lNMsGuM8+ohS7cZrthdLQ==}
     engines: {node: '>=10.13.0'}
     hasBin: true
-    dev: true
 
   /prettier/2.6.2:
     resolution: {integrity: sha512-PkUpF+qoXTqhOeWL9fu7As8LXsIUZ1WYaJiY/a7McAQzxjk82OF0tibkFXVCDImZtWxbvojFjerkiLb0/q8mew==}
@@ -53613,6 +53591,7 @@ packages:
     resolution: {integrity: sha512-iOqSav00cVxEEICeD7TjLB1sueEL+81Wpzp2bY17uZjZN0pWZPuo4suZ/61VujxmqSGFfgOcNuTZ85QJwNZQpw==}
     dependencies:
       readable-stream: 3.6.0
+    dev: true
 
   /thunky/1.1.0:
     resolution: {integrity: sha512-eHY7nBftgThBqOyHGVN+l8gF0BucP09fMo0oO/Lb0w1OF80dJv+lDVpXG60WMQvkcxAkNybKsrEIE3ZtKGmPrA==}
