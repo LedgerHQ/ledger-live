@@ -1,6 +1,6 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
-import { deviceActionFlow } from "../../bot/specs";
+import { deviceActionFlow, SpeculosButton } from "../../bot/specs";
 import { casperPubKeyToAccountHash } from "./utils";
 
 export const acceptTransaction: DeviceAction<Transaction, any> =
@@ -8,30 +8,30 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
     steps: [
       {
         title: "Review",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Txn hash",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Type",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: () => "Token transfer",
       },
       {
         title: "Chain ID",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: () => "casper",
       },
       {
         title: "Account",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account }) => account.freshAddress,
       },
       {
         title: "Fee",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) =>
           `${transaction.fees
             .toNumber()
@@ -40,13 +40,13 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Target",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) =>
           casperPubKeyToAccountHash(transaction.recipient),
       },
       {
         title: "Amount",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ status }) =>
           `${status.amount
             .toNumber()
@@ -55,7 +55,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "APPROVE",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
       },
     ],
   });

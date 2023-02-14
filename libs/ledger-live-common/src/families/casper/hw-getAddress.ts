@@ -17,7 +17,9 @@ const resolver: Resolver = async (transport, { path, verify }) => {
 
   return {
     path,
-    address: r.Address.length ? r.Address.toString() : casperAddressFromPubKey(r.publicKey),
+    address: r.Address.length
+      ? r.Address.toString()
+      : casperAddressFromPubKey(r.publicKey),
     publicKey: r.publicKey.toString("hex"),
   };
 };

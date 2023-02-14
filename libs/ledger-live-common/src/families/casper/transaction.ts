@@ -10,7 +10,6 @@ import type { Account } from "@ledgerhq/types-live";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import BigNumber from "bignumber.js";
-import { DeployUtil } from "casper-js-sdk";
 
 export const formatTransaction = (
   { recipient, useAllAmount, amount }: Transaction,

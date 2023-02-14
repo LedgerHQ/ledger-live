@@ -62,6 +62,16 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Rosetta API for ICP",
   },
+  API_CASPER_INDEXER_ENDPOINT: {
+    parser: stringParser,
+    def: "https://casper.coin.ledger.com/indexer",
+    desc: "Casper API url indexer",
+  },
+  API_CASPER_NODE_ENDPOINT: {
+    parser: stringParser,
+    def: "https://casper.coin.ledger.com/node",
+    desc: "Casper API url node",
+  },
   API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
     def: "https://algorand.coin.ledger.com",
     parser: stringParser,
