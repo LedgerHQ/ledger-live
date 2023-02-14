@@ -1399,7 +1399,7 @@
         "label" : "Populaire"
       },
       "earn" : {
-        "title" : "Gagner",
+        "title" : "Staker",
         "description" : "Faites fructifier vos crypto-actifs via Ledger."
       }
     }
@@ -2924,7 +2924,7 @@
               "title" : "Récompenses bien encaissées",
               "titleCompound" : "Récompenses bien capitalisées",
               "text" : "Vos récompenses ont été ajoutées à votre solde disponible.",
-              "textCompound" : "Vos récompenses <0>{{amount}}</0> ont été automatiquement déléguées à <0>{{validator}}</0>.",
+              "textCompound" : "Vos récompenses de <0>{{amount}}</0> ont été automatiquement déléguées à <0>{{validator}}</0>.",
               "cta" : "Voir les détails"
             },
             "pending" : {
@@ -5356,7 +5356,7 @@
       "description" : "Les transactions doivent être signées dans les 30 secondes. Veuillez réessayer."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Énergie inférieure à la quantité requise. Vous pourriez payer des frais allant jusqu’à 50 TRX."
+      "title" : "Énergie inférieure à la quantité requise. Vous pourriez payer des frais allant jusqu’à 50 TRX."
     },
     "PairingFailed" : {
       "title" : "Échec du couplage",
@@ -5593,6 +5593,13 @@
       "descriptionWithProductName" : "Vous devez d’abord configurer votre {{ productName }}.\nNous vous guiderons à chaque étape.",
       "goToOnboardingButton" : "Configurer mon appareil",
       "goToOnboardingButtonWithProductName" : "Configurer mon {{ productName }}"
+    },
+    "EtherscanAPIError" : {
+      "title" : "Échec de la récupération des transactions",
+      "description" : "Une erreur s’est produite avec les explorateurs. Veuillez réessayer plus tard."
+    },
+    "GasEstimationError" : {
+      "title" : "Échec de l’estimation du prix du gaz"
     }
   },
   "cryptoOrg" : {
