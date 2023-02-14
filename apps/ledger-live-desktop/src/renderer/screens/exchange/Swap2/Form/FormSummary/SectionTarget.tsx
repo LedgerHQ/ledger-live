@@ -48,7 +48,10 @@ const AccountSection = ({
   return (
     <SummarySection>
       <SummaryLabel label={t("swap2.form.details.label.target")} />
-      <SummaryValue value={accountName} handleChange={handleChangeAndTrack}>
+      <SummaryValue
+        value={accountName}
+        {...(handleChange ? { handleChange: handleChangeAndTrack } : {})}
+      >
         {currency ? <CryptoCurrencyIcon circle currency={currency} size={16} /> : null}
       </SummaryValue>
     </SummarySection>

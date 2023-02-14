@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import ButtonBase from "~/renderer/components/Button";
 import TextBase from "~/renderer/components/Text";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
 const Container: ThemedComponent<{}> = styled.div`
   display: flex;
@@ -44,9 +44,9 @@ const SummaryValue = ({
   handleChange,
   children,
 }: {
-  value?: string,
-  handleChange?: Function,
-  children?: React$Node,
+  value?: string;
+  handleChange?: () => void;
+  children?: React.ReactNode;
 }) => {
   const { t } = useTranslation();
   return (
