@@ -1399,7 +1399,7 @@
         "label" : "Populares"
       },
       "earn" : {
-        "title" : "Ganhar",
+        "title" : "Aplicar",
         "description" : "Cresça suas criptos com a Ledger"
       }
     }
@@ -5521,6 +5521,10 @@
       "title" : "Falha no carregamento da imagem do arquivo",
       "description" : "Tente novamente com outra imagem"
     },
+    "ImageLoadFromNftError" : {
+      "title" : "Falha no carregamento da imagem do NFT",
+      "description" : "Tente novamente com outro NFT"
+    },
     "ImageDownloadError" : {
       "title" : "Falha m baixar a imagem",
       "description" : "Tente novamente com outra imagem"
@@ -5631,7 +5635,13 @@
         "stepLabel" : "Escolha uma imagem",
         "description" : "Escolha uma imagem para definir como (...)",
         "pickFromNftGallery" : "Selecionar na minha galeria de NFTs",
-        "upload" : "Carregar do meu computador"
+        "myNfts" : "Meus NFTs",
+        "upload" : "Carregar do meu computador",
+        "chooseNft" : "Escolha um NFT",
+        "selectNft" : "Escolher NFT",
+        "previousSelectNft" : "voltar",
+        "nftEmptyStateTitle" : "Sem NFTs para mostrar ainda",
+        "nftEmptyStateDescription" : "Comece adicionando NFTs à sua carteira."
       },
       "adjust" : {
         "stepLabel" : "Ajustar imagem",
