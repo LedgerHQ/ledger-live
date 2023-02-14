@@ -62,7 +62,7 @@ export default function ExploreTabNavigator() {
           name={ScreenName.Newsfeed}
           component={NewsfeedPage}
           options={{
-            title: t("wallet.tabs.nft"),
+            title: t("newsfeed.title"),
           }}
         />
       )}

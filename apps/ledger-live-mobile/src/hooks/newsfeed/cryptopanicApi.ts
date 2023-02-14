@@ -81,9 +81,11 @@ export type CryptopanicGetParams = {
   metadata?: boolean;
   approved?: boolean;
   page?: number;
+  // eslint-disable-next-line camelcase
+  auth_token: string;
 };
 
-function createSearchParams(params) {
+function createSearchParams(params: CryptopanicGetParams) {
   const searchParams = new URLSearchParams();
   Object.entries(params).forEach(([key, values]) => {
     if (Array.isArray(values)) {
@@ -103,7 +105,7 @@ export async function getPosts(
   const formattedParams = createSearchParams(params).toString();
 
   const response = await fetch(
-    `https://cryptopanic.com/api/v1/posts/?auth_token=${CRYPTOMANIAC_AUTH_TOKEN}&${formattedParams}`,
+    `https://cryptopanic.com/api/v1/posts/?${formattedParams}`,
   ).then(response => {
     if (!response.ok) {
       throw new Error("Network response was not OK");

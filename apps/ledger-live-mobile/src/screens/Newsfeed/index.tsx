@@ -1,26 +1,35 @@
-import { InformativeCard, Flex } from "@ledgerhq/native-ui";
-import React, { memo, useCallback } from "react";
-import { FlatList, Linking, Platform } from "react-native";
+import { InformativeCard, Flex, Text } from "@ledgerhq/native-ui";
+import React, { memo, useCallback, useMemo } from "react";
+import { FlatList, Linking } from "react-native";
 import { TouchableHighlight } from "react-native-gesture-handler";
 import styled, { useTheme } from "styled-components/native";
 import { InAppBrowser } from "react-native-inappbrowser-reborn";
+import { useTranslation } from "react-i18next";
 import { TrackScreen } from "../../analytics";
 import { CryptopanicNewsWithMetadata } from "../../hooks/newsfeed/cryptopanicApi";
 import FormatDate from "../../components/FormatDate";
 import { inAppBrowserDefaultParams } from "../../components/InAppBrowser";
 import { useCryptopanicPosts } from "../../hooks/newsfeed/useCryptopanicPosts";
+import CryptopanicIcon from "../../icons/Cryptopanic";
+import Button from "../../components/wrappedUi/Button";
 
 const keyExtractor = (item: CryptopanicNewsWithMetadata) => item.slug;
 
+const imageNewsProps = {
+  style: { width: 90, height: 75 },
+};
+
 function NewsfeedPage() {
+  const { t } = useTranslation();
   const theme = useTheme();
   const { colors } = theme;
   const inApppBrowserParams = inAppBrowserDefaultParams(theme);
-  const { posts, hasMore, isLoading, loadMore, refresh } = useCryptopanicPosts({
-    metadata: true,
-    approved: true,
-    public: true,
-  });
+  const { posts, hasMore, loadingState, ready, loadMore, refresh } =
+    useCryptopanicPosts({
+      metadata: true,
+      approved: true,
+      public: true,
+    });
 
   // logic to move to the hook
   const onClickItem = useCallback(
@@ -51,13 +60,41 @@ function NewsfeedPage() {
             </>
           }
           title={item.title}
-          imageProps={{
-            style: { width: 90, height: 75 },
-          }}
+          imageProps={imageNewsProps}
         />
       </Container>
     ),
     [colors.neutral.c30, onClickItem],
+  );
+
+  const ListHeaderComponent = useMemo(
+    () => (
+      <Flex mx={6} flexDirection={"row"}>
+        <Text variant={"small"} color={"neutral.c80"} mr={3}>
+          {t("newsfeed.poweredByCryptopanic")}
+        </Text>
+        <CryptopanicIcon size={14} />
+      </Flex>
+    ),
+    [t],
+  );
+
+  const ListFooterComponent = useMemo(
+    () => (
+      <Flex mx={6} pt={6} pb={8}>
+        <Button
+          type={"shade"}
+          size={"small"}
+          outline
+          onPress={loadMore}
+          pending={loadingState === "loadingMore"}
+          displayContentWhenPending
+        >
+          {t("common.loadMore")}
+        </Button>
+      </Flex>
+    ),
+    [loadMore, loadingState, t],
   );
 
   return (
@@ -68,9 +105,10 @@ function NewsfeedPage() {
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
-        onEndReached={hasMore ? loadMore : () => {}}
+        ListHeaderComponent={ListHeaderComponent}
+        ListFooterComponent={ready && hasMore ? ListFooterComponent : undefined}
         onRefresh={refresh}
-        refreshing={isLoading}
+        refreshing={loadingState === "refreshing"}
       />
     </Flex>
   );
