@@ -16,7 +16,7 @@ export type CheckSuite = Awaited<
 >["data"];
 
 export const BOT_APP_ID = 198164;
-export const GATE_CHECK_RUN_NAME = "@@PR • Watcher 🪬";
+export const WATCHER_CHECK_RUN_NAME = "@@PR • Watcher 🪬";
 export enum RUNNERS {
   internal,
   external,
