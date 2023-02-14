@@ -9,7 +9,7 @@ import {
 } from "./cryptopanicApi";
 import { useLocale } from "../../context/Locale";
 
-export async function useCryptopanicPosts(params: CryptopanicGetParams) {
+export function useCryptopanicPosts(params: CryptopanicGetParams) {
   const { locale } = useLocale();
   const newsfeedPageFeature = useFeature("newsfeedPage");
   const [isLoading, setIsLoading] = useState(false);
@@ -58,8 +58,9 @@ export async function useCryptopanicPosts(params: CryptopanicGetParams) {
 
   // Init
   useEffect(() => {
-    if (ready || isLoading) return;
-    getCryptoPanicPosts({ page: 1 });
+    if (!ready && !isLoading) {
+      getCryptoPanicPosts({ page: 1 });
+    }
   }, [getCryptoPanicPosts, isLoading, ready]);
 
   const refresh = useCallback(async () => {
