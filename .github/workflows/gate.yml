@@ -29,13 +29,13 @@ jobs:
       - uses: ./tools/actions/turbo-affected
         id: affected
         with:
-          head-ref: ${{ format('origin/{0}', github.event.pull_request.base.ref) }}
+          ref: ${{ format('origin/{0}', github.event_name == 'pull_request' && github.event.pull_request.base.ref || github.event.merge_group.base_ref) }}
       # Labeller
       - uses: actions/labeler@v4
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
       - uses: actions/github-script@v6
-        if: github.event.pull_request.head.repo.fork
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
