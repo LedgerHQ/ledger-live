@@ -1399,7 +1399,7 @@
         "label" : "Популярно"
       },
       "earn" : {
-        "title" : "Приумножить",
+        "title" : "Стейкинг",
         "description" : "Приумножайте криптовалюты вместе с Ledger"
       }
     }
@@ -5521,6 +5521,10 @@
       "title" : "Не удалось загрузить изображение из файла",
       "description" : "Попробуйте другое изображение"
     },
+    "ImageLoadFromNftError" : {
+      "title" : "Не удалось загрузить изображение NFT",
+      "description" : "Попробуйте использовать другой NFT"
+    },
     "ImageDownloadError" : {
       "title" : "Не удалось загрузить изображение",
       "description" : "Попробуйте другое изображение"
@@ -5593,6 +5597,13 @@
       "descriptionWithProductName" : "Сначала {{ productName }} необходимо настроить.\nМы поможем вам с этим.",
       "goToOnboardingButton" : "Настроить устройство",
       "goToOnboardingButtonWithProductName" : "Настроить {{ productName }}"
+    },
+    "EtherscanAPIError" : {
+      "title" : "Сбой при загрузке транзакций",
+      "description" : "Произошла непредвиденная ошибка с обозревателями. Повторите попытку позже"
+    },
+    "GasEstimationError" : {
+      "title" : "Сбой расчёта стоимости Газа"
     }
   },
   "cryptoOrg" : {
@@ -5631,7 +5642,13 @@
         "stepLabel" : "Выбрать изображение",
         "description" : "Выберите изображение для использования в качестве (...)",
         "pickFromNftGallery" : "Выбрать из галереи NFT",
-        "upload" : "Загрузить с ПК"
+        "myNfts" : "Мои NFT",
+        "upload" : "Загрузить с ПК",
+        "chooseNft" : "Выбрать NFT",
+        "selectNft" : "Выбрать NFT",
+        "previousSelectNft" : "Назад",
+        "nftEmptyStateTitle" : "Пока тут ничего нет",
+        "nftEmptyStateDescription" : "Сначала добавьте NFT в кошелёк"
       },
       "adjust" : {
         "stepLabel" : "Изменить изображение",
