@@ -13,28 +13,6 @@ let settingsPage: SettingsPage;
 let debugSettingsPage: DebugSettingsPage;
 let deviceSelectionPage: DeviceSelectionPage;
 
-const updatableDeviceInfo = {
-  bootloaderVersion: "1.16",
-  hardwareVersion: 0,
-  hasDevFirmware: false,
-  isBootloader: false,
-  isOSU: false,
-  isRecoveryMode: false,
-  languageId: 0,
-  majMin: "2.1",
-  managerAllowed: false,
-  mcuBlVersion: undefined,
-  mcuTargetId: undefined,
-  mcuVersion: "2.30",
-  onboarded: true,
-  pinValidated: true,
-  providerName: null,
-  seTargetId: 855638020,
-  seVersion: "2.0.0",
-  targetId: 855638020,
-  version: "2.0.0",
-};
-
 describe("Firmware update", () => {
   beforeAll(async () => {
     await loadConfig("1AccountBTC1AccountETH", true);
@@ -100,7 +78,5 @@ describe("Firmware update", () => {
     await expect(debugSettingsPage.getUpdateLockedDevice()).toHaveText("false");
     await expect(debugSettingsPage.getUpdateStep()).toHaveText("installingOsu");
     await expect(debugSettingsPage.getUpdateError()).toHaveText("null");
-
-    await new Promise((resolve) => setTimeout(() => resolve("a"), 10000));
   });
 });
