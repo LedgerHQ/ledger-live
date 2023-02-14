@@ -341,7 +341,7 @@ const accountNamesCache = makeLRUCache(
   (addr: string) => addr,
   {
     max: 300,
-    maxAge: 180 * 60 * 1000, // 3hours
+    ttl: 180 * 60 * 1000, // 3hours
   }
 );
 // cache for super representative brokerages (brokerage is unchanged over time)
@@ -350,7 +350,7 @@ const srBrokeragesCache = makeLRUCache(
   (addr: string) => addr,
   {
     max: 300,
-    maxAge: 180 * 60 * 1000, // 3hours
+    ttl: 180 * 60 * 1000, // 3hours
   }
 );
 export const getAccountName = async (
@@ -384,7 +384,7 @@ const superRepresentativesCache = makeLRUCache(
   () => "",
   {
     max: 300,
-    maxAge: 60 * 60 * 1000, // 1hour
+    ttl: 60 * 60 * 1000, // 1hour
   }
 );
 export const getTronSuperRepresentatives = async (): Promise<

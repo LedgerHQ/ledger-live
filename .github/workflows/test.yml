@@ -78,6 +78,8 @@ jobs:
         run: pnpm i --frozen-lockfile
       - name: build cli
         run: pnpm build:cli
+      - name: test cli
+        run: pnpm test --filter="live-cli"
       - name: get diff
         id: diff
         run: |

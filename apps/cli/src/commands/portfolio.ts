@@ -14,8 +14,7 @@ import {
   flattenAccounts,
   getAccountName,
 } from "@ledgerhq/live-common/account/index";
-import { getPortfolio } from "@ledgerhq/live-common/portfolio/v2/index";
-import { getRanges } from "@ledgerhq/live-common/portfolio/v2/range";
+import { getPortfolio, getRanges } from "@ledgerhq/live-common/portfolio/v2/index";
 import {
   formatCurrencyUnit,
   findCurrencyByTicker,

@@ -6,8 +6,8 @@ import { toBalanceHistoryRaw } from "@ledgerhq/live-common/account/index";
 import {
   getBalanceHistory,
   getPortfolioCount,
+  getRanges,
 } from "@ledgerhq/live-common/portfolio/v2/index";
-import { getRanges } from "@ledgerhq/live-common/portfolio/v2/range";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";

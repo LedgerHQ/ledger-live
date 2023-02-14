@@ -1,3 +1,132 @@
+import { CoinType } from "./slip44";
+
+// All cryptocurrency ids
+// list should be append only. **do not modify existing ids**
+export type CryptoCurrencyId =
+  | "aeternity"
+  | "aion"
+  | "akroma"
+  | "algorand"
+  | "ark"
+  | "atheios"
+  | "avalanche_c_chain"
+  | "banano"
+  | "bitcoin"
+  | "bitcoin_cash"
+  | "bitcoin_gold"
+  | "bitcoin_private"
+  | "bsc"
+  | "callisto"
+  | "cardano"
+  | "cardano_testnet"
+  | "celo"
+  | "clubcoin"
+  | "cosmos"
+  | "cosmos_testnet"
+  | "dash"
+  | "decred"
+  | "dexon"
+  | "ellaism"
+  | "dogecoin"
+  | "digibyte"
+  | "energywebchain"
+  | "eos"
+  | "elastos"
+  | "elrond"
+  | "ethereum"
+  | "ethereum_classic"
+  | "ether1"
+  | "ethergem"
+  | "ethersocial"
+  | "expanse"
+  | "factom"
+  | "fic"
+  | "flow"
+  | "game_credits"
+  | "gochain"
+  | "groestlcoin"
+  | "hcash"
+  | "hedera"
+  | "helium"
+  | "hpb"
+  | "hycon"
+  | "icon"
+  | "icp"
+  | "iota"
+  | "juno"
+  | "iov"
+  | "kin"
+  | "komodo"
+  | "kusama"
+  | "lbry"
+  | "litecoin"
+  | "lisk"
+  | "mix"
+  | "monero"
+  | "moonriver"
+  | "musicoin"
+  | "nano"
+  | "nem"
+  | "neo"
+  | "nervos"
+  | "nimiq"
+  | "nix"
+  | "nos"
+  | "ontology"
+  | "particl"
+  | "peercoin"
+  | "pirl"
+  | "pivx"
+  | "poa"
+  | "polkadot"
+  | "polygon"
+  | "poswallet"
+  | "qrl"
+  | "qtum"
+  | "ravencoin"
+  | "ripple"
+  | "rise"
+  | "reosc"
+  | "resistance"
+  | "solana"
+  | "stakenet"
+  | "stratis"
+  | "stealthcoin"
+  | "stellar"
+  | "osmosis"
+  | "shyft"
+  | "tezos"
+  | "thundercore"
+  | "tomo"
+  | "tron"
+  | "ubiq"
+  | "vechain"
+  | "vertcoin"
+  | "viacoin"
+  | "wanchain"
+  | "waves"
+  | "zcash"
+  | "zclassic"
+  | "zcoin"
+  | "zencash"
+  | "zilliqa"
+  | "crypto_org"
+  | "bitcoin_testnet"
+  | "ethereum_ropsten"
+  | "ethereum_goerli"
+  | "stacks"
+  | "crypto_org_croeseid"
+  | "solana_testnet"
+  | "solana_devnet"
+  | "filecoin"
+  | "arbitrum"
+  | "cronos"
+  | "fantom"
+  | "flare"
+  | "songbird"
+  | "moonbeam"
+  | "near";
+
 /**
  *
  */
@@ -74,13 +203,15 @@ export type ExplorerView = {
 export type CryptoCurrency = CurrencyCommon & {
   type: "CryptoCurrency";
   // unique internal id of a crypto currency
-  id: string;
+  // LBRY | groestcoin | osmo are expectional ids
+  // because in `cryptocurrenciesById` the key of the object is different from the id
+  id: CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo";
   // define if a crypto is a fork from another coin. helps dealing with split/unsplit
   forkedFrom?: string;
   // name of the app as shown in the Manager
   managerAppName: string;
   // coin type according to slip44. THIS IS NOT GUARANTEED UNIQUE across currencies (e.g testnets,..)
-  coinType: number;
+  coinType: CoinType;
   // the scheme name to use when formatting an URI (without the ':')
   scheme: string;
   // used for UI
@@ -103,7 +234,7 @@ export type CryptoCurrency = CurrencyCommon & {
   ethereumLikeInfo?: {
     chainId: number;
     networkId?: number;
-    baseChain?: string;
+    baseChain?: "mainnet" | "goerli" | "ropsten";
     hardfork?: string;
     // used by evm light integration
     rpc?: string;
@@ -128,3 +259,5 @@ export type CryptoCurrency = CurrencyCommon & {
 export type Currency = FiatCurrency | CryptoCurrency | TokenCurrency;
 
 export type CryptoOrTokenCurrency = CryptoCurrency | TokenCurrency;
+
+export { CoinType };

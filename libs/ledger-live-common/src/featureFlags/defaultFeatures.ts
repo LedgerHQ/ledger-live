@@ -20,6 +20,9 @@ export const defaultFeatures: DefaultFeatures = {
       debug: false,
     },
   },
+  currencyAvalancheCChain: {
+    enabled: false,
+  },
   currencyOsmosis: {
     enabled: false,
   },
