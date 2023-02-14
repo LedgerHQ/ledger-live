@@ -27,20 +27,14 @@ jobs:
         id: affected
         with:
           head-ref: ${{ format('origin/{0}', github.event.pull_request.base.ref) }}
-      - name: generate token
-        id: generate-token
-        uses: tibdex/github-app-token@v1
-        with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       # Labeller
       - uses: actions/labeler@v4
         with:
-          repo-token: "${{ steps.generate-token.outputs.token }}"
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
       - uses: actions/github-script@v6
         if: github.event.pull_request.head.repo.fork
         with:
-          github-token: ${{ steps.generate-token.outputs.token }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             try {
               const { data: rawLabels } = await github.rest.issues.listLabelsOnIssue({
