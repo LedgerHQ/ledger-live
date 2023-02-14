@@ -173,7 +173,43 @@
       "REGISTER" : "Registriert",
       "STAKE" : "Gestaked",
       "UNSTAKE" : "Nicht mehr gestaked",
-      "WITHDRAW_UNSTAKED" : "Ausgezahlt"
+      "WITHDRAW_UNSTAKED" : "Ausgezahlt",
+      "SENDING" : "Senden"
+    },
+    "edit" : {
+      "title" : "Beschleunigen oder Abbrechen",
+      "description" : "Ihre Transaktion ist noch nicht abgeschlossen. Sie können sie mit einer höheren Netzwerkgebühr beschleunigen, oder sie abbrechen.",
+      "stuckDescription" : "Ihre Transaktion ist stecken geblieben. Sie können sie mit einer höheren Netzwerkgebühr beschleunigen, oder sie abbrechen.",
+      "previousFeesInfo" : "Ihre vorherige Transaktion hatte eine Netzwerkgebühr von",
+      "panel" : {
+        "title" : "Beschleunigen oder Abbrechen",
+        "description" : "Ihre zuletzt „gesendete“ Transaktion ist stecken geblieben. Sie können die Transaktion mit einer höheren Netzwerkgebühr beschleunigen, oder sie abbrechen."
+      },
+      "speedUp" : {
+        "title" : "Beschleunigen",
+        "description" : "Reichen Sie die Transaktion mit einer höheren Netzwerkgebühr erneut ein."
+      },
+      "cancel" : {
+        "title" : "Abbrechen",
+        "description" : "Sendet 0 {{ticker}} an Ihre eigene Adresse mit einer höheren Gebühr."
+      },
+      "steps" : {
+        "method" : {
+          "title" : "Methode"
+        },
+        "fees" : {
+          "title" : "Gebühren"
+        },
+        "summary" : {
+          "title" : "Zusammenfassung"
+        },
+        "device" : {
+          "title" : "Gerät"
+        },
+        "confirmation" : {
+          "title" : "Bestätigung"
+        }
+      }
     }
   },
   "byteSize" : {
@@ -1399,7 +1435,7 @@
         "label" : "beliebt"
       },
       "earn" : {
-        "title" : "Verdienen",
+        "title" : "Staken",
         "description" : "Vermehren Sie Ihre Kryptowährungen mit Ledger"
       }
     }
