@@ -1,7 +1,7 @@
 name: "[Bot] non-reg on develop with 'Silicium'"
 on:
   schedule:
-    - cron: "1 19 * * 2,4,6"
+    - cron: "9 5 * * 5" # Friday – daily rotation of bots
 
 concurrency:
   group: bot-seed3
