@@ -12,12 +12,10 @@ import { track } from "../../analytics";
 import useDynamicContent from "../../dynamicContent/dynamicContent";
 import Notifications from "../../icons/Notifications";
 
-function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
+const NotificationsButton = () => {
   const navigation = useNavigation();
   const { colors } = useTheme();
-
   const { notificationCards } = useDynamicContent();
-  const { t } = useTranslation();
 
   const onNotificationButtonPress = useCallback(() => {
     track("button_clicked", {
@@ -28,6 +26,28 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
       screen: ScreenName.NotificationCenter,
     });
   }, [navigation]);
+
+  const notificationsCount = useMemo(
+    () =>
+      notificationCards.length - notificationCards.filter(n => n.viewed).length,
+    [notificationCards],
+  );
+  return (
+    <Touchable onPress={onNotificationButtonPress}>
+      <Notifications
+        size={24}
+        color={colors.neutral.c100}
+        dotColor={colors.error.c80}
+        isOn={notificationsCount > 0}
+      />
+    </Touchable>
+  );
+};
+
+function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
+  const navigation = useNavigation();
+
+  const { t } = useTranslation();
 
   const onSettingsButtonPress = useCallback(() => {
     track("button_clicked", {
@@ -43,12 +63,6 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
       name: "CL Card Powered by Ledger",
     });
   }, [navigation]);
-
-  const notificationsCount = useMemo(
-    () =>
-      notificationCards.length - notificationCards.filter(n => n.viewed).length,
-    [notificationCards],
-  );
 
   return (
     <Flex
@@ -90,14 +104,7 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
           </Touchable>
         </Flex>
         <Flex mr={7}>
-          <Touchable onPress={onNotificationButtonPress}>
-            <Notifications
-              size={24}
-              color={colors.neutral.c100}
-              dotColor={colors.error.c80}
-              isOn={notificationsCount > 0}
-            />
-          </Touchable>
+          <NotificationsButton />
         </Flex>
         <Touchable onPress={onSettingsButtonPress} testID="settings-icon">
           <SettingsMedium size={24} color={"neutral.c100"} />

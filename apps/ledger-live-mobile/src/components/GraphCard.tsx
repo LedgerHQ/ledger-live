@@ -10,7 +10,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSelector } from "react-redux";
 import Delta from "./Delta";
-import TransactionsPendingConfirmationWarning from "./TransactionsPendingConfirmationWarning";
+import { TransactionsPendingConfirmationWarningAllAccounts } from "./TransactionsPendingConfirmationWarning";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 
 import { useTimeRange } from "../actions/settings";
@@ -145,7 +145,7 @@ function GraphCard({
                       />
                     </Text>
                   )}
-                  <TransactionsPendingConfirmationWarning />
+                  <TransactionsPendingConfirmationWarningAllAccounts />
                 </Flex>
                 <Flex flexDirection={"row"}>
                   {!balanceHistory ? (

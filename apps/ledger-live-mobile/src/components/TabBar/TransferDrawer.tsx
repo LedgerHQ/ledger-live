@@ -2,7 +2,6 @@ import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { ScrollView } from "react-native-gesture-handler";
 import { Flex, Icons, Text, Box } from "@ledgerhq/native-ui";
 import { StyleProp, ViewStyle } from "react-native";
@@ -13,8 +12,8 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { NavigatorName, ScreenName } from "../../const";
 import {
   accountsCountSelector,
+  areAccountsEmptySelector,
   hasLendEnabledAccountsSelector,
-  accountsSelector,
 } from "../../reducers/accounts";
 import {
   hasOrderedNanoSelector,
@@ -50,12 +49,8 @@ export default function TransferDrawer({
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const accountsCount: number = useSelector(accountsCountSelector);
   const lendingEnabled = useSelector(hasLendEnabledAccountsSelector);
-  const accounts = useSelector(accountsSelector);
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
-  const areAccountsEmpty = useMemo(
-    () => accounts.every(isAccountEmpty),
-    [accounts],
-  );
+  const areAccountsEmpty = useSelector(areAccountsEmptySelector);
 
   const walletConnectEntryPoint = useFeature("walletConnectEntryPoint");
 
