@@ -1,4 +1,3 @@
-// @flow
 import { openModal } from "~/renderer/actions/modals";
 import { BannerProps } from "~/renderer/screens/account/AccountBanner";
 import { AccountBannerState } from "@ledgerhq/live-common/lib/families/cosmos/banner";
