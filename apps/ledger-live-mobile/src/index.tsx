@@ -108,6 +108,8 @@ import type { Writeable } from "./types/helpers";
 import HookDynamicContentCards from "./dynamicContent/useContentCards";
 import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
 
+console.log("YOLO");
+
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
 }
