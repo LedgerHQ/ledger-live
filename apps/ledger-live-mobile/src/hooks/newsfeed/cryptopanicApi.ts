@@ -1,3 +1,5 @@
+const CRYPTOMANIAC_AUTH_TOKEN = "N/A";
+
 type CryptopanicAvailableRegions =
   | "en"
   | "de"
@@ -16,6 +18,7 @@ export type CryptopanicNews = {
     region: CryptopanicAvailableRegions;
     domain: string;
     path: string | null;
+    url: string | null;
   };
   title: string;
   slug: string;
@@ -36,8 +39,10 @@ export type CryptopanicNews = {
 };
 
 export type CryptopanicNewsWithMetadata = CryptopanicNews & {
-  description: string;
-  image: string;
+  metadata: {
+    image: string;
+    description: string;
+  };
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -65,8 +70,32 @@ export type CryptopanicGetParams = {
   page?: number;
 };
 
+function createSearchParams(params) {
+  const searchParams = new URLSearchParams();
+  Object.entries(params).forEach(([key, values]) => {
+    if (Array.isArray(values)) {
+      values.forEach(value => {
+        searchParams.append(key, value);
+      });
+    } else {
+      searchParams.append(key, values.toString());
+    }
+  });
+  return searchParams;
+}
+
 export async function getPosts(
-  _: CryptopanicGetParams,
+  params: CryptopanicGetParams,
 ): Promise<CryptopanicPostsResponse> {
-  return null;
+  const formattedParams = createSearchParams(params).toString();
+
+  const response = await fetch(
+    `https://cryptopanic.com/api/v1/posts/?auth_token=${CRYPTOMANIAC_AUTH_TOKEN}&${formattedParams}`,
+  ).then(response => {
+    if (!response.ok) {
+      throw new Error("Network response was not OK");
+    }
+    return response.json();
+  });
+  return response;
 }
