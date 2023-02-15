@@ -811,6 +811,13 @@
       "title" : "جهازك مقفل",
       "description" : "قم بإلغاء قفل جهازك وحاول مرة أخرى.",
       "descriptionWithProductName" : "قم بإلغاء قفل {{ productName }} خاصتك وحاول مرة أخرى."
+    },
+    "EtherscanAPIError" : {
+      "title" : "فشل إحضار المعاملات",
+      "description" : "حدث خطأ غير متوقع مع المستكشفات. يُرجى إعادة المحاولة لاحقاً"
+    },
+    "GasEstimationError" : {
+      "title" : "فشل تقدير الغاز"
     }
   },
   "crash" : {
@@ -1495,25 +1502,20 @@
     "stepProtect" : {
       "bullets" : {
         "0" : {
-          "title" : "تصفح ",
-          "label" : "تعرف على كيفية التفاعل مع جهازك من خلال قراءة التعليمات التي تظهر على الشاشة."
+          "title" : "Select “Restore”",
+          "label" : "Press both buttons simultaneously to select."
         },
         "1" : {
-          "title" : "اختر \"Restore [استعادة]\"",
-          "label" : "اضغط على كلا الزرين في وقت واحد لتأكيد الاختيار."
-        },
-        "2" : {
-          "title" : "اختر وضع \"Restore with Protect [الاستعادة عن طريق Protect]\"",
-          "label" : "اضغط على كلا الزرين في وقت واحد لتأكيد الاختيار."
+          "title" : "Select “Restore using Ledger Recover”",
+          "label" : "Press both buttons simultaneously to select."
         }
       },
       "nextStep" : "متابعة",
       "extraInfo" : {
-        "tooltip" : "لا أستطيع رؤيته على Ledger الخاص بي",
-        "title" : "لماذا لا أستطيع رؤية Restore with Protect [الاستعادة عن طريق Protect] على Ledger الخاص بي؟",
-        "desc1" : "السبب الأكثر احتمالاً هو أن جهازك غير متوافق مع Protect. لا تقلق، نحن هنا لإرشادك حول كيفية جعلها تعمل.",
-        "desc2" : "يُرجى التواصل معنا واختيار \"My Ledger doesn't display Restore with Protect [Ledger الخاص بي لا يعرض الاستعادة عن طريق Protect]\"، ونحن هنا من أجلك.",
-        "cta" : "اتبع الخطوات اليدوية",
+        "tooltip" : "I don't see 'Restore using Ledger Recover'",
+        "title" : "The OS on your Ledger Nano X needs to be updated",
+        "desc" : "You can try updating the OS or contact Ledger support for assistance.",
+        "cta" : "Learn how to update",
         "supportLink" : "تواصل مع دعم Ledger"
       }
     },
@@ -3298,6 +3300,10 @@
           }
         }
       }
+    },
+    "walletConnect" : {
+      "title" : "WalletConnect",
+      "description" : "قم بتوصيل محفظتك بالتطبيقات اللامركزية"
     }
   },
   "signMessage" : {
