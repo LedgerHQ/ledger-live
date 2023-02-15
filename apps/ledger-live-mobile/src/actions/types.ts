@@ -5,7 +5,12 @@ import type {
   ImportAccountsReduceInput,
 } from "@ledgerhq/live-common/account/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { Account, DeviceModelInfo } from "@ledgerhq/types-live";
+import type {
+  Account,
+  DeviceModelInfo,
+  Feature,
+  FeatureId,
+} from "@ledgerhq/types-live";
 import type { Payload as PostOnboardingPayload } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
@@ -24,6 +29,8 @@ import type {
   State,
   WalletConnectState,
   SwapStateType,
+  DynamicContentState,
+  ProtectState,
 } from "../reducers/types";
 import type { Unpacked } from "../types/helpers";
 
@@ -38,6 +45,7 @@ export enum AccountsActionTypes {
   UPDATE_ACCOUNT = "UPDATE_ACCOUNT",
   DELETE_ACCOUNT = "DELETE_ACCOUNT",
   CLEAN_CACHE = "CLEAN_CACHE",
+  DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
 }
 
 export type AccountsImportStorePayload = { active: Account[] };
@@ -68,12 +76,15 @@ export type AccountsPayload =
 // === APPSTATE ACTIONS ===
 
 export enum AppStateActionTypes {
+  DEBUG_MENU_VISIBLE = "DEBUG_MENU_VISIBLE",
   SYNC_IS_CONNECTED = "SYNC_IS_CONNECTED",
   HAS_CONNECTED_DEVICE = "HAS_CONNECTED_DEVICE",
   SET_MODAL_LOCK = "SET_MODAL_LOCK",
   QUEUE_BACKGROUND_EVENT = "QUEUE_BACKGROUND_EVENT",
   DEQUEUE_BACKGROUND_EVENT = "DEQUEUE_BACKGROUND_EVENT",
   CLEAR_BACKGROUND_EVENTS = "CLEAR_BACKGROUND_EVENTS",
+  DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
+  UPDATE_MAIN_NAVIGATOR_VISIBILITY = "UPDATE_MAIN_NAVIGATOR_VISIBILITY",
 }
 
 export type AppStateIsConnectedPayload = Pick<AppState, "isConnected">;
@@ -85,11 +96,17 @@ export type AppStateSetModalLockPayload = Pick<AppState, "modalLock">;
 export type AppStateAddBackgroundEventPayload = {
   event: FwUpdateBackgroundEvent;
 };
+
+export type AppStateUpdateMainNavigatorVisibilityPayload = Pick<
+  AppState,
+  "isMainNavigatorVisible"
+>;
 export type AppStatePayload =
   | AppStateIsConnectedPayload
   | AppStateSetHasConnectedDevicePayload
   | AppStateSetModalLockPayload
-  | AppStateAddBackgroundEventPayload;
+  | AppStateAddBackgroundEventPayload
+  | AppStateUpdateMainNavigatorVisibilityPayload;
 
 // === BLE ACTIONS ===
 
@@ -99,6 +116,7 @@ export enum BleActionTypes {
   BLE_ADD_DEVICE = "BLE_ADD_DEVICE",
   BLE_IMPORT = "BLE_IMPORT",
   BLE_SAVE_DEVICE_NAME = "BLE_SAVE_DEVICE_NAME",
+  DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
 }
 
 export type BleRemoveKnownDevicePayload = { deviceId: string };
@@ -122,6 +140,7 @@ export enum NotificationsActionTypes {
   NOTIFICATIONS_SET_CURRENT_ROUTE_NAME = "NOTIFICATIONS_SET_CURRENT_ROUTE_NAME",
   NOTIFICATIONS_SET_EVENT_TRIGGERED = "NOTIFICATIONS_SET_EVENT_TRIGGERED",
   NOTIFICATIONS_SET_DATA_OF_USER = "NOTIFICATIONS_SET_DATA_OF_USER",
+  DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
 }
 
 export type NotificationsSetModalOpenPayload = Pick<
@@ -162,6 +181,41 @@ export type NotificationsPayload =
   | NotificationsSetEventTriggeredPayload
   | NotificationsSetDataOfUserPayload;
 
+// === DYNAMIC CONTENT ACTIONS ===
+
+export enum DynamicContentActionTypes {
+  DYNAMIC_CONTENT_SET_WALLET_CARDS = "DYNAMIC_CONTENT_SET_WALLET_CARDS",
+  DYNAMIC_CONTENT_SET_ASSET_CARDS = "DYNAMIC_CONTENT_SET_ASSET_CARDS",
+  DYNAMIC_CONTENT_SET_LEARN_CARDS = "DYNAMIC_CONTENT_SET_LEARN_CARDS",
+  DYNAMIC_CONTENT_SET_NOTIFICATION_CARDS = "DYNAMIC_CONTENT_SET_NOTIFICATION_CARDS",
+}
+
+export type DynamicContentSetWalletCardsPayload = Pick<
+  DynamicContentState,
+  "walletCards"
+>;
+
+export type DynamicContentSetAssetCardsPayload = Pick<
+  DynamicContentState,
+  "assetsCards"
+>;
+
+export type DynamicContentSetLearnCardsPayload = Pick<
+  DynamicContentState,
+  "learnCards"
+>;
+
+export type DynamicContentSetNotificationCardsPayload = Pick<
+  DynamicContentState,
+  "notificationCards"
+>;
+
+export type DynamicContentPayload =
+  | DynamicContentSetWalletCardsPayload
+  | DynamicContentSetAssetCardsPayload
+  | DynamicContentSetLearnCardsPayload
+  | DynamicContentSetNotificationCardsPayload;
+
 // === RATINGS ACTIONS ===
 
 export enum RatingsActionTypes {
@@ -170,6 +224,7 @@ export enum RatingsActionTypes {
   RATINGS_SET_CURRENT_ROUTE_NAME = "RATINGS_SET_CURRENT_ROUTE_NAME",
   RATINGS_SET_HAPPY_MOMENT = "RATINGS_SET_HAPPY_MOMENT",
   RATINGS_SET_DATA_OF_USER = "RATINGS_SET_DATA_OF_USER",
+  DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
 }
 
 export type RatingsSetModalOpenPayload = Pick<
@@ -225,6 +280,7 @@ export enum SettingsActionTypes {
   SETTINGS_SET_THEME = "SETTINGS_SET_THEME",
   SETTINGS_SET_OS_THEME = "SETTINGS_SET_OS_THEME",
   SETTINGS_SET_CAROUSEL_VISIBILITY = "SETTINGS_SET_CAROUSEL_VISIBILITY",
+  SETTINGS_SET_DISMISSED_DYNAMIC_CARDS = "SETTINGS_SET_DISMISSED_DYNAMIC_CARDS",
   SETTINGS_SET_DISCREET_MODE = "SETTINGS_SET_DISCREET_MODE",
   SETTINGS_SET_LANGUAGE = "SETTINGS_SET_LANGUAGE",
   SETTINGS_SET_LOCALE = "SETTINGS_SET_LOCALE",
@@ -233,9 +289,11 @@ export enum SettingsActionTypes {
   ACCEPT_SWAP_PROVIDER = "ACCEPT_SWAP_PROVIDER",
   LAST_SEEN_DEVICE = "LAST_SEEN_DEVICE",
   LAST_SEEN_DEVICE_INFO = "LAST_SEEN_DEVICE_INFO",
+  SET_LAST_SEEN_CUSTOM_IMAGE = "SET_LAST_SEEN_CUSTOM_IMAGE",
   ADD_STARRED_MARKET_COINS = "ADD_STARRED_MARKET_COINS",
   REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
   SET_LAST_CONNECTED_DEVICE = "SET_LAST_CONNECTED_DEVICE",
+  SET_CUSTOM_IMAGE_BACKUP = "SET_CUSTOM_IMAGE_BACKUP",
   SET_HAS_ORDERED_NANO = "SET_HAS_ORDERED_NANO",
   SET_MARKET_REQUEST_PARAMS = "SET_MARKET_REQUEST_PARAMS",
   SET_MARKET_COUNTER_CURRENCY = "SET_MARKET_COUNTER_CURRENCY",
@@ -244,6 +302,12 @@ export enum SettingsActionTypes {
   SET_FIRST_CONNECTION_HAS_DEVICE = "SET_FIRST_CONNECTION_HAS_DEVICE",
   SET_NOTIFICATIONS = "SET_NOTIFICATIONS",
   RESET_SWAP_LOGIN_AND_KYC_DATA = "RESET_SWAP_LOGIN_AND_KYC_DATA",
+  WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB = "WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB",
+  SET_STATUS_CENTER = "SET_STATUS_CENTER",
+  SET_OVERRIDDEN_FEATURE_FLAG = "SET_OVERRIDDEN_FEATURE_FLAG",
+  SET_OVERRIDDEN_FEATURE_FLAGS = "SET_OVERRIDDEN_FEATURE_FLAGS",
+  SET_FEATURE_FLAGS_BANNER_VISIBLE = "SET_FEATURE_FLAGS_BANNER_VISIBLE",
+  SET_DEBUG_APP_LEVEL_DRAWER_OPENED = "SET_DEBUG_APP_LEVEL_DRAWER_OPENED",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -291,10 +355,6 @@ export type SettingsSetReadOnlyModePayload = Pick<
   SettingsState,
   "readOnlyModeEnabled"
 >;
-export type SettingsSetExperimentalUsbSupportPayload = Pick<
-  SettingsState,
-  "experimentalUSBEnabled"
->;
 export type SettingsHideEmptyTokenAccountsPayload = Pick<
   SettingsState,
   "hideEmptyTokenAccounts"
@@ -310,9 +370,9 @@ export type SettingsSetAvailableUpdatePayload = Pick<
 >;
 export type SettingsSetThemePayload = Pick<SettingsState, "theme">;
 export type SettingsSetOsThemePayload = Pick<SettingsState, "osTheme">;
-export type SettingsSetCarouselVisibilityPayload = Pick<
+export type SettingsSetDismissedDynamicCardsPayload = Pick<
   SettingsState,
-  "carouselVisibility"
+  "dismissedDynamicCards"
 >;
 export type SettingsSetDiscreetModePayload = Pick<
   SettingsState,
@@ -332,6 +392,10 @@ export type SettingsSetSwapKycPayload = {
 export type SettingsAcceptSwapProviderPayload = {
   acceptedProvider: Unpacked<SettingsState["swap"]["acceptedProviders"]>;
 };
+export type SettingsSetLastSeenCustomImagePayload = {
+  imageSize: number;
+  imageHash: string;
+};
 export type SettingsLastSeenDevicePayload = {
   deviceInfo: NonNullable<SettingsState["lastSeenDevice"]>["deviceInfo"];
 };
@@ -346,6 +410,10 @@ export type SettingsRemoveStarredMarketcoinsPayload = {
 };
 export type SettingsSetLastConnectedDevicePayload = {
   lastConnectedDevice: Device;
+};
+export type SettingsSetCustomImageBackupPayload = {
+  hex: string;
+  hash: string;
 };
 export type SettingsSetHasOrderedNanoPayload = Pick<
   SettingsState,
@@ -377,7 +445,34 @@ export type SettingsSetFirstConnectHasDeviceUpdatedPayload = Pick<
 export type SettingsSetNotificationsPayload = {
   notifications: Partial<SettingsState["notifications"]>;
 };
+export type SettingsSetWalletTabNavigatorLastVisitedTabPayload = Pick<
+  SettingsState,
+  "walletTabNavigatorLastVisitedTab"
+>;
+
+export type SettingsSetStatusCenterPayload = Pick<
+  SettingsState,
+  "displayStatusCenter"
+>;
 export type SettingsDangerouslyOverrideStatePayload = State;
+export type DangerouslyOverrideStatePayload = Partial<State>;
+export type SettingsSetOverriddenFeatureFlagPlayload = {
+  id: FeatureId;
+  value: Feature | undefined;
+};
+export type SettingsSetOverriddenFeatureFlagsPlayload = Pick<
+  SettingsState,
+  "overriddenFeatureFlags"
+>;
+export type SettingsSetFeatureFlagsBannerVisiblePayload = Pick<
+  SettingsState,
+  "featureFlagsBannerVisible"
+>;
+export type SettingsSetDebugAppLevelDrawerOpenedPayload = Pick<
+  SettingsState,
+  "debugAppLevelDrawerOpened"
+>;
+
 export type SettingsPayload =
   | SettingsImportPayload
   | SettingsImportDesktopPayload
@@ -392,7 +487,6 @@ export type SettingsPayload =
   | SettingsSetSelectedTimeRangePayload
   | SettingsInstallAppFirstTimePayload
   | SettingsSetReadOnlyModePayload
-  | SettingsSetExperimentalUsbSupportPayload
   | SettingsHideEmptyTokenAccountsPayload
   | SettingsShowTokenPayload
   | SettingsBlacklistTokenPayload
@@ -402,7 +496,6 @@ export type SettingsPayload =
   | SettingsSetAvailableUpdatePayload
   | SettingsSetThemePayload
   | SettingsSetOsThemePayload
-  | SettingsSetCarouselVisibilityPayload
   | SettingsSetDiscreetModePayload
   | SettingsSetLanguagePayload
   | SettingsSetLocalePayload
@@ -411,6 +504,7 @@ export type SettingsPayload =
   | SettingsAcceptSwapProviderPayload
   | SettingsLastSeenDevicePayload
   | SettingsLastSeenDeviceInfoPayload
+  | SettingsSetLastSeenCustomImagePayload
   | SettingsAddStarredMarketcoinsPayload
   | SettingsRemoveStarredMarketcoinsPayload
   | SettingsSetLastConnectedDevicePayload
@@ -421,7 +515,13 @@ export type SettingsPayload =
   | SettingsSetSensitiveAnalyticsPayload
   | SettingsSetFirstConnectHasDeviceUpdatedPayload
   | SettingsSetNotificationsPayload
-  | SettingsDangerouslyOverrideStatePayload;
+  | SettingsDangerouslyOverrideStatePayload
+  | SettingsSetStatusCenterPayload
+  | DangerouslyOverrideStatePayload
+  | SettingsSetOverriddenFeatureFlagPlayload
+  | SettingsSetOverriddenFeatureFlagsPlayload
+  | SettingsSetFeatureFlagsBannerVisiblePayload
+  | SettingsSetDebugAppLevelDrawerOpenedPayload;
 
 // === WALLET CONNECT ACTIONS ===
 
@@ -438,6 +538,7 @@ export enum SwapActionTypes {
   UPDATE_PROVIDERS = "UPDATE_PROVIDERS",
   UPDATE_TRANSACTION = "UPDATE_TRANSACTION",
   UPDATE_RATE = "UPDATE_RATE",
+  DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
 }
 
 export type UpdateProvidersPayload = SwapStateType["providers"];
@@ -448,6 +549,19 @@ export type SwapPayload =
   | UpdateProvidersPayload
   | UpdateTransactionPayload
   | UpdateRatePayload;
+
+// === PROTECT ACTIONS ===
+
+export enum ProtectActionTypes {
+  UPDATE_DATA = "UPDATE_DATA",
+  UPDATE_PROTECT_STATUS = "UPDATE_PROTECT_STATUS",
+}
+
+export type ProtectDataPayload = Pick<ProtectState, "data">;
+
+export type ProtectStatusPayload = Pick<ProtectState, "protectStatus">;
+
+export type ProtectPayload = ProtectDataPayload | ProtectStatusPayload;
 
 // === PAYLOADS ===
 
@@ -460,4 +574,5 @@ export type ActionsPayload =
   | Action<SettingsPayload>
   | Action<WalletConnectPayload>
   | Action<PostOnboardingPayload>
-  | Action<SwapPayload>;
+  | Action<SwapPayload>
+  | Action<ProtectPayload>;

@@ -7,6 +7,7 @@ import {
   DustLimit,
   FeeTooHigh,
   FeeRequired,
+  OpReturnDataSizeLimit,
 } from "@ledgerhq/errors";
 import type { Account } from "@ledgerhq/types-live";
 
@@ -16,13 +17,14 @@ import { TaprootNotActivated } from "./errors";
 import { computeDustAmount } from "./wallet-btc/utils";
 import { Currency } from "./wallet-btc";
 import cryptoFactory from "./wallet-btc/crypto/factory";
+import { OP_RETURN_DATA_SIZE_LIMIT } from "./wallet-btc/crypto/base";
 
 const getTransactionStatus = async (
   a: Account,
   t: Transaction
 ): Promise<TransactionStatus> => {
-  const errors: any = {};
-  const warnings: any = {};
+  const errors: Record<string, Error> = {};
+  const warnings: Record<string, Error> = {};
   const useAllAmount = !!t.useAllAmount;
   const { recipientError, recipientWarning } = await validateRecipient(
     a.currency,
@@ -53,6 +55,7 @@ const getTransactionStatus = async (
   let txInputs;
   let txOutputs;
   let estimatedFees = new BigNumber(0);
+  const { opReturnData } = t;
 
   if (!t.feePerByte) {
     errors.feePerByte = new FeeNotLoaded();
@@ -117,12 +120,20 @@ const getTransactionStatus = async (
     warnings.feeTooHigh = new FeeTooHigh();
   }
 
-  const txSize = Math.ceil(estimatedFees.toNumber() / t.feePerByte!.toNumber());
-  const crypto = cryptoFactory(a.currency.id as Currency);
-  const dustAmount = computeDustAmount(crypto, txSize);
+  if (t.feePerByte) {
+    const txSize = Math.ceil(
+      estimatedFees.toNumber() / t.feePerByte.toNumber()
+    );
+    const crypto = cryptoFactory(a.currency.id as Currency);
+    const dustAmount = computeDustAmount(crypto, txSize);
 
-  if (amount.gt(0) && amount.lt(dustAmount)) {
-    errors.dustLimit = new DustLimit();
+    if (amount.gt(0) && amount.lt(dustAmount)) {
+      errors.dustLimit = new DustLimit();
+    }
+  }
+
+  if (opReturnData && opReturnData.length > OP_RETURN_DATA_SIZE_LIMIT) {
+    errors.opReturnSizeLimit = new OpReturnDataSizeLimit();
   }
 
   return {
@@ -130,6 +141,7 @@ const getTransactionStatus = async (
     warnings,
     estimatedFees,
     amount,
+    opReturnData: opReturnData?.toString(),
     totalSpent,
     txInputs,
     txOutputs,

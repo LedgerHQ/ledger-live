@@ -1,4 +1,5 @@
 name: "[Bot] Testing with 'Oxygen'"
+run-name: Test with 🤖 Oxygen by @${{github.actor}} with ${{inputs.family}}
 on:
   workflow_dispatch:
     inputs:
@@ -54,7 +55,7 @@ jobs:
       - name: Retrieving coin apps
         uses: actions/checkout@v3
         with:
-          ref: ledger-live-bot
+          ref: generated/ledger-live-bot
           repository: LedgerHQ/coin-apps
           token: ${{ secrets.GH_PAT }}
           path: coin-apps
@@ -67,4 +68,4 @@ jobs:
           SLACK_ICON_EMOJI: ":bot-seed5:"
           SEED: ${{ secrets.SEED5 }}
           BOT_ENVIRONMENT: testing
-          BOT_FILTER_FAMILY: ${{github.event.inputs.family}}
+          BOT_FILTER_FAMILY: ${{inputs.family}}

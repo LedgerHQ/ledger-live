@@ -36,8 +36,10 @@ const TermsFooter: React.FC<{
         i18nKey="DeviceAction.confirmSwap.acceptTerms"
         values={{ provider }}
         components={[
-          <UnderlinedText onPress={onLinkClick}>
-            <Text textTransform="capitalize">{provider}</Text>
+          <UnderlinedText onPress={onLinkClick} textAlign="center">
+            <Text textTransform="capitalize" textAlign="center">
+              {provider}
+            </Text>
           </UnderlinedText>,
         ]}
       />

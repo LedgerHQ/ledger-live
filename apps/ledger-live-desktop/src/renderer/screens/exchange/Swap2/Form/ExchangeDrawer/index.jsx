@@ -11,6 +11,7 @@ import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import TrackPage from "~/renderer/analytics/TrackPage";
+import { track } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import {
@@ -19,7 +20,7 @@ import {
 } from "~/renderer/components/DeviceAction/rendering";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { SWAP_VERSION, useRedirectToSwapHistory } from "../../utils/index";
+import { useGetSwapTrackingProperties, useRedirectToSwapHistory } from "../../utils/index";
 import { DrawerTitle } from "../DrawerTitle";
 import { Separator } from "../Separator";
 import SwapAction from "./SwapAction";
@@ -43,6 +44,7 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
   const dispatch = useDispatch();
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
+  const swapDefaultTrack = useGetSwapTrackingProperties();
   const redirectToHistory = useRedirectToSwapHistory();
   const {
     transaction,
@@ -67,10 +69,15 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
 
       // Consider the swap as cancelled (on provider perspective) in case of error
       postSwapCancelled({ provider: exchangeRate.provider, swapId });
-
+      track("error_message", {
+        message: "drawer_error",
+        page: "Page Swap Drawer",
+        ...swapDefaultTrack,
+        error,
+      });
       setError(error);
     },
-    [exchangeRate],
+    [exchangeRate.provider, swapDefaultTrack],
   );
 
   const onCompletion = useCallback(
@@ -144,7 +151,7 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
           sourceCurrency={sourceCurrency?.name}
           targetCurrency={targetCurrency?.name}
           provider={exchangeRate.provider}
-          swapVersion={SWAP_VERSION}
+          {...swapDefaultTrack}
         />
         <Box justifyContent="center" flex={1}>
           <ErrorDisplay error={error} />
@@ -170,7 +177,7 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
           sourceCurrency={sourceCurrency?.name}
           targetCurrency={targetCurrency?.name}
           provider={exchangeRate.provider}
-          swapVersion={SWAP_VERSION}
+          {...swapDefaultTrack}
         />
         <Box justifyContent="center" flex={1}>
           <SwapCompleted

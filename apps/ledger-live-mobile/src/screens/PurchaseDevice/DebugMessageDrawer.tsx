@@ -1,7 +1,8 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { BottomDrawer, Flex, Text } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 
+import QueuedDrawer from "../../components/QueuedDrawer";
 import { PurchaseMessage } from "./types";
 
 export type Props = {
@@ -18,8 +19,8 @@ const DebugMessageDrawer = ({ isOpen, message, onClose }: Props) => {
   }, [onClose]);
 
   return (
-    <BottomDrawer
-      isOpen={isOpen}
+    <QueuedDrawer
+      isRequestingToBeOpened={isOpen}
       onClose={handleClose}
       title={t(
         `purchaseDevice.debugDrawers.message.${
@@ -58,7 +59,7 @@ const DebugMessageDrawer = ({ isOpen, message, onClose }: Props) => {
           })}
         </Text>
       )}
-    </BottomDrawer>
+    </QueuedDrawer>
   );
 };
 

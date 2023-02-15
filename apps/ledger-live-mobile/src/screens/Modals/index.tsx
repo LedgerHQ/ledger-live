@@ -8,6 +8,7 @@ import PushNotificationsModal from "../PushNotificationsModal";
 import RatingsModal from "../RatingsModal";
 import useRatings from "../../logic/ratings";
 import useNotifications from "../../logic/notifications";
+import DebugAppLevelDrawer from "../../components/DebugAppLevelDrawer";
 
 const getCurrentRouteName = (
   state: NavigationState | Required<NavigationState["routes"][0]>["state"],
@@ -28,7 +29,7 @@ const Modals = () => {
   const pushNotificationsFeature = useFeature("brazePushNotifications");
   const { onPushNotificationsRouteChange } = useNotifications();
 
-  const ratingsFeature = useFeature("ratings");
+  const ratingsFeature = useFeature("ratingsPrompt");
   const { onRatingsRouteChange } = useRatings();
 
   const onRouteChange = useCallback(
@@ -76,9 +77,10 @@ const Modals = () => {
       <FeatureToggle feature="brazePushNotifications">
         <PushNotificationsModal />
       </FeatureToggle>
-      <FeatureToggle feature="ratings">
+      <FeatureToggle feature="ratingsPrompt">
         <RatingsModal />
       </FeatureToggle>
+      <DebugAppLevelDrawer />
     </>
   );
 };

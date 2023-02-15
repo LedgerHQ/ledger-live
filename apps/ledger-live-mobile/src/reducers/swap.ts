@@ -10,6 +10,7 @@ import {
   UpdateProvidersPayload,
   UpdateRatePayload,
   UpdateTransactionPayload,
+  DangerouslyOverrideStatePayload,
 } from "../actions/types";
 
 export const INITIAL_STATE: SwapStateType = {
@@ -53,6 +54,15 @@ const handlers: ReducerMap<SwapStateType, SwapPayload> = {
           : undefined,
     };
   },
+
+  [SwapActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (
+    state,
+    action,
+  ): SwapStateType => ({
+    ...state,
+    ...(action as Action<DangerouslyOverrideStatePayload>).payload.swap,
+  }),
+
   RESET_STATE: () => ({ ...INITIAL_STATE }),
 };
 

@@ -3,7 +3,6 @@ import { ipcRenderer } from "electron";
 import debug from "debug";
 import { killInternalProcess } from "./reset";
 import { lock } from "./actions/application";
-import { onSetDeviceBusy } from "~/renderer/components/DeviceBusyIndicator";
 import { hasEncryptionKey } from "~/renderer/storage";
 
 const CHECK_UPDATE_DELAY = 5000;
@@ -29,10 +28,6 @@ export default ({ store }: { store: Object }) => {
     if (await hasEncryptionKey("app", "accounts")) {
       store.dispatch(lock());
     }
-  });
-
-  ipcRenderer.on("setDeviceBusy", (event: any, { busy }) => {
-    onSetDeviceBusy(busy);
   });
 };
 

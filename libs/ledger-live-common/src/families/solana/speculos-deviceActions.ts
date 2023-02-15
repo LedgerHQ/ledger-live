@@ -1,6 +1,10 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
-import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
+import {
+  deviceActionFlow,
+  formatDeviceAmount,
+  SpeculosButton,
+} from "../../bot/specs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -28,7 +32,7 @@ export const acceptTransferTransaction: DeviceAction<Transaction, any> =
     steps: [
       {
         title: "Transfer",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account, transaction }) => {
           const command = transaction.model.commandDescriptor?.command;
           if (command?.kind === "transfer") {
@@ -39,7 +43,7 @@ export const acceptTransferTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Recipient",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => {
           const command = transaction.model.commandDescriptor?.command;
           if (command?.kind === "transfer") {
@@ -50,7 +54,7 @@ export const acceptTransferTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Approve",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
         final: true,
       },
     ],
@@ -63,7 +67,7 @@ export const acceptStakeCreateAccountTransaction: DeviceAction<
   steps: [
     {
       title: "Delegate from",
-      button: "Rr",
+      button: SpeculosButton.RIGHT,
       expectedValue: ({ transaction }) => {
         const command = transaction.model.commandDescriptor?.command;
         if (command?.kind === "stake.createAccount") {
@@ -75,7 +79,7 @@ export const acceptStakeCreateAccountTransaction: DeviceAction<
     },
     {
       title: "Deposit",
-      button: "Rr",
+      button: SpeculosButton.RIGHT,
       expectedValue: ({ account, transaction }) => {
         const command = transaction.model.commandDescriptor?.command;
         if (command?.kind === "stake.createAccount") {
@@ -90,7 +94,7 @@ export const acceptStakeCreateAccountTransaction: DeviceAction<
     },
     {
       title: "New authority",
-      button: "Rr",
+      button: SpeculosButton.RIGHT,
       expectedValue: ({ transaction }) => {
         const command = transaction.model.commandDescriptor?.command;
         if (command?.kind === "stake.createAccount") {
@@ -102,7 +106,7 @@ export const acceptStakeCreateAccountTransaction: DeviceAction<
     },
     {
       title: "Vote account",
-      button: "Rr",
+      button: SpeculosButton.RIGHT,
       expectedValue: ({ transaction }) => {
         const command = transaction.model.commandDescriptor?.command;
         if (command?.kind === "stake.createAccount") {
@@ -114,7 +118,7 @@ export const acceptStakeCreateAccountTransaction: DeviceAction<
     },
     {
       title: "Approve",
-      button: "LRlr",
+      button: SpeculosButton.BOTH,
       final: true,
     },
   ],
@@ -125,7 +129,7 @@ export const acceptStakeDelegateTransaction: DeviceAction<Transaction, any> =
     steps: [
       {
         title: "Delegate from",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => {
           const command = transaction.model.commandDescriptor?.command;
           if (command?.kind === "stake.delegate") {
@@ -136,7 +140,7 @@ export const acceptStakeDelegateTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Vote account",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => {
           const command = transaction.model.commandDescriptor?.command;
           if (command?.kind === "stake.delegate") {
@@ -147,7 +151,7 @@ export const acceptStakeDelegateTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Approve",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
         final: true,
       },
     ],
@@ -158,7 +162,7 @@ export const acceptStakeUndelegateTransaction: DeviceAction<Transaction, any> =
     steps: [
       {
         title: "Deactivate stake",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => {
           const command = transaction.model.commandDescriptor?.command;
           if (command?.kind === "stake.undelegate") {
@@ -169,7 +173,7 @@ export const acceptStakeUndelegateTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Approve",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
         final: true,
       },
     ],
@@ -180,7 +184,7 @@ export const acceptStakeWithdrawTransaction: DeviceAction<Transaction, any> =
     steps: [
       {
         title: "Stake withdraw",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account, transaction }) => {
           const command = transaction.model.commandDescriptor?.command;
 
@@ -193,7 +197,7 @@ export const acceptStakeWithdrawTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "From",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => {
           const command = transaction.model.commandDescriptor?.command;
 
@@ -206,7 +210,7 @@ export const acceptStakeWithdrawTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "To",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => {
           const command = transaction.model.commandDescriptor?.command;
 
@@ -219,7 +223,7 @@ export const acceptStakeWithdrawTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Approve",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
         final: true,
       },
     ],

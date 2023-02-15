@@ -5,17 +5,20 @@ import { createStore, applyMiddleware, compose } from "redux";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import { CounterValuesStateRaw } from "@ledgerhq/live-common/countervalues/types";
 import { initialState as postOnboardingState } from "@ledgerhq/live-common/postOnboarding/reducer";
+import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import {
   getAccounts,
   getCountervalues,
   getSettings,
   getBle,
   getPostOnboardingState,
+  getProtect,
 } from "../db";
 import reducers from "../reducers";
 import { importSettings } from "../actions/settings";
 import { importStore as importAccounts } from "../actions/accounts";
 import { importBle } from "../actions/ble";
+import { updateProtectData, updateProtectStatus } from "../actions/protect";
 import {
   INITIAL_STATE as settingsState,
   supportedCountervalues,
@@ -27,7 +30,10 @@ import { INITIAL_STATE as notificationsState } from "../reducers/notifications";
 import { INITIAL_STATE as swapState } from "../reducers/swap";
 import { INITIAL_STATE as ratingsState } from "../reducers/ratings";
 import { INITIAL_STATE as walletconnectState } from "../reducers/walletconnect";
+import { INITIAL_STATE as dynamicContentState } from "../reducers/dynamicContent";
+import { INITIAL_STATE as protectState } from "../reducers/protect";
 import type { State } from "../reducers/types";
+import { listCachedCurrencyIds, hydrateCurrency } from "../bridge/cache";
 
 const INITIAL_STATE: State = {
   accounts: accountsState,
@@ -39,6 +45,8 @@ const INITIAL_STATE: State = {
   swap: swapState,
   walletconnect: walletconnectState,
   postOnboarding: postOnboardingState,
+  dynamicContent: dynamicContentState,
+  protect: protectState,
 };
 
 export const store = createStore(
@@ -82,6 +90,22 @@ export default class LedgerStoreProvider extends Component<
     store.dispatch(importBle(bleData));
     const settingsData = await getSettings();
 
+    const cachedCurrencyIds = await listCachedCurrencyIds();
+    // hydrate the store with the bridge/cache
+    // Promise.allSettled doesn't exist in RN
+    await Promise.all(
+      cachedCurrencyIds
+        .map(id => {
+          const currency = findCryptoCurrencyById?.(id);
+          return currency ? hydrateCurrency(currency) : Promise.reject();
+        })
+        .map(promise =>
+          promise
+            .then((value: unknown) => ({ status: "fulfilled", value }))
+            .catch((reason: unknown) => ({ status: "rejected", reason })),
+        ),
+    );
+
     if (
       settingsData &&
       settingsData.counterValue &&
@@ -101,6 +125,12 @@ export default class LedgerStoreProvider extends Component<
       store.dispatch(
         importPostOnboardingState({ newState: postOnboardingState }),
       );
+    }
+
+    const protect = await getProtect();
+    if (protect) {
+      store.dispatch(updateProtectData(protect.data));
+      store.dispatch(updateProtectStatus(protect.protectStatus));
     }
 
     const initialCountervalues = await getCountervalues();

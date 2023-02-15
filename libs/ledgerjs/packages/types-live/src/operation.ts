@@ -1,4 +1,5 @@
 import type { BigNumber } from "bignumber.js";
+import { TransactionCommonRaw } from "./transaction";
 import { NFTStandard } from "./nft";
 
 /**
@@ -45,7 +46,11 @@ export type OperationType =
   | "REGISTER"
   // NFT
   | "NFT_IN"
-  | "NFT_OUT";
+  | "NFT_OUT"
+  // NEAR
+  | "STAKE"
+  | "UNSTAKE"
+  | "WITHDRAW_UNSTAKED";
 
 /**
  *
@@ -101,6 +106,7 @@ export type Operation = {
   internalOperations?: Operation[];
   // Operations related to ERC721 | ERC1155 tokens
   nftOperations?: Operation[];
+  transactionRaw?: TransactionCommonRaw;
 };
 
 /**
@@ -134,6 +140,7 @@ export type OperationRaw = {
   internalOperations?: OperationRaw[];
   // Operations related to ERC721 | ERC1155 tokens
   nftOperations?: OperationRaw[];
+  transactionRaw?: TransactionCommonRaw;
 };
 
 /**

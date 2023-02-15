@@ -6,8 +6,9 @@ import zipWith from "lodash/zipWith";
 import { BigNumber } from "bignumber.js";
 import { Transaction as CosmosTransaction } from "./types";
 import type { CosmosDelegationInfo } from "./types";
-import cosmosValidatorsManager from "./validators";
 import { AccountLike } from "@ledgerhq/types-live";
+import { getCryptoCurrencyById } from "../../currencies";
+import { CosmosValidatorsManager } from "./CosmosValidatorsManager";
 
 const options = [
   {
@@ -96,6 +97,9 @@ const cosmosValidatorsFormatters = {
       )
       .join("\n"),
 };
+const cosmosValidatorsManager = new CosmosValidatorsManager(
+  getCryptoCurrencyById("cosmos")
+);
 const cosmosValidators = {
   args: [
     {

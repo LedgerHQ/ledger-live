@@ -20,7 +20,7 @@ import type {
   SwapDataType,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import { track } from "~/renderer/analytics/segment";
-import { SWAP_VERSION } from "../../utils/index";
+import { useGetSwapTrackingProperties } from "../../utils/index";
 
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/sortByMarketcap";
 import { listCryptoCurrencies, listTokens } from "@ledgerhq/live-common/currencies/index";
@@ -68,12 +68,6 @@ type Props = {
 /* @dev: Yeah, Im sorry if you read this, design asked us to
  override the input component when it is called from the swap form. */
 const InputSection = styled(Box)`
-  & div {
-    padding-right: 0;
-    > input {
-      padding-right: 15px;
-    }
-  }
   & ${ErrorContainer} {
     font-weight: 500;
     font-size: 11px;
@@ -81,6 +75,7 @@ const InputSection = styled(Box)`
     margin-left: calc(calc(100% + 30px) * -1);
     margin-top: 6px;
     align-self: flex-end;
+    margin-right: -15px;
   }
 `;
 
@@ -96,27 +91,49 @@ function FromRow({
   isSendMaxLoading,
   updateSelectedRate,
 }: Props) {
+  const swapDefaultTrack = useGetSwapTrackingProperties();
+
   const accounts = useSelector(fromSelector)(useSelector(shallowAccountsSelector));
   const unit = fromAccount && getAccountUnit(fromAccount);
   const { t } = useTranslation();
   usePickDefaultAccount(accounts, fromAccount, setFromAccount);
   const trackEditAccount = () =>
-    track("Page Swap Form - Edit Source Account", {
-      provider,
-      swapVersion: SWAP_VERSION,
+    track("button_clicked", {
+      button: "Edit source account",
+      page: "Page Swap Form",
+      ...swapDefaultTrack,
     });
+
   const setAccountAndTrack = account => {
     updateSelectedRate();
-    track("Page Swap Form - New Source Account", {
-      provider,
-      swapVersion: SWAP_VERSION,
+    track("button_clicked", {
+      button: "New source account",
+      page: "Page Swap Form",
+      ...swapDefaultTrack,
+      account: account,
     });
     setFromAccount(account);
   };
 
   const setValue = fromAmount => {
+    track("button_clicked", {
+      button: "Amount input",
+      page: "Page Swap Form",
+      ...swapDefaultTrack,
+      amount: null,
+    });
     updateSelectedRate();
     setFromAmount(fromAmount);
+  };
+
+  const toggleMaxAndTrack = state => {
+    track("button_clicked", {
+      button: "max",
+      page: "Page Swap Form",
+      ...swapDefaultTrack,
+      state,
+    });
+    toggleMax(state);
   };
 
   return (
@@ -137,7 +154,7 @@ function FromRow({
           <Switch
             small
             isChecked={isMaxEnabled}
-            onChange={toggleMax}
+            onChange={toggleMaxAndTrack}
             disabled={!fromAccount}
             data-test-id="swap-max-spendable-toggle"
           />

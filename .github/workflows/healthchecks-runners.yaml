@@ -1,0 +1,575 @@
+name: "[Healthchecks] CI Runners"
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */6 * * *"
+
+jobs:
+  start-runner:
+    name: Start self-hosted EC2 runner
+    runs-on: [ledger-live, linux]
+    outputs:
+      label: ${{ steps.start-ec2-linux-runner.outputs.label }}
+      ec2-instance-id: ${{ steps.start-ec2-linux-runner.outputs.ec2-instance-id }}
+    steps:
+      - name: Start EC2 Linux Runner
+        id: start-ec2-linux-runner
+        uses: LedgerHQ/actions/ec2-linux-runner@main
+        with:
+          mode: start
+          github-token: ${{ secrets.CI_BOT_TOKEN }}
+          project: 2049
+          aws-nfs-logging: true
+          ami-name-filter: ledger-live-runner
+          instance-volume-size: 30
+          instance-type: c5.4xlarge
+
+  stop-runner:
+    name: Stop self-hosted EC2 runner
+    if: ${{ always() && needs.start-runner.result == 'success' }}
+    needs: [start-runner, checks-linux]
+    runs-on: [ledger-live, linux]
+    steps:
+      - name: Stop EC2 Linux Runner
+        if: ${{ always() && needs.start-runner.result == 'success' }}
+        uses: LedgerHQ/actions/ec2-linux-runner@main
+        with:
+          mode: stop
+          github-token: ${{ secrets.CI_BOT_TOKEN }}
+          label: ${{ needs.start-runner.outputs.label }}
+          ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
+
+  checks-linux:
+    name: "CI runners Healthchecks (Linux)"
+    needs: [start-runner]
+    runs-on: ${{ needs.start-runner.outputs.label }}
+    outputs:
+      check-java: ${{ steps.check-java.outputs.result }}
+      check-node: ${{ steps.check-node.outputs.result }}
+      check-pnpm: ${{ steps.check-pnpm.outputs.result }}
+      check-python: ${{ steps.check-python.outputs.result }}
+      check-ruby: ${{ steps.check-ruby.outputs.result }}
+      check-android: ${{ steps.check-android.outputs.result }}
+      check-xvfb: ${{ steps.check-xvfb.outputs.result }}
+      java-version: ${{ steps.check-java.outputs.version }}
+      node-version: ${{ steps.check-node.outputs.version }}
+      pnpm-version: ${{ steps.check-pnpm.outputs.version }}
+      python-version: ${{ steps.check-python.outputs.version }}
+      ruby-version: ${{ steps.check-ruby.outputs.version }}
+      android-version: ${{ steps.check-android.outputs.version }}
+      xvfb-version: ${{ steps.check-xvfb.outputs.version }}
+      checkout: ${{ steps.checkout.outcome }}
+    steps:
+      - uses: actions/setup-python@v2
+        if: always()
+        with:
+          python-version: "3.x"
+      - uses: pnpm/action-setup@v2
+        if: always()
+        with:
+          version: latest
+          dest: ${{ runner.temp }}/setup-pnpm
+      - uses: actions/setup-node@v3
+        if: always()
+        with:
+          node-version: 16.x
+      - uses: ruby/setup-ruby@v1
+        if: always()
+        with:
+          ruby-version: 3.1.2
+        env:
+          ImageOS: ubuntu20
+      - uses: actions/setup-java@v3
+        if: always()
+        with:
+          distribution: "zulu" # See 'Supported distributions' for available options
+          java-version: "11"
+      - name: setup Android SDK
+        if: always()
+        uses: android-actions/setup-android@v2.0.6
+      - name: check java
+        if: always()
+        id: check-java
+        run: |
+          if [[ $(java --version) ]]; then
+            result=ok
+          else
+            result=ko
+          fi
+          version=$(java --version | head -1 | awk '{ print $2 }')
+          echo "result=$result" >> $GITHUB_OUTPUT
+          echo "version=$version" >> $GITHUB_OUTPUT
+      - name: check pnpm
+        if: always()
+        id: check-pnpm
+        run: |
+          if [[ $(pnpm --version) ]]; then
+            result=ok
+          else
+            result=ko
+          fi
+          version=$(pnpm --version)
+          echo "result=$result" >> $GITHUB_OUTPUT
+          echo "version=$version" >> $GITHUB_OUTPUT
+      - name: check node version
+        if: always()
+        id: check-node
+        run: |
+          if [[ "$(node --version)" == *"v16."* ]]; then
+            result=ok
+          else
+            result=ko
+          fi
+          version=$(node --version)
+          echo "result=$result" >> $GITHUB_OUTPUT
+          echo "version=${version//v}" >> $GITHUB_OUTPUT
+      - name: check python
+        if: always()
+        id: check-python
+        run: |
+          if [[ "$(python3 --version)" == *"3."* ]]; then
+            result=ok
+          else
+            result=ko
+          fi
+          version=$(python3 --version)
+          version=${version//Python }
+          echo "result=$result" >> $GITHUB_OUTPUT
+          echo "version=$version" >> $GITHUB_OUTPUT
+      - name: check ruby
+        if: always()
+        id: check-ruby
+        run: |
+          if [[ "$(ruby --copyright)" == *"ruby - Copyright (C)"* ]]; then
+            result=ok
+          else
+            result=ko
+          fi
+          version=$(ruby --version | awk '{ print $2 }')
+          echo "result=$result" >> $GITHUB_OUTPUT
+          echo "version=$version" >> $GITHUB_OUTPUT
+      - name: check android
+        if: always()
+        id: check-android
+        run: |
+          command=$(which sdkmanager)
+          if [[ $(${ANDROID_HOME}/cmdline-tools/3.0/bin/sdkmanager --version) ]]; then
+            result=ok
+          else
+            result=ko
+          fi
+          version=$(${ANDROID_HOME}/cmdline-tools/3.0/bin/sdkmanager --version)
+          echo "result=$result" >> $GITHUB_OUTPUT
+          echo "version=$version" >> $GITHUB_OUTPUT
+      - name: check xvfb
+        if: always()
+        id: check-xvfb
+        run: |
+          if [[ "$(xvfb-run echo "dummy test")" == "dummy test" ]]; then
+            result=ok
+          else
+            result=ko
+          fi
+          echo "result=$result" >> $GITHUB_OUTPUT
+          echo "version=N/A" >> $GITHUB_OUTPUT
+      - uses: actions/checkout@v3
+        if: always()
+        id: checkout
+        with:
+          ref: main
+          token: ${{ github.token }}
+  checks-windows:
+    runs-on: [ledger-live, windows]
+    outputs:
+      check-git: ${{ steps.check-git.outputs.result }}
+      check-node: ${{ steps.check-node.outputs.result }}
+      check-pnpm: ${{ steps.check-pnpm.outputs.result }}
+      git-version: ${{ steps.check-git.outputs.version }}
+      node-version: ${{ steps.check-node.outputs.version }}
+      pnpm-version: ${{ steps.check-pnpm.outputs.version }}
+      checkout: ${{ steps.checkout.outcome }}
+    steps:
+      - uses: pnpm/action-setup@v2
+        if: always()
+        with:
+          version: latest
+          dest: ${{ runner.temp }}/setup-pnpm
+      - uses: actions/setup-node@v3
+        if: always()
+        with:
+          node-version: 16.x
+      - name: check git
+        if: always()
+        id: check-git
+        shell: powershell
+        run: |
+          git version
+          $exitCode = $LASTEXITCODE
+          if ($exitCode -eq 0) {
+          $result = "ok"
+          } else {
+          $result = "ko"
+          }
+          $version = (git version)
+          $version | Select-String -Pattern '\S+\s+\S+(\S+)' -AllMatches | % {$_.Matches} | % {$_.Groups[1].Value}
+          echo "result=$result" >> $env:GITHUB_OUTPUT
+          echo "version=$version" >> $env:GITHUB_OUTPUT
+      - name: check pnpm
+        if: always()
+        id: check-pnpm
+        shell: powershell
+        run: |
+          pnpm version
+          $exitCode = $LASTEXITCODE
+          if ($exitCode -eq 0) {
+          $result = "ok"
+          } else {
+          $result = "ko"
+          }
+          $version = (pnpm --version)
+          echo "result=$result" >> $env:GITHUB_OUTPUT
+          echo "version=$version" >> $env:GITHUB_OUTPUT
+      - name: check node version
+        if: always()
+        id: check-node
+        shell: powershell
+        run: |
+          node --version
+          $exitCode = $LASTEXITCODE
+          if ($exitCode -eq 0) {
+          $result = "ok"
+          } else {
+          $result = "ko"
+          }
+          $version = (node --version)
+          echo "result=$result" >> $env:GITHUB_OUTPUT
+          echo "version=$version" >> $env:GITHUB_OUTPUT
+      - uses: actions/checkout@v3
+        if: always()
+        id: checkout
+        with:
+          ref: main
+          token: ${{ github.token }}
+  checks-macos:
+    runs-on: [m1, ARM64]
+    outputs:
+      check-node: ${{ steps.check-node.outputs.result }}
+      check-pnpm: ${{ steps.check-pnpm.outputs.result }}
+      check-python: ${{ steps.check-python.outputs.result }}
+      check-ruby: ${{ steps.check-ruby.outputs.result }}
+      node-version: ${{ steps.check-node.outputs.version }}
+      pnpm-version: ${{ steps.check-pnpm.outputs.version }}
+      python-version: ${{ steps.check-python.outputs.version }}
+      ruby-version: ${{ steps.check-ruby.outputs.version }}
+      checkout: ${{ steps.checkout.outcome }}
+    steps:
+      - uses: pnpm/action-setup@v2
+        if: always()
+        with:
+          version: latest
+          dest: ${{ runner.temp }}/setup-pnpm
+      - uses: actions/setup-node@v3
+        if: always()
+        with:
+          node-version: 16.x
+      # - uses: ruby/setup-ruby@v1
+      #   if: always()
+      #   with:
+      #     ruby-version: 3.1.2
+      #   env:
+      #     ImageOS: macos11
+      - name: check pnpm
+        if: always()
+        id: check-pnpm
+        shell: bash
+        run: |
+          if [[ $(pnpm --version) ]]; then
+            result=ok
+          else
+            result=ko
+          fi
+          version=$(pnpm --version)
+          echo "result=$result" >> $GITHUB_OUTPUT
+          echo "version=$version" >> $GITHUB_OUTPUT
+      - name: check node version
+        if: always()
+        id: check-node
+        shell: bash
+        run: |
+          if [[ "$(node --version)" == *"v16."* ]]; then
+            result=ok
+          else
+            result=ko
+          fi
+          version=$(node --version)
+          echo "result=$result" >> $GITHUB_OUTPUT
+          echo "version=${version//v}" >> $GITHUB_OUTPUT
+      - name: check python
+        if: always()
+        id: check-python
+        run: |
+          if [[ "$(python3 --version)" == *"3."* ]]; then
+            result=ok
+          else
+            result=ko
+          fi
+          version=$(python3 --version)
+          version=${version//Python }
+          echo "result=$result" >> $GITHUB_OUTPUT
+          echo "version=$version" >> $GITHUB_OUTPUT
+      - name: check ruby
+        if: always()
+        id: check-ruby
+        run: |
+          if [[ "$(ruby --copyright)" == *"ruby - Copyright (C)"* ]]; then
+            result=ok
+          else
+            result=ko
+          fi
+          version=$(ruby --version | awk '{ print $2 }')
+          echo "result=$result" >> $GITHUB_OUTPUT
+          echo "version=$version" >> $GITHUB_OUTPUT
+      - uses: actions/checkout@v3
+        if: always()
+        id: checkout
+        with:
+          ref: main
+          token: ${{ github.token }}
+  report:
+    needs: [checks-linux, checks-windows, checks-macos]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: format message
+        uses: actions/github-script@v6
+        if: always()
+        with:
+          script: |
+            const fs = require("fs");
+            const linuxJava = "${{ needs.checks-linux.outputs.check-java }}";
+            const linuxNode = "${{ needs.checks-linux.outputs.check-node }}";
+            const linuxPnpm = "${{ needs.checks-linux.outputs.check-pnpm }}";
+            const linuxPython = "${{ needs.checks-linux.outputs.check-python }}";
+            const linuxRuby = "${{ needs.checks-linux.outputs.check-ruby }}";
+            const linuxAndroid = "${{ needs.checks-linux.outputs.check-android }}";
+            const linuxXvfb = "${{ needs.checks-linux.outputs.check-xvfb }}";
+            const winGit = "${{ needs.checks-windows.outputs.check-git }}";
+            const winNode = "${{ needs.checks-windows.outputs.check-node }}";
+            const winPnpm = "${{ needs.checks-windows.outputs.check-pnpm }}";
+            const macNode = "${{ needs.checks-macos.outputs.check-node }}";
+            const macPnpm = "${{ needs.checks-macos.outputs.check-pnpm }}";
+            const macPython = "${{ needs.checks-macos.outputs.check-python }}";
+            const macRuby = "${{ needs.checks-macos.outputs.check-ruby }}";
+            const linuxJavaEmoji = linuxJava === "ok" ? ":green-check:" : ":red-cross:";
+            const linuxNodeEmoji = linuxNode === "ok" ? ":green-check:" : ":red-cross:";
+            const linuxPnpmEmoji = linuxPnpm === "ok" ? ":green-check:" : ":red-cross:";
+            const linuxPythonEmoji = linuxPython === "ok" ? ":green-check:" : ":red-cross:";
+            const linuxRubyEmoji = linuxRuby === "ok" ? ":green-check:" : ":red-cross:";
+            const linuxAndroidEmoji = linuxAndroid === "ok" ? ":green-check:" : ":red-cross:";
+            const linuxXvfbEmoji = linuxXvfb === "ok" ? ":green-check:" : ":red-cross:";
+            const winGitEmoji = winGit === "ok" ? ":green-check:" : ":red-cross:";
+            const winNodeEmoji = winNode === "ok" ? ":green-check:" : ":red-cross:";
+            const winPnpmEmoji = winPnpm === "ok" ? ":green-check:" : ":red-cross:";
+            const macNodeEmoji = macNode === "ok" ? ":green-check:" : ":red-cross:";
+            const macPnpmEmoji = macPnpm === "ok" ? ":green-check:" : ":red-cross:";
+            const macPythonEmoji = macPython === "ok" ? ":green-check:" : ":red-cross:";
+            const macRubyEmoji = macRuby === "ok" ? ":green-check:" : ":red-cross:";
+            const linuxCheckout = "${{ needs.checks-linux.outputs.checkout }}";
+            const winCheckout = "${{ needs.checks-windows.outputs.checkout }}";
+            const macCheckout = "${{ needs.checks-macos.outputs.checkout }}";
+            const linuxCheckoutEmoji = linuxCheckout === "success" ? ":green-check:" : ":red-cross:";
+            const winCheckoutEmoji = winCheckout === "success" ? ":green-check:" : ":red-cross:";
+            const macCheckoutEmoji = macCheckout === "success" ? ":green-check:" : ":red-cross:";
+
+            const result = {
+              "text": "[Alert] Healthchecks Ledger Live CI runners",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": ":warning: [Alert] Healthchecks Ledger Live CI runners",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Binaries checks",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Legend:*\n:green-check: The binary has been installed and can be executed successfuly\n:x: The binary cannot be executed ; meaning that there is probably an issue with how the runner has been configured."
+                  }
+                },
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": ":penguin: Linux",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*java* : " + linuxJavaEmoji + " ${{ needs.checks-linux.outputs.java-version }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*node* : " + linuxNodeEmoji + " ${{ needs.checks-linux.outputs.node-version }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*pnpm* : " + linuxPnpmEmoji + " ${{ needs.checks-linux.outputs.pnpm-version }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*python* : " + linuxPythonEmoji + " ${{ needs.checks-linux.outputs.python-version }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*ruby* : " + linuxRubyEmoji + " ${{ needs.checks-linux.outputs.ruby-version }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*android-sdk* : " + linuxAndroidEmoji + " ${{ needs.checks-linux.outputs.android-version }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*xvfb* : " + linuxXvfbEmoji
+                    }
+                  ]
+                },
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": ":window: Windows",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*git* : " + winGitEmoji + " ${{ needs.checks-windows.outputs.git-version }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*node* : " + winNodeEmoji + " ${{ needs.checks-windows.outputs.node-version }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*pnpm* : " + winPnpmEmoji + " ${{ needs.checks-windows.outputs.pnpm-version }}"
+                    }
+                  ]
+                },
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": ":apple: MacOS",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*node* : " + macNodeEmoji + " ${{ needs.checks-macos.outputs.node-version }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*pnpm* : " + macPnpmEmoji + " ${{ needs.checks-macos.outputs.pnpm-version }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*python* : " + macPythonEmoji + " ${{ needs.checks-macos.outputs.python-version }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*ruby* : " + macRubyEmoji + " ${{ needs.checks-macos.outputs.ruby-version }}"
+                    }
+                  ]
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Repository checkouts",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Legend:*\n:green-check: The Ledger Live Github repository have been checked-out successfuly\n:x: The Ledger Live Github repository checkout failed ; meaning that there is probably an outage with Github platform or network related issues with the runners."
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":penguin: *Linux:* " + linuxCheckoutEmoji
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":window: *Windows:* " + winCheckoutEmoji
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":apple: *MacOS:* " + macCheckoutEmoji
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "\nhttps://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  }
+                }
+              ]
+            };
+            fs.writeFileSync(`./payload-slack-content.json`, JSON.stringify(result, null, 2));
+      - name: upload message
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: payload-slack-content.json
+          path: ${{ github.workspace }}/payload-slack-content.json
+      - name: post to a Slack channel
+        id: slack
+        uses: slackapi/slack-github-action@v1.23.0
+        if: always() && contains(join(needs.*.result, ','), 'failure')
+        with:
+          channel-id: "C04GE8AEN3H"
+          payload-file-path: ${{ github.workspace }}/payload-slack-content.json
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}

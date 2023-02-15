@@ -7,6 +7,7 @@ import {
   SectionListData,
   SectionListRenderItemInfo,
 } from "react-native";
+import BigNumber from "bignumber.js";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -62,7 +63,7 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
   );
   const [searchQuery, setSearchQuery] = useState("");
   const validators = useLedgerFirstShuffledValidatorsCosmosFamily(
-    "cosmos",
+    mainAccount.currency.id,
     searchQuery,
   );
   const validatorSrc = useMemo(
@@ -81,8 +82,7 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
       ),
     [delegations, transaction.sourceValidator],
   );
-  invariant(srcDelegation, "source delegation required");
-  const max = srcDelegation.amount;
+  const max = srcDelegation?.amount;
   const sections: SectionListData<CosmosValidatorItem>[] = useMemo(
     () =>
       validators
@@ -125,7 +125,7 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
         transaction,
         validatorSrc,
         validator,
-        max,
+        max: max ?? new BigNumber(0),
         status,
         nextScreen: ScreenName.CosmosRedelegationSelectDevice,
       });
@@ -138,6 +138,9 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
     ),
     [onSelect, account],
   );
+
+  if (!srcDelegation) return null;
+
   return (
     <SafeAreaView
       style={[

@@ -1,10 +1,9 @@
 import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { add, isBefore, parseISO } from "date-fns";
-import type { Account } from "@ledgerhq/types-live";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { accountsSelector } from "../reducers/accounts";
+import { accountsWithPositiveBalanceCountSelector } from "../reducers/accounts";
 import {
   ratingsModalOpenSelector,
   ratingsModalLockedSelector,
@@ -43,6 +42,8 @@ export type RatingsDataOfUser = {
   dateOfNextAllowedRequest?: Date;
   /** Whether or not the user clicked on the "Not now" cta from the Enjoy step of the ratings flow */
   alreadyClosedFromEnjoyStep?: boolean;
+  /** Whether or not the user clicked on the "Not now" cta from the Init step of the ratings flow */
+  alreadyClosedFromInitStep?: boolean;
   /** Whether or not the user already rated the app */
   alreadyRated?: boolean;
   /** If true, we will not prompt the rating flow again unless the user triggers it manually from the settings */
@@ -71,18 +72,16 @@ async function setRatingsDataOfUserInStorage(
 }
 
 const useRatings = () => {
-  const ratingsFeature = useFeature("ratings");
+  const ratingsFeature = useFeature("ratingsPrompt");
 
   const isRatingsModalOpen = useSelector(ratingsModalOpenSelector);
   const isRatingsModalLocked = useSelector(ratingsModalLockedSelector);
   const ratingsOldRoute = useSelector(ratingsCurrentRouteNameSelector);
   const ratingsHappyMoment = useSelector(ratingsHappyMomentSelector);
   const ratingsDataOfUser = useSelector(ratingsDataOfUserSelector);
-  const accounts: Account[] = useSelector(accountsSelector);
 
-  const accountsWithAmountCount = useMemo(
-    () => accounts.filter(account => account.balance?.gt(0)).length,
-    [accounts],
+  const accountsWithAmountCount = useSelector(
+    accountsWithPositiveBalanceCountSelector,
   );
 
   const dispatch = useDispatch();
@@ -288,7 +287,10 @@ const useRatings = () => {
   );
 
   const handleEnjoyNotNow = useCallback(() => {
-    if (ratingsDataOfUser?.alreadyClosedFromEnjoyStep) {
+    if (
+      ratingsDataOfUser?.alreadyClosedFromEnjoyStep ||
+      ratingsDataOfUser?.alreadyClosedFromInitStep
+    ) {
       updateRatingsDataOfUserInStateAndStore({
         ...ratingsDataOfUser,
         doNotAskAgain: true,
@@ -306,6 +308,30 @@ const useRatings = () => {
     handleRatingsSetDateOfNextAllowedRequest,
     ratingsDataOfUser,
     ratingsFeature?.params?.conditions?.satisfied_then_not_now_delay,
+    updateRatingsDataOfUserInStateAndStore,
+  ]);
+
+  const handleInitNotNow = useCallback(() => {
+    if (
+      ratingsDataOfUser?.alreadyClosedFromEnjoyStep ||
+      ratingsDataOfUser?.alreadyClosedFromInitStep
+    ) {
+      updateRatingsDataOfUserInStateAndStore({
+        ...ratingsDataOfUser,
+        doNotAskAgain: true,
+      });
+    } else {
+      handleRatingsSetDateOfNextAllowedRequest(
+        ratingsFeature?.params?.conditions?.not_now_delay,
+        {
+          alreadyClosedFromInitStep: true,
+        },
+      );
+    }
+  }, [
+    handleRatingsSetDateOfNextAllowedRequest,
+    ratingsDataOfUser,
+    ratingsFeature?.params?.conditions?.not_now_delay,
     updateRatingsDataOfUserInStateAndStore,
   ]);
 
@@ -330,6 +356,7 @@ const useRatings = () => {
     handleSettingsRateApp,
     handleRatingsSetDateOfNextAllowedRequest,
     handleEnjoyNotNow,
+    handleInitNotNow,
     handleGoToStore,
     handleSatisfied,
     ratingsFeatureParams: ratingsFeature?.params,

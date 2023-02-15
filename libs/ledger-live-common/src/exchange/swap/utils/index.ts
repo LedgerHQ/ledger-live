@@ -183,10 +183,29 @@ export const isRegistrationRequired = (provider: string): boolean => {
 
 export const getProviderName = (provider: string): string => {
   switch (provider) {
+    case "cic":
     case "ftx":
     case "ftxus":
       return provider.toUpperCase();
+    case "oneinch":
+      return "1inch";
     default:
       return provider.charAt(0).toUpperCase() + provider.slice(1);
+  }
+};
+
+export const getNoticeType = (
+  provider: string
+): { message: string; learnMore: boolean } => {
+  switch (provider) {
+    case "cic":
+      return { message: "provider", learnMore: false };
+    case "changelly":
+      return {
+        message: "provider",
+        learnMore: false,
+      };
+    default:
+      return { message: "default", learnMore: true };
   }
 };

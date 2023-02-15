@@ -166,7 +166,9 @@ export const SwapExchangeRateAmountTooLow = createCustomErrorClass(
 export const SwapExchangeRateAmountTooHigh = createCustomErrorClass(
   "SwapExchangeRateAmountTooHigh"
 );
-
+export const SwapExchangeRateAmountTooLowOrTooHigh = createCustomErrorClass(
+  "SwapExchangeRateAmountTooLowOrTooHigh"
+);
 export const SwapCheckKYCStatusFailed = createCustomErrorClass(
   "SwapCheckKYCStatusFailed"
 );
@@ -215,19 +217,17 @@ export const AlgorandASANotOptInInRecipient = createCustomErrorClass(
 export const CompoundLowerAllowanceOfActiveAccountError =
   createCustomErrorClass("CompoundLowerAllowanceOfActiveAccountError");
 export const OutdatedApp = createCustomErrorClass("OutdatedApp");
-export const FreshAddressIndexInvalid = createCustomErrorClass(
-  "FreshAddressIndexInvalid"
-);
 
 export const BluetoothNotSupportedError = createCustomErrorClass(
   "FwUpdateBluetoothNotSupported"
 );
 
-export const UnsupportedDerivation = createCustomErrorClass(
-  "UnsupportedDerivation"
-);
+export const EConnResetError = createCustomErrorClass("EConnReset");
 
-export * from "./families/polkadot/errors";
+export * from "@ledgerhq/coin-framework/errors";
+export * from "@ledgerhq/coin-polkadot/errors";
 export * from "./families/stellar/errors";
 export * from "./families/solana/errors";
 export * from "./families/cardano/errors";
+export * from "./families/near/errors";
+export * from "./families/evm/errors";

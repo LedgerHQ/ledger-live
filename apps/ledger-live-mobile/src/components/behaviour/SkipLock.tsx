@@ -36,13 +36,8 @@ class SkipLockClass extends PureComponent<Props> {
   }
 }
 
-export default function SkipLock(
-  props: Omit<Props, "isFocused" | "setEnabled">,
-) {
+export default function SkipLock() {
   const isFocused = useIsFocused();
   const setEnabled = useContext(SkipLockContext);
-  return (
-    // FIXME: this seems weird since the props object has only 2 properties: isFocused ans setEnabled
-    <SkipLockClass {...props} isFocused={isFocused} setEnabled={setEnabled} />
-  );
+  return <SkipLockClass isFocused={isFocused} setEnabled={setEnabled} />;
 }

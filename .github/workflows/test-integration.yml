@@ -35,7 +35,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.ref || github.ref }}
+          ref: ${{ inputs.ref || github.ref }}
           fetch-depth: 0
       - uses: pnpm/action-setup@v2
         with:
@@ -50,13 +50,13 @@ jobs:
         run: |
           pnpm add -g node-gyp
       - name: Install dependencies
-        run: pnpm i --filter="!./apps/**"
+        run: pnpm i --filter="live-common..." --filter="ledger-live"
       - name: Build
-        run: pnpm build:libs
+        run: pnpm build:llc
       - name: Test
         shell: bash
         env:
-          FILTER: ${{ github.event.inputs.filter }}
+          FILTER: ${{ inputs.filter }}
           VERBOSE_FILE: logs.txt
         run: |
           pnpm common ci-test-integration $FILTER

@@ -1,8 +1,4 @@
-import {
-  TransportStatusError,
-  StatusCodes,
-  CantOpenDevice,
-} from "@ledgerhq/errors";
+import { CantOpenDevice, LockedDeviceError } from "@ledgerhq/errors";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import { from, Observable, TimeoutError } from "rxjs";
 import { retryWhen, timeout } from "rxjs/operators";
@@ -104,11 +100,5 @@ export const getDeviceRunningMode = ({
   });
 
 const isLockedDeviceError = (e: Error) => {
-  return (
-    (e &&
-      e instanceof TransportStatusError &&
-      // @ts-expect-error typescript not checking agains the instanceof
-      e.statusCode === StatusCodes.LOCKED_DEVICE) ||
-    e instanceof TimeoutError
-  );
+  return e && (e instanceof TimeoutError || e instanceof LockedDeviceError);
 };

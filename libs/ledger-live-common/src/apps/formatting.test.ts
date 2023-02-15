@@ -1,14 +1,48 @@
 import { formatSize } from "./formatting";
-test("Scenario: Formatting - format bytes", () => {
-  const bytes: [number | undefined, number][] = [
-    [4096, 4096],
-    [1, 4096],
-    [1025, 1024],
-    [4097, 4096],
-    [undefined, 4096],
-    [0, 4096],
+describe("Formatting bytes depending on device block size", () => {
+  const scenarios = [
+    {
+      bytes: 1024,
+      blockSize: 4 * 1024,
+      expectation: ["4", "kbUnit"],
+      desc: "Bytes need to be rounded to block size.",
+    },
+    {
+      bytes: 1024,
+      blockSize: 4 * 1024,
+      expectation: ["4", "kbUnit"],
+      desc: "Bytes need to be rounded to block size.",
+    },
+    {
+      bytes: 1150000,
+      blockSize: 4 * 1024,
+      expectation: ["1.10", "mbUnit"],
+      desc: "Megabytes do have decimal points",
+    },
+    {
+      bytes: 1150000,
+      blockSize: 32,
+      expectation: ["1.10", "mbUnit"],
+      desc: "Megabytes do have decimal points",
+    },
+    {
+      bytes: 1150000,
+      blockSize: 4 * 1024,
+      expectation: ["1.09", "mbUnit"],
+      floor: true,
+      desc: "Rounding down works",
+    },
+    {
+      bytes: 1050,
+      blockSize: 32,
+      expectation: ["2", "kbUnit"],
+      desc: "Nano S Plus will round to nearest ceil kb",
+    },
   ];
-  const formattedBytes = bytes.map((args) => formatSize(args[0], args[1]));
-  const expectedSizes = ["4Kb", "4Kb", "2Kb", "8Kb", "", ""];
-  expect(formattedBytes).toEqual(expectedSizes);
+
+  scenarios.map(({ bytes, blockSize, desc, expectation, floor }) => {
+    it(desc, () => {
+      expect(formatSize(bytes, blockSize, floor)).toMatchObject(expectation);
+    });
+  });
 });

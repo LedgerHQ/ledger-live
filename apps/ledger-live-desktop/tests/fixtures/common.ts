@@ -1,5 +1,5 @@
 import { _electron as electron } from "playwright";
-import { test as base, expect, Page, ElectronApplication } from "@playwright/test";
+import { test as base, Page, ElectronApplication } from "@playwright/test";
 import * as fs from "fs";
 import * as path from "path";
 import * as crypto from "crypto";
@@ -68,6 +68,7 @@ const test = base.extend<TestFixtures>({
         CRASH_ON_INTERNAL_CRASH: true,
         LEDGER_MIN_HEIGHT: 768,
         FEATURE_FLAGS: JSON.stringify(featureFlags),
+        DESKTOP_LOGS_FILE: path.join(__dirname, "../artifacts/logs"),
       },
       env,
     );
@@ -118,7 +119,6 @@ const test = base.extend<TestFixtures>({
     });
 
     // app is loaded
-    // expect(await page.title()).toBe("Ledger Live");
     await page.waitForLoadState("domcontentloaded");
     await page.waitForSelector("#loader-container", { state: "hidden" });
 

@@ -21,7 +21,7 @@ import LText from "../../components/LText";
 import TranslatedError from "../../components/TranslatedError";
 import { BaseButton } from "../../components/Button";
 import PoweredByLedger from "../../screens/Settings/PoweredByLedger";
-import BottomModal from "../../components/BottomModal";
+import QueuedDrawer from "../../components/QueuedDrawer";
 import HardResetModal from "../../components/HardResetModal";
 import Touchable from "../../components/Touchable";
 import PasswordInput from "../../components/PasswordInput";
@@ -241,6 +241,7 @@ class AuthScreen extends PureComponent<Props, State> {
                   onFocus={this.onFocus}
                   onBlur={this.onBlur}
                   password={this.state.password}
+                  testID="password-text-input"
                 />
               </View>
 
@@ -271,9 +272,12 @@ class AuthScreen extends PureComponent<Props, State> {
               <PoweredByLedger />
             </View>
           )}
-          <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
+          <QueuedDrawer
+            isRequestingToBeOpened={isModalOpened}
+            onClose={this.onRequestClose}
+          >
             <HardResetModal />
-          </BottomModal>
+          </QueuedDrawer>
         </SafeAreaView>
       </KeyboardBackgroundDismiss>
     );

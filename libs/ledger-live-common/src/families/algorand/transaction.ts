@@ -1,9 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import type {
-  AlgorandAccount,
-  AlgorandTransaction,
-  AlgorandTransactionRaw,
-} from "./types";
+import type { AlgorandTransaction, AlgorandTransactionRaw } from "./types";
 import {
   formatTransactionStatusCommon as formatTransactionStatus,
   fromTransactionCommonRaw,
@@ -12,6 +8,7 @@ import {
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "../../transaction/common";
 import { getAccountUnit } from "../../account";
+import type { Account } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "../../currencies";
 export const formatTransaction = (
   {
@@ -22,7 +19,7 @@ export const formatTransaction = (
     fees,
     useAllAmount,
   }: AlgorandTransaction,
-  mainAccount: AlgorandAccount
+  mainAccount: Account
 ): string => {
   const account =
     (subAccountId &&

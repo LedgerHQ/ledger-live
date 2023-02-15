@@ -7,12 +7,10 @@ import { useCalculate } from "@ledgerhq/live-common/countervalues/react";
 import { useTheme } from "@react-navigation/native";
 import { Trans } from "react-i18next";
 import { counterValueCurrencySelector } from "../reducers/settings";
-import CurrencyUnitValue, {
-  Props as CurrencyUnitValueProps,
-} from "./CurrencyUnitValue";
+import CurrencyUnitValue, { CurrencyUnitValueProps } from "./CurrencyUnitValue";
 import LText from "./LText";
 import InfoIcon from "../icons/Info";
-import BottomModal from "./BottomModal";
+import QueuedDrawer from "./QueuedDrawer";
 import Circle from "./Circle";
 import FormatDate from "./FormatDate";
 
@@ -73,8 +71,8 @@ function DoubleCounterValue({
     return withPlaceholder ? (
       <TouchableOpacity style={styles.placeholderButton} onPress={openModal}>
         <LText style={styles.placeholderLabel}>-</LText>
-        <BottomModal
-          isOpened={placeholderModalOpened}
+        <QueuedDrawer
+          isRequestingToBeOpened={placeholderModalOpened}
           onClose={closeModal}
           style={[styles.modal]}
         >
@@ -85,7 +83,7 @@ function DoubleCounterValue({
           <LText style={styles.modalTitle} semiBold>
             <Trans i18nKey="errors.countervaluesUnavailable.title" />
           </LText>
-        </BottomModal>
+        </QueuedDrawer>
       </TouchableOpacity>
     ) : null;
   }
@@ -103,7 +101,11 @@ function DoubleCounterValue({
 
         <InfoIcon size={16} color={colors.grey} />
       </TouchableOpacity>
-      <BottomModal isOpened={isOpened} onClose={onClose} style={styles.modal}>
+      <QueuedDrawer
+        isRequestingToBeOpened={isOpened}
+        onClose={onClose}
+        style={styles.modal}
+      >
         <View style={styles.row}>
           <View style={styles.column}>
             <LText bold style={styles.title}>
@@ -150,7 +152,7 @@ function DoubleCounterValue({
             <LText style={styles.placeholder}>-</LText>
           )}
         </View>
-      </BottomModal>
+      </QueuedDrawer>
     </>
   );
 

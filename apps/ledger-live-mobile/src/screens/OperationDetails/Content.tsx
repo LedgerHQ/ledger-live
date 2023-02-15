@@ -144,11 +144,11 @@ export default function Content({
     ];
   const urlFeesInfo =
     specific &&
-    (specific as { getURLFeesInfo: (o: Operation) => string })
+    (specific as { getURLFeesInfo: (o: Operation, c: string) => string })
       ?.getURLFeesInfo &&
-    (specific as { getURLFeesInfo: (o: Operation) => string })?.getURLFeesInfo(
-      operation,
-    );
+    (
+      specific as { getURLFeesInfo: (o: Operation, c: string) => string }
+    )?.getURLFeesInfo(operation, mainAccount.currency.id);
   const Extra =
     specific &&
     (specific as { OperationDetailsExtra: React.ComponentType })
@@ -158,6 +158,8 @@ export default function Content({
             OperationDetailsExtra: React.ComponentType<{
               type: typeof type;
               account: AccountLike;
+              operation: Operation;
+              extra: Record<string, unknown>;
             }>;
           }
         ).OperationDetailsExtra
@@ -452,7 +454,12 @@ export default function Content({
         </View>
       ) : null}
 
-      <Extra extra={extra} type={type} account={account} />
+      <Extra
+        operation={operation}
+        extra={extra}
+        type={type}
+        account={account}
+      />
 
       <Modal
         isOpened={isModalOpened}

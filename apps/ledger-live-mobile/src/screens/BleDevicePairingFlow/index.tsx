@@ -1,18 +1,17 @@
-import React, { useCallback, useState } from "react";
-import { useDispatch } from "react-redux";
+import { Device, DeviceModelId } from "@ledgerhq/types-devices";
+import React, { useCallback, useEffect } from "react";
 import { has as hasFromPath, set as setFromPath } from "lodash";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { DeviceModelId } from "@ledgerhq/types-devices";
-import RequiresBLE from "../../components/RequiresBLE";
-import { BleDevicesScanning } from "./BleDevicesScanning";
-import { BleDevicePairing } from "./BleDevicePairing";
-import { addKnownDevice } from "../../actions/ble";
+import { BackHandler } from "react-native";
+import { Flex } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "../../const";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import { useIncrementOnNavigationFocusState } from "../../helpers/useIncrementOnNavigationFocusState";
+import BleDevicePairingFlowComponent from "../../components/BleDevicePairingFlow/index";
 import {
   RootComposite,
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import DeviceSetupView from "../../components/DeviceSetupView";
 
 export type Props = RootComposite<
   StackNavigatorProps<
@@ -24,7 +23,7 @@ export type Props = RootComposite<
 // Necessary when the pairing flow is opened from a deeplink without any params
 // Shouldn't be relied upon for other usages
 const defaultNavigationParams = {
-  filterByDeviceModelId: DeviceModelId.nanoFTS, // This needs to be removed when nanos are supported
+  filterByDeviceModelId: DeviceModelId.stax, // This needs to be removed when nanos are supported
   areKnownDevicesDisplayed: true,
   onSuccessAddToKnownDevices: false,
   successNavigateToConfig: {
@@ -47,6 +46,9 @@ const defaultNavigationParams = {
 
 /**
  * Screen handling the BLE flow with a scanning step and a pairing step
+ *
+ * Note: this screen will disappear in the future, but still necessary for now.
+ *
  * @param navigation react-navigation navigation object
  * @param route react-navigation route object. The route params are:
  * - filterByDeviceModelId: (optional, default to none) a device model id to filter on
@@ -78,8 +80,6 @@ const defaultNavigationParams = {
  * @returns a JSX component
  */
 export const BleDevicePairingFlow = ({ navigation, route }: Props) => {
-  const dispatchRedux = useDispatch();
-
   const params = route?.params || defaultNavigationParams;
 
   const {
@@ -95,31 +95,12 @@ export const BleDevicePairingFlow = ({ navigation, route }: Props) => {
     navigationType = "navigate",
   } = onSuccessNavigateToConfig;
 
-  const [deviceToPair, setDeviceToPair] = useState<Device | null>(null);
+  // Makes sure the pairing components are reset when navigating back to this screen
+  const keyToReset =
+    useIncrementOnNavigationFocusState<Props["navigation"]>(navigation);
 
-  const onDeviceSelect = useCallback((item: Device) => {
-    const deviceToPair = {
-      deviceId: item.deviceId,
-      deviceName: item.deviceName,
-      modelId: item.modelId,
-      wired: false,
-    };
-
-    setDeviceToPair(deviceToPair);
-  }, []);
-
-  const onPaired = useCallback(
+  const onPairingSuccess = useCallback(
     (device: Device) => {
-      if (onSuccessAddToKnownDevices) {
-        dispatchRedux(
-          addKnownDevice({
-            id: device.deviceId,
-            name: device.deviceName ?? device.modelId,
-            modelId: device.modelId,
-          }),
-        );
-      }
-
       const hasDeviceParam = hasFromPath(navigateInput, pathToDeviceParam);
       if (hasDeviceParam) {
         setFromPath(navigateInput, pathToDeviceParam, device);
@@ -131,9 +112,6 @@ export const BleDevicePairingFlow = ({ navigation, route }: Props) => {
         );
       }
 
-      // Before navigating, to never come back a the successful pairing but to the scanning part
-      setDeviceToPair(null);
-
       const params = navigateInput.params
         ? {
             ...navigateInput.params,
@@ -142,7 +120,8 @@ export const BleDevicePairingFlow = ({ navigation, route }: Props) => {
 
       if (navigationType === "push") {
         // @ts-expect-error this seems complicated to type properly
-        // the typings for react-navigation cannot reconciliate screens having "undefined" params and object params
+        // the typings for react-navigation cannot reconciliate screens having "undefined" params and object params.
+        // And this will disappear in a future screen.
         navigation.push(navigateInput.name, params);
       } else if (navigationType === "replace") {
         // @ts-expect-error this seems complicated to type properly
@@ -152,35 +131,58 @@ export const BleDevicePairingFlow = ({ navigation, route }: Props) => {
         navigation.navigate(navigateInput.name, params);
       }
     },
-    [
-      dispatchRedux,
-      navigateInput,
-      navigation,
-      navigationType,
-      onSuccessAddToKnownDevices,
-      pathToDeviceParam,
-    ],
+    [navigateInput, navigation, navigationType, pathToDeviceParam],
   );
 
-  const onRetryPairingFlow = useCallback(() => {
-    setDeviceToPair(null);
-  }, []);
+  const handleGoBackFromScanning = useCallback(() => {
+    const routes = navigation.getState().routes;
+
+    const isNavigationFromDeeplink =
+      routes[routes.length - 1]?.params === undefined;
+
+    if (!isNavigationFromDeeplink) {
+      navigation.goBack();
+    } else {
+      navigation.reset({
+        index: 0,
+        routes: [
+          {
+            // @ts-expect-error is fixed in a future screen
+            name: NavigatorName.BaseOnboarding,
+            state: {
+              routes: [
+                {
+                  name: ScreenName.OnboardingWelcome,
+                },
+              ],
+            },
+          },
+        ],
+      });
+    }
+  }, [navigation]);
+
+  // Handles back button, necessary when the user comes from the deep link
+  useEffect(() => {
+    const listener = BackHandler.addEventListener("hardwareBackPress", () => {
+      handleGoBackFromScanning();
+      return true;
+    });
+
+    return () => listener.remove();
+  }, [handleGoBackFromScanning]);
 
   return (
-    <RequiresBLE>
-      {deviceToPair ? (
-        <BleDevicePairing
-          deviceToPair={deviceToPair}
-          onPaired={onPaired}
-          onRetry={onRetryPairingFlow}
-        />
-      ) : (
-        <BleDevicesScanning
+    <DeviceSetupView hasBackButton onBack={handleGoBackFromScanning}>
+      <Flex px={6} flex={1}>
+        <BleDevicePairingFlowComponent
+          key={keyToReset}
           filterByDeviceModelId={filterByDeviceModelId}
           areKnownDevicesDisplayed={areKnownDevicesDisplayed}
-          onDeviceSelect={onDeviceSelect}
+          onPairingSuccess={onPairingSuccess}
+          onPairingSuccessAddToKnownDevices={onSuccessAddToKnownDevices}
         />
-      )}
-    </RequiresBLE>
+      </Flex>
+    </DeviceSetupView>
   );
 };

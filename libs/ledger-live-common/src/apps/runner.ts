@@ -100,13 +100,15 @@ export const runAllWithProgress = (
   return concat(
     ...getActionPlan(state).map((appOp) => runAppOp(state, appOp, exec))
   ).pipe(
-    map(
-      (event) =>
-        <Action>{
-          type: "onRunnerEvent",
-          event,
-        }
-    ),
+    map((event) => {
+      if (event.type === "runError") {
+        throw event.error;
+      }
+      return <Action>{
+        type: "onRunnerEvent",
+        event,
+      };
+    }),
     scan(reducer, state),
     mergeMap((s) => {
       // Nb if you also want to expose the uninstall queue, feel free.

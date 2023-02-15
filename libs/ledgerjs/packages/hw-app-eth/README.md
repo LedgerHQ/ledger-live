@@ -77,8 +77,6 @@ For a smooth and quick integration:
     *   [Parameters](#parameters-18)
 *   [byContractAddressAndChainId](#bycontractaddressandchainid)
     *   [Parameters](#parameters-19)
-*   [list](#list)
-    *   [Parameters](#parameters-20)
 *   [ResolutionConfig](#resolutionconfig)
     *   [Properties](#properties)
 
@@ -452,19 +450,9 @@ Retrieve the token information by a given contract address if any
 
 *   `contract` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 *   `chainId` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
-*   `erc20SignaturesBlob` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
+*   `erc20SignaturesBlob` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | null)?** 
 
-Returns **(TokenInfo | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
-
-### list
-
-list all the ERC20 tokens informations
-
-#### Parameters
-
-*   `erc20SignaturesBlob` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
-
-Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<TokenInfo>** 
+Returns **ReturnType\<any>** 
 
 ### ResolutionConfig
 

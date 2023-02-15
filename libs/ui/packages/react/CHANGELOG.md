@@ -1,5 +1,131 @@
 # @ledgerhq/react-ui
 
+## 0.10.4
+
+### Patch Changes
+
+- [#2242](https://github.com/LedgerHQ/ledger-live/pull/2242) [`15ffdd6972`](https://github.com/LedgerHQ/ledger-live/commit/15ffdd6972dcc3bf5de5af34528725fae24120af) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: narrow-typed theme to "dark"| "light"
+
+  And exported Theme type from react-ui
+
+- Updated dependencies [[`5266518d0b`](https://github.com/LedgerHQ/ledger-live/commit/5266518d0baf26258f95a08d7f0a127f1848b38f)]:
+  - @ledgerhq/icons-ui@0.3.4
+
+## 0.10.4-next.0
+
+### Patch Changes
+
+- [#2242](https://github.com/LedgerHQ/ledger-live/pull/2242) [`15ffdd6972`](https://github.com/LedgerHQ/ledger-live/commit/15ffdd6972dcc3bf5de5af34528725fae24120af) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: narrow-typed theme to "dark"| "light"
+
+  And exported Theme type from react-ui
+
+- Updated dependencies [[`5266518d0b`](https://github.com/LedgerHQ/ledger-live/commit/5266518d0baf26258f95a08d7f0a127f1848b38f)]:
+  - @ledgerhq/icons-ui@0.3.4-next.0
+
+## 0.10.3
+
+### Patch Changes
+
+- [#2062](https://github.com/LedgerHQ/ledger-live/pull/2062) [`32993aea9a`](https://github.com/LedgerHQ/ledger-live/commit/32993aea9af5dfb7f2519263e5f2a22a88320cdc) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - New flags icons. Added 2 new icons to Providers and Payments. Prevented crash when using ProviderIcon with incorrect string in boxed mode
+
+- Updated dependencies [[`32993aea9a`](https://github.com/LedgerHQ/ledger-live/commit/32993aea9af5dfb7f2519263e5f2a22a88320cdc)]:
+  - @ledgerhq/icons-ui@0.3.3
+
+## 0.10.3-next.0
+
+### Patch Changes
+
+- [#2062](https://github.com/LedgerHQ/ledger-live/pull/2062) [`32993aea9a`](https://github.com/LedgerHQ/ledger-live/commit/32993aea9af5dfb7f2519263e5f2a22a88320cdc) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - New flags icons. Added 2 new icons to Providers and Payments. Prevented crash when using ProviderIcon with incorrect string in boxed mode
+
+- Updated dependencies [[`32993aea9a`](https://github.com/LedgerHQ/ledger-live/commit/32993aea9af5dfb7f2519263e5f2a22a88320cdc)]:
+  - @ledgerhq/icons-ui@0.3.3-next.0
+
+## 0.10.2
+
+### Patch Changes
+
+- [#1998](https://github.com/LedgerHQ/ledger-live/pull/1998) [`1269f149ae`](https://github.com/LedgerHQ/ledger-live/commit/1269f149aef5d842eddd83beb64ae65240c3dc0f) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Updated Payment providers icon : new sources and updated sizes
+
+- Updated dependencies [[`e3222832ba`](https://github.com/LedgerHQ/ledger-live/commit/e3222832ba1fc7f90940fe637bf4a29361a72d94), [`1269f149ae`](https://github.com/LedgerHQ/ledger-live/commit/1269f149aef5d842eddd83beb64ae65240c3dc0f)]:
+  - @ledgerhq/icons-ui@0.3.2
+
+## 0.10.2-next.0
+
+### Patch Changes
+
+- [#1998](https://github.com/LedgerHQ/ledger-live/pull/1998) [`1269f149ae`](https://github.com/LedgerHQ/ledger-live/commit/1269f149aef5d842eddd83beb64ae65240c3dc0f) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Updated Payment providers icon : new sources and updated sizes
+
+- Updated dependencies [[`e3222832ba`](https://github.com/LedgerHQ/ledger-live/commit/e3222832ba1fc7f90940fe637bf4a29361a72d94), [`1269f149ae`](https://github.com/LedgerHQ/ledger-live/commit/1269f149aef5d842eddd83beb64ae65240c3dc0f)]:
+  - @ledgerhq/icons-ui@0.3.2-next.0
+
+## 0.10.1
+
+### Patch Changes
+
+- [#1882](https://github.com/LedgerHQ/ledger-live/pull/1882) [`828af17431`](https://github.com/LedgerHQ/ledger-live/commit/828af1743180ccf0f21a7de143cb910ef7258407) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Fixed naming issues causing error in CSJ. New prefixing system to prevent issues with icon names starting with a number
+
+- Updated dependencies [[`7aa0e616b3`](https://github.com/LedgerHQ/ledger-live/commit/7aa0e616b3dab8e218fea8631c3aa8b894dfc8f1), [`828af17431`](https://github.com/LedgerHQ/ledger-live/commit/828af1743180ccf0f21a7de143cb910ef7258407)]:
+  - @ledgerhq/icons-ui@0.3.1
+
+## 0.10.1-next.0
+
+### Patch Changes
+
+- [#1882](https://github.com/LedgerHQ/ledger-live/pull/1882) [`828af17431`](https://github.com/LedgerHQ/ledger-live/commit/828af1743180ccf0f21a7de143cb910ef7258407) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Fixed naming issues causing error in CSJ. New prefixing system to prevent issues with icon names starting with a number
+
+- Updated dependencies [[`7aa0e616b3`](https://github.com/LedgerHQ/ledger-live/commit/7aa0e616b3dab8e218fea8631c3aa8b894dfc8f1), [`828af17431`](https://github.com/LedgerHQ/ledger-live/commit/828af1743180ccf0f21a7de143cb910ef7258407)]:
+  - @ledgerhq/icons-ui@0.3.1-next.0
+
+## 0.10.0
+
+### Minor Changes
+
+- [#1808](https://github.com/LedgerHQ/ledger-live/pull/1808) [`ec266145d9`](https://github.com/LedgerHQ/ledger-live/commit/ec266145d95e25e5305e49e2a97736d00eac8873) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Add a new help drawer in the new synchronous onboarding screen. Also update the drawer component from UI library to comply with recent designs.
+
+### Patch Changes
+
+- [#1352](https://github.com/LedgerHQ/ledger-live/pull/1352) [`0d7e0f713a`](https://github.com/LedgerHQ/ledger-live/commit/0d7e0f713ab4fbb3d4bd7df147a96c7de73123b7) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Remove background color in Button "shade" variant (following design)
+
+* [#1352](https://github.com/LedgerHQ/ledger-live/pull/1352) [`0d7e0f713a`](https://github.com/LedgerHQ/ledger-live/commit/0d7e0f713ab4fbb3d4bd7df147a96c7de73123b7) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add h4Inter text variant
+
+- [#1539](https://github.com/LedgerHQ/ledger-live/pull/1539) [`9c4073e500`](https://github.com/LedgerHQ/ledger-live/commit/9c4073e5002a7d1363736cb3159565f16c953b8b) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix issue on checkbox component onChange callback
+
+* [#1768](https://github.com/LedgerHQ/ledger-live/pull/1768) [`9b00b3dd53`](https://github.com/LedgerHQ/ledger-live/commit/9b00b3dd531a05b9ab1961bfb4f658de70a041d7) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Updating the imports for png images to prevent issues with csj.
+
+- [#1748](https://github.com/LedgerHQ/ledger-live/pull/1748) [`ce040b4020`](https://github.com/LedgerHQ/ledger-live/commit/ce040b4020ffc9b19fa46ac5edf2122cd38fde62) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Adding new icons to indexes
+
+* [#1141](https://github.com/LedgerHQ/ledger-live/pull/1141) [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd) Thanks [@valpinkman](https://github.com/valpinkman)! - Collateral changes due to solving all LLM typescript/eslint issues/warnings.
+
+* Updated dependencies [[`7495373f8b`](https://github.com/LedgerHQ/ledger-live/commit/7495373f8b4690ce5b7b48410f3e4e47bf2555f4), [`f7a162c356`](https://github.com/LedgerHQ/ledger-live/commit/f7a162c356a0cd84b6eb635493ee56af06e306e5), [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd)]:
+  - @ledgerhq/icons-ui@0.3.0
+  - @ledgerhq/crypto-icons-ui@0.2.1
+  - @ledgerhq/ui-shared@0.1.10
+
+## 0.10.0-next.0
+
+### Minor Changes
+
+- [#1808](https://github.com/LedgerHQ/ledger-live/pull/1808) [`ec266145d9`](https://github.com/LedgerHQ/ledger-live/commit/ec266145d95e25e5305e49e2a97736d00eac8873) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Add a new help drawer in the new synchronous onboarding screen. Also update the drawer component from UI library to comply with recent designs.
+
+### Patch Changes
+
+- [#1352](https://github.com/LedgerHQ/ledger-live/pull/1352) [`0d7e0f713a`](https://github.com/LedgerHQ/ledger-live/commit/0d7e0f713ab4fbb3d4bd7df147a96c7de73123b7) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Remove background color in Button "shade" variant (following design)
+
+* [#1352](https://github.com/LedgerHQ/ledger-live/pull/1352) [`0d7e0f713a`](https://github.com/LedgerHQ/ledger-live/commit/0d7e0f713ab4fbb3d4bd7df147a96c7de73123b7) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add h4Inter text variant
+
+- [#1539](https://github.com/LedgerHQ/ledger-live/pull/1539) [`9c4073e500`](https://github.com/LedgerHQ/ledger-live/commit/9c4073e5002a7d1363736cb3159565f16c953b8b) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix issue on checkbox component onChange callback
+
+* [#1768](https://github.com/LedgerHQ/ledger-live/pull/1768) [`9b00b3dd53`](https://github.com/LedgerHQ/ledger-live/commit/9b00b3dd531a05b9ab1961bfb4f658de70a041d7) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Updating the imports for png images to prevent issues with csj.
+
+- [#1748](https://github.com/LedgerHQ/ledger-live/pull/1748) [`ce040b4020`](https://github.com/LedgerHQ/ledger-live/commit/ce040b4020ffc9b19fa46ac5edf2122cd38fde62) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Adding new icons to indexes
+
+* [#1141](https://github.com/LedgerHQ/ledger-live/pull/1141) [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd) Thanks [@valpinkman](https://github.com/valpinkman)! - Collateral changes due to solving all LLM typescript/eslint issues/warnings.
+
+* Updated dependencies [[`7495373f8b`](https://github.com/LedgerHQ/ledger-live/commit/7495373f8b4690ce5b7b48410f3e4e47bf2555f4), [`f7a162c356`](https://github.com/LedgerHQ/ledger-live/commit/f7a162c356a0cd84b6eb635493ee56af06e306e5), [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd)]:
+  - @ledgerhq/icons-ui@0.3.0-next.0
+  - @ledgerhq/crypto-icons-ui@0.2.1-next.0
+  - @ledgerhq/ui-shared@0.1.10-next.0
+
 ## 0.9.2
 
 ### Patch Changes

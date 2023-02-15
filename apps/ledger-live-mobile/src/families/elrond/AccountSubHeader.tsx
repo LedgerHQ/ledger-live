@@ -1,8 +1,13 @@
 import React from "react";
+
 import AccountSubHeader from "../../components/AccountSubHeader";
 
-function ElrondAccountSubHeader() {
-  return <AccountSubHeader family="Elrond" team="Elrond" />;
-}
+/*
+ * Handle the component declaration.
+ */
+
+const ElrondAccountSubHeader = () => (
+  <AccountSubHeader family="MultiversX" team="MultiversX" />
+);
 
 export default ElrondAccountSubHeader;

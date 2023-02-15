@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, useEffect } from "react";
+import React, { useMemo, useState, useCallback, useRef } from "react";
 import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
 import Animated, {
   useAnimatedScrollHandler,
@@ -10,10 +10,10 @@ import { Box, Flex } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 import { useTheme } from "styled-components/native";
-import { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { useNavigation } from "@react-navigation/native";
-import { useSingleCoinMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
+import { isEqual } from "lodash";
+import BigNumber from "bignumber.js";
 import accountSyncRefreshControl from "../../components/accountSyncRefreshControl";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import TabBarSafeAreaView, {
@@ -23,18 +23,11 @@ import { flattenAccountsByCryptoCurrencyScreenSelector } from "../../reducers/ac
 import SectionContainer from "../WalletCentricSections/SectionContainer";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
-import MarketPriceSection from "../WalletCentricSections/MarketPrice";
 import AccountsSection from "./AccountsSection";
 import { NavigatorName, ScreenName } from "../../const";
 import EmptyAccountCard from "../Account/EmptyAccountCard";
-import AssetCentricGraphCard from "../../components/AssetCentricGraphCard";
 import CurrencyBackgroundGradient from "../../components/CurrencyBackgroundGradient";
 import Header from "./Header";
-import { usePortfolio } from "../../hooks/portfolio";
-import {
-  counterValueCurrencySelector,
-  countervalueFirstSelector,
-} from "../../reducers/settings";
 import { track, TrackScreen } from "../../analytics";
 import { FabAssetActions } from "../../components/FabActions/actionsList/asset";
 import { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
@@ -42,12 +35,9 @@ import {
   BaseComposite,
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
-
-// @FIXME workarround for main tokens
-const tokenIDToMarketID = {
-  "ethereum/erc20/usd_tether__erc20_": "tether",
-  "ethereum/erc20/usd__coin": "usd",
-};
+import AssetDynamicContent from "./AssetDynamicContent";
+import AssetMarketSection from "./AssetMarketSection";
+import AssetGraph from "./AssetGraph";
 
 const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
   accountSyncRefreshControl(FlatList),
@@ -61,39 +51,14 @@ const AssetScreen = ({ route }: NavigationProps) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationProps["navigation"]>();
-  const useCounterValue = useSelector(countervalueFirstSelector);
   const { currency } = route?.params;
-  const isCryptoCurrency = currency?.type === "CryptoCurrency";
   const cryptoAccounts = useSelector(
     flattenAccountsByCryptoCurrencyScreenSelector(currency),
-  );
-  const defaultAccount = useMemo(
-    () =>
-      cryptoAccounts && cryptoAccounts.length === 1
-        ? cryptoAccounts[0]
-        : undefined,
-    [cryptoAccounts],
+    isEqual,
   );
 
-  const counterValueCurrency: Currency = useSelector(
-    counterValueCurrencySelector,
-  );
-
-  const assetPortfolio = usePortfolio(cryptoAccounts, {
-    flattenSourceAccounts: false,
-  });
-  const { selectedCoinData, selectCurrency, counterCurrency } =
-    useSingleCoinMarketData();
-
-  useEffect(() => {
-    selectCurrency(
-      tokenIDToMarketID[currency.id as keyof typeof tokenIDToMarketID] ||
-        currency.id,
-      undefined,
-      "24h",
-    );
-    return () => selectCurrency();
-  }, [currency, selectCurrency]);
+  const defaultAccount =
+    cryptoAccounts?.length === 1 ? cryptoAccounts[0] : undefined;
 
   const cryptoAccountsEmpty = useMemo(
     () => cryptoAccounts.every(account => isAccountEmpty(account)),
@@ -106,15 +71,19 @@ const AssetScreen = ({ route }: NavigationProps) => {
     currentPositionY.value = event.contentOffset.y;
   });
 
-  const currencyBalance = useMemo(
-    () => cryptoAccounts.reduce((acc, val) => acc + val.balance.toNumber(), 0),
-    [cryptoAccounts],
-  );
-
-  const onAssetCardLayout = useCallback((event: LayoutChangeEvent) => {
+  const graphCardLayedOutOnce = useRef(false);
+  const onGraphCardLayout = useCallback((event: LayoutChangeEvent) => {
+    if (!graphCardLayedOutOnce.current) return;
+    graphCardLayedOutOnce.current = true;
     const { y, height } = event.nativeEvent.layout;
     setGraphCardEndPosition(y + height / 10);
   }, []);
+
+  const currencyBalance = useMemo(
+    () =>
+      cryptoAccounts.reduce((acc, val) => acc.plus(val.balance), BigNumber(0)),
+    [cryptoAccounts],
+  );
 
   const onAddAccount = useCallback(() => {
     track("button_clicked", {
@@ -137,18 +106,17 @@ const AssetScreen = ({ route }: NavigationProps) => {
 
   const data = useMemo(
     () => [
-      <Box mt={6} onLayout={onAssetCardLayout}>
-        <AssetCentricGraphCard
-          assetPortfolio={assetPortfolio}
-          counterValueCurrency={counterValueCurrency}
+      <Box mt={6} onLayout={onGraphCardLayout}>
+        <AssetGraph
+          accounts={cryptoAccounts}
+          currency={currency}
           currentPositionY={currentPositionY}
           graphCardEndPosition={graphCardEndPosition}
-          currency={currency}
-          currencyBalance={currencyBalance}
-          accountsEmpty={cryptoAccountsEmpty}
+          currencyBalance={currencyBalance.toNumber()}
+          accountsAreEmpty={cryptoAccountsEmpty}
         />
       </Box>,
-      <SectionContainer px={6}>
+      <SectionContainer px={6} isFirst>
         <SectionTitle
           title={t("account.quickActions")}
           containerProps={{ mb: 6 }}
@@ -158,18 +126,14 @@ const AssetScreen = ({ route }: NavigationProps) => {
           accounts={cryptoAccounts}
           defaultAccount={defaultAccount}
         />
+        <AssetDynamicContent currency={currency} />
         {cryptoAccountsEmpty ? (
           <Flex minHeight={220}>
             <EmptyAccountCard currencyTicker={currency.ticker} />
           </Flex>
         ) : null}
       </SectionContainer>,
-      <SectionContainer
-        px={6}
-        isLast={
-          (!isCryptoCurrency || !selectedCoinData?.price) && cryptoAccountsEmpty
-        }
-      >
+      <SectionContainer px={6}>
         <SectionTitle
           title={t("asset.accountsSection.title", {
             currencyName: currency.ticker,
@@ -183,37 +147,16 @@ const AssetScreen = ({ route }: NavigationProps) => {
           currencyTicker={currency.ticker}
         />
       </SectionContainer>,
-      ...(selectedCoinData?.price
-        ? [
-            <SectionContainer px={6} isLast={cryptoAccountsEmpty}>
-              <SectionTitle
-                title={t("portfolio.marketPriceSection.title", {
-                  currencyTicker: currency.ticker,
-                })}
-              />
-              <Flex minHeight={65}>
-                <MarketPriceSection
-                  currency={currency as CryptoCurrency}
-                  selectedCoinData={selectedCoinData}
-                  counterCurrency={counterCurrency}
-                />
-              </Flex>
-            </SectionContainer>,
-          ]
-        : []),
-      ...(!cryptoAccountsEmpty
-        ? [
-            <SectionContainer px={6} isLast>
-              <SectionTitle title={t("analytics.operations.title")} />
-              <OperationsHistorySection accounts={cryptoAccounts} />
-            </SectionContainer>,
-          ]
-        : []),
+      <AssetMarketSection currency={currency} />,
+      cryptoAccountsEmpty ? null : (
+        <SectionContainer px={6}>
+          <SectionTitle title={t("analytics.operations.title")} />
+          <OperationsHistorySection accounts={cryptoAccounts} />
+        </SectionContainer>
+      ),
     ],
     [
-      onAssetCardLayout,
-      assetPortfolio,
-      counterValueCurrency,
+      onGraphCardLayout,
       currentPositionY,
       graphCardEndPosition,
       currency,
@@ -222,10 +165,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
       t,
       cryptoAccounts,
       defaultAccount,
-      isCryptoCurrency,
-      selectedCoinData,
       onAddAccount,
-      counterCurrency,
     ],
   );
 
@@ -252,13 +192,10 @@ const AssetScreen = ({ route }: NavigationProps) => {
         currentPositionY={currentPositionY}
         graphCardEndPosition={graphCardEndPosition}
         currency={currency}
-        useCounterValue={useCounterValue}
-        assetPortfolio={assetPortfolio}
         currencyBalance={currencyBalance}
-        counterValueCurrency={counterValueCurrency}
       />
     </TabBarSafeAreaView>
   );
 };
 
-export default withDiscreetMode(AssetScreen);
+export default React.memo(withDiscreetMode(AssetScreen));

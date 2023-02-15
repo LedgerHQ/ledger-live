@@ -43,7 +43,7 @@ const illustrations = {
     dark: nanoSPDark,
     width: 332,
   },
-  nanoFTS: {
+  stax: {
     light: nanoS,
     dark: nanoSDark,
     width: 290,
@@ -56,7 +56,7 @@ const illustrations = {
 };
 
 const Illustration: ThemedComponent<{ modelId: string }> = styled.div`
-  background: url(${p => illustrations[p.modelId][p.theme.colors.palette.type || "light"]})
+  background: url('${p => illustrations[p.modelId][p.theme.colors.palette.type || "light"]}')
     no-repeat top right;
   width: ${p => illustrations[p.modelId].width}px;
   height: 50px;

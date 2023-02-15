@@ -85,13 +85,12 @@ apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
  * ]
  */
 
+/**
+  * Clean and rebuild if changing
+  */
 project.ext.react = [
-    /**
-     * Clean and rebuild if changing
-     * The following env var is not read from ../.env, you need to export this var like this: `export HERMES_ENABLED_ANDROID=true`
-     */
     enableHermes: true,
-    // bundleInDebug: true, // Uncomment this to debug java without having to deal with JS dev server (metro)
+    bundleInDebug: System.getenv("ANDROID_BUNDLE_IN_DEBUG") != null, // Generates JS bundle and sourcemap at build time
 ]
 project.ext.sentryCli = [
     logLevel: "debug"
@@ -281,6 +280,7 @@ android {
         release {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
             matchingFallbacks = ['debug']
         }
         stagingRelease {
@@ -321,6 +321,7 @@ dependencies {
     releaseImplementation files(hermesPath + "hermes-release.aar")
 
     androidTestImplementation('com.wix:detox:+')
+    implementation 'com.facebook.soloader:soloader:0.10.4+'
 
     compile project(':react-native-video')
     implementation "androidx.appcompat:appcompat:1.0.0"
@@ -360,4 +361,10 @@ def isNewArchitectureEnabled() {
     // - Invoke gradle with `-newArchEnabled=true`
     // - Set an environment variable `ORG_GRADLE_PROJECT_newArchEnabled=true`
     return project.hasProperty("newArchEnabled") && project.newArchEnabled == "true"
+}
+
+android {
+    buildFeatures {
+        buildConfig = true
+    }
 }

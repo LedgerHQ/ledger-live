@@ -12,8 +12,6 @@ import { PostOnboardingNavigatorParamList } from "./types/PostOnboardingNavigato
 
 const Stack = createStackNavigator<PostOnboardingNavigatorParamList>();
 
-const screenOptions = { headerShown: true, title: "", headerLeft: () => null };
-
 const PostOnboardingNavigator = () => {
   const { colors } = useTheme();
   const stackNavigationConfig = useMemo(
@@ -31,7 +29,6 @@ const PostOnboardingNavigator = () => {
       <Stack.Screen
         name={ScreenName.PostOnboardingHub}
         component={PostOnboardingHub}
-        options={screenOptions}
       />
       <Stack.Screen
         name={ScreenName.PostOnboardingDebugScreen}
@@ -40,7 +37,6 @@ const PostOnboardingNavigator = () => {
       <Stack.Screen
         name={ScreenName.PostOnboardingMockActionScreen}
         component={PostOnboardingMockActionScreen}
-        options={screenOptions}
       />
     </Stack.Navigator>
   );

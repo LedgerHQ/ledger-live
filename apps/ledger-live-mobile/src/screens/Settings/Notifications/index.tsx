@@ -20,6 +20,13 @@ import type { State } from "../../../reducers/types";
 import useNotifications from "../../../logic/notifications";
 import { updateUserPreferences } from "../../../notifications/braze";
 
+const notificationsMapping = {
+  areNotificationsAllowed: "allowed",
+  announcementsCategory: "announcements",
+  recommendationsCategory: "recommendations",
+  largeMoverCategory: "largeMover",
+};
+
 type NotificationRowProps = {
   disabled?: boolean;
   notificationKey: keyof State["settings"]["notifications"];
@@ -36,7 +43,8 @@ function NotificationSettingsRow({
 
   const { t } = useTranslation();
 
-  const capitalizedKey = capitalize(notificationKey);
+  const translationKey = notificationsMapping[notificationKey];
+  const capitalizedKey = capitalize(translationKey);
 
   const onChange = useCallback(
     (value: boolean) => {
@@ -58,8 +66,8 @@ function NotificationSettingsRow({
   return (
     <SettingsRow
       event={`${capitalizedKey}Row`}
-      title={t(`settings.notifications.${notificationKey}.title`)}
-      desc={t(`settings.notifications.${notificationKey}.desc`)}
+      title={t(`settings.notifications.${translationKey}.title`)}
+      desc={t(`settings.notifications.${translationKey}.desc`)}
       label={label}
     >
       <Switch
@@ -78,6 +86,7 @@ function NotificationsSettings() {
     getIsNotifEnabled,
     handlePushNotificationsPermission,
     pushNotificationsOldRoute,
+    notificationsCategoriesHidden,
   } = useNotifications();
   const [isNotifPermissionEnabled, setIsNotifPermissionEnabled] = useState<
     boolean | undefined
@@ -112,7 +121,7 @@ function NotificationsSettings() {
     updateUserPreferences(notifications);
   }, [notifications]);
 
-  const disableSubSettings = !notifications.allowed;
+  const disableSubSettings = !notifications.areNotificationsAllowed;
 
   const platformData = useMemo(
     () =>
@@ -168,28 +177,49 @@ function NotificationsSettings() {
           ) : null}
           <Box opacity={isNotifPermissionEnabled ? 1 : 0.2}>
             <NotificationSettingsRow
-              notificationKey={"allowed"}
+              notificationKey={"areNotificationsAllowed"}
               disabled={!isNotifPermissionEnabled}
             />
           </Box>
           <Box
             opacity={
-              isNotifPermissionEnabled && notifications.allowed ? 1 : 0.2
+              isNotifPermissionEnabled && notifications.areNotificationsAllowed
+                ? 1
+                : 0.2
             }
           >
-            <NotificationSettingsRow
-              notificationKey={"announcements"}
-              disabled={disableSubSettings}
-            />
-            <NotificationSettingsRow
-              notificationKey={"recommendations"}
-              disabled={disableSubSettings}
-            />
+            {!notificationsCategoriesHidden ||
+            !notificationsCategoriesHidden.includes("announcementsCategory") ? (
+              <NotificationSettingsRow
+                notificationKey={"announcementsCategory"}
+                disabled={disableSubSettings}
+              />
+            ) : null}
+            {!notificationsCategoriesHidden ||
+            !notificationsCategoriesHidden.includes(
+              "recommendationsCategory",
+            ) ? (
+              <NotificationSettingsRow
+                notificationKey={"recommendationsCategory"}
+                disabled={disableSubSettings}
+              />
+            ) : null}
+            {!notificationsCategoriesHidden ||
+            !notificationsCategoriesHidden.includes("largeMoverCategory") ? (
+              <NotificationSettingsRow
+                notificationKey={"largeMoverCategory"}
+                disabled={disableSubSettings}
+              />
+            ) : null}
           </Box>
           <Box m={6}>
             <Text
-              color={notifications.allowed ? "neutral.c40" : "neutral.c70"}
-              variant={"bodyLineHeight"}
+              color={
+                notifications.areNotificationsAllowed
+                  ? "neutral.c40"
+                  : "neutral.c70"
+              }
+              variant={"small"}
               textAlign="center"
             >
               {t("settings.notifications.disclaimer")}

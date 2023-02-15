@@ -3,9 +3,11 @@ import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import styled, { useTheme } from "styled-components";
-import { Flex, Text, Icon } from "@ledgerhq/react-ui";
+import { Flex, Text, Icon, Box } from "@ledgerhq/react-ui";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { track } from "~/renderer/analytics/segment";
+import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { TableCell, TableRow } from "./MarketList";
@@ -16,6 +18,8 @@ import { useTranslation } from "react-i18next";
 import { openModal } from "~/renderer/actions/modals";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
+import useStakeFlow from "~/renderer/screens/stake/index";
+import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
@@ -48,6 +52,7 @@ type Props = {
   selectCurrency: (currencyId: string) => void;
   availableOnBuy: boolean;
   availableOnSwap: boolean;
+  availableOnStake: boolean;
   range?: string;
 };
 
@@ -62,13 +67,16 @@ function MarketRowItem({
   selectCurrency,
   availableOnBuy,
   availableOnSwap,
+  availableOnStake,
   range,
 }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const swapDefaultTrack = useGetSwapTrackingProperties();
 
   // PTX smart routing feature flag - buy sell live app flag
   const ptxSmartRouting = useFeature("ptxSmartRouting");
+  const startStakeFlow = useStakeFlow({ currencies: [currency?.internalCurrency?.id] });
 
   const openAddAccounts = useCallback(() => {
     if (currency)
@@ -96,40 +104,41 @@ function MarketRowItem({
   }, [currency, history, range, selectCurrency]);
 
   const onBuy = useCallback(
-    (e: any) => {
+    (e: React.ChangeEvent<HTMLInputElement>) => {
       e.preventDefault();
       e.stopPropagation();
       setTrackingSource("Page Market");
       // PTX smart routing redirect to live app or to native implementation
-      if (ptxSmartRouting?.enabled && currency?.internalCurrency) {
-        const params = {
-          currency: currency.internalCurrency?.id,
-          mode: "buy", // buy or sell
-        };
 
-        history.push({
-          // replace 'multibuy' in case live app id changes
-          pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ?? "multibuy"}`,
-          state: params,
-        });
-      } else {
-        history.push({
-          pathname: "/exchange",
-          state: {
-            mode: "onRamp",
-            defaultTicker: currency && currency.ticker ? currency.ticker.toUpperCase() : undefined,
-          },
-        });
-      }
+      history.push({
+        pathname: "/exchange",
+        state:
+          ptxSmartRouting?.enabled && currency?.internalCurrency
+            ? {
+                currency: currency.internalCurrency?.id,
+                mode: "buy", // buy or sell
+              }
+            : {
+                mode: "onRamp",
+                defaultTicker:
+                  currency && currency.ticker ? currency.ticker.toUpperCase() : undefined,
+              },
+      });
     },
     [currency, history, ptxSmartRouting],
   );
 
   const onSwap = useCallback(
-    (e: any) => {
+    (e: React.ChangeEvent<HTMLInputElement>) => {
       if (currency?.internalCurrency?.id) {
         e.preventDefault();
         e.stopPropagation();
+        track("button_clicked", {
+          button: "swap",
+          currency: currency?.ticker,
+          page: "Page Market",
+          ...swapDefaultTrack,
+        });
         setTrackingSource("Page Market");
 
         const currencyId = currency?.internalCurrency?.id;
@@ -152,11 +161,34 @@ function MarketRowItem({
         });
       }
     },
-    [currency?.internalCurrency, flattenedAccounts, openAddAccounts, history],
+    [
+      currency?.internalCurrency,
+      currency?.ticker,
+      swapDefaultTrack,
+      flattenedAccounts,
+      openAddAccounts,
+      history,
+    ],
+  );
+
+  const onStake = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+      track("button_clicked", {
+        button: "stake",
+        currency: currency?.ticker,
+        page: "Page Market",
+        ...stakeDefaultTrack,
+      });
+      startStakeFlow();
+      setTrackingSource("Page Market");
+    },
+    [currency?.ticker, startStakeFlow],
   );
 
   const onStarClick = useCallback(
-    (e: any) => {
+    (e: React.ChangeEvent<HTMLInputElement>) => {
       e.preventDefault();
       e.stopPropagation();
       toggleStar();
@@ -164,8 +196,8 @@ function MarketRowItem({
     [toggleStar],
   );
 
-  const hasActions = currency?.internalCurrency && (availableOnBuy || availableOnSwap);
-
+  const hasActions =
+    currency?.internalCurrency && (availableOnBuy || availableOnSwap || availableOnStake);
   return (
     <div style={{ ...style }}>
       {loading || !currency ? (
@@ -225,9 +257,19 @@ function MarketRowItem({
                   <Button
                     data-test-id={`market-${currency?.ticker}-swap-button`}
                     variant="color"
+                    mr={1}
                     onClick={onSwap}
                   >
                     {t("accounts.contextMenu.swap")}
+                  </Button>
+                )}
+                {availableOnStake && (
+                  <Button
+                    data-test-id={`market-${currency?.ticker}-stake-button`}
+                    variant="color"
+                    onClick={e => onStake(e)}
+                  >
+                    {t("accounts.contextMenu.stake")}
                   </Button>
                 )}
               </Flex>

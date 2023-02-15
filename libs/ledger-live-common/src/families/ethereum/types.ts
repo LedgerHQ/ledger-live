@@ -43,7 +43,7 @@ export type Transaction = TransactionCommon & {
   collection?: string;
   collectionName?: string;
   tokenIds?: string[];
-  quantities?: BigNumber[];
+  quantities?: Array<BigNumber | null>;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {

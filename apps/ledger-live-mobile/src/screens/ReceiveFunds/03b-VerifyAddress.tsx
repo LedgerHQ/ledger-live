@@ -209,7 +209,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
               style={{ width: "100%" }}
               source={getDeviceAnimation({
                 device,
-                key: "validate",
+                key: "verify",
                 theme: themeKind,
               })}
             />

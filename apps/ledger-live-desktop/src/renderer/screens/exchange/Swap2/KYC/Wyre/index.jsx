@@ -23,7 +23,7 @@ import { swapKYCSelector } from "~/renderer/reducers/settings";
 import { setSwapKYCStatus } from "~/renderer/actions/settings";
 import Tabbable from "~/renderer/components/Box/Tabbable";
 import AngleLeft from "~/renderer/icons/AngleLeft";
-import { SWAP_VERSION } from "../../utils/index";
+import { useGetSwapTrackingProperties } from "../../utils/index";
 import { openURL } from "~/renderer/linking";
 import IconExternalLink from "~/renderer/icons/ExternalLink";
 import FakeLink from "~/renderer/components/FakeLink";
@@ -98,6 +98,7 @@ const WyreKYC = ({ onClose }: { onClose: Function }) => {
   const [state, setState] = useState("");
   const [country, setCountry] = useState(countryOptions[0]);
   const [postalCode, setPostalCode] = useState("");
+  const swapDefaultTrack = useGetSwapTrackingProperties();
 
   const requiredFields = useMemo(
     () => ({ firstName, lastName, dateOfBirth, street1, city, state, postalCode }),
@@ -173,7 +174,7 @@ const WyreKYC = ({ onClose }: { onClose: Function }) => {
         <Pending onClose={onClose} />
       ) : (
         <>
-          <TrackPage category="Swap" name="KYC Form" swapVersion={SWAP_VERSION} />
+          <TrackPage category="Swap" name="KYC Form" {...swapDefaultTrack} />
           <Box px={40} pt={40} mb={16} alignSelf={"normal"} alignItems={"center"}>
             <IconWyre size={32} />
             <Text ff="Inter|SemiBold" fontSize={18} color="palette.text.shade100">

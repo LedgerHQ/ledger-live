@@ -1,0 +1,322 @@
+name: "@Mobile • Test App End-2-End"
+run-name: "@Mobile • Test App End-2-End triggered by ${{ github.event_name == 'workflow_dispatch' && inputs.login || github.actor }} ${{ github.event_name == 'workflow_dispatch' && format('on branch {0}', inputs.ref) || format('on ref {0}', github.ref) }}"
+
+on:
+  # pull_request:
+  push:
+    branches:
+      - main
+      - develop
+      - release
+      - hotfix
+  # schedule:
+  #   - cron: "0 0/12 * * *"
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: the branch which triggered this workflow
+        required: true
+      login:
+        description: The GitHub username that triggered the workflow
+        required: true
+      base_ref:
+        description: The base branch to merge the head into when checking out the code
+
+# Uncomment to have log-level: trace on detox run and build
+# (cf: apps/ledger-live-mobile/detox.config.js)
+# env:
+#   DEBUG_DETOX: true
+
+concurrency:
+  # See: https://github.com/orgs/community/discussions/35341
+  group: ${{ github.workflow }}-${{ github.event.inputs.ref || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ref != 'develop' || github.ref_name != 'develop' }}
+
+jobs:
+  detox-tests-ios:
+    name: "Ledger Live Mobile - iOS Detox Tests"
+    runs-on: [m1, ARM64]
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      LANG: en_US.UTF-8
+      LANGUAGE: en_US.UTF-8
+      LC_ALL: en_US.UTF-8
+    outputs:
+      status: ${{ steps.detox.outcome }}
+    steps:
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+          base: ${{ inputs.base_ref }}
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+          dest: ${{ runner.temp }}/setup-pnpm
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: Install applesimutils
+        run: |
+          brew update
+          brew tap wix/brew
+          brew install applesimutils
+      - name: Cache LLM pods
+        uses: actions/cache@v3
+        with:
+          path: |
+            apps/ledger-live-mobile/ios/Pods
+            ~/Library/Caches/CocoaPods
+            ~/.cocoapods
+          key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
+      - name: install dependencies
+        run: |
+          pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+      - name: Build dependencies
+        run: |
+          pnpm build:llm:deps
+      - name: Create iOS simulator
+        id: simulator
+        run: |
+          ID=$(xcrun simctl create "iPhone 13" "iPhone 13")
+          echo "id=$ID" >> $GITHUB_OUTPUT
+      - name: Build iOS app for Detox test run
+        run: |
+          pnpm mobile e2e:build -c ios.sim.release
+      - name: Test iOS app
+        id: detox
+        run: |
+          pnpm mobile e2e:test -c ios.sim.release --record-logs all --take-screenshots all --record-videos failing --record-performance all --detectOpenHandles --cleanup --headless
+      - name: Delete iOS simulator
+        if: always()
+        run: |
+          xcrun simctl delete ${{ steps.simulator.outputs.id }}
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: test-ios-artifacts
+          path: apps/ledger-live-mobile/artifacts
+      - name: Upload Allure report
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: "allure-ios-reports"
+          path: apps/ledger-live-mobile/allure-results
+
+  allure-report-ios:
+    name: "Allure Reports Export on Server"
+    runs-on: [ledger-live, linux]
+    if: always()
+    needs: [detox-tests-ios]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+      - uses: ./tools/actions/composites/upload-allure-report
+        with:
+          platform: ios
+          login: ${{ secrets.ALLURE_LOGIN }}
+          password: ${{ secrets.ALLURE_PASSWORD }}
+          path: allure-ios-reports
+  # detox-tests-android:
+  #   name: "Ledger Live Mobile - Android Detox Tests"
+  #   runs-on: [ledger-live, macos]
+  #   env:
+  #     NODE_OPTIONS: "--max-old-space-size=7168"
+  #     LANG: en_US.UTF-8
+  #     LANGUAGE: en_US.UTF-8
+  #     LC_ALL: en_US.UTF-8
+  #   steps:
+  #     - name: checkout
+  #       uses: actions/checkout@v3
+  #       with:
+  #         ref: ${{ inputs.ref || 'develop' }}
+  #     - uses: pnpm/action-setup@v2
+  #       with:
+  #         version: latest
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 16.x
+  #         cache: pnpm
+  #         cache-dependency-path: "**/pnpm-lock.yaml"
+  #     - name: setup JDK 11
+  #       uses: actions/setup-java@v3
+  #       with:
+  #         distribution: "zulu"
+  #         java-version: "11"
+  #         cache: "gradle"
+  #     - name: Cache LLM pods
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: |
+  #           apps/ledger-live-mobile/ios/Pods
+  #           ~/Library/Caches/CocoaPods
+  #           ~/.cocoapods
+  #         key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
+  #     - name: setup Android SDK
+  #       uses: android-actions/setup-android@v2.0.8
+  #     - name: Install dependencies
+  #       run: |
+  #         eval "$(rbenv init - bash)"
+  #         pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+  #     - name: Build dependencies
+  #       run: |
+  #         eval "$(rbenv init - bash)"
+  #         pnpm build:llm:deps
+  #     - name: Gradle cache
+  #       uses: gradle/gradle-build-action@v2
+  #     - name: create AVD and generate snapshot for caching
+  #       uses: reactivecircus/android-emulator-runner@v2
+  #       with:
+  #         api-level: 31
+  #         arch: x86_64
+  #         target: default
+  #         avd-name: "Pixel_5_API_31"
+  #         force-avd-creation: false
+  #         emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+  #         disable-animations: false
+  #         cores: 4
+  #         ram-size: 4096M
+  #         heap-size: 512M
+  #         disk-size: 4096M
+  #         script: echo "Generated AVD snapshot for caching."
+  #     - name: Build Android app for Detox test run
+  #       run: |
+  #         eval "$(rbenv init - bash)"
+  #         pnpm mobile e2e:build -c android.emu.release
+  #     - name: Run Android tests
+  #       uses: reactivecircus/android-emulator-runner@v2
+  #       timeout-minutes: 20
+  #       with:
+  #         api-level: 31
+  #         arch: x86_64
+  #         target: default
+  #         avd-name: "Pixel_5_API_31"
+  #         force-avd-creation: false
+  #         emulator-options: -verbose -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+  #         cores: 4
+  #         ram-size: 4096M
+  #         heap-size: 512M
+  #         disk-size: 4096M
+  #         script: pnpm mobile e2e:test -c android.emu.release --loglevel verbose --record-logs all --take-screenshots all --record-videos failing --forceExit --detectOpenHandles --cleanup --headless
+  #     - name: Upload test artifacts
+  #       if: always()
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: test-android-artifacts
+  #         path: apps/ledger-live-mobile/artifacts/
+  #     - name: Upload Allure Report
+  #       uses: actions/upload-artifact@v3
+  #       if: always()
+  #       with:
+  #         name: "allure-android-reports"
+  #         path: apps/ledger-live-mobile/allure-results
+  # allure-report-android:
+  #   name: "Allure Reports Export on Server"
+  #   runs-on: [ledger-live, linux]
+  #   if: always()
+  #   needs: [detox-tests-android]
+  #   steps:
+  #     - name: checkout
+  #       uses: actions/checkout@v3
+  #       with:
+  #         ref: ${{ inputs.ref || 'develop' }}
+  #     - uses: ./tools/actions/composites/upload-allure-report
+  #       with:
+  #         platform: android
+  #         login: ${{ secrets.ALLURE_LOGIN }}
+  #         password: ${{ secrets.ALLURE_PASSWORD }}
+  #         path: allure-android-reports
+
+  report:
+    needs: [detox-tests-ios]
+    runs-on: ubuntu-latest
+    if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+          base: ${{ inputs.base_ref }}
+      - uses: actions/github-script@v6
+        name: prepare status
+        id: status
+        with:
+          script: |
+            const fs = require("fs");
+
+            const [ owner, repo ] = "${{ github.repository }}".split("/");
+
+            const jobs = await github.paginate(github.rest.actions.listJobsForWorkflowRunAttempt, {
+              owner,
+              repo,
+              run_id: "${{ github.run_id }}",
+              attempt_number: "${{ github.run_attempt }}",
+            });
+
+            const findJobUrl = os =>
+              jobs.find(job => job.name == `Ledger Live Mobile - ${os} Detox Tests`)?.html_url;
+
+            const keys = {
+              ios: {
+                symbol: "🍏",
+                name: "iOS",
+                jobUrl: findJobUrl("iOS")
+              },
+              android: {
+                symbol: "🤖",
+                name: "Android",
+                jobUrl: findJobUrl("Android")
+              },
+            };
+
+            const report = {
+              ios: {
+                pass: ${{ needs.detox-tests-ios.outputs.status == 'success' }},
+                status: "${{ needs.e2e-tests-mac.outputs.status }}",
+              },
+              // TODO: Android
+            };
+
+            let summary = `### Detox Tests
+
+            `
+
+            summary += `|`
+
+            const reportKeys = Object.keys(report);
+            const detoxSuccess = Object.entries(report).every(([os, values]) => !!values.pass);
+
+            reportKeys.forEach((k) => {
+              summary += ` [${keys[k].symbol} ${keys[k].name}](${keys[k].jobUrl}) |`;
+            });
+
+            summary += `
+            |`;
+
+            for (let i = 0; i < reportKeys.length; i++) {
+              summary += ` :--: |`;
+            }
+
+            summary += `
+            |`;
+
+            Object.entries(report).forEach(([os, values]) => {
+              summary += ` ${values.pass ? "✅" : "❌"} (${values.status}) |`;
+            });
+
+            summary += `
+            ${{ steps.comment.outputs.body }}
+            `
+
+            const output = {
+              summary
+            };
+
+            fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
+      - uses: actions/upload-artifact@v3
+        name: upload summary
+        with:
+          name: summary.json
+          path: ${{ github.workspace }}/summary.json

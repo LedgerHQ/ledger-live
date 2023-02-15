@@ -11,14 +11,18 @@ const SENTRY_URL = process.env?.SENTRY_URL;
 const pkg = require("../../package.json");
 const lldRoot = path.resolve(__dirname, "..", "..");
 
-const GIT_REVISION = childProcess
-  .execSync("git rev-parse --short HEAD")
-  .toString("utf8")
-  .trim();
+let GIT_REVISION = process.env?.GIT_REVISION;
+
+if (!GIT_REVISION) {
+  GIT_REVISION = childProcess
+    .execSync("git rev-parse --short HEAD")
+    .toString("utf8")
+    .trim();
+}
 
 const parsed = prerelease(pkg.version);
 let PRERELEASE = false;
-let CHANNEL;
+let CHANNEL = null;
 if (parsed) {
   PRERELEASE = !!(parsed && parsed.length);
   CHANNEL = parsed[0];
@@ -41,7 +45,7 @@ const buildMainEnv = (mode, argv) => {
     __GIT_REVISION__: JSON.stringify(GIT_REVISION),
     __SENTRY_URL__: JSON.stringify(SENTRY_URL || null),
     // See: https://github.com/node-formidable/formidable/issues/337
-    "global.GENTLY": false,
+    "global.GENTLY": JSON.stringify(false),
     __PRERELEASE__: JSON.stringify(PRERELEASE),
     __CHANNEL__: JSON.stringify(CHANNEL),
   };
@@ -88,30 +92,23 @@ const buildViteConfig = argv =>
           path.dirname(require.resolve("@ledgerhq/react-ui/package.json")),
           "lib",
         ),
+        // This is not the best way to do this, but it works for now.
+        // The problem is that vitejs has trouble resolving everything under the /bridge subfolder.
+        // Even though the files are there, it can't find them - and it manages to resolve other paths just fine.
+        "@ledgerhq/coin-framework": path.join(
+          path.resolve(__dirname, "..", "..", "..", "..", "libs", "coin-framework"),
+          "lib-es",
+        ),
+        "@ledgerhq/coin-polkadot": path.join(
+          path.resolve(__dirname, "..", "..", "..", "..", "libs", "coin-polkadot"),
+          "lib-es",
+        ),
         electron: path.join(__dirname, "electronRendererStubs.js"),
       },
     },
     optimizeDeps: {
       // The common.js dependencies and files need to be force-added below:
-      include: [
-        "@ledgerhq/live-common > @ledgerhq/cryptoassets",
-        "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/asa.js",
-        "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/bep20.js",
-        "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/erc20-signatures.js",
-        "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/erc20.js",
-        "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/eip712.js",
-        "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/esdt.js",
-        "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/polygon-erc20.js",
-        "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/spl.js",
-        "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/trc10.js",
-        "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/trc20.js",
-        "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/exchange/coins.js",
-        "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/exchange/erc20.js",
-        "@ledgerhq/cryptoassets",
-        "@ledgerhq/cryptoassets/data/erc20-signatures",
-        "@ledgerhq/cryptoassets/data/eip712",
-        "@ledgerhq/hw-app-eth/erc20",
-      ],
+      include: ["@ledgerhq/hw-app-eth/erc20"],
       esbuildOptions: {
         target: ["es2020"],
         plugins: [

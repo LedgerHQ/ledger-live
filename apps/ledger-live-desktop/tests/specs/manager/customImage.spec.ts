@@ -33,7 +33,7 @@ test("Custom image", async ({ page }) => {
 
   await test.step("Access manager", async () => {
     await layout.goToManager();
-    await deviceAction.accessManager("", "", DeviceModelId.nanoFTS);
+    await deviceAction.accessManager("", "", DeviceModelId.stax);
     await managerPage.customImageButton.waitFor({ state: "visible" });
   });
 
@@ -41,6 +41,13 @@ test("Custom image", async ({ page }) => {
     await managerPage.openCustomImage();
     await container.waitFor({ state: "attached" });
     await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}drawer.png`);
+  });
+
+  await test.step("Import NFT", async () => {
+    await customImageDrawer.openNftGallery();
+    await customImageDrawer.importNftPreviousButton.waitFor({ state: "visible" });
+    await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}nft-gallery-empty.png`);
+    await customImageDrawer.importNftPreviousButton.click();
   });
 
   await test.step("Import image", async () => {

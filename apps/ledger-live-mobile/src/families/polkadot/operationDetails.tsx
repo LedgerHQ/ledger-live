@@ -33,7 +33,11 @@ import OperationStatusWrapper from "../../icons/OperationStatusIcon/Wrapper";
 
 import NominationInfo from "./components/NominationInfo";
 
-function getURLWhatIsThis(op: Operation): string | undefined {
+function getURLWhatIsThis(
+  op: Operation,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  currencyId: string,
+): string | undefined {
   if (op.type !== "IN" && op.type !== "OUT") {
     return urls.polkadotStaking;
   }

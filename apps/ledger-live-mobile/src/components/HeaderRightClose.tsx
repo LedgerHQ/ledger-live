@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { StyleSheet } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import type { Props as BottomModalProps } from "./BottomModal";
+import type { Props as BottomModalProps } from "./QueuedDrawer";
 import Touchable from "./Touchable";
 import CloseIcon from "../icons/Close";
 import ConfirmationModal from "./ConfirmationModal";

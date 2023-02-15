@@ -10,8 +10,9 @@ import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import { providerIcons } from "../../../icons/swap/index";
 import { SelectProviderParamList } from "../types";
 import CounterValue from "../../../components/CounterValue";
-import { TrackScreen } from "../../../analytics";
+import { TrackScreen, useAnalytics } from "../../../analytics";
 import { ScreenName } from "../../../const";
+import { sharedSwapTracking, SWAP_VERSION } from "../utils";
 
 export function SelectProvider({
   navigation,
@@ -19,10 +20,11 @@ export function SelectProvider({
     params: {
       provider,
       swap: { from, to, rates },
-      selectedId,
+      selectedRate,
     },
   },
 }: SelectProviderParamList) {
+  const { track } = useAnalytics();
   const { t } = useTranslation();
   const fromUnit = useMemo(
     () => from.account && getAccountUnit(from.account),
@@ -31,10 +33,17 @@ export function SelectProvider({
 
   const onSelect = useCallback(
     (rate: ExchangeRate) => {
+      track("button_clicked", {
+        ...sharedSwapTracking,
+        button: "Partner Chosen",
+        swapType: rate.tradeMethod,
+        defaultPartner: selectedRate?.provider ?? "missing",
+        totalPartners: rates.value?.length ?? "missing",
+      });
       // @ts-expect-error navigation type is only partially declared
       navigation.navigate(ScreenName.SwapForm, { rate });
     },
-    [navigation],
+    [navigation, track, selectedRate, rates],
   );
 
   if (!rates.value || !fromUnit || !to.currency) {
@@ -49,6 +58,10 @@ export function SelectProvider({
         category="Swap Form"
         name="Edit Provider"
         provider={provider}
+        flow="swap"
+        swapVersion={SWAP_VERSION}
+        defaultPartner={selectedRate?.provider ?? "missing"}
+        totalPartners={rates.value.length}
       />
       <Flex flexDirection="row" justifyContent="space-between" paddingY={2}>
         <Text margin={4} color="neutral.c70">
@@ -63,11 +76,11 @@ export function SelectProvider({
       <Flex>
         {rates.value.map(rate => {
           const ProviderIcon = providerIcons[rate.provider.toLowerCase()];
-          const isSelected = selectedId === rate.rateId;
+          const isSelected = selectedRate === rate;
 
           return (
             <TouchableOpacity
-              key={rate.rateId}
+              key={`${rate.provider}_${rate.tradeMethod}`}
               onPress={() => onSelect(rate)}
               disabled={isSelected}
             >

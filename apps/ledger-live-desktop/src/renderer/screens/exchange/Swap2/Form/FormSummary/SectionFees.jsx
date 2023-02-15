@@ -13,6 +13,7 @@ import type {
   SwapTransactionType,
   SwapSelectorStateType,
 } from "@ledgerhq/live-common/exchange/swap/types";
+import { track } from "~/renderer/analytics/segment";
 import { rateSelector } from "~/renderer/actions/swap";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Box from "~/renderer/components/Box";
@@ -21,6 +22,7 @@ import TachometerHigh from "~/renderer/icons/TachometerHigh";
 import TachometerLow from "~/renderer/icons/TachometerLow";
 import TachometerMedium from "~/renderer/icons/TachometerMedium";
 import styled from "styled-components";
+import { useGetSwapTrackingProperties } from "../../utils/index";
 
 type Strategies = "slow" | "medium" | "fast" | "advanced";
 const FEES_STRATEGY_ICONS: {
@@ -84,6 +86,7 @@ const SectionFees = ({
     account &&
     family &&
     sendAmountByFamily[family];
+  const swapDefaultTrack = useGetSwapTrackingProperties();
 
   const StrategyIcon = useMemo(() => FEES_STRATEGY_ICONS[transaction?.feesStrategy], [
     transaction?.feesStrategy,
@@ -106,7 +109,12 @@ const SectionFees = ({
   const handleChange = useMemo(
     () =>
       canEdit &&
-      (() =>
+      (() => {
+        track("button_clicked", {
+          button: "change network fees",
+          page: "Page Swap Form",
+          ...swapDefaultTrack,
+        });
         setDrawer(FeesDrawer, {
           setTransaction,
           updateTransaction,
@@ -115,17 +123,19 @@ const SectionFees = ({
           status,
           disableSlowStrategy: exchangeRate?.tradeMethod === "fixed",
           provider,
-        })),
+        });
+      }),
     [
       canEdit,
+      swapDefaultTrack,
       setDrawer,
       setTransaction,
       updateTransaction,
       mainFromAccount,
       currency,
       status,
-      provider,
       exchangeRate?.tradeMethod,
+      provider,
     ],
   );
 

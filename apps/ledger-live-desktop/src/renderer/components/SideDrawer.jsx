@@ -194,7 +194,13 @@ export function SideDrawer({
           unmountOnExit
         >
           {state => (
-            <DrawerContainer className="sidedrawer" state={state} ref={focusTrapElem} tabIndex="-1">
+            <DrawerContainer
+              className="sidedrawer"
+              state={state}
+              ref={focusTrapElem}
+              tabIndex="-1"
+              data-test-id="side-drawer-container"
+            >
               <DrawerContent
                 {...props}
                 isOpened={isOpen}
@@ -247,6 +253,7 @@ export function SideDrawer({
               <DrawerBackdrop
                 state={state}
                 onClick={preventBackdropClick ? undefined : onRequestClose}
+                data-test-id="drawer-overlay"
               />
             </DrawerContainer>
           )}

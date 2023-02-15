@@ -7,6 +7,7 @@ import type {
   AppStateIsConnectedPayload,
   AppStateSetHasConnectedDevicePayload,
   AppStateSetModalLockPayload,
+  AppStateUpdateMainNavigatorVisibilityPayload,
 } from "./types";
 import { AppStateActionTypes } from "./types";
 
@@ -22,6 +23,10 @@ export const syncIsConnected =
       dispatch(syncIsConnectedAction({ isConnected }));
     }
   };
+
+export const openDebugMenu = createAction(
+  AppStateActionTypes.DEBUG_MENU_VISIBLE,
+);
 
 const setHasConnectedDeviceAction =
   createAction<AppStateSetHasConnectedDevicePayload>(
@@ -61,3 +66,14 @@ const clearBackgroundEventsAction = createAction(
 );
 export const clearBackgroundEvents = () => (dispatch: Dispatch) =>
   dispatch(clearBackgroundEventsAction());
+
+const updateMainNavigatorVisibilityAction =
+  createAction<AppStateUpdateMainNavigatorVisibilityPayload>(
+    AppStateActionTypes.UPDATE_MAIN_NAVIGATOR_VISIBILITY,
+  );
+export const updateMainNavigatorVisibility = (
+  isMainNavigatorVisible: boolean,
+) =>
+  updateMainNavigatorVisibilityAction({
+    isMainNavigatorVisible,
+  });

@@ -8,5 +8,5 @@ import { usePostOnboardingHubState } from "./usePostOnboardingHubState";
  */
 export function useAllPostOnboardingActionsCompleted(): boolean {
   const { actionsState } = usePostOnboardingHubState();
-  return actionsState.every((action) => action.completed);
+  return actionsState.every((action) => action.completed || action.disabled);
 }

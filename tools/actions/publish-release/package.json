@@ -1,6 +1,6 @@
 {
   "name": "@actions/publish-release",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Publish a draft release",
   "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
   "license": "MIT",

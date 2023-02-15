@@ -13,6 +13,7 @@ export type LinkProps = TouchableOpacityProps & {
   disabled?: boolean;
   reversed?: boolean;
   children?: React.ReactNode;
+  numberOfLines?: number;
 };
 
 const IconContainer = styled.View<{
@@ -20,7 +21,7 @@ const IconContainer = styled.View<{
   iconLink?: boolean;
 }>`
   ${(p) =>
-    p.iconLink ? "" : p.iconPosition === "left" ? `margin-right: 6px;` : `margin-left: 6px;`}
+    p.iconLink ? "" : p.iconPosition === "left" ? `margin-right: 4px;` : `margin-left: 4px;`}
 `;
 
 export const Base = styled(TouchableOpacity)`
@@ -39,6 +40,7 @@ const LinkContainer = (props: LinkProps): React.ReactElement => {
     reversed,
     type = "main",
     disabled,
+    numberOfLines,
   } = props;
   const { colors } = useTheme();
   const colorValue =
@@ -47,7 +49,12 @@ const LinkContainer = (props: LinkProps): React.ReactElement => {
   return (
     <>
       {iconPosition === "right" && children ? (
-        <Text variant={ctaTextType[size]} fontWeight={"semiBold"} color={colorValue}>
+        <Text
+          variant={ctaTextType[size]}
+          fontWeight={"semiBold"}
+          color={colorValue}
+          numberOfLines={numberOfLines}
+        >
           {children}
         </Text>
       ) : null}
@@ -57,7 +64,12 @@ const LinkContainer = (props: LinkProps): React.ReactElement => {
         </IconContainer>
       ) : null}
       {iconPosition === "left" && children ? (
-        <Text variant={ctaTextType[size]} fontWeight={"semiBold"} color={colorValue}>
+        <Text
+          variant={ctaTextType[size]}
+          fontWeight={"semiBold"}
+          color={colorValue}
+          numberOfLines={numberOfLines}
+        >
           {children}
         </Text>
       ) : null}

@@ -10,7 +10,7 @@ import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import { StyleSheet, View } from "react-native";
 import { BigNumber } from "bignumber.js";
-import { Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import invariant from "invariant";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
@@ -33,6 +33,7 @@ const Ethereum1559CustomFees = ({
   transaction: originalTransaction,
 }: Props) => {
   const { colors } = useTheme();
+  const { t } = useTranslation();
 
   invariant(originalTransaction.family === "ethereum", "not ethereum family");
   invariant(account, "no account found");
@@ -110,32 +111,29 @@ const Ethereum1559CustomFees = ({
         onChange={onFeesChange(setMaxPriorityFeePerGas)}
         title={"send.summary.maxPriorityFee"}
       />
-      <LText color="grey">
-        <Trans
-          i18nKey="send.summary.suggestedPriorityFee"
-          values={{
-            lowPriorityFee: formatCurrencyUnit(
-              feeUnit,
-              networkInfo?.maxPriorityFeePerGas?.min || maxPriorityFeeRange.min,
-            ),
-            highPriorityFee: formatCurrencyUnit(
-              feeUnit,
-              networkInfo?.maxPriorityFeePerGas?.max || maxPriorityFeeRange.max,
-              {
-                showCode: true,
-              },
-            ),
-          }}
-        />
+      <LText color="palette.neutral.c70">
+        {`${t("send.summary.suggested")} : `}
+        <LText color="palette.neutral.c90">
+          {`${formatCurrencyUnit(
+            feeUnit,
+            networkInfo?.maxPriorityFeePerGas?.min || maxPriorityFeeRange.min,
+          )} - ${formatCurrencyUnit(
+            feeUnit,
+            networkInfo?.maxPriorityFeePerGas?.max || maxPriorityFeeRange.max,
+            {
+              showCode: true,
+            },
+          )}`}
+        </LText>
       </LText>
       {maxPriorityFeeWarning ? (
         <LText style={styles.warning} color="orange">
-          <Trans i18nKey={`errors.${maxPriorityFeeWarning.name}.title`} />
+          {t(`errors.${maxPriorityFeeWarning.name}.title`)}
         </LText>
       ) : null}
       {maxPriorityFeeError ? (
         <LText style={styles.warning} color="red">
-          <Trans i18nKey={`errors.${maxPriorityFeeError.name}.title`} />
+          {t(`errors.${maxPriorityFeeError.name}.title`)}
         </LText>
       ) : null}
 
@@ -153,28 +151,26 @@ const Ethereum1559CustomFees = ({
         onChange={onFeesChange(setMaxFeePerGas)}
         title={"send.summary.maxFee"}
       />
-      <LText color="grey">
-        <Trans
-          i18nKey="send.summary.nextBlock"
-          values={{
-            nextBaseFee: formatCurrencyUnit(
-              feeUnit,
-              networkInfo?.nextBaseFeePerGas || new BigNumber(0),
-              {
-                showCode: true,
-              },
-            ),
-          }}
-        />
+      <LText color="palette.neutral.c70">
+        {`${t("send.summary.nextBlock")} : `}
+        <LText color="palette.neutral.c90">
+          {formatCurrencyUnit(
+            feeUnit,
+            networkInfo?.nextBaseFeePerGas || new BigNumber(0),
+            {
+              showCode: true,
+            },
+          )}
+        </LText>
       </LText>
       {maxFeeWarning ? (
         <LText style={styles.warning} color="orange">
-          <Trans i18nKey={`errors.${maxFeeWarning.name}.title`} />
+          {t(`errors.${maxFeeWarning.name}.title`)}
         </LText>
       ) : null}
       {maxFeeError ? (
         <LText style={styles.warning} color="red">
-          <Trans i18nKey={`errors.${maxFeeError.name}.title`} />
+          {t(`errors.${maxFeeError.name}.title`)}
         </LText>
       ) : null}
 
@@ -197,7 +193,7 @@ const Ethereum1559CustomFees = ({
         <Button
           event="EthereumSetCustomFees"
           type="primary"
-          title={<Trans i18nKey="send.summary.validateFees" />}
+          title={t("send.summary.validateFees")}
           disabled={Boolean(maxPriorityFeeError || maxFeeError)}
           onPress={onValidateFees(transactionPatch)}
         />

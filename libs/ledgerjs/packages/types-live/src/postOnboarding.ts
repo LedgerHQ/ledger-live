@@ -9,6 +9,8 @@ export enum PostOnboardingActionId {
   migrateAssetsMock = "migrateAssetsMock",
   personalizeMock = "personalizeMock",
   customImage = "customImage",
+  claimNft = "claimNft",
+  assetsTransfer = "assetsTransfer",
 }
 
 export type WithNavigationParams = {
@@ -37,6 +39,11 @@ export type PostOnboardingAction = {
   id: PostOnboardingActionId;
 
   /**
+   * Allow to display the action without letting the user access its flow
+   */
+  disabled?: boolean;
+
+  /**
    * If this action is linked to a feature that is enabled by a feature flag,
    * use this property to identify the feature flag.
    */
@@ -53,6 +60,12 @@ export type PostOnboardingAction = {
   title: string;
 
   /**
+   * Title displayed for this action in the post onboarding hub when the action
+   * is completed.
+   */
+  titleCompleted: string;
+
+  /**
    * Description displayed for this action in the post onboarding hub.
    */
   description: string;
@@ -67,12 +80,6 @@ export type PostOnboardingAction = {
    * after completing this action.
    * */
   actionCompletedPopupLabel: string;
-
-  /**
-   * Will be used as a title success alert at the bottom of the post-onboarding
-   * hub after completing this action.
-   * */
-  actionCompletedHubTitle: string;
 
   /**
    * Event that will be dispatched when starting this action.

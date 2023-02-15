@@ -10,6 +10,8 @@ import type {
   AppStatePayload,
   AppStateSetHasConnectedDevicePayload,
   AppStateSetModalLockPayload,
+  AppStateUpdateMainNavigatorVisibilityPayload,
+  DangerouslyOverrideStatePayload,
 } from "../actions/types";
 import { AppStateActionTypes } from "../actions/types";
 
@@ -22,9 +24,16 @@ export const INITIAL_STATE: AppState = {
   hasConnectedDevice: false, // NB for this current session, have we done a device action with a device.
   modalLock: false,
   backgroundEvents: [],
+  debugMenuVisible: false,
+  isMainNavigatorVisible: true,
 };
 
 const handlers: ReducerMap<AppState, AppStatePayload> = {
+  [AppStateActionTypes.DEBUG_MENU_VISIBLE]: state => ({
+    ...state,
+    debugMenuVisible: true,
+  }),
+
   [AppStateActionTypes.SYNC_IS_CONNECTED]: (state, action) => ({
     ...state,
     isConnected: (action as Action<AppStateIsConnectedPayload>).payload
@@ -63,10 +72,27 @@ const handlers: ReducerMap<AppState, AppStatePayload> = {
     ...state,
     backgroundEvents: [],
   }),
+
+  [AppStateActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (
+    state: AppState,
+    action,
+  ): AppState => ({
+    ...state,
+    ...(action as Action<DangerouslyOverrideStatePayload>).payload.appstate,
+  }),
+
+  [AppStateActionTypes.UPDATE_MAIN_NAVIGATOR_VISIBILITY]: (state, action) => ({
+    ...state,
+    isMainNavigatorVisible: (
+      action as Action<AppStateUpdateMainNavigatorVisibilityPayload>
+    ).payload.isMainNavigatorVisible,
+  }),
 };
 
 // Selectors
 
+export const isDebugMenuVisible = (state: State) =>
+  state.appstate.debugMenuVisible;
 export const isConnectedSelector = (state: State) => state.appstate.isConnected;
 export const isModalLockedSelector = (state: State) => state.appstate.modalLock;
 export const hasConnectedDeviceSelector = (state: State) =>
@@ -77,6 +103,9 @@ export const backgroundEventsSelector = (state: State) =>
 
 export const nextBackgroundEventSelector = (state: State) =>
   state.appstate.backgroundEvents[0];
+
+export const isMainNavigatorVisibleSelector = (state: State) =>
+  state.appstate.isMainNavigatorVisible;
 
 const globalNetworkDown = new NetworkDown();
 

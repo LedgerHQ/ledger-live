@@ -11,7 +11,7 @@ export const FirebaseRemoteConfigContext = React.createContext<RemoteConfig | nu
 
 export const useFirebaseRemoteConfig = () => useContext(FirebaseRemoteConfigContext);
 
-export const formatFeatureId = (id: string) => `feature_${snakeCase(id)}`;
+export const formatToFirebaseFeatureId = (id: string) => `feature_${snakeCase(id)}`;
 
 // Firebase SDK treat JSON values as strings
 const formatDefaultFeatures = (config: DefaultFeatures) =>
@@ -19,7 +19,7 @@ const formatDefaultFeatures = (config: DefaultFeatures) =>
     config,
     (acc, feature, featureId) => ({
       ...acc,
-      [formatFeatureId(featureId)]: JSON.stringify(feature),
+      [formatToFirebaseFeatureId(featureId)]: JSON.stringify(feature),
     }),
     {},
   );
@@ -44,6 +44,11 @@ export const FirebaseRemoteConfigProvider = ({ children }: Props): JSX.Element |
     const fetchConfig = async () => {
       try {
         const remoteConfig = getRemoteConfig();
+
+        if (__DEV__) {
+          remoteConfig.settings.minimumFetchIntervalMillis = 0;
+        }
+
         remoteConfig.defaultConfig = {
           ...formatDefaultFeatures(defaultFeatures),
         };

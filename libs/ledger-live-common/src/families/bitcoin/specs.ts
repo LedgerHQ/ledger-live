@@ -9,11 +9,16 @@ import type {
   BitcoinOutput,
   BitcoinResources,
   Transaction,
+  TransactionStatus,
 } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
 import { bitcoinPickingStrategy } from "./types";
-import type { MutationSpec, AppSpec } from "../../bot/types";
+import type {
+  MutationSpec,
+  AppSpec,
+  TransactionTestInput,
+} from "../../bot/types";
 import { LowerThanMinimumRelayFee } from "../../errors";
 import { getMinRelayFee, getUTXOStatus } from "./logic";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -56,9 +61,9 @@ const genericTest = ({
   transaction,
   status,
   accountBeforeTransaction,
-}): void => {
+}: TransactionTestInput<Transaction>): void => {
   invariant(
-    Date.now() - operation.date < 1000000,
+    Date.now() - operation.date.getTime() < 1000000,
     "operation time to be recent"
   );
 
@@ -69,10 +74,10 @@ const genericTest = ({
     )
   );
   // inputs outputs
-  const { txInputs, txOutputs } = status;
+  const { txInputs, txOutputs } = status as TransactionStatus;
   invariant(txInputs, "tx inputs defined");
   invariant(txOutputs, "tx outputs defined");
-  const { bitcoinResources } = accountBeforeTransaction;
+  const { bitcoinResources } = accountBeforeTransaction as BitcoinAccount;
   invariant(bitcoinResources, "bitcoin resources");
   const nonDeterministicPicking =
     transaction.utxoStrategy.strategy === bitcoinPickingStrategy.OPTIMIZE_SIZE;
@@ -84,27 +89,39 @@ const genericTest = ({
   });
 
   botTest("operation matches tx senders and recipients", () => {
-    let expectedSenders = nonDeterministicPicking
-      ? operation.senders
-      : txInputs.map((t) => t.address).filter(Boolean);
-    let expectedRecipients = txOutputs
-      .filter((o) => o.address && !o.isChange)
-      .map((o) => o.address)
-      .filter(Boolean);
-    if (account.currency.id === "bitcoin_cash") {
-      expectedSenders = expectedSenders.map(bchToCashaddrAddressWithoutPrefix);
-      expectedRecipients = expectedRecipients.map(
-        bchToCashaddrAddressWithoutPrefix
+    if (transaction.opReturnData) {
+      // transaction.recipient has format <coinId>:<address>
+      const [, recipientAddress] = transaction.recipient.split(":");
+      expect(operation.recipients).toContain(recipientAddress);
+      expect(operation.recipients.length).toBe(2);
+    } else {
+      let expectedSenders = nonDeterministicPicking
+        ? operation.senders
+        : (txInputs!.map((t) => t.address).filter(Boolean) as string[]);
+
+      let expectedRecipients = txOutputs!
+        .filter((o) => o.address && !o.isChange)
+        .map((o) => o.address) as string[];
+
+      if (account.currency.id === "bitcoin_cash") {
+        expectedSenders = expectedSenders.map(
+          bchToCashaddrAddressWithoutPrefix
+        );
+        expectedRecipients = expectedRecipients.map(
+          bchToCashaddrAddressWithoutPrefix
+        );
+      }
+
+      expect(asSorted(operation)).toMatchObject(
+        asSorted({
+          senders: expectedSenders,
+          recipients: expectedRecipients,
+        })
       );
     }
-    expect(asSorted(operation)).toMatchObject(
-      asSorted({
-        senders: expectedSenders,
-        recipients: expectedRecipients,
-      })
-    );
   });
-  const utxosPicked = (status.txInputs || [])
+
+  const utxosPicked = ((status as TransactionStatus).txInputs || [])
     .map(({ previousTxHash, previousOutputIndex }) =>
       bitcoinResources.utxos.find(
         (u) =>
@@ -116,8 +133,10 @@ const genericTest = ({
   botTest("picked utxo has been consumed", () =>
     expect(
       utxosPicked.filter(
-        (u: BitcoinOutput) =>
-          u.blockHeight && getUTXOStatus(u, transaction.utxoStrategy).excluded
+        (utxo) =>
+          utxo &&
+          utxo.blockHeight &&
+          getUTXOStatus(utxo, transaction.utxoStrategy).excluded
       )
     ).toEqual([])
   );
@@ -140,7 +159,10 @@ const bitcoinLikeMutations = ({
       const sibling = pickSiblings(siblings, targetAccountSize);
       const recipient = recipientVariation(sibling.freshAddress);
       const amount = maxSpendable.div(1.9 + 0.2 * Math.random()).integerValue();
-      const transaction = bridge.createTransaction(account);
+      const transaction: Transaction = {
+        ...bridge.createTransaction(account),
+        feePerByte: new BigNumber(0.0001),
+      };
       const updates: Array<Partial<Transaction>> = [
         {
           recipient,
@@ -171,7 +193,10 @@ const bitcoinLikeMutations = ({
     transaction: ({ account, siblings, bridge, maxSpendable }) => {
       invariant(maxSpendable.gt(minimalAmount), "balance is too low");
       const sibling = pickSiblings(siblings, targetAccountSize);
-      const transaction = bridge.createTransaction(account);
+      const transaction: Transaction = {
+        ...bridge.createTransaction(account),
+        feePerByte: new BigNumber(0.0001),
+      };
       const updates = [
         {
           recipient: recipientVariation(sibling.freshAddress),
@@ -203,7 +228,10 @@ const bitcoinLikeMutations = ({
       const sibling = pickSiblings(siblings, targetAccountSize);
       const { bitcoinResources } = account as BitcoinAccount;
       invariant(bitcoinResources, "bitcoin resources");
-      const transaction = bridge.createTransaction(account);
+      const transaction: Transaction = {
+        ...bridge.createTransaction(account),
+        feePerByte: new BigNumber(0.0001),
+      };
       const utxo = sample(
         (bitcoinResources as BitcoinResources).utxos.filter(
           (u) => u.blockHeight
@@ -268,13 +296,50 @@ const bitcoinLikeMutations = ({
     },
   },
   {
+    name: "send OP_RETURN transaction",
+    maxRun: 1,
+    transaction: ({ account, bridge, siblings, maxSpendable }) => {
+      invariant(maxSpendable.gt(minimalAmount), "balance is too low");
+      const sibling = pickSiblings(siblings, targetAccountSize);
+      const { bitcoinResources } = account as BitcoinAccount;
+      invariant(bitcoinResources, "bitcoin resources");
+
+      const transaction: Transaction = {
+        ...bridge.createTransaction(account),
+        feePerByte: new BigNumber(0.0001),
+        opReturnData: Buffer.from("charley loves heidi", "utf-8"),
+      };
+
+      return {
+        transaction,
+        updates: [
+          {
+            recipient: recipientVariation(sibling.freshAddress),
+            amount: minimalAmount,
+          },
+          {
+            utxoStrategy: {
+              ...transaction.utxoStrategy,
+            },
+          },
+        ],
+        destination: sibling,
+      };
+    },
+    recoverBadTransactionStatus,
+    testDestination,
+  },
+  {
     name: "send max",
     maxRun: 1,
     transaction: ({ account, siblings, bridge, maxSpendable }) => {
       invariant(maxSpendable.gt(minimalAmount), "balance is too low");
       const sibling = pickSiblings(siblings, targetAccountSize);
       const recipient = recipientVariation(sibling.freshAddress);
-      const transaction = bridge.createTransaction(account);
+      const transaction: Transaction = {
+        ...bridge.createTransaction(account),
+        feePerByte: new BigNumber(0),
+      };
       return {
         transaction,
         updates: [

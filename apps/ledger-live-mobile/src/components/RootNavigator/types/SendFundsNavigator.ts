@@ -31,7 +31,6 @@ import {
   CryptoOrgAccount,
   Transaction as CryptoOrgTransaction,
 } from "@ledgerhq/live-common/families/crypto_org/types";
-import { Transaction as OsmosisTransaction } from "@ledgerhq/live-common/families/osmosis/types";
 import { Transaction as HederaTransaction } from "@ledgerhq/live-common/families/hedera/types";
 import {
   SolanaAccount,
@@ -292,7 +291,7 @@ export type SendFundsNavigatorStackParamList = {
     accountId: string;
     parentId?: string;
     account: CosmosAccount;
-    transaction: CosmosTransaction | OsmosisTransaction;
+    transaction: CosmosTransaction;
     currentNavigation:
       | ScreenName.LendingWithdrawSummary
       | ScreenName.LendingSupplySummary

@@ -36,7 +36,11 @@ async function startServer() {
       const filename = artifactId + ".gz";
       const cacheKey = await cache.restoreCache(
         [`${cacheDirectory}/${filename}`],
-        artifactId
+        artifactId,
+        undefined,
+        {
+          timeoutInMs: 5000,
+        }
       );
       if (!cacheKey) {
         console.log(`Artifact ${artifactId} not found.`);

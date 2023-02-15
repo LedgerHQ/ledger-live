@@ -32,7 +32,7 @@ def infer_android_version_code
       package_name: "com.ledger.live",
       track: track,
       json_key_data: ENV["ANDROID_SERVICE_KEY_CONTENT"]
-    )[0].to_i
+    ).map(&:to_i).max
   }.max + 1
 end
 

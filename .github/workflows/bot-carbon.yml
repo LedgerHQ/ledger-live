@@ -1,4 +1,5 @@
 name: "[Bot] Testing with 'Carbon'"
+run-name: Test with 🤖 Carbon by @${{github.actor}} with ${{inputs.family}}
 on:
   workflow_dispatch:
     inputs:
@@ -39,6 +40,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Stop EC2 Linux Runner
+        if: ${{ always() && needs.start-runner.result == 'success' }}
         uses: LedgerHQ/actions/ec2-linux-runner@main
         with:
           mode: stop
@@ -67,4 +69,4 @@ jobs:
           SLACK_ICON_EMOJI: ":bot-seed2:"
           SEED: ${{ secrets.SEED2 }}
           BOT_ENVIRONMENT: testing
-          BOT_FILTER_FAMILY: ${{github.event.inputs.family}}
+          BOT_FILTER_FAMILY: ${{inputs.family}}

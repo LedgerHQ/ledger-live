@@ -7,6 +7,9 @@ export const defaultFeatures: DefaultFeatures = {
   brazePushNotifications: {
     enabled: false,
   },
+  brazeLearn: {
+    enabled: false,
+  },
   deviceLocalization: {
     enabled: false,
   },
@@ -16,6 +19,9 @@ export const defaultFeatures: DefaultFeatures = {
       url: null,
       debug: false,
     },
+  },
+  currencyAvalancheCChain: {
+    enabled: false,
   },
   currencyOsmosis: {
     enabled: false,
@@ -27,6 +33,9 @@ export const defaultFeatures: DefaultFeatures = {
     enabled: false,
   },
   currencyCronos: {
+    enabled: false,
+  },
+  currencyNear: {
     enabled: false,
   },
   currencySongbird: {
@@ -68,7 +77,7 @@ export const defaultFeatures: DefaultFeatures = {
   disableNftRaribleOpensea: {
     enabled: false,
   },
-  ratings: {
+  ratingsPrompt: {
     enabled: false,
     params: {
       happy_moments: [
@@ -143,7 +152,7 @@ export const defaultFeatures: DefaultFeatures = {
         recoverySeed: {
           testingEnabled: false,
           token:
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2NfaWQiOjY5NDgsImFwcF9pZCI6MTE0MjIsImluc19pZCI6MTI0ODh9.gFt9c5R8rLsnYpZfoBBchKqo9nEJJs5_G3-i215mTlU",
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NfaWQiOjY5NDgsImFwcF9pZCI6MTE0MjIsImluc19pZCI6MTQ4Mjl9.iak4gUnizDdPrEXJEV3wszzJ2YkYX-RIWDXv31aJkiE",
         },
         testStory: {
           testingEnabled: false,
@@ -157,5 +166,34 @@ export const defaultFeatures: DefaultFeatures = {
         },
       },
     },
+  },
+  firebaseEnvironmentReadOnly: {
+    enabled: false,
+    params: {
+      project: "n/a (Firebase project could not be reached)",
+      comment:
+        "Do not modify this configuration. This is just a read-only helper to display the targeted Firebase environment in Ledger Live. The value of this flag has NO functional impact.",
+    },
+  },
+  walletNftGallery: {
+    enabled: false,
+  },
+  walletConnectEntryPoint: {
+    enabled: false,
+  },
+  staxWelcomeScreen: {
+    enabled: false,
+  },
+  customImage: {
+    enabled: false,
+  },
+  postOnboardingClaimNft: {
+    enabled: false,
+  },
+  postOnboardingAssetsTransfer: {
+    enabled: false,
+  },
+  objkt: {
+    enabled: false,
   },
 };

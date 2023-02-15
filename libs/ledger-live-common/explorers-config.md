@@ -2,6 +2,7 @@
 # Current explorers configured per currency
 | name | ticker | PROD | EXPERIMENTAL |
 |--|--|--|--|
+| Avalanche C-Chain | AVAX | https://explorers.api.live.ledger.com/blockchain/v3/avax | N/A |
 | Bitcoin | BTC | https://explorers.api.live.ledger.com/blockchain/v3/btc | N/A |
 | Bitcoin Cash | BCH | https://explorers.api.live.ledger.com/blockchain/v3/bch | N/A |
 | Bitcoin Gold | BTG | https://explorers.api.live.ledger.com/blockchain/v3/btg | N/A |
@@ -18,7 +19,6 @@
 | PivX | PIVX | https://explorers.api.live.ledger.com/blockchain/v3/pivx | N/A |
 | Polygon | MATIC | https://explorers.api.live.ledger.com/blockchain/v3/matic | N/A |
 | Qtum | QTUM | https://explorers.api.live.ledger.com/blockchain/v3/qtum | N/A |
-| Stakenet | XSN | https://explorers.api.live.ledger.com/blockchain/v3/xsn | N/A |
 | Vertcoin | VTC | https://explorers.api.live.ledger.com/blockchain/v3/vtc | N/A |
 | Viacoin | VIA | https://explorers.api.live.ledger.com/blockchain/v3/via | N/A |
 | Zcash | ZEC | https://explorers.api.live.ledger.com/blockchain/v3/zec | N/A |

@@ -48,7 +48,7 @@ import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import { prepareCurrency } from "../../bridge/cache";
 import { blacklistedTokenIdsSelector } from "../../reducers/settings";
-import BottomModal from "../../components/BottomModal";
+import QueuedDrawer from "../../components/QueuedDrawer";
 import { urls } from "../../config/urls";
 import noAssociatedAccountsByFamily from "../../generated/NoAssociatedAccounts";
 import { State } from "../../reducers/types";
@@ -330,10 +330,11 @@ function AddAccountsAccounts({
     s => s.id === "importable" || s.id === "creatable" || s.id === "migrate",
   );
   const CustomNoAssociatedAccounts =
-    noAssociatedAccountsByFamily[
-      (currency as CryptoCurrency)
-        .family as keyof typeof noAssociatedAccountsByFamily
-    ];
+    currency.type === "CryptoCurrency"
+      ? noAssociatedAccountsByFamily[
+          currency.family as keyof typeof noAssociatedAccountsByFamily
+        ]
+      : null;
   const emptyTexts = {
     creatable: alreadyEmptyAccount ? (
       <LText style={styles.paddingHorizontal}>
@@ -414,10 +415,12 @@ function AddAccountsAccounts({
               {hasMultipleSchemes ? (
                 <View style={styles.moreAddressTypesContainer}>
                   {showAllCreatedAccounts ? (
-                    <AddressTypeTooltip
-                      accountSchemes={newAccountSchemes as DerivationMode[]}
-                      currency={currency as CryptoCurrency}
-                    />
+                    currency.type === "CryptoCurrency" ? (
+                      <AddressTypeTooltip
+                        accountSchemes={newAccountSchemes as DerivationMode[]}
+                        currency={currency}
+                      />
+                    ) : null
                   ) : (
                     <Button
                       event={"AddAccountsMoreAddressType"}
@@ -497,7 +500,11 @@ const AddressTypeTooltip = ({
         onPress={onOpen}
         IconRight={Info}
       />
-      <BottomModal isOpened={isOpen} onClose={onClose} style={styles.modal}>
+      <QueuedDrawer
+        isRequestingToBeOpened={isOpen}
+        onClose={onClose}
+        style={styles.modal}
+      >
         <View style={styles.modalContainer}>
           <LText style={styles.subtitle} color="grey">
             <Trans i18nKey="addAccounts.addressTypeInfo.subtitle" />
@@ -531,7 +538,7 @@ const AddressTypeTooltip = ({
             onPress={() => Linking.openURL(urls.bitcoinAddressType)}
           />
         ) : null}
-      </BottomModal>
+      </QueuedDrawer>
     </>
   );
 };

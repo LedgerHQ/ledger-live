@@ -1,14 +1,7 @@
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
-import { findCryptoCurrencyById } from "../../../currencies";
 import { transactionToEthersTransaction } from "../adapters";
-import { makeAccount } from "../testUtils";
-import * as API from "../api/rpc.common";
-import {
-  fromTransactionRaw,
-  toTransactionRaw,
-  transactionToUnsignedTransaction,
-} from "../transaction";
+import { fromTransactionRaw, toTransactionRaw } from "../transaction";
 import {
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
@@ -17,8 +10,6 @@ import {
 } from "../types";
 
 const testData = Buffer.from("testBufferString").toString("hex");
-const currency = findCryptoCurrencyById("ethereum")!;
-const fakeAccount = makeAccount("0xBob", currency);
 const rawEip1559Tx: EvmTransactionEIP1559Raw = {
   amount: "100",
   useAllAmount: false,
@@ -107,7 +98,6 @@ describe("EVM Family", () => {
     describe("transactionToEthersTransaction", () => {
       it("should build convert an EIP1559 ledger live transaction to an ethers transaction", () => {
         const ethers1559Tx: ethers.Transaction = {
-          from: "0xBob",
           to: "0xkvn",
           nonce: 0,
           gasLimit: ethers.BigNumber.from(21000),
@@ -119,14 +109,11 @@ describe("EVM Family", () => {
           maxPriorityFeePerGas: ethers.BigNumber.from(10000),
         };
 
-        expect(transactionToEthersTransaction(eip1559Tx, fakeAccount)).toEqual(
-          ethers1559Tx
-        );
+        expect(transactionToEthersTransaction(eip1559Tx)).toEqual(ethers1559Tx);
       });
 
       it("should build convert an legacy ledger live transaction to an ethers transaction", () => {
         const legacyEthersTx: ethers.Transaction = {
-          from: "0xBob",
           to: "0xkvn",
           nonce: 0,
           gasLimit: ethers.BigNumber.from(21000),
@@ -137,28 +124,9 @@ describe("EVM Family", () => {
           gasPrice: ethers.BigNumber.from(10000),
         };
 
-        expect(transactionToEthersTransaction(legacyTx, fakeAccount)).toEqual(
+        expect(transactionToEthersTransaction(legacyTx)).toEqual(
           legacyEthersTx
         );
-      });
-    });
-
-    describe("transactionToUnsignedTransaction", () => {
-      it("should create an unsigned version of a ledger live transaction", async () => {
-        jest
-          .spyOn(API, "getTransactionCount")
-          .mockReturnValue(Promise.resolve(69));
-
-        const unsignedTransaction = await transactionToUnsignedTransaction(
-          fakeAccount as any,
-          legacyTx
-        );
-        expect(unsignedTransaction).toEqual({
-          ...legacyTx,
-          nonce: 69,
-        });
-
-        jest.restoreAllMocks();
       });
     });
   });

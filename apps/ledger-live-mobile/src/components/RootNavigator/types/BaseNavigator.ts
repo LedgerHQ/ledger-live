@@ -13,6 +13,7 @@ import type { PropertyPath } from "lodash";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { NavigatorName, ScreenName } from "../../../const";
 import type { LendingNavigatorParamList } from "./LendingNavigator";
 import type { AccountSettingsNavigatorParamList } from "./AccountSettingsNavigator";
@@ -49,6 +50,7 @@ import type { WalletConnectNavigatorParamList } from "./WalletConnectNavigator";
 import type { WalletConnectLiveAppNavigatorParamList } from "./WalletConnectLiveAppNavigator";
 import type { PostOnboardingNavigatorParamList } from "./PostOnboardingNavigator";
 import type { CustomImageNavigatorParamList } from "./CustomImageNavigator";
+import type { ClaimNftNavigatorParamList } from "./ClaimNftNavigator";
 import type { PolkadotSimpleOperationFlowParamList } from "../../../families/polkadot/SimpleOperationFlow/types";
 import type { PolkadotNominateFlowParamList } from "../../../families/polkadot/NominateFlow/types";
 import type { PolkadotUnbondFlowParamList } from "../../../families/polkadot/UnbondFlow/type";
@@ -67,10 +69,6 @@ import type { CosmosDelegationFlowParamList } from "../../../families/cosmos/Del
 import type { CosmosRedelegationFlowParamList } from "../../../families/cosmos/RedelegationFlow/types";
 import type { CosmosUndelegationFlowParamList } from "../../../families/cosmos/UndelegationFlow/types";
 import type { CosmosClaimRewardsFlowParamList } from "../../../families/cosmos/ClaimRewardsFlow/types";
-import type { OsmosisDelegationFlowParamList } from "../../../families/osmosis/DelegationFlow/types";
-import type { OsmosisRedelegationFlowParamList } from "../../../families/osmosis/RedelegationFlow/types";
-import type { OsmosisUndelegationFlowParamList } from "../../../families/osmosis/UndelegationFlow/types";
-import type { OsmosisClaimRewardsFlowParamList } from "../../../families/osmosis/ClaimRewardsFlow/types";
 import type { SolanaDelegationFlowParamList } from "../../../families/solana/DelegationFlow/types";
 import type { StellarAddAssetFlowParamList } from "../../../families/stellar/AddAssetFlow/types";
 import type { TezosDelegationFlowParamList } from "../../../families/tezos/DelegationFlow/types";
@@ -119,6 +117,9 @@ export type BaseNavigatorStackParamList = {
     defaultTicker?: string;
   };
   [ScreenName.Learn]: undefined;
+  [ScreenName.LearnWebView]: {
+    uri?: string;
+  };
   [ScreenName.SwapOperationDetails]: {
     swapOperation: MappedSwapOperation;
   };
@@ -145,7 +146,7 @@ export type BaseNavigatorStackParamList = {
     deviceModelIds?: DeviceModelId[];
   };
   [ScreenName.EditDeviceName]: {
-    deviceId: string;
+    device: Device;
     deviceName: string;
   };
   [ScreenName.MarketCurrencySelect]: undefined;
@@ -162,9 +163,6 @@ export type BaseNavigatorStackParamList = {
     parentId?: string;
     transaction?: Transaction;
     justScanned?: boolean;
-  };
-  [ScreenName.FallbackCameraSend]: {
-    screenName: keyof BaseNavigatorStackParamList;
   };
   [ScreenName.BleDevicePairingFlow]: {
     filterByDeviceModelId?: DeviceModelId;
@@ -266,6 +264,7 @@ export type BaseNavigatorStackParamList = {
     WalletConnectNavigatorParamList | WalletConnectLiveAppNavigatorParamList
   >;
   [NavigatorName.CustomImage]: NavigatorScreenParams<CustomImageNavigatorParamList>;
+  [NavigatorName.ClaimNft]: NavigatorScreenParams<ClaimNftNavigatorParamList>;
   [NavigatorName.PostOnboarding]: NavigatorScreenParams<PostOnboardingNavigatorParamList>;
 
   // Polkadot
@@ -304,12 +303,6 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.CosmosUndelegationFlow]: NavigatorScreenParams<CosmosUndelegationFlowParamList>;
   [NavigatorName.CosmosClaimRewardsFlow]: NavigatorScreenParams<CosmosClaimRewardsFlowParamList>;
 
-  // Osmosis
-  [NavigatorName.OsmosisDelegationFlow]: NavigatorScreenParams<OsmosisDelegationFlowParamList>;
-  [NavigatorName.OsmosisRedelegationFlow]: NavigatorScreenParams<OsmosisRedelegationFlowParamList>;
-  [NavigatorName.OsmosisUndelegationFlow]: NavigatorScreenParams<OsmosisUndelegationFlowParamList>;
-  [NavigatorName.OsmosisClaimRewardsFlow]: NavigatorScreenParams<OsmosisClaimRewardsFlowParamList>;
-
   // Solana
   [NavigatorName.SolanaDelegationFlow]: NavigatorScreenParams<SolanaDelegationFlowParamList>;
 
@@ -321,4 +314,11 @@ export type BaseNavigatorStackParamList = {
 
   // Tron
   [NavigatorName.TronVoteFlow]: NavigatorScreenParams<TronVoteFlowParamList>;
+
+  [ScreenName.DeviceConnect]: {
+    appName?: string;
+    onSuccess: (result: AppResult) => void;
+    onError: (error: Error) => void;
+    onClose: () => void;
+  };
 };

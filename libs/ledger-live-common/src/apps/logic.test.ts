@@ -1,4 +1,3 @@
-// import { ManagerDeviceLockedError } from "@ledgerhq/errors";
 import {
   initState,
   reducer,

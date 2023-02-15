@@ -6,7 +6,7 @@ import { timeout, tap } from "rxjs/operators";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import getDeviceName from "@ledgerhq/live-common/hw/getDeviceName";
 import { listApps } from "@ledgerhq/live-common/apps/hw";
-import type { DeviceModelId } from "@ledgerhq/devices";
+import { DeviceModelId } from "@ledgerhq/devices";
 import { delay } from "@ledgerhq/live-common/promise";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTheme } from "@react-navigation/native";
@@ -125,7 +125,7 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
       const device = {
         deviceName: bleDevice.name,
         deviceId: bleDevice.id,
-        modelId: "nanoX",
+        modelId: deviceMeta?.modelId ?? DeviceModelId.nanoX,
         wired: false,
       };
       dispatch({
@@ -187,12 +187,12 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
               name,
               deviceInfo,
               appsInstalled,
-              modelId: deviceMeta?.modelId,
+              modelId: device.modelId,
             }),
           );
           dispatchRedux(
             setLastSeenDeviceInfo({
-              modelId: device.modelId as DeviceModelId,
+              modelId: device.modelId,
               deviceInfo,
               apps: appsInstalled || [],
             }),
@@ -227,6 +227,7 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
         addKnownDevice({
           id: device.deviceId,
           name: name ?? device.deviceName ?? "",
+          modelId: device.modelId,
         }),
       );
       dispatch({

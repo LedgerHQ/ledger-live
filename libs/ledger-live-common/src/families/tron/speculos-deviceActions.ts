@@ -1,5 +1,9 @@
 import type { DeviceAction } from "../../bot/types";
-import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
+import {
+  deviceActionFlow,
+  formatDeviceAmount,
+  SpeculosButton,
+} from "../../bot/specs";
 import type { Transaction, Vote } from "./types";
 
 function subAccount(subAccountId, account) {
@@ -19,61 +23,76 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
     steps: [
       {
         title: "Review",
-        button: "Rr", // TODO define expectedValue
+        button: SpeculosButton.RIGHT, // TODO define expectedValue
       },
       {
         title: "Claim",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Gain",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: (arg) => resourceExpected(arg),
       },
       {
         title: "Resource",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: (arg) => resourceExpected(arg),
       },
       {
         title: "Amount",
-        button: "Rr",
-        expectedValue: ({ account, status }) =>
-          formatDeviceAmount(account.currency, status.amount, {
-            hideCode: true,
-          }),
+        button: SpeculosButton.RIGHT,
+        expectedValue: ({ account, status, transaction }) =>
+          formatDeviceAmount(
+            transaction.subAccountId
+              ? subAccount(transaction.subAccountId, account).token
+              : account.currency,
+            status.amount,
+            {
+              hideCode: true,
+            }
+          ),
       },
       {
         title: "Token",
-        button: "Rr",
-        expectedValue: ({ account, transaction }) =>
-          transaction.subAccountId
-            ? subAccount(transaction.subAccountId, account).token.ticker
-            : "TRX",
+        button: SpeculosButton.RIGHT,
+        expectedValue: ({ account, transaction }) => {
+          const isTokenTransaction = Boolean(transaction.subAccountId);
+          if (isTokenTransaction) {
+            const token = subAccount(transaction.subAccountId, account).token;
+            const [, tokenType, tokenId] = token.id.split("/");
+            if (tokenType === "trc10") {
+              return `${token.name.split(" ")[0]}[${tokenId}]`;
+            } else {
+              return token.ticker;
+            }
+          }
+          return "TRX";
+        },
       },
       {
         title: "From Address",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account }) => account.freshAddress,
       },
       {
         title: "Freeze To",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account }) => account.freshAddress,
       },
       {
         title: "Delegated To",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account }) => account.freshAddress,
       },
       {
         title: "Send To",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => transaction.recipient,
       },
       {
         title: "Sign",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
         final: true,
       },
     ],
@@ -95,10 +114,10 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
 function voteAction(
   vote: Vote,
   title: string
-): { title: string; button: string; expectedValue: () => string } {
+): { title: string; button: SpeculosButton; expectedValue: () => string } {
   return {
     title,
-    button: "Rr",
+    button: SpeculosButton.RIGHT,
     expectedValue: () => String(vote.voteCount),
   };
 }

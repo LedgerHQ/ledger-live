@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { BoxedIcon, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import {
-  CircledAlertMedium,
   CircledCheckSolidMedium,
+  WarningSolidMedium,
 } from "@ledgerhq/native-ui/assets/icons";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -40,7 +40,10 @@ type GenuineCheckUiDrawerStatus =
 
 type FirmwareUpdateUiStepStatus = CheckStatus;
 type FirmwareUpdateStatus = "unchecked" | "ongoing" | "completed" | "failed";
-type FirmwareUpdateUiDrawerStatus = "none" | "new-firmware-available";
+type FirmwareUpdateUiDrawerStatus =
+  | "none"
+  | "unlock-needed"
+  | "new-firmware-available";
 
 type CheckCardProps = FlexBoxProps & {
   title: string;
@@ -58,7 +61,7 @@ const CheckCard = ({ title, index, status, ...props }: CheckCardProps) => {
       checkIcon = <CircledCheckSolidMedium color="success.c100" size={24} />;
       break;
     case "failed":
-      checkIcon = <CircledAlertMedium color="warning.c100" size={24} />;
+      checkIcon = <WarningSolidMedium color="warning.c80" size={24} />;
       break;
     case "inactive":
     default:
@@ -92,10 +95,6 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
   const productName =
     getDeviceModel(device.modelId).productName || device.modelId;
 
-  const [currentDisplayedDrawer, setCurrentDisplayedDrawer] = useState<
-    GenuineCheckUiDrawerStatus | FirmwareUpdateUiDrawerStatus
-  >("none");
-
   // Will be computed depending on the states. Updating nextDrawerToDisplay
   // triggers the current displayed drawer to close
   let nextDrawerToDisplay:
@@ -128,6 +127,7 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
     latestFirmware,
     error: latestFirmwareGettingError,
     status: latestFirmwareGettingStatus,
+    lockedDevice: latestFirmwareGettingLockedDevice,
   } = useGetLatestAvailableFirmware({
     isHookEnabled: firmwareUpdateStatus === "ongoing",
     deviceId: device.deviceId,
@@ -236,11 +236,15 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
         }
 
         // Updates the UI
-        if (
+        if (latestFirmwareGettingLockedDevice) {
+          nextDrawerToDisplay = "unlock-needed";
+        } else if (
           latestFirmwareGettingStatus === "available-firmware" &&
           latestFirmware
         ) {
           nextDrawerToDisplay = "new-firmware-available";
+        } else {
+          nextDrawerToDisplay = "none";
         }
       }
       // currentSoftwareChecksStep can be any value for those UI updates
@@ -258,9 +262,6 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
     case "active":
       genuineCheckStepTitle = t(
         "syncOnboarding.softwareChecksSteps.genuineCheckStep.active.title",
-        {
-          productName,
-        },
       );
       break;
     case "completed":
@@ -305,6 +306,7 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
       } else {
         firmwareUpdateStepTitle = t(
           "syncOnboarding.softwareChecksSteps.firmwareUpdateStep.completed.noUpdateAvailable.title",
+          { productName },
         );
       }
       break;
@@ -315,16 +317,9 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
       break;
     default:
       firmwareUpdateStepTitle = t(
-        "syncOnboarding.softwareChecksSteps.firmwareUpdateStep.inactive.title",
+        "syncOnboarding.softwareChecksSteps.firmwareUpdateStep.active.title",
       );
       break;
-  }
-
-  // If there is already a displayed drawer, the currentDisplayedDrawer would be
-  // synchronized with nextDrawerToDisplay during the displayed drawer onClose event.
-  // Otherwise, currentDisplayDrawer needs to be set to nextDrawerToDisplay manually
-  if (currentDisplayedDrawer === "none" && nextDrawerToDisplay !== "none") {
-    setCurrentDisplayedDrawer(nextDrawerToDisplay);
   }
 
   return (
@@ -333,51 +328,42 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
         <Flex>
           <GenuineCheckDrawer
             productName={productName}
-            isOpen={
-              currentDisplayedDrawer === "requested" &&
-              nextDrawerToDisplay === "requested"
-            }
+            isOpen={nextDrawerToDisplay === "requested"}
             onPress={() => setGenuineCheckStatus("ongoing")}
-            onClose={() => setCurrentDisplayedDrawer(nextDrawerToDisplay)}
           />
           <UnlockDeviceDrawer
-            isOpen={
-              currentDisplayedDrawer === "unlock-needed" &&
-              nextDrawerToDisplay === "unlock-needed"
-            }
-            onClose={() => setCurrentDisplayedDrawer(nextDrawerToDisplay)}
+            isOpen={nextDrawerToDisplay === "unlock-needed"}
+            onClose={() => {
+              // Closing because the user pressed on close button, and the genuine check is ongoing
+              if (genuineCheckStatus === "ongoing") {
+                // Fails the genuine check entirely
+                setGenuineCheckStatus("failed");
+              }
+              // Closing because the user pressed on close button, and the firmware check is ongoing
+              else if (firmwareUpdateStatus === "ongoing") {
+                setFirmwareUpdateStatus("failed");
+              }
+            }}
             device={device}
           />
           <AllowManagerDrawer
-            isOpen={
-              currentDisplayedDrawer === "allow-manager" &&
-              nextDrawerToDisplay === "allow-manager"
-            }
-            onClose={() => setCurrentDisplayedDrawer(nextDrawerToDisplay)}
+            isOpen={nextDrawerToDisplay === "allow-manager"}
             device={device}
           />
           <GenuineCheckCancelledDrawer
             productName={productName}
-            isOpen={
-              currentDisplayedDrawer === "cancelled" &&
-              nextDrawerToDisplay === "cancelled"
-            }
+            isOpen={nextDrawerToDisplay === "cancelled"}
             onRetry={() => {
               resetGenuineCheckState();
               setGenuineCheckStatus("unchecked");
             }}
             onSkip={() => setGenuineCheckStatus("failed")}
-            onClose={() => setCurrentDisplayedDrawer(nextDrawerToDisplay)}
           />
           <FirmwareUpdateDrawer
             productName={productName}
-            isOpen={
-              currentDisplayedDrawer === "new-firmware-available" &&
-              nextDrawerToDisplay === "new-firmware-available"
-            }
+            isOpen={nextDrawerToDisplay === "new-firmware-available"}
             onSkip={() => setFirmwareUpdateStatus("completed")}
             onUpdate={() => setFirmwareUpdateStatus("completed")}
-            onClose={() => setCurrentDisplayedDrawer(nextDrawerToDisplay)}
           />
         </Flex>
       )}

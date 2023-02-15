@@ -1,10 +1,8 @@
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { CompositeScreenProps, useNavigation } from "@react-navigation/native";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { filterPlatformApps } from "@ledgerhq/live-common/platform/filters";
-import { getPlatformVersion } from "@ledgerhq/live-common/platform/version";
 import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { AppManifest } from "@ledgerhq/live-common/platform/types";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { NavigatorName, ScreenName } from "../const";
 import {
   BaseComposite,
@@ -63,19 +61,11 @@ type Navigation = BaseComposite<
     StackNavigatorProps<MainNavigatorParamList>
   >
 >;
-const emptyObject: AppManifest[] = [];
+const emptyObject: LiveAppManifest[] = [];
 export function useDeepLinkHandler() {
   const { navigate } = useNavigation<Navigation["navigation"]>();
   const { state } = useRemoteLiveAppContext();
   const manifests = state?.value?.liveAppByIndex || emptyObject;
-  const filteredManifests = useMemo(() => {
-    const branches = ["stable", "soon"];
-    return filterPlatformApps([...(manifests as AppManifest[])], {
-      version: getPlatformVersion(),
-      platform: "mobile",
-      branches,
-    });
-  }, [manifests]);
   const handler = useCallback(
     (deeplink: string) => {
       const { hostname, searchParams, pathname = "" } = new URL(deeplink);
@@ -151,8 +141,7 @@ export function useDeepLinkHandler() {
         }
 
         case "discover": {
-          const dapp =
-            path && filteredManifests.find(m => path.toLowerCase() === m.id);
+          const dapp = path && manifests.find(m => path.toLowerCase() === m.id);
           navigate(NavigatorName.Discover, {
             screen: ScreenName.PlatformCatalog,
             params: dapp
@@ -187,12 +176,12 @@ export function useDeepLinkHandler() {
         case "portfolio":
         default:
           navigate(NavigatorName.Portfolio, {
-            screen: ScreenName.Portfolio,
+            screen: NavigatorName.WalletTab,
           });
           break;
       }
     },
-    [navigate, filteredManifests],
+    [navigate, manifests],
   );
   return {
     handler,

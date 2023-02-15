@@ -24,6 +24,14 @@ module.exports = function override(webpackConfig) {
     "@polkadot/x-textencoder/browser.js";
   webpackConfig.resolve.alias["@polkadot/x-textdecoder$"] =
     "@polkadot/x-textdecoder/browser.js";
+  webpackConfig.resolve.alias["@ledgerhq/devices"] = "@ledgerhq/devices/lib-es";
+  webpackConfig.resolve.alias["@ledgerhq/cryptoassets"] =
+    "@ledgerhq/cryptoassets/lib-es";
+
+  webpackConfig.resolve.alias["@ledgerhq/coin-framework"] =
+    "@ledgerhq/coin-framework/lib-es";
+    webpackConfig.resolve.alias["@ledgerhq/coin-polkadot"] =
+    "@ledgerhq/coin-polkadot/lib-es";
 
   return webpackConfig;
 };

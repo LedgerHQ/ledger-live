@@ -85,11 +85,15 @@ const getTransactionStatus = (account, t) => {
     errors.amount = new NotEnoughBalance();
   }
 
-  const txSize = Math.ceil(estimatedFees.toNumber() / t.feePerByte!.toNumber());
-  const crypto = cryptoFactory(account.currency.id as Currency);
+  if (t.feePerByte) {
+    const txSize = Math.ceil(
+      estimatedFees.toNumber() / t.feePerByte.toNumber()
+    );
+    const crypto = cryptoFactory(account.currency.id as Currency);
 
-  if (amount.gt(0) && amount.lt(computeDustAmount(crypto, txSize))) {
-    errors.dustLimit = new DustLimit();
+    if (amount.gt(0) && amount.lt(computeDustAmount(crypto, txSize))) {
+      errors.dustLimit = new DustLimit();
+    }
   }
 
   // Fill up recipient errors...

@@ -4,8 +4,9 @@ buildscript {
     ext {
         buildToolsVersion = "30.0.3"
         minSdkVersion = 24
-        compileSdkVersion = 30
-        targetSdkVersion = 30
+        compileSdkVersion = 32
+        targetSdkVersion = 32
+        ndkVersion = "21.4.7075529"
         kotlinVersion = "1.6.0"
         androidXCore = "1.6.0"
         if (System.properties['os.arch'] == "aarch64") {
@@ -26,7 +27,7 @@ buildscript {
         // in the individual module build.gradle files
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlinVersion"
-        classpath 'com.google.gms:google-services:4.3.10'
+        classpath 'com.google.gms:google-services:4.3.13'
     }
     gradle.projectsEvaluated {
         tasks.withType(JavaCompile) {
@@ -78,6 +79,9 @@ allprojects {
         resolutionStrategy {
             force 'androidx.core:core:1.6.0'
 
+            // Needed for flipper https://github.com/facebook/flipper/issues/3397
+            // In the case of a detox build
+            force 'androidx.sqlite:sqlite-framework:2.1.0'
             dependencySubstitution {
                 substitute module("com.redmadrobot:input-mask-android:6.0.0") using module('com.github.RedMadRobot:input-mask-android:6.0.0')
             }

@@ -7,6 +7,7 @@ import {
   LatestFirmwareVersionRequired,
   DeviceNotOnboarded,
   NoSuchAppOnProvider,
+  EConnResetError,
 } from "@ledgerhq/live-common/errors";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { setPreferredDeviceModel, setLastSeenDeviceInfo } from "~/renderer/actions/settings";
@@ -34,7 +35,10 @@ import {
   renderSecureTransferDeviceConfirmation,
   renderAllowLanguageInstallation,
   renderInstallingLanguage,
+  renderLockedDeviceError,
+  RenderDeviceNotOnboardedError,
 } from "./rendering";
+import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils";
 
 type Props<R, H, P> = {
   overridesPreferredDeviceModel?: DeviceModelId;
@@ -73,6 +77,7 @@ export const DeviceActionDefaultRendering = <R, H, P>({
     appAndVersion,
     device,
     unresponsive,
+    isLocked,
     error,
     isLoading,
     allowManagerRequestedWording,
@@ -112,6 +117,7 @@ export const DeviceActionDefaultRendering = <R, H, P>({
 
   const dispatch = useDispatch();
   const preferredDeviceModel = useSelector(preferredDeviceModelSelector);
+  const swapDefaultTrack = useGetSwapTrackingProperties();
 
   const type = useTheme("colors.palette.type");
 
@@ -219,6 +225,7 @@ export const DeviceActionDefaultRendering = <R, H, P>({
       status,
       amountExpectedTo,
       estimatedFees,
+      swapDefaultTrack,
     });
   }
 
@@ -241,6 +248,7 @@ export const DeviceActionDefaultRendering = <R, H, P>({
 
   if (inWrongDeviceForAccount) {
     return renderInWrongAppForAccount({
+      t,
       onRetry,
       accountName: inWrongDeviceForAccount.accountName,
     });
@@ -253,6 +261,7 @@ export const DeviceActionDefaultRendering = <R, H, P>({
       error instanceof UpdateYourApp
     ) {
       return renderError({
+        t,
         error,
         managerAppName: error.managerAppName,
       });
@@ -260,37 +269,52 @@ export const DeviceActionDefaultRendering = <R, H, P>({
 
     if (error instanceof LatestFirmwareVersionRequired) {
       return renderError({
+        t,
         error,
         requireFirmwareUpdate: true,
       });
     }
 
-    // NB Until we find a better way, remap the error if it's 6d06 and we haven't fallen
+    // NB Until we find a better way, remap the error if it's 6d06 (LNS, LNSP, LNX) or 6d07 (Stax) and we haven't fallen
     // into another handled case.
     if (
       error instanceof DeviceNotOnboarded ||
-      (error instanceof TransportStatusError && error.message.includes("0x6d06"))
+      (error instanceof TransportStatusError &&
+        (error.message.includes("0x6d06") || error.message.includes("0x6d07")))
     ) {
-      return renderError({
-        error: new DeviceNotOnboarded(),
-        withOnboardingCTA: true,
-        info: true,
-      });
+      return <RenderDeviceNotOnboardedError t={t} device={device} />;
     }
 
     if (error instanceof NoSuchAppOnProvider) {
       return renderError({
+        t,
         error,
         withOpenManager: true,
         withExportLogs: true,
       });
     }
 
+    // workarround to catch ECONNRESET error and show better message
+    if (error?.message?.includes("ECONNRESET")) {
+      return renderError({
+        error: new EConnResetError(),
+        onRetry,
+        withExportLogs: true,
+      });
+    }
+
     return renderError({
+      t,
       error,
       onRetry,
       withExportLogs: true,
+      device: device ?? undefined,
     });
+  }
+
+  // Renders an error as long as LLD is using the "event" implementation of device actions
+  if (isLocked) {
+    return renderLockedDeviceError({ t, device, onRetry });
   }
 
   if ((!isLoading && !device) || unresponsive) {

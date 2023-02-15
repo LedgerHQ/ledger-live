@@ -22,6 +22,8 @@ import Plus from "~/renderer/icons/Plus";
 import { rgba } from "~/renderer/styles/helpers";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { context } from "~/renderer/drawers/Provider";
+import { track } from "~/renderer/analytics/segment";
+import { useGetSwapTrackingProperties } from "../../utils/index";
 
 const AccountWrapper = styled(Tabbable)`
   cursor: pointer;
@@ -61,6 +63,7 @@ const TargetAccount = memo(function TargetAccount({
   setAccount?: $PropertyType<Props, "setToAccount">,
   isChild?: boolean,
 }) {
+  const swapDefaultTrack = useGetSwapTrackingProperties();
   const allAccounts = useSelector(shallowAccountsSelector);
   const theme = useTheme();
   const currency = getAccountCurrency(account);
@@ -72,17 +75,29 @@ const TargetAccount = memo(function TargetAccount({
     account.type !== "ChildAccount" && account.spendableBalance
       ? account.spendableBalance
       : account.balance;
-  const onClick = useCallback(() => setAccount && setAccount(currency, account, parentAccount), [
-    setAccount,
-    currency,
-    account,
-    parentAccount,
-  ]);
+  const onClick = useCallback(() => {
+    track("button_clicked", {
+      page: "Swap accounts",
+      ...swapDefaultTrack,
+      button: "account",
+      currency,
+      account,
+      parentAccount,
+    });
+    setAccount && setAccount(currency, account, parentAccount);
+  }, [swapDefaultTrack, currency, account, parentAccount, setAccount]);
 
   const Wrapper = setAccount ? AccountWrapper : Box;
 
   return (
-    <Wrapper horizontal p={3} justifyContent="space-between" selected={selected} onClick={onClick}>
+    <Wrapper
+      horizontal
+      p={3}
+      justifyContent="space-between"
+      selected={selected}
+      onClick={onClick}
+      data-test-id={`target-account-container-${account.name}`}
+    >
       <Box horizontal alignItems="center" pl={isChild ? "8px" : 0}>
         {isChild && (
           <Box
@@ -131,6 +146,7 @@ export default function TargetAccountDrawer({
   setToAccount,
   setDrawerStateRef,
 }: Props) {
+  const swapDefaultTrack = useGetSwapTrackingProperties();
   const allAccounts = useSelector(shallowAccountsSelector);
   const dispatch = useDispatch();
   const { setDrawer } = React.useContext(context);
@@ -146,7 +162,7 @@ export default function TargetAccountDrawer({
     };
   }, [setDrawerStateRef]);
   const handleAddAccount = () =>
-    dispatch(openModal("MODAL_ADD_ACCOUNTS", { currency, flow: "swap" }));
+    dispatch(openModal("MODAL_ADD_ACCOUNTS", { currency, ...swapDefaultTrack }));
   const handleAccountPick: $PropertyType<Props, "setToAccount"> = (
     currency,
     account,

@@ -13,10 +13,9 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { ValidKYCStatus } from "@ledgerhq/live-common/exchange/swap/types";
 import type { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { CurrencySettings, SettingsState, State } from "./types";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
-// eslint-disable-next-line import/no-cycle
-import { SLIDES } from "../components/Carousel/shared";
 import { getDefaultLanguageLocale, getDefaultLocale } from "../languages";
 import type {
   SettingsAcceptSwapProviderPayload,
@@ -34,16 +33,16 @@ import type {
   SettingsRemoveStarredMarketcoinsPayload,
   SettingsSetAnalyticsPayload,
   SettingsSetAvailableUpdatePayload,
-  SettingsSetCarouselVisibilityPayload,
   SettingsSetCountervaluePayload,
   SettingsSetDiscreetModePayload,
-  SettingsSetExperimentalUsbSupportPayload,
   SettingsSetFirstConnectHasDeviceUpdatedPayload,
   SettingsSetHasOrderedNanoPayload,
   SettingsSetLanguagePayload,
   SettingsSetLastConnectedDevicePayload,
   SettingsSetLocalePayload,
   SettingsSetMarketCounterCurrencyPayload,
+  SettingsSetCustomImageBackupPayload,
+  SettingsSetLastSeenCustomImagePayload,
   SettingsSetMarketFilterByStarredAccountsPayload,
   SettingsSetMarketRequestParamsPayload,
   SettingsSetNotificationsPayload,
@@ -61,8 +60,19 @@ import type {
   SettingsUnhideNftCollectionPayload,
   SettingsUpdateCurrencyPayload,
   SettingsSetSwapSelectableCurrenciesPayload,
+  SettingsSetDismissedDynamicCardsPayload,
+  SettingsSetStatusCenterPayload,
+  SettingsSetOverriddenFeatureFlagPlayload,
+  SettingsSetOverriddenFeatureFlagsPlayload,
+  SettingsSetFeatureFlagsBannerVisiblePayload,
+  DangerouslyOverrideStatePayload,
+  SettingsSetDebugAppLevelDrawerOpenedPayload,
 } from "../actions/types";
-import { SettingsActionTypes } from "../actions/types";
+import {
+  SettingsActionTypes,
+  SettingsSetWalletTabNavigatorLastVisitedTabPayload,
+} from "../actions/types";
+import { ScreenName } from "../const";
 
 const bitcoin = getCryptoCurrencyById("bitcoin");
 const ethereum = getCryptoCurrencyById("ethereum");
@@ -98,7 +108,6 @@ export const INITIAL_STATE: SettingsState = {
   // readOnlyModeEnabled: !Config.DISABLE_READ_ONLY,
   readOnlyModeEnabled: true,
   hasOrderedNano: false,
-  experimentalUSBEnabled: false,
   countervalueFirst: true,
   graphCountervalueFirst: true,
   hideEmptyTokenAccounts: false,
@@ -108,10 +117,12 @@ export const INITIAL_STATE: SettingsState = {
   hasAvailableUpdate: false,
   theme: "system",
   osTheme: undefined,
-
-  carouselVisibility: Object.fromEntries(
-    SLIDES.map(slide => [slide.name, true]),
-  ),
+  customImageBackup: undefined,
+  lastSeenCustomImage: {
+    size: 0,
+    hash: "",
+  },
+  dismissedDynamicCards: [],
   discreetMode: false,
   language: getDefaultLanguageLocale(),
   languageIsSetByUser: false,
@@ -139,10 +150,16 @@ export const INITIAL_STATE: SettingsState = {
   firstConnectionHasDevice: null,
   firstConnectHasDeviceUpdated: null,
   notifications: {
-    allowed: true,
-    announcements: true,
-    recommendations: true,
+    areNotificationsAllowed: true,
+    announcementsCategory: true,
+    recommendationsCategory: true,
+    largeMoverCategory: true,
   },
+  walletTabNavigatorLastVisitedTab: ScreenName.Portfolio,
+  displayStatusCenter: false,
+  overriddenFeatureFlags: {},
+  featureFlagsBannerVisible: false,
+  debugAppLevelDrawerOpened: false,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -257,6 +274,16 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     hasCompletedCustomImageFlow: true,
   }),
 
+  [SettingsActionTypes.SET_LAST_SEEN_CUSTOM_IMAGE]: (state, action) => ({
+    ...state,
+    lastSeenCustomImage: {
+      size: (action as Action<SettingsSetLastSeenCustomImagePayload>).payload
+        .imageSize,
+      hash: (action as Action<SettingsSetLastSeenCustomImagePayload>).payload
+        .imageHash,
+    },
+  }),
+
   [SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING]: state => ({
     ...state,
     hasCompletedOnboarding: true,
@@ -272,16 +299,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     readOnlyModeEnabled: (action as Action<SettingsSetReadOnlyModePayload>)
       .payload.readOnlyModeEnabled,
-  }),
-
-  [SettingsActionTypes.SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT]: (
-    state,
-    action,
-  ) => ({
-    ...state,
-    experimentalUSBEnabled: (
-      action as Action<SettingsSetExperimentalUsbSupportPayload>
-    ).payload.experimentalUSBEnabled,
   }),
 
   [SettingsActionTypes.SETTINGS_SWITCH_COUNTERVALUE_FIRST]: state => ({
@@ -360,8 +377,12 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       .payload.hasAvailableUpdate,
   }),
 
-  [SettingsActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (state): SettingsState => ({
+  [SettingsActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (
+    state,
+    action,
+  ): SettingsState => ({
     ...state,
+    ...(action as Action<DangerouslyOverrideStatePayload>).payload.settings,
   }),
 
   [SettingsActionTypes.SETTINGS_SET_THEME]: (state, action) => ({
@@ -374,10 +395,14 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     osTheme: (action as Action<SettingsSetOsThemePayload>).payload.osTheme,
   }),
 
-  [SettingsActionTypes.SETTINGS_SET_CAROUSEL_VISIBILITY]: (state, action) => ({
+  [SettingsActionTypes.SETTINGS_SET_DISMISSED_DYNAMIC_CARDS]: (
+    state,
+    action,
+  ) => ({
     ...state,
-    carouselVisibility: (action as Action<SettingsSetCarouselVisibilityPayload>)
-      .payload.carouselVisibility,
+    dismissedDynamicCards: (
+      action as Action<SettingsSetDismissedDynamicCardsPayload>
+    ).payload.dismissedDynamicCards,
   }),
 
   [SettingsActionTypes.SETTINGS_SET_DISCREET_MODE]: (state, action) => ({
@@ -467,6 +492,12 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ),
   }),
 
+  [SettingsActionTypes.SET_CUSTOM_IMAGE_BACKUP]: (state, action) => ({
+    ...state,
+    customImageBackup: (action as Action<SettingsSetCustomImageBackupPayload>)
+      .payload,
+  }),
+
   [SettingsActionTypes.SET_LAST_CONNECTED_DEVICE]: (state, action) => ({
     ...state,
     lastConnectedDevice: (
@@ -535,6 +566,62 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       KYC: {},
     },
   }),
+
+  [SettingsActionTypes.WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB]: (
+    state,
+    action,
+  ) => ({
+    ...state,
+    walletTabNavigatorLastVisitedTab: (
+      action as Action<SettingsSetWalletTabNavigatorLastVisitedTabPayload>
+    ).payload.walletTabNavigatorLastVisitedTab,
+  }),
+
+  [SettingsActionTypes.SET_STATUS_CENTER]: (state, action) => ({
+    ...state,
+    displayStatusCenter: (action as Action<SettingsSetStatusCenterPayload>)
+      .payload.displayStatusCenter,
+  }),
+
+  [SettingsActionTypes.SET_OVERRIDDEN_FEATURE_FLAG]: (state, action) => {
+    const {
+      payload: { id, value },
+    } = action as Action<SettingsSetOverriddenFeatureFlagPlayload>;
+    return {
+      ...state,
+      overriddenFeatureFlags: {
+        ...state.overriddenFeatureFlags,
+        [id]: value,
+      },
+    };
+  },
+  [SettingsActionTypes.SET_OVERRIDDEN_FEATURE_FLAGS]: (state, action) => {
+    const {
+      payload: { overriddenFeatureFlags },
+    } = action as Action<SettingsSetOverriddenFeatureFlagsPlayload>;
+    return {
+      ...state,
+      overriddenFeatureFlags,
+    };
+  },
+  [SettingsActionTypes.SET_FEATURE_FLAGS_BANNER_VISIBLE]: (state, action) => {
+    const {
+      payload: { featureFlagsBannerVisible },
+    } = action as Action<SettingsSetFeatureFlagsBannerVisiblePayload>;
+    return {
+      ...state,
+      featureFlagsBannerVisible,
+    };
+  },
+  [SettingsActionTypes.SET_DEBUG_APP_LEVEL_DRAWER_OPENED]: (state, action) => {
+    const {
+      payload: { debugAppLevelDrawerOpened },
+    } = action as Action<SettingsSetDebugAppLevelDrawerOpenedPayload>;
+    return {
+      ...state,
+      debugAppLevelDrawerOpened,
+    };
+  },
 };
 
 export default handleActions<SettingsState, SettingsPayload>(
@@ -593,9 +680,9 @@ export const analyticsEnabledSelector = createSelector(
   storeSelector,
   s => s.analyticsEnabled,
 );
-export const experimentalUSBEnabledSelector = createSelector(
+export const lastSeenCustomImageSelector = createSelector(
   storeSelector,
-  s => s.experimentalUSBEnabled,
+  s => s.lastSeenCustomImage,
 );
 export const currencySettingsForAccountSelector = (
   s: State,
@@ -673,20 +760,8 @@ export const dismissedBannersSelector = (state: State) =>
   state.settings.dismissedBanners;
 export const hasAvailableUpdateSelector = (state: State) =>
   state.settings.hasAvailableUpdate;
-export const carouselVisibilitySelector = (state: State) => {
-  const settingValue = state.settings.carouselVisibility;
-
-  if (typeof settingValue === "number") {
-    /**
-     * Ensure correct behavior when using the legacy setting value from LLM v2:
-     * We show all the slides as they are different from the ones in V2.
-     * Users will then be able to hide them one by one if they want.
-     */
-    return Object.fromEntries(SLIDES.map(slide => [slide.name, true]));
-  }
-
-  return settingValue;
-};
+export const dismissedDynamicCardsSelector = (state: State) =>
+  state.settings.dismissedDynamicCards;
 export const discreetModeSelector = (state: State): boolean =>
   state.settings.discreetMode === true;
 
@@ -708,12 +783,32 @@ export const swapSelectableCurrenciesSelector = (state: State) =>
 export const swapAcceptedProvidersSelector = (state: State) =>
   state.settings.swap.acceptedProviders;
 export const swapKYCSelector = (state: State) => state.settings.swap.KYC;
-export const lastSeenDeviceSelector = (state: State) =>
-  state.settings.lastSeenDevice;
+export const lastSeenDeviceSelector = (state: State) => {
+  // Nb workaround to prevent crash for dev/qa that have nanoFTS references.
+  // to be removed in a while.
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  if (state.settings.lastSeenDevice?.modelId === "nanoFTS") {
+    return { ...state.settings.lastSeenDevice, modelId: DeviceModelId.stax };
+  }
+  return state.settings.lastSeenDevice;
+};
 export const starredMarketCoinsSelector = (state: State) =>
   state.settings.starredMarketCoins;
-export const lastConnectedDeviceSelector = (state: State) =>
-  state.settings.lastConnectedDevice;
+export const lastConnectedDeviceSelector = (state: State) => {
+  // Nb workaround to prevent crash for dev/qa that have nanoFTS references.
+  // to be removed in a while.
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  if (state.settings.lastConnectedDevice?.modelId === "nanoFTS") {
+    return {
+      ...state.settings.lastConnectedDevice,
+      modelId: DeviceModelId.stax,
+    };
+  }
+
+  return state.settings.lastConnectedDevice;
+};
 export const hasOrderedNanoSelector = (state: State) =>
   state.settings.hasOrderedNano;
 export const marketRequestParamsSelector = (state: State) =>
@@ -722,6 +817,8 @@ export const marketCounterCurrencySelector = (state: State) =>
   state.settings.marketCounterCurrency;
 export const marketFilterByStarredAccountsSelector = (state: State) =>
   state.settings.marketFilterByStarredAccounts;
+export const customImageBackupSelector = (state: State) =>
+  state.settings.customImageBackup;
 export const sensitiveAnalyticsSelector = (state: State) =>
   state.settings.sensitiveAnalytics;
 export const firstConnectionHasDeviceSelector = (state: State) =>
@@ -730,3 +827,13 @@ export const firstConnectHasDeviceUpdatedSelector = (state: State) =>
   state.settings.firstConnectHasDeviceUpdated;
 export const notificationsSelector = (state: State) =>
   state.settings.notifications;
+export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
+  state.settings.walletTabNavigatorLastVisitedTab;
+export const statusCenterSelector = (state: State) =>
+  state.settings.displayStatusCenter;
+export const overriddenFeatureFlagsSelector = (state: State) =>
+  state.settings.overriddenFeatureFlags;
+export const featureFlagsBannerVisibleSelector = (state: State) =>
+  state.settings.featureFlagsBannerVisible;
+export const debugAppLevelDrawerOpenedSelector = (state: State) =>
+  state.settings.debugAppLevelDrawerOpened;

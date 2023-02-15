@@ -20,8 +20,36 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { CompoundAccountSummary } from "../../compound/types";
 import { acceptTransaction } from "./speculos-deviceActions";
+import { avalancheSpeculosDeviceAction } from "./speculos-deviceActions-avalanche";
 
 const testTimeout = 8 * 60 * 1000;
+
+const testBasicMutation = ({
+  account,
+  accountBeforeTransaction,
+  operation,
+  transaction,
+}) => {
+  // workaround for buggy explorer behavior (nodes desync)
+  invariant(
+    Date.now() - operation.date > 60000,
+    "operation time to be older than 60s"
+  );
+  const gasPrice = EIP1559ShouldBeUsed(account.currency)
+    ? transaction.maxFeePerGas
+    : transaction.gasPrice;
+  const estimatedGas = getGasLimit(transaction).times(gasPrice);
+  botTest("operation fee is not exceeding estimated gas", () =>
+    expect(operation.fee.toNumber()).toBeLessThanOrEqual(
+      estimatedGas.toNumber()
+    )
+  );
+  botTest("account balance moved with operation value", () =>
+    expect(account.balance.toString()).toBe(
+      accountBeforeTransaction.balance.minus(operation.value).toString()
+    )
+  );
+};
 
 const ethereumBasicMutations = ({ maxAccount }) => [
   {
@@ -42,27 +70,28 @@ const ethereumBasicMutations = ({ maxAccount }) => [
         ],
       };
     },
-    test: ({ account, accountBeforeTransaction, operation, transaction }) => {
-      // workaround for buggy explorer behavior (nodes desync)
-      invariant(
-        Date.now() - operation.date > 60000,
-        "operation time to be older than 60s"
-      );
-      const gasPrice = EIP1559ShouldBeUsed(account.currency)
-        ? transaction.maxFeePerGas
-        : transaction.gasPrice;
-      const estimatedGas = getGasLimit(transaction).times(gasPrice);
-      botTest("operation fee is not exceeding estimated gas", () =>
-        expect(operation.fee.toNumber()).toBeLessThanOrEqual(
-          estimatedGas.toNumber()
-        )
-      );
-      botTest("account balance moved with operation value", () =>
-        expect(account.balance.toString()).toBe(
-          accountBeforeTransaction.balance.minus(operation.value).toString()
-        )
-      );
+    test: testBasicMutation,
+  },
+  {
+    name: "send max",
+    maxRun: 1,
+    testDestination: genericTestDestination,
+    transaction: ({ account, siblings, bridge }) => {
+      const sibling = pickSiblings(siblings, maxAccount);
+      const recipient = sibling.freshAddress;
+      return {
+        transaction: bridge.createTransaction(account),
+        updates: [
+          {
+            recipient,
+          },
+          {
+            useAllAmount: true,
+          },
+        ],
+      };
     },
+    test: testBasicMutation,
   },
 ];
 
@@ -514,7 +543,27 @@ const polygon: AppSpec<Transaction> = {
   ]),
 };
 
+const avax_c_chain = getCryptoCurrencyById("avalanche_c_chain");
+const minAmountAVAXC = parseCurrencyUnit(avax_c_chain.units[0], "0.001");
+
+const avalanche_c_chain: AppSpec<Transaction> = {
+  name: "Avalanche C-Chain",
+  currency: avax_c_chain,
+  appQuery: {
+    model: DeviceModelId.nanoS,
+    appName: "Avalanche",
+  },
+  genericDeviceAction: avalancheSpeculosDeviceAction,
+  testTimeout,
+  minViableAmount: minAmountAVAXC,
+  transactionCheck: ({ maxSpendable }) => {
+    invariant(maxSpendable.gt(minAmountAVAXC), "balance is too low");
+  },
+  mutations: ethereumBasicMutations({ maxAccount: 8 }),
+};
+
 export default {
+  avalanche_c_chain,
   bsc,
   polygon,
   ethereum,

@@ -1,3 +1,4 @@
+import invariant from "invariant";
 import { AccountBridge } from "@ledgerhq/types-live";
 import {
   getNetworkInfo,
@@ -6,10 +7,11 @@ import {
   inferMaxPriorityFeePerGas,
 } from "./gas";
 import { estimateGasLimit } from "./gas";
-import { isEthereumAddress } from "./logic";
+import { isEthereumAddress, padHexString } from "./logic";
 import { NetworkInfo, Transaction } from "./types";
-import { EIP1559ShouldBeUsed } from "./transaction";
+import { buildEthereumTx, EIP1559ShouldBeUsed } from "./transaction";
 import { prepareTransaction as prepareTransactionModules } from "./modules";
+import { findSubAccountById } from "../../account";
 
 export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] =
   async (account, tx) => {
@@ -48,14 +50,40 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
 
     let estimatedGasLimit;
     if (isEthereumAddress(tx.recipient)) {
+      // building a bear minimum transaction for gas estimation
+      const protoTransaction = (() => {
+        try {
+          return buildEthereumTx(account, tx, account.operationsCount).tx;
+        } catch (e) {
+          // fallback in case @ethereumjs/tx breaks on building a potentially partial transaction
+          const subAccount = tx.subAccountId
+            ? findSubAccountById(account, tx.subAccountId)
+            : null;
+          const recipient =
+            subAccount?.type === "TokenAccount"
+              ? subAccount.token.contractAddress
+              : tx.recipient;
+          return {
+            from: account.freshAddress,
+            to: recipient,
+            data: undefined,
+            value: tx.amount,
+          };
+        }
+      })();
+      invariant(protoTransaction.to, "ethereum transaction has no recipient");
+
       estimatedGasLimit = await estimateGasLimit(
         account,
-        tx.recipient,
         // Those are the only elements from a transaction necessary to estimate the gas limit
         {
           from: account.freshAddress,
-          value: "0x" + (tx.amount.toString(16) || "0"),
-          data: "0x" + (tx.data?.toString("hex") || "0"),
+          to: protoTransaction.to!.toString(),
+          value:
+            "0x" + (padHexString(protoTransaction.value.toString(16)) || "00"),
+          data: protoTransaction.data
+            ? `0x${padHexString(protoTransaction.data.toString("hex"))}`
+            : "0x",
         }
       );
     }

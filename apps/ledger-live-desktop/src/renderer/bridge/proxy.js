@@ -23,6 +23,7 @@ import { patchAccount } from "@ledgerhq/live-common/reconciliation";
 import { fromScanAccountEventRaw } from "@ledgerhq/live-common/bridge/index";
 import * as bridgeImpl from "@ledgerhq/live-common/bridge/impl";
 import { command } from "~/renderer/commands";
+import { getEnv } from "@ledgerhq/live-common/env";
 
 const scanAccounts = ({ currency, deviceId, syncConfig }) =>
   command("CurrencyScanAccounts")({
@@ -33,6 +34,7 @@ const scanAccounts = ({ currency, deviceId, syncConfig }) =>
 
 export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   const bridge = bridgeImpl.getCurrencyBridge(currency);
+  if (getEnv("EXPERIMENTAL_EXECUTION_ON_RENDERER")) return bridge;
   const bridgeGetPreloadStrategy = bridge.getPreloadStrategy;
   const getPreloadStrategy = bridgeGetPreloadStrategy
     ? currency => bridgeGetPreloadStrategy.call(bridge, currency)
@@ -40,14 +42,14 @@ export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   const b: CurrencyBridge = {
     preload: async () => {
       const value = await command("CurrencyPreload")({ currencyId: currency.id }).toPromise();
-      bridgeImpl.getCurrencyBridge(currency).hydrate(value, currency);
+      bridge.hydrate(value, currency);
       return value;
     },
 
-    hydrate: value => bridgeImpl.getCurrencyBridge(currency).hydrate(value, currency),
+    hydrate: value => bridge.hydrate(value, currency),
 
     scanAccounts,
-    nftResolvers: bridgeImpl.getCurrencyBridge(currency).nftResolvers,
+    nftResolvers: bridge.nftResolvers,
   };
 
   if (getPreloadStrategy) {
@@ -64,6 +66,10 @@ export const getAccountBridge = (
   account: AccountLike,
   parentAccount: ?Account,
 ): AccountBridge<any> => {
+  if (getEnv("EXPERIMENTAL_EXECUTION_ON_RENDERER")) {
+    return bridgeImpl.getAccountBridge(account, parentAccount);
+  }
+
   const sync = (account, syncConfig) => {
     syncs[account.id] = true;
     const span = startSpan("sync", "toAccountRaw");
@@ -85,18 +91,16 @@ export const getAccountBridge = (
       }),
     );
   };
-
+  const bridge = bridgeImpl.getAccountBridge(account, parentAccount);
   const receive = (account, arg) =>
     command("AccountReceive")({
       account: toAccountRaw(account),
       arg,
     });
 
-  const createTransaction = a =>
-    bridgeImpl.getAccountBridge(account, parentAccount).createTransaction(a);
+  const createTransaction = account => bridge.createTransaction(account);
 
-  const updateTransaction = (a, patch) =>
-    bridgeImpl.getAccountBridge(account, parentAccount).updateTransaction(a, patch);
+  const updateTransaction = (account, patch) => bridge.updateTransaction(account, patch);
 
   const prepareTransaction = async (a, t) => {
     const transaction = toTransactionRaw(t);
@@ -152,6 +156,10 @@ export const getAccountBridge = (
     prepareTransaction,
     sync,
     receive,
+    applyReconciliation: bridge.applyReconciliation,
+    assignToAccountRaw: bridge.assignToAccountRaw,
+    assignFromAccountRaw: bridge.assignFromAccountRaw,
+    initAccount: bridge.initAccount,
     signOperation,
     broadcast,
     estimateMaxSpendable,

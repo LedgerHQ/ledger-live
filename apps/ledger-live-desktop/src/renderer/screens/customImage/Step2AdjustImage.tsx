@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { ImageBase64Data } from "~/renderer/components/CustomImage/types";
 import { Step, StepProps } from "./types";
 import ImageCropper, { CropParams } from "~/renderer/components/CustomImage/ImageCropper";
-import { targetDimensions } from "~/renderer/components/CustomImage/shared";
+import { targetDisplayDimensions } from "~/renderer/components/CustomImage/shared";
 import StepFooter from "./StepFooter";
 import { useTranslation } from "react-i18next";
 import StepContainer from "./StepContainer";
@@ -29,6 +29,7 @@ const StepAdjustImage: React.FC<Props> = props => {
           nextLabel={t("common.continue")}
           nextLoading={loading}
           nextDisabled={loading}
+          previousTestId="custom-image-crop-previous-button"
           nextTestId="custom-image-crop-continue-button"
           setStep={setStep}
         />
@@ -39,7 +40,7 @@ const StepAdjustImage: React.FC<Props> = props => {
           {...src}
           initialCropParams={initialCropParams}
           setCropParams={setCropParams}
-          targetDimensions={targetDimensions}
+          targetDimensions={targetDisplayDimensions}
           onResult={onResult}
           onError={onError}
           setLoading={setLoading}

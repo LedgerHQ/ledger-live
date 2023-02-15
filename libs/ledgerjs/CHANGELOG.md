@@ -1,5 +1,33 @@
 # ledger-libs
 
+## 0.1.0
+
+### Minor Changes
+
+- [#1211](https://github.com/LedgerHQ/ledger-live/pull/1211) [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add EIP712 CAL and CAL importer
+
+### Patch Changes
+
+- [#1766](https://github.com/LedgerHQ/ledger-live/pull/1766) [`0308e8c6ae`](https://github.com/LedgerHQ/ledger-live/commit/0308e8c6ae721a99bc50f5dc60db0d11ea8ea1ff) Thanks [@gre](https://github.com/gre)! - Fixes resiliency of deserializeError.
+
+* [#1729](https://github.com/LedgerHQ/ledger-live/pull/1729) [`d3c91a53e0`](https://github.com/LedgerHQ/ledger-live/commit/d3c91a53e06f9f47817e96c452f69e2d9f71d80f) Thanks [@gre](https://github.com/gre)! - update node-hid to 2.1.2
+
+- [#1141](https://github.com/LedgerHQ/ledger-live/pull/1141) [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd) Thanks [@valpinkman](https://github.com/valpinkman)! - Collateral changes due to solving all LLM typescript/eslint issues/warnings.
+
+## 0.1.0-next.0
+
+### Minor Changes
+
+- [#1211](https://github.com/LedgerHQ/ledger-live/pull/1211) [`32c8df8f47`](https://github.com/LedgerHQ/ledger-live/commit/32c8df8f47644278ee44e9db623af864d57ad61c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add EIP712 CAL and CAL importer
+
+### Patch Changes
+
+- [#1766](https://github.com/LedgerHQ/ledger-live/pull/1766) [`0308e8c6ae`](https://github.com/LedgerHQ/ledger-live/commit/0308e8c6ae721a99bc50f5dc60db0d11ea8ea1ff) Thanks [@gre](https://github.com/gre)! - Fixes resiliency of deserializeError.
+
+* [#1729](https://github.com/LedgerHQ/ledger-live/pull/1729) [`d3c91a53e0`](https://github.com/LedgerHQ/ledger-live/commit/d3c91a53e06f9f47817e96c452f69e2d9f71d80f) Thanks [@gre](https://github.com/gre)! - update node-hid to 2.1.2
+
+- [#1141](https://github.com/LedgerHQ/ledger-live/pull/1141) [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd) Thanks [@valpinkman](https://github.com/valpinkman)! - Collateral changes due to solving all LLM typescript/eslint issues/warnings.
+
 ## 0.0.4
 
 ### Patch Changes

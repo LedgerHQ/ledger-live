@@ -1,7 +1,7 @@
 import React from "react";
 import styled, { DefaultTheme, StyledComponent, ThemeProps } from "styled-components";
-import nanoFTS from "~/renderer/images/nanoFTS.svg";
-import nanoFTSDark from "~/renderer/images/nanoFTSDark.svg";
+import stax from "~/renderer/images/stax.svg";
+import staxDark from "~/renderer/images/staxDark.svg";
 import nanoX from "~/renderer/images/nanoX.v3.svg";
 import nanoS from "~/renderer/images/nanoS.v3.svg";
 import nanoS2 from "~/renderer/images/nanoS2.v3.svg";
@@ -12,27 +12,27 @@ import nanoS2Dark from "~/renderer/images/nanoS2Dark.v3.svg";
 import { registerAssets } from "~/renderer/components/Onboarding/preloadAssets";
 import { DeviceModelId } from "@ledgerhq/devices";
 
-registerAssets([nanoX, nanoS, nanoS2, nanoXDark, nanoSDark, nanoS2Dark, nanoFTS, nanoFTSDark]);
+registerAssets([nanoX, nanoS, nanoS2, nanoXDark, nanoSDark, nanoS2Dark, stax, staxDark]);
 
 const makeAssetSelector = (lightAsset: any, darkAsset: any) => (p: ThemeProps<DefaultTheme>) =>
   p.theme.colors.palette.type === "light" ? lightAsset : darkAsset;
 
 const NanoS = styled.div`
   // TODO: rendering issue in the SVG in the "hole"
-  background: url(${p => makeAssetSelector(nanoS, nanoSDark)(p)}) no-repeat center;
+  background: url('${p => makeAssetSelector(nanoS, nanoSDark)(p)}') no-repeat center;
 `;
 
 const NanoSP = styled.div`
   // TODO: rendering issue in the SVG in the "hole"
-  background: url(${p => makeAssetSelector(nanoS2, nanoS2Dark)(p)}) no-repeat center;
+  background: url('${p => makeAssetSelector(nanoS2, nanoS2Dark)(p)}') no-repeat center;
 `;
 
 const NanoX = styled.div`
-  background: url(${p => makeAssetSelector(nanoX, nanoXDark)(p)}) no-repeat center;
+  background: url('${p => makeAssetSelector(nanoX, nanoXDark)(p)}') no-repeat center;
 `;
 
-const NanoFTS = styled.div`
-  background: url(${p => makeAssetSelector(nanoFTS, nanoFTSDark)(p)}) no-repeat center;
+const Stax = styled.div`
+  background: url('${p => makeAssetSelector(stax, staxDark)(p)}') no-repeat center;
 `;
 
 type Illustration = {
@@ -57,10 +57,10 @@ const illustrations: { [key in DeviceModelId]: Illustration } = {
     width: 53.83,
     height: 250.87,
   },
-  nanoFTS: {
-    Illustration: NanoFTS,
-    width: 160.15,
-    height: 250.1,
+  stax: {
+    Illustration: Stax,
+    width: 240,
+    height: 240,
   },
   blue: {
     Illustration: NanoS,

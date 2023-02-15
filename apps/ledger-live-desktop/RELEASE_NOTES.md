@@ -1,3 +1,63 @@
+# 2.53.2
+
+### 🐛 Fixes
+
+- Some users reported a long sync time when adding an Ethereum account. We've fixed this.
+
+# 2.53.1
+
+### 🌷 Improvements
+
+- Following the latest TRON network update, we've raised the fee limit to 30 TRC to prevent failed transactions.
+
+### 🐛 Fixes
+
+- Accessing Ledger Live from market.ledger.com would cause the app to crash. We've fixed this.
+
+# 2.52.0
+
+### 🚀 Features
+
+- Starting today, you can **stake MultiversX (EGLD)** through Ledger Live and earn rewards. In addition, we've added **support for** 3 MultiversX tokens—**Tether (USDT), Holoride (RIDE) and Maiar DEX (MEX)**.
+- Swapping crypto? Now you can **compare quotes from ParaSwap and 1inch** for 200 tokens and select the best offer.
+
+### 🗑 Removed features
+
+- Ledger Live no longer supports the **XSN network**.
+- **TronGrid** has been removed from the Experimental features.
+
+### 🐛 Fixes
+
+- The delegated ATOM wasn’t visible in the account or transaction history. We’ve fixed this.
+
+# 2.51.0
+
+### 🚀 Features
+
+- Ledger Live is no longer compatible with Windows 7.
+
+### 🌷 Improvements
+
+- We've made some tweaks to improve the staking experience for Ethereum (ETH) and make it easier to select and access staking providers.
+
+# 2.50.1
+
+### 🐛 Fixes
+
+- Sending USDT through Ledger Live would result in the **FAILED -OUT OF ENERGY>** error for some users. We've fixed the issue, and you'll now see a **warning message if your account doesn't have enough energy** to cover the transaction.
+
+# 2.50.0
+
+### 🚀 Features
+
+- **EIP-1559 is here.** Now you can enjoy **more predictable fees and reduced confirmation delays** for Ethereum-based transactions. You can also avoid overpaying fees—specify the max fee you're willing to pay and get reimbursed if the transaction is processed at a lower price.
+- **Don’t trust, verify.** Ledger now supports the **EIP-712** standard that will display data in signing prompts in a readable format instead of complex hexadecimal strings.
+- **Swap crypto with CIC from the US without leaving Ledger Live.** Access to CIC swapping options to grow and diversify your portfolio from the security of your Ledger Nano.
+
+### 🐛 Fixes
+
+- A sneaky bug caused the value of some Cardano tokens to be displayed incorrectly. This has now been fixed.
+
 # 2.49.2
 
 ### 🐛 Fixes

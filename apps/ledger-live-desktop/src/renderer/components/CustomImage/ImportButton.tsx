@@ -6,6 +6,8 @@ type Props = {
   text: string;
   children?: React.ReactNode | undefined;
   Icon: React.ComponentType<{ size: number; color: string }>;
+  onClick?: () => void;
+  testId?: string;
 };
 
 const Container = styled(Flex).attrs({
@@ -17,12 +19,14 @@ const Container = styled(Flex).attrs({
   flexDirection: "row",
   justifyContent: "space-between",
   alignItems: "center",
-})``;
+})`
+  cursor: pointer;
+`;
 
 const ImportButton: React.FC<Props> = props => {
-  const { text, children, Icon } = props;
+  const { text, children, Icon, onClick, testId } = props;
   return (
-    <Container>
+    <Container onClick={onClick} data-test-id={testId}>
       <Text variant="large" fontWeight="semiBold">
         {text}
       </Text>

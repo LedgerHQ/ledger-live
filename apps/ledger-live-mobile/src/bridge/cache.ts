@@ -14,6 +14,13 @@ function currencyCacheId(currency: CryptoCurrency) {
   return `bridgeproxypreload_${currency.id}`;
 }
 
+export async function listCachedCurrencyIds() {
+  const keys = await AsyncStorage.getAllKeys();
+  return keys
+    .filter(k => k.startsWith("bridgeproxypreload"))
+    .map(k => k.replace("bridgeproxypreload_", ""));
+}
+
 export async function setCurrencyCache(
   currency: CryptoCurrency,
   data: unknown,

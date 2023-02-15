@@ -1,6 +1,5 @@
 import React, { memo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { NativeModules } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import { Box, Flex, Icons, Link, Text } from "@ledgerhq/native-ui";
 import { CloseMedium } from "@ledgerhq/native-ui/assets/icons";
@@ -9,6 +8,7 @@ import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import useExportLogs from "./useExportLogs";
 import TranslatedError from "./TranslatedError";
 import SupportLinkError from "./SupportLinkError";
+import { usePromptBluetoothCallback } from "../logic/usePromptBluetoothCallback";
 
 type Props = {
   error: Error;
@@ -41,13 +41,14 @@ const GenericErrorView = ({
   Icon = CloseMedium,
   iconColor = "error.c100",
 }: Props) => {
+  const promptBluetooth = usePromptBluetoothCallback();
   useEffect(() => {
     if (error instanceof BluetoothRequired) {
-      NativeModules.BluetoothHelperModule.prompt().catch(() => {
+      promptBluetooth().catch(() => {
         /* ignore */
       });
     }
-  }, [error]);
+  }, [promptBluetooth, error]);
 
   const { t } = useTranslation();
 
@@ -64,8 +65,8 @@ const GenericErrorView = ({
         <Box mb={7}>
           <Flex
             backgroundColor={iconColor}
-            height={space[10]}
-            width={space[10]}
+            height={space[11]}
+            width={space[11]}
             borderRadius={999}
             justifyContent="center"
             alignItems="center"

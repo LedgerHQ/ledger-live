@@ -7,11 +7,13 @@ import type {
   BalanceHistoryWithCountervalue,
 } from "@ledgerhq/live-common/portfolio/v2/types";
 import { setCountervalueFirst } from "~/renderer/actions/settings";
+import { track } from "~/renderer/analytics/segment";
 import { BalanceTotal, BalanceDiff } from "~/renderer/components/BalanceInfos";
 import Box, { Tabbable } from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Price from "~/renderer/components/Price";
 import PillsDaysCount from "~/renderer/components/PillsDaysCount";
+import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
 import styled from "styled-components";
 import Swap from "~/renderer/icons/Swap";
 
@@ -25,6 +27,8 @@ import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform
 import { useProviders } from "../exchange/Swap2/Form";
 
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import useStakeFlow from "~/renderer/screens/stake";
+import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 
 type Props = {
   isAvailable: boolean,
@@ -45,9 +49,9 @@ export default function AssetBalanceSummaryHeader({
   countervalueChange,
   countervalueFirst,
   currency,
-
   unit,
 }: Props) {
+  const swapDefaultTrack = useGetSwapTrackingProperties();
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const history = useHistory();
@@ -92,6 +96,11 @@ export default function AssetBalanceSummaryHeader({
 
   const { providers, storedProviders } = useProviders();
 
+  const startStakeFlow = useStakeFlow({ currencies: [currency?.id] });
+  const stakeProgramsFeatureFlag = useFeature("stakePrograms");
+  const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
+  const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;
+  const availableOnStake = stakeProgramsEnabled && currency && listFlag.includes(currency?.id);
   const availableOnSwap =
     (providers || storedProviders) &&
     !!(providers || storedProviders).find(({ pairs }) => {
@@ -100,38 +109,47 @@ export default function AssetBalanceSummaryHeader({
 
   const onBuy = useCallback(() => {
     setTrackingSource("asset header actions");
-    // PTX smart routing redirect to live app or to native implementation
-    if (ptxSmartRouting?.enabled) {
-      const params = {
-        currency: currency?.id,
-        mode: "buy", // buy or sell
-      };
 
-      history.push({
-        // replace 'multibuy' in case live app id changes
-        pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ?? "multibuy"}`,
-        state: params,
-      });
-    } else {
-      history.push({
-        pathname: "/exchange",
-        state: {
-          mode: "onRamp",
-          currencyId: currency.id,
-        },
-      });
-    }
+    history.push({
+      pathname: "/exchange",
+      state: ptxSmartRouting?.enabled
+        ? {
+            currency: currency?.id,
+            mode: "buy", // buy or sell
+          }
+        : {
+            mode: "onRamp",
+            currencyId: currency.id,
+          },
+    });
   }, [currency.id, history, ptxSmartRouting]);
 
   const onSwap = useCallback(() => {
-    setTrackingSource("asset header actions");
+    track("button_clicked", {
+      button: "swap",
+      currency: currency?.ticker,
+      page: "Page Asset",
+      ...swapDefaultTrack,
+    });
+    setTrackingSource("Page Asset");
     history.push({
       pathname: "/swap",
       state: {
         defaultCurrency: currency,
       },
     });
-  }, [currency, history]);
+  }, [currency, history, swapDefaultTrack]);
+
+  const onStake = useCallback(() => {
+    track("button_clicked", {
+      button: "stake",
+      currency: currency?.ticker,
+      page: "Page Asset",
+      ...stakeDefaultTrack,
+    });
+    setTrackingSource("Page Asset");
+    startStakeFlow();
+  }, [currency?.ticker, startStakeFlow]);
 
   return (
     <Box flow={5}>
@@ -188,8 +206,14 @@ export default function AssetBalanceSummaryHeader({
         )}
 
         {availableOnSwap && (
-          <Button data-test-id="portfolio-swap-button" variant="color" onClick={onSwap}>
+          <Button data-test-id="portfolio-swap-button" variant="color" mr={1} onClick={onSwap}>
             {t("accounts.contextMenu.swap")}
+          </Button>
+        )}
+
+        {availableOnStake && (
+          <Button variant="color" onClick={onStake} data-test-id="asset-page-stake-button">
+            {t("accounts.contextMenu.stake")}
           </Button>
         )}
       </Box>

@@ -1,10 +1,15 @@
 // @flow
 import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { setPlatformVersion } from "@ledgerhq/live-common/platform/version";
+import { PLATFORM_VERSION } from "@ledgerhq/live-common/platform/constants";
+import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
+import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 
-setPlatformVersion("1.1.0");
+setPlatformVersion(PLATFORM_VERSION);
+setWalletAPIVersion(WALLET_API_VERSION);
 
 setSupportedCurrencies([
+  "avalanche_c_chain",
   "bitcoin",
   "ethereum",
   "bsc",
@@ -36,11 +41,9 @@ setSupportedCurrencies([
   "vertcoin",
   "peercoin",
   "viacoin",
-  "stakenet",
   "bitcoin_testnet",
   "ethereum_ropsten",
   "ethereum_goerli",
-  "cosmos_testnet",
   "hedera",
   "cardano",
   "filecoin",
@@ -50,4 +53,5 @@ setSupportedCurrencies([
   "moonbeam",
   "songbird",
   "flare",
+  "near",
 ]);

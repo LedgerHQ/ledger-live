@@ -1,6 +1,6 @@
 import React, { memo, useMemo, useCallback } from "react";
 import { SectionList, SectionListRenderItemInfo } from "react-native";
-import { Button, Flex } from "@ledgerhq/native-ui";
+import { Button } from "@ledgerhq/native-ui";
 import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/groupOperations";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
@@ -28,7 +28,7 @@ const NB_OPERATIONS_TO_DISPLAY = 3;
 const keyExtractor = (operation: Operation) => operation.id;
 
 const renderSectionHeader = ({ section }: { section: { day: Date } }) => (
-  <SectionHeader section={section} />
+  <SectionHeader day={section.day} />
 );
 
 const OperationsHistory = ({ accounts }: Props) => {
@@ -81,10 +81,9 @@ const OperationsHistory = ({ accounts }: Props) => {
   }, [navigation, accounts]);
 
   return (
-    <Flex flex={1}>
+    <>
       <SectionList
         sections={sections}
-        style={{ flex: 1 }}
         contentContainerStyle={{ flexGrow: 1 }}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
@@ -102,7 +101,7 @@ const OperationsHistory = ({ accounts }: Props) => {
           {t("common.seeAll")}
         </Button>
       ) : null}
-    </Flex>
+    </>
   );
 };
 

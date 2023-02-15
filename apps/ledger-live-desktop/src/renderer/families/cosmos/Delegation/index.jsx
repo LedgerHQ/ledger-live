@@ -23,8 +23,7 @@ import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import IconChartLine from "~/renderer/icons/ChartLine";
 import { Header, UnbondingHeader } from "./Header";
 import { Row, UnbondingRow } from "./Row";
-
-import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
+import cosmosBase from "@ledgerhq/live-common/families/cosmos/chain/cosmosBase";
 import ToolTip from "~/renderer/components/Tooltip";
 import ClaimRewards from "~/renderer/icons/ClaimReward";
 import DelegateIcon from "~/renderer/icons/Delegate";
@@ -105,7 +104,7 @@ const Delegation = ({ account }: Props) => {
 
   const onExternalLink = useCallback(
     (address: string) => {
-      if (address === LEDGER_VALIDATOR_ADDRESS) {
+      if (cosmosBase.COSMOS_FAMILY_LEDGER_VALIDATOR_ADDRESSES.includes(address)) {
         openURL(urls.ledgerValidator);
       } else {
         const srURL = explorerView && getAddressExplorer(explorerView, address);
@@ -194,7 +193,7 @@ const Delegation = ({ account }: Props) => {
               <Text ff="Inter|Medium|SemiBold" color="palette.text.shade60" fontSize={4}>
                 <Trans
                   i18nKey="cosmos.delegation.emptyState.description"
-                  values={{ name: account.currency.name }}
+                  values={{ name: account.currency.name, currencyTicker: account.currency.ticker }}
                 />
               </Text>
               <Box mt={2}>

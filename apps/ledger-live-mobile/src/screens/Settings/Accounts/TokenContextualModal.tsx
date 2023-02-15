@@ -12,7 +12,6 @@ import {
   getDefaultExplorerView,
 } from "@ledgerhq/live-common/explorers";
 import { createStructuredSelector } from "reselect";
-import { BottomDrawer } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import LText from "../../../components/LText";
 import { blacklistToken } from "../../../actions/settings";
@@ -21,10 +20,11 @@ import Button from "../../../components/Button";
 import { parentAccountSelector } from "../../../reducers/accounts";
 import ParentCurrencyIcon from "../../../components/ParentCurrencyIcon";
 import BottomModalChoice from "../../../components/BottomModalChoice";
-import { ScreenName } from "../../../const";
+import { NavigatorName } from "../../../const";
 import { StackNavigatorNavigation } from "../../../components/RootNavigator/types/helpers";
 import { PortfolioNavigatorStackParamList } from "../../../components/RootNavigator/types/PortfolioNavigator";
 import { State } from "../../../reducers/types";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 
 const mapDispatchToProps = {
   blacklistToken,
@@ -62,7 +62,7 @@ const TokenContextualModal = ({
     if (!account) return;
     blacklistToken(account.token.id);
     onCloseModal();
-    navigation.navigate(ScreenName.Portfolio);
+    navigation.navigate(NavigatorName.WalletTab);
   }, [onCloseModal, blacklistToken, account, navigation]);
 
   if (!isOpened || !account) return null;
@@ -74,8 +74,8 @@ const TokenContextualModal = ({
     ? getAccountContractExplorer(explorerView, account, parentAccount!)
     : null;
   return (
-    <BottomDrawer
-      isOpen={isOpened}
+    <QueuedDrawer
+      isRequestingToBeOpened={isOpened}
       preventBackdropClick={false}
       Icon={
         showingContextMenu ? (
@@ -148,7 +148,7 @@ const TokenContextualModal = ({
           )}
         </>
       )}
-    </BottomDrawer>
+    </QueuedDrawer>
   );
 };
 

@@ -33,7 +33,6 @@ import {
   SolanaTokenAccounNotInitialized,
   SolanaTokenAccountHoldsAnotherToken,
   SolanaTokenRecipientIsSenderATA,
-  SolanaUseAllAmountStakeWarning,
   SolanaValidatorRequired,
 } from "./errors";
 import {
@@ -41,6 +40,7 @@ import {
   isEd25519Address,
   isValidBase58Address,
   MAX_MEMO_LENGTH,
+  SOLANA_DUST,
 } from "./logic";
 import { estimateTxFee } from "./tx-fees";
 import type {
@@ -378,15 +378,14 @@ async function deriveStakeCreateAccountCommandDescriptor(
   const fee = txFee + stakeAccRentExemptAmount;
 
   const amount = tx.useAllAmount
-    ? BigNumber.max(mainAccount.spendableBalance.minus(fee), 0)
+    ? BigNumber.max(
+        mainAccount.spendableBalance.minus(fee).minus(SOLANA_DUST),
+        0
+      )
     : tx.amount;
 
   if (!errors.amount && mainAccount.spendableBalance.lt(amount.plus(fee))) {
     errors.amount = new NotEnoughBalance();
-  }
-
-  if (!errors.amount && tx.useAllAmount) {
-    warnings.amount = new SolanaUseAllAmountStakeWarning();
   }
 
   const {

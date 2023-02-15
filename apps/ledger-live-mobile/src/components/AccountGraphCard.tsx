@@ -35,12 +35,12 @@ import { QrCodeMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useNavigation } from "@react-navigation/native";
 import { useTimeRange } from "../actions/settings";
 import Delta from "./Delta";
-import CurrencyUnitValue from "./CurrencyUnitValue";
+import CurrencyUnitValue, { CurrencyUnitValueProps } from "./CurrencyUnitValue";
 import { Item } from "./Graph/types";
 import getWindowDimensions from "../logic/getWindowDimensions";
 import Graph from "./Graph";
 import Touchable from "./Touchable";
-import TransactionsPendingConfirmationWarning from "./TransactionsPendingConfirmationWarning";
+import { TransactionsPendingConfirmationWarningForAccount } from "./TransactionsPendingConfirmationWarning";
 import { NoCountervaluePlaceholder } from "./CounterValue";
 import { ensureContrast } from "../colors";
 import { NavigatorName, ScreenName } from "../const";
@@ -235,10 +235,11 @@ const GraphCardHeader = ({
   parentAccount,
   currency,
 }: HeaderTitleProps) => {
-  const items = [
+  const items: CurrencyUnitValueProps[] = [
     {
       unit: cryptoCurrencyUnit,
       value: item.value,
+      dynamicSignificantDigits: 8,
     },
     {
       unit: counterValueUnit,
@@ -300,7 +301,9 @@ const GraphCardHeader = ({
               <NoCountervaluePlaceholder />
             )}
           </Text>
-          <TransactionsPendingConfirmationWarning maybeAccount={account} />
+          <TransactionsPendingConfirmationWarningForAccount
+            maybeAccount={account}
+          />
         </Flex>
         <Text
           fontFamily="Inter"
@@ -309,10 +312,7 @@ const GraphCardHeader = ({
           numberOfLines={1}
           adjustsFontSizeToFit
         >
-          <CurrencyUnitValue
-            disableRounding={shouldUseCounterValue}
-            {...items[0]}
-          />
+          <CurrencyUnitValue {...items[0]} />
         </Text>
         <Flex flexDirection="row" alignItems="center">
           <Delta percent show0Delta valueChange={valueChange} />

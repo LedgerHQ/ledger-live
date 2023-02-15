@@ -1,0 +1,12 @@
+<svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="56" height="56" transform="translate(0 0.000244141)" fill="#266EF0"/>
+<g clip-path="url(#clip0_1125_16733)">
+<path d="M18.4801 27.1733L11.1997 14.5632L25.7606 14.5632L18.4801 27.1733Z" fill="white"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M29.3862 14.6011L44.7997 41.2981L13.9726 41.2981L29.3862 14.6011ZM29.3862 22.1747L38.2408 37.5113L20.5316 37.5113L29.3862 22.1747Z" fill="white"/>
+</g>
+<defs>
+<clipPath id="clip0_1125_16733">
+<rect width="33.6" height="33.6" fill="white" transform="translate(11.1997 11.2002)"/>
+</clipPath>
+</defs>
+</svg>

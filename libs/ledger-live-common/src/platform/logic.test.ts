@@ -6,9 +6,10 @@ import {
   WebPlatformContext,
 } from "./logic";
 
-import { AppManifest } from "./types";
+import { LiveAppManifest } from "./types";
 import {
   createFixtureAccount,
+  createFixtureTokenAccount,
   createFixtureCryptoCurrency,
 } from "../mock/fixtures/cryptoCurrencies";
 import {
@@ -145,7 +146,71 @@ describe("completeExchangeLogic", () => {
 
     beforeEach(() => uiNavigation.mockResolvedValueOnce(expectedResult));
 
-    it("calls uiNavigation callback", async () => {
+    it("calls uiNavigation callback (token)", async () => {
+      // Given
+      const fromAccount = createFixtureTokenAccount("16");
+      const fromParentAccount = createFixtureAccount("16");
+      context.accounts = [...context.accounts, fromAccount, fromParentAccount];
+      const rawPlatformTransaction = createRawEtherumTransaction();
+      const completeExchangeRequest = {
+        provider: "provider",
+        fromAccountId:
+          "js:2:ethereum:0x16:+ethereum%2Ferc20%2Fusd_tether__erc20_",
+        toAccountId: "ethereumjs:2:ethereum:0x042:",
+        transaction: rawPlatformTransaction,
+        binaryPayload: "binaryPayload",
+        signature: "signature",
+        feesStrategy: "medium",
+        exchangeType: 8,
+      };
+
+      const expectedTransaction: EthereumTransaction = {
+        family: "ethereum",
+        amount: new BigNumber("1000000000"),
+        subAccountId:
+          "js:2:ethereum:0x16:+ethereum%2Ferc20%2Fusd_tether__erc20_",
+        recipient: "0x0123456",
+        nonce: 8,
+        data: Buffer.from("Some data...", "hex"),
+        gasPrice: new BigNumber("700000"),
+        maxFeePerGas: null,
+        maxPriorityFeePerGas: null,
+        userGasLimit: new BigNumber("1200000"),
+        feesStrategy: "medium",
+        estimatedGasLimit: null,
+        feeCustomUnit: { name: "Gwei", code: "Gwei", magnitude: 9 },
+        mode: "send",
+        networkInfo: null,
+        useAllAmount: false,
+      };
+
+      // When
+      const result = await completeExchangeLogic(
+        context,
+        completeExchangeRequest,
+        uiNavigation
+      );
+
+      // Then
+      expect(uiNavigation).toBeCalledTimes(1);
+      expect(uiNavigation.mock.calls[0][0]).toEqual({
+        provider: "provider",
+        exchange: {
+          fromAccount,
+          fromParentAccount,
+          toAccount: undefined,
+          toParentAccount: undefined,
+        },
+        transaction: expectedTransaction,
+        binaryPayload: "binaryPayload",
+        signature: "signature",
+        feesStrategy: "medium",
+        exchangeType: 8,
+      });
+      expect(result).toEqual(expectedResult);
+    });
+
+    it("calls uiNavigation callback (coin)", async () => {
       // Given
       const fromAccount = createFixtureAccount("17");
       context.accounts = [...context.accounts, fromAccount];
@@ -192,9 +257,9 @@ describe("completeExchangeLogic", () => {
         provider: "provider",
         exchange: {
           fromAccount,
-          fromParentAccount: null,
+          fromParentAccount: undefined,
           toAccount: undefined,
-          toParentAccount: null,
+          toParentAccount: undefined,
         },
         transaction: expectedTransaction,
         binaryPayload: "binaryPayload",
@@ -482,7 +547,9 @@ describe("signMessageLogic", () => {
           messageToSign,
           uiNavigation
         );
-      }).rejects.toThrowError("account not found");
+      }).rejects.toThrowError(
+        `account with id "${nonFoundAccountId}" not found`
+      );
 
       // Then
       expect(uiNavigation).toBeCalledTimes(0);
@@ -590,7 +657,7 @@ describe("signMessageLogic", () => {
   });
 });
 
-function createAppManifest(id = "1"): AppManifest {
+function createAppManifest(id = "1"): LiveAppManifest {
   return {
     id,
     private: false,

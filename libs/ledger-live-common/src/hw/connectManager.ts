@@ -4,6 +4,7 @@ import {
   TransportStatusError,
   DeviceOnDashboardExpected,
   StatusCodes,
+  LockedDeviceError,
 } from "@ledgerhq/errors";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import type { ListAppsEvent } from "../apps";
@@ -88,12 +89,7 @@ const cmd = ({
               );
             }),
             catchError((e: unknown) => {
-              if (
-                e &&
-                e instanceof TransportStatusError &&
-                // @ts-expect-error typescript not checking agains the instanceof
-                e.statusCode === StatusCodes.LOCKED_DEVICE
-              ) {
+              if (e instanceof LockedDeviceError) {
                 return of({
                   type: "lockedDevice",
                 } as ConnectManagerEvent);

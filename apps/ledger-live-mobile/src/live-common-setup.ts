@@ -11,6 +11,9 @@ import {
   setSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
 import { setPlatformVersion } from "@ledgerhq/live-common/platform/version";
+import { PLATFORM_VERSION } from "@ledgerhq/live-common/platform/constants";
+import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
+import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
 import type { TransportModule } from "@ledgerhq/live-common/hw/index";
 import { setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
@@ -19,7 +22,6 @@ import { DescriptorEvent } from "@ledgerhq/hw-transport";
 import VersionNumber from "react-native-version-number";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import { Platform } from "react-native";
-import axios from "axios";
 import { setSecp256k1Instance } from "@ledgerhq/live-common/families/bitcoin/wallet-btc/crypto/secp256k1";
 import { setGlobalOnBridgeError } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { prepareCurrency } from "./bridge/cache";
@@ -29,8 +31,10 @@ import logger from "./logger";
 
 setGlobalOnBridgeError(e => logger.critical(e));
 setDeviceMode("polling");
-setPlatformVersion("1.1.0");
+setPlatformVersion(PLATFORM_VERSION);
+setWalletAPIVersion(WALLET_API_VERSION);
 setSupportedCurrencies([
+  "avalanche_c_chain",
   "bitcoin",
   "ethereum",
   "bsc",
@@ -61,11 +65,9 @@ setSupportedCurrencies([
   "vertcoin",
   "peercoin",
   "viacoin",
-  "stakenet",
   "bitcoin_testnet",
   "ethereum_ropsten",
   "ethereum_goerli",
-  "cosmos_testnet",
   "elrond",
   "hedera",
   "cardano",
@@ -76,6 +78,7 @@ setSupportedCurrencies([
   "moonbeam",
   "songbird",
   "flare",
+  "near",
 ]);
 
 if (Config.VERBOSE) {
@@ -162,10 +165,11 @@ registerTransportModule({
 });
 
 if (process.env.NODE_ENV === "production") {
-  axios.defaults.headers.common["User-Agent"] =
+  const value =
     Platform.OS === "ios"
-      ? `Live-IOS/${VersionNumber.appVersion}`
-      : `Live-Android/${VersionNumber.appVersion}`;
+      ? `llm-ios/${VersionNumber.appVersion}`
+      : `llm-android/${VersionNumber.appVersion}`;
+  setEnv("LEDGER_CLIENT_VERSION", value);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires

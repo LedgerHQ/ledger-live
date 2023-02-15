@@ -6,6 +6,7 @@ import Transport from "@ledgerhq/hw-transport";
 import {
   DeviceExtractOnboardingStateError,
   DisconnectedDevice,
+  LockedDeviceError,
 } from "@ledgerhq/errors";
 import { withDevice } from "./deviceAccess";
 import getVersion from "./getVersion";
@@ -25,7 +26,7 @@ jest.useFakeTimers();
 const aDevice = {
   deviceId: "DEVICE_ID_A",
   deviceName: "DEVICE_NAME_A",
-  modelId: DeviceModelId.nanoFTS,
+  modelId: DeviceModelId.stax,
   wired: false,
 };
 
@@ -83,9 +84,42 @@ describe("getOnboardingStatePolling", () => {
           pollingPeriodMs,
         }).subscribe({
           next: (value) => {
-            expect(value.onboardingState).toBeNull();
-            expect(value.allowedError).toBeInstanceOf(DisconnectedDevice);
-            done();
+            try {
+              expect(value.onboardingState).toBeNull();
+              expect(value.allowedError).toBeInstanceOf(DisconnectedDevice);
+              expect(value.lockedDevice).toBe(false);
+              done();
+            } catch (expectError) {
+              done(expectError);
+            }
+          },
+        });
+
+        // The timeout is equal to pollingPeriodMs by default
+        jest.advanceTimersByTime(pollingPeriodMs - 1);
+      });
+    });
+
+    describe("and when the error is due to a locked device", () => {
+      it("should update the lockedDevice, update the onboarding state to null and keep track of the allowed error", (done) => {
+        mockedGetVersion.mockRejectedValue(new LockedDeviceError());
+        mockedExtractOnboardingState.mockReturnValue(anOnboardingState);
+
+        const device = aDevice;
+
+        getOnboardingStatePolling({
+          deviceId: device.deviceId,
+          pollingPeriodMs,
+        }).subscribe({
+          next: (value) => {
+            try {
+              expect(value.onboardingState).toBeNull();
+              expect(value.allowedError).toBeInstanceOf(LockedDeviceError);
+              expect(value.lockedDevice).toBe(true);
+              done();
+            } catch (expectError) {
+              done(expectError);
+            }
           },
         });
 
@@ -106,9 +140,14 @@ describe("getOnboardingStatePolling", () => {
           pollingPeriodMs,
         }).subscribe({
           next: (value) => {
-            expect(value.onboardingState).toBeNull();
-            expect(value.allowedError).toBeInstanceOf(TimeoutError);
-            done();
+            try {
+              expect(value.onboardingState).toBeNull();
+              expect(value.allowedError).toBeInstanceOf(TimeoutError);
+              expect(value.lockedDevice).toBe(false);
+              done();
+            } catch (expectError) {
+              done(expectError);
+            }
           },
         });
 
@@ -129,9 +168,14 @@ describe("getOnboardingStatePolling", () => {
           fetchingTimeoutMs,
         }).subscribe({
           next: (value) => {
-            expect(value.onboardingState).toBeNull();
-            expect(value.allowedError).toBeInstanceOf(TimeoutError);
-            done();
+            try {
+              expect(value.onboardingState).toBeNull();
+              expect(value.allowedError).toBeInstanceOf(TimeoutError);
+              expect(value.lockedDevice).toBe(false);
+              done();
+            } catch (expectError) {
+              done(expectError);
+            }
           },
         });
 
@@ -151,9 +195,13 @@ describe("getOnboardingStatePolling", () => {
           pollingPeriodMs,
         }).subscribe({
           error: (error) => {
-            expect(error).toBeInstanceOf(Error);
-            expect(error?.message).toBe("Unknown error");
-            done();
+            try {
+              expect(error).toBeInstanceOf(Error);
+              expect(error?.message).toBe("Unknown error");
+              done();
+            } catch (expectError) {
+              done(expectError);
+            }
           },
         });
 
@@ -178,11 +226,16 @@ describe("getOnboardingStatePolling", () => {
         pollingPeriodMs,
       }).subscribe({
         next: (value) => {
-          expect(value.onboardingState).toBeNull();
-          expect(value.allowedError).toBeInstanceOf(
-            DeviceExtractOnboardingStateError
-          );
-          done();
+          try {
+            expect(value.onboardingState).toBeNull();
+            expect(value.allowedError).toBeInstanceOf(
+              DeviceExtractOnboardingStateError
+            );
+            expect(value.lockedDevice).toBe(false);
+            done();
+          } catch (expectError) {
+            done(expectError);
+          }
         },
       });
 
@@ -202,9 +255,14 @@ describe("getOnboardingStatePolling", () => {
         pollingPeriodMs,
       }).subscribe({
         next: (value) => {
-          expect(value.allowedError).toBeNull();
-          expect(value.onboardingState).toEqual(anOnboardingState);
-          done();
+          try {
+            expect(value.allowedError).toBeNull();
+            expect(value.onboardingState).toEqual(anOnboardingState);
+            expect(value.lockedDevice).toBe(false);
+            done();
+          } catch (expectError) {
+            done(expectError);
+          }
         },
         error: (error) => {
           done(error);
@@ -222,25 +280,31 @@ describe("getOnboardingStatePolling", () => {
 
       // Did not manage to test that the polling is repeated by using jest's fake timer
       // and advanceTimersByTime method or equivalent.
-      // Hacky test: spy on the repeat operator to see if it has been called.
-      const spiedRepeat = jest.spyOn(rxjsOperators, "repeat");
+      // Hacky test: spy on the repeatWhen operator to see if it has been called.
+      const spiedRepeatWhen = jest.spyOn(rxjsOperators, "repeatWhen");
 
       onboardingStatePollingSubscription = getOnboardingStatePolling({
         deviceId: device.deviceId,
         pollingPeriodMs,
+        fetchingTimeoutMs: pollingPeriodMs * 10,
       }).subscribe({
         next: (value) => {
-          expect(value.onboardingState).toEqual(anOnboardingState);
-          expect(value.allowedError).toBeNull();
-          expect(spiedRepeat).toHaveBeenCalledTimes(1);
-          done();
+          try {
+            expect(value.onboardingState).toEqual(anOnboardingState);
+            expect(value.allowedError).toBeNull();
+            expect(value.lockedDevice).toBe(false);
+            expect(spiedRepeatWhen).toHaveBeenCalledTimes(1);
+            done();
+          } catch (expectError) {
+            done(expectError);
+          }
         },
         error: (error) => {
           done(error);
         },
       });
 
-      jest.runOnlyPendingTimers();
+      jest.advanceTimersByTime(1);
     });
   });
 });

@@ -19,8 +19,6 @@ import {
   fromTronResourcesRaw,
   fromCosmosResourcesRaw,
   fromBitcoinResourcesRaw,
-  fromAlgorandResourcesRaw,
-  fromCardanoResourceRaw,
   fromPolkadotResourcesRaw,
   fromTezosResourcesRaw,
   fromElrondResourcesRaw,
@@ -30,8 +28,6 @@ import {
   fromNFTRaw,
   toTronResourcesRaw,
   toCosmosResourcesRaw,
-  toAlgorandResourcesRaw,
-  toCardanoResourceRaw,
   toPolkadotResourcesRaw,
   toTezosResourcesRaw,
   toElrondResourcesRaw,
@@ -40,9 +36,7 @@ import {
   toCeloResourcesRaw,
 } from "./account";
 import consoleWarnExpectToEqual from "./consoleWarnExpectToEqual";
-import { AlgorandAccount, AlgorandAccountRaw } from "./families/algorand/types";
 import { BitcoinAccount, BitcoinAccountRaw } from "./families/bitcoin/types";
-import { CardanoAccount, CardanoAccountRaw } from "./families/cardano/types";
 import { CosmosAccount, CosmosAccountRaw } from "./families/cosmos/types";
 import {
   CryptoOrgAccount,
@@ -54,6 +48,7 @@ import { SolanaAccount, SolanaAccountRaw } from "./families/solana/types";
 import { TezosAccount, TezosAccountRaw } from "./families/tezos/types";
 import { TronAccount, TronAccountRaw } from "./families/tron/types";
 import { CeloAccount, CeloAccountRaw } from "./families/celo/types";
+import { getAccountBridge } from "./bridge";
 
 // aim to build operations with the minimal diff & call to coin implementation possible
 export async function minimalOperationsBuilder<CO>(
@@ -341,42 +336,6 @@ export function patchAccount(
       }
       break;
     }
-    case "osmosis": {
-      const cosmosAcc = account as CosmosAccount;
-      const cosmosUpdatedRaw = updatedRaw as CosmosAccountRaw;
-      if (
-        cosmosUpdatedRaw.cosmosResources &&
-        (!cosmosAcc.cosmosResources ||
-          !areSameResources(
-            toCosmosResourcesRaw(cosmosAcc.cosmosResources),
-            cosmosUpdatedRaw.cosmosResources
-          ))
-      ) {
-        (next as CosmosAccount).cosmosResources = fromCosmosResourcesRaw(
-          cosmosUpdatedRaw.cosmosResources
-        );
-        changed = true;
-      }
-      break;
-    }
-    case "algorand": {
-      const algorandAcc = account as AlgorandAccount;
-      const algorandUpdatedRaw = updatedRaw as AlgorandAccountRaw;
-      if (
-        algorandUpdatedRaw.algorandResources &&
-        (!algorandAcc.algorandResources ||
-          !areSameResources(
-            toAlgorandResourcesRaw(algorandAcc.algorandResources),
-            algorandUpdatedRaw.algorandResources
-          ))
-      ) {
-        (next as AlgorandAccount).algorandResources = fromAlgorandResourcesRaw(
-          algorandUpdatedRaw.algorandResources
-        );
-        changed = true;
-      }
-      break;
-    }
     case "bitcoin": {
       if (shouldRefreshBitcoinResources(updatedRaw, account)) {
         (next as BitcoinAccount).bitcoinResources = fromBitcoinResourcesRaw(
@@ -439,24 +398,6 @@ export function patchAccount(
       }
       break;
     }
-    case "cardano": {
-      const cardanoAcc = account as CardanoAccount;
-      const cardanoUpdatedRaw = updatedRaw as CardanoAccountRaw;
-      if (
-        cardanoUpdatedRaw.cardanoResources &&
-        (!cardanoAcc.cardanoResources ||
-          !areSameResources(
-            toCardanoResourceRaw(cardanoAcc.cardanoResources),
-            cardanoUpdatedRaw.cardanoResources
-          ))
-      ) {
-        (next as CardanoAccount).cardanoResources = fromCardanoResourceRaw(
-          cardanoUpdatedRaw.cardanoResources
-        );
-        changed = true;
-      }
-      break;
-    }
     case "crypto_org": {
       const cryptoOrgAcc = account as CryptoOrgAccount;
       const cryptoOrgUpdatedRaw = updatedRaw as CryptoOrgAccountRaw;
@@ -493,24 +434,32 @@ export function patchAccount(
       }
       break;
     }
-    case "celo": {
-      const celoAcc = account as CeloAccount;
-      const celoUpdatedRaw = updatedRaw as CeloAccountRaw;
+    case "celo":
+      {
+        const celoAcc = account as CeloAccount;
+        const celoUpdatedRaw = updatedRaw as CeloAccountRaw;
 
-      if (
-        celoUpdatedRaw.celoResources &&
-        (!celoAcc.celoResources ||
-          !areSameResources(
-            toCeloResourcesRaw(celoAcc.celoResources),
+        if (
+          celoUpdatedRaw.celoResources &&
+          (!celoAcc.celoResources ||
+            !areSameResources(
+              toCeloResourcesRaw(celoAcc.celoResources),
+              celoUpdatedRaw.celoResources
+            ))
+        ) {
+          (next as CeloAccount).celoResources = fromCeloResourcesRaw(
             celoUpdatedRaw.celoResources
-          ))
-      ) {
-        (next as CeloAccount).celoResources = fromCeloResourcesRaw(
-          celoUpdatedRaw.celoResources
-        );
-        changed = true;
+          );
+          changed = true;
+        }
       }
       break;
+    default: {
+      const bridge = getAccountBridge(account);
+      const applyReconciliation = bridge.applyReconciliation;
+      if (applyReconciliation) {
+        changed = changed || applyReconciliation(account, updatedRaw, next);
+      }
     }
   }
 

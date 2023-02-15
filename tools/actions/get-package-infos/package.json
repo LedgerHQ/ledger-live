@@ -1,6 +1,6 @@
 {
   "name": "@actions/get-package-infos",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "returns the current version, clean semver version and name from package.json",
   "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
   "license": "MIT",

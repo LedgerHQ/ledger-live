@@ -58,7 +58,6 @@ const hedera: AppSpec<Transaction> = {
       }: TransactionArg<Transaction>): TransactionRes<Transaction> => {
         const sibling = pickSiblings(siblings, 4);
         const recipient = sibling.freshAddress;
-
         const transaction = bridge.createTransaction(account);
 
         const amount = account.balance
@@ -95,13 +94,19 @@ const hedera: AppSpec<Transaction> = {
       }: TransactionArg<Transaction>): TransactionRes<Transaction> => {
         const sibling = pickSiblings(siblings, 4);
         const recipient = sibling.freshAddress;
-
         const transaction = bridge.createTransaction(account);
 
         return {
           transaction,
           updates: [{ recipient }, { useAllAmount: true }],
         };
+      },
+      test: ({ account, accountBeforeTransaction, operation }) => {
+        botTest("Account balance should have decreased", () => {
+          expect(account.balance.toNumber()).toEqual(
+            accountBeforeTransaction.balance.minus(operation.value).toNumber()
+          );
+        });
       },
     },
     {
@@ -114,7 +119,6 @@ const hedera: AppSpec<Transaction> = {
       }: TransactionArg<Transaction>): TransactionRes<Transaction> => {
         const sibling = pickSiblings(siblings, 4);
         const recipient = sibling.freshAddress;
-
         const transaction = bridge.createTransaction(account);
 
         const amount = account.balance
@@ -133,6 +137,7 @@ const hedera: AppSpec<Transaction> = {
           expect(transaction.memo).toBe(memoTestMessage)
         );
       },
+      testDestination: genericTestDestination,
     },
   ],
 };

@@ -6,9 +6,10 @@ import moment from "moment";
 
 import { add } from "./logger";
 
-export async function enableFileLogger() {
+export async function enableFileLogger(basedir) {
   await app.whenReady();
-  const desktopDir = app.getPath("desktop");
+
+  const desktopDir = basedir || app.getPath("desktop");
 
   const fileT = new winston.transports.File({
     filename: path.join(

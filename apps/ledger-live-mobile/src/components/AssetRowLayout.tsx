@@ -5,6 +5,7 @@ import { BigNumber } from "bignumber.js";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { Flex, Text, Tag } from "@ledgerhq/native-ui";
 import { ValueChange } from "@ledgerhq/types-live";
+import { isEqual } from "lodash";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
 import Delta from "./Delta";
@@ -125,4 +126,12 @@ const AssetRowLayout = ({
   );
 };
 
-export default React.memo<Props>(AssetRowLayout);
+/**
+ * In most usages, the prop `countervalueChange` is an object that is
+ * created at each render in the parent component, (with a new ref)
+ * hence why the deep equality here.
+ * By avoiding a re-render of this component, we can save ~5ms on a performant
+ * device, in __DEV__ mode. Since it's meant to be rendered in a list, this is
+ * not a small optimisation.
+ */
+export default React.memo<Props>(AssetRowLayout, isEqual);
