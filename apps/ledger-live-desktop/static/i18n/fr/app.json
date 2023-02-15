@@ -824,7 +824,20 @@
       "delegation" : {
         "title" : "Bon à savoir",
         "description" : "En stakant vos {{asset}} via le validateur Ledger, les frais de commission sont de {{commission}} %.",
-        "cta" : "Staker avec Ledger"
+        "cta" : "Staker avec Ledger",
+        "linkText" : "En savoir plus",
+        "ethereum" : {
+          "lido" : {
+            "title" : "Bon à savoir",
+            "description" : "Stakez vos ETH avec Lido et gagnez des récompenses quotidiennes. Sans durée, ni montant minimum.",
+            "cta" : "Staker avec Lido"
+          },
+          "kiln" : {
+            "title" : "Maximisez votre HODL. Faites fructifier vos ETH.",
+            "description" : "Vous avez plus de 32 ETH ? Gagnez des récompenses en toute sécurité en mettant vos ETH en staking avec Kiln.",
+            "cta" : "Staker avec Kiln"
+          }
+        }
       }
     }
   },
@@ -1399,7 +1412,7 @@
         "label" : "Populaire"
       },
       "earn" : {
-        "title" : "Gagner",
+        "title" : "Staker",
         "description" : "Faites fructifier vos crypto-actifs via Ledger."
       }
     }
@@ -2924,7 +2937,7 @@
               "title" : "Récompenses bien encaissées",
               "titleCompound" : "Récompenses bien capitalisées",
               "text" : "Vos récompenses ont été ajoutées à votre solde disponible.",
-              "textCompound" : "Vos récompenses <0>{{amount}}</0> ont été automatiquement déléguées à <0>{{validator}}</0>.",
+              "textCompound" : "Vos récompenses de <0>{{amount}}</0> ont été automatiquement déléguées à <0>{{validator}}</0>.",
               "cta" : "Voir les détails"
             },
             "pending" : {
@@ -3470,6 +3483,71 @@
       },
       "providerTitle" : "Gagnez avec {{provider}}",
       "providerLink" : "En savoir plus sur {{provider}}"
+    }
+  },
+  "avalanchepchain" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Propulsé par Figment",
+        "moreInfo" : "Plus d’informations",
+        "drawerTitle" : "Propulsé par Figment",
+        "title" : "Le token AVAX désormais disponible sur Ledger Live",
+        "description" : "Vous pouvez maintenant gérer et sécuriser vos tokens AVAX via Ledger Live.",
+        "website" : "Propulsé par Figment"
+      }
+    },
+    "stakedBalance" : "Staking",
+    "stakedBalanceTooltip" : "Montant staké auprès de validateurs.",
+    "delegation" : {
+      "header" : "Délégations",
+      "add" : "Ajouter",
+      "commission" : "Commission",
+      "validator" : "NodeID",
+      "startTime" : "Heure de début",
+      "endTime" : "Heure de fin",
+      "stakeAmount" : "Staker",
+      "potentialReward" : "Récompense potentielle",
+      "emptyState" : {
+        "description" : "Vous pouvez gagner des récompenses AVAX en déléguant vos actifs.",
+        "info" : "Fonctionnement de la délégation",
+        "delegation" : "Gagner des récompenses"
+      },
+      "notEnoughToDelegate" : "Vous devez disposer d’au moins 25 AVAX sur la P-Chain pour déléguer.",
+      "validatorStake" : "Actifs stakés via ce validateur",
+      "validatorRemainingStake" : "Disponible",
+      "flow" : {
+        "title" : "Déléguer",
+        "steps" : {
+          "starter" : {
+            "description" : "Vous pouvez gagner des récompenses en déléguant vos AVAX à un validateur.",
+            "bullet" : ["Vous gardez la propriété de vos actifs délégués.", "Déléguez avec votre appareil Ledger.", "Montant minimum de 25 AVAX requis pour staker.", "Les AVAX doivent être délégués pour un minimum de 2 semaines."]
+          },
+          "amount" : {
+            "title" : "Montant"
+          },
+          "validator" : {
+            "title" : "Validateurs",
+            "ledgerByFigmentTC" : "Conditions d’utilisation de Ledger by Figment"
+          },
+          "endDate" : {
+            "title" : "Échéance",
+            "text" : "Sélectionnez la date à laquelle cette délégation doit se terminer. La date de fin de cette délégation doit se situer entre {{minEndDate}} et {{maxEndDate}}.",
+            "label" : "Date de fin de la délégation"
+          },
+          "connectDevice" : {
+            "title" : "Appareil"
+          },
+          "confirmation" : {
+            "title" : "Confirmation",
+            "success" : {
+              "title" : "Actifs bien délégués",
+              "text" : "Le solde de votre compte sera mis à jour une fois que la blockchain aura confirmé la transaction.",
+              "cta" : "Voir les détails"
+            },
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
+          }
+        }
+      }
     }
   },
   "near" : {
@@ -5356,7 +5434,7 @@
       "description" : "Les transactions doivent être signées dans les 30 secondes. Veuillez réessayer."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Énergie inférieure à la quantité requise. Vous pourriez payer des frais allant jusqu’à 50 TRX."
+      "title" : "Énergie inférieure à la quantité requise. Vous pourriez payer des frais allant jusqu’à 50 TRX."
     },
     "PairingFailed" : {
       "title" : "Échec du couplage",
@@ -5510,6 +5588,9 @@
     "StellarBurnAddressError" : {
       "title" : "Un problème est survenu lors de l’ajout du compte Stellar"
     },
+    "AvalancheMinimumAmountError" : {
+      "title" : "Le montant minimum est de 25 AVAX"
+    },
     "HederaAddAccountError" : {
       "title" : "Votre compte n’a pas été ajouté. Veuillez réessayer."
     },
@@ -5520,6 +5601,10 @@
     "ImageLoadFromFileError" : {
       "title" : "Échec du chargement de l’image.",
       "description" : "Veuillez réessayer avec une autre image."
+    },
+    "ImageLoadFromNftError" : {
+      "title" : "Échec du chargement du NFT",
+      "description" : "Veuillez réessayer avec un autre NFT."
     },
     "ImageDownloadError" : {
       "title" : "Échec du téléchargement de l’image",
@@ -5593,6 +5678,13 @@
       "descriptionWithProductName" : "Vous devez d’abord configurer votre {{ productName }}.\nNous vous guiderons à chaque étape.",
       "goToOnboardingButton" : "Configurer mon appareil",
       "goToOnboardingButtonWithProductName" : "Configurer mon {{ productName }}"
+    },
+    "EtherscanAPIError" : {
+      "title" : "Échec de la récupération des transactions",
+      "description" : "Une erreur s’est produite avec les explorateurs. Veuillez réessayer plus tard."
+    },
+    "GasEstimationError" : {
+      "title" : "Échec de l’estimation du prix du gaz"
     }
   },
   "cryptoOrg" : {
@@ -5631,7 +5723,13 @@
         "stepLabel" : "Choisissez une image",
         "description" : "Choisir une image à définir comme (...)",
         "pickFromNftGallery" : "Sélectionner depuis ma galerie de NFT",
-        "upload" : "Télécharger à partir de mon ordinateur"
+        "myNfts" : "Mes NFT",
+        "upload" : "Télécharger à partir de mon ordinateur",
+        "chooseNft" : "Choisir un NFT",
+        "selectNft" : "Choisir ce NFT",
+        "previousSelectNft" : "Retour",
+        "nftEmptyStateTitle" : "Pas (encore) de NFT",
+        "nftEmptyStateDescription" : "Commencez par ajouter des NFT à votre wallet."
       },
       "adjust" : {
         "stepLabel" : "Ajuster l’image",
