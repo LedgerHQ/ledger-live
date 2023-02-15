@@ -23,7 +23,6 @@ import QueuedDrawer from "../../components/QueuedDrawer";
 import Close from "../../icons/Close";
 import QRcodeZoom from "../../icons/QRcodeZoom";
 import Touchable from "../../components/Touchable";
-import Button from "../../components/Button";
 import CurrencyIcon from "../../components/CurrencyIcon";
 import CopyLink from "../../components/CopyLink";
 import ShareLink from "../../components/ShareLink";
@@ -241,18 +240,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
         onModalHide={onModalHide.current}
       >
         {error ? (
-          <View style={styles.modal}>
-            <GenericErrorView error={error} />
-            <View style={styles.buttonsContainer}>
-              <Button
-                event="ReceiveRetry"
-                type="primary"
-                title={<Trans i18nKey="common.retry" />}
-                containerStyle={styles.bigButton}
-                onPress={onRetry}
-              />
-            </View>
-          </View>
+          <GenericErrorView error={error} onPrimaryPress={onRetry} />
         ) : null}
         <Touchable
           event="ReceiveClose"

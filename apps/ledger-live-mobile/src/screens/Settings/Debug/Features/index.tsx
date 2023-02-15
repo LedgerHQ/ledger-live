@@ -58,6 +58,12 @@ export default function Features() {
         onPress={() => navigation.navigate(ScreenName.DebugLottie)}
       />
       <SettingsRow
+        title="Errors"
+        desc="Easily see the rendering of errors in both modal and full page fashion"
+        iconLeft={<Icons.EmojiSadMedium size={32} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugErrors)}
+      />
+      <SettingsRow
         title="Videos"
         desc="See all video assets"
         iconLeft={<Icons.PlayMedium size={32} color="black" />}

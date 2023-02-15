@@ -13,8 +13,6 @@ import { ScreenName } from "../../../../const";
 import { TrackScreen } from "../../../../analytics";
 import LText from "../../../../components/LText";
 import Button from "../../../../components/Button";
-import RetryButton from "../../../../components/RetryButton";
-import CancelButton from "../../../../components/CancelButton";
 import GenericErrorBottomModal from "../../../../components/GenericErrorBottomModal";
 import TooltipLabel from "../../../../components/TooltipLabel";
 import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
@@ -53,10 +51,6 @@ export default function EnableAdvanced({
       transaction,
     });
   }, [navigation, route.params, account.id, parentAccount, transaction]);
-  const onBridgeErrorCancel = useCallback(() => {
-    const parent = navigation.getParent();
-    if (parent) parent.goBack();
-  }, [navigation]);
   const onBridgeErrorRetry = useCallback(() => {
     if (!transaction) return;
     setTransaction(bridge.updateTransaction(transaction, {}));
@@ -190,18 +184,7 @@ export default function EnableAdvanced({
       <GenericErrorBottomModal
         error={bridgeError}
         onClose={onBridgeErrorRetry}
-        footerButtons={
-          <>
-            <CancelButton
-              containerStyle={styles.button}
-              onPress={onBridgeErrorCancel}
-            />
-            <RetryButton
-              containerStyle={[styles.button, styles.buttonRight]}
-              onPress={onBridgeErrorRetry}
-            />
-          </>
-        }
+        onPrimaryPress={onBridgeErrorRetry}
       />
     </>
   );

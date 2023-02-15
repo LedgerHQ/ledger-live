@@ -18,8 +18,6 @@ import { ScreenName } from "../../../../const";
 import { TrackScreen } from "../../../../analytics";
 import Button from "../../../../components/Button";
 import KeyboardView from "../../../../components/KeyboardView";
-import RetryButton from "../../../../components/RetryButton";
-import CancelButton from "../../../../components/CancelButton";
 import GenericErrorBottomModal from "../../../../components/GenericErrorBottomModal";
 import AmountInput from "../../../SendFunds/AmountInput";
 import LText from "../../../../components/LText";
@@ -68,10 +66,6 @@ export default function SendAmount({
       transaction,
     });
   }, [navigation, route.params, account.id, parentAccount, transaction]);
-  const onBridgeErrorCancel = useCallback(() => {
-    const parent = navigation.getParent();
-    if (parent) parent.goBack();
-  }, [navigation]);
   const onBridgeErrorRetry = useCallback(() => {
     if (!transaction) return;
     const bridge = getAccountBridge(account, parentAccount);
@@ -152,18 +146,7 @@ export default function SendAmount({
       <GenericErrorBottomModal
         error={bridgeError}
         onClose={onBridgeErrorRetry}
-        footerButtons={
-          <>
-            <CancelButton
-              containerStyle={styles.button}
-              onPress={onBridgeErrorCancel}
-            />
-            <RetryButton
-              containerStyle={[styles.button, styles.buttonRight]}
-              onPress={onBridgeErrorRetry}
-            />
-          </>
-        }
+        onPrimaryPress={onBridgeErrorRetry}
       />
     </>
   );

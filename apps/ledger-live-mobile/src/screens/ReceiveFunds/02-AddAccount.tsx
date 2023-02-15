@@ -18,8 +18,6 @@ import { TrackScreen } from "../../analytics";
 import Button from "../../components/Button";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import LText from "../../components/LText";
-import RetryButton from "../../components/RetryButton";
-import CancelButton from "../../components/CancelButton";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import { prepareCurrency } from "../../bridge/cache";
 import AccountCard from "../../components/AccountCard";
@@ -130,11 +128,6 @@ function AddAccountsAccounts({ navigation, route }: Props) {
     }
   }, []);
 
-  const onCancel = useCallback(() => {
-    setError(null);
-    setCancelled(true);
-  }, []);
-
   const onModalHide = useCallback(() => {
     if (cancelled) {
       navigation
@@ -233,12 +226,7 @@ function AddAccountsAccounts({ navigation, route }: Props) {
       <GenericErrorBottomModal
         error={error}
         onModalHide={onModalHide}
-        footerButtons={
-          <>
-            <CancelButton flex={1} mx={8} onPress={onCancel} />
-            <RetryButton flex={1} mx={8} onPress={restartSubscription} />
-          </>
-        }
+        onPrimaryPress={restartSubscription}
       />
     </>
   );

@@ -23,8 +23,6 @@ import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import KeyboardView from "../../components/KeyboardView";
-import RetryButton from "../../components/RetryButton";
-import CancelButton from "../../components/CancelButton";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import CurrencyInput from "../../components/CurrencyInput";
 import TranslatedError from "../../components/TranslatedError";
@@ -130,12 +128,6 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
   const [bridgeErr, setBridgeErr] = useState(bridgeError);
 
   useEffect(() => setBridgeErr(bridgeError), [bridgeError]);
-
-  const onBridgeErrorCancel = useCallback(() => {
-    setBridgeErr(null);
-    const parent = navigation.getParent();
-    if (parent) parent.goBack();
-  }, [navigation]);
 
   const onBridgeErrorRetry = useCallback(() => {
     setBridgeErr(null);
@@ -323,18 +315,7 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
       <GenericErrorBottomModal
         error={bridgeErr}
         onClose={onBridgeErrorRetry}
-        footerButtons={
-          <>
-            <CancelButton
-              containerStyle={styles.button}
-              onPress={onBridgeErrorCancel}
-            />
-            <RetryButton
-              containerStyle={[styles.button, styles.buttonRight]}
-              onPress={onBridgeErrorRetry}
-            />
-          </>
-        }
+        onPrimaryPress={onBridgeErrorRetry}
       />
     </>
   );

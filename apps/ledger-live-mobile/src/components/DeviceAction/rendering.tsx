@@ -56,7 +56,6 @@ import Animation from "../Animation";
 import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
 import GenericErrorView from "../GenericErrorView";
 import Circle from "../Circle";
-import { MANAGER_TABS } from "../../const/manager";
 import { providerIcons } from "../../icons/swap/index";
 import ExternalLink from "../ExternalLink";
 import { track } from "../../analytics";
@@ -565,7 +564,7 @@ export function renderLockedDeviceError({
   const productName = device
     ? getDeviceModel(device.modelId).productName
     : null;
-
+  // TODO this should use the generic error rendering for the top part.
   return (
     <Wrapper>
       <Flex flexDirection="column" alignItems="center" alignSelf="stretch">
@@ -614,65 +613,33 @@ export function renderError({
   t,
   error,
   onRetry,
-  managerAppName,
-  navigation,
-  Icon,
-  iconColor,
   device,
 }: RawProps & {
-  navigation?: StackNavigationProp<ParamListBase>;
   error: Error;
   onRetry?: (() => void) | null;
-  managerAppName?: string;
-  Icon?: React.ComponentProps<typeof GenericErrorView>["Icon"];
-  iconColor?: string;
   device?: Device;
 }) {
-  const onPress = () => {
-    if (managerAppName && navigation) {
-      navigation.navigate(NavigatorName.Manager, {
-        screen: ScreenName.Manager,
-        params: {
-          tab: MANAGER_TABS.INSTALLED_APPS,
-          updateModalOpened: true,
-        },
-      });
-    } else if (onRetry) {
-      onRetry();
-    }
-  };
-
   // Redirects from renderError and not from DeviceActionDefaultRendering because renderError
   // can be used directly by other component
   if (error instanceof LockedDeviceError) {
     return renderLockedDeviceError({ t, onRetry, device });
   }
 
+  const productName = device ? getDeviceModel(device.modelId).productName : "";
+  const deviceName = device?.deviceName || productName || "";
+
+  const extraArgs = {
+    deviceName,
+    productName,
+  };
+
   return (
     <Wrapper>
       <GenericErrorView
         error={error}
-        withDescription
-        withIcon
-        Icon={Icon}
-        iconColor={iconColor}
-      >
-        {onRetry || managerAppName ? (
-          <ActionContainer marginBottom={0} marginTop={32}>
-            <StyledButton
-              event="DeviceActionErrorRetry"
-              type="main"
-              outline={false}
-              title={
-                managerAppName
-                  ? t("DeviceAction.button.openManager")
-                  : t("common.retry")
-              }
-              onPress={onPress}
-            />
-          </ActionContainer>
-        ) : null}
-      </GenericErrorView>
+        args={extraArgs}
+        onPrimaryPress={onRetry}
+      />
     </Wrapper>
   );
 }

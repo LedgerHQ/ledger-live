@@ -19,13 +19,11 @@ import { useSelector } from "react-redux";
 import { track, TrackScreen } from "../../analytics";
 import Alert from "../../components/Alert";
 import Button from "../../components/Button";
-import CancelButton from "../../components/CancelButton";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import KeyboardView from "../../components/KeyboardView";
 import LText from "../../components/LText";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import RecipientInput from "../../components/RecipientInput";
-import RetryButton from "../../components/RetryButton";
 import {
   BaseComposite,
   StackNavigatorProps,
@@ -101,11 +99,6 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   useEffect(() => setBridgeErr(bridgeError), [bridgeError]);
   invariant(account, "account is needed ");
   const currency = getAccountCurrency(account);
-  const onBridgeErrorCancel = useCallback(() => {
-    setBridgeErr(null);
-    const parent = navigation.getParent();
-    if (parent) parent.goBack();
-  }, [navigation]);
   const onBridgeErrorRetry = useCallback(() => {
     setBridgeErr(null);
     if (!transaction) return;
@@ -267,18 +260,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
       <GenericErrorBottomModal
         error={bridgeErr}
         onClose={onBridgeErrorRetry}
-        footerButtons={
-          <>
-            <CancelButton
-              containerStyle={styles.button}
-              onPress={onBridgeErrorCancel}
-            />
-            <RetryButton
-              containerStyle={[styles.button, styles.buttonRight]}
-              onPress={onBridgeErrorRetry}
-            />
-          </>
-        }
+        onPrimaryPress={onBridgeErrorRetry}
       />
     </>
   );

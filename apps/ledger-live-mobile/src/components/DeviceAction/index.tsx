@@ -5,18 +5,14 @@ import {
   DeviceNotOnboarded,
   LatestFirmwareVersionRequired,
 } from "@ledgerhq/live-common/errors";
-import {
-  TransportStatusError,
-  UserRefusedDeviceNameChange,
-} from "@ledgerhq/errors";
+import { TransportStatusError } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
 import {
   ParamListBase,
   useNavigation,
   useTheme,
 } from "@react-navigation/native";
-import { useTheme as useThemeFromStyledComponents } from "styled-components/native";
-import { Flex, Text, Icons } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import type { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import type { InitSellResult } from "@ledgerhq/live-common/exchange/sell/types";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -171,10 +167,6 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   request?: R;
 }): JSX.Element | null {
   const { colors, dark } = useTheme();
-  const {
-    colors: { palette },
-  } = useThemeFromStyledComponents();
-
   const dispatch = useDispatch();
   const theme: "dark" | "light" = dark ? "dark" : "light";
   const { t } = useTranslation();
@@ -444,30 +436,9 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       );
     }
 
-    if ((error as Status["error"]) instanceof UserRefusedDeviceNameChange) {
-      return renderError({
-        t,
-        navigation,
-        error,
-        onRetry,
-        colors,
-        theme,
-        iconColor: palette.neutral.c100a01,
-        Icon: () => (
-          <Icons.WarningSolidMedium size={28} color={colors.warning} />
-        ),
-        device: device ?? undefined,
-      });
-    }
-
     return renderError({
       t,
-      navigation,
       error,
-      managerAppName:
-        (error as Status["error"])?.name === "UpdateYourApp"
-          ? (error as Status["error"])?.managerAppName
-          : undefined,
       onRetry,
       colors,
       theme,
