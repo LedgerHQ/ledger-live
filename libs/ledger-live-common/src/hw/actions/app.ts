@@ -27,7 +27,7 @@ import {
   getDerivationScheme,
   getDerivationModesForCurrency,
   runDerivationScheme,
-} from "../../derivation";
+} from "@ledgerhq/coin-framework/derivation";
 import type {
   AppAndVersion,
   ConnectAppEvent,

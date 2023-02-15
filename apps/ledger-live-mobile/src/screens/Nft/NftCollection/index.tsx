@@ -58,7 +58,7 @@ const renderOperationSectionHeader = ({
   section,
 }: {
   section: SectionListData<Operation, DailyOperationsSection>;
-}) => <SectionHeader section={section} />;
+}) => <SectionHeader day={section.day} />;
 
 const NftCollection = ({ route }: NavigationProps) => {
   const navigation = useNavigation();

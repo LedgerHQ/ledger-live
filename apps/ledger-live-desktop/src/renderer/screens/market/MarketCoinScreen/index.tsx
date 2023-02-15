@@ -306,7 +306,7 @@ export default function MarketCoinScreen() {
                 </Button>
               )}
               {availableOnStake && (
-                <Button variant="color" onClick={onStake}>
+                <Button variant="color" onClick={onStake} data-test-id="market-coin-stake-button">
                   {t("accounts.contextMenu.stake")}
                 </Button>
               )}

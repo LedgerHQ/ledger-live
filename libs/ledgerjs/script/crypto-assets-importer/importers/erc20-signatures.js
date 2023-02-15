@@ -1,6 +1,6 @@
 const path = require("path");
 const Buffer = require("buffer").Buffer;
-const { readFileJSON } = require("../utils");
+const { readFileJSON, asUint4be } = require("../utils");
 const {
   getCryptoCurrencyById,
 } = require("../../../packages/cryptoassets/lib/currencies");
@@ -8,12 +8,6 @@ const {
 const inferChainId = (common, folder) =>
   getCryptoCurrencyById(path.basename(path.dirname(folder))).ethereumLikeInfo
     .chainId;
-
-const asUint4be = (n) => {
-  const b = Buffer.alloc(4);
-  b.writeUInt32BE(n);
-  return b;
-};
 
 module.exports = {
   paths: [

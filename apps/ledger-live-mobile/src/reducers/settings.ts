@@ -16,8 +16,6 @@ import type { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { CurrencySettings, SettingsState, State } from "./types";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
-// eslint-disable-next-line import/no-cycle
-import { SLIDES } from "../components/Carousel/shared";
 import { getDefaultLanguageLocale, getDefaultLocale } from "../languages";
 import type {
   SettingsAcceptSwapProviderPayload,
@@ -35,7 +33,6 @@ import type {
   SettingsRemoveStarredMarketcoinsPayload,
   SettingsSetAnalyticsPayload,
   SettingsSetAvailableUpdatePayload,
-  SettingsSetCarouselVisibilityPayload,
   SettingsSetCountervaluePayload,
   SettingsSetDiscreetModePayload,
   SettingsSetFirstConnectHasDeviceUpdatedPayload,
@@ -125,9 +122,6 @@ export const INITIAL_STATE: SettingsState = {
     size: 0,
     hash: "",
   },
-  carouselVisibility: Object.fromEntries(
-    SLIDES.map(slide => [slide.name, true]),
-  ),
   dismissedDynamicCards: [],
   discreetMode: false,
   language: getDefaultLanguageLocale(),
@@ -399,12 +393,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
   [SettingsActionTypes.SETTINGS_SET_OS_THEME]: (state, action) => ({
     ...state,
     osTheme: (action as Action<SettingsSetOsThemePayload>).payload.osTheme,
-  }),
-
-  [SettingsActionTypes.SETTINGS_SET_CAROUSEL_VISIBILITY]: (state, action) => ({
-    ...state,
-    carouselVisibility: (action as Action<SettingsSetCarouselVisibilityPayload>)
-      .payload.carouselVisibility,
   }),
 
   [SettingsActionTypes.SETTINGS_SET_DISMISSED_DYNAMIC_CARDS]: (
@@ -772,20 +760,6 @@ export const dismissedBannersSelector = (state: State) =>
   state.settings.dismissedBanners;
 export const hasAvailableUpdateSelector = (state: State) =>
   state.settings.hasAvailableUpdate;
-export const carouselVisibilitySelector = (state: State) => {
-  const settingValue = state.settings.carouselVisibility;
-
-  if (typeof settingValue === "number") {
-    /**
-     * Ensure correct behavior when using the legacy setting value from LLM v2:
-     * We show all the slides as they are different from the ones in V2.
-     * Users will then be able to hide them one by one if they want.
-     */
-    return Object.fromEntries(SLIDES.map(slide => [slide.name, true]));
-  }
-
-  return settingValue;
-};
 export const dismissedDynamicCardsSelector = (state: State) =>
   state.settings.dismissedDynamicCards;
 export const discreetModeSelector = (state: State): boolean =>

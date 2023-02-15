@@ -22,7 +22,7 @@ if (!GIT_REVISION) {
 
 const parsed = prerelease(pkg.version);
 let PRERELEASE = false;
-let CHANNEL;
+let CHANNEL = null;
 if (parsed) {
   PRERELEASE = !!(parsed && parsed.length);
   CHANNEL = parsed[0];
@@ -45,7 +45,7 @@ const buildMainEnv = (mode, argv) => {
     __GIT_REVISION__: JSON.stringify(GIT_REVISION),
     __SENTRY_URL__: JSON.stringify(SENTRY_URL || null),
     // See: https://github.com/node-formidable/formidable/issues/337
-    "global.GENTLY": false,
+    "global.GENTLY": JSON.stringify(false),
     __PRERELEASE__: JSON.stringify(PRERELEASE),
     __CHANNEL__: JSON.stringify(CHANNEL),
   };
@@ -91,6 +91,17 @@ const buildViteConfig = argv =>
         "@ledgerhq/react-ui": path.join(
           path.dirname(require.resolve("@ledgerhq/react-ui/package.json")),
           "lib",
+        ),
+        // This is not the best way to do this, but it works for now.
+        // The problem is that vitejs has trouble resolving everything under the /bridge subfolder.
+        // Even though the files are there, it can't find them - and it manages to resolve other paths just fine.
+        "@ledgerhq/coin-framework": path.join(
+          path.resolve(__dirname, "..", "..", "..", "..", "libs", "coin-framework"),
+          "lib-es",
+        ),
+        "@ledgerhq/coin-polkadot": path.join(
+          path.resolve(__dirname, "..", "..", "..", "..", "libs", "coin-polkadot"),
+          "lib-es",
         ),
         electron: path.join(__dirname, "electronRendererStubs.js"),
       },

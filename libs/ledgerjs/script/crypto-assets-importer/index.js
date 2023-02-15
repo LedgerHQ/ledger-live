@@ -2,7 +2,7 @@ const axios = require("axios");
 const fs = require("fs");
 const path = require("path");
 
-const importers = [
+const globalImporters = [
   require("./importers/ethereum-plugins"),
   require("./importers/eip712"),
   require("./importers/erc20-signatures"),
@@ -13,6 +13,7 @@ const importers = [
   require("./importers/polygontokensfull"),
   require("./importers/currenciesExchange"),
 ];
+const evmByChainImporter = require("./evm");
 
 const outputFolder = path.join(__dirname, "../../packages/cryptoassets/src");
 const inputFolder = process.argv[2];
@@ -27,7 +28,7 @@ const toJSON = process.argv[3] === "true";
 axios
   .get("https://countervalues.live.ledger.com/v2/tickers")
   .then(({ data: countervaluesTickers }) => {
-    importers.forEach((imp) => {
+    globalImporters.forEach((imp) => {
       const outputJS = path.join(
         outputFolder,
         imp.output ? imp.output(toJSON) : imp.path + toJSON ? ".json" : ".ts"
@@ -60,6 +61,9 @@ axios
           fs.writeFileSync(outputJS, imp.outputTemplate(data, toJSON), "utf-8");
         });
     });
+
+    // EVM importers will create the definition files and signatures for all ERC20s by chain ID
+    evmByChainImporter(inputFolder, outputFolder);
   });
 
 async function promiseAllBatched(batch, items, fn) {

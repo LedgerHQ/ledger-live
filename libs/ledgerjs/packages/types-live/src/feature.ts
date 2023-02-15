@@ -11,6 +11,7 @@ export type FeatureId =
   | "deviceInitialApps"
   | "buyDeviceFromLive"
   | "ptxSmartRouting"
+  | "currencyAvalancheCChain"
   | "currencyOsmosis"
   | "currencyOsmosisMobile"
   | "currencyFantom"
@@ -26,8 +27,10 @@ export type FeatureId =
   | "currencyFlareMobile"
   | "ptxSmartRoutingMobile"
   | "mockFeature"
+  | "multibuyNavigation"
   | "syncOnboarding"
   | "walletConnectLiveApp"
+  | "walletConnectEntryPoint"
   | "customImage"
   | "referralProgramDiscoverCard"
   | "referralProgramDesktopBanner"
@@ -47,6 +50,7 @@ export type FeatureId =
   | "stakePrograms"
   | "portfolioExchangeBanner"
   | "objkt"
+  | "stakeAccountBanner"
   | "newsfeedPage";
 
 /**  We use objects instead of direct booleans for potential future improvements

@@ -15,11 +15,12 @@ const SeedWarning = ({ deviceModelId }: { deviceModelId: DeviceModelId }) => {
     Linking.openURL(urls.contact);
   }, []);
 
+  const onClose = useCallback(() => {
+    setIsOpened(false);
+  }, []);
+
   return (
-    <QueuedDrawer
-      isRequestingToBeOpened={isOpened}
-      onClose={() => setIsOpened(false)}
-    >
+    <QueuedDrawer isRequestingToBeOpened={isOpened} onClose={onClose}>
       <Flex alignItems="center">
         <IconBox
           Icon={Icons.WarningMedium}

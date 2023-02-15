@@ -1,12 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import {
-  CardMedium,
-  SettingsMedium,
-  WarningMedium,
-} from "@ledgerhq/native-ui/assets/icons";
+import { CardMedium, SettingsMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import Touchable from "../../components/Touchable";
@@ -17,13 +12,10 @@ import { track } from "../../analytics";
 import useDynamicContent from "../../dynamicContent/dynamicContent";
 import Notifications from "../../icons/Notifications";
 
-function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
+const NotificationsButton = () => {
   const navigation = useNavigation();
   const { colors } = useTheme();
-
   const { notificationCards } = useDynamicContent();
-  const { incidents } = useFilteredServiceStatus();
-  const { t } = useTranslation();
 
   const onNotificationButtonPress = useCallback(() => {
     track("button_clicked", {
@@ -35,11 +27,28 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
     });
   }, [navigation]);
 
-  const onStatusErrorButtonPress = useCallback(() => {
-    navigation.navigate(NavigatorName.NotificationCenter, {
-      screen: ScreenName.NotificationCenterStatus,
-    });
-  }, [navigation]);
+  const notificationsCount = useMemo(
+    () =>
+      notificationCards.length - notificationCards.filter(n => n.viewed).length,
+    [notificationCards],
+  );
+  return (
+    <Touchable onPress={onNotificationButtonPress}>
+      <Notifications
+        size={24}
+        color={colors.neutral.c100}
+        dotColor={colors.error.c80}
+        isOn={notificationsCount > 0}
+      />
+    </Touchable>
+  );
+};
+
+function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
+  const navigation = useNavigation();
+
+  const { t } = useTranslation();
+
   const onSettingsButtonPress = useCallback(() => {
     track("button_clicked", {
       button: "Settings",
@@ -54,12 +63,6 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
       name: "CL Card Powered by Ledger",
     });
   }, [navigation]);
-
-  const notificationsCount = useMemo(
-    () =>
-      notificationCards.length - notificationCards.filter(n => n.viewed).length,
-    [notificationCards],
-  );
 
   return (
     <Flex
@@ -86,13 +89,6 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
           {t("tabs.portfolio")}
         </Text>
         {!hidePortfolio && <DiscreetModeButton size={20} />}
-        {incidents.length > 0 && (
-          <Flex pl={2}>
-            <Touchable onPress={onStatusErrorButtonPress}>
-              <WarningMedium size={24} color={"warning.c100"} />
-            </Touchable>
-          </Flex>
-        )}
       </Flex>
       <Flex flexDirection="row">
         <Flex mr={7}>
@@ -108,14 +104,7 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
           </Touchable>
         </Flex>
         <Flex mr={7}>
-          <Touchable onPress={onNotificationButtonPress}>
-            <Notifications
-              size={24}
-              color={colors.neutral.c100}
-              dotColor={colors.error.c80}
-              isOn={notificationsCount > 0}
-            />
-          </Touchable>
+          <NotificationsButton />
         </Flex>
         <Touchable onPress={onSettingsButtonPress} testID="settings-icon">
           <SettingsMedium size={24} color={"neutral.c100"} />

@@ -56,9 +56,16 @@ const StepFooter: React.FC<Props> = props => {
 
   if (!showPrevious && !showNext) return null;
   return (
-    <Flex flexDirection="column" alignSelf="stretch" mx={-16} mb={-5}>
+    <Flex flexDirection="column" alignSelf="stretch">
       <Divider variant="light" />
-      <Flex alignSelf="stretch" flexDirection="row" justifyContent="space-between" px={16} py={4}>
+      <Flex
+        px={12}
+        alignSelf="stretch"
+        flexDirection="row"
+        justifyContent="space-between"
+        pt={4}
+        pb={1}
+      >
         {showPrevious ? (
           <Button
             variant="main"

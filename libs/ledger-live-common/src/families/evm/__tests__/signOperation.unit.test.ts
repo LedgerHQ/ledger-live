@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import signOperation, {
   applyEIP155,
   getSerializedTransaction,
@@ -10,10 +10,10 @@ import { Transaction as EvmTransaction } from "../types";
 import * as Device from "../../../hw/deviceAccess";
 import { getEstimatedFees } from "../logic";
 import { makeAccount } from "../testUtils";
-import * as API from "../api/rpc.common";
+import * as rpcAPI from "../api/rpc.common";
 
 const currency: CryptoCurrency = {
-  ...findCryptoCurrencyById("ethereum")!,
+  ...getCryptoCurrencyById("ethereum"),
   ethereumLikeInfo: {
     chainId: 1,
     rpc: "my-rpc.com",
@@ -57,17 +57,25 @@ const transactionEIP1559: EvmTransaction = {
 const estimatedFees = getEstimatedFees(transactionEIP1559);
 
 // Mocking here in order to be ack by the signOperation.ts file
-jest.mock(
-  "@ledgerhq/hw-app-eth",
-  () =>
-    class {
-      signTransaction = () => ({
-        r: "123",
-        s: "abc",
-        v: "27",
-      });
-    }
-);
+jest.mock("@ledgerhq/hw-app-eth", () => ({
+  __esModule: true,
+  default: class {
+    signTransaction = () => ({
+      r: "123",
+      s: "abc",
+      v: "27",
+    });
+  },
+  ledgerService: {
+    resolveTransaction: () =>
+      Promise.resolve({
+        erc20Tokens: [],
+        nfts: [],
+        externalPlugin: [],
+        plugin: [],
+      }),
+  },
+}));
 
 describe("EVM Family", () => {
   describe("signOperation.ts", () => {
@@ -79,7 +87,7 @@ describe("EVM Family", () => {
               job({})
         );
         jest
-          .spyOn(API, "getTransactionCount")
+          .spyOn(rpcAPI, "getTransactionCount")
           .mockImplementation(async () => 1);
       });
 
@@ -101,7 +109,7 @@ describe("EVM Family", () => {
             } = obs;
 
             expect(operation).toEqual({
-              id: "js:1:ethereum:0x7265a60acAeaf3A5E18E10BC1128e72F27B2e176:--OUT",
+              id: "js:2:ethereum:0x7265a60acAeaf3A5E18E10BC1128e72F27B2e176:--OUT",
               hash: "",
               type: "OUT",
               value: new BigNumber(100).plus(estimatedFees),
@@ -111,7 +119,7 @@ describe("EVM Family", () => {
               senders: [account.freshAddress],
               recipients: [transactionEIP1559.recipient],
               accountId: account.id,
-              transactionSequenceNumber: 0,
+              transactionSequenceNumber: 1,
               date: expect.any(Date),
               extra: {},
             });
@@ -127,7 +135,7 @@ describe("EVM Family", () => {
     describe("getSerializedTransaction", () => {
       beforeAll(() => {
         jest
-          .spyOn(API, "getTransactionCount")
+          .spyOn(rpcAPI, "getTransactionCount")
           .mockImplementation(() => Promise.resolve(0));
       });
 
@@ -169,7 +177,7 @@ describe("EVM Family", () => {
       const possibleHexV = [
         "00", // 0 - ethereum + testnets should always retrun 0/1 from hw-app-eth
         "01", // 1
-        "1b", // 27 - type 0 transactions from other chains (when chain id > 109) shoud always return 27/28
+        "1b", // 27 - type 0 transactions from other chains (when chain id > 109) should always return 27/28
         "1c", // 28
       ];
 

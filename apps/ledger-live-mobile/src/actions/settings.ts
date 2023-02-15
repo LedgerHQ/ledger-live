@@ -36,7 +36,6 @@ import {
   SettingsRemoveStarredMarketcoinsPayload,
   SettingsSetAnalyticsPayload,
   SettingsSetAvailableUpdatePayload,
-  SettingsSetCarouselVisibilityPayload,
   SettingsSetLastSeenCustomImagePayload,
   SettingsSetCountervaluePayload,
   SettingsSetDiscreetModePayload,
@@ -266,14 +265,6 @@ export const dismissBanner = (bannerId: string) =>
   dismissBannerAction({
     bannerId,
   });
-
-const setCarouselVisibilityAction =
-  createAction<SettingsSetCarouselVisibilityPayload>(
-    SettingsActionTypes.SETTINGS_SET_CAROUSEL_VISIBILITY,
-  );
-export const setCarouselVisibility = (carouselVisibility: {
-  [key: string]: boolean;
-}) => setCarouselVisibilityAction({ carouselVisibility });
 
 const setDismissedDynamicCardsAction =
   createAction<SettingsSetDismissedDynamicCardsPayload>(

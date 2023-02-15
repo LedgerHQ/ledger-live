@@ -210,7 +210,7 @@ const WebPlatformTopBar = ({
         <>
           <TitleContainer>
             <LiveAppIcon name={name} icon={icon || undefined} size={20} />
-            <ItemContent>{name}</ItemContent>
+            <ItemContent data-test-id="live-app-title">{name}</ItemContent>
           </TitleContainer>
           <Separator />
         </>

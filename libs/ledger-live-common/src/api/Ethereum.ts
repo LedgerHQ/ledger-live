@@ -346,7 +346,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       },
       (currency) => currency.id,
       {
-        maxAge: 30 * 1000,
+        ttl: 30 * 1000,
       }
     ),
 

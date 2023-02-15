@@ -10,7 +10,7 @@ import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
 import { StackNavigatorNavigation } from "../../../../components/RootNavigator/types/helpers";
 import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
 
-export default function Debugging() {
+export default function Features() {
   const navigation =
     useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
   return (

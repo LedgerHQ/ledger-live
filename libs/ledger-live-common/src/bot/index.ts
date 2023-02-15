@@ -34,7 +34,7 @@ import {
 } from "../countervalues/logic";
 import { getPortfolio } from "../portfolio/v2";
 import { Account } from "@ledgerhq/types-live";
-import { getContext } from "./bot-test-context";
+import { getContext } from "@ledgerhq/coin-framework/bot/bot-test-context";
 import { Transaction } from "../generated/types";
 import { sha256 } from "../crypto";
 

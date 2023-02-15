@@ -56,7 +56,7 @@ import type {
   TransactionCommon,
 } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "../generated/types";
-import { botTest } from "./bot-test-context";
+import { botTest } from "@ledgerhq/coin-framework/bot/bot-test-context";
 import { retryWithDelay } from "../rxjs/operators/retryWithDelay";
 
 let appCandidates;
@@ -825,6 +825,7 @@ export function autoSignTransaction<T extends Transaction>({
   account,
   transaction,
   status,
+  disableStrictStepValueValidation,
 }: {
   transport: any;
   deviceAction: DeviceAction<T, any>;
@@ -832,6 +833,7 @@ export function autoSignTransaction<T extends Transaction>({
   account: Account;
   transaction: T;
   status: TransactionStatus;
+  disableStrictStepValueValidation?: boolean;
 }): OperatorFunction<SignOperationEvent, SignOperationEvent> {
   let sub;
   let observer;
@@ -881,6 +883,7 @@ export function autoSignTransaction<T extends Transaction>({
                   transport,
                   state,
                   status,
+                  disableStrictStepValueValidation,
                 });
               } catch (e) {
                 o.error(e);

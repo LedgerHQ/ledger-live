@@ -32,6 +32,7 @@ export const getAccountShape: GetAccountShape = async (
 ) => {
   const { currency, initialAccount, derivationMode } = infoInput;
   let { address } = infoInput;
+
   address = eip55.encode(address);
   const accountId = encodeAccountId({
     type: "js",
@@ -580,18 +581,27 @@ const fetchCurrentBlock = ((perCurrencyId) => (currency) => {
   return f();
 })({});
 
-// FIXME we need to figure out how to optimize this
-// but nothing can easily be done until we have a better api
+// FIXME : We need to use the pagination token from backend
 const fetchAllTransactions = async (api: API, address, blockHeight) => {
   let getTransactionsResult: Tx[];
   let txs: Tx[] = [];
   let maxIteration = 20; // safe limit
+  let lastRequestTxHash: string | undefined;
 
   do {
     getTransactionsResult = await api.getTransactions(address, blockHeight);
     if (getTransactionsResult.length === 0) return txs;
+    if (
+      lastRequestTxHash &&
+      getTransactionsResult[getTransactionsResult.length - 1].hash ===
+        lastRequestTxHash
+    ) {
+      return txs;
+    }
+
     txs = txs.concat(getTransactionsResult);
     blockHeight = txs[txs.length - 1].block?.height;
+    lastRequestTxHash = txs[txs.length - 1].hash;
 
     if (!blockHeight) {
       log("ethereum", "block.height missing!");

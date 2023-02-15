@@ -158,6 +158,7 @@ export default function SelectDevice({ onSelect, stopBleScanning }: Props) {
   const onAddNewPress = useCallback(() => setIsAddNewDrawerOpen(true), []);
 
   const openBlePairingFlow = useCallback(() => {
+    setIsAddNewDrawerOpen(false);
     setIsPairingDevices(true);
   }, []);
 
@@ -167,6 +168,8 @@ export default function SelectDevice({ onSelect, stopBleScanning }: Props) {
   }, []);
 
   const onSetUpNewDevice = useCallback(() => {
+    setIsAddNewDrawerOpen(false);
+
     navigation.navigate(NavigatorName.BaseOnboarding, {
       screen: NavigatorName.Onboarding,
       params: {
