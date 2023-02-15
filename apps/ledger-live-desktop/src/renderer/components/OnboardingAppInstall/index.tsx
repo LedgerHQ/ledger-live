@@ -17,7 +17,7 @@ const fallbackDefaultAppsToInstall = ["Bitcoin", "Ethereum", "Polygon"];
 type Props = {
   device: Device | null | undefined;
   /**
-   * Optional prop that will overload the apps to install if present
+   * Optional prop that will override the apps to install if present
    */
   deviceToRestore?: DeviceModelInfo | null | undefined;
   onComplete: () => void;
