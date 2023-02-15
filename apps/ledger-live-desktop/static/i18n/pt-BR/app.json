@@ -24,14 +24,14 @@
       }
     },
     "catalog" : {
-      "title" : "Discover",
+      "title" : "Explorar",
       "branch" : {
         "soon" : "em breve",
         "experimental" : "experimental",
         "debug" : "debugar"
       },
       "banner" : {
-        "title" : "Descubra nosso Catálogo Live de aplicativos",
+        "title" : "Explore nosso Catálogo Live de aplicativos",
         "description" : "Estamos trabalhando duro para oferecer um acesso seguro ao mundo dos NFTs, DeFi e muito mais no Ledger Live!"
       },
       "twitterBanner" : {
@@ -217,7 +217,7 @@
     "exchange" : "Comprar / Vender",
     "swap" : "Trocar",
     "lend" : "Emprestar",
-    "catalog" : "Discover",
+    "catalog" : "Explorar",
     "market" : "Mercado"
   },
   "stars" : {
@@ -394,10 +394,10 @@
     "title" : "Trocar",
     "titleCrypto" : "Trocar {{currency}}",
     "whatIsSwap" : "O que é Troca (Swap)",
-    "decentralizedSwapAvailable" : "Para algumas transações, você pode considerar fazer trocas (swap) em protocolos descentralizados. Descubra o <0>ParaSwap</0> e o <1>1inch</1>.",
+    "decentralizedSwapAvailable" : "Para algumas transações, considere usar corretoras descentralizadas. Descubra o <0>ParaSwap</0> e o <1>1inch</1>.",
     "paraswap" : {
       "cta" : " Confira",
-      "description" : "Procurando pelo Paraswap? Ele foi movido para a aba Discover."
+      "description" : "Procurando pelo ParaSwap? Ele foi movido para a aba Explorar."
     },
     "tabs" : {
       "exchange" : "Negociar",
@@ -824,7 +824,20 @@
       "delegation" : {
         "title" : "Caso você não saiba...",
         "description" : "O validador da Ledger faz staking do seu {{asset}} por uma comissão menor que {{commission}}%.",
-        "cta" : "Faça staking com a Ledger"
+        "cta" : "Faça staking com a Ledger",
+        "linkText" : "Saiba Mais",
+        "ethereum" : {
+          "lido" : {
+            "title" : "Caso você não saiba...",
+            "description" : "Faça staking de Ethereum com Lido e ganhe recompensas diariamente. Sem período de bloqueio. Sem depósito mínimo.",
+            "cta" : "Fazer staking com Lido"
+          },
+          "kiln" : {
+            "title" : "Não se limite ao HODL. Aumente seus ETH",
+            "description" : "Tem mais do que 32 ETH? Receba recompensas passivas fazendo staking dos seus ETH em segurança com Kiln.",
+            "cta" : "Fazer staking com Kiln"
+          }
+        }
       }
     }
   },
@@ -1399,7 +1412,7 @@
         "label" : "Populares"
       },
       "earn" : {
-        "title" : "Ganhar",
+        "title" : "Aplicar",
         "description" : "Cresça suas criptos com a Ledger"
       }
     }
@@ -3472,6 +3485,71 @@
       "providerLink" : "Saiba mais sobre {{provider}}"
     }
   },
+  "avalanchepchain" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Powered by Figment",
+        "moreInfo" : "Mais informações",
+        "drawerTitle" : "Powered by Figment",
+        "title" : "O token AVAX agora está disponível no Ledger Live",
+        "description" : "Agora você pode começar a gerenciar e proteger seus tokens AVAX pelo Ledger Live.",
+        "website" : "Powered by Figment"
+      }
+    },
+    "stakedBalance" : "Staking",
+    "stakedBalanceTooltip" : "Quantia aplicada em validadores.",
+    "delegation" : {
+      "header" : "Delegações",
+      "add" : "Adicionar",
+      "commission" : "Comissão",
+      "validator" : "NodeID",
+      "startTime" : "Horário de início",
+      "endTime" : "Horário de término",
+      "stakeAmount" : "Aplicar",
+      "potentialReward" : "Recompensa Potencial",
+      "emptyState" : {
+        "description" : "Você pode ganhar recompensas AVAX delegando seus ativos.",
+        "info" : "Como funciona a Delegação",
+        "delegation" : "Receber recompensas"
+      },
+      "notEnoughToDelegate" : "Você deve ter pelo menos 25 AVAX disponíveis na cadeia P para se tornar um delegador.",
+      "validatorStake" : "Aplicação do Validador",
+      "validatorRemainingStake" : "Disponível",
+      "flow" : {
+        "title" : "Delegar",
+        "steps" : {
+          "starter" : {
+            "description" : "Você pode ganhar recompensas delegando seus ativos AVAX a um validador.",
+            "bullet" : ["Você continua tendo posse dos ativos delegados", "Delegar usando seu dispositivo Ledger", "É necessário o mínimo de 25 AVAX para fazer staking", "AVAX precisa ser delegado por um mínimo de 2 semanas"]
+          },
+          "amount" : {
+            "title" : "Quantia"
+          },
+          "validator" : {
+            "title" : "Validadores",
+            "ledgerByFigmentTC" : "Ledger by Figment T&Cs"
+          },
+          "endDate" : {
+            "title" : "Data de término",
+            "text" : "Selecione um horário para que essa delegação termine. A data final para essa delegação deve ser entre {{minEndDate}} e {{maxEndDate}}.",
+            "label" : "Data de término da delegação"
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmação",
+            "success" : {
+              "title" : "Você delegou seus ativos com sucesso",
+              "text" : "O saldo da sua conta será atualizado quando a blockchain confirmar a transação.",
+              "cta" : "Ver detalhes"
+            },
+            "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+          }
+        }
+      }
+    }
+  },
   "near" : {
     "account" : {
       "stakedBalance" : "Saldo aplicado",
@@ -5510,6 +5588,9 @@
     "StellarBurnAddressError" : {
       "title" : "Ocorreu um problema ao tentar adicionar uma conta Stellar"
     },
+    "AvalancheMinimumAmountError" : {
+      "title" : "A quantia mínima é de 25 AVAX"
+    },
     "HederaAddAccountError" : {
       "title" : "Sua conta não foi adicionada. Tente Novamente."
     },
@@ -5520,6 +5601,10 @@
     "ImageLoadFromFileError" : {
       "title" : "Falha no carregamento da imagem do arquivo",
       "description" : "Tente novamente com outra imagem"
+    },
+    "ImageLoadFromNftError" : {
+      "title" : "Falha no carregamento da imagem do NFT",
+      "description" : "Tente novamente com outro NFT"
     },
     "ImageDownloadError" : {
       "title" : "Falha m baixar a imagem",
@@ -5593,6 +5678,13 @@
       "descriptionWithProductName" : "Você precisa configurar sua {{ productName }} primeiro.\nVamos guiar você pelo processo de configuração.",
       "goToOnboardingButton" : "Configurar meu dispositivo",
       "goToOnboardingButtonWithProductName" : "Configurar minha {{ productName }}"
+    },
+    "EtherscanAPIError" : {
+      "title" : "Falha em buscar transações",
+      "description" : "Ocorreu um erro inesperado com os exploradores. Tente novamente mais tarde"
+    },
+    "GasEstimationError" : {
+      "title" : "Falha em estimar o gás"
     }
   },
   "cryptoOrg" : {
@@ -5631,7 +5723,13 @@
         "stepLabel" : "Escolha uma imagem",
         "description" : "Escolha uma imagem para definir como (...)",
         "pickFromNftGallery" : "Selecionar na minha galeria de NFTs",
-        "upload" : "Carregar do meu computador"
+        "myNfts" : "Meus NFTs",
+        "upload" : "Carregar do meu computador",
+        "chooseNft" : "Escolha um NFT",
+        "selectNft" : "Escolher NFT",
+        "previousSelectNft" : "voltar",
+        "nftEmptyStateTitle" : "Sem NFTs para mostrar ainda",
+        "nftEmptyStateDescription" : "Comece adicionando NFTs à sua carteira."
       },
       "adjust" : {
         "stepLabel" : "Ajustar imagem",
