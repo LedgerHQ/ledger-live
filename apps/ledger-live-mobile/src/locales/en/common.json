@@ -1502,25 +1502,20 @@
     "stepProtect": {
       "bullets": {
         "0": {
-          "title": "Browse ",
-          "label": "Learn how to interact with your device by reading the on-screen instructions."
+          "title": "Select “Restore”",
+          "label": "Press both buttons simultaneously to select."
         },
         "1": {
-          "title": "Select “Restore”",
-          "label": "Press both buttons simultaneously to validate the selection."
-        },
-        "2": {
-          "title": "Select “Restore with Protect” mode",
-          "label": "Press both buttons simultaneously to validate the selection."
+          "title": "Select “Restore using Ledger Recover”",
+          "label": "Press both buttons simultaneously to select."
         }
       },
       "nextStep": "Continue",
       "extraInfo": {
-        "tooltip": "Cannot see it on my Ledger",
-        "title": "Why can I not see Restore with Protect on my Ledger?",
-        "desc1": "The most probable option is that your device is not compatible with Protect. No worries, we are here to guide you on how to make it work.",
-        "desc2": "Please contact us through and choose \"My Ledger doesn't display Restore with Protect\", we got you covered.",
-        "cta": "Go through manual steps",
+        "tooltip": "I don't see 'Restore using Ledger Recover'",
+        "title": "The OS on your Ledger Nano X needs to be updated",
+        "desc": "You can try updating the OS or contact Ledger support for assistance.",
+        "cta": "Learn how to update",
         "supportLink": "Contact Ledger Support"
       }
     },
