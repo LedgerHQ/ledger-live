@@ -7,11 +7,11 @@ import { InAppBrowser } from "react-native-inappbrowser-reborn";
 import { useTranslation } from "react-i18next";
 import { TrackScreen } from "../../analytics";
 import { CryptopanicNewsWithMetadata } from "../../hooks/newsfeed/cryptopanicApi";
-import FormatDate from "../../components/FormatDate";
 import { inAppBrowserDefaultParams } from "../../components/InAppBrowser";
 import { useCryptopanicPosts } from "../../hooks/newsfeed/useCryptopanicPosts";
 import CryptopanicIcon from "../../icons/Cryptopanic";
 import Button from "../../components/wrappedUi/Button";
+import FormatRelativeTime from "../../components/FormatRelativeTime";
 
 const keyExtractor = (item: CryptopanicNewsWithMetadata) => item.slug;
 
@@ -56,7 +56,7 @@ function NewsfeedPage() {
           tag={
             <>
               {item.source.title} •{" "}
-              <FormatDate date={new Date(item.published_at)} withHoursMinutes />
+              <FormatRelativeTime date={new Date(item.published_at)} />
             </>
           }
           title={item.title}
