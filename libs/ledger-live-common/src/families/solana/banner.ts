@@ -48,19 +48,19 @@ export function getAccountBannerState(
 
   // Find user current worst validator (default validator is ledger)
   let worstValidator = ledgerValidator;
-  for (let i = 0; i < delegations.length; i++) {
-    const validatorAdress = delegations[i]?.delegation?.voteAccAddr;
+  for (const delegation of delegations) {
+    const validatorAdress = delegation.delegation?.voteAccAddr;
     const validator = validators.find(
       (validator) => validator.voteAccount === validatorAdress
     );
-    const actions = stakeActions(delegations[i]);
+    const actions = stakeActions(delegation);
     const isValidRedelegation =
       validator &&
       validatorAdress !== ledgerValidator.voteAccount &&
       worstValidator.commission <= validator.commission &&
       actions.includes("deactivate");
     if (isValidRedelegation) {
-      stakeAccAddr = delegations[i].stakeAccAddr;
+      stakeAccAddr = delegation.stakeAccAddr;
       worstValidator = validator;
     }
   }
