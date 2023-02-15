@@ -20,12 +20,10 @@ import { useSelector } from "react-redux";
 import { Text } from "@ledgerhq/native-ui";
 import { TrackScreen } from "../../../analytics";
 import Button from "../../../components/Button";
-import CancelButton from "../../../components/CancelButton";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import ExternalLink from "../../../components/ExternalLink";
 import GenericErrorBottomModal from "../../../components/GenericErrorBottomModal";
 import KeyboardView from "../../../components/KeyboardView";
-import RetryButton from "../../../components/RetryButton";
 import Touchable from "../../../components/Touchable";
 import { urls } from "../../../config/urls";
 import { ScreenName } from "../../../const";
@@ -107,12 +105,6 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
 
   const [bridgeErr, setBridgeErr] = useState(bridgeError);
   useEffect(() => setBridgeErr(bridgeError), [bridgeError]);
-
-  const onBridgeErrorCancel = useCallback(() => {
-    setBridgeErr(null);
-    const parent = navigation.getParent();
-    if (parent) parent.goBack();
-  }, [navigation]);
 
   const onBridgeErrorRetry = useCallback(() => {
     setBridgeErr(null);
@@ -219,18 +211,7 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
       <GenericErrorBottomModal
         error={bridgeErr}
         onClose={onBridgeErrorRetry}
-        footerButtons={
-          <>
-            <CancelButton
-              containerStyle={styles.button}
-              onPress={onBridgeErrorCancel}
-            />
-            <RetryButton
-              containerStyle={[styles.button, styles.buttonRight]}
-              onPress={onBridgeErrorRetry}
-            />
-          </>
-        }
+        onPrimaryPress={onBridgeErrorRetry}
       />
     </>
   );

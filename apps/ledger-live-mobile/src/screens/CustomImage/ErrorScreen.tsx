@@ -58,7 +58,7 @@ const ErrorScreen = ({ route }: NavigationProps) => {
       />
       <Flex flex={1} justifyContent="center" alignSelf="center" p={5}>
         <Flex flex={1} justifyContent="center">
-          <GenericErrorView error={error} hasExportLogButton={false} />
+          <GenericErrorView error={error} />
         </Flex>
         <Button
           mb={5}

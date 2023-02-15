@@ -1,8 +1,7 @@
 import React, { ComponentProps, useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Image } from "react-native";
-import { Flex, Icons } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { Flex } from "@ledgerhq/native-ui";
 import withRemountableWrapper from "@ledgerhq/live-common/hoc/withRemountableWrapper";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { createAction } from "@ledgerhq/live-common/hw/actions/staxLoadImage";
@@ -17,11 +16,9 @@ import {
 } from "../actions/settings";
 import { DeviceActionDefaultRendering } from "./DeviceAction";
 import { ImageSourceContext } from "./CustomImage/FramedImage";
-import { renderError } from "./DeviceAction/rendering";
 import CustomImageBottomModal from "./CustomImage/CustomImageBottomModal";
-import Button from "./wrappedUi/Button";
-import Link from "./wrappedUi/Link";
 import { screen, TrackScreen } from "../analytics";
+import GenericErrorView from "./GenericErrorView";
 
 type Props = {
   device: Device;
@@ -39,15 +36,6 @@ type Props = {
 };
 
 const analyticsScreenNameRefusedOnStax = "Lock screen cancelled on Ledger Stax";
-const analyticsRefusedOnStaxUploadAnotherEventProps = {
-  button: "Upload another image",
-};
-const analyticsRefusedOnStaxDoThisLaterEventProps = {
-  button: "Do this later",
-};
-const analyticsErrorTryAgainEventProps = {
-  button: "Try again",
-};
 const action = createAction(loadImage);
 
 const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
@@ -55,13 +43,12 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
   hexImage,
   onStart,
   onResult,
-  onSkip,
+  // onSkip, // TODO it's not up to the error screen to handle the skip
   source,
   remountMe,
 }) => {
   const commandRequest = hexImage;
 
-  const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const status = action?.useHook(device, commandRequest);
@@ -116,50 +103,21 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
       : "Error: " + error.name
     : undefined;
 
+  const extraErrorArgs = {
+    deviceName: device.deviceName || "",
+    modelId: device.modelId,
+  };
+
   return (
     <ImageSourceContext.Provider value={{ source }}>
       {trackScreenName ? <TrackScreen category={trackScreenName} /> : null}
       <Flex flexDirection="column" flex={1} alignSelf="stretch">
         {isError ? (
-          <Flex flex={1}>
-            {renderError({
-              t,
-              error,
-              device,
-              ...(isRefusedOnStaxError
-                ? { Icon: Icons.CircledAlertMedium, iconColor: "warning.c100" }
-                : {}),
-            })}
-            {}
-            <Button
-              size="large"
-              type="main"
-              outline={false}
-              onPress={handleRetry}
-              event="button_clicked"
-              eventProperties={
-                isRefusedOnStaxError
-                  ? analyticsRefusedOnStaxUploadAnotherEventProps
-                  : analyticsErrorTryAgainEventProps
-              }
-            >
-              {isRefusedOnStaxError
-                ? t("customImage.uploadAnotherImage")
-                : t("common.retry")}
-            </Button>
-            {isRefusedOnStaxError ? (
-              <Flex py={7}>
-                <Link
-                  size="large"
-                  onPress={onSkip}
-                  event="button_clicked"
-                  eventProperties={analyticsRefusedOnStaxDoThisLaterEventProps}
-                >
-                  {t("customImage.doThisLater")}
-                </Link>
-              </Flex>
-            ) : null}
-          </Flex>
+          <GenericErrorView
+            error={error}
+            args={extraErrorArgs}
+            onPrimaryPress={handleRetry}
+          />
         ) : (
           <DeviceActionDefaultRendering
             status={status}

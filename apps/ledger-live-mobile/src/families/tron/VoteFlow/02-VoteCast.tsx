@@ -21,8 +21,6 @@ import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
 import Button from "../../../components/Button";
-import RetryButton from "../../../components/RetryButton";
-import CancelButton from "../../../components/CancelButton";
 import GenericErrorBottomModal from "../../../components/GenericErrorBottomModal";
 import LText from "../../../components/LText";
 import ArrowRight from "../../../icons/ArrowRight";
@@ -138,11 +136,6 @@ export default function VoteCast({ route, navigation }: Props) {
   }, [account, navigation, transaction, status]);
   const [bridgeErr, setBridgeErr] = useState(bridgeError);
   useEffect(() => setBridgeErr(bridgeError), [bridgeError]);
-  const onBridgeErrorCancel = useCallback(() => {
-    setBridgeErr(null);
-    const parent = navigation.getParent();
-    if (parent) parent.goBack();
-  }, [navigation]);
   const onBridgeErrorRetry = useCallback(() => {
     setBridgeErr(null);
     if (!transaction) return;
@@ -255,18 +248,7 @@ export default function VoteCast({ route, navigation }: Props) {
       <GenericErrorBottomModal
         error={bridgeErr}
         onClose={onBridgeErrorRetry}
-        footerButtons={
-          <>
-            <CancelButton
-              containerStyle={styles.button}
-              onPress={onBridgeErrorCancel}
-            />
-            <RetryButton
-              containerStyle={[styles.button, styles.buttonRight]}
-              onPress={onBridgeErrorRetry}
-            />
-          </>
-        }
+        onPrimaryPress={onBridgeErrorRetry}
       />
     </>
   );
