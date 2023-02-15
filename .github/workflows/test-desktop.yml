@@ -108,11 +108,8 @@ jobs:
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
-    runs-on: [ledger-live, windows]
+    runs-on: windows-latest
     steps:
-      - name: Update path
-        run: |
-          echo "C:\Program Files\Git\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
           ref: ${{ inputs.ref || github.ref }}
@@ -120,8 +117,6 @@ jobs:
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
-          skip_ruby: true
-          skip_python: true
           install_node_gyp: true
           install_playwright: true
       - name: Run playwright tests
