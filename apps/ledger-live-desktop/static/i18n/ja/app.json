@@ -608,22 +608,22 @@
   },
   "stake" : {
     "noFundsModal" : {
-      "title" : "Buy, swap or receive",
-      "text" : "You do not have enough {{coin}} available to stake",
-      "description" : "Not enough funds? Don’t worry, you can securely buy, swap or receive crypto directly in Ledger Live.",
+      "title" : "購入、スワップ、受け取り",
+      "text" : "ステーキングに十分な{{coin}}がありません",
+      "description" : "資金が足りませんか？ご心配いりません。Ledger Liveで暗号資産を直接、安全に購入、スワップ、または受け取ることができます。",
       "options" : {
         "buy" : {
-          "title" : "Buy",
-          "body" : "Buy with trusted  providers"
+          "title" : "購入",
+          "body" : "信頼できるプロバイダーで購入する"
         },
         "swap" : {
-          "title" : "Swap",
-          "label" : "Popular",
-          "body" : "Convert crypto to crypto securely"
+          "title" : "スワップ",
+          "label" : "人気",
+          "body" : "安全に別の暗号資産へ交換"
         },
         "receive" : {
-          "title" : "Receive",
-          "body" : "Receive crypto in your wallet"
+          "title" : "受け取る",
+          "body" : "ウォレットで暗号資産を受け取る"
         }
       }
     }
@@ -824,7 +824,20 @@
       "delegation" : {
         "title" : "ご存知でしたか？",
         "description" : "Ledgerのバリデーターは、{{commission}}%の手数料で{{asset}}のステーキングを行います。",
-        "cta" : "Ledgerでステーキング"
+        "cta" : "Ledgerでステーキング",
+        "linkText" : "詳細はこちら",
+        "ethereum" : {
+          "lido" : {
+            "title" : "ご存知でしたか？",
+            "description" : "LidoでEthereumをステーキングして、毎日報酬を獲得しましょう。ロックアップ（凍結）期間なし。最低入金額なし。",
+            "cta" : "Lidoでステーキング"
+          },
+          "kiln" : {
+            "title" : "HODLに限定する必要はありません。ETHを運用しましょう",
+            "description" : "32ETH以上をお持ちですか？KilnでETHを安全にステーキングすることで、受動的な報酬を獲得できます。",
+            "cta" : "Kilnでステーキング"
+          }
+        }
       }
     }
   },
@@ -1399,7 +1412,7 @@
         "label" : "人気"
       },
       "earn" : {
-        "title" : "報酬獲得",
+        "title" : "ステーキング",
         "description" : "Ledgerで暗号資産を運用"
       }
     }
@@ -3472,6 +3485,71 @@
       "providerLink" : "{{provider}}の詳細"
     }
   },
+  "avalanchepchain" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Powered by Figment",
+        "moreInfo" : "詳細はこちら",
+        "drawerTitle" : "Powered by Figment",
+        "title" : "AVAXトークンがLedger Liveでご利用可能になりました",
+        "description" : "AVAXトークンを管理して、Ledger Liveで保護できるようになりました。",
+        "website" : "Powered by Figment"
+      }
+    },
+    "stakedBalance" : "ステーキング",
+    "stakedBalanceTooltip" : "バリデーターにステーキングされた数量。",
+    "delegation" : {
+      "header" : "デリゲート",
+      "add" : "追加",
+      "commission" : "コミッション",
+      "validator" : "NodeID",
+      "startTime" : "開始時間",
+      "endTime" : "終了時間",
+      "stakeAmount" : "ステーキング",
+      "potentialReward" : "潜在的な報酬",
+      "emptyState" : {
+        "description" : "資産をデリゲートし、AVAXで報酬を獲得できます。",
+        "info" : "デリゲートの仕組み",
+        "delegation" : "報酬を獲得する"
+      },
+      "notEnoughToDelegate" : "デリゲーターになるには、Pチェーンで少なくとも25AVAXが利用可能である必要があります。",
+      "validatorStake" : "バリデーターステーキング",
+      "validatorRemainingStake" : "利用可能",
+      "flow" : {
+        "title" : "デリゲート",
+        "steps" : {
+          "starter" : {
+            "description" : "AVAX資産をバリデーターにデリゲートし、報酬を獲得できます。",
+            "bullet" : ["デリゲートされた資産の所有権を保持する", "Ledgerデバイスを使ってデリゲートしましょう", "ステーキングするには最低25AVAXが必要です", "AVAXは最低2週間デリゲートする必要があります"]
+          },
+          "amount" : {
+            "title" : "数量"
+          },
+          "validator" : {
+            "title" : "バリデーター",
+            "ledgerByFigmentTC" : "Ledger by Figment T&Cs"
+          },
+          "endDate" : {
+            "title" : "終了日",
+            "text" : "このデリゲートが終了する時間を選択します。このデリゲートの終了日は{{minEndDate}}から{{maxEndDate}}の間でなければなりません。",
+            "label" : "デリゲート終了日"
+          },
+          "connectDevice" : {
+            "title" : "デバイス"
+          },
+          "confirmation" : {
+            "title" : "確認",
+            "success" : {
+              "title" : "資産が正常にデリゲートされました。",
+              "text" : "ブロックチェーンがトランザクションを承認後、アカウントの残高が更新されます。",
+              "cta" : "詳細を表示"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
+    }
+  },
   "near" : {
     "account" : {
       "stakedBalance" : "ステーキング済み残高",
@@ -5356,7 +5434,7 @@
       "description" : "トランザクションは、30秒以内に署名する必要があります。もう一度お試しください。"
     },
     "TronNotEnoughEnergy" : {
-      "title" : "エネルギーが必要額を満たしていません。手数料には最大30TRXが必要となります。"
+      "title" : "エネルギーが必要額を満たしていません。手数料には最大50TRXが必要となります。"
     },
     "PairingFailed" : {
       "title" : "ペアリングに失敗しました",
@@ -5510,6 +5588,9 @@
     "StellarBurnAddressError" : {
       "title" : "Stellarアカウントを追加しようとしたときに問題が発生しました"
     },
+    "AvalancheMinimumAmountError" : {
+      "title" : "最低数量は25AVAXです"
+    },
     "HederaAddAccountError" : {
       "title" : "アカウントが追加されていません。もう一度お試しください。"
     },
@@ -5520,6 +5601,10 @@
     "ImageLoadFromFileError" : {
       "title" : "ファイルからの画像の読み込みに失敗しました",
       "description" : "別の画像でもう一度お試しください"
+    },
+    "ImageLoadFromNftError" : {
+      "title" : "NFTからの画像の読み込みに失敗しました",
+      "description" : "別のNFTでもう一度お試しください"
     },
     "ImageDownloadError" : {
       "title" : "画像のダウンロードに失敗しました",
@@ -5593,6 +5678,13 @@
       "descriptionWithProductName" : "最初に{{ productName }}をセットアップする必要があります。\nセットアッププロセスをご案内します。",
       "goToOnboardingButton" : "デバイスをセットアップ",
       "goToOnboardingButtonWithProductName" : "{{ productName }}をセットアップする"
+    },
+    "EtherscanAPIError" : {
+      "title" : "トランザクションの取得に失敗しました",
+      "description" : "エクスプローラーで予期しないエラーが発生しました。後でもう一度お試しください"
+    },
+    "GasEstimationError" : {
+      "title" : "ガスの見積もりに失敗しました"
     }
   },
   "cryptoOrg" : {
@@ -5631,7 +5723,13 @@
         "stepLabel" : "画像を選択してください",
         "description" : "(...) として設定する画像を選択",
         "pickFromNftGallery" : "NFTギャラリーから選択",
-        "upload" : "パソコンからアップロード"
+        "myNfts" : "私のNFT",
+        "upload" : "パソコンからアップロード",
+        "chooseNft" : "NFTを選択",
+        "selectNft" : "NFTを選択",
+        "previousSelectNft" : "戻る",
+        "nftEmptyStateTitle" : "表示できるNFTはまだありません",
+        "nftEmptyStateDescription" : "NFTをウォレットに追加して始めます。"
       },
       "adjust" : {
         "stepLabel" : "画像を調整",
