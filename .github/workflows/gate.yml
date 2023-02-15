@@ -47,10 +47,8 @@ jobs:
             const newHeadBranch = head_branch.replace("refs/heads/", "");
             const newBaseBranch = base_branch.replace("refs/heads/", "");
 
-            return {
-              head_branch: newHeadBranch,
-              base_branch: newBaseBranch
-            };
+            core.exportVariable("head_branch", newHeadBranch)
+            core.exportVariable("base_branch", newBaseBranch)
 
       - uses: ./tools/actions/turbo-affected
         id: affected
@@ -75,9 +73,9 @@ jobs:
             fs.writeFileSync("pr_metadata.json", JSON.stringify({
               number: ${{ env.number }},
               head_sha: "${{ env.head_sha }}",
-              head_branch: "${{ steps.clean-refs.outputs.result.head_branch }}",
+              head_branch: "${{ env.head_branch }}",
               base_sha: "${{ env.base_sha }}",
-              base_branch: "${{ steps.clean-refs.outputs.result.base_branch }}"
+              base_branch: "${{ env.base_branch }}"
             }), "utf-8");
       - uses: actions/upload-artifact@v3
         with:
