@@ -711,7 +711,7 @@ const envDefinitions: Record<
     desc: "bucket S3 of the dynamic cryptoassets list",
   },
   FEATURE_FLAGS: {
-    def: "",
+    def: "{}",
     parser: jsonParser,
     desc: "key value map for feature flags: {[key in FeatureId]?: Feature]}",
   },
