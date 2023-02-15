@@ -819,7 +819,13 @@
       "redelegation": {
         "title": "In case you didn’t know...",
         "description": "The Ledger validator stakes at a lower commission than the validator you’re using.",
-        "cta": "Redelegate with Ledger"
+        "cta": "Redelegate with Ledger",
+        "solana": {
+          "title": "Did you know?",
+          "description": "Ledger offers a lower commission rate than your validator.This process can take up to 4 days.",
+          "linkText": "What is redelegation and how long does it take?",
+          "cta": "Redelegate with Ledger"
+        }
       },
       "delegation": {
         "title": "In case you didn’t know...",

@@ -6,9 +6,12 @@ import { getAccountBannerState as getCosmosBannerState } from "@ledgerhq/live-co
 import { getAccountBannerProps as getCosmosBannerProps } from "~/renderer/families/cosmos/utils";
 import { getAccountBannerState as getEthereumBannerState } from "@ledgerhq/live-common/families/ethereum/banner";
 import { getAccountBannerProps as getEthereumBannerProps } from "~/renderer/families/ethereum/utils";
+import { getAccountBannerState as getSolanaBannerState } from "@ledgerhq/live-common/families/solana/banner";
+import { getAccountBannerProps as getSolanaBannerProps } from "~/renderer/families/solana/utils";
 import { BannerProps } from "~/renderer/screens/account/AccountBanner";
 import { CosmosAccount } from "@ledgerhq/live-common/lib/families/cosmos/types";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useSolanaStakesWithMeta } from "@ledgerhq/live-common/families/solana/react";
 
 type StakeAccountBannerParams = {
   solana?: {
@@ -43,6 +46,10 @@ export const useGetBannerProps = (account: Account | null): BannerProps => {
   const { t } = useTranslation();
   const stakeAccountBanner = useFeature("stakeAccountBanner");
   const ethStakingProviders = useFeature("ethStakingProviders");
+  const stakesWithMeta = useSolanaStakesWithMeta(
+    account.currency,
+    account?.solanaResources?.stakes,
+  );
 
   const stakeAccountBannerParams: StakeAccountBannerParams = stakeAccountBanner?.params ?? null;
   const hooks: Hooks = {
@@ -51,6 +58,7 @@ export const useGetBannerProps = (account: Account | null): BannerProps => {
     history,
     dispatch,
     stakeAccountBannerParams,
+    stakesWithMeta,
   };
 
   if (!account || !stakeAccountBanner?.enabled) return { display: false };
@@ -64,6 +72,11 @@ export const useGetBannerProps = (account: Account | null): BannerProps => {
     case "ethereum": {
       const state = getEthereumBannerState(account);
       const props = getEthereumBannerProps(state, account, hooks);
+      return props;
+    }
+    case "solana": {
+      const state = getSolanaBannerState(account);
+      const props = getSolanaBannerProps(state, account, hooks);
       return props;
     }
     default: {

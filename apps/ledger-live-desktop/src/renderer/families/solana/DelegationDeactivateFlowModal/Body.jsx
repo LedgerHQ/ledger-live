@@ -112,7 +112,7 @@ const Body = ({
       model: {
         kind: "stake.undelegate",
         uiState: {
-          stakeAccAddr: stakeWithMeta.stake.stakeAccAddr,
+          stakeAccAddr: stakeWithMeta?.stake?.stakeAccAddr,
         },
       },
     });
