@@ -6087,6 +6087,7 @@
   },
   "newsfeed": {
     "title": "Newsfeed",
-    "poweredByCryptopanic": "Powered by Cryptopanic"
+    "poweredByCryptopanic": "Powered by Cryptopanic",
+    "noPosts": "No posts available currently"
   }
 }

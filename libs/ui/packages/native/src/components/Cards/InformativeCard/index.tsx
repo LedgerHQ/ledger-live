@@ -37,7 +37,13 @@ const CardContainer = (props: CardProps): React.ReactElement => {
 
   return (
     <Flex flexDirection="row">
-      <Flex justifyContent="space-between" alignItems="flex-start" py={2} pr={4} flex={1}>
+      <Flex
+        justifyContent="space-between"
+        alignItems="flex-start"
+        py={2}
+        pr={imageUrl ? 4 : 2}
+        flex={1}
+      >
         <Text variant="body" fontWeight="medium" color="neutral.c100" numberOfLines={2}>
           {title}
         </Text>
@@ -46,13 +52,15 @@ const CardContainer = (props: CardProps): React.ReactElement => {
         </Text>
       </Flex>
 
-      <ImageContent
-        source={{
-          uri: imageUrl,
-        }}
-        style={styles.image}
-        {...imageProps}
-      />
+      {imageUrl && (
+        <ImageContent
+          source={{
+            uri: imageUrl,
+          }}
+          style={styles.image}
+          {...imageProps}
+        />
+      )}
     </Flex>
   );
 };
