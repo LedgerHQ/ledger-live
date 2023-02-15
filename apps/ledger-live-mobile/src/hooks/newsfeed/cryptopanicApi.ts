@@ -11,17 +11,6 @@ export const cryptopanicAvailableRegions = [
 
 export type CryptopanicAvailableRegionsType =
   typeof cryptopanicAvailableRegions[number];
-const CRYPTOMANIAC_AUTH_TOKEN = "N/A";
-
-type CryptopanicAvailableRegions =
-  | "en"
-  | "de"
-  | "nl"
-  | "es"
-  | "fr"
-  | "it"
-  | "pt"
-  | "ru";
 
 export type CryptopanicNews = {
   kind: "news";
@@ -58,7 +47,6 @@ export type CryptopanicNewsWithMetadata = CryptopanicNews & {
   };
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type CryptopanicPostsResponse = {
   count: number;
   next: string | null;

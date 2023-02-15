@@ -127,6 +127,9 @@ function Discover() {
                 title: t("discover.sections.learn.title"),
                 subTitle: t("discover.sections.learn.desc"),
                 onPress: () => {
+                  // Fixme: Can't find a way to make TS happy ...
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore
                   navigation.navigate(NavigatorName.ExploreTab);
                   readOnlyTrack("Learn");
                 },

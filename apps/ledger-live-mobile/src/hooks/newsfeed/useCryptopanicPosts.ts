@@ -61,7 +61,7 @@ export function useCryptopanicPosts(
       setReady(true);
     },
     // maybe spread params object to array to reduce re-render
-    [cryptopanicLocale, params],
+    [cryptopanicLocale, newsfeedPageFeature?.params.cryptopanicApiKey, params],
   );
 
   // Init
