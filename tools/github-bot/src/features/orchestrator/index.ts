@@ -72,10 +72,6 @@ export function orchestrator(app: Probot) {
   app.on("workflow_run", async (context) => {
     const { payload, octokit } = context;
 
-    context.log.debug(
-      `[Orchestrator](workflow_run.${payload.action}) ${payload.workflow_run.name}`
-    );
-
     // @ts-expect-error Expected because probot does not declare this webhook event even though it exists.
     if (context.payload.action !== "in_progress") return;
 
@@ -158,7 +154,7 @@ export function orchestrator(app: Probot) {
           ): Promise<
             Record<string, { path: string }> | PullRequestMetadata | undefined
           > => {
-            const artifactId = artifacts.data.artifacts.find(
+            const artifactId = artifacts.find(
               (artifact) => artifact.name === fileName
             )?.id;
 
@@ -210,6 +206,15 @@ export function orchestrator(app: Probot) {
             });
           if (isAffected) {
             affectedWorkflows++;
+            const workflowRef =
+              metadata?.head_branch ||
+              payload.workflow_run.pull_requests[0]?.head.ref;
+            const workflowInputs = workflow.getInputs(payload, metadata);
+            context.log.info(
+              `[Orchestrator](workflow_run.completed) Dispatching workflow ${fileName} on ref ${workflowRef} with inputs ${JSON.stringify(
+                workflowInputs
+              )}`
+            );
             // Trigger the associated workflow.
             // This will trigger the workflow_run.requested event,
             // which will create/recreate the check run and update the watcher.
@@ -217,9 +222,7 @@ export function orchestrator(app: Probot) {
               owner,
               repo,
               workflow_id: fileName,
-              ref:
-                metadata?.head_branch ||
-                payload.workflow_run.pull_requests[0]?.head.ref,
+              ref: workflowRef,
               inputs: workflow.getInputs(payload, metadata),
             });
           }
@@ -246,6 +249,10 @@ export function orchestrator(app: Probot) {
         });
       }
     } else if (matchedWorkflow) {
+      context.log.info(
+        `[Orchestrator](workflow_run.completed) ${payload.workflow_run.name}`
+      );
+
       // Sync the check_run with the conclusion of the workflow
       const checkRuns = await getCheckRunByName({
         octokit,
@@ -271,7 +278,7 @@ export function orchestrator(app: Probot) {
           payload.workflow_run.id
         );
 
-        const artifactId = artifacts.data.artifacts.find(
+        const artifactId = artifacts.find(
           (artifact) => artifact.name === matchedWorkflow.summaryFile
         )?.id;
 
@@ -311,6 +318,10 @@ export function orchestrator(app: Probot) {
       const checkRun = checkRuns.data.check_runs[0];
       const output = getGenericOutput(payload.workflow_run.conclusion, summary);
       const tips = await getTips(workflowFile);
+
+      context.log.info(
+        `[Orchestrator](workflow_run.completed) Updating check run: ${checkRun.name} @id ${checkRun.id}`
+      );
 
       await octokit.checks.update({
         owner,
@@ -395,6 +406,9 @@ export function orchestrator(app: Probot) {
 
     if (workflow) {
       const [workflowName, workflowMeta] = workflow;
+      context.log.info(
+        `[Orchestrator](check_run.rerequested) ${payload.check_run.name} @workflow ${workflowName}`
+      );
       octokit.actions.createWorkflowDispatch({
         owner,
         repo,
