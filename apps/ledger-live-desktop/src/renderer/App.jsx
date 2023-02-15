@@ -36,6 +36,7 @@ import MarketDataProvider from "~/renderer/screens/market/MarketDataProviderWrap
 // $FlowFixMe
 import { ConnectEnvsToSentry } from "~/renderer/components/ConnectEnvsToSentry";
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
+import { NamingServiceProvider } from "@ledgerhq/live-common/naming-service/index";
 
 const reloadApp = event => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
@@ -88,7 +89,9 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: * }) => {
                               <DrawerProvider>
                                 <NftMetadataProvider>
                                   <MarketDataProvider>
-                                    <Default />
+                                    <NamingServiceProvider>
+                                      <Default />
+                                    </NamingServiceProvider>
                                   </MarketDataProvider>
                                 </NftMetadataProvider>
                               </DrawerProvider>

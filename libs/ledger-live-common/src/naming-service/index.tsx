@@ -14,6 +14,8 @@ import {
   NamingServiceStatus,
 } from "./types";
 
+export const VALID_DOMAINS = [".eth"];
+
 const NamingServiceContext = createContext<NamingServiceContextType>({
   cache: {},
   loadNamingServiceAPI: () => Promise.resolve(),
@@ -48,7 +50,7 @@ export const useNamingServiceAPI = (
 
 type UseNamingServiceResponse =
   | { status: Exclude<NamingServiceStatus["status"], "loaded"> }
-  | { status: "loaded"; address: string };
+  | { status: "loaded"; address: string; name: string };
 
 export function useNamingService(name: string): UseNamingServiceResponse {
   const data = useNamingServiceAPI(name);
@@ -64,6 +66,7 @@ export function useNamingService(name: string): UseNamingServiceResponse {
     : {
         status,
         address: address as string, // should always
+        name
       };
 }
 
@@ -100,6 +103,7 @@ export function NamingServiceProvider({
               [name]: {
                 status: "loaded",
                 address,
+                name,
                 updatedAt: Date.now(),
               },
             },

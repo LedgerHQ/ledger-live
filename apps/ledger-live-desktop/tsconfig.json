@@ -15,7 +15,10 @@
     "baseUrl": ".",
     "skipLibCheck": true,
     "sourceMap": true,
-    "rootDir": "."
+    "rootDir": ".",
+    "paths": {
+      "~/*": ["src/*"]
+    }
   },
   "include": ["tests"],
   "files": ["package.json", "release-notes.json"],

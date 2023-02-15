@@ -1,7 +1,7 @@
 export type NamingServiceStatus =
   | { status: "queued" }
   | { status: "loading" }
-  | { status: "loaded"; address: string; updatedAt: number }
+  | { status: "loaded"; address: string; name: string; updatedAt: number }
   | { status: "error"; error: any; updatedAt: number };
 
 export type NamingServiceContextState = {

@@ -28,6 +28,10 @@ export const fromTransactionCommonRaw = (
     common.subAccountId = raw.subAccountId;
   }
 
+  if ("recipientName" in raw) {
+    common.recipientName = raw.recipientName;
+  }
+
   return common;
 };
 
@@ -45,6 +49,10 @@ export const toTransactionCommonRaw = (
 
   if ("subAccountId" in raw) {
     common.subAccountId = raw.subAccountId;
+  }
+
+  if ("recipientName" in raw) {
+    common.recipientName = raw.recipientName;
   }
 
   return common;
