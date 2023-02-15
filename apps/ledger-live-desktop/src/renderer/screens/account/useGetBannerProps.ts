@@ -57,7 +57,7 @@ export const useGetBannerProps = (account: AccountLike | null): BannerProps => {
   if (!account || !stakeAccountBanner?.enabled) return { display: false };
 
   if (isAccount(account)) {
-    switch (account.currency.family) {
+    switch (account.currency.id) {
       case "cosmos": {
         const state = getCosmosBannerState(account as CosmosAccount);
         const props = getCosmosBannerProps(state, account as CosmosAccount, hooks);
