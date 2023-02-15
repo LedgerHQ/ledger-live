@@ -1,17 +1,25 @@
 // @flow
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useHistory } from "react-router-dom";
 import * as providerIcons from "~/renderer/icons/providers";
-import type { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import { SwapExchangeRateAmountTooLow } from "@ledgerhq/live-common/errors";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { track } from "~/renderer/analytics/segment";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import type { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 
 export const SWAP_VERSION = "2.35";
 
-export const swapDefaultTrack = {
-  swapVersion: SWAP_VERSION,
-  flow: "swap",
+export const useGetSwapTrackingProperties = () => {
+  const swapShowDexQuotes = useFeature("swapShowDexQuotes");
+  return useMemo(
+    () => ({
+      swapVersion: SWAP_VERSION,
+      flow: "swap",
+      isDexEnabled: swapShowDexQuotes?.enabled ?? false,
+    }),
+    [swapShowDexQuotes?.enabled],
+  );
 };
 
 export const useRedirectToSwapHistory = () => {

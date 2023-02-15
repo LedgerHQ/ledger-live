@@ -170,6 +170,7 @@ export const withDevice =
         if (sub) sub.unsubscribe();
       };
     });
+
 export const genericCanRetryOnError = (err: unknown): boolean => {
   if (err instanceof WrongAppForCurrency) return false;
   if (err instanceof WrongDeviceForAccount) return false;
@@ -182,6 +183,7 @@ export const genericCanRetryOnError = (err: unknown): boolean => {
   if (err instanceof TransportInterfaceNotAvailable) return false;
   return true;
 };
+
 export const retryWhileErrors =
   (acceptError: (arg0: Error) => boolean) =>
   (attempts: Observable<any>): Observable<any> =>
@@ -194,6 +196,7 @@ export const retryWhileErrors =
         return timer(getEnv("WITH_DEVICE_POLLING_DELAY"));
       })
     );
+
 export const withDevicePolling =
   (deviceId: string) =>
   <T>(

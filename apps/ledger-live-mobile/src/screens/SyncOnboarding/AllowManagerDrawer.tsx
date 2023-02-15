@@ -1,9 +1,10 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { BottomDrawer, Flex } from "@ledgerhq/native-ui";
+import { Flex } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTheme } from "styled-components/native";
 import { renderAllowManager as AllowManager } from "../../components/DeviceAction/rendering";
+import QueuedDrawer from "../../components/QueuedDrawer";
 
 export type Props = {
   isOpen: boolean;
@@ -12,14 +13,14 @@ export type Props = {
   device: Device;
 };
 
-const UnlockDeviceDrawer = ({ isOpen, device, onClose }: Props) => {
+const AllowManagerDrawer = ({ isOpen, device, onClose }: Props) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const theme = colors.type as "dark" | "light";
 
   return (
-    <BottomDrawer
-      isOpen={isOpen}
+    <QueuedDrawer
+      isRequestingToBeOpened={isOpen}
       onClose={onClose}
       preventBackdropClick
       noCloseButton
@@ -34,8 +35,8 @@ const UnlockDeviceDrawer = ({ isOpen, device, onClose }: Props) => {
           theme={theme}
         />
       </Flex>
-    </BottomDrawer>
+    </QueuedDrawer>
   );
 };
 
-export default UnlockDeviceDrawer;
+export default AllowManagerDrawer;

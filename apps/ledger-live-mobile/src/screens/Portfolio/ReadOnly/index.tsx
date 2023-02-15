@@ -24,7 +24,7 @@ import {
   counterValueCurrencySelector,
   hasOrderedNanoSelector,
 } from "../../../reducers/settings";
-import { usePortfolio } from "../../../hooks/portfolio";
+import { usePortfolioAllAccounts } from "../../../hooks/portfolio";
 
 import GraphCardContainer from "../GraphCardContainer";
 import TrackScreen from "../../../analytics/TrackScreen";
@@ -59,7 +59,7 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
   const counterValueCurrency: Currency = useSelector(
     counterValueCurrencySelector,
   );
-  const portfolio = usePortfolio();
+  const portfolio = usePortfolioAllAccounts();
   const { colors } = useTheme();
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
   useProviders();

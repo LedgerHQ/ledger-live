@@ -14,7 +14,7 @@ import SettingsRow from "./SettingsRow";
 import LText from "./LText";
 import CurrencyInput from "./CurrencyInput";
 import Touchable from "./Touchable";
-import BottomModal from "./BottomModal";
+import QueuedDrawer from "./QueuedDrawer";
 import Button from "./Button";
 import {
   BaseComposite,
@@ -131,7 +131,10 @@ export default function EditFreeUnit({ account, field }: Props) {
           />
         </View>
       </View>
-      <BottomModal isOpened={isModalOpened} onClose={onRequestClose}>
+      <QueuedDrawer
+        isRequestingToBeOpened={isModalOpened}
+        onClose={onRequestClose}
+      >
         <View style={styles.editFeesUnitsModalTitleRow}>
           <LText secondary semiBold style={styles.editFeesUnitModalTitle}>
             {t("send.fees.edit.title")}
@@ -160,7 +163,7 @@ export default function EditFreeUnit({ account, field }: Props) {
         >
           {account.unit.code}
         </FlatList>
-      </BottomModal>
+      </QueuedDrawer>
     </>
   );
 }

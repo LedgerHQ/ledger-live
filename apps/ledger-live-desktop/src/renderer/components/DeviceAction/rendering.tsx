@@ -44,7 +44,7 @@ import ProgressCircle from "~/renderer/components/ProgressCircle";
 import CrossCircle from "~/renderer/icons/CrossCircle";
 import { getProviderIcon } from "~/renderer/screens/exchange/Swap2/utils";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
-import { swapDefaultTrack } from "~/renderer/screens/exchange/Swap2/utils/index";
+import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
 import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { DrawerFooter } from "~/renderer/screens/exchange/Swap2/Form/DrawerFooter";
@@ -767,6 +767,7 @@ export const renderSwapDeviceConfirmation = ({
   exchange,
   amountExpectedTo,
   estimatedFees,
+  swapDefaultTrack,
 }: {
   modelId: DeviceModelId;
   type: Theme["theme"];
@@ -776,6 +777,7 @@ export const renderSwapDeviceConfirmation = ({
   exchange: Exchange;
   amountExpectedTo?: string;
   estimatedFees?: string;
+  swapDefaultTrack: Record<string, string>;
 }) => {
   const ProviderIcon = getProviderIcon(exchangeRate);
   const [sourceAccountName, sourceAccountCurrency] = [

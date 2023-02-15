@@ -449,6 +449,12 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
   }, []);
 
   useEffect(() => {
+    return () => {
+      transport.current?.complete();
+    };
+  }, []);
+
+  useEffect(() => {
     serverRef.current?.setAccounts(walletAPIAccounts);
   }, [walletAPIAccounts]);
 

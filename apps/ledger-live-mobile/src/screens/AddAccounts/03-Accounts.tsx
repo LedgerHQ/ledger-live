@@ -48,7 +48,7 @@ import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import { prepareCurrency } from "../../bridge/cache";
 import { blacklistedTokenIdsSelector } from "../../reducers/settings";
-import BottomModal from "../../components/BottomModal";
+import QueuedDrawer from "../../components/QueuedDrawer";
 import { urls } from "../../config/urls";
 import noAssociatedAccountsByFamily from "../../generated/NoAssociatedAccounts";
 import { State } from "../../reducers/types";
@@ -500,7 +500,11 @@ const AddressTypeTooltip = ({
         onPress={onOpen}
         IconRight={Info}
       />
-      <BottomModal isOpened={isOpen} onClose={onClose} style={styles.modal}>
+      <QueuedDrawer
+        isRequestingToBeOpened={isOpen}
+        onClose={onClose}
+        style={styles.modal}
+      >
         <View style={styles.modalContainer}>
           <LText style={styles.subtitle} color="grey">
             <Trans i18nKey="addAccounts.addressTypeInfo.subtitle" />
@@ -534,7 +538,7 @@ const AddressTypeTooltip = ({
             onPress={() => Linking.openURL(urls.bitcoinAddressType)}
           />
         ) : null}
-      </BottomModal>
+      </QueuedDrawer>
     </>
   );
 };

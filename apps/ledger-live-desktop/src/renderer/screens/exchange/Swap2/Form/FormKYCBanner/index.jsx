@@ -7,7 +7,7 @@ import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import { track } from "~/renderer/analytics/segment";
 import SectionInformative from "~/renderer/screens/exchange/Swap2/Form/FormSummary/SectionInformative";
-import { swapDefaultTrack } from "../../utils/index";
+import { useGetSwapTrackingProperties } from "../../utils/index";
 
 const FormKYCBanner = ({
   provider,
@@ -18,6 +18,8 @@ const FormKYCBanner = ({
   status?: KYCStatus,
   onClick: Function,
 }) => {
+  const swapDefaultTrack = useGetSwapTrackingProperties();
+
   const { t } = useTranslation();
 
   const openProviderSupport = useCallback(() => {
@@ -36,7 +38,7 @@ const FormKYCBanner = ({
       status,
     });
     onClick();
-  }, [onClick, provider, status]);
+  }, [onClick, provider, status, swapDefaultTrack]);
 
   // we render the component only if KYC is rejected or need to be upgraded
   // i.e: we don't render it if the KYC is "pending".

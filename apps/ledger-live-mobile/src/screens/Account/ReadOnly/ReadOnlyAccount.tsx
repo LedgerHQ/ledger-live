@@ -172,4 +172,4 @@ function ReadOnlyAccount({ route }: Props) {
   );
 }
 
-export default withDiscreetMode(ReadOnlyAccount);
+export default React.memo(withDiscreetMode(ReadOnlyAccount));

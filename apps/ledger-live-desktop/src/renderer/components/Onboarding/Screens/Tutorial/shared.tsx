@@ -24,7 +24,7 @@ export const AnimationContainer = styled(Flex)`
 `;
 
 export const IllustrationContainer = styled(Flex)<{ src: string }>`
-  background: url(${({ src }) => src}) no-repeat center;
+  background: url('${({ src }) => src}') no-repeat center;
   background-size: contain;
 `;
 

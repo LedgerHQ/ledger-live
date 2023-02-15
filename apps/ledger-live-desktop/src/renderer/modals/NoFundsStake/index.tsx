@@ -13,6 +13,7 @@ import Box from "~/renderer/components/Box";
 import EntryButton from "~/renderer/components/EntryButton/EntryButton";
 import CoinsIcon from "./assets/CoinsIcon";
 import { page, track } from "~/renderer/analytics/segment";
+import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 
 interface NoFundsStakeModalProps {
   account: AccountLike;
@@ -56,6 +57,7 @@ const NoFundsStakeModal = ({ account, parentAccount }: NoFundsStakeModalProps) =
     track("button_clicked", {
       button: "buy",
       page: history.location.pathname,
+      ...stakeDefaultTrack,
     });
 
     dispatch(closeModal(modalName));
@@ -73,6 +75,7 @@ const NoFundsStakeModal = ({ account, parentAccount }: NoFundsStakeModalProps) =
     track("button_clicked", {
       button: "swap",
       page: history.location.pathname,
+      ...stakeDefaultTrack,
     });
 
     dispatch(closeModal(modalName));
@@ -91,6 +94,7 @@ const NoFundsStakeModal = ({ account, parentAccount }: NoFundsStakeModalProps) =
     track("button_clicked", {
       button: "receive",
       page: history.location.pathname,
+      ...stakeDefaultTrack,
     });
 
     dispatch(closeModal(modalName));

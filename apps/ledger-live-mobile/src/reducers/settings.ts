@@ -16,8 +16,6 @@ import type { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { CurrencySettings, SettingsState, State } from "./types";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
-// eslint-disable-next-line import/no-cycle
-import { SLIDES } from "../components/Carousel/shared";
 import { getDefaultLanguageLocale, getDefaultLocale } from "../languages";
 import type {
   SettingsAcceptSwapProviderPayload,
@@ -35,7 +33,6 @@ import type {
   SettingsRemoveStarredMarketcoinsPayload,
   SettingsSetAnalyticsPayload,
   SettingsSetAvailableUpdatePayload,
-  SettingsSetCarouselVisibilityPayload,
   SettingsSetCountervaluePayload,
   SettingsSetDiscreetModePayload,
   SettingsSetFirstConnectHasDeviceUpdatedPayload,
@@ -69,6 +66,7 @@ import type {
   SettingsSetOverriddenFeatureFlagsPlayload,
   SettingsSetFeatureFlagsBannerVisiblePayload,
   DangerouslyOverrideStatePayload,
+  SettingsSetDebugAppLevelDrawerOpenedPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -124,9 +122,6 @@ export const INITIAL_STATE: SettingsState = {
     size: 0,
     hash: "",
   },
-  carouselVisibility: Object.fromEntries(
-    SLIDES.map(slide => [slide.name, true]),
-  ),
   dismissedDynamicCards: [],
   discreetMode: false,
   language: getDefaultLanguageLocale(),
@@ -164,6 +159,7 @@ export const INITIAL_STATE: SettingsState = {
   displayStatusCenter: false,
   overriddenFeatureFlags: {},
   featureFlagsBannerVisible: false,
+  debugAppLevelDrawerOpened: false,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -399,12 +395,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     osTheme: (action as Action<SettingsSetOsThemePayload>).payload.osTheme,
   }),
 
-  [SettingsActionTypes.SETTINGS_SET_CAROUSEL_VISIBILITY]: (state, action) => ({
-    ...state,
-    carouselVisibility: (action as Action<SettingsSetCarouselVisibilityPayload>)
-      .payload.carouselVisibility,
-  }),
-
   [SettingsActionTypes.SETTINGS_SET_DISMISSED_DYNAMIC_CARDS]: (
     state,
     action,
@@ -623,6 +613,15 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       featureFlagsBannerVisible,
     };
   },
+  [SettingsActionTypes.SET_DEBUG_APP_LEVEL_DRAWER_OPENED]: (state, action) => {
+    const {
+      payload: { debugAppLevelDrawerOpened },
+    } = action as Action<SettingsSetDebugAppLevelDrawerOpenedPayload>;
+    return {
+      ...state,
+      debugAppLevelDrawerOpened,
+    };
+  },
 };
 
 export default handleActions<SettingsState, SettingsPayload>(
@@ -761,20 +760,6 @@ export const dismissedBannersSelector = (state: State) =>
   state.settings.dismissedBanners;
 export const hasAvailableUpdateSelector = (state: State) =>
   state.settings.hasAvailableUpdate;
-export const carouselVisibilitySelector = (state: State) => {
-  const settingValue = state.settings.carouselVisibility;
-
-  if (typeof settingValue === "number") {
-    /**
-     * Ensure correct behavior when using the legacy setting value from LLM v2:
-     * We show all the slides as they are different from the ones in V2.
-     * Users will then be able to hide them one by one if they want.
-     */
-    return Object.fromEntries(SLIDES.map(slide => [slide.name, true]));
-  }
-
-  return settingValue;
-};
 export const dismissedDynamicCardsSelector = (state: State) =>
   state.settings.dismissedDynamicCards;
 export const discreetModeSelector = (state: State): boolean =>
@@ -850,3 +835,5 @@ export const overriddenFeatureFlagsSelector = (state: State) =>
   state.settings.overriddenFeatureFlags;
 export const featureFlagsBannerVisibleSelector = (state: State) =>
   state.settings.featureFlagsBannerVisible;
+export const debugAppLevelDrawerOpenedSelector = (state: State) =>
+  state.settings.debugAppLevelDrawerOpened;

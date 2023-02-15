@@ -178,7 +178,7 @@ jobs:
         id: checkout
         with:
           ref: main
-          token: ${{ secrets.GH_PAT }}
+          token: ${{ github.token }}
   checks-windows:
     runs-on: [ledger-live, windows]
     outputs:
@@ -250,7 +250,7 @@ jobs:
         id: checkout
         with:
           ref: main
-          token: ${{ secrets.GH_PAT }}
+          token: ${{ github.token }}
   checks-macos:
     runs-on: [m1, ARM64]
     outputs:
@@ -335,7 +335,7 @@ jobs:
         id: checkout
         with:
           ref: main
-          token: ${{ secrets.GH_PAT }}
+          token: ${{ github.token }}
   report:
     needs: [checks-linux, checks-windows, checks-macos]
     if: always()
@@ -566,7 +566,7 @@ jobs:
           path: ${{ github.workspace }}/payload-slack-content.json
       - name: post to a Slack channel
         id: slack
-        uses: slackapi/slack-github-action@v1.21.0
+        uses: slackapi/slack-github-action@v1.23.0
         if: always() && contains(join(needs.*.result, ','), 'failure')
         with:
           channel-id: "C04GE8AEN3H"

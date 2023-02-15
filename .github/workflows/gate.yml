@@ -1,0 +1,69 @@
+name: "@PR • Gate"
+run-name: "@Gate triggered by ${{ github.actor }} ${{ format('on branch {0}', github.head_ref) }}"
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - main
+      - release
+      - hotfix
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref_name != 'develop' }}
+
+jobs:
+  setup:
+    name: "Setup"
+    runs-on: ubuntu-latest
+    outputs:
+      affected: ${{ steps.affected.outputs.affected }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: ./tools/actions/turbo-affected
+        id: affected
+        with:
+          head-ref: ${{ format('origin/{0}', github.event.pull_request.base.ref) }}
+      # Labeller
+      - uses: actions/labeler@v4
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+      - uses: actions/github-script@v6
+        if: github.event.pull_request.head.repo.fork
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            try {
+              const { data: rawLabels } = await github.rest.issues.listLabelsOnIssue({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+              }) || [];
+              const labels = rawLabels.map(label => label.name)
+              console.log(labels)
+              if(labels.includes('fork')) {
+                return
+              }
+              await github.rest.issues.setLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                labels: [...labels, 'fork']
+              })
+            } catch(error) {
+              console.error(error)
+            }
+      - uses: actions/github-script@v6
+        name: create output file ("affected.json")
+        with:
+          script: |
+            const fs = require("fs");
+            const affected = ${{ steps.affected.outputs.affected }};
+            fs.writeFileSync("affected.json", JSON.stringify(affected), "utf-8");
+      - uses: actions/upload-artifact@v3
+        with:
+          name: affected.json
+          path: affected.json

@@ -1,5 +1,131 @@
 # @ledgerhq/live-common
 
+## 28.0.1
+
+### Patch Changes
+
+- [#2543](https://github.com/LedgerHQ/ledger-live/pull/2543) [`61c7aafb21`](https://github.com/LedgerHQ/ledger-live/commit/61c7aafb216099692fad27621fff167f1ba4c840) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Change fee limit to 50
+
+* [#2532](https://github.com/LedgerHQ/ledger-live/pull/2532) [`31f13e8ac2`](https://github.com/LedgerHQ/ledger-live/commit/31f13e8ac2272c54621d2b83f8b17ab5350ce918) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Tron fee limit upgrade to 30
+
+## 28.0.1-hotfix.1
+
+### Patch Changes
+
+- [#2543](https://github.com/LedgerHQ/ledger-live/pull/2543) [`61c7aafb21`](https://github.com/LedgerHQ/ledger-live/commit/61c7aafb216099692fad27621fff167f1ba4c840) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Change fee limit to 50
+
+## 28.0.1-hotfix.0
+
+### Patch Changes
+
+- [#2532](https://github.com/LedgerHQ/ledger-live/pull/2532) [`31f13e8ac2`](https://github.com/LedgerHQ/ledger-live/commit/31f13e8ac2272c54621d2b83f8b17ab5350ce918) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Tron fee limit upgrade to 30
+
+## 28.0.0
+
+### Major Changes
+
+- [#2444](https://github.com/LedgerHQ/ledger-live/pull/2444) [`dcfeef0a2c`](https://github.com/LedgerHQ/ledger-live/commit/dcfeef0a2c0f8c3d344d2943b3d21654f15ae184) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update to v4 explorers and removal of JSONBigNumber dependency
+
+### Minor Changes
+
+- [#2256](https://github.com/LedgerHQ/ledger-live/pull/2256) [`ebdb20d071`](https://github.com/LedgerHQ/ledger-live/commit/ebdb20d071290c6d4565d64bc77e26ce8191edea) Thanks [@lvndry](https://github.com/lvndry)! - Ledger Live Common can build transactions including OP_RETURN opcode
+
+* [#817](https://github.com/LedgerHQ/ledger-live/pull/817) [`36c1a33638`](https://github.com/LedgerHQ/ledger-live/commit/36c1a33638dd889173f1caf263563c27aebc521f) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Remove algorand dependencies from LLC
+
+- [#1782](https://github.com/LedgerHQ/ledger-live/pull/1782) [`3ca4c9763d`](https://github.com/LedgerHQ/ledger-live/commit/3ca4c9763dd7c7ab7891efbd3cb6785cda2d038f) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - merge osmosis into cosmos family
+
+* [#2405](https://github.com/LedgerHQ/ledger-live/pull/2405) [`7eb8b1a39b`](https://github.com/LedgerHQ/ledger-live/commit/7eb8b1a39b36a5b336d95f89a92edf7ee22bcd26) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Make Ethereum family preload resilient to malformed dynamic CAL
+
+### Patch Changes
+
+- [#2135](https://github.com/LedgerHQ/ledger-live/pull/2135) [`6214ac0412`](https://github.com/LedgerHQ/ledger-live/commit/6214ac0412f5d67ffc9ed965e21ffda44c30ae21) Thanks [@quimodotcom](https://github.com/quimodotcom)! - Crypto Icons - Add support for CRACKER token icons
+
+* [#2510](https://github.com/LedgerHQ/ledger-live/pull/2510) [`0e3dadacce`](https://github.com/LedgerHQ/ledger-live/commit/0e3dadacce1292b85ae028289301b7a84631a8fa) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix cosmos unbond bug and translation
+
+- [#2419](https://github.com/LedgerHQ/ledger-live/pull/2419) [`8ff8e433ed`](https://github.com/LedgerHQ/ledger-live/commit/8ff8e433edb6e95693dc21f83c958f6c4a65f056) Thanks [@gre](https://github.com/gre)! - Simplify network logs
+
+* [#2467](https://github.com/LedgerHQ/ledger-live/pull/2467) [`61ff754c0c`](https://github.com/LedgerHQ/ledger-live/commit/61ff754c0cfcacb564e6c6e0497c23cee17f1eb8) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Base the dependency resolution on the minimum version and not the presence of Bitcoin Legacy
+
+- [#2293](https://github.com/LedgerHQ/ledger-live/pull/2293) [`db03ee7a28`](https://github.com/LedgerHQ/ledger-live/commit/db03ee7a28e832582111eb5ab31ce73694cfb957) Thanks [@Yahmooo](https://github.com/Yahmooo)! - changed the name of a crypto icon from H3M.svg to hmmm.svg because the currency name is hmmm not H3M.
+
+* [#2410](https://github.com/LedgerHQ/ledger-live/pull/2410) [`0839f0886f`](https://github.com/LedgerHQ/ledger-live/commit/0839f0886f3acd544ae21d3c9c3c7a607662303b) Thanks [@chabroA](https://github.com/chabroA)! - Update wallet-api error formatting
+
+- [#2401](https://github.com/LedgerHQ/ledger-live/pull/2401) [`de69b7f2ba`](https://github.com/LedgerHQ/ledger-live/commit/de69b7f2baa614726167e97e4fb4bbe741aafbfb) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Prevent device name bug in LNX
+
+* [#2342](https://github.com/LedgerHQ/ledger-live/pull/2342) [`c2779b1cab`](https://github.com/LedgerHQ/ledger-live/commit/c2779b1cab18a1d5747ca955f5ceee86db920f57) Thanks [@gre](https://github.com/gre)! - Improve performance of socket.ts by using exchangeBulk
+
+* Updated dependencies [[`7eb8b1a39b`](https://github.com/LedgerHQ/ledger-live/commit/7eb8b1a39b36a5b336d95f89a92edf7ee22bcd26), [`3ca4c9763d`](https://github.com/LedgerHQ/ledger-live/commit/3ca4c9763dd7c7ab7891efbd3cb6785cda2d038f), [`0e7ff249f7`](https://github.com/LedgerHQ/ledger-live/commit/0e7ff249f7e1160ff3888e52767ef91151efbedd), [`dcfeef0a2c`](https://github.com/LedgerHQ/ledger-live/commit/dcfeef0a2c0f8c3d344d2943b3d21654f15ae184), [`c2779b1cab`](https://github.com/LedgerHQ/ledger-live/commit/c2779b1cab18a1d5747ca955f5ceee86db920f57)]:
+  - @ledgerhq/hw-app-eth@6.31.0
+  - @ledgerhq/cryptoassets@8.0.0
+  - @ledgerhq/hw-transport@6.28.0
+  - @ledgerhq/hw-app-algorand@6.27.11
+  - @ledgerhq/hw-app-btc@9.1.3
+  - @ledgerhq/hw-app-cosmos@6.27.11
+  - @ledgerhq/hw-app-near@6.27.6
+  - @ledgerhq/hw-app-polkadot@6.27.11
+  - @ledgerhq/hw-app-solana@7.0.5
+  - @ledgerhq/hw-app-str@6.27.11
+  - @ledgerhq/hw-app-tezos@6.27.11
+  - @ledgerhq/hw-app-trx@6.27.11
+  - @ledgerhq/hw-app-xrp@6.27.11
+  - @ledgerhq/hw-transport-mocker@6.27.11
+  - @ledgerhq/hw-transport-node-speculos@6.27.11
+
+## 28.0.0-next.1
+
+### Patch Changes
+
+- [#2510](https://github.com/LedgerHQ/ledger-live/pull/2510) [`0e3dadacce`](https://github.com/LedgerHQ/ledger-live/commit/0e3dadacce1292b85ae028289301b7a84631a8fa) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix cosmos unbond bug and translation
+
+## 28.0.0-next.0
+
+### Major Changes
+
+- [#2444](https://github.com/LedgerHQ/ledger-live/pull/2444) [`dcfeef0a2c`](https://github.com/LedgerHQ/ledger-live/commit/dcfeef0a2c0f8c3d344d2943b3d21654f15ae184) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update to v4 explorers and removal of JSONBigNumber dependency
+
+### Minor Changes
+
+- [#2256](https://github.com/LedgerHQ/ledger-live/pull/2256) [`ebdb20d071`](https://github.com/LedgerHQ/ledger-live/commit/ebdb20d071290c6d4565d64bc77e26ce8191edea) Thanks [@lvndry](https://github.com/lvndry)! - Ledger Live Common can build transactions including OP_RETURN opcode
+
+* [#817](https://github.com/LedgerHQ/ledger-live/pull/817) [`36c1a33638`](https://github.com/LedgerHQ/ledger-live/commit/36c1a33638dd889173f1caf263563c27aebc521f) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Remove algorand dependencies from LLC
+
+- [#1782](https://github.com/LedgerHQ/ledger-live/pull/1782) [`3ca4c9763d`](https://github.com/LedgerHQ/ledger-live/commit/3ca4c9763dd7c7ab7891efbd3cb6785cda2d038f) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - merge osmosis into cosmos family
+
+* [#2405](https://github.com/LedgerHQ/ledger-live/pull/2405) [`7eb8b1a39b`](https://github.com/LedgerHQ/ledger-live/commit/7eb8b1a39b36a5b336d95f89a92edf7ee22bcd26) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Make Ethereum family preload resilient to malformed dynamic CAL
+
+### Patch Changes
+
+- [#2135](https://github.com/LedgerHQ/ledger-live/pull/2135) [`6214ac0412`](https://github.com/LedgerHQ/ledger-live/commit/6214ac0412f5d67ffc9ed965e21ffda44c30ae21) Thanks [@quimodotcom](https://github.com/quimodotcom)! - Crypto Icons - Add support for CRACKER token icons
+
+* [#2419](https://github.com/LedgerHQ/ledger-live/pull/2419) [`8ff8e433ed`](https://github.com/LedgerHQ/ledger-live/commit/8ff8e433edb6e95693dc21f83c958f6c4a65f056) Thanks [@gre](https://github.com/gre)! - Simplify network logs
+
+- [#2467](https://github.com/LedgerHQ/ledger-live/pull/2467) [`61ff754c0c`](https://github.com/LedgerHQ/ledger-live/commit/61ff754c0cfcacb564e6c6e0497c23cee17f1eb8) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Base the dependency resolution on the minimum version and not the presence of Bitcoin Legacy
+
+* [#2293](https://github.com/LedgerHQ/ledger-live/pull/2293) [`db03ee7a28`](https://github.com/LedgerHQ/ledger-live/commit/db03ee7a28e832582111eb5ab31ce73694cfb957) Thanks [@Yahmooo](https://github.com/Yahmooo)! - changed the name of a crypto icon from H3M.svg to hmmm.svg because the currency name is hmmm not H3M.
+
+- [#2410](https://github.com/LedgerHQ/ledger-live/pull/2410) [`0839f0886f`](https://github.com/LedgerHQ/ledger-live/commit/0839f0886f3acd544ae21d3c9c3c7a607662303b) Thanks [@chabroA](https://github.com/chabroA)! - Update wallet-api error formatting
+
+* [#2401](https://github.com/LedgerHQ/ledger-live/pull/2401) [`de69b7f2ba`](https://github.com/LedgerHQ/ledger-live/commit/de69b7f2baa614726167e97e4fb4bbe741aafbfb) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Prevent device name bug in LNX
+
+- [#2342](https://github.com/LedgerHQ/ledger-live/pull/2342) [`c2779b1cab`](https://github.com/LedgerHQ/ledger-live/commit/c2779b1cab18a1d5747ca955f5ceee86db920f57) Thanks [@gre](https://github.com/gre)! - Improve performance of socket.ts by using exchangeBulk
+
+- Updated dependencies [[`7eb8b1a39b`](https://github.com/LedgerHQ/ledger-live/commit/7eb8b1a39b36a5b336d95f89a92edf7ee22bcd26), [`3ca4c9763d`](https://github.com/LedgerHQ/ledger-live/commit/3ca4c9763dd7c7ab7891efbd3cb6785cda2d038f), [`0e7ff249f7`](https://github.com/LedgerHQ/ledger-live/commit/0e7ff249f7e1160ff3888e52767ef91151efbedd), [`dcfeef0a2c`](https://github.com/LedgerHQ/ledger-live/commit/dcfeef0a2c0f8c3d344d2943b3d21654f15ae184), [`c2779b1cab`](https://github.com/LedgerHQ/ledger-live/commit/c2779b1cab18a1d5747ca955f5ceee86db920f57)]:
+  - @ledgerhq/hw-app-eth@6.31.0-next.0
+  - @ledgerhq/cryptoassets@8.0.0-next.0
+  - @ledgerhq/hw-transport@6.28.0-next.0
+  - @ledgerhq/hw-app-algorand@6.27.11-next.0
+  - @ledgerhq/hw-app-btc@9.1.3-next.0
+  - @ledgerhq/hw-app-cosmos@6.27.11-next.0
+  - @ledgerhq/hw-app-near@6.27.6-next.0
+  - @ledgerhq/hw-app-polkadot@6.27.11-next.0
+  - @ledgerhq/hw-app-solana@7.0.5-next.0
+  - @ledgerhq/hw-app-str@6.27.11-next.0
+  - @ledgerhq/hw-app-tezos@6.27.11-next.0
+  - @ledgerhq/hw-app-trx@6.27.11-next.0
+  - @ledgerhq/hw-app-xrp@6.27.11-next.0
+  - @ledgerhq/hw-transport-mocker@6.27.11-next.0
+  - @ledgerhq/hw-transport-node-speculos@6.27.11-next.0
+
 ## 27.12.0
 
 ### Minor Changes

@@ -53,7 +53,7 @@ export default function CosmosEarnRewardsInfoModal({ name, account, parentAccoun
       footerLeft={
         <LinkWithExternalIcon
           label={t("delegation.howItWorks")}
-          onClick={onLearnMore(account.currency.id)}
+          onClick={() => onLearnMore(account.currency.id)}
         />
       }
     />

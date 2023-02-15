@@ -101,3 +101,4 @@ export default function cryptoFactory(currency: Currency): ICrypto {
   }
   return res;
 }
+// TODO: Currently, all bitcoin currencies included setSupportedCurrencies must be supported here. We are working on a new way to support/enable new currencies

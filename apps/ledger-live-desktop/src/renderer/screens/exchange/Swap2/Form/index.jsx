@@ -7,12 +7,12 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import {
   getKYCStatusFromCheckQuoteStatus,
+  getProviderName,
   KYC_STATUS,
   shouldShowKYCBanner,
   shouldShowLoginBanner,
-  getProviderName,
 } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import React, { useCallback, useEffect, useState, useRef, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
@@ -34,11 +34,10 @@ import ButtonBase from "~/renderer/components/Button";
 import { context } from "~/renderer/drawers/Provider";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { swapKYCSelector } from "~/renderer/reducers/settings";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import KYC from "../KYC";
 import Login from "../Login";
 import MFA from "../MFA";
-import { swapDefaultTrack, trackSwapError } from "../utils/index";
+import { trackSwapError, useGetSwapTrackingProperties } from "../utils/index";
 import ExchangeDrawer from "./ExchangeDrawer/index";
 import FormErrorBanner from "./FormErrorBanner";
 import FormKYCBanner from "./FormKYCBanner";
@@ -55,6 +54,7 @@ import useRefreshRates from "./hooks/useRefreshRates";
 import LoadingState from "./Rates/LoadingState";
 import EmptyState from "./Rates/EmptyState";
 import usePageState from "./hooks/usePageState";
+import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
 const Wrapper: ThemedComponent<{}> = styled(Box).attrs({
   p: 20,
@@ -73,15 +73,6 @@ const idleTime = 60 * 60000; // 1 hour
 const Button = styled(ButtonBase)`
   justify-content: center;
 `;
-
-const trackNoRates = ({ toState }) => {
-  track("error_message", {
-    message: "no_rates",
-    page: "Page Swap Form",
-    ...swapDefaultTrack,
-    sourceCurrency: toState.currency?.name,
-  });
-};
 
 export const useProviders = () => {
   const dispatch = useDispatch();
@@ -109,6 +100,7 @@ const SwapForm = () => {
   // FIXME: should use enums for Flow and Banner values
   const [currentFlow, setCurrentFlow] = useState(null);
   const [currentBanner, setCurrentBanner] = useState(null);
+  const swapDefaultTrack = useGetSwapTrackingProperties();
 
   const [idleState, setIdleState] = useState(false);
 
@@ -128,10 +120,21 @@ const SwapForm = () => {
   );
   const showDexQuotes: boolean | null = useFeature("swapShowDexQuotes");
 
+  const onNoRates = useCallback(
+    ({ toState }) => {
+      track("error_message", {
+        message: "no_rates",
+        page: "Page Swap Form",
+        ...swapDefaultTrack,
+        sourceCurrency: toState.currency?.name,
+      });
+    },
+    [swapDefaultTrack],
+  );
   const swapTransaction = useSwapTransaction({
     accounts,
     setExchangeRate,
-    onNoRates: trackNoRates,
+    onNoRates,
     ...locationState,
     providers: storedProviders,
     includeDEX: showDexQuotes?.enabled || false,
@@ -386,7 +389,7 @@ const SwapForm = () => {
         `/platform/${getProviderName(exchangeRate.provider).toLowerCase()}`;
       history.push({
         pathname: providerURL,
-        params: {
+        state: {
           returnTo: "/swap",
           accountId: fromAddress,
         },

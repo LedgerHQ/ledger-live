@@ -2,9 +2,8 @@ name: "[Release](Prerelease) Publish packages and apps"
 on:
   push:
     branches:
-      - "release"
-      - "releases/**"
-      - "hotfix"
+      - release
+      - hotfix
   workflow_dispatch:
     inputs:
       ref:
@@ -17,20 +16,26 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - uses: actions/checkout@v3
         if: ${{ github.event_name == 'push' }}
         with:
-          token: ${{ secrets.GH_PAT }}
+          token: ${{ steps.generate-token.outputs.token }}
       - uses: actions/checkout@v3
         if: ${{ github.event_name == 'workflow_dispatch' }}
         with:
-          ref: ${{ github.event.inputs.ref }}
-          token: ${{ secrets.GH_PAT }}
+          ref: ${{ inputs.ref }}
+          token: ${{ steps.generate-token.outputs.token }}
 
       - name: set git user
         run: |
           git config user.email "team-live@ledger.fr"
-          git config user.name "Team Live"
+          git config user.name "live-github-bot[bot]"
       - uses: pnpm/action-setup@v2
         with:
           version: latest
@@ -95,11 +100,11 @@ jobs:
           git add . &&
           git commit -m ":fire: hotfix prerelease [${{ env.LLD }}, ${{ env.LLM }}]" ||
           echo ""
-      - name: commit (from ${{ github.event.inputs.ref }} branch) workflow dispatch
+      - name: commit (from ${{ inputs.ref }} branch) workflow dispatch
         if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
           git add .
-          git commit -m ":rocket: ${{ github.event.inputs.ref }} prerelease [LLD(${{ steps.post-desktop-version.outputs.version }}), LLM(${{ steps.post-mobile-version.outputs.version }})]" ||
+          git commit -m ":rocket: ${{ inputs.ref }} prerelease [LLD(${{ steps.post-desktop-version.outputs.version }}), LLM(${{ steps.post-mobile-version.outputs.version }})]" ||
           echo ""
       - name: publish prerelease
         run: pnpm changeset publish
@@ -122,12 +127,12 @@ jobs:
         if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
           git pull --rebase
-          git push origin ${{ github.event.inputs.ref }} --follow-tags
+          git push origin ${{ inputs.ref }} --follow-tags
       - uses: actions/github-script@v6
         name: trigger prerelease build for desktop
         if: ${{ steps.desktop-version.outputs.version != steps.post-desktop-version.outputs.version }}
         with:
-          github-token: ${{ secrets.GH_PAT }}
+          github-token: ${{ steps.generate-token.outputs.token }}
           script: |
             github.rest.actions.createWorkflowDispatch({
               owner: "ledgerhq",
@@ -135,14 +140,14 @@ jobs:
               ref: "main",
               workflow_id: "pre-desktop.yml",
               inputs: {
-                ref: "${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ref || github.ref_name }}",
+                ref: "${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref_name }}",
               }
             });
       - uses: actions/github-script@v6
         name: trigger prerelease build of mobile
         if: ${{ steps.mobile-version.outputs.version != steps.post-mobile-version.outputs.version }}
         with:
-          github-token: ${{ secrets.GH_PAT }}
+          github-token: ${{ steps.generate-token.outputs.token }}
           script: |
             github.rest.actions.createWorkflowDispatch({
               owner: "ledgerhq",
@@ -150,6 +155,6 @@ jobs:
               ref: "main",
               workflow_id: "pre-mobile.yml",
               inputs: {
-                ref: "${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ref || github.ref_name }}",
+                ref: "${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref_name }}",
               }
             });

@@ -10,7 +10,7 @@ import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
 import { StackNavigatorNavigation } from "../../../../components/RootNavigator/types/helpers";
 import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
 
-export default function Debugging() {
+export default function Features() {
   const navigation =
     useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
   return (
@@ -75,6 +75,13 @@ export default function Debugging() {
         desc="Trigger Terms of Use Popup"
         iconLeft={<Icons.LinkMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugTermsOfUse)}
+      />
+
+      <SettingsRow
+        title="Successive drawers opening/closing"
+        desc="Open and close several bottom drawers"
+        iconLeft={<Icons.LayersMedium size={32} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugQueuedDrawers)}
       />
     </SettingsNavigationScrollView>
   );

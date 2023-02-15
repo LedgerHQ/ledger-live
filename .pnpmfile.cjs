@@ -102,6 +102,7 @@ function readPackage(pkg, context) {
       }),
       addDependencies("@celo/utils", {
         "fp-ts": "*",
+        rlp: "*",
       }),
       addDependencies("@avalabs/avalanche-wallet-sdk", {
         buffer: "*",

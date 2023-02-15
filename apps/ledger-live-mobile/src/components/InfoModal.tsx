@@ -5,10 +5,10 @@ import { Trans } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { Icons, IconBox, Flex } from "@ledgerhq/native-ui";
 import type { Props as IconBoxProps } from "@ledgerhq/native-ui/components/Icon/IconBox";
-import BottomModal from "./BottomModal";
+import QueuedDrawer from "./QueuedDrawer";
 import LText from "./LText";
 import IconArrowRight from "../icons/ArrowRight";
-import type { Props as ModalProps } from "./BottomModal";
+import type { Props as ModalProps } from "./QueuedDrawer";
 import Button, { WrappedButtonProps } from "./wrappedUi/Button";
 import { Merge } from "../types/helpers";
 
@@ -18,8 +18,9 @@ type BulletItem = {
 };
 
 type InfoModalProps = Merge<
-  ModalProps,
+  Omit<ModalProps, "isRequestingToBeOpened">,
   {
+    isOpened: boolean;
     id?: string;
     title?: React.ReactNode;
     desc?: React.ReactNode;
@@ -49,8 +50,8 @@ const InfoModal = ({
   style,
   containerStyle,
 }: InfoModalProps) => (
-  <BottomModal
-    isOpened={isOpened}
+  <QueuedDrawer
+    isRequestingToBeOpened={isOpened}
     onClose={onClose}
     style={[styles.modal, style || {}]}
   >
@@ -105,7 +106,7 @@ const InfoModal = ({
         {confirmLabel || <Trans i18nKey="common.gotit" />}
       </Button>
     </Flex>
-  </BottomModal>
+  </QueuedDrawer>
 );
 
 function BulletLine({ children }: { children?: React.ReactNode }) {

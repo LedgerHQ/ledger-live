@@ -21,8 +21,8 @@ import Assets from "../../screens/Assets";
 
 import ReadOnlyAccount from "../../screens/Account/ReadOnly/ReadOnlyAccount";
 
-import { accountsSelector } from "../../reducers/accounts";
 import type { AccountsNavigatorParamList } from "./types/AccountsNavigator";
+import { hasNoAccountsSelector } from "../../reducers/accounts";
 
 const Stack = createStackNavigator<AccountsNavigatorParamList>();
 
@@ -33,9 +33,9 @@ export default function AccountsNavigator() {
     [colors],
   );
 
-  const accounts = useSelector(accountsSelector);
+  const hasNoAccounts = useSelector(hasNoAccountsSelector);
   const readOnlyModeEnabled =
-    useSelector(readOnlyModeEnabledSelector) && accounts.length <= 0;
+    useSelector(readOnlyModeEnabledSelector) && hasNoAccounts;
 
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>

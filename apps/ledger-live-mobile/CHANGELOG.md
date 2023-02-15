@@ -1,5 +1,103 @@
 # live-mobile
 
+## 3.15.1
+
+### Patch Changes
+
+- Updated dependencies [[`61c7aafb21`](https://github.com/LedgerHQ/ledger-live/commit/61c7aafb216099692fad27621fff167f1ba4c840), [`31f13e8ac2`](https://github.com/LedgerHQ/ledger-live/commit/31f13e8ac2272c54621d2b83f8b17ab5350ce918)]:
+  - @ledgerhq/live-common@28.0.1
+
+## 3.15.1-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies [[`61c7aafb21`](https://github.com/LedgerHQ/ledger-live/commit/61c7aafb216099692fad27621fff167f1ba4c840)]:
+  - @ledgerhq/live-common@28.0.1-hotfix.1
+
+## 3.15.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`31f13e8ac2`](https://github.com/LedgerHQ/ledger-live/commit/31f13e8ac2272c54621d2b83f8b17ab5350ce918)]:
+  - @ledgerhq/live-common@28.0.1-hotfix.0
+
+## 3.15.0
+
+### Minor Changes
+
+- [#1782](https://github.com/LedgerHQ/ledger-live/pull/1782) [`3ca4c9763d`](https://github.com/LedgerHQ/ledger-live/commit/3ca4c9763dd7c7ab7891efbd3cb6785cda2d038f) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - merge cosmos and osmosis
+
+### Patch Changes
+
+- [#2492](https://github.com/LedgerHQ/ledger-live/pull/2492) [`eca1fc0a76`](https://github.com/LedgerHQ/ledger-live/commit/eca1fc0a764e3895a392a1a0bd09d52987524351) Thanks [@chabroA](https://github.com/chabroA)! - Second tentative to fix the analytics missing equipment id for some users
+
+* [#2290](https://github.com/LedgerHQ/ledger-live/pull/2290) [`8e690ef8ac`](https://github.com/LedgerHQ/ledger-live/commit/8e690ef8acd66d67642c95fd918ef9c3386765aa) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Multi Select mode allowing hide unwanted collections in NFT GAllery
+
+- [#2350](https://github.com/LedgerHQ/ledger-live/pull/2350) [`de1bf99157`](https://github.com/LedgerHQ/ledger-live/commit/de1bf99157b069f8ae6746172cf0a929c2764d3c) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Implementation of analytics for Custom Lock Screen
+
+* [#2427](https://github.com/LedgerHQ/ledger-live/pull/2427) [`b192ed6b24`](https://github.com/LedgerHQ/ledger-live/commit/b192ed6b24220acd52f4500e664ebbdf735953ee) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - We now add a parameter apptracking=false to our webviews in LLM redirecting to the shop and to the academy websites in order to not display the cookie prompt (to comply with apple rules)
+
+- [#2475](https://github.com/LedgerHQ/ledger-live/pull/2475) [`4b81270e26`](https://github.com/LedgerHQ/ledger-live/commit/4b81270e26c683240945ecf6867b47f1272db474) Thanks [@Justkant](https://github.com/Justkant)! - fix: remove skip select device on DeviceConnect
+
+* [#2350](https://github.com/LedgerHQ/ledger-live/pull/2350) [`de1bf99157`](https://github.com/LedgerHQ/ledger-live/commit/de1bf99157b069f8ae6746172cf0a929c2764d3c) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Improvements to the UX of the in-app analytics console
+
+- [#2464](https://github.com/LedgerHQ/ledger-live/pull/2464) [`59eb2b4874`](https://github.com/LedgerHQ/ledger-live/commit/59eb2b487488fd14cd40ff7157349f42ad8b6107) Thanks [@alexandremgo](https://github.com/alexandremgo)! - ignore HwTransportError for Sentry on LLM
+
+* [#2492](https://github.com/LedgerHQ/ledger-live/pull/2492) [`eca1fc0a76`](https://github.com/LedgerHQ/ledger-live/commit/eca1fc0a764e3895a392a1a0bd09d52987524351) Thanks [@chabroA](https://github.com/chabroA)! - Added tracking to NFT Hide Multiselect feature
+
+* Updated dependencies [[`ebdb20d071`](https://github.com/LedgerHQ/ledger-live/commit/ebdb20d071290c6d4565d64bc77e26ce8191edea), [`dcfeef0a2c`](https://github.com/LedgerHQ/ledger-live/commit/dcfeef0a2c0f8c3d344d2943b3d21654f15ae184), [`6214ac0412`](https://github.com/LedgerHQ/ledger-live/commit/6214ac0412f5d67ffc9ed965e21ffda44c30ae21), [`36c1a33638`](https://github.com/LedgerHQ/ledger-live/commit/36c1a33638dd889173f1caf263563c27aebc521f), [`3ca4c9763d`](https://github.com/LedgerHQ/ledger-live/commit/3ca4c9763dd7c7ab7891efbd3cb6785cda2d038f), [`0e3dadacce`](https://github.com/LedgerHQ/ledger-live/commit/0e3dadacce1292b85ae028289301b7a84631a8fa), [`8ff8e433ed`](https://github.com/LedgerHQ/ledger-live/commit/8ff8e433edb6e95693dc21f83c958f6c4a65f056), [`61ff754c0c`](https://github.com/LedgerHQ/ledger-live/commit/61ff754c0cfcacb564e6c6e0497c23cee17f1eb8), [`db03ee7a28`](https://github.com/LedgerHQ/ledger-live/commit/db03ee7a28e832582111eb5ab31ce73694cfb957), [`0839f0886f`](https://github.com/LedgerHQ/ledger-live/commit/0839f0886f3acd544ae21d3c9c3c7a607662303b), [`de69b7f2ba`](https://github.com/LedgerHQ/ledger-live/commit/de69b7f2baa614726167e97e4fb4bbe741aafbfb), [`c2779b1cab`](https://github.com/LedgerHQ/ledger-live/commit/c2779b1cab18a1d5747ca955f5ceee86db920f57), [`c2779b1cab`](https://github.com/LedgerHQ/ledger-live/commit/c2779b1cab18a1d5747ca955f5ceee86db920f57), [`7eb8b1a39b`](https://github.com/LedgerHQ/ledger-live/commit/7eb8b1a39b36a5b336d95f89a92edf7ee22bcd26), [`dcfeef0a2c`](https://github.com/LedgerHQ/ledger-live/commit/dcfeef0a2c0f8c3d344d2943b3d21654f15ae184), [`315c0ba0f4`](https://github.com/LedgerHQ/ledger-live/commit/315c0ba0f4e407927bd7a2ba5cc03006e24ff94d), [`de3b0da314`](https://github.com/LedgerHQ/ledger-live/commit/de3b0da31428487e025548abcfa26c0d4dac33f1)]:
+  - @ledgerhq/live-common@28.0.0
+  - @ledgerhq/types-cryptoassets@7.0.0
+  - @ledgerhq/hw-transport@6.28.0
+  - @ledgerhq/types-live@6.30.0
+  - @ledgerhq/react-native-hw-transport-ble@6.28.2
+  - @ledgerhq/hw-transport-http@6.27.11
+  - @ledgerhq/react-native-hid@6.28.13
+
+## 3.15.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`0e3dadacce`](https://github.com/LedgerHQ/ledger-live/commit/0e3dadacce1292b85ae028289301b7a84631a8fa)]:
+  - @ledgerhq/live-common@28.0.0-next.1
+
+## 3.15.0-next.1
+
+### Patch Changes
+
+- [#2492](https://github.com/LedgerHQ/ledger-live/pull/2492) [`eca1fc0a76`](https://github.com/LedgerHQ/ledger-live/commit/eca1fc0a764e3895a392a1a0bd09d52987524351) Thanks [@chabroA](https://github.com/chabroA)! - Second tentative to fix the analytics missing equipment id for some users
+
+* [#2492](https://github.com/LedgerHQ/ledger-live/pull/2492) [`eca1fc0a76`](https://github.com/LedgerHQ/ledger-live/commit/eca1fc0a764e3895a392a1a0bd09d52987524351) Thanks [@chabroA](https://github.com/chabroA)! - Added tracking to NFT Hide Multiselect feature
+
+## 3.15.0-next.0
+
+### Minor Changes
+
+- [#1782](https://github.com/LedgerHQ/ledger-live/pull/1782) [`3ca4c9763d`](https://github.com/LedgerHQ/ledger-live/commit/3ca4c9763dd7c7ab7891efbd3cb6785cda2d038f) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - merge cosmos and osmosis
+
+### Patch Changes
+
+- [#2290](https://github.com/LedgerHQ/ledger-live/pull/2290) [`8e690ef8ac`](https://github.com/LedgerHQ/ledger-live/commit/8e690ef8acd66d67642c95fd918ef9c3386765aa) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Multi Select mode allowing hide unwanted collections in NFT GAllery
+
+* [#2350](https://github.com/LedgerHQ/ledger-live/pull/2350) [`de1bf99157`](https://github.com/LedgerHQ/ledger-live/commit/de1bf99157b069f8ae6746172cf0a929c2764d3c) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Implementation of analytics for Custom Lock Screen
+
+- [#2427](https://github.com/LedgerHQ/ledger-live/pull/2427) [`b192ed6b24`](https://github.com/LedgerHQ/ledger-live/commit/b192ed6b24220acd52f4500e664ebbdf735953ee) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - We now add a parameter apptracking=false to our webviews in LLM redirecting to the shop and to the academy websites in order to not display the cookie prompt (to comply with apple rules)
+
+* [#2475](https://github.com/LedgerHQ/ledger-live/pull/2475) [`4b81270e26`](https://github.com/LedgerHQ/ledger-live/commit/4b81270e26c683240945ecf6867b47f1272db474) Thanks [@Justkant](https://github.com/Justkant)! - fix: remove skip select device on DeviceConnect
+
+- [#2350](https://github.com/LedgerHQ/ledger-live/pull/2350) [`de1bf99157`](https://github.com/LedgerHQ/ledger-live/commit/de1bf99157b069f8ae6746172cf0a929c2764d3c) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Improvements to the UX of the in-app analytics console
+
+* [#2464](https://github.com/LedgerHQ/ledger-live/pull/2464) [`59eb2b4874`](https://github.com/LedgerHQ/ledger-live/commit/59eb2b487488fd14cd40ff7157349f42ad8b6107) Thanks [@alexandremgo](https://github.com/alexandremgo)! - ignore HwTransportError for Sentry on LLM
+
+* Updated dependencies [[`ebdb20d071`](https://github.com/LedgerHQ/ledger-live/commit/ebdb20d071290c6d4565d64bc77e26ce8191edea), [`dcfeef0a2c`](https://github.com/LedgerHQ/ledger-live/commit/dcfeef0a2c0f8c3d344d2943b3d21654f15ae184), [`6214ac0412`](https://github.com/LedgerHQ/ledger-live/commit/6214ac0412f5d67ffc9ed965e21ffda44c30ae21), [`36c1a33638`](https://github.com/LedgerHQ/ledger-live/commit/36c1a33638dd889173f1caf263563c27aebc521f), [`3ca4c9763d`](https://github.com/LedgerHQ/ledger-live/commit/3ca4c9763dd7c7ab7891efbd3cb6785cda2d038f), [`8ff8e433ed`](https://github.com/LedgerHQ/ledger-live/commit/8ff8e433edb6e95693dc21f83c958f6c4a65f056), [`61ff754c0c`](https://github.com/LedgerHQ/ledger-live/commit/61ff754c0cfcacb564e6c6e0497c23cee17f1eb8), [`db03ee7a28`](https://github.com/LedgerHQ/ledger-live/commit/db03ee7a28e832582111eb5ab31ce73694cfb957), [`0839f0886f`](https://github.com/LedgerHQ/ledger-live/commit/0839f0886f3acd544ae21d3c9c3c7a607662303b), [`de69b7f2ba`](https://github.com/LedgerHQ/ledger-live/commit/de69b7f2baa614726167e97e4fb4bbe741aafbfb), [`c2779b1cab`](https://github.com/LedgerHQ/ledger-live/commit/c2779b1cab18a1d5747ca955f5ceee86db920f57), [`c2779b1cab`](https://github.com/LedgerHQ/ledger-live/commit/c2779b1cab18a1d5747ca955f5ceee86db920f57), [`7eb8b1a39b`](https://github.com/LedgerHQ/ledger-live/commit/7eb8b1a39b36a5b336d95f89a92edf7ee22bcd26), [`dcfeef0a2c`](https://github.com/LedgerHQ/ledger-live/commit/dcfeef0a2c0f8c3d344d2943b3d21654f15ae184), [`315c0ba0f4`](https://github.com/LedgerHQ/ledger-live/commit/315c0ba0f4e407927bd7a2ba5cc03006e24ff94d), [`de3b0da314`](https://github.com/LedgerHQ/ledger-live/commit/de3b0da31428487e025548abcfa26c0d4dac33f1)]:
+  - @ledgerhq/live-common@28.0.0-next.0
+  - @ledgerhq/types-cryptoassets@7.0.0-next.0
+  - @ledgerhq/hw-transport@6.28.0-next.0
+  - @ledgerhq/types-live@6.30.0-next.0
+  - @ledgerhq/react-native-hw-transport-ble@6.28.2-next.0
+  - @ledgerhq/hw-transport-http@6.27.11-next.0
+  - @ledgerhq/react-native-hid@6.28.13-next.0
+
 ## 3.14.0
 
 ### Minor Changes

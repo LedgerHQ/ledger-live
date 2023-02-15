@@ -1,5 +1,133 @@
 # ledger-live-desktop
 
+## 2.53.1
+
+### Patch Changes
+
+- [#2523](https://github.com/LedgerHQ/ledger-live/pull/2523) [`e26155d3b2`](https://github.com/LedgerHQ/ledger-live/commit/e26155d3b2f9611923b1008c928f9fb1fc18f351) Thanks [@sarneijim](https://github.com/sarneijim)! - Deep link support hotfix
+
+- Updated dependencies [[`61c7aafb21`](https://github.com/LedgerHQ/ledger-live/commit/61c7aafb216099692fad27621fff167f1ba4c840), [`31f13e8ac2`](https://github.com/LedgerHQ/ledger-live/commit/31f13e8ac2272c54621d2b83f8b17ab5350ce918)]:
+  - @ledgerhq/live-common@28.0.1
+
+## 2.53.1-hotfix.2
+
+### Patch Changes
+
+- Updated dependencies [[`61c7aafb21`](https://github.com/LedgerHQ/ledger-live/commit/61c7aafb216099692fad27621fff167f1ba4c840)]:
+  - @ledgerhq/live-common@28.0.1-hotfix.1
+
+## 2.53.1-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies [[`31f13e8ac2`](https://github.com/LedgerHQ/ledger-live/commit/31f13e8ac2272c54621d2b83f8b17ab5350ce918)]:
+  - @ledgerhq/live-common@28.0.1-hotfix.0
+
+## 2.53.1-hotfix.0
+
+### Patch Changes
+
+- [#2523](https://github.com/LedgerHQ/ledger-live/pull/2523) [`e26155d3b2`](https://github.com/LedgerHQ/ledger-live/commit/e26155d3b2f9611923b1008c928f9fb1fc18f351) Thanks [@sarneijim](https://github.com/sarneijim)! - Deep link support hotfix
+
+## 2.53.0
+
+### Minor Changes
+
+- [#817](https://github.com/LedgerHQ/ledger-live/pull/817) [`36c1a33638`](https://github.com/LedgerHQ/ledger-live/commit/36c1a33638dd889173f1caf263563c27aebc521f) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Remove algorand dependencies from LLC
+
+* [#1782](https://github.com/LedgerHQ/ledger-live/pull/1782) [`3ca4c9763d`](https://github.com/LedgerHQ/ledger-live/commit/3ca4c9763dd7c7ab7891efbd3cb6785cda2d038f) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - merge osmosis into cosmos family
+
+- [#2426](https://github.com/LedgerHQ/ledger-live/pull/2426) [`9d06be5753`](https://github.com/LedgerHQ/ledger-live/commit/9d06be57533dbd9799fe76775696b8b8dd351ed2) Thanks [@brunospolidorio](https://github.com/brunospolidorio)! - add stake modal for LLD
+
+* [#2444](https://github.com/LedgerHQ/ledger-live/pull/2444) [`dcfeef0a2c`](https://github.com/LedgerHQ/ledger-live/commit/dcfeef0a2c0f8c3d344d2943b3d21654f15ae184) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Remove explorer configuration
+
+- [#2471](https://github.com/LedgerHQ/ledger-live/pull/2471) [`eb9f2b7ef0`](https://github.com/LedgerHQ/ledger-live/commit/eb9f2b7ef062779960623e00ec3d695de734c9a9) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Shows stake button on asset screen
+
+### Patch Changes
+
+- [#2403](https://github.com/LedgerHQ/ledger-live/pull/2403) [`35ae3e6282`](https://github.com/LedgerHQ/ledger-live/commit/35ae3e6282dfe63831cd0a2ef4f78ad60b12a5d4) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Changes gitignore
+
+* [#2396](https://github.com/LedgerHQ/ledger-live/pull/2396) [`28b668d1f9`](https://github.com/LedgerHQ/ledger-live/commit/28b668d1f98e4e9aab72252eeec460fc6953c2ca) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Adds new UI elements for the new featured buttons on portfolio screen
+
+- [#2434](https://github.com/LedgerHQ/ledger-live/pull/2434) [`ead56ef81b`](https://github.com/LedgerHQ/ledger-live/commit/ead56ef81bd312bb38883ab40dad581ac0745fc3) Thanks [@sarneijim](https://github.com/sarneijim)! - Add market page stake buttons
+
+* [#2510](https://github.com/LedgerHQ/ledger-live/pull/2510) [`0e3dadacce`](https://github.com/LedgerHQ/ledger-live/commit/0e3dadacce1292b85ae028289301b7a84631a8fa) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix cosmos unbond bug and translation
+
+- [#2406](https://github.com/LedgerHQ/ledger-live/pull/2406) [`afda2ec326`](https://github.com/LedgerHQ/ledger-live/commit/afda2ec326851f826f769095ddfbea5d3c9ce87f) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Adds link behaviour to new exchange buttons on portfolio screen.
+
+* [#2420](https://github.com/LedgerHQ/ledger-live/pull/2420) [`315c0ba0f4`](https://github.com/LedgerHQ/ledger-live/commit/315c0ba0f4e407927bd7a2ba5cc03006e24ff94d) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - LLD: Adds feature flag and analytics to new exchange buttons on portfolio screen
+
+- [#2464](https://github.com/LedgerHQ/ledger-live/pull/2464) [`59eb2b4874`](https://github.com/LedgerHQ/ledger-live/commit/59eb2b487488fd14cd40ff7157349f42ad8b6107) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: ignore HwTransportError for Sentry on LLD
+
+* [#2417](https://github.com/LedgerHQ/ledger-live/pull/2417) [`763690846d`](https://github.com/LedgerHQ/ledger-live/commit/763690846dbf87a4794ef654fc7f6df43574a0c9) Thanks [@gre](https://github.com/gre)! - fixes old link to old repository
+
+- [#2342](https://github.com/LedgerHQ/ledger-live/pull/2342) [`c2779b1cab`](https://github.com/LedgerHQ/ledger-live/commit/c2779b1cab18a1d5747ca955f5ceee86db920f57) Thanks [@gre](https://github.com/gre)! - Improve performance of socket.ts by using exchangeBulk
+
+* [#2385](https://github.com/LedgerHQ/ledger-live/pull/2385) [`1fc8d26eb1`](https://github.com/LedgerHQ/ledger-live/commit/1fc8d26eb1fe9094e7fbfc08df04dff08f54609d) Thanks [@sarneijim](https://github.com/sarneijim)! - Add common stake flow for LLD
+
+- [#2420](https://github.com/LedgerHQ/ledger-live/pull/2420) [`315c0ba0f4`](https://github.com/LedgerHQ/ledger-live/commit/315c0ba0f4e407927bd7a2ba5cc03006e24ff94d) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Refactors stake flow to trigger from modal
+
+- Updated dependencies [[`ebdb20d071`](https://github.com/LedgerHQ/ledger-live/commit/ebdb20d071290c6d4565d64bc77e26ce8191edea), [`dcfeef0a2c`](https://github.com/LedgerHQ/ledger-live/commit/dcfeef0a2c0f8c3d344d2943b3d21654f15ae184), [`6214ac0412`](https://github.com/LedgerHQ/ledger-live/commit/6214ac0412f5d67ffc9ed965e21ffda44c30ae21), [`36c1a33638`](https://github.com/LedgerHQ/ledger-live/commit/36c1a33638dd889173f1caf263563c27aebc521f), [`3ca4c9763d`](https://github.com/LedgerHQ/ledger-live/commit/3ca4c9763dd7c7ab7891efbd3cb6785cda2d038f), [`0e3dadacce`](https://github.com/LedgerHQ/ledger-live/commit/0e3dadacce1292b85ae028289301b7a84631a8fa), [`8ff8e433ed`](https://github.com/LedgerHQ/ledger-live/commit/8ff8e433edb6e95693dc21f83c958f6c4a65f056), [`61ff754c0c`](https://github.com/LedgerHQ/ledger-live/commit/61ff754c0cfcacb564e6c6e0497c23cee17f1eb8), [`db03ee7a28`](https://github.com/LedgerHQ/ledger-live/commit/db03ee7a28e832582111eb5ab31ce73694cfb957), [`0839f0886f`](https://github.com/LedgerHQ/ledger-live/commit/0839f0886f3acd544ae21d3c9c3c7a607662303b), [`de69b7f2ba`](https://github.com/LedgerHQ/ledger-live/commit/de69b7f2baa614726167e97e4fb4bbe741aafbfb), [`c2779b1cab`](https://github.com/LedgerHQ/ledger-live/commit/c2779b1cab18a1d5747ca955f5ceee86db920f57), [`c2779b1cab`](https://github.com/LedgerHQ/ledger-live/commit/c2779b1cab18a1d5747ca955f5ceee86db920f57), [`7eb8b1a39b`](https://github.com/LedgerHQ/ledger-live/commit/7eb8b1a39b36a5b336d95f89a92edf7ee22bcd26), [`dcfeef0a2c`](https://github.com/LedgerHQ/ledger-live/commit/dcfeef0a2c0f8c3d344d2943b3d21654f15ae184), [`315c0ba0f4`](https://github.com/LedgerHQ/ledger-live/commit/315c0ba0f4e407927bd7a2ba5cc03006e24ff94d)]:
+  - @ledgerhq/live-common@28.0.0
+  - @ledgerhq/types-cryptoassets@7.0.0
+  - @ledgerhq/hw-transport@6.28.0
+  - @ledgerhq/types-live@6.30.0
+  - @ledgerhq/hw-transport-http@6.27.11
+  - @ledgerhq/hw-transport-node-hid-singleton@6.28.8
+
+## 2.53.0-next.1
+
+### Patch Changes
+
+- [#2510](https://github.com/LedgerHQ/ledger-live/pull/2510) [`0e3dadacce`](https://github.com/LedgerHQ/ledger-live/commit/0e3dadacce1292b85ae028289301b7a84631a8fa) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix cosmos unbond bug and translation
+
+- Updated dependencies [[`0e3dadacce`](https://github.com/LedgerHQ/ledger-live/commit/0e3dadacce1292b85ae028289301b7a84631a8fa)]:
+  - @ledgerhq/live-common@28.0.0-next.1
+
+## 2.53.0-next.0
+
+### Minor Changes
+
+- [#817](https://github.com/LedgerHQ/ledger-live/pull/817) [`36c1a33638`](https://github.com/LedgerHQ/ledger-live/commit/36c1a33638dd889173f1caf263563c27aebc521f) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Remove algorand dependencies from LLC
+
+* [#1782](https://github.com/LedgerHQ/ledger-live/pull/1782) [`3ca4c9763d`](https://github.com/LedgerHQ/ledger-live/commit/3ca4c9763dd7c7ab7891efbd3cb6785cda2d038f) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - merge osmosis into cosmos family
+
+- [#2426](https://github.com/LedgerHQ/ledger-live/pull/2426) [`9d06be5753`](https://github.com/LedgerHQ/ledger-live/commit/9d06be57533dbd9799fe76775696b8b8dd351ed2) Thanks [@brunospolidorio](https://github.com/brunospolidorio)! - add stake modal for LLD
+
+* [#2444](https://github.com/LedgerHQ/ledger-live/pull/2444) [`dcfeef0a2c`](https://github.com/LedgerHQ/ledger-live/commit/dcfeef0a2c0f8c3d344d2943b3d21654f15ae184) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Remove explorer configuration
+
+- [#2471](https://github.com/LedgerHQ/ledger-live/pull/2471) [`eb9f2b7ef0`](https://github.com/LedgerHQ/ledger-live/commit/eb9f2b7ef062779960623e00ec3d695de734c9a9) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Shows stake button on asset screen
+
+### Patch Changes
+
+- [#2403](https://github.com/LedgerHQ/ledger-live/pull/2403) [`35ae3e6282`](https://github.com/LedgerHQ/ledger-live/commit/35ae3e6282dfe63831cd0a2ef4f78ad60b12a5d4) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Changes gitignore
+
+* [#2396](https://github.com/LedgerHQ/ledger-live/pull/2396) [`28b668d1f9`](https://github.com/LedgerHQ/ledger-live/commit/28b668d1f98e4e9aab72252eeec460fc6953c2ca) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Adds new UI elements for the new featured buttons on portfolio screen
+
+- [#2434](https://github.com/LedgerHQ/ledger-live/pull/2434) [`ead56ef81b`](https://github.com/LedgerHQ/ledger-live/commit/ead56ef81bd312bb38883ab40dad581ac0745fc3) Thanks [@sarneijim](https://github.com/sarneijim)! - Add market page stake buttons
+
+* [#2406](https://github.com/LedgerHQ/ledger-live/pull/2406) [`afda2ec326`](https://github.com/LedgerHQ/ledger-live/commit/afda2ec326851f826f769095ddfbea5d3c9ce87f) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Adds link behaviour to new exchange buttons on portfolio screen.
+
+- [#2420](https://github.com/LedgerHQ/ledger-live/pull/2420) [`315c0ba0f4`](https://github.com/LedgerHQ/ledger-live/commit/315c0ba0f4e407927bd7a2ba5cc03006e24ff94d) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - LLD: Adds feature flag and analytics to new exchange buttons on portfolio screen
+
+* [#2464](https://github.com/LedgerHQ/ledger-live/pull/2464) [`59eb2b4874`](https://github.com/LedgerHQ/ledger-live/commit/59eb2b487488fd14cd40ff7157349f42ad8b6107) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: ignore HwTransportError for Sentry on LLD
+
+- [#2417](https://github.com/LedgerHQ/ledger-live/pull/2417) [`763690846d`](https://github.com/LedgerHQ/ledger-live/commit/763690846dbf87a4794ef654fc7f6df43574a0c9) Thanks [@gre](https://github.com/gre)! - fixes old link to old repository
+
+* [#2342](https://github.com/LedgerHQ/ledger-live/pull/2342) [`c2779b1cab`](https://github.com/LedgerHQ/ledger-live/commit/c2779b1cab18a1d5747ca955f5ceee86db920f57) Thanks [@gre](https://github.com/gre)! - Improve performance of socket.ts by using exchangeBulk
+
+- [#2385](https://github.com/LedgerHQ/ledger-live/pull/2385) [`1fc8d26eb1`](https://github.com/LedgerHQ/ledger-live/commit/1fc8d26eb1fe9094e7fbfc08df04dff08f54609d) Thanks [@sarneijim](https://github.com/sarneijim)! - Add common stake flow for LLD
+
+* [#2420](https://github.com/LedgerHQ/ledger-live/pull/2420) [`315c0ba0f4`](https://github.com/LedgerHQ/ledger-live/commit/315c0ba0f4e407927bd7a2ba5cc03006e24ff94d) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Refactors stake flow to trigger from modal
+
+* Updated dependencies [[`ebdb20d071`](https://github.com/LedgerHQ/ledger-live/commit/ebdb20d071290c6d4565d64bc77e26ce8191edea), [`dcfeef0a2c`](https://github.com/LedgerHQ/ledger-live/commit/dcfeef0a2c0f8c3d344d2943b3d21654f15ae184), [`6214ac0412`](https://github.com/LedgerHQ/ledger-live/commit/6214ac0412f5d67ffc9ed965e21ffda44c30ae21), [`36c1a33638`](https://github.com/LedgerHQ/ledger-live/commit/36c1a33638dd889173f1caf263563c27aebc521f), [`3ca4c9763d`](https://github.com/LedgerHQ/ledger-live/commit/3ca4c9763dd7c7ab7891efbd3cb6785cda2d038f), [`8ff8e433ed`](https://github.com/LedgerHQ/ledger-live/commit/8ff8e433edb6e95693dc21f83c958f6c4a65f056), [`61ff754c0c`](https://github.com/LedgerHQ/ledger-live/commit/61ff754c0cfcacb564e6c6e0497c23cee17f1eb8), [`db03ee7a28`](https://github.com/LedgerHQ/ledger-live/commit/db03ee7a28e832582111eb5ab31ce73694cfb957), [`0839f0886f`](https://github.com/LedgerHQ/ledger-live/commit/0839f0886f3acd544ae21d3c9c3c7a607662303b), [`de69b7f2ba`](https://github.com/LedgerHQ/ledger-live/commit/de69b7f2baa614726167e97e4fb4bbe741aafbfb), [`c2779b1cab`](https://github.com/LedgerHQ/ledger-live/commit/c2779b1cab18a1d5747ca955f5ceee86db920f57), [`c2779b1cab`](https://github.com/LedgerHQ/ledger-live/commit/c2779b1cab18a1d5747ca955f5ceee86db920f57), [`7eb8b1a39b`](https://github.com/LedgerHQ/ledger-live/commit/7eb8b1a39b36a5b336d95f89a92edf7ee22bcd26), [`dcfeef0a2c`](https://github.com/LedgerHQ/ledger-live/commit/dcfeef0a2c0f8c3d344d2943b3d21654f15ae184), [`315c0ba0f4`](https://github.com/LedgerHQ/ledger-live/commit/315c0ba0f4e407927bd7a2ba5cc03006e24ff94d)]:
+  - @ledgerhq/live-common@28.0.0-next.0
+  - @ledgerhq/types-cryptoassets@7.0.0-next.0
+  - @ledgerhq/hw-transport@6.28.0-next.0
+  - @ledgerhq/types-live@6.30.0-next.0
+  - @ledgerhq/hw-transport-http@6.27.11-next.0
+  - @ledgerhq/hw-transport-node-hid-singleton@6.28.8-next.0
+
 ## 2.52.0
 
 ### Minor Changes

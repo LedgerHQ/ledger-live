@@ -22,7 +22,7 @@ import TachometerHigh from "~/renderer/icons/TachometerHigh";
 import TachometerLow from "~/renderer/icons/TachometerLow";
 import TachometerMedium from "~/renderer/icons/TachometerMedium";
 import styled from "styled-components";
-import { swapDefaultTrack } from "../../utils/index";
+import { useGetSwapTrackingProperties } from "../../utils/index";
 
 type Strategies = "slow" | "medium" | "fast" | "advanced";
 const FEES_STRATEGY_ICONS: {
@@ -86,6 +86,7 @@ const SectionFees = ({
     account &&
     family &&
     sendAmountByFamily[family];
+  const swapDefaultTrack = useGetSwapTrackingProperties();
 
   const StrategyIcon = useMemo(() => FEES_STRATEGY_ICONS[transaction?.feesStrategy], [
     transaction?.feesStrategy,
@@ -126,14 +127,15 @@ const SectionFees = ({
       }),
     [
       canEdit,
+      swapDefaultTrack,
       setDrawer,
       setTransaction,
       updateTransaction,
       mainFromAccount,
       currency,
       status,
-      provider,
       exchangeRate?.tradeMethod,
+      provider,
     ],
   );
 

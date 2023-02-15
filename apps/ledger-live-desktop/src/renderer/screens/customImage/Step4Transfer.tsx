@@ -2,6 +2,7 @@ import React, { useCallback, useState } from "react";
 import { ProcessorResult } from "~/renderer/components/CustomImage/ImageGrayscalePreview";
 import { Step, StepProps } from "./types";
 import { useTranslation } from "react-i18next";
+import { Flex } from "@ledgerhq/react-ui";
 import StepFooter from "./StepFooter";
 import StepContainer from "./StepContainer";
 import TestImage from "~/renderer/components/CustomImage/TestImage";
@@ -47,15 +48,17 @@ const StepTransfer: React.FC<Props> = props => {
       }
     >
       {result ? (
-        <CustomImageDeviceAction
-          device={device}
-          hexImage={result?.rawResult.hexData}
-          source={result?.previewResult.imageBase64DataUri}
-          onResult={handleResult}
-          onSkip={handleExit}
-          onTryAnotherImage={handleTryAnotherImage}
-          blockNavigation={setNavigationBlocked}
-        />
+        <Flex flex={1} px={12}>
+          <CustomImageDeviceAction
+            device={device}
+            hexImage={result?.rawResult.hexData}
+            source={result?.previewResult.imageBase64DataUri}
+            onResult={handleResult}
+            onSkip={handleExit}
+            onTryAnotherImage={handleTryAnotherImage}
+            blockNavigation={setNavigationBlocked}
+          />
+        </Flex>
       ) : null}
       {DEBUG ? <TestImage result={result} onError={onError} /> : null}
     </StepContainer>

@@ -11,12 +11,12 @@ import evm from "../families/evm/specs";
 import filecoin from "../families/filecoin/specs";
 import hedera from "../families/hedera/specs";
 import near from "../families/near/specs";
-import polkadot from "../families/polkadot/specs";
 import ripple from "../families/ripple/specs";
 import solana from "../families/solana/specs";
 import stellar from "../families/stellar/specs";
 import tezos from "../families/tezos/specs";
 import tron from "../families/tron/specs";
+import polkadot from "@ledgerhq/coin-polkadot/specs";
 
 export default {
   algorand,
@@ -32,10 +32,10 @@ export default {
   filecoin,
   hedera,
   near,
-  polkadot,
   ripple,
   solana,
   stellar,
   tezos,
   tron,
+  polkadot,
 };
