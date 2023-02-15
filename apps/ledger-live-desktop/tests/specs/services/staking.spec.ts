@@ -8,6 +8,8 @@ import { MarketPage } from "tests/models/MarketPage";
 import { Layout } from "tests/models/Layout";
 import { MarketCoinPage } from "tests/models/MarketCoinPage";
 import { AssetPage } from "tests/models/AssetPage";
+import { AccountsPage } from "tests/models/AccountsPage";
+import { AccountPage } from "tests/models/AccountPage";
 
 test.use({
   userdata: "1AccountBTC1AccountETH",
@@ -21,6 +23,19 @@ test.use({
     portfolioExchangeBanner: {
       enabled: true,
     },
+    stakeAccountBanner: {
+      enabled: true,
+      params: {
+        solana: {
+          redelegate: true,
+          delegegate: true,
+        },
+        eth: {
+          kiln: true,
+          lido: true,
+        },
+      },
+    },
   },
 });
 
@@ -30,6 +45,8 @@ test("Ethereum staking flows via portfolio, asset page and market page", async (
   const modal = new Modal(page);
   const liveApp = new DiscoverPage(page);
   const assetPage = new AssetPage(page);
+  const accountsPage = new AccountsPage(page);
+  const accountPage = new AccountPage(page);
   const layout = new Layout(page);
   const marketPage = new MarketPage(page);
   const marketCoinPage = new MarketCoinPage(page);
@@ -51,7 +68,7 @@ test("Ethereum staking flows via portfolio, asset page and market page", async (
 
   await test.step("choose ethereum account", async () => {
     await drawer.selectAccount("Ethereum", 1);
-    await expect.soft(page).toHaveScreenshot("choose-stake-provider-modal.png");
+    await expect.soft(page).toHaveScreenshot("choose-stake-provider-modal-from-portfolio-page.png");
   });
 
   await test.step("choose Lido", async () => {
@@ -76,6 +93,28 @@ test("Ethereum staking flows via portfolio, asset page and market page", async (
     await drawer.close();
   });
 
+  await test.step("start stake flow via Account page", async () => {
+    await layout.goToAccounts();
+    await accountsPage.navigateToAccountByName("Ethereum 2");
+    await expect.soft(page).toHaveScreenshot("account-page-with-stake-button-and-banner.png");
+  });
+
+  await test.step("choose to stake Ethereum via main stake button", async () => {
+    await accountPage.startStakingFlowFromMainStakeButton();
+    await modal.waitForModalToAppear();
+    await expect.soft(page).toHaveScreenshot("choose-stake-provider-modal-from-account-page.png");
+    await modal.close();
+  });
+
+  await test.step("start stake flow via Banner CTA", async () => {
+    await accountPage.clickBannerCTA();
+    await liveApp.waitForCorrectTextInWebview("Ethereum 2");
+    await expect(await liveApp.getLiveAppTitle()).toBe("Lido");
+    await expect.soft(page).toHaveScreenshot("lido-opened-after-banner-cta-clicked.png", {
+      mask: [page.locator("webview")],
+    });
+  });
+
   await test.step("Market page loads with ETH staking available", async () => {
     await layout.goToMarket();
     await marketPage.waitForLoading();
@@ -84,7 +123,6 @@ test("Ethereum staking flows via portfolio, asset page and market page", async (
 
   await test.step("start stake flow via Stake entry button", async () => {
     await marketPage.startStakeFlowByTicker("eth");
-
     await drawer.waitForDrawerToBeVisible();
     await expect.soft(page).toHaveScreenshot("stake-drawer-opened-from-market-page.png");
     await drawer.close();
