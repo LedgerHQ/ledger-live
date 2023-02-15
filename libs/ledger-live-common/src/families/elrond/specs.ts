@@ -71,7 +71,6 @@ function expectCorrectOptimisticOperation(
   const opExpected: Record<string, any> = toOperationRaw({
     ...optimisticOperation,
   });
-  operation.extra = opExpected.extra;
   delete opExpected.value;
   delete opExpected.fee;
   delete opExpected.date;
@@ -173,6 +172,7 @@ const elrondSpec: AppSpec<Transaction> = {
     appName: "MultiversX",
   },
   genericDeviceAction: acceptMoveBalanceTransaction,
+  genericDeviceActionForSubAccountTransfers: acceptEsdtTransferTransaction,
   testTimeout: 2 * 60 * 1000,
   minViableAmount: minimalAmount,
   transactionCheck: ({ maxSpendable }) => {

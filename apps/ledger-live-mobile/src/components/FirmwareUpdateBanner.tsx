@@ -4,7 +4,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { Alert, BottomDrawer, Text, Flex } from "@ledgerhq/native-ui";
+import { Alert, Text, Flex } from "@ledgerhq/native-ui";
 import { DownloadMedium, UsbMedium } from "@ledgerhq/native-ui/assets/icons";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -20,6 +20,7 @@ import {
 import { hasConnectedDeviceSelector } from "../reducers/appstate";
 import Button from "./Button";
 import useLatestFirmware from "../hooks/useLatestFirmware";
+import QueuedDrawer from "./QueuedDrawer";
 
 const FirmwareUpdateBanner = ({
   containerProps,
@@ -111,8 +112,8 @@ const FirmwareUpdateBanner = ({
         />
       </Alert>
 
-      <BottomDrawer
-        isOpen={showDrawer}
+      <QueuedDrawer
+        isRequestingToBeOpened={showDrawer}
         onClose={onCloseDrawer}
         Icon={fwUpdateActivatedButNotWired ? UsbMedium : DownloadMedium}
         title={
@@ -134,7 +135,7 @@ const FirmwareUpdateBanner = ({
           title={t("common.close")}
           onPress={onCloseDrawer}
         />
-      </BottomDrawer>
+      </QueuedDrawer>
     </Flex>
   ) : null;
 };

@@ -21,20 +21,11 @@
       "*.json": [
         "*.json"
       ],
-      "*/": [
-        "lib/*/index.d.ts"
-      ],
       "*": [
         "lib/*"
       ],
-      "lib/*/": [
-        "lib/*/index.d.ts"
-      ],
       "lib/*": [
         "lib/*"
-      ],
-      "lib-es/*/": [
-        "lib-es/*/index.d.ts"
       ],
       "lib-es/*": [
         "lib-es/*"
@@ -42,16 +33,10 @@
     }
   },
   "exports": {
-    "./lib/*/": "./lib/*/index.js",
     "./lib/*": "./lib/*.js",
     "./lib/*.js": "./lib/*.js",
-    "./lib-es/*/": "./lib-es/*/index.js",
     "./lib-es/*": "./lib-es/*.js",
     "./lib-es/*.js": "./lib-es/*.js",
-    "./*/": {
-      "require": "./lib/*/index.js",
-      "default": "./lib-es/*/index.js"
-    },
     "./*": {
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
@@ -83,6 +68,7 @@
   },
   "files": [
     "lib",
+    "lib-es",
     "src",
     "react.js",
     "reactNative.js"
@@ -144,6 +130,8 @@
     "@hashgraph/sdk": "^2.10.1",
     "@keplr-wallet/cosmos": "^0.9.16",
     "@keplr-wallet/proto-types": "^0.10.4",
+    "@ledgerhq/coin-framework": "workspace:^",
+    "@ledgerhq/coin-polkadot": "workspace:^",
     "@ledgerhq/compressjs": "github:LedgerHQ/compressjs#d9e8e4d994923e0ea76a32b97289bcccfe71b82e",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
@@ -166,10 +154,6 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/wallet-api-core": "^0.11.0",
     "@ledgerhq/wallet-api-server": "^0.10.1",
-    "@polkadot/types": "9.8.1",
-    "@polkadot/types-known": "9.8.1",
-    "@polkadot/util": "10.1.12",
-    "@polkadot/util-crypto": "10.1.12",
     "@solana/spl-token": "^0.2.0",
     "@solana/web3.js": "1.41.3",
     "@stricahq/bip32ed25519": "^1.0.3",
@@ -224,7 +208,6 @@
     "jwt-decode": "^3.1.2",
     "leb128": "^0.0.5",
     "lodash": "^4.17.21",
-    "lru-cache": "5.1.1",
     "minimatch": "^5.1.0",
     "near-api-js": "^0.44.2",
     "numeral": "^2.0.6",
@@ -309,6 +292,7 @@
     "typescript": "^4.8.3",
     "typescript-eslint-parser": "^22.0.0",
     "uuid": "^8.3.2",
-    "ws": "7"
+    "ws": "7",
+    "mkdirp": "*"
   }
 }

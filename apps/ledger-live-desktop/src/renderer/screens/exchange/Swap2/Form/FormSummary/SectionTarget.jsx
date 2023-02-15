@@ -12,7 +12,7 @@ import type { TokenCurrency, CryptoCurrency } from "@ledgerhq/types-cryptoassets
 import SummarySection from "./SummarySection";
 import { openModal } from "~/renderer/actions/modals";
 import { context } from "~/renderer/drawers/Provider";
-import { swapDefaultTrack } from "../../utils/index";
+import { useGetSwapTrackingProperties } from "../../utils/index";
 
 import type {
   SwapSelectorStateType,
@@ -31,6 +31,7 @@ const AccountSection = ({
 }) => {
   const { t } = useTranslation();
   const accountName = getAccountName(account);
+  const swapDefaultTrack = useGetSwapTrackingProperties();
 
   const handleChangeAndTrack = useCallback(() => {
     track("button_clicked", {
@@ -39,7 +40,7 @@ const AccountSection = ({
       ...swapDefaultTrack,
     });
     handleChange();
-  }, [handleChange]);
+  }, [handleChange, swapDefaultTrack]);
 
   return (
     <SummarySection>
@@ -81,6 +82,7 @@ const SectionTarget = ({
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { setDrawer } = React.useContext(context);
+  const swapDefaultTrack = useGetSwapTrackingProperties();
 
   const handleAddAccount = () => {
     track("button_clicked", {

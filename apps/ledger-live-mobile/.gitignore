@@ -100,3 +100,6 @@ allure-results/
 #CI
 **/vendor/**
 **/*.jks
+
+# temp directory
+/temp

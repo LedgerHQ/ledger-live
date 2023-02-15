@@ -10,7 +10,7 @@ import type {
 } from "@ledgerhq/live-common/exchange/swap/types";
 import { DrawerTitle } from "../DrawerTitle";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { swapDefaultTrack } from "../../utils/index";
+import { useGetSwapTrackingProperties } from "../../utils/index";
 
 type Props = {
   setTransaction: $PropertyType<SwapTransactionType, "setTransaction">,
@@ -25,11 +25,11 @@ export default function FeesDrawer({
   setTransaction,
   updateTransaction,
   mainAccount,
-  currency,
   status,
   provider,
   disableSlowStrategy = false,
 }: Props) {
+  const swapDefaultTrack = useGetSwapTrackingProperties();
   const transaction = useSelector(transactionSelector);
   const mapStrategies = useCallback(
     strategy =>
@@ -46,7 +46,7 @@ export default function FeesDrawer({
         {...swapDefaultTrack}
       />
       <DrawerTitle i18nKey="swap2.form.details.label.fees" />
-      <Box mt={3} flow={4}>
+      <Box mt={3} flow={4} mr={3}>
         {transaction.networkInfo && (
           <SendAmountFields
             account={mainAccount}

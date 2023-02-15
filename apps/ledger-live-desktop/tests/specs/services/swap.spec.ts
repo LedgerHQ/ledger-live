@@ -91,11 +91,29 @@ test.describe.parallel("Swap", () => {
       await swapPage.selectTargetAccount("Ethereum 2");
     });
 
+    await test.step("Open Network Fees Drawer", async () => {
+      await swapPage.openNetworkFeesDrawer();
+      await expect.soft(page).toHaveScreenshot("network-fees-drawer.png");
+    });
+
+    await test.step("Navigate to standard fees", async () => {
+      await swapPage.selectStandardFees();
+      await expect.soft(page).toHaveScreenshot("standard-network-selected.png");
+    });
+
+    // there are no UTXOs in the current test data so can't test the coin strategies
+    await test.step("Navigate to set custom fee", async () => {
+      await swapPage.selectAdvancedFees();
+      await swapPage.enterCustomFee("5");
+      await drawer.close();
+      await expect.soft(page).toHaveScreenshot("custom-fee-set-for-swap.png");
+    });
+
     await test.step("Confirm Exchange", async () => {
       await swapPage.selectExchangeQuote("changelly", "float");
       await swapPage.confirmExchange();
       await deviceAction.initiateSwap();
-      await expect.soft(page).toHaveScreenshot("initiate-swap.png", { timeout: 20000 });
+      await expect.soft(page).toHaveScreenshot("initiate-swap.png", { timeout: 10000 });
     });
 
     await test.step("Confirm swap with Nano App", async () => {

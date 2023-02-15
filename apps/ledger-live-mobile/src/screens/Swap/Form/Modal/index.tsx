@@ -106,9 +106,7 @@ export function Modal({
         />
       )}
 
-      {error && (
-        <GenericErrorBottomModal error={error} isOpened onClose={resetError} />
-      )}
+      {error && <GenericErrorBottomModal error={error} onClose={resetError} />}
     </>
   );
 }

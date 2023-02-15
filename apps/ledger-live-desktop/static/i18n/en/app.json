@@ -824,7 +824,20 @@
       "delegation": {
         "title": "In case you didn’t know...",
         "description": "The Ledger validator stakes your {{asset}} at a commission of {{commission}}%.",
-        "cta": "Stake with Ledger"
+        "cta": "Stake with Ledger",
+        "linkText": "Learn more",
+        "ethereum": {
+          "lido": {
+            "title": "In case you didn’t know...",
+            "description": "Stake your Ethereum with Lido and earn rewards daily. No lock-up period. No minimum deposit.",
+            "cta": "Stake with Lido"
+          },
+          "kiln": {
+            "title": "Don’t just HODL. Grow your ETH",
+            "description": "Got more than 32 ETH? Earn passive rewards by securely staking your ETH with Kiln.",
+            "cta": "Stake with Kiln"
+          }
+        }
       }
     }
   },
@@ -1399,7 +1412,7 @@
         "label": "Popular"
       },
       "earn": {
-        "title": "Earn",
+        "title": "Stake",
         "description": "Grow your crypto with Ledger"
       }
     }
@@ -5540,6 +5553,10 @@
       "title": "Image loading from file failed",
       "description": "Please try again with another image"
     },
+    "ImageLoadFromNftError": {
+      "title": "Image loading from NFT failed",
+      "description": "Please try again with another NFT"
+    },
     "ImageDownloadError": {
       "title": "Image download failed",
       "description": "Please try again with another image"
@@ -5612,6 +5629,13 @@
       "descriptionWithProductName": "You need to setup your {{ productName }} first.\nWe will guide you through the setup process.",
       "goToOnboardingButton": "Set up my device",
       "goToOnboardingButtonWithProductName": "Set up my {{ productName }}"
+    },
+    "EtherscanAPIError": {
+      "title": "Fetching transactions failed",
+      "description": "An unexpected error occurred with the explorers. Please try again later"
+    },
+    "GasEstimationError": {
+      "title": "Gas estimation failed"
     }
   },
   "cryptoOrg": {
@@ -5650,7 +5674,13 @@
         "stepLabel": "Choose an image",
         "description": "Choose an image to set as (...)",
         "pickFromNftGallery": "Select from my NFT gallery",
-        "upload": "Upload from my computer"
+        "myNfts": "My NFTs",
+        "upload": "Upload from my computer",
+        "chooseNft": "Choose an NFT",
+        "selectNft": "Choose NFT",
+        "previousSelectNft": "back",
+        "nftEmptyStateTitle": "No NFT's to show yet",
+        "nftEmptyStateDescription": "Get started by adding NFTs to your wallet."
       },
       "adjust": {
         "stepLabel": "Adjust image",

@@ -1,4 +1,5 @@
 import invariant from "invariant";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 /**
  * these are either "dead"/"burn" addresses OR "abandon" seed addresses.
@@ -6,10 +7,11 @@ import invariant from "invariant";
  * We use them for tests and also for dry-run estimations
  * DO NOT USE AS RECIPIENT OR SIGN TRANSACTIONS INTO THEM
  */
-const abandonSeedAddresses: Record<string, string> = {
+const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   algorand: "PSHLIWQKDEETIIBQEOTLGCT5IF7BTTOKCUULONOGVGF2HYDT2IHW3H4CCI",
+  // https://snowtrace.io/address/0x000000000000000000000000000000000000dead/tokens
+  avalanche_c_chain: "0x000000000000000000000000000000000000dEaD",
   cosmos: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
-  cosmos_testnet: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
   ripple: "rHsMGQEkVNJmpGWs8XUBoTBiAAbwxZN5v3",
   stellar: "GDYPMQMYW2JTLPWAUAHIDY3E4VHP5SGTFC5SMA45L7ZPOTHWQ2PHEW3E",
   tezos: "tz1VJitLYB31fEC82efFkLRU4AQUH9QgH3q6",
@@ -72,10 +74,12 @@ const abandonSeedAddresses: Record<string, string> = {
  * DO NOT USE AS RECIPIENT OR SIGN TRANSACTIONS INTO THEM
  * @param {*} currencyId
  */
+// TODO: signature should be getAbandonSeedAddress(currencyId: CryptoCurrencyId)
 export const getAbandonSeedAddress = (currencyId: string): string => {
   invariant(
     abandonSeedAddresses[currencyId] !== undefined,
     `No abandonseed available for ${currencyId}`
   );
-  return abandonSeedAddresses[currencyId];
+
+  return abandonSeedAddresses[currencyId]!;
 };

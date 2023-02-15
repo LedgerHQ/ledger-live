@@ -12,6 +12,7 @@ import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
 
 import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 
 type Props = {
   account: AccountLike,
@@ -37,7 +38,14 @@ const AccountHeaderActions = (props: Props) => {
     : false;
 
   const onClick = useCallback(() => {
-    if (hasDelegations) {
+    if (isAccountEmpty(account) || !earnRewardEnabled) {
+      dispatch(
+        openModal("MODAL_NO_FUNDS_STAKE", {
+          account,
+          parentAccount,
+        }),
+      );
+    } else if (hasDelegations) {
       dispatch(
         openModal(modals.stake, {
           account,
@@ -52,20 +60,16 @@ const AccountHeaderActions = (props: Props) => {
         }),
       );
     }
-  }, [dispatch, account, validators, hasDelegations]);
+  }, [account, earnRewardEnabled, hasDelegations, dispatch, parentAccount, validators]);
 
   if (parentAccount) return null;
-
-  const disabledLabel = earnRewardEnabled ? "" : t("elrond.delegation.minSafeWarning");
 
   return [
     {
       key: "Stake",
       onClick: onClick,
       icon: IconCoins,
-      disabled: !earnRewardEnabled,
       label: t("account.stake"),
-      tooltip: disabledLabel,
     },
   ];
 };

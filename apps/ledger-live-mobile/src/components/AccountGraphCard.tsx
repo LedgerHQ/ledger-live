@@ -40,7 +40,7 @@ import { Item } from "./Graph/types";
 import getWindowDimensions from "../logic/getWindowDimensions";
 import Graph from "./Graph";
 import Touchable from "./Touchable";
-import TransactionsPendingConfirmationWarning from "./TransactionsPendingConfirmationWarning";
+import { TransactionsPendingConfirmationWarningForAccount } from "./TransactionsPendingConfirmationWarning";
 import { NoCountervaluePlaceholder } from "./CounterValue";
 import { ensureContrast } from "../colors";
 import { NavigatorName, ScreenName } from "../const";
@@ -301,7 +301,9 @@ const GraphCardHeader = ({
               <NoCountervaluePlaceholder />
             )}
           </Text>
-          <TransactionsPendingConfirmationWarning maybeAccount={account} />
+          <TransactionsPendingConfirmationWarningForAccount
+            maybeAccount={account}
+          />
         </Flex>
         <Text
           fontFamily="Inter"
