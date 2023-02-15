@@ -27,7 +27,6 @@ export function getAccountBannerState(
   const { validators } = getCurrentSolanaPreloadData(account.currency) ?? {
     validators: [],
   };
-  console.log("validators", validators);
   const ledgerValidator = validators.find(
     (validator) => validator.voteAccount === LEDGER_VALIDATOR_ADDRESS
   );
