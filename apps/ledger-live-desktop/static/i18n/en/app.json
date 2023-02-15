@@ -3805,7 +3805,9 @@
       "runLocalAppDeleteButton": "Delete",
       "runLocalAppOpenButton": "Open",
       "enableLearnStagingUrl": "Learn page staging URL",
-      "enableLearnStagingUrlDesc": "Enable the staging URL for the learn page."
+      "enableLearnStagingUrlDesc": "Enable the staging URL for the learn page.",
+      "openOnboardingAppInstallDebug": "Open onboarding app install debug screen",
+      "openOnboardingAppInstallDebugDesc": "Open a screen with the components from the sync onboarding app installation step"
     },
     "currencies": {
       "selectPlaceholder": "Select crypto asset",
@@ -5706,5 +5708,37 @@
     },
     "customImageSet": "Lockscreen set",
     "finishCTA": "Finish"
+  },
+  "onboardingAppInstall": {
+    "restore": {
+      "title": "Install the same apps as on {{deviceName}}?",
+      "titleNoDeviceName": "Install the same apps as on previous Ledger device?",
+      "subtitle": "You can install or remove apps at anytime.",
+      "installCTA": "Restore applications",
+      "skipCTA": "I'll do this later"
+    },
+    "default": {
+      "title": "{{ productName }} uses apps to enable secure blockchain transactions",
+      "subtitle": "We recommend downloading a default set of apps. You can download more later.",
+      "installCTA": "Install applications",
+      "skipCTA": "I'll do this later"
+    },
+    "progress": {
+      "loading": "Loading ...",
+      "resolving": "Resolving dependencies",
+      "progress": "Installing apps {{progress}}%",
+      "disclaimer": "Add or remove apps at any time from Ledger Live."
+    },
+    "cancelled": {
+      "title": "App installation was cancelled on {{productName}}",
+      "subtitle": "{{productName}} needs blockchain apps to approve your crypto and NFT transactions.",
+      "installCTA": "Install now",
+      "skipCTA": "I'll do this later"
+    },
+    "locked": {
+      "title": "Your {{productName}} is locked",
+      "subtitle": "Unlock your {{productName}} and restart the installation.",
+      "installCTA": "Restart installation"
+    }
   }
 }
