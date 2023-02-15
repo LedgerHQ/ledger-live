@@ -112,19 +112,9 @@
       "title" : "عذراً، تم تعطيل البلوتوث",
       "description" : "يرجى تفعيل البلوتوث في إعدادات هاتفك. (حالة {{state}})"
     },
-    "FwUpdateBluetoothNotSupported" : {
-      "title" : "تحديثات البرامج الثابتة مدعومة فقط للاتصالات السلكية"
-    },
-    "BtcUnmatchedApp" : {
-      "title" : "هذا التطبيق الخطأ",
-      "description" : "يرجى فتح تطبيق {{managerAppName}} على جهازك."
-    },
     "CantOpenDevice" : {
       "title" : "عذراً، فشل الاتصال",
       "description" : "يجب إلغاء قفل جهازك Ledger وأن يكون داخل النطاق لاستخدام البلوتوث."
-    },
-    "CantScanQRCode" : {
-      "title" : "تعذر فحص رمز الاستجابة السريعة (QR) هذا: التحقق التلقائي غير مدعوم من قِبل هذا العنوان"
     },
     "ConnectAppTimeout" : {
       "title" : "عفوًا، لم يتم العثور على أي جهاز",
@@ -324,11 +314,13 @@
     },
     "ImageCommitRefusedOnDevice" : {
       "title" : "تم إلغاء شاشة القَفل على Ledger Stax",
-      "description" : "إذا لم تكن هذه الصورة بالمقاس المناسب، يُمكنك المحاولة مرة ثانية مع صورة أخرى."
+      "description" : "إذا لم تكن هذه الصورة بالمقاس المناسب، يُمكنك المحاولة مرة ثانية مع صورة أخرى.",
+      "primaryCTA" : "Upload another picture"
     },
     "ImageLoadRefusedOnDevice" : {
       "title" : "تم إلغاء شاشة القَفل على Ledger Stax",
-      "description" : "إذا لم تكن هذه الصورة بالمقاس المناسب، يُمكنك المحاولة مرة ثانية مع صورة أخرى."
+      "description" : "إذا لم تكن هذه الصورة بالمقاس المناسب، يُمكنك المحاولة مرة ثانية مع صورة أخرى.",
+      "primaryCTA" : "Upload another picture"
     },
     "InvalidAddress" : {
       "title" : "هذا ليس عنوان {{currencyName}} صحيح"
@@ -553,7 +545,8 @@
     },
     "UpdateYourApp" : {
       "title" : "مطلوب تحديث للتطبيق",
-      "description" : "يرجى إلغاء التثبيت ثم إعادة تثبيت تطبيق {{managerAppName}} في المدير (Manager)."
+      "description" : "يرجى إلغاء التثبيت ثم إعادة تثبيت تطبيق {{managerAppName}} في المدير (Manager).",
+      "primaryCTA" : "افتح Manager (المدير)"
     },
     "UserRefusedAllowManager" : {
       "title" : "تم تعطيل المدير (Manager) على الجهاز",
@@ -672,7 +665,8 @@
     },
     "generic" : {
       "title" : "{{message}}",
-      "description" : "حدث خطأ ما. يرجى إعادة المحاولة مرة أخرى. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم Ledger."
+      "description" : "حدث خطأ ما. يرجى إعادة المحاولة مرة أخرى. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم Ledger.",
+      "primaryCTA" : "إعادة المحاولة"
     },
     "SolanaAccountNotFunded" : {
       "title" : "الحساب غير ممول"
@@ -811,6 +805,13 @@
       "title" : "جهازك مقفل",
       "description" : "قم بإلغاء قفل جهازك وحاول مرة أخرى.",
       "descriptionWithProductName" : "قم بإلغاء قفل {{ productName }} خاصتك وحاول مرة أخرى."
+    },
+    "EtherscanAPIError" : {
+      "title" : "فشل إحضار المعاملات",
+      "description" : "حدث خطأ غير متوقع مع المستكشفات. يُرجى إعادة المحاولة لاحقاً"
+    },
+    "GasEstimationError" : {
+      "title" : "فشل تقدير الغاز"
     }
   },
   "crash" : {
@@ -3298,6 +3299,10 @@
           }
         }
       }
+    },
+    "walletConnect" : {
+      "title" : "WalletConnect",
+      "description" : "قم بتوصيل محفظتك بالتطبيقات اللامركزية"
     }
   },
   "signMessage" : {
