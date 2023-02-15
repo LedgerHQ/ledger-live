@@ -18,6 +18,7 @@ import { AnalyticsContext } from "../../analytics/AnalyticsContext";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { MainNavigatorParamList } from "../../components/RootNavigator/types/MainNavigator";
 import useDynamicContent from "../../dynamicContent/dynamicContent";
+import { useIsNewsfeedAvailable } from "../../hooks/newsfeed/useIsNewsfeedAvailable";
 
 const images = {
   light: {
@@ -48,6 +49,7 @@ function Discover() {
     >();
 
   const learn = useFeature("brazeLearn");
+  const isNewsfeedAvailable = useIsNewsfeedAvailable();
   const referralProgramConfig = useFeature("referralProgramDiscoverCard");
   const isNFTDisabled =
     useFeature("disableNftLedgerMarket")?.enabled && Platform.OS === "ios";
@@ -97,7 +99,7 @@ function Discover() {
             ]
           : []),
 
-        ...(!learn?.enabled
+        ...(!learn?.enabled && !isNewsfeedAvailable
           ? [
               {
                 title: t("discover.sections.learn.title"),
@@ -119,12 +121,15 @@ function Discover() {
                 ),
               },
             ]
-          : learnCards.length > 0
+          : learnCards.length > 0 || isNewsfeedAvailable
           ? [
               {
                 title: t("discover.sections.learn.title"),
                 subTitle: t("discover.sections.learn.desc"),
                 onPress: () => {
+                  // Fixme: Can't find a way to make TS happy ...
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore
                   navigation.navigate(NavigatorName.ExploreTab);
                   readOnlyTrack("Learn");
                 },

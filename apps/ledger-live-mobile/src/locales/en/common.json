@@ -87,7 +87,8 @@
     "popular": "popular",
     "getSupport": "Get support",
     "comingSoon": "Coming soon",
-    "restart": "Restart"
+    "restart": "Restart",
+    "loadMore": "Load more"
   },
   "errors": {
     "countervaluesUnavailable": {
@@ -6083,5 +6084,9 @@
         "emptyPassword": "Password cannot be empty"
       }
     }
+  },
+  "newsfeed": {
+    "title": "Newsfeed",
+    "poweredByCryptopanic": "Powered by Cryptopanic"
   }
 }

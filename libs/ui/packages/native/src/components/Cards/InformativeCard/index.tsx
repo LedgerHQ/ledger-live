@@ -1,22 +1,36 @@
-import React from "react";
-import { TouchableOpacityProps, TouchableOpacity, Image, ImageProps } from "react-native";
+import React, { memo } from "react";
+import {
+  TouchableOpacityProps,
+  TouchableOpacity,
+  Image,
+  ImageProps,
+  StyleSheet,
+} from "react-native";
 import styled from "styled-components/native";
 
 import Text from "../../Text";
 import Flex from "../../Layout/Flex";
 
 export type CardProps = TouchableOpacityProps & {
-  tag?: string;
+  tag?: React.ReactNode;
   title?: React.ReactNode;
   imageUrl?: string;
   onClickCard?: () => void;
-  imageProps?: ImageProps;
+  imageProps?: Partial<ImageProps>;
 };
 
 const Base = styled(TouchableOpacity)``;
 const ImageContent = styled(Image)`
   border-radius: 8px;
 `;
+
+const styles = StyleSheet.create({
+  image: {
+    flex: 1,
+    backgroundColor: "#fff",
+    width: "100%",
+  },
+});
 
 const CardContainer = (props: CardProps): React.ReactElement => {
   const { imageUrl, title, tag, imageProps } = props;
@@ -36,7 +50,7 @@ const CardContainer = (props: CardProps): React.ReactElement => {
         source={{
           uri: imageUrl,
         }}
-        style={{ width: 100, height: 75 }}
+        style={styles.image}
         {...imageProps}
       />
     </Flex>
@@ -51,4 +65,4 @@ const InformativeCard = (props: CardProps): React.ReactElement => {
   );
 };
 
-export default InformativeCard;
+export default memo(InformativeCard);

@@ -1,21 +1,23 @@
-const CRYPTOMANIAC_AUTH_TOKEN = "N/A";
+export const cryptopanicAvailableRegions = [
+  "en",
+  "de",
+  "nl",
+  "es",
+  "fr",
+  "it",
+  "pt",
+  "ru",
+] as const;
 
-type CryptopanicAvailableRegions =
-  | "en"
-  | "de"
-  | "nl"
-  | "es"
-  | "fr"
-  | "it"
-  | "pt"
-  | "ru";
+export type CryptopanicAvailableRegionsType =
+  typeof cryptopanicAvailableRegions[number];
 
 export type CryptopanicNews = {
   kind: "news";
   domain: string;
   source: {
     title: string;
-    region: CryptopanicAvailableRegions;
+    region: CryptopanicAvailableRegionsType;
     domain: string;
     path: string | null;
     url: string | null;
@@ -45,7 +47,6 @@ export type CryptopanicNewsWithMetadata = CryptopanicNews & {
   };
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type CryptopanicPostsResponse = {
   count: number;
   next: string | null;
@@ -64,13 +65,15 @@ export type CryptopanicGetParams = {
     | "lol";
   public?: boolean;
   currencies?: [string];
-  regions?: [CryptopanicAvailableRegions];
+  regions?: [CryptopanicAvailableRegionsType];
   metadata?: boolean;
   approved?: boolean;
   page?: number;
+  // eslint-disable-next-line camelcase
+  auth_token: string;
 };
 
-function createSearchParams(params) {
+function createSearchParams(params: CryptopanicGetParams) {
   const searchParams = new URLSearchParams();
   Object.entries(params).forEach(([key, values]) => {
     if (Array.isArray(values)) {
@@ -90,7 +93,7 @@ export async function getPosts(
   const formattedParams = createSearchParams(params).toString();
 
   const response = await fetch(
-    `https://cryptopanic.com/api/v1/posts/?auth_token=${CRYPTOMANIAC_AUTH_TOKEN}&${formattedParams}`,
+    `https://cryptopanic.com/api/v1/posts/?${formattedParams}`,
   ).then(response => {
     if (!response.ok) {
       throw new Error("Network response was not OK");
