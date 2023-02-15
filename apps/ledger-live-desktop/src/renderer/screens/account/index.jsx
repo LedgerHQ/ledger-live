@@ -92,7 +92,7 @@ const AccountPage = ({
     : null;
   const bgColor = useTheme("colors.palette.background.paper");
   const isCompoundEnabled = useCompoundAccountEnabled(account, parentAccount);
-  const banner = useGetBannerProps(mainAccount);
+  const banner = useGetBannerProps(account);
 
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
   const filterOperations = useCallback(

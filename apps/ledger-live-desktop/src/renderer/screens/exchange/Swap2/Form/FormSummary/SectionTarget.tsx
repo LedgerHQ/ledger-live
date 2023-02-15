@@ -1,5 +1,4 @@
-// @flow
-import React, { useEffect, useRef, useCallback } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { track } from "~/renderer/analytics/segment";
 import SummaryLabel from "./SummaryLabel";
@@ -8,29 +7,30 @@ import SummaryValue, { NoValuePlaceholder } from "./SummaryValue";
 import { useTranslation } from "react-i18next";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { getAccountName } from "@ledgerhq/live-common/account/index";
-import type { TokenCurrency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import SummarySection from "./SummarySection";
 import { openModal } from "~/renderer/actions/modals";
 import { context } from "~/renderer/drawers/Provider";
 import { useGetSwapTrackingProperties } from "../../utils/index";
 
-import type {
+import {
   SwapSelectorStateType,
   SwapTransactionType,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import TargetAccountDrawer from "../TargetAccountDrawer";
+import { AccountLike } from "~/../../../libs/ledgerjs/packages/types-live/lib";
 
 const AccountSection = ({
   account,
   currency,
   handleChange,
 }: {
-  account: $PropertyType<SwapSelectorStateType, "account">,
-  currency: TokenCurrency | CryptoCurrency,
-  handleChange: ?() => void,
+  account: SwapSelectorStateType["account"];
+  currency: TokenCurrency | CryptoCurrency;
+  handleChange?: () => void;
 }) => {
   const { t } = useTranslation();
-  const accountName = getAccountName(account);
+  const accountName = account ? getAccountName(account) : undefined;
   const swapDefaultTrack = useGetSwapTrackingProperties();
 
   const handleChangeAndTrack = useCallback(() => {
@@ -39,13 +39,19 @@ const AccountSection = ({
       page: "Page Swap Form",
       ...swapDefaultTrack,
     });
-    handleChange();
+
+    if (handleChange) {
+      handleChange();
+    }
   }, [handleChange, swapDefaultTrack]);
 
   return (
     <SummarySection>
       <SummaryLabel label={t("swap2.form.details.label.target")} />
-      <SummaryValue value={accountName} handleChange={handleChangeAndTrack}>
+      <SummaryValue
+        value={accountName}
+        {...(handleChange ? { handleChange: handleChangeAndTrack } : {})}
+      >
         {currency ? <CryptoCurrencyIcon circle currency={currency} size={16} /> : null}
       </SummaryValue>
     </SummarySection>
@@ -66,12 +72,17 @@ const PlaceholderSection = () => {
 };
 
 type SectionTargetProps = {
-  account: $PropertyType<SwapSelectorStateType, "account">,
-  currency: $PropertyType<SwapSelectorStateType, "currency">,
-  setToAccount: $PropertyType<SwapTransactionType, "setToAccount">,
-  targetAccounts: $PropertyType<SwapTransactionType, "targetAccounts">,
-  hasRates: boolean,
+  account: SwapSelectorStateType["account"];
+  currency: SwapSelectorStateType["currency"];
+  setToAccount: SwapTransactionType["setToAccount"];
+  targetAccounts: AccountLike[];
+  hasRates: boolean;
 };
+
+type SetDrawerStateRef = (args: {
+  selectedAccount: AccountLike | undefined;
+  targetAccounts: AccountLike[];
+}) => void;
 const SectionTarget = ({
   account,
   currency,
@@ -96,7 +107,7 @@ const SectionTarget = ({
   const hideEdit = !targetAccounts || targetAccounts.length < 2;
 
   // Using a ref to keep the drawer state synced.
-  const setDrawerStateRef = useRef(null);
+  const setDrawerStateRef = useRef<SetDrawerStateRef>(null);
   useEffect(() => {
     setDrawerStateRef.current &&
       setDrawerStateRef.current({
@@ -114,7 +125,7 @@ const SectionTarget = ({
     });
   };
 
-  const handleEditAccount = hideEdit ? null : showDrawer;
+  const handleEditAccount = hideEdit ? undefined : showDrawer;
 
   if (!currency || !hasRates) return <PlaceholderSection />;
   if (!account)
