@@ -549,7 +549,7 @@
       "description" : "トランザクションは、30秒以内に署名する必要があります。もう一度お試しください。"
     },
     "TronNotEnoughEnergy" : {
-      "title" : "エネルギーが必要額を満たしていません。手数料には最大30TRXが必要となります。"
+      "title" : "エネルギーが必要額を満たしていません。手数料には最大50TRXが必要となります。"
     },
     "UpdateYourApp" : {
       "title" : "アプリのアップデートが必要です。",
@@ -811,6 +811,13 @@
       "title" : "デバイスがロックされています。",
       "description" : "デバイスのロックを解除して、再度お試しください。",
       "descriptionWithProductName" : "{{ productName }}のロックを解除して、再度お試しください。"
+    },
+    "EtherscanAPIError" : {
+      "title" : "トランザクションの取得に失敗しました",
+      "description" : "エクスプローラーで予期しないエラーが発生しました。後でもう一度お試しください"
+    },
+    "GasEstimationError" : {
+      "title" : "ガスの見積もりに失敗しました"
     }
   },
   "crash" : {
@@ -1495,25 +1502,20 @@
     "stepProtect" : {
       "bullets" : {
         "0" : {
-          "title" : "画面をチェックする ",
-          "label" : "デバイスの画面に表示される手順に従って、操作方法を学びましょう。"
+          "title" : "Select “Restore”",
+          "label" : "Press both buttons simultaneously to select."
         },
         "1" : {
-          "title" : "「復元」を選択",
-          "label" : "両方のボタンを同時に押して、選択内容を確定します。"
-        },
-        "2" : {
-          "title" : "「Protectで復元」モードを選択",
-          "label" : "両方のボタンを同時に押して、選択内容を確定します。"
+          "title" : "Select “Restore using Ledger Recover”",
+          "label" : "Press both buttons simultaneously to select."
         }
       },
       "nextStep" : "続行",
       "extraInfo" : {
-        "tooltip" : "Ledgerで表示されない",
-        "title" : "Ledgerで「Protectで復元」が表示されないのはなぜですか？",
-        "desc1" : "最も可能性の高い理由は、お使いのデバイスがProtectと互換性がないことです。ご心配ありません。それをお使いいただけるように、ぜひサポートさせていただきます。",
-        "desc2" : "「My Ledgerに「Protectで復元」が表示されない（My Ledger does not display Restore with Protect）」を選択して、当社にご連絡ください。サポートさせていただきます。",
-        "cta" : "マニュアル手順を実行する",
+        "tooltip" : "I don't see 'Restore using Ledger Recover'",
+        "title" : "The OS on your Ledger Nano X needs to be updated",
+        "desc" : "You can try updating the OS or contact Ledger support for assistance.",
+        "cta" : "Learn how to update",
         "supportLink" : "Ledgerサポートへのお問い合わせ"
       }
     },
@@ -3298,6 +3300,10 @@
           }
         }
       }
+    },
+    "walletConnect" : {
+      "title" : "WalletConnect",
+      "description" : "ウォレットをdappsに接続"
     }
   },
   "signMessage" : {
