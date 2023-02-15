@@ -10,58 +10,62 @@ import DefaultAppsIllustration from "./DefaultAppsIllustration";
 import RestoreAppsIllustration from "./RestoreAppsIllustration";
 import CancelModal from "./CancelModal";
 import InstallSetOfApps from "./InstallSetOfApps";
+import LockedModal from "./LockedModal";
 
 const fallbackDefaultAppsToInstall = ["Bitcoin", "Ethereum", "Polygon"];
 
 type Props = {
-  device?: Device | null | undefined;
-  restoreDevice?: DeviceModelInfo | null | undefined;
-  onComplete?: () => void;
-  onError?: (error: Error) => void;
+  device: Device | null | undefined;
+  /**
+   * Optional prop that will overload the apps to install if present
+   */
+  deviceToRestore?: DeviceModelInfo | null | undefined;
+  onComplete: () => void;
+  onError: (error: Error) => void;
 };
 
-const OnboardingAppInstallStep = ({ device, restoreDevice, onComplete, onError }: Props) => {
+/**
+ * OnboardingAppInstallStep wraps the InstallSetOfApps component and handle its
+ * dependencies, the display of modals and the mounting of InstallSetOfApps which
+ * will then start the installation directly
+ */
+const OnboardingAppInstallStep = ({ device, deviceToRestore, onComplete, onError }: Props) => {
   const { t } = useTranslation();
   const deviceInitialApps = useFeature("deviceInitialApps");
   const [dependencies, setDependencies] = useState<string[]>([]);
   const [inProgress, setInProgress] = useState<boolean>(false);
   const [isCancelModalOpen, setCancelModalOpen] = useState<boolean>(false);
+  const [isLockedModalOpen, setLockedModalOpen] = useState<boolean>(false);
 
   const productName = device ? getDeviceModel(device.modelId)?.productName : "Ledger Device";
 
-  const restoreDeviceName = restoreDevice?.modelId
-    ? getDeviceModel(restoreDevice?.modelId).productName
-    : restoreDevice?.modelId;
+  const deviceToRestoreName = deviceToRestore?.modelId
+    ? getDeviceModel(deviceToRestore?.modelId).productName
+    : deviceToRestore?.modelId;
 
   useEffect(() => {
-    if (restoreDevice) {
-      setDependencies(restoreDevice.apps.map(app => app.name));
+    if (deviceToRestore) {
+      setDependencies(deviceToRestore.apps.map(app => app.name));
     } else if (deviceInitialApps?.params?.apps) {
       setDependencies(deviceInitialApps.params.apps);
     } else {
       setDependencies(fallbackDefaultAppsToInstall);
     }
-  }, [deviceInitialApps, restoreDevice]);
+  }, [deviceInitialApps, deviceToRestore]);
 
   const handleRetry = useCallback(() => {
     setCancelModalOpen(false);
+    setLockedModalOpen(false);
   }, []);
-
-  const handleSkip = useCallback(() => {
-    if (onComplete) {
-      onComplete();
-    }
-  }, [onComplete]);
-
-  const handleComplete = useCallback(() => {
-    if (onComplete) {
-      onComplete();
-    }
-  }, [onComplete]);
 
   const handleCancel = useCallback(() => {
     setInProgress(false);
     setCancelModalOpen(true);
+  }, []);
+
+  const handleLocked = useCallback(() => {
+    setInProgress(false);
+    setLockedModalOpen(true);
   }, []);
 
   const handleError = useCallback(
@@ -79,38 +83,40 @@ const OnboardingAppInstallStep = ({ device, restoreDevice, onComplete, onError }
         isOpen={isCancelModalOpen}
         productName={productName}
         onRetry={handleRetry}
-        onSkip={handleSkip}
+        onSkip={onComplete}
       />
+      <LockedModal isOpen={isLockedModalOpen} productName={productName} onClose={handleRetry} />
       {inProgress && device ? (
         <InstallSetOfApps
           device={device}
           dependencies={dependencies}
-          onComplete={handleComplete}
+          onComplete={onComplete}
           onCancel={handleCancel}
+          onLocked={handleLocked}
           onError={handleError}
         />
       ) : (
         <Flex flexDirection="column">
           <Flex justifyContent="center" alignItems="center" mb={10} mt={4}>
-            {restoreDevice ? <RestoreAppsIllustration /> : <DefaultAppsIllustration />}
+            {deviceToRestore ? <RestoreAppsIllustration /> : <DefaultAppsIllustration />}
           </Flex>
           <Text variant="h5Inter" fontWeight="semiBold" textAlign="center">
-            {restoreDevice
-              ? restoreDeviceName
-                ? t("onboardingAppInstall.restore.title", { deviceName: restoreDeviceName })
+            {deviceToRestore
+              ? deviceToRestoreName
+                ? t("onboardingAppInstall.restore.title", { deviceName: deviceToRestoreName })
                 : t("onboardingAppInstall.restore.titleNoDeviceName")
               : t("onboardingAppInstall.default.title", { productName })}
           </Text>
           <Text variant="paragraphLineHeight" color="neutral.c70" textAlign="center" mt={2}>
-            {t(`onboardingAppInstall.${restoreDevice ? "restore" : "default"}.subtitle`)}
+            {t(`onboardingAppInstall.${deviceToRestore ? "restore" : "default"}.subtitle`)}
           </Text>
           <Flex pt={8} pb={2} justifyContent="space-between">
-            <Button flex={1} onClick={handleSkip}>
-              {t(`onboardingAppInstall.${restoreDevice ? "restore" : "default"}.skipCTA`)}
+            <Button flex={1} onClick={onComplete}>
+              {t(`onboardingAppInstall.${deviceToRestore ? "restore" : "default"}.skipCTA`)}
             </Button>
             <Flex px={2} />
             <Button flex={1} variant="main" onClick={() => setInProgress(true)}>
-              {t(`onboardingAppInstall.${restoreDevice ? "restore" : "default"}.installCTA`)}
+              {t(`onboardingAppInstall.${deviceToRestore ? "restore" : "default"}.installCTA`)}
             </Button>
           </Flex>
         </Flex>

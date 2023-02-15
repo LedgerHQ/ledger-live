@@ -11,7 +11,7 @@ import OnboardingAppInstallStep from "~/renderer/components/OnboardingAppInstall
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 
-const defaultRestoreDevice: DeviceModelInfo = {
+const defaultDeviceToRestore: DeviceModelInfo = {
   modelId: DeviceModelId.nanoX,
   deviceInfo: {} as DeviceInfo,
   apps: [
@@ -22,7 +22,7 @@ const defaultRestoreDevice: DeviceModelInfo = {
 
 type SelectRestoreDeviceItem = { value: DeviceModelId | null; label: string };
 
-const restoreDeviceOptions: SelectRestoreDeviceItem[] = [
+const deviceToRestoreOptions: SelectRestoreDeviceItem[] = [
   { value: null, label: "Use default apps" },
   { value: DeviceModelId.nanoX, label: "Restore from Nano X" },
   { value: DeviceModelId.nanoSP, label: "Restore from Nano S Plus" },
@@ -34,41 +34,41 @@ const OnboardingAppInstallDebugScreen = () => {
   const [restore, setRestore] = useState<boolean>(false);
   const [componentKey, setComponentKey] = useState<number>(1);
   const [installDone, setInstallDone] = useState<boolean>(false);
-  const [restoreDevice, setRestoreDevice] = useState<DeviceModelInfo>(defaultRestoreDevice);
+  const [deviceToRestore, setDeviceToRestore] = useState<DeviceModelInfo>(defaultDeviceToRestore);
   const [
-    selectedRestoreDeviceOption,
-    setSelectedRestoreDeviceOption,
-  ] = useState<SelectRestoreDeviceItem | null>(restoreDeviceOptions[0]);
+    selectedDeviceToRestoreOption,
+    setSelectedDeviceToRestoreOption,
+  ] = useState<SelectRestoreDeviceItem | null>(deviceToRestoreOptions[0]);
   const [appsToRestore, setAppsToRestore] = useState<string[]>(
-    defaultRestoreDevice.apps.map(app => app.name),
+    defaultDeviceToRestore.apps.map(app => app.name),
   );
   const device = useSelector(getCurrentDevice);
 
   useEffect(() => {
-    setRestoreDevice(prev => ({
+    setDeviceToRestore(prev => ({
       ...prev,
       apps: appsToRestore.map(app => ({ name: app, version: "" })),
     }));
   }, [appsToRestore]);
 
   useEffect(() => {
-    if (selectedRestoreDeviceOption) {
-      setRestore(selectedRestoreDeviceOption.value !== null);
-      if (selectedRestoreDeviceOption.value) {
-        setRestoreDevice(prev => ({
+    if (selectedDeviceToRestoreOption) {
+      setRestore(selectedDeviceToRestoreOption.value !== null);
+      if (selectedDeviceToRestoreOption.value) {
+        setDeviceToRestore(prev => ({
           ...prev,
-          modelId: selectedRestoreDeviceOption.value as DeviceModelId,
+          modelId: selectedDeviceToRestoreOption.value as DeviceModelId,
         }));
       }
     }
-  }, [selectedRestoreDeviceOption]);
+  }, [selectedDeviceToRestoreOption]);
 
   const handleRemount = useCallback(() => {
     setComponentKey(prev => prev + 1);
     setInstallDone(false);
-    setSelectedRestoreDeviceOption(restoreDeviceOptions[0]);
-    setAppsToRestore(defaultRestoreDevice.apps.map(app => app.name));
-    setRestoreDevice(defaultRestoreDevice);
+    setSelectedDeviceToRestoreOption(deviceToRestoreOptions[0]);
+    setAppsToRestore(defaultDeviceToRestore.apps.map(app => app.name));
+    setDeviceToRestore(defaultDeviceToRestore);
   }, []);
 
   const steps = [
@@ -84,8 +84,8 @@ const OnboardingAppInstallDebugScreen = () => {
       title: "Install default set of apps",
       renderBody: () => (
         <OnboardingAppInstallStep
-          restoreDevice={restore ? restoreDevice : undefined}
-          device={device as Device}
+          deviceToRestore={restore ? deviceToRestore : undefined}
+          device={device}
           onComplete={() => setInstallDone(true)}
         />
       ),
@@ -109,9 +109,9 @@ const OnboardingAppInstallDebugScreen = () => {
         <Flex flex={1} flexDirection="column">
           <SelectInput
             isMulti={false}
-            value={selectedRestoreDeviceOption}
-            options={restoreDeviceOptions}
-            onChange={setSelectedRestoreDeviceOption}
+            value={selectedDeviceToRestoreOption}
+            options={deviceToRestoreOptions}
+            onChange={setSelectedDeviceToRestoreOption}
           />
         </Flex>
       </Flex>

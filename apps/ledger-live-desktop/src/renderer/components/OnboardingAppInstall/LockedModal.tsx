@@ -11,11 +11,10 @@ const AppInstallPopin = styled(Popin)`
 type Props = {
   isOpen: boolean;
   productName: string;
-  onRetry: () => void;
-  onSkip: () => void;
+  onClose: () => void;
 };
 
-const CancelModal = ({ isOpen, productName, onRetry, onSkip }: Props) => {
+const LockedModal = ({ isOpen, productName, onClose }: Props) => {
   const { t } = useTranslation();
 
   return (
@@ -27,17 +26,14 @@ const CancelModal = ({ isOpen, productName, onRetry, onSkip }: Props) => {
       </Flex>
       <Flex flex={1} flexDirection="column" justifyContent="center" alignItems="center" px={12}>
         <Text mb={8} variant="body" fontSize={24} textAlign="center">
-          {t("onboardingAppInstall.cancelled.title", { productName })}
+          {t("onboardingAppInstall.locked.title", { productName })}
         </Text>
         <Text mb={14} fontSize={16} variant="body" color="palette.neutral.c80" textAlign="center">
-          {t("onboardingAppInstall.cancelled.subtitle", { productName })}
+          {t("onboardingAppInstall.locked.subtitle", { productName })}
         </Text>
         <Flex flexDirection="column" width="100%">
-          <Button size="large" variant="main" width="100%" onClick={onRetry} mb={8}>
-            {t("onboardingAppInstall.cancelled.installCTA")}
-          </Button>
-          <Button size="large" width="100%" onClick={onSkip}>
-            {t("onboardingAppInstall.cancelled.skipCTA")}
+          <Button size="large" variant="main" width="100%" onClick={onClose} mb={8}>
+            {t("onboardingAppInstall.locked.installCTA")}
           </Button>
         </Flex>
       </Flex>
@@ -45,4 +41,4 @@ const CancelModal = ({ isOpen, productName, onRetry, onSkip }: Props) => {
   );
 };
 
-export default CancelModal;
+export default LockedModal;

@@ -80,7 +80,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
   const history = useHistory();
   const [stepKey, setStepKey] = useState<StepKey>(StepKey.Paired);
   const [shouldRestoreApps, setShouldRestoreApps] = useState<boolean>(false);
-  const restoreDevice = useSelector(lastSeenDeviceSelector);
+  const deviceToRestore = useSelector(lastSeenDeviceSelector) as DeviceModelInfo | null | undefined;
 
   const device = useSelector(getCurrentDevice);
 
@@ -178,9 +178,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
         renderBody: () => (
           <OnboardingAppInstallStep
             device={device}
-            restoreDevice={
-              shouldRestoreApps && restoreDevice ? (restoreDevice as DeviceModelInfo) : undefined
-            }
+            deviceToRestore={shouldRestoreApps && deviceToRestore ? deviceToRestore : undefined}
             onComplete={handleInstallRecommendedApplicationComplete}
             onError={handleInstallRecommendedApplicationComplete}
           />
@@ -195,7 +193,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
     [
       t,
       device,
-      restoreDevice,
+      deviceToRestore,
       shouldRestoreApps,
       productName,
       lastKnownDeviceModelId,

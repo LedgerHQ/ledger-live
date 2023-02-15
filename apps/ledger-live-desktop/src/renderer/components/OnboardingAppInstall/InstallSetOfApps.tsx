@@ -16,10 +16,18 @@ type Props = {
   dependencies: string[];
   onComplete: () => void;
   onCancel: () => void;
+  onLocked: () => void;
   onError: (error: Error) => void;
 };
 
-const InstallSetOfApps = ({ device, dependencies, onComplete, onCancel, onError }: Props) => {
+const InstallSetOfApps = ({
+  device,
+  dependencies,
+  onComplete,
+  onCancel,
+  onLocked,
+  onError,
+}: Props) => {
   const { t } = useTranslation();
 
   const request = useMemo(
@@ -44,7 +52,14 @@ const InstallSetOfApps = ({ device, dependencies, onComplete, onCancel, onError 
     progress,
     opened,
     installQueue,
+    isLocked,
   } = status;
+
+  useEffect(() => {
+    if (isLocked) {
+      onLocked();
+    }
+  }, [isLocked, onLocked]);
 
   useEffect(() => {
     if (error instanceof UserRefusedAllowManager) {

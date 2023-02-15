@@ -5734,6 +5734,11 @@
       "subtitle": "{{productName}} needs blockchain apps to approve your crypto and NFT transactions.",
       "installCTA": "Install now",
       "skipCTA": "I'll do this later"
+    },
+    "locked": {
+      "title": "Your {{productName}} is locked",
+      "subtitle": "Unlock your {{productName}} and restart the installation.",
+      "installCTA": "Restart installation"
     }
   }
 }

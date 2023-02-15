@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { Icons, Flex, ProgressLoader, Text } from "@ledgerhq/react-ui";
 import { useTheme } from "styled-components";
 
@@ -44,4 +44,4 @@ const AppInstallItem = ({ appName, isActive, installed, itemProgress, index }: P
   );
 };
 
-export default AppInstallItem;
+export default memo(AppInstallItem);
