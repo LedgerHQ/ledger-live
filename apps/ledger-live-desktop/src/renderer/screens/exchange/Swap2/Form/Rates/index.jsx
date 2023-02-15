@@ -60,7 +60,7 @@ export default function ProviderRate({
 
   const dispatch = useDispatch();
   const [filter, setFilter] = useState([]);
-  const [defaultPartner, setDefaultPartner] = useState("");
+  const [defaultPartner, setDefaultPartner] = useState(null);
   const selectedRate = useSelector(rateSelector);
   const filteredRates = useMemo(() => filterRates(rates, filter), [rates, filter]);
 
