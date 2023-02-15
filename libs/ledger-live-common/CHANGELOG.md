@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 28.0.2
+
+### Patch Changes
+
+- [#2622](https://github.com/LedgerHQ/ledger-live/pull/2622) [`090c6c8d8f`](https://github.com/LedgerHQ/ledger-live/commit/090c6c8d8f15bc13995851abc9eb35c649f6b678) Thanks [@github-actions](https://github.com/apps/github-actions)! - Reduce redundant calls for ethereum synchronization
+
 ## 28.0.2-hotfix.0
 
 ### Patch Changes
