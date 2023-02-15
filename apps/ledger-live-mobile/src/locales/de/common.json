@@ -549,7 +549,7 @@
       "description" : "Transaktionen müssen innerhalb von 30 Sekunden signiert werden. Bitte versuchen Sie es erneut."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Energie ist niedriger als notwendig. Es können bis zu 50TRX an Gebühren anfallen."
+      "title" : "Energie ist niedriger als notwendig. Es können bis zu 50 TRX an Gebühren anfallen."
     },
     "UpdateYourApp" : {
       "title" : "App-Update erforderlich",
@@ -811,6 +811,13 @@
       "title" : "Ihr Gerät ist gesperrt",
       "description" : "Entsperren Sie Ihr Gerät und versuchen Sie es erneut.",
       "descriptionWithProductName" : "Entsperren Sie Ihr {{ productName }} und versuchen Sie es erneut."
+    },
+    "EtherscanAPIError" : {
+      "title" : "Abruf der Transaktionen fehlgeschlagen",
+      "description" : "Bei den Explorern ist ein unerwarteter Fehler aufgetreten. Versuchen Sie es bitte später noch einmal"
+    },
+    "GasEstimationError" : {
+      "title" : "Gasgebührenschätzung fehlgeschlagen"
     }
   },
   "crash" : {
@@ -1495,25 +1502,20 @@
     "stepProtect" : {
       "bullets" : {
         "0" : {
-          "title" : "Durchsuchen ",
-          "label" : "Erfahren Sie, wie Sie Ihr Gerät bedienen können, indem Sie die Anweisungen auf dem Bildschirm lesen."
+          "title" : "Select “Restore”",
+          "label" : "Press both buttons simultaneously to select."
         },
         "1" : {
-          "title" : "Wählen Sie „Restore“ (Wiederherstellen)",
-          "label" : "Drücken Sie beide Tasten gleichzeitig, um die Auswahl zu bestätigen."
-        },
-        "2" : {
-          "title" : "Wählen Sie den Modus „Restore with Protect“ (mit Protect wiederherstellen) aus.",
-          "label" : "Drücken Sie beide Tasten gleichzeitig, um die Auswahl zu bestätigen."
+          "title" : "Select “Restore using Ledger Recover”",
+          "label" : "Press both buttons simultaneously to select."
         }
       },
       "nextStep" : "Weiter",
       "extraInfo" : {
-        "tooltip" : "Ich kann es nicht auf meinem Ledger finden",
-        "title" : "Warum kann ich „Restore with Protect“ (mit Protect wiederherstellen) nicht auf meinem Ledger finden?",
-        "desc1" : "Am wahrscheinlichsten ist es, dass Ihr Gerät nicht mit Protect kompatibel ist. Keine Sorge, wir sind hier, um Ihnen zu helfen, wie es funktioniert.",
-        "desc2" : "Bitte kontaktieren Sie uns und wählen Sie „My Ledger doesn't display Restore with Protect“ (Mein Ledger zeigt die Wiederherstellung mit Protect nicht an), wir kümmern uns um Sie.",
-        "cta" : "Führen Sie die Schritte manuell durch",
+        "tooltip" : "I don't see 'Restore using Ledger Recover'",
+        "title" : "The OS on your Ledger Nano X needs to be updated",
+        "desc" : "You can try updating the OS or contact Ledger support for assistance.",
+        "cta" : "Learn how to update",
         "supportLink" : "Ledger-Kundenservice kontaktieren"
       }
     },
@@ -3298,6 +3300,10 @@
           }
         }
       }
+    },
+    "walletConnect" : {
+      "title" : "WalletConnect",
+      "description" : "Verbinden Sie Ihre Wallet mit dApps"
     }
   },
   "signMessage" : {
