@@ -3105,6 +3105,28 @@ importers:
       '@actions/github': 5.1.1
       '@vercel/ncc': 0.33.4
 
+  tools/actions/download-workflow-artifacts:
+    specifiers:
+      '@actions/core': ^1.10.0
+      '@actions/github': ^5.1.1
+      '@vercel/ncc': ^0.33.4
+    dependencies:
+      '@actions/core': 1.10.0
+      '@actions/github': 5.1.1
+      '@vercel/ncc': 0.33.4
+
+  tools/actions/extract-live-common-version:
+    specifiers:
+      '@actions/core': ^1.10.0
+      '@actions/github': ^5.1.1
+      '@vercel/ncc': ^0.33.4
+      isomorphic-unfetch: ^3.1.0
+    dependencies:
+      '@actions/core': 1.10.0
+      '@actions/github': 5.1.1
+      '@vercel/ncc': 0.33.4
+      isomorphic-unfetch: 3.1.0
+
   tools/actions/generate-bot-super-report:
     specifiers:
       '@actions/core': ^1.10.0
@@ -3125,6 +3147,18 @@ importers:
       tsup: 6.2.2
       unzipper: 0.10.11
 
+  tools/actions/generate-jira-diff:
+    specifiers:
+      '@actions/core': ^1.10.0
+      '@actions/github': ^5.1.1
+      '@vercel/ncc': ^0.33.4
+      isomorphic-unfetch: ^3.1.0
+    dependencies:
+      '@actions/core': 1.10.0
+      '@actions/github': 5.1.1
+      '@vercel/ncc': 0.33.4
+      isomorphic-unfetch: 3.1.0
+
   tools/actions/generate-release-message:
     specifiers:
       '@actions/core': ^1.10.0
@@ -3136,6 +3170,16 @@ importers:
       '@actions/github': 5.1.1
       '@vercel/ncc': 0.33.4
       semver: 7.3.7
+
+  tools/actions/generate-slack-screenshots-diff:
+    specifiers:
+      '@actions/core': ^1.10.0
+      '@actions/github': ^5.1.1
+      '@vercel/ncc': ^0.33.4
+    dependencies:
+      '@actions/core': 1.10.0
+      '@actions/github': 5.1.1
+      '@vercel/ncc': 0.33.4
 
   tools/actions/get-package-infos:
     specifiers:
@@ -3151,6 +3195,56 @@ importers:
       isomorphic-unfetch: 3.1.0
       semver: 7.3.7
 
+  tools/actions/get-pr-number:
+    specifiers:
+      '@actions/core': ^1.10.0
+      '@actions/github': ^5.1.1
+      '@vercel/ncc': ^0.33.4
+    dependencies:
+      '@actions/core': 1.10.0
+      '@actions/github': 5.1.1
+      '@vercel/ncc': 0.33.4
+
+  tools/actions/get-release-by-tag:
+    specifiers:
+      '@actions/core': ^1.10.0
+      '@actions/github': ^5.1.1
+      '@vercel/ncc': ^0.33.4
+    dependencies:
+      '@actions/core': 1.10.0
+      '@actions/github': 5.1.1
+      '@vercel/ncc': 0.33.4
+
+  tools/actions/get-workflow-artifacts-id:
+    specifiers:
+      '@actions/core': ^1.10.0
+      '@actions/github': ^5.1.1
+      '@vercel/ncc': ^0.33.4
+    dependencies:
+      '@actions/core': 1.10.0
+      '@actions/github': 5.1.1
+      '@vercel/ncc': 0.33.4
+
+  tools/actions/has-hash-commit-deps:
+    specifiers:
+      '@actions/core': ^1.6.0
+      '@actions/github': ^5.0.0
+      '@vercel/ncc': ^0.33.4
+    dependencies:
+      '@actions/core': 1.10.0
+      '@actions/github': 5.1.1
+      '@vercel/ncc': 0.33.4
+
+  tools/actions/is-org-member:
+    specifiers:
+      '@actions/core': ^1.10.0
+      '@actions/github': ^5.1.1
+      '@vercel/ncc': ^0.33.4
+    dependencies:
+      '@actions/core': 1.10.0
+      '@actions/github': 5.1.1
+      '@vercel/ncc': 0.33.4
+
   tools/actions/live-common-affected:
     specifiers:
       '@actions/core': ^1.10.0
@@ -3161,7 +3255,29 @@ importers:
       '@actions/github': 5.1.1
       tsup: 6.5.0
 
+  tools/actions/prepare-comment:
+    specifiers:
+      '@actions/core': ^1.10.0
+      '@actions/github': ^5.1.1
+      '@vercel/ncc': ^0.33.4
+      isomorphic-unfetch: ^3.1.0
+    dependencies:
+      '@actions/core': 1.10.0
+      '@actions/github': 5.1.1
+      '@vercel/ncc': 0.33.4
+      isomorphic-unfetch: 3.1.0
+
   tools/actions/prepare-comment-screenshots:
+    specifiers:
+      '@actions/core': ^1.10.0
+      '@actions/github': ^5.1.1
+      '@vercel/ncc': ^0.33.4
+    dependencies:
+      '@actions/core': 1.10.0
+      '@actions/github': 5.1.1
+      '@vercel/ncc': 0.33.4
+
+  tools/actions/publish-release:
     specifiers:
       '@actions/core': ^1.10.0
       '@actions/github': ^5.1.1
@@ -11154,7 +11270,7 @@ packages:
       md5-file: 3.2.3
       md5hex: 1.0.0
       minipass: 3.1.6
-      node-fetch: 2.6.7
+      node-fetch: 2.6.9
       node-forge: 1.3.1
       npm-package-arg: 7.0.0
       ora: 3.4.0
@@ -11412,7 +11528,7 @@ packages:
       connect: 3.7.0
       fs-extra: 9.0.0
       glob: 8.0.3
-      node-fetch: 2.6.7
+      node-fetch: 2.6.9
       open: 8.4.0
       resolve-from: 5.0.0
       semver: 7.3.2
@@ -11669,7 +11785,7 @@ packages:
       '@segment/loosely-validate-event': 2.0.0
       fetch-retry: 4.1.1
       md5: 2.3.0
-      node-fetch: 2.6.7
+      node-fetch: 2.6.9
       remove-trailing-slash: 0.1.1
       uuid: 8.3.2
     transitivePeerDependencies:
@@ -15147,7 +15263,7 @@ packages:
       chalk: 4.1.2
       lodash: 4.17.21
       mime: 2.6.0
-      node-fetch: 2.6.7
+      node-fetch: 2.6.9
       open: 6.4.0
       semver: 6.3.0
       shell-quote: 1.6.1
@@ -15161,7 +15277,7 @@ packages:
       chalk: 4.1.2
       lodash: 4.17.21
       mime: 2.6.0
-      node-fetch: 2.6.7
+      node-fetch: 2.6.9
       open: 6.4.0
       semver: 6.3.0
       shell-quote: 1.7.3
@@ -15175,7 +15291,7 @@ packages:
       chalk: 4.1.2
       lodash: 4.17.21
       mime: 2.6.0
-      node-fetch: 2.6.7
+      node-fetch: 2.6.9
       open: 6.4.0
       ora: 5.4.1
       semver: 6.3.0
@@ -36839,7 +36955,7 @@ packages:
   /isomorphic-unfetch/3.1.0:
     resolution: {integrity: sha512-geDJjpoZ8N0kWexiwkX8F9NkTsXhetLPVbZFQ+JTW239QNOwvB0gniuR1Wc6f0AMTn7/mFGyXvHTifrCp/GH8Q==}
     dependencies:
-      node-fetch: 2.6.7
+      node-fetch: 2.6.9
       unfetch: 4.2.0
     transitivePeerDependencies:
       - encoding
@@ -52463,7 +52579,7 @@ packages:
     dependencies:
       http-proxy-agent: 4.0.1
       https-proxy-agent: 5.0.1
-      node-fetch: 2.6.7
+      node-fetch: 2.6.9
       stream-events: 1.0.5
       uuid: 8.3.2
     transitivePeerDependencies:

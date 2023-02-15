@@ -274,7 +274,7 @@ jobs:
             const report = {
               ios: {
                 pass: ${{ needs.detox-tests-ios.outputs.status == 'success' }},
-                status: "${{ needs.detox-tests-ios.outputs.status }}",
+                status: "${{ needs.e2e-tests-mac.outputs.status }}",
               },
               // TODO: Android
             };
@@ -305,6 +305,10 @@ jobs:
             Object.entries(report).forEach(([os, values]) => {
               summary += ` ${values.pass ? "✅" : "❌"} (${values.status}) |`;
             });
+
+            summary += `
+            ${{ steps.comment.outputs.body }}
+            `
 
             const output = {
               summary
