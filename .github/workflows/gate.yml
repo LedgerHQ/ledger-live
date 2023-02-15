@@ -16,6 +16,13 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref_name != 'develop' }}
 
+env:
+  number: ${{ github.event.pull_request.number || -1 }}
+  head_sha: ${{ github.event.pull_request.head.sha || github.event.merge_group.head_sha }}
+  head_branch: ${{ github.event.pull_request.head.ref || github.event.merge_group.head_ref }}
+  base_sha: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha }}
+  base_branch: ${{ github.event.pull_request.base.ref || github.event.merge_group.base_ref }}
+
 jobs:
   setup:
     name: "Setup"
@@ -26,16 +33,32 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
+      - uses: actions/github-script@v6
+        id: clean-refs
+        with:
+          script: |
+            const head_branch = "${{ env.head_branch }}";
+            const base_branch = "${{ env.base_branch }}";
+
+            const newHeadBranch = head_branch.replace("refs/heads/", "");
+            const newBaseBranch = base_branch.replace("refs/heads/", "");
+
+            return {
+              head_branch: newHeadBranch,
+              base_branch: newBaseBranch
+            };
+
       - uses: ./tools/actions/turbo-affected
         id: affected
         with:
-          ref: ${{ format('origin/{0}', github.event_name == 'pull_request' && github.event.pull_request.base.ref || github.event.merge_group.base_ref) }}
+          ref: ${{ format('origin/{0}', steps.clean-refs.outputs.result.base_branch) }}
       # Labeller
       - uses: actions/labeler@v4
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
       - uses: actions/github-script@v6
-        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork
+        if: github.event.pull_request.head.repo.fork
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -76,11 +99,11 @@ jobs:
           script: |
             const fs = require("fs");
             fs.writeFileSync("pr_metadata.json", JSON.stringify({
-              number: ${{ github.event_name == 'pull_request' && github.event.pull_request.number || -1 }},
-              head_sha: "${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.event.merge_group.head_sha }}",
-              head_branch: "${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.event.merge_group.head_ref }}",
-              base_sha: "${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.merge_group.base_sha }}",
-              base_branch: "${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || github.event.merge_group.base_ref }}"
+              number: ${{ env.number }},
+              head_sha: "${{ env.head_sha }}",
+              head_branch: "${{ steps.clean-refs.outputs.result.head_branch }}",
+              base_sha: "${{ env.base_sha }}",
+              base_branch: "${{ steps.clean-refs.outputs.result.base_branch }}"
             }), "utf-8");
       - uses: actions/upload-artifact@v3
         with:
