@@ -15,6 +15,7 @@ export const AccountStakeBanner = ({ account }: { account: AccountLike | null })
       case "cosmos":
         return <CosmosStakeBanner account={account as CosmosAccount} />;
       default:
+        return null;
     }
   }
 
