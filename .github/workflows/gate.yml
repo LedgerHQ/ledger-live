@@ -15,6 +15,9 @@ concurrency:
 
 jobs:
   setup:
+    permissions:
+      contents: read
+      pull-requests: write
     name: "Setup"
     runs-on: ubuntu-latest
     outputs:
