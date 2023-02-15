@@ -12,6 +12,7 @@ import {
   getGenericOutput,
   createRunByName,
   listWorkflowRunArtifacts,
+  WorkflowRunArtifacts,
 } from "../../tools";
 import { prIsFork, updateWatcherCheckRun, getTips } from "./tools";
 
@@ -158,7 +159,7 @@ export function orchestrator(app: Probot) {
           ): Promise<
             Record<string, { path: string }> | PullRequestMetadata | undefined
           > => {
-            const artifactId = artifacts.data.artifacts.find(
+            const artifactId = artifacts.find(
               (artifact) => artifact.name === fileName
             )?.id;
 
@@ -271,7 +272,7 @@ export function orchestrator(app: Probot) {
           payload.workflow_run.id
         );
 
-        const artifactId = artifacts.data.artifacts.find(
+        const artifactId = artifacts.find(
           (artifact) => artifact.name === matchedWorkflow.summaryFile
         )?.id;
 

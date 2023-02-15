@@ -105,7 +105,7 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
           payload.workflow_run.id
         );
 
-        const artifactId = artifacts.data.artifacts.find(
+        const artifactId = artifacts.find(
           (artifact) => artifact.name === workflow.summaryFile
         )?.id;
 
