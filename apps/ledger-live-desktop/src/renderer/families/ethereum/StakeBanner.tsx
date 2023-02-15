@@ -13,7 +13,7 @@ import { StakeAccountBannerParams } from "~/renderer/screens/account/types";
 const kilnAppId = "kiln";
 const lidoAppId = "lido";
 
-export const EthereumStakeBanner: React.FC<{ account: Account }> = ({ account }) => {
+export const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
   const history = useHistory();
   const { t } = useTranslation();
   const stakeAccountBanner = useFeature("stakeAccountBanner");

@@ -1,8 +1,8 @@
 import React from "react";
 import { AccountLike } from "@ledgerhq/types-live";
 import { isAccount } from "@ledgerhq/live-common/account/index";
-import { EthereumStakeBanner } from "~/renderer/families/ethereum/StakeBanner";
-import { CosmosStakeBanner } from "~/renderer/families/cosmos/StakeBanner";
+import { StakeBanner as EthereumStakeBanner } from "~/renderer/families/ethereum/StakeBanner";
+import { StakeBanner as CosmosStakeBanner } from "~/renderer/families/cosmos/StakeBanner";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 
 export const AccountStakeBanner = ({ account }: { account: AccountLike | null }) => {

@@ -9,7 +9,7 @@ import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { openModal } from "~/renderer/actions/modals";
 import { useDispatch } from "react-redux";
 
-export const CosmosStakeBanner: React.FC<{ account: CosmosAccount }> = ({ account }) => {
+export const StakeBanner: React.FC<{ account: CosmosAccount }> = ({ account }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const stakeAccountBanner = useFeature("stakeAccountBanner");
