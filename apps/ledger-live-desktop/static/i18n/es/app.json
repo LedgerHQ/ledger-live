@@ -824,7 +824,20 @@
       "delegation" : {
         "title" : "Por si no lo sabías,",
         "description" : "El validador de Ledger pone en participación tus {{asset}} con una comisión del {{commission}}%.",
-        "cta" : "Participar con Ledger"
+        "cta" : "Participar con Ledger",
+        "linkText" : "Más información",
+        "ethereum" : {
+          "lido" : {
+            "title" : "Por si no lo sabías,",
+            "description" : "Pon tus Ethereum en participación con Lido y gana recompensas diarias. Sin periodo de inmovilización. Sin depósito mínimo.",
+            "cta" : "Participar con Lido"
+          },
+          "kiln" : {
+            "title" : "No hagas solo HODL. Haz crecer tus ETH",
+            "description" : "¿Tienes más de 32 ETH? Consigue recompensas pasivas poniendo tu ETH de forma segura en participación con Kiln.",
+            "cta" : "Participar con Kiln"
+          }
+        }
       }
     }
   },
@@ -1399,7 +1412,7 @@
         "label" : "Popular"
       },
       "earn" : {
-        "title" : "Gana",
+        "title" : "Poner en participación",
         "description" : "Haz crecer tus cripto con Ledger"
       }
     }
@@ -3472,6 +3485,71 @@
       "providerLink" : "Aprende más sobre {{provider}}"
     }
   },
+  "avalanchepchain" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Con tecnología de Figment",
+        "moreInfo" : "Más información",
+        "drawerTitle" : "Con tecnología de Figment",
+        "title" : "El token AVAX ya está disponible en Ledger Live",
+        "description" : "Ahora puedes gestionar tus tokens AVAX y protegerlos con Ledger Live.",
+        "website" : "Con tecnología de Figment"
+      }
+    },
+    "stakedBalance" : "Puesta en participación",
+    "stakedBalanceTooltip" : "Cantidad puesta en participación con validadores.",
+    "delegation" : {
+      "header" : "Delegaciones",
+      "add" : "Agregar",
+      "commission" : "Comisión",
+      "validator" : "ID de nodo",
+      "startTime" : "Fecha de inicio",
+      "endTime" : "Fecha de finalización",
+      "stakeAmount" : "Poner en participación",
+      "potentialReward" : "Posible recompensa",
+      "emptyState" : {
+        "description" : "Puedes recibir recompensas de AVAX delegando tu activos.",
+        "info" : "Cómo funciona la delegación",
+        "delegation" : "Ganar recompensas"
+      },
+      "notEnoughToDelegate" : "Para convertirte en delegador, debes tener al menos 25 AVAX disponibles en la P-Chain.",
+      "validatorStake" : "Puesta en participación con validadores",
+      "validatorRemainingStake" : "Disponible",
+      "flow" : {
+        "title" : "Delegar",
+        "steps" : {
+          "starter" : {
+            "description" : "Puedes recibir recompensas delegando tus activos AVAX a un validador.",
+            "bullet" : ["Conservas la propiedad de los activos delegados", "Delegar utilizando tu dispositivo Ledger", "Hay un mínimo de puesta en participación de 25 AVAX", "Los AVAX deben delegarse durante un mínimo de 2 semanas"]
+          },
+          "amount" : {
+            "title" : "Importe"
+          },
+          "validator" : {
+            "title" : "Validadores",
+            "ledgerByFigmentTC" : "Términos y condiciones de Ledger by Figment"
+          },
+          "endDate" : {
+            "title" : "Fecha de finalización",
+            "text" : "Selecciona la fecha de finalización de la delegación. La fecha de finalización de la delegación debe estar comprendida entre el {{minEndDate}} y el {{maxEndDate}}.",
+            "label" : "Fecha de finalización de la delegación"
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "success" : {
+              "title" : "Has delegado tus activos con éxito",
+              "text" : "El saldo de tu cuenta se actualizará cuando la cadena de bloques confirme la transacción.",
+              "cta" : "Ver detalles"
+            },
+            "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y revisa el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
+    }
+  },
   "near" : {
     "account" : {
       "stakedBalance" : "Saldo en participación",
@@ -5510,6 +5588,9 @@
     "StellarBurnAddressError" : {
       "title" : "Se ha producido un problema al intentar agregar una cuenta de Stellar"
     },
+    "AvalancheMinimumAmountError" : {
+      "title" : "La cantidad mínima es de 25 AVAX"
+    },
     "HederaAddAccountError" : {
       "title" : "Tu cuenta no ha sido agregada. Inténtalo de nuevo."
     },
@@ -5520,6 +5601,10 @@
     "ImageLoadFromFileError" : {
       "title" : "Error al cargar la imagen desde el archivo.",
       "description" : "Vuelve a intentarlo con otra imagen"
+    },
+    "ImageLoadFromNftError" : {
+      "title" : "Error al cargar la imagen del NFT",
+      "description" : "Vuelve a intentarlo con otro NFT"
     },
     "ImageDownloadError" : {
       "title" : "Error al descargar la imagen",
@@ -5593,6 +5678,13 @@
       "descriptionWithProductName" : "Primero debes configurar tu {{ productName }}.\nTe guiaremos a lo largo del proceso de configuración.",
       "goToOnboardingButton" : "Configurar mi dispositivo",
       "goToOnboardingButtonWithProductName" : "Configurar mi {{ productName }}"
+    },
+    "EtherscanAPIError" : {
+      "title" : "Se produjo un fallo al recuperar las transacciones",
+      "description" : "Se produjo un error inesperado con los exploradores. Inténtalo de nuevo más tarde"
+    },
+    "GasEstimationError" : {
+      "title" : "Se produjo un fallo en la estimación del gas"
     }
   },
   "cryptoOrg" : {
@@ -5631,7 +5723,13 @@
         "stepLabel" : "Elige una imagen",
         "description" : "Elige una imagen para establecerla como (...)",
         "pickFromNftGallery" : "Seleccionar de mi galería de NFT",
-        "upload" : "Cargar desde mi PC"
+        "myNfts" : "Mis NFTs",
+        "upload" : "Cargar desde mi PC",
+        "chooseNft" : "Elige un NFT",
+        "selectNft" : "Elegir NFT",
+        "previousSelectNft" : "Atrás",
+        "nftEmptyStateTitle" : "Todavía no hay NFTs para mostrar",
+        "nftEmptyStateDescription" : "Empieza agregando NFTs a tu billetera."
       },
       "adjust" : {
         "stepLabel" : "Ajustar imagen",
