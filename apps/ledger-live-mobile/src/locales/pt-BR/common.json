@@ -811,6 +811,13 @@
       "title" : "Seu dispositivo está bloqueado",
       "description" : "Desbloqueie seu dispositivo e tente novamente.",
       "descriptionWithProductName" : "Desbloqueie sua {{ productName }} e tente novamente."
+    },
+    "EtherscanAPIError" : {
+      "title" : "Falha em buscar transações",
+      "description" : "Ocorreu um erro inesperado com os exploradores. Tente novamente mais tarde"
+    },
+    "GasEstimationError" : {
+      "title" : "Falha em estimar o gás"
     }
   },
   "crash" : {
@@ -925,7 +932,7 @@
     "week" : "1S",
     "month" : "1M",
     "year" : "1A",
-    "all" : "TODOS"
+    "all" : "TUDO"
   },
   "carousel" : {
     "title" : "Fechar banner?",
@@ -1008,8 +1015,8 @@
       },
       "discoverWeb3" : {
         "title" : "Descubra a Web3",
-        "description" : "Descubra tudo sobre a Web3 enquanto seu dispositivo não chega!",
-        "cta" : "Descobrir"
+        "description" : "Explore a Web3 a fundo enquanto seu dispositivo não chega!",
+        "cta" : "Explorar"
       }
     }
   },
@@ -1110,7 +1117,7 @@
     "desc" : "Seu pedido está sendo processado.\nVocê receberá sua Ledger em breve. Verifique seu e-mail para a confirmação de seu pedido."
   },
   "discover" : {
-    "title" : "Discover",
+    "title" : "Explorar",
     "desc" : "Explore o mundo da Web3 com segurança",
     "link" : "Fale mais",
     "sections" : {
@@ -1245,13 +1252,13 @@
       "firstUse" : {
         "title" : "Primeira vez usando sua Nano?",
         "subTitle" : "Configurar uma nova Nano",
-        "desc" : "Vamos começar e configurar seu dispositivo!",
+        "desc" : "Vamos começar configurando seu dispositivo!",
         "label" : "30 minutos"
       },
       "devicePairing" : {
         "title" : "Já tem uma frase de recuperação?",
         "label" : "Emparelhamento de dispositivos",
-        "subTitle" : "Conecte sua Nano",
+        "subTitle" : "Conecte sua Ledger Nano",
         "desc" : "Seu dispositivo já está configurado? Conecte-o ao aplicativo!"
       },
       "desktopSync" : {
@@ -1262,8 +1269,8 @@
       },
       "restoreDevice" : {
         "label" : "Restaurar dispositivo",
-        "subTitle" : "Restaure sua frase de recuperação em um novo dispositivo",
-        "desc" : "Use uma frase de recuperação existente para restaurar suas chaves privadas em uma nova Nano!"
+        "subTitle" : "Restaurar sua frase em um novo dispositivo",
+        "desc" : "Use uma frase de recuperação e restaure suas chaves privadas em uma nova Ledger Nano!"
       },
       "recovery" : "Já tem uma frase de recuperação?",
       "protect" : {
@@ -1275,7 +1282,7 @@
       "0" : {
         "label" : "Noções básicas",
         "title" : "Acesse suas criptos",
-        "desc" : "Seus criptoativos são armazenados na blockchain. Você precisa de uma chave privada para acessá-los e gerenciá-los.",
+        "desc" : "Seus criptoativos estão armazenados na blockchain. Você precisa de uma chave privada para acessá-los e gerenciá-los.",
         "action" : "Não tem uma Nano? Descubra o aplicativo"
       },
       "1" : {
@@ -1286,17 +1293,17 @@
       "2" : {
         "label" : "Noções básicas",
         "title" : "Fique Offline",
-        "desc" : "O Ledger Live permite a você comprar, vender, gerenciar, negociar e ganhar criptoativos com proteção. Você validará cada transação cripto com sua Nano."
+        "desc" : "Com o Ledger Live, você pode comprar, vender, gerenciar, negociar e ganhar cripto em total segurança. Você validará cada transação cripto com sua Ledger Nano."
       },
       "3" : {
         "label" : "Noções básicas",
         "title" : "Valide transações",
-        "desc" : "Sua Nano funciona como uma carteira de \"armazenamento frio\". Isso significa que ela nunca expõe sua chave privada online, mesmo ao utilizar o aplicativo."
+        "desc" : "Sua Ledger Nano funciona como uma carteira de \"armazenamento frio\". Ela nunca expõe sua chave privada na internet, nem mesmo ao usar o aplicativo."
       },
       "4" : {
         "label" : "Noções básicas",
         "title" : "Vamos configurar sua Nano!",
-        "desc" : "Vamos começar configurando a segurança da sua Nano."
+        "desc" : "Vamos começar pelas configurações de segurança da sua Nano."
       },
       "cta" : "Vamos lá!",
       "title" : "BÁSICO"
@@ -1495,25 +1502,20 @@
     "stepProtect" : {
       "bullets" : {
         "0" : {
-          "title" : "Navegar ",
-          "label" : "Aprenda a interagir com seu dispositivo lendo as instruções na tela."
+          "title" : "Select “Restore”",
+          "label" : "Press both buttons simultaneously to select."
         },
         "1" : {
-          "title" : "Selecione \"Restore\" (Restaurar)",
-          "label" : "Pressione ambos os botões simultaneamente para validar a seleção."
-        },
-        "2" : {
-          "title" : "Selecione o modo \"Restore with protect\" (Restaurar com Protect)",
-          "label" : "Pressione ambos os botões simultaneamente para validar a seleção."
+          "title" : "Select “Restore using Ledger Recover”",
+          "label" : "Press both buttons simultaneously to select."
         }
       },
       "nextStep" : "Continuar",
       "extraInfo" : {
-        "tooltip" : "Não consigo encontrar em minha Ledger",
-        "title" : "Por que não consigo ver \"Restore with protect\" (Restaure com Protect) em minha Ledger?",
-        "desc1" : "A opção mais provável é que seu dispositivo não é compatível com o Protect. Não se preocupe, estamos aqui para explicar a você como fazer isso funcionar.",
-        "desc2" : "Entre em contato conosco e escolha \"Minha Ledger não exibe Restaurar com Protect\" e nós vamos ajudar você.",
-        "cta" : "Seguir etapas manuais",
+        "tooltip" : "I don't see 'Restore using Ledger Recover'",
+        "title" : "The OS on your Ledger Nano X needs to be updated",
+        "desc" : "You can try updating the OS or contact Ledger support for assistance.",
+        "cta" : "Learn how to update",
         "supportLink" : "Contate o Suporte Ledger"
       }
     },
@@ -1594,12 +1596,12 @@
         "cta" : "Vamos emparelhar minha Nano"
       },
       "nanoS" : {
-        "title" : "Conecte sua Nano",
+        "title" : "Conecte sua Ledger Nano",
         "desc" : "Esta é a primeira vez que você está configurando sua Nano com este telefone. Vamos conectar seu dispositivo rapidamente.",
         "cta" : "Vamos conectar minha Nano"
       },
       "nanoSP" : {
-        "title" : "Conecte sua Nano",
+        "title" : "Conecte sua Ledger Nano",
         "desc" : "Esta é a primeira vez que você está configurando sua Nano com este telefone. Vamos conectar seu dispositivo rapidamente.",
         "cta" : "Vamos conectar minha Nano"
       },
@@ -1949,7 +1951,7 @@
     "manager" : "Minha Ledger",
     "settings" : "Configurações",
     "platform" : "Live Apps",
-    "discover" : "Discover",
+    "discover" : "Explorar",
     "nanoX" : "Nano X",
     "market" : "Mercado",
     "learn" : "Aprender"
@@ -2045,7 +2047,7 @@
     "week" : "1S",
     "month" : "1M",
     "year" : "1A",
-    "all" : "Todos",
+    "all" : "Tudo",
     "since" : {
       "day" : "último dia",
       "week" : "semana passada",
@@ -2668,7 +2670,7 @@
       "featureFlagsEdit" : "Editar",
       "featureFlagsRestore" : "Restaurar",
       "featureFlagsRestoreAll" : "Restaurar os valores de todos os marcadores",
-      "featureFlagsTabAll" : "Todos",
+      "featureFlagsTabAll" : "Tudo",
       "featureFlagsTabGroups" : "Grupos",
       "firebaseProject" : "Projeto Firebase mirado por esta versão:",
       "showBannerDesc" : "Mostrar banner quando os marcadores estiverem desativados",
@@ -2941,7 +2943,7 @@
         "balance" : "Saldo <0>123</0>",
         "fromAccount" : "Selecionar Conta",
         "toAccount" : "Selecionar Conta",
-        "paraswapCTA" : "Procurando pelo Paraswap? Ele foi movido para a aba Discover!",
+        "paraswapCTA" : "Procurando pelo ParaSwap? Ele foi movido para a aba Explorar!",
         "quote" : "Cotação",
         "receive" : "Receber",
         "amount" : {
@@ -3298,6 +3300,10 @@
           }
         }
       }
+    },
+    "walletConnect" : {
+      "title" : "WalletConnect",
+      "description" : "Conectar sua carteira a DApps"
     }
   },
   "signMessage" : {
@@ -3942,7 +3948,7 @@
     },
     "filter" : {
       "title" : "Filtros",
-      "all" : "Todos",
+      "all" : "Tudo",
       "installed" : "Aplicativos",
       "not_installed" : "Não Instalados",
       "supported" : "Apoio ao vivo",
@@ -5705,7 +5711,7 @@
         "debug" : "debugar"
       },
       "banner" : {
-        "title" : "Descubra o Catálogo Live",
+        "title" : "Explore o Catálogo Live",
         "description" : "Encontre um novo mundo de possibilidades com cripto. Um acesso seguro a todos os serviços - DeFi, NFTs e outros por vir."
       },
       "twitterBanner" : {
