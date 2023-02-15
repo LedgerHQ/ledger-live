@@ -9,7 +9,7 @@ const getAccountBannerProps = (
 
   if (!display) return { display: false };
   if (redelegate && !stakeAccountBannerParams?.solana.redelegate) return { display: false };
-  if (!redelegate && !stakeAccountBannerParams?.solana.delegegate) return { display: false };
+  if (!redelegate && !stakeAccountBannerParams?.solana.delegate) return { display: false };
 
   const commission = ledgerValidator?.commission ? ledgerValidator?.commission : 1;
   const stakeWithMeta = stakesWithMeta?.find(s => s.stake.stakeAccAddr === stakeAccAddr);

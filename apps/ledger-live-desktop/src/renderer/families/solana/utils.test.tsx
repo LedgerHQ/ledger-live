@@ -12,7 +12,7 @@ describe("getAccountBannerProps", () => {
     const props = getAccountBannerProps(
       { display: true, redelegate: false } as AccountBannerState,
       {},
-      { stakeAccountBannerParams: { solana: { delegegate: false } } } as Hooks,
+      { stakeAccountBannerParams: { solana: { delegate: false } } } as Hooks,
     );
     expect(props.display).toBe(false);
   });
@@ -32,7 +32,7 @@ describe("getAccountBannerProps", () => {
       { currency: { ticker: "currency-ticker" } },
       {
         t: (input: string) => input,
-        stakeAccountBannerParams: { solana: { delegegate: true } },
+        stakeAccountBannerParams: { solana: { delegate: true } },
       } as Hooks,
     );
     if (!props.display) throw new Error("display should be true");
