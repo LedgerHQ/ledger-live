@@ -1,8 +1,8 @@
 // @flow
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback } from "react";
 import { compose } from "redux";
-import { connect, useDispatch, useSelector } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import { withTranslation } from "react-i18next";
 import type { TFunction } from "react-i18next";
 import { Redirect } from "react-router";
@@ -39,7 +39,8 @@ import EmptyStateAccount from "./EmptyStateAccount";
 import TokensList from "./TokensList";
 import CompoundBodyHeader from "~/renderer/screens/lend/Account/AccountBodyHeader";
 import useCompoundAccountEnabled from "~/renderer/screens/lend/useCompoundAccountEnabled";
-import { getBannerProps, AccountBanner } from "./AccountBanner";
+import { AccountBanner } from "./AccountBanner";
+import { useGetBannerProps } from "./useGetBannerProps";
 
 const mapStateToProps = (
   state,
@@ -90,19 +91,8 @@ const AccountPage = ({
     ? perFamilyAccountSubHeader[mainAccount.currency.family]
     : null;
   const bgColor = useTheme("colors.palette.background.paper");
-
   const isCompoundEnabled = useCompoundAccountEnabled(account, parentAccount);
-
-  const [banner, setBanner] = useState({});
-
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (mainAccount) {
-      const bannerProps = getBannerProps(mainAccount, { t, dispatch });
-      setBanner(bannerProps);
-    }
-  }, [mainAccount, t, dispatch]);
+  const banner = useGetBannerProps(mainAccount);
 
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
   const filterOperations = useCallback(
@@ -169,7 +159,7 @@ const AccountPage = ({
               ctoken={ctoken}
             />
           </Box>
-          {banner.display && <AccountBanner {...banner} />}
+          <AccountBanner {...banner} />
           {AccountBodyHeader ? (
             <AccountBodyHeader account={account} parentAccount={parentAccount} />
           ) : null}

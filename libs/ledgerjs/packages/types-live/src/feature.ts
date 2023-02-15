@@ -49,7 +49,8 @@ export type FeatureId =
   | "swapShowDexQuotes"
   | "stakePrograms"
   | "portfolioExchangeBanner"
-  | "objkt";
+  | "objkt"
+  | "stakeAccountBanner";
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */
