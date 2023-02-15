@@ -549,7 +549,7 @@
       "description" : "Les transactions doivent être signées dans les 30 secondes. Veuillez réessayer."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Énergie inférieure à la quantité requise. Vous pourriez payer des frais allant jusqu’à 50 TRX."
+      "title" : "Énergie inférieure à la quantité requise. Vous pourriez payer des frais allant jusqu’à 50 TRX."
     },
     "UpdateYourApp" : {
       "title" : "Mise à jour de l’app nécessaire",
@@ -811,6 +811,13 @@
       "title" : "Appareil verrouillé",
       "description" : "Déverrouillez votre appareil et réessayez.",
       "descriptionWithProductName" : "Déverrouillez votre {{ productName }} et réessayez."
+    },
+    "EtherscanAPIError" : {
+      "title" : "Échec de la récupération des transactions",
+      "description" : "Une erreur s’est produite avec les explorateurs. Veuillez réessayer plus tard."
+    },
+    "GasEstimationError" : {
+      "title" : "Échec de l’estimation du prix du gaz"
     }
   },
   "crash" : {
@@ -1141,7 +1148,7 @@
   "installSetOfApps" : {
     "restore" : {
       "title" : "Installer les mêmes apps que sur {{deviceName}} ?",
-      "titleNoDeviceName" : "Installer les mêmes apps que sur votre Ledger précédent ?",
+      "titleNoDeviceName" : "Installer les mêmes apps que sur votre autre Ledger ?",
       "installCTA" : "Installer maintenant",
       "skipCTA" : "Plus tard"
     },
@@ -1495,25 +1502,20 @@
     "stepProtect" : {
       "bullets" : {
         "0" : {
-          "title" : "Naviguez ",
-          "label" : "Apprenez à interagir avec votre appareil. Lisez les instructions à l’écran."
+          "title" : "Select “Restore”",
+          "label" : "Press both buttons simultaneously to select."
         },
         "1" : {
-          "title" : "Sélectionnez \"Restore\"",
-          "label" : "Appuyez simultanément sur les deux boutons pour valider."
-        },
-        "2" : {
-          "title" : "Sélectionnez \"Restore with Protect\"",
-          "label" : "Appuyez simultanément sur les deux boutons pour valider."
+          "title" : "Select “Restore using Ledger Recover”",
+          "label" : "Press both buttons simultaneously to select."
         }
       },
       "nextStep" : "Continuer",
       "extraInfo" : {
-        "tooltip" : "Je ne le vois pas sur mon Ledger",
-        "title" : "Pourquoi ne vois-je pas \"Restore with Protect\" sur mon Ledger ?",
-        "desc1" : "La raison la plus probable est que votre appareil n’est pas compatible avec Protect. Ne vous inquiétez pas, nous allons vous aider à résoudre ce problème.",
-        "desc2" : "Contactez-nous et choisissez « Mon Ledger n’affiche pas \"Restore with Protect\" ». Nous avons tout prévu.",
-        "cta" : "Suivre les étapes",
+        "tooltip" : "I don't see 'Restore using Ledger Recover'",
+        "title" : "The OS on your Ledger Nano X needs to be updated",
+        "desc" : "You can try updating the OS or contact Ledger support for assistance.",
+        "cta" : "Learn how to update",
         "supportLink" : "Contacter l’Assistance Ledger"
       }
     },
@@ -3298,6 +3300,10 @@
           }
         }
       }
+    },
+    "walletConnect" : {
+      "title" : "WalletConnect",
+      "description" : "Connectez votre wallet aux dApps"
     }
   },
   "signMessage" : {
