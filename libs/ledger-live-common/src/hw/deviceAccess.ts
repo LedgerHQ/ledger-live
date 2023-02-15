@@ -13,6 +13,7 @@ import {
   TransportStatusError,
   DeviceHalted,
   PeerRemovedPairing,
+  PairingFailed,
 } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { getEnv } from "../env";
@@ -140,6 +141,7 @@ export const withDevice =
           if (e instanceof TransportWebUSBGestureRequired) throw e;
           if (e instanceof TransportInterfaceNotAvailable) throw e;
           if (e instanceof PeerRemovedPairing) throw e;
+          if (e instanceof PairingFailed) throw e;
           throw new CantOpenDevice(e.message);
         })
         // Executes the job

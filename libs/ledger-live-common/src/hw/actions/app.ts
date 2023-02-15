@@ -484,7 +484,7 @@ const implementations = {
     Observable.create((o) => {
       const POLLING = 2000;
       const INIT_DEBOUNCE = 5000;
-      const DEVICE_POLLING_TIMEOUT = 20000;
+      const DEVICE_POLLING_TIMEOUT = 60000;
       // this pattern allows to actually support events based (like if deviceSubject emits new device changes) but inside polling paradigm
       let pollingOnDevice;
       const sub = deviceSubject.subscribe((d) => {
