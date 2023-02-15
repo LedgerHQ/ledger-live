@@ -112,19 +112,9 @@
       "title" : "Bluetooth désactivé",
       "description" : "Activez le Bluetooth dans les paramètres de votre téléphone (état {{state}})."
     },
-    "FwUpdateBluetoothNotSupported" : {
-      "title" : "Les mises à jour du micrologiciel sont uniquement prises en charge pour les connexions filaires."
-    },
-    "BtcUnmatchedApp" : {
-      "title" : "Mauvaise app",
-      "description" : "Ouvrez l’app {{managerAppName}} sur votre appareil."
-    },
     "CantOpenDevice" : {
       "title" : "Échec de la connexion",
       "description" : "Votre appareil Ledger doit être déverrouillé et à portée pour utiliser le Bluetooth."
-    },
-    "CantScanQRCode" : {
-      "title" : "Échec du scan de ce code QR. Cette adresse ne prend pas en charge la vérification automatique."
     },
     "ConnectAppTimeout" : {
       "title" : "Aucun appareil trouvé",
@@ -324,11 +314,13 @@
     },
     "ImageCommitRefusedOnDevice" : {
       "title" : "Image refusée sur votre Ledger Stax",
-      "description" : "Si cette image ne vous plaît pas, choisissez une autre image."
+      "description" : "Si cette image ne vous plaît pas, choisissez une autre image.",
+      "primaryCTA" : "Upload another picture"
     },
     "ImageLoadRefusedOnDevice" : {
       "title" : "Image refusée sur votre Ledger Stax",
-      "description" : "Si cette image ne vous plaît pas, choisissez une autre image."
+      "description" : "Si cette image ne vous plaît pas, choisissez une autre image.",
+      "primaryCTA" : "Upload another picture"
     },
     "InvalidAddress" : {
       "title" : "Adresse {{currencyName}} invalide"
@@ -549,11 +541,12 @@
       "description" : "Les transactions doivent être signées dans les 30 secondes. Veuillez réessayer."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Énergie inférieure à la quantité requise. Vous pourriez payer des frais allant jusqu’à 50 TRX."
+      "title" : "Énergie inférieure à la quantité requise. Vous pourriez payer des frais allant jusqu’à 50 TRX."
     },
     "UpdateYourApp" : {
       "title" : "Mise à jour de l’app nécessaire",
-      "description" : "Merci de désinstaller puis réinstaller l’app {{managerAppName}} dans le Gestionnaire."
+      "description" : "Merci de désinstaller puis réinstaller l’app {{managerAppName}} dans le Gestionnaire.",
+      "primaryCTA" : "Ouvrir My Ledger"
     },
     "UserRefusedAllowManager" : {
       "title" : "Gestionnaire désactivé sur l’appareil",
@@ -672,7 +665,8 @@
     },
     "generic" : {
       "title" : "{{message}}",
-      "description" : "Une erreur est survenue. Veuillez réessayer. Si le problème persiste, enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l’Assistance Ledger."
+      "description" : "Une erreur est survenue. Veuillez réessayer. Si le problème persiste, enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l’Assistance Ledger.",
+      "primaryCTA" : "Réessayer"
     },
     "SolanaAccountNotFunded" : {
       "title" : "Pas de fonds sur le compte"
@@ -811,6 +805,13 @@
       "title" : "Appareil verrouillé",
       "description" : "Déverrouillez votre appareil et réessayez.",
       "descriptionWithProductName" : "Déverrouillez votre {{ productName }} et réessayez."
+    },
+    "EtherscanAPIError" : {
+      "title" : "Échec de la récupération des transactions",
+      "description" : "Une erreur s’est produite avec les explorateurs. Veuillez réessayer plus tard."
+    },
+    "GasEstimationError" : {
+      "title" : "Échec de l’estimation du prix du gaz"
     }
   },
   "crash" : {
@@ -1141,7 +1142,7 @@
   "installSetOfApps" : {
     "restore" : {
       "title" : "Installer les mêmes apps que sur {{deviceName}} ?",
-      "titleNoDeviceName" : "Installer les mêmes apps que sur votre Ledger précédent ?",
+      "titleNoDeviceName" : "Installer les mêmes apps que sur votre autre Ledger ?",
       "installCTA" : "Installer maintenant",
       "skipCTA" : "Plus tard"
     },
@@ -3298,6 +3299,10 @@
           }
         }
       }
+    },
+    "walletConnect" : {
+      "title" : "WalletConnect",
+      "description" : "Connectez votre wallet aux dApps"
     }
   },
   "signMessage" : {
