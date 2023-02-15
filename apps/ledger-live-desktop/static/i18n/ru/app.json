@@ -824,7 +824,20 @@
       "delegation" : {
         "title" : "Если вы не знали...",
         "description" : "Валидатор Ledger может застейкать ваши {{asset}} с комиссией в {{commission}}%.",
-        "cta" : "Застейкать в Ledger"
+        "cta" : "Застейкать в Ledger",
+        "linkText" : "Подробнее",
+        "ethereum" : {
+          "lido" : {
+            "title" : "Если вы не знали...",
+            "description" : "Стейкайте ETH в Lido и получайте вознаграждения. Без блокировки и минимальной суммы.",
+            "cta" : "Стейкинг с Lido"
+          },
+          "kiln" : {
+            "title" : "Не ограничивайтесь ходлом. Приумножайте ETH",
+            "description" : "У вас больше 32 ETH? Тогда наслаждайтесь безопасным стейкингом эфиров в Kiln и получайте пассивный доход.",
+            "cta" : "Стейкинг с Kiln"
+          }
+        }
       }
     }
   },
@@ -1399,7 +1412,7 @@
         "label" : "Популярно"
       },
       "earn" : {
-        "title" : "Приумножить",
+        "title" : "Стейкинг",
         "description" : "Приумножайте криптовалюты вместе с Ledger"
       }
     }
@@ -3472,6 +3485,71 @@
       "providerLink" : "Подробнее о {{provider}}"
     }
   },
+  "avalanchepchain" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Powered by Figment",
+        "moreInfo" : "Подробнее",
+        "drawerTitle" : "Powered by Figment",
+        "title" : "Токен AVAX теперь доступен в Ledger Live",
+        "description" : "Теперь вы можете управлять своими токенами AVAX и хранить их в Ledger Live.",
+        "website" : "Powered by Figment"
+      }
+    },
+    "stakedBalance" : "Стейкинг",
+    "stakedBalanceTooltip" : "Сумма в стейкинге с валидаторами.",
+    "delegation" : {
+      "header" : "Назначения",
+      "add" : "Дополнить",
+      "commission" : "Комиссия",
+      "validator" : "ID ноды",
+      "startTime" : "Начало стейкинга",
+      "endTime" : "Конец стейкинга",
+      "stakeAmount" : "Стейкинг",
+      "potentialReward" : "Возможное вознаграждение",
+      "emptyState" : {
+        "description" : "Вы можете получать вознаграждения в токенах AVAX, делегируя активы.",
+        "info" : "Как работает делегирование",
+        "delegation" : "Получить вознаграждения"
+      },
+      "notEnoughToDelegate" : "Для делегирования требуется не менее 25 AVAX, доступных в цепочке P-Chain.",
+      "validatorStake" : "Доля валидатора",
+      "validatorRemainingStake" : "Доступно",
+      "flow" : {
+        "title" : "Делегировать",
+        "steps" : {
+          "starter" : {
+            "description" : "Вы можете получать вознаграждения, делегируя AVAX валидатору.",
+            "bullet" : ["Делегированные активы остаются в вашей собственности", "Делегируйте прямо на устройстве Ledger", "Для стейкинга необходимо не менее 25 AVAX", "AVAX делегируются как минимум на две недели"]
+          },
+          "amount" : {
+            "title" : "Сумма"
+          },
+          "validator" : {
+            "title" : "Валидаторы",
+            "ledgerByFigmentTC" : "Положения и условия Ledger by Figment"
+          },
+          "endDate" : {
+            "title" : "Дата окончания",
+            "text" : "Выберите время окончания делегирования. Дата окончания должна быть в пределах от {{minEndDate}} и до {{maxEndDate}}.",
+            "label" : "Дата окончания делегирования"
+          },
+          "connectDevice" : {
+            "title" : "Устройство"
+          },
+          "confirmation" : {
+            "title" : "Подтверждение",
+            "success" : {
+              "title" : "Вы успешно делегировали активы",
+              "text" : "Баланс обновится после подтверждения транзакции в блокчейне.",
+              "cta" : "Подробнее"
+            },
+            "broadcastError" : "Возможно, ваша транзакция не прошла. Пожалуйста, подождите немного и проверьте историю транзакций, прежде чем повторить попытку."
+          }
+        }
+      }
+    }
+  },
   "near" : {
     "account" : {
       "stakedBalance" : "Стейкается",
@@ -5510,6 +5588,9 @@
     "StellarBurnAddressError" : {
       "title" : "При попытке добавления счёта Stellar возникла проблема"
     },
+    "AvalancheMinimumAmountError" : {
+      "title" : "Минимальная сумма — 25 AVAX"
+    },
     "HederaAddAccountError" : {
       "title" : "Не удалось добавить счёт. Пожалуйста, попробуйте ещё раз."
     },
@@ -5520,6 +5601,10 @@
     "ImageLoadFromFileError" : {
       "title" : "Не удалось загрузить изображение из файла",
       "description" : "Попробуйте другое изображение"
+    },
+    "ImageLoadFromNftError" : {
+      "title" : "Не удалось загрузить изображение NFT",
+      "description" : "Попробуйте использовать другой NFT"
     },
     "ImageDownloadError" : {
       "title" : "Не удалось загрузить изображение",
@@ -5593,6 +5678,13 @@
       "descriptionWithProductName" : "Сначала {{ productName }} необходимо настроить.\nМы поможем вам с этим.",
       "goToOnboardingButton" : "Настроить устройство",
       "goToOnboardingButtonWithProductName" : "Настроить {{ productName }}"
+    },
+    "EtherscanAPIError" : {
+      "title" : "Сбой при загрузке транзакций",
+      "description" : "Произошла непредвиденная ошибка с обозревателями. Повторите попытку позже"
+    },
+    "GasEstimationError" : {
+      "title" : "Сбой расчёта стоимости Газа"
     }
   },
   "cryptoOrg" : {
@@ -5631,7 +5723,13 @@
         "stepLabel" : "Выбрать изображение",
         "description" : "Выберите изображение для использования в качестве (...)",
         "pickFromNftGallery" : "Выбрать из галереи NFT",
-        "upload" : "Загрузить с ПК"
+        "myNfts" : "Мои NFT",
+        "upload" : "Загрузить с ПК",
+        "chooseNft" : "Выбрать NFT",
+        "selectNft" : "Выбрать NFT",
+        "previousSelectNft" : "Назад",
+        "nftEmptyStateTitle" : "Пока тут ничего нет",
+        "nftEmptyStateDescription" : "Сначала добавьте NFT в кошелёк"
       },
       "adjust" : {
         "stepLabel" : "Изменить изображение",
