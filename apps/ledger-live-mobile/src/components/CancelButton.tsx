@@ -1,17 +1,15 @@
 import React, { Component } from "react";
 import { Trans } from "react-i18next";
-import Button from "./Button";
+import { Link, Text } from "@ledgerhq/native-ui";
 
-type Props = Omit<React.ComponentProps<typeof Button>, "type" | "title">;
-
-class CancelButton extends Component<Props> {
+class CancelButton extends Component {
   render() {
     return (
-      <Button
-        type="secondary"
-        title={<Trans i18nKey="common.cancel" />}
-        {...this.props}
-      />
+      <Link type="main">
+        <Text variant="body" color="neutral.c100" fontSize={5}>
+          <Trans i18nKey="common.cancel" />
+        </Text>
+      </Link>
     );
   }
 }

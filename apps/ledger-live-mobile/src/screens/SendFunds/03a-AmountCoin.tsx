@@ -27,8 +27,6 @@ import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import Touchable from "../../components/Touchable";
 import Button from "../../components/Button";
 import KeyboardView from "../../components/KeyboardView";
-import RetryButton from "../../components/RetryButton";
-import CancelButton from "../../components/CancelButton";
 import ExternalLink from "../../components/ExternalLink";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import InfoModal from "../../modals/Info";
@@ -113,11 +111,6 @@ export default function SendAmountCoin({ navigation, route }: Props) {
   }, [account, parentAccount, navigation, transaction]);
   const [bridgeErr, setBridgeErr] = useState(bridgeError);
   useEffect(() => setBridgeErr(bridgeError), [bridgeError]);
-  const onBridgeErrorCancel = useCallback(() => {
-    setBridgeErr(null);
-    const parent = navigation.getParent();
-    if (parent) parent.goBack();
-  }, [navigation]);
   const onBridgeErrorRetry = useCallback(() => {
     setBridgeErr(null);
     if (!transaction) return;
@@ -237,18 +230,7 @@ export default function SendAmountCoin({ navigation, route }: Props) {
       <GenericErrorBottomModal
         error={bridgeErr}
         onClose={onBridgeErrorRetry}
-        footerButtons={
-          <>
-            <CancelButton
-              containerStyle={styles.button}
-              onPress={onBridgeErrorCancel}
-            />
-            <RetryButton
-              containerStyle={[styles.button, styles.buttonRight]}
-              onPress={onBridgeErrorRetry}
-            />
-          </>
-        }
+        onPrimaryPress={onBridgeErrorRetry}
       />
     </>
   );

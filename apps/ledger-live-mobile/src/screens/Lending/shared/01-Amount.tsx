@@ -26,8 +26,6 @@ import LText from "../../../components/LText";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import Button from "../../../components/Button";
 import KeyboardView from "../../../components/KeyboardView";
-import RetryButton from "../../../components/RetryButton";
-import CancelButton from "../../../components/CancelButton";
 import GenericErrorBottomModal from "../../../components/GenericErrorBottomModal";
 import CurrencyInput from "../../../components/CurrencyInput";
 import TranslatedError from "../../../components/TranslatedError";
@@ -53,7 +51,6 @@ type Props = {
   category: string;
 };
 export default function AmountScreen({
-  navigation,
   route,
   transaction,
   setTransaction,
@@ -86,11 +83,6 @@ export default function AmountScreen({
   );
   const [bridgeErr, setBridgeErr] = useState(bridgeError);
   useEffect(() => setBridgeErr(bridgeError), [bridgeError]);
-  const onBridgeErrorCancel = useCallback(() => {
-    setBridgeErr(null);
-    const parent = navigation.getParent();
-    if (parent) parent.goBack();
-  }, [navigation]);
   const onBridgeErrorRetry = useCallback(() => {
     setBridgeErr(null);
     if (!transaction) return;
@@ -249,18 +241,7 @@ export default function AmountScreen({
       <GenericErrorBottomModal
         error={bridgeErr}
         onClose={onBridgeErrorRetry}
-        footerButtons={
-          <>
-            <CancelButton
-              containerStyle={styles.button}
-              onPress={onBridgeErrorCancel}
-            />
-            <RetryButton
-              containerStyle={[styles.button, styles.buttonRight]}
-              onPress={onBridgeErrorRetry}
-            />
-          </>
-        }
+        onPrimaryPress={onBridgeErrorRetry}
       />
     </>
   );

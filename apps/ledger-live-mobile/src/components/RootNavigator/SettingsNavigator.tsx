@@ -16,6 +16,7 @@ import DebugCrash from "../../screens/Settings/Debug/Debugging/Crashes";
 import DebugCustomImageGraphics from "../../screens/Settings/Debug/Features/CustomImageGraphics";
 import DebugDebugging from "../../screens/Settings/Debug/Debugging";
 import DebugEnv from "../../screens/Settings/Debug/Configuration/DebugEnv";
+import DebugErrors from "../../screens/Settings/Debug/Features/DebugErrors";
 import DebugExport from "../../screens/Settings/Debug/Features/ExportAccounts";
 import DebugFeatureFlags from "../../screens/FeatureFlagsSettings";
 import DebugFeatures from "../../screens/Settings/Debug/Features";
@@ -318,6 +319,13 @@ export default function SettingsNavigator() {
         component={DebugEnv}
         options={{
           title: "Environment Variables",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugErrors}
+        component={DebugErrors}
+        options={{
+          title: "Errors",
         }}
       />
       <Stack.Screen

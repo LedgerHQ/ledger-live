@@ -4,11 +4,13 @@ import { Platform, Text } from "react-native";
 
 type Props = {
   error: Error | null | undefined;
-  field?: "title" | "description";
+  field?: "title" | "description" | "primaryCTA";
+  args?: { [key: string]: string | number | null };
 };
 export default function TranslatedError({
   error,
   field = "title",
+  args,
 }: Props): JSX.Element | null {
   const { t } = useTranslation();
   if (!error) return null;
@@ -26,6 +28,7 @@ export default function TranslatedError({
 
   const arg: Error & { returnObjects: boolean; productName?: string[] } = {
     returnObjects: true,
+    ...args,
     ...error,
     // message is not enumerable so we need to add it manually
     message: error.message,

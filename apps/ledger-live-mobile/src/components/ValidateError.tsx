@@ -24,7 +24,7 @@ function ValidateError({ error, onClose, onRetry }: Props) {
       ]}
     >
       <View style={styles.container}>
-        <GenericErrorView error={error} />
+        <GenericErrorView error={error} onPrimaryPress={onRetry} />
         <Button
           event="SendErrorRetry"
           title={<Trans i18nKey="send.validation.button.retry" />}
