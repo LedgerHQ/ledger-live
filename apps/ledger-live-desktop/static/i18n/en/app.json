@@ -80,6 +80,7 @@
     "selectCurrencyEmptyOption": "No crypto asset",
     "selectValidatorNoOption": "No validator matching \"{{accountName}}\"",
     "selectNoResults": "No results found matching \"{{query}}\"",
+    "backToLiveApp": "Back to {{appName}}",
     "sortBy": "Sort by",
     "save": "Save",
     "lock": "Lock",

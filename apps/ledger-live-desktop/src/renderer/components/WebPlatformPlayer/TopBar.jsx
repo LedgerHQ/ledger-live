@@ -1,7 +1,7 @@
 // @flow
 
 import { WebviewTag } from "electron";
-import React, { RefObject, useCallback, useEffect, useState } from "react";
+import React, { RefObject, useCallback, useEffect, useRef, useState } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 
@@ -135,8 +135,11 @@ const WebPlatformTopBar = ({
     shouldDisplayInfo = true,
     shouldDisplayClose = !!onClose,
     shouldDisplayNavigation = false,
+    shouldDisplayBackToLiveApp = false,
   } = config;
 
+  const lastLiveAppURL = useRef("");
+  const [isLiveAppURL, setIsLiveAppURL] = useState(true);
   const [canGoBack, setCanGoBack] = useState(false);
   const [canGoForward, setCanGoForward] = useState(false);
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
@@ -146,10 +149,16 @@ const WebPlatformTopBar = ({
     const webview = webviewRef.current;
 
     if (webview) {
+      if (shouldDisplayBackToLiveApp) {
+        const url = webview.getURL();
+        const isLiveAppUrl = url.includes(manifest.url);
+        if (isLiveAppUrl) lastLiveAppURL.current = url;
+        setIsLiveAppURL(isLiveAppUrl);
+      }
       setCanGoBack(webview.canGoBack());
       setCanGoForward(webview.canGoForward());
     }
-  }, [webviewRef]);
+  }, [webviewRef, shouldDisplayBackToLiveApp, manifest]);
 
   useEffect(() => {
     const webview = webviewRef.current;
@@ -168,7 +177,7 @@ const WebPlatformTopBar = ({
      * https://www.electronjs.org/docs/latest/api/webview-tag#event-did-navigate-in-page
      */
 
-    if (webview && shouldDisplayNavigation) {
+    if (webview && (shouldDisplayNavigation || shouldDisplayBackToLiveApp)) {
       webview.addEventListener("did-navigate", handleDidNavigate);
       webview.addEventListener("did-navigate-in-page", handleDidNavigate);
 
@@ -177,7 +186,7 @@ const WebPlatformTopBar = ({
         webview.removeEventListener("did-navigate-in-page", handleDidNavigate);
       };
     }
-  }, [handleDidNavigate, webviewRef, shouldDisplayNavigation]);
+  }, [handleDidNavigate, webviewRef, shouldDisplayNavigation, shouldDisplayBackToLiveApp]);
 
   const onClick = useCallback(() => {
     dispatch(openPlatformAppInfoDrawer({ manifest }));
@@ -194,6 +203,13 @@ const WebPlatformTopBar = ({
     const webview = webviewRef.current;
     if (webview) {
       webview.goBack();
+    }
+  }, [webviewRef]);
+
+  const onBackToLiveApp = useCallback(() => {
+    const webview = webviewRef.current;
+    if (webview) {
+      webview.loadURL(lastLiveAppURL.current);
     }
   }, [webviewRef]);
 
@@ -214,6 +230,14 @@ const WebPlatformTopBar = ({
           </TitleContainer>
           <Separator />
         </>
+      )}
+      {shouldDisplayBackToLiveApp && !isLiveAppURL && (
+        <ItemContainer isInteractive onClick={onBackToLiveApp}>
+          <ArrowRight flipped size={16} />
+          <ItemContent>
+            <Trans i18nKey="common.backToLiveApp" values={{ appName: manifest.name }} />
+          </ItemContent>
+        </ItemContainer>
       )}
       <ItemContainer isInteractive onClick={onReload}>
         <IconReload size={16} />
