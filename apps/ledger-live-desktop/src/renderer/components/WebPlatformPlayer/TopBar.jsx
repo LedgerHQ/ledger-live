@@ -135,11 +135,11 @@ const WebPlatformTopBar = ({
     shouldDisplayInfo = true,
     shouldDisplayClose = !!onClose,
     shouldDisplayNavigation = false,
-    shouldDisplayBackToLiveApp = false,
+    shouldDisplayBackToLedgerLiveApp = false,
   } = config;
 
-  const lastLiveAppURL = useRef("");
-  const [isLiveAppURL, setIsLiveAppURL] = useState(true);
+  const lastLedgerLiveAppURL = useRef("");
+  const [isLedgerLiveAppURL, setIsLedgerLiveAppURL] = useState(true);
   const [canGoBack, setCanGoBack] = useState(false);
   const [canGoForward, setCanGoForward] = useState(false);
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
@@ -149,16 +149,16 @@ const WebPlatformTopBar = ({
     const webview = webviewRef.current;
 
     if (webview) {
-      if (shouldDisplayBackToLiveApp) {
+      if (shouldDisplayBackToLedgerLiveApp) {
         const url = webview.getURL();
-        const isLiveAppUrl = url.includes(manifest.url);
-        if (isLiveAppUrl) lastLiveAppURL.current = url;
-        setIsLiveAppURL(isLiveAppUrl);
+        const isLedgerLiveAppUrl = url.includes(manifest.url);
+        if (isLedgerLiveAppUrl) lastLedgerLiveAppURL.current = url;
+        setIsLedgerLiveAppURL(isLedgerLiveAppUrl);
       }
       setCanGoBack(webview.canGoBack());
       setCanGoForward(webview.canGoForward());
     }
-  }, [webviewRef, shouldDisplayBackToLiveApp, manifest]);
+  }, [webviewRef, shouldDisplayBackToLedgerLiveApp, manifest]);
 
   useEffect(() => {
     const webview = webviewRef.current;
@@ -177,7 +177,7 @@ const WebPlatformTopBar = ({
      * https://www.electronjs.org/docs/latest/api/webview-tag#event-did-navigate-in-page
      */
 
-    if (webview && (shouldDisplayNavigation || shouldDisplayBackToLiveApp)) {
+    if (webview && (shouldDisplayNavigation || shouldDisplayBackToLedgerLiveApp)) {
       webview.addEventListener("did-navigate", handleDidNavigate);
       webview.addEventListener("did-navigate-in-page", handleDidNavigate);
 
@@ -186,7 +186,7 @@ const WebPlatformTopBar = ({
         webview.removeEventListener("did-navigate-in-page", handleDidNavigate);
       };
     }
-  }, [handleDidNavigate, webviewRef, shouldDisplayNavigation, shouldDisplayBackToLiveApp]);
+  }, [handleDidNavigate, webviewRef, shouldDisplayNavigation, shouldDisplayBackToLedgerLiveApp]);
 
   const onClick = useCallback(() => {
     dispatch(openPlatformAppInfoDrawer({ manifest }));
@@ -209,7 +209,7 @@ const WebPlatformTopBar = ({
   const onBackToLiveApp = useCallback(() => {
     const webview = webviewRef.current;
     if (webview) {
-      webview.loadURL(lastLiveAppURL.current);
+      webview.loadURL(lastLedgerLiveAppURL.current);
     }
   }, [webviewRef]);
 
@@ -231,7 +231,7 @@ const WebPlatformTopBar = ({
           <Separator />
         </>
       )}
-      {shouldDisplayBackToLiveApp && !isLiveAppURL && (
+      {shouldDisplayBackToLedgerLiveApp && !isLedgerLiveAppURL && (
         <ItemContainer isInteractive onClick={onBackToLiveApp}>
           <ArrowRight flipped size={16} />
           <ItemContent>

@@ -11,5 +11,5 @@ export type TopBarConfig = {
   shouldDisplayInfo?: boolean,
   shouldDisplayClose?: boolean,
   shouldDisplayNavigation?: boolean,
-  shouldDisplayBackToLiveApp?: boolean,
+  shouldDisplayBackToLedgerLiveApp?: boolean,
 };
