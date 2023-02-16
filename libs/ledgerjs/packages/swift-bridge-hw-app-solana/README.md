@@ -7,4 +7,4 @@
 
 **Package to facilitate bundling hw-app-solana in the SolanaWrapper Swift package**
 
-This package provides a bridge to allow bundling hw-app-solana in the SolanaWrapper Swift package.
+This package provides a bridge to allow bundling hw-app-solana in the [SolanaWrapper Swift package](https://github.com/LedgerHQ/ios-ble-wrapper-solana).
