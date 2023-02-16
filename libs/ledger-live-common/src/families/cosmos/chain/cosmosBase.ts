@@ -19,7 +19,7 @@ abstract class cosmosBase {
     delegate: 250000,
     undelegate: 250000,
     redelegate: 300000,
-    claimReward: 140000,
+    claimReward: 180000,
     claimRewardCompound: 400000,
   };
   public static COSMOS_FAMILY_LEDGER_VALIDATOR_ADDRESSES: string[] = [];
