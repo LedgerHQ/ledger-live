@@ -39,7 +39,7 @@ export default {
   tron,
   polkadot,
 };
-import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_avalanchepchain } from  "../families/avalanchepchain/deviceTransactionConfig";
+import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_avalanchepchain } from "../families/avalanchepchain/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_cosmos } from "../families/cosmos/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_filecoin } from "../families/filecoin/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_stellar } from "../families/stellar/deviceTransactionConfig";
