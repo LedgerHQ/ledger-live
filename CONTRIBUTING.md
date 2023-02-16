@@ -46,13 +46,9 @@ We use [**changesets**](https://github.com/changesets/changesets) to handle the 
 
 #### Commit message
 
-_No specific rules at this point in time (this may change in the future though), use common sense and well known good practices._
+We use the standard [**Conventional Commits**](https://www.conventionalcommits.org/) specification and enforce it using [**commitlint**](https://commitlint.js.org/).
 
-- Keep your commit message short.
-- Your message should describe clearly the change.
-- You may use a prefix / scope to label the change.
-
-Following the [Conventional Commits](https://www.conventionalcommits.org/) specification is not mandatory but if you do it will be appreciated.
+You can use the `pnpm commit` prompt to ensure that your commit messages are valid, as well as the `pnpm commitlint --from <target branch>` command to check that every commit on your current branch are valid.
 
 #### Rebase & Merge strategies
 

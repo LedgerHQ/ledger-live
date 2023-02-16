@@ -6,7 +6,7 @@ const NoConnectionIllustration = styled(Flex).attrs({
   height: "200px",
   width: "200px",
 })`
-  background-image: url(${noConnection});
+  background-image: url('${noConnection}');
   background-size: contain;
   ${p => p.theme.colors.type === "light" && "filter: invert(100%);"}
 `;

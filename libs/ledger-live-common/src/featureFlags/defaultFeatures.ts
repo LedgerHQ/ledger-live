@@ -20,6 +20,9 @@ export const defaultFeatures: DefaultFeatures = {
       debug: false,
     },
   },
+  currencyAvalancheCChain: {
+    enabled: false,
+  },
   currencyOsmosis: {
     enabled: false,
   },
@@ -173,6 +176,9 @@ export const defaultFeatures: DefaultFeatures = {
     },
   },
   walletNftGallery: {
+    enabled: false,
+  },
+  walletConnectEntryPoint: {
     enabled: false,
   },
   staxWelcomeScreen: {

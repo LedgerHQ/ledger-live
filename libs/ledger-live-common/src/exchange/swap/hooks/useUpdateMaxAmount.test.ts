@@ -1,9 +1,10 @@
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import { act, renderHook } from "@testing-library/react-hooks";
 import BigNumber from "bignumber.js";
-import { checkAccountSupported } from "../../../account/support";
+import { checkAccountSupported } from "../../../account/index";
 import ethBridge from "../../../families/ethereum/bridge/mock";
-import { genAccount, genTokenAccount } from "../../../mock/account";
+import { genTokenAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { genAccount } from "../../../mock/account";
 import { useUpdateMaxAmount, ZERO } from "./useUpdateMaxAmount";
 
 // Needs to be mocked since userSupportedCurrencies is initially empty.

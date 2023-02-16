@@ -29,9 +29,7 @@ export function listCurrencies(
     return currencies;
   }
 
-  const allTokens = listTokens().filter(
-    ({ tokenType }) => tokenType === "erc20" || tokenType === "bep20"
-  );
+  const allTokens = listTokens();
 
   return [...currencies, ...allTokens];
 }

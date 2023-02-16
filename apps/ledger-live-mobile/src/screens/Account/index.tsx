@@ -226,4 +226,4 @@ const AccountScreenInner = ({
   );
 };
 
-export default withDiscreetMode(AccountScreen);
+export default React.memo(withDiscreetMode(AccountScreen));

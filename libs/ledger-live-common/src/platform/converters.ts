@@ -56,10 +56,6 @@ export function currencyToPlatformCurrency(
   currency: PlatformSupportedCurrency
 ): PlatformCurrency {
   if (currency.type === "TokenCurrency") {
-    if (currency.parentCurrency.family !== "ethereum") {
-      throw new Error("Only ERC20 tokens are supported");
-    }
-
     return {
       type: PlatformCurrencyType.TokenCurrency,
       standard: PlatformTokenStandard.ERC20,

@@ -13,6 +13,7 @@ import Learn from "../../screens/Learn/learn";
 import ExploreTabNavigatorTabBar from "../ExploreTab/ExploreTabNavigatorTabBar";
 import ExploreTabNavigatorTabBarDisabled from "../ExploreTab/ExploreTabNavigatorTabBarDisabled";
 import { useIsNewsfeedAvailable } from "../../hooks/newsfeed/useIsNewsfeedAvailable";
+import useDynamicContent from "../../dynamicContent/dynamicContent";
 
 const ExploreTab =
   createMaterialTopTabNavigator<ExploreTabNavigatorStackParamList>();
@@ -28,22 +29,25 @@ const tabBarDisabledOptions = (props: MaterialTopTabBarProps) => (
 export default function ExploreTabNavigator() {
   const { t } = useTranslation();
   const brazeLearnFeature = useFeature("brazeLearn");
+  const { learnCards } = useDynamicContent();
   const isNewsfeedAvailable = useIsNewsfeedAvailable();
+  const isLearnAvailable = brazeLearnFeature?.enabled && learnCards.length > 0;
 
-  if (!brazeLearnFeature?.enabled && !isNewsfeedAvailable) return null;
+  if (!isLearnAvailable && !isNewsfeedAvailable) return null;
 
   return (
     <ExploreTab.Navigator
-      initialRouteName={ScreenName.Newsfeed}
+      initialRouteName={ScreenName.Learn}
+      backBehavior={"history"}
       tabBar={
-        isNewsfeedAvailable && brazeLearnFeature?.enabled
+        isNewsfeedAvailable && isLearnAvailable
           ? tabBarOptions
           : tabBarDisabledOptions
       }
       style={{ backgroundColor: "transparent" }}
       sceneContainerStyle={{ backgroundColor: "transparent" }}
     >
-      {brazeLearnFeature?.enabled && (
+      {isLearnAvailable && (
         <ExploreTab.Screen
           name={ScreenName.Learn}
           component={Learn}

@@ -81,7 +81,7 @@ import CustomImageNavigator from "./CustomImageNavigator";
 import ClaimNftNavigator from "./ClaimNftNavigator";
 import PostOnboardingNavigator from "./PostOnboardingNavigator";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
-import { accountsSelector } from "../../reducers/accounts";
+import { hasNoAccountsSelector } from "../../reducers/accounts";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import DeviceConnect from "../../screens/DeviceConnect";
 import ExploreTabNavigator from "./ExploreTabNavigator";
@@ -99,9 +99,9 @@ export default function BaseNavigator() {
   const ptxSmartRoutingMobile = useFeature("ptxSmartRoutingMobile");
   const walletConnectLiveApp = useFeature("walletConnectLiveApp");
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
-  const accounts = useSelector(accountsSelector);
+  const isAccountsEmpty = useSelector(hasNoAccountsSelector);
   const readOnlyModeEnabled =
-    useSelector(readOnlyModeEnabledSelector) && accounts.length <= 0;
+    useSelector(readOnlyModeEnabledSelector) && isAccountsEmpty;
 
   return (
     <Stack.Navigator
@@ -203,7 +203,7 @@ export default function BaseNavigator() {
         options={({ navigation }) => ({
           headerShown: true,
           animationEnabled: false,
-          headerTitle: t("discover.sections.learn.title"),
+          headerTitle: t("discover.sections.news.title"),
           headerLeft: () => <BackButton navigation={navigation} />,
           headerRight: () => null,
         })}

@@ -2,8 +2,8 @@ name: "[Release] Check for translations"
 on:
   pull_request:
     branches:
-      - main
       - release
+      - hotfix
     paths:
       - apps/ledger-live-desktop/static/i18n/**
       - apps/ledger-live-mobile/src/locales/**
@@ -26,7 +26,7 @@ jobs:
       - name: checkout PR
         if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
-          gh pr checkout ${{ github.event.inputs.prNumber }}
+          gh pr checkout ${{ inputs.prNumber }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -37,7 +37,7 @@ jobs:
         with:
           script: |
             const fs = require("fs");
-            const text = "Translations files have changed on ${{ github.event.inputs.prNumber || github.event.push.head.ref || github.event.pull_request.number }}";
+            const text = "Translations files have changed on ${{ inputs.prNumber || github.event.pull_request.number }}";
             const output = {
               text,
               blocks: [
@@ -57,7 +57,7 @@ jobs:
                   "text": {
                     "type": "mrkdwn",
                     "text": `Please make sure all languages are provided before the release.
-              You can see more informations on the <https://github.com/LedgerHQ/ledger-live/pull/${{ github.event.inputs.prNumber || github.event.pull_request.number }}|Pull Request>
+              You can see more informations on the <https://github.com/LedgerHQ/ledger-live/pull/${{ inputs.prNumber || github.event.pull_request.number }}|Pull Request>
                     `
                   }
                 }
@@ -67,7 +67,7 @@ jobs:
             fs.writeFileSync("./payload-slack-content.json", JSON.stringify(output, null, 2));
       - name: post to a Slack channel
         id: slack
-        uses: slackapi/slack-github-action@v1.21.0
+        uses: slackapi/slack-github-action@v1.23.0
         with:
           channel-id: "C040D9JMVQ8"
           payload-file-path: "./payload-slack-content.json"

@@ -7,11 +7,13 @@ import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hook
 import { useTheme } from "styled-components";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { stringToDeviceModelId } from "@ledgerhq/devices/helpers";
+import { DeviceModelInfo } from "@ledgerhq/types-live";
 import {
   OnboardingStep as DeviceOnboardingStep,
   fromSeedPhraseTypeToNbOfSeedWords,
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
 
+import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import { command } from "~/renderer/commands";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import HelpDrawer from "./HelpDrawer";
@@ -19,12 +21,12 @@ import TroubleshootingDrawer from "./TroubleshootingDrawer";
 import SoftwareCheckStep from "./SoftwareCheckStep";
 import { DesyncOverlay } from "./DesyncOverlay";
 import RecoveryContent from "./RecoveryContent";
-import ApplicationContent from "./ApplicationContent";
 import { StepText } from "./shared";
 import Header from "./Header";
 import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "../../DeviceAction/animations";
 import DeviceIllustration from "../../DeviceIllustration";
+import OnboardingAppInstallStep from "../../OnboardingAppInstall";
 
 const readyRedirectDelayMs = 2500;
 const pollingPeriodMs = 1000;
@@ -77,6 +79,8 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
   const theme = useTheme();
   const history = useHistory();
   const [stepKey, setStepKey] = useState<StepKey>(StepKey.Paired);
+  const [shouldRestoreApps, setShouldRestoreApps] = useState<boolean>(false);
+  const deviceToRestore = useSelector(lastSeenDeviceSelector) as DeviceModelInfo | null | undefined;
 
   const device = useSelector(getCurrentDevice);
 
@@ -172,9 +176,11 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
         status: "inactive",
         title: "Nano applications",
         renderBody: () => (
-          <ApplicationContent
+          <OnboardingAppInstallStep
+            device={device}
+            deviceToRestore={shouldRestoreApps && deviceToRestore ? deviceToRestore : undefined}
             onComplete={handleInstallRecommendedApplicationComplete}
-            productName={productName}
+            onError={handleInstallRecommendedApplicationComplete}
           />
         ),
       },
@@ -186,6 +192,9 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
     ],
     [
       t,
+      device,
+      deviceToRestore,
+      shouldRestoreApps,
       productName,
       lastKnownDeviceModelId,
       handleSoftwareCheckComplete,
@@ -239,10 +248,16 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
 
     switch (deviceOnboardingState?.currentOnboardingStep) {
       case DeviceOnboardingStep.SetupChoice:
-      case DeviceOnboardingStep.RestoreSeed:
       case DeviceOnboardingStep.SafetyWarning:
+        setStepKey(StepKey.Seed);
+        break;
       case DeviceOnboardingStep.NewDevice:
       case DeviceOnboardingStep.NewDeviceConfirming:
+        setShouldRestoreApps(false);
+        setStepKey(StepKey.Seed);
+        break;
+      case DeviceOnboardingStep.RestoreSeed:
+        setShouldRestoreApps(true);
         setStepKey(StepKey.Seed);
         break;
       case DeviceOnboardingStep.WelcomeScreen1:

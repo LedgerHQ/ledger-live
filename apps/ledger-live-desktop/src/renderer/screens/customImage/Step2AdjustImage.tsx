@@ -29,6 +29,7 @@ const StepAdjustImage: React.FC<Props> = props => {
           nextLabel={t("common.continue")}
           nextLoading={loading}
           nextDisabled={loading}
+          previousTestId="custom-image-crop-previous-button"
           nextTestId="custom-image-crop-continue-button"
           setStep={setStep}
         />

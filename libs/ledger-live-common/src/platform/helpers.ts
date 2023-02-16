@@ -6,12 +6,20 @@ import {
   PlatformERC20TokenCurrency,
   PlatformCryptoCurrency,
   PlatformCurrencyType,
+  PLATFORM_FAMILIES,
 } from "./types";
+import { includes } from "../helpers";
 
 export function isPlatformSupportedCurrency(
   currency: Currency
 ): currency is PlatformSupportedCurrency {
-  return isCryptoCurrency(currency) || isTokenCurrency(currency);
+  if (isCryptoCurrency(currency)) {
+    return includes(PLATFORM_FAMILIES, currency.family);
+  }
+  if (isTokenCurrency(currency)) {
+    return includes(PLATFORM_FAMILIES, currency.parentCurrency.family);
+  }
+  return false;
 }
 
 export function isPlatformCryptoCurrency(

@@ -812,6 +812,13 @@
       "title": "Your device is locked",
       "description": "Unlock your device and try again.",
       "descriptionWithProductName": "Unlock your {{ productName }} and try again."
+    },    
+    "EtherscanAPIError": {
+      "title": "Fetching transactions failed",
+      "description": "An unexpected error occurred with the explorers. Please try again later"
+    },
+    "GasEstimationError": {
+      "title": "Gas estimation failed"
     }
   },
   "crash": {
@@ -1118,6 +1125,10 @@
       "learn": {
         "title": "Learn",
         "desc": "Learn about crypto, web3, digital security and more"
+      },
+      "news": {
+        "title": "News",
+        "desc": "Learn about crypto, security, web3 and catch up with latest news"
       },
       "ledgerApps": {
         "title": "Apps",
@@ -3299,6 +3310,10 @@
           }
         }
       }
+    },
+    "walletConnect": {
+      "title": "WalletConnect",
+      "description": "Connect your wallet to dapps"
     }
   },
   "signMessage": {
@@ -6087,6 +6102,7 @@
   },
   "newsfeed": {
     "title": "Newsfeed",
-    "poweredByCryptopanic": "Powered by Cryptopanic"
+    "poweredByCryptopanic": "Powered by Cryptopanic",
+    "noPosts": "No posts available currently"
   }
 }

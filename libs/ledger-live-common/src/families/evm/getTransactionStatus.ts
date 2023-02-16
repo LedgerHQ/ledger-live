@@ -1,5 +1,3 @@
-import BigNumber from "bignumber.js";
-import { ethers } from "ethers";
 import {
   NotEnoughGas,
   FeeNotLoaded,
@@ -10,12 +8,15 @@ import {
   NotEnoughBalance,
   GasLessThanEstimate,
 } from "@ledgerhq/errors";
+import { ethers } from "ethers";
+import BigNumber from "bignumber.js";
+import { Account, AccountBridge, SubAccount } from "@ledgerhq/types-live";
+import { findSubAccountById } from "../../account";
 import {
   eip1559TransactionHasFees,
   getEstimatedFees,
   legacyTransactionHasFees,
 } from "./logic";
-import { Account, AccountBridge } from "@ledgerhq/types-live";
 import {
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
@@ -29,7 +30,6 @@ type ValidatedTransactionFields =
   | "amount";
 type ValidationIssues = Partial<Record<ValidatedTransactionFields, Error>>;
 
-const DEFAULT_GAS_LIMIT = new BigNumber(21000);
 // This regex will not work with Starknet since addresses are 65 caracters long after the 0x
 const ethAddressRegEx = /^(0x)?[0-9a-fA-F]{40}$/;
 
@@ -75,15 +75,23 @@ export const validateRecipient = (
  * Validate the amount of a transaction for an account
  */
 export const validateAmount = (
-  account: Account,
+  account: Account | SubAccount,
   transaction: EvmTransaction,
   totalSpent: BigNumber
 ): Array<ValidationIssues> => {
   const errors: ValidationIssues = {};
   const warnings: ValidationIssues = {};
 
+  const isTokenTransaction = account?.type === "TokenAccount";
+  const isSmartContractInteraction = isTokenTransaction || transaction.data; // if the transaction is a smart contract interaction, it's normal that transaction has no amount
+  const canHaveZeroAmount =
+    isSmartContractInteraction && totalSpent.isGreaterThan(0);
+
   // if no amount or 0
-  if (!transaction.amount || transaction.amount.isZero()) {
+  if (
+    (!transaction.amount || transaction.amount.isZero()) &&
+    !canHaveZeroAmount
+  ) {
     errors.amount = new AmountRequired(); // "Amount required"
   } else if (totalSpent.isGreaterThan(account.balance)) {
     // if not enough to make the transaction
@@ -127,17 +135,26 @@ export const validateGas = (
  */
 export const getTransactionStatus: AccountBridge<EvmTransaction>["getTransactionStatus"] =
   (account, tx) => {
-    const gasLimit = tx.gasLimit || DEFAULT_GAS_LIMIT;
+    const subAccount = findSubAccountById(account, tx.subAccountId || "");
+    const isTokenTransaction = subAccount?.type === "TokenAccount";
+    const gasLimit = tx.gasLimit;
     const estimatedFees = getEstimatedFees(tx);
-    const amount = tx.useAllAmount
-      ? account.balance.minus(estimatedFees)
-      : tx.amount;
-    const totalSpent = amount?.plus(estimatedFees);
+    const amount = (() => {
+      if (isTokenTransaction) {
+        return tx.useAllAmount ? subAccount.balance : tx.amount;
+      }
+      return tx.useAllAmount ? account.balance.minus(estimatedFees) : tx.amount;
+    })();
+    const totalSpent = isTokenTransaction ? amount : amount.plus(estimatedFees);
 
     // Recipient related errors and warnings
     const [recipientErr, recipientWarn] = validateRecipient(account, tx);
     // Amount related errors and warnings
-    const [amountErr, amountWarn] = validateAmount(account, tx, totalSpent);
+    const [amountErr, amountWarn] = validateAmount(
+      subAccount || account,
+      tx,
+      totalSpent
+    );
     // Gas related errors and warnings
     const [gasErr, gasWarn] = validateGas(account, tx, gasLimit, estimatedFees);
 

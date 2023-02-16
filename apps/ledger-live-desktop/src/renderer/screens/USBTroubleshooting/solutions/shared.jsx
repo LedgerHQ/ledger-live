@@ -53,7 +53,7 @@ export const Content: ThemedComponent<{}> = styled(Box).attrs({
 `;
 
 export const Illustration: ThemedComponent<{}> = styled.div`
-  background-image: url(${p => p.image});
+  background-image: url('${p => p.image}');
   background-size: contain;
   background-position: center center;
   background-repeat: no-repeat;

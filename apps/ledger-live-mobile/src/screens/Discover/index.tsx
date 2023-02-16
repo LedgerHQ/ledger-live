@@ -124,14 +124,16 @@ function Discover() {
           : learnCards.length > 0 || isNewsfeedAvailable
           ? [
               {
-                title: t("discover.sections.learn.title"),
-                subTitle: t("discover.sections.learn.desc"),
+                title: t("discover.sections.news.title"),
+                subTitle: t("discover.sections.news.desc"),
                 onPress: () => {
                   // Fixme: Can't find a way to make TS happy ...
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore
                   navigation.navigate(NavigatorName.ExploreTab);
-                  readOnlyTrack("Learn");
+                  track("banner_clicked", {
+                    banner: "News",
+                  });
                 },
                 disabled: false,
                 Image: (
