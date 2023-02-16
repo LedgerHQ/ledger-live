@@ -114,15 +114,15 @@ export const WORKFLOWS = {
     summaryFile: "summary.json",
     getInputs: commonGetInputs,
   },
-  // "test-mobile-e2e.yml": {
-  //   checkRunName: "@Mobile • Test App End-2-End",
-  //   description: "Run Detox end-to-end tests on Ledger Live Mobile",
-  //   runsOn: RUNNERS.internal,
-  //   required: false,
-  //   affected: ["live-mobile"],
-  //   summaryFile: "summary.json",
-  //   getInputs: commonGetInputs
-  // },
+  "test-mobile-e2e.yml": {
+    checkRunName: "@Mobile • Test App End-2-End",
+    description: "Run Detox end-to-end tests on Ledger Live Mobile",
+    runsOn: RUNNERS.internal,
+    required: false,
+    affected: ["live-mobile"],
+    summaryFile: "summary.json",
+    getInputs: commonGetInputs,
+  },
   "test.yml": {
     checkRunName: "@Libraries • Tests",
     description: "Run the `test` script for affected libraries.",

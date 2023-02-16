@@ -1,5 +1,5 @@
 name: "@PR • Gate"
-run-name: "@Gate triggered by ${{ github.actor }} ${{ format('on branch {0}', github.head_ref) }}"
+run-name: "@Gate triggered by ${{ github.actor }} ${{ format('on branch {0}', github.head_ref || github.ref) }}"
 
 on:
   pull_request:
