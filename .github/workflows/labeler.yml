@@ -1,0 +1,41 @@
+name: "@PR • Labeler"
+run-name: "@PR • Labeler triggered by ${{ github.actor }} ${{ format('on branch {0}', github.head_ref) }}"
+
+on:
+  - pull_request_target
+
+jobs:
+  triage:
+    permissions:
+      contents: read
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/labeler@v4
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+      - uses: actions/github-script@v6
+        if: github.event.pull_request.head.repo.fork
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            try {
+              const { data: rawLabels } = await github.rest.issues.listLabelsOnIssue({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+              }) || [];
+              const labels = rawLabels.map(label => label.name)
+              console.log(labels)
+              if(labels.includes('fork')) {
+                return
+              }
+              await github.rest.issues.setLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                labels: [...labels, 'fork']
+              })
+            } catch(error) {
+              console.error(error)
+            }
