@@ -1126,6 +1126,10 @@
         "title": "Learn",
         "desc": "Learn about crypto, web3, digital security and more"
       },
+      "news": {
+        "title": "News",
+        "desc": "Learn about crypto, security, web3 and catch up with latest news"
+      },
       "ledgerApps": {
         "title": "Apps",
         "desc": "Explore Ledger's partner apps all in one place"

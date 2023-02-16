@@ -203,7 +203,7 @@ export default function BaseNavigator() {
         options={({ navigation }) => ({
           headerShown: true,
           animationEnabled: false,
-          headerTitle: t("discover.sections.learn.title"),
+          headerTitle: t("discover.sections.news.title"),
           headerLeft: () => <BackButton navigation={navigation} />,
           headerRight: () => null,
         })}

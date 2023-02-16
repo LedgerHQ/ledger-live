@@ -15,7 +15,7 @@ import Button from "../../components/wrappedUi/Button";
 import Skeleton from "../../components/Skeleton";
 import { ScreenName } from "../../const";
 
-const keyExtractor = (item: CryptopanicNewsWithMetadata) => item.slug;
+const keyExtractor = (item: CryptopanicNewsWithMetadata) => item.id.toString();
 
 const imageNewsProps = {
   style: { width: 90, height: 75 },
@@ -32,7 +32,7 @@ function NewsfeedPage() {
   const { t } = useTranslation();
   const theme = useTheme();
   const { colors, space, radii } = theme;
-  const inApppBrowserParams = inAppBrowserDefaultParams(theme);
+  const inAppBrowserParams = inAppBrowserDefaultParams(theme);
   const { posts, hasMore, loadingState, ready, loadMore, refresh } =
     useCryptopanicPosts({
       ...CRYPTOPANIC_DEFAULT_PARAMS,
@@ -47,13 +47,13 @@ function NewsfeedPage() {
       });
       if (await InAppBrowser.isAvailable()) {
         await InAppBrowser.open(url, {
-          ...inApppBrowserParams,
+          ...inAppBrowserParams,
         });
       } else {
         Linking.openURL(url);
       }
     },
-    [inApppBrowserParams],
+    [inAppBrowserParams],
   );
 
   const onPressCryptopanic = () => {
