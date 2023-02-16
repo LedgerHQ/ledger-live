@@ -10,7 +10,7 @@ let walletTabNavigatorPage: WalletTabNavigatorPage;
 let nftGalleryPage: NftGalleryPage;
 let nftViewerPage: NftViewerPage;
 
-describe.skip("NFT Gallery screen", () => {
+describe("NFT Gallery screen", () => {
   beforeAll(async () => {
     await loadConfig("2_accounts_eth_with_tokens_and_nft", true);
     portfolioPage = new PortfolioPage();
