@@ -9,6 +9,7 @@ import SectionExport from "./Export";
 import Currencies from "./Currencies";
 import BlacklistedTokens from "./BlacklistedTokens";
 import HiddenNftCollections from "./HiddenNFTCollections";
+import HideZeroValueOperationButton from "./HideZeroValueOperationButton";
 
 export default function SectionAccounts() {
   const { t } = useTranslation();
@@ -25,6 +26,12 @@ export default function SectionAccounts() {
       </Row>
       <BlacklistedTokens />
       <HiddenNftCollections />
+      <Row
+        title={t("settings.accounts.hideZeroValueOperation.title")}
+        desc={t("settings.accounts.hideZeroValueOperation.desc")}
+      >
+        <HideZeroValueOperationButton />
+      </Row>
       <Currencies />
     </Body>
   );
