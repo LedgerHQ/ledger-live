@@ -53,7 +53,7 @@ jobs:
       - uses: ./tools/actions/turbo-affected
         id: affected
         with:
-          ref: ${{ format('origin/{0}', steps.clean-refs.outputs.result.base_branch) }}
+          ref: ${{ format('origin/{0}', env.base_branch) }}
       - uses: actions/github-script@v6
         name: create output file ("affected.json")
         with:
