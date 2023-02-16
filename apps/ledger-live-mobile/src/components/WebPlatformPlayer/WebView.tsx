@@ -16,7 +16,9 @@ import {
 import { WebView as RNWebView } from "react-native-webview";
 import { useNavigation } from "@react-navigation/native";
 import { JSONRPCRequest } from "json-rpc-2.0";
+import { useTranslation } from "react-i18next";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import {
   Account,
   AccountLike,
@@ -127,12 +129,15 @@ export const WebView = ({ manifest, inputs }: Props) => {
     current: null | RNWebView;
   } = useRef(null);
   const accounts = useSelector(flattenAccountsSelector);
+  const { t } = useTranslation();
   const navigation =
     useNavigation<
       RootNavigationComposite<
         StackNavigatorNavigation<BaseNavigatorStackParamList>
       >
     >();
+  const lastLedgerLiveAppURL = useRef("");
+  const [isLedgerLiveAppURL, setIsLedgerLiveAppURL] = useState(true);
   const [loadDate, setLoadDate] = useState(new Date());
   const [widgetLoaded, setWidgetLoaded] = useState(false);
   const [isInfoPanelOpened, setIsInfoPanelOpened] = useState(false);
@@ -587,22 +592,84 @@ export const WebView = ({ manifest, inputs }: Props) => {
     tracking.platformLoadFail(manifest);
   }, [manifest]);
 
+  const handleNavigateBackToLedgerLiveApp = () => {
+    const redirectTo = `window.location = "${lastLedgerLiveAppURL.current}"`;
+    targetRef.current && targetRef.current.injectJavaScript(redirectTo);
+  };
+
+  const handleOnNavigationStateChange = ({ url }: { url: string }) => {
+    const isOriginUrl = url.includes(manifest.url.toString());
+    if (isOriginUrl) lastLedgerLiveAppURL.current = url;
+    setIsLedgerLiveAppURL(isOriginUrl);
+  };
+
+  const shouldDisplayBackToLedgerLiveApp = manifest.params?.includes(
+    "shouldDisplayBackToLedgerLiveApp",
+  );
+
   useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <View style={styles.headerRight}>
-          <ReloadButton onReload={handleReload} loading={!widgetLoaded} />
-          <InfoPanelButton
-            loading={!widgetLoaded}
-            setIsInfoPanelOpened={setIsInfoPanelOpened}
-          />
-        </View>
-      ),
-    });
-  }, [navigation, widgetLoaded, handleReload, isInfoPanelOpened]);
+    navigation.setOptions(
+      shouldDisplayBackToLedgerLiveApp
+        ? {
+            headerTitle: isLedgerLiveAppURL ? manifest.name : "",
+            headerRight: () => (
+              <View style={styles.headerRightLedgerLiveApp}>
+                <TouchableOpacity
+                  disabled={!widgetLoaded}
+                  onPress={() => widgetLoaded && handleReload()}
+                >
+                  <Icons.RefreshMedium color="neutral.c100" size="20px" />
+                </TouchableOpacity>
+                <Flex onTouchStart={navigation.goBack} pl="20px">
+                  <Icons.CloseMedium color="neutral.c100" size="20px" />
+                </Flex>
+              </View>
+            ),
+            headerLeft: () => (
+              <View style={styles.headerLeftLedgerLiveApp}>
+                {!isLedgerLiveAppURL && (
+                  <Flex alignItems={"center"}>
+                    <Text
+                      onPress={handleNavigateBackToLedgerLiveApp}
+                      fontWeight="semiBold"
+                      fontSize={16}
+                      color="neutral.c100"
+                    >
+                      {t("common.backToLiveApp", { liveApp: manifest.name })}
+                    </Text>
+                  </Flex>
+                )}
+              </View>
+            ),
+          }
+        : {
+            headerTitle: manifest.name,
+            headerRight: () => (
+              <View style={styles.headerRight}>
+                <ReloadButton onReload={handleReload} loading={!widgetLoaded} />
+                <InfoPanelButton
+                  loading={!widgetLoaded}
+                  setIsInfoPanelOpened={setIsInfoPanelOpened}
+                />
+              </View>
+            ),
+          },
+    );
+  }, [
+    navigation,
+    widgetLoaded,
+    handleReload,
+    isInfoPanelOpened,
+    isLedgerLiveAppURL,
+    shouldDisplayBackToLedgerLiveApp,
+    manifest,
+    t,
+  ]);
+
   useEffect(() => {
     tracking.platformLoad(manifest);
   }, [manifest]);
+
   return (
     <SafeAreaView style={[styles.root]}>
       <InfoPanel
@@ -638,6 +705,7 @@ export const WebView = ({ manifest, inputs }: Props) => {
         automaticallyAdjustContentInsets={false}
         scrollEnabled={true}
         style={styles.webview}
+        onNavigationStateChange={handleOnNavigationStateChange}
       />
     </SafeAreaView>
   );
@@ -651,6 +719,16 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     paddingRight: 8,
+  },
+  headerRightLedgerLiveApp: {
+    display: "flex",
+    flexDirection: "row",
+    paddingRight: 16,
+  },
+  headerLeftLedgerLiveApp: {
+    display: "flex",
+    flexDirection: "row",
+    paddingLeft: 16,
   },
   center: {
     flex: 1,

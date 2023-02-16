@@ -11,6 +11,7 @@
     "no": "No",
     "gotit": "Got it",
     "continue": "Continue",
+    "backToLiveApp": "Back to {{liveApp}}",
     "retry": "Retry",
     "done": "Done",
     "sortBy": "Sort by",
@@ -811,7 +812,7 @@
       "title": "Your device is locked",
       "description": "Unlock your device and try again.",
       "descriptionWithProductName": "Unlock your {{ productName }} and try again."
-    },    
+    },
     "EtherscanAPIError": {
       "title": "Fetching transactions failed",
       "description": "An unexpected error occurred with the explorers. Please try again later"
