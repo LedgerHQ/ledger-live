@@ -24,12 +24,19 @@ function NewsfeedPage() {
   const theme = useTheme();
   const { colors } = theme;
   const inApppBrowserParams = inAppBrowserDefaultParams(theme);
-  const { posts, hasMore, loadingState, ready, loadMore, refresh } =
-    useCryptopanicPosts({
-      metadata: true,
-      approved: true,
-      public: true,
-    });
+  const {
+    posts,
+    hasMore,
+    loadingState,
+    ready,
+    loadMore,
+    refresh,
+    lastDataLoadingDate,
+  } = useCryptopanicPosts({
+    metadata: true,
+    approved: true,
+    public: true,
+  });
 
   // logic to move to the hook
   const onClickItem = useCallback(
@@ -56,7 +63,10 @@ function NewsfeedPage() {
           tag={
             <>
               {item.source.title} •{" "}
-              <FormatRelativeTime date={new Date(item.published_at)} />
+              <FormatRelativeTime
+                date={new Date(item.published_at)}
+                baseDate={lastDataLoadingDate}
+              />
             </>
           }
           title={item.title}

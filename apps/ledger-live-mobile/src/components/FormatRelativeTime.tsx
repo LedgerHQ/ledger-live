@@ -2,9 +2,11 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { createSelector } from "reselect";
 import { languageSelector } from "../reducers/settings";
+import compareDate from "../logic/compareDate";
 
 type Props = {
-  date: Date | null | undefined;
+  date: Date | undefined;
+  baseDate?: Date | undefined;
 };
 
 const units: { unit: Intl.RelativeTimeFormatUnit; ms: number }[] = [
@@ -25,7 +27,7 @@ const defaultRelativeTimeFormatterSelector = createSelector(
 );
 
 /**
- * Get language-sensitive relative time message from Dates.
+ * Get language-sensitive relative time message from Dates. Borrowed from https://stackoverflow.com/a/66390028
  * @param formatter
  * @param relative  - the relative dateTime, generally is in the past or future
  * @param pivot     - the dateTime of reference, generally is the current time
@@ -57,14 +59,23 @@ export function relativeTimeFromElapsed(
   return "";
 }
 
-function FormatRelativeTime({ date }: Props): JSX.Element | null {
+function FormatRelativeTime({
+  date,
+  baseDate = new Date(),
+}: Props): JSX.Element | null {
   const defaultFormatter = useSelector(defaultRelativeTimeFormatterSelector);
-
   const jsx =
     date && date.getTime()
-      ? relativeTimeFromDates(defaultFormatter, date)
+      ? relativeTimeFromDates(defaultFormatter, date, baseDate)
       : null;
   return <>{jsx}</>;
 }
 
-export default FormatRelativeTime;
+function areEqual(prevProps: Props, nextProps: Props): boolean {
+  return (
+    compareDate(prevProps.date, nextProps.date) &&
+    compareDate(prevProps.baseDate, nextProps.baseDate)
+  );
+}
+
+export default React.memo<Props>(FormatRelativeTime, areEqual);

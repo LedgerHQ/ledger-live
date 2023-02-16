@@ -18,6 +18,9 @@ export function useCryptopanicPosts(
   const newsfeedPageFeature = useFeature("newsfeedPage");
   const [loadingState, setLoadingState] = useState<LoadingStateType>(null);
   const [ready, setReady] = useState(false);
+  const [lastDataLoadingDate, setLastDataLoadingDate] = useState<
+    Date | undefined
+  >();
   const [posts, setPosts] = useState<CryptopanicNewsWithMetadata[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -54,6 +57,7 @@ export function useCryptopanicPosts(
         }
         setHasMore(!!apiResult.next);
         setCurrentPage(page);
+        setLastDataLoadingDate(new Date());
       } catch (e) {
         // handle error
       }
@@ -84,5 +88,13 @@ export function useCryptopanicPosts(
     );
   }, [currentPage, getCryptoPanicPosts, hasMore, loadingState, ready]);
 
-  return { posts, hasMore, ready, loadingState, refresh, loadMore };
+  return {
+    posts,
+    hasMore,
+    ready,
+    loadingState,
+    refresh,
+    loadMore,
+    lastDataLoadingDate,
+  };
 }
