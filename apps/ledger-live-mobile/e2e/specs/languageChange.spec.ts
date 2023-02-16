@@ -32,6 +32,7 @@ describe("Change Language", () => {
     { lang: "简体中文", localization: "一般条款" },
     { lang: "한국어", localization: "일반" },
     { lang: "日本語", localization: "一般" },
+    { lang: "English", localization: "General" },
   ];
 
   beforeAll(async () => {
@@ -41,18 +42,13 @@ describe("Change Language", () => {
     generalSettingsPage = new GeneralSettingsPage();
   });
 
-  it("should go to Settings", async () => {
+  it("should go to General Settings", async () => {
+    await portfolioPage.waitForPortfolioPageToLoad();
     await portfolioPage.navigateToSettings();
-  });
-
-  it("should go navigate to General settings", async () => {
     await settingsPage.navigateToGeneralSettings();
   });
 
-  it("Settings page should be in English", async () => {
-    await expect(generalSettingsPage.isEnglish()).toBeVisible();
-  });
-
+  // test steps for each language
   for (const l10n of langButtonText) {
     verifyLanguageCanBeChanged(l10n);
   }
