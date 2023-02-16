@@ -1249,7 +1249,7 @@ importers:
       algo-msgpack-with-bigint: ^2.1.1
       algosdk: 1.13.0
       async: ^3.2.3
-      avalanche: ^3.15.3
+      avalanche: 3.15.5
       axios: 0.26.1
       axios-retry: ^3.2.4
       base32-decode: ^1.0.0
@@ -1421,7 +1421,7 @@ importers:
       algo-msgpack-with-bigint: 2.1.1
       algosdk: 1.13.0
       async: 3.2.3
-      avalanche: 3.15.5
+      avalanche: 3.15.5_qnpvrke4w43onsvbhvz2qcyeby
       axios: 0.26.1
       axios-retry: 3.2.5
       base32-decode: 1.0.0
@@ -3539,7 +3539,7 @@ packages:
       '@metamask/eth-sig-util': 4.0.0
       '@obsidiansystems/hw-app-avalanche': 0.2.2_ts-node@10.7.0
       '@openzeppelin/contracts': 4.7.3
-      avalanche: 3.15.5
+      avalanche: 3.15.5_qnpvrke4w43onsvbhvz2qcyeby
       big.js: 6.2.1
       bip32: 2.0.6
       bip32-path: 0.4.2
@@ -18317,7 +18317,7 @@ packages:
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
       regenerator-runtime: 0.13.11
-      store2: 2.13.2
+      store2: 2.14.2
       synchronous-promise: 2.0.15
       ts-dedent: 2.2.0
       util-deprecate: 1.0.2
@@ -24126,7 +24126,7 @@ packages:
     engines: {node: '>= 0.4'}
     dev: false
 
-  /avalanche/3.15.5:
+  /avalanche/3.15.5_qnpvrke4w43onsvbhvz2qcyeby:
     resolution: {integrity: sha512-g+u69QkZhQzEU09C5ZLejMIfU3op3V+i+hP4EOhqH/k37bD/OxoUB2jAMm7UQ8aMHz355djo8mx7t0EFJ6/5cA==}
     engines: {node: '>=14.0.0'}
     dependencies:
@@ -24151,6 +24151,7 @@ packages:
       - bufferutil
       - utf-8-validate
     dev: false
+    patched: true
 
   /aws-sign2/0.7.0:
     resolution: {integrity: sha512-08kcGqnYf/YmjoRhfxyu+CLxBjUtHLXLXX/vUfx9l2LYzG3c1m61nrpyFUZI6zeS+Li/wWMMidD9KgrqtGq3mA==}
@@ -30172,7 +30173,7 @@ packages:
       es6-symbol: 3.1.3
 
   /es6-object-assign/1.1.0:
-    resolution: {integrity: sha1-wsNYJlYkfDnqEHyx5mUrb58kUjw=}
+    resolution: {integrity: sha512-MEl9uirslVwqQU369iHNWZXsI8yaZYGg/D65aOgZkeyFJwHYSxilf7rQzXKI7DdDuBPrBXbfk3sl9hJhmd5AUw==}
     dev: false
 
   /es6-promise/4.2.8:
@@ -40997,7 +40998,7 @@ packages:
       whatwg-encoding: 1.0.5
       whatwg-mimetype: 2.3.0
       whatwg-url: 9.1.0
-      ws: 8.6.0
+      ws: 8.8.1
       xml-name-validator: 3.0.0
     transitivePeerDependencies:
       - bufferutil
@@ -41039,7 +41040,7 @@ packages:
       whatwg-encoding: 2.0.0
       whatwg-mimetype: 3.0.0
       whatwg-url: 10.0.0
-      ws: 8.6.0
+      ws: 8.8.1
       xml-name-validator: 4.0.0
     transitivePeerDependencies:
       - bufferutil
@@ -51321,7 +51322,7 @@ packages:
       '@babel/runtime': 7.20.13
       eventemitter3: 4.0.7
       uuid: 8.3.2
-      ws: 8.6.0_3cxu5zja4e2r5wmvge7mdcljwq
+      ws: 8.8.1_3cxu5zja4e2r5wmvge7mdcljwq
     optionalDependencies:
       bufferutil: 4.0.7
       utf-8-validate: 5.0.10
@@ -51600,7 +51601,7 @@ packages:
     dependencies:
       jszip: 3.9.1
       tmp: 0.2.1
-      ws: 8.6.0
+      ws: 8.8.1
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -57548,7 +57549,7 @@ packages:
       spdy: 4.0.2
       webpack: 5.72.1
       webpack-dev-middleware: 5.3.3_webpack@5.72.1
-      ws: 8.6.0
+      ws: 8.8.1
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -58613,21 +58614,6 @@ packages:
         optional: true
       utf-8-validate:
         optional: true
-
-  /ws/8.6.0_3cxu5zja4e2r5wmvge7mdcljwq:
-    resolution: {integrity: sha512-AzmM3aH3gk0aX7/rZLYvjdvZooofDu3fFOzGqcSnQ1tOcTWwhM/o+q++E8mAyVVIyUdajrkzWUGftaVSDLn1bw==}
-    engines: {node: '>=10.0.0'}
-    peerDependencies:
-      bufferutil: ^4.0.1
-      utf-8-validate: ^5.0.2
-    peerDependenciesMeta:
-      bufferutil:
-        optional: true
-      utf-8-validate:
-        optional: true
-    dependencies:
-      bufferutil: 4.0.7
-      utf-8-validate: 5.0.10
     dev: false
 
   /ws/8.8.1:
@@ -58641,6 +58627,22 @@ packages:
         optional: true
       utf-8-validate:
         optional: true
+
+  /ws/8.8.1_3cxu5zja4e2r5wmvge7mdcljwq:
+    resolution: {integrity: sha512-bGy2JzvzkPowEJV++hF07hAD6niYSr0JzBNo/J29WsB57A2r7Wlc1UFcTR9IzrPvuNVO4B8LGqF8qcpsVOhJCA==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: ^5.0.2
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+    dependencies:
+      bufferutil: 4.0.7
+      utf-8-validate: 5.0.10
+    dev: false
 
   /x-is-string/0.1.0:
     resolution: {integrity: sha1-R0tQhlrzpJqcRlfwWs0UVFj3fYI=}
