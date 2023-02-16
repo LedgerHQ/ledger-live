@@ -5,7 +5,7 @@ import { TouchableHighlight } from "react-native-gesture-handler";
 import styled, { useTheme } from "styled-components/native";
 import { InAppBrowser } from "react-native-inappbrowser-reborn";
 import { useTranslation } from "react-i18next";
-import { TrackScreen } from "../../analytics";
+import { track, TrackScreen } from "../../analytics";
 import { CryptopanicNewsWithMetadata } from "../../hooks/newsfeed/cryptopanicApi";
 import FormatDate from "../../components/FormatDate";
 import { inAppBrowserDefaultParams } from "../../components/InAppBrowser";
@@ -13,6 +13,7 @@ import { useCryptopanicPosts } from "../../hooks/newsfeed/useCryptopanicPosts";
 import CryptopanicIcon from "../../icons/Cryptopanic";
 import Button from "../../components/wrappedUi/Button";
 import Skeleton from "../../components/Skeleton";
+import { ScreenName } from "../../const";
 
 const keyExtractor = (item: CryptopanicNewsWithMetadata) => item.slug;
 
@@ -39,12 +40,17 @@ function NewsfeedPage() {
 
   const onClickItem = useCallback(
     async (news: CryptopanicNewsWithMetadata) => {
+      const url = news?.source?.url || news.url;
+      track("card_clicked", {
+        url,
+        screen: ScreenName.Newsfeed,
+      });
       if (await InAppBrowser.isAvailable()) {
-        await InAppBrowser.open(news?.source?.url || news.url, {
+        await InAppBrowser.open(url, {
           ...inApppBrowserParams,
         });
       } else {
-        Linking.openURL(news?.source?.url || news.url);
+        Linking.openURL(url);
       }
     },
     [inApppBrowserParams],
@@ -131,7 +137,7 @@ function NewsfeedPage() {
     <EmptyState />
   ) : (
     <Flex>
-      <TrackScreen category="Newsfeed" />
+      <TrackScreen category="NewsFeed" />
       <FlatList
         data={posts}
         renderItem={renderItem}

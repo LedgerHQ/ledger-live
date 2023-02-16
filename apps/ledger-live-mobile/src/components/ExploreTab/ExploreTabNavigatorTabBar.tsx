@@ -36,6 +36,7 @@ function Tab({
     if (!isActive && !event.defaultPrevented) {
       track("tab_clicked", {
         tab: route.name,
+        screen: route.name,
       });
       navigation.navigate(route.name);
     }

@@ -105,8 +105,8 @@ function Discover() {
                 title: t("discover.sections.learn.title"),
                 subTitle: t("discover.sections.learn.desc"),
                 onPress: () => {
-                  readOnlyTrack("Learn");
-                  track("Discover - Learn - OpenUrl", {
+                  readOnlyTrack("News");
+                  track("Discover - News - OpenUrl", {
                     url: urls.discover.academy,
                   });
                   Linking.openURL(urls.discover.academy);
