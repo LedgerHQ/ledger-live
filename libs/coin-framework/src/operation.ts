@@ -210,3 +210,18 @@ export const isConfirmedOperation = (
   operation.blockHeight
     ? account.blockHeight - operation.blockHeight + 1 >= confirmationsNb
     : false;
+
+export const isPoisoningOperation = (
+  account: AccountLike,
+  operation: Operation
+): boolean => {
+  const isEvmorTronToken =
+    account.type === "TokenAccount" &&
+    ["ethereum", "evm", "tron"].includes(account.token.parentCurrency.family);
+  return (
+    // two types of poisoning addresses
+    // refer to https://support.ledger.com/hc/en-us/articles/8473509294365-Beware-of-address-poisoning-scams?docs=true
+    // and https://www.coinbase.com/blog/zero-transfer-phishing-part-1-attack-analysis
+    (isEvmorTronToken || operation.type === "IN") && operation.value.eq(0)
+  );
+};

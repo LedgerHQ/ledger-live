@@ -3974,9 +3974,9 @@
         "title": "Connect Bitcoin full node",
         "desc": "Set up your Bitcoin full node to synchronize and send transactions without using Ledger’s explorers."
       },
-      "hideZeroValueOperation": {
-        "title": "Hide zero value operations",
-        "desc": "You can hide zero value operations."
+      "showZeroValueOperation": {
+        "title": "Zero amount transactions",
+        "desc": "Show transactions with zero amount in transaction history."
       }
     }
   },

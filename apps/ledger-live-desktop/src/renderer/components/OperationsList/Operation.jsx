@@ -23,16 +23,16 @@ import AmountCell from "./AmountCell";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import {
   confirmationsNbForCurrencySelector,
-  hideZeroValueOperationSelector,
+  showZeroValueOperationSelector,
 } from "~/renderer/reducers/settings";
-import { isConfirmedOperation } from "@ledgerhq/live-common/operation";
+import { isConfirmedOperation, isPoisoningOperation } from "@ledgerhq/live-common/operation";
 
 const mapStateToProps = createStructuredSelector({
   confirmationsNb: (state, { account, parentAccount }) =>
     confirmationsNbForCurrencySelector(state, {
       currency: getMainAccount(account, parentAccount).currency,
     }),
-  hideZeroValueOperation: state => hideZeroValueOperationSelector(state),
+  showZeroValueOperation: state => showZeroValueOperationSelector(state),
 });
 
 const OperationRow: ThemedComponent<{}> = styled(Box).attrs(() => ({
@@ -63,7 +63,7 @@ type OwnProps = {
 type Props = {
   ...OwnProps,
   confirmationsNb: number,
-  hideZeroValueOperation: boolean,
+  showZeroValueOperation: boolean,
 };
 
 class OperationComponent extends PureComponent<Props> {
@@ -87,14 +87,14 @@ class OperationComponent extends PureComponent<Props> {
       text,
       withAddress,
       confirmationsNb,
-      hideZeroValueOperation,
+      showZeroValueOperation,
     } = this.props;
     const isOptimistic = operation.blockHeight === null;
     const currency = getAccountCurrency(account);
     const unit = getAccountUnit(account);
     const mainAccount = getMainAccount(account, parentAccount);
     const isConfirmed = isConfirmedOperation(operation, mainAccount, confirmationsNb);
-    if (operation.value.eq(0) && hideZeroValueOperation) {
+    if (isPoisoningOperation(account, operation) && !showZeroValueOperation) {
       return null;
     }
     return (

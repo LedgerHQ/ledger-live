@@ -108,7 +108,7 @@ export type SettingsState = {
   firstTimeLend: boolean,
   showClearCacheBanner: boolean,
   fullNodeEnabled: boolean,
-  hideZeroValueOperation: boolean,
+  showZeroValueOperation: boolean,
 
   // developer settings
   allowDebugApps: boolean,
@@ -169,7 +169,7 @@ const INITIAL_STATE: SettingsState = {
   developerMode: !!process.env.__DEV__,
   loaded: false,
   shareAnalytics: true,
-  hideZeroValueOperation: true,
+  showZeroValueOperation: false,
   sentryLogs: true,
   lastUsedVersion: __APP_VERSION__,
   dismissedBanners: [],
@@ -576,8 +576,8 @@ export const dismissedBannerSelectorLoaded = (bannerKey: string) => (state: Stat
 
 export const hideEmptyTokenAccountsSelector = (state: State) =>
   state.settings.hideEmptyTokenAccounts;
-export const hideZeroValueOperationSelector = (state: State) =>
-  state.settings.hideZeroValueOperation;
+export const showZeroValueOperationSelector = (state: State) =>
+  state.settings.showZeroValueOperation;
 
 export const lastSeenDeviceSelector = (state: State) => {
   // Nb workaround to prevent crash for dev/qa that have nanoFTS references.

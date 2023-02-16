@@ -39,8 +39,8 @@ export const setMarketIndicator = (marketIndicator: *) => saveSettings({ marketI
 export const setAutoLockTimeout = (autoLockTimeout: *) => saveSettings({ autoLockTimeout });
 export const setHasInstalledApps = (hasInstalledApps: boolean) =>
   saveSettings({ hasInstalledApps });
-export const setHideZeroValueOperation = (hideZeroValueOperation: boolean) =>
-  saveSettings({ hideZeroValueOperation });
+export const setShowZeroValueOperation = (showZeroValueOperation: boolean) =>
+  saveSettings({ showZeroValueOperation });
 
 // developer
 export const setAllowDebugApps = (allowDebugApps: boolean) => saveSettings({ allowDebugApps });
