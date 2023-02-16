@@ -7,4 +7,4 @@
 
 **Package to facilitate bundling hw-app-eth in the EthWrapper Swift package**
 
-This package provides a bridge to allow bundling hw-app-eth in the EthWrapper Swift package.
+This package provides a bridge to allow bundling hw-app-eth in the [EthWrapper Swift package](https://github.com/LedgerHQ/ios-ble-wrapper-eth).
