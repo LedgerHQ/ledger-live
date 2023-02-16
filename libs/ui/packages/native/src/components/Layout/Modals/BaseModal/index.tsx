@@ -115,7 +115,7 @@ export function ModalHeaderCloseButton({
 }: Pick<BaseModalProps, "onClose">): React.ReactElement {
   return (
     <CloseContainer>
-      <ClosePressableExtendedBounds onPress={onClose}>
+      <ClosePressableExtendedBounds onPress={onClose} testID="modal-close-button">
         <Icons.CloseMedium color="neutral.c100" size="20px" />
       </ClosePressableExtendedBounds>
     </CloseContainer>
