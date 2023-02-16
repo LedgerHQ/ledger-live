@@ -50,7 +50,7 @@ export default function StepValidator({
   const unit = getAccountUnit(account);
 
   const validators = useValidators(account.currency);
-  const validator = validators.find(v => v.voteAccount === stake?.delegation?.voteAccAddr);
+  const validator = validators.find(v => v.voteAccount === stake.delegation?.voteAccAddr);
 
   if (validator === undefined) {
     return null;

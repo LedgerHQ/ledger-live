@@ -14,15 +14,15 @@ export function useReplaySubject<T>(value: T): ReplaySubject<T> {
   return subject;
 }
 export function useObservable<T>(
-  observable: Observable<T> | null,
+  observable: Observable<T>,
   initialValue?: T
 ): T | null | undefined {
   const [value, update] = useState<T | null | undefined>(
     initialValue || undefined
   );
   useEffect(() => {
-    const s = observable?.subscribe(update);
-    return () => s?.unsubscribe();
+    const s = observable.subscribe(update);
+    return () => s.unsubscribe();
   }, [observable]);
   return value;
 }

@@ -12,8 +12,8 @@ export function useSolanaPreloadData(
   currency: CryptoCurrency
 ): SolanaPreloadDataV1 | undefined | null {
   return useObservable(
-    currency.id === "solana" ? getSolanaPreloadData(currency) : null,
-    currency.id === "solana" ? getCurrentSolanaPreloadData(currency) : null
+    getSolanaPreloadData(currency),
+    getCurrentSolanaPreloadData(currency)
   );
 }
 
