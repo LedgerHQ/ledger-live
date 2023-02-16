@@ -1,7 +1,7 @@
-<img src="https://user-images.githubusercontent.com/211411/34776833-6f1ef4da-f618-11e7-8b13-f0697901d6a8.png" height="100" />
+<img src="https://user-images.githubusercontent.com/3273751/151214602-f5153588-1911-4456-ae65-604d56821b36.png" height="80" />
 
-[Github](https://github.com/LedgerHQ/ledgerjs/),
-[Ledger Devs Slack](https://ledger-dev.slack.com/)
+[Github](https://github.com/LedgerHQ/ledger-live),
+[Discord](https://developers.ledger.com/discord/)
 
 ## @ledgerhq/swift-bridge-hw-app-eth
 
