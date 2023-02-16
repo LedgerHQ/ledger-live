@@ -8,8 +8,6 @@ on:
       - main
       - release
       - hotfix
-      # TODO: remove me
-      - support/merge_groups
   merge_group:
 
 concurrency:
