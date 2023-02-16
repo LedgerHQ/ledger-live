@@ -11,7 +11,7 @@ export async function updateWatcherCheckRun(
   owner: string,
   repo: string,
   ref: string
-) {
+): Promise<ReturnType<Octokit["checks"]["update"]> | void> {
   const checkSuites = await octokit.checks.listSuitesForRef({
     owner,
     repo,
@@ -46,80 +46,78 @@ export async function updateWatcherCheckRun(
       "startup_failure",
       "failure",
     ];
-    let gateId = null;
+    let watcherId = null;
 
-    let summary = `#### This is the gate check run. It aggregates the status of all the other checks in the check suite.`;
+    let summary = `#### This is the watcher check run. It aggregates the status of all the other checks in the check suite.`;
     summary += `\n\n`;
     summary += `### 👁 Watching`;
 
-    const [
-      aggregatedConclusion,
-      aggregatedStatus,
-    ] = rawCheckRuns.data.check_runs
-      .slice()
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .reduce(
-        (acc, check_run) => {
-          if (check_run.name === WATCHER_CHECK_RUN_NAME) {
-            gateId = check_run.id;
-            return acc;
-          }
+    const [aggregatedConclusion, aggregatedStatus] =
+      rawCheckRuns.data.check_runs
+        .slice()
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .reduce(
+          (acc, check_run) => {
+            if (check_run.name === WATCHER_CHECK_RUN_NAME) {
+              watcherId = check_run.id;
+              return acc;
+            }
 
-          const workflowMeta = Object.entries(WORKFLOWS).find(
-            ([, w]) => w.checkRunName === check_run.name
-          );
+            const workflowMeta = Object.entries(WORKFLOWS).find(
+              ([, w]) => w.checkRunName === check_run.name
+            );
 
-          if (!workflowMeta) {
-            return acc;
-          }
+            if (!workflowMeta) {
+              return acc;
+            }
 
-          const workflowRun = rawWorkflowRuns.data.workflow_runs.find(
-            (wr) => (wr as any).path === ".github/workflows/" + workflowMeta[0]
-          );
+            const workflowRun = rawWorkflowRuns.data.workflow_runs.find(
+              (wr) =>
+                (wr as any).path === ".github/workflows/" + workflowMeta[0]
+            );
 
-          const workflowLink =
-            workflowRun?.html_url &&
-            ` _[(workflow)](${workflowRun?.html_url})_`;
+            const workflowLink =
+              workflowRun?.html_url &&
+              ` _[(workflow)](${workflowRun?.html_url})_`;
 
-          summary += `\n- ${getStatusEmoji(
-            check_run.conclusion || check_run.status
-          )} **[${check_run.name}](${
-            check_run.html_url
-          })**${workflowLink}: \`${check_run.conclusion ||
-            check_run.status}\` ${
-            workflowMeta[1].required ? "(required)" : "(optional)"
-          }`;
-          let newPriority;
+            summary += `\n- ${getStatusEmoji(
+              check_run.conclusion || check_run.status
+            )} **[${check_run.name}](${
+              check_run.html_url
+            })**${workflowLink}: \`${
+              check_run.conclusion || check_run.status
+            }\` ${workflowMeta[1].required ? "" : "_(optional)_"}`;
+            let newPriority;
 
-          const priority = conclusions.indexOf(
-            check_run.conclusion || "neutral"
-          );
-          const accumulatorPriority = conclusions.indexOf(acc[0]);
-          const newStatus =
-            check_run.status === "completed" && acc[1] === "completed"
-              ? "completed"
-              : "in_progress";
+            const priority = conclusions.indexOf(
+              check_run.conclusion || "neutral"
+            );
+            const accumulatorPriority = conclusions.indexOf(acc[0]);
+            const newStatus =
+              check_run.status === "completed" && acc[1] === "completed"
+                ? "completed"
+                : "in_progress";
 
-          if (workflowMeta[1].required) {
-            newPriority =
-              priority > accumulatorPriority
-                ? check_run.conclusion || "neutral"
-                : acc[0];
-          } else {
-            newPriority = acc[0];
-          }
+            if (workflowMeta[1].required) {
+              newPriority =
+                priority > accumulatorPriority
+                  ? check_run.conclusion || "neutral"
+                  : acc[0];
+            } else {
+              newPriority = acc[0];
+            }
 
-          return [newPriority, newStatus];
-        },
-        ["success", "completed"]
-      );
+            return [newPriority, newStatus];
+          },
+          ["success", "completed"]
+        );
 
-    if (gateId) {
+    if (watcherId) {
       if (aggregatedStatus === "completed") {
-        await octokit.checks.update({
+        return await octokit.checks.update({
           owner,
           repo,
-          check_run_id: gateId,
+          check_run_id: watcherId,
           status: "completed",
           conclusion: aggregatedConclusion,
           output: {
@@ -129,10 +127,10 @@ export async function updateWatcherCheckRun(
           completed_at: new Date().toISOString(),
         });
       } else {
-        await octokit.checks.update({
+        return await octokit.checks.update({
           owner,
           repo,
-          check_run_id: gateId,
+          check_run_id: watcherId,
           status: aggregatedStatus,
           output: {
             title: "⚙️ Running",

@@ -46,7 +46,10 @@ export function orchestrator(app: Probot) {
         ? `#### ${matchedWorkflow.description}\n\n`
         : "";
       // Will trigger the check_run.created event (which will update the watcher)
-      await octokit.checks.create({
+      context.log.info(
+        `[Orchestrator](workflow_run.requested) Creating check run ${matchedWorkflow.checkRunName} @ ${checkSuite.head_sha}`
+      );
+      const response = await octokit.checks.create({
         owner,
         repo,
         name: matchedWorkflow.checkRunName,
@@ -61,6 +64,9 @@ export function orchestrator(app: Probot) {
           details_url: workflowUrl,
         },
       });
+      context.log.info(
+        `[Orchestrator](workflow_run.requested) Check run created @id ${response.data.id}`
+      );
     }
   });
 
@@ -94,8 +100,11 @@ export function orchestrator(app: Probot) {
         : "";
       const tips = await getTips(workflowFile);
 
+      context.log.info(
+        `[Orchestrator](workflow_run.in_progress) Creating check run ${matchedWorkflow.checkRunName} @ ${checkSuite.head_sha}`
+      );
       // Will trigger the check_run.created event (which will update the watcher)
-      await createRunByName({
+      const response = await createRunByName({
         octokit,
         owner,
         repo,
@@ -112,6 +121,9 @@ export function orchestrator(app: Probot) {
           },
         },
       });
+      context.log.info(
+        `[Orchestrator](workflow_run.in_progress) Check run created @id ${response.id}`
+      );
     }
   });
 
@@ -146,6 +158,17 @@ export function orchestrator(app: Probot) {
         payload.workflow_run.id
       );
 
+      context.log.info(
+        `[Orchestrator](workflow_run.completed) Linked artifacts ${artifacts.map(
+          (a) => ({
+            name: a.name,
+            id: a.id,
+            created_at: a.created_at,
+            expires_at: a.expires_at,
+          })
+        )}`
+      );
+
       // Get the affected / metadata artifacts
       const [affected, metadata] = (await Promise.all(
         ["affected.json", "pr_metadata.json"].map(
@@ -157,6 +180,10 @@ export function orchestrator(app: Probot) {
             const artifactId = artifacts.find(
               (artifact) => artifact.name === fileName
             )?.id;
+
+            context.log.info(
+              `[Orchestrator](workflow_run.completed) Found artifact ${fileName} @id ${artifactId}`
+            );
 
             if (!artifactId) return undefined;
 
@@ -170,7 +197,7 @@ export function orchestrator(app: Probot) {
               return JSON.parse(raw.toString());
             } catch (e) {
               context.log.error(
-                `[Orchestrator](downloadArtifact) Error while downloading / parsing artifact: ${fileName} @ artifactId: ${artifactId} & workflow_run.id: ${payload.workflow_run.id}`
+                `[Orchestrator](workflow_run.completed) Error while downloading / parsing artifact: ${fileName} @ artifactId: ${artifactId} & workflow_run.id: ${payload.workflow_run.id}`
               );
               context.log.error(e as Error);
               return undefined;
@@ -187,6 +214,10 @@ export function orchestrator(app: Probot) {
           owner,
           metadata?.number || payload.workflow_run.pull_requests[0]?.number
         ));
+
+      context.log.info(
+        `[Orchestrator](workflow_run.completed) Is pull requests from a forked repo? ${isFork}`
+      );
 
       let affectedWorkflows = 0;
       // For each workflow…
@@ -218,13 +249,16 @@ export function orchestrator(app: Probot) {
             // Trigger the associated workflow.
             // This will trigger the workflow_run.requested event,
             // which will create/recreate the check run and update the watcher.
-            await octokit.actions.createWorkflowDispatch({
+            const response = await octokit.actions.createWorkflowDispatch({
               owner,
               repo,
               workflow_id: fileName,
               ref: workflowRef,
               inputs: workflow.getInputs(payload, metadata),
             });
+            context.log.info(
+              `[Orchestrator](workflow_run.completed) Dispatched workflow run response @status ${response.status}`
+            );
           }
         })
       );
@@ -238,8 +272,15 @@ export function orchestrator(app: Probot) {
         checkName: WATCHER_CHECK_RUN_NAME,
       });
 
+      context.log.info(
+        `[Orchestrator](workflow_run.completed) Created watcher check run @name ${checkRun.name} @id ${checkRun.id}`
+      );
+
       // If there are no affected workflows, update the watcher to success.
       if (checkRun && affectedWorkflows < 1) {
+        context.log.info(
+          `[Orchestrator](workflow_run.completed) No affected workflows, updating watcher to success`
+        );
         await octokit.checks.update({
           owner,
           repo,
@@ -261,6 +302,15 @@ export function orchestrator(app: Probot) {
         ref: checkSuite.head_sha,
         checkName: matchedWorkflow.checkRunName,
       });
+
+      context.log.info(
+        `[Orchestrator](workflow_run.completed) Found ${
+          checkRuns.data.total_count
+        } check runs named ${matchedWorkflow.checkRunName} @sha ${
+          checkSuite.head_sha
+        }\n${checkRuns.data.check_runs.map((cr) => cr.id)}`
+      );
+
       if (checkRuns.data.total_count === 0) {
         return;
       }
@@ -299,7 +349,7 @@ export function orchestrator(app: Probot) {
             annotations = newSummary?.annotations;
           } catch (e) {
             context.log.error(
-              `[Orchestrator](downloadArtifact) Error while downloading / parsing artifact: ${matchedWorkflow.summaryFile} @ artifactId: ${artifactId} & workflow_run.id: ${payload.workflow_run.id}`
+              `[Orchestrator](workflow_run.completed) Error while downloading / parsing artifact: ${matchedWorkflow.summaryFile} @ artifactId: ${artifactId} & workflow_run.id: ${payload.workflow_run.id}`
             );
             context.log.error(e as Error);
           }
@@ -376,19 +426,31 @@ export function orchestrator(app: Probot) {
         `[Orchestrator](check_run.created) ${payload.check_run.name}`
       );
       // (Re)Create watcher check run in pending state
-      await createRunByName({
+      const response = await createRunByName({
         octokit,
         owner,
         repo,
         sha: payload.check_run.head_sha,
         checkName: WATCHER_CHECK_RUN_NAME,
       });
-      await updateWatcherCheckRun(
+      context.log.info(
+        `[Orchestrator](check_run.created) Created watcher check run @id ${response.id}`
+      );
+      const result = await updateWatcherCheckRun(
         octokit,
         owner,
         repo,
         payload.check_run.head_sha
       );
+      if (result) {
+        context.log.info(
+          `[Orchestrator](check_run.created) Synchronized watcher status ${result.data.conclusion}`
+        );
+      } else {
+        context.log.error(
+          `[Orchestrator](check_run.created) Unable to update watcher check run @sha ${payload.check_run.head_sha}`
+        );
+      }
     }
   });
 
@@ -435,12 +497,21 @@ export function orchestrator(app: Probot) {
       context.log.info(
         `[Orchestrator](check_run.completed) ${payload.check_run.name}`
       );
-      await updateWatcherCheckRun(
+      const result = await updateWatcherCheckRun(
         octokit,
         owner,
         repo,
         payload.check_run.head_sha
       );
+      if (result) {
+        context.log.info(
+          `[Orchestrator](check_run.completed) Synchronized watcher status ${result.data.conclusion}`
+        );
+      } else {
+        context.log.error(
+          `[Orchestrator](check_run.completed) Unable to update watcher check run @sha ${payload.check_run.head_sha}`
+        );
+      }
     }
   });
 }
