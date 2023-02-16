@@ -52,7 +52,7 @@ export default function Settings({
   }, [dispatch]);
 
   return (
-    <SettingsNavigationScrollView>
+    <SettingsNavigationScrollView testID={"settings-page-scrollview"}>
       <TrackScreen category="Settings" />
       <SettingsCard
         title={t("settings.display.title")}
@@ -121,6 +121,7 @@ export default function Settings({
           desc="Use at your own risk – Developer tools"
           Icon={Icons.ToolsMedium}
           onClick={() => navigation.navigate(ScreenName.DebugSettings)}
+          settingsCardTestId="debug-settings-card"
           arrowRight
         />
       ) : null}

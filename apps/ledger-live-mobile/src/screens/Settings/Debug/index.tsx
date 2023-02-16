@@ -50,7 +50,7 @@ export default function DebugSettings({
   }, [ruleThemAll]);
 
   return (
-    <SettingsNavigationScrollView>
+    <SettingsNavigationScrollView testID="settings-debug-page-scrollview">
       <TrackScreen category="Settings" name="Debug" />
       <AlertBox
         type={"warning"}
@@ -63,6 +63,7 @@ export default function DebugSettings({
         onPress={() => navigate(ScreenName.DebugConfiguration)}
       />
       <SettingsRow
+        testID="debug-settings-features-row"
         title="Features & flows"
         desc="Specific flows and tools"
         iconLeft={<Icons.BoxMedium size={24} color="black" />}

@@ -365,7 +365,6 @@ const DebugErrors = () => {
   const mappedAndSortedData: Item[] = items
     .map(item => ({
       ...item,
-      name: item.hasOverride ? `*${item.name}` : item.name,
       hasTranslation: t(item.translationKey) === item.translationKey,
     }))
     .sort((a, b) => +a.hasTranslation - +b.hasTranslation)
@@ -407,10 +406,15 @@ const DebugErrors = () => {
           >
             <Icons.InfoMedium size={24} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={toggleIsModal} style={styles.headerButton}>
+          <TouchableOpacity
+            testID="debug-errors-toggle"
+            onPress={toggleIsModal}
+            style={styles.headerButton}
+          >
             <Icons.BringFrontMedium size={24} />
           </TouchableOpacity>
           <TouchableOpacity
+            testID="debug-errors-selector"
             onPress={toggleErrorSelector}
             style={styles.headerButton}
           >
@@ -433,6 +437,7 @@ const DebugErrors = () => {
 
   const renderItem = ({ item }: ListRenderItemInfo<Item>) => (
     <Touchable
+      testID={item.name}
       key={item.name}
       onPress={() => onSelectError(item)}
       style={styles.button}
@@ -444,7 +449,7 @@ const DebugErrors = () => {
             : "neutral.c100"
         }
       >
-        {item.name}
+        {item.hasOverride ? `*${item.name}` : item.name}
       </Text>
       {errorInstance instanceof item.Class && (
         <Check size={16} color={colors.live} />

@@ -45,6 +45,7 @@ const FilteredSearchBar = <T,>({
     <>
       <Flex style={inputWrapperStyle}>
         <SearchInput
+          testID="search-input"
           value={query}
           onChange={onChange}
           placeholder={t("common.search")}

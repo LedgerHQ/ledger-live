@@ -14,7 +14,7 @@ export default function Features() {
   const navigation =
     useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
   return (
-    <SettingsNavigationScrollView>
+    <SettingsNavigationScrollView testID="settings-debug-features-page-scrollview">
       <SettingsRow
         title="Swap"
         desc="KYC skips, toggle providers, etc"
@@ -58,6 +58,7 @@ export default function Features() {
         onPress={() => navigation.navigate(ScreenName.DebugLottie)}
       />
       <SettingsRow
+        testID="debug-settings-errors-row"
         title="Errors"
         desc="Easily see the rendering of errors in both modal and full page fashion"
         iconLeft={<Icons.EmojiSadMedium size={32} color="black" />}
