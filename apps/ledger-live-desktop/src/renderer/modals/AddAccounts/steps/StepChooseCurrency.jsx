@@ -50,7 +50,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       flare,
       near,
       avalanche_c_chain: avaxCChain,
-      avalanchepchain: avaxPChain
+      avalanchepchain: avaxPChain,
     }),
     [osmo, fantom, moonbeam, cronos, songbird, flare, near, avaxCChain, avaxPChain],
   );

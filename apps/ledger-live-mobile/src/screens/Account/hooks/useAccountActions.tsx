@@ -213,7 +213,7 @@ export default function useAccountActions({
     ...(!readOnlyModeEnabled && canBeBought ? [actionButtonBuy] : []),
     ...(!readOnlyModeEnabled && canBeSold ? [actionButtonSell] : []),
     ...(!readOnlyModeEnabled ? [SendAction] : []),
-    ReceiveAction
+    ReceiveAction,
   ];
   const secondaryActions = [
     ...baseActions,

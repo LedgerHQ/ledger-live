@@ -6,14 +6,14 @@ import { Trans } from "react-i18next";
 import { AvalanchePChainAccount } from "@ledgerhq/live-common/families/avalanchepchain/types";
 import { NavigatorName, ScreenName } from "../../const";
 
-const getExtraSendActionParams = ({ account }: { account: AccountLike }) => {
+const getExtraSendActionParams = () => {
   return {
     disabled: true,
     modalOnDisabledClick: null,
   };
 };
 
-const getExtraReceiveActionParams = ({ account }: { account: AccountLike }) => {
+const getExtraReceiveActionParams = () => {
   return {
     disabled: true,
   };
