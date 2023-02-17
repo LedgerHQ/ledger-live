@@ -812,7 +812,7 @@
       "title": "Your device is locked",
       "description": "Unlock your device and try again.",
       "descriptionWithProductName": "Unlock your {{ productName }} and try again."
-    },    
+    },
     "EtherscanAPIError": {
       "title": "Fetching transactions failed",
       "description": "An unexpected error occurred with the explorers. Please try again later"
@@ -1279,8 +1279,7 @@
       },
       "recovery": "Already have a recovery phrase?",
       "protect": {
-        "label": "~60 mins",
-        "subTitle": "Restore with Protect"
+        "subTitle": "Restore using Ledger Recover"
       }
     },
     "stepNewDevice": {
