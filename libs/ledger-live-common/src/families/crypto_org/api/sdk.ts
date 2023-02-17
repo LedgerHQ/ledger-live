@@ -1,4 +1,4 @@
-import { utils } from "@crypto-com/chain-jslib";
+import { utils } from "@crypto-org-chain/chain-jslib";
 import {
   CryptoOrgAccountTransaction,
   CryptoOrgMsgSendContent,
