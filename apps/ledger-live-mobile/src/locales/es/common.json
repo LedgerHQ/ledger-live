@@ -811,6 +811,13 @@
       "title" : "Tu dispositivo está bloqueado",
       "description" : "Desbloquea tu dispositivo e inténtalo de nuevo.",
       "descriptionWithProductName" : "Desbloquea tu {{ productName }} e inténtalo de nuevo."
+    },
+    "EtherscanAPIError" : {
+      "title" : "Se produjo un fallo al recuperar las transacciones",
+      "description" : "Se produjo un error inesperado con los exploradores. Inténtalo de nuevo más tarde"
+    },
+    "GasEstimationError" : {
+      "title" : "Se produjo un fallo en la estimación del gas"
     }
   },
   "crash" : {
@@ -1267,8 +1274,7 @@
       },
       "recovery" : "¿Ya tienes una Frase de recuperación?",
       "protect" : {
-        "label" : "Aproximadamente 60 min",
-        "subTitle" : "Restaurar con Protect"
+        "subTitle" : "Restore using Ledger Recover"
       }
     },
     "stepNewDevice" : {
@@ -3298,6 +3304,10 @@
           }
         }
       }
+    },
+    "walletConnect" : {
+      "title" : "WalletConnect",
+      "description" : "Conecta tu billetera a dApps"
     }
   },
   "signMessage" : {
