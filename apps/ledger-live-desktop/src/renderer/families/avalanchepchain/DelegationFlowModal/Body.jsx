@@ -12,6 +12,7 @@ import { Trans, withTranslation } from "react-i18next";
 import { connect, useDispatch } from "react-redux";
 import { compose } from "redux";
 import { createStructuredSelector } from "reselect";
+import { FIGMENT_AVALANCHE_VALIDATOR_NODES } from "@ledgerhq/live-common/families/avalanchepchain/utils";
 import logger from "~/logger/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { closeModal, openModal } from "~/renderer/actions/modals";
@@ -130,6 +131,7 @@ const Body = ({
 
     const transaction = bridge.updateTransaction(bridge.createTransaction(account), {
       mode: "delegate",
+      recipient: FIGMENT_AVALANCHE_VALIDATOR_NODES[0]
     });
 
     return { account, parentAccount: undefined, transaction };
