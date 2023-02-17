@@ -150,9 +150,10 @@ const WebPlatformTopBar = ({
     if (webview) {
       if (displayBackToManifestApp) {
         const url = webview.getURL();
-        const isLedgerLiveAppUrl = url.includes(manifest.url);
-        if (isLedgerLiveAppUrl) lastManifestAppURL.current = url;
-        setIsManifestAppURL(isLedgerLiveAppUrl);
+        const manifestHostname = new URL(manifest.url).hostname;
+        const isOriginUrl = url.includes(manifestHostname);
+        if (isOriginUrl) lastManifestAppURL.current = url;
+        setIsManifestAppURL(isOriginUrl);
       }
       setCanGoBack(webview.canGoBack());
       setCanGoForward(webview.canGoForward());
