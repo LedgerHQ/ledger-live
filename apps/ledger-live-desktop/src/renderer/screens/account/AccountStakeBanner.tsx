@@ -4,6 +4,7 @@ import { isAccount } from "@ledgerhq/live-common/account/index";
 import { StakeBanner as EthereumStakeBanner } from "~/renderer/families/ethereum/StakeBanner";
 import { StakeBanner as CosmosStakeBanner } from "~/renderer/families/cosmos/StakeBanner";
 import { StakeBanner as SolanaStakeBanner } from "~/renderer/families/solana/StakeBanner";
+import { StakeBanner as NearStakeBanner } from "~/renderer/families/near/StakeBanner";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 
 export const AccountStakeBanner = ({ account }: { account: AccountLike | null }) => {
@@ -18,6 +19,8 @@ export const AccountStakeBanner = ({ account }: { account: AccountLike | null })
         return <CosmosStakeBanner account={account as CosmosAccount} />;
       case "solana":
         return <SolanaStakeBanner account={account} />;
+      case "near":
+        return <NearStakeBanner account={account} />;
       default:
         return null;
     }

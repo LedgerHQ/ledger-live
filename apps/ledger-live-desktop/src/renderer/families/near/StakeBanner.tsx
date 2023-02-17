@@ -7,8 +7,7 @@ import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import React from "react";
 import { StakeAccountBannerParams } from "~/renderer/screens/account/types";
-import { useSolanaStakesWithMeta } from "@ledgerhq/live-common/families/solana/react";
-import { getAccountBannerState as getSolanaBannerState } from "@ledgerhq/live-common/families/solana/banner";
+import { getAccountBannerState as getNearBannerState } from "@ledgerhq/live-common/families/near/banner";
 import { openModal } from "~/renderer/actions/modals";
 import { useDispatch } from "react-redux";
 
@@ -16,26 +15,20 @@ export const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const stakeAccountBanner = useFeature("stakeAccountBanner");
-  const stakesWithMeta = useSolanaStakesWithMeta(
-    account.currency,
-    account?.solanaResources?.stakes,
-  );
   const stakeAccountBannerParams: StakeAccountBannerParams | null =
     stakeAccountBanner?.params ?? null;
-  const state = getSolanaBannerState(account);
-  const { redelegate, display, ledgerValidator, stakeAccAddr } = state;
+  const state = getNearBannerState(account);
+  const { redelegate, display, ledgerValidator, validatorId } = state;
 
-  if (redelegate && !stakeAccountBannerParams?.solana?.redelegate) return null;
-  if (!redelegate && !stakeAccountBannerParams?.solana?.delegate) return null;
+  if (redelegate && !stakeAccountBannerParams?.near?.redelegate) return null;
+  if (!redelegate && !stakeAccountBannerParams?.near?.delegate) return null;
 
-  const commission = ledgerValidator?.commission ? ledgerValidator?.commission : 1;
-  const stakeWithMeta = stakesWithMeta?.find(s => s.stake?.stakeAccAddr === stakeAccAddr);
-  const title = redelegate
-    ? t("account.banner.redelegation.solana.title")
-    : t("account.banner.delegation.title");
+  const commission = ledgerValidator?.commission ? ledgerValidator?.commission * 100 : 1;
+
+  const title = redelegate ? t("account.near.title") : t("account.banner.delegation.title");
   const description = redelegate
-    ? t("account.banner.redelegation.solana.description")
-    : t("account.banner.delegation.description", {
+    ? t("account.banner.redelegation.near.description")
+    : t("account.banner.delegation.near.description", {
         asset: account.currency.ticker,
         commission,
       });
@@ -46,8 +39,8 @@ export const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
     ? t("account.banner.redelegation.linkText")
     : t("account.banner.delegation.linkText");
   const linkUrl = redelegate
-    ? "https://support.ledger.com/hc/en-us/articles/4731749170461-Staking-Solana-SOL-in-Ledger-Live?support=true"
-    : "https://www.ledger.com/staking/ledger-node/solana";
+    ? "https://support.ledger.com/hc/en-us/articles/7658561043613-How-to-stake-NEAR-through-Ledger-Live-and-earn-rewards"
+    : "https://www.ledger.com/staking/staking-near";
   const onClick = () => {
     track("button_clicked", {
       ...stakeDefaultTrack,
@@ -55,18 +48,18 @@ export const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
       page: "Page Account",
       button: "delegate",
       redelegate,
-      token: "SOLANA",
+      token: "NEAR",
     });
     if (redelegate) {
       dispatch(
-        openModal("MODAL_SOLANA_DELEGATION_DEACTIVATE", {
+        openModal("MODAL_NEAR_UNSTAKE", {
           account,
-          stakeWithMeta,
+          validatorAddress: validatorId,
         }),
       );
     } else {
       dispatch(
-        openModal("MODAL_SOLANA_DELEGATE", {
+        openModal("MODAL_NEAR_STAKE", {
           account,
         }),
       );
