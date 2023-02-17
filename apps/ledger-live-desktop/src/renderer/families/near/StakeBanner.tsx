@@ -25,7 +25,7 @@ export const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
 
   const commission = ledgerValidator?.commission ? ledgerValidator?.commission * 100 : 1;
 
-  const title = redelegate ? t("account..near.title") : t("account.banner.delegation.title");
+  const title = redelegate ? t("account.near.title") : t("account.banner.delegation.title");
   const description = redelegate
     ? t("account.banner.redelegation.near.description")
     : t("account.banner.delegation.near.description", {
@@ -40,7 +40,7 @@ export const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
     : t("account.banner.delegation.linkText");
   const linkUrl = redelegate
     ? "https://support.ledger.com/hc/en-us/articles/7658561043613-How-to-stake-NEAR-through-Ledger-Live-and-earn-rewards"
-    : "https://www.ledger.com/staking/ledger-node/near";
+    : "https://www.ledger.com/staking/staking-near";
   const onClick = () => {
     track("button_clicked", {
       ...stakeDefaultTrack,
