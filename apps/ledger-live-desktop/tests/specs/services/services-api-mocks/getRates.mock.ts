@@ -1,0 +1,43 @@
+// export const getRatesMock = () => {
+// return JSON.stringify([
+//   {
+//     rate: "1",
+//     toAmount: amount.times(magnitudeAwareRate),
+//     magnitudeAwareRate,
+//     rateId: "mockedRateId1",
+//     provider: "changelly",
+//     providerType: "CEX",
+//     expirationDate: new Date(),
+//     tradeMethod: "fixed",
+//   },
+//   {
+//     rate: new BigNumber("1.1"),
+//     toAmount: amount.times(magnitudeAwareRate),
+//     magnitudeAwareRate,
+//     rateId: "mockedRateId2",
+//     provider: "changelly",
+//     providerType: "CEX",
+//     expirationDate: new Date(),
+//     tradeMethod: "float",
+//   },
+//   {
+//     rate: new BigNumber("0.9"),
+//     toAmount: amount.times(magnitudeAwareRate),
+//     magnitudeAwareRate,
+//     rateId: "mockedRateId3",
+//     provider: "cic",
+//     providerType: "CEX",
+//     expirationDate: new Date(),
+//     tradeMethod: "float",
+//   },
+//   {
+//     rate: new BigNumber("0.95"),
+//     toAmount: amount.times(magnitudeAwareRate),
+//     magnitudeAwareRate,
+//     rateId: "mockedRateId4",
+//     provider: "oneinch",
+//     providerType: "DEX",
+//     expirationDate: new Date(),
+//     tradeMethod: "float",
+//   },
+// ]);

@@ -7,8 +7,9 @@ import { AccountsPage } from "../../models/AccountsPage";
 import { AccountPage } from "../../models/AccountPage";
 import { Layout } from "../../models/Layout";
 import { Modal } from "../../models/Modal";
+import { getProvidersMock } from "./services-api-mocks/getProviders.mock";
 
-test.use({ userdata: "1AccountBTC1AccountETH" });
+test.use({ userdata: "1AccountBTC1AccountETH", env: { DEV_TOOLS: true, MOCK: undefined } });
 
 // Tests to cover in Playwright test suite
 // Enter specific amount
@@ -20,6 +21,8 @@ test.use({ userdata: "1AccountBTC1AccountETH" });
 // ‘Insufficient funds’
 // Amount too low for providers ‘Amount must be at least …’
 
+process.env.PWDEBUG = "1";
+
 test.describe.parallel("Swap", () => {
   test("Add accounts via Swap page", async ({ page }) => {
     const layout = new Layout(page);
@@ -30,6 +33,22 @@ test.describe.parallel("Swap", () => {
 
     const ethereumAccountName = "Ethereum 2";
 
+    await page.route("https://swap.ledger.com/v4/providers**", async route => {
+      console.log("MOCKING TIME BABY");
+
+      const mockProvidersResponse = JSON.stringify(getProvidersMock());
+
+      route.fulfill({ body: mockProvidersResponse });
+    });
+
+    await page.route("https://swap.ledger.com/v4/providers**", async route => {
+      console.log("MOCKING TIME BABY");
+
+      const mockProvidersResponse = JSON.stringify(getProvidersMock());
+
+      route.fulfill({ body: mockProvidersResponse });
+    });
+
     await test.step("Navigate to swap via account page", async () => {
       await layout.goToAccounts();
       await accountsPage.navigateToAccountByName(ethereumAccountName);
@@ -38,6 +57,7 @@ test.describe.parallel("Swap", () => {
     });
 
     await test.step("Open source (From) account dropdown", async () => {
+      await page.pause();
       await swapPage.openAccountDropdownByAccountName(ethereumAccountName);
       await expect.soft(page).toHaveScreenshot("from-account-dropdown-opened.png");
     });
