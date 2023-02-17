@@ -26,7 +26,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const hasDelegations = cosmosResources.delegations.length > 0;
 
   const onClick = useCallback(() => {
-    if (isAccountEmpty(account) || !earnRewardEnabled) {
+    if (isAccountEmpty(account) && !earnRewardEnabled) {
       dispatch(
         openModal("MODAL_NO_FUNDS_STAKE", {
           account,
