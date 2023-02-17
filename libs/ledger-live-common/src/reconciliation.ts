@@ -16,20 +16,17 @@ import {
   fromAccountRaw,
   fromOperationRaw,
   fromSubAccountRaw,
-  fromCosmosResourcesRaw,
   fromBitcoinResourcesRaw,
   fromPolkadotResourcesRaw,
   fromElrondResourcesRaw,
   fromCryptoOrgResourcesRaw,
   fromNFTRaw,
-  toCosmosResourcesRaw,
   toPolkadotResourcesRaw,
   toElrondResourcesRaw,
   toCryptoOrgResourcesRaw,
 } from "./account";
 import consoleWarnExpectToEqual from "./consoleWarnExpectToEqual";
 import { BitcoinAccount, BitcoinAccountRaw } from "./families/bitcoin/types";
-import { CosmosAccount, CosmosAccountRaw } from "./families/cosmos/types";
 import {
   CryptoOrgAccount,
   CryptoOrgAccountRaw,
@@ -287,24 +284,6 @@ export function patchAccount(
   //   OR
   //   - current account data is different
   switch (account.currency.family) {
-    case "cosmos": {
-      const cosmosAcc = account as CosmosAccount;
-      const cosmosUpdatedRaw = updatedRaw as CosmosAccountRaw;
-      if (
-        cosmosUpdatedRaw.cosmosResources &&
-        (!cosmosAcc.cosmosResources ||
-          !areSameResources(
-            toCosmosResourcesRaw(cosmosAcc.cosmosResources),
-            cosmosUpdatedRaw.cosmosResources
-          ))
-      ) {
-        (next as CosmosAccount).cosmosResources = fromCosmosResourcesRaw(
-          cosmosUpdatedRaw.cosmosResources
-        );
-        changed = true;
-      }
-      break;
-    }
     case "bitcoin": {
       if (shouldRefreshBitcoinResources(updatedRaw, account)) {
         (next as BitcoinAccount).bitcoinResources = fromBitcoinResourcesRaw(
