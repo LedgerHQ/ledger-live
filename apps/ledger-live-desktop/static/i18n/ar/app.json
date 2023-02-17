@@ -824,7 +824,20 @@
       "delegation" : {
         "title" : "في حالة أنك لم تكن تعلم...",
         "description" : "مدقق Ledger يقوم بتكديس {{asset}} خاصتك بعمولة قدرها %{{commission}}.",
-        "cta" : "قم بالتكديس مع Ledger"
+        "cta" : "قم بالتكديس مع Ledger",
+        "linkText" : "تعرّف على المزيد",
+        "ethereum" : {
+          "lido" : {
+            "title" : "في حالة أنك لم تكن تعلم...",
+            "description" : "قم بتكديس إيثريوم خاصتك عن طريق Lido واكسب مكافآت يومية. دون فترة قَفل. دون حد أدنى للإيداع.",
+            "cta" : "قم بالتكديس مع Lido"
+          },
+          "kiln" : {
+            "title" : "لا تقم فقط بالاحتفاظ لفترة طويلة. قم بتنمية ETH خاصتك",
+            "description" : "لديك أكثر من 32 ETH؟ اكسب مكافآت سلبية عن طريق تكديس ETH خاصتك بأمان مع Kiln.",
+            "cta" : "قم بالتكديس مع Kiln"
+          }
+        }
       }
     }
   },
@@ -1399,7 +1412,7 @@
         "label" : "شائع"
       },
       "earn" : {
-        "title" : "اكسب",
+        "title" : "تكديس",
         "description" : "قم بتنمية أصولك المشفرة مع Ledger"
       }
     }
@@ -3472,6 +3485,71 @@
       "providerLink" : "تعرف على المزيد عن {{provider}}"
     }
   },
+  "avalanchepchain" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "تعمل بواسطة Figment",
+        "moreInfo" : "مزيد من المعلومات",
+        "drawerTitle" : "تعمل بواسطة Figment",
+        "title" : "رمز AVAX متاح الآن في Ledger Live",
+        "description" : "يمكنك الآن بدء إدارة رموزك AVAX وتأمينها من خلال Ledger Live.",
+        "website" : "تعمل بواسطة Figment"
+      }
+    },
+    "stakedBalance" : "التكديس",
+    "stakedBalanceTooltip" : "المبلغ المُكدَّس إلى مدققين.",
+    "delegation" : {
+      "header" : "التفويضات",
+      "add" : "إضافة",
+      "commission" : "العمولة",
+      "validator" : "مُعرِّف العُقدة",
+      "startTime" : "وقت البدء",
+      "endTime" : "وقت الانتهاء",
+      "stakeAmount" : "تكديس",
+      "potentialReward" : "المكافأة المحتملة",
+      "emptyState" : {
+        "description" : "يمكنك كسب مكافآت AVAX عن طريق تفويض أصولك.",
+        "info" : "كيف يعمل التفويض",
+        "delegation" : "اكسب المكافآت"
+      },
+      "notEnoughToDelegate" : "يجب أن يكون لديك على الأقل 25 AVAX متاحة على سلسلة P لتصبح مُفوِّضاً.",
+      "validatorStake" : "حصة المدقق",
+      "validatorRemainingStake" : "متاح",
+      "flow" : {
+        "title" : "تفويض",
+        "steps" : {
+          "starter" : {
+            "description" : "يمكنك كسب المكافآت عن طريق تفويض أصولك AVAX إلى مدقق.",
+            "bullet" : ["أنت تحتفظ بملكية الأصول المفوضة", "قم بالتفويض باستخدام جهازك Ledger", "مطلوب 25 AVAX بحد أدنى للتكديس", "يجب تفويض AVAX لمدة أسبوعين بحد أدنى"]
+          },
+          "amount" : {
+            "title" : "المبلغ"
+          },
+          "validator" : {
+            "title" : "المدققون",
+            "ledgerByFigmentTC" : "شروط وأحكام Ledger by Figment"
+          },
+          "endDate" : {
+            "title" : "تاريخ الانتهاء",
+            "text" : "اختر وقتاً لينتهي فيه هذا التفويض. تاريخ انتهاء هذا التفويض يجب أن يكون بين {{minEndDate}} و {{maxEndDate}}.",
+            "label" : "تاريخ انتهاء التفويض"
+          },
+          "connectDevice" : {
+            "title" : "الجهاز"
+          },
+          "confirmation" : {
+            "title" : "تأكيد",
+            "success" : {
+              "title" : "لقد قمت بتفويض أصولك بنجاح",
+              "text" : "سيتم تحديث رصيد حسابك عندما تقوم سلسلة الكتل بتأكيد المعاملة.",
+              "cta" : "رؤية التفاصيل"
+            },
+            "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+          }
+        }
+      }
+    }
+  },
   "near" : {
     "account" : {
       "stakedBalance" : "الرصيد المُكدَّس",
@@ -3776,7 +3854,9 @@
       "runLocalAppDeleteButton" : "حذف",
       "runLocalAppOpenButton" : "فتح",
       "enableLearnStagingUrl" : "الرابط المرحلي (staging URL) للصفحة التعليمية",
-      "enableLearnStagingUrlDesc" : "تمكين الرابط المرحلي (staging URL) للصفحة التعليمية."
+      "enableLearnStagingUrlDesc" : "تمكين الرابط المرحلي (staging URL) للصفحة التعليمية.",
+      "openOnboardingAppInstallDebug" : "Open onboarding app install debug screen",
+      "openOnboardingAppInstallDebugDesc" : "Open a screen with the components from the sync onboarding app installation step"
     },
     "currencies" : {
       "selectPlaceholder" : "اختار أصل مشفر",
@@ -5356,7 +5436,7 @@
       "description" : "يجب تطبيق التوقيع في غضون 30 ثانية. يرجى إعادة المحاولة مرة أخرى."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "الطاقة أقل من المطلوب. قد تدفع رسوم تصل إلى 50TRX."
+      "title" : "الطاقة أقل من المطلوب. قد تدفع رسوم تصل إلى 50 TRX."
     },
     "PairingFailed" : {
       "title" : "لم يتم إجراء الإقران بنجاح",
@@ -5510,6 +5590,9 @@
     "StellarBurnAddressError" : {
       "title" : "حدثت مشكلة أثناء محاولة إضافة حساب Stellar"
     },
+    "AvalancheMinimumAmountError" : {
+      "title" : "الحد الأدنى للمبلغ هو 25 AVAX"
+    },
     "HederaAddAccountError" : {
       "title" : "لم تتم إضافة حسابك. يرجى إعادة المحاولة."
     },
@@ -5520,6 +5603,10 @@
     "ImageLoadFromFileError" : {
       "title" : "فشل تحميل الصورة من الملف",
       "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
+    },
+    "ImageLoadFromNftError" : {
+      "title" : "فشل تحميل الصورة من الرمز غير القابل للاستبدال",
+      "description" : "يُرجى المحاولة مرةً أخرى برمز غير قابل للاستبدال آخر"
     },
     "ImageDownloadError" : {
       "title" : "فشل تنزيل الصورة",
@@ -5593,6 +5680,13 @@
       "descriptionWithProductName" : "يجب أن تقوم بإعداد {{ productName }} خاصتك أولاً.\nسنرشدك خلال عملية الإعداد.",
       "goToOnboardingButton" : "إعداد جهازي",
       "goToOnboardingButtonWithProductName" : "إعداد {{ productName }}"
+    },
+    "EtherscanAPIError" : {
+      "title" : "فشل إحضار المعاملات",
+      "description" : "حدث خطأ غير متوقع مع المستكشفات. يُرجى إعادة المحاولة لاحقاً"
+    },
+    "GasEstimationError" : {
+      "title" : "فشل تقدير الغاز"
     }
   },
   "cryptoOrg" : {
@@ -5631,7 +5725,13 @@
         "stepLabel" : "اختر صورة",
         "description" : "اختر صورة لتعيينها على أنها (...)",
         "pickFromNftGallery" : "اختر من معرض NFT",
-        "upload" : "تحميل من الكمبيوتر الخاص بي"
+        "myNfts" : "رموزي غير القابلة للاستبدال",
+        "upload" : "تحميل من الكمبيوتر الخاص بي",
+        "chooseNft" : "اختر رمزاً غير قابل للاستبدال",
+        "selectNft" : "اختر رمز غير قابل للاستبدال",
+        "previousSelectNft" : "عودة",
+        "nftEmptyStateTitle" : "ليس هناك رموز غير قابلة للاستبدال بعد لعرضها",
+        "nftEmptyStateDescription" : "ابدأ بإضافة رموز غير قابلة للاستبدال إلى محفظتك."
       },
       "adjust" : {
         "stepLabel" : "ضبط الصورة",
@@ -5657,5 +5757,37 @@
     },
     "customImageSet" : "تم إعداد شاشة القَفل",
     "finishCTA" : "إنهاء"
+  },
+  "onboardingAppInstall" : {
+    "restore" : {
+      "title" : "تثبيت نفس التطبيقات كما في {{deviceName}}؟",
+      "titleNoDeviceName" : "تثبيت نفس التطبيقات كما في جهاز Ledger السابق؟",
+      "subtitle" : "You can install or remove apps at anytime.",
+      "installCTA" : "Restore applications",
+      "skipCTA" : "سأقوم بذلك في وقت لاحق"
+    },
+    "default" : {
+      "title" : "{{ productName }} يستخدم تطبيقات لتمكين المعاملات الآمنة على سلسلة الكتل",
+      "subtitle" : "نوصي بتنزيل مجموعة محددة من التطبيقات. يُمكنك تنزيل المزيد لاحقاً.",
+      "installCTA" : "Install applications",
+      "skipCTA" : "سأقوم بذلك في وقت لاحق"
+    },
+    "progress" : {
+      "loading" : "جاري التحميل ...",
+      "resolving" : "حل التبعيات",
+      "progress" : "تثبيت التطبيقات %{{progress}}",
+      "disclaimer" : "قم بإضافة أو حذف التطبيقات في أي وقت من Ledger Live."
+    },
+    "cancelled" : {
+      "title" : "App installation was cancelled on {{productName}}",
+      "subtitle" : "{{productName}} needs blockchain apps to approve your crypto and NFT transactions.",
+      "installCTA" : "تثبيت الآن",
+      "skipCTA" : "سأقوم بذلك في وقت لاحق"
+    },
+    "locked" : {
+      "title" : "Your {{productName}} is locked",
+      "subtitle" : "Unlock your {{productName}} and restart the installation.",
+      "installCTA" : "Restart installation"
+    }
   }
 }
