@@ -14,6 +14,7 @@ export const AccountStakeBanner = ({ account }: { account: AccountLike | null })
       case "ethereum":
         return <EthereumStakeBanner account={account} />;
       case "cosmos":
+      case "osmo":
         return <CosmosStakeBanner account={account as CosmosAccount} />;
       case "solana":
         return <SolanaStakeBanner account={account} />;
