@@ -4,7 +4,7 @@ import * as logic from "./logic";
 
 import { BigNumber } from "bignumber.js";
 import type { NearAccount, NearValidatorItem } from "./types";
-import type { NearStakingPosition } from "./api/sdk.types.ts";
+import type { NearStakingPosition } from "./api/sdk.types";
 
 const ledgerValidator: NearValidatorItem = {
   validatorAddress: "ledgerbyfigment.poolv1.near",
