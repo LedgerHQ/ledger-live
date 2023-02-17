@@ -15,6 +15,7 @@ abstract class cosmosBase {
     [Key in CosmosOperationMode]: number;
   } = {
     // refer to https://github.com/chainapsis/keplr-wallet/blob/master/packages/stores/src/account/cosmos.ts#L113 for the gas fees
+    // TODO use simulate endpoint to evaluate tx gas instead of constant gas
     send: 90000,
     delegate: 250000,
     undelegate: 250000,
