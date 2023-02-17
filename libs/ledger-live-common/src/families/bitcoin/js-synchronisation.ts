@@ -13,7 +13,7 @@ import {
   isTaprootDerivationMode,
   DerivationMode,
 } from "../../derivation";
-import { BitcoinAccount, BitcoinOutput } from "./types";
+import { BitcoinAccount, BitcoinAccountRaw, BitcoinOutput } from "./types";
 import { perCoinLogic } from "./logic";
 import wallet from "./wallet-btc";
 import { getAddress } from "./hw-getAddress";
@@ -21,6 +21,9 @@ import { mapTxToOperations } from "./logic";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { decodeAccountId } from "../../account/index";
 import { startSpan } from "../../performance";
+import { isEqual } from "lodash";
+import { AccountRaw } from "@ledgerhq/types-live";
+import { fromBitcoinResourcesRaw } from "./serialization";
 
 // Map LL's DerivationMode to wallet-btc's
 const toWalletDerivationMode = (
@@ -259,3 +262,34 @@ export const scanAccounts = makeScanAccounts({
   getAddressFn,
 });
 export const sync = makeSync({ getAccountShape, postSync });
+
+function shouldRefreshBitcoinResources(
+  updatedRaw: AccountRaw,
+  account: Account
+) {
+  if (!(updatedRaw as BitcoinAccountRaw).bitcoinResources) return false;
+  if (!(account as BitcoinAccount).bitcoinResources) return true;
+  if (updatedRaw.blockHeight !== account.blockHeight) return true;
+  if (updatedRaw.operations.length !== account.operations.length) return true;
+  const { bitcoinResources: existing } = account as BitcoinAccount;
+  const { bitcoinResources: raw } = updatedRaw as BitcoinAccountRaw;
+  // FIXME Need more typing in wallet-btc to have a meaningful comparison
+  //if (!isEqual(raw.walletAccount?.xpub?.data, existing.walletAccount?.xpub?.data)) return true;
+  if (raw.utxos.length !== existing.utxos.length) return true;
+  return !isEqual(raw.utxos, existing.utxos);
+}
+
+export function applyReconciliation(
+  account: Account,
+  updatedRaw: AccountRaw,
+  next: Account
+): boolean {
+  let changed = false;
+  if (shouldRefreshBitcoinResources(updatedRaw, account)) {
+    (next as BitcoinAccount).bitcoinResources = fromBitcoinResourcesRaw(
+      (updatedRaw as BitcoinAccountRaw).bitcoinResources
+    );
+    changed = true;
+  }
+  return changed;
+}
