@@ -115,14 +115,14 @@ const Body = (props: Props) => {
     bridgeError,
     bridgePending,
   } = useBridgeTransaction(() => {
-    const { account } = params;
+    const { account, parentAccount } = params;
 
-    const bridge: AccountBridge<Transaction> = getAccountBridge(account, undefined);
+    const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
     const transaction: Transaction = bridge.createTransaction(account);
 
     return {
       account,
-      parentAccount: undefined,
+      parentAccount,
       transaction: bridge.updateTransaction(transaction, {
         recipient: defaultValidator ? defaultValidator.contract : "",
       }),

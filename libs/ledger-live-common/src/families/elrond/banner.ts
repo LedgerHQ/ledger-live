@@ -15,7 +15,7 @@ export function getAccountBannerState(
 ): AccountBannerState {
   const elrondResources = account.elrondResources
     ? account.elrondResources
-    : { delegations: [], redelegations: [] };
+    : { delegations: [] };
 
   const { validators } = elrondPreloadData;
 
@@ -40,7 +40,7 @@ export function getAccountBannerState(
     (validator) => validator.contract === ELROND_LEDGER_VALIDATOR_ADDRESS
   );
 
-  // // if Ledger doesn't provide validator, we don't display banner: TODO: question, is this still correct? Not in acceptance criteria to hide banner when ledger isn't a validator
+  // // if Ledger doesn't provide validator, we don't display banner
   if (!ledgerValidator) {
     return {
       display: false,
@@ -52,7 +52,7 @@ export function getAccountBannerState(
       const validator = validators.find(
         (validator) => validator.contract === validatorAddress
       );
-      if (validator && worstValidator.aprValue < validator.aprValue) {
+      if (validator && worstValidator.aprValue < validator.aprValue) { // TODO: question - check if this is correct instead of commission
         return validator;
       }
       return worstValidator;
@@ -65,10 +65,14 @@ export function getAccountBannerState(
       display: true,
       bannerType: "redelegate",
     };
-  } else {
+  } else if (!account.balance.isZero()) {
     return {
       display: true,
       bannerType: "delegate",
+    };
+  } else {
+    return {
+      display: false,
     };
   }
 }

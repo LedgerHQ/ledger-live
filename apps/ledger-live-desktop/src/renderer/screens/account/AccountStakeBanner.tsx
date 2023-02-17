@@ -1,5 +1,5 @@
 import React from "react";
-import { AccountLike } from "@ledgerhq/types-live";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import { isAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { StakeBanner as EthereumStakeBanner } from "~/renderer/families/ethereum/StakeBanner";
 import { StakeBanner as CosmosStakeBanner } from "~/renderer/families/cosmos/StakeBanner";
@@ -8,7 +8,10 @@ import { StakeBanner as ElrondStakeBanner } from "~/renderer/families/elrond/Sta
 import { StakeBanner as NearStakeBanner } from "~/renderer/families/near/StakeBanner";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 
-export const AccountStakeBanner = ({ account }: { account: AccountLike | null }) => {
+export const AccountStakeBanner: React.FC<{
+  account: AccountLike | null;
+  parentAccount: Account;
+}> = ({ account, parentAccount }) => {
   if (!account) return null;
 
   if (isAccount(account)) {
@@ -28,7 +31,7 @@ export const AccountStakeBanner = ({ account }: { account: AccountLike | null })
   } else if (isTokenAccount(account)) {
     switch (account.token.id) {
       case "ethereum/erc20/elrond":
-        return <ElrondStakeBanner account={account} />;
+        return <ElrondStakeBanner account={account} parentAccount={parentAccount} />;
       default:
         return null;
     }

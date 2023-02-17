@@ -8,15 +8,23 @@ import React from "react";
 import { StakeAccountBannerParams } from "~/renderer/screens/account/types";
 import { useElrondPreloadData } from "@ledgerhq/live-common/families/elrond/react";
 import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+import { track } from "~/renderer/analytics/segment";
+import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
+import { useDispatch } from "react-redux";
+import { openModal } from "~/renderer/actions/modals";
 
-export const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
+export const StakeBanner: React.FC<{ account: ElrondAccount; parentAccount: Account }> = ({
+  account,
+  parentAccount,
+}) => {
   const { t } = useTranslation();
   const stakeAccountBanner = useFeature("stakeAccountBanner");
   const stakeAccountBannerParams: StakeAccountBannerParams | null =
     stakeAccountBanner?.params ?? null;
 
   const elrondPreloadData = useElrondPreloadData();
-  const bannerState = getElrondBannerState(account as ElrondAccount, elrondPreloadData);
+  const dispatch = useDispatch();
+  const bannerState = getElrondBannerState(account, elrondPreloadData);
   if (
     stakeAccountBannerParams?.elrond?.delegate === false &&
     bannerState.bannerType === "delegate"
@@ -35,7 +43,36 @@ export const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
   const description = "DESCRIPTION";
   const cta = "TODO";
 
-  const onClick = () => alert("TODO");
+  const onClick = () => {
+    track("button_clicked", {
+      ...stakeDefaultTrack,
+      delegation: "stake",
+      page: "Page Account",
+      button: "delegate",
+      redelegate: bannerState.bannerType === "redelegate",
+      token: "ELROND",
+    });
+    if (bannerState.bannerType === "redelegate") {
+      dispatch(
+        openModal("MODAL_ELROND_UNDELEGATE", {
+          account,
+          validatorAddress: "TODO",
+        }),
+      );
+    } else {
+      dispatch(
+        openModal("MODAL_ELROND_DELEGATE", {
+          account: {
+            ...account,
+            elrondResources: account.elrondResources || { delegations: [] },
+          },
+          parentAccount,
+          validators: elrondPreloadData.validators,
+          delegations: [],
+        }),
+      );
+    }
+  };
 
   return (
     <AccountBanner
