@@ -19,14 +19,14 @@ const images = {
     setupNano: require("../../../images/illustration/Light/_NewNano.png"),
     restoreRecoveryPhrase: require("../../../images/illustration/Light/_RestoreRecoveryPhrase.png"),
     syncCrypto: require("../../../images/illustration/Light/_SyncCrypto.png"),
-    protect: require("../../../images/illustration/Light/_000_PLACEHOLDER.png"),
+    protect: require("../../../images/illustration/Light/_LedgerRecover.png"),
   },
   dark: {
     pairNew: require("../../../images/illustration/Dark/_ConnectYourNano.png"),
     setupNano: require("../../../images/illustration/Dark/_NewNano.png"),
     restoreRecoveryPhrase: require("../../../images/illustration/Dark/_RestoreRecoveryPhrase.png"),
     syncCrypto: require("../../../images/illustration/Dark/_SyncCrypto.png"),
-    protect: require("../../../images/illustration/Dark/_000_PLACEHOLDER.png"),
+    protect: require("../../../images/illustration/Dark/_LedgerRecover.png"),
   },
 };
 
@@ -149,10 +149,6 @@ const OnboardingStepUseCaseSelection = () => {
                           />
                         ),
                         title: t("onboarding.stepUseCase.protect.subTitle"),
-                        labelBadge:
-                          deviceModelId === "nanoX"
-                            ? t("onboarding.stepUseCase.protect.label")
-                            : undefined,
                         event: "Onboarding - Restore Protect",
                       },
                     ]
