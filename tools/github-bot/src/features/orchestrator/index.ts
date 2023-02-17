@@ -47,7 +47,7 @@ export function orchestrator(app: Probot) {
         : "";
       // Will trigger the check_run.created event (which will update the watcher)
       context.log.info(
-        `[Orchestrator](workflow_run.requested) Creating check run ${matchedWorkflow.checkRunName} @ ${checkSuite.head_sha}`
+        `[Orchestrator](workflow_run.requested) Creating check run ${matchedWorkflow.checkRunName} @sha ${checkSuite.head_sha}`
       );
       const response = await octokit.checks.create({
         owner,
@@ -100,8 +100,24 @@ export function orchestrator(app: Probot) {
         : "";
       const tips = await getTips(workflowFile);
 
+      // Ensure that the latest workflow run status is "in progress"
+      // Why? Because github might send the "in progress" event AFTER the "completed" event…
+      const workflowRun = await octokit.actions.getWorkflowRun({
+        owner,
+        repo,
+        run_id: payload.workflow_run.id,
+      });
+
+      if (workflowRun.data.status !== "in_progress") {
+        context.log.info(
+          `[Orchestrator](workflow_run.in_progress) The workflow run seems to be completed already, skipping…`
+        );
+        // Oops, the workflow is not in progress anymore, we should not update the check run
+        return;
+      }
+
       context.log.info(
-        `[Orchestrator](workflow_run.in_progress) Creating check run ${matchedWorkflow.checkRunName} @ ${checkSuite.head_sha}`
+        `[Orchestrator](workflow_run.in_progress) Creating check run ${matchedWorkflow.checkRunName} @sha ${checkSuite.head_sha}`
       );
       // Will trigger the check_run.created event (which will update the watcher)
       const response = await createRunByName({
@@ -110,6 +126,7 @@ export function orchestrator(app: Probot) {
         repo,
         sha: checkSuite.head_sha,
         checkName: matchedWorkflow.checkRunName,
+        //payload.workflow_run.updated_at
         extraFields: {
           details_url: workflowUrl,
           output: {
@@ -160,12 +177,13 @@ export function orchestrator(app: Probot) {
 
       context.log.info(
         `[Orchestrator](workflow_run.completed) Linked artifacts ${artifacts.map(
-          (a) => ({
-            name: a.name,
-            id: a.id,
-            created_at: a.created_at,
-            expires_at: a.expires_at,
-          })
+          (a) =>
+            JSON.stringify({
+              name: a.name,
+              id: a.id,
+              created_at: a.created_at,
+              expires_at: a.expires_at,
+            })
         )}`
       );
 
@@ -383,7 +401,7 @@ export function orchestrator(app: Probot) {
           ...output,
           text: tips,
         },
-        completed_at: new Date().toISOString(),
+        completed_at: payload.workflow_run.updated_at,
         actions,
       });
 
@@ -423,7 +441,7 @@ export function orchestrator(app: Probot) {
 
     if (matchedWorkflow) {
       context.log.info(
-        `[Orchestrator](check_run.created) ${payload.check_run.name}`
+        `[Orchestrator](check_run.created) ${payload.check_run.name} @sha ${payload.check_run.head_sha}`
       );
       // (Re)Create watcher check run in pending state
       const response = await createRunByName({
@@ -444,7 +462,7 @@ export function orchestrator(app: Probot) {
       );
       if (result) {
         context.log.info(
-          `[Orchestrator](check_run.created) Synchronized watcher status ${result.data.conclusion}`
+          `[Orchestrator](check_run.created) Synchronized watcher @id ${result.data.id}`
         );
       } else {
         context.log.error(
@@ -505,7 +523,7 @@ export function orchestrator(app: Probot) {
       );
       if (result) {
         context.log.info(
-          `[Orchestrator](check_run.completed) Synchronized watcher status ${result.data.conclusion}`
+          `[Orchestrator](check_run.completed) Synchronized watcher @id ${result.data.id}`
         );
       } else {
         context.log.error(
