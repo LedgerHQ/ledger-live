@@ -824,7 +824,20 @@
       "delegation" : {
         "title" : "Haberiniz olsun...",
         "description" : "Ledger doğrulayıcısı, {{asset}} varlığınızı %{{commission}} oranında bir komisyonla stake eder.",
-        "cta" : "Ledger ile Stake Edin"
+        "cta" : "Ledger ile Stake Edin",
+        "linkText" : "Daha fazla bilgi",
+        "ethereum" : {
+          "lido" : {
+            "title" : "Kaçırmış olmayın:",
+            "description" : "Lido ile Ethereum stake edin ve her gün ödül kazanın. Kilitleme süresi yok. Minimum yatırma tutarı yok.",
+            "cta" : "Lido ile stake edin"
+          },
+          "kiln" : {
+            "title" : "Sadece HODL ile yetinmeyin. ETH varlıklarınızı artırın",
+            "description" : "32'den fazla ETH'niz mi var? Kiln ile ETH varlıklarınızı güvenle stake ederek pasif ödüller kazanın.",
+            "cta" : "Kiln ile stake edin"
+          }
+        }
       }
     }
   },
@@ -1399,7 +1412,7 @@
         "label" : "Popüler"
       },
       "earn" : {
-        "title" : "Kazan",
+        "title" : "Stake et",
         "description" : "Kriptolarınızı Ledger ile artırın"
       }
     }
@@ -3472,6 +3485,71 @@
       "providerLink" : "{{provider}} uygulaması hakkında daha fazla bilgi edinin"
     }
   },
+  "avalanchepchain" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Figment desteğiyle",
+        "moreInfo" : "Daha fazla bilgi",
+        "drawerTitle" : "Figment desteğiyle",
+        "title" : "AVAX token artık Ledger Live'da",
+        "description" : "Artık AVAX token'larınızı Ledger Live ile yönetmeye başlayabilir ve güvenceye alabilirsiniz.",
+        "website" : "Figment desteğiyle"
+      }
+    },
+    "stakedBalance" : "Staking",
+    "stakedBalanceTooltip" : "Doğrulayıcılara stake edilen miktar.",
+    "delegation" : {
+      "header" : "Yetki Devirleri",
+      "add" : "Ekle",
+      "commission" : "Komisyon",
+      "validator" : "Node Kimliği",
+      "startTime" : "Başlangıç Zamanı",
+      "endTime" : "Bitiş Zamanı",
+      "stakeAmount" : "Stake et",
+      "potentialReward" : "Potansiyel Ödül",
+      "emptyState" : {
+        "description" : "Varlıklarınızın yetkisini devrederek AVAX ödülleri kazanabilirsiniz.",
+        "info" : "Yetki Devri nasıl çalışır?",
+        "delegation" : "Ödüller kazanın"
+      },
+      "notEnoughToDelegate" : "Bir yetki devreden olmak için P zincirinde en az 25 AVAX'ınızın olması gerekmektedir.",
+      "validatorStake" : "Doğrulayıcı Staking'i",
+      "validatorRemainingStake" : "Mevcut",
+      "flow" : {
+        "title" : "Yetki Devredin",
+        "steps" : {
+          "starter" : {
+            "description" : "AVAX varlıklarınızın yetkisini bir doğrulayıcıya devrederek ödüller kazanabilirsiniz.",
+            "bullet" : ["Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.", "Ledger cihazınızı kullanarak yetki devredin.", "Stake etmek için en az 25 AVAX gereklidir", "AVAX varlığının yetkisi en az 2 haftalığına devredilmelidir"]
+          },
+          "amount" : {
+            "title" : "Tutar"
+          },
+          "validator" : {
+            "title" : "Doğrulayıcılar",
+            "ledgerByFigmentTC" : "Ledger by Figment Hüküm ve Koşulları"
+          },
+          "endDate" : {
+            "title" : "Bitiş tarihi",
+            "text" : "Bu yetki devrinin bitiş zamanını seçin. Bu yetki devrinin bitiş tarihi {{minEndDate}} ila {{maxEndDate}} tarihleri arasında olmalıdır.",
+            "label" : "Yetki devri bitiş tarihi"
+          },
+          "connectDevice" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "success" : {
+              "title" : "Varlıklarınızla başarıyla yetki devrettiniz.",
+              "text" : "İşlem blok zinciri tarafından onaylandığında hesap bakiyeniz güncellenecek",
+              "cta" : "Ayrıntıları göster"
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    }
+  },
   "near" : {
     "account" : {
       "stakedBalance" : "Stake bakiyesi",
@@ -3776,7 +3854,9 @@
       "runLocalAppDeleteButton" : "Sil",
       "runLocalAppOpenButton" : "Aç",
       "enableLearnStagingUrl" : "Öğren sayfası staging URL'si",
-      "enableLearnStagingUrlDesc" : "Öğren sayfası için staging URL'sini etkinleştirin."
+      "enableLearnStagingUrlDesc" : "Öğren sayfası için staging URL'sini etkinleştirin.",
+      "openOnboardingAppInstallDebug" : "Open onboarding app install debug screen",
+      "openOnboardingAppInstallDebugDesc" : "Open a screen with the components from the sync onboarding app installation step"
     },
     "currencies" : {
       "selectPlaceholder" : "Kripto varlık seç",
@@ -5356,7 +5436,7 @@
       "description" : "İmza 30 saniye içinde uygulanmalıdır. Lütfen tekrar deneyin."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Yeterince Enerji mevcut değil. Ağ ücreti 50TRX tutarına ulaşabilir."
+      "title" : "Enerji yetersiz. Ağ ücreti 50 TRX tutarına ulaşabilir."
     },
     "PairingFailed" : {
       "title" : "Eşleştirme başarısız",
@@ -5510,6 +5590,9 @@
     "StellarBurnAddressError" : {
       "title" : "Stellar hesabı eklenmeye çalışırken bir sorun yaşandı"
     },
+    "AvalancheMinimumAmountError" : {
+      "title" : "Minimum tutar 25 AVAX'tır"
+    },
     "HederaAddAccountError" : {
       "title" : "Hesabınız eklenemedi. Lütfen tekrar deneyin."
     },
@@ -5520,6 +5603,10 @@
     "ImageLoadFromFileError" : {
       "title" : "Dosyadan görüntü yüklenemedi",
       "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
+    },
+    "ImageLoadFromNftError" : {
+      "title" : "NFT'den görüntü yüklenemedi",
+      "description" : "Lütfen başka bir NFT ile tekrar deneyin"
     },
     "ImageDownloadError" : {
       "title" : "Görüntü indirilemedi",
@@ -5593,6 +5680,13 @@
       "descriptionWithProductName" : "Öncelikle {{ productName }} cihazınızın kurulumunu yapmanız gerekiyor.\nKurulum sürecinde size yardımcı olacağız.",
       "goToOnboardingButton" : "Cihazımı kur",
       "goToOnboardingButtonWithProductName" : "{{ productName }} cihazımı kur"
+    },
+    "EtherscanAPIError" : {
+      "title" : "İşlemler alınamadı",
+      "description" : "Tarayıcılarla ilgili beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin"
+    },
+    "GasEstimationError" : {
+      "title" : "Tahmini Gas ücreti hesaplanamadı"
     }
   },
   "cryptoOrg" : {
@@ -5631,7 +5725,13 @@
         "stepLabel" : "Bir görüntü seçin",
         "description" : "Bir görüntü seçip ayarlayın (...)",
         "pickFromNftGallery" : "NFT galerimden seç",
-        "upload" : "Bilgisayarımdan yükle"
+        "myNfts" : "NFT'lerim",
+        "upload" : "Bilgisayarımdan yükle",
+        "chooseNft" : "Bir NFT seçin",
+        "selectNft" : "NFT'yi seç",
+        "previousSelectNft" : "Geri",
+        "nftEmptyStateTitle" : "Gösterilecek NFT yok",
+        "nftEmptyStateDescription" : "Öncelikle cüzdanınıza NFT ekleyin."
       },
       "adjust" : {
         "stepLabel" : "Görüntüyü ayarla",
@@ -5657,5 +5757,37 @@
     },
     "customImageSet" : "Kilitli ekran resmi belirlendi",
     "finishCTA" : "Bitir"
+  },
+  "onboardingAppInstall" : {
+    "restore" : {
+      "title" : "Install the same apps as on {{deviceName}}?",
+      "titleNoDeviceName" : "Install the same apps as on previous Ledger device?",
+      "subtitle" : "You can install or remove apps at anytime.",
+      "installCTA" : "Restore applications",
+      "skipCTA" : "I'll do this later"
+    },
+    "default" : {
+      "title" : "{{ productName }} uses apps to enable secure blockchain transactions",
+      "subtitle" : "We recommend downloading a default set of apps. You can download more later.",
+      "installCTA" : "Install applications",
+      "skipCTA" : "I'll do this later"
+    },
+    "progress" : {
+      "loading" : "Loading ...",
+      "resolving" : "Resolving dependencies",
+      "progress" : "Installing apps {{progress}}%",
+      "disclaimer" : "Add or remove apps at any time from Ledger Live."
+    },
+    "cancelled" : {
+      "title" : "App installation was cancelled on {{productName}}",
+      "subtitle" : "{{productName}} needs blockchain apps to approve your crypto and NFT transactions.",
+      "installCTA" : "Install now",
+      "skipCTA" : "I'll do this later"
+    },
+    "locked" : {
+      "title" : "Your {{productName}} is locked",
+      "subtitle" : "Unlock your {{productName}} and restart the installation.",
+      "installCTA" : "Restart installation"
+    }
   }
 }
