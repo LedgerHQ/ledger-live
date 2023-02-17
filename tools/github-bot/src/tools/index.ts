@@ -209,3 +209,36 @@ export const createRunByName = async ({
 
   return checkRun;
 };
+
+const TIMEOUT = 500;
+const MAX_RETRIES = 3;
+export type WorkflowRunArtifacts = Awaited<
+  ReturnType<Octokit["actions"]["listWorkflowRunArtifacts"]>
+>["data"]["artifacts"];
+export async function listWorkflowRunArtifacts(
+  octokit: Octokit,
+  owner: string,
+  repo: string,
+  run_id: number,
+  attempt: number = 0
+): Promise<WorkflowRunArtifacts> {
+  const artifacts = await octokit.actions.listWorkflowRunArtifacts({
+    owner,
+    repo,
+    run_id,
+  });
+
+  if (artifacts.data.artifacts.length > 0) {
+    return artifacts.data.artifacts;
+  }
+
+  if (artifacts.data.artifacts.length === 0 && attempt <= MAX_RETRIES) {
+    return new Promise((res) =>
+      setTimeout(() => {
+        res(listWorkflowRunArtifacts(octokit, owner, repo, run_id, ++attempt));
+      }, TIMEOUT * attempt ** 2)
+    );
+  }
+
+  return [];
+}

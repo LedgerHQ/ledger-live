@@ -4,17 +4,45 @@ type WorkflowRunPayload = Context<"workflow_run">["payload"];
 type CheckRunPayload = Context<"check_run">["payload"];
 type GetInputsPayload = WorkflowRunPayload | CheckRunPayload;
 type Octokit = InstanceType<typeof ProbotOctokit>;
+export type PullRequestMetadata = {
+  number: number;
+  head_sha: string;
+  head_branch: string;
+  base_sha: string;
+  base_branch: string;
+};
 export type CheckSuite = Awaited<
   ReturnType<Octokit["checks"]["getSuite"]>
 >["data"];
 
 export const BOT_APP_ID = 198164;
-export const GATE_CHECK_RUN_NAME = "@@PR • Watcher 🪬";
+export const WATCHER_CHECK_RUN_NAME = "@@PR • Watcher 🪬";
 export enum RUNNERS {
   internal,
   external,
   both,
 }
+const commonGetInputs = (
+  payload: GetInputsPayload,
+  metadata?: PullRequestMetadata
+) => {
+  return "workflow_run" in payload
+    ? {
+        login: payload.workflow_run.actor.login,
+        ref:
+          metadata?.head_branch ??
+          payload.workflow_run.pull_requests[0]?.head.ref,
+        base_ref:
+          metadata?.base_branch ||
+          payload.workflow_run.pull_requests[0]?.base.ref ||
+          "develop",
+      }
+    : {
+        login: payload.sender.login,
+        ref: payload.check_run.pull_requests[0]?.head.ref,
+        base_ref: payload.check_run.pull_requests[0]?.base.ref || "develop",
+      };
+};
 export const WORKFLOWS = {
   "build-desktop.yml": {
     checkRunName: "@Desktop • Build App",
@@ -24,20 +52,7 @@ export const WORKFLOWS = {
     required: true,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
-    getInputs: (payload: GetInputsPayload) => {
-      return "workflow_run" in payload
-        ? {
-            login: payload.workflow_run.actor.login,
-            ref: payload.workflow_run.pull_requests[0]?.head.ref,
-            base_ref:
-              payload.workflow_run.pull_requests[0]?.base.ref || "develop",
-          }
-        : {
-            login: payload.sender.login,
-            ref: payload.check_run.pull_requests[0]?.head.ref,
-            base_ref: payload.check_run.pull_requests[0]?.base.ref || "develop",
-          };
-    },
+    getInputs: commonGetInputs,
   },
   "build-desktop-external.yml": {
     checkRunName: "@Desktop • Build App (external)",
@@ -47,20 +62,7 @@ export const WORKFLOWS = {
     required: true,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
-    getInputs: (payload: GetInputsPayload) => {
-      return "workflow_run" in payload
-        ? {
-            login: payload.workflow_run.actor.login,
-            ref: payload.workflow_run.pull_requests[0]?.head.ref,
-            base_ref:
-              payload.workflow_run.pull_requests[0]?.base.ref || "develop",
-          }
-        : {
-            login: payload.sender.login,
-            ref: payload.check_run.pull_requests[0]?.head.ref,
-            base_ref: payload.check_run.pull_requests[0]?.base.ref || "develop",
-          };
-    },
+    getInputs: commonGetInputs,
   },
   "test-desktop.yml": {
     checkRunName: "@Desktop • Test App",
@@ -70,20 +72,7 @@ export const WORKFLOWS = {
     required: true,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
-    getInputs: (payload: GetInputsPayload) => {
-      return "workflow_run" in payload
-        ? {
-            login: payload.workflow_run.actor.login,
-            ref: payload.workflow_run.pull_requests[0]?.head.ref,
-            base_ref:
-              payload.workflow_run.pull_requests[0]?.base.ref || "develop",
-          }
-        : {
-            login: payload.sender.login,
-            ref: payload.check_run.pull_requests[0]?.head.ref,
-            base_ref: payload.check_run.pull_requests[0]?.base.ref || "develop",
-          };
-    },
+    getInputs: commonGetInputs,
   },
   "test-desktop-external.yml": {
     checkRunName: "@Desktop • Test App (external)",
@@ -93,20 +82,7 @@ export const WORKFLOWS = {
     required: true,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
-    getInputs: (payload: GetInputsPayload) => {
-      return "workflow_run" in payload
-        ? {
-            login: payload.workflow_run.actor.login,
-            ref: payload.workflow_run.pull_requests[0]?.head.ref,
-            base_ref:
-              payload.workflow_run.pull_requests[0]?.base.ref || "develop",
-          }
-        : {
-            login: payload.sender.login,
-            ref: payload.check_run.pull_requests[0]?.head.ref,
-            base_ref: payload.check_run.pull_requests[0]?.base.ref || "develop",
-          };
-    },
+    getInputs: commonGetInputs,
   },
   "build-mobile.yml": {
     checkRunName: "@Mobile • Build App",
@@ -116,20 +92,7 @@ export const WORKFLOWS = {
     required: true,
     affected: ["live-mobile"],
     summaryFile: "summary.json",
-    getInputs: (payload: GetInputsPayload) => {
-      return "workflow_run" in payload
-        ? {
-            login: payload.workflow_run.actor.login,
-            ref: payload.workflow_run.pull_requests[0]?.head.ref,
-            base_ref:
-              payload.workflow_run.pull_requests[0]?.base.ref || "develop",
-          }
-        : {
-            login: payload.sender.login,
-            ref: payload.check_run.pull_requests[0]?.head.ref,
-            base_ref: payload.check_run.pull_requests[0]?.base.ref || "develop",
-          };
-    },
+    getInputs: commonGetInputs,
   },
   "build-mobile-external.yml": {
     checkRunName: "@Mobile • Build App (external)",
@@ -139,20 +102,7 @@ export const WORKFLOWS = {
     required: true,
     affected: ["live-mobile"],
     summaryFile: "summary.json",
-    getInputs: (payload: GetInputsPayload) => {
-      return "workflow_run" in payload
-        ? {
-            login: payload.workflow_run.actor.login,
-            ref: payload.workflow_run.pull_requests[0]?.head.ref,
-            base_ref:
-              payload.workflow_run.pull_requests[0]?.base.ref || "develop",
-          }
-        : {
-            login: payload.sender.login,
-            ref: payload.check_run.pull_requests[0]?.head.ref,
-            base_ref: payload.check_run.pull_requests[0]?.base.ref || "develop",
-          };
-    },
+    getInputs: commonGetInputs,
   },
   "test-mobile.yml": {
     checkRunName: "@Mobile • Test App",
@@ -162,43 +112,17 @@ export const WORKFLOWS = {
     required: true,
     affected: ["live-mobile"],
     summaryFile: "summary.json",
-    getInputs: (payload: GetInputsPayload) => {
-      return "workflow_run" in payload
-        ? {
-            login: payload.workflow_run.actor.login,
-            ref: payload.workflow_run.pull_requests[0]?.head.ref,
-            base_ref:
-              payload.workflow_run.pull_requests[0]?.base.ref || "develop",
-          }
-        : {
-            login: payload.sender.login,
-            ref: payload.check_run.pull_requests[0]?.head.ref,
-            base_ref: payload.check_run.pull_requests[0]?.base.ref || "develop",
-          };
-    },
+    getInputs: commonGetInputs,
   },
-  // "test-mobile-e2e.yml": {
-  //   checkRunName: "@Mobile • Test App End-2-End",
-  //   description: "Run Detox end-to-end tests on Ledger Live Mobile",
-  //   runsOn: RUNNERS.internal,
-  //   required: false,
-  //   affected: ["live-mobile"],
-  //   summaryFile: "summary.json",
-  //   getInputs: (payload: GetInputsPayload) => {
-  //     return "workflow_run" in payload
-  //       ? {
-  //           login: payload.workflow_run.actor.login,
-  //           ref: payload.workflow_run.pull_requests[0]?.head.ref,
-  //           base_ref:
-  //             payload.workflow_run.pull_requests[0]?.base.ref || "develop",
-  //         }
-  //       : {
-  //           login: payload.sender.login,
-  //           ref: payload.check_run.pull_requests[0]?.head.ref,
-  //           base_ref: payload.check_run.pull_requests[0]?.base.ref || "develop",
-  //         };
-  //   },
-  // },
+  "test-mobile-e2e.yml": {
+    checkRunName: "@Mobile • Test App End-2-End",
+    description: "Run Detox end-to-end tests on Ledger Live Mobile",
+    runsOn: RUNNERS.internal,
+    required: false,
+    affected: ["live-mobile"],
+    summaryFile: "summary.json",
+    getInputs: commonGetInputs,
+  },
   "test.yml": {
     checkRunName: "@Libraries • Tests",
     description: "Run the `test` script for affected libraries.",
@@ -206,13 +130,17 @@ export const WORKFLOWS = {
     required: true,
     affected: [/^libs\/.*/],
     summaryFile: "summary.json",
-    getInputs: (payload: GetInputsPayload) => {
+    getInputs: (payload: GetInputsPayload, metadata?: PullRequestMetadata) => {
       return "workflow_run" in payload
         ? {
             login: payload.workflow_run.actor.login,
-            ref: payload.workflow_run.pull_requests[0]?.head.ref,
+            ref:
+              metadata?.head_branch ??
+              payload.workflow_run.pull_requests[0]?.head.ref,
             since_branch:
-              payload.workflow_run.pull_requests[0]?.base.ref || "develop",
+              metadata?.base_branch ||
+              payload.workflow_run.pull_requests[0]?.base.ref ||
+              "develop",
           }
         : {
             login: payload.sender.login,

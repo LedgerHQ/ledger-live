@@ -7,6 +7,7 @@ import {
   extractWorkflowFile,
   getCheckRunByName,
   getGenericOutput,
+  listWorkflowRunArtifacts,
 } from ".";
 
 type CheckRunPayload = Context<"check_run">["payload"];
@@ -97,30 +98,38 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
       let annotations;
       if (workflow.summaryFile) {
         // Get the summary artifact
-        const artifacts = await octokit.actions.listWorkflowRunArtifacts({
+        const artifacts = await listWorkflowRunArtifacts(
+          octokit,
           owner,
           repo,
-          run_id: payload.workflow_run.id,
-        });
+          payload.workflow_run.id
+        );
 
-        const artifactId = artifacts.data.artifacts.find(
+        const artifactId = artifacts.find(
           (artifact) => artifact.name === workflow.summaryFile
         )?.id;
 
         if (artifactId) {
-          const rawSummary = await downloadArtifact(
-            octokit,
-            owner,
-            repo,
-            artifactId
-          );
-          const newSummary = JSON.parse(rawSummary.toString());
-          if (newSummary.summary) {
-            summary = newSummary?.summary;
-            defaultSummary = false;
+          try {
+            const rawSummary = await downloadArtifact(
+              octokit,
+              owner,
+              repo,
+              artifactId
+            );
+            const newSummary = JSON.parse(rawSummary.toString());
+            if (newSummary.summary) {
+              summary = newSummary?.summary;
+              defaultSummary = false;
+            }
+            actions = newSummary?.actions;
+            annotations = newSummary?.annotations;
+          } catch (e) {
+            context.log.error(
+              `[Monitoring Workflow](downloadArtifact) Error while downloading / parsing artifact: ${workflow.summaryFile} @ artifactId: ${artifactId} & workflow_run.id: ${payload.workflow_run.id}`
+            );
+            context.log.error(e as Error);
           }
-          actions = newSummary?.actions;
-          annotations = newSummary?.annotations;
         }
       }
 
