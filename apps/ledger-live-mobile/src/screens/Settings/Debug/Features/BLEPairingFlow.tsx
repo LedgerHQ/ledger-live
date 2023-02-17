@@ -1,7 +1,6 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useCallback, useState } from "react";
 import {
-  BottomDrawer,
   Text,
   Icons,
   Button,
@@ -23,6 +22,7 @@ import {
   StackNavigatorRoute,
 } from "../../../../components/RootNavigator/types/helpers";
 import { usePromptBluetoothCallback } from "../../../../logic/usePromptBluetoothCallback";
+import QueuedDrawer from "../../../../components/QueuedDrawer";
 
 const availableDeviceModelFilter = [
   "none",
@@ -145,7 +145,10 @@ export default () => {
         pairedDevice?.deviceName ?? pairedDevice?.deviceId ?? "no device"
       }`}
     >
-      <BottomDrawer isOpen={isDrawerOpen} onClose={onCloseDrawer}>
+      <QueuedDrawer
+        isRequestingToBeOpened={isDrawerOpen}
+        onClose={onCloseDrawer}
+      >
         <Flex mb="8">
           <Text variant="body" mb="8">
             Choose which device model to filter on:
@@ -179,7 +182,7 @@ export default () => {
         <Button type="color" onPress={goToBlePairingFlow}>
           Go to pairing flow
         </Button>
-      </BottomDrawer>
+      </QueuedDrawer>
     </SettingsRow>
   );
 };

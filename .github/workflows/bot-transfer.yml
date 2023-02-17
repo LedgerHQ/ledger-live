@@ -1,4 +1,5 @@
 name: "Bot Transfer"
+run-name: Transfer from bot ${{inputs.origin}} to ${{inputs.recipient}} (${{inputs.currencies}} 100%/${{inputs.split}})
 on:
   workflow_dispatch:
     inputs:
@@ -8,6 +9,15 @@ on:
       recipient:
         description: "index of the seed to receive the funds (e.g. 4)"
         required: true
+      split:
+        description: "split the amount of the origin by this number. For instance 2 will send half of the amount, 3 will send 1/3rd of the amount, etc."
+        required: false
+      concurrency:
+        description: "number of concurrent transfers to run"
+        required: false
+      currencies:
+        description: "a comma separated list of currencies to transfer. If not specified, all currencies will be transferred."
+        required: false
 
 jobs:
   start-runner:
@@ -69,18 +79,22 @@ jobs:
         run: |
           pnpm i --filter="live-cli..." --filter="ledger-live" --frozen-lockfile
           pnpm build:cli
-          cd libs/ledger-live-common/cli
+          cd apps/cli
           npm link
       - name: bot transfer
         env:
-          SEED: ${{ secrets[format('SEED{0}', github.event.inputs.origin)] }}
-          SEED_RECIPIENT: ${{ secrets[format('SEED{0}', github.event.inputs.recipient)] }}
+          NODE_OPTIONS: "--max-old-space-size=7168"
+          CONCURRENCY: ${{ github.event.inputs.concurrency }}
+          ONLY_CURRENCIES: ${{ github.event.inputs.currencies }}
+          SEED: ${{ secrets[format('SEED{0}', inputs.origin)] }}
+          SEED_RECIPIENT: ${{ secrets[format('SEED{0}', inputs.recipient)] }}
           VERBOSE_FILE: bot-transfer.txt
+          FUNDS_SPLIT: ${{ github.event.inputs.split }}
         run: COINAPPS=$PWD/coin-apps ledger-live botTransfer
-        timeout-minutes: 120
+        timeout-minutes: 200
       - name: upload logs
         if: failure() || success()
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: bot-transfer.txt
           path: bot-transfer.txt

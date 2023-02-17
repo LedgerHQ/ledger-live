@@ -85,7 +85,7 @@ import {
 } from "../../../api/Tron";
 import { activationFees, oneTrx } from "../constants";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
-import type { GetAccountShapeArg0 } from "../../../bridge/jsHelpers";
+import type { AccountShapeInfo } from "../../../bridge/jsHelpers";
 
 const receive = makeAccountBridgeReceive();
 
@@ -319,7 +319,7 @@ const broadcast = async ({
   return operation;
 };
 
-const getAccountShape = async (info: GetAccountShapeArg0, syncConfig) => {
+const getAccountShape = async (info: AccountShapeInfo, syncConfig) => {
   const blockHeight = await fetchCurrentBlockHeight();
   const tronAcc = await fetchTronAccount(info.address);
 
@@ -766,7 +766,7 @@ const getTransactionStatus = async (
     if (
       account.type === "TokenAccount" &&
       account.token.tokenType === "trc20" &&
-      energy.lt(29650) // temporary value corresponding to usdt trc20 energy
+      energy.lt(47619) // temporary value corresponding to usdt trc20 energy
     ) {
       const contractUserEnergyConsumption =
         await getContractUserEnergyRatioConsumption(

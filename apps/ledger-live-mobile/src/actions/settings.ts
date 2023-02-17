@@ -36,7 +36,6 @@ import {
   SettingsRemoveStarredMarketcoinsPayload,
   SettingsSetAnalyticsPayload,
   SettingsSetAvailableUpdatePayload,
-  SettingsSetCarouselVisibilityPayload,
   SettingsSetLastSeenCustomImagePayload,
   SettingsSetCountervaluePayload,
   SettingsSetDiscreetModePayload,
@@ -72,6 +71,7 @@ import {
   SettingsSetOverriddenFeatureFlagPlayload,
   SettingsSetOverriddenFeatureFlagsPlayload,
   SettingsSetFeatureFlagsBannerVisiblePayload,
+  SettingsSetDebugAppLevelDrawerOpenedPayload,
 } from "./types";
 import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
 
@@ -265,14 +265,6 @@ export const dismissBanner = (bannerId: string) =>
   dismissBannerAction({
     bannerId,
   });
-
-const setCarouselVisibilityAction =
-  createAction<SettingsSetCarouselVisibilityPayload>(
-    SettingsActionTypes.SETTINGS_SET_CAROUSEL_VISIBILITY,
-  );
-export const setCarouselVisibility = (carouselVisibility: {
-  [key: string]: boolean;
-}) => setCarouselVisibilityAction({ carouselVisibility });
 
 const setDismissedDynamicCardsAction =
   createAction<SettingsSetDismissedDynamicCardsPayload>(
@@ -530,6 +522,14 @@ const setFeatureFlagsBannerVisibleAction =
 export const setFeatureFlagsBannerVisible = (
   featureFlagsBannerVisible: boolean,
 ) => setFeatureFlagsBannerVisibleAction({ featureFlagsBannerVisible });
+
+const setDebugAppLevelDrawerOpenedAction =
+  createAction<SettingsSetDebugAppLevelDrawerOpenedPayload>(
+    SettingsActionTypes.SET_DEBUG_APP_LEVEL_DRAWER_OPENED,
+  );
+export const setDebugAppLelevelDrawerOpened = (
+  debugAppLevelDrawerOpened: boolean,
+) => setDebugAppLevelDrawerOpenedAction({ debugAppLevelDrawerOpened });
 
 const dangerouslyOverrideStateAction =
   createAction<DangerouslyOverrideStatePayload>(

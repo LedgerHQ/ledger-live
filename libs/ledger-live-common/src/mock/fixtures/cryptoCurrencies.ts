@@ -5,11 +5,12 @@ import type {
 } from "@ledgerhq/types-cryptoassets";
 import type { TokenAccount, Account } from "@ledgerhq/types-live";
 import { cryptocurrenciesById, findTokenById } from "@ledgerhq/cryptoassets";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
 export function createFixtureCryptoCurrency(family: string): CryptoCurrency {
   return {
     type: "CryptoCurrency",
-    id: "testCoinId",
+    id: "testCoinId" as CryptoCurrencyId,
     coinType: 8008,
     name: "MyCoin",
     managerAppName: "MyCoin",

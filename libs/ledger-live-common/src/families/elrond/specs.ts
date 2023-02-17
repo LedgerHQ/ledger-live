@@ -172,6 +172,7 @@ const elrondSpec: AppSpec<Transaction> = {
     appName: "MultiversX",
   },
   genericDeviceAction: acceptMoveBalanceTransaction,
+  genericDeviceActionForSubAccountTransfers: acceptEsdtTransferTransaction,
   testTimeout: 2 * 60 * 1000,
   minViableAmount: minimalAmount,
   transactionCheck: ({ maxSpendable }) => {

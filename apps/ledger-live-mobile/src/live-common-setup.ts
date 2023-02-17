@@ -34,6 +34,7 @@ setDeviceMode("polling");
 setPlatformVersion(PLATFORM_VERSION);
 setWalletAPIVersion(WALLET_API_VERSION);
 setSupportedCurrencies([
+  "avalanche_c_chain",
   "bitcoin",
   "ethereum",
   "bsc",
@@ -67,7 +68,6 @@ setSupportedCurrencies([
   "bitcoin_testnet",
   "ethereum_ropsten",
   "ethereum_goerli",
-  "cosmos_testnet",
   "elrond",
   "hedera",
   "cardano",

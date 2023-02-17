@@ -3,7 +3,7 @@ import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AppState, Linking, PermissionsAndroid } from "react-native";
 import { useIsMounted } from "../../helpers/useIsMounted";
-import BottomModal from "../BottomModal";
+import QueuedDrawer from "../QueuedDrawer";
 import {
   bluetoothPermissions,
   checkBluetoothPermissions,
@@ -77,7 +77,11 @@ const AndroidRequiresBluetoothPermissions: React.FC<{
   return (
     <>
       <BluetoothDisabled onRetry={showModal} />
-      <BottomModal isOpen={modalOpened} onClose={closeModal} noCloseButton>
+      <QueuedDrawer
+        isRequestingToBeOpened={modalOpened}
+        onClose={closeModal}
+        noCloseButton
+      >
         <Flex flexDirection="row">
           <Flex
             flexDirection="column"
@@ -110,7 +114,7 @@ const AndroidRequiresBluetoothPermissions: React.FC<{
             </Link>
           </Flex>
         </Flex>
-      </BottomModal>
+      </QueuedDrawer>
     </>
   );
 };

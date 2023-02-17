@@ -11,7 +11,7 @@ import { Flex, Icons, Text, Button } from "@ledgerhq/native-ui";
 import { hasInstalledAnyAppSelector } from "../../../reducers/settings";
 import { installAppFirstTime } from "../../../actions/settings";
 import AppIcon from "../AppsList/AppIcon";
-import BottomModal from "../../../components/BottomModal";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 
 type Props = {
   appInstallWithDependencies: { app: App; dependencies: App[] };
@@ -79,7 +79,7 @@ function AppDependenciesModal({
   }, [dispatch, dispatchProps, onClose, name, hasInstalledAnyApp]);
 
   return (
-    <BottomModal isOpened={!!app} onClose={onClose}>
+    <QueuedDrawer isRequestingToBeOpened={!!app} onClose={onClose}>
       <Flex alignItems="center">
         {!!dependencies.length && (
           <>
@@ -128,7 +128,7 @@ function AppDependenciesModal({
           </>
         )}
       </Flex>
-    </BottomModal>
+    </QueuedDrawer>
   );
 }
 

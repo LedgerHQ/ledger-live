@@ -3,7 +3,7 @@ import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import styled from "styled-components/native";
 import { Flex, Icons, Text, Button } from "@ledgerhq/native-ui";
-import BottomModal from "../../../components/BottomModal";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 
 type Props = {
   isOpened: boolean;
@@ -61,7 +61,11 @@ const QuitManagerModal = ({
   );
 
   return (
-    <BottomModal isOpened={!!isOpened} onClose={onClose} noCloseButton>
+    <QueuedDrawer
+      isRequestingToBeOpened={!!isOpened}
+      onClose={onClose}
+      noCloseButton
+    >
       <Flex alignItems="center">
         <IconContainer borderColor="neutral.c40">
           <Icons.QuitMedium size={24} color="neutral.c100" />
@@ -92,7 +96,7 @@ const QuitManagerModal = ({
           </CancelButton>
         </ButtonsContainer>
       </Flex>
-    </BottomModal>
+    </QueuedDrawer>
   );
 };
 

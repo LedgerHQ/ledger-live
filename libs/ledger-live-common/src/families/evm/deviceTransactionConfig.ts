@@ -1,16 +1,23 @@
-import { Account } from "@ledgerhq/types-live";
+import { AccountLike, Account } from "@ledgerhq/types-live";
 import { DeviceTransactionField } from "../../transaction";
 import { Transaction as EvmTransaction } from "./types";
 import { TransactionStatus } from "../../generated/types";
+import { getMainAccount } from "../../account";
 
+/**
+ * Method responsible for creating the summary of the screens visible on the nano
+ */
 function getDeviceTransactionConfig({
   account,
+  parentAccount,
   transaction,
 }: {
-  account: Account;
+  account: AccountLike;
+  parentAccount: Account | null | undefined;
   transaction: EvmTransaction;
   status: TransactionStatus;
 }): Array<DeviceTransactionField> {
+  const mainAccount = getMainAccount(account, parentAccount);
   const { mode } = transaction;
   const fields: Array<DeviceTransactionField> = [];
 
@@ -30,7 +37,7 @@ function getDeviceTransactionConfig({
         {
           type: "text",
           label: "Network",
-          value: account.currency.name,
+          value: mainAccount.currency.name,
         }
       );
       break;

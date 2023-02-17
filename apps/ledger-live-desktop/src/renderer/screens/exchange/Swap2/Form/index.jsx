@@ -389,7 +389,7 @@ const SwapForm = () => {
         `/platform/${getProviderName(exchangeRate.provider).toLowerCase()}`;
       history.push({
         pathname: providerURL,
-        params: {
+        state: {
           returnTo: "/swap",
           accountId: fromAddress,
         },

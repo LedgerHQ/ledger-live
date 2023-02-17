@@ -17,39 +17,50 @@ const { buildMainEnv, buildRendererEnv, buildViteConfig, lldRoot } = require("./
 const startDev = async argv => {
   const electron = new Electron("./.webpack/main.bundle.js");
 
-  const devConfig = {
-    minify: false,
-    watch: {
-      onRebuild(error, result) {
-        if (error) {
-          console.error("Watch build failed:", error);
+  const OnRebuildPlugin = {
+    name: "onRebuild",
+    setup(build) {
+      build.onEnd(result => {
+        if (result.errors.length > 0) {
+          console.log(`Build ended with ${result.errors.length} errors.`);
+          console.log(result.errors.map(error => error.message).join("\n"));
         } else {
           electron.reload();
         }
-      },
+      });
     },
   };
 
   const mainConfig = {
     ...require("./config/main.esbuild"),
     define: buildMainEnv("development", argv),
-    plugins: [...(require("./config/main.esbuild").plugins || []), NodeExternalsPlugin],
-    ...devConfig,
+    plugins: [
+      ...(require("./config/main.esbuild").plugins || []),
+      NodeExternalsPlugin,
+      OnRebuildPlugin,
+    ],
+    minify: false,
   };
   const preloaderConfig = {
     ...require("./config/preloader.esbuild"),
     define: buildMainEnv("development", argv),
-    ...devConfig,
+    plugins: [...(require("./config/preloader.esbuild").plugins || []), OnRebuildPlugin],
+    minify: false,
   };
   const webviewPreloaderConfig = {
     ...require("./config/webviewPreloader.esbuild"),
     define: buildMainEnv("development", argv),
-    ...devConfig,
+    plugins: [...(require("./config/webviewPreloader.esbuild").plugins || []), OnRebuildPlugin],
+    minify: false,
   };
   const swapConnectWebviewPreloaderConfig = {
     ...require("./config/swapConnectWebviewPreloader.esbuild"),
     define: buildMainEnv("development", argv),
-    ...devConfig,
+    plugins: [
+      ...(require("./config/swapConnectWebviewPreloader.esbuild").plugins || []),
+      OnRebuildPlugin,
+    ],
+    minify: false,
   };
 
   try {
@@ -60,13 +71,15 @@ const startDev = async argv => {
 
   const rendererServer = await createServer(buildViteConfig(argv));
 
-  await Promise.all([
-    esbuild.build(mainConfig),
-    esbuild.build(preloaderConfig),
-    esbuild.build(webviewPreloaderConfig),
-    esbuild.build(swapConnectWebviewPreloaderConfig),
-    rendererServer.listen(),
+  const contexts = await Promise.all([
+    esbuild.context(mainConfig),
+    esbuild.context(preloaderConfig),
+    esbuild.context(webviewPreloaderConfig),
+    esbuild.context(swapConnectWebviewPreloaderConfig),
   ]);
+
+  await rendererServer.listen();
+  await Promise.all(contexts.map(context => context.watch()));
 
   rendererServer.printUrls();
   electron.start();

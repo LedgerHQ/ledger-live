@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useContext } from "react";
+import React, { createContext, useContext } from "react";
 import type { FeatureId, Feature } from "@ledgerhq/types-live";
 
 type State = {
@@ -23,17 +23,13 @@ export function useFeatureFlags(): State {
   return useContext<State>(FeatureFlagsContext);
 }
 
-type Props = State & {
-  children?: ReactNode;
-};
-
-export function FeatureFlagsProvider({
+export const FeatureFlagsProvider: React.FC<State> = ({
   children,
   ...providerState
-}: Props): JSX.Element {
+}) => {
   return (
     <FeatureFlagsContext.Provider value={providerState}>
       {children}
     </FeatureFlagsContext.Provider>
   );
-}
+};

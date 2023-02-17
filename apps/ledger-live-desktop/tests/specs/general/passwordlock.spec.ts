@@ -14,17 +14,15 @@ test("Enable password lock", async ({ page, userdataFile }) => {
   const passwordlockModal = new PasswordlockModal(page);
   const lockscreenPage = new LockscreenPage(page);
 
-   const getUserdata = () => {
+  const getUserdata = () => {
     const jsonFile = fs.readFileSync(userdataFile, "utf-8");
     return JSON.parse(jsonFile);
-  }
+  };
 
   await test.step("Open password lock modal", async () => {
     await layout.goToSettings();
     await passwordlockModal.toggle();
-    await expect.soft(passwordlockModal.container).toHaveScreenshot(
-      "set-passwordlock-modal.png",
-    );
+    await expect.soft(passwordlockModal.container).toHaveScreenshot("set-passwordlock-modal.png");
   });
 
   await test.step("Enable password lock", async () => {
@@ -40,9 +38,7 @@ test("Enable password lock", async ({ page, userdataFile }) => {
 
   await test.step("Open change password modal", async () => {
     await passwordlockModal.openChangePasswordModal();
-    await expect.soft(passwordlockModal.container).toHaveScreenshot(
-      "changepassword-modal.png",
-    );
+    await expect.soft(passwordlockModal.container).toHaveScreenshot("changepassword-modal.png");
   });
 
   await test.step("Change password", async () => {
@@ -84,9 +80,7 @@ test("Enable password lock", async ({ page, userdataFile }) => {
     await passwordlockModal.disablePassword("password");
     expect(await layout.inputError).toBeVisible();
     expect(await layout.topbarLockButton).toBeVisible();
-    await expect.soft(modal.container).toHaveScreenshot(
-      "passwordlock-disable-bad-password.png",
-    );
+    await expect.soft(modal.container).toHaveScreenshot("passwordlock-disable-bad-password.png");
   });
 
   await test.step("Disable password lock: Set correct password", async () => {
