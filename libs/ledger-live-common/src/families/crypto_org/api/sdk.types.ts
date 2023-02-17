@@ -1,6 +1,6 @@
 export const CryptoOrgAccountTransactionTypeEnum = {
-  MsgSend: "/cosmos.bank.v1beta1.MsgSend",
-  MgsMultiSend: "/cosmos.bank.v1beta1.MsgMultiSend",
+  MsgSend: "MsgSend",
+  MgsMultiSend: "MsgMultiSend",
 };
 export const CryptoOrgCurrency = "basecro";
 export const CryptoOrgTestnetCurrency = "basetcro";
