@@ -26,7 +26,7 @@ export default class TransportBLESwift extends Transport {
   promisify(callback: Callback): Promise<any> {
     return new Promise((resolve, reject) => {
       callback(function (response, error) {
-        if (error == "") {
+        if (response) {
           resolve(response);
         } else {
           reject(error);
