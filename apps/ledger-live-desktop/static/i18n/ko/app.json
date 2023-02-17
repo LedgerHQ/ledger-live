@@ -218,7 +218,8 @@
     "swap" : "스왑",
     "lend" : "대출",
     "catalog" : "탐색",
-    "market" : "마켓"
+    "market" : "마켓",
+    "protect" : "Protect"
   },
   "stars" : {
     "placeholder" : "계정을 즐겨찾기 하여 여기서 바로 확인하세요.",
@@ -819,12 +820,31 @@
       "redelegation" : {
         "title" : "알고 계셨나요?",
         "description" : "Ledger 검증인의 스테이킹 수수료는 귀하의 현 검증인보다 저렴합니다",
-        "cta" : "Ledger로 재위임"
+        "cta" : "Ledger로 재위임",
+        "solana" : {
+          "title" : "Did you know?",
+          "description" : "Ledger offers a lower commission rate than your validator.This process can take up to 4 days.",
+          "linkText" : "What is redelegation and how long does it take?",
+          "cta" : "Redelegate with Ledger"
+        }
       },
       "delegation" : {
         "title" : "알고 계셨나요?",
         "description" : "Ledger 검증인은 {{asset}} 스테이킹 서비스를 {{commission}}%의 커미션으로 제공합니다.",
-        "cta" : "Ledger를 통한 스테이킹"
+        "cta" : "Ledger를 통한 스테이킹",
+        "linkText" : "Learn more",
+        "ethereum" : {
+          "lido" : {
+            "title" : "알고 계셨나요?",
+            "description" : "Lido를 통해 이더리움을 스테이킹하고 매일 보상을 받으세요. 락업 기간 없음. 최소 예치금 없음.",
+            "cta" : "리도(Lido)를 통한 스테이킹"
+          },
+          "kiln" : {
+            "title" : "호들만으로는 부족합니다. 보유한 ETH로 더 큰 수익을 올려보세요",
+            "description" : "ETH를 32개 이상 보유하고 계시나요? Kiln을 통해 ETH를 안전하게 스테이킹하여 불로소득을 올려보세요.",
+            "cta" : "킬른(Kiln)으로 스테이킹"
+          }
+        }
       }
     }
   },
@@ -1399,7 +1419,7 @@
         "label" : "인기 있는"
       },
       "earn" : {
-        "title" : "수익",
+        "title" : "스테이킹",
         "description" : "Ledger와 함께 암호화폐 수익 실현"
       }
     }
@@ -3776,7 +3796,9 @@
       "runLocalAppDeleteButton" : "삭제",
       "runLocalAppOpenButton" : "열기",
       "enableLearnStagingUrl" : "페이지 스테이징 URL 알아보기",
-      "enableLearnStagingUrlDesc" : "학습 페이지의 스테이징 URL을 활성화합니다."
+      "enableLearnStagingUrlDesc" : "학습 페이지의 스테이징 URL을 활성화합니다.",
+      "openOnboardingAppInstallDebug" : "Open onboarding app install debug screen",
+      "openOnboardingAppInstallDebugDesc" : "Open a screen with the components from the sync onboarding app installation step"
     },
     "currencies" : {
       "selectPlaceholder" : "암호화 자산 선택",
@@ -5356,7 +5378,7 @@
       "description" : "30초 이내에 서명이 적용되어야 합니다. 다시 시도해 주세요."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 30TRX를 지불할 수 있습니다."
+      "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 50 TRX를 지불할 수 있습니다."
     },
     "PairingFailed" : {
       "title" : "페어링 실패",
@@ -5521,6 +5543,10 @@
       "title" : "파일 이미지 로딩 실패",
       "description" : "다른 이미지로 다시 시도하세요"
     },
+    "ImageLoadFromNftError" : {
+      "title" : "NFT 이미지 로딩 실패",
+      "description" : "다른 NFT로 다시 시도하세요"
+    },
     "ImageDownloadError" : {
       "title" : "이미지 다운로드 실패",
       "description" : "다른 이미지로 다시 시도하세요"
@@ -5593,6 +5619,13 @@
       "descriptionWithProductName" : "먼저 {{ productName }} 장치 설정이 필요합니다.\n설정 절차를 안내해드리겠습니다.",
       "goToOnboardingButton" : "내 장치 설정",
       "goToOnboardingButtonWithProductName" : "내 {{ productName }} 설정"
+    },
+    "EtherscanAPIError" : {
+      "title" : "트랜잭션을 가져오지 못했습니다",
+      "description" : "탐색기에서 예상하지 못한 오류가 발생했습니다. 나중에 다시 시도해 주세요"
+    },
+    "GasEstimationError" : {
+      "title" : "가스비를 추정하지 못했습니다"
     }
   },
   "cryptoOrg" : {
@@ -5631,7 +5664,13 @@
         "stepLabel" : "이미지 선택",
         "description" : "(...)로 설정할 이미지 선택",
         "pickFromNftGallery" : "내 NFT 갤러리에서 선택",
-        "upload" : "내 컴퓨터에서 업로드"
+        "myNfts" : "내 NFT",
+        "upload" : "내 컴퓨터에서 업로드",
+        "chooseNft" : "NFT 선택하기",
+        "selectNft" : "NFT 선택",
+        "previousSelectNft" : "뒤로",
+        "nftEmptyStateTitle" : "아직 표시할 NFT가 없습니다",
+        "nftEmptyStateDescription" : "지갑에 NFT를 추가하고 시작하세요."
       },
       "adjust" : {
         "stepLabel" : "이미지 조정",
@@ -5657,5 +5696,44 @@
     },
     "customImageSet" : "잠금화면을 설정하세요",
     "finishCTA" : "완료"
+  },
+  "onboardingAppInstall" : {
+    "restore" : {
+      "title" : "Install the same apps as on {{deviceName}}?",
+      "titleNoDeviceName" : "Install the same apps as on previous Ledger device?",
+      "subtitle" : "You can install or remove apps at anytime.",
+      "installCTA" : "Restore applications",
+      "skipCTA" : "I'll do this later"
+    },
+    "default" : {
+      "title" : "{{ productName }} uses apps to enable secure blockchain transactions",
+      "subtitle" : "We recommend downloading a default set of apps. You can download more later.",
+      "installCTA" : "Install applications",
+      "skipCTA" : "I'll do this later"
+    },
+    "progress" : {
+      "loading" : "Loading ...",
+      "resolving" : "Resolving dependencies",
+      "progress" : "Installing apps {{progress}}%",
+      "disclaimer" : "Add or remove apps at any time from Ledger Live."
+    },
+    "cancelled" : {
+      "title" : "App installation was cancelled on {{productName}}",
+      "subtitle" : "{{productName}} needs blockchain apps to approve your crypto and NFT transactions.",
+      "installCTA" : "Install now",
+      "skipCTA" : "I'll do this later"
+    },
+    "locked" : {
+      "title" : "Your {{productName}} is locked",
+      "subtitle" : "Unlock your {{productName}} and restart the installation.",
+      "installCTA" : "Restart installation"
+    }
+  },
+  "discoverProtect" : {
+    "new" : "신규",
+    "title" : "Protect의 보호 기능이 자산에 대한 액세스 권한을 지켜줍니다 철통같이 말이죠.",
+    "description" : "Protect는 복구 문구를 보호하여, 해당 문구 및 Ledger 장치의 도난이나 분실로 인한 자산 손실을 예방합니다.",
+    "cta" : "이점 알아보기",
+    "downloadLLM" : "구독하려면 QR 코드를 스캔하고 모바일 앱을 다운로드하세요"
   }
 }
