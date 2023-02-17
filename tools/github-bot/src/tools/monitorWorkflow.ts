@@ -218,6 +218,23 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
       context.log.info(
         `[Monitoring Workflow](workflow_run.in_progress) ${payload.workflow_run.name}`
       );
+
+      // Ensure that the latest workflow run status is "in progress"
+      // Why? Because github might send the "in progress" event AFTER the "completed" event…
+      const workflowRun = await octokit.actions.getWorkflowRun({
+        owner,
+        repo,
+        run_id: payload.workflow_run.id,
+      });
+
+      if (workflowRun.data.status !== "in_progress") {
+        context.log.info(
+          `[Monitoring Workflow](workflow_run.in_progress) The workflow run seems to be completed already, skipping…`
+        );
+        // Oops, the workflow is not in progress anymore, we should not update the check run
+        return;
+      }
+
       const workflowUrl = `https://github.com/${owner}/${repo}/actions/runs/${payload.workflow_run.id}`;
       const summaryPrefix = workflow.description
         ? `#### ${workflow.description}\n\n`
