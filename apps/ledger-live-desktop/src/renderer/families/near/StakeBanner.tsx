@@ -25,12 +25,10 @@ export const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
 
   const commission = ledgerValidator?.commission ? ledgerValidator?.commission * 100 : 1;
 
-  const title = redelegate
-    ? t("account.banner.redelegation.title")
-    : t("account.banner.delegation.title");
+  const title = redelegate ? t("account..near.title") : t("account.banner.delegation.title");
   const description = redelegate
-    ? t("account.banner.redelegation.description")
-    : t("account.banner.delegation.description", {
+    ? t("account.banner.redelegation.near.description")
+    : t("account.banner.delegation.near.description", {
         asset: account.currency.ticker,
         commission,
       });
