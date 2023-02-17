@@ -43,7 +43,7 @@ const AccountBanner = (props: BannerProps) => {
               )}
             </Text>
           </Flex>
-          <Button variant="color" ml={12} onClick={onClick}>
+          <Button variant="color" ml={12} onClick={onClick} buttonTestId="account-banner-button">
             {cta}
           </Button>
         </Flex>

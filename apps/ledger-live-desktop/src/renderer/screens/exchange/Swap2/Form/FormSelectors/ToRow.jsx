@@ -84,7 +84,7 @@ function ToRow({
       button: "New target currency",
       page: "Page Swap Form",
       ...swapDefaultTrack,
-      currency,
+      currency: currency.ticker || currency.name,
     });
     setToCurrency(currency);
   };

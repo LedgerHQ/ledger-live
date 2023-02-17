@@ -2205,7 +2205,7 @@ var import_child_process = require("child_process");
 var core = __toESM(require_core());
 function main() {
   return __async(this, null, function* () {
-    const ref = core.getInput("head-ref");
+    const ref = core.getInput("ref");
     const pkg = core.getInput("package") || "";
     const command = core.getInput("command");
     try {

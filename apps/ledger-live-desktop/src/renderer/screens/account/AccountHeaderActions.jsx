@@ -257,7 +257,16 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     openModal("MODAL_RECEIVE", { parentAccount, account });
   }, [parentAccount, account, openModal]);
 
-  const renderAction = ({ label, onClick, event, eventProperties, icon, disabled, tooltip }) => {
+  const renderAction = ({
+    label,
+    onClick,
+    event,
+    eventProperties,
+    icon,
+    disabled,
+    tooltip,
+    accountActionsTestId,
+  }) => {
     const Icon = icon;
 
     const Action = (
@@ -268,6 +277,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
         eventProperties={eventProperties}
         iconComponent={Icon && <Icon size={14} overrideColor={contrastText} currency={currency} />}
         labelComponent={label}
+        accountActionsTestId={accountActionsTestId}
       />
     );
 

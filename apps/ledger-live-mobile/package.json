@@ -84,8 +84,6 @@
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@ledgerhq/wallet-api-core": "^0.11.0",
-    "@ledgerhq/wallet-api-server": "^0.10.1",
     "@polkadot/reactnative-identicon": "2.11.1",
     "@polkadot/x-randomvalues": "10.3.1",
     "@react-native-async-storage/async-storage": "^1.15.17",
