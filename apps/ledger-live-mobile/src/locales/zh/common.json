@@ -87,7 +87,8 @@
     "popular" : "热门",
     "getSupport" : "获取支持",
     "comingSoon" : "敬请期待",
-    "restart" : "重新启动"
+    "restart" : "重新启动",
+    "loadMore" : "Load more"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -549,7 +550,7 @@
       "description" : "必须在 30 秒内签署交易。请重试。"
     },
     "TronNotEnoughEnergy" : {
-      "title" : "能量低于必要值。您可能需要支付高达 50TRX 的费用。"
+      "title" : "能量低于必要值。您可能需要支付高达 50 TRX 的费用。"
     },
     "UpdateYourApp" : {
       "title" : "需要更新应用程序",
@@ -811,6 +812,13 @@
       "title" : "您的设备已经锁定",
       "description" : "解锁您的设备并重试。",
       "descriptionWithProductName" : "解锁您的 {{ productName }} 并重试。"
+    },
+    "EtherscanAPIError" : {
+      "title" : "未能提取交易",
+      "description" : "浏览器出现意外错误。请重试"
+    },
+    "GasEstimationError" : {
+      "title" : "未能估计 Gas 费用"
     }
   },
   "crash" : {
@@ -1117,6 +1125,10 @@
       "learn" : {
         "title" : "学习",
         "desc" : "了解加密货币、web3、数字安全等等"
+      },
+      "news" : {
+        "title" : "新闻",
+        "desc" : "Learn about crypto, security, web3 and catch up with latest news"
       },
       "ledgerApps" : {
         "title" : "应用程序",
@@ -1653,6 +1665,10 @@
             "label" : "检查您的 Nano X 是否已被检测到。"
           }
         }
+      },
+      "protectConnectionInformationModal" : {
+        "title" : "为什么无法连接我的 Ledger 设备？",
+        "description" : "如果您在 Ledger 设备上启用蓝牙后，连接 Ledger Live 手机应用程序时遇到了问题，您可以点按下方的 “Learn how to fix that”（了解如何修复此问题）按钮，按以下说明操作"
       }
     },
     "stepImportAccounts" : {
@@ -3298,6 +3314,10 @@
           }
         }
       }
+    },
+    "walletConnect" : {
+      "title" : "WalletConnect",
+      "description" : "将您的钱包连接到去中心化应用程序"
     }
   },
   "signMessage" : {
@@ -3419,6 +3439,15 @@
         "description" : "最大可支出数额指的是一个账户可通过一个交易发送的总余额。"
       }
     }
+  },
+  "editTransaction" : {
+    "header" : "编辑交易",
+    "stuckTx" : "您最近的一次“发送”交易已停滞。使用较高的网络费用加速交易，或取消交易。",
+    "speedupTxMessage" : "您的交易正在进行。您可使用较高的网络费用加速交易，或取消交易。",
+    "speedupOrCancel" : "加速或取消",
+    "resubmitTxDescription" : "使用较高的网络费用重新提交此交易。",
+    "cancelTxDescription" : "发送 0 以太币到您自己的地址。为确保取消交易，网络费用比将要取消的交易费用高 10%-30%。",
+    "currentNetworkFee" : "当前网络费用 = {{amount}} 以太币"
   },
   "requestAccount" : {
     "stepperHeader" : {
@@ -6077,5 +6106,10 @@
         "emptyPassword" : "密码不能为空"
       }
     }
+  },
+  "newsfeed" : {
+    "title" : "Newsfeed",
+    "poweredByCryptopanic" : "Powered by Cryptopanic",
+    "noPosts" : "No posts available currently"
   }
 }
