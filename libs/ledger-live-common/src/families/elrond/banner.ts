@@ -1,5 +1,5 @@
 import type { ElrondAccount, ElrondProvider } from "./types";
-import { ElrondPreloadData } from "./types";
+import { ElrondDelegation, ElrondPreloadData } from "./types";
 import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "./constants";
 
 export interface AccountBannerState {
@@ -15,12 +15,12 @@ export function getAccountBannerState(
 ): AccountBannerState {
   const elrondResources = account.elrondResources
     ? account.elrondResources
-    : { delegations: [] };
+    : { delegations: [] as ElrondDelegation[] };
 
   const { validators } = elrondPreloadData;
 
   const delegationAddresses = elrondResources.delegations.map((delegation) => {
-    return delegation.validatorAddress;
+    return delegation.address;
   });
 
   if (!account.balance.isZero() && delegationAddresses.length === 0) {
@@ -52,7 +52,7 @@ export function getAccountBannerState(
       const validator = validators.find(
         (validator) => validator.contract === validatorAddress
       );
-      if (validator && worstValidator.aprValue < validator.aprValue) { // TODO: question - check if this is correct instead of commission
+      if (validator && validator.aprValue < worstValidator.aprValue) {
         return validator;
       }
       return worstValidator;
