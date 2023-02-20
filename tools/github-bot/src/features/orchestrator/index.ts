@@ -230,8 +230,8 @@ export function orchestrator(app: Probot) {
         metadata?.number !== -1 &&
         (await prIsFork(
           octokit,
-          owner,
           repo,
+          owner,
           metadata?.number || payload.workflow_run.pull_requests[0]?.number
         ));
 
