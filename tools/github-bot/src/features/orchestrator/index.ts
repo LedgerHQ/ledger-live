@@ -273,7 +273,7 @@ export function orchestrator(app: Probot) {
               owner: baseOwner,
               repo,
               workflow_id: fileName,
-              ref: workflowRef,
+              ref: isFork ? "develop" : workflowRef,
               inputs: workflow.getInputs(payload, metadata),
             });
             context.log.info(
