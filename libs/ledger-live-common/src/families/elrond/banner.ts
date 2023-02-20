@@ -2,12 +2,28 @@ import type { ElrondAccount, ElrondProvider } from "./types";
 import { ElrondDelegation, ElrondPreloadData } from "./types";
 import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "./constants";
 
-export interface AccountBannerState {
-  display: boolean;
-  bannerType?: "delegate" | "redelegate";
-  validatorSrcAddress?: string;
-  ledgerValidator?: ElrondProvider; // todo question: is this type correct?
+type MappedElrondDelegation = ElrondDelegation & {
+  validator: ElrondProvider | undefined;
+};
+
+interface AccountBannerHiddenState {
+  bannerType: "hidden";
 }
+
+interface AccountBannerDelegateState {
+  bannerType: "delegate";
+}
+
+interface AccountBannerRedelegateState {
+  bannerType: "redelegate";
+  mappedDelegations: MappedElrondDelegation[];
+  selectedDelegation: ElrondDelegation;
+}
+
+export type AccountBannerState =
+  | AccountBannerDelegateState
+  | AccountBannerRedelegateState
+  | AccountBannerHiddenState;
 
 export function getAccountBannerState(
   account: ElrondAccount,
@@ -25,14 +41,13 @@ export function getAccountBannerState(
 
   if (!account.balance.isZero() && delegationAddresses.length === 0) {
     return {
-      display: true,
       bannerType: "delegate",
     };
   }
 
   if (delegationAddresses.length > 0 && account.balance.isZero()) {
     return {
-      display: false,
+      bannerType: "hidden",
     };
   }
 
@@ -43,9 +58,12 @@ export function getAccountBannerState(
   // // if Ledger doesn't provide validator, we don't display banner
   if (!ledgerValidator) {
     return {
-      display: false,
+      bannerType: "hidden",
     };
   }
+
+  const findValidator = (validator: string) =>
+    elrondPreloadData.validators.find((item) => item.contract === validator);
 
   const worstValidator: ElrondProvider = delegationAddresses.reduce(
     (worstValidator, validatorAddress) => {
@@ -59,20 +77,41 @@ export function getAccountBannerState(
     },
     ledgerValidator
   );
+  // TODO delete once demoed that this is working
+  // return {
+  //   bannerType: "redelegate",
+  //   mappedDelegations: account.elrondResources.delegations.map(
+  //     (delegation: ElrondDelegation) => ({
+  //       ...delegation,
+  //       validator: findValidator(delegation.contract),
+  //     })
+  //   ),
+  //   selectedDelegation: elrondResources.delegations[0],
+  // };
 
   if (worstValidator.contract !== ledgerValidator.contract) {
+    const selectedDelegation = elrondResources.delegations.find(
+      (delegation) => delegation.address === worstValidator.contract
+    );
+    if (!selectedDelegation) return { bannerType: "hidden" };
+
     return {
-      display: true,
       bannerType: "redelegate",
+      mappedDelegations: account.elrondResources.delegations.map(
+        (delegation: ElrondDelegation) => ({
+          ...delegation,
+          validator: findValidator(delegation.contract),
+        })
+      ),
+      selectedDelegation,
     };
   } else if (!account.balance.isZero()) {
     return {
-      display: true,
       bannerType: "delegate",
     };
   } else {
     return {
-      display: false,
+      bannerType: "hidden",
     };
   }
 }

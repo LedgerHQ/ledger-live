@@ -1,4 +1,3 @@
-import { Account } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
@@ -12,11 +11,10 @@ import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
+import { modals } from "~/renderer/families/elrond/modals";
+import { AccountBannerState } from "@ledgerhq/live-common/lib/families/elrond/banner";
 
-export const StakeBanner: React.FC<{ account: ElrondAccount; parentAccount: Account }> = ({
-  account,
-  parentAccount,
-}) => {
+export const StakeBanner: React.FC<{ account: ElrondAccount }> = ({ account }) => {
   const { t } = useTranslation();
   const stakeAccountBanner = useFeature("stakeAccountBanner");
   const stakeAccountBannerParams: StakeAccountBannerParams | null =
@@ -24,7 +22,7 @@ export const StakeBanner: React.FC<{ account: ElrondAccount; parentAccount: Acco
 
   const elrondPreloadData = useElrondPreloadData();
   const dispatch = useDispatch();
-  const bannerState = getElrondBannerState(account, elrondPreloadData);
+  const bannerState: AccountBannerState = getElrondBannerState(account, elrondPreloadData);
   if (
     stakeAccountBannerParams?.elrond?.delegate === false &&
     bannerState.bannerType === "delegate"
@@ -41,8 +39,7 @@ export const StakeBanner: React.FC<{ account: ElrondAccount; parentAccount: Acco
 
   const title = "TODO";
   const description = "DESCRIPTION";
-  const cta = "TODO";
-
+  const cta = bannerState.bannerType === "delegate" ? "DELEGATE" : "REDELEGATE";
   const onClick = () => {
     track("button_clicked", {
       ...stakeDefaultTrack,
@@ -52,23 +49,23 @@ export const StakeBanner: React.FC<{ account: ElrondAccount; parentAccount: Acco
       redelegate: bannerState.bannerType === "redelegate",
       token: "ELROND",
     });
+
     if (bannerState.bannerType === "redelegate") {
       dispatch(
-        openModal("MODAL_ELROND_UNDELEGATE", {
+        openModal(modals.unstake, {
           account,
-          validatorAddress: "TODO",
+          contract: bannerState.selectedDelegation.contract,
+          validators: elrondPreloadData.validators,
+          delegations: bannerState.mappedDelegations,
+          amount: bannerState.selectedDelegation.userActiveStake,
         }),
       );
     } else {
       dispatch(
-        openModal("MODAL_ELROND_DELEGATE", {
-          account: {
-            ...account,
-            elrondResources: account.elrondResources || { delegations: [] },
-          },
-          parentAccount,
+        openModal(modals.stake, {
+          account,
           validators: elrondPreloadData.validators,
-          delegations: [],
+          delegations: account.elrondResources.delegations,
         }),
       );
     }
@@ -80,7 +77,7 @@ export const StakeBanner: React.FC<{ account: ElrondAccount; parentAccount: Acco
       description={description}
       cta={cta}
       onClick={onClick}
-      display={true}
+      display={bannerState.bannerType !== "hidden"}
       linkText={t("account.banner.delegation.linkText")}
       linkUrl={"https://www.ledger.com/staking-ethereum"}
     />

@@ -19,7 +19,6 @@ describe("getAccountBannerState", () => {
       elrondPreloadData
     );
     expect(result).toEqual({
-      display: true,
       bannerType: "delegate",
     });
   });
@@ -43,7 +42,7 @@ describe("getAccountBannerState", () => {
       elrondPreloadData
     );
     expect(result).toEqual({
-      display: false,
+      bannerType: "hidden",
     });
   });
 
@@ -70,7 +69,7 @@ describe("getAccountBannerState", () => {
       elrondPreloadData
     );
     expect(result).toEqual({
-      display: false,
+      bannerType: "hidden",
     });
   });
 
@@ -80,6 +79,7 @@ describe("getAccountBannerState", () => {
       elrondResources: {
         delegations: [
           {
+            contract: "address:a",
             address: "address:a",
           } as ElrondDelegation,
         ],
@@ -106,8 +106,21 @@ describe("getAccountBannerState", () => {
       elrondPreloadData
     );
     expect(result).toEqual({
-      display: true,
       bannerType: "redelegate",
+      mappedDelegations: [
+        {
+          address: "address:a",
+          contract: "address:a",
+          validator: {
+            aprValue: 0.1,
+            contract: "address:a",
+          },
+        },
+      ],
+      selectedDelegation: {
+        address: "address:a",
+        contract: "address:a",
+      },
     });
   });
 
@@ -143,7 +156,6 @@ describe("getAccountBannerState", () => {
       elrondPreloadData
     );
     expect(result).toEqual({
-      display: true,
       bannerType: "delegate",
     });
   });
@@ -180,7 +192,7 @@ describe("getAccountBannerState", () => {
       elrondPreloadData
     );
     expect(result).toEqual({
-      display: false,
+      bannerType: "hidden",
     });
   });
 });
