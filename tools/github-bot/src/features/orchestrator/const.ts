@@ -19,6 +19,7 @@ export type CheckSuite = Awaited<
 export const REPO_OWNER = "LedgerHQ";
 export const BOT_APP_ID = 198164;
 export const WATCHER_CHECK_RUN_NAME = "@@PR • Watcher 🪬";
+export const FORKED_REF_PREFIX = "refs/heads/forked";
 export enum RUNNERS {
   internal,
   external,
