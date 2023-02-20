@@ -87,7 +87,8 @@
     "popular" : "beliebt",
     "getSupport" : "Hilfe",
     "comingSoon" : "In Kürze verfügbar",
-    "restart" : "Neustarten"
+    "restart" : "Neustarten",
+    "loadMore" : "Load more"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -549,7 +550,7 @@
       "description" : "Transaktionen müssen innerhalb von 30 Sekunden signiert werden. Bitte versuchen Sie es erneut."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Energie ist niedriger als notwendig. Es können bis zu 50TRX an Gebühren anfallen."
+      "title" : "Energie ist niedriger als notwendig. Es können bis zu 50 TRX an Gebühren anfallen."
     },
     "UpdateYourApp" : {
       "title" : "App-Update erforderlich",
@@ -811,6 +812,13 @@
       "title" : "Ihr Gerät ist gesperrt",
       "description" : "Entsperren Sie Ihr Gerät und versuchen Sie es erneut.",
       "descriptionWithProductName" : "Entsperren Sie Ihr {{ productName }} und versuchen Sie es erneut."
+    },
+    "EtherscanAPIError" : {
+      "title" : "Abruf der Transaktionen fehlgeschlagen",
+      "description" : "Bei den Explorern ist ein unerwarteter Fehler aufgetreten. Versuchen Sie es bitte später noch einmal"
+    },
+    "GasEstimationError" : {
+      "title" : "Gasgebührenschätzung fehlgeschlagen"
     }
   },
   "crash" : {
@@ -1117,6 +1125,10 @@
       "learn" : {
         "title" : "Lernen",
         "desc" : "Lernen Sie über Krypto, Web 3.0, digitale Sicherheit und mehr"
+      },
+      "news" : {
+        "title" : "News",
+        "desc" : "Learn about crypto, security, web3 and catch up with latest news"
       },
       "ledgerApps" : {
         "title" : "Apps",
@@ -1653,6 +1665,10 @@
             "label" : "Prüfen Sie, ob Ihr Nano X erkannt wird."
           }
         }
+      },
+      "protectConnectionInformationModal" : {
+        "title" : "Warum kann ich mein Ledger-Gerät nicht verbinden?",
+        "description" : "Wenn Sie Probleme haben, sich mit Ledger Live Mobile zu verbinden, nachdem Sie Bluetooth auf Ihrem Ledger-Gerät aktiviert haben, können Sie die Anweisungen befolgen, indem Sie auf die Schaltfläche \"Learn how to fix that\" (Erfahren, wie man das behebt) weiter unten tippen"
       }
     },
     "stepImportAccounts" : {
@@ -3298,6 +3314,10 @@
           }
         }
       }
+    },
+    "walletConnect" : {
+      "title" : "WalletConnect",
+      "description" : "Verbinden Sie Ihre Wallet mit dApps"
     }
   },
   "signMessage" : {
@@ -3419,6 +3439,15 @@
         "description" : "Der maximal ausgabefähige Betrag ist das gesamte Guthaben auf einem Konto, das zum Senden in einer Transaktion zur Verfügung steht."
       }
     }
+  },
+  "editTransaction" : {
+    "header" : "Transaktion bearbeiten",
+    "stuckTx" : "Ihre zuletzt „gesendete“ Transaktion ist stecken geblieben. Sie können die Transaktion mit einer höheren Netzwerkgebühr beschleunigen, oder sie abbrechen.",
+    "speedupTxMessage" : "Ihre Transaktion ist noch nicht abgeschlossen. Sie können sie mit einer höheren Netzwerkgebühr beschleunigen, oder sie abbrechen.",
+    "speedupOrCancel" : "Beschleunigen oder Abbrechen",
+    "resubmitTxDescription" : "Reichen Sie die Transaktion mit einer höheren Netzwerkgebühr erneut ein.",
+    "cancelTxDescription" : "Sendet 0 ETH an Ihre eigene Adresse. Um die Stornierung zu gewährleisten, ist die Netzwerkgebühr 10-30 % höher als die Gebühr für die zu stornierende Transaktion.",
+    "currentNetworkFee" : "Aktuelle Netzwerkgebühr = {{amount}} ETH"
   },
   "requestAccount" : {
     "stepperHeader" : {
@@ -6077,5 +6106,10 @@
         "emptyPassword" : "Passwort darf nicht leer sein"
       }
     }
+  },
+  "newsfeed" : {
+    "title" : "Newsfeed",
+    "poweredByCryptopanic" : "Powered by Cryptopanic",
+    "noPosts" : "No posts available currently"
   }
 }
