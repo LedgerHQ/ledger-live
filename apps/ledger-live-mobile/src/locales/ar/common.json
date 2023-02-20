@@ -811,6 +811,13 @@
       "title" : "جهازك مقفل",
       "description" : "قم بإلغاء قفل جهازك وحاول مرة أخرى.",
       "descriptionWithProductName" : "قم بإلغاء قفل {{ productName }} خاصتك وحاول مرة أخرى."
+    },
+    "EtherscanAPIError" : {
+      "title" : "فشل إحضار المعاملات",
+      "description" : "حدث خطأ غير متوقع مع المستكشفات. يُرجى إعادة المحاولة لاحقاً"
+    },
+    "GasEstimationError" : {
+      "title" : "فشل تقدير الغاز"
     }
   },
   "crash" : {
@@ -1653,6 +1660,10 @@
             "label" : "تحقق مما إذا كان قد تم اكتشاف Nano X الخاصة بك."
           }
         }
+      },
+      "protectConnectionInformationModal" : {
+        "title" : "لماذا لا أستطيع جهازي Ledger؟",
+        "description" : "إذا كنت تواجه مشكلات في الاتصال بـ Ledger Live للجوّال بعد أن قمت بتمكين البلوتوث على جهازك Ledger، يمكنك اتباع التعليمات بالنقر على زر \"Learn how to fix that (تعلم كيفية إصلاح ذلك)\" أدناه"
       }
     },
     "stepImportAccounts" : {
@@ -3298,6 +3309,10 @@
           }
         }
       }
+    },
+    "walletConnect" : {
+      "title" : "WalletConnect",
+      "description" : "قم بتوصيل محفظتك بالتطبيقات اللامركزية"
     }
   },
   "signMessage" : {
