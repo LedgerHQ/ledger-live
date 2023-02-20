@@ -196,6 +196,9 @@ export const defaultFeatures: DefaultFeatures = {
   objkt: {
     enabled: false,
   },
+  protectServicesMobile: {
+    enabled: false,
+  },
   newsfeedPage: {
     enabled: false,
   },

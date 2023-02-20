@@ -64,6 +64,11 @@ export class Modal {
     await this.closeButton.click();
   }
 
+  async waitForModalToAppear() {
+    await this.container.waitFor({ state: "attached" });
+    await this.backdrop.waitFor({ state: "attached" });
+  }
+
   async waitForModalToDisappear() {
     await this.container.waitFor({ state: "detached" });
   }
