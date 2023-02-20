@@ -5,7 +5,7 @@ import {
   RUNNERS,
   WORKFLOWS,
   REPO_OWNER,
-  FORKED_REF_PREFIX,
+  REF_PREFIX,
 } from "./const";
 import {
   downloadArtifact,
@@ -241,7 +241,7 @@ export function orchestrator(app: Probot) {
       );
 
       let affectedWorkflows = 0;
-      let localRef = `${FORKED_REF_PREFIX}/${checkSuite.head_sha}`;
+      let localRef = `forked/${checkSuite.head_sha}`;
 
       if (isFork) {
         try {
@@ -249,7 +249,7 @@ export function orchestrator(app: Probot) {
             owner: baseOwner,
             repo,
             sha: checkSuite.head_sha,
-            ref: localRef,
+            ref: `${REF_PREFIX}/${localRef}`,
           });
           context.log.warn(
             `[Orchestrator](workflow_run.completed) created a ref "${data.ref}" on sha "${data.object.sha}" for forked PR (${status})`
@@ -296,7 +296,11 @@ export function orchestrator(app: Probot) {
               repo,
               workflow_id: fileName,
               ref: isFork ? localRef : workflowRef,
-              inputs: workflow.getInputs(payload, metadata),
+              inputs: workflow.getInputs(
+                payload,
+                metadata,
+                isFork ? localRef : undefined
+              ),
             });
             context.log.info(
               `[Orchestrator](workflow_run.completed) Dispatched workflow run response @status ${response.status}`
