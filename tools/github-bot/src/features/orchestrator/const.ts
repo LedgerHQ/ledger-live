@@ -10,11 +10,13 @@ export type PullRequestMetadata = {
   head_branch: string;
   base_sha: string;
   base_branch: string;
+  base_owner: string;
 };
 export type CheckSuite = Awaited<
   ReturnType<Octokit["checks"]["getSuite"]>
 >["data"];
 
+export const REPO_OWNER = "LedgerHQ";
 export const BOT_APP_ID = 198164;
 export const WATCHER_CHECK_RUN_NAME = "@@PR • Watcher 🪬";
 export enum RUNNERS {
