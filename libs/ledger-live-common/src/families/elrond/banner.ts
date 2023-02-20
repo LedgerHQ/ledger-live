@@ -77,17 +77,6 @@ export function getAccountBannerState(
     },
     ledgerValidator
   );
-  // TODO delete once demoed that this is working
-  // return {
-  //   bannerType: "redelegate",
-  //   mappedDelegations: account.elrondResources.delegations.map(
-  //     (delegation: ElrondDelegation) => ({
-  //       ...delegation,
-  //       validator: findValidator(delegation.contract),
-  //     })
-  //   ),
-  //   selectedDelegation: elrondResources.delegations[0],
-  // };
 
   if (worstValidator.contract !== ledgerValidator.contract) {
     const selectedDelegation = elrondResources.delegations.find(
