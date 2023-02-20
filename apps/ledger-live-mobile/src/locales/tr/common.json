@@ -87,7 +87,8 @@
     "popular" : "popüler",
     "getSupport" : "Destek alın",
     "comingSoon" : "Çok yakında",
-    "restart" : "Yeniden Başlat"
+    "restart" : "Yeniden Başlat",
+    "loadMore" : "Load more"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -549,7 +550,7 @@
       "description" : "İşlemlerin 30 saniye içinde imzalanması gerekir. Lütfen tekrar deneyin."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Yeterince Enerji mevcut değil. Ağ ücreti 50TRX tutarına ulaşabilir."
+      "title" : "Enerji yetersiz. Ağ ücreti 50 TRX tutarına ulaşabilir."
     },
     "UpdateYourApp" : {
       "title" : "Uygulama güncellemesi gerekiyor",
@@ -811,6 +812,13 @@
       "title" : "Cihazınız kilitlendi",
       "description" : "Cihazınızın kilidini açın ve tekrar deneyin.",
       "descriptionWithProductName" : "{{ productName }} cihazınızın kilidini açın ve tekrar deneyin."
+    },
+    "EtherscanAPIError" : {
+      "title" : "İşlemler alınamadı",
+      "description" : "Tarayıcılarla ilgili beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin"
+    },
+    "GasEstimationError" : {
+      "title" : "Tahmini Gas ücreti hesaplanamadı"
     }
   },
   "crash" : {
@@ -1117,6 +1125,10 @@
       "learn" : {
         "title" : "Öğrenin",
         "desc" : "Kripto, Web 3.0, dijital güvenlik ve diğer konular hakkında bilgi edinin"
+      },
+      "news" : {
+        "title" : "News",
+        "desc" : "Learn about crypto, security, web3 and catch up with latest news"
       },
       "ledgerApps" : {
         "title" : "Uygulamalar",
@@ -1653,6 +1665,10 @@
             "label" : "Nano X'inizin tespit edilip edilmediğini kontrol edin."
           }
         }
+      },
+      "protectConnectionInformationModal" : {
+        "title" : "Ledger cihazımı neden bağlayamıyorum?",
+        "description" : "Ledger cihazınızda Bluetooth'u etkinleştirdikten sonra Ledger Live Mobile uygulamasına bağlanmada sorun yaşıyorsanız aşağıdaki \"Bu sorunu nasıl düzelteceğinizi öğrenin\" düğmesine dokunarak gösterilen yönergeleri uygulayabilirsiniz"
       }
     },
     "stepImportAccounts" : {
@@ -3298,6 +3314,10 @@
           }
         }
       }
+    },
+    "walletConnect" : {
+      "title" : "WalletConnect",
+      "description" : "Cüzdanınızı dApp'lere bağlayın"
     }
   },
   "signMessage" : {
@@ -3419,6 +3439,15 @@
         "description" : "Maksimum harcanabilir tutar, bir hesapta bulunan ve bir işlemde gönderilebilecek olan toplam bakiye miktarıdır."
       }
     }
+  },
+  "editTransaction" : {
+    "header" : "İşlemi Düzenleyin",
+    "stuckTx" : "En son başlattığınız \"gönderme\" işlemi takıldı. Daha yüksek bir ağ ücretiyle hızlandırın veya işlemi iptal edin.",
+    "speedupTxMessage" : "İşleminiz devam ediyor. Daha yüksek bir ağ ücretiyle hızlandırabilir ya da işlemi iptal edebilirsiniz.",
+    "speedupOrCancel" : "Hızlandırın veya İptal Edin",
+    "resubmitTxDescription" : "Bu işlemi daha yüksek bir ağ ücretiyle yeniden gönderin.",
+    "cancelTxDescription" : "Kendi adresinize 0 ETH gönderiliyor. İptal edildiğinden emin olmak için ağ ücreti, iptal edilecek işlemin ücretinden %10-30 daha yüksek olacaktır.",
+    "currentNetworkFee" : "Mevcut ağ ücreti = {{amount}} ETH"
   },
   "requestAccount" : {
     "stepperHeader" : {
@@ -6077,5 +6106,10 @@
         "emptyPassword" : "Parola alanı boş bırakılamaz"
       }
     }
+  },
+  "newsfeed" : {
+    "title" : "Newsfeed",
+    "poweredByCryptopanic" : "Powered by Cryptopanic",
+    "noPosts" : "No posts available currently"
   }
 }
