@@ -89,6 +89,8 @@ xliffs/
 
 src/generated/
 
+coverage/
+
 # CocoaPods
 /ios/Pods/
 /vendor/bundle/
@@ -97,12 +99,9 @@ src/generated/
 artifacts/
 allure-results/
 
-#CI
+# CI
 **/vendor/**
 **/*.jks
 
 # temp directory
 /temp
-
-# coverage
-coverage/
