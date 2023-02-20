@@ -60,14 +60,15 @@ const mockedAccount: Account = {
 };
 
 describe("OperationRow test", () => {
-  render(
-    <OperationRow
-      account={mockedAccount}
-      parentAccount={null}
-      operation={mockedOperation}
-      isLast
-    />,
-  );
-
-  expect(true).toBe(true);
+  it("should render correctly", () => {
+    render(
+      <OperationRow
+        account={mockedAccount}
+        parentAccount={null}
+        operation={mockedOperation}
+        isLast
+      />,
+    );
+    expect(true).toBe(true);
+  });
 });
