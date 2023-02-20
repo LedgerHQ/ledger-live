@@ -42,7 +42,7 @@ test.use({
 
 process.env.PWDEBUG = "1";
 
-test("Ethereum staking flows via portfolio, asset page and market page", async ({ page }) => {
+test("Cosmos staking flows via portfolio, asset page and market page", async ({ page }) => {
   const portfolioPage = new PortfolioPage(page);
   const drawer = new Drawer(page);
   const modal = new Modal(page);
@@ -55,87 +55,50 @@ test("Ethereum staking flows via portfolio, asset page and market page", async (
   const marketCoinPage = new MarketCoinPage(page);
 
   await test.step(
-    "stake cosmos from portfolio page with an account that isn't staking",
+    "access stake cosmos from portfolio page with an account that isn't staking",
     async () => {
-      await page.pause();
       await portfolioPage.startStakeFlow();
       await drawer.waitForDrawerToBeVisible();
       await drawer.selectCurrency("cosmos");
       await drawer.selectAccount("cosmos", 0);
+      await expect.soft(modal.container).toHaveScreenshot("earn-modal-staking-cosmos-account.png");
+      await modal.continue();
       await expect
-        .soft(page)
-        .toHaveScreenshot("earn-modal-staking-non-cosmos-account-from-portfolio.png");
+        .soft(modal.container)
+        .toHaveScreenshot("modal-staking-cosmos-account.png");
+      await modal.close();
+      await expect
+      .soft(page)
+      .toHaveScreenshot("non-cosmos-account-page.png");
+      await accountPage.clickBannerCTA();
+      await expect
+        .soft(modal.container)
+        .toHaveScreenshot("modal-staking-cosmos-account-2.png");
+      await modal.close();
     },
   );
 
-  // await test.step("choose ethereum account", async () => {
-  //   await drawer.selectAccount("Ethereum", 1);
-  //   await expect.soft(page).toHaveScreenshot("choose-stake-provider-modal-from-portfolio-page.png");
-  // });
-
-  // await test.step("choose Lido", async () => {
-  //   await modal.chooseStakeProvider("Lido");
-  //   await liveApp.waitForCorrectTextInWebview("Ethereum 2");
-  //   await expect(await liveApp.getLiveAppTitle()).toBe("Lido");
-  //   await expect.soft(page).toHaveScreenshot("stake-provider-dapp-has-opened.png", {
-  //     mask: [page.locator("webview")],
-  //   });
-  // });
-
-  // await test.step("start stake flow via Asset page", async () => {
-  //   await layout.goToPortfolio();
-  //   await portfolioPage.navigateToAsset("ethereum");
-  //   await expect.soft(page).toHaveScreenshot("asset-page-with-stake-available.png");
-  // });
-
-  // await test.step("choose to stake Ethereum", async () => {
-  //   await assetPage.startStakeFlow();
-  //   await drawer.waitForDrawerToBeVisible();
-  //   await expect.soft(page).toHaveScreenshot("stake-drawer-opened-from-asset-page.png");
-  //   await drawer.close();
-  // });
-
-  // await test.step("start stake flow via Account page", async () => {
-  //   await layout.goToAccounts();
-  //   await accountsPage.navigateToAccountByName("Ethereum 2");
-  //   await expect.soft(page).toHaveScreenshot("account-page-with-stake-button-and-banner.png");
-  // });
-
-  // await test.step("choose to stake Ethereum via main stake button", async () => {
-  //   await accountPage.startStakingFlowFromMainStakeButton();
-  //   await modal.waitForModalToAppear();
-  //   await expect.soft(page).toHaveScreenshot("choose-stake-provider-modal-from-account-page.png");
-  //   await modal.close();
-  // });
-
-  // await test.step("start stake flow via Banner CTA", async () => {
-  //   await accountPage.clickBannerCTA();
-  //   await liveApp.waitForCorrectTextInWebview("Ethereum 2");
-  //   await expect(await liveApp.getLiveAppTitle()).toBe("Lido");
-  //   await expect.soft(page).toHaveScreenshot("lido-opened-after-banner-cta-clicked.png", {
-  //     mask: [page.locator("webview")],
-  //   });
-  // });
-
-  // await test.step("Market page loads with ETH staking available", async () => {
-  //   await layout.goToMarket();
-  //   await marketPage.waitForLoading();
-  //   await expect.soft(page).toHaveScreenshot("market-loaded-with-eth-stake-button-available.png");
-  // });
-
-  // await test.step("start stake flow via Stake entry button", async () => {
-  //   await marketPage.startStakeFlowByTicker("eth");
-  //   await drawer.waitForDrawerToBeVisible();
-  //   await expect.soft(page).toHaveScreenshot("stake-drawer-opened-from-market-page.png");
-  //   await drawer.close();
-  // });
-
-  // await test.step("Go back to Market page and start stake from ETH coin detail page", async () => {
-  //   await layout.goToMarket();
-  //   await marketPage.waitForLoading();
-  //   await marketPage.openCoinPage("eth");
-  //   await marketCoinPage.startStakeFlow();
-  //   await drawer.waitForDrawerToBeVisible();
-  //   await expect.soft(page).toHaveScreenshot("stake-drawer-opened-from-market-coin-page.png");
-  // });
+  // await test.step(
+  //   "access stake cosmos from portfolio page with an account with worse provider than ledger",
+  //   async () => {
+  //     await layout.goToPortfolio();
+  //     await portfolioPage.startStakeFlow();
+  //     await drawer.waitForDrawerToBeVisible();
+  //     await drawer.selectCurrency("cosmos");
+  //     await drawer.selectAccount("cosmos", 1);
+  //     await expect
+  //       .soft(modal.container)
+  //       .toHaveScreenshot("modal-staking-cosmos-account-3.png");
+  //     await modal.close();
+  //     await expect
+  //     .soft(page)
+  //     .toHaveScreenshot("worst-provider-cosmos-account-page.png");
+  //     await accountPage.clickBannerCTA();
+  //     await page.pause();
+  //     await expect
+  //       .soft(modal.container)
+  //       .toHaveScreenshot("modal-staking-cosmos-account-4.png");
+  //     await modal.close();
+  //   },
+  // );
 });
