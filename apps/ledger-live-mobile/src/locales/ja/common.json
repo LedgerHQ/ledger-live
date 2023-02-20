@@ -87,7 +87,8 @@
     "popular" : "人気",
     "getSupport" : "サポートを利用する",
     "comingSoon" : "近日公開",
-    "restart" : "再起動"
+    "restart" : "再起動",
+    "loadMore" : "Load more"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -549,7 +550,7 @@
       "description" : "トランザクションは、30秒以内に署名する必要があります。もう一度お試しください。"
     },
     "TronNotEnoughEnergy" : {
-      "title" : "エネルギーが必要額を満たしていません。手数料には最大30TRXが必要となります。"
+      "title" : "エネルギーが必要額を満たしていません。手数料には最大50TRXが必要となります。"
     },
     "UpdateYourApp" : {
       "title" : "アプリのアップデートが必要です。",
@@ -811,6 +812,13 @@
       "title" : "デバイスがロックされています。",
       "description" : "デバイスのロックを解除して、再度お試しください。",
       "descriptionWithProductName" : "{{ productName }}のロックを解除して、再度お試しください。"
+    },
+    "EtherscanAPIError" : {
+      "title" : "トランザクションの取得に失敗しました",
+      "description" : "エクスプローラーで予期しないエラーが発生しました。後でもう一度お試しください"
+    },
+    "GasEstimationError" : {
+      "title" : "ガスの見積もりに失敗しました"
     }
   },
   "crash" : {
@@ -1117,6 +1125,10 @@
       "learn" : {
         "title" : "ラーニング",
         "desc" : "暗号資産、Web3、デジタルセキュリティについて学ぶ"
+      },
+      "news" : {
+        "title" : "News",
+        "desc" : "Learn about crypto, security, web3 and catch up with latest news"
       },
       "ledgerApps" : {
         "title" : "アプリ",
@@ -1653,6 +1665,10 @@
             "label" : "Nano Xが認識されるかどうかを確認します。"
           }
         }
+      },
+      "protectConnectionInformationModal" : {
+        "title" : "Ledgerを接続できないのはなぜですか？",
+        "description" : "LedgerでBluetoothを有効にした後、Ledger Live Mobileへの接続に問題が発生した場合は、下の「問題の修正方法を学ぶ（Learn how to fix that）」ボタンをタップして指示に従ってください。"
       }
     },
     "stepImportAccounts" : {
@@ -3298,6 +3314,10 @@
           }
         }
       }
+    },
+    "walletConnect" : {
+      "title" : "WalletConnect",
+      "description" : "ウォレットをdappsに接続"
     }
   },
   "signMessage" : {
@@ -3419,6 +3439,15 @@
         "description" : "最大利用可能額は、1回のトランザクションで送金できる、1つのアカウントの合計残高です。"
       }
     }
+  },
+  "editTransaction" : {
+    "header" : "トランザクションを編集",
+    "stuckTx" : "直近の「送信」トランザクションが滞っています。さらに高いネットワーク手数料でトランザクションの速度を上げるか、キャンセルしてください。",
+    "speedupTxMessage" : "お客様のトランザクションは進行中です。より高いネットワーク手数料で速度を上げるか、キャンセルが可能です。",
+    "speedupOrCancel" : "速度を上げる、またはキャンセルする",
+    "resubmitTxDescription" : "さらに高いネットワーク手数料でこのトランザクションを再送信します。",
+    "cancelTxDescription" : "0ETHをお客様自身のアドレスに送信中です。キャンセルを確定するため、ネットワーク手数料はキャンセルされるトランザクション手数料よりも 10～30%高くなります。",
+    "currentNetworkFee" : "現在のネットワーク手数料 = {{amount}} ETH"
   },
   "requestAccount" : {
     "stepperHeader" : {
@@ -6077,5 +6106,10 @@
         "emptyPassword" : "パスワードを入力してください"
       }
     }
+  },
+  "newsfeed" : {
+    "title" : "Newsfeed",
+    "poweredByCryptopanic" : "Powered by Cryptopanic",
+    "noPosts" : "No posts available currently"
   }
 }
