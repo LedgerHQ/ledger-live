@@ -1,9 +1,9 @@
 import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+
+import React, { useMemo } from "react";
 import { getCurrentElrondPreloadData } from "@ledgerhq/live-common/families/elrond/preload";
-import React from "react";
-import { BigNumber } from "bignumber.js";
 import { randomizeProviders } from "@ledgerhq/live-common/families/elrond/helpers/randomizeProviders";
-import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
+import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/elrond/constants";
 
 import { Icons } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
@@ -28,12 +28,11 @@ export type getActionsReturnType = ActionButtonEvent[] | null | undefined;
 const getActions = (props: getActionsType): getActionsReturnType => {
   const { account } = props;
 
-  const balance = denominate({
-    input: String(account.spendableBalance),
-    showLastNonZeroDecimal: true,
-  });
-
-  const delegationEnabled = new BigNumber(balance).isGreaterThanOrEqualTo(1); // FIXME Should use the constant defined in live-common
+  const delegationEnabled = useMemo(
+    () =>
+      account.spendableBalance.isGreaterThanOrEqualTo(MIN_DELEGATION_AMOUNT),
+    [account.spendableBalance],
+  );
 
   /*
    * Get a list of all the providers, randomize, and also the screen, conditionally, based on existing amount of delegations.

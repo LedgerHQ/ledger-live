@@ -1,11 +1,10 @@
 // @flow
 
 import { useCallback, useMemo } from "react";
-import { BigNumber } from "bignumber.js";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 import { useElrondRandomizedValidators } from "@ledgerhq/live-common/families/elrond/react";
+import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/elrond/constants";
 
 import { modals } from "./modals";
 import { openModal } from "~/renderer/actions/modals";
@@ -25,10 +24,7 @@ const AccountHeaderActions = (props: Props) => {
   const validators = useElrondRandomizedValidators();
 
   const earnRewardEnabled = useMemo(
-    (): boolean =>
-      BigNumber(denominate({ input: account.spendableBalance, showLastNonZeroDecimal: true })).gte(
-        1,
-      ),
+    () => account.spendableBalance.isGreaterThanOrEqualTo(MIN_DELEGATION_AMOUNT),
     [account.spendableBalance],
   );
 
