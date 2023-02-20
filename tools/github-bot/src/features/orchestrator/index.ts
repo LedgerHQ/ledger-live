@@ -5,6 +5,7 @@ import {
   RUNNERS,
   WORKFLOWS,
   REPO_OWNER,
+  REF_PREFIX,
 } from "./const";
 import {
   downloadArtifact,
@@ -240,6 +241,26 @@ export function orchestrator(app: Probot) {
       );
 
       let affectedWorkflows = 0;
+      let localRef = `forked/${checkSuite.head_sha}`;
+
+      if (isFork) {
+        try {
+          const { data, status } = await octokit.rest.git.createRef({
+            owner: baseOwner,
+            repo,
+            sha: checkSuite.head_sha,
+            ref: `${REF_PREFIX}/${localRef}`,
+          });
+          context.log.warn(
+            `[Orchestrator](workflow_run.completed) created a ref "${data.ref}" on sha "${data.object.sha}" for forked PR (${status})`
+          );
+        } catch (error) {
+          context.log.warn(
+            `[Orchestrator](workflow_run.completed) createRef ${localRef} already exists: ${error}`
+          );
+        }
+      }
+
       // For each workflow…
       await Promise.all(
         Object.entries(WORKFLOWS).map(async ([fileName, workflow]) => {
@@ -266,6 +287,7 @@ export function orchestrator(app: Probot) {
                 workflowInputs
               )}`
             );
+
             // Trigger the associated workflow.
             // This will trigger the workflow_run.requested event,
             // which will create/recreate the check run and update the watcher.
@@ -273,8 +295,12 @@ export function orchestrator(app: Probot) {
               owner: baseOwner,
               repo,
               workflow_id: fileName,
-              ref: isFork ? "develop" : workflowRef,
-              inputs: workflow.getInputs(payload, metadata),
+              ref: isFork ? localRef : workflowRef,
+              inputs: workflow.getInputs(
+                payload,
+                metadata,
+                isFork ? localRef : undefined
+              ),
             });
             context.log.info(
               `[Orchestrator](workflow_run.completed) Dispatched workflow run response @status ${response.status}`

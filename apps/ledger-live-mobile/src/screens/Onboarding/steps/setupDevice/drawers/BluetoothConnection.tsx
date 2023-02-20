@@ -30,7 +30,7 @@ const BluetoothConnection = () => {
   }, []);
 
   return (
-    <Flex flex={1} justifyContent="space-between" bg="background.main">
+    <Flex flex={1} justifyContent="space-between" bg="background.drawer">
       <ScrollListContainer contentContainerStyle={{ padding: 16 }}>
         <Flex>
           <Text variant="h1" color="neutral.c100" uppercase mb={6}>
