@@ -24,14 +24,11 @@ export const StakeBanner: React.FC<{ account: ElrondAccount }> = ({ account }) =
   const dispatch = useDispatch();
   const bannerState: AccountBannerState = getElrondBannerState(account, elrondPreloadData);
   const showDelegationBanner = bannerState.bannerType === "delegate";
-  if (stakeAccountBannerParams?.elrond?.delegate === false && showDelegationBanner) {
+  if (!stakeAccountBannerParams?.elrond?.delegate && showDelegationBanner) {
     return null;
   }
 
-  if (
-    stakeAccountBannerParams?.elrond?.redelegate === false &&
-    bannerState.bannerType === "redelegate"
-  ) {
+  if (!stakeAccountBannerParams?.elrond?.redelegate && bannerState.bannerType === "redelegate") {
     return null;
   }
 
