@@ -87,7 +87,8 @@
     "popular" : "popular",
     "getSupport" : "Obtener ayuda",
     "comingSoon" : "Próximamente",
-    "restart" : "Reiniciar"
+    "restart" : "Reiniciar",
+    "loadMore" : "Load more"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -811,6 +812,13 @@
       "title" : "Tu dispositivo está bloqueado",
       "description" : "Desbloquea tu dispositivo e inténtalo de nuevo.",
       "descriptionWithProductName" : "Desbloquea tu {{ productName }} e inténtalo de nuevo."
+    },
+    "EtherscanAPIError" : {
+      "title" : "Se produjo un fallo al recuperar las transacciones",
+      "description" : "Se produjo un error inesperado con los exploradores. Inténtalo de nuevo más tarde"
+    },
+    "GasEstimationError" : {
+      "title" : "Se produjo un fallo en la estimación del gas"
     }
   },
   "crash" : {
@@ -1117,6 +1125,10 @@
       "learn" : {
         "title" : "Información",
         "desc" : "Obtén información sobre las cripto, la Web3, la seguridad digital y mucho más"
+      },
+      "news" : {
+        "title" : "Noticias",
+        "desc" : "Learn about crypto, security, web3 and catch up with latest news"
       },
       "ledgerApps" : {
         "title" : "Aplicaciones",
@@ -1653,6 +1665,10 @@
             "label" : "Comprueba si detecta tu Nano X."
           }
         }
+      },
+      "protectConnectionInformationModal" : {
+        "title" : "¿Por qué no puedo conectar mi Ledger?",
+        "description" : "Si tienes problemas para conectarte a Ledger Live Mobile después de activar el Bluetooth en tu Ledger, puedes seguir las instrucciones pulsando el botón \"Cómo resolverlo\" a continuación"
       }
     },
     "stepImportAccounts" : {
@@ -3298,6 +3314,10 @@
           }
         }
       }
+    },
+    "walletConnect" : {
+      "title" : "WalletConnect",
+      "description" : "Conecta tu billetera a dApps"
     }
   },
   "signMessage" : {
@@ -3419,6 +3439,15 @@
         "description" : "El importe máximo a gastar es el saldo total disponible en una cuenta para enviar en una transacción."
       }
     }
+  },
+  "editTransaction" : {
+    "header" : "Editar transacción",
+    "stuckTx" : "Tu transacción de envío más reciente ha quedado atascada. Acelera la transacción con una tarifa de red más alta o cancélala.",
+    "speedupTxMessage" : "Tu transacción está en curso. Puedes acelerarla con una tarifa de red más alta o cancelarla.",
+    "speedupOrCancel" : "Acelerar o cancelar",
+    "resubmitTxDescription" : "Vuelve a enviar la transacción con una tarifa de red mayor.",
+    "cancelTxDescription" : "Enviando 0 ETH a tu propia dirección. Para garantizar la cancelación, la tarifa de red es un 10-30% más alta que la tarifa de la transacción que se pretende cancelar.",
+    "currentNetworkFee" : "Tarifa de red actual = {{amount}} ETH"
   },
   "requestAccount" : {
     "stepperHeader" : {
@@ -6077,5 +6106,10 @@
         "emptyPassword" : "La contraseña no puede estar en blanco"
       }
     }
+  },
+  "newsfeed" : {
+    "title" : "Newsfeed",
+    "poweredByCryptopanic" : "Powered by Cryptopanic",
+    "noPosts" : "No posts available currently"
   }
 }
