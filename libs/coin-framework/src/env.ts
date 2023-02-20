@@ -719,7 +719,7 @@ const envDefinitions: Record<
     def: false,
     parser: boolParser,
     desc: "Show a performance overlay on the app UI",
-  }
+  },
 };
 
 export const getDefinition = (name: string): EnvDef<any> | null | undefined =>
