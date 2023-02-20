@@ -549,7 +549,7 @@
       "description" : "Les transactions doivent être signées dans les 30 secondes. Veuillez réessayer."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Énergie inférieure à la quantité requise. Vous pourriez payer des frais allant jusqu’à 50 TRX."
+      "title" : "Énergie inférieure à la quantité requise. Vous pourriez payer des frais allant jusqu’à 50 TRX."
     },
     "UpdateYourApp" : {
       "title" : "Mise à jour de l’app nécessaire",
@@ -811,6 +811,13 @@
       "title" : "Appareil verrouillé",
       "description" : "Déverrouillez votre appareil et réessayez.",
       "descriptionWithProductName" : "Déverrouillez votre {{ productName }} et réessayez."
+    },
+    "EtherscanAPIError" : {
+      "title" : "Échec de la récupération des transactions",
+      "description" : "Une erreur s’est produite avec les explorateurs. Veuillez réessayer plus tard."
+    },
+    "GasEstimationError" : {
+      "title" : "Échec de l’estimation du prix du gaz"
     }
   },
   "crash" : {
@@ -963,12 +970,12 @@
       },
       "buyCrypto" : {
         "title" : "Acheter des cryptos",
-        "description" : "Achetez plus de 50 cryptos avec nos partenaires.",
+        "description" : "Achetez plus de 50 cryptos avec nos prestataires tiers.",
         "cta" : "Acheter maintenant"
       },
       "swap" : {
         "title" : "Échanger des cryptos",
-        "description" : "Échangez plus de 100 cryptos et gardez le contrôle avec nos partenaires.",
+        "description" : "Échangez plus de 100 cryptos et gardez le contrôle avec nos prestataires tiers.",
         "cta" : "Échanger maintenant"
       },
       "algorand" : {
@@ -1059,7 +1066,7 @@
     },
     "2" : {
       "title" : "Vos clés vers le Web3",
-      "desc" : "Achetez, vendez et échangez les cryptos les plus connues, via nos partenaires et en toute sécurité avec votre Ledger."
+      "desc" : "Achetez, vendez et échangez les cryptos les plus connues, via nos prestataires tiers et en toute sécurité avec votre Ledger."
     },
     "3" : {
       "title" : "Une sécurité certifiée",
@@ -1141,7 +1148,7 @@
   "installSetOfApps" : {
     "restore" : {
       "title" : "Installer les mêmes apps que sur {{deviceName}} ?",
-      "titleNoDeviceName" : "Installer les mêmes apps que sur votre Ledger précédent ?",
+      "titleNoDeviceName" : "Installer les mêmes apps que sur votre autre Ledger ?",
       "installCTA" : "Installer maintenant",
       "skipCTA" : "Plus tard"
     },
@@ -1653,6 +1660,10 @@
             "label" : "Vérifiez si votre Nano X est bien détecté."
           }
         }
+      },
+      "protectConnectionInformationModal" : {
+        "title" : "Je n’arrive pas à connecter mon Ledger. Pourquoi ?",
+        "description" : "Si vous rencontrez des problèmes de connexion à Ledger Live pour le mobile après avoir activé le Bluetooth sur votre Ledger, appuyez sur le bouton \"En savoir plus\", et suivez les instructions."
       }
     },
     "stepImportAccounts" : {
@@ -1984,7 +1995,7 @@
       "addAccounts" : {
         "addAccounts" : "Ajouter un actif",
         "title" : "Commencer",
-        "description" : "Vous pouvez acheter des cryptos auprès de nos partenaires ou configurer votre wallet."
+        "description" : "Vous pouvez acheter des cryptos auprès de nos prestataires ou configurer votre wallet."
       },
       "title" : "Commencez par ajouter vos actifs préférés à votre wallet",
       "subtitle" : "Ledger prend en charge plus de 6 000 cryptos.",
@@ -3298,6 +3309,10 @@
           }
         }
       }
+    },
+    "walletConnect" : {
+      "title" : "WalletConnect",
+      "description" : "Connectez votre wallet aux dApps"
     }
   },
   "signMessage" : {
@@ -5558,8 +5573,8 @@
       "selectAccount" : "Sélectionner un compte",
       "wantToBuy" : "Je souhaite acheter",
       "connectDevice" : "Connecter votre appareil",
-      "title" : "Acheter des cryptos via nos partenaires",
-      "coinifyTitle" : "Acheter des cryptos via nos partenaires",
+      "title" : "Acheter des cryptos via nos prestataires tiers",
+      "coinifyTitle" : "Acheter des cryptos via nos prestataires tiers",
       "description" : "Achetez des crypto-actifs via Coinify et recevez-les directement dans votre compte Ledger.",
       "CTAButton" : "Acheter maintenant",
       "emptyState" : {
@@ -5586,7 +5601,7 @@
       "selectAccount" : "Sélectionner un compte",
       "wantToSell" : "Je souhaite vendre",
       "connectDevice" : "Connecter votre appareil",
-      "title" : "Vendre des cryptos via notre partenaire",
+      "title" : "Vendre des cryptos via notre prestataire tiers",
       "description" : "Vendez des crypto-actifs directement depuis votre compte Ledger via Coinify et recevez des monnaies fiduciaires sur votre compte bancaire.",
       "CTAButton" : "Vendre maintenant",
       "emptyState" : {
@@ -5609,7 +5624,7 @@
     },
     "swap" : {
       "title" : "ÉCHANGER DES CRYPTOS",
-      "description" : "Échangez des crypto-actifs directement depuis vos comptes Ledger avec notre partenaire."
+      "description" : "Échangez des crypto-actifs directement depuis vos comptes Ledger avec notre prestataire tiers."
     }
   },
   "walletconnect" : {
