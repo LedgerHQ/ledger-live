@@ -95,23 +95,25 @@ export async function updateWatcherCheckRun(
             workflowMeta[1].required ? "" : "_(optional)_"
           }`;
           let newPriority;
+          let newStatus;
 
           const priority = conclusions.indexOf(
             check_run.conclusion || "neutral"
           );
           const accumulatorPriority = conclusions.indexOf(acc[0]);
-          const newStatus =
-            check_run.status === "completed" && acc[1] === "completed"
-              ? "completed"
-              : "in_progress";
 
           if (workflowMeta[1].required) {
             newPriority =
               priority > accumulatorPriority
                 ? check_run.conclusion || "neutral"
                 : acc[0];
+            newStatus =
+              check_run.status === "completed" && acc[1] === "completed"
+                ? "completed"
+                : "in_progress";
           } else {
             newPriority = acc[0];
+            newStatus = acc[1];
           }
 
           return [newPriority, newStatus];
