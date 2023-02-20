@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState } from "react";
 import { Linking, Platform, SectionList } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { BottomDrawer, Button, Flex, Tag, Text } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import Illustration from "../../../images/illustration/Illustration";
 import { TrackScreen, track } from "../../../analytics";
@@ -11,6 +11,8 @@ import OnboardingView from "../OnboardingView";
 import DiscoverCard from "../../Discover/DiscoverCard";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
+import Button from "../../../components/Button";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 
 // @TODO Replace
 const images = {
@@ -184,24 +186,10 @@ const OnboardingStepUseCaseSelection = () => {
 
   const onBuyNanoX = useCallback(() => {
     Linking.openURL("https://shop.ledger.com/pages/ledger-nano-x");
-
-    track("button_clicked", {
-      button: "Get a Ledger Nano X",
-      screen: "UseCase",
-      timestamp: Date.now(),
-      drawer: "Protect is available only on Nano X",
-    });
   }, []);
 
   const onDiscoverBenefits = useCallback(() => {
     Linking.openURL("http://ledger.com");
-
-    track("link_clicked", {
-      link: "Discover the benefits",
-      screen: "UseCase",
-      timestamp: Date.now(),
-      drawer: "Protect is available only on Nano X",
-    });
   }, []);
 
   return (
@@ -227,7 +215,10 @@ const OnboardingStepUseCaseSelection = () => {
       />
       <TrackScreen category="Onboarding" name="UseCase" />
 
-      <BottomDrawer isOpen={isProtectDrawerOpen} onClose={onCloseProtectDrawer}>
+      <QueuedDrawer
+        isRequestingToBeOpened={isProtectDrawerOpen}
+        onClose={onCloseProtectDrawer}
+      >
         <Flex>
           <Text variant="h4" textAlign="center" mb={6}>
             {t("onboarding.stepUseCase.protect.drawer.title")}
@@ -243,6 +234,11 @@ const OnboardingStepUseCaseSelection = () => {
             iconName="ExternalLink"
             onPress={onBuyNanoX}
             mb={6}
+            event="button_clicked"
+            eventProperties={{
+              button: "Get a Ledger Nano X",
+              drawer: "Protect is available only on Nano X",
+            }}
           >
             {t("onboarding.stepUseCase.protect.drawer.buyNanoX")}
           </Button>
@@ -252,11 +248,16 @@ const OnboardingStepUseCaseSelection = () => {
             iconPosition="right"
             iconName="ExternalLink"
             onPress={onDiscoverBenefits}
+            event="link_clicked"
+            eventProperties={{
+              link: "Discover the benefits",
+              drawer: "Protect is available only on Nano X",
+            }}
           >
             {t("onboarding.stepUseCase.protect.drawer.discoverBenefits")}
           </Button>
         </Flex>
-      </BottomDrawer>
+      </QueuedDrawer>
     </OnboardingView>
   );
 };
