@@ -87,7 +87,8 @@
     "popular" : "인기 있는",
     "getSupport" : "지원 받기",
     "comingSoon" : "곧 출시 예정",
-    "restart" : "재시작"
+    "restart" : "재시작",
+    "loadMore" : "Load more"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -549,7 +550,7 @@
       "description" : "트랜잭션은 30초 이내에 서명을 완료해야 합니다. 다시 시도해 주세요."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 30TRX를 지불할 수 있습니다."
+      "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 50 TRX를 지불할 수 있습니다."
     },
     "UpdateYourApp" : {
       "title" : "앱 업데이트 필요",
@@ -811,6 +812,13 @@
       "title" : "장치가 잠금 상태입니다",
       "description" : "장치의 잠금을 해제하고 다시 시도하세요.",
       "descriptionWithProductName" : "{{ productName }}의 잠금을 해제하고 다시 시도하세요."
+    },
+    "EtherscanAPIError" : {
+      "title" : "트랜잭션을 가져오지 못했습니다",
+      "description" : "탐색기에서 예상하지 못한 오류가 발생했습니다. 나중에 다시 시도해 주세요"
+    },
+    "GasEstimationError" : {
+      "title" : "가스비를 추정하지 못했습니다"
     }
   },
   "crash" : {
@@ -1117,6 +1125,10 @@
       "learn" : {
         "title" : "알아보기",
         "desc" : "암호화폐, Web3, 디지털 보안 등에 대해 알아보세요"
+      },
+      "news" : {
+        "title" : "News",
+        "desc" : "Learn about crypto, security, web3 and catch up with latest news"
       },
       "ledgerApps" : {
         "title" : "앱",
@@ -1653,6 +1665,10 @@
             "label" : "Nano X가 감지되는지 확인하세요."
           }
         }
+      },
+      "protectConnectionInformationModal" : {
+        "title" : "Ledger를 연결할 수 없는 이유가 무엇인가요?",
+        "description" : "Ledger에서 블루투스를 활성화한 후에 Ledger Live 모바일과 연결 문제가 발생한 경우 아래의 \"해결 방법 알아보기\" 버튼을 눌러서 안내에 따라 문제를 해결할 수 있습니다."
       }
     },
     "stepImportAccounts" : {
@@ -3298,6 +3314,10 @@
           }
         }
       }
+    },
+    "walletConnect" : {
+      "title" : "WalletConnect",
+      "description" : "지갑을 디앱에 연결합니다"
     }
   },
   "signMessage" : {
@@ -3419,6 +3439,15 @@
         "description" : "최대 사용 가능 금액은 한 트랜잭션에 보낼 수 있는 계정의 총 잔금입니다."
       }
     }
+  },
+  "editTransaction" : {
+    "header" : "트랜잭션 수정",
+    "stuckTx" : "가장 최근 실행한 '전송' 트랜잭션이 중단되었습니다. 트랜잭션을 취소하거나 네트워크 수수료를 올려 속도를 높일 수 있습니다.",
+    "speedupTxMessage" : "트랜잭션이 진행 중입니다. 트랜잭션을 취소하거나 네트워크 수수료를 올려 속도를 높일 수 있습니다.",
+    "speedupOrCancel" : "속도 올리기 또는 취소",
+    "resubmitTxDescription" : "네트워크 수수료를 올려 해당 트랜잭션을 다시 제출하세요.",
+    "cancelTxDescription" : "0 ETH를 본인 주소로 전송하기 취소를 담보하기 위해 네트워크 수수료는 취소하려는 트랜잭션 수수료보다 10-30% 더 높습니다.",
+    "currentNetworkFee" : "현재 네트워크 수수료 = {{amount}} ETH"
   },
   "requestAccount" : {
     "stepperHeader" : {
@@ -6077,5 +6106,10 @@
         "emptyPassword" : "패스워드는 비워둘 수 없습니다"
       }
     }
+  },
+  "newsfeed" : {
+    "title" : "Newsfeed",
+    "poweredByCryptopanic" : "Powered by Cryptopanic",
+    "noPosts" : "No posts available currently"
   }
 }
