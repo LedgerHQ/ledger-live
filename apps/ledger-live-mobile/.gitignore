@@ -96,6 +96,8 @@ xliffs/
 
 src/generated/
 
+coverage/
+
 # CocoaPods
 /ios/Pods/
 /vendor/bundle/
@@ -104,7 +106,7 @@ src/generated/
 artifacts/
 allure-results/
 
-#CI
+# CI
 **/vendor/**
 **/*.jks
 
@@ -113,6 +115,3 @@ allure-results/
 
 # Temporary files created by Metro to check the health of the file watcher
 .metro-health-check*
-
-# coverage
-coverage/
