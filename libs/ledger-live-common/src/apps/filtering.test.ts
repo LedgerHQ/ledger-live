@@ -2,7 +2,7 @@ import { initState } from "./logic";
 import { deviceInfo155, mockListAppsResult } from "./mock";
 import type { FilterOptions, SortOptions } from "./filtering";
 import { sortFilterApps } from "./filtering";
-import { setSupportedCurrencies } from "../currencies/support";
+import { setSupportedCurrencies } from "../currencies/index";
 import { setPlatformVersion } from "../platform/version";
 import { PLATFORM_VERSION } from "../platform/constants";
 import { WALLET_API_VERSION } from "../wallet-api/constants";

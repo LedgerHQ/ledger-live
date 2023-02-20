@@ -68,7 +68,7 @@ jobs:
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ inputs.ref || github.event.push.head.sha }}
+          ref: ${{ inputs.ref || github.sha }}
           base: ${{ inputs.base_ref }}
       - name: set git user
         run: |
@@ -143,7 +143,7 @@ jobs:
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ inputs.ref || github.event.push.head.sha }}
+          ref: ${{ inputs.ref || github.sha }}
           base: ${{ inputs.base_ref }}
       - name: set git user
         run: |

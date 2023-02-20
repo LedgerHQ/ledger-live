@@ -1,27 +1,25 @@
 // @flow
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback } from "react";
 import { compose } from "redux";
-import { connect, useDispatch, useSelector } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import { withTranslation } from "react-i18next";
-import type { TFunction } from "react-i18next";
 import { Redirect } from "react-router";
-import type { AccountLike, Account } from "@ledgerhq/types-live";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { findCompoundToken } from "@ledgerhq/live-common/currencies/index";
 import { isNFTActive } from "@ledgerhq/live-common/nft/support";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import { accountSelector } from "~/renderer/reducers/accounts";
 import {
-  isAccountEmpty,
+  findSubAccountById,
   getAccountCurrency,
   getMainAccount,
-  findSubAccountById,
+  isAccountEmpty,
 } from "@ledgerhq/live-common/account/index";
 import { setCountervalueFirst } from "~/renderer/actions/settings";
 import {
-  hiddenNftCollectionsSelector,
   countervalueFirstSelector,
+  hiddenNftCollectionsSelector,
 } from "~/renderer/reducers/settings";
 
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -39,7 +37,9 @@ import EmptyStateAccount from "./EmptyStateAccount";
 import TokensList from "./TokensList";
 import CompoundBodyHeader from "~/renderer/screens/lend/Account/AccountBodyHeader";
 import useCompoundAccountEnabled from "~/renderer/screens/lend/useCompoundAccountEnabled";
-import { getBannerProps, AccountBanner } from "./AccountBanner";
+import { AccountStakeBanner } from "~/renderer/screens/account/AccountStakeBanner";
+import type { TFunction } from "react-i18next";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
 
 const mapStateToProps = (
   state,
@@ -90,19 +90,7 @@ const AccountPage = ({
     ? perFamilyAccountSubHeader[mainAccount.currency.family]
     : null;
   const bgColor = useTheme("colors.palette.background.paper");
-
   const isCompoundEnabled = useCompoundAccountEnabled(account, parentAccount);
-
-  const [banner, setBanner] = useState({});
-
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (mainAccount) {
-      const bannerProps = getBannerProps(mainAccount, { t, dispatch });
-      setBanner(bannerProps);
-    }
-  }, [mainAccount, t, dispatch]);
 
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
   const filterOperations = useCallback(
@@ -169,7 +157,7 @@ const AccountPage = ({
               ctoken={ctoken}
             />
           </Box>
-          {banner.display && <AccountBanner {...banner} />}
+          <AccountStakeBanner account={account} />
           {AccountBodyHeader ? (
             <AccountBodyHeader account={account} parentAccount={parentAccount} />
           ) : null}

@@ -20,6 +20,7 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { CompoundAccountSummary } from "../../compound/types";
 import { acceptTransaction } from "./speculos-deviceActions";
+import { avalancheSpeculosDeviceAction } from "./speculos-deviceActions-avalanche";
 
 const testTimeout = 8 * 60 * 1000;
 
@@ -542,7 +543,27 @@ const polygon: AppSpec<Transaction> = {
   ]),
 };
 
+const avax_c_chain = getCryptoCurrencyById("avalanche_c_chain");
+const minAmountAVAXC = parseCurrencyUnit(avax_c_chain.units[0], "0.001");
+
+const avalanche_c_chain: AppSpec<Transaction> = {
+  name: "Avalanche C-Chain",
+  currency: avax_c_chain,
+  appQuery: {
+    model: DeviceModelId.nanoS,
+    appName: "Avalanche",
+  },
+  genericDeviceAction: avalancheSpeculosDeviceAction,
+  testTimeout,
+  minViableAmount: minAmountAVAXC,
+  transactionCheck: ({ maxSpendable }) => {
+    invariant(maxSpendable.gt(minAmountAVAXC), "balance is too low");
+  },
+  mutations: ethereumBasicMutations({ maxAccount: 8 }),
+};
+
 export default {
+  avalanche_c_chain,
   bsc,
   polygon,
   ethereum,

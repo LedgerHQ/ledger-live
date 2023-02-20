@@ -2,7 +2,10 @@ import Transport from "@ledgerhq/hw-transport";
 import { WrongDeviceForAccount } from "@ledgerhq/errors";
 import getAddress from "./getAddress";
 import checkCurrencyApp from "./checkCurrencyApp";
-import { DerivationMode, isSegwitDerivationMode } from "../derivation";
+import {
+  DerivationMode,
+  isSegwitDerivationMode,
+} from "@ledgerhq/coin-framework/derivation";
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 export default async (

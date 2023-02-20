@@ -173,9 +173,16 @@ const QueuedDrawer = ({
   // Handled separately to avoid calling addToWaitingDrawers or triggering useFocusEffect on every onClose changes (if not memoized).
   useEffect(() => {
     if (wasForcefullyCleaned) {
-      onClose && onClose();
       setWasForcefullyCleaned(false);
+
+      // Only call onClose if the drawer was trying to be opened
+      if (isRequestingToBeOpened || isForcingToBeOpened) {
+        onClose && onClose();
+      }
     }
+    // Only needs to be triggered when wasForcefullyCleaned is set to true.
+    // Avoids triggering when isRequestingToBeOpened or isForcingToBeOpened change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wasForcefullyCleaned, onClose]);
 
   return (

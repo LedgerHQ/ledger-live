@@ -108,8 +108,6 @@ export const BaseInput = styled.input.attrs<
   outline: none;
   cursor: ${(p) => (p.disabled ? "not-allowed" : "text")};
   flex-shrink: 1;
-  padding-top: 14px;
-  padding-bottom: 14px;
   padding-left: 20px;
   padding-right: 20px;
   &::placeholder {

@@ -1,11 +1,14 @@
 import { Operation } from "@ledgerhq/types-live";
 import axios, { AxiosRequestConfig } from "axios";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { etherscanOperationToOperation } from "../adapters";
-import { EtherscanOperation } from "../types";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { EtherscanERC20Event, EtherscanOperation } from "../types";
 import { makeLRUCache } from "../../../cache";
 import { EtherscanAPIError } from "../errors";
 import { delay } from "../../../promise";
+import {
+  etherscanERC20EventToOperation,
+  etherscanOperationToOperation,
+} from "../adapters";
 
 export const DEFAULT_RETRIES_API = 5;
 export const ETHERSCAN_TIMEOUT = 5000; // 5 seconds between 2 calls
@@ -41,9 +44,9 @@ async function fetchWithRetries<T>(
 }
 
 /**
- * Get all the latest "normal" transactions (no tokens / NFTs)
+ * Get all the last "normal" transactions (no tokens / NFTs)
  */
-export const getLatestTransactions = makeLRUCache<
+export const getLastCoinOperations = makeLRUCache<
   [
     currency: CryptoCurrency,
     address: string,
@@ -69,13 +72,53 @@ export const getLatestTransactions = makeLRUCache<
     });
 
     return ops
-      .map((tx) => etherscanOperationToOperation(accountId, address, tx))
+      .map((tx) => etherscanOperationToOperation(accountId, tx))
       .filter(Boolean) as Operation[];
   },
   (currency, address, accountId) => accountId,
-  { maxAge: 6 * 1000 }
+  { ttl: 6 * 1000 }
+);
+
+/**
+ * Get all the last ERC20 transactions
+ */
+export const getLastTokenOperations = makeLRUCache<
+  [
+    currency: CryptoCurrency,
+    address: string,
+    accountId: string,
+    fromBlock: number
+  ],
+  { tokenCurrency: TokenCurrency; operation: Operation }[]
+>(
+  async (currency, address, accountId, fromBlock) => {
+    const apiDomain = currency.ethereumLikeInfo?.explorer?.uri;
+    if (!apiDomain) {
+      return [];
+    }
+
+    let url = `${apiDomain}/api?module=account&action=tokentx&address=${address}&tag=latest&page=1&sort=desc`;
+    if (fromBlock) {
+      url += `&startBlock=${fromBlock}`;
+    }
+
+    const ops = await fetchWithRetries<EtherscanERC20Event[]>({
+      method: "GET",
+      url,
+    });
+
+    return ops
+      .map((event) => etherscanERC20EventToOperation(accountId, event))
+      .filter(Boolean) as {
+      tokenCurrency: TokenCurrency;
+      operation: Operation;
+    }[];
+  },
+  (currency, address, accountId) => accountId,
+  { ttl: 6 * 1000 }
 );
 
 export default {
-  getLatestTransactions,
+  getLastCoinOperations,
+  getLastTokenOperations,
 };

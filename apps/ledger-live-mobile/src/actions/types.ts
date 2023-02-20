@@ -370,10 +370,6 @@ export type SettingsSetAvailableUpdatePayload = Pick<
 >;
 export type SettingsSetThemePayload = Pick<SettingsState, "theme">;
 export type SettingsSetOsThemePayload = Pick<SettingsState, "osTheme">;
-export type SettingsSetCarouselVisibilityPayload = Pick<
-  SettingsState,
-  "carouselVisibility"
->;
 export type SettingsSetDismissedDynamicCardsPayload = Pick<
   SettingsState,
   "dismissedDynamicCards"
@@ -500,7 +496,6 @@ export type SettingsPayload =
   | SettingsSetAvailableUpdatePayload
   | SettingsSetThemePayload
   | SettingsSetOsThemePayload
-  | SettingsSetCarouselVisibilityPayload
   | SettingsSetDiscreetModePayload
   | SettingsSetLanguagePayload
   | SettingsSetLocalePayload

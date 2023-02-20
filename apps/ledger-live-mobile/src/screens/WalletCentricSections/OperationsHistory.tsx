@@ -28,7 +28,7 @@ const NB_OPERATIONS_TO_DISPLAY = 3;
 const keyExtractor = (operation: Operation) => operation.id;
 
 const renderSectionHeader = ({ section }: { section: { day: Date } }) => (
-  <SectionHeader section={section} />
+  <SectionHeader day={section.day} />
 );
 
 const OperationsHistory = ({ accounts }: Props) => {

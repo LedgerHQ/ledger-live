@@ -7,6 +7,7 @@ import { prepareTransaction } from "../prepareTransaction";
 import { createTransaction } from "../createTransaction";
 import { sync, scanAccounts } from "../synchronization";
 import { signOperation } from "../signOperation";
+import { hydrate, preload } from "../preload";
 import { broadcast } from "../broadcast";
 
 const receive = makeAccountBridgeReceive();
@@ -17,10 +18,6 @@ const updateTransaction: AccountBridge<EvmTransaction>["updateTransaction"] = (
 ) => {
   return { ...transaction, ...patch } as EvmTransaction;
 };
-
-const preload = async (): Promise<Record<any, any>> => Promise.resolve({});
-
-const hydrate = (): void => {};
 
 const currencyBridge: CurrencyBridge = {
   preload,

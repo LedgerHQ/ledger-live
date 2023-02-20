@@ -21,6 +21,8 @@ import {
   setOverriddenFeatureFlags,
 } from "../actions/settings";
 
+type Props = PropsWithChildren<unknown>;
+
 const checkFeatureFlagVersion = (feature: Feature | undefined) => {
   if (
     feature &&
@@ -38,8 +40,6 @@ const checkFeatureFlagVersion = (feature: Feature | undefined) => {
   }
   return feature;
 };
-
-type Props = PropsWithChildren<unknown>;
 
 const isFeature = (key: string): boolean => {
   try {
@@ -81,6 +81,11 @@ const getFeature = (args: {
           overridesRemote: true,
           overriddenByEnv: true,
         };
+    }
+    const config = remoteConfig();
+
+    if (__DEV__) {
+      config.setConfigSettings({ minimumFetchIntervalMillis: 0 });
     }
 
     const value = remoteConfig().getValue(formatToFirebaseFeatureId(key));

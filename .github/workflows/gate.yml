@@ -1,5 +1,5 @@
 name: "@PR • Gate"
-run-name: "@Gate triggered by ${{ github.actor }} ${{ format('on branch {0}', github.head_ref) }}"
+run-name: "@Gate triggered by ${{ github.actor }} ${{ format('on branch {0}', github.head_ref || github.ref) }}"
 
 on:
   pull_request:
@@ -8,13 +8,25 @@ on:
       - main
       - release
       - hotfix
+  merge_group:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref_name != 'develop' }}
 
+env:
+  number: ${{ github.event.pull_request.number || -1 }}
+  head_sha: ${{ github.event.pull_request.head.sha || github.event.merge_group.head_sha }}
+  head_branch: ${{ github.event.pull_request.head.ref || github.event.merge_group.head_ref }}
+  base_sha: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha }}
+  base_branch: ${{ github.event.pull_request.base.ref || github.event.merge_group.base_ref }}
+  base_owner: ${{ github.event.pull_request.base.repo.owner.login || github.repository_owner }}
+
 jobs:
   setup:
+    permissions:
+      contents: read
+      pull-requests: write
     name: "Setup"
     runs-on: ubuntu-latest
     outputs:
@@ -23,45 +35,24 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
+      - uses: actions/github-script@v6
+        id: clean-refs
+        with:
+          script: |
+            const head_branch = "${{ env.head_branch }}";
+            const base_branch = "${{ env.base_branch }}";
+
+            const newHeadBranch = head_branch.replace("refs/heads/", "");
+            const newBaseBranch = base_branch.replace("refs/heads/", "");
+
+            core.exportVariable("head_branch", newHeadBranch)
+            core.exportVariable("base_branch", newBaseBranch)
+
       - uses: ./tools/actions/turbo-affected
         id: affected
         with:
-          head-ref: ${{ format('origin/{0}', github.event.pull_request.base.ref) }}
-      - name: generate token
-        id: generate-token
-        uses: tibdex/github-app-token@v1
-        with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      # Labeller
-      - uses: actions/labeler@v4
-        with:
-          repo-token: "${{ steps.generate-token.outputs.token }}"
-      - uses: actions/github-script@v6
-        if: github.event.pull_request.head.repo.fork
-        with:
-          github-token: ${{ steps.generate-token.outputs.token }}
-          script: |
-            try {
-              const { data: rawLabels } = await github.rest.issues.listLabelsOnIssue({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-              }) || [];
-              const labels = rawLabels.map(label => label.name)
-              console.log(labels)
-              if(labels.includes('fork')) {
-                return
-              }
-              await github.rest.issues.setLabels({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                labels: [...labels, 'fork']
-              })
-            } catch(error) {
-              console.error(error)
-            }
+          ref: ${{ format('origin/{0}', env.base_branch) }}
       - uses: actions/github-script@v6
         name: create output file ("affected.json")
         with:
@@ -73,3 +64,20 @@ jobs:
         with:
           name: affected.json
           path: affected.json
+      - uses: actions/github-script@v6
+        name: create output file ("pr_metadata.json")
+        with:
+          script: |
+            const fs = require("fs");
+            fs.writeFileSync("pr_metadata.json", JSON.stringify({
+              number: ${{ env.number }},
+              head_sha: "${{ env.head_sha }}",
+              head_branch: "${{ env.head_branch }}",
+              base_sha: "${{ env.base_sha }}",
+              base_branch: "${{ env.base_branch }}",
+              base_owner: "${{ env.base_owner }}"
+            }), "utf-8");
+      - uses: actions/upload-artifact@v3
+        with:
+          name: pr_metadata.json
+          path: pr_metadata.json

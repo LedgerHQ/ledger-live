@@ -19,6 +19,7 @@ const StyledTouchableRow = styled(Touchable)<{ compact?: boolean }>`
 
 export default function SettingsRow({
   onPress,
+  onLongPress,
   onHelpPress,
   title,
   titleStyle,
@@ -39,6 +40,7 @@ export default function SettingsRow({
   testID,
 }: {
   onPress?: () => void;
+  onLongPress?: () => void;
   onHelpPress?: () => void;
   title: ReactNode;
   subtitle?: string;
@@ -100,6 +102,7 @@ export default function SettingsRow({
   return (
     <StyledTouchableRow
       onPress={onPress}
+      onLongPress={onLongPress}
       event={event}
       eventProperties={eventProperties}
       style={style}
