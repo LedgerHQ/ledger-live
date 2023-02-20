@@ -819,12 +819,37 @@
       "redelegation" : {
         "title" : "في حالة أنك لم تكن تعلم...",
         "description" : "مدقق Ledger يقوم بالتكديس بعمولة منخفضة عن المدقق الذي تستخدمه.",
-        "cta" : "إعادة التفويض مع Ledger"
+        "cta" : "إعادة التفويض مع Ledger",
+        "linkText" : "ما هو إعادة التفويض وكم يستغرق من الوقت؟",
+        "solana" : {
+          "title" : "هل تعلم؟",
+          "description" : "Ledger توفِّر مُعدل عمولة أقل من مُدقِّقك. هذه العملية قد تستغرق ما يصل إلى 4 أيام."
+        },
+        "near" : {
+          "title" : "هل تعلم؟",
+          "description" : "Ledger offers a lower commission rate than your validator.This process can take up to 65 hours."
+        }
       },
       "delegation" : {
         "title" : "في حالة أنك لم تكن تعلم...",
         "description" : "مدقق Ledger يقوم بتكديس {{asset}} خاصتك بعمولة قدرها %{{commission}}.",
-        "cta" : "قم بالتكديس مع Ledger"
+        "cta" : "قم بالتكديس مع Ledger",
+        "linkText" : "تعرّف على المزيد",
+        "ethereum" : {
+          "lido" : {
+            "title" : "في حالة أنك لم تكن تعلم...",
+            "description" : "قم بتكديس إيثريوم خاصتك عن طريق Lido واكسب مكافآت يومية. دون فترة قَفل. دون حد أدنى للإيداع.",
+            "cta" : "قم بالتكديس مع Lido"
+          },
+          "kiln" : {
+            "title" : "لا تقم فقط بالاحتفاظ لفترة طويلة. قم بتنمية ETH خاصتك",
+            "description" : "لديك أكثر من 32 ETH؟ اكسب مكافآت سلبية عن طريق تكديس ETH خاصتك بأمان مع Kiln.",
+            "cta" : "قم بالتكديس مع Kiln"
+          }
+        },
+        "near" : {
+          "description" : "Stake your NEAR with Ledger by Figment validator. Your coins stay yours, backed by Ledger’s uncompromising security."
+        }
       }
     }
   },
@@ -1399,7 +1424,7 @@
         "label" : "شائع"
       },
       "earn" : {
-        "title" : "اكسب",
+        "title" : "تكديس",
         "description" : "قم بتنمية أصولك المشفرة مع Ledger"
       }
     }
@@ -3776,7 +3801,9 @@
       "runLocalAppDeleteButton" : "حذف",
       "runLocalAppOpenButton" : "فتح",
       "enableLearnStagingUrl" : "الرابط المرحلي (staging URL) للصفحة التعليمية",
-      "enableLearnStagingUrlDesc" : "تمكين الرابط المرحلي (staging URL) للصفحة التعليمية."
+      "enableLearnStagingUrlDesc" : "تمكين الرابط المرحلي (staging URL) للصفحة التعليمية.",
+      "openOnboardingAppInstallDebug" : "Open onboarding app install debug screen",
+      "openOnboardingAppInstallDebugDesc" : "افتح شاشة بالمكونات من خطوة تثبيت تطبيق مزامنة التهيئة"
     },
     "currencies" : {
       "selectPlaceholder" : "اختار أصل مشفر",
@@ -5356,7 +5383,7 @@
       "description" : "يجب تطبيق التوقيع في غضون 30 ثانية. يرجى إعادة المحاولة مرة أخرى."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "الطاقة أقل من المطلوب. قد تدفع رسوم تصل إلى 50TRX."
+      "title" : "الطاقة أقل من المطلوب. قد تدفع رسوم تصل إلى 50 TRX."
     },
     "PairingFailed" : {
       "title" : "لم يتم إجراء الإقران بنجاح",
@@ -5521,6 +5548,10 @@
       "title" : "فشل تحميل الصورة من الملف",
       "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
     },
+    "ImageLoadFromNftError" : {
+      "title" : "فشل تحميل الصورة من الرمز غير القابل للاستبدال",
+      "description" : "يُرجى المحاولة مرةً أخرى برمز غير قابل للاستبدال آخر"
+    },
     "ImageDownloadError" : {
       "title" : "فشل تنزيل الصورة",
       "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
@@ -5593,6 +5624,13 @@
       "descriptionWithProductName" : "يجب أن تقوم بإعداد {{ productName }} خاصتك أولاً.\nسنرشدك خلال عملية الإعداد.",
       "goToOnboardingButton" : "إعداد جهازي",
       "goToOnboardingButtonWithProductName" : "إعداد {{ productName }}"
+    },
+    "EtherscanAPIError" : {
+      "title" : "فشل إحضار المعاملات",
+      "description" : "حدث خطأ غير متوقع مع المستكشفات. يُرجى إعادة المحاولة لاحقاً"
+    },
+    "GasEstimationError" : {
+      "title" : "فشل تقدير الغاز"
     }
   },
   "cryptoOrg" : {
@@ -5631,7 +5669,13 @@
         "stepLabel" : "اختر صورة",
         "description" : "اختر صورة لتعيينها على أنها (...)",
         "pickFromNftGallery" : "اختر من معرض NFT",
-        "upload" : "تحميل من الكمبيوتر الخاص بي"
+        "myNfts" : "رموزي غير القابلة للاستبدال",
+        "upload" : "تحميل من الكمبيوتر الخاص بي",
+        "chooseNft" : "اختر رمزاً غير قابل للاستبدال",
+        "selectNft" : "اختر رمز غير قابل للاستبدال",
+        "previousSelectNft" : "عودة",
+        "nftEmptyStateTitle" : "ليس هناك رموز غير قابلة للاستبدال بعد لعرضها",
+        "nftEmptyStateDescription" : "ابدأ بإضافة رموز غير قابلة للاستبدال إلى محفظتك."
       },
       "adjust" : {
         "stepLabel" : "ضبط الصورة",
@@ -5657,5 +5701,37 @@
     },
     "customImageSet" : "تم إعداد شاشة القَفل",
     "finishCTA" : "إنهاء"
+  },
+  "onboardingAppInstall" : {
+    "restore" : {
+      "title" : "تثبيت نفس التطبيقات كما في {{deviceName}}؟",
+      "titleNoDeviceName" : "تثبيت نفس التطبيقات كما في جهاز Ledger السابق؟",
+      "subtitle" : "يمكنك تثبيت التطبيقات أو إزالتها في أي وقت.",
+      "installCTA" : "استعادة التطبيقات",
+      "skipCTA" : "سأقوم بذلك في وقت لاحق"
+    },
+    "default" : {
+      "title" : "{{ productName }} يستخدم تطبيقات لتمكين المعاملات الآمنة على سلسلة الكتل",
+      "subtitle" : "نوصي بتنزيل مجموعة محددة من التطبيقات. يُمكنك تنزيل المزيد لاحقاً.",
+      "installCTA" : "تثبيت التطبيقات",
+      "skipCTA" : "سأقوم بذلك في وقت لاحق"
+    },
+    "progress" : {
+      "loading" : "جاري التحميل ...",
+      "resolving" : "حل التبعيات",
+      "progress" : "تثبيت التطبيقات %{{progress}}",
+      "disclaimer" : "قم بإضافة أو حذف التطبيقات في أي وقت من Ledger Live."
+    },
+    "cancelled" : {
+      "title" : "تم إلغاء تثبيت التطبيق على {{productName}}",
+      "subtitle" : "{{productName}} يحتاج تطبيقات سلسلة الكتل (blockchain) للموافقة على معاملات الأصول المشفرة والرموز غير القابلة للاستبدال خاصتك.",
+      "installCTA" : "تثبيت الآن",
+      "skipCTA" : "سأقوم بذلك في وقت لاحق"
+    },
+    "locked" : {
+      "title" : "{{productName}} خاصتك مُقفل",
+      "subtitle" : "قم بإلغاء قفل {{productName}} خاصتك وابدأ التثبيت مرة أخرى.",
+      "installCTA" : "إعادة بدء التثبيت"
+    }
   }
 }
