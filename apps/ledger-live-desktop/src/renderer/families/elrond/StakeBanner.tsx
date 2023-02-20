@@ -23,10 +23,8 @@ export const StakeBanner: React.FC<{ account: ElrondAccount }> = ({ account }) =
   const elrondPreloadData = useElrondPreloadData();
   const dispatch = useDispatch();
   const bannerState: AccountBannerState = getElrondBannerState(account, elrondPreloadData);
-  if (
-    stakeAccountBannerParams?.elrond?.delegate === false &&
-    bannerState.bannerType === "delegate"
-  ) {
+  const showDelegationBanner = bannerState.bannerType === "delegate";
+  if (stakeAccountBannerParams?.elrond?.delegate === false && showDelegationBanner) {
     return null;
   }
 
@@ -37,9 +35,21 @@ export const StakeBanner: React.FC<{ account: ElrondAccount }> = ({ account }) =
     return null;
   }
 
-  const title = "TODO";
-  const description = "DESCRIPTION";
-  const cta = bannerState.bannerType === "delegate" ? "DELEGATE" : "REDELEGATE";
+  const title = showDelegationBanner
+    ? t("account.banner.delegation.title")
+    : t("account.banner.redelegation.elrond.title");
+  const description = showDelegationBanner
+    ? t("account.banner.delegation.elrond.description")
+    : t("account.banner.redelegation.elrond.description");
+  const cta = showDelegationBanner
+    ? t("account.banner.delegation.cta")
+    : t("account.banner.redelegation.cta");
+  const linkUrl = showDelegationBanner
+    ? "https://www.ledger.com/staking"
+    : "https://support.ledger.com/hc/en-us/articles/7228337345693-Staking-MultiversX-EGLD-through-Ledger-Live-?support=true";
+  const linkText = showDelegationBanner
+    ? t("account.banner.delegation.linkText")
+    : t("account.banner.redelegation.linkText");
   const onClick = () => {
     track("button_clicked", {
       ...stakeDefaultTrack,
@@ -78,8 +88,8 @@ export const StakeBanner: React.FC<{ account: ElrondAccount }> = ({ account }) =
       cta={cta}
       onClick={onClick}
       display={bannerState.bannerType !== "hidden"}
-      linkText={t("account.banner.delegation.linkText")}
-      linkUrl={"https://www.ledger.com/staking-ethereum"}
+      linkText={linkText}
+      linkUrl={linkUrl}
     />
   );
 };
