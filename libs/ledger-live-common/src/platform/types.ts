@@ -70,7 +70,7 @@ export type LiveAppManifest = {
     shortDescription: TranslatableString;
     description: TranslatableString;
   };
-  displayBackToManifestApp: boolean;
+  displayBackToManifestApp?: boolean;
 };
 
 export type PlatformApi = {
