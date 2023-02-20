@@ -218,7 +218,8 @@
     "swap" : "Takas et",
     "lend" : "Borç ver",
     "catalog" : "Keşfet",
-    "market" : "Piyasa"
+    "market" : "Piyasa",
+    "protect" : "Protect"
   },
   "stars" : {
     "placeholder" : "Favori hesaplarınızı yıldızlayarak burada görüntüleyebilirsiniz.",
@@ -819,12 +820,37 @@
       "redelegation" : {
         "title" : "Haberiniz olsun...",
         "description" : "Ledger doğrulayıcısı, kullanmakta olduğunuz doğrulayıcıya kıyasla daha düşük bir komisyonla stake eder.",
-        "cta" : "Ledger ile yeniden yetki devredin"
+        "cta" : "Ledger ile yeniden yetki devredin",
+        "linkText" : "What is redelegation and how long does it take?",
+        "solana" : {
+          "title" : "Did you know?",
+          "description" : "Ledger offers a lower commission rate than your validator.This process can take up to 4 days."
+        },
+        "near" : {
+          "title" : "Did you know?",
+          "description" : "Ledger offers a lower commission rate than your validator.This process can take up to 65 hours."
+        }
       },
       "delegation" : {
         "title" : "Haberiniz olsun...",
         "description" : "Ledger doğrulayıcısı, {{asset}} varlığınızı %{{commission}} oranında bir komisyonla stake eder.",
-        "cta" : "Ledger ile Stake Edin"
+        "cta" : "Ledger ile Stake Edin",
+        "linkText" : "Daha fazla bilgi",
+        "ethereum" : {
+          "lido" : {
+            "title" : "Kaçırmış olmayın:",
+            "description" : "Lido ile Ethereum stake edin ve her gün ödül kazanın. Kilitleme süresi yok. Minimum yatırma tutarı yok.",
+            "cta" : "Lido ile stake edin"
+          },
+          "kiln" : {
+            "title" : "Sadece HODL ile yetinmeyin. ETH varlıklarınızı artırın",
+            "description" : "32'den fazla ETH'niz mi var? Kiln ile ETH varlıklarınızı güvenle stake ederek pasif ödüller kazanın.",
+            "cta" : "Kiln ile stake edin"
+          }
+        },
+        "near" : {
+          "description" : "Stake your NEAR with Ledger by Figment validator. Your coins stay yours, backed by Ledger’s uncompromising security."
+        }
       }
     }
   },
@@ -1399,7 +1425,7 @@
         "label" : "Popüler"
       },
       "earn" : {
-        "title" : "Kazan",
+        "title" : "Stake et",
         "description" : "Kriptolarınızı Ledger ile artırın"
       }
     }
@@ -3776,7 +3802,9 @@
       "runLocalAppDeleteButton" : "Sil",
       "runLocalAppOpenButton" : "Aç",
       "enableLearnStagingUrl" : "Öğren sayfası staging URL'si",
-      "enableLearnStagingUrlDesc" : "Öğren sayfası için staging URL'sini etkinleştirin."
+      "enableLearnStagingUrlDesc" : "Öğren sayfası için staging URL'sini etkinleştirin.",
+      "openOnboardingAppInstallDebug" : "Open onboarding app install debug screen",
+      "openOnboardingAppInstallDebugDesc" : "Open a screen with the components from the sync onboarding app installation step"
     },
     "currencies" : {
       "selectPlaceholder" : "Kripto varlık seç",
@@ -5356,7 +5384,7 @@
       "description" : "İmza 30 saniye içinde uygulanmalıdır. Lütfen tekrar deneyin."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Yeterince Enerji mevcut değil. Ağ ücreti 50TRX tutarına ulaşabilir."
+      "title" : "Enerji yetersiz. Ağ ücreti 50 TRX tutarına ulaşabilir."
     },
     "PairingFailed" : {
       "title" : "Eşleştirme başarısız",
@@ -5521,6 +5549,10 @@
       "title" : "Dosyadan görüntü yüklenemedi",
       "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
     },
+    "ImageLoadFromNftError" : {
+      "title" : "NFT'den görüntü yüklenemedi",
+      "description" : "Lütfen başka bir NFT ile tekrar deneyin"
+    },
     "ImageDownloadError" : {
       "title" : "Görüntü indirilemedi",
       "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
@@ -5593,6 +5625,13 @@
       "descriptionWithProductName" : "Öncelikle {{ productName }} cihazınızın kurulumunu yapmanız gerekiyor.\nKurulum sürecinde size yardımcı olacağız.",
       "goToOnboardingButton" : "Cihazımı kur",
       "goToOnboardingButtonWithProductName" : "{{ productName }} cihazımı kur"
+    },
+    "EtherscanAPIError" : {
+      "title" : "İşlemler alınamadı",
+      "description" : "Tarayıcılarla ilgili beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin"
+    },
+    "GasEstimationError" : {
+      "title" : "Tahmini Gas ücreti hesaplanamadı"
     }
   },
   "cryptoOrg" : {
@@ -5631,7 +5670,13 @@
         "stepLabel" : "Bir görüntü seçin",
         "description" : "Bir görüntü seçip ayarlayın (...)",
         "pickFromNftGallery" : "NFT galerimden seç",
-        "upload" : "Bilgisayarımdan yükle"
+        "myNfts" : "NFT'lerim",
+        "upload" : "Bilgisayarımdan yükle",
+        "chooseNft" : "Bir NFT seçin",
+        "selectNft" : "NFT'yi seç",
+        "previousSelectNft" : "Geri",
+        "nftEmptyStateTitle" : "Gösterilecek NFT yok",
+        "nftEmptyStateDescription" : "Öncelikle cüzdanınıza NFT ekleyin."
       },
       "adjust" : {
         "stepLabel" : "Görüntüyü ayarla",
@@ -5657,5 +5702,44 @@
     },
     "customImageSet" : "Kilitli ekran resmi belirlendi",
     "finishCTA" : "Bitir"
+  },
+  "onboardingAppInstall" : {
+    "restore" : {
+      "title" : "Install the same apps as on {{deviceName}}?",
+      "titleNoDeviceName" : "Install the same apps as on previous Ledger device?",
+      "subtitle" : "You can install or remove apps at anytime.",
+      "installCTA" : "Restore applications",
+      "skipCTA" : "I'll do this later"
+    },
+    "default" : {
+      "title" : "{{ productName }} uses apps to enable secure blockchain transactions",
+      "subtitle" : "We recommend downloading a default set of apps. You can download more later.",
+      "installCTA" : "Install applications",
+      "skipCTA" : "I'll do this later"
+    },
+    "progress" : {
+      "loading" : "Loading ...",
+      "resolving" : "Resolving dependencies",
+      "progress" : "Installing apps {{progress}}%",
+      "disclaimer" : "Add or remove apps at any time from Ledger Live."
+    },
+    "cancelled" : {
+      "title" : "App installation was cancelled on {{productName}}",
+      "subtitle" : "{{productName}} needs blockchain apps to approve your crypto and NFT transactions.",
+      "installCTA" : "Install now",
+      "skipCTA" : "I'll do this later"
+    },
+    "locked" : {
+      "title" : "Your {{productName}} is locked",
+      "subtitle" : "Unlock your {{productName}} and restart the installation.",
+      "installCTA" : "Restart installation"
+    }
+  },
+  "discoverProtect" : {
+    "new" : "Yeni",
+    "title" : "Protect ile varlıklara erişiminizi hiçbir zaman yitirmeyin. Asla ve katiyen.",
+    "description" : "Protect, Kurtarma İfadenizin veya Ledger'ınızın çalınması ya da kaybolması durumunda hiçbir varlığınızı kaybetmemeniz için Kurtarma İfadenizi koruma sorumluluğunu üstlenir.",
+    "cta" : "Avantajlarını keşfedin",
+    "downloadLLM" : "Abone olmak için QR kodunu tarayıp mobil uygulamamızı indirin"
   }
 }
