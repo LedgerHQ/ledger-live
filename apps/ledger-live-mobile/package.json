@@ -51,9 +51,9 @@
     "lint": "eslint src --ext .js,.json,.ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit",
-    "test": "pnpm test:jest && pnpm test:env",
-    "test:jest": "jest src --silent --ci --coverage --json --testLocationInResults",
+    "test:jest": "jest src --testLocationInResults",
     "test:env": "node ./scripts/mobile-env-md.mjs",
+    "test": "pnpm test:jest && pnpm test:env",
     "sync-locales": "./scripts/sync-locales.sh",
     "test-deep-links": "ws --spa ./deep-links-test-page.html",
     "download-hermes-profile": "zx ./scripts/download-hermes-profile.mjs"
