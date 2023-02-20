@@ -15,6 +15,7 @@ import {
 } from "@ledgerhq/live-common/wallet-api/react";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
+import { getEnv } from "@ledgerhq/live-common/env";
 
 import { openModal } from "../../actions/modals";
 import { updateAccountWithUpdater } from "../../actions/accounts";
@@ -30,9 +31,8 @@ import { shareAnalyticsSelector } from "~/renderer/reducers/settings";
 import TopBar from "./TopBar";
 import { TopBarConfig } from "./type";
 import { Container, Wrapper, Loader } from "./styled";
-import packageInfo from "../../../../package.json";
 
-const wallet = { name: packageInfo.name, version: packageInfo.version };
+const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
 const tracking = trackingWrapper(track);
 
 export type WebPlatformPlayerConfig = {
@@ -168,7 +168,8 @@ function useWebView({ manifest, inputs }: Pick<Props, "manifest" | "inputs">) {
   const url = useWalletAPIUrl({ manifest, inputs });
   const shareAnalytics = useSelector(shareAnalyticsSelector);
   const config = useConfig({
-    manifest,
+    appId: manifest.id,
+    userId: getEnv("USER_ID"),
     tracking: shareAnalytics,
     wallet,
   });
