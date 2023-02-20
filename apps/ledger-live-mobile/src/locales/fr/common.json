@@ -912,12 +912,12 @@
       },
       "buyCrypto" : {
         "title" : "Acheter des cryptos",
-        "description" : "Achetez plus de 50 cryptos avec nos partenaires.",
+        "description" : "Achetez plus de 50 cryptos avec nos prestataires tiers.",
         "cta" : "Acheter maintenant"
       },
       "swap" : {
         "title" : "Échanger des cryptos",
-        "description" : "Échangez plus de 100 cryptos et gardez le contrôle avec nos partenaires.",
+        "description" : "Échangez plus de 100 cryptos et gardez le contrôle avec nos prestataires tiers.",
         "cta" : "Échanger maintenant"
       },
       "algorand" : {
@@ -1008,7 +1008,7 @@
     },
     "2" : {
       "title" : "Vos clés vers le Web3",
-      "desc" : "Achetez, vendez et échangez les cryptos les plus connues, via nos partenaires et en toute sécurité avec votre Ledger."
+      "desc" : "Achetez, vendez et échangez les cryptos les plus connues, via nos prestataires tiers et en toute sécurité avec votre Ledger."
     },
     "3" : {
       "title" : "Une sécurité certifiée",
@@ -1105,7 +1105,7 @@
   "onboarding" : {
     "stepWelcome" : {
       "title" : "Bienvenue sur Ledger",
-      "subtitle" : "La propriété numérique, sécurisée et simplifiée.",
+      "subtitle" : "Gérez vos cryptos et NFT en toute sécurité.",
       "start" : "Commencer",
       "noDevice" : "Pas encore d’appareil ?",
       "buy" : "Achetez un {{fullDeviceName}}.",
@@ -1892,7 +1892,7 @@
       "addAccounts" : {
         "addAccounts" : "Ajouter un actif",
         "title" : "Commencer",
-        "description" : "Vous pouvez acheter des cryptos auprès de nos partenaires ou configurer votre wallet."
+        "description" : "Vous pouvez acheter des cryptos auprès de nos prestataires ou configurer votre wallet."
       },
       "title" : "Commencez par ajouter vos actifs préférés à votre wallet",
       "subtitle" : "Ledger prend en charge plus de 6 000 cryptos.",
@@ -5167,8 +5167,8 @@
       "selectAccount" : "Sélectionner un compte",
       "wantToBuy" : "Je souhaite acheter",
       "connectDevice" : "Connecter votre appareil",
-      "title" : "Acheter des cryptos via nos partenaires",
-      "coinifyTitle" : "Acheter des cryptos via nos partenaires",
+      "title" : "Acheter des cryptos via nos prestataires tiers",
+      "coinifyTitle" : "Acheter des cryptos via nos prestataires tiers",
       "description" : "Achetez des crypto-actifs via Coinify et recevez-les directement dans votre compte Ledger.",
       "CTAButton" : "Acheter maintenant",
       "emptyState" : {
@@ -5195,7 +5195,7 @@
       "selectAccount" : "Sélectionner un compte",
       "wantToSell" : "Je souhaite vendre",
       "connectDevice" : "Connecter votre appareil",
-      "title" : "Vendre des cryptos via notre partenaire",
+      "title" : "Vendre des cryptos via notre prestataire tiers",
       "description" : "Vendez des crypto-actifs directement depuis votre compte Ledger via Coinify et recevez des monnaies fiduciaires sur votre compte bancaire.",
       "CTAButton" : "Vendre maintenant",
       "emptyState" : {
@@ -5218,7 +5218,7 @@
     },
     "swap" : {
       "title" : "ÉCHANGER DES CRYPTOS",
-      "description" : "Échangez des crypto-actifs directement depuis vos comptes Ledger avec notre partenaire."
+      "description" : "Échangez des crypto-actifs directement depuis vos comptes Ledger avec notre prestataire tiers."
     }
   },
   "walletconnect" : {
