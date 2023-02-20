@@ -7,6 +7,7 @@ import {
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { PlatformTransaction } from "@ledgerhq/live-common/platform/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
+
 import prepareSignTransaction from "./liveSDKLogic";
 
 // Fake the support of the test currency
@@ -59,7 +60,7 @@ describe("prepareSignTransaction", () => {
 // *** UTIL FUNCTIONS ***
 function createEtherumTransaction(): PlatformTransaction {
   return {
-    family: "ethereum",
+    family: "ethereum" as any,
     amount: new BigNumber("1000"),
     recipient: "0x0123456",
     nonce: 8,
@@ -73,11 +74,11 @@ const createCryptoCurrency = (family: string): CryptoCurrency => ({
   type: "CryptoCurrency",
   id: "testCoinId" as CryptoCurrencyId,
   coinType: 8008,
-  name: "MyCoin",
-  managerAppName: "MyCoin",
+  name: "bitcoin",
+  managerAppName: "Bitcoin",
   ticker: "MYC",
   countervalueTicker: "MYC",
-  scheme: "mycoin",
+  scheme: "bitcoin",
   color: "#ff0000",
   family,
   units: [

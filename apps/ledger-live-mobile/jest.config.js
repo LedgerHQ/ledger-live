@@ -1,8 +1,12 @@
+/** @type {import('ts-jest').JestConfigWithTsJest} */
 module.export = {
-  preset: ["react-native", "@babel/preset-typescript"],
-  setupFilesAfterEnv: ["@testing-library/jest-native/extend-expect"],
-  transformIgnorePatterns: ["node_modules"],
+  preset: "react-native",
+  testEnvironment: "jsdom",
   transform: {
-    "^.+\\.js$": "<rootDir>/node_modules/react-native/jest/preprocessor.js",
+    "^.+\\.(js)$": "<rootDir>/node_modules/babel-jest",
+    "^.+\\.tsx?$": "ts-jest",
   },
+  moduleFileExtensions: ["ts", "tsx"],
+  coverageReporters: ["json"],
+  coverageDirectory: "<rootDir>/coverage",
 };
