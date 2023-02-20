@@ -121,6 +121,40 @@ export default class Transport {
   }
 
   /**
+   * Send apdus in batch to the device using a low level API.
+   * The default implementation is to call exchange for each apdu.
+   * @param {Array<Buffer>} apdus - array of apdus to send.
+   * @param {Observer<Buffer>} observer - an observer that will receive the response of each apdu.
+   * @returns {Subscription} A Subscription object on which you can call ".unsubscribe()" to stop sending apdus.
+   */
+  exchangeBulk(apdus: Buffer[], observer: Observer<Buffer>): Subscription {
+    let unsubscribed = false;
+    const unsubscribe = () => {
+      unsubscribed = true;
+    };
+
+    const main = async () => {
+      if (unsubscribed) return;
+      for (const apdu of apdus) {
+        const r = await this.exchange(apdu);
+        if (unsubscribed) return;
+        const status = r.readUInt16BE(r.length - 2);
+        if (status !== StatusCodes.OK) {
+          throw new TransportStatusError(status);
+        }
+        observer.next(r);
+      }
+    };
+
+    main().then(
+      () => !unsubscribed && observer.complete(),
+      (e) => !unsubscribed && observer.error(e)
+    );
+
+    return { unsubscribe };
+  }
+
+  /**
    * Set the "scramble key" for the next data exchanges with the device.
    * Each app can have a different scramble key and it is set internally during instantiation.
    * @param {string} key - The scramble key to set.

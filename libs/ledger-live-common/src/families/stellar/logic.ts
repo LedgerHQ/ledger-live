@@ -317,7 +317,7 @@ export const getRecipientAccount: CacheRes<
   (extract) => extract.recipient,
   {
     max: 300,
-    maxAge: 5 * 60,
+    ttl: 5 * 60,
   } // 5 minutes
 );
 

@@ -1,8 +1,9 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { BigNumber } from "bignumber.js";
+import { isEqual } from "lodash";
 import { NavigatorName, ScreenName } from "../../const";
-import { usePortfolio } from "../../hooks/portfolio";
+import { usePortfolioForAccounts } from "../../hooks/portfolio";
 import AssetRowLayout from "../../components/AssetRowLayout";
 import { track } from "../../analytics";
 import {
@@ -39,7 +40,8 @@ const AssetRow = ({
   const name = currency.name;
   const unit = currency.units[0];
 
-  const { countervalueChange } = usePortfolio(asset.accounts);
+  // TODO: implement a much lighter hook to get this simple value
+  const { countervalueChange } = usePortfolioForAccounts(asset.accounts);
 
   const onAssetPress = useCallback(() => {
     track("asset_clicked", {
@@ -53,12 +55,20 @@ const AssetRow = ({
     });
   }, [currency, navigation]);
 
+  /**
+   * Avoid passing a new object to AssetRowLayout if the value didn't actually
+   * change.
+   * Not a small optimisation as that component can take several milliseconds to
+   * render, and it's meant to be rendered in a list.
+   *  */
+  const balance = useMemo(() => BigNumber(asset.amount), [asset.amount]);
+
   return (
     <AssetRowLayout
       onPress={onAssetPress}
       currency={currency}
       currencyUnit={unit}
-      balance={new BigNumber(asset.amount)}
+      balance={balance}
       name={name}
       countervalueChange={countervalueChange}
       topLink={topLink}
@@ -68,4 +78,15 @@ const AssetRow = ({
   );
 };
 
-export default React.memo(AssetRow);
+export default React.memo(
+  AssetRow,
+  /**
+   * Here we need a deep compare for the `asset` prop in particular.
+   * We want to avoid recomputing usePortfolioForAccounts if the accounts value
+   * did not change.
+   * (That portfolio computation can take several milliseconds ~4ms for instance
+   * on a performant device, in __DEV__ mode). Since it's meant to be rendered
+   * in a list, this is not a small optimisation.
+   */
+  (prevProps, newProps) => isEqual(prevProps, newProps),
+);

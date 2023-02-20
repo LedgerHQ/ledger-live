@@ -1,5 +1,6 @@
 // @flow
 import React, { useCallback, useMemo } from "react";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import Box from "~/renderer/components/Box";
 import { accountsSelector, currenciesSelector } from "~/renderer/reducers/accounts";
 import BalanceSummary from "./GlobalSummary";
@@ -30,6 +31,7 @@ import EmptyStateAccounts from "~/renderer/screens/dashboard/EmptyStateAccounts"
 import { useRefreshAccountsOrderingEffect } from "~/renderer/actions/general";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import PostOnboardingHubBanner from "~/renderer/components/PostOnboardingHub/PostOnboardingHubBanner";
+import FeaturedButtons from "~/renderer/screens/dashboard/FeaturedButtons";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer: ThemedComponent<{}> = styled.div`
@@ -50,6 +52,7 @@ export default function DashboardPage() {
   const selectedTimeRange = useSelector(selectedTimeRangeSelector);
   const hasInstalledApps = useSelector(hasInstalledAppsSelector);
   const totalAccounts = accounts.length;
+  const portfolioExchangeBanner = useFeature("portfolioExchangeBanner");
   const totalCurrencies = useMemo(() => uniq(accounts.map(a => a.currency.id)).length, [accounts]);
   const totalOperations = useMemo(() => accounts.reduce((sum, a) => sum + a.operations.length, 0), [
     accounts,
@@ -90,11 +93,13 @@ export default function DashboardPage() {
       </TopBannerContainer>
       {showCarousel ? <Carousel /> : null}
       {isPostOnboardingBannerVisible && <PostOnboardingHubBanner />}
+      <FeaturedButtons />
       <TrackPage
         category="Portfolio"
         totalAccounts={totalAccounts}
         totalOperations={totalOperations}
         totalCurrencies={totalCurrencies}
+        hasExchangeBannerCTA={!!portfolioExchangeBanner?.enabled}
       />
       <Box flow={7} id="portfolio-container">
         {!hasInstalledApps ? (

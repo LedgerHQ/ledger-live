@@ -163,7 +163,7 @@ Ideally these are placed at development time so tests are easier to write in fut
 For example:
 
 ```js
-<BottomDrawer
+<QueuedDrawer
   testId="AddAccountsModal"
   isOpen={isOpened}
   onClose={onClose}

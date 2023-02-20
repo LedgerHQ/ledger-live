@@ -1,7 +1,7 @@
 import { log } from "@ledgerhq/logs";
 import type { Result } from "../cross";
 import { accountDataToAccount } from "../cross";
-import { findAccountMigration, checkAccountSupported } from "./support";
+import { findAccountMigration, checkAccountSupported } from "./index";
 import joinSwapHistories from "../exchange/swap/joinSwapHistories";
 import isEqual from "lodash/isEqual";
 import type { Account } from "@ledgerhq/types-live";

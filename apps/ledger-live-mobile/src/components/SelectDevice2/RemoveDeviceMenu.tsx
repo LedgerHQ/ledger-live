@@ -14,7 +14,7 @@ import Stax from "../../images/devices/Stax";
 import NanoX from "../../images/devices/NanoX";
 
 import Trash from "../../icons/Trash";
-import BottomModal from "../BottomModal";
+import QueuedDrawer from "../QueuedDrawer";
 import { removeKnownDevice } from "../../actions/ble";
 
 const illustrations = {
@@ -55,7 +55,7 @@ const RemoveDeviceMenu = ({
   }, [device, dispatch, onHideMenu]);
 
   return (
-    <BottomModal isOpened={open} onClose={onHideMenu}>
+    <QueuedDrawer isRequestingToBeOpened={open} onClose={onHideMenu}>
       <Flex alignItems="center" mb={8}>
         {illustration}
       </Flex>
@@ -66,7 +66,7 @@ const RemoveDeviceMenu = ({
         title={<Trans i18nKey="common.forgetDevice" />}
         onPress={onRemoveDevice}
       />
-    </BottomModal>
+    </QueuedDrawer>
   );
 };
 

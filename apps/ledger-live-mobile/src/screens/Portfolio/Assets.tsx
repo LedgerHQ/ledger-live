@@ -1,6 +1,7 @@
 import React, { useCallback } from "react";
 import { FlatList } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { isEqual } from "lodash";
 import AssetRow, { NavigationProp } from "../WalletCentricAsset/AssetRow";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import { Asset } from "../../types/asset";
@@ -26,4 +27,4 @@ const AssetsList = ({ assets }: ListProps) => {
   );
 };
 
-export default withDiscreetMode(AssetsList);
+export default React.memo(withDiscreetMode(AssetsList), isEqual);

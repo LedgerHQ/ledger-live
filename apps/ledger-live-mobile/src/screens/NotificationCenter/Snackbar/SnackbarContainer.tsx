@@ -81,7 +81,8 @@ const styles = StyleSheet.create({
     left: 0,
     height: "auto",
     width: "100%",
-    zIndex: 100,
+    zIndex: 150,
+    elevation: 150,
     paddingHorizontal: 16,
   },
 });

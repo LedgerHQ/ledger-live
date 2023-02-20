@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { ScreenName } from "../../const";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import Step1Cropping from "../../screens/CustomImage/Step1Crop";
-import Step2Preview from "../../screens/CustomImage/Step2Preview";
+import Step2ChooseContrast from "../../screens/CustomImage/Step2ChooseContrast";
 import Step3Transfer from "../../screens/CustomImage/Step3Transfer";
 import ErrorScreen from "../../screens/CustomImage/ErrorScreen";
 import Step0Welcome from "../../screens/CustomImage/Step0Welcome";
@@ -36,7 +36,7 @@ export default function CustomImageNavigator() {
       />
       <Stack.Screen
         name={ScreenName.CustomImageStep2Preview}
-        component={Step2Preview}
+        component={Step2ChooseContrast}
         options={{
           title: t("customImage.chooseConstrast"),
           headerRight: undefined,

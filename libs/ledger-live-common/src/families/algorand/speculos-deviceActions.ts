@@ -1,7 +1,11 @@
 import type { DeviceAction } from "../../bot/types";
 import type { AlgorandTransaction } from "./types";
 import { findTokenById } from "../../currencies";
-import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
+import {
+  deviceActionFlow,
+  formatDeviceAmount,
+  SpeculosButton,
+} from "../../bot/specs";
 import { extractTokenId, addPrefixToken } from "./tokens";
 import { displayTokenValue } from "./deviceTransactionConfig";
 
@@ -10,27 +14,27 @@ export const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
     steps: [
       {
         title: "Txn Type",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) =>
           transaction.subAccountId ? "Asset xfer" : "Payment",
       },
       {
         title: "Asset xfer",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Payment",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Fee",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account, status }) =>
           formatDeviceAmount(account.currency, status.estimatedFees),
       },
       {
         title: "Asset ID",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => {
           const id = transaction.assetId
             ? extractTokenId(transaction.assetId)
@@ -43,27 +47,27 @@ export const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
       },
       {
         title: "Asset amt",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction, status }) =>
           transaction.mode === "optIn" ? "0" : status.amount.toString(),
       },
       {
         title: "Sender",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Receiver",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => transaction.recipient,
       },
       {
         title: "Asset dst",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => transaction.recipient,
       },
       {
         title: "Amount",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account, status, transaction }) =>
           transaction.mode === "claimReward"
             ? "0"
@@ -71,23 +75,23 @@ export const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
       },
       {
         title: "APPROVE",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
       },
       {
         title: "Sign",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
       },
       {
         title: "Review",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Genesis ID",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       }, // Only on testnet
       {
         title: "Genesis hash",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       }, // Only on testnet
     ],
   });

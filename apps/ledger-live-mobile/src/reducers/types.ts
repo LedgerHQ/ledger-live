@@ -71,6 +71,7 @@ export type AppState = {
   hasConnectedDevice: boolean;
   modalLock: boolean;
   backgroundEvents: Array<FwUpdateBackgroundEvent>;
+  isMainNavigatorVisible: boolean;
 };
 
 // === BLE STATE ===
@@ -191,7 +192,6 @@ export type SettingsState = {
   hasAvailableUpdate: boolean;
   theme: Theme;
   osTheme: string | null | undefined;
-  carouselVisibility: number | Record<string, boolean>;
   dismissedDynamicCards: string[];
   // number is the legacy type from LLM V2
   discreetMode: boolean;
@@ -225,12 +225,14 @@ export type SettingsState = {
   displayStatusCenter: boolean;
   overriddenFeatureFlags: { [key in FeatureId]?: Feature | undefined };
   featureFlagsBannerVisible: boolean;
+  debugAppLevelDrawerOpened: boolean;
 };
 
 export type NotificationsSettings = {
   areNotificationsAllowed: boolean;
   announcementsCategory: boolean;
   recommendationsCategory: boolean;
+  largeMoverCategory: boolean;
 };
 
 // === WALLET CONNECT STATE ===

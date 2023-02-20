@@ -9,6 +9,7 @@ import BaseOnboardingNavigator from "./BaseOnboardingNavigator";
 import ImportAccountsNavigator from "./ImportAccountsNavigator";
 import { RootStackParamList } from "./types/RootNavigator";
 import { AnalyticsContext } from "../../analytics/AnalyticsContext";
+import { StartupTimeMarker } from "../../StartupTimeMarker";
 
 type Props = {
   importDataString?: string;
@@ -30,39 +31,41 @@ export default function RootNavigator({ importDataString }: Props) {
     undefined,
   );
   return (
-    <AnalyticsContext.Provider
-      value={{
-        source: analyticsSource,
-        screen: analyticsScreen,
-        setSource: setAnalyticsSource,
-        setScreen: setAnalyticsScreen,
-      }}
-    >
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
+    <StartupTimeMarker>
+      <AnalyticsContext.Provider
+        value={{
+          source: analyticsSource,
+          screen: analyticsScreen,
+          setSource: setAnalyticsSource,
+          setScreen: setAnalyticsScreen,
         }}
       >
-        {data ? (
-          <Stack.Screen
-            name={NavigatorName.ImportAccounts}
-            component={ImportAccountsNavigator}
-          />
-        ) : goToOnboarding ? (
-          <Stack.Screen
-            name={NavigatorName.BaseOnboarding}
-            component={BaseOnboardingNavigator}
-          />
-        ) : null}
-        <Stack.Screen name={NavigatorName.Base} component={BaseNavigator} />
-        {hasCompletedOnboarding ? (
-          <Stack.Screen
-            name={NavigatorName.BaseOnboarding}
-            component={BaseOnboardingNavigator}
-          />
-        ) : null}
-      </Stack.Navigator>
-    </AnalyticsContext.Provider>
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
+          }}
+        >
+          {data ? (
+            <Stack.Screen
+              name={NavigatorName.ImportAccounts}
+              component={ImportAccountsNavigator}
+            />
+          ) : goToOnboarding ? (
+            <Stack.Screen
+              name={NavigatorName.BaseOnboarding}
+              component={BaseOnboardingNavigator}
+            />
+          ) : null}
+          <Stack.Screen name={NavigatorName.Base} component={BaseNavigator} />
+          {hasCompletedOnboarding ? (
+            <Stack.Screen
+              name={NavigatorName.BaseOnboarding}
+              component={BaseOnboardingNavigator}
+            />
+          ) : null}
+        </Stack.Navigator>
+      </AnalyticsContext.Provider>
+    </StartupTimeMarker>
   );
 }
 const Stack = createStackNavigator<RootStackParamList>();

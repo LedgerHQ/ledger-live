@@ -14,7 +14,7 @@ import { dangerouslyOverrideState } from "../../../../actions/settings";
 import Button from "../../../../components/Button";
 import { SettingsActionTypes } from "../../../../actions/types";
 import { State } from "../../../../reducers/types";
-import BottomModal from "../../../../components/BottomModal";
+import QueuedDrawer from "../../../../components/QueuedDrawer";
 import TextInput from "../../../../components/FocusedTextInput";
 
 const Separator = styled(Flex).attrs({
@@ -186,7 +186,7 @@ export default function Store() {
       <ScrollView contentContainerStyle={{ flex: 0, paddingBottom: 170 }}>
         <Node data={modifiedState} onEdit={onEdit} />
       </ScrollView>
-      <BottomModal isOpened={isModalOpen} onClose={onRestore}>
+      <QueuedDrawer isRequestingToBeOpened={isModalOpen} onClose={onRestore}>
         <Alert
           type="error"
           title="Setting an invalid value may corrupt your app state requiring a full app reinstall."
@@ -210,7 +210,7 @@ export default function Store() {
           disabled={!hasMadeChanges}
           onPress={onConfirm}
         />
-      </BottomModal>
+      </QueuedDrawer>
     </SafeAreaView>
   );
 }

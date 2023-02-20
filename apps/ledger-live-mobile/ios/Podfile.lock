@@ -469,6 +469,8 @@ PODS:
     - ReactCommon/turbomodule/core
   - react-native-splash-screen (3.2.0):
     - React
+  - react-native-startup-time (2.0.1):
+    - React-Core
   - react-native-text-input-mask (3.1.4):
     - InputMask (~> 6.1.0)
     - React-Core
@@ -724,6 +726,7 @@ DEPENDENCIES:
   - "react-native-restart (from `../../../node_modules/.pnpm/react-native-restart@0.0.24_ondxtwf5lqq5g76dzmsmwamaca/node_modules/react-native-restart`)"
   - "react-native-safe-area-context (from `../../../node_modules/.pnpm/react-native-safe-area-context@4.2.5_ondxtwf5lqq5g76dzmsmwamaca/node_modules/react-native-safe-area-context`)"
   - "react-native-splash-screen (from `../../../node_modules/.pnpm/react-native-splash-screen@3.2.0_react-native@0.68.5/node_modules/react-native-splash-screen`)"
+  - "react-native-startup-time (from `../../../node_modules/.pnpm/react-native-startup-time@2.0.1_ondxtwf5lqq5g76dzmsmwamaca/node_modules/react-native-startup-time`)"
   - "react-native-text-input-mask (from `../../../node_modules/.pnpm/react-native-text-input-mask@3.1.4_react-native@0.68.5/node_modules/react-native-text-input-mask`)"
   - "react-native-udp (from `../../../node_modules/.pnpm/react-native-udp@4.1.5/node_modules/react-native-udp`)"
   - "react-native-version-number (from `../../../node_modules/.pnpm/react-native-version-number@0.3.6/node_modules/react-native-version-number`)"
@@ -899,6 +902,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native-safe-area-context@4.2.5_ondxtwf5lqq5g76dzmsmwamaca/node_modules/react-native-safe-area-context"
   react-native-splash-screen:
     :path: "../../../node_modules/.pnpm/react-native-splash-screen@3.2.0_react-native@0.68.5/node_modules/react-native-splash-screen"
+  react-native-startup-time:
+    :path: "../../../node_modules/.pnpm/react-native-startup-time@2.0.1_ondxtwf5lqq5g76dzmsmwamaca/node_modules/react-native-startup-time"
   react-native-text-input-mask:
     :path: "../../../node_modules/.pnpm/react-native-text-input-mask@3.1.4_react-native@0.68.5/node_modules/react-native-text-input-mask"
   react-native-udp:
@@ -1057,6 +1062,7 @@ SPEC CHECKSUMS:
   react-native-restart: 45c8dca02491980f2958595333cbccd6877cb57e
   react-native-safe-area-context: ebf8c413eb8b5f7c392a036a315eb7b46b96845f
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
+  react-native-startup-time: 90dc8ded4242ba45523e7d974d5fdef883a23160
   react-native-text-input-mask: 36a546b378fadd2efe1b7484a859d34bc2c80395
   react-native-udp: 8864b1211857e9d8224ae5cbaf8580970fb99de1
   react-native-version-number: b415bbec6a13f2df62bf978e85bc0d699462f37f

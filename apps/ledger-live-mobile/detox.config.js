@@ -15,7 +15,7 @@ module.exports = {
     },
   },
   logger: {
-    level: process.env.DEBUG_DETOX ? "trace" : "debug",
+    level: process.env.DEBUG_DETOX ? "trace" : "info",
   },
   behavior: {
     // NOTE: https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md#behavior-configuration

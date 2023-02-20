@@ -4,11 +4,24 @@ import { useTranslation } from "react-i18next";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/types-devices";
 import { NavigatorName, ScreenName } from "../../const";
-import BottomModal, { Props as BottomModalProps } from "../BottomModal";
+import QueuedDrawer, { Props as BottomModalProps } from "../QueuedDrawer";
 import ModalChoice from "./ModalChoice";
 import { importImageFromPhoneGallery } from "./imageUtils";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
+import { TrackScreen } from "../../analytics";
+
+const analyticsDrawerName = "Choose an image to set as your Stax lockscreen";
+
+const analyticsButtonChoosePhoneGalleryEventProps = {
+  button: "Choose from my picture gallery",
+  drawer: analyticsDrawerName,
+};
+
+const analyticsButtonChooseNFTGalleryEventProps = {
+  button: "Choose from NFT gallery",
+  drawer: analyticsDrawerName,
+};
 
 type Props = {
   isOpened?: boolean;
@@ -57,7 +70,12 @@ const CustomImageBottomModal: React.FC<Props> = props => {
   }, [navigation, device, onClose]);
 
   return (
-    <BottomModal isOpened={isOpened} onClose={onClose}>
+    <QueuedDrawer isRequestingToBeOpened={!!isOpened} onClose={onClose}>
+      <TrackScreen
+        category={analyticsDrawerName}
+        type="drawer"
+        refreshSource={false}
+      />
       {isLoading ? (
         <Flex m={10}>
           <InfiniteLoader />
@@ -68,18 +86,20 @@ const CustomImageBottomModal: React.FC<Props> = props => {
             onPress={handleUploadFromPhone}
             title={t("customImage.drawer.options.uploadFromPhone")}
             iconName={"Upload"}
-            event=""
+            event="button_clicked"
+            eventProperties={analyticsButtonChoosePhoneGalleryEventProps}
           />
           <Flex mt={6} />
           <ModalChoice
             onPress={handleSelectFromNFTGallery}
             title={t("customImage.drawer.options.selectFromNFTGallery")}
             iconName={"Ticket"}
-            event=""
+            event="button_clicked"
+            eventProperties={analyticsButtonChooseNFTGalleryEventProps}
           />
         </>
       )}
-    </BottomModal>
+    </QueuedDrawer>
   );
 };
 

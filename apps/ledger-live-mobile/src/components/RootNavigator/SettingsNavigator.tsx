@@ -23,6 +23,7 @@ import DebugFetchCustomImage from "../../screens/Settings/Debug/Features/FetchCu
 import DebugGenerators from "../../screens/Settings/Debug/Generators";
 import DebugHttpTransport from "../../screens/Settings/Debug/Connectivity/DebugHttpTransport";
 import DebugInformation from "../../screens/Settings/Debug/Information";
+import DebugPerformance from "../../screens/Settings/Debug/Performance";
 import DebugLogs from "../../screens/Settings/Debug/Debugging/Logs";
 import DebugLottie from "../../screens/Settings/Debug/Features/Lottie";
 import DebugNetwork from "../../screens/Settings/Debug/Debugging/Network";
@@ -59,6 +60,7 @@ import PostOnboardingDebugScreen from "../../screens/PostOnboarding/PostOnboardi
 import { SettingsNavigatorStackParamList } from "./types/SettingsNavigator";
 import DebugTermsOfUse from "../../screens/Settings/Debug/Features/TermsOfUse";
 import CameraPermissions from "../../screens/Settings/Debug/Debugging/CameraPermissions";
+import DebugQueuedDrawers from "../../screens/Settings/Debug/Features/QueuedDrawers";
 
 const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 
@@ -397,6 +399,20 @@ export default function SettingsNavigator() {
       <Stack.Screen
         name={ScreenName.DebugCameraPermissions}
         component={CameraPermissions}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugPerformance}
+        component={DebugPerformance}
+        options={{
+          title: "Performance",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugQueuedDrawers}
+        component={DebugQueuedDrawers}
+        options={{
+          title: "Debug bottom drawers",
+        }}
       />
     </Stack.Navigator>
   );

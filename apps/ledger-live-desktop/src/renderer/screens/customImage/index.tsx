@@ -50,6 +50,7 @@ const CustomImage: React.FC<Props> = props => {
   const [stepError, setStepError] = useState<{ [key in Step]?: Error }>({});
 
   const [sourceLoading, setSourceLoading] = useState<boolean>(false);
+  const [isShowingNftGallery, setIsShowingNftGallery] = useState<boolean>(false);
 
   const [loadedImage, setLoadedImage] = useState<ImageBase64Data>();
   const [croppedImage, setCroppedImage] = useState<ImageBase64Data>();
@@ -204,18 +205,21 @@ const CustomImage: React.FC<Props> = props => {
       flexDirection="column"
       rowGap={5}
       height="100%"
+      overflowY="hidden"
       width="100%"
       flex={1}
-      px={12}
       data-test-id="custom-image-container"
     >
-      <Text alignSelf="center" variant="h3">
+      <Text alignSelf="center" variant="h3Inter">
         {t("customImage.title")}
       </Text>
       {!transferDone ? (
         <FlowStepper.Indexed
           activeKey={step}
           extraStepperProps={{ errored: !!error }}
+          extraStepperContainerProps={{ px: 12 }}
+          extraContainerProps={{ overflowY: "hidden" }}
+          extraChildrenContainerProps={{ overflowY: "hidden" }}
           renderChildren={renderError}
         >
           <FlowStepper.Indexed.Step
@@ -232,6 +236,8 @@ const CustomImage: React.FC<Props> = props => {
                 onResult={handleStepChooseImageResult}
                 setStep={setStepWrapper}
                 setLoading={setSourceLoading}
+                isShowingNftGallery={isShowingNftGallery}
+                setIsShowingNftGallery={setIsShowingNftGallery}
               />
             )}
           </FlowStepper.Indexed.Step>
@@ -296,6 +302,7 @@ const CustomImage: React.FC<Props> = props => {
                   variant: "h5",
                 }}
                 mt={12}
+                width={201}
               >
                 {t("customImage.customImageSet")}
               </Log>

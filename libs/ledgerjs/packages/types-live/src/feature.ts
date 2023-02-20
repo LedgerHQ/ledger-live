@@ -11,6 +11,7 @@ export type FeatureId =
   | "deviceInitialApps"
   | "buyDeviceFromLive"
   | "ptxSmartRouting"
+  | "currencyAvalancheCChain"
   | "currencyOsmosis"
   | "currencyOsmosisMobile"
   | "currencyFantom"
@@ -26,8 +27,10 @@ export type FeatureId =
   | "currencyFlareMobile"
   | "ptxSmartRoutingMobile"
   | "mockFeature"
+  | "multibuyNavigation"
   | "syncOnboarding"
   | "walletConnectLiveApp"
+  | "walletConnectEntryPoint"
   | "customImage"
   | "referralProgramDiscoverCard"
   | "referralProgramDesktopBanner"
@@ -44,7 +47,10 @@ export type FeatureId =
   | "firebaseEnvironmentReadOnly"
   | "protectServicesMobile"
   | "swapShowDexQuotes"
-  | "objkt";
+  | "stakePrograms"
+  | "portfolioExchangeBanner"
+  | "objkt"
+  | "stakeAccountBanner";
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */

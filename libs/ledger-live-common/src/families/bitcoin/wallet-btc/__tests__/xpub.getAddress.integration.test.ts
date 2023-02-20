@@ -1,4 +1,5 @@
 import coininfo from "coininfo";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 import { DerivationModes } from "..";
 import BitcoinLikeStorage from "../storage";
@@ -18,8 +19,7 @@ describe("Unit tests for getAddress", () => {
     const bchxpub = new Xpub({
       storage: new BitcoinLikeStorage(),
       explorer: new BitcoinLikeExplorer({
-        explorerURI: "https://explorers.api.vault.ledger.com/blockchain/v3/bch",
-        explorerVersion: "v3",
+        cryptoCurrency: getCryptoCurrencyById("bitcoin_cash"),
       }),
       crypto: bchCrypto,
       xpub: "xpub6BtWBf3Pu6hYwJBKvEwG7JtrTxxDrSGy39HaTgZz6GTSaFWFdoCtuEXSQtoKGaYdz1emg8xTXKYwjhu3xXRPzFnYS1z4yjKj7hLDQyNeDZr",
@@ -34,8 +34,7 @@ describe("Unit tests for getAddress", () => {
     const btcxpub = new Xpub({
       storage: new BitcoinLikeStorage(),
       explorer: new BitcoinLikeExplorer({
-        explorerURI: "https://explorers.api.vault.ledger.com/blockchain/v3/btc",
-        explorerVersion: "v3",
+        cryptoCurrency: getCryptoCurrencyById("bitcoin"),
       }),
       crypto: btcCrypto,
       xpub: "xpub6BtWBf3Pu6hYwJBKvEwG7JtrTxxDrSGy39HaTgZz6GTSaFWFdoCtuEXSQtoKGaYdz1emg8xTXKYwjhu3xXRPzFnYS1z4yjKj7hLDQyNeDZr",

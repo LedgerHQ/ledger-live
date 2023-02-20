@@ -22,6 +22,13 @@ const tokens: ElrondESDTToken[] = [
     "3045022100afa25bb834c8a2a6e7f6e15f3f318e9da3b7991f2a3f9c2f58d73c700be08736022066d3d0ef00e754e050a4b1ba8455129e83dd01c2a8a6b79738373a463d10fe82",
     "holoride",
   ],
+  [
+    "UTK",
+    "55544B2D326638306539",
+    18,
+    "304402204f2f6035dccb8c5e16698a1a8cfd0c0d4203e9a31103147e286fa1c1ea829c16022003284c1f3c8cb23b6587c5dee3187feb1e0663b15ffbffa89dbe07e7a766eff2",
+    "Utrust",
+  ],
 ];
 
 export default tokens;

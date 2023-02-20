@@ -28,26 +28,11 @@ import {
   getMaxEstimatedBalance,
 } from "./logic";
 import invariant from "invariant";
-import { CosmosAPI, defaultCosmosAPI } from "./api/Cosmos";
-import { OsmosisAPI } from "../osmosis/api/sdk";
+import * as bech32 from "bech32";
+import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import cryptoFactory from "./chain/chain";
 
 export class CosmosTransactionStatusManager {
-  protected _api: CosmosAPI = defaultCosmosAPI;
-  protected _validatorOperatorAddressPrefix = "cosmosvaloper";
-
-  constructor(options?: {
-    api?: CosmosAPI;
-    validatorOperatorAddressPrefix?: string;
-  }) {
-    if (options?.validatorOperatorAddressPrefix) {
-      this._validatorOperatorAddressPrefix =
-        options.validatorOperatorAddressPrefix;
-    }
-    if (options?.api) {
-      this._api = options.api;
-    }
-  }
-
   getTransactionStatus = async (
     a: CosmosAccount,
     t: CosmosLikeTransaction
@@ -66,7 +51,9 @@ export class CosmosTransactionStatusManager {
       t.validators.some(
         (v) =>
           !v.address ||
-          !v.address.includes(this._validatorOperatorAddressPrefix)
+          !v.address.includes(
+            cryptoFactory(a.currency.id).validatorOperatorAddressPrefix
+          )
       ) ||
       t.validators.length === 0
     )
@@ -161,7 +148,9 @@ export class CosmosTransactionStatusManager {
       t.validators.some(
         (v) =>
           !v.address ||
-          !v.address.includes(this._validatorOperatorAddressPrefix)
+          !v.address.includes(
+            cryptoFactory(a.currency.id).validatorOperatorAddressPrefix
+          )
       ) ||
       t.validators.length === 0
     )
@@ -175,27 +164,12 @@ export class CosmosTransactionStatusManager {
 
     const estimatedFees = t.fees || new BigNumber(0);
 
-    if (this._api instanceof OsmosisAPI) {
-      if (!t.fees) {
-        errors.fees = new FeeNotLoaded();
-      }
-    } else {
-      if (!t.fees || !t.fees.gt(0)) {
-        errors.fees = new FeeNotLoaded();
-      }
+    if (!t.fees || !t.fees.gt(0)) {
+      errors.fees = new FeeNotLoaded();
     }
-    let amount;
-
-    // TODO, refactor this block. We should use cosmosResources for Osmosis
-    if (this._api instanceof OsmosisAPI) {
-      amount = t.useAllAmount
-        ? a.spendableBalance.minus(estimatedFees)
-        : new BigNumber(t.amount);
-    } else {
-      amount = t.useAllAmount
-        ? getMaxEstimatedBalance(a, estimatedFees)
-        : t.amount;
-    }
+    const amount = t.useAllAmount
+      ? getMaxEstimatedBalance(a, estimatedFees)
+      : t.amount;
     const totalSpent = amount.plus(estimatedFees);
 
     if (amount.eq(0)) {
@@ -235,7 +209,18 @@ export class CosmosTransactionStatusManager {
     } else if (a.freshAddress === t.recipient) {
       errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
     } else {
-      if (!(await this._api.isValidRecipent(t.recipient))) {
+      let isValid = true;
+      try {
+        bech32.decode(t.recipient);
+      } catch (e) {
+        isValid = false;
+      }
+      isValid =
+        isValid &&
+        t.recipient.startsWith(
+          findCryptoCurrencyById(a.currency.name.toLowerCase())?.id ?? ""
+        );
+      if (!isValid) {
         errors.recipient = new InvalidAddress(undefined, {
           currencyName: a.currency.name,
         });
@@ -249,15 +234,8 @@ export class CosmosTransactionStatusManager {
     }
 
     const estimatedFees = t.fees || new BigNumber(0);
-
-    if (this._api instanceof OsmosisAPI) {
-      if (!t.fees) {
-        errors.fees = new FeeNotLoaded();
-      }
-    } else {
-      if (!t.fees || !t.fees.gt(0)) {
-        errors.fees = new FeeNotLoaded();
-      }
+    if (!t.fees || !t.fees.gt(0)) {
+      errors.fees = new FeeNotLoaded();
     }
 
     amount = t.useAllAmount ? getMaxEstimatedBalance(a, estimatedFees) : amount;
@@ -277,7 +255,6 @@ export class CosmosTransactionStatusManager {
     ) {
       warnings.amount = new RecommendUndelegation();
     }
-
     return Promise.resolve({
       errors,
       warnings,

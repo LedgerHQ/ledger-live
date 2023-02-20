@@ -167,6 +167,9 @@ export const fetchERC20Tokens: () => Promise<ERC20Token[]> = makeLRUCache(
       const { data } = await network({
         url: `${getEnv("DYNAMIC_CAL_BASE_URL")}/erc20.json`,
       });
+      if (!data || !Array.isArray(data)) {
+        throw new Error("ERC20.json file was malformed");
+      }
 
       tokens = data;
     } catch (e: any) {
@@ -178,7 +181,7 @@ export const fetchERC20Tokens: () => Promise<ERC20Token[]> = makeLRUCache(
   },
   () => "erc20-tokens",
   {
-    maxAge: 6 * 60 * 60 * 1000,
+    ttl: 6 * 60 * 60 * 1000,
   }
 );
 
@@ -189,9 +192,14 @@ export async function preload(
     return Promise.resolve(null);
   }
 
-  const tokens = await fetchERC20Tokens();
-  addTokens(tokens.map(convertERC20));
-  return tokens;
+  try {
+    const tokens = await fetchERC20Tokens();
+    addTokens(tokens.map(convertERC20));
+    return tokens;
+  } catch (e) {
+    log("Ethereum Family", "Error while adding tokens in preload", e);
+    return [];
+  }
 }
 
 export function hydrate(

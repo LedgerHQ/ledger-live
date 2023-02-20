@@ -6,7 +6,6 @@ import { log } from "@ledgerhq/logs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
-import { findCurrencyExplorer } from "../../api/Ledger";
 import { encodeAccountId } from "../../account";
 import {
   isSegwitDerivationMode,
@@ -20,7 +19,7 @@ import wallet from "./wallet-btc";
 import { getAddress } from "./hw-getAddress";
 import { mapTxToOperations } from "./logic";
 import { Account, Operation } from "@ledgerhq/types-live";
-import { decodeAccountId } from "../../account/accountId";
+import { decodeAccountId } from "../../account/index";
 import { startSpan } from "../../performance";
 
 // Map LL's DerivationMode to wallet-btc's
@@ -132,29 +131,21 @@ const getAccountShape: GetAccountShape = async (info) => {
   const walletDerivationMode = toWalletDerivationMode(
     derivationMode as DerivationMode
   );
-  const explorer = findCurrencyExplorer(currency);
-  if (!explorer) {
-    throw new Error(`No explorer found for currency ${currency.name}`);
-  }
-  if (explorer.version !== "v2" && explorer.version !== "v3") {
-    throw new Error(`Unsupported explorer version ${explorer.version}`);
-  }
 
   span = startSpan("sync", "generateAccount");
   const walletAccount =
     (initialAccount as BitcoinAccount)?.bitcoinResources?.walletAccount ||
-    (await wallet.generateAccount({
-      xpub,
-      path: rootPath,
-      index,
-      currency: <Currency>currency.id,
-      network: walletNetwork,
-      derivationMode: walletDerivationMode,
-      explorer: `ledger${explorer.version}`,
-      explorerURI: `${explorer.endpoint}/blockchain/${explorer.version}/${explorer.id}`,
-      storage: "mock",
-      storageParams: [],
-    }));
+    (await wallet.generateAccount(
+      {
+        xpub,
+        path: rootPath,
+        index,
+        currency: <Currency>currency.id,
+        network: walletNetwork,
+        derivationMode: walletDerivationMode,
+      },
+      currency
+    ));
   span.finish();
 
   const oldOperations = initialAccount?.operations || [];

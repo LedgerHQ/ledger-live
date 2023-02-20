@@ -14,7 +14,7 @@ import { useTheme } from "@react-navigation/native";
 import DelegatingContainer from "../families/tezos/DelegatingContainer";
 import { rgba } from "../colors";
 import getWindowDimensions from "../logic/getWindowDimensions";
-import BottomModal from "./BottomModal";
+import QueuedDrawer from "./QueuedDrawer";
 import Circle from "./Circle";
 import Touchable from "./Touchable";
 import LText from "./LText";
@@ -56,7 +56,11 @@ export default function DelegationDrawer({
   const unit = getAccountUnit(account);
   const iconWidth = normalize(64);
   return (
-    <BottomModal style={styles.modal} isOpened={isOpen} onClose={onClose}>
+    <QueuedDrawer
+      style={styles.modal}
+      isRequestingToBeOpened={isOpen}
+      onClose={onClose}
+    >
       <View style={styles.root}>
         <DelegatingContainer
           left={
@@ -110,10 +114,10 @@ export default function DelegationDrawer({
           ))}
         </View>
       </View>
-    </BottomModal>
+    </QueuedDrawer>
   );
 }
-type FieldType = {
+export type FieldType = {
   label: React.ReactNode;
   Component: React.ReactNode;
 };
@@ -150,7 +154,7 @@ function DataField({ label, Component, isLast }: DataFieldProps) {
   );
 }
 
-type Action = {
+export type Action = {
   label?: React.ReactNode;
   Icon: string | ComponentType<IconProps>;
   event?: string;
@@ -158,6 +162,7 @@ type Action = {
   disabled?: boolean;
   onPress?: () => void;
 };
+
 export type IconProps = {
   size: number;
   style: StyleProp<ViewStyle>;

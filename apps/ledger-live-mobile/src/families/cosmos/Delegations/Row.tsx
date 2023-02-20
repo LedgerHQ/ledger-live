@@ -8,8 +8,7 @@ import {
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
-import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
-
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
 import CounterValue from "../../../components/CounterValue";
 import ArrowRight from "../../../icons/ArrowRight";
 import LText from "../../../components/LText";
@@ -46,7 +45,10 @@ export default function DelegationRow({
       <View style={[styles.icon]}>
         <ValidatorImage
           size={42}
-          isLedger={validatorAddress === LEDGER_VALIDATOR_ADDRESS}
+          isLedger={
+            validatorAddress ===
+            cryptoFactory(currency.name.toLowerCase()).ledgerValidator
+          }
           name={validator?.name ?? validatorAddress ?? ""}
         />
       </View>

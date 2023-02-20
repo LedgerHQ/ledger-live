@@ -421,6 +421,23 @@
       "title" : "抱歉，没有找到账户",
       "description" : "地址计算出错。请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
     },
+    "ElrondDecimalsLimitReached" : {
+      "title" : "已达到小数位数限制",
+      "description" : "请确保所提供的数额有 18 位小数。"
+    },
+    "ElrondMinDelegatedAmountError" : {
+      "title" : "已委托数额必须至少为 {{formattedAmount}}"
+    },
+    "ElrondMinUndelegatedAmountError" : {
+      "title" : "未委托数额必须至少为 {{formattedAmount}}"
+    },
+    "ElrondDelegationBelowMinimumError" : {
+      "title" : "剩余委托不能少于 {{formattedAmount}}"
+    },
+    "NotEnoughEGLDForFees" : {
+      "title" : "EGLD 数额不足以支付交易费用",
+      "description" : "请向您的账户发送一些 EGLD 以支付交易费用。"
+    },
     "NotEnoughBalance" : {
       "title" : "抱歉，资金不足",
       "description" : "请确保该账户资金充足。"
@@ -532,7 +549,7 @@
       "description" : "必须在 30 秒内签署交易。请重试。"
     },
     "TronNotEnoughEnergy" : {
-      "title" : "能量低于必要值。您可能需要支付高达 20TRX 的费用。"
+      "title" : "能量低于必要值。您可能需要支付高达 50TRX 的费用。"
     },
     "UpdateYourApp" : {
       "title" : "需要更新应用程序",
@@ -831,6 +848,13 @@
       "modalButtonLabelBase" : "授权",
       "modalButtonLabelSettingsVariant" : "前往设置选项",
       "dontPair" : "不配对"
+    },
+    "camera" : {
+      "title" : "授权相机",
+      "authorizeDescription" : "请授权相机扫描二维码。",
+      "authorizeButtonTitle" : "授权",
+      "goToSettingsDescription" : "请在“设置”中授权相机扫描二维码。",
+      "goToSettingsButtonTitle" : "前往设置选项"
     }
   },
   "fees" : {
@@ -1115,6 +1139,12 @@
     "mostPopular" : "最受欢迎"
   },
   "installSetOfApps" : {
+    "restore" : {
+      "title" : "是否安装与 {{deviceName}} 上相同的应用程序？",
+      "titleNoDeviceName" : "是否安装与上一台 Ledger 设备上相同的应用程序？",
+      "installCTA" : "立即安装",
+      "skipCTA" : "我以后再下载"
+    },
     "landing" : {
       "estimatedTime" : "{{ minutes }} 分钟",
       "title" : "{{ productName }} 使用应用程序完成安全的区块链交易",
@@ -1126,7 +1156,7 @@
       "loading" : "正在加载……",
       "resolving" : "解决依赖关系",
       "progress" : "正在安装应用程序 {{progress}}%",
-      "disclaimer" : "{{ productName }} 上的应用程序用于批准交易。您可以随时添加或删除它们。"
+      "disclaimer" : "随时在 Ledger Live 中添加或删除应用程序。"
     }
   },
   "onboarding" : {
@@ -2116,6 +2146,8 @@
       "undelegated" : "已解除委托 ({{amount}})",
       "undelegatedFrom" : "已解除对后者的委托",
       "undelegatedAmount" : "已解除委托的数额",
+      "withdrawnFrom" : "已提取自",
+      "withdrawnAmount" : "已提取数额",
       "rewardFrom" : "奖励来自",
       "rewardAmount" : "已收集的数额",
       "memo" : "Memo",
@@ -2272,12 +2304,6 @@
         "unsupported" : "不支持",
         "settings" : "应用程序设置",
         "includeGeneralSettings" : "导入桌面应用程序设置"
-      },
-      "fallback" : {
-        "header" : "导入账户",
-        "title" : "启用摄像头",
-        "desc" : "请在设置中启用摄像头以便扫描二维码。",
-        "buttonTitle" : "前往设置选项"
       }
     },
     "availableBalance" : "可用余额",
@@ -2550,6 +2576,10 @@
       "recommendations" : {
         "title" : "推荐",
         "desc" : "使用个性化推荐和特别优惠，丰富您的体验"
+      },
+      "largeMover" : {
+        "title" : "大幅波动工具",
+        "desc" : "当比特币和以太币价格出现重要波动时，您会收到通知。"
       },
       "price" : {
         "title" : "价格提醒",
@@ -3622,7 +3652,7 @@
       "title" : "在设备上确认互换操作",
       "alert" : {
         "default" : "发送之前请在您的设备上验证互换详情。地址会被安全地交换因此您不必对其进行验证。",
-        "cic" : "在发送之前，请先在您的设备上核实互换详情。CIC 可能需要对某些交易进行额外的验证，从而导致延迟。"
+        "provider" : "发送资金之前，请先在您的设备上核实互换详情。{{providerName}} 可能需要对某些交易进行额外验证，因此导致延迟。"
       },
       "acceptTerms" : "验证此交易，即表示我接受\n<0><0>{{provider}}</0>的使用条款</0>",
       "notice" : "发送之前请在您的设备上验证互换详情。地址会被安全地交换因此您不必对其进行验证。"
@@ -4425,44 +4455,19 @@
       "activatableVotes" : "您有现在可激活的投票。"
     }
   },
-  "osmosis" : {
-    "info" : {
-      "available" : {
-        "title" : "OSMO 现已推出"
-      },
-      "delegated" : {
-        "description" : "委托资产用于 Osmosis 投票。这是您的总得票数。"
-      },
-      "undelegating" : {
-        "description" : "取消委托的资产在 14 天锁定期才能使用。"
-      }
-    },
-    "delegation" : {
-      "flow" : {
-        "steps" : {
-          "starter" : {
-            "description" : "委托 OSMO 可安全赚取奖励，时刻掌控您的资产。",
-            "steps" : {
-              "1" : "取消委托过程必须等待 14 天才能完成。"
-            }
-          }
-        }
-      }
-    }
-  },
   "cosmos" : {
     "info" : {
       "available" : {
-        "title" : "ATOM 可用",
+        "title" : "{{currencyTicker}} 可用",
         "description" : "该数额可自由支配。"
       },
       "delegated" : {
         "title" : "已委托资产",
-        "description" : "已委托的资产被用于 Cosmos 投票。这是您的总票数。"
+        "description" : "委托资产用于 {{currencyName}} 投票。这是您的总得票数。"
       },
       "undelegating" : {
         "title" : "正在解除委托",
-        "description" : "解除委托的资产会有 21 天的时间锁，之后才可用。"
+        "description" : "取消委托的资产在 {{numberOfDays}} 天锁定期后才能使用。"
       },
       "delegationUnavailable" : {
         "title" : "委托不可用",
@@ -4470,7 +4475,7 @@
       }
     },
     "delegation" : {
-      "delegationEarn" : "您可以通过委托资产赚取 ATOM 奖励。",
+      "delegationEarn" : "您可以通过委托资产赚取 {{ticker}} 奖励。",
       "info" : "委托机制如何运作",
       "claimRewards" : "申领奖励",
       "claimAvailableRewards" : "申领 {{amount}}",
@@ -4498,10 +4503,10 @@
       "flow" : {
         "steps" : {
           "starter" : {
-            "description" : "将您的 ATOM 币委托出去从而安全地赚取奖励，同时依旧掌控您的资产。",
+            "description" : "委托 {{ticker}} 可安全赚取奖励，时刻掌控您的资产。",
             "steps" : {
               "0" : "委托出去的资产依旧为您所有。",
-              "1" : "你需要等待 21 天才能完成解除委托流程。",
+              "1" : "取消委托过程必须等待 {{numberOfDays}} 天才能完成。",
               "2" : "使用您的 Ledger 设备安全地进行委托。"
             },
             "warning" : {
@@ -4641,6 +4646,207 @@
             "success" : {
               "title" : "您已成功申领您的奖励。已将其添加到您的可用余额。",
               "titleCompound" : "您的奖励已委托给同一个验证者。",
+              "text" : "该交易一经网络确认，就会更新您的账户余额。",
+              "cta" : "查看详情"
+            },
+            "pending" : {
+              "title" : "正在播送交易……"
+            },
+            "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
+          }
+        }
+      }
+    }
+  },
+  "elrond" : {
+    "info" : {
+      "available" : {
+        "title" : "可用 EGLD",
+        "description" : "此数额可以转移。"
+      },
+      "delegated" : {
+        "title" : "权益质押的资产",
+        "description" : "权益质押服务提供商间接使用权益质押的资产，通过参与共识机制运行验证者节点、处理交易和保护网络。"
+      },
+      "undelegating" : {
+        "title" : "待处理的提取",
+        "description" : "取消权益质押的资产需在 10 天解绑期结束后才能提取。"
+      },
+      "delegationUnavailable" : {
+        "title" : "委托不可用",
+        "description" : "您的账户中没有足够的可用余额来开始新的委托。"
+      }
+    },
+    "delegation" : {
+      "delegationEarn" : "权益质押您的 EGLD 资产，保护网络并领取您的奖励份额。",
+      "info" : "什么是权益质押？它是如何运作的？",
+      "claimRewards" : "申领奖励",
+      "claimAvailableRewards" : "申领 {{amount}}",
+      "header" : "我的权益质押",
+      "Amount" : "数额",
+      "noRewards" : "没有奖励可用",
+      "delegate" : "重新权益质押",
+      "undelegate" : "取消权益质押",
+      "reward" : "申领奖励",
+      "commission" : "佣金",
+      "iDelegate" : "我委托",
+      "totalStake" : "质押总额",
+      "stepperHeader" : {
+        "starter" : "赚取奖励",
+        "validator" : "委托资产",
+        "amountSubTitle" : "要权益质押的数额",
+        "summary" : "概要",
+        "verification" : "验证",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "您可以通过将 EGLD 资产权益质押给权益质押服务提供商来赚取奖励。",
+            "steps" : {
+              "0" : "您仍然保持对权益质押资产的所有权。",
+              "1" : "资产将在取消权益质押 10 天后可用。",
+              "2" : "使用 Ledger 设备进行权益质押。"
+            },
+            "warning" : {
+              "description" : "明智选择权益质押服务提供商：目前您面临的唯一风险是由于各种原因无法获得奖励，因此您应该根据可靠程度、沟通和经济因素选择提供商。"
+            },
+            "cta" : "继续"
+          },
+          "validator" : {
+            "validators" : "权益质押服务提供商",
+            "myDelegations" : "我的权益质押",
+            "cta" : "继续",
+            "apr" : "年化利率：{{amount}}",
+            "totalAvailable" : "可用总额：<0>{{amount}}</0>",
+            "allAssetsUsed" : "已使用所有资产",
+            "noResultsFound" : "未找到 \"<0>{{search}}</0>\" 验证者",
+            "currentAmount" : "(+ <0>{{amount}}</0>)"
+          },
+          "amount" : {
+            "assetsRemaining" : "剩余资产：<0>{{amount}}</0>",
+            "allAssetsUsed" : "已使用所有资产",
+            "minAmount" : "最小数额：<0>{{min}}</0>",
+            "incorrectAmount" : "最大数额：<0>{{max}}</0>",
+            "insufficientDelegation" : "每个权益质押服务提供商的权益质押总额必须至少为 1 {{label}}。",
+            "wrongUndelegations" : "每个权益质押服务提供商的剩余 {{label}} 权益质押数额应为 0 或大于 1 {{label}}。",
+            "cta" : "继续"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "您已成功权益质押资产",
+              "text" : "交易一经网络确认，您的账户余额就会更新。",
+              "cta" : "查看详情"
+            },
+            "pending" : {
+              "title" : "正在播送交易……"
+            },
+            "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
+          }
+        }
+      },
+      "drawer" : {
+        "status" : "状态",
+        "rewards" : "奖励",
+        "active" : "活跃",
+        "inactive" : "不活跃",
+        "completionDate" : "完成日期",
+        "redelegatedFrom" : "已重新委托自",
+        "completionDateHit" : "已完成"
+      }
+    },
+    "claimRewards" : {
+      "stepperHeader" : {
+        "validator" : "选择要收集的奖励",
+        "method" : "申领奖励",
+        "summary" : "概要",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "method" : {
+            "youEarned" : "您赚取了",
+            "byDelegationAssetsTo" : "通过将资产权益质押给",
+            "claimRewards" : "申领奖励",
+            "reDelegateRewards" : "权益质押奖励",
+            "claimRewardsInfo" : "它们现在将被申领并被添加到您的可用余额。",
+            "reDelegateRewardsInfo" : "将立即申领奖励并自动权益质押给同一个权益质押服务提供商。",
+            "compoundOrCashIn" : "权益质押奖励还是申领奖励？",
+            "claimRewardsTooltip" : "奖励将被添加至可用余额",
+            "reDelegateRewardsTooltip" : "奖励将添加至已权益质押数额。",
+            "cta" : "继续"
+          },
+          "verification" : {
+            "success" : {
+              "claimRewardsSuccess" : "您已成功申领您的奖励。已将其添加到您的可用余额。",
+              "reDelegateRewardsSuccess" : "您的奖励已权益质押给同一个权益质押服务提供商。",
+              "text" : "该交易一经网络确认，就会更新您的账户余额。",
+              "cta" : "查看详情"
+            },
+            "pending" : {
+              "title" : "正在播送交易……"
+            },
+            "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "要取消权益质押的数额",
+        "summary" : "概要",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "allAssetsUsed" : "已选择所有资产",
+            "assetsRemaining" : "剩余委托资产：<0>{{amount}}</0>",
+            "minAmount" : "最小数额：<0>{{min}}</0>",
+            "incorrectAmount" : "最大数额：<0>{{max}}</0>",
+            "minRemaining" : "最低剩余：<0>{{min}}</0>"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "您已成功取消权益质押资产",
+              "text" : "该交易一经网络确认，就会更新您的账户余额。",
+              "cta" : "查看详情"
+            },
+            "pending" : {
+              "title" : "正在播送交易……"
+            },
+            "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "stepperHeader" : {
+        "validator" : "选择要收集的奖励",
+        "method" : "申领奖励",
+        "summary" : "概要",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "method" : {
+            "youEarned" : "您已取消权益质押",
+            "byDelegationAssetsTo" : "从",
+            "withdrawInfo" : "它们现在将被申领并被添加到您的可用余额。",
+            "withdrawTooltip" : "提取的数额将添加至可用余额",
+            "cta" : "继续"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "您已成功申领您的奖励。已将其添加到您的可用余额。",
               "text" : "该交易一经网络确认，就会更新您的账户余额。",
               "cta" : "查看详情"
             },
@@ -5264,7 +5470,8 @@
     "actions" : {
       "redelegate" : "重新委托",
       "collectRewards" : "收集奖励",
-      "undelegate" : "解除委托"
+      "undelegate" : "解除委托",
+      "withdraw" : "提取"
     }
   },
   "ValidateOnDevice" : {
@@ -5757,6 +5964,13 @@
       "nft" : "NFT"
     },
     "nftGallery" : {
+      "filters" : {
+        "selectAndHide" : "选择并隐藏",
+        "hide" : "隐藏 {{count}} 件藏品",
+        "hide_plural" : "隐藏 {{count}} 件藏品",
+        "alertHide" : "已隐藏 1 件收藏。随时前往设置显示并取消隐藏",
+        "alertHide_plural" : "已隐藏 {{count}} 件收藏。随时前往设置显示并取消隐藏"
+      },
       "empty" : {
         "title" : "暂时没有 NFT 可显示",
         "subtitle" : "从接收您的第一个 NFT 开始。",

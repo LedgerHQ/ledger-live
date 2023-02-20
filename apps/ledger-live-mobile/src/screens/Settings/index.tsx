@@ -6,7 +6,7 @@ import { Icons } from "@ledgerhq/native-ui";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import Config from "react-native-config";
 import { ScreenName } from "../../const";
-import { accountsSelector } from "../../reducers/accounts";
+import { hasNoAccountsSelector } from "../../reducers/accounts";
 import SettingsCard from "../../components/SettingsCard";
 import PoweredByLedger from "./PoweredByLedger";
 import { TrackScreen } from "../../analytics";
@@ -26,7 +26,7 @@ export default function Settings({
 >) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const accounts = useSelector(accountsSelector);
+  const hasNoAccounts = useSelector(hasNoAccountsSelector);
   const { handleSettingsRateApp } = useRatings();
 
   const debugVisible =
@@ -62,7 +62,7 @@ export default function Settings({
         arrowRight
         settingsCardTestId="general-settings-card"
       />
-      {accounts.length > 0 && (
+      {hasNoAccounts ? null : (
         <SettingsCard
           title={t("settings.accounts.title")}
           desc={t("settings.accounts.desc")}
