@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { DefaultTheme } from "styled-components/native";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import { rgba, Theme, withTheme } from "../../../colors";
-import BottomModal from "../../../components/BottomModal";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
 import TrackScreen from "../../../analytics/TrackScreen";
@@ -44,9 +44,9 @@ class ConfirmationModal extends PureComponent<Props> {
       ...rest
     } = this.props;
     return (
-      <BottomModal
+      <QueuedDrawer
         {...rest}
-        isOpened={isOpened}
+        isRequestingToBeOpened={isOpened}
         onClose={onClose}
         style={styles.confirmationModal}
       >
@@ -95,7 +95,7 @@ class ConfirmationModal extends PureComponent<Props> {
             />
           ) : null}
         </View>
-      </BottomModal>
+      </QueuedDrawer>
     );
   }
 }

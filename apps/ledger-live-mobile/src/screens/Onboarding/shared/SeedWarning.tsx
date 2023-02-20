@@ -3,16 +3,9 @@ import React, { useState, useCallback } from "react";
 import { Linking } from "react-native";
 import { Trans } from "react-i18next";
 import { getDeviceModel, DeviceModelId } from "@ledgerhq/devices";
-import {
-  Text,
-  BottomDrawer,
-  Button,
-  Alert,
-  Flex,
-  IconBox,
-  Icons,
-} from "@ledgerhq/native-ui";
+import { Text, Button, Alert, Flex, IconBox, Icons } from "@ledgerhq/native-ui";
 import { urls } from "../../../config/urls";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 
 const SeedWarning = ({ deviceModelId }: { deviceModelId: DeviceModelId }) => {
   const deviceName = getDeviceModel(deviceModelId).productName;
@@ -22,8 +15,12 @@ const SeedWarning = ({ deviceModelId }: { deviceModelId: DeviceModelId }) => {
     Linking.openURL(urls.contact);
   }, []);
 
+  const onClose = useCallback(() => {
+    setIsOpened(false);
+  }, []);
+
   return (
-    <BottomDrawer isOpen={isOpened} onClose={() => setIsOpened(false)}>
+    <QueuedDrawer isRequestingToBeOpened={isOpened} onClose={onClose}>
       <Flex alignItems="center">
         <IconBox
           Icon={Icons.WarningMedium}
@@ -55,7 +52,7 @@ const SeedWarning = ({ deviceModelId }: { deviceModelId: DeviceModelId }) => {
       <Button type="default" outline={false} onPress={onContactSupport}>
         <Trans i18nKey="onboarding.warning.seed.contactSupportCTA" />
       </Button>
-    </BottomDrawer>
+    </QueuedDrawer>
   );
 };
 

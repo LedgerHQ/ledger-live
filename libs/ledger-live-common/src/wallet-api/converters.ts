@@ -68,10 +68,6 @@ export function currencyToWalletAPICurrency(
   currency: WalletAPISupportedCurrency
 ): WalletAPICurrency {
   if (currency.type === "TokenCurrency") {
-    if (currency.parentCurrency.family !== "ethereum") {
-      throw new Error("Only ERC20 tokens are supported");
-    }
-
     return {
       type: "TokenCurrency",
       standard: "ERC20",

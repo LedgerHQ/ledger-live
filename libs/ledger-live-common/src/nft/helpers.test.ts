@@ -9,7 +9,7 @@ import {
   groupByCurrency,
   orderByLastReceived,
 } from "./helpers";
-import { encodeNftId } from "./nftId";
+import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 
 const NFT_1 = {
   id: encodeNftId("js:2:0ddkdlsPmds", "contract", "nft.tokenId", "ethereum"),

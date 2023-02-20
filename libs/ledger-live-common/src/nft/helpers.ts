@@ -1,6 +1,6 @@
 import eip55 from "eip55";
 import BigNumber from "bignumber.js";
-import { encodeNftId } from ".";
+import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { decodeAccountId, groupAccountsOperationsByDay } from "../account";
 
 import type { Batch, BatchElement, Batcher } from "./NftMetadataProvider/types";

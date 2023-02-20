@@ -17,6 +17,12 @@ function currencyCacheId(currency) {
   return `bridgeproxypreload_${currency.id}`;
 }
 
+export function listCachedCurrencyIds() {
+  return Object.keys(global.localStorage)
+    .filter(k => k.startsWith("bridgeproxypreload"))
+    .map(k => k.replace("bridgeproxypreload_", ""));
+}
+
 export function setCurrencyCache(currency: CryptoCurrency, data: mixed) {
   if (data) {
     const serialized = JSON.stringify(data);

@@ -34,7 +34,6 @@ export const buildTransaction = async (
 ): Promise<{ aminoMsgs: AminoMsg[]; protoMsgs: ProtoMsg[] }> => {
   const aminoMsgs: Array<AminoMsg> = [];
   const protoMsgs: Array<ProtoMsg> = [];
-
   switch (transaction.mode) {
     case "send":
       if (transaction.recipient && transaction.amount.gt(0)) {
@@ -144,7 +143,7 @@ export const buildTransaction = async (
     case "undelegate":
       if (transaction.validators && transaction.validators.length > 0) {
         const validator = transaction.validators[0];
-        if (validator && validator.address && transaction.amount.gt(0)) {
+        if (validator && validator.address && validator.amount.gt(0)) {
           const aminoMsg: AminoMsgUndelegate = {
             type: "cosmos-sdk/MsgUndelegate",
             value: {

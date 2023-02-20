@@ -20,7 +20,7 @@ const account: Account = {
   blockHeight: 0,
   currency: {
     type: "CryptoCurrency",
-    id: "",
+    id: "hedera",
     managerAppName: "",
     coinType: 0,
     scheme: "",

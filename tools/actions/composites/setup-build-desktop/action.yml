@@ -1,0 +1,68 @@
+name: "Setup Build Ledger Live Desktop"
+description: "Composite job to build Ledger Live Desktop"
+inputs:
+  os:
+    description: "name of the os <mac | linux | win>"
+    required: true
+outputs:
+  version:
+    description: "package.json version"
+    value: ${{ steps.post-version.outputs.version }}
+  name:
+    description: "package.json name"
+    value: ${{ steps.post-version.outputs.name }}
+  port:
+    description: "The port the local server runs on"
+    value: ${{ steps.turborepo-cache-server.outputs.port }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: TurboRepo local caching server
+      id: turborepo-cache-server
+      uses: ./tools/actions/turborepo-gh-cache
+      with:
+        server-token: "yolo"
+        cleanup-cache-folder: "true"
+    - name: install dependencies
+      if: ${{ inputs.os != 'mac' }}
+      run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
+      shell: bash
+    - name: install dependencies
+      if: ${{ inputs.os == 'mac' }}
+      env:
+        LC_ALL: en_US.UTF-8
+        LANG: en_US.UTF-8
+      run: |
+        pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" -frozen-lockfile --unsafe-perm
+      shell: bash
+    - uses: ./tools/actions/get-package-infos
+      id: version
+      with:
+        path: ${{ github.workspace }}/apps/ledger-live-desktop
+    - name: set beta name
+      uses: ./tools/actions/change-product-name
+      with:
+        path: ${{ github.workspace }}/apps/ledger-live-desktop
+    - name: make local version (workflow dispatch)
+      if: github.event_name == 'workflow_dispatch'
+      env:
+        VERSION: ${{ steps.version.outputs.clean }}-sha.${{ github.sha }}
+      run: cd apps/ledger-live-desktop && npm version $VERSION
+      shell: bash
+    - name: make local version (pr)
+      if: github.event_name == 'pull_request'
+      env:
+        VERSION: ${{ steps.version.outputs.clean }}-sha.${{ github.event.pull_request.head.sha }}
+      run: cd apps/ledger-live-desktop && npm version $VERSION
+      shell: bash
+    - name: make local version (push)
+      if: github.event_name == 'push'
+      env:
+        VERSION: ${{ steps.version.outputs.clean }}-sha.${{ github.sha }}
+      run: cd apps/ledger-live-desktop && npm version $VERSION
+      shell: bash
+    - uses: ./tools/actions/get-package-infos
+      id: post-version
+      with:
+        path: ${{ github.workspace }}/apps/ledger-live-desktop

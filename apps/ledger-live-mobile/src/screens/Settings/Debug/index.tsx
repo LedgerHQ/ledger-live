@@ -92,6 +92,12 @@ export default function DebugSettings({
         iconLeft={<Icons.InfoAltMedium size={24} color="black" />}
         onPress={() => navigate(ScreenName.DebugInformation)}
       />
+      <SettingsRow
+        title="Performance"
+        desc="Get performance information about your setup"
+        iconLeft={<Icons.BarChartMedium size={24} color="black" />}
+        onPress={() => navigate(ScreenName.DebugPerformance)}
+      />
       <TouchableWithoutFeedback onPress={onDebugHiddenPress}>
         <View>
           <PoweredByLedger />

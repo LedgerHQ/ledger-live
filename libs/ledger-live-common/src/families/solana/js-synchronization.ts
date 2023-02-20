@@ -1,4 +1,4 @@
-import { GetAccountShapeArg0, mergeOps } from "../../bridge/jsHelpers";
+import { AccountShapeInfo, mergeOps } from "../../bridge/jsHelpers";
 import BigNumber from "bignumber.js";
 
 import { emptyHistoryCache, encodeAccountId } from "../../account";
@@ -60,7 +60,7 @@ type OnChainTokenAccount = Awaited<
 >["tokenAccounts"][number];
 
 export const getAccountShapeWithAPI = async (
-  info: GetAccountShapeArg0,
+  info: AccountShapeInfo,
   api: ChainAPI
 ): Promise<Partial<Account>> => {
   const {

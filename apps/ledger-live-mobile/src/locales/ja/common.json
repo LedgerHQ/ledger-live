@@ -421,6 +421,23 @@
       "title" : "アカウントが見つかりませんでした。",
       "description" : "アドレスの計算中に問題が発生しました。もう一度お試しください。問題が解決しない場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。"
     },
+    "ElrondDecimalsLimitReached" : {
+      "title" : "小数点以下の最大桁数に達しました",
+      "description" : "指定された量の小数点以下が18桁であることをご確認ください。"
+    },
+    "ElrondMinDelegatedAmountError" : {
+      "title" : "デリゲート解除の数量は{{formattedAmount}}以上必要です"
+    },
+    "ElrondMinUndelegatedAmountError" : {
+      "title" : "デリゲート解除の数量は{{formattedAmount}}以上必要です"
+    },
+    "ElrondDelegationBelowMinimumError" : {
+      "title" : "残りのデリゲートは{{formattedAmount}}を下回ることはできません"
+    },
+    "NotEnoughEGLDForFees" : {
+      "title" : "トランザクション手数料の支払いに十分なEGLDがありません",
+      "description" : "EGLDをアカウントに送付し、トランザクションの支払いを行ってください。"
+    },
     "NotEnoughBalance" : {
       "title" : "資金が不足しています。",
       "description" : "アカウントに十分な資金があることを確認してください。"
@@ -532,7 +549,7 @@
       "description" : "トランザクションは、30秒以内に署名する必要があります。もう一度お試しください。"
     },
     "TronNotEnoughEnergy" : {
-      "title" : "エネルギーが必要額を満たしていません。手数料には最大20TRXが必要となります。"
+      "title" : "エネルギーが必要額を満たしていません。手数料には最大30TRXが必要となります。"
     },
     "UpdateYourApp" : {
       "title" : "アプリのアップデートが必要です。",
@@ -547,7 +564,7 @@
       "description" : "アドレスを拒否しました。不審な点がある場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。"
     },
     "UserRefusedDeviceNameChange" : {
-      "title" : "Renaming was cancelled on {{ productName }}",
+      "title" : "{{ productName }}の名前変更がキャンセルされました",
       "description" : ""
     },
     "UserRefusedFirmwareUpdate" : {
@@ -831,6 +848,13 @@
       "modalButtonLabelBase" : "許可する",
       "modalButtonLabelSettingsVariant" : "設定を開く",
       "dontPair" : "ペアリングしない"
+    },
+    "camera" : {
+      "title" : "カメラを許可",
+      "authorizeDescription" : "カメラにQRコードのスキャンを許可してください。",
+      "authorizeButtonTitle" : "許可する",
+      "goToSettingsDescription" : "QRコードをスキャンするには、設定でカメラを許可してください。",
+      "goToSettingsButtonTitle" : "設定を開く"
     }
   },
   "fees" : {
@@ -1115,6 +1139,12 @@
     "mostPopular" : "一番人気"
   },
   "installSetOfApps" : {
+    "restore" : {
+      "title" : "{{deviceName}}と同じアプリをインストールしますか？",
+      "titleNoDeviceName" : "前のLedgerデバイスと同じアプリをインストールしますか？",
+      "installCTA" : "今すぐインストールする",
+      "skipCTA" : "後で行う"
+    },
     "landing" : {
       "estimatedTime" : "{{ minutes }}分",
       "title" : "{{ productName }} はアプリを使用し、安全なブロックチェーントランザクションを有効にします",
@@ -1126,7 +1156,7 @@
       "loading" : "読み込み中...",
       "resolving" : "依存関係を解決しています",
       "progress" : "アプリのインストール中{{progress}}%",
-      "disclaimer" : "{{ productName }}のアプリはトランザクションの承認に使用されます。これはいつでも追加、または削除できます。"
+      "disclaimer" : "Ledger Liveからいつでもアプリを追加または削除できます。"
     }
   },
   "onboarding" : {
@@ -2116,6 +2146,8 @@
       "undelegated" : "デリゲート解除済み（{{amount}}）",
       "undelegatedFrom" : "デリゲート解除元",
       "undelegatedAmount" : "デリゲート解除数",
+      "withdrawnFrom" : "引き出し：",
+      "withdrawnAmount" : "引き出し数量",
       "rewardFrom" : "報酬元",
       "rewardAmount" : "獲得額",
       "memo" : "メモ",
@@ -2272,12 +2304,6 @@
         "unsupported" : "未サポート",
         "settings" : "アプリ設定",
         "includeGeneralSettings" : "デスクトップ設定のインポート"
-      },
-      "fallback" : {
-        "header" : "アカウントのインポート",
-        "title" : "カメラの有効化",
-        "desc" : "QRコードをスキャンするには、設定でカメラを有効にしてください。",
-        "buttonTitle" : "設定を開く"
       }
     },
     "availableBalance" : "利用可能残高",
@@ -2550,6 +2576,10 @@
       "recommendations" : {
         "title" : "おすすめ",
         "desc" : "おすすめや特別なオファーで、お客様の体験をより豊かなものに"
+      },
+      "largeMover" : {
+        "title" : "変動",
+        "desc" : "BTCとETHで重要な値動きがあった場合に通知されます"
       },
       "price" : {
         "title" : "価格アラート",
@@ -3622,7 +3652,7 @@
       "title" : "スワップ処理をデバイス上で確認する",
       "alert" : {
         "default" : "送付する前に、スワップの詳細をデバイス上で確認してください。アドレスは安全にやりとりされるため、確認の必要はありません。",
-        "cic" : "送付する前に、スワップの詳細をデバイス上で確認してください。CICでは、一部のトランザクションに対して追加の検証を実行する必要があり、遅延が発生する場合があります。"
+        "provider" : "送付前に、スワップの詳細をデバイス上で確認してください。{{providerName}}では、一部のトランザクションに対して追加の検証を実行する必要があり、遅延が発生する場合があります。"
       },
       "acceptTerms" : "このトランザクションを検証することにより、私は\n<0><0>{{provider}}</0>の利用規約</0>に同意します",
       "notice" : "送付する前に、スワップの詳細をデバイス上で確認してください。アドレスは安全にやりとりされるため、確認の必要はありません。"
@@ -3714,9 +3744,9 @@
   "EditDeviceName" : {
     "title" : "デバイス名の変更",
     "charactersRemaining" : "残り{{remainingCount}}文字",
-    "action" : "Set name",
-    "rename" : "rename",
-    "success" : "Device renamed to '{{deviceName}}'"
+    "action" : "名前を設定",
+    "rename" : "名前の変更",
+    "success" : "デバイスの名前が「{{deviceName}}に変更されました"
   },
   "PairDevices" : {
     "Paired" : {
@@ -4425,44 +4455,19 @@
       "activatableVotes" : "有効化可能な投票があります。"
     }
   },
-  "osmosis" : {
-    "info" : {
-      "available" : {
-        "title" : "OSMO利用可"
-      },
-      "delegated" : {
-        "description" : "デリゲートされた資産は、Osmosisの投票に使われます。これがお客様の合計票数です。"
-      },
-      "undelegating" : {
-        "description" : "デリゲートを解除した資産は、14日間のロック期間後に再び利用可能になります。"
-      }
-    },
-    "delegation" : {
-      "flow" : {
-        "steps" : {
-          "starter" : {
-            "description" : "資産を管理しながら、OSMOをデリゲートして報酬を獲得しましょう。",
-            "steps" : {
-              "1" : "デリゲート解除が完了するまで、14日待つ必要があります。"
-            }
-          }
-        }
-      }
-    }
-  },
   "cosmos" : {
     "info" : {
       "available" : {
-        "title" : "利用可能なATOM",
+        "title" : "{{currencyTicker}} がご利用可能です",
         "description" : "これは利用可能額です。"
       },
       "delegated" : {
         "title" : "デリゲートされた資産",
-        "description" : "デリゲートされた資産は、Cosmosの投票に使われます。これがあなたの合計票数です。"
+        "description" : "デリゲートされた資産は、{{currencyName}}の投票に使われます。これがお客様の合計票数です。"
       },
       "undelegating" : {
         "title" : "デリゲート解除中",
-        "description" : "デリゲートを解除した資産は、21日間のロック期間後に再び利用可能になります。"
+        "description" : "デリゲートを解除した資産は、{{numberOfDays}}日間のロック期間後に再び利用可能になります。"
       },
       "delegationUnavailable" : {
         "title" : "デリゲート不可",
@@ -4470,7 +4475,7 @@
       }
     },
     "delegation" : {
-      "delegationEarn" : "資産をデリゲートすることで、ATOMで報酬を獲得できます。",
+      "delegationEarn" : "資産をデリゲートすることで、{{ticker}}で報酬を獲得できます。",
       "info" : "デリゲートの仕組み",
       "claimRewards" : "報酬獲得を申請",
       "claimAvailableRewards" : "{{amount}}を獲得",
@@ -4498,10 +4503,10 @@
       "flow" : {
         "steps" : {
           "starter" : {
-            "description" : "資産を管理しながら、ATOMをデリゲートして報酬を獲得しましょう。",
+            "description" : "資産を管理しながら、{{ticker}}をデリゲートして報酬を獲得しましょう。",
             "steps" : {
               "0" : "資産をデリゲートしても、資産の所有者は変わりません。",
-              "1" : "デリゲート解除が完了するまで、21日待つ必要があります。",
+              "1" : "デリゲート解除が完了するまで、{{numberOfDays}}日待つ必要があります。",
               "2" : "Ledgerデバイスを使って安全にデリゲートできます。"
             },
             "warning" : {
@@ -4641,6 +4646,207 @@
             "success" : {
               "title" : "報酬を正常に獲得しました。報酬は利用可能残高に加算されました。",
               "titleCompound" : "報酬が同じバリデータにデリゲートされました。",
+              "text" : "ネットワークによるトランザクションの承認後、アカウントの残高が更新されます。",
+              "cta" : "詳細を表示"
+            },
+            "pending" : {
+              "title" : "トランザクションをブロードキャスト中…"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
+    }
+  },
+  "elrond" : {
+    "info" : {
+      "available" : {
+        "title" : "利用可能なEGLD",
+        "description" : "この数量は送金できます。"
+      },
+      "delegated" : {
+        "title" : "ステーキングされた資産",
+        "description" : "ステーキングされた資産は、ステーキングプロバイダーによって間接的に使用され、バリデーターノードを操作し、トランザクションを処理し、コンセンサスメカニズムに参加することでネットワークを保護します。"
+      },
+      "undelegating" : {
+        "title" : "保留中の引き出し",
+        "description" : "ステーキングされていない資産は、10日間のボンド解除期間の対象となり、その後引き出しができるようになります。"
+      },
+      "delegationUnavailable" : {
+        "title" : "デリゲート不可",
+        "description" : "アカウントの利用可能残高が不足しているため、新たなデリゲートを開始できません。"
+      }
+    },
+    "delegation" : {
+      "delegationEarn" : "EGLDをステーキングしてネットワークを保護し、報酬のシェアを獲得します。",
+      "info" : "ステーキングとは何ですか？また、その仕組みは？",
+      "claimRewards" : "報酬獲得を申請",
+      "claimAvailableRewards" : "{{amount}}を獲得",
+      "header" : "私のステーキング",
+      "Amount" : "数量",
+      "noRewards" : "受け取れる報酬はありません。",
+      "delegate" : "再ステーキング",
+      "undelegate" : "ステーキングの解除",
+      "reward" : "報酬獲得を申請",
+      "commission" : "コミッション",
+      "iDelegate" : "デリゲートする",
+      "totalStake" : "合計ステーキング量",
+      "stepperHeader" : {
+        "starter" : "報酬を獲得する",
+        "validator" : "資産をデリゲートする",
+        "amountSubTitle" : "ステーキングする量",
+        "summary" : "概要",
+        "verification" : "認証",
+        "selectDevice" : "デバイスを選択",
+        "connectDevice" : "デバイスを接続",
+        "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "EGLD資産をステーキングプロバイダーにステーキングすることで、報酬を獲得できます。",
+            "steps" : {
+              "0" : "ステーキングされた資産の所有者は変わりません。",
+              "1" : "資産はステーキング解除から10日後に利用可能になります。",
+              "2" : "Ledgerデバイスを使用してステーキング。"
+            },
+            "warning" : {
+              "description" : "ステーキングプロバイダーを賢く選択してください。現在、唯一のリスクは、さまざまな理由で報酬を得られないことです。そのため、信頼性、コミュニケーション、および経済性に基づいてプロバイダーを選択する必要があります。"
+            },
+            "cta" : "続行"
+          },
+          "validator" : {
+            "validators" : "ステーキングプロバイダー",
+            "myDelegations" : "私のステーキング",
+            "cta" : "続行",
+            "apr" : "APR: {{amount}}",
+            "totalAvailable" : "合計利用可能額：<0>{{amount}}</0>",
+            "allAssetsUsed" : "全ての資産を使用中",
+            "noResultsFound" : "<0>{{search}}</0>のバリデーターが見つかりませんでした。",
+            "currentAmount" : "(+ <0>{{amount}}</0>)"
+          },
+          "amount" : {
+            "assetsRemaining" : "残りの資産：<0>{{amount}}</0>",
+            "allAssetsUsed" : "全ての資産を使用中",
+            "minAmount" : "最低金額: <0>{{min}}</0>",
+            "incorrectAmount" : "最大金額: <0>{{max}}</0>",
+            "insufficientDelegation" : "ステーキングの合計量は、ステーキングプロバイダーごとに最低1 {{label}}でなければなりません。",
+            "wrongUndelegations" : "ステーキングされた{{label}}の残りの量は、ステーキングプロバイダーごとに、0または1{{label}}より大きい必要があります。",
+            "cta" : "続行"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "資産が正常にステーキングされました",
+              "text" : "ネットワークによるトランザクションの承認後、アカウントの残高が更新されます。",
+              "cta" : "詳細を表示"
+            },
+            "pending" : {
+              "title" : "トランザクションをブロードキャスト中…"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      },
+      "drawer" : {
+        "status" : "ステータス",
+        "rewards" : "報酬",
+        "active" : "アクティブ",
+        "inactive" : "停止中",
+        "completionDate" : "完了日",
+        "redelegatedFrom" : "再デリゲート元",
+        "completionDateHit" : "完了"
+      }
+    },
+    "claimRewards" : {
+      "stepperHeader" : {
+        "validator" : "受け取る報酬を選択",
+        "method" : "報酬獲得を申請",
+        "summary" : "概要",
+        "selectDevice" : "デバイスを選択",
+        "connectDevice" : "デバイスを接続",
+        "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "method" : {
+            "youEarned" : "獲得額",
+            "byDelegationAssetsTo" : "資産を以下にステーキングすることによって：",
+            "claimRewards" : "報酬獲得を申請",
+            "reDelegateRewards" : "報酬をステーキング",
+            "claimRewardsInfo" : "報酬獲得を申請し、報酬は利用可能残高に加算されます。",
+            "reDelegateRewardsInfo" : "獲得した報酬が自動的に、同じステーキングプロバイダーにステーキングされます。",
+            "compoundOrCashIn" : "報酬をステーキングまたは獲得しますか？",
+            "claimRewardsTooltip" : "報酬は利用可能残高に加算されます。",
+            "reDelegateRewardsTooltip" : "報酬はステーキングした量に追加されます",
+            "cta" : "続行"
+          },
+          "verification" : {
+            "success" : {
+              "claimRewardsSuccess" : "報酬を正常に獲得しました。報酬は利用可能残高に加算されました。",
+              "reDelegateRewardsSuccess" : "報酬が同じステーキングプロバイダーにステーキングされました。",
+              "text" : "ネットワークによるトランザクションの承認後、アカウントの残高が更新されます。",
+              "cta" : "詳細を表示"
+            },
+            "pending" : {
+              "title" : "トランザクションをブロードキャスト中…"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "ステーキングを解除する量",
+        "summary" : "概要",
+        "selectDevice" : "デバイスを選択",
+        "connectDevice" : "デバイスを接続",
+        "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "allAssetsUsed" : "全ての資産選択済み",
+            "assetsRemaining" : "デリゲート済み資産：<0>{{amount}}</0>",
+            "minAmount" : "最低金額: <0>{{min}}</0>",
+            "incorrectAmount" : "最大金額: <0>{{max}}</0>",
+            "minRemaining" : "最小残高：<0>{{min}}</0>"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "資産のステーキングを正常に解除しました",
+              "text" : "ネットワークによるトランザクションの承認後、アカウントの残高が更新されます。",
+              "cta" : "詳細を表示"
+            },
+            "pending" : {
+              "title" : "トランザクションをブロードキャスト中…"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "stepperHeader" : {
+        "validator" : "受け取る報酬を選択",
+        "method" : "報酬獲得を申請",
+        "summary" : "概要",
+        "selectDevice" : "デバイスを選択",
+        "connectDevice" : "デバイスを接続",
+        "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "method" : {
+            "youEarned" : "ステーキング解除済み",
+            "byDelegationAssetsTo" : "from",
+            "withdrawInfo" : "報酬獲得を申請し、報酬は利用可能残高に加算されます。",
+            "withdrawTooltip" : "引き出したものは利用可能残高に加算されます",
+            "cta" : "続行"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "報酬を正常に獲得しました。報酬は利用可能残高に加算されました。",
               "text" : "ネットワークによるトランザクションの承認後、アカウントの残高が更新されます。",
               "cta" : "詳細を表示"
             },
@@ -5264,7 +5470,8 @@
     "actions" : {
       "redelegate" : "再デリゲート",
       "collectRewards" : "報酬を受け取る",
-      "undelegate" : "デリゲート解除"
+      "undelegate" : "デリゲート解除",
+      "withdraw" : "出金"
     }
   },
   "ValidateOnDevice" : {
@@ -5757,6 +5964,13 @@
       "nft" : "NFT"
     },
     "nftGallery" : {
+      "filters" : {
+        "selectAndHide" : "選択して非表示",
+        "hide" : "{{count}}個のコレクションを非表示",
+        "hide_plural" : "{{count}}個のコレクションを非表示",
+        "alertHide" : "1個のコレクションが非表示です。設定に移動して、いつでも表示か非表示を選択可能です",
+        "alertHide_plural" : "{{count}}個のコレクションが非表示です。設定に移動して、いつでも表示か非表示を選択可能です"
+      },
       "empty" : {
         "title" : "表示できるNFTはまだありません",
         "subtitle" : "最初のNFTを受け取って開始しましょう。",

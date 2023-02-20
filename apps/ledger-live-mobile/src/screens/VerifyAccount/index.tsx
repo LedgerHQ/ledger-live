@@ -21,7 +21,7 @@ import NavigationScrollView from "../../components/NavigationScrollView";
 import GenericErrorView from "../../components/GenericErrorView";
 import SkipDeviceVerification from "./SkipDeviceVerification";
 import VerifyAddress from "./VerifyAddress";
-import BottomModal from "../../components/BottomModal";
+import QueuedDrawer from "../../components/QueuedDrawer";
 import {
   RootComposite,
   StackNavigatorNavigation,
@@ -137,7 +137,7 @@ export default function VerifyAccount({ navigation, route }: NavigationProps) {
           )}
         />
       ) : !device && skipDevice ? (
-        <BottomModal isOpened={true}>
+        <QueuedDrawer isRequestingToBeOpened={true}>
           <View style={styles.modalContainer}>
             <SkipDeviceVerification
               onCancel={handleClose}
@@ -145,7 +145,7 @@ export default function VerifyAccount({ navigation, route }: NavigationProps) {
               account={account}
             />
           </View>
-        </BottomModal>
+        </QueuedDrawer>
       ) : null}
     </SafeAreaView>
   );

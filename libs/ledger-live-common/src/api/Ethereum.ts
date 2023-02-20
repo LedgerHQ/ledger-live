@@ -174,6 +174,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       const query: any = {
         batch_size: batchSize,
         filtering: true,
+        noinput: true,
       };
       if (blockHeight) {
         query.block_height = blockHeight;
@@ -346,7 +347,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       },
       (currency) => currency.id,
       {
-        maxAge: 30 * 1000,
+        ttl: 30 * 1000,
       }
     ),
 

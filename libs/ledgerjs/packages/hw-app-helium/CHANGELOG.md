@@ -1,5 +1,19 @@
 # @ledgerhq/hw-app-helium
 
+## 6.29.6
+
+### Patch Changes
+
+- Updated dependencies [[`c2779b1cab`](https://github.com/LedgerHQ/ledger-live/commit/c2779b1cab18a1d5747ca955f5ceee86db920f57)]:
+  - @ledgerhq/hw-transport@6.28.0
+
+## 6.29.6-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`c2779b1cab`](https://github.com/LedgerHQ/ledger-live/commit/c2779b1cab18a1d5747ca955f5ceee86db920f57)]:
+  - @ledgerhq/hw-transport@6.28.0-next.0
+
 ## 6.29.5
 
 ### Patch Changes

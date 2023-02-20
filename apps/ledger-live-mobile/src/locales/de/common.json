@@ -421,6 +421,23 @@
       "title" : "Entschuldigung, es wurde kein Konto gefunden",
       "description" : "Bei der Adressberechnung ist etwas schief gelaufen. Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, speichern Sie bitte Ihre Protokolle über die Schaltfläche unten und stellen Sie sie dem Ledger-Support zur Verfügung."
     },
+    "ElrondDecimalsLimitReached" : {
+      "title" : "Maximale Dezimalstellengrenze erreicht",
+      "description" : "Bitte stellen Sie sicher, dass der angegebene Betrag 18 Dezimalstellen hat."
+    },
+    "ElrondMinDelegatedAmountError" : {
+      "title" : "Der delegierte Betrag muss mindestens {{formattedAmount}} betragen"
+    },
+    "ElrondMinUndelegatedAmountError" : {
+      "title" : "Undelegierter Betrag muss mindestens {{formattedAmount}} betragen"
+    },
+    "ElrondDelegationBelowMinimumError" : {
+      "title" : "Verbleibende Delegierung darf nicht kleiner als {{formattedAmount}} sein"
+    },
+    "NotEnoughEGLDForFees" : {
+      "title" : "Nicht genug EGLD, um die Transaktionsgebühren zu bezahlen",
+      "description" : "Bitte überweisen Sie einige EGLD auf Ihr Konto, um die Transaktionen zu bezahlen."
+    },
     "NotEnoughBalance" : {
       "title" : "Entschuldigung, Guthaben reicht nicht aus",
       "description" : "Bitte stellen Sie sicher, dass das Konto ausreichend gedeckt ist."
@@ -532,7 +549,7 @@
       "description" : "Transaktionen müssen innerhalb von 30 Sekunden signiert werden. Bitte versuchen Sie es erneut."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Energie ist niedriger als notwendig. Es können bis zu 20TRX an Gebühren anfallen."
+      "title" : "Energie ist niedriger als notwendig. Es können bis zu 50TRX an Gebühren anfallen."
     },
     "UpdateYourApp" : {
       "title" : "App-Update erforderlich",
@@ -831,6 +848,13 @@
       "modalButtonLabelBase" : "Autorisieren",
       "modalButtonLabelSettingsVariant" : "Gehen Sie zu Einstellungen",
       "dontPair" : "Nicht verbinden"
+    },
+    "camera" : {
+      "title" : "Kamera autorisieren",
+      "authorizeDescription" : "Autorisieren Sie bitte die Kamera zum Scannen von QR-Codes.",
+      "authorizeButtonTitle" : "Autorisieren",
+      "goToSettingsDescription" : "Autorisieren Sie bitte die Kamera in den Einstellungen, um QR-Codes zu scannen.",
+      "goToSettingsButtonTitle" : "Gehen Sie zu Einstellungen"
     }
   },
   "fees" : {
@@ -1115,6 +1139,12 @@
     "mostPopular" : "Am beliebtesten"
   },
   "installSetOfApps" : {
+    "restore" : {
+      "title" : "Die gleichen Apps wie auf {{deviceName}} installieren?",
+      "titleNoDeviceName" : "Die gleichen Apps wie auf dem vorherigen Ledger-Gerät installieren?",
+      "installCTA" : "Jetzt installieren",
+      "skipCTA" : "Ich mache das später"
+    },
     "landing" : {
       "estimatedTime" : "{{ minutes }} Min.",
       "title" : "{{ productName }} nutzt Apps, um sichere Blockchain-Transaktionen zu ermöglichen",
@@ -1126,7 +1156,7 @@
       "loading" : "Lade Daten...",
       "resolving" : "Auflösen von Abhängigkeiten",
       "progress" : "Installieren von Apps {{progress}} %",
-      "disclaimer" : "Apps auf {{ productName }} werden zur Autorisierung von Transaktionen verwendet. Sie können sie jederzeit hinzufügen oder entfernen."
+      "disclaimer" : "Sie können jederzeit Apps aus Ledger Live hinzufügen oder entfernen."
     }
   },
   "onboarding" : {
@@ -2116,6 +2146,8 @@
       "undelegated" : "({{amount}}) nicht delegiert",
       "undelegatedFrom" : "Übertragung aufgehoben durch",
       "undelegatedAmount" : "Nicht delegierter Betrag",
+      "withdrawnFrom" : "Abgehoben von",
+      "withdrawnAmount" : "Abgehobener Betrag",
       "rewardFrom" : "Prämie von",
       "rewardAmount" : "Eingesammelter Betrag",
       "memo" : "Memo",
@@ -2272,12 +2304,6 @@
         "unsupported" : "Nicht unterstützt",
         "settings" : "App-Einstellungen",
         "includeGeneralSettings" : "Desktop-Einstellungen importieren"
-      },
-      "fallback" : {
-        "header" : "Konto importieren",
-        "title" : "Kamera einschalten",
-        "desc" : "Bitte aktivieren Sie die Kamera in den Einstellungen, um QR-Codes zu scannen.",
-        "buttonTitle" : "Gehen Sie zu Einstellungen"
       }
     },
     "availableBalance" : "Verfügbares Guthaben",
@@ -2550,6 +2576,10 @@
       "recommendations" : {
         "title" : "Empfehlungen",
         "desc" : "Bereichern Sie Ihr Erlebnis mit personalisierten Empfehlungen und speziellen Angeboten"
+      },
+      "largeMover" : {
+        "title" : "Große Mover",
+        "desc" : "Sie bekommen eine Benachrichtigung über wichtige Preisbewegungen für BTC und ETH"
       },
       "price" : {
         "title" : "Preisalarme",
@@ -3622,7 +3652,7 @@
       "title" : "Swap-Vorgang auf dem Gerät bestätigen",
       "alert" : {
         "default" : "Überprüfen Sie die Details des Tauschs auf Ihrem Gerät, bevor Sie sie senden. Die Adressen werden sicher ausgetauscht, sodass Sie diese nicht verifizieren müssen.",
-        "cic" : "Verifizieren Sie die Swap-Details auf Ihrem Gerät, bevor Sie diese senden. CIC muss möglicherweise eine zusätzliche Überprüfung für einige Transaktionen durchführen, was zu einer Verzögerung führen kann."
+        "provider" : "Verifizieren Sie die Swap-Details auf Ihrem Gerät, bevor Sie diese senden. {{providerName}} muss möglicherweise eine zusätzliche Überprüfung für einige Transaktionen durchführen, was zu einer Verzögerung führen kann."
       },
       "acceptTerms" : "Durch Validieren dieser Transaktion stimme ich den\n<0>Nutzungsbedingungen von <0>{{provider}}</0> zu</0>",
       "notice" : "Überprüfen Sie die Details des Tauschs auf Ihrem Gerät, bevor Sie sie senden. Die Adressen werden sicher ausgetauscht, sodass Sie diese nicht verifizieren müssen."
@@ -4425,44 +4455,19 @@
       "activatableVotes" : "Sie haben Stimmen, die jetzt aktiviert werden können."
     }
   },
-  "osmosis" : {
-    "info" : {
-      "available" : {
-        "title" : "OSMO verfügbar"
-      },
-      "delegated" : {
-        "description" : "Übertragene Vermögenswerte werden für Osmosis-Abstimmungen verwendet. Dies ist Ihre Gesamtzahl der Stimmen."
-      },
-      "undelegating" : {
-        "description" : "Nicht delegierte Vermögenswerte sind in einer Zeitsperre von 14 Tagen, bevor sie verfügbar sind."
-      }
-    },
-    "delegation" : {
-      "flow" : {
-        "steps" : {
-          "starter" : {
-            "description" : "Delegieren Sie Ihr OSMO, um sicher Prämien zu verdienen und behalten Sie die Kontrolle über Ihr Vermögen.",
-            "steps" : {
-              "1" : "Sie müssen 14 Tage warten, bis die Delegierung vollständig beendet ist."
-            }
-          }
-        }
-      }
-    }
-  },
   "cosmos" : {
     "info" : {
       "available" : {
-        "title" : "ATOM verfügbar",
+        "title" : "{{currencyTicker}} verfügbar",
         "description" : "Dieser Betrag ist verfügbar."
       },
       "delegated" : {
         "title" : "Delegierte Vermögenswerte",
-        "description" : "Übertragene Vermögenswerte werden für Cosmos-Abstimmungen verwendet. Dies ist Ihre Gesamtzahl der Stimmen."
+        "description" : "Delegierte Vermögenswerte werden für {{currencyName}}-Abstimmungen verwendet. Dies ist Ihre Gesamtzahl der Stimmen."
       },
       "undelegating" : {
         "title" : "Delegierung aufheben",
-        "description" : "Nicht delegierte Vermögenswerte sind in einer Zeitsperre von 21 Tagen, bevor sie verfügbar sind."
+        "description" : "Nicht delegierte Vermögenswerte befinden sich in einer Zeitsperre von {{numberOfDays}} Tagen, bevor sie verfügbar sind."
       },
       "delegationUnavailable" : {
         "title" : "Übertragung nicht verfügbar",
@@ -4470,7 +4475,7 @@
       }
     },
     "delegation" : {
-      "delegationEarn" : "Sie können ATOM-Prämien verdienen, indem Sie Ihre Vermögenswerte übertragen.",
+      "delegationEarn" : "Sie können {{ticker}}-Belohnungen erhalten, indem Sie Ihre Vermögenswerte delegieren.",
       "info" : "So funktioniert Delegation",
       "claimRewards" : "Prämien beanspruchen",
       "claimAvailableRewards" : "Anspruch {{amount}}",
@@ -4498,10 +4503,10 @@
       "flow" : {
         "steps" : {
           "starter" : {
-            "description" : "Delegieren Sie Ihr ATOM, um sicher Prämien zu verdienen und behalten Sie die Kontrolle über Ihr Vermögen.",
+            "description" : "Delegieren Sie Ihre {{ticker}}, um sicher Belohnungen zu verdienen und behalten Sie die Kontrolle über Ihre Vermögenswerte.",
             "steps" : {
               "0" : "Delegierte Vermögenswerte bleiben in Ihrem Besitz.",
-              "1" : "Sie müssen 21 Tage warten, bis die Delegierung vollständig beendet ist.",
+              "1" : "Sie müssen {{numberOfDays}} Tage warten, bis die Aufhebung der Delegierung abgeschlossen ist.",
               "2" : "Delegieren Sie sicher mit Ihrem Ledger-Gerät."
             },
             "warning" : {
@@ -4641,6 +4646,207 @@
             "success" : {
               "title" : "Sie haben Ihre Prämien erfolgreich eingefordert. Diese wurden zu Ihrem verfügbaren Guthaben hinzugefügt.",
               "titleCompound" : "Deine Belohnungen wurden an denselben Validator delegiert.",
+              "text" : "Ihr Kontostand wird aktualisiert, wenn das Netzwerk die Transaktion bestätigt.",
+              "cta" : "Details anzeigen"
+            },
+            "pending" : {
+              "title" : "Sende Transaktion..."
+            },
+            "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+          }
+        }
+      }
+    }
+  },
+  "elrond" : {
+    "info" : {
+      "available" : {
+        "title" : "EGLD verfügbar",
+        "description" : "Dieser Betrag kann überwiesen werden."
+      },
+      "delegated" : {
+        "title" : "Vermögenswerte im Staking",
+        "description" : "Im Staking eingesetzte Vermögenswerte werden indirekt vom Staking-Anbieter verwendet, um Validatorknoten zu betreiben, Transaktionen zu verarbeiten und das Netzwerk durch Teilnahme am Konsensmechanismus zu sichern."
+      },
+      "undelegating" : {
+        "title" : "Ausstehende Abhebungen",
+        "description" : "Vermögenswerte, deren Delegierung aufgehoben wurde, unterliegen einer 10-tägigen Frist für die Aufhebung der Bindung, bevor sie abgehoben werden können."
+      },
+      "delegationUnavailable" : {
+        "title" : "Übertragung nicht verfügbar",
+        "description" : "Nicht genügend verfügbares Guthaben auf Ihrem Konto, um eine neue Übertragung zu starten."
+      }
+    },
+    "delegation" : {
+      "delegationEarn" : "Setzen Sie Ihre EGLD im Staking ein, um das Netzwerk zu sichern und Ihren Anteil an den Belohnungen zu erhalten.",
+      "info" : "Was ist Staking und wie funktioniert es?",
+      "claimRewards" : "Prämien beanspruchen",
+      "claimAvailableRewards" : "Anspruch {{amount}}",
+      "header" : "Mein Staking-Einsatz",
+      "Amount" : "Betrag",
+      "noRewards" : "Keine Prämien verfügbar",
+      "delegate" : "Restake",
+      "undelegate" : "Unstake",
+      "reward" : "Prämien beanspruchen",
+      "commission" : "Provision",
+      "iDelegate" : "Ich delegiere",
+      "totalStake" : "Stake-Gesamtsumme",
+      "stepperHeader" : {
+        "starter" : "Verdienen Sie Belohnungen",
+        "validator" : "Delegierte Vermögenswerte",
+        "amountSubTitle" : "Staking-Betrag",
+        "summary" : "Zusammenfassung",
+        "verification" : "Verifizierung",
+        "selectDevice" : "Gerät wählen",
+        "connectDevice" : "Verbundenes Gerät",
+        "stepRange" : "Schritt {{currentStep}} von {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Sie können Belohnungen verdienen, indem Sie Ihre EGLD-Vermögenswerte an einen Staking-Anbieter delegieren.",
+            "steps" : {
+              "0" : "Sie behalten das Eigentum an den im Staking eingesetzten Vermögenswerten.",
+              "1" : "Vermögenswerte sind 10 Tage nach dem Aufheben des Staking-Prozesses verfügbar.",
+              "2" : "Staking mit Ihrem Ledger-Gerät"
+            },
+            "warning" : {
+              "description" : "Wählen Sie Ihren Staking-Anbieter mit Bedacht aus: Derzeit besteht das einzige Risiko darin, aus verschiedenen Gründen keine Belohnungen zu erhalten. Daher sollten Sie einen Anbieter auswählen, der auf Zuverlässigkeit, Kommunikation und Wirtschaftlichkeit basiert."
+            },
+            "cta" : "Weiter"
+          },
+          "validator" : {
+            "validators" : "Staking-Anbieter",
+            "myDelegations" : "Mein Staking-Einsatz",
+            "cta" : "Weiter",
+            "apr" : "APR: {{amount}}",
+            "totalAvailable" : "Insgesamt verfügbar: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Alle verwendeten Vermögenswerte",
+            "noResultsFound" : "Kein Validator für \"<0>{{search}}</0>\" gefunden.",
+            "currentAmount" : "(+ <0>{{amount}}</0>)"
+          },
+          "amount" : {
+            "assetsRemaining" : "Verbleibende Vermögenswerte: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Alle verwendeten Vermögenswerte",
+            "minAmount" : "Mindestbetrag: <0>{{min}}</0>",
+            "incorrectAmount" : "Maximaler Betrag: <0>{{max}}</0>",
+            "insufficientDelegation" : "Ihr gesamter Staking-Betrag muss mindestens 1 {{label}} pro Staking-Anbieter betragen.",
+            "wrongUndelegations" : "Der verbleibende Betrag an im Staking eingesetzten {{label}} sollte entweder 0 oder mehr als 1 {{label}} pro Staking-Anbieter betragen.",
+            "cta" : "Weiter"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Sie haben Ihre Vermögenswerte erfolgreich im Staking eingesetzt",
+              "text" : "Ihr Kontostand wird aktualisiert, sobald das Netzwerk die Transaktion bestätigt.",
+              "cta" : "Details anzeigen"
+            },
+            "pending" : {
+              "title" : "Sende Transaktion..."
+            },
+            "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+          }
+        }
+      },
+      "drawer" : {
+        "status" : "Status",
+        "rewards" : "Prämien",
+        "active" : "Aktiv",
+        "inactive" : "Inaktiv",
+        "completionDate" : "Datum der Fertigstellung",
+        "redelegatedFrom" : "Zurückdelegiert von",
+        "completionDateHit" : "Abgeschlossen"
+      }
+    },
+    "claimRewards" : {
+      "stepperHeader" : {
+        "validator" : "Prämie auswählen",
+        "method" : "Prämien beanspruchen",
+        "summary" : "Zusammenfassung",
+        "selectDevice" : "Gerät wählen",
+        "connectDevice" : "Verbundenes Gerät",
+        "stepRange" : "Schritt {{currentStep}} von {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "method" : {
+            "youEarned" : "Sie haben verdient",
+            "byDelegationAssetsTo" : "durch das Staking von Vermögenswerten an",
+            "claimRewards" : "Prämien beanspruchen",
+            "reDelegateRewards" : "Staking-Belohnungen",
+            "claimRewardsInfo" : "Sie werden jetzt eingefordert und zu Ihrem verfügbaren Guthaben hinzugefügt.",
+            "reDelegateRewardsInfo" : "Sie werden jetzt eingefordert und automatisch bei dem demselben Staking-Anbieter im Staking eingesetzt.",
+            "compoundOrCashIn" : "Belohnungen im Staking einsetzen oder einfordern?",
+            "claimRewardsTooltip" : "Die Prämien werden dem verfügbaren Guthaben hinzugefügt",
+            "reDelegateRewardsTooltip" : "Belohnungen werden zum im Staking eingesetzten Betrag hinzugefügt",
+            "cta" : "Weiter"
+          },
+          "verification" : {
+            "success" : {
+              "claimRewardsSuccess" : "Sie haben Ihre Prämien erfolgreich eingefordert. Diese wurden zu Ihrem verfügbaren Guthaben hinzugefügt.",
+              "reDelegateRewardsSuccess" : "Ihre Belohnungen wurden bei demselben Staking-Anbieter im Staking eingesetzt.",
+              "text" : "Ihr Kontostand wird aktualisiert, wenn das Netzwerk die Transaktion bestätigt.",
+              "cta" : "Details anzeigen"
+            },
+            "pending" : {
+              "title" : "Sende Transaktion..."
+            },
+            "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Aufzuhebender Staking-Betrag",
+        "summary" : "Zusammenfassung",
+        "selectDevice" : "Gerät wählen",
+        "connectDevice" : "Verbundenes Gerät",
+        "stepRange" : "Schritt {{currentStep}} von {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "allAssetsUsed" : "Alle Vermögenswerte ausgewählt",
+            "assetsRemaining" : "Verbleibende delegierte Vermögenswerte: <0>{{amount}}</0>",
+            "minAmount" : "Mindestbetrag: <0>{{min}}</0>",
+            "incorrectAmount" : "Maximaler Betrag: <0>{{max}}</0>",
+            "minRemaining" : "Restlicher Mindestbetrag: <0>{{min}}</0>"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Sie haben erfolgreich das Staking Ihrer Vermögenswerte aufgehoben",
+              "text" : "Ihr Kontostand wird aktualisiert, wenn das Netzwerk die Transaktion bestätigt.",
+              "cta" : "Details anzeigen"
+            },
+            "pending" : {
+              "title" : "Sende Transaktion..."
+            },
+            "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "stepperHeader" : {
+        "validator" : "Prämie auswählen",
+        "method" : "Prämien beanspruchen",
+        "summary" : "Zusammenfassung",
+        "selectDevice" : "Gerät wählen",
+        "connectDevice" : "Verbundenes Gerät",
+        "stepRange" : "Schritt {{currentStep}} von {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "method" : {
+            "youEarned" : "Staking aufgehoben für",
+            "byDelegationAssetsTo" : "Von",
+            "withdrawInfo" : "Sie werden jetzt eingefordert und zu Ihrem verfügbaren Guthaben hinzugefügt.",
+            "withdrawTooltip" : "Abhebungen werden dem verfügbaren Guthaben hinzugefügt",
+            "cta" : "Weiter"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Sie haben Ihre Prämien erfolgreich eingefordert. Diese wurden zu Ihrem verfügbaren Guthaben hinzugefügt.",
               "text" : "Ihr Kontostand wird aktualisiert, wenn das Netzwerk die Transaktion bestätigt.",
               "cta" : "Details anzeigen"
             },
@@ -5264,7 +5470,8 @@
     "actions" : {
       "redelegate" : "Erneut delegieren",
       "collectRewards" : "Prämien einsammeln",
-      "undelegate" : "Delegierung aufheben"
+      "undelegate" : "Delegierung aufheben",
+      "withdraw" : "Abheben"
     }
   },
   "ValidateOnDevice" : {
@@ -5757,6 +5964,13 @@
       "nft" : "NFTs"
     },
     "nftGallery" : {
+      "filters" : {
+        "selectAndHide" : "Auswählen und ausblenden",
+        "hide" : "{{count}} Sammlung ausblenden",
+        "hide_plural" : "{{count}} Sammlungen ausblenden",
+        "alertHide" : "1 Sammlung ausgeblendet. Gehen Sie zu den Einstellungen, um sie jederzeit ein- und auszublenden",
+        "alertHide_plural" : "{{count}} Sammlungen ausgeblendet. Gehen Sie zu den Einstellungen, um sie jederzeit ein- und auszublenden"
+      },
       "empty" : {
         "title" : "Noch keine NFTs zu zeigen",
         "subtitle" : "Fangen Sie an, indem Sie Ihr erstes NFT erhalten.",

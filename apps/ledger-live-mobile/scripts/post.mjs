@@ -1,6 +1,5 @@
 #!/usr/bin/env zx
 import "zx/globals";
-import rimraf from "rimraf";
 
 cd(path.join(__dirname, ".."));
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import BottomModal from "../components/BottomModal";
+import QueuedDrawer from "../components/QueuedDrawer";
 import LText, { Opts } from "../components/LText";
 
 type Props = {
@@ -21,7 +21,11 @@ export type ModalInfo = {
 };
 export default function InfoModal({ data, isOpened, onClose }: Props) {
   return (
-    <BottomModal style={styles.root} isOpened={isOpened} onClose={onClose}>
+    <QueuedDrawer
+      style={styles.root}
+      isRequestingToBeOpened={isOpened}
+      onClose={onClose}
+    >
       {data.map(
         (
           {
@@ -57,7 +61,7 @@ export default function InfoModal({ data, isOpened, onClose }: Props) {
           </View>
         ),
       )}
-    </BottomModal>
+    </QueuedDrawer>
   );
 }
 const styles = StyleSheet.create({

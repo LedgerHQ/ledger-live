@@ -1,6 +1,5 @@
 import "../__tests__/test-helpers/setup";
-import { isPlatformSupportedCurrency } from "../platform/helpers";
-import { isCryptoCurrency, listCurrencies } from "./helpers";
+import { isCryptoCurrency, isTokenCurrency, listCurrencies } from "./helpers";
 
 describe("Currencies helpers", () => {
   test("listCurrencies without includeTokens", () => {
@@ -15,7 +14,9 @@ describe("Currencies helpers", () => {
     const currencies = listCurrencies(true);
 
     currencies.forEach((currency) => {
-      expect(isPlatformSupportedCurrency(currency)).toBeTruthy();
+      expect(
+        isCryptoCurrency(currency) || isTokenCurrency(currency)
+      ).toBeTruthy();
     });
   });
 });

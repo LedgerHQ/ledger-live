@@ -307,6 +307,7 @@ export enum SettingsActionTypes {
   SET_OVERRIDDEN_FEATURE_FLAG = "SET_OVERRIDDEN_FEATURE_FLAG",
   SET_OVERRIDDEN_FEATURE_FLAGS = "SET_OVERRIDDEN_FEATURE_FLAGS",
   SET_FEATURE_FLAGS_BANNER_VISIBLE = "SET_FEATURE_FLAGS_BANNER_VISIBLE",
+  SET_DEBUG_APP_LEVEL_DRAWER_OPENED = "SET_DEBUG_APP_LEVEL_DRAWER_OPENED",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -369,10 +370,6 @@ export type SettingsSetAvailableUpdatePayload = Pick<
 >;
 export type SettingsSetThemePayload = Pick<SettingsState, "theme">;
 export type SettingsSetOsThemePayload = Pick<SettingsState, "osTheme">;
-export type SettingsSetCarouselVisibilityPayload = Pick<
-  SettingsState,
-  "carouselVisibility"
->;
 export type SettingsSetDismissedDynamicCardsPayload = Pick<
   SettingsState,
   "dismissedDynamicCards"
@@ -471,6 +468,11 @@ export type SettingsSetFeatureFlagsBannerVisiblePayload = Pick<
   SettingsState,
   "featureFlagsBannerVisible"
 >;
+export type SettingsSetDebugAppLevelDrawerOpenedPayload = Pick<
+  SettingsState,
+  "debugAppLevelDrawerOpened"
+>;
+
 export type SettingsPayload =
   | SettingsImportPayload
   | SettingsImportDesktopPayload
@@ -494,7 +496,6 @@ export type SettingsPayload =
   | SettingsSetAvailableUpdatePayload
   | SettingsSetThemePayload
   | SettingsSetOsThemePayload
-  | SettingsSetCarouselVisibilityPayload
   | SettingsSetDiscreetModePayload
   | SettingsSetLanguagePayload
   | SettingsSetLocalePayload
@@ -519,7 +520,8 @@ export type SettingsPayload =
   | DangerouslyOverrideStatePayload
   | SettingsSetOverriddenFeatureFlagPlayload
   | SettingsSetOverriddenFeatureFlagsPlayload
-  | SettingsSetFeatureFlagsBannerVisiblePayload;
+  | SettingsSetFeatureFlagsBannerVisiblePayload
+  | SettingsSetDebugAppLevelDrawerOpenedPayload;
 
 // === WALLET CONNECT ACTIONS ===
 

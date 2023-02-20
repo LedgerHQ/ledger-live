@@ -192,7 +192,6 @@ export type SettingsState = {
   hasAvailableUpdate: boolean;
   theme: Theme;
   osTheme: string | null | undefined;
-  carouselVisibility: number | Record<string, boolean>;
   dismissedDynamicCards: string[];
   // number is the legacy type from LLM V2
   discreetMode: boolean;
@@ -226,6 +225,7 @@ export type SettingsState = {
   displayStatusCenter: boolean;
   overriddenFeatureFlags: { [key in FeatureId]?: Feature | undefined };
   featureFlagsBannerVisible: boolean;
+  debugAppLevelDrawerOpened: boolean;
 };
 
 export type NotificationsSettings = {

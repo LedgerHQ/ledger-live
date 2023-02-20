@@ -41,7 +41,7 @@ import {
   SendActionDefault,
   SwapActionDefault,
 } from "./AccountActionsDefault";
-import { swapDefaultTrack } from "~/renderer/screens/exchange/Swap2/utils/index";
+import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const ButtonSettings: ThemedComponent<{ disabled?: boolean }> = styled(Tabbable).attrs(() => ({
@@ -152,6 +152,7 @@ const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModa
 const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const contrastText = useTheme("colors.palette.text.shade60");
+  const swapDefaultTrack = useGetSwapTrackingProperties();
 
   // PTX smart routing feature flag - buy sell live app flag
   const ptxSmartRouting = useFeature("ptxSmartRouting");
@@ -246,7 +247,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
         defaultParentAccount: parentAccount,
       },
     });
-  }, [currency, history, account, parentAccount]);
+  }, [currency, swapDefaultTrack, history, account, parentAccount]);
 
   const onSend = useCallback(() => {
     openModal("MODAL_SEND", { parentAccount, account });
@@ -256,7 +257,16 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     openModal("MODAL_RECEIVE", { parentAccount, account });
   }, [parentAccount, account, openModal]);
 
-  const renderAction = ({ label, onClick, event, eventProperties, icon, disabled, tooltip }) => {
+  const renderAction = ({
+    label,
+    onClick,
+    event,
+    eventProperties,
+    icon,
+    disabled,
+    tooltip,
+    accountActionsTestId,
+  }) => {
     const Icon = icon;
 
     const Action = (
@@ -267,6 +277,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
         eventProperties={eventProperties}
         iconComponent={Icon && <Icon size={14} overrideColor={contrastText} currency={currency} />}
         labelComponent={label}
+        accountActionsTestId={accountActionsTestId}
       />
     );
 

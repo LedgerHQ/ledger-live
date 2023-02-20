@@ -1,8 +1,9 @@
 import React, { memo, useState, useCallback } from "react";
 import { TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
-import { Flex, Text, BottomDrawer, Icon as IconUI } from "@ledgerhq/native-ui";
+import { Flex, Text, Icon as IconUI } from "@ledgerhq/native-ui";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
+import QueuedDrawer from "../../components/QueuedDrawer";
 
 export const Badge = styled(Flex).attrs((p: { bg?: string }) => ({
   bg: p.bg ?? "neutral.c30",
@@ -76,7 +77,11 @@ function SortBadge({
           ) : null}
         </Badge>
       </TouchableOpacity>
-      <BottomDrawer isOpen={isDrawerOpen} onClose={closeDrawer} title={label}>
+      <QueuedDrawer
+        isRequestingToBeOpened={isDrawerOpen}
+        onClose={closeDrawer}
+        title={label}
+      >
         {options.map(
           ({ label, value: optValue, requestParam }: Option, index) => (
             <TouchableOpacity
@@ -113,7 +118,7 @@ function SortBadge({
             </TouchableOpacity>
           ),
         )}
-      </BottomDrawer>
+      </QueuedDrawer>
     </>
   );
 }

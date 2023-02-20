@@ -19,29 +19,24 @@ import {
   fromTronResourcesRaw,
   fromCosmosResourcesRaw,
   fromBitcoinResourcesRaw,
-  fromCardanoResourceRaw,
   fromPolkadotResourcesRaw,
   fromTezosResourcesRaw,
   fromElrondResourcesRaw,
   fromCryptoOrgResourcesRaw,
   fromSolanaResourcesRaw,
   fromCeloResourcesRaw,
-  fromNearResourcesRaw,
   fromNFTRaw,
   toTronResourcesRaw,
   toCosmosResourcesRaw,
-  toCardanoResourceRaw,
   toPolkadotResourcesRaw,
   toTezosResourcesRaw,
   toElrondResourcesRaw,
   toCryptoOrgResourcesRaw,
   toSolanaResourcesRaw,
   toCeloResourcesRaw,
-  toNearResourcesRaw,
 } from "./account";
 import consoleWarnExpectToEqual from "./consoleWarnExpectToEqual";
 import { BitcoinAccount, BitcoinAccountRaw } from "./families/bitcoin/types";
-import { CardanoAccount, CardanoAccountRaw } from "./families/cardano/types";
 import { CosmosAccount, CosmosAccountRaw } from "./families/cosmos/types";
 import {
   CryptoOrgAccount,
@@ -54,7 +49,6 @@ import { TezosAccount, TezosAccountRaw } from "./families/tezos/types";
 import { TronAccount, TronAccountRaw } from "./families/tron/types";
 import { CeloAccount, CeloAccountRaw } from "./families/celo/types";
 import { getAccountBridge } from "./bridge";
-import { NearAccount, NearAccountRaw } from "./families/near/types";
 
 // aim to build operations with the minimal diff & call to coin implementation possible
 export async function minimalOperationsBuilder<CO>(
@@ -404,24 +398,6 @@ export function patchAccount(
       }
       break;
     }
-    case "cardano": {
-      const cardanoAcc = account as CardanoAccount;
-      const cardanoUpdatedRaw = updatedRaw as CardanoAccountRaw;
-      if (
-        cardanoUpdatedRaw.cardanoResources &&
-        (!cardanoAcc.cardanoResources ||
-          !areSameResources(
-            toCardanoResourceRaw(cardanoAcc.cardanoResources),
-            cardanoUpdatedRaw.cardanoResources
-          ))
-      ) {
-        (next as CardanoAccount).cardanoResources = fromCardanoResourceRaw(
-          cardanoUpdatedRaw.cardanoResources
-        );
-        changed = true;
-      }
-      break;
-    }
     case "crypto_org": {
       const cryptoOrgAcc = account as CryptoOrgAccount;
       const cryptoOrgUpdatedRaw = updatedRaw as CryptoOrgAccountRaw;
@@ -478,25 +454,6 @@ export function patchAccount(
         }
       }
       break;
-    case "near": {
-      const nearAcc = account as NearAccount;
-      const nearUpdatedRaw = updatedRaw as NearAccountRaw;
-
-      if (
-        nearUpdatedRaw.nearResources &&
-        (!nearAcc.nearResources ||
-          !areSameResources(
-            toNearResourcesRaw(nearAcc.nearResources),
-            nearUpdatedRaw.nearResources
-          ))
-      ) {
-        (next as NearAccount).nearResources = fromNearResourcesRaw(
-          nearUpdatedRaw.nearResources
-        );
-        changed = true;
-      }
-      break;
-    }
     default: {
       const bridge = getAccountBridge(account);
       const applyReconciliation = bridge.applyReconciliation;
