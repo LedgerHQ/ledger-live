@@ -53,4 +53,7 @@ module.exports = {
     "styled-components":
       "<rootDir>/node_modules/styled-components/native/dist/styled-components.native.cjs.js",
   },
+  moduleFileExtensions: ["ts", "tsx"],
+  coverageReporters: ["json"],
+  coverageDirectory: "<rootDir>/coverage",
 };
