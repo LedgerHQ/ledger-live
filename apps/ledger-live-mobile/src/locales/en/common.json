@@ -87,7 +87,8 @@
     "popular": "popular",
     "getSupport": "Get support",
     "comingSoon": "Coming soon",
-    "restart": "Restart"
+    "restart": "Restart",
+    "loadMore": "Load more"
   },
   "errors": {
     "countervaluesUnavailable": {
@@ -1124,6 +1125,10 @@
       "learn": {
         "title": "Learn",
         "desc": "Learn about crypto, web3, digital security and more"
+      },
+      "news": {
+        "title": "News",
+        "desc": "Learn about crypto, security, web3 and catch up with latest news"
       },
       "ledgerApps": {
         "title": "Apps",
@@ -6098,5 +6103,10 @@
         "emptyPassword": "Password cannot be empty"
       }
     }
+  },
+  "newsfeed": {
+    "title": "Newsfeed",
+    "poweredByCryptopanic": "Powered by Cryptopanic",
+    "noPosts": "No posts available currently"
   }
 }
