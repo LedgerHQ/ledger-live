@@ -535,7 +535,7 @@
     },
     "resetThirdPartyDataModal" : {
       "title" : "Supprimer vos données locales partagées avec des tiers",
-      "subtitle" : "Vous vous apprêtez à supprimer vos données stockées localement qui sont partagées avec des tiers. Vous devrez peut-être soumettre à nouveau votre vérification d’identité et/ou vous reconnecter pour accéder aux services fournis par nos partenaires.",
+      "subtitle" : "Vous vous apprêtez à supprimer vos données stockées localement qui sont partagées avec des tiers. Vous devrez peut-être soumettre à nouveau votre vérification d’identité et/ou vous reconnecter pour accéder aux services fournis par nos prestataires tiers.",
       "cta" : "Confirmer"
     },
     "modal" : {
@@ -807,7 +807,7 @@
     "reset" : "Réinitialiser",
     "verifyAddress" : "Merci de confirmer que l’adresse affichée est identique à celle sur votre appareil",
     "buy" : {
-      "header" : "Acheter des cryptos avec nos partenaires",
+      "header" : "Acheter des cryptos avec nos prestataires tiers",
       "title" : "Choisir un prestataire pour acheter des cryptos",
       "buyFrom" : "Achetez de là où vous vous trouvez",
       "cryptoSupported" : "cryptos prises en charge",
@@ -823,7 +823,7 @@
       }
     },
     "sell" : {
-      "header" : "Vendre des cryptos avec nos partenaires",
+      "header" : "Vendre des cryptos avec nos prestataires tiers",
       "title" : "Vendez des cryptos avec <0>{{provider}}</0>.",
       "tab" : "Vendre",
       "selectCrypto" : "Choisir un crypto-actif",
@@ -1268,7 +1268,7 @@
     },
     "buyCrypto" : {
       "title" : "Acheter des cryptos",
-      "description" : "Achetez des crypto-actifs via nos partenaires et recevez-les directement dans votre compte Ledger.",
+      "description" : "Achetez des crypto-actifs via nos prestataires tiers et recevez-les directement dans votre compte Ledger.",
       "cta" : "Acheter maintenant"
     },
     "familyPack" : {
@@ -1282,7 +1282,7 @@
     },
     "sell" : {
       "title" : "Vendre des cryptos",
-      "description" : "Vendez vos bitcoins via notre partenaire sans sortir de Ledger Live."
+      "description" : "Vendez vos bitcoins via notre prestataire tiers sans sortir de Ledger Live."
     },
     "stakeAlgorand" : {
       "title" : "Les récompenses avec Algorand",
@@ -1290,7 +1290,7 @@
     },
     "swap" : {
       "title" : "Échanger des cryptos",
-      "description" : "Échangez une crypto contre une autre sur Ledger Live grâce à nos partenaires."
+      "description" : "Échangez une crypto contre une autre sur Ledger Live grâce à nos prestataires tiers."
     },
     "lending" : {
       "title" : "Prêter",
@@ -2693,7 +2693,7 @@
               "title" : "Récompenses bien encaissées",
               "titleCompound" : "Récompenses bien capitalisées",
               "text" : "Vos récompenses ont été ajoutées à votre solde disponible.",
-              "textCompound" : "Vos récompenses <0>{{amount}}</0> ont été automatiquement déléguées à <0>{{validator}}</0>.",
+              "textCompound" : "Vos récompenses de <0>{{amount}}</0> ont été automatiquement déléguées à <0>{{validator}}</0>.",
               "cta" : "Voir les détails"
             },
             "pending" : {
@@ -2747,7 +2747,7 @@
           "amount" : {
             "title" : "Montant",
             "subtitle" : "L’interruption de délégation est finalisée après <0>21 jours</0>.",
-            "warning" : "Les récompenses seront immédiatement encaissées. Le montant de délégation interrompue sera versé sur votre solde disponible après la période de <0>verrouillage de 21 jours</0>.",
+            "warning" : "Les récompenses seront immédiatement encaissées. Le montant qui n’est plus délégué sera versé sur votre solde disponible après la période de <0>verrouillage de 21 jours</0>.",
             "fields" : {
               "validator" : "Validateur",
               "amount" : "Montant à interrompre"
@@ -2933,7 +2933,7 @@
               "title" : "Récompenses bien encaissées",
               "titleCompound" : "Récompenses bien capitalisées",
               "text" : "Vos récompenses ont été ajoutées à votre solde disponible.",
-              "textCompound" : "Vos récompenses <0>{{amount}}</0> ont été automatiquement déléguées à <0>{{validator}}</0>.",
+              "textCompound" : "Vos récompenses de <0>{{amount}}</0> ont été automatiquement déléguées à <0>{{validator}}</0>.",
               "cta" : "Voir les détails"
             },
             "pending" : {
@@ -2987,7 +2987,7 @@
           "amount" : {
             "title" : "Montant",
             "subtitle" : "L’interruption de délégation est finalisée après <0>14 jours</0>.",
-            "warning" : "Les récompenses seront immédiatement encaissées. Le montant de délégation interrompue sera versé sur votre solde disponible après la période de <0>verrouillage de 14 jours</0>.",
+            "warning" : "Les récompenses seront immédiatement encaissées. Le montant qui n’est plus délégué sera versé sur votre solde disponible après la période de <0>verrouillage de 14 jours</0>.",
             "fields" : {
               "validator" : "Validateur",
               "amount" : "Montant à interrompre"
