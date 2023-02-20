@@ -811,6 +811,13 @@
       "title" : "Tu dispositivo está bloqueado",
       "description" : "Desbloquea tu dispositivo e inténtalo de nuevo.",
       "descriptionWithProductName" : "Desbloquea tu {{ productName }} e inténtalo de nuevo."
+    },
+    "EtherscanAPIError" : {
+      "title" : "Se produjo un fallo al recuperar las transacciones",
+      "description" : "Se produjo un error inesperado con los exploradores. Inténtalo de nuevo más tarde"
+    },
+    "GasEstimationError" : {
+      "title" : "Se produjo un fallo en la estimación del gas"
     }
   },
   "crash" : {
@@ -1653,6 +1660,10 @@
             "label" : "Comprueba si detecta tu Nano X."
           }
         }
+      },
+      "protectConnectionInformationModal" : {
+        "title" : "¿Por qué no puedo conectar mi Ledger?",
+        "description" : "Si tienes problemas para conectarte a Ledger Live Mobile después de activar el Bluetooth en tu Ledger, puedes seguir las instrucciones pulsando el botón \"Cómo resolverlo\" a continuación"
       }
     },
     "stepImportAccounts" : {
@@ -3298,6 +3309,10 @@
           }
         }
       }
+    },
+    "walletConnect" : {
+      "title" : "WalletConnect",
+      "description" : "Conecta tu billetera a dApps"
     }
   },
   "signMessage" : {
