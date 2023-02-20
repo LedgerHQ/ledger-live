@@ -197,6 +197,6 @@ export const defaultFeatures: DefaultFeatures = {
     enabled: false,
   },
   protectServicesMobile: {
-    enabled: false
-  }
+    enabled: false,
+  },
 };
