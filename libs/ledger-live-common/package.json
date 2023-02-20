@@ -61,8 +61,8 @@
     "lint:fix": "pnpm lint --fix",
     "jest": "cross-env TZ=America/New_York jest",
     "typecheck": "tsc --noEmit -p src/tsconfig.json",
-    "ci-lint": "pnpm lint",
     "test": "pnpm ci-test-unit",
+    "ci-lint": "pnpm lint",
     "ci-test-unit": "env-cmd -f .ci.unit.env pnpm jest --ci --updateSnapshot && git diff --exit-code src",
     "ci-test-integration": "env-cmd -f .ci.integration.env pnpm jest --ci --updateSnapshot --passWithNoTests"
   },
