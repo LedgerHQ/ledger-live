@@ -136,8 +136,9 @@ export const WebView = ({ manifest, inputs }: Props) => {
         StackNavigatorNavigation<BaseNavigatorStackParamList>
       >
     >();
-  const lastLedgerLiveAppURL = useRef("");
-  const [isLedgerLiveAppURL, setIsLedgerLiveAppURL] = useState(true);
+  const { displayBackToManifestApp } = manifest;
+  const lastManifestAppURL = useRef("");
+  const [isManifestAppURL, setIsManifestAppURL] = useState(true);
   const [loadDate, setLoadDate] = useState(new Date());
   const [widgetLoaded, setWidgetLoaded] = useState(false);
   const [isInfoPanelOpened, setIsInfoPanelOpened] = useState(false);
@@ -592,26 +593,23 @@ export const WebView = ({ manifest, inputs }: Props) => {
     tracking.platformLoadFail(manifest);
   }, [manifest]);
 
-  const handleNavigateBackToLedgerLiveApp = () => {
-    const redirectTo = `window.location = "${lastLedgerLiveAppURL.current}"`;
+  const handleNavigateBackToManifestApp = () => {
+    const redirectTo = `window.location = "${lastManifestAppURL.current}"`;
     targetRef.current && targetRef.current.injectJavaScript(redirectTo);
   };
 
   const handleOnNavigationStateChange = ({ url }: { url: string }) => {
-    const isOriginUrl = url.includes(manifest.url.toString());
-    if (isOriginUrl) lastLedgerLiveAppURL.current = url;
-    setIsLedgerLiveAppURL(isOriginUrl);
+    const manifestHostname = new URL(manifest.url).hostname;
+    const isOriginUrl = url.includes(manifestHostname);
+    if (isOriginUrl) lastManifestAppURL.current = url;
+    setIsManifestAppURL(isOriginUrl);
   };
-
-  const shouldDisplayBackToLedgerLiveApp = manifest.params?.includes(
-    "shouldDisplayBackToLedgerLiveApp",
-  );
 
   useEffect(() => {
     navigation.setOptions(
-      shouldDisplayBackToLedgerLiveApp
+      displayBackToManifestApp
         ? {
-            headerTitle: isLedgerLiveAppURL ? manifest.name : "",
+            headerTitle: isManifestAppURL ? manifest.name : "",
             headerRight: () => (
               <View style={styles.headerRightLedgerLiveApp}>
                 <TouchableOpacity
@@ -627,10 +625,10 @@ export const WebView = ({ manifest, inputs }: Props) => {
             ),
             headerLeft: () => (
               <View style={styles.headerLeftLedgerLiveApp}>
-                {!isLedgerLiveAppURL && (
+                {!isManifestAppURL && (
                   <Flex alignItems={"center"}>
                     <Text
-                      onPress={handleNavigateBackToLedgerLiveApp}
+                      onPress={handleNavigateBackToManifestApp}
                       fontWeight="semiBold"
                       fontSize={16}
                       color="neutral.c100"
@@ -660,8 +658,8 @@ export const WebView = ({ manifest, inputs }: Props) => {
     widgetLoaded,
     handleReload,
     isInfoPanelOpened,
-    isLedgerLiveAppURL,
-    shouldDisplayBackToLedgerLiveApp,
+    displayBackToManifestApp,
+    isManifestAppURL,
     manifest,
     t,
   ]);
