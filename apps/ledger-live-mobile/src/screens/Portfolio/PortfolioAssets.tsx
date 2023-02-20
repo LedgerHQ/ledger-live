@@ -3,6 +3,8 @@ import { useNavigation } from "@react-navigation/native";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
+import { useStartProfiler } from "@shopify/react-native-performance";
+import { GestureResponderEvent } from "react-native";
 import { useDistribution } from "../../actions/general";
 import { TrackScreen } from "../../analytics";
 import { NavigatorName, ScreenName } from "../../const";
@@ -22,6 +24,7 @@ const maxAssetsToDisplay = 5;
 const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
   const { t } = useTranslation();
   const navigation = useNavigation();
+  const startNavigationTTITimer = useStartProfiler();
   const distribution = useDistribution({
     showEmptyAccounts: true,
     hideEmptyTokenAccount,
@@ -43,11 +46,15 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
     [distribution, blacklistedTokenIds],
   );
 
-  const goToAssets = useCallback(() => {
-    navigation.navigate(NavigatorName.Accounts, {
-      screen: ScreenName.Assets,
-    });
-  }, [navigation]);
+  const goToAssets = useCallback(
+    (uiEvent: GestureResponderEvent) => {
+      startNavigationTTITimer({ source: ScreenName.Portfolio, uiEvent });
+      navigation.navigate(NavigatorName.Accounts, {
+        screen: ScreenName.Assets,
+      });
+    },
+    [startNavigationTTITimer, navigation],
+  );
 
   return (
     <>

@@ -715,6 +715,11 @@ const envDefinitions: Record<
     parser: jsonParser,
     desc: "key value map for feature flags: {[key in FeatureId]?: Feature]}",
   },
+  PERFORMANCE_CONSOLE: {
+    def: false,
+    parser: boolParser,
+    desc: "Show a performance overlay on the app UI",
+  },
 };
 
 export const getDefinition = (name: string): EnvDef<any> | null | undefined =>
