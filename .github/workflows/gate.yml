@@ -74,7 +74,7 @@ jobs:
               head_sha: "${{ env.head_sha }}",
               head_branch: "${{ env.head_branch }}",
               base_sha: "${{ env.base_sha }}",
-              base_branch: "${{ env.base_branch }}"
+              base_branch: "${{ env.base_branch }}",
               base_owner: "${{ env.base_owner }}"
             }), "utf-8");
       - uses: actions/upload-artifact@v3
