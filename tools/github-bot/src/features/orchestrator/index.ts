@@ -4,6 +4,7 @@ import {
   PullRequestMetadata,
   RUNNERS,
   WORKFLOWS,
+  REPO_OWNER,
 } from "./const";
 import {
   downloadArtifact,
@@ -223,6 +224,7 @@ export function orchestrator(app: Probot) {
           }
         )
       )) as [Record<string, { path: string }>?, PullRequestMetadata?];
+      const baseOwner = metadata?.base_owner || REPO_OWNER;
 
       const isFork =
         metadata?.number !== -1 &&
@@ -268,10 +270,10 @@ export function orchestrator(app: Probot) {
             // This will trigger the workflow_run.requested event,
             // which will create/recreate the check run and update the watcher.
             const response = await octokit.actions.createWorkflowDispatch({
-              owner,
+              owner: baseOwner,
               repo,
               workflow_id: fileName,
-              ref: workflowRef,
+              ref: isFork ? "develop" : workflowRef,
               inputs: workflow.getInputs(payload, metadata),
             });
             context.log.info(
@@ -284,7 +286,7 @@ export function orchestrator(app: Probot) {
       // Create or recreate the Watcher check run
       const checkRun = await createRunByName({
         octokit,
-        owner,
+        owner: baseOwner,
         repo,
         sha: checkSuite.head_sha,
         checkName: WATCHER_CHECK_RUN_NAME,
@@ -300,7 +302,7 @@ export function orchestrator(app: Probot) {
           `[Orchestrator](workflow_run.completed) No affected workflows, updating watcher to success`
         );
         await octokit.checks.update({
-          owner,
+          owner: baseOwner,
           repo,
           check_run_id: checkRun.id,
           status: "completed",

@@ -820,11 +820,14 @@
         "title": "In case you didn’t know...",
         "description": "The Ledger validator stakes at a lower commission than the validator you’re using.",
         "cta": "Redelegate with Ledger",
+        "linkText": "What is redelegation and how long does it take?",
         "solana": {
           "title": "Did you know?",
-          "description": "Ledger offers a lower commission rate than your validator.This process can take up to 4 days.",
-          "linkText": "What is redelegation and how long does it take?",
-          "cta": "Redelegate with Ledger"
+          "description": "Ledger offers a lower commission rate than your validator.This process can take up to 4 days."
+        },
+        "near": {
+          "title": "Did you know?",
+          "description": "Ledger offers a lower commission rate than your validator.This process can take up to 65 hours."
         }
       },
       "delegation": {
@@ -843,6 +846,9 @@
             "description": "Got more than 32 ETH? Earn passive rewards by securely staking your ETH with Kiln.",
             "cta": "Stake with Kiln"
           }
+        },
+        "near": {
+          "description": "Stake your NEAR with Ledger by Figment validator. Your coins stay yours, backed by Ledger’s uncompromising security."
         }
       }
     }
