@@ -1,5 +1,26 @@
 # @ledgerhq/devices
 
+## 8.0.0-next.0
+
+### Major Changes
+
+- [#1991](https://github.com/LedgerHQ/ledger-live/pull/1991) [`62af25493e`](https://github.com/LedgerHQ/ledger-live/commit/62af25493e2becf897d517af42542db208b971c7) Thanks [@valpinkman](https://github.com/valpinkman)! - Remove the support for imports ending with `/` mapping to the `index.js` file.
+
+  For instance:
+
+  ```js
+  import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/";
+  ```
+
+  Should be rewritten to:
+
+  ```js
+  import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+  ```
+
+  This trailing slash is poorly supported by some tools like `vite.js` and was meant as a transitional change.
+  Time has come to remove the support for thos shorthand.
+
 ## 7.0.7
 
 ### Patch Changes

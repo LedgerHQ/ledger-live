@@ -1,5 +1,15 @@
 # @ledgerhq/react-ui
 
+## 0.11.0-next.0
+
+### Minor Changes
+
+- [#2531](https://github.com/LedgerHQ/ledger-live/pull/2531) [`28105e0fd5`](https://github.com/LedgerHQ/ledger-live/commit/28105e0fd5cfa435f327e0ca6c2c643ff21c612e) Thanks [@gobeli](https://github.com/gobeli)! - Visual bugfix on input controls
+
+### Patch Changes
+
+- [#2460](https://github.com/LedgerHQ/ledger-live/pull/2460) [`b0849833f7`](https://github.com/LedgerHQ/ledger-live/commit/b0849833f7ff168610b288e24aab89de5eb04d7e) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Add extraChildrenContainerProps to FlowStepper component
+
 ## 0.10.4
 
 ### Patch Changes
