@@ -549,7 +549,7 @@
       "description" : "İşlemlerin 30 saniye içinde imzalanması gerekir. Lütfen tekrar deneyin."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Yeterince Enerji mevcut değil. Ağ ücreti 50TRX tutarına ulaşabilir."
+      "title" : "Enerji yetersiz. Ağ ücreti 50 TRX tutarına ulaşabilir."
     },
     "UpdateYourApp" : {
       "title" : "Uygulama güncellemesi gerekiyor",
@@ -1268,7 +1268,13 @@
       "recovery" : "Kurtarma ifadeniz var mı?",
       "protect" : {
         "label" : "Yaklaşık 60 dk.",
-        "subTitle" : "Protect ile Geri Yükleyin"
+        "subTitle" : "Protect ile Geri Yükleyin",
+        "drawer" : {
+          "title" : "Nano X kullanın",
+          "desc" : "Sınırlı olarak kullanıma sunulan Ledger Recover sadece Ledger Nano X'i kapsamaktadır",
+          "buyNanoX" : "Ledger Nano X satın alın",
+          "discoverBenefits" : "Avantajlarını keşfedin"
+        }
       }
     },
     "stepNewDevice" : {
