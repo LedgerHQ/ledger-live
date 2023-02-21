@@ -64,7 +64,7 @@ const PlatformCatalog = () => {
     manifest => {
       const openApp = () => history.push(`/platform/${manifest.id}`);
 
-      if (!isDismissed) {
+      if (!isDismissed && manifest.author !== "ledger") {
         dispatch(
           openPlatformAppDisclaimerDrawer({
             manifest,
