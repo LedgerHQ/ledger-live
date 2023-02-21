@@ -1268,7 +1268,13 @@
       "recovery" : "¿Ya tienes una Frase de recuperación?",
       "protect" : {
         "label" : "Aproximadamente 60 min",
-        "subTitle" : "Restaurar con Protect"
+        "subTitle" : "Restaurar con Protect",
+        "drawer" : {
+          "title" : "Usa un Ledger Nano X",
+          "desc" : "El prelanzamiento de Ledger Recover es exclusivo para el Ledger Nano X",
+          "buyNanoX" : "Compra un Ledger Nano X",
+          "discoverBenefits" : "Descubre las ventajas"
+        }
       }
     },
     "stepNewDevice" : {
