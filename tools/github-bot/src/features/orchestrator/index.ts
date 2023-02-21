@@ -478,7 +478,7 @@ export function orchestrator(app: Probot) {
 
     if (matchedWorkflow) {
       context.log.info(
-        `[Orchestrator](check_run.created) ${payload.check_run.name} @sha ${payload.check_run.head_sha}`
+        `[Orchestrator](check_run.created) ${payload.check_run.name} @sha ${payload.check_run.head_sha} @id ${payload.check_run.id} @url ${payload.check_run.html_url}`
       );
       // (Re)Create watcher check run in pending state
       const response = await createRunByName({
@@ -524,7 +524,7 @@ export function orchestrator(app: Probot) {
     if (workflow) {
       const [workflowName, workflowMeta] = workflow;
       context.log.info(
-        `[Orchestrator](check_run.rerequested) ${payload.check_run.name} @workflow ${workflowName}`
+        `[Orchestrator](check_run.rerequested) ${payload.check_run.name} @workflow ${workflowName} @sha ${payload.check_run.head_sha} @id ${payload.check_run.id} @url ${payload.check_run.html_url}`
       );
       octokit.actions.createWorkflowDispatch({
         owner,
@@ -550,7 +550,7 @@ export function orchestrator(app: Probot) {
 
     if (matchedWorkflow) {
       context.log.info(
-        `[Orchestrator](check_run.completed) ${payload.check_run.name}`
+        `[Orchestrator](check_run.completed) ${payload.check_run.name} @sha ${payload.check_run.head_sha} @id ${payload.check_run.id} @url ${payload.check_run.html_url}`
       );
       const result = await updateWatcherCheckRun(
         octokit,
