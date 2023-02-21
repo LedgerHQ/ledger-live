@@ -1268,7 +1268,13 @@
       "recovery" : "لديك عبارة استرداد بالفعل؟",
       "protect" : {
         "label" : "60 دقيقة تقريباً",
-        "subTitle" : "الاستعادة عن طريق Protect"
+        "subTitle" : "الاستعادة عن طريق Protect",
+        "drawer" : {
+          "title" : "استخدم Nano X",
+          "desc" : "إطلاق Ledger Recover الأولي حصري لـ Ledger Nano X",
+          "buyNanoX" : "شراء Ledger Nano X",
+          "discoverBenefits" : "اكتشف المزايا"
+        }
       }
     },
     "stepNewDevice" : {
