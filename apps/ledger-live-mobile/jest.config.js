@@ -17,8 +17,8 @@ module.exports = {
     "^.+\\.tsx?$": "ts-jest",
   },
   transformIgnorePatterns: [
-    // "/node_modules/(?!(@react-native|react-native)).*/",
-    // "<rootDir>/node_modules/(react-clone-referenced-element|@react-native-community|react-navigation|@react-navigation/.*|@unimodules/.*|native-base|react-native-code-push)",
+    "node_modules/(?!(.pnpm|@react-native/polyfills|react-native)/)",
+    "\\.pnp\\.[^\\/]+$",
   ],
   testPathIgnorePatterns: ["<rootDir>/node_modules/"],
   coverageReporters: ["json"],

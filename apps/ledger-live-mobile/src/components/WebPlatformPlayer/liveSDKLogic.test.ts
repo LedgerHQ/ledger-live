@@ -10,11 +10,6 @@ import { Transaction } from "@ledgerhq/live-common/generated/types";
 
 import prepareSignTransaction from "./liveSDKLogic";
 
-// Fake the support of the test currency
-jest.mock("@ledgerhq/live-common/currencies/support", () => ({
-  isCurrencySupported: () => true,
-}));
-
 describe("prepareSignTransaction", () => {
   it("returns a Transaction", () => {
     // Given
