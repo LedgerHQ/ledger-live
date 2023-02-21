@@ -225,15 +225,10 @@
     "tooltip" : "Hesabı yıldızla"
   },
   "bridge" : {
-    "modalTitle" : "Cihaz Köprüsünü Aç",
-    "openHeader" : "WebSocket üzerinden Cihaz hesaplarınızı gösterin",
-    "openDescription" : "Köprü açmanız, tüm hesaplarınızı üçüncü taraf uygulamalar tarafından görünür hale getirir.",
-    "openedHeader" : "{{appName}} köprüsü açıldı",
-    "openedDescription" : "Üçüncü taraf web uygulamasında {{appName}} hesabınıza WebSocket üzerinden artık erişebilirsiniz.",
-    "completeHeader" : "Köprü oturumu tamamlandı",
-    "completeDescription" : "WebSocket köprüsü kapatıldı.",
-    "openButton" : "Aç",
-    "disconnectButton" : "Bağlantıyı Kes"
+    "modalTitle" : "Cihaz Köprüsü",
+    "openHeader" : "Cihaz Köprüsü artık mevcut değil",
+    "openDescription" : "Ledger Live yerine WebHID'yi kullanmak için lütfen tarayıcınızın cüzdan uzantılarını yapılandırın.",
+    "closeButton" : "Kapat"
   },
   "swap2" : {
     "title" : "Takas edin",
@@ -1399,7 +1394,7 @@
         "label" : "Popüler"
       },
       "earn" : {
-        "title" : "Kazan",
+        "title" : "Stake et",
         "description" : "Kriptolarınızı Ledger ile artırın"
       }
     }
@@ -5356,7 +5351,7 @@
       "description" : "İmza 30 saniye içinde uygulanmalıdır. Lütfen tekrar deneyin."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Yeterince Enerji mevcut değil. Ağ ücreti 50TRX tutarına ulaşabilir."
+      "title" : "Enerji yetersiz. Ağ ücreti 50 TRX tutarına ulaşabilir."
     },
     "PairingFailed" : {
       "title" : "Eşleştirme başarısız",
@@ -5593,6 +5588,13 @@
       "descriptionWithProductName" : "Öncelikle {{ productName }} cihazınızın kurulumunu yapmanız gerekiyor.\nKurulum sürecinde size yardımcı olacağız.",
       "goToOnboardingButton" : "Cihazımı kur",
       "goToOnboardingButtonWithProductName" : "{{ productName }} cihazımı kur"
+    },
+    "EtherscanAPIError" : {
+      "title" : "İşlemler alınamadı",
+      "description" : "Tarayıcılarla ilgili beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin"
+    },
+    "GasEstimationError" : {
+      "title" : "Tahmini Gas ücreti hesaplanamadı"
     }
   },
   "cryptoOrg" : {
