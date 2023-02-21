@@ -812,7 +812,7 @@
       "title": "Your device is locked",
       "description": "Unlock your device and try again.",
       "descriptionWithProductName": "Unlock your {{ productName }} and try again."
-    },    
+    },
     "EtherscanAPIError": {
       "title": "Fetching transactions failed",
       "description": "An unexpected error occurred with the explorers. Please try again later"
@@ -6032,22 +6032,10 @@
       "status": {
         "new": {
           "title": "New",
-          "desc": "Back up your recovery phrase",
-          "0": {
-            "title": "Trusted by millions of Ledger users"
-          },
-          "1": {
-            "title": "Your Recovery Phrase is safely linked to your identity"
-          },
-          "2": {
-            "title": "State of the art encryption"
-          },
-          "3": {
-            "title": "Sharded into 3 decentralized pieces, so your recovery phrase can never be stolen"
-          },
+          "desc": "Recover access to your wallet without your Secret Recovery Phrase.",
           "actions": {
-            "learnMore": "Learn more",
-            "alreadySubscribed": "Already subscribed to Protect?"
+            "learnMore": "How does it benefit me?",
+            "alreadySubscribed": "Already subscribed? <LinkAccount>View my account</LinkAccount>"
           }
         },
         "confirmIdentity": {
