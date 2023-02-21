@@ -1,12 +1,42 @@
 import LRU from "lru-cache";
+
 export type CacheRes<A extends Array<any>, T> = {
   (...args: A): Promise<T>;
   force: (...args: A) => Promise<T>;
-  hydrate: (arg0: string, arg1: T) => void;
-  clear: (arg0: string) => void;
+  hydrate: (key: string, value: T) => void;
+  clear: (key: string) => void;
   reset: () => void;
 };
-export const makeLRUCache = <A extends Array<any>, T>(
+
+export type LRUCacheFn = <A extends Array<any>, T>(
+  f: (...args: A) => Promise<T>,
+  keyExtractor?: (...args: A) => string,
+  lruOpts?: LRU.Options<string, any>
+) => CacheRes<A, T>;
+
+export const makeNoCache: LRUCacheFn = <A extends Array<any>, T>(
+  f: (...args: A) => Promise<T>
+): CacheRes<A, T> => {
+  const result = (...args: A) => {
+    return f(...args).catch((e) => {
+      throw e;
+    });
+  };
+
+  result.force = (...args: A) => {
+    return f(...args).catch((e) => {
+      throw e;
+    });
+  };
+
+  result.hydrate = () => {};
+  result.clear = () => {};
+  result.reset = () => {};
+
+  return result;
+};
+
+export const makeLRUCache: LRUCacheFn = <A extends Array<any>, T>(
   f: (...args: A) => Promise<T>,
   keyExtractor: (...args: A) => string = () => "",
   lruOpts: LRU.Options<string, any> = {
@@ -32,7 +62,7 @@ export const makeLRUCache = <A extends Array<any>, T>(
     let promise = cache.get(key);
     if (promise) return promise;
     promise = f(...args).catch((e) => {
-      cache.del(key);
+      cache.delete(key);
       throw e;
     });
     cache.set(key, promise);
@@ -42,7 +72,7 @@ export const makeLRUCache = <A extends Array<any>, T>(
   result.force = (...args: A) => {
     const key = keyExtractor(...args);
     const promise = f(...args).catch((e) => {
-      cache.del(key);
+      cache.delete(key);
       throw e;
     });
     cache.set(key, promise);
@@ -54,11 +84,11 @@ export const makeLRUCache = <A extends Array<any>, T>(
   };
 
   result.clear = (key: string) => {
-    cache.del(key);
+    cache.delete(key);
   };
 
   result.reset = () => {
-    cache.reset();
+    cache.clear();
   };
 
   return result;

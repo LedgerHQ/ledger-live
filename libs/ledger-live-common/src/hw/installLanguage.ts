@@ -11,7 +11,7 @@ import ManagerAPI from "../api/Manager";
 import { withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
 import { Language, LanguagePackage } from "@ledgerhq/types-live";
-import network from "@ledgerhq/coin-framework/network";
+import network from "../network";
 import { LanguageInstallRefusedOnDevice } from "../errors";
 import getAppAndVersion from "./getAppAndVersion";
 import { isDashboardName } from "./isDashboardName";
