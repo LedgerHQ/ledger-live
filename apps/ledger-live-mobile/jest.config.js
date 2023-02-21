@@ -29,7 +29,11 @@ module.exports = {
     "^.+\\.(ts|tsx)?$": "ts-jest",
   },
   transformIgnorePatterns: [
+<<<<<<< HEAD
     `node_modules/(?!(.pnpm|${transformIncludePatterns.join("|")})/)`,
+=======
+    "node_modules/(?!(.pnpm|@react-native/polyfills|react-native)/)",
+>>>>>>> 32b2f1cace (chore(llm): attempt to fix several jest issues)
     "\\.pnp\\.[^\\/]+$",
   ],
   testPathIgnorePatterns: ["<rootDir>/node_modules/"],
