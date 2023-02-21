@@ -223,6 +223,7 @@ const localizationEvents = [
 
 if (getEnv("MOCK")) {
   window.mock = {
+    fromTransactionRaw,
     events: {
       test: 0,
       queue: [],
@@ -236,12 +237,15 @@ if (getEnv("MOCK")) {
             }
             if (Array.isArray(rawEvents)) return rawEvents.map(this.parseRawEvents);
             const event = {};
-            for (const k in rawEvents) {
-              if (rawEvents.hasOwnProperty(k)) {
-                event[k] = this.parseRawEvents(rawEvents[k], k);
+            // clone the object if and only if it is a basic object. to not convert BigNumber
+            if (Object.getPrototypeOf(rawEvents) === Object.prototype) {
+              for (const k in rawEvents) {
+                if (rawEvents.hasOwnProperty(k)) {
+                  event[k] = this.parseRawEvents(rawEvents[k], k);
+                }
               }
+              return event;
             }
-            return event;
           }
           return rawEvents;
         };

@@ -33,11 +33,9 @@ import staxLoadImage from "./staxLoadImage";
 import getOnboardingStatePolling from "./getOnboardingStatePolling";
 import getGenuineCheckFromDeviceId from "./getGenuineCheckFromDeviceId";
 import getLatestAvailableFirmwareFromDeviceId from "./getLatestAvailableFirmwareFromDeviceId";
-import { commands as bridgeProxyCommands } from "~/renderer/bridge/proxy-commands";
 
 export const commandsById = {
   appOpExec,
-  ...bridgeProxyCommands,
   checkRPCNodeConfig,
   firmwarePrepare,
   firmwareMain,
