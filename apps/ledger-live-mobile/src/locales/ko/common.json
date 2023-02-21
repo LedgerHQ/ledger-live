@@ -549,7 +549,7 @@
       "description" : "트랜잭션은 30초 이내에 서명을 완료해야 합니다. 다시 시도해 주세요."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 30TRX를 지불할 수 있습니다."
+      "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 50 TRX를 지불할 수 있습니다."
     },
     "UpdateYourApp" : {
       "title" : "앱 업데이트 필요",
@@ -1268,7 +1268,13 @@
       "recovery" : "이미 복구 문구가 있나요?",
       "protect" : {
         "label" : "~60분",
-        "subTitle" : "Protect를 통해 복구하세요"
+        "subTitle" : "Protect를 통해 복구하세요",
+        "drawer" : {
+          "title" : "Nano X 사용",
+          "desc" : "Ledger Recover 소프트 런칭은 Ledger Nano X 전용입니다.",
+          "buyNanoX" : "Ledger Nano X 구매하기",
+          "discoverBenefits" : "장점 살펴보기"
+        }
       }
     },
     "stepNewDevice" : {
