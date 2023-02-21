@@ -3,6 +3,7 @@ import { Flex, Icons } from "@ledgerhq/react-ui";
 import Text from "~/renderer/components/Text";
 import EditDeviceName from "./EditDeviceName";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { identifyTargetId, DeviceModelId } from "@ledgerhq/devices";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import { track } from "~/renderer/analytics/segment";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
@@ -24,6 +25,7 @@ const PenIcon = styled.div`
   justify-content: center;
   height: 32px;
   width: 32px;
+  cursor: pointer;
 `;
 
 const DeviceName: React.FC<Props> = ({
@@ -32,7 +34,10 @@ const DeviceName: React.FC<Props> = ({
   device,
   onRefreshDeviceInfo,
 }: Props) => {
-  const [name, setName] = useState(deviceName);
+  const model = identifyTargetId(deviceInfo.targetId as number);
+  const editSupported = model?.id && [DeviceModelId.stax, DeviceModelId.nanoX].includes(model.id);
+
+  const [name, setName] = useState(editSupported ? deviceName : model?.productName);
 
   const onSuccess = useCallback(() => {
     track("Page Manager RenamedDevice", { deviceName });
@@ -57,9 +62,11 @@ const DeviceName: React.FC<Props> = ({
           <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={6} mr={3}>
             {name || deviceInfo.version}
           </Text>
-          <PenIcon>
-            <Icons.PenMedium color="primary.c90" size={17} />
-          </PenIcon>
+          {editSupported ? (
+            <PenIcon>
+              <Icons.PenMedium color="primary.c90" size={17} />
+            </PenIcon>
+          ) : null}
         </Flex>
       </Flex>
     </Flex>
