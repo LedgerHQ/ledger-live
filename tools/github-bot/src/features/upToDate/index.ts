@@ -108,8 +108,6 @@ export function upToDate(app: Probot) {
     const { payload, octokit } = context;
     const { owner, repo } = context.repo();
 
-    app.log.info(payload, "Check run re-requested");
-
     if (payload.check_run.name !== CHECK_NAME) return;
 
     await updateCheckRun({

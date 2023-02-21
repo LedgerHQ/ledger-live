@@ -11,7 +11,7 @@ import { rgba } from "../../colors";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
 import WalletTabBackgroundGradient from "./WalletTabBackgroundGradient";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
-import { accountsSelector } from "../../reducers/accounts";
+import { hasNoAccountsSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";
 
 const StyledTouchableOpacity = styled.TouchableOpacity`
@@ -111,7 +111,7 @@ function WalletTabNavigatorTabBar({
 }: MaterialTopTabBarProps) {
   const { colors } = useTheme();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
-  const accounts = useSelector(accountsSelector);
+  const hasNoAccounts = useSelector(hasNoAccountsSelector);
 
   const { scrollY, headerHeight, tabBarHeight } = useContext(
     WalletTabNavigatorScrollContext,
@@ -134,9 +134,7 @@ function WalletTabNavigatorTabBar({
       <WalletTabBackgroundGradient
         scrollX={position}
         color={
-          readOnlyModeEnabled && accounts.length <= 0
-            ? colors.neutral.c30
-            : undefined
+          readOnlyModeEnabled && hasNoAccounts ? colors.neutral.c30 : undefined
         }
       />
       <AnimatedSafeArea

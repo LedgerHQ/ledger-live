@@ -12,6 +12,8 @@ import {
   isUpToDateAccount,
   nestedSortAccounts,
 } from "@ledgerhq/live-common/account/index";
+import { decodeNftId } from "@ledgerhq/live-common/nft/nftId";
+import { orderByLastReceived } from "@ledgerhq/live-common/nft/helpers";
 import { getEnv } from "@ledgerhq/live-common/env";
 import isEqual from "lodash/isEqual";
 import logger from "./../../logger/logger";
@@ -19,6 +21,7 @@ import accountModel from "./../../helpers/accountModel";
 import type { State } from ".";
 
 import useCompoundAccountEnabled from "../screens/lend/useCompoundAccountEnabled";
+import { hiddenNftCollectionsSelector } from "./settings";
 
 export type AccountsState = Account[];
 const state: AccountsState = [];
@@ -252,3 +255,29 @@ export const encodeAccountsModel = (accounts: *) => (accounts || []).map(account
 export default handleActions(handlers, state);
 
 export const flattenAccountsSelector = createSelector(accountsSelector, flattenAccounts);
+
+/**
+ * Returns the list of all the NFTs from non hidden collections accross all
+ * accounts, ordered by last received.
+ *
+ * /!\ Use this with a deep equal comparison if possible as it will always
+ * return a new array if `accounts` or `hiddenNftCollections` changes.
+ *
+ * Example:
+ * ```
+ * import { isEqual } from "lodash";
+ * // ...
+ * const orderedVisibleNfts = useSelector(orderedVisibleNftsSelector, isEqual)
+ * ```
+ * */
+export const orderedVisibleNftsSelector = createSelector(
+  accountsSelector,
+  hiddenNftCollectionsSelector,
+  (accounts, hiddenNftCollections) => {
+    const nfts = accounts.map(a => a.nfts ?? []).flat();
+    const visibleNfts = nfts.filter(
+      nft => !hiddenNftCollections.includes(`${decodeNftId(nft.id).accountId}|${nft.contract}`),
+    );
+    return orderByLastReceived(accounts, visibleNfts);
+  },
+);

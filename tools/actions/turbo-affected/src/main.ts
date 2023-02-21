@@ -2,7 +2,7 @@ import { execSync } from "child_process";
 import * as core from "@actions/core";
 
 async function main() {
-  const ref = core.getInput("head-ref");
+  const ref = core.getInput("ref");
   const pkg = core.getInput("package") || "";
   const command = core.getInput("command");
 

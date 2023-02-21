@@ -79,7 +79,7 @@ export default function History() {
             section,
           }: {
             section: DailyOperationsSection;
-          }) => <SectionHeader section={section} />}
+          }) => <SectionHeader day={section.day} />}
           renderItem={({
             item,
             index,

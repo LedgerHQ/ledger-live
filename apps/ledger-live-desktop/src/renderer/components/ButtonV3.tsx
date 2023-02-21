@@ -24,6 +24,7 @@ export type Props = BaseButtonProps & {
   isLoading?: boolean;
   event?: string;
   eventProperties?: Record<string, unknown>;
+  buttonTestId?: string;
 };
 
 export default function Button({
@@ -34,6 +35,7 @@ export default function Button({
   isLoading,
   event,
   eventProperties,
+  buttonTestId,
   ...rest
 }: Props) {
   const isClickDisabled = disabled || isLoading;
@@ -46,7 +48,12 @@ export default function Button({
     }
   };
   const inner = (
-    <Base {...rest} disabled={disabled} onClick={isClickDisabled ? undefined : onClickHandler}>
+    <Base
+      {...rest}
+      disabled={disabled}
+      onClick={isClickDisabled ? undefined : onClickHandler}
+      data-test-id={buttonTestId}
+    >
       {children}
     </Base>
   );

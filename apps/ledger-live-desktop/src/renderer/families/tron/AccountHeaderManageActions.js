@@ -1,9 +1,5 @@
 // @flow
-import {
-  getAccountUnit,
-  getMainAccount,
-  isAccountEmpty,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
@@ -33,7 +29,7 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
   const earnRewardDisabled = tronPower === 0 && spendableBalance.lt(minAmount);
 
   const onClick = useCallback(() => {
-    if (isAccountEmpty(account) || earnRewardDisabled) {
+    if (earnRewardDisabled) {
       dispatch(
         openModal("MODAL_NO_FUNDS_STAKE", {
           account,

@@ -7,7 +7,10 @@ import { AccountFilters, CurrencyFilters } from "./filters";
 import {
   Account as PlatformAccount,
   Currency as PlatformCurrency,
+  FAMILIES,
 } from "@ledgerhq/live-app-sdk";
+
+export const PLATFORM_FAMILIES = Object.values(FAMILIES);
 
 export type {
   Account as PlatformAccount,

@@ -1,5 +1,9 @@
 import BigNumber from "bignumber.js";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import {
+  CryptoCurrency,
+  CryptoCurrencyId,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { PlatformTransaction } from "@ledgerhq/live-common/platform/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -66,7 +70,7 @@ function createEtherumTransaction(): PlatformTransaction {
 
 const createCryptoCurrency = (family: string): CryptoCurrency => ({
   type: "CryptoCurrency",
-  id: "testCoinId",
+  id: "testCoinId" as CryptoCurrencyId,
   coinType: 8008,
   name: "MyCoin",
   managerAppName: "MyCoin",

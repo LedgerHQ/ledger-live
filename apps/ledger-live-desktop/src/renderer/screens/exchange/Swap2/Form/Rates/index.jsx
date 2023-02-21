@@ -60,24 +60,24 @@ export default function ProviderRate({
 
   const dispatch = useDispatch();
   const [filter, setFilter] = useState([]);
+  const [defaultPartner, setDefaultPartner] = useState(null);
   const selectedRate = useSelector(rateSelector);
   const filteredRates = useMemo(() => filterRates(rates, filter), [rates, filter]);
 
   const updateRate = useCallback(
     rate => {
-      const buttonName = rate.providerType === "CEX" ? "Partner Chosen" : "Partner Dex Chosen";
       const value = rate ?? rate.provider;
       track("partner_clicked", {
-        button: buttonName,
         page: "Page Swap Form",
         ...swapDefaultTrack,
         swap_type: rate.tradeMethod,
         value,
-        defaultPartner: rate.provider,
+        partner: rate.provider,
+        defaultPartner,
       });
       dispatch(updateRateAction(rate));
     },
-    [dispatch, swapDefaultTrack],
+    [defaultPartner, dispatch, swapDefaultTrack],
   );
 
   useEffect(() => {
@@ -89,16 +89,21 @@ export default function ProviderRate({
         r => r.provider === selectedRate.provider && r.tradeMethod === selectedRate.tradeMethod,
       )
     ) {
-      dispatch(updateRateAction(filteredRates[0]));
+      const firstRate = filteredRates[0];
+      setDefaultPartner(firstRate?.provider);
+      dispatch(updateRateAction(firstRate));
     }
 
     // if there is no selected rate but there is a filtered rate, we need to update it
     if (!selectedRate && filteredRates.length > 0) {
-      dispatch(updateRateAction(filteredRates[0]));
+      const firstRate = filteredRates[0];
+      setDefaultPartner(firstRate?.provider);
+      dispatch(updateRateAction(firstRate));
     }
 
     // if there are no filtered rates, we need to unset the selected rate
     if (selectedRate && filteredRates.length === 0) {
+      setDefaultPartner(null);
       dispatch(updateRateAction(null));
     }
   }, [filteredRates, selectedRate, dispatch]);

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { TouchableOpacity, StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { isAccountBalanceUnconfirmed } from "@ledgerhq/live-common/account/index";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-import { accountsSelector } from "../reducers/accounts";
+import { isAccountBalanceUnconfirmed } from "@ledgerhq/live-common/account/helpers";
+import { areSomeAccountsBalanceUnconfirmedSelector } from "../reducers/accounts";
 import QueuedDrawer from "./QueuedDrawer";
 import LText from "./LText";
 import Circle from "./Circle";
@@ -20,16 +20,10 @@ const hitSlop = {
   bottom: 16,
 };
 
-const TransactionsPendingConfirmationWarning = ({
-  maybeAccount,
-}: {
-  maybeAccount?: AccountLike;
-}) => {
+const TransactionsPendingConfirmationWarningContent = () => {
   const { colors } = useTheme();
-  let accounts = useSelector(accountsSelector);
   const [isModalOpened, setIsModalOpened] = useState(false);
-  accounts = maybeAccount ? [maybeAccount as Account] : accounts;
-  return accounts.some(isAccountBalanceUnconfirmed) ? (
+  return (
     <View style={styles.wrapper}>
       <TouchableOpacity
         hitSlop={hitSlop}
@@ -53,6 +47,25 @@ const TransactionsPendingConfirmationWarning = ({
         </LText>
       </QueuedDrawer>
     </View>
+  );
+};
+
+export const TransactionsPendingConfirmationWarningForAccount = ({
+  maybeAccount,
+}: {
+  maybeAccount: AccountLike;
+}) => {
+  return isAccountBalanceUnconfirmed(maybeAccount) ? (
+    <TransactionsPendingConfirmationWarningContent />
+  ) : null;
+};
+
+export const TransactionsPendingConfirmationWarningAllAccounts = () => {
+  const areSomeAccountsBalanceUnconfirmed = useSelector(
+    areSomeAccountsBalanceUnconfirmedSelector,
+  );
+  return areSomeAccountsBalanceUnconfirmed ? (
+    <TransactionsPendingConfirmationWarningContent />
   ) : null;
 };
 
@@ -82,4 +95,3 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
-export default TransactionsPendingConfirmationWarning;

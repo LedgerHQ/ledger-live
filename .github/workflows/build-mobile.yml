@@ -20,8 +20,9 @@ on:
         description: The base branch to merge the head into when checking out the code
 
 concurrency:
-  group: ${{ github.workflow }}-${{ inputs.ref || github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'workflow_dispatch' && inputs.ref != 'develop' || github.ref_name != 'develop' }}
+  # See: https://github.com/orgs/community/discussions/35341
+  group: ${{ github.workflow }}-${{ github.event.inputs.ref || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ref != 'develop' || github.ref_name != 'develop' }}
 
 jobs:
   start-runner:
@@ -67,7 +68,7 @@ jobs:
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ inputs.ref || github.event.push.head.sha }}
+          ref: ${{ inputs.ref || github.sha }}
           base: ${{ inputs.base_ref }}
       - name: set git user
         run: |
@@ -142,7 +143,7 @@ jobs:
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ inputs.ref || github.event.push.head.sha }}
+          ref: ${{ inputs.ref || github.sha }}
           base: ${{ inputs.base_ref }}
       - name: set git user
         run: |

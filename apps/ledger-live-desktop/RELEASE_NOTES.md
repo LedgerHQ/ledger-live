@@ -1,3 +1,9 @@
+# 2.53.2
+
+### 🐛 Fixes
+
+- Some users reported a long sync time when adding an Ethereum account. We've fixed this.
+
 # 2.53.1
 
 ### 🌷 Improvements

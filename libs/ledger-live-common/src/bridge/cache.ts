@@ -50,7 +50,7 @@ export function makeBridgeCacheSystem({
         },
         () => "",
         {
-          maxAge: preloadMaxAge,
+          ttl: preloadMaxAge,
         }
       );
       lruCaches[currency.id] = cache;

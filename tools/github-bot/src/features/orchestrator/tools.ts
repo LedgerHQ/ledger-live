@@ -2,16 +2,21 @@ import fs from "fs/promises";
 import path from "path";
 import { ProbotOctokit } from "probot";
 import { formatConclusion, getStatusEmoji } from "../../tools";
-import { BOT_APP_ID, GATE_CHECK_RUN_NAME, WORKFLOWS } from "./const";
+import {
+  BOT_APP_ID,
+  REF_PREFIX,
+  WATCHER_CHECK_RUN_NAME,
+  WORKFLOWS,
+} from "./const";
 
 type Octokit = InstanceType<typeof ProbotOctokit>;
 
-export async function updateGateCheckRun(
+export async function updateWatcherCheckRun(
   octokit: Octokit,
   owner: string,
   repo: string,
   ref: string
-) {
+): Promise<ReturnType<Octokit["checks"]["update"]> | void> {
   const checkSuites = await octokit.checks.listSuitesForRef({
     owner,
     repo,
@@ -46,9 +51,9 @@ export async function updateGateCheckRun(
       "startup_failure",
       "failure",
     ];
-    let gateId = null;
+    let watcherId = null;
 
-    let summary = `#### This is the gate check run. It aggregates the status of all the other checks in the check suite.`;
+    let summary = `#### This is the watcher check run. It aggregates the status of all the other checks in the check suite.`;
     summary += `\n\n`;
     summary += `### 👁 Watching`;
 
@@ -60,8 +65,8 @@ export async function updateGateCheckRun(
       .sort((a, b) => a.name.localeCompare(b.name))
       .reduce(
         (acc, check_run) => {
-          if (check_run.name === GATE_CHECK_RUN_NAME) {
-            gateId = check_run.id;
+          if (check_run.name === WATCHER_CHECK_RUN_NAME) {
+            watcherId = check_run.id;
             return acc;
           }
 
@@ -87,26 +92,28 @@ export async function updateGateCheckRun(
             check_run.html_url
           })**${workflowLink}: \`${check_run.conclusion ||
             check_run.status}\` ${
-            workflowMeta[1].required ? "(required)" : "(optional)"
+            workflowMeta[1].required ? "" : "_(optional)_"
           }`;
           let newPriority;
+          let newStatus;
 
           const priority = conclusions.indexOf(
             check_run.conclusion || "neutral"
           );
           const accumulatorPriority = conclusions.indexOf(acc[0]);
-          const newStatus =
-            check_run.status === "completed" && acc[1] === "completed"
-              ? "completed"
-              : "in_progress";
 
           if (workflowMeta[1].required) {
             newPriority =
               priority > accumulatorPriority
                 ? check_run.conclusion || "neutral"
                 : acc[0];
+            newStatus =
+              check_run.status === "completed" && acc[1] === "completed"
+                ? "completed"
+                : "in_progress";
           } else {
             newPriority = acc[0];
+            newStatus = acc[1];
           }
 
           return [newPriority, newStatus];
@@ -114,12 +121,23 @@ export async function updateGateCheckRun(
         ["success", "completed"]
       );
 
-    if (gateId) {
+    if (watcherId) {
       if (aggregatedStatus === "completed") {
-        await octokit.checks.update({
+        // Delete the previously created ref for forked PRs
+        try {
+          await octokit.rest.git.deleteRef({
+            owner,
+            repo,
+            ref: `${REF_PREFIX}/forked/${checkSuite.head_sha}`,
+          });
+        } catch (error) {
+          // Ignore error / maybe ref doesn't exists
+        }
+
+        return await octokit.checks.update({
           owner,
           repo,
-          check_run_id: gateId,
+          check_run_id: watcherId,
           status: "completed",
           conclusion: aggregatedConclusion,
           output: {
@@ -129,10 +147,10 @@ export async function updateGateCheckRun(
           completed_at: new Date().toISOString(),
         });
       } else {
-        await octokit.checks.update({
+        return await octokit.checks.update({
           owner,
           repo,
-          check_run_id: gateId,
+          check_run_id: watcherId,
           status: aggregatedStatus,
           output: {
             title: "⚙️ Running",
