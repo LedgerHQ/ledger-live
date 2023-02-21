@@ -549,7 +549,7 @@
       "description" : "必须在 30 秒内签署交易。请重试。"
     },
     "TronNotEnoughEnergy" : {
-      "title" : "能量低于必要值。您可能需要支付高达 50TRX 的费用。"
+      "title" : "能量低于必要值。您可能需要支付高达 50 TRX 的费用。"
     },
     "UpdateYourApp" : {
       "title" : "需要更新应用程序",
@@ -1268,7 +1268,13 @@
       "recovery" : "已经有了恢复短语？",
       "protect" : {
         "label" : "约 60 分钟",
-        "subTitle" : "使用 Protect 重置"
+        "subTitle" : "使用 Protect 重置",
+        "drawer" : {
+          "title" : "使用 Nano X",
+          "desc" : "Ledger Recover 软启动专用于 Ledger Nano X",
+          "buyNanoX" : "购买 Ledger Nano X",
+          "discoverBenefits" : "了解优势"
+        }
       }
     },
     "stepNewDevice" : {
