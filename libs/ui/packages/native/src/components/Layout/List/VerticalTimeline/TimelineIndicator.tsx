@@ -3,7 +3,7 @@ import { CircledCheckSolidMedium } from "@ledgerhq/icons-ui/native";
 import styled, { useTheme } from "styled-components/native";
 
 import Flex, { Props as FlexProps } from "../../Flex";
-import { ItemStatus } from ".";
+import { ItemStatus } from "../types";
 import { Theme } from "src/styles/theme";
 
 const TopSegment = styled(Flex)<{ status: ItemStatus; hidden?: boolean }>`

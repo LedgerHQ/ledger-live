@@ -4,7 +4,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-na
 import { Theme } from "src/styles/theme";
 import styled from "styled-components/native";
 
-import { Item, ItemStatus } from ".";
+import { Item, ItemStatus } from "../types";
 import { Flex } from "../..";
 import { Text, Tag } from "../../..";
 import TimelineIndicator from "./TimelineIndicator";
