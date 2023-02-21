@@ -80,7 +80,7 @@ module.exports = {
     "import/no-extraneous-dependencies": [
       "error",
       {
-        devDependencies: ["**/e2e/**", "**/*.test.{ts,tsx}"],
+        devDependencies: ["**/e2e/**", "**/*.test.{ts,tsx}", "jest.config.js"],
       },
     ],
     // For Link component from native-ui, that is interpreted like a html link, and thus this rule tried to impose a href prop on it
