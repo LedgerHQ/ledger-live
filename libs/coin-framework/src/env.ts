@@ -565,6 +565,11 @@ const envDefinitions: Record<
     parser: boolParser,
     desc: "dev flag to skip onboarding flow",
   },
+  SPECULOS_PID_OFFSET: {
+    def: 0,
+    parser: intParser,
+    desc: "offset to be added to the speculos pid and avoid collision with other instances",
+  },
   SWAP_API_BASE: {
     def: "https://swap.ledger.com/v4",
     parser: stringParser,
@@ -714,6 +719,11 @@ const envDefinitions: Record<
     def: "{}",
     parser: jsonParser,
     desc: "key value map for feature flags: {[key in FeatureId]?: Feature]}",
+  },
+  PERFORMANCE_CONSOLE: {
+    def: false,
+    parser: boolParser,
+    desc: "Show a performance overlay on the app UI",
   },
 };
 

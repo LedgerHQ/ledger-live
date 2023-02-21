@@ -138,6 +138,7 @@ const OnboardingStepUseCaseSelection = () => {
                             navigation.navigate(ScreenName.OnboardingPairNew, {
                               deviceModelId: route.params.deviceModelId,
                               next: ScreenName.OnboardingProtectFlow,
+                              isProtectFlow: true,
                             });
                           }
                         },

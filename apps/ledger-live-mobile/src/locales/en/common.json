@@ -87,7 +87,8 @@
     "popular": "popular",
     "getSupport": "Get support",
     "comingSoon": "Coming soon",
-    "restart": "Restart"
+    "restart": "Restart",
+    "loadMore": "Load more"
   },
   "errors": {
     "countervaluesUnavailable": {
@@ -1125,6 +1126,10 @@
         "title": "Learn",
         "desc": "Learn about crypto, web3, digital security and more"
       },
+      "news": {
+        "title": "News",
+        "desc": "Learn about crypto, security, web3 and catch up with latest news"
+      },
       "ledgerApps": {
         "title": "Apps",
         "desc": "Explore Ledger's partner apps all in one place"
@@ -1660,6 +1665,10 @@
             "label": "Check whether your Nano X is detected."
           }
         }
+      },
+      "protectConnectionInformationModal": {
+        "title": "Why can I not connect my Ledger?",
+        "description": "If you are experiencing issues connecting to Ledger Live mobile after you have enabled Bluetooth on your Ledger, you can follow the instructions by tapping on the \"Learn how to fix that\" button below"
       }
     },
     "stepImportAccounts": {
@@ -6094,5 +6103,10 @@
         "emptyPassword": "Password cannot be empty"
       }
     }
+  },
+  "newsfeed": {
+    "title": "Newsfeed",
+    "poweredByCryptopanic": "Powered by Cryptopanic",
+    "noPosts": "No posts available currently"
   }
 }

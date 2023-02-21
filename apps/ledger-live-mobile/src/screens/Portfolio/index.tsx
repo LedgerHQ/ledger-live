@@ -6,8 +6,10 @@ import { useFocusEffect } from "@react-navigation/native";
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
 import { useRefreshAccountsOrdering } from "../../actions/general";
 import { discreetModeSelector } from "../../reducers/settings";
+
 import Carousel from "../../components/Carousel";
 import TrackScreen from "../../analytics/TrackScreen";
 import MigrateAccountsBanner from "../MigrateAccounts/Banner";
@@ -151,7 +153,10 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   );
 
   return (
-    <>
+    <ReactNavigationPerformanceView
+      screenName={ScreenName.Portfolio}
+      interactive
+    >
       <CheckLanguageAvailability />
       <CheckTermOfUseUpdate />
       <RefreshableCollapsibleHeaderFlatList
@@ -169,7 +174,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
         isOpened={isAddModalOpened}
         onClose={closeAddModal}
       />
-    </>
+    </ReactNavigationPerformanceView>
   );
 }
 

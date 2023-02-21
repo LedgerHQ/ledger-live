@@ -43,7 +43,7 @@ export const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
     ? t("account.banner.redelegation.cta")
     : t("account.banner.delegation.cta");
   const linkText = redelegate
-    ? t("account.banner.redelegation.solana.linkText")
+    ? t("account.banner.redelegation.linkText")
     : t("account.banner.delegation.linkText");
   const linkUrl = redelegate
     ? "https://support.ledger.com/hc/en-us/articles/4731749170461-Staking-Solana-SOL-in-Ledger-Live?support=true"

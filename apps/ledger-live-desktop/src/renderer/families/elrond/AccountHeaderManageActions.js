@@ -12,7 +12,6 @@ import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
 
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 
 type Props = {
   account: AccountLike,
@@ -38,7 +37,7 @@ const AccountHeaderActions = (props: Props) => {
     : false;
 
   const onClick = useCallback(() => {
-    if (isAccountEmpty(account) || !earnRewardEnabled) {
+    if (!earnRewardEnabled) {
       dispatch(
         openModal("MODAL_NO_FUNDS_STAKE", {
           account,
