@@ -5,7 +5,7 @@ import { getSpecTypes } from "@polkadot/types-known";
 import { Metadata } from "@polkadot/types/metadata";
 import { expandMetadata } from "@polkadot/types/metadata/decorate";
 import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
-import { LRUCacheFn, makeLRUCache } from "@ledgerhq/coin-framework/cache";
+import { LRUCacheFn } from "@ledgerhq/coin-framework/cache";
 import { getEnv } from "@ledgerhq/coin-framework/env";
 import type { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
 import type {

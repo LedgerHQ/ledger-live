@@ -1329,6 +1329,7 @@ importers:
       leb128: ^0.0.5
       lodash: ^4.17.21
       long: ^4.0.0
+      lru-cache: ^7.14.1
       minimatch: ^5.1.0
       mkdirp: '*'
       near-api-js: ^0.44.2
@@ -1475,6 +1476,7 @@ importers:
       jwt-decode: 3.1.2
       leb128: 0.0.5
       lodash: 4.17.21
+      lru-cache: 7.14.1
       minimatch: 5.1.0
       near-api-js: 0.44.2
       numeral: 2.0.6

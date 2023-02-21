@@ -5,7 +5,6 @@ import {
   makeScanAccounts,
   makeSync,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { makeLRUCache } from "@ledgerhq/coin-framework/cache";
 import type { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
 import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
 import type {
@@ -26,6 +25,7 @@ import { loadPolkadotCrypto } from "../polkadot-crypto";
 import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 import { getPreloadStrategy, hydrate, preload } from "../preload";
 import type { Transaction } from "../types";
+import { LRUCacheFn } from "@ledgerhq/coin-framework/cache";
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
 
@@ -47,9 +47,10 @@ const broadcast =
 
 export function buildCurrencyBridge(
   deviceCommunication: DeviceCommunication,
-  network: NetworkRequestCall
+  network: NetworkRequestCall,
+  cacheFn: LRUCacheFn
 ): CurrencyBridge {
-  const polkadotAPI = new PolkadotAPI(network, makeLRUCache);
+  const polkadotAPI = new PolkadotAPI(network, cacheFn);
 
   const getAccountShape = makeGetAccountShape(polkadotAPI);
   const scanAccounts = makeScanAccounts({
@@ -68,9 +69,10 @@ export function buildCurrencyBridge(
 
 export function buildAccountBridge(
   deviceCommunication: DeviceCommunication,
-  network: NetworkRequestCall
+  network: NetworkRequestCall,
+  cacheFn: LRUCacheFn
 ): AccountBridge<Transaction> {
-  const polkadotAPI = new PolkadotAPI(network, makeLRUCache);
+  const polkadotAPI = new PolkadotAPI(network, cacheFn);
 
   const receive = makeAccountBridgeReceive(
     getAddressWrapper(getAddress),
