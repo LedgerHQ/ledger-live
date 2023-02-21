@@ -26,6 +26,7 @@ export async function updateWatcherCheckRun(
   const checkSuite = checkSuites.data.check_suites.find(
     (suite) => suite.app?.id === BOT_APP_ID
   );
+
   if (checkSuite) {
     const [rawCheckRuns, rawWorkflowRuns] = await Promise.all([
       octokit.checks.listForSuite({
@@ -61,67 +62,69 @@ export async function updateWatcherCheckRun(
     summary += `\n\n`;
     summary += `### 👁 Watching`;
 
-    const [aggregatedConclusion, aggregatedStatus] =
-      rawCheckRuns.data.check_runs
-        .slice()
-        .sort((a, b) => a.name.localeCompare(b.name))
-        .reduce(
-          (acc, check_run) => {
-            if (check_run.name === WATCHER_CHECK_RUN_NAME) {
-              watcherId = check_run.id;
-              return acc;
-            }
+    const [
+      aggregatedConclusion,
+      aggregatedStatus,
+    ] = rawCheckRuns.data.check_runs
+      .slice()
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .reduce(
+        (acc, check_run) => {
+          if (check_run.name === WATCHER_CHECK_RUN_NAME) {
+            watcherId = check_run.id;
+            return acc;
+          }
 
-            const workflowMeta = Object.entries(WORKFLOWS).find(
-              ([, w]) => w.checkRunName === check_run.name
-            );
+          const workflowMeta = Object.entries(WORKFLOWS).find(
+            ([, w]) => w.checkRunName === check_run.name
+          );
 
-            if (!workflowMeta) {
-              return acc;
-            }
+          if (!workflowMeta) {
+            return acc;
+          }
 
-            const workflowRun = rawWorkflowRuns.data.workflow_runs.find(
-              (wr) =>
-                (wr as any).path === ".github/workflows/" + workflowMeta[0]
-            );
+          const workflowRun = rawWorkflowRuns.data.workflow_runs.find(
+            (wr) => (wr as any).path === ".github/workflows/" + workflowMeta[0]
+          );
 
-            const workflowLink =
-              workflowRun?.html_url &&
-              ` _[(workflow)](${workflowRun?.html_url})_`;
+          const workflowLink =
+            workflowRun?.html_url &&
+            ` _[(workflow)](${workflowRun?.html_url})_`;
 
-            summary += `\n- ${getStatusEmoji(
-              check_run.conclusion || check_run.status
-            )} **[${check_run.name}](${
-              check_run.html_url
-            })**${workflowLink}: \`${
-              check_run.conclusion || check_run.status
-            }\` ${workflowMeta[1].required ? "" : "_(optional)_"}`;
-            let newPriority;
-            let newStatus;
+          summary += `\n- ${getStatusEmoji(
+            check_run.conclusion || check_run.status
+          )} **[${check_run.name}](${
+            check_run.html_url
+          })**${workflowLink}: \`${check_run.conclusion ||
+            check_run.status}\` ${
+            workflowMeta[1].required ? "" : "_(optional)_"
+          }`;
+          let newPriority;
+          let newStatus;
 
-            const priority = conclusions.indexOf(
-              check_run.conclusion || "neutral"
-            );
-            const accumulatorPriority = conclusions.indexOf(acc[0]);
+          const priority = conclusions.indexOf(
+            check_run.conclusion || "neutral"
+          );
+          const accumulatorPriority = conclusions.indexOf(acc[0]);
 
-            if (workflowMeta[1].required) {
-              newPriority =
-                priority > accumulatorPriority
-                  ? check_run.conclusion || "neutral"
-                  : acc[0];
-              newStatus =
-                check_run.status === "completed" && acc[1] === "completed"
-                  ? "completed"
-                  : "in_progress";
-            } else {
-              newPriority = acc[0];
-              newStatus = acc[1];
-            }
+          if (workflowMeta[1].required) {
+            newPriority =
+              priority > accumulatorPriority
+                ? check_run.conclusion || "neutral"
+                : acc[0];
+            newStatus =
+              check_run.status === "completed" && acc[1] === "completed"
+                ? "completed"
+                : "in_progress";
+          } else {
+            newPriority = acc[0];
+            newStatus = acc[1];
+          }
 
-            return [newPriority, newStatus];
-          },
-          ["success", "completed"]
-        );
+          return [newPriority, newStatus];
+        },
+        ["success", "completed"]
+      );
 
     if (watcherId) {
       if (aggregatedStatus === "completed") {

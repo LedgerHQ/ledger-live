@@ -30,16 +30,16 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
 
     const { owner, repo } = context.repo();
     const workflowFile = extractWorkflowFile(payload);
-    const { data: checkSuite } = await octokit.checks.getSuite({
-      owner,
-      repo,
-      check_suite_id: payload.workflow_run.check_suite_id,
-    });
 
     if (workflowFile === workflow.file) {
       context.log.info(
         `[Monitoring Workflow](workflow_run.requested) ${payload.workflow_run.name}`
       );
+      const { data: checkSuite } = await octokit.checks.getSuite({
+        owner,
+        repo,
+        check_suite_id: payload.workflow_run.check_suite_id,
+      });
       const workflowUrl = payload.workflow_run.html_url;
       const summaryPrefix = workflow.description
         ? `#### ${workflow.description}\n\n`
@@ -73,13 +73,13 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
 
     const { owner, repo } = context.repo();
     const workflowFile = extractWorkflowFile(payload);
-    const { data: checkSuite } = await octokit.checks.getSuite({
-      owner,
-      repo,
-      check_suite_id: payload.workflow_run.check_suite_id,
-    });
 
     if (workflowFile === workflow.file) {
+      const { data: checkSuite } = await octokit.checks.getSuite({
+        owner,
+        repo,
+        check_suite_id: payload.workflow_run.check_suite_id,
+      });
       // Sync the check_run with the conclusion of the workflow
       const checkRuns = await getCheckRunByName({
         octokit,
@@ -208,11 +208,6 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
 
     const { owner, repo } = context.repo();
     const workflowFile = extractWorkflowFile(payload);
-    const { data: checkSuite } = await octokit.checks.getSuite({
-      owner,
-      repo,
-      check_suite_id: payload.workflow_run.check_suite_id,
-    });
 
     if (workflow.file === workflowFile) {
       context.log.info(
@@ -234,6 +229,12 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
         // Oops, the workflow is not in progress anymore, we should not update the check run
         return;
       }
+
+      const { data: checkSuite } = await octokit.checks.getSuite({
+        owner,
+        repo,
+        check_suite_id: payload.workflow_run.check_suite_id,
+      });
 
       const workflowUrl = `https://github.com/${owner}/${repo}/actions/runs/${payload.workflow_run.id}`;
       const summaryPrefix = workflow.description
