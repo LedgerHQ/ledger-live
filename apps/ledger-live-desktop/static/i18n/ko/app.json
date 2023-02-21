@@ -225,15 +225,10 @@
     "tooltip" : "계정 즐겨찾기"
   },
   "bridge" : {
-    "modalTitle" : "장치 브릿지 열기",
-    "openHeader" : "Websocket을 통해 장치 계정 노출하기",
-    "openDescription" : "브릿지를 열면 귀하의 모든 계정이 타사 애플리케이션에 노출됩니다.",
-    "openedHeader" : "{{appName}} 브릿지 열림",
-    "openedDescription" : "이제 타사 WebSocket을 통해 웹 애플리케이션의 {{appName}} 계정에 접근할 수 있습니다.",
-    "completeHeader" : "브릿지 세션 완료",
-    "completeDescription" : "이제 WebSocket 브릿지가 마감되었습니다.",
-    "openButton" : "열기",
-    "disconnectButton" : "연결 해제"
+    "modalTitle" : "장치 브릿지(Device Bridge)",
+    "openHeader" : "장치 브릿지는 더 이상 사용할 수 없습니다",
+    "openDescription" : "브라우저 지갑 확장 프로그램에서 Ledger Live 대신 WebHID를 사용하도록 구성하세요.",
+    "closeButton" : "종료"
   },
   "swap2" : {
     "title" : "스왑",
@@ -1399,7 +1394,7 @@
         "label" : "인기 있는"
       },
       "earn" : {
-        "title" : "수익",
+        "title" : "스테이킹",
         "description" : "Ledger와 함께 암호화폐 수익 실현"
       }
     }
@@ -5356,7 +5351,7 @@
       "description" : "30초 이내에 서명이 적용되어야 합니다. 다시 시도해 주세요."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 30TRX를 지불할 수 있습니다."
+      "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 50 TRX를 지불할 수 있습니다."
     },
     "PairingFailed" : {
       "title" : "페어링 실패",
@@ -5593,6 +5588,13 @@
       "descriptionWithProductName" : "먼저 {{ productName }} 장치 설정이 필요합니다.\n설정 절차를 안내해드리겠습니다.",
       "goToOnboardingButton" : "내 장치 설정",
       "goToOnboardingButtonWithProductName" : "내 {{ productName }} 설정"
+    },
+    "EtherscanAPIError" : {
+      "title" : "트랜잭션을 가져오지 못했습니다",
+      "description" : "탐색기에서 예상하지 못한 오류가 발생했습니다. 나중에 다시 시도해 주세요"
+    },
+    "GasEstimationError" : {
+      "title" : "가스비를 추정하지 못했습니다"
     }
   },
   "cryptoOrg" : {
