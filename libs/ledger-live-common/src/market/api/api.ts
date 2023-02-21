@@ -14,7 +14,7 @@ import {
 import { rangeDataTable } from "../utils/rangeDataTable";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "../../env";
-import network from "@ledgerhq/coin-framework/network";
+import network from "../../network";
 
 const cryptoCurrenciesList = [...listCryptoCurrencies(), ...listTokens()];
 

@@ -16,6 +16,7 @@ import { DeviceCommunication } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { buildTransaction } from "./js-buildTransaction";
 import { calculateAmount, getNonce, isFirstBond } from "./logic";
+import { PolkadotAPI } from "./api";
 const MODE_TO_TYPE = {
   send: "OUT",
   bond: "BOND",
@@ -154,7 +155,10 @@ export const fakeSignExtrinsic = async (
  * Sign Transaction with Ledger hardware
  */
 const buildSignOperation =
-  (withDevice: DeviceCommunication): SignOperationFnSignature<Transaction> =>
+  (
+    withDevice: DeviceCommunication,
+    polkadotAPI: PolkadotAPI
+  ): SignOperationFnSignature<Transaction> =>
   ({
     account,
     deviceId,
@@ -184,7 +188,7 @@ const buildSignOperation =
                 t: transaction,
               }),
             };
-            const { unsigned, registry } = await buildTransaction(
+            const { unsigned, registry } = await buildTransaction(polkadotAPI)(
               account as PolkadotAccount,
               transactionToSign,
               true

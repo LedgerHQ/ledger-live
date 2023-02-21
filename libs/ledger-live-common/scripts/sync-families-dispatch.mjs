@@ -58,22 +58,32 @@ async function genTarget(targets, families) {
       }
     }
 
+    // In case of cli-transaction, add special import
+    if (target === "cli-transaction.ts") {
+      imports += `import { makeLRUCache } from "../cache";\n`;
+      imports += `import network from "../network";\n`;
+    }
+
+    // Behavior for coin family with their own package
     const libsDir = path.join(__dirname, "../..");
     for (const family of familiesWPackage) {
+      // We still use bridge/js file inside "families" directory
       if (
         target !== "bridge/js.ts" &&
+        target !== "cli-transaction.ts" &&
         fs.existsSync(path.join(libsDir, `coin-${family}/src`, target))
       ) {
-        imports += `import ${family} from "@ledgerhq/coin-${family}/${imprtTarget}";
-`;
-        exprts += `
-  ${family},`;
+        imports += `import ${family} from "@ledgerhq/coin-${family}/${imprtTarget}";\n`;
+        exprts += `\n  ${family},`;
+      }
+
+      if (target === "cli-transaction.ts") {
+        imports += `import ${family}CreateCliTools from "@ledgerhq/coin-${family}/${imprtTarget}";\n`;
+        exprts += `\n  ${family}: ${family}CreateCliTools(network, makeLRUCache),`;
       }
     }
 
-    exprts += `
-};
-`;
+    exprts += `\n};\n`;
 
     const str = `${imports}
 ${exprts}`;
@@ -106,10 +116,8 @@ async function getDeviceTransactionConfig(families) {
   const family = "polkadot";
   const target = "deviceTransactionConfig.ts";
   if (fs.existsSync(path.join(libsDir, `coin-${family}/src`, target))) {
-    imports += `import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_${family} } from "@ledgerhq/coin-${family}/deviceTransactionConfig";
-`;
-    exprts += `
-    | ExtraDeviceTransactionField_${family}`;
+    imports += `import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_${family} } from "@ledgerhq/coin-${family}/deviceTransactionConfig";\n`;
+    exprts += `\n  | ExtraDeviceTransactionField_${family}`;
   }
 
   const str = `${imports}

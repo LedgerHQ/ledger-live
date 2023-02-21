@@ -1,4 +1,4 @@
-import network from "@ledgerhq/coin-framework/network";
+import type { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
 import querystring from "querystring";
 import { BigNumber } from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
@@ -286,44 +286,46 @@ const slashToOperation = (
  *
  * @param {Operation[]} prevOperations
  */
-const fetchOperationList = async (
-  accountId: string,
-  addr: string,
-  startAt: number,
-  offset = 0,
-  prevOperations: Operation[] = []
-) => {
-  const { data } = await network({
-    method: "GET",
-    url: getAccountOperationUrl(addr, offset, startAt),
-  });
-  const operations = data.extrinsics.map((extrinsic) =>
-    extrinsicToOperation(addr, accountId, extrinsic)
-  );
-  const rewards = data.rewards.map((reward) =>
-    rewardToOperation(addr, accountId, reward)
-  );
-  const slashes = data.slashes.map((slash) =>
-    slashToOperation(addr, accountId, slash)
-  );
-  const mergedOp = [...prevOperations, ...operations, ...rewards, ...slashes];
+const fetchOperationList =
+  (network: NetworkRequestCall) =>
+  async (
+    accountId: string,
+    addr: string,
+    startAt: number,
+    offset = 0,
+    prevOperations: Operation[] = []
+  ) => {
+    const { data } = await network({
+      method: "GET",
+      url: getAccountOperationUrl(addr, offset, startAt),
+    });
+    const operations = data.extrinsics.map((extrinsic) =>
+      extrinsicToOperation(addr, accountId, extrinsic)
+    );
+    const rewards = data.rewards.map((reward) =>
+      rewardToOperation(addr, accountId, reward)
+    );
+    const slashes = data.slashes.map((slash) =>
+      slashToOperation(addr, accountId, slash)
+    );
+    const mergedOp = [...prevOperations, ...operations, ...rewards, ...slashes];
 
-  if (
-    operations.length < LIMIT &&
-    rewards.length < LIMIT &&
-    slashes.length < LIMIT
-  ) {
-    return mergedOp.filter(Boolean).sort((a, b) => b.date - a.date);
-  }
+    if (
+      operations.length < LIMIT &&
+      rewards.length < LIMIT &&
+      slashes.length < LIMIT
+    ) {
+      return mergedOp.filter(Boolean).sort((a, b) => b.date - a.date);
+    }
 
-  return await fetchOperationList(
-    accountId,
-    addr,
-    startAt,
-    offset + LIMIT,
-    mergedOp
-  );
-};
+    return await fetchOperationList(network)(
+      accountId,
+      addr,
+      startAt,
+      offset + LIMIT,
+      mergedOp
+    );
+  };
 
 /**
  * Fetch all operations for a single account from indexer
@@ -334,10 +336,8 @@ const fetchOperationList = async (
  *
  * @return {Operation[]}
  */
-export const getOperations = async (
-  accountId: string,
-  addr: string,
-  startAt = 0
-) => {
-  return await fetchOperationList(accountId, addr, startAt);
+export const getOperations =
+  (network: NetworkRequestCall) =>
+  async (accountId: string, addr: string, startAt = 0) => {
+    return await fetchOperationList(network)(accountId, addr, startAt);
 };
