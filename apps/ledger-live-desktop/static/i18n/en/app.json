@@ -3867,10 +3867,6 @@
           "title": "Experimental integrations",
           "description": "Use available experimental crypto assets integrations."
         },
-        "experimentalExecutionOnRenderer": {
-          "title": "Experimental networking",
-          "description": "Use experimental networking to optimize your Ledger Live experience with your VPN. Activate this only if your current VPN causes system errors."
-        },
         "experimentalLanguages": {
           "title": "Translation testing",
           "description": "Adds unreleased languages to the language list in the general settings tab."

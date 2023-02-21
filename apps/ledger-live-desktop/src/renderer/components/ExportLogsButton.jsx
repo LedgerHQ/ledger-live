@@ -16,13 +16,7 @@ import type { Props as ButtonProps } from "~/renderer/components/Button";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 
 const saveLogs = async (path: { canceled: boolean, filePath: string }) => {
-  await ipcRenderer.invoke(
-    "save-logs",
-    path,
-    getEnv("EXPERIMENTAL_EXECUTION_ON_RENDERER")
-      ? JSON.stringify(loggerInstance.getMemoryLogs())
-      : null,
-  );
+  await ipcRenderer.invoke("save-logs", path, JSON.stringify(loggerInstance.getMemoryLogs()));
 };
 
 type RestProps = ButtonProps & {|

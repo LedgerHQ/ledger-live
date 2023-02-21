@@ -361,11 +361,6 @@ const envDefinitions: Record<
     parser: boolParser,
     desc: "enable an experimental swap interface",
   },
-  EXPERIMENTAL_EXECUTION_ON_RENDERER: {
-    def: false,
-    parser: boolParser,
-    desc: "enable an experimental execution of business logic to run on renderer side (LLD)",
-  },
   EXPLORER: {
     def: "https://explorers.api.live.ledger.com",
     parser: stringParser,

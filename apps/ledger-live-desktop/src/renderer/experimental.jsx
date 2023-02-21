@@ -113,14 +113,6 @@ export const experimentalFeatures: Feature[] = [
     minValue: 0,
     maxValue: 1,
   },
-  {
-    type: "toggle",
-    name: "EXPERIMENTAL_EXECUTION_ON_RENDERER",
-    title: <Trans i18nKey="settings.experimental.features.experimentalExecutionOnRenderer.title" />,
-    description: (
-      <Trans i18nKey="settings.experimental.features.experimentalExecutionOnRenderer.description" />
-    ),
-  },
 ];
 
 const lsKey = "experimentalFlags";

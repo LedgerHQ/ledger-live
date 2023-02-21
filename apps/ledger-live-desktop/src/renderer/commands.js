@@ -25,7 +25,6 @@ import { v4 as uuidv4 } from "uuid";
 import { Observable } from "rxjs";
 import logger from "~/logger";
 import { deserializeError } from "@ledgerhq/errors";
-import { getEnv } from "@ledgerhq/live-common/env";
 
 // Implements command message of (Renderer proc -> Main proc)
 type Msg<A> = {
@@ -56,7 +55,7 @@ const commandsOnRenderer = {
 };
 
 export function command<Id: $Keys<Commands>>(id: Id): CommandFn<Id> {
-  if (getEnv("EXPERIMENTAL_EXECUTION_ON_RENDERER") && id in commandsOnRenderer) {
+  if (id in commandsOnRenderer) {
     return commandsOnRenderer[id];
   }
   // $FlowFixMe i'm not sure how to prove CommandFn to flow but it works
