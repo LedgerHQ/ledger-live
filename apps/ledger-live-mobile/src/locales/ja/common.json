@@ -549,7 +549,7 @@
       "description" : "トランザクションは、30秒以内に署名する必要があります。もう一度お試しください。"
     },
     "TronNotEnoughEnergy" : {
-      "title" : "エネルギーが必要額を満たしていません。手数料には最大30TRXが必要となります。"
+      "title" : "エネルギーが必要額を満たしていません。手数料には最大50TRXが必要となります。"
     },
     "UpdateYourApp" : {
       "title" : "アプリのアップデートが必要です。",
@@ -1268,7 +1268,13 @@
       "recovery" : "リカバリーフレーズをすでにお持ちですか？",
       "protect" : {
         "label" : "～60分",
-        "subTitle" : "Protectで復元"
+        "subTitle" : "Protectで復元",
+        "drawer" : {
+          "title" : "Nano Xを使用する",
+          "desc" : "Ledgerの復元ソフトローンチ（限定公開）はLedger Nano X専用です",
+          "buyNanoX" : "Ledger Nano Xを購入する",
+          "discoverBenefits" : "メリットをチェック"
+        }
       }
     },
     "stepNewDevice" : {
