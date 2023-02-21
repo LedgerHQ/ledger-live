@@ -44,7 +44,6 @@ import ProgressCircle from "~/renderer/components/ProgressCircle";
 import CrossCircle from "~/renderer/icons/CrossCircle";
 import { getProviderIcon } from "~/renderer/screens/exchange/Swap2/utils";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
-import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
 import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { DrawerFooter } from "~/renderer/screens/exchange/Swap2/Form/DrawerFooter";
@@ -631,10 +630,10 @@ export const renderError = ({
         <ErrorIcon size={44} error={error} />
       </Logo>
       <ErrorTitle>
-        <TranslatedError error={error} />
+        <TranslatedError error={error} noLink />
       </ErrorTitle>
       <ErrorDescription>
-        <TranslatedError error={error} field="description" /> <SupportLinkError error={error} />
+        <TranslatedError error={error} field="description" />
       </ErrorDescription>
       {list ? (
         <ErrorDescription>
