@@ -549,7 +549,7 @@
       "description" : "Transaktionen müssen innerhalb von 30 Sekunden signiert werden. Bitte versuchen Sie es erneut."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Energie ist niedriger als notwendig. Es können bis zu 50TRX an Gebühren anfallen."
+      "title" : "Energie ist niedriger als notwendig. Es können bis zu 50 TRX an Gebühren anfallen."
     },
     "UpdateYourApp" : {
       "title" : "App-Update erforderlich",
@@ -1268,7 +1268,13 @@
       "recovery" : "Haben Sie bereits eine Wiederherstellungsphrase?",
       "protect" : {
         "label" : "~60 Minuten",
-        "subTitle" : "Mit Protect wiederherstellen"
+        "subTitle" : "Mit Protect wiederherstellen",
+        "drawer" : {
+          "title" : "Verwenden Sie Nano X",
+          "desc" : "Ledger Recover ist ausschließlich für Ledger Nano X erhältlich.",
+          "buyNanoX" : "Kaufen Sie eine Ledger Nano X",
+          "discoverBenefits" : "Entdecken Sie die Vorteile"
+        }
       }
     },
     "stepNewDevice" : {
