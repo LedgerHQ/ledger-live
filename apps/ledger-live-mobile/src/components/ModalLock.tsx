@@ -6,7 +6,7 @@ import { setModalLock } from "../actions/appstate";
 /**
  * If mounted, lock all drawers using the modalLock redux app state (components/QueuedDrawer)
  *
- * The modal lock is reset when loosing the react-navigation screen focus.
+ * The modal lock is reset when losing the react-navigation screen focus.
  *
  * Used in some DeviceAction displayed in drawers:
  * All steps of a DeviceAction that have an ongoing operation on
