@@ -6,13 +6,14 @@ import { AccountBanner } from "~/renderer/screens/account/AccountBanner";
 import React from "react";
 import { StakeAccountBannerParams } from "~/renderer/screens/account/types";
 import { useElrondPreloadData } from "@ledgerhq/live-common/families/elrond/react";
-import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+import { ElrondAccount, ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
 import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import { modals } from "~/renderer/families/elrond/modals";
 import { AccountBannerState } from "@ledgerhq/live-common/lib/families/elrond/banner";
+import { ElrondDelegation } from "@ledgerhq/live-common/lib/families/elrond/types";
 
 export const StakeBanner: React.FC<{ account: ElrondAccount }> = ({ account }) => {
   const { t } = useTranslation();
@@ -21,6 +22,7 @@ export const StakeBanner: React.FC<{ account: ElrondAccount }> = ({ account }) =
     stakeAccountBanner?.params ?? null;
 
   const elrondPreloadData = useElrondPreloadData();
+
   const dispatch = useDispatch();
   const bannerState: AccountBannerState = getElrondBannerState(account, elrondPreloadData);
   const showDelegationBanner = bannerState.bannerType === "delegate";
@@ -58,13 +60,23 @@ export const StakeBanner: React.FC<{ account: ElrondAccount }> = ({ account }) =
     });
 
     if (bannerState.bannerType === "redelegate") {
+      const findValidator = (validator: string) =>
+        elrondPreloadData.validators.find((item: ElrondProvider) => item.contract === validator);
+
+      const mappedDelegations = account.elrondResources.delegations.map(
+        (delegation: ElrondDelegation) => ({
+          ...delegation,
+          validator: findValidator(delegation.contract),
+        }),
+      );
+
       dispatch(
         openModal(modals.unstake, {
           account,
-          contract: bannerState.selectedDelegation.contract,
+          contract: bannerState.worstDelegation.contract,
           validators: elrondPreloadData.validators,
-          delegations: bannerState.mappedDelegations,
-          amount: bannerState.selectedDelegation.userActiveStake,
+          delegations: mappedDelegations,
+          amount: bannerState.worstDelegation.userActiveStake,
         }),
       );
     } else {

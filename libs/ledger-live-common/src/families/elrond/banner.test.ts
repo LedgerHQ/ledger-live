@@ -6,13 +6,18 @@ import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "./constants";
 describe("getAccountBannerState", () => {
   it("returns the delegate banner when balance is not zero and there are no delegations", () => {
     const account = {
-      balance: BigNumber(1),
+      spendableBalance: BigNumber(1000000000000000000000),
       elrondResources: {
         delegations: [],
       },
     };
     const elrondPreloadData = {
-      validators: [],
+      validators: [
+        {
+          contract: ELROND_LEDGER_VALIDATOR_ADDRESS,
+          aprValue: 0.2,
+        } as ElrondProvider,
+      ],
     };
     const result = getAccountBannerState(
       account as unknown as ElrondAccount,
@@ -25,7 +30,7 @@ describe("getAccountBannerState", () => {
 
   it("returns no banner when balance is zero and account already has delegations", () => {
     const account = {
-      balance: BigNumber(0),
+      spendableBalance: BigNumber(0),
       elrondResources: {
         delegations: [
           {
@@ -35,7 +40,12 @@ describe("getAccountBannerState", () => {
       },
     };
     const elrondPreloadData = {
-      validators: [],
+      validators: [
+        {
+          contract: ELROND_LEDGER_VALIDATOR_ADDRESS,
+          aprValue: 0.2,
+        } as ElrondProvider,
+      ],
     };
     const result = getAccountBannerState(
       account as unknown as ElrondAccount,
@@ -48,11 +58,11 @@ describe("getAccountBannerState", () => {
 
   it("returns no banner when there is no ledger validator", () => {
     const account = {
-      balance: BigNumber(100),
+      spendableBalance: BigNumber(100),
       elrondResources: {
         delegations: [
           {
-            address: "address:a",
+            contract: "contract:a",
           } as ElrondDelegation,
         ],
       },
@@ -75,12 +85,11 @@ describe("getAccountBannerState", () => {
 
   it("returns the redelegation banner when the ledger validator is not the worst validator", () => {
     const account = {
-      balance: BigNumber(100),
+      spendableBalance: BigNumber(100),
       elrondResources: {
         delegations: [
           {
-            contract: "address:a",
-            address: "address:a",
+            contract: "contract:a",
           } as ElrondDelegation,
         ],
       },
@@ -88,7 +97,7 @@ describe("getAccountBannerState", () => {
     const elrondPreloadData = {
       validators: [
         {
-          contract: "address:a",
+          contract: "contract:a",
           aprValue: 0.1,
         } as ElrondProvider,
         {
@@ -96,7 +105,7 @@ describe("getAccountBannerState", () => {
           aprValue: 0.2,
         } as ElrondProvider,
         {
-          contract: "address:b",
+          contract: "contract:b",
           aprValue: 0.3,
         } as ElrondProvider,
       ],
@@ -107,30 +116,19 @@ describe("getAccountBannerState", () => {
     );
     expect(result).toEqual({
       bannerType: "redelegate",
-      mappedDelegations: [
-        {
-          address: "address:a",
-          contract: "address:a",
-          validator: {
-            aprValue: 0.1,
-            contract: "address:a",
-          },
-        },
-      ],
-      selectedDelegation: {
-        address: "address:a",
-        contract: "address:a",
+      worstDelegation: {
+        contract: "contract:a",
       },
     });
   });
 
   it("returns the delegation banner when ledger is the worst validator and the account balance is not zero", () => {
     const account = {
-      balance: BigNumber(100),
+      spendableBalance: BigNumber(1000000000000000000000),
       elrondResources: {
         delegations: [
           {
-            address: "address:a",
+            contract: "contract:a",
           } as ElrondDelegation,
         ],
       },
@@ -138,7 +136,7 @@ describe("getAccountBannerState", () => {
     const elrondPreloadData = {
       validators: [
         {
-          contract: "address:a",
+          contract: "contract:a",
           aprValue: 0.2,
         } as ElrondProvider,
         {
@@ -146,7 +144,7 @@ describe("getAccountBannerState", () => {
           aprValue: 0.1,
         } as ElrondProvider,
         {
-          contract: "address:b",
+          contract: "contract:b",
           aprValue: 0.3,
         } as ElrondProvider,
       ],
@@ -162,11 +160,11 @@ describe("getAccountBannerState", () => {
 
   it("returns no banner when ledger is the worst validator and the account balance is zero", () => {
     const account = {
-      balance: BigNumber(0),
+      spendableBalance: BigNumber(0),
       elrondResources: {
         delegations: [
           {
-            address: "address:a",
+            contract: "contract:a",
           } as ElrondDelegation,
         ],
       },
@@ -174,7 +172,7 @@ describe("getAccountBannerState", () => {
     const elrondPreloadData = {
       validators: [
         {
-          contract: "address:a",
+          contract: "contract:a",
           aprValue: 0.2,
         } as ElrondProvider,
         {
@@ -182,7 +180,7 @@ describe("getAccountBannerState", () => {
           aprValue: 0.1,
         } as ElrondProvider,
         {
-          contract: "address:b",
+          contract: "contract:b",
           aprValue: 0.3,
         } as ElrondProvider,
       ],

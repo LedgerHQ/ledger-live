@@ -1,10 +1,7 @@
 import type { ElrondAccount, ElrondProvider } from "./types";
 import { ElrondDelegation, ElrondPreloadData } from "./types";
 import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "./constants";
-
-type MappedElrondDelegation = ElrondDelegation & {
-  validator: ElrondProvider | undefined;
-};
+import { areEarnRewardsEnabled } from "./helpers/areEarnRewardsEnabled";
 
 interface AccountBannerHiddenState {
   bannerType: "hidden";
@@ -16,8 +13,7 @@ interface AccountBannerDelegateState {
 
 interface AccountBannerRedelegateState {
   bannerType: "redelegate";
-  mappedDelegations: MappedElrondDelegation[];
-  selectedDelegation: ElrondDelegation;
+  worstDelegation: ElrondDelegation;
 }
 
 export type AccountBannerState =
@@ -25,32 +21,32 @@ export type AccountBannerState =
   | AccountBannerRedelegateState
   | AccountBannerHiddenState;
 
+function getWorstValidator(
+  delegations: ElrondDelegation[],
+  validators: ElrondProvider[],
+  ledgerValidator: ElrondProvider
+) {
+  return delegations.reduce((worstValidator, delegation) => {
+    const validator = validators.find(
+      (validator) => validator.contract === delegation.contract
+    );
+    if (validator && validator.aprValue < worstValidator.aprValue) {
+      return validator;
+    }
+    return worstValidator;
+  }, ledgerValidator);
+}
+
 export function getAccountBannerState(
   account: ElrondAccount,
   elrondPreloadData: ElrondPreloadData
 ): AccountBannerState {
+  const { validators } = elrondPreloadData;
   const elrondResources = account.elrondResources
     ? account.elrondResources
     : { delegations: [] as ElrondDelegation[] };
 
-  const { validators } = elrondPreloadData;
-
-  const delegationAddresses = elrondResources.delegations.map((delegation) => {
-    return delegation.address;
-  });
-
-  if (!account.balance.isZero() && delegationAddresses.length === 0) {
-    return {
-      bannerType: "delegate",
-    };
-  }
-
-  if (delegationAddresses.length > 0 && account.balance.isZero()) {
-    return {
-      bannerType: "hidden",
-    };
-  }
-
+  const hasDelegations = elrondResources.delegations.length > 0;
   const ledgerValidator = validators.find(
     (validator) => validator.contract === ELROND_LEDGER_VALIDATOR_ADDRESS
   );
@@ -62,45 +58,33 @@ export function getAccountBannerState(
     };
   }
 
-  const findValidator = (validator: string) =>
-    elrondPreloadData.validators.find((item) => item.contract === validator);
-
-  const worstValidator: ElrondProvider = delegationAddresses.reduce(
-    (worstValidator, validatorAddress) => {
-      const validator = validators.find(
-        (validator) => validator.contract === validatorAddress
-      );
-      if (validator && validator.aprValue < worstValidator.aprValue) {
-        return validator;
-      }
-      return worstValidator;
-    },
-    ledgerValidator
-  );
-
-  if (worstValidator.contract !== ledgerValidator.contract) {
-    const selectedDelegation = elrondResources.delegations.find(
-      (delegation) => delegation.address === worstValidator.contract
+  if (hasDelegations) {
+    const worstValidator: ElrondProvider = getWorstValidator(
+      elrondResources.delegations,
+      validators,
+      ledgerValidator
     );
-    if (!selectedDelegation) return { bannerType: "hidden" };
 
-    return {
-      bannerType: "redelegate",
-      mappedDelegations: account.elrondResources.delegations.map(
-        (delegation: ElrondDelegation) => ({
-          ...delegation,
-          validator: findValidator(delegation.contract),
-        })
-      ),
-      selectedDelegation,
-    };
-  } else if (!account.balance.isZero()) {
+    if (worstValidator.contract !== ledgerValidator.contract) {
+      const worstDelegation = elrondResources.delegations.find(
+        (delegation) => delegation.contract === worstValidator.contract
+      );
+      if (!worstDelegation) return { bannerType: "hidden" };
+
+      return {
+        bannerType: "redelegate",
+        worstDelegation,
+      };
+    }
+  }
+
+  if (areEarnRewardsEnabled(account)) {
     return {
       bannerType: "delegate",
     };
-  } else {
-    return {
-      bannerType: "hidden",
-    };
   }
+
+  return {
+    bannerType: "hidden",
+  };
 }
