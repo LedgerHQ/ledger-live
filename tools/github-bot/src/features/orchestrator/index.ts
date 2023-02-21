@@ -100,15 +100,20 @@ export function orchestrator(app: Probot) {
       const summaryPrefix = matchedWorkflow.description
         ? `#### ${matchedWorkflow.description}\n\n`
         : "";
-      const tips = await getTips(workflowFile);
+      const tipsPromise = getTips(workflowFile);
 
       // Ensure that the latest workflow run status is "in progress"
       // Why? Because github might send the "in progress" event AFTER the "completed" event…
-      const workflowRun = await octokit.actions.getWorkflowRun({
+      const workflowRunPromise = octokit.actions.getWorkflowRun({
         owner,
         repo,
         run_id: payload.workflow_run.id,
       });
+
+      const [tips, workflowRun] = await Promise.all([
+        tipsPromise,
+        workflowRunPromise,
+      ]);
 
       if (workflowRun.data.status !== "in_progress") {
         context.log.info(
@@ -419,7 +424,7 @@ export function orchestrator(app: Probot) {
         `[Orchestrator](workflow_run.completed) Updating check run: ${checkRun.name} @id ${checkRun.id}`
       );
 
-      await octokit.checks.update({
+      const updateRes = await octokit.checks.update({
         owner,
         repo,
         check_run_id: checkRun.id,
@@ -432,6 +437,10 @@ export function orchestrator(app: Probot) {
         completed_at: payload.workflow_run.updated_at,
         actions,
       });
+
+      context.log.info(
+        `[Orchestrator](workflow_run.completed) Check run updated: ${updateRes.data.name} @status ${updateRes.data.status} @conclusion ${updateRes.data.conclusion}`
+      );
 
       // Batch annotations to avoid hitting the API rate limit.
       // "The Checks API limits the number of annotations to a maximum of 50 per API request.
