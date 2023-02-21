@@ -225,15 +225,10 @@
     "tooltip" : "Destacar cuenta"
   },
   "bridge" : {
-    "modalTitle" : "Abrir puente de dispositivo",
-    "openHeader" : "Expón tus cuentas del dispositivo a través de WebSocket",
-    "openDescription" : "Abrir un puente expone todas tus cuentas a aplicaciones de terceros.",
-    "openedHeader" : "Puente {{appName}} abierto",
-    "openedDescription" : "Ahora puedes acceder a tu cuenta de {{appName}} en una aplicación web de terceros a través de WebSocket.",
-    "completeHeader" : "Sesión de puente finalizada",
-    "completeDescription" : "El puente WebSocket está ahora cerrado",
-    "openButton" : "Abrir",
-    "disconnectButton" : "Desconectar"
+    "modalTitle" : "Puente de dispositivo",
+    "openHeader" : "El puente de dispositivo ya no está disponible",
+    "openDescription" : "Configura las extensiones de billetera de tu navegador para utilizar WebHID en lugar de Ledger Live.",
+    "closeButton" : "Cerrar"
   },
   "swap2" : {
     "title" : "Permutar",
@@ -1399,7 +1394,7 @@
         "label" : "Popular"
       },
       "earn" : {
-        "title" : "Gana",
+        "title" : "Poner en participación",
         "description" : "Haz crecer tus cripto con Ledger"
       }
     }
@@ -5593,6 +5588,13 @@
       "descriptionWithProductName" : "Primero debes configurar tu {{ productName }}.\nTe guiaremos a lo largo del proceso de configuración.",
       "goToOnboardingButton" : "Configurar mi dispositivo",
       "goToOnboardingButtonWithProductName" : "Configurar mi {{ productName }}"
+    },
+    "EtherscanAPIError" : {
+      "title" : "Se produjo un fallo al recuperar las transacciones",
+      "description" : "Se produjo un error inesperado con los exploradores. Inténtalo de nuevo más tarde"
+    },
+    "GasEstimationError" : {
+      "title" : "Se produjo un fallo en la estimación del gas"
     }
   },
   "cryptoOrg" : {
