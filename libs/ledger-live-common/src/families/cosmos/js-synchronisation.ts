@@ -236,27 +236,3 @@ export const getAccountShape: GetAccountShape = async (info) => {
 
 export const scanAccounts = makeScanAccounts({ getAccountShape });
 export const sync = makeSync({ getAccountShape });
-
-export function applyReconciliation(
-  account: Account,
-  updatedRaw: AccountRaw,
-  next: Account
-): boolean {
-  let changed = false;
-  const cosmosAcc = account as CosmosAccount;
-  const cosmosUpdatedRaw = updatedRaw as CosmosAccountRaw;
-  if (
-    cosmosUpdatedRaw.cosmosResources &&
-    (!cosmosAcc.cosmosResources ||
-      !isEqual(
-        toCosmosResourcesRaw(cosmosAcc.cosmosResources),
-        cosmosUpdatedRaw.cosmosResources
-      ))
-  ) {
-    (next as CosmosAccount).cosmosResources = fromCosmosResourcesRaw(
-      cosmosUpdatedRaw.cosmosResources
-    );
-    changed = true;
-  }
-  return changed;
-}

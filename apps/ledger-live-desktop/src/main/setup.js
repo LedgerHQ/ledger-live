@@ -6,7 +6,6 @@ import contextMenu from "electron-context-menu";
 import { log } from "@ledgerhq/logs";
 import logger, { enableDebugLogger } from "../logger";
 import LoggerTransport from "~/logger/logger-transport-main";
-import LoggerTransportFirmware from "~/logger/logger-transport-firmware";
 import { fsWriteFile, fsReadFile, fsUnlink } from "~/helpers/fs";
 import updater from "./updater";
 import resolveUserDataDirectory from "~/helpers/resolveUserDataDirectory";
@@ -14,9 +13,7 @@ import path from "path";
 import { enableFileLogger } from "~/logger/logger-transport-file";
 
 const loggerTransport = new LoggerTransport();
-const loggerFirmwareTransport = new LoggerTransportFirmware();
 logger.add(loggerTransport);
-logger.add(loggerFirmwareTransport);
 
 if (process.env.DEV_TOOLS || process.env.DEBUG_LOGS) {
   enableDebugLogger();

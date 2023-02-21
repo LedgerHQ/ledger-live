@@ -7,13 +7,14 @@ import { log } from "@ledgerhq/logs";
 import logger from "~/logger";
 import LoggerTransport from "~/logger/logger-transport-internal";
 
-import { executeCommand, unsubscribeCommand, unsubscribeAllCommands } from "./commandHandler";
 import sentry, { setTags } from "~/sentry/internal";
 import {
   transportClose,
   transportExchange,
   transportExchangeBulk,
   transportExchangeBulkUnsubscribe,
+  transportListen,
+  transportListenUnsubscribe,
   transportOpen,
 } from "~/internal/transportHandler";
 import {
@@ -21,13 +22,14 @@ import {
   transportExchangeBulkChannel,
   transportExchangeBulkUnsubscribeChannel,
   transportExchangeChannel,
+  transportListenChannel,
+  transportListenUnsubscribeChannel,
   transportOpenChannel,
 } from "~/config/transportChannels";
 
 process.on("exit", () => {
   logger.debug("exiting process, unsubscribing all...");
   unsubscribeSetup();
-  unsubscribeAllCommands();
   getSentryIfAvailable()?.close(2000);
 });
 
@@ -46,8 +48,6 @@ process.on("uncaughtException", err => {
   // but for now, until we kill all exceptions:
   logger.critical(err, "uncaughtException");
 });
-
-const defers = {};
 
 // eslint-disable-next-line no-unused-vars
 let sentryEnabled = process.env.INITIAL_SENTRY_ENABLED !== "false";
@@ -74,33 +74,15 @@ process.on("message", m => {
     case transportExchangeBulkUnsubscribeChannel:
       transportExchangeBulkUnsubscribe(m);
       break;
+    case transportListenChannel:
+      transportListen(m);
+      break;
+    case transportListenUnsubscribeChannel:
+      transportListenUnsubscribe(m);
+      break;
     case transportCloseChannel:
       transportClose(m);
       break;
-
-    case "command":
-      // $FlowFixMe TODO
-      executeCommand(m.command, process.send.bind(process));
-      break;
-
-    case "command-unsubscribe":
-      unsubscribeCommand(m.requestId);
-      break;
-
-    case "executeHttpQueryPayload": {
-      const { payload } = m;
-      const defer = defers[payload.id];
-      if (!defer) {
-        logger.warn("executeHttpQueryPayload: no defer found");
-        return;
-      }
-      if (payload.type === "success") {
-        defer.resolve(payload.result);
-      } else {
-        defer.reject(payload.error);
-      }
-      break;
-    }
 
     case "sentryLogsChanged": {
       const { payload } = m;

@@ -12,6 +12,8 @@ import {
   transportExchangeBulkChannel,
   transportOpenChannel,
   transportExchangeBulkUnsubscribeChannel,
+  transportListenChannel,
+  transportListenUnsubscribeChannel,
 } from "~/config/transportChannels";
 
 // ~~~
@@ -228,4 +230,6 @@ internalHandlerPromise(transportOpenChannel);
 internalHandlerPromise(transportExchangeChannel);
 internalHandlerPromise(transportCloseChannel);
 internalHandlerObservable(transportExchangeBulkChannel);
+internalHandlerObservable(transportListenChannel);
 internalHandlerEvent(transportExchangeBulkUnsubscribeChannel);
+internalHandlerEvent(transportListenUnsubscribeChannel);

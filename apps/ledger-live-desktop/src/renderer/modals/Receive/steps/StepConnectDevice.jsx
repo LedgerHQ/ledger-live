@@ -8,15 +8,12 @@ import DeviceAction from "~/renderer/components/DeviceAction";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { command } from "~/renderer/commands";
-
+import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import type { StepProps } from "../Body";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { getEnv } from "@ledgerhq/live-common/env";
 
-const connectAppExec = command("connectApp");
-
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectAppExec);
+const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 
 export default function StepConnectDevice({
   account,

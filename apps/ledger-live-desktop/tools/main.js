@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+const fs = require("fs");
 const yargs = require("yargs");
 const Electron = require("./utils/Electron");
 const processReleaseNotes = require("./utils/processReleaseNotes");
@@ -105,6 +106,7 @@ const build = async argv => {
   }
 
   const mainConfig = require("./config/main.esbuild");
+  const workersPath = path.join(lldRoot, "src", "renderer", "webworkers", "workers");
 
   await Promise.all([
     esbuild.build({
@@ -133,6 +135,17 @@ const build = async argv => {
       ...require("./config/renderer.esbuild"),
       define: buildRendererEnv("production"),
     }),
+
+    ...fs.readdirSync(workersPath).map(file =>
+      esbuild.build({
+        ...require("./config/renderer.esbuild"),
+        entryPoints: [path.join(workersPath, file)],
+        entryNames: `${
+          file.lastIndexOf(".") !== -1 ? file.substring(0, file.lastIndexOf(".")) : file
+        }.worker`,
+        define: buildRendererEnv("production"),
+      }),
+    ),
   ]);
 };
 

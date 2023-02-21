@@ -5,7 +5,6 @@ import {
   SolanaResourcesRaw,
 } from "./types";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
-import { isEqual } from "lodash";
 
 export function toSolanaResourcesRaw(
   resources: SolanaResources
@@ -37,29 +36,4 @@ export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
   if (solanaResourcesRaw)
     (account as SolanaAccount).solanaResources =
       fromSolanaResourcesRaw(solanaResourcesRaw);
-}
-
-export function applyReconciliation(
-  account: Account,
-  updatedRaw: AccountRaw,
-  next: Account
-): boolean {
-  let changed = false;
-  const solanaAcc = account as SolanaAccount;
-  const solanaUpdatedRaw = updatedRaw as SolanaAccountRaw;
-
-  if (
-    solanaUpdatedRaw.solanaResources &&
-    (!solanaAcc.solanaResources ||
-      !isEqual(
-        toSolanaResourcesRaw(solanaAcc.solanaResources),
-        solanaUpdatedRaw.solanaResources
-      ))
-  ) {
-    (next as SolanaAccount).solanaResources = fromSolanaResourcesRaw(
-      solanaUpdatedRaw.solanaResources
-    );
-    changed = true;
-  }
-  return changed;
 }

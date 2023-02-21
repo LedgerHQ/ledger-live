@@ -35,7 +35,6 @@ import IsSystemLanguageAvailable from "~/renderer/components/IsSystemLanguageAva
 // $FlowFixMe
 import IsTermOfUseUpdated from "./components/IsTermOfUseUpdated";
 import KeyboardContent from "~/renderer/components/KeyboardContent";
-import PerfIndicator from "~/renderer/components/PerfIndicator";
 import MainSideBar from "~/renderer/components/MainSideBar";
 import TriggerAppReady from "~/renderer/components/TriggerAppReady";
 import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWrapper";
@@ -288,9 +287,6 @@ export default function Default() {
                         <NightlyLayer />
                       ) : null}
 
-                      <KeyboardContent sequence="BJBJBJ">
-                        <PerfIndicator />
-                      </KeyboardContent>
                       <KeyboardContent sequence="CRASH_TEST">
                         <LetThisCrashForCrashTest />
                       </KeyboardContent>
