@@ -824,7 +824,20 @@
       "delegation" : {
         "title" : "Schon gewusst?",
         "description" : "Der Ledger-Validator erledigt das Staking Ihrer {{asset}} zu einer Provision in Höhe von {{commission}} %.",
-        "cta" : "Mit Ledger staken"
+        "cta" : "Mit Ledger staken",
+        "linkText" : "Weitere Informationen",
+        "ethereum" : {
+          "lido" : {
+            "title" : "Schon gewusst?",
+            "description" : "Staken Sie Ihr Ethereum mit Lido ein und verdienen Sie täglich Belohnungen. Keine Sperrfrist. Keine Mindesteinzahlung.",
+            "cta" : "Staking mit Lido"
+          },
+          "kiln" : {
+            "title" : "HODLn Sie nicht nur. Vermehren Sie Ihre ETH.",
+            "description" : "Sie haben mehr als 32 ETH? Verdienen Sie passive Belohnungen, indem Sie Ihre ETH sicher mit Kiln staken.",
+            "cta" : "Staking mit Kiln"
+          }
+        }
       }
     }
   },
@@ -1399,7 +1412,7 @@
         "label" : "beliebt"
       },
       "earn" : {
-        "title" : "Verdienen",
+        "title" : "Staken",
         "description" : "Vermehren Sie Ihre Kryptowährungen mit Ledger"
       }
     }
@@ -3776,7 +3789,9 @@
       "runLocalAppDeleteButton" : "Löschen",
       "runLocalAppOpenButton" : "offen",
       "enableLearnStagingUrl" : "Staging-URL für Lernen-Seite",
-      "enableLearnStagingUrlDesc" : "Aktivieren Sie die Staging-URL für die Lernen-Seite."
+      "enableLearnStagingUrlDesc" : "Aktivieren Sie die Staging-URL für die Lernen-Seite.",
+      "openOnboardingAppInstallDebug" : "Bildschirm zum Installieren der Debug-Anwendung der Onboarding-App öffnen",
+      "openOnboardingAppInstallDebugDesc" : "Öffnen Sie einen Bildschirm mit den Komponenten aus dem Installationsschritt der Sync-Onboarding-App"
     },
     "currencies" : {
       "selectPlaceholder" : "Krypto-Vermögenswert auswählen",
@@ -3942,6 +3957,10 @@
       "fullNode" : {
         "title" : "Bitcoin Full Node verbinden",
         "desc" : "Richten Sie Ihren Bitcoin-Knoten (Full Node) ein, um Transaktionen zu synchronisieren und zu senden, ohne die Explorer von Ledger zu verwenden."
+      },
+      "showZeroValueOperation" : {
+        "title" : "Transaktionen mit Nullbetrag",
+        "desc" : "Transaktionen mit Nullbetrag im Transaktionsverlauf anzeigen."
       }
     }
   },
@@ -5521,6 +5540,10 @@
       "title" : "Das Laden des Bildes aus einer Datei ist fehlgeschlagen",
       "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
     },
+    "ImageLoadFromNftError" : {
+      "title" : "Das Bild konnte nicht aus dem NFT geladen werden",
+      "description" : "Bitte versuchen Sie es erneut mit einem anderen NFT"
+    },
     "ImageDownloadError" : {
       "title" : "Bilddownload fehlgeschlagen",
       "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
@@ -5593,6 +5616,13 @@
       "descriptionWithProductName" : "Sie müssen Ihr {{ productName }} zuerst einrichten.\nWir führen Sie durch den Einrichtungsprozess.",
       "goToOnboardingButton" : "Mein Gerät einrichten",
       "goToOnboardingButtonWithProductName" : "Mein {{ productName }} einrichten"
+    },
+    "EtherscanAPIError" : {
+      "title" : "Abruf der Transaktionen fehlgeschlagen",
+      "description" : "Bei den Explorern ist ein unerwarteter Fehler aufgetreten. Versuchen Sie es bitte später noch einmal"
+    },
+    "GasEstimationError" : {
+      "title" : "Gasgebührenschätzung fehlgeschlagen"
     }
   },
   "cryptoOrg" : {
@@ -5631,7 +5661,13 @@
         "stepLabel" : "Wählen Sie ein Bild aus",
         "description" : "Wählen Sie ein Bild, das als (...) festgelegt werden soll",
         "pickFromNftGallery" : "Aus meiner NFT-Galerie auswählen",
-        "upload" : "Von meinem Computer hochladen"
+        "myNfts" : "Meine NFTs",
+        "upload" : "Von meinem Computer hochladen",
+        "chooseNft" : "Wählen Sie ein NFT",
+        "selectNft" : "NFT wählen",
+        "previousSelectNft" : "Zurück",
+        "nftEmptyStateTitle" : "Es können noch keine NFTs angezeigt werden",
+        "nftEmptyStateDescription" : "Fügen Sie NFTs zu Ihrer Wallet hinzu, um loszulegen."
       },
       "adjust" : {
         "stepLabel" : "Bild anpassen",
@@ -5657,5 +5693,37 @@
     },
     "customImageSet" : "Sperrbildschirm festgelegt",
     "finishCTA" : "Beenden"
+  },
+  "onboardingAppInstall" : {
+    "restore" : {
+      "title" : "Die gleichen Apps wie auf {{deviceName}} installieren?",
+      "titleNoDeviceName" : "Die gleichen Apps wie auf dem vorherigen Ledger-Gerät installieren?",
+      "subtitle" : "Sie können Apps jederzeit installieren oder entfernen.",
+      "installCTA" : "Applikationen wiederherstellen",
+      "skipCTA" : "Ich mache das später"
+    },
+    "default" : {
+      "title" : "{{ productName }} nutzt Apps, um sichere Blockchain-Transaktionen zu ermöglichen",
+      "subtitle" : "Wir empfehlen, eine Standardauswahl an Apps herunterzuladen. Sie können später mehr herunterladen.",
+      "installCTA" : "Applikationen installieren",
+      "skipCTA" : "Ich mache das später"
+    },
+    "progress" : {
+      "loading" : "Lade Daten...",
+      "resolving" : "Auflösen von Abhängigkeiten",
+      "progress" : "Installieren von Apps {{progress}} %",
+      "disclaimer" : "Sie können jederzeit Apps aus Ledger Live hinzufügen oder entfernen."
+    },
+    "cancelled" : {
+      "title" : "Die Installation der App wurde auf {{productName}} abgebrochen",
+      "subtitle" : "{{productName}} benötigt Blockchain-Apps, um Ihre Krypto- und NFT-Transaktionen zu genehmigen.",
+      "installCTA" : "Jetzt installieren",
+      "skipCTA" : "Ich mache das später"
+    },
+    "locked" : {
+      "title" : "Ihr {{productName}} ist gesperrt",
+      "subtitle" : "Geben Sie Ihren {{productName}} frei und starten Sie die Installation neu.",
+      "installCTA" : "Installation neu starten"
+    }
   }
 }
