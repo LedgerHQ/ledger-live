@@ -140,9 +140,7 @@ function OperationRow({
 
   const { colors } = useTheme();
   const amount = getOperationAmountNumber(operation);
-  const valueColor = amount.isNegative()
-    ? colors.neutral.c100
-    : colors.success.c50;
+  const valueColor = amount.isNegative() ? colors.neutral.c100 : colors.success.c50;
   const currency = getAccountCurrency(account);
   const unit = getAccountUnit(account);
   const text = <Trans i18nKey={`operations.types.${operation.type}`} />;
@@ -176,11 +174,7 @@ function OperationRow({
           </Text>
 
           {isOptimistic ? (
-            <Flex
-              flexDirection="row"
-              alignItems="center"
-              testID="spinner-container"
-            >
+            <Flex flexDirection="row" alignItems="center" testID="spinner-container">
               {spinner}
               <Text
                 numberOfLines={1}
