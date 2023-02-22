@@ -550,7 +550,7 @@ Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 Add others with union (e.g. "learn" | "market" | "foo")
 
-Type: (`"learn"` | `"brazePushNotifications"` | `"brazeLearn"` | `"llmNewDeviceSelection"` | `"llmUsbFirmwareUpdate"` | `"ratingsPrompt"` | `"counterValue"` | `"deviceLocalization"` | `"deviceInitialApps"` | `"buyDeviceFromLive"` | `"ptxSmartRouting"` | `"currencyAvalancheCChain"` | `"currencyOsmosis"` | `"currencyOsmosisMobile"` | `"currencyFantom"` | `"currencyMoonbeam"` | `"currencyCronos"` | `"currencySongbird"` | `"currencyFlare"` | `"currencyNear"` | `"currencyFantomMobile"` | `"currencyMoonbeamMobile"` | `"currencyCronosMobile"` | `"currencySongbirdMobile"` | `"currencyFlareMobile"` | `"ptxSmartRoutingMobile"` | `"mockFeature"` | `"multibuyNavigation"` | `"syncOnboarding"` | `"walletConnectLiveApp"` | `"walletConnectEntryPoint"` | `"customImage"` | `"referralProgramDiscoverCard"` | `"referralProgramDesktopBanner"` | `"disableNftSend"` | `"disableNftLedgerMarket"` | `"disableNftRaribleOpensea"` | `"walletNftGallery"` | `"receiveStakingFlowConfigDesktop"` | `"ethStakingProviders"` | `"storyly"` | `"staxWelcomeScreen"` | `"postOnboardingClaimNft"` | `"postOnboardingAssetsTransfer"` | `"firebaseEnvironmentReadOnly"` | `"protectServicesMobile"` | `"swapShowDexQuotes"` | `"stakePrograms"` | `"portfolioExchangeBanner"` | `"objkt"` | `"stakeAccountBanner"` | `"newsfeedPage"`)
+Type: (`"learn"` | `"brazePushNotifications"` | `"brazeLearn"` | `"llmNewDeviceSelection"` | `"llmUsbFirmwareUpdate"` | `"ratingsPrompt"` | `"counterValue"` | `"deviceLocalization"` | `"deviceInitialApps"` | `"buyDeviceFromLive"` | `"ptxSmartRouting"` | `"currencyAvalancheCChain"` | `"currencyOsmosis"` | `"currencyOsmosisMobile"` | `"currencyFantom"` | `"currencyMoonbeam"` | `"currencyCronos"` | `"currencySongbird"` | `"currencyFlare"` | `"currencyNear"` | `"currencyFantomMobile"` | `"currencyMoonbeamMobile"` | `"currencyCronosMobile"` | `"currencySongbirdMobile"` | `"currencyFlareMobile"` | `"ptxSmartRoutingMobile"` | `"mockFeature"` | `"multibuyNavigation"` | `"syncOnboarding"` | `"walletConnectLiveApp"` | `"walletConnectEntryPoint"` | `"customImage"` | `"referralProgramDiscoverCard"` | `"referralProgramDesktopBanner"` | `"disableNftSend"` | `"disableNftLedgerMarket"` | `"disableNftRaribleOpensea"` | `"walletNftGallery"` | `"receiveStakingFlowConfigDesktop"` | `"ethStakingProviders"` | `"storyly"` | `"staxWelcomeScreen"` | `"postOnboardingClaimNft"` | `"postOnboardingAssetsTransfer"` | `"firebaseEnvironmentReadOnly"` | `"protectServicesMobile"` | `"swapShowDexQuotes"` | `"stakePrograms"` | `"portfolioExchangeBanner"` | `"objkt"` | `"stakeAccountBanner"` | `"newsfeedPage"` | `"ens"`)
 
 ### Feature
 
@@ -1435,24 +1435,26 @@ Type: ({type: `"device-streaming"`, progress: [number](https://developer.mozilla
 Transaction is a generic object that holds all state for all transactions
 there are generic fields and coin specific fields. That's why almost all fields are optionals
 
-Type: {amount: BigNumber, recipient: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), useAllAmount: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, subAccountId: ([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))?, feesStrategy: (`"slow"` | `"medium"` | `"fast"` | `"custom"` | null)?}
+Type: {amount: BigNumber, recipient: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), recipientName: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, useAllAmount: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, subAccountId: ([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))?, feesStrategy: (`"slow"` | `"medium"` | `"fast"` | `"custom"` | null)?}
 
 #### Properties
 
 *   `amount` **BigNumber** 
 *   `recipient` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+*   `recipientName` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
 *   `useAllAmount` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
 *   `subAccountId` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))?** 
 *   `feesStrategy` **(`"slow"` | `"medium"` | `"fast"` | `"custom"` | null)?** 
 
 ### TransactionCommonRaw
 
-Type: {amount: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), recipient: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), useAllAmount: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, subAccountId: ([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))?, feesStrategy: (`"slow"` | `"medium"` | `"fast"` | `"custom"` | null)?}
+Type: {amount: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), recipient: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), recipientName: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, useAllAmount: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, subAccountId: ([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))?, feesStrategy: (`"slow"` | `"medium"` | `"fast"` | `"custom"` | null)?}
 
 #### Properties
 
 *   `amount` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 *   `recipient` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+*   `recipientName` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
 *   `useAllAmount` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
 *   `subAccountId` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))?** 
 *   `feesStrategy` **(`"slow"` | `"medium"` | `"fast"` | `"custom"` | null)?** 

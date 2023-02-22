@@ -51,7 +51,8 @@ export type FeatureId =
   | "portfolioExchangeBanner"
   | "objkt"
   | "stakeAccountBanner"
-  | "newsfeedPage";
+  | "newsfeedPage"
+  | "ens";
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */

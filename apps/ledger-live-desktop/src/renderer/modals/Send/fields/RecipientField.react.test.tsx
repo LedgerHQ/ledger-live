@@ -3,14 +3,24 @@ import {
   setSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { render } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  waitForElementToBeRemoved,
+} from "@testing-library/react";
 import BigNumber from "bignumber.js";
 import React from "react";
 import { ThemeProvider } from "styled-components";
 import { TransactionMode } from "~/../../../libs/ledger-live-common/lib/families/ethereum/modules";
 import RecipientField from "./RecipientField";
 import defaultTheme from "../../../styles/theme";
-import light from "./light";
+import { InvalidAddress } from "@ledgerhq/errors";
+import { NamingServiceProvider } from "~/../../../libs/ledger-live-common/lib/naming-service";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+
 const eth = findCryptoCurrencyById("ethereum");
 
 const mockAccount = {
@@ -56,7 +66,7 @@ const mockAccount = {
   subAccounts: [],
 };
 
-const mockTransaction = {
+const baseMockTransaction = {
   amount: new BigNumber(0),
   recipient: "",
   useAllAmount: false,
@@ -67,18 +77,17 @@ const mockTransaction = {
   maxPriorityFeePerGas: new BigNumber("1000000000"),
   userGasLimit: null,
   estimatedGasLimit: null,
-  feeCustomUnit: {
-    name: "Gwei",
-    code: "Gwei",
-    magnitude: 9,
-  },
   networkInfo: {
     family: "ethereum" as "ethereum",
   },
   feesStrategy: "medium" as "medium",
 };
 
-const mockStatus = {
+const changeTransactionFn = jest.fn();
+jest.mock("@ledgerhq/live-common/featureFlags/index");
+const mockedUseFeature = jest.mocked(useFeature);
+
+const baseMockStatus = {
   errors: {},
   warnings: {},
   estimatedFees: new BigNumber("1041182537010000"),
@@ -86,32 +95,99 @@ const mockStatus = {
   totalSpent: new BigNumber("0"),
 };
 
-const changeTransactionFn = jest.fn();
+const setup = (mockStatus = {}, mockTransaction = {}) => {
+  return render(
+    <ThemeProvider
+      theme={{
+        ...defaultTheme,
+        //@ts-ignore
+        colors: { palette: { text: { shade100: "" }, background: { default: "", paper: "" } } },
+      }}
+    >
+      <NamingServiceProvider>
+        <RecipientField
+          account={mockAccount}
+          transaction={{ ...baseMockTransaction, ...mockTransaction }}
+          t={str => str}
+          onChangeTransaction={changeTransactionFn}
+          status={{ ...baseMockStatus, ...mockStatus }}
+        ></RecipientField>
+      </NamingServiceProvider>
+    </ThemeProvider>,
+  );
+};
 
 describe("RecipientField", () => {
   beforeAll(() => {
     setSupportedCurrencies(["bitcoin", "ethereum"]);
   });
 
-  it("should test input", () => {
-    render(
-      <ThemeProvider
-        theme={{
-          ...defaultTheme,
-          //@ts-ignore
-          colors: { palette: { text: { shade100: "" }, background: { default: "", paper: "" } } },
-        }}
-      >
-        <RecipientField
-          account={mockAccount}
-          transaction={mockTransaction}
-          t={str => {
-            return str;
-          }}
-          onChangeTransaction={changeTransactionFn}
-          status={mockStatus}
-        ></RecipientField>
-      </ThemeProvider>,
+  it("should render without problem with minimum config", () => {
+    setup();
+  });
+
+  it("should test change input should trigger change transaction", () => {
+    setup();
+    const input = screen.getByTestId("send-recipient-input");
+    expect(changeTransactionFn).toBeCalledTimes(0);
+    fireEvent.change(input, { target: { value: "mockrecipient" } });
+    expect(changeTransactionFn).toBeCalledTimes(1);
+    expect(changeTransactionFn).toHaveBeenCalledWith({
+      ...baseMockTransaction,
+      recipient: "mockrecipient",
+    });
+  });
+
+  it("should display error if status has error", () => {
+    setup({ errors: { recipient: new InvalidAddress() } });
+    screen.getByTestId("input-error");
+  });
+
+  it("FF off: should not change recipientName", async () => {
+    jest.clearAllMocks();
+    setup();
+    mockedUseFeature.mockReturnValueOnce({ enabled: false });
+    const input = screen.getByTestId("send-recipient-input");
+    fireEvent.change(input, { target: { value: "vitalik.eth" } });
+
+    await waitFor(() =>
+      expect(changeTransactionFn).toHaveBeenCalledWith({
+        ...baseMockTransaction,
+        recipient: "vitalik.eth",
+        recipientName: undefined,
+      }),
+    );
+  });
+
+  it("FF is on : should change recipientName in transaction", async () => {
+    jest.clearAllMocks();
+    setup({}, {});
+    mockedUseFeature.mockReturnValueOnce({ enabled: true });
+    const input = screen.getByTestId("send-recipient-input");
+    fireEvent.change(input, { target: { value: "vitalik.eth" } });
+
+    await waitFor(() =>
+      expect(changeTransactionFn).toHaveBeenCalledWith({
+        ...baseMockTransaction,
+        recipient: "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
+        recipientName: "vitalik.eth",
+      }),
+    );
+  });
+
+  it("FF is on : should not change recipientName because invalid recipient name", async () => {
+    jest.clearAllMocks();
+    setup({}, {});
+    mockedUseFeature.mockReturnValueOnce({ enabled: true });
+    const input = screen.getByTestId("send-recipient-input");
+    fireEvent.change(input, { target: { value: "vitalik.notanamingservice" } });
+
+    await waitFor(() =>
+      expect(changeTransactionFn).toHaveBeenCalledWith({
+        ...baseMockTransaction,
+        recipient: "vitalik.notanamingservice",
+        recipientName: undefined,
+      }),
     );
   });
 });

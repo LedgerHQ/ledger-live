@@ -12,7 +12,7 @@ export function isOutdated(resource: NamingServiceStatus): boolean {
       return now - resource.updatedAt > 60 * 1000; // 1 minute
     }
     case "error": {
-      return now - resource.updatedAt > 60 * 1000; // 1 minute
+      return now - resource.updatedAt > 30 * 1000; // 30 seconds
     }
   }
   return false;
