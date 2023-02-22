@@ -9,9 +9,9 @@ import { getEnv } from "../../env";
 import {
   getPortfolioRangeConfig,
   getDates,
-} from "@ledgerhq/coin-framework/rangeDates";
+} from "@ledgerhq/live-common-date/index";
 
-export { getDates, getRanges } from "@ledgerhq/coin-framework/rangeDates";
+export { getDates, getRanges } from "@ledgerhq/live-common-date/index";
 
 export const defaultAssetsDistribution = {
   minShowFirst: 1,

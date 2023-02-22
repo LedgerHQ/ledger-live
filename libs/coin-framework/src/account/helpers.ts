@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import { getEnv } from "../env";
+import { getEnv } from "@ledgerhq/live-common-env/index";
 import { encodeTokenAccountId } from "./accountId";
 import { emptyHistoryCache } from "./balanceHistoryCache";
 import type {

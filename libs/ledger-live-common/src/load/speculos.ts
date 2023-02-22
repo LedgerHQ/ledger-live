@@ -14,7 +14,7 @@ import { getEnv } from "../env";
 import { getDependencies } from "../apps/polyfill";
 import { findCryptoCurrencyByKeyword } from "../currencies";
 import { formatAppCandidate } from "../bot/formatters";
-import { delay } from "@ledgerhq/coin-framework/promise";
+import { delay } from "../promise";
 import { mustUpgrade, shouldUpgrade } from "../apps";
 
 let idCounter = getEnv("SPECULOS_PID_OFFSET");

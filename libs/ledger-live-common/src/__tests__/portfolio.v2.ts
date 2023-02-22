@@ -20,7 +20,7 @@ import {
   getPortfolioRangeConfig,
   getDates,
   getRanges,
-} from "@ledgerhq/coin-framework/rangeDates";
+} from "@ledgerhq/live-common-date/index";
 import { setEnv } from "../env";
 import { genAccount } from "../mock/account";
 import { getAccountCurrency } from "../account";

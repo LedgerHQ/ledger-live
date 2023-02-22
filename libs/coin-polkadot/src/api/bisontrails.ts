@@ -2,7 +2,7 @@ import type { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
 import querystring from "querystring";
 import { BigNumber } from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { getEnv } from "@ledgerhq/coin-framework/env";
+import { getEnv } from "@ledgerhq/live-common-env/index";
 import { getOperationType } from "./common";
 import type { OperationType, Operation } from "@ledgerhq/types-live";
 import { isValidAddress } from "../address";
