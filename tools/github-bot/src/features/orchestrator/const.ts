@@ -11,6 +11,7 @@ export type PullRequestMetadata = {
   base_sha: string;
   base_branch: string;
   base_owner: string;
+  is_fork: boolean;
 };
 export type CheckSuite = Awaited<
   ReturnType<Octokit["checks"]["getSuite"]>

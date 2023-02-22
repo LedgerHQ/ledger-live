@@ -1,30 +1,26 @@
 import React from "react";
 
-import TimelineItem from "./TimelineItem";
+import StepperItem from "./StepperItem";
 import { Flex } from "../..";
 import { BaseStyledProps } from "src/components/styled";
 import { Item, ItemStatus } from "../types";
 
 export type Props = BaseStyledProps & {
   steps?: Item[];
-  formatEstimatedTime?: (_: number) => string;
   setActiveIndex?: (arg0: number) => void;
+  nested?: boolean;
 };
 
-export default function VerticalTimeline({
-  steps,
-  formatEstimatedTime,
-  setActiveIndex,
-  ...props
-}: Props) {
+export default function VerticalStepper({ steps, setActiveIndex, nested, ...props }: Props) {
   return (
     <Flex {...props} flexDirection="column">
+      {nested && <Flex mt={7} mb={4} borderBottomWidth={1} borderBottomColor="neutral.c40" />}
       {steps?.map((step, index) => (
-        <TimelineItem
+        <StepperItem
           key={step.title}
           item={step}
-          formatEstimatedTime={formatEstimatedTime}
-          isFirstItem={index === 0}
+          progress={step.progress}
+          nested={nested}
           isLastItem={index === steps.length - 1}
           setActiveIndex={setActiveIndex}
           index={index}
@@ -34,4 +30,4 @@ export default function VerticalTimeline({
   );
 }
 
-VerticalTimeline.ItemStatus = ItemStatus;
+VerticalStepper.ItemStatus = ItemStatus;

@@ -21,6 +21,7 @@ env:
   base_sha: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha }}
   base_branch: ${{ github.event.pull_request.base.ref || github.event.merge_group.base_ref }}
   base_owner: ${{ github.event.pull_request.base.repo.owner.login || github.repository_owner }}
+  is_fork: ${{ github.event.pull_request.head.repo.fork || false }}
 
 jobs:
   setup:
@@ -75,7 +76,8 @@ jobs:
               head_branch: "${{ env.head_branch }}",
               base_sha: "${{ env.base_sha }}",
               base_branch: "${{ env.base_branch }}",
-              base_owner: "${{ env.base_owner }}"
+              base_owner: "${{ env.base_owner }}",
+              is_fork: ${{ env.is_fork }}
             }), "utf-8");
       - uses: actions/upload-artifact@v3
         with:

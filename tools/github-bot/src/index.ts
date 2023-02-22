@@ -30,4 +30,10 @@ export default (app: Probot) => {
   lintCommits(app);
   // Orchestrate
   orchestrator(app);
+
+  /* Log errors */
+  app.onError((error) => {
+    app.log.error("[ERROR] Unhandled error");
+    app.log.error(error);
+  });
 };
