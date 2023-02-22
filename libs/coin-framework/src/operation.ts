@@ -212,7 +212,7 @@ export const isAddressPoisoningOperation = (
   );
 };
 
-export function isEditableOperation(account: AccountLike, operation: Operation): boolean {
+export const isEditableOperation = (account: AccountLike, operation: Operation): boolean => {
   let isEthFamily = false;
   if (account.type === "Account") {
     isEthFamily = account.currency.family === "ethereum";
@@ -220,7 +220,7 @@ export function isEditableOperation(account: AccountLike, operation: Operation):
     isEthFamily = account.token.parentCurrency.family === "ethereum";
   }
   return isEthFamily && operation.blockHeight === null && !!operation.transactionRaw;
-}
+};
 
 // return the oldest stuck pending operation and its corresponding account according to a eth account or a token subaccount. If no stuck pending operation is found, return undefined
 export function getStuckAccountAndOperation(
@@ -238,14 +238,22 @@ export function getStuckAccountAndOperation(
   const mainAccount = getMainAccount(account, parentAccount);
 
   const SUPPORTED_FAMILIES = ["ethereum"];
-  if (!SUPPORTED_FAMILIES.includes(mainAccount.currency.family)) return undefined;
+
+  if (!SUPPORTED_FAMILIES.includes(mainAccount.currency.family)) {
+    return undefined;
+  }
+
   const now = new Date().getTime();
   const stuckOperations = mainAccount.pendingOperations.filter(
     pendingOp =>
       isEditableOperation(mainAccount, pendingOp) &&
       now - pendingOp.date.getTime() > getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT"),
   );
-  if (stuckOperations.length === 0) return undefined;
+
+  if (stuckOperations.length === 0) {
+    return undefined;
+  }
+
   const oldestStuckOperation = stuckOperations.reduce((oldestOp, currentOp) => {
     if (!oldestOp) return currentOp;
     return oldestOp.transactionSequenceNumber !== undefined &&
@@ -254,6 +262,7 @@ export function getStuckAccountAndOperation(
       ? currentOp
       : oldestOp;
   });
+
   if (oldestStuckOperation?.transactionRaw?.subAccountId) {
     stuckAccount = findSubAccountById(
       mainAccount,
@@ -265,6 +274,7 @@ export function getStuckAccountAndOperation(
     stuckParentAccount = undefined;
   }
   invariant(stuckAccount, "stuckAccount required");
+
   return {
     account: stuckAccount,
     parentAccount: stuckParentAccount,
