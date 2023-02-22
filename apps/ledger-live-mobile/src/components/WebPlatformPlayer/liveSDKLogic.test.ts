@@ -5,7 +5,6 @@ import {
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { PlatformTransaction } from "@ledgerhq/live-common/platform/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 
 import prepareSignTransaction from "./liveSDKLogic";
@@ -47,9 +46,7 @@ describe("prepareSignTransaction", () => {
     const result = prepareSignTransaction(
       childAccount,
       parentAccount,
-      createEtherumTransaction() as Partial<
-        Transaction & { gasLimit: BigNumber }
-      >,
+      createEtherumTransaction(),
     );
 
     // Then
@@ -58,9 +55,11 @@ describe("prepareSignTransaction", () => {
 });
 
 // *** UTIL FUNCTIONS ***
-function createEtherumTransaction(): PlatformTransaction {
+function createEtherumTransaction(): Partial<
+  Transaction & { gasLimit: BigNumber }
+> {
   return {
-    family: "ethereum" as any,
+    family: "ethereum",
     amount: new BigNumber("1000"),
     recipient: "0x0123456",
     nonce: 8,
@@ -74,11 +73,11 @@ const createCryptoCurrency = (family: string): CryptoCurrency => ({
   type: "CryptoCurrency",
   id: "testCoinId" as CryptoCurrencyId,
   coinType: 8008,
-  name: "bitcoin",
-  managerAppName: "Bitcoin",
+  name: "ethereum",
+  managerAppName: "ethereum",
   ticker: "MYC",
   countervalueTicker: "MYC",
-  scheme: "bitcoin",
+  scheme: "ethereum",
   color: "#ff0000",
   family,
   units: [
