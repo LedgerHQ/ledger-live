@@ -10,7 +10,6 @@ import type { StepProps } from "../types";
 import invariant from "invariant";
 import Alert from "~/renderer/components/Alert";
 import { urls } from "~/config/urls";
-import moment from "moment";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { AccountBridge, Transaction } from "@ledgerhq/live-common/types";
 import BigNumber from "bignumber.js";
@@ -25,6 +24,9 @@ import {
   TWO_WEEKS,
   THREE_WEEKS,
 } from "@ledgerhq/live-common/families/avalanchepchain/utils";
+import { localeSelector } from "~/renderer/reducers/settings";
+import { useSelector } from "react-redux";
+import moment from 'moment/min/moment-with-locales';
 
 const Container: ThemedComponent<*> = styled(Box)`
     input[type="datetime-local"]::-webkit-calendar-picker-indicator {
@@ -59,6 +61,7 @@ function StepEndDate({
   status,
 }: StepProps) {
   const { validators } = useAvalanchePChainPreloadData();
+  const { locale } = useSelector(localeSelector);
 
   const selectedValidator = validators.find(v => v.nodeID === transaction.recipient);
 
@@ -81,14 +84,12 @@ function StepEndDate({
 
   if (!status) return null;
 
+  moment.locale(locale);
   const minEndDate = moment.unix(unixMinEndDate).format("YYYY-MM-DDTh:mm");
   const maxEndDate = moment.unix(unixMaxEndDate).format("YYYY-MM-DDTh:mm");
   const defaultEndDate = moment.unix(unixDefaultEndDate).format("YYYY-MM-DDTHH:mm");
-  const minEndDateText = moment
-    .unix(unixMinEndDate)
-    .add(1, "minutes")
-    .format("MM/DD/YYYY, h:mm a");
-  const maxEndDateText = moment.unix(unixMaxEndDate).format("MM/DD/YYYY, h:mm a");
+  const minEndDateText = moment.unix(unixMinEndDate).format("L, LT");
+  const maxEndDateText = moment.unix(unixMaxEndDate).format("L, LT");
 
   const updateEndTime = endTime => {
     const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
