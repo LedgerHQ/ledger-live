@@ -3,7 +3,7 @@ import {
   CurrencyNotSupported,
   UnavailableTezosOriginatedAccountReceive,
 } from "@ledgerhq/errors";
-import { getEnv } from "../env";
+import { getEnv } from "@ledgerhq/live-common-env/index";
 import { decodeAccountId } from "./accountId";
 import {
   getAllDerivationModes,

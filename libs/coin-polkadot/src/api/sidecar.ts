@@ -6,7 +6,7 @@ import { Metadata } from "@polkadot/types/metadata";
 import { expandMetadata } from "@polkadot/types/metadata/decorate";
 import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
 import { LRUCacheFn } from "@ledgerhq/coin-framework/cache";
-import { getEnv } from "@ledgerhq/coin-framework/env";
+import { getEnv } from "@ledgerhq/live-common-env/index";
 import type { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
 import type {
   PolkadotValidator,
