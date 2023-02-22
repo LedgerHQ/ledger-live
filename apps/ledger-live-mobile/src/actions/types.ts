@@ -270,6 +270,7 @@ export enum SettingsActionTypes {
   SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT = "SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT",
   SETTINGS_SWITCH_COUNTERVALUE_FIRST = "SETTINGS_SWITCH_COUNTERVALUE_FIRST",
   SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS = "SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS",
+  SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT = "SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT",
   SHOW_TOKEN = "SHOW_TOKEN",
   BLACKLIST_TOKEN = "BLACKLIST_TOKEN",
   HIDE_NFT_COLLECTION = "HIDE_NFT_COLLECTION",
@@ -358,6 +359,10 @@ export type SettingsSetReadOnlyModePayload = Pick<
 export type SettingsHideEmptyTokenAccountsPayload = Pick<
   SettingsState,
   "hideEmptyTokenAccounts"
+>;
+export type SettingsFilterTokenOperationsZeroAmountPayload = Pick<
+  SettingsState,
+  "filterTokenOperationsZeroAmount"
 >;
 export type SettingsShowTokenPayload = { tokenId: string };
 export type SettingsBlacklistTokenPayload = { tokenId: string };

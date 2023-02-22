@@ -72,6 +72,7 @@ import {
   SettingsSetOverriddenFeatureFlagsPlayload,
   SettingsSetFeatureFlagsBannerVisiblePayload,
   SettingsSetDebugAppLevelDrawerOpenedPayload,
+  SettingsFilterTokenOperationsZeroAmountPayload,
 } from "./types";
 import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
 
@@ -223,6 +224,17 @@ const setHideEmptyTokenAccountsAction =
 export const setHideEmptyTokenAccounts = (hideEmptyTokenAccounts: boolean) =>
   setHideEmptyTokenAccountsAction({
     hideEmptyTokenAccounts,
+  });
+
+const setFilterTokenOperationsZeroAmountAction =
+  createAction<SettingsFilterTokenOperationsZeroAmountPayload>(
+    SettingsActionTypes.SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT,
+  );
+export const setFilterTokenOperationsZeroAmount = (
+  filterTokenOperationsZeroAmount: boolean,
+) =>
+  setFilterTokenOperationsZeroAmountAction({
+    filterTokenOperationsZeroAmount,
   });
 
 const blacklistTokenAction = createAction<SettingsBlacklistTokenPayload>(
