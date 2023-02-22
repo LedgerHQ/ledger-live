@@ -52,12 +52,14 @@ export function CancelTransaction({ route, navigation }: Props) {
 
     setTransaction(bridge.updateTransaction(transaction, transactionToEdit));
 
-    navigation.navigate(ScreenName.SendSelectDevice, {
-      accountId: account.id,
-      parentId: parentAccount?.id,
-      transaction: transactionToEdit,
-      status,
-    });
+    if (transaction) {
+      navigation.navigate(ScreenName.SendSelectDevice, {
+        accountId: account.id,
+        parentId: parentAccount?.id,
+        transaction,
+        status,
+      });
+    }
   }, []);
 
   return null;
