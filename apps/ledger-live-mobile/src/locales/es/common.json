@@ -87,7 +87,8 @@
     "popular" : "popular",
     "getSupport" : "Obtener ayuda",
     "comingSoon" : "Próximamente",
-    "restart" : "Reiniciar"
+    "restart" : "Reiniciar",
+    "loadMore" : "Cargar más"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -112,19 +113,9 @@
       "title" : "Bluetooth está deshabilitado",
       "description" : "Habilita Bluetooth en los ajustes del teléfono. (estado {{state}})"
     },
-    "FwUpdateBluetoothNotSupported" : {
-      "title" : "Las actualizaciones de firmware solo se pueden realizar con conexiones cableadas"
-    },
-    "BtcUnmatchedApp" : {
-      "title" : "Esa es la aplicación incorrecta",
-      "description" : "Abre la aplicación {{managerAppName}} en tu dispositivo."
-    },
     "CantOpenDevice" : {
       "title" : "La conexión ha fallado",
       "description" : "Tu dispositivo Ledger debe estar desbloqueado y dentro del alcance para utilizar Bluetooth."
-    },
-    "CantScanQRCode" : {
-      "title" : "No fue posible escanear este código QR: esta dirección no es compatible con la verificación automática."
     },
     "ConnectAppTimeout" : {
       "title" : "No se ha encontrado ningún dispositivo",
@@ -324,11 +315,13 @@
     },
     "ImageCommitRefusedOnDevice" : {
       "title" : "Pantalla de bloqueo cancelada en Ledger Stax",
-      "description" : "Si la imagen no era la adecuada, puedes intentarlo de nuevo con una diferente."
+      "description" : "Si la imagen no era la adecuada, puedes intentarlo de nuevo con una diferente.",
+      "primaryCTA" : "Cargar otra imagen"
     },
     "ImageLoadRefusedOnDevice" : {
       "title" : "Pantalla de bloqueo cancelada en Ledger Stax",
-      "description" : "Si la imagen no era la adecuada, puedes intentarlo de nuevo con una diferente."
+      "description" : "Si la imagen no era la adecuada, puedes intentarlo de nuevo con una diferente.",
+      "primaryCTA" : "Cargar otra imagen"
     },
     "InvalidAddress" : {
       "title" : "Esta no es una dirección de {{currencyName}} válida"
@@ -553,7 +546,8 @@
     },
     "UpdateYourApp" : {
       "title" : "Es necesario actualizar la aplicación",
-      "description" : "Desinstala y vuelve a instalar la aplicación {{managerAppName}} en Manager."
+      "description" : "Desinstala y vuelve a instalar la aplicación {{managerAppName}} en Manager.",
+      "primaryCTA" : "Abrir Manager"
     },
     "UserRefusedAllowManager" : {
       "title" : "Manager deshabilitado en el dispositivo",
@@ -672,7 +666,8 @@
     },
     "generic" : {
       "title" : "{{message}}",
-      "description" : "Algo ha salido mal. Inténtalo de nuevo. Si el problema persiste, guarda los registros con el botón que aparece a continuación y envíalos al Soporte de Ledger."
+      "description" : "Algo ha salido mal. Inténtalo de nuevo. Si el problema persiste, guarda los registros con el botón que aparece a continuación y envíalos al Soporte de Ledger.",
+      "primaryCTA" : "Reintentar"
     },
     "SolanaAccountNotFunded" : {
       "title" : "Cuenta sin fondos"
@@ -811,6 +806,13 @@
       "title" : "Tu dispositivo está bloqueado",
       "description" : "Desbloquea tu dispositivo e inténtalo de nuevo.",
       "descriptionWithProductName" : "Desbloquea tu {{ productName }} e inténtalo de nuevo."
+    },
+    "EtherscanAPIError" : {
+      "title" : "Se produjo un fallo al recuperar las transacciones",
+      "description" : "Se produjo un error inesperado con los exploradores. Inténtalo de nuevo más tarde"
+    },
+    "GasEstimationError" : {
+      "title" : "Se produjo un fallo en la estimación del gas"
     }
   },
   "crash" : {
@@ -1117,6 +1119,10 @@
       "learn" : {
         "title" : "Información",
         "desc" : "Obtén información sobre las cripto, la Web3, la seguridad digital y mucho más"
+      },
+      "news" : {
+        "title" : "Noticias",
+        "desc" : "Aprende más de cripto, seguridad, Web3 y entérate de las últimas novedades"
       },
       "ledgerApps" : {
         "title" : "Aplicaciones",
@@ -1653,6 +1659,10 @@
             "label" : "Comprueba si detecta tu Nano X."
           }
         }
+      },
+      "protectConnectionInformationModal" : {
+        "title" : "¿Por qué no puedo conectar mi Ledger?",
+        "description" : "Si tienes problemas para conectarte a Ledger Live Mobile después de activar el Bluetooth en tu Ledger, puedes seguir las instrucciones pulsando el botón \"Cómo resolverlo\" a continuación"
       }
     },
     "stepImportAccounts" : {
@@ -3298,6 +3308,10 @@
           }
         }
       }
+    },
+    "walletConnect" : {
+      "title" : "WalletConnect",
+      "description" : "Conecta tu billetera a dApps"
     }
   },
   "signMessage" : {
@@ -6077,5 +6091,10 @@
         "emptyPassword" : "La contraseña no puede estar en blanco"
       }
     }
+  },
+  "newsfeed" : {
+    "title" : "Newsfeed",
+    "poweredByCryptopanic" : "Con tecnología de Cryptopanic",
+    "noPosts" : "No hay ninguna publicación disponible"
   }
 }
