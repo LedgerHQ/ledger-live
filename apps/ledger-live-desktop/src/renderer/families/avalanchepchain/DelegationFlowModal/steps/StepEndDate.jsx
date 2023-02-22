@@ -10,7 +10,6 @@ import type { StepProps } from "../types";
 import invariant from "invariant";
 import Alert from "~/renderer/components/Alert";
 import { urls } from "~/config/urls";
-import moment from "moment";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { AccountBridge, Transaction } from "@ledgerhq/live-common/types";
 import BigNumber from "bignumber.js";
@@ -25,6 +24,8 @@ import {
   TWO_WEEKS,
   THREE_WEEKS,
 } from "@ledgerhq/live-common/families/avalanchepchain/utils";
+import moment from 'moment/min/moment-with-locales';
+import { getInitialLanguageLocale } from "~/renderer/reducers/settings";
 
 const Container: ThemedComponent<*> = styled(Box)`
     input[type="datetime-local"]::-webkit-calendar-picker-indicator {
@@ -81,14 +82,13 @@ function StepEndDate({
 
   if (!status) return null;
 
+  const locale = getInitialLanguageLocale();
+  moment.locale(locale);
   const minEndDate = moment.unix(unixMinEndDate).format("YYYY-MM-DDTh:mm");
   const maxEndDate = moment.unix(unixMaxEndDate).format("YYYY-MM-DDTh:mm");
   const defaultEndDate = moment.unix(unixDefaultEndDate).format("YYYY-MM-DDTHH:mm");
-  const minEndDateText = moment
-    .unix(unixMinEndDate)
-    .add(1, "minutes")
-    .format("MM/DD/YYYY, h:mm a");
-  const maxEndDateText = moment.unix(unixMaxEndDate).format("MM/DD/YYYY, h:mm a");
+  const minEndDateText = moment.unix(unixMinEndDate).add(1, "minutes").format("L, LT");
+  const maxEndDateText = moment.unix(unixMaxEndDate).format("L, LT");
 
   const updateEndTime = endTime => {
     const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
