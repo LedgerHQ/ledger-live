@@ -320,7 +320,6 @@ export type BaseNavigatorStackParamList = {
   [ScreenName.DeviceConnect]: {
     appName?: string;
     onSuccess: (result: AppResult) => void;
-    onError: (error: Error) => void;
     onClose: () => void;
   };
 };

@@ -6108,5 +6108,8 @@
     "title": "Newsfeed",
     "poweredByCryptopanic": "Powered by Cryptopanic",
     "noPosts": "No posts available currently"
+  },
+  "deviceConnect": {
+    "title": "Connect device"
   }
 }
