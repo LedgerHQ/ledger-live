@@ -8,7 +8,7 @@ import {
   getMainAccount,
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { TransactionStatus as BitcoinTransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
 import { NotEnoughGas } from "@ledgerhq/errors";
@@ -17,7 +17,9 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import invariant from "invariant";
 import { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
 import { isEthereumFamily } from "@ledgerhq/live-common/families/ethereum/guards";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
+import { EIP1559ShouldBeUsed } from "@ledgerhq/live-common/families/ethereum/transaction";
 
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName, NavigatorName } from "../../const";
@@ -49,7 +51,6 @@ import {
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 import { EthereumEditTransactionParamList } from "../../components/RootNavigator/types/EthereumEditTransactionNavigator";
-import { getCustomStrategy } from "../../families/ethereum/EthereumFeesStrategy";
 
 type Navigation = BaseComposite<
   | StackNavigatorProps<
@@ -354,21 +355,34 @@ function SendSummary({ navigation, route }: Props) {
 }
 
 const CurrentNetworkFee = ({
+  account,
   transaction,
   currency,
 }: {
+  account: AccountLike;
   transaction: Transaction;
-  currency: CryptoCurrency;
+  currency: CryptoCurrency | TokenCurrency;
 }) => {
   const { t } = useTranslation();
-  const fee = getCustomStrategy(transaction, currency);
-  const feeAmount = fee?.displayedAmount?.toNumber();
+  const feePerGas = new BigNumber(
+    (account.type === "Account" && EIP1559ShouldBeUsed(account.currency)) ||
+    (account.type === "TokenAccount" &&
+      EIP1559ShouldBeUsed(account.token.parentCurrency))
+      ? transaction!.maxFeePerGas!
+      : transaction!.gasPrice!,
+  );
 
-  return feeAmount && feeAmount > 0 ? (
+  const feeValue = new BigNumber(
+    transaction!.userGasLimit! || transaction!.estimatedGasLimit!,
+  )
+    .times(feePerGas)
+    .div(new BigNumber(10).pow(currency.units[0].magnitude));
+
+  return !!feeValue && feeValue.toNumber() > 0 ? (
     <Alert type="hint">
       <LText>
         {t("editTransaction.currentNetworkFee", {
-          amount: feeAmount / 10 ** 18, // feeAmount is in wei
+          amount: feeValue.toNumber(),
         })}
       </LText>
     </Alert>
