@@ -17,6 +17,7 @@ import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/grou
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 
 import { Trans } from "react-i18next";
+import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
 import { useRefreshAccountsOrdering } from "../../actions/general";
 import { flattenAccountsSelector } from "../../reducers/accounts";
 
@@ -34,6 +35,7 @@ import { TrackScreen } from "../../analytics";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { filterTokenOperationsZeroAmountEnabledSelector } from "../../reducers/settings";
 
 type Props = StackNavigatorProps<
   BaseNavigatorStackParamList,
@@ -61,11 +63,26 @@ export function Operations({ navigation, route }: Props) {
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);
 
+  const shouldFilterTokenOpsZeroAmount = useSelector(
+    filterTokenOperationsZeroAmountEnabledSelector,
+  );
+  const filterOperation = useCallback(
+    (operation, account) => {
+      // Remove operations linked to address poisoning
+      const removeZeroAmountTokenOp =
+        shouldFilterTokenOpsZeroAmount &&
+        isAddressPoisoningOperation(operation, account);
+
+      return !removeZeroAmountTokenOp;
+    },
+    [shouldFilterTokenOpsZeroAmount],
+  );
   const { sections, completed } = groupAccountsOperationsByDay(
     accountsFiltered,
     {
       count: opCount,
       withSubAccounts: true,
+      filterOperation,
     },
   );
 
