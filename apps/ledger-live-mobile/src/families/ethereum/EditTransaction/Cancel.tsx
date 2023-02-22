@@ -1,4 +1,7 @@
-import { fromTransactionRaw } from "@ledgerhq/live-common/families/ethereum/transaction";
+import {
+  fromTransactionRaw,
+  EIP1559ShouldBeUsed,
+} from "@ledgerhq/live-common/families/ethereum/transaction";
 import {
   Transaction,
   TransactionRaw,
@@ -7,6 +10,8 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { useEffect } from "react";
 
 import { ScreenName } from "../../../const";
@@ -38,16 +43,26 @@ export function CancelTransaction({ route, navigation }: Props) {
   useEffect(() => {
     transactionToEdit.amount = new BigNumber(0);
 
-    if (transactionToEdit.maxPriorityFeePerGas) {
-      transactionToEdit.maxPriorityFeePerGas = new BigNumber(
-        transactionToEdit.maxPriorityFeePerGas.toNumber() * 1.1,
-      );
-    }
+    const currency = getAccountCurrency(account) as CryptoCurrency;
 
-    if (transactionToEdit.maxFeePerGas) {
-      transactionToEdit.maxFeePerGas = new BigNumber(
-        transactionToEdit.maxFeePerGas.toNumber() * 1.3,
-      );
+    if (EIP1559ShouldBeUsed(currency)) {
+      if (transactionToEdit.maxPriorityFeePerGas) {
+        transactionToEdit.maxPriorityFeePerGas = new BigNumber(
+          transactionToEdit.maxPriorityFeePerGas.toNumber() * 1.1,
+        );
+      }
+
+      if (transactionToEdit.maxFeePerGas) {
+        transactionToEdit.maxFeePerGas = new BigNumber(
+          transactionToEdit.maxFeePerGas.toNumber() * 1.3,
+        );
+      }
+    } else {
+      if (transactionToEdit.gasPrice) {
+        transactionToEdit.gasPrice = new BigNumber(
+          transactionToEdit.gasPrice.toNumber() * 1.3,
+        );
+      }
     }
 
     setTransaction(bridge.updateTransaction(transaction, transactionToEdit));
