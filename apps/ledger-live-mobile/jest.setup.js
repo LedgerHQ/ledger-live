@@ -1,5 +1,9 @@
 /* eslint-disable no-undef */
 
+jest.useFakeTimers();
+
+jest.runAllTimers();
+
 jest.mock("react-native-localize", () => ({
   getTimeZone: jest.fn(),
   getLocales: jest.fn(),
@@ -35,5 +39,3 @@ jest.mock("react-native-version-number", () => ({
 jest.mock("react-native-startup-time", () => ({
   getStartupTime: jest.fn(),
 }));
-
-// require("react-native-reanimated/lib/reanimated2/jestUtils").setUpTests();
