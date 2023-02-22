@@ -17,7 +17,10 @@ module.exports = {
   ...tsjPreset,
   verbose: true,
   preset: "react-native",
-  setupFilesAfterEnv: ["@testing-library/jest-native/extend-expect"],
+  setupFilesAfterEnv: [
+    "@testing-library/jest-native/extend-expect",
+    "./jest.setup.js",
+  ],
   globals: {
     "ts-jest": {
       babelConfig: true,
@@ -45,6 +48,5 @@ module.exports = {
     "^react-native/(.*)$": "<rootDir>/node_modules/react-native/$1",
     "^react-native$": "<rootDir>/node_modules/react-native",
     "^victory-native$": "victory",
-    // "^react$": "<rootDir>/node_modules/react",
   },
 };
