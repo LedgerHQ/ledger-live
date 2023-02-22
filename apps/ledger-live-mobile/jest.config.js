@@ -17,7 +17,7 @@ module.exports = {
   ...tsjPreset,
   verbose: true,
   preset: "react-native",
-  setupFilesAfterEnv: ["@testing-library/jest-native/extend-expect", "./jest-setup.js"],
+  setupFilesAfterEnv: ["@testing-library/jest-native/extend-expect", "./jest.setup.js"],
   testMatch: ["**/src/**/*.test.(ts|tsx)"],
   transform: {
     "^.+\\.js?$": "babel-jest",
