@@ -146,11 +146,13 @@ function OperationRow({
     ) : null;
   }, [account, operation, parentAccount]);
 
+  const { colors } = useTheme();
   const amount = getOperationAmountNumber(operation);
-  const valueColor = amount.isNegative() ? "neutral.c100" : "success.c50";
+  const valueColor = amount.isNegative()
+    ? colors.neutral.c100
+    : colors.success.c50;
   const currency = getAccountCurrency(account);
   const unit = getAccountUnit(account);
-  const { colors } = useTheme();
   const text = <Trans i18nKey={`operations.types.${operation.type}`} />;
   const isOptimistic = operation.blockHeight === null;
   const spinner =
