@@ -406,6 +406,11 @@ const envDefinitions: Record<
     parser: intParser,
     desc: "use a different provider for app store (for developers only)",
   },
+  FILTER_ZERO_AMOUNT_ERC20_EVENTS: {
+    def: true,
+    parser: boolParser,
+    desc: "Remove filter of address poisoning",
+  },
   GET_CALLS_RETRY: {
     def: 2,
     parser: intParser,

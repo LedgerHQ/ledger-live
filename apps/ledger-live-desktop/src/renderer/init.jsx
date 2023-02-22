@@ -44,6 +44,7 @@ import {
   sentryLogsSelector,
   hideEmptyTokenAccountsSelector,
   localeSelector,
+  filterTokenOperationsZeroAmountSelector,
 } from "~/renderer/reducers/settings";
 
 import ReactRoot from "~/renderer/ReactRoot";
@@ -133,6 +134,9 @@ async function init() {
 
   const hideEmptyTokenAccounts = hideEmptyTokenAccountsSelector(state);
   setEnvOnAllThreads("HIDE_EMPTY_TOKEN_ACCOUNTS", hideEmptyTokenAccounts);
+
+  const filterTokenOperationsZeroAmount = filterTokenOperationsZeroAmountSelector(state);
+  setEnvOnAllThreads("FILTER_ZERO_AMOUNT_ERC20_EVENTS", filterTokenOperationsZeroAmount);
 
   const isMainWindow = remote.getCurrentWindow().name === "MainWindow";
 
