@@ -19,13 +19,11 @@ module.exports = {
   preset: "react-native",
   setupFilesAfterEnv: [
     "@testing-library/jest-native/extend-expect",
-    "./jest.setup.js",
+    "./jest-setup.js",
   ],
   globals: {
     "ts-jest": {
       babelConfig: true,
-      diagnostics: "warnOnly",
-      isolatedModules: true,
     },
   },
   testMatch: ["**/src/**/*.test.(ts|tsx)"],

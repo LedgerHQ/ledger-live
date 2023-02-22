@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 import "@testing-library/jest-native/extend-expect";
 
+=======
+>>>>>>> 8878b480b8 (remove useless jest config props)
 // Needed for react-reanimated https://docs.swmansion.com/react-native-reanimated/docs/next/guide/testing/
 jest.useFakeTimers();
 jest.runAllTimers();
