@@ -87,7 +87,8 @@
     "popular" : "热门",
     "getSupport" : "获取支持",
     "comingSoon" : "敬请期待",
-    "restart" : "重新启动"
+    "restart" : "重新启动",
+    "loadMore" : "加载更多"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -112,19 +113,9 @@
       "title" : "抱歉，蓝牙已禁用",
       "description" : "请在您的手机设置中启用蓝牙。({{state}} 状态)"
     },
-    "FwUpdateBluetoothNotSupported" : {
-      "title" : "固件更新仅支持有线连接"
-    },
-    "BtcUnmatchedApp" : {
-      "title" : "这是错误的应用程序",
-      "description" : "请打开您设备上的 {{managerAppName}} 应用程序。"
-    },
     "CantOpenDevice" : {
       "title" : "抱歉，连接失败",
       "description" : "您的 Ledger 设备必须解锁并在范围内才能使用蓝牙。"
-    },
-    "CantScanQRCode" : {
-      "title" : "无法扫描此二维码：此地址不支持自动验证。"
     },
     "ConnectAppTimeout" : {
       "title" : "抱歉，未找到设备",
@@ -324,11 +315,13 @@
     },
     "ImageCommitRefusedOnDevice" : {
       "title" : "Ledger Stax 锁屏已取消",
-      "description" : "如果这张图片不合适，您可以使用另一张图片重试。"
+      "description" : "如果这张图片不合适，您可以使用另一张图片重试。",
+      "primaryCTA" : "上传另一张图片"
     },
     "ImageLoadRefusedOnDevice" : {
       "title" : "Ledger Stax 锁屏已取消",
-      "description" : "如果这张图片不合适，您可以使用另一张图片重试。"
+      "description" : "如果这张图片不合适，您可以使用另一张图片重试。",
+      "primaryCTA" : "上传另一张图片"
     },
     "InvalidAddress" : {
       "title" : "该{{currencyName}} 地址无效"
@@ -549,11 +542,12 @@
       "description" : "必须在 30 秒内签署交易。请重试。"
     },
     "TronNotEnoughEnergy" : {
-      "title" : "能量低于必要值。您可能需要支付高达 50TRX 的费用。"
+      "title" : "能量低于必要值。您可能需要支付高达 50 TRX 的费用。"
     },
     "UpdateYourApp" : {
       "title" : "需要更新应用程序",
-      "description" : "请通过管理器卸载并重新安装 {{managerAppName}} 应用程序。"
+      "description" : "请通过管理器卸载并重新安装 {{managerAppName}} 应用程序。",
+      "primaryCTA" : "Open Manager"
     },
     "UserRefusedAllowManager" : {
       "title" : "Manager（管理器）已被在设备上禁用",
@@ -672,7 +666,8 @@
     },
     "generic" : {
       "title" : "{{message}}",
-      "description" : "出错了。请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
+      "description" : "出错了。请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。",
+      "primaryCTA" : "重试"
     },
     "SolanaAccountNotFunded" : {
       "title" : "账户没有资金"
@@ -811,6 +806,13 @@
       "title" : "您的设备已经锁定",
       "description" : "解锁您的设备并重试。",
       "descriptionWithProductName" : "解锁您的 {{ productName }} 并重试。"
+    },
+    "EtherscanAPIError" : {
+      "title" : "未能提取交易",
+      "description" : "浏览器出现意外错误。请重试"
+    },
+    "GasEstimationError" : {
+      "title" : "未能估计 Gas 费用"
     }
   },
   "crash" : {
@@ -1117,6 +1119,10 @@
       "learn" : {
         "title" : "学习",
         "desc" : "了解加密货币、web3、数字安全等等"
+      },
+      "news" : {
+        "title" : "新闻",
+        "desc" : "了解有关加密货币、安全性、Web3 资讯并追踪最新消息"
       },
       "ledgerApps" : {
         "title" : "应用程序",
@@ -1653,6 +1659,10 @@
             "label" : "检查您的 Nano X 是否已被检测到。"
           }
         }
+      },
+      "protectConnectionInformationModal" : {
+        "title" : "为什么无法连接我的 Ledger 设备？",
+        "description" : "如果您在 Ledger 设备上启用蓝牙后，连接 Ledger Live 手机应用程序时遇到了问题，您可以点按下方的 “Learn how to fix that”（了解如何修复此问题）按钮，按以下说明操作"
       }
     },
     "stepImportAccounts" : {
@@ -3298,6 +3308,10 @@
           }
         }
       }
+    },
+    "walletConnect" : {
+      "title" : "WalletConnect",
+      "description" : "将您的钱包连接到去中心化应用程序"
     }
   },
   "signMessage" : {
@@ -6077,5 +6091,10 @@
         "emptyPassword" : "密码不能为空"
       }
     }
+  },
+  "newsfeed" : {
+    "title" : "新闻摘要",
+    "poweredByCryptopanic" : "由 Cryptopanic 提供支持",
+    "noPosts" : "当前无可阅览内容"
   }
 }
