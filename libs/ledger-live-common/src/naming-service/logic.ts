@@ -19,5 +19,5 @@ export function isOutdated(resource: NamingServiceStatus): boolean {
 }
 
 export const isNameValid = (name: string | undefined): boolean => {
-  return VALID_DOMAINS.some(str => name?.includes(str))
+  return VALID_DOMAINS.some(str => name?.endsWith(str))
 };
