@@ -2,8 +2,8 @@ import * as React from "react";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import BigNumber from "bignumber.js";
-import { render } from "@testing-library/react-native";
 import { NavigationContainer } from "@react-navigation/native";
+import { render } from "../../__test__/test-renderer";
 
 import OperationRow from ".";
 
@@ -73,6 +73,7 @@ describe("OperationRow test", () => {
         ,
       </NavigationContainer>,
     );
+
     expect(true).toBe(true);
   });
 });
