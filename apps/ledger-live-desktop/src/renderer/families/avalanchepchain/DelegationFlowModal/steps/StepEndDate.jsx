@@ -24,9 +24,8 @@ import {
   TWO_WEEKS,
   THREE_WEEKS,
 } from "@ledgerhq/live-common/families/avalanchepchain/utils";
-import { localeSelector } from "~/renderer/reducers/settings";
-import { useSelector } from "react-redux";
 import moment from 'moment/min/moment-with-locales';
+import { getInitialLanguageLocale } from "~/renderer/reducers/settings";
 
 const Container: ThemedComponent<*> = styled(Box)`
     input[type="datetime-local"]::-webkit-calendar-picker-indicator {
@@ -61,7 +60,6 @@ function StepEndDate({
   status,
 }: StepProps) {
   const { validators } = useAvalanchePChainPreloadData();
-  const { locale } = useSelector(localeSelector);
 
   const selectedValidator = validators.find(v => v.nodeID === transaction.recipient);
 
@@ -84,6 +82,7 @@ function StepEndDate({
 
   if (!status) return null;
 
+  const locale = getInitialLanguageLocale();
   moment.locale(locale);
   const minEndDate = moment.unix(unixMinEndDate).format("YYYY-MM-DDTh:mm");
   const maxEndDate = moment.unix(unixMaxEndDate).format("YYYY-MM-DDTh:mm");
