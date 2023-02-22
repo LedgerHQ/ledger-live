@@ -9,6 +9,7 @@ import { promises as fsp } from "fs";
 import { log } from "@ledgerhq/logs";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import SpeculosTransport from "@ledgerhq/hw-transport-node-speculos";
+import type { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
 import { registerTransportModule } from "../hw";
 import { getEnv } from "../env";
 import { getDependencies } from "../apps/polyfill";
@@ -243,13 +244,6 @@ export async function createSpeculosDevice(
     appPath,
   };
 }
-export type AppCandidate = {
-  path: string;
-  model: DeviceModelId;
-  firmware: string;
-  appName: string;
-  appVersion: string;
-};
 
 function hackBadSemver(str) {
   const split = str.split(".");
