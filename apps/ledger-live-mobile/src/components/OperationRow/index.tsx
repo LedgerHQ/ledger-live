@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
-import styled from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { getOperationAmountNumber } from "@ledgerhq/live-common/operation";
 import {
@@ -150,7 +150,7 @@ function OperationRow({
   const valueColor = amount.isNegative() ? "neutral.c100" : "success.c50";
   const currency = getAccountCurrency(account);
   const unit = getAccountUnit(account);
-
+  const { colors } = useTheme();
   const text = <Trans i18nKey={`operations.types.${operation.type}`} />;
   const isOptimistic = operation.blockHeight === null;
   const spinner =
@@ -184,7 +184,7 @@ function OperationRow({
           <Text
             variant="body"
             fontWeight="semiBold"
-            color="neutral.c100"
+            color={colors.neutral.c100}
             numberOfLines={1}
           >
             {multipleAccounts ? getAccountName(account) : text}
@@ -197,7 +197,7 @@ function OperationRow({
                 numberOfLines={1}
                 variant="paragraph"
                 fontWeight="medium"
-                color="neutral.c70"
+                color={colors.neutral.c70}
               >
                 <Trans
                   i18nKey={
@@ -211,7 +211,7 @@ function OperationRow({
           ) : (
             <Text
               numberOfLines={1}
-              color="neutral.c70"
+              color={colors.neutral.c70}
               variant="paragraph"
               fontWeight="medium"
             >
@@ -245,7 +245,11 @@ function OperationRow({
                 alwaysShowSign
               />
             </Text>
-            <Text variant="paragraph" fontWeight="medium" color="neutral.c70">
+            <Text
+              variant="paragraph"
+              fontWeight="medium"
+              color={colors.neutral.c70}
+            >
               <CounterValue
                 showCode
                 date={operation.date}
