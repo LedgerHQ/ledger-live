@@ -97,4 +97,5 @@ const deviceStorage = {
     );
   },
 };
+
 module.exports = deviceStorage;

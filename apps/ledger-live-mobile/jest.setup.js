@@ -35,3 +35,9 @@ jest.mock("react-native-version-number", () => ({
 jest.mock("react-native-startup-time", () => ({
   getStartupTime: jest.fn(),
 }));
+
+jest.mock("styled-components/native", () => ({
+  __esModule: true,
+  useTheme: jest.fn(),
+  default: jest.fn(),
+}));
