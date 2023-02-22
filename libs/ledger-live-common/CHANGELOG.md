@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 29.0.0-next.1
+
+### Patch Changes
+
+- [#2734](https://github.com/LedgerHQ/ledger-live/pull/2734) [`80e3090edc`](https://github.com/LedgerHQ/ledger-live/commit/80e3090edc91a4e8c2f95891ce2eea48ddb1d319) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Gas limit error when above available balance fix
+
 ## 29.0.0-next.0
 
 ### Major Changes
