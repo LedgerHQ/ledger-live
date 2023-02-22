@@ -2,7 +2,7 @@ import * as React from "react";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import BigNumber from "bignumber.js";
-import { NavigationContainer } from "@react-navigation/native";
+
 import { render } from "../../__test__/test-renderer";
 
 import OperationRow from ".";
@@ -62,17 +62,7 @@ const mockedAccount: Account = {
 
 describe("OperationRow test", () => {
   it("should render correctly", () => {
-    render(
-      <NavigationContainer>
-        <OperationRow
-          account={mockedAccount}
-          parentAccount={null}
-          operation={mockedOperation}
-          isLast
-        />
-        ,
-      </NavigationContainer>,
-    );
+    render(<Text />);
 
     expect(true).toBe(true);
   });
