@@ -2511,7 +2511,9 @@
         "bullet2": "Ledger Live version, OS region, language and region"
       },
       "hideEmptyTokenAccounts": "Hide empty token accounts",
-      "hideEmptyTokenAccountsDesc": "All empty token accounts in the Assets page will be hidden."
+      "hideEmptyTokenAccountsDesc": "All empty token accounts in the Assets page will be hidden.",
+      "filterTokenOperationsZeroAmount": "Hide token transactions when value is 0",
+      "filterTokenOperationsZeroAmountDesc": "Hiding token transactions without value can prevent some potential address poisoning attacks on Eth, Polygon, BSC, Tron..."
     },
     "currencies": {
       "header": "Currencies",

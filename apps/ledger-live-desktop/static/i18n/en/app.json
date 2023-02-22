@@ -3988,6 +3988,10 @@
       "fullNode": {
         "title": "Connect Bitcoin full node",
         "desc": "Set up your Bitcoin full node to synchronize and send transactions without using Ledger’s explorers."
+      },
+      "filterTokenOperationsZeroAmount": {
+        "title": "Hide token transactions when value is 0",
+        "desc": "Hiding token transactions without value can prevent some potential address poisoning attacks on Eth, Polygon, BSC, Tron..."
       }
     }
   },
