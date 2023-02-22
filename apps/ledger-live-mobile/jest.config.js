@@ -19,7 +19,7 @@ module.exports = {
   preset: "react-native",
   setupFilesAfterEnv: [
     "@testing-library/jest-native/extend-expect",
-    "./jest-setup.js",
+    "./jest.setup.js",
   ],
   testMatch: ["**/src/**/*.test.(ts|tsx)"],
   transform: {
@@ -46,7 +46,10 @@ module.exports = {
     "^react-native/(.*)$": "<rootDir>/node_modules/react-native/$1",
     "^react-native$": "<rootDir>/node_modules/react-native",
     "^victory-native$": "victory",
+<<<<<<< HEAD
     "styled-components":
       "<rootDir>/node_modules/styled-components/native/dist/styled-components.native.cjs.js",
+=======
+>>>>>>> f2afef9744 (can run tests)
   },
 };
