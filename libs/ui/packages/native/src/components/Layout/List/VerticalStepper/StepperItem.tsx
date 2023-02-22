@@ -5,8 +5,9 @@ import styled from "styled-components/native";
 import { CheckAloneMedium } from "@ledgerhq/icons-ui/native";
 
 import { Item, ItemStatus } from "../types";
-import { Flex } from "../..";
-import { Text, ProgressLoader } from "../../..";
+import Flex from "../../Flex";
+import Text from "../../../Text";
+import ProgressLoader from "../../../Loader/ProgressLoader";
 
 export type Props = {
   item: Item;
