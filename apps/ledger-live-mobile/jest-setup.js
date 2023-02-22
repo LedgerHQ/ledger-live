@@ -1,9 +1,8 @@
-/* eslint-disable no-undef */
-
+// Needed for react-reanimated https://docs.swmansion.com/react-native-reanimated/docs/next/guide/testing/
 jest.useFakeTimers();
-
 jest.runAllTimers();
 
+// Mock of Native Modules
 jest.mock("react-native-localize", () => ({
   getTimeZone: jest.fn(),
   getLocales: jest.fn(),
