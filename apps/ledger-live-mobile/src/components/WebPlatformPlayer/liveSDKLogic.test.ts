@@ -59,7 +59,7 @@ function createEtherumTransaction(): Partial<
   Transaction & { gasLimit: BigNumber }
 > {
   return {
-    family: "ethereum" as any,
+    family: "ethereum",
     amount: new BigNumber("1000"),
     recipient: "0x0123456",
     nonce: 8,

@@ -15,6 +15,7 @@ import { NotEnoughGas } from "@ledgerhq/errors";
 import { useTheme } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
+import { isEthereumFamily } from "@ledgerhq/live-common/families/ethereum/guards";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 import { accountScreenSelector } from "../../reducers/accounts";
@@ -275,7 +276,7 @@ function SendSummary({ navigation, route }: Props) {
           route={route}
         />
 
-        {currency.id === "ethereum" && currency.type === "CryptoCurrency" && (
+        {isEthereumFamily(currency) && (
           <CurrentNetworkFee
             transaction={route.params.transaction as Transaction}
             currency={currency}
