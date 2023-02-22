@@ -21,6 +21,7 @@ import {
   getOperationAmountNumber,
   isConfirmedOperation,
   getOperationConfirmationDisplayableNumber,
+  isEditableOperation,
 } from "@ledgerhq/live-common/operation";
 import {
   useNftCollectionMetadata,
@@ -112,13 +113,13 @@ export default function Content({
     });
   }, [account.id, navigation, parentAccount]);
 
-  const onPressInfo = () => {
+  const onPressInfo = useCallback(() => {
     setIsModalOpened(true);
-  };
+  }, []);
 
-  const onModalClose = () => {
+  const onModalClose = useCallback(() => {
     setIsModalOpened(false);
-  };
+  }, []);
 
   const currencySettings = useSelector((s: State) =>
     currencySettingsForAccountSelector(s, {
@@ -145,12 +146,12 @@ export default function Content({
   const internalOperations = operation.internalOperations || [];
   const shouldDisplayTo = uniqueRecipients.length > 0 && !!uniqueRecipients[0];
 
-  const onEditTxPress = () => {
+  const onEditTxPress = useCallback(() => {
     navigation.navigate(NavigatorName.EthereumEditTransaction, {
       screen: ScreenName.EditEthereumTransactionMethodSelection,
       params: { operation, account, parentAccount },
     });
-  };
+  }, []);
 
   const isConfirmed = isConfirmedOperation(
     operation,
@@ -163,7 +164,7 @@ export default function Content({
     new Date().getTime() - getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
 
   const isEditable =
-    mainAccount.currency.family === "ethereum" &&
+    isEditableOperation(mainAccount, operation) &&
     !isConfirmed &&
     operation.type === "OUT";
 
