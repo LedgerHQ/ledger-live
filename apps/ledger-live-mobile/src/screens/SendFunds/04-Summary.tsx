@@ -16,6 +16,7 @@ import { useTheme } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import invariant from "invariant";
 import { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
+import { isEthereumFamily } from "@ledgerhq/live-common/families/ethereum/guards";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 import { accountScreenSelector } from "../../reducers/accounts";
