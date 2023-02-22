@@ -102,7 +102,7 @@ module.exports = {
           "**/e2e/**",
           "**/*.test.{ts,tsx}",
           "**/jest.config.js",
-          "**/jest-setup.js",
+          "**/jest.setup.js",
           "**/__test__/**",
         ],
       },
