@@ -4309,7 +4309,7 @@ importers:
       react-is: ^17.0.2
       react-native-svg: ^12.1.1
       rimraf: ^4.1.2
-      styled-components: ^5.3.6
+      styled-components: ^5.3.3
       styled-system: ^5.1.5
       tiny-glob: ^0.2.9
       typescript: ^4.8.3
@@ -4413,7 +4413,7 @@ importers:
       react-is: ^17.0.2
       react-native-svg: ^12.1.1
       rimraf: ^4.1.2
-      styled-components: ^5.3.6
+      styled-components: ^5.3.3
       styled-system: ^5.1.5
       tiny-glob: ^0.2.9
       typescript: ^4.8.3
@@ -4522,6 +4522,7 @@ importers:
         specifier: ^35.5.5
         version: 35.5.5(react@18.0.0)
     devDependencies:
+<<<<<<< HEAD
       '@babel/core':
         specifier: ^7.21.0
         version: 7.21.0
@@ -4811,11 +4812,104 @@ importers:
         specifier: ^35.5.5
         version: 35.11.4(react@18.0.0)
       webpack:
+<<<<<<< HEAD
         specifier: ^5.76.1
         version: 5.76.1(metro@0.76.0)
       webpack-dev-server:
         specifier: ^4.12.0
         version: 4.12.0(webpack@5.76.1)
+=======
+        specifier: ^4.46.0
+        version: 4.46.0
+=======
+      '@babel/core': 7.17.10
+      '@babel/generator': 7.17.10
+      '@babel/plugin-proposal-export-namespace-from': 7.16.7_@babel+core@7.17.10
+      '@babel/preset-env': 7.17.10_@babel+core@7.17.10
+      '@babel/runtime': 7.17.9
+      '@emotion/core': 11.0.0
+      '@expo/webpack-config': 0.16.23_qfsddtnvzdxybhtegrh2ztoaxi
+      '@react-native-community/cli-server-api': 7.0.3
+      '@react-native-community/eslint-config': 3.0.1_e7fseprhxui5cudjryavvqldey
+      '@storybook/addon-actions': 6.4.22_k2mvpji5i2ojml6m4ftklg47pa
+      '@storybook/addon-backgrounds': 6.4.22_k2mvpji5i2ojml6m4ftklg47pa
+      '@storybook/addon-controls': 6.4.22_p63n3csk2bbc2wu2r32slz6s2y
+      '@storybook/addon-docs': 6.4.22_4g2kxweqpv3vlt5hxriafuolvq
+      '@storybook/addon-essentials': 6.4.22_wfuuxqlqb5334qikhlebi5o6jq
+      '@storybook/addon-knobs': 6.4.0_7iqh65vw43x2ixk3qybqpwtvci
+      '@storybook/addon-links': 6.4.22_sfoxds7t5ydpegc3knd667wn6m
+      '@storybook/addon-measure': 6.4.22_k2mvpji5i2ojml6m4ftklg47pa
+      '@storybook/addon-ondevice-actions': 5.3.23_s7j5jygbctujwbs6tva7zjwumq
+      '@storybook/addon-ondevice-knobs': 5.3.25_s4idhe7zhl7qzqdesqp3gl6jkq
+      '@storybook/addon-outline': 6.4.22_k2mvpji5i2ojml6m4ftklg47pa
+      '@storybook/addon-toolbars': 6.4.22_k2mvpji5i2ojml6m4ftklg47pa
+      '@storybook/addon-viewport': 6.4.22_k2mvpji5i2ojml6m4ftklg47pa
+      '@storybook/addons': 6.4.22_sfoxds7t5ydpegc3knd667wn6m
+      '@storybook/api': 6.4.22_sfoxds7t5ydpegc3knd667wn6m
+      '@storybook/components': 6.4.22_k2mvpji5i2ojml6m4ftklg47pa
+      '@storybook/core-events': 6.4.22
+      '@storybook/react': 6.4.22_hcq42gmltxbuua2zcsjee4f4xu
+      '@storybook/react-native': 5.3.25_mzn2qdupzdlf6f3mwisi7guu2y
+      '@storybook/theming': 6.4.22_sfoxds7t5ydpegc3knd667wn6m
+      '@svgr/core': 5.5.0_@svgr+plugin-svgo@5.5.0
+      '@svgr/plugin-jsx': 5.5.0
+      '@svgr/plugin-svgo': 5.5.0
+      '@types/hoist-non-react-statics': 3.3.1_@types+react@17.0.45
+      '@types/node': 17.0.32
+      '@types/prop-types': 15.7.5
+      '@types/react': 17.0.45
+      '@types/react-native': 0.68.9_@types+react@17.0.45
+      '@types/styled-components': 5.1.25_@types+react@17.0.45
+      '@types/styled-components-react-native': 5.1.3_@types+react@17.0.45
+      '@typescript-eslint/eslint-plugin': 5.23.0_e5ttr75qf74rtjqbvndt6ltmhq
+      '@typescript-eslint/parser': 5.23.0_wdqgoy3juh7r2u2b4n4o4ol5rq
+      babel-loader: 8.2.5_usdhdj5awexcm2e5jtwd44bofa
+      babel-plugin-module-resolver: 4.1.0
+      babel-preset-expo: 9.1.0_@babel+core@7.17.10
+      camelcase: 6.3.0
+      csstype: 3.0.11
+      eslint: 8.15.0
+      eslint-config-prettier: 8.5.0_eslint@8.15.0
+      eslint-plugin-prettier: 4.0.0_iqftbjqlxzn3ny5nablrkczhqi
+      eslint-plugin-react: 7.29.4_eslint@8.15.0
+      eslint-plugin-react-hooks: 4.5.0_eslint@8.15.0
+      expo: 45.0.8_@babel+core@7.17.10
+      expo-asset: 8.6.2_67kmol2ndvglimbu7dp4kuhmni
+      expo-cli: 6.0.8_ri4qjomkglb4qgncccm6ftdufq
+      expo-constants: 13.2.4_qdkx4js63y5mi3qdvc6pmdao2e
+      expo-font: 10.2.1_v43by3k4ldxntb4lqmmfgsqfny
+      expo-modules-core: 0.6.5_expo-constants@13.2.4
+      fs-extra: 10.1.0
+      glob: 7.2.0
+      metro: 0.67.0
+      metro-config: 0.67.0_h77kaxayu5kga6qsud7rauzt6a
+      metro-extra-config: link:../../../../tools/metro-extra-config
+      metro-minify-uglify: 0.67.0
+      metro-react-native-babel-preset: 0.67.0_@babel+core@7.17.10
+      metro-resolver: 0.67.0
+      metro-runtime: 0.67.0
+      metro-transform-worker: 0.67.0_metro-minify-uglify@0.67.0
+      prettier: 2.6.2
+      prop-types: 15.8.1
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
+      react-is: 17.0.2
+      react-native: 0.68.5_7bkeunqngmazlu32h3v2zcqrja
+      react-native-gesture-handler: 1.10.3
+      react-native-reanimated: 2.8.0_ng25wgrbxfbuobm4i4zjlzcppu
+      react-native-web: 0.17.7_sfoxds7t5ydpegc3knd667wn6m
+      regenerator-runtime: 0.13.9
+      rimraf: 4.1.2
+      styled-components: 5.3.5_fane7jikarojcev26y27hpbhu4
+      stylelint: 14.10.0
+      stylelint-config-recommended: 8.0.0_stylelint@14.10.0
+      stylelint-config-styled-components: 0.1.1
+      stylelint-processor-styled-components: 1.10.0
+      typescript: 4.9.3
+      victory: 35.11.4_react@17.0.2
+      webpack: 4.46.0
+>>>>>>> 223bea10b6 (remove useless jest config props)
+>>>>>>> 792ca9d0fc (remove useless jest config props)
 
   libs/ui/packages/react:
     dependencies:
@@ -5889,6 +5983,7 @@ packages:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       '@babel/helper-validator-option': 7.21.0
 =======
       '@babel/helper-validator-option': 7.18.6
@@ -5905,9 +6000,21 @@ packages:
       '@babel/helper-validator-option': 7.18.6
 >>>>>>> c8a26c4912 (can run tests)
 >>>>>>> 1c5dc2b62d (can run tests)
+<<<<<<< HEAD
 >>>>>>> 33c8d6c820 (can run tests)
+<<<<<<< HEAD
 >>>>>>> b3cb8d10d6 (can run tests)
+<<<<<<< HEAD
 >>>>>>> b12905bf24 (an run tests)
+=======
+=======
+=======
+=======
+      '@babel/helper-validator-option': 7.21.0
+>>>>>>> 733db2a5eb (remove useless jest config props)
+>>>>>>> 5d99c55e0d (remove useless jest config props)
+>>>>>>> da34655fd6 (remove useless jest config props)
+>>>>>>> 56dfa4ee76 (remove useless jest config props)
       browserslist: 4.21.3
       lru-cache: 5.1.1
       semver: 6.3.0
@@ -6332,9 +6439,16 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       '@babel/template': 7.20.7
+<<<<<<< HEAD
       '@babel/types': 7.20.7
 >>>>>>> c8a26c4912 (can run tests)
+<<<<<<< HEAD
 >>>>>>> b3cb8d10d6 (can run tests)
+=======
+=======
+      '@babel/types': 7.21.0
+>>>>>>> 1fdca713c5 (remove useless jest config props)
+>>>>>>> da34655fd6 (remove useless jest config props)
 
   /@babel/helper-function-name/7.21.0:
     resolution: {integrity: sha512-HfK1aMRanKHpxemaY2gqBmL04iAPOPRj7DxtNbiDOrJK+gdwkiNRVpCpUJYbUT+aZyemKN8brqTOxzCaG6ExRg==}
@@ -6539,6 +6653,79 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       '@babel/types': 7.21.4
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+=======
+=======
+>>>>>>> 2024bd8b51 (chore(llm): fix jest setup)
+<<<<<<< HEAD
+      '@babel/types': 7.20.7
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> 4e47f37c7a (chore(llm): fix jest setup)
+      '@babel/types': 7.21.3
+
+  /@babel/helper-optimise-call-expression/7.18.6:
+    resolution: {integrity: sha512-HP59oD9/fEHQkdcbgFCnbmgH5vIQTJbxh2yf+CdM89/glUNnuzr87Q8GIjGEnOktTROemO0Pe0iPAYbqZuOUiA==}
+    engines: {node: '>=6.9.0'}
+    dependencies:
+<<<<<<< HEAD
+      '@babel/types': 7.21.3
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> a8bb3d25d8 (remove useless jest config props)
+      '@babel/types': 7.21.2
+=======
+=======
+>>>>>>> bd77c4e48b (fix merge conflict in env.ts)
+>>>>>>> 01b7787564 (fix merge conflict in env.ts)
+      '@babel/types': 7.20.7
+<<<<<<< HEAD
+>>>>>>> a84825c468 (fix merge conflict in env.ts)
+>>>>>>> 8336da2107 (fix merge conflict in env.ts)
+<<<<<<< HEAD
+>>>>>>> dd8e409f6f (fix merge conflict in env.ts)
+=======
+=======
+>>>>>>> 4e47f37c7a (chore(llm): fix jest setup)
+<<<<<<< HEAD
+>>>>>>> 2024bd8b51 (chore(llm): fix jest setup)
+<<<<<<< HEAD
+>>>>>>> 315470edf3 (chore(llm): fix jest setup)
+=======
+=======
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/types': 7.21.2
+>>>>>>> 6b49f39d12 (chore(llm): fix jest setup)
+<<<<<<< HEAD
+>>>>>>> 7790fbedd9 (chore(llm): fix jest setup)
+=======
+=======
+      '@babel/types': 7.21.2
+=======
+      '@babel/types': 7.21.0
+>>>>>>> 1fdca713c5 (remove useless jest config props)
+>>>>>>> 733db2a5eb (remove useless jest config props)
+>>>>>>> 5d99c55e0d (remove useless jest config props)
+>>>>>>> da34655fd6 (remove useless jest config props)
+>>>>>>> a8bb3d25d8 (remove useless jest config props)
+>>>>>>> 792ca9d0fc (remove useless jest config props)
+>>>>>>> bf63857d87 (remove useless jest config props)
+>>>>>>> 56dfa4ee76 (remove useless jest config props)
 
   /@babel/helper-plugin-utils@7.10.4:
     resolution: {integrity: sha512-O4KCvQA6lLiMU9l2eawBPMf1xPP8xPfB3iEQw150hOVTqj/rfXz0ThTb4HEzqQfs2Bmo5Ay8BzxfzVtBrr9dVg==}
@@ -6639,6 +6826,73 @@ packages:
       '@babel/types': 7.21.4
 
   /@babel/helper-simple-access@7.20.2:
+<<<<<<< HEAD
+=======
+=======
+=======
+<<<<<<< HEAD
+      '@babel/types': 7.20.7
+=======
+      '@babel/helper-environment-visitor': 7.18.9
+      '@babel/helper-member-expression-to-functions': 7.21.0
+      '@babel/helper-optimise-call-expression': 7.18.6
+      '@babel/template': 7.20.7
+      '@babel/traverse': 7.20.13
+<<<<<<< HEAD
+      '@babel/types': 7.21.3
+=======
+      '@babel/types': 7.21.2
+    transitivePeerDependencies:
+      - supports-color
+=======
+>>>>>>> 01b7787564 (fix merge conflict in env.ts)
+      '@babel/helper-member-expression-to-functions': 7.17.7
+      '@babel/helper-optimise-call-expression': 7.16.7
+=======
+>>>>>>> bd77c4e48b (fix merge conflict in env.ts)
+      '@babel/traverse': 7.20.13
+<<<<<<< HEAD
+      '@babel/types': 7.21.2
+=======
+      '@babel/types': 7.21.0
+>>>>>>> 1fdca713c5 (remove useless jest config props)
+>>>>>>> da34655fd6 (remove useless jest config props)
+    transitivePeerDependencies:
+      - supports-color
+>>>>>>> 8336da2107 (fix merge conflict in env.ts)
+>>>>>>> dd8e409f6f (fix merge conflict in env.ts)
+
+<<<<<<< HEAD
+<<<<<<< HEAD
+  /@babel/helper-simple-access@7.20.2:
+=======
+<<<<<<< HEAD
+  /@babel/helper-replace-supers/7.20.7:
+    resolution: {integrity: sha512-vujDMtB6LVfNW13jhlCrp48QNslK6JXi7lQG736HVbHz/mbf4Dc7tIRh1Xf5C0rF7BP8iiSxGMCmY6Ci1ven3A==}
+=======
+<<<<<<< HEAD
+  /@babel/helper-simple-access/7.17.7:
+    resolution: {integrity: sha512-txyMCGroZ96i+Pxr3Je3lzEJjqwaRC9buMUgtomcrLe5Nd0+fk1h0LLA+ixUF5OW7AhHuQ7Es1WcQJZmZsz2XA==}
+>>>>>>> a84825c468 (fix merge conflict in env.ts)
+    engines: {node: '>=6.9.0'}
+    dependencies:
+      '@babel/helper-environment-visitor': 7.18.9
+      '@babel/helper-member-expression-to-functions': 7.21.0
+      '@babel/helper-optimise-call-expression': 7.18.6
+      '@babel/template': 7.20.7
+      '@babel/traverse': 7.20.13
+      '@babel/types': 7.21.3
+    transitivePeerDependencies:
+      - supports-color
+
+=======
+>>>>>>> bd77c4e48b (fix merge conflict in env.ts)
+=======
+>>>>>>> 19c63b6cf3 (chore(llm): fix jest setup)
+  /@babel/helper-simple-access/7.20.2:
+>>>>>>> e3b44ff130 (fix merge conflict in env.ts)
+>>>>>>> 315470edf3 (chore(llm): fix jest setup)
+>>>>>>> 56dfa4ee76 (remove useless jest config props)
     resolution: {integrity: sha512-+0woI/WPq59IrqDYbVGfshjT5Dmk/nnbdpcF8SnMhhXObpTq2KNBdLFRFrkVdbDOyUmHBCxzm5FHV1rACIkIbA==}
     engines: {node: '>=6.9.0'}
     dependencies:
@@ -6667,16 +6921,31 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
 <<<<<<< HEAD
+<<<<<<< HEAD
       '@babel/types': 7.21.3
 =======
+=======
+>>>>>>> da34655fd6 (remove useless jest config props)
 <<<<<<< HEAD
       '@babel/types': 7.21.2
 =======
       '@babel/types': 7.20.7
 >>>>>>> c8a26c4912 (can run tests)
+<<<<<<< HEAD
 >>>>>>> b3cb8d10d6 (can run tests)
+<<<<<<< HEAD
 >>>>>>> 2489bbce3d (can run tests)
+<<<<<<< HEAD
 >>>>>>> d098a432b4 (an run tests)
+=======
+=======
+=======
+=======
+      '@babel/types': 7.21.0
+>>>>>>> 1fdca713c5 (remove useless jest config props)
+>>>>>>> da34655fd6 (remove useless jest config props)
+>>>>>>> a8bb3d25d8 (remove useless jest config props)
+>>>>>>> 792ca9d0fc (remove useless jest config props)
 
   /@babel/helper-split-export-declaration@7.18.6:
     resolution: {integrity: sha512-bde1etTx6ZyTmobl9LLMMQsaizFVZrquTEHOqKeQESMKo4PlObf+8+JA25ZsIpZhT/WEd39+vOdLXAFG/nELpA==}
@@ -7331,9 +7600,30 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
+<<<<<<< HEAD
       '@babel/core': 7.21.0
       '@babel/helper-create-class-features-plugin': 7.17.9(@babel/core@7.21.0)
+=======
+      '@babel/core': 7.17.10
+<<<<<<< HEAD
+      '@babel/helper-create-class-features-plugin': 7.17.9(@babel/core@7.17.10)
+=======
+      '@babel/helper-create-class-features-plugin': 7.17.9_@babel+core@7.17.10
+<<<<<<< HEAD
+>>>>>>> 223bea10b6 (remove useless jest config props)
+>>>>>>> 792ca9d0fc (remove useless jest config props)
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.16.7
+<<<<<<< HEAD
+=======
+>>>>>>> cfeb8910fa (chore(llm): attempt to fix several jest issues)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 144a96f422 (remove useless jest config props)
+>>>>>>> 8878b480b8 (remove useless jest config props)
+>>>>>>> 5d99c55e0d (remove useless jest config props)
     transitivePeerDependencies:
       - supports-color
 
@@ -7355,11 +7645,51 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
+<<<<<<< HEAD
       '@babel/core': 7.21.0
+=======
+      '@babel/core': 7.17.10
+<<<<<<< HEAD
+>>>>>>> 792ca9d0fc (remove useless jest config props)
       '@babel/helper-annotate-as-pure': 7.18.6
       '@babel/helper-create-class-features-plugin': 7.17.9(@babel/core@7.21.0)
       '@babel/helper-plugin-utils': 7.20.2
+<<<<<<< HEAD
       '@babel/plugin-syntax-private-property-in-object': 7.14.5(@babel/core@7.21.0)
+=======
+<<<<<<< HEAD
+      '@babel/plugin-syntax-private-property-in-object': 7.14.5(@babel/core@7.17.10)
+=======
+=======
+<<<<<<< HEAD
+      '@babel/helper-annotate-as-pure': 7.16.7
+      '@babel/helper-create-class-features-plugin': 7.17.9_@babel+core@7.17.10
+      '@babel/helper-plugin-utils': 7.16.7
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-annotate-as-pure': 7.18.6
+<<<<<<< HEAD
+      '@babel/helper-create-class-features-plugin': 7.17.9_@babel+core@7.17.10
+=======
+      '@babel/helper-create-class-features-plugin': 7.21.0_@babel+core@7.17.10
+>>>>>>> 2732a1ab0e (fix merge conflict in env.ts)
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-annotate-as-pure': 7.16.7
+      '@babel/helper-create-class-features-plugin': 7.17.9_@babel+core@7.17.10
+      '@babel/helper-plugin-utils': 7.16.7
+>>>>>>> cfeb8910fa (chore(llm): attempt to fix several jest issues)
+=======
+      '@babel/helper-annotate-as-pure': 7.18.6
+      '@babel/helper-create-class-features-plugin': 7.17.9_@babel+core@7.17.10
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 144a96f422 (remove useless jest config props)
+>>>>>>> 8878b480b8 (remove useless jest config props)
+>>>>>>> 5d99c55e0d (remove useless jest config props)
+      '@babel/plugin-syntax-private-property-in-object': 7.14.5_@babel+core@7.17.10
+>>>>>>> 223bea10b6 (remove useless jest config props)
+>>>>>>> 792ca9d0fc (remove useless jest config props)
     transitivePeerDependencies:
       - supports-color
 
@@ -8614,6 +8944,38 @@ packages:
       '@babel/helper-module-transforms': 7.21.2
       '@babel/helper-plugin-utils': 7.20.2
       '@babel/helper-validator-identifier': 7.19.1
+<<<<<<< HEAD
+=======
+=======
+      '@babel/helper-module-transforms': 7.18.9
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-validator-identifier': 7.18.6
+<<<<<<< HEAD
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-validator-identifier': 7.19.1
+=======
+      '@babel/helper-validator-identifier': 7.18.6
+>>>>>>> 33d75de1c1 (add OperationRow.test.ts)
+=======
+      '@babel/helper-validator-identifier': 7.19.1
+>>>>>>> 2732a1ab0e (fix merge conflict in env.ts)
+=======
+      '@babel/helper-validator-identifier': 7.18.6
+>>>>>>> cfeb8910fa (chore(llm): attempt to fix several jest issues)
+=======
+      '@babel/helper-validator-identifier': 7.19.1
+>>>>>>> 144a96f422 (remove useless jest config props)
+>>>>>>> 8878b480b8 (remove useless jest config props)
+>>>>>>> 733db2a5eb (remove useless jest config props)
+>>>>>>> 5d99c55e0d (remove useless jest config props)
       babel-plugin-dynamic-import-node: 2.3.3
     transitivePeerDependencies:
       - supports-color
@@ -9706,8 +10068,14 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/compat-data': 7.20.14
+<<<<<<< HEAD
       '@babel/core': 7.21.0
       '@babel/helper-compilation-targets': 7.20.7(@babel/core@7.21.0)
+=======
+      '@babel/core': 7.17.10
+<<<<<<< HEAD
+      '@babel/helper-compilation-targets': 7.20.7(@babel/core@7.17.10)
+>>>>>>> 792ca9d0fc (remove useless jest config props)
       '@babel/helper-plugin-utils': 7.20.2
       '@babel/helper-validator-option': 7.18.6
       '@babel/plugin-bugfix-safari-id-destructuring-collision-in-function-expression': 7.16.7(@babel/core@7.21.0)
@@ -9775,9 +10143,107 @@ packages:
       '@babel/plugin-transform-unicode-regex': 7.16.7(@babel/core@7.21.0)
       '@babel/preset-modules': 0.1.5(@babel/core@7.21.0)
       '@babel/types': 7.20.7
+<<<<<<< HEAD
       babel-plugin-polyfill-corejs2: 0.3.1(@babel/core@7.21.0)
       babel-plugin-polyfill-corejs3: 0.5.2(@babel/core@7.21.0)
       babel-plugin-polyfill-regenerator: 0.3.1(@babel/core@7.21.0)
+=======
+      babel-plugin-polyfill-corejs2: 0.3.1(@babel/core@7.17.10)
+      babel-plugin-polyfill-corejs3: 0.5.2(@babel/core@7.17.10)
+      babel-plugin-polyfill-regenerator: 0.3.1(@babel/core@7.17.10)
+=======
+<<<<<<< HEAD
+      '@babel/helper-compilation-targets': 7.20.7_@babel+core@7.17.10
+      '@babel/helper-plugin-utils': 7.20.2
+      '@babel/helper-validator-option': 7.18.6
+=======
+      '@babel/helper-compilation-targets': 7.17.10_@babel+core@7.17.10
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.16.7
+      '@babel/helper-validator-option': 7.16.7
+<<<<<<< HEAD
+=======
+>>>>>>> cfeb8910fa (chore(llm): attempt to fix several jest issues)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+      '@babel/helper-validator-option': 7.21.0
+>>>>>>> 144a96f422 (remove useless jest config props)
+>>>>>>> 8878b480b8 (remove useless jest config props)
+>>>>>>> 5d99c55e0d (remove useless jest config props)
+      '@babel/plugin-bugfix-safari-id-destructuring-collision-in-function-expression': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-bugfix-v8-spread-parameters-in-optional-chaining': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-proposal-async-generator-functions': 7.16.8_@babel+core@7.17.10
+      '@babel/plugin-proposal-class-properties': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-proposal-class-static-block': 7.17.6_@babel+core@7.17.10
+      '@babel/plugin-proposal-dynamic-import': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-proposal-export-namespace-from': 7.18.9_@babel+core@7.17.10
+      '@babel/plugin-proposal-json-strings': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-proposal-logical-assignment-operators': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-proposal-nullish-coalescing-operator': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-proposal-numeric-separator': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-proposal-object-rest-spread': 7.17.3_@babel+core@7.17.10
+      '@babel/plugin-proposal-optional-catch-binding': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-proposal-optional-chaining': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-proposal-private-methods': 7.16.11_@babel+core@7.17.10
+      '@babel/plugin-proposal-private-property-in-object': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-proposal-unicode-property-regex': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-syntax-async-generators': 7.8.4_@babel+core@7.17.10
+      '@babel/plugin-syntax-class-properties': 7.12.13_@babel+core@7.17.10
+      '@babel/plugin-syntax-class-static-block': 7.14.5_@babel+core@7.17.10
+      '@babel/plugin-syntax-dynamic-import': 7.8.3_@babel+core@7.17.10
+      '@babel/plugin-syntax-export-namespace-from': 7.8.3_@babel+core@7.17.10
+      '@babel/plugin-syntax-json-strings': 7.8.3_@babel+core@7.17.10
+      '@babel/plugin-syntax-logical-assignment-operators': 7.10.4_@babel+core@7.17.10
+      '@babel/plugin-syntax-nullish-coalescing-operator': 7.8.3_@babel+core@7.17.10
+      '@babel/plugin-syntax-numeric-separator': 7.10.4_@babel+core@7.17.10
+      '@babel/plugin-syntax-object-rest-spread': 7.8.3_@babel+core@7.17.10
+      '@babel/plugin-syntax-optional-catch-binding': 7.8.3_@babel+core@7.17.10
+      '@babel/plugin-syntax-optional-chaining': 7.8.3_@babel+core@7.17.10
+      '@babel/plugin-syntax-private-property-in-object': 7.14.5_@babel+core@7.17.10
+      '@babel/plugin-syntax-top-level-await': 7.14.5_@babel+core@7.17.10
+      '@babel/plugin-transform-arrow-functions': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-async-to-generator': 7.16.8_@babel+core@7.17.10
+      '@babel/plugin-transform-block-scoped-functions': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-block-scoping': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-classes': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-computed-properties': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-destructuring': 7.17.7_@babel+core@7.17.10
+      '@babel/plugin-transform-dotall-regex': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-duplicate-keys': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-exponentiation-operator': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-for-of': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-function-name': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-literals': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-member-expression-literals': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-modules-amd': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-modules-commonjs': 7.17.9_@babel+core@7.17.10
+      '@babel/plugin-transform-modules-systemjs': 7.17.8_@babel+core@7.17.10
+      '@babel/plugin-transform-modules-umd': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-named-capturing-groups-regex': 7.17.10_@babel+core@7.17.10
+      '@babel/plugin-transform-new-target': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-object-super': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-parameters': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-property-literals': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-regenerator': 7.17.9_@babel+core@7.17.10
+      '@babel/plugin-transform-reserved-words': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-shorthand-properties': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-spread': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-sticky-regex': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-template-literals': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-typeof-symbol': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-unicode-escapes': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-unicode-regex': 7.16.7_@babel+core@7.17.10
+      '@babel/preset-modules': 0.1.5_@babel+core@7.17.10
+<<<<<<< HEAD
+      '@babel/types': 7.20.7
+=======
+      '@babel/types': 7.21.0
+>>>>>>> 5d99c55e0d (remove useless jest config props)
+      babel-plugin-polyfill-corejs2: 0.3.1_@babel+core@7.17.10
+      babel-plugin-polyfill-corejs3: 0.5.2_@babel+core@7.17.10
+      babel-plugin-polyfill-regenerator: 0.3.1_@babel+core@7.17.10
+>>>>>>> 223bea10b6 (remove useless jest config props)
+>>>>>>> 792ca9d0fc (remove useless jest config props)
       core-js-compat: 3.22.5
       semver: 6.3.0
     transitivePeerDependencies:
@@ -9948,16 +10414,97 @@ packages:
       '@babel/helper-validator-option': 7.21.0
       '@babel/plugin-transform-flow-strip-types': 7.16.7(@babel/core@7.21.0)
 
+<<<<<<< HEAD
   /@babel/preset-modules@0.1.5(@babel/core@7.21.0):
+=======
+  /@babel/preset-flow@7.16.7(@babel/core@7.20.12):
+    resolution: {integrity: sha512-6ceP7IyZdUYQ3wUVqyRSQXztd1YmFHWI4Xv11MIqAlE4WqxBSd/FZ61V9k+TS5Gd4mkHOtQtPp9ymRpxH4y1Ug==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    dependencies:
+      '@babel/core': 7.20.12
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+<<<<<<< HEAD
+      '@babel/helper-validator-option': 7.18.6
+      '@babel/plugin-transform-flow-strip-types': 7.16.7(@babel/core@7.20.12)
+=======
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.16.7
+>>>>>>> 47a53f2584 (remove useless jest config props)
+      '@babel/helper-validator-option': 7.16.7
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+      '@babel/helper-validator-option': 7.21.0
+>>>>>>> 8878b480b8 (remove useless jest config props)
+      '@babel/plugin-transform-flow-strip-types': 7.16.7_@babel+core@7.20.12
+>>>>>>> 223bea10b6 (remove useless jest config props)
+
+  /@babel/preset-modules@0.1.5(@babel/core@7.17.10):
+>>>>>>> 792ca9d0fc (remove useless jest config props)
     resolution: {integrity: sha512-A57th6YRG7oR3cq/yt/Y84MvGgE0eJG2F1JLhKuyG+jFxEgrd/HAMJatiFtmOiZurz+0DkrvbheCLaV5f2JfjA==}
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.21.0
       '@babel/helper-plugin-utils': 7.20.2
+<<<<<<< HEAD
       '@babel/plugin-proposal-unicode-property-regex': 7.16.7(@babel/core@7.21.0)
       '@babel/plugin-transform-dotall-regex': 7.16.7(@babel/core@7.21.0)
       '@babel/types': 7.21.4
+=======
+<<<<<<< HEAD
+      '@babel/plugin-proposal-unicode-property-regex': 7.16.7(@babel/core@7.17.10)
+      '@babel/plugin-transform-dotall-regex': 7.16.7(@babel/core@7.17.10)
+=======
+      '@babel/plugin-proposal-unicode-property-regex': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-dotall-regex': 7.16.7_@babel+core@7.17.10
+<<<<<<< HEAD
+>>>>>>> 223bea10b6 (remove useless jest config props)
+      '@babel/types': 7.20.7
+=======
+      '@babel/types': 7.21.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/plugin-proposal-unicode-property-regex': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-dotall-regex': 7.16.7_@babel+core@7.17.10
+<<<<<<< HEAD
+      '@babel/types': 7.18.10
+<<<<<<< HEAD
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/types': 7.20.7
+=======
+      '@babel/types': 7.21.0
+>>>>>>> 2732a1ab0e (fix merge conflict in env.ts)
+=======
+      '@babel/types': 7.18.10
+>>>>>>> cfeb8910fa (chore(llm): attempt to fix several jest issues)
+=======
+      '@babel/types': 7.21.0
+>>>>>>> 144a96f422 (remove useless jest config props)
+>>>>>>> 8878b480b8 (remove useless jest config props)
+>>>>>>> 733db2a5eb (remove useless jest config props)
+>>>>>>> 5d99c55e0d (remove useless jest config props)
+      esutils: 2.0.3
+
+  /@babel/preset-modules@0.1.5(@babel/core@7.20.12):
+    resolution: {integrity: sha512-A57th6YRG7oR3cq/yt/Y84MvGgE0eJG2F1JLhKuyG+jFxEgrd/HAMJatiFtmOiZurz+0DkrvbheCLaV5f2JfjA==}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    dependencies:
+      '@babel/core': 7.20.12
+      '@babel/helper-plugin-utils': 7.20.2
+      '@babel/plugin-proposal-unicode-property-regex': 7.16.7(@babel/core@7.20.12)
+      '@babel/plugin-transform-dotall-regex': 7.16.7(@babel/core@7.20.12)
+      '@babel/types': 7.20.7
+>>>>>>> 792ca9d0fc (remove useless jest config props)
       esutils: 2.0.3
 
   /@babel/preset-modules@0.1.5(@babel/core@7.9.0):
@@ -9978,6 +10525,7 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
+<<<<<<< HEAD
       '@babel/core': 7.21.0
       '@babel/helper-plugin-utils': 7.20.2
       '@babel/helper-validator-option': 7.18.6
@@ -9985,6 +10533,61 @@ packages:
       '@babel/plugin-transform-react-jsx': 7.18.10(@babel/core@7.21.0)
       '@babel/plugin-transform-react-jsx-development': 7.16.7(@babel/core@7.21.0)
       '@babel/plugin-transform-react-pure-annotations': 7.16.7(@babel/core@7.21.0)
+=======
+      '@babel/core': 7.17.10
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> 5d99c55e0d (remove useless jest config props)
+      '@babel/helper-plugin-utils': 7.20.2
+      '@babel/helper-validator-option': 7.18.6
+<<<<<<< HEAD
+      '@babel/plugin-transform-react-display-name': 7.16.7(@babel/core@7.17.10)
+      '@babel/plugin-transform-react-jsx': 7.18.10(@babel/core@7.17.10)
+      '@babel/plugin-transform-react-jsx-development': 7.16.7(@babel/core@7.17.10)
+      '@babel/plugin-transform-react-pure-annotations': 7.16.7(@babel/core@7.17.10)
+=======
+      '@babel/plugin-transform-react-display-name': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-react-jsx': 7.18.10_@babel+core@7.17.10
+<<<<<<< HEAD
+=======
+=======
+=======
+>>>>>>> 733db2a5eb (remove useless jest config props)
+      '@babel/helper-plugin-utils': 7.16.7
+      '@babel/helper-validator-option': 7.16.7
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+<<<<<<< HEAD
+      '@babel/helper-validator-option': 7.18.6
+=======
+      '@babel/helper-validator-option': 7.21.0
+>>>>>>> 144a96f422 (remove useless jest config props)
+>>>>>>> 1fdca713c5 (remove useless jest config props)
+      '@babel/plugin-transform-react-display-name': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-react-jsx': 7.17.3_@babel+core@7.17.10
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+>>>>>>> 5d99c55e0d (remove useless jest config props)
+      '@babel/plugin-transform-react-jsx-development': 7.16.7_@babel+core@7.17.10
+      '@babel/plugin-transform-react-pure-annotations': 7.16.7_@babel+core@7.17.10
+>>>>>>> 223bea10b6 (remove useless jest config props)
+    dev: true
+
+  /@babel/preset-react@7.16.7(@babel/core@7.20.12):
+    resolution: {integrity: sha512-fWpyI8UM/HE6DfPBzD8LnhQ/OcH8AgTaqcqP2nGOXEUV+VKBR5JRN9hCk9ai+zQQ57vtm9oWeXguBCPNUjytgA==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    dependencies:
+      '@babel/core': 7.20.12
+      '@babel/helper-plugin-utils': 7.20.2
+      '@babel/helper-validator-option': 7.18.6
+      '@babel/plugin-transform-react-display-name': 7.16.7(@babel/core@7.20.12)
+      '@babel/plugin-transform-react-jsx': 7.18.10(@babel/core@7.20.12)
+      '@babel/plugin-transform-react-jsx-development': 7.16.7(@babel/core@7.20.12)
+      '@babel/plugin-transform-react-pure-annotations': 7.16.7(@babel/core@7.20.12)
+>>>>>>> 792ca9d0fc (remove useless jest config props)
 
   /@babel/preset-react@7.9.1(@babel/core@7.9.0):
     resolution: {integrity: sha512-aJBYF23MPj0RNdp/4bHnAP0NVqqZRr9kl0NAOP4nJCex6OYVio59+dnQzsAWFuogdLyeaKA1hmfUIVZkY5J+TQ==}
@@ -16734,10 +17337,20 @@ packages:
       '@babel/runtime': 7.20.13
       '@polkadot/ui-shared': 2.11.1(@polkadot/util-crypto@10.3.1)(@polkadot/util@10.3.1)
       '@polkadot/util': 10.3.1
+<<<<<<< HEAD
       '@polkadot/util-crypto': 10.3.1(@polkadot/util@10.3.1)
+<<<<<<< HEAD
       react: 18.0.0
       react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-svg: 12.5.1(react-native@0.71.6)(react@18.0.0)
+=======
+=======
+      '@polkadot/util-crypto': 10.3.1
+>>>>>>> 223bea10b6 (remove useless jest config props)
+      react: 17.0.2
+      react-native: 0.68.5(@babel/core@7.17.10)(@babel/preset-env@7.17.10)(metro-resolver@0.67.0)(metro-transform-worker@0.67.0)(react@17.0.2)
+      react-native-svg: 12.5.1(react-native@0.68.5)(react@17.0.2)
+>>>>>>> 792ca9d0fc (remove useless jest config props)
     dev: false
 
   /@polkadot/types-augment@9.8.1:
@@ -16812,11 +17425,44 @@ packages:
     dependencies:
       '@babel/runtime': 7.20.13
       '@polkadot/util': 10.3.1
+<<<<<<< HEAD
       '@polkadot/util-crypto': 10.3.1(@polkadot/util@10.3.1)
+=======
+<<<<<<< HEAD
+      '@polkadot/util-crypto': 10.3.1
+=======
+<<<<<<< HEAD
+      '@polkadot/util-crypto': 10.3.1(@polkadot/util@10.3.1)
+>>>>>>> 63f98d45aa (remove useless jest config props)
+>>>>>>> c8e3fb4fcc (remove useless jest config props)
       color: 3.2.1
     dev: false
 
   /@polkadot/util-crypto@10.3.1(@polkadot/util@10.3.1):
+=======
+      '@polkadot/util-crypto': 10.3.1
+      color: 3.2.1
+    dev: false
+
+  /@polkadot/util-crypto/10.3.1:
+    resolution: {integrity: sha512-viqLMuNGrbB2lyDIYdXAl3tq/Em/Y7ql2FvCTHJmxXaB5C1NXiWf1SqFAahUJKohL+ke5IL0jr19wZu/f88lIQ==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@babel/runtime': 7.20.13
+      '@noble/hashes': 1.1.5
+      '@noble/secp256k1': 1.7.1
+      '@polkadot/networks': 10.3.1
+      '@polkadot/util': 10.3.1
+      '@polkadot/wasm-crypto': 6.4.1_hmowrubltiyg4mpvtnqaaplyfm
+      '@polkadot/x-bigint': 10.3.1
+      '@polkadot/x-randomvalues': 10.3.1
+      '@scure/base': 1.1.1
+      ed2curve: 0.3.0
+      tweetnacl: 1.0.3
+    dev: false
+
+  /@polkadot/util-crypto/10.3.1_@polkadot+util@10.3.1:
+>>>>>>> 223bea10b6 (remove useless jest config props)
     resolution: {integrity: sha512-viqLMuNGrbB2lyDIYdXAl3tq/Em/Y7ql2FvCTHJmxXaB5C1NXiWf1SqFAahUJKohL+ke5IL0jr19wZu/f88lIQ==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
@@ -27929,7 +28575,15 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
+<<<<<<< HEAD
       styled-components: 5.3.5(react-dom@17.0.2)(react-is@17.0.2)(react@17.0.2)
+=======
+<<<<<<< HEAD
+      styled-components: 5.3.5(react-dom@17.0.2)(react-is@17.0.2)(react-native@0.68.5)(react@17.0.2)
+=======
+      styled-components: 5.3.5_3a4gaprdt6lucrt3fqgxp3nfme
+>>>>>>> 223bea10b6 (remove useless jest config props)
+>>>>>>> 792ca9d0fc (remove useless jest config props)
 
 <<<<<<< HEAD
   /babel-plugin-syntax-jsx@6.18.0:
@@ -57484,7 +58138,6 @@ packages:
 >>>>>>> b3cb8d10d6 (can run tests)
       shallowequal: 1.1.0
       supports-color: 5.5.0
-    dev: false
 
 <<<<<<< HEAD
 =======
