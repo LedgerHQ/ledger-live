@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
-import styled from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { getOperationAmountNumber } from "@ledgerhq/live-common/operation";
 import {
@@ -142,7 +142,7 @@ function OperationRow({
   const valueColor = amount.isNegative() ? "neutral.c100" : "success.c50";
   const currency = getAccountCurrency(account);
   const unit = getAccountUnit(account);
-
+  const { colors } = useTheme();
   const text = <Trans i18nKey={`operations.types.${operation.type}`} />;
   const isOptimistic = operation.blockHeight === null;
   const spinner =
@@ -169,14 +169,19 @@ function OperationRow({
       </Box>
       <Wrapper opacity={isOptimistic ? 0.5 : 1}>
         <BodyLeftContainer>
-          <Text variant="body" fontWeight="semiBold" color="neutral.c100" numberOfLines={1}>
+          <Text variant="body" fontWeight="semiBold" color={colors.neutral.c100} numberOfLines={1}>
             {multipleAccounts ? getAccountName(account) : text}
           </Text>
 
           {isOptimistic ? (
             <Flex flexDirection="row" alignItems="center">
               {spinner}
-              <Text numberOfLines={1} variant="paragraph" fontWeight="medium" color="neutral.c70">
+              <Text
+                numberOfLines={1}
+                variant="paragraph"
+                fontWeight="medium"
+                color={colors.neutral.c70}
+              >
                 <Trans
                   i18nKey={
                     amount.isNegative() ? "operationDetails.sending" : "operationDetails.receiving"
@@ -185,7 +190,12 @@ function OperationRow({
               </Text>
             </Flex>
           ) : (
-            <Text numberOfLines={1} color="neutral.c70" variant="paragraph" fontWeight="medium">
+            <Text
+              numberOfLines={1}
+              color={colors.neutral.c70}
+              variant="paragraph"
+              fontWeight="medium"
+            >
               {text} <OperationRowDate date={operation.date} />
             </Text>
           )}
@@ -206,7 +216,7 @@ function OperationRow({
             <Text numberOfLines={1} color={valueColor} variant="body" fontWeight="semiBold">
               <CurrencyUnitValue showCode unit={unit} value={amount} alwaysShowSign />
             </Text>
-            <Text variant="paragraph" fontWeight="medium" color="neutral.c70">
+            <Text variant="paragraph" fontWeight="medium" color={colors.neutral.c70}>
               <CounterValue
                 showCode
                 date={operation.date}
