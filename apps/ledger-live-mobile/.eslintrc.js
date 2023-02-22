@@ -84,6 +84,7 @@ module.exports = {
           "**/e2e/**",
           "**/*.test.{ts,tsx}",
           "**/jest.config.js",
+          "**/jest.setup.js",
           "**/__test__/**",
         ],
       },
@@ -165,7 +166,7 @@ module.exports = {
       },
     },
     {
-      files: ["**/jest.config.js"],
+      files: ["**/jest.config.js", "**/jest.setup.js"],
       rules: {
         "@typescript-eslint/no-var-requires": "off",
       },

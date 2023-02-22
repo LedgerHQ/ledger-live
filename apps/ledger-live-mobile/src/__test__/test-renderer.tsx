@@ -2,6 +2,7 @@ import React from "react";
 import { render, RenderOptions } from "@testing-library/react-native";
 import { I18nextProvider } from "react-i18next";
 import { Provider } from "react-redux";
+import { NavigationContainer } from "@react-navigation/native";
 
 import { store } from "../context/LedgerStore";
 import { i18n } from "../context/Locale";
@@ -12,7 +13,9 @@ const AllTheProviders: React.FC = ({ children }) => {
   return (
     <Provider store={store}>
       <StyleProvider selectedPalette="light">
-        <I18nextProvider i18n={i18n}>{children}</I18nextProvider>
+        <NavigationContainer>
+          <I18nextProvider i18n={i18n}>{children}</I18nextProvider>
+        </NavigationContainer>
       </StyleProvider>
     </Provider>
   );
