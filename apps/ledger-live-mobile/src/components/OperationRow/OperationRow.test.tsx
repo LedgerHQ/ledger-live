@@ -3,7 +3,7 @@ import { Account, Operation } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import BigNumber from "bignumber.js";
 
-import { render } from "../../__test__/test-renderer";
+import { render, screen } from "../../__test__/test-renderer";
 
 import OperationRow from ".";
 
@@ -62,8 +62,15 @@ const mockedAccount: Account = {
 
 describe("OperationRow test", () => {
   it("should render correctly", () => {
-    render(<Text />);
+    render(
+      <OperationRow
+        account={mockedAccount}
+        parentAccount={null}
+        operation={mockedOperation}
+        isLast
+      />,
+    );
 
-    expect(true).toBe(true);
+    screen.getByTestId("currency-unit-value");
   });
 });
