@@ -193,7 +193,11 @@ function OperationRow({
           </Text>
 
           {isOptimistic ? (
-            <Flex flexDirection="row" alignItems="center">
+            <Flex
+              flexDirection="row"
+              alignItems="center"
+              testID="spinner-container"
+            >
               {spinner}
               <Text
                 numberOfLines={1}
