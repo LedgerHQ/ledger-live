@@ -2,7 +2,10 @@ import { getElementById, tapByElement } from "../../helpers";
 import { ScreenName } from "../../../src/const";
 
 export default class WalletTabNavigatorPage {
-  getNftGalleryTab = () =>
+  nftGalleryTab = () =>
     getElementById(`wallet-tab-${ScreenName.WalletNftGallery}`);
-  navigateToNftGallery = () => tapByElement(this.getNftGalleryTab());
+
+  async navigateToNftGallery() {
+    await tapByElement(this.nftGalleryTab());
+  }
 }

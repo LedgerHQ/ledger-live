@@ -1,5 +1,6 @@
 // @flow
 import React, { useCallback, useMemo } from "react";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import Box from "~/renderer/components/Box";
 import { accountsSelector, currenciesSelector } from "~/renderer/reducers/accounts";
 import BalanceSummary from "./GlobalSummary";
@@ -51,6 +52,7 @@ export default function DashboardPage() {
   const selectedTimeRange = useSelector(selectedTimeRangeSelector);
   const hasInstalledApps = useSelector(hasInstalledAppsSelector);
   const totalAccounts = accounts.length;
+  const portfolioExchangeBanner = useFeature("portfolioExchangeBanner");
   const totalCurrencies = useMemo(() => uniq(accounts.map(a => a.currency.id)).length, [accounts]);
   const totalOperations = useMemo(() => accounts.reduce((sum, a) => sum + a.operations.length, 0), [
     accounts,
@@ -97,6 +99,7 @@ export default function DashboardPage() {
         totalAccounts={totalAccounts}
         totalOperations={totalOperations}
         totalCurrencies={totalCurrencies}
+        hasExchangeBannerCTA={!!portfolioExchangeBanner?.enabled}
       />
       <Box flow={7} id="portfolio-container">
         {!hasInstalledApps ? (

@@ -2,13 +2,24 @@ import React, { PureComponent } from "react";
 import * as d3shape from "d3-shape";
 import { View } from "react-native";
 import Svg, { Path, G, Circle } from "react-native-svg";
-import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
+import {
+  getCurrencyColor,
+  ColorableCurrency,
+} from "@ledgerhq/live-common/currencies/index";
 import { DefaultTheme } from "styled-components/native";
 import type { DistributionItem } from "./DistributionCard";
 import { ensureContrast, withTheme } from "../../colors";
 
+/**
+ * Type that allows to have a dynamically generated currency "other" that just
+ * has a color and a ticker.
+ */
+export type ColorableDistributionItem = Omit<DistributionItem, "currency"> & {
+  currency: ColorableCurrency;
+};
+
 type Props = {
-  data: Array<DistributionItem>;
+  data: Array<ColorableDistributionItem>;
   size: number;
   strokeWidth?: number;
   colors: DefaultTheme["colors"];
@@ -44,7 +55,11 @@ class RingChart extends PureComponent<Props> {
     this.generatePaths();
   }
 
-  reducer = (data: Paths, item: DistributionItem, index: number): Paths => {
+  reducer = (
+    data: Paths,
+    item: ColorableDistributionItem,
+    index: number,
+  ): Paths => {
     const increment = item.distribution * 2 * Math.PI;
 
     const pathData =

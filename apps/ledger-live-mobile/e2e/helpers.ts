@@ -1,5 +1,4 @@
-import { readFileSync } from "fs";
-import { by, element, expect, waitFor } from "detox";
+import { by, element, waitFor } from "detox";
 import { Direction } from "react-native-modal";
 
 const DEFAULT_TIMEOUT = 60000;
@@ -62,7 +61,7 @@ export async function typeTextByElement(
 export async function scrollToText(
   text: string,
   scrollViewId: string,
-  pixels: number = 100,
+  pixels = 100,
   direction: Direction = "down",
 ) {
   await waitFor(getElementByText(text))

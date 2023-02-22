@@ -4,7 +4,8 @@ import { renderHook, act } from "@testing-library/react-hooks";
 import BigNumber from "bignumber.js";
 import { selectorStateDefaultValues } from ".";
 import useBridgeTransaction from "../../../bridge/useBridgeTransaction";
-import { genAccount, genTokenAccount } from "../../../mock/account";
+import { genTokenAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { genAccount } from "../../../mock/account";
 import { useFromState } from "./useFromState";
 
 const BTC = getCryptoCurrencyById("bitcoin");

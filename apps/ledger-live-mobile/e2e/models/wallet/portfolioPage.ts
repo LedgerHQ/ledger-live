@@ -1,14 +1,18 @@
-import { getElementById, tapByElement } from "../../helpers";
+import {
+  getElementById,
+  tapByElement,
+  waitForElementByID,
+} from "../../helpers";
 
 export default class PortfolioPage {
-  getEmptyPortfolio = () => getElementById("PortfolioEmptyAccount");
-  getSettingsButton = () => {
-    // FIXME: weird that we check for settings-icon to be sure we are on portfolio page ?
-    return getElementById("settings-icon");
-  };
+  emptyPortfolioComponent = () => getElementById("PortfolioEmptyAccount");
+  portfolioSettingsButton = () => getElementById("settings-icon");
 
   async navigateToSettings() {
-    // FIXME: this is probably better in settings page model ?
-    await tapByElement(this.getSettingsButton());
+    await tapByElement(this.portfolioSettingsButton());
+  }
+
+  async waitForPortfolioPageToLoad() {
+    await waitForElementByID("settings-icon");
   }
 }

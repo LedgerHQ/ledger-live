@@ -24,6 +24,8 @@ import java.util.List;
 import expo.modules.ApplicationLifecycleDispatcher;
 import expo.modules.ReactNativeHostWrapper;
 
+import com.shopify.reactnativeperformance.ReactNativePerformance;
+
 public class MainApplication extends Application implements ReactApplication {
   public static String LO_NOTIFICATION_CHANNEL = "lo-llm";
   public static String HI_NOTIFICATION_CHANNEL = "hi-llm";
@@ -81,6 +83,7 @@ public class MainApplication extends Application implements ReactApplication {
 
   @Override
   public void onCreate() {
+    ReactNativePerformance.onAppStarted();
     super.onCreate();
     // If you opted-in for the New Architecture, we enable the TurboModule system
     ReactFeatureFlags.useTurboModules = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;

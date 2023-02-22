@@ -89,4 +89,4 @@ export default connect((state: State, props: OwnProps) => {
     type,
     confirmed: isConfirmed,
   };
-})(OperationIcon);
+})(React.memo(OperationIcon));
