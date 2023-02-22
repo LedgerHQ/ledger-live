@@ -87,7 +87,8 @@
     "popular" : "人気",
     "getSupport" : "サポートを利用する",
     "comingSoon" : "近日公開",
-    "restart" : "再起動"
+    "restart" : "再起動",
+    "loadMore" : "さらに読み込む"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -112,19 +113,9 @@
       "title" : "Bluetoothが無効です。",
       "description" : "スマートフォンの設定でBluetoothを有効にしてください。({{state}}状態)"
     },
-    "FwUpdateBluetoothNotSupported" : {
-      "title" : "ファームウェアアップデートは有線接続にのみ対応しています"
-    },
-    "BtcUnmatchedApp" : {
-      "title" : "間違ったアプリです。",
-      "description" : "デバイス上で{{managerAppName}}アプリを開いてください。"
-    },
     "CantOpenDevice" : {
       "title" : "接続に失敗しました。",
       "description" : "Bluetoothを使用するには、Ledgerデバイスのロックを解除し、通信範囲内に置いてください。"
-    },
-    "CantScanQRCode" : {
-      "title" : "このQRコードをスキャンできませんでした：このアドレスでは自動認証がサポートされていません。"
     },
     "ConnectAppTimeout" : {
       "title" : "デバイスが見つかりません。",
@@ -324,11 +315,13 @@
     },
     "ImageCommitRefusedOnDevice" : {
       "title" : "Ledger Staxでロック画面がキャンセルされました",
-      "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。"
+      "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。",
+      "primaryCTA" : "別の写真をアップロード"
     },
     "ImageLoadRefusedOnDevice" : {
       "title" : "Ledger Staxでロック画面がキャンセルされました",
-      "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。"
+      "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。",
+      "primaryCTA" : "別の写真をアップロード"
     },
     "InvalidAddress" : {
       "title" : "これは有効な{{currencyName}} アドレスではありません。"
@@ -549,11 +542,12 @@
       "description" : "トランザクションは、30秒以内に署名する必要があります。もう一度お試しください。"
     },
     "TronNotEnoughEnergy" : {
-      "title" : "エネルギーが必要額を満たしていません。手数料には最大30TRXが必要となります。"
+      "title" : "エネルギーが必要額を満たしていません。手数料には最大50TRXが必要となります。"
     },
     "UpdateYourApp" : {
       "title" : "アプリのアップデートが必要です。",
-      "description" : "管理から{{managerAppName}}アプリをアンインストールして、再インストールしてください。"
+      "description" : "管理から{{managerAppName}}アプリをアンインストールして、再インストールしてください。",
+      "primaryCTA" : "管理画面を開く"
     },
     "UserRefusedAllowManager" : {
       "title" : "デバイスのManagerが無効です。",
@@ -672,7 +666,8 @@
     },
     "generic" : {
       "title" : "{{message}}",
-      "description" : "問題が発生しました。もう一度お試しください。問題が解決しない場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。"
+      "description" : "問題が発生しました。もう一度お試しください。問題が解決しない場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。",
+      "primaryCTA" : "再試行"
     },
     "SolanaAccountNotFunded" : {
       "title" : "アカウントに資金がありません"
@@ -811,6 +806,13 @@
       "title" : "デバイスがロックされています。",
       "description" : "デバイスのロックを解除して、再度お試しください。",
       "descriptionWithProductName" : "{{ productName }}のロックを解除して、再度お試しください。"
+    },
+    "EtherscanAPIError" : {
+      "title" : "トランザクションの取得に失敗しました",
+      "description" : "エクスプローラーで予期しないエラーが発生しました。後でもう一度お試しください"
+    },
+    "GasEstimationError" : {
+      "title" : "ガスの見積もりに失敗しました"
     }
   },
   "crash" : {
@@ -1117,6 +1119,10 @@
       "learn" : {
         "title" : "ラーニング",
         "desc" : "暗号資産、Web3、デジタルセキュリティについて学ぶ"
+      },
+      "news" : {
+        "title" : "ニュース",
+        "desc" : "暗号資産およびセキュリティ、Web3についての最新情報をチェックしましょう"
       },
       "ledgerApps" : {
         "title" : "アプリ",
@@ -1653,6 +1659,10 @@
             "label" : "Nano Xが認識されるかどうかを確認します。"
           }
         }
+      },
+      "protectConnectionInformationModal" : {
+        "title" : "Ledgerを接続できないのはなぜですか？",
+        "description" : "LedgerでBluetoothを有効にした後、Ledger Live Mobileへの接続に問題が発生した場合は、下の「問題の修正方法を学ぶ（Learn how to fix that）」ボタンをタップして指示に従ってください。"
       }
     },
     "stepImportAccounts" : {
@@ -3298,6 +3308,10 @@
           }
         }
       }
+    },
+    "walletConnect" : {
+      "title" : "WalletConnect",
+      "description" : "ウォレットをdappsに接続"
     }
   },
   "signMessage" : {
@@ -6077,5 +6091,10 @@
         "emptyPassword" : "パスワードを入力してください"
       }
     }
+  },
+  "newsfeed" : {
+    "title" : "ニュースフィード",
+    "poweredByCryptopanic" : "Powered by Cryptopanic",
+    "noPosts" : "現在表示できる投稿がありません"
   }
 }
