@@ -24,6 +24,7 @@ import type {
   SettingsDismissBannerPayload,
   SettingsSetSwapKycPayload,
   SettingsHideEmptyTokenAccountsPayload,
+  SettingsFilterTokenOperationsZeroAmountPayload,
   SettingsHideNftCollectionPayload,
   SettingsImportDesktopPayload,
   SettingsImportPayload,
@@ -111,6 +112,7 @@ export const INITIAL_STATE: SettingsState = {
   countervalueFirst: true,
   graphCountervalueFirst: true,
   hideEmptyTokenAccounts: false,
+  filterTokenOperationsZeroAmount: true,
   blacklistedTokenIds: [],
   hiddenNftCollections: [],
   dismissedBanners: [],
@@ -314,6 +316,16 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     hideEmptyTokenAccounts: (
       action as Action<SettingsHideEmptyTokenAccountsPayload>
     ).payload.hideEmptyTokenAccounts,
+  }),
+
+  [SettingsActionTypes.SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT]: (
+    state,
+    action,
+  ) => ({
+    ...state,
+    filterTokenOperationsZeroAmount: (
+      action as Action<SettingsFilterTokenOperationsZeroAmountPayload>
+    ).payload.filterTokenOperationsZeroAmount,
   }),
 
   [SettingsActionTypes.SHOW_TOKEN]: (state, action) => {
@@ -756,6 +768,8 @@ export const exportSettingsSelector = createSelector(
 );
 export const hideEmptyTokenAccountsEnabledSelector = (state: State) =>
   state.settings.hideEmptyTokenAccounts;
+export const filterTokenOperationsZeroAmountEnabledSelector = (state: State) =>
+  state.settings.filterTokenOperationsZeroAmount;
 export const dismissedBannersSelector = (state: State) =>
   state.settings.dismissedBanners;
 export const hasAvailableUpdateSelector = (state: State) =>
