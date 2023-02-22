@@ -36,8 +36,4 @@ jest.mock("react-native-startup-time", () => ({
   getStartupTime: jest.fn(),
 }));
 
-jest.mock("styled-components/native", () => ({
-  __esModule: true,
-  useTheme: jest.fn(),
-  default: jest.fn(),
-}));
+// require("react-native-reanimated/lib/reanimated2/jestUtils").setUpTests();
