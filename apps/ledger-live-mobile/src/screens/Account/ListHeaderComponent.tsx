@@ -133,7 +133,9 @@ export function getListHeaderComponents({
 
   const [latestOperation] = groupAccountOperationsByDay(account, {
     count: 2,
-  }).sections[0].data.filter(operation => operation.type === "OUT");
+  }).sections[0].data.filter(
+    operation => operation.type === "OUT" || operation.type === "NFT_OUT",
+  );
 
   const shouldRenderEditTxModal =
     mainAccount.currency.family === "ethereum" &&
