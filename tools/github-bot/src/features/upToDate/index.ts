@@ -1,7 +1,7 @@
 import { Probot } from "probot";
 import { batch, CheckRun, getCheckRunByName, updateCheckRun } from "./tools";
 
-const CHECK_NAME = "PR is up-to-date";
+const CHECK_NAME = "@PR • Up to date";
 
 /**
  * Checks if every pull requests referencing a commit are up-to-date.
@@ -107,8 +107,6 @@ export function upToDate(app: Probot) {
   app.on(["check_run.rerequested", "check_run.created"], async (context) => {
     const { payload, octokit } = context;
     const { owner, repo } = context.repo();
-
-    app.log.info(payload, "Check run re-requested");
 
     if (payload.check_run.name !== CHECK_NAME) return;
 

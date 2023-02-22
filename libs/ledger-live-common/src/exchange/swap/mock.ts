@@ -161,6 +161,8 @@ export const mockGetProviders: GetProviders = async () => {
       pairs: [
         { from: "bitcoin", to: "ethereum", tradeMethod: "float" },
         { from: "bitcoin", to: "ethereum", tradeMethod: "fixed" },
+        { from: "bitcoin", to: "dogecoin", tradeMethod: "float" },
+        { from: "bitcoin", to: "dogecoin", tradeMethod: "fixed" },
         { from: "ethereum", to: "bitcoin", tradeMethod: "float" },
         { from: "ethereum", to: "bitcoin", tradeMethod: "fixed" },
       ],

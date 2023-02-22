@@ -9,7 +9,7 @@ import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import PillsDaysCount from "~/renderer/components/PillsDaysCount";
 import TransactionsPendingConfirmationWarning from "~/renderer/components/TransactionsPendingConfirmationWarning";
-import { swapDefaultTrack } from "~/renderer/screens/exchange/Swap2/utils/index";
+import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
 import { PlaceholderLine } from "./Placeholder";
 
 // $FlowFixMe
@@ -112,11 +112,14 @@ export function BalanceTotal({
 }
 
 export default function BalanceInfos({ totalBalance, valueChange, isAvailable, unit }: Props) {
+  const swapDefaultTrack = useGetSwapTrackingProperties();
   const { t } = useTranslation();
   const history = useHistory();
 
   // PTX smart routing feature flag - buy sell live app flag
   const ptxSmartRouting = useFeature("ptxSmartRouting");
+  // Remove "SWAP" and "BUY" redundant buttons when portafolio exchange banner is available
+  const portfolioExchangeBanner = useFeature("portfolioExchangeBanner");
 
   const onBuy = useCallback(() => {
     setTrackingSource("Page Portfolio");
@@ -150,23 +153,26 @@ export default function BalanceInfos({ totalBalance, valueChange, isAvailable, u
         >
           <Sub>{t("dashboard.totalBalance")}</Sub>
         </BalanceTotal>
-        <Button data-test-id="portfolio-buy-button" variant="color" mr={1} onClick={onBuy}>
-          {t("accounts.contextMenu.buy")}
-        </Button>
-
-        <Button
-          data-test-id="portfolio-swap-button"
-          variant="color"
-          event="button_clicked"
-          eventProperties={{
-            button: "swap",
-            page: "Page Portfolio",
-            ...swapDefaultTrack,
-          }}
-          onClick={onSwap}
-        >
-          {t("accounts.contextMenu.swap")}
-        </Button>
+        {!portfolioExchangeBanner?.enabled && (
+          <>
+            <Button data-test-id="portfolio-buy-button" variant="color" mr={1} onClick={onBuy}>
+              {t("accounts.contextMenu.buy")}
+            </Button>
+            <Button
+              data-test-id="portfolio-swap-button"
+              variant="color"
+              event="button_clicked"
+              eventProperties={{
+                button: "swap",
+                page: "Page Portfolio",
+                ...swapDefaultTrack,
+              }}
+              onClick={onSwap}
+            >
+              {t("accounts.contextMenu.swap")}
+            </Button>
+          </>
+        )}
       </Box>
       <Box horizontal alignItems="center" justifyContent="space-between">
         <BalanceDiff

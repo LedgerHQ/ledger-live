@@ -421,6 +421,23 @@
       "title" : "죄송하지만 발견된 계정이 없습니다",
       "description" : "주소 계산에 문제가 발생했습니다. 다시 시도해 주세요. 문제가 지속될 경우, 아래 버튼을 이용해 로그를 저장하고 Ledger 지원 부서로 보내주세요."
     },
+    "ElrondDecimalsLimitReached" : {
+      "title" : "최대 소수점 제한에 도달했습니다.",
+      "description" : "제공된 금액이 소수점 이하 18자리인지 확인하세요."
+    },
+    "ElrondMinDelegatedAmountError" : {
+      "title" : "위임된 금액은 {{formattedAmount}} 이상이어야 합니다"
+    },
+    "ElrondMinUndelegatedAmountError" : {
+      "title" : "위임되지 않은 금액은 {{formattedAmount}} 이상이어야 합니다."
+    },
+    "ElrondDelegationBelowMinimumError" : {
+      "title" : "남은 위임은 {{formattedAmount}}보다 작을 수 없습니다"
+    },
+    "NotEnoughEGLDForFees" : {
+      "title" : "트랜잭션 수수료로 지불할 EGLD가 충분하지 않습니다.",
+      "description" : "계정에 EGLD를 전송하여 트랜잭션 수수료를 지불하세요."
+    },
     "NotEnoughBalance" : {
       "title" : "죄송하지만 자금이 부족합니다",
       "description" : "계정에 자금이 충분한지 확인해 주세요."
@@ -532,7 +549,7 @@
       "description" : "트랜잭션은 30초 이내에 서명을 완료해야 합니다. 다시 시도해 주세요."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 20TRX를 지불할 수 있습니다."
+      "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 30TRX를 지불할 수 있습니다."
     },
     "UpdateYourApp" : {
       "title" : "앱 업데이트 필요",
@@ -831,6 +848,13 @@
       "modalButtonLabelBase" : "승인",
       "modalButtonLabelSettingsVariant" : "설정으로 이동",
       "dontPair" : "페어링 금지"
+    },
+    "camera" : {
+      "title" : "카메라 허용",
+      "authorizeDescription" : "QR 코드를 스캔하려면 카메라를 허용하세요.",
+      "authorizeButtonTitle" : "승인",
+      "goToSettingsDescription" : "QR 코드 스캔를 스캔하려면 설정에서 카메라를 허용하세요.",
+      "goToSettingsButtonTitle" : "설정으로 이동"
     }
   },
   "fees" : {
@@ -1115,6 +1139,12 @@
     "mostPopular" : "인기 항목"
   },
   "installSetOfApps" : {
+    "restore" : {
+      "title" : "{{deviceName}}에서와 동일한 앱을 설치하시겠어요?",
+      "titleNoDeviceName" : "이전 Ledger 장치에서와 동일한 앱을 설치하시겠어요?",
+      "installCTA" : "지금 설치",
+      "skipCTA" : "나중에 할게요"
+    },
     "landing" : {
       "estimatedTime" : "{{ minutes }}분",
       "title" : "{{ productName }} 제품은 앱을 사용하여 안전한 블록체인 트랜잭션을 지원합니다",
@@ -1126,7 +1156,7 @@
       "loading" : "로딩 중...",
       "resolving" : "의존성 해결",
       "progress" : "앱 설치 중 {{progress}}%",
-      "disclaimer" : "{{ productName }}의 앱은 트랜잭션 승인에 사용됩니다. 언제든지 추가나 삭제가 가능합니다."
+      "disclaimer" : "Ledger Live에서 언제든지 앱을 추가하거나 제거하세요."
     }
   },
   "onboarding" : {
@@ -2116,6 +2146,8 @@
       "undelegated" : "({{amount}}) 위임 해제됨",
       "undelegatedFrom" : "다음으로부터 위임 해제됨",
       "undelegatedAmount" : "위임 해제 금액",
+      "withdrawnFrom" : "출금 계좌",
+      "withdrawnAmount" : "출금된 금액",
       "rewardFrom" : "보상처",
       "rewardAmount" : "받은 금액",
       "memo" : "메모",
@@ -2272,12 +2304,6 @@
         "unsupported" : "지원되지 않음",
         "settings" : "앱 설정",
         "includeGeneralSettings" : "데스크탑 설정 가져오기"
-      },
-      "fallback" : {
-        "header" : "계정 가져오기",
-        "title" : "카메라 활성화",
-        "desc" : "설정에서 카메라의 QR 코드 스캔을 허용하세요.",
-        "buttonTitle" : "설정으로 이동"
       }
     },
     "availableBalance" : "이용 가능 잔액",
@@ -2550,6 +2576,10 @@
       "recommendations" : {
         "title" : "추천",
         "desc" : "개인 맞춤 추천과 특별 오퍼로 더욱 풍성해진 사용자 경험을 누려보세요."
+      },
+      "largeMover" : {
+        "title" : "가격 변동폭이 큰 자산",
+        "desc" : "BTC 및 ETH의 중요한 가격 변동에 대한 알림을 보내드립니다."
       },
       "price" : {
         "title" : "가격 알림",
@@ -3622,7 +3652,7 @@
       "title" : "장치에서 스왑 거래를 확인하세요",
       "alert" : {
         "default" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다.",
-        "cic" : "장치에서 자금 세부사항을 확인한 후 전송하세요. CIC는 일부 트랜잭션에 대해 추가 확인을 수행해야 하므로 지연이 발생할 수 있습니다."
+        "provider" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 일부 트랜잭션에서 {{providerName}}의 추가 확인 단계가 필요할 수 있어 지연이 발생할 수 있습니다."
       },
       "acceptTerms" : "본인은 이 트랜잭션을 확인함으로써 \n<0><0>{{provider}}</0>의 이용약관</0>을 수락합니다.",
       "notice" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다."
@@ -4425,44 +4455,19 @@
       "activatableVotes" : "현재 활성화할 수 있는 투표가 있습니다."
     }
   },
-  "osmosis" : {
-    "info" : {
-      "available" : {
-        "title" : "OSMO 사용 가능"
-      },
-      "delegated" : {
-        "description" : "위임된 자산은 오스모시스(Osmosis) 투표에 사용됩니다. 이는 사용차의 총 투표 수입니다."
-      },
-      "undelegating" : {
-        "description" : "위임 해제 자산은 14일 후 타임락이 해제되면 사용 가능합니다."
-      }
-    },
-    "delegation" : {
-      "flow" : {
-        "steps" : {
-          "starter" : {
-            "description" : "OSMO를 위임하여 안전하게 보상을 받으면서, 자산에 대한 통제 권한도 유지하세요.",
-            "steps" : {
-              "1" : "위임 해제가 완료되려면 14일을 기다려야 합니다."
-            }
-          }
-        }
-      }
-    }
-  },
   "cosmos" : {
     "info" : {
       "available" : {
-        "title" : "ATOM 이용 가능",
+        "title" : "{{currencyTicker}} 이용 가능",
         "description" : "가처분 금액입니다."
       },
       "delegated" : {
         "title" : "위임된 자산",
-        "description" : "위임된 자산이 Cosmos(코스모스) 투표에 사용됩니다. 사용차의 총 투표 수입니다."
+        "description" : "위임된 자산은 {{currencyName}} 투표에 사용됩니다. 이는 사용차의 총 투표 수입니다."
       },
       "undelegating" : {
         "title" : "위임 해제",
-        "description" : "위임 해제 자산은 21일 후 타임락이 해제되면 사용 가능합니다."
+        "description" : "위임 해제 자산은 {{numberOfDays}}일 후 타임락이 해제되면 사용 가능합니다."
       },
       "delegationUnavailable" : {
         "title" : "위임할 수 없습니다",
@@ -4470,7 +4475,7 @@
       }
     },
     "delegation" : {
-      "delegationEarn" : "자산을 위임하여 ATOM 보상을 받을 수 있습니다.",
+      "delegationEarn" : "자산을 위임하여 {{ticker}} 보상을 받을 수 있습니다.",
       "info" : "위임은 어떤 원리인가요?",
       "claimRewards" : "보상 수령",
       "claimAvailableRewards" : "{{amount}} 수령",
@@ -4498,10 +4503,10 @@
       "flow" : {
         "steps" : {
           "starter" : {
-            "description" : "ATOM을 위임하여 안전하게 보상을 받으면서, 자산에 대한 통제 권한도 유지하세요.",
+            "description" : "{{ticker}}를 위임하여 안전하게 보상을 받으면서, 자산에 대한 통제 권한도 유지하세요.",
             "steps" : {
               "0" : "위임된 자산은 귀하의 소유입니다.",
-              "1" : "위임 해제가 완료되려면 21일을 기다려야 합니다.",
+              "1" : "위임 해제가 완료되려면 {{numberOfDays}}일을 기다려야 합니다.",
               "2" : "Ledger 장치로 안전하게 위임하세요."
             },
             "warning" : {
@@ -4641,6 +4646,207 @@
             "success" : {
               "title" : "보상을 성공적으로 수령했습니다. 보상이 이용 가능 잔금에 추가되었습니다.",
               "titleCompound" : "보상이 동일한 검증인에게 위임되었습니다.",
+              "text" : "네트워크가 트랜잭션을 검증 완료하면 계정 잔금이 업데이트됩니다.",
+              "cta" : "세부사항 보기"
+            },
+            "pending" : {
+              "title" : "트랜잭션 브로드캐스팅 중..."
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    }
+  },
+  "elrond" : {
+    "info" : {
+      "available" : {
+        "title" : "이용 가능한 EGLD",
+        "description" : "이체 가능한 금액입니다."
+      },
+      "delegated" : {
+        "title" : "스테이킹된 자산",
+        "description" : "스테이킹된 자산은 스테이킹 제공자가 컨센서스 메커니즘에 참여하여 검증인 노드를 운영하고 트랜잭션을 처리하며 네트워크를 보호하는 데 간접적으로 사용됩니다."
+      },
+      "undelegating" : {
+        "title" : "대기 중 출금 요청",
+        "description" : "스테이킹되지 않은 자산은 10일 간의 본딩 해제 기간을 거쳐 출금할 수 있습니다."
+      },
+      "delegationUnavailable" : {
+        "title" : "위임할 수 없습니다",
+        "description" : "계정에 이용 가능 잔액이 부족하여 새로운 위임을 시작할 수 없습니다."
+      }
+    },
+    "delegation" : {
+      "delegationEarn" : "EGLD를 스테이킹하여 네트워크를 보호하고 본인 몫의 보상을 확보하세요.",
+      "info" : "스테이킹이란 무엇이며 어떻게 작동하나요?",
+      "claimRewards" : "보상 수령",
+      "claimAvailableRewards" : "{{amount}} 수령",
+      "header" : "내 스테이킹",
+      "Amount" : "금액",
+      "noRewards" : "이용 가능한 보상이 없습니다",
+      "delegate" : "리스테이킹",
+      "undelegate" : "언스테이킹",
+      "reward" : "보상 수령",
+      "commission" : "커미션",
+      "iDelegate" : "위임",
+      "totalStake" : "총 스테이킹",
+      "stepperHeader" : {
+        "starter" : "보상 받기",
+        "validator" : "자산 위임하기",
+        "amountSubTitle" : "스테이킹할 금액",
+        "summary" : "요약",
+        "verification" : "인증",
+        "selectDevice" : "장치 선택",
+        "connectDevice" : "장치 연결",
+        "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "EGLD 자산을 스테이킹 공급자에게 스테이킹하여 보상을 받을 수 있습니다.",
+            "steps" : {
+              "0" : "스테이킹된 자산의 소유권은 귀하에게 있습니다",
+              "1" : "자산은 언스테이킹 10일 후에 이용 가능합니다",
+              "2" : "Ledger 장치를 사용한 스테이킹"
+            },
+            "warning" : {
+              "description" : "스테이킹 제공자를 현명하게 선택하세요. 현재 유일한 위험 요소는 다양한 사유로 보상을 받지 못하는 상황이 발생하는 것입니다. 따라서, 제공자는 신뢰성, 커뮤니케이션 및 경제성을 기준으로 선택해야 합니다."
+            },
+            "cta" : "계속"
+          },
+          "validator" : {
+            "validators" : "스테이킹 공급자",
+            "myDelegations" : "내 스테이킹",
+            "cta" : "계속",
+            "apr" : "연이율(APR): {{amount}}",
+            "totalAvailable" : "총 이용 가능 금액: <0>{{amount}}</0>",
+            "allAssetsUsed" : "사용된 모든 자산",
+            "noResultsFound" : "<0>{{search}}</0>에 대한 검증인이 없습니다",
+            "currentAmount" : "(+ <0>{{amount}}</0>)"
+          },
+          "amount" : {
+            "assetsRemaining" : "나머지 자산: <0>{{amount}}</0>",
+            "allAssetsUsed" : "사용된 모든 자산",
+            "minAmount" : "최소 금액: <0>{{min}}</0>",
+            "incorrectAmount" : "최대 금액: <0>{{max}}</0>",
+            "insufficientDelegation" : "총 스테이킹 금액은 스테이킹 제공자당 1 {{label}} 이상입니다.",
+            "wrongUndelegations" : "남아 있는 {{label}} 스테이킹 금액은 스테이킹 제공자당 0 또는 1 {{label}} 이상이어야 합니다.",
+            "cta" : "계속"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "자산을 성공적으로 스테이킹했습니다.",
+              "text" : "네트워크가 트랜잭션을 검증 완료하면 계정 잔액이 업데이트됩니다.",
+              "cta" : "세부사항 보기"
+            },
+            "pending" : {
+              "title" : "트랜잭션 브로드캐스팅 중..."
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      },
+      "drawer" : {
+        "status" : "상태",
+        "rewards" : "보상",
+        "active" : "활성",
+        "inactive" : "비활성",
+        "completionDate" : "완료 날짜",
+        "redelegatedFrom" : "다음으로부터 재위임됨",
+        "completionDateHit" : "완료됨"
+      }
+    },
+    "claimRewards" : {
+      "stepperHeader" : {
+        "validator" : "수령할 보상 선택",
+        "method" : "보상 수령",
+        "summary" : "요약",
+        "selectDevice" : "장치 선택",
+        "connectDevice" : "장치 연결",
+        "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계"
+      },
+      "flow" : {
+        "steps" : {
+          "method" : {
+            "youEarned" : "귀하의 수입",
+            "byDelegationAssetsTo" : "스테이킹 제공자에게 자산 스테이킹",
+            "claimRewards" : "보상 수령",
+            "reDelegateRewards" : "보상 스테이킹",
+            "claimRewardsInfo" : "바로 보상을 수령하여 사용자의 이용 가능 잔액에 추가됩니다.",
+            "reDelegateRewardsInfo" : "바로 보상을 수령하여 동일한 스테이킹 제공자에게 자동 스테이킹됩니다.",
+            "compoundOrCashIn" : "보상 스테이킹 또는 보상 수령?",
+            "claimRewardsTooltip" : "보상이 이용 가능 잔액에 추가됩니다",
+            "reDelegateRewardsTooltip" : "스테이킹된 금액에 보상이 추가됩니다.",
+            "cta" : "계속"
+          },
+          "verification" : {
+            "success" : {
+              "claimRewardsSuccess" : "보상을 성공적으로 수령했습니다. 보상이 이용 가능 잔액에 추가되었습니다.",
+              "reDelegateRewardsSuccess" : "귀하의 보상이 동일한 스테이킹 제공자에게 스테이킹되었습니다.",
+              "text" : "네트워크가 트랜잭션을 검증 완료하면 계정 잔액이 업데이트됩니다.",
+              "cta" : "세부사항 보기"
+            },
+            "pending" : {
+              "title" : "트랜잭션 브로드캐스팅 중..."
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "언스테이킹할 금액",
+        "summary" : "요약",
+        "selectDevice" : "장치 선택",
+        "connectDevice" : "장치 연결",
+        "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "allAssetsUsed" : "모든 자산 선택됨",
+            "assetsRemaining" : "남은 위임된 자산: <0>{{amount}}</0>",
+            "minAmount" : "최소 금액: <0>{{min}}</0>",
+            "incorrectAmount" : "최대 금액: <0>{{max}}</0>",
+            "minRemaining" : "최소 남은 자산: <0>{{min}}</0>"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "자산을 성공적으로 언스테이킹했습니다.",
+              "text" : "네트워크가 트랜잭션을 검증 완료하면 계정 잔액이 업데이트됩니다.",
+              "cta" : "세부사항 보기"
+            },
+            "pending" : {
+              "title" : "트랜잭션 브로드캐스팅 중..."
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "stepperHeader" : {
+        "validator" : "수령할 보상 선택",
+        "method" : "보상 수령",
+        "summary" : "요약",
+        "selectDevice" : "장치 선택",
+        "connectDevice" : "장치 연결",
+        "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계"
+      },
+      "flow" : {
+        "steps" : {
+          "method" : {
+            "youEarned" : "언스테이킹이 완료되었습니다",
+            "byDelegationAssetsTo" : "from",
+            "withdrawInfo" : "바로 보상을 수령하여 사용자의 이용 가능 잔금에 추가됩니다.",
+            "withdrawTooltip" : "출금액이 이용 가능 잔액에 추가됩니다.",
+            "cta" : "계속"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "보상을 성공적으로 수령했습니다. 보상이 이용 가능 잔금에 추가되었습니다.",
               "text" : "네트워크가 트랜잭션을 검증 완료하면 계정 잔금이 업데이트됩니다.",
               "cta" : "세부사항 보기"
             },
@@ -5264,7 +5470,8 @@
     "actions" : {
       "redelegate" : "재위임",
       "collectRewards" : "보상 수령",
-      "undelegate" : "위임 해제"
+      "undelegate" : "위임 해제",
+      "withdraw" : "출금"
     }
   },
   "ValidateOnDevice" : {
@@ -5757,6 +5964,13 @@
       "nft" : "NFT"
     },
     "nftGallery" : {
+      "filters" : {
+        "selectAndHide" : "선택 및 숨기기",
+        "hide" : "{{count}}개의 컬렉션 숨기기",
+        "hide_plural" : "{{count}}개의 컬렉션 숨기기",
+        "alertHide" : "1개의 컬렉션을 숨겼습니다 설정으로 이동해 언제든지 숨김을 해제하고 다시 표시하세요",
+        "alertHide_plural" : "{{count}}개의 컬렉션을 숨겼습니다. 설정으로 이동해 언제든지 숨김을 해제하고 다시 표시하세요"
+      },
       "empty" : {
         "title" : "아직 표시할 NFT가 없습니다",
         "subtitle" : "첫 NFT를 받고 시작해 보세요.",

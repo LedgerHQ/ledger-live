@@ -40,7 +40,7 @@ export const calculateFees = makeLRUCache(
       t: transaction,
     }),
   {
-    maxAge: 5 * 60 * 1000, // 5 minutes
+    ttl: 5 * 60 * 1000, // 5 minutes
   }
 );
 

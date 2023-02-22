@@ -3,10 +3,9 @@ import type { CosmosPreloadData, CosmosValidatorItem } from "./types";
 
 // this module holds the cached state of preload()
 // eslint-disable-next-line no-unused-vars
-let currentCosmosPreloadedData: CosmosPreloadData = {
-  // NB initial state because UI need to work even if it's currently "loading", typically after clear cache
-  validators: [],
-};
+const currentCosmosPreloadedData: { [currencyId: string]: CosmosPreloadData } =
+  {};
+
 export function asSafeCosmosPreloadData(data?: {
   validators?: CosmosValidatorItem[];
 }): CosmosPreloadData {
@@ -33,18 +32,24 @@ export function asSafeCosmosPreloadData(data?: {
   };
 }
 
-const updates = new Subject<CosmosPreloadData>();
+const updates = new Subject<{ [currencyId: string]: CosmosPreloadData }>();
 
-export function setCosmosPreloadData(data: CosmosPreloadData): void {
-  if (data === currentCosmosPreloadedData) return;
-  currentCosmosPreloadedData = data;
-  updates.next(data);
+export function setCosmosPreloadData(
+  currencyId: string,
+  data: CosmosPreloadData
+): void {
+  currentCosmosPreloadedData[currencyId] = data;
+  updates.next(currentCosmosPreloadedData);
 }
 
-export function getCurrentCosmosPreloadData(): CosmosPreloadData {
+export function getCurrentCosmosPreloadData(): {
+  [currencyId: string]: CosmosPreloadData;
+} {
   return currentCosmosPreloadedData;
 }
 
-export function getCosmosPreloadDataUpdates(): Observable<CosmosPreloadData> {
+export function getCosmosPreloadDataUpdates(): Observable<{
+  [currencyId: string]: CosmosPreloadData;
+}> {
   return updates.asObservable();
 }

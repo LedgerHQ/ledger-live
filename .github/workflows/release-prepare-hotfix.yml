@@ -15,16 +15,22 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - name: Checkout Repo
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.ref }}
-          token: ${{ secrets.GH_PAT }}
+          ref: ${{ inputs.ref }}
+          token: ${{ steps.generate-token.outputs.token }}
 
       - name: set git user
         run: |
           git config user.email "team-live@ledger.fr"
-          git config user.name "Team Live"
+          git config user.name "live-github-bot[bot]"
 
       - uses: pnpm/action-setup@v2
         with:
@@ -54,7 +60,7 @@ jobs:
 
       - name: push changes
         run: |
-          git push origin ${{ github.event.inputs.ref }}
+          git push origin ${{ inputs.ref }}
           git fetch origin
 
       - name: fetch develop and main
@@ -64,89 +70,39 @@ jobs:
       - name: merge into main
         run: |
           git checkout main
-          git merge ${{ github.event.inputs.ref }}
+          git merge ${{ inputs.ref }}
           git push origin main
 
       - name: merge into develop
-        id: merge-develop
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
           git checkout develop
-          if [[ git merge ${{ github.event.inputs.ref }} ]]
+          if git merge ${{ github.event.inputs.ref }}
           then
             git push origin develop
-            echo "create-pr=0" >> $GITHUB_OUTPUT
           else
+            git merge --abort
             git checkout ${{ github.event.inputs.ref }}
             git checkout -b support/hotfix-merge-conflicts
             git push origin support/hotfix-merge-conflicts
-            echo "create-pr=1" >> $GITHUB_OUTPUT
+            gh pr create --title ":rotating_light: Hotfix merge conflicts" -F .github/templates/hotfix-conflicts.md --base develop --head support/hotfix-merge-conflicts
           fi
 
       - name: merge into release if present
-        id: merge-release
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
-          if [[ git checkout release ]]
+          if git checkout release
           then
-            if [[ git merge ${{ github.event.inputs.ref }} ]]
+            if git merge ${{ github.event.inputs.ref }}
             then
               git push origin release
-              echo "create-pr=0" >> $GITHUB_OUTPUT
             else
+              git merge --abort
               git checkout ${{ github.event.inputs.ref }}
               git checkout -b support/hotfix-release-merge-conflicts
               git push origin support/hotfix-release-merge-conflicts
-              echo "create-pr=1" >> $GITHUB_OUTPUT
+              gh pr create --title ":rotating_light: Hotfix Release merge conflicts" -F .github/templates/hotfix-release-conflicts.md --base release --head support/hotfix-release-merge-conflicts
             fi
-          else
-            echo "create-pr=0" >> $GITHUB_OUTPUT
           fi
-
-      - uses: actions/github-script@v6
-        name: create PR for develop
-        if: ${{ steps.merge-develop.outputs.create-pr == 1 }}
-        with:
-          github-token: ${{ secrets.GH_PAT }}
-          script: |
-            github.rest.pulls.create({
-              owner: "ledgerhq",
-              repo: "ledger-live",
-              head: "support/hotfix-merge-conflicts",
-              base: "develop",
-              title: ":rotating_light: Hotfix merge conflicts",
-              body: `# The hotfix had some merge conflicts :rotating_light:
-              
-              This pull request was created in order to resolve the merge conflicts between the hotfix and develop branches. 
-              
-              ## Checklist
-              
-              To be ready to be merged, we must comply with all theses checks:
-              
-              - [ ] all CI checks have passed
-              - [ ] reviews of the code owners impacted by the conflict
-              `
-            });
-
-      - uses: actions/github-script@v6
-        name: create PR for release
-        if: ${{ steps.merge-release.outputs.create-pr == 1 }}
-        with:
-          github-token: ${{ secrets.GH_PAT }}
-          script: |
-            github.rest.pulls.create({
-              owner: "ledgerhq",
-              repo: "ledger-live",
-              head: "support/hotfix-release-merge-conflicts",
-              base: "release",
-              title: ":rotating_light: Hotfix Release merge conflicts",
-              body: `# The hotfix had some merge conflicts :rotating_light:
-              
-              This pull request was created in order to resolve the merge conflicts between the hotfix and release branches. 
-              
-              ## Checklist
-              
-              To be ready to be merged, we must comply with all theses checks:
-              
-              - [ ] all CI checks have passed
-              - [ ] reviews of the code owners impacted by the conflict
-              `
-            });

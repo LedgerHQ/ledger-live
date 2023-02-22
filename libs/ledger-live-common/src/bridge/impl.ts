@@ -1,7 +1,7 @@
 import { CurrencyNotSupported } from "@ledgerhq/errors";
 import { decodeAccountId, getMainAccount } from "../account";
 import { getEnv } from "../env";
-import { checkAccountSupported } from "../account/support";
+import { checkAccountSupported } from "../account/index";
 import jsBridges from "../generated/bridge/js";
 import mockBridges from "../generated/bridge/mock";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -53,28 +53,9 @@ export const getAccountBridge = (
   if (type === "mock") {
     const mockBridge = mockBridges[currency.family];
     if (mockBridge) return mockBridge.accountBridge;
-    throw new CurrencyNotSupported(
-      "no mock implementation available for currency " + currency.id,
-      {
-        currencyName: currency.name,
-      }
-    );
   }
 
   const jsBridge = jsBridges[family];
-  if (type === "libcore") {
-    // migrate from libcore via JS
-    if (jsBridge) {
-      return jsBridge.accountBridge;
-    }
-    throw new CurrencyNotSupported(
-      "no libcore implementation available for currency " + currency.id,
-      {
-        currencyName: currency.name,
-      }
-    );
-  }
-
   if (jsBridge) return jsBridge.accountBridge;
   throw new CurrencyNotSupported("currency not supported " + currency.id, {
     currencyName: mainAccount.currency.name,

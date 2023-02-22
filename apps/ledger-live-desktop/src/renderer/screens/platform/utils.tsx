@@ -1,6 +1,3 @@
-import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
-
 const isValidUrl = urlString => {
   try {
     return Boolean(new URL(urlString));
@@ -9,21 +6,16 @@ const isValidUrl = urlString => {
   }
 };
 
-export const useGetManifest = (appId, genericParams, newpathname = "") => {
-  const localManifest = useLocalLiveAppManifest(appId);
-  const remoteManifest = useRemoteLiveAppManifest(appId);
-  const manifest = Object.assign({}, localManifest || remoteManifest);
-
-  const isLocalPath =
-    (typeof newpathname === "string" && newpathname[0] === "/") || newpathname[0] === "#";
+export const getCustomDappUrl = (manifest, appId, genericParams, pathname = "") => {
+  const isLocalPath = (typeof pathname === "string" && pathname[0] === "/") || pathname[0] === "#";
   const oldDappUrl = manifest?.params?.dappUrl;
   const isValidOldUrl = isValidUrl(oldDappUrl);
-  const newUrl = isLocalPath ? `https://www.prefix.com${newpathname}` : "";
+  const newUrl = isLocalPath ? `https://www.prefix.com${pathname}` : "";
   const isValidNewdUrl = isValidUrl(newUrl);
   if (isLocalPath && isValidOldUrl && isValidNewdUrl) {
     const { origin, search } = new URL(oldDappUrl);
-    const { hash, searchParams } = new URL(newUrl);
-    const [realHash, query] = hash.split("?");
+    const { hash: fragment, searchParams } = new URL(newUrl);
+    const [realFragment, query] = fragment.split("?");
     const urlSearchParams = new URLSearchParams(query);
     const allParams = {
       ...genericParams,
@@ -32,15 +24,18 @@ export const useGetManifest = (appId, genericParams, newpathname = "") => {
       ...Object.fromEntries(searchParams),
     };
 
-    // paraswap need the hash in the bottom to be connected with ledger wallet.
+    // Providers need to use the standard structure: query + fragment
+    // https://www.rfc-editor.org/rfc/rfc3986#section-4.2
+    // 1inch is not using the standard  (fragnment + query).
+    // Refactor when the providers follow the standards.
+
     const newDappUrl =
-      appId === "paraswap"
-        ? `${origin}?${new URLSearchParams(allParams).toString()}${realHash}`
-        : `${origin}${realHash}?${new URLSearchParams(allParams).toString()}`;
+      appId === "1inch"
+        ? `${origin}${realFragment}?${new URLSearchParams(allParams).toString()}`
+        : `${origin}?${new URLSearchParams(allParams).toString()}${realFragment}`;
     if (oldDappUrl !== newDappUrl) {
-      manifest.params.dappUrl = newDappUrl;
+      return newDappUrl;
     }
   }
-
-  return manifest;
+  return false;
 };

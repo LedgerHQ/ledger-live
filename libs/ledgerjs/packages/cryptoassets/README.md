@@ -73,7 +73,7 @@ These addresses are PUBLIC addresses
 We use them for tests and also for dry-run estimations
 DO NOT USE AS RECIPIENT OR SIGN TRANSACTIONS INTO THEM
 
-Type: Record<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>
+Type: Partial\<Record\<any, [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>>
 
 ### getAbandonSeedAddress
 
@@ -92,8 +92,8 @@ Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/G
 
 #### Parameters
 
-*   `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 *   `currency` **CryptoCurrency** 
+*   `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 
 Returns **void** 
 

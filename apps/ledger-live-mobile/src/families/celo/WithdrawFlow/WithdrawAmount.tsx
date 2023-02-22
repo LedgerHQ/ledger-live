@@ -22,7 +22,7 @@ import Touchable from "../../../components/Touchable";
 import SendRowsFee from "../SendRowsFee";
 import Clock from "../../../icons/Clock";
 import LText from "../../../components/LText";
-import BottomModal from "../../../components/BottomModal";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 import InfoIcon from "../../../components/InfoIcon";
 import Line from "../components/Line";
 import Words from "../components/Words";
@@ -200,7 +200,10 @@ export default function WithdrawAmount({ navigation, route }: Props) {
           pending={bridgePending}
         />
       </View>
-      <BottomModal isOpened={!!infoModalOpen} onClose={closeModal}>
+      <QueuedDrawer
+        isRequestingToBeOpened={!!infoModalOpen}
+        onClose={closeModal}
+      >
         <View style={styles.modal}>
           <View style={styles.infoIcon}>
             <InfoIcon bg={colors.lightLive}>
@@ -219,7 +222,7 @@ export default function WithdrawAmount({ navigation, route }: Props) {
             </LText>
           </View>
         </View>
-      </BottomModal>
+      </QueuedDrawer>
     </SafeAreaView>
   );
 }

@@ -30132,7 +30132,7 @@ var require_public_api = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/node-fetch@2.6.7/node_modules/node-fetch/lib/index.mjs
+// ../../../node_modules/.pnpm/node-fetch@2.6.9/node_modules/node-fetch/lib/index.mjs
 function FetchError(message, type3, systemError) {
   Error.call(this, message);
   this.message = message;
@@ -30513,7 +30513,7 @@ function fetch(url2, opts) {
       let error = new AbortError2("The user aborted a request.");
       reject(error);
       if (request.body && request.body instanceof import_stream.default.Readable) {
-        request.body.destroy(error);
+        destroyStream(request.body, error);
       }
       if (!response || !response.body)
         return;
@@ -30548,8 +30548,31 @@ function fetch(url2, opts) {
     }
     req.on("error", function(err) {
       reject(new FetchError(`request to ${request.url} failed, reason: ${err.message}`, "system", err));
+      if (response && response.body) {
+        destroyStream(response.body, err);
+      }
       finalize();
     });
+    fixResponseChunkedTransferBadEnding(req, function(err) {
+      if (signal && signal.aborted) {
+        return;
+      }
+      if (response && response.body) {
+        destroyStream(response.body, err);
+      }
+    });
+    if (parseInt(process.version.substring(1)) < 14) {
+      req.on("socket", function(s) {
+        s.addListener("close", function(hadError) {
+          const hasDataListener = s.listenerCount("data") > 0;
+          if (response && hasDataListener && !hadError && !(signal && signal.aborted)) {
+            const err = new Error("Premature close");
+            err.code = "ERR_STREAM_PREMATURE_CLOSE";
+            response.body.emit("error", err);
+          }
+        });
+      });
+    }
     req.on("response", function(res) {
       clearTimeout(reqTimeout);
       const headers = createHeadersLenient(res.headers);
@@ -30600,7 +30623,7 @@ function fetch(url2, opts) {
               timeout: request.timeout,
               size: request.size
             };
-            if (!isDomainOrSubdomain(request.url, locationURL)) {
+            if (!isDomainOrSubdomain(request.url, locationURL) || !isSameProtocol(request.url, locationURL)) {
               for (const name of ["authorization", "www-authenticate", "cookie", "cookie2"]) {
                 requestOpts.headers.delete(name);
               }
@@ -30661,6 +30684,12 @@ function fetch(url2, opts) {
           response = new Response(body2, response_options);
           resolve3(response);
         });
+        raw.on("end", function() {
+          if (!response) {
+            response = new Response(body2, response_options);
+            resolve3(response);
+          }
+        });
         return;
       }
       if (codings == "br" && typeof import_zlib.default.createBrotliDecompress === "function") {
@@ -30675,9 +30704,36 @@ function fetch(url2, opts) {
     writeToStream(req, request);
   });
 }
-var import_stream, import_http, import_url3, import_whatwg_url, import_https, import_zlib, Readable, BUFFER, TYPE, Blob2, convert, INTERNALS, PassThrough, invalidTokenRegex, invalidHeaderCharRegex, MAP, Headers, INTERNAL, HeadersIteratorPrototype, INTERNALS$1, STATUS_CODES, Response, INTERNALS$2, URL2, parse_url, format_url, streamDestructionSupported, Request, URL$1, PassThrough$1, isDomainOrSubdomain, lib_default;
+function fixResponseChunkedTransferBadEnding(request, errorCallback) {
+  let socket;
+  request.on("socket", function(s) {
+    socket = s;
+  });
+  request.on("response", function(response) {
+    const headers = response.headers;
+    if (headers["transfer-encoding"] === "chunked" && !headers["content-length"]) {
+      response.once("close", function(hadError) {
+        const hasDataListener = socket.listenerCount("data") > 0;
+        if (hasDataListener && !hadError) {
+          const err = new Error("Premature close");
+          err.code = "ERR_STREAM_PREMATURE_CLOSE";
+          errorCallback(err);
+        }
+      });
+    }
+  });
+}
+function destroyStream(stream, err) {
+  if (stream.destroy) {
+    stream.destroy(err);
+  } else {
+    stream.emit("error", err);
+    stream.end();
+  }
+}
+var import_stream, import_http, import_url3, import_whatwg_url, import_https, import_zlib, Readable, BUFFER, TYPE, Blob2, convert, INTERNALS, PassThrough, invalidTokenRegex, invalidHeaderCharRegex, MAP, Headers, INTERNAL, HeadersIteratorPrototype, INTERNALS$1, STATUS_CODES, Response, INTERNALS$2, URL2, parse_url, format_url, streamDestructionSupported, Request, URL$1, PassThrough$1, isDomainOrSubdomain, isSameProtocol, lib_default;
 var init_lib = __esm({
-  "../../../node_modules/.pnpm/node-fetch@2.6.7/node_modules/node-fetch/lib/index.mjs"() {
+  "../../../node_modules/.pnpm/node-fetch@2.6.9/node_modules/node-fetch/lib/index.mjs"() {
     import_stream = __toESM(require("stream"), 1);
     import_http = __toESM(require("http"), 1);
     import_url3 = __toESM(require("url"), 1);
@@ -31188,6 +31244,11 @@ var init_lib = __esm({
       const dest = new URL$1(destination).hostname;
       return orig === dest || orig[orig.length - dest.length - 1] === "." && orig.endsWith(dest);
     };
+    isSameProtocol = function isSameProtocol2(destination, original) {
+      const orig = new URL$1(original).protocol;
+      const dest = new URL$1(destination).protocol;
+      return orig === dest;
+    };
     fetch.isRedirect = function(code) {
       return code === 301 || code === 302 || code === 303 || code === 307 || code === 308;
     };
@@ -31478,14 +31539,18 @@ var init_httpPipelineLogLevel = __esm({
   }
 });
 
-// ../../../node_modules/.pnpm/tslib@2.4.0/node_modules/tslib/tslib.js
+// ../../../node_modules/.pnpm/tslib@2.5.0/node_modules/tslib/tslib.js
 var require_tslib = __commonJS({
-  "../../../node_modules/.pnpm/tslib@2.4.0/node_modules/tslib/tslib.js"(exports, module2) {
+  "../../../node_modules/.pnpm/tslib@2.5.0/node_modules/tslib/tslib.js"(exports, module2) {
     var __extends2;
     var __assign2;
     var __rest2;
     var __decorate2;
     var __param2;
+    var __esDecorate2;
+    var __runInitializers2;
+    var __propKey2;
+    var __setFunctionName2;
     var __metadata2;
     var __awaiter2;
     var __generator2;
@@ -31582,6 +31647,65 @@ var require_tslib = __commonJS({
           decorator(target, key, paramIndex);
         };
       };
+      __esDecorate2 = function(ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
+        function accept3(f) {
+          if (f !== void 0 && typeof f !== "function")
+            throw new TypeError("Function expected");
+          return f;
+        }
+        var kind = contextIn.kind, key = kind === "getter" ? "get" : kind === "setter" ? "set" : "value";
+        var target = !descriptorIn && ctor ? contextIn["static"] ? ctor : ctor.prototype : null;
+        var descriptor = descriptorIn || (target ? Object.getOwnPropertyDescriptor(target, contextIn.name) : {});
+        var _, done = false;
+        for (var i = decorators.length - 1; i >= 0; i--) {
+          var context4 = {};
+          for (var p in contextIn)
+            context4[p] = p === "access" ? {} : contextIn[p];
+          for (var p in contextIn.access)
+            context4.access[p] = contextIn.access[p];
+          context4.addInitializer = function(f) {
+            if (done)
+              throw new TypeError("Cannot add initializers after decoration has completed");
+            extraInitializers.push(accept3(f || null));
+          };
+          var result = (0, decorators[i])(kind === "accessor" ? { get: descriptor.get, set: descriptor.set } : descriptor[key], context4);
+          if (kind === "accessor") {
+            if (result === void 0)
+              continue;
+            if (result === null || typeof result !== "object")
+              throw new TypeError("Object expected");
+            if (_ = accept3(result.get))
+              descriptor.get = _;
+            if (_ = accept3(result.set))
+              descriptor.set = _;
+            if (_ = accept3(result.init))
+              initializers.push(_);
+          } else if (_ = accept3(result)) {
+            if (kind === "field")
+              initializers.push(_);
+            else
+              descriptor[key] = _;
+          }
+        }
+        if (target)
+          Object.defineProperty(target, contextIn.name, descriptor);
+        done = true;
+      };
+      __runInitializers2 = function(thisArg, initializers, value) {
+        var useValue = arguments.length > 2;
+        for (var i = 0; i < initializers.length; i++) {
+          value = useValue ? initializers[i].call(thisArg, value) : initializers[i].call(thisArg);
+        }
+        return useValue ? value : void 0;
+      };
+      __propKey2 = function(x) {
+        return typeof x === "symbol" ? x : "".concat(x);
+      };
+      __setFunctionName2 = function(f, name, prefix2) {
+        if (typeof name === "symbol")
+          name = name.description ? "[".concat(name.description, "]") : "";
+        return Object.defineProperty(f, "name", { configurable: true, value: prefix2 ? "".concat(prefix2, " ", name) : name });
+      };
       __metadata2 = function(metadataKey, metadataValue) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function")
           return Reflect.metadata(metadataKey, metadataValue);
@@ -31630,7 +31754,7 @@ var require_tslib = __commonJS({
         function step(op) {
           if (f)
             throw new TypeError("Generator is already executing.");
-          while (_)
+          while (g && (g = 0, op[0] && (_ = 0)), _)
             try {
               if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done)
                 return t;
@@ -31816,7 +31940,7 @@ var require_tslib = __commonJS({
         }, i;
         function verb(n, f) {
           i[n] = o[n] ? function(v) {
-            return (p = !p) ? { value: __await2(o[n](v)), done: n === "return" } : f ? f(v) : v;
+            return (p = !p) ? { value: __await2(o[n](v)), done: false } : f ? f(v) : v;
           } : f;
         }
       };
@@ -31894,6 +32018,10 @@ var require_tslib = __commonJS({
       exporter("__rest", __rest2);
       exporter("__decorate", __decorate2);
       exporter("__param", __param2);
+      exporter("__esDecorate", __esDecorate2);
+      exporter("__runInitializers", __runInitializers2);
+      exporter("__propKey", __propKey2);
+      exporter("__setFunctionName", __setFunctionName2);
       exporter("__metadata", __metadata2);
       exporter("__awaiter", __awaiter2);
       exporter("__generator", __generator2);
@@ -31918,10 +32046,10 @@ var require_tslib = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/tslib@2.4.0/node_modules/tslib/modules/index.js
-var import_tslib, __extends, __assign, __rest, __decorate, __param, __metadata, __awaiter, __generator, __exportStar, __createBinding, __values2, __read, __spread, __spreadArrays, __spreadArray, __await, __asyncGenerator, __asyncDelegator, __asyncValues, __makeTemplateObject, __importStar, __importDefault, __classPrivateFieldGet, __classPrivateFieldSet, __classPrivateFieldIn;
+// ../../../node_modules/.pnpm/tslib@2.5.0/node_modules/tslib/modules/index.js
+var import_tslib, __extends, __assign, __rest, __decorate, __param, __esDecorate, __runInitializers, __propKey, __setFunctionName, __metadata, __awaiter, __generator, __exportStar, __createBinding, __values2, __read, __spread, __spreadArrays, __spreadArray, __await, __asyncGenerator, __asyncDelegator, __asyncValues, __makeTemplateObject, __importStar, __importDefault, __classPrivateFieldGet, __classPrivateFieldSet, __classPrivateFieldIn;
 var init_modules = __esm({
-  "../../../node_modules/.pnpm/tslib@2.4.0/node_modules/tslib/modules/index.js"() {
+  "../../../node_modules/.pnpm/tslib@2.5.0/node_modules/tslib/modules/index.js"() {
     import_tslib = __toESM(require_tslib(), 1);
     ({
       __extends,
@@ -31929,6 +32057,10 @@ var init_modules = __esm({
       __rest,
       __decorate,
       __param,
+      __esDecorate,
+      __runInitializers,
+      __propKey,
+      __setFunctionName,
       __metadata,
       __awaiter,
       __generator,
@@ -76065,7 +76197,11 @@ async function startServer() {
       const filename = artifactId + ".gz";
       const cacheKey = await cache.restoreCache(
         [`${cacheDirectory}/${filename}`],
-        artifactId
+        artifactId,
+        void 0,
+        {
+          timeoutInMs: 5e3
+        }
       );
       if (!cacheKey) {
         console.log(`Artifact ${artifactId} not found.`);

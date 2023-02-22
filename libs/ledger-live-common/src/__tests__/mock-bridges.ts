@@ -8,8 +8,10 @@ import { setEnv } from "../env";
 import { getCryptoCurrencyById } from "../currencies";
 import { toAccountRaw, flattenAccounts } from "../account";
 import type { Account } from "@ledgerhq/types-live";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 jest.setTimeout(120000);
-const mockedCoins = [
+
+const mockedCoins: CryptoCurrencyId[] = [
   "bitcoin",
   "zcash",
   "ethereum",
@@ -19,6 +21,7 @@ const mockedCoins = [
   "stellar",
   "cosmos",
 ];
+
 mockedCoins.map(getCryptoCurrencyById).forEach((currency) => {
   describe("mock " + currency.id, () => {
     setEnv("MOCK", true);

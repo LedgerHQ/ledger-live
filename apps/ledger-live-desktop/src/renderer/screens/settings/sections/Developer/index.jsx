@@ -12,6 +12,7 @@ import CatalogRampProviderSelect from "./CatalogRampProviderSelect";
 import RunLocalAppButton from "./RunLocalAppButton";
 import FeatureFlagsSettings from "./FeatureFlagsSettings";
 import EnableLearnPageStagingUrlToggle from "./EnableLearnPageStagingUrlToggle";
+import OnboardingAppInstallDebugButton from "./OnboardingAppInstallDebug";
 
 const SectionDeveloper = () => {
   const { t } = useTranslation();
@@ -53,6 +54,12 @@ const SectionDeveloper = () => {
         </Row>
         <RunLocalAppButton />
         <FeatureFlagsSettings />
+        <Row
+          title={t("settings.developer.openOnboardingAppInstallDebug")}
+          desc={t("settings.developer.openOnboardingAppInstallDebugDesc")}
+        >
+          <OnboardingAppInstallDebugButton />
+        </Row>
         <Row
           title={t("settings.developer.enableLearnStagingUrl")}
           desc={t("settings.developer.enableLearnStagingUrlDesc")}

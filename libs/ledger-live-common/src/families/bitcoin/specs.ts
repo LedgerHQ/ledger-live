@@ -91,7 +91,7 @@ const genericTest = ({
   botTest("operation matches tx senders and recipients", () => {
     if (transaction.opReturnData) {
       // transaction.recipient has format <coinId>:<address>
-      const [, recipientAddress] = transaction.recipient.split(":")[1];
+      const [, recipientAddress] = transaction.recipient.split(":");
       expect(operation.recipients).toContain(recipientAddress);
       expect(operation.recipients.length).toBe(2);
     } else {

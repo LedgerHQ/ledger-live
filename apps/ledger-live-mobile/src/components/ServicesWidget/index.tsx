@@ -1,7 +1,8 @@
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { ProtectStateNumberEnum } from "@ledgerhq/live-common/platform/providers/ProtectProvider/types";
 import { refreshToken } from "@ledgerhq/live-common/platform/providers/ProtectProvider/api/index";
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
+import { Linking } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import Svg, { LinearGradient, Defs, Rect, Stop } from "react-native-svg";
@@ -21,6 +22,7 @@ import { saveProtect } from "../../db";
 import { ScreenName } from "../../const";
 import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { ManagerNavigatorStackParamList } from "../RootNavigator/types/ManagerNavigator";
+import Touchable from "../Touchable";
 
 const SvgGradient = () => (
   <Svg width="100%" height="8px">
@@ -82,6 +84,13 @@ function ServicesWidget() {
 
   const ProtectStateComponent = statesComponents[protectStatus];
 
+  const onCardPress = useCallback(() => {
+    if (protectStatus !== ProtectStateNumberEnum.NEW) return;
+
+    const { learnMoreURI } = params?.managerStatesData?.[protectStatus] || {};
+    Linking.canOpenURL(learnMoreURI).then(() => Linking.openURL(learnMoreURI));
+  }, [params?.managerStatesData, protectStatus]);
+
   useEffect(() => {
     const refreshSession = async () => {
       if (wasPreviouslyRefreshed || !data.refreshToken) {
@@ -117,31 +126,39 @@ function ServicesWidget() {
       <Text variant="paragraph" color="neutral.c80">
         {t("servicesWidget.subTitle")}
       </Text>
-      <Flex bg="neutral.c30" borderRadius={8} mt={5} mb={13} overflow="hidden">
-        <SvgGradient />
-        <Flex p={8}>
-          <Flex
-            flexDirection="row"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Text variant="h5" mr={6}>
-              {t("servicesWidget.protect.title")}
+      <Touchable onPress={onCardPress}>
+        <Flex
+          bg="neutral.c30"
+          borderRadius={8}
+          mt={5}
+          mb={13}
+          overflow="hidden"
+        >
+          <SvgGradient />
+          <Flex p={8}>
+            <Flex
+              flexDirection="row"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <Text variant="h5" mr={6}>
+                {t("servicesWidget.protect.title")}
+              </Text>
+              {ProtectStateComponent && ProtectStateComponent.StatusTag ? (
+                <ProtectStateComponent.StatusTag />
+              ) : null}
+            </Flex>
+            <Text variant="paragraph" color="neutral.c80" mt={3}>
+              {t(
+                `servicesWidget.protect.status.${statesKeys[protectStatus]}.desc`,
+              )}
             </Text>
-            {ProtectStateComponent && ProtectStateComponent.StatusTag ? (
-              <ProtectStateComponent.StatusTag />
-            ) : null}
+            <ProtectStateComponent
+              params={params?.managerStatesData?.[protectStatus]}
+            />
           </Flex>
-          <Text variant="paragraph" color="neutral.c80" mt={3}>
-            {t(
-              `servicesWidget.protect.status.${statesKeys[protectStatus]}.desc`,
-            )}
-          </Text>
-          <ProtectStateComponent
-            params={params?.managerStatesData?.[protectStatus]}
-          />
         </Flex>
-      </Flex>
+      </Touchable>
     </>
   ) : null;
 }

@@ -69,14 +69,11 @@ import type { CosmosDelegationFlowParamList } from "../../../families/cosmos/Del
 import type { CosmosRedelegationFlowParamList } from "../../../families/cosmos/RedelegationFlow/types";
 import type { CosmosUndelegationFlowParamList } from "../../../families/cosmos/UndelegationFlow/types";
 import type { CosmosClaimRewardsFlowParamList } from "../../../families/cosmos/ClaimRewardsFlow/types";
-import type { OsmosisDelegationFlowParamList } from "../../../families/osmosis/DelegationFlow/types";
-import type { OsmosisRedelegationFlowParamList } from "../../../families/osmosis/RedelegationFlow/types";
-import type { OsmosisUndelegationFlowParamList } from "../../../families/osmosis/UndelegationFlow/types";
-import type { OsmosisClaimRewardsFlowParamList } from "../../../families/osmosis/ClaimRewardsFlow/types";
 import type { SolanaDelegationFlowParamList } from "../../../families/solana/DelegationFlow/types";
 import type { StellarAddAssetFlowParamList } from "../../../families/stellar/AddAssetFlow/types";
 import type { TezosDelegationFlowParamList } from "../../../families/tezos/DelegationFlow/types";
 import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/types";
+import { ExploreTabNavigatorStackParamList } from "./ExploreTabNavigator";
 
 type TradeParams = {
   type: "onRamp" | "offRamp";
@@ -120,7 +117,6 @@ export type BaseNavigatorStackParamList = {
     defaultCurrencyId?: string;
     defaultTicker?: string;
   };
-  [ScreenName.Learn]: undefined;
   [ScreenName.LearnWebView]: {
     uri?: string;
   };
@@ -307,12 +303,6 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.CosmosUndelegationFlow]: NavigatorScreenParams<CosmosUndelegationFlowParamList>;
   [NavigatorName.CosmosClaimRewardsFlow]: NavigatorScreenParams<CosmosClaimRewardsFlowParamList>;
 
-  // Osmosis
-  [NavigatorName.OsmosisDelegationFlow]: NavigatorScreenParams<OsmosisDelegationFlowParamList>;
-  [NavigatorName.OsmosisRedelegationFlow]: NavigatorScreenParams<OsmosisRedelegationFlowParamList>;
-  [NavigatorName.OsmosisUndelegationFlow]: NavigatorScreenParams<OsmosisUndelegationFlowParamList>;
-  [NavigatorName.OsmosisClaimRewardsFlow]: NavigatorScreenParams<OsmosisClaimRewardsFlowParamList>;
-
   // Solana
   [NavigatorName.SolanaDelegationFlow]: NavigatorScreenParams<SolanaDelegationFlowParamList>;
 
@@ -324,6 +314,8 @@ export type BaseNavigatorStackParamList = {
 
   // Tron
   [NavigatorName.TronVoteFlow]: NavigatorScreenParams<TronVoteFlowParamList>;
+
+  [NavigatorName.ExploreTab]: NavigatorScreenParams<ExploreTabNavigatorStackParamList>;
 
   [ScreenName.DeviceConnect]: {
     appName?: string;

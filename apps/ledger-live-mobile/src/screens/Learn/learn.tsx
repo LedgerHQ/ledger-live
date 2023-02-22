@@ -67,7 +67,7 @@ function LearnSection() {
   };
 
   return (
-    <Flex mt={4}>
+    <Flex>
       <TrackScreen category="Learn" />
       <FlatList
         data={sortedLearnCards}

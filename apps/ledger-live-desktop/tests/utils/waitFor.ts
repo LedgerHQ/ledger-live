@@ -17,6 +17,7 @@ export async function waitFor(
         resolve(true);
       }
     }, intervalMs);
+
     setTimeout(() => {
       clearTimeout(interval);
       reject(new Error("waitFor timeout"));

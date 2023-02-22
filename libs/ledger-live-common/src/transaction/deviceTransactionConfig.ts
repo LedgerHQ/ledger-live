@@ -1,30 +1,10 @@
+import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import perFamily from "../generated/deviceTransactionConfig";
 import type { ExtraDeviceTransactionField } from "../generated/deviceTransactionConfig";
 import type { Transaction, TransactionStatus } from "../generated/types";
 import { getMainAccount } from "../account";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-type tooltipArgs = Record<string, string>;
-export type CommonDeviceTransactionField =
-  | {
-      type: "amount";
-      label: string;
-    }
-  | {
-      type: "address";
-      label: string;
-      address: string;
-    }
-  | {
-      type: "fees";
-      label: string;
-    }
-  | {
-      type: "text";
-      label: string;
-      value: string;
-      tooltipI18nKey?: string;
-      tooltipI18nArgs?: tooltipArgs;
-    };
+
 export type DeviceTransactionField =
   | CommonDeviceTransactionField
   | ExtraDeviceTransactionField;

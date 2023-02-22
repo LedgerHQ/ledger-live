@@ -1,9 +1,9 @@
+import { ethers } from "ethers";
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import type {
-  Transaction as EvmTransaction,
-  TransactionRaw as EvmTransactionRaw,
-} from "./types";
+import { formatCurrencyUnit } from "../../currencies";
+import { getAccountUnit } from "../../account";
+import ERC20ABI from "./abis/erc20.abi.json";
 import {
   formatTransactionStatusCommon as formatTransactionStatus,
   fromTransactionCommonRaw,
@@ -11,9 +11,15 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "../../transaction/common";
-import { getAccountUnit } from "../../account";
-import { formatCurrencyUnit } from "../../currencies";
-import { getTransactionCount } from "./api/rpc";
+import type {
+  EvmTransactionEIP1559,
+  EvmTransactionLegacy,
+  FeeData,
+  Transaction as EvmTransaction,
+  TransactionRaw as EvmTransactionRaw,
+} from "./types";
+
+export const DEFAULT_GAS_LIMIT = new BigNumber(21000);
 
 /**
  * Format the transaction for the CLI
@@ -93,35 +99,63 @@ export const toTransactionRaw = (tx: EvmTransaction): EvmTransactionRaw => {
   }
 
   if (tx.gasPrice) {
-    txRaw.gasPrice = tx.gasPrice?.toFixed();
+    txRaw.gasPrice = tx.gasPrice.toFixed();
   }
 
   if (tx.maxFeePerGas) {
-    txRaw.maxFeePerGas = tx.maxFeePerGas?.toFixed();
+    txRaw.maxFeePerGas = tx.maxFeePerGas.toFixed();
   }
 
   if (tx.maxPriorityFeePerGas) {
-    txRaw.maxPriorityFeePerGas = tx.maxPriorityFeePerGas?.toFixed();
+    txRaw.maxPriorityFeePerGas = tx.maxPriorityFeePerGas.toFixed();
   }
 
   return txRaw as EvmTransactionRaw;
 };
 
 /**
- * Create an unsigned transaction from a Ledger Live transaction.
- * Usually called "buildTransaction"
+ * Returns the data necessary to execute smart contracts.
+ * As of now, only used to create ERC20 transfers' data
  */
-export const transactionToUnsignedTransaction = async (
-  account: Account,
-  tx: EvmTransaction
-): Promise<EvmTransaction> => {
-  const { currency, freshAddress } = account;
-  const nonce = await getTransactionCount(currency, freshAddress);
+export const getTransactionData = (
+  transaction: EvmTransaction
+): Buffer | undefined => {
+  const contract = new ethers.utils.Interface(ERC20ABI);
+  const data = contract.encodeFunctionData("transfer", [
+    transaction.recipient,
+    transaction.amount.toFixed(),
+  ]);
 
+  return data ? Buffer.from(data.slice(2), "hex") : undefined;
+};
+
+/**
+ * Returns a transaction with the correct type and entries depending
+ * on the network compatiblity.
+ */
+export const getTypedTransaction = (
+  transaction: EvmTransaction,
+  feeData: FeeData
+): EvmTransaction => {
+  // If the blockchain is supporting EIP-1559, use maxFeePerGas & maxPriorityFeePerGas
+  if (feeData.maxFeePerGas && feeData.maxPriorityFeePerGas) {
+    delete transaction.gasPrice;
+    return {
+      ...transaction,
+      maxFeePerGas: feeData.maxFeePerGas,
+      maxPriorityFeePerGas: feeData.maxPriorityFeePerGas,
+      type: 2,
+    } as EvmTransactionEIP1559;
+  }
+
+  // Else just use a legacy transaction
+  delete transaction.maxFeePerGas;
+  delete transaction.maxPriorityFeePerGas;
   return {
-    ...tx,
-    nonce,
-  };
+    ...transaction,
+    gasPrice: feeData.gasPrice || new BigNumber(0),
+    type: 0,
+  } as EvmTransactionLegacy;
 };
 
 export default {
@@ -129,7 +163,6 @@ export default {
   fromTransactionRaw,
   toTransactionRaw,
   toTransactionStatusRaw,
-  transactionToUnsignedTransaction,
   formatTransactionStatus,
   fromTransactionStatusRaw,
 };

@@ -27,15 +27,10 @@ const exec = async (file, args, options = {}) => {
   return execa(file, args, opts);
 };
 
-const rmDir = dir =>
-  new Promise((resolve, reject) => {
-    const fullPath = path.resolve(__dirname, rootFolder, dir);
-
-    rimraf(fullPath, error => {
-      if (error) return reject(error);
-      resolve();
-    });
-  });
+const rmDir = dir => {
+  const fullPath = path.resolve(__dirname, rootFolder, dir);
+  return rimraf(fullPath);
+};
 
 const cleaningTasks = args => [
   {

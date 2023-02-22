@@ -14,7 +14,7 @@ import type { Device } from "../actions/types";
 import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
 import { withDevice } from "../deviceAccess";
 import type { MessageData, SignMessage, Result } from "./types";
-import { DerivationMode } from "../../derivation";
+import { DerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { TypedMessageData } from "../../families/ethereum/types";
 
 export const prepareMessageToSign = (

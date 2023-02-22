@@ -1,13 +1,8 @@
 import React from "react";
-import {
-  BottomDrawer,
-  BoxedIcon,
-  Button,
-  Flex,
-  Text,
-} from "@ledgerhq/native-ui";
+import { BoxedIcon, Button, Flex, Text } from "@ledgerhq/native-ui";
 import { WarningSolidMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
+import QueuedDrawer from "../../components/QueuedDrawer";
 
 export type Props = {
   isOpen: boolean;
@@ -27,8 +22,8 @@ const GenuineCheckCancelledDrawer = ({
   const { t } = useTranslation();
 
   return (
-    <BottomDrawer
-      isOpen={isOpen}
+    <QueuedDrawer
+      isRequestingToBeOpened={isOpen}
       onClose={onClose}
       preventBackdropClick
       noCloseButton
@@ -68,7 +63,7 @@ const GenuineCheckCancelledDrawer = ({
           "syncOnboarding.softwareChecksSteps.genuineCheckCancelledDrawer.skipCta",
         )}
       </Button>
-    </BottomDrawer>
+    </QueuedDrawer>
   );
 };
 

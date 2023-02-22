@@ -8,6 +8,7 @@ import PushNotificationsModal from "../PushNotificationsModal";
 import RatingsModal from "../RatingsModal";
 import useRatings from "../../logic/ratings";
 import useNotifications from "../../logic/notifications";
+import DebugAppLevelDrawer from "../../components/DebugAppLevelDrawer";
 
 const getCurrentRouteName = (
   state: NavigationState | Required<NavigationState["routes"][0]>["state"],
@@ -79,6 +80,7 @@ const Modals = () => {
       <FeatureToggle feature="ratingsPrompt">
         <RatingsModal />
       </FeatureToggle>
+      <DebugAppLevelDrawer />
     </>
   );
 };

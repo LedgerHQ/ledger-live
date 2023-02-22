@@ -3,7 +3,7 @@ import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
-import { deviceActionFlow } from "../../bot/specs";
+import { deviceActionFlow, SpeculosButton } from "../../bot/specs";
 const confirmWording = {
   send: "transfer",
   stake: "deposit_and_stake",
@@ -16,12 +16,12 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
     steps: [
       {
         title: "Confirm",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => confirmWording[transaction.mode],
       },
       {
         title: "Deposit",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction, account }) => {
           if (transaction.mode === "stake") {
             return formatCurrencyUnit(
@@ -38,7 +38,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Amount",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction, account }) =>
           formatCurrencyUnit(getAccountUnit(account), transaction.amount, {
             disableRounding: true,
@@ -46,17 +46,17 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "To",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => transaction.recipient,
       },
       {
         title: "From",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account }) => account.freshAddress,
       },
       {
         title: "Args",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction, account }) => {
           if (transaction.mode === "stake") {
             return "{}";
@@ -73,7 +73,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Approve",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
         final: true,
       },
     ],

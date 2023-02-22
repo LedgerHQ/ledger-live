@@ -37,7 +37,7 @@ const EntryButtonContainer = styled.button`
   border-radius: 4px;
   padding: ${p => p.theme.space[3]}px;
   gap: ${p => p.theme.space[3]}px;
-  transition: background-color ease-in-out 200ms;
+  transition: ease-in-out 200ms;
 
   &:disabled {
     cursor: not-allowed;
@@ -95,6 +95,7 @@ interface EntryButtonProps {
   label?: string;
   Icon?: React.ComponentType;
   showChevron?: boolean;
+  entryButtonTestId?: string;
 }
 const EntryButton: React.FC<EntryButtonProps> = ({
   title,
@@ -104,9 +105,10 @@ const EntryButton: React.FC<EntryButtonProps> = ({
   Icon,
   label,
   showChevron,
+  entryButtonTestId,
 }) => {
   return (
-    <EntryButtonContainer onClick={onClick} disabled={disabled}>
+    <EntryButtonContainer onClick={onClick} disabled={disabled} data-test-id={entryButtonTestId}>
       <Box horizontal shrink alignItems="center">
         {Icon && (
           <IconWrapper>

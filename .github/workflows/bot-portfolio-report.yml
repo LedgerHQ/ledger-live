@@ -1,0 +1,104 @@
+name: "Bots Portfolio"
+on:
+  workflow_dispatch:
+    inputs:
+      seeds:
+        description: "comma separated list of seed indexes to filter on (e.g. 1,2,3) – all if not filtered"
+        required: false
+      currencies:
+        description: "a comma separated list of currencies to filter (if provided)."
+        required: false
+      families:
+        description: "a comma separated list of families to filter (if provided)."
+        required: false
+  push:
+    branches:
+      - support/bots-portfolio
+      - support/bots-portfolio-*
+  schedule:
+    - cron: "30 5 * * *"
+
+jobs:
+  start-runner:
+    name: Start self-hosted EC2 runner
+    runs-on: [ledger-live, linux]
+    outputs:
+      label: ${{ steps.start-ec2-linux-runner.outputs.label }}
+      ec2-instance-id: ${{ steps.start-ec2-linux-runner.outputs.ec2-instance-id }}
+    steps:
+      - name: Start EC2 Linux Runner
+        id: start-ec2-linux-runner
+        uses: LedgerHQ/actions/ec2-linux-runner@main
+        with:
+          mode: start
+          github-token: ${{ secrets.CI_BOT_TOKEN }}
+          project: 2049
+          aws-nfs-logging: true
+          ami-name-filter: ledger-live-runner
+          instance-volume-size: 30
+
+  stop-runner:
+    name: Stop self-hosted EC2 runner
+    needs: [start-runner, portfolio]
+    runs-on: [ledger-live, linux]
+    timeout-minutes: 5
+    steps:
+      - name: Stop EC2 Linux Runner
+        if: ${{ always() && needs.start-runner.result == 'success' }}
+        uses: LedgerHQ/actions/ec2-linux-runner@main
+        with:
+          mode: stop
+          github-token: ${{ secrets.CI_BOT_TOKEN }}
+          label: ${{ needs.start-runner.outputs.label }}
+          ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
+
+  portfolio:
+    runs-on: ${{ needs.start-runner.outputs.label }}
+    needs: [start-runner]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Retrieving coin apps
+        uses: actions/checkout@v3
+        with:
+          ref: generated/ledger-live-bot
+          repository: LedgerHQ/coin-apps
+          token: ${{ secrets.GH_PAT }}
+          path: coin-apps
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+      - name: install and build
+        run: |
+          pnpm i --filter="live-cli..." --filter="ledger-live" --frozen-lockfile
+          pnpm build:llc
+        shell: bash
+      - name: portfolio
+        timeout-minutes: 200
+        env:
+          SEED1: ${{ secrets.SEED1 }}
+          SEED2: ${{ secrets.SEED2 }}
+          SEED3: ${{ secrets.SEED3 }}
+          SEED4: ${{ secrets.SEED4 }}
+          SEED5: ${{ secrets.SEED5 }}
+          SEED6: ${{ secrets.SEED6 }}
+          SEED7: ${{ secrets.SEED7 }}
+          FILTER_CURRENCIES: ${{ github.event.inputs.currencies }}
+          FILTER_FAMILIES: ${{ github.event.inputs.families }}
+          FILTER_SEEDS: ${{ github.event.inputs.seeds }}
+          DEFAULT_FILTER_SEEDS: "1,2,3,4,5"
+          PARALLEL: 4
+          NODE_OPTIONS: "--max-old-space-size=7168"
+          REPORT_FOLDER: reports
+        run: |
+          export COINAPPS=$PWD/coin-apps
+          export SUMMARY=$GITHUB_STEP_SUMMARY
+          export NODE_ENV=production
+          cd libs/ledger-live-common
+          node lib/bot/portfolio/process-main.js
+        shell: bash
+
+      - name: upload reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: reports
+          path: libs/ledger-live-common/reports

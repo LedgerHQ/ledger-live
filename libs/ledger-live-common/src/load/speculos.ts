@@ -14,10 +14,10 @@ import { getEnv } from "../env";
 import { getDependencies } from "../apps/polyfill";
 import { findCryptoCurrencyByKeyword } from "../currencies";
 import { formatAppCandidate } from "../bot/formatters";
-import { delay } from "../promise";
+import { delay } from "@ledgerhq/coin-framework/promise";
 import { mustUpgrade, shouldUpgrade } from "../apps";
 
-let idCounter = 0;
+let idCounter = getEnv("SPECULOS_PID_OFFSET");
 
 const data = {};
 
@@ -89,10 +89,10 @@ export async function createSpeculosDevice(
   const { model, firmware, appName, appVersion, seed, coinapps, dependency } =
     arg;
   const speculosID = `speculosID-${++idCounter}`;
-  const apduPort = 40000 + idCounter;
-  const vncPort = 41000 + idCounter;
-  const buttonPort = 42000 + idCounter;
-  const automationPort = 43000 + idCounter;
+  const apduPort = 30000 + idCounter;
+  const vncPort = 35000 + idCounter;
+  const buttonPort = 40000 + idCounter;
+  const automationPort = 45000 + idCounter;
 
   const sdk = inferSDK(firmware, model);
 

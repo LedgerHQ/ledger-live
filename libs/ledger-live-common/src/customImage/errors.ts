@@ -8,6 +8,10 @@ export const ImageLoadFromFileError = createCustomErrorClass(
   "ImageLoadFromFileError"
 );
 
+export const ImageLoadFromNftError = createCustomErrorClass(
+  "ImageLoadFromNftError"
+);
+
 export const ImageIncorrectFileTypeError = createCustomErrorClass(
   "ImageIncorrectFileTypeError"
 );

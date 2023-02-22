@@ -84,6 +84,7 @@ export enum AppStateActionTypes {
   DEQUEUE_BACKGROUND_EVENT = "DEQUEUE_BACKGROUND_EVENT",
   CLEAR_BACKGROUND_EVENTS = "CLEAR_BACKGROUND_EVENTS",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
+  UPDATE_MAIN_NAVIGATOR_VISIBILITY = "UPDATE_MAIN_NAVIGATOR_VISIBILITY",
 }
 
 export type AppStateIsConnectedPayload = Pick<AppState, "isConnected">;
@@ -95,11 +96,17 @@ export type AppStateSetModalLockPayload = Pick<AppState, "modalLock">;
 export type AppStateAddBackgroundEventPayload = {
   event: FwUpdateBackgroundEvent;
 };
+
+export type AppStateUpdateMainNavigatorVisibilityPayload = Pick<
+  AppState,
+  "isMainNavigatorVisible"
+>;
 export type AppStatePayload =
   | AppStateIsConnectedPayload
   | AppStateSetHasConnectedDevicePayload
   | AppStateSetModalLockPayload
-  | AppStateAddBackgroundEventPayload;
+  | AppStateAddBackgroundEventPayload
+  | AppStateUpdateMainNavigatorVisibilityPayload;
 
 // === BLE ACTIONS ===
 
@@ -300,6 +307,7 @@ export enum SettingsActionTypes {
   SET_OVERRIDDEN_FEATURE_FLAG = "SET_OVERRIDDEN_FEATURE_FLAG",
   SET_OVERRIDDEN_FEATURE_FLAGS = "SET_OVERRIDDEN_FEATURE_FLAGS",
   SET_FEATURE_FLAGS_BANNER_VISIBLE = "SET_FEATURE_FLAGS_BANNER_VISIBLE",
+  SET_DEBUG_APP_LEVEL_DRAWER_OPENED = "SET_DEBUG_APP_LEVEL_DRAWER_OPENED",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -362,10 +370,6 @@ export type SettingsSetAvailableUpdatePayload = Pick<
 >;
 export type SettingsSetThemePayload = Pick<SettingsState, "theme">;
 export type SettingsSetOsThemePayload = Pick<SettingsState, "osTheme">;
-export type SettingsSetCarouselVisibilityPayload = Pick<
-  SettingsState,
-  "carouselVisibility"
->;
 export type SettingsSetDismissedDynamicCardsPayload = Pick<
   SettingsState,
   "dismissedDynamicCards"
@@ -464,6 +468,11 @@ export type SettingsSetFeatureFlagsBannerVisiblePayload = Pick<
   SettingsState,
   "featureFlagsBannerVisible"
 >;
+export type SettingsSetDebugAppLevelDrawerOpenedPayload = Pick<
+  SettingsState,
+  "debugAppLevelDrawerOpened"
+>;
+
 export type SettingsPayload =
   | SettingsImportPayload
   | SettingsImportDesktopPayload
@@ -487,7 +496,6 @@ export type SettingsPayload =
   | SettingsSetAvailableUpdatePayload
   | SettingsSetThemePayload
   | SettingsSetOsThemePayload
-  | SettingsSetCarouselVisibilityPayload
   | SettingsSetDiscreetModePayload
   | SettingsSetLanguagePayload
   | SettingsSetLocalePayload
@@ -512,7 +520,8 @@ export type SettingsPayload =
   | DangerouslyOverrideStatePayload
   | SettingsSetOverriddenFeatureFlagPlayload
   | SettingsSetOverriddenFeatureFlagsPlayload
-  | SettingsSetFeatureFlagsBannerVisiblePayload;
+  | SettingsSetFeatureFlagsBannerVisiblePayload
+  | SettingsSetDebugAppLevelDrawerOpenedPayload;
 
 // === WALLET CONNECT ACTIONS ===
 

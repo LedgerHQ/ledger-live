@@ -8,7 +8,7 @@ import {
   Icons,
   Button,
 } from "@ledgerhq/native-ui";
-import BottomModal from "../../components/BottomModal";
+import QueuedDrawer from "../../components/QueuedDrawer";
 import AppIcon from "./AppIcon";
 import LedgerIcon from "../../icons/Ledger";
 
@@ -62,7 +62,7 @@ const DAppDisclaimer = ({
   }, [disableDisclaimerChecked, closeDisclaimer, disableDisclaimer, next]);
 
   return (
-    <BottomModal isOpened={isOpened} onClose={onClose}>
+    <QueuedDrawer isRequestingToBeOpened={isOpened} onClose={onClose}>
       <Flex
         flexDirection="row"
         justifyContent="center"
@@ -131,7 +131,7 @@ const DAppDisclaimer = ({
           {t("platform.disclaimer.CTA")}
         </Button>
       </Flex>
-    </BottomModal>
+    </QueuedDrawer>
   );
 };
 

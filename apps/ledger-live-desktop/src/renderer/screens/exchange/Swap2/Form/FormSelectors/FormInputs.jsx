@@ -13,7 +13,7 @@ import type {
   SwapTransactionType,
   SwapDataType,
 } from "@ledgerhq/live-common/exchange/swap/types";
-import { swapDefaultTrack } from "../../utils/index";
+import { useGetSwapTrackingProperties } from "../../utils/index";
 
 type FormInputsProps = {
   fromAccount: $PropertyType<SwapSelectorStateType, "account">,
@@ -55,7 +55,12 @@ type SwapButtonProps = {
 };
 function SwapButton({ onClick, disabled }: SwapButtonProps): React$Node {
   return (
-    <RoundButton lighterPrimary disabled={disabled} onClick={onClick}>
+    <RoundButton
+      lighterPrimary
+      disabled={disabled}
+      onClick={onClick}
+      data-test-id="swap-reverse-pair-button"
+    >
       <ArrowsUpDown size={14} />
     </RoundButton>
   );
@@ -81,6 +86,7 @@ export default function FormInputs({
   isSendMaxLoading,
   updateSelectedRate,
 }: FormInputsProps) {
+  const swapDefaultTrack = useGetSwapTrackingProperties();
   const reverseSwapAndTrack = () => {
     track("button_clicked", {
       button: "switch",

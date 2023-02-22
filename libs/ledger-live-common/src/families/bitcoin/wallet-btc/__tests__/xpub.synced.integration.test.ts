@@ -1,5 +1,3 @@
-// import path from 'path';
-// import fs from 'fs';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import coininfo from "coininfo";
@@ -9,11 +7,11 @@ import BitcoinLikeStorage from "../storage";
 import BitcoinLikeExplorer from "../explorer";
 import Crypto from "../crypto/bitcoincash";
 import Xpub from "../xpub";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 describe("synced xpub utilites functions", () => {
   const explorer = new BitcoinLikeExplorer({
-    explorerURI: "https://explorers.api.vault.ledger.com/blockchain/v3/bch",
-    explorerVersion: "v3",
+    cryptoCurrency: getCryptoCurrencyById("bitcoin_cash"),
   });
   const crypto = new Crypto({
     network: coininfo.bitcoincash.main.toBitcoinJS(),

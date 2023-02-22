@@ -11,9 +11,15 @@ import LoggerTransport from "~/logger/logger-transport-internal";
 
 import { executeCommand, unsubscribeCommand, unsubscribeAllCommands } from "./commandHandler";
 import sentry, { setTags } from "~/sentry/internal";
-import { transportClose, transportExchange, transportOpen } from "~/internal/transportHandler";
+import {
+  transportClose,
+  transportExchange,
+  transportExchangeBulk,
+  transportOpen,
+} from "~/internal/transportHandler";
 import {
   transportCloseChannel,
+  transportExchangeBulkChannel,
   transportExchangeChannel,
   transportOpenChannel,
 } from "~/config/transportChannels";
@@ -61,6 +67,9 @@ process.on("message", m => {
       break;
     case transportExchangeChannel:
       transportExchange(m);
+      break;
+    case transportExchangeBulkChannel:
+      transportExchangeBulk(m);
       break;
     case transportCloseChannel:
       transportClose(m);

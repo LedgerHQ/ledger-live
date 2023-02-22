@@ -1,12 +1,3 @@
-import { encodeURIScheme, decodeURIScheme } from "./CurrencyURIScheme";
-import { sanitizeValueString } from "./sanitizeValueString";
-import {
-  sortByMarketcap,
-  getMarketcapTickers,
-  useMarketcapTickers,
-  currenciesByMarketcap,
-  useCurrenciesByMarketcap,
-} from "./sortByMarketcap";
 import {
   listFiatCurrencies,
   findFiatCurrencyByTicker,
@@ -32,23 +23,28 @@ import {
   getTokenById,
   addTokens,
 } from "@ledgerhq/cryptoassets";
-export * from "./support";
-export * from "./helpers";
-import { parseCurrencyUnit } from "./parseCurrencyUnit";
-import { chopCurrencyUnitDecimals } from "./chopCurrencyUnitDecimals";
 import {
+  encodeURIScheme,
+  decodeURIScheme,
+  sanitizeValueString,
+  chopCurrencyUnitDecimals,
   formatCurrencyUnit,
   formatCurrencyUnitFragment,
-} from "./formatCurrencyUnit";
-import { formatShort } from "./formatShort";
-import { valueFromUnit } from "./valueFromUnit";
-import { getCurrencyColor } from "./color";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
-
-const findCurrencyByTicker = (ticker: string): Currency | null | undefined =>
-  findCryptoCurrencyByTicker(ticker) ||
-  findFiatCurrencyByTicker(ticker) ||
-  findTokenByTicker(ticker);
+  formatShort,
+  valueFromUnit,
+  findCurrencyByTicker,
+} from "@ledgerhq/coin-framework/currencies/index";
+import { getCurrencyColor, ColorableCurrency } from "./color";
+import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurrencyUnit";
+import {
+  sortByMarketcap,
+  getMarketcapTickers,
+  useMarketcapTickers,
+  currenciesByMarketcap,
+  useCurrenciesByMarketcap,
+} from "./sortByMarketcap";
+export * from "@ledgerhq/coin-framework/currencies/support";
+export * from "./helpers";
 
 export {
   sortByMarketcap,
@@ -87,6 +83,7 @@ export {
   valueFromUnit,
   sanitizeValueString,
   getCurrencyColor,
+  ColorableCurrency,
   findCompoundToken,
   listTokens,
   addTokens,

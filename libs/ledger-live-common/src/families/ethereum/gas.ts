@@ -85,25 +85,33 @@ export const inferMaxFeePerGas = (
 
 export const estimateGasLimit: (
   account: Account,
-  addr: string,
-  transaction: { from: string; value: string; data: string }
+  transaction: {
+    from: string;
+    to: string;
+    value: string;
+    data: string;
+  }
 ) => Promise<BigNumber> = makeLRUCache(
   (
     account: Account,
-    addr: string,
-    transaction: { from: string; value: string; data: string }
+    transaction: {
+      from: string;
+      to: string;
+      value: string;
+      data: string;
+    }
   ) => {
     const api = apiForCurrency(account.currency);
     return api
-      .getDryRunGasLimit(addr, transaction)
+      .getDryRunGasLimit(transaction)
       .then((value) =>
         value.eq(21000) // regular ETH send should not be amplified
           ? value
           : value.times(getEnv("ETHEREUM_GAS_LIMIT_AMPLIFIER")).integerValue()
       )
-      .catch(() => api.roughlyEstimateGasLimit(addr));
+      .catch(() => api.getFallbackGasLimit(transaction.to));
   },
-  (a, addr, { from, value, data }) => `${addr}+${from}+${value}+${data}`
+  (account, { from, to, value, data }) => `${from}+${to}+${value}+${data}`
 );
 
 export default {

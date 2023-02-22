@@ -11,6 +11,11 @@ import signOperation from "../js-signOperation";
 import broadcast from "../js-broadcast";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import {
+  applyReconciliation,
+  assignToAccountRaw,
+  assignFromAccountRaw,
+} from "../serialization";
 
 const receive = makeAccountBridgeReceive();
 
@@ -22,6 +27,9 @@ const accountBridge: AccountBridge<Transaction> = {
   prepareTransaction,
   sync,
   receive,
+  applyReconciliation,
+  assignToAccountRaw,
+  assignFromAccountRaw,
   signOperation,
   broadcast,
 };

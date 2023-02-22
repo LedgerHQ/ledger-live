@@ -7,6 +7,15 @@ inputs:
   skip_ruby:
     description: "skip the step to setup ruby"
     required: false
+  skip_builds:
+    description: "skip the steps to build the desktop and dummy-live-app"
+    required: false
+  install_node_gyp:
+    description: "install node-gyp"
+    required: false
+  install_playwright:
+    description: "install playwright"
+    required: false
 
 runs:
   using: "composite"
@@ -28,3 +37,36 @@ runs:
       if: ${{ !inputs.skip_ruby }}
       with:
         ruby-version: 3.1.2
+    - name: Install node-gyp globally
+      if: ${{ inputs.install_node_gyp }}
+      run: |
+        pnpm add -g node-gyp
+      shell: bash
+    - name: Install dependencies
+      run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --filter="dummy-live-app" --frozen-lockfile --unsafe-perm
+      shell: bash
+    - name: Install playwright dependencies
+      if: ${{ inputs.install_playwright }}
+      run: npx playwright@1.27.1 install --with-deps chromium
+      shell: bash
+    - name: TurboRepo local caching server
+      id: turborepo-cache-server
+      uses: ./tools/actions/turborepo-gh-cache
+      with:
+        server-token: "yolo"
+        cleanup-cache-folder: "true"
+    - name: Build dependencies
+      env:
+        GOGC: 75
+      run: |
+        pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+      shell: bash
+    - name: Build desktop testing
+      if: ${{ !inputs.skip_builds }}
+      run: |
+        pnpm desktop build:testing
+      shell: bash
+    - name: Build Dummy SDK app for testing
+      if: ${{ !inputs.skip_builds }}
+      run: pnpm --filter="dummy-live-app" build
+      shell: bash

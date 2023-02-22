@@ -5,6 +5,10 @@ export class SwapPage {
   readonly page: Page;
   readonly swapMenuButton: Locator;
   readonly maxSpendableToggle: Locator;
+  readonly accountByName: Function;
+  readonly accountDropdownAddAccountButton: Locator;
+  readonly reverseSwapPairButton: Locator;
+  readonly addToAccountButton: Locator;
   readonly exchangeButton: Locator;
   readonly swapId: Locator;
   readonly seeDetailsButton: Locator;
@@ -12,13 +16,20 @@ export class SwapPage {
   readonly historyRow: Locator;
   readonly quoteContainer: Function;
   readonly changeTargetAccountButton: Locator;
-  readonly targetAccountContainer: Function;
   readonly changeNetworkFeesButton: Locator;
+  readonly standardFeesSelector: Locator;
+  readonly advancedFeesSelector: Locator;
+  readonly customFeeTextbox: Locator;
+  readonly targetAccountContainer: Function;
 
   constructor(page: Page) {
     this.page = page;
     this.swapMenuButton = page.locator("data-test-id=drawer-swap-button");
     this.maxSpendableToggle = page.locator("data-test-id=swap-max-spendable-toggle");
+    this.accountByName = (accountName: string) => page.getByText(accountName);
+    this.accountDropdownAddAccountButton = page.getByText("Add account");
+    this.reverseSwapPairButton = page.locator("data-test-id=swap-reverse-pair-button");
+    this.addToAccountButton = page.locator("data-test-id=add-destination-account-button");
     this.exchangeButton = page.locator("data-test-id=exchange-button");
     this.swapId = page.locator("data-test-id=swap-id");
     this.seeDetailsButton = page.locator('button:has-text("See details")');
@@ -29,11 +40,14 @@ export class SwapPage {
     this.changeTargetAccountButton = page
       .locator("data-test-id=change-exchange-details-button")
       .first();
-    this.targetAccountContainer = (accountName: string): Locator =>
-      page.locator(`data-test-id=target-account-container-${accountName}`).first();
     this.changeNetworkFeesButton = page
       .locator("data-test-id=change-exchange-details-button")
       .last();
+    this.standardFeesSelector = page.locator("data-test-id=standard-fee-mode-selector");
+    this.advancedFeesSelector = page.locator("data-test-id=advanced-fee-mode-selector");
+    this.customFeeTextbox = page.locator("data-test-id=currency-textbox");
+    this.targetAccountContainer = (accountName: string): Locator =>
+      page.locator(`data-test-id=target-account-container-${accountName}`).first();
   }
 
   async navigate() {
@@ -43,6 +57,26 @@ export class SwapPage {
 
   async sendMax() {
     await this.maxSpendableToggle.click();
+  }
+
+  async openAccountDropdownByAccountName(accountName: string) {
+    await this.accountByName(accountName).click();
+  }
+
+  async selectAccountByName(accountName: string) {
+    await this.accountByName(accountName).click();
+  }
+
+  async addAccountFromAccountDropdown() {
+    await this.accountDropdownAddAccountButton.click();
+  }
+
+  async reverseSwapPair() {
+    await this.reverseSwapPairButton.click();
+  }
+
+  async addDestinationAccount() {
+    await this.addToAccountButton.click();
   }
 
   async openTargetAccountDrawer() {
@@ -55,6 +89,18 @@ export class SwapPage {
 
   async openNetworkFeesDrawer() {
     await this.changeNetworkFeesButton.click();
+  }
+
+  async selectStandardFees() {
+    await this.standardFeesSelector.click();
+  }
+
+  async selectAdvancedFees() {
+    await this.advancedFeesSelector.click();
+  }
+
+  async enterCustomFee(amount: string) {
+    await this.customFeeTextbox.fill(amount);
   }
 
   async selectExchangeQuote(

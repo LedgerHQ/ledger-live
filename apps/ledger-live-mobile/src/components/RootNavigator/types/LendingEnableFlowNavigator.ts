@@ -31,7 +31,6 @@ import {
   Transaction as SolanaTransaction,
 } from "@ledgerhq/live-common/families/solana/types";
 import { Transaction as HederaTransaction } from "@ledgerhq/live-common/families/hedera/types";
-import { Transaction as OsmosisTransaction } from "@ledgerhq/live-common/families/osmosis/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   CryptoOrTokenCurrency,
@@ -277,7 +276,7 @@ export type LendingEnableFlowParamsList = {
     accountId: string;
     parentId?: string | null;
     account: CosmosAccount;
-    transaction: CosmosTransaction | OsmosisTransaction;
+    transaction: CosmosTransaction;
     currentNavigation:
       | ScreenName.LendingWithdrawSummary
       | ScreenName.LendingSupplySummary

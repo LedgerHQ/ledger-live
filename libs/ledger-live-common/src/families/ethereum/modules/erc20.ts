@@ -181,7 +181,7 @@ export const fetchERC20Tokens: () => Promise<ERC20Token[]> = makeLRUCache(
   },
   () => "erc20-tokens",
   {
-    maxAge: 6 * 60 * 60 * 1000,
+    ttl: 6 * 60 * 60 * 1000,
   }
 );
 
