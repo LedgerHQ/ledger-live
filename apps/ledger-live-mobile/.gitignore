@@ -1,9 +1,7 @@
 # OSX
-#
 .DS_Store
 
 # Xcode
-#
 ios/Index/*
 build/
 *.pbxuser
@@ -25,7 +23,6 @@ DerivedData
 ios/.xcode.env.local
 
 # Android/IntelliJ
-#
 build/
 .idea
 .gradle
@@ -37,7 +34,6 @@ local.properties
 !debug.keystore
 
 # node.js
-#
 node_modules/
 npm-debug.log
 yarn-error.log
@@ -96,11 +92,13 @@ xliffs/
 
 src/generated/
 
-coverage/
-
 # CocoaPods
 /ios/Pods/
 /vendor/bundle/
+
+# jest
+coverage/
+**/__snapshots__/
 
 # Detox
 artifacts/
