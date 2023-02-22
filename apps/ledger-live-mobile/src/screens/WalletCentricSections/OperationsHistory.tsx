@@ -12,6 +12,7 @@ import {
   SubAccount,
 } from "@ledgerhq/types-live";
 import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
+
 import OperationRow from "../../components/OperationRow";
 import SectionHeader from "../../components/SectionHeader";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
