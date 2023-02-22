@@ -102,7 +102,7 @@ module.exports = {
           "**/e2e/**",
           "**/*.test.{ts,tsx}",
           "**/jest.config.js",
-          "**/jest-setup.js",
+          "**/jest.setup.js",
           "**/__test__/**",
         ],
       },
@@ -184,7 +184,6 @@ module.exports = {
       },
     },
     {
-<<<<<<< HEAD
       files: [
         "src/screens/Settings/Debug/**/*",
         "src/screens/FeatureFlagsSettings/**/*",
@@ -205,9 +204,6 @@ module.exports = {
       env: {
         jest: true,
       },
-=======
-      files: ["**/jest.config.js"],
->>>>>>> f2afef9744 (can run tests)
       rules: {
         "@typescript-eslint/no-var-requires": "off",
       },
