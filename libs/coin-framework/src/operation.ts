@@ -210,3 +210,17 @@ export const isConfirmedOperation = (
   operation.blockHeight
     ? account.blockHeight - operation.blockHeight + 1 >= confirmationsNb
     : false;
+
+export const isAddressPoisoningOperation = (
+  operation: Operation,
+  account: AccountLike
+): boolean => {
+  const familiesImpacted = ["ethereum", "evm", "tron"];
+  const isTokenAccount = account.type === "TokenAccount";
+
+  return (
+    isTokenAccount &&
+    familiesImpacted.includes(account.token.parentCurrency.family) &&
+    operation.value.isZero()
+  );
+};
