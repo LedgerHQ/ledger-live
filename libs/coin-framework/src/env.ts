@@ -56,6 +56,11 @@ const envDefinitions: Record<
   string,
   EnvDef<boolean | string | number | string[] | unknown>
 > = {
+  ADDRESS_POISONING_FAMILIES: {
+    def: "ethereum,evm,tron",
+    parser: stringParser,
+    desc: "List of families impacted by the address poisoning attack",
+  },
   ANALYTICS_CONSOLE: {
     def: false,
     parser: boolParser,
