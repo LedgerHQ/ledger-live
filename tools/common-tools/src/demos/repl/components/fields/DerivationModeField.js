@@ -1,8 +1,8 @@
 // @flow
 import React from "react";
 import Select from "react-select";
-import { getAllDerivationModes } from "@ledgerhq/live-common/lib/derivation";
-import type { DerivationMode } from "@ledgerhq/live-common/lib/derivation";
+import { getAllDerivationModes } from "@ledgerhq/coin-framework/derivation";
+import type { DerivationMode } from "@ledgerhq/coin-framework/derivation";
 
 export type DataTypeDerivationMode = {
   type: "derivationMode",
