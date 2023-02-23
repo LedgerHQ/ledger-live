@@ -12,7 +12,7 @@ import camelCase from "lodash/camelCase";
 import type { Operation } from "@ledgerhq/types-live";
 import type { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
 import { BigNumber } from "bignumber.js";
-import { getEnv } from "@ledgerhq/live-common-env/index";
+import { getEnv } from "@ledgerhq/live-common-env";
 import { encodeAddress } from "@polkadot/util-crypto";
 import { getOperationType } from "./common";
 import type { PolkadotValidator } from "../types";

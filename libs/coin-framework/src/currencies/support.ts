@@ -8,7 +8,7 @@ import {
   CryptoCurrencyId,
   FiatCurrency,
 } from "@ledgerhq/types-cryptoassets";
-import { getEnv } from "@ledgerhq/live-common-env/index";
+import { getEnv } from "@ledgerhq/live-common-env";
 
 // set by user side effect to precise which currencies are considered supported (typically by live)
 let userSupportedCurrencies: CryptoCurrency[] = [];

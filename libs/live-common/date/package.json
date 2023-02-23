@@ -19,28 +19,6 @@
   "main": "lib/index.js",
   "module": "lib-es/index.js",
   "types": "lib/index.d.ts",
-  "typesVersions": {
-    "*": {
-      "lib/*": [
-        "lib/*"
-      ],
-      "lib-es/*": [
-        "lib-es/*"
-      ],
-      "*": [
-        "lib/*"
-      ]
-    }
-  },
-  "exports": {
-    "./lib/*": "./lib/*.js",
-    "./lib-es/*": "./lib-es/*.js",
-    "./*": {
-      "require": "./lib/*.js",
-      "default": "./lib-es/*.js"
-    },
-    "./package.json": "./package.json"
-  },
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/types-live": "workspace:^"
