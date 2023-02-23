@@ -8,4 +8,3 @@ export const getAddressByName = async (name: string): Promise<string> => {
   const { data: address } = await network({ method: "GET", url });
   return address;
 };
-

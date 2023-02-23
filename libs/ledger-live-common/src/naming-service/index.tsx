@@ -66,7 +66,7 @@ export function useNamingService(name: string): UseNamingServiceResponse {
     : {
         status,
         address: address as string, // should always
-        name
+        name,
       };
 }
 
