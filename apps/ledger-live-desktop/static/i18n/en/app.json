@@ -823,11 +823,15 @@
         "linkText": "What is redelegation and how long does it take?",
         "solana": {
           "title": "Did you know?",
-          "description": "Ledger offers a lower commission rate than your validator.This process can take up to 4 days."
+          "description": "Ledger offers a lower commission rate than your validator. This process can take up to 4 days."
         },
         "near": {
           "title": "Did you know?",
-          "description": "Ledger offers a lower commission rate than your validator.This process can take up to 65 hours."
+          "description": "Ledger offers a lower commission rate than your validator. This process can take up to 65 hours."
+        },
+        "elrond": {
+          "title": "Did you know?",
+          "description": "Ledger offers a lower commission rate than your validator. This process can take up to 10 days."
         }
       },
       "delegation": {
@@ -849,6 +853,9 @@
         },
         "near": {
           "description": "Stake your NEAR with Ledger by Figment validator. Your coins stay yours, backed by Ledger’s uncompromising security."
+        },
+        "elrond": {
+          "description": "Stake your ELROND with Ledger by Figment validator. Your coins stay yours, backed by Ledger’s uncompromising security."
         }
       }
     }
