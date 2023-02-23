@@ -819,12 +819,44 @@
       "redelegation" : {
         "title" : "Haberiniz olsun...",
         "description" : "Ledger doğrulayıcısı, kullanmakta olduğunuz doğrulayıcıya kıyasla daha düşük bir komisyonla stake eder.",
-        "cta" : "Ledger ile yeniden yetki devredin"
+        "cta" : "Ledger ile yeniden yetki devredin",
+        "linkText" : "What is redelegation and how long does it take?",
+        "solana" : {
+          "title" : "Bunu biliyor muydunuz?",
+          "description" : "Ledger offers a lower commission rate than your validator. This process can take up to 4 days."
+        },
+        "near" : {
+          "title" : "Did you know?",
+          "description" : "Ledger offers a lower commission rate than your validator. This process can take up to 65 hours."
+        },
+        "elrond" : {
+          "title" : "Did you know?",
+          "description" : "Ledger offers a lower commission rate than your validator. This process can take up to 10 days."
+        }
       },
       "delegation" : {
         "title" : "Haberiniz olsun...",
         "description" : "Ledger doğrulayıcısı, {{asset}} varlığınızı %{{commission}} oranında bir komisyonla stake eder.",
-        "cta" : "Ledger ile Stake Edin"
+        "cta" : "Ledger ile Stake Edin",
+        "linkText" : "Daha fazla bilgi",
+        "ethereum" : {
+          "lido" : {
+            "title" : "Kaçırmış olmayın:",
+            "description" : "Lido ile Ethereum stake edin ve her gün ödül kazanın. Kilitleme süresi yok. Minimum yatırma tutarı yok.",
+            "cta" : "Lido ile stake edin"
+          },
+          "kiln" : {
+            "title" : "Sadece HODL ile yetinmeyin. ETH varlıklarınızı artırın",
+            "description" : "32'den fazla ETH'niz mi var? Kiln ile ETH varlıklarınızı güvenle stake ederek pasif ödüller kazanın.",
+            "cta" : "Kiln ile stake edin"
+          }
+        },
+        "near" : {
+          "description" : "Stake your NEAR with Ledger by Figment validator. Your coins stay yours, backed by Ledger’s uncompromising security."
+        },
+        "elrond" : {
+          "description" : "Stake your ELROND with Ledger by Figment validator. Your coins stay yours, backed by Ledger’s uncompromising security."
+        }
       }
     }
   },
@@ -1399,7 +1431,7 @@
         "label" : "Popüler"
       },
       "earn" : {
-        "title" : "Kazan",
+        "title" : "Stake et",
         "description" : "Kriptolarınızı Ledger ile artırın"
       }
     }
@@ -1814,7 +1846,7 @@
       "used" : "Kullanılan",
       "firmwareAvailable" : "Yazılım sürümü eski:",
       "firmwareUpToDate" : "Yazılım sürümü güncel:",
-      "genuine" : "Cihaz orijinal",
+      "genuine" : "Cihazınız orijinal",
       "incomplete" : "Bazı uygulamalar tanınmadı. Lütfen bunları kaldırın ve yeniden yükleyin."
     },
     "applist" : {
@@ -2236,6 +2268,12 @@
     },
     "switchButton" : "{{language}} diline geç",
     "no" : "Şimdilik kalsın"
+  },
+  "deviceRename" : {
+    "title" : "{{ productName }} adını değiştirin",
+    "chooseName" : "Bir ad girin",
+    "placeholder" : "Tony'nin Stax'i",
+    "renamed" : "{{ productName }} adını “{{ name }}” olarak değiştirdiniz "
   },
   "deviceLocalization" : {
     "language" : "Dil",
@@ -3761,6 +3799,9 @@
       "catalogRampServerDesc" : "Farklı alım satım sağlayıcıları arasında geçiş yapın",
       "enablePlatformDevTools" : "Platform geliştirme araçlarını etkinleştirin",
       "enablePlatformDevToolsDesc" : "Platform uygulama geliştirme araçları penceresini açmayı etkinleştirin",
+      "customLockScreen" : "Özel kilitli ekran varlıkları",
+      "customLockScreenDesc" : "Özel kilitli ekran grafik varlıklarında hata ayıklayın",
+      "customLockScreenCTA" : "Başlat",
       "featureFlagsTitle" : "Ledger Live'da kullanılan tanımlı özellik bayrakları",
       "featureFlagsDesc" : "Uygulama yeniden başlatılırsa geçersiz bırakılan değerler sıfırlanacaktır. Sadece geçerli JSON dizeleri kabul edilecektir.",
       "featureFlagsEdit" : "Düzenle",
@@ -3776,7 +3817,9 @@
       "runLocalAppDeleteButton" : "Sil",
       "runLocalAppOpenButton" : "Aç",
       "enableLearnStagingUrl" : "Öğren sayfası staging URL'si",
-      "enableLearnStagingUrlDesc" : "Öğren sayfası için staging URL'sini etkinleştirin."
+      "enableLearnStagingUrlDesc" : "Öğren sayfası için staging URL'sini etkinleştirin.",
+      "openOnboardingAppInstallDebug" : "İlk uygulama kurulumu hata ayıklama ekranını açın",
+      "openOnboardingAppInstallDebugDesc" : "İlk uygulama kurulumunu senkronize etme adımındaki bileşenlerin yer aldığı bir ekranı açın"
     },
     "currencies" : {
       "selectPlaceholder" : "Kripto varlık seç",
@@ -3942,6 +3985,10 @@
       "fullNode" : {
         "title" : "Bitcoin tam düğümü bağla",
         "desc" : "Ledger'ın tarayıcılarını kullanmadan işlemleri senkronize etmek ve göndermek için Bitcoin tam düğümünüzü ayarlayın."
+      },
+      "filterTokenOperationsZeroAmount" : {
+        "title" : "Hide token transactions when value is 0",
+        "desc" : "Hiding token transactions without value can prevent some potential address poisoning attacks on Eth, Polygon, BSC, Tron..."
       }
     }
   },
@@ -5356,7 +5403,7 @@
       "description" : "İmza 30 saniye içinde uygulanmalıdır. Lütfen tekrar deneyin."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Yeterince Enerji mevcut değil. Ağ ücreti 50TRX tutarına ulaşabilir."
+      "title" : "Enerji yetersiz. Ağ ücreti 50 TRX tutarına ulaşabilir."
     },
     "PairingFailed" : {
       "title" : "Eşleştirme başarısız",
@@ -5521,6 +5568,10 @@
       "title" : "Dosyadan görüntü yüklenemedi",
       "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
     },
+    "ImageLoadFromNftError" : {
+      "title" : "NFT'den görüntü yüklenemedi",
+      "description" : "Lütfen başka bir NFT ile tekrar deneyin"
+    },
     "ImageDownloadError" : {
       "title" : "Görüntü indirilemedi",
       "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
@@ -5593,6 +5644,13 @@
       "descriptionWithProductName" : "Öncelikle {{ productName }} cihazınızın kurulumunu yapmanız gerekiyor.\nKurulum sürecinde size yardımcı olacağız.",
       "goToOnboardingButton" : "Cihazımı kur",
       "goToOnboardingButtonWithProductName" : "{{ productName }} cihazımı kur"
+    },
+    "EtherscanAPIError" : {
+      "title" : "İşlemler alınamadı",
+      "description" : "Tarayıcılarla ilgili beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin"
+    },
+    "GasEstimationError" : {
+      "title" : "Tahmini Gas ücreti hesaplanamadı"
     }
   },
   "cryptoOrg" : {
@@ -5626,12 +5684,19 @@
   },
   "customImage" : {
     "title" : "Özel kilitli ekran",
+    "managerCTA" : "Kilit ekranı resmi",
     "steps" : {
       "choose" : {
         "stepLabel" : "Bir görüntü seçin",
         "description" : "Bir görüntü seçip ayarlayın (...)",
         "pickFromNftGallery" : "NFT galerimden seç",
-        "upload" : "Bilgisayarımdan yükle"
+        "myNfts" : "NFT'lerim",
+        "upload" : "Bilgisayarımdan yükle",
+        "chooseNft" : "Bir NFT seçin",
+        "selectNft" : "NFT'yi seç",
+        "previousSelectNft" : "Geri",
+        "nftEmptyStateTitle" : "Gösterilecek NFT yok",
+        "nftEmptyStateDescription" : "Öncelikle cüzdanınıza NFT ekleyin."
       },
       "adjust" : {
         "stepLabel" : "Görüntüyü ayarla",
@@ -5657,5 +5722,37 @@
     },
     "customImageSet" : "Kilitli ekran resmi belirlendi",
     "finishCTA" : "Bitir"
+  },
+  "onboardingAppInstall" : {
+    "restore" : {
+      "title" : "{{deviceName}} cihazındaki uygulamalar yüklensin mi?",
+      "titleNoDeviceName" : "Eski Ledger cihazındaki uygulamalar yüklensin mi?",
+      "subtitle" : "Uygulamaları istediğiniz zaman kurabilir ve kaldırabilirsiniz.",
+      "installCTA" : "Uygulamaları geri yükle",
+      "skipCTA" : "Daha sonra yapacağım"
+    },
+    "default" : {
+      "title" : "{{ productName }}, güvenli blok zinciri işlemleri gerçekleştirmek için uygulamalar kullanmaktadır",
+      "subtitle" : "Varsayılan bir uygulama grubunu indirmenizi öneririz. Daha sonra diğer uygulamaları da indirebilirsiniz.",
+      "installCTA" : "Uygulamaları kur",
+      "skipCTA" : "Daha sonra yapacağım"
+    },
+    "progress" : {
+      "loading" : "Yükleniyor...",
+      "resolving" : "Gereksinimler çözülüyor",
+      "progress" : "Uygulamalar yükleniyor %{{progress}}",
+      "disclaimer" : "Ledger Live üzerinden uygulamaları istediğiniz zaman ekleyip kaldırabilirsiniz."
+    },
+    "cancelled" : {
+      "title" : "Uygulama kurulumu, {{productName}} cihazında iptal edildi",
+      "subtitle" : "{{productName}} cihazı, kripto ve NFT işlemlerinizi onaylamak için blok zinciri uygulamaları gerektirmektedir.",
+      "installCTA" : "Şimdi yükle",
+      "skipCTA" : "Daha sonra yapacağım"
+    },
+    "locked" : {
+      "title" : "{{productName}} cihazınız kilitli",
+      "subtitle" : "{{productName}} cihazınızın kilidini açın ve kurulumu yeniden başlatın.",
+      "installCTA" : "Kurulumu yeniden başlat"
+    }
   }
 }
