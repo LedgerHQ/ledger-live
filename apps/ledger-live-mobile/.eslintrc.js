@@ -167,7 +167,7 @@ module.exports = {
       },
     },
     {
-      files: ["**/jest.config.js", "**/jest-setup.js"],
+      files: ["**/jest.config.js", "**/jest-setup.js", "**/e2e/*.js"],
       env: {
         jest: true,
       },
