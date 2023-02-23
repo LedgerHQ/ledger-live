@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.16.0-next.3
+
+### Patch Changes
+
+- [#2707](https://github.com/LedgerHQ/ledger-live/pull/2707) [`d7b6b3a78d`](https://github.com/LedgerHQ/ledger-live/commit/d7b6b3a78de8bb3a5c72e74586b09fc3f03753d0) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fixed hierarchy issue causing Auth screen to render behind app in Android
+
 ## 3.16.0-next.2
 
 ### Minor Changes
