@@ -96,3 +96,14 @@ export function buildAccountBridge(
     assignToAccountRaw,
   };
 }
+
+export function createBridge(
+  deviceCommunication: DeviceCommunication,
+  network: NetworkRequestCall,
+  cacheFn: LRUCacheFn
+) {
+  return {
+    currencyBridge: buildCurrencyBridge(deviceCommunication, network, cacheFn),
+    accountBridge: buildAccountBridge(deviceCommunication, network, cacheFn),
+  };
+}
