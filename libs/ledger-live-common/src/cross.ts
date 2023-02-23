@@ -6,7 +6,10 @@ import {
   getDerivationScheme,
   asDerivationMode,
 } from "@ledgerhq/coin-framework/derivation";
-import { decodeAccountId, emptyHistoryCache } from "./account";
+import {
+  decodeAccountId,
+  emptyHistoryCache,
+} from "@ledgerhq/coin-framework/account/index";
 import { getCryptoCurrencyById } from "./currencies";
 import type { Account, CryptoCurrencyIds } from "@ledgerhq/types-live";
 

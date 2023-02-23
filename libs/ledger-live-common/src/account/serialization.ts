@@ -16,14 +16,14 @@ import {
   getTokenById,
   findTokenById,
 } from "../currencies";
-import { inferFamilyFromAccountId } from "./index";
 import accountByFamily from "../generated/account";
 import { isAccountEmpty } from "./helpers";
 import type { SwapOperation, SwapOperationRaw } from "../exchange/swap/types";
 import {
   emptyHistoryCache,
   generateHistoryFromOperations,
-} from "@ledgerhq/coin-framework/account/balanceHistoryCache";
+  inferFamilyFromAccountId,
+} from "@ledgerhq/coin-framework/account/index";
 import {
   fromCardanoResourceRaw,
   toCardanoResourceRaw,
