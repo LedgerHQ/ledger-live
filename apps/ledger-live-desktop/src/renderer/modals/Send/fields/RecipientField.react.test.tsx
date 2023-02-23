@@ -1,30 +1,23 @@
+import { InvalidAddress } from "@ledgerhq/errors";
 import {
   findCryptoCurrencyById,
   setSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  act,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-  waitForElementToBeRemoved,
-} from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import BigNumber from "bignumber.js";
 import React from "react";
 import { ThemeProvider } from "styled-components";
 import { TransactionMode } from "~/../../../libs/ledger-live-common/lib/families/ethereum/modules";
-import RecipientField from "./RecipientField";
-import defaultTheme from "../../../styles/theme";
-import { InvalidAddress } from "@ledgerhq/errors";
 import { NamingServiceProvider } from "~/../../../libs/ledger-live-common/lib/naming-service";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import defaultTheme from "../../../styles/theme";
+import RecipientField from "./RecipientField";
 
 const eth = findCryptoCurrencyById("ethereum");
 
 const mockAccount = {
-  type: "Account" as "Account",
+  type: "Account" as const,
   id: "js:2:ethereum:0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3:",
   starred: false,
   used: true,
@@ -71,16 +64,17 @@ const baseMockTransaction = {
   recipient: "",
   useAllAmount: false,
   mode: "send" as TransactionMode,
-  family: "ethereum" as "ethereum",
+  family: "ethereum" as const,
   gasPrice: null,
   maxFeePerGas: new BigNumber("28026227316"),
   maxPriorityFeePerGas: new BigNumber("1000000000"),
   userGasLimit: null,
   estimatedGasLimit: null,
+  feeCustomUnit: null,
   networkInfo: {
-    family: "ethereum" as "ethereum",
+    family: "ethereum" as const,
   },
-  feesStrategy: "medium" as "medium",
+  feesStrategy: "medium" as const,
 };
 
 const changeTransactionFn = jest.fn();
@@ -100,7 +94,6 @@ const setup = (mockStatus = {}, mockTransaction = {}) => {
     <ThemeProvider
       theme={{
         ...defaultTheme,
-        //@ts-ignore
         colors: { palette: { text: { shade100: "" }, background: { default: "", paper: "" } } },
       }}
     >
@@ -124,14 +117,15 @@ describe("RecipientField", () => {
 
   it("should render without problem with minimum config", () => {
     setup();
+    expect(screen.findByTestId("send-recipient-input")).toBeTruthy();
   });
 
   it("should test change input should trigger change transaction", () => {
     setup();
     const input = screen.getByTestId("send-recipient-input");
-    expect(changeTransactionFn).toBeCalledTimes(0);
+    expect(changeTransactionFn).toHaveBeenCalledTimes(0);
     fireEvent.change(input, { target: { value: "mockrecipient" } });
-    expect(changeTransactionFn).toBeCalledTimes(1);
+    expect(changeTransactionFn).toHaveBeenCalledTimes(1);
     expect(changeTransactionFn).toHaveBeenCalledWith({
       ...baseMockTransaction,
       recipient: "mockrecipient",
@@ -140,7 +134,7 @@ describe("RecipientField", () => {
 
   it("should display error if status has error", () => {
     setup({ errors: { recipient: new InvalidAddress() } });
-    screen.getByTestId("input-error");
+    expect(screen.findByTestId("input-error")).toBeTruthy();
   });
 
   it("FF off: should not change recipientName", async () => {

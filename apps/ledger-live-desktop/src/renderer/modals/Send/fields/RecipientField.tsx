@@ -1,8 +1,8 @@
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type { Account } from "@ledgerhq/types-live";
 import React, { memo, useCallback, useEffect, useState } from "react";
-import type { TFunction } from "react-i18next";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { Account } from "@ledgerhq/types-live";
+import { TFunction } from "react-i18next";
 
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import RecipientFieldBase from "./RecipientFieldBase";
@@ -33,7 +33,9 @@ const RecipientField = ({
   resetInitValue,
 }: Props) => {
   const bridge = getAccountBridge(account, null);
-  const [value, setValue] = useState(initValue || transaction.recipientName || transaction.recipient || "");
+  const [value, setValue] = useState(
+    initValue || transaction.recipientName || transaction.recipient || "",
+  );
   const FFNamingService = useFeature("ens");
 
   useEffect(() => {
@@ -49,7 +51,10 @@ const RecipientField = ({
       const invalidRecipient = currency && currency.scheme !== account.currency.scheme;
       setValue(recipient);
       onChangeTransaction(
-        bridge.updateTransaction(transaction, { recipient: invalidRecipient ? "" : recipient, recipientName: undefined }),
+        bridge.updateTransaction(transaction, {
+          recipient: invalidRecipient ? "" : recipient,
+          recipientName: undefined,
+        }),
       );
     },
     [bridge, account, transaction, onChangeTransaction],
@@ -58,7 +63,7 @@ const RecipientField = ({
   if (!status) return null;
 
   return FFNamingService?.enabled ? (
-    <RecipientFieldNamingService 
+    <RecipientFieldNamingService
       t={t}
       label={label}
       autoFocus={autoFocus}
@@ -71,15 +76,15 @@ const RecipientField = ({
       bridge={bridge}
     />
   ) : (
-      <RecipientFieldBase
-        t={t}
-        label={label}
-        autoFocus={autoFocus}
-        status={status}
-        account={account}
-        value={value}
-        onChange={onChange}
-      />
+    <RecipientFieldBase
+      t={t}
+      label={label}
+      autoFocus={autoFocus}
+      status={status}
+      account={account}
+      value={value}
+      onChange={onChange}
+    />
   );
 };
 

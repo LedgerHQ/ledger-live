@@ -1,7 +1,7 @@
-import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type { Account, AccountBridge } from "@ledgerhq/types-live";
 import React, { memo, useEffect, useMemo } from "react";
-import type { TFunction } from "react-i18next";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { Account, AccountBridge } from "@ledgerhq/types-live";
+import { TFunction } from "react-i18next";
 
 import { useNamingService } from "@ledgerhq/live-common/naming-service/index";
 import RecipientFieldBase from "./RecipientFieldBase";
@@ -18,7 +18,7 @@ type Props = {
   initValue?: string;
   resetInitValue?: () => void;
   value: string | string;
-  bridge: AccountBridge<any>;
+  bridge: AccountBridge<Transaction>;
   onChange: (recipient: string, maybeExtra?: Record<string, CryptoCurrency>) => Promise<void>;
 };
 
@@ -35,24 +35,34 @@ const RecipientField = ({
   onChange,
 }: Props) => {
   const namingServiceResponse = useNamingService(value);
-  const hasValidatedName = useMemo(() => namingServiceResponse.status === "loaded", [namingServiceResponse.status]);
+  const hasValidatedName = useMemo(() => namingServiceResponse.status === "loaded", [
+    namingServiceResponse.status,
+  ]);
 
   useEffect(() => {
-    if (hasValidatedName && (transaction.recipient === transaction.recipientName || value !== transaction.recipientName)) {
-      onChangeTransaction(bridge.updateTransaction(transaction, { recipient: (namingServiceResponse as { address: string }).address, recipientName: value }));
+    if (
+      hasValidatedName &&
+      (transaction.recipient === transaction.recipientName || value !== transaction.recipientName)
+    ) {
+      onChangeTransaction(
+        bridge.updateTransaction(transaction, {
+          recipient: (namingServiceResponse as { address: string }).address,
+          recipientName: value,
+        }),
+      );
     }
   }, [bridge, transaction, onChangeTransaction, namingServiceResponse, hasValidatedName, value]);
 
   return (
     <RecipientFieldBase
-    t={t}
-    label={label}
-    autoFocus={autoFocus}
-    status={status}
-    account={account}
-    value={value}
-    onChange={onChange}
-  />
+      t={t}
+      label={label}
+      autoFocus={autoFocus}
+      status={status}
+      account={account}
+      value={value}
+      onChange={onChange}
+    />
   );
 };
 

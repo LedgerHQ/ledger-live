@@ -46,7 +46,7 @@ const BackgroundLayer = styled(Box)`
 
 type Props = {
   placeholder: string,
-  autoFocus: boolean| undefined,
+  autoFocus: boolean | undefined,
   readOnly: boolean | undefined,
   error: RecipientRequired | null,
   warning: Error,

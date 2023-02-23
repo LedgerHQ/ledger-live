@@ -1,8 +1,8 @@
 import React, { memo } from "react";
 import { RecipientRequired } from "@ledgerhq/errors";
-import type { Account } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type { TFunction } from "react-i18next";
+import { Account } from "@ledgerhq/types-live";
+import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { TFunction } from "react-i18next";
 
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
@@ -21,16 +21,7 @@ type Props = {
   onChange: (recipient: string, maybeExtra?: Record<string, CryptoCurrency>) => Promise<void>;
 };
 
-const RecipientFieldBase = ({
-  t,
-  account,
-  autoFocus,
-  status,
-  label,
-  value,
-  onChange,
-}: Props) => {
-
+const RecipientFieldBase = ({ t, account, autoFocus, status, label, value, onChange }: Props) => {
   const { recipient: recipientError } = status.errors;
   const { recipient: recipientWarning } = status.warnings;
 
