@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.16.0-nightly.1
+
+### Patch Changes
+
+- [#2733](https://github.com/LedgerHQ/ledger-live/pull/2733) [`0272d44dff`](https://github.com/LedgerHQ/ledger-live/commit/0272d44dff11e356858f666b962b65025d2029eb) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Remove cycle dependencies
+
 ## 0.16.0-nightly.0
 
 ### Minor Changes

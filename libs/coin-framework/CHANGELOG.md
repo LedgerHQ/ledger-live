@@ -1,5 +1,11 @@
 # @ledgerhq/coin-framework
 
+## 0.1.0-nightly.1
+
+### Minor Changes
+
+- [#2744](https://github.com/LedgerHQ/ledger-live/pull/2744) [`bc3af8a918`](https://github.com/LedgerHQ/ledger-live/commit/bc3af8a91819eaa653f76db6333508111963fdba) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for address poisoning filtering
+
 ## 0.0.2-nightly.0
 
 ### Patch Changes

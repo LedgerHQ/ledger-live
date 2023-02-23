@@ -1,5 +1,26 @@
 # live-mobile
 
+## 3.16.0-nightly.1
+
+### Minor Changes
+
+- [#2744](https://github.com/LedgerHQ/ledger-live/pull/2744) [`bc3af8a918`](https://github.com/LedgerHQ/ledger-live/commit/bc3af8a91819eaa653f76db6333508111963fdba) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for address poisoning filtering
+
+### Patch Changes
+
+- [#2736](https://github.com/LedgerHQ/ledger-live/pull/2736) [`475b854946`](https://github.com/LedgerHQ/ledger-live/commit/475b85494698f94286c97b31bae37ce951480e22) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Fixed detox E2E test after removing autolock-timeout
+
+- [#2740](https://github.com/LedgerHQ/ledger-live/pull/2740) [`fbc7c4c83a`](https://github.com/LedgerHQ/ledger-live/commit/fbc7c4c83a4e84618cf18a4c8d108396fa7cda7a) Thanks [@Justkant](https://github.com/Justkant)! - fix(DeviceConnect): remove onError handler
+
+  The error is already handled by the UI in `DeviceActionModal`
+  Also adds a correct title to this screen and fixes the `SafeAreaView`
+
+- [#2733](https://github.com/LedgerHQ/ledger-live/pull/2733) [`0272d44dff`](https://github.com/LedgerHQ/ledger-live/commit/0272d44dff11e356858f666b962b65025d2029eb) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fix up some warnings at launch
+
+- Updated dependencies [[`bc3af8a918`](https://github.com/LedgerHQ/ledger-live/commit/bc3af8a91819eaa653f76db6333508111963fdba), [`fbc7c4c83a`](https://github.com/LedgerHQ/ledger-live/commit/fbc7c4c83a4e84618cf18a4c8d108396fa7cda7a), [`0272d44dff`](https://github.com/LedgerHQ/ledger-live/commit/0272d44dff11e356858f666b962b65025d2029eb)]:
+  - @ledgerhq/live-common@29.0.0-nightly.1
+  - @ledgerhq/native-ui@0.16.0-nightly.1
+
 ## 3.16.0-nightly.0
 
 ### Minor Changes

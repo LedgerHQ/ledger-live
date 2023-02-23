@@ -1,5 +1,24 @@
 # ledger-live-desktop
 
+## 2.54.0-nightly.1
+
+### Minor Changes
+
+- [#2744](https://github.com/LedgerHQ/ledger-live/pull/2744) [`bc3af8a918`](https://github.com/LedgerHQ/ledger-live/commit/bc3af8a91819eaa653f76db6333508111963fdba) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for address poisoning filtering
+
+### Patch Changes
+
+- [#2741](https://github.com/LedgerHQ/ledger-live/pull/2741) [`77cc2e946d`](https://github.com/LedgerHQ/ledger-live/commit/77cc2e946d8e4ea320a8e794a7c7b4665aa3f66b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - fix flakiness of custom lock screen nft gallery test
+
+- [#2733](https://github.com/LedgerHQ/ledger-live/pull/2733) [`0272d44dff`](https://github.com/LedgerHQ/ledger-live/commit/0272d44dff11e356858f666b962b65025d2029eb) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Refactor useIsMounted hook
+
+- [#2719](https://github.com/LedgerHQ/ledger-live/pull/2719) [`c403cc63de`](https://github.com/LedgerHQ/ledger-live/commit/c403cc63de98607baf9b1d018a0dba954bd0790b) Thanks [@juan-cortes](https://github.com/juan-cortes)! - fix(errors): Fix rendering for errors in device actions
+
+- [#2647](https://github.com/LedgerHQ/ledger-live/pull/2647) [`73887a6923`](https://github.com/LedgerHQ/ledger-live/commit/73887a69234e1c50e41b2219454b7e23e997d867) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Add support for custom lock screen graphical assets on LLD
+
+- Updated dependencies [[`bc3af8a918`](https://github.com/LedgerHQ/ledger-live/commit/bc3af8a91819eaa653f76db6333508111963fdba), [`fbc7c4c83a`](https://github.com/LedgerHQ/ledger-live/commit/fbc7c4c83a4e84618cf18a4c8d108396fa7cda7a)]:
+  - @ledgerhq/live-common@29.0.0-nightly.1
+
 ## 2.54.0-nightly.0
 
 ### Minor Changes

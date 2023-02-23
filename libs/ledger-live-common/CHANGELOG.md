@@ -1,5 +1,22 @@
 # @ledgerhq/live-common
 
+## 29.0.0-nightly.1
+
+### Minor Changes
+
+- [#2744](https://github.com/LedgerHQ/ledger-live/pull/2744) [`bc3af8a918`](https://github.com/LedgerHQ/ledger-live/commit/bc3af8a91819eaa653f76db6333508111963fdba) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for address poisoning filtering
+
+### Patch Changes
+
+- [#2740](https://github.com/LedgerHQ/ledger-live/pull/2740) [`fbc7c4c83a`](https://github.com/LedgerHQ/ledger-live/commit/fbc7c4c83a4e84618cf18a4c8d108396fa7cda7a) Thanks [@Justkant](https://github.com/Justkant)! - fix(DeviceConnect): remove onError handler
+
+  The error is already handled by the UI in `DeviceActionModal`
+  Also adds a correct title to this screen and fixes the `SafeAreaView`
+
+- Updated dependencies [[`bc3af8a918`](https://github.com/LedgerHQ/ledger-live/commit/bc3af8a91819eaa653f76db6333508111963fdba)]:
+  - @ledgerhq/coin-framework@0.1.0-nightly.1
+  - @ledgerhq/coin-polkadot@0.0.2-nightly.1
+
 ## 29.0.0-nightly.0
 
 ### Major Changes
