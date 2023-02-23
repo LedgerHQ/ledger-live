@@ -92,7 +92,6 @@ const Settings = ({ history, location, match }: Props) => {
     },
     [match, history, location, items],
   );
-
   useEffect(() => {
     const url = `${match.url}/${items[activeTabIndex].key}`;
     if (location.pathname === "/settings") {
@@ -100,9 +99,11 @@ const Settings = ({ history, location, match }: Props) => {
       return;
     }
 
-    if (url !== location.pathname) {
+    // Nb In case this gives conflicts, we should depend on path-to-regexp to resolve the path
+    // instead of an exact match. In the meantime this should be enough, allowing for sub navigation.
+    if (!location.pathname.startsWith(url)) {
       const idx = items.findIndex(val => {
-        return `${match.url}/${val.key}` === location.pathname;
+        return location.pathname.startsWith(`${match.url}/${val.key}`);
       });
       setActiveTabIndex(idx > -1 && idx !== activeTabIndex ? idx : 0);
     }
@@ -133,7 +134,7 @@ const Settings = ({ history, location, match }: Props) => {
         />
         <Switch>
           {processedItems.map(i => (
-            <Route key={i.key} path={`${match.url}/${i.key}`} component={i.value} />
+            <Route key={i.key} path={`${match.url}/${i.key}/:a?`} component={i.value} />
           ))}
           <Route component={defaultItem.value} />
         </Switch>

@@ -9,10 +9,10 @@ import { useReceiveNFTsModal } from "../../screens/Nft/NftGallery/ReceiveNFTsMod
 
 const StyledTouchableOpacity = styled(TouchableOpacity)`
   background-color: ${props => props.theme.colors.background.main};
-  margin-bottom: 8;
-  border-radius: 8;
-  height: 160;
-  border-width: 1;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  height: 160px;
+  border-width: 1px;
   border-color: ${props => props.theme.colors.neutral.c60};
   border-style: dashed;
   flex-direction: column;

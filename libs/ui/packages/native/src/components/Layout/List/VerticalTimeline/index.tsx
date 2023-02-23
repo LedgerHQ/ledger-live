@@ -1,7 +1,7 @@
 import React from "react";
 
 import TimelineItem from "./TimelineItem";
-import { Flex } from "../..";
+import Flex from "../../Flex";
 import { BaseStyledProps } from "src/components/styled";
 import { Item, ItemStatus } from "../types";
 

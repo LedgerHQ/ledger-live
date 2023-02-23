@@ -27,6 +27,7 @@ import {
   getOperationConfirmationDisplayableNumber,
   isConfirmedOperation,
   patchOperationWithHash as commonPatchOperationWithHash,
+  isAddressPoisoningOperation,
 } from "@ledgerhq/coin-framework/operation";
 
 export {
@@ -41,6 +42,7 @@ export {
   getOperationConfirmationNumber,
   getOperationConfirmationDisplayableNumber,
   isConfirmedOperation,
+  isAddressPoisoningOperation,
 };
 
 export function patchOperationWithHash(
