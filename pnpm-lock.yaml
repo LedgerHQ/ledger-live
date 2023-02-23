@@ -3066,11 +3066,7 @@ importers:
       react-native-web: 0.17.7_sfoxds7t5ydpegc3knd667wn6m
       regenerator-runtime: 0.13.9
       rimraf: 4.1.2
-<<<<<<< HEAD
       styled-components: 5.3.6_r5v5njrgi2xonksi37jom6g63m
-=======
-      styled-components: 5.3.5_r5v5njrgi2xonksi37jom6g63m
->>>>>>> a7869e9ebf (LText sample test)
       stylelint: 14.10.0
       stylelint-config-recommended: 8.0.0_stylelint@14.10.0
       stylelint-config-styled-components: 0.1.1
@@ -6123,11 +6119,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
-<<<<<<< HEAD
       '@babel/helper-module-imports': 7.18.6
-=======
-      '@babel/helper-module-imports': 7.16.7
->>>>>>> a7869e9ebf (LText sample test)
       '@babel/helper-plugin-utils': 7.20.2
       '@babel/helper-remap-async-to-generator': 7.16.8
     transitivePeerDependencies:
@@ -7425,11 +7417,7 @@ packages:
       '@babel/helper-module-imports': 7.18.6
       '@babel/helper-plugin-utils': 7.20.2
       '@babel/plugin-syntax-jsx': 7.18.6_@babel+core@7.20.12
-<<<<<<< HEAD
       '@babel/types': 7.20.7
-=======
-      '@babel/types': 7.18.10
->>>>>>> a7869e9ebf (LText sample test)
     dev: true
 
   /@babel/plugin-transform-react-jsx/7.17.3_@babel+core@7.9.0:
@@ -8550,11 +8538,6 @@ packages:
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
-<<<<<<< HEAD
-    dev: true
-=======
-    dev: false
->>>>>>> a7869e9ebf (LText sample test)
 
   /@babel/types/7.17.10:
     resolution: {integrity: sha512-9O26jG0mBYfGkUYCYZRnBwbVLd1UZOICEr2Em6InB6jVfsAv1GKgwXHmrSg+WFWDmeKTA6vyTZiN8tCSM5Oo3A==}
@@ -24734,21 +24717,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.6_r5v5njrgi2xonksi37jom6g63m
-    dev: true
-
-  /babel-plugin-styled-components/2.0.7_styled-components@5.3.6:
-    resolution: {integrity: sha512-i7YhvPgVqRKfoQ66toiZ06jPNA3p6ierpfUuEWxNF+fV27Uv5gxBkf8KZLHUCc1nFA9j6+80pYoIpqCeyW3/bA==}
-    peerDependencies:
-      styled-components: '>= 2'
-    dependencies:
-      '@babel/helper-annotate-as-pure': 7.18.6
-      '@babel/helper-module-imports': 7.18.6
-      babel-plugin-syntax-jsx: 6.18.0
-      lodash: 4.17.21
-      picomatch: 2.3.1
       styled-components: 5.3.6_ovpqj5wn7dv5iunpkty63trwiy
-    dev: false
 
   /babel-plugin-syntax-jsx/6.18.0:
     resolution: {integrity: sha512-qrPaCSo9c8RHNRHIotaufGbuOBN8rtdC4QrrFFc43vyWCCz7Kl7GL1PGaXtMGQZUXrkCjNEgxDfmAuAabr/rlw==}
@@ -52767,40 +52736,7 @@ packages:
       shallowequal: 1.1.0
       supports-color: 5.5.0
 
-<<<<<<< HEAD
-  /styled-components/5.3.6_r5v5njrgi2xonksi37jom6g63m:
-=======
-  /styled-components/5.3.5_r5v5njrgi2xonksi37jom6g63m:
-    resolution: {integrity: sha512-ndETJ9RKaaL6q41B69WudeqLzOpY1A/ET/glXkNZ2T7dPjPqpPCXXQjDFYZWwNnE5co0wX+gTCqx9mfxTmSIPg==}
-    engines: {node: '>=10'}
-    requiresBuild: true
-    peerDependencies:
-      react: '>= 16.8.0'
-      react-dom: '>= 16.8.0'
-      react-is: '>= 16.8.0'
-      react-native: '*'
-    peerDependenciesMeta:
-      react-native:
-        optional: true
-    dependencies:
-      '@babel/helper-module-imports': 7.16.7
-      '@babel/traverse': 7.17.10_supports-color@5.5.0
-      '@emotion/is-prop-valid': 1.1.2
-      '@emotion/stylis': 0.8.5
-      '@emotion/unitless': 0.7.5
-      babel-plugin-styled-components: 2.0.7_styled-components@5.3.5
-      css-to-react-native: 3.0.0
-      hoist-non-react-statics: 3.3.2
-      react: 17.0.2
-      react-dom: 17.0.2_react@17.0.2
-      react-is: 17.0.2
-      react-native: 0.68.5_7bkeunqngmazlu32h3v2zcqrja
-      shallowequal: 1.1.0
-      supports-color: 5.5.0
-    dev: true
-
   /styled-components/5.3.6_ovpqj5wn7dv5iunpkty63trwiy:
->>>>>>> a7869e9ebf (LText sample test)
     resolution: {integrity: sha512-hGTZquGAaTqhGWldX7hhfzjnIYBZ0IXQXkCYdvF1Sq3DsUaLx6+NTHC5Jj1ooM2F68sBiVz3lvhfwQs/S3l6qg==}
     engines: {node: '>=10'}
     requiresBuild: true
@@ -52822,19 +52758,38 @@ packages:
       css-to-react-native: 3.0.0
       hoist-non-react-statics: 3.3.2
       react: 17.0.2
-<<<<<<< HEAD
+      react-is: 17.0.2
+      shallowequal: 1.1.0
+      supports-color: 5.5.0
+
+  /styled-components/5.3.6_r5v5njrgi2xonksi37jom6g63m:
+    resolution: {integrity: sha512-hGTZquGAaTqhGWldX7hhfzjnIYBZ0IXQXkCYdvF1Sq3DsUaLx6+NTHC5Jj1ooM2F68sBiVz3lvhfwQs/S3l6qg==}
+    engines: {node: '>=10'}
+    requiresBuild: true
+    peerDependencies:
+      react: '>= 16.8.0'
+      react-dom: '>= 16.8.0'
+      react-is: '>= 16.8.0'
+      react-native: ^0.63.4
+    peerDependenciesMeta:
+      react-native:
+        optional: true
+    dependencies:
+      '@babel/helper-module-imports': 7.18.6
+      '@babel/traverse': 7.20.13_supports-color@5.5.0
+      '@emotion/is-prop-valid': 1.1.2
+      '@emotion/stylis': 0.8.5
+      '@emotion/unitless': 0.7.5
+      babel-plugin-styled-components: 2.0.7_styled-components@5.3.6
+      css-to-react-native: 3.0.0
+      hoist-non-react-statics: 3.3.2
+      react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
       react-is: 17.0.2
       react-native: 0.68.5_7bkeunqngmazlu32h3v2zcqrja
       shallowequal: 1.1.0
       supports-color: 5.5.0
     dev: true
-=======
-      react-is: 17.0.2
-      shallowequal: 1.1.0
-      supports-color: 5.5.0
-    dev: false
->>>>>>> a7869e9ebf (LText sample test)
 
   /styled-system/5.1.5:
     resolution: {integrity: sha512-7VoD0o2R3RKzOzPK0jYrVnS8iJdfkKsQJNiLRDjikOpQVqQHns/DXWaPZOH4tIKkhAT7I6wIsy9FWTWh2X3q+A==}
