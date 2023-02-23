@@ -7,7 +7,6 @@ export const EXISTENTIAL_DEPOSIT = new BigNumber(10000000000);
 export const EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN = new BigNumber(1000000000); // Polkadot recommended Existential Deposit error margin
 export const MAX_NOMINATIONS = 16;
 export const MAX_UNLOCKINGS = 32;
-export const PRELOAD_MAX_AGE = 60 * 1000;
 // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
 export const MAX_AMOUNT_INPUT = 0xffffffffffffffff;
 export const FEES_SAFETY_BUFFER = new BigNumber(1000000000); // Arbitrary buffer for paying fees of next transactions
@@ -152,6 +151,13 @@ export const canNominate = (a: PolkadotAccount): boolean => isController(a);
  * @param {Account} a
  */
 export const isFirstBond = (a: PolkadotAccount): boolean => !isStash(a);
+
+export const isElectionOpen = (): boolean => {
+  const { staking } = getCurrentPolkadotPreloadData();
+  return staking?.electionClosed !== undefined
+    ? !staking?.electionClosed
+    : false;
+};
 
 /**
  * Returns nonce for an account
