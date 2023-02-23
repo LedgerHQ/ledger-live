@@ -2841,6 +2841,7 @@ importers:
       '@types/jest': ^29.2.4
       '@typescript-eslint/eslint-plugin': ^5.46.1
       '@typescript-eslint/parser': ^5.46.1
+      cross-env: ^7.0.3
       eslint: ^7.32.0
       eslint-config-prettier: ^8.3.0
       eslint-config-typescript: ^3.0.0
@@ -2857,6 +2858,7 @@ importers:
       '@types/jest': 29.4.0
       '@typescript-eslint/eslint-plugin': 5.50.0_26f3njul6gntellyj5og7p3oly
       '@typescript-eslint/parser': 5.50.0_jofidmxrjzhj7l6vknpw5ecvfe
+      cross-env: 7.0.3
       eslint: 7.32.0
       eslint-config-prettier: 8.5.0_eslint@7.32.0
       eslint-config-typescript: 3.0.0_bvhhfxrlaenfxnnrz7vkefdxf4
