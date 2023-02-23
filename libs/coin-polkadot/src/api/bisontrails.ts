@@ -340,4 +340,4 @@ export const getOperations =
   (network: NetworkRequestCall) =>
   async (accountId: string, addr: string, startAt = 0) => {
     return await fetchOperationList(network)(accountId, addr, startAt);
-};
+  };
