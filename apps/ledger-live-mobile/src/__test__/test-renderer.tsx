@@ -9,7 +9,7 @@ import { i18n } from "../context/Locale";
 
 import StyleProvider from "../StyleProvider";
 
-const AllTheProviders: React.FC = ({ children }) => {
+const ProvidersWrapper: React.FC = ({ children }) => {
   return (
     <Provider store={store}>
       <StyleProvider selectedPalette="light">
@@ -22,7 +22,7 @@ const AllTheProviders: React.FC = ({ children }) => {
 };
 
 const customRender = (ui: React.ReactElement, options?: RenderOptions) => {
-  return render(ui, { wrapper: AllTheProviders, ...options });
+  return render(ui, { wrapper: ProvidersWrapper, ...options });
 };
 
 // re-export everything

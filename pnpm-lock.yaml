@@ -788,6 +788,7 @@ importers:
       react-native-video: 5.2.0
       react-native-webview: ^11.26.1
       react-redux: ^7.2.9
+      react-test-renderer: ^17.0.2
       redux: ^4.1.2
       redux-actions: 2.6.5
       redux-thunk: 2.3.0
@@ -961,8 +962,8 @@ importers:
       '@babel/runtime': 7.17.9
       '@jest/reporters': 29.3.1_metro@0.67.0
       '@react-native-community/eslint-config': 2.0.0_v6wlzenavrjogo6kc2ozkcrtlu
-      '@testing-library/jest-native': 5.4.2_ondxtwf5lqq5g76dzmsmwamaca
-      '@testing-library/react-native': 12.0.0-rc.0_775pqk6rzmh5bnyrop3smhalru
+      '@testing-library/jest-native': 5.4.2_kh3ko6fgffdhfizf4bwrlce54e
+      '@testing-library/react-native': 12.0.0-rc.0_tiiitllwmb6imdepirs53x5seq
       '@types/color': 3.0.3
       '@types/d3-array': 2.3.0
       '@types/d3-scale': 3.3.2
@@ -1021,6 +1022,7 @@ importers:
       react-native-flipper-performance-plugin: 0.3.1
       react-native-performance: 3.1.2_react-native@0.68.5
       react-native-performance-flipper-reporter: 3.0.0_7sc2hkefyiisiq72s7zgx4ldd4
+      react-test-renderer: 17.0.2_react@17.0.2
       strip-ansi: 6.0.1
       ts-jest: 28.0.8_gexfbuwuvn3hxagcrhsppz3ope
       typescript: 4.9.3
@@ -2798,10 +2800,19 @@ importers:
       camelcase: ^6.2.1
       esbuild: ^0.13.15
       glob: ^7.2.0
+      react: ^17.0.2
+      react-is: ^17.0.2
       react-native-svg: ^12.1.1
       rimraf: ^4.1.2
+      styled-components: ^5.3.6
+      styled-system: ^5.1.5
       tiny-glob: ^0.2.9
       typescript: ^4.8.3
+    dependencies:
+      react: 17.0.2
+      react-is: 17.0.2
+      styled-components: 5.3.6_ovpqj5wn7dv5iunpkty63trwiy
+      styled-system: 5.1.5
     devDependencies:
       '@svgr/core': 5.5.0_@svgr+plugin-svgo@5.5.0
       '@svgr/plugin-svgo': 5.5.0
@@ -2813,7 +2824,7 @@ importers:
       camelcase: 6.3.0
       esbuild: 0.13.15
       glob: 7.2.0
-      react-native-svg: 12.3.0
+      react-native-svg: 12.3.0_react@17.0.2
       rimraf: 4.1.2
       tiny-glob: 0.2.9
       typescript: 4.9.3
@@ -2831,10 +2842,19 @@ importers:
       camelcase: ^6.2.1
       esbuild: ^0.13.15
       glob: ^7.2.0
+      react: ^17.0.2
+      react-is: ^17.0.2
       react-native-svg: ^12.1.1
       rimraf: ^4.1.2
+      styled-components: ^5.3.6
+      styled-system: ^5.1.5
       tiny-glob: ^0.2.9
       typescript: ^4.8.3
+    dependencies:
+      react: 17.0.2
+      react-is: 17.0.2
+      styled-components: 5.3.6_ovpqj5wn7dv5iunpkty63trwiy
+      styled-system: 5.1.5
     devDependencies:
       '@svgr/core': 5.5.0_@svgr+plugin-svgo@5.5.0
       '@svgr/plugin-svgo': 5.5.0
@@ -2847,7 +2867,7 @@ importers:
       camelcase: 6.3.0
       esbuild: 0.13.15
       glob: 7.2.0
-      react-native-svg: 12.3.0
+      react-native-svg: 12.3.0_react@17.0.2
       rimraf: 4.1.2
       tiny-glob: 0.2.9
       typescript: 4.9.3
@@ -2943,7 +2963,7 @@ importers:
       regenerator-runtime: ^0.13.9
       rimraf: ^4.1.2
       rn-range-slider: ^2.1.1
-      styled-components: ^5.3.3
+      styled-components: ^5.3.5
       styled-system: ^5.1.5
       stylelint: ^14.9.1
       stylelint-config-recommended: ^8.0.0
@@ -3046,7 +3066,11 @@ importers:
       react-native-web: 0.17.7_sfoxds7t5ydpegc3knd667wn6m
       regenerator-runtime: 0.13.9
       rimraf: 4.1.2
+<<<<<<< HEAD
       styled-components: 5.3.6_r5v5njrgi2xonksi37jom6g63m
+=======
+      styled-components: 5.3.5_r5v5njrgi2xonksi37jom6g63m
+>>>>>>> a7869e9ebf (LText sample test)
       stylelint: 14.10.0
       stylelint-config-recommended: 8.0.0_stylelint@14.10.0
       stylelint-config-styled-components: 0.1.1
@@ -6099,7 +6123,11 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
+<<<<<<< HEAD
       '@babel/helper-module-imports': 7.18.6
+=======
+      '@babel/helper-module-imports': 7.16.7
+>>>>>>> a7869e9ebf (LText sample test)
       '@babel/helper-plugin-utils': 7.20.2
       '@babel/helper-remap-async-to-generator': 7.16.8
     transitivePeerDependencies:
@@ -7397,7 +7425,11 @@ packages:
       '@babel/helper-module-imports': 7.18.6
       '@babel/helper-plugin-utils': 7.20.2
       '@babel/plugin-syntax-jsx': 7.18.6_@babel+core@7.20.12
+<<<<<<< HEAD
       '@babel/types': 7.20.7
+=======
+      '@babel/types': 7.18.10
+>>>>>>> a7869e9ebf (LText sample test)
     dev: true
 
   /@babel/plugin-transform-react-jsx/7.17.3_@babel+core@7.9.0:
@@ -8518,7 +8550,11 @@ packages:
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
+<<<<<<< HEAD
     dev: true
+=======
+    dev: false
+>>>>>>> a7869e9ebf (LText sample test)
 
   /@babel/types/7.17.10:
     resolution: {integrity: sha512-9O26jG0mBYfGkUYCYZRnBwbVLd1UZOICEr2Em6InB6jVfsAv1GKgwXHmrSg+WFWDmeKTA6vyTZiN8tCSM5Oo3A==}
@@ -20054,7 +20090,7 @@ packages:
       pretty-format: 27.5.1
     dev: true
 
-  /@testing-library/jest-native/5.4.2_ondxtwf5lqq5g76dzmsmwamaca:
+  /@testing-library/jest-native/5.4.2_kh3ko6fgffdhfizf4bwrlce54e:
     resolution: {integrity: sha512-Vo/CE1uvCVH1H8YPoOEXLXVsm+BjzSQTq35+wkri1fr0O5D+A2WZ+m3ni5g6f1OCzNKNGIAHmisBEWkDs1P1mw==}
     peerDependencies:
       react: '>=16.0.0'
@@ -20067,6 +20103,7 @@ packages:
       pretty-format: 29.4.1
       react: 17.0.2
       react-native: 0.68.5_qiqqwmyv63yhnuboofexv3s7x4
+      react-test-renderer: 17.0.2_react@17.0.2
       redent: 3.0.0
     dev: true
 
@@ -20087,7 +20124,7 @@ packages:
       react-test-renderer: 17.0.2_react@17.0.2
     dev: true
 
-  /@testing-library/react-native/12.0.0-rc.0_775pqk6rzmh5bnyrop3smhalru:
+  /@testing-library/react-native/12.0.0-rc.0_tiiitllwmb6imdepirs53x5seq:
     resolution: {integrity: sha512-6znVJ9o32ZSvf4W+1jYHea5XES+Mxw3A58r6Z8cT+qinzUSZZtRDZ7AK7Nk7x7VPHogardGdnCzY6kNiML+TJg==}
     peerDependencies:
       jest: '>=28.0.0'
@@ -20102,6 +20139,7 @@ packages:
       pretty-format: 29.4.1
       react: 17.0.2
       react-native: 0.68.5_qiqqwmyv63yhnuboofexv3s7x4
+      react-test-renderer: 17.0.2_react@17.0.2
     dev: true
 
   /@testing-library/react/12.1.5_k2mvpji5i2ojml6m4ftklg47pa:
@@ -24698,6 +24736,19 @@ packages:
       picomatch: 2.3.1
       styled-components: 5.3.6_r5v5njrgi2xonksi37jom6g63m
     dev: true
+
+  /babel-plugin-styled-components/2.0.7_styled-components@5.3.6:
+    resolution: {integrity: sha512-i7YhvPgVqRKfoQ66toiZ06jPNA3p6ierpfUuEWxNF+fV27Uv5gxBkf8KZLHUCc1nFA9j6+80pYoIpqCeyW3/bA==}
+    peerDependencies:
+      styled-components: '>= 2'
+    dependencies:
+      '@babel/helper-annotate-as-pure': 7.18.6
+      '@babel/helper-module-imports': 7.18.6
+      babel-plugin-syntax-jsx: 6.18.0
+      lodash: 4.17.21
+      picomatch: 2.3.1
+      styled-components: 5.3.6_ovpqj5wn7dv5iunpkty63trwiy
+    dev: false
 
   /babel-plugin-syntax-jsx/6.18.0:
     resolution: {integrity: sha512-qrPaCSo9c8RHNRHIotaufGbuOBN8rtdC4QrrFFc43vyWCCz7Kl7GL1PGaXtMGQZUXrkCjNEgxDfmAuAabr/rlw==}
@@ -48820,16 +48871,6 @@ packages:
       react-native: 0.68.5_qiqqwmyv63yhnuboofexv3s7x4
     dev: false
 
-  /react-native-svg/12.3.0:
-    resolution: {integrity: sha512-ESG1g1j7/WLD7X3XRFTQHVv0r6DpbHNNcdusngAODIxG88wpTWUZkhcM3A2HJTb+BbXTFDamHv7FwtRKWQ/ALg==}
-    peerDependencies:
-      react: '*'
-      react-native: '>=0.50.0'
-    dependencies:
-      css-select: 4.3.0
-      css-tree: 1.1.3
-    dev: true
-
   /react-native-svg/12.3.0_fvyp5h33mdlmlhalc4xfh32q7e:
     resolution: {integrity: sha512-ESG1g1j7/WLD7X3XRFTQHVv0r6DpbHNNcdusngAODIxG88wpTWUZkhcM3A2HJTb+BbXTFDamHv7FwtRKWQ/ALg==}
     peerDependencies:
@@ -48853,6 +48894,17 @@ packages:
       react: 17.0.2
       react-native: 0.68.5_qiqqwmyv63yhnuboofexv3s7x4
     dev: false
+
+  /react-native-svg/12.3.0_react@17.0.2:
+    resolution: {integrity: sha512-ESG1g1j7/WLD7X3XRFTQHVv0r6DpbHNNcdusngAODIxG88wpTWUZkhcM3A2HJTb+BbXTFDamHv7FwtRKWQ/ALg==}
+    peerDependencies:
+      react: '*'
+      react-native: '>=0.50.0'
+    dependencies:
+      css-select: 4.3.0
+      css-tree: 1.1.3
+      react: 17.0.2
+    dev: true
 
   /react-native-svg/12.5.1_ondxtwf5lqq5g76dzmsmwamaca:
     resolution: {integrity: sha512-c374ENsq2MWCfr+7jC7TGwSeOAuC1Dp0osh2pw8PjpYFxmmB/toFIwcnCLz+SgBd6iLJClRhbATealqM05HOGg==}
@@ -52715,7 +52767,40 @@ packages:
       shallowequal: 1.1.0
       supports-color: 5.5.0
 
+<<<<<<< HEAD
   /styled-components/5.3.6_r5v5njrgi2xonksi37jom6g63m:
+=======
+  /styled-components/5.3.5_r5v5njrgi2xonksi37jom6g63m:
+    resolution: {integrity: sha512-ndETJ9RKaaL6q41B69WudeqLzOpY1A/ET/glXkNZ2T7dPjPqpPCXXQjDFYZWwNnE5co0wX+gTCqx9mfxTmSIPg==}
+    engines: {node: '>=10'}
+    requiresBuild: true
+    peerDependencies:
+      react: '>= 16.8.0'
+      react-dom: '>= 16.8.0'
+      react-is: '>= 16.8.0'
+      react-native: '*'
+    peerDependenciesMeta:
+      react-native:
+        optional: true
+    dependencies:
+      '@babel/helper-module-imports': 7.16.7
+      '@babel/traverse': 7.17.10_supports-color@5.5.0
+      '@emotion/is-prop-valid': 1.1.2
+      '@emotion/stylis': 0.8.5
+      '@emotion/unitless': 0.7.5
+      babel-plugin-styled-components: 2.0.7_styled-components@5.3.5
+      css-to-react-native: 3.0.0
+      hoist-non-react-statics: 3.3.2
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
+      react-is: 17.0.2
+      react-native: 0.68.5_7bkeunqngmazlu32h3v2zcqrja
+      shallowequal: 1.1.0
+      supports-color: 5.5.0
+    dev: true
+
+  /styled-components/5.3.6_ovpqj5wn7dv5iunpkty63trwiy:
+>>>>>>> a7869e9ebf (LText sample test)
     resolution: {integrity: sha512-hGTZquGAaTqhGWldX7hhfzjnIYBZ0IXQXkCYdvF1Sq3DsUaLx6+NTHC5Jj1ooM2F68sBiVz3lvhfwQs/S3l6qg==}
     engines: {node: '>=10'}
     requiresBuild: true
@@ -52737,12 +52822,19 @@ packages:
       css-to-react-native: 3.0.0
       hoist-non-react-statics: 3.3.2
       react: 17.0.2
+<<<<<<< HEAD
       react-dom: 17.0.2_react@17.0.2
       react-is: 17.0.2
       react-native: 0.68.5_7bkeunqngmazlu32h3v2zcqrja
       shallowequal: 1.1.0
       supports-color: 5.5.0
     dev: true
+=======
+      react-is: 17.0.2
+      shallowequal: 1.1.0
+      supports-color: 5.5.0
+    dev: false
+>>>>>>> a7869e9ebf (LText sample test)
 
   /styled-system/5.1.5:
     resolution: {integrity: sha512-7VoD0o2R3RKzOzPK0jYrVnS8iJdfkKsQJNiLRDjikOpQVqQHns/DXWaPZOH4tIKkhAT7I6wIsy9FWTWh2X3q+A==}

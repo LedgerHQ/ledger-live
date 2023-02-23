@@ -1,3 +1,5 @@
+import "@testing-library/jest-native/extend-expect";
+
 // Needed for react-reanimated https://docs.swmansion.com/react-native-reanimated/docs/next/guide/testing/
 jest.useFakeTimers();
 jest.runAllTimers();
