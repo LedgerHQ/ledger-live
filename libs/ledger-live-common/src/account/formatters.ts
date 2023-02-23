@@ -1,11 +1,11 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
+import { toAccountRaw } from "./serialization";
 import {
-  toAccountRaw,
   getAccountCurrency,
   getAccountName,
   getAccountUnit,
-} from ".";
+} from "@ledgerhq/coin-framework/account/index";
 import { getOperationAmountNumberWithInternals } from "../operation";
 import { formatCurrencyUnit } from "../currencies";
 import { getOperationAmountNumber } from "../operation";
