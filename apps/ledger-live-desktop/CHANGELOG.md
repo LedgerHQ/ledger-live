@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.54.0-next.4
+
+### Patch Changes
+
+- [#2749](https://github.com/LedgerHQ/ledger-live/pull/2749) [`adec003c19`](https://github.com/LedgerHQ/ledger-live/commit/adec003c1914883b8773b9d541707253e6d38cf8) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix swap drawer left padding
+
 ## 2.54.0-next.3
 
 ### Patch Changes
