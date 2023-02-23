@@ -8,7 +8,7 @@ import { encodeAccountId, inferSubOperations } from "../../account";
 
 import BigNumber from "bignumber.js";
 import Ada from "@cardano-foundation/ledgerjs-hw-app-cardano";
-import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils";
+import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils/address";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { APITransaction } from "./api/api-types";
 import { CardanoAccount, CardanoOutput, PaymentCredential } from "./types";

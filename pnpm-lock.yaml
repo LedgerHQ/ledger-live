@@ -1166,7 +1166,7 @@ importers:
 
   libs/ledger-live-common:
     specifiers:
-      '@cardano-foundation/ledgerjs-hw-app-cardano': ^5.1.0
+      '@cardano-foundation/ledgerjs-hw-app-cardano': ^6.0.0
       '@celo/connect': ^3.0.1
       '@celo/contractkit': ^3.0.1
       '@celo/utils': ^3.0.1
@@ -1350,7 +1350,7 @@ importers:
       xstate: ^4.30.2
       zcash-bitcore-lib: ^0.13.20-rc3
     dependencies:
-      '@cardano-foundation/ledgerjs-hw-app-cardano': 5.1.0
+      '@cardano-foundation/ledgerjs-hw-app-cardano': 6.0.0
       '@celo/connect': 3.0.1
       '@celo/contractkit': 3.0.1
       '@celo/utils': 3.0.1
@@ -8557,14 +8557,12 @@ packages:
       rollup-pluginutils: 2.8.2
     dev: true
 
-  /@cardano-foundation/ledgerjs-hw-app-cardano/5.1.0:
-    resolution: {integrity: sha512-ucuz/XbS/0ZD0Bal/GI/kiTm9jDIl8J+A7ypEqcAcBDGicFsyWmtPotOTwuDovTsiM8+eA/5OGTFX0oRqzxstQ==}
+  /@cardano-foundation/ledgerjs-hw-app-cardano/6.0.0:
+    resolution: {integrity: sha512-aiWlERF5sXMzygE62YH9AXrVePu5ZG+QKGv/ZhvYec35vUhDFJK8qPiLzXmTy6MdoDKSqbYVRPd6jY3KKs5pOg==}
     dependencies:
-      '@ledgerhq/hw-transport': 5.51.1
-      '@types/ledgerhq__hw-transport': 4.21.4
+      '@ledgerhq/hw-transport': 6.28.1
       base-x: 3.0.9
       bech32: 1.1.4
-      blake2: 4.1.1
       int64-buffer: 1.0.1
     dev: false
 
@@ -13831,7 +13829,16 @@ packages:
   /@ledgerhq/devices/7.0.5:
     resolution: {integrity: sha512-2o2zD2Yv1Hgd3+R2aLCvlyT7NxBz2nltawTCPSXaf3+8MDIyZbiJlXi43hLEISRFBG3u3bYwAQuiOisimN9C6Q==}
     dependencies:
-      '@ledgerhq/errors': 6.12.1
+      '@ledgerhq/errors': 6.12.3
+      '@ledgerhq/logs': 6.10.1
+      rxjs: 6.6.7
+      semver: 7.3.8
+    dev: false
+
+  /@ledgerhq/devices/8.0.0:
+    resolution: {integrity: sha512-gSnRT0KPca+LIpaC6D/WZQjOAlSI5uCvK1dmxXtKhODLAj735rX5Z3SnGnLUavRCHNbUi44FzgvloF5BKTkh7A==}
+    dependencies:
+      '@ledgerhq/errors': 6.12.3
       '@ledgerhq/logs': 6.10.1
       rxjs: 6.6.7
       semver: 7.3.8
@@ -13858,6 +13865,10 @@ packages:
 
   /@ledgerhq/errors/6.12.1:
     resolution: {integrity: sha512-2qeUSUCpQbMhV9eLJDLI8wycFwTcWszP8g3cJycBt9Jf1VczC5MRERwAQv5AYhPa4rcy+jLKBOVZYxc35r5l7g==}
+    dev: false
+
+  /@ledgerhq/errors/6.12.3:
+    resolution: {integrity: sha512-djiMSgB/7hnK3aLR/c5ZMMivxjcI7o2+y3VKcsZZpydPoVf9+FXqeJPRfOwmJ0JxbQ//LinUfWpIfHew8LkaVw==}
     dev: false
 
   /@ledgerhq/hw-app-eth/5.11.0:
@@ -13907,6 +13918,14 @@ packages:
     dependencies:
       '@ledgerhq/devices': 7.0.5
       '@ledgerhq/errors': 6.12.1
+      events: 3.3.0
+    dev: false
+
+  /@ledgerhq/hw-transport/6.28.1:
+    resolution: {integrity: sha512-RaZe+abn0zBIz82cE9tp7Y7aZkHWWbEaE2yJpfxT8AhFz3fx+BU0kLYzuRN9fmA7vKueNJ1MTVUCY+Ex9/CHSQ==}
+    dependencies:
+      '@ledgerhq/devices': 8.0.0
+      '@ledgerhq/errors': 6.12.3
       events: 3.3.0
     dev: false
 
@@ -14693,16 +14712,11 @@ packages:
       webpack-dev-server: 4.9.3_webpack@5.72.1
     dev: false
 
-  /@polkadot/keyring/10.3.1_5aiqcisuhlfhaktqmynzmrayma:
+  /@polkadot/keyring/10.3.1:
     resolution: {integrity: sha512-xBkUtyQ766NVS1ccSYbQssWpxAhSf0uwkw9Amj8TFhu++pnZcVm+EmM2VczWqgOkmWepO7MGRjEXeOIw1YUGiw==}
     engines: {node: '>=14.0.0'}
-    peerDependencies:
-      '@polkadot/util': 10.3.1
-      '@polkadot/util-crypto': 10.3.1
     dependencies:
       '@babel/runtime': 7.20.13
-      '@polkadot/util': 10.3.1
-      '@polkadot/util-crypto': 10.3.1_@polkadot+util@10.3.1
     dev: false
 
   /@polkadot/networks/10.3.1:
@@ -14723,7 +14737,7 @@ packages:
       styled-components: '*'
     dependencies:
       '@babel/runtime': 7.20.13
-      '@polkadot/keyring': 10.3.1_5aiqcisuhlfhaktqmynzmrayma
+      '@polkadot/keyring': 10.3.1
       '@polkadot/ui-settings': 2.11.1
       '@polkadot/ui-shared': 2.11.1_5aiqcisuhlfhaktqmynzmrayma
       '@polkadot/util': 10.3.1
@@ -14798,7 +14812,7 @@ packages:
     engines: {node: '>=14.0.0'}
     dependencies:
       '@babel/runtime': 7.20.13
-      '@polkadot/keyring': 10.3.1_5aiqcisuhlfhaktqmynzmrayma
+      '@polkadot/keyring': 10.3.1
       '@polkadot/types-augment': 9.8.1
       '@polkadot/types-codec': 9.8.1
       '@polkadot/types-create': 9.8.1
@@ -20259,12 +20273,6 @@ packages:
     dependencies:
       '@types/node': 18.11.18
 
-  /@types/ledgerhq__hw-transport/4.21.4:
-    resolution: {integrity: sha512-vep+6yZnGv6owAthIY0w3f72w4dJIb4+yE5PCHveInTlZE9wukvU6Wc5Eig0OUUxcdhTazzeZx1xUaNVLqyQSg==}
-    dependencies:
-      '@types/node': 18.11.18
-    dev: false
-
   /@types/libsodium-wrappers/0.7.9:
     resolution: {integrity: sha512-LisgKLlYQk19baQwjkBZZXdJL0KbeTpdEnrAfz5hQACbklCY0gVFnsKUyjfNWF1UQsCSjw93Sj5jSbiO8RPfdw==}
     dev: false
@@ -25042,14 +25050,6 @@ packages:
       readable-stream: 3.6.0
     dev: false
 
-  /blake2/4.1.1:
-    resolution: {integrity: sha512-HUmkY0MUDUVgejJVNrpNKAva8C4IWD/Rd862sdexoSibu86b6iu0gO0/RjovO2lM5+w6JqjIEmkuAgGhfHlnJw==}
-    engines: {node: '>= 8.0.0'}
-    requiresBuild: true
-    dependencies:
-      nan: 2.15.0
-    dev: false
-
   /blake2b-wasm/1.1.7:
     resolution: {integrity: sha512-oFIHvXhlz/DUgF0kq5B1CqxIDjIJwh9iDeUUGQUcvgiGz7Wdw03McEO7CfLBy7QKGdsydcMCgO9jFNBAFCtFcA==}
     dependencies:
@@ -25810,7 +25810,7 @@ packages:
       mkdirp: 0.5.6
       move-concurrently: 1.0.1
       p-map: 3.0.0
-      promise-inflight: 1.0.1
+      promise-inflight: 1.0.1_bluebird@3.7.2
       rimraf: 2.7.1
       ssri: 7.1.1
       unique-filename: 1.1.1
@@ -46856,6 +46856,7 @@ packages:
     peerDependenciesMeta:
       bluebird:
         optional: true
+    dev: true
 
   /promise-inflight/1.0.1_bluebird@3.7.2:
     resolution: {integrity: sha512-6zWPyEOFaQBJYcGMHBKTKJ3u6TBsnMFOIZSa6ce1e/ZrrsOlnHRHbabMjLiBYKp+n44X9eUI6VUPaukCXHuG4g==}
