@@ -8,9 +8,9 @@ import {
   hasExternalController,
   hasExternalStash,
   hasPendingOperationType,
+  isElectionOpen,
   isStash,
 } from "@ledgerhq/live-common/families/polkadot/logic";
-import { getCurrentPolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/preload";
 import { Icons } from "@ledgerhq/native-ui";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import BondIcon from "../../icons/LinkIcon";
@@ -104,12 +104,10 @@ const getSecondaryActions = (args: {
 }): ActionButtonEvent[] | null => {
   const { account } = args;
   if (!account.polkadotResources) return null;
-  const { staking } = getCurrentPolkadotPreloadData();
   const accountId = account.id;
   const { unlockedBalance, lockedBalance, nominations } =
     account.polkadotResources || {};
-  const electionOpen =
-    staking?.electionClosed !== undefined ? !staking?.electionClosed : false;
+  const electionOpen = isElectionOpen();
   const hasUnlockedBalance = unlockedBalance && unlockedBalance.gt(0);
   const hasBondedBalance = lockedBalance && lockedBalance.gt(0);
   const hasPendingBondOperation = hasPendingOperationType(account, "BOND");
