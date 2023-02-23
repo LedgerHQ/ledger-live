@@ -3514,6 +3514,7 @@ importers:
     specifiers:
       '@babel/plugin-proposal-class-properties': ^7.13.0
       '@babel/plugin-syntax-import-meta': ^7.10.1
+      '@ledgerhq/coin-framework': workspace:^
       '@ledgerhq/cryptoassets': workspace:^
       '@ledgerhq/devices': workspace:^
       '@ledgerhq/errors': workspace:^
@@ -3554,6 +3555,7 @@ importers:
       styled-components: ^4.4.0
       webpack: '4.42'
     dependencies:
+      '@ledgerhq/coin-framework': link:../../libs/coin-framework
       '@ledgerhq/cryptoassets': link:../../libs/ledgerjs/packages/cryptoassets
       '@ledgerhq/devices': link:../../libs/ledgerjs/packages/devices
       '@ledgerhq/errors': link:../../libs/ledgerjs/packages/errors
