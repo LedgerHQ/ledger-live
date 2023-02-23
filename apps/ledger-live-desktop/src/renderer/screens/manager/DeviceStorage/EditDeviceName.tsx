@@ -30,7 +30,7 @@ const EditDeviceName: React.FC<Props> = ({ onClose, deviceName, onSetName, devic
   const [completed, setCompleted] = useState<boolean>(false);
   const [error, setError] = useState<Error | undefined | null>(null);
   const [running, setRunning] = useState(false);
-  const disableButton = running || (!running && deviceName === name);
+  const disableButton = running || (!running && (deviceName === name || error));
 
   const onCloseDrawer = useCallback(() => {
     onClose();
