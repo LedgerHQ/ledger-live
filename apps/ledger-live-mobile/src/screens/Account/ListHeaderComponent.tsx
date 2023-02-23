@@ -23,6 +23,7 @@ import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { LayoutChangeEvent } from "react-native";
 import { getEnv } from "@ledgerhq/live-common/env";
+import { isEditableOperation } from "@ledgerhq/live-common/operation";
 
 import Header from "./Header";
 import AccountGraphCard from "../../components/AccountGraphCard";
@@ -137,9 +138,6 @@ export function getListHeaderComponents({
     operation => operation.type === "OUT" || operation.type === "NFT_OUT",
   );
 
-  const shouldRenderEditTxModal =
-    mainAccount.currency.family === "ethereum" &&
-    latestOperation?.blockHeight === null;
   latestOperation?.date.getTime() <
     new Date().getTime() - getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
 
@@ -166,7 +164,7 @@ export function getListHeaderComponents({
           <AccountSubHeader />
         </Box>
       ),
-      shouldRenderEditTxModal ? (
+      isEditableOperation(account, latestOperation) ? (
         <SectionContainer px={6}>
           <SideImageCard
             title={t("editTransaction.stuckTx")}
