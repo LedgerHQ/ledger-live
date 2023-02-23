@@ -1,9 +1,11 @@
-import React, { memo, useEffect, useMemo } from "react";
+import React, { memo, useCallback, useEffect, useMemo } from "react";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { TFunction } from "react-i18next";
 
 import { useNamingService } from "@ledgerhq/live-common/naming-service/index";
+import { NamingServiceResponseLoaded, UseNamingServiceResponse } from "@ledgerhq/live-common/naming-service/types"
+
 import RecipientFieldBase from "./RecipientFieldBase";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
@@ -35,18 +37,18 @@ const RecipientField = ({
   onChange,
 }: Props) => {
   const namingServiceResponse = useNamingService(value);
-  const hasValidatedName = useMemo(() => namingServiceResponse.status === "loaded", [
-    namingServiceResponse.status,
-  ]);
+  const hasValidatedName = useCallback(
+    (nsResponse: UseNamingServiceResponse): nsResponse is NamingServiceResponseLoaded => nsResponse.status === "loaded",
+    [],
+  );
 
   useEffect(() => {
-    if (
-      hasValidatedName &&
-      (transaction.recipient === transaction.recipientName || value !== transaction.recipientName)
-    ) {
+    const isInitValueDifferent = value !== transaction.recipientName;
+    const isRecipientUpdated = transaction.recipient === transaction.recipientName;
+    if (hasValidatedName(namingServiceResponse) && (isRecipientUpdated || isInitValueDifferent)) {
       onChangeTransaction(
         bridge.updateTransaction(transaction, {
-          recipient: (namingServiceResponse as { address: string }).address,
+          recipient: namingServiceResponse.address,
           recipientName: value,
         }),
       );

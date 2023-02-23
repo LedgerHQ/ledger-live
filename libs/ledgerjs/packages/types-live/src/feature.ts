@@ -52,7 +52,7 @@ export type FeatureId =
   | "objkt"
   | "stakeAccountBanner"
   | "newsfeedPage"
-  | "ens";
+  | "trustedNameInputResolution";
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */

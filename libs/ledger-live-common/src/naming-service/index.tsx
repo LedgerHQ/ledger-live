@@ -5,13 +5,14 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { isNameValid, isOutdated } from "./logic";
 import { getAddressByName } from "./api";
+import { isNameValid, isOutdated } from "./logic";
 import {
   NamingServiceContextAPI,
   NamingServiceContextState,
   NamingServiceContextType,
   NamingServiceStatus,
+  UseNamingServiceResponse,
 } from "./types";
 
 export const VALID_DOMAINS = [".eth"];
@@ -47,10 +48,6 @@ export const useNamingServiceAPI = (
     return { status: "queued" };
   }
 };
-
-type UseNamingServiceResponse =
-  | { status: Exclude<NamingServiceStatus["status"], "loaded"> }
-  | { status: "loaded"; address: string; name: string };
 
 export function useNamingService(name: string): UseNamingServiceResponse {
   const data = useNamingServiceAPI(name);

@@ -36,7 +36,7 @@ const RecipientField = ({
   const [value, setValue] = useState(
     initValue || transaction.recipientName || transaction.recipient || "",
   );
-  const FFNamingService = useFeature("ens");
+  const FFNamingService = useFeature("trustedNameInputResolution");
 
   useEffect(() => {
     if (value !== "" && value !== transaction.recipient) {

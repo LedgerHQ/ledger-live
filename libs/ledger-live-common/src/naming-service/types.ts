@@ -15,3 +15,13 @@ export type NamingServiceContextAPI = {
 
 export type NamingServiceContextType = NamingServiceContextState &
   NamingServiceContextAPI;
+
+export type NamingServiceResponseLoaded = {
+  status: "loaded";
+  address: string;
+  name: string;
+};
+
+export type UseNamingServiceResponse =
+  | { status: Exclude<NamingServiceStatus["status"], "loaded"> }
+  | NamingServiceResponseLoaded;

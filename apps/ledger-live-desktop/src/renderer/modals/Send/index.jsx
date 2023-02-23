@@ -4,6 +4,7 @@ import React, { useCallback, useState } from "react";
 import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
 import type { StepId } from "./types";
+import { NamingServiceProvider } from "@ledgerhq/live-common/naming-service/index";
 
 type Props = {
   stepId: StepId,
@@ -24,22 +25,24 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
   const handleStepChange = useCallback(stepId => setStep(stepId), []);
   const isModalLocked = MODAL_LOCKED[stepId];
   return (
-    <Modal
-      name="MODAL_SEND"
-      centered
-      refocusWhenChange={stepId}
-      onHide={handleReset}
-      onClose={onClose}
-      preventBackdropClick={isModalLocked}
-      render={({ onClose, data }) => (
-        <Body
-          stepId={stepId}
-          onClose={onClose}
-          onChangeStepId={handleStepChange}
-          params={data || {}}
-        />
-      )}
-    />
+    <NamingServiceProvider>
+      <Modal
+        name="MODAL_SEND"
+        centered
+        refocusWhenChange={stepId}
+        onHide={handleReset}
+        onClose={onClose}
+        preventBackdropClick={isModalLocked}
+        render={({ onClose, data }) => (
+          <Body
+            stepId={stepId}
+            onClose={onClose}
+            onChangeStepId={handleStepChange}
+            params={data || {}}
+          />
+        )}
+      />
+    </NamingServiceProvider>
   );
 };
 
