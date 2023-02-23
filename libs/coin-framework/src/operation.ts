@@ -210,10 +210,7 @@ export const isAddressPoisoningOperation = (
   );
 };
 
-export const isEditableOperation = (
-  account: AccountLike,
-  operation: Operation
-): boolean => {
+export const isEditableOperation = (account: AccountLike, operation: Operation): boolean => {
   let isEthFamily = false;
   if (account.type === "Account") {
     isEthFamily = account.currency.family === "ethereum";
