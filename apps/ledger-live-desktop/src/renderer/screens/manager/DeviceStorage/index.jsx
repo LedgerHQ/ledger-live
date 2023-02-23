@@ -33,8 +33,6 @@ import nanoXDark from "~/renderer/images/devices/nanoX_dark.png";
 import stax from "~/renderer/images/devices/stax.png";
 import staxDark from "~/renderer/images/devices/stax_dark.png";
 import blue from "~/renderer/images/devices/blue.png";
-import stax from "~/renderer/images/devices/stax.png";
-import staxDark from "~/renderer/images/devices/stax_dark.png";
 
 import CustomImageManagerButton from "./CustomImageManagerButton";
 import DeviceLanguage from "./DeviceLanguage";
