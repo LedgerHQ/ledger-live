@@ -107,7 +107,7 @@ const envDefinitions: Record<
     desc: "Node endpoint for avalanche",
   },
   API_AVALANCHE_EXPLORER_API: {
-    def: "https://explorerapi.avax.network",
+    def: "https://avax-explorer.coin.ledger.com",
     parser: stringParser,
     desc: "Explorer API for avalanche",
   },
