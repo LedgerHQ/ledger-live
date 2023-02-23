@@ -70,3 +70,6 @@ jobs:
           SEED: ${{ secrets.SEED7 }}
           BOT_ENVIRONMENT: testing
           BOT_FILTER_FAMILY: ${{github.event.inputs.family}}
+          ALLURE_PROJECT: "nitrogen"
+          ALLURE_LOGIN: ${{secrets.ALLURE_LOGIN}}
+          ALLURE_PASSWORD: ${{secrets.ALLURE_PASSWORD}}

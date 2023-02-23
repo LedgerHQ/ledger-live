@@ -25,6 +25,12 @@ inputs:
   BOT_ENVIRONMENT:
     description: "defines an environment to be included in the report.json"
     required: false
+  ALLURE_LOGIN:
+    description: "allure login"
+    required: true
+  ALLURE_PASSWORD:
+    description: "allure password"
+    required: true
 
 runs:
   using: "composite"
@@ -54,6 +60,7 @@ runs:
     - name: bot logic
       env:
         SEED: ${{ inputs.SEED }}
+        BOT_ALLURE_FOLDER: allure
         BOT_REPORT_FOLDER: botreport
         VERBOSE_FILE: botreport/logs.txt
         GITHUB_RUN_ID: ${{ github.run_id }}
@@ -99,3 +106,11 @@ runs:
       with:
         name: report
         path: libs/ledger-live-common/report.json
+    - name: Send Results and Generate Allure Report - Ledger-bot
+      uses: ./tools/actions/composites/upload-allure-report
+      if: always()
+      with:
+        platform: ${{ inputs.ALLURE_PROJECT }}
+        login: ${{ inputs.ALLURE_LOGIN }}
+        password: ${{ inputs.ALLURE_PASSWORD }}
+        path: libs/ledger-live-common/allure

@@ -70,3 +70,6 @@ jobs:
           SEED: ${{ secrets.SEED1 }}
           BOT_ENVIRONMENT: testing
           BOT_FILTER_FAMILY: ${{inputs.family}}
+          ALLURE_PROJECT: "mere-denis"
+          ALLURE_LOGIN: ${{secrets.ALLURE_LOGIN}}
+          ALLURE_PASSWORD: ${{secrets.ALLURE_PASSWORD}}

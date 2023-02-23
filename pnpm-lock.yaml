@@ -1245,6 +1245,7 @@ importers:
       '@zondax/ledger-filecoin': ^0.11.2
       algo-msgpack-with-bigint: ^2.1.1
       algosdk: 1.13.0
+      allure-js-commons: 2.0.0-beta.19
       async: ^3.2.3
       axios: 0.26.1
       axios-retry: ^3.2.4
@@ -1413,6 +1414,7 @@ importers:
       '@zondax/ledger-filecoin': 0.11.2
       algo-msgpack-with-bigint: 2.1.1
       algosdk: 1.13.0
+      allure-js-commons: 2.0.0-beta.19
       async: 3.2.3
       axios: 0.26.1
       axios-retry: 3.2.5
@@ -22960,6 +22962,14 @@ packages:
       object-assign: 4.1.1
       uuid: 3.4.0
     dev: true
+
+  /allure-js-commons/2.0.0-beta.19:
+    resolution: {integrity: sha512-sgt7TnU7s8QIzEOmLFO0T5ih4W2YbLrcsL1ElO7WN/dPzIww4G1BBJQDK98VCS+cG5qIljBYRuJ+rtzKWgtM8A==}
+    dependencies:
+      mkdirp: 1.0.4
+      properties: 1.2.1
+      uuid: 8.3.2
+    dev: false
 
   /allure-js-commons/2.0.0-beta.20:
     resolution: {integrity: sha512-ZUSa75s1LEhoIOTgNJhB463t+GURPKkB92HNqSWvFImxU0SojdT7JbgaQ4Ku+qhY5VFMsWmZJt6TAYo5t7ZR4A==}
@@ -46956,7 +46966,6 @@ packages:
   /properties/1.2.1:
     resolution: {integrity: sha512-qYNxyMj1JeW54i/EWEFsM1cVwxJbtgPp8+0Wg9XjNaK6VE/c4oRi6PNu5p7w1mNXEIQIjV5Wwn8v8Gz82/QzdQ==}
     engines: {node: '>=0.10'}
-    dev: true
 
   /property-information/5.6.0:
     resolution: {integrity: sha512-YUHSPk+A30YPv+0Qf8i9Mbfe/C0hdPXk1s1jPVToV8pk8BQtpw10ct89Eo7OWkutrwqvT0eicAxlOg3dOAu8JA==}

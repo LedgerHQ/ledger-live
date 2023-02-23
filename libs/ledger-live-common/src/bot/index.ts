@@ -37,6 +37,7 @@ import { Account } from "@ledgerhq/types-live";
 import { getContext } from "@ledgerhq/coin-framework/bot/bot-test-context";
 import { Transaction } from "../generated/types";
 import { sha256 } from "../crypto";
+import { createAllureReport } from "./allure";
 
 type Arg = Partial<{
   currency: string;
@@ -747,7 +748,7 @@ export async function bot({
     "\n> What is the bot and how does it work? [Everything is documented here!](https://github.com/LedgerHQ/ledger-live/wiki/LLC:bot)\n\n"
   );
 
-  const { BOT_REPORT_FOLDER, BOT_ENVIRONMENT } = process.env;
+  const { BOT_REPORT_FOLDER, BOT_ALLURE_FOLDER, BOT_ENVIRONMENT } = process.env;
 
   let complementary = "";
   const { GITHUB_REF_NAME, GITHUB_ACTOR } = process.env;
@@ -798,6 +799,14 @@ export async function bot({
         "utf-8"
       ),
     ]);
+  }
+
+  if (BOT_ALLURE_FOLDER) {
+    createAllureReport({
+      folder: BOT_ALLURE_FOLDER,
+      results,
+      environment: BOT_ENVIRONMENT,
+    });
   }
 
   if (botHaveFailed) {

@@ -61,3 +61,6 @@ jobs:
           SLACK_ICON_EMOJI: ":bot-seed3:"
           SEED: ${{ secrets.SEED3 }}
           BOT_ENVIRONMENT: production
+          ALLURE_PROJECT: "silicium"
+          ALLURE_LOGIN: ${{secrets.ALLURE_LOGIN}}
+          ALLURE_PASSWORD: ${{secrets.ALLURE_PASSWORD}}
