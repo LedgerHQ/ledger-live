@@ -10,7 +10,7 @@ POLKADOT.JS API VERSION 2.5.1
 import uniq from "lodash/uniq";
 import compact from "lodash/compact";
 import { BigNumber } from "bignumber.js";
-import { getEnv } from "@ledgerhq/live-common-env/index";
+import { getEnv } from "@ledgerhq/live-common-env";
 //@ts-expect-error
 import { WsProvider, ApiPromise } from "@polkadot/api";
 import { u8aToString } from "@polkadot/util";

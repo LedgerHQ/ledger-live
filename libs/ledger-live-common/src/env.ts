@@ -1,1 +1,1 @@
-export * from "@ledgerhq/live-common-env/index";
+export * from "@ledgerhq/live-common-env";
