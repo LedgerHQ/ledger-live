@@ -14,7 +14,6 @@ export function useIsNewsfeedAvailable() {
     newsfeedPageFeature?.params?.cryptopanicApiKey &&
     cryptopanicAvailableRegions.includes(
       locale as CryptopanicAvailableRegionsType,
-    ) &&
-    newsfeedPageFeature?.params?.whitelistedLocales?.includes(locale)
+    )
   );
 }
