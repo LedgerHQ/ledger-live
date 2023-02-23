@@ -20,6 +20,7 @@ const targets = [
   "walletApiAdapter.ts",
 ];
 
+// Coins using coin-framework
 const familiesWPackage = ["polkadot"];
 
 cd(path.join(__dirname, "..", "src"));
@@ -58,30 +59,9 @@ async function genTarget(targets, families) {
       }
     }
 
-    // In case of cli-transaction, add special import
-    if (target === "cli-transaction.ts") {
-      imports += `import { makeLRUCache } from "../cache";\n`;
-      imports += `import network from "../network";\n`;
-    }
-
-    // Behavior for coin family with their own package
-    const libsDir = path.join(__dirname, "../..");
-    for (const family of familiesWPackage) {
-      // We still use bridge/js file inside "families" directory
-      if (
-        target !== "bridge/js.ts" &&
-        target !== "cli-transaction.ts" &&
-        fs.existsSync(path.join(libsDir, `coin-${family}/src`, target))
-      ) {
-        imports += `import ${family} from "@ledgerhq/coin-${family}/${imprtTarget}";\n`;
-        exprts += `\n  ${family},`;
-      }
-
-      if (target === "cli-transaction.ts") {
-        imports += `import ${family}CreateCliTools from "@ledgerhq/coin-${family}/${imprtTarget}";\n`;
-        exprts += `\n  ${family}: ${family}CreateCliTools(network, makeLRUCache),`;
-      }
-    }
+    const { upImports, upExports } = genCoinFrameworkTarget(target);
+    imports += upImports;
+    exprts += upExports;
 
     exprts += `\n};\n`;
 
@@ -90,6 +70,55 @@ ${exprts}`;
 
     await fs.promises.writeFile(outpath, str, "utf8");
   });
+}
+
+function genCoinFrameworkTarget(targetFile) {
+  const targetName = targetFile.replace(".ts", "");
+  let imports = "";
+  let exprts = "";
+
+  // In case of cli-transaction, add special import
+  if (targetFile === "cli-transaction.ts") {
+    imports += `import { makeLRUCache } from "../cache";\n`;
+    imports += `import network from "../network";\n`;
+  }
+  if (targetFile === "bridge/js.ts") {
+    imports += `import { makeLRUCache } from "../../cache";\n`;
+    imports += `import network from "../../network";\n`;
+    imports += `import { withDevice } from "../../hw/deviceAccess";\n`;
+  }
+
+  // Behavior for coin family with their own package
+  const libsDir = path.join(__dirname, "../..");
+  for (const family of familiesWPackage) {
+    const targetImportPath = `@ledgerhq/coin-${family}/${targetName}`;
+
+    // We still use bridge/js file inside "families" directory
+    if (
+      targetFile !== "bridge/js.ts" &&
+      targetFile !== "cli-transaction.ts" &&
+      fs.existsSync(path.join(libsDir, `coin-${family}/src`, targetFile))
+    ) {
+      imports += `import ${family} from "${targetImportPath}";\n`;
+      exprts += `\n  ${family},`;
+    }
+
+    if (targetFile === "bridge/js.ts") {
+      const bridgeFn = family + "CreateBridge";
+      imports += `import { createBridge as ${bridgeFn} } from "${targetImportPath}";\n`;
+      exprts += `\n  ${family}: ${bridgeFn}(withDevice, network, makeLRUCache),`;
+    }
+    if (targetFile === "cli-transaction.ts") {
+      const cliToolsFn = family + "CreateCliTools";
+      imports += `import ${cliToolsFn} from "${targetImportPath}";\n`;
+      exprts += `\n  ${family}: ${cliToolsFn}(network, makeLRUCache),`;
+    }
+  }
+
+  return {
+    upImports: imports,
+    upExports: exprts,
+  };
 }
 
 async function getDeviceTransactionConfig(families) {
