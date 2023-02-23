@@ -39,18 +39,21 @@ const DeviceName: React.FC<Props> = ({
 
   const [name, setName] = useState(editSupported ? deviceName : model?.productName);
 
-  const onSuccess = useCallback(() => {
-    track("Page Manager RenamedDevice", { deviceName });
-    onRefreshDeviceInfo();
-  }, [deviceName, onRefreshDeviceInfo]);
+  const onSuccess = useCallback(
+    (deviceName: string) => {
+      track("Page Manager RenamedDevice", { deviceName });
+      setName(deviceName);
+      onRefreshDeviceInfo();
+    },
+    [onRefreshDeviceInfo],
+  );
 
   const openDeviceRename = useCallback(() => {
     setDrawer(EditDeviceName, {
       key: name,
       device,
-      onSetName: setName,
+      onSetName: onSuccess,
       deviceName: name,
-      onSuccess,
     });
     track("Page Manager RenameDeviceEntered");
   }, [device, name, onSuccess]);

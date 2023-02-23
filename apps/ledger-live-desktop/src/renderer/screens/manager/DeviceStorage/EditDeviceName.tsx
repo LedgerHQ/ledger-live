@@ -18,7 +18,6 @@ const MAX_DEVICE_NAME = 20;
 type Props = {
   onClose: () => void;
   deviceName: string;
-  onSuccess: () => void;
   onSetName: (name: string) => void;
   device: Device;
 };
@@ -30,13 +29,12 @@ const EditDeviceName: React.FC<Props> = ({ onClose, deviceName, onSetName, devic
   const [completed, setCompleted] = useState<boolean>(false);
   const [error, setError] = useState<Error | undefined | null>(null);
   const [running, setRunning] = useState(false);
-  const disableButton = running || (!running && (deviceName === name || error));
+  const disableButton = running || (!completed && (deviceName === name || !name.trim() || error));
 
   const onCloseDrawer = useCallback(() => {
     onClose();
     setRunning(false);
-    if (completed) onSetName(name);
-  }, [completed, name, onClose, onSetName]);
+  }, [onClose]);
 
   const onChangeText = useCallback((name: string) => {
     // eslint-disable-next-line no-control-regex
@@ -61,7 +59,8 @@ const EditDeviceName: React.FC<Props> = ({ onClose, deviceName, onSetName, devic
   const onSuccess = useCallback(() => {
     setCompleted(true);
     setRunning(false);
-  }, []);
+    onSetName(name);
+  }, [onSetName, name]);
 
   const remainingCharacters = MAX_DEVICE_NAME - name.length;
 
