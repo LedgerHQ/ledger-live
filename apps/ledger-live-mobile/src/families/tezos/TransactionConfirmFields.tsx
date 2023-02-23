@@ -12,7 +12,7 @@ import {
   getDefaultExplorerView,
   getAddressExplorer,
 } from "@ledgerhq/live-common/explorers";
-import { toLocaleString } from "@ledgerhq/live-common/currencies/BigNumberToLocaleString";
+import { toLocaleString } from "@ledgerhq/live-common/currencies/index";
 import { useSelector } from "react-redux";
 import { DataRow } from "../../components/ValidateOnDeviceDataRow";
 import LText from "../../components/LText";

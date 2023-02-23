@@ -13,7 +13,7 @@ import {
   DailyOperationsSection,
   Operation,
 } from "@ledgerhq/types-live";
-import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/groupOperations";
+import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/index";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 
 import { Trans } from "react-i18next";

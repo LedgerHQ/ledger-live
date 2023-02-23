@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/live-common/explorers";
 import { Account, OperationType } from "@ledgerhq/types-live";
 import { useCeloPreloadData } from "@ledgerhq/live-common/families/celo/react";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { useRoute } from "@react-navigation/native";
 import Section from "../../screens/OperationDetails/Section";

@@ -16,7 +16,7 @@ import {
   isAccountEmpty,
   groupAddAccounts,
 } from "@ledgerhq/live-common/account/index";
-import type { AddAccountSupportLink } from "@ledgerhq/live-common/account/addAccounts";
+import type { AddAccountSupportLink } from "@ledgerhq/live-common/account/index";
 import { createStructuredSelector } from "reselect";
 import uniq from "lodash/uniq";
 import { Trans } from "react-i18next";

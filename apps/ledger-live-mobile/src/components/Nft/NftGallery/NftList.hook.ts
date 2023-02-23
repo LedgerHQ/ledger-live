@@ -1,4 +1,4 @@
-import { decodeNftId } from "@ledgerhq/live-common/nft/nftId";
+import { decodeNftId } from "@ledgerhq/live-common/nft/index";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { ProtoNFT, NFTMetadata } from "@ledgerhq/types-live";
 import { useIsFocused, useNavigation } from "@react-navigation/native";

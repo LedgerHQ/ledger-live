@@ -1,7 +1,7 @@
 import React, { memo, useMemo, useCallback } from "react";
 import { SectionList, SectionListRenderItemInfo } from "react-native";
 import { Button } from "@ledgerhq/native-ui";
-import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/groupOperations";
+import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/index";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
