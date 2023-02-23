@@ -4,7 +4,10 @@ import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { TFunction } from "react-i18next";
 
 import { useNamingService } from "@ledgerhq/live-common/naming-service/index";
-import { NamingServiceResponseLoaded, UseNamingServiceResponse } from "@ledgerhq/live-common/naming-service/types"
+import {
+  NamingServiceResponseLoaded,
+  UseNamingServiceResponse,
+} from "@ledgerhq/live-common/naming-service/types";
 
 import RecipientFieldBase from "./RecipientFieldBase";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -38,7 +41,8 @@ const RecipientField = ({
 }: Props) => {
   const namingServiceResponse = useNamingService(value);
   const hasValidatedName = useCallback(
-    (nsResponse: UseNamingServiceResponse): nsResponse is NamingServiceResponseLoaded => nsResponse.status === "loaded",
+    (nsResponse: UseNamingServiceResponse): nsResponse is NamingServiceResponseLoaded =>
+      nsResponse.status === "loaded",
     [],
   );
 

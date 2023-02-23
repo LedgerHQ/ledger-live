@@ -88,7 +88,7 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: * }) => {
                               <DrawerProvider>
                                 <NftMetadataProvider>
                                   <MarketDataProvider>
-                                      <Default />
+                                    <Default />
                                   </MarketDataProvider>
                                 </NftMetadataProvider>
                               </DrawerProvider>
