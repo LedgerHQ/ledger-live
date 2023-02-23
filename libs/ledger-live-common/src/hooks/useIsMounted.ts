@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 
 // Stateless hook that returns a function which, when called, indicates if the component
 // using the hook is currently mounted or not
-export const useIsMounted = () => {
+const useIsMounted = () => {
   const mountedRef = useRef(false);
   const isMounted = useCallback(() => mountedRef.current, []);
 
@@ -16,3 +16,5 @@ export const useIsMounted = () => {
 
   return isMounted;
 };
+
+export default useIsMounted;

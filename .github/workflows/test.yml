@@ -1,5 +1,5 @@
 name: "@Libraries • Tests"
-run-name: "@Libraries • Tests triggered by ${{ github.event_name == 'workflow_dispatch' && inputs.login || github.actor }} ${{ github.event_name == 'workflow_dispatch' && format('on branch {0}', inputs.ref) || format('on ref {0}', github.ref) }}"
+run-name: "@Libraries • Tests triggered by ${{ github.event_name == 'workflow_dispatch' && inputs.login || github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
 
 on:
   push:
@@ -15,15 +15,15 @@ on:
         default: "develop"
       ref:
         description: the branch which triggered this workflow
-        required: true
+        required: false
       login:
         description: The GitHub username that triggered the workflow
         required: true
 
 concurrency:
   # See: https://github.com/orgs/community/discussions/35341
-  group: ${{ github.workflow }}-${{ github.event.inputs.ref || github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ref != 'develop' || github.ref_name != 'develop' }}
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref_name != 'develop' }}
 
 jobs:
   test-docs:
@@ -34,7 +34,7 @@ jobs:
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ inputs.ref || github.ref }}
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
           base: ${{ inputs.since_branch }}
       - uses: pnpm/action-setup@v2
         with:
@@ -66,7 +66,7 @@ jobs:
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ inputs.ref || github.ref }}
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
           base: ${{ inputs.since_branch }}
       - uses: pnpm/action-setup@v2
         with:
@@ -111,7 +111,7 @@ jobs:
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ inputs.ref || github.ref }}
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
           base: ${{ inputs.since_branch }}
           fetch-depth: 0
       - uses: pnpm/action-setup@v2

@@ -1,6 +1,7 @@
 // @flow
 import React, { useCallback, useMemo } from "react";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
 import Box from "~/renderer/components/Box";
 import { accountsSelector, currenciesSelector } from "~/renderer/reducers/accounts";
 import BalanceSummary from "./GlobalSummary";
@@ -22,7 +23,7 @@ import MigrationBanner from "~/renderer/modals/MigrateAccounts/Banner";
 import ClearCacheBanner from "~/renderer/components/ClearCacheBanner";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 
-import { saveSettings } from "~/renderer/actions/settings";
+import { saveSettings, useFilterTokenOperationsZeroAmount } from "~/renderer/actions/settings";
 import { useDispatch, useSelector } from "react-redux";
 import uniq from "lodash/uniq";
 import { useHistory } from "react-router-dom";
@@ -74,14 +75,21 @@ export default function DashboardPage() {
 
   useRefreshAccountsOrderingEffect({ onMount: true });
 
+  const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
   const filterOperations = useCallback(
     (operation, account) => {
-      return !operation?.nftOperations?.find(op =>
+      // Remove operations linked to address poisoning
+      const removeZeroAmountTokenOp =
+        shouldFilterTokenOpsZeroAmount && isAddressPoisoningOperation(operation, account);
+      // Remove operations coming from an NFT collection considered spam
+      const opFromBlacklistedNftCollection = operation?.nftOperations?.find(op =>
         hiddenNftCollections.includes(`${account.id}|${op?.contract}`),
       );
+
+      return !opFromBlacklistedNftCollection && !removeZeroAmountTokenOp;
     },
-    [hiddenNftCollections],
+    [hiddenNftCollections, shouldFilterTokenOpsZeroAmount],
   );
 
   return (

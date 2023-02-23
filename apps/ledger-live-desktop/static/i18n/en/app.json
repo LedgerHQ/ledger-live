@@ -823,11 +823,15 @@
         "linkText": "What is redelegation and how long does it take?",
         "solana": {
           "title": "Did you know?",
-          "description": "Ledger offers a lower commission rate than your validator.This process can take up to 4 days."
+          "description": "Ledger offers a lower commission rate than your validator. This process can take up to 4 days."
         },
         "near": {
           "title": "Did you know?",
-          "description": "Ledger offers a lower commission rate than your validator.This process can take up to 65 hours."
+          "description": "Ledger offers a lower commission rate than your validator. This process can take up to 65 hours."
+        },
+        "elrond": {
+          "title": "Did you know?",
+          "description": "Ledger offers a lower commission rate than your validator. This process can take up to 10 days."
         }
       },
       "delegation": {
@@ -849,6 +853,9 @@
         },
         "near": {
           "description": "Stake your NEAR with Ledger by Figment validator. Your coins stay yours, backed by Ledger’s uncompromising security."
+        },
+        "elrond": {
+          "description": "Stake your ELROND with Ledger by Figment validator. Your coins stay yours, backed by Ledger’s uncompromising security."
         }
       }
     }
@@ -3802,6 +3809,9 @@
       "catalogRampServerDesc": "Switch between multiple trading providers",
       "enablePlatformDevTools": "Enable platform dev tools",
       "enablePlatformDevToolsDesc": "Enable opening platform apps dev tools window",
+      "customLockScreen": "Custom lock-screen assets",
+      "customLockScreenDesc": "Debug custom lock-screen graphical assets",
+      "customLockScreenCTA": "Launch",
       "featureFlagsTitle": "Defined feature flags used in Ledger Live",
       "featureFlagsDesc": "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
       "featureFlagsEdit": "Edit",
@@ -3985,6 +3995,10 @@
       "fullNode": {
         "title": "Connect Bitcoin full node",
         "desc": "Set up your Bitcoin full node to synchronize and send transactions without using Ledger’s explorers."
+      },
+      "filterTokenOperationsZeroAmount": {
+        "title": "Hide token transactions when value is 0",
+        "desc": "Hiding token transactions without value can prevent some potential address poisoning attacks on Eth, Polygon, BSC, Tron..."
       }
     }
   },
