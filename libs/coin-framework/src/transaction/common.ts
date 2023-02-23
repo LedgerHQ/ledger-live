@@ -51,7 +51,7 @@ export const fromTransactionCommonRaw = (
     common.subAccountId = raw.subAccountId;
   }
 
-    if ("recipientName" in raw) {
+  if ("recipientName" in raw) {
     common.recipientName = raw.recipientName;
   }
 
