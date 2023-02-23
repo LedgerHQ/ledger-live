@@ -2,7 +2,7 @@
 import React from "react";
 import styled from "styled-components";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { getTagDerivationMode } from "@ledgerhq/live-common/derivation";
+import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Text from "~/renderer/components/Text";
 

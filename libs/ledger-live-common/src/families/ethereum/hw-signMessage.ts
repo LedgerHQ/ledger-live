@@ -6,7 +6,7 @@ import { TypedDataUtils } from "eth-sig-util";
 import { bufferToHex } from "ethereumjs-util";
 import type { MessageData, Result } from "../../hw/signMessage/types";
 import type { TypedMessageData } from "./types";
-import { DerivationMode } from "../../derivation";
+import { DerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "../../env";
 

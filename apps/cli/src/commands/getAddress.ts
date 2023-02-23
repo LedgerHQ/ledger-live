@@ -1,6 +1,6 @@
 import { from } from "rxjs";
 import { mergeMap } from "rxjs/operators";
-import { asDerivationMode } from "@ledgerhq/live-common/derivation";
+import { asDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getAddress from "@ledgerhq/live-common/hw/getAddress/index";
 import { currencyOpt, deviceOpt, inferCurrency } from "../scan";

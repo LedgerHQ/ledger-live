@@ -1,8 +1,8 @@
-import { getCryptoCurrencyById } from "../currencies";
+import { getCryptoCurrencyById } from "./currencies";
 import {
   getPreferredNewAccountScheme,
   getDefaultPreferredNewAccountScheme,
-} from "../derivation";
+} from "./derivation";
 describe("derivation", () => {
   test("getPreferredNewAccountScheme should return a list of schemes for a given currency", () => {
     const testData = [

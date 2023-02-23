@@ -1,6 +1,6 @@
 import Btc, { AddressFormat } from "@ledgerhq/hw-app-btc";
 import { log } from "@ledgerhq/logs";
-import { getAddressFormatDerivationMode } from "../../derivation";
+import { getAddressFormatDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import type {
   Resolver,
   GetAddressOptions,

@@ -9,7 +9,7 @@ import {
 import { getOperationAmountNumberWithInternals } from "../operation";
 import { formatCurrencyUnit } from "../currencies";
 import { getOperationAmountNumber } from "../operation";
-import { getTagDerivationMode } from "../derivation";
+import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import byFamily from "../generated/account";
 import { nftsByCollections } from "../nft";
 import type { Unit } from "@ledgerhq/types-cryptoassets";

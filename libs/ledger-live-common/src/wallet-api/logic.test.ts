@@ -20,7 +20,7 @@ import BigNumber from "bignumber.js";
 
 import * as converters from "./converters";
 import * as signMessage from "../hw/signMessage/index";
-import { DerivationMode } from "../derivation";
+import { DerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { TrackingAPI } from "./tracking";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";

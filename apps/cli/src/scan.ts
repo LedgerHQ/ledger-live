@@ -24,7 +24,7 @@ import { emptyHistoryCache } from "@ledgerhq/live-common/lib/account/index";
 import {
   fromAccountRaw,
 } from "@ledgerhq/live-common/lib/account/serialization";
-import { asDerivationMode, DerivationMode } from "@ledgerhq/live-common/lib/derivation";
+import { asDerivationMode, DerivationMode } from "@ledgerhq/coin-framework/derivation";
 import {
   getAccountBridge,
   getCurrencyBridge,
@@ -37,7 +37,7 @@ import {
 import {
   runDerivationScheme,
   getDerivationScheme,
-} from "@ledgerhq/live-common/derivation";
+} from "@ledgerhq/coin-framework/derivation";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import getAppAndVersion from "@ledgerhq/live-common/hw/getAppAndVersion";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";

@@ -12,7 +12,7 @@ import {
   isNativeSegwitDerivationMode,
   isTaprootDerivationMode,
   DerivationMode,
-} from "../../derivation";
+} from "@ledgerhq/coin-framework/derivation";
 import { BitcoinAccount, BitcoinOutput } from "./types";
 import { perCoinLogic } from "./logic";
 import wallet from "./wallet-btc";
