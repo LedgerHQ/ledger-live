@@ -6,10 +6,7 @@ import {
   getAccountHistoryBalances,
 } from "../../account";
 import { getEnv } from "../../env";
-import {
-  getPortfolioRangeConfig,
-  getDates,
-} from "@ledgerhq/live-common-date";
+import { getPortfolioRangeConfig, getDates } from "@ledgerhq/live-common-date";
 
 export { getDates, getRanges } from "@ledgerhq/live-common-date";
 
