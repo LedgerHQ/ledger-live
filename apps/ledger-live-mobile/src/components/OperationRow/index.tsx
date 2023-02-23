@@ -3,7 +3,10 @@ import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import styled, { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
-import { getOperationAmountNumber } from "@ledgerhq/live-common/operation";
+import {
+  getOperationAmountNumber,
+  isEditableOperation,
+} from "@ledgerhq/live-common/operation";
 import {
   getMainAccount,
   getAccountCurrency,
@@ -156,7 +159,7 @@ function OperationRow({
   const text = <Trans i18nKey={`operations.types.${operation.type}`} />;
   const isOptimistic = operation.blockHeight === null;
   const spinner =
-    currency.id === "ethereum" &&
+    isEditableOperation(account, operation) &&
     isOptimistic &&
     operation.date.getTime() <=
       new Date().getTime() - getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT") ? (
