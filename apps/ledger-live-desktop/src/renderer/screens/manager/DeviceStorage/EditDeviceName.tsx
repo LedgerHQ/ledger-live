@@ -63,6 +63,8 @@ const EditDeviceName: React.FC<Props> = ({ onClose, deviceName, onSetName, devic
     setRunning(false);
   }, []);
 
+  const remainingCharacters = MAX_DEVICE_NAME - name.length;
+
   return (
     <Flex
       flexDirection="column"
@@ -125,6 +127,7 @@ const EditDeviceName: React.FC<Props> = ({ onClose, deviceName, onSetName, devic
                 value={name}
                 placeholder={t("deviceRename.placeholder")}
                 error={error && <TranslatedError error={error} field="title" noLink />}
+                info={t("deviceRename.remainingCharacters", { remainingCharacters })}
               />
             </Box>
           </Flex>

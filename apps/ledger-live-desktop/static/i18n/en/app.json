@@ -2273,6 +2273,7 @@
     "title": "Rename {{ productName }}",
     "chooseName": "Choose a name",
     "placeholder": "Tony's Stax",
+    "remainingCharacters": "{{ remainingCharacters }} characters remaining",
     "renamed": "{{ productName }} name changed to “{{ name }}” "
   },
   "deviceLocalization": {
