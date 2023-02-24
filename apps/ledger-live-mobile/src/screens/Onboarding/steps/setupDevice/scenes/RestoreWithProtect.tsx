@@ -1,11 +1,12 @@
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Icons, NumberedList } from "@ledgerhq/native-ui";
+import { Icons, NumberedList, Text } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Linking } from "react-native";
 import InfoModal from "../../../../../modals/Info";
 import Button from "../../../../../components/wrappedUi/Button";
 import { TrackScreen } from "../../../../../analytics";
+import Touchable from "../../../../../components/Touchable";
 
 const RestoreWithProtectScene = () => {
   const { t } = useTranslation();
@@ -18,10 +19,6 @@ const RestoreWithProtectScene = () => {
     {
       title: "onboarding.stepProtect.bullets.1.title",
       desc: `onboarding.stepProtect.bullets.1.label`,
-    },
-    {
-      title: "onboarding.stepProtect.bullets.2.title",
-      desc: `onboarding.stepProtect.bullets.2.label`,
     },
   ];
 
@@ -46,20 +43,19 @@ const Next = ({ onNext }: { onNext: () => void }) => {
   const restoreInfoDrawer =
     servicesConfig?.params?.onboardingRestore?.restoreInfoDrawer || {};
 
-  const manualStepsURI = restoreInfoDrawer?.manualStepsURI;
+  const updateFirmwareLink =
+    "https://support.ledger.com/hc/en-us/articles/360013349800-Update-Ledger-Nano-X-firmware?docs=true";
 
   const supportLink = restoreInfoDrawer?.supportLink;
 
   const onOpen = useCallback(() => setIsOpened(true), []);
   const onClose = useCallback(() => setIsOpened(false), []);
-  const onManualSteps = useCallback(() => {
+  const onLearnToUpdate = useCallback(() => {
     onClose();
-    if (manualStepsURI) {
-      Linking.canOpenURL(manualStepsURI).then(() =>
-        Linking.openURL(manualStepsURI),
-      );
-    }
-  }, [manualStepsURI, onClose]);
+    Linking.canOpenURL(updateFirmwareLink).then(() =>
+      Linking.openURL(updateFirmwareLink),
+    );
+  }, [onClose]);
   const onSupportLink = useCallback(() => {
     onClose();
     if (supportLink) {
@@ -69,7 +65,7 @@ const Next = ({ onNext }: { onNext: () => void }) => {
 
   return (
     <>
-      <Button type="main" size="large" onPress={onNext} mb={6}>
+      <Button type="main" size="large" onPress={onNext} mb={7}>
         {t("onboarding.stepProtect.nextStep")}
       </Button>
       <InfoModal
@@ -77,23 +73,16 @@ const Next = ({ onNext }: { onNext: () => void }) => {
         onClose={onClose}
         data={[
           {
-            Icon: () => <Icons.InfoAltMedium size={42} color="primary.c80" />,
-          },
-          {
             title: t("onboarding.stepProtect.extraInfo.title"),
-            description: t("onboarding.stepProtect.extraInfo.desc1"),
-            titleProps: { textAlign: "center" },
-            descriptionProps: { textAlign: "center" },
           },
           {
-            description: t("onboarding.stepProtect.extraInfo.desc2"),
-            descriptionProps: { textAlign: "center" },
+            description: t("onboarding.stepProtect.extraInfo.desc"),
             footer: (
               <>
                 <Button
                   type="main"
                   size="large"
-                  onPress={onManualSteps}
+                  onPress={onLearnToUpdate}
                   Icon={Icons.ExternalLinkMedium}
                   mt={8}
                   mb={6}
@@ -123,9 +112,11 @@ const Next = ({ onNext }: { onNext: () => void }) => {
         ]}
       />
       {restoreInfoDrawer?.enabled ? (
-        <Button type="default" size="large" onPress={onOpen} iconName="Help">
-          {t("onboarding.stepProtect.extraInfo.tooltip")}
-        </Button>
+        <Touchable onPress={onOpen}>
+          <Text textAlign="center" variant="large">
+            {t("onboarding.stepProtect.extraInfo.tooltip")}
+          </Text>
+        </Touchable>
       ) : null}
     </>
   );
