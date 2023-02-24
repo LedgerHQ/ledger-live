@@ -43,8 +43,8 @@ export const isValidAddress = (
 ): boolean => {
   if (!address) return false;
   const network = isTestNet(currencyId)
-  ? CroNetwork.TestnetCroeseid4
-  : CroNetwork.Mainnet;
+    ? CroNetwork.TestnetCroeseid4
+    : CroNetwork.Mainnet;
   const addressProps = {
     address: address,
     network: network,
