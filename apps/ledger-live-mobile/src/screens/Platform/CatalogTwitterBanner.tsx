@@ -48,8 +48,7 @@ const CatalogTwitterBanner = () => {
       <LText style={styles.textTwitter}>
         <Trans i18nKey="platform.catalog.twitterBanner.description" />
         <LText bold onPress={sendTweet}>
-          {" "}
-          #LedgerLiveApp
+          {" #LedgerLiveApp"}
         </LText>
       </LText>
       <TouchableOpacity style={styles.iconClose} onPress={dismiss}>

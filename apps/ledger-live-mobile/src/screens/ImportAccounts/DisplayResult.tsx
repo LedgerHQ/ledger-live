@@ -201,7 +201,7 @@ class DisplayResult extends Component<Props, State> {
       <ResultSection mode="empty" />
       <LText style={styles.emptyNotice}>
         <Trans i18nKey="account.import.result.descEmpty">
-          <LText semiBold>No accounts</LText>
+          <LText semiBold>NO_ACCOUNTS</LText>
           {
             "found on your desktop app, please try again or continue the onboarding."
           }
