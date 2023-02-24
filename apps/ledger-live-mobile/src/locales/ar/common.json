@@ -87,7 +87,8 @@
     "popular" : "شائع",
     "getSupport" : "احصل على الدعم",
     "comingSoon" : "قريباً",
-    "restart" : "إعادة التشغيل"
+    "restart" : "إعادة التشغيل",
+    "loadMore" : "تحميل المزيد"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -811,6 +812,13 @@
       "title" : "جهازك مقفل",
       "description" : "قم بإلغاء قفل جهازك وحاول مرة أخرى.",
       "descriptionWithProductName" : "قم بإلغاء قفل {{ productName }} خاصتك وحاول مرة أخرى."
+    },
+    "EtherscanAPIError" : {
+      "title" : "فشل إحضار المعاملات",
+      "description" : "حدث خطأ غير متوقع مع المستكشفات. يُرجى إعادة المحاولة لاحقاً"
+    },
+    "GasEstimationError" : {
+      "title" : "فشل تقدير الغاز"
     }
   },
   "crash" : {
@@ -1118,6 +1126,10 @@
         "title" : "تعلّم",
         "desc" : "تعرّف على الأصول المشفرة وويب 3.0 والأمان الرقمي وغير ذلك الكثير"
       },
+      "news" : {
+        "title" : "الأخبار",
+        "desc" : "تعرّف على الأصول المشفرة والأمان والويب 3.0 وقم بمواكبة آخر الأخبار"
+      },
       "ledgerApps" : {
         "title" : "التطبيقات",
         "desc" : "استكشف تطبيقات شركاء Ledger من مكان واحد"
@@ -1267,8 +1279,7 @@
       },
       "recovery" : "لديك عبارة استرداد بالفعل؟",
       "protect" : {
-        "label" : "60 دقيقة تقريباً",
-        "subTitle" : "الاستعادة عن طريق Protect"
+        "subTitle" : "Restore using Ledger Recover"
       }
     },
     "stepNewDevice" : {
@@ -1653,6 +1664,10 @@
             "label" : "تحقق مما إذا كان قد تم اكتشاف Nano X الخاصة بك."
           }
         }
+      },
+      "protectConnectionInformationModal" : {
+        "title" : "لماذا لا أستطيع جهازي Ledger؟",
+        "description" : "إذا كنت تواجه مشكلات في الاتصال بـ Ledger Live للجوّال بعد أن قمت بتمكين البلوتوث على جهازك Ledger، يمكنك اتباع التعليمات بالنقر على زر \"Learn how to fix that (تعلم كيفية إصلاح ذلك)\" أدناه"
       }
     },
     "stepImportAccounts" : {
@@ -2495,7 +2510,9 @@
         "bullet2" : "إصدار Ledger Live، ومنطقة نظام التشغيل، واللغة والمنطقة"
       },
       "hideEmptyTokenAccounts" : "إخفاء حسابات رموز التوكن الفارغة",
-      "hideEmptyTokenAccountsDesc" : "جميع حسابات رموز التوكن الخالية في صفحة الأصول سيتم إخفائها."
+      "hideEmptyTokenAccountsDesc" : "جميع حسابات رموز التوكن الخالية في صفحة الأصول سيتم إخفائها.",
+      "filterTokenOperationsZeroAmount" : "إخفاء معاملات رموز التوكن عندما تكون القيمة 0",
+      "filterTokenOperationsZeroAmountDesc" : "يمكن أن يؤدي إخفاء معاملات رموز التوكن التي ليست لديها قيمة إلى منع بعض هجمات تسميم العناوين المحتملة على Eth و Polygon و BSC و Tron..."
     },
     "currencies" : {
       "header" : "العملات",
@@ -3298,6 +3315,10 @@
           }
         }
       }
+    },
+    "walletConnect" : {
+      "title" : "WalletConnect",
+      "description" : "قم بتوصيل محفظتك بالتطبيقات اللامركزية"
     }
   },
   "signMessage" : {
@@ -6077,5 +6098,13 @@
         "emptyPassword" : "لا يمكن أن تكون كلمة المرور فارغة"
       }
     }
+  },
+  "newsfeed" : {
+    "title" : "موجز الأخبار",
+    "poweredByCryptopanic" : "يعمل بواسطة Cryptopanic",
+    "noPosts" : "ليس هناك منشورات متاحة حالياً"
+  },
+  "deviceConnect" : {
+    "title" : "Connect device"
   }
 }
