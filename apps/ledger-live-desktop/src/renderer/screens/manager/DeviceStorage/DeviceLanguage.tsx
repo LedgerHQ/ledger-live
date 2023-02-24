@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { Flex, Icons, Link } from "@ledgerhq/react-ui";
-import Text from "~/renderer/components/Text";
+import { Flex, Icons, Link, Text } from "@ledgerhq/react-ui";
 import DeviceLanguageInstallation from "./DeviceLanguageInstallation";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { idsToLanguage, Language, DeviceInfo } from "@ledgerhq/types-live";
@@ -31,7 +30,7 @@ const DeviceLanguage: React.FC<Props> = ({ deviceInfo, device, onRefreshDeviceIn
     <Flex alignItems="center">
       <Icons.LanguageMedium color="neutral.c80" size={24} />
       <Flex ml={1} mr={5}>
-        <Text ff="Inter|SemiBold" color="palette.text.shade40" fontSize={4}>
+        <Text color="neutral.c80" variant="bodyLineHeight" fontSize={4}>
           {t("deviceLocalization.language")}
         </Text>
       </Flex>
