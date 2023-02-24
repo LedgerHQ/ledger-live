@@ -10,9 +10,23 @@ type Props = {
   inputs?: Record<string, string>;
 };
 
+const ledgerRecoverIds = [
+  "protect",
+  "ledger-recover",
+  "ledger-recover-preprod",
+];
+
 const WebViewWrapper = ({ manifest, inputs }: Props) => {
+  const isManifestOfLedgerRecover = ledgerRecoverIds.includes(manifest.id);
+
   if (semver.satisfies(WALLET_API_VERSION, manifest.apiVersion)) {
-    return <WebViewV2 manifest={manifest} inputs={inputs} />;
+    return (
+      <WebViewV2
+        manifest={manifest}
+        inputs={inputs}
+        hideHeader={isManifestOfLedgerRecover}
+      />
+    );
   }
   return <WebView manifest={manifest} inputs={inputs} />;
 };
