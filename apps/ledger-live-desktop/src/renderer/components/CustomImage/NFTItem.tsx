@@ -55,9 +55,10 @@ type Props = {
   onItemClick: (nftId: string, nftMetadata: NFTMetadata) => void;
   selected: boolean;
   testId?: string;
+  index: number;
 };
 
-const NftItem = ({ id, onItemClick, selected, testId }: Props) => {
+const NftItem = ({ id, onItemClick, selected, testId, index }: Props) => {
   const nft = useSelector(state => getNFTById(state, { nftId: id }));
   const { status, metadata } = useNftMetadata(nft.contract, nft.tokenId, nft.currencyId);
   const { nftName } = metadata || {};
@@ -80,7 +81,7 @@ const NftItem = ({ id, onItemClick, selected, testId }: Props) => {
       onClick={handleClick}
       data-test-id={testId}
     >
-      <Flex flex={1} width="100%">
+      <Flex flex={1} width="100%" data-test-id={`custom-image-nft-card-media-${index}`}>
         <Skeleton width={40} minHeight={40} full={isGrid} show={show}>
           <Media
             metadata={metadata}
@@ -92,10 +93,19 @@ const NftItem = ({ id, onItemClick, selected, testId }: Props) => {
         </Skeleton>
       </Flex>
       <Flex mt={2} flexDirection="column" width={"100%"}>
-        <EllipsizedText variant="small" fontWeight="medium">
+        <EllipsizedText
+          variant="small"
+          fontWeight="medium"
+          data-test-id={`custom-image-nft-card-name-${index}`}
+        >
           {nftName || "-"}
         </EllipsizedText>
-        <EllipsizedText variant="small" fontWeight="medium" color="neutral.c60">
+        <EllipsizedText
+          variant="small"
+          fontWeight="medium"
+          color="neutral.c60"
+          data-test-id={`custom-image-nft-card-id-${index}`}
+        >
           <Trans i18nKey="NFT.gallery.tokensList.item.tokenId" values={{ tokenId: nft.tokenId }} />
         </EllipsizedText>
       </Flex>

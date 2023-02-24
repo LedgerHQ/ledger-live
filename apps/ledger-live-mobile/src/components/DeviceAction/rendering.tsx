@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Platform, ScrollView, StyleSheet } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import { LockedDeviceError, WrongDeviceForAccount } from "@ledgerhq/errors";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -45,7 +45,6 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { ParamListBase } from "@react-navigation/native";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
 import { lastSeenDeviceSelector } from "../../reducers/settings";
-import { setModalLock } from "../../actions/appstate";
 import { urls } from "../../config/urls";
 import Alert from "../Alert";
 import { lighten, Theme } from "../../colors";
@@ -71,6 +70,7 @@ import {
   Props as FramedImageWithLottieProps,
   FramedImageWithLottieWithContext,
 } from "../CustomImage/FramedImageWithLottie";
+import ModalLock from "../ModalLock";
 
 const confirmLockscreen = require("../animations/stax/customimage/confirmLockscreen.json"); // eslint-disable-line @typescript-eslint/no-var-requires, import/no-unresolved
 const allowConnection = require("../animations/stax/customimage/allowConnection.json"); // eslint-disable-line @typescript-eslint/no-var-requires, import/no-unresolved
@@ -893,6 +893,7 @@ export function renderLoading({
         <InfiniteLoader />
       </SpinnerContainer>
       <CenteredText>{description ?? t("DeviceAction.loading")}</CenteredText>
+      <ModalLock />
     </Wrapper>
   );
 }
@@ -955,17 +956,6 @@ export function LoadingAppInstall({
   description?: string;
   request?: AppRequest;
 }) {
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    // Nb Blocks closing the modal while the install is happening.
-    // releases the block on onmount.
-    dispatch(setModalLock(true));
-    return () => {
-      dispatch(setModalLock(false));
-    };
-  }, [dispatch]);
-
   const currency = request?.currency || request?.account?.currency;
   const appName = request?.appName || currency?.managerAppName;
   useEffect(() => {
@@ -975,6 +965,7 @@ export function LoadingAppInstall({
     ] as const;
     track(...trackingArgs);
   }, [appName, analyticsPropertyFlow]);
+
   return renderLoading(props);
 }
 

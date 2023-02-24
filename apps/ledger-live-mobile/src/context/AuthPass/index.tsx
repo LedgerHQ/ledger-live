@@ -173,8 +173,8 @@ class AuthPass extends PureComponent<Props, State> {
 
     return (
       <SkipLockContext.Provider value={setEnabled}>
-        {lockScreen}
         {children}
+        {lockScreen}
       </SkipLockContext.Provider>
     );
   }

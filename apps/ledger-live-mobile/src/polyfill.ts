@@ -74,6 +74,7 @@ if (__DEV__ && process.env.NODE_ENV !== "test") {
         "Warning: componentWillReceiveProps has been renamed",
         "Warning: componentWillUpdate has been renamed",
         "Warning: componentWillMount has been renamed",
+        "exported from 'deprecated-react-native-prop-types'.", // https://github.com/facebook/react-native/issues/33557#issuecomment-1093083115
       ]);
     } catch (e) {
       console.warn(e);

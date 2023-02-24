@@ -50,6 +50,15 @@ test("Custom image (with populated NFT gallery)", async ({ page }) => {
     await customImageDrawer.importNftPreviousButton.waitFor({ state: "visible" });
     await expect(container).toHaveScreenshot(
       `${generateScreenshotPrefix()}nft-gallery-populated.png`,
+      {
+        mask: Array(4)
+          .fill(undefined)
+          .flatMap((_, index) => [
+            customImageDrawer.nftCardMedia(index),
+            customImageDrawer.nftCardName(index),
+            customImageDrawer.nftCardId(index),
+          ]),
+      },
     );
   });
   /**
