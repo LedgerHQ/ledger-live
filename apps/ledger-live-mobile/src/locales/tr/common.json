@@ -87,7 +87,8 @@
     "popular" : "popüler",
     "getSupport" : "Destek alın",
     "comingSoon" : "Çok yakında",
-    "restart" : "Yeniden Başlat"
+    "restart" : "Yeniden Başlat",
+    "loadMore" : "Daha fazlasını yükle"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -549,7 +550,7 @@
       "description" : "İşlemlerin 30 saniye içinde imzalanması gerekir. Lütfen tekrar deneyin."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Yeterince Enerji mevcut değil. Ağ ücreti 50TRX tutarına ulaşabilir."
+      "title" : "Enerji yetersiz. Ağ ücreti 50 TRX tutarına ulaşabilir."
     },
     "UpdateYourApp" : {
       "title" : "Uygulama güncellemesi gerekiyor",
@@ -811,6 +812,13 @@
       "title" : "Cihazınız kilitlendi",
       "description" : "Cihazınızın kilidini açın ve tekrar deneyin.",
       "descriptionWithProductName" : "{{ productName }} cihazınızın kilidini açın ve tekrar deneyin."
+    },
+    "EtherscanAPIError" : {
+      "title" : "İşlemler alınamadı",
+      "description" : "Tarayıcılarla ilgili beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin"
+    },
+    "GasEstimationError" : {
+      "title" : "Tahmini Gas ücreti hesaplanamadı"
     }
   },
   "crash" : {
@@ -1118,6 +1126,10 @@
         "title" : "Öğrenin",
         "desc" : "Kripto, Web 3.0, dijital güvenlik ve diğer konular hakkında bilgi edinin"
       },
+      "news" : {
+        "title" : "Haberler",
+        "desc" : "Kripto, güvenlik ve Web 3.0 hakkında daha fazla bilgi edinin ve son haberleri öğrenin"
+      },
       "ledgerApps" : {
         "title" : "Uygulamalar",
         "desc" : "Ledger'ın iş ortağı uygulamaların hepsini tek bir yerden keşfedin"
@@ -1267,8 +1279,13 @@
       },
       "recovery" : "Kurtarma ifadeniz var mı?",
       "protect" : {
-        "label" : "Yaklaşık 60 dk.",
-        "subTitle" : "Protect ile Geri Yükleyin"
+        "subTitle" : "Restore using Ledger Recover",
+        "drawer" : {
+          "title" : "Use Ledger Nano X",
+          "desc" : "Sınırlı olarak kullanıma sunulan Ledger Recover sadece Ledger Nano X'i kapsamaktadır",
+          "buyNanoX" : "Ledger Nano X satın alın",
+          "discoverBenefits" : "Avantajlarını keşfedin"
+        }
       }
     },
     "stepNewDevice" : {
@@ -1495,25 +1512,20 @@
     "stepProtect" : {
       "bullets" : {
         "0" : {
-          "title" : "Göz Atın ",
-          "label" : "Ekrandaki yönergeleri okuyarak cihazınızı nasıl kullanacağınızı öğrenin."
+          "title" : "“Restore” (Geri Yükle) seçimini yapın",
+          "label" : "Seçmek için iki tuşa aynı anda basın."
         },
         "1" : {
-          "title" : "“Restore” (Geri Yükle) seçimini yapın",
-          "label" : "Seçimi onaylamak için her iki tuşa da aynı anda basın."
-        },
-        "2" : {
-          "title" : "“Restore with Protect” (Protect ile Geri Yükleyin) modunu seçin",
-          "label" : "Seçimi onaylamak için her iki tuşa da aynı anda basın."
+          "title" : "“Ledger Recover kullanarak geri yükle” seçimini yapın",
+          "label" : "Seçmek için iki tuşa aynı anda basın."
         }
       },
       "nextStep" : "Devam",
       "extraInfo" : {
-        "tooltip" : "Ledger'ımda göremiyorum",
-        "title" : "Ledger'ımda neden “Restore with Protect” seçeneğini göremiyorum?",
-        "desc1" : "Büyük ihtimalle cihazınız Protect hizmetiyle uyumlu değildir. Endişelenmeyin! Nasıl çalıştıracağınız konusunda sizi yönlendireceğiz.",
-        "desc2" : "Lütfen bizimle iletişime geçin ve “My Ledger doesn't display Restore with Protect” (Ledger'ım Restore with Protect seçeneğini göstermiyor) seçimini yapın.",
-        "cta" : "Manuel adımları uygulayın",
+        "tooltip" : "“Ledger Recover kullanarak geri yükle” seçeneği yok",
+        "title" : "Ledger Nano X cihazındaki işletim sisteminin güncellenmesi gerekiyor",
+        "desc" : "İşletim sistemini güncellemeyi deneyebilir veya yardım almak için Ledger Destek ile iletişime geçebilirsiniz.",
+        "cta" : "Güncelleme yönergeleri",
         "supportLink" : "Ledger Destek ile iletişime geçin"
       }
     },
@@ -1653,6 +1665,10 @@
             "label" : "Nano X'inizin tespit edilip edilmediğini kontrol edin."
           }
         }
+      },
+      "protectConnectionInformationModal" : {
+        "title" : "Ledger cihazımı neden bağlayamıyorum?",
+        "description" : "Ledger cihazınızda Bluetooth'u etkinleştirdikten sonra Ledger Live Mobile uygulamasına bağlanmada sorun yaşıyorsanız aşağıdaki \"Bu sorunu nasıl düzelteceğinizi öğrenin\" düğmesine dokunarak gösterilen yönergeleri uygulayabilirsiniz"
       }
     },
     "stepImportAccounts" : {
@@ -2495,7 +2511,9 @@
         "bullet2" : "Ledger Live sürümü, işletim sistemi bölgesi, dil ve bölge"
       },
       "hideEmptyTokenAccounts" : "Boş token hesaplarını gizle",
-      "hideEmptyTokenAccountsDesc" : "Varlıklar sayfasındaki tüm boş token hesapları gizlenecek."
+      "hideEmptyTokenAccountsDesc" : "Varlıklar sayfasındaki tüm boş token hesapları gizlenecek.",
+      "filterTokenOperationsZeroAmount" : "Değeri 0 olan token işlemlerini gizle",
+      "filterTokenOperationsZeroAmountDesc" : "Değer içermeyen token işlemlerini gizleyerek Ethereum, Polygon, BSC ve Tron ağlarındaki bazı potansiyel adres zehirleme saldırılarını önleyebilirsiniz."
     },
     "currencies" : {
       "header" : "Para Birimleri",
@@ -3298,6 +3316,10 @@
           }
         }
       }
+    },
+    "walletConnect" : {
+      "title" : "WalletConnect",
+      "description" : "Cüzdanınızı dApp'lere bağlayın"
     }
   },
   "signMessage" : {
@@ -6004,22 +6026,10 @@
       "status" : {
         "new" : {
           "title" : "Yeni",
-          "desc" : "Kurtarma ifadenizi yedekleyin",
-          "0" : {
-            "title" : "Milyonlarca Ledger kullanıcısı güveniyor"
-          },
-          "1" : {
-            "title" : "Kurtarma İfadeniz güvenli bir şekilde kimliğinizle eşleştirilir"
-          },
-          "2" : {
-            "title" : "En gelişmiş şifreleme teknolojisi"
-          },
-          "3" : {
-            "title" : "Merkeziyetsiz bir şekilde 3 farklı parçaya bölünen kurtarma ifadeniz asla çalınamaz"
-          },
+          "desc" : "Gizli Kurtarma İfadenizi kullanmadan cüzdanınıza yeniden erişin.",
           "actions" : {
-            "learnMore" : "Daha fazla bilgi",
-            "alreadySubscribed" : "Protect'e zaten abone misiniz?"
+            "learnMore" : "Bunun bana ne yararı var?",
+            "alreadySubscribed" : "Zaten abone misiniz? <LinkAccount>Hesabınızı görüntüleyin</LinkAccount>"
           }
         },
         "confirmIdentity" : {
@@ -6077,5 +6087,13 @@
         "emptyPassword" : "Parola alanı boş bırakılamaz"
       }
     }
+  },
+  "newsfeed" : {
+    "title" : "Haber akışı",
+    "poweredByCryptopanic" : "Cryptopanic desteğiyle",
+    "noPosts" : "Yeni içerik mevcut değil"
+  },
+  "deviceConnect" : {
+    "title" : "Cihazı bağlayın"
   }
 }
