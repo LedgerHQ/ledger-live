@@ -73,6 +73,7 @@ import {
   SettingsSetFeatureFlagsBannerVisiblePayload,
   SettingsSetDebugAppLevelDrawerOpenedPayload,
   SettingsFilterTokenOperationsZeroAmountPayload,
+  SettingsLastSeenDeviceLanguagePayload,
 } from "./types";
 import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
 
@@ -378,6 +379,13 @@ const setLastSeenDeviceInfoAction =
   );
 export const setLastSeenDeviceInfo = (dmi: DeviceModelInfo) =>
   setLastSeenDeviceInfoAction({ dmi });
+
+const setLastSeenDeviceLanguageIdAction =
+  createAction<SettingsLastSeenDeviceLanguagePayload>(
+    SettingsActionTypes.LAST_SEEN_DEVICE_LANGUAGE_ID,
+  );
+export const setLastSeenDeviceLanguageId = (languageId: number) =>
+  setLastSeenDeviceLanguageIdAction({ languageId });
 
 const addStarredMarketCoinsAction =
   createAction<SettingsAddStarredMarketcoinsPayload>(

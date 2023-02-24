@@ -1,15 +1,22 @@
 import React, { useEffect } from "react";
 
-import { Language } from "@ledgerhq/types-live";
+import { Language, languageIds } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { Flex, Text, Button, Icons } from "@ledgerhq/native-ui";
+import { useDispatch } from "react-redux";
+import { setLastSeenDeviceLanguageId } from "../actions/settings";
 
 const DeviceLanguageInstalled: React.FC<{
   onContinue?: () => void;
   onMount?: () => void;
   installedLanguage: Language;
 }> = ({ onContinue, onMount, installedLanguage }) => {
+  const dispatch = useDispatch();
+
   useEffect(() => {
+    // Nb Update the stored information for the last seen device to match this new language.
+    dispatch(setLastSeenDeviceLanguageId(languageIds[installedLanguage]));
+
     if (onMount) {
       onMount();
     }
