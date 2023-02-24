@@ -2210,7 +2210,7 @@ function main() {
     const command = core.getInput("command");
     try {
       const turboOutput = (0, import_child_process.execSync)(
-        `npx turbo run ${command} --filter=...[${ref}] --dry=json`,
+        `npx turbo@1.7 run ${command} --filter=...[${ref}] --dry=json`,
         { encoding: "utf-8" }
       );
       const pnpmOutput = (0, import_child_process.execSync)(`npx pnpm list -r --depth=0 --json`, {

@@ -3,9 +3,6 @@ import { retry } from "@octokit/plugin-retry";
 import app from "../../../src/index";
 
 const myOctokit = ProbotOctokit.plugin(retry).defaults({
-  retry: {
-    doNotRety: [400, 401, 403, 422],
-  },
   request: { retries: 3 },
 });
 

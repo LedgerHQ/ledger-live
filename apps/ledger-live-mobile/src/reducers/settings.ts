@@ -24,6 +24,7 @@ import type {
   SettingsDismissBannerPayload,
   SettingsSetSwapKycPayload,
   SettingsHideEmptyTokenAccountsPayload,
+  SettingsFilterTokenOperationsZeroAmountPayload,
   SettingsHideNftCollectionPayload,
   SettingsImportDesktopPayload,
   SettingsImportPayload,
@@ -67,6 +68,7 @@ import type {
   SettingsSetFeatureFlagsBannerVisiblePayload,
   DangerouslyOverrideStatePayload,
   SettingsSetDebugAppLevelDrawerOpenedPayload,
+  SettingsLastSeenDeviceLanguagePayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -111,6 +113,7 @@ export const INITIAL_STATE: SettingsState = {
   countervalueFirst: true,
   graphCountervalueFirst: true,
   hideEmptyTokenAccounts: false,
+  filterTokenOperationsZeroAmount: true,
   blacklistedTokenIds: [],
   hiddenNftCollections: [],
   dismissedBanners: [],
@@ -316,6 +319,16 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ).payload.hideEmptyTokenAccounts,
   }),
 
+  [SettingsActionTypes.SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT]: (
+    state,
+    action,
+  ) => ({
+    ...state,
+    filterTokenOperationsZeroAmount: (
+      action as Action<SettingsFilterTokenOperationsZeroAmountPayload>
+    ).payload.filterTokenOperationsZeroAmount,
+  }),
+
   [SettingsActionTypes.SHOW_TOKEN]: (state, action) => {
     const ids = state.blacklistedTokenIds;
     return {
@@ -472,6 +485,20 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       ...(action as Action<SettingsLastSeenDeviceInfoPayload>).payload.dmi,
     },
   }),
+
+  [SettingsActionTypes.LAST_SEEN_DEVICE_LANGUAGE_ID]: (state, action) => {
+    if (!state.lastSeenDevice) return state;
+    return {
+      ...state,
+      lastSeenDevice: {
+        ...state.lastSeenDevice,
+        deviceInfo: {
+          ...state.lastSeenDevice.deviceInfo,
+          ...(action as Action<SettingsLastSeenDeviceLanguagePayload>).payload,
+        },
+      },
+    };
+  },
 
   [SettingsActionTypes.ADD_STARRED_MARKET_COINS]: (state, action) => ({
     ...state,
@@ -756,6 +783,8 @@ export const exportSettingsSelector = createSelector(
 );
 export const hideEmptyTokenAccountsEnabledSelector = (state: State) =>
   state.settings.hideEmptyTokenAccounts;
+export const filterTokenOperationsZeroAmountEnabledSelector = (state: State) =>
+  state.settings.filterTokenOperationsZeroAmount;
 export const dismissedBannersSelector = (state: State) =>
   state.settings.dismissedBanners;
 export const hasAvailableUpdateSelector = (state: State) =>

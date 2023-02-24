@@ -26,13 +26,13 @@ export function generateScreenshots(app: Probot) {
     const { payload } = context;
     let ref;
     if ("check_run" in payload) {
-      ref = payload.check_run.pull_requests[0]?.head.ref;
+      ref = payload.check_run.pull_requests[0]?.base.ref;
     } else {
       const { data: prData } = await context.octokit.rest.pulls.get({
         ...context.repo(),
         pull_number: payload.issue.number,
       });
-      ref = prData.head.ref;
+      ref = prData.head.repo?.fork ? prData.base.ref : prData.head.ref;
     }
 
     return context.octokit.actions.createWorkflowDispatch({

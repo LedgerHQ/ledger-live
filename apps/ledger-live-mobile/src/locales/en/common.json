@@ -87,7 +87,8 @@
     "popular": "popular",
     "getSupport": "Get support",
     "comingSoon": "Coming soon",
-    "restart": "Restart"
+    "restart": "Restart",
+    "loadMore": "Load more"
   },
   "errors": {
     "countervaluesUnavailable": {
@@ -811,7 +812,7 @@
       "title": "Your device is locked",
       "description": "Unlock your device and try again.",
       "descriptionWithProductName": "Unlock your {{ productName }} and try again."
-    },    
+    },
     "EtherscanAPIError": {
       "title": "Fetching transactions failed",
       "description": "An unexpected error occurred with the explorers. Please try again later"
@@ -1125,6 +1126,10 @@
         "title": "Learn",
         "desc": "Learn about crypto, web3, digital security and more"
       },
+      "news": {
+        "title": "News",
+        "desc": "Learn about crypto, security, web3 and catch up with latest news"
+      },
       "ledgerApps": {
         "title": "Apps",
         "desc": "Explore Ledger's partner apps all in one place"
@@ -1275,7 +1280,13 @@
       "recovery": "Already have a recovery phrase?",
       "protect": {
         "label": "~60 mins",
-        "subTitle": "Restore with Protect"
+        "subTitle": "Restore with Protect",
+        "drawer": {
+          "title": "Use Ledger Nano X",
+          "desc": "Ledger Recover soft launch is exclusively for Ledger Nano X",
+          "buyNanoX": "Buy a Ledger Nano X",
+          "discoverBenefits": "Discover the benefits"
+        }
       }
     },
     "stepNewDevice": {
@@ -1660,6 +1671,10 @@
             "label": "Check whether your Nano X is detected."
           }
         }
+      },
+      "protectConnectionInformationModal": {
+        "title": "Why can I not connect my Ledger?",
+        "description": "If you are experiencing issues connecting to Ledger Live mobile after you have enabled Bluetooth on your Ledger, you can follow the instructions by tapping on the \"Learn how to fix that\" button below"
       }
     },
     "stepImportAccounts": {
@@ -2502,7 +2517,9 @@
         "bullet2": "Ledger Live version, OS region, language and region"
       },
       "hideEmptyTokenAccounts": "Hide empty token accounts",
-      "hideEmptyTokenAccountsDesc": "All empty token accounts in the Assets page will be hidden."
+      "hideEmptyTokenAccountsDesc": "All empty token accounts in the Assets page will be hidden.",
+      "filterTokenOperationsZeroAmount": "Hide token transactions when value is 0",
+      "filterTokenOperationsZeroAmountDesc": "Hiding token transactions without value can prevent some potential address poisoning attacks on Eth, Polygon, BSC, Tron..."
     },
     "currencies": {
       "header": "Currencies",
@@ -6021,22 +6038,10 @@
       "status": {
         "new": {
           "title": "New",
-          "desc": "Back up your recovery phrase",
-          "0": {
-            "title": "Trusted by millions of Ledger users"
-          },
-          "1": {
-            "title": "Your Recovery Phrase is safely linked to your identity"
-          },
-          "2": {
-            "title": "State of the art encryption"
-          },
-          "3": {
-            "title": "Sharded into 3 decentralized pieces, so your recovery phrase can never be stolen"
-          },
+          "desc": "Recover access to your wallet without your Secret Recovery Phrase.",
           "actions": {
-            "learnMore": "Learn more",
-            "alreadySubscribed": "Already subscribed to Protect?"
+            "learnMore": "How does it benefit me?",
+            "alreadySubscribed": "Already subscribed? <LinkAccount>View my account</LinkAccount>"
           }
         },
         "confirmIdentity": {
@@ -6094,5 +6099,13 @@
         "emptyPassword": "Password cannot be empty"
       }
     }
+  },
+  "newsfeed": {
+    "title": "Newsfeed",
+    "poweredByCryptopanic": "Powered by Cryptopanic",
+    "noPosts": "No posts available currently"
+  },
+  "deviceConnect": {
+    "title": "Connect device"
   }
 }

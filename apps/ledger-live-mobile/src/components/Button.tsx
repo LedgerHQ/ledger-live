@@ -50,6 +50,9 @@ type Props = BaseButtonProps & {
   isFocused: boolean;
 };
 
+/**
+ * @deprecated This button is a wrapper around native-ui, trying to translate the props of this component to those of the native-ui button. Please use directly Button from @ledgerhq/native-ui or the wrapped one from ./wrappedUi if you want to use event and eventProperties props.
+ */
 function ButtonWrapped(props: BaseButtonProps) {
   const isFocused = useIsFocused(); // @Warning be careful not to import the wrapped button outside of navigation context
   const useTouchable = useContext(ButtonUseTouchable);

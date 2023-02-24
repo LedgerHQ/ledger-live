@@ -10,13 +10,17 @@ export type PullRequestMetadata = {
   head_branch: string;
   base_sha: string;
   base_branch: string;
+  base_owner: string;
+  is_fork: boolean;
 };
 export type CheckSuite = Awaited<
   ReturnType<Octokit["checks"]["getSuite"]>
 >["data"];
 
+export const REPO_OWNER = "LedgerHQ";
 export const BOT_APP_ID = 198164;
 export const WATCHER_CHECK_RUN_NAME = "@@PR • Watcher 🪬";
+export const REF_PREFIX = "refs/heads";
 export enum RUNNERS {
   internal,
   external,
@@ -24,12 +28,14 @@ export enum RUNNERS {
 }
 const commonGetInputs = (
   payload: GetInputsPayload,
-  metadata?: PullRequestMetadata
+  metadata?: PullRequestMetadata,
+  localRef?: string
 ) => {
   return "workflow_run" in payload
     ? {
         login: payload.workflow_run.actor.login,
         ref:
+          localRef ??
           metadata?.head_branch ??
           payload.workflow_run.pull_requests[0]?.head.ref,
         base_ref:
@@ -130,11 +136,16 @@ export const WORKFLOWS = {
     required: true,
     affected: [/^libs\/.*/],
     summaryFile: "summary.json",
-    getInputs: (payload: GetInputsPayload, metadata?: PullRequestMetadata) => {
+    getInputs: (
+      payload: GetInputsPayload,
+      metadata?: PullRequestMetadata,
+      localRef?: string
+    ) => {
       return "workflow_run" in payload
         ? {
             login: payload.workflow_run.actor.login,
             ref:
+              localRef ??
               metadata?.head_branch ??
               payload.workflow_run.pull_requests[0]?.head.ref,
             since_branch:

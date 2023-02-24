@@ -26,7 +26,9 @@ export function lintCommits(app: Probot) {
         owner,
         repo,
         workflow_id: "commitlint.yml",
-        ref: payload.pull_request.head.ref,
+        ref: payload.pull_request.head.repo.fork
+          ? payload.pull_request.base.ref
+          : payload.pull_request.head.ref,
         inputs: {
           ref: payload.pull_request.head.ref,
           from: payload.pull_request.base.ref,

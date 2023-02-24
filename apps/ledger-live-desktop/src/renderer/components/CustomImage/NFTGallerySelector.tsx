@@ -44,6 +44,7 @@ const NFTGallerySelector = ({ handlePickNft, selectedNftId }: Props) => {
             selected={selectedNftId === id}
             onItemClick={handlePickNft}
             testId={`custom-image-nft-card-${index}`}
+            index={index}
           />
         );
       }),

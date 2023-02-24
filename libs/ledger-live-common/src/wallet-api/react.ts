@@ -52,7 +52,6 @@ import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { MessageData } from "../hw/signMessage/types";
 import { TypedMessageData } from "../families/ethereum/types";
 import { Transaction } from "../generated/types";
-import useEnv from "../hooks/useEnv";
 
 /**
  * TODO: we might want to use "searchParams.append" instead of "searchParams.set"
@@ -204,7 +203,6 @@ export interface UiHook {
   "device.transport": (params: {
     appName: string | undefined;
     onSuccess: (result: AppResult) => void;
-    onError: (error: Error) => void;
     onCancel: () => void;
   }) => void;
 }
@@ -231,22 +229,19 @@ function useTransport(
 }
 
 export function useConfig({
-  manifest,
+  appId,
+  userId,
   tracking,
   wallet,
-}: Pick<ServerConfig, "tracking" | "wallet"> & {
-  manifest: AppManifest;
-}): ServerConfig {
-  const userId = useEnv("USER_ID");
-
+}: ServerConfig): ServerConfig {
   return useMemo(
     () => ({
-      appId: manifest.id,
+      appId,
       userId,
       tracking,
       wallet,
     }),
-    [manifest.id, tracking, userId, wallet]
+    [appId, tracking, userId, wallet]
   );
 }
 
@@ -634,16 +629,12 @@ export function useWalletAPIServer({
                 return;
               }
               // TODO handle appFirmwareRange & seeded params
-              device?.subscribe(deviceParam.deviceId);
+              device.subscribe(deviceParam.deviceId);
               resolve("1");
             },
             onCancel: () => {
               tracking.deviceTransportFail(manifest);
               reject(new Error("User cancelled"));
-            },
-            onError: (error: Error) => {
-              tracking.deviceTransportFail(manifest);
-              reject(error);
             },
           });
         })
