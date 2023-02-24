@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 29.0.0-nightly.2
+
+### Patch Changes
+
+- [#2737](https://github.com/LedgerHQ/ledger-live/pull/2737) [`ab0781e7cb`](https://github.com/LedgerHQ/ledger-live/commit/ab0781e7cb0ab191519a4860ccc6c7f6a472b500) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Disable intall for elrond
+
 ## 29.0.0-nightly.1
 
 ### Minor Changes

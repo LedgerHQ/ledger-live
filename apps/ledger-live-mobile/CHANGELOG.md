@@ -1,5 +1,20 @@
 # live-mobile
 
+## 3.16.0-nightly.2
+
+### Patch Changes
+
+- [#2750](https://github.com/LedgerHQ/ledger-live/pull/2750) [`8b61e7638b`](https://github.com/LedgerHQ/ledger-live/commit/8b61e7638bf6355f8e62a5f89c6cbe6ecc1a2b9b) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Fixed hierarchy issue causing Auth screen to render behind app in Android
+
+- [#2737](https://github.com/LedgerHQ/ledger-live/pull/2737) [`198e7203f6`](https://github.com/LedgerHQ/ledger-live/commit/198e7203f67edad003813ebd41bf6bc7034546e3) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Implement UI for disabled install button on my ledger llm
+
+- [#2670](https://github.com/LedgerHQ/ledger-live/pull/2670) [`aa7f51af07`](https://github.com/LedgerHQ/ledger-live/commit/aa7f51af0771e39d9a6307d291549dc36ad4277f) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fix bug in device language prompt detection
+
+- [#2735](https://github.com/LedgerHQ/ledger-live/pull/2735) [`d42eceaeae`](https://github.com/LedgerHQ/ledger-live/commit/d42eceaeae51a128b45aa70285f7c5b47013a4dd) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fix the main transfer button animation on LLM
+
+- Updated dependencies [[`ab0781e7cb`](https://github.com/LedgerHQ/ledger-live/commit/ab0781e7cb0ab191519a4860ccc6c7f6a472b500)]:
+  - @ledgerhq/live-common@29.0.0-nightly.2
+
 ## 3.16.0-nightly.1
 
 ### Minor Changes

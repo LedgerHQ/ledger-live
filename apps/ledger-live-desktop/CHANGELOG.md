@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 2.54.0-nightly.2
+
+### Minor Changes
+
+- [#2672](https://github.com/LedgerHQ/ledger-live/pull/2672) [`48c12c9af8`](https://github.com/LedgerHQ/ledger-live/commit/48c12c9af8ad8cf07f87c8bddbb6763c6692f852) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - feat: adds a staking modal to the elrond account screen on lld
+
+### Patch Changes
+
+- Updated dependencies [[`ab0781e7cb`](https://github.com/LedgerHQ/ledger-live/commit/ab0781e7cb0ab191519a4860ccc6c7f6a472b500)]:
+  - @ledgerhq/live-common@29.0.0-nightly.2
+
 ## 2.54.0-nightly.1
 
 ### Minor Changes
