@@ -87,7 +87,8 @@
     "popular" : "人気",
     "getSupport" : "サポートを利用する",
     "comingSoon" : "近日公開",
-    "restart" : "再起動"
+    "restart" : "再起動",
+    "loadMore" : "さらに読み込む"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -549,7 +550,7 @@
       "description" : "トランザクションは、30秒以内に署名する必要があります。もう一度お試しください。"
     },
     "TronNotEnoughEnergy" : {
-      "title" : "エネルギーが必要額を満たしていません。手数料には最大30TRXが必要となります。"
+      "title" : "エネルギーが必要額を満たしていません。手数料には最大50TRXが必要となります。"
     },
     "UpdateYourApp" : {
       "title" : "アプリのアップデートが必要です。",
@@ -811,6 +812,13 @@
       "title" : "デバイスがロックされています。",
       "description" : "デバイスのロックを解除して、再度お試しください。",
       "descriptionWithProductName" : "{{ productName }}のロックを解除して、再度お試しください。"
+    },
+    "EtherscanAPIError" : {
+      "title" : "トランザクションの取得に失敗しました",
+      "description" : "エクスプローラーで予期しないエラーが発生しました。後でもう一度お試しください"
+    },
+    "GasEstimationError" : {
+      "title" : "ガスの見積もりに失敗しました"
     }
   },
   "crash" : {
@@ -1118,6 +1126,10 @@
         "title" : "ラーニング",
         "desc" : "暗号資産、Web3、デジタルセキュリティについて学ぶ"
       },
+      "news" : {
+        "title" : "ニュース",
+        "desc" : "暗号資産およびセキュリティ、Web3についての最新情報をチェックしましょう"
+      },
       "ledgerApps" : {
         "title" : "アプリ",
         "desc" : "Ledgerパートナーのアプリを一箇所でチェック"
@@ -1267,8 +1279,7 @@
       },
       "recovery" : "リカバリーフレーズをすでにお持ちですか？",
       "protect" : {
-        "label" : "～60分",
-        "subTitle" : "Protectで復元"
+        "subTitle" : "Restore using Ledger Recover"
       }
     },
     "stepNewDevice" : {
@@ -1653,6 +1664,10 @@
             "label" : "Nano Xが認識されるかどうかを確認します。"
           }
         }
+      },
+      "protectConnectionInformationModal" : {
+        "title" : "Ledgerを接続できないのはなぜですか？",
+        "description" : "LedgerでBluetoothを有効にした後、Ledger Live Mobileへの接続に問題が発生した場合は、下の「問題の修正方法を学ぶ（Learn how to fix that）」ボタンをタップして指示に従ってください。"
       }
     },
     "stepImportAccounts" : {
@@ -2495,7 +2510,9 @@
         "bullet2" : "Ledger Liveのバージョンと、OSのリージョン、言語、地域"
       },
       "hideEmptyTokenAccounts" : "未使用アカウントを非表示にする",
-      "hideEmptyTokenAccountsDesc" : "資産ページでは、全ての空のトークンアカウントが非表示になります。"
+      "hideEmptyTokenAccountsDesc" : "資産ページでは、全ての空のトークンアカウントが非表示になります。",
+      "filterTokenOperationsZeroAmount" : "数量がゼロのトランザクションを非表示にする",
+      "filterTokenOperationsZeroAmountDesc" : "数量がゼロのトランザクションを非表示にすることで、イーサやPolygon、BSC、Tronのポイズニング攻撃などを事前に防ぐことができます。"
     },
     "currencies" : {
       "header" : "通貨",
@@ -3298,6 +3315,10 @@
           }
         }
       }
+    },
+    "walletConnect" : {
+      "title" : "WalletConnect",
+      "description" : "ウォレットをdappsに接続"
     }
   },
   "signMessage" : {
@@ -6077,5 +6098,13 @@
         "emptyPassword" : "パスワードを入力してください"
       }
     }
+  },
+  "newsfeed" : {
+    "title" : "ニュースフィード",
+    "poweredByCryptopanic" : "Powered by Cryptopanic",
+    "noPosts" : "現在表示できる投稿がありません"
+  },
+  "deviceConnect" : {
+    "title" : "Connect device"
   }
 }
