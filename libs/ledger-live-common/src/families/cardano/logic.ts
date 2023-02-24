@@ -19,7 +19,7 @@ import {
   TxOutputDestination,
   TxOutputDestinationType,
 } from "@cardano-foundation/ledgerjs-hw-app-cardano";
-import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils";
+import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils/address";
 import {
   BipPath,
   PaymentChain,
