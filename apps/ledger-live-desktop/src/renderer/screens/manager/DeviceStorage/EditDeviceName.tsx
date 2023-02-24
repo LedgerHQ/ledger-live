@@ -11,6 +11,7 @@ import DeviceAction from "~/renderer/components/DeviceAction";
 import { createAction } from "@ledgerhq/live-common/hw/actions/renameDevice";
 import renameDevice from "@ledgerhq/live-common/hw/renameDevice";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
+import styled from "styled-components";
 
 const action = createAction(renameDevice);
 const MAX_DEVICE_NAME = 20;
@@ -21,6 +22,12 @@ type Props = {
   onSetName: (name: string) => void;
   device: Device;
 };
+
+const TextEllipsis = styled.div`
+  flex-shrink: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
 
 const EditDeviceName: React.FC<Props> = ({ onClose, deviceName, onSetName, device }: Props) => {
   const { t } = useTranslation();
@@ -95,22 +102,26 @@ const EditDeviceName: React.FC<Props> = ({ onClose, deviceName, onSetName, devic
               mx={16}
               mt={10}
               textAlign="center"
-              fontSize={24}
+              fontSize={22}
             >
-              {t("deviceRename.renamed", {
-                productName,
-                name,
-              })}
+              <TextEllipsis>
+                {t("deviceRename.renamed", {
+                  productName,
+                  name,
+                })}
+              </TextEllipsis>
             </Text>
           </Flex>
         ) : running ? (
-          <DeviceAction
-            device={device}
-            request={name}
-            action={action}
-            onClose={onClose}
-            onResult={onSuccess}
-          />
+          <Flex flex={1} alignItems="center" justifyContent="center" p={2}>
+            <DeviceAction
+              device={device}
+              request={name}
+              action={action}
+              onClose={onClose}
+              onResult={onSuccess}
+            />
+          </Flex>
         ) : (
           <Flex px={5} flexDirection="column">
             <Text alignSelf="center" variant="h3Inter" mb={3}>
