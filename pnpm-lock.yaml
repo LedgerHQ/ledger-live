@@ -781,7 +781,7 @@ importers:
       react-native-vector-icons: ^8.1.0
       react-native-version-number: ^0.3.6
       react-native-video: 5.2.0
-      react-native-webview: ^11.17.1
+      react-native-webview: ^11.26.1
       react-redux: ^7.2.9
       redux: ^4.1.2
       redux-actions: 2.6.5
@@ -930,7 +930,7 @@ importers:
       react-native-vector-icons: 8.1.0
       react-native-version-number: 0.3.6
       react-native-video: 5.2.0_lojvl6twgoj4rxeqeytmq4uduq
-      react-native-webview: 11.18.2_ondxtwf5lqq5g76dzmsmwamaca
+      react-native-webview: 11.26.1_ondxtwf5lqq5g76dzmsmwamaca
       react-redux: 7.2.9_hx2b44akkvgcgvvtmk7ds2qk6q
       redux: 4.2.0
       redux-actions: 2.6.5
@@ -47748,8 +47748,8 @@ packages:
       - encoding
     dev: true
 
-  /react-native-webview/11.18.2_ondxtwf5lqq5g76dzmsmwamaca:
-    resolution: {integrity: sha512-EB2BzFi+soOp6GmZQrw6kpeFfoKMxw1vzZg68gWsBllAXfTpfJuxr5zsRoZSNyRRpIoaJ+N+Ok2BVJJiyUYx+g==}
+  /react-native-webview/11.26.1_ondxtwf5lqq5g76dzmsmwamaca:
+    resolution: {integrity: sha512-hC7BkxOpf+z0UKhxFSFTPAM4shQzYmZHoELa6/8a/MspcjEP7ukYKpuSUTLDywQditT8yI9idfcKvfZDKQExGw==}
     peerDependencies:
       react: '*'
       react-native: '*'
