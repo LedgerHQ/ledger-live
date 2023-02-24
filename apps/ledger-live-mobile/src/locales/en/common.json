@@ -1280,7 +1280,13 @@
       "recovery": "Already have a recovery phrase?",
       "protect": {
         "label": "~60 mins",
-        "subTitle": "Restore with Protect"
+        "subTitle": "Restore with Protect",
+        "drawer": {
+          "title": "Use Ledger Nano X",
+          "desc": "Ledger Recover soft launch is exclusively for Ledger Nano X",
+          "buyNanoX": "Buy a Ledger Nano X",
+          "discoverBenefits": "Discover the benefits"
+        }
       }
     },
     "stepNewDevice": {
