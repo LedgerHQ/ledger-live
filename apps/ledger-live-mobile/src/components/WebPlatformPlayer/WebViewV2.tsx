@@ -183,7 +183,8 @@ function useWebView({
   manifest,
   inputs,
   hideHeader,
-}: Pick<Props, "manifest" | "inputs" | "hideHeader">) {
+  onBackButtonPress,
+}: Pick<Props, "manifest" | "inputs" | "hideHeader" | "onBackButtonPress">) {
   const accounts = useSelector(flattenAccountsSelector);
   const navigation = useNavigation();
   const [loadDate, setLoadDate] = useState(new Date());
@@ -260,6 +261,15 @@ function useWebView({
     });
   }, [navigation, widgetLoaded, onReload, isInfoPanelOpened, hideHeader]);
 
+  useEffect(() => {
+    const unsubcribe = navigation.addListener(
+      "beforeRemove",
+      onBackButtonPress,
+    );
+
+    return unsubcribe;
+  }, [navigation, onBackButtonPress]);
+
   return {
     uri: url.toString(),
     isInfoPanelOpened,
@@ -329,11 +339,17 @@ function renderLoading() {
 
 interface Props {
   manifest: AppManifest;
+  onBackButtonPress: (event: any) => void;
   inputs?: Record<string, string>;
   hideHeader?: boolean;
 }
 
-export function WebView({ manifest, inputs, hideHeader = false }: Props) {
+export function WebView({
+  manifest,
+  inputs,
+  hideHeader = false,
+  onBackButtonPress,
+}: Props) {
   const {
     uri,
     isInfoPanelOpened,
@@ -346,6 +362,7 @@ export function WebView({ manifest, inputs, hideHeader = false }: Props) {
     manifest,
     inputs,
     hideHeader,
+    onBackButtonPress,
   });
 
   const source = useMemo(() => {
