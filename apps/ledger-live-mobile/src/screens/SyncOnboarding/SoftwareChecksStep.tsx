@@ -16,6 +16,7 @@ import FirmwareUpdateDrawer from "./FirmwareUpdateDrawer";
 import GenuineCheckCancelledDrawer from "./GenuineCheckCancelledDrawer";
 import UnlockDeviceDrawer from "./UnlockDeviceDrawer";
 import AllowManagerDrawer from "./AllowManagerDrawer";
+import { TrackScreen, track } from "../../analytics";
 
 const softwareStepDelay = 2500;
 const lockedDeviceTimeoutMs = 1000;
@@ -324,12 +325,16 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
 
   return (
     <Flex>
+      <TrackScreen category="Set up Ledger Stax: Step 4 Software & Hardware check" />
       {isDisplayed && (
         <Flex>
           <GenuineCheckDrawer
             productName={productName}
             isOpen={nextDrawerToDisplay === "requested"}
-            onPress={() => setGenuineCheckStatus("ongoing")}
+            onPress={() => {
+              setGenuineCheckStatus("ongoing");
+              track("button_clicked", { button: "Start genuine check" });
+            }}
           />
           <UnlockDeviceDrawer
             isOpen={nextDrawerToDisplay === "unlock-needed"}
@@ -354,19 +359,44 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
             productName={productName}
             isOpen={nextDrawerToDisplay === "cancelled"}
             onRetry={() => {
+              track("button_clicked", { button: "run genuine check again" });
               resetGenuineCheckState();
               setGenuineCheckStatus("unchecked");
             }}
-            onSkip={() => setGenuineCheckStatus("failed")}
+            onSkip={() => {
+              track("button_clicked", {
+                button: "check if hardware genuine later",
+              });
+              setGenuineCheckStatus("failed");
+            }}
           />
           <FirmwareUpdateDrawer
             productName={productName}
             isOpen={nextDrawerToDisplay === "new-firmware-available"}
-            onSkip={() => setFirmwareUpdateStatus("completed")}
-            onUpdate={() => setFirmwareUpdateStatus("completed")}
+            onSkip={() => {
+              track("button_clicked", { button: "skip software update" });
+              setFirmwareUpdateStatus("completed");
+            }}
+            onUpdate={() => {
+              track("button_clicked", { button: "download software update" });
+              setFirmwareUpdateStatus("completed");
+            }}
           />
         </Flex>
       )}
+      {genuineCheckUiStepStatus === "failed" ? (
+        <TrackScreen category="Set up Ledger Stax: Step 4 Hardware not checked" />
+      ) : null}
+      {firmwareUpdateStepTitle === "failed" ? (
+        <TrackScreen category="Stax Set Up - Step 4: Software update available" />
+      ) : null}
+      {firmwareUpdateStepTitle === "ongoing" ? (
+        <TrackScreen category="Set up Ledger Stax: Step 4 Checking software" />
+      ) : null}
+      {genuineCheckUiStepStatus === "completed" &&
+      firmwareUpdateStepTitle === "completed" ? (
+        <TrackScreen category="Stax Set Up - Step 4: Software & Hardware checked successfully" />
+      ) : null}
       <CheckCard
         title={genuineCheckStepTitle}
         status={genuineCheckUiStepStatus}

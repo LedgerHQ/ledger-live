@@ -7,6 +7,7 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { urls } from "../../config/urls";
 import QueuedDrawer from "../../components/QueuedDrawer";
+import { TrackScreen, track } from "../../analytics";
 
 export type Props = {
   isOpen: boolean;
@@ -21,6 +22,7 @@ const DesyncDrawer = ({ isOpen, onClose, onRetry, device }: Props) => {
     getDeviceModel(device.modelId).productName || device.modelId;
 
   const handleSupportPress = useCallback(() => {
+    track("button_clicked", { button: "Get help" });
     Linking.openURL(urls.errors.PairingFailed);
   }, []);
 
@@ -31,6 +33,10 @@ const DesyncDrawer = ({ isOpen, onClose, onRetry, device }: Props) => {
       preventBackdropClick
       noCloseButton
     >
+      <TrackScreen
+        category="Could not connect to Stax"
+        value={{ type: "drawer" }}
+      />
       <Text variant="h4" fontWeight="semiBold" mb={4}>
         {t("syncOnboarding.desyncDrawer.title", { productName })}
       </Text>
