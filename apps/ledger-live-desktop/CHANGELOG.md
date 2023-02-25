@@ -1,5 +1,19 @@
 # ledger-live-desktop
 
+## 2.54.0-nightly.3
+
+### Minor Changes
+
+- [#2759](https://github.com/LedgerHQ/ledger-live/pull/2759) [`207dae90dd`](https://github.com/LedgerHQ/ledger-live/commit/207dae90dd88205d05d22ea1ce911f7b347d6d6b) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Fixes the coin modal close button on the swap screen
+
+### Patch Changes
+
+- [#2652](https://github.com/LedgerHQ/ledger-live/pull/2652) [`897f42df13`](https://github.com/LedgerHQ/ledger-live/commit/897f42df1389768f66882172341be600e09f1791) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Bring the edit device name feature to LLD
+
+- Updated dependencies [[`897f42df13`](https://github.com/LedgerHQ/ledger-live/commit/897f42df1389768f66882172341be600e09f1791), [`e41884bb9e`](https://github.com/LedgerHQ/ledger-live/commit/e41884bb9ed5fadbe893042939c12214ea5e9491), [`ebe618881d`](https://github.com/LedgerHQ/ledger-live/commit/ebe618881d9e9c7159d7a9fe135e18b0cb2fde8f)]:
+  - @ledgerhq/live-common@29.0.0-nightly.3
+  - @ledgerhq/react-ui@0.11.0-nightly.1
+
 ## 2.54.0-nightly.2
 
 ### Minor Changes

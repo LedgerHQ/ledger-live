@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.16.0-nightly.3
+
+### Patch Changes
+
+- [#2766](https://github.com/LedgerHQ/ledger-live/pull/2766) [`93ea7c84a0`](https://github.com/LedgerHQ/ledger-live/commit/93ea7c84a0b76de7cb2869b53d42158be0a21ce1) Thanks [@Justkant](https://github.com/Justkant)! - fix: android webview camera and audio
+
+  Also updates the `react-native-webview` package
+
+- Updated dependencies [[`897f42df13`](https://github.com/LedgerHQ/ledger-live/commit/897f42df1389768f66882172341be600e09f1791), [`ebe618881d`](https://github.com/LedgerHQ/ledger-live/commit/ebe618881d9e9c7159d7a9fe135e18b0cb2fde8f)]:
+  - @ledgerhq/live-common@29.0.0-nightly.3
+
 ## 3.16.0-nightly.2
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.11.0-nightly.1
+
+### Patch Changes
+
+- [#2652](https://github.com/LedgerHQ/ledger-live/pull/2652) [`e41884bb9e`](https://github.com/LedgerHQ/ledger-live/commit/e41884bb9ed5fadbe893042939c12214ea5e9491) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Support neutral info message on BaseInput
+
 ## 0.11.0-nightly.0
 
 ### Minor Changes

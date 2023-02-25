@@ -1,5 +1,19 @@
 # @ledgerhq/live-common
 
+## 29.0.0-nightly.3
+
+### Patch Changes
+
+- [#2652](https://github.com/LedgerHQ/ledger-live/pull/2652) [`897f42df13`](https://github.com/LedgerHQ/ledger-live/commit/897f42df1389768f66882172341be600e09f1791) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Get device name when accessing the manager
+
+- [#2639](https://github.com/LedgerHQ/ledger-live/pull/2639) [`ebe618881d`](https://github.com/LedgerHQ/ledger-live/commit/ebe618881d9e9c7159d7a9fe135e18b0cb2fde8f) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - remove zcash outdated package
+
+- Updated dependencies [[`900ef4f528`](https://github.com/LedgerHQ/ledger-live/commit/900ef4f528c3b2359d666fbb76073978d5f9c840)]:
+  - @ledgerhq/cryptoassets@9.0.0-nightly.1
+  - @ledgerhq/coin-framework@0.1.0-nightly.2
+  - @ledgerhq/coin-polkadot@0.0.2-nightly.2
+  - @ledgerhq/hw-app-eth@6.32.0-nightly.1
+
 ## 29.0.0-nightly.2
 
 ### Patch Changes
