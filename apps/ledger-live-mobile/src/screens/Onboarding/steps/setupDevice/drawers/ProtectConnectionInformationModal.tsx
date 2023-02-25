@@ -25,9 +25,7 @@ const ProtectConnectionInformationModal = () => {
   }, []);
 
   const handlePressLearnHowToUpdate = useCallback(() => {
-    Linking.openURL(
-      "https://support.ledger.com/hc/en-us/articles/360013349800-Update-Ledger-Nano-X-firmware?docs=true",
-    );
+    Linking.openURL(urls.lnxFirmwareUpdate);
   }, []);
 
   const handlePressContactSupport = React.useCallback(() => {
