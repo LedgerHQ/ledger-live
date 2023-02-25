@@ -13,7 +13,7 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   deviceInfo: DeviceInfo;
-  onSuccess: (selectedLangauge: Language) => void;
+  onSuccess: (selectedLanguage: Language) => void;
   onError: (error: Error) => void;
   currentLanguage: Language;
   device: Device;
