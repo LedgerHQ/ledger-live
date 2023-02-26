@@ -5,7 +5,7 @@ import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
 import { PartialNullable } from "../types/helpers";
-import BottomModal from "./BottomModal";
+import QueuedDrawer from "./QueuedDrawer";
 import DeviceAction from "./DeviceAction";
 
 const DeviceActionContainer = styled(Flex).attrs({
@@ -45,7 +45,6 @@ export default function DeviceActionModal<Req, Stt, Res>({
     if (onModalHide) onModalHide();
     if (onResult && result) {
       onResult(result);
-      setResult(null);
     }
   }, [onModalHide, onResult, result]);
 
@@ -56,8 +55,8 @@ export default function DeviceActionModal<Req, Stt, Res>({
   }, [onClose, result]);
 
   return (
-    <BottomModal
-      isOpened={result ? false : !!device}
+    <QueuedDrawer
+      isRequestingToBeOpened={result ? false : !!device}
       onClose={handleClose}
       onModalHide={handleModalHide}
     >
@@ -85,6 +84,6 @@ export default function DeviceActionModal<Req, Stt, Res>({
             </Flex>
           )}
       {device && <SyncSkipUnderPriority priority={100} />}
-    </BottomModal>
+    </QueuedDrawer>
   );
 }

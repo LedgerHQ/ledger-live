@@ -1,43 +1,54 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { useAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/index";
-import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import {
-  CardMedium,
-  NotificationsMedium,
-  NotificationsOnMedium,
-  SettingsMedium,
-  WarningMedium,
-} from "@ledgerhq/native-ui/assets/icons";
+import { CardMedium, SettingsMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "styled-components/native";
 import Touchable from "../../components/Touchable";
 import { NavigatorName, ScreenName } from "../../const";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import DiscreetModeButton from "../../components/DiscreetModeButton";
 import { track } from "../../analytics";
+import useDynamicContent from "../../dynamicContent/dynamicContent";
+import Notifications from "../../icons/Notifications";
+
+const NotificationsButton = () => {
+  const navigation = useNavigation();
+  const { colors } = useTheme();
+  const { notificationCards } = useDynamicContent();
+
+  const onNotificationButtonPress = useCallback(() => {
+    track("button_clicked", {
+      button: "notification bell",
+      screen: ScreenName.Portfolio,
+    });
+    navigation.navigate(NavigatorName.NotificationCenter, {
+      screen: ScreenName.NotificationCenter,
+    });
+  }, [navigation]);
+
+  const notificationsCount = useMemo(
+    () =>
+      notificationCards.length - notificationCards.filter(n => n.viewed).length,
+    [notificationCards],
+  );
+  return (
+    <Touchable onPress={onNotificationButtonPress}>
+      <Notifications
+        size={24}
+        color={colors.neutral.c100}
+        dotColor={colors.error.c80}
+        isOn={notificationsCount > 0}
+      />
+    </Touchable>
+  );
+};
 
 function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
   const navigation = useNavigation();
 
-  const { allIds, seenIds } = useAnnouncements();
-  const { incidents } = useFilteredServiceStatus();
   const { t } = useTranslation();
 
-  const onNotificationButtonPress = useCallback(() => {
-    track("button_clicked", {
-      button: "Notification Center",
-    });
-    navigation.navigate(NavigatorName.NotificationCenter, {
-      screen: ScreenName.NotificationCenterNews,
-    });
-  }, [navigation]);
-
-  const onStatusErrorButtonPress = useCallback(() => {
-    navigation.navigate(NavigatorName.NotificationCenter, {
-      screen: ScreenName.NotificationCenterStatus,
-    });
-  }, [navigation]);
   const onSettingsButtonPress = useCallback(() => {
     track("button_clicked", {
       button: "Settings",
@@ -46,14 +57,12 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
     navigation.navigate(NavigatorName.Settings);
   }, [navigation]);
 
-  const onCardButtonPress = useCallback(() => {
+  const onSideImageCardButtonPress = useCallback(() => {
     navigation.navigate(ScreenName.PlatformApp, {
       platform: "cl-card",
       name: "CL Card Powered by Ledger",
     });
   }, [navigation]);
-
-  const notificationsCount = allIds.length - seenIds.length;
 
   return (
     <Flex
@@ -80,27 +89,11 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
           {t("tabs.portfolio")}
         </Text>
         {!hidePortfolio && <DiscreetModeButton size={20} />}
-        {incidents.length > 0 && (
-          <Flex pl={2}>
-            <Touchable onPress={onStatusErrorButtonPress}>
-              <WarningMedium size={24} color={"warning.c100"} />
-            </Touchable>
-          </Flex>
-        )}
       </Flex>
       <Flex flexDirection="row">
         <Flex mr={7}>
-          <Touchable onPress={onNotificationButtonPress}>
-            {notificationsCount > 0 ? (
-              <NotificationsOnMedium size={24} color={"neutral.c100"} />
-            ) : (
-              <NotificationsMedium size={24} color={"neutral.c100"} />
-            )}
-          </Touchable>
-        </Flex>
-        <Flex mr={7}>
           <Touchable
-            onPress={onCardButtonPress}
+            onPress={onSideImageCardButtonPress}
             event="button_clicked"
             eventProperties={{
               button: "card",
@@ -109,6 +102,9 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
           >
             <CardMedium size={24} color={"neutral.c100"} />
           </Touchable>
+        </Flex>
+        <Flex mr={7}>
+          <NotificationsButton />
         </Flex>
         <Touchable onPress={onSettingsButtonPress} testID="settings-icon">
           <SettingsMedium size={24} color={"neutral.c100"} />

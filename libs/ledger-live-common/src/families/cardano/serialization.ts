@@ -2,6 +2,8 @@ import { BigNumber } from "bignumber.js";
 import type {
   BipPath,
   BipPathRaw,
+  CardanoAccount,
+  CardanoAccountRaw,
   CardanoOutput,
   CardanoOutputRaw,
   CardanoResources,
@@ -13,6 +15,8 @@ import type {
   Token,
   TokenRaw,
 } from "./types";
+import { Account, AccountRaw } from "@ledgerhq/types-live";
+import isEqual from "lodash/isEqual";
 
 function toTokenRaw({ assetName, policyId, amount }: Token): TokenRaw {
   return {
@@ -176,4 +180,48 @@ export function fromCardanoResourceRaw(
     utxos: r.utxos.map(fromCardanoOutputRaw),
     protocolParams: fromProtocolParamsRaw(r.protocolParams),
   };
+}
+
+export function applyReconciliation(
+  account: Account,
+  updatedRaw: AccountRaw,
+  next: Account
+): boolean {
+  let changed = false;
+  const cardanoAcc = account as CardanoAccount;
+  const cardanoUpdatedRaw = updatedRaw as CardanoAccountRaw;
+  if (
+    cardanoUpdatedRaw.cardanoResources &&
+    (!cardanoAcc.cardanoResources ||
+      !isEqual(
+        toCardanoResourceRaw(cardanoAcc.cardanoResources),
+        cardanoUpdatedRaw.cardanoResources
+      ))
+  ) {
+    (next as CardanoAccount).cardanoResources = fromCardanoResourceRaw(
+      cardanoUpdatedRaw.cardanoResources
+    );
+    changed = true;
+  }
+  return changed;
+}
+
+export function assignToAccountRaw(
+  account: Account,
+  accountRaw: AccountRaw
+): void {
+  const cardanoAccount = account as CardanoAccount;
+  if (cardanoAccount.cardanoResources) {
+    (accountRaw as CardanoAccountRaw).cardanoResources = toCardanoResourceRaw(
+      cardanoAccount.cardanoResources
+    );
+  }
+}
+
+export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
+  const cardanoResourcesRaw = (accountRaw as CardanoAccountRaw)
+    .cardanoResources;
+  if (cardanoResourcesRaw)
+    (account as CardanoAccount).cardanoResources =
+      fromCardanoResourceRaw(cardanoResourcesRaw);
 }

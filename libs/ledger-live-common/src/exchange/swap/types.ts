@@ -46,7 +46,7 @@ export type ExchangeRaw = {
   toAccount: AccountRawLike;
 };
 export type ExchangeRate = {
-  rate: BigNumber;
+  rate: BigNumber | undefined;
   // NB Raw rate, for display
   magnitudeAwareRate: BigNumber;
   // NB rate between satoshi units
@@ -56,9 +56,11 @@ export type ExchangeRate = {
   // There's a delta somewhere between from times rate and the api.
   rateId?: string;
   provider: string;
+  providerType: "CEX" | "DEX";
   tradeMethod: "fixed" | "float";
   error?: Error;
   providerURL?: string | null | undefined;
+  expirationTime?: number;
 };
 
 export type TradeMethod = "fixed" | "float";
@@ -70,6 +72,7 @@ export type ExchangeRateRaw = {
   toAmount: string;
   rateId?: string;
   provider: string;
+  providerType: "CEX" | "DEX";
   tradeMethod: TradeMethod;
   error?: string;
   providerURL?: string | null | undefined;
@@ -315,6 +318,7 @@ export type SwapDataType = {
   from: SwapSelectorStateType;
   to: SwapSelectorStateType;
   isMaxEnabled: boolean;
+  isMaxLoading: boolean;
   isSwapReversable: boolean;
   rates: RatesReducerState;
   refetchRates: () => void;
@@ -337,8 +341,6 @@ export type SwapTransactionType = UseBridgeTransactionResult & {
   reverseSwap: () => void;
   fromAmountError?: Error;
 };
-
-export type SetIsSendMaxLoading = (loading: boolean) => void;
 
 export enum ActionRequired {
   Login = "Login",

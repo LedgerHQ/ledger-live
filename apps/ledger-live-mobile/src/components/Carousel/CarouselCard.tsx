@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useEffect } from "react";
 import { Linking } from "react-native";
-import { Flex, CardA } from "@ledgerhq/native-ui";
+import { Flex, FullBackgroundCard } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { WalletContentCard } from "../../dynamicContent/types";
 import useDynamicContent from "../../dynamicContent/dynamicContent";
@@ -31,6 +31,7 @@ const CarouselCard = ({ id, cardProps, index, width }: CarouselCardProps) => {
 
   const onPress = useCallback(() => {
     if (!cardProps) return;
+    if (!cardProps.link) return;
 
     trackContentCardEvent("contentcard_clicked", {
       screen: cardProps.location,
@@ -48,7 +49,7 @@ const CarouselCard = ({ id, cardProps, index, width }: CarouselCardProps) => {
 
     trackContentCardEvent("contentcard_dismissed", {
       screen: cardProps.location,
-      link: cardProps.link,
+      link: cardProps.link || "",
       campaign: cardProps.id,
     });
     dismissCard(cardProps.id);
@@ -57,7 +58,7 @@ const CarouselCard = ({ id, cardProps, index, width }: CarouselCardProps) => {
   return (
     <Flex key={`container_${id}`} mr={6} ml={index === 0 ? 6 : 0} width={width}>
       <ForceTheme selectedPalette={cardProps.image ? "dark" : theme}>
-        <CardA
+        <FullBackgroundCard
           variant={cardProps.background}
           backgroundImage={cardProps.image}
           tag={cardProps.tag}

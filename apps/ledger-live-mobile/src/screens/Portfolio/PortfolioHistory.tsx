@@ -91,7 +91,7 @@ export const PortfolioHistoryList = withDiscreetMode(
     }: {
       section: SectionListData<Operation, DailyOperationsSection>;
     }) {
-      return <SectionHeader section={section} />;
+      return <SectionHeader day={section.day} />;
     }
 
     const onTransactionButtonPress = useCallback(() => {

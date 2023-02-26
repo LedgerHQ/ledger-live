@@ -4,9 +4,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppResult, createAction } from "@ledgerhq/live-common/hw/actions/app";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
+import { Flex } from "@ledgerhq/native-ui";
 import { TrackScreen } from "../../analytics";
+import SelectDevice2 from "../../components/SelectDevice2";
 import SelectDevice from "../../components/SelectDevice";
+import RemoveDeviceMenu from "../../components/SelectDevice2/RemoveDeviceMenu";
 import DeviceActionModal from "../../components/DeviceActionModal";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import {
@@ -16,7 +20,6 @@ import {
 } from "../../components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "../../const";
-import SkipSelectDevice from "../SkipSelectDevice";
 import { RootStackParamList } from "../../components/RootNavigator/types/RootNavigator";
 
 const action = createAction(connectApp);
@@ -28,7 +31,19 @@ type NavigationProps = RootComposite<
 export default function DeviceConnect({ navigation, route }: NavigationProps) {
   const { colors } = useTheme();
   const [device, setDevice] = useState<Device | null | undefined>();
-  const { appName = "BOLOS", onSuccess, onError, onClose } = route.params;
+  const { appName = "BOLOS", onSuccess } = route.params;
+
+  const [chosenDevice, setChosenDevice] = useState<Device | null>();
+  const [showMenu, setShowMenu] = useState<boolean>(false);
+
+  const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
+
+  const onShowMenu = useCallback((device: Device) => {
+    setChosenDevice(device);
+    setShowMenu(true);
+  }, []);
+
+  const onHideMenu = useCallback(() => setShowMenu(false), []);
 
   const onDone = useCallback(() => {
     const n =
@@ -42,21 +57,18 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
   const handleSuccess = useCallback(
     (result: AppResult) => {
       onSuccess(result);
-      // Resets the device to avoid having
-      // the bottom modal popping up again
-      setDevice(undefined);
       onDone();
     },
     [onDone, onSuccess],
   );
 
-  const handleClose = useCallback(() => {
-    onClose();
-    onDone();
-  }, [onClose, onDone]);
+  const resetDevice = useCallback(() => {
+    setDevice(undefined);
+  }, []);
 
   return (
     <SafeAreaView
+      edges={["bottom"]}
       style={[
         styles.root,
         {
@@ -65,19 +77,34 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
       ]}
     >
       <TrackScreen category="DeviceConnect" name="ConnectDevice" />
-      <NavigationScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContainer}
-      >
-        <SkipSelectDevice onResult={setDevice} />
-        <SelectDevice onSelect={setDevice} />
-      </NavigationScrollView>
+      {newDeviceSelectionFeatureFlag?.enabled ? (
+        <Flex px={16} py={5} flex={1}>
+          <SelectDevice2 onSelect={setDevice} stopBleScanning={!!device} />
+        </Flex>
+      ) : (
+        <NavigationScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContainer}
+        >
+          <SelectDevice
+            autoSelectOnAdd
+            onSelect={setDevice}
+            onBluetoothDeviceAction={onShowMenu}
+          />
+          {chosenDevice ? (
+            <RemoveDeviceMenu
+              open={showMenu}
+              device={chosenDevice}
+              onHideMenu={onHideMenu}
+            />
+          ) : null}
+        </NavigationScrollView>
+      )}
       <DeviceActionModal
         action={action}
         device={device}
         onResult={handleSuccess}
-        onClose={handleClose}
-        onError={onError}
+        onClose={resetDevice}
         request={{
           appName,
         }}

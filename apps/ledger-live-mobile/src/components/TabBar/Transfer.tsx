@@ -76,7 +76,7 @@ const BackdropPressable = Animated.createAnimatedComponent(styled(Pressable)`
   background-color: rgba(0, 0, 0, 0.7);
 `);
 
-const DURATION_MS = 250;
+const DURATION_MS = 400;
 const Y_AMPLITUDE = 90;
 
 const animParams = { duration: DURATION_MS };
@@ -146,10 +146,13 @@ export function TransferTabIcon() {
   }, [openAnimValue, track, readOnlyModeEnabled]);
 
   const closeModal = useCallback(() => {
-    setIsOpened(false);
+    const animCallback = () => {
+      setIsOpened(false);
+    };
     openAnimValue.value = withTiming(2, animParams, finished => {
       if (finished) {
         openAnimValue.value = 0;
+        runOnJS(animCallback)();
       }
     });
   }, [openAnimValue]);

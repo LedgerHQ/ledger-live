@@ -144,11 +144,11 @@ export default function Content({
     ];
   const urlFeesInfo =
     specific &&
-    (specific as { getURLFeesInfo: (o: Operation) => string })
+    (specific as { getURLFeesInfo: (o: Operation, c: string) => string })
       ?.getURLFeesInfo &&
-    (specific as { getURLFeesInfo: (o: Operation) => string })?.getURLFeesInfo(
-      operation,
-    );
+    (
+      specific as { getURLFeesInfo: (o: Operation, c: string) => string }
+    )?.getURLFeesInfo(operation, mainAccount.currency.id);
   const Extra =
     specific &&
     (specific as { OperationDetailsExtra: React.ComponentType })

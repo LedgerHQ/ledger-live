@@ -1,7 +1,8 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
-import { BottomDrawer, Flex, Text, Button } from "@ledgerhq/native-ui";
+import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import { track, TrackScreen } from "../../analytics";
+import QueuedDrawer from "../../components/QueuedDrawer";
 
 type Props = {
   isOpen: boolean;
@@ -27,7 +28,7 @@ const AdditionalInfoModal = ({ isOpen, onClose, currencyTicker }: Props) => {
   }, [onClose]);
 
   return (
-    <BottomDrawer isOpen={isOpen} onClose={handleClose}>
+    <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={handleClose}>
       <TrackScreen
         category="Receive"
         name="Explication Account Import/Creation"
@@ -58,7 +59,7 @@ const AdditionalInfoModal = ({ isOpen, onClose, currencyTicker }: Props) => {
           <Trans i18nKey="transfer.receive.additionalInfoModal.closeCta" />
         </Button>
       </Flex>
-    </BottomDrawer>
+    </QueuedDrawer>
   );
 };
 

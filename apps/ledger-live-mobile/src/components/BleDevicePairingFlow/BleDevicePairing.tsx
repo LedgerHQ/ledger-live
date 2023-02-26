@@ -1,4 +1,5 @@
 import React, { ReactNode, useCallback, useEffect } from "react";
+import { TouchableOpacity } from "react-native";
 import { useTheme } from "styled-components/native";
 import { useBleDevicePairing } from "@ledgerhq/live-common/ble/hooks/useBleDevicePairing";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -8,11 +9,11 @@ import { Flex, InfiniteLoader, Text, Button } from "@ledgerhq/native-ui";
 import {
   CircledCheckSolidMedium,
   CircledCrossSolidMedium,
+  CloseMedium,
 } from "@ledgerhq/native-ui/assets/icons";
 import { LockedDeviceError } from "@ledgerhq/errors";
 import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
 import Animation from "../Animation";
-import DeviceSetupView from "../DeviceSetupView";
 
 const TIMEOUT_AFTER_PAIRED_MS = 2000;
 
@@ -157,11 +158,16 @@ const BleDevicePairing = ({
   }
 
   return (
-    <DeviceSetupView onClose={handleClose}>
+    <Flex flex={1}>
+      <Flex flexDirection="row" justifyContent="flex-end">
+        <TouchableOpacity onPress={handleClose}>
+          <CloseMedium size={24} />
+        </TouchableOpacity>
+      </Flex>
       <Flex flex={1} px={10} pt={36} alignItems="center">
         {content}
       </Flex>
-    </DeviceSetupView>
+    </Flex>
   );
 };
 

@@ -5,11 +5,11 @@ import { setEnvUnsafe, getAllEnvs } from "@ledgerhq/live-common/env";
 import { isRestartNeeded } from "~/helpers/env";
 import { setTags } from "~/sentry/main";
 import logger from "~/logger";
-import { getMainWindow } from "./window-lifecycle";
 import InternalProcess from "./InternalProcess";
 import {
   transportCloseChannel,
   transportExchangeChannel,
+  transportExchangeBulkChannel,
   transportOpenChannel,
 } from "~/config/transportChannels";
 
@@ -145,15 +145,6 @@ function handleGlobalInternalMessage(payload) {
       // captureException(err)
       break;
     }
-    case "setDeviceBusy": {
-      const win = getMainWindow && getMainWindow();
-      if (!win) {
-        logger.warn(`can't ${payload.type} because no renderer`);
-        return;
-      }
-      win.webContents.send(payload.type, payload);
-      break;
-    }
     default:
   }
 }
@@ -193,15 +184,17 @@ ipcMain.on("hydrateCurrencyData", (event, { currencyId, serialized }) => {
   internal.send({ type: "hydrateCurrencyData", serialized, currencyId });
 });
 
-// TODO maybe add a timeout to avoid deadlocks ?
-const internalHandler = channel => {
+// route internal process messages to renderer
+const internalHandlerPromise = channel => {
   ipcMain.on(channel, (event, { data, requestId }) => {
     const replyChannel = `${channel}_RESPONSE_${requestId}`;
     const handler = message => {
       if (message.type === channel && message.requestId === requestId) {
         if (message.error) {
+          // reject
           event.reply(replyChannel, { error: message.error });
         } else {
+          // resolve
           event.reply(replyChannel, { data: message.data });
         }
         internal.process.removeListener("message", handler);
@@ -213,6 +206,31 @@ const internalHandler = channel => {
   });
 };
 
-internalHandler(transportOpenChannel);
-internalHandler(transportExchangeChannel);
-internalHandler(transportCloseChannel);
+// multi event version of internalHandler
+const internalHandlerObservable = channel => {
+  ipcMain.on(channel, (event, { data, requestId }) => {
+    const replyChannel = `${channel}_RESPONSE_${requestId}`;
+    const handler = message => {
+      if (message.type === channel && message.requestId === requestId) {
+        if (message.error) {
+          // error
+          event.reply(replyChannel, { error: message.error });
+        } else if (message.data) {
+          // next
+          event.reply(replyChannel, { data: message.data });
+        } else {
+          // complete
+          event.reply(replyChannel, {});
+          internal.process.removeListener("message", handler);
+        }
+      }
+    };
+    internal.process.on("message", handler);
+    internal.send({ type: channel, data, requestId });
+  });
+};
+
+internalHandlerPromise(transportOpenChannel);
+internalHandlerPromise(transportExchangeChannel);
+internalHandlerPromise(transportCloseChannel);
+internalHandlerObservable(transportExchangeBulkChannel);

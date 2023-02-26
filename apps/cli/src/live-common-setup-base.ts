@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import winston from "winston";
-import { EnvName, setEnvUnsafe } from "@ledgerhq/live-common/env";
+import { EnvName, setEnv, setEnvUnsafe } from "@ledgerhq/live-common/env";
 import simple from "@ledgerhq/live-common/logs/simple";
 import { listen } from "@ledgerhq/logs";
 import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
@@ -33,6 +33,7 @@ setSupportedCurrencies([
   "decred",
   "digibyte",
   "algorand",
+  "avalanche_c_chain",
   "qtum",
   "bitcoin_gold",
   "komodo",
@@ -41,11 +42,9 @@ setSupportedCurrencies([
   "vertcoin",
   "peercoin",
   "viacoin",
-  "stakenet",
   "bitcoin_testnet",
   "ethereum_ropsten",
   "ethereum_goerli",
-  "cosmos_testnet",
   "crypto_org",
   "crypto_org_croeseid",
   "celo",
@@ -74,7 +73,10 @@ const { format } = winston;
 const { combine, json } = format;
 const winstonFormatJSON = json();
 const winstonFormatConsole = combine(
-  format(({ type: _type, id: _id, date: _date, ...rest }) => rest)(),
+  format(({ type, message, id: _id, date: _date, ...rest }) => ({
+    ...rest,
+    message: `${type}: ${message}`,
+  }))(),
   format.colorize(),
   simple()
 );
@@ -141,3 +143,6 @@ listen((log) => {
   // @ts-ignore
   logger.log(level, log);
 });
+
+const value = "cli/0.0.0";
+setEnv("LEDGER_CLIENT_VERSION", value);

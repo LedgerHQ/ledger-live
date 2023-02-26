@@ -19,7 +19,7 @@ import {
   deserializePlatformSignedTransaction,
 } from "./serializers";
 import type { TrackFunction } from "./tracking";
-import { AppManifest, TranslatableString } from "./types";
+import { LiveAppManifest, TranslatableString } from "./types";
 import { isTokenAccount, getMainAccount, isAccount } from "../account/index";
 import { getAccountBridge } from "../bridge/index";
 import { Transaction } from "../generated/types";
@@ -37,7 +37,7 @@ export function translateContent(
 }
 
 export type WebPlatformContext = {
-  manifest: AppManifest;
+  manifest: LiveAppManifest;
   accounts: AccountLike[];
   tracking: Record<string, TrackFunction>;
 };
@@ -115,9 +115,7 @@ export function signTransactionLogic(
 
   if (accountFamily !== platformTransaction.family) {
     return Promise.reject(
-      new Error(`Transaction family not matching account currency family.\n
-      Account family: ${accountFamily}\n
-      Transaction family: ${platformTransaction.family}
+      new Error(`Transaction family not matching account currency family. Account family: ${accountFamily}, Transaction family: ${platformTransaction.family}
       `)
     );
   }
@@ -230,9 +228,7 @@ export function completeExchangeLogic(
   if (transaction.family !== mainFromAccountFamily) {
     return Promise.reject(
       new Error(
-        `Account and transaction must be from the same family.\n
-        Account family: ${mainFromAccountFamily}\n
-        Transaction family: ${transaction.family}`
+        `Account and transaction must be from the same family. Account family: ${mainFromAccountFamily}, Transaction family: ${transaction.family}`
       )
     );
   }

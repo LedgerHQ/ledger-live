@@ -12,13 +12,12 @@ import hedera from "../families/hedera/hw-getAddress";
 import near from "../families/near/hw-getAddress";
 import icon from "../families/icon/hw-getAddress";
 import neo from "../families/neo/hw-getAddress";
-import osmosis from "../families/osmosis/hw-getAddress";
-import polkadot from "../families/polkadot/hw-getAddress";
 import ripple from "../families/ripple/hw-getAddress";
 import solana from "../families/solana/hw-getAddress";
 import stellar from "../families/stellar/hw-getAddress";
 import tezos from "../families/tezos/hw-getAddress";
 import tron from "../families/tron/hw-getAddress";
+import polkadot from "@ledgerhq/coin-polkadot/hw-getAddress";
 
 export default {
   algorand,
@@ -35,11 +34,10 @@ export default {
   near,
   icon,
   neo,
-  osmosis,
-  polkadot,
   ripple,
   solana,
   stellar,
   tezos,
   tron,
+  polkadot,
 };

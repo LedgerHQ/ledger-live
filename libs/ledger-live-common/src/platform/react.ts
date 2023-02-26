@@ -15,7 +15,7 @@ import {
   ListPlatformAccount,
   ListPlatformCurrency,
   PlatformCurrency,
-  AppManifest,
+  LiveAppManifest,
   PlatformAccount,
 } from "./types";
 import { getParentAccount } from "../account";
@@ -28,7 +28,7 @@ import { listCurrencies } from "../currencies";
  * We can also use the stringify method of qs (https://github.com/ljharb/qs#stringifying)
  */
 export function usePlatformUrl(
-  manifest: AppManifest,
+  manifest: LiveAppManifest,
   params: { background?: string; text?: string; loadDate?: Date },
   inputs?: Record<string, string>
 ): URL {
@@ -86,13 +86,17 @@ export function useListPlatformAccounts(
 }
 
 export function usePlatformCurrencies(): PlatformCurrency[] {
-  return useMemo(
-    () =>
-      listCurrencies(true)
-        .filter(isPlatformSupportedCurrency)
-        .map(currencyToPlatformCurrency),
-    []
-  );
+  return useMemo(() => {
+    return listCurrencies(true).reduce<PlatformCurrency[]>(
+      (filtered, currency) => {
+        if (isPlatformSupportedCurrency(currency)) {
+          filtered.push(currencyToPlatformCurrency(currency));
+        }
+        return filtered;
+      },
+      []
+    );
+  }, []);
 }
 
 export function useListPlatformCurrencies(): ListPlatformCurrency {

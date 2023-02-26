@@ -3,7 +3,7 @@
 exports[`celo currency bridge scanAccounts Celo 1 1`] = `
 Array [
   Object {
-    "balance": "200081719000000000",
+    "balance": "200083719000000000",
     "celoResources": Object {
       "electionAddress": "0x8D6677192144292870907E3Fa8A5527fE55A7ff6",
       "lockedBalance": "200000000000000000",
@@ -45,10 +45,10 @@ Array [
     "index": 0,
     "name": "Celo 1",
     "nfts": undefined,
-    "operationsCount": 7,
+    "operationsCount": 9,
     "pendingOperations": Array [],
     "seedIdentifier": "0453390dcc1e6f1be0fb34f837b278ed1b4c84097c7493c13a0d915c735af1d8aa445d2738a95e8f50bc22abd2e17cb868d4db22a623d99d861740eb93373d50a3",
-    "spendableBalance": "81719000000000",
+    "spendableBalance": "83719000000000",
     "starred": false,
     "swapHistory": Array [],
     "syncHash": undefined,
@@ -148,6 +148,30 @@ Array [
     Object {
       "accountId": "js:2:celo:0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB:",
       "blockHash": null,
+      "blockHeight": 15545261,
+      "contract": undefined,
+      "extra": Object {
+        "celoOperationValue": "1000000000000",
+      },
+      "fee": "20250000000000",
+      "hasFailed": false,
+      "hash": "0x374851f85b8e09848861425e01ef3f276a4dc39cd746df3681a214a40a30c864",
+      "id": "js:2:celo:0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB:-0x374851f85b8e09848861425e01ef3f276a4dc39cd746df3681a214a40a30c864-IN",
+      "operator": undefined,
+      "recipients": Array [
+        "0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB",
+      ],
+      "senders": Array [
+        "0x835bD367715a74Ab03E91EdCCaF804c82BfE6b93",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "IN",
+      "value": "1000000000000",
+    },
+    Object {
+      "accountId": "js:2:celo:0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB:",
+      "blockHash": null,
       "blockHeight": 14356275,
       "contract": undefined,
       "extra": Object {
@@ -193,6 +217,30 @@ Array [
       "tokenId": undefined,
       "type": "IN",
       "value": "399893159500000000",
+    },
+    Object {
+      "accountId": "js:2:celo:0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB:",
+      "blockHash": null,
+      "blockHeight": 15975626,
+      "contract": undefined,
+      "extra": Object {
+        "celoOperationValue": "1000000000000",
+      },
+      "fee": "19992000000000",
+      "hasFailed": false,
+      "hash": "0x857cbd64d3e9afde598b6622dae0d713f4c50d6d79e95c59dfc4a1bc9bf17c5e",
+      "id": "js:2:celo:0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB:-0x857cbd64d3e9afde598b6622dae0d713f4c50d6d79e95c59dfc4a1bc9bf17c5e-IN",
+      "operator": undefined,
+      "recipients": Array [
+        "0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB",
+      ],
+      "senders": Array [
+        "0x74d7aC2d24D96640d236613132B8e6c1Edf20bCD",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "IN",
+      "value": "1000000000000",
     },
     Object {
       "accountId": "js:2:celo:0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB:",

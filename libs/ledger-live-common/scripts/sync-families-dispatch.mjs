@@ -17,18 +17,13 @@ const targets = [
   "exchange.ts",
   "presync.ts",
   "platformAdapter.ts",
+  "walletApiAdapter.ts",
 ];
 
+const familiesWPackage = ["polkadot"];
+
 cd(path.join(__dirname, "..", "src"));
-await new Promise((resolve, reject) =>
-  rimraf("generated", (e) => {
-    if (e) {
-      echo(chalk.red(e));
-      return reject(e);
-    }
-    resolve();
-  })
-);
+await rimraf("generated");
 await fs.promises.mkdir("generated");
 await fs.promises.mkdir("generated/bridge");
 
@@ -63,6 +58,19 @@ async function genTarget(targets, families) {
       }
     }
 
+    const libsDir = path.join(__dirname, "../..");
+    for (const family of familiesWPackage) {
+      if (
+        target !== "bridge/js.ts" &&
+        fs.existsSync(path.join(libsDir, `coin-${family}/src`, target))
+      ) {
+        imports += `import ${family} from "@ledgerhq/coin-${family}/${imprtTarget}";
+`;
+        exprts += `
+  ${family},`;
+      }
+    }
+
     exprts += `
 };
 `;
@@ -86,12 +94,22 @@ async function getDeviceTransactionConfig(families) {
         "export type ExtraDeviceTransactionField"
       );
       if (hasExports) {
-        imports += `import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_${family} } from  "../families/${family}/deviceTransactionConfig";
+        imports += `import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_${family} } from "../families/${family}/deviceTransactionConfig";
 `;
         exprts += `
   | ExtraDeviceTransactionField_${family}`;
       }
     }
+  }
+
+  const libsDir = path.join(__dirname, "../..");
+  const family = "polkadot";
+  const target = "deviceTransactionConfig.ts";
+  if (fs.existsSync(path.join(libsDir, `coin-${family}/src`, target))) {
+    imports += `import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_${family} } from "@ledgerhq/coin-${family}/deviceTransactionConfig";
+`;
+    exprts += `
+    | ExtraDeviceTransactionField_${family}`;
   }
 
   const str = `${imports}
@@ -109,10 +127,14 @@ async function genTypesFile(families) {
   let exprtsStatus = `export type TransactionStatus =`;
   let exprtsStatusRaw = `export type TransactionStatusRaw =`;
   for (const family of families) {
-    imprts += `import { Transaction as ${family}Transaction } from "../families/${family}/types";
-import { TransactionRaw as ${family}TransactionRaw } from "../families/${family}/types";
-import { TransactionStatus as ${family}TransactionStatus } from "../families/${family}/types";
-import { TransactionStatusRaw as ${family}TransactionStatusRaw } from "../families/${family}/types";
+    const importPath = familiesWPackage.includes(family)
+      ? "@ledgerhq/coin-"
+      : "../families/";
+
+    imprts += `import { Transaction as ${family}Transaction } from "${importPath}${family}/types";
+import { TransactionRaw as ${family}TransactionRaw } from "${importPath}${family}/types";
+import { TransactionStatus as ${family}TransactionStatus } from "${importPath}${family}/types";
+import { TransactionStatusRaw as ${family}TransactionStatusRaw } from "${importPath}${family}/types";
 `;
     exprtsT += `
   | ${family}Transaction`;

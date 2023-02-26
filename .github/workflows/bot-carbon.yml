@@ -69,4 +69,4 @@ jobs:
           SLACK_ICON_EMOJI: ":bot-seed2:"
           SEED: ${{ secrets.SEED2 }}
           BOT_ENVIRONMENT: testing
-          BOT_FILTER_FAMILY: ${{github.event.inputs.family}}
+          BOT_FILTER_FAMILY: ${{inputs.family}}

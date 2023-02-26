@@ -9,6 +9,7 @@ import type {
   BleRemoveKnownDevicePayload,
   BleRemoveKnownDevicesPayload,
   BleSaveDeviceNamePayload,
+  DangerouslyOverrideStatePayload,
 } from "../actions/types";
 import { BleActionTypes } from "../actions/types";
 
@@ -55,6 +56,14 @@ const handlers: ReducerMap<BleState, BlePayload> = {
       ),
     };
   },
+
+  [BleActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (
+    state: BleState,
+    action,
+  ): BleState => ({
+    ...state,
+    ...(action as Action<DangerouslyOverrideStatePayload>).payload.ble,
+  }),
 };
 // Selectors
 export const exportSelector = (s: State) => s.ble;

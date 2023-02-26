@@ -17,7 +17,7 @@ const Illustration: ThemedComponent<Props> = styled(Box).attrs((p: Props) => ({
   width: `${p.size}px`,
   height: p.height ? `${p.height}px` : `${p.size}px`,
 }))<Props>`
-  background: url(${(p: Props) => defineStyleFromTheme(p.lightSource, p.darkSource)(p)});
+  background: url('${(p: Props) => defineStyleFromTheme(p.lightSource, p.darkSource)(p)}');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;

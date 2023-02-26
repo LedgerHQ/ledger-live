@@ -1,13 +1,8 @@
 import React from "react";
-import {
-  BottomDrawer,
-  BoxedIcon,
-  Button,
-  Flex,
-  Text,
-} from "@ledgerhq/native-ui";
+import { BoxedIcon, Button, Flex, Text } from "@ledgerhq/native-ui";
 import { NanoFirmwareUpdateMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
+import QueuedDrawer from "../../components/QueuedDrawer";
 
 export type Props = {
   isOpen: boolean;
@@ -27,12 +22,12 @@ const FirmwareUpdateDrawer = ({
   const { t } = useTranslation();
 
   return (
-    <BottomDrawer
+    <QueuedDrawer
       onClose={() => {
         onClose?.();
         onSkip?.();
       }}
-      isOpen={isOpen}
+      isRequestingToBeOpened={isOpen}
       preventBackdropClick
     >
       <Flex justifyContent="center" alignItems="center">
@@ -63,7 +58,7 @@ const FirmwareUpdateDrawer = ({
           "syncOnboarding.softwareChecksSteps.updateAvailableDrawer.updateCta",
         )}
       </Button>
-    </BottomDrawer>
+    </QueuedDrawer>
   );
 };
 

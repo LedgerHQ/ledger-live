@@ -7,7 +7,7 @@ import {
   inferMaxPriorityFeePerGas,
 } from "./gas";
 import { estimateGasLimit } from "./gas";
-import { isEthereumAddress } from "./logic";
+import { isEthereumAddress, padHexString } from "./logic";
 import { NetworkInfo, Transaction } from "./types";
 import { buildEthereumTx, EIP1559ShouldBeUsed } from "./transaction";
 import { prepareTransaction as prepareTransactionModules } from "./modules";
@@ -75,13 +75,14 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
 
       estimatedGasLimit = await estimateGasLimit(
         account,
-        protoTransaction.to!.toString(),
         // Those are the only elements from a transaction necessary to estimate the gas limit
         {
           from: account.freshAddress,
-          value: "0x" + (protoTransaction.value.toString(16) || "00"),
+          to: protoTransaction.to!.toString(),
+          value:
+            "0x" + (padHexString(protoTransaction.value.toString(16)) || "00"),
           data: protoTransaction.data
-            ? `0x${protoTransaction.data.toString("hex")}`
+            ? `0x${padHexString(protoTransaction.data.toString("hex"))}`
             : "0x",
         }
       );

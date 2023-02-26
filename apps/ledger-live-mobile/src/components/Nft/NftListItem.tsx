@@ -18,13 +18,18 @@ import { Box, Flex, Tag, Text } from "@ledgerhq/native-ui";
 import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import { useTranslation } from "react-i18next";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { useTheme } from "styled-components/native";
 import CurrencyIcon from "../CurrencyIcon";
 import NftMedia from "./NftMedia";
 import Skeleton from "../Skeleton";
+import { NftSelectionCheckbox } from "./NftSelectionCheckbox";
 
 type Props = {
   nft: ProtoNFT;
   onPress?: (nft: ProtoNFT, nftMetadata?: NFTMetadata) => void;
+  onLongPress?: () => void;
+  selectable?: boolean;
+  isSelected?: boolean;
 };
 
 const StyledTouchableOpacity = styled.TouchableOpacity<BaseStyledProps>`
@@ -42,6 +47,9 @@ const NftCardView = ({
   collectionStatus,
   collectionMetadata,
   onPress,
+  onLongPress,
+  selectable = false,
+  isSelected = false,
 }: {
   nft: ProtoNFT;
   status: NFTResource["status"];
@@ -49,6 +57,9 @@ const NftCardView = ({
   collectionStatus: NFTResource["status"];
   collectionMetadata?: NFTCollectionMetadata | null;
   onPress?: () => void;
+  onLongPress?: () => void;
+  selectable?: boolean;
+  isSelected?: boolean;
 }) => {
   const currency = useMemo(
     () => getCryptoCurrencyById(nft.currencyId),
@@ -59,11 +70,17 @@ const NftCardView = ({
   const collectionLoading = collectionStatus === "loading";
 
   return (
-    <StyledTouchableOpacity bg="background.main" onPress={onPress}>
+    <StyledTouchableOpacity
+      bg="background.main"
+      onPress={onPress}
+      onLongPress={onLongPress}
+    >
       <NftMediaComponent
         status={status}
         metadata={metadata}
         nftAmount={nft.standard === "ERC1155" ? nft.amount : undefined}
+        isSelected={isSelected}
+        selectable={selectable}
       />
       <Box mb={7}>
         <Flex flexDirection="column">
@@ -126,7 +143,13 @@ const NftCardView = ({
 const NftCardMemo = memo(NftCardView);
 // this technique of splitting the usage of context and memoing the presentational component is used to prevent
 // the rerender of all NftCards whenever the NFT cache changes (whenever a new NFT is loaded)
-const NftListItem = ({ nft, onPress }: Props) => {
+const NftListItem = ({
+  nft,
+  onPress,
+  onLongPress,
+  isSelected,
+  selectable,
+}: Props) => {
   const nftMetadata = useNftMetadata(
     nft?.contract,
     nft?.tokenId,
@@ -158,6 +181,9 @@ const NftListItem = ({ nft, onPress }: Props) => {
       collectionStatus={collectionStatus}
       collectionMetadata={collectionMetadata}
       onPress={handlePress}
+      onLongPress={onLongPress}
+      selectable={selectable}
+      isSelected={isSelected}
     />
   );
 };
@@ -167,17 +193,33 @@ type NftMediaProps = {
   metadata: NFTMetadata;
   nftAmount?: ProtoNFT["amount"];
 };
-const NftMediaComponent = ({ status, metadata, nftAmount }: NftMediaProps) => {
+type SelectionProps = {
+  selectable: boolean;
+  isSelected: boolean;
+};
+const NftMediaComponent = ({
+  status,
+  metadata,
+  nftAmount,
+  selectable,
+  isSelected,
+}: NftMediaProps & SelectionProps) => {
   const { t } = useTranslation();
-  if (nftAmount && nftAmount.gt(1)) {
-    return (
-      <Box position="relative">
-        <NftMedia
-          style={styles.image}
-          metadata={metadata}
-          mediaFormat="preview"
-          status={status}
-        />
+  const { space } = useTheme();
+  return (
+    <Box>
+      <NftMedia
+        style={[
+          styles.image,
+          {
+            opacity: isSelected ? 0.3 : selectable ? 0.7 : 1,
+          },
+        ]}
+        status={status}
+        metadata={metadata}
+        mediaFormat="preview"
+      />
+      {nftAmount && nftAmount.gt(1) ? (
         <Tag
           position="absolute"
           top="10px"
@@ -188,16 +230,18 @@ const NftMediaComponent = ({ status, metadata, nftAmount }: NftMediaProps) => {
         >
           {t("wallet.nftGallery.media.tag", { count: nftAmount.toNumber() })}
         </Tag>
-      </Box>
-    );
-  }
-  return (
-    <NftMedia
-      style={styles.image}
-      metadata={metadata}
-      mediaFormat="preview"
-      status={status}
-    />
+      ) : null}
+
+      {selectable && (
+        <Flex
+          position="absolute"
+          bottom={`${space[7]}px`}
+          left={`${space[4]}px`}
+        >
+          <NftSelectionCheckbox isSelected={isSelected} />
+        </Flex>
+      )}
+    </Box>
   );
 };
 

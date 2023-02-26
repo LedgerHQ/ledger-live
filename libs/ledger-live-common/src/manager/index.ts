@@ -24,6 +24,7 @@ const oldAppsInstallDisabled = [
   "Ripple",
   "Ontology",
   "Zcoin",
+  "Elrond",
 ];
 
 const canHandleInstall = (app: { name: string }): boolean =>

@@ -27,7 +27,7 @@ import {
   getDerivationScheme,
   getDerivationModesForCurrency,
   runDerivationScheme,
-} from "../../derivation";
+} from "@ledgerhq/coin-framework/derivation";
 import type {
   AppAndVersion,
   ConnectAppEvent,
@@ -109,6 +109,7 @@ export type AppRequest = {
   dependencies?: AppRequest[];
   withInlineInstallProgress?: boolean;
   requireLatestFirmware?: boolean;
+  skipAppInstallIfNotFound?: boolean;
 };
 
 export type AppResult = {
@@ -397,7 +398,8 @@ function inferCommandParams(appRequest: AppRequest) {
   let derivationMode;
   let derivationPath;
 
-  const { account, requireLatestFirmware } = appRequest;
+  const { account, requireLatestFirmware, skipAppInstallIfNotFound } =
+    appRequest;
   let { appName, currency, dependencies } = appRequest;
 
   if (!currency && account) {
@@ -415,7 +417,12 @@ function inferCommandParams(appRequest: AppRequest) {
   }
 
   if (!currency) {
-    return { appName, dependencies, requireLatestFirmware };
+    return {
+      appName,
+      dependencies,
+      requireLatestFirmware,
+      skipAppInstallIfNotFound,
+    };
   }
 
   let extra;
@@ -450,6 +457,7 @@ function inferCommandParams(appRequest: AppRequest) {
       currencyId: currency.id,
       ...extra,
     },
+    skipAppInstallIfNotFound,
   };
 }
 
@@ -644,6 +652,7 @@ export const createAction = (
         appRequest.currency && appRequest.currency.id,
       ]
     );
+
     useEffect(() => {
       if (state.opened) return;
       const impl = implementations[currentMode];

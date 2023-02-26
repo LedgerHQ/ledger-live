@@ -2,6 +2,7 @@
 export type FeatureId =
   | "learn"
   | "brazePushNotifications"
+  | "brazeLearn"
   | "llmNewDeviceSelection"
   | "llmUsbFirmwareUpdate"
   | "ratingsPrompt"
@@ -10,6 +11,7 @@ export type FeatureId =
   | "deviceInitialApps"
   | "buyDeviceFromLive"
   | "ptxSmartRouting"
+  | "currencyAvalancheCChain"
   | "currencyOsmosis"
   | "currencyOsmosisMobile"
   | "currencyFantom"
@@ -25,8 +27,10 @@ export type FeatureId =
   | "currencyFlareMobile"
   | "ptxSmartRoutingMobile"
   | "mockFeature"
+  | "multibuyNavigation"
   | "syncOnboarding"
   | "walletConnectLiveApp"
+  | "walletConnectEntryPoint"
   | "customImage"
   | "referralProgramDiscoverCard"
   | "referralProgramDesktopBanner"
@@ -41,7 +45,13 @@ export type FeatureId =
   | "postOnboardingClaimNft"
   | "postOnboardingAssetsTransfer"
   | "firebaseEnvironmentReadOnly"
-  | "protectServicesMobile";
+  | "protectServicesMobile"
+  | "swapShowDexQuotes"
+  | "stakePrograms"
+  | "portfolioExchangeBanner"
+  | "objkt"
+  | "stakeAccountBanner"
+  | "newsfeedPage";
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */

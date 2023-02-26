@@ -2,11 +2,8 @@ import {
   getAccountCurrency,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
+import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
 import { Button, Flex, Icons, Notification, Text } from "@ledgerhq/native-ui";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { useRoute } from "@react-navigation/native";
 import React, { useCallback, useState } from "react";
@@ -214,11 +211,7 @@ function ReceiveConfirmationInner({
               <CurrencyIcon
                 currency={currency}
                 color={colors.constant.white}
-                bg={
-                  (currency as CryptoCurrency)?.color ||
-                  (currency as TokenCurrency).parentCurrency?.color ||
-                  colors.constant.black
-                }
+                bg={getCurrencyColor(currency) || colors.constant.black}
                 size={48}
                 circle
               />

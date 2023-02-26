@@ -13,6 +13,7 @@ export default async (transport: Transport): Promise<number> => {
   const res = await transport.send(0xe0, 0x64, 0x00, 0x00, Buffer.from([]), [
     StatusCodes.OK,
     StatusCodes.CUSTOM_IMAGE_BOOTLOADER,
+    StatusCodes.UNKNOWN_APDU,
   ]);
 
   const status = res.readUInt16BE(res.length - 2);
@@ -20,6 +21,7 @@ export default async (transport: Transport): Promise<number> => {
   switch (status) {
     case StatusCodes.OK:
       return res.readUInt32BE();
+    case StatusCodes.UNKNOWN_APDU: // Nb For il fw, since it doesn't support CLS
     case StatusCodes.CUSTOM_IMAGE_EMPTY:
       return 0;
     case StatusCodes.CUSTOM_IMAGE_BOOTLOADER:

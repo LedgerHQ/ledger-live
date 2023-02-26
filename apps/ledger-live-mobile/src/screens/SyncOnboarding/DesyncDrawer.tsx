@@ -1,11 +1,12 @@
 import React, { useCallback } from "react";
 import { Linking } from "react-native";
-import { BottomDrawer, Button, Link, Text } from "@ledgerhq/native-ui";
+import { Button, Link, Text } from "@ledgerhq/native-ui";
 import { ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { urls } from "../../config/urls";
+import QueuedDrawer from "../../components/QueuedDrawer";
 
 export type Props = {
   isOpen: boolean;
@@ -24,9 +25,9 @@ const DesyncDrawer = ({ isOpen, onClose, onRetry, device }: Props) => {
   }, []);
 
   return (
-    <BottomDrawer
+    <QueuedDrawer
       onClose={onClose}
-      isOpen={isOpen}
+      isRequestingToBeOpened={isOpen}
       preventBackdropClick
       noCloseButton
     >
@@ -42,7 +43,7 @@ const DesyncDrawer = ({ isOpen, onClose, onRetry, device }: Props) => {
       <Link Icon={ExternalLinkMedium} onPress={handleSupportPress}>
         {t("syncOnboarding.desyncDrawer.helpCta")}
       </Link>
-    </BottomDrawer>
+    </QueuedDrawer>
   );
 };
 

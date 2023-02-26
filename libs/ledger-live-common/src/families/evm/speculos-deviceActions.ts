@@ -1,6 +1,10 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
-import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
+import {
+  deviceActionFlow,
+  formatDeviceAmount,
+  SpeculosButton,
+} from "../../bot/specs";
 
 function subAccount(subAccountId, account) {
   const sub = (account.subAccounts || []).find((a) => a.id === subAccountId);
@@ -17,15 +21,15 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
     steps: [
       {
         title: "Review",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Type",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Amount",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account, status, transaction }) => {
           const a = transaction.subAccountId
             ? subAccount(transaction.subAccountId, account)
@@ -40,35 +44,35 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Contract",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Network",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Max fees",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: maxFeesExpectedValue,
       },
       {
         // Legacy (ETC..)
         title: "Max Fees",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: maxFeesExpectedValue,
       },
       {
         title: "Address",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => transaction.recipient,
       },
       {
         title: "Accept",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
       },
       {
         title: "Approve",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
       },
     ],
   });

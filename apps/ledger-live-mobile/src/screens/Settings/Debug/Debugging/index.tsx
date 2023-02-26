@@ -37,6 +37,12 @@ export default function Debugging() {
         iconLeft={<Icons.WarningSolidMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugCrash)}
       />
+      <SettingsRow
+        title="Camera permission"
+        desc="Debug Camera permissions"
+        iconLeft={<Icons.ClipboardListCheckMedium size={32} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugCameraPermissions)}
+      />
     </SettingsNavigationScrollView>
   );
 }

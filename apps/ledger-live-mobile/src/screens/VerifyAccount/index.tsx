@@ -9,16 +9,19 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { Flex } from "@ledgerhq/native-ui";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import SelectDevice from "../../components/SelectDevice";
+import SelectDevice2 from "../../components/SelectDevice2";
 import DeviceActionModal from "../../components/DeviceActionModal";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import GenericErrorView from "../../components/GenericErrorView";
 import SkipDeviceVerification from "./SkipDeviceVerification";
 import VerifyAddress from "./VerifyAddress";
-import BottomModal from "../../components/BottomModal";
+import QueuedDrawer from "../../components/QueuedDrawer";
 import {
   RootComposite,
   StackNavigatorNavigation,
@@ -39,6 +42,9 @@ export default function VerifyAccount({ navigation, route }: NavigationProps) {
   const { parentAccount } = useSelector(accountScreenSelector(route));
   const [device, setDevice] = useState<Device | null | undefined>();
   const [skipDevice, setSkipDevice] = useState<boolean>(false);
+
+  const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
+
   const { account, onSuccess, onError, onClose } = route.params;
   const mainAccount = getMainAccount(account, parentAccount);
   const error = useMemo(
@@ -100,12 +106,18 @@ export default function VerifyAccount({ navigation, route }: NavigationProps) {
       ]}
     >
       <TrackScreen category="VerifyAccount" name="ConnectDevice" />
-      <NavigationScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContainer}
-      >
-        <SelectDevice onSelect={setDevice} onWithoutDevice={onSkipDevice} />
-      </NavigationScrollView>
+      {newDeviceSelectionFeatureFlag?.enabled ? (
+        <Flex px={16} py={8} flex={1}>
+          <SelectDevice2 onSelect={setDevice} stopBleScanning={!!device} />
+        </Flex>
+      ) : (
+        <NavigationScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContainer}
+        >
+          <SelectDevice onSelect={setDevice} onWithoutDevice={onSkipDevice} />
+        </NavigationScrollView>
+      )}
 
       {device ? (
         <DeviceActionModal
@@ -125,7 +137,7 @@ export default function VerifyAccount({ navigation, route }: NavigationProps) {
           )}
         />
       ) : !device && skipDevice ? (
-        <BottomModal isOpened={true}>
+        <QueuedDrawer isRequestingToBeOpened={true}>
           <View style={styles.modalContainer}>
             <SkipDeviceVerification
               onCancel={handleClose}
@@ -133,7 +145,7 @@ export default function VerifyAccount({ navigation, route }: NavigationProps) {
               account={account}
             />
           </View>
-        </BottomModal>
+        </QueuedDrawer>
       ) : null}
     </SafeAreaView>
   );

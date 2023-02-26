@@ -187,6 +187,8 @@ export const getProviderName = (provider: string): string => {
     case "ftx":
     case "ftxus":
       return provider.toUpperCase();
+    case "oneinch":
+      return "1inch";
     default:
       return provider.charAt(0).toUpperCase() + provider.slice(1);
   }
@@ -197,7 +199,12 @@ export const getNoticeType = (
 ): { message: string; learnMore: boolean } => {
   switch (provider) {
     case "cic":
-      return { message: "cic", learnMore: false };
+      return { message: "provider", learnMore: false };
+    case "changelly":
+      return {
+        message: "provider",
+        learnMore: false,
+      };
     default:
       return { message: "default", learnMore: true };
   }

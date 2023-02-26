@@ -1,12 +1,12 @@
-import React, { useRef, useState, useCallback } from "react";
-import { useSelector } from "react-redux";
+import React, { useRef, useCallback } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { View, TouchableWithoutFeedback } from "react-native";
 import { Icons } from "@ledgerhq/native-ui";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import Config from "react-native-config";
 import { ScreenName } from "../../const";
-import { accountsSelector } from "../../reducers/accounts";
+import { hasNoAccountsSelector } from "../../reducers/accounts";
 import SettingsCard from "../../components/SettingsCard";
 import PoweredByLedger from "./PoweredByLedger";
 import { TrackScreen } from "../../analytics";
@@ -15,6 +15,8 @@ import SettingsNavigationScrollView from "./SettingsNavigationScrollView";
 import useRatings from "../../logic/ratings";
 import { SettingsNavigatorStackParamList } from "../../components/RootNavigator/types/SettingsNavigator";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { openDebugMenu } from "../../actions/appstate";
+import { isDebugMenuVisible } from "../../reducers/appstate";
 
 export default function Settings({
   navigation,
@@ -23,19 +25,19 @@ export default function Settings({
   ScreenName.SettingsScreen
 >) {
   const { t } = useTranslation();
-  const accounts = useSelector(accountsSelector);
+  const dispatch = useDispatch();
+  const hasNoAccounts = useSelector(hasNoAccountsSelector);
   const { handleSettingsRateApp } = useRatings();
 
-  const [debugVisible, setDebugVisible] = useState(
-    Config.FORCE_DEBUG_VISIBLE || false,
-  );
+  const debugVisible =
+    useSelector(isDebugMenuVisible) || Config.FORCE_DEBUG_VISIBLE;
   const count = useRef(0);
   const debugTimeout = useRef(onTimeout);
 
   function onTimeout(): void {
     timer.timeout(() => {
       count.current = 0;
-    }, 1000);
+    }, 2000);
   }
 
   const onDebugHiddenPress = useCallback(() => {
@@ -43,11 +45,11 @@ export default function Settings({
     count.current++;
     if (count.current > 6) {
       count.current = 0;
-      setDebugVisible(!debugVisible);
+      dispatch(openDebugMenu());
     } else {
       onTimeout();
     }
-  }, [debugVisible]);
+  }, [dispatch]);
 
   return (
     <SettingsNavigationScrollView>
@@ -60,7 +62,7 @@ export default function Settings({
         arrowRight
         settingsCardTestId="general-settings-card"
       />
-      {accounts.length > 0 && (
+      {hasNoAccounts ? null : (
         <SettingsCard
           title={t("settings.accounts.title")}
           desc={t("settings.accounts.desc")}

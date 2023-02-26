@@ -10,13 +10,12 @@ import filecoin from "../families/filecoin/cli-transaction";
 import hedera from "../families/hedera/cli-transaction";
 import near from "../families/near/cli-transaction";
 import icon from "../families/icon/cli-transaction";
-import osmosis from "../families/osmosis/cli-transaction";
-import polkadot from "../families/polkadot/cli-transaction";
 import ripple from "../families/ripple/cli-transaction";
 import solana from "../families/solana/cli-transaction";
 import stellar from "../families/stellar/cli-transaction";
 import tezos from "../families/tezos/cli-transaction";
 import tron from "../families/tron/cli-transaction";
+import polkadot from "@ledgerhq/coin-polkadot/cli-transaction";
 
 export default {
   algorand,
@@ -31,11 +30,10 @@ export default {
   hedera,
   near,
   icon,
-  osmosis,
-  polkadot,
   ripple,
   solana,
   stellar,
   tezos,
   tron,
+  polkadot,
 };

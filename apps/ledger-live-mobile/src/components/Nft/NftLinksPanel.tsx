@@ -17,7 +17,7 @@ import ExternalLinkIcon from "../../icons/ExternalLink";
 import OpenSeaIcon from "../../icons/OpenSea";
 import RaribleIcon from "../../icons/Rarible";
 import GlobeIcon from "../../icons/Globe";
-import BottomModal from "../BottomModal";
+import QueuedDrawer from "../QueuedDrawer";
 import { rgba } from "../../colors";
 import HideNftDrawer from "./HideNftDrawer";
 import { track, TrackScreen } from "../../analytics";
@@ -136,9 +136,8 @@ const NftLinksPanel = ({
   const handlePressCustomImage = useCallback(() => {
     if (!customImageUri) return;
     track("button_clicked", {
-      button: "Set as Stax Lockscreen",
+      button: "Set as Ledger Stax lockscreen picture",
       drawer: "NFT settings",
-      url: links?.explorer,
     });
     navigation.navigate(NavigatorName.CustomImage, {
       screen: ScreenName.CustomImagePreviewPreEdit,
@@ -281,14 +280,14 @@ const NftLinksPanel = ({
   };
 
   return (
-    <BottomModal
+    <QueuedDrawer
       style={[
         styles.root,
         {
           backgroundColor: colors.background.drawer,
         },
       ]}
-      isOpened={isOpen}
+      isRequestingToBeOpened={isOpen}
       onClose={onClose}
     >
       <TrackScreen
@@ -304,7 +303,7 @@ const NftLinksPanel = ({
         isOpened={bottomHideCollectionOpen}
         onClose={closeHideModal}
       />
-    </BottomModal>
+    </QueuedDrawer>
   );
 };
 

@@ -45,7 +45,12 @@ export function CurrencyList({ currencies, onCurrencySelect }: Props) {
             {({ index, style }: any) => {
               const currency = currencies[index];
               return (
-                <RowContainer key={index} style={style} onClick={() => onCurrencySelect(currency)}>
+                <RowContainer
+                  key={index}
+                  style={style}
+                  onClick={() => onCurrencySelect(currency)}
+                  data-test-id={`currency-row-${currency?.name?.toLowerCase()}`}
+                >
                   <RowInnerContainer>
                     <Box
                       horizontal

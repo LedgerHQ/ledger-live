@@ -1,4 +1,5 @@
 import {
+  bitcoinFamillyAccountGetXPubLogic,
   broadcastTransactionLogic,
   receiveOnAccountLogic,
   signMessageLogic,
@@ -20,21 +21,23 @@ import BigNumber from "bignumber.js";
 import * as converters from "./converters";
 import * as signMessage from "../hw/signMessage/index";
 import { DerivationMode } from "../derivation";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { TrackingAPI } from "./tracking";
+import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
 
 describe("receiveOnAccountLogic", () => {
   // Given
   const mockWalletAPIReceiveRequested = jest.fn();
   const mockWalletAPIReceiveFail = jest.fn();
-  const context = createContextContainingAccountId(
-    {
+
+  const context = createContextContainingAccountId({
+    tracking: {
       receiveRequested: mockWalletAPIReceiveRequested,
       receiveFail: mockWalletAPIReceiveFail,
     },
-    "11",
-    "12"
-  );
+    accountsParams: [{ id: "11" }, { id: "12" }],
+  });
+
   const uiNavigation = jest.fn();
   const getAccountIdFromWalletAccountIdSpy = jest.spyOn(
     converters,
@@ -126,13 +129,14 @@ describe("receiveOnAccountLogic", () => {
 describe("broadcastTransactionLogic", () => {
   // Given
   const mockWalletAPIBroadcastFail = jest.fn();
-  const context = createContextContainingAccountId(
-    {
+
+  const context = createContextContainingAccountId({
+    tracking: {
       broadcastFail: mockWalletAPIBroadcastFail,
     },
-    "11",
-    "12"
-  );
+    accountsParams: [{ id: "11" }, { id: "12" }],
+  });
+
   const uiNavigation = jest.fn();
 
   const getAccountIdFromWalletAccountIdSpy = jest.spyOn(
@@ -247,14 +251,15 @@ describe("signMessageLogic", () => {
   // Given
   const mockWalletAPISignMessageRequested = jest.fn();
   const mockWalletAPISignMessageFail = jest.fn();
-  const context = createContextContainingAccountId(
-    {
+
+  const context = createContextContainingAccountId({
+    tracking: {
       signMessageRequested: mockWalletAPISignMessageRequested,
       signMessageFail: mockWalletAPISignMessageFail,
     },
-    "11",
-    "12"
-  );
+    accountsParams: [{ id: "11" }, { id: "12" }],
+  });
+
   const uiNavigation = jest.fn();
 
   const getAccountIdFromWalletAccountIdSpy = jest.spyOn(
@@ -465,6 +470,93 @@ describe("signMessageLogic", () => {
   });
 });
 
+describe("bitcoinFamillyAccountGetXPubLogic", () => {
+  // Given
+  const mockBitcoinFamillyAccountXpubRequested = jest.fn();
+  const mockBitcoinFamillyAccountXpubFail = jest.fn();
+  const mockBitcoinFamillyAccountXpubSuccess = jest.fn();
+
+  const bitcoinCrypto = cryptocurrenciesById["bitcoin"];
+
+  const context = createContextContainingAccountId({
+    tracking: {
+      bitcoinFamillyAccountXpubRequested:
+        mockBitcoinFamillyAccountXpubRequested,
+      bitcoinFamillyAccountXpubFail: mockBitcoinFamillyAccountXpubFail,
+      bitcoinFamillyAccountXpubSuccess: mockBitcoinFamillyAccountXpubSuccess,
+    },
+    accountsParams: [
+      { id: "11" },
+      { id: "12" },
+      { id: "13", currency: bitcoinCrypto },
+    ],
+  });
+
+  const getAccountIdFromWalletAccountIdSpy = jest.spyOn(
+    converters,
+    "getAccountIdFromWalletAccountId"
+  );
+
+  beforeEach(() => {
+    mockBitcoinFamillyAccountXpubRequested.mockClear();
+    mockBitcoinFamillyAccountXpubFail.mockClear();
+    mockBitcoinFamillyAccountXpubSuccess.mockClear();
+    getAccountIdFromWalletAccountIdSpy.mockClear();
+  });
+
+  const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
+
+  it.each([
+    {
+      desc: "receive unkown accountId",
+      accountId: undefined,
+      errorMessage: `accountId ${walletAccountId} unknown`,
+    },
+    {
+      desc: "account not found",
+      accountId: "ethereumjs:2:ethereum:0x010:",
+      errorMessage: "account not found",
+    },
+    {
+      desc: "account is not a bitcoin family account",
+      accountId: "ethereumjs:2:ethereum:0x012:",
+      errorMessage: "not a bitcoin family account",
+    },
+  ])("returns an error when $desc", async ({ accountId, errorMessage }) => {
+    // Given
+
+    getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(accountId);
+
+    // When
+    await expect(async () => {
+      await bitcoinFamillyAccountGetXPubLogic(context, walletAccountId);
+    }).rejects.toThrowError(errorMessage);
+
+    // Then
+    expect(mockBitcoinFamillyAccountXpubRequested).toBeCalledTimes(1);
+    expect(mockBitcoinFamillyAccountXpubFail).toBeCalledTimes(1);
+    expect(mockBitcoinFamillyAccountXpubSuccess).toBeCalledTimes(0);
+  });
+
+  it("should return the xpub", async () => {
+    // Given
+    const accountId = "bitcoinjs:2:bitcoin:0x013:";
+    getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(accountId);
+
+    // When
+    const result = await bitcoinFamillyAccountGetXPubLogic(
+      context,
+      walletAccountId
+    );
+
+    // Then
+    expect(result).toEqual("testxpub");
+    expect(mockBitcoinFamillyAccountXpubRequested).toBeCalledTimes(1);
+    expect(mockBitcoinFamillyAccountXpubFail).toBeCalledTimes(0);
+    expect(mockBitcoinFamillyAccountXpubSuccess).toBeCalledTimes(1);
+  });
+});
+
 function createAppManifest(id = "1"): AppManifest {
   return {
     id,
@@ -494,16 +586,18 @@ function createAppManifest(id = "1"): AppManifest {
   };
 }
 
-function createContextContainingAccountId(
-  tracking: Partial<TrackingAPI>,
-  ...accountIds: string[]
-): WalletAPIContext {
+function createContextContainingAccountId({
+  tracking,
+  accountsParams,
+}: {
+  tracking: Partial<TrackingAPI>;
+  accountsParams: Array<{ id: string; currency?: CryptoCurrency }>;
+}): WalletAPIContext {
   return {
     manifest: createAppManifest(),
-    accounts: [
-      ...accountIds.map((val) => createFixtureAccount(val)),
-      createFixtureAccount(),
-    ],
+    accounts: accountsParams
+      .map(({ id, currency }) => createFixtureAccount(id, currency))
+      .concat([createFixtureAccount()]),
     tracking: tracking as TrackingAPI,
   };
 }

@@ -80,11 +80,6 @@ export default function cryptoFactory(currency: Currency): ICrypto {
       res = new crypto.ViaCoin({ network });
       break;
     }
-    case "stakenet": {
-      const network = coininfo.bitcoin.main.toBitcoinJS();
-      res = new crypto.Stakenet({ network });
-      break;
-    }
     case "stealthcoin": {
       const network = coininfo.bitcoin.main.toBitcoinJS();
       res = new crypto.Stealth({ network });
@@ -106,3 +101,4 @@ export default function cryptoFactory(currency: Currency): ICrypto {
   }
   return res;
 }
+// TODO: Currently, all bitcoin currencies included setSupportedCurrencies must be supported here. We are working on a new way to support/enable new currencies

@@ -7,7 +7,6 @@ import { createStructuredSelector } from "reselect";
 import { compose } from "redux";
 import { privacySelector } from "../../reducers/settings";
 import { SkipLockContext } from "../../components/behaviour/SkipLock";
-import { AUTOLOCK_TIMEOUT } from "../../constants";
 import type { Privacy, State as GlobalState } from "../../reducers/types";
 import AuthScreen from "./AuthScreen";
 import RequestBiometricAuth from "../../components/RequestBiometricAuth";
@@ -75,21 +74,12 @@ class AuthPass extends PureComponent<Props, State> {
     this.state.mounted = false;
   }
 
-  appInBg: number | undefined;
   handleAppStateChange = (nextAppState: string) => {
     if (
       this.state.appState.match(/inactive|background/) &&
-      nextAppState === "active" &&
-      !!this.appInBg &&
-      this.appInBg + AUTOLOCK_TIMEOUT < Date.now()
+      nextAppState === "active"
     ) {
       this.lock();
-      this.appInBg = Date.now();
-    } else if (
-      nextAppState === "background" ||
-      this.state.appState === "active"
-    ) {
-      this.appInBg = Date.now();
     }
 
     if (this.state.mounted)
@@ -183,8 +173,8 @@ class AuthPass extends PureComponent<Props, State> {
 
     return (
       <SkipLockContext.Provider value={setEnabled}>
-        {lockScreen}
         {children}
+        {lockScreen}
       </SkipLockContext.Provider>
     );
   }

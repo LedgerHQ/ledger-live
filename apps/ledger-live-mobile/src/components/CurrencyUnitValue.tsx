@@ -28,11 +28,12 @@ const CurrencyUnitValue = ({
   const { locale } = useLocale();
   const discreet = useSelector(discreetModeSelector);
   const shouldApplyDiscreetMode = useContext(DiscreetModeContext);
-  const value = valueProp
-    ? valueProp instanceof BigNumber
-      ? valueProp
-      : new BigNumber(valueProp)
-    : null;
+  const value =
+    valueProp || valueProp === 0
+      ? valueProp instanceof BigNumber
+        ? valueProp
+        : new BigNumber(valueProp)
+      : null;
 
   let loc = locale;
   // TEMPORARY : quick win to transform arabic to english

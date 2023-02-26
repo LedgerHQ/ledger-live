@@ -1,12 +1,11 @@
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { ProtectStateNumberEnum } from "@ledgerhq/live-common/platform/providers/ProtectProvider/types";
-import { refreshToken } from "@ledgerhq/live-common/platform/providers/ProtectProvider/api/index";
-import React, { memo, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { memo, useCallback } from "react";
+import { Linking, Image } from "react-native";
 import { useTranslation } from "react-i18next";
 import Svg, { LinearGradient, Defs, Rect, Stop } from "react-native-svg";
+import { useTheme } from "styled-components/native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useNavigation } from "@react-navigation/native";
 import NewProtectState from "./Protect/NewProtectState";
 import ConfirmIdentityProtectState from "./Protect/ConfirmIdentityProtectState";
 import AddPaymentProtectState from "./Protect/AddPaymentProtectState";
@@ -14,13 +13,10 @@ import SubscriptionCanceledProtectState from "./Protect/SubscriptionCanceledProt
 import PaymentRejectedProtectState from "./Protect/PaymentRejectedProtectState";
 import ActiveProtectState from "./Protect/ActiveProtectState";
 import { ServicesConfig } from "./types";
-import { protectSelector } from "../../reducers/protect";
-import { updateProtectData, updateProtectStatus } from "../../actions/protect";
-import { formatData, getProtectStatus } from "../../logic/protect";
-import { saveProtect } from "../../db";
-import { ScreenName } from "../../const";
-import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
-import { ManagerNavigatorStackParamList } from "../RootNavigator/types/ManagerNavigator";
+import Touchable from "../Touchable";
+
+import LedgerRecoverLogoLight from "../../images/ledger_recover_light.png";
+import LedgerRecoverLogoDark from "../../images/ledger_recover_dark.png";
 
 const SvgGradient = () => (
   <Svg width="100%" height="8px">
@@ -33,8 +29,12 @@ const SvgGradient = () => (
         y2="0%"
         gradientUnits="userSpaceOnUse"
       >
-        <Stop offset="0%" stopOpacity={1} stopColor="hsla(40, 90%, 69%, 1)" />
-        <Stop offset="100%" stopOpacity={1} stopColor="hsla(40, 96%, 81%, 1)" />
+        <Stop offset="0%" stopOpacity={1} stopColor="hsla(172, 100%, 42%, 1)" />
+        <Stop
+          offset="100%"
+          stopOpacity={1}
+          stopColor="hsla(220, 100%, 42%, 1)"
+        />
       </LinearGradient>
     </Defs>
     <Rect x="0" y="0" width="100%" height="100%" fill="url(#protectGradient)" />
@@ -66,82 +66,69 @@ const statesComponents: Record<
 };
 
 function ServicesWidget() {
-  const dispatch = useDispatch();
   const { t } = useTranslation();
   const servicesConfig: ServicesConfig | null = useFeature(
     "protectServicesMobile",
   );
-  const navigation =
-    useNavigation<StackNavigatorNavigation<ManagerNavigatorStackParamList>>();
-
-  const [wasPreviouslyRefreshed, setWasPreviouslyRefreshed] = useState(false);
+  const theme = useTheme();
 
   const { enabled, params } = servicesConfig || {};
+  const { managerStatesData } = params || {};
 
-  const { protectStatus, data } = useSelector(protectSelector);
+  const protectStatus = ProtectStateNumberEnum.NEW;
 
   const ProtectStateComponent = statesComponents[protectStatus];
 
-  useEffect(() => {
-    const refreshSession = async () => {
-      if (wasPreviouslyRefreshed || !data.refreshToken) {
-        return;
-      }
+  const onCardPress = useCallback(() => {
+    if (protectStatus !== ProtectStateNumberEnum.NEW) return;
 
-      const res = await refreshToken(data.refreshToken);
-
-      if (!res) {
-        navigation.navigate(ScreenName.ProtectLogin);
-        return;
-      }
-
-      const newData = formatData(res);
-
-      dispatch(updateProtectData(newData));
-      dispatch(updateProtectStatus(getProtectStatus(newData)));
-      setWasPreviouslyRefreshed(true);
-    };
-
-    refreshSession();
-  }, [data.refreshToken, dispatch, navigation, wasPreviouslyRefreshed]);
-
-  useEffect(() => {
-    saveProtect({ data, protectStatus });
-  }, [data, protectStatus]);
+    const { learnMoreURI } = managerStatesData?.[protectStatus] || {};
+    Linking.canOpenURL(learnMoreURI).then(() => Linking.openURL(learnMoreURI));
+  }, [managerStatesData, protectStatus]);
 
   return enabled && params?.managerStatesData ? (
     <>
-      <Text mt={12} fontWeight="semiBold" variant="h5">
+      <Text mt={12} fontWeight="semiBold" variant="h5" mb={6}>
         {t("servicesWidget.title")}
       </Text>
-      <Text variant="paragraph" color="neutral.c80">
-        {t("servicesWidget.subTitle")}
-      </Text>
-      <Flex bg="neutral.c30" borderRadius={8} mt={5} mb={13} overflow="hidden">
-        <SvgGradient />
-        <Flex p={8}>
-          <Flex
-            flexDirection="row"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Text variant="h5" mr={6}>
-              {t("servicesWidget.protect.title")}
+      <Touchable onPress={onCardPress}>
+        <Flex
+          bg="neutral.c30"
+          borderRadius={8}
+          mt={5}
+          mb={13}
+          overflow="hidden"
+        >
+          <SvgGradient />
+          <Flex p={8}>
+            <Flex
+              flexDirection="row"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <Image
+                source={
+                  theme.colors.type === "light"
+                    ? LedgerRecoverLogoLight
+                    : LedgerRecoverLogoDark
+                }
+                style={{ width: 90, height: 26 }}
+              />
+              {ProtectStateComponent && ProtectStateComponent.StatusTag ? (
+                <ProtectStateComponent.StatusTag />
+              ) : null}
+            </Flex>
+            <Text variant="paragraph" color="neutral.c80" my={7}>
+              {t(
+                `servicesWidget.protect.status.${statesKeys[protectStatus]}.desc`,
+              )}
             </Text>
-            {ProtectStateComponent && ProtectStateComponent.StatusTag ? (
-              <ProtectStateComponent.StatusTag />
-            ) : null}
+            <NewProtectState
+              params={params?.managerStatesData?.[protectStatus]}
+            />
           </Flex>
-          <Text variant="paragraph" color="neutral.c80" mt={3}>
-            {t(
-              `servicesWidget.protect.status.${statesKeys[protectStatus]}.desc`,
-            )}
-          </Text>
-          <ProtectStateComponent
-            params={params?.managerStatesData?.[protectStatus]}
-          />
         </Flex>
-      </Flex>
+      </Touchable>
     </>
   ) : null;
 }

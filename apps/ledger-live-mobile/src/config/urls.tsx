@@ -83,16 +83,14 @@ export const urls = {
   },
   celoStakingRewards:
     "https://support.ledger.com/hc/en-us/articles/360020499920-Celo-CELO-?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=celo&docs=true",
-  osmosisStakingRewards:
-    "https://support.ledger.com/hc/en-us/sections/4404369637521-Crypto-assets?docs=true",
   cosmosStaking:
     "https://www.ledger.com/staking-cosmos?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=cosmos",
-  cosmosStakingRewards:
-    "https://support.ledger.com/hc/en-us/articles/360014339340-Earn-Cosmos-staking-rewards?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=cosmos",
   algorandStaking:
     "https://support.ledger.com/hc/en-us/articles/360015897740?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=algorand",
   polkadotStaking:
     "https://support.ledger.com/hc/en-us/articles/360018131260-Earning-Polkadot-DOT-bonding-rewards?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=polkadot",
+  elrondStaking:
+    "https://support.ledger.com/hc/en-us/articles/360016750819-Elrond-EGLD-?docs=true",
   nearStakingRewards:
     "https://support.ledger.com/hc/en-us/articles/360020450619-NEAR-NEAR-?docs=true",
   swap: {
@@ -199,6 +197,8 @@ export const urls = {
     tellMeMore:
       "https://www.ledger.com/supported-services?utm_source=ledger_live&utm_medium=self_referral&utm_content=discover",
     mint: "ledgerlive://discover/lmarket",
+    linkDrop: "ledgerlive://discover/linkdrop",
+    linkDropStaging: "ledgerlive://discover/linkdrop-staging",
   },
   hedera: {
     supportArticleLink:
@@ -209,4 +209,6 @@ export const urls = {
       "https://support.ledger.com/hc/en-us/articles/7572912170653?docs=true",
     howToSecure: "https://www.ledger.com/academy/how-to-secure-your-nfts",
   },
+  lnxFirmwareUpdate:
+    "https://support.ledger.com/hc/en-us/articles/360013349800-Update-Ledger-Nano-X-firmware?docs=true",
 };

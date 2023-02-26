@@ -23,6 +23,7 @@ import DebugFetchCustomImage from "../../screens/Settings/Debug/Features/FetchCu
 import DebugGenerators from "../../screens/Settings/Debug/Generators";
 import DebugHttpTransport from "../../screens/Settings/Debug/Connectivity/DebugHttpTransport";
 import DebugInformation from "../../screens/Settings/Debug/Information";
+import DebugPerformance from "../../screens/Settings/Debug/Performance";
 import DebugLogs from "../../screens/Settings/Debug/Debugging/Logs";
 import DebugLottie from "../../screens/Settings/Debug/Features/Lottie";
 import DebugNetwork from "../../screens/Settings/Debug/Debugging/Network";
@@ -31,6 +32,7 @@ import DebugSettings from "../../screens/Settings/Debug";
 import DebugStore from "../../screens/Settings/Debug/Debugging/Store";
 import DebugStoryly from "../../screens/Settings/Debug/Features/Storyly";
 import DebugSwap from "../../screens/Settings/Debug/Features/Swap";
+import DebugVideos from "../../screens/Settings/Debug/Features/Videos";
 
 import Settings from "../../screens/Settings";
 import AccountsSettings from "../../screens/Settings/Accounts";
@@ -47,7 +49,6 @@ import ExperimentalSettings from "../../screens/Settings/Experimental";
 import DeveloperSettings, {
   DeveloperCustomManifest,
 } from "../../screens/Settings/Developer";
-import RepairDevice from "../../screens/RepairDevice";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import Button from "../Button";
 import HelpButton from "../../screens/Settings/HelpButton";
@@ -57,6 +58,9 @@ import HiddenNftCollections from "../../screens/Settings/Accounts/HiddenNftColle
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 import PostOnboardingDebugScreen from "../../screens/PostOnboarding/PostOnboardingDebugScreen";
 import { SettingsNavigatorStackParamList } from "./types/SettingsNavigator";
+import DebugTermsOfUse from "../../screens/Settings/Debug/Features/TermsOfUse";
+import CameraPermissions from "../../screens/Settings/Debug/Debugging/CameraPermissions";
+import DebugQueuedDrawers from "../../screens/Settings/Debug/Features/QueuedDrawers";
 
 const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 
@@ -152,13 +156,6 @@ export default function SettingsNavigator() {
           headerRight: undefined,
         })}
         {...noNanoBuyNanoWallScreenOptions}
-      />
-      <Stack.Screen
-        name={ScreenName.RepairDevice}
-        component={RepairDevice}
-        options={{
-          title: t("RepairDevice.title"),
-        }}
       />
       <Stack.Screen
         name={ScreenName.ExperimentalSettings}
@@ -345,6 +342,13 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
+        name={ScreenName.DebugVideos}
+        component={DebugVideos}
+        options={{
+          title: "Debug Videos",
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.DebugFetchCustomImage}
         component={DebugFetchCustomImage}
         options={{
@@ -366,6 +370,13 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
+        name={ScreenName.DebugTermsOfUse}
+        component={DebugTermsOfUse}
+        options={{
+          title: "Debug Terms of Use",
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.BenchmarkQRStream}
         component={DebugBenchmarkQRStream}
         options={{
@@ -384,6 +395,24 @@ export default function SettingsNavigator() {
       <Stack.Screen
         name={ScreenName.PostOnboardingDebugScreen}
         component={PostOnboardingDebugScreen}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugCameraPermissions}
+        component={CameraPermissions}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugPerformance}
+        component={DebugPerformance}
+        options={{
+          title: "Performance",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugQueuedDrawers}
+        component={DebugQueuedDrawers}
+        options={{
+          title: "Debug bottom drawers",
+        }}
       />
     </Stack.Navigator>
   );

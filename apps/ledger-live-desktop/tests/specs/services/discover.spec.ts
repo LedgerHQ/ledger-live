@@ -2,9 +2,9 @@ import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { DiscoverPage } from "../../models/DiscoverPage";
 import { Layout } from "../../models/Layout";
-import { Drawer } from "tests/models/Drawer";
-import { Modal } from "tests/models/Modal";
-import { DeviceAction } from "tests/models/DeviceAction";
+import { Drawer } from "../../models/Drawer";
+import { Modal } from "../../models/Modal";
+import { DeviceAction } from "../../models/DeviceAction";
 import * as server from "../../utils/serve-dummy-app";
 
 // Comment out to disable recorder
@@ -55,6 +55,7 @@ test("Discover", async ({ page }) => {
     await drawer.continue();
     await drawer.waitForDrawerToDisappear(); // macos runner was having screenshot issues here because the drawer wasn't disappearing fast enough
     await discoverPage.waitForLiveAppToLoad(); // let the loading spinner disappear first
+    await discoverPage.waitForCorrectTextInWebview("Ledger Live Dummy Test App");
     await expect.soft(page).toHaveScreenshot("live-disclaimer-accepted.png");
   });
 
@@ -67,13 +68,13 @@ test("Discover", async ({ page }) => {
 
   await test.step("Request Account drawer - open", async () => {
     await discoverPage.requestAsset();
-    await expect(await discoverPage.selectAssetTitle.isVisible()).toBe(true);
+    await expect(discoverPage.selectAssetTitle).toBeVisible();
   });
 
   await test.step("Request Account - select asset", async () => {
     await discoverPage.selectAsset();
-    await expect(await discoverPage.selectAccountTitle.isVisible()).toBe(true);
-    await expect(await discoverPage.selectAssetSearchBar.isEnabled()).toBe(true);
+    await expect(discoverPage.selectAccountTitle).toBeVisible();
+    await expect(discoverPage.selectAssetSearchBar).toBeEnabled();
   });
 
   await test.step("Request Account - select BTC", async () => {

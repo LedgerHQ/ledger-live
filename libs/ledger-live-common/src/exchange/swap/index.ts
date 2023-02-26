@@ -53,7 +53,7 @@ const getSwapAPIVersion: () => number = () => {
   return version;
 };
 
-const ftx: SwapProviderConfig = {
+const ftx: ProviderConfig = {
   ...createExchangeProviderNameAndSignature({
     name: "FTX",
     publicKey:
@@ -63,9 +63,18 @@ const ftx: SwapProviderConfig = {
   }),
   needsKYC: true,
   needsBearerToken: true,
+  type: "CEX",
 };
 
-const swapProviders: Record<string, SwapProviderConfig> = {
+type CEXProviderConfig = SwapProviderConfig & { type: "CEX" };
+type DEXProviderConfig = {
+  needsKYC: boolean;
+  needsBearerToken: boolean;
+  type: "DEX";
+};
+type ProviderConfig = CEXProviderConfig | DEXProviderConfig;
+
+const swapProviders: Record<string, ProviderConfig> = {
   changelly: {
     ...createExchangeProviderNameAndSignature({
       name: "Changelly",
@@ -76,6 +85,7 @@ const swapProviders: Record<string, SwapProviderConfig> = {
     }),
     needsKYC: false,
     needsBearerToken: false,
+    type: "CEX",
   },
   cic: {
     ...createExchangeProviderNameAndSignature({
@@ -87,6 +97,7 @@ const swapProviders: Record<string, SwapProviderConfig> = {
     }),
     needsKYC: false,
     needsBearerToken: false,
+    type: "CEX",
   },
   wyre: {
     ...createExchangeProviderNameAndSignature({
@@ -98,12 +109,23 @@ const swapProviders: Record<string, SwapProviderConfig> = {
     }),
     needsKYC: true,
     needsBearerToken: false,
+    type: "CEX",
   },
   ftx,
   ftxus: ftx,
+  oneinch: {
+    needsKYC: false,
+    needsBearerToken: false,
+    type: "DEX",
+  },
+  paraswap: {
+    needsKYC: false,
+    needsBearerToken: false,
+    type: "DEX",
+  },
 };
 
-const getProviderConfig = (providerName: string): SwapProviderConfig => {
+const getProviderConfig = (providerName: string): ProviderConfig => {
   const res = swapProviders[providerName.toLowerCase()];
 
   if (!res) {

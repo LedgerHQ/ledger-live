@@ -24,7 +24,11 @@ import { discreetModeSelector, localeSelector } from "../../reducers/settings";
 
 const helpURL = "https://support.ledger.com/hc/en-us/articles/360013062139";
 
-function getURLWhatIsThis(op: Operation): string | null | undefined {
+function getURLWhatIsThis(
+  op: Operation,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  currencyId: string,
+): string | null | undefined {
   if (op.type !== "IN" && op.type !== "OUT") {
     return helpURL;
   }

@@ -3,13 +3,13 @@ import { Account, NFTStandard, ProtoNFT } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { genAccount } from "../mock/account";
 import {
-  getNFTByTokenId,
+  getNFT,
   getNftCollectionKey,
   getNftKey,
   groupByCurrency,
   orderByLastReceived,
 } from "./helpers";
-import { encodeNftId } from "./nftId";
+import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 
 const NFT_1 = {
   id: encodeNftId("js:2:0ddkdlsPmds", "contract", "nft.tokenId", "ethereum"),
@@ -73,8 +73,8 @@ describe("helpers", () => {
       "currencyId-contract"
     );
   });
-  it("getNFTByTokenId", () => {
-    expect(getNFTByTokenId("nft.tokenId", NFTs)).toEqual(NFT_1);
+  it("getNFT", () => {
+    expect(getNFT("contract", "nft.tokenId", NFTs)).toEqual(NFT_1);
   });
 
   it("groupByCurrency", () => {

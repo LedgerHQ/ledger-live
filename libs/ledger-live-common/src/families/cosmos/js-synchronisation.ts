@@ -6,8 +6,7 @@ import {
   mergeOps,
 } from "../../bridge/jsHelpers";
 import { encodeAccountId } from "../../account";
-import { defaultCosmosAPI } from "./api/Cosmos";
-import { pubkeyToAddress, decodeBech32Pubkey } from "@cosmjs/amino";
+import { CosmosAPI } from "./api/Cosmos";
 import { encodeOperationId } from "../../operation";
 import { CosmosDelegationInfo } from "./types";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
@@ -162,18 +161,11 @@ const txToOps = (info: any, id: string, txs: any): Operation[] => {
 
 export const getAccountShape: GetAccountShape = async (info) => {
   const { address, currency, derivationMode, initialAccount } = info;
-  let xpubOrAddress = address;
-
-  if (address.match("cosmospub")) {
-    const pubkey = decodeBech32Pubkey(address);
-    xpubOrAddress = pubkeyToAddress(pubkey as any, "cosmos");
-  }
-
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
     currencyId: currency.id,
-    xpubOrAddress,
+    xpubOrAddress: address,
     derivationMode,
   });
 
@@ -185,12 +177,10 @@ export const getAccountShape: GetAccountShape = async (info) => {
     redelegations,
     unbondings,
     withdrawAddress,
-  } = await defaultCosmosAPI.getAccountInfo(xpubOrAddress, currency);
-
+  } = await new CosmosAPI(currency.id).getAccountInfo(address, currency);
   const oldOperations = initialAccount?.operations || [];
   const newOperations = txToOps(info, accountId, txs);
   const operations = mergeOps(oldOperations, newOperations);
-
   let balance = balances;
   let delegatedBalance = new BigNumber(0);
   let pendingRewardsBalance = new BigNumber(0);
@@ -218,7 +208,7 @@ export const getAccountShape: GetAccountShape = async (info) => {
 
   const shape = {
     id: accountId,
-    xpub: xpubOrAddress,
+    xpub: address,
     balance: balance,
     spendableBalance,
     operationsCount: operations.length,

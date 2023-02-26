@@ -7,6 +7,9 @@ export const defaultFeatures: DefaultFeatures = {
   brazePushNotifications: {
     enabled: false,
   },
+  brazeLearn: {
+    enabled: false,
+  },
   deviceLocalization: {
     enabled: false,
   },
@@ -16,6 +19,9 @@ export const defaultFeatures: DefaultFeatures = {
       url: null,
       debug: false,
     },
+  },
+  currencyAvalancheCChain: {
+    enabled: false,
   },
   currencyOsmosis: {
     enabled: false,
@@ -172,6 +178,9 @@ export const defaultFeatures: DefaultFeatures = {
   walletNftGallery: {
     enabled: false,
   },
+  walletConnectEntryPoint: {
+    enabled: false,
+  },
   staxWelcomeScreen: {
     enabled: false,
   },
@@ -182,6 +191,15 @@ export const defaultFeatures: DefaultFeatures = {
     enabled: false,
   },
   postOnboardingAssetsTransfer: {
+    enabled: false,
+  },
+  objkt: {
+    enabled: false,
+  },
+  protectServicesMobile: {
+    enabled: false,
+  },
+  newsfeedPage: {
     enabled: false,
   },
 };

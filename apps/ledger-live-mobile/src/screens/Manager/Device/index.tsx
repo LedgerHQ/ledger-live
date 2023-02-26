@@ -72,7 +72,6 @@ const BorderCard = styled.View`
 const DeviceCard = ({
   distribution,
   state,
-  deviceId,
   device,
   initialDeviceName,
   pendingInstalls,
@@ -139,8 +138,7 @@ const DeviceCard = ({
           ml={4}
         >
           <DeviceName
-            deviceId={deviceId}
-            deviceModel={deviceModel}
+            device={device}
             initialDeviceName={initialDeviceName}
             disabled={pendingInstalls}
           />
