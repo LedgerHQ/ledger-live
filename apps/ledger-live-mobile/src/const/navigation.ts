@@ -481,6 +481,27 @@ export enum ScreenName {
   NearWithdrawingValidationSuccess = "NearWithdrawingValidationSuccess",
 
   Newsfeed = "Newsfeed",
+  //ICON
+  IconFreezeInfo = "IconFreezeInfo",
+  IconFreezeAmount = "IconFreezeAmount",
+  IconFreezeSelectDevice = "IconFreezeSelectDevice",
+  IconFreezeConnectDevice = "IconFreezeConnectDevice",
+  IconFreezeValidationError = "IconFreezeValidationError",
+  IconFreezeValidationSuccess = "IconFreezeValidationSuccess",
+
+  IconUnfreezeAmount = "IconUnfreezeAmount",
+  IconUnfreezeConnectDevice = "IconUnfreezeConnectDevice",
+  IconUnfreezeSelectDevice = "IconUnfreezeSelectDevice",
+  IconUnfreezeValidationError = "IconUnfreezeValidationError",
+  IconUnfreezeValidationSuccess = "IconUnfreezeValidationSuccess",
+
+  IconVoteStarted = "IconVoteStarted",
+  IconVoteSelectValidator = "IconVoteSelectValidator",
+  IconVoteCast = "IconVoteCast",
+  IconVoteConnectDevice = "IconVoteConnectDevice",
+  IconVoteSelectDevice = "IconVoteSelectDevice",
+  IconVoteValidationSuccess = "IconVoteValidationSuccess",
+  IconVoteValidationError = "IconVoteValidationError",
 
   CustomImageStep0Welcome = "CustomImageStep0Welcome",
   CustomImageStep1Crop = "CustomImageStep1Crop",
@@ -593,7 +614,10 @@ export enum NavigatorName {
   NearStakingFlow = "NearStakingFlow",
   NearUnstakingFlow = "NearUnstakingFlow",
   NearWithdrawingFlow = "NearWithdrawingFlow",
-
+  // ICON
+  IconFreezeFlow = "IconFreezeFlow",
+  IconUnfreezeFlow = "IconUnfreezeFlow",
+  IconVoteFlow = "IconVoteFlow",
   // Tab
   Main = "Main",
   WalletTab = "WalletTabNavigator",

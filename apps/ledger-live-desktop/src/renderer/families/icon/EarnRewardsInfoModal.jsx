@@ -45,7 +45,7 @@ export default function IconEarnRewardsInfoModal({ name, account, parentAccount 
       footerLeft={
         <LinkWithExternalIcon
           label={<Trans i18nKey="icon.voting.flow.steps.starter.help" />}
-          onClick={() => openURL(urls.stakingTron)}
+          onClick={() => openURL(urls.icon.staking)}
         />
       }
     />

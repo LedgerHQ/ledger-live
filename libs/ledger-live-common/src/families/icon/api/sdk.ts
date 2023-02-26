@@ -10,7 +10,7 @@ import {
   getLatestBlock,
 } from "./apiCalls";
 import { formatPRepData, getRpcUrl } from "../logic";
-import { GOVERNANCE_SCORE_ADDRESS, IISS_SCORE_ADDRESS, I_SCORE_UNIT } from "../constants";
+import { GOVERNANCE_SCORE_ADDRESS, IISS_SCORE_ADDRESS, I_SCORE_UNIT, STEP_LIMIT } from "../constants";
 const { HttpProvider } = IconService;
 const { IconBuilder, IconAmount } = IconService;
 const iconUnit = IconAmount.Unit.ICX.toString();
@@ -132,7 +132,7 @@ export const getFees = async (unsigned, account): Promise<BigNumber> => {
   } catch (error) {
     // TODO: handle show log
   }
-  return new BigNumber(res || 0);
+  return new BigNumber(res || STEP_LIMIT);
 };
 
 /**

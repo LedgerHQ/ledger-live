@@ -70,6 +70,7 @@ import type { NoFundsNavigatorParamList } from "./NoFundsNavigator";
 import type { StakeNavigatorParamList } from "./StakeNavigator";
 import type { ExploreTabNavigatorStackParamList } from "./ExploreTabNavigator";
 import { AnalyticsOptInPromptNavigatorParamList } from "./AnalyticsOptInPromptNavigator";
+import type { IconFreezeFlowParamList } from "../../../families/icon/FreezeFlow/type";
 
 export type NavigateInput<
   ParamList extends ParamListBase = ParamListBase,
@@ -286,6 +287,8 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.TronVoteFlow]: NavigatorScreenParams<TronVoteFlowParamList>;
 
   [NavigatorName.ExploreTab]: NavigatorScreenParams<ExploreTabNavigatorStackParamList>;
+  // Icon
+  [NavigatorName.IconFreezeFlow]: NavigatorScreenParams<IconFreezeFlowParamList>;
 
   [ScreenName.DeviceConnect]: {
     appName?: string;

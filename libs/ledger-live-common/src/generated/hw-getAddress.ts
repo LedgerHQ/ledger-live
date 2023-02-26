@@ -5,9 +5,19 @@ import crypto_org from "../families/crypto_org/hw-getAddress";
 import elrond from "../families/elrond/hw-getAddress";
 import filecoin from "../families/filecoin/hw-getAddress";
 import hedera from "../families/hedera/hw-getAddress";
+<<<<<<< HEAD
 import internet_computer from "../families/internet_computer/hw-getAddress";
 import stacks from "../families/stacks/hw-getAddress";
 import icon from "../families/icon/hw-getAddress";
+=======
+import icon from "../families/icon/hw-getAddress";
+import near from "../families/near/hw-getAddress";
+import neo from "../families/neo/hw-getAddress";
+import osmosis from "../families/osmosis/hw-getAddress";
+import polkadot from "../families/polkadot/hw-getAddress";
+import ripple from "../families/ripple/hw-getAddress";
+import solana from "../families/solana/hw-getAddress";
+>>>>>>> 414b5dbd18 (feat: add staking feature for icon network)
 import stellar from "../families/stellar/hw-getAddress";
 import tron from "../families/tron/hw-getAddress";
 import vechain from "../families/vechain/hw-getAddress";
@@ -29,9 +39,19 @@ export default {
   elrond,
   filecoin,
   hedera,
+<<<<<<< HEAD
   internet_computer,
   stacks,
   icon,
+=======
+  icon,
+  near,
+  neo,
+  osmosis,
+  polkadot,
+  ripple,
+  solana,
+>>>>>>> 414b5dbd18 (feat: add staking feature for icon network)
   stellar,
   tron,
   vechain,

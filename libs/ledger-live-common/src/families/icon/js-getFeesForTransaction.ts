@@ -20,6 +20,7 @@ const getEstimatedFees = async ({
   const unsigned = await buildTransaction(a, t);
   if (unsigned?.rawTransaction?.to) {
     const stepLimit = await getFees(unsigned.rawTransaction, a);
+    t.stepLimit = stepLimit;
     const stepPrice = await getStepPrice(a);
     return stepLimit.multipliedBy(stepPrice);
   }

@@ -54,6 +54,9 @@ import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/ty
 import { SignMessageNavigatorStackParamList } from "~/components/RootNavigator/types/SignMessageNavigator";
 import { useTransactionDeviceAction } from "~/hooks/deviceActions";
 import { SignedOperation } from "@ledgerhq/types-live";
+import { IconFreezeFlowParamList } from "../families/icon/FreezeFlow/type";
+import { IconUnfreezeFlowParamList } from "../families/icon/UnfreezeFlow/type";
+import { IconVoteFlowParamList } from "../families/icon/VoteFlow/types";
 
 type Props =
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendConnectDevice>
@@ -101,7 +104,10 @@ type Props =
   | StackNavigatorProps<TezosDelegationFlowParamList, ScreenName.DelegationConnectDevice>
   | StackNavigatorProps<TronVoteFlowParamList, ScreenName.VoteConnectDevice>
   | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionConnectDevice>
-  | StackNavigatorProps<SignMessageNavigatorStackParamList, ScreenName.SignConnectDevice>;
+  | StackNavigatorProps<SignMessageNavigatorStackParamList, ScreenName.SignConnectDevice>
+  | StackNavigatorProps<IconFreezeFlowParamList, ScreenName.IconFreezeConnectDevice>
+  | StackNavigatorProps<IconUnfreezeFlowParamList, ScreenName.IconUnfreezeConnectDevice>
+  | StackNavigatorProps<IconVoteFlowParamList, ScreenName.IconVoteConnectDevice>;
 
 export const navigateToSelectDevice = (navigation: Props["navigation"], route: Props["route"]) =>
   // Assumes that it will always navigate to a "SelectDevice"

@@ -5,9 +5,18 @@ import crypto_org from "../families/crypto_org/deviceTransactionConfig";
 import elrond from "../families/elrond/deviceTransactionConfig";
 import filecoin from "../families/filecoin/deviceTransactionConfig";
 import hedera from "../families/hedera/deviceTransactionConfig";
+<<<<<<< HEAD
 import internet_computer from "../families/internet_computer/deviceTransactionConfig";
 import stacks from "../families/stacks/deviceTransactionConfig";
 import icon from "../families/icon/deviceTransactionConfig";
+=======
+import icon from "../families/icon/deviceTransactionConfig";
+import near from "../families/near/deviceTransactionConfig";
+import osmosis from "../families/osmosis/deviceTransactionConfig";
+import polkadot from "../families/polkadot/deviceTransactionConfig";
+import ripple from "../families/ripple/deviceTransactionConfig";
+import solana from "../families/solana/deviceTransactionConfig";
+>>>>>>> 414b5dbd18 (feat: add staking feature for icon network)
 import stellar from "../families/stellar/deviceTransactionConfig";
 import tron from "../families/tron/deviceTransactionConfig";
 import algorand from "@ledgerhq/coin-algorand/deviceTransactionConfig";
@@ -28,9 +37,18 @@ export default {
   elrond,
   filecoin,
   hedera,
+<<<<<<< HEAD
   internet_computer,
   stacks,
   icon,
+=======
+  icon,
+  near,
+  osmosis,
+  polkadot,
+  ripple,
+  solana,
+>>>>>>> 414b5dbd18 (feat: add staking feature for icon network)
   stellar,
   tron,
   algorand,
