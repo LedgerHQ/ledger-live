@@ -16,6 +16,7 @@ import Icon from "@ledgerhq/hw-app-icon";
 import { buildTransaction } from "./js-buildTransaction";
 import { getNonce } from "./logic";
 import { STEP_LIMIT } from "./constants";
+import { getFees } from "./api";
 
 const buildOptimisticOperation = (
   account: Account,
@@ -82,7 +83,7 @@ const signOperation = ({
         const { unsigned, rawTransaction } = await buildTransaction(
           account as IconAccount,
           transaction,
-          new BigNumber(STEP_LIMIT)
+          transaction.stepLimit,
         );
 
         // Sign by device

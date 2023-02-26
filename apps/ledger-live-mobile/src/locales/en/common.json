@@ -4657,6 +4657,163 @@
       "btn": "Earn rewards"
     }
   },
+  "icon": {
+    "account": {
+      "availableBalance": "Available balance",
+      "votingPower": "Voting Power",
+      "voted": "Voted",
+      "unstake": "Unstake"
+    },
+    "voting": {
+      "castVotes": {
+        "maxVotesAvailable": "Max votes available: {{total}}",
+        "votesRemaining": "Votes remaining: {{total}}"
+      },
+      "earnRewars": "Earn rewards",
+      "delegationEarn": "You can now earn rewards by freezing and voting.",
+      "howItWorks": "How voting works",
+      "startEarning": "Earn rewards",
+      "title": "Claim rewards",
+      "header": "Votes ({{total}})",
+      "Amount": "Amount",
+      "noRewards": "No rewards available",
+      "votes": {
+        "title": "Votes",
+        "description": "Cast your votes for one or more Representatives to start earning rewards.",
+        "cta": "Vote"
+      },
+      "rewards": {
+        "title": "Voting rewards",
+        "button": "Claim"
+      },
+      "manageVotes": "Manage votes",
+      "remainingVotes": {
+        "title": "You still have votes remaining",
+        "description": "Cast your remaining votes to earn more rewards."
+      },
+      "flow": {
+        "started": {
+          "title": "Vote",
+          "prOrCandidate": "P-Reps or Sub P-Reps?",
+          "description": "Vote for one or more Pulic Representatives to start earning rewards.",
+          "button": {
+            "continue": "Cast votes"
+          }
+        },
+        "selectValidator": {
+          "sections": {
+            "title": {
+              "selected": "Selected",
+              "publicRepresentatives": "Pulic Representatives",
+              "candidates": "Candidates"
+            }
+          }
+        }
+      }
+    },
+    "freeze": {
+      "flow": {
+        "steps": {
+          "starter": {
+            "title": "Earn rewards",
+            "description": "Delegate ICX to a third party candidate to earn rewards. \n Click on continue to freeze assets and vote.",
+            "bullet": {
+              "delegate": "Delegated assets remain yours.",
+              "access": "You can access your assets 3 days after freezing.",
+              "ledger": "Delegate securely with your Ledger device."
+            },
+            "button": {
+              "cta": "Continue"
+            }
+          },
+          "success": {
+            "title": "Asset Frozen",
+            "textNRG": "You will start earning ISCORE once you vote for Public Representatives",
+            "text": "You will start earning ISCORE once you vote for Public Representatives",
+            "votePending": "Vote in {{time}}",
+            "vote": "Vote",
+            "later": "Vote later"
+          }
+        }
+      },
+      "amount": {
+        "info": "Function for staking requested amount of ICX. Once staking is requested, Voting power will generate in 1 to 1 ratio. Using Voting power, it can be delegate to P-Rep candidate."
+      }
+    },
+    "unfreeze": {
+      "title": "Unfreeze assets",
+      "steps": {
+        "amount": {
+          "title": "Unfreeze",
+          "info": "After you have completed the unstaking of your tokens, the unlock period may vary between 5 and 20 days. It depends on current Total Staked %: the more tokens are staked, the less you have to wait before the unlock. Current unlock period is 10 days approximately.",
+          "totalStaked": "Total Staked:",
+          "voted": "Voted: ",
+          "amountToUnstake": "Amount to Unstake:"
+        },
+        "connectDevice": {
+          "title": "Device"
+        },
+        "validation": {
+          "title": "Confirmation",
+          "success": {
+            "title": "",
+            "text": "Your assets were unfrozen successfully. Your staking value will be decreased.",
+            "continue": "Continue",
+            "close": "Close"
+          },
+          "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+        }
+      }
+    },
+    "manage": {
+      "title": "Manage Icon Voting Power",
+      "freeze": {
+        "title": "Freeze",
+        "description": "Freeze ICX to earn Bandwidth or Energy. You can also vote for Super Representatives."
+      },
+      "unfreeze": {
+        "title": "Unfreeze",
+        "description": "Unfreeze ICX to add them back to your available balance. You will no longer earn rewards."
+      },
+      "vote": {
+        "title": "Vote",
+        "description": "Cast votes for Super Representatives to earn rewards."
+      }
+    },
+    "info": {
+      "available": {
+        "title": "ICX available",
+        "description": "This amount is disposable."
+      },
+      "voted": {
+        "title": "Voted",
+        "description": "Total voting powers value that you voted for P-Reps"
+      },
+      "votingPower": {
+        "title": "Voting Power",
+        "description": "Frozen assets are used for ICX voting power. This is your total number of voting power."
+      },
+      "unstake": {
+        "title": "Unstake",
+        "description": "The unlock period may vary between 5 and 20 days"
+      },
+      "claimRewards": {
+        "title": "Voting rewards",
+        "description": "The ICX generated as rewards during block production can be claimed every 43,200 blocks."
+      },
+      "publicRepresentative": {
+        "title": "Public representatives (P-Rep)",
+        "description": "Public Representatives (P-Reps) are elected for the ICON Network by delegation of ICONists. Top ranked 22 main P-Reps will participate in block production, verification and making governance decisions."
+      },
+      "subPRepresentative": {
+        "title": "Sub P-Reps",
+        "description": "The other 78 P-Reps are considered as Sub P-Rep and only receive the representative reward. They also verify blocks."
+      }
+    },
+    "receive": {
+      "newAddressTRC20": "You first need to send at least 0.1 TRX to this address to activate it."
+    }
+  },
   "tron": {
     "voting": {
       "earnRewars": "Earn rewards",
@@ -5723,7 +5880,6 @@
       }
     }
   },
-
   "postOnboarding": {
     "hub": {
       "title": "Next up, use your {{productName}} to...",

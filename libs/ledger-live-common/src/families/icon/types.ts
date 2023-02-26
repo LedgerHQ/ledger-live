@@ -89,6 +89,7 @@ export type Transaction = TransactionCommon & {
   txType?: string | null | undefined;
   id?: string | null | undefined;
   votes: Vote[];
+  stepLimit?: BigNumber
   // add here all transaction-specific fields if you implement other modes than "send"
 };
 

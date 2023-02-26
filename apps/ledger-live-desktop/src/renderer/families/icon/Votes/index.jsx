@@ -222,7 +222,7 @@ const Delegation = ({ account }: Props) => {
             <Box mt={2}>
               <LinkWithExternalIcon
                 label={<Trans i18nKey="icon.voting.emptyState.info" />}
-                onClick={() => openURL(urls.stakingTron)}
+                onClick={() => openURL(urls.icon.staking)}
               />
             </Box>
           </Box>

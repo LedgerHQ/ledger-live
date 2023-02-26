@@ -27,6 +27,7 @@ export type State = {
 
 export const SR_THRESHOLD = 22;
 export let SR_MAX_VOTES = 0;
+export const MIN_TRANSACTION_AMOUNT = 1;
 
 let __lastSeenPR: PRep[] = [];
 
@@ -56,7 +57,7 @@ export const formatVotes = (
   publicRepresentatives: Array<PRep> | null | undefined
 ): Array<
   Vote & {
-    validator?: PRep | null;
+    validator?: PRep;
     isPR: boolean;
     rank: number;
   }

@@ -38,7 +38,7 @@
     "dev:cli": "pnpm turbo watch --no-daemon --filter=live-cli",
     "dev:lld": "pnpm turbo start --no-daemon --filter=ledger-live-desktop",
     "dev:lld:debug": "DEV_TOOLS=1 LEDGER_INTERNAL_ARGS=--inspect pnpm turbo start --no-daemon --filter=ledger-live-desktop",
-    "dev:llm": "pnpm turbo start --no-daemon --filter=live-mobile",
+    "dev:llm": "DEV_TOOLS=1 LEDGER_INTERNAL_ARGS=--inspect pnpm turbo start --no-daemon --filter=live-mobile",
     "release:lld": "pnpm turbo release --no-daemon --filter=ledger-live-desktop",
     "pre:lld": "pnpm turbo pre-build --no-daemon --filter=ledger-live-desktop",
     "nightly": "pnpm turbo nightly --no-daemon --include-dependencies --no-deps",
@@ -103,7 +103,8 @@
     "pnpm-utils": "workspace:*",
     "rimraf": "^3.0.2",
     "turbo": "^1.6.1",
-    "zx": "^7.0.7"
+    "zx": "^7.0.7",
+    "rlp": "^3.0.0"
   },
   "pnpm": {
     "overrides": {

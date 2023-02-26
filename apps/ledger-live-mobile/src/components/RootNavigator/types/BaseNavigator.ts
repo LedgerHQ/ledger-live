@@ -77,6 +77,8 @@ import type { SolanaDelegationFlowParamList } from "../../../families/solana/Del
 import type { StellarAddAssetFlowParamList } from "../../../families/stellar/AddAssetFlow/types";
 import type { TezosDelegationFlowParamList } from "../../../families/tezos/DelegationFlow/types";
 import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/types";
+import type { IconFreezeFlowParamList } from "../../../families/icon/FreezeFlow/type";
+
 
 type TradeParams = {
   type: "onRamp" | "offRamp";
@@ -327,6 +329,9 @@ export type BaseNavigatorStackParamList = {
 
   // Tron
   [NavigatorName.TronVoteFlow]: NavigatorScreenParams<TronVoteFlowParamList>;
+
+  // Icon
+  [NavigatorName.IconFreezeFlow]: NavigatorScreenParams<IconFreezeFlowParamList>;
 
   [ScreenName.DeviceConnect]: {
     appName?: string;

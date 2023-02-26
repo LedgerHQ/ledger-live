@@ -55,6 +55,9 @@ import { TezosDelegationFlowParamList } from "../families/tezos/DelegationFlow/t
 import { TronVoteFlowParamList } from "../families/tron/VoteFlow/types";
 import { SignTransactionNavigatorParamList } from "../components/RootNavigator/types/SignTransactionNavigator";
 import { SignMessageNavigatorStackParamList } from "../components/RootNavigator/types/SignMessageNavigator";
+import { IconFreezeFlowParamList } from "../families/icon/FreezeFlow/type";
+import { IconUnfreezeFlowParamList } from "../families/icon/UnfreezeFlow/type";
+import { IconVoteFlowParamList } from "../families/icon/VoteFlow/types";
 
 const action = createAction(connectApp);
 type Props =
@@ -188,6 +191,18 @@ type Props =
       StellarAddAssetFlowParamList,
       ScreenName.StellarAddAssetConnectDevice
     >
+  | StackNavigatorProps<
+    IconFreezeFlowParamList,
+    ScreenName.IconFreezeConnectDevice
+  >
+  | StackNavigatorProps<
+    IconUnfreezeFlowParamList,
+    ScreenName.IconUnfreezeConnectDevice
+  >
+  | StackNavigatorProps<
+    IconVoteFlowParamList,
+    ScreenName.IconVoteConnectDevice
+  >
   | StackNavigatorProps<
       TezosDelegationFlowParamList,
       ScreenName.DelegationConnectDevice

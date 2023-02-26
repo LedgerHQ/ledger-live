@@ -2453,7 +2453,7 @@
               "next": "Cast Votes"
             },
             "info": {
-              "message": "P-Rep or Sub P-Reps?",
+              "message": "P-Reps or Sub P-Reps?",
               "publicRepresentative": {
                 "title": "Public representatives (P-Rep)",
                 "description": "Public Representatives (P-Reps) are elected for the ICON Network by delegation of ICONists. Top ranked 22 main P-Reps will participate in block production, verification and making governance decisions."
