@@ -266,6 +266,7 @@ export const getTagDerivationMode = (
 
   return null;
 };
+
 export const getAddressFormatDerivationMode = (derivationMode: DerivationMode): string =>
   (modes[derivationMode] as { addressFormat: string }).addressFormat || "legacy";
 
