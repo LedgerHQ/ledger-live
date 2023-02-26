@@ -201,6 +201,9 @@ const modes = Object.freeze({
     overridesDerivation: "44'/397'/0'/0'/<account>'",
     mandatoryEmptyAccountSkip: 1,
   },
+  icon: {
+    overridesDerivation: "44'/4801368'/0'/0'/<account>'",
+  },
 });
 modes as Record<DerivationMode, ModeSpec>; // eslint-disable-line
 
@@ -220,6 +223,8 @@ const legacyDerivations: Record<CryptoCurrencyIds, DerivationMode[]> = {
   cardano: ["cardano"],
   cardano_testnet: ["cardano"],
   near: ["nearbip44h"],
+  icon: ["icon"],
+  icon_berlin_testnet: ["icon"],
 };
 
 const legacyDerivationsPerFamily: Record<string, DerivationMode[]> = {
@@ -239,45 +244,45 @@ export const getAllDerivationModes = (): DerivationMode[] =>
 export const getMandatoryEmptyAccountSkip = (
   derivationMode: DerivationMode
 ): number =>
-  (modes[derivationMode] as { mandatoryEmptyAccountSkip: number })
+  (modes[derivationMode] as { mandatoryEmptyAccountSkip: number; })
     .mandatoryEmptyAccountSkip || 0;
 export const isInvalidDerivationMode = (
   derivationMode: DerivationMode
 ): boolean =>
-  (modes[derivationMode] as { isInvalid: boolean }).isInvalid || false;
+  (modes[derivationMode] as { isInvalid: boolean; }).isInvalid || false;
 export const isSegwitDerivationMode = (
   derivationMode: DerivationMode
 ): boolean =>
-  (modes[derivationMode] as { isSegwit: boolean }).isSegwit || false;
+  (modes[derivationMode] as { isSegwit: boolean; }).isSegwit || false;
 export const isNativeSegwitDerivationMode = (
   derivationMode: DerivationMode
 ): boolean =>
-  (modes[derivationMode] as { isNativeSegwit: boolean }).isNativeSegwit ||
+  (modes[derivationMode] as { isNativeSegwit: boolean; }).isNativeSegwit ||
   false;
 export const isTaprootDerivationMode = (
   derivationMode: DerivationMode
 ): boolean =>
-  (modes[derivationMode] as { isTaproot: boolean }).isTaproot || false;
+  (modes[derivationMode] as { isTaproot: boolean; }).isTaproot || false;
 
 export const isUnsplitDerivationMode = (
   derivationMode: DerivationMode
 ): boolean =>
-  (modes[derivationMode] as { isUnsplit: boolean }).isUnsplit || false;
+  (modes[derivationMode] as { isUnsplit: boolean; }).isUnsplit || false;
 export const isIterableDerivationMode = (
   derivationMode: DerivationMode
 ): boolean =>
-  !(modes[derivationMode] as { isNonIterable: boolean }).isNonIterable;
+  !(modes[derivationMode] as { isNonIterable: boolean; }).isNonIterable;
 export const getDerivationModeStartsAt = (
   derivationMode: DerivationMode
-): number => (modes[derivationMode] as { startsAt: number }).startsAt || 0;
+): number => (modes[derivationMode] as { startsAt: number; }).startsAt || 0;
 export const getPurposeDerivationMode = (
   derivationMode: DerivationMode
-): number => (modes[derivationMode] as { purpose: number }).purpose || 44;
+): number => (modes[derivationMode] as { purpose: number; }).purpose || 44;
 export const getTagDerivationMode = (
   currency: CryptoCurrency,
   derivationMode: DerivationMode
 ): string | null | undefined => {
-  const mode = modes[derivationMode] as { tag: any; isInvalid: any };
+  const mode = modes[derivationMode] as { tag: any; isInvalid: any; };
 
   if (mode.tag) {
     return mode.tag;
@@ -296,14 +301,14 @@ export const getTagDerivationMode = (
 export const getAddressFormatDerivationMode = (
   derivationMode: DerivationMode
 ): string =>
-  (modes[derivationMode] as { addressFormat: string }).addressFormat ||
+  (modes[derivationMode] as { addressFormat: string; }).addressFormat ||
   "legacy";
 export const derivationModeSupportsIndex = (
   derivationMode: DerivationMode,
   index: number
 ): boolean => {
   const mode = modes[derivationMode];
-  if ((mode as { skipFirst: boolean }).skipFirst && index === 0) return false;
+  if ((mode as { skipFirst: boolean; }).skipFirst && index === 0) return false;
   return true;
 };
 const currencyForceCoinType = {
@@ -331,10 +336,10 @@ export const getDerivationScheme = ({
   const coinType = splitFrom
     ? getCryptoCurrencyById(splitFrom).coinType
     : typeof overridesCoinType === "number"
-    ? overridesCoinType
-    : currencyForceCoinType
-    ? currency.coinType
-    : "<coin_type>";
+      ? overridesCoinType
+      : currencyForceCoinType
+        ? currency.coinType
+        : "<coin_type>";
   const purpose = getPurposeDerivationMode(derivationMode);
   return `${purpose}'/${coinType}'/<account>'/<node>/<address>`;
 };
@@ -383,6 +388,8 @@ const disableBIP44: Record<string, boolean> = {
   cardano: true,
   cardano_testnet: true,
   near: true,
+  icon: true,
+  icon_berlin_testnet: true,
 };
 type SeedInfo = {
   purpose: number;
@@ -559,11 +566,11 @@ export function walletDerivation<R>({
 
           const path = shouldDerivesOnAccount
             ? runAccountDerivationScheme(derivationScheme, currency, {
-                account: index,
-              })
+              account: index,
+            })
             : runDerivationScheme(derivationScheme, currency, {
-                account: index,
-              });
+              account: index,
+            });
           return derivateAddress({
             currency,
             path,

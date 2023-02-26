@@ -35,7 +35,7 @@ type JSONValue =
   | number
   | boolean
   | null
-  | { [x: string]: JSONValue }
+  | { [x: string]: JSONValue; }
   | Array<JSONValue>;
 
 const jsonParser = (v: unknown): JSONValue | undefined => {
@@ -225,6 +225,26 @@ const envDefinitions: Record<
     def: "https://testnet-ledger.cardanoscan.io/api",
     parser: stringParser,
     desc: "Cardano API url",
+  },
+  ICON_RPC_ENDPOINT: {
+    parser: stringParser,
+    def: "https://icon.coin.ledger.com/node/api/v3",
+    desc: "ICON RPC url",
+  },
+  ICON_TESTNET_RPC_ENDPOINT: {
+    parser: stringParser,
+    def: "https://berlin.net.solidwallet.io/api/v3",
+    desc: "ICON Berlin Testnet API url",
+  },
+  ICON_API_ENDPOINT: {
+    parser: stringParser,
+    def: "https://icon.coin.ledger.com/indexer/v3",
+    desc: "ICON API url",
+  },
+  ICON_TESTNET_API_ENDPOINT: {
+    parser: stringParser,
+    def: "https://berlin.tracker.solidwallet.io/v3",
+    desc: "ICON Berlin Testnet API url",
   },
   COINAPPS: {
     def: "",
