@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.54.0-nightly.4
+
+### Patch Changes
+
+- [#2769](https://github.com/LedgerHQ/ledger-live/pull/2769) [`16e3639512`](https://github.com/LedgerHQ/ledger-live/commit/16e363951241556725f09158f0982a99b52ce3d4) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fix glitchy drawer for language selector on My Ledger
+
 ## 2.54.0-nightly.3
 
 ### Minor Changes
