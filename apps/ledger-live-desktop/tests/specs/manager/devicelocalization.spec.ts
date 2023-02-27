@@ -5,6 +5,7 @@ import { LanguageInstallation } from "../../models/LanguageInstallation";
 import { DeviceAction } from "../../models/DeviceAction";
 import { Layout } from "../../models/Layout";
 import { Drawer } from "tests/models/Drawer";
+import { waitFor } from "tests/utils/waitFor";
 
 test.use({ userdata: "skip-onboarding" });
 test.use({ env: { FORCE_PROVIDER: 12 } });
@@ -26,9 +27,8 @@ test("Manager", async ({ page }) => {
 
   await test.step("can open change language menu and select language", async () => {
     await managerPage.openChangeLanguageDrawerAndSelectLanguage("french");
-    await expect
-      .soft(drawer.content)
-      .toHaveScreenshot("manager-change-language-drawer-selected.png");
+    await waitFor(() => languageInstallation.installLanguageButton.isEnabled());
+    await expect.soft(page).toHaveScreenshot("manager-change-language-drawer-selected.png");
   });
 
   await test.step("can install language", async () => {
