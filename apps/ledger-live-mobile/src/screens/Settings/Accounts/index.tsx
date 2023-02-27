@@ -16,6 +16,7 @@ import LText from "../../../components/LText";
 import CurrencyIcon from "../../../components/CurrencyIcon";
 import { TrackScreen } from "../../../analytics";
 import HideEmptyTokenAccountsRow from "./HideEmptyTokenAccountsRow";
+import FilterTokenOperationsZeroAmountRow from "./FilterTokenOperationsZeroAmountRow";
 import Close from "../../../icons/Close";
 import { ScreenName } from "../../../const";
 import { SettingsNavigatorStackParamList } from "../../../components/RootNavigator/types/SettingsNavigator";
@@ -93,6 +94,7 @@ export default function AccountsSettings({
           />
         )}
         <HideEmptyTokenAccountsRow />
+        <FilterTokenOperationsZeroAmountRow />
         <SettingsRow
           event="HideEmptyTokenAccountsRow"
           title={t("settings.accounts.blacklistedTokens")}

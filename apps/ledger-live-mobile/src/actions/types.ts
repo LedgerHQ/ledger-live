@@ -7,6 +7,7 @@ import type {
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type {
   Account,
+  DeviceInfo,
   DeviceModelInfo,
   Feature,
   FeatureId,
@@ -270,6 +271,7 @@ export enum SettingsActionTypes {
   SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT = "SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT",
   SETTINGS_SWITCH_COUNTERVALUE_FIRST = "SETTINGS_SWITCH_COUNTERVALUE_FIRST",
   SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS = "SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS",
+  SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT = "SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT",
   SHOW_TOKEN = "SHOW_TOKEN",
   BLACKLIST_TOKEN = "BLACKLIST_TOKEN",
   HIDE_NFT_COLLECTION = "HIDE_NFT_COLLECTION",
@@ -289,6 +291,7 @@ export enum SettingsActionTypes {
   ACCEPT_SWAP_PROVIDER = "ACCEPT_SWAP_PROVIDER",
   LAST_SEEN_DEVICE = "LAST_SEEN_DEVICE",
   LAST_SEEN_DEVICE_INFO = "LAST_SEEN_DEVICE_INFO",
+  LAST_SEEN_DEVICE_LANGUAGE_ID = "LAST_SEEN_DEVICE_LANGUAGE_ID",
   SET_LAST_SEEN_CUSTOM_IMAGE = "SET_LAST_SEEN_CUSTOM_IMAGE",
   ADD_STARRED_MARKET_COINS = "ADD_STARRED_MARKET_COINS",
   REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
@@ -359,6 +362,10 @@ export type SettingsHideEmptyTokenAccountsPayload = Pick<
   SettingsState,
   "hideEmptyTokenAccounts"
 >;
+export type SettingsFilterTokenOperationsZeroAmountPayload = Pick<
+  SettingsState,
+  "filterTokenOperationsZeroAmount"
+>;
 export type SettingsShowTokenPayload = { tokenId: string };
 export type SettingsBlacklistTokenPayload = { tokenId: string };
 export type SettingsHideNftCollectionPayload = { collectionId: string };
@@ -402,6 +409,8 @@ export type SettingsLastSeenDevicePayload = {
 export type SettingsLastSeenDeviceInfoPayload = {
   dmi: DeviceModelInfo;
 };
+export type SettingsLastSeenDeviceLanguagePayload = Partial<DeviceInfo>;
+
 export type SettingsAddStarredMarketcoinsPayload = {
   starredMarketCoin: Unpacked<SettingsState["starredMarketCoins"]>;
 };
@@ -503,6 +512,7 @@ export type SettingsPayload =
   | SettingsSetSwapKycPayload
   | SettingsAcceptSwapProviderPayload
   | SettingsLastSeenDevicePayload
+  | SettingsLastSeenDeviceLanguagePayload
   | SettingsLastSeenDeviceInfoPayload
   | SettingsSetLastSeenCustomImagePayload
   | SettingsAddStarredMarketcoinsPayload

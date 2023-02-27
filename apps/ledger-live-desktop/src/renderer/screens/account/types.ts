@@ -15,4 +15,8 @@ export type StakeAccountBannerParams = {
     redelegate: boolean;
     delegate: boolean;
   };
+  elrond?: {
+    redelegate: boolean;
+    delegate: boolean;
+  };
 };

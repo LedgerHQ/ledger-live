@@ -177,6 +177,7 @@ export function mockListAppsResult(
   });
   const installed = parseInstalled(installedDesc);
   return {
+    deviceName: "Mock device name",
     appByName,
     appsListNames: apps.map((a) => a.name),
     deviceInfo,

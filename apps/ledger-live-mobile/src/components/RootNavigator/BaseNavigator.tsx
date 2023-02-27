@@ -578,6 +578,10 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={ScreenName.DeviceConnect}
         component={DeviceConnect}
+        options={{
+          title: t("deviceConnect.title"),
+          headerRight: () => null,
+        }}
         listeners={({ route }) => ({
           beforeRemove: () => {
             const onClose =

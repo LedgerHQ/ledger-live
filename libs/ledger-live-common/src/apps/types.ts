@@ -39,6 +39,7 @@ export type ListAppsResult = {
   installed: InstalledItem[];
   deviceInfo: DeviceInfo;
   deviceModelId: DeviceModelId;
+  deviceName: string;
   firmware: FinalFirmware | null | undefined;
   customImageBlocks: number;
 };

@@ -150,12 +150,11 @@ function useUiHook(): Partial<UiHook> {
           },
         });
       },
-      "device.transport": ({ appName, onSuccess, onCancel, onError }) => {
+      "device.transport": ({ appName, onSuccess, onCancel }) => {
         navigation.navigate(ScreenName.DeviceConnect, {
           appName,
           onSuccess,
           onClose: onCancel,
-          onError,
         });
       },
     }),
