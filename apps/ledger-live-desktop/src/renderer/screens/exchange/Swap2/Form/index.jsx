@@ -55,6 +55,7 @@ import LoadingState from "./Rates/LoadingState";
 import EmptyState from "./Rates/EmptyState";
 import usePageState from "./hooks/usePageState";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import { getCustomDappUrl } from "./utils";
 
 const Wrapper: ThemedComponent<{}> = styled(Box).attrs({
   p: 20,
@@ -372,6 +373,7 @@ const SwapForm = () => {
     swapTransaction.swap.from.amount.gt(0);
 
   const onSubmit = () => {
+    const { provider, providerURL, providerType } = exchangeRate;
     track("button_clicked", {
       button: "Request",
       page: "Page Swap Form",
@@ -381,14 +383,19 @@ const SwapForm = () => {
       partner: provider,
     });
 
-    if (exchangeRate.providerType === "DEX") {
+    if (providerType === "DEX") {
       const from = swapTransaction.swap.from;
       const fromAddress = from.parentAccount?.id || from.account.id;
-      const providerURL =
-        exchangeRate.providerURL ||
-        `/platform/${getProviderName(exchangeRate.provider).toLowerCase()}`;
+      const customParams = {
+        provider,
+        providerURL,
+      };
+      const customDappUrl = getCustomDappUrl({ ...customParams });
+
+      const pathname = `/platform/${getProviderName(provider).toLowerCase()}`;
       history.push({
-        pathname: providerURL,
+        customDappUrl,
+        pathname,
         state: {
           returnTo: "/swap",
           accountId: fromAddress,
