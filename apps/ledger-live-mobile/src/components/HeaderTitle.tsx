@@ -7,7 +7,10 @@ import { scrollToTop } from "../navigation/utils";
 import { Merge } from "../types/helpers";
 
 export default function HeaderTitle(
-  props: Merge<HeaderTitleProps, { children?: React.ReactNode }>,
+  props: Merge<
+    HeaderTitleProps,
+    { children?: React.ReactNode; color?: BaseTextProps["color"] }
+  >,
 ) {
   return (
     <TouchableWithoutFeedback onPress={scrollToTop}>
