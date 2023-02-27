@@ -110,9 +110,7 @@ export default class Zilliqa {
     return this.getAppConfigurationInternal();
   }
 
-  async getPathParametersFromPath(
-    path: string
-  ): Promise<{
+  async getPathParametersFromPath(path: string): Promise<{
     account: number;
     change: number;
     index: number;
@@ -214,12 +212,8 @@ export default class Zilliqa {
     address: string;
   }> {
     // Getting path parameters
-    const {
-      account,
-      change,
-      index,
-      protocolFeatures,
-    } = await this.getPathParametersFromPath(path);
+    const { account, change, index, protocolFeatures } =
+      await this.getPathParametersFromPath(path);
     // Preparing payload to send to the wallet app.
 
     const bip44_support = (protocolFeatures & FEATURE_BIP44) != 0;
@@ -265,12 +259,8 @@ export default class Zilliqa {
     message: string
   ): Promise<{ signature: null | string; returnCode: number }> {
     // Getting path parameters
-    const {
-      account,
-      change,
-      index,
-      protocolFeatures,
-    } = await this.getPathParametersFromPath(path);
+    const { account, change, index, protocolFeatures } =
+      await this.getPathParametersFromPath(path);
 
     // If we are using the full protocol, we add change and index
     // as well to the parameters. Note that this is unfortunately not backward compatible.
@@ -351,12 +341,8 @@ export default class Zilliqa {
     message: string
   ): Promise<{ signature: null | string; returnCode: number }> {
     // Getting path parameters
-    const {
-      account,
-      change,
-      index,
-      protocolFeatures,
-    } = await this.getPathParametersFromPath(path);
+    const { account, change, index, protocolFeatures } =
+      await this.getPathParametersFromPath(path);
 
     const bip44_support = (protocolFeatures & FEATURE_BIP44) != 0;
     const params = Buffer.alloc(bip44_support ? 12 : 4);
