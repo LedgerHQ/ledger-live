@@ -28,6 +28,7 @@ import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import { track } from "~/renderer/analytics/segment";
 import { shareAnalyticsSelector } from "~/renderer/reducers/settings";
+import { setKey, getKey } from "~/renderer/storage";
 import TopBar from "./TopBar";
 import { TopBarConfig } from "./type";
 import { Container, Wrapper, Loader } from "./styled";
@@ -88,6 +89,14 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
             onClose: onCancel,
           }),
         );
+      },
+      "storage.get": async ({ key, storeId }) => {
+        const namespace = `wallet-api/${storeId}`;
+        return await getKey(namespace, key);
+      },
+      "storage.set": async ({ key, value, storeId }) => {
+        const namespace = `wallet-api/${storeId}`;
+        setKey(namespace, key, value);
       },
       "transaction.sign": ({
         account,
