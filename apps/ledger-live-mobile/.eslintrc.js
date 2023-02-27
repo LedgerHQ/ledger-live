@@ -61,21 +61,21 @@ module.exports = {
     "import/namespace": ["error", { allowComputed: true }],
     "i18next/no-literal-string": [
       "error",
-      { 
+      {
         "jsx-components": {
-          "include": [],
-          "exclude": []
+          include: [],
+          exclude: [],
         },
         words: {
           // Maybe move this to a separate file if it becomes too large.
           exclude: [
-            '\\s*[A-Z0-9≈•%!-:-@[-`{-~\\s]+\\s*',
-            '\\s #LedgerLiveApp\\s*',
-            '\\s*ledger.com/academy\\s*',
-            'Baking Bad',
-          ]
-        }
-      }
+            "\\s*[A-Z0-9≈•%!-:-@[-`{-~\\s]+\\s*",
+            "\\s #LedgerLiveApp\\s*",
+            "\\s*ledger.com/academy\\s*",
+            "Baking Bad",
+          ],
+        },
+      },
     ],
     "no-use-before-define": 0,
     "react/sort-comp": 0,
@@ -184,7 +184,6 @@ module.exports = {
       },
     },
     {
-<<<<<<< HEAD
       files: [
         "src/screens/Settings/Debug/**/*",
         "src/screens/FeatureFlagsSettings/**/*",
@@ -197,11 +196,11 @@ module.exports = {
         "**/*Mock*",
       ],
       rules: {
-        "i18next/no-literal-string": "off"
-      }
-    }
-=======
-      files: ["**/jest.config.js", "**/jest-setup.js"],
+        "i18next/no-literal-string": "off",
+      },
+    },
+    {
+      files: ["**/jest.config.js", "**/jest-setup.js", "**/e2e/**"],
       env: {
         jest: true,
       },
@@ -209,6 +208,5 @@ module.exports = {
         "@typescript-eslint/no-var-requires": "off",
       },
     },
->>>>>>> c288c83959 (update lockfile)
   ],
 };
