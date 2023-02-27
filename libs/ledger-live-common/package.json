@@ -247,7 +247,7 @@
     "@zilliqa-js/proto": "^3.3.4",
     "@zilliqa-js/subscriptions": "^3.3.4",
     "@zilliqa-js/util": "^3.3.4",
-    "@zilliqa-js/zilliqa": "^3.3.4",
+    "@zilliqa-js/zilliqa": "^3.3.4"
   },
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",
