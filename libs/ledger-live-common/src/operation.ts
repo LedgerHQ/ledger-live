@@ -38,6 +38,7 @@ export {
   getOperationConfirmationDisplayableNumber,
   isConfirmedOperation,
   isAddressPoisoningOperation,
+  isEditableOperation,
 };
 
 export function patchOperationWithHash(operation: Operation, hash: string): Operation {
