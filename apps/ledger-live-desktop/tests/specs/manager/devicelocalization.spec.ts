@@ -4,7 +4,6 @@ import { ManagerPage } from "../../models/ManagerPage";
 import { LanguageInstallation } from "../../models/LanguageInstallation";
 import { DeviceAction } from "../../models/DeviceAction";
 import { Layout } from "../../models/Layout";
-import { Drawer } from "tests/models/Drawer";
 import { waitFor } from "tests/utils/waitFor";
 
 test.use({ userdata: "skip-onboarding" });
@@ -16,7 +15,6 @@ test("Manager", async ({ page }) => {
   const languageInstallation = new LanguageInstallation(page);
   const deviceAction = new DeviceAction(page);
   const layout = new Layout(page);
-  const drawer = new Drawer(page);
 
   await test.step("can access manager with l10n firmware", async () => {
     await layout.goToManager();
@@ -28,7 +26,7 @@ test("Manager", async ({ page }) => {
   await test.step("can open change language menu and select language", async () => {
     await managerPage.openChangeLanguageDrawerAndSelectLanguage("french");
     await waitFor(() => languageInstallation.installLanguageButton.isEnabled());
-    await waitFor(() => new Promise(resolve => requestAnimationFrame(() => resolve(true))));
+    await page.waitForTimeout(500);
     await expect.soft(page).toHaveScreenshot("manager-change-language-drawer-selected.png");
   });
 
