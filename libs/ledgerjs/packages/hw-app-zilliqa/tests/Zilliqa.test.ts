@@ -367,10 +367,6 @@ test("signTransactionDifferentPath", async () => {
 <= 68e4ebde902ad8b61b5770b7f74c97deb57fa3723afce2992813372948530c6c15c98c807060b047654ef9ac994581f711ae4369f6377db787eef582687793529000
 `)
   );
-  // Used for recording in hw-signMessage
-  //  const tx =
-  //  "08818004100d1a148ad0357ebb5515f694de597eda6f3f6bdbad0fd922230a210205273e54f262f8717a687250591dcfb5755b8ce4e3bd340c7abefd0de12765742a120a100000000000000000000000000000006432120a100000000000000000000000003b9aca003801";
-  // const r = await zilliqa.signTransaction(path, tx);
 
   const zilliqa = new Zilliqa(transport);
   const result = await zilliqa.signTransaction(

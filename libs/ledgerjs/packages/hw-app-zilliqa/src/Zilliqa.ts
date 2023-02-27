@@ -65,16 +65,6 @@ export default class Zilliqa {
     data: Buffer = Buffer.alloc(0),
     statusList: Array<number> = [SW_OK]
   ): Promise<Buffer> {
-    /*
-    const input = Buffer.concat([
-      Buffer.from([cla, ins, p1, p2]),
-      Buffer.from([data.length]),
-      data,
-    ]);
-
-    console log(`=> ${input.toString("hex")}`);
-    */
-
     const result = await this.transport.send(
       cla,
       ins,
@@ -84,7 +74,6 @@ export default class Zilliqa {
       statusList
     );
 
-    // console log(`<= ${result.toString("hex")}`);
     return result;
   }
   async getAppConfigurationInternal(): Promise<{
@@ -121,7 +110,9 @@ export default class Zilliqa {
     return this.getAppConfigurationInternal();
   }
 
-  async getPathParametersFromPath(path: string): Promise<{
+  async getPathParametersFromPath(
+    path: string
+  ): Promise<{
     account: number;
     change: number;
     index: number;
@@ -223,8 +214,12 @@ export default class Zilliqa {
     address: string;
   }> {
     // Getting path parameters
-    const { account, change, index, protocolFeatures } =
-      await this.getPathParametersFromPath(path);
+    const {
+      account,
+      change,
+      index,
+      protocolFeatures,
+    } = await this.getPathParametersFromPath(path);
     // Preparing payload to send to the wallet app.
 
     const bip44_support = (protocolFeatures & FEATURE_BIP44) != 0;
@@ -270,8 +265,12 @@ export default class Zilliqa {
     message: string
   ): Promise<{ signature: null | string; returnCode: number }> {
     // Getting path parameters
-    const { account, change, index, protocolFeatures } =
-      await this.getPathParametersFromPath(path);
+    const {
+      account,
+      change,
+      index,
+      protocolFeatures,
+    } = await this.getPathParametersFromPath(path);
 
     // If we are using the full protocol, we add change and index
     // as well to the parameters. Note that this is unfortunately not backward compatible.
@@ -352,8 +351,12 @@ export default class Zilliqa {
     message: string
   ): Promise<{ signature: null | string; returnCode: number }> {
     // Getting path parameters
-    const { account, change, index, protocolFeatures } =
-      await this.getPathParametersFromPath(path);
+    const {
+      account,
+      change,
+      index,
+      protocolFeatures,
+    } = await this.getPathParametersFromPath(path);
 
     const bip44_support = (protocolFeatures & FEATURE_BIP44) != 0;
     const params = Buffer.alloc(bip44_support ? 12 : 4);
@@ -362,12 +365,10 @@ export default class Zilliqa {
     // If we are using the BIP 44 support, we add change and index
     // as well to the parameters. Note that this is unfortunately not backward compatible.
     if (bip44_support) {
-      // TOOD: Untested
       params.writeUInt32LE(change, 4);
       params.writeUInt32LE(index, 8);
     }
 
-    // TODO: Compute hash here instead of relying on message hash as input?
     const payload = Buffer.from(message, "hex");
     const data = Buffer.concat([params, payload]);
 
