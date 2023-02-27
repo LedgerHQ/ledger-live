@@ -8,6 +8,7 @@ import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/accoun
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { TransactionStatus as BitcoinTransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
+import { isEditableOperation } from "@ledgerhq/live-common/operation";
 import { NotEnoughGas } from "@ledgerhq/errors";
 import { useTheme } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -56,7 +57,8 @@ const WARN_FROM_UTXO_COUNT = 50;
 
 function SendSummary({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { nextNavigation, overrideAmountLabel, hideTotal } = route.params;
+  const { nextNavigation, overrideAmountLabel, hideTotal, isEdit, operation } = route.params;
+
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
 
   invariant(account, "account is missing");
@@ -224,13 +226,13 @@ function SendSummary({ navigation, route }: Props) {
           route={route}
         />
 
-        {currencyOrToken.id === "ethereum" && currencyOrToken.type === "CryptoCurrency" && (
+        {isEdit && operation && isEditableOperation(account, operation) ? (
           <CurrentNetworkFee
-            saccount={account}
+            account={account}
             transaction={route.params.transaction as Transaction}
             currency={currencyOrToken}
           />
-        )}
+        ) : null}
 
         {error ? (
           <View style={styles.gasPriceError}>
