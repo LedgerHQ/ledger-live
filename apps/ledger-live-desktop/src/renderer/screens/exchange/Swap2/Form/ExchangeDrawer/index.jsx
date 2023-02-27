@@ -153,7 +153,7 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
           provider={exchangeRate.provider}
           {...swapDefaultTrack}
         />
-        <Box justifyContent="center" flex={1}>
+        <Box justifyContent="center" flex={1} mx={3}>
           <ErrorDisplay error={error} />
         </Box>
         <Box flex={0}>
@@ -179,7 +179,7 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
           provider={exchangeRate.provider}
           {...swapDefaultTrack}
         />
-        <Box justifyContent="center" flex={1}>
+        <Box justifyContent="center" flex={1} mx={3}>
           <SwapCompleted
             swapId={result?.swapId}
             provider={exchangeRate.provider}
