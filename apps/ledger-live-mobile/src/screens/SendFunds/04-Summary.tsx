@@ -11,12 +11,12 @@ import {
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { TransactionStatus as BitcoinTransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
+import { isEditableOperation } from "@ledgerhq/live-common/operation";
 import { NotEnoughGas } from "@ledgerhq/errors";
 import { useTheme } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import invariant from "invariant";
 import { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
-import { isEthereumFamily } from "@ledgerhq/live-common/families/ethereum/guards";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { EIP1559ShouldBeUsed } from "@ledgerhq/live-common/families/ethereum/transaction";
@@ -74,7 +74,8 @@ const WARN_FROM_UTXO_COUNT = 50;
 
 function SendSummary({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { nextNavigation, overrideAmountLabel, hideTotal } = route.params;
+  const { nextNavigation, overrideAmountLabel, hideTotal, isEdit, operation } =
+    route.params;
 
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is missing");
@@ -270,13 +271,13 @@ function SendSummary({ navigation, route }: Props) {
           route={route}
         />
 
-        {currencyOrToken.id === "ethereum" &&
-          currencyOrToken.type === "CryptoCurrency" && (
-            <CurrentNetworkFee
-              transaction={route.params.transaction as Transaction}
-              currency={currencyOrToken}
-            />
-          )}
+        {isEdit && operation && isEditableOperation(account, operation) ? (
+          <CurrentNetworkFee
+            transaction={route.params.transaction as Transaction}
+            currency={currencyOrToken}
+            account={account}
+          />
+        ) : null}
 
         {error ? (
           <View style={styles.gasPriceError}>

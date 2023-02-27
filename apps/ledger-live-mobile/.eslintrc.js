@@ -49,6 +49,7 @@ module.exports = {
     "no-continue": 0,
     "no-control-regex": 0,
     "no-return-assign": 0,
+    "no-else-return": 0,
     "no-shadow": 0,
     "prefer-template": 0,
     "no-unused-expressions": 0,
