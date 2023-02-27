@@ -481,7 +481,10 @@ export type SettingsSetDebugAppLevelDrawerOpenedPayload = Pick<
   SettingsState,
   "debugAppLevelDrawerOpened"
 >;
-export type SettingsCompleteOnboardingPayload = Pick<SettingsState, "hasCompletedOnboarding">;
+export type SettingsCompleteOnboardingPayload = Pick<
+  SettingsState,
+  "hasCompletedOnboarding"
+>;
 
 export type SettingsPayload =
   | SettingsImportPayload
