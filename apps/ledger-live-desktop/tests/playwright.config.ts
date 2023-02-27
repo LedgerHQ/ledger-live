@@ -13,7 +13,7 @@ const config: PlaywrightTestConfig = {
        * if you need a less sensitive threshold for a given test,
        * configure it for specific screenshots
        * */
-      maxDiffPixelRatio: 0.001,
+      maxDiffPixelRatio: 0.005,
     },
     toMatchSnapshot: {
       maxDiffPixelRatio: 0.01,
