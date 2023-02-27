@@ -8,11 +8,11 @@ import {
   TouchableOpacity,
   Linking,
 } from "react-native";
-import { urls } from "../../config/urls";
-import IconClose from "../../icons/Close";
-import LText from "../../components/LText";
-import IconTwitter from "../../icons/Twitter";
-import { useBanner } from "../../components/banners/hooks";
+import { urls } from "../../../config/urls";
+import IconClose from "../../../icons/Close";
+import LText from "../../../components/LText";
+import IconTwitter from "../../../icons/Twitter";
+import { useBanner } from "../../../components/banners/hooks";
 
 const CatalogTwitterBanner = () => {
   const { t } = useTranslation();

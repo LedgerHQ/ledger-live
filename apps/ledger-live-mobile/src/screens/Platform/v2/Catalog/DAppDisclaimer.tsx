@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import {
   Flex,
@@ -8,58 +8,30 @@ import {
   Icons,
   Button,
 } from "@ledgerhq/native-ui";
-import QueuedDrawer from "../../components/QueuedDrawer";
-import AppIcon from "./AppIcon";
-import LedgerIcon from "../../icons/Ledger";
+import { AppIcon } from "../AppIcon";
+import LedgerIcon from "../../../../icons/Ledger";
+import QueuedDrawer from "../../../../components/QueuedDrawer";
 
-export type Props = {
-  closeDisclaimer: () => void;
-  disableDisclaimer: () => void;
-  onContinue: () => void;
-  isOpened: boolean;
-  name: string | null;
+interface Props {
+  name?: string | null;
   icon?: string | null;
-};
+  isOpened: boolean;
+  isChecked: boolean;
+  onClose: () => void;
+  onContinue: () => void;
+  toggleCheck: () => void;
+}
 
-const IconsSeparator = React.memo(() => (
-  <Flex flexDirection="row" justifyContent="center" alignItems="center" mx={2}>
-    {Array(6)
-      .fill(undefined)
-      .map((_, i) => (
-        <Flex
-          key={i}
-          width="3px"
-          height={1}
-          marginX={2}
-          backgroundColor="neutral.c40"
-        />
-      ))}
-  </Flex>
-));
-
-const DAppDisclaimer = ({
-  closeDisclaimer,
-  isOpened,
-  disableDisclaimer,
-  onContinue: next,
-  icon,
+export function DAppDisclaimer({
   name,
-}: Props) => {
+  icon,
+  isOpened,
+  isChecked,
+  onClose,
+  onContinue,
+  toggleCheck,
+}: Props) {
   const { t } = useTranslation();
-  const [disableDisclaimerChecked, setDisableDisclaimerChecked] =
-    useState(false);
-
-  const onClose = useCallback(() => {
-    closeDisclaimer();
-  }, [closeDisclaimer]);
-
-  const onContinue = useCallback(() => {
-    if (disableDisclaimerChecked) {
-      disableDisclaimer();
-    }
-    closeDisclaimer();
-    next();
-  }, [disableDisclaimerChecked, closeDisclaimer, disableDisclaimer, next]);
 
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpened} onClose={onClose}>
@@ -119,10 +91,8 @@ const DAppDisclaimer = ({
       >
         <Checkbox
           label={t("platform.disclaimer.checkbox")}
-          checked={disableDisclaimerChecked}
-          onChange={() =>
-            setDisableDisclaimerChecked(!disableDisclaimerChecked)
-          }
+          checked={isChecked}
+          onChange={toggleCheck}
         />
       </Flex>
 
@@ -133,6 +103,20 @@ const DAppDisclaimer = ({
       </Flex>
     </QueuedDrawer>
   );
-};
+}
 
-export default DAppDisclaimer;
+const IconsSeparator = React.memo(() => (
+  <Flex flexDirection="row" justifyContent="center" alignItems="center" mx={2}>
+    {Array(6)
+      .fill(undefined)
+      .map((_, i) => (
+        <Flex
+          key={i}
+          width="3px"
+          height={1}
+          marginX={2}
+          backgroundColor="neutral.c40"
+        />
+      ))}
+  </Flex>
+));

@@ -7,7 +7,7 @@ import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/in
 import { ScreenName } from "../../const";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 
-import PlatformApp from "../../screens/Platform/App";
+import { LiveApp } from "../../screens/Platform";
 import styles from "../../navigation/styles";
 import type { ExchangeLiveAppNavigatorParamList } from "./types/ExchangeLiveAppNavigator";
 import type { StackNavigatorProps } from "./types/helpers";
@@ -23,7 +23,7 @@ const ExchangeBuy = (
   // PTX smart routing feature flag - buy sell live app flag
   const ptxSmartRoutingMobile = useFeature("ptxSmartRoutingMobile");
   return (
-    <PlatformApp
+    <LiveApp
       {..._props}
       route={{
         ..._props.route,
@@ -50,7 +50,7 @@ const ExchangeSell = (
   const ptxSmartRoutingMobile = useFeature("ptxSmartRoutingMobile");
 
   return (
-    <PlatformApp
+    <LiveApp
       {..._props}
       route={{
         ..._props.route,
