@@ -6,7 +6,6 @@ import {
   StackNavigationOptions,
 } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
-import { Flex, Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useSelector } from "react-redux";
@@ -60,7 +59,7 @@ import StepHeader from "../StepHeader";
 import PortfolioHistory from "../../screens/Portfolio/PortfolioHistory";
 import RequestAccountNavigator from "./RequestAccountNavigator";
 import VerifyAccount from "../../screens/VerifyAccount";
-import PlatformApp from "../../screens/Platform/App";
+import { LiveApp } from "../../screens/Platform";
 import AccountsNavigator from "./AccountsNavigator";
 import MarketCurrencySelect from "../../screens/Market/MarketCurrencySelect";
 import { BleDevicePairingFlow } from "../../screens/BleDevicePairingFlow/index";
@@ -180,16 +179,10 @@ export default function BaseNavigator() {
       />
       <Stack.Screen
         name={ScreenName.PlatformApp}
-        component={PlatformApp}
-        options={({ route }) => ({
-          headerBackImage: () => (
-            <Flex pl="16px">
-              <Icons.CloseMedium color="neutral.c100" size="20px" />
-            </Flex>
-          ),
+        component={LiveApp}
+        options={{
           headerStyle: styles.headerNoShadow,
-          title: route.params.name,
-        })}
+        }}
         {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
