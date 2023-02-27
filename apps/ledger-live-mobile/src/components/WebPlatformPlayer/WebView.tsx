@@ -10,9 +10,10 @@ import {
   ActivityIndicator,
   StyleSheet,
   View,
-  TouchableOpacity,
   SafeAreaView,
+  TouchableOpacity,
 } from "react-native";
+import { Flex, Icon } from "@ledgerhq/native-ui";
 import { WebView as RNWebView } from "react-native-webview";
 import { useNavigation } from "@react-navigation/native";
 import { JSONRPCRequest } from "json-rpc-2.0";
@@ -54,14 +55,11 @@ import {
   usePlatformUrl,
 } from "@ledgerhq/live-common/platform/react";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
-import { useTheme } from "styled-components/native";
 import BigNumber from "bignumber.js";
 import { NavigatorName, ScreenName } from "../../const";
 import { broadcastSignedTx } from "../../logic/screenTransactionHooks";
 import { flattenAccountsSelector } from "../../reducers/accounts";
-import UpdateIcon from "../../icons/Update";
-import InfoIcon from "../../icons/Info";
-import InfoPanel from "./InfoPanel";
+import { InfoPanel } from "./InfoPanel";
 import { track } from "../../analytics/segment";
 import prepareSignTransaction from "./liveSDKLogic";
 import {
@@ -69,55 +67,15 @@ import {
   StackNavigatorNavigation,
 } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
+import { BottomNav } from "./BottomNav";
+import { useBrowserNavigator } from "./hooks";
+import HeaderTitle from "../HeaderTitle";
 
 const tracking = trackingWrapper(track);
 
 type Props = {
   manifest: LiveAppManifest;
   inputs?: Record<string, string>;
-};
-
-const ReloadButton = ({
-  onReload,
-  loading,
-}: {
-  onReload: () => void;
-  loading: boolean;
-}) => {
-  const { colors } = useTheme();
-  return (
-    <TouchableOpacity
-      style={styles.buttons}
-      disabled={loading}
-      onPress={() => !loading && onReload()}
-    >
-      <UpdateIcon size={18} color={colors.neutral.c70} />
-    </TouchableOpacity>
-  );
-};
-
-const InfoPanelButton = ({
-  loading,
-  setIsInfoPanelOpened,
-}: {
-  loading: boolean;
-  setIsInfoPanelOpened: (_: boolean) => void;
-}) => {
-  const { colors } = useTheme();
-
-  const onPress = () => {
-    setIsInfoPanelOpened(true);
-  };
-
-  return (
-    <TouchableOpacity
-      style={styles.buttons}
-      disabled={loading}
-      onPress={onPress}
-    >
-      <InfoIcon size={18} color={colors.neutral.c70} />
-    </TouchableOpacity>
-  );
 };
 
 export const WebView = ({ manifest, inputs }: Props) => {
@@ -585,22 +543,53 @@ export const WebView = ({ manifest, inputs }: Props) => {
     tracking.platformLoadFail(manifest);
   }, [manifest]);
 
+  const onPressInfo = useCallback(() => {
+    setIsInfoPanelOpened(true);
+  }, []);
+
   useEffect(() => {
     navigation.setOptions({
+      headerTitleAlign: "left",
+      headerLeft: () => null,
+      headerTitleContainerStyle: { marginHorizontal: 0 },
+      headerTitle: () => (
+        <Flex justifyContent={"center"} flex={1}>
+          <HeaderTitle color="neutral.c70"> {manifest.homepageUrl}</HeaderTitle>
+        </Flex>
+      ),
       headerRight: () => (
         <View style={styles.headerRight}>
-          <ReloadButton onReload={handleReload} loading={!widgetLoaded} />
-          <InfoPanelButton
-            loading={!widgetLoaded}
-            setIsInfoPanelOpened={setIsInfoPanelOpened}
-          />
+          <TouchableOpacity onPress={onPressInfo}>
+            <Flex
+              alignItems="center"
+              justifyContent="center"
+              height={40}
+              width={40}
+            >
+              <Icon name="Info" color="neutral.c70" size={20} />
+            </Flex>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={navigation.goBack}>
+            <Flex
+              alignItems="center"
+              justifyContent="center"
+              height={40}
+              width={40}
+            >
+              <Icon name="Close" color="neutral.c100" size={20} />
+            </Flex>
+          </TouchableOpacity>
         </View>
       ),
     });
-  }, [navigation, widgetLoaded, handleReload, isInfoPanelOpened]);
+  }, [navigation, manifest.homepageUrl, onPressInfo]);
+
+  const { onNavStateChange, navColors, navState } = useBrowserNavigator();
+
   useEffect(() => {
     tracking.platformLoad(manifest);
   }, [manifest]);
+
   return (
     <SafeAreaView style={[styles.root]}>
       <InfoPanel
@@ -612,11 +601,13 @@ export const WebView = ({ manifest, inputs }: Props) => {
         isOpened={isInfoPanelOpened}
         setIsOpened={setIsInfoPanelOpened}
       />
+
       <RNWebView
         ref={targetRef}
         startInLoadingState={true}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
+        onNavigationStateChange={onNavStateChange}
         renderLoading={() => (
           <View style={styles.center}>
             <ActivityIndicator size="large" />
@@ -636,6 +627,14 @@ export const WebView = ({ manifest, inputs }: Props) => {
         automaticallyAdjustContentInsets={false}
         scrollEnabled={true}
         style={styles.webview}
+      />
+
+      <BottomNav
+        navState={navState}
+        navColors={navColors}
+        goBack={() => targetRef.current?.goBack()}
+        goForward={() => targetRef.current?.goForward()}
+        onReload={handleReload}
       />
     </SafeAreaView>
   );
