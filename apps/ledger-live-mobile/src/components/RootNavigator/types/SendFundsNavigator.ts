@@ -76,6 +76,7 @@ export type SendFundsNavigatorStackParamList = {
     parentId?: string;
     deviceId?: string;
     transaction: Transaction;
+    hideTotal?: boolean;
     currentNavigation:
       | ScreenName.LendingWithdrawSummary
       | ScreenName.LendingSupplySummary
@@ -93,7 +94,7 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
     overrideAmountLabel?: string;
-    hideTotal?: boolean;
+    operation?: Operation;
     isEdit?: string;
     appName?: string;
   };

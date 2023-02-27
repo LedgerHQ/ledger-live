@@ -32,7 +32,7 @@ import { Transaction as HederaTransaction } from "@ledgerhq/live-common/families
 import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/ripple/types";
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { Account, SignedOperation } from "@ledgerhq/types-live";
+import { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { ScreenName } from "../../../const";
 
@@ -47,6 +47,7 @@ export type SignTransactionNavigatorParamList = {
     parentId?: string;
     deviceId?: string;
     transaction?: Transaction;
+    operation?: Operation;
     overrideAmountLabel?: string;
     hideTotal?: boolean;
     isEdit?: boolean;

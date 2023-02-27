@@ -35,6 +35,7 @@ export type EthereumEditTransactionParamList = {
     parentId?: string;
     deviceId?: string;
     transaction: Transaction;
+    operation?: Operation;
     currentNavigation:
       | ScreenName.SpeedUpTransaction
       | ScreenName.SendSummary
