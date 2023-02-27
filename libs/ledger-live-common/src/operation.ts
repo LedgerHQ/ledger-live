@@ -41,7 +41,10 @@ export {
   isConfirmedOperation,
   isAddressPoisoningOperation,
   isEditableOperation,
+<<<<<<< HEAD
   getStuckAccountAndOperation,
+=======
+>>>>>>> af568130fc (pass operation as route params for summary page)
 };
 
 export function patchOperationWithHash(operation: Operation, hash: string): Operation {
