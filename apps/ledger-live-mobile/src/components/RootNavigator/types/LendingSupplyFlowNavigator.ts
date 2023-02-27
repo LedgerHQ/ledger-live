@@ -48,6 +48,7 @@ export type LendingSupplyFlowNavigatorParamList = {
     parentId?: string;
     deviceId?: string;
     transaction: Transaction;
+    operation?: Operation;
     currentNavigation:
       | ScreenName.LendingWithdrawSummary
       | ScreenName.LendingSupplySummary
