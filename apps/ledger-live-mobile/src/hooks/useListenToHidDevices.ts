@@ -4,9 +4,9 @@ import { Observable, Subscription } from "rxjs";
 import { DescriptorEvent, DeviceModelId } from "@ledgerhq/types-devices";
 import HIDTransport from "@ledgerhq/react-native-hid";
 import { map } from "rxjs/operators";
+import useIsMounted from "@ledgerhq/live-common/hooks/useIsMounted";
 import { setWiredDevice } from "../actions/appstate";
 import { DeviceLike } from "../reducers/types";
-import { useIsMounted } from "../helpers/useIsMounted";
 
 /**
  * Allows LLM to be aware of USB OTG connections on Android as they happen.
