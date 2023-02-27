@@ -36,18 +36,14 @@ test("Manager", async ({ page }) => {
     await languageInstallation.installLanguageButton.click();
     await deviceAction.initiateLanguageInstallation();
     await languageInstallation.allowLanguageInstallation.waitFor({ state: "visible" });
-    await expect.soft(drawer.content).toHaveScreenshot("manager-allow-language-installation.png");
+    await expect.soft(page).toHaveScreenshot("manager-allow-language-installation.png");
 
     await deviceAction.add50ProgressToLanguageInstallation();
     await languageInstallation.installingLanguageProgress.waitFor({ state: "visible" });
-    await expect
-      .soft(drawer.content)
-      .toHaveScreenshot("manager-language-installation-progress.png");
+    await expect.soft(page).toHaveScreenshot("manager-language-installation-progress.png");
 
     await deviceAction.completeLanguageInstallation();
     await languageInstallation.languageInstalled.waitFor({ state: "visible" });
-    await expect
-      .soft(drawer.content)
-      .toHaveScreenshot("manager-language-installation-complete.png");
+    await expect.soft(page).toHaveScreenshot("manager-language-installation-complete.png");
   });
 });
