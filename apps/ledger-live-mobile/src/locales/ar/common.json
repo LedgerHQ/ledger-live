@@ -87,7 +87,8 @@
     "popular" : "شائع",
     "getSupport" : "احصل على الدعم",
     "comingSoon" : "قريباً",
-    "restart" : "إعادة التشغيل"
+    "restart" : "إعادة التشغيل",
+    "loadMore" : "تحميل المزيد"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -811,6 +812,13 @@
       "title" : "جهازك مقفل",
       "description" : "قم بإلغاء قفل جهازك وحاول مرة أخرى.",
       "descriptionWithProductName" : "قم بإلغاء قفل {{ productName }} خاصتك وحاول مرة أخرى."
+    },
+    "EtherscanAPIError" : {
+      "title" : "فشل إحضار المعاملات",
+      "description" : "حدث خطأ غير متوقع مع المستكشفات. يُرجى إعادة المحاولة لاحقاً"
+    },
+    "GasEstimationError" : {
+      "title" : "فشل تقدير الغاز"
     }
   },
   "crash" : {
@@ -1118,6 +1126,10 @@
         "title" : "تعلّم",
         "desc" : "تعرّف على الأصول المشفرة وويب 3.0 والأمان الرقمي وغير ذلك الكثير"
       },
+      "news" : {
+        "title" : "الأخبار",
+        "desc" : "تعرّف على الأصول المشفرة والأمان والويب 3.0 وقم بمواكبة آخر الأخبار"
+      },
       "ledgerApps" : {
         "title" : "التطبيقات",
         "desc" : "استكشف تطبيقات شركاء Ledger من مكان واحد"
@@ -1267,8 +1279,13 @@
       },
       "recovery" : "لديك عبارة استرداد بالفعل؟",
       "protect" : {
-        "label" : "60 دقيقة تقريباً",
-        "subTitle" : "الاستعادة عن طريق Protect"
+        "subTitle" : "استعادة باستخدام Ledger Recover",
+        "drawer" : {
+          "title" : "Use Ledger Nano X",
+          "desc" : "إطلاق Ledger Recover الأولي حصري لـ Ledger Nano X",
+          "buyNanoX" : "شراء Ledger Nano X",
+          "discoverBenefits" : "اكتشف المزايا"
+        }
       }
     },
     "stepNewDevice" : {
@@ -1495,25 +1512,20 @@
     "stepProtect" : {
       "bullets" : {
         "0" : {
-          "title" : "تصفح ",
-          "label" : "تعرف على كيفية التفاعل مع جهازك من خلال قراءة التعليمات التي تظهر على الشاشة."
+          "title" : "اختر \"Restore [استعادة]\"",
+          "label" : "اضغط على كلا الزرين معاً للاختيار."
         },
         "1" : {
-          "title" : "اختر \"Restore [استعادة]\"",
-          "label" : "اضغط على كلا الزرين في وقت واحد لتأكيد الاختيار."
-        },
-        "2" : {
-          "title" : "اختر وضع \"Restore with Protect [الاستعادة عن طريق Protect]\"",
-          "label" : "اضغط على كلا الزرين في وقت واحد لتأكيد الاختيار."
+          "title" : "اختر \"Restore using Ledger Recover [استعادة باستخدام Ledger Recover]\"",
+          "label" : "اضغط على كلا الزرين معاً للاختيار."
         }
       },
       "nextStep" : "متابعة",
       "extraInfo" : {
-        "tooltip" : "لا أستطيع رؤيته على Ledger الخاص بي",
-        "title" : "لماذا لا أستطيع رؤية Restore with Protect [الاستعادة عن طريق Protect] على Ledger الخاص بي؟",
-        "desc1" : "السبب الأكثر احتمالاً هو أن جهازك غير متوافق مع Protect. لا تقلق، نحن هنا لإرشادك حول كيفية جعلها تعمل.",
-        "desc2" : "يُرجى التواصل معنا واختيار \"My Ledger doesn't display Restore with Protect [Ledger الخاص بي لا يعرض الاستعادة عن طريق Protect]\"، ونحن هنا من أجلك.",
-        "cta" : "اتبع الخطوات اليدوية",
+        "tooltip" : "لا أرى \"Restore using Ledger Recover [استعادة باستخدام Ledger Recover]\"",
+        "title" : "نظام التشغيل على Ledger Nano X خاصتك يحتاج إلى التحديث",
+        "desc" : "يمكنك محاولة تحديث نظام التشغيل أو التواصل مع دعم Ledger من أجل المساعدة.",
+        "cta" : "تعرف على كيفية التحديث",
         "supportLink" : "تواصل مع دعم Ledger"
       }
     },
@@ -1653,6 +1665,11 @@
             "label" : "تحقق مما إذا كان قد تم اكتشاف Nano X الخاصة بك."
           }
         }
+      },
+      "protectConnectionInformationModal" : {
+        "title" : "اتصال Ledger Nano X",
+        "description" : "تأكد أن جهازك Ledger قريب من هاتفك وحاول مجدداً. <LinkBluethooth>مشكلات اتصال Bluetooth® \n</LinkBluethooth>.\nإذا كان Bluetooth® يعمل، قد تحتاج إلى تحديث نظام تشغيل Ledger. حاول تحديث نظام التشغيل، أو تواصل مع دعم Ledger من أجل المساعدة. ",
+        "learnHowToUpdate" : "تعرف على كيفية التحديث"
       }
     },
     "stepImportAccounts" : {
@@ -2495,7 +2512,9 @@
         "bullet2" : "إصدار Ledger Live، ومنطقة نظام التشغيل، واللغة والمنطقة"
       },
       "hideEmptyTokenAccounts" : "إخفاء حسابات رموز التوكن الفارغة",
-      "hideEmptyTokenAccountsDesc" : "جميع حسابات رموز التوكن الخالية في صفحة الأصول سيتم إخفائها."
+      "hideEmptyTokenAccountsDesc" : "جميع حسابات رموز التوكن الخالية في صفحة الأصول سيتم إخفائها.",
+      "filterTokenOperationsZeroAmount" : "إخفاء معاملات رموز التوكن عندما تكون القيمة 0",
+      "filterTokenOperationsZeroAmountDesc" : "يمكن أن يؤدي إخفاء معاملات رموز التوكن التي ليست لديها قيمة إلى منع بعض هجمات تسميم العناوين المحتملة على Eth و Polygon و BSC و Tron..."
     },
     "currencies" : {
       "header" : "العملات",
@@ -3298,6 +3317,10 @@
           }
         }
       }
+    },
+    "walletConnect" : {
+      "title" : "WalletConnect",
+      "description" : "قم بتوصيل محفظتك بالتطبيقات اللامركزية"
     }
   },
   "signMessage" : {
@@ -3419,6 +3442,15 @@
         "description" : "الحد الأقصى للمبلغ القابل للإنفاق هو إجمالي الرصيد في الحساب المتاح للإرسال في معاملة."
       }
     }
+  },
+  "editTransaction" : {
+    "header" : "تعديل المعاملة",
+    "stuckTx" : "أحدث معاملة \"إرسال\" لك عالقة. قم بتسريع المعاملة برسوم شبكة أعلى أو قم بإلغائها.",
+    "speedupTxMessage" : "معاملتك جارية. يمكنك تسريعها برسوم شبكة أعلى أو إلغائها.",
+    "speedupOrCancel" : "التسريع أو الإلغاء",
+    "resubmitTxDescription" : "أعد إرسال المعاملة برسوم شبكة أعلى.",
+    "cancelTxDescription" : "إرسال 0 ETH إلى عنوانك. لضمان الإلغاء، رسوم الشبكة تكون أعلى بنسبة 10-30% من رسوم المعاملة المراد إلغاؤها.",
+    "currentNetworkFee" : "رسوم الشبكة الحالية = {{amount}} ETH"
   },
   "requestAccount" : {
     "stepperHeader" : {
@@ -6004,22 +6036,10 @@
       "status" : {
         "new" : {
           "title" : "جديد",
-          "desc" : "قم بعمل نسخة احتياطية من عبارة الاسترداد الخاصة بك",
-          "0" : {
-            "title" : "يثق بها الملايين من مستخدمي Ledger"
-          },
-          "1" : {
-            "title" : "يتم ربط عبارة الاسترداد خاصتك بهويتك بأمان"
-          },
-          "2" : {
-            "title" : "أحدث تقنيات التشفير"
-          },
-          "3" : {
-            "title" : "مجزأة إلى 3 قطع لامركزية بحيث لا يمكن أبداً سرقة عبارة الاسترداد الخاصة بك"
-          },
+          "desc" : "استعدْ الوصول إلى محفظتك بدون عبارة الاسترداد السرية الخاصة بك.",
           "actions" : {
-            "learnMore" : "تعرّف على المزيد",
-            "alreadySubscribed" : "مشترك بالفعل في Protect؟"
+            "learnMore" : "كيف يفيدني هذا؟",
+            "alreadySubscribed" : "مشترك بالفعل؟ <LinkAccount>عرض حسابي</LinkAccount>"
           }
         },
         "confirmIdentity" : {
@@ -6077,5 +6097,13 @@
         "emptyPassword" : "لا يمكن أن تكون كلمة المرور فارغة"
       }
     }
+  },
+  "newsfeed" : {
+    "title" : "موجز الأخبار",
+    "poweredByCryptopanic" : "يعمل بواسطة Cryptopanic",
+    "noPosts" : "ليس هناك منشورات متاحة حالياً"
+  },
+  "deviceConnect" : {
+    "title" : "توصيل الجهاز"
   }
 }
