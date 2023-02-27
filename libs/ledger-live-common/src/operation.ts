@@ -45,6 +45,7 @@ export {
   getOperationConfirmationDisplayableNumber,
   isConfirmedOperation,
   isAddressPoisoningOperation,
+  isEditableOperation,
 };
 
 export function patchOperationWithHash(
