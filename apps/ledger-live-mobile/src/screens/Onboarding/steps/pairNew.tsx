@@ -129,11 +129,13 @@ function OnboardingStepPairNew() {
       screen: NavigatorName.Main,
     });
 
-    startPostOnboarding(deviceModelId as DeviceModelId, false, () =>
-      navigation.navigate(NavigatorName.Base, {
-        screen: NavigatorName.Main,
-      }),
-    );
+    startPostOnboarding({
+      deviceModelId: deviceModelId as DeviceModelId,
+      fallbackIfNoAction: () =>
+        navigation.navigate(NavigatorName.Base, {
+          screen: NavigatorName.Main,
+        }),
+    });
 
     triggerJustFinishedOnboardingNewDevicePushNotificationModal();
   }, [

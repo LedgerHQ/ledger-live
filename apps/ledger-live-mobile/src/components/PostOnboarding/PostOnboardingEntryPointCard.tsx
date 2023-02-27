@@ -53,7 +53,7 @@ const PostOnboardingEntryPointCard: React.FC<Record<string, never>> = () => {
           alignSelf="stretch"
           type="main"
           outline
-          onPress={openHub}
+          onPress={() => openHub()}
           event="button_clicked"
           eventProperties={{ button: "Access" }}
         >
