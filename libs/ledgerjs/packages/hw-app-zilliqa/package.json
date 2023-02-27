@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-zilliqa",
-  "version": "6.27.6",
+  "version": "1.0.0",
   "description": "Ledger Hardware Wallet Zilliqa Application API",
   "keywords": [
     "Ledger",
