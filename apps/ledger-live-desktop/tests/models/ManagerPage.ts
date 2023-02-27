@@ -60,7 +60,6 @@ export class ManagerPage {
   async openChangeLanguageDrawerAndSelectLanguage(language: string) {
     await this.changeDeviceLanguageButton.click();
     await this.changeLanguageOption(language).waitFor({ state: "visible" });
-    await this.changeLanguageOption(language).waitFor({ state: "stable" });
     await this.changeLanguageOption(language).click();
   }
 

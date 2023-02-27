@@ -28,6 +28,7 @@ test("Manager", async ({ page }) => {
   await test.step("can open change language menu and select language", async () => {
     await managerPage.openChangeLanguageDrawerAndSelectLanguage("french");
     await waitFor(() => languageInstallation.installLanguageButton.isEnabled());
+    await waitFor(() => new Promise(resolve => requestAnimationFrame(() => resolve(true))));
     await expect.soft(page).toHaveScreenshot("manager-change-language-drawer-selected.png");
   });
 
