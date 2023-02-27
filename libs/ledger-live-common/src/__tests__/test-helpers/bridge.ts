@@ -494,7 +494,6 @@ export function testBridge<T extends TransactionCommon>(
                 blockHeight: 0,
               };
               const synced = await syncAccount(bridge, copy);
-
               // same ops are restored
               expect(synced.operations).toEqual(account.operations);
               // pendingOperations is empty
