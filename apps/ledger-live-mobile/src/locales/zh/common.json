@@ -87,7 +87,8 @@
     "popular" : "热门",
     "getSupport" : "获取支持",
     "comingSoon" : "敬请期待",
-    "restart" : "重新启动"
+    "restart" : "重新启动",
+    "loadMore" : "加载更多"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -549,7 +550,7 @@
       "description" : "必须在 30 秒内签署交易。请重试。"
     },
     "TronNotEnoughEnergy" : {
-      "title" : "能量低于必要值。您可能需要支付高达 50TRX 的费用。"
+      "title" : "能量低于必要值。您可能需要支付高达 50 TRX 的费用。"
     },
     "UpdateYourApp" : {
       "title" : "需要更新应用程序",
@@ -811,6 +812,13 @@
       "title" : "您的设备已经锁定",
       "description" : "解锁您的设备并重试。",
       "descriptionWithProductName" : "解锁您的 {{ productName }} 并重试。"
+    },
+    "EtherscanAPIError" : {
+      "title" : "未能提取交易",
+      "description" : "浏览器出现意外错误。请重试"
+    },
+    "GasEstimationError" : {
+      "title" : "未能估计 Gas 费用"
     }
   },
   "crash" : {
@@ -1118,6 +1126,10 @@
         "title" : "学习",
         "desc" : "了解加密货币、web3、数字安全等等"
       },
+      "news" : {
+        "title" : "新闻",
+        "desc" : "了解有关加密货币、安全性、Web3 资讯并追踪最新消息"
+      },
       "ledgerApps" : {
         "title" : "应用程序",
         "desc" : "一站式探索 Ledger 合作伙伴应用程序"
@@ -1267,8 +1279,13 @@
       },
       "recovery" : "已经有了恢复短语？",
       "protect" : {
-        "label" : "约 60 分钟",
-        "subTitle" : "使用 Protect 重置"
+        "subTitle" : "使用 Ledger Recover 恢复",
+        "drawer" : {
+          "title" : "Use Ledger Nano X",
+          "desc" : "Ledger Recover 软启动专用于 Ledger Nano X",
+          "buyNanoX" : "购买 Ledger Nano X",
+          "discoverBenefits" : "了解优势"
+        }
       }
     },
     "stepNewDevice" : {
@@ -1495,25 +1512,20 @@
     "stepProtect" : {
       "bullets" : {
         "0" : {
-          "title" : "浏览 ",
-          "label" : "阅读屏幕上的说明，了解如何使用您的设备。"
+          "title" : "选择“Restore”（重置）",
+          "label" : "同时按下两个按钮进行选择。"
         },
         "1" : {
-          "title" : "选择“Restore”（重置）",
-          "label" : "同时按下两个按钮以激活该选项。"
-        },
-        "2" : {
-          "title" : "选择“Restore with Protect”（使用 Protect 重置）模式",
-          "label" : "同时按下两个按钮以激活该选项。"
+          "title" : "选择“使用 Ledger Recover 恢复”",
+          "label" : "同时按下两个按钮进行选择。"
         }
       },
       "nextStep" : "继续",
       "extraInfo" : {
-        "tooltip" : "在我的 Ledger 上看不到它",
-        "title" : "为什么我在 Ledger 上看不到 Restore with Protect（使用 Protect 重置）？",
-        "desc1" : "最有可能的原因是您的设备与 Protect 不兼容。别担心，我们会指导您如何解决此问题。",
-        "desc2" : "请联系我们，选择“My Ledger doesn't display Restore with Protect”（我的 Ledger 不显示使用 Protect 重置），我们会为您提供支持。",
-        "cta" : "完成手动步骤",
+        "tooltip" : "我没看到“使用 Ledger Recover 恢复”",
+        "title" : "Ledger Nano X 的操作系统需要更新",
+        "desc" : "您可以尝试更新操作系统或联系 Ledger 客服寻求帮助。",
+        "cta" : "了解如何更新",
         "supportLink" : "联系 Ledger 客服"
       }
     },
@@ -1653,6 +1665,11 @@
             "label" : "检查您的 Nano X 是否已被检测到。"
           }
         }
+      },
+      "protectConnectionInformationModal" : {
+        "title" : "Ledger Nano X connection",
+        "description" : "Make sure your Ledger is close to your phone and try again. <LinkBluethooth>Bluetooth® connection issues \n</LinkBluethooth>.\nIf Bluetooth® is working, you might need to update Ledger’s OS. Try updating the OS, or contact Ledger Support for assistance. ",
+        "learnHowToUpdate" : "了解如何更新"
       }
     },
     "stepImportAccounts" : {
@@ -2495,7 +2512,9 @@
         "bullet2" : "Ledger Live 版本、操作系统区域、语言和地区"
       },
       "hideEmptyTokenAccounts" : "隐藏空的代币账户",
-      "hideEmptyTokenAccountsDesc" : "资产页面中所有空的代币账户都将被隐藏。"
+      "hideEmptyTokenAccountsDesc" : "资产页面中所有空的代币账户都将被隐藏。",
+      "filterTokenOperationsZeroAmount" : "值为 0 时隐藏代币交易",
+      "filterTokenOperationsZeroAmountDesc" : "隐藏没有价值的代币交易可以防止一些针对以太坊（ETH）、多边形（Polygon）、币安智能链（BSC）和波场（Tron）等的潜在地址中毒攻击"
     },
     "currencies" : {
       "header" : "币种",
@@ -3298,6 +3317,10 @@
           }
         }
       }
+    },
+    "walletConnect" : {
+      "title" : "WalletConnect",
+      "description" : "将您的钱包连接到去中心化应用程序"
     }
   },
   "signMessage" : {
@@ -3419,6 +3442,15 @@
         "description" : "最大可支出数额指的是一个账户可通过一个交易发送的总余额。"
       }
     }
+  },
+  "editTransaction" : {
+    "header" : "编辑交易",
+    "stuckTx" : "您最近的一次“发送”交易已停滞。使用较高的网络费用加速交易，或取消交易。",
+    "speedupTxMessage" : "您的交易正在进行。您可使用较高的网络费用加速交易，或取消交易。",
+    "speedupOrCancel" : "加速或取消",
+    "resubmitTxDescription" : "使用较高的网络费用重新提交此交易。",
+    "cancelTxDescription" : "发送 0 以太币到您自己的地址。为确保取消交易，网络费用比将要取消的交易费用高 10%-30%。",
+    "currentNetworkFee" : "当前网络费用 = {{amount}} 以太币"
   },
   "requestAccount" : {
     "stepperHeader" : {
@@ -6004,22 +6036,10 @@
       "status" : {
         "new" : {
           "title" : "新",
-          "desc" : "备份您的恢复短语",
-          "0" : {
-            "title" : "受到数百万 Ledger 用户的信赖"
-          },
-          "1" : {
-            "title" : "您的恢复短语与您的身份安全关联"
-          },
-          "2" : {
-            "title" : "最先进的加密技术"
-          },
-          "3" : {
-            "title" : "分成 3 个去中心化的部分，因此您的恢复短语绝不会被窃取"
-          },
+          "desc" : "不用秘密恢复短语即可恢复钱包访问权限。",
           "actions" : {
-            "learnMore" : "了解更多",
-            "alreadySubscribed" : "已经订阅了\"Protect\"保护？"
+            "learnMore" : "这对我有什么好处？",
+            "alreadySubscribed" : "已订阅？<LinkAccount>查看我的账户</LinkAccount>"
           }
         },
         "confirmIdentity" : {
@@ -6077,5 +6097,13 @@
         "emptyPassword" : "密码不能为空"
       }
     }
+  },
+  "newsfeed" : {
+    "title" : "新闻摘要",
+    "poweredByCryptopanic" : "由 Cryptopanic 提供支持",
+    "noPosts" : "当前无可阅览内容"
+  },
+  "deviceConnect" : {
+    "title" : "连接设备"
   }
 }
