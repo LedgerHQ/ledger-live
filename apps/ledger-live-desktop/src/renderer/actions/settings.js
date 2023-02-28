@@ -11,6 +11,7 @@ import { setEnvOnAllThreads } from "~/helpers/env";
 import type { SettingsState as Settings } from "~/renderer/reducers/settings";
 import {
   hideEmptyTokenAccountsSelector,
+  filterTokenOperationsZeroAmountSelector,
   selectedTimeRangeSelector,
 } from "~/renderer/reducers/settings";
 import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
@@ -75,6 +76,20 @@ export function useHideEmptyTokenAccounts() {
       }
     },
     [dispatch, refreshAccountsOrdering],
+  );
+  return [value, setter];
+}
+
+export function useFilterTokenOperationsZeroAmount() {
+  const dispatch = useDispatch();
+  const value = useSelector(filterTokenOperationsZeroAmountSelector);
+  const setter = useCallback(
+    (filterTokenOperationsZeroAmount: boolean) => {
+      if (setEnvOnAllThreads("FILTER_ZERO_AMOUNT_ERC20_EVENTS", filterTokenOperationsZeroAmount)) {
+        dispatch(saveSettings({ filterTokenOperationsZeroAmount }));
+      }
+    },
+    [dispatch],
   );
   return [value, setter];
 }

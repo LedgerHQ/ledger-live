@@ -119,7 +119,7 @@ export const createTronTransaction = async (
   if (tokenType === "trc20" && tokenId) {
     const txData: SmartContractTransactionData = {
       function_selector: "transfer(address,uint256)",
-      fee_limit: 20000000,
+      fee_limit: 50000000,
       call_value: 0,
       contract_address: decode58Check(tokenId),
       parameter: abiEncodeTrc20Transfer(decode58Check(t.recipient), t.amount),
@@ -341,7 +341,7 @@ const accountNamesCache = makeLRUCache(
   (addr: string) => addr,
   {
     max: 300,
-    maxAge: 180 * 60 * 1000, // 3hours
+    ttl: 180 * 60 * 1000, // 3hours
   }
 );
 // cache for super representative brokerages (brokerage is unchanged over time)
@@ -350,7 +350,7 @@ const srBrokeragesCache = makeLRUCache(
   (addr: string) => addr,
   {
     max: 300,
-    maxAge: 180 * 60 * 1000, // 3hours
+    ttl: 180 * 60 * 1000, // 3hours
   }
 );
 export const getAccountName = async (
@@ -384,7 +384,7 @@ const superRepresentativesCache = makeLRUCache(
   () => "",
   {
     max: 300,
-    maxAge: 60 * 60 * 1000, // 1hour
+    ttl: 60 * 60 * 1000, // 1hour
   }
 );
 export const getTronSuperRepresentatives = async (): Promise<

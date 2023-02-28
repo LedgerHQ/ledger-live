@@ -1,10 +1,10 @@
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
-import BottomModal from "./BottomModal";
-import type { Props as BottomModalProps } from "./BottomModal";
+import QueuedDrawer from "./QueuedDrawer";
+import type { Props as BottomModalProps } from "./QueuedDrawer";
 import GenericErrorView from "./GenericErrorView";
 
-type Props = BottomModalProps & {
+type Props = Omit<BottomModalProps, "isRequestingToBeOpened"> & {
   error: Error | null | undefined;
   onClose?: () => void;
   footerButtons?: React.ReactNode;
@@ -19,7 +19,11 @@ function GenericErrorBottomModal({
   ...otherProps
 }: Props) {
   return (
-    <BottomModal {...otherProps} isOpened={!!error} onClose={onClose}>
+    <QueuedDrawer
+      {...otherProps}
+      isRequestingToBeOpened={!!error}
+      onClose={onClose}
+    >
       {error ? (
         <View style={styles.root}>
           <GenericErrorView
@@ -31,7 +35,7 @@ function GenericErrorBottomModal({
           ) : null}
         </View>
       ) : null}
-    </BottomModal>
+    </QueuedDrawer>
   );
 }
 

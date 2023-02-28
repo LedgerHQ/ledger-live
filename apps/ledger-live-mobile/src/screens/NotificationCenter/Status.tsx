@@ -2,10 +2,11 @@ import React, { useCallback } from "react";
 import { Linking } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
-import { BottomDrawer, Button, Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Button, Flex, Icons, Text } from "@ledgerhq/native-ui";
 
 import styled, { useTheme } from "styled-components/native";
 
+import QueuedDrawer from "../../components/QueuedDrawer";
 import { urls } from "../../config/urls";
 import { track, TrackScreen } from "../../analytics";
 
@@ -47,7 +48,7 @@ export default function StatusCenter({ onClose, isOpened }: Props) {
   }, [onClose]);
 
   return (
-    <BottomDrawer isOpen={isOpened} onClose={onPressClose}>
+    <QueuedDrawer isRequestingToBeOpened={isOpened} onClose={onPressClose}>
       <TrackScreen
         category={DATA_TRACKING_DRAWER_NAME}
         type="drawer"
@@ -112,7 +113,7 @@ export default function StatusCenter({ onClose, isOpened }: Props) {
       <Button type="main" size="large" onPress={onPressOk} mt={8} mb={4}>
         {t("notificationCenter.status.cta.ok")}
       </Button>
-    </BottomDrawer>
+    </QueuedDrawer>
   );
 }
 

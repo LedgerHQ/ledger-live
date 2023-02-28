@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState, useMemo } from "react";
-import { BottomDrawer } from "@ledgerhq/native-ui";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
 } from "react-native-reanimated";
 import useRatings from "../../logic/ratings";
+import QueuedDrawer from "../../components/QueuedDrawer";
 import Init from "./Init";
 import Enjoy from "./Enjoy";
 import Disappointed from "./Disappointed";
@@ -78,8 +78,8 @@ const RatingsModal = () => {
   }, [closeModal, setStep, step]);
 
   return (
-    <BottomDrawer
-      isOpen={isRatingsModalOpen}
+    <QueuedDrawer
+      isRequestingToBeOpened={isRatingsModalOpen}
       onClose={closeModal}
       onBackdropPress={handleBackdropClose}
       onBackButtonPress={handleBackdropClose}
@@ -89,7 +89,7 @@ const RatingsModal = () => {
       <Animated.ScrollView style={animatedStyle}>
         <Animated.View onLayout={onLayout}>{component}</Animated.View>
       </Animated.ScrollView>
-    </BottomDrawer>
+    </QueuedDrawer>
   );
 };
 

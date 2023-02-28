@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
-import { Alert, BottomDrawer, Button, Text, Switch } from "@ledgerhq/native-ui";
+import { Alert, Button, Text, Switch } from "@ledgerhq/native-ui";
 import { GraphGrowAltMedium } from "@ledgerhq/native-ui/assets/icons";
 import { View } from "react-native";
 import SettingsRow from "../../../components/SettingsRow";
 import { setAnalytics } from "../../../actions/settings";
 import { analyticsEnabledSelector } from "../../../reducers/settings";
 import Track from "../../../analytics/Track";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 
 const AnalyticsRow = () => {
   const { t } = useTranslation();
@@ -72,8 +73,8 @@ const AnalyticsRow = () => {
           onChange={value => dispatch(setAnalytics(value))}
         />
       </SettingsRow>
-      <BottomDrawer
-        isOpen={isOpened}
+      <QueuedDrawer
+        isRequestingToBeOpened={isOpened}
         onClose={() => setIsOpened(false)}
         Icon={GraphGrowAltMedium}
         iconColor={"primary.c80"}
@@ -98,7 +99,7 @@ const AnalyticsRow = () => {
         <Button type={"main"} mt={8} onPress={() => setIsOpened(false)}>
           <Trans i18nKey="common.close" />
         </Button>
-      </BottomDrawer>
+      </QueuedDrawer>
     </>
   );
 };

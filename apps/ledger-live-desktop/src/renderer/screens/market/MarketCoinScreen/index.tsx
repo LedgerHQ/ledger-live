@@ -11,7 +11,7 @@ import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import { addStarredMarketCoins, removeStarredMarketCoins } from "~/renderer/actions/settings";
 import { track } from "~/renderer/analytics/segment";
-import { swapDefaultTrack } from "~/renderer/screens/exchange/Swap2/utils/index";
+import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
 import { Button } from "..";
 import MarketCoinChart from "./MarketCoinChart";
 import MarketInfo from "./MarketInfo";
@@ -26,6 +26,7 @@ import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import useStakeFlow from "../../stake";
+import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 
 const CryptoCurrencyIconWrapper = styled.div`
   height: 56px;
@@ -69,6 +70,8 @@ export default function MarketCoinScreen() {
   const allAccounts = useSelector(accountsSelector);
   const flattenedAccounts = flattenAccounts(allAccounts);
   const { providers, storedProviders } = useProviders();
+  const swapDefaultTrack = useGetSwapTrackingProperties();
+
   const swapAvailableIds = useMemo(() => {
     return providers || storedProviders
       ? (providers || storedProviders)
@@ -130,8 +133,11 @@ export default function MarketCoinScreen() {
   const stakeProgramsFeatureFlag = useFeature("stakePrograms");
   const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
   const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;
-  const availableOnStake = stakeProgramsEnabled && currency && listFlag.includes(currency.id);
-  const startStakeFlow = useStakeFlow({ currencies: currency ? [currency.id] : [] });
+  const availableOnStake =
+    stakeProgramsEnabled && currency && listFlag.includes(currency?.internalCurrency?.id);
+  const startStakeFlow = useStakeFlow({
+    currencies: currency ? [currency?.internalCurrency?.id] : [],
+  });
 
   const color = internalCurrency
     ? getCurrencyColor(internalCurrency, colors.background.main)
@@ -204,7 +210,14 @@ export default function MarketCoinScreen() {
         });
       }
     },
-    [currency?.internalCurrency, currency?.ticker, flattenedAccounts, history, openAddAccounts],
+    [
+      currency?.internalCurrency,
+      currency?.ticker,
+      flattenedAccounts,
+      history,
+      openAddAccounts,
+      swapDefaultTrack,
+    ],
   );
 
   const onStake = useCallback(
@@ -215,7 +228,7 @@ export default function MarketCoinScreen() {
         button: "stake",
         currency: currency?.ticker,
         page: "Page Market Coin",
-        ...swapDefaultTrack,
+        ...stakeDefaultTrack,
       });
       setTrackingSource("Page Market Coin");
 
@@ -293,7 +306,7 @@ export default function MarketCoinScreen() {
                 </Button>
               )}
               {availableOnStake && (
-                <Button variant="color" onClick={onStake}>
+                <Button variant="color" onClick={onStake} data-test-id="market-coin-stake-button">
                   {t("accounts.contextMenu.stake")}
                 </Button>
               )}

@@ -26,7 +26,7 @@ import FirstLetterIcon from "../../../components/FirstLetterIcon";
 import KeyboardView from "../../../components/KeyboardView";
 import InfoIcon from "../../../components/InfoIcon";
 import Info from "../../../icons/Info";
-import BottomModal from "../../../components/BottomModal";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import { StellarAddAssetFlowParamList } from "./types";
 
@@ -187,7 +187,10 @@ export default function DelegationStarted({ navigation, route }: Props) {
           />
         </View>
       </KeyboardView>
-      <BottomModal isOpened={!!infoModalOpen} onClose={closeModal}>
+      <QueuedDrawer
+        isRequestingToBeOpened={!!infoModalOpen}
+        onClose={closeModal}
+      >
         <View style={styles.modal}>
           <View style={styles.infoIcon}>
             <InfoIcon bg={colors.lightLive}>
@@ -210,7 +213,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
             </LText>
           </View>
         </View>
-      </BottomModal>
+      </QueuedDrawer>
     </SafeAreaView>
   );
 }

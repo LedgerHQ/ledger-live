@@ -819,12 +819,44 @@
       "redelegation": {
         "title": "In case you didn’t know...",
         "description": "The Ledger validator stakes at a lower commission than the validator you’re using.",
-        "cta": "Redelegate with Ledger"
+        "cta": "Redelegate with Ledger",
+        "linkText": "What is redelegation and how long does it take?",
+        "solana": {
+          "title": "Did you know?",
+          "description": "Ledger offers a lower commission rate than your validator. This process can take up to 4 days."
+        },
+        "near": {
+          "title": "Did you know?",
+          "description": "Ledger offers a lower commission rate than your validator. This process can take up to 65 hours."
+        },
+        "elrond": {
+          "title": "Did you know?",
+          "description": "Ledger offers a lower commission rate than your validator. This process can take up to 10 days."
+        }
       },
       "delegation": {
         "title": "In case you didn’t know...",
         "description": "The Ledger validator stakes your {{asset}} at a commission of {{commission}}%.",
-        "cta": "Stake with Ledger"
+        "cta": "Stake with Ledger",
+        "linkText": "Learn more",
+        "ethereum": {
+          "lido": {
+            "title": "In case you didn’t know...",
+            "description": "Stake your Ethereum with Lido and earn rewards daily. No lock-up period. No minimum deposit.",
+            "cta": "Stake with Lido"
+          },
+          "kiln": {
+            "title": "Don’t just HODL. Grow your ETH",
+            "description": "Got more than 32 ETH? Earn passive rewards by securely staking your ETH with Kiln.",
+            "cta": "Stake with Kiln"
+          }
+        },
+        "near": {
+          "description": "Stake your NEAR with Ledger by Figment validator. Your coins stay yours, backed by Ledger’s uncompromising security."
+        },
+        "elrond": {
+          "description": "Stake your ELROND with Ledger by Figment validator. Your coins stay yours, backed by Ledger’s uncompromising security."
+        }
       }
     }
   },
@@ -1399,7 +1431,7 @@
         "label": "Popular"
       },
       "earn": {
-        "title": "Earn",
+        "title": "Stake",
         "description": "Grow your crypto with Ledger"
       }
     }
@@ -1814,7 +1846,7 @@
       "used": "Used",
       "firmwareAvailable": "Firmware is outdated:",
       "firmwareUpToDate": "Firmware is up to date:",
-      "genuine": "Device is genuine",
+      "genuine": "Your device is Genuine",
       "incomplete": "Some apps were not recognized. Please uninstall, then reinstall them."
     },
     "applist": {
@@ -2236,6 +2268,13 @@
     },
     "switchButton": "Switch to {{language}}",
     "no": "I prefer not to"
+  },
+  "deviceRename": {
+    "title": "Rename {{ productName }}",
+    "chooseName": "Choose a name",
+    "placeholder": "Tony's Stax",
+    "remainingCharacters": "{{ remainingCharacters }} characters remaining",
+    "renamed": "{{ productName }} name changed to \n“{{ name }}” "
   },
   "deviceLocalization": {
     "language": "Language",
@@ -2958,7 +2997,7 @@
             "currentDelegation": "Current delegation",
             "newDelegation": "New delegation",
             "chooseValidator": "Choose a validator",
-            "warning": "You will have to wait <0>{{numberOfDays}}</0> to redelegate from the new validator, if you change your mind again",
+            "warning": "You will have to wait <0>{{numberOfDays}} days</0> to redelegate from the new validator, if you change your mind again",
             "amountLabel": "Amount to redelegate"
           },
           "device": {
@@ -2985,8 +3024,8 @@
         "steps": {
           "amount": {
             "title": "Amount",
-            "subtitle": "The undelegation process takes <0>{{numberOfDays}}</0> to finalize.",
-            "warning": "Rewards will be immediately cashed in. The undelegated amount will be back in the available balance after the <0>21-day timelock</0>.",
+            "subtitle": "The undelegation process takes <0>{{numberOfDays}} days</0> to finalize.",
+            "warning": "Rewards will be immediately cashed in. The undelegated amount will be back in the available balance after the <0>{{numberOfDays}}-day timelock</0>.",
             "fields": {
               "validator": "Validator",
               "amount": "Amount to undelegate"
@@ -3777,6 +3816,9 @@
       "catalogRampServerDesc": "Switch between multiple trading providers",
       "enablePlatformDevTools": "Enable platform dev tools",
       "enablePlatformDevToolsDesc": "Enable opening platform apps dev tools window",
+      "customLockScreen": "Custom lock-screen assets",
+      "customLockScreenDesc": "Debug custom lock-screen graphical assets",
+      "customLockScreenCTA": "Launch",
       "featureFlagsTitle": "Defined feature flags used in Ledger Live",
       "featureFlagsDesc": "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
       "featureFlagsEdit": "Edit",
@@ -3792,7 +3834,9 @@
       "runLocalAppDeleteButton": "Delete",
       "runLocalAppOpenButton": "Open",
       "enableLearnStagingUrl": "Learn page staging URL",
-      "enableLearnStagingUrlDesc": "Enable the staging URL for the learn page."
+      "enableLearnStagingUrlDesc": "Enable the staging URL for the learn page.",
+      "openOnboardingAppInstallDebug": "Open onboarding app install debug screen",
+      "openOnboardingAppInstallDebugDesc": "Open a screen with the components from the sync onboarding app installation step"
     },
     "currencies": {
       "selectPlaceholder": "Select crypto asset",
@@ -3958,6 +4002,10 @@
       "fullNode": {
         "title": "Connect Bitcoin full node",
         "desc": "Set up your Bitcoin full node to synchronize and send transactions without using Ledger’s explorers."
+      },
+      "filterTokenOperationsZeroAmount": {
+        "title": "Hide token transactions when value is 0",
+        "desc": "Hiding token transactions without value can prevent some potential address poisoning attacks on Eth, Polygon, BSC, Tron..."
       }
     }
   },
@@ -5375,7 +5423,7 @@
       "description": "Signature must be applied within 30 seconds. Please try again."
     },
     "TronNotEnoughEnergy": {
-      "title": "Energy is lower than necessary. You might pay up to 20TRX in fees."
+      "title": "Energy is lower than necessary. You might pay up to 50 TRX in fees."
     },
     "PairingFailed": {
       "title": "Pairing unsuccessful",
@@ -5540,6 +5588,10 @@
       "title": "Image loading from file failed",
       "description": "Please try again with another image"
     },
+    "ImageLoadFromNftError": {
+      "title": "Image loading from NFT failed",
+      "description": "Please try again with another NFT"
+    },
     "ImageDownloadError": {
       "title": "Image download failed",
       "description": "Please try again with another image"
@@ -5612,6 +5664,13 @@
       "descriptionWithProductName": "You need to setup your {{ productName }} first.\nWe will guide you through the setup process.",
       "goToOnboardingButton": "Set up my device",
       "goToOnboardingButtonWithProductName": "Set up my {{ productName }}"
+    },
+    "EtherscanAPIError": {
+      "title": "Fetching transactions failed",
+      "description": "An unexpected error occurred with the explorers. Please try again later"
+    },
+    "GasEstimationError": {
+      "title": "Gas estimation failed"
     }
   },
   "cryptoOrg": {
@@ -5645,12 +5704,19 @@
   },
   "customImage": {
     "title": "Custom lock screen",
+    "managerCTA": "Lock screen picture",
     "steps": {
       "choose": {
         "stepLabel": "Choose an image",
         "description": "Choose an image to set as (...)",
         "pickFromNftGallery": "Select from my NFT gallery",
-        "upload": "Upload from my computer"
+        "myNfts": "My NFTs",
+        "upload": "Upload from my computer",
+        "chooseNft": "Choose an NFT",
+        "selectNft": "Choose NFT",
+        "previousSelectNft": "back",
+        "nftEmptyStateTitle": "No NFT's to show yet",
+        "nftEmptyStateDescription": "Get started by adding NFTs to your wallet."
       },
       "adjust": {
         "stepLabel": "Adjust image",
@@ -5676,5 +5742,37 @@
     },
     "customImageSet": "Lockscreen set",
     "finishCTA": "Finish"
+  },
+  "onboardingAppInstall": {
+    "restore": {
+      "title": "Install the same apps as on {{deviceName}}?",
+      "titleNoDeviceName": "Install the same apps as on previous Ledger device?",
+      "subtitle": "You can install or remove apps at anytime.",
+      "installCTA": "Restore applications",
+      "skipCTA": "I'll do this later"
+    },
+    "default": {
+      "title": "{{ productName }} uses apps to enable secure blockchain transactions",
+      "subtitle": "We recommend downloading a default set of apps. You can download more later.",
+      "installCTA": "Install applications",
+      "skipCTA": "I'll do this later"
+    },
+    "progress": {
+      "loading": "Loading ...",
+      "resolving": "Resolving dependencies",
+      "progress": "Installing apps {{progress}}%",
+      "disclaimer": "Add or remove apps at any time from Ledger Live."
+    },
+    "cancelled": {
+      "title": "App installation was cancelled on {{productName}}",
+      "subtitle": "{{productName}} needs blockchain apps to approve your crypto and NFT transactions.",
+      "installCTA": "Install now",
+      "skipCTA": "I'll do this later"
+    },
+    "locked": {
+      "title": "Your {{productName}} is locked",
+      "subtitle": "Unlock your {{productName}} and restart the installation.",
+      "installCTA": "Restart installation"
+    }
   }
 }

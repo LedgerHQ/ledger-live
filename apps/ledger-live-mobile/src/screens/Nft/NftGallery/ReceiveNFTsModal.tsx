@@ -1,12 +1,13 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { BottomDrawer, Button, Text } from "@ledgerhq/native-ui";
+import { Button, Text } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import { Linking } from "react-native";
 import Svg, { G, Path, Rect, Mask } from "react-native-svg";
 import { NavigatorName, ScreenName } from "../../../const";
 import { track, TrackScreen } from "../../../analytics";
 import { urls } from "../../../config/urls";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 
 type Props = {
   isOpened: boolean;
@@ -59,9 +60,9 @@ export default function ReceiveNFTsModal({ onClose, isOpened }: Props) {
   }, [onClose, openSupportLink]);
 
   return (
-    <BottomDrawer
+    <QueuedDrawer
       title={t("wallet.nftGallery.receiveModal.title")}
-      isOpen={isOpened}
+      isRequestingToBeOpened={isOpened}
       onClose={onPressClose}
       Icon={<EthPolygonIcons />}
     >
@@ -89,7 +90,7 @@ export default function ReceiveNFTsModal({ onClose, isOpened }: Props) {
       <Button size="large" type="default" onPress={onClickLearnMore}>
         {t("wallet.nftGallery.receiveModal.info")}
       </Button>
-    </BottomDrawer>
+    </QueuedDrawer>
   );
 }
 

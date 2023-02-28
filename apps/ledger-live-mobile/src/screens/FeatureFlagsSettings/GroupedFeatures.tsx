@@ -46,9 +46,9 @@ const GroupedFeatures: React.FC<Props> = ({
   featureIds.forEach(featureId => {
     const val = getFeature(featureId);
     const { enabled, overridesRemote } = val || {};
-    someEnabled ||= Boolean(enabled);
-    allEnabled &&= Boolean(enabled);
-    someOverridden ||= Boolean(overridesRemote);
+    someEnabled = someEnabled || Boolean(enabled);
+    allEnabled = allEnabled && Boolean(enabled);
+    someOverridden = someOverridden || Boolean(overridesRemote);
   });
 
   const handleSwitchChange = useCallback(

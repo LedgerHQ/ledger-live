@@ -1,19 +1,13 @@
 import React, { ReactNode, useCallback } from "react";
 import { Linking, ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
-import {
-  BottomDrawer,
-  Flex,
-  Icons,
-  Link,
-  Text,
-  Divider,
-} from "@ledgerhq/native-ui";
+import { Flex, Icons, Link, Text, Divider } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 
 import { useLocalizedTermsUrl, useTermsAccept } from "../logic/terms";
 import Button from "./Button";
 import Alert from "./Alert";
+import QueuedDrawer from "./QueuedDrawer";
 
 const Description = styled(Text).attrs(() => ({
   color: "neutral.c70",
@@ -36,10 +30,10 @@ const CheckTermOfUseUpdateModal = () => {
   }, [termsUrl]);
 
   return (
-    <BottomDrawer
+    <QueuedDrawer
       noCloseButton={true}
       title={t("updatedTerms.title")}
-      isOpen={!accepted}
+      isRequestingToBeOpened={!accepted}
     >
       <ScrollView showsVerticalScrollIndicator={false}>
         <Flex px={4}>
@@ -68,7 +62,7 @@ const CheckTermOfUseUpdateModal = () => {
           </Button>
         </Flex>
       </ScrollView>
-    </BottomDrawer>
+    </QueuedDrawer>
   );
 };
 

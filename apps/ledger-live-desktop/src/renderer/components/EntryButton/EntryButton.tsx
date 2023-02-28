@@ -95,6 +95,7 @@ interface EntryButtonProps {
   label?: string;
   Icon?: React.ComponentType;
   showChevron?: boolean;
+  entryButtonTestId?: string;
 }
 const EntryButton: React.FC<EntryButtonProps> = ({
   title,
@@ -104,9 +105,10 @@ const EntryButton: React.FC<EntryButtonProps> = ({
   Icon,
   label,
   showChevron,
+  entryButtonTestId,
 }) => {
   return (
-    <EntryButtonContainer onClick={onClick} disabled={disabled}>
+    <EntryButtonContainer onClick={onClick} disabled={disabled} data-test-id={entryButtonTestId}>
       <Box horizontal shrink alignItems="center">
         {Icon && (
           <IconWrapper>

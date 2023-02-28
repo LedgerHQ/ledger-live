@@ -52,6 +52,7 @@ const DeviceLanguageSelection: React.FC<Props> = ({
                 currentLanguage === deviceLanguage;
               return (
                 <SelectableList.Element
+                  key={currentLanguage}
                   value={currentLanguage}
                   renderRight={() =>
                     isCurrentDeviceLanguage ? (

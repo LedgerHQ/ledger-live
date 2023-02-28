@@ -87,15 +87,33 @@ test.describe.parallel("Swap", () => {
 
     await test.step("Select Different Target Account", async () => {
       await swapPage.openTargetAccountDrawer();
-      await expect.soft(page).toHaveScreenshot("target-account-drawer.png");
+      await expect.soft(drawer.content).toHaveScreenshot("target-account-drawer.png");
       await swapPage.selectTargetAccount("Ethereum 2");
+    });
+
+    await test.step("Open Network Fees Drawer", async () => {
+      await swapPage.openNetworkFeesDrawer();
+      await expect.soft(page).toHaveScreenshot("network-fees-drawer.png");
+    });
+
+    await test.step("Navigate to standard fees", async () => {
+      await swapPage.selectStandardFees();
+      await expect.soft(page).toHaveScreenshot("standard-network-selected.png");
+    });
+
+    // there are no UTXOs in the current test data so can't test the coin strategies
+    await test.step("Navigate to set custom fee", async () => {
+      await swapPage.selectAdvancedFees();
+      await swapPage.enterCustomFee("5");
+      await drawer.close();
+      await expect.soft(page).toHaveScreenshot("custom-fee-set-for-swap.png");
     });
 
     await test.step("Confirm Exchange", async () => {
       await swapPage.selectExchangeQuote("changelly", "float");
       await swapPage.confirmExchange();
       await deviceAction.initiateSwap();
-      await expect.soft(page).toHaveScreenshot("initiate-swap.png", { timeout: 20000 });
+      await expect.soft(drawer.content).toHaveScreenshot("initiate-swap.png", { timeout: 10000 });
     });
 
     await test.step("Confirm swap with Nano App", async () => {
@@ -103,14 +121,14 @@ test.describe.parallel("Swap", () => {
       await deviceAction.silentSign();
       const originalSwapId = await swapPage.verifySuccessfulExchange();
       swapId = originalSwapId.replace("#", "");
-      await expect.soft(page).toHaveScreenshot("confirmed-swap.png");
+      await expect.soft(drawer.content).toHaveScreenshot("confirmed-swap.png");
     });
 
     await test.step("Verify Swap details are present in the exchange drawer", async () => {
       await swapPage.navigateToExchangeDetails();
       detailsSwapId = await swapPage.verifyExchangeDetails();
       await expect(detailsSwapId).toEqual(swapId);
-      await expect.soft(page).toHaveScreenshot("verify-swap-details.png");
+      await expect.soft(drawer.content).toHaveScreenshot("verify-swap-details.png");
     });
 
     await test.step("Verify Swap details are present in the swap history", async () => {

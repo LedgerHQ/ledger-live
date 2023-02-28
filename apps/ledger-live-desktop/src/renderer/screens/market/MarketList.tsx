@@ -223,7 +223,9 @@ const CurrencyRow = memo(function CurrencyRowItem({
   const stakeProgramsFeatureFlag = useFeature("stakePrograms");
   const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
   const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;
-  const availableOnStake = stakeProgramsEnabled && listFlag.includes(currency?.id || "");
+  const availableOnStake =
+    stakeProgramsEnabled && listFlag.includes(currency?.internalCurrency?.id || "");
+
   return (
     <MarketRowItem
       loading={!currency || (index === data.length && index > 50 && loading)}

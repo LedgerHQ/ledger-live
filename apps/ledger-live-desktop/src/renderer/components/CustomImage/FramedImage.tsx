@@ -1,22 +1,19 @@
 import React from "react";
-import { Flex, Box, Text } from "@ledgerhq/react-ui";
-import styled, { useTheme } from "styled-components";
-import { scaleDimensions } from "./imageUtils";
-import { targetDisplayDimensions } from "./shared";
+import { Flex, Box } from "@ledgerhq/react-ui";
+import styled from "styled-components";
 import StyleProviderV3 from "~/renderer/styles/StyleProviderV3";
-import { ImageDimensions } from "./types";
+import transferBackground from "./assets/transferBackground.png";
 
 type Props = Partial<React.ComponentProps<"img">> & {
   /** source of the image inside */
-  src?: string | undefined;
-  /** source of the background image */
-  backgroundSrc?: string | undefined;
-  /** text to display in the background placeholder */
-  backgroundPlaceholderText?: string;
+  source?: string;
+  /** item to put in the background */
+  background?: React.ReactNode | undefined;
   /** float between 0 and 1 */
   loadingProgress?: number;
   children?: React.ReactNode | undefined;
-  dimensions?: ImageDimensions;
+  frameConfig?: FrameConfig;
+  scale?: number;
 };
 
 const absoluteFillObject = {
@@ -27,81 +24,136 @@ const absoluteFillObject = {
   right: 0,
 };
 
-const defaultImageDimensions = scaleDimensions(targetDisplayDimensions, 0.4);
-
-const px = 3;
-const py = 3;
-
 const Container = styled(Box).attrs({
   position: "relative",
-  px,
-  py,
 })``;
 
 const AbsoluteBackgroundContainer = styled(Flex).attrs({
   ...absoluteFillObject,
-  backgroundColor: "lightgreen",
-})``;
-
-const BackgroundPlaceholder = styled(Flex).attrs({
-  ...absoluteFillObject,
-  backgroundColor: "#494949",
-  px,
-  py,
-  flexDirection: "column",
-  justifyContent: "center",
-  alignItems: "center",
 })``;
 
 const AbsoluteInnerImageContainer = styled(Flex).attrs({
-  ...absoluteFillObject,
-  mx: px,
-  my: py,
   overflow: "hidden",
+  position: "absolute",
+  flexDirection: "row-reverse",
+  justifyContent: "flex-start",
 })``;
 
+type FrameConfig = {
+  frameHeight: number;
+  frameWidth: number;
+  innerWidth: number;
+  innerHeight: number;
+  innerRight: number;
+  innerLeft: number;
+  innerTop: number;
+  innerBottomHeight: number;
+  borderRightRadius: number;
+  /** source of the background image */
+  backgroundSource?: string;
+};
+
+const DEBUG = false;
+export const transferConfigBase: FrameConfig = {
+  frameHeight: 236,
+  frameWidth: 150,
+  innerHeight: 223,
+  innerWidth: 140.5,
+  innerRight: 8,
+  innerTop: 7,
+  innerLeft: 1.5,
+  innerBottomHeight: 27,
+  borderRightRadius: 6.5,
+};
+
+export const transferConfig: FrameConfig = {
+  ...transferConfigBase,
+  backgroundSource: transferBackground,
+};
+
+function scaleFrameConfig(frameConfig: FrameConfig, scale: number): FrameConfig {
+  const { backgroundSource, ...rest } = frameConfig;
+  return {
+    backgroundSource,
+    ...Object.fromEntries(
+      Object.entries(rest).map(([key, value]) => {
+        return [key, value * scale];
+      }),
+    ),
+  } as FrameConfig;
+}
+
 const FramedImage: React.FC<Props> = ({
-  src,
-  backgroundSrc,
-  backgroundPlaceholderText,
+  source,
   loadingProgress = 1,
   children,
-  dimensions = defaultImageDimensions,
+  frameConfig = transferConfig,
+  scale,
+  background,
   ...imageProps
 }) => {
-  const { space } = useTheme();
+  const isLottie = !!background;
+
+  const {
+    frameHeight,
+    frameWidth,
+    innerWidth,
+    innerHeight,
+    innerRight,
+    innerTop,
+    innerLeft,
+    borderRightRadius,
+    innerBottomHeight,
+    backgroundSource,
+  } = scaleFrameConfig(frameConfig, scale || 1);
+
   return (
-    <StyleProviderV3 selectedPalette="light">
-      <Container>
-        <AbsoluteBackgroundContainer>
-          {backgroundSrc ? (
-            <img
-              src={backgroundSrc}
-              style={{
-                height: dimensions.height + 2 * space[3],
-                width: dimensions.width + 2 * space[3],
-              }}
-            />
-          ) : (
-            <BackgroundPlaceholder>
-              <Text color="neutral.c00" textAlign="center">
-                {backgroundPlaceholderText || "illustrationPlaceholder"}
-              </Text>
-            </BackgroundPlaceholder>
-          )}
-        </AbsoluteBackgroundContainer>
-        <AbsoluteInnerImageContainer style={{ height: loadingProgress * dimensions.height }}>
-          {src ? (
-            <img
-              {...imageProps}
-              src={src}
-              style={{ ...(imageProps.style || {}), ...dimensions, pointerEvents: "none" }}
-            />
-          ) : null}
-        </AbsoluteInnerImageContainer>
-        <Flex style={dimensions}>{children}</Flex>
+    <>
+      <Container height={frameHeight} width={frameWidth}>
+        <StyleProviderV3 selectedPalette="light">
+          <AbsoluteBackgroundContainer height={frameHeight} width={frameWidth}>
+            {!background && backgroundSource ? (
+              <img
+                src={backgroundSource}
+                style={{
+                  height: frameHeight,
+                  width: frameWidth,
+                  objectFit: "fill",
+                }}
+              />
+            ) : null}
+          </AbsoluteBackgroundContainer>
+          <Flex height={frameHeight} justifyContent="center" width={frameWidth}>
+            {background || null}
+          </Flex>
+          <AbsoluteInnerImageContainer
+            style={{
+              right: innerRight,
+              top: innerTop,
+              left: innerLeft,
+              height: loadingProgress * (innerHeight - (isLottie ? innerBottomHeight : 0)),
+              width: innerWidth,
+              backgroundColor: DEBUG ? "red" : undefined,
+            }}
+          >
+            {!DEBUG && source ? (
+              <img
+                {...imageProps}
+                src={source}
+                style={{
+                  height: innerHeight,
+                  width: innerWidth,
+                  objectFit: "fill",
+                  borderTopRightRadius: borderRightRadius,
+                  borderBottomRightRadius: borderRightRadius,
+                }}
+              />
+            ) : null}
+          </AbsoluteInnerImageContainer>
+          <Flex style={{ height: innerHeight, width: innerWidth }}>{children}</Flex>
+        </StyleProviderV3>
       </Container>
-    </StyleProviderV3>
+    </>
   );
 };
 

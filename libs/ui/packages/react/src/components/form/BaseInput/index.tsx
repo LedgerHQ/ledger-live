@@ -14,6 +14,7 @@ export type CommonProps = InputHTMLAttributes<HTMLInputElement> &
     disabled?: boolean;
     error?: string;
     warning?: string;
+    info?: string;
   };
 
 export type InputProps<T = ValueType> = Omit<CommonProps, "value" | "onChange"> & {
@@ -108,8 +109,6 @@ export const BaseInput = styled.input.attrs<
   outline: none;
   cursor: ${(p) => (p.disabled ? "not-allowed" : "text")};
   flex-shrink: 1;
-  padding-top: 14px;
-  padding-bottom: 14px;
   padding-left: 20px;
   padding-right: 20px;
   &::placeholder {
@@ -142,6 +141,10 @@ export const InputWarningContainer = styled(Text)`
   color: ${(p) => p.theme.colors.warning.c80};
   margin-left: 12px;
 `;
+export const InputInfoContainer = styled(Text)`
+  color: ${(p) => p.theme.colors.neutral.c60};
+  margin-left: 12px;
+`;
 
 export const InputRenderLeftContainer = styled(FlexBox).attrs(() => ({
   alignItems: "center",
@@ -170,6 +173,7 @@ function Input<T = ValueType>(
     disabled,
     error,
     warning,
+    info,
     onChange,
     onChangeEvent,
     renderLeft,
@@ -205,6 +209,7 @@ function Input<T = ValueType>(
         disabled={disabled}
         error={error}
         warning={warning}
+        info={info}
         onChange={handleChange}
         value={inputValue}
         onFocus={(event: React.FocusEvent<HTMLInputElement>) => {
@@ -246,10 +251,15 @@ function Input<T = ValueType>(
       >
         {inner}
       </InputContainer>
-      {(error || warning) && !disabled && (
+      {(error || warning || info) && !disabled && (
         <FlexBox flexDirection="column" rowGap={2} mt={2}>
-          {error && <InputErrorContainer variant="small">{error}</InputErrorContainer>}
-          {warning && <InputWarningContainer variant="small">{warning}</InputWarningContainer>}
+          {error ? (
+            <InputErrorContainer variant="small">{error}</InputErrorContainer>
+          ) : warning ? (
+            <InputWarningContainer variant="small">{warning}</InputWarningContainer>
+          ) : info ? (
+            <InputInfoContainer variant="small">{info}</InputInfoContainer>
+          ) : null}
         </FlexBox>
       )}
     </div>

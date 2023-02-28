@@ -16,7 +16,7 @@ import type {
 } from "@ledgerhq/live-common/exchange/swap/types";
 import { rateSelector, updateRateAction } from "~/renderer/actions/swap";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { swapDefaultTrack } from "../../utils/index";
+import { useGetSwapTrackingProperties } from "../../utils/index";
 import styled from "styled-components";
 import Tooltip from "~/renderer/components/Tooltip";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
@@ -56,26 +56,28 @@ export default function ProviderRate({
   refreshTime,
   countdown,
 }: Props) {
+  const swapDefaultTrack = useGetSwapTrackingProperties();
+
   const dispatch = useDispatch();
   const [filter, setFilter] = useState([]);
+  const [defaultPartner, setDefaultPartner] = useState(null);
   const selectedRate = useSelector(rateSelector);
   const filteredRates = useMemo(() => filterRates(rates, filter), [rates, filter]);
 
   const updateRate = useCallback(
     rate => {
-      const buttonName = rate.providerType === "CEX" ? "Partner Chosen" : "Partner Dex Chosen";
       const value = rate ?? rate.provider;
       track("partner_clicked", {
-        button: buttonName,
         page: "Page Swap Form",
         ...swapDefaultTrack,
         swap_type: rate.tradeMethod,
         value,
-        defaultPartner: rate.provider,
+        partner: rate.provider,
+        defaultPartner,
       });
       dispatch(updateRateAction(rate));
     },
-    [dispatch],
+    [defaultPartner, dispatch, swapDefaultTrack],
   );
 
   useEffect(() => {
@@ -87,29 +89,37 @@ export default function ProviderRate({
         r => r.provider === selectedRate.provider && r.tradeMethod === selectedRate.tradeMethod,
       )
     ) {
-      dispatch(updateRateAction(filteredRates[0]));
+      const firstRate = filteredRates[0];
+      setDefaultPartner(firstRate?.provider);
+      dispatch(updateRateAction(firstRate));
     }
 
     // if there is no selected rate but there is a filtered rate, we need to update it
     if (!selectedRate && filteredRates.length > 0) {
-      dispatch(updateRateAction(filteredRates[0]));
+      const firstRate = filteredRates[0];
+      setDefaultPartner(firstRate?.provider);
+      dispatch(updateRateAction(firstRate));
     }
 
     // if there are no filtered rates, we need to unset the selected rate
     if (selectedRate && filteredRates.length === 0) {
+      setDefaultPartner(null);
       dispatch(updateRateAction(null));
     }
   }, [filteredRates, selectedRate, dispatch]);
 
-  const updateFilter = useCallback(newFilter => {
-    track("button_clicked", {
-      button: "Filter selected",
-      page: "Page Swap Form",
-      ...swapDefaultTrack,
-      value: newFilter,
-    });
-    setFilter(newFilter);
-  }, []);
+  const updateFilter = useCallback(
+    newFilter => {
+      track("button_clicked", {
+        button: "Filter selected",
+        page: "Page Swap Form",
+        ...swapDefaultTrack,
+        value: newFilter,
+      });
+      setFilter(newFilter);
+    },
+    [swapDefaultTrack],
+  );
 
   return (
     <Box height="100%" width="100%">

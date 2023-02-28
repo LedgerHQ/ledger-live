@@ -7,7 +7,7 @@ import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box";
 import SwapCircle from "~/renderer/icons/SwapCircle";
 
-import { swapDefaultTrack } from "../../utils/index";
+import { useGetSwapTrackingProperties } from "../../utils/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 
 const Body = styled(Box).attrs({
@@ -28,6 +28,7 @@ const IconContainer = styled.div`
 
 const FormNotAvailable = () => {
   const { t } = useTranslation();
+  const swapDefaultTrack = useGetSwapTrackingProperties();
 
   return (
     <Box justifyContent="center" alignItems="center">

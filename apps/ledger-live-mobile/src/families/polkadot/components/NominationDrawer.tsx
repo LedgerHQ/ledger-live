@@ -9,7 +9,7 @@ import { useTheme } from "@react-navigation/native";
 import DelegatingContainer from "../../tezos/DelegatingContainer";
 import { rgba } from "../../../colors";
 import getWindowDimensions from "../../../logic/getWindowDimensions";
-import BottomModal from "../../../components/BottomModal";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 import Circle from "../../../components/Circle";
 import LText from "../../../components/LText";
 import CurrencyIcon from "../../../components/CurrencyIcon";
@@ -41,7 +41,11 @@ export default function NominationDrawer({
   const color = getCurrencyColor(currency);
   const iconWidth = normalize(64);
   return (
-    <BottomModal style={styles.modal} isOpened={isOpen} onClose={onClose}>
+    <QueuedDrawer
+      style={styles.modal}
+      isRequestingToBeOpened={isOpen}
+      onClose={onClose}
+    >
       <View style={styles.root}>
         {isNominated ? (
           <DelegatingContainer
@@ -77,7 +81,7 @@ export default function NominationDrawer({
           ))}
         </ScrollView>
       </View>
-    </BottomModal>
+    </QueuedDrawer>
   );
 }
 type FieldType = {

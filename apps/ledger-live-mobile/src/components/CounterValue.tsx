@@ -19,7 +19,7 @@ import type { CurrencyUnitValueProps } from "./CurrencyUnitValue";
 import LText from "./LText";
 import Circle from "./Circle";
 import IconHelp from "../icons/Info";
-import BottomModal from "./BottomModal";
+import QueuedDrawer from "./QueuedDrawer";
 
 type Props = {
   // wich market to query
@@ -45,8 +45,8 @@ export const NoCountervaluePlaceholder = () => {
   return (
     <TouchableOpacity style={styles.placeholderButton} onPress={openModal}>
       <LText style={styles.placeholderLabel}>-</LText>
-      <BottomModal
-        isOpened={modalOpened}
+      <QueuedDrawer
+        isRequestingToBeOpened={modalOpened}
         onClose={closeModal}
         style={[styles.modal]}
       >
@@ -57,7 +57,7 @@ export const NoCountervaluePlaceholder = () => {
         <LText style={styles.modalTitle} semiBold>
           <Trans i18nKey="errors.countervaluesUnavailable.title" />
         </LText>
-      </BottomModal>
+      </QueuedDrawer>
     </TouchableOpacity>
   );
 };

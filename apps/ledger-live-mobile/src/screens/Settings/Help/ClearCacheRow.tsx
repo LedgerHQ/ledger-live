@@ -1,11 +1,11 @@
 import React, { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { BottomDrawer } from "@ledgerhq/native-ui";
 import { InfoMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useCleanCache } from "../../../actions/general";
 import SettingsRow from "../../../components/SettingsRow";
 import { useReboot } from "../../../context/Reboot";
 import Button from "../../../components/wrappedUi/Button";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 
 export default function ClearCacheRow() {
   const { t } = useTranslation();
@@ -36,8 +36,8 @@ export default function ClearCacheRow() {
         onPress={onPress}
         arrowRight
       />
-      <BottomDrawer
-        isOpen={isModalOpened}
+      <QueuedDrawer
+        isRequestingToBeOpened={isModalOpened}
         onClose={onRequestClose}
         Icon={InfoMedium}
         iconColor={"primary.c80"}
@@ -60,7 +60,7 @@ export default function ClearCacheRow() {
         >
           {t("common.cancel")}
         </Button>
-      </BottomDrawer>
+      </QueuedDrawer>
     </>
   );
 }

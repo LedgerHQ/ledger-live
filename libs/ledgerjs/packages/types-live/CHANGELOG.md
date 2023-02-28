@@ -1,5 +1,17 @@
 # @ledgerhq/types-live
 
+## 6.30.0
+
+### Minor Changes
+
+- [#2420](https://github.com/LedgerHQ/ledger-live/pull/2420) [`315c0ba0f4`](https://github.com/LedgerHQ/ledger-live/commit/315c0ba0f4e407927bd7a2ba5cc03006e24ff94d) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Adds new feature flag for enabling the exchange buttons on portfolio screen
+
+## 6.30.0-next.0
+
+### Minor Changes
+
+- [#2420](https://github.com/LedgerHQ/ledger-live/pull/2420) [`315c0ba0f4`](https://github.com/LedgerHQ/ledger-live/commit/315c0ba0f4e407927bd7a2ba5cc03006e24ff94d) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Adds new feature flag for enabling the exchange buttons on portfolio screen
+
 ## 6.29.0
 
 ### Minor Changes

@@ -46,6 +46,7 @@ const AccountsSection = ({
         account={item}
         accountId={item.id}
         isLast={index === accountsToDisplay.length - 1}
+        sourceScreenName={ScreenName.Asset}
       />
     ),
     [accountsToDisplay.length, navigation],

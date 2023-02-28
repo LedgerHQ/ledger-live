@@ -31,19 +31,19 @@ type NavigationProps = RootComposite<
 export default function DeviceConnect({ navigation, route }: NavigationProps) {
   const { colors } = useTheme();
   const [device, setDevice] = useState<Device | null | undefined>();
-  const { appName = "BOLOS", onSuccess, onError, onClose } = route.params;
+  const { appName = "BOLOS", onSuccess } = route.params;
 
   const [chosenDevice, setChosenDevice] = useState<Device | null>();
   const [showMenu, setShowMenu] = useState<boolean>(false);
 
   const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
 
-  const onShowMenu = (device: Device) => {
+  const onShowMenu = useCallback((device: Device) => {
     setChosenDevice(device);
     setShowMenu(true);
-  };
+  }, []);
 
-  const onHideMenu = () => setShowMenu(false);
+  const onHideMenu = useCallback(() => setShowMenu(false), []);
 
   const onDone = useCallback(() => {
     const n =
@@ -57,21 +57,18 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
   const handleSuccess = useCallback(
     (result: AppResult) => {
       onSuccess(result);
-      // Resets the device to avoid having
-      // the bottom modal popping up again
-      setDevice(undefined);
       onDone();
     },
     [onDone, onSuccess],
   );
 
-  const handleClose = useCallback(() => {
-    onClose();
-    onDone();
-  }, [onClose, onDone]);
+  const resetDevice = useCallback(() => {
+    setDevice(undefined);
+  }, []);
 
   return (
     <SafeAreaView
+      edges={["bottom"]}
       style={[
         styles.root,
         {
@@ -107,8 +104,7 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
         action={action}
         device={device}
         onResult={handleSuccess}
-        onClose={handleClose}
-        onError={onError}
+        onClose={resetDevice}
         request={{
           appName,
         }}

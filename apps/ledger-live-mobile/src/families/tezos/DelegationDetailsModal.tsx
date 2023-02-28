@@ -25,7 +25,7 @@ import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
 import CurrencyIcon from "../../components/CurrencyIcon";
 import Touchable from "../../components/Touchable";
-import BottomModal from "../../components/BottomModal";
+import QueuedDrawer from "../../components/QueuedDrawer";
 import Circle from "../../components/Circle";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import { rgba } from "../../colors";
@@ -204,7 +204,11 @@ export default function DelegationDetailsModal({
   const height = Math.min(getWindowDimensions().height - 400, 280);
   return (
     // TODO use DelegationDrawer component
-    <BottomModal isOpened={isOpened} onClose={onClose} style={styles.modal}>
+    <QueuedDrawer
+      isRequestingToBeOpened={isOpened}
+      onClose={onClose}
+      style={styles.modal}
+    >
       <View style={styles.root}>
         <DelegatingContainer
           left={
@@ -339,6 +343,6 @@ export default function DelegationDetailsModal({
           </View>
         )}
       </View>
-    </BottomModal>
+    </QueuedDrawer>
   );
 }

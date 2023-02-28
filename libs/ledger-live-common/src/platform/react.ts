@@ -86,13 +86,17 @@ export function useListPlatformAccounts(
 }
 
 export function usePlatformCurrencies(): PlatformCurrency[] {
-  return useMemo(
-    () =>
-      listCurrencies(true)
-        .filter(isPlatformSupportedCurrency)
-        .map(currencyToPlatformCurrency),
-    []
-  );
+  return useMemo(() => {
+    return listCurrencies(true).reduce<PlatformCurrency[]>(
+      (filtered, currency) => {
+        if (isPlatformSupportedCurrency(currency)) {
+          filtered.push(currencyToPlatformCurrency(currency));
+        }
+        return filtered;
+      },
+      []
+    );
+  }, []);
 }
 
 export function useListPlatformCurrencies(): ListPlatformCurrency {

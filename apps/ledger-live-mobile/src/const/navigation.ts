@@ -34,6 +34,7 @@ export enum ScreenName {
   DebugCrash = "DebugCrash",
   DebugCustomImageGraphics = "DebugCustomImageGraphics",
   DebugDebugging = "DebugDebugging",
+  DebugQueuedDrawers = "DebugQueuedDrawers",
   DebugEnv = "DebugEnv",
   DebugExport = "DebugExport",
   DebugFeatureFlags = "DebugFeatureFlags",
@@ -42,6 +43,7 @@ export enum ScreenName {
   DebugGenerators = "DebugGenerators",
   DebugHttpTransport = "DebugHttpTransport",
   DebugInformation = "DebugInformation",
+  DebugPerformance = "DebugPerformance",
   DebugLogs = "DebugLogs",
   DebugLottie = "DebugLottie",
   DebugTermsOfUse = "DebugTermsOfUse",
@@ -407,6 +409,7 @@ export enum ScreenName {
   OnboardingSetupDeviceRecoveryPhrase = "OnboardingSetupDeviceRecoveryPhrase",
   OnboardingGeneralInformation = "OnboardingGeneralInformation",
   OnboardingBluetoothInformation = "OnboardingBluetoothInformation",
+  OnboardingProtectionConnectionInformation = "OnboardingProtectionConnectionInformation",
   OnboardingInfoModal = "OnboardingInfoModal",
   OnboardingRecoveryPhrase = "OnboardingRecoveryPhrase",
   OnboardingPairNew = "OnboardingPairNew",
@@ -486,6 +489,8 @@ export enum ScreenName {
   NearWithdrawingConnectDevice = "NearWithdrawingConnectDevice",
   NearWithdrawingValidationError = "NearWithdrawingValidationError",
   NearWithdrawingValidationSuccess = "NearWithdrawingValidationSuccess",
+
+  Newsfeed = "Newsfeed",
 
   CustomImageStep0Welcome = "CustomImageStep0Welcome",
   CustomImageStep1Crop = "CustomImageStep1Crop",
@@ -593,6 +598,7 @@ export enum NavigatorName {
   // Tab
   Main = "Main",
   WalletTab = "WalletTabNavigator",
+  ExploreTab = "ExploreTabNavigator",
   // Root
   RootNavigator = "RootNavigator",
   Discover = "Discover",

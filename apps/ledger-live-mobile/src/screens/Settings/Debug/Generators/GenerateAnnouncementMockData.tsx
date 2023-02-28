@@ -6,7 +6,7 @@ import { useTheme } from "@react-navigation/native";
 import { Icons } from "@ledgerhq/native-ui";
 import { addMockAnnouncement } from "../__mocks__/announcements";
 import SettingsRow from "../../../../components/SettingsRow";
-import BottomModal from "../../../../components/BottomModal";
+import QueuedDrawer from "../../../../components/QueuedDrawer";
 import TextInput from "../../../../components/TextInput";
 import Touchable from "../../../../components/Touchable";
 import LText from "../../../../components/LText";
@@ -111,7 +111,11 @@ export default function AddMockAnnouncementButton({
         iconLeft={<Icons.NewsMedium size={24} color="black" />}
         onPress={onOpen}
       />
-      <BottomModal isOpened={open} onClose={onClose} style={styles.root}>
+      <QueuedDrawer
+        isRequestingToBeOpened={open}
+        onClose={onClose}
+        style={styles.root}
+      >
         <TextInput
           placeholder="platform separated by ','"
           value={notifPlatform}
@@ -173,7 +177,7 @@ export default function AddMockAnnouncementButton({
         >
           <LText color="white">Confirm</LText>
         </Touchable>
-      </BottomModal>
+      </QueuedDrawer>
     </>
   ) : null;
 }
