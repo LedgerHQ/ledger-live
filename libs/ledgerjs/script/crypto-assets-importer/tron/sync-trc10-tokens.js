@@ -9,14 +9,14 @@ const trc10Tokens = require("./trc10-tokens");
 const { signedList, whitelist } = trc10Tokens;
 
 const ts = `export type TRC10Token = [
-  id: number,
-  abbr: string,
-  name: string,
-  contractAddress: string,
-  precision: number,
-  delisted: boolean,
-  ledgerSignature: string,
-  enableCountervalues?: boolean
+  number, // id
+  string, // abbr
+  string, // name
+  string, // contractAddress
+  number, // precision
+  boolean, // delisted
+  string, // ledgerSignature
+  boolean? // enableCountervalues
 ];
 
 import tokens from "./trc10.json";
