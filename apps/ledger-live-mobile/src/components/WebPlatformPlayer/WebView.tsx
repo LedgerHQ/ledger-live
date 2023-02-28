@@ -31,10 +31,8 @@ import type {
 import { getEnv } from "@ledgerhq/live-common/env";
 import { isTokenAccount } from "@ledgerhq/live-common/account/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import {
-  findCryptoCurrencyById,
-  listAndFilterCurrencies,
-} from "@ledgerhq/live-common/currencies/index";
+import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import {

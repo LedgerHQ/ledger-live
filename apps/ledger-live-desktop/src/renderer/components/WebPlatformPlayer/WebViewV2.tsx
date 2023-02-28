@@ -50,7 +50,7 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
         setDrawer(
           SelectAccountAndCurrencyDrawer,
           {
-            currencies: currencies.map(c => c.id),
+            currencies,
             onAccountSelected: (account: Account, parentAccount: Account | undefined) => {
               setDrawer();
               onSuccess(account, parentAccount);
