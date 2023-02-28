@@ -1,7 +1,7 @@
 import semver from "semver";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
-import React from "react";
+import React, { useMemo } from "react";
 import { WebView as WebViewV2 } from "./WebViewV2";
 import { WebView } from "./WebView";
 
@@ -17,7 +17,10 @@ const ledgerRecoverIds = [
 ];
 
 const WebViewWrapper = ({ manifest, inputs }: Props) => {
-  const isManifestOfLedgerRecover = ledgerRecoverIds.includes(manifest.id);
+  const isManifestOfLedgerRecover = useMemo(
+    () => ledgerRecoverIds.includes(manifest.id),
+    [manifest.id],
+  );
 
   if (semver.satisfies(WALLET_API_VERSION, manifest.apiVersion)) {
     return (
