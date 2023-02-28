@@ -87,7 +87,7 @@ export type InlineAppInstallEvent =
  * @param transport Transport instance
  * @param appNames List of app names to install
  * @param onSuccessObs Optional observable to run after the installation
- * @param skipAppInstallIfNotFound If true, skip the installation of any app that were not found from the provider. Default to false.
+ * @param allowPartialDependencies If true, keep installing apps even if some are missing
  * @returns Observable of InlineAppInstallEvent or ConnectAppEvent
  * - Event "inline-install" contains a global progress of the installation
  */
@@ -95,12 +95,12 @@ export const inlineAppInstall = ({
   transport,
   appNames,
   onSuccessObs,
-  skipAppInstallIfNotFound = false,
+  allowPartialDependencies = false,
 }: {
   transport: Transport;
   appNames: string[];
   onSuccessObs?: () => Observable<any>;
-  skipAppInstallIfNotFound?: boolean;
+  allowPartialDependencies?: boolean;
 }): Observable<InlineAppInstallEvent | ConnectAppEvent> =>
   concat(
     of({
@@ -124,7 +124,7 @@ export const inlineAppInstall = ({
               reducer(state, {
                 type: "install",
                 name,
-                skip: skipAppInstallIfNotFound,
+                allowPartialDependencies,
               }),
             initState(e.result)
           );

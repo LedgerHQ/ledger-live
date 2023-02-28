@@ -35,7 +35,7 @@ const InstallSetOfApps = ({
       dependencies: dependencies.map(appName => ({ appName })),
       appName: "BOLOS",
       withInlineInstallProgress: true,
-      skipAppInstallIfNotFound: true,
+      allowPartialDependencies: true,
     }),
     [dependencies],
   );

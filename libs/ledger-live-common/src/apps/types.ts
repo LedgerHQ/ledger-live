@@ -103,7 +103,7 @@ export type Action =  // recover from an error
   | {
       type: "install";
       name: string;
-      skip?: boolean;
+      allowPartialDependencies?: boolean;
     } // update all
   | {
       type: "updateAll";

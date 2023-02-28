@@ -47,7 +47,7 @@ export type Input = {
   dependencies?: string[];
   requireLatestFirmware?: boolean;
   outdatedApp?: AppAndVersion;
-  skipAppInstallIfNotFound?: boolean;
+  allowPartialDependencies: boolean;
 };
 export type AppAndVersion = {
   name: string;
@@ -273,7 +273,7 @@ const derivationLogic = (
   );
 
 /**
- * @param skipAppInstallIfNotFound If some dependencies need to be installed, and if set to true,
+ * @param allowPartialDependencies If some dependencies need to be installed, and if set to true,
  *   skip any app install if the app is not found from the provider.
  */
 const cmd = ({
@@ -284,7 +284,7 @@ const cmd = ({
   dependencies,
   requireLatestFirmware,
   outdatedApp,
-  skipAppInstallIfNotFound = false,
+  allowPartialDependencies = false,
 }: Input): Observable<ConnectAppEvent> =>
   withDevice(devicePath)(
     (transport) =>
@@ -386,7 +386,7 @@ const cmd = ({
                         appName,
                       }); // NB without deps
                     },
-                    skipAppInstallIfNotFound,
+                    allowPartialDependencies,
                   });
                 }
 

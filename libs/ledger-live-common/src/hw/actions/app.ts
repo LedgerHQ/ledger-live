@@ -110,7 +110,7 @@ export type AppRequest = {
   dependencies?: AppRequest[];
   withInlineInstallProgress?: boolean;
   requireLatestFirmware?: boolean;
-  skipAppInstallIfNotFound?: boolean;
+  allowPartialDependencies?: boolean;
 };
 
 export type AppResult = {
@@ -420,7 +420,7 @@ function inferCommandParams(appRequest: AppRequest) {
   let derivationMode;
   let derivationPath;
 
-  const { account, requireLatestFirmware, skipAppInstallIfNotFound } =
+  const { account, requireLatestFirmware, allowPartialDependencies } =
     appRequest;
   let { appName, currency, dependencies } = appRequest;
 
@@ -443,7 +443,7 @@ function inferCommandParams(appRequest: AppRequest) {
       appName,
       dependencies,
       requireLatestFirmware,
-      skipAppInstallIfNotFound,
+      allowPartialDependencies,
     };
   }
 
@@ -479,7 +479,7 @@ function inferCommandParams(appRequest: AppRequest) {
       currencyId: currency.id,
       ...extra,
     },
-    skipAppInstallIfNotFound,
+    allowPartialDependencies,
   };
 }
 

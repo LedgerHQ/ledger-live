@@ -274,7 +274,7 @@ export const reducer = (state: State, action: Action): State => {
     }
 
     case "install": {
-      const { name, skip } = action;
+      const { name, allowPartialDependencies } = action;
 
       if (state.installQueue.includes(name)) {
         // already queued for install
@@ -316,7 +316,7 @@ export const reducer = (state: State, action: Action): State => {
 
       // The target application was not found in the specified provider.
       if (!appToInstall) {
-        if (skip) {
+        if (allowPartialDependencies) {
           // Some flows are resillient to missing operations.
           skippedAppOps.push({
             reason: SkipReason.NoSuchAppOnProvider,
