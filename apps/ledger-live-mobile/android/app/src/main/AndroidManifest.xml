@@ -28,6 +28,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- Needed by Adjust and by Braze -->
     <uses-permission android:name="com.google.android.gms.permission.AD_ID"/> <!-- Needed by Adjust -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" /> <!-- Needed by Live apps -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" /> <!-- Required for the webview camera/audio media -->
     <uses-sdk
         android:targetSdkVersion="27"
         tools:overrideLibrary="com.ledger.reactnative" />

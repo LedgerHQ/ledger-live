@@ -812,7 +812,7 @@
       "title": "Your device is locked",
       "description": "Unlock your device and try again.",
       "descriptionWithProductName": "Unlock your {{ productName }} and try again."
-    },    
+    },
     "EtherscanAPIError": {
       "title": "Fetching transactions failed",
       "description": "An unexpected error occurred with the explorers. Please try again later"
@@ -1279,8 +1279,13 @@
       },
       "recovery": "Already have a recovery phrase?",
       "protect": {
-        "label": "~60 mins",
-        "subTitle": "Restore with Protect"
+        "subTitle": "Restore using Ledger Recover",
+        "drawer": {
+          "title": "Use Ledger Nano X",
+          "desc": "Ledger Recover soft launch is exclusively for Ledger Nano X",
+          "buyNanoX": "Buy a Ledger Nano X",
+          "discoverBenefits": "Discover the benefits"
+        }
       }
     },
     "stepNewDevice": {
@@ -1507,25 +1512,20 @@
     "stepProtect": {
       "bullets": {
         "0": {
-          "title": "Browse ",
-          "label": "Learn how to interact with your device by reading the on-screen instructions."
+          "title": "Select “Restore”",
+          "label": "Press both buttons simultaneously to select."
         },
         "1": {
-          "title": "Select “Restore”",
-          "label": "Press both buttons simultaneously to validate the selection."
-        },
-        "2": {
-          "title": "Select “Restore with Protect” mode",
-          "label": "Press both buttons simultaneously to validate the selection."
+          "title": "Select “Restore using Ledger Recover”",
+          "label": "Press both buttons simultaneously to select."
         }
       },
       "nextStep": "Continue",
       "extraInfo": {
-        "tooltip": "Cannot see it on my Ledger",
-        "title": "Why can I not see Restore with Protect on my Ledger?",
-        "desc1": "The most probable option is that your device is not compatible with Protect. No worries, we are here to guide you on how to make it work.",
-        "desc2": "Please contact us through and choose \"My Ledger doesn't display Restore with Protect\", we got you covered.",
-        "cta": "Go through manual steps",
+        "tooltip": "I don't see 'Restore using Ledger Recover'",
+        "title": "The OS on your Ledger Nano X needs to be updated",
+        "desc": "You can try updating the OS or contact Ledger support for assistance.",
+        "cta": "Learn how to update",
         "supportLink": "Contact Ledger Support"
       }
     },
@@ -1667,8 +1667,9 @@
         }
       },
       "protectConnectionInformationModal": {
-        "title": "Why can I not connect my Ledger?",
-        "description": "If you are experiencing issues connecting to Ledger Live mobile after you have enabled Bluetooth on your Ledger, you can follow the instructions by tapping on the \"Learn how to fix that\" button below"
+        "title": "Ledger Nano X connection",
+        "description": "Make sure your Ledger is close to your phone and try again. <LinkBluethooth>Bluetooth® connection issues\u2028\n</LinkBluethooth>.\nIf Bluetooth® is working, you might need to update Ledger’s OS. Try updating the OS, or contact Ledger Support for assistance. ",
+        "learnHowToUpdate": "Learn how to update"
       }
     },
     "stepImportAccounts": {
@@ -6032,22 +6033,10 @@
       "status": {
         "new": {
           "title": "New",
-          "desc": "Back up your recovery phrase",
-          "0": {
-            "title": "Trusted by millions of Ledger users"
-          },
-          "1": {
-            "title": "Your Recovery Phrase is safely linked to your identity"
-          },
-          "2": {
-            "title": "State of the art encryption"
-          },
-          "3": {
-            "title": "Sharded into 3 decentralized pieces, so your recovery phrase can never be stolen"
-          },
+          "desc": "Recover access to your wallet without your Secret Recovery Phrase.",
           "actions": {
-            "learnMore": "Learn more",
-            "alreadySubscribed": "Already subscribed to Protect?"
+            "learnMore": "How does it benefit me?",
+            "alreadySubscribed": "Already subscribed? <LinkAccount>View my account</LinkAccount>"
           }
         },
         "confirmIdentity": {
