@@ -1,9 +1,9 @@
 export type ElrondESDTToken = [
-  ticker: string,
-  identifier: string,
-  decimals: number,
-  signature: string,
-  name: string
+  string, // ticker
+  string, // identifier
+  number, // decimals
+  string, // signature
+  string // name
 ];
 
 import tokens from "./esdt.json";

@@ -1,10 +1,10 @@
 export type AlgorandASAToken = [
-  id: string,
-  abbr: string,
-  name: string,
-  contractAddress: string,
-  precision: number,
-  enableCountervalues?: boolean
+  string, // id
+  string, // abbr
+  string, // name
+  string, // contractAddress
+  number, // precision
+  boolean? // enableCountervalues
 ];
 
 import tokens from "./asa.json";
