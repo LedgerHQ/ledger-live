@@ -92,7 +92,7 @@ const ClaimNftQrScan = () => {
 
   useEffect(() => {
     if (isInFocus) {
-      timeoutRef.current = setTimeout(navigateToHub, 3000);
+      timeoutRef.current = setTimeout(navigateToHub, 120000);
     }
     return () => {
       if (timeoutRef.current) {
