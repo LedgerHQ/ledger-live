@@ -1,5 +1,12 @@
 # @ledgerhq/hw-transport-mocker
 
+## 6.27.12-ios-builds-improvement.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.28.1-ios-builds-improvement.0
+
 ## 6.27.11
 
 ### Patch Changes
