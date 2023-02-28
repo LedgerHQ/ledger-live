@@ -4,7 +4,6 @@ import React, { useCallback, useState } from "react";
 import { getEnv } from "@ledgerhq/live-common/env";
 import Text from "~/renderer/components/Text";
 import { ReplaySubject } from "rxjs";
-import { deserializeError } from "@ledgerhq/errors";
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import {
   deviceInfo155,
@@ -229,27 +228,6 @@ if (getEnv("MOCK")) {
       queue: [],
       history: [],
       subject: new ReplaySubject<any>(),
-      get parseRawEvents() {
-        return (rawEvents, maybeKey): Object => {
-          if (rawEvents && typeof rawEvents === "object") {
-            if (maybeKey === "error") {
-              return deserializeError(rawEvents);
-            }
-            if (Array.isArray(rawEvents)) return rawEvents.map(this.parseRawEvents);
-            const event = {};
-            // clone the object if and only if it is a basic object. to not convert BigNumber
-            if (Object.getPrototypeOf(rawEvents) === Object.prototype) {
-              for (const k in rawEvents) {
-                if (rawEvents.hasOwnProperty(k)) {
-                  event[k] = this.parseRawEvents(rawEvents[k], k);
-                }
-              }
-              return event;
-            }
-          }
-          return rawEvents;
-        };
-      },
       get emitter() {
         return () => {
           // Cleanup the queue of complete events
@@ -266,7 +244,7 @@ if (getEnv("MOCK")) {
       },
       get mockDeviceEvent() {
         return (...o: any[]) => {
-          for (const e of this.parseRawEvents(o)) this.queue.push(e);
+          for (const e of o) this.queue.push(e);
         };
       },
       exposed: {
