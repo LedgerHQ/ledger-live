@@ -88,7 +88,11 @@
     "getSupport": "Get support",
     "comingSoon": "Coming soon",
     "restart": "Restart",
-    "loadMore": "Load more"
+    "loadMore": "Load more",
+    "patterns": {
+      "id": "ID {{ value }}",
+      "times": "x{{ value }}"
+    }
   },
   "errors": {
     "countervaluesUnavailable": {
@@ -5449,6 +5453,7 @@
     "warnDelegation": "Delegating your voting rights does not guarantee any rewards from your validator.",
     "to": "to",
     "from": "from",
+    "yield": "Est. Yield",
     "forAnEstYield": "for an est. yield of",
     "yieldPerYear": "{{yield}} / Year",
     "yieldInfos": "Yield rates are provided by",
@@ -5580,6 +5585,7 @@
     "cta": "Continue"
   },
   "exchange": {
+    "count": "+ {{count}} more",
     "buy": {
       "screenTitle": "BUY CRYPTO",
       "tabTitle": "Buy",

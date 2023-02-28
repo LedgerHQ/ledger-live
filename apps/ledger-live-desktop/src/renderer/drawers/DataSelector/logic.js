@@ -3,6 +3,7 @@
 import { setDrawer } from "../Provider";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import SelectAccountAndCurrencyDrawer from "./SelectAccountAndCurrencyDrawer";
+import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 
 type SelectAccountAndCurrencyResult = {
   account: AccountLike,
@@ -17,8 +18,7 @@ export function selectAccountAndCurrency(
     setDrawer(
       SelectAccountAndCurrencyDrawer,
       {
-        currencies,
-        includeTokens,
+        currencies: listAndFilterCurrencies({ currencies, includeTokens }),
         onAccountSelected: (account, parentAccount) => {
           setDrawer();
           resolve({ account, parentAccount });

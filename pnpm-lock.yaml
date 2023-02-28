@@ -686,6 +686,7 @@ importers:
       eslint-find-rules: ^3.6.1
       eslint-import-resolver-typescript: ^3.5.1
       eslint-plugin-detox: ^1.0.0
+      eslint-plugin-i18next: 6.0.0-6
       eslint-plugin-import: ^2.26.0
       eslint-plugin-json: ^3.1.0
       eslint-plugin-jsx-a11y: ^6.6.1
@@ -987,6 +988,7 @@ importers:
       eslint-find-rules: 3.6.1_eslint@7.32.0
       eslint-import-resolver-typescript: 3.5.2_hpmu7kn6tcn2vnxpfzvv33bxmy
       eslint-plugin-detox: 1.0.0
+      eslint-plugin-i18next: 6.0.0-6
       eslint-plugin-import: 2.26.0_ymzqyjxdu7ir24gg3vejmyl6la
       eslint-plugin-json: 3.1.0
       eslint-plugin-jsx-a11y: 6.6.1_eslint@7.32.0
@@ -30081,6 +30083,14 @@ packages:
       lodash: 4.17.21
       string-natural-compare: 3.0.1
     dev: false
+
+  /eslint-plugin-i18next/6.0.0-6:
+    resolution: {integrity: sha512-Wl9Ko3AUORoOXm8Gve8BlfasT2dyIcDu1WgPUpLK3G6D/CDDOH33mF5Nd+TThkRVFKIoFY8QObZtnmn9jf9qxA==}
+    engines: {node: '>=0.10.0'}
+    dependencies:
+      lodash: 4.17.21
+      requireindex: 1.1.0
+    dev: true
 
   /eslint-plugin-import/2.20.1_tbglwmj7t2rhd43mvxmptakoay:
     resolution: {integrity: sha512-qQHgFOTjguR+LnYRoToeZWT62XM55MBVXObHM6SKFd1VzDcX/vqT1kAz8ssqigh5eMj8qXcRoXXGZpPP6RfdCw==}
