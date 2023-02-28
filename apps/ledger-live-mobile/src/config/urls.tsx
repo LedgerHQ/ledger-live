@@ -211,4 +211,7 @@ export const urls = {
   },
   lnxFirmwareUpdate:
     "https://support.ledger.com/hc/en-us/articles/360013349800-Update-Ledger-Nano-X-firmware?docs=true",
+  recoverSources: {
+    myLedger: "ledgerlive://myledger",
+  },
 };

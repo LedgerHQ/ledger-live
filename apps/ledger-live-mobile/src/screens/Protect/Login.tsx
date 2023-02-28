@@ -22,6 +22,7 @@ import {
 import { formatData, getProtectStatus } from "../../logic/protect";
 import { deleteProtect } from "../../db";
 import { ServicesConfig } from "../../components/ServicesWidget/types";
+import { urls } from "../../config/urls";
 
 function Login() {
   const dispatch = useDispatch();
@@ -42,8 +43,6 @@ function Login() {
 
   const { params } = servicesConfig || {};
   const { forgotPasswordURI } = params?.login || {};
-
-  const source = "ledgerlive://myledger";
 
   const validateEmail = useCallback(() => {
     if (!email) {
@@ -99,9 +98,8 @@ function Login() {
   );
 
   const onForgotPassword = useCallback(() => {
-    Linking.canOpenURL(forgotPasswordURI).then(() =>
-      Linking.openURL(`${forgotPasswordURI}&source=${source}`),
-    );
+    const url = `${forgotPasswordURI}&source=${urls.recoverSources.myLedger}`;
+    Linking.canOpenURL(url).then(() => Linking.openURL(url));
   }, [forgotPasswordURI]);
 
   useEffect(() => {
@@ -116,16 +114,10 @@ function Login() {
       }}
     >
       <Flex px={6} pt={6}>
-        <Text
-          mb={9}
-          textTransform="none"
-          fontFamily="Inter"
-          fontSize="24px"
-          fontWeight="bold"
-        >
+        <Text mb={9} variant="h4">
           {t("protect.login.title")}
         </Text>
-        <Text mb={10} color="neutral.c80" fontFamily="Inter" fontSize="14px">
+        <Text mb={10} variant="body">
           {t("protect.login.desc")}
         </Text>
 
@@ -152,15 +144,7 @@ function Login() {
             secureTextEntry
           />
         </Box>
-        <Text
-          mt={6}
-          color="primary.c80"
-          fontFamily="Inter"
-          fontSize="14px"
-          fontWeight="semiBold"
-          variant="body"
-          onPress={onForgotPassword}
-        >
+        <Text mt={6} variant="body" onPress={onForgotPassword}>
           {t("protect.login.forgotPassword")}
         </Text>
         <Button
