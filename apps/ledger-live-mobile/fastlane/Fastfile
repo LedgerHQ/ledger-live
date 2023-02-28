@@ -415,7 +415,10 @@ platform :android do
   desc "private: build the app apk for the specified build `type`. Defaults to `Release`"
   private_lane :build do |options|
     type = options.fetch(:type, "Release")
-    task = options[:apk] ? "assemble" : "bundle"
+    tasks =
+      options[:apk_and_aab] ? ["assemble", "bundle"] :
+      options[:apk] ? ["assemble"] :
+      ["bundle"]
     if(options[:ci])
       sh(
           <<-SHELL
@@ -427,14 +430,14 @@ platform :android do
     gradle(task: "clean", project_dir: 'android/')
     if (options[:local])
       gradle(
-        task: task,
+        tasks: tasks,
         build_type: type,
         print_command: false,
         project_dir: 'android/'
       )
     else
       gradle(
-        task: task,
+        tasks: tasks,
         build_type: type,
         print_command: false,
         properties: {
@@ -488,12 +491,13 @@ platform :android do
     )
   end
 
-  desc "build APK and send to Google Play Store"
+  desc "build APKs + AAB and send the AAB to the Google Play Store "
   lane :ci_playstore do
     prepare_android_internal
     build(
       type: "Release",
-      ci: true
+      ci: true,
+      apk_and_aab: true
     )
     upload(ci: true)
   end
