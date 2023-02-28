@@ -14,21 +14,13 @@ export async function getEstimatedFees(): Promise<BigNumber> {
     const { data } = await axios.get(
       "https://countervalues.live.ledger.com/latest/direct?pairs=hbar:usd"
     );
-
-    hederaPrice = data[0];
-  } catch {
-    hederaPrice = 0;
-  }
-
-  let estimatedFees = new BigNumber("212800"); // 0.002128 ℏ (as of 2023-01-09)
-
-  if (hederaPrice) {
-    estimatedFees = new BigNumber("0.0001").dividedBy(
-      new BigNumber(hederaPrice)
-    );
-  }
-
-  return estimatedFees;
+    if (data[0]) {
+      const hederaPrice = new BigNumber(data[0]);
+      return new BigNumber("0.0001").dividedBy(hederaPrice);
+    }
+  } catch {}
+  
+  return new BigNumber("212800"); // 0.002128 ℏ (as of 2023-01-09)
 }
 
 export async function calculateAmount({
