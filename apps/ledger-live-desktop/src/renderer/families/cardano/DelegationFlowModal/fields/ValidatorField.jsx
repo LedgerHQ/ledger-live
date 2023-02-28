@@ -3,6 +3,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import type { TFunction } from "react-i18next";
 
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { debounce } from "lodash";
 
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
@@ -74,9 +75,11 @@ const ValidatorField = ({
     }
   };
 
+  const debouncedFetchPools = debounce(fetchPools, 1000);
+
   useEffect(() => {
     setPageNo(1);
-    fetchPools();
+    debouncedFetchPools();
   }, [search]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onSearch = useCallback(evt => setSearch(evt.target.value), [setSearch]);
