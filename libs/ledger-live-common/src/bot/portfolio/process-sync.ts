@@ -15,7 +15,7 @@ import {
 import { makeBridgeCacheSystem } from "../../bridge/cache";
 import { getCurrencyBridge } from "../../bridge";
 import { filter, map, reduce, timeoutWith } from "rxjs/operators";
-import { getEnv } from "@ledgerhq/live-common-env";
+import { getEnv } from "@ledgerhq/live-env";
 import { throwError } from "rxjs";
 import { Report } from "./types";
 import { toAccountRaw } from "../../account";

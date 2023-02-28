@@ -1,5 +1,5 @@
 {
-  "name": "@ledgerhq/live-common-date",
+  "name": "@ledgerhq/live-date",
   "version": "0.0.1",
   "description": "Ledger Live Date utilities",
   "keywords": [

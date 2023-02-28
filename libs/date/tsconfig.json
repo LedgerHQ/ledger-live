@@ -15,6 +15,6 @@
     "resolveJsonModule": true,
     "lib": ["es2020", "dom"],
     "outDir": "lib"
-  }
+  },
+  "include": ["src/**/*"]
 }
-

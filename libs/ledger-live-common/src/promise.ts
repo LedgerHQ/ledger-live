@@ -1,1 +1,1 @@
-export * from "@ledgerhq/live-common-promise";
+export * from "@ledgerhq/live-promise";
