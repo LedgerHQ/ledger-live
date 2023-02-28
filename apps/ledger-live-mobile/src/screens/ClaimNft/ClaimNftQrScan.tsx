@@ -88,12 +88,16 @@ const ClaimNftQrScan = () => {
     });
   }, [cameraDimensions]);
 
-  useEffect(() => {
-    if (!isInFocus) return;
-    const redirectionTimeout = setTimeout(navigateToHub, 120000);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
+  useEffect(() => {
+    if (isInFocus) {
+      timeoutRef.current = setTimeout(navigateToHub, 3000);
+    }
     return () => {
-      clearTimeout(redirectionTimeout);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
     };
   }, [navigateToHub, isInFocus]);
 
