@@ -147,7 +147,7 @@ const VoteModal = ({
                           { color: colors.alert },
                         ]}
                       >
-                        text
+                        PLACEHOLDER_TEXT
                       </LText>
                     </Trans>
                   </LText>
@@ -168,7 +168,7 @@ const VoteModal = ({
                       values={{ total: votesRemaining }}
                     >
                       <LText semiBold style={[styles.availableAmount]}>
-                        text
+                        PLACEHOLDER_TEXT
                       </LText>
                     </Trans>
                   </LText>

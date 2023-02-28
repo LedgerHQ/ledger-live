@@ -18,6 +18,7 @@ const disconnectedErrors = [
   "I/O error",
   "Attempt to invoke virtual method 'int android.hardware.usb.UsbDevice.getDeviceClass()' on a null object reference",
   "Invalid channel",
+  "Permission denied by user for device",
 ];
 
 const listLedgerDevices = async () => {
