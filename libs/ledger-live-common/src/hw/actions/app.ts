@@ -219,7 +219,7 @@ const reducer = (state: State, e: Event): State => {
         ...state,
         skippedAppOps: e.skippedAppOps,
       };
-    case "stream-install":
+    case "inline-install":
       return {
         isLoading: false,
         requestQuitApp: false,

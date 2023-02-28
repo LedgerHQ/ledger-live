@@ -53,7 +53,7 @@ export const execWithTransport =
 
 const appsThatKeepChangingHashes = ["Fido U2F", "Security Key"];
 
-export type StreamAppInstallEvent =
+export type InlineAppInstallEvent =
   | {
       type: "device-permission-requested";
       wording: string;
@@ -74,7 +74,7 @@ export type StreamAppInstallEvent =
       skippedAppOps: SkippedAppOp[];
     }
   | {
-      type: "stream-install";
+      type: "inline-install";
       progress: number;
       itemProgress: number;
       currentAppOp: AppOp;
@@ -88,10 +88,10 @@ export type StreamAppInstallEvent =
  * @param appNames List of app names to install
  * @param onSuccessObs Optional observable to run after the installation
  * @param skipAppInstallIfNotFound If true, skip the installation of any app that were not found from the provider. Default to false.
- * @returns Observable of StreamAppInstallEvent or ConnectAppEvent
- * - Event "stream-install" contains a global progress of the installation
+ * @returns Observable of InlineAppInstallEvent or ConnectAppEvent
+ * - Event "inline-install" contains a global progress of the installation
  */
-export const streamAppInstall = ({
+export const inlineAppInstall = ({
   transport,
   appNames,
   onSuccessObs,
@@ -101,7 +101,7 @@ export const streamAppInstall = ({
   appNames: string[];
   onSuccessObs?: () => Observable<any>;
   skipAppInstallIfNotFound?: boolean;
-}): Observable<StreamAppInstallEvent | ConnectAppEvent> =>
+}): Observable<InlineAppInstallEvent | ConnectAppEvent> =>
   concat(
     of({
       type: "listing-apps",
@@ -131,7 +131,7 @@ export const streamAppInstall = ({
 
           // Failed appOps in this flow will throw by default but if we're here
           // it means we didn't throw, so we wan't to notify the action about it.
-          const maybeSkippedEvent: Observable<StreamAppInstallEvent> = state
+          const maybeSkippedEvent: Observable<InlineAppInstallEvent> = state
             .skippedAppOps.length
             ? of({
                 type: "some-apps-skipped",
@@ -166,7 +166,7 @@ export const streamAppInstall = ({
                   installQueue,
                   currentAppOp,
                 }) => ({
-                  type: "stream-install",
+                  type: "inline-install",
                   progress: globalProgress,
                   itemProgress,
                   installQueue,

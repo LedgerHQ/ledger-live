@@ -20,7 +20,7 @@ import type { AppOp, SkippedAppOp } from "../apps/types";
 import { getCryptoCurrencyById } from "../currencies";
 import appSupportsQuitApp from "../appSupportsQuitApp";
 import { withDevice } from "./deviceAccess";
-import { streamAppInstall } from "../apps/hw";
+import { inlineAppInstall } from "../apps/hw";
 import { isDashboardName } from "./isDashboardName";
 import getAppAndVersion from "./getAppAndVersion";
 import getDeviceInfo from "./getDeviceInfo";
@@ -80,7 +80,7 @@ export type ConnectAppEvent =
       appName: string;
     }
   | {
-      type: "stream-install";
+      type: "inline-install";
       progress: number;
       itemProgress: number;
       currentAppOp: AppOp;
@@ -158,7 +158,7 @@ export const openAppFromDashboard = (
                 switch (e.statusCode) {
                   case 0x6984: // No StatusCodes definition
                   case 0x6807: // No StatusCodes definition
-                    return streamAppInstall({
+                    return inlineAppInstall({
                       transport,
                       appNames: [appName],
                       onSuccessObs: () =>
@@ -372,7 +372,7 @@ const cmd = ({
                 // check if we meet dependencies
                 if (dependencies?.length) {
                   const completesInDashboard = isDashboardName(appName);
-                  return streamAppInstall({
+                  return inlineAppInstall({
                     transport,
                     appNames: [
                       ...(completesInDashboard ? [] : [appName]),
