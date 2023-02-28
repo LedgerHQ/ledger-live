@@ -1,7 +1,7 @@
 import "../../__tests__/test-helpers/setup";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
 import type { DatasetTest, CurrenciesData } from "@ledgerhq/types-live";
-import type { Transaction } from "./types";
+import type { AvalanchePChainAccountRaw, Transaction } from "./types";
 import { BigNumber } from "bignumber.js";
 import {
   InvalidAddressBecauseDestinationIsAlsoSource,
@@ -10,15 +10,13 @@ import {
 import { FIVE_MINUTES, TWO_WEEKS, AVAX_MINIMUM_STAKE_AMOUNT } from "./utils";
 import { AvalancheInvalidDateTimeError, AvalancheMinimumAmountError } from "./errors";
 
-const avalanchepchain: CurrenciesData<Transaction> = {
+const avalanchepchain: CurrenciesData<Transaction, AvalanchePChainAccountRaw> = {
   scanAccounts: [
     {
       name: "avalanchepchain seed 1",
       apdus: `
-      => 8002000015058000002c80002328800000000000000000000000
-      <= 0b2d7225e42ebd50a830abd9b0bfa77555e89ebf9000
-      => 800300000d038000002c8000232880000000
-      <= 4104512c844e8140a7e03e6967276ef0395cc662d2b059440f7f2532ccdc9c8ad214623ccf368d78d8c06ff4e8e4436199bfc9d561304059e71b296dd0705c32906b20d31aa2c102c05840cab783582ddabafa47401c3d1d6ace40cd0ca19426722e7a9000
+      => 800300000f0000038000002c8000232880000000
+      <= 2103828c8dad550959fba4b8b7aef4fff624ff514acbd5e5ea8095b2e714747eed7e0572f641ad2ae06b7d0d0e190e74af86732927ced7b828fef23589257bbed1e59000
       `,
     },
   ],
@@ -52,6 +50,12 @@ const avalanchepchain: CurrenciesData<Transaction> = {
         operations: [],
         pendingOperations: [],
         lastSyncDate: "",
+        avalanchePChainResources: {
+          publicKey: "03828c8dad550959fba4b8b7aef4fff624ff514acbd5e5ea8095b2e714747eed7e",
+          chainCode: "0572f641ad2ae06b7d0d0e190e74af86732927ced7b828fef23589257bbed1e5",
+          stakedBalance: "",
+          delegations: []
+        }
       },
       transactions: [
         {

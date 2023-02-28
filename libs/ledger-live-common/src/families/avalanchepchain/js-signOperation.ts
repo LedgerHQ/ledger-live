@@ -33,7 +33,6 @@ import {
   LedgerProvider,
   getTxOutputAddresses,
 } from "@avalabs/avalanche-wallet-sdk";
-import Transport from "@ledgerhq/hw-transport";
 
 const STAKEABLELOCKINID = 21;
 const AVA_ACCOUNT_PATH = "m/44'/9000'/0'";
@@ -128,7 +127,7 @@ const signTransactionParsable = async <
 >(
   unsignedTx: UnsignedTx,
   paths: string[],
-  transport: Transport,
+  transport,  //FIXME: check why transport is not align package
   hdHelper: HDHelper
 ): Promise<SignedTx> => {
   const accountPath = BIPPath.fromString(AVA_ACCOUNT_PATH);
@@ -163,7 +162,7 @@ const signTransactionHash = async <
 >(
   unsignedTx: UnsignedTx,
   paths: string[],
-  transport: Transport
+  transport //FIXME: check why transport is not align package
 ): Promise<SignedTx> => {
   const txbuff = unsignedTx.toBuffer();
   const msg = Buffer.from(createHash("sha256").update(txbuff).digest());

@@ -245,7 +245,7 @@ type CurrencyTransaction<T extends TransactionCommon> = {
 /**
  *
  */
-export type CurrenciesData<T extends TransactionCommon> = {
+export type CurrenciesData<T extends TransactionCommon, A = AccountRaw> = {
   FIXME_ignoreAccountFields?: string[];
   FIXME_ignoreOperationFields?: string[];
   FIXME_ignorePreloadFields?: string[];
@@ -262,7 +262,7 @@ export type CurrenciesData<T extends TransactionCommon> = {
   }>;
   accounts?: Array<{
     implementations?: string[];
-    raw: AccountRaw;
+    raw: A;
     FIXME_tests?: Array<string | RegExp>;
     transactions?: Array<CurrencyTransaction<T>>;
     test?: (arg0: ExpectFn, arg1: Account, arg2: AccountBridge<T>) => any;
