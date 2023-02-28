@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.54.0-nightly.5
+
+### Patch Changes
+
+- [#2768](https://github.com/LedgerHQ/ledger-live/pull/2768) [`534ed054ec`](https://github.com/LedgerHQ/ledger-live/commit/534ed054ec587602c70232f579641a796b3e21af) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - fix padding in swap drawers
+
+- Updated dependencies [[`13a71f1cb2`](https://github.com/LedgerHQ/ledger-live/commit/13a71f1cb24fa254a2ed0b2db7f0d7b8f32465b5)]:
+  - @ledgerhq/react-ui@0.11.0-nightly.2
+
 ## 2.54.0-nightly.4
 
 ### Patch Changes

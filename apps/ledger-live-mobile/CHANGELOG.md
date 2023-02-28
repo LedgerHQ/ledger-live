@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.16.0-nightly.4
+
+### Patch Changes
+
+- [#2742](https://github.com/LedgerHQ/ledger-live/pull/2742) [`67f6a47799`](https://github.com/LedgerHQ/ledger-live/commit/67f6a4779913f7c33c700aa4387c0dd2015e54fe) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Improve Firmware update banner logic on LLM
+
+- [#2742](https://github.com/LedgerHQ/ledger-live/pull/2742) [`9a83fcd1cd`](https://github.com/LedgerHQ/ledger-live/commit/9a83fcd1cd534f4685f425369ec50a932d823d1d) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Allow USB detection app wide on LLM
+
+- Updated dependencies [[`8787e31a55`](https://github.com/LedgerHQ/ledger-live/commit/8787e31a5566f1291fc762eb4287bcc0e5f2b509)]:
+  - @ledgerhq/react-native-hid@6.29.0-nightly.1
+  - @ledgerhq/native-ui@0.16.0-nightly.2
+
 ## 3.16.0-nightly.3
 
 ### Patch Changes
