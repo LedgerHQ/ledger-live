@@ -46,7 +46,7 @@ export const execWithTransport =
     return fn(transport, targetId, app);
   };
 
-const appsThatKeepChangingHashes = ["Fido U2F"];
+const appsThatKeepChangingHashes = ["Fido U2F", "Security Key"];
 
 export type StreamAppInstallEvent =
   | {
