@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 29.0.0-next.4
+
+### Patch Changes
+
+- [#2707](https://github.com/LedgerHQ/ledger-live/pull/2707) [`8c4cc6a69f`](https://github.com/LedgerHQ/ledger-live/commit/8c4cc6a69fed65b5ced7fe77f302aa1faf880149) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - fix: filter outside SelectAccountAndCurrencyDrawer [LIVE-5865]
+
 ## 29.0.0-next.3
 
 ### Patch Changes
