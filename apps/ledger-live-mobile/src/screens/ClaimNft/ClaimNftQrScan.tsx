@@ -89,12 +89,13 @@ const ClaimNftQrScan = () => {
   }, [cameraDimensions]);
 
   useEffect(() => {
-    const redirectionTimeout = setTimeout(() => navigateToHub(), 120000);
+    if (!isInFocus) return;
+    const redirectionTimeout = setTimeout(navigateToHub, 120000);
 
     return () => {
       clearTimeout(redirectionTimeout);
     };
-  }, [navigateToHub]);
+  }, [navigateToHub, isInFocus]);
 
   const handleBarCodeScanned = useCallback(({ data }) => {
     try {
