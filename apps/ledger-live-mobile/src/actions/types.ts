@@ -483,6 +483,10 @@ export type SettingsSetDebugAppLevelDrawerOpenedPayload = Pick<
   SettingsState,
   "debugAppLevelDrawerOpened"
 >;
+export type SettingsCompleteOnboardingPayload = Pick<
+  SettingsState,
+  "hasCompletedOnboarding"
+>;
 
 export type SettingsPayload =
   | SettingsImportPayload
@@ -533,6 +537,7 @@ export type SettingsPayload =
   | SettingsSetOverriddenFeatureFlagPlayload
   | SettingsSetOverriddenFeatureFlagsPlayload
   | SettingsSetFeatureFlagsBannerVisiblePayload
+  | SettingsCompleteOnboardingPayload
   | SettingsSetDebugAppLevelDrawerOpenedPayload;
 
 // === WALLET CONNECT ACTIONS ===

@@ -125,15 +125,14 @@ function OnboardingStepPairNew() {
       parentNav.popToTop();
     }
 
-    navigation.replace(NavigatorName.Base, {
-      screen: NavigatorName.Main,
+    startPostOnboarding({
+      deviceModelId: deviceModelId as DeviceModelId,
+      resetNavigationStack: true,
+      fallbackIfNoAction: () =>
+        navigation.navigate(NavigatorName.Base, {
+          screen: NavigatorName.Main,
+        }),
     });
-
-    startPostOnboarding(deviceModelId as DeviceModelId, false, () =>
-      navigation.navigate(NavigatorName.Base, {
-        screen: NavigatorName.Main,
-      }),
-    );
 
     triggerJustFinishedOnboardingNewDevicePushNotificationModal();
   }, [

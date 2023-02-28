@@ -74,6 +74,7 @@ import {
   SettingsSetDebugAppLevelDrawerOpenedPayload,
   SettingsFilterTokenOperationsZeroAmountPayload,
   SettingsLastSeenDeviceLanguagePayload,
+  SettingsCompleteOnboardingPayload,
 } from "./types";
 import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
 
@@ -199,10 +200,14 @@ export const setLastSeenCustomImage = ({
 export const clearLastSeenCustomImage = () =>
   setLastSeenCustomImageAction({ imageSize: 0, imageHash: "" });
 
-const completeOnboardingAction = createAction(
-  SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING,
-);
-export const completeOnboarding = () => completeOnboardingAction();
+const completeOnboardingAction =
+  createAction<SettingsCompleteOnboardingPayload>(
+    SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING,
+  );
+export const completeOnboarding = (hasCompletedOnboarding = true) =>
+  completeOnboardingAction({
+    hasCompletedOnboarding,
+  });
 
 const installAppFirstTimeAction =
   createAction<SettingsInstallAppFirstTimePayload>(
