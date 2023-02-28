@@ -9,8 +9,13 @@ import { concat, of, EMPTY, from, Observable, throwError, defer } from "rxjs";
 import { mergeMap, map } from "rxjs/operators";
 import { App, AppType, DeviceInfo } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
-import { LatestFirmwareVersionRequired, NoSuchAppOnProvider } from "../errors";
-import type { Exec, AppOp, ListAppsEvent, ListAppsResult } from "./types";
+import type {
+  Exec,
+  AppOp,
+  ListAppsEvent,
+  ListAppsResult,
+  SkippedAppOp,
+} from "./types";
 import manager, { getProviderId } from "../manager";
 import installApp from "../hw/installApp";
 import uninstallApp from "../hw/uninstallApp";
@@ -23,7 +28,7 @@ import {
 } from "../currencies";
 import ManagerAPI from "../api/Manager";
 import { getEnv } from "../env";
-import hwListApps from "../hw/listApps";
+
 import {
   calculateDependencies,
   polyfillApp,
@@ -65,6 +70,10 @@ export type StreamAppInstallEvent =
       appNames: string[];
     }
   | {
+      type: "some-apps-skipped";
+      skippedAppOps: SkippedAppOp[];
+    }
+  | {
       type: "stream-install";
       progress: number;
       itemProgress: number;
@@ -100,43 +109,38 @@ export const streamAppInstall = ({
     from(getDeviceInfo(transport)).pipe(
       mergeMap((deviceInfo) => listApps(transport, deviceInfo)),
       mergeMap((e) => {
+        // Bubble up events
         if (
           e.type === "device-permission-granted" ||
           e.type === "device-permission-requested"
         ) {
-          // pass in events we need
           return of(e);
         }
 
         if (e.type === "result") {
-          // stream install with the result of list apps
-          const state = appNames.reduce((state, name) => {
-            try {
-              return reducer(state, {
+          // Figure out the operations that need to happen
+          const state = appNames.reduce(
+            (state, name) =>
+              reducer(state, {
                 type: "install",
                 name,
-              });
-            } catch (e: unknown) {
-              if (
-                e instanceof NoSuchAppOnProvider ||
-                e instanceof LatestFirmwareVersionRequired
-              ) {
-                log(
-                  "hw",
-                  `failed to install app: ${name}. Skipping: ${skipAppInstallIfNotFound}`
-                );
+                skip: skipAppInstallIfNotFound,
+              }),
+            initState(e.result)
+          );
 
-                // Continues installing the next apps
-                if (skipAppInstallIfNotFound) {
-                  return state;
-                }
-              }
-
-              throw e;
-            }
-          }, initState(e.result));
+          // Failed appOps in this flow will throw by default but if we're here
+          // it means we didn't throw, so we wan't to notify the action about it.
+          const maybeSkippedEvent: Observable<StreamAppInstallEvent> = state
+            .skippedAppOps.length
+            ? of({
+                type: "some-apps-skipped",
+                skippedAppOps: state.skippedAppOps,
+              })
+            : EMPTY;
 
           if (!state.installQueue.length) {
+            // There's nothing to install, we can consider this a success.
             return defer(onSuccessObs || (() => EMPTY));
           }
 
@@ -153,6 +157,7 @@ export const streamAppInstall = ({
 
           const exec = execWithTransport(transport);
           return concat(
+            maybeSkippedEvent,
             runAllWithProgress(state, exec).pipe(
               map(
                 ({
@@ -177,8 +182,12 @@ export const streamAppInstall = ({
       })
     )
   );
+
 const emptyHashData =
   "0000000000000000000000000000000000000000000000000000000000000000";
+
+//TODO if you are reading this, don't worry, a big rewrite is coming and we'll be able
+//to simplify this a lot. Stay calm.
 export const listApps = (
   transport: Transport,
   deviceInfo: DeviceInfo
@@ -228,26 +237,7 @@ export const listApps = (
           )
           .catch((e) => {
             log("hw", "failed to HSM list apps " + String(e) + "\n" + e.stack);
-
-            if (getEnv("EXPERIMENTAL_FALLBACK_APDU_LISTAPPS")) {
-              return hwListApps(transport)
-                .then((apps) =>
-                  apps.map(({ name, hash, blocks }) => ({
-                    name,
-                    hash,
-                    blocks,
-                  }))
-                )
-                .catch((e) => {
-                  log(
-                    "hw",
-                    "failed to device list apps " + String(e) + "\n" + e.stack
-                  );
-                  throw e;
-                });
-            } else {
-              throw e;
-            }
+            throw e;
           })
           .then((apps) => [apps, true]);
 

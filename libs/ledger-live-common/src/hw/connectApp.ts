@@ -16,7 +16,7 @@ import type Transport from "@ledgerhq/hw-transport";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import type { DerivationMode } from "@ledgerhq/coin-framework/derivation";
-import type { AppOp } from "../apps/types";
+import type { AppOp, SkippedAppOp } from "../apps/types";
 import { getCryptoCurrencyById } from "../currencies";
 import appSupportsQuitApp from "../appSupportsQuitApp";
 import { withDevice } from "./deviceAccess";
@@ -85,6 +85,10 @@ export type ConnectAppEvent =
       itemProgress: number;
       currentAppOp: AppOp;
       installQueue: string[];
+    }
+  | {
+      type: "some-apps-skipped";
+      skippedAppOps: SkippedAppOp[];
     }
   | {
       type: "listing-apps";
