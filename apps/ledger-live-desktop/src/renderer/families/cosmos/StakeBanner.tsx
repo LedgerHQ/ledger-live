@@ -2,14 +2,20 @@ import { useTranslation } from "react-i18next";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 import { getAccountBannerState } from "@ledgerhq/live-common/families/cosmos/banner";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { canDelegate } from "@ledgerhq/live-common/families/cosmos/logic";
 import { AccountBanner } from "~/renderer/screens/account/AccountBanner";
 import React from "react";
 import { StakeAccountBannerParams } from "~/renderer/screens/account/types";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
+import { Account } from "@ledgerhq/types-live";
 import { openModal } from "~/renderer/actions/modals";
 import { useDispatch } from "react-redux";
 
-export const StakeBanner: React.FC<{ account: CosmosAccount }> = ({ account }) => {
+export const StakeBanner: React.FC<{ account: CosmosAccount; parentAccount: Account }> = ({
+  account,
+  parentAccount,
+}) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const stakeAccountBanner = useFeature("stakeAccountBanner");
@@ -36,6 +42,7 @@ export const StakeBanner: React.FC<{ account: CosmosAccount }> = ({ account }) =
     : t("account.banner.delegation.cta");
 
   const onClick = () => {
+    const mainAccount = getMainAccount(account, parentAccount);
     if (redelegate) {
       dispatch(
         openModal("MODAL_COSMOS_REDELEGATE", {
@@ -44,10 +51,17 @@ export const StakeBanner: React.FC<{ account: CosmosAccount }> = ({ account }) =
           validatorDstAddress: ledgerValidator?.validatorAddress || "",
         }),
       );
-    } else {
+    } else if (canDelegate(mainAccount)) {
       dispatch(
         openModal("MODAL_COSMOS_DELEGATE", {
           account,
+        }),
+      );
+    } else {
+      dispatch(
+        openModal("MODAL_NO_FUNDS_STAKE", {
+          account,
+          parentAccount,
         }),
       );
     }
