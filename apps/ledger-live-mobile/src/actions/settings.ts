@@ -72,6 +72,8 @@ import {
   SettingsSetOverriddenFeatureFlagsPlayload,
   SettingsSetFeatureFlagsBannerVisiblePayload,
   SettingsSetDebugAppLevelDrawerOpenedPayload,
+  SettingsFilterTokenOperationsZeroAmountPayload,
+  SettingsLastSeenDeviceLanguagePayload,
 } from "./types";
 import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
 
@@ -225,6 +227,17 @@ export const setHideEmptyTokenAccounts = (hideEmptyTokenAccounts: boolean) =>
     hideEmptyTokenAccounts,
   });
 
+const setFilterTokenOperationsZeroAmountAction =
+  createAction<SettingsFilterTokenOperationsZeroAmountPayload>(
+    SettingsActionTypes.SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT,
+  );
+export const setFilterTokenOperationsZeroAmount = (
+  filterTokenOperationsZeroAmount: boolean,
+) =>
+  setFilterTokenOperationsZeroAmountAction({
+    filterTokenOperationsZeroAmount,
+  });
+
 const blacklistTokenAction = createAction<SettingsBlacklistTokenPayload>(
   SettingsActionTypes.BLACKLIST_TOKEN,
 );
@@ -366,6 +379,13 @@ const setLastSeenDeviceInfoAction =
   );
 export const setLastSeenDeviceInfo = (dmi: DeviceModelInfo) =>
   setLastSeenDeviceInfoAction({ dmi });
+
+const setLastSeenDeviceLanguageIdAction =
+  createAction<SettingsLastSeenDeviceLanguagePayload>(
+    SettingsActionTypes.LAST_SEEN_DEVICE_LANGUAGE_ID,
+  );
+export const setLastSeenDeviceLanguageId = (languageId: number) =>
+  setLastSeenDeviceLanguageIdAction({ languageId });
 
 const addStarredMarketCoinsAction =
   createAction<SettingsAddStarredMarketcoinsPayload>(

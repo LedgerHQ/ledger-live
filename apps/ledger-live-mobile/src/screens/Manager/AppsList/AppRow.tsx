@@ -7,6 +7,7 @@ import { useNotEnoughMemoryToInstall } from "@ledgerhq/live-common/apps/react";
 import { Trans } from "react-i18next";
 import styled from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
+import manager from "@ledgerhq/live-common/manager/index";
 import AppIcon from "./AppIcon";
 
 import AppStateButton from "./AppStateButton";
@@ -22,13 +23,14 @@ type Props = {
   optimisticState: State;
 };
 
-const RowContainer = styled(Flex).attrs({
+const RowContainer = styled(Flex).attrs((p: { disabled?: boolean }) => ({
   flexDirection: "row",
   alignItems: "center",
   justifyContent: "flex-start",
   paddingVertical: 14,
   height: 64,
-})``;
+  opacity: p.disabled ? 0.2 : 1,
+}))<{ disabled?: boolean }>``;
 
 const LabelContainer = styled(Flex).attrs({
   flexGrow: 0,
@@ -61,6 +63,7 @@ const AppRow = ({
 }: Props) => {
   const { name, bytes, version: appVersion, displayName } = app;
   const { installed, deviceInfo } = state;
+  const canBeInstalled = useMemo(() => manager.canHandleInstall(app), [app]);
 
   const isInstalled = useMemo(
     () => installed.find(i => i.name === name),
@@ -82,7 +85,7 @@ const AppRow = ({
   );
 
   return (
-    <RowContainer>
+    <RowContainer disabled={!isInstalled && !canBeInstalled}>
       <AppIcon app={app} size={48} />
       <LabelContainer>
         <Text

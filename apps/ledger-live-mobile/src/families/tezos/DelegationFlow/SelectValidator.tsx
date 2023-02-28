@@ -40,6 +40,7 @@ const keyExtractor = (baker: Baker) => baker.address;
 
 const BakerHead = ({ onPressHelp }: { onPressHelp: () => void }) => {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   return (
     <View style={styles.bakerHead}>
       <LText
@@ -48,7 +49,7 @@ const BakerHead = ({ onPressHelp }: { onPressHelp: () => void }) => {
         numberOfLines={1}
         semiBold
       >
-        Validator
+        {t("delegation.validator")}
       </LText>
       <View style={styles.bakerHeadContainer}>
         <LText
@@ -57,7 +58,7 @@ const BakerHead = ({ onPressHelp }: { onPressHelp: () => void }) => {
           numberOfLines={1}
           semiBold
         >
-          Est. Yield
+          {t("delegation.yield")}
         </LText>
         <Touchable
           style={styles.bakerHeadInfo}

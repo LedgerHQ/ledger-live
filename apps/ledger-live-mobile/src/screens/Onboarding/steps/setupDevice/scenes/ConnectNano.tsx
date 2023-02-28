@@ -128,7 +128,7 @@ const Next = ({ onNext }: { onNext: () => void }) => {
         onNext();
       }}
     >
-      (DEV) skip this step
+      (DEV) SKIP THIS STEP
     </Button>
   ) : null;
 };

@@ -136,7 +136,7 @@ export default function MarketCoinScreen() {
   const availableOnStake =
     stakeProgramsEnabled && currency && listFlag.includes(currency?.internalCurrency?.id);
   const startStakeFlow = useStakeFlow({
-    currencies: currency ? [currency?.internalCurrency?.id] : [],
+    currencies: internalCurrency ? [internalCurrency.id] : undefined,
   });
 
   const color = internalCurrency

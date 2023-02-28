@@ -34,7 +34,7 @@ export const ActionDefault = ({
     event={event}
     eventProperties={eventProperties}
     disabled={disabled}
-    data-test-id={accountActionsTestId}
+    buttonTestId={accountActionsTestId}
   >
     <Flex flexDirection="row" alignItems="center">
       {iconComponent ? <Flex mr="8px">{iconComponent}</Flex> : null} {labelComponent}

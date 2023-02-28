@@ -1,10 +1,9 @@
 // @flow
 
 import { useCallback, useMemo } from "react";
-import { BigNumber } from "bignumber.js";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
+import { areEarnRewardsEnabled } from "@ledgerhq/live-common/families/elrond/helpers/areEarnRewardsEnabled";
 import { useElrondRandomizedValidators } from "@ledgerhq/live-common/families/elrond/react";
 
 import { modals } from "./modals";
@@ -12,7 +11,6 @@ import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
 
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 
 type Props = {
   account: AccountLike,
@@ -25,20 +23,14 @@ const AccountHeaderActions = (props: Props) => {
   const dispatch = useDispatch();
   const validators = useElrondRandomizedValidators();
 
-  const earnRewardEnabled = useMemo(
-    (): boolean =>
-      BigNumber(denominate({ input: account.spendableBalance, showLastNonZeroDecimal: true })).gte(
-        1,
-      ),
-    [account.spendableBalance],
-  );
+  const earnRewardEnabled = useMemo(() => areEarnRewardsEnabled(account), [account]);
 
   const hasDelegations = account.elrondResources
     ? account.elrondResources.delegations.length > 0
     : false;
 
   const onClick = useCallback(() => {
-    if (isAccountEmpty(account) || !earnRewardEnabled) {
+    if (!earnRewardEnabled) {
       dispatch(
         openModal("MODAL_NO_FUNDS_STAKE", {
           account,

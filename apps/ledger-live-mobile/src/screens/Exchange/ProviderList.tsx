@@ -52,6 +52,7 @@ const ProviderItem = ({ provider, onClick }: ProviderItemProps) => {
     provider.paymentProviders.slice(0, 4),
   );
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const manifest = useRemoteLiveAppManifest(provider.appId);
   const onItemClick = useCallback(() => {
     onClick(provider, manifest?.icon, manifest?.name);
@@ -112,7 +113,9 @@ const ProviderItem = ({ provider, onClick }: ProviderItemProps) => {
               ]}
             >
               <LText style={styles.pmLabel}>
-                +{provider.paymentProviders.length - 4} more
+                {t("exchange.count", {
+                  count: provider.paymentProviders.length - 4,
+                })}
               </LText>
             </TouchableOpacity>
           )}

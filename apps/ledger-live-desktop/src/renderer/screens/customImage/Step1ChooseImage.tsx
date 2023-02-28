@@ -15,7 +15,7 @@ import {
   ImageDownloadError,
 } from "@ledgerhq/live-common/customImage/errors";
 import { urlContentToDataUri } from "~/renderer/components/CustomImage/shared";
-import { useIsMounted } from "~/renderer/hooks/useIsMounted";
+import useIsMounted from "@ledgerhq/live-common/hooks/useIsMounted";
 
 type Props = StepProps & {
   onResult: (res: ImageBase64Data) => void;

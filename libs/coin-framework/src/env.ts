@@ -56,6 +56,11 @@ const envDefinitions: Record<
   string,
   EnvDef<boolean | string | number | string[] | unknown>
 > = {
+  ADDRESS_POISONING_FAMILIES: {
+    def: "ethereum,evm,tron",
+    parser: stringParser,
+    desc: "List of families impacted by the address poisoning attack",
+  },
   ANALYTICS_CONSOLE: {
     def: false,
     parser: boolParser,
@@ -421,6 +426,11 @@ const envDefinitions: Record<
     parser: intParser,
     desc: "use a different provider for app store (for developers only)",
   },
+  FILTER_ZERO_AMOUNT_ERC20_EVENTS: {
+    def: true,
+    parser: boolParser,
+    desc: "Remove filter of address poisoning",
+  },
   GET_CALLS_RETRY: {
     def: 2,
     parser: intParser,
@@ -580,6 +590,11 @@ const envDefinitions: Record<
     parser: boolParser,
     desc: "dev flag to skip onboarding flow",
   },
+  SPECULOS_PID_OFFSET: {
+    def: 0,
+    parser: intParser,
+    desc: "offset to be added to the speculos pid and avoid collision with other instances",
+  },
   SWAP_API_BASE: {
     def: "https://swap.ledger.com/v4",
     parser: stringParser,
@@ -729,6 +744,11 @@ const envDefinitions: Record<
     def: "{}",
     parser: jsonParser,
     desc: "key value map for feature flags: {[key in FeatureId]?: Feature]}",
+  },
+  PERFORMANCE_CONSOLE: {
+    def: false,
+    parser: boolParser,
+    desc: "Show a performance overlay on the app UI",
   },
 };
 

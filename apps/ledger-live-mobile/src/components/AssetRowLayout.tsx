@@ -1,11 +1,11 @@
 import React from "react";
-import { TouchableOpacity } from "react-native";
 import { useTheme } from "styled-components/native";
 import { BigNumber } from "bignumber.js";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { Flex, Text, Tag } from "@ledgerhq/native-ui";
 import { ValueChange } from "@ledgerhq/types-live";
 import { isEqual } from "lodash";
+import { TouchableOpacity, TouchableOpacityProps } from "react-native";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
 import Delta from "./Delta";
@@ -18,7 +18,7 @@ type Props = {
   countervalueChange?: ValueChange;
   name: string;
   tag?: string | null | boolean;
-  onPress?: () => void;
+  onPress?: TouchableOpacityProps["onPress"];
   progress?: number;
   hideDelta?: boolean;
   topLink?: boolean;

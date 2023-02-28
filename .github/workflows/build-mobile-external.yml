@@ -1,12 +1,12 @@
 name: "@Mobile • Build App (external)"
-run-name: "@Mobile • Build App (external) triggered by ${{ inputs.login }} ${{ format('on branch {0}', inputs.ref) }}"
+run-name: "@Mobile • Build App (external) triggered by ${{ inputs.login }} ${{ format('on ref {0}', github.ref_name) }}"
 
 on:
   workflow_dispatch:
     inputs:
       ref:
         description: the branch which triggered this workflow
-        required: true
+        required: false
       login:
         description: The GitHub username that triggered the workflow
         required: true
@@ -15,8 +15,8 @@ on:
 
 concurrency:
   # See: https://github.com/orgs/community/discussions/35341
-  group: ${{ github.workflow }}-${{ github.event.inputs.ref || github.ref }}
-  cancel-in-progress: ${{ github.event.inputs.ref != 'develop' }}
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref_name != 'develop' }}
 
 jobs:
   build-mobile-app-android:
@@ -27,7 +27,7 @@ jobs:
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ inputs.ref || github.event.push.head.sha }}
+          ref: ${{ github.ref_name }}
           base_ref: ${{ inputs.base_ref }}
       - name: set git user
         run: |
@@ -102,7 +102,7 @@ jobs:
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ inputs.ref || github.event.push.head.sha }}
+          ref: ${{ github.ref_name }}
           base_ref: ${{ inputs.base_ref }}
       - name: set git user
         run: |

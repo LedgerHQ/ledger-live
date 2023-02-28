@@ -30,7 +30,12 @@ const AccountBanner = (props: BannerProps) => {
             <Text color="inherit" variant="body" fontWeight="bold" fontSize="14px">
               {title}
             </Text>
-            <Text color="inherit" variant="body" fontSize="14px" style={{ marginTop: "10px" }}>
+            <Text
+              color="inherit"
+              variant="body"
+              fontSize="14px"
+              style={{ marginTop: "10px", lineHeight: 1 }}
+            >
               {description}{" "}
               {linkUrl && linkText && (
                 <Link
@@ -43,7 +48,7 @@ const AccountBanner = (props: BannerProps) => {
               )}
             </Text>
           </Flex>
-          <Button variant="color" ml={12} onClick={onClick}>
+          <Button variant="color" ml={12} onClick={onClick} buttonTestId="account-banner-button">
             {cta}
           </Button>
         </Flex>

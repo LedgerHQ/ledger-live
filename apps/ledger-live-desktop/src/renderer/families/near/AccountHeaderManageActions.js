@@ -1,5 +1,5 @@
 // @flow
-import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
+import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { canStake } from "@ledgerhq/live-common/families/near/logic";
 import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
 import invariant from "invariant";
@@ -26,7 +26,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const hasStakingPositions = nearResources.stakingPositions.length > 0;
 
   const onClick = useCallback(() => {
-    if (isAccountEmpty(account) || !stakingEnabled) {
+    if (!stakingEnabled) {
       dispatch(
         openModal("MODAL_NO_FUNDS_STAKE", {
           account,
