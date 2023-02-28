@@ -419,6 +419,7 @@ platform :android do
       options[:apk_and_aab] ? ["assemble", "bundle"] :
       options[:apk] ? ["assemble"] :
       ["bundle"]
+    tasks = tasks.map { |task| task + type }
     if(options[:ci])
       sh(
           <<-SHELL
@@ -431,14 +432,12 @@ platform :android do
     if (options[:local])
       gradle(
         tasks: tasks,
-        build_type: type,
         print_command: false,
         project_dir: 'android/'
       )
     else
       gradle(
         tasks: tasks,
-        build_type: type,
         print_command: false,
         properties: {
           "android.injected.signing.store.file" => ENV["ANDROID_KEYSTORE_FILE"],
@@ -525,6 +524,14 @@ platform :android do
     upload(
       recover: true,
       ci: true
+    )
+  end
+
+  lane :ci_build do
+    build(
+      type: "Release",
+      ci: true,
+      apk: true
     )
   end
 

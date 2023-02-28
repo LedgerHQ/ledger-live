@@ -81,24 +81,6 @@ jobs:
         id: post-mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
-      - name: commit (from release branch)
-        if: ${{ startsWith(github.ref_name, 'release') }}
-        env:
-          LLD: LLD(${{ steps.post-desktop-version.outputs.version }})
-          LLM: LLM(${{ steps.post-mobile-version.outputs.version }})
-        run: |
-          git add . &&
-          git commit -m ":rocket: release prerelease [${{ env.LLD }}, ${{ env.LLM }}]" ||
-          echo ""
-      - name: commit (from hotfix branch)
-        if: ${{ startsWith(github.ref_name, 'hotfix') }}
-        env:
-          LLD: LLD(${{ steps.post-desktop-version.outputs.version }})
-          LLM: LLM(${{ steps.post-mobile-version.outputs.version }})
-        run: |
-          git add . &&
-          git commit -m ":fire: hotfix prerelease [${{ env.LLD }}, ${{ env.LLM }}]" ||
-          echo ""
       - name: commit (from ${{ inputs.ref }} branch) workflow dispatch
         if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
