@@ -25,7 +25,9 @@ export const StakeBanner: React.FC<{ account: CosmosAccount; parentAccount: Acco
   const { redelegate, ledgerValidator, validatorSrcAddress } = state;
 
   if (redelegate && !stakeAccountBannerParams?.cosmos?.redelegate) return null;
-  if (!redelegate && !stakeAccountBannerParams?.cosmos?.delegate) return null;
+  const mainAccount = getMainAccount(account, parentAccount);
+  if (!redelegate && !(stakeAccountBannerParams?.cosmos?.delegate && canDelegate(mainAccount)))
+    return null;
 
   const commission = ledgerValidator?.commission ? ledgerValidator?.commission * 100 : 1;
   const title = redelegate
@@ -42,7 +44,6 @@ export const StakeBanner: React.FC<{ account: CosmosAccount; parentAccount: Acco
     : t("account.banner.delegation.cta");
 
   const onClick = () => {
-    const mainAccount = getMainAccount(account, parentAccount);
     if (redelegate) {
       dispatch(
         openModal("MODAL_COSMOS_REDELEGATE", {
@@ -55,13 +56,6 @@ export const StakeBanner: React.FC<{ account: CosmosAccount; parentAccount: Acco
       dispatch(
         openModal("MODAL_COSMOS_DELEGATE", {
           account,
-        }),
-      );
-    } else {
-      dispatch(
-        openModal("MODAL_NO_FUNDS_STAKE", {
-          account,
-          parentAccount,
         }),
       );
     }
