@@ -127,7 +127,7 @@ const signTransactionParsable = async <
 >(
   unsignedTx: UnsignedTx,
   paths: string[],
-  transport,  //FIXME: check why transport is not align package
+  transport, //FIXME: check why transport is not align package
   hdHelper: HDHelper
 ): Promise<SignedTx> => {
   const accountPath = BIPPath.fromString(AVA_ACCOUNT_PATH);

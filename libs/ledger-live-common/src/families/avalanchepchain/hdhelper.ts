@@ -50,7 +50,10 @@ class HDHelper {
     this.utxoSet = new UTXOSet();
   }
 
-  static async instantiate(publicKey: string, chainCode: string): Promise<HDHelper> {
+  static async instantiate(
+    publicKey: string,
+    chainCode: string
+  ): Promise<HDHelper> {
     this.instance = new this(publicKey, chainCode);
     this.instance.hdIndex = await this.instance.findAvailableIndexExplorer();
     return this.instance;

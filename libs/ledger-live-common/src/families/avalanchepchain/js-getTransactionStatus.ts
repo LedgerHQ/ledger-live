@@ -5,7 +5,10 @@ import {
   AmountRequired,
   InvalidAddressBecauseDestinationIsAlsoSource,
 } from "@ledgerhq/errors";
-import { AvalancheInvalidDateTimeError, AvalancheMinimumAmountError } from "./errors";
+import {
+  AvalancheInvalidDateTimeError,
+  AvalancheMinimumAmountError,
+} from "./errors";
 import { Account } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "./types";
 import { FIVE_MINUTES, TWO_WEEKS, AVAX_MINIMUM_STAKE_AMOUNT } from "./utils";

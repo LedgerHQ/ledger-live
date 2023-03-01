@@ -24,7 +24,7 @@ export const defaultFeatures: DefaultFeatures = {
     enabled: false,
   },
   currencyAvalanchePChain: {
-    enabled: false
+    enabled: false,
   },
   currencyOsmosis: {
     enabled: false,

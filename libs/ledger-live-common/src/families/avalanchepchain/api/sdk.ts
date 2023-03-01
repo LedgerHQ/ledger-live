@@ -185,7 +185,11 @@ export const getDelegations = async (publicKey: string, chainCode: string) => {
   return getUserDelegations(allDelegators, publicKey, chainCode);
 };
 
-const getUserDelegations = async (delegators, publicKey: string, chainCode: string) => {
+const getUserDelegations = async (
+  delegators,
+  publicKey: string,
+  chainCode: string
+) => {
   const hdHelper = await HDHelper.instantiate(publicKey, chainCode);
 
   const userAddresses = hdHelper.getAllDerivedAddresses();

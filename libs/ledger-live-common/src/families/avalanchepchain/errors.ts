@@ -6,4 +6,4 @@ export const AvalancheInvalidDateTimeError = createCustomErrorClass(
 
 export const AvalancheMinimumAmountError = createCustomErrorClass(
   "AvalancheMinimumAmountError"
-)
+);
