@@ -619,7 +619,7 @@ importers:
       '@ledgerhq/types-live': workspace:^
       '@polkadot/reactnative-identicon': 2.11.1
       '@polkadot/x-randomvalues': 10.3.1
-      '@react-native-async-storage/async-storage': ^1.15.17
+      '@react-native-async-storage/async-storage': ^1.17.11
       '@react-native-community/cli': ^7.0.1
       '@react-native-community/cli-platform-android': ^7.0.1
       '@react-native-community/cli-platform-ios': ^7.0.1
@@ -827,7 +827,7 @@ importers:
       '@ledgerhq/types-live': link:../../libs/ledgerjs/packages/types-live
       '@polkadot/reactnative-identicon': 2.11.1_ondxtwf5lqq5g76dzmsmwamaca
       '@polkadot/x-randomvalues': 10.3.1
-      '@react-native-async-storage/async-storage': 1.17.4_react-native@0.68.5
+      '@react-native-async-storage/async-storage': 1.17.11_react-native@0.68.5
       '@react-native-community/cli': 7.0.4_4bco2uivkunuhrlwlwyjelbvu4
       '@react-native-community/cli-platform-android': 7.0.1
       '@react-native-community/cli-platform-ios': 7.0.1
@@ -1214,8 +1214,8 @@ importers:
       '@ledgerhq/types-cryptoassets': workspace:^
       '@ledgerhq/types-devices': workspace:^
       '@ledgerhq/types-live': workspace:^
-      '@ledgerhq/wallet-api-core': ^0.11.0
-      '@ledgerhq/wallet-api-server': ^0.11.0
+      '@ledgerhq/wallet-api-core': ^0.13.0
+      '@ledgerhq/wallet-api-server': ^0.12.0
       '@solana/spl-token': ^0.2.0
       '@solana/web3.js': 1.41.3
       '@stricahq/bip32ed25519': ^1.0.3
@@ -1394,8 +1394,8 @@ importers:
       '@ledgerhq/hw-transport-node-speculos': link:../ledgerjs/packages/hw-transport-node-speculos
       '@ledgerhq/live-app-sdk': 0.8.1
       '@ledgerhq/logs': link:../ledgerjs/packages/logs
-      '@ledgerhq/wallet-api-core': 0.11.0
-      '@ledgerhq/wallet-api-server': 0.11.0_react@17.0.2
+      '@ledgerhq/wallet-api-core': 0.13.0
+      '@ledgerhq/wallet-api-server': 0.12.0_react@17.0.2
       '@solana/spl-token': 0.2.0
       '@solana/web3.js': 1.41.3
       '@stricahq/bip32ed25519': 1.0.4
@@ -13562,15 +13562,6 @@ packages:
       bignumber.js: 9.1.0
     dev: false
 
-  /@ledgerhq/wallet-api-core/0.11.0:
-    resolution: {integrity: sha512-SHIdZD/gQJ4dMag5zzmRAAfhkkfiyHFVLHR7xz0Srj2BLdMfQZzXneTSnv7YND4YOZrwHIfBTA68Bim+AiKjwA==}
-    dependencies:
-      '@ledgerhq/errors': 6.12.1
-      bignumber.js: 9.1.0
-      uuid: 9.0.0
-      zod: 3.19.1
-    dev: false
-
   /@ledgerhq/wallet-api-core/0.12.0:
     resolution: {integrity: sha512-e8V73MgiXa63mUkyF3MqwqjKxYzVVF6lhLHYWtUVJCUDwyXEq7EmuEK9IxYl7o5oxqmXlkxQ6qXjl7aQTT6P8g==}
     dependencies:
@@ -13580,15 +13571,24 @@ packages:
       zod: 3.19.1
     dev: false
 
-  /@ledgerhq/wallet-api-server/0.11.0_react@17.0.2:
-    resolution: {integrity: sha512-7aOttVBuj0dAfwKa8Na3e9T+xv9ZC8kHjeBwtLHJpCnjsqODTubj50J1SBw0gnqRKXK1dkUHFZCVYOhddYu8Xg==}
+  /@ledgerhq/wallet-api-core/0.13.0:
+    resolution: {integrity: sha512-ibz2bOhUAnKqwca5C/BWKzAMvaQrKcD0gbAQQG/BMIjf3q9seZsv2D+iww7f3dwbmsWLBhFff60zR52nFaTo2A==}
+    dependencies:
+      '@ledgerhq/errors': 6.12.1
+      bignumber.js: 9.1.0
+      uuid: 9.0.0
+      zod: 3.19.1
+    dev: false
+
+  /@ledgerhq/wallet-api-server/0.12.0_react@17.0.2:
+    resolution: {integrity: sha512-zoSd9uhdz7CAH7MsqblQwg6TXBtW2mpU8fgxpkMSbl0fRGHFuYtd4wBbr4e280QZMSq0cPNmMCnpLPg3+6BW0A==}
     peerDependencies:
       react: ^17.x || ^18.x
     peerDependenciesMeta:
       react:
         optional: true
     dependencies:
-      '@ledgerhq/wallet-api-core': 0.12.0
+      '@ledgerhq/wallet-api-core': 0.13.0
       bignumber.js: 9.1.0
       json-rpc-2.0: 1.1.0
       picomatch: 2.3.1
@@ -14675,10 +14675,10 @@ packages:
       react-lifecycles-compat: 3.0.4
     dev: true
 
-  /@react-native-async-storage/async-storage/1.17.4_react-native@0.68.5:
-    resolution: {integrity: sha512-c6GglKBRaWkjNyYd0FM8f0/neQEcwQom4MjZNqYSsIz55LcddJb7W8GM/n2dkzZ0JnaMylMX3+Vo+fpmkFEGTQ==}
+  /@react-native-async-storage/async-storage/1.17.11_react-native@0.68.5:
+    resolution: {integrity: sha512-bzs45n5HNcDq6mxXnSsOHysZWn1SbbebNxldBXCQs8dSvF8Aor9KCdpm+TpnnGweK3R6diqsT8lFhX77VX0NFw==}
     peerDependencies:
-      react-native: ^0.0.0-0 || 0.60 - 0.68 || 1000.0.0
+      react-native: ^0.0.0-0 || 0.60 - 0.71 || 1000.0.0
     dependencies:
       merge-options: 3.0.4
       react-native: 0.68.5_qiqqwmyv63yhnuboofexv3s7x4
@@ -15465,7 +15465,7 @@ packages:
       react: '*'
       react-native: '*'
     dependencies:
-      '@react-native-async-storage/async-storage': 1.17.4_react-native@0.68.5
+      '@react-native-async-storage/async-storage': 1.17.11_react-native@0.68.5
       '@segment/sovran-react-native': 0.4.5_ondxtwf5lqq5g76dzmsmwamaca
       deepmerge: 4.2.2
       js-base64: 3.7.2
@@ -15487,7 +15487,7 @@ packages:
       react: '*'
       react-native: '*'
     dependencies:
-      '@react-native-async-storage/async-storage': 1.17.4_react-native@0.68.5
+      '@react-native-async-storage/async-storage': 1.17.11_react-native@0.68.5
       ansi-regex: 5.0.1
       deepmerge: 4.2.2
       react: 17.0.2

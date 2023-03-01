@@ -40,6 +40,7 @@ import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigato
 import { analyticsEnabledSelector } from "../../reducers/settings";
 import getOrCreateUser from "../../user";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
+import deviceStorage from "../../logic/storeWrapper";
 
 const wallet = {
   name: "ledger-live-mobile",
@@ -104,6 +105,14 @@ function useUiHook(): Partial<UiHook> {
           },
           onClose: onCancel,
         });
+      },
+      "storage.get": async ({ key, storeId }) => {
+        const storageKey = storeId ? `${storeId}-${key}` : key;
+        return (await deviceStorage.get(storageKey)) as string;
+      },
+      "storage.set": ({ key, value, storeId }) => {
+        const storageKey = storeId ? `${storeId}-${key}` : key;
+        return deviceStorage.save(storageKey, value);
       },
       "transaction.sign": ({
         account,
