@@ -1173,10 +1173,10 @@
       "skipCTA": "I'll do this later"
     },
     "ongoing": {
-      "loading": "Loading ...",
       "resolving": "Resolving dependencies",
-      "progress": "Installing apps {{progress}}%",
-      "disclaimer": "Add or remove apps at any time from Ledger Live."
+      "progress": "Stay in Ledger Live while apps are installing.",
+      "skippedInfo": "Some apps aren’t available. They are yet to be developed for {{ productName }}.",
+      "skipped": "Not yet available for {{ productName }}"
     }
   },
   "onboarding": {
