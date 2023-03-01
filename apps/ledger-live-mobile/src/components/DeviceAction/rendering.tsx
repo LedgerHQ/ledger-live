@@ -447,7 +447,7 @@ export function renderAllowLanguageInstallation({
   device: Device;
 }) {
   const deviceName = getDeviceModel(device.modelId).productName;
-  const key = device.modelId === "stax" ? "allowConnection" : "sign";
+  const key = device.modelId === "stax" ? "allowManager" : "sign";
 
   return (
     <Wrapper>

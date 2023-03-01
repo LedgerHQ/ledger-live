@@ -69,6 +69,7 @@ import type {
   DangerouslyOverrideStatePayload,
   SettingsSetDebugAppLevelDrawerOpenedPayload,
   SettingsLastSeenDeviceLanguagePayload,
+  SettingsCompleteOnboardingPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -287,9 +288,11 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     },
   }),
 
-  [SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING]: state => ({
+  [SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING]: (state, action) => ({
     ...state,
-    hasCompletedOnboarding: true,
+    hasCompletedOnboarding: (
+      action as Action<SettingsCompleteOnboardingPayload>
+    ).payload.hasCompletedOnboarding,
   }),
 
   [SettingsActionTypes.SETTINGS_INSTALL_APP_FIRST_TIME]: (state, action) => ({

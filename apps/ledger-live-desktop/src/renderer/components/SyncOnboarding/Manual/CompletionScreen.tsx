@@ -21,9 +21,10 @@ const CompletionScreen = () => {
     dispatch(saveSettings({ hasCompletedOnboarding: true }));
     const timeout = setTimeout(
       () =>
-        handleInitPostOnboarding(device?.modelId || DeviceModelId.nanoX, false, () =>
-          history.push("/"),
-        ),
+        handleInitPostOnboarding({
+          deviceModelId: device?.modelId || DeviceModelId.nanoX,
+          fallbackIfNoAction: () => history.push("/"),
+        }),
       GO_TO_POSTONBOARDING_TIMEOUT,
     );
     return () => {

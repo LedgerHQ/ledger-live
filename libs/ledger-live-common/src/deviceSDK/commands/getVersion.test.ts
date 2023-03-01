@@ -54,8 +54,9 @@ test("isBootloaderVersionSupported", () => {
   /**
    * Stax
    * */
-  expect(isBootloaderVersionSupported("1.0.0", stax)).toBe(false);
-  expect(isBootloaderVersionSupported("1.0.0-whatever0", stax)).toBe(false);
+  expect(isBootloaderVersionSupported("0.9.0", stax)).toBe(false);
+  expect(isBootloaderVersionSupported("1.0.0", stax)).toBe(true);
+  expect(isBootloaderVersionSupported("1.0.0-whatever0", stax)).toBe(true);
 });
 
 test("isHardwareVersionSupported", () => {

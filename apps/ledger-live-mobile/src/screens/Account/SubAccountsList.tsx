@@ -146,10 +146,10 @@ export default function SubAccountsList({
                   values={{ currency: parentAccount.currency.family }}
                 >
                   <Text variant={"large"} fontWeight={"semiBold"}>
-                    text
+                    PLACEHOLDER_TEXT
                   </Text>
                   <Text variant={"large"} fontWeight={"semiBold"}>
-                    text
+                    PLACEHOLDER_TEXT
                   </Text>
                 </Trans>
               </Text>
