@@ -89,6 +89,7 @@ export type State = {
   itemProgress?: number;
   isLocked: boolean;
   skippedAppOps: SkippedAppOp[];
+  listedApps?: boolean;
 };
 
 export type AppState = State & {
@@ -184,11 +185,13 @@ const getInitialState = (
   request,
   currentAppOp: undefined,
   installQueue: [],
+  listedApps: false, // Nb maybe expose the result
   skippedAppOps: [],
   itemProgress: 0,
 });
 
 const reducer = (state: State, e: Event): State => {
+  console.log("event", e)
   switch (e.type) {
     case "unresponsiveDevice":
       return { ...state, unresponsive: true };
@@ -218,6 +221,7 @@ const reducer = (state: State, e: Event): State => {
       return {
         ...state,
         skippedAppOps: e.skippedAppOps,
+        installQueue: state.installQueue,
       };
     case "inline-install":
       return {
@@ -244,6 +248,7 @@ const reducer = (state: State, e: Event): State => {
         request: state.request,
         skippedAppOps: state.skippedAppOps,
         currentAppOp: e.currentAppOp,
+        listedApps: state.listedApps,
         itemProgress: e.itemProgress || 0,
         installQueue: e.installQueue || [],
       };
@@ -251,6 +256,7 @@ const reducer = (state: State, e: Event): State => {
     case "listing-apps":
       return {
         ...state,
+        listedApps: false,
         listingApps: true,
         unresponsive: false,
         isLocked: false,
@@ -335,6 +341,7 @@ const reducer = (state: State, e: Event): State => {
 
         request: state.request,
         skippedAppOps: state.skippedAppOps,
+        installQueue: state.installQueue,
       };
 
     case "device-permission-granted":
@@ -358,6 +365,8 @@ const reducer = (state: State, e: Event): State => {
 
         request: state.request,
         skippedAppOps: state.skippedAppOps,
+        installQueue: state.installQueue,
+        listedApps: state.listedApps,
       };
 
     case "app-not-installed":
@@ -386,6 +395,13 @@ const reducer = (state: State, e: Event): State => {
         skippedAppOps: state.skippedAppOps,
       };
 
+    case "listed-apps":
+      return {
+        ...state,
+        listedApps: true,
+        installQueue: e.installQueue,
+      };
+
     case "opened":
       return {
         requestQuitApp: false,
@@ -406,6 +422,7 @@ const reducer = (state: State, e: Event): State => {
 
         request: state.request,
         skippedAppOps: state.skippedAppOps,
+        listedApps: state.listedApps,
         displayUpgradeWarning:
           state.device && e.app
             ? shouldUpgrade(state.device.modelId, e.app.name, e.app.version)

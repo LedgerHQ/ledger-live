@@ -94,6 +94,10 @@ export type ConnectAppEvent =
       type: "listing-apps";
     }
   | {
+      type: "listed-apps";
+      installQueue: string[];
+    }
+  | {
       type: "dependencies-resolved";
     }
   | {

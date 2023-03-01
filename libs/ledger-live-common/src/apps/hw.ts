@@ -62,6 +62,10 @@ export type InlineAppInstallEvent =
       type: "listing-apps";
     }
   | {
+      type: "listed-apps";
+      installQueue: string[];
+    }
+  | {
       type: "device-permission-granted";
     }
   | {
@@ -157,6 +161,10 @@ export const inlineAppInstall = ({
 
           const exec = execWithTransport(transport);
           return concat(
+            of({
+              type: "listed-apps",
+              installQueue: state.installQueue,
+            }),
             maybeSkippedEvent,
             runAllWithProgress(state, exec).pipe(
               map(
