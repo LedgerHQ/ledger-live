@@ -16,7 +16,6 @@ import {
   fromAccountRaw,
   fromOperationRaw,
   fromSubAccountRaw,
-  fromTronResourcesRaw,
   fromCosmosResourcesRaw,
   fromBitcoinResourcesRaw,
   fromPolkadotResourcesRaw,
@@ -27,7 +26,6 @@ import {
   fromCeloResourcesRaw,
   fromAvalanchePChainResourcesRaw,
   fromNFTRaw,
-  toTronResourcesRaw,
   toCosmosResourcesRaw,
   toPolkadotResourcesRaw,
   toTezosResourcesRaw,
@@ -48,7 +46,6 @@ import { ElrondAccount, ElrondAccountRaw } from "./families/elrond/types";
 import { PolkadotAccount, PolkadotAccountRaw } from "./families/polkadot/types";
 import { SolanaAccount, SolanaAccountRaw } from "./families/solana/types";
 import { TezosAccount, TezosAccountRaw } from "./families/tezos/types";
-import { TronAccount, TronAccountRaw } from "./families/tron/types";
 import { CeloAccount, CeloAccountRaw } from "./families/celo/types";
 import {
   AvalanchePChainAccount,
@@ -305,25 +302,6 @@ export function patchAccount(
   //   OR
   //   - current account data is different
   switch (account.currency.family) {
-    case "tron":
-      {
-        const tronAcc = account as TronAccount;
-        const tronUpdatedRaw = updatedRaw as TronAccountRaw;
-        if (
-          tronUpdatedRaw.tronResources &&
-          (!tronAcc.tronResources ||
-            !areSameResources(
-              toTronResourcesRaw(tronAcc.tronResources),
-              tronUpdatedRaw.tronResources
-            ))
-        ) {
-          (next as TronAccount).tronResources = fromTronResourcesRaw(
-            tronUpdatedRaw.tronResources
-          );
-          changed = true;
-        }
-      }
-      break;
     case "cosmos": {
       const cosmosAcc = account as CosmosAccount;
       const cosmosUpdatedRaw = updatedRaw as CosmosAccountRaw;
