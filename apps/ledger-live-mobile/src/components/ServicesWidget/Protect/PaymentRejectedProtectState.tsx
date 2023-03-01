@@ -2,6 +2,7 @@ import { Tag } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Linking } from "react-native";
+import { urls } from "../../../config/urls";
 import Button from "../../Button";
 
 function PaymentRejectedProtectState({
@@ -13,18 +14,14 @@ function PaymentRejectedProtectState({
 
   const { editNowURI, viewDetailsURI } = params || {};
 
-  const source = "ledgerlive://myledger";
-
   const onEditNow = useCallback(() => {
-    Linking.canOpenURL(editNowURI).then(() =>
-      Linking.openURL(`${editNowURI}&source=${source}`),
-    );
+    const url = `${editNowURI}&source=${urls.recoverSources.myLedger}`;
+    Linking.canOpenURL(url).then(() => Linking.openURL(url));
   }, [editNowURI]);
 
   const onViewDetails = useCallback(() => {
-    Linking.canOpenURL(viewDetailsURI).then(() =>
-      Linking.openURL(`${viewDetailsURI}&source=${source}`),
-    );
+    const url = `${viewDetailsURI}&source=${urls.recoverSources.myLedger}`;
+    Linking.canOpenURL(url).then(() => Linking.openURL(url));
   }, [viewDetailsURI]);
 
   return (
