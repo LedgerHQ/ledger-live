@@ -1,5 +1,14 @@
 # @ledgerhq/live-cli
 
+## 22.6.5-nightly.4
+
+### Patch Changes
+
+- [#2791](https://github.com/LedgerHQ/ledger-live/pull/2791) [`9002e51d8b`](https://github.com/LedgerHQ/ledger-live/commit/9002e51d8b01b178f7d0ec12852bc6a768f6fd4e) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Blacklist Security Key app from version check
+
+- Updated dependencies [[`684c10d10a`](https://github.com/LedgerHQ/ledger-live/commit/684c10d10a51337e22b838e3ae6465721477c4de), [`0207d76b15`](https://github.com/LedgerHQ/ledger-live/commit/0207d76b15dca7128aea720b1663c58a12f42967), [`7daaa8f750`](https://github.com/LedgerHQ/ledger-live/commit/7daaa8f75029927459b8132befcd6a20b3ef8e17), [`f7f38ae801`](https://github.com/LedgerHQ/ledger-live/commit/f7f38ae801c7f78c04cf776e7fdab63d7cfb77d4)]:
+  - @ledgerhq/live-common@29.0.0-nightly.4
+
 ## 22.6.5-nightly.3
 
 ### Patch Changes
