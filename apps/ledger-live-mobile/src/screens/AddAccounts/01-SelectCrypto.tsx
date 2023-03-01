@@ -74,7 +74,17 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       avalanche_c_chain: avaxCChain,
       avalanchepchain: avaxPChain,
     }),
-    [osmo, fantom, moonbeam, cronos, songbird, flare, near, avaxCChain],
+    [
+      osmo,
+      fantom,
+      moonbeam,
+      cronos,
+      songbird,
+      flare,
+      near,
+      avaxCChain,
+      avaxPChain,
+    ],
   );
 
   const cryptoCurrencies = useMemo(() => {
