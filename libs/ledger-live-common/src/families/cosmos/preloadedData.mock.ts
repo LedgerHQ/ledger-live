@@ -630,7 +630,7 @@ const data: CosmosPreloadData = {
       estimatedYearlyRewardsRate: 0,
     },
     {
-      validatorAddress: "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
+      validatorAddress: LEDGER_VALIDATOR_ADDRESS,
       name: "Ledger",
       tokens: 1465639218435,
       votingPower: 0,
@@ -1403,6 +1403,14 @@ const data: CosmosPreloadData = {
       tokens: 448761484035,
       votingPower: 0,
       commission: 0,
+      estimatedYearlyRewardsRate: 0,
+    },
+    {
+      validatorAddress: "cosmosvaloper1mykn77lkynl8fkwvl9tqg369u0zajzzcdhkptq",
+      tokens: 90061196918,
+      votingPower: 90061196918 / (0.7202 * 254624972017526),
+      name: "Nodeasy.com",
+      commission: 0.1,
       estimatedYearlyRewardsRate: 0,
     },
   ],

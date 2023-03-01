@@ -21,7 +21,7 @@ export const AccountStakeBanner: React.FC<{
       case "cosmos":
       case "osmo":
         return (
-          <CosmosStakeBanner account={account as CosmosAccount} parenAccount={parentAccount} />
+          <CosmosStakeBanner account={account as CosmosAccount} parentAccount={parentAccount} />
         );
       case "solana":
         return <SolanaStakeBanner account={account} />;
