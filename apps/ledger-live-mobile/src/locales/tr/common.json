@@ -87,7 +87,8 @@
     "popular" : "popüler",
     "getSupport" : "Destek alın",
     "comingSoon" : "Çok yakında",
-    "restart" : "Yeniden Başlat"
+    "restart" : "Yeniden Başlat",
+    "loadMore" : "Daha fazlasını yükle"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -549,7 +550,7 @@
       "description" : "İşlemlerin 30 saniye içinde imzalanması gerekir. Lütfen tekrar deneyin."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Yeterince Enerji mevcut değil. Ağ ücreti 50TRX tutarına ulaşabilir."
+      "title" : "Enerji yetersiz. Ağ ücreti 50 TRX tutarına ulaşabilir."
     },
     "UpdateYourApp" : {
       "title" : "Uygulama güncellemesi gerekiyor",
@@ -811,6 +812,13 @@
       "title" : "Cihazınız kilitlendi",
       "description" : "Cihazınızın kilidini açın ve tekrar deneyin.",
       "descriptionWithProductName" : "{{ productName }} cihazınızın kilidini açın ve tekrar deneyin."
+    },
+    "EtherscanAPIError" : {
+      "title" : "İşlemler alınamadı",
+      "description" : "Tarayıcılarla ilgili beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin"
+    },
+    "GasEstimationError" : {
+      "title" : "Tahmini Gas ücreti hesaplanamadı"
     }
   },
   "crash" : {
@@ -1117,6 +1125,10 @@
       "learn" : {
         "title" : "Öğrenin",
         "desc" : "Kripto, Web 3.0, dijital güvenlik ve diğer konular hakkında bilgi edinin"
+      },
+      "news" : {
+        "title" : "Haberler",
+        "desc" : "Kripto, güvenlik ve Web 3.0 hakkında daha fazla bilgi edinin ve son haberleri öğrenin"
       },
       "ledgerApps" : {
         "title" : "Uygulamalar",
@@ -1653,6 +1665,10 @@
             "label" : "Nano X'inizin tespit edilip edilmediğini kontrol edin."
           }
         }
+      },
+      "protectConnectionInformationModal" : {
+        "title" : "Ledger cihazımı neden bağlayamıyorum?",
+        "description" : "Ledger cihazınızda Bluetooth'u etkinleştirdikten sonra Ledger Live Mobile uygulamasına bağlanmada sorun yaşıyorsanız aşağıdaki \"Bu sorunu nasıl düzelteceğinizi öğrenin\" düğmesine dokunarak gösterilen yönergeleri uygulayabilirsiniz"
       }
     },
     "stepImportAccounts" : {
@@ -2495,7 +2511,9 @@
         "bullet2" : "Ledger Live sürümü, işletim sistemi bölgesi, dil ve bölge"
       },
       "hideEmptyTokenAccounts" : "Boş token hesaplarını gizle",
-      "hideEmptyTokenAccountsDesc" : "Varlıklar sayfasındaki tüm boş token hesapları gizlenecek."
+      "hideEmptyTokenAccountsDesc" : "Varlıklar sayfasındaki tüm boş token hesapları gizlenecek.",
+      "filterTokenOperationsZeroAmount" : "Değeri 0 olan token işlemlerini gizle",
+      "filterTokenOperationsZeroAmountDesc" : "Değer içermeyen token işlemlerini gizleyerek Ethereum, Polygon, BSC ve Tron ağlarındaki bazı potansiyel adres zehirleme saldırılarını önleyebilirsiniz."
     },
     "currencies" : {
       "header" : "Para Birimleri",
@@ -3298,6 +3316,10 @@
           }
         }
       }
+    },
+    "walletConnect" : {
+      "title" : "WalletConnect",
+      "description" : "Cüzdanınızı dApp'lere bağlayın"
     }
   },
   "signMessage" : {
@@ -6077,5 +6099,10 @@
         "emptyPassword" : "Parola alanı boş bırakılamaz"
       }
     }
+  },
+  "newsfeed" : {
+    "title" : "Haber akışı",
+    "poweredByCryptopanic" : "Cryptopanic desteğiyle",
+    "noPosts" : "Yeni içerik mevcut değil"
   }
 }
