@@ -7,7 +7,7 @@ import { FlatList } from "react-native";
 import { isEqual } from "lodash";
 
 import { orderedVisibleNftsSelector } from "../../reducers/accounts";
-import NftListItem from "../../components/Nft/NftListItem";
+import NftListItem from "../../components/Nft/NftGallery/NftListItem";
 import NftGalleryEmptyState from "../Nft/NftGallery/NftGalleryEmptyState";
 import { NavigatorName, ScreenName } from "../../const";
 import {

@@ -7,10 +7,10 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { BackHandler } from "react-native";
-import { hideNftCollection } from "../../actions/settings";
-import { track } from "../../analytics";
-import { NavigatorName, ScreenName } from "../../const";
-import { updateMainNavigatorVisibility } from "../../actions/appstate";
+import { hideNftCollection } from "../../../actions/settings";
+import { track } from "../../../analytics";
+import { NavigatorName, ScreenName } from "../../../const";
+import { updateMainNavigatorVisibility } from "../../../actions/appstate";
 
 const TOAST_ID = "SUCCESS_HIDE";
 

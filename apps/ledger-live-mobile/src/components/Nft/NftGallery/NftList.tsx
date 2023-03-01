@@ -8,11 +8,11 @@ import styled, { useTheme } from "styled-components/native";
 import Animated, { FadeInDown, FadeOutDown } from "react-native-reanimated";
 import NftListItem from "./NftListItem";
 import { AddNewItem } from "./AddNewItemList";
-import CollapsibleHeaderFlatList from "../WalletTab/CollapsibleHeaderFlatList";
-import globalSyncRefreshControl from "../globalSyncRefreshControl";
-import { TrackScreen } from "../../analytics";
+import CollapsibleHeaderFlatList from "../../WalletTab/CollapsibleHeaderFlatList";
+import globalSyncRefreshControl from "../../globalSyncRefreshControl";
+import { TrackScreen } from "../../../analytics";
 import { useNftList } from "./NftList.hook";
-import BackgroundGradient from "../TabBar/BackgroundGradient";
+import BackgroundGradient from "../../TabBar/BackgroundGradient";
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl<
   FlatListProps<ProtoNFT>
