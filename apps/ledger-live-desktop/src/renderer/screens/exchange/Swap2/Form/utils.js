@@ -22,16 +22,18 @@ const isValidUrl = urlString => {
 // real: https://app.1inch.io/#/1/simple/swap/usdt/shib?ledgerLive=true&sourceTokenAmount=24.6
 
 export const getCustomDappUrl = ({ provider, providerURL = "" }) => {
+  // To support when bk apply set the complete URL
+  if (isValidUrl(providerURL)) {
+    return providerURL;
+  }
   const dappUrl =
     provider === "paraswap"
       ? "https://embedded.paraswap.io/?referrer=ledger2&embed=true&enableStaking=false&displayMenu=false&enableNetworkSwitch=false"
       : "https://app.1inch.io/?ledgerLive=true";
-  const oldDappUrl = dappUrl;
-  const isValidOldUrl = isValidUrl(oldDappUrl);
   const newUrl = `https://www.prefix.com/${providerURL}`;
   const isValidNewdUrl = isValidUrl(newUrl);
-  if (isValidOldUrl && isValidNewdUrl) {
-    const { origin, search } = new URL(oldDappUrl);
+  if (isValidNewdUrl) {
+    const { origin, search } = new URL(dappUrl);
     const { hash: fragment, searchParams } = new URL(newUrl);
     const [realFragment, query] = fragment.split("?");
     const urlSearchParams = new URLSearchParams(query);
