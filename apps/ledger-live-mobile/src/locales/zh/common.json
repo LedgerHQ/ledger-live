@@ -88,7 +88,11 @@
     "getSupport" : "获取支持",
     "comingSoon" : "敬请期待",
     "restart" : "重新启动",
-    "loadMore" : "加载更多"
+    "loadMore" : "加载更多",
+    "patterns" : {
+      "id" : "ID {{ value }}",
+      "times" : "x{{ value }}"
+    }
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -1279,8 +1283,13 @@
       },
       "recovery" : "已经有了恢复短语？",
       "protect" : {
-        "label" : "约 60 分钟",
-        "subTitle" : "使用 Protect 重置"
+        "subTitle" : "使用 Ledger Recover 恢复",
+        "drawer" : {
+          "title" : "Use Ledger Nano X",
+          "desc" : "Ledger Recover 软启动专用于 Ledger Nano X",
+          "buyNanoX" : "购买 Ledger Nano X",
+          "discoverBenefits" : "了解优势"
+        }
       }
     },
     "stepNewDevice" : {
@@ -1507,25 +1516,20 @@
     "stepProtect" : {
       "bullets" : {
         "0" : {
-          "title" : "浏览 ",
-          "label" : "阅读屏幕上的说明，了解如何使用您的设备。"
+          "title" : "选择“Restore”（重置）",
+          "label" : "同时按下两个按钮进行选择。"
         },
         "1" : {
-          "title" : "选择“Restore”（重置）",
-          "label" : "同时按下两个按钮以激活该选项。"
-        },
-        "2" : {
-          "title" : "选择“Restore with Protect”（使用 Protect 重置）模式",
-          "label" : "同时按下两个按钮以激活该选项。"
+          "title" : "选择“使用 Ledger Recover 恢复”",
+          "label" : "同时按下两个按钮进行选择。"
         }
       },
       "nextStep" : "继续",
       "extraInfo" : {
-        "tooltip" : "在我的 Ledger 上看不到它",
-        "title" : "为什么我在 Ledger 上看不到 Restore with Protect（使用 Protect 重置）？",
-        "desc1" : "最有可能的原因是您的设备与 Protect 不兼容。别担心，我们会指导您如何解决此问题。",
-        "desc2" : "请联系我们，选择“My Ledger doesn't display Restore with Protect”（我的 Ledger 不显示使用 Protect 重置），我们会为您提供支持。",
-        "cta" : "完成手动步骤",
+        "tooltip" : "我没看到“使用 Ledger Recover 恢复”",
+        "title" : "Ledger Nano X 的操作系统需要更新",
+        "desc" : "您可以尝试更新操作系统或联系 Ledger 客服寻求帮助。",
+        "cta" : "了解如何更新",
         "supportLink" : "联系 Ledger 客服"
       }
     },
@@ -1667,8 +1671,9 @@
         }
       },
       "protectConnectionInformationModal" : {
-        "title" : "为什么无法连接我的 Ledger 设备？",
-        "description" : "如果您在 Ledger 设备上启用蓝牙后，连接 Ledger Live 手机应用程序时遇到了问题，您可以点按下方的 “Learn how to fix that”（了解如何修复此问题）按钮，按以下说明操作"
+        "title" : "Ledger Nano X connection",
+        "description" : "Make sure your Ledger is close to your phone and try again. <LinkBluethooth>Bluetooth® connection issues \n</LinkBluethooth>.\nIf Bluetooth® is working, you might need to update Ledger’s OS. Try updating the OS, or contact Ledger Support for assistance. ",
+        "learnHowToUpdate" : "了解如何更新"
       }
     },
     "stepImportAccounts" : {
@@ -5446,6 +5451,7 @@
     "warnDelegation" : "将您的投票权委托出去并不能保证从您的验证者获得任何奖励。",
     "to" : "到",
     "from" : "从",
+    "yield" : "Est. Yield",
     "forAnEstYield" : "以获得预估收益",
     "yieldPerYear" : "{{yield}} / 年",
     "yieldInfos" : "收益率提供方",
@@ -5573,6 +5579,7 @@
     "cta" : "继续"
   },
   "exchange" : {
+    "count" : "+ {{count}} more",
     "buy" : {
       "screenTitle" : "买入加密货币",
       "tabTitle" : "买入",
@@ -6026,22 +6033,10 @@
       "status" : {
         "new" : {
           "title" : "新",
-          "desc" : "备份您的恢复短语",
-          "0" : {
-            "title" : "受到数百万 Ledger 用户的信赖"
-          },
-          "1" : {
-            "title" : "您的恢复短语与您的身份安全关联"
-          },
-          "2" : {
-            "title" : "最先进的加密技术"
-          },
-          "3" : {
-            "title" : "分成 3 个去中心化的部分，因此您的恢复短语绝不会被窃取"
-          },
+          "desc" : "不用秘密恢复短语即可恢复钱包访问权限。",
           "actions" : {
-            "learnMore" : "了解更多",
-            "alreadySubscribed" : "已经订阅了\"Protect\"保护？"
+            "learnMore" : "这对我有什么好处？",
+            "alreadySubscribed" : "已订阅？<LinkAccount>查看我的账户</LinkAccount>"
           }
         },
         "confirmIdentity" : {
@@ -6104,5 +6099,8 @@
     "title" : "新闻摘要",
     "poweredByCryptopanic" : "由 Cryptopanic 提供支持",
     "noPosts" : "当前无可阅览内容"
+  },
+  "deviceConnect" : {
+    "title" : "连接设备"
   }
 }
