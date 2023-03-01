@@ -22,3 +22,9 @@ const updateProtectStatusAction = createAction<ProtectStatusPayload>(
 export const updateProtectStatus = (protectStatus: ProtectStateNumberEnum) => {
   return updateProtectStatusAction({ protectStatus });
 };
+
+const resetProtectStateAction = createAction(ProtectActionTypes.RESET_STATE);
+
+export const resetProtectState = () => {
+  return resetProtectStateAction();
+};

@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Flex, Icons, Text, Button } from "@ledgerhq/native-ui";
+import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,6 +8,7 @@ import { hidePostOnboardingWalletEntryPoint } from "@ledgerhq/live-common/postOn
 import { postOnboardingDeviceModelIdSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { useNavigateToPostOnboardingHubCallback } from "../../logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
 import Touchable from "../Touchable";
+import Button from "../wrappedUi/Button";
 
 const PostOnboardingEntryPointCard: React.FC<Record<string, never>> = () => {
   const { t } = useTranslation();
@@ -48,7 +49,14 @@ const PostOnboardingEntryPointCard: React.FC<Record<string, never>> = () => {
         >
           {t("postOnboarding.entryPointCard.description", { productName })}
         </Text>
-        <Button alignSelf="stretch" type="main" outline onPress={openHub}>
+        <Button
+          alignSelf="stretch"
+          type="main"
+          outline
+          onPress={() => openHub()}
+          event="button_clicked"
+          eventProperties={{ button: "Access" }}
+        >
           {t("postOnboarding.entryPointCard.buttonLabel")}
         </Button>
       </Flex>

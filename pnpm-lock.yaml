@@ -13,6 +13,12 @@ overrides:
   remove-flow-types-loader>loader-utils: '*'
 
 patchedDependencies:
+  react-native-video@5.2.0:
+    hash: lojvl6twgoj4rxeqeytmq4uduq
+    path: patches/react-native-video@5.2.0.patch
+  react-native-os@1.2.6:
+    hash: 2e25ffb547hjiczrnsjhxl6geu
+    path: patches/react-native-os@1.2.6.patch
   react-native-image-crop-tools@1.6.2:
     hash: ykxjy5s7xujdxmsgrwxo5mh3y4
     path: patches/react-native-image-crop-tools@1.6.2.patch
@@ -22,12 +28,6 @@ patchedDependencies:
   react-native-tcp@4.0.0:
     hash: frdjcnsdohx4blxdmaawwvdihy
     path: patches/react-native-tcp@4.0.0.patch
-  react-native-os@1.2.6:
-    hash: 2e25ffb547hjiczrnsjhxl6geu
-    path: patches/react-native-os@1.2.6.patch
-  react-native-video@5.2.0:
-    hash: lojvl6twgoj4rxeqeytmq4uduq
-    path: patches/react-native-video@5.2.0.patch
   rn-fetch-blob@0.12.0:
     hash: n5yzdsrxz654upecs5xliebtmm
     path: patches/rn-fetch-blob@0.12.0.patch
@@ -686,6 +686,7 @@ importers:
       eslint-find-rules: ^3.6.1
       eslint-import-resolver-typescript: ^3.5.1
       eslint-plugin-detox: ^1.0.0
+      eslint-plugin-i18next: 6.0.0-6
       eslint-plugin-import: ^2.26.0
       eslint-plugin-json: ^3.1.0
       eslint-plugin-jsx-a11y: ^6.6.1
@@ -989,6 +990,7 @@ importers:
       eslint-find-rules: 3.6.1_eslint@7.32.0
       eslint-import-resolver-typescript: 3.5.2_hpmu7kn6tcn2vnxpfzvv33bxmy
       eslint-plugin-detox: 1.0.0
+      eslint-plugin-i18next: 6.0.0-6
       eslint-plugin-import: 2.26.0_ymzqyjxdu7ir24gg3vejmyl6la
       eslint-plugin-json: 3.1.0
       eslint-plugin-jsx-a11y: 6.6.1_eslint@7.32.0
@@ -14262,7 +14264,7 @@ packages:
       '@babel/runtime': 7.20.13
       '@polkadot/ui-shared': 2.11.1_5aiqcisuhlfhaktqmynzmrayma
       '@polkadot/util': 10.3.1
-      '@polkadot/util-crypto': 10.3.1_@polkadot+util@10.3.1
+      '@polkadot/util-crypto': 10.3.1
       react: 17.0.2
       react-native: 0.68.5_qiqqwmyv63yhnuboofexv3s7x4
       react-native-svg: 12.5.1_ondxtwf5lqq5g76dzmsmwamaca
@@ -14340,8 +14342,25 @@ packages:
     dependencies:
       '@babel/runtime': 7.20.13
       '@polkadot/util': 10.3.1
-      '@polkadot/util-crypto': 10.3.1_@polkadot+util@10.3.1
+      '@polkadot/util-crypto': 10.3.1
       color: 3.2.1
+    dev: false
+
+  /@polkadot/util-crypto/10.3.1:
+    resolution: {integrity: sha512-viqLMuNGrbB2lyDIYdXAl3tq/Em/Y7ql2FvCTHJmxXaB5C1NXiWf1SqFAahUJKohL+ke5IL0jr19wZu/f88lIQ==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@babel/runtime': 7.20.13
+      '@noble/hashes': 1.1.5
+      '@noble/secp256k1': 1.7.1
+      '@polkadot/networks': 10.3.1
+      '@polkadot/util': 10.3.1
+      '@polkadot/wasm-crypto': 6.4.1_hmowrubltiyg4mpvtnqaaplyfm
+      '@polkadot/x-bigint': 10.3.1
+      '@polkadot/x-randomvalues': 10.3.1
+      '@scure/base': 1.1.1
+      ed2curve: 0.3.0
+      tweetnacl: 1.0.3
     dev: false
 
   /@polkadot/util-crypto/10.3.1_@polkadot+util@10.3.1:
@@ -23858,7 +23877,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5_fane7jikarojcev26y27hpbhu4
+      styled-components: 5.3.5_ovpqj5wn7dv5iunpkty63trwiy
 
   /babel-plugin-syntax-jsx/6.18.0:
     resolution: {integrity: sha1-CvMqmm4Tyno/1QaeYtew9Y0NiUY=}
@@ -30097,6 +30116,14 @@ packages:
       lodash: 4.17.21
       string-natural-compare: 3.0.1
     dev: false
+
+  /eslint-plugin-i18next/6.0.0-6:
+    resolution: {integrity: sha512-Wl9Ko3AUORoOXm8Gve8BlfasT2dyIcDu1WgPUpLK3G6D/CDDOH33mF5Nd+TThkRVFKIoFY8QObZtnmn9jf9qxA==}
+    engines: {node: '>=0.10.0'}
+    dependencies:
+      lodash: 4.17.21
+      requireindex: 1.1.0
+    dev: true
 
   /eslint-plugin-import/2.20.1_tbglwmj7t2rhd43mvxmptakoay:
     resolution: {integrity: sha512-qQHgFOTjguR+LnYRoToeZWT62XM55MBVXObHM6SKFd1VzDcX/vqT1kAz8ssqigh5eMj8qXcRoXXGZpPP6RfdCw==}
@@ -37799,6 +37826,7 @@ packages:
       fsevents: 2.3.2
     transitivePeerDependencies:
       - metro
+    dev: true
 
   /jest-haste-map/28.1.3_metro@0.67.0:
     resolution: {integrity: sha512-3S+RQWDXccXDKSWnkHa/dPwt+2qwA8CJzR61w3FoYCvoo3Pn8tvGcysmMF0Bj0EX5RYvAI2EIvC57OmotfdtKA==}
@@ -38091,7 +38119,7 @@ packages:
       jest-resolve:
         optional: true
     dependencies:
-      jest-resolve: 28.1.3
+      jest-resolve: 28.1.3_metro@0.67.0
 
   /jest-regex-util/24.9.0:
     resolution: {integrity: sha512-05Cmb6CuxaA+Ys6fjr3PhvV3bGQmO+2p2La4hFbU+W5uOc479f7FdLXUWXw4pYMAhhSZIuKHwSXSu6CsSBAXQA==}
@@ -38200,6 +38228,7 @@ packages:
       slash: 3.0.0
     transitivePeerDependencies:
       - metro
+    dev: true
 
   /jest-resolve/28.1.3_metro@0.67.0:
     resolution: {integrity: sha512-Z1W3tTjE6QaNI90qo/BJpfnvpxtaFTFw5CDgwpyE/Kz8U/06N1Hjf4ia9quUhCh39qIGWF1ZuxFiBiJQwSEYKQ==}
@@ -51641,7 +51670,6 @@ packages:
       react-is: 17.0.2
       shallowequal: 1.1.0
       supports-color: 5.5.0
-    dev: false
 
   /styled-system/5.1.5:
     resolution: {integrity: sha512-7VoD0o2R3RKzOzPK0jYrVnS8iJdfkKsQJNiLRDjikOpQVqQHns/DXWaPZOH4tIKkhAT7I6wIsy9FWTWh2X3q+A==}
