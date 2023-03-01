@@ -153,7 +153,7 @@ const WebPlatformTopBar = ({
         const url = webview.getURL();
         const manifestHostname = new URL(manifest.url).hostname;
         const isOriginUrl = url.includes(manifestHostname);
-        if (isOriginUrl) lastLiveAppURL.current = url;
+        if (isOriginUrl) lastLiveAppURL.current = url; // WARN: last LiveApp URL can't auto redirect to an external URL. If so this will create a loop when navigating back.
         setIsLiveAppURL(isOriginUrl);
       }
       setCanGoBack(webview.canGoBack());
