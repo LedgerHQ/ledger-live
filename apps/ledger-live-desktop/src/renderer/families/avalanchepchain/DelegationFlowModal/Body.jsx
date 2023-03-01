@@ -131,7 +131,7 @@ const Body = ({
 
     const transaction = bridge.updateTransaction(bridge.createTransaction(account), {
       mode: "delegate",
-      recipient: FIGMENT_AVALANCHE_VALIDATOR_NODES[0]
+      recipient: FIGMENT_AVALANCHE_VALIDATOR_NODES[0],
     });
 
     return { account, parentAccount: undefined, transaction };
