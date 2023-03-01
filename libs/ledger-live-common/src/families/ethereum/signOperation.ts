@@ -125,13 +125,17 @@ export const signOperation = ({
 
               log("rawtx", txHex);
 
+              const eth = new Eth(transport);
+
+              const challenge = await eth.getChallenge();
+              console.log(challenge);
               const resolution = await ethLedgerServices.resolveTransaction(
                 txHex,
                 loadConfig,
-                resolutionConfig
+                resolutionConfig,
+                challenge
               );
 
-              const eth = new Eth(transport);
               eth.setLoadConfig(loadConfig);
 
               // FIXME this part is still required for compound to correctly display info on the device

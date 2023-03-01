@@ -16,6 +16,7 @@ import {
   nftSelectors,
   mergeResolutions,
 } from "../../utils";
+import { fetchENSPayload } from "./ens";
 
 type potentialResolutions = {
   token: boolean | undefined;
@@ -115,6 +116,9 @@ const loadNanoAppPlugins = async (
     plugin: [],
     nfts: [],
     erc20Tokens: [],
+    domaineName: {
+      signedPayload: "",
+    },
   };
 
   if (shouldResolve.nft) {
@@ -189,7 +193,13 @@ const loadNanoAppPlugins = async (
 };
 
 const ledgerService: LedgerEthTransactionService = {
-  resolveTransaction: async (rawTxHex, loadConfig, resolutionConfig) => {
+  resolveTransaction: async (
+    rawTxHex,
+    loadConfig,
+    resolutionConfig,
+    challenge,
+    registry = "ens"
+  ) => {
     const rawTx = Buffer.from(rawTxHex, "hex");
     const { decodedTx, chainIdTruncated } = decodeTxInfo(rawTx);
 
@@ -223,7 +233,17 @@ const ledgerService: LedgerEthTransactionService = {
       );
     }
 
-    return mergeResolutions(pluginsResolution, contractResolution);
+    const signedPayload = await fetchENSPayload(
+      registry,
+      contractAddress,
+      loadConfig,
+      challenge
+    );
+
+    const resolution = mergeResolutions(pluginsResolution, contractResolution);
+    resolution.domaineName = { signedPayload };
+
+    return resolution;
   },
 };
 

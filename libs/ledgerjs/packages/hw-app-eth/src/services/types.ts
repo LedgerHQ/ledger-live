@@ -1,3 +1,5 @@
+import { Registry } from "./ledger/ens";
+
 export type LedgerEthTransactionResolution = {
   // device serialized data that contains ERC20 data (hex format)
   erc20Tokens: Array<string>;
@@ -7,6 +9,10 @@ export type LedgerEthTransactionResolution = {
   externalPlugin: Array<{ payload: string; signature: string }>;
   // device serialized data that contains plugin data (hex format)
   plugin: Array<string>;
+  // Domain name resolution data
+  domaineName: {
+    signedPayload: string;
+  };
 };
 
 export type LoadConfig = {
@@ -19,6 +25,8 @@ export type LoadConfig = {
   // object will be merged with the returned value of the Ledger cdn payload
   extraPlugins?: any | null;
   cryptoassetsBaseURL?: string | null;
+  // ENS base URL
+  domainNameBaseURL?: string;
 };
 
 /**
@@ -38,6 +46,8 @@ export type LedgerEthTransactionService = {
   resolveTransaction: (
     rawTxHex: string,
     loadConfig: LoadConfig,
-    resolutionConfig: ResolutionConfig
+    resolutionConfig: ResolutionConfig,
+    challenge?: string,
+    registry?: Registry
   ) => Promise<LedgerEthTransactionResolution>;
 };

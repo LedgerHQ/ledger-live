@@ -74,6 +74,7 @@ export const signOperation: AccountBridge<EvmTransaction>["signOperation"] = ({
             account,
             transaction
           );
+
           const serializedTxHexString = getSerializedTransaction(
             account,
             preparedTransaction
@@ -81,6 +82,9 @@ export const signOperation: AccountBridge<EvmTransaction>["signOperation"] = ({
 
           // Instanciate Eth app bindings
           const eth = new Eth(transport);
+
+          const challenge = await eth.getChallenge();
+          console.log(challenge);
           // Look for resolutions for external plugins and ERC20
           const resolution = await ledgerService.resolveTransaction(
             serializedTxHexString,
@@ -88,7 +92,8 @@ export const signOperation: AccountBridge<EvmTransaction>["signOperation"] = ({
             {
               externalPlugins: true,
               erc20: true,
-            }
+            },
+            challenge
           );
           // Request signature on the nano
           const sig = await eth.signTransaction(

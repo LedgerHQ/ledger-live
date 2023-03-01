@@ -41,6 +41,7 @@ export type StarkQuantizationType =
   | "erc721"
   | "erc20mintable"
   | "erc721mintable";
+
 const starkQuantizationTypeMap = {
   eth: 1,
   erc20: 2,
@@ -48,6 +49,8 @@ const starkQuantizationTypeMap = {
   erc20mintable: 4,
   erc721mintable: 5,
 };
+
+const MAX_CHUNK_SIZE = 150; // bytes
 
 const remapTransactionRelatedErrors = (e) => {
   if (e && e.statusCode === 0x6a80) {
@@ -220,18 +223,24 @@ export default class Eth {
       for (const plugin of resolution.plugin) {
         await setPlugin(this.transport, plugin);
       }
+
       for (const { payload, signature } of resolution.externalPlugin) {
         await setExternalPlugin(this.transport, payload, signature);
       }
+
       for (const nft of resolution.nfts) {
         await provideNFTInformation(this.transport, Buffer.from(nft, "hex"));
       }
+
       for (const data of resolution.erc20Tokens) {
         await provideERC20TokenInformation(
           this.transport,
           Buffer.from(data, "hex")
         );
       }
+
+      const { signedPayload } = resolution.domaineName;
+      await this.provideTrustedName(signedPayload);
     }
 
     const rawTx = Buffer.from(rawTxHex, "hex");
@@ -239,11 +248,13 @@ export default class Eth {
       decodeTxInfo(rawTx);
 
     const paths = splitPath(path);
-    let response;
+    let response: Buffer | undefined;
     let offset = 0;
     while (offset !== rawTx.length) {
       const first = offset === 0;
-      const maxChunkSize = first ? 150 - 1 - paths.length * 4 : 150;
+      const maxChunkSize = first
+        ? MAX_CHUNK_SIZE - 1 - paths.length * 4
+        : MAX_CHUNK_SIZE;
       let chunkSize =
         offset + maxChunkSize > rawTx.length
           ? rawTx.length - offset
@@ -268,6 +279,7 @@ export default class Eth {
         rawTx.copy(buffer, 0, offset, offset + chunkSize);
       }
 
+      /** @doc https://github.com/LedgerHQ/app-ethereum/blob/feature/apa/ens/doc/ethapp.adoc#sign-eth-transaction */
       response = await this.transport
         .send(0xe0, 0x04, first ? 0x00 : 0x80, 0x00, buffer)
         .catch((e) => {
@@ -277,7 +289,7 @@ export default class Eth {
       offset += chunkSize;
     }
 
-    const response_byte: number = response[0];
+    const response_byte: number = response![0];
     let v = "";
 
     if (chainId.times(2).plus(35).plus(1).isGreaterThan(255)) {
@@ -301,8 +313,9 @@ export default class Eth {
       v = "0" + v;
     }
 
-    const r = response.slice(1, 1 + 32).toString("hex");
-    const s = response.slice(1 + 32, 1 + 32 + 32).toString("hex");
+    const r = response!.slice(1, 1 + 32).toString("hex");
+    const s = response!.slice(1 + 32, 1 + 32 + 32).toString("hex");
+
     return { v, r, s };
   }
 
@@ -324,6 +337,43 @@ export default class Eth {
         version: "" + response[1] + "." + response[2] + "." + response[3],
       };
     });
+  }
+
+  /**
+   * The challenge has to be sent to the backend when requesting for ???
+   * @returns a random 32-bit long value
+   * @doc https://github.com/LedgerHQ/app-ethereum/blob/feature/apa/ens/doc/ethapp.adoc#get-challenge
+   */
+  async getChallenge(): Promise<string> {
+    try {
+      const challenge = await this.transport.send(0xe0, 0x20, 0x0, 0x0);
+      return challenge.toString("hex");
+    } catch (err) {
+      throw remapTransactionRelatedErrors(err);
+    }
+  }
+
+  /**
+   * @returns void
+   * @doc https://github.com/LedgerHQ/app-ethereum/blob/feature/apa/ens/doc/ethapp.adoc#provide-trusted-name
+   */
+  async provideTrustedName(signedPayload: string): Promise<void> {
+    try {
+      const bufferedPayload = Buffer.from(signedPayload);
+      let offset = 0;
+      const firstChunkLength = 2;
+      const chunk = bufferedPayload.slice(0, firstChunkLength);
+      offset += firstChunkLength;
+      await this.transport.send(0xe0, 0x22, 0x1, 0x0, chunk);
+
+      while (offset < bufferedPayload.length) {
+        const chunk = bufferedPayload.slice(offset, offset + MAX_CHUNK_SIZE);
+        offset += MAX_CHUNK_SIZE;
+        await this.transport.send(0xe0, 0x22, 0x0, 0x0, chunk);
+      }
+    } catch (err) {
+      throw remapTransactionRelatedErrors(err);
+    }
   }
 
   /**
@@ -352,7 +402,10 @@ export default class Eth {
     let response;
 
     while (offset !== message.length) {
-      const maxChunkSize = offset === 0 ? 150 - 1 - paths.length * 4 - 4 : 150;
+      const maxChunkSize =
+        offset === 0
+          ? MAX_CHUNK_SIZE - 1 - paths.length * 4 - 4
+          : MAX_CHUNK_SIZE;
       const chunkSize =
         offset + maxChunkSize > message.length
           ? message.length - offset

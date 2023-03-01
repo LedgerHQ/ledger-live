@@ -159,6 +159,9 @@ export const mergeResolutions = (
     erc20Tokens: [],
     externalPlugin: [],
     plugin: [],
+    domaineName: {
+      signedPayload: "",
+    },
   };
 
   for (const key in oldResolution) {
