@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from "react";
-import { Button, Flex, Icons, Drawer, Radio, Divider, Text } from "@ledgerhq/react-ui";
+import { Button, Flex, Icons, Radio, Divider, Text } from "@ledgerhq/react-ui";
 import { DeviceInfo, Language } from "@ledgerhq/types-live";
 import { track } from "~/renderer/analytics/segment";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
@@ -7,31 +7,28 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTranslation } from "react-i18next";
 import ChangeDeviceLanguageAction from "~/renderer/components/ChangeDeviceLanguageAction";
+import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   deviceInfo: DeviceInfo;
-  onSuccess: () => void;
+  onSuccess: (selectedLanguage: Language) => void;
   onError: (error: Error) => void;
-  selectedLanguage: Language;
   currentLanguage: Language;
-  onSelectLanguage: (language: Language) => void;
   device: Device;
 };
 
 const DeviceLanguageInstallation: React.FC<Props> = ({
-  isOpen,
   onClose,
   deviceInfo,
   device,
-  selectedLanguage,
-  onSelectLanguage,
   onError,
   currentLanguage,
   onSuccess,
 }: Props) => {
   const { availableLanguages } = useAvailableLanguagesForDevice(deviceInfo);
+  const [selectedLanguage, setSelectedLanguage] = useState<Language>(currentLanguage);
   const { t } = useTranslation();
 
   const sortedAvailableLanguages = useMemo(
@@ -54,8 +51,8 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
   }, [onClose, setInstalling]);
 
   const onChange = useCallback(
-    (radioValue?: string | string[] | number) => onSelectLanguage(radioValue as Language),
-    [onSelectLanguage],
+    (radioValue?: string | string[] | number) => setSelectedLanguage(radioValue as Language),
+    [setSelectedLanguage],
   );
 
   const onInstall = useCallback(() => {
@@ -66,25 +63,30 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
   const deviceName = getDeviceModel(device.modelId).productName;
 
   return (
-    <Drawer
-      isOpen={isOpen}
-      onClose={onCloseDrawer}
-      extraContainerProps={{ p: 0 }}
-      title={t("deviceLocalization.deviceLanguage")}
-      big
+    <Flex
+      flexDirection="column"
+      rowGap={5}
+      height="100%"
+      overflowY="hidden"
+      width="100%"
+      flex={1}
+      data-test-id="device-rename-container"
     >
-      <Flex flex={1} flexDirection="column" justifyContent="space-between">
+      <Flex p={3} flex={1}>
         {installing ? (
           <ChangeDeviceLanguageAction
             onSuccess={() => {
-              onSuccess();
+              onSuccess(selectedLanguage);
               setInstalled(true);
             }}
             onError={onError}
             language={selectedLanguage}
           />
         ) : (
-          <Flex px={12} flexDirection="column">
+          <Flex px={3} flexGrow={1} flexDirection="column">
+            <Text alignSelf="center" variant="h3Inter" mb={3}>
+              {t("deviceLocalization.deviceLanguage")}
+            </Text>
             <Text textAlign="center" mb={10} variant="body" color="neutral.c70">
               {t("deviceLocalization.chooseLanguage", { deviceName })}
             </Text>
@@ -120,26 +122,26 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
             </Radio>
           </Flex>
         )}
-        {(!installing || installed) && (
-          <Flex flexDirection="column" rowGap={8}>
-            <Divider variant="light" />
-            <Flex alignSelf="end" px={12} pb={8}>
-              <Button
-                data-test-id={
-                  installed ? "close-language-installation-button" : "install-language-button"
-                }
-                variant="main"
-                onClick={installed ? onCloseDrawer : onInstall}
-                disabled={!installing && currentLanguage === selectedLanguage}
-              >
-                {installed ? t(`common.close`) : t(`deviceLocalization.changeLanguage`)}
-              </Button>
-            </Flex>
-          </Flex>
-        )}
       </Flex>
-    </Drawer>
+      {(!installing || installed) && (
+        <Flex flexDirection="column" rowGap={8} flex={0}>
+          <Divider variant="light" />
+          <Flex alignSelf="end" px={12} pb={8}>
+            <Button
+              data-test-id={
+                installed ? "close-language-installation-button" : "install-language-button"
+              }
+              variant="main"
+              onClick={installed ? onCloseDrawer : onInstall}
+              disabled={!installing && currentLanguage === selectedLanguage}
+            >
+              {installed ? t(`common.close`) : t(`deviceLocalization.changeLanguage`)}
+            </Button>
+          </Flex>
+        </Flex>
+      )}
+    </Flex>
   );
 };
 
-export default DeviceLanguageInstallation;
+export default withV3StyleProvider(DeviceLanguageInstallation);

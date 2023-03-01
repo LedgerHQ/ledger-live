@@ -5,6 +5,7 @@ import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import { useTheme, useNavigation } from "@react-navigation/native";
 import { NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
+import { useTranslation } from "react-i18next";
 import { NavigatorName, ScreenName } from "../../const";
 import Skeleton from "../Skeleton";
 import NftMedia from "./NftMedia";
@@ -26,6 +27,7 @@ const NftCardView = ({
   status: NFTResource["status"];
   metadata: NFTMetadata;
 }) => {
+  const { t } = useTranslation();
   const amount = nft?.amount?.toFixed();
   const { colors } = useTheme();
   const navigation = useNavigation();
@@ -74,7 +76,7 @@ const NftCardView = ({
             ellipsizeMode="middle"
             numberOfLines={1}
           >
-            ID {nft?.tokenId}
+            {t("common.patterns.id", { value: nft?.tokenId })}
           </LText>
           {amount > "1" ? (
             <LText
@@ -83,7 +85,7 @@ const NftCardView = ({
               ellipsizeMode="middle"
               numberOfLines={1}
             >
-              x{amount}
+              {t("common.patterns.times", { value: amount })}
             </LText>
           ) : null}
         </View>

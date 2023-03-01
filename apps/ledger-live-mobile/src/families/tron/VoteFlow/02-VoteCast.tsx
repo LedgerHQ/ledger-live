@@ -221,7 +221,7 @@ export default function VoteCast({ route, navigation }: Props) {
                   }}
                 >
                   <LText semiBold style={styles.availableAmount}>
-                    text
+                    PLACEHOLDER_TEXT
                   </LText>
                 </Trans>
               </LText>

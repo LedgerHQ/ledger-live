@@ -823,11 +823,15 @@
         "linkText": "What is redelegation and how long does it take?",
         "solana": {
           "title": "Did you know?",
-          "description": "Ledger offers a lower commission rate than your validator.This process can take up to 4 days."
+          "description": "Ledger offers a lower commission rate than your validator. This process can take up to 4 days."
         },
         "near": {
           "title": "Did you know?",
-          "description": "Ledger offers a lower commission rate than your validator.This process can take up to 65 hours."
+          "description": "Ledger offers a lower commission rate than your validator. This process can take up to 65 hours."
+        },
+        "elrond": {
+          "title": "Did you know?",
+          "description": "Ledger offers a lower commission rate than your validator. This process can take up to 10 days."
         }
       },
       "delegation": {
@@ -849,6 +853,9 @@
         },
         "near": {
           "description": "Stake your NEAR with Ledger by Figment validator. Your coins stay yours, backed by Ledger’s uncompromising security."
+        },
+        "elrond": {
+          "description": "Stake your ELROND with Ledger by Figment validator. Your coins stay yours, backed by Ledger’s uncompromising security."
         }
       }
     }
@@ -1839,7 +1846,7 @@
       "used": "Used",
       "firmwareAvailable": "Firmware is outdated:",
       "firmwareUpToDate": "Firmware is up to date:",
-      "genuine": "Device is genuine",
+      "genuine": "Your device is Genuine",
       "incomplete": "Some apps were not recognized. Please uninstall, then reinstall them."
     },
     "applist": {
@@ -2261,6 +2268,13 @@
     },
     "switchButton": "Switch to {{language}}",
     "no": "I prefer not to"
+  },
+  "deviceRename": {
+    "title": "Rename {{ productName }}",
+    "chooseName": "Choose a name",
+    "placeholder": "Tony's Stax",
+    "remainingCharacters": "{{ remainingCharacters }} characters remaining",
+    "renamed": "{{ productName }} name changed to \n“{{ name }}” "
   },
   "deviceLocalization": {
     "language": "Language",
@@ -3802,6 +3816,9 @@
       "catalogRampServerDesc": "Switch between multiple trading providers",
       "enablePlatformDevTools": "Enable platform dev tools",
       "enablePlatformDevToolsDesc": "Enable opening platform apps dev tools window",
+      "customLockScreen": "Custom lock-screen assets",
+      "customLockScreenDesc": "Debug custom lock-screen graphical assets",
+      "customLockScreenCTA": "Launch",
       "featureFlagsTitle": "Defined feature flags used in Ledger Live",
       "featureFlagsDesc": "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
       "featureFlagsEdit": "Edit",
@@ -5687,6 +5704,7 @@
   },
   "customImage": {
     "title": "Custom lock screen",
+    "managerCTA": "Lock screen picture",
     "steps": {
       "choose": {
         "stepLabel": "Choose an image",

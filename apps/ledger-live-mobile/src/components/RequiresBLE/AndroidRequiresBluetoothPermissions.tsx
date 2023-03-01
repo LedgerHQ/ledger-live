@@ -2,7 +2,7 @@ import { Button, Flex, Link, Text } from "@ledgerhq/native-ui";
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AppState, Linking, PermissionsAndroid } from "react-native";
-import { useIsMounted } from "../../helpers/useIsMounted";
+import useIsMounted from "@ledgerhq/live-common/hooks/useIsMounted";
 import QueuedDrawer from "../QueuedDrawer";
 import {
   bluetoothPermissions,

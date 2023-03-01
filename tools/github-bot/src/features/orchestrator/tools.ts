@@ -21,22 +21,27 @@ export async function updateWatcherCheckRun(
     owner,
     repo,
     ref,
+    app_id: BOT_APP_ID,
   });
   const checkSuite = checkSuites.data.check_suites.find(
     (suite) => suite.app?.id === BOT_APP_ID
   );
-  if (checkSuite) {
-    const rawCheckRuns = await octokit.checks.listForSuite({
-      owner,
-      repo,
-      check_suite_id: checkSuite.id,
-    });
 
-    const rawWorkflowRuns = await octokit.rest.actions.listWorkflowRunsForRepo({
-      owner,
-      repo,
-      head_sha: checkSuite.head_sha,
-    });
+  if (checkSuite) {
+    const [rawCheckRuns, rawWorkflowRuns] = await Promise.all([
+      octokit.checks.listForSuite({
+        owner,
+        repo,
+        check_suite_id: checkSuite.id,
+      }),
+      octokit.rest.actions.listWorkflowRunsForRepo({
+        owner,
+        repo,
+        head_sha: checkSuite.head_sha,
+        exclude_pull_requests: true,
+        event: "workflow_dispatch",
+      }),
+    ]);
 
     const conclusions = [
       "success",
@@ -123,18 +128,7 @@ export async function updateWatcherCheckRun(
 
     if (watcherId) {
       if (aggregatedStatus === "completed") {
-        // Delete the previously created ref for forked PRs
-        try {
-          await octokit.rest.git.deleteRef({
-            owner,
-            repo,
-            ref: `${REF_PREFIX}/forked/${checkSuite.head_sha}`,
-          });
-        } catch (error) {
-          // Ignore error / maybe ref doesn't exists
-        }
-
-        return await octokit.checks.update({
+        const updateResponse = await octokit.checks.update({
           owner,
           repo,
           check_run_id: watcherId,
@@ -146,6 +140,19 @@ export async function updateWatcherCheckRun(
           },
           completed_at: new Date().toISOString(),
         });
+
+        // Delete the previously created ref for forked PRs
+        try {
+          await octokit.rest.git.deleteRef({
+            owner,
+            repo,
+            ref: `${REF_PREFIX}/forked/${checkSuite.head_sha}`,
+          });
+        } catch (error) {
+          // Ignore error / maybe ref doesn't exist
+        }
+
+        return updateResponse;
       } else {
         return await octokit.checks.update({
           owner,

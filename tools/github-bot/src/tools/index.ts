@@ -236,7 +236,7 @@ export async function listWorkflowRunArtifacts(
     return new Promise((res) =>
       setTimeout(() => {
         res(listWorkflowRunArtifacts(octokit, owner, repo, run_id, ++attempt));
-      }, TIMEOUT * attempt ** 2)
+      }, TIMEOUT)
     );
   }
 

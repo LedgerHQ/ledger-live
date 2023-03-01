@@ -23,7 +23,6 @@ import Card from "~/renderer/components/Box/Card";
 import Box from "~/renderer/components/Box";
 
 import IconTriangleWarning from "~/renderer/icons/TriangleWarning";
-import IconCheckFull from "~/renderer/icons/CheckFull";
 
 import nanoS from "~/renderer/images/devices/nanoS.png";
 import nanoSDark from "~/renderer/images/devices/nanoS_dark.png";
@@ -31,10 +30,14 @@ import nanoSP from "~/renderer/images/devices/nanoSP.png";
 import nanoSPDark from "~/renderer/images/devices/nanoSP_dark.png";
 import nanoX from "~/renderer/images/devices/nanoX.png";
 import nanoXDark from "~/renderer/images/devices/nanoX_dark.png";
+import stax from "~/renderer/images/devices/stax.png";
+import staxDark from "~/renderer/images/devices/stax_dark.png";
 import blue from "~/renderer/images/devices/blue.png";
 
 import CustomImageManagerButton from "./CustomImageManagerButton";
 import DeviceLanguage from "./DeviceLanguage";
+import DeviceName from "./DeviceName";
+import { Icons } from "~/../../../libs/ui/packages/react/lib";
 
 const illustrations = {
   nanoS: {
@@ -50,8 +53,8 @@ const illustrations = {
     dark: nanoXDark,
   },
   stax: {
-    light: nanoS,
-    dark: nanoSDark,
+    light: stax,
+    dark: staxDark,
   },
   blue: {
     light: blue,
@@ -65,7 +68,6 @@ export const DeviceIllustration: ThemedComponent<{}> = styled.img.attrs(p => ({
       p.theme.colors.palette.type || "light"
     ],
 }))`
-  ${p => (p.deviceModel.id === "stax" ? "border: 3px solid red;" : "")}
   position: absolute;
   top: 0;
   left: 50%;
@@ -79,13 +81,13 @@ export const DeviceIllustration: ThemedComponent<{}> = styled.img.attrs(p => ({
 const Separator = styled.div`
   height: 1px;
   margin: 20px 0px;
-  background: ${p => p.theme.colors.palette.background.default};
+  background: ${p => p.theme.colors.neutral.c40};
   width: 100%;
 `;
 
 const HighlightVersion = styled.span`
   padding: 4px 6px;
-  color: ${p => p.theme.colors.wallet};
+  color: ${p => p.theme.colors.primary.c80};
   background: ${p => p.theme.colors.blueTransparentBackground};
   border-radius: 4px;
 `;
@@ -175,7 +177,6 @@ const StorageBarItem: ThemedComponent<{ ratio: number }> = styled.div.attrs(prop
 `;
 
 const FreeInfo = styled.div`
-  padding: 10px 0 0 0;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -279,6 +280,7 @@ export const StorageBar = ({
 type Props = {
   deviceModel: DeviceModel,
   deviceInfo: DeviceInfo,
+  deviceName: string,
   device: Device,
   distribution: AppsDistribution,
   onRefreshDeviceInfo: () => void,
@@ -293,6 +295,7 @@ const DeviceStorage = ({
   deviceModel,
   deviceInfo,
   device,
+  deviceName,
   distribution,
   onRefreshDeviceInfo,
   isIncomplete,
@@ -307,43 +310,123 @@ const DeviceStorage = ({
   const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
 
   return (
-    <Card p={20} mb={4} horizontal data-test-id="device-storage-card">
-      <Box position="relative" flex="0 0 140px" mr={20}>
-        <DeviceIllustration deviceModel={deviceModel} />
-      </Box>
-      <div style={{ flex: 1 }}>
-        <Box horizontal alignItems="center">
-          <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={5}>
-            {deviceModel.productName}
-          </Text>
-          <Box ml={2}>
-            <Tooltip content={<Trans i18nKey="manager.deviceStorage.genuine" />}>
-              <IconCheckFull size={18} />
-            </Tooltip>
-          </Box>
+    <Card p={20} mb={4} data-test-id="device-storage-card">
+      <Flex flexDirection="row">
+        <Box position="relative" flex="0 0 140px" mr={20}>
+          <DeviceIllustration deviceModel={deviceModel} />
         </Box>
-        <Flex justifyContent="space-between" alignItems="center" mt={1}>
-          <Text ff="Inter|SemiBold" color="palette.text.shade40" fontSize={4}>
-            {firmwareOutdated ? (
-              <Trans
-                i18nKey="manager.deviceStorage.firmwareAvailable"
-                values={{ version: deviceInfo.version }}
+        <Flex flexDirection="column" flex={1}>
+          <div style={{ flex: 1 }}>
+            <Box horizontal alignItems="center">
+              <DeviceName
+                deviceName={deviceName}
+                deviceInfo={deviceInfo}
+                device={device}
+                onRefreshDeviceInfo={onRefreshDeviceInfo}
               />
-            ) : (
-              <Trans
-                i18nKey="manager.deviceStorage.firmwareUpToDate"
-                values={{ version: deviceInfo.version }}
-              />
-            )}{" "}
-            {<HighlightVersion>{deviceInfo.version}</HighlightVersion>}
-          </Text>
+            </Box>
+            <Flex justifyContent="space-between" alignItems="center" mt={1}>
+              <Flex flexDirection="row">
+                <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
+                  {firmwareOutdated ? (
+                    <Trans
+                      i18nKey="manager.deviceStorage.firmwareAvailable"
+                      values={{ version: deviceInfo.version }}
+                    />
+                  ) : (
+                    <Trans
+                      i18nKey="manager.deviceStorage.firmwareUpToDate"
+                      values={{ version: deviceInfo.version }}
+                    />
+                  )}{" "}
+                  {<HighlightVersion>{deviceInfo.version}</HighlightVersion>}
+                </Text>
+                <Flex ml={2} flexDirection="row">
+                  <Icons.CircledCheckSolidMedium size={22} color="success.c100" />
+                  <Text ff="Inter|SemiBold" color="palette.text.shade80" ml={1} fontSize={4}>
+                    <Trans i18nKey="manager.deviceStorage.genuine" />
+                  </Text>
+                </Flex>
+              </Flex>
+            </Flex>
+            <Separator />
+            <Info>
+              <div>
+                <Text fontSize={4}>
+                  <Trans i18nKey="manager.deviceStorage.used" />
+                </Text>
+                <Text color="palette.text.shade100" ff="Inter|Bold" fontSize={4}>
+                  <ByteSize
+                    deviceModel={deviceModel}
+                    value={distribution.totalAppsBytes}
+                    firmwareVersion={deviceInfo.version}
+                    formatFunction={Math.ceil}
+                  />
+                </Text>
+              </div>
+              <div>
+                <Text fontSize={4}>
+                  <Trans i18nKey="manager.deviceStorage.capacity" />
+                </Text>
+                <Text color="palette.text.shade100" ff="Inter|Bold" fontSize={4}>
+                  <ByteSize
+                    deviceModel={deviceModel}
+                    value={distribution.appsSpaceBytes}
+                    firmwareVersion={deviceInfo.version}
+                    formatFunction={Math.floor}
+                  />
+                </Text>
+              </div>
+              <div>
+                <Text fontSize={4}>
+                  <Trans i18nKey="manager.deviceStorage.installed" />
+                </Text>
+                <Text color="palette.text.shade100" ff="Inter|Bold" fontSize={4}>
+                  {!isIncomplete ? distribution.apps.length : "—"}
+                </Text>
+              </div>
+              <FreeInfo danger={shouldWarn}>
+                {shouldWarn ? <IconTriangleWarning /> : ""}{" "}
+                <Box paddingLeft={1}>
+                  <Text ff="Inter|SemiBold" fontSize={3}>
+                    {isIncomplete ? (
+                      <Trans i18nKey="manager.deviceStorage.incomplete" />
+                    ) : distribution.freeSpaceBytes > 0 ? (
+                      <>
+                        <Trans i18nKey="manager.deviceStorage.freeSpace" values={{ space: 0 }}>
+                          <ByteSize
+                            value={distribution.freeSpaceBytes}
+                            deviceModel={deviceModel}
+                            firmwareVersion={deviceInfo.version}
+                            formatFunction={Math.floor}
+                          />
+                          {"free"}
+                        </Trans>
+                      </>
+                    ) : (
+                      <Trans i18nKey="manager.deviceStorage.noFreeSpace" />
+                    )}
+                  </Text>
+                </Box>
+              </FreeInfo>
+            </Info>
+            <StorageBar
+              distribution={distribution}
+              deviceInfo={deviceInfo}
+              deviceModel={deviceModel}
+              isIncomplete={isIncomplete}
+              installQueue={installQueue}
+              uninstallQueue={uninstallQueue}
+              jobInProgress={jobInProgress}
+            />
+          </div>
           <Flex
             data-test-id="device-options-container"
-            flexDirection="column"
             alignSelf="flex-start"
             justifyContent="flex-start"
             alignItems="flex-end"
             rowGap={3}
+            mt={4}
           >
             {deviceModel.id === DeviceModelId.stax ? (
               <FeatureToggle feature="customImage">
@@ -359,77 +442,7 @@ const DeviceStorage = ({
             )}
           </Flex>
         </Flex>
-        <Separator />
-        <Info>
-          <div>
-            <Text fontSize={4}>
-              <Trans i18nKey="manager.deviceStorage.used" />
-            </Text>
-            <Text color="palette.text.shade100" ff="Inter|Bold" fontSize={4}>
-              <ByteSize
-                deviceModel={deviceModel}
-                value={distribution.totalAppsBytes}
-                firmwareVersion={deviceInfo.version}
-                formatFunction={Math.ceil}
-              />
-            </Text>
-          </div>
-          <div>
-            <Text fontSize={4}>
-              <Trans i18nKey="manager.deviceStorage.capacity" />
-            </Text>
-            <Text color="palette.text.shade100" ff="Inter|Bold" fontSize={4}>
-              <ByteSize
-                deviceModel={deviceModel}
-                value={distribution.appsSpaceBytes}
-                firmwareVersion={deviceInfo.version}
-                formatFunction={Math.floor}
-              />
-            </Text>
-          </div>
-          <div>
-            <Text fontSize={4}>
-              <Trans i18nKey="manager.deviceStorage.installed" />
-            </Text>
-            <Text color="palette.text.shade100" ff="Inter|Bold" fontSize={4}>
-              {!isIncomplete ? distribution.apps.length : "—"}
-            </Text>
-          </div>
-        </Info>
-        <StorageBar
-          distribution={distribution}
-          deviceInfo={deviceInfo}
-          deviceModel={deviceModel}
-          isIncomplete={isIncomplete}
-          installQueue={installQueue}
-          uninstallQueue={uninstallQueue}
-          jobInProgress={jobInProgress}
-        />
-        <FreeInfo danger={shouldWarn}>
-          {shouldWarn ? <IconTriangleWarning /> : ""}{" "}
-          <Box paddingLeft={1}>
-            <Text ff="Inter|SemiBold" fontSize={3}>
-              {isIncomplete ? (
-                <Trans i18nKey="manager.deviceStorage.incomplete" />
-              ) : distribution.freeSpaceBytes > 0 ? (
-                <>
-                  <Trans i18nKey="manager.deviceStorage.freeSpace" values={{ space: 0 }}>
-                    <ByteSize
-                      value={distribution.freeSpaceBytes}
-                      deviceModel={deviceModel}
-                      firmwareVersion={deviceInfo.version}
-                      formatFunction={Math.floor}
-                    />
-                    {"free"}
-                  </Trans>
-                </>
-              ) : (
-                <Trans i18nKey="manager.deviceStorage.noFreeSpace" />
-              )}
-            </Text>
-          </Box>
-        </FreeInfo>
-      </div>
+      </Flex>
     </Card>
   );
 };
