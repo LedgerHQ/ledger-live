@@ -88,7 +88,11 @@
     "getSupport" : "Obtener ayuda",
     "comingSoon" : "Próximamente",
     "restart" : "Reiniciar",
-    "loadMore" : "Cargar más"
+    "loadMore" : "Cargar más",
+    "patterns" : {
+      "id" : "ID {{ value }}",
+      "times" : "x{{ value }}"
+    }
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -1279,8 +1283,13 @@
       },
       "recovery" : "¿Ya tienes una Frase de recuperación?",
       "protect" : {
-        "label" : "Aproximadamente 60 min",
-        "subTitle" : "Restaurar con Protect"
+        "subTitle" : "Restaurar con Ledger Recover",
+        "drawer" : {
+          "title" : "Use Ledger Nano X",
+          "desc" : "El prelanzamiento de Ledger Recover es exclusivo para el Ledger Nano X",
+          "buyNanoX" : "Compra un Ledger Nano X",
+          "discoverBenefits" : "Descubre las ventajas"
+        }
       }
     },
     "stepNewDevice" : {
@@ -1507,25 +1516,20 @@
     "stepProtect" : {
       "bullets" : {
         "0" : {
-          "title" : "Examinar ",
-          "label" : "Aprende a interactuar con tu dispositivo mediante las instrucciones en pantalla."
+          "title" : "Selecciona “Restore” (Restaurar)",
+          "label" : "Presiona los dos botones a la vez para seleccionar."
         },
         "1" : {
-          "title" : "Selecciona “Restore” (Restaurar)",
-          "label" : "Presiona ambos botones simultáneamente para validar la selección."
-        },
-        "2" : {
-          "title" : "Selecciona el modo “Restore with Protect” (Restaurar con Protect).",
-          "label" : "Presiona ambos botones simultáneamente para validar la selección."
+          "title" : "Selecciona “Restore using Ledger Recover” (Restaurar con Ledger Recover).",
+          "label" : "Presiona los dos botones a la vez para seleccionar."
         }
       },
       "nextStep" : "Continuar",
       "extraInfo" : {
-        "tooltip" : "No veo esa opción en mi Ledger",
-        "title" : "¿Por qué no veo la opción “Restore with Protect” (Restaurar con Protect) en mi Ledger?",
-        "desc1" : "Lo más probable es que tu dispositivo no sea compatible con Protect. No te preocupes, con gusto te ayudaremos a resolverlo.",
-        "desc2" : "Ponte en contacto con nosotros y elige la opción \"En Mi Ledger no se muestra Restore with Protect\" para que podamos ayudarte.",
-        "cta" : "Seguir los pasos manuales",
+        "tooltip" : "No veo “Restore using Ledger Recover” (Restaurar con Ledger Recover)",
+        "title" : "Es necesario actualizar el SO de tu Ledger Nano X",
+        "desc" : "Puedes probar a actualizar el SO o contactar con el servicio de soporte de Ledger para pedir ayuda.",
+        "cta" : "Aprende cómo actualizarlo",
         "supportLink" : "Ponte en contacto con el Soporte de Ledger"
       }
     },
@@ -1667,8 +1671,9 @@
         }
       },
       "protectConnectionInformationModal" : {
-        "title" : "¿Por qué no puedo conectar mi Ledger?",
-        "description" : "Si tienes problemas para conectarte a Ledger Live Mobile después de activar el Bluetooth en tu Ledger, puedes seguir las instrucciones pulsando el botón \"Cómo resolverlo\" a continuación"
+        "title" : "Conexión con el Ledger Nano X",
+        "description" : "Asegúrate de que tienes el teléfono móvil cerca de tu Ledger e inténtalo de nuevo. <LinkBluethooth>Problemas de conexión Bluetooth® \n</LinkBluethooth>.\nSi el Bluetooth® funciona correctamente, puede que tengas que actualizar el SO del Ledger. Prueba a actualizar el SO o contactar con el servicio de soporte de Ledger para pedir ayuda. ",
+        "learnHowToUpdate" : "Aprende cómo actualizarlo"
       }
     },
     "stepImportAccounts" : {
@@ -5446,6 +5451,7 @@
     "warnDelegation" : "Si delegas tus derechos de voto, las recompensas de tu validador no estarán garantizadas.",
     "to" : "a",
     "from" : "desde",
+    "yield" : "Rendimiento Est.",
     "forAnEstYield" : "con un rendimiento est. de",
     "yieldPerYear" : "{{yield}}/Año",
     "yieldInfos" : "Las tasas de rendimiento las proporciona",
@@ -5573,6 +5579,7 @@
     "cta" : "Continuar"
   },
   "exchange" : {
+    "count" : "+ {{count}} more",
     "buy" : {
       "screenTitle" : "COMPRAR CRIPTO",
       "tabTitle" : "Comprar",
@@ -6026,22 +6033,10 @@
       "status" : {
         "new" : {
           "title" : "Nuevo",
-          "desc" : "Respalda tu Frase de recuperación",
-          "0" : {
-            "title" : "Millones de usuarios de Ledger confían en nosotros"
-          },
-          "1" : {
-            "title" : "Tu Frase de recuperación está vinculada a tu identidad de forma segura"
-          },
-          "2" : {
-            "title" : "Cifrado con tecnología de avanzada"
-          },
-          "3" : {
-            "title" : "Distribuido en 3 instalaciones descentralizadas, de manera de que nadie pueda robar tu Frase de recuperación"
-          },
+          "desc" : "Recupera el acceso a tu billetera sin tu Frase de recuperación secreta.",
           "actions" : {
-            "learnMore" : "Más información",
-            "alreadySubscribed" : "¿Ya estás suscrito a Protect?"
+            "learnMore" : "¿Qué beneficios me ofrece?",
+            "alreadySubscribed" : "¿Ya tienes una suscripción? <LinkAccount>Ver mi cuenta</LinkAccount>"
           }
         },
         "confirmIdentity" : {
@@ -6104,5 +6099,8 @@
     "title" : "Newsfeed",
     "poweredByCryptopanic" : "Con tecnología de Cryptopanic",
     "noPosts" : "No hay ninguna publicación disponible"
+  },
+  "deviceConnect" : {
+    "title" : "Conectar dispositivo"
   }
 }
