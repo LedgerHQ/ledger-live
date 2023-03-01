@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-helium
 
+## 6.29.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.28.1
+
 ## 6.29.7-next.0
 
 ### Patch Changes
