@@ -207,10 +207,11 @@ const WebPlatformTopBar = ({
     }
   }, [webviewRef]);
 
-  const onBackToLiveApp = useCallback(() => {
+  const onBackToLiveApp = useCallback(async () => {
     const webview = webviewRef.current;
     if (webview) {
-      webview.loadURL(lastLiveAppURL.current);
+      await webview.loadURL(lastLiveAppURL.current);
+      webview.clearHistory();
     }
   }, [webviewRef]);
 
