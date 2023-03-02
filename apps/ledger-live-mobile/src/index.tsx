@@ -44,6 +44,11 @@ import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/red
 import Braze from "react-native-appboy-sdk";
 import Config from "react-native-config";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import {
+  LogLevel,
+  PerformanceProfiler,
+  RenderPassReport,
+} from "@shopify/react-native-performance";
 import logger from "./logger";
 import {
   saveAccounts,
@@ -107,6 +112,10 @@ import { isAcceptedTerms } from "./logic/terms";
 import type { Writeable } from "./types/helpers";
 import HookDynamicContentCards from "./dynamicContent/useContentCards";
 import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
+import { performanceReportSubject } from "./components/PerformanceConsole/usePerformanceReportsLog";
+import PerformanceConsole from "./components/PerformanceConsole";
+import useEnv from "../../../libs/ledger-live-common/lib/hooks/useEnv";
+import { useListenToHidDevices } from "./hooks/useListenToHidDevices";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -140,6 +149,8 @@ export const routingInstrumentation =
 
 function App({ importDataString }: AppProps) {
   useAppStateListener();
+  useListenToHidDevices();
+
   const getSettingsChanged = useCallback(
     (a, b) => a.settings !== b.settings,
     [],
@@ -220,6 +231,7 @@ function App({ importDataString }: AppProps) {
       <ExperimentalHeader />
       <RootNavigator importDataString={importDataString} />
       <AnalyticsConsole />
+      <PerformanceConsole />
       <DebugTheme />
       <Modals />
     </GestureHandlerRootView>
@@ -500,6 +512,7 @@ const emptyObject: LiveAppManifest[] = [];
 
 const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useDispatch();
+  const performanceConsoleEnabled = useEnv("PERFORMANCE_CONSOLE");
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const wcContext = useContext(_wcContext);
   const { state } = useRemoteLiveAppContext();
@@ -640,24 +653,34 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
 
   useFlipper(navigationRef);
 
+  const onReportPrepared = useCallback((report: RenderPassReport) => {
+    performanceReportSubject.next({ report, date: new Date() });
+  }, []);
+
   if (!isReady) {
     return null;
   }
 
   return (
     <StyleProvider selectedPalette={resolvedTheme}>
-      <NavigationContainer
-        theme={themes[resolvedTheme]}
-        linking={linking}
-        ref={navigationRef}
-        onReady={() => {
-          (isReadyRef as Writeable<typeof isReadyRef>).current = true;
-          setTimeout(() => SplashScreen.hide(), 300);
-          routingInstrumentation.registerNavigationContainer(navigationRef);
-        }}
+      <PerformanceProfiler
+        onReportPrepared={onReportPrepared}
+        logLevel={LogLevel.Info}
+        enabled={!!performanceConsoleEnabled}
       >
-        {children}
-      </NavigationContainer>
+        <NavigationContainer
+          theme={themes[resolvedTheme]}
+          linking={linking}
+          ref={navigationRef}
+          onReady={() => {
+            (isReadyRef as Writeable<typeof isReadyRef>).current = true;
+            setTimeout(() => SplashScreen.hide(), 300);
+            routingInstrumentation.registerNavigationContainer(navigationRef);
+          }}
+        >
+          {children}
+        </NavigationContainer>
+      </PerformanceProfiler>
     </StyleProvider>
   );
 };

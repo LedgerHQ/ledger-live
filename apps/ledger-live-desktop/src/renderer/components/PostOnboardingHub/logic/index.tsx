@@ -9,6 +9,7 @@ const claimMock: PostOnboardingAction = {
   id: PostOnboardingActionId.claimMock,
   Icon: Icons.GiftCardMedium,
   title: "Claim my NFT",
+  titleCompleted: "Claim my NFT",
   description: "A special NFT for you.",
   tagLabel: "Free",
   actionCompletedPopupLabel: "NFT claimed",
@@ -20,6 +21,7 @@ const personalizeMock: PostOnboardingAction = {
   Icon: Icons.BracketsMedium,
   featureFlagId: "customImage",
   title: `Personalize my ${getDeviceModel(DeviceModelId.stax).productName}`,
+  titleCompleted: `Personalize my ${getDeviceModel(DeviceModelId.stax).productName}`,
   description: "By customizing the screen.",
   actionCompletedPopupLabel: "Device personalized",
   startAction: () =>
@@ -30,6 +32,7 @@ const migrateAssetsMock: PostOnboardingAction = {
   id: PostOnboardingActionId.migrateAssetsMock,
   Icon: Icons.TransferMedium,
   title: "Transfer assets to my Ledger",
+  titleCompleted: "Transfer assets to my Ledger",
   description: "Easily secure assets from coinbase or another exchange.",
   actionCompletedPopupLabel: "Assets transfered",
   startAction: () =>
@@ -41,6 +44,7 @@ const customImage: PostOnboardingAction = {
   Icon: Icons.BracketsMedium,
   featureFlagId: "customImage",
   title: "customImage.postOnboarding.title",
+  titleCompleted: "customImage.postOnboarding.title",
   description: "customImage.postOnboarding.description",
   actionCompletedPopupLabel: "customImage.postOnboarding.actionCompletedPopupLabel",
   startAction: () => setDrawer(CustomImage, { isFromPostOnboardingEntryPoint: true }),
@@ -49,7 +53,7 @@ const customImage: PostOnboardingAction = {
 /**
  * All implemented post onboarding actions.
  */
-const postOnboardingActions: Record<PostOnboardingActionId, PostOnboardingAction> = {
+const postOnboardingActions: { [id in PostOnboardingActionId]?: PostOnboardingAction } = {
   claimMock,
   migrateAssetsMock,
   personalizeMock,
@@ -65,7 +69,9 @@ const staxPostOnboardingActionsMock: PostOnboardingAction[] = [
   migrateAssetsMock,
 ];
 
-export function getPostOnboardingAction(id: PostOnboardingActionId): PostOnboardingAction {
+export function getPostOnboardingAction(
+  id: PostOnboardingActionId,
+): PostOnboardingAction | undefined {
   return postOnboardingActions[id];
 }
 

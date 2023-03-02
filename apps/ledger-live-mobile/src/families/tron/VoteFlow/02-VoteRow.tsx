@@ -163,7 +163,7 @@ const VoteRow = ({
                     fontWeight={"medium"}
                     color={"neutral.c100"}
                   >
-                    text
+                    PLACEHOLDER_TEXT
                   </Text>
                 </Trans>
               </Text>

@@ -1,5 +1,5 @@
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
-import { useIsMounted } from "../../helpers/useIsMounted";
+import useIsMounted from "@ledgerhq/live-common/hooks/useIsMounted";
 import LocationRequired from "../LocationRequired";
 import {
   checkLocationPermission,

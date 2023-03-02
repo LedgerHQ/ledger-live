@@ -1,7 +1,11 @@
 import type { Dispatch } from "redux";
 import { createAction } from "redux-actions";
 import { isConnectedSelector } from "../reducers/appstate";
-import type { FwUpdateBackgroundEvent, State } from "../reducers/types";
+import type {
+  DeviceLike,
+  FwUpdateBackgroundEvent,
+  State,
+} from "../reducers/types";
 import type {
   AppStateAddBackgroundEventPayload,
   AppStateIsConnectedPayload,
@@ -60,6 +64,12 @@ const dequeueBackgroundEventAction = createAction(
 );
 export const dequeueBackgroundEvent = () => (dispatch: Dispatch) =>
   dispatch(dequeueBackgroundEventAction());
+
+const setWiredDeviceAction = createAction(AppStateActionTypes.SET_WIRED_DEVICE);
+export const setWiredDevice = (wiredDevice: DeviceLike | null) =>
+  setWiredDeviceAction({
+    wiredDevice,
+  });
 
 const clearBackgroundEventsAction = createAction(
   AppStateActionTypes.CLEAR_BACKGROUND_EVENTS,

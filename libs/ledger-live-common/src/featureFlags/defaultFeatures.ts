@@ -202,4 +202,7 @@ export const defaultFeatures: DefaultFeatures = {
   protectServicesDiscoverDesktop: {
     enabled: false,
   },
+  newsfeedPage: {
+    enabled: false,
+  },
 };

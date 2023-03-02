@@ -11,6 +11,9 @@ export class CustomImageDrawer {
   readonly importNftPreviousButton: Locator;
   readonly importNftContinueButton: Locator;
   readonly nftCard: (index: number) => Locator;
+  readonly nftCardMedia: (index: number) => Locator;
+  readonly nftCardName: (index: number) => Locator;
+  readonly nftCardId: (index: number) => Locator;
   readonly cropView: Locator;
   readonly cropRotateButton: Locator;
   readonly cropPreviousButton: Locator;
@@ -31,6 +34,12 @@ export class CustomImageDrawer {
     this.importNftPreviousButton = page.locator("data-test-id=custom-image-nft-previous-button");
     this.importNftContinueButton = page.locator("data-test-id=custom-image-nft-continue-button");
     this.nftCard = (index: number) => page.locator(`data-test-id=custom-image-nft-card-${index}`);
+    this.nftCardMedia = (index: number) =>
+      page.locator(`data-test-id=custom-image-nft-card-media-${index}`);
+    this.nftCardName = (index: number) =>
+      page.locator(`data-test-id=custom-image-nft-card-name-${index}`);
+    this.nftCardId = (index: number) =>
+      page.locator(`data-test-id=custom-image-nft-card-id-${index}`);
     this.cropView = page.locator("data-test-id=custom-image-crop-view");
     this.cropRotateButton = page.locator("data-test-id=custom-image-crop-rotate-button");
     this.cropPreviousButton = page.locator("data-test-id=custom-image-crop-previous-button");

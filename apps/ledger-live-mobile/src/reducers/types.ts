@@ -72,6 +72,7 @@ export type AppState = {
   modalLock: boolean;
   backgroundEvents: Array<FwUpdateBackgroundEvent>;
   isMainNavigatorVisible: boolean;
+  wiredDevice?: DeviceLike;
 };
 
 // === BLE STATE ===
@@ -186,6 +187,7 @@ export type SettingsState = {
   countervalueFirst: boolean;
   graphCountervalueFirst: boolean;
   hideEmptyTokenAccounts: boolean;
+  filterTokenOperationsZeroAmount: boolean;
   blacklistedTokenIds: string[];
   hiddenNftCollections: string[];
   dismissedBanners: string[];

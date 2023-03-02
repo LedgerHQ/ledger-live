@@ -7,6 +7,7 @@ import type {
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type {
   Account,
+  DeviceInfo,
   DeviceModelInfo,
   Feature,
   FeatureId,
@@ -85,6 +86,7 @@ export enum AppStateActionTypes {
   CLEAR_BACKGROUND_EVENTS = "CLEAR_BACKGROUND_EVENTS",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
   UPDATE_MAIN_NAVIGATOR_VISIBILITY = "UPDATE_MAIN_NAVIGATOR_VISIBILITY",
+  SET_WIRED_DEVICE = "SET_WIRED_DEVICE",
 }
 
 export type AppStateIsConnectedPayload = Pick<AppState, "isConnected">;
@@ -92,6 +94,7 @@ export type AppStateSetHasConnectedDevicePayload = Pick<
   AppState,
   "hasConnectedDevice"
 >;
+export type AppStateSetWiredDevicePayload = Pick<AppState, "wiredDevice">;
 export type AppStateSetModalLockPayload = Pick<AppState, "modalLock">;
 export type AppStateAddBackgroundEventPayload = {
   event: FwUpdateBackgroundEvent;
@@ -270,6 +273,7 @@ export enum SettingsActionTypes {
   SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT = "SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT",
   SETTINGS_SWITCH_COUNTERVALUE_FIRST = "SETTINGS_SWITCH_COUNTERVALUE_FIRST",
   SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS = "SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS",
+  SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT = "SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT",
   SHOW_TOKEN = "SHOW_TOKEN",
   BLACKLIST_TOKEN = "BLACKLIST_TOKEN",
   HIDE_NFT_COLLECTION = "HIDE_NFT_COLLECTION",
@@ -289,6 +293,7 @@ export enum SettingsActionTypes {
   ACCEPT_SWAP_PROVIDER = "ACCEPT_SWAP_PROVIDER",
   LAST_SEEN_DEVICE = "LAST_SEEN_DEVICE",
   LAST_SEEN_DEVICE_INFO = "LAST_SEEN_DEVICE_INFO",
+  LAST_SEEN_DEVICE_LANGUAGE_ID = "LAST_SEEN_DEVICE_LANGUAGE_ID",
   SET_LAST_SEEN_CUSTOM_IMAGE = "SET_LAST_SEEN_CUSTOM_IMAGE",
   ADD_STARRED_MARKET_COINS = "ADD_STARRED_MARKET_COINS",
   REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
@@ -359,6 +364,10 @@ export type SettingsHideEmptyTokenAccountsPayload = Pick<
   SettingsState,
   "hideEmptyTokenAccounts"
 >;
+export type SettingsFilterTokenOperationsZeroAmountPayload = Pick<
+  SettingsState,
+  "filterTokenOperationsZeroAmount"
+>;
 export type SettingsShowTokenPayload = { tokenId: string };
 export type SettingsBlacklistTokenPayload = { tokenId: string };
 export type SettingsHideNftCollectionPayload = { collectionId: string };
@@ -402,6 +411,8 @@ export type SettingsLastSeenDevicePayload = {
 export type SettingsLastSeenDeviceInfoPayload = {
   dmi: DeviceModelInfo;
 };
+export type SettingsLastSeenDeviceLanguagePayload = Partial<DeviceInfo>;
+
 export type SettingsAddStarredMarketcoinsPayload = {
   starredMarketCoin: Unpacked<SettingsState["starredMarketCoins"]>;
 };
@@ -472,6 +483,10 @@ export type SettingsSetDebugAppLevelDrawerOpenedPayload = Pick<
   SettingsState,
   "debugAppLevelDrawerOpened"
 >;
+export type SettingsCompleteOnboardingPayload = Pick<
+  SettingsState,
+  "hasCompletedOnboarding"
+>;
 
 export type SettingsPayload =
   | SettingsImportPayload
@@ -503,6 +518,7 @@ export type SettingsPayload =
   | SettingsSetSwapKycPayload
   | SettingsAcceptSwapProviderPayload
   | SettingsLastSeenDevicePayload
+  | SettingsLastSeenDeviceLanguagePayload
   | SettingsLastSeenDeviceInfoPayload
   | SettingsSetLastSeenCustomImagePayload
   | SettingsAddStarredMarketcoinsPayload
@@ -521,6 +537,7 @@ export type SettingsPayload =
   | SettingsSetOverriddenFeatureFlagPlayload
   | SettingsSetOverriddenFeatureFlagsPlayload
   | SettingsSetFeatureFlagsBannerVisiblePayload
+  | SettingsCompleteOnboardingPayload
   | SettingsSetDebugAppLevelDrawerOpenedPayload;
 
 // === WALLET CONNECT ACTIONS ===
@@ -555,6 +572,7 @@ export type SwapPayload =
 export enum ProtectActionTypes {
   UPDATE_DATA = "UPDATE_DATA",
   UPDATE_PROTECT_STATUS = "UPDATE_PROTECT_STATUS",
+  RESET_STATE = "RESET_STATE",
 }
 
 export type ProtectDataPayload = Pick<ProtectState, "data">;

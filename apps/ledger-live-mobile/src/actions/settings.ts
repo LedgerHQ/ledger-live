@@ -72,6 +72,9 @@ import {
   SettingsSetOverriddenFeatureFlagsPlayload,
   SettingsSetFeatureFlagsBannerVisiblePayload,
   SettingsSetDebugAppLevelDrawerOpenedPayload,
+  SettingsFilterTokenOperationsZeroAmountPayload,
+  SettingsLastSeenDeviceLanguagePayload,
+  SettingsCompleteOnboardingPayload,
 } from "./types";
 import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
 
@@ -197,10 +200,14 @@ export const setLastSeenCustomImage = ({
 export const clearLastSeenCustomImage = () =>
   setLastSeenCustomImageAction({ imageSize: 0, imageHash: "" });
 
-const completeOnboardingAction = createAction(
-  SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING,
-);
-export const completeOnboarding = () => completeOnboardingAction();
+const completeOnboardingAction =
+  createAction<SettingsCompleteOnboardingPayload>(
+    SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING,
+  );
+export const completeOnboarding = (hasCompletedOnboarding = true) =>
+  completeOnboardingAction({
+    hasCompletedOnboarding,
+  });
 
 const installAppFirstTimeAction =
   createAction<SettingsInstallAppFirstTimePayload>(
@@ -223,6 +230,17 @@ const setHideEmptyTokenAccountsAction =
 export const setHideEmptyTokenAccounts = (hideEmptyTokenAccounts: boolean) =>
   setHideEmptyTokenAccountsAction({
     hideEmptyTokenAccounts,
+  });
+
+const setFilterTokenOperationsZeroAmountAction =
+  createAction<SettingsFilterTokenOperationsZeroAmountPayload>(
+    SettingsActionTypes.SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT,
+  );
+export const setFilterTokenOperationsZeroAmount = (
+  filterTokenOperationsZeroAmount: boolean,
+) =>
+  setFilterTokenOperationsZeroAmountAction({
+    filterTokenOperationsZeroAmount,
   });
 
 const blacklistTokenAction = createAction<SettingsBlacklistTokenPayload>(
@@ -366,6 +384,13 @@ const setLastSeenDeviceInfoAction =
   );
 export const setLastSeenDeviceInfo = (dmi: DeviceModelInfo) =>
   setLastSeenDeviceInfoAction({ dmi });
+
+const setLastSeenDeviceLanguageIdAction =
+  createAction<SettingsLastSeenDeviceLanguagePayload>(
+    SettingsActionTypes.LAST_SEEN_DEVICE_LANGUAGE_ID,
+  );
+export const setLastSeenDeviceLanguageId = (languageId: number) =>
+  setLastSeenDeviceLanguageIdAction({ languageId });
 
 const addStarredMarketCoinsAction =
   createAction<SettingsAddStarredMarketcoinsPayload>(

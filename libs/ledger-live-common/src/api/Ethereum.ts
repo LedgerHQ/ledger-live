@@ -147,6 +147,7 @@ export type API = {
     data: string;
     to: string;
   }) => Promise<BigNumber>;
+  getFallbackGasLimit: (address: string) => Promise<BigNumber>;
   getGasTrackerBarometer: (currency: CryptoCurrency) => Promise<{
     low: BigNumber;
     medium: BigNumber;
@@ -312,6 +313,18 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
 
         throw e;
       }
+    },
+
+    // FIXME: Dirty fix that calls v3 gas limit estimation while we find a better solution
+    async getFallbackGasLimit(address: string): Promise<BigNumber> {
+      const { data } = await network({
+        method: "GET",
+        url: `${baseURL.replace(
+          "v4",
+          "v3"
+        )}/addresses/${address}/estimate-gas-limit`,
+      });
+      return new BigNumber(data.estimated_gas_limit);
     },
 
     async getDryRunGasLimit(transaction): Promise<BigNumber> {

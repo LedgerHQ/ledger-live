@@ -5,6 +5,7 @@ import {
   RUNNERS,
   WORKFLOWS,
   REPO_OWNER,
+  REF_PREFIX,
 } from "./const";
 import {
   downloadArtifact,
@@ -32,11 +33,6 @@ export function orchestrator(app: Probot) {
     const { owner, repo } = context.repo();
     const workflowFile = extractWorkflowFile(payload);
     const matchedWorkflow = WORKFLOWS[workflowFile as keyof typeof WORKFLOWS];
-    const { data: checkSuite } = await octokit.checks.getSuite({
-      owner,
-      repo,
-      check_suite_id: payload.workflow_run.check_suite_id,
-    });
 
     if (matchedWorkflow) {
       context.log.info(
@@ -46,10 +42,18 @@ export function orchestrator(app: Probot) {
       const summaryPrefix = matchedWorkflow.description
         ? `#### ${matchedWorkflow.description}\n\n`
         : "";
+
+      const { data: checkSuite } = await octokit.checks.getSuite({
+        owner,
+        repo,
+        check_suite_id: payload.workflow_run.check_suite_id,
+      });
+
       // Will trigger the check_run.created event (which will update the watcher)
       context.log.info(
         `[Orchestrator](workflow_run.requested) Creating check run ${matchedWorkflow.checkRunName} @sha ${checkSuite.head_sha}`
       );
+
       const response = await octokit.checks.create({
         owner,
         repo,
@@ -85,11 +89,6 @@ export function orchestrator(app: Probot) {
     const { owner, repo } = context.repo();
     const workflowFile = extractWorkflowFile(payload);
     const matchedWorkflow = WORKFLOWS[workflowFile as keyof typeof WORKFLOWS];
-    const { data: checkSuite } = await octokit.checks.getSuite({
-      owner,
-      repo,
-      check_suite_id: payload.workflow_run.check_suite_id,
-    });
 
     if (matchedWorkflow) {
       context.log.info(
@@ -99,15 +98,20 @@ export function orchestrator(app: Probot) {
       const summaryPrefix = matchedWorkflow.description
         ? `#### ${matchedWorkflow.description}\n\n`
         : "";
-      const tips = await getTips(workflowFile);
+      const tipsPromise = getTips(workflowFile);
 
       // Ensure that the latest workflow run status is "in progress"
       // Why? Because github might send the "in progress" event AFTER the "completed" event…
-      const workflowRun = await octokit.actions.getWorkflowRun({
+      const workflowRunPromise = octokit.actions.getWorkflowRun({
         owner,
         repo,
         run_id: payload.workflow_run.id,
       });
+
+      const [tips, workflowRun] = await Promise.all([
+        tipsPromise,
+        workflowRunPromise,
+      ]);
 
       if (workflowRun.data.status !== "in_progress") {
         context.log.info(
@@ -117,9 +121,16 @@ export function orchestrator(app: Probot) {
         return;
       }
 
+      const { data: checkSuite } = await octokit.checks.getSuite({
+        owner,
+        repo,
+        check_suite_id: payload.workflow_run.check_suite_id,
+      });
+
       context.log.info(
         `[Orchestrator](workflow_run.in_progress) Creating check run ${matchedWorkflow.checkRunName} @sha ${checkSuite.head_sha}`
       );
+
       // Will trigger the check_run.created event (which will update the watcher)
       const response = await createRunByName({
         octokit,
@@ -156,11 +167,6 @@ export function orchestrator(app: Probot) {
     const { owner, repo } = context.repo();
     const workflowFile = extractWorkflowFile(payload);
     const matchedWorkflow = WORKFLOWS[workflowFile as keyof typeof WORKFLOWS];
-    const { data: checkSuite } = await octokit.checks.getSuite({
-      owner,
-      repo,
-      check_suite_id: payload.workflow_run.check_suite_id,
-    });
 
     if (workflowFile === "gate.yml") {
       if (payload.workflow_run.conclusion !== "success") return;
@@ -227,7 +233,7 @@ export function orchestrator(app: Probot) {
       const baseOwner = metadata?.base_owner || REPO_OWNER;
 
       const isFork =
-        metadata?.number !== -1 &&
+        metadata?.is_fork ??
         (await prIsFork(
           octokit,
           repo,
@@ -239,7 +245,33 @@ export function orchestrator(app: Probot) {
         `[Orchestrator](workflow_run.completed) Is pull requests from a forked repo? ${isFork}`
       );
 
+      const { data: checkSuite } = await octokit.checks.getSuite({
+        owner,
+        repo,
+        check_suite_id: payload.workflow_run.check_suite_id,
+      });
+
       let affectedWorkflows = 0;
+      let localRef = `forked/${checkSuite.head_sha}`;
+
+      if (isFork) {
+        try {
+          const { data, status } = await octokit.rest.git.createRef({
+            owner: baseOwner,
+            repo,
+            sha: checkSuite.head_sha,
+            ref: `${REF_PREFIX}/${localRef}`,
+          });
+          context.log.warn(
+            `[Orchestrator](workflow_run.completed) created a ref "${data.ref}" on sha "${data.object.sha}" for forked PR (${status})`
+          );
+        } catch (error) {
+          context.log.warn(
+            `[Orchestrator](workflow_run.completed) createRef ${localRef} error: ${error}`
+          );
+        }
+      }
+
       // For each workflow…
       await Promise.all(
         Object.entries(WORKFLOWS).map(async ([fileName, workflow]) => {
@@ -266,6 +298,7 @@ export function orchestrator(app: Probot) {
                 workflowInputs
               )}`
             );
+
             // Trigger the associated workflow.
             // This will trigger the workflow_run.requested event,
             // which will create/recreate the check run and update the watcher.
@@ -273,8 +306,12 @@ export function orchestrator(app: Probot) {
               owner: baseOwner,
               repo,
               workflow_id: fileName,
-              ref: isFork ? "develop" : workflowRef,
-              inputs: workflow.getInputs(payload, metadata),
+              ref: isFork ? localRef : workflowRef,
+              inputs: workflow.getInputs(
+                payload,
+                metadata,
+                isFork ? localRef : undefined
+              ),
             });
             context.log.info(
               `[Orchestrator](workflow_run.completed) Dispatched workflow run response @status ${response.status}`
@@ -313,6 +350,12 @@ export function orchestrator(app: Probot) {
       context.log.info(
         `[Orchestrator](workflow_run.completed) ${payload.workflow_run.name}`
       );
+
+      const { data: checkSuite } = await octokit.checks.getSuite({
+        owner,
+        repo,
+        check_suite_id: payload.workflow_run.check_suite_id,
+      });
 
       // Sync the check_run with the conclusion of the workflow
       const checkRuns = await getCheckRunByName({
@@ -393,7 +436,7 @@ export function orchestrator(app: Probot) {
         `[Orchestrator](workflow_run.completed) Updating check run: ${checkRun.name} @id ${checkRun.id}`
       );
 
-      await octokit.checks.update({
+      const updateRes = await octokit.checks.update({
         owner,
         repo,
         check_run_id: checkRun.id,
@@ -406,6 +449,10 @@ export function orchestrator(app: Probot) {
         completed_at: payload.workflow_run.updated_at,
         actions,
       });
+
+      context.log.info(
+        `[Orchestrator](workflow_run.completed) Check run updated: ${updateRes.data.name} @status ${updateRes.data.status} @conclusion ${updateRes.data.conclusion}`
+      );
 
       // Batch annotations to avoid hitting the API rate limit.
       // "The Checks API limits the number of annotations to a maximum of 50 per API request.
@@ -443,7 +490,7 @@ export function orchestrator(app: Probot) {
 
     if (matchedWorkflow) {
       context.log.info(
-        `[Orchestrator](check_run.created) ${payload.check_run.name} @sha ${payload.check_run.head_sha}`
+        `[Orchestrator](check_run.created) ${payload.check_run.name} @sha ${payload.check_run.head_sha} @id ${payload.check_run.id} @url ${payload.check_run.html_url}`
       );
       // (Re)Create watcher check run in pending state
       const response = await createRunByName({
@@ -489,7 +536,7 @@ export function orchestrator(app: Probot) {
     if (workflow) {
       const [workflowName, workflowMeta] = workflow;
       context.log.info(
-        `[Orchestrator](check_run.rerequested) ${payload.check_run.name} @workflow ${workflowName}`
+        `[Orchestrator](check_run.rerequested) ${payload.check_run.name} @workflow ${workflowName} @sha ${payload.check_run.head_sha} @id ${payload.check_run.id} @url ${payload.check_run.html_url}`
       );
       octokit.actions.createWorkflowDispatch({
         owner,
@@ -515,7 +562,7 @@ export function orchestrator(app: Probot) {
 
     if (matchedWorkflow) {
       context.log.info(
-        `[Orchestrator](check_run.completed) ${payload.check_run.name}`
+        `[Orchestrator](check_run.completed) ${payload.check_run.name} @sha ${payload.check_run.head_sha} @id ${payload.check_run.id} @url ${payload.check_run.html_url}`
       );
       const result = await updateWatcherCheckRun(
         octokit,

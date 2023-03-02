@@ -43,15 +43,8 @@ describe("Password Lock Screen", () => {
     await generalSettingsPage.enterNewPassword(CORRECT_PASSWORD + "\n"); // confirm password step
   });
 
-  it("should not require the password if the user exits the app for less than the lock timeout", async () => {
-    await device.sendToHome(); // leave LLM app and go to phone's home screen
-    await device.launchApp(); // launch app within the lock timeout (60 secs on prod, 5 secs with MOCK=1)
-    await expect(generalSettingsPage.preferredCurrencyButton()).toBeVisible();
-  });
-
   it("should need to enter password to unlock app", async () => {
     await device.sendToHome();
-    await delay(5500); // Wait for AUTOLOCK_TIMEOUT to activate, which is 5 secs on MOCK mode
     await device.launchApp(); // restart LLM
     await passwordEntryPage.enterPassword(CORRECT_PASSWORD);
     await passwordEntryPage.login();
