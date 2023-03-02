@@ -14653,7 +14653,7 @@ var require_form_data = __commonJS({
 var import_isomorphic_unfetch = __toESM(require_isomorphic_unfetch());
 var core = __toESM(require_core());
 var fs = __toESM(require("fs"));
-var FormData = __toESM(require_form_data());
+var import_form_data = __toESM(require_form_data());
 var path = __toESM(require("path"));
 function handleErrors(response) {
   if (!response.ok) {
@@ -14674,7 +14674,7 @@ var uploadImage = () => __async(exports, null, function* () {
     if (i > 2) {
       return "error";
     }
-    const body = new FormData();
+    const body = new import_form_data.default();
     body.append("type", "file");
     body.append("image", file);
     try {
