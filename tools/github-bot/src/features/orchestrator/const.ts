@@ -1,9 +1,9 @@
 import { Context, ProbotOctokit } from "probot";
 
-type WorkflowRunPayload = Context<"workflow_run">["payload"];
-type CheckRunPayload = Context<"check_run">["payload"];
-type GetInputsPayload = WorkflowRunPayload | CheckRunPayload;
-type Octokit = InstanceType<typeof ProbotOctokit>;
+export type WorkflowRunPayload = Context<"workflow_run">["payload"];
+export type CheckRunPayload = Context<"check_run">["payload"];
+export type GetInputsPayload = WorkflowRunPayload | CheckRunPayload;
+export type Octokit = InstanceType<typeof ProbotOctokit>;
 export type PullRequestMetadata = {
   number: number;
   head_sha: string;
@@ -17,6 +17,7 @@ export type CheckSuite = Awaited<
   ReturnType<Octokit["checks"]["getSuite"]>
 >["data"];
 
+export const SYNC_ACTION = "sync_action";
 export const REPO_OWNER = "LedgerHQ";
 export const BOT_APP_ID = 198164;
 export const WATCHER_CHECK_RUN_NAME = "@@PR • Watcher 🪬";
