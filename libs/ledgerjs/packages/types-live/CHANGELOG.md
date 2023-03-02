@@ -1,6 +1,6 @@
 # @ledgerhq/types-live
 
-## 6.31.0-nightly.0
+## 6.31.0
 
 ### Minor Changes
 
@@ -10,17 +10,15 @@
 
 - [#2552](https://github.com/LedgerHQ/ledger-live/pull/2552) [`467822aaf6`](https://github.com/LedgerHQ/ledger-live/commit/467822aaf680df334531c1489e5a845fecad492a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Feature flag for WallectConnect Entry point
 
-## 6.29.0-nightly.1
-
-### Patch Changes
-
-- [#2332](https://github.com/LedgerHQ/ledger-live/pull/2332) [`53b526847d`](https://github.com/LedgerHQ/ledger-live/commit/53b526847d5478e271e216c7a98d650915b7cb6a) Thanks [@sarneijim](https://github.com/sarneijim)! - Add stakePrograms flag
-
-## 6.29.0-nightly.0
+## 6.31.0-next.0
 
 ### Minor Changes
 
-- [#2351](https://github.com/LedgerHQ/ledger-live/pull/2351) [`f3fd3134a3`](https://github.com/LedgerHQ/ledger-live/commit/f3fd3134a3852f9d872b1be268e60beae8ea3496) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add transactionRaw to Operation type
+- [#2569](https://github.com/LedgerHQ/ledger-live/pull/2569) [`5b65ae6b04`](https://github.com/LedgerHQ/ledger-live/commit/5b65ae6b04f20534962b986fab4e3ed29ad2e273) Thanks [@cksanders](https://github.com/cksanders)! - conditionally activate navigation on the buy&sell screen depending on the value of a feature flag
+
+### Patch Changes
+
+- [#2552](https://github.com/LedgerHQ/ledger-live/pull/2552) [`467822aaf6`](https://github.com/LedgerHQ/ledger-live/commit/467822aaf680df334531c1489e5a845fecad492a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Feature flag for WallectConnect Entry point
 
 ## 6.30.0
 

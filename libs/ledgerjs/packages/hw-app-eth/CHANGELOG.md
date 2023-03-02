@@ -1,13 +1,6 @@
 # @ledgerhq/hw-app-eth
 
-## 6.32.0-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`900ef4f528`](https://github.com/LedgerHQ/ledger-live/commit/900ef4f528c3b2359d666fbb76073978d5f9c840)]:
-  - @ledgerhq/cryptoassets@9.0.0-nightly.1
-
-## 6.32.0-nightly.0
+## 6.32.0
 
 ### Minor Changes
 
@@ -16,29 +9,22 @@
 ### Patch Changes
 
 - Updated dependencies [[`0725151a34`](https://github.com/LedgerHQ/ledger-live/commit/0725151a348608bec1f8338b57772f12a23cb471), [`cec9e0f33d`](https://github.com/LedgerHQ/ledger-live/commit/cec9e0f33d5bc058c0e4b3a2680fc8791d5b61b1), [`62af25493e`](https://github.com/LedgerHQ/ledger-live/commit/62af25493e2becf897d517af42542db208b971c7), [`725000b4ed`](https://github.com/LedgerHQ/ledger-live/commit/725000b4ed37a2669f3a0cd70ca2b5d0b1d4825e)]:
-  - @ledgerhq/cryptoassets@9.0.0-nightly.0
-  - @ledgerhq/hw-transport@6.28.1-nightly.0
-  - @ledgerhq/hw-transport-mocker@6.27.12-nightly.0
+  - @ledgerhq/cryptoassets@9.0.0
+  - @ledgerhq/hw-transport@6.28.1
+  - @ledgerhq/hw-transport-mocker@6.27.12
 
-## 6.31.0-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`0e7ff249f7`](https://github.com/LedgerHQ/ledger-live/commit/0e7ff249f7e1160ff3888e52767ef91151efbedd)]:
-  - @ledgerhq/cryptoassets@7.3.0-nightly.1
-
-## 6.31.0-nightly.1
+## 6.32.0-next.0
 
 ### Minor Changes
 
-- [#2405](https://github.com/LedgerHQ/ledger-live/pull/2405) [`7eb8b1a39b`](https://github.com/LedgerHQ/ledger-live/commit/7eb8b1a39b36a5b336d95f89a92edf7ee22bcd26) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add resilience to malformed dynamic CAL
-
-## 6.30.5-nightly.0
+- [#2328](https://github.com/LedgerHQ/ledger-live/pull/2328) [`0725151a34`](https://github.com/LedgerHQ/ledger-live/commit/0725151a348608bec1f8338b57772f12a23cb471) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Updated consummed CAL files for the new chain id based approach from @ledger/cryptoassets
 
 ### Patch Changes
 
-- Updated dependencies [[`a56ffa948d`](https://github.com/LedgerHQ/ledger-live/commit/a56ffa948defb16ea9f2968d96d4b896f9839145)]:
-  - @ledgerhq/cryptoassets@7.3.0-nightly.0
+- Updated dependencies [[`0725151a34`](https://github.com/LedgerHQ/ledger-live/commit/0725151a348608bec1f8338b57772f12a23cb471), [`cec9e0f33d`](https://github.com/LedgerHQ/ledger-live/commit/cec9e0f33d5bc058c0e4b3a2680fc8791d5b61b1), [`62af25493e`](https://github.com/LedgerHQ/ledger-live/commit/62af25493e2becf897d517af42542db208b971c7), [`725000b4ed`](https://github.com/LedgerHQ/ledger-live/commit/725000b4ed37a2669f3a0cd70ca2b5d0b1d4825e)]:
+  - @ledgerhq/cryptoassets@9.0.0-next.0
+  - @ledgerhq/hw-transport@6.28.1-next.0
+  - @ledgerhq/hw-transport-mocker@6.27.12-next.0
 
 ## 6.31.0
 
