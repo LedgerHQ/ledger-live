@@ -7,9 +7,6 @@ import axios from "axios";
 export const estimatedFeeSafetyRate = 2;
 
 export async function getEstimatedFees(): Promise<BigNumber> {
-  // If get hedera price works, use real estimate, otherwise fallback to hard coded
-  let hederaPrice;
-
   try {
     const { data } = await axios.get(
       "https://countervalues.live.ledger.com/latest/direct?pairs=hbar:usd"
@@ -19,7 +16,7 @@ export async function getEstimatedFees(): Promise<BigNumber> {
       return new BigNumber("0.0001").dividedBy(hederaPrice);
     }
   } catch {}
-  
+
   return new BigNumber("212800"); // 0.002128 ℏ (as of 2023-01-09)
 }
 
