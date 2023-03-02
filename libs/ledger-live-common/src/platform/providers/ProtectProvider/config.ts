@@ -1,6 +1,6 @@
 import { ProtectEnv } from "./types";
 
-const protectEnv = ProtectEnv.SIMU;
+const protectEnv = ProtectEnv.STAGING;
 
 const protectIds = {
   [ProtectEnv.PREPROD]: "protect-preprod",
