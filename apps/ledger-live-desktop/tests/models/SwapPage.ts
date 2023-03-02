@@ -5,7 +5,8 @@ export class SwapPage {
   readonly page: Page;
   readonly swapMenuButton: Locator;
   readonly maxSpendableToggle: Locator;
-  readonly accountByName: Function;
+  readonly destinationCurrencyDropdown: Locator;
+  readonly currencyByName: Function;
   readonly accountDropdownAddAccountButton: Locator;
   readonly reverseSwapPairButton: Locator;
   readonly addToAccountButton: Locator;
@@ -26,7 +27,8 @@ export class SwapPage {
     this.page = page;
     this.swapMenuButton = page.locator("data-test-id=drawer-swap-button");
     this.maxSpendableToggle = page.locator("data-test-id=swap-max-spendable-toggle");
-    this.accountByName = (accountName: string) => page.getByText(accountName);
+    this.destinationCurrencyDropdown = page.locator("data-test-id=destination-currency-dropdown");
+    this.currencyByName = (accountName: string) => page.getByText(accountName);
     this.accountDropdownAddAccountButton = page.getByText("Add account");
     this.reverseSwapPairButton = page.locator("data-test-id=swap-reverse-pair-button");
     this.addToAccountButton = page.locator("data-test-id=add-destination-account-button");
@@ -59,12 +61,16 @@ export class SwapPage {
     await this.maxSpendableToggle.click();
   }
 
-  async openAccountDropdownByAccountName(accountName: string) {
-    await this.accountByName(accountName).click();
+  // async openAccountDropdownByAccountName(accountName: string) {
+  //   await this.accountByName(accountName).click();
+  // }
+
+  async openDestinationCurrencyDropdown() {
+    await this.destinationCurrencyDropdown.click();
   }
 
-  async selectAccountByName(accountName: string) {
-    await this.accountByName(accountName).click();
+  async selectCurrencyByName(accountName: string) {
+    await this.currencyByName(accountName).click();
   }
 
   async addAccountFromAccountDropdown() {
