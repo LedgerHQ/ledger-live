@@ -51,6 +51,7 @@ const excludedErrorName = [
   // bad usage of device
   "BleError",
   "EthAppPleaseEnableContractData",
+  "VechainAppPleaseEnableContractDataAndMultiClause",
   "CantOpenDevice",
   "DisconnectedDevice",
   "DisconnectedDeviceDuringOperation",

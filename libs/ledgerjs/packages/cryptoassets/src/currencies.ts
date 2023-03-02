@@ -2781,18 +2781,24 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     managerAppName: "VeChain",
     ticker: "VET",
     scheme: "vechain",
-    color: "#00C2FF",
+    color: "#28008C",
     family: "vechain",
     units: [
       {
         name: "VET",
         code: "VET",
-        magnitude: 8,
+        magnitude: 18,
+      },
+      {
+        name: "WEI",
+        code: "WEI",
+        magnitude: 0,
       },
     ],
     explorerViews: [
       {
-        tx: "https://explore.veforge.com/transactions/$hash",
+        tx: "https://explore-testnet.vechain.org/transactions/$hash",
+        address: "https://explore-testnet.vechain.org/accounts/$address",
       },
     ],
   },

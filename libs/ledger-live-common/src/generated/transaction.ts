@@ -16,6 +16,7 @@ import solana from "../families/solana/transaction";
 import stellar from "../families/stellar/transaction";
 import tezos from "../families/tezos/transaction";
 import tron from "../families/tron/transaction";
+import vechain from "../families/vechain/transaction";
 import polkadot from "@ledgerhq/coin-polkadot/transaction";
 
 export default {
@@ -37,5 +38,6 @@ export default {
   stellar,
   tezos,
   tron,
+  vechain,
   polkadot,
 };

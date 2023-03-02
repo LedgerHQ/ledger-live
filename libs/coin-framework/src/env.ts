@@ -201,6 +201,11 @@ const envDefinitions: Record<
     parser: stringParser,
     desc: "mirror node API for Hedera",
   },
+  API_VECHAIN_THOREST: {
+    def: "https://testnet.node.dev-vechain.org",
+    parser: stringParser,
+    desc: "Thorest API for VeChain",
+  },
   BASE_SOCKET_URL: {
     def: "wss://scriptrunner.api.live.ledger.com/update",
     parser: stringParser,

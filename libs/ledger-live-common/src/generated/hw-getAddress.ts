@@ -16,6 +16,7 @@ import solana from "../families/solana/hw-getAddress";
 import stellar from "../families/stellar/hw-getAddress";
 import tezos from "../families/tezos/hw-getAddress";
 import tron from "../families/tron/hw-getAddress";
+import vechain from "../families/vechain/hw-getAddress";
 import polkadot from "@ledgerhq/coin-polkadot/hw-getAddress";
 
 export default {
@@ -37,5 +38,6 @@ export default {
   stellar,
   tezos,
   tron,
+  vechain,
   polkadot,
 };
