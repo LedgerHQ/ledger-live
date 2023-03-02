@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.54.1-nightly.0
+
+### Patch Changes
+
+- [#2755](https://github.com/LedgerHQ/ledger-live/pull/2755) [`54ae257ebb`](https://github.com/LedgerHQ/ledger-live/commit/54ae257ebb2fa84ef45a14b4d47c84b622b79da9) Thanks [@sarneijim](https://github.com/sarneijim)! - Passing parameters to DEX apps
+
 ## 2.54.0
 
 ### Minor Changes
