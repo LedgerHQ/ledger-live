@@ -19,7 +19,7 @@ import { broadcastWithAPI } from "../js-broadcast";
 import createTransaction, { updateTransaction } from "../js-createTransaction";
 import estimateMaxSpendableWithAPI from "../js-estimateMaxSpendable";
 import getTransactionStatus from "../js-getTransactionStatus";
-import { hydrate, preloadWithAPI } from "../js-preload";
+import { PRELOAD_MAX_AGE, hydrate, preloadWithAPI } from "../js-preload";
 import { prepareTransaction as prepareTransactionWithAPI } from "../js-prepareTransaction";
 import { signOperationWithAPI } from "../js-signOperation";
 import { getAccountShapeWithAPI } from "../js-synchronization";
@@ -143,6 +143,12 @@ function makePreload(
   return preload;
 }
 
+function getPreloadStrategy() {
+  return {
+    preloadMaxAge: PRELOAD_MAX_AGE,
+  };
+}
+
 export function makeBridges({
   getAPI,
   getQueuedAPI,
@@ -173,6 +179,7 @@ export function makeBridges({
     preload: makePreload(getQueuedAndCachedAPI),
     hydrate,
     scanAccounts: scan,
+    getPreloadStrategy,
   };
 
   return {
