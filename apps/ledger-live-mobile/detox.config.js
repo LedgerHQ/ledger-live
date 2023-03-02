@@ -40,7 +40,7 @@ module.exports = {
     },
     "ios.release": {
       type: "ios.app",
-      build: `export RCT_NO_LAUNCH_PACKAGER=true && export ENVFILE=.env.mock && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=no -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Release -sdk iphonesimulator -derivedDataPath ios/build`,
+      build: `export RCT_NO_LAUNCH_PACKAGER=true && export ENVFILE=.env.mock && xcodebuild DEPLOYMENT_LOCATION=1 DEPLOYMENT_POSTPROCESSING=1 ARCHS=${iosArch} ONLY_ACTIVE_ARCH=no -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Release -sdk iphonesimulator -derivedDataPath ios/build`,
       binaryPath:
         "ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app",
     },
