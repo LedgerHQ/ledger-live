@@ -119,20 +119,25 @@ export const signOperation = ({
               const m = modes[transaction.mode];
               invariant(m, "missing module for mode=" + transaction.mode);
 
-              const resolutionConfig = m.getResolutionConfig
-                ? m.getResolutionConfig(account, transaction)
-                : {};
-
               log("rawtx", txHex);
 
               const eth = new Eth(transport);
 
               const challenge = await eth.getChallenge();
-              console.log(challenge);
+
+              const commonResolutionConfig = {
+                challenge,
+                recipientName: transaction.recipientName,
+              };
+
+              const resolutionConfig = m.getResolutionConfig
+                ? m.getResolutionConfig(account, transaction)
+                : {};
+
               const resolution = await ethLedgerServices.resolveTransaction(
                 txHex,
                 loadConfig,
-                resolutionConfig,
+                { ...commonResolutionConfig, ...resolutionConfig },
                 challenge
               );
 

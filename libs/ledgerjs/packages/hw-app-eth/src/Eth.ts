@@ -32,6 +32,7 @@ import {
   isEIP712Message,
   getFiltersForMessage,
 } from "./modules/EIP712";
+import { intAsHexBytes } from "./utils";
 
 export { ledgerService, isEIP712Message, getFiltersForMessage };
 
@@ -49,8 +50,6 @@ const starkQuantizationTypeMap = {
   erc20mintable: 4,
   erc721mintable: 5,
 };
-
-const MAX_CHUNK_SIZE = 150; // bytes
 
 const remapTransactionRelatedErrors = (e) => {
   if (e && e.statusCode === 0x6a80) {
@@ -252,9 +251,7 @@ export default class Eth {
     let offset = 0;
     while (offset !== rawTx.length) {
       const first = offset === 0;
-      const maxChunkSize = first
-        ? MAX_CHUNK_SIZE - 1 - paths.length * 4
-        : MAX_CHUNK_SIZE;
+      const maxChunkSize = first ? 150 - 1 - paths.length * 4 : 150;
       let chunkSize =
         offset + maxChunkSize > rawTx.length
           ? rawTx.length - offset
@@ -347,7 +344,14 @@ export default class Eth {
   async getChallenge(): Promise<string> {
     try {
       const challenge = await this.transport.send(0xe0, 0x20, 0x0, 0x0);
-      return challenge.toString("hex");
+      // The last 4 bytes of the challenge represent the status code.
+      // 9000: status OK
+      if (challenge.subarray(4, challenge.length).toString("hex") === "9000") {
+        return challenge.subarray(0, 4).toString("hex");
+      }
+
+      // TODO what should be returned here
+      return "";
     } catch (err) {
       throw remapTransactionRelatedErrors(err);
     }
@@ -360,16 +364,25 @@ export default class Eth {
   async provideTrustedName(signedPayload: string): Promise<void> {
     try {
       const bufferedPayload = Buffer.from(signedPayload);
-      let offset = 0;
-      const firstChunkLength = 2;
-      const chunk = bufferedPayload.slice(0, firstChunkLength);
-      offset += firstChunkLength;
-      await this.transport.send(0xe0, 0x22, 0x1, 0x0, chunk);
 
-      while (offset < bufferedPayload.length) {
-        const chunk = bufferedPayload.slice(offset, offset + MAX_CHUNK_SIZE);
-        offset += MAX_CHUNK_SIZE;
-        await this.transport.send(0xe0, 0x22, 0x0, 0x0, chunk);
+      await this.transport.send(
+        0xe0,
+        0x22,
+        0x1,
+        0x0,
+        Buffer.from(intAsHexBytes(bufferedPayload.length, 4))
+      );
+
+      const maxChunkLength = 256; // bytes
+      if (bufferedPayload.length > maxChunkLength) {
+        let offset = 0;
+        while (offset < bufferedPayload.length) {
+          const chunk = bufferedPayload.slice(offset, offset + maxChunkLength);
+          await this.transport.send(0xe0, 0x22, 0x0, 0x0, chunk);
+          offset += maxChunkLength;
+        }
+      } else {
+        await this.transport.send(0xe0, 0x22, 0x0, 0x0, bufferedPayload);
       }
     } catch (err) {
       throw remapTransactionRelatedErrors(err);
@@ -402,10 +415,7 @@ export default class Eth {
     let response;
 
     while (offset !== message.length) {
-      const maxChunkSize =
-        offset === 0
-          ? MAX_CHUNK_SIZE - 1 - paths.length * 4 - 4
-          : MAX_CHUNK_SIZE;
+      const maxChunkSize = offset === 0 ? 150 - 1 - paths.length * 4 - 4 : 150;
       const chunkSize =
         offset + maxChunkSize > message.length
           ? message.length - offset

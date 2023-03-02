@@ -5,26 +5,24 @@ import { getLoadConfig } from "./loadConfig";
 
 export type Registry = "ens";
 
-type GetReverseNameResponse = {
+type GetRecipientNamePayloadResponse = {
   payload: string;
 };
 
-export const fetchENSPayload = async (
+export const fetchRecipientNamePayload = async (
   registry: Registry,
-  address: string,
+  recipientName: string,
   loadConfig: LoadConfig,
   challenge?: string
 ): Promise<string> => {
   const { domainNameBaseURL: BASE_URL } = getLoadConfig(loadConfig);
-  const endpoint = `${BASE_URL}/names/${registry}/reverse/${address}`;
-  console.log(endpoint);
+  const endpoint = `${BASE_URL}/names/${registry}/forward/${recipientName}`;
 
-  const { data } = await axios.get<GetReverseNameResponse>(endpoint, {
+  const { data } = await axios.get<GetRecipientNamePayloadResponse>(endpoint, {
     params: { challenge },
   });
-  const { payload } = data;
 
-  console.log(payload);
+  const { payload } = data;
 
   return payload;
 };

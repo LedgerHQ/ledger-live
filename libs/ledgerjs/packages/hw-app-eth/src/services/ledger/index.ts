@@ -16,7 +16,7 @@ import {
   nftSelectors,
   mergeResolutions,
 } from "../../utils";
-import { fetchENSPayload } from "./ens";
+import { fetchRecipientNamePayload } from "./ens";
 
 type potentialResolutions = {
   token: boolean | undefined;
@@ -233,9 +233,9 @@ const ledgerService: LedgerEthTransactionService = {
       );
     }
 
-    const signedPayload = await fetchENSPayload(
+    const signedPayload = await fetchRecipientNamePayload(
       registry,
-      contractAddress,
+      contractAddress, // TODO should be ens
       loadConfig,
       challenge
     );

@@ -25,7 +25,7 @@ export type LoadConfig = {
   // object will be merged with the returned value of the Ledger cdn payload
   extraPlugins?: any | null;
   cryptoassetsBaseURL?: string | null;
-  // ENS base URL
+  // Domain name base URL
   domainNameBaseURL?: string;
 };
 

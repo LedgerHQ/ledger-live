@@ -78,6 +78,7 @@ export type SignOperationEventRaw =
 export type TransactionCommon = {
   amount: BigNumber;
   recipient: string;
+  recipientName?: string;
   useAllAmount?: boolean;
   subAccountId?: string | null | undefined;
   feesStrategy?: "slow" | "medium" | "fast" | "custom" | null;

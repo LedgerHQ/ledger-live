@@ -84,7 +84,7 @@ export const signOperation: AccountBridge<EvmTransaction>["signOperation"] = ({
           const eth = new Eth(transport);
 
           const challenge = await eth.getChallenge();
-          console.log(challenge);
+
           // Look for resolutions for external plugins and ERC20
           const resolution = await ledgerService.resolveTransaction(
             serializedTxHexString,
