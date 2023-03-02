@@ -5,9 +5,7 @@ import {
   GetAccountShape,
   mergeOps,
 } from "../../bridge/jsHelpers";
-import {
-  encodeAccountId,
-} from "../../account";
+import { encodeAccountId } from "../../account";
 import { CosmosAPI } from "./api/Cosmos";
 import { encodeOperationId } from "../../operation";
 import { CosmosAccount, CosmosAccountRaw, CosmosDelegationInfo } from "./types";
