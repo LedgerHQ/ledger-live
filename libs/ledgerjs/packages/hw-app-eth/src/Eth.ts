@@ -363,26 +363,31 @@ export default class Eth {
    */
   async provideTrustedName(signedPayload: string): Promise<void> {
     try {
-      const bufferedPayload = Buffer.from(signedPayload);
+      const bufferedPayload = Buffer.from(signedPayload, "hex");
+      const payloadLength = intAsHexBytes(bufferedPayload.length, 2);
 
       await this.transport.send(
         0xe0,
         0x22,
-        0x1,
-        0x0,
-        Buffer.from(intAsHexBytes(bufferedPayload.length, 4))
+        0x01,
+        0x00,
+        Buffer.from(payloadLength, "hex")
       );
 
-      const maxChunkLength = 256; // bytes
+      const maxChunkLength = 255; // bytes
       if (bufferedPayload.length > maxChunkLength) {
         let offset = 0;
         while (offset < bufferedPayload.length) {
-          const chunk = bufferedPayload.slice(offset, offset + maxChunkLength);
-          await this.transport.send(0xe0, 0x22, 0x0, 0x0, chunk);
-          offset += maxChunkLength;
+          const chunk = bufferedPayload.subarray(
+            offset,
+            offset + maxChunkLength
+          );
+
+          await this.transport.send(0xe0, 0x22, 0x00, 0x00, chunk);
+          offset = offset + maxChunkLength + 1;
         }
       } else {
-        await this.transport.send(0xe0, 0x22, 0x0, 0x0, bufferedPayload);
+        await this.transport.send(0xe0, 0x22, 0x00, 0x00, bufferedPayload);
       }
     } catch (err) {
       throw remapTransactionRelatedErrors(err);

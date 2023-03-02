@@ -85,16 +85,23 @@ export const signOperation: AccountBridge<EvmTransaction>["signOperation"] = ({
 
           const challenge = await eth.getChallenge();
 
+          const commonResolutionConfig = {
+            challenge,
+            recipientName: transaction.recipientName,
+          };
+
           // Look for resolutions for external plugins and ERC20
           const resolution = await ledgerService.resolveTransaction(
             serializedTxHexString,
             eth.loadConfig,
             {
+              ...commonResolutionConfig,
               externalPlugins: true,
               erc20: true,
             },
             challenge
           );
+
           // Request signature on the nano
           const sig = await eth.signTransaction(
             account.freshAddressPath,

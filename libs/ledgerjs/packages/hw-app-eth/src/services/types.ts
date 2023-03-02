@@ -40,6 +40,10 @@ export type ResolutionConfig = {
   externalPlugins?: boolean;
   // ERC20 resolution service (to clear sign erc20 transfers & other actions)
   erc20?: boolean;
+  // Challenge used to resolve recipientName
+  challenge?: string;
+  // recipient name
+  recipientName?: string;
 };
 
 export type LedgerEthTransactionService = {

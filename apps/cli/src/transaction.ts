@@ -43,6 +43,7 @@ export type InferTransactionsOpts = Partial<{
   "self-transaction": boolean;
   "use-all-amount": boolean;
   recipient: string[];
+  recipientName: string;
   amount: string;
   shuffle: boolean;
   "fees-strategy": string;
@@ -50,6 +51,7 @@ export type InferTransactionsOpts = Partial<{
   tokenIds: string;
   quantities: string;
 }>;
+
 export const inferTransactionsOpts = uniqBy(
   [
     {
@@ -67,6 +69,12 @@ export const inferTransactionsOpts = uniqBy(
       type: String,
       desc: "the address to send funds to",
       multiple: true,
+    },
+    {
+      name: "recipientName",
+      type: String,
+      desc: "the domain name (.eth) to send funds to",
+      multiple: false,
     },
     {
       name: "amount",
@@ -98,6 +106,7 @@ export const inferTransactionsOpts = uniqBy(
   ),
   "name"
 );
+
 export async function inferTransactions(
   mainAccount: Account,
   opts: InferTransactionsOpts
@@ -121,7 +130,7 @@ export async function inferTransactions(
   ) => Transaction[] =
     (specific && specific.inferTransactions) ||
     ((inferred, _opts, _r) => inferred.map(({ transaction }) => transaction));
-
+    
   let all: Array<{
     account: AccountLike;
     transaction: Transaction;
@@ -131,11 +140,13 @@ export async function inferTransactions(
       inferAccounts(mainAccount, opts),
       opts.recipient || [
         opts["self-transaction"] ? mainAccount.freshAddress : "",
-      ]
+      ],
+      opts.recipientName || ""
     ).map(async ([account, recipient]: [AccountLike, string]) => {
       const transaction = bridge.createTransaction(mainAccount);
       transaction.recipient = recipient;
       transaction.useAllAmount = !!opts["use-all-amount"];
+      transaction.recipientName = opts.recipientName;
       transaction.amount = transaction.useAllAmount
         ? new BigNumber(0)
         : inferAmount(account, opts.amount || "0");

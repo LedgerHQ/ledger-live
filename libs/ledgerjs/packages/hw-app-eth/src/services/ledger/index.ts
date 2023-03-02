@@ -209,6 +209,7 @@ const ledgerService: LedgerEthTransactionService = {
 
     let pluginsResolution: Partial<LedgerEthTransactionResolution> = {};
     let contractResolution: Partial<LedgerEthTransactionResolution> = {};
+
     if (selector) {
       const shouldResolve: potentialResolutions = {
         token: resolutionConfig.erc20 && tokenSelectors.includes(selector),
@@ -233,15 +234,18 @@ const ledgerService: LedgerEthTransactionService = {
       );
     }
 
-    const signedPayload = await fetchRecipientNamePayload(
-      registry,
-      contractAddress, // TODO should be ens
-      loadConfig,
-      challenge
-    );
-
     const resolution = mergeResolutions(pluginsResolution, contractResolution);
-    resolution.domaineName = { signedPayload };
+
+    if (resolutionConfig.recipientName) {
+      const signedPayload = await fetchRecipientNamePayload(
+        registry,
+        resolutionConfig.recipientName,
+        loadConfig,
+        challenge
+      );
+
+      resolution.domaineName = { signedPayload };
+    }
 
     return resolution;
   },
