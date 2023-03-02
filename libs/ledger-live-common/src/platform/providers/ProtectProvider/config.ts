@@ -1,7 +1,7 @@
 import { LiveAppManifest } from "../../types";
 import { ProtectEnv } from "./types";
 
-const protectEnv = ProtectEnv.SIMU;
+const protectEnv = ProtectEnv.PREPROD;
 
 const protectIds = {
   [ProtectEnv.PREPROD]: "protect-preprod",
