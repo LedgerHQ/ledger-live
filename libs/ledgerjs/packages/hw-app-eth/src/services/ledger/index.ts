@@ -116,7 +116,7 @@ const loadNanoAppPlugins = async (
     plugin: [],
     nfts: [],
     erc20Tokens: [],
-    domaineName: {
+    domainName: {
       signedPayload: "",
     },
   };
@@ -238,13 +238,13 @@ const ledgerService: LedgerEthTransactionService = {
 
     if (resolutionConfig.recipientName) {
       const signedPayload = await fetchRecipientNamePayload(
-        registry,
         resolutionConfig.recipientName,
+        registry,
         loadConfig,
         challenge
       );
 
-      resolution.domaineName = { signedPayload };
+      resolution.domainName = { signedPayload };
     }
 
     return resolution;

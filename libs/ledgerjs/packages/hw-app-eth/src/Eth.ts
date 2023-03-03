@@ -238,8 +238,10 @@ export default class Eth {
         );
       }
 
-      const { signedPayload } = resolution.domaineName;
-      await this.provideTrustedName(signedPayload);
+      const { signedPayload } = resolution.domainName;
+      if (signedPayload) {
+        await this.provideTrustedName(signedPayload);
+      }
     }
 
     const rawTx = Buffer.from(rawTxHex, "hex");

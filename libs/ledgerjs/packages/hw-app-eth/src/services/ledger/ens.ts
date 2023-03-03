@@ -10,12 +10,12 @@ type GetRecipientNamePayloadResponse = {
 };
 
 export const fetchRecipientNamePayload = async (
-  registry: Registry,
   recipientName: string,
+  registry: Registry,
   loadConfig: LoadConfig,
   challenge?: string
 ): Promise<string> => {
-  const { domainNameBaseURL: BASE_URL } = getLoadConfig(loadConfig);
+  const { nftMetadataBaseURL: BASE_URL } = getLoadConfig(loadConfig);
   const endpoint = `${BASE_URL}/names/${registry}/forward/${recipientName}`;
 
   const { data } = await axios.get<GetRecipientNamePayloadResponse>(endpoint, {

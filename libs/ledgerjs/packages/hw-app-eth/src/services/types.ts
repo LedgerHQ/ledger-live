@@ -10,8 +10,8 @@ export type LedgerEthTransactionResolution = {
   // device serialized data that contains plugin data (hex format)
   plugin: Array<string>;
   // Domain name resolution data
-  domaineName: {
-    signedPayload: string;
+  domainName: {
+    signedPayload: string | null;
   };
 };
 
@@ -26,7 +26,7 @@ export type LoadConfig = {
   extraPlugins?: any | null;
   cryptoassetsBaseURL?: string | null;
   // Domain name base URL
-  domainNameBaseURL?: string;
+  nftMetadataBaseURL?: string;
 };
 
 /**
@@ -40,9 +40,9 @@ export type ResolutionConfig = {
   externalPlugins?: boolean;
   // ERC20 resolution service (to clear sign erc20 transfers & other actions)
   erc20?: boolean;
-  // Challenge used to resolve recipientName
+  // optional challenge to get recipient domain name
   challenge?: string;
-  // recipient name
+  // recipient domain name
   recipientName?: string;
 };
 

@@ -159,8 +159,8 @@ export const mergeResolutions = (
     erc20Tokens: [],
     externalPlugin: [],
     plugin: [],
-    domaineName: {
-      signedPayload: "",
+    domainName: {
+      signedPayload: null,
     },
   };
 
