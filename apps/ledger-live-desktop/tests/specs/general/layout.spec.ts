@@ -44,7 +44,7 @@ test("Layout", async ({ page }) => {
     await layout.goToDiscover();
     await expect(page).toHaveURL(/.*\/platform.*/);
     await page.waitForLoadState("domcontentloaded");
-    await expect(page).toHaveScreenshot("discover.png");
+    await expect.soft(page).toHaveScreenshot("discover.png");
   });
 
   await test.step("go to buy / sell cryto", async () => {
