@@ -80,7 +80,7 @@ export function useDeeplinkEffect(
 const DAPP_DISCLAIMER_ID = "PlatformAppDisclaimer";
 
 export function useDisclaimer(
-  pushRecentlyUsed: (manifest: AppManifest) => void,
+  appendRecentlyUsed: (manifest: AppManifest) => void,
 ) {
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const route = useRoute<NavigationProps["route"]>();
@@ -99,9 +99,9 @@ export function useDisclaimer(
         platform: manifest.id,
         name: manifest.name,
       });
-      pushRecentlyUsed(manifest);
+      appendRecentlyUsed(manifest);
     },
-    [navigation, params, pushRecentlyUsed],
+    [navigation, params, appendRecentlyUsed],
   );
 
   const close = useCallback(() => {
@@ -228,12 +228,10 @@ function usePlatformState<T>(
   return [result, setState];
 }
 
-export function useRecentlyUsed(
-  manifests: LiveAppManifest[],
-): [LiveAppManifest[], (manifest: LiveAppManifest) => void] {
+export function useRecentlyUsed(manifests: LiveAppManifest[]) {
   const [ids, setState] = usePlatformState(state => state.recentlyUsed);
 
-  const res = useMemo(
+  const data = useMemo(
     () =>
       ids
         .map(id => manifests.find(m => m.id === id))
@@ -241,19 +239,28 @@ export function useRecentlyUsed(
     [ids, manifests],
   );
 
-  const push = useCallback(
+  const append = useCallback(
     (manifest: LiveAppManifest) => {
       setState(state =>
         state.recentlyUsed.includes(manifest.id)
           ? state
           : {
               ...state,
-              recentlyUsed: [...state.recentlyUsed, manifest.id],
+              recentlyUsed:
+                state.recentlyUsed.length >= MAX_LENGTH
+                  ? [manifest.id, ...state.recentlyUsed.slice(0, -1)]
+                  : [manifest.id, ...state.recentlyUsed],
             },
       );
     },
     [setState],
   );
 
-  return [res, push];
+  const clear = useCallback(() => {
+    setState(state => ({ ...state, recentlyUsed: [] }));
+  }, [setState]);
+
+  return { data, append, clear };
 }
+
+const MAX_LENGTH = 10;

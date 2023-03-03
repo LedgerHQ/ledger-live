@@ -41,7 +41,7 @@ export function Catalog({ navigation }: Props) {
     initialSelectedState,
   } = useCategories();
 
-  const [recentlyUsed, pushRecentlyUsed] = useRecentlyUsed(manifests);
+  const recentlyUsed = useRecentlyUsed(manifests);
 
   const {
     input,
@@ -76,7 +76,7 @@ export function Catalog({ navigation }: Props) {
     isChecked,
     toggleCheck,
     onContinue,
-  } = useDisclaimer(pushRecentlyUsed);
+  } = useDisclaimer(recentlyUsed.append);
 
   useDeeplinkEffect(manifests, openApp);
 
@@ -108,7 +108,7 @@ export function Catalog({ navigation }: Props) {
       {isActive ? (
         <Search
           manifests={manifests}
-          recentlyUsed={recentlyUsed}
+          recentlyUsed={recentlyUsed.data}
           title={title}
           input={input}
           inputRef={inputRef}
@@ -159,7 +159,11 @@ export function Catalog({ navigation }: Props) {
             }
             disableStyleBottomHeader
             bottomHeaderContent={
-              <RecentlyUsed recentlyUsed={recentlyUsed} onSelect={onSelect} />
+              <RecentlyUsed
+                recentlyUsed={recentlyUsed.data}
+                onSelect={onSelect}
+                onClear={recentlyUsed.clear}
+              />
             }
             disableStyleSubBottomHeader
             subBottomHeaderContent={

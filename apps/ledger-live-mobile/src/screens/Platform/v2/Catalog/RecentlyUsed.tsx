@@ -8,22 +8,31 @@ import { AppIcon } from "../AppIcon";
 export function RecentlyUsed({
   recentlyUsed,
   onSelect,
+  onClear,
 }: {
   recentlyUsed: LiveAppManifest[];
   onSelect: (manifest: LiveAppManifest) => void;
+  onClear: () => void;
 }) {
   const { t } = useTranslation();
 
   return recentlyUsed.length > 0 ? (
     <>
-      <Text
-        variant={"h4"}
-        fontWeight={"semiBold"}
-        marginBottom={16}
-        marginLeft={16}
-      >
-        {t("browseWeb3.catalog.section.recentlyUsed")}
-      </Text>
+      <Flex flexDirection="row" alignItems="center" paddingX={4}>
+        <Flex flex={1} justifyContent="center">
+          <Text variant={"h4"} fontWeight={"semiBold"}>
+            {t("browseWeb3.catalog.section.recentlyUsed")}
+          </Text>
+        </Flex>
+
+        <TouchableOpacity onPress={onClear}>
+          <Flex margin={4}>
+            <Text color="primary.c80">
+              {t("browseWeb3.catalog.section.clearAll")}
+            </Text>
+          </Flex>
+        </TouchableOpacity>
+      </Flex>
 
       <ScrollContainer
         paddingLeft={6}
