@@ -1,5 +1,5 @@
 import { Icons, Text } from "@ledgerhq/native-ui";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Language, DeviceInfo } from "@ledgerhq/types-live";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
@@ -44,7 +44,6 @@ const DeviceLanguage: React.FC<Props> = ({
     [setIsChangeLanguageOpen],
   );
   const openChangeLanguageModal = useCallback(() => {
-    track("Page Manager ChangeLanguageEntered");
     setIsChangeLanguageOpen(true);
   }, [setIsChangeLanguageOpen]);
 
@@ -71,6 +70,18 @@ const DeviceLanguage: React.FC<Props> = ({
     track("Page Manager LanguageInstalled", { selectedLanguage });
     onLanguageChange();
   }, [onLanguageChange, selectedLanguage]);
+
+  const errorTracked = useRef(null);
+  const handleError = useCallback(
+    error => {
+      if (errorTracked.current !== error) {
+        track("Page Manager LanguageInstallError", { error, type: "drawer" });
+        errorTracked.current = error;
+      }
+      refreshDeviceLanguage();
+    },
+    [refreshDeviceLanguage],
+  );
 
   return (
     <>
@@ -105,10 +116,7 @@ const DeviceLanguage: React.FC<Props> = ({
         onClose={closeDeviceActionModal}
         device={deviceForActionModal}
         language={selectedLanguage}
-        onError={error => {
-          track("Page Manager LanguageInstallError", { error });
-          refreshDeviceLanguage();
-        }}
+        onError={handleError}
         onResult={refreshDeviceLanguage}
       />
     </>

@@ -324,16 +324,6 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
       break;
   }
 
-  const screenNameRef = useRef(currentRouteNameRef.current);
-  useEffect(() => {
-    // logic to reset the current screen name in analytics when opening/closing drawers
-    if (nextDrawerToDisplay === "none") {
-      currentRouteNameRef.current = screenNameRef.current;
-    } else {
-      screenNameRef.current = currentRouteNameRef.current;
-    }
-  }, [nextDrawerToDisplay]);
-
   return (
     <Flex>
       <TrackScreen

@@ -38,7 +38,8 @@ const DesyncDrawer = ({ isOpen, onClose, onRetry, device }: Props) => {
     >
       <TrackScreen
         category="Could not connect to Stax"
-        value={{ type: "drawer" }}
+        type="drawer"
+        refreshSource={false}
       />
       <Text variant="h4" fontWeight="semiBold" mb={4}>
         {t("syncOnboarding.desyncDrawer.title", { productName })}

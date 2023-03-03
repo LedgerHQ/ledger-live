@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
   Button,
   Flex,
@@ -36,7 +36,10 @@ const DeviceLanguageSelection: React.FC<Props> = ({
 
   const handleSelectLanguage = useCallback(
     (language: Language) => {
-      track("language_clicked", { firmwareLanguage: language });
+      track("language_clicked", {
+        firmwareLanguage: language,
+        drawer: "App Language Manager",
+      });
       onSelectLanguage(language);
     },
     [onSelectLanguage],
@@ -44,7 +47,11 @@ const DeviceLanguageSelection: React.FC<Props> = ({
 
   return (
     <Flex height="100%" justifyContent="space-between">
-      <TrackScreen category={"App Language Manager"} />
+      <TrackScreen
+        category={"App Language Manager"}
+        type="drawer"
+        refreshSource={false}
+      />
       <Flex flexShrink={1}>
         <Text variant="h4" textAlign="center">
           {t("deviceLocalization.language")}

@@ -29,7 +29,11 @@ const GenuineCheckCancelledDrawer = ({
       preventBackdropClick
       noCloseButton
     >
-      <TrackScreen category="Failed Stax hardware check" type="drawer" />
+      <TrackScreen
+        category="Failed Stax hardware check"
+        type="drawer"
+        refreshSource={false}
+      />
       <Flex justifyContent="center" alignItems="center" flex={1} mt={9} mb={6}>
         <BoxedIcon
           Icon={<WarningSolidMedium color="warning.c80" size={24} />}

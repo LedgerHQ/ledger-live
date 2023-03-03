@@ -67,12 +67,7 @@ const PostOnboardingHub = ({ navigation, route }: NavigationProps) => {
      * Complete claim NFT action if the route param completed is true
      * */
     () => {
-      const shouldComplete =
-        route &&
-        route.params &&
-        route.params.completed &&
-        route.params.completed === "true";
-      if (shouldComplete) {
+      if (route?.params?.completed === "true") {
         track("deeplink", { action: "Claim NFT return to setup" });
         completePostOnboardingAction(PostOnboardingActionId.claimNft);
       }
