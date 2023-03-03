@@ -14,7 +14,7 @@ import {
 import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
 import { submitExtrinsic } from "../api";
 import { getPreloadStrategy, preload, hydrate } from "../preload";
-import { getAccountShape } from "../js-synchronisation";
+import { applyReconciliation, getAccountShape } from "../js-synchronisation";
 import createTransaction from "../js-createTransaction";
 import prepareTransaction from "../js-prepareTransaction";
 import getTransactionStatus from "../js-getTransactionStatus";
@@ -23,6 +23,7 @@ import buildSignOperation from "../js-signOperation";
 import getAddress from "../hw-getAddress";
 import { loadPolkadotCrypto } from "../polkadot-crypto";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
 
@@ -77,5 +78,8 @@ export function buildAccountBridge(
     receive,
     signOperation,
     broadcast,
+    assignFromAccountRaw,
+    assignToAccountRaw,
+    applyReconciliation,
   };
 }
