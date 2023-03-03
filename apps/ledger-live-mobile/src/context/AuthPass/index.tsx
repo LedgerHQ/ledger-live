@@ -75,10 +75,7 @@ class AuthPass extends PureComponent<Props, State> {
   }
 
   handleAppStateChange = (nextAppState: string) => {
-    if (
-      this.state.appState.match(/inactive|background/) &&
-      nextAppState === "active"
-    ) {
+    if (this.state.appState === "background" && nextAppState === "active") {
       this.lock();
     }
 
