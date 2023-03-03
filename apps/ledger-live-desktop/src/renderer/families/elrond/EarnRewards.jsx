@@ -3,10 +3,11 @@
 import React, { Fragment, useCallback, useMemo, useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
-import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
 import { useElrondRandomizedValidators } from "@ledgerhq/live-common/families/elrond/react";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
+import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/elrond/constants";
+import styled from "styled-components";
 
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
@@ -56,10 +57,7 @@ const Delegation = (props: DelegationPropsType) => {
 
   const dispatch = useDispatch();
   const delegationEnabled = useMemo(
-    (): boolean =>
-      BigNumber(denominate({ input: account.spendableBalance, showLastNonZeroDecimal: true })).gte(
-        1,
-      ),
+    () => account.spendableBalance.isGreaterThanOrEqualTo(MIN_DELEGATION_AMOUNT),
     [account.spendableBalance],
   );
 
