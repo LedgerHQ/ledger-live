@@ -56,7 +56,6 @@ export function Row({ delegation, account, onExternalLink }: Props) {
       <Column>{moment.unix(delegation.startTime).format("MM/DD/YYYY, h:mm:ss a")}</Column>
       <Column>{moment.unix(delegation.endTime).format("MM/DD/YYYY, h:mm:ss a")}</Column>
       <Column>{formatAmount(delegation.stakeAmount.toString())}</Column>
-      <Column>{formatAmount(delegation.potentialReward.toString())}</Column>
     </Wrapper>
   );
 }

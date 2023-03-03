@@ -2,12 +2,16 @@ import BigNumber from "bignumber.js";
 import { getEnv } from "../../../env";
 import network from "../../../network";
 import { Operation, OperationType } from "@ledgerhq/types-live";
-import { AvalanchePChainTransactions } from "../types";
+import { AvalancheDelegationRaw, AvalanchePChainTransactions } from "../types";
 import { encodeOperationId } from "../../../operation";
 import { avalancheClient } from "./client";
 import { makeLRUCache } from "../../../cache";
 import { HDHelper } from "../hdhelper";
 import { isDefaultValidatorNode, MINUTE, DAY, ONE_AVAX } from "../utils";
+import {
+  getHistoryP,
+  OrteliusAvalancheTx,
+} from "@avalabs/avalanche-wallet-sdk";
 
 const getIndexerUrl = (route: string): string =>
   `${getEnv("API_AVALANCHE_INDEXER")}${route || ""}`;
@@ -172,44 +176,47 @@ export const getAccount = async (publicKey: string, chainCode: string) => {
   };
 };
 
-export const getDelegations = async (publicKey: string, chainCode: string) => {
-  const allDelegators: any = [];
-  const validators = await getValidators();
-
-  for (let i = 0; i < validators.length; i++) {
-    const validator = validators[i];
-    if (validator.delegators == null) continue;
-    allDelegators.push(...validator.delegators);
-  }
-
-  return getUserDelegations(allDelegators, publicKey, chainCode);
-};
-
-const getUserDelegations = async (
-  delegators,
+export const getDelegations = async (
   publicKey: string,
   chainCode: string
-) => {
+): Promise<AvalancheDelegationRaw[]> => {
   const hdHelper = await HDHelper.instantiate(publicKey, chainCode);
 
   const userAddresses = hdHelper.getAllDerivedAddresses();
+  const addressHistory = await getHistoryP(userAddresses);
 
-  const userDelegations = delegators.filter((d) => {
-    const rewardAddresses = d.rewardOwner.addresses;
-    const filteredByUser = rewardAddresses.filter((address) => {
-      return userAddresses.includes(address);
-    });
+  const currentDate = Math.floor(Date.now() / 1000);
 
-    return filteredByUser.length > 0;
-  });
+  const isCurrentDelegation = (history: OrteliusAvalancheTx) =>
+    history.type === "add_delegator" && currentDate < history.validatorEnd;
 
-  userDelegations.sort((a, b) => {
+  const currentDelegations = addressHistory.filter(isCurrentDelegation);
+
+  const getStakeAmount = (outputs) => {
+    const totalStake = outputs.reduce((acc, out) => {
+      if (out.stake) {
+        return acc.plus(new BigNumber(out.amount));
+      }
+      return acc;
+    }, new BigNumber(0));
+    return totalStake.toString();
+  };
+
+  const mappedDelegations = currentDelegations.map((d) => ({
+    txID: d.id,
+    startTime: d.validatorStart.toString(),
+    endTime: d.validatorEnd.toString(),
+    stakeAmount: getStakeAmount(d.outputs),
+    nodeID: d.validatorNodeID,
+  }));
+
+  mappedDelegations.sort((a, b) => {
     const startA = parseInt(a.startTime);
     const startB = parseInt(b.startTime);
     return startA - startB;
   });
 
-  return userDelegations;
+  return mappedDelegations;
 };
 
 export const getValidators = makeLRUCache(async () => {

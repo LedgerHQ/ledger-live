@@ -40,8 +40,5 @@ export const Header = () => (
     <TableLine>
       <Trans i18nKey="avalanchepchain.delegation.stakeAmount" />
     </TableLine>
-    <TableLine>
-      <Trans i18nKey="avalanchepchain.delegation.potentialReward" />
-    </TableLine>
   </HeaderWrapper>
 );

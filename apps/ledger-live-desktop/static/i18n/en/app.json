@@ -3544,7 +3544,6 @@
       "startTime": "Start Time",
       "endTime": "End Time",
       "stakeAmount": "Stake",
-      "potentialReward": "Potential Reward",
       "emptyState": {
         "description": "You can earn AVAX rewards by delegating your assets.",
         "info": "How Delegation works",

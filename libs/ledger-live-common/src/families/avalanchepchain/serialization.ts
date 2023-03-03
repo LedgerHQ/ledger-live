@@ -19,8 +19,6 @@ export function toAvalanchePChainResourcesRaw(
       endTime: delegation.endTime,
       stakeAmount: delegation.stakeAmount.toString(),
       nodeID: delegation.nodeID,
-      rewardOwner: delegation.rewardOwner,
-      potentialReward: delegation.potentialReward.toString(),
     })),
   };
 }
@@ -40,8 +38,6 @@ export function fromAvalanchePChainResourcesRaw(
       endTime: delegation.endTime,
       stakeAmount: new BigNumber(delegation.stakeAmount),
       nodeID: delegation.nodeID,
-      rewardOwner: delegation.rewardOwner,
-      potentialReward: new BigNumber(delegation.potentialReward),
     })),
   };
 }
