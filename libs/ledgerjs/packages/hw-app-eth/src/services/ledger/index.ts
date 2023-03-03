@@ -117,7 +117,7 @@ const loadNanoAppPlugins = async (
     nfts: [],
     erc20Tokens: [],
     domainName: {
-      signedPayload: "",
+      signedPayload: null,
     },
   };
 
@@ -197,7 +197,6 @@ const ledgerService: LedgerEthTransactionService = {
     rawTxHex,
     loadConfig,
     resolutionConfig,
-    challenge,
     registry = "ens"
   ) => {
     const rawTx = Buffer.from(rawTxHex, "hex");
@@ -241,7 +240,7 @@ const ledgerService: LedgerEthTransactionService = {
         resolutionConfig.recipientName,
         registry,
         loadConfig,
-        challenge
+        resolutionConfig.challenge
       );
 
       resolution.domainName = { signedPayload };

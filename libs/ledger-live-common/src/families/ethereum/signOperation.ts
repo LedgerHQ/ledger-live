@@ -137,8 +137,7 @@ export const signOperation = ({
               const resolution = await ethLedgerServices.resolveTransaction(
                 txHex,
                 loadConfig,
-                { ...commonResolutionConfig, ...resolutionConfig },
-                challenge
+                { ...commonResolutionConfig, ...resolutionConfig }
               );
 
               eth.setLoadConfig(loadConfig);

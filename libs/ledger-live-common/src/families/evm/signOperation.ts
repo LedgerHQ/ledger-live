@@ -98,8 +98,7 @@ export const signOperation: AccountBridge<EvmTransaction>["signOperation"] = ({
               ...commonResolutionConfig,
               externalPlugins: true,
               erc20: true,
-            },
-            challenge
+            }
           );
 
           // Request signature on the nano

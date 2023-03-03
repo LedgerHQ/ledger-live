@@ -51,7 +51,6 @@ export type LedgerEthTransactionService = {
     rawTxHex: string,
     loadConfig: LoadConfig,
     resolutionConfig: ResolutionConfig,
-    challenge?: string,
     registry?: Registry
   ) => Promise<LedgerEthTransactionResolution>;
 };
