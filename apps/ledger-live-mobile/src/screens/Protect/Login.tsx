@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { GestureResponderEvent } from "react-native";
+import { GestureResponderEvent, Linking } from "react-native";
 import { useDispatch } from "react-redux";
 import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import BaseInput from "@ledgerhq/native-ui/components/Form/Input/BaseInput";
 import { login } from "@ledgerhq/live-common/platform/providers/ProtectProvider/api/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 import TabBarSafeAreaView from "../../components/TabBar/TabBarSafeAreaView";
 import Button from "../../components/wrappedUi/Button";
@@ -20,6 +21,8 @@ import {
 } from "../../actions/protect";
 import { formatData, getProtectStatus } from "../../logic/protect";
 import { deleteProtect } from "../../db";
+import { ServicesConfig } from "../../components/ServicesWidget/types";
+import { urls } from "../../config/urls";
 
 function Login() {
   const dispatch = useDispatch();
@@ -33,6 +36,13 @@ function Login() {
   );
   const navigation =
     useNavigation<StackNavigatorNavigation<ManagerNavigatorStackParamList>>();
+
+  const servicesConfig: ServicesConfig | null = useFeature(
+    "protectServicesMobile",
+  );
+
+  const { params } = servicesConfig || {};
+  const { forgotPasswordURI } = params?.login || {};
 
   const validateEmail = useCallback(() => {
     if (!email) {
@@ -87,6 +97,11 @@ function Login() {
     [dispatch, email, navigation, password, validateEmail, validatePassword],
   );
 
+  const onForgotPassword = useCallback(() => {
+    const url = `${forgotPasswordURI}&source=${urls.recoverSources.myLedger}`;
+    Linking.canOpenURL(url).then(() => Linking.openURL(url));
+  }, [forgotPasswordURI]);
+
   useEffect(() => {
     dispatch(resetProtectState());
     deleteProtect();
@@ -99,21 +114,10 @@ function Login() {
       }}
     >
       <Flex px={6} pt={6}>
-        <Text
-          mb={9}
-          textTransform="none"
-          fontFamily="Inter"
-          fontSize="24px"
-          fontWeight="bold"
-        >
+        <Text mb={9} variant="h4">
           {t("protect.login.title")}
         </Text>
-        <Text
-          mb={10}
-          color="palette.neutral.c80"
-          fontFamily="Inter"
-          fontSize="14px"
-        >
+        <Text mb={10} variant="body">
           {t("protect.login.desc")}
         </Text>
 
@@ -140,6 +144,9 @@ function Login() {
             secureTextEntry
           />
         </Box>
+        <Text mt={6} variant="body" onPress={onForgotPassword}>
+          {t("protect.login.forgotPassword")}
+        </Text>
         <Button
           onPress={onSubmit}
           size={"large"}

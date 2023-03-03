@@ -23,7 +23,7 @@ outputs:
 
 runs:
   using: node16
-  main: build/index.js
+  main: build/main.js
 
 branding:
   icon: package
