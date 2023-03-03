@@ -112,11 +112,7 @@ export const runAllWithProgress = (
     scan(reducer, state),
     mergeMap((s) => {
       // Nb if you also want to expose the uninstall queue, feel free.
-      const {
-        currentProgressSubject,
-        currentAppOp,
-        installQueue,
-      } = s;
+      const { currentProgressSubject, currentAppOp, installQueue } = s;
 
       if (!currentProgressSubject)
         return of({

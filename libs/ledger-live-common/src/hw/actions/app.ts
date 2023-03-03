@@ -191,7 +191,6 @@ const getInitialState = (
 });
 
 const reducer = (state: State, e: Event): State => {
-  console.log("event", e)
   switch (e.type) {
     case "unresponsiveDevice":
       return { ...state, unresponsive: true };
