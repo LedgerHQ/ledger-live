@@ -711,7 +711,7 @@ const envDefinitions: Record<
     desc: "use the staging URL for the learn page",
   },
   DYNAMIC_CAL_BASE_URL: {
-    def: "https://cdn.live.ledger.com/cryptoassets",
+    def: "testpurposebadurl",
     parser: stringParser,
     desc: "bucket S3 of the dynamic cryptoassets list",
   },
