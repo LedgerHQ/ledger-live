@@ -88,12 +88,6 @@ export type AvalancheDelegation = {
   endTime: string;
   stakeAmount: BigNumber;
   nodeID: string;
-  rewardOwner: {
-    lockTime: string;
-    threshold: string;
-    addresses: string[];
-  };
-  potentialReward: BigNumber;
 };
 
 export type AvalancheDelegationRaw = {
@@ -102,12 +96,6 @@ export type AvalancheDelegationRaw = {
   endTime: string;
   stakeAmount: string;
   nodeID: string;
-  rewardOwner: {
-    lockTime: string;
-    threshold: string;
-    addresses: string[];
-  };
-  potentialReward: string;
 };
 
 export const AvalanchePChainTransactions = {
