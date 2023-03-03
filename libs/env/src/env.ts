@@ -101,6 +101,21 @@ const envDefinitions: Record<
     def: "https://filecoin.coin.ledger.com",
     desc: "Filecoin API url",
   },
+  API_AVALANCHE_INDEXER: {
+    def: "https://avax-indexer.coin.ledger.com",
+    parser: stringParser,
+    desc: "Explorer API for avalanche",
+  },
+  API_AVALANCHE_NODE: {
+    def: "avax-node.coin.ledger.com",
+    parser: stringParser,
+    desc: "Node endpoint for avalanche",
+  },
+  API_AVALANCHE_EXPLORER_API: {
+    def: "https://avax-explorer.coin.ledger.com",
+    parser: stringParser,
+    desc: "Explorer API for avalanche",
+  },
   API_NEAR_ARCHIVE_NODE: {
     def: "https://near.coin.ledger.com/node/",
     parser: stringParser,
@@ -711,7 +726,7 @@ const envDefinitions: Record<
     desc: "use the staging URL for the learn page",
   },
   DYNAMIC_CAL_BASE_URL: {
-    def: "testpurposebadurl",
+    def: "https://cdn.live.ledger.com/cryptoassets",
     parser: stringParser,
     desc: "bucket S3 of the dynamic cryptoassets list",
   },
