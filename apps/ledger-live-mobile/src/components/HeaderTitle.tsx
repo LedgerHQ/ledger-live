@@ -8,8 +8,8 @@ import { Merge } from "../types/helpers";
 
 export default function HeaderTitle(
   props: Merge<
-    HeaderTitleProps,
-    { children?: React.ReactNode; color?: BaseTextProps["color"] }
+    Merge<HeaderTitleProps, { children?: React.ReactNode }>,
+    BaseTextProps
   >,
 ) {
   return (

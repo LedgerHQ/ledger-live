@@ -22,6 +22,7 @@ import {
   useWalletAPIUrl,
 } from "@ledgerhq/live-common/wallet-api/react";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
+import { Flex, Icon } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "../../const";
 import { flattenAccountsSelector } from "../../reducers/accounts";
 import prepareSignTransaction from "./liveSDKLogic";
@@ -30,9 +31,8 @@ import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigato
 import { analyticsEnabledSelector } from "../../reducers/settings";
 import getOrCreateUser from "../../user";
 import { track } from "../../analytics/segment";
-import InfoIcon from "../../icons/Info";
 import { RootProps } from "./types";
-import UpdateIcon from "../../icons/Update";
+import HeaderTitle from "../HeaderTitle";
 
 const wallet = {
   name: "ledger-live-mobile",
@@ -241,7 +241,6 @@ export function useWebView({
   }, []);
 
   const {
-    widgetLoaded,
     onLoad,
     onReload: onReloadRaw,
     onMessage: onMessageRaw,
@@ -269,20 +268,47 @@ export function useWebView({
     setLoadDate(new Date()); // TODO: wtf
   }, [onReloadRaw, setLoadDate]);
 
+  const onPressInfo = useCallback(() => {
+    setIsInfoPanelOpened(true);
+  }, []);
+
   useEffect(() => {
     navigation.setOptions({
+      headerTitleAlign: "left",
+      headerLeft: () => null,
+      headerTitleContainerStyle: { marginHorizontal: 0 },
+      headerTitle: () => (
+        <Flex justifyContent={"center"} flex={1}>
+          <HeaderTitle color="neutral.c70"> {manifest.homepageUrl}</HeaderTitle>
+        </Flex>
+      ),
       headerRight: () => (
         <View style={styles.headerRight}>
-          <ReloadButton onReload={onReload} loading={!widgetLoaded} />
-          <InfoPanelButton
-            loading={!widgetLoaded}
-            setIsInfoPanelOpened={setIsInfoPanelOpened}
-          />
+          <TouchableOpacity onPress={onPressInfo}>
+            <Flex
+              alignItems="center"
+              justifyContent="center"
+              height={40}
+              width={40}
+            >
+              <Icon name="Info" color="neutral.c70" size={20} />
+            </Flex>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={navigation.goBack}>
+            <Flex
+              alignItems="center"
+              justifyContent="center"
+              height={40}
+              width={40}
+            >
+              <Icon name="Close" color="neutral.c100" size={20} />
+            </Flex>
+          </TouchableOpacity>
         </View>
       ),
       headerShown: !hideHeader,
     });
-  }, [navigation, widgetLoaded, onReload, isInfoPanelOpened, hideHeader]);
+  }, [manifest.homepageUrl, navigation, onPressInfo, hideHeader]);
 
   return {
     uri: url.toString(),
@@ -297,54 +323,6 @@ export function useWebView({
     navColors,
     navState,
   };
-}
-
-function ReloadButton({
-  onReload,
-  loading,
-}: {
-  onReload: () => void;
-  loading: boolean;
-}) {
-  const { colors } = useTheme();
-  const onPress = useCallback(
-    () => !loading && onReload(),
-    [loading, onReload],
-  );
-
-  return (
-    <TouchableOpacity
-      style={styles.buttons}
-      disabled={loading}
-      onPress={onPress}
-    >
-      <UpdateIcon size={18} color={colors.neutral.c70} />
-    </TouchableOpacity>
-  );
-}
-
-function InfoPanelButton({
-  loading,
-  setIsInfoPanelOpened,
-}: {
-  loading: boolean;
-  setIsInfoPanelOpened: (_: boolean) => void;
-}) {
-  const { colors } = useTheme();
-
-  const onPress = useCallback(() => {
-    setIsInfoPanelOpened(true);
-  }, [setIsInfoPanelOpened]);
-
-  return (
-    <TouchableOpacity
-      style={styles.buttons}
-      disabled={loading}
-      onPress={onPress}
-    >
-      <InfoIcon size={18} color={colors.neutral.c70} />
-    </TouchableOpacity>
-  );
 }
 
 const styles = StyleSheet.create({
