@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.17.0-nightly.1
+
+### Minor Changes
+
+- [#2804](https://github.com/LedgerHQ/ledger-live/pull/2804) [`f0c83f37fc`](https://github.com/LedgerHQ/ledger-live/commit/f0c83f37fc0dc00d2cb78d0e977b3b401a92d3fc) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add dynamic content to the sync onboarding "Secret Recovery Phrase" step based on the user selection on the device
+
 ## 3.16.1-nightly.0
 
 ### Patch Changes

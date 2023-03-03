@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.55.0-nightly.1
+
+### Minor Changes
+
+- [#2725](https://github.com/LedgerHQ/ledger-live/pull/2725) [`b4cd547f16`](https://github.com/LedgerHQ/ledger-live/commit/b4cd547f16583d6b2a03b25bc14dcf8dc64133d0) Thanks [@gre](https://github.com/gre)! - Update to Electron 23
+
 ## 2.54.1-nightly.0
 
 ### Patch Changes
