@@ -14,6 +14,7 @@ const defaultItems = [
     status: ItemStatus.inactive,
     title: "Set your PIN",
     estimatedTime: 120,
+    shouldContinueOnStax: true,
     renderBody: () => (
       <Text>
         {`Your PIN can be 4 to 8 digits long. Anyone with access to your Nano and to your PIN can also access all your crypto and NFT assets.`}
