@@ -17,7 +17,10 @@ import {
   hasCompletedOnboardingSelector,
   lastConnectedDeviceSelector,
 } from "../reducers/settings";
-import { hasConnectedDeviceSelector } from "../reducers/appstate";
+import {
+  getWiredDeviceSelector,
+  hasConnectedDeviceSelector,
+} from "../reducers/appstate";
 import Button from "./Button";
 import useLatestFirmware from "../hooks/useLatestFirmware";
 import QueuedDrawer from "./QueuedDrawer";
@@ -30,6 +33,7 @@ const FirmwareUpdateBanner = ({
   const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(
     lastSeenDeviceSelector,
   );
+  const wiredDevice = useSelector(getWiredDeviceSelector);
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   const hasConnectedDevice = useSelector(hasConnectedDeviceSelector);
   const hasCompletedOnboarding: boolean = useSelector(
@@ -76,14 +80,13 @@ const FirmwareUpdateBanner = ({
       lastSeenDevice.deviceInfo,
       lastSeenDevice.modelId,
     );
-  const isDeviceConnectedViaUSB = lastConnectedDevice?.wired === true;
+
   const usbFwUpdateActivated =
     usbFwUpdateFeatureFlag?.enabled &&
     Platform.OS === "android" &&
     isUsbFwVersionUpdateSupported;
 
-  const fwUpdateActivatedButNotWired =
-    usbFwUpdateActivated && !isDeviceConnectedViaUSB;
+  const fwUpdateActivatedButNotWired = usbFwUpdateActivated && !wiredDevice;
 
   const deviceName = lastConnectedDevice
     ? getDeviceModel(lastConnectedDevice.modelId).productName
@@ -104,7 +107,7 @@ const FirmwareUpdateBanner = ({
           type="color"
           title={t("FirmwareUpdate.update")}
           onPress={
-            usbFwUpdateActivated && isDeviceConnectedViaUSB
+            usbFwUpdateActivated && wiredDevice
               ? onExperimentalFirmwareUpdate
               : onPress
           }

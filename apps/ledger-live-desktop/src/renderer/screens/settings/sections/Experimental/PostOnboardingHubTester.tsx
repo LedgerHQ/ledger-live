@@ -11,7 +11,7 @@ const PostOnboardingHubTester = () => {
   const { t } = useTranslation();
   const history = useHistory();
 
-  const handleInitStax = useStartPostOnboardingCallback();
+  const handleInitPostOnboarding = useStartPostOnboardingCallback();
 
   return (
     <SettingsSectionRow
@@ -20,7 +20,13 @@ const PostOnboardingHubTester = () => {
     >
       <Button
         data-test-id="postonboarding-tester-button"
-        onClick={() => handleInitStax(DeviceModelId.stax, true, () => history.push("/"))}
+        onClick={() =>
+          handleInitPostOnboarding({
+            deviceModelId: DeviceModelId.stax,
+            mock: true,
+            fallbackIfNoAction: () => history.push("/"),
+          })
+        }
         primary
       >
         {t("postOnboardingDebugger.buttonTitle")}

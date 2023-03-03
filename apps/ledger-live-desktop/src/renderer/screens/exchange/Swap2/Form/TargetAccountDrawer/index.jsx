@@ -197,7 +197,7 @@ export default function TargetAccountDrawer({
   return (
     <Box height="100%">
       <DrawerTitle i18nKey="swap2.form.to.title" />
-      <Box>
+      <Box mx={3}>
         {accountsList.map(({ account, subAccounts }) => (
           <>
             <TargetAccount

@@ -220,9 +220,7 @@ const ImageGrayscalePreview: React.FC<Props> = props => {
         style={{ opacity: 0, position: "absolute", pointerEvents: "none" }}
         onLoad={handleSourceLoaded}
       />
-      {previewResult ? (
-        <FramedImage src={previewResult?.imageBase64DataUri} dimensions={imageDimensions} />
-      ) : null}
+      {previewResult ? <FramedImage source={previewResult?.imageBase64DataUri} /> : null}
       <Flex alignSelf="center" flexDirection="row" mt={8} columnGap={2}>
         {contrasts.map(({ val, color }, index) => (
           <ContrastChoice

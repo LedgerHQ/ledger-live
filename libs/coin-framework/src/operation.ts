@@ -1,5 +1,6 @@
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
+import { getEnv } from "./env";
 
 export function findOperationInAccount(
   { operations, pendingOperations }: AccountLike,
@@ -210,3 +211,17 @@ export const isConfirmedOperation = (
   operation.blockHeight
     ? account.blockHeight - operation.blockHeight + 1 >= confirmationsNb
     : false;
+
+export const isAddressPoisoningOperation = (
+  operation: Operation,
+  account: AccountLike
+): boolean => {
+  const impactedFamilies = getEnv("ADDRESS_POISONING_FAMILIES").split(",");
+  const isTokenAccount = account.type === "TokenAccount";
+
+  return (
+    isTokenAccount &&
+    impactedFamilies.includes(account.token.parentCurrency.family) &&
+    operation.value.isZero()
+  );
+};

@@ -17,7 +17,7 @@
     "sourceMap": true,
     "rootDir": "."
   },
-  "include": ["tests"],
+  "include": ["tests", "**/*.d.ts"],
   "files": ["package.json", "release-notes.json"],
   "exclude": [
     "node_modules",

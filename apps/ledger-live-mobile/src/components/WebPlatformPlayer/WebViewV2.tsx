@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
+import VersionNumber from "react-native-version-number";
 import { WebView as RNWebView } from "react-native-webview";
 import { useNavigation } from "@react-navigation/native";
 import { SignedOperation } from "@ledgerhq/types-live";
@@ -37,9 +38,13 @@ import prepareSignTransaction from "./liveSDKLogic";
 import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { analyticsEnabledSelector } from "../../reducers/settings";
-import packageInfo from "../../../package.json";
+import getOrCreateUser from "../../user";
+import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 
-const wallet = { name: packageInfo.name, version: packageInfo.version };
+const wallet = {
+  name: "ledger-live-mobile",
+  version: VersionNumber.appVersion,
+};
 const tracking = trackingWrapper(track);
 
 function useUiHook(): Partial<UiHook> {
@@ -146,12 +151,11 @@ function useUiHook(): Partial<UiHook> {
           },
         });
       },
-      "device.transport": ({ appName, onSuccess, onCancel, onError }) => {
+      "device.transport": ({ appName, onSuccess, onCancel }) => {
         navigation.navigate(ScreenName.DeviceConnect, {
           appName,
           onSuccess,
           onClose: onCancel,
-          onError,
         });
       },
     }),
@@ -159,7 +163,27 @@ function useUiHook(): Partial<UiHook> {
   );
 }
 
-function useWebView({ manifest, inputs }: Pick<Props, "manifest" | "inputs">) {
+const useGetUserId = () => {
+  const [userId, setUserId] = useState("");
+
+  useEffect(() => {
+    let mounted = true;
+    getOrCreateUser().then(({ user }) => {
+      if (mounted) setUserId(user.id);
+    });
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  return userId;
+};
+
+function useWebView({
+  manifest,
+  inputs,
+  hideHeader,
+}: Pick<Props, "manifest" | "inputs" | "hideHeader">) {
   const accounts = useSelector(flattenAccountsSelector);
   const navigation = useNavigation();
   const [loadDate, setLoadDate] = useState(new Date());
@@ -175,8 +199,10 @@ function useWebView({ manifest, inputs }: Pick<Props, "manifest" | "inputs">) {
     inputs,
   );
   const analyticsEnabled = useSelector(analyticsEnabledSelector);
+  const userId = useGetUserId();
   const config = useConfig({
-    manifest,
+    appId: manifest.id,
+    userId,
     tracking: analyticsEnabled,
     wallet,
   });
@@ -230,8 +256,9 @@ function useWebView({ manifest, inputs }: Pick<Props, "manifest" | "inputs">) {
           />
         </View>
       ),
+      headerShown: !hideHeader,
     });
-  }, [navigation, widgetLoaded, onReload, isInfoPanelOpened]);
+  }, [navigation, widgetLoaded, onReload, isInfoPanelOpened, hideHeader]);
 
   return {
     uri: url.toString(),
@@ -303,9 +330,10 @@ function renderLoading() {
 interface Props {
   manifest: AppManifest;
   inputs?: Record<string, string>;
+  hideHeader?: boolean;
 }
 
-export function WebView({ manifest, inputs }: Props) {
+export function WebView({ manifest, inputs, hideHeader = false }: Props) {
   const {
     uri,
     isInfoPanelOpened,
@@ -317,6 +345,7 @@ export function WebView({ manifest, inputs }: Props) {
   } = useWebView({
     manifest,
     inputs,
+    hideHeader,
   });
 
   const source = useMemo(() => {
@@ -326,7 +355,12 @@ export function WebView({ manifest, inputs }: Props) {
   }, [uri]);
 
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView
+      style={[
+        styles.root,
+        { paddingTop: hideHeader ? extraStatusBarPadding : 0 },
+      ]}
+    >
       <InfoPanel
         name={manifest.name}
         icon={manifest.icon}

@@ -62,6 +62,7 @@ import PreventNativeBack from "../PreventNativeBack";
 import SkipLock from "../behaviour/SkipLock";
 import DeviceActionProgress from "../DeviceActionProgress";
 import { PartialNullable } from "../../types/helpers";
+import ModalLock from "../ModalLock";
 
 type LedgerError = InstanceType<
   LedgerErrorConstructor<{ [key: string]: unknown }>
@@ -280,6 +281,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
         <Flex mt={5}>
           <Text variant="h4">{t("deviceLocalization.installingLanguage")}</Text>
         </Flex>
+        <ModalLock />
       </Flex>
     );
   }

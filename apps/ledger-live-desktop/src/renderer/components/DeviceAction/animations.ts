@@ -71,6 +71,13 @@ import STAX_enterPin from "~/renderer/animations/stax/enterPIN.json";
 import STAX_verifyAddress from "~/renderer/animations/stax/verifyAddress.json";
 import STAX_signTransaction from "~/renderer/animations/stax/signTransaction.json";
 import STAX_allowConnection from "~/renderer/animations/stax/allowConnection.json";
+import STAX_confirmLockscreen from "~/renderer/animations/stax/confirmLockscreen.json";
+
+// Nb We will eventually transition to lottie animations that are not surrounded by a huge box
+// like we have today. Until then, we need to maintain two types of animations for those that
+// don't have a bounding box, and use the boundingboxless one when requested, if available.
+import STAX_allowConnection_noBox from "~/renderer/animations/stax/noBox/allowConnection.json";
+import STAX_confirmLockscreen_noBox from "~/renderer/animations/stax/noBox/confirmLockscreen.json";
 
 /* eslint-enable camelcase */
 
@@ -84,7 +91,8 @@ export type AnimationKey =
   | "verify"
   | "sign"
   | "firmwareUpdating"
-  | "installLoading";
+  | "installLoading"
+  | "confirmLockscreen";
 type DeviceAnimations = { [key in AnimationKey]: ThemedAnimation };
 
 const nanoS: DeviceAnimations = {
@@ -123,6 +131,10 @@ const nanoS: DeviceAnimations = {
   installLoading: {
     light: NANO_S_LIGHT_installLoading,
     dark: NANO_S_DARK_installLoading,
+  },
+  confirmLockscreen: {
+    light: STAX_confirmLockscreen,
+    dark: STAX_confirmLockscreen,
   },
 };
 
@@ -163,6 +175,10 @@ const nanoX: DeviceAnimations = {
     light: NANO_X_LIGHT_installLoading,
     dark: NANO_X_DARK_installLoading,
   },
+  confirmLockscreen: {
+    light: STAX_confirmLockscreen,
+    dark: STAX_confirmLockscreen,
+  },
 };
 
 const nanoSP: DeviceAnimations = {
@@ -202,6 +218,10 @@ const nanoSP: DeviceAnimations = {
     light: NANO_SP_LIGHT_installLoading,
     dark: NANO_SP_DARK_installLoading,
   },
+  confirmLockscreen: {
+    light: STAX_confirmLockscreen,
+    dark: STAX_confirmLockscreen,
+  },
 };
 
 const stax: DeviceAnimations = {
@@ -240,6 +260,10 @@ const stax: DeviceAnimations = {
   installLoading: {
     light: STAX_allowConnection,
     dark: STAX_allowConnection,
+  },
+  confirmLockscreen: {
+    light: STAX_confirmLockscreen,
+    dark: STAX_confirmLockscreen,
   },
 };
 
@@ -281,6 +305,27 @@ const blue: DeviceAnimations = {
     light: NANO_S_LIGHT_installLoading,
     dark: NANO_S_DARK_installLoading,
   },
+  confirmLockscreen: {
+    light: STAX_confirmLockscreen,
+    dark: STAX_confirmLockscreen,
+  },
+};
+
+const animationsWithoutBoundingBox: { [modelId in DeviceModelId]: Partial<DeviceAnimations> } = {
+  nanoX: {},
+  nanoS: {},
+  nanoSP: {},
+  stax: {
+    allowManager: {
+      light: STAX_allowConnection_noBox,
+      dark: STAX_allowConnection_noBox,
+    },
+    confirmLockscreen: {
+      light: STAX_confirmLockscreen_noBox,
+      dark: STAX_confirmLockscreen_noBox,
+    },
+  },
+  blue: {},
 };
 
 type Animations = {
@@ -292,14 +337,24 @@ export const getDeviceAnimation = (
   modelId: DeviceModelId,
   theme: Theme["theme"],
   key: AnimationKey,
+  noBox?: boolean,
 ) => {
   const animationModelId = (process.env.OVERRIDE_MODEL_ID as DeviceModelId) || modelId;
 
   // Handles the case where OVERRIDE_MODEL_ID is incorrect
   const animationModel = animations[animationModelId] || animations.nanoX;
-  const animationKey = animationModel[key];
+  let animationKey: ThemedAnimation | undefined = animationModel[key];
+
+  // With the current assets I see no other way of doing this.
+  // Check whether the requested animation is expecting a bounded or boundless version,
+  // falling back to the default if the boundingboxless version doesn't exist.
+  if (noBox && animationsWithoutBoundingBox[animationModelId][key]) {
+    animationKey = animationsWithoutBoundingBox[animationModelId][key];
+  }
+
   if (!animationKey) {
     return null;
   }
+
   return animationKey[theme];
 };

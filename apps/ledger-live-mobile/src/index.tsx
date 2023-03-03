@@ -115,6 +115,7 @@ import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
 import { performanceReportSubject } from "./components/PerformanceConsole/usePerformanceReportsLog";
 import PerformanceConsole from "./components/PerformanceConsole";
 import useEnv from "../../../libs/ledger-live-common/lib/hooks/useEnv";
+import { useListenToHidDevices } from "./hooks/useListenToHidDevices";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -148,6 +149,8 @@ export const routingInstrumentation =
 
 function App({ importDataString }: AppProps) {
   useAppStateListener();
+  useListenToHidDevices();
+
   const getSettingsChanged = useCallback(
     (a, b) => a.settings !== b.settings,
     [],

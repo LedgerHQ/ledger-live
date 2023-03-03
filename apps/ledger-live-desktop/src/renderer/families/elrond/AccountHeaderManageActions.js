@@ -3,6 +3,7 @@
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
+import { areEarnRewardsEnabled } from "@ledgerhq/live-common/families/elrond/helpers/areEarnRewardsEnabled";
 import { useElrondRandomizedValidators } from "@ledgerhq/live-common/families/elrond/react";
 import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/elrond/constants";
 
@@ -23,10 +24,7 @@ const AccountHeaderActions = (props: Props) => {
   const dispatch = useDispatch();
   const validators = useElrondRandomizedValidators();
 
-  const earnRewardEnabled = useMemo(
-    () => account.spendableBalance.isGreaterThanOrEqualTo(MIN_DELEGATION_AMOUNT),
-    [account.spendableBalance],
-  );
+  const earnRewardEnabled = useMemo(() => areEarnRewardsEnabled(account), [account]);
 
   const hasDelegations = account.elrondResources
     ? account.elrondResources.delegations.length > 0
