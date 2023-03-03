@@ -1,9 +1,5 @@
 import { BigNumber } from "bignumber.js";
 import {
-  toTronResourcesRaw,
-  fromTronResourcesRaw,
-} from "../families/tron/serialization";
-import {
   toBitcoinResourcesRaw,
   fromBitcoinResourcesRaw,
 } from "../families/bitcoin/serialization";
@@ -92,7 +88,6 @@ import {
 import { SolanaAccount, SolanaAccountRaw } from "../families/solana/types";
 import { TezosAccount, TezosAccountRaw } from "../families/tezos/types";
 import { CeloAccount, CeloAccountRaw } from "../families/celo/types";
-import type { TronAccount, TronAccountRaw } from "../families/tron/types";
 import { getAccountBridge } from "../bridge";
 
 export { toCosmosResourcesRaw, fromCosmosResourcesRaw };
@@ -103,7 +98,6 @@ export { toElrondResourcesRaw, fromElrondResourcesRaw };
 export { toCryptoOrgResourcesRaw, fromCryptoOrgResourcesRaw };
 export { toCardanoResourceRaw, fromCardanoResourceRaw };
 export { toSolanaResourcesRaw, fromSolanaResourcesRaw };
-export { toTronResourcesRaw, fromTronResourcesRaw };
 export { toCeloResourcesRaw, fromCeloResourcesRaw };
 
 export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
@@ -495,13 +489,6 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
   }
 
   switch (res.currency.family) {
-    case "tron": {
-      const tronResourcesRaw = (rawAccount as TronAccountRaw).tronResources;
-      if (tronResourcesRaw)
-        (res as TronAccount).tronResources =
-          fromTronResourcesRaw(tronResourcesRaw);
-      break;
-    }
     case "cosmos": {
       const cosmosResourcesRaw = (rawAccount as CosmosAccountRaw)
         .cosmosResources;
@@ -651,15 +638,6 @@ export function toAccountRaw(account: Account): AccountRaw {
   }
 
   switch (account.currency.family) {
-    case "tron": {
-      const tronAccount = account as TronAccount;
-      if (tronAccount.tronResources) {
-        (res as TronAccountRaw).tronResources = toTronResourcesRaw(
-          tronAccount.tronResources
-        );
-      }
-      break;
-    }
     case "cosmos": {
       const cosmosAccount = account as CosmosAccount;
       if (cosmosAccount.cosmosResources) {

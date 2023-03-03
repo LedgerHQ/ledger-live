@@ -483,6 +483,10 @@ export type SettingsSetDebugAppLevelDrawerOpenedPayload = Pick<
   SettingsState,
   "debugAppLevelDrawerOpened"
 >;
+export type SettingsCompleteOnboardingPayload = Pick<
+  SettingsState,
+  "hasCompletedOnboarding"
+>;
 
 export type SettingsPayload =
   | SettingsImportPayload
@@ -533,6 +537,7 @@ export type SettingsPayload =
   | SettingsSetOverriddenFeatureFlagPlayload
   | SettingsSetOverriddenFeatureFlagsPlayload
   | SettingsSetFeatureFlagsBannerVisiblePayload
+  | SettingsCompleteOnboardingPayload
   | SettingsSetDebugAppLevelDrawerOpenedPayload;
 
 // === WALLET CONNECT ACTIONS ===
@@ -567,6 +572,7 @@ export type SwapPayload =
 export enum ProtectActionTypes {
   UPDATE_DATA = "UPDATE_DATA",
   UPDATE_PROTECT_STATUS = "UPDATE_PROTECT_STATUS",
+  RESET_STATE = "RESET_STATE",
 }
 
 export type ProtectDataPayload = Pick<ProtectState, "data">;

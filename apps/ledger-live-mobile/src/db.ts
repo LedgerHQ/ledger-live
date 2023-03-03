@@ -290,3 +290,7 @@ export async function getProtect(): Promise<ProtectState> {
 export async function saveProtect(obj: ProtectState): Promise<void> {
   await store.save("protect", obj);
 }
+
+export async function deleteProtect(): Promise<void> {
+  await store.delete("protect");
+}
