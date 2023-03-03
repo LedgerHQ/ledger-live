@@ -87,7 +87,12 @@
     "popular" : "popular",
     "getSupport" : "Obtener ayuda",
     "comingSoon" : "Próximamente",
-    "restart" : "Reiniciar"
+    "restart" : "Reiniciar",
+    "loadMore" : "Cargar más",
+    "patterns" : {
+      "id" : "ID {{ value }}",
+      "times" : "x{{ value }}"
+    }
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -811,6 +816,13 @@
       "title" : "Tu dispositivo está bloqueado",
       "description" : "Desbloquea tu dispositivo e inténtalo de nuevo.",
       "descriptionWithProductName" : "Desbloquea tu {{ productName }} e inténtalo de nuevo."
+    },
+    "EtherscanAPIError" : {
+      "title" : "Se produjo un fallo al recuperar las transacciones",
+      "description" : "Se produjo un error inesperado con los exploradores. Inténtalo de nuevo más tarde"
+    },
+    "GasEstimationError" : {
+      "title" : "Se produjo un fallo en la estimación del gas"
     }
   },
   "crash" : {
@@ -1118,9 +1130,17 @@
         "title" : "Información",
         "desc" : "Obtén información sobre las cripto, la Web3, la seguridad digital y mucho más"
       },
+      "news" : {
+        "title" : "Noticias",
+        "desc" : "Aprende más de cripto, seguridad, Web3 y entérate de las últimas novedades"
+      },
       "ledgerApps" : {
         "title" : "Aplicaciones",
         "desc" : "Explorar las aplicaciones de los socios de Ledger desde un solo lugar"
+      },
+      "browseWeb3" : {
+        "title" : "Explorar la Web3",
+        "desc" : "Explora la Web3 totalmente integrada con Ledger"
       },
       "earn" : {
         "title" : "Gana",
@@ -1267,8 +1287,13 @@
       },
       "recovery" : "¿Ya tienes una Frase de recuperación?",
       "protect" : {
-        "label" : "Aproximadamente 60 min",
-        "subTitle" : "Restaurar con Protect"
+        "subTitle" : "Restaurar con Ledger Recover",
+        "drawer" : {
+          "title" : "Usar Ledger Nano X",
+          "desc" : "El prelanzamiento de Ledger Recover es exclusivo para el Ledger Nano X",
+          "buyNanoX" : "Compra un Ledger Nano X",
+          "discoverBenefits" : "Descubre las ventajas"
+        }
       }
     },
     "stepNewDevice" : {
@@ -1495,25 +1520,20 @@
     "stepProtect" : {
       "bullets" : {
         "0" : {
-          "title" : "Examinar ",
-          "label" : "Aprende a interactuar con tu dispositivo mediante las instrucciones en pantalla."
+          "title" : "Selecciona “Restore” (Restaurar)",
+          "label" : "Presiona los dos botones a la vez para seleccionar."
         },
         "1" : {
-          "title" : "Selecciona “Restore” (Restaurar)",
-          "label" : "Presiona ambos botones simultáneamente para validar la selección."
-        },
-        "2" : {
-          "title" : "Selecciona el modo “Restore with Protect” (Restaurar con Protect).",
-          "label" : "Presiona ambos botones simultáneamente para validar la selección."
+          "title" : "Selecciona “Restore using Ledger Recover” (Restaurar con Ledger Recover).",
+          "label" : "Presiona los dos botones a la vez para seleccionar."
         }
       },
       "nextStep" : "Continuar",
       "extraInfo" : {
-        "tooltip" : "No veo esa opción en mi Ledger",
-        "title" : "¿Por qué no veo la opción “Restore with Protect” (Restaurar con Protect) en mi Ledger?",
-        "desc1" : "Lo más probable es que tu dispositivo no sea compatible con Protect. No te preocupes, con gusto te ayudaremos a resolverlo.",
-        "desc2" : "Ponte en contacto con nosotros y elige la opción \"En Mi Ledger no se muestra Restore with Protect\" para que podamos ayudarte.",
-        "cta" : "Seguir los pasos manuales",
+        "tooltip" : "No veo “Restore using Ledger Recover” (Restaurar con Ledger Recover)",
+        "title" : "Es necesario actualizar el SO de tu Ledger Nano X",
+        "desc" : "Puedes probar a actualizar el SO o contactar con el servicio de soporte de Ledger para pedir ayuda.",
+        "cta" : "Aprende cómo actualizarlo",
         "supportLink" : "Ponte en contacto con el Soporte de Ledger"
       }
     },
@@ -1653,6 +1673,11 @@
             "label" : "Comprueba si detecta tu Nano X."
           }
         }
+      },
+      "protectConnectionInformationModal" : {
+        "title" : "Conexión con el Ledger Nano X",
+        "description" : "Asegúrate de que tienes el teléfono móvil cerca de tu Ledger e inténtalo de nuevo. <LinkBluethooth>Problemas de conexión Bluetooth® \n</LinkBluethooth>.\nSi el Bluetooth® funciona correctamente, puede que tengas que actualizar el SO del Ledger. Prueba a actualizar el SO o contactar con el servicio de soporte de Ledger para pedir ayuda. ",
+        "learnHowToUpdate" : "Aprende cómo actualizarlo"
       }
     },
     "stepImportAccounts" : {
@@ -2495,7 +2520,9 @@
         "bullet2" : "Versión de Ledger Live, región del SO, idioma y región"
       },
       "hideEmptyTokenAccounts" : "Ocultar cuentas de tokens sin saldo",
-      "hideEmptyTokenAccountsDesc" : "Se ocultarán todas las cuentas de token vacías en la página de Activos."
+      "hideEmptyTokenAccountsDesc" : "Se ocultarán todas las cuentas de token vacías en la página de Activos.",
+      "filterTokenOperationsZeroAmount" : "Ocultar transacciones con tokens cuando el valor es 0",
+      "filterTokenOperationsZeroAmountDesc" : "Ocultar transacciones con tokens sin valor puede evitar posibles ataques de contaminación de direcciones sobre Ethereum, Polygon, BSC, Tron..."
     },
     "currencies" : {
       "header" : "Divisas",
@@ -2639,6 +2666,10 @@
         "experimentalSwap" : {
           "title" : "Nueva interfaz de PERMUTA",
           "description" : "Usa la nueva interfaz experimental de permuta"
+        },
+        "experimentalPlatformDiscover" : {
+          "title" : "Descubre la V2",
+          "description" : "Usa la nueva pantalla Experimental Discover"
         }
       },
       "developerFeatures" : {
@@ -3298,6 +3329,10 @@
           }
         }
       }
+    },
+    "walletConnect" : {
+      "title" : "WalletConnect",
+      "description" : "Conecta tu billetera a dApps"
     }
   },
   "signMessage" : {
@@ -5424,6 +5459,7 @@
     "warnDelegation" : "Si delegas tus derechos de voto, las recompensas de tu validador no estarán garantizadas.",
     "to" : "a",
     "from" : "desde",
+    "yield" : "Rendimiento Est.",
     "forAnEstYield" : "con un rendimiento est. de",
     "yieldPerYear" : "{{yield}}/Año",
     "yieldInfos" : "Las tasas de rendimiento las proporciona",
@@ -5551,6 +5587,7 @@
     "cta" : "Continuar"
   },
   "exchange" : {
+    "count" : "+ {{count}} más",
     "buy" : {
       "screenTitle" : "COMPRAR CRIPTO",
       "tabTitle" : "Comprar",
@@ -5696,6 +5733,50 @@
       }
     }
   },
+  "browseWeb3" : {
+    "catalog" : {
+      "title" : "Explorar la Web3",
+      "subtitle" : "Explora la Web3 totalmente integrada con Ledger",
+      "section" : {
+        "recentlyUsed" : "Usadas recientemente",
+        "categories" : "Categorías"
+      },
+      "branch" : {
+        "soon" : "próximamente",
+        "experimental" : "experimental",
+        "debug" : "depuración"
+      },
+      "banner" : {
+        "title" : "Descubre nuestro catálogo de Live",
+        "description" : "Descubre un nuevo mundo de posibilidades cripto. Un acceso seguro a todos nuestros servicios inteligentes: aplicaciones DeFi, NFTs y mucho más."
+      },
+      "twitterBanner" : {
+        "description" : "Cuéntanos cuál es el siguiente servicio que quieres ver con el hashtag",
+        "tweetText" : "La próxima aplicación de Ledger debería ser..."
+      },
+      "pollCTA" : {
+        "title" : "Encuesta",
+        "description" : "¿Qué servicio quieres ver en Ledger Live?"
+      },
+      "developerCTA" : {
+        "title" : "Para desarrolladores",
+        "description" : "Toda la información que necesitas para integrar tus aplicaciones en Ledger Live."
+      }
+    },
+    "disclaimer" : {
+      "title" : "Aplicación externa",
+      "description" : "Estás a punto de ser redireccionado a una aplicación no operada por Ledger.",
+      "legalAdvice" : "Esta aplicación no es operada por Ledger. Ledger no será responsable de cualquier pérdida de fondos o de calidad de servicio relacionada a dicha aplicación.\n\nSiempre asegúrate de verificar cuidadosamente la información que se muestra en tu dispositivo.",
+      "legalAdviceShort" : "Ledger no será responsable por ninguna pérdida de fondos. Siempre asegúrate de verificar la información que se muestra en tu dispositivo.",
+      "checkbox" : "No recordarme de nuevo.",
+      "CTA" : "Continuar"
+    },
+    "webPlatformPlayer" : {
+      "infoPanel" : {
+        "website" : "Sitio web"
+      }
+    }
+  },
   "platform" : {
     "catalog" : {
       "title" : "Catálogo de aplicaciones de Live",
@@ -5795,6 +5876,7 @@
       "reload" : "Volver a cargar",
       "noCryptosFound" : "No se han encontrado monedas",
       "noCurrencyFound" : "No se encontraron divisas",
+      "noAppFound" : "No se han encontrado aplicaciones",
       "noSearchResultsFor" : "Lo sentimos, no hemos encontrado ningún resultado para <0>{{search}}</0>. Por favor, intenta de nuevo con otra palabra clave.",
       "noCurrencySearchResultsFor" : "Lo sentimos, no hemos encontrado ninguna divisa para <0>{{search}}</0>. Por favor, intenta de nuevo con otra palabra clave.",
       "noSearchResults" : "Lo sentimos, no hemos encontrado ningún resultado.",
@@ -6004,22 +6086,10 @@
       "status" : {
         "new" : {
           "title" : "Nuevo",
-          "desc" : "Respalda tu Frase de recuperación",
-          "0" : {
-            "title" : "Millones de usuarios de Ledger confían en nosotros"
-          },
-          "1" : {
-            "title" : "Tu Frase de recuperación está vinculada a tu identidad de forma segura"
-          },
-          "2" : {
-            "title" : "Cifrado con tecnología de avanzada"
-          },
-          "3" : {
-            "title" : "Distribuido en 3 instalaciones descentralizadas, de manera de que nadie pueda robar tu Frase de recuperación"
-          },
+          "desc" : "Recupera el acceso a tu billetera sin tu Frase de recuperación secreta.",
           "actions" : {
-            "learnMore" : "Más información",
-            "alreadySubscribed" : "¿Ya estás suscrito a Protect?"
+            "learnMore" : "¿Qué beneficios me ofrece?",
+            "alreadySubscribed" : "¿Ya tienes una suscripción? <LinkAccount>Ver mi cuenta</LinkAccount>"
           }
         },
         "confirmIdentity" : {
@@ -6077,5 +6147,13 @@
         "emptyPassword" : "La contraseña no puede estar en blanco"
       }
     }
+  },
+  "newsfeed" : {
+    "title" : "Newsfeed",
+    "poweredByCryptopanic" : "Con tecnología de Cryptopanic",
+    "noPosts" : "No hay ninguna publicación disponible"
+  },
+  "deviceConnect" : {
+    "title" : "Conectar dispositivo"
   }
 }
