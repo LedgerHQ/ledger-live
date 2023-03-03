@@ -24,7 +24,7 @@ import {
   TWO_WEEKS,
   THREE_WEEKS,
 } from "@ledgerhq/live-common/families/avalanchepchain/utils";
-import moment from 'moment/min/moment-with-locales';
+import moment from "moment/min/moment-with-locales";
 import { getInitialLanguageLocale } from "~/renderer/reducers/settings";
 
 const Container: ThemedComponent<*> = styled(Box)`
@@ -87,7 +87,10 @@ function StepEndDate({
   const minEndDate = moment.unix(unixMinEndDate).format("YYYY-MM-DDTh:mm");
   const maxEndDate = moment.unix(unixMaxEndDate).format("YYYY-MM-DDTh:mm");
   const defaultEndDate = moment.unix(unixDefaultEndDate).format("YYYY-MM-DDTHH:mm");
-  const minEndDateText = moment.unix(unixMinEndDate).add(1, "minutes").format("L, LT");
+  const minEndDateText = moment
+    .unix(unixMinEndDate)
+    .add(1, "minutes")
+    .format("L, LT");
   const maxEndDateText = moment.unix(unixMaxEndDate).format("L, LT");
 
   const updateEndTime = endTime => {
