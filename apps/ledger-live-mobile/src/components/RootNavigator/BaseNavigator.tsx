@@ -180,6 +180,9 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={ScreenName.PlatformApp}
         component={LiveApp}
+        options={{
+          headerStyle: styles.headerNoShadow,
+        }}
         {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen

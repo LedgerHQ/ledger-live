@@ -11,7 +11,9 @@ import {
   StyleSheet,
   View,
   SafeAreaView,
+  TouchableOpacity,
 } from "react-native";
+import { Flex, Icon } from "@ledgerhq/native-ui";
 import { WebView as RNWebView } from "react-native-webview";
 import { useNavigation } from "@react-navigation/native";
 import { JSONRPCRequest } from "json-rpc-2.0";
@@ -67,8 +69,9 @@ import {
   StackNavigatorNavigation,
 } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
-import { BrowserHeader, BottomNav } from "./navigator";
+import { BottomNav } from "./navigator";
 import { useBrowserNavigator } from "./hooks";
+import HeaderTitle from "../HeaderTitle";
 
 const tracking = trackingWrapper(track);
 
@@ -548,15 +551,40 @@ export const WebView = ({ manifest, inputs }: Props) => {
 
   useEffect(() => {
     navigation.setOptions({
-      header: () => (
-        <BrowserHeader
-          url={manifest.homepageUrl}
-          infoDisabled={!widgetLoaded}
-          onPressInfo={onPressInfo}
-        />
+      headerTitleAlign: "left",
+      headerLeft: () => null,
+      headerTitleContainerStyle: { marginHorizontal: 0 },
+      headerTitle: () => (
+        <Flex justifyContent={"center"} flex={1}>
+          <HeaderTitle color="neutral.c70"> {manifest.homepageUrl}</HeaderTitle>
+        </Flex>
+      ),
+      headerRight: () => (
+        <View style={styles.headerRight}>
+          <TouchableOpacity onPress={onPressInfo}>
+            <Flex
+              alignItems="center"
+              justifyContent="center"
+              height={40}
+              width={40}
+            >
+              <Icon name="Info" color="neutral.c70" size={20} />
+            </Flex>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={navigation.goBack}>
+            <Flex
+              alignItems="center"
+              justifyContent="center"
+              height={40}
+              width={40}
+            >
+              <Icon name="Close" color="neutral.c100" size={20} />
+            </Flex>
+          </TouchableOpacity>
+        </View>
       ),
     });
-  }, [navigation, widgetLoaded, manifest.homepageUrl, onPressInfo]);
+  }, [navigation, manifest.homepageUrl, onPressInfo]);
 
   const { onNavStateChange, navColors, navState } = useBrowserNavigator();
 
