@@ -26,10 +26,7 @@ const GenuineCheckDrawer = ({
       preventBackdropClick
       noCloseButton
     >
-      <TrackScreen
-        category="Start Stax hardware check"
-        value={{ value: "drawer" }}
-      />
+      <TrackScreen category="Start Stax hardware check" type="drawer" />
       <Flex justifyContent="center" alignItems="center" flex={1} mt={9} mb={6}>
         <Icons.LedgerLogoRegular size={28} color="primary.c80" />
       </Flex>

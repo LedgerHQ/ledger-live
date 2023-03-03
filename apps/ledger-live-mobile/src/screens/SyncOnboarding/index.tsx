@@ -232,7 +232,10 @@ export const SyncOnboarding = ({
 
   const handleDesyncRetry = useCallback(() => {
     // handleDesyncClose is then called
-    track("button_clicked", { button: "Try again" });
+    track("button_clicked", {
+      button: "Try again",
+      drawer: "Could not connect to Stax",
+    });
     setDesyncDrawerOpen(false);
   }, []);
 
@@ -520,12 +523,6 @@ export const SyncOnboarding = ({
         isOpen={isHelpDrawerOpen}
         onClose={() => setHelpDrawerOpen(false)}
       />
-      {isDesyncDrawerOpen ? (
-        <TrackScreen
-          category="Stax BT Pairing Lost"
-          value={{ type: "toast" }}
-        />
-      ) : null}
       <DesyncDrawer
         isOpen={isDesyncDrawerOpen}
         onClose={handleDesyncClose}

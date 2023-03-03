@@ -22,7 +22,10 @@ const DesyncDrawer = ({ isOpen, onClose, onRetry, device }: Props) => {
     getDeviceModel(device.modelId).productName || device.modelId;
 
   const handleSupportPress = useCallback(() => {
-    track("button_clicked", { button: "Get help" });
+    track("button_clicked", {
+      button: "Get help",
+      drawer: "Could not connect to Stax",
+    });
     Linking.openURL(urls.errors.PairingFailed);
   }, []);
 
