@@ -5745,7 +5745,8 @@
       "subtitle": "Explore Web3 fully integrated with Ledger",
       "section": {
         "recentlyUsed": "Recently Used",
-        "categories": "Categories"
+        "categories": "Categories",
+        "clearAll": "Clear All"
       },
       "branch": {
         "soon": "coming soon",
@@ -5767,7 +5768,7 @@
       "developerCTA": {
         "title": "For Developers",
         "description": "All the information you need to integrate your applications on Ledger Live."
-      }
+      },
     },
     "disclaimer": {
       "title": "External Application",
