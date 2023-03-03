@@ -1,5 +1,10 @@
 import { BigNumber } from "bignumber.js";
-import type { PolkadotResourcesRaw, PolkadotResources, PolkadotAccount, PolkadotAccountRaw } from "./types";
+import type {
+  PolkadotResourcesRaw,
+  PolkadotResources,
+  PolkadotAccount,
+  PolkadotAccountRaw,
+} from "./types";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
 
 export function toPolkadotResourcesRaw(
@@ -52,14 +57,14 @@ export function fromPolkadotResourcesRaw(
 export function assignToAccountRaw(account: Account, accountRaw: AccountRaw) {
   const polkadotAccount = account as PolkadotAccount;
   if (polkadotAccount.polkadotResources) {
-    (accountRaw as PolkadotAccountRaw).polkadotResources = toPolkadotResourcesRaw(
-      polkadotAccount.polkadotResources
-    );
+    (accountRaw as PolkadotAccountRaw).polkadotResources =
+      toPolkadotResourcesRaw(polkadotAccount.polkadotResources);
   }
 }
 
 export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
-  const polkadotResourcesRaw = (accountRaw as PolkadotAccountRaw).polkadotResources;
+  const polkadotResourcesRaw = (accountRaw as PolkadotAccountRaw)
+    .polkadotResources;
   if (polkadotResourcesRaw)
     (account as PolkadotAccount).polkadotResources =
       fromPolkadotResourcesRaw(polkadotResourcesRaw);

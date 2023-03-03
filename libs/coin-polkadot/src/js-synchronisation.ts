@@ -5,9 +5,11 @@ import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getAccount, getOperations } from "./api";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
 import { isEqual } from "lodash";
-import { fromPolkadotResourcesRaw, toPolkadotResourcesRaw } from "./serialization";
+import {
+  fromPolkadotResourcesRaw,
+  toPolkadotResourcesRaw,
+} from "./serialization";
 import { PolkadotAccount, PolkadotAccountRaw } from "./types";
-
 
 export const getAccountShape: GetAccountShape = async (info) => {
   await loadPolkadotCrypto();
@@ -80,6 +82,6 @@ export function applyReconciliation(
     );
     return true;
   }
-  
+
   return false;
 }
