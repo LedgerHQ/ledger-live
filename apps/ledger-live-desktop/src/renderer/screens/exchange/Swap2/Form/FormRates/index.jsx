@@ -31,8 +31,6 @@ const SwapFormProviders = ({
   const { currency: toCurrency } = swap.to;
 
   const updatedRatesState = useMemo(() => {
-    console.log("SWAP OBJECT: ", { swap });
-
     if (showNoQuoteDexRate && swap.rates?.value) {
       return {
         ...swap.rates,

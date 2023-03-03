@@ -21,7 +21,7 @@ test.use({
       enabled: true,
     },
   },
-  env: { MOCK: undefined, DEV_TOOLS: true },
+  env: { MOCK: undefined },
 });
 
 // Tests to cover in Playwright test suite
@@ -34,7 +34,7 @@ test.use({
 // ‘Insufficient funds’
 // Amount too low for providers ‘Amount must be at least …’
 
-process.env.PWDEBUG = "1";
+// process.env.PWDEBUG = "1";
 
 test.describe.parallel("Swap", () => {
   test("Add accounts via Swap page", async ({ page }) => {
@@ -116,14 +116,35 @@ test.describe.parallel("Swap", () => {
       await expect.soft(page).toHaveScreenshot("eth-to-usdt-quotes-generated.png");
     });
 
-    // await test.step("Centralised Quotes filtered", async () => {
-    // await expect.soft(page).toHaveScreenshot("eth-to-usdt-quotes-generated.png");
-    // });
+    await test.step("Decentralised Quotes filtered", async () => {
+      await swapPage.filterByDecentralisedQuotes();
+      await expect.soft(page).toHaveScreenshot("only-decentralised-quotes-displayed.png");
+    });
+
+    await test.step("Fixed Decentralised Quotes filtered", async () => {
+      await swapPage.filterByFixedRateQuotes();
+      await expect.soft(page).toHaveScreenshot("fixed-decentralised-quotes-displayed.png");
+    });
+
+    await test.step("Floating Decentralised Quotes filtered", async () => {
+      await swapPage.filterByFloatingRateQuotes();
+      await expect.soft(page).toHaveScreenshot("floating-decentralised-quotes-displayed.png");
+    });
+
+    await test.step("Floating Centralised Quotes filtered", async () => {
+      await swapPage.filterByCentralisedQuotes();
+      await expect.soft(page).toHaveScreenshot("floating-centralised-quotes-displayed.png");
+    });
+
+    await test.step("Fixed Centralised filtered", async () => {
+      await swapPage.filterByFixedRateQuotes();
+      await expect.soft(page).toHaveScreenshot("fixed-centralised-quotes-displayed.png");
+    });
   });
 
-  test.skip("Add specific amount to swap", async ({ page }) => {}); // requires separate test due to different mocks
+  // test.skip("Add specific amount to swap", async ({ page }) => {}); // requires separate test due to different mocks
 
-  test.skip("Swap is not available in your area", async ({ page }) => {});
+  // test.skip("Swap is not available in your area", async ({ page }) => {});
 
   test("Full Swap with Centralised Exchange", async ({ page }) => {
     const swapPage = new SwapPage(page);

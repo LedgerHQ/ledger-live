@@ -7,9 +7,9 @@ export class SwapPage {
   readonly maxSpendableToggle: Locator;
   readonly destinationCurrencyDropdown: Locator;
   readonly currencyByName: Function;
-  readonly accountDropdownAddAccountButton: Locator;
+  readonly fromCurrencyDropdownAddAccountButton: Locator;
   readonly reverseSwapPairButton: Locator;
-  readonly addToAccountButton: Locator;
+  readonly addDestinationAccountButton: Locator;
   readonly exchangeButton: Locator;
   readonly swapId: Locator;
   readonly seeDetailsButton: Locator;
@@ -22,34 +22,61 @@ export class SwapPage {
   readonly advancedFeesSelector: Locator;
   readonly customFeeTextbox: Locator;
   readonly targetAccountContainer: Function;
+  readonly centralisedQuoteFilterButton: Locator;
+  readonly decentralisedQuoteFilterButton: Locator;
+  readonly floatQuoteFilterButton: Locator;
+  readonly fixedQuoteFilterButton: Locator;
 
   constructor(page: Page) {
+    // Misc Swap Components
     this.page = page;
-    this.swapMenuButton = page.locator("data-test-id=drawer-swap-button");
+    this.swapMenuButton = page.locator("data-test-id=drawer-swap-button"); // TODO: Should this be here?
+    this.currencyByName = (accountName: string) => page.getByText(accountName); // TODO: this is rubbish. Changed this
+
+    // Swap Amount and Currency components
     this.maxSpendableToggle = page.locator("data-test-id=swap-max-spendable-toggle");
     this.destinationCurrencyDropdown = page.locator("data-test-id=destination-currency-dropdown");
-    this.currencyByName = (accountName: string) => page.getByText(accountName);
-    this.accountDropdownAddAccountButton = page.getByText("Add account");
+    this.fromCurrencyDropdownAddAccountButton = page.getByText("Add account");
     this.reverseSwapPairButton = page.locator("data-test-id=swap-reverse-pair-button");
-    this.addToAccountButton = page.locator("data-test-id=add-destination-account-button");
-    this.exchangeButton = page.locator("data-test-id=exchange-button");
-    this.swapId = page.locator("data-test-id=swap-id");
-    this.seeDetailsButton = page.locator('button:has-text("See details")');
-    this.detailsSwapId = page.locator("data-test-id=details-swap-id").first();
-    this.historyRow = page.locator(".swap-history-row").first();
-    this.quoteContainer = (providerName: string, exchangeType: string) =>
-      page.locator(`data-test-id=quote-container-${providerName}-${exchangeType}`);
+    this.addDestinationAccountButton = page.locator("data-test-id=add-destination-account-button");
     this.changeTargetAccountButton = page
       .locator("data-test-id=change-exchange-details-button")
       .first();
+    this.targetAccountContainer = (accountName: string): Locator =>
+      page.locator(`data-test-id=target-account-container-${accountName}`).first();
+
+    // Network Fee Components
     this.changeNetworkFeesButton = page
       .locator("data-test-id=change-exchange-details-button")
       .last();
     this.standardFeesSelector = page.locator("data-test-id=standard-fee-mode-selector");
     this.advancedFeesSelector = page.locator("data-test-id=advanced-fee-mode-selector");
     this.customFeeTextbox = page.locator("data-test-id=currency-textbox");
-    this.targetAccountContainer = (accountName: string): Locator =>
-      page.locator(`data-test-id=target-account-container-${accountName}`).first();
+
+    // Quote Filter Components
+    this.centralisedQuoteFilterButton = page.locator(
+      "data-test-id=centralised-quote-filter-button",
+    );
+    this.decentralisedQuoteFilterButton = page.locator(
+      "data-test-id=decentralised-quote-filter-button",
+    );
+    this.floatQuoteFilterButton = page.locator("data-test-id=float-quote-filter-button");
+    this.fixedQuoteFilterButton = page.locator("data-test-id=fixed-quote-filter-button");
+
+    // Quote Components
+    this.quoteContainer = (providerName: string, exchangeType: string) =>
+      page.locator(`data-test-id=quote-container-${providerName}-${exchangeType}`);
+
+    // Exchange Button Component
+    this.exchangeButton = page.locator("data-test-id=exchange-button");
+
+    // Exchange Drawer Components
+    this.swapId = page.locator("data-test-id=swap-id");
+    this.seeDetailsButton = page.locator('button:has-text("See details")');
+    this.detailsSwapId = page.locator("data-test-id=details-swap-id").first();
+
+    // Swap History Components
+    this.historyRow = page.locator(".swap-history-row").first();
   }
 
   async navigate() {
@@ -61,10 +88,6 @@ export class SwapPage {
     await this.maxSpendableToggle.click();
   }
 
-  // async openAccountDropdownByAccountName(accountName: string) {
-  //   await this.accountByName(accountName).click();
-  // }
-
   async openDestinationCurrencyDropdown() {
     await this.destinationCurrencyDropdown.click();
   }
@@ -74,7 +97,7 @@ export class SwapPage {
   }
 
   async addAccountFromAccountDropdown() {
-    await this.accountDropdownAddAccountButton.click();
+    await this.fromCurrencyDropdownAddAccountButton.click();
   }
 
   async reverseSwapPair() {
@@ -82,7 +105,7 @@ export class SwapPage {
   }
 
   async addDestinationAccount() {
-    await this.addToAccountButton.click();
+    await this.addDestinationAccountButton.click();
   }
 
   async openTargetAccountDrawer() {
@@ -107,6 +130,22 @@ export class SwapPage {
 
   async enterCustomFee(amount: string) {
     await this.customFeeTextbox.fill(amount);
+  }
+
+  async filterByCentralisedQuotes() {
+    await this.centralisedQuoteFilterButton.click();
+  }
+
+  async filterByDecentralisedQuotes() {
+    await this.decentralisedQuoteFilterButton.click();
+  }
+
+  async filterByFloatingRateQuotes() {
+    await this.floatQuoteFilterButton.click();
+  }
+
+  async filterByFixedRateQuotes() {
+    await this.fixedQuoteFilterButton.click();
   }
 
   async selectExchangeQuote(
