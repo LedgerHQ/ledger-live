@@ -23,24 +23,24 @@ const getContainerBackground = (theme: Theme, status: ItemStatus, isLastItem?: b
   if (isLastItem && status === "completed") {
     return theme.colors.success.c30;
   } else if (status === "completed") {
-    return theme.colors.primary.c20;
+    return "transparent";
   } else if (status === "active") {
     return theme.colors.neutral.c20;
   }
-  return theme.colors.neutral.c30;
+  return "transparent";
 };
 
 const getContainerBorder = (theme: Theme, status: ItemStatus, isLastItem?: boolean) => {
   if (isLastItem && status === "completed") {
-    return theme.colors.success.c30;
+    return "transparent";
   } else if (isLastItem && status === "active") {
     return theme.colors.success.c100;
   } else if (status === "completed") {
-    return theme.colors.primary.c20;
+    return "transparent";
   } else if (status === "active") {
-    return theme.colors.primary.c80;
+    return theme.colors.neutral.c40;
   }
-  return theme.colors.neutral.c30;
+  return "transparent";
 };
 
 const Container = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>`
@@ -50,6 +50,11 @@ const Container = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>`
   border: 1px solid ${(p) => getContainerBorder(p.theme, p.status, p.isLastItem)};
   padding: 20px 16px;
 `;
+
+const ShouldContinueOnStax = () => {
+  //TODO: Wait for the final design of this component. The prop is already set up
+  return <></>;
+};
 
 export default function TimelineItem({
   item,
@@ -104,13 +109,7 @@ export default function TimelineItem({
             <Text
               variant="body"
               flexShrink={1}
-              color={
-                item.status === "inactive"
-                  ? "neutral.c80"
-                  : isLastItem
-                  ? "success.c100"
-                  : "primary.c90"
-              }
+              color={item.status === "active" ? "primary.c90" : "neutral.c80"}
             >
               {item.status === "completed" ? item.doneTitle ?? item.title : item.title}
             </Text>
@@ -122,6 +121,7 @@ export default function TimelineItem({
               </Tag>
             )}
           </Flex>
+          {item.shouldContinueOnStax ? <ShouldContinueOnStax /> : null}
           <Animated.ScrollView style={animatedStyle} showsVerticalScrollIndicator={false}>
             <Animated.View onLayout={handleLayout}>
               {item.renderBody && item.status === "active" ? (
