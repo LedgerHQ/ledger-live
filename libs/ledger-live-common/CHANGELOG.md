@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 29.1.0-nightly.0
+
+### Minor Changes
+
+- [#2618](https://github.com/LedgerHQ/ledger-live/pull/2618) [`9ec0582d2a`](https://github.com/LedgerHQ/ledger-live/commit/9ec0582d2ae8ee57884531d4d104a3724735a2c2) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add token for pagination eth explorers tx
+
 ## 29.0.0
 
 ### Major Changes

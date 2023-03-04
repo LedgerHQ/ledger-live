@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.17.0-nightly.2
+
+### Patch Changes
+
+- [#2834](https://github.com/LedgerHQ/ledger-live/pull/2834) [`2b04ef7874`](https://github.com/LedgerHQ/ledger-live/commit/2b04ef7874232ecd044fc66342817f7d31fc53b6) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fix UI bug on NFT CLS device selector
+
+- [#2823](https://github.com/LedgerHQ/ledger-live/pull/2823) [`e363d83a69`](https://github.com/LedgerHQ/ledger-live/commit/e363d83a696c6cae20d7fcff3f2da6eea168d98b) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fix the prompt loop on receive flow
+
+- Updated dependencies [[`9ec0582d2a`](https://github.com/LedgerHQ/ledger-live/commit/9ec0582d2ae8ee57884531d4d104a3724735a2c2)]:
+  - @ledgerhq/live-common@29.1.0-nightly.0
+
 ## 3.17.0-nightly.1
 
 ### Minor Changes
