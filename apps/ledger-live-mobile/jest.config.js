@@ -50,15 +50,7 @@ module.exports = {
     "^react-native/(.*)$": "<rootDir>/node_modules/react-native/$1",
     "^react-native$": "<rootDir>/node_modules/react-native",
     "^victory-native$": "victory",
-<<<<<<< HEAD
-<<<<<<< HEAD
     "styled-components":
       "<rootDir>/node_modules/styled-components/native/dist/styled-components.native.cjs.js",
-=======
->>>>>>> f2afef9744 (can run tests)
-=======
-    "styled-components":
-      "<rootDir>/node_modules/styled-components/native/dist/styled-components.native.cjs.js",
->>>>>>> 1818e014aa (simple text test)
   },
 };
