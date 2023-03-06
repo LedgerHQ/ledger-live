@@ -423,8 +423,8 @@ export const SyncOnboarding = ({
           doneTitle: t("syncOnboarding.seedStep.doneTitle"),
           estimatedTime: 300,
           renderBody: () => (
-<<<<<<< HEAD
             <Flex>
+              <TrackScreen category="Set up Ledger Stax: Step 3 Seed" />
               {seedStatus === "selection" ? (
                 <Text variant="bodyLineHeight">
                   {t("syncOnboarding.seedStep.selection")}
@@ -442,15 +442,6 @@ export const SyncOnboarding = ({
                   {t("syncOnboarding.seedStep.recovery", { productName })}
                 </Text>
               )}
-=======
-            <Flex pb={1}>
-              <TrackScreen category="Set up Ledger Stax: Step 3 Seed" />
-              <Stories
-                instanceID={StorylyInstanceID.recoverySeed}
-                vertical
-                keepOriginalOrder
-              />
->>>>>>> 03de7d525f (feat(analytics): add analytics claim NFT, restore install set of apps and generics)
             </Flex>
           ),
         },
