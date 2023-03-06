@@ -823,11 +823,15 @@
         "linkText" : "O que é redelegação e quanto tempo ela leva?",
         "solana" : {
           "title" : "Você sabia?",
-          "description" : "A Ledger oferece uma taxa de comissão menor do que seu validador. Este processo pode levar até 4 dias."
+          "description" : "A Ledger oferece uma taxa de comissão menor do que o seu validador. Este processo pode levar até 4 dias."
         },
         "near" : {
           "title" : "Você sabia?",
           "description" : "A Ledger oferece uma taxa de comissão menor do que o seu validador. Este processo pode levar até 65 horas."
+        },
+        "elrond" : {
+          "title" : "Você sabia?",
+          "description" : "A Ledger oferece uma taxa de comissão menor do que o seu validador. Este processo pode levar até 10 dias."
         }
       },
       "delegation" : {
@@ -849,6 +853,9 @@
         },
         "near" : {
           "description" : "Faça staking de NEAR com o validador Ledger by Figment. As suas moedas continuam sendo suas, suportadas pela segurança absoluta da Ledger."
+        },
+        "elrond" : {
+          "description" : "Faça staking de ELROND com o validador Ledger by Figment. As suas moedas continuam sendo suas, suportadas pela segurança absoluta da Ledger."
         }
       }
     }
@@ -1839,7 +1846,7 @@
       "used" : "Usado",
       "firmwareAvailable" : "O firmware está desatualizado:",
       "firmwareUpToDate" : "O firmware está atualizado:",
-      "genuine" : "O dispositivo é autêntico",
+      "genuine" : "Seu dispositivo é autêntico",
       "incomplete" : "Alguns aplicativos não foram reconhecidos. Desinstale-os e depois os reinstale."
     },
     "applist" : {
@@ -2261,6 +2268,13 @@
     },
     "switchButton" : "Alterar para {{language}}",
     "no" : "Eu prefiro não"
+  },
+  "deviceRename" : {
+    "title" : "Renomear {{ productName }}",
+    "chooseName" : "Escolha um nome",
+    "placeholder" : "Antônio Stax",
+    "remainingCharacters" : "{{ remainingCharacters }} caracteres restantes",
+    "renamed" : "O nome da {{ productName }} foi alterado para \n“{{ name }}” "
   },
   "deviceLocalization" : {
     "language" : "Idioma",
@@ -3786,6 +3800,9 @@
       "catalogRampServerDesc" : "Alternar entre vários provedores de negociação",
       "enablePlatformDevTools" : "Habilitar ferramentas de desenvolvedor da plataforma",
       "enablePlatformDevToolsDesc" : "Habilitar a abertura da janela de ferramentas de desenvolvedor de aplicativos da plataforma",
+      "customLockScreen" : "Ativos personalizados para a tela de bloqueio",
+      "customLockScreenDesc" : "Depurar ativos gráficos personalizados da tela de bloqueio",
+      "customLockScreenCTA" : "Iniciar",
       "featureFlagsTitle" : "Marcadores definidos usados no Ledger Live",
       "featureFlagsDesc" : "Valores sobrepostos serão redefinidos se o aplicativo for reexecutado. Apenas strings JSON válidas serão aceitas.",
       "featureFlagsEdit" : "Editar",
@@ -3850,10 +3867,6 @@
         "experimentalCurrencies" : {
           "title" : "Integrações Experimentais",
           "description" : "Use as integrações experimentais de criptoativos disponíveis."
-        },
-        "experimentalExecutionOnRenderer" : {
-          "title" : "Rede experimental",
-          "description" : "Use a rede experimental para otimizar sua experiência no Ledger Live com a sua VPN. Ative apensas se a sua VPN atual estiver causando erros de sistema."
         },
         "experimentalLanguages" : {
           "title" : "Teste de tradução",
@@ -5668,6 +5681,7 @@
   },
   "customImage" : {
     "title" : "Tela de bloqueio personalizada",
+    "managerCTA" : "Imagem da tela de bloqueio",
     "steps" : {
       "choose" : {
         "stepLabel" : "Escolha uma imagem",
