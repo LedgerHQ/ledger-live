@@ -88,7 +88,11 @@
     "getSupport" : "Obter suporte",
     "comingSoon" : "Em Breve",
     "restart" : "Reiniciar",
-    "loadMore" : "Carregar mais"
+    "loadMore" : "Carregar mais",
+    "patterns" : {
+      "id" : "ID {{ value }}",
+      "times" : "x{{ value }}"
+    }
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -694,7 +698,13 @@
       "title" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
     },
     "CardanoMinAmountError" : {
-      "title" : "A quantia mínima a ser enviada é {{amount}} ADA"
+      "title" : "Mínimo de {{amount}} ADA necessário"
+    },
+    "AvalancheInvalidDateTimeError" : {
+      "title" : "Data final selecionada inválida para staking"
+    },
+    "AvalancheMinimumAmountError" : {
+      "title" : "A quantia mínima é de 25 AVAX"
     },
     "CardanoNotEnoughFunds" : {
       "title" : "Certifique-se de ter fundos suficientes para pagar as taxas"
@@ -1279,8 +1289,13 @@
       },
       "recovery" : "Já tem uma frase de recuperação?",
       "protect" : {
-        "label" : "~60 mins",
-        "subTitle" : "Restaurar com Protect"
+        "subTitle" : "Restaurar usando o Ledger Recover",
+        "drawer" : {
+          "title" : "Usar a Ledger Nano X",
+          "desc" : "O lançamento piloto do Ledger Recover é exclusivo para a Ledger Nano X",
+          "buyNanoX" : "Comprar uma Ledger Nano X",
+          "discoverBenefits" : "Descubra os benefícios"
+        }
       }
     },
     "stepNewDevice" : {
@@ -1507,25 +1522,20 @@
     "stepProtect" : {
       "bullets" : {
         "0" : {
-          "title" : "Navegue ",
-          "label" : "Aprenda a interagir com seu dispositivo lendo as instruções na tela."
+          "title" : "Selecione \"Restore\" (Restaurar)",
+          "label" : "Pressione ambos os botões simultaneamente para selecionar."
         },
         "1" : {
-          "title" : "Selecione \"Restore\" (Restaurar)",
-          "label" : "Pressione ambos os botões simultaneamente para validar a seleção."
-        },
-        "2" : {
-          "title" : "Selecione o modo \"Restore with protect\" (Restaurar com Protect)",
-          "label" : "Pressione ambos os botões simultaneamente para validar a seleção."
+          "title" : "Selecione \"Restore using Ledger Recover\" (Restaurar usando o Ledger Recover)",
+          "label" : "Pressione ambos os botões simultaneamente para selecionar."
         }
       },
       "nextStep" : "Continuar",
       "extraInfo" : {
-        "tooltip" : "Não consigo encontrar em minha Ledger",
-        "title" : "Por que não consigo ver \"Restore with protect\" (Restaure com Protect) em minha Ledger?",
-        "desc1" : "A opção mais provável é que seu dispositivo não é compatível com o Protect. Não se preocupe, estamos aqui para explicar a você como fazer isso funcionar.",
-        "desc2" : "Entre em contato conosco e escolha \"Minha Ledger não exibe Restaurar com Protect\" e nós vamos ajudar você.",
-        "cta" : "Seguir etapas manuais",
+        "tooltip" : "Não vejo \"Restore using Ledger Recover\" (Restaurar usando o Ledger Recover)",
+        "title" : "O sistema operacional em sua Ledger Nano X precisa ser atualizado",
+        "desc" : "Tente atualizar o sistema operacional ou entre em contato com o Suporte Ledger para assistência.",
+        "cta" : "Aprenda como atualizar",
         "supportLink" : "Contate o Suporte Ledger"
       }
     },
@@ -1667,8 +1677,9 @@
         }
       },
       "protectConnectionInformationModal" : {
-        "title" : "Por que eu não consigo conectar minha Ledger?",
-        "description" : "Se você estiver enfrentando problemas para se conectar ao Ledger Live mobile depois de ter habilitado o Bluetooth em sua Ledger, você pode seguir as instruções tocando no botão \"Aprender como corrigir isso\" abaixo"
+        "title" : "Conexão da Ledger Nano X",
+        "description" : "Certifique-se de que sua Ledger está próxima ao seu celular e tente novamente. <LinkBluethooth>Problemas de conexão Bluetooth®  </LinkBluethooth>.\nSe o Bluetooth® estiver funcionando, talvez você precise atualizar o sistema operacional da Ledger. Tente atualizar o sistema operacional ou entre em contato com o Suporte Ledger para assistência. ",
+        "learnHowToUpdate" : "Aprenda como atualizar"
       }
     },
     "stepImportAccounts" : {
@@ -1892,7 +1903,9 @@
     "seedStep" : {
       "title" : "Frase de Recuperação Secreta",
       "doneTitle" : "Frase de Recuperação Secreta confirmada",
-      "description" : "Sua frase de recuperação é uma lista secreta de 24 palavras que respaldam suas chaves privadas. Sua {{productName}} gera uma frase de recuperação única. A Ledger não guarda uma cópia dela"
+      "description" : "Sua frase de recuperação é uma lista secreta de 24 palavras que respaldam suas chaves privadas. Sua {{productName}} gera uma frase de recuperação única. A Ledger não guarda uma cópia dela",
+      "selection" : "Escolha a opção de configuração que mais sirva a você.",
+      "recovery" : "Para recuperação, certifique-se de usar uma Frase de Recuperação Secreta gerada por uma Ledger para garantir a segurança de seus ativos.\n\nNão tem uma? Use sua {{productName}} para gerar uma nova Frase."
     },
     "softwareChecksSteps" : {
       "title" : "Verificações de Hardware e Software",
@@ -5324,6 +5337,69 @@
       }
     }
   },
+  "avalanchepchain" : {
+    "delegation" : {
+      "delegationEarn" : "Você pode ganhar recompensas AVAX delegando seus ativos.",
+      "info" : "Como funciona a Delegação",
+      "iDelegate" : "Eu delego",
+      "until" : "até",
+      "validatorRemainingStake" : "Disponível",
+      "validator" : "NodeID",
+      "startTime" : "Horário de início",
+      "endTime" : "Horário de término",
+      "notEnoughToDelegate" : "Você deve ter pelo menos 25 AVAX disponíveis na cadeia P para se tornar um delegador.",
+      "stepperHeader" : {
+        "starter" : "Receber recompensas",
+        "validator" : "Ativos delegados",
+        "amount" : "Quantia a delegar",
+        "endDate" : "Data de término da delegação",
+        "summary" : "Resumo",
+        "verification" : "Verificação",
+        "selectDevice" : "Selecione o dispositivo",
+        "connectDevice" : "Conecte o dispositivo",
+        "stepRange" : "Etapa {{currentStep}} de {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "available" : "Total disponível",
+            "maxLabel" : "Máximo"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Você delegou seus ativos com sucesso",
+              "text" : "O saldo de sua conta será atualizado assim que a rede confirmar a transação."
+            }
+          },
+          "starter" : {
+            "description" : "Delegue seu AVAX para ganhar recompensas de forma segura, mantendo o controle de seus ativos.",
+            "steps" : {
+              "0" : "Você continua tendo posse dos ativos delegados",
+              "1" : "Delegar usando seu dispositivo Ledger",
+              "2" : "É necessário o mínimo de 25 AVAX para fazer staking",
+              "3" : "AVAX precisa ser delegado por um mínimo de 2 semanas"
+            },
+            "cta" : "Continuar"
+          },
+          "endDate" : "A data final para essa delegação deve ser entre {{minEndDate}} e {{maxEndDate}}."
+        }
+      }
+    },
+    "info" : {
+      "available" : {
+        "title" : "AVAX disponível",
+        "description" : "Esta quantia é descartável."
+      },
+      "delegated" : {
+        "title" : "AVAX aplicado",
+        "description" : "Quantia aplicada em validadores."
+      },
+      "delegationUnavailable" : {
+        "title" : "Delegação indisponível",
+        "description" : "Não há saldo disponível suficiente em sua conta para iniciar uma nova delegação."
+      }
+    }
+  },
   "near" : {
     "info" : {
       "available" : {
@@ -5446,6 +5522,7 @@
     "warnDelegation" : "A delegação de seus direitos de voto não garante nenhuma recompensa do seu validador.",
     "to" : "para",
     "from" : "de",
+    "yield" : "Rendimento est.",
     "forAnEstYield" : "para um rendimento est. de",
     "yieldPerYear" : "{{yield}} / Ano",
     "yieldInfos" : "Taxas de rendimento fornecidas por",
@@ -5573,6 +5650,7 @@
     "cta" : "Continuar"
   },
   "exchange" : {
+    "count" : "+ {{count}} mais",
     "buy" : {
       "screenTitle" : "COMPRAR CRIPTO",
       "tabTitle" : "Comprar",
@@ -6026,22 +6104,10 @@
       "status" : {
         "new" : {
           "title" : "Novo",
-          "desc" : "Guarde sua frase de recuperação",
-          "0" : {
-            "title" : "Confiada por milhões de usuários Ledger"
-          },
-          "1" : {
-            "title" : "Sua Frase de Recuperação está ligada à sua identidade com segurança"
-          },
-          "2" : {
-            "title" : "Encriptação de última geração"
-          },
-          "3" : {
-            "title" : "Fragmentada em 3 peças descentralizadas, para que sua frase de recuperação nunca possa ser roubada"
-          },
+          "desc" : "Recuperar acesso a sua carteira sem sua Frase de Recuperação Secreta.",
           "actions" : {
-            "learnMore" : "Saiba Mais",
-            "alreadySubscribed" : "Já se inscrever no Protect?"
+            "learnMore" : "Como isso me beneficia?",
+            "alreadySubscribed" : "Já se inscreveu? <LinkAccount>Ver minha conta</LinkAccount>"
           }
         },
         "confirmIdentity" : {
@@ -6104,5 +6170,8 @@
     "title" : "Feed de notícias",
     "poweredByCryptopanic" : "Impulsionado por Cryptopanic",
     "noPosts" : "Nenhum post disponível no momento"
+  },
+  "deviceConnect" : {
+    "title" : "Conectar dispositivo"
   }
 }
