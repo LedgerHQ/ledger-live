@@ -21,7 +21,7 @@ test.use({
       enabled: true,
     },
   },
-  env: { MOCK: undefined },
+  // env: { MOCK: undefined },
 });
 
 // Tests to cover in Playwright test suite
@@ -33,6 +33,17 @@ test.use({
 // Errors:
 // ‘Insufficient funds’
 // Amount too low for providers ‘Amount must be at least …’
+// could add pause to HTTP mock to test 'LOADING' component
+
+// MOCKS TO INCLUDE IN HTTP MOCKS:
+// libs/ledger-live-common/src/exchange/swap/getExchangeRates.ts ✅
+// libs/ledger-live-common/src/exchange/swap/getProviders.ts ✅
+// libs/ledger-live-common/src/exchange/swap/checkQuote.ts - Probably just FTX related
+// libs/ledger-live-common/src/exchange/swap/getStatus.ts - https://swap.ledger.com/v4/swap/status
+// libs/ledger-live-common/src/exchange/swap/postSwapState.ts - https://swap.ledger.com/v4/swap/cancelled
+
+// MOCKS REQUIRED AS THEY CURRENTLY ARE:
+// libs/ledger-live-common/src/exchange/swap/initSwap.ts ✅
 
 // process.env.PWDEBUG = "1";
 
