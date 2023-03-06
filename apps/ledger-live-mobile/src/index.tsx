@@ -594,7 +594,6 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
             url.searchParams.set("name", manifest.name);
             return getStateFromPath(url.href?.split("://")[1], config);
           }
-          console.log(path, hostname);
           if (path === "linkdrop-nft-claim/qr-scanning") {
             track("deeplink", { action: "Claim NFT scan QR code again" });
           }
