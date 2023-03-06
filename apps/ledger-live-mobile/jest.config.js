@@ -42,7 +42,7 @@ module.exports = {
     "^@ledgerhq/coin-framework(.*)$":
       "<rootDir>/../../libs/coin-framework/lib$1.js",
     "^@ledgerhq/icons-ui/native(.*)$":
-      "<rootDir>/../../libs/ui/packages/icons/native$1",
+      "<rootDir>/../../libs/ui/packages/icons/native/$1",
     "^@ledgerhq/crypto-icons-ui/native(.*)$":
       "<rootDir>/../../libs/ui/packages/crypto-icons/native/$1",
     "^@ledgerhq/native-ui(.*)$":
@@ -50,16 +50,7 @@ module.exports = {
     "^react-native/(.*)$": "<rootDir>/node_modules/react-native/$1",
     "^react-native$": "<rootDir>/node_modules/react-native",
     "^victory-native$": "victory",
-<<<<<<< HEAD
-<<<<<<< HEAD
     "styled-components":
       "<rootDir>/node_modules/styled-components/native/dist/styled-components.native.cjs.js",
-=======
->>>>>>> f2afef9744 (can run tests)
-=======
-    "styled-components":
-      "<rootDir>/node_modules/styled-components/native/dist/styled-components.native.cjs.js",
->>>>>>> 1818e014aa (simple text test)
   },
-  moduleFileExtensions: ["ts", "tsx"],
 };
