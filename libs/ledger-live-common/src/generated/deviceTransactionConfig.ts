@@ -17,6 +17,7 @@ import tezos from "../families/tezos/deviceTransactionConfig";
 import tron from "../families/tron/deviceTransactionConfig";
 import zilliqa from "../families/zilliqa/deviceTransactionConfig";
 import polkadot from "@ledgerhq/coin-polkadot/deviceTransactionConfig";
+import zilliqa from "../families/zilliqa/deviceTransactionConfig";
 
 export default {
   algorand,
@@ -38,6 +39,7 @@ export default {
   tron,
   zilliqa,
   polkadot,
+  zilliqa,
 };
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_cosmos } from "../families/cosmos/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_filecoin } from "../families/filecoin/deviceTransactionConfig";
