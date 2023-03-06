@@ -147,6 +147,7 @@
     "@ledgerhq/hw-app-tezos": "workspace:^",
     "@ledgerhq/hw-app-trx": "workspace:^",
     "@ledgerhq/hw-app-xrp": "workspace:^",
+    "@ledgerhq/hw-app-zilliqa": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
