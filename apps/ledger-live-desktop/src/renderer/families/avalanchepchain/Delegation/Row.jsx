@@ -14,6 +14,7 @@ import Logo from "~/renderer/icons/Logo";
 import type { AvalancheDelegation } from "@ledgerhq/live-common/families/avalanchepchain/types";
 import moment from "moment";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import { getInitialLanguageLocale } from "~/renderer/reducers/settings";
 
 type Props = {
   account: Account,
@@ -24,6 +25,9 @@ type Props = {
 
 export function Row({ delegation, account, onExternalLink }: Props) {
   const onExternalLinkClick = () => onExternalLink(delegation.txID);
+
+  const locale = getInitialLanguageLocale();
+  moment.locale(locale);
 
   const formatAmount = React.useCallback(
     (amount: string) => {
@@ -53,8 +57,8 @@ export function Row({ delegation, account, onExternalLink }: Props) {
           {isDefaultValidatorNode(delegation.nodeID) ? `Ledger by Figment` : delegation.nodeID}
         </Ellipsis>
       </Column>
-      <Column>{moment.unix(delegation.startTime).format("MM/DD/YYYY, h:mm:ss a")}</Column>
-      <Column>{moment.unix(delegation.endTime).format("MM/DD/YYYY, h:mm:ss a")}</Column>
+      <Column>{moment.unix(delegation.startTime).format("L, LT")}</Column>
+      <Column>{moment.unix(delegation.endTime).format("L, LT")}</Column>
       <Column>{formatAmount(delegation.stakeAmount.toString())}</Column>
     </Wrapper>
   );
