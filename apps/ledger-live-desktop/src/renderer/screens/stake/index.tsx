@@ -12,9 +12,10 @@ import { openModal } from "~/renderer/actions/modals";
 
 type Props = {
   currencies?: string[];
+  shouldRedirect?: boolean;
 };
 
-const useStakeFlow = ({ currencies }: Props = {}) => {
+const useStakeFlow = ({ currencies, shouldRedirect = true }: Props = {}) => {
   const history = useHistory();
   const { params: { list } = { list: undefined } } = useFeature("stakePrograms") || {};
   const dispatch = useDispatch();
@@ -47,9 +48,11 @@ const useStakeFlow = ({ currencies }: Props = {}) => {
           });
           setDrawer();
           dispatch(openModal("MODAL_START_STAKE", { account, parentAccount }));
-          history.push({
-            pathname: `/account/${account.id}`,
-          });
+          if (shouldRedirect) {
+            history.push({
+              pathname: `/account/${account.id}`,
+            });
+          }
         },
       },
       {

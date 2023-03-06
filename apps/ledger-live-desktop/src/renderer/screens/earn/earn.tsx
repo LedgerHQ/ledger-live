@@ -11,6 +11,7 @@ import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/provide
 import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
 import useTheme from "~/renderer/hooks/useTheme";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
+import useStakeFlow from "~/renderer/screens/stake";
 
 const LiveAppEarn = ({ appId }: { appId: string }) => {
   const { state: urlParams } = useLocation();
@@ -21,6 +22,7 @@ const LiveAppEarn = ({ appId }: { appId: string }) => {
   const remoteManifest = useRemoteLiveAppManifest(appId);
   const manifest = localManifest || remoteManifest;
   const themeType = useTheme("colors.palette.type");
+  const startStakeFlow = useStakeFlow({ shouldRedirect: false });
 
   return (
     <Card grow style={{ overflow: "hidden" }}>
@@ -32,6 +34,14 @@ const LiveAppEarn = ({ appId }: { appId: string }) => {
               shouldDisplayInfo: false,
               shouldDisplayClose: false,
               shouldDisplayNavigation,
+            },
+            onMessage: rawMessage => {
+              console.log("ON MESSAGE");
+              console.log(rawMessage);
+              const { type } = JSON.parse(rawMessage);
+              if (type === "startStake") {
+                startStakeFlow();
+              }
             },
           }}
           manifest={manifest}
