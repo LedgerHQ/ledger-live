@@ -86,6 +86,7 @@ export enum AppStateActionTypes {
   CLEAR_BACKGROUND_EVENTS = "CLEAR_BACKGROUND_EVENTS",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
   UPDATE_MAIN_NAVIGATOR_VISIBILITY = "UPDATE_MAIN_NAVIGATOR_VISIBILITY",
+  SET_WIRED_DEVICE = "SET_WIRED_DEVICE",
 }
 
 export type AppStateIsConnectedPayload = Pick<AppState, "isConnected">;
@@ -93,6 +94,7 @@ export type AppStateSetHasConnectedDevicePayload = Pick<
   AppState,
   "hasConnectedDevice"
 >;
+export type AppStateSetWiredDevicePayload = Pick<AppState, "wiredDevice">;
 export type AppStateSetModalLockPayload = Pick<AppState, "modalLock">;
 export type AppStateAddBackgroundEventPayload = {
   event: FwUpdateBackgroundEvent;
@@ -481,6 +483,10 @@ export type SettingsSetDebugAppLevelDrawerOpenedPayload = Pick<
   SettingsState,
   "debugAppLevelDrawerOpened"
 >;
+export type SettingsCompleteOnboardingPayload = Pick<
+  SettingsState,
+  "hasCompletedOnboarding"
+>;
 
 export type SettingsPayload =
   | SettingsImportPayload
@@ -531,6 +537,7 @@ export type SettingsPayload =
   | SettingsSetOverriddenFeatureFlagPlayload
   | SettingsSetOverriddenFeatureFlagsPlayload
   | SettingsSetFeatureFlagsBannerVisiblePayload
+  | SettingsCompleteOnboardingPayload
   | SettingsSetDebugAppLevelDrawerOpenedPayload;
 
 // === WALLET CONNECT ACTIONS ===
@@ -565,6 +572,7 @@ export type SwapPayload =
 export enum ProtectActionTypes {
   UPDATE_DATA = "UPDATE_DATA",
   UPDATE_PROTECT_STATUS = "UPDATE_PROTECT_STATUS",
+  RESET_STATE = "RESET_STATE",
 }
 
 export type ProtectDataPayload = Pick<ProtectState, "data">;

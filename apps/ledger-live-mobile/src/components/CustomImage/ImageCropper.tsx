@@ -4,6 +4,7 @@ import { CropView } from "react-native-image-crop-tools";
 import styled from "styled-components/native";
 import { Image, StyleProp, ViewStyle } from "react-native";
 import { ImageCropError } from "@ledgerhq/live-common/customImage/errors";
+import { useTranslation } from "react-i18next";
 import { ImageDimensions, ImageFileUri } from "./types";
 
 const HiddenImage = styled(Image)`
@@ -46,6 +47,7 @@ const ImageCropper = React.forwardRef<CropView, Props>((props, ref) => {
   } = props;
 
   const cropViewRef = useRef<CropView>(null);
+  const { t } = useTranslation();
 
   const handleImageCrop = useCallback(
     async res => {
@@ -86,7 +88,7 @@ const ImageCropper = React.forwardRef<CropView, Props>((props, ref) => {
       />
       {withButton && (
         <Button type="main" onPress={handleSave}>
-          Crop
+          {t("customImage.cropImage")}
         </Button>
       )}
     </Flex>

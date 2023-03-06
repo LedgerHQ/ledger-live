@@ -10,6 +10,6 @@
   "devDependencies": {
     "@actions/core": "^1.10.0",
     "@actions/github": "^5.1.1",
-    "tsup": "^6.4.0"
+    "tsup": "^6.5.0"
   }
 }

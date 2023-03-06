@@ -9,7 +9,6 @@ import { languageSelector } from "~/renderer/reducers/settings";
 import { useSelector } from "react-redux";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
-// import { getCustomDappUrl } from "./utils";
 
 type Props = {
   match: {
@@ -28,13 +27,14 @@ type Props = {
     },
     pathname: string,
     search: string,
+    customDappUrl?: string,
   },
 };
 
 export default function PlatformApp({ match, appId: propsAppId, location }: Props) {
   const history = useHistory();
   const { params: internalParams, search } = location;
-  const { state: urlParams } = useLocation();
+  const { state: urlParams, customDappUrl } = useLocation();
 
   const appId = propsAppId || match.params?.appId;
 
@@ -55,14 +55,10 @@ export default function PlatformApp({ match, appId: propsAppId, location }: Prop
 
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
-  const manifest = localManifest || remoteManifest;
-
-  // TODO - Need to fix to support SWAP deep link
-  // const customDappUrl = getCustomDappUrl(manifest, appId, params, pathname);
-  // if (customDappUrl) {
-  //   manifest = { ...manifest, params: { ...manifest.params, dappUrl: customDappUrl } };
-  // }
-
+  let manifest = localManifest || remoteManifest;
+  if (customDappUrl) {
+    manifest = { ...manifest, params: { ...manifest.params, dappUrl: customDappUrl } };
+  }
   // TODO for next urlscheme evolutions:
   // - check if local settings allow to launch an app from this branch, else display an error
   // - check if the app is available in store, else display a loader if apps are getting fetched from remote, else display an error stating that the app doesn't exist

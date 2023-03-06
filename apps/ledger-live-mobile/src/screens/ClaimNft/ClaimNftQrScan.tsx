@@ -88,13 +88,18 @@ const ClaimNftQrScan = () => {
     });
   }, [cameraDimensions]);
 
-  useEffect(() => {
-    const redirectionTimeout = setTimeout(() => navigateToHub(), 120000);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
+  useEffect(() => {
+    if (isInFocus) {
+      timeoutRef.current = setTimeout(navigateToHub, 120000);
+    }
     return () => {
-      clearTimeout(redirectionTimeout);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
     };
-  }, [navigateToHub]);
+  }, [navigateToHub, isInFocus]);
 
   const handleBarCodeScanned = useCallback(({ data }) => {
     try {

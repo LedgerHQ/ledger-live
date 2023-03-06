@@ -2,6 +2,7 @@ import { Tag, Text } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { GestureResponderEvent, Linking } from "react-native";
+import { urls } from "../../../config/urls";
 import Button from "../../Button";
 
 function NewProtectState({ params }: { params: Record<string, string> }) {
@@ -9,14 +10,15 @@ function NewProtectState({ params }: { params: Record<string, string> }) {
   const { learnMoreURI, alreadySubscribedURI } = params || {};
 
   const onLearnMore = useCallback(() => {
-    Linking.canOpenURL(learnMoreURI).then(() => Linking.openURL(learnMoreURI));
+    const url = `${learnMoreURI}&source=${urls.recoverSources.myLedger}`;
+    Linking.canOpenURL(url).then(() => Linking.openURL(url));
   }, [learnMoreURI]);
 
   const onAlreadySubscribe = useCallback(() => {
-    Linking.canOpenURL(learnMoreURI).then(() =>
+    Linking.canOpenURL(alreadySubscribedURI).then(() =>
       Linking.openURL(alreadySubscribedURI),
     );
-  }, [learnMoreURI, alreadySubscribedURI]);
+  }, [alreadySubscribedURI]);
 
   const onPressInAlreadySubscribed = useCallback((e: GestureResponderEvent) => {
     e.stopPropagation();

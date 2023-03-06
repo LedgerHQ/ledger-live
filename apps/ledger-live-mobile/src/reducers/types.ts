@@ -72,6 +72,7 @@ export type AppState = {
   modalLock: boolean;
   backgroundEvents: Array<FwUpdateBackgroundEvent>;
   isMainNavigatorVisible: boolean;
+  wiredDevice?: DeviceLike;
 };
 
 // === BLE STATE ===

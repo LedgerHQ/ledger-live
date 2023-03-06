@@ -23,6 +23,7 @@ import {
   Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTranslation } from "react-i18next";
 import LoadingFooter from "../../components/LoadingFooter";
 import NftMedia from "../../components/Nft/NftMedia";
 import Skeleton from "../../components/Skeleton";
@@ -36,6 +37,7 @@ const NFTS_TO_ADD_ON_LIST_END_REACHED = 8;
 
 const NftRow = memo(
   ({ account, nft }: { account: Account | TokenAccount; nft: ProtoNFT }) => {
+    const { t } = useTranslation();
     const navigation =
       useNavigation<
         StackNavigatorNavigation<
@@ -104,13 +106,13 @@ const NftRow = memo(
             ellipsizeMode="middle"
             style={[styles.tokenId, { color: colors.grey }]}
           >
-            ID {nft?.tokenId}
+            {t("common.patterns.id", { value: nft?.tokenId })}
           </LText>
         </View>
         {nft?.standard === "ERC1155" ? (
           <View style={styles.amount}>
             <LText numberOfLines={1} style={{ color: colors.grey }}>
-              x{nft?.amount?.toFixed()}
+              {t("common.patterns.times", { value: nft?.amount?.toFixed() })}
             </LText>
           </View>
         ) : null}
