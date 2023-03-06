@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from "uuid";
 import {
   transportCloseChannel,
   transportExchangeBulkChannel,
+  transportExchangeBulkUnsubscribeChannel,
   transportExchangeChannel,
   transportOpenChannel,
 } from "~/config/transportChannels";
@@ -101,6 +102,12 @@ export class IPCTransport extends Transport {
     return {
       unsubscribe: () => {
         ipcRenderer.removeListener(replyChannel, handler);
+        ipcRenderer.send(transportExchangeBulkUnsubscribeChannel, {
+          data: {
+            descriptor: this.id,
+          },
+          requestId,
+        });
       },
     };
   }
