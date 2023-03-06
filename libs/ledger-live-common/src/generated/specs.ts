@@ -15,6 +15,7 @@ import solana from "../families/solana/specs";
 import stellar from "../families/stellar/specs";
 import tezos from "../families/tezos/specs";
 import tron from "../families/tron/specs";
+import zilliqa from "../families/zilliqa/specs";
 import polkadot from "@ledgerhq/coin-polkadot/specs";
 import zilliqa from "../families/zilliqa/specs";
 
@@ -36,6 +37,7 @@ export default {
   stellar,
   tezos,
   tron,
+  zilliqa,
   polkadot,
   zilliqa,
 };

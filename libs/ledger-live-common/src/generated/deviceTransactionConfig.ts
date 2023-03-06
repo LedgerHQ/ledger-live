@@ -15,6 +15,7 @@ import solana from "../families/solana/deviceTransactionConfig";
 import stellar from "../families/stellar/deviceTransactionConfig";
 import tezos from "../families/tezos/deviceTransactionConfig";
 import tron from "../families/tron/deviceTransactionConfig";
+import zilliqa from "../families/zilliqa/deviceTransactionConfig";
 import polkadot from "@ledgerhq/coin-polkadot/deviceTransactionConfig";
 import zilliqa from "../families/zilliqa/deviceTransactionConfig";
 
@@ -36,6 +37,7 @@ export default {
   stellar,
   tezos,
   tron,
+  zilliqa,
   polkadot,
   zilliqa,
 };
