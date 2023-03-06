@@ -24,6 +24,7 @@ import {
   fromCryptoOrgResourcesRaw,
   fromSolanaResourcesRaw,
   fromCeloResourcesRaw,
+  fromZilliqaResourcesRaw,
   fromNFTRaw,
   toCosmosResourcesRaw,
   toPolkadotResourcesRaw,
@@ -32,6 +33,7 @@ import {
   toCryptoOrgResourcesRaw,
   toSolanaResourcesRaw,
   toCeloResourcesRaw,
+  toZilliqaResourcesRaw,
 } from "./account";
 import consoleWarnExpectToEqual from "./consoleWarnExpectToEqual";
 import { BitcoinAccount, BitcoinAccountRaw } from "./families/bitcoin/types";
@@ -45,7 +47,7 @@ import { PolkadotAccount, PolkadotAccountRaw } from "./families/polkadot/types";
 import { SolanaAccount, SolanaAccountRaw } from "./families/solana/types";
 import { TezosAccount, TezosAccountRaw } from "./families/tezos/types";
 import { CeloAccount, CeloAccountRaw } from "./families/celo/types";
-import { getAccountBridge } from "./bridge";
+import { ZilliqaAccount, ZilliqaAccountRaw } from "./families/zilliqa/types";
 
 // aim to build operations with the minimal diff & call to coin implementation possible
 export async function minimalOperationsBuilder<CO>(
@@ -371,6 +373,24 @@ export function patchAccount(
       ) {
         (next as ElrondAccount).elrondResources = fromElrondResourcesRaw(
           elrondUpdatedRaw.elrondResources
+        );
+        changed = true;
+      }
+      break;
+    }
+    case "zilliqa": {
+      const zilliqaAcc = account as ZilliqaAccount;
+      const zilliqaUpdatedRaw = updatedRaw as ZilliqaAccountRaw;
+      if (
+        zilliqaUpdatedRaw.zilliqaResources &&
+        (!zilliqaAcc.zilliqaResources ||
+          !areSameResources(
+            toZilliqaResourcesRaw(zilliqaAcc.zilliqaResources),
+            zilliqaUpdatedRaw.zilliqaResources
+          ))
+      ) {
+        (next as ZilliqaAccount).zilliqaResources = fromZilliqaResourcesRaw(
+          zilliqaUpdatedRaw.zilliqaResources
         );
         changed = true;
       }

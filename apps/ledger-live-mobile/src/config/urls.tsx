@@ -165,6 +165,9 @@ export const urls = {
   elrond: {
     website: "https://elrond.com",
   },
+  zilliqa: {
+    website: "https://zilliqa.com",
+  },
   cryptoOrg: {
     website: "https://crypto.org",
   },
