@@ -17,6 +17,7 @@ import stellar from "../families/stellar/hw-getAddress";
 import tezos from "../families/tezos/hw-getAddress";
 import tron from "../families/tron/hw-getAddress";
 import polkadot from "@ledgerhq/coin-polkadot/hw-getAddress";
+import zilliqa from "../families/zilliqa/hw-getAddress";
 
 export default {
   algorand,
@@ -38,4 +39,5 @@ export default {
   tezos,
   tron,
   polkadot,
+ zilliqa
 };

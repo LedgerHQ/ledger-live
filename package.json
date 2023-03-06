@@ -74,6 +74,7 @@
     "ljs:hw-app-tezos": "pnpm --filter hw-app-tezos",
     "ljs:hw-app-trx": "pnpm --filter hw-app-trx",
     "ljs:hw-app-xrp": "pnpm --filter hw-app-xrp",
+    "ljs:hw-app-zilliqa": "pnpm --filter hw-app-zilliqa",
     "ljs:hw-transport": "pnpm --filter hw-transport",
     "ljs:hw-transport-http": "pnpm --filter hw-transport-http",
     "ljs:hw-transport-mocker": "pnpm --filter hw-transport-mocker",
@@ -132,6 +133,13 @@
       "rn-fetch-blob@0.12.0": "patches/rn-fetch-blob@0.12.0.patch",
       "react-native-os@1.2.6": "patches/react-native-os@1.2.6.patch",
       "react-native-tcp@4.0.0": "patches/react-native-tcp@4.0.0.patch"
+    },
+    "packageExtensions": {
+      "@zilliqa-js/account": {
+        "dependencies": {
+          "hash.js": "^1.1.7"
+        }
+      }
     }
   }
 }
