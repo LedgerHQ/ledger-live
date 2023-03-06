@@ -101,34 +101,12 @@ const test = base.extend<TestFixtures>({
     // app is ready
     const page = await electronApp.firstWindow();
 
-    // start coverage
-    const istanbulCLIOutput = path.join(__dirname, "../artifacts/.nyc_output");
-
-    await page.addInitScript(() =>
-      window.addEventListener("beforeunload", () =>
-        (window as any).collectIstanbulCoverage(JSON.stringify((window as any).__coverage__)),
-      ),
-    );
-    await fs.promises.mkdir(istanbulCLIOutput, { recursive: true });
-    await page.exposeFunction("collectIstanbulCoverage", (coverageJSON: string) => {
-      if (coverageJSON)
-        fs.writeFileSync(
-          path.join(istanbulCLIOutput, `playwright_coverage_${generateUUID()}.json`),
-          coverageJSON,
-        );
-    });
-
     // app is loaded
     await page.waitForLoadState("domcontentloaded");
     await page.waitForSelector("#loader-container", { state: "hidden" });
 
     // use page in the test
     await use(page);
-
-    // stop coverage
-    await page.evaluate(() =>
-      (window as any).collectIstanbulCoverage(JSON.stringify((window as any).__coverage__)),
-    );
 
     // close app
     await electronApp.close();
