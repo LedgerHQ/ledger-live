@@ -13,6 +13,7 @@ import {
   getBitcoinToEthereumRatesMock,
   getEthereumToTetherRatesMock,
 } from "./services-api-mocks/getRates.mock";
+import { getStatusMock } from "./services-api-mocks/getStatus.mock";
 
 test.use({
   userdata: "1AccountBTC1AccountETH",
@@ -21,7 +22,7 @@ test.use({
       enabled: true,
     },
   },
-  // env: { MOCK: undefined },
+  // env: { DEV_TOOLS: true },
 });
 
 // Tests to cover in Playwright test suite
@@ -167,14 +168,17 @@ test.describe.parallel("Swap", () => {
 
     await page.route("https://swap.ledger.com/v4/providers**", async route => {
       const mockProvidersResponse = getProvidersMock();
-
       route.fulfill({ body: mockProvidersResponse });
     });
 
     await page.route("https://swap.ledger.com/v4/rate**", async route => {
       const mockRatesResponse = getBitcoinToEthereumRatesMock();
-
       route.fulfill({ body: mockRatesResponse });
+    });
+
+    await page.route("https://swap.ledger.com/v4/swap/status", async route => {
+      const mockStatusResponse = getStatusMock();
+      route.fulfill({ body: mockStatusResponse });
     });
 
     await test.step("Open Swap Page", async () => {
