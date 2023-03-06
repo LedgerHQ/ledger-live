@@ -76,7 +76,9 @@ const protectManifest = {
   domains: [
     "https://*.aws.*.ldg-tech.com",
     "http://*.aws.*.ldg-tech.com",
-    "https://ledgerservices*.chargebee.com",
+    "https://*.chargebee.com",
+    "https://js.stripe.com/v3",
+    "https://api.stripe.com",
   ],
 } as LiveAppManifest;
 
