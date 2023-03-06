@@ -740,11 +740,6 @@ const envDefinitions: Record<
     parser: intParser,
     desc: "Time after which an optimisc operation is considered stuck",
   },
-  ETHEREUM_STUCK_TRANSACTION_TIMEOUT: {
-    def: 5 * 60 * 1000,
-    parser: intParser,
-    desc: "Time after which an optimisc operation is considered stuck",
-  },
 };
 
 export const getDefinition = (name: string): EnvDef<any> | null | undefined =>
