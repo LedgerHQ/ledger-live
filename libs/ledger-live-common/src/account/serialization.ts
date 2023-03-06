@@ -7,6 +7,7 @@ import {
   toCosmosResourcesRaw,
   fromCosmosResourcesRaw,
 } from "../families/cosmos/serialization";
+
 import {
   toPolkadotResourcesRaw,
   fromPolkadotResourcesRaw,
@@ -19,6 +20,10 @@ import {
   toElrondResourcesRaw,
   fromElrondResourcesRaw,
 } from "../families/elrond/serialization";
+import {
+  toZilliqaResourcesRaw,
+  fromZilliqaResourcesRaw,
+} from "../families/zilliqa/serialization";
 import {
   toCryptoOrgResourcesRaw,
   fromCryptoOrgResourcesRaw,
@@ -39,7 +44,8 @@ import {
   getTokenById,
   findTokenById,
 } from "../currencies";
-import { inferFamilyFromAccountId } from "./index";
+
+import { inferFamilyFromAccountId } from "./accountId";
 import accountByFamily from "../generated/account";
 import { isAccountEmpty } from "./helpers";
 import type { SwapOperation, SwapOperationRaw } from "../exchange/swap/types";
@@ -75,12 +81,14 @@ import {
   fromOperationRaw as commonFromOperationRaw,
 } from "@ledgerhq/coin-framework/account/serialization";
 import { CosmosAccount, CosmosAccountRaw } from "../families/cosmos/types";
+
 import { BitcoinAccount, BitcoinAccountRaw } from "../families/bitcoin/types";
 import {
   PolkadotAccount,
   PolkadotAccountRaw,
 } from "@ledgerhq/coin-polkadot/types";
 import { ElrondAccount, ElrondAccountRaw } from "../families/elrond/types";
+import { ZilliqaAccount, ZilliqaAccountRaw } from "../families/zilliqa/types";
 import {
   CryptoOrgAccount,
   CryptoOrgAccountRaw,
@@ -91,10 +99,12 @@ import { CeloAccount, CeloAccountRaw } from "../families/celo/types";
 import { getAccountBridge } from "../bridge";
 
 export { toCosmosResourcesRaw, fromCosmosResourcesRaw };
+export { toAlgorandResourcesRaw, fromAlgorandResourcesRaw };
 export { toBitcoinResourcesRaw, fromBitcoinResourcesRaw };
 export { toPolkadotResourcesRaw, fromPolkadotResourcesRaw };
 export { toTezosResourcesRaw, fromTezosResourcesRaw };
 export { toElrondResourcesRaw, fromElrondResourcesRaw };
+export { toZilliqaResourcesRaw, fromZilliqaResourcesRaw };
 export { toCryptoOrgResourcesRaw, fromCryptoOrgResourcesRaw };
 export { toCardanoResourceRaw, fromCardanoResourceRaw };
 export { toSolanaResourcesRaw, fromSolanaResourcesRaw };
@@ -166,6 +176,187 @@ export const fromOperationRaw = (
   return {
     ...res,
     extra: e || {},
+    contract,
+    operator,
+    standard,
+    tokenId,
+  };
+
+  if (transactionSequenceNumber !== undefined) {
+    res.transactionSequenceNumber = transactionSequenceNumber;
+  }
+
+  if (hasFailed !== undefined) {
+    res.hasFailed = hasFailed;
+  }
+
+  if (subAccounts) {
+    res.subOperations = inferSubOperations(hash, subAccounts);
+  } else if (subOperations) {
+    res.subOperations = subOperations.map((o) =>
+      fromOperationRaw(o, o.accountId)
+    );
+  }
+
+  if (internalOperations) {
+    res.internalOperations = internalOperations.map((o) =>
+      fromOperationRaw(o, o.accountId)
+    );
+  }
+
+  if (nftOperations) {
+    res.nftOperations = nftOperations.map((o) =>
+      fromOperationRaw(o, o.accountId)
+    );
+  }
+
+  return res;
+};
+export const toTronResourcesRaw = ({
+  frozen,
+  delegatedFrozen,
+  votes,
+  tronPower,
+  energy,
+  bandwidth,
+  unwithdrawnReward,
+  lastWithdrawnRewardDate,
+  lastVotedDate,
+  cacheTransactionInfoById: cacheTx,
+}: TronResources): TronResourcesRaw => {
+  const frozenBandwidth = frozen.bandwidth;
+  const frozenEnergy = frozen.energy;
+  const delegatedFrozenBandwidth = delegatedFrozen.bandwidth;
+  const delegatedFrozenEnergy = delegatedFrozen.energy;
+  const cacheTransactionInfoById = {};
+
+  for (const k in cacheTx) {
+    const { fee, blockNumber, withdraw_amount, unfreeze_amount } = cacheTx[k];
+    cacheTransactionInfoById[k] = [
+      fee,
+      blockNumber,
+      withdraw_amount,
+      unfreeze_amount,
+    ];
+  }
+
+  return {
+    frozen: {
+      bandwidth: frozenBandwidth
+        ? {
+            amount: frozenBandwidth.amount.toString(),
+            expiredAt: frozenBandwidth.expiredAt.toISOString(),
+          }
+        : undefined,
+      energy: frozenEnergy
+        ? {
+            amount: frozenEnergy.amount.toString(),
+            expiredAt: frozenEnergy.expiredAt.toISOString(),
+          }
+        : undefined,
+    },
+    delegatedFrozen: {
+      bandwidth: delegatedFrozenBandwidth
+        ? {
+            amount: delegatedFrozenBandwidth.amount.toString(),
+          }
+        : undefined,
+      energy: delegatedFrozenEnergy
+        ? {
+            amount: delegatedFrozenEnergy.amount.toString(),
+          }
+        : undefined,
+    },
+    votes,
+    tronPower,
+    energy: energy.toString(),
+    bandwidth: {
+      freeUsed: bandwidth.freeUsed.toString(),
+      freeLimit: bandwidth.freeLimit.toString(),
+      gainedUsed: bandwidth.gainedUsed.toString(),
+      gainedLimit: bandwidth.gainedLimit.toString(),
+    },
+    unwithdrawnReward: unwithdrawnReward.toString(),
+    lastWithdrawnRewardDate: lastWithdrawnRewardDate
+      ? lastWithdrawnRewardDate.toISOString()
+      : undefined,
+    lastVotedDate: lastVotedDate ? lastVotedDate.toISOString() : undefined,
+    cacheTransactionInfoById,
+  };
+};
+export const fromTronResourcesRaw = ({
+  frozen,
+  delegatedFrozen,
+  votes,
+  tronPower,
+  energy,
+  bandwidth,
+  unwithdrawnReward,
+  lastWithdrawnRewardDate,
+  lastVotedDate,
+  cacheTransactionInfoById: cacheTransactionInfoByIdRaw,
+}: TronResourcesRaw): TronResources => {
+  const frozenBandwidth = frozen.bandwidth;
+  const frozenEnergy = frozen.energy;
+  const delegatedFrozenBandwidth = delegatedFrozen.bandwidth;
+  const delegatedFrozenEnergy = delegatedFrozen.energy;
+  const cacheTransactionInfoById = {};
+
+  if (cacheTransactionInfoByIdRaw) {
+    for (const k in cacheTransactionInfoByIdRaw) {
+      const [fee, blockNumber, withdraw_amount, unfreeze_amount] =
+        cacheTransactionInfoByIdRaw[k];
+      cacheTransactionInfoById[k] = {
+        fee,
+        blockNumber,
+        withdraw_amount,
+        unfreeze_amount,
+      };
+    }
+  }
+
+  return {
+    frozen: {
+      bandwidth: frozenBandwidth
+        ? {
+            amount: new BigNumber(frozenBandwidth.amount),
+            expiredAt: new Date(frozenBandwidth.expiredAt),
+          }
+        : undefined,
+      energy: frozenEnergy
+        ? {
+            amount: new BigNumber(frozenEnergy.amount),
+            expiredAt: new Date(frozenEnergy.expiredAt),
+          }
+        : undefined,
+    },
+    delegatedFrozen: {
+      bandwidth: delegatedFrozenBandwidth
+        ? {
+            amount: new BigNumber(delegatedFrozenBandwidth.amount),
+          }
+        : undefined,
+      energy: delegatedFrozenEnergy
+        ? {
+            amount: new BigNumber(delegatedFrozenEnergy.amount),
+          }
+        : undefined,
+    },
+    votes,
+    tronPower,
+    energy: new BigNumber(energy),
+    bandwidth: {
+      freeUsed: new BigNumber(bandwidth.freeUsed),
+      freeLimit: new BigNumber(bandwidth.freeLimit),
+      gainedUsed: new BigNumber(bandwidth.gainedUsed),
+      gainedLimit: new BigNumber(bandwidth.gainedLimit),
+    },
+    unwithdrawnReward: new BigNumber(unwithdrawnReward),
+    lastWithdrawnRewardDate: lastWithdrawnRewardDate
+      ? new Date(lastWithdrawnRewardDate)
+      : undefined,
+    lastVotedDate: lastVotedDate ? new Date(lastVotedDate) : undefined,
+    cacheTransactionInfoById,
   };
 };
 export function fromSwapOperationRaw(raw: SwapOperationRaw): SwapOperation {
@@ -489,6 +680,14 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
   }
 
   switch (res.currency.family) {
+    case "tron": {
+      const tronResourcesRaw = (rawAccount as TronAccountRaw).tronResources;
+      if (tronResourcesRaw)
+        (res as TronAccount).tronResources =
+          fromTronResourcesRaw(tronResourcesRaw);
+      break;
+    }
+    case "osmosis":
     case "cosmos": {
       const cosmosResourcesRaw = (rawAccount as CosmosAccountRaw)
         .cosmosResources;
@@ -512,6 +711,14 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
           fromBitcoinResourcesRaw(bitcoinResourcesRaw);
       break;
     }
+    case "algorand": {
+      const algoResourcesRaw = (rawAccount as AlgorandAccountRaw)
+        .algorandResources;
+      if (algoResourcesRaw)
+        (res as AlgorandAccount).algorandResources =
+          fromAlgorandResourcesRaw(algoResourcesRaw);
+      break;
+    }
     case "polkadot": {
       const polkadotResourcesRaw = (rawAccount as PolkadotAccountRaw)
         .polkadotResources;
@@ -526,6 +733,23 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
       if (elrondResourcesRaw)
         (res as ElrondAccount).elrondResources =
           fromElrondResourcesRaw(elrondResourcesRaw);
+      break;
+    }
+
+    case "zilliqa": {
+      const zilliqaResourcesRaw = (rawAccount as ZilliqaAccountRaw)
+        .zilliqaResources;
+      if (zilliqaResourcesRaw)
+        (res as ZilliqaAccount).zilliqaResources =
+          fromZilliqaResourcesRaw(zilliqaResourcesRaw);
+      break;
+    }
+    case "cardano": {
+      const cardanoResourcesRaw = (rawAccount as CardanoAccountRaw)
+        .cardanoResources;
+      if (cardanoResourcesRaw)
+        (res as CardanoAccount).cardanoResources =
+          fromCardanoResourceRaw(cardanoResourcesRaw);
       break;
     }
     case "solana": {
@@ -683,7 +907,16 @@ export function toAccountRaw(account: Account): AccountRaw {
       }
       break;
     }
-    case "solana": {
+    case "zilliqa": {
+      const zilliqaAccount = account as ZilliqaAccount;
+      if (zilliqaAccount.zilliqaResources) {
+        (res as ZilliqaAccountRaw).zilliqaResources = toZilliqaResourcesRaw(
+          zilliqaAccount.zilliqaResources
+        );
+      }
+      break;
+    }
+       case "solana": {
       const solanaAccount = account as SolanaAccount;
       if (solanaAccount.solanaResources) {
         (res as SolanaAccountRaw).solanaResources = toSolanaResourcesRaw(
