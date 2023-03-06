@@ -88,7 +88,11 @@
     "getSupport" : "Hilfe",
     "comingSoon" : "In Kürze verfügbar",
     "restart" : "Neustarten",
-    "loadMore" : "Mehr laden"
+    "loadMore" : "Mehr laden",
+    "patterns" : {
+      "id" : "ID {{ value }}",
+      "times" : "x{{ value }}"
+    }
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -694,7 +698,13 @@
       "title" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie vor einem erneuten Versuch zunächst den Transaktionsverlauf."
     },
     "CardanoMinAmountError" : {
-      "title" : "Der Mindestbetrag, der versendet werden kann, ist {{amount}} ADA"
+      "title" : "Mindestens {{amount}} ADA erforderlich"
+    },
+    "AvalancheInvalidDateTimeError" : {
+      "title" : "Ungültiges Staking-Enddatum ausgewählt"
+    },
+    "AvalancheMinimumAmountError" : {
+      "title" : "Mindestbetrag ist 25 AVAX"
     },
     "CardanoNotEnoughFunds" : {
       "title" : "Bitte vergewissern Sie sich, dass Sie genügend Geld für die Bezahlung der Gebühren haben"
@@ -1279,8 +1289,13 @@
       },
       "recovery" : "Haben Sie bereits eine Wiederherstellungsphrase?",
       "protect" : {
-        "label" : "~60 Minuten",
-        "subTitle" : "Mit Protect wiederherstellen"
+        "subTitle" : "Wiederherstellen mit Ledger Recover",
+        "drawer" : {
+          "title" : "Ledger Nano X benutzen",
+          "desc" : "Ledger Recover ist ausschließlich für Ledger Nano X erhältlich.",
+          "buyNanoX" : "Kaufen Sie eine Ledger Nano X",
+          "discoverBenefits" : "Entdecken Sie die Vorteile"
+        }
       }
     },
     "stepNewDevice" : {
@@ -1507,25 +1522,20 @@
     "stepProtect" : {
       "bullets" : {
         "0" : {
-          "title" : "Durchsuchen ",
-          "label" : "Erfahren Sie, wie Sie Ihr Gerät bedienen können, indem Sie die Anweisungen auf dem Bildschirm lesen."
+          "title" : "Wählen Sie „Restore“ (Wiederherstellen)",
+          "label" : "Drücken Sie beide Tasten gleichzeitig, um auszuwählen."
         },
         "1" : {
-          "title" : "Wählen Sie „Restore“ (Wiederherstellen)",
-          "label" : "Drücken Sie beide Tasten gleichzeitig, um die Auswahl zu bestätigen."
-        },
-        "2" : {
-          "title" : "Wählen Sie den Modus „Restore with Protect“ (mit Protect wiederherstellen) aus.",
-          "label" : "Drücken Sie beide Tasten gleichzeitig, um die Auswahl zu bestätigen."
+          "title" : "Wählen Sie „Restore using Ledger Recover“ (Mit Ledger Recover wiederherstellen)",
+          "label" : "Drücken Sie beide Tasten gleichzeitig, um auszuwählen."
         }
       },
       "nextStep" : "Weiter",
       "extraInfo" : {
-        "tooltip" : "Ich kann es nicht auf meinem Ledger finden",
-        "title" : "Warum kann ich „Restore with Protect“ (mit Protect wiederherstellen) nicht auf meinem Ledger finden?",
-        "desc1" : "Am wahrscheinlichsten ist es, dass Ihr Gerät nicht mit Protect kompatibel ist. Keine Sorge, wir sind hier, um Ihnen zu helfen, wie es funktioniert.",
-        "desc2" : "Bitte kontaktieren Sie uns und wählen Sie „My Ledger doesn't display Restore with Protect“ (Mein Ledger zeigt die Wiederherstellung mit Protect nicht an), wir kümmern uns um Sie.",
-        "cta" : "Führen Sie die Schritte manuell durch",
+        "tooltip" : "Ich kann „Restore using Ledger Recover“ nicht sehen",
+        "title" : "Das Betriebssystem auf Ihrem Ledger Nano X muss aktualisiert werden",
+        "desc" : "Sie können versuchen, das Betriebssystem zu aktualisieren oder den Ledger Kundenservice um Hilfe bitten.",
+        "cta" : "Erfahren Sie, wie Sie aktualisieren können",
         "supportLink" : "Ledger-Kundenservice kontaktieren"
       }
     },
@@ -1667,8 +1677,9 @@
         }
       },
       "protectConnectionInformationModal" : {
-        "title" : "Warum kann ich mein Ledger-Gerät nicht verbinden?",
-        "description" : "Wenn Sie Probleme haben, sich mit Ledger Live Mobile zu verbinden, nachdem Sie Bluetooth auf Ihrem Ledger-Gerät aktiviert haben, können Sie die Anweisungen befolgen, indem Sie auf die Schaltfläche \"Learn how to fix that\" (Erfahren, wie man das behebt) weiter unten tippen"
+        "title" : "Ledger Nano X Verbindung",
+        "description" : "Stellen Sie sicher, dass sich Ihr Ledger in der Nähe Ihres Mobiltelefons befindet und versuchen Sie es noch einmal. <LinkBluethooth>Bluetooth® Verbindungsprobleme \n</LinkBluethooth>.\nWenn Bluetooth® funktioniert, müssen Sie möglicherweise das Betriebssystem von Ledger aktualisieren. Versuchen Sie, das Betriebssystem zu aktualisieren, oder wenden Sie sich an den Ledger Kundenservice, um Hilfe zu erhalten. ",
+        "learnHowToUpdate" : "Erfahren Sie, wie Sie aktualisieren können"
       }
     },
     "stepImportAccounts" : {
@@ -1892,7 +1903,9 @@
     "seedStep" : {
       "title" : "Geheime Wiederherstellungsphrase",
       "doneTitle" : "Geheime Wiederherstellungsphrase bestätigt",
-      "description" : "Ihre Wiederherstellungsphrase ist eine geheime Liste mit 24 Wörtern, mit denen Ihre privaten Schlüssel gesichert werden. Ihre {{productName}} erzeugt eine eindeutige Wiederherstellungsphrase. Ledger bewahrt keine Kopie davon auf."
+      "description" : "Ihre Wiederherstellungsphrase ist eine geheime Liste mit 24 Wörtern, mit denen Ihre privaten Schlüssel gesichert werden. Ihre {{productName}} erzeugt eine eindeutige Wiederherstellungsphrase. Ledger bewahrt keine Kopie davon auf.",
+      "selection" : "Wählen Sie eine Einrichtungsoption, die Ihnen am besten gefällt.",
+      "recovery" : "Stellen Sie sicher, dass Sie für die Wiederherstellung eine geheime Wiederherstellungsphrase verwenden, die von einem Ledger-Gerät generiert wird, um die Sicherheit Ihrer Vermögenswerte zu gewährleisten.\n\nSie haben keine? Verwenden Sie Ihr {{productName}}, um eine neue Phrase zu generieren."
     },
     "softwareChecksSteps" : {
       "title" : "Hardware- und Software-Überprüfungen",
@@ -5324,6 +5337,69 @@
       }
     }
   },
+  "avalanchepchain" : {
+    "delegation" : {
+      "delegationEarn" : "Sie können AVAX-Prämien verdienen, indem Sie Ihre Vermögenswerte delegieren.",
+      "info" : "So funktioniert Delegierung",
+      "iDelegate" : "Ich delegiere",
+      "until" : "bis",
+      "validatorRemainingStake" : "Verfügbar",
+      "validator" : "NodeID",
+      "startTime" : "Startzeit",
+      "endTime" : "Endzeit",
+      "notEnoughToDelegate" : "Sie müssen mindestens 25 AVAX auf der P-Chain zur Verfügung haben, um Delegierter zu werden.",
+      "stepperHeader" : {
+        "starter" : "Verdienen Sie Belohnungen",
+        "validator" : "Delegierte Vermögenswerte",
+        "amount" : "Zu delegierender Betrag",
+        "endDate" : "Enddatum der Delegation",
+        "summary" : "Zusammenfassung",
+        "verification" : "Verifizierung",
+        "selectDevice" : "Gerät wählen",
+        "connectDevice" : "Verbundenes Gerät",
+        "stepRange" : "Schritt {{currentStep}} von {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "available" : "Insgesamt verfügbar",
+            "maxLabel" : "Max."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Sie haben Ihre Vermögenswerte erfolgreich delegiert",
+              "text" : "Ihr Kontostand wird aktualisiert, sobald das Netzwerk die Transaktion bestätigt."
+            }
+          },
+          "starter" : {
+            "description" : "Delegieren Sie Ihre AVAX, um sicher Prämien zu verdienen und behalten Sie die Kontrolle über Ihre Vermögenswerte.",
+            "steps" : {
+              "0" : "Sie behalten das Eigentum an delegierten Vermögenswerten",
+              "1" : "Delegieren Sie mit Ihrem Ledger-Gerät",
+              "2" : "Mindestens 25 AVAX sind für das Staking erforderlich",
+              "3" : "AVAX müssen für mindestens 2 Wochen delegiert werden"
+            },
+            "cta" : "Weiter"
+          },
+          "endDate" : "Das Enddatum für diese Delegation muss zwischen {{minEndDate}} und {{maxEndDate}} liegen."
+        }
+      }
+    },
+    "info" : {
+      "available" : {
+        "title" : "AVAX verfügbar",
+        "description" : "Dieser Betrag ist verfügbar."
+      },
+      "delegated" : {
+        "title" : "AVAX gestaked",
+        "description" : "Mit Validatoren gestaketer Betrag."
+      },
+      "delegationUnavailable" : {
+        "title" : "Übertragung nicht verfügbar",
+        "description" : "Nicht genügend verfügbares Guthaben auf Ihrem Konto, um eine neue Übertragung zu starten."
+      }
+    }
+  },
   "near" : {
     "info" : {
       "available" : {
@@ -5446,6 +5522,7 @@
     "warnDelegation" : "Das Delegieren Ihrer Stimmrechte garantiert keine Prämien durch Ihren Validator.",
     "to" : "an",
     "from" : "Von",
+    "yield" : "geschätzter Ertrag",
     "forAnEstYield" : "für einen geschätzten Ertrag von",
     "yieldPerYear" : "{{yield}} / Jahr",
     "yieldInfos" : "Die Ertragsätze werden bereitgestellt von",
@@ -5573,6 +5650,7 @@
     "cta" : "Weiter"
   },
   "exchange" : {
+    "count" : "+ {{count}} mehr",
     "buy" : {
       "screenTitle" : "Krypto kaufen",
       "tabTitle" : "Kaufen",
@@ -6026,22 +6104,10 @@
       "status" : {
         "new" : {
           "title" : "Neu",
-          "desc" : "Ihre Wiederherstellungsphrase sichern",
-          "0" : {
-            "title" : "Millionen von Ledger-Nutzern vertrauen darauf"
-          },
-          "1" : {
-            "title" : "Ihre Wiederherstellungsphrase ist sicher mit Ihrer Identität verknüpft"
-          },
-          "2" : {
-            "title" : "Verschlüsselung auf dem neuesten Stand der Technik"
-          },
-          "3" : {
-            "title" : "In 3 dezentrale Teile aufgeteilt, sodass Ihre Wiederherstellungsphrase niemals gestohlen werden kann"
-          },
+          "desc" : "Stellen Sie den Zugang zu Ihrer Wallet ohne Ihre geheime Wiederherstellungsphrase wieder her.",
           "actions" : {
-            "learnMore" : "Weitere Informationen",
-            "alreadySubscribed" : "Haben Sie Protect bereits abonniert?"
+            "learnMore" : "Welchen Nutzen bringt es mir?",
+            "alreadySubscribed" : "Bereits abonniert? <LinkAccount>Mein Konto ansehen</LinkAccount>"
           }
         },
         "confirmIdentity" : {
@@ -6104,5 +6170,8 @@
     "title" : "Newsfeed",
     "poweredByCryptopanic" : "Powered by Cryptopanic",
     "noPosts" : "Zur Zeit keine Posts verfügbar"
+  },
+  "deviceConnect" : {
+    "title" : "Gerät verbinden"
   }
 }
