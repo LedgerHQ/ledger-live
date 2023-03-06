@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "tag_name": "2.53.2",
+    "body": "\n### 🐛 Fixes\n\n- Some users reported a long sync time when adding an Ethereum account. We've fixed this.\n"
+  },
+  {
+    "tag_name": "2.53.1",
+    "body": "\n### 🌷 Improvements\n\n- Following the latest TRON network update, we've raised the fee limit to 30 TRC to prevent failed transactions.\n\n### 🐛 Fixes\n\n- Accessing Ledger Live from market.ledger.com would cause the app to crash. We've fixed this.\n"
+  }
+]

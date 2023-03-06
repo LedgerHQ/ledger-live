@@ -85,6 +85,31 @@ const ethereumUnits = (name, code) => [
 // to fix that we should always have the 'main' currency of the managerapp first in this list
 // e.g for Ethereum manager Ethereum is first in the list and other coin are in the bottom of the list
 export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
+  aptos: {
+    type: "CryptoCurrency",
+    id: "aptos",
+    coinType: 637, // The slip-0044 coin type if registered
+    name: "Aptos",
+    managerAppName: "Aptos", // name of the embedded app in manager case-sensitive
+    ticker: "APT",
+    countervalueTicker: "APT", // depending on the counter value api
+    scheme: "aptos",
+    color: "#E6007A", // color to be display on live-desktop and mobile
+    family: "aptos", // folder name in the live-common / desktop and mobile
+    units: [
+      {
+        name: "APT",
+        code: "APT",
+        magnitude: 8,
+      },
+    ],
+    explorerViews: [
+      {
+        address: "https://explorer.aptoslabs.com/account/$address", // url for exploring an address
+        tx: "https://explorer.aptoslabs.com/txn/$hash", // url for exploring a transaction
+      },
+    ],
+  },
   near: {
     type: "CryptoCurrency",
     id: "near",
