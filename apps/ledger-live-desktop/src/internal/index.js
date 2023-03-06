@@ -13,11 +13,13 @@ import {
   transportClose,
   transportExchange,
   transportExchangeBulk,
+  transportExchangeBulkUnsubscribe,
   transportOpen,
 } from "~/internal/transportHandler";
 import {
   transportCloseChannel,
   transportExchangeBulkChannel,
+  transportExchangeBulkUnsubscribeChannel,
   transportExchangeChannel,
   transportOpenChannel,
 } from "~/config/transportChannels";
@@ -68,6 +70,9 @@ process.on("message", m => {
       break;
     case transportExchangeBulkChannel:
       transportExchangeBulk(m);
+      break;
+    case transportExchangeBulkUnsubscribeChannel:
+      transportExchangeBulkUnsubscribe(m);
       break;
     case transportCloseChannel:
       transportClose(m);
