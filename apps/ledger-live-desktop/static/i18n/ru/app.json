@@ -828,6 +828,10 @@
         "near" : {
           "title" : "Угадайте что?",
           "description" : "У Ledger более низкие комиссии по сравнению с вашим валидатором. На этот процесс может уйти вплоть до 65 часов."
+        },
+        "elrond" : {
+          "title" : "Угадайте что?",
+          "description" : "У Ledger более низкие комиссии по сравнению с вашим валидатором. На этот процесс может уйти вплоть до 10 дней."
         }
       },
       "delegation" : {
@@ -849,6 +853,9 @@
         },
         "near" : {
           "description" : "Стейкайте NEAR с помощью валидатора «Ledger by Figment». Монеты остаются вашими, а их безопасность обеспечивает Ledger."
+        },
+        "elrond" : {
+          "description" : "Стейкайте ELROND с помощью валидатора «Ledger by Figment». Монеты остаются вашими, а их безопасность обеспечивает Ledger."
         }
       }
     }
@@ -2261,6 +2268,13 @@
     },
     "switchButton" : "Переключиться на {{language}}",
     "no" : "Мне не хочется"
+  },
+  "deviceRename" : {
+    "title" : "Переименовать {{ productName }}",
+    "chooseName" : "Укажите название",
+    "placeholder" : "Stax Олега",
+    "remainingCharacters" : "Осталось символов: {{ remainingCharacters }}",
+    "renamed" : "Название {{ productName }} изменено на\n«{{ name }}» "
   },
   "deviceLocalization" : {
     "language" : "Язык устройства",
@@ -3786,6 +3800,9 @@
       "catalogRampServerDesc" : "Переключайтесь между несколькими операторами услуг обмена",
       "enablePlatformDevTools" : "Включить инструменты разработчика на платформе",
       "enablePlatformDevToolsDesc" : "Разрешить открывать окно инструментов разработчика на платформе",
+      "customLockScreen" : "Собственные картинки для экрана блокировки",
+      "customLockScreenDesc" : "Отладка собственных картинок для экрана блокировки",
+      "customLockScreenCTA" : "Запустить",
       "featureFlagsTitle" : "Определённые фича-флаги (feature flags), используемые в Ledger Live",
       "featureFlagsDesc" : "Переписанные значения будут сброшены в случае перезапуска приложения. Принимаются лишь валидные строки JSON.",
       "featureFlagsEdit" : "Редактировать",
@@ -5668,6 +5685,7 @@
   },
   "customImage" : {
     "title" : "Персонализированный экран блокировки",
+    "managerCTA" : "Изображение экрана блокировки",
     "steps" : {
       "choose" : {
         "stepLabel" : "Выбрать изображение",
