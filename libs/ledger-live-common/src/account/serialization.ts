@@ -916,7 +916,7 @@ export function toAccountRaw(account: Account): AccountRaw {
       }
       break;
     }
-       case "solana": {
+    case "solana": {
       const solanaAccount = account as SolanaAccount;
       if (solanaAccount.solanaResources) {
         (res as SolanaAccountRaw).solanaResources = toSolanaResourcesRaw(
