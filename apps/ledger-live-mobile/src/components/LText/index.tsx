@@ -17,6 +17,7 @@ export type Opts = Omit<BaseTextProps, "children"> & {
   children?: React.ReactNode;
   variant?: string;
   fontFamily?: string;
+  id?: string;
 };
 
 export type Res = {
@@ -54,13 +55,18 @@ const inferFontWeight = ({
  *
  * @deprecated Please, prefer using the Text component from our design-system if possible.
  */
-function LText({ color, children, semiBold, bold, ...props }: Opts) {
+function LText({ color, children, semiBold, bold, id, ...props }: Opts) {
   const fontWeight = useMemo(
     () => inferFontWeight({ semiBold, bold }),
     [semiBold, bold],
   );
   return (
-    <Text {...props} fontWeight={fontWeight} color={color}>
+    <Text
+      {...props}
+      fontWeight={fontWeight}
+      color={color}
+      testID={`ltext-${id}`}
+    >
       {children}
     </Text>
   );
