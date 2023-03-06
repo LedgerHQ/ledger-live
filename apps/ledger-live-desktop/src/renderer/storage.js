@@ -17,6 +17,18 @@ import type { SatStackConfig } from "@ledgerhq/live-common/families/bitcoin/sats
   Because only serialized json can be sent between processes, the transform system now live here.
  */
 
+export const getStoreValue = (storeId, key) => {
+  return ipcRenderer.invoke("getStoreValue", { storeId, key });
+};
+
+export const setStoreValue = (storeId, key, value) => {
+  return ipcRenderer.invoke("setStoreValue", { storeId, key, value });
+};
+
+export const resetStore = () => {
+  return ipcRenderer.invoke("resetStore");
+};
+
 const transforms = {};
 
 transforms.accounts = {
@@ -28,6 +40,9 @@ transforms.accounts = {
   set: (accounts: *) => (accounts || []).map(accountModel.encode),
 };
 
+/**
+ * @deprecated use getStoreValue
+ */
 export const getKey = async (ns: string, keyPath: string, defaultValue: any) => {
   let data = await ipcRenderer.invoke("getKey", { ns, keyPath, defaultValue });
 
@@ -57,6 +72,9 @@ const debouncedSetKey = memoize(
   (ns: string, keyPath: string) => `${ns}:${keyPath}`,
 );
 
+/**
+ * @deprecated use setStoreValue
+ */
 export const setKey = (ns: string, keyPath: string, value: any) => {
   debouncedSetKey(ns, keyPath)(value);
 };

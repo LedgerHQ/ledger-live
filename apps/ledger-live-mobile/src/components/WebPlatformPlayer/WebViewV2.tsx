@@ -112,7 +112,7 @@ function useUiHook(): Partial<UiHook> {
       },
       "storage.set": ({ key, value, storeId }) => {
         const storageKey = storeId ? `${storeId}-${key}` : key;
-        return deviceStorage.save(storageKey, value);
+        deviceStorage.save(storageKey, value);
       },
       "transaction.sign": ({
         account,

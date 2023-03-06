@@ -5,6 +5,7 @@ require("@electron/remote/main").initialize();
 /* eslint-disable import/first */
 import "./setup";
 import { app, Menu, ipcMain, session, webContents, shell } from "electron";
+import { store } from "./store";
 import menu from "./menu";
 import {
   createMainWindow,
@@ -111,10 +112,30 @@ app.on("ready", async () => {
     );
   });
 
+  ipcMain.handle("getStoreValue", (event, { storeId, key }) => {
+    const storageKey = storeId ? `${storeId}-${key}` : key;
+    return store.get(storageKey);
+  });
+
+  ipcMain.handle("setStoreValue", (event, { storeId, key, value }) => {
+    const storageKey = storeId ? `${storeId}-${key}` : key;
+    return store.set(storageKey, value);
+  });
+
+  ipcMain.handle("resetStore", event => {
+    return store.clear();
+  });
+
+  /**
+   * @deprecated use getStoreValue
+   */
   ipcMain.handle("getKey", (event, { ns, keyPath, defaultValue }) => {
     return db.getKey(ns, keyPath, defaultValue);
   });
 
+  /**
+   * @deprecated use setStoreValue
+   */
   ipcMain.handle("setKey", (event, { ns, keyPath, value }) => {
     return db.setKey(ns, keyPath, value);
   });

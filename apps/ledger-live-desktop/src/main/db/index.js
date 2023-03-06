@@ -7,7 +7,6 @@ import get from "lodash/get";
 import set from "lodash/set";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { NoDBPathGiven, DBWrongPassword } from "@ledgerhq/errors";
-import {} from "@ledgerhq/live-common/promise";
 import { encryptData, decryptData } from "~/main/db/crypto";
 import { readFile, writeFile } from "~/main/db/fsHelper";
 
@@ -40,11 +39,6 @@ const debounce = (fn: any => any, ms: number) => {
   };
 };
 
-type Transform = {
-  get: any => any,
-  set: any => any,
-};
-
 let DBPath = null;
 let memoryNamespaces = {};
 let encryptionKeys = {};
@@ -62,15 +56,6 @@ function init(_DBPath: string) {
   memoryNamespaces = {};
   encryptionKeys = {};
   transforms = {};
-}
-
-/**
- * Register a transformation for a given namespace and keyPath
- * it will be used when reading/writing from/to file
- */
-function registerTransform(ns: string, keyPath: string, transform: Transform) {
-  if (!transforms[ns]) transforms[ns] = {};
-  transforms[ns][keyPath] = transform;
 }
 
 /**
@@ -189,21 +174,6 @@ async function getKey(ns: string, keyPath: string, defaultValue?: any): Promise<
 }
 
 /**
- * Get whole namespace
- */
-async function getNamespace(ns: string, defaultValue?: any) {
-  logger.onDB("read", ns);
-  await ensureNSLoaded(ns);
-  return memoryNamespaces[ns] || defaultValue;
-}
-
-async function setNamespace(ns: string, value: any) {
-  logger.onDB("write", ns);
-  set(memoryNamespaces, ns, value);
-  return save(ns);
-}
-
-/**
  * Check if a key has been decrypted
  *
  * /!\ it consider encrypted if it's string and can't JSON.parse, so
@@ -291,27 +261,17 @@ function hasEncryptionKey(ns: string, keyPath: string) {
   }
 }
 
-function getDBPath() {
-  if (!DBPath) throw new Error("Trying to get db path but it is not initialized");
-  return DBPath;
-}
-
 export default {
   init,
   reload,
   load,
-  registerTransform,
   setEncryptionKey,
   removeEncryptionKey,
   isEncryptionKeyCorrect,
   hasEncryptionKey,
   setKey,
   getKey,
-  getNamespace,
-  setNamespace,
   hasBeenDecrypted,
-  save,
   cleanCache,
   resetAll,
-  getDBPath,
 };

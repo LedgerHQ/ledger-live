@@ -80,6 +80,7 @@
     "debug": "^4.3.3",
     "dotenv": "^8.2.0",
     "electron-context-menu": "^3.6.0",
+    "electron-store": "^8.1.0",
     "ethereumjs-tx": "^2.1.2",
     "firebase": "^9.6.6",
     "focus-trap": "^6.6.1",
