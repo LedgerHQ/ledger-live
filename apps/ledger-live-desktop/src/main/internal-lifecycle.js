@@ -11,6 +11,7 @@ import {
   transportExchangeChannel,
   transportExchangeBulkChannel,
   transportOpenChannel,
+  transportExchangeBulkUnsubscribeChannel,
 } from "~/config/transportChannels";
 
 // ~~~ Local state that main thread keep
@@ -230,7 +231,15 @@ const internalHandlerObservable = channel => {
   });
 };
 
+// simple event routing
+const internalHandlerEvent = channel => {
+  ipcMain.on(channel, (event, { data, requestId }) => {
+    internal.send({ type: channel, data, requestId });
+  });
+};
+
 internalHandlerPromise(transportOpenChannel);
 internalHandlerPromise(transportExchangeChannel);
 internalHandlerPromise(transportCloseChannel);
 internalHandlerObservable(transportExchangeBulkChannel);
+internalHandlerEvent(transportExchangeBulkUnsubscribeChannel);
