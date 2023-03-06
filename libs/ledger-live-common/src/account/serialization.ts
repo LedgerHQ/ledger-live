@@ -8,6 +8,10 @@ import {
   fromPolkadotResourcesRaw,
 } from "@ledgerhq/coin-polkadot/serialization";
 import {
+  toZilliqaResourcesRaw,
+  fromZilliqaResourcesRaw,
+} from "../families/zilliqa/serialization";
+import {
   toCryptoOrgResourcesRaw,
   fromCryptoOrgResourcesRaw,
 } from "../families/crypto_org/serialization";
@@ -56,6 +60,7 @@ import {
   PolkadotAccount,
   PolkadotAccountRaw,
 } from "@ledgerhq/coin-polkadot/types";
+import { ZilliqaAccount, ZilliqaAccountRaw } from "../families/zilliqa/types";
 import {
   CryptoOrgAccount,
   CryptoOrgAccountRaw,
@@ -64,6 +69,7 @@ import { getAccountBridge } from "../bridge";
 
 export { toBitcoinResourcesRaw, fromBitcoinResourcesRaw };
 export { toPolkadotResourcesRaw, fromPolkadotResourcesRaw };
+export { toZilliqaResourcesRaw, fromZilliqaResourcesRaw };
 export { toCryptoOrgResourcesRaw, fromCryptoOrgResourcesRaw };
 export { toCardanoResourceRaw, fromCardanoResourceRaw };
 
@@ -472,6 +478,14 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
           fromPolkadotResourcesRaw(polkadotResourcesRaw);
       break;
     }
+    case "zilliqa": {
+      const zilliqaResourcesRaw = (rawAccount as ZilliqaAccountRaw)
+        .zilliqaResources;
+      if (zilliqaResourcesRaw)
+        (res as ZilliqaAccount).zilliqaResources =
+          fromZilliqaResourcesRaw(zilliqaResourcesRaw);
+      break;
+    }
     case "crypto_org": {
       const cryptoOrgResourcesRaw = (rawAccount as CryptoOrgAccountRaw)
         .cryptoOrgResources;
@@ -581,6 +595,15 @@ export function toAccountRaw(account: Account): AccountRaw {
       if (polkadotAccount.polkadotResources) {
         (res as PolkadotAccountRaw).polkadotResources = toPolkadotResourcesRaw(
           polkadotAccount.polkadotResources
+        );
+      }
+      break;
+    }
+    case "zilliqa": {
+      const zilliqaAccount = account as ZilliqaAccount;
+      if (zilliqaAccount.zilliqaResources) {
+        (res as ZilliqaAccountRaw).zilliqaResources = toZilliqaResourcesRaw(
+          zilliqaAccount.zilliqaResources
         );
       }
       break;

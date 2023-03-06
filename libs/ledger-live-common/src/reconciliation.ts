@@ -19,9 +19,11 @@ import {
   fromBitcoinResourcesRaw,
   fromPolkadotResourcesRaw,
   fromCryptoOrgResourcesRaw,
+  fromZilliqaResourcesRaw,
   fromNFTRaw,
   toPolkadotResourcesRaw,
   toCryptoOrgResourcesRaw,
+  toZilliqaResourcesRaw,
 } from "./account";
 import consoleWarnExpectToEqual from "./consoleWarnExpectToEqual";
 import { BitcoinAccount, BitcoinAccountRaw } from "./families/bitcoin/types";
@@ -30,7 +32,7 @@ import {
   CryptoOrgAccountRaw,
 } from "./families/crypto_org/types";
 import { PolkadotAccount, PolkadotAccountRaw } from "./families/polkadot/types";
-import { getAccountBridge } from "./bridge";
+import { ZilliqaAccount, ZilliqaAccountRaw } from "./families/zilliqa/types";
 
 // aim to build operations with the minimal diff & call to coin implementation possible
 export async function minimalOperationsBuilder<CO>(
@@ -302,6 +304,24 @@ export function patchAccount(
       ) {
         (next as PolkadotAccount).polkadotResources = fromPolkadotResourcesRaw(
           polkadotUpdatedRaw.polkadotResources
+        );
+        changed = true;
+      }
+      break;
+    }
+    case "zilliqa": {
+      const zilliqaAcc = account as ZilliqaAccount;
+      const zilliqaUpdatedRaw = updatedRaw as ZilliqaAccountRaw;
+      if (
+        zilliqaUpdatedRaw.zilliqaResources &&
+        (!zilliqaAcc.zilliqaResources ||
+          !areSameResources(
+            toZilliqaResourcesRaw(zilliqaAcc.zilliqaResources),
+            zilliqaUpdatedRaw.zilliqaResources
+          ))
+      ) {
+        (next as ZilliqaAccount).zilliqaResources = fromZilliqaResourcesRaw(
+          zilliqaUpdatedRaw.zilliqaResources
         );
         changed = true;
       }
