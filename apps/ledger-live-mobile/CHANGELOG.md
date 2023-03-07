@@ -1,31 +1,16 @@
 # live-mobile
 
-## 3.17.0-nightly.2
+## 3.16.1
 
 ### Patch Changes
 
-- [#2834](https://github.com/LedgerHQ/ledger-live/pull/2834) [`2b04ef7874`](https://github.com/LedgerHQ/ledger-live/commit/2b04ef7874232ecd044fc66342817f7d31fc53b6) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fix UI bug on NFT CLS device selector
+- [#2838](https://github.com/LedgerHQ/ledger-live/pull/2838) [`c52eb6d900`](https://github.com/LedgerHQ/ledger-live/commit/c52eb6d900b949457d76cbbbda23786dfbce04fa) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Bugfix : FaceId is triggered in loop.
 
-- [#2823](https://github.com/LedgerHQ/ledger-live/pull/2823) [`e363d83a69`](https://github.com/LedgerHQ/ledger-live/commit/e363d83a696c6cae20d7fcff3f2da6eea168d98b) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fix the prompt loop on receive flow
-
-- Updated dependencies [[`9ec0582d2a`](https://github.com/LedgerHQ/ledger-live/commit/9ec0582d2ae8ee57884531d4d104a3724735a2c2)]:
-  - @ledgerhq/live-common@29.1.0-nightly.0
-
-## 3.17.0-nightly.1
-
-### Minor Changes
-
-- [#2804](https://github.com/LedgerHQ/ledger-live/pull/2804) [`f0c83f37fc`](https://github.com/LedgerHQ/ledger-live/commit/f0c83f37fc0dc00d2cb78d0e977b3b401a92d3fc) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add dynamic content to the sync onboarding "Secret Recovery Phrase" step based on the user selection on the device
-
-## 3.16.1-nightly.0
+## 3.16.1-hotfix.0
 
 ### Patch Changes
 
-- [#2778](https://github.com/LedgerHQ/ledger-live/pull/2778) [`76a03adae6`](https://github.com/LedgerHQ/ledger-live/commit/76a03adae69309d75031abecc6ef4c1878576e68) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - Prevent WebView closure from OS back button if Ledger Recover
-
-- [#2797](https://github.com/LedgerHQ/ledger-live/pull/2797) [`d7eee4ae34`](https://github.com/LedgerHQ/ledger-live/commit/d7eee4ae34f20f9d0a87558cc42788b93c8915f3) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - fix claim NFT "redirection after a timeout if no QR code scan" which was still effective outside of the QR code scan screen
-
-- [#2775](https://github.com/LedgerHQ/ledger-live/pull/2775) [`ed076170b7`](https://github.com/LedgerHQ/ledger-live/commit/ed076170b742125cf3b79c52606a5b5e5d8d9068) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - Hide WebView header if it's Ledger Recover
+- [#2838](https://github.com/LedgerHQ/ledger-live/pull/2838) [`c52eb6d900`](https://github.com/LedgerHQ/ledger-live/commit/c52eb6d900b949457d76cbbbda23786dfbce04fa) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Bugfix : FaceId is triggered in loop.
 
 ## 3.16.0
 

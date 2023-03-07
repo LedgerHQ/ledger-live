@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { StyleSheet, View, AppState } from "react-native";
+import { StyleSheet, View, AppState, Platform } from "react-native";
 import type { TFunction } from "i18next";
 import { connect } from "react-redux";
 import { withTranslation } from "react-i18next";
@@ -74,9 +74,15 @@ class AuthPass extends PureComponent<Props, State> {
     this.state.mounted = false;
   }
 
+  // The state lifecycle differs between iOS and Android. This is to prevent FaceId from triggering an inactive state and looping.
+  checkAppStateChange = (appState: string) =>
+    Platform.OS === "ios"
+      ? appState === "background"
+      : appState.match(/inactive|background/);
+
   handleAppStateChange = (nextAppState: string) => {
     if (
-      this.state.appState.match(/inactive|background/) &&
+      this.checkAppStateChange(this.state.appState) &&
       nextAppState === "active"
     ) {
       this.lock();
