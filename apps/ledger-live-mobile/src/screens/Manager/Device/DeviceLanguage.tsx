@@ -67,9 +67,8 @@ const DeviceLanguage: React.FC<Props> = ({
   }, [setShouldInstallLanguage, setDeviceForActionModal]);
 
   const refreshDeviceLanguage = useCallback(() => {
-    track("Page Manager LanguageInstalled", { selectedLanguage });
     onLanguageChange();
-  }, [onLanguageChange, selectedLanguage]);
+  }, [onLanguageChange]);
 
   const errorTracked = useRef(null);
   const handleError = useCallback(
@@ -82,6 +81,13 @@ const DeviceLanguage: React.FC<Props> = ({
     },
     [refreshDeviceLanguage],
   );
+  const handleResult = useCallback(() => {
+    track("Page Manager LanguageInstalled", {
+      selectedLanguage,
+      type: "drawer",
+    });
+    refreshDeviceLanguage();
+  }, [refreshDeviceLanguage, selectedLanguage]);
 
   return (
     <>
@@ -117,7 +123,7 @@ const DeviceLanguage: React.FC<Props> = ({
         device={deviceForActionModal}
         language={selectedLanguage}
         onError={handleError}
-        onResult={refreshDeviceLanguage}
+        onResult={handleResult}
       />
     </>
   );
