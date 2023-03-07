@@ -191,13 +191,13 @@ export function MethodSelection({ navigation, route }: Props) {
                 <Trans i18nKey={editOption.i18nKey} />
                 <Flex>
                   <LText style={{ marginTop: 15, marginBottom: 0 }}>
-                    {/* <Trans
+                    <Trans
                       i18nKey={
                         editOption.value === "speedup"
                           ? "editTransaction.resubmitTxDescription"
                           : "editTransaction.cancelTxDescription"
                       }
-                    /> */}
+                    />
                   </LText>
                 </Flex>
               </SelectableList.Element>
