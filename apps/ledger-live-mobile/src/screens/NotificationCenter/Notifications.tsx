@@ -236,7 +236,7 @@ export default function NotificationCenter() {
                 mb={3}
                 textAlign="center"
               >
-                {t("notificationCenter.news.emptyState.title")} 💤
+                {t("notificationCenter.news.emptyState.title")}
               </Text>
               <Text
                 variant="paragraph"

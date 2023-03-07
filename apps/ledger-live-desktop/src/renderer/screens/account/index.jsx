@@ -8,6 +8,7 @@ import { Redirect } from "react-router";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { findCompoundToken } from "@ledgerhq/live-common/currencies/index";
 import { isNFTActive } from "@ledgerhq/live-common/nft/support";
+import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import { accountSelector } from "~/renderer/reducers/accounts";
 import {
@@ -16,7 +17,10 @@ import {
   getMainAccount,
   isAccountEmpty,
 } from "@ledgerhq/live-common/account/index";
-import { setCountervalueFirst } from "~/renderer/actions/settings";
+import {
+  setCountervalueFirst,
+  useFilterTokenOperationsZeroAmount,
+} from "~/renderer/actions/settings";
 import {
   countervalueFirstSelector,
   hiddenNftCollectionsSelector,
@@ -91,15 +95,22 @@ const AccountPage = ({
     : null;
   const bgColor = useTheme("colors.palette.background.paper");
   const isCompoundEnabled = useCompoundAccountEnabled(account, parentAccount);
+  const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
 
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
   const filterOperations = useCallback(
     (operation, account) => {
-      return !operation?.nftOperations?.find(op =>
+      // Remove operations linked to address poisoning
+      const removeZeroAmountTokenOp =
+        shouldFilterTokenOpsZeroAmount && isAddressPoisoningOperation(operation, account);
+      // Remove operations coming from an NFT collection considered spam
+      const opFromBlacklistedNftCollection = operation?.nftOperations?.find(op =>
         hiddenNftCollections.includes(`${account.id}|${op?.contract}`),
       );
+
+      return !opFromBlacklistedNftCollection && !removeZeroAmountTokenOp;
     },
-    [hiddenNftCollections],
+    [hiddenNftCollections, shouldFilterTokenOpsZeroAmount],
   );
 
   if (!account || !mainAccount) {

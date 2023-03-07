@@ -163,8 +163,7 @@ Ledger Live main types.
     *   [description](#description)
     *   [tagLabel](#taglabel)
     *   [actionCompletedPopupLabel](#actioncompletedpopuplabel)
-    *   [startEvent](#startevent)
-    *   [startEventProperties](#starteventproperties)
+    *   [buttonLabelForAnalyticsEvent](#buttonlabelforanalyticsevent)
 *   [PostOnboardingActionState](#postonboardingactionstate)
     *   [Properties](#properties-44)
     *   [completed](#completed)
@@ -1277,17 +1276,12 @@ after completing this action.
 
 Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
 
-#### startEvent
+#### buttonLabelForAnalyticsEvent
 
-Event that will be dispatched when starting this action.
+Value to use in the "button" property of the event sent when the user
+triggers the action by pressing the button in the post onboarding hub.
 
 Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
-
-#### startEventProperties
-
-Event properties that will be dispatched when starting this action.
-
-Type: any
 
 ### PostOnboardingActionState
 

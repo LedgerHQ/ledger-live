@@ -2,6 +2,7 @@ import { Tag } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Linking } from "react-native";
+import { urls } from "../../../config/urls";
 import Button from "../../Button";
 
 function SubscriptionCanceledProtectState({
@@ -14,15 +15,13 @@ function SubscriptionCanceledProtectState({
   const { contactLedgerSupportURI, viewDetailsURI } = params || {};
 
   const onContactLedgerSupport = useCallback(() => {
-    Linking.canOpenURL(contactLedgerSupportURI).then(() =>
-      Linking.openURL(contactLedgerSupportURI),
-    );
+    const url = `${contactLedgerSupportURI}&source=${urls.recoverSources.myLedger}`;
+    Linking.canOpenURL(url).then(() => Linking.openURL(url));
   }, [contactLedgerSupportURI]);
 
   const onViewDetails = useCallback(() => {
-    Linking.canOpenURL(viewDetailsURI).then(() =>
-      Linking.openURL(viewDetailsURI),
-    );
+    const url = `${viewDetailsURI}&source=${urls.recoverSources.myLedger}`;
+    Linking.canOpenURL(url).then(() => Linking.openURL(url));
   }, [viewDetailsURI]);
 
   return (

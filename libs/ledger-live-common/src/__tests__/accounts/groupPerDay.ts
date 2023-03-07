@@ -1,6 +1,9 @@
 import flatMap from "lodash/flatMap";
 import { fromAccountRaw, groupAccountOperationsByDay } from "../../account";
 import { TezosAccountRaw } from "../../families/tezos/types";
+import { setSupportedCurrencies } from "../../currencies";
+setSupportedCurrencies(["tezos"]);
+
 const account = fromAccountRaw({
   id: "libcore:1:tezos:A:tezbox",
   seedIdentifier: "B",

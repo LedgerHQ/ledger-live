@@ -110,6 +110,9 @@ export const SyncOnboarding = ({
   const [companionStepKey, setCompanionStepKey] = useState<CompanionStepKey>(
     CompanionStepKey.Paired,
   );
+  const [seedStatus, setSeedStatus] = useState<"selection" | "new" | "restore">(
+    "selection",
+  );
 
   const getNextStepKey = useCallback(
     (step: CompanionStepKey) => {
@@ -306,15 +309,18 @@ export const SyncOnboarding = ({
       case DeviceOnboardingStep.SetupChoice:
       case DeviceOnboardingStep.SafetyWarning:
         setCompanionStepKey(CompanionStepKey.Seed);
+        setSeedStatus("selection");
         break;
       case DeviceOnboardingStep.NewDevice:
       case DeviceOnboardingStep.NewDeviceConfirming:
         setShouldRestoreApps(false);
         setCompanionStepKey(CompanionStepKey.Seed);
+        setSeedStatus("new");
         break;
       case DeviceOnboardingStep.RestoreSeed:
         setShouldRestoreApps(true);
         setCompanionStepKey(CompanionStepKey.Seed);
+        setSeedStatus("restore");
         break;
       case DeviceOnboardingStep.WelcomeScreen1:
       case DeviceOnboardingStep.WelcomeScreen2:
@@ -408,12 +414,24 @@ export const SyncOnboarding = ({
           doneTitle: t("syncOnboarding.seedStep.doneTitle"),
           estimatedTime: 300,
           renderBody: () => (
-            <Flex pb={1}>
-              <Stories
-                instanceID={StorylyInstanceID.recoverySeed}
-                vertical
-                keepOriginalOrder
-              />
+            <Flex>
+              {seedStatus === "selection" ? (
+                <Text variant="bodyLineHeight">
+                  {t("syncOnboarding.seedStep.selection")}
+                </Text>
+              ) : seedStatus === "new" ? (
+                <Flex pb={1}>
+                  <Stories
+                    instanceID={StorylyInstanceID.recoverySeed}
+                    vertical
+                    keepOriginalOrder
+                  />
+                </Flex>
+              ) : (
+                <Text variant="bodyLineHeight">
+                  {t("syncOnboarding.seedStep.recovery", { productName })}
+                </Text>
+              )}
             </Flex>
           ),
         },
@@ -464,6 +482,7 @@ export const SyncOnboarding = ({
     [
       t,
       productName,
+      seedStatus,
       deviceInitialApps?.enabled,
       device,
       handleSoftwareCheckComplete,

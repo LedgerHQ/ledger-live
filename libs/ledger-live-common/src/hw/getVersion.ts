@@ -10,6 +10,7 @@ const deviceVersionRangesForBootloaderVersion: {
   nanoS: ">=2.0.0",
   nanoX: ">=2.0.0",
   nanoSP: ">=1.0.0",
+  stax: ">=1.0.0",
 };
 export const isBootloaderVersionSupported = (
   seVersion: string,

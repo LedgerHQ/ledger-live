@@ -6,7 +6,7 @@ import {
   Operation,
   SignedOperation,
 } from "@ledgerhq/types-live";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   WalletHandlers,
   useWalletAPIServer as useWalletAPIServerRaw,
@@ -32,7 +32,7 @@ import { getMainAccount, getParentAccount } from "../account";
 import {
   listCurrencies,
   findCryptoCurrencyById,
-  listSupportedCurrencies,
+  findTokenById,
 } from "../currencies";
 import { TrackingAPI } from "./tracking";
 import {
@@ -160,7 +160,7 @@ export function useGetAccountIds(
 export interface UiHook {
   "account.request": (params: {
     accounts$: Observable<WalletAPIAccount[]>;
-    currencies: CryptoCurrency[];
+    currencies: CryptoOrTokenCurrency[];
     onSuccess: (
       account: AccountLike,
       parentAccount: Account | undefined
@@ -203,7 +203,6 @@ export interface UiHook {
   "device.transport": (params: {
     appName: string | undefined;
     onSuccess: (result: AppResult) => void;
-    onError: (error: Error) => void;
     onCancel: () => void;
   }) => void;
 }
@@ -313,6 +312,8 @@ function useDeviceTransport({ manifest, tracking }) {
   );
 }
 
+const allCurrenciesAndTokens = listCurrencies(true);
+
 export function useWalletAPIServer({
   manifest,
   accounts,
@@ -372,12 +373,14 @@ export function useWalletAPIServer({
 
       return new Promise((resolve, reject) => {
         // handle no curencies selected case
-        const cryptoCurrencyIds = currencies.map(({ id }) => id);
+        const currencyIds = currencies.map(({ id }) => id);
 
-        let currencyList: CryptoCurrency[] = [];
+        let currencyList: CryptoOrTokenCurrency[] = [];
         // if single currency available redirect to select account directly
-        if (cryptoCurrencyIds.length === 1) {
-          const currency = findCryptoCurrencyById(cryptoCurrencyIds[0]);
+        if (currencyIds.length === 1) {
+          const currency =
+            findCryptoCurrencyById(currencyIds[0]) ||
+            findTokenById(currencyIds[0]);
           if (currency) {
             currencyList = [currency];
           }
@@ -385,13 +388,11 @@ export function useWalletAPIServer({
           if (!currencyList[0]) {
             tracking.requestAccountFail(manifest);
             // @TODO replace with correct error
-            reject(
-              new ServerError(createCurrencyNotFound(cryptoCurrencyIds[0]))
-            );
+            reject(new ServerError(createCurrencyNotFound(currencyIds[0])));
           }
         } else {
-          currencyList = listSupportedCurrencies().filter(({ id }) =>
-            cryptoCurrencyIds.includes(id)
+          currencyList = allCurrenciesAndTokens.filter(({ id }) =>
+            currencyIds.includes(id)
           );
         }
 
@@ -630,16 +631,12 @@ export function useWalletAPIServer({
                 return;
               }
               // TODO handle appFirmwareRange & seeded params
-              device?.subscribe(deviceParam.deviceId);
+              device.subscribe(deviceParam.deviceId);
               resolve("1");
             },
             onCancel: () => {
               tracking.deviceTransportFail(manifest);
               reject(new Error("User cancelled"));
-            },
-            onError: (error: Error) => {
-              tracking.deviceTransportFail(manifest);
-              reject(error);
             },
           });
         })

@@ -87,7 +87,7 @@ test.describe.parallel("Swap", () => {
 
     await test.step("Select Different Target Account", async () => {
       await swapPage.openTargetAccountDrawer();
-      await expect.soft(page).toHaveScreenshot("target-account-drawer.png");
+      await expect.soft(drawer.content).toHaveScreenshot("target-account-drawer.png");
       await swapPage.selectTargetAccount("Ethereum 2");
     });
 
@@ -113,7 +113,7 @@ test.describe.parallel("Swap", () => {
       await swapPage.selectExchangeQuote("changelly", "float");
       await swapPage.confirmExchange();
       await deviceAction.initiateSwap();
-      await expect.soft(page).toHaveScreenshot("initiate-swap.png", { timeout: 10000 });
+      await expect.soft(drawer.content).toHaveScreenshot("initiate-swap.png", { timeout: 10000 });
     });
 
     await test.step("Confirm swap with Nano App", async () => {
@@ -121,14 +121,14 @@ test.describe.parallel("Swap", () => {
       await deviceAction.silentSign();
       const originalSwapId = await swapPage.verifySuccessfulExchange();
       swapId = originalSwapId.replace("#", "");
-      await expect.soft(page).toHaveScreenshot("confirmed-swap.png");
+      await expect.soft(drawer.content).toHaveScreenshot("confirmed-swap.png");
     });
 
     await test.step("Verify Swap details are present in the exchange drawer", async () => {
       await swapPage.navigateToExchangeDetails();
       detailsSwapId = await swapPage.verifyExchangeDetails();
       await expect(detailsSwapId).toEqual(swapId);
-      await expect.soft(page).toHaveScreenshot("verify-swap-details.png");
+      await expect.soft(drawer.content).toHaveScreenshot("verify-swap-details.png");
     });
 
     await test.step("Verify Swap details are present in the swap history", async () => {

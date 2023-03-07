@@ -56,6 +56,11 @@ const envDefinitions: Record<
   string,
   EnvDef<boolean | string | number | string[] | unknown>
 > = {
+  ADDRESS_POISONING_FAMILIES: {
+    def: "ethereum,evm,tron",
+    parser: stringParser,
+    desc: "List of families impacted by the address poisoning attack",
+  },
   ANALYTICS_CONSOLE: {
     def: false,
     parser: boolParser,
@@ -406,6 +411,11 @@ const envDefinitions: Record<
     parser: intParser,
     desc: "use a different provider for app store (for developers only)",
   },
+  FILTER_ZERO_AMOUNT_ERC20_EVENTS: {
+    def: true,
+    parser: boolParser,
+    desc: "Remove filter of address poisoning",
+  },
   GET_CALLS_RETRY: {
     def: 2,
     parser: intParser,
@@ -724,6 +734,11 @@ const envDefinitions: Record<
     def: false,
     parser: boolParser,
     desc: "Show a performance overlay on the app UI",
+  },
+  ETHEREUM_STUCK_TRANSACTION_TIMEOUT: {
+    def: 5 * 60 * 1000,
+    parser: intParser,
+    desc: "Time after which an optimisc operation is considered stuck",
   },
 };
 
