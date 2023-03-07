@@ -9,6 +9,19 @@ setPlatformVersion(PLATFORM_VERSION);
 setWalletAPIVersion(WALLET_API_VERSION);
 
 setSupportedCurrencies([
+  "axelar",
+  "injective",
+  "onomy",
+  "quicksilver",
+  "stride",
+  "persistence",
+  "stargaze",
+  "nyx",
+  "secret_network",
+  "sei_network",
+  "desmos",
+  "umee",
+  "binance_beacon_chain",
   "bitcoin",
   "ethereum",
   "bsc",

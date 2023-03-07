@@ -28,9 +28,49 @@ import { NetworkDown } from "@ledgerhq/errors";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 const listSupportedTokens = () => listTokens().filter(t => isCurrencySupported(t.parentCurrency));
 const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
+  const axelar = useFeature("currencyAxelar");
+  const injective = useFeature("currencyInjective");
+  const onomy = useFeature("currencyOnomy");
+  const quicksilver = useFeature("currencyQuicksilver");
+  const stride = useFeature("currencyStride");
+  const persistence = useFeature("currencyPersistence");
+  const stargaze = useFeature("currencyStargaze");
+  const nyx = useFeature("currencyNyx");
+  const secretNetwork = useFeature("currencySecretNetwork");
+  const seiNetwork = useFeature("currencySeiNetwork");
+  const desmos = useFeature("currencyDesmos");
+  const umee = useFeature("currencyUmee");
+  const binanceBeaconChain = useFeature("currencyBinanceBeaconChain");
+  const osmo = useFeature("currencyOsmosis");
+  const fantom = useFeature("currencyFantom");
+  const moonbeam = useFeature("currencyMoonbeam");
+  const cronos = useFeature("currencyCronos");
+  const songbird = useFeature("currencySongbird");
+  const flare = useFeature("currencyFlare");
+  const near = useFeature("currencyNear");
   const avaxCChain = useFeature("currencyAvalancheCChain");
   const featureFlaggedCurrencies = useMemo(
     () => ({
+      axelar,
+      injective,
+      onomy,
+      quicksilver,
+      stride,
+      persistence,
+      stargaze,
+      nyx,
+      secretNetwork,
+      seiNetwork,
+      desmos,
+      umee,
+      binanceBeaconChain,
+      osmo,
+      fantom,
+      moonbeam,
+      cronos,
+      songbird,
+      flare,
+      near,
       avalanche_c_chain: avaxCChain,
     }),
     [avaxCChain],

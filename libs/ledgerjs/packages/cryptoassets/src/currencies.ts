@@ -284,6 +284,35 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     keywords: ["avax", "avalanche", "c-chain"],
     explorerId: "avax",
   },
+  axelar: {
+    type: "CryptoCurrency",
+    id: "axelar",
+    coinType: CoinType.ATOM,
+    name: "Axelar",
+    managerAppName: "Cosmos",
+    ticker: "AXL",
+    scheme: "axelar",
+    color: "#b2b6bc",
+    family: "cosmos",
+    units: [
+      {
+        name: "Axelar",
+        code: "AXL",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-Axelar",
+        code: "uaxl",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/axelar/txs/$hash",
+        address: "https://www.mintscan.io/axelar/validators/$address",
+      },
+    ],
+  },
   banano: {
     type: "CryptoCurrency",
     id: "banano",
@@ -302,6 +331,35 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
     explorerViews: [],
+  },
+  binance_beacon_chain: {
+    type: "CryptoCurrency",
+    id: "binance_beacon_chain",
+    coinType: CoinType.ATOM,
+    name: "BinanceBeaconChain",
+    managerAppName: "Cosmos",
+    ticker: "BNB",
+    scheme: "BinanceBeaconChain",
+    color: "#f0b90b",
+    family: "cosmos",
+    units: [
+      {
+        name: "BNB",
+        code: "BNB",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-BNB",
+        code: "ubnb",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://binance.mintscan.io/txs/$hash",
+        address: "https://binance.mintscan.io/validators/$address",
+      },
+    ],
   },
   bitcoin: {
     type: "CryptoCurrency",
@@ -792,6 +850,35 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
     explorerId: "dcr",
+  },
+  desmos: {
+    type: "CryptoCurrency",
+    id: "desmos",
+    coinType: CoinType.ATOM,
+    name: "Desmos",
+    managerAppName: "Cosmos",
+    ticker: "DSM",
+    scheme: "desmos",
+    color: "#ed6c53",
+    family: "cosmos",
+    units: [
+      {
+        name: "Desmos",
+        code: "DSM",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-Desmos",
+        code: "udsm",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/desmos/txs/$hash",
+        address: "https://www.mintscan.io/desmos/validators/$address",
+      },
+    ],
   },
   dexon: {
     type: "CryptoCurrency",
@@ -1438,6 +1525,35 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  injective: {
+    type: "CryptoCurrency",
+    id: "injective",
+    coinType: CoinType.ATOM,
+    name: "Injective",
+    managerAppName: "Cosmos",
+    ticker: "INJ",
+    scheme: "injective",
+    color: "#0bd",
+    family: "cosmos",
+    units: [
+      {
+        name: "Injective",
+        code: "INJ",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-Injective",
+        code: "uinj",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/injective/txs/$hash",
+        address: "https://www.mintscan.io/injective/validators/$address",
+      },
+    ],
+  },
   iota: {
     type: "CryptoCurrency",
     id: "iota",
@@ -1905,6 +2021,64 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [],
   },
+  nyx: {
+    type: "CryptoCurrency",
+    id: "nyx",
+    coinType: CoinType.ATOM,
+    name: "Nyx",
+    managerAppName: "Cosmos",
+    ticker: "NYM",
+    scheme: "nyx",
+    color: "#5f82c8",
+    family: "cosmos",
+    units: [
+      {
+        name: "Nyx",
+        code: "NYM",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-Nyx",
+        code: "unym",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/nyx/txs/$hash",
+        address: "https://www.mintscan.io/nyx/validators/$address",
+      },
+    ],
+  },
+  onomy: {
+    type: "CryptoCurrency",
+    id: "onomy",
+    coinType: CoinType.ATOM,
+    name: "Onomy",
+    managerAppName: "Cosmos",
+    ticker: "NOM",
+    scheme: "onomy",
+    color: "#8c94d3",
+    family: "cosmos",
+    units: [
+      {
+        name: "Onomy",
+        code: "NOM",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-Onomy",
+        code: "unom",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/onomy/txs/$hash",
+        address: "https://www.mintscan.io/onomy/validators/$address",
+      },
+    ],
+  },
   ontology: {
     type: "CryptoCurrency",
     id: "ontology",
@@ -1987,6 +2161,35 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
     explorerId: "ppc",
+  },
+  persistence: {
+    type: "CryptoCurrency",
+    id: "persistence",
+    coinType: CoinType.ATOM,
+    name: "Persistence",
+    managerAppName: "Cosmos",
+    ticker: "XPRT",
+    scheme: "persistence",
+    color: "#e50a13",
+    family: "cosmos",
+    units: [
+      {
+        name: "Persistence",
+        code: "XPRT",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-Persistence",
+        code: "uxprt",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/persistence/txs/$hash",
+        address: "https://www.mintscan.io/persistence/validators/$address",
+      },
+    ],
   },
   pirl: {
     type: "CryptoCurrency",
@@ -2235,6 +2438,35 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerId: "qtum",
   },
+  quicksilver: {
+    type: "CryptoCurrency",
+    id: "quicksilver",
+    coinType: CoinType.ATOM,
+    name: "Quicksilver",
+    managerAppName: "Cosmos",
+    ticker: "QCK",
+    scheme: "quicksilver",
+    color: "#e91179",
+    family: "cosmos",
+    units: [
+      {
+        name: "Quicksilver",
+        code: "QCK",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-Quicksilver",
+        code: "uqck",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/quicksilver/txs/$hash",
+        address: "https://www.mintscan.io/quicksilver/validators/$address",
+      },
+    ],
+  },
   ravencoin: {
     type: "CryptoCurrency",
     id: "ravencoin",
@@ -2355,6 +2587,64 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [],
   },
+  secret_network: {
+    type: "CryptoCurrency",
+    id: "secret_network",
+    coinType: CoinType.ATOM,
+    name: "SecretNetwork",
+    managerAppName: "Cosmos",
+    ticker: "SCRT",
+    scheme: "secret_network",
+    color: "#a3b0bd",
+    family: "cosmos",
+    units: [
+      {
+        name: "Secret",
+        code: "SCRT",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-Secret",
+        code: "uscrt",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/secret/txs/$hash",
+        address: "https://www.mintscan.io/secret/validators/$address",
+      },
+    ],
+  },
+  sei_network: {
+    type: "CryptoCurrency",
+    id: "sei_network",
+    coinType: CoinType.ATOM,
+    name: "SeiNetwork",
+    managerAppName: "Cosmos",
+    ticker: "SEI",
+    scheme: "sei_network",
+    color: "#89395b",
+    family: "cosmos",
+    units: [
+      {
+        name: "SEI",
+        code: "SEI",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-SEI",
+        code: "usei",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/sei/txs/$hash",
+        address: "https://www.mintscan.io/sei/validators/$address",
+      },
+    ],
+  },
   solana: {
     type: "CryptoCurrency",
     id: "solana",
@@ -2428,6 +2718,35 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
     explorerId: "xsn",
+  },
+  stargaze: {
+    type: "CryptoCurrency",
+    id: "stargaze",
+    coinType: CoinType.ATOM,
+    name: "Stargaze",
+    managerAppName: "Cosmos",
+    ticker: "STARS",
+    scheme: "stargaze",
+    color: "#e38cd4",
+    family: "cosmos",
+    units: [
+      {
+        name: "Stargaze",
+        code: "STARS",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-Stargaze",
+        code: "ustars",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/stargaze/txs/$hash",
+        address: "https://www.mintscan.io/stargaze/validators/$address",
+      },
+    ],
   },
   stratis: {
     terminated: {
@@ -2621,6 +2940,35 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  stride: {
+    type: "CryptoCurrency",
+    id: "stride",
+    coinType: CoinType.ATOM,
+    name: "Stride",
+    managerAppName: "Cosmos",
+    ticker: "STRD",
+    scheme: "stride",
+    color: "#e91179",
+    family: "cosmos",
+    units: [
+      {
+        name: "Stride",
+        code: "STRD",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-Stride",
+        code: "ustrd",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/stride/txs/$hash",
+        address: "https://www.mintscan.io/stride/validators/$address",
+      },
+    ],
+  },
   tezos: {
     type: "CryptoCurrency",
     id: "tezos",
@@ -2770,6 +3118,35 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     explorerViews: [
       {
         tx: "https://ubiqscan.io/tx/$hash",
+      },
+    ],
+  },
+  umee: {
+    type: "CryptoCurrency",
+    id: "umee",
+    coinType: CoinType.ATOM,
+    name: "Umee",
+    managerAppName: "Cosmos",
+    ticker: "UMEE",
+    scheme: "umee",
+    color: "#bb90f8",
+    family: "cosmos",
+    units: [
+      {
+        name: "Umee",
+        code: "UMEE",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-Umee",
+        code: "uumee",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/umee/txs/$hash",
+        address: "https://www.mintscan.io/umee/validators/$address",
       },
     ],
   },

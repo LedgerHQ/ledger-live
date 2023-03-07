@@ -52,10 +52,50 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const devMode = useEnv("MANAGER_DEV_MODE");
   const { filterCurrencyIds = [], currency } = route.params || {};
 
+  const osmo = useFeature("currencyOsmosisMobile");
+  const axelar = useFeature("currencyAxelarMobile");
+  const injective = useFeature("currencyInjective");
+  const onomy = useFeature("currencyOnomy");
+  const quicksilver = useFeature("currencyQuicksilver");
+  const stride = useFeature("currencyStride");
+  const persistence = useFeature("currencyPersistence");
+  const stargaze = useFeature("currencyStargaze");
+  const nyx = useFeature("currencyNyx");
+  const secretNetwork = useFeature("currencySecretNetwork");
+  const seiNetwork = useFeature("currencySeiNetwork");
+  const desmos = useFeature("currencyDesmos");
+  const umee = useFeature("currencyUmee");
+  const binanceBeaconChain = useFeature("currencyBinanceBeaconChain");
+  const fantom = useFeature("currencyFantomMobile");
+  const moonbeam = useFeature("currencyMoonbeamMobile");
+  const cronos = useFeature("currencyCronosMobile");
+  const songbird = useFeature("currencySongbirdMobile");
+  const flare = useFeature("currencyFlareMobile");
+  const near = useFeature("currencyNear");
   const avaxCChain = useFeature("currencyAvalancheCChain");
 
   const featureFlaggedCurrencies = useMemo(
     () => ({
+      axelar,
+      injective,
+      onomy,
+      quicksilver,
+      stride,
+      persistence,
+      stargaze,
+      nyx,
+      secretNetwork,
+      seiNetwork,
+      desmos,
+      umee,
+      binanceBeaconChain,
+      osmo,
+      fantom,
+      moonbeam,
+      cronos,
+      songbird,
+      flare,
+      near,
       avalanche_c_chain: avaxCChain,
     }),
     [avaxCChain],

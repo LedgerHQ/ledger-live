@@ -108,6 +108,19 @@ export const getVotesCount = (
       return isAccountDelegating(account) ? 1 : 0;
     case "tron":
       return (mainAccount as TronAccount)?.tronResources?.votes.length || 0;
+    case "axelar":
+    case "injective":
+    case "onomy":
+    case "quicksilver":
+    case "stride":
+    case "persistence":
+    case "stargaze":
+    case "nyx":
+    case "secret_network":
+    case "sei_network":
+    case "desmos":
+    case "umee":
+    case "binance_beacon_chain":
     case "osmosis":
     case "cosmos":
       return (
