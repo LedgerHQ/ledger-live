@@ -151,10 +151,10 @@ export default function NftCollectionsList({ account }: Props) {
                   values={{ currency: account.currency.family }}
                 >
                   <Text variant={"large"} fontWeight={"semiBold"}>
-                    text
+                    PLACEHOLDER_TEXT
                   </Text>
                   <Text variant={"large"} fontWeight={"semiBold"}>
-                    text
+                    PLACEHOLDER_TEXT
                   </Text>
                 </Trans>
               </Text>

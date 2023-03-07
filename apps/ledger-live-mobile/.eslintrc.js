@@ -33,7 +33,7 @@ module.exports = {
       },
     },
   },
-  plugins: ["detox"],
+  plugins: ["detox", "i18next"],
   rules: {
     "no-console": [
       "error",
@@ -59,6 +59,24 @@ module.exports = {
     "import/no-mutable-exports": 0,
     "import/prefer-default-export": 0,
     "import/namespace": ["error", { allowComputed: true }],
+    "i18next/no-literal-string": [
+      "error",
+      {
+        "jsx-components": {
+          include: [],
+          exclude: [],
+        },
+        words: {
+          // Maybe move this to a separate file if it becomes too large.
+          exclude: [
+            "\\s*[A-Z0-9≈•%!-:-@[-`{-~\\s]+\\s*",
+            "\\s #LedgerLiveApp\\s*",
+            "\\s*ledger.com/academy\\s*",
+            "Baking Bad",
+          ],
+        },
+      },
+    ],
     "no-use-before-define": 0,
     "react/sort-comp": 0,
     "react/jsx-boolean-value": 0,
@@ -79,7 +97,15 @@ module.exports = {
     // for importing detox
     "import/no-extraneous-dependencies": [
       "error",
-      { devDependencies: ["**/e2e/**"] },
+      {
+        devDependencies: [
+          "**/e2e/**",
+          "**/*.test.{ts,tsx}",
+          "**/jest.config.js",
+          "**/jest-setup.js",
+          "**/__test__/**",
+        ],
+      },
     ],
     // For Link component from native-ui, that is interpreted like a html link, and thus this rule tried to impose a href prop on it
     "jsx-a11y/anchor-is-valid": [
@@ -99,7 +125,6 @@ module.exports = {
     "react/state-in-constructor": 0,
     "react/static-property-placement": 0,
     "react/default-props-match-prop-types": 0,
-    "jsx-a11y/anchor-is-valid": 0, // this is not valid in react native as we don't have href
     "@typescript-eslint/no-non-null-assertion": 0,
     "react-native/no-inline-styles": 0,
     "react/prop-types": 0, // causes issues with typescript, reports false positives
@@ -156,6 +181,31 @@ module.exports = {
         beforeAll: false,
         afterAll: false,
         device: false,
+      },
+    },
+    {
+      files: [
+        "src/screens/Settings/Debug/**/*",
+        "src/screens/FeatureFlagsSettings/**/*",
+        "src/components/AnalyticsConsole/**/*",
+        "src/components/StorylyStories/**/*",
+        "src/screens/Settings/Experimental/**/*",
+        "src/components/PerformanceConsole/**/*",
+        "src/components/CustomImage/TestImage.tsx",
+
+        "**/*Mock*",
+      ],
+      rules: {
+        "i18next/no-literal-string": "off",
+      },
+    },
+    {
+      files: ["**/jest.config.js", "**/jest-setup.js", "**/e2e/**"],
+      env: {
+        jest: true,
+      },
+      rules: {
+        "@typescript-eslint/no-var-requires": "off",
       },
     },
   ],

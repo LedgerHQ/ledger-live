@@ -12,7 +12,6 @@ import { usePostOnboardingContext } from "./usePostOnboardingContext";
  * This takes feature flagging into account so the logic is
  * resistant to flags getting enabled/disabled over time (for a given disabled
  * feature flag, the actions pointing to it will be excluded).
- * TODO: unit test this
  * */
 export function usePostOnboardingHubState(): PostOnboardingHubState {
   const hubState = useSelector(hubStateSelector);

@@ -2,6 +2,7 @@ import { Tag } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Linking } from "react-native";
+import { urls } from "../../../config/urls";
 import Button from "../../Button";
 
 function ActiveProtectState({ params }: { params: Record<string, string> }) {
@@ -10,9 +11,8 @@ function ActiveProtectState({ params }: { params: Record<string, string> }) {
   const { viewDetailsURI } = params || {};
 
   const onViewDetails = useCallback(() => {
-    Linking.canOpenURL(viewDetailsURI).then(() =>
-      Linking.openURL(viewDetailsURI),
-    );
+    const url = `${viewDetailsURI}&source=${urls.recoverSources.myLedger}`;
+    Linking.canOpenURL(url).then(() => Linking.openURL(url));
   }, [viewDetailsURI]);
 
   return (

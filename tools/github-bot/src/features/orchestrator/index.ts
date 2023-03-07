@@ -6,6 +6,8 @@ import {
   WORKFLOWS,
   REPO_OWNER,
   REF_PREFIX,
+  SYNC_ACTION,
+  WorkflowRunPayload,
 } from "./const";
 import {
   downloadArtifact,
@@ -141,6 +143,16 @@ export function orchestrator(app: Probot) {
         //payload.workflow_run.updated_at
         extraFields: {
           details_url: workflowUrl,
+          actions: [
+            {
+              // 20 chars max
+              label: "Sync Status",
+              // 20 chars max
+              identifier: SYNC_ACTION,
+              // 40 chars max
+              description: "Refresh the status of the check",
+            },
+          ],
           output: {
             title: "⚙️ Running",
             summary:
@@ -578,6 +590,168 @@ export function orchestrator(app: Probot) {
         context.log.error(
           `[Orchestrator](check_run.completed) Unable to update watcher check run @sha ${payload.check_run.head_sha}`
         );
+      }
+    }
+  });
+
+  /**
+   * When a check run sync action is sent:
+   * - Update the check run and the watcher with the right status based on the other check runs of the suite
+   */
+  app.on("check_run.requested_action", async (context) => {
+    const { payload, octokit } = context;
+
+    if (payload.requested_action.identifier !== SYNC_ACTION) return;
+
+    context.log.info(
+      `[Orchestrator](check_run.requested_action) Running requested action: ${SYNC_ACTION}`
+    );
+
+    /**
+     * Get workflow for given sha filtered by match on Workflow
+     * Update check run with correct status.
+     */
+    const { data } = await octokit.rest.actions.listWorkflowRunsForRepo({
+      ...context.repo(),
+      head_sha: payload.check_run.head_sha,
+      exclude_pull_requests: true,
+      event: "workflow_dispatch",
+    });
+
+    const workflowMeta = Object.entries(WORKFLOWS).find(
+      ([, w]) => w.checkRunName === payload.check_run.name
+    );
+
+    if (!workflowMeta) {
+      context.log.info(
+        `[Orchestrator](check_run.requested_action)(${SYNC_ACTION}) Could not find a workflow run for ${payload.check_run.name}`
+      );
+      return;
+    }
+
+    const workflowRun = data.workflow_runs.reduce<
+      WorkflowRunPayload["workflow_run"] | undefined
+    >((wf, curr) => {
+      if ((curr as any).path === ".github/workflows/" + workflowMeta[0]) {
+        if (!wf || wf.run_attempt < (curr?.run_attempt ?? 1)) {
+          return curr as WorkflowRunPayload["workflow_run"];
+        }
+      }
+      return wf;
+    }, undefined);
+
+    if (!workflowRun) {
+      context.log.info(
+        `[Orchestrator](check_run.requested_action)(${SYNC_ACTION}) Could not find a workflow run for ${workflowMeta[0]}`
+      );
+      return;
+    }
+
+    if (workflowRun.status === "in_progress") {
+      context.log.info(
+        `[Orchestrator](check_run.requested_action)(${SYNC_ACTION}) The workflow run seems to be running still, no updates to check run`
+      );
+      // The workflow is still running, we should not update the check run
+      return;
+    }
+
+    if (workflowRun.status === "completed") {
+      // The workflow has completed, let's sync the state
+      let summary = `The **[workflow run](${workflowRun.html_url})** has completed with status \`${workflowRun.conclusion}\`.`;
+      let defaultSummary = true;
+      let actions;
+      let annotations;
+      const { repo, owner } = context.repo();
+      if (workflowMeta[1].summaryFile) {
+        // Get the summary artifact
+
+        const artifacts = await listWorkflowRunArtifacts(
+          octokit,
+          owner,
+          repo,
+          workflowRun.id
+        );
+
+        const artifactId = artifacts.find(
+          (artifact) => artifact.name === workflowMeta[1].summaryFile
+        )?.id;
+
+        if (artifactId) {
+          try {
+            const rawSummary = await downloadArtifact(
+              octokit,
+              owner,
+              repo,
+              artifactId
+            );
+            const newSummary = JSON.parse(rawSummary.toString());
+            if (newSummary.summary) {
+              summary = newSummary?.summary;
+              defaultSummary = false;
+            }
+            actions = newSummary?.actions;
+            annotations = newSummary?.annotations;
+          } catch (e) {
+            context.log.error(
+              `[Orchestrator](check_run.requested_action)(${SYNC_ACTION}) Error while downloading / parsing artifact: ${workflowMeta[1].summaryFile} @ artifactId: ${artifactId} & workflow_run.id: ${workflowRun.id}`
+            );
+            context.log.error(e as Error);
+          }
+        }
+      }
+
+      const summaryPrefix = workflowMeta[1].description
+        ? `#### ${workflowMeta[1].description}${
+            !defaultSummary
+              ? `\n##### [🔗 Workflow run](${workflowRun.html_url})`
+              : ""
+          }\n\n`
+        : "";
+      summary = summaryPrefix + summary;
+
+      // const checkRun = checkRuns.data.check_runs[0];
+      const output = getGenericOutput(workflowRun?.conclusion ?? "", summary);
+      const tips = await getTips(workflowMeta[0]);
+
+      context.log.info(
+        `[Orchestrator](check_run.requested_action)(${SYNC_ACTION}) Updating check run: ${payload.check_run.name} @id ${payload.check_run.id}`
+      );
+
+      const updateRes = await octokit.checks.update({
+        owner,
+        repo,
+        check_run_id: payload.check_run.id,
+        status: "completed",
+        conclusion: workflowRun.conclusion,
+        output: {
+          ...output,
+          text: tips,
+        },
+        completed_at: workflowRun.updated_at,
+        actions,
+      });
+
+      context.log.info(
+        `[Orchestrator](check_run.requested_action)(${SYNC_ACTION}) Check run updated: ${updateRes.data.name} @status ${updateRes.data.status} @conclusion ${updateRes.data.conclusion}`
+      );
+
+      // Batch annotations to avoid hitting the API rate limit.
+      // "The Checks API limits the number of annotations to a maximum of 50 per API request.
+      // To create more than 50 annotations, you have to make multiple requests to the Update a check run endpoint.
+      // Each time you update the check run, annotations are appended to the list of annotations that already exist for the check run."
+      // See: https://docs.github.com/en/rest/checks/runs#update-a-check-run
+      while (annotations && annotations.length > 0) {
+        const batch = annotations.splice(0, 50);
+        await octokit.rest.checks.update({
+          owner,
+          repo,
+          check_run_id: payload.check_run.id,
+          output: {
+            ...output,
+            annotations: batch,
+            text: tips,
+          },
+        });
       }
     }
   });

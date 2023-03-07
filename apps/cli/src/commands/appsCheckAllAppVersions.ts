@@ -34,7 +34,7 @@ type Result =
       status: "KO";
       error: string;
     });
-const blacklistApps = ["Fido U2F"];
+const blacklistApps = ["Fido U2F", "Security Key"];
 
 class MemoFile {
   file: string;
