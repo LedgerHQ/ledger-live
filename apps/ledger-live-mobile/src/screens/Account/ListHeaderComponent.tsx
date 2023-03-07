@@ -164,7 +164,7 @@ export function getListHeaderComponents({
           <AccountSubHeader />
         </Box>
       ),
-      isEditableOperation(account, latestOperation) ? (
+      latestOperation && isEditableOperation(account, latestOperation) ? (
         <SectionContainer px={6}>
           <SideImageCard
             title={t("editTransaction.stuckTx")}
