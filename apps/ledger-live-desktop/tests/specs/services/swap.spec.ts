@@ -22,31 +22,15 @@ test.use({
       enabled: true,
     },
   },
-  // env: { DEV_TOOLS: true },
 });
 
 // Tests to cover in Playwright test suite
 // Enter specific amount
-// Change network fees
-// Filter quotes (centralised, decentralised, etc)
-// Correct fiat currency used
-// Navigate to
+// Coin strategy tests
 // Errors:
 // ‘Insufficient funds’
 // Amount too low for providers ‘Amount must be at least …’
 // could add pause to HTTP mock to test 'LOADING' component
-
-// MOCKS TO INCLUDE IN HTTP MOCKS:
-// libs/ledger-live-common/src/exchange/swap/getExchangeRates.ts ✅
-// libs/ledger-live-common/src/exchange/swap/getProviders.ts ✅
-// libs/ledger-live-common/src/exchange/swap/checkQuote.ts - Just FTX related ❌
-// libs/ledger-live-common/src/exchange/swap/getStatus.ts - https://swap.ledger.com/v4/swap/status ✅
-// libs/ledger-live-common/src/exchange/swap/postSwapState.ts - https://swap.ledger.com/v4/swap/cancelled (cancelled because the transaction is not broadcast)
-
-// MOCKS REQUIRED AS THEY CURRENTLY ARE:
-// libs/ledger-live-common/src/exchange/swap/initSwap.ts ✅
-
-// process.env.PWDEBUG = "1";
 
 test.describe.parallel("Swap", () => {
   test("Add accounts via Swap page", async ({ page }) => {
@@ -159,8 +143,6 @@ test.describe.parallel("Swap", () => {
     });
   });
 
-  // test.skip("Swap is not available in your area", async ({ page }) => {});
-
   test("Full Swap with Centralised Exchange", async ({ page }) => {
     const swapPage = new SwapPage(page);
     const deviceAction = new DeviceAction(page);
@@ -182,8 +164,8 @@ test.describe.parallel("Swap", () => {
       route.fulfill({ body: mockRatesResponse });
     });
 
-    // We mock the 'cancelled' swap response because the transaction isn't broadcast.
-    // If it is called then it's a successful test
+    // We mock the 'cancelled' swap response because the transaction isn't broadcast when run locally.
+    // If 'cancelled' is called then it's a successful test
     await page.route("https://swap.ledger.com/v4/swap/cancelled", async route => {
       console.log("Mocking swap cancelled HTTP response");
       route.fulfill({ body: "" });
