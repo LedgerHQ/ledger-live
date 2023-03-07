@@ -52,7 +52,7 @@ const GenericErrorView = ({
 
   // To avoid regression, but this case should not happen if RequiresBle component is correctly used.
   if (error instanceof BluetoothRequired) {
-    return <BluetoothDisabled hasBackButton={false} />;
+    return <BluetoothDisabled />;
   }
 
   return (

@@ -115,10 +115,7 @@ export default function DebugBluetoothAndLocationServices() {
           </>
         ) : (
           <Flex mt={5}>
-            <RequiresBLE
-              hasBackButtonOnError={false}
-              openSettingsOnErrorButton={openSettings}
-            >
+            <RequiresBLE forceOpenSettingsOnErrorButton={openSettings}>
               <Alert
                 type="info"
                 title="We have all the permissions for the services and they are enabled ✅"

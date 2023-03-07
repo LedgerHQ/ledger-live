@@ -1,16 +1,15 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Icons } from "@ledgerhq/native-ui";
+// import { Icons } from "@ledgerhq/native-ui";
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 
 import NoLocationImage from "../../icons/NoLocationImage";
-import ServiceDisabledView from "../ServiceDisabledView";
 import InformationalMessageDrawerContent from "../InformationalMessageDrawerContent";
+import GenericInformationalView from "../GenericInformationalView";
 
 type Props = {
   onRetry?: (() => void) | null;
-  hasBackButton?: boolean;
-  openSettings?: boolean;
+  forceOpenSettings?: boolean;
   componentType?: "drawer" | "view";
 };
 
@@ -21,15 +20,15 @@ type Props = {
  * This is fine because, currently, this type of error (location disabled) is only happening on Android.
  * Indeed, LLM does not need the location service on iOS.
  *
- * @param onRetry A callback for the user to retry enabling the service. If undefined or if openSettings is true,
+ * @param onRetry A callback for the user to retry enabling the service. If undefined or if forceOpenSettings is true,
  *   the user will be prompted to open the native settings.
- * @param hasBackButton If true, a back button will be displayed in the header. Default to false.
- * @param openSettings Used for debug purposes. If true pressing the button will make the user go to the settings. Defaults to false.
+ * @param forceOpenSettings Used mainly for debug purposes. If true pressing the button will make the user go to the settings. Defaults to false.
+ * @param componentType If "drawer", the component will be rendered as a content to be rendered in a drawer.
+ *   If "view", the component will be rendered as a view. Defaults to "view".
  */
 const LocationDisabled: React.FC<Props> = ({
   onRetry,
-  hasBackButton = false,
-  openSettings = false,
+  forceOpenSettings = false,
   componentType = "view",
 }) => {
   const { t } = useTranslation();
@@ -48,13 +47,11 @@ const LocationDisabled: React.FC<Props> = ({
   };
 
   let onButtonPress;
-  let ButtonIcon;
   let buttonLabel;
   let buttonEvent;
 
-  if (!onRetry || openSettings) {
+  if (!onRetry || forceOpenSettings) {
     onButtonPress = openNativeLocationServicesSetting;
-    ButtonIcon = Icons.SettingsMedium;
     buttonLabel = t("location.openSettings");
     buttonEvent = "LocationServicesDisabledOpenSettings";
   } else {
@@ -77,16 +74,14 @@ const LocationDisabled: React.FC<Props> = ({
   }
 
   return (
-    <ServiceDisabledView
+    <GenericInformationalView
       title={t("location.titleServiceRequired")}
-      TitleIcon={<NoLocationImage />}
+      icon={<NoLocationImage viewBox="0 0 113 114" height="60" width="60" />}
       description={t("location.descriptionServiceRequired")}
       subTitle={t("location.noInfos")}
-      hasBackButton={hasBackButton}
-      ButtonIcon={ButtonIcon}
-      buttonLabel={buttonLabel}
-      onButtonPress={onButtonPress}
-      buttonEvent={buttonEvent}
+      primaryButtonLabel={buttonLabel}
+      onPrimaryButtonPress={onButtonPress}
+      primaryButtonEvent={buttonEvent}
     />
   );
 };

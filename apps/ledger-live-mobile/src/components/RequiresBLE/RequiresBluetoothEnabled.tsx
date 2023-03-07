@@ -5,8 +5,7 @@ import BluetoothPermissionsDenied from "./BluetoothPermissionsDenied";
 
 type Props = {
   children?: React.ReactNode;
-  hasBackButtonOnError?: boolean;
-  openSettingsOnErrorButton?: boolean;
+  forceOpenSettingsOnErrorButton?: boolean;
 };
 
 /**
@@ -17,14 +16,13 @@ type Props = {
  *
  * @param hasBackButtonOnError If true, the back button will be displayed on the permission denied or disabled error screens.
  * Defaults to false.
- * @param openSettingsOnErrorButton Used for debug purposes. If true, on a bluetooth services disabled, pressing the button on
+ * @param forceOpenSettingsOnErrorButton Used mainly for debug purposes. If true, on a bluetooth services disabled, pressing the button on
  *   the error component will make the user go to the settings. Otherwise it will try to prompt the user to enable their bluetooth
  *   services if possible. Defaults to false.
  */
 const RequiresBluetoothEnabled: React.FC<Props> = ({
   children,
-  hasBackButtonOnError = false,
-  openSettingsOnErrorButton = false,
+  forceOpenSettingsOnErrorButton = false,
 }) => {
   const { bluetoothServicesState, checkAndRequestAgain } = useEnableBluetooth();
 
@@ -35,14 +33,13 @@ const RequiresBluetoothEnabled: React.FC<Props> = ({
     case "enabled":
       return <>{children}</>;
     case "unauthorized":
-      return <BluetoothPermissionsDenied hasBackButton={hasBackButtonOnError} />;
+      return <BluetoothPermissionsDenied />;
     default:
     case "disabled":
       return (
         <BluetoothDisabled
           onRetry={checkAndRequestAgain}
-          hasBackButton={hasBackButtonOnError}
-          openSettings={openSettingsOnErrorButton}
+          forceOpenSettings={forceOpenSettingsOnErrorButton}
         />
       );
   }
