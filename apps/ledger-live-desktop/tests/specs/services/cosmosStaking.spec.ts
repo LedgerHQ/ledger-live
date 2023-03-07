@@ -21,20 +21,18 @@ test.use({
     stakeAccountBanner: {
       enabled: true,
       params: {
-        solana: {
+        cosmos: {
           redelegate: true,
-          delegegate: true,
-        },
-        eth: {
-          kiln: true,
-          lido: true,
+          delegate: true,
         },
       },
     },
   },
 });
 
-test("Cosmos staking flows via portfolio. Check stake flow modals and stake banner", async ({ page }) => {
+test("Cosmos staking flows via portfolio. Check stake flow modals and stake banner", async ({
+  page,
+}) => {
   const portfolioPage = new PortfolioPage(page);
   const drawer = new Drawer(page);
   const modal = new Modal(page);
