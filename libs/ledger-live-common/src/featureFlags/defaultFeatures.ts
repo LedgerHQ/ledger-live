@@ -23,6 +23,45 @@ export const defaultFeatures: DefaultFeatures = {
   currencyAvalancheCChain: {
     enabled: false,
   },
+  currencyAxelar: {
+    enabled: true,
+  },
+  currencyInjective: {
+    enabled: true,
+  },
+  currencyOnomy: {
+    enabled: true,
+  },
+  currencyQuicksilver: {
+    enabled: true,
+  },
+  currencyStride: {
+    enabled: true,
+  },
+  currencyPersistence: {
+    enabled: true,
+  },
+  currencyStargaze: {
+    enabled: true,
+  },
+  currencyNyx: {
+    enabled: true,
+  },
+  currencySecretNetwork: {
+    enabled: true,
+  },
+  currencySeiNetwork: {
+    enabled: true,
+  },
+  currencyDesmos: {
+    enabled: true,
+  },
+  currencyUmee: {
+    enabled: true,
+  },
+  currencyBinanceBeaconChain: {
+    enabled: true,
+  },
   deviceInitialApps: {
     enabled: false,
     params: {
