@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-eth
 
+## 6.32.1-recover-beta.0
+
+### Patch Changes
+
+- Updated dependencies [[`900ef4f528`](https://github.com/LedgerHQ/ledger-live/commit/900ef4f528c3b2359d666fbb76073978d5f9c840)]:
+  - @ledgerhq/cryptoassets@9.1.0-recover-beta.0
+
 ## 6.32.0
 
 ### Minor Changes
