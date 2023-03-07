@@ -201,7 +201,7 @@ const modes = Object.freeze({
     overridesDerivation: "44'/397'/0'/0'/<account>'",
     mandatoryEmptyAccountSkip: 1,
   },
-    vechain: {
+  vechain: {
     overridesDerivation: "44'/818'/0'/0/<account>",
   },
 });
