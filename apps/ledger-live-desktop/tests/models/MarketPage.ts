@@ -83,6 +83,12 @@ export class MarketPage {
     await this.swapButton("btc").waitFor({ state: "attached" }); // swap buttons are displayed few seconds after
   }
 
+  async waitForSearchBarToBeEmpty() {
+    await this.page.waitForFunction(async () => {
+      return (await this.searchInput?.inputValue()) === "";
+    });
+  }
+
   async startStakeFlowByTicker(ticker: string) {
     await this.stakeButton(ticker).click();
     await this.page.getByText("choose account").waitFor({ state: "visible" });
