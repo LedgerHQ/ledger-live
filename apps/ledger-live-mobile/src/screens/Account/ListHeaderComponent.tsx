@@ -1,4 +1,5 @@
 import React, { ReactNode } from "react";
+import { LayoutChangeEvent } from "react-native";
 import {
   isAccountEmpty,
   getMainAccount,
@@ -20,8 +21,12 @@ import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
+<<<<<<< HEAD
 import { LayoutChangeEvent } from "react-native";
 import { isEditableOperation } from "@ledgerhq/coin-framework/operation";
+=======
+import { isEditableOperation } from "@ledgerhq/live-common/operation";
+>>>>>>> 80082c1cf2 (fix operationRow.test)
 
 import Header from "./Header";
 import AccountGraphCard from "../../components/AccountGraphCard";
@@ -120,7 +125,13 @@ export function getListHeaderComponents({
 
   const [latestOperation] = groupAccountOperationsByDay(account, {
     count: 2,
+<<<<<<< HEAD
   }).sections[0].data.filter(operation => operation.type === "OUT" || operation.type === "NFT_OUT");
+=======
+  }).sections[0].data.filter(
+    operation => operation.type === "OUT" || operation.type === "NFT_OUT",
+  );
+>>>>>>> 80082c1cf2 (fix operationRow.test)
 
   return {
     listHeaderComponents: [
