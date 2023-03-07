@@ -19,12 +19,6 @@ import {
   toCryptoOrgResourcesRaw,
   fromCryptoOrgResourcesRaw,
 } from "../families/crypto_org/serialization";
-
-import {
-  toSolanaResourcesRaw,
-  fromSolanaResourcesRaw,
-} from "../families/solana/serialization";
-
 import {
   getCryptoCurrencyById,
   getTokenById,
@@ -76,7 +70,6 @@ import {
   CryptoOrgAccount,
   CryptoOrgAccountRaw,
 } from "../families/crypto_org/types";
-import { SolanaAccount, SolanaAccountRaw } from "../families/solana/types";
 import { getAccountBridge } from "../bridge";
 
 export { toCosmosResourcesRaw, fromCosmosResourcesRaw };
@@ -85,7 +78,6 @@ export { toPolkadotResourcesRaw, fromPolkadotResourcesRaw };
 export { toElrondResourcesRaw, fromElrondResourcesRaw };
 export { toCryptoOrgResourcesRaw, fromCryptoOrgResourcesRaw };
 export { toCardanoResourceRaw, fromCardanoResourceRaw };
-export { toSolanaResourcesRaw, fromSolanaResourcesRaw };
 
 export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
   return b.map(({ date, value }) => [date.toISOString(), value.toString()]);
@@ -508,14 +500,6 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
           fromElrondResourcesRaw(elrondResourcesRaw);
       break;
     }
-    case "solana": {
-      const solanaResourcesRaw = (rawAccount as SolanaAccountRaw)
-        .solanaResources;
-      if (solanaResourcesRaw)
-        (res as SolanaAccount).solanaResources =
-          fromSolanaResourcesRaw(solanaResourcesRaw);
-      break;
-    }
     case "crypto_org": {
       const cryptoOrgResourcesRaw = (rawAccount as CryptoOrgAccountRaw)
         .cryptoOrgResources;
@@ -643,15 +627,6 @@ export function toAccountRaw(account: Account): AccountRaw {
       if (elrondAccount.elrondResources) {
         (res as ElrondAccountRaw).elrondResources = toElrondResourcesRaw(
           elrondAccount.elrondResources
-        );
-      }
-      break;
-    }
-    case "solana": {
-      const solanaAccount = account as SolanaAccount;
-      if (solanaAccount.solanaResources) {
-        (res as SolanaAccountRaw).solanaResources = toSolanaResourcesRaw(
-          solanaAccount.solanaResources
         );
       }
       break;
