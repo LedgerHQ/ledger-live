@@ -218,7 +218,8 @@
     "swap" : "مبادلة",
     "lend" : "إقراض",
     "catalog" : "Discover",
-    "market" : "السوق"
+    "market" : "السوق",
+    "protect" : "Protect"
   },
   "stars" : {
     "placeholder" : "قم بتفضيل حساب لعرضه هنا.",
@@ -828,6 +829,10 @@
         "near" : {
           "title" : "هل تعلم؟",
           "description" : "Ledger توفِّر مُعدل عمولة أقل من مُدقِّقك. هذه العملية قد تستغرق ما يصل إلى 65 ساعة."
+        },
+        "elrond" : {
+          "title" : "هل تعلم؟",
+          "description" : "Ledger توفِّر مُعدل عمولة أقل من مُدقِّقك. هذه العملية قد تستغرق ما يصل إلى 10 أيام."
         }
       },
       "delegation" : {
@@ -849,6 +854,9 @@
         },
         "near" : {
           "description" : "قم بتكديس NEAR خاصتك مع مُدقِّق Ledger by Figment. عملاتك تظل ملكك، ومدعومة من أمان Ledger الذي لا هوادة فيه."
+        },
+        "elrond" : {
+          "description" : "قم بتكديس ELROND خاصتك مع مُدقِّق Ledger by Figment. عملاتك تظل ملكك، ومدعومة من أمان Ledger الذي لا هوادة فيه."
         }
       }
     }
@@ -1839,7 +1847,7 @@
       "used" : "مُستَخدمة",
       "firmwareAvailable" : "البرنامج الثابت قديم:",
       "firmwareUpToDate" : "البرنامج الثابت محدّث:",
-      "genuine" : "الجهاز أصلي",
+      "genuine" : "جهازك أصلي",
       "incomplete" : "لم يتم التعرف على بعض التطبيقات. يُرجى إلغاء التثبيت، ثم إعادة تثبيتهم."
     },
     "applist" : {
@@ -2261,6 +2269,13 @@
     },
     "switchButton" : "التبديل إلى {{language}}",
     "no" : "أفضل عدم القيام بذلك"
+  },
+  "deviceRename" : {
+    "title" : "إعادة تسمية {{ productName }}",
+    "chooseName" : "اختر اسماً",
+    "placeholder" : "Stax طوني",
+    "remainingCharacters" : "{{ remainingCharacters }} حرف متبقي",
+    "renamed" : "اسم {{ productName }} تم تغييره إلى \n\"{{ name }}\" "
   },
   "deviceLocalization" : {
     "language" : "اللغة",
@@ -3786,6 +3801,9 @@
       "catalogRampServerDesc" : "التبديل بين مزودي تداول متعددين",
       "enablePlatformDevTools" : "تمكين أدوات تطوير المنصة",
       "enablePlatformDevToolsDesc" : "تمكين فتح نافذة أدوات تطوير تطبيقات المنصة",
+      "customLockScreen" : "أصول شاشة القَفل المُخصّصة",
+      "customLockScreenDesc" : "تصحيح أخطاء الأصول الرسومية لشاشة القَفل المُخصّصة",
+      "customLockScreenCTA" : "تشغيل",
       "featureFlagsTitle" : "علامات الميزة المحددة المستخدمة في Ledger Live",
       "featureFlagsDesc" : "القيم المُتجاوزَة سيتم إعادة تعيينها إذا أُعيد إطلاق التطبيق. سيتم قبول خيوط JSON الصالحة فقط.",
       "featureFlagsEdit" : "تعديل",
@@ -5668,6 +5686,7 @@
   },
   "customImage" : {
     "title" : "شاشة قَفل مُخصّصة",
+    "managerCTA" : "صورة شاشة القَفل",
     "steps" : {
       "choose" : {
         "stepLabel" : "اختر صورة",
@@ -5737,5 +5756,11 @@
       "subtitle" : "قم بإلغاء قفل {{productName}} خاصتك وابدأ التثبيت مرة أخرى.",
       "installCTA" : "إعادة بدء التثبيت"
     }
+  },
+  "discoverProtect" : {
+    "title" : "النسخة الاحتياطية لعبارة الاسترداد السرية خاصتك",
+    "description" : "حتى تستطيع استعادة الوصول إلى محفظتك في أي وقت، وأي مكان.",
+    "cta" : "اكتشاف المزايا",
+    "downloadLLM" : "اشترك في Ledger Recover باستخدام تطبيق Ledger Live للجوّال"
   }
 }
