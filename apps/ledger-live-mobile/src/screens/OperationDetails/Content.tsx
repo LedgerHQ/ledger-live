@@ -342,7 +342,7 @@ export default function Content({
         />
       ) : null}
 
-      {isEditable && (
+      {isEditable ? (
         <Flex
           backgroundColor={isOperationStuck ? "warning.c70" : "primary.c80"}
           color={"primary.c80"}
@@ -390,7 +390,7 @@ export default function Content({
             </>
           )}
         </Flex>
-      )}
+      ) : null}
 
       {!disableAllLinks ? (
         <Section
