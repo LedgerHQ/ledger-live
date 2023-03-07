@@ -43,10 +43,12 @@ export function useDeepLinkHandler() {
 
   const navigate = useCallback(
     (url: string, state?: any, search?: string) => {
-      if (url !== location.pathname) {
-        setTrackingSource("deeplink");
-        history.push({ pathname: url, state, search });
+      if (url === location.pathname && !search) {
+        return;
       }
+
+      setTrackingSource("deeplink");
+      history.push({ pathname: url, state, search });
     },
     [history, location],
   );
@@ -91,6 +93,17 @@ export function useDeepLinkHandler() {
         case "buy":
           navigate("/exchange");
           break;
+
+        case "earn": {
+          const { startStake } = query;
+          if (startStake) {
+            navigate("/earn", undefined, `?q=startStake`);
+            break;
+          } else {
+            navigate("/earn");
+            break;
+          }
+        }
 
         case "myledger": {
           const { installApp } = query;

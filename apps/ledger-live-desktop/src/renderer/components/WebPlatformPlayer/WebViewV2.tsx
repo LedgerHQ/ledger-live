@@ -37,7 +37,6 @@ const tracking = trackingWrapper(track);
 
 export type WebPlatformPlayerConfig = {
   topBarConfig?: TopBarConfig;
-  onMessage?: (message: any) => void;
 };
 
 function useUiHook(manifest: AppManifest): Partial<UiHook> {
@@ -164,7 +163,6 @@ function useWalletAPIUrl({ manifest, inputs }: Omit<Props, "onClose">) {
 function useWebView({
   manifest,
   inputs,
-  onMessage: onCustomMessage,
 }: Pick<Props, "manifest" | "inputs">) {
   const accounts = useSelector(flattenAccountsSelector);
 
@@ -205,10 +203,6 @@ function useWebView({
     event => {
       if (event.channel === "webviewToParent") {
         onMessage(event.args[0]);
-
-        if (onCustomMessage) {
-          onCustomMessage(event.args[0]);
-        }
       }
     },
     [onMessage],
@@ -272,7 +266,6 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
   const { webviewRef, webviewStyle, url, widgetLoaded, onReload } = useWebView({
     manifest,
     inputs,
-    onMessage: config.onMessage,
   });
 
   return (
