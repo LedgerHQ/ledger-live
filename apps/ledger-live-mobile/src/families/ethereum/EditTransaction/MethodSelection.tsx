@@ -181,23 +181,23 @@ export function MethodSelection({ navigation, route }: Props) {
       <Flex p={6}>
         <SelectableList onChange={onSelect}>
           {options.map(editOption => {
-            const cancelEnabled = editOption.disabledFn(account, currency);
+            const isEnabled = editOption.disabledFn(account, currency);
 
             return (
               <SelectableList.Element
-                disabled={!cancelEnabled}
+                disabled={!isEnabled}
                 value={editOption.value}
               >
                 <Trans i18nKey={editOption.i18nKey} />
                 <Flex>
                   <LText style={{ marginTop: 15, marginBottom: 0 }}>
-                    <Trans
+                    {/* <Trans
                       i18nKey={
                         editOption.value === "speedup"
                           ? "editTransaction.resubmitTxDescription"
                           : "editTransaction.cancelTxDescription"
                       }
-                    />
+                    /> */}
                   </LText>
                 </Flex>
               </SelectableList.Element>
