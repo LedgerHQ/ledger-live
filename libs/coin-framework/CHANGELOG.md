@@ -1,5 +1,11 @@
 # @ledgerhq/coin-framework
 
+## 0.1.1-nightly.0
+
+### Patch Changes
+
+- [#2779](https://github.com/LedgerHQ/ledger-live/pull/2779) [`297d6cc4a0`](https://github.com/LedgerHQ/ledger-live/commit/297d6cc4a03444fce5272f192accc96fb7f26cef) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - add edit transaction helper and env variable
+
 ## 0.1.0
 
 ### Minor Changes

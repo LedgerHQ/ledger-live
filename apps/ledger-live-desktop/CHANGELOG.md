@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.55.0-nightly.3
+
+### Patch Changes
+
+- [#2851](https://github.com/LedgerHQ/ledger-live/pull/2851) [`bea3513e28`](https://github.com/LedgerHQ/ledger-live/commit/bea3513e28a519f1fc4fb9f3e7d2e4760f85f3ec) Thanks [@gre](https://github.com/gre)! - exchangeBulk renderer execution to properly be interruptable.
+
+- Updated dependencies [[`47e3ef84ba`](https://github.com/LedgerHQ/ledger-live/commit/47e3ef84bad0e93d6f1d8f921b3fb2aa04240065), [`24bc5674d2`](https://github.com/LedgerHQ/ledger-live/commit/24bc5674d28009a032bb421e20f7a480b0557e29), [`a87ee27900`](https://github.com/LedgerHQ/ledger-live/commit/a87ee27900ec062bccc0e4cf453b4d2112f83ada), [`297d6cc4a0`](https://github.com/LedgerHQ/ledger-live/commit/297d6cc4a03444fce5272f192accc96fb7f26cef)]:
+  - @ledgerhq/live-common@29.1.0-nightly.1
+
 ## 2.55.0-nightly.2
 
 ### Patch Changes
