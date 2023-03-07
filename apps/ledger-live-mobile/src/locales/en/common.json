@@ -3480,6 +3480,7 @@
   },
   "editTransaction": {
     "header": "Edit Transaction",
+    "speedup": "Speed Up",
     "stuckTx": "Your most recent 'send' transaction is stuck. Speed up the transaction with a higher network fee or cancel it.",
     "speedupTxMessage": "Your transaction is ongoing. You can speed it up with a higher network fee or cancel it.",
     "speedupOrCancel": "Speed up or Cancel",
