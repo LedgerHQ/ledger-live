@@ -8,8 +8,6 @@ import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 import { MethodSelection } from "../../families/ethereum/EditTransaction/MethodSelection";
 import { EthereumEditTransactionParamList } from "./types/EthereumEditTransactionNavigator";
-import { SpeedupTransaction } from "../../families/ethereum/EditTransaction/Speedup";
-import { CancelTransaction } from "../../families/ethereum/EditTransaction/Cancel";
 import SendSummary from "../../screens/SendFunds/04-Summary";
 import SelectDevice from "../../screens/SelectDevice";
 import SendConnectDevice from "../../screens/ConnectDevice";
@@ -35,21 +33,6 @@ export default function EditTransactionNavigator() {
           headerTitle: () => <StepHeader title={t("editTransaction.header")} />,
         }}
       />
-      <Stack.Screen
-        name={ScreenName.SpeedUpTransaction}
-        component={SpeedupTransaction}
-        options={{
-          headerTitle: () => <StepHeader title={t("editTransaction.header")} />,
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.CancelTransaction}
-        component={CancelTransaction}
-        options={{
-          headerTitle: () => <StepHeader title={t("editTransaction.header")} />,
-        }}
-      />
-
       <Stack.Screen
         name={ScreenName.SendSummary}
         component={SendSummary}
