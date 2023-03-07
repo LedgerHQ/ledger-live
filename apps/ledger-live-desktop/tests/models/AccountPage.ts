@@ -24,7 +24,7 @@ export class AccountPage {
   }
 
   async startStakingFlowFromMainStakeButton() {
-    await this.stakeBannerButton.click();
+    await this.stakeButton.click();
   }
 
   async clickBannerCTA() {
