@@ -134,12 +134,12 @@ const BleDevicesScanning = ({
 
   // This error should never happen if this component is wrapped around a RequiresBLE component.
   if (locationDisabledError) {
-    return <LocationDisabled hasBackButton />;
+    return <LocationDisabled />;
   }
 
   // This error should never happen if this component is wrapped around a RequiresBLE component.
   if (locationUnauthorizedError) {
-    return <LocationPermissionDenied hasBackButton />;
+    return <LocationPermissionDenied />;
   }
 
   return (
