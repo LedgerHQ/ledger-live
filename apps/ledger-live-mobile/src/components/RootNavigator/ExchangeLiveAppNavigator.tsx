@@ -36,6 +36,7 @@ const ExchangeBuy = (
           account: _props.route.params?.defaultAccountId,
         },
       }}
+      config={{ shouldDisplayBackToLiveApp: true }}
     />
   );
 };
@@ -63,6 +64,7 @@ const ExchangeSell = (
           account: _props.route.params?.defaultAccountId,
         },
       }}
+      config={{ shouldDisplayBackToLiveApp: true }}
     />
   );
 };

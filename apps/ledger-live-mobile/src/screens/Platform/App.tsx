@@ -16,16 +16,24 @@ import { ScreenName } from "../../const";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { ExchangeNavigatorParamList } from "../../components/RootNavigator/types/ExchangeNavigator";
+import { WebPlatformPlayerConfig } from "../../components/WebPlatformPlayer/types";
 
 const appManifestNotFoundError = new Error("App not found"); // FIXME move this elsewhere.
-type Props =
-  | StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.PlatformApp>
-  | StackNavigatorProps<
-      ExchangeNavigatorParamList,
-      ScreenName.ExchangeBuy | ScreenName.ExchangeSell
-    >;
 
-const PlatformApp = ({ route }: Props) => {
+type Config = {
+  config?: WebPlatformPlayerConfig;
+};
+
+type Props = Config &
+  (
+    | StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.PlatformApp>
+    | StackNavigatorProps<
+        ExchangeNavigatorParamList,
+        ScreenName.ExchangeBuy | ScreenName.ExchangeSell
+      >
+  );
+
+const PlatformApp = ({ route, config }: Props) => {
   const { theme } = useTheme();
   const { platform: appId, ...params } = route.params || {};
   const { setParams } = useNavigation<Props["navigation"]>();
@@ -52,6 +60,7 @@ const PlatformApp = ({ route }: Props) => {
           lang: locale,
           ...params,
         }}
+        config={config}
       />
     </>
   ) : (

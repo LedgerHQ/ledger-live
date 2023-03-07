@@ -73,12 +73,14 @@ import {
   StackNavigatorNavigation,
 } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
+import { WebPlatformPlayerConfig } from "./types";
 
 const tracking = trackingWrapper(track);
 
 type Props = {
   manifest: LiveAppManifest;
   inputs?: Record<string, string>;
+  config?: WebPlatformPlayerConfig;
 };
 
 const ReloadButton = ({
@@ -124,7 +126,7 @@ const InfoPanelButton = ({
   );
 };
 
-export const WebView = ({ manifest, inputs }: Props) => {
+export const WebView = ({ manifest, inputs, config = {} }: Props) => {
   const targetRef: {
     current: null | RNWebView;
   } = useRef(null);
@@ -136,9 +138,9 @@ export const WebView = ({ manifest, inputs }: Props) => {
         StackNavigatorNavigation<BaseNavigatorStackParamList>
       >
     >();
-  const { displayBackToManifestApp } = manifest;
-  const lastManifestAppURL = useRef("");
-  const [isManifestAppURL, setIsManifestAppURL] = useState(true);
+  const { shouldDisplayBackToLiveApp } = config;
+  const lastliveAppURL = useRef("");
+  const [isLiveAppURL, setIsLiveAppURL] = useState(true);
   const [loadDate, setLoadDate] = useState(new Date());
   const [widgetLoaded, setWidgetLoaded] = useState(false);
   const [isInfoPanelOpened, setIsInfoPanelOpened] = useState(false);
@@ -593,23 +595,23 @@ export const WebView = ({ manifest, inputs }: Props) => {
     tracking.platformLoadFail(manifest);
   }, [manifest]);
 
-  const handleNavigateBackToManifestApp = () => {
-    const redirectTo = `window.location = "${lastManifestAppURL.current}"`;
+  const handleNavigateBackToliveApp = () => {
+    const redirectTo = `window.location = "${lastliveAppURL.current}"`;
     targetRef.current && targetRef.current.injectJavaScript(redirectTo);
   };
 
   const handleOnNavigationStateChange = ({ url }: { url: string }) => {
     const manifestHostname = new URL(manifest.url).hostname;
     const isOriginUrl = url.includes(manifestHostname);
-    if (isOriginUrl) lastManifestAppURL.current = url;
-    setIsManifestAppURL(isOriginUrl);
+    if (isOriginUrl) lastliveAppURL.current = url;
+    setIsLiveAppURL(isOriginUrl);
   };
 
   useEffect(() => {
     navigation.setOptions(
-      displayBackToManifestApp
+      shouldDisplayBackToLiveApp
         ? {
-            headerTitle: isManifestAppURL ? manifest.name : "",
+            headerTitle: isLiveAppURL ? manifest.name : "",
             headerRight: () => (
               <View style={styles.headerRightLedgerLiveApp}>
                 <TouchableOpacity
@@ -625,10 +627,10 @@ export const WebView = ({ manifest, inputs }: Props) => {
             ),
             headerLeft: () => (
               <View style={styles.headerLeftLedgerLiveApp}>
-                {!isManifestAppURL && (
+                {!isLiveAppURL && (
                   <Flex alignItems={"center"}>
                     <Text
-                      onPress={handleNavigateBackToManifestApp}
+                      onPress={handleNavigateBackToliveApp}
                       fontWeight="semiBold"
                       fontSize={16}
                       color="neutral.c100"
@@ -658,8 +660,8 @@ export const WebView = ({ manifest, inputs }: Props) => {
     widgetLoaded,
     handleReload,
     isInfoPanelOpened,
-    displayBackToManifestApp,
-    isManifestAppURL,
+    shouldDisplayBackToLiveApp,
+    isLiveAppURL,
     manifest,
     t,
   ]);
