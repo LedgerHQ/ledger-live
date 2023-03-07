@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import invariant from "invariant";
 import { Trans } from "react-i18next";
 import BigNumber from "bignumber.js";
@@ -43,10 +43,6 @@ export function MethodSelection({ navigation, route }: Props) {
   const currency = getAccountCurrency(account);
 
   invariant(transaction, "Could not edit the latest ethereum transaction");
-
-  if (!transaction) {
-    return null;
-  }
 
   const bridge = getAccountBridge(account, parentAccount as Account);
 
@@ -147,13 +143,6 @@ export function MethodSelection({ navigation, route }: Props) {
           bridge.updateTransaction(transaction, transactionToEdit),
         );
 
-        navigation.navigate(ScreenName.SendSelectDevice, {
-          accountId: account.id,
-          parentId: parentAccount?.id,
-          transaction,
-          status,
-        });
-
         break;
 
       case "speedup":
@@ -172,6 +161,20 @@ export function MethodSelection({ navigation, route }: Props) {
     }
   };
 
+  useEffect(() => {
+    if (transaction.amount.eq(0)) {
+      navigation.navigate(ScreenName.SendSelectDevice, {
+        accountId: account.id,
+        parentId: parentAccount?.id,
+        transaction,
+        status,
+      });
+    }
+  }, [transaction, onSelect]);
+
+  if (!transaction) {
+    return null;
+  }
   return (
     <Flex flex={1} color="background.main">
       <TrackScreen
