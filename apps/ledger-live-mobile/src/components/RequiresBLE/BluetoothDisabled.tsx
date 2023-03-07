@@ -1,32 +1,28 @@
 import React, { useCallback } from "react";
 import { Linking, Platform } from "react-native";
-import { IconBox, Icons } from "@ledgerhq/native-ui";
+import { Icon } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import { BluetoothMedium } from "@ledgerhq/native-ui/assets/icons";
-import ServiceDisabledView from "../ServiceDisabledView";
 import InformationalMessageDrawerContent from "../InformationalMessageDrawerContent";
+import GenericInformationalView from "../GenericInformationalView";
 
 export type Props = {
-  hasBackButton?: boolean;
   onRetry?: (() => void) | null;
-  openSettings?: boolean;
+  forceOpenSettings?: boolean;
   componentType?: "drawer" | "view";
 };
 
 /**
  * Renders a component that informs the user that they have disabled their bluetooth service.
  *
- * @param onRetry A callback for the user to retry enabling the service. If undefined or if openSettings is true,
+ * @param onRetry A callback for the user to retry enabling the service. If undefined or if forceOpenSettings is true,
  *   the user will be prompted to open the native settings.
- * @param hasBackButton If true, a back button will be displayed in the header. Default to false.
- * @param openSettings Used for debug purposes. If true pressing the button will make the user go to the settings. Defaults to false.
+ * @param forceOpenSettings Used mainly for debug purposes. If true pressing the button will make the user go to the settings. Defaults to false.
  * @param componentType If "drawer", the component will be rendered as a content to be rendered in a drawer.
  *   If "view", the component will be rendered as a view. Defaults to "view".
  */
 const BluetoothDisabled: React.FC<Props> = ({
   onRetry,
-  hasBackButton = false,
-  openSettings = false,
+  forceOpenSettings = false,
   componentType = "view",
 }) => {
   const { t } = useTranslation();
@@ -38,13 +34,11 @@ const BluetoothDisabled: React.FC<Props> = ({
   }, []);
 
   let onButtonPress;
-  let ButtonIcon;
   let buttonLabel;
   let buttonEvent;
 
-  if (!onRetry || openSettings) {
+  if (!onRetry || forceOpenSettings) {
     onButtonPress = openNativeBluetoothServiceSettings;
-    ButtonIcon = Icons.SettingsMedium;
     buttonLabel = t("bluetooth.openSettings");
     buttonEvent = "BluetoothServiceDisabledOpenSettings";
   } else {
@@ -67,15 +61,13 @@ const BluetoothDisabled: React.FC<Props> = ({
   }
 
   return (
-    <ServiceDisabledView
+    <GenericInformationalView
       title={t("bluetooth.required")}
-      TitleIcon={<IconBox Icon={BluetoothMedium} iconSize={24} boxSize={64} />}
+      icon={<Icon name="Bluetooth" size={30} color="neutral.c100" />}
       description={t("bluetooth.checkEnabled")}
-      hasBackButton={hasBackButton}
-      ButtonIcon={ButtonIcon}
-      buttonLabel={buttonLabel}
-      onButtonPress={onButtonPress}
-      buttonEvent={buttonEvent}
+      primaryButtonLabel={buttonLabel}
+      onPrimaryButtonPress={onButtonPress}
+      primaryButtonEvent={buttonEvent}
     />
   );
 };

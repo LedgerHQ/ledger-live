@@ -7,8 +7,7 @@ import AndroidRequiresLocationEnabled from "../RequiresLocation/AndroidRequiresL
 
 type Props = {
   children?: React.ReactNode;
-  hasBackButtonOnError?: boolean;
-  openSettingsOnErrorButton?: boolean;
+  forceOpenSettingsOnErrorButton?: boolean;
 };
 
 /**
@@ -16,34 +15,29 @@ type Props = {
  * Otherwise, renders a relevant error component.
  *
  * @param children The children to render if bluetooth (and location on Android) has the correct granted permissions and is enabled
- * @param hasBackButtonOnError If true, the back button will be displayed on the different error component
- * @param openSettingsOnErrorButton Used for debug purposes. If true, on a permission denied or service disabled,
+ * @param hasBackButtonOnError If true, the back button will be displayed on the different error component. Default to false.
+ * @param forceOpenSettingsOnErrorButton Used mainly for debug purposes. If true, on a permission denied or service disabled,
  *   pressing the button on the error component will make the user go to the settings.
  *   Otherwise it will try to prompt the user (to allow permission, or enable the service) if possible.
  *   Defaults to false.
  */
 const RequiresBLE: React.FC<Props> = ({
   children,
-  hasBackButtonOnError = false,
-  openSettingsOnErrorButton = false,
+  forceOpenSettingsOnErrorButton = false,
 }) => {
   if (Platform.OS === "android") {
     return (
       <AndroidRequiresBluetoothPermissions
-        hasBackButtonOnDenied={hasBackButtonOnError}
-        openSettingsOnErrorButton={openSettingsOnErrorButton}
+        forceOpenSettingsOnErrorButton={forceOpenSettingsOnErrorButton}
       >
         <AndroidRequiresLocationPermission
-          hasBackButtonOnDenied={hasBackButtonOnError}
-          openSettingsOnErrorButton={openSettingsOnErrorButton}
+          forceOpenSettingsOnErrorButton={forceOpenSettingsOnErrorButton}
         >
           <AndroidRequiresLocationEnabled
-            hasBackButtonOnError={hasBackButtonOnError}
-            openSettingsOnErrorButton={openSettingsOnErrorButton}
+            forceOpenSettingsOnErrorButton={forceOpenSettingsOnErrorButton}
           >
             <RequiresBluetoothEnabled
-              hasBackButtonOnError={hasBackButtonOnError}
-              openSettingsOnErrorButton={openSettingsOnErrorButton}
+              forceOpenSettingsOnErrorButton={forceOpenSettingsOnErrorButton}
             >
               {children}
             </RequiresBluetoothEnabled>
@@ -56,8 +50,7 @@ const RequiresBLE: React.FC<Props> = ({
   // On iOS, only Bluetooth service is needed. Its permission is directly handled by `RequiresBluetoothEnabled`.
   return (
     <RequiresBluetoothEnabled
-      hasBackButtonOnError={hasBackButtonOnError}
-      openSettingsOnErrorButton={openSettingsOnErrorButton}
+      forceOpenSettingsOnErrorButton={forceOpenSettingsOnErrorButton}
     >
       {children}
     </RequiresBluetoothEnabled>

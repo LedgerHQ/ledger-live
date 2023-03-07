@@ -47,7 +47,7 @@ type NavigationProps = RootComposite<
 export default function PairDevices(props: NavigationProps) {
   const { colors } = useTheme();
   return (
-    <RequiresBLE hasBackButtonOnError={false}>
+    <RequiresBLE>
       <SafeAreaView
         style={[
           styles.root,

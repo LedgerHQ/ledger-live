@@ -4,8 +4,7 @@ import LocationPermissionDenied from "./LocationPermissionDenied";
 
 type Props = {
   children?: ReactNode | undefined;
-  hasBackButtonOnDenied?: boolean;
-  openSettingsOnErrorButton?: boolean;
+  forceOpenSettingsOnErrorButton?: boolean;
 };
 
 /**
@@ -15,15 +14,13 @@ type Props = {
  * Should only be used for Android.
  *
  * @param children The children to render if bluetooth has its associated permissions granted
- * @param hasBackButtonOnDenied If true, the back button will be displayed on the permission denied screen. Defaults to false.
- * @param openSettingsOnErrorButton Used for debug purposes. If true, on a permission denied, pressing the button on
+ * @param forceOpenSettingsOnErrorButton Used mainly for debug purposes. If true, on a permission denied, pressing the button on
  *   the error component will make the user go to the settings. Otherwise it will try to prompt the user to allow permission
  *   if possible. Defaults to false.
  */
 const AndroidRequiresLocationPermission: React.FC<Props> = ({
   children,
-  hasBackButtonOnDenied = false,
-  openSettingsOnErrorButton = false,
+  forceOpenSettingsOnErrorButton = false,
 }) => {
   const { hasPermission, neverAskAgain, requestForPermissionAgain } =
     useAndroidLocationPermission();
@@ -36,8 +33,7 @@ const AndroidRequiresLocationPermission: React.FC<Props> = ({
     <LocationPermissionDenied
       neverAskAgain={neverAskAgain}
       onRetry={requestForPermissionAgain}
-      hasBackButton={hasBackButtonOnDenied}
-      openSettings={openSettingsOnErrorButton}
+      forceOpenSettings={forceOpenSettingsOnErrorButton}
     />
   );
 };

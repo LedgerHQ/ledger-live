@@ -67,6 +67,7 @@ const GenericInformationalView: React.FC<Props> = ({
         {subTitle ? (
           <Text
             variant={"bodyLineHeight"}
+            textAlign="center"
             color="neutral.c70"
             numberOfLines={3}
             mb={6}
@@ -103,61 +104,6 @@ const GenericInformationalView: React.FC<Props> = ({
       </Flex>
     </Flex>
   );
-
-  // return (
-  //   <SafeAreaContainer>
-  //     <Flex
-  //       px={6}
-  //       mt={8}
-  //       height={64}
-  //       flexDirection="row"
-  //       justifyContent="space-between"
-  //       alignItems="center"
-  //     >
-  //       {hasBackButton ? (
-  //         <Flex>
-  //           <TouchableOpacity onPress={handleBack}>
-  //             <ArrowLeftMedium size={24} />
-  //           </TouchableOpacity>
-  //         </Flex>
-  //       ) : null}
-  //     </Flex>
-  //     <Flex alignItems="center" justifyContent="center" flex={1} mx={6}>
-  //       {icon}
-  //       <Text variant={"h2"} mb={5} mt={7} textAlign="center">
-  //         {title}
-  //       </Text>
-  //       <Text
-  //         mb={10}
-  //         variant={"body"}
-  //         fontWeight={"medium"}
-  //         textAlign="center"
-  //         color={"neutral.c80"}
-  //       >
-  //         {description}
-  //       </Text>
-  //       <Text variant={"h3"} mb={8} mt={24} px={20} textAlign="center">
-  //         {subTitle}
-  //       </Text>
-  //       <Flex alignSelf="stretch" mb={24} px={36}>
-  //         <Button
-  //           type="main"
-  //           onPress={onPrimaryButtonPress}
-  //           outline
-  //           iconPosition="left"
-  //           event={primaryButtonEvent}
-  //         >
-  //           {primaryButtonLabel}
-  //         </Button>
-  //       </Flex>
-  //     </Flex>
-  //   </SafeAreaContainer>
-  // );
 };
 
 export default GenericInformationalView;
-
-// const SafeAreaContainer = styled.SafeAreaView`
-//   flex: 1;
-//   background-color: ${p => p.theme.colors.background.main};
-// `;
