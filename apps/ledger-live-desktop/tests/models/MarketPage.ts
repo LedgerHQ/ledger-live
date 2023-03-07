@@ -33,7 +33,6 @@ export class MarketPage {
       page.locator(`data-test-id=market-${ticker}-swap-button`);
     this.stakeButton = (ticker: string): Locator =>
       page.locator(`data-test-id=market-${ticker}-stake-button`);
-    this.coinPageStakeButton = page.locator(`data-test-id="market-coin-stake-button`);
   }
 
   async search(query: string) {

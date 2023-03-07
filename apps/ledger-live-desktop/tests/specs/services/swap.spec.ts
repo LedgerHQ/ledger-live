@@ -233,6 +233,7 @@ test.describe.parallel("Swap", () => {
       await swapPage.selectAdvancedFees();
       await swapPage.enterCustomFee("5");
       await drawer.close();
+      await layout.waitForLoadingSpinnerToHaveDisappeared();
       await expect.soft(page).toHaveScreenshot("custom-fee-set-for-swap.png");
     });
 
