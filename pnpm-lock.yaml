@@ -1099,8 +1099,14 @@ importers:
       '@babel/core': ^7.12.9
       '@babel/plugin-proposal-export-namespace-from': ^7.18.9
       '@babel/plugin-transform-named-capturing-groups-regex': ^7.16.8
+<<<<<<< HEAD
       '@babel/preset-env': ^7.15.8
       '@babel/preset-react': ^7.13.13
+=======
+      '@babel/preset-flow': ^7.13.13
+      '@babel/preset-react': ^7.13.13
+      '@babel/preset-typescript': ^7.15.0
+>>>>>>> daa8f8d6ef (wip)
       '@babel/runtime': ^7.12.5
       '@formatjs/intl-datetimeformat': ^5.0.0
       '@formatjs/intl-getcanonicallocales': ^1.9.1
@@ -1983,8 +1989,14 @@ importers:
       '@actions/core': 1.8.0
       '@babel/core': 7.17.10
       '@babel/plugin-proposal-export-namespace-from': 7.18.9_@babel+core@7.17.10
+<<<<<<< HEAD
       '@babel/preset-env': 7.17.10_@babel+core@7.17.10
       '@babel/preset-react': 7.16.7_@babel+core@7.17.10
+=======
+      '@babel/preset-flow': 7.16.7_@babel+core@7.17.10
+      '@babel/preset-react': 7.16.7_@babel+core@7.17.10
+      '@babel/preset-typescript': 7.16.7_@babel+core@7.17.10
+>>>>>>> daa8f8d6ef (wip)
       '@babel/runtime': 7.17.9
       '@jest/reporters': 29.3.1_metro@0.67.0
       '@react-native-community/eslint-config': 2.0.0_v6wlzenavrjogo6kc2ozkcrtlu
@@ -6764,7 +6776,91 @@ packages:
     dependencies:
       '@babel/compat-data': 7.20.14
       '@babel/core': 7.17.10
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-validator-option': 7.21.0
+=======
+>>>>>>> c98cf04388 (wip)
       '@babel/helper-validator-option': 7.18.6
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-validator-option': 7.21.0
+>>>>>>> 09e161a064 (wip)
+      browserslist: 4.21.3
+      semver: 6.3.0
+
+  /@babel/helper-compilation-targets/7.17.10_@babel+core@7.20.12:
+    resolution: {integrity: sha512-gh3RxjWbauw/dFiU/7whjd0qN9K6nPJMqe6+Er7rOavFh0CQUSwhAE3IcTho2rywPJFxej6TUUHDkWcYI6gGqQ==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0
+    dependencies:
+      '@babel/compat-data': 7.20.14
+      '@babel/core': 7.20.12
+<<<<<<< HEAD
+      '@babel/helper-validator-option': 7.21.0
+=======
+      '@babel/helper-validator-option': 7.18.6
+      browserslist: 4.21.3
+      semver: 6.3.0
+
+  /@babel/helper-compilation-targets/7.18.9:
+    resolution: {integrity: sha512-tzLCyVmqUiFlcFoAPLA/gL9TeYrF61VLNtb+hvkuVaB5SUjW7jcfrglBIX1vUIoT7CLP3bBlIMeyEsIl2eFQNg==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0
+    dependencies:
+      '@babel/compat-data': 7.20.14
+      '@babel/helper-validator-option': 7.21.0
+      browserslist: 4.21.3
+      semver: 6.3.0
+
+  /@babel/helper-compilation-targets/7.18.9_@babel+core@7.17.10:
+    resolution: {integrity: sha512-tzLCyVmqUiFlcFoAPLA/gL9TeYrF61VLNtb+hvkuVaB5SUjW7jcfrglBIX1vUIoT7CLP3bBlIMeyEsIl2eFQNg==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0
+    dependencies:
+      '@babel/compat-data': 7.20.14
+      '@babel/core': 7.17.10
+      '@babel/helper-validator-option': 7.21.0
+      browserslist: 4.21.3
+      semver: 6.3.0
+
+  /@babel/helper-compilation-targets/7.18.9_@babel+core@7.20.12:
+    resolution: {integrity: sha512-tzLCyVmqUiFlcFoAPLA/gL9TeYrF61VLNtb+hvkuVaB5SUjW7jcfrglBIX1vUIoT7CLP3bBlIMeyEsIl2eFQNg==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0
+    dependencies:
+      '@babel/compat-data': 7.20.14
+      '@babel/core': 7.20.12
+      '@babel/helper-validator-option': 7.21.0
+      browserslist: 4.21.3
+      semver: 6.3.0
+
+  /@babel/helper-compilation-targets/7.18.9_@babel+core@7.9.0:
+    resolution: {integrity: sha512-tzLCyVmqUiFlcFoAPLA/gL9TeYrF61VLNtb+hvkuVaB5SUjW7jcfrglBIX1vUIoT7CLP3bBlIMeyEsIl2eFQNg==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0
+    dependencies:
+      '@babel/compat-data': 7.20.14
+      '@babel/core': 7.9.0
+<<<<<<< HEAD
+      '@babel/helper-validator-option': 7.18.6
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-validator-option': 7.21.0
+>>>>>>> bd77c4e48b (fix merge conflict in env.ts)
+>>>>>>> 01b7787564 (fix merge conflict in env.ts)
+>>>>>>> daa8f8d6ef (wip)
       browserslist: 4.21.3
       semver: 6.3.0
 
@@ -6867,6 +6963,7 @@ packages:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       '@babel/helper-validator-option': 7.21.0
 =======
       '@babel/helper-validator-option': 7.18.6
@@ -6880,8 +6977,17 @@ packages:
 =======
       '@babel/helper-validator-option': 7.18.6
 >>>>>>> 1c5dc2b62d (can run tests)
+<<<<<<< HEAD
 >>>>>>> 33c8d6c820 (can run tests)
+<<<<<<< HEAD
 >>>>>>> b3cb8d10d6 (can run tests)
+=======
+=======
+=======
+      '@babel/helper-validator-option': 7.21.0
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
+>>>>>>> daa8f8d6ef (wip)
       browserslist: 4.21.3
       lru-cache: 5.1.1
       semver: 6.3.0
@@ -8288,7 +8394,19 @@ packages:
       '@babel/core': ^7.0.0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-bugfix-safari-id-destructuring-collision-in-function-expression@7.16.7(@babel/core@7.20.12):
     resolution: {integrity: sha512-anv/DObl7waiGEnC24O9zqL0pSuI9hljihqiDuFHC8d7/bjr/4RLGPWuc8rYOff/QPzbEPSkzG8wGG9aDuhHRg==}
@@ -8306,7 +8424,19 @@ packages:
       '@babel/core': ^7.13.0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+      '@babel/helper-skip-transparent-expression-wrappers': 7.20.0
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
       '@babel/helper-skip-transparent-expression-wrappers': 7.16.0
       '@babel/plugin-proposal-optional-chaining': 7.16.7(@babel/core@7.17.10)
 
@@ -8328,7 +8458,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
       '@babel/helper-remap-async-to-generator': 7.16.8
       '@babel/plugin-syntax-async-generators': 7.8.4(@babel/core@7.17.10)
     transitivePeerDependencies:
@@ -8372,8 +8514,12 @@ packages:
       '@babel/helper-plugin-utils': 7.20.2
 =======
       '@babel/helper-create-class-features-plugin': 7.17.9_@babel+core@7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.16.7
 >>>>>>> 994ac36dce (resolve merge conflicts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 5dc4ffd9d4 (wip)
     transitivePeerDependencies:
       - supports-color
 
@@ -8389,8 +8535,12 @@ packages:
       '@babel/helper-plugin-utils': 7.20.2
 =======
       '@babel/helper-create-class-features-plugin': 7.17.9_@babel+core@7.20.12
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.16.7
 >>>>>>> 994ac36dce (resolve merge conflicts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 5dc4ffd9d4 (wip)
     transitivePeerDependencies:
       - supports-color
 
@@ -8445,9 +8595,24 @@ packages:
       '@babel/core': ^7.12.0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-create-class-features-plugin': 7.17.9(@babel/core@7.17.10)
       '@babel/helper-plugin-utils': 7.20.2
       '@babel/plugin-syntax-class-static-block': 7.14.5(@babel/core@7.17.10)
+=======
+      '@babel/helper-create-class-features-plugin': 7.17.9_@babel+core@7.17.10
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
+      '@babel/plugin-syntax-class-static-block': 7.14.5_@babel+core@7.17.10
+>>>>>>> 5dc4ffd9d4 (wip)
     transitivePeerDependencies:
       - supports-color
 
@@ -8694,8 +8859,24 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+<<<<<<< HEAD
       '@babel/plugin-syntax-dynamic-import': 7.8.3(@babel/core@7.17.10)
+=======
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
+      '@babel/plugin-syntax-dynamic-import': 7.8.3_@babel+core@7.17.10
+>>>>>>> 5dc4ffd9d4 (wip)
 
   /@babel/plugin-proposal-dynamic-import@7.16.7(@babel/core@7.20.12):
     resolution: {integrity: sha512-I8SW9Ho3/8DRSdmDdH3gORdyUuYnk1m4cMxUAdu5oy4n3OfN8flDEH+d60iG7dUfi0KkYwSvoalHzzdRzpWHTg==}
@@ -8726,6 +8907,7 @@ packages:
       '@babel/core': 7.17.10
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.16.7
       '@babel/plugin-syntax-export-default-from': 7.16.7(@babel/core@7.17.10)
 =======
@@ -8733,6 +8915,9 @@ packages:
 =======
       '@babel/helper-plugin-utils': 7.16.7
 >>>>>>> 994ac36dce (resolve merge conflicts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 5dc4ffd9d4 (wip)
       '@babel/plugin-syntax-export-default-from': 7.16.7_@babel+core@7.17.10
 >>>>>>> 6ce772fce2 (pdate lockfile)
 
@@ -8744,7 +8929,11 @@ packages:
     dependencies:
       '@babel/core': 7.20.12
       '@babel/helper-plugin-utils': 7.20.2
+<<<<<<< HEAD
       '@babel/plugin-syntax-export-default-from': 7.16.7(@babel/core@7.20.12)
+=======
+      '@babel/plugin-syntax-export-default-from': 7.16.7_@babel+core@7.20.12
+>>>>>>> 5dc4ffd9d4 (wip)
 
   /@babel/plugin-proposal-export-namespace-from@7.16.7(@babel/core@7.17.10):
     resolution: {integrity: sha512-ZxdtqDXLRGBL64ocZcs7ovt71L3jhC1RGSyR996svrCi3PYqHNkb3SwPJCs8RIzD86s+WPpt2S73+EHCGO+NUA==}
@@ -8754,10 +8943,14 @@ packages:
     dependencies:
       '@babel/core': 7.17.10
 <<<<<<< HEAD
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
       '@babel/plugin-syntax-export-namespace-from': 7.8.3(@babel/core@7.17.10)
 =======
       '@babel/helper-plugin-utils': 7.16.7
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 5dc4ffd9d4 (wip)
       '@babel/plugin-syntax-export-namespace-from': 7.8.3_@babel+core@7.17.10
 >>>>>>> 994ac36dce (resolve merge conflicts)
     dev: true
@@ -8789,8 +8982,24 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+<<<<<<< HEAD
       '@babel/plugin-syntax-json-strings': 7.8.3(@babel/core@7.17.10)
+=======
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
+      '@babel/plugin-syntax-json-strings': 7.8.3_@babel+core@7.17.10
+>>>>>>> 5dc4ffd9d4 (wip)
 
   /@babel/plugin-proposal-json-strings@7.16.7(@babel/core@7.20.12):
     resolution: {integrity: sha512-lNZ3EEggsGY78JavgbHsK9u5P3pQaW7k4axlgFLYkMd7UBsiNahCITShLjNQschPyjtO6dADrL24757IdhBrsQ==}
@@ -8819,8 +9028,24 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+<<<<<<< HEAD
       '@babel/plugin-syntax-logical-assignment-operators': 7.10.4(@babel/core@7.17.10)
+=======
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
+      '@babel/plugin-syntax-logical-assignment-operators': 7.10.4_@babel+core@7.17.10
+>>>>>>> 5dc4ffd9d4 (wip)
 
   /@babel/plugin-proposal-logical-assignment-operators@7.16.7(@babel/core@7.20.12):
     resolution: {integrity: sha512-K3XzyZJGQCr00+EtYtrDjmwX7o7PLK6U9bi1nCwkQioRFVUv6dJoxbQjtWVtP+bCPy82bONBKG8NPyQ4+i6yjg==}
@@ -8945,8 +9170,24 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+<<<<<<< HEAD
       '@babel/plugin-syntax-numeric-separator': 7.10.4(@babel/core@7.17.10)
+=======
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
+      '@babel/plugin-syntax-numeric-separator': 7.10.4_@babel+core@7.17.10
+>>>>>>> 5dc4ffd9d4 (wip)
 
   /@babel/plugin-proposal-numeric-separator@7.16.7(@babel/core@7.20.12):
     resolution: {integrity: sha512-vQgPMknOIgiuVqbokToyXbkY/OmmjAzr/0lhSIbG/KmnzXPGwW/AdhdKpi+O4X/VkWiWjnkKOBiqJrTaC98VKw==}
@@ -8998,8 +9239,26 @@ packages:
       '@babel/core': 7.17.10
       '@babel/helper-compilation-targets': 7.20.7(@babel/core@7.17.10)
       '@babel/helper-plugin-utils': 7.20.2
+<<<<<<< HEAD
       '@babel/plugin-syntax-object-rest-spread': 7.8.3(@babel/core@7.17.10)
       '@babel/plugin-transform-parameters': 7.16.7(@babel/core@7.17.10)
+=======
+<<<<<<< HEAD
+=======
+=======
+      '@babel/compat-data': 7.17.10
+      '@babel/core': 7.17.10
+      '@babel/helper-compilation-targets': 7.18.9_@babel+core@7.17.10
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
+      '@babel/plugin-syntax-object-rest-spread': 7.8.3_@babel+core@7.17.10
+      '@babel/plugin-transform-parameters': 7.16.7_@babel+core@7.17.10
+>>>>>>> 5dc4ffd9d4 (wip)
 
   /@babel/plugin-proposal-object-rest-spread@7.17.3(@babel/core@7.20.12):
     resolution: {integrity: sha512-yuL5iQA/TbZn+RGAfxQXfi7CNLmKi1f8zInn4IgobuCWcAb7i+zj4TYzQ9l8cEzVyJ89PDGuqxK1xZpUDISesw==}
@@ -9011,8 +9270,26 @@ packages:
       '@babel/core': 7.20.12
       '@babel/helper-compilation-targets': 7.20.7(@babel/core@7.20.12)
       '@babel/helper-plugin-utils': 7.20.2
+<<<<<<< HEAD
       '@babel/plugin-syntax-object-rest-spread': 7.8.3(@babel/core@7.20.12)
       '@babel/plugin-transform-parameters': 7.16.7(@babel/core@7.20.12)
+=======
+<<<<<<< HEAD
+=======
+=======
+      '@babel/compat-data': 7.17.10
+      '@babel/core': 7.20.12
+      '@babel/helper-compilation-targets': 7.18.9_@babel+core@7.20.12
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
+      '@babel/plugin-syntax-object-rest-spread': 7.8.3_@babel+core@7.20.12
+      '@babel/plugin-transform-parameters': 7.16.7_@babel+core@7.20.12
+>>>>>>> 5dc4ffd9d4 (wip)
 
   /@babel/plugin-proposal-object-rest-spread@7.17.3(@babel/core@7.9.0):
     resolution: {integrity: sha512-yuL5iQA/TbZn+RGAfxQXfi7CNLmKi1f8zInn4IgobuCWcAb7i+zj4TYzQ9l8cEzVyJ89PDGuqxK1xZpUDISesw==}
@@ -9034,8 +9311,24 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+<<<<<<< HEAD
       '@babel/plugin-syntax-optional-catch-binding': 7.8.3(@babel/core@7.17.10)
+=======
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
+      '@babel/plugin-syntax-optional-catch-binding': 7.8.3_@babel+core@7.17.10
+>>>>>>> 5dc4ffd9d4 (wip)
 
   /@babel/plugin-proposal-optional-catch-binding@7.16.7(@babel/core@7.20.12):
     resolution: {integrity: sha512-eMOH/L4OvWSZAE1VkHbr1vckLG1WUcHGJSLqqQwl2GaUqG6QjddvrOaTUMNYiv77H5IKPMZ9U9P7EaHwvAShfA==}
@@ -9044,8 +9337,24 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+<<<<<<< HEAD
       '@babel/plugin-syntax-optional-catch-binding': 7.8.3(@babel/core@7.20.12)
+=======
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
+      '@babel/plugin-syntax-optional-catch-binding': 7.8.3_@babel+core@7.20.12
+>>>>>>> 5dc4ffd9d4 (wip)
 
   /@babel/plugin-proposal-optional-catch-binding@7.16.7(@babel/core@7.9.0):
     resolution: {integrity: sha512-eMOH/L4OvWSZAE1VkHbr1vckLG1WUcHGJSLqqQwl2GaUqG6QjddvrOaTUMNYiv77H5IKPMZ9U9P7EaHwvAShfA==}
@@ -9160,6 +9469,7 @@ packages:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 223bea10b6 (remove useless jest config props)
 =======
 <<<<<<< HEAD
@@ -9167,6 +9477,9 @@ packages:
 =======
 <<<<<<< HEAD
 >>>>>>> 994ac36dce (resolve merge conflicts)
+=======
+<<<<<<< HEAD
+>>>>>>> 5dc4ffd9d4 (wip)
       '@babel/helper-plugin-utils': 7.20.2
 =======
 =======
@@ -9190,6 +9503,9 @@ packages:
 =======
       '@babel/helper-plugin-utils': 7.16.7
 >>>>>>> 8335fa38c4 (resolve merge conflicts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> c98cf04388 (wip)
     transitivePeerDependencies:
       - supports-color
 
@@ -9227,6 +9543,7 @@ packages:
 <<<<<<< HEAD
       '@babel/helper-annotate-as-pure': 7.16.7
       '@babel/helper-create-class-features-plugin': 7.17.9_@babel+core@7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.16.7
 =======
 <<<<<<< HEAD
@@ -9263,6 +9580,9 @@ packages:
       '@babel/helper-create-class-features-plugin': 7.17.9_@babel+core@7.17.10
       '@babel/helper-plugin-utils': 7.16.7
 >>>>>>> 8335fa38c4 (resolve merge conflicts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> c98cf04388 (wip)
       '@babel/plugin-syntax-private-property-in-object': 7.14.5_@babel+core@7.17.10
 >>>>>>> 223bea10b6 (remove useless jest config props)
     transitivePeerDependencies:
@@ -9289,8 +9609,24 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-create-regexp-features-plugin': 7.17.0(@babel/core@7.17.10)
+=======
+      '@babel/helper-create-regexp-features-plugin': 7.17.0_@babel+core@7.17.10
+<<<<<<< HEAD
+>>>>>>> 5dc4ffd9d4 (wip)
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-proposal-unicode-property-regex@7.16.7(@babel/core@7.20.12):
     resolution: {integrity: sha512-QRK0YI/40VLhNVGIjRNAAQkEHws0cswSdFFjpFyt943YmJIU1da9uW63Iu6NFV6CxTZW5eTDCrwZUstBWgp/Rg==}
@@ -9318,7 +9654,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-syntax-async-generators@7.8.4(@babel/core@7.20.12):
     resolution: {integrity: sha512-tycmZxkGfZaxhMRbXlPXuVFpdWlXpir2W4AMhSJgRKzk/eDlIXOhb2LHWoLpDF7TEHylV5zNhykX6KAgHJmTNw==}
@@ -9326,7 +9674,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-syntax-async-generators@7.8.4(@babel/core@7.9.0):
     resolution: {integrity: sha512-tycmZxkGfZaxhMRbXlPXuVFpdWlXpir2W4AMhSJgRKzk/eDlIXOhb2LHWoLpDF7TEHylV5zNhykX6KAgHJmTNw==}
@@ -9386,7 +9746,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-syntax-class-static-block@7.14.5(@babel/core@7.20.12):
     resolution: {integrity: sha512-b+YyPmr6ldyNnM6sqYeMWE+bgJcJpO6yS4QD7ymxgH34GBPNDM/THBh8iunyvKIZztiwLH4CJZ0RxTk9emgpjw==}
@@ -9453,7 +9825,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
-      '@babel/helper-plugin-utils': 7.16.7
+      '@babel/helper-plugin-utils': 7.20.2
 
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -9496,7 +9868,27 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.18.9
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.18.9
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
+>>>>>>> daa8f8d6ef (wip)
+>>>>>>> 3ca6ac5d49 (wip)
 
   /@babel/plugin-syntax-export-default-from@7.16.7(@babel/core@7.20.12):
     resolution: {integrity: sha512-4C3E4NsrLOgftKaTYTULhHsuQrGv3FHrBzOMDiS7UYKIpgGBkAdawg4h+EI8zPeK9M0fiIIh72hIwsI24K7MbA==}
@@ -9517,6 +9909,7 @@ packages:
 <<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.18.9
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -9546,10 +9939,25 @@ packages:
 =======
       '@babel/helper-plugin-utils': 7.18.9
 >>>>>>> 728ca54dcd (resolve merge conflicts)
+<<<<<<< HEAD
 >>>>>>> 8335fa38c4 (resolve merge conflicts)
+<<<<<<< HEAD
 >>>>>>> 1378ea1f6f (resolve merge conflicts)
+<<<<<<< HEAD
 >>>>>>> 30e01362f4 (resolve merge conflicts)
+<<<<<<< HEAD
 >>>>>>> 994ac36dce (resolve merge conflicts)
+=======
+=======
+=======
+=======
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
+>>>>>>> daa8f8d6ef (wip)
+>>>>>>> 3ca6ac5d49 (wip)
+>>>>>>> 5dc4ffd9d4 (wip)
 
   /@babel/plugin-syntax-export-namespace-from@7.8.3(@babel/core@7.17.10):
     resolution: {integrity: sha512-MXf5laXo6c1IbEbegDmzGPwGNTsHZmEy6QGznu5Sh2UCWvueywb2ee+CCE4zQiZstxU9BMoQO9i6zUFSY0Kj0Q==}
@@ -9557,7 +9965,27 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.18.9
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.18.9
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
+>>>>>>> daa8f8d6ef (wip)
+>>>>>>> 3ca6ac5d49 (wip)
 
   /@babel/plugin-syntax-export-namespace-from@7.8.3(@babel/core@7.20.12):
     resolution: {integrity: sha512-MXf5laXo6c1IbEbegDmzGPwGNTsHZmEy6QGznu5Sh2UCWvueywb2ee+CCE4zQiZstxU9BMoQO9i6zUFSY0Kj0Q==}
@@ -9647,7 +10075,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
-      '@babel/helper-plugin-utils': 7.16.7
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-syntax-import-meta@7.10.4(@babel/core@7.20.12):
     resolution: {integrity: sha512-Yqfm+XDx0+Prh3VSeEQCPU81yC+JWZ2pDPFSS4ZdpfZhp4MkFMaDC1UqseovEKwSUpnIL7+vK+Clp7bfh0iD7g==}
@@ -9655,7 +10083,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
-      '@babel/helper-plugin-utils': 7.16.7
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-syntax-json-strings@7.8.3(@babel/core@7.17.10):
     resolution: {integrity: sha512-lY6kdGpWHvjoe2vk4WrAapEuBR69EMxZl+RoGRhrFGNYVK8mOPAW8VfbT/ZgrFbXlDNiiaxQnAtgVCZ6jv30EA==}
@@ -9663,7 +10091,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-syntax-json-strings@7.8.3(@babel/core@7.20.12):
     resolution: {integrity: sha512-lY6kdGpWHvjoe2vk4WrAapEuBR69EMxZl+RoGRhrFGNYVK8mOPAW8VfbT/ZgrFbXlDNiiaxQnAtgVCZ6jv30EA==}
@@ -9671,7 +10111,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-syntax-json-strings@7.8.3(@babel/core@7.9.0):
     resolution: {integrity: sha512-lY6kdGpWHvjoe2vk4WrAapEuBR69EMxZl+RoGRhrFGNYVK8mOPAW8VfbT/ZgrFbXlDNiiaxQnAtgVCZ6jv30EA==}
@@ -9723,7 +10175,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-syntax-logical-assignment-operators@7.10.4(@babel/core@7.20.12):
     resolution: {integrity: sha512-d8waShlpFDinQ5MtvGU9xDAOzKH47+FFoney2baFIoMr952hKOLp1HR7VszoZvOsV/4+RRszNY7D17ba0te0ig==}
@@ -9734,6 +10198,7 @@ packages:
 <<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -9753,7 +10218,13 @@ packages:
 =======
       '@babel/helper-plugin-utils': 7.18.9
 >>>>>>> 728ca54dcd (resolve merge conflicts)
+<<<<<<< HEAD
 >>>>>>> 8335fa38c4 (resolve merge conflicts)
+=======
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
 <<<<<<< HEAD
   /@babel/plugin-syntax-nullish-coalescing-operator@7.8.3(@babel/core@7.17.10):
@@ -9794,7 +10265,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-syntax-nullish-coalescing-operator@7.8.3(@babel/core@7.20.12):
     resolution: {integrity: sha512-aSff4zPII1u2QD7y+F8oDsz19ew4IGEJg9SVW+bqwpwtfFleiQDMdzA/R+UlWDzfnHFCxxleFT0PMIrR36XLNQ==}
@@ -9802,7 +10285,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-syntax-nullish-coalescing-operator@7.8.3(@babel/core@7.9.0):
     resolution: {integrity: sha512-aSff4zPII1u2QD7y+F8oDsz19ew4IGEJg9SVW+bqwpwtfFleiQDMdzA/R+UlWDzfnHFCxxleFT0PMIrR36XLNQ==}
@@ -9818,7 +10313,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-syntax-numeric-separator@7.10.4(@babel/core@7.20.12):
     resolution: {integrity: sha512-9H6YdfkcK/uOnY/K7/aA2xpzaAgkQn37yzWUMRK7OaPOqOpGS1+n0H5hxT9AUw9EsSjPW8SVyMJwYRtWs3X3ug==}
@@ -9826,7 +10333,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-syntax-numeric-separator@7.10.4(@babel/core@7.9.0):
     resolution: {integrity: sha512-9H6YdfkcK/uOnY/K7/aA2xpzaAgkQn37yzWUMRK7OaPOqOpGS1+n0H5hxT9AUw9EsSjPW8SVyMJwYRtWs3X3ug==}
@@ -9906,7 +10425,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-syntax-object-rest-spread@7.8.3(@babel/core@7.20.12):
     resolution: {integrity: sha512-XoqMijGZb9y3y2XskN+P1wUGiVwWZ5JmoDRwx5+3GmEplNyVM2s2Dg8ILFQm8rWM48orGy5YpI5Bl8U1y7ydlA==}
@@ -9914,7 +10445,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-syntax-object-rest-spread@7.8.3(@babel/core@7.9.0):
     resolution: {integrity: sha512-XoqMijGZb9y3y2XskN+P1wUGiVwWZ5JmoDRwx5+3GmEplNyVM2s2Dg8ILFQm8rWM48orGy5YpI5Bl8U1y7ydlA==}
@@ -9985,7 +10528,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-syntax-optional-catch-binding@7.8.3(@babel/core@7.20.12):
     resolution: {integrity: sha512-6VPD0Pc1lpTqw0aKoeRTMiB+kWhAoT24PA+ksWSBrFtl5SIRVpZlwN3NNPQjehA2E/91FV3RjLWoVTglWcSV3Q==}
@@ -9993,7 +10548,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-syntax-optional-catch-binding@7.8.3(@babel/core@7.9.0):
     resolution: {integrity: sha512-6VPD0Pc1lpTqw0aKoeRTMiB+kWhAoT24PA+ksWSBrFtl5SIRVpZlwN3NNPQjehA2E/91FV3RjLWoVTglWcSV3Q==}
@@ -10064,7 +10631,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-syntax-optional-chaining@7.8.3(@babel/core@7.20.12):
     resolution: {integrity: sha512-KoK9ErH1MBlCPxV0VANkXW2/dw4vlbGDrFgz8bmUsBGYkFRcbRwMh6cIJubdPrkxRwuGdtCk0v/wPTKbQgBjkg==}
@@ -10072,7 +10651,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-syntax-optional-chaining@7.8.3(@babel/core@7.9.0):
     resolution: {integrity: sha512-KoK9ErH1MBlCPxV0VANkXW2/dw4vlbGDrFgz8bmUsBGYkFRcbRwMh6cIJubdPrkxRwuGdtCk0v/wPTKbQgBjkg==}
@@ -10089,7 +10680,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-syntax-private-property-in-object@7.14.5(@babel/core@7.20.12):
     resolution: {integrity: sha512-0wVnp9dxJ72ZUJDV27ZfbSj6iHLoytYZmh3rFcxNnvsJF3ktkzLDZPy/mA17HGsaQT3/DQsWYX1f1QGWkCoVUg==}
@@ -10107,7 +10710,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-syntax-top-level-await@7.14.5(@babel/core@7.20.12):
     resolution: {integrity: sha512-hx++upLv5U1rgYfwe1xBQUhRmU41NEvpUvrp8jkrSCdvGSnM5/qdRMtylJ6PG5OFkBaHkbTAKTnd3/YyESRHFw==}
@@ -10116,7 +10731,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-syntax-top-level-await@7.14.5(@babel/core@7.9.0):
     resolution: {integrity: sha512-hx++upLv5U1rgYfwe1xBQUhRmU41NEvpUvrp8jkrSCdvGSnM5/qdRMtylJ6PG5OFkBaHkbTAKTnd3/YyESRHFw==}
@@ -10227,7 +10854,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-transform-arrow-functions@7.16.7(@babel/core@7.20.12):
     resolution: {integrity: sha512-9ffkFFMbvzTvv+7dTp/66xvZAWASuPD5Tl9LK3Z9vhOmANo6j94rik+5YMBt4CwHVMWLWpMsriIc2zsa3WW3xQ==}
@@ -10236,7 +10875,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-transform-arrow-functions@7.16.7(@babel/core@7.9.0):
     resolution: {integrity: sha512-9ffkFFMbvzTvv+7dTp/66xvZAWASuPD5Tl9LK3Z9vhOmANo6j94rik+5YMBt4CwHVMWLWpMsriIc2zsa3WW3xQ==}
@@ -10376,9 +11027,11 @@ packages:
 =======
 >>>>>>> 874b9c8723 (resolve merge conflicts)
       '@babel/helper-module-imports': 7.16.7
+<<<<<<< HEAD
 >>>>>>> c8a26c4912 (can run tests)
 >>>>>>> 1c5dc2b62d (can run tests)
       '@babel/helper-plugin-utils': 7.18.9
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> b24122bbb3 (add OperationRow.test.ts)
@@ -10415,8 +11068,19 @@ packages:
 =======
 =======
 >>>>>>> 728ca54dcd (resolve merge conflicts)
+<<<<<<< HEAD
 >>>>>>> 8335fa38c4 (resolve merge conflicts)
+<<<<<<< HEAD
 >>>>>>> 1378ea1f6f (resolve merge conflicts)
+=======
+=======
+=======
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> e2971a4f8c (wip)
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
+>>>>>>> daa8f8d6ef (wip)
       '@babel/helper-remap-async-to-generator': 7.16.8
     transitivePeerDependencies:
       - supports-color
@@ -10457,9 +11121,11 @@ packages:
 =======
 >>>>>>> 874b9c8723 (resolve merge conflicts)
       '@babel/helper-module-imports': 7.16.7
+<<<<<<< HEAD
 >>>>>>> c8a26c4912 (can run tests)
 >>>>>>> 1c5dc2b62d (can run tests)
       '@babel/helper-plugin-utils': 7.18.9
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> b24122bbb3 (add OperationRow.test.ts)
@@ -10483,8 +11149,19 @@ packages:
 =======
 =======
 >>>>>>> 728ca54dcd (resolve merge conflicts)
+<<<<<<< HEAD
 >>>>>>> 8335fa38c4 (resolve merge conflicts)
+<<<<<<< HEAD
 >>>>>>> 1378ea1f6f (resolve merge conflicts)
+=======
+=======
+=======
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> e2971a4f8c (wip)
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
+>>>>>>> daa8f8d6ef (wip)
       '@babel/helper-remap-async-to-generator': 7.16.8
     transitivePeerDependencies:
       - supports-color
@@ -10564,7 +11241,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-transform-block-scoped-functions@7.16.7(@babel/core@7.20.12):
     resolution: {integrity: sha512-JUuzlzmF40Z9cXyytcbZEZKckgrQzChbQJw/5PuEHYeqzCsvebDx0K0jWnIIVcmmDOAVctCgnYs0pMcrYj2zJg==}
@@ -10573,7 +11262,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-transform-block-scoped-functions@7.16.7(@babel/core@7.9.0):
     resolution: {integrity: sha512-JUuzlzmF40Z9cXyytcbZEZKckgrQzChbQJw/5PuEHYeqzCsvebDx0K0jWnIIVcmmDOAVctCgnYs0pMcrYj2zJg==}
@@ -10661,7 +11362,27 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.18.9
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.18.9
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
+>>>>>>> daa8f8d6ef (wip)
+>>>>>>> 3ca6ac5d49 (wip)
 
   /@babel/plugin-transform-block-scoping@7.16.7(@babel/core@7.20.12):
     resolution: {integrity: sha512-ObZev2nxVAYA4bhyusELdo9hb3H+A56bxH3FZMbEImZFiEDYVHXQSJ1hQKFlDnlt8G9bBrCZ5ZpURZUrV4G5qQ==}
@@ -10670,7 +11391,27 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.18.9
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.18.9
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
+>>>>>>> daa8f8d6ef (wip)
+>>>>>>> 3ca6ac5d49 (wip)
 
   /@babel/plugin-transform-block-scoping@7.16.7(@babel/core@7.9.0):
     resolution: {integrity: sha512-ObZev2nxVAYA4bhyusELdo9hb3H+A56bxH3FZMbEImZFiEDYVHXQSJ1hQKFlDnlt8G9bBrCZ5ZpURZUrV4G5qQ==}
@@ -10772,6 +11513,20 @@ packages:
       '@babel/helper-function-name': 7.19.0
       '@babel/helper-optimise-call-expression': 7.16.7
       '@babel/helper-plugin-utils': 7.20.2
+<<<<<<< HEAD
+=======
+=======
+      '@babel/helper-annotate-as-pure': 7.16.7
+      '@babel/helper-environment-visitor': 7.18.9
+      '@babel/helper-function-name': 7.18.9
+      '@babel/helper-optimise-call-expression': 7.16.7
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
       '@babel/helper-replace-supers': 7.16.7
       '@babel/helper-split-export-declaration': 7.18.6
       globals: 11.12.0
@@ -10790,6 +11545,20 @@ packages:
       '@babel/helper-function-name': 7.19.0
       '@babel/helper-optimise-call-expression': 7.16.7
       '@babel/helper-plugin-utils': 7.20.2
+<<<<<<< HEAD
+=======
+=======
+      '@babel/helper-annotate-as-pure': 7.16.7
+      '@babel/helper-environment-visitor': 7.18.9
+      '@babel/helper-function-name': 7.18.9
+      '@babel/helper-optimise-call-expression': 7.16.7
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
       '@babel/helper-replace-supers': 7.16.7
       '@babel/helper-split-export-declaration': 7.18.6
       globals: 11.12.0
@@ -10821,7 +11590,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-transform-computed-properties@7.16.7(@babel/core@7.20.12):
     resolution: {integrity: sha512-gN72G9bcmenVILj//sv1zLNaPyYcOzUho2lIJBMh/iakJ9ygCo/hEF9cpGb61SCMEDxbbyBoVQxrt+bWKu5KGw==}
@@ -10830,7 +11611,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-transform-computed-properties@7.16.7(@babel/core@7.9.0):
     resolution: {integrity: sha512-gN72G9bcmenVILj//sv1zLNaPyYcOzUho2lIJBMh/iakJ9ygCo/hEF9cpGb61SCMEDxbbyBoVQxrt+bWKu5KGw==}
@@ -10904,7 +11697,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-transform-destructuring@7.17.7(@babel/core@7.20.12):
     resolution: {integrity: sha512-XVh0r5yq9sLR4vZ6eVZe8FKfIcSgaTBxVBRSYokRj2qksf6QerYnTxz9/GTuKTH/n/HwLP7t6gtlybHetJ/6hQ==}
@@ -10913,7 +11718,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-transform-destructuring@7.17.7(@babel/core@7.9.0):
     resolution: {integrity: sha512-XVh0r5yq9sLR4vZ6eVZe8FKfIcSgaTBxVBRSYokRj2qksf6QerYnTxz9/GTuKTH/n/HwLP7t6gtlybHetJ/6hQ==}
@@ -10931,8 +11748,24 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-create-regexp-features-plugin': 7.17.0(@babel/core@7.17.10)
+=======
+      '@babel/helper-create-regexp-features-plugin': 7.17.0_@babel+core@7.17.10
+<<<<<<< HEAD
+>>>>>>> 5dc4ffd9d4 (wip)
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-transform-dotall-regex@7.16.7(@babel/core@7.20.12):
     resolution: {integrity: sha512-Lyttaao2SjZF6Pf4vk1dVKv8YypMpomAbygW+mU5cYP3S5cWTfCJjG8xV6CFdzGFlfWK81IjL9viiTvpb6G7gQ==}
@@ -10961,7 +11794,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-transform-duplicate-keys@7.16.7(@babel/core@7.20.12):
     resolution: {integrity: sha512-03DvpbRfvWIXyK0/6QiR1KMTWeT6OcQ7tbhjrXyFS02kjuX/mu5Bvnh5SDSWHxyawit2g5aWhKwI86EE7GUnTw==}
@@ -11046,7 +11891,19 @@ packages:
     dependencies:
       '@babel/core': 7.17.10
       '@babel/helper-builder-binary-assignment-operator-visitor': 7.16.7
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-transform-exponentiation-operator@7.16.7(@babel/core@7.20.12):
     resolution: {integrity: sha512-8UYLSlyLgRixQvlYH3J2ekXFHDFLQutdy7FfFAMm3CPZ6q9wHCwnUyiXpQCe3gVVnQlHc5nsuiEVziteRNTXEA==}
@@ -11056,7 +11913,19 @@ packages:
     dependencies:
       '@babel/core': 7.20.12
       '@babel/helper-builder-binary-assignment-operator-visitor': 7.16.7
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-transform-exponentiation-operator@7.16.7(@babel/core@7.9.0):
     resolution: {integrity: sha512-8UYLSlyLgRixQvlYH3J2ekXFHDFLQutdy7FfFAMm3CPZ6q9wHCwnUyiXpQCe3gVVnQlHc5nsuiEVziteRNTXEA==}
@@ -11246,7 +12115,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-transform-for-of@7.16.7(@babel/core@7.20.12):
     resolution: {integrity: sha512-/QZm9W92Ptpw7sjI9Nx1mbcsWz33+l8kuMIQnDwgQBG5s3fAfQvkRjQ7NqXhtNcKOnPkdICmUHyCaWW06HCsqg==}
@@ -11255,7 +12136,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-transform-for-of@7.16.7(@babel/core@7.9.0):
     resolution: {integrity: sha512-/QZm9W92Ptpw7sjI9Nx1mbcsWz33+l8kuMIQnDwgQBG5s3fAfQvkRjQ7NqXhtNcKOnPkdICmUHyCaWW06HCsqg==}
@@ -11332,6 +12225,18 @@ packages:
       '@babel/helper-compilation-targets': 7.20.7(@babel/core@7.17.10)
       '@babel/helper-function-name': 7.19.0
       '@babel/helper-plugin-utils': 7.20.2
+<<<<<<< HEAD
+=======
+=======
+      '@babel/helper-compilation-targets': 7.18.9_@babel+core@7.17.10
+      '@babel/helper-function-name': 7.18.9
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-transform-function-name@7.16.7(@babel/core@7.20.12):
     resolution: {integrity: sha512-SU/C68YVwTRxqWj5kgsbKINakGag0KTgq9f2iZEXdStoAbOzLHEBRYzImmA6yFo8YZhJVflvXmIHUO7GWHmxxA==}
@@ -11343,6 +12248,18 @@ packages:
       '@babel/helper-compilation-targets': 7.20.7(@babel/core@7.20.12)
       '@babel/helper-function-name': 7.19.0
       '@babel/helper-plugin-utils': 7.20.2
+<<<<<<< HEAD
+=======
+=======
+      '@babel/helper-compilation-targets': 7.18.9_@babel+core@7.20.12
+      '@babel/helper-function-name': 7.18.9
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-transform-function-name@7.16.7(@babel/core@7.9.0):
     resolution: {integrity: sha512-SU/C68YVwTRxqWj5kgsbKINakGag0KTgq9f2iZEXdStoAbOzLHEBRYzImmA6yFo8YZhJVflvXmIHUO7GWHmxxA==}
@@ -11416,7 +12333,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-transform-literals@7.16.7(@babel/core@7.20.12):
     resolution: {integrity: sha512-6tH8RTpTWI0s2sV6uq3e/C9wPo4PTqqZps4uF0kzQ9/xPLFQtipynvmT1g/dOfEJ+0EQsHhkQ/zyRId8J2b8zQ==}
@@ -11425,7 +12354,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-transform-literals@7.16.7(@babel/core@7.9.0):
     resolution: {integrity: sha512-6tH8RTpTWI0s2sV6uq3e/C9wPo4PTqqZps4uF0kzQ9/xPLFQtipynvmT1g/dOfEJ+0EQsHhkQ/zyRId8J2b8zQ==}
@@ -11499,7 +12440,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-transform-member-expression-literals@7.16.7(@babel/core@7.20.12):
     resolution: {integrity: sha512-mBruRMbktKQwbxaJof32LT9KLy2f3gH+27a5XSuXo6h7R3vqltl0PgZ80C8ZMKw98Bf8bqt6BEVi3svOh2PzMw==}
@@ -11508,7 +12461,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-transform-member-expression-literals@7.16.7(@babel/core@7.9.0):
     resolution: {integrity: sha512-mBruRMbktKQwbxaJof32LT9KLy2f3gH+27a5XSuXo6h7R3vqltl0PgZ80C8ZMKw98Bf8bqt6BEVi3svOh2PzMw==}
@@ -11528,6 +12493,17 @@ packages:
       '@babel/core': 7.17.10
       '@babel/helper-module-transforms': 7.20.11
       '@babel/helper-plugin-utils': 7.20.2
+<<<<<<< HEAD
+=======
+=======
+      '@babel/helper-module-transforms': 7.18.9
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
       babel-plugin-dynamic-import-node: 2.3.3
     transitivePeerDependencies:
       - supports-color
@@ -11795,7 +12771,7 @@ packages:
 =======
 =======
       '@babel/helper-module-transforms': 7.18.9
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
       '@babel/helper-validator-identifier': 7.18.6
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -11918,6 +12894,17 @@ packages:
       '@babel/core': 7.17.10
       '@babel/helper-module-transforms': 7.20.11
       '@babel/helper-plugin-utils': 7.20.2
+<<<<<<< HEAD
+=======
+=======
+      '@babel/helper-module-transforms': 7.18.9
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
     transitivePeerDependencies:
       - supports-color
 
@@ -11979,7 +12966,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-transform-new-target@7.16.7(@babel/core@7.20.12):
     resolution: {integrity: sha512-xiLDzWNMfKoGOpc6t3U+etCE2yRnn3SM09BXqWPIZOBpL2gvVrBWUKnsJx0K/ADi5F5YC5f8APFfWrz25TdlGg==}
@@ -12083,7 +13082,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
       '@babel/helper-replace-supers': 7.16.7
     transitivePeerDependencies:
       - supports-color
@@ -12095,7 +13106,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
       '@babel/helper-replace-supers': 7.16.7
     transitivePeerDependencies:
       - supports-color
@@ -12129,7 +13152,27 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.18.9
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.18.9
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
+>>>>>>> daa8f8d6ef (wip)
+>>>>>>> 3ca6ac5d49 (wip)
 
   /@babel/plugin-transform-parameters@7.16.7(@babel/core@7.20.12):
     resolution: {integrity: sha512-AT3MufQ7zZEhU2hwOA11axBnExW0Lszu4RL/tAlUJBuNoRak+wehQW8h6KcXOcgjY42fHtDxswuMhMjFEuv/aw==}
@@ -12138,7 +13181,27 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.18.9
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.18.9
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
+>>>>>>> daa8f8d6ef (wip)
+>>>>>>> 3ca6ac5d49 (wip)
 
   /@babel/plugin-transform-parameters@7.16.7(@babel/core@7.9.0):
     resolution: {integrity: sha512-AT3MufQ7zZEhU2hwOA11axBnExW0Lszu4RL/tAlUJBuNoRak+wehQW8h6KcXOcgjY42fHtDxswuMhMjFEuv/aw==}
@@ -12226,7 +13289,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-transform-property-literals@7.16.7(@babel/core@7.20.12):
     resolution: {integrity: sha512-z4FGr9NMGdoIl1RqavCqGG+ZuYjfZ/hkCIeuH6Do7tXmSm0ls11nYVSJqFEUOSJbDab5wC6lRE/w6YjVcr6Hqw==}
@@ -12235,7 +13310,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-transform-property-literals@7.16.7(@babel/core@7.9.0):
     resolution: {integrity: sha512-z4FGr9NMGdoIl1RqavCqGG+ZuYjfZ/hkCIeuH6Do7tXmSm0ls11nYVSJqFEUOSJbDab5wC6lRE/w6YjVcr6Hqw==}
@@ -12800,7 +13887,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-transform-reserved-words@7.16.7(@babel/core@7.20.12):
     resolution: {integrity: sha512-KQzzDnZ9hWQBjwi5lpY5v9shmm6IVG0U9pB18zvMu2i4H90xpT4gmqwPYsn8rObiadYe2M0gmgsiOIF5A/2rtg==}
@@ -12892,7 +13991,27 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.18.9
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.18.9
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
+>>>>>>> daa8f8d6ef (wip)
+>>>>>>> 3ca6ac5d49 (wip)
 
   /@babel/plugin-transform-shorthand-properties@7.16.7(@babel/core@7.20.12):
     resolution: {integrity: sha512-hah2+FEnoRoATdIb05IOXf+4GzXYTq75TVhIn1PewihbpyrNWUt2JbudKQOETWw6QpLe+AIUpJ5MVLYTQbeeUg==}
@@ -12901,7 +14020,27 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.18.9
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.18.9
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
+>>>>>>> daa8f8d6ef (wip)
+>>>>>>> 3ca6ac5d49 (wip)
 
   /@babel/plugin-transform-shorthand-properties@7.16.7(@babel/core@7.9.0):
     resolution: {integrity: sha512-hah2+FEnoRoATdIb05IOXf+4GzXYTq75TVhIn1PewihbpyrNWUt2JbudKQOETWw6QpLe+AIUpJ5MVLYTQbeeUg==}
@@ -13001,7 +14140,26 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.18.9
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+      '@babel/helper-skip-transparent-expression-wrappers': 7.20.0
+=======
+>>>>>>> c98cf04388 (wip)
+      '@babel/helper-plugin-utils': 7.18.9
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> daa8f8d6ef (wip)
+>>>>>>> 3ca6ac5d49 (wip)
       '@babel/helper-skip-transparent-expression-wrappers': 7.16.0
 
   /@babel/plugin-transform-spread@7.16.7(@babel/core@7.20.12):
@@ -13011,7 +14169,26 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.18.9
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+      '@babel/helper-skip-transparent-expression-wrappers': 7.20.0
+=======
+>>>>>>> c98cf04388 (wip)
+      '@babel/helper-plugin-utils': 7.18.9
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> daa8f8d6ef (wip)
+>>>>>>> 3ca6ac5d49 (wip)
       '@babel/helper-skip-transparent-expression-wrappers': 7.16.0
 
   /@babel/plugin-transform-spread@7.16.7(@babel/core@7.9.0):
@@ -13031,7 +14208,27 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.18.9
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.18.9
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
+>>>>>>> daa8f8d6ef (wip)
+>>>>>>> 3ca6ac5d49 (wip)
 
   /@babel/plugin-transform-sticky-regex@7.16.7(@babel/core@7.20.12):
     resolution: {integrity: sha512-NJa0Bd/87QV5NZZzTuZG5BPJjLYadeSZ9fO6oOUoL4iQx+9EEuw/eEM92SrsT19Yc2jgB1u1hsjqDtH02c3Drw==}
@@ -13040,7 +14237,27 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.18.9
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.18.9
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
+>>>>>>> daa8f8d6ef (wip)
+>>>>>>> 3ca6ac5d49 (wip)
 
   /@babel/plugin-transform-sticky-regex@7.16.7(@babel/core@7.9.0):
     resolution: {integrity: sha512-NJa0Bd/87QV5NZZzTuZG5BPJjLYadeSZ9fO6oOUoL4iQx+9EEuw/eEM92SrsT19Yc2jgB1u1hsjqDtH02c3Drw==}
@@ -13142,7 +14359,27 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.18.9
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.18.9
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
+>>>>>>> daa8f8d6ef (wip)
+>>>>>>> 3ca6ac5d49 (wip)
 
   /@babel/plugin-transform-template-literals@7.16.7(@babel/core@7.20.12):
     resolution: {integrity: sha512-VwbkDDUeenlIjmfNeDX/V0aWrQH2QiVyJtwymVQSzItFDTpxfyJh3EVaQiS0rIN/CqbLGr0VcGmuwyTdZtdIsA==}
@@ -13151,7 +14388,27 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.18.9
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.18.9
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
+>>>>>>> daa8f8d6ef (wip)
+>>>>>>> 3ca6ac5d49 (wip)
 
   /@babel/plugin-transform-template-literals@7.16.7(@babel/core@7.9.0):
     resolution: {integrity: sha512-VwbkDDUeenlIjmfNeDX/V0aWrQH2QiVyJtwymVQSzItFDTpxfyJh3EVaQiS0rIN/CqbLGr0VcGmuwyTdZtdIsA==}
@@ -13169,7 +14426,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-transform-typeof-symbol@7.16.7(@babel/core@7.20.12):
     resolution: {integrity: sha512-p2rOixCKRJzpg9JB4gjnG4gjWkWa89ZoYUnl9snJ1cWIcTH/hvxZqfO+WjG6T8DRBpctEol5jw1O5rA8gkCokQ==}
@@ -13435,7 +14704,19 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
 
   /@babel/plugin-transform-unicode-escapes@7.16.7(@babel/core@7.20.12):
     resolution: {integrity: sha512-TAV5IGahIz3yZ9/Hfv35TV2xEm+kaBDaZQCn2S/hG9/CZ0DktxJv9eKfPc7yYCvOYR4JGx1h8C+jcSOvgaaI/Q==}
@@ -13524,8 +14805,32 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-create-regexp-features-plugin': 7.17.0(@babel/core@7.17.10)
+=======
+      '@babel/helper-create-regexp-features-plugin': 7.17.0_@babel+core@7.17.10
+<<<<<<< HEAD
+>>>>>>> 5dc4ffd9d4 (wip)
       '@babel/helper-plugin-utils': 7.18.9
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.18.9
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
+>>>>>>> daa8f8d6ef (wip)
+>>>>>>> 3ca6ac5d49 (wip)
 
   /@babel/plugin-transform-unicode-regex@7.16.7(@babel/core@7.20.12):
     resolution: {integrity: sha512-oC5tYYKw56HO75KZVLQ+R/Nl3Hro9kf8iG0hXoaHP7tjAyCpvqBiSNe6vGrZni1Z6MggmUOC6A7VP7AVmw225Q==}
@@ -13534,8 +14839,32 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
+<<<<<<< HEAD
       '@babel/helper-create-regexp-features-plugin': 7.17.0(@babel/core@7.20.12)
+=======
+      '@babel/helper-create-regexp-features-plugin': 7.17.0_@babel+core@7.20.12
+<<<<<<< HEAD
+>>>>>>> 5dc4ffd9d4 (wip)
       '@babel/helper-plugin-utils': 7.18.9
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.18.9
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      '@babel/helper-plugin-utils': 7.20.2
+=======
+      '@babel/helper-plugin-utils': 7.18.9
+>>>>>>> b24122bbb3 (add OperationRow.test.ts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
+>>>>>>> c98cf04388 (wip)
+>>>>>>> daa8f8d6ef (wip)
+>>>>>>> 3ca6ac5d49 (wip)
 
   /@babel/plugin-transform-unicode-regex@7.16.7(@babel/core@7.9.0):
     resolution: {integrity: sha512-oC5tYYKw56HO75KZVLQ+R/Nl3Hro9kf8iG0hXoaHP7tjAyCpvqBiSNe6vGrZni1Z6MggmUOC6A7VP7AVmw225Q==}
@@ -13634,6 +14963,7 @@ packages:
       '@babel/helper-validator-option': 7.18.6
 =======
       '@babel/helper-compilation-targets': 7.17.10_@babel+core@7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.16.7
       '@babel/helper-validator-option': 7.16.7
 <<<<<<< HEAD
@@ -13655,6 +14985,10 @@ packages:
 >>>>>>> 2a05210361 (pdate lockfile)
 =======
 >>>>>>> 8335fa38c4 (resolve merge conflicts)
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+      '@babel/helper-validator-option': 7.21.0
+>>>>>>> c98cf04388 (wip)
       '@babel/plugin-bugfix-safari-id-destructuring-collision-in-function-expression': 7.16.7_@babel+core@7.17.10
       '@babel/plugin-bugfix-v8-spread-parameters-in-optional-chaining': 7.16.7_@babel+core@7.17.10
       '@babel/plugin-proposal-async-generator-functions': 7.16.8_@babel+core@7.17.10
@@ -13982,8 +15316,17 @@ packages:
     dependencies:
       '@babel/core': 7.17.10
       '@babel/helper-plugin-utils': 7.20.2
+<<<<<<< HEAD
       '@babel/helper-validator-option': 7.18.6
       '@babel/plugin-transform-flow-strip-types': 7.16.7(@babel/core@7.17.10)
+=======
+<<<<<<< HEAD
+      '@babel/helper-validator-option': 7.16.7
+=======
+      '@babel/helper-validator-option': 7.21.0
+>>>>>>> af07b4b441 (wip)
+      '@babel/plugin-transform-flow-strip-types': 7.16.7_@babel+core@7.17.10
+>>>>>>> 5dc4ffd9d4 (wip)
     dev: true
 
   /@babel/preset-flow@7.16.7(@babel/core@7.20.12):
@@ -13993,6 +15336,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -14010,6 +15354,10 @@ packages:
       '@babel/helper-plugin-utils': 7.16.7
 >>>>>>> 47a53f2584 (remove useless jest config props)
       '@babel/helper-validator-option': 7.16.7
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+      '@babel/helper-validator-option': 7.21.0
+>>>>>>> af07b4b441 (wip)
       '@babel/plugin-transform-flow-strip-types': 7.16.7_@babel+core@7.20.12
 >>>>>>> 223bea10b6 (remove useless jest config props)
 
@@ -14019,6 +15367,11 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> c98cf04388 (wip)
       '@babel/helper-plugin-utils': 7.20.2
 <<<<<<< HEAD
       '@babel/plugin-proposal-unicode-property-regex': 7.16.7(@babel/core@7.17.10)
@@ -14033,6 +15386,9 @@ packages:
       '@babel/types': 7.21.2
 =======
       '@babel/helper-plugin-utils': 7.18.9
+=======
+      '@babel/helper-plugin-utils': 7.20.2
+>>>>>>> 09e161a064 (wip)
       '@babel/plugin-proposal-unicode-property-regex': 7.16.7_@babel+core@7.17.10
       '@babel/plugin-transform-dotall-regex': 7.16.7_@babel+core@7.17.10
       '@babel/types': 7.18.10
@@ -21192,6 +22548,7 @@ packages:
       '@polkadot/util': 10.3.1
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       '@polkadot/util-crypto': 10.3.1(@polkadot/util@10.3.1)
 =======
       '@polkadot/util-crypto': 10.3.1
@@ -21199,6 +22556,9 @@ packages:
 =======
       '@polkadot/util-crypto': 10.3.1_@polkadot+util@10.3.1
 >>>>>>> 6ce772fce2 (pdate lockfile)
+=======
+      '@polkadot/util-crypto': 10.3.1
+>>>>>>> 5dc4ffd9d4 (wip)
       react: 17.0.2
       react-native: 0.68.5(@babel/core@7.17.10)(@babel/preset-env@7.17.10)(metro-resolver@0.67.0)(metro-transform-worker@0.67.0)(react@17.0.2)
       react-native-svg: 12.5.1(react-native@0.68.5)(react@17.0.2)
@@ -21281,6 +22641,7 @@ packages:
       '@polkadot/util': 10.3.1
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       '@polkadot/util-crypto': 10.3.1(@polkadot/util@10.3.1)
       color: 3.2.1
     dev: false
@@ -21291,7 +22652,27 @@ packages:
 =======
       '@polkadot/util-crypto': 10.3.1_@polkadot+util@10.3.1
 >>>>>>> 6ce772fce2 (pdate lockfile)
+=======
+      '@polkadot/util-crypto': 10.3.1
+>>>>>>> 5dc4ffd9d4 (wip)
       color: 3.2.1
+    dev: false
+
+  /@polkadot/util-crypto/10.3.1:
+    resolution: {integrity: sha512-viqLMuNGrbB2lyDIYdXAl3tq/Em/Y7ql2FvCTHJmxXaB5C1NXiWf1SqFAahUJKohL+ke5IL0jr19wZu/f88lIQ==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@babel/runtime': 7.20.13
+      '@noble/hashes': 1.1.5
+      '@noble/secp256k1': 1.7.1
+      '@polkadot/networks': 10.3.1
+      '@polkadot/util': 10.3.1
+      '@polkadot/wasm-crypto': 6.4.1_hmowrubltiyg4mpvtnqaaplyfm
+      '@polkadot/x-bigint': 10.3.1
+      '@polkadot/x-randomvalues': 10.3.1
+      '@scure/base': 1.1.1
+      ed2curve: 0.3.0
+      tweetnacl: 1.0.3
     dev: false
 
   /@polkadot/util-crypto/10.3.1_@polkadot+util@10.3.1:
@@ -30511,6 +31892,7 @@ packages:
       picomatch: 2.3.1
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       styled-components: 5.3.5(react-dom@17.0.2)(react-is@17.0.2)(react-native@0.68.5)(react@17.0.2)
 =======
       styled-components: 5.3.5_3a4gaprdt6lucrt3fqgxp3nfme
@@ -30518,6 +31900,9 @@ packages:
 =======
       styled-components: 5.3.5_fane7jikarojcev26y27hpbhu4
 >>>>>>> 6ce772fce2 (pdate lockfile)
+=======
+      styled-components: 5.3.5_3a4gaprdt6lucrt3fqgxp3nfme
+>>>>>>> 5dc4ffd9d4 (wip)
 
 <<<<<<< HEAD
   /babel-plugin-syntax-jsx@6.18.0:
@@ -44537,6 +45922,7 @@ packages:
       fsevents: 2.3.2
     transitivePeerDependencies:
       - metro
+    dev: true
 
 <<<<<<< HEAD
   /jest-haste-map@29.3.1(metro@0.67.0):
@@ -44942,7 +46328,11 @@ packages:
       jest-resolve:
         optional: true
     dependencies:
+<<<<<<< HEAD
       jest-resolve: 28.1.3(metro@0.67.0)
+=======
+      jest-resolve: 28.1.3_metro@0.67.0
+>>>>>>> 5dc4ffd9d4 (wip)
 
   /jest-regex-util@24.9.0:
     resolution: {integrity: sha512-05Cmb6CuxaA+Ys6fjr3PhvV3bGQmO+2p2La4hFbU+W5uOc479f7FdLXUWXw4pYMAhhSZIuKHwSXSu6CsSBAXQA==}
@@ -45040,6 +46430,7 @@ packages:
       slash: 3.0.0
     transitivePeerDependencies:
       - metro
+    dev: true
 
   /jest-runner@24.9.0:
     resolution: {integrity: sha512-KksJQyI3/0mhcfspnxxEOBueGrd5E4vV7ADQLT9ESaCzz02WnbdbKWIf5Mkaucoaj7obQckYPVX6JJhgUcoWWg==}
@@ -58874,7 +60265,6 @@ packages:
 >>>>>>> b3cb8d10d6 (can run tests)
       shallowequal: 1.1.0
       supports-color: 5.5.0
-    dev: false
 
 <<<<<<< HEAD
 =======
