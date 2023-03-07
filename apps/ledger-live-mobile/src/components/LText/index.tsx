@@ -54,14 +54,14 @@ const inferFontWeight = ({
  *
  * @deprecated Please, prefer using the Text component from our design-system if possible.
  */
-function LText({ color, children, semiBold, bold, ...props }: Opts) {
+function LText({ color, children, semiBold, bold, testID, ...props }: Opts) {
   const fontWeight = useMemo(
     () => inferFontWeight({ semiBold, bold }),
     [semiBold, bold],
   );
 
   return (
-    <Text {...props} fontWeight={fontWeight} color={color}>
+    <Text {...props} fontWeight={fontWeight} color={color} testID={testID}>
       {children}
     </Text>
   );

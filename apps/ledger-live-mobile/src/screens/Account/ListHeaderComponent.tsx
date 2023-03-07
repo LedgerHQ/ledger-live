@@ -1,4 +1,5 @@
 import React, { ReactNode } from "react";
+import { LayoutChangeEvent } from "react-native";
 import {
   isAccountEmpty,
   getMainAccount,
@@ -21,8 +22,6 @@ import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
-import { LayoutChangeEvent } from "react-native";
-import { getEnv } from "@ledgerhq/live-common/env";
 import { isEditableOperation } from "@ledgerhq/live-common/operation";
 
 import Header from "./Header";
@@ -137,9 +136,6 @@ export function getListHeaderComponents({
   }).sections[0].data.filter(
     operation => operation.type === "OUT" || operation.type === "NFT_OUT",
   );
-
-  latestOperation?.date.getTime() <
-    new Date().getTime() - getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
 
   return {
     listHeaderComponents: [
