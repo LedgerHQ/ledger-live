@@ -17,7 +17,6 @@ import GenuineCheckCancelledDrawer from "./GenuineCheckCancelledDrawer";
 import UnlockDeviceDrawer from "./UnlockDeviceDrawer";
 import AllowManagerDrawer from "./AllowManagerDrawer";
 import { TrackScreen, track } from "../../analytics";
-import { currentRouteNameRef } from "../../analytics/screenRefs";
 
 const softwareStepDelay = 2500;
 const lockedDeviceTimeoutMs = 1000;
@@ -384,11 +383,17 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
             productName={productName}
             isOpen={nextDrawerToDisplay === "new-firmware-available"}
             onSkip={() => {
-              track("button_clicked", { button: "skip software update" });
+              track("button_clicked", {
+                button: "skip software update",
+                drawer: `Set up ${productName}: Step 4: Software update available`,
+              });
               setFirmwareUpdateStatus("completed");
             }}
             onUpdate={() => {
-              track("button_clicked", { button: "download software update" });
+              track("button_clicked", {
+                button: "download software update",
+                drawer: `Set up ${productName}: Step 4: Software update available`,
+              });
               setFirmwareUpdateStatus("completed");
             }}
           />
@@ -397,11 +402,6 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
       {genuineCheckUiStepStatus === "failed" ? (
         <TrackScreen
           category={`Set up ${productName}: Step 4 Hardware not checked`}
-        />
-      ) : null}
-      {firmwareUpdateUiStepStatus === "failed" ? (
-        <TrackScreen
-          category={`Set up ${productName}: Step 4: Software update available`}
         />
       ) : null}
       {firmwareUpdateUiStepStatus === "active" ? (
