@@ -26,10 +26,6 @@ test.use({
     stakeAccountBanner: {
       enabled: true,
       params: {
-        solana: {
-          redelegate: true,
-          delegegate: true,
-        },
         eth: {
           kiln: true,
           lido: true,
