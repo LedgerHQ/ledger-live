@@ -7,12 +7,12 @@ import { render } from "../../__test__/test-renderer";
 describe("LText", () => {
   it("Should render text correctly", () => {
     const { getByTestId } = render(
-      <LText color="#000" id="helloworld">
+      <LText color="#000" testID="helloworld">
         Hello World
       </LText>,
     );
 
-    const ltext = getByTestId("ltext-helloworld");
+    const ltext = getByTestId("helloworld");
 
     expect(ltext).toHaveTextContent("Hello World");
     expect(ltext).toHaveStyle({ color: "#000" });

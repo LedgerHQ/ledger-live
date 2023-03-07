@@ -16,8 +16,8 @@ const mockedOperation: Operation = {
   fee: new BigNumber(4890),
   senders: ["0xsender"],
   recipients: ["0xrecipient"],
-  blockHeight: null,
-  blockHash: null,
+  blockHeight: 0,
+  blockHash: "",
   transactionSequenceNumber: undefined,
   date: new Date(),
   extra: {},
@@ -60,7 +60,7 @@ const mockedAccount: Account = {
   swapHistory: [],
 };
 
-describe("OperationRow test", () => {
+describe("OperationRow test (non optimistic operation)", () => {
   it("should render correctly", () => {
     render(
       <OperationRow
@@ -71,6 +71,6 @@ describe("OperationRow test", () => {
       />,
     );
 
-    screen.getByTestId("currency-unit-value");
+    screen.getByTestId("operationRowDate");
   });
 });
