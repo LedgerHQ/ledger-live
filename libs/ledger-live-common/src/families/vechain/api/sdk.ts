@@ -28,6 +28,15 @@ export const getAccount = async (address: string): Promise<AccountResponse> => {
   return data;
 };
 
+export const getLastBlock = async (): Promise<{ number: number }> => {
+  const { data } = await network({
+    method: "GET",
+    url: `${BASE_URL}/blocks/best`,
+  });
+
+  return data;
+};
+
 /**
  * Get VET operations
  * @param accountId

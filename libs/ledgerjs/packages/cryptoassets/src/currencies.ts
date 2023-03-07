@@ -2783,6 +2783,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "vechain",
     color: "#28008C",
     family: "vechain",
+    blockAvgTime: 10,
     units: [
       {
         name: "VET",

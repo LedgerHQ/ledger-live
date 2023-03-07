@@ -5,7 +5,12 @@ import { encodeAccountId } from "../../account";
 import eip55 from "eip55";
 import { emptyHistoryCache } from "../../account";
 
-import { getAccount, getOperations, getTokenOperations } from "./api";
+import {
+  getAccount,
+  getLastBlock,
+  getOperations,
+  getTokenOperations,
+} from "./api";
 import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
 
 const getAccountShape: GetAccountShape = async (info) => {
@@ -29,6 +34,9 @@ const getAccountShape: GetAccountShape = async (info) => {
 
   // get the current account balance state depending your api implementation
   const { balance, energy } = await getAccount(address);
+
+  // get the current block height
+  const { number: blockHeight } = await getLastBlock();
 
   // Merge new operations with the previously synced ones
   const newOperations = await getOperations(accountId, address, startAt);
@@ -56,6 +64,7 @@ const getAccountShape: GetAccountShape = async (info) => {
     spendableBalance: BigNumber(balance),
     operationsCount: operations.length,
     operations: operations,
+    blockHeight,
     subAccounts: [
       {
         type: "TokenAccount" as TokenType,
@@ -67,6 +76,7 @@ const getAccountShape: GetAccountShape = async (info) => {
         creationDate: min_date != -1 ? new Date(min_date) : new Date(),
         operationsCount: VTHOoperations.length,
         operations: VTHOoperations,
+        blockHeight,
         pendingOperations:
           (initialAccount?.subAccounts &&
             initialAccount.subAccounts[0]?.pendingOperations) ||
