@@ -321,7 +321,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   }[] = [
     ...manageList.map(item => ({
       ...item,
-      eventProperties: buttonSharedTrackingFields,
+      eventProperties: { ...buttonSharedTrackingFields, ...item.eventProperties }, // TODO debug why polkadot not working
     })),
     ...(availableOnCompound
       ? [
