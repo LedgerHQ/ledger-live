@@ -45,6 +45,9 @@ import { TrackingAPI } from "./tracking";
 import {
   bitcoinFamillyAccountGetXPubLogic,
   broadcastTransactionLogic,
+  completeExchangeLogic,
+  CompleteExchangeRequest,
+  CompleteExchangeUiRequest,
   receiveOnAccountLogic,
   signMessageLogic,
   signTransactionLogic,
@@ -172,6 +175,11 @@ export interface UiHook {
     onSuccess: (result: AppResult) => void;
     onCancel: () => void;
   }) => void;
+  "exchange.complete": (params: {
+    exchangeParams: CompleteExchangeUiRequest;
+    onSuccess: (hash: string) => void;
+    onCancel: (error: Error) => void;
+  }) => void;
 }
 
 function usePermission(manifest: AppManifest): Permission {
@@ -294,6 +302,7 @@ export function useWalletAPIServer({
     "transaction.sign": uiTxSign,
     "transaction.broadcast": uiTxBroadcast,
     "device.transport": uiDeviceTransport,
+    "exchange.complete": uiExchangeComplete,
   },
 }: {
   manifest: AppManifest;
@@ -647,6 +656,46 @@ export function useWalletAPIServer({
     });
   }, [accounts, manifest, server, tracking]);
 
+  useEffect(() => {
+    if (!uiExchangeComplete) {
+      return;
+    }
+
+    server.setHandler("exchange.complete", (params) => {
+      // retrofit of the exchange params to fit the old platform spec
+      const request: CompleteExchangeRequest = {
+        provider: params.provider,
+        fromAccountId: params.fromAccount.id,
+        toAccountId:
+          params.exchangeType === "SWAP" ? params.toAccount.id : undefined,
+        transaction: params.transaction,
+        binaryPayload: params.binaryPayload.toString(),
+        signature: params.signature.toString(),
+        feesStrategy: params.feeStrategy,
+        exchangeType: ExchangeType[params.exchangeType],
+      };
+
+      return completeExchangeLogic(
+        { manifest, accounts, tracking },
+        request,
+        (request) =>
+          new Promise((resolve, reject) =>
+            uiExchangeComplete({
+              exchangeParams: request,
+              onSuccess: (hash: string) => {
+                tracking.completeExchangeSuccess(manifest);
+                resolve(hash);
+              },
+              onCancel: (error) => {
+                tracking.completeExchangeFail(manifest);
+                reject(error);
+              },
+            })
+          )
+      );
+    });
+  }, [uiExchangeComplete, accounts, manifest, server, tracking]);
+
   return {
     widgetLoaded,
     onMessage,
@@ -654,4 +703,10 @@ export function useWalletAPIServer({
     onReload,
     onLoadError,
   };
+}
+
+export enum ExchangeType {
+  SWAP = 0x00,
+  SELL = 0x01,
+  FUND = 0x02,
 }

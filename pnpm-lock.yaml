@@ -13,27 +13,27 @@ overrides:
   remove-flow-types-loader>loader-utils: '*'
 
 patchedDependencies:
-  react-native-fast-crypto@2.2.0:
-    hash: jdmv3zyvsaug2f6l23zgrmwdli
-    path: patches/react-native-fast-crypto@2.2.0.patch
-  react-native-image-crop-tools@1.6.2:
-    hash: ykxjy5s7xujdxmsgrwxo5mh3y4
-    path: patches/react-native-image-crop-tools@1.6.2.patch
   react-native-os@1.2.6:
     hash: 2e25ffb547hjiczrnsjhxl6geu
     path: patches/react-native-os@1.2.6.patch
-  react-native-tcp@4.0.0:
-    hash: frdjcnsdohx4blxdmaawwvdihy
-    path: patches/react-native-tcp@4.0.0.patch
-  react-native-video@5.2.0:
-    hash: lojvl6twgoj4rxeqeytmq4uduq
-    path: patches/react-native-video@5.2.0.patch
+  react-native-fast-crypto@2.2.0:
+    hash: jdmv3zyvsaug2f6l23zgrmwdli
+    path: patches/react-native-fast-crypto@2.2.0.patch
   react-native-webview@11.26.1:
     hash: no3vzt46yoww4w2wn7ciytbsoy
     path: patches/react-native-webview@11.26.1.patch
+  react-native-image-crop-tools@1.6.2:
+    hash: ykxjy5s7xujdxmsgrwxo5mh3y4
+    path: patches/react-native-image-crop-tools@1.6.2.patch
+  react-native-tcp@4.0.0:
+    hash: frdjcnsdohx4blxdmaawwvdihy
+    path: patches/react-native-tcp@4.0.0.patch
   rn-fetch-blob@0.12.0:
     hash: n5yzdsrxz654upecs5xliebtmm
     path: patches/rn-fetch-blob@0.12.0.patch
+  react-native-video@5.2.0:
+    hash: lojvl6twgoj4rxeqeytmq4uduq
+    path: patches/react-native-video@5.2.0.patch
 
 importers:
 
@@ -925,7 +925,7 @@ importers:
       reselect: 4.0.0
       rn-fetch-blob: 0.12.0_n5yzdsrxz654upecs5xliebtmm
       rxjs: 6.6.7
-      rxjs-compat: 6.6.7_rxjs@7.8.0
+      rxjs-compat: 6.6.7_rxjs@6.6.7
       rxjs7: /rxjs/7.8.0
       semver: 7.3.7
       storyly-react-native: 1.26.2_ondxtwf5lqq5g76dzmsmwamaca
@@ -1319,8 +1319,8 @@ importers:
       '@ledgerhq/types-cryptoassets': workspace:^
       '@ledgerhq/types-devices': workspace:^
       '@ledgerhq/types-live': workspace:^
-      '@ledgerhq/wallet-api-core': ^0.11.0
-      '@ledgerhq/wallet-api-server': ^0.11.0
+      '@ledgerhq/wallet-api-core': ^0.14.0
+      '@ledgerhq/wallet-api-server': ^0.13.0
       '@solana/spl-token': ^0.2.0
       '@solana/web3.js': 1.41.3
       '@stricahq/bip32ed25519': ^1.0.3
@@ -1504,8 +1504,8 @@ importers:
       '@ledgerhq/live-portfolio': link:../live-portfolio
       '@ledgerhq/live-promise': link:../promise
       '@ledgerhq/logs': link:../ledgerjs/packages/logs
-      '@ledgerhq/wallet-api-core': 0.11.0
-      '@ledgerhq/wallet-api-server': 0.11.0_react@17.0.2
+      '@ledgerhq/wallet-api-core': 0.14.0
+      '@ledgerhq/wallet-api-server': 0.13.0_react@17.0.2
       '@solana/spl-token': 0.2.0
       '@solana/web3.js': 1.41.3
       '@stricahq/bip32ed25519': 1.0.4
@@ -1577,7 +1577,7 @@ importers:
       ripple-bs58check: 2.0.2
       rlp: 3.0.0
       rxjs: 6.6.7
-      rxjs-compat: 6.6.7_rxjs@7.8.0
+      rxjs-compat: 6.6.7_rxjs@6.6.7
       rxjs7: /rxjs/7.8.0
       secp256k1: 4.0.3
       semver: 7.3.7
@@ -13689,15 +13689,6 @@ packages:
       bignumber.js: 9.1.0
     dev: false
 
-  /@ledgerhq/wallet-api-core/0.11.0:
-    resolution: {integrity: sha512-SHIdZD/gQJ4dMag5zzmRAAfhkkfiyHFVLHR7xz0Srj2BLdMfQZzXneTSnv7YND4YOZrwHIfBTA68Bim+AiKjwA==}
-    dependencies:
-      '@ledgerhq/errors': 6.12.3
-      bignumber.js: 9.1.0
-      uuid: 9.0.0
-      zod: 3.19.1
-    dev: false
-
   /@ledgerhq/wallet-api-core/0.12.0:
     resolution: {integrity: sha512-e8V73MgiXa63mUkyF3MqwqjKxYzVVF6lhLHYWtUVJCUDwyXEq7EmuEK9IxYl7o5oxqmXlkxQ6qXjl7aQTT6P8g==}
     dependencies:
@@ -13707,15 +13698,24 @@ packages:
       zod: 3.19.1
     dev: false
 
-  /@ledgerhq/wallet-api-server/0.11.0_react@17.0.2:
-    resolution: {integrity: sha512-7aOttVBuj0dAfwKa8Na3e9T+xv9ZC8kHjeBwtLHJpCnjsqODTubj50J1SBw0gnqRKXK1dkUHFZCVYOhddYu8Xg==}
+  /@ledgerhq/wallet-api-core/0.14.0:
+    resolution: {integrity: sha512-ZntDYBH40gjwuq9DXS7xT2RZtwm0rU7h7ZLLdH6JOtZwfUZzYyFXqzalptcLNPOLpU1SJb6ozc+XkvWj4gHbbA==}
+    dependencies:
+      '@ledgerhq/errors': 6.12.3
+      bignumber.js: 9.1.0
+      uuid: 9.0.0
+      zod: 3.19.1
+    dev: false
+
+  /@ledgerhq/wallet-api-server/0.13.0_react@17.0.2:
+    resolution: {integrity: sha512-6HttAVhwTwIpphWuh5LlzNA6PRjPHH//eZIz7/YsGuoUWNnneB68vWwchws9y0OVavyQgfPWJUr+BjsCGY5a9A==}
     peerDependencies:
       react: ^17.x || ^18.x
     peerDependenciesMeta:
       react:
         optional: true
     dependencies:
-      '@ledgerhq/wallet-api-core': 0.12.0
+      '@ledgerhq/wallet-api-core': 0.14.0
       bignumber.js: 9.1.0
       json-rpc-2.0: 1.1.0
       picomatch: 2.3.1
@@ -41867,6 +41867,7 @@ packages:
     peerDependencies:
       '@babel/core': '*'
     dependencies:
+      '@babel/core': 7.20.12
       '@babel/plugin-proposal-class-properties': 7.16.7
       '@babel/plugin-proposal-export-default-from': 7.16.7
       '@babel/plugin-proposal-nullish-coalescing-operator': 7.16.7
@@ -49924,17 +49925,6 @@ packages:
         optional: true
     dependencies:
       rxjs: 6.6.7
-    dev: false
-
-  /rxjs-compat/6.6.7_rxjs@7.8.0:
-    resolution: {integrity: sha512-szN4fK+TqBPOFBcBcsR0g2cmTTUF/vaFEOZNuSdfU8/pGFnNmmn2u8SystYXG1QMrjOPBc6XTKHMVfENDf6hHw==}
-    peerDependencies:
-      rxjs: '*'
-    peerDependenciesMeta:
-      rxjs:
-        optional: true
-    dependencies:
-      rxjs: 7.8.0
     dev: false
 
   /rxjs/6.6.7:
