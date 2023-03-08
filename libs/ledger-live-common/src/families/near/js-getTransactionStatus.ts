@@ -21,6 +21,7 @@ import {
   getMaxAmount,
   getTotalSpent,
   getYoctoThreshold,
+  YOCTO_THRESHOLD_VARIATION,
 } from "./logic";
 import { fetchAccountDetails } from "./api";
 import { getCurrentNearPreloadData } from "./preload";
@@ -78,7 +79,7 @@ const getTransactionStatus = async (
     const currency = getCryptoCurrencyById("near");
     const formattedStakingThreshold = formatCurrencyUnit(
       currency.units[0],
-      stakingThreshold.plus("1"),
+      stakingThreshold.plus(YOCTO_THRESHOLD_VARIATION),
       {
         showCode: true,
       }

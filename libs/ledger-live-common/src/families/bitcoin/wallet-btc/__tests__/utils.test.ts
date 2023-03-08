@@ -1,5 +1,6 @@
 import * as bech32 from "bech32";
 import { bech32m } from "../../bech32m";
+
 import * as utils from "../utils";
 import { Currency } from "../crypto/types";
 import cryptoFactory from "../crypto/factory";
@@ -176,7 +177,6 @@ describe("Unit tests for various utils functions", () => {
     validateAddrs(["3LQWwDEpgjjQokDusDXtoF9c8on8zr54fT"], "vertcoin", true);
     validateAddrs(["PCYt39DMYuFqUYkP8w6ubZXJbTTL4c9KAV"], "peercoin", true);
     validateAddrs(["ETx91CT52eBFYWbe4Yht5BpZNigWg2EkqJ"], "viacoin", true);
-    validateAddrs(["7i1KkJHUjfw2MrbtXK5DQkhz7zd36st9GR"], "stakenet", true);
     validateAddrs(["S6NMcEfYbavHrP3Uo1wbEUvKhAbKeMuga8"], "stealthcoin", true);
     validateAddrs(["Dso59DoPRkfATcZgHGgfh9mpku7taw9srAv"], "decred", true);
     validateAddrs(["Dcck4QrFF5wuLzQpwxb5evhSRD7ZTsJZwuh"], "decred", true);
@@ -212,7 +212,6 @@ describe("Unit tests for various utils functions", () => {
     validateAddrs(["3LQWwDEpgjjQokDusDXtoF9c8on8zr54ff"], "vertcoin", false);
     validateAddrs(["PCYt39DMYuFqUYkP8w6ubZXJbTTL4c9KAA"], "peercoin", false);
     validateAddrs(["ETx91CT52eBFYWbe4Yht5BpZNigWg2Ekqq"], "viacoin", false);
-    validateAddrs(["7i1KkJHUjfw2MrbtXK5DQkhz7zd36st9GG"], "stakenet", false);
     validateAddrs(["S6NMcEfYbavHrP3Uo1wbEUvKhAbKeMugaa"], "stealthcoin", false);
     validateAddrs(["Dso59DoPRkfATcZgHGgff9mpku7taw9srAv"], "decred", false);
     validateAddrs(["Dcck4QrFF5wuLQzpwxb5evhSRD7ZTsJZwuh"], "decred", false);
@@ -250,13 +249,13 @@ describe("Unit tests for maxTxSize", () => {
     // In 148 out 34
     [0, [], false, p2pkh, 10],
     [0, [], true, p2pkh, 44],
-    [0, [pkh], false, p2pkh, 44],
-    [0, [pkh], true, p2pkh, 78],
-    [1, [pkh], true, p2pkh, 226],
-    [2, [pkh], true, p2pkh, 374],
-    [1, [wpkh], true, p2pkh, 223],
-    [1, [sh], true, p2pkh, 224],
-    [1, [tr], true, p2pkh, 235],
+    [0, [btc.toOutputScript(pkh)], false, p2pkh, 44],
+    [0, [btc.toOutputScript(pkh)], true, p2pkh, 78],
+    [1, [btc.toOutputScript(pkh)], true, p2pkh, 226],
+    [2, [btc.toOutputScript(pkh)], true, p2pkh, 374],
+    [1, [btc.toOutputScript(wpkh)], true, p2pkh, 223],
+    [1, [btc.toOutputScript(sh)], true, p2pkh, 224],
+    [1, [btc.toOutputScript(tr)], true, p2pkh, 235],
 
     // In 68 out 31
     [0, [], false, p2wpkh, 11],
@@ -269,8 +268,8 @@ describe("Unit tests for maxTxSize", () => {
     [0, [], false, p2sh, 11],
     [0, [], true, p2sh, 43],
     [1, [], false, p2sh, 101],
-    [1, [sh], false, p2sh, 133],
-    [2, [sh], false, p2sh, 223],
+    [1, [btc.toOutputScript(sh)], false, p2sh, 133],
+    [2, [btc.toOutputScript(sh)], false, p2sh, 223],
 
     // Fixed 10.5 In 57.75 out 43
     [0, [], false, p2tr, 11],
@@ -301,22 +300,24 @@ describe("Unit tests for maxTxSize", () => {
     // test address with witness version 16 and witness program [0x01, 0x02] => tb1sqypqyuzpgh
     [
       2,
-      [tr, sh, pkh, wpkh, "tb1sqypqyuzpgh"],
+      [tr, sh, pkh, wpkh, "tb1sqypqyuzpgh"].map((addr) =>
+        btc.toOutputScript(addr)
+      ),
       false,
       p2wpkh,
       Math.ceil(10.5 + 68 * 2 + 43 + 32 + 34 + 31 + 13),
     ],
   ])(
     "%i, %s, %s, %s => %i",
-    (inputCount, outputAddrs, useChange, derivationMode, exp) => {
+    (inputCount, outputScripts, useChange, derivationMode, exp) => {
       const s = utils.maxTxSizeCeil(
         inputCount,
-        outputAddrs,
+        outputScripts,
         useChange,
         btc,
         derivationMode
       );
-      //const s = utils.estimateTxSize(inputCount, outputAddrs.length + (useChange ? 1 : 0), btc, derivationMode);
+
       expect(s).toEqual(exp);
     }
   );

@@ -6,15 +6,17 @@ import {
   getMainAccount,
   getReceiveFlowError,
 } from "@ledgerhq/live-common/account/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
+import { Flex } from "@ledgerhq/native-ui";
 
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import SelectDevice from "../../components/SelectDevice";
+import SelectDevice2 from "../../components/SelectDevice2";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import ReadOnlyWarning from "./ReadOnlyWarning";
@@ -39,6 +41,8 @@ export default function ConnectDevice({
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const [device, setDevice] = useState<Device | undefined>();
 
+  const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
+
   useEffect(() => {
     const readOnlyTitle = "transfer.receive.titleReadOnly";
     if (readOnlyModeEnabled && route.params?.title !== readOnlyTitle) {
@@ -58,7 +62,11 @@ export default function ConnectDevice({
       if (!account) {
         return null;
       }
-      setDevice(undefined);
+
+      // Nb Unsetting device here caused the scanning to start again,
+      // scanning causes a disconnect, which throws an error when we try to talk
+      // to the device on the next step.
+
       return navigation.navigate(ScreenName.ReceiveVerifyAddress, {
         ...route.params,
         ...payload,
@@ -90,12 +98,13 @@ export default function ConnectDevice({
 
   const mainAccount = getMainAccount(account, parentAccount);
   const currency = getAccountCurrency(mainAccount);
+  if (currency.type !== "CryptoCurrency") return null; // this should not happen: currency of main account is a crypto currency
   const tokenCurrency =
     account && account.type === "TokenAccount" ? account.token : undefined;
 
   // check for coin specific UI
   const CustomConnectDevice =
-    byFamily[(currency as CryptoCurrency).family as keyof typeof byFamily];
+    byFamily[currency.family as keyof typeof byFamily];
   if (CustomConnectDevice)
     return <CustomConnectDevice {...{ navigation, route }} />;
 
@@ -112,18 +121,24 @@ export default function ConnectDevice({
   return (
     <>
       <TrackScreen category="ReceiveFunds" name="Device Selection" />
-      <NavigationScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContainer}
-      >
-        <SkipSelectDevice route={route} onResult={setDevice} />
-        <SelectDevice
-          onSelect={setDevice}
-          onWithoutDevice={
-            route.params?.notSkippable ? undefined : onSkipDevice
-          }
-        />
-      </NavigationScrollView>
+      <SkipSelectDevice route={route} onResult={setDevice} />
+      {newDeviceSelectionFeatureFlag?.enabled ? (
+        <Flex px={16} py={5} flex={1}>
+          <SelectDevice2 onSelect={setDevice} stopBleScanning={!!device} />
+        </Flex>
+      ) : (
+        <NavigationScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContainer}
+        >
+          <SelectDevice
+            onSelect={setDevice}
+            onWithoutDevice={
+              route.params?.notSkippable ? undefined : onSkipDevice
+            }
+          />
+        </NavigationScrollView>
+      )}
       <DeviceActionModal
         action={action}
         device={device}

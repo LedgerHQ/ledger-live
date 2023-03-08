@@ -1,5 +1,5 @@
 // @flow
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
@@ -19,6 +19,16 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
   const delegation = useDelegation(account);
 
   const onClick = useCallback(() => {
+    if (isAccountEmpty(account)) {
+      dispatch(
+        openModal("MODAL_NO_FUNDS_STAKE", {
+          account,
+          parentAccount,
+        }),
+      );
+      return;
+    }
+
     const options = delegation
       ? {
           parentAccount,
@@ -31,7 +41,7 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
           account,
         };
     dispatch(openModal("MODAL_DELEGATE", options));
-  }, [dispatch, account, parentAccount, delegation]);
+  }, [account, delegation, parentAccount, dispatch]);
 
   if (parentAccount) return null;
 

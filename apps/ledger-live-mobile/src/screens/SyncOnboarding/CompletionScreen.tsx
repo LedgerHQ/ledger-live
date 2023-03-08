@@ -13,9 +13,10 @@ import {
   RootNavigation,
 } from "../../components/RootNavigator/types/helpers";
 import useIsAppInBackground from "../../components/useIsAppInBackground";
+import videoSources from "../../../assets/videos";
 
-const sourceLight = require("../../../assets/videos/onboardingTransitionLight.mp4"); // eslint-disable-line @typescript-eslint/no-var-requires
-const sourceDark = require("../../../assets/videos/onboardingTransitionDark.mp4"); // eslint-disable-line @typescript-eslint/no-var-requires
+const sourceLight = videoSources.onboardingSuccessStaxLight;
+const sourceDark = videoSources.onboardingSuccessStaxDark;
 
 const redirectDelay = 5000;
 
@@ -45,28 +46,28 @@ const CompletionScreen = ({ navigation, route }: Props) => {
   const videoSource = theme === "light" ? sourceLight : sourceDark;
 
   const redirectToPostOnboarding = useCallback(() => {
-    // Resets the navigation stack to avoid allowing to go back to the onboarding welcome screen
-    // FIXME: bindings to react-navigation seem to have issues with composites
-    (navigation as unknown as RootNavigation).reset({
-      index: 0,
-      routes: [
-        {
-          name: NavigatorName.Base,
-          state: {
-            routes: [
-              {
-                name: NavigatorName.Main,
+    startPostOnboarding({
+      deviceModelId: device.modelId,
+      resetNavigationStack: true,
+      fallbackIfNoAction: () =>
+        // Resets the navigation stack to avoid allowing to go back to the onboarding welcome screen
+        // FIXME: bindings to react-navigation seem to have issues with composites
+        (navigation as unknown as RootNavigation).reset({
+          index: 0,
+          routes: [
+            {
+              name: NavigatorName.Base,
+              state: {
+                routes: [
+                  {
+                    name: NavigatorName.Main,
+                  },
+                ],
               },
-            ],
-          },
-        },
-      ],
+            },
+          ],
+        }),
     });
-    startPostOnboarding(device.modelId, false, () =>
-      navigation.navigate(NavigatorName.Base, {
-        screen: NavigatorName.Main,
-      }),
-    );
   }, [device.modelId, navigation, startPostOnboarding]);
 
   const skipDelay = useCallback(() => {

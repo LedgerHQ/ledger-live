@@ -48,7 +48,7 @@ function readPackage(pkg, context) {
         Furthermore it makes these packages self-contained which eases the CI process.
       */
       addDevDependencies(
-        /^@ledgerhq\/(hw-app.*|hw-transport.*|cryptoassets|devices|errors|logs|react-native-hid|react-native-hw-transport-ble|types-.*)$/,
+        /^@ledgerhq\/(hw-app.*|hw-transport.*|cryptoassets|devices|errors|logs|react-native-hid|react-native-hw-transport-ble|swift-bridge.*|types-.*)$/,
         {
           jest: "^28.1.1",
           "ts-jest": "^28.0.5",
@@ -62,6 +62,17 @@ function readPackage(pkg, context) {
         },
         { silent: true }
       ),
+      /*
+        Fix the unmet peer dep on rxjs for the wallet-api-server
+        Because we're still using rxjs v6 everywhere
+        We only added rxjs v7 as an alias on rxjs7
+      */
+      addDependencies("@ledgerhq/wallet-api-server", {
+        rxjs: pkg.peerDependencies?.rxjs ?? "*",
+      }),
+      removeDependencies("@ledgerhq/wallet-api-server", ["rxjs"], {
+        kind: "peerDependencies",
+      }),
       /*
         The following packages are broken and do not declare their dependencies properly.
         So we are going to patch these until the maintainers fix their own stuff…
@@ -90,7 +101,7 @@ function readPackage(pkg, context) {
         "web3-utils": pkg.dependencies?.["web3"],
       }),
       addDependencies("@celo/utils", {
-        randombytes: "*",
+        "fp-ts": "*",
         rlp: "*",
       }),
       /*  @cosmjs/* packages */

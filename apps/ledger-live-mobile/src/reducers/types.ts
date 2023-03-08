@@ -20,7 +20,12 @@ import { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { EventTrigger, DataOfUser } from "../logic/notifications";
 import type { RatingsHappyMoment, RatingsDataOfUser } from "../logic/ratings";
 import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
-import { WalletContentCard, AssetContentCard } from "../dynamicContent/types";
+import {
+  WalletContentCard,
+  AssetContentCard,
+  LearnContentCard,
+  NotificationContentCard,
+} from "../dynamicContent/types";
 import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
 
 // === ACCOUNT STATE ===
@@ -61,10 +66,13 @@ export type FwUpdateBackgroundEvent =
     };
 
 export type AppState = {
+  debugMenuVisible: boolean;
   isConnected: boolean | null;
   hasConnectedDevice: boolean;
   modalLock: boolean;
   backgroundEvents: Array<FwUpdateBackgroundEvent>;
+  isMainNavigatorVisible: boolean;
+  wiredDevice?: DeviceLike;
 };
 
 // === BLE STATE ===
@@ -108,6 +116,10 @@ export type DynamicContentState = {
   walletCards: WalletContentCard[];
   /** Dynamic content cards displayed in an Asset Page */
   assetsCards: AssetContentCard[];
+  /** Dynamic content cards displayed in Learn Section */
+  learnCards: LearnContentCard[];
+  /** Dynamic content cards displayed in Notification Center */
+  notificationCards: NotificationContentCard[];
 };
 
 // === RATINGS STATE ===
@@ -175,13 +187,13 @@ export type SettingsState = {
   countervalueFirst: boolean;
   graphCountervalueFirst: boolean;
   hideEmptyTokenAccounts: boolean;
+  filterTokenOperationsZeroAmount: boolean;
   blacklistedTokenIds: string[];
   hiddenNftCollections: string[];
   dismissedBanners: string[];
   hasAvailableUpdate: boolean;
   theme: Theme;
   osTheme: string | null | undefined;
-  carouselVisibility: number | Record<string, boolean>;
   dismissedDynamicCards: string[];
   // number is the legacy type from LLM V2
   discreetMode: boolean;
@@ -212,14 +224,17 @@ export type SettingsState = {
   };
   notifications: NotificationsSettings;
   walletTabNavigatorLastVisitedTab: keyof WalletTabNavigatorStackParamList;
+  displayStatusCenter: boolean;
   overriddenFeatureFlags: { [key in FeatureId]?: Feature | undefined };
   featureFlagsBannerVisible: boolean;
+  debugAppLevelDrawerOpened: boolean;
 };
 
 export type NotificationsSettings = {
   areNotificationsAllowed: boolean;
   announcementsCategory: boolean;
   recommendationsCategory: boolean;
+  largeMoverCategory: boolean;
 };
 
 // === WALLET CONNECT STATE ===

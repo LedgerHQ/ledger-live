@@ -33,7 +33,7 @@ module.exports = {
       },
     },
   },
-  plugins: ["detox"],
+  plugins: ["detox", "i18next"],
   rules: {
     "no-console": [
       "error",
@@ -59,6 +59,24 @@ module.exports = {
     "import/no-mutable-exports": 0,
     "import/prefer-default-export": 0,
     "import/namespace": ["error", { allowComputed: true }],
+    "i18next/no-literal-string": [
+      "error",
+      { 
+        "jsx-components": {
+          "include": [],
+          "exclude": []
+        },
+        words: {
+          // Maybe move this to a separate file if it becomes too large.
+          exclude: [
+            '\\s*[A-Z0-9≈•%!-:-@[-`{-~\\s]+\\s*',
+            '\\s #LedgerLiveApp\\s*',
+            '\\s*ledger.com/academy\\s*',
+            'Baking Bad',
+          ]
+        }
+      }
+    ],
     "no-use-before-define": 0,
     "react/sort-comp": 0,
     "react/jsx-boolean-value": 0,
@@ -158,5 +176,21 @@ module.exports = {
         device: false,
       },
     },
+    {
+      files: [
+        "src/screens/Settings/Debug/**/*",
+        "src/screens/FeatureFlagsSettings/**/*",
+        "src/components/AnalyticsConsole/**/*",
+        "src/components/StorylyStories/**/*",
+        "src/screens/Settings/Experimental/**/*",
+        "src/components/PerformanceConsole/**/*",
+        "src/components/CustomImage/TestImage.tsx",
+
+        "**/*Mock*",
+      ],
+      rules: {
+        "i18next/no-literal-string": "off"
+      }
+    }
   ],
 };

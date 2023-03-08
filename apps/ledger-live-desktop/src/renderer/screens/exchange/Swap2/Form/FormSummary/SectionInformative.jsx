@@ -46,7 +46,9 @@ const SectionInformative = ({ message, ctaLabel, onClick }: SectionInformativePr
     <TextWrappper>
       <Text>{message}</Text>
     </TextWrappper>
-    <ButtonAddAccount onClick={onClick}>{ctaLabel}</ButtonAddAccount>
+    <ButtonAddAccount onClick={onClick} data-test-id="add-destination-account-button">
+      {ctaLabel}
+    </ButtonAddAccount>
   </Container>
 );
 

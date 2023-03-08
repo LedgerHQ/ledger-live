@@ -6,17 +6,17 @@ import type { Transaction } from "../generated/types";
 import type { WalletAPITransaction } from "./types";
 
 const ethBridge = jest.fn();
-jest.mock("../generated/platformAdapter", () => {
+jest.mock("../generated/walletApiAdapter", () => {
   return {
     ethereum: {
-      getPlatformTransactionSignFlowInfos: function () {
+      getWalletAPITransactionSignFlowInfos: function () {
         return ethBridge();
       },
     },
   };
 });
 
-describe("getPlatformTransactionSignFlowInfos", () => {
+describe("getWalletAPITransactionSignFlowInfos", () => {
   beforeEach(() => {
     ethBridge.mockClear();
   });

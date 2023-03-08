@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import ReactNativeModal, { ModalProps } from "react-native-modal";
 import styled from "styled-components/native";
 import { StyleProp, ViewStyle } from "react-native";
@@ -136,6 +136,7 @@ export default function BaseModal({
   description,
   subtitle,
   children,
+  onModalHide,
   ...rest
 }: BaseModalProps): React.ReactElement {
   const backDropProps = preventBackdropClick
@@ -145,6 +146,14 @@ export default function BaseModal({
         onBackButtonPress: onClose,
         onSwipeComplete: onClose,
       };
+
+  // Workaround: until this, onModalHide={onClose}, making onClose being called twice and onModalHide being never called
+  // The real fix would be to have onModalHide={onModalHide} and make sure every usage on onClose in the consumers of this component
+  // expect the correct behavior
+  const onModalHideWithClose = useCallback(() => {
+    onClose();
+    onModalHide && onModalHide();
+  }, [onClose, onModalHide]);
 
   return (
     <ReactNativeModal
@@ -156,7 +165,7 @@ export default function BaseModal({
       useNativeDriver
       useNativeDriverForBackdrop
       hideModalContentWhileAnimating
-      onModalHide={onClose}
+      onModalHide={onModalHideWithClose}
       style={[defaultModalStyle, modalStyle]}
     >
       <SafeContainer style={safeContainerStyle}>

@@ -4,7 +4,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { Alert, BottomDrawer, Text, Flex } from "@ledgerhq/native-ui";
+import { Alert, Text, Flex } from "@ledgerhq/native-ui";
 import { DownloadMedium, UsbMedium } from "@ledgerhq/native-ui/assets/icons";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -17,9 +17,13 @@ import {
   hasCompletedOnboardingSelector,
   lastConnectedDeviceSelector,
 } from "../reducers/settings";
-import { hasConnectedDeviceSelector } from "../reducers/appstate";
+import {
+  getWiredDeviceSelector,
+  hasConnectedDeviceSelector,
+} from "../reducers/appstate";
 import Button from "./Button";
 import useLatestFirmware from "../hooks/useLatestFirmware";
+import QueuedDrawer from "./QueuedDrawer";
 
 const FirmwareUpdateBanner = ({
   containerProps,
@@ -29,6 +33,7 @@ const FirmwareUpdateBanner = ({
   const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(
     lastSeenDeviceSelector,
   );
+  const wiredDevice = useSelector(getWiredDeviceSelector);
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   const hasConnectedDevice = useSelector(hasConnectedDeviceSelector);
   const hasCompletedOnboarding: boolean = useSelector(
@@ -75,21 +80,20 @@ const FirmwareUpdateBanner = ({
       lastSeenDevice.deviceInfo,
       lastSeenDevice.modelId,
     );
-  const isDeviceConnectedViaUSB = lastConnectedDevice?.wired === true;
+
   const usbFwUpdateActivated =
     usbFwUpdateFeatureFlag?.enabled &&
     Platform.OS === "android" &&
     isUsbFwVersionUpdateSupported;
 
-  const fwUpdateActivatedButNotWired =
-    usbFwUpdateActivated && !isDeviceConnectedViaUSB;
+  const fwUpdateActivatedButNotWired = usbFwUpdateActivated && !wiredDevice;
 
   const deviceName = lastConnectedDevice
     ? getDeviceModel(lastConnectedDevice.modelId).productName
     : "";
 
   return showBanner && hasCompletedOnboarding && hasConnectedDevice ? (
-    <Flex mt={8} {...containerProps}>
+    <Flex mt={5} {...containerProps}>
       <Alert type="info" showIcon={false}>
         <Text flexShrink={1} flexGrow={1}>
           {t("FirmwareUpdate.newVersion", {
@@ -103,7 +107,7 @@ const FirmwareUpdateBanner = ({
           type="color"
           title={t("FirmwareUpdate.update")}
           onPress={
-            usbFwUpdateActivated && isDeviceConnectedViaUSB
+            usbFwUpdateActivated && wiredDevice
               ? onExperimentalFirmwareUpdate
               : onPress
           }
@@ -111,8 +115,8 @@ const FirmwareUpdateBanner = ({
         />
       </Alert>
 
-      <BottomDrawer
-        isOpen={showDrawer}
+      <QueuedDrawer
+        isRequestingToBeOpened={showDrawer}
         onClose={onCloseDrawer}
         Icon={fwUpdateActivatedButNotWired ? UsbMedium : DownloadMedium}
         title={
@@ -134,7 +138,7 @@ const FirmwareUpdateBanner = ({
           title={t("common.close")}
           onPress={onCloseDrawer}
         />
-      </BottomDrawer>
+      </QueuedDrawer>
     </Flex>
   ) : null;
 };

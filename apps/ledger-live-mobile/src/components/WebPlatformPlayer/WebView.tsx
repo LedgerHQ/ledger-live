@@ -31,12 +31,10 @@ import type {
 import { getEnv } from "@ledgerhq/live-common/env";
 import { isTokenAccount } from "@ledgerhq/live-common/account/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import {
-  findCryptoCurrencyById,
-  listAndFilterCurrencies,
-} from "@ledgerhq/live-common/currencies/index";
+import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { AppManifest } from "@ledgerhq/live-common/platform/types";
+import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import {
   broadcastTransactionLogic,
   receiveOnAccountLogic,
@@ -57,7 +55,6 @@ import {
 } from "@ledgerhq/live-common/platform/react";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 import { useTheme } from "styled-components/native";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { NavigatorName, ScreenName } from "../../const";
 import { broadcastSignedTx } from "../../logic/screenTransactionHooks";
@@ -76,7 +73,7 @@ import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigato
 const tracking = trackingWrapper(track);
 
 type Props = {
-  manifest: AppManifest;
+  manifest: LiveAppManifest;
   inputs?: Record<string, string>;
 };
 
@@ -163,15 +160,24 @@ export const WebView = ({ manifest, inputs }: Props) => {
       new Promise((resolve, reject) => {
         tracking.platformRequestAccountRequested(manifest);
 
+        /**
+         * make sure currencies are strings
+         * PS: yes `currencies` is properly typed as `string[]` but this typing only
+         * works at build time and the `currencies` array is received at runtime from
+         * JSONRPC requests. So we need to make sure the array is properly typed.
+         */
+        const safeCurrencyIds =
+          currencyIds?.filter(c => typeof c === "string") ?? undefined;
+
         const allCurrencies = listAndFilterCurrencies({
-          currencies: currencyIds,
+          currencies: safeCurrencyIds,
           includeTokens,
         });
         // handle no curencies selected case
         const cryptoCurrencyIds =
-          currencyIds && currencyIds.length > 0
-            ? currencyIds
-            : allCurrencies.map(currency => (currency as CryptoCurrency).id);
+          safeCurrencyIds && safeCurrencyIds.length > 0
+            ? safeCurrencyIds
+            : allCurrencies.map(currency => currency.id);
 
         const foundAccounts = cryptoCurrencyIds?.length
           ? accounts.filter(a =>

@@ -1,7 +1,8 @@
 import React, { useCallback } from "react";
-import { BottomDrawer, Button, Link, Text } from "@ledgerhq/native-ui";
+import { Button, Link, Text } from "@ledgerhq/native-ui";
 import { ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
+import QueuedDrawer from "../../components/QueuedDrawer";
 
 export type Props = {
   isOpen: boolean;
@@ -20,7 +21,7 @@ const HelpDrawer = ({ isOpen, onClose }: Props) => {
   }, []);
 
   return (
-    <BottomDrawer onClose={onClose} isOpen={isOpen}>
+    <QueuedDrawer onClose={onClose} isRequestingToBeOpened={isOpen}>
       <Text variant="h4" fontWeight="semiBold" mb={4}>
         {t("syncOnboarding.helpDrawer.title")}
       </Text>
@@ -33,7 +34,7 @@ const HelpDrawer = ({ isOpen, onClose }: Props) => {
       <Link Icon={ExternalLinkMedium} onPress={handleSupportPress}>
         {t("syncOnboarding.helpDrawer.supportCta")}
       </Link>
-    </BottomDrawer>
+    </QueuedDrawer>
   );
 };
 

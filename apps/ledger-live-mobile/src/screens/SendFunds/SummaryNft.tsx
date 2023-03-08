@@ -46,7 +46,7 @@ const SummaryNft = ({ transaction, currencyId }: Props) => {
             numberOfLines={1}
             ellipsizeMode="middle"
           >
-            ID {tokenId}
+            {t("common.patterns.id", { value: tokenId })}
           </LText>
         </View>
       </SummaryRow>

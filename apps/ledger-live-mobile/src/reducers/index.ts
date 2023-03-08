@@ -11,7 +11,7 @@ import dynamicContent from "./dynamicContent";
 import walletconnect from "./walletconnect";
 import protect from "./protect";
 import { State } from "./types";
-import { ActionsPayload, SettingsActionTypes } from "../actions/types";
+import { ActionsPayload } from "../actions/types";
 
 export type AppStore = Store<State>;
 
@@ -31,13 +31,6 @@ const appReducer = combineReducers({
 
 // TODO: EXPORT ALL POSSIBLE ACTION TYPES AND USE ACTION<TYPES>
 const rootReducer = (state: State | undefined, action: ActionsPayload) => {
-  if (
-    __DEV__ &&
-    action.type === SettingsActionTypes.DANGEROUSLY_OVERRIDE_STATE
-  ) {
-    appReducer({ ...action.payload } as State, action);
-  }
-
   return appReducer(state, action);
 };
 

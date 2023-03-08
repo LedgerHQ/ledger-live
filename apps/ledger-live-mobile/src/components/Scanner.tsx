@@ -1,24 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import { StyleSheet, View } from "react-native";
 import { BarCodeScanningResult, Camera } from "expo-camera";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { useTheme } from "styled-components/native";
-import {
-  CompositeNavigationProp,
-  useNavigation,
-  useRoute,
-} from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { Flex } from "@ledgerhq/native-ui";
 import StyledStatusBar from "./StyledStatusBar";
 import CameraScreen from "./CameraScreen";
 import HeaderRightClose from "./HeaderRightClose";
-import FallbackCameraScreen from "../screens/ImportAccounts/FallBackCameraScreen";
 import getWindowDimensions from "../logic/getWindowDimensions";
-import type {
-  StackNavigatorNavigation,
-  StackNavigatorRoute,
-} from "./RootNavigator/types/helpers";
-import { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator";
-import { ImportAccountsNavigatorParamList } from "./RootNavigator/types/ImportAccountsNavigator";
+import RequiresCameraPermissions from "./RequiresCameraPermissions";
+import CameraPermissionContext from "./RequiresCameraPermissions/CameraPermissionContext";
 
 type Props = {
   onResult: (_: string) => void;
@@ -28,32 +20,13 @@ type Props = {
 };
 
 const Scanner = ({ onResult, liveQrCode, progress, instruction }: Props) => {
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+  const hasPermission = useContext(CameraPermissionContext).permissionGranted;
   const { width, height } = getWindowDimensions();
-  const navigation =
-    useNavigation<
-      CompositeNavigationProp<
-        StackNavigatorNavigation<ImportAccountsNavigatorParamList>,
-        StackNavigatorNavigation<BaseNavigatorStackParamList>
-      >
-    >();
-  const route = useRoute<StackNavigatorRoute<BaseNavigatorStackParamList>>();
+  const navigation = useNavigation();
   const { colors } = useTheme();
-  useEffect(() => {
-    (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === "granted");
-    })();
-  }, []);
 
   useEffect(() => {
-    if (hasPermission === false) {
-      navigation.setOptions({
-        headerRight: () => (
-          <HeaderRightClose color={colors.neutral.c100} preferDismiss={false} />
-        ),
-      });
-    } else if (hasPermission) {
+    if (hasPermission) {
       navigation.setOptions({
         headerRight: () => (
           <HeaderRightClose
@@ -65,44 +38,51 @@ const Scanner = ({ onResult, liveQrCode, progress, instruction }: Props) => {
     }
   }, [colors, hasPermission, navigation]);
 
-  switch (hasPermission) {
-    case null:
-      return <View />;
-    case false:
-      return <FallbackCameraScreen route={route} navigation={navigation} />;
-    default:
-      return (
-        <View style={styles.container}>
-          <StyledStatusBar barStyle="light-content" />
-          <Camera
-            style={styles.camera}
-            type={Camera.Constants.Type.back}
-            ratio="16:9"
-            onBarCodeScanned={({ data }: BarCodeScanningResult) =>
-              onResult(data)
-            }
-            barCodeScannerSettings={{
-              barCodeTypes: [BarCodeScanner.Constants.BarCodeType.qr],
-            }}
-          >
-            <CameraScreen
-              liveQrCode={liveQrCode}
-              progress={progress}
-              width={width}
-              height={height}
-              instruction={instruction}
-            />
-          </Camera>
-        </View>
-      );
-  }
+  if (!hasPermission) return <View />;
+  return (
+    <Flex flex={1}>
+      <StyledStatusBar barStyle="light-content" />
+      <Camera
+        style={styles.camera}
+        type={Camera.Constants.Type.back}
+        ratio="16:9"
+        onBarCodeScanned={({ data }: BarCodeScanningResult) => onResult(data)}
+        barCodeScannerSettings={{
+          barCodeTypes: [BarCodeScanner.Constants.BarCodeType.qr],
+        }}
+      >
+        <CameraScreen
+          liveQrCode={liveQrCode}
+          progress={progress}
+          width={width}
+          height={height}
+          instruction={instruction}
+        />
+      </Camera>
+    </Flex>
+  );
 };
 
-export default Scanner;
+const ScannerWrappedInRequiresCameraPermission: React.FC<Props> = props => {
+  const navigation = useNavigation();
+  const { colors } = useTheme();
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <HeaderRightClose color={colors.neutral.c100} preferDismiss={false} />
+      ),
+    });
+  }, [colors.neutral.c100, navigation]);
+
+  return (
+    <RequiresCameraPermissions optimisticallyMountChildren>
+      <Scanner {...props} />
+    </RequiresCameraPermissions>
+  );
+};
+
+export default ScannerWrappedInRequiresCameraPermission;
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   camera: {
     flex: 1,
   },

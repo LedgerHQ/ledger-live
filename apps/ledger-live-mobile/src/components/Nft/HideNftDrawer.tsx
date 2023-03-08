@@ -2,7 +2,7 @@ import React, { memo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 
-import { BottomDrawer, Button, Icons } from "@ledgerhq/native-ui";
+import { Button, Icons } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
 import { Account } from "@ledgerhq/types-live";
 import { decodeNftId } from "@ledgerhq/live-common/nft/index";
@@ -10,6 +10,7 @@ import { track, TrackScreen } from "../../analytics";
 import { hideNftCollection } from "../../actions/settings";
 import { accountSelector } from "../../reducers/accounts";
 import { State } from "../../reducers/types";
+import QueuedDrawer from "../QueuedDrawer";
 
 type Props = {
   nftId?: string;
@@ -61,8 +62,8 @@ const HideNftDrawer = ({
     onClose();
   }, [onClose]);
   return (
-    <BottomDrawer
-      isOpen={isOpened}
+    <QueuedDrawer
+      isRequestingToBeOpened={isOpened}
       onClose={onPressClose}
       Icon={Icons.EyeNoneMedium}
       title={t("wallet.nftGallery.hideNftModal.title")}
@@ -95,7 +96,7 @@ const HideNftDrawer = ({
       >
         {t("common.cancel")}
       </Button>
-    </BottomDrawer>
+    </QueuedDrawer>
   );
 };
 

@@ -34,7 +34,6 @@ import IsNewVersion from "~/renderer/components/IsNewVersion";
 import IsSystemLanguageAvailable from "~/renderer/components/IsSystemLanguageAvailable";
 // $FlowFixMe
 import IsTermOfUseUpdated from "./components/IsTermOfUseUpdated";
-import DeviceBusyIndicator from "~/renderer/components/DeviceBusyIndicator";
 import KeyboardContent from "~/renderer/components/KeyboardContent";
 import PerfIndicator from "~/renderer/components/PerfIndicator";
 import MainSideBar from "~/renderer/components/MainSideBar";
@@ -193,7 +192,16 @@ export default function Default() {
             <Switch>
               <Route path="/onboarding" render={props => <Onboarding {...props} />} />
               <Route path="/sync-onboarding" render={props => <SyncOnboarding {...props} />} />
-              <Route path="/post-onboarding" render={() => <PostOnboardingScreen />} />
+              <Route
+                path="/post-onboarding"
+                render={() => (
+                  <>
+                    <PostOnboardingScreen />
+                    <Drawer />
+                  </>
+                )}
+              />
+
               <Route path="/USBTroubleshooting">
                 <USBTroubleshooting onboarding={!hasCompletedOnboarding} />
               </Route>
@@ -280,7 +288,6 @@ export default function Default() {
                         <NightlyLayer />
                       ) : null}
 
-                      <DeviceBusyIndicator />
                       <KeyboardContent sequence="BJBJBJ">
                         <PerfIndicator />
                       </KeyboardContent>

@@ -24,7 +24,7 @@ import {
   SettingsAcceptSwapProviderPayload,
   SettingsAddStarredMarketcoinsPayload,
   SettingsBlacklistTokenPayload,
-  SettingsDangerouslyOverrideStatePayload,
+  DangerouslyOverrideStatePayload,
   SettingsDismissBannerPayload,
   SettingsHideEmptyTokenAccountsPayload,
   SettingsHideNftCollectionPayload,
@@ -36,7 +36,6 @@ import {
   SettingsRemoveStarredMarketcoinsPayload,
   SettingsSetAnalyticsPayload,
   SettingsSetAvailableUpdatePayload,
-  SettingsSetCarouselVisibilityPayload,
   SettingsSetLastSeenCustomImagePayload,
   SettingsSetCountervaluePayload,
   SettingsSetDiscreetModePayload,
@@ -68,9 +67,14 @@ import {
   SettingsActionTypes,
   SettingsSetWalletTabNavigatorLastVisitedTabPayload,
   SettingsSetDismissedDynamicCardsPayload,
+  SettingsSetStatusCenterPayload,
   SettingsSetOverriddenFeatureFlagPlayload,
   SettingsSetOverriddenFeatureFlagsPlayload,
   SettingsSetFeatureFlagsBannerVisiblePayload,
+  SettingsSetDebugAppLevelDrawerOpenedPayload,
+  SettingsFilterTokenOperationsZeroAmountPayload,
+  SettingsLastSeenDeviceLanguagePayload,
+  SettingsCompleteOnboardingPayload,
 } from "./types";
 import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
 
@@ -196,10 +200,14 @@ export const setLastSeenCustomImage = ({
 export const clearLastSeenCustomImage = () =>
   setLastSeenCustomImageAction({ imageSize: 0, imageHash: "" });
 
-const completeOnboardingAction = createAction(
-  SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING,
-);
-export const completeOnboarding = () => completeOnboardingAction();
+const completeOnboardingAction =
+  createAction<SettingsCompleteOnboardingPayload>(
+    SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING,
+  );
+export const completeOnboarding = (hasCompletedOnboarding = true) =>
+  completeOnboardingAction({
+    hasCompletedOnboarding,
+  });
 
 const installAppFirstTimeAction =
   createAction<SettingsInstallAppFirstTimePayload>(
@@ -222,6 +230,17 @@ const setHideEmptyTokenAccountsAction =
 export const setHideEmptyTokenAccounts = (hideEmptyTokenAccounts: boolean) =>
   setHideEmptyTokenAccountsAction({
     hideEmptyTokenAccounts,
+  });
+
+const setFilterTokenOperationsZeroAmountAction =
+  createAction<SettingsFilterTokenOperationsZeroAmountPayload>(
+    SettingsActionTypes.SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT,
+  );
+export const setFilterTokenOperationsZeroAmount = (
+  filterTokenOperationsZeroAmount: boolean,
+) =>
+  setFilterTokenOperationsZeroAmountAction({
+    filterTokenOperationsZeroAmount,
   });
 
 const blacklistTokenAction = createAction<SettingsBlacklistTokenPayload>(
@@ -264,14 +283,6 @@ export const dismissBanner = (bannerId: string) =>
   dismissBannerAction({
     bannerId,
   });
-
-const setCarouselVisibilityAction =
-  createAction<SettingsSetCarouselVisibilityPayload>(
-    SettingsActionTypes.SETTINGS_SET_CAROUSEL_VISIBILITY,
-  );
-export const setCarouselVisibility = (carouselVisibility: {
-  [key: string]: boolean;
-}) => setCarouselVisibilityAction({ carouselVisibility });
 
 const setDismissedDynamicCardsAction =
   createAction<SettingsSetDismissedDynamicCardsPayload>(
@@ -373,6 +384,13 @@ const setLastSeenDeviceInfoAction =
   );
 export const setLastSeenDeviceInfo = (dmi: DeviceModelInfo) =>
   setLastSeenDeviceInfoAction({ dmi });
+
+const setLastSeenDeviceLanguageIdAction =
+  createAction<SettingsLastSeenDeviceLanguagePayload>(
+    SettingsActionTypes.LAST_SEEN_DEVICE_LANGUAGE_ID,
+  );
+export const setLastSeenDeviceLanguageId = (languageId: number) =>
+  setLastSeenDeviceLanguageIdAction({ languageId });
 
 const addStarredMarketCoinsAction =
   createAction<SettingsAddStarredMarketcoinsPayload>(
@@ -493,6 +511,14 @@ export const setWalletTabNavigatorLastVisitedTab = (
     walletTabNavigatorLastVisitedTab,
   });
 
+const setStatusCenterAction = createAction<SettingsSetStatusCenterPayload>(
+  SettingsActionTypes.SET_STATUS_CENTER,
+);
+export const setStatusCenter = (displayStatusCenter: boolean) =>
+  setStatusCenterAction({
+    displayStatusCenter,
+  });
+
 const setOverriddenFeatureFlagAction =
   createAction<SettingsSetOverriddenFeatureFlagPlayload>(
     SettingsActionTypes.SET_OVERRIDDEN_FEATURE_FLAG,
@@ -522,8 +548,16 @@ export const setFeatureFlagsBannerVisible = (
   featureFlagsBannerVisible: boolean,
 ) => setFeatureFlagsBannerVisibleAction({ featureFlagsBannerVisible });
 
+const setDebugAppLevelDrawerOpenedAction =
+  createAction<SettingsSetDebugAppLevelDrawerOpenedPayload>(
+    SettingsActionTypes.SET_DEBUG_APP_LEVEL_DRAWER_OPENED,
+  );
+export const setDebugAppLelevelDrawerOpened = (
+  debugAppLevelDrawerOpened: boolean,
+) => setDebugAppLevelDrawerOpenedAction({ debugAppLevelDrawerOpened });
+
 const dangerouslyOverrideStateAction =
-  createAction<SettingsDangerouslyOverrideStatePayload>(
+  createAction<DangerouslyOverrideStatePayload>(
     SettingsActionTypes.DANGEROUSLY_OVERRIDE_STATE,
   );
 export const dangerouslyOverrideState = (s: State) =>

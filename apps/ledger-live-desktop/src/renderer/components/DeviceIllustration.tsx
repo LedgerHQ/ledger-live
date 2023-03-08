@@ -19,20 +19,20 @@ const makeAssetSelector = (lightAsset: any, darkAsset: any) => (p: ThemeProps<De
 
 const NanoS = styled.div`
   // TODO: rendering issue in the SVG in the "hole"
-  background: url(${p => makeAssetSelector(nanoS, nanoSDark)(p)}) no-repeat center;
+  background: url('${p => makeAssetSelector(nanoS, nanoSDark)(p)}') no-repeat center;
 `;
 
 const NanoSP = styled.div`
   // TODO: rendering issue in the SVG in the "hole"
-  background: url(${p => makeAssetSelector(nanoS2, nanoS2Dark)(p)}) no-repeat center;
+  background: url('${p => makeAssetSelector(nanoS2, nanoS2Dark)(p)}') no-repeat center;
 `;
 
 const NanoX = styled.div`
-  background: url(${p => makeAssetSelector(nanoX, nanoXDark)(p)}) no-repeat center;
+  background: url('${p => makeAssetSelector(nanoX, nanoXDark)(p)}') no-repeat center;
 `;
 
 const Stax = styled.div`
-  background: url(${p => makeAssetSelector(stax, staxDark)(p)}) no-repeat center;
+  background: url('${p => makeAssetSelector(stax, staxDark)(p)}') no-repeat center;
 `;
 
 type Illustration = {
@@ -59,8 +59,8 @@ const illustrations: { [key in DeviceModelId]: Illustration } = {
   },
   stax: {
     Illustration: Stax,
-    width: 160.15,
-    height: 250.1,
+    width: 240,
+    height: 240,
   },
   blue: {
     Illustration: NanoS,

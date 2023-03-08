@@ -2,10 +2,12 @@ import React, { useCallback, useState } from "react";
 import { Flex } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import connectManager from "@ledgerhq/live-common/hw/connectManager";
 import { createAction, Result } from "@ledgerhq/live-common/hw/actions/manager";
 import DeviceActionModal from "../../../../../components/DeviceActionModal";
 import SelectDevice from "../../../../../components/SelectDevice";
+import SelectDevice2 from "../../../../../components/SelectDevice2";
 import { TrackScreen, updateIdentify } from "../../../../../analytics";
 import Button from "../../../../../components/PreventDoubleClickButton";
 
@@ -30,6 +32,8 @@ const ConnectNanoScene = ({
   const dispatch = useDispatch();
   const readOnlyMode = useSelector(readOnlyModeEnabledSelector);
   const [device, setDevice] = useState<Device | undefined>();
+
+  const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
 
   const onSetDevice = useCallback(
     async (device: Device) => {
@@ -85,13 +89,17 @@ const ConnectNanoScene = ({
     <>
       <TrackScreen category="Onboarding" name="PairNew" />
       <Flex flex={1}>
-        <SelectDevice
-          withArrows
-          usbOnly={usbOnly}
-          onSelect={usbOnly ? onSetDevice : directNext}
-          autoSelectOnAdd
-          hideAnimation
-        />
+        {newDeviceSelectionFeatureFlag?.enabled ? (
+          <SelectDevice2 onSelect={onSetDevice} stopBleScanning={!!device} />
+        ) : (
+          <SelectDevice
+            withArrows
+            usbOnly={usbOnly}
+            onSelect={usbOnly ? onSetDevice : directNext}
+            autoSelectOnAdd
+            hideAnimation
+          />
+        )}
       </Flex>
       <DeviceActionModal
         onClose={() => setDevice(undefined)}
@@ -120,7 +128,7 @@ const Next = ({ onNext }: { onNext: () => void }) => {
         onNext();
       }}
     >
-      (DEV) skip this step
+      (DEV) SKIP THIS STEP
     </Button>
   ) : null;
 };

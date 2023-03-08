@@ -23,12 +23,14 @@ import SummaryRow from "../screens/SendFunds/SummaryRow";
 import CounterValue from "./CounterValue";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import SectionSeparator from "./SectionSeparator";
-import BottomModal from "./BottomModal";
+import QueuedDrawer from "./QueuedDrawer";
 import Info from "../icons/Info";
 import TachometerSlow from "../icons/TachometerSlow";
 import TachometerMedium from "../icons/TachometerMedium";
 import TachometerFast from "../icons/TachometerFast";
 import NetworkFeeInfo from "./NetworkFeeInfo";
+import { useAnalytics } from "../analytics";
+import { sharedSwapTracking } from "../screens/Swap/utils";
 
 type Props = {
   strategies: (FeeStrategy & { userGasLimit?: BigNumber })[];
@@ -57,6 +59,7 @@ export default function SelectFeesStrategy({
   forceUnitLabel,
   disabledStrategies,
 }: Props) {
+  const { track } = useAnalytics();
   const { t } = useTranslation();
   const { colors } = useTheme();
   const mainAccount = getMainAccount(account, parentAccount);
@@ -73,6 +76,11 @@ export default function SelectFeesStrategy({
 
   const onPressStrategySelect = useCallback(
     (item: FeeStrategy) => {
+      track("button_clicked", {
+        ...sharedSwapTracking,
+        button: item.label,
+        page: "Swap quotes",
+      });
       onStrategySelect({
         amount: item.amount,
         label:
@@ -81,7 +89,7 @@ export default function SelectFeesStrategy({
         txParameters: item.txParameters,
       });
     },
-    [onStrategySelect],
+    [onStrategySelect, track],
   );
 
   const renderItem = ({ item }: ListRenderItemInfo<FeeStrategy>) => (
@@ -147,13 +155,13 @@ export default function SelectFeesStrategy({
 
   return (
     <>
-      <BottomModal
-        isOpened={isNetworkFeeHelpOpened}
+      <QueuedDrawer
+        isRequestingToBeOpened={isNetworkFeeHelpOpened}
         preventBackdropClick={false}
         onClose={closeNetworkFeeHelpModal}
       >
         <NetworkFeeInfo />
-      </BottomModal>
+      </QueuedDrawer>
 
       <View>
         <SectionSeparator lineColor={colors.lightFog} />

@@ -36,8 +36,9 @@ test("isDeviceLocalizationSupported", () => {
   /**
    * Stax
    * */
-  expect(isDeviceLocalizationSupported("9.0.0", stax)).toBe(false);
-  expect(isDeviceLocalizationSupported("9.0.0-whatever", stax)).toBe(false);
+  expect(isDeviceLocalizationSupported("0.9.0", stax)).toBe(false);
+  expect(isDeviceLocalizationSupported("9.0.0", stax)).toBe(true);
+  expect(isDeviceLocalizationSupported("9.0.0-whatever", stax)).toBe(true);
 
   /**
    * NanoS

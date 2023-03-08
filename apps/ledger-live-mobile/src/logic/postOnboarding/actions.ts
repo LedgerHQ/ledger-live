@@ -22,11 +22,12 @@ export const customImageAction: PostOnboardingAction = {
       },
     },
   ],
+  buttonLabelForAnalyticsEvent: "Set lock screen picture",
 };
 
 export const claimNftAction: PostOnboardingAction = {
   id: PostOnboardingActionId.claimNft,
-  disabled: true,
+  disabled: false,
   Icon: Icons.GiftCardMedium,
   featureFlagId: "postOnboardingClaimNft",
   title: "postOnboarding.actions.claimNft.title",
@@ -34,6 +35,13 @@ export const claimNftAction: PostOnboardingAction = {
   description: "postOnboarding.actions.claimNft.description",
   tagLabel: "postOnboarding.actions.claimNft.tagLabel",
   actionCompletedPopupLabel: "postOnboarding.actions.claimNft.popupLabel",
+  navigationParams: [
+    NavigatorName.ClaimNft,
+    {
+      screen: ScreenName.ClaimNftWelcome,
+    },
+  ],
+  buttonLabelForAnalyticsEvent: "Claim Ledger NFT",
 };
 
 export const assetsTransferAction: PostOnboardingAction = {
@@ -45,4 +53,5 @@ export const assetsTransferAction: PostOnboardingAction = {
   titleCompleted: "postOnboarding.actions.assetsTransfer.titleCompleted",
   description: "postOnboarding.actions.assetsTransfer.description",
   actionCompletedPopupLabel: "postOnboarding.actions.assetsTransfer.popupLabel",
+  buttonLabelForAnalyticsEvent: "Secure your assets on Ledger",
 };

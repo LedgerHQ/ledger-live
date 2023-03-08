@@ -1,10 +1,11 @@
 import React, { useState, useCallback } from "react";
 import { useDispatch } from "react-redux";
-import { BottomDrawer, Icons } from "@ledgerhq/native-ui";
+import { Icons } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import SettingsRow from "../../../components/SettingsRow";
 import Button from "../../../components/wrappedUi/Button";
 import { resetSwapLoginAndKYCData } from "../../../actions/settings";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 
 export default function ResetThirdPartyDataRow() {
   const { t } = useTranslation();
@@ -33,8 +34,8 @@ export default function ResetThirdPartyDataRow() {
         onPress={onPress}
         arrowRight
       />
-      <BottomDrawer
-        isOpen={isModalOpened}
+      <QueuedDrawer
+        isRequestingToBeOpened={isModalOpened}
         onClose={onRequestClose}
         Icon={Icons.InfoMedium}
         iconColor={"primary.c80"}
@@ -52,7 +53,7 @@ export default function ResetThirdPartyDataRow() {
         >
           {t("common.cancel")}
         </Button>
-      </BottomDrawer>
+      </QueuedDrawer>
     </>
   );
 }

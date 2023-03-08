@@ -2,6 +2,7 @@ import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import React, { useCallback, useEffect } from "react";
 import { has as hasFromPath, set as setFromPath } from "lodash";
 import { BackHandler } from "react-native";
+import { Flex } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "../../const";
 import { useIncrementOnNavigationFocusState } from "../../helpers/useIncrementOnNavigationFocusState";
 import BleDevicePairingFlowComponent from "../../components/BleDevicePairingFlow/index";
@@ -10,6 +11,7 @@ import {
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import DeviceSetupView from "../../components/DeviceSetupView";
 
 export type Props = RootComposite<
   StackNavigatorProps<
@@ -171,13 +173,16 @@ export const BleDevicePairingFlow = ({ navigation, route }: Props) => {
   }, [handleGoBackFromScanning]);
 
   return (
-    <BleDevicePairingFlowComponent
-      key={keyToReset}
-      filterByDeviceModelId={filterByDeviceModelId}
-      areKnownDevicesDisplayed={areKnownDevicesDisplayed}
-      onGoBackFromScanning={handleGoBackFromScanning}
-      onPairingSuccess={onPairingSuccess}
-      onPairingSuccessAddToKnownDevices={onSuccessAddToKnownDevices}
-    />
+    <DeviceSetupView hasBackButton onBack={handleGoBackFromScanning}>
+      <Flex px={6} flex={1}>
+        <BleDevicePairingFlowComponent
+          key={keyToReset}
+          filterByDeviceModelId={filterByDeviceModelId}
+          areKnownDevicesDisplayed={areKnownDevicesDisplayed}
+          onPairingSuccess={onPairingSuccess}
+          onPairingSuccessAddToKnownDevices={onSuccessAddToKnownDevices}
+        />
+      </Flex>
+    </DeviceSetupView>
   );
 };

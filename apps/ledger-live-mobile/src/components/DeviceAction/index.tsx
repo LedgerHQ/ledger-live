@@ -62,6 +62,7 @@ import PreventNativeBack from "../PreventNativeBack";
 import SkipLock from "../behaviour/SkipLock";
 import DeviceActionProgress from "../DeviceActionProgress";
 import { PartialNullable } from "../../types/helpers";
+import ModalLock from "../ModalLock";
 
 type LedgerError = InstanceType<
   LedgerErrorConstructor<{ [key: string]: unknown }>
@@ -280,6 +281,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
         <Flex mt={5}>
           <Text variant="h4">{t("deviceLocalization.installingLanguage")}</Text>
         </Flex>
+        <ModalLock />
       </Flex>
     );
   }
@@ -422,13 +424,14 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     /** @TODO Put that back if the app is still crashing */
     // track("DeviceActionError", error);
 
-    // NB Until we find a better way, remap the error if it's 6d06 and we haven't fallen
+    // NB Until we find a better way, remap the error if it's 6d06 (LNS, LNSP, LNX) or 6d07 (Stax) and we haven't fallen
     // into another handled case.
     if (
       device &&
       (error instanceof DeviceNotOnboarded ||
         ((error as unknown) instanceof TransportStatusError &&
-          (error as Error).message.includes("0x6d06")))
+          ((error as Error).message.includes("0x6d06") ||
+            (error as Error).message.includes("0x6d07"))))
     ) {
       return renderDeviceNotOnboarded({ t, device, navigation });
     }

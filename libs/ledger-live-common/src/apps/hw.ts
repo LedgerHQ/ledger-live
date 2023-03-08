@@ -7,12 +7,14 @@ import {
 import { UnexpectedBootloader } from "@ledgerhq/errors";
 import { concat, of, EMPTY, from, Observable, throwError, defer } from "rxjs";
 import { mergeMap, map } from "rxjs/operators";
+import { App, AppType, DeviceInfo } from "@ledgerhq/types-live";
+import { log } from "@ledgerhq/logs";
+import { LatestFirmwareVersionRequired, NoSuchAppOnProvider } from "../errors";
 import type { Exec, AppOp, ListAppsEvent, ListAppsResult } from "./types";
 import manager, { getProviderId } from "../manager";
 import installApp from "../hw/installApp";
 import uninstallApp from "../hw/uninstallApp";
 import staxFetchImageSize from "../hw/staxFetchImageSize";
-import { log } from "@ledgerhq/logs";
 import getDeviceInfo from "../hw/getDeviceInfo";
 import {
   listCryptoCurrencies,
@@ -35,7 +37,7 @@ import {
 } from "../apps/logic";
 import { runAllWithProgress } from "../apps/runner";
 import type { ConnectAppEvent } from "../hw/connectApp";
-import { App, AppType, DeviceInfo } from "@ledgerhq/types-live";
+import getDeviceName from "../hw/getDeviceName";
 
 export const execWithTransport =
   (transport: Transport): Exec =>
@@ -44,7 +46,7 @@ export const execWithTransport =
     return fn(transport, targetId, app);
   };
 
-const appsThatKeepChangingHashes = ["Fido U2F"];
+const appsThatKeepChangingHashes = ["Fido U2F", "Security Key"];
 
 export type StreamAppInstallEvent =
   | {
@@ -70,15 +72,26 @@ export type StreamAppInstallEvent =
       installQueue: string[];
     };
 
-// global percentage
+/**
+ * Tries to install a list of apps
+ *
+ * @param transport Transport instance
+ * @param appNames List of app names to install
+ * @param onSuccessObs Optional observable to run after the installation
+ * @param skipAppInstallIfNotFound If true, skip the installation of any app that were not found from the provider. Default to false.
+ * @returns Observable of StreamAppInstallEvent or ConnectAppEvent
+ * - Event "stream-install" contains a global progress of the installation
+ */
 export const streamAppInstall = ({
   transport,
   appNames,
   onSuccessObs,
+  skipAppInstallIfNotFound = false,
 }: {
   transport: Transport;
   appNames: string[];
   onSuccessObs?: () => Observable<any>;
+  skipAppInstallIfNotFound?: boolean;
 }): Observable<StreamAppInstallEvent | ConnectAppEvent> =>
   concat(
     of({
@@ -97,14 +110,31 @@ export const streamAppInstall = ({
 
         if (e.type === "result") {
           // stream install with the result of list apps
-          const state = appNames.reduce(
-            (state, name) =>
-              reducer(state, {
+          const state = appNames.reduce((state, name) => {
+            try {
+              return reducer(state, {
                 type: "install",
                 name,
-              }),
-            initState(e.result)
-          );
+              });
+            } catch (e: unknown) {
+              if (
+                e instanceof NoSuchAppOnProvider ||
+                e instanceof LatestFirmwareVersionRequired
+              ) {
+                log(
+                  "hw",
+                  `failed to install app: ${name}. Skipping: ${skipAppInstallIfNotFound}`
+                );
+
+                // Continues installing the next apps
+                if (skipAppInstallIfNotFound) {
+                  return state;
+                }
+              }
+
+              throw e;
+            }
+          }, initState(e.result));
 
           if (!state.installQueue.length) {
             return defer(onSuccessObs || (() => EMPTY));
@@ -265,11 +295,7 @@ export const listApps = (
         sortedCryptoCurrencies,
       ] = await Promise.all([
         installedP,
-        ManagerAPI.listApps().then((apps) =>
-          apps.map((app) => {
-            return polyfillApplication(app, provider);
-          })
-        ),
+        ManagerAPI.listApps().then((apps) => apps.map(polyfillApplication)),
         applicationsByDeviceP,
         firmwareP,
         currenciesByMarketcap(
@@ -449,6 +475,10 @@ export const listApps = (
         }
       }
 
+      // Harmless to run here since we are already in a secure channel, leading to
+      // no prompt for the user. Introduced for the device renaming for LLD.
+      const deviceName = await getDeviceName(transport);
+
       const result: ListAppsResult = {
         appByName,
         appsListNames,
@@ -458,6 +488,7 @@ export const listApps = (
         deviceModelId,
         firmware,
         customImageBlocks,
+        deviceName,
       };
       o.next({
         type: "result",

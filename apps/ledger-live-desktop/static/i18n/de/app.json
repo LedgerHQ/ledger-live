@@ -102,6 +102,7 @@
     "addressCopied" : "Adresse kopiert",
     "addressCopiedSuspicious" : "Unstimmigkeit zwischen der kopierten Adresse und der in der Zwischenablage.",
     "experimentalFeature" : "Experimentell",
+    "featureFlags" : "Feature-Flags",
     "information" : "Information",
     "search" : "Suche...",
     "searchWithoutEllipsis" : "Suchen nach",
@@ -131,7 +132,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "nanoFTS" : "Nano FTS",
+    "stax" : "Stax",
     "blue" : "Blau"
   },
   "operation" : {
@@ -251,6 +252,8 @@
         "float" : "Variabel",
         "update" : "Kursaktualisierung in",
         "loading" : "Lade Daten...",
+        "loadingQuotes" : "Jetzt Angebote laden",
+        "loadingDescription" : "Es wird nur einen Moment dauern, um die besten Optionen für Sie zu finden.",
         "name" : {
           "title" : "Anbieter",
           "tooltip" : "Je nach Anbieter müssen Sie sich bei diesem anmelden, indem Sie ein Konto erstellen."
@@ -603,6 +606,28 @@
       "creditedAmount" : "Gutschrift"
     }
   },
+  "stake" : {
+    "noFundsModal" : {
+      "title" : "Kaufen, umtauschen oder empfangen",
+      "text" : "Sie haben nicht genug {{coin}} verfügbar um am Staking teilzunehmen",
+      "description" : "Zu niedriges Guthaben? Keine Sorge, Sie können direkt in Ledger Live sicher Kryptowährungen kaufen, umtauschen oder empfangen.",
+      "options" : {
+        "buy" : {
+          "title" : "Kaufen",
+          "body" : "Kaufen Sie bei vertrauenswürdigen Anbietern"
+        },
+        "swap" : {
+          "title" : "Umtauschen",
+          "label" : "Beliebt",
+          "body" : "Sicheres Konvertieren von Krypto in Krypto"
+        },
+        "receive" : {
+          "title" : "Empfangen",
+          "body" : "Empfangen Sie Kryptowährungen in Ihrer Wallet"
+        }
+      }
+    }
+  },
   "lottieDebugger" : {
     "buttonTitle" : "Testen"
   },
@@ -794,12 +819,37 @@
       "redelegation" : {
         "title" : "Schon gewusst?",
         "description" : "Der Ledger-Validator erledigt das Staking zu einer günstigeren Provision als Ihr derzeitiger Validator.",
-        "cta" : "Mit Ledger erneut delegieren"
+        "cta" : "Mit Ledger erneut delegieren",
+        "linkText" : "Was ist eine Redelegation und wie lange dauert sie?",
+        "solana" : {
+          "title" : "Wussten Sie schon?",
+          "description" : "Ledger bietet einen niedrigeren Provisionssatz als Ihr Validator. Dieser Vorgang kann bis zu 4 Tage dauern."
+        },
+        "near" : {
+          "title" : "Wussten Sie schon?",
+          "description" : "Ledger bietet einen niedrigeren Provisionssatz als Ihr Validator. Dieser Vorgang kann bis zu 65 Stunden dauern."
+        }
       },
       "delegation" : {
         "title" : "Schon gewusst?",
         "description" : "Der Ledger-Validator erledigt das Staking Ihrer {{asset}} zu einer Provision in Höhe von {{commission}} %.",
-        "cta" : "Mit Ledger staken"
+        "cta" : "Mit Ledger staken",
+        "linkText" : "Weitere Informationen",
+        "ethereum" : {
+          "lido" : {
+            "title" : "Schon gewusst?",
+            "description" : "Staken Sie Ihr Ethereum mit Lido ein und verdienen Sie täglich Belohnungen. Keine Sperrfrist. Keine Mindesteinzahlung.",
+            "cta" : "Staking mit Lido"
+          },
+          "kiln" : {
+            "title" : "HODLn Sie nicht nur. Vermehren Sie Ihre ETH.",
+            "description" : "Sie haben mehr als 32 ETH? Verdienen Sie passive Belohnungen, indem Sie Ihre ETH sicher mit Kiln staken.",
+            "cta" : "Staking mit Kiln"
+          }
+        },
+        "near" : {
+          "description" : "Staken Sie Ihre NEAR mit dem Ledger by Figment Validator. Ihre Coins gehören stets Ihnen, unterstützt durch die kompromisslose Sicherheit von Ledger."
+        }
       }
     }
   },
@@ -1096,6 +1146,7 @@
       "receive" : "Empfangen",
       "send" : "Senden",
       "swap" : "Umtauschen",
+      "stake" : "Staken",
       "buy" : "Kaufen",
       "sell" : "Verkaufen",
       "edit" : "Konto bearbeiten",
@@ -1206,8 +1257,11 @@
         "checkDeviceButton" : "Überprüfung erneut durchführen",
         "cancelButton" : "Vielleicht später"
       },
-      "genuineCheckAnimationModal" : {
-        "message" : "Manager aktivieren auf {{deviceName}}"
+      "softwareCheckAllowSecureChannelModal" : {
+        "title" : "Manager aktivieren auf {{deviceName}}"
+      },
+      "softwareCheckLockedDeviceModal" : {
+        "title" : "Entsperren Sie Ihr Gerät"
       },
       "helpDrawer" : {
         "title" : "Benötigen Sie Hilfe mit Ihrem Einrichtungshandbuch?",
@@ -1231,16 +1285,16 @@
   },
   "postOnboarding" : {
     "postOnboardingScreen" : {
-      "title" : "Gut gemacht.\nSie können loslegen.",
-      "description" : "Vielen Dank für das Einrichten Ihres {{deviceName}}!",
-      "paragraph" : "Wir haben zunächst einige Schritte für Sie vorbereitet. Wenn Sie Ledger Live auf eigene Faust erkunden möchten, zögern Sie nicht, diesen Schritt zu überspringen, Sie können jederzeit darauf zurückkommen.",
-      "bottomText" : "Genießen Sie Ihre Reise ins Web 3.0 sicher mit Ledger Live."
+      "title" : "Nutzen Sie als Nächstes Ihren\nLedger Stax, um... ",
+      "titleCompleted" : "und das ist \nalles!"
     },
     "postOnboardingContent" : {
-      "title" : "Gut gemacht.\nSie können loslegen.",
-      "description" : "Hier ist, was Sie als nächstes tun können:",
-      "skipLink" : "Weiter zur App",
-      "skipLinkInDrawer" : "Ich mache das später"
+      "skipLink" : "Ich mache das später"
+    },
+    "postOnboardingBanner" : {
+      "title" : "Wie geht es mit Ihrem Ledger Stax weiter?",
+      "description" : "Sie können Infinity NFT beantragen, den Sperrbildschirm anpassen oder Ihr Vermögen von anderen Börsen übertragen.",
+      "link" : "Schauen Sie, was als nächstes kommt"
     }
   },
   "hideNftCollection" : {
@@ -1358,7 +1412,22 @@
     },
     "recentActivity" : "Letzte Aktionen",
     "totalBalance" : "Gesamtsaldo",
-    "transactionsPendingConfirmation" : "Einige Transaktionen sind noch nicht bestätigt. Diese werden in Ihrem Guthaben angezeigt und können nach der Bestätigung verwendet werden."
+    "transactionsPendingConfirmation" : "Einige Transaktionen sind noch nicht bestätigt. Diese werden in Ihrem Guthaben angezeigt und können nach der Bestätigung verwendet werden.",
+    "featuredButtons" : {
+      "buySell" : {
+        "title" : "Kaufen / Verkaufen",
+        "description" : "Kaufen und verkaufen Sie bei vertrauenswürdigen Anbietern"
+      },
+      "swap" : {
+        "title" : "Umtauschen",
+        "description" : "Sicheres Konvertieren von Krypto in Krypto",
+        "label" : "beliebt"
+      },
+      "earn" : {
+        "title" : "Staken",
+        "description" : "Vermehren Sie Ihre Kryptowährungen mit Ledger"
+      }
+    }
   },
   "currentAddress" : {
     "title" : "Aktuelle Adresse",
@@ -1678,6 +1747,8 @@
       "undelegated" : "Nicht delegiert",
       "undelegatedFrom" : "Übertragung aufgehoben durch",
       "undelegatedAmount" : "Nicht delegierter Betrag",
+      "withdrawnFrom" : "Abgehoben von",
+      "withdrawnAmount" : "Abgehobener Betrag",
       "rewardFrom" : "Prämie von",
       "memo" : "Memo",
       "assetId" : "Vermögenswert-ID",
@@ -1718,7 +1789,7 @@
     "swap" : {
       "notice" : {
         "default" : "Überprüfen Sie die Details des Tauschs auf Ihrem Gerät, bevor Sie sie senden. Die Adressen werden sicher ausgetauscht, sodass Sie diese nicht verifizieren müssen.",
-        "cic" : "Verifizieren Sie die Swap-Details auf Ihrem Gerät, bevor Sie diese senden. CIC muss möglicherweise eine zusätzliche Überprüfung für einige Transaktionen durchführen, was zu einer Verzögerung führen kann."
+        "provider" : "Verifizieren Sie die Swap-Details auf Ihrem Gerät, bevor Sie diese senden. {{providerName}} muss möglicherweise eine zusätzliche Überprüfung für einige Transaktionen durchführen, was zu einer Verzögerung führen kann."
       },
       "confirm" : "Swap-Transaktion bestätigen",
       "amountSent" : "Zu sendender Betrag",
@@ -2231,6 +2302,187 @@
     "value" : "Wert",
     "header" : "Kontozuteilung ({{count}})"
   },
+  "elrond" : {
+    "summary" : {
+      "availableBalanceTooltip" : "Dieser Betrag kann überwiesen werden.",
+      "availableBalance" : "Verfügbares Guthaben",
+      "delegatedAssetsTooltip" : "Delegierte Vermögenswerte werden indirekt vom Staking-Anbieter verwendet, um Validatorknoten zu betreiben, Transaktionen zu verarbeiten und das Netzwerk durch Teilnahme am Konsensmechanismus zu sichern.",
+      "delegatedAssets" : "Delegierte Vermögenswerte",
+      "undelegatingTooltip" : "Vermögenswerte, deren Delegierung aufgehoben wurde, unterliegen einer 10-tägigen Frist für die Aufhebung der Bindung, bevor sie abgehoben werden können.",
+      "undelegating" : "Ausstehende Abhebungen"
+    },
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Powered by MultiversX",
+        "moreInfo" : "Mehr Infos",
+        "drawerTitle" : "MultiversX Integration",
+        "title" : "MultiversX eGold (EGLD) Token ist jetzt auf Ledger Live verfügbar",
+        "description" : "Sie können jetzt Ihre eGold (EGLD) Token sicher sichern und über Ledger Live verwalten.",
+        "description2" : "Der MultiversX eGold (EGLD) Token ist nativ im MultiversX Netzwerk und wird für alle Transaktionen verwendet, für staken, intelligente Verträge, Governance und Validator-Belohnungen.",
+        "description3" : "Wir arbeiten aktiv mit dem MultiversX Team zusammen, um mehr Funktionalitäten wie Staking, native ESDT (Elrond Standard Digital Token) Unterstützung und mehr hinzuzufügen.",
+        "website" : "Die Internet Scale Blockchain"
+      }
+    },
+    "delegation" : {
+      "emptyState" : {
+        "description" : "Delegieren Sie Ihre EGLD, um das Netzwerk zu sichern und Ihren Anteil an den Belohnungen zu erhalten.",
+        "info" : "Was ist eine Delegation?",
+        "delegation" : "Verdienen Sie Belohnungen"
+      },
+      "commission" : "Provision",
+      "claimRewards" : "Prämien beanspruchen",
+      "header" : "Delegierung(en)",
+      "noRewards" : "Keine Prämien verfügbar",
+      "delegate" : "Delegieren",
+      "undelegate" : "Delegierung aufheben",
+      "redelegateDisabledTooltip" : "Sie können erneut delegieren <0>{{days}}</0>",
+      "redelegateMaxDisabledTooltip" : "Sie können nicht mehr als <0>7</0> Validatoren auf einmal neu delegieren",
+      "undelegateDisabledTooltip" : "Sie können die Delegierung nicht bei mehr als <0>7</0> Validatoren gleichzeitig aufheben",
+      "reward" : "Prämien beanspruchen",
+      "currentDelegation" : "Delegiert: <0>{{amount}}</0>",
+      "apr" : "APR",
+      "totalStake" : "Staking-Gesamtbetrag",
+      "activeTooltip" : "Delegierte Beträge generieren Prämien",
+      "inactiveTooltip" : "Nicht-delegierte Beträge generieren keine Prämien",
+      "minSafeWarning" : "Zu niedriges Guthaben. Sie benötigen mindestens 1 EGLD zur Verfügung.",
+      "flow" : {
+        "title" : "Delegieren",
+        "steps" : {
+          "amount" : {
+            "title" : "Delegieren",
+            "subtitle" : "Stellen Sie Ihre Vermögenswerte einem der folgenden Staking-Anbieter zur Verfügung.",
+            "warning" : "Wählen Sie Ihren Staking-Anbieter mit Bedacht aus: Derzeit besteht das einzige Risiko darin, aus verschiedenen Gründen keine Belohnungen zu erhalten. Daher sollten Sie einen Anbieter auswählen, der auf Zuverlässigkeit, Kommunikation und Wirtschaftlichkeit basiert.",
+            "fields" : {
+              "validator" : "Staking-Anbieter"
+            }
+          },
+          "fields" : {
+            "amount" : "Staking-Betrag"
+          },
+          "starter" : {
+            "description" : "Sie können Belohnungen verdienen, indem Sie Ihre EGLD-Vermögenswerte an einen Staking-Anbieter delegieren.",
+            "bullet" : ["Sie behalten das Eigentum an delegierten Vermögenswerten", "Delegieren Sie mit Ihrem Ledger-Gerät", "Vermögenswerte sind 10 Tage nach Aufhebung der Delegierung verfügbar"],
+            "warning" : {
+              "description" : "Wählen Sie Ihren Staking-Anbieter mit Bedacht aus: Derzeit besteht das einzige Risiko darin, aus verschiedenen Gründen keine Belohnungen zu erhalten. Daher sollten Sie einen Anbieter auswählen, der auf Zuverlässigkeit, Kommunikation und Wirtschaftlichkeit basiert."
+            }
+          },
+          "validator" : {
+            "title" : "Staking-Anbieter"
+          },
+          "connectDevice" : {
+            "title" : "Gerät"
+          },
+          "confirmation" : {
+            "title" : "Bestätigung",
+            "success" : {
+              "title" : "Sie haben Ihre Vermögenswerte erfolgreich delegiert.",
+              "text" : "Ihr Kontostand wird aktualisiert, wenn die Blockchain die Transaktion bestätigt.",
+              "cta" : "Details anzeigen"
+            },
+            "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+          }
+        }
+      }
+    },
+    "claimRewards" : {
+      "flow" : {
+        "title" : "Prämien beanspruchen",
+        "steps" : {
+          "claimRewards" : {
+            "title" : "Prämien",
+            "compound" : "Belohnungen zusammenlegen",
+            "claim" : "Prämien beanspruchen",
+            "compoundOrClaim" : "Belohnungen zusammenlegen oder einfordern",
+            "compoundDescription" : "Belohnungen werden zum delegierten Betrag hinzugefügt.",
+            "claimDescription" : "Belohnungen werden Ihrem verfügbaren Guthaben gutgeschrieben.",
+            "compoundInfo" : "Sie haben <0>{{amount}}</0> verdient. Wenn Sie auf „Continue“ (Weiter) klicken, werden sie jetzt eingefordert und automatisch an denselben Staking-Anbieter delegiert.",
+            "claimInfo" : "Sie haben sich <0>{{amount}}</0> vom unten stehenden Staking-Anbieter verdient. Wenn Sie auf „Continue“ (Weiter) klicken, werden sie jetzt eingefordert und automatisch zum verfügbaren Guthaben hinzugefügt.",
+            "selectLabel" : "Wählen Sie eine Delegation"
+          },
+          "connectDevice" : {
+            "title" : "Gerät"
+          },
+          "confirmation" : {
+            "title" : "Bestätigung",
+            "label" : "Bestätigung",
+            "success" : {
+              "title" : "Einfordern von Belohnungen war erfolgreich",
+              "titleCompound" : "Erfolgreich zusammengerechnete Prämien",
+              "text" : "Die Belohnungen wurden zu Ihrem verfügbaren Guthaben hinzugefügt",
+              "textCompound" : "Ihre Transaktion für zusammengelegte Belohnungen von <0>{{amount}}</0>EGLD an <0>{{validator}}</0>wurde erfolgreich bearbeitet.",
+              "cta" : "Details anzeigen"
+            },
+            "pending" : {
+              "title" : "Sende Transaktion..."
+            },
+            "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "header" : "Aufgehobene Delegierung(en)",
+      "headerTooltip" : "Verfügbar nach der 10-tägigen Frist für die Aufhebung der Bindung.",
+      "inactiveTooltip" : "Beträge mit aufgehobener Delegierung generieren keine Prämien.",
+      "withdraw" : {
+        "cta" : "Abhebung abschließen"
+      },
+      "flow" : {
+        "title" : "Vermögenswerte mit aufgehobener Delegierung",
+        "steps" : {
+          "amount" : {
+            "title" : "Betrag",
+            "subtitle" : "Der Prozess der Aufhebung der Delegierung dauert <0>10 Tage</0> bis zum Abschluss.",
+            "warning" : "Prämien werden automatisch eingefordert. Die Aufhebung der Delegation ist ein zweistufiger Prozess: Antrag für die Aufhebung der Delegierung, gefolgt von einer <0>10-tägigen Frist zur Aufhebung der Bindung</0>, nach der Sie die Auszahlung abschließen können und der nicht delegierte Betrag auf Ihr verfügbares Guthaben überwiesen wird.",
+            "fields" : {
+              "validator" : "Staking-Anbieter",
+              "amount" : "Nicht zu delegierender Betrag"
+            }
+          },
+          "device" : {
+            "title" : "Gerät"
+          },
+          "confirmation" : {
+            "title" : "Bestätigung",
+            "success" : {
+              "title" : "Sie haben die Übertragung Ihrer Vermögenswerte erfolgreich aufgehoben.",
+              "description" : "Die Delegierung von <0>{{amount}}</0> wurde von <0>{{validator}}</0> aufgehoben.",
+              "cta" : "Details anzeigen"
+            },
+            "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "flow" : {
+        "title" : "Abhebung abschließen",
+        "steps" : {
+          "withdraw" : {
+            "title" : "Abhebung abschließen",
+            "description" : "Sie haben die Delegierung von <0>{{amount}}</0>EGLD von <0>{{validator}}</0> aufgehoben. Wenn Sie auf „Continue“ (Weiter) klicken, werden sie jetzt abgehoben und automatisch wieder zu Ihrem verfügbaren Guthaben hinzugefügt.",
+            "selectLabel" : "Aufhebung einer Delegation auswählen"
+          },
+          "connectDevice" : {
+            "title" : "Gerät"
+          },
+          "confirmation" : {
+            "title" : "Bestätigung",
+            "label" : "Bestätigung",
+            "success" : {
+              "title" : "Guthaben wurden erfolgreich abgehoben",
+              "text" : "Der Betrag <0>{{amount}}</0>wurde wieder auf Ihren Kontostand zurücküberwiesen.",
+              "cta" : "Details anzeigen"
+            },
+            "pending" : {
+              "title" : "Sende Transaktion..."
+            },
+            "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+          }
+        }
+      }
+    }
+  },
   "cardano" : {
     "account" : {
       "stakingRewardsBanner" : {
@@ -2312,6 +2564,15 @@
             }
           }
         }
+      }
+    }
+  },
+  "tezos" : {
+    "objkt" : {
+      "card" : {
+        "title" : "NFT (Non Fungible Tokens) Sammlungen",
+        "description" : "Tezos NFTs können Sie direkt über Objkt in Ledger Live einsehen.",
+        "cta" : "Meine NFTs auf Objkt anzeigen"
       }
     }
   },
@@ -2611,7 +2872,7 @@
   "cosmos" : {
     "delegation" : {
       "emptyState" : {
-        "description" : "Sie können ATOM-Prämien verdienen, indem Sie Ihre Vermögenswerte übertragen.",
+        "description" : "Sie können {{currencyTicker}}-Belohnungen erhalten, indem Sie Ihre Vermögenswerte delegieren.",
         "info" : "So funktioniert Delegation",
         "delegation" : "Verdienen Sie Belohnungen"
       },
@@ -2636,8 +2897,8 @@
         "title" : "Delegieren",
         "steps" : {
           "starter" : {
-            "description" : "Sie können Prämien verdienen, indem Sie Ihre ATOM-Vermögenswerte an einen Validator übertragen.",
-            "bullet" : ["Sie behalten das Eigentum an delegierten Vermögenswerten", "Delegieren Sie mit Ihrem Ledger-Gerät", "Vermögenswerte sind 21 Tage nach Rücknahme der Delegierung verfügbar"],
+            "description" : "Sie können Belohnungen verdienen, indem Sie Ihre {{currencyTicker}}-Vermögenswerte an einen Validator delegieren.",
+            "bullet" : ["Sie behalten das Eigentum an delegierten Vermögenswerten", "Delegieren Sie mit Ihrem Ledger-Gerät", "Vermögenswerte sind {{numberOfDays}} Tage nach Aufhebung der Delegierung verfügbar"],
             "warning" : {
               "description" : "Wählen Sie Ihren Validator mit Bedacht: Ein Teil Ihrer übertragenen Vermögenswerte kann unwiderruflich verloren gehen, wenn sich der Validator nicht angemessen verhält."
             }
@@ -2714,7 +2975,7 @@
             "currentDelegation" : "Aktuelle Delegierung",
             "newDelegation" : "Neue Delegierung",
             "chooseValidator" : "Wählen Sie einen Validator",
-            "warning" : "Sie müssen <0>21 Tage</0> warten, um vom neuen Validator neu zu delegieren, wenn Sie Ihre Meinung wieder ändern",
+            "warning" : "Sie müssen <0>{{numberOfDays}} Tage</0> warten, um vom neuen Validator neu zu delegieren, wenn Sie Ihre Meinung wieder ändern",
             "amountLabel" : "Erneut zu delegierender Betrag"
           },
           "device" : {
@@ -2741,8 +3002,8 @@
         "steps" : {
           "amount" : {
             "title" : "Betrag",
-            "subtitle" : "Der Prozess der Aufhebung der Übertragung dauert <0>21 Tage</0> bis zum Abschluss.",
-            "warning" : "Die Prämien werden sofort eingelöst. Der nicht übertragene Betrag ist nach der <0>21-tägigen Zeitsperre wieder im verfügbaren Guthaben.",
+            "subtitle" : "Der Prozess der Aufhebung der Delegierung dauert <0>{{numberOfDays}} Tage</0> bis zum Abschluss.",
+            "warning" : "Die Belohnungen werden sofort eingelöst. Der nicht übertragene Betrag ist nach der <0>{{numberOfDays}}-Tage Zeitsperre<0> wieder im verfügbaren Guthaben.",
             "fields" : {
               "validator" : "Validator",
               "amount" : "Nicht zu delegierender Betrag"
@@ -2826,176 +3087,6 @@
             "success" : {
               "title" : "Prämien erfolgreich eingefordert!",
               "text" : "Ihre Prämien wurden zu Ihrem verfügbaren Guthaben hinzugefügt",
-              "cta" : "Details anzeigen"
-            },
-            "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
-          }
-        }
-      }
-    }
-  },
-  "osmosis" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Powered by Figment",
-        "moreInfo" : "Mehr Infos",
-        "drawerTitle" : "Powered by Figment",
-        "title" : "Der OSMO-Token ist jetzt auf Ledger Live verfügbar",
-        "description" : "Sie können jetzt damit beginnen, Ihre OSMO-Token zu verwalten und sie über Ledger Live zu sichern.",
-        "description2" : "Der OSMO-Token ist Teil der Osmosis-Chain und wird für alle Transaktionen, Staking und viele zukünftige Funktionen verwendet.",
-        "website" : "Powered by Figment"
-      }
-    },
-    "memo" : "Memo",
-    "memoPlaceholder" : "Optional",
-    "memoWarningText" : "Bei Verwendung eines Memos sollten Sie alle Angaben sorgfältig beim Empfänger verifizieren.",
-    "delegation" : {
-      "emptyState" : {
-        "description" : "Sie können OSMO-Prämien verdienen, indem Sie Ihre Vermögenswerte übertragen.",
-        "info" : "So funktioniert Delegierung",
-        "delegation" : "Verdienen Sie Belohnungen"
-      },
-      "commission" : "Provision",
-      "totalStake" : "Staking-Gesamtbetrag",
-      "claimRewards" : "Prämien beanspruchen",
-      "header" : "Delegierung(en)",
-      "noRewards" : "Keine Prämien verfügbar",
-      "delegate" : "Hinzufügen",
-      "undelegate" : "Delegierung aufheben",
-      "redelegate" : "Erneut delegieren",
-      "redelegateDisabledTooltip" : "Sie können erneut delegieren <0>{{days}}</0>",
-      "redelegateMaxDisabledTooltip" : "Sie können nicht mehr als <0>7</0> Validatoren auf einmal neu delegieren",
-      "undelegateDisabledTooltip" : "Sie können die Delegierung nicht bei mehr als <0>7</0> Validatoren gleichzeitig aufheben",
-      "reward" : "Prämien beanspruchen",
-      "currentDelegation" : "Delegiert: <0>{{amount}}</0>",
-      "estYield" : "geschätzter Ertrag",
-      "activeTooltip" : "Delegierte Beträge generieren Prämien",
-      "inactiveTooltip" : "Nicht-delegierte Beträge generieren keine Prämien",
-      "minSafeWarning" : "Zu niedriges Guthaben",
-      "flow" : {
-        "title" : "Delegieren",
-        "steps" : {
-          "starter" : {
-            "description" : "Sie können Belohnungen verdienen, indem Sie Ihre OSMO-Werte an einen Validator delegieren.",
-            "bullet" : ["Sie behalten das Eigentum an delegierten Vermögenswerten", "Delegieren Sie mit Ihrem Ledger-Gerät", "Vermögenswerte sind 14 Tage nach Rücknahme der Delegierung verfügbar"],
-            "warning" : {
-              "description" : "Wählen Sie Ihren Validator mit Bedacht: Ein Teil Ihrer übertragenen Vermögenswerte kann unwiderruflich verloren gehen, wenn sich der Validator nicht angemessen verhält."
-            }
-          },
-          "amount" : {
-            "title" : "Betrag"
-          },
-          "validator" : {
-            "title" : "Validatoren"
-          },
-          "connectDevice" : {
-            "title" : "Gerät"
-          },
-          "confirmation" : {
-            "title" : "Bestätigung",
-            "success" : {
-              "title" : "Sie haben Ihre Vermögenswerte erfolgreich delegiert",
-              "text" : "Ihr Kontostand wird aktualisiert, wenn die Blockchain die Transaktion bestätigt.",
-              "cta" : "Details anzeigen"
-            },
-            "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
-          }
-        }
-      }
-    },
-    "claimRewards" : {
-      "flow" : {
-        "title" : "Prämien beanspruchen",
-        "steps" : {
-          "claimRewards" : {
-            "title" : "Prämien",
-            "compound" : "Compound",
-            "claim" : "Einzahlen",
-            "compoundOrClaim" : "Verbinden oder einkassieren",
-            "compoundDescription" : "Prämien werden dem delegierten Betrag hinzugefügt",
-            "claimDescription" : "Die Prämien werden dem verfügbaren Guthaben hinzugefügt",
-            "compoundInfo" : "Sie haben <0>{{amount}}</0> verdient. Wenn Sie auf Weiter klicken, werden sie jetzt beansprucht und automatisch an denselben Validator delegiert.",
-            "claimInfo" : "Sie haben <0>{{amount}}</0> vom unten stehenden Validator erhalten. Wenn Sie auf Weiter klicken, werden sie jetzt beansprucht und automatisch zum verfügbaren Guthaben hinzugefügt.",
-            "selectLabel" : "Wählen Sie eine Delegation"
-          },
-          "connectDevice" : {
-            "title" : "Gerät"
-          },
-          "confirmation" : {
-            "title" : "Bestätigung",
-            "label" : "Bestätigung",
-            "success" : {
-              "title" : "Erfolgreich eingelöste Prämien",
-              "titleCompound" : "Erfolgreich zusammengerechnete Prämien",
-              "text" : "Ihre Prämien wurden zu Ihrem verfügbaren Guthaben hinzugefügt",
-              "textCompound" : "Ihre Prämien <0>{{amount}}</0> wurden automatisch an <0>{{validator}}</0> übertragen",
-              "cta" : "Details anzeigen"
-            },
-            "pending" : {
-              "title" : "Sende Transaktion..."
-            },
-            "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
-          }
-        }
-      }
-    },
-    "redelegation" : {
-      "flow" : {
-        "title" : "Vermögenswerte zurückübertragen",
-        "steps" : {
-          "starter" : {
-            "title" : "Erneute Delegierung",
-            "description" : "Verwenden Sie die erneute Delegierung, um einfach von einem Validator zu einem anderen zu wechseln. Wenn Sie es sich aber wieder anders überlegen, müssen Sie dann warten, weil die erneute Delegierung eine 14-tägige Zeitsperre auslöst.",
-            "warning" : "Wählen Sie Ihren Validator mit Bedacht: Ein Teil Ihrer delegierten Vermögenswerte kann unwiderruflich verloren gehen, wenn sich der Validator nicht angemessen verhält. Sie können maximal <0>7 ausstehende, erneute Delegierungen durchführen.",
-            "howDelegationWorks" : "Wie funktioniert die Delegierung?"
-          },
-          "validators" : {
-            "title" : "Validatoren",
-            "currentDelegation" : "Aktuelle Delegierung",
-            "newDelegation" : "Neue Delegierung",
-            "chooseValidator" : "Wählen Sie einen Validator",
-            "warning" : "Sie müssen <0>14 Tage</0> warten, um vom neuen Validator neu zu delegieren, wenn Sie Ihre Meinung wieder ändern",
-            "amountLabel" : "Erneut zu delegierender Betrag"
-          },
-          "device" : {
-            "title" : "Gerät"
-          },
-          "confirmation" : {
-            "title" : "Bestätigung",
-            "success" : {
-              "title" : "Sie haben Ihr Vermögen erfolgreich erneut delegiert",
-              "text" : "Die erneute Übertragung wird aktualisiert, sobald die Blockchain die Transaktion bestätigt hat",
-              "cta" : "Details anzeigen"
-            },
-            "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
-          }
-        }
-      }
-    },
-    "undelegation" : {
-      "header" : "Aufgehobene Delegierung(en)",
-      "headerTooltip" : "Verfügbar nach der 14-tägigen Zeitsperre",
-      "inactiveTooltip" : "Beträge mit aufgehobener Delegierung generieren keine Prämien.",
-      "flow" : {
-        "title" : "Vermögenswerte mit aufgehobener Delegierung",
-        "steps" : {
-          "amount" : {
-            "title" : "Betrag",
-            "subtitle" : "Der Prozess der Aufhebung der Übertragung dauert <0>14 Tage</0> bis zum Abschluss.",
-            "warning" : "Die Prämien werden sofort eingelöst. Der nicht übertragene Betrag ist nach der <0>14-tägigen Zeitsperre<0> wieder im verfügbaren Guthaben.",
-            "fields" : {
-              "validator" : "Validator",
-              "amount" : "Nicht zu delegierender Betrag"
-            }
-          },
-          "device" : {
-            "title" : "Gerät"
-          },
-          "confirmation" : {
-            "title" : "Bestätigung",
-            "success" : {
-              "title" : "Sie haben die Übertragung Ihrer Vermögenswerte erfolgreich aufgehoben.",
-              "description" : "Die Delegierung von <0>{{amount}}</0> wurde von <0>{{validator}}</0> aufgehoben",
               "cta" : "Details anzeigen"
             },
             "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
@@ -3689,8 +3780,10 @@
       "debugAppsDesc" : "Anzeigen und Öffnen von Debug-getaggten Plattform-Apps erlauben.",
       "experimentalApps" : "Experimentelle Apps erlauben",
       "experimentalAppsDesc" : "Anzeigen und Öffnen von Debug-getaggten Plattform-Apps erlauben.",
-      "catalogServer" : "Einstellen des Kataloganbieters",
-      "catalogServerDesc" : "Wechseln Sie zwischen mehreren Plattform-App-Quellen",
+      "catalogUrl" : "Anbieter Katalog-Apps festlegen",
+      "catalogUrlDesc" : "Geben Sie die benutzerdefinierte URL Ihres Kataloganbieters ein",
+      "catalogRampServer" : "Anbieter Kaufen/Verkaufen festlegen",
+      "catalogRampServerDesc" : "Zwischen mehreren Handelsanbietern wechseln",
       "enablePlatformDevTools" : "Plattform-Entwicklungswerkzeuge aktivieren",
       "enablePlatformDevToolsDesc" : "Aktivieren Sie das Öffnen des Entwicklerwerkzeug-Fensters für Plattform-Apps",
       "featureFlagsTitle" : "In Ledger Live verwendete definierte Feature-Flags",
@@ -3698,6 +3791,9 @@
       "featureFlagsEdit" : "Bearbeiten",
       "featureFlagsRestore" : "Wiederherstellen",
       "featureFlagsOverride" : "Überschreiben",
+      "featureFlagsRestoreAll" : "Alle Flag-Werte wiederherstellen",
+      "showButtonDesc" : "Die Schaltfläche „Feature-Flags“ immer in der Seitenleiste anzeigen",
+      "buttonTitle" : "Flags lokal überschrieben",
       "firebaseProject" : "Firebase-Projekt, auf das diese Entwicklung abzielt",
       "addLocalApp" : "Lokale App hinzufügen",
       "addLocalAppDesc" : "Durchsuchen Sie lokale Dateien und fügen Sie eine lokale App mit einem lokalen Manifest hinzu",
@@ -3705,7 +3801,9 @@
       "runLocalAppDeleteButton" : "Löschen",
       "runLocalAppOpenButton" : "offen",
       "enableLearnStagingUrl" : "Staging-URL für Lernen-Seite",
-      "enableLearnStagingUrlDesc" : "Aktivieren Sie die Staging-URL für die Lernen-Seite."
+      "enableLearnStagingUrlDesc" : "Aktivieren Sie die Staging-URL für die Lernen-Seite.",
+      "openOnboardingAppInstallDebug" : "Bildschirm zum Installieren der Debug-Anwendung der Onboarding-App öffnen",
+      "openOnboardingAppInstallDebugDesc" : "Öffnen Sie einen Bildschirm mit den Komponenten aus dem Installationsschritt der Sync-Onboarding-App"
     },
     "currencies" : {
       "selectPlaceholder" : "Krypto-Vermögenswert auswählen",
@@ -3749,13 +3847,13 @@
     "experimental" : {
       "disclaimer" : "Dies sind experimentelle Funktionen, die wir für unsere technisch versierte Community zum Testen bereitstellen. Sie können jederzeit geändert, abgebrochen oder entfernt werden. Dadurch, dass Sie sie aktivieren, erklären Sie sich damit einverstanden, sie auf eigenes Risiko zu nutzen.",
       "features" : {
-        "apiTrongridProxy" : {
-          "title" : "TronGrid.io verwenden",
-          "description" : "Verwenden Sie TronGrid direkt ohne Ledger-Proxy"
-        },
         "experimentalCurrencies" : {
           "title" : "Experimentelle Integrationen",
           "description" : "Verwenden Sie verfügbare experimentelle Integrationen für Krypto-Werte."
+        },
+        "experimentalExecutionOnRenderer" : {
+          "title" : "Experimentelle Netzwerke",
+          "description" : "Nutzen Sie experimentelle Netzwerke, um Ihr Ledger Live-Erlebnis mit Ihrem VPN zu optimieren. Aktivieren Sie diese Option nur, wenn Ihr aktuelles VPN Systemfehler verursacht."
         },
         "experimentalLanguages" : {
           "title" : "Testen der Übersetzung",
@@ -3871,6 +3969,10 @@
       "fullNode" : {
         "title" : "Bitcoin Full Node verbinden",
         "desc" : "Richten Sie Ihren Bitcoin-Knoten (Full Node) ein, um Transaktionen zu synchronisieren und zu senden, ohne die Explorer von Ledger zu verwenden."
+      },
+      "filterTokenOperationsZeroAmount" : {
+        "title" : "Token-Transaktionen ausblenden, wenn der Wert 0 ist",
+        "desc" : "Das Ausblenden von Token-Transaktionen ohne Wert kann einige potenzielle Adresspoisoning-Angriffe auf Eth, Polygon, BSC, Tron... verhindern."
       }
     }
   },
@@ -4998,6 +5100,23 @@
       "title" : "Entschuldigung, es wurden keine Konten gefunden",
       "description" : "Bei der Adressberechnung ist etwas schief gelaufen, versuchen Sie es erneut oder wenden Sie sich an den Ledger-Support"
     },
+    "ElrondDecimalsLimitReached" : {
+      "title" : "Maximale Dezimalstellengrenze erreicht",
+      "description" : "Bitte stellen Sie sicher, dass der angegebene Betrag 18 Dezimalstellen hat."
+    },
+    "ElrondMinDelegatedAmountError" : {
+      "title" : "Der delegierte Betrag muss mindestens {{formattedAmount}} betragen"
+    },
+    "ElrondMinUndelegatedAmountError" : {
+      "title" : "Undelegierter Betrag muss mindestens {{formattedAmount}} betragen"
+    },
+    "ElrondDelegationBelowMinimumError" : {
+      "title" : "Verbleibende Delegierung darf nicht kleiner als {{formattedAmount}} sein"
+    },
+    "NotEnoughEGLDForFees" : {
+      "title" : "Nicht genug EGLD, um die Transaktionsgebühren zu bezahlen",
+      "description" : "Bitte überweisen Sie einige EGLD auf Ihr Konto, um die Transaktionen zu bezahlen."
+    },
     "NotEnoughBalance" : {
       "title" : "Entschuldigung, Guthaben reicht nicht aus",
       "description" : "Bitte stellen Sie sicher, dass das Konto ausreichend gedeckt ist."
@@ -5268,7 +5387,7 @@
       "description" : "Die Signatur muss innerhalb von 30 Sekunden angewendet werden. Bitte versuchen Sie es erneut."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Energie ist niedriger als notwendig. Es können bis zu 20TRX an Gebühren anfallen."
+      "title" : "Energie ist niedriger als notwendig. Es können bis zu 50 TRX an Gebühren anfallen."
     },
     "PairingFailed" : {
       "title" : "Kopplung fehlgeschlagen",
@@ -5433,6 +5552,10 @@
       "title" : "Das Laden des Bildes aus einer Datei ist fehlgeschlagen",
       "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
     },
+    "ImageLoadFromNftError" : {
+      "title" : "Das Bild konnte nicht aus dem NFT geladen werden",
+      "description" : "Bitte versuchen Sie es erneut mit einem anderen NFT"
+    },
     "ImageDownloadError" : {
       "title" : "Bilddownload fehlgeschlagen",
       "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
@@ -5497,6 +5620,21 @@
       "title" : "Ihr Gerät ist gesperrt",
       "description" : "Entsperren Sie Ihr Gerät und versuchen Sie es erneut.",
       "descriptionWithProductName" : "Entsperren Sie Ihr {{ productName }} und versuchen Sie es erneut."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "Ihr Gerät kann noch nicht verwendet werden",
+      "titleWithProductName" : "{{ productName }} kann noch nicht verwendet werden",
+      "description" : "Sie müssen Ihr Gerät zuerst einrichten.\nWir führen Sie durch den Einrichtungsprozess.",
+      "descriptionWithProductName" : "Sie müssen Ihr {{ productName }} zuerst einrichten.\nWir führen Sie durch den Einrichtungsprozess.",
+      "goToOnboardingButton" : "Mein Gerät einrichten",
+      "goToOnboardingButtonWithProductName" : "Mein {{ productName }} einrichten"
+    },
+    "EtherscanAPIError" : {
+      "title" : "Abruf der Transaktionen fehlgeschlagen",
+      "description" : "Bei den Explorern ist ein unerwarteter Fehler aufgetreten. Versuchen Sie es bitte später noch einmal"
+    },
+    "GasEstimationError" : {
+      "title" : "Gasgebührenschätzung fehlgeschlagen"
     }
   },
   "cryptoOrg" : {
@@ -5529,13 +5667,19 @@
     }
   },
   "customImage" : {
-    "title" : "Benutzerdefiniertes Bild",
+    "title" : "Individueller Sperrbildschirm",
     "steps" : {
       "choose" : {
         "stepLabel" : "Wählen Sie ein Bild aus",
         "description" : "Wählen Sie ein Bild, das als (...) festgelegt werden soll",
         "pickFromNftGallery" : "Aus meiner NFT-Galerie auswählen",
-        "upload" : "Von meinem Computer hochladen"
+        "myNfts" : "Meine NFTs",
+        "upload" : "Von meinem Computer hochladen",
+        "chooseNft" : "Wählen Sie ein NFT",
+        "selectNft" : "NFT wählen",
+        "previousSelectNft" : "Zurück",
+        "nftEmptyStateTitle" : "Es können noch keine NFTs angezeigt werden",
+        "nftEmptyStateDescription" : "Fügen Sie NFTs zu Ihrer Wallet hinzu, um loszulegen."
       },
       "adjust" : {
         "stepLabel" : "Bild anpassen",
@@ -5547,22 +5691,51 @@
       "transfer" : {
         "stepLabel" : "Übertragen",
         "uploadAnotherImage" : "Ein weiteres Bild hochladen",
-        "allowPreview" : "Bildvorschau zulassen auf {{productName}}",
-        "loadingPicture" : "Bild wird geladen auf {{productName}}",
-        "pictureLoaded" : "Bild geladen",
+        "allowPreview" : "Erlauben Sie das Laden eines Bildes im Sperrbildschirm auf Ihrem {{productName}}",
+        "loadingPicture" : "Lade Daten...",
         "imageLoaded" : "Bild geladen auf {{productName}}",
-        "confirmPicture" : "Bestätigen auf {{productName}}",
-        "doThisLater" : "Vielleicht später",
-        "timeDisclaimer" : "Dies kann bis zu 30 Sekunden dauern"
+        "confirmPicture" : "Gefällt Ihnen, was Sie sehen?\nBehalten Sie es!",
+        "doThisLater" : "Vielleicht später"
       }
     },
     "postOnboarding" : {
       "title" : "Mein Gerät personalisieren",
       "description" : "Durch Anpassen des Bildschirms",
-      "actionCompletedPopupLabel" : "Gerät personalisiert",
-      "actionCompletedHubTitle" : "Dieser Bildschirm sieht gut aus."
+      "actionCompletedPopupLabel" : "Gerät personalisiert"
     },
-    "customImageSet" : "Benutzerdefiniertes Bild-Set",
+    "customImageSet" : "Sperrbildschirm festgelegt",
     "finishCTA" : "Beenden"
+  },
+  "onboardingAppInstall" : {
+    "restore" : {
+      "title" : "Die gleichen Apps wie auf {{deviceName}} installieren?",
+      "titleNoDeviceName" : "Die gleichen Apps wie auf dem vorherigen Ledger-Gerät installieren?",
+      "subtitle" : "Sie können Apps jederzeit installieren oder entfernen.",
+      "installCTA" : "Applikationen wiederherstellen",
+      "skipCTA" : "Ich mache das später"
+    },
+    "default" : {
+      "title" : "{{ productName }} nutzt Apps, um sichere Blockchain-Transaktionen zu ermöglichen",
+      "subtitle" : "Wir empfehlen, eine Standardauswahl an Apps herunterzuladen. Sie können später mehr herunterladen.",
+      "installCTA" : "Applikationen installieren",
+      "skipCTA" : "Ich mache das später"
+    },
+    "progress" : {
+      "loading" : "Lade Daten...",
+      "resolving" : "Auflösen von Abhängigkeiten",
+      "progress" : "Installieren von Apps {{progress}} %",
+      "disclaimer" : "Sie können jederzeit Apps aus Ledger Live hinzufügen oder entfernen."
+    },
+    "cancelled" : {
+      "title" : "Die Installation der App wurde auf {{productName}} abgebrochen",
+      "subtitle" : "{{productName}} benötigt Blockchain-Apps, um Ihre Krypto- und NFT-Transaktionen zu genehmigen.",
+      "installCTA" : "Jetzt installieren",
+      "skipCTA" : "Ich mache das später"
+    },
+    "locked" : {
+      "title" : "Ihr {{productName}} ist gesperrt",
+      "subtitle" : "Geben Sie Ihren {{productName}} frei und starten Sie die Installation neu.",
+      "installCTA" : "Installation neu starten"
+    }
   }
 }

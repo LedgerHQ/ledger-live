@@ -16,8 +16,16 @@ import {
   getInfosForServiceUuid,
 } from "@ledgerhq/devices";
 import type { DeviceModel } from "@ledgerhq/devices";
-import { sendAPDU } from "@ledgerhq/devices/ble/sendAPDU";
-import { receiveAPDU } from "@ledgerhq/devices/ble/receiveAPDU";
+// ---------------------------------------------------------------------------------------------
+// Since this is a react-native library and metro bundler does not support
+// package exports yet (see: https://github.com/facebook/metro/issues/670)
+// we need to import the file directly from the lib folder.
+// Otherwise it would force the consumer of the lib to manually "tell" metro to resolve to /lib.
+//
+// TLDR: /!\ Do not remove the /lib part in the import statements below (@ledgerhq/devices/lib) ! /!\
+// See: https://github.com/LedgerHQ/ledger-live/pull/879
+import { sendAPDU } from "@ledgerhq/devices/lib/ble/sendAPDU";
+import { receiveAPDU } from "@ledgerhq/devices/lib/ble/receiveAPDU";
 import { log } from "@ledgerhq/logs";
 import { Observable, defer, merge, from, of, throwError } from "rxjs";
 import {
@@ -45,14 +53,21 @@ let connectOptions: Record<string, unknown> = {
   connectionPriority: 1,
 };
 const transportsCache = {};
-let bleManager;
 
+let _bleManager: BleManager | null = null;
+/**
+ * Allows lazy initialization of BleManager
+ * Useful for iOS to only ask for Bluetooth permission when needed
+ *
+ * Do not use _bleManager directly
+ * Only use this instance getter inside BleTransport
+ */
 const bleManagerInstance = (): BleManager => {
-  if (!bleManager) {
-    bleManager = new BleManager();
+  if (!_bleManager) {
+    _bleManager = new BleManager();
   }
 
-  return bleManager;
+  return _bleManager;
 };
 
 const retrieveInfos = (device) => {
@@ -89,8 +104,8 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
       return transportsCache[deviceOrId];
     }
 
-    log("ble-verbose", `open(${deviceOrId})`);
-    await awaitsBleOn(bleManager);
+    log("ble-verbose", `Tries to open device: ${deviceOrId}`);
+    await awaitsBleOn(bleManagerInstance());
 
     if (!device) {
       // works for iOS but not Android
@@ -259,6 +274,8 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
     notifyObservable,
     deviceModel
   );
+
+  await transport.requestConnectionPriority("High");
 
   const onDisconnect = (e) => {
     transport.notYetDisconnected = false;

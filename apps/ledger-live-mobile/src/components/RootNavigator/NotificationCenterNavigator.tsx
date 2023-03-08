@@ -1,103 +1,86 @@
-import React, { useState } from "react";
-import {
-  createMaterialTopTabNavigator,
-  MaterialTopTabBarProps,
-} from "@react-navigation/material-top-tabs";
+import React, { useMemo, useCallback } from "react";
+import { TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/index";
 
-import { Flex } from "@ledgerhq/native-ui";
-import styled from "styled-components/native";
-import { TabsContainer } from "@ledgerhq/native-ui/components/Tabs/TemplateTabs";
-import { ChipTab } from "@ledgerhq/native-ui/components/Tabs/Chip";
-import NotificationCenterStatus from "../../screens/NotificationCenter/Status";
-import NotificationCenterNews from "../../screens/NotificationCenter/News";
-import { ScreenName } from "../../const";
+import { createStackNavigator } from "@react-navigation/stack";
+import { Flex, Icons } from "@ledgerhq/native-ui";
+import { useTheme } from "styled-components/native";
+import { useNavigation } from "@react-navigation/native";
+import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
+
+import { useDispatch } from "react-redux";
+import NotificationCenter from "../../screens/NotificationCenter/Notifications";
+import { NavigatorName, ScreenName } from "../../const";
 import type { NotificationCenterNavigatorParamList } from "./types/NotificationCenterNavigator";
+import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { track } from "../../analytics";
+import { setStatusCenter } from "../../actions/settings";
+import FullNodeWarning from "../../icons/FullNodeWarning";
 
-const Tab =
-  createMaterialTopTabNavigator<NotificationCenterNavigatorParamList>();
-
-const TabBarContainer = styled(Flex)`
-  border-bottom-width: 1px;
-  border-bottom-color: ${p => p.theme.colors.palette.neutral.c40};
-  background-color: ${p => p.theme.colors.palette.background.main};
-`;
-
-function TabBar({ state, descriptors, navigation }: MaterialTopTabBarProps) {
-  return (
-    <TabBarContainer
-      paddingLeft={4}
-      paddingRight={4}
-      paddingBottom={4}
-      paddingTop={4}
-    >
-      <TabsContainer>
-        {state.routes.map((route, index) => {
-          const { options } = descriptors[route.key];
-          const label = options.title;
-
-          const isActive = state.index === index;
-
-          const onPress = () => {
-            const event = navigation.emit({
-              type: "tabPress",
-              target: route.key,
-              canPreventDefault: true,
-            });
-
-            if (!isActive && !event.defaultPrevented) {
-              navigation.navigate(route.name);
-            }
-          };
-
-          return (
-            <ChipTab
-              key={index}
-              label={label || ""}
-              isActive={isActive}
-              index={index}
-              onPress={onPress}
-            />
-          );
-        })}
-      </TabsContainer>
-    </TabBarContainer>
-  );
-}
+const Stack = createStackNavigator<NotificationCenterNavigatorParamList>();
 
 export default function NotificationCenterNavigator() {
   const { t } = useTranslation();
-  const { allIds, seenIds } = useAnnouncements();
-  const [notificationsCount] = useState(allIds.length - seenIds.length);
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const { colors, space } = useTheme();
+
+  const stackNavConfig = useMemo(
+    () => getStackNavigatorConfig(colors),
+    [colors],
+  );
+  const { incidents } = useFilteredServiceStatus();
+
+  const goToNotificationsSettings = useCallback(() => {
+    track("button_clicked", {
+      button: "Settings",
+      screen: ScreenName.NotificationCenter,
+    });
+    navigation.navigate(NavigatorName.Settings, {
+      screen: ScreenName.NotificationsSettings,
+    });
+  }, [navigation]);
+
+  const openStatusCenter = useCallback(() => {
+    track("button_clicked", {
+      button: "Notification Center Status",
+    });
+    dispatch(setStatusCenter(true));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
-    <>
-      <Tab.Navigator
-        tabBar={(props: MaterialTopTabBarProps) => <TabBar {...props} />}
-      >
-        <Tab.Screen
-          name={ScreenName.NotificationCenterNews}
-          component={NotificationCenterNews}
-          options={{
-            title: t(
-              notificationsCount > 0
-                ? "notificationCenter.news.titleCount"
-                : "notificationCenter.news.title",
-              {
-                count: notificationsCount,
-              },
-            ),
-          }}
-        />
-        <Tab.Screen
-          name={ScreenName.NotificationCenterStatus}
-          component={NotificationCenterStatus}
-          options={{
-            title: t("notificationCenter.status.title"),
-          }}
-        />
-      </Tab.Navigator>
-    </>
+    <Stack.Navigator screenOptions={stackNavConfig}>
+      <Stack.Screen
+        name={ScreenName.NotificationCenter}
+        component={NotificationCenter}
+        options={{
+          title: t("notificationCenter.news.title"),
+          headerRight: () => (
+            <Flex flexDirection="row">
+              {incidents.length > 0 && (
+                <TouchableOpacity
+                  style={{ marginRight: space[6] }}
+                  onPress={openStatusCenter}
+                >
+                  <FullNodeWarning
+                    size={24}
+                    color={colors.neutral.c100}
+                    warningColor={colors.warning.c70}
+                    backgroundColor={colors.background.main}
+                  />
+                </TouchableOpacity>
+              )}
+              <TouchableOpacity
+                style={{ marginRight: space[6] }}
+                onPress={goToNotificationsSettings}
+              >
+                <Icons.SettingsMedium size={24} />
+              </TouchableOpacity>
+            </Flex>
+          ),
+        }}
+      />
+    </Stack.Navigator>
   );
 }

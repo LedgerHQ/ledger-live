@@ -8,6 +8,7 @@ import type {
   RatingsSetHappyMomentPayload,
   RatingsSetModalLockedPayload,
   RatingsSetModalOpenPayload,
+  DangerouslyOverrideStatePayload,
 } from "../actions/types";
 import { RatingsActionTypes } from "../actions/types";
 
@@ -46,6 +47,14 @@ const handlers: ReducerMap<RatingsState, RatingsPayload> = {
   [RatingsActionTypes.RATINGS_SET_DATA_OF_USER]: (state, action) => ({
     ...state,
     dataOfUser: (action as Action<RatingsDataOfUserPayload>).payload.dataOfUser,
+  }),
+
+  [RatingsActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (
+    state: RatingsState,
+    action,
+  ): RatingsState => ({
+    ...state,
+    ...(action as Action<DangerouslyOverrideStatePayload>).payload.ratings,
   }),
 };
 

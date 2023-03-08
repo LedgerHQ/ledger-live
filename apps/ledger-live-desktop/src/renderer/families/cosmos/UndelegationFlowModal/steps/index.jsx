@@ -13,24 +13,24 @@ export function useSteps(currencyName): St[] {
     () => [
       {
         id: "amount",
-        label: t(`${currencyName}.undelegation.flow.steps.amount.title`),
+        label: t("cosmos.undelegation.flow.steps.amount.title"),
         component: StepAmount,
         noScroll: true,
         footer: StepAmountFooter,
       },
       {
         id: "device",
-        label: t(`${currencyName}.undelegation.flow.steps.device.title`),
+        label: t("cosmos.undelegation.flow.steps.device.title"),
         component: GenericStepConnectDevice,
         onBack: ({ transitionTo }: StepProps) => transitionTo("amount"),
       },
       {
         id: "confirmation",
-        label: t(`${currencyName}.undelegation.flow.steps.confirmation.title`),
+        label: t("cosmos.undelegation.flow.steps.confirmation.title"),
         component: StepConfirmation,
         footer: StepConfirmationFooter,
       },
     ],
-    [t, currencyName],
+    [t],
   );
 }

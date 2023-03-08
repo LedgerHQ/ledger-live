@@ -19,6 +19,7 @@ const StyledTouchableRow = styled(Touchable)<{ compact?: boolean }>`
 
 export default function SettingsRow({
   onPress,
+  onLongPress,
   onHelpPress,
   title,
   titleStyle,
@@ -36,8 +37,10 @@ export default function SettingsRow({
   eventProperties,
   compact,
   label,
+  testID,
 }: {
   onPress?: () => void;
+  onLongPress?: () => void;
   onHelpPress?: () => void;
   title: ReactNode;
   subtitle?: string;
@@ -55,6 +58,7 @@ export default function SettingsRow({
   eventProperties?: Record<string, unknown>;
   compact?: boolean;
   label?: string;
+  testID?: string;
 }) {
   let title$ = (
     <Flex
@@ -98,10 +102,12 @@ export default function SettingsRow({
   return (
     <StyledTouchableRow
       onPress={onPress}
+      onLongPress={onLongPress}
       event={event}
       eventProperties={eventProperties}
       style={style}
       compact={compact}
+      testID={testID}
     >
       {iconLeft && (
         <Flex

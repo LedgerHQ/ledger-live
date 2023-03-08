@@ -5,11 +5,12 @@ import type {
 } from "@ledgerhq/types-cryptoassets";
 import type { TokenAccount, Account } from "@ledgerhq/types-live";
 import { cryptocurrenciesById, findTokenById } from "@ledgerhq/cryptoassets";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
 export function createFixtureCryptoCurrency(family: string): CryptoCurrency {
   return {
     type: "CryptoCurrency",
-    id: "testCoinId",
+    id: "testCoinId" as CryptoCurrencyId,
     coinType: 8008,
     name: "MyCoin",
     managerAppName: "MyCoin",
@@ -83,7 +84,7 @@ export function createFixtureAccount(
 ): Account {
   return {
     type: "Account",
-    id: `ethereumjs:2:ethereum:0x0${id}:`,
+    id: `${currency.family}js:2:${currency.family}:0x0${id}:`,
     seedIdentifier: "0x01",
     derivationMode: "ethM",
     index: 0,
@@ -98,6 +99,7 @@ export function createFixtureAccount(
     creationDate: new Date(),
     blockHeight: 8168983,
     currency,
+    xpub: currency.family === "bitcoin" ? "testxpub" : undefined,
     unit: {
       name: "satoshi",
       code: "BTC",

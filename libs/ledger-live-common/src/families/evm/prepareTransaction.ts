@@ -1,77 +1,145 @@
 import BigNumber from "bignumber.js";
-import { getFeesEstimation, getGasEstimation } from "./api/rpc";
-import {
-  EvmTransactionEIP1559,
-  EvmTransactionLegacy,
-  Transaction as EvmTransaction,
-} from "./types";
-import { Account } from "@ledgerhq/types-live";
-import { getEstimatedFees } from "./logic";
-import { estimateMaxSpendable } from "./estimateMaxSpendable";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { validateAmount, validateRecipient } from "./getTransactionStatus";
+import { Transaction as EvmTransaction } from "./types";
+import { findSubAccountById } from "../../account";
+import { getEstimatedFees } from "./logic";
+import {
+  DEFAULT_GAS_LIMIT,
+  getTransactionData,
+  getTypedTransaction,
+} from "./transaction";
+import {
+  getFeesEstimation,
+  getGasEstimation,
+  getTransactionCount,
+} from "./api/rpc";
 
+/**
+ * Prepare basic coin transactions or smart contract interactions (other than live ERC20 transfers)
+ * Should be used for transactions coming from the wallet API
+ * Handling addition of gas limit
+ */
+export const prepareCoinTransaction = async (
+  account: Account,
+  typedTransaction: EvmTransaction
+): Promise<EvmTransaction> => {
+  const estimatedFees = getEstimatedFees(typedTransaction);
+  const amount = typedTransaction.useAllAmount
+    ? account.balance.minus(estimatedFees)
+    : typedTransaction.amount;
+  const totalSpent = amount.plus(estimatedFees);
+  const protoTransaction = { ...typedTransaction, amount };
+
+  const [recipientErrors] = validateRecipient(account, typedTransaction);
+  const [amountErrors] = validateAmount(account, protoTransaction, totalSpent);
+  if (Object.keys(amountErrors).length || Object.keys(recipientErrors).length) {
+    return typedTransaction;
+  }
+
+  const gasLimit = typedTransaction.data
+    ? await getGasEstimation(account, protoTransaction)
+    : DEFAULT_GAS_LIMIT; // For a coin transaction, no need for gas limit estimation, just use the default one
+
+  return {
+    ...protoTransaction,
+    amount,
+    gasLimit,
+  };
+};
+
+/**
+ * Prepare ERC20 transactions.
+ * Handling addition of ERC20 transfer data and gas limit
+ */
+export const prepareTokenTransaction = async (
+  account: Account,
+  tokenAccount: TokenAccount,
+  typedTransaction: EvmTransaction
+): Promise<EvmTransaction> => {
+  const amount = typedTransaction.useAllAmount
+    ? tokenAccount.balance
+    : typedTransaction.amount;
+  const protoTransaction = {
+    ...typedTransaction,
+    amount: new BigNumber(0),
+  };
+  const [recipientErrors] = validateRecipient(account, protoTransaction);
+  const [amountErrors] = validateAmount(tokenAccount, protoTransaction, amount);
+  if (Object.keys(amountErrors).length || Object.keys(recipientErrors).length) {
+    return typedTransaction;
+  }
+
+  const data = getTransactionData({ ...typedTransaction, amount });
+  // As we're interacting with a smart contract,
+  // it's going to be our real recipient for the tx
+  const gasLimit = await getGasEstimation(account, {
+    ...protoTransaction,
+    recipient: tokenAccount.token.contractAddress,
+    data,
+  });
+  // Recipient isn't changed here as it would change on the UI end as well
+  // The change will be handled by the `prepareForSignOperation` method
+  return {
+    ...typedTransaction,
+    data,
+    gasLimit,
+  };
+};
+
+/**
+ * Method called to update a transaction into a state that would make it valid
+ * (E.g. Adding fees, add smart contract data, etc...)
+ */
 export const prepareTransaction = async (
   account: Account,
   transaction: EvmTransaction
 ): Promise<EvmTransaction> => {
   const { currency } = account;
-  const estimatedFees = getEstimatedFees(transaction);
-  // Not final amount (cause it could change depending on tx type) used for gas estimation
-  // Some RPCs will throw at gas estimation if the account doesn't have the required amount first
-  const tempAmount = transaction.useAllAmount
-    ? account.balance.minus(estimatedFees)
-    : transaction.amount;
-  const totalSpent = tempAmount?.plus(estimatedFees);
-
-  const [recipientvalidationErrors] = validateRecipient(account, transaction);
-  const [amountValidationErrors] = validateAmount(
+  // Get the current network status fees
+  const feeData = await getFeesEstimation(currency);
+  const subAccount = findSubAccountById(
     account,
-    transaction,
-    totalSpent
+    transaction.subAccountId || ""
   );
-  const { recipient: recipientErrors } = recipientvalidationErrors || {};
-  const { amount: amountErrors } = amountValidationErrors || {};
-  const [gasLimit, feeData] = await Promise.all([
-    // Validating recipient and amount first cause estimating a transaction with a wrong recipient or wrong amount will throw an error
-    recipientErrors || amountErrors
-      ? Promise.resolve(new BigNumber(21000))
-      : getGasEstimation(account, transaction),
-    // Fee data is not dependent on the gasEstimation so they can be triggered in parallel
-    getFeesEstimation(currency),
-  ]);
+  const isTokenTransaction = subAccount?.type === "TokenAccount";
+  const typedTransaction = getTypedTransaction(transaction, feeData);
 
-  // First the transaction is creating with its correct type, in order for the `estimateMaxSpendable` to be correct
-  // Doing the `estimateMaxSpendable` first would give a potentially incorrect amount if the transaction if transform from a
-  // type 2 to a type 0 (1559 to Legacy)
-  const typedTransaction = (() => {
-    // If the blockchain is supporting EIP-1559, use maxFeePerGas & maxPriorityFeePerGas
-    if (feeData.maxFeePerGas && feeData.maxPriorityFeePerGas) {
-      delete transaction.gasPrice;
-      return {
+  return isTokenTransaction
+    ? await prepareTokenTransaction(account, subAccount, typedTransaction)
+    : await prepareCoinTransaction(account, typedTransaction);
+};
+
+/**
+ * Prepare the transaction for the signOperation step.
+ * For now, used to changed the recipient for TokenAccount transfers
+ * with the smart contract address as recipient and add the nonce
+ * (which would change as well in the UI if it was done before that step)
+ */
+export const prepareForSignOperation = async (
+  account: Account,
+  transaction: EvmTransaction
+): Promise<EvmTransaction> => {
+  const nonce = await getTransactionCount(
+    account.currency,
+    account.freshAddress
+  );
+
+  const subAccount = findSubAccountById(
+    account,
+    transaction.subAccountId || ""
+  );
+  const isTokenTransaction = subAccount?.type === "TokenAccount";
+
+  return isTokenTransaction
+    ? {
         ...transaction,
-        gasLimit,
-        maxFeePerGas: feeData.maxFeePerGas || undefined,
-        maxPriorityFeePerGas: feeData.maxPriorityFeePerGas || undefined,
-        type: 2,
-      } as EvmTransactionEIP1559;
-    }
-
-    // Else just use a legacy transaction
-    delete transaction.maxFeePerGas;
-    delete transaction.maxPriorityFeePerGas;
-    return {
-      ...transaction,
-      gasLimit,
-      gasPrice: feeData.gasPrice || new BigNumber(0),
-      type: 0,
-    } as EvmTransactionLegacy;
-  })();
-  const amount = transaction.useAllAmount
-    ? await estimateMaxSpendable({ account, transaction: typedTransaction })
-    : transaction.amount;
-
-  return {
-    ...typedTransaction,
-    amount,
-  };
+        amount: new BigNumber(0),
+        recipient: subAccount.token.contractAddress,
+        nonce,
+      }
+    : {
+        ...transaction,
+        nonce,
+      };
 };

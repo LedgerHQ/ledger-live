@@ -6,11 +6,13 @@ import { EnvName, setEnvUnsafe } from "../../env";
 import { setWalletAPIVersion } from "../../wallet-api/version";
 import { WALLET_API_VERSION } from "../../wallet-api/constants";
 import { PLATFORM_VERSION } from "../../platform/constants";
+import { setEnv } from "../../env";
 
 setPlatformVersion(PLATFORM_VERSION);
 setWalletAPIVersion(WALLET_API_VERSION);
 
 setSupportedCurrencies([
+  "avalanche_c_chain",
   "bitcoin",
   "ethereum",
   "bsc",
@@ -34,7 +36,6 @@ setSupportedCurrencies([
   "vertcoin",
   "peercoin",
   "viacoin",
-  "stakenet",
   "stealthcoin",
   "decred",
   "tron",
@@ -45,7 +46,6 @@ setSupportedCurrencies([
   "bitcoin_testnet",
   "ethereum_ropsten",
   "ethereum_goerli",
-  "cosmos_testnet",
   "crypto_org_croeseid",
   "crypto_org",
   "filecoin",
@@ -99,3 +99,6 @@ listen(({ type, message, ...rest }) => {
     ...rest,
   });
 });
+
+const value = "ll-ci/0.0.0";
+setEnv("LEDGER_CLIENT_VERSION", value);

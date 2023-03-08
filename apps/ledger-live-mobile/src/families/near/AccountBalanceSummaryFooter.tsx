@@ -1,15 +1,15 @@
-import React, { useCallback, useState, useMemo } from "react";
-import { ScrollView, StyleSheet } from "react-native";
-import { useTranslation, TFunction } from "react-i18next";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
-import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
+import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 import invariant from "invariant";
-import InfoModal from "../../modals/Info";
-import type { ModalInfo } from "../../modals/Info";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
+import React, { useCallback, useMemo, useState } from "react";
+import { TFunction, useTranslation } from "react-i18next";
+import { ScrollView } from "react-native";
 import InfoItem from "../../components/BalanceSummaryInfoItem";
+import CurrencyUnitValue from "../../components/CurrencyUnitValue";
+import type { ModalInfo } from "../../modals/Info";
+import InfoModal from "../../modals/Info";
 
 type Props = {
   account: NearAccount;
@@ -46,7 +46,6 @@ function AccountBalanceSummaryFooter({ account }: Props) {
       horizontal
       showsHorizontalScrollIndicator={false}
       style={[
-        styles.root,
         {
           paddingHorizontal: 16,
         },
@@ -57,7 +56,6 @@ function AccountBalanceSummaryFooter({ account }: Props) {
         onClose={onCloseModal}
         data={infoName ? info[infoName] : []}
       />
-
       <InfoItem
         title={t("account.availableBalance")}
         onPress={onPressInfoCreator("available")}
@@ -127,14 +125,6 @@ export default function AccountBalanceFooter({ account }: Props) {
   if (!account.nearResources || account.balance.lte(0)) return null;
   return <AccountBalanceSummaryFooter account={account} />;
 }
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    flexDirection: "row",
-    overflow: "visible",
-    paddingTop: 16,
-  },
-});
 
 function getInfo(t: TFunction<"translation">): Record<InfoName, ModalInfo[]> {
   const currency = getCryptoCurrencyById("near");

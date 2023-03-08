@@ -15,6 +15,8 @@ export enum ScreenName {
   Assets = "Assets",
   BenchmarkQRStream = "BenchmarkQRStream",
   BitcoinEditCustomFees = "BitcoinEditCustomFees",
+  ClaimNftWelcome = "ClaimNftWelcome",
+  ClaimNftQrScan = "ClaimNftQrScan",
   ClaimRewardsConnectDevice = "ClaimRewardsConnectDevice",
   ClaimRewardsSelectDevice = "ClaimRewardsSelectDevice",
   ClaimRewardsValidationError = "ClaimRewardsValidationError",
@@ -32,6 +34,7 @@ export enum ScreenName {
   DebugCrash = "DebugCrash",
   DebugCustomImageGraphics = "DebugCustomImageGraphics",
   DebugDebugging = "DebugDebugging",
+  DebugQueuedDrawers = "DebugQueuedDrawers",
   DebugEnv = "DebugEnv",
   DebugExport = "DebugExport",
   DebugFeatureFlags = "DebugFeatureFlags",
@@ -40,14 +43,18 @@ export enum ScreenName {
   DebugGenerators = "DebugGenerators",
   DebugHttpTransport = "DebugHttpTransport",
   DebugInformation = "DebugInformation",
+  DebugPerformance = "DebugPerformance",
   DebugLogs = "DebugLogs",
   DebugLottie = "DebugLottie",
+  DebugTermsOfUse = "DebugTermsOfUse",
+  DebugVideos = "DebugVideos",
   DebugMockGenerateAccounts = "DebugMockGenerateAccounts",
   DebugNetwork = "DebugNetwork",
   DebugSettings = "DebugSettings",
   DebugStore = "DebugStore",
   DebugStoryly = "DebugStoryly",
   DebugSwap = "DebugSwap",
+  DebugCameraPermissions = "DebugCameraPermissions",
   DelegationConnectDevice = "DelegationConnectDevice",
   DelegationSelectDevice = "DelegationSelectDevice",
   DelegationSelectValidator = "DelegationSelectValidator",
@@ -71,8 +78,6 @@ export enum ScreenName {
   ExchangeSelectCurrency = "ExchangeSelectCurrency",
   ExchangeSell = "ExchangeSell",
   ExperimentalSettings = "ExperimentalSettings",
-  FallBackCameraScreen = "FallBackCameraScreen",
-  FallbackCameraSend = "FallbackCameraSend",
   FirmwareUpdateCheckId = "FirmwareUpdateCheckId",
   FirmwareUpdateConfirmation = "FirmwareUpdateConfirmation",
   FirmwareUpdateFailure = "FirmwareUpdateFailure",
@@ -251,6 +256,33 @@ export enum ScreenName {
   CosmosClaimRewardsValidationError = "CosmosClaimRewardsValidationError",
   CosmosClaimRewardsValidationSuccess = "CosmosClaimRewardsValidationSuccess",
 
+  // elrond
+  ElrondDelegationStarted = "ElrondDelegationStarted",
+  ElrondDelegationValidator = "ElrondDelegationValidator",
+  ElrondDelegationValidatorList = "ElrondDelegationValidatorList",
+  ElrondDelegationAmount = "ElrondDelegationAmount",
+  ElrondDelegationSelectDevice = "ElrondDelegationSelectDevice",
+  ElrondDelegationConnectDevice = "ElrondDelegationConnectDevice",
+  ElrondDelegationValidationError = "ElrondDelegationValidationError",
+  ElrondDelegationValidationSuccess = "ElrondDelegationValidationSuccess",
+  ElrondUndelegationAmount = "ElrondUndelegationAmount",
+  ElrondUndelegationSelectDevice = "ElrondUndelegationSelectDevice",
+  ElrondUndelegationConnectDevice = "ElrondUndelegationConnectDevice",
+  ElrondUndelegationValidationError = "ElrondUndelegationValidationError",
+  ElrondUndelegationValidationSuccess = "ElrondUndelegationValidationSuccess",
+  ElrondClaimRewardsValidator = "ElrondClaimRewardsValidator",
+  ElrondClaimRewardsMethod = "ElrondClaimRewardsMethod",
+  ElrondClaimRewardsSelectDevice = "ElrondClaimRewardsSelectDevice",
+  ElrondClaimRewardsConnectDevice = "ElrondClaimRewardsConnectDevice",
+  ElrondClaimRewardsValidation = "ElrondClaimRewardsValidation",
+  ElrondClaimRewardsValidationError = "ElrondClaimRewardsValidationError",
+  ElrondClaimRewardsValidationSuccess = "ElrondClaimRewardsValidationSuccess",
+  ElrondWithdrawFunds = "ElrondWithdrawFunds",
+  ElrondWithdrawSelectDevice = "ElrondWithdrawSelectDevice",
+  ElrondWithdrawConnectDevice = "ElrondWithdrawConnectDevice",
+  ElrondWithdrawValidationError = "ElrondWithdrawValidationError",
+  ElrondWithdrawValidationSuccess = "ElrondWithdrawValidationSuccess",
+
   OsmosisDelegationStarted = "OsmosisDelegationStarted",
   OsmosisDelegationValidator = "OsmosisDelegationValidator",
   OsmosisDelegationValidatorSelect = "OsmosisDelegationValidatorSelect",
@@ -320,6 +352,7 @@ export enum ScreenName {
   PolkadotSimpleOperationConnectDevice = "PolkadotSimpleOperationConnectDevice",
   PolkadotSimpleOperationValidationError = "PolkadotSimpleOperationValidationError",
   PolkadotSimpleOperationValidationSuccess = "PolkadotSimpleOperationValidationSuccess",
+
   // Stellar
   StellarEditMemoType = "StellarEditMemoType",
   StellarEditMemoValue = "StellarEditMemoValue",
@@ -376,6 +409,7 @@ export enum ScreenName {
   OnboardingSetupDeviceRecoveryPhrase = "OnboardingSetupDeviceRecoveryPhrase",
   OnboardingGeneralInformation = "OnboardingGeneralInformation",
   OnboardingBluetoothInformation = "OnboardingBluetoothInformation",
+  OnboardingProtectionConnectionInformation = "OnboardingProtectionConnectionInformation",
   OnboardingInfoModal = "OnboardingInfoModal",
   OnboardingRecoveryPhrase = "OnboardingRecoveryPhrase",
   OnboardingPairNew = "OnboardingPairNew",
@@ -408,7 +442,7 @@ export enum ScreenName {
   WalletConnectScan = "WalletConnectScan",
   WalletConnectConnect = "WalletConnectConnect",
   WalletConnectDeeplinkingSelectAccount = "WalletConnectDeeplinkingSelectAccount",
-  NotificationCenterNews = "NotificationCenterNews",
+  NotificationCenter = "NotificationCenter",
   NotificationCenterStatus = "NotificationCenterStatus",
   SignTransactionSummary = "SignTransactionSummary",
   SignTransactionSelectDevice = "SignTransactionSelectDevice",
@@ -431,6 +465,7 @@ export enum ScreenName {
   NoDeviceWallScreen = "NoDeviceWallScreen",
   DiscoverScreen = "DiscoverScreen",
   Learn = "Learn",
+  LearnWebView = "LearnWebView",
   // cardano
   CardanoEditMemo = "CardanoEditMemo",
   // hedera
@@ -455,6 +490,8 @@ export enum ScreenName {
   NearWithdrawingValidationError = "NearWithdrawingValidationError",
   NearWithdrawingValidationSuccess = "NearWithdrawingValidationSuccess",
 
+  Newsfeed = "Newsfeed",
+
   CustomImageStep0Welcome = "CustomImageStep0Welcome",
   CustomImageStep1Crop = "CustomImageStep1Crop",
   CustomImageStep2Preview = "CustomImageStep2Preview",
@@ -463,6 +500,9 @@ export enum ScreenName {
   CustomImagePreviewPreEdit = "CustomImagePreviewPreEdit",
   CustomImagePreviewPostEdit = "CustomImagePreviewPostEdit",
   CustomImageNFTGallery = "CustomImageNFTGallery",
+
+  ClaimNftWelcomeScreen = "ClaimNftWelcomeScreen",
+  ClaimNftQrScanScreen = "ClaimNftQrScanScreen",
 
   PostOnboardingHub = "PostOnboardingHub",
   PostOnboardingDebugScreen = "PostOnboardingDebugScreen",
@@ -487,6 +527,10 @@ export enum NavigatorName {
   CosmosDelegationFlow = "CosmosDelegationFlow",
   CosmosRedelegationFlow = "CosmosRedelegationFlow",
   CosmosUndelegationFlow = "CosmosUndelegationFlow",
+  ElrondClaimRewardsFlow = "ElrondClaimRewardsFlow",
+  ElrondDelegationFlow = "ElrondDelegationFlow",
+  ElrondWithdrawFlow = "ElrondWithdrawFlow",
+  ElrondUndelegationFlow = "ElrondUndelegationFlow",
   OsmosisClaimRewardsFlow = "OsmosisClaimRewardsFlow",
   OsmosisDelegationFlow = "OsmosisDelegationFlow",
   OsmosisRedelegationFlow = "OsmosisRedelegationFlow",
@@ -554,12 +598,16 @@ export enum NavigatorName {
   // Tab
   Main = "Main",
   WalletTab = "WalletTabNavigator",
+  ExploreTab = "ExploreTabNavigator",
   // Root
   RootNavigator = "RootNavigator",
   Discover = "Discover",
 
   // Custom Image
   CustomImage = "CustomImage",
+
+  // Claim NFT
+  ClaimNft = "ClaimNft",
 
   WalletConnect = "WalletConnect",
 

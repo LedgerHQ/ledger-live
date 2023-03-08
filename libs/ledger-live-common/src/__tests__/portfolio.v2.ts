@@ -20,7 +20,7 @@ import {
   getPortfolioRangeConfig,
   getDates,
   getRanges,
-} from "../portfolio/v2/range";
+} from "@ledgerhq/coin-framework/rangeDates";
 import { setEnv } from "../env";
 import { genAccount } from "../mock/account";
 import { getAccountCurrency } from "../account";
@@ -29,6 +29,8 @@ import type {
   AccountLike,
   PortfolioRange,
 } from "@ledgerhq/types-live";
+import { setSupportedCurrencies } from "../currencies";
+setSupportedCurrencies(["ethereum", "ethereum_classic", "ripple"]);
 
 setEnv("MOCK", "1");
 setEnv("MOCK_COUNTERVALUES", "1");

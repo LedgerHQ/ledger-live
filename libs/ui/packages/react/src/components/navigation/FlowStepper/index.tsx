@@ -88,6 +88,10 @@ export interface Props<ExtraProps> {
    */
   extraStepperContainerProps?: FlexProps;
   /**
+   * Extra props that are passed to the children `Flex` wrapper.
+   */
+  extraChildrenContainerProps?: FlexProps;
+  /**
    * Custom rendering function to wrap children.
    */
   renderChildren?: (
@@ -112,6 +116,7 @@ function FlowStepper<ExtraProps>({
   extraContainerProps,
   extraStepperProps,
   extraStepperContainerProps,
+  extraChildrenContainerProps,
   renderChildren,
   children,
 }: Props<ExtraProps>) {
@@ -167,7 +172,7 @@ function FlowStepper<ExtraProps>({
       <Flex my={8} justifyContent="center" {...extraStepperContainerProps}>
         <Stepper activeIndex={activeIndex} steps={steps} flex={1} {...extraStepperProps} />
       </Flex>
-      <Flex flex={1} flexDirection="column" position="relative">
+      <Flex flex={1} flexDirection="column" position="relative" {...extraChildrenContainerProps}>
         {renderChildren
           ? renderChildren({ ...renderArgs, children: innerContents })
           : innerContents}

@@ -1,11 +1,12 @@
 {
   "name": "live-common-tools",
-  "version": "0.2.19",
+  "version": "0.2.25",
   "private": true,
   "dependencies": {
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-app-eth": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-http": "workspace:^",
     "@ledgerhq/hw-transport-u2f": "5.36.0-deprecated",

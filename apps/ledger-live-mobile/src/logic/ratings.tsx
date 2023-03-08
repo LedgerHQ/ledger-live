@@ -1,10 +1,9 @@
 import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { add, isBefore, parseISO } from "date-fns";
-import type { Account } from "@ledgerhq/types-live";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { accountsSelector } from "../reducers/accounts";
+import { accountsWithPositiveBalanceCountSelector } from "../reducers/accounts";
 import {
   ratingsModalOpenSelector,
   ratingsModalLockedSelector,
@@ -80,11 +79,9 @@ const useRatings = () => {
   const ratingsOldRoute = useSelector(ratingsCurrentRouteNameSelector);
   const ratingsHappyMoment = useSelector(ratingsHappyMomentSelector);
   const ratingsDataOfUser = useSelector(ratingsDataOfUserSelector);
-  const accounts: Account[] = useSelector(accountsSelector);
 
-  const accountsWithAmountCount = useMemo(
-    () => accounts.filter(account => account.balance?.gt(0)).length,
-    [accounts],
+  const accountsWithAmountCount = useSelector(
+    accountsWithPositiveBalanceCountSelector,
   );
 
   const dispatch = useDispatch();

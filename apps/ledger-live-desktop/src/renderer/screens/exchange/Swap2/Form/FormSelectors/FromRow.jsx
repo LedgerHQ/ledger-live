@@ -20,7 +20,7 @@ import type {
   SwapDataType,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import { track } from "~/renderer/analytics/segment";
-import { swapDefaultTrack } from "../../utils/index";
+import { useGetSwapTrackingProperties } from "../../utils/index";
 
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/sortByMarketcap";
 import { listCryptoCurrencies, listTokens } from "@ledgerhq/live-common/currencies/index";
@@ -91,6 +91,8 @@ function FromRow({
   isSendMaxLoading,
   updateSelectedRate,
 }: Props) {
+  const swapDefaultTrack = useGetSwapTrackingProperties();
+
   const accounts = useSelector(fromSelector)(useSelector(shallowAccountsSelector));
   const unit = fromAccount && getAccountUnit(fromAccount);
   const { t } = useTranslation();

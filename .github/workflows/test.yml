@@ -1,4 +1,5 @@
-name: "[Test] Libraries"
+name: "@Libraries • Tests"
+run-name: "@Libraries • Tests triggered by ${{ github.event_name == 'workflow_dispatch' && inputs.login || github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
 
 on:
   push:
@@ -7,15 +8,20 @@ on:
       - develop
       - release
       - hotfix
-  pull_request:
   workflow_dispatch:
     inputs:
       since_branch:
         description: The branch that turborepo will check when diffing.
         default: "develop"
+      ref:
+        description: the branch which triggered this workflow
+        required: false
+      login:
+        description: The GitHub username that triggered the workflow
         required: true
 
 concurrency:
+  # See: https://github.com/orgs/community/discussions/35341
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref_name != 'develop' }}
 
@@ -23,8 +29,13 @@ jobs:
   test-docs:
     name: "Test Docs"
     runs-on: ubuntu-latest
+    outputs:
+      fail: ${{ steps.diff.outputs.diff }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          base: ${{ inputs.since_branch }}
       - uses: pnpm/action-setup@v2
         with:
           version: latest
@@ -37,17 +48,26 @@ jobs:
         run: pnpm i --filter="!./apps/**" --frozen-lockfile
       - name: run doc
         run: pnpm doc:ljs
-      - name: check if diff
-        run: git diff --exit-code || exit 1
+      - name: get diff
+        id: diff
+        run: |
+          diff=$(git diff --exit-code > /dev/null && echo 0 || echo 1)
+          echo "diff=$diff" >> $GITHUB_OUTPUT
+          exit $diff
 
   test-cli:
     name: "Test CLI"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
+    outputs:
+      fail: ${{ steps.diff.outputs.diff }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          base: ${{ inputs.since_branch }}
       - uses: pnpm/action-setup@v2
         with:
           version: latest
@@ -60,8 +80,14 @@ jobs:
         run: pnpm i --frozen-lockfile
       - name: build cli
         run: pnpm build:cli
-      - name: check if diff
-        run: git diff --exit-code || exit 1
+      - name: test cli
+        run: pnpm test --filter="live-cli"
+      - name: get diff
+        id: diff
+        run: |
+          diff=$(git diff --exit-code > /dev/null && echo 0 || echo 1)
+          echo "diff=$diff" >> $GITHUB_OUTPUT
+          exit $diff
 
   test-libraries:
     name: "Test Libraries"
@@ -79,13 +105,14 @@ jobs:
           # Commenting because of random node-gyp failures on windows…
           # See:
           #  * https://github.com/serialport/node-serialport/issues/2322
-          #  * https://github.com/serialport/node-serialport/issues/2322
           # - windows-latest
 
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          base: ${{ inputs.since_branch }}
           fetch-depth: 0
       - uses: pnpm/action-setup@v2
         with:
@@ -95,13 +122,12 @@ jobs:
           node-version: 16
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v4
         with:
           python-version: "3.10"
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.6
-
       - name: TurboRepo local caching server
         id: turborepo-cache-server
         uses: ./tools/actions/turborepo-gh-cache
@@ -110,13 +136,9 @@ jobs:
           cleanup-cache-folder: "true"
       - name: Install dependencies
         run: pnpm i --filter="!./apps/**"
-      - name: Build and Test affected libraries (Pull Request)
-        if: ${{ github.event_name != 'push' }}
-        run: pnpm run test --continue --filter="!./apps/**" --filter="!live-common-tools" --filter="!ledger-live...[origin/${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || github.event.inputs.since_branchsince_branch || 'develop' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
-        shell: bash
-      - name: Build and Test affected libraries (Pull Request)
-        if: ${{ github.event_name == 'push' }}
-        run: pnpm run test --continue --filter="!./apps/**" --filter="!live-common-tools" --filter="!ledger-live...[HEAD^1]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+      - name: Build and Test affected libraries
+        id: test-libs
+        run: pnpm run test --continue --filter="!./apps/**" --filter="!live-common-tools" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
         shell: bash
       - name: (On Failure) Upload live-common snapshots and source
         uses: actions/upload-artifact@v3
@@ -137,3 +159,98 @@ jobs:
         run: npx codecov -F test
         env:
           CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
+      - uses: actions/github-script@v6
+        if: always()
+        with:
+          script: |
+            const fs = require("fs");
+            fs.writeFileSync("summary-${{ matrix.os }}.txt", "${{ steps.test-libs.outcome }}", "utf-8");
+      - uses: actions/upload-artifact@v3
+        with:
+          name: outputs
+          path: ${{ github.workspace }}/summary-${{ matrix.os }}.txt
+
+  report:
+    needs: [test-cli, test-docs, test-libraries]
+    if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: outputs
+      - uses: actions/github-script@v6
+        name: build summary
+        with:
+          script: |
+            const fs = require("fs");
+            const resultLinux = fs.readFileSync("${{ github.workspace }}/summary-ubuntu-latest.txt", "utf-8");
+            const resultMacos = fs.readFileSync("${{ github.workspace }}/summary-macos-latest.txt", "utf-8");
+
+            const statuses = {
+              doc: {
+                pass: ${{ needs.test-docs.outputs.fail != '1' }},
+                status: "${{ needs.test-docs.result }}",
+              },
+              cli: {
+                pass: ${{ needs.test-cli.outputs.fail != '1' }},
+                status: "${{ needs.test-docs.result }}",
+              },
+              libraries: {
+                pass: ${{ needs.test-libraries.result == 'success' }},
+                status: "${{ needs.test-libraries.result }}",
+              },
+              libs: {
+                mac: {
+                  pass: resultMacos == 'success',
+                  status: resultMacos,
+                },
+                linux: {
+                  pass: resultLinux == 'success',
+                  status: resultLinux,
+                }
+              }
+            };
+
+            const libsOk = Object.values(statuses.libs).every(os => os.pass);
+
+            const summary = `### Test documentation files
+            ${statuses.doc.pass ? "Documentation files are fine" : "Documentation files are outdated"}
+              - ${statuses.doc.pass ? "✅" : "❌"} **Test documentation files** ended with status \`${statuses.doc.status}\`
+
+            ### Test CLI
+            ${statuses.cli.pass ? "CLI tests are successful" : "CLI tests did not end successfully"}
+              - ${statuses.cli.pass ? "✅" : "❌"} **CLI tests** ended with status \`${statuses.cli.status}\`
+
+            ### Test Libraries
+            ${libsOk ? "All tests are fine" : "Some tests failed"}
+
+            | Linux (🤖) | macOS (🍏) |
+            | :--: | :--: |
+            | ${statuses.libs.linux.pass ? "✅" : "❌"} (${statuses.libs.linux.status}) | ${statuses.libs.mac.pass ? "✅" : "❌"} (${statuses.libs.mac.status}) |
+
+            `;
+
+            const actions = [];
+
+            if (${{ needs.test-docs.outputs.fail == '1' }}) {
+              actions.push({
+                // 20 chars max
+                label: "Regen. Doc Files",
+                // 20 chars max
+                identifier: "regen_doc",
+                // 40 chars max
+                description: "Will regenerate doc files for ljs",
+              });
+            }
+
+            const output = {
+              summary,
+              actions
+            };
+
+            fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
+      - uses: actions/upload-artifact@v3
+        name: Upload output
+        with:
+          path: ${{ github.workspace }}/summary.json
+          name: summary.json

@@ -1,11 +1,11 @@
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { Linking, Platform } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { add, isBefore, parseISO } from "date-fns";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import messaging from "@react-native-firebase/messaging";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { accountsSelector } from "../reducers/accounts";
+import { accountsWithPositiveBalanceCountSelector } from "../reducers/accounts";
 import {
   notificationsModalOpenSelector,
   notificationsModalTypeSelector,
@@ -51,6 +51,13 @@ export type DataOfUser = {
   doNotAskAgain?: boolean;
 };
 
+export type NotificationCategory = {
+  /** Whether or not the category is displayed in the Ledger Live notifications settings */
+  displayed?: boolean;
+  /** The key of the category */
+  category?: string;
+};
+
 const pushNotificationsDataOfUserAsyncStorageKey =
   "pushNotificationsDataOfUser";
 
@@ -80,6 +87,16 @@ const useNotifications = () => {
   const pushNotificationsFeature = useFeature("brazePushNotifications");
   const notifications = useSelector(notificationsSelector);
 
+  const notificationsCategoriesHidden =
+    pushNotificationsFeature?.params?.notificationsCategories
+      ?.filter(
+        (notificationsCategory: NotificationCategory) =>
+          !notificationsCategory?.displayed,
+      )
+      .map(
+        (notificationsCategory: NotificationCategory) =>
+          notificationsCategory?.category || "",
+      );
   const isPushNotificationsModalOpen = useSelector(
     notificationsModalOpenSelector,
   );
@@ -98,11 +115,8 @@ const useNotifications = () => {
   const pushNotificationsDataOfUser = useSelector(
     notificationsDataOfUserSelector,
   );
-  const accounts = useSelector(accountsSelector);
-
-  const accountsWithAmountCount = useMemo(
-    () => accounts.filter(account => account.balance?.gt(0)).length,
-    [accounts],
+  const accountsWithAmountCount = useSelector(
+    accountsWithPositiveBalanceCountSelector,
   );
 
   const dispatch = useDispatch();
@@ -273,6 +287,7 @@ const useNotifications = () => {
           areNotificationsAllowed: true,
           announcementsCategory: true,
           recommendationsCategory: true,
+          largeMoverCategory: true,
         }),
       );
     }
@@ -428,6 +443,7 @@ const useNotifications = () => {
     pushNotificationsOldRoute,
     pushNotificationsModalType,
     isPushNotificationsModalOpen,
+    notificationsCategoriesHidden,
     getIsNotifEnabled,
     handlePushNotificationsPermission,
     triggerMarketPushNotificationModal,

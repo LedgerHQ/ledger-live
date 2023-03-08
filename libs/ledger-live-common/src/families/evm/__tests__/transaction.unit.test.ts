@@ -1,14 +1,7 @@
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
-import { findCryptoCurrencyById } from "../../../currencies";
 import { transactionToEthersTransaction } from "../adapters";
-import { makeAccount } from "../testUtils";
-import * as API from "../api/rpc.common";
-import {
-  fromTransactionRaw,
-  toTransactionRaw,
-  transactionToUnsignedTransaction,
-} from "../transaction";
+import { fromTransactionRaw, toTransactionRaw } from "../transaction";
 import {
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
@@ -17,8 +10,6 @@ import {
 } from "../types";
 
 const testData = Buffer.from("testBufferString").toString("hex");
-const currency = findCryptoCurrencyById("ethereum")!;
-const fakeAccount = makeAccount("0xBob", currency);
 const rawEip1559Tx: EvmTransactionEIP1559Raw = {
   amount: "100",
   useAllAmount: false,
@@ -136,25 +127,6 @@ describe("EVM Family", () => {
         expect(transactionToEthersTransaction(legacyTx)).toEqual(
           legacyEthersTx
         );
-      });
-    });
-
-    describe("transactionToUnsignedTransaction", () => {
-      it("should create an unsigned version of a ledger live transaction", async () => {
-        jest
-          .spyOn(API, "getTransactionCount")
-          .mockReturnValue(Promise.resolve(69));
-
-        const unsignedTransaction = await transactionToUnsignedTransaction(
-          fakeAccount as any,
-          legacyTx
-        );
-        expect(unsignedTransaction).toEqual({
-          ...legacyTx,
-          nonce: 69,
-        });
-
-        jest.restoreAllMocks();
       });
     });
   });

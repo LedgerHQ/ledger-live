@@ -2,19 +2,19 @@
 
 import { handleActions } from "redux-actions";
 
-import type { AppManifest } from "@ledgerhq/live-common/platform/types";
+import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 import type { State } from "~/renderer/reducers";
 
 export type PlatformAppDrawerInfo = {
   type: "DAPP_INFO",
-  manifest: ?AppManifest,
+  manifest: ?LiveAppManifest,
   title: string,
 };
 
 export type PlatformAppDrawerDisclaimer = {
   type: "DAPP_DISCLAIMER",
-  manifest: ?AppManifest,
+  manifest: ?LiveAppManifest,
   disclaimerId: string,
   title: string,
   next: () => void,

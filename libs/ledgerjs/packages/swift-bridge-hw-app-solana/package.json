@@ -1,0 +1,44 @@
+{
+  "name": "@ledgerhq/swift-bridge-hw-app-solana",
+  "version": "1.0.0",
+  "description": "Package to facilitate bundling hw-app-solana in the SolanaWrapper Swift package",
+  "keywords": [
+    "Ledger",
+    "LedgerWallet",
+    "NanoX",
+    "Stax",
+    "Hardware Wallet",
+    "bluetooth",
+    "swift",
+    "ios"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "lib/Wrapper.js",
+  "module": "lib-es/Wrapper.js",
+  "types": "lib/Wrapper.d.ts",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ledgerhq/swift-bridge-hw-transport-ble": "workspace:^",
+    "@ledgerhq/hw-app-solana": "workspace:^"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest"
+  },
+  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec"
+}

@@ -1,29 +1,32 @@
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import { useHistory } from "react-router-dom";
 import { Flex, Text, VerticalTimeline } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { useTheme } from "styled-components";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
+import { stringToDeviceModelId } from "@ledgerhq/devices/helpers";
+import { DeviceModelInfo } from "@ledgerhq/types-live";
 import {
   OnboardingStep as DeviceOnboardingStep,
   fromSeedPhraseTypeToNbOfSeedWords,
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
 
+import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import { command } from "~/renderer/commands";
-import { useHistory } from "react-router-dom";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import HelpDrawer from "./HelpDrawer";
 import TroubleshootingDrawer from "./TroubleshootingDrawer";
 import SoftwareCheckStep from "./SoftwareCheckStep";
 import { DesyncOverlay } from "./DesyncOverlay";
 import RecoveryContent from "./RecoveryContent";
-import ApplicationContent from "./ApplicationContent";
 import { StepText } from "./shared";
 import Header from "./Header";
 import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "../../DeviceAction/animations";
 import DeviceIllustration from "../../DeviceIllustration";
+import OnboardingAppInstallStep from "../../OnboardingAppInstall";
 
 const readyRedirectDelayMs = 2500;
 const pollingPeriodMs = 1000;
@@ -61,17 +64,45 @@ function nextStepKey(step: StepKey): StepKey {
   return step + 1;
 }
 
-const SyncOnboardingManual = () => {
+export type SyncOnboardingManualProps = {
+  deviceModelId: string; // Should be DeviceModelId. react-router 5 seems to only handle [K in keyof Params]?: string props
+};
+
+/**
+ * Component rendering the synchronous onboarding steps
+ *
+ * @param deviceModelId: a device model used to render the animation and text.
+ *  Needed because the device object can be null if disconnected.
+ */
+const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardingManualProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const history = useHistory();
   const [stepKey, setStepKey] = useState<StepKey>(StepKey.Paired);
+  const [shouldRestoreApps, setShouldRestoreApps] = useState<boolean>(false);
+  const deviceToRestore = useSelector(lastSeenDeviceSelector) as DeviceModelInfo | null | undefined;
+
   const device = useSelector(getCurrentDevice);
+
+  const deviceModelId = stringToDeviceModelId(strDeviceModelId, DeviceModelId.stax);
+  // Needed because the device object can be null or changed if disconnected/reconnected
+  const [lastKnownDeviceModelId, setLastKnownDeviceModelId] = useState<DeviceModelId>(
+    deviceModelId,
+  );
+
+  useEffect(() => {
+    if (device) {
+      setLastKnownDeviceModelId(device.modelId);
+    }
+  }, [device]);
 
   const productName = device
     ? getDeviceModel(device.modelId).productName || device.modelId
     : "Ledger Device";
   const deviceName = device?.deviceName || productName;
+
+  const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
+  const [isTroubleshootingDrawerOpen, setTroubleshootingDrawerOpen] = useState<boolean>(false);
 
   const handleSoftwareCheckComplete = useCallback(() => {
     setStepKey(nextStepKey(StepKey.SoftwareCheck));
@@ -133,6 +164,7 @@ const SyncOnboardingManual = () => {
         title: t("syncOnboarding.manual.softwareCheckContent.title"),
         renderBody: (isDisplayed?: boolean) => (
           <SoftwareCheckStep
+            deviceModelId={lastKnownDeviceModelId}
             isDisplayed={isDisplayed}
             onComplete={handleSoftwareCheckComplete}
             productName={productName}
@@ -144,9 +176,11 @@ const SyncOnboardingManual = () => {
         status: "inactive",
         title: "Nano applications",
         renderBody: () => (
-          <ApplicationContent
+          <OnboardingAppInstallStep
+            device={device}
+            deviceToRestore={shouldRestoreApps && deviceToRestore ? deviceToRestore : undefined}
             onComplete={handleInstallRecommendedApplicationComplete}
-            productName={productName}
+            onError={handleInstallRecommendedApplicationComplete}
           />
         ),
       },
@@ -156,7 +190,16 @@ const SyncOnboardingManual = () => {
         title: "Nano is ready",
       },
     ],
-    [t, productName, handleSoftwareCheckComplete, handleInstallRecommendedApplicationComplete],
+    [
+      t,
+      device,
+      deviceToRestore,
+      shouldRestoreApps,
+      productName,
+      lastKnownDeviceModelId,
+      handleSoftwareCheckComplete,
+      handleInstallRecommendedApplicationComplete,
+    ],
   );
 
   const [steps, setSteps] = useState<Step[]>(defaultSteps);
@@ -169,16 +212,13 @@ const SyncOnboardingManual = () => {
     onboardingState: deviceOnboardingState,
     allowedError,
     fatalError,
+    lockedDevice: lockedDeviceDuringPolling,
   } = useOnboardingStatePolling({
     getOnboardingStatePolling: getOnboardingStatePollingCommand,
     device,
     pollingPeriodMs,
     stopPolling,
   });
-
-  const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
-  const [isTroubleshootingDrawerOpen, setTroubleshootingDrawerOpen] = useState<boolean>(false);
-  const [lastKnownDeviceId, setLastKnownDeviceId] = useState<DeviceModelId>(DeviceModelId.nanoX);
 
   const handleClose = useCallback(() => {
     history.push("/onboarding/select-device");
@@ -198,12 +238,6 @@ const SyncOnboardingManual = () => {
   }, []);
 
   useEffect(() => {
-    if (device) {
-      setLastKnownDeviceId(device.modelId);
-    }
-  }, [device]);
-
-  useEffect(() => {
     if (
       deviceOnboardingState?.isOnboarded &&
       deviceOnboardingState?.currentOnboardingStep === DeviceOnboardingStep.Ready
@@ -214,10 +248,16 @@ const SyncOnboardingManual = () => {
 
     switch (deviceOnboardingState?.currentOnboardingStep) {
       case DeviceOnboardingStep.SetupChoice:
-      case DeviceOnboardingStep.RestoreSeed:
       case DeviceOnboardingStep.SafetyWarning:
+        setStepKey(StepKey.Seed);
+        break;
       case DeviceOnboardingStep.NewDevice:
       case DeviceOnboardingStep.NewDeviceConfirming:
+        setShouldRestoreApps(false);
+        setStepKey(StepKey.Seed);
+        break;
+      case DeviceOnboardingStep.RestoreSeed:
+        setShouldRestoreApps(true);
         setStepKey(StepKey.Seed);
         break;
       case DeviceOnboardingStep.WelcomeScreen1:
@@ -305,12 +345,14 @@ const SyncOnboardingManual = () => {
     }
   }, [isTroubleshootingDrawerOpen]);
 
+  const displayUnlockOrPlugDeviceAnimation = !device || (lockedDeviceDuringPolling && !stopPolling);
+
   return (
     <Flex bg="background.main" width="100%" height="100%" flexDirection="column">
       <Header onClose={handleClose} onHelp={() => setHelpDrawerOpen(true)} />
       <HelpDrawer isOpen={isHelpDrawerOpen} onClose={() => setHelpDrawerOpen(false)} />
       <TroubleshootingDrawer
-        lastKnownDeviceId={lastKnownDeviceId}
+        lastKnownDeviceId={lastKnownDeviceModelId}
         isOpen={isTroubleshootingDrawerOpen}
         onClose={handleTroubleshootingDrawerClose}
       />
@@ -328,17 +370,17 @@ const SyncOnboardingManual = () => {
             </Flex>
           </Flex>
           <Flex flex={1} justifyContent="center" alignItems="center">
-            {device?.modelId === "stax" ? (
+            {displayUnlockOrPlugDeviceAnimation ? (
               <Animation
                 height="540px"
                 animation={getDeviceAnimation(
-                  "stax" as DeviceModelId,
-                  theme.theme as "light" | "dark",
-                  "plugAndPinCode",
+                  lastKnownDeviceModelId,
+                  theme.theme,
+                  lockedDeviceDuringPolling ? "enterPinCode" : "plugAndPinCode",
                 )}
               />
             ) : (
-              <DeviceIllustration deviceId={device?.modelId || ("nanoS" as DeviceModelId)} />
+              <DeviceIllustration deviceId={lastKnownDeviceModelId} />
             )}
           </Flex>
         </Flex>

@@ -3,6 +3,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import { useDispatch } from "react-redux";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { NavigatorName, ScreenName } from "../../../const";
 import BaseStepperView, { PairNew, ConnectNano } from "./setupDevice/scenes";
@@ -34,7 +35,7 @@ const images = {
 
 type Metadata = {
   id: string;
-  illustration: JSX.Element;
+  illustration: JSX.Element | null;
   drawer: null | { route: string; screen: string };
 };
 
@@ -57,7 +58,9 @@ function OnboardingStepPairNew() {
     useNotifications();
   const { resetCurrentStep } = useNavigationInterceptor();
 
-  const { deviceModelId, showSeedWarning, next } = route.params;
+  const { deviceModelId, showSeedWarning, next, isProtectFlow } = route.params;
+
+  const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
 
   const metadata: Array<Metadata> = useMemo(
     () => [
@@ -77,20 +80,25 @@ function OnboardingStepPairNew() {
       },
       {
         id: ConnectNano.id,
-        illustration: (
+        illustration: newDeviceSelectionFeatureFlag?.enabled ? null : (
           <StepLottieAnimation
             stepId="pinCode"
             deviceModelId={deviceModelId}
             theme={theme === "dark" ? "dark" : "light"}
           />
         ),
-        drawer: {
-          route: ScreenName.OnboardingBluetoothInformation,
-          screen: ScreenName.OnboardingBluetoothInformation,
-        },
+        drawer: isProtectFlow
+          ? {
+              route: ScreenName.OnboardingProtectionConnectionInformation,
+              screen: ScreenName.OnboardingProtectionConnectionInformation,
+            }
+          : {
+              route: ScreenName.OnboardingBluetoothInformation,
+              screen: ScreenName.OnboardingBluetoothInformation,
+            },
       },
     ],
-    [deviceModelId, theme],
+    [deviceModelId, theme, newDeviceSelectionFeatureFlag?.enabled],
   );
 
   const startPostOnboarding = useStartPostOnboardingCallback();
@@ -117,15 +125,14 @@ function OnboardingStepPairNew() {
       parentNav.popToTop();
     }
 
-    navigation.replace(NavigatorName.Base, {
-      screen: NavigatorName.Main,
+    startPostOnboarding({
+      deviceModelId: deviceModelId as DeviceModelId,
+      resetNavigationStack: true,
+      fallbackIfNoAction: () =>
+        navigation.navigate(NavigatorName.Base, {
+          screen: NavigatorName.Main,
+        }),
     });
-
-    startPostOnboarding(deviceModelId as DeviceModelId, false, () =>
-      navigation.navigate(NavigatorName.Base, {
-        screen: NavigatorName.Main,
-      }),
-    );
 
     triggerJustFinishedOnboardingNewDevicePushNotificationModal();
   }, [

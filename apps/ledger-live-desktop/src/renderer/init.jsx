@@ -21,11 +21,14 @@ import "~/renderer/styles/global";
 import "~/renderer/live-common-setup";
 import { getLocalStorageEnvs } from "~/renderer/experimental";
 import "~/renderer/i18n/init";
-import { prepareCurrency } from "~/renderer/bridge/cache";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { hydrateCurrency, prepareCurrency } from "~/renderer/bridge/cache";
+import {
+  getCryptoCurrencyById,
+  findCryptoCurrencyById,
+} from "@ledgerhq/live-common/currencies/index";
 
 import logger, { enableDebugLogger } from "~/logger";
-import LoggerTransport from "~/logger/logger-transport-renderer";
+import loggerInstance from "~/logger/logger-transport-renderer-instance";
 import { enableGlobalTab, disableGlobalTab, isGlobalTabEnabled } from "~/config/global-tab";
 import sentry from "~/sentry/renderer";
 import { setEnvOnAllThreads } from "~/helpers/env";
@@ -41,15 +44,17 @@ import {
   sentryLogsSelector,
   hideEmptyTokenAccountsSelector,
   localeSelector,
+  filterTokenOperationsZeroAmountSelector,
 } from "~/renderer/reducers/settings";
 
 import ReactRoot from "~/renderer/ReactRoot";
 import AppError from "~/renderer/AppError";
 import { expectOperatingSystemSupportStatus } from "~/support/os";
+import { listCachedCurrencyIds } from "./bridge/cache";
 
-logger.add(new LoggerTransport());
+logger.add(loggerInstance);
 
-if (process.env.NODE_ENV !== "production" || process.env.DEV_TOOLS) {
+if (process.env.VERBOSE) {
   enableDebugLogger();
 }
 
@@ -130,7 +135,18 @@ async function init() {
   const hideEmptyTokenAccounts = hideEmptyTokenAccountsSelector(state);
   setEnvOnAllThreads("HIDE_EMPTY_TOKEN_ACCOUNTS", hideEmptyTokenAccounts);
 
+  const filterTokenOperationsZeroAmount = filterTokenOperationsZeroAmountSelector(state);
+  setEnvOnAllThreads("FILTER_ZERO_AMOUNT_ERC20_EVENTS", filterTokenOperationsZeroAmount);
+
   const isMainWindow = remote.getCurrentWindow().name === "MainWindow";
+
+  // hydrate the store with the bridge/cache
+  await Promise.allSettled(
+    listCachedCurrencyIds().map(id => {
+      const currency = findCryptoCurrencyById(id);
+      return currency ? hydrateCurrency(currency) : null;
+    }),
+  );
 
   let accounts = await getKey("app", "accounts", []);
   if (accounts) {

@@ -110,6 +110,9 @@ export const SyncOnboarding = ({
   const [companionStepKey, setCompanionStepKey] = useState<CompanionStepKey>(
     CompanionStepKey.Paired,
   );
+  const [seedStatus, setSeedStatus] = useState<"selection" | "new" | "restore">(
+    "selection",
+  );
 
   const getNextStepKey = useCallback(
     (step: CompanionStepKey) => {
@@ -161,6 +164,7 @@ export const SyncOnboarding = ({
     useState<boolean>(false);
   const [isDesyncDrawerOpen, setDesyncDrawerOpen] = useState<boolean>(false);
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
+  const [shouldRestoreApps, setShouldRestoreApps] = useState<boolean>(false);
 
   const goBackToPairingFlow = useCallback(() => {
     const navigateInput: NavigateInput<
@@ -303,11 +307,20 @@ export const SyncOnboarding = ({
 
     switch (deviceOnboardingState?.currentOnboardingStep) {
       case DeviceOnboardingStep.SetupChoice:
-      case DeviceOnboardingStep.RestoreSeed:
       case DeviceOnboardingStep.SafetyWarning:
+        setCompanionStepKey(CompanionStepKey.Seed);
+        setSeedStatus("selection");
+        break;
       case DeviceOnboardingStep.NewDevice:
       case DeviceOnboardingStep.NewDeviceConfirming:
+        setShouldRestoreApps(false);
         setCompanionStepKey(CompanionStepKey.Seed);
+        setSeedStatus("new");
+        break;
+      case DeviceOnboardingStep.RestoreSeed:
+        setShouldRestoreApps(true);
+        setCompanionStepKey(CompanionStepKey.Seed);
+        setSeedStatus("restore");
         break;
       case DeviceOnboardingStep.WelcomeScreen1:
       case DeviceOnboardingStep.WelcomeScreen2:
@@ -323,7 +336,7 @@ export const SyncOnboarding = ({
       default:
         break;
     }
-  }, [deviceOnboardingState]);
+  }, [deviceOnboardingState, shouldRestoreApps]);
 
   // When the user gets close to the seed generation step, sets the lost synchronization delay
   // and timers to a higher value. It avoids having a warning message while the connection is lost
@@ -401,12 +414,24 @@ export const SyncOnboarding = ({
           doneTitle: t("syncOnboarding.seedStep.doneTitle"),
           estimatedTime: 300,
           renderBody: () => (
-            <Flex pb={1}>
-              <Stories
-                instanceID={StorylyInstanceID.recoverySeed}
-                vertical
-                keepOriginalOrder
-              />
+            <Flex>
+              {seedStatus === "selection" ? (
+                <Text variant="bodyLineHeight">
+                  {t("syncOnboarding.seedStep.selection")}
+                </Text>
+              ) : seedStatus === "new" ? (
+                <Flex pb={1}>
+                  <Stories
+                    instanceID={StorylyInstanceID.recoverySeed}
+                    vertical
+                    keepOriginalOrder
+                  />
+                </Flex>
+              ) : (
+                <Text variant="bodyLineHeight">
+                  {t("syncOnboarding.seedStep.recovery", { productName })}
+                </Text>
+              )}
             </Flex>
           ),
         },
@@ -429,9 +454,9 @@ export const SyncOnboarding = ({
               {
                 key: CompanionStepKey.Apps,
                 title: t("syncOnboarding.appsStep.title", { productName }),
-                estimatedTime: 60,
                 renderBody: () => (
                   <InstallSetOfApps
+                    restore={shouldRestoreApps}
                     device={device}
                     onResult={handleInstallAppsComplete}
                     dependencies={initialAppsToInstall}
@@ -457,12 +482,14 @@ export const SyncOnboarding = ({
     [
       t,
       productName,
+      seedStatus,
       deviceInitialApps?.enabled,
       device,
       handleSoftwareCheckComplete,
       handleInstallAppsComplete,
       initialAppsToInstall,
       companionStepKey,
+      shouldRestoreApps,
     ],
   );
 

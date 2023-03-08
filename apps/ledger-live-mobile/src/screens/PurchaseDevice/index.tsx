@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from "react";
+import React, { memo, useCallback, useState, useMemo } from "react";
 import { Flex, Icons } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useNavigation } from "@react-navigation/native";
@@ -28,6 +28,17 @@ const PurchaseDevice = () => {
   const [isURLDrawerOpen, setURLDrawerOpen] = useState(false);
   const [isMessageDrawerOpen, setMessageDrawerOpen] = useState(false);
   const [url, setUrl] = useState(buyDeviceFromLive?.params?.url || defaultURL);
+  const urlWithParam = useMemo(() => {
+    const appTrackingParam = "apptracking=false";
+
+    if (!url || url.includes(appTrackingParam)) {
+      return url;
+    }
+    if (url.includes("?")) {
+      return url.concat(`&${appTrackingParam}`);
+    }
+    return url.concat(`?${appTrackingParam}`);
+  }, [url]);
   const [message, setMessage] = useState<PurchaseMessage | null>(null);
 
   const handleBack = useCallback(() => {
@@ -96,7 +107,7 @@ const PurchaseDevice = () => {
     <>
       <WebViewScreen
         screenName={t("purchaseDevice.pageTitle")}
-        uri={url}
+        uri={urlWithParam}
         onMessage={handleMessage}
         renderHeader={() => (
           <Flex
@@ -124,7 +135,7 @@ const PurchaseDevice = () => {
       {buyDeviceFromLive?.params?.debug && (
         <DebugURLDrawer
           isOpen={isURLDrawerOpen}
-          value={url}
+          value={urlWithParam}
           onClose={() => setURLDrawerOpen(false)}
           onChange={setUrl}
         />

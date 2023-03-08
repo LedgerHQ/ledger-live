@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { StyleSheet, ScrollView, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Edge, SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import Config from "react-native-config";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -9,10 +9,12 @@ import Button from "../../../../components/Button";
 import LText from "../../../../components/LText";
 import Animation from "../../../../components/Animation";
 import { getDeviceAnimation } from "../../../../helpers/getDeviceAnimation";
-import BottomModal from "../../../../components/BottomModal";
+import QueuedDrawer from "../../../../components/QueuedDrawer";
 import Touchable from "../../../../components/Touchable";
 import Check from "../../../../icons/Check";
 import { lottieAnimations } from "../../../Onboarding/shared/infoPagesData";
+
+const edges: Edge[] = ["bottom"];
 
 const DebugLottie = () => {
   const { colors } = useTheme();
@@ -91,6 +93,7 @@ const DebugLottie = () => {
   const keyIndex = allKeys.findIndex(k => k === key);
   return (
     <SafeAreaView
+      edges={edges}
       style={[
         styles.root,
         {
@@ -193,8 +196,8 @@ const DebugLottie = () => {
           Icon={Icons.ChevronRightMedium}
         />
       </Flex>
-      <BottomModal
-        isOpened={keyModalVisible}
+      <QueuedDrawer
+        isRequestingToBeOpened={keyModalVisible}
         onClose={setKeyModalVisible as () => void}
       >
         <ScrollView style={styles.modal}>
@@ -226,7 +229,7 @@ const DebugLottie = () => {
             </Touchable>
           ))}
         </ScrollView>
-      </BottomModal>
+      </QueuedDrawer>
     </SafeAreaView>
   );
 };

@@ -1,4 +1,6 @@
-name: "Pull Request Labeler"
+name: "@PR • Labeler"
+run-name: "@PR • Labeler triggered by ${{ github.actor }} ${{ format('on branch {0}', github.head_ref) }}"
+
 on:
   - pull_request_target
 
@@ -15,6 +17,7 @@ jobs:
       - uses: actions/github-script@v6
         if: github.event.pull_request.head.repo.fork
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             try {
               const { data: rawLabels } = await github.rest.issues.listLabelsOnIssue({

@@ -1,5 +1,55 @@
 # @ledgerhq/native-ui
 
+## 0.15.1
+
+### Patch Changes
+
+- [#2503](https://github.com/LedgerHQ/ledger-live/pull/2503) [`aed44f43b2`](https://github.com/LedgerHQ/ledger-live/commit/aed44f43b26fa9b60822c0754ba384412b9b236a) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Minor ui modifications to Link, FullBackgroundCard and SideImageCard components
+
+- [#2519](https://github.com/LedgerHQ/ledger-live/pull/2519) [`68c0a2a2ac`](https://github.com/LedgerHQ/ledger-live/commit/68c0a2a2ac2080ec7de069ceb2053737f44f2a4b) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: onModalHide passed down to ReactNativeModal
+
+  `BaseModal` was not passing down `onModalHide` to `ReactNativeModal`. Until this, `onModalHide={onClose}`, making `onClose` being called twice (once when the user closes the modal, once when the modal is hidden) and `onModalHide` being never called.
+
+  The fix is a workaround so we don't break legacy components that use `BaseModal`. The long-term fix would be to have `onModalHide={onModalHide}` and make sure every usage on `onClose` in the consumers of this component expect the correct behavior.
+
+## 0.15.1-next.0
+
+### Patch Changes
+
+- [#2503](https://github.com/LedgerHQ/ledger-live/pull/2503) [`aed44f43b2`](https://github.com/LedgerHQ/ledger-live/commit/aed44f43b26fa9b60822c0754ba384412b9b236a) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Minor ui modifications to Link, FullBackgroundCard and SideImageCard components
+
+- [#2519](https://github.com/LedgerHQ/ledger-live/pull/2519) [`68c0a2a2ac`](https://github.com/LedgerHQ/ledger-live/commit/68c0a2a2ac2080ec7de069ceb2053737f44f2a4b) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: onModalHide passed down to ReactNativeModal
+
+  `BaseModal` was not passing down `onModalHide` to `ReactNativeModal`. Until this, `onModalHide={onClose}`, making `onClose` being called twice (once when the user closes the modal, once when the modal is hidden) and `onModalHide` being never called.
+
+  The fix is a workaround so we don't break legacy components that use `BaseModal`. The long-term fix would be to have `onModalHide={onModalHide}` and make sure every usage on `onClose` in the consumers of this component expect the correct behavior.
+
+## 0.15.0
+
+### Minor Changes
+
+- [#2081](https://github.com/LedgerHQ/ledger-live/pull/2081) [`87826dce62`](https://github.com/LedgerHQ/ledger-live/commit/87826dce627602cef94cf4831c17251069b92076) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Native UI - NotificationCard component added to the ui library
+
+### Patch Changes
+
+- [#2071](https://github.com/LedgerHQ/ledger-live/pull/2071) [`cc3c591bdc`](https://github.com/LedgerHQ/ledger-live/commit/cc3c591bdcb31df5882210fa43928603c2bcb200) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - fix ratings modal close behavior
+
+- Updated dependencies [[`5266518d0b`](https://github.com/LedgerHQ/ledger-live/commit/5266518d0baf26258f95a08d7f0a127f1848b38f)]:
+  - @ledgerhq/icons-ui@0.3.4
+
+## 0.15.0-next.0
+
+### Minor Changes
+
+- [#2081](https://github.com/LedgerHQ/ledger-live/pull/2081) [`87826dce62`](https://github.com/LedgerHQ/ledger-live/commit/87826dce627602cef94cf4831c17251069b92076) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Native UI - NotificationCard component added to the ui library
+
+### Patch Changes
+
+- [#2071](https://github.com/LedgerHQ/ledger-live/pull/2071) [`cc3c591bdc`](https://github.com/LedgerHQ/ledger-live/commit/cc3c591bdcb31df5882210fa43928603c2bcb200) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - fix ratings modal close behavior
+
+- Updated dependencies [[`5266518d0b`](https://github.com/LedgerHQ/ledger-live/commit/5266518d0baf26258f95a08d7f0a127f1848b38f)]:
+  - @ledgerhq/icons-ui@0.3.4-next.0
+
 ## 0.14.0
 
 ### Minor Changes
@@ -26,7 +76,7 @@
 
 ### Minor Changes
 
-- [#1831](https://github.com/LedgerHQ/ledger-live/pull/1831) [`8ac70e5cca`](https://github.com/LedgerHQ/ledger-live/commit/8ac70e5ccab58159c646f23694c1da13ebc00248) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Two Cards components (CardA and CardB) added to the native-ui lib
+- [#1831](https://github.com/LedgerHQ/ledger-live/pull/1831) [`8ac70e5cca`](https://github.com/LedgerHQ/ledger-live/commit/8ac70e5ccab58159c646f23694c1da13ebc00248) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Two Cards components (FullBackgroundCard and SideImageCard) added to the native-ui lib
 
 ### Patch Changes
 
@@ -37,7 +87,7 @@
 
 ### Minor Changes
 
-- [#1831](https://github.com/LedgerHQ/ledger-live/pull/1831) [`8ac70e5cca`](https://github.com/LedgerHQ/ledger-live/commit/8ac70e5ccab58159c646f23694c1da13ebc00248) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Two Cards components (CardA and CardB) added to the native-ui lib
+- [#1831](https://github.com/LedgerHQ/ledger-live/pull/1831) [`8ac70e5cca`](https://github.com/LedgerHQ/ledger-live/commit/8ac70e5ccab58159c646f23694c1da13ebc00248) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Two Cards components (FullBackgroundCard and SideImageCard) added to the native-ui lib
 
 ### Patch Changes
 

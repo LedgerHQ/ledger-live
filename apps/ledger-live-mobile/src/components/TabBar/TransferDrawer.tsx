@@ -2,43 +2,57 @@ import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
-
+import { ScrollView } from "react-native-gesture-handler";
 import { Flex, Icons, Text, Box } from "@ledgerhq/native-ui";
-import { ScrollView } from "react-native";
+import { StyleProp, ViewStyle } from "react-native";
 import { snakeCase } from "lodash";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { NavigatorName, ScreenName } from "../../const";
 import {
   accountsCountSelector,
+  areAccountsEmptySelector,
   hasLendEnabledAccountsSelector,
-  accountsSelector,
 } from "../../reducers/accounts";
 import {
   hasOrderedNanoSelector,
   readOnlyModeEnabledSelector,
 } from "../../reducers/settings";
-import { Props as ModalProps } from "../BottomModal";
+import { Props as ModalProps } from "../QueuedDrawer";
 import TransferButton from "./TransferButton";
 import BuyDeviceBanner, { IMAGE_PROPS_SMALL_NANO } from "../BuyDeviceBanner";
 import SetupDeviceBanner from "../SetupDeviceBanner";
-import { useAnalytics } from "../../analytics";
+import { track, useAnalytics } from "../../analytics";
+import { sharedSwapTracking } from "../../screens/Swap/utils";
 
-export default function TransferDrawer({ onClose }: ModalProps) {
+type ButtonItem = {
+  title: string;
+  description: string;
+  tag?: string;
+  Icon: IconType;
+  onPress?: (() => void) | null;
+  disabled?: boolean;
+  event?: string;
+  eventProperties?: Parameters<typeof track>[1];
+  style?: StyleProp<ViewStyle>;
+};
+
+export default function TransferDrawer({
+  onClose,
+}: Omit<ModalProps, "isRequestingToBeOpened">) {
   const navigation = useNavigation();
   const { t } = useTranslation();
 
-  const { page } = useAnalytics();
+  const { page, track } = useAnalytics();
 
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const accountsCount: number = useSelector(accountsCountSelector);
   const lendingEnabled = useSelector(hasLendEnabledAccountsSelector);
-  const accounts = useSelector(accountsSelector);
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
-  const areAccountsEmpty = useMemo(
-    () => accounts.every(isAccountEmpty),
-    [accounts],
-  );
+  const areAccountsEmpty = useSelector(areAccountsEmptySelector);
+
+  const walletConnectEntryPoint = useFeature("walletConnectEntryPoint");
 
   const onNavigate = useCallback(
     (name: string, options?: object) => {
@@ -64,13 +78,24 @@ export default function TransferDrawer({ onClose }: ModalProps) {
     () => onNavigate(NavigatorName.ReceiveFunds),
     [onNavigate],
   );
-  const onSwap = useCallback(
+
+  const onWalletConnect = useCallback(
     () =>
-      onNavigate(NavigatorName.Swap, {
-        screen: ScreenName.SwapForm,
+      onNavigate(NavigatorName.WalletConnect, {
+        screen: ScreenName.WalletConnectConnect,
       }),
     [onNavigate],
   );
+
+  const onSwap = useCallback(() => {
+    track("button_clicked", {
+      ...sharedSwapTracking,
+      button: "swap",
+    });
+    onNavigate(NavigatorName.Swap, {
+      screen: ScreenName.SwapForm,
+    });
+  }, [onNavigate, track]);
   const onBuy = useCallback(
     () =>
       onNavigate(NavigatorName.Exchange, { screen: ScreenName.ExchangeBuy }),
@@ -89,116 +114,115 @@ export default function TransferDrawer({ onClose }: ModalProps) {
     [onNavigate],
   );
 
-  const buttons = (
-    <>
-      <Box mb={8}>
-        <TransferButton
-          eventProperties={{
-            button: "transfer_send",
-            page,
-            drawer: "trade",
-          }}
-          title={t("transfer.send.title")}
-          description={t("transfer.send.description")}
-          onPress={
-            accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty
-              ? onSendFunds
-              : null
-          }
-          Icon={Icons.ArrowTopMedium}
-          disabled={!accountsCount || readOnlyModeEnabled || areAccountsEmpty}
-        />
-      </Box>
-      <Box mb={8}>
-        <TransferButton
-          eventProperties={{
-            button: "transfer_receive",
-            page,
-            drawer: "trade",
-          }}
-          title={t("transfer.receive.title")}
-          description={t("transfer.receive.description")}
-          onPress={onReceiveFunds}
-          Icon={Icons.ArrowBottomMedium}
-          disabled={readOnlyModeEnabled}
-        />
-      </Box>
-      <Box mb={8}>
-        <TransferButton
-          eventProperties={{
-            button: "transfer_buy",
-            page,
-            drawer: "trade",
-          }}
-          title={t("transfer.buy.title")}
-          description={t("transfer.buy.description")}
-          tag={t("common.popular")}
-          Icon={Icons.PlusMedium}
-          onPress={onBuy}
-          disabled={readOnlyModeEnabled}
-        />
-      </Box>
-      <Box mb={8}>
-        <TransferButton
-          eventProperties={{
-            button: "transfer_sell",
-            page,
-            drawer: "trade",
-          }}
-          title={t("transfer.sell.title")}
-          description={t("transfer.sell.description")}
-          Icon={Icons.MinusMedium}
-          onPress={
-            accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty
-              ? onSell
-              : null
-          }
-          disabled={!accountsCount || readOnlyModeEnabled || areAccountsEmpty}
-        />
-      </Box>
+  const buttonsList: ButtonItem[] = [
+    {
+      eventProperties: {
+        button: "transfer_send",
+        page,
+        drawer: "trade",
+      },
+      title: t("transfer.send.title"),
+      description: t("transfer.send.description"),
+      onPress:
+        accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty
+          ? onSendFunds
+          : null,
+      Icon: Icons.ArrowTopMedium,
+      disabled: !accountsCount || readOnlyModeEnabled || areAccountsEmpty,
+    },
+    {
+      eventProperties: {
+        button: "transfer_receive",
+        page,
+        drawer: "trade",
+      },
+      title: t("transfer.receive.title"),
+      description: t("transfer.receive.description"),
+      onPress: onReceiveFunds,
+      Icon: Icons.ArrowBottomMedium,
+      disabled: readOnlyModeEnabled,
+    },
+    {
+      eventProperties: {
+        button: "transfer_buy",
+        page,
+        drawer: "trade",
+      },
+      title: t("transfer.buy.title"),
+      description: t("transfer.buy.description"),
+      tag: t("common.popular"),
+      Icon: Icons.PlusMedium,
+      onPress: onBuy,
+      disabled: readOnlyModeEnabled,
+    },
+    {
+      eventProperties: {
+        button: "transfer_sell",
+        page,
+        drawer: "trade",
+      },
+      title: t("transfer.sell.title"),
+      description: t("transfer.sell.description"),
+      Icon: Icons.MinusMedium,
+      onPress:
+        accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty
+          ? onSell
+          : null,
+      disabled: !accountsCount || readOnlyModeEnabled || areAccountsEmpty,
+    },
+    {
+      eventProperties: {
+        button: "transfer_swap",
+        page,
+        drawer: "trade",
+      },
+      title: t("transfer.swap.title"),
+      description: t("transfer.swap.description"),
+      Icon: Icons.BuyCryptoMedium,
+      onPress:
+        accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty
+          ? onSwap
+          : null,
+      disabled: !accountsCount || readOnlyModeEnabled || areAccountsEmpty,
+    },
 
-      <Box mb={8}>
-        <TransferButton
-          eventProperties={{
-            button: "transfer_swap",
-            page,
-            drawer: "trade",
-          }}
-          title={t("transfer.swap.title")}
-          description={t("transfer.swap.description")}
-          Icon={Icons.BuyCryptoMedium}
-          onPress={
-            accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty
-              ? onSwap
-              : null
-          }
-          disabled={!accountsCount || readOnlyModeEnabled || areAccountsEmpty}
-        />
-      </Box>
-
-      {lendingEnabled ? (
-        <Box mb={8}>
-          <TransferButton
-            eventProperties={{
+    ...(walletConnectEntryPoint?.enabled
+      ? [
+          {
+            eventProperties: {
+              button: "transfer_walletConnect",
+              page,
+              drawer: "trade",
+            },
+            title: t("transfer.walletConnect.title"),
+            description: t("transfer.walletConnect.description"),
+            Icon: Icons.WalletConnectMedium,
+            onPress: onWalletConnect,
+            disabled: readOnlyModeEnabled,
+          },
+        ]
+      : []),
+    ...(lendingEnabled
+      ? [
+          {
+            eventProperties: {
               button: "transfer_lending",
               page,
               drawer: "trade",
-            }}
-            title={t("transfer.lending.titleTransferTab")}
-            description={t("transfer.lending.descriptionTransferTab")}
-            tag={t("common.popular")}
-            Icon={Icons.LendMedium}
-            onPress={
+            },
+            title: t("transfer.lending.titleTransferTab"),
+            description: t("transfer.lending.descriptionTransferTab"),
+            tag: t("common.popular"),
+            Icon: Icons.LendMedium,
+            onPress:
               accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty
                 ? onLending
-                : null
-            }
-            disabled={!accountsCount || readOnlyModeEnabled || areAccountsEmpty}
-          />
-        </Box>
-      ) : null}
-    </>
-  );
+                : null,
+            disabled: !accountsCount || readOnlyModeEnabled || areAccountsEmpty,
+          },
+        ]
+      : []),
+  ];
 
   const bannerEventProperties = useMemo(
     () => ({
@@ -233,9 +257,13 @@ export default function TransferDrawer({ onClose }: ModalProps) {
   }
 
   return (
-    <Flex flexDirection="column" alignItems="flex-start" p={7} pt={9}>
+    <Flex flexDirection="column" alignItems="flex-start" p={7} pt={9} flex={1}>
       <ScrollView alwaysBounceVertical={false} style={{ width: "100%" }}>
-        {buttons}
+        {buttonsList.map((button, index) => (
+          <Box mb={index === buttonsList.length - 1 ? 0 : 8} key={button.title}>
+            <TransferButton {...button} />
+          </Box>
+        ))}
       </ScrollView>
       {readOnlyModeEnabled && !hasOrderedNano && (
         <BuyDeviceBanner

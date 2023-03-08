@@ -18,6 +18,7 @@ export const MIN_ACCOUNT_BALANCE_BUFFER = "50000000000000000000000";
 export const STAKING_GAS_BASE = "25000000000000";
 export const FIGMENT_NEAR_VALIDATOR_ADDRESS = "ledgerbyfigment.poolv1.near";
 export const FRACTIONAL_DIGITS = 5;
+export const YOCTO_THRESHOLD_VARIATION = "10";
 
 export const isValidAddress = (address: string): boolean => {
   const readableAddressRegex =
@@ -178,7 +179,7 @@ export const canWithdraw = (
 export const getYoctoThreshold = (): BigNumber => {
   return new BigNumber(10)
     .pow(new BigNumber(utils.format.NEAR_NOMINATION_EXP - FRACTIONAL_DIGITS))
-    .minus("1");
+    .minus(YOCTO_THRESHOLD_VARIATION);
 };
 
 /*
