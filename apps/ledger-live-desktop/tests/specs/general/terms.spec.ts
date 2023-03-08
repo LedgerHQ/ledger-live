@@ -9,6 +9,6 @@ test("Terms of Use", async ({ page }) => {
 
   await test.step("check for popup", async () => {
     await termsModal.termsModal.isVisible();
-    await expect(termsModal.termsModal).toBeVisible();
+    await expect.soft(page).toHaveScreenshot("terms-modal.png");
   });
 });
