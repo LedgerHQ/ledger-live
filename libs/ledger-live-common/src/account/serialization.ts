@@ -4,10 +4,6 @@ import {
   fromBitcoinResourcesRaw,
 } from "../families/bitcoin/serialization";
 import {
-  toCosmosResourcesRaw,
-  fromCosmosResourcesRaw,
-} from "../families/cosmos/serialization";
-import {
   toPolkadotResourcesRaw,
   fromPolkadotResourcesRaw,
 } from "@ledgerhq/coin-polkadot/serialization";
@@ -55,7 +51,6 @@ import {
   toOperationRaw as commonToOperationRaw,
   fromOperationRaw as commonFromOperationRaw,
 } from "@ledgerhq/coin-framework/account/serialization";
-import { CosmosAccount, CosmosAccountRaw } from "../families/cosmos/types";
 import { BitcoinAccount, BitcoinAccountRaw } from "../families/bitcoin/types";
 import {
   PolkadotAccount,
@@ -67,7 +62,6 @@ import {
 } from "../families/crypto_org/types";
 import { getAccountBridge } from "../bridge";
 
-export { toCosmosResourcesRaw, fromCosmosResourcesRaw };
 export { toBitcoinResourcesRaw, fromBitcoinResourcesRaw };
 export { toPolkadotResourcesRaw, fromPolkadotResourcesRaw };
 export { toCryptoOrgResourcesRaw, fromCryptoOrgResourcesRaw };
@@ -462,14 +456,6 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
   }
 
   switch (res.currency.family) {
-    case "cosmos": {
-      const cosmosResourcesRaw = (rawAccount as CosmosAccountRaw)
-        .cosmosResources;
-      if (cosmosResourcesRaw)
-        (res as CosmosAccount).cosmosResources =
-          fromCosmosResourcesRaw(cosmosResourcesRaw);
-      break;
-    }
     case "bitcoin": {
       const bitcoinResourcesRaw = (rawAccount as BitcoinAccountRaw)
         .bitcoinResources;
@@ -581,15 +567,6 @@ export function toAccountRaw(account: Account): AccountRaw {
   }
 
   switch (account.currency.family) {
-    case "cosmos": {
-      const cosmosAccount = account as CosmosAccount;
-      if (cosmosAccount.cosmosResources) {
-        (res as CosmosAccountRaw).cosmosResources = toCosmosResourcesRaw(
-          cosmosAccount.cosmosResources
-        );
-      }
-      break;
-    }
     case "bitcoin": {
       const bitcoinAccount = account as BitcoinAccount;
       if (bitcoinAccount.bitcoinResources) {
