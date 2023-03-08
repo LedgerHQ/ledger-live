@@ -13,7 +13,7 @@ import AssetBalanceSummaryHeader from "./AssetBalanceSummaryHeader";
 import { discreetModeSelector } from "~/renderer/reducers/settings";
 import FormattedDate from "~/renderer/components/FormattedDate";
 
-import ErrorBanner from "~/renderer/components/ErrorBanner";
+import NoGraphWarning from "~/renderer/families/vechain/NoGraphWarning.tsx";
 import PlaceholderChart from "~/renderer/components/PlaceholderChart";
 
 type Props = {
@@ -96,10 +96,7 @@ export default function BalanceSummary({
       <Box px={5} ff="Inter" fontSize={4} color="palette.text.shade80" pt={6}>
         {currency.type === "TokenCurrency" && currency.id === "vechain/vtho" ? (
           <>
-            <ErrorBanner
-              error={new Error("Graph not available for this token")}
-              warning={true}
-            ></ErrorBanner>
+            <NoGraphWarning />
             <PlaceholderChart
               magnitude={counterValue.units[0].magnitude}
               chartId="prova"

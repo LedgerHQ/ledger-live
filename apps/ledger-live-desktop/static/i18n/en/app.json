@@ -3523,6 +3523,9 @@
       "providerLink": "Learn more about {{provider}}"
     }
   },
+  "vechain": {
+    "warning": "Graph not available for this token"
+  },
   "near": {
     "account": {
       "stakedBalance": "Staked balance",

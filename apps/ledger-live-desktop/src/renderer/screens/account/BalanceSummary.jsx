@@ -19,7 +19,7 @@ import AccountLendingFooter from "~/renderer/screens/lend/Account/AccountBalance
 import perFamilyAccountBalanceSummaryFooter from "~/renderer/generated/AccountBalanceSummaryFooter";
 import FormattedDate from "~/renderer/components/FormattedDate";
 
-import ErrorBanner from "~/renderer/components/ErrorBanner";
+import NoGraphWarning from "~/renderer/families/vechain/NoGraphWarning.tsx";
 import PlaceholderChart from "~/renderer/components/PlaceholderChart";
 
 type Props = {
@@ -122,10 +122,7 @@ export default function AccountBalanceSummary({
       <Box px={5} ff="Inter" fontSize={4} color="palette.text.shade80" pt={5}>
         {account.type === "TokenAccount" && account.token.id === "vechain/vtho" ? (
           <>
-            <ErrorBanner
-              error={new Error("Graph not available for this token")}
-              warning={true}
-            ></ErrorBanner>
+            <NoGraphWarning />
             <PlaceholderChart
               magnitude={counterValue.units[0].magnitude}
               chartId="prova"
