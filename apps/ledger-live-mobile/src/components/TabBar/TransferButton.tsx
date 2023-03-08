@@ -2,6 +2,7 @@ import React, { useCallback } from "react";
 import { BoxedIcon, Flex, Tag, Text } from "@ledgerhq/native-ui";
 import { TouchableOpacity, StyleProp, ViewStyle } from "react-native";
 import type { IconType } from "@ledgerhq/native-ui/components/Icon/type";
+import { ChevronRightMedium } from "@ledgerhq/native-ui/assets/icons";
 import { track } from "../../analytics";
 
 type Props = {
@@ -14,6 +15,7 @@ type Props = {
   event?: string;
   eventProperties?: Parameters<typeof track>[1];
   style?: StyleProp<ViewStyle>;
+  rightArrow?: boolean;
 };
 
 export default function TransferButton({
@@ -26,6 +28,7 @@ export default function TransferButton({
   event = "button_clicked",
   eventProperties,
   style,
+  rightArrow = false,
 }: Props) {
   const handlePress = useCallback(() => {
     if (onPress) onPress();
@@ -49,6 +52,7 @@ export default function TransferButton({
           ml="16px"
           py="1px"
           flexShrink={1}
+          flexGrow={1}
         >
           <Flex flexDirection="row" alignItems={"center"}>
             <Text
@@ -78,6 +82,11 @@ export default function TransferButton({
             {description}
           </Text>
         </Flex>
+        {rightArrow && (
+          <Flex>
+            <ChevronRightMedium size={18} styles={{ alignSelf: "flex-end" }} />
+          </Flex>
+        )}
       </Flex>
     </TouchableOpacity>
   );
