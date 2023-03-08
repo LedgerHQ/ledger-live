@@ -75,7 +75,7 @@
     "@ledgerhq/ui-shared": "workspace:^",
     "@tippyjs/react": "^4.2.6",
     "@types/color": "^3.0.2",
-    "@types/react": "~17.0.37",
+    "@types/react": "~17.0.53",
     "@types/react-dom": "^17.0.11",
     "@types/react-transition-group": "^4.4.2",
     "@types/react-window": "^1.8.5",

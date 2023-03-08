@@ -118,8 +118,8 @@ function readPackage(pkg, context) {
       addPeerDependencies("metro-config", {
         "metro-transform-worker": "*",
       }),
-      addPeerDependencies("metro-transform-worker", {
-        "metro-minify-uglify": "*",
+      addDependencies("metro-transform-worker", {
+        "metro-minify-terser": "*",
       }),
       /* Expo packages… */
       addDependencies("@expo/webpack-config", {
@@ -134,9 +134,16 @@ function readPackage(pkg, context) {
         "@expo/spawn-async": "*",
         glob: "*",
       }),
+      addPeerDependencies("expo-modules-core", {
+        "react-native": "*",
+      }),
+      addPeerDependencies("expo", {
+        "react-native": "*",
+      }),
       addPeerDependencies(/^expo-/, {
         "expo-modules-core": "*",
         "expo-constants": "*",
+        "react-native": "*",
       }),
       addPeerDependencies("expo-asset", {
         "expo-file-system": "*",
