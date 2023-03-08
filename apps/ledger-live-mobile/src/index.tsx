@@ -116,6 +116,7 @@ import { performanceReportSubject } from "./components/PerformanceConsole/usePer
 import PerformanceConsole from "./components/PerformanceConsole";
 import useEnv from "../../../libs/ledger-live-common/lib/hooks/useEnv";
 import { useListenToHidDevices } from "./hooks/useListenToHidDevices";
+import { track } from "./analytics";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -592,6 +593,9 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
             url.pathname = `/${manifest.id}`;
             url.searchParams.set("name", manifest.name);
             return getStateFromPath(url.href?.split("://")[1], config);
+          }
+          if (path === "linkdrop-nft-claim/qr-scanning") {
+            track("deeplink", { action: "Claim NFT scan QR code again" });
           }
 
           return getStateFromPath(path, config);
