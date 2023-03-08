@@ -4,7 +4,7 @@ import { compact } from "lodash/fp";
 import { getEnv } from "../../../env";
 import network from "../../../network";
 
-const MAX_VALIDATORS_NB = 2000; // Max number of validators to fetch
+const MAX_VALIDATORS_NB = 1000; // Max number of validators to fetch
 
 export type ValidatorsAppValidatorRaw = {
   active_stake?: number | null;
