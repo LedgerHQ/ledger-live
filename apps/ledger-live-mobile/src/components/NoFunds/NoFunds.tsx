@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import CoinsIcon from "./CoinsIcon";
 import { useProviders } from "../../screens/Swap/Form";
-import TransferButton from "../TabBar/TransferButton";
+import TransferButton from "../TransferButton";
 import { useAnalytics } from "../../analytics";
 import { NavigatorName, ScreenName } from "../../const";
 
