@@ -271,6 +271,7 @@ export type GenAccountOptions = {
   subAccountsCount?: number;
   swapHistorySize?: number;
   withNft?: boolean;
+  tokenIds?: string[];
 };
 
 export function genTokenAccount(
@@ -408,20 +409,27 @@ export function genAccount(
       typeof opts.subAccountsCount === "number"
         ? opts.subAccountsCount
         : rng.nextInt(0, 8);
-    const all = listTokensForCryptoCurrency(account.currency).filter((t) =>
-      hardcodedMarketcap.includes(t.id)
+    const all = listTokensForCryptoCurrency(account.currency, {
+      withDelisted: true,
+    }).filter(
+      ({ id, delisted }) =>
+        (hardcodedMarketcap.includes(id) && !delisted) ||
+        opts.tokenIds?.includes(id)
     );
+    const tokensFromOpts = all.filter((t) => opts.tokenIds?.includes(t.id));
     const compoundReadyTokens = all.filter(findCompoundToken);
     const notCompoundReadyTokens = all.filter((a) => !findCompoundToken(a));
-    // favorize the generation of compound tokens
-    const tokens = compoundReadyTokens
+
+    // [ explicit token from opts ] > compoundReady > rest
+    const tokens = tokensFromOpts
+      .concat(compoundReadyTokens)
       .concat(
         // from random index
         notCompoundReadyTokens.slice(
           rng.nextInt(Math.floor(notCompoundReadyTokens.length / 2))
         )
       )
-      .slice(0, tokenCount);
+      .slice(0, Math.max(tokenCount, opts.tokenIds?.length || 0));
     account.subAccounts = tokens.map((token, i) =>
       genTokenAccount(i, account, token)
     );
