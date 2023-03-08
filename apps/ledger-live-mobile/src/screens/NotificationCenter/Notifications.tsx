@@ -85,6 +85,7 @@ export default function NotificationCenter() {
   }, [refreshDynamicContent, fetchData, logCardsImpression]);
 
   useEffect(() => {
+    logCardsImpression();
     // Need to refresh just one time when coming in the Page
     refreshNotifications();
 
