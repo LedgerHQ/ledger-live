@@ -97,7 +97,7 @@ export function buildAccountBridge(
   };
 }
 
-export function createBridge(
+export function createBridges(
   deviceCommunication: DeviceCommunication,
   network: NetworkRequestCall,
   cacheFn: LRUCacheFn

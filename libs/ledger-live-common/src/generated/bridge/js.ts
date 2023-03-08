@@ -19,7 +19,7 @@ import tron from "../../families/tron/bridge/js";
 import { makeLRUCache } from "../../cache";
 import network from "../../network";
 import { withDevice } from "../../hw/deviceAccess";
-import { createBridge as polkadotCreateBridge } from "@ledgerhq/coin-polkadot/bridge/js";
+import { createBridges as polkadotCreateBridge } from "@ledgerhq/coin-polkadot/bridge/js";
 
 export default {
   algorand,
