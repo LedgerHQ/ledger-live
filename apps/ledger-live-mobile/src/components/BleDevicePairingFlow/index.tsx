@@ -7,7 +7,7 @@ import BleDevicePairing from "./BleDevicePairing";
 import { addKnownDevice } from "../../actions/ble";
 import type { BleDevicesScanningProps } from "./BleDevicesScanning";
 import type { BleDevicePairingProps } from "./BleDevicePairing";
-import { TrackScreen, track } from "../../analytics";
+import { track } from "../../analytics";
 
 export type BleDevicePairingFlowProps = {
   filterByDeviceModelId?: BleDevicesScanningProps["filterByDeviceModelId"];

@@ -14,7 +14,7 @@ import {
 import { LockedDeviceError } from "@ledgerhq/errors";
 import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
 import Animation from "../Animation";
-import { TrackScreen, track } from "../../analytics";
+import { TrackScreen } from "../../analytics";
 
 const TIMEOUT_AFTER_PAIRED_MS = 2000;
 

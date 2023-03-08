@@ -8,7 +8,7 @@ import { Camera } from "expo-camera";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { Svg, Defs, Rect, Mask } from "react-native-svg";
 import { useIsFocused } from "@react-navigation/native";
-import { TrackScreen, track } from "../../analytics";
+import { TrackScreen } from "../../analytics";
 import { useNavigateToPostOnboardingHubCallback } from "../../logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
 import { urls } from "../../config/urls";
 import RequiresCameraPermissions from "../../components/RequiresCameraPermissions";
