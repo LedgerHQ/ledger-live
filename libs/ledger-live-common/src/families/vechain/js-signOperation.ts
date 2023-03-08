@@ -19,12 +19,16 @@ const buildOptimisticOperation = async (
   transaction: Transaction
 ): Promise<Operation> => {
   const type = "OUT";
-
+  const subAccountId = transaction.subAccountId;
   const operation: Operation = {
-    id: encodeOperationId(account.id, "", type),
+    id: encodeOperationId(
+      transaction.subAccountId ? transaction.subAccountId : account.id,
+      "",
+      type
+    ),
     hash: "",
-    type,
-    value: BigNumber(transaction.amount),
+    type: subAccountId ? "NONE" : type,
+    value: subAccountId ? new BigNumber(0) : BigNumber(transaction.amount),
     fee: await calculateFee(
       BigNumber(transaction.body.gas),
       transaction.body.gasPriceCoef
@@ -36,6 +40,27 @@ const buildOptimisticOperation = async (
     accountId: account.id,
     date: new Date(),
     extra: { transaction },
+    subOperations: subAccountId
+      ? [
+          {
+            id: `${subAccountId}--OUT`,
+            hash: "",
+            type: "OUT",
+            value: transaction.amount,
+            fee: await calculateFee(
+              BigNumber(transaction.body.gas),
+              transaction.body.gasPriceCoef
+            ),
+            blockHash: null,
+            blockHeight: null,
+            senders: [account.freshAddress],
+            recipients: [transaction.recipient].filter(Boolean),
+            accountId: subAccountId,
+            date: new Date(),
+            extra: {},
+          },
+        ]
+      : [],
   };
 
   return operation;
