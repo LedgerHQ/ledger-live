@@ -28,6 +28,7 @@ test.use({
       },
     },
   },
+  env: { MOCK: undefined },
 });
 
 test("Cosmos staking flows via portfolio. Check stake flow modals and stake banner", async ({
