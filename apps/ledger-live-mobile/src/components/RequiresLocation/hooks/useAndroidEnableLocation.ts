@@ -5,6 +5,7 @@ import {
   NativeModules,
   Platform,
 } from "react-native";
+import { log } from "@ledgerhq/logs";
 import LocationHelperModule, {
   CheckAndRequestResponse,
 } from "../../../native-modules/LocationHelperModule";
@@ -20,7 +21,9 @@ import LocationHelperModule, {
  * @returns the callback
  */
 export function useAndroidPromptEnableLocationCallback() {
-  return useCallback(async (): Promise<CheckAndRequestResponse> => {
+  return useCallback(async (): Promise<
+    CheckAndRequestResponse | "LOCATION_MODULE_THREW_ERROR"
+  > => {
     try {
       if (Platform.OS === "android") {
         const response =
@@ -30,8 +33,16 @@ export function useAndroidPromptEnableLocationCallback() {
 
       return "ERROR_UNKNOWN";
     } catch (e) {
-      // Should never be reached, a checkAndRequestEnablingLocationServices only resolves
-      return "ERROR_UNKNOWN";
+      // Should never be reached, a checkAndRequestEnablingLocationServices only resolves.
+      // But if the module LocationHelperModule get changed/removed, it could be reached.
+      let errorMessage = "Unknown error was thrown by LocationHelperModule";
+      if (e instanceof Error) {
+        errorMessage = `{e.name}: {e.message}`;
+      }
+
+      log("useAndroidPromptEnableLocationCallback:error", `${errorMessage}`);
+
+      return "LOCATION_MODULE_THREW_ERROR";
     }
   }, []);
 }
