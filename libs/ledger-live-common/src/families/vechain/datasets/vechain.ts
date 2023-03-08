@@ -1,0 +1,72 @@
+import { AccountRaw } from "@ledgerhq/types-live";
+export const vechain1: AccountRaw = {
+  id: "js:2:vechain:0x087Fb90d37A2E2462CCcFEDD74eCB24c68329741:vechain",
+  seedIdentifier:
+    "0482c44bc99cdf08d4360c97fbf62d387288ab75c576926943ad90059002720e93f58799391393c98ad41136aa4ac871b103d25cb9a88f1aadd7dbbe3c77948889",
+  name: "VeChain 4",
+  starred: false,
+  used: false,
+  derivationMode: "vechain",
+  index: 3,
+  freshAddress: "0x087Fb90d37A2E2462CCcFEDD74eCB24c68329741",
+  freshAddressPath: "44'/818'/0'/0/3",
+  freshAddresses: [],
+  blockHeight: 0,
+  creationDate: new Date(1675317600).toISOString(),
+  operationsCount: 1,
+  operations: [
+    {
+      accountId:
+        "js:2:vechain:0x32476193d4a32488322ffBb9835a7cF2c7e2202C:vechain+vechain%2Fvtho",
+      blockHash:
+        "0x00ddd8047ce47f277e3a021fee267bc025a68e9669e9e25fe0839a037515603a",
+      blockHeight: 14538756,
+      date: new Date().toISOString(),
+      extra: {},
+      hash: "0x05ee616beb80ddd8e41cec0bd12829f21395e99c13f7e2e2ea313f20f7414c2a",
+      id: "0x05ee616beb80ddd8e41cec0bd12829f21395e99c13f7e2e2ea313f20f7414c2a",
+      operator: undefined,
+      recipients: ["0x32476193d4a32488322ffbb9835a7cf2c7e2202c"],
+      senders: ["0x4f6fc409e152d33843cf4982d414c1dd0879277e"],
+      standard: undefined,
+      tokenId: undefined,
+      type: "IN",
+      value: "10000000000000000000",
+      fee: "2100000000000000",
+    },
+  ],
+  pendingOperations: [],
+  currencyId: "vechain",
+  unitMagnitude: 18,
+  lastSyncDate: "2023-02-28T09:07:53.785Z",
+  balance: "10000000000000000000",
+  spendableBalance: "10000000000000000000",
+  balanceHistoryCache: {
+    HOUR: { balances: [], latestDate: 1677574800000 },
+    DAY: { balances: [], latestDate: 1677538800000 },
+    WEEK: { balances: [], latestDate: 1677366000000 },
+  },
+  subAccounts: [
+    {
+      type: "TokenAccountRaw",
+      id: "js:2:vechain:0x087Fb90d37A2E2462CCcFEDD74eCB24c68329741:vechain+vechain%2Fvtho",
+      parentId:
+        "js:2:vechain:0x087Fb90d37A2E2462CCcFEDD74eCB24c68329741:vechain",
+      starred: false,
+      tokenId: "vechain/vtho",
+      balance: "10000000000000000000",
+      spendableBalance: "9000000000000000000",
+      balanceHistoryCache: {
+        HOUR: { latestDate: null, balances: [] },
+        DAY: { latestDate: null, balances: [] },
+        WEEK: { latestDate: null, balances: [] },
+      },
+      creationDate: "2023-02-28T09:07:53.785Z",
+      operationsCount: 0,
+      operations: [],
+      pendingOperations: [],
+      swapHistory: [],
+    },
+  ],
+  swapHistory: [],
+};

@@ -4229,6 +4229,9 @@
     "EthAppPleaseEnableContractData": {
       "title": "Please enable contract data in the Ethereum app settings"
     },
+    "VechainAppPleaseEnableContractDataAndMultiClause": {
+      "title": "Please enable contract data in the Vechain app settings"
+    },
     "InvalidXRPTag": {
       "title": "Invalid XRP Destination tag"
     },

@@ -201,6 +201,9 @@ const modes = Object.freeze({
     overridesDerivation: "44'/397'/0'/0'/<account>'",
     mandatoryEmptyAccountSkip: 1,
   },
+    vechain: {
+    overridesDerivation: "44'/818'/0'/0/<account>",
+  },
 });
 modes as Record<DerivationMode, ModeSpec>; // eslint-disable-line
 
@@ -220,6 +223,7 @@ const legacyDerivations: Record<CryptoCurrencyIds, DerivationMode[]> = {
   cardano: ["cardano"],
   cardano_testnet: ["cardano"],
   near: ["nearbip44h"],
+  vechain: ["vechain"],
 };
 
 const legacyDerivationsPerFamily: Record<string, DerivationMode[]> = {
@@ -383,6 +387,7 @@ const disableBIP44: Record<string, boolean> = {
   cardano: true,
   cardano_testnet: true,
   near: true,
+  vechain: true,
 };
 type SeedInfo = {
   purpose: number;
@@ -397,6 +402,7 @@ const seedIdentifierPath: Record<string, SeedPathFn> = {
   cardano: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   cardano_testnet: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   near: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'`,
+  vechain: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   _: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'`,
 };
 export const getSeedIdentifierDerivation = (

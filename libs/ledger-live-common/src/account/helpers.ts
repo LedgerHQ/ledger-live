@@ -68,7 +68,6 @@ export const isAccountEmpty = (a: AccountLike): boolean => {
       tronAcc.tronResources && tronAcc.tronResources.bandwidth.freeLimit.eq(0)
     );
   }
-
   return commonIsAccountEmpty(a);
 };
 
