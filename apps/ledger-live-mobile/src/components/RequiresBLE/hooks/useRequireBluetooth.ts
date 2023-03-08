@@ -1,8 +1,6 @@
 import { Platform } from "react-native";
 
-// import { useAndroidBluetoothPermissions } from "./useAndroidBluetoothPermissions";
 import { useEnableBluetooth } from "./useEnableBluetooth";
-// import { useAndroidLocationPermission } from "../../RequiresLocation/hooks/useAndroidLocationPermission";
 import { useAndroidEnableLocation } from "../../RequiresLocation/hooks/useAndroidEnableLocation";
 import { useAndroidBluetoothPermissions } from "./useAndroidBluetoothPermissions";
 import { useAndroidLocationPermission } from "../../RequiresLocation/hooks/useAndroidLocationPermission";
@@ -49,7 +47,8 @@ export const useRequireBluetooth = ({
 }: UseRequireBluetoothArgs): UseRequireBluetoothOutput => {
   // Handles bluetooth and location permissions first because there is more chance that the user enable/disable
   // a service during runtime than changing the permissions.
-  // If the permissions are handled after, each time there is a change on the services enabling/disabling.
+  // If the permissions are handled after, each time there is a change on the services enabling/disabling,
+  // the check on the permissions will be restarted.
   const isAndroidBluetoothPermissionsHookEnabled =
     isHookEnabled && Platform.OS === "android";
 
