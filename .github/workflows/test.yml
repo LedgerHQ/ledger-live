@@ -160,6 +160,7 @@ jobs:
         env:
           CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
       - uses: actions/github-script@v6
+        if: always()
         with:
           script: |
             const fs = require("fs");

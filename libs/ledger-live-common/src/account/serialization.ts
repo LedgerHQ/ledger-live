@@ -12,19 +12,9 @@ import {
   fromPolkadotResourcesRaw,
 } from "@ledgerhq/coin-polkadot/serialization";
 import {
-  toElrondResourcesRaw,
-  fromElrondResourcesRaw,
-} from "../families/elrond/serialization";
-import {
   toCryptoOrgResourcesRaw,
   fromCryptoOrgResourcesRaw,
 } from "../families/crypto_org/serialization";
-
-import {
-  toSolanaResourcesRaw,
-  fromSolanaResourcesRaw,
-} from "../families/solana/serialization";
-
 import {
   getCryptoCurrencyById,
   getTokenById,
@@ -71,21 +61,17 @@ import {
   PolkadotAccount,
   PolkadotAccountRaw,
 } from "@ledgerhq/coin-polkadot/types";
-import { ElrondAccount, ElrondAccountRaw } from "../families/elrond/types";
 import {
   CryptoOrgAccount,
   CryptoOrgAccountRaw,
 } from "../families/crypto_org/types";
-import { SolanaAccount, SolanaAccountRaw } from "../families/solana/types";
 import { getAccountBridge } from "../bridge";
 
 export { toCosmosResourcesRaw, fromCosmosResourcesRaw };
 export { toBitcoinResourcesRaw, fromBitcoinResourcesRaw };
 export { toPolkadotResourcesRaw, fromPolkadotResourcesRaw };
-export { toElrondResourcesRaw, fromElrondResourcesRaw };
 export { toCryptoOrgResourcesRaw, fromCryptoOrgResourcesRaw };
 export { toCardanoResourceRaw, fromCardanoResourceRaw };
-export { toSolanaResourcesRaw, fromSolanaResourcesRaw };
 
 export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
   return b.map(({ date, value }) => [date.toISOString(), value.toString()]);
@@ -500,22 +486,6 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
           fromPolkadotResourcesRaw(polkadotResourcesRaw);
       break;
     }
-    case "elrond": {
-      const elrondResourcesRaw = (rawAccount as ElrondAccountRaw)
-        .elrondResources;
-      if (elrondResourcesRaw)
-        (res as ElrondAccount).elrondResources =
-          fromElrondResourcesRaw(elrondResourcesRaw);
-      break;
-    }
-    case "solana": {
-      const solanaResourcesRaw = (rawAccount as SolanaAccountRaw)
-        .solanaResources;
-      if (solanaResourcesRaw)
-        (res as SolanaAccount).solanaResources =
-          fromSolanaResourcesRaw(solanaResourcesRaw);
-      break;
-    }
     case "crypto_org": {
       const cryptoOrgResourcesRaw = (rawAccount as CryptoOrgAccountRaw)
         .cryptoOrgResources;
@@ -634,24 +604,6 @@ export function toAccountRaw(account: Account): AccountRaw {
       if (polkadotAccount.polkadotResources) {
         (res as PolkadotAccountRaw).polkadotResources = toPolkadotResourcesRaw(
           polkadotAccount.polkadotResources
-        );
-      }
-      break;
-    }
-    case "elrond": {
-      const elrondAccount = account as ElrondAccount;
-      if (elrondAccount.elrondResources) {
-        (res as ElrondAccountRaw).elrondResources = toElrondResourcesRaw(
-          elrondAccount.elrondResources
-        );
-      }
-      break;
-    }
-    case "solana": {
-      const solanaAccount = account as SolanaAccount;
-      if (solanaAccount.solanaResources) {
-        (res as SolanaAccountRaw).solanaResources = toSolanaResourcesRaw(
-          solanaAccount.solanaResources
         );
       }
       break;
