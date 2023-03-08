@@ -1,12 +1,6 @@
-import React, {
-  useCallback,
-  useContext,
-  useMemo,
-  useEffect,
-  useState,
-} from "react";
+import React, { useContext, useMemo, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Linking, Appearance, AppState, Platform } from "react-native";
+import { Linking, Platform } from "react-native";
 import SplashScreen from "react-native-splash-screen";
 import {
   getStateFromPath,
@@ -17,28 +11,17 @@ import { useFlipper } from "@react-navigation/devtools";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import Braze from "react-native-appboy-sdk";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import {
-  LogLevel,
-  PerformanceProfiler,
-  RenderPassReport,
-} from "@shopify/react-native-performance";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+
 import * as Sentry from "@sentry/react-native";
-import {
-  hasCompletedOnboardingSelector,
-  osThemeSelector,
-  themeSelector,
-} from "../reducers/settings";
+import { hasCompletedOnboardingSelector } from "../reducers/settings";
 import { context as _wcContext } from "../screens/WalletConnect/Provider";
 import { navigationRef, isReadyRef } from "../rootnavigation";
 import { ScreenName, NavigatorName } from "../const";
-import { setOsTheme } from "../actions/settings";
-import StyleProvider from "../StyleProvider";
 import { setWallectConnectUri } from "../actions/walletconnect";
 import { isAcceptedTerms } from "../logic/terms";
 import { Writeable } from "../types/helpers";
-import { performanceReportSubject } from "../components/PerformanceConsole/usePerformanceReportsLog";
 import { lightTheme, darkTheme, Theme } from "../colors";
+import { track } from "../analytics";
 
 const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
 
@@ -342,11 +325,12 @@ const emptyObject: LiveAppManifest[] = [];
 
 export const DeeplinksProvider = ({
   children,
+  resolvedTheme,
 }: {
   children: React.ReactNode;
+  resolvedTheme: "light" | "dark";
 }) => {
   const dispatch = useDispatch();
-  const performanceConsoleEnabled = useEnv("PERFORMANCE_CONSOLE");
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const wcContext = useContext(_wcContext);
   const { state } = useRemoteLiveAppContext();
@@ -427,6 +411,10 @@ export const DeeplinksProvider = ({
             url.searchParams.set("name", manifest.name);
             return getStateFromPath(url.href?.split("://")[1], config);
           }
+          if (path === "linkdrop-nft-claim/qr-scanning") {
+            track("deeplink", { action: "Claim NFT scan QR code again" });
+          }
+
           return getStateFromPath(path, config);
         },
       } as LinkingOptions<ReactNavigation.RootParamList>),
@@ -454,66 +442,30 @@ export const DeeplinksProvider = ({
     },
     [],
   );
-  const theme = useSelector(themeSelector);
-  const osTheme = useSelector(osThemeSelector);
-  const compareOsTheme = useCallback(() => {
-    const currentOsTheme = Appearance.getColorScheme();
-
-    if (currentOsTheme && osTheme !== currentOsTheme) {
-      dispatch(setOsTheme(currentOsTheme));
-    }
-  }, [dispatch, osTheme]);
 
   useEffect(() => {
     const loadTerms = async () => setUserAcceptedTerms(await isAcceptedTerms());
     loadTerms();
   }, []);
 
-  useEffect(() => {
-    compareOsTheme();
-
-    const osThemeChangeHandler = (nextAppState: string) =>
-      nextAppState === "active" && compareOsTheme();
-
-    const sub = AppState.addEventListener("change", osThemeChangeHandler);
-    return () => sub.remove();
-  }, [compareOsTheme]);
-  const resolvedTheme = useMemo(
-    () =>
-      ((theme === "system" && osTheme) || theme) === "light" ? "light" : "dark",
-    [theme, osTheme],
-  );
-
   useFlipper(navigationRef);
-
-  const onReportPrepared = useCallback((report: RenderPassReport) => {
-    performanceReportSubject.next({ report, date: new Date() });
-  }, []);
 
   if (!isReady) {
     return null;
   }
 
   return (
-    <StyleProvider selectedPalette={resolvedTheme}>
-      <PerformanceProfiler
-        onReportPrepared={onReportPrepared}
-        logLevel={LogLevel.Info}
-        enabled={!!performanceConsoleEnabled}
-      >
-        <NavigationContainer
-          theme={themes[resolvedTheme]}
-          linking={linking}
-          ref={navigationRef}
-          onReady={() => {
-            (isReadyRef as Writeable<typeof isReadyRef>).current = true;
-            setTimeout(() => SplashScreen.hide(), 300);
-            routingInstrumentation.registerNavigationContainer(navigationRef);
-          }}
-        >
-          {children}
-        </NavigationContainer>
-      </PerformanceProfiler>
-    </StyleProvider>
+    <NavigationContainer
+      theme={themes[resolvedTheme]}
+      linking={linking}
+      ref={navigationRef}
+      onReady={() => {
+        (isReadyRef as Writeable<typeof isReadyRef>).current = true;
+        setTimeout(() => SplashScreen.hide(), 300);
+        routingInstrumentation.registerNavigationContainer(navigationRef);
+      }}
+    >
+      {children}
+    </NavigationContainer>
   );
 };
