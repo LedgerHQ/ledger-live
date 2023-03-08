@@ -381,7 +381,7 @@ const bitcoin: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Bitcoin",
-    appVersion: "2.1.0-rc",
+    appVersion: "2.1.0",
   },
   genericDeviceAction: acceptTransaction,
   test: genericTest,
@@ -394,7 +394,7 @@ const bitcoinTestnet: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Bitcoin Test",
-    appVersion: "2.1.0-rc",
+    appVersion: "2.1.0",
   },
   genericDeviceAction: acceptTransaction,
   test: genericTest,
@@ -407,7 +407,7 @@ const bitcoinGold: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "BitcoinGold",
-    appVersion: "2.1.0-rc",
+    appVersion: "2.1.0",
   },
   genericDeviceAction: acceptTransaction,
   test: genericTest,
@@ -424,7 +424,7 @@ const bitcoinCash: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "BitcoinCash",
-    appVersion: "2.1.0-rc",
+    appVersion: "2.1.0",
   },
   genericDeviceAction: acceptTransaction,
   test: genericTest,
@@ -449,7 +449,7 @@ const peercoin: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Peercoin",
-    appVersion: "2.1.0-rc",
+    appVersion: "2.1.0",
   },
   genericDeviceAction: acceptTransaction,
   test: genericTest,
@@ -462,7 +462,7 @@ const pivx: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "PivX",
-    appVersion: "2.1.0-rc",
+    appVersion: "2.1.0",
   },
   genericDeviceAction: acceptTransaction,
   test: genericTest,
@@ -475,7 +475,7 @@ const qtum: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Qtum",
-    appVersion: "2.1.0-rc",
+    appVersion: "2.1.0",
   },
   genericDeviceAction: acceptTransaction,
   test: genericTest,
@@ -488,7 +488,7 @@ const vertcoin: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Vertcoin",
-    appVersion: "2.1.0-rc",
+    appVersion: "2.1.0",
   },
   genericDeviceAction: acceptTransaction,
   test: genericTest,
@@ -501,7 +501,7 @@ const viacoin: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Viacoin",
-    appVersion: "2.1.0-rc",
+    appVersion: "2.1.0",
   },
   genericDeviceAction: acceptTransaction,
   test: genericTest,
@@ -518,7 +518,7 @@ const dash: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Dash",
-    appVersion: "2.1.0-rc",
+    appVersion: "2.1.0",
   },
   genericDeviceAction: acceptTransaction,
   test: genericTest,
@@ -538,7 +538,7 @@ const dogecoin: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Dogecoin",
-    appVersion: "2.1.0-rc",
+    appVersion: "2.1.0",
   },
   genericDeviceAction: acceptTransaction,
   test: genericTest,
@@ -576,7 +576,7 @@ const zencash: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Horizen",
-    appVersion: "2.1.0-rc",
+    appVersion: "2.1.0",
   },
   genericDeviceAction: acceptTransaction,
   test: genericTest,
@@ -595,7 +595,7 @@ const digibyte: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Digibyte",
-    appVersion: "2.1.0-rc",
+    appVersion: "2.1.0",
   },
   genericDeviceAction: acceptTransaction,
   test: genericTest,
@@ -615,7 +615,7 @@ const komodo: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Komodo",
-    appVersion: "2.1.0-rc",
+    appVersion: "2.1.0",
   },
   genericDeviceAction: acceptTransaction,
   test: genericTest,
@@ -652,7 +652,7 @@ const litecoin: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Litecoin",
-    appVersion: "2.1.0-rc",
+    appVersion: "2.1.0",
   },
   genericDeviceAction: acceptTransaction,
   test: genericTest,

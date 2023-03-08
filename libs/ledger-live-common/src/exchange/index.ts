@@ -9,22 +9,22 @@ import { findTestExchangeCurrencyConfig } from "./testCurrencyConfig";
 // Minimum version of a currency app which has exchange capabilities, meaning it can be used
 // for sell/swap, and do silent signing.
 const exchangeSupportAppVersions = {
-  bitcoin_cash: "1.5.0",
-  bitcoin_gold: "1.5.0",
+  bitcoin_cash: "2.1.0",
+  bitcoin_gold: "2.1.0",
   bitcoin: "2.1.0",
-  dash: "1.5.0",
-  digibyte: "1.5.0",
-  dogecoin: "1.5.0",
+  dash: "2.1.0",
+  digibyte: "2.1.0",
+  dogecoin: "2.1.0",
   ethereum: "1.4.0",
-  litecoin: "1.5.0",
-  qtum: "1.5.0",
+  litecoin: "2.1.0",
+  qtum: "2.1.0",
   ripple: "2.1.0",
   solana: "1.4.0",
   stellar: "3.3.0",
   stratis: "1.5.0",
   tezos: "2.2.13",
-  zcash: "1.5.0",
-  zencash: "1.5.0",
+  zcash: "2.1.0",
+  zencash: "2.1.0",
 };
 
 const findExchangeCurrencyConfig = (
