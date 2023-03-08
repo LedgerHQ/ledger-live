@@ -41,6 +41,11 @@ import { patchOperationWithHash } from "../../../operation";
 import { log } from "@ledgerhq/logs";
 import { InvalidAddressBecauseAlreadyDelegated } from "../../../errors";
 import api from "../api/tzkt";
+import {
+  applyReconciliation,
+  assignFromAccountRaw,
+  assignToAccountRaw,
+} from "../serialization";
 
 const validateRecipient = (currency, recipient) => {
   let recipientError: Error | null = null;
@@ -398,6 +403,9 @@ const accountBridge: AccountBridge<Transaction> = {
   receive,
   signOperation,
   broadcast,
+  applyReconciliation,
+  assignToAccountRaw,
+  assignFromAccountRaw,
 };
 
 export default { currencyBridge, accountBridge };
