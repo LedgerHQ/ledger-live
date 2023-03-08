@@ -12,7 +12,6 @@ import {
   toTransactionStatusRawCommon,
 } from "../../transaction/common";
 
-// TODO: Implement formatTransaction() properly
 export const formatTransaction = (t: Transaction): string => {
   return `${t.mode.toUpperCase()} 1 TO ${t.recipient}`;
 };
