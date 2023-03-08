@@ -37,8 +37,25 @@ const appVersionsRequired = {
   Solana: ">= 1.2.0",
   Celo: ">= 1.1.8",
   "Cardano ADA": ">= 4.1.0",
-  Zcash: "> 2.0.6",
+  Bitcoin: ">= 2.1.0",
+  "Bitcoin Test": ">= 2.1.0",
+  Zcash: ">= 2.1.0",
+  BitcoinGold: ">= 2.1.0",
+  BitcoinCash: ">= 2.1.0",
+  Peercoin: ">= 2.1.0",
+  PivX: ">= 2.1.0",
+  Qtum: ">= 2.1.0",
+  Vertcoin: ">= 2.1.0",
+  Viacoin: ">= 2.1.0",
+  Dash: ">= 2.1.0",
+  Dogecoin: ">= 2.1.0",
+  Horizen: ">= 2.1.0",
+  Digibyte: ">= 2.1.0",
+  Komodo: ">= 2.1.0",
+  Decred: ">= 2.1.0",
+  Litecoin: ">= 2.1.0",
   NEAR: ">= 1.2.1",
+  Exchange: ">= 2.0.12",
 };
 export function mustUpgrade(
   deviceModel: DeviceModelId,
@@ -47,7 +64,6 @@ export function mustUpgrade(
 ): boolean {
   if (getEnv("DISABLE_APP_VERSION_REQUIREMENTS")) return false;
   const range = appVersionsRequired[appName];
-
   if (range) {
     return !semver.satisfies(appVersion || "", range, {
       includePrerelease: true, // this will allow pre-release tags that would otherwise return false. E.g. 1.0.0-dev

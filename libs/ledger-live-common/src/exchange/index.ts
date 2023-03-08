@@ -11,7 +11,7 @@ import { findTestExchangeCurrencyConfig } from "./testCurrencyConfig";
 const exchangeSupportAppVersions = {
   bitcoin_cash: "1.5.0",
   bitcoin_gold: "1.5.0",
-  bitcoin: "1.5.0",
+  bitcoin: "2.1.0",
   dash: "1.5.0",
   digibyte: "1.5.0",
   dogecoin: "1.5.0",
