@@ -26,6 +26,7 @@ import {
   BaseComposite,
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
+import { saveBleDeviceName } from "../../actions/ble";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.ManagerMain>
@@ -46,6 +47,11 @@ const Manager = ({ navigation, route }: NavigationProps) => {
   const { deviceId, deviceName, modelId } = device;
   const [state, dispatch] = useApps(result, deviceId, appsToRestore);
   const reduxDispatch = useDispatch();
+
+  useEffect(() => {
+    // Newly fetched device name from accessing the manager, gets updated.
+    reduxDispatch(saveBleDeviceName(device.deviceId, result.deviceName));
+  }, [reduxDispatch, device.deviceId, result.deviceName]);
 
   const refreshDeviceInfo = useCallback(() => {
     withDevice(deviceId)(transport => from(getDeviceInfo(transport)))
