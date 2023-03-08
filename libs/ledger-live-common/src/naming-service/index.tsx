@@ -5,8 +5,8 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { getAddressByName } from "./api";
-import { isNameValid, isOutdated } from "./logic";
+import { getAddressByName, getNameByAddress } from "./api";
+import { isEthereumAddress, isNameValid, isOutdated } from "./logic";
 import {
   NamingServiceContextAPI,
   NamingServiceContextState,
@@ -30,7 +30,7 @@ export const useNamingServiceAPI = (
   const cachedData = name && cache[name];
 
   useEffect(() => {
-    if (!name || !isNameValid(name)) return;
+    if (!name || (!isNameValid(name) && !isEthereumAddress(name))) return;
     if (!cachedData || isOutdated(cachedData)) {
       loadNamingServiceAPI(name);
     }
@@ -38,7 +38,10 @@ export const useNamingServiceAPI = (
 
   if (cachedData) {
     return cachedData;
-  } else if (!isNameValid(name)) {
+  } else if (
+    (!isNameValid(name) && name && !isEthereumAddress(name)) ||
+    !name
+  ) {
     return {
       status: "error",
       error: new Error("Invalid name format"),
@@ -53,18 +56,21 @@ export function useNamingService(name: string): UseNamingServiceResponse {
   const data = useNamingServiceAPI(name);
 
   const { status } = data;
-  const address = useMemo(
-    () => (status === "loaded" ? data.address : null),
+  const loadedData = useMemo(
+    () => (status === "loaded" ? data : null),
     [data, status]
   );
 
-  return status !== "loaded"
-    ? { status }
-    : {
-        status,
-        address: address as string, // should always
-        name,
-      };
+  return loadedData && status === "loaded"
+    ? {
+        status: "loaded",
+        address: loadedData.address,
+        name: loadedData.name,
+        type: loadedData.type,
+      }
+    : ({ status } as {
+        status: Exclude<UseNamingServiceResponse["status"], "loaded">;
+      });
 }
 
 type NamingServiceProviderProps = {
@@ -80,37 +86,56 @@ export function NamingServiceProvider({
 
   const api: NamingServiceContextAPI = useMemo(
     () => ({
-      loadNamingServiceAPI: async (name: string) => {
+      loadNamingServiceAPI: async (str: string) => {
         setState((oldState) => ({
           ...oldState,
           cache: {
             ...oldState.cache,
-            [name]: {
+            [str]: {
               status: "loading",
             },
           },
         }));
 
         try {
-          const address = await getAddressByName(name);
-          setState((oldState) => ({
-            ...oldState,
-            cache: {
-              ...oldState.cache,
-              [name]: {
-                status: "loaded",
-                address,
-                name,
-                updatedAt: Date.now(),
+          let result: string;
+          if (isNameValid(str)) {
+            result = await getAddressByName(str);
+            setState((oldState) => ({
+              ...oldState,
+              cache: {
+                ...oldState.cache,
+                [str]: {
+                  status: "loaded",
+                  address: result,
+                  name: str,
+                  type: "forward",
+                  updatedAt: Date.now(),
+                },
               },
-            },
-          }));
+            }));
+          } else {
+            result = await getNameByAddress(str);
+            setState((oldState) => ({
+              ...oldState,
+              cache: {
+                ...oldState.cache,
+                [str]: {
+                  status: "loaded",
+                  address: str,
+                  name: result,
+                  type: "reverse",
+                  updatedAt: Date.now(),
+                },
+              },
+            }));
+          }
         } catch (error) {
           setState((oldState) => ({
             ...oldState,
             cache: {
               ...oldState.cache,
-              [name]: {
+              [str]: {
                 status: "error",
                 error,
                 updatedAt: Date.now(),

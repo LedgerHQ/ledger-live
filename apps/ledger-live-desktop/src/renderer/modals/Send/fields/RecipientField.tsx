@@ -34,7 +34,7 @@ const RecipientField = ({
 }: Props) => {
   const bridge = getAccountBridge(account, null);
   const [value, setValue] = useState(
-    initValue || transaction.recipientName || transaction.recipient || "",
+    initValue || transaction.domain || transaction.recipient || "",
   );
   const FFNamingService = useFeature("trustedNameInputResolution");
 
@@ -53,7 +53,7 @@ const RecipientField = ({
       onChangeTransaction(
         bridge.updateTransaction(transaction, {
           recipient: invalidRecipient ? "" : recipient,
-          recipientName: undefined,
+          domain: undefined,
         }),
       );
     },

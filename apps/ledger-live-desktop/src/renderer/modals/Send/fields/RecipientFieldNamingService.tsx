@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useMemo } from "react";
+import React, { memo, useCallback, useEffect } from "react";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { TFunction } from "react-i18next";
@@ -11,6 +11,9 @@ import {
 
 import RecipientFieldBase from "./RecipientFieldBase";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import Alert from "~/renderer/components/Alert";
+import Text from "~/renderer/components/Text";
+import Box from "~/renderer/components/Box";
 
 type Props = {
   account: Account;
@@ -47,28 +50,53 @@ const RecipientField = ({
   );
 
   useEffect(() => {
-    const isInitValueDifferent = value !== transaction.recipientName;
-    const isRecipientUpdated = transaction.recipient === transaction.recipientName;
-    if (hasValidatedName(namingServiceResponse) && (isRecipientUpdated || isInitValueDifferent)) {
+    const isInitValueDifferent = value !== transaction.domain;
+    const isRecipientUpdated = transaction.recipient === transaction.domain;
+    if (
+      (hasValidatedName(namingServiceResponse) &&
+        namingServiceResponse.type === "forward" &&
+        (isInitValueDifferent || isRecipientUpdated)) ||
+      (hasValidatedName(namingServiceResponse) &&
+        namingServiceResponse.type === "reverse" &&
+        value !== transaction.recipient)
+    ) {
       onChangeTransaction(
         bridge.updateTransaction(transaction, {
           recipient: namingServiceResponse.address,
-          recipientName: value,
+          domain: namingServiceResponse.name,
         }),
       );
     }
   }, [bridge, transaction, onChangeTransaction, namingServiceResponse, hasValidatedName, value]);
 
   return (
-    <RecipientFieldBase
-      t={t}
-      label={label}
-      autoFocus={autoFocus}
-      status={status}
-      account={account}
-      value={value}
-      onChange={onChange}
-    />
+    <>
+      <RecipientFieldBase
+        t={t}
+        label={label}
+        autoFocus={autoFocus}
+        status={status}
+        account={account}
+        value={value}
+        onChange={onChange}
+      />
+      {hasValidatedName(namingServiceResponse) && (
+        <Alert mt={5}>
+          <Box>
+            <Text ff="Inter" fontSize={3}>
+              {t("send.steps.recipient.namingService.resolve")}
+            </Text>
+          </Box>
+          <Box>
+            <Text ff="Inter|SemiBold" fontSize={3}>
+              {namingServiceResponse.type === "reverse"
+                ? namingServiceResponse.name
+                : namingServiceResponse.address}
+            </Text>
+          </Box>
+        </Alert>
+      )}
+    </>
   );
 };
 

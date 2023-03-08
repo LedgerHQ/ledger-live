@@ -14,6 +14,15 @@ import { NamingServiceProvider } from "~/../../../libs/ledger-live-common/lib/na
 import defaultTheme from "../../../styles/theme";
 import RecipientField from "./RecipientField";
 
+// Alert component have many problems and many import that make the test break so
+// I have to remove it
+jest.mock("../../../components/Alert", () => () => {
+  const mockDiv = () => {
+    return <div />;
+  };
+  return mockDiv;
+});
+
 const eth = findCryptoCurrencyById("ethereum");
 
 const mockAccount = {
@@ -137,7 +146,7 @@ describe("RecipientField", () => {
     expect(screen.findByTestId("input-error")).toBeTruthy();
   });
 
-  it("FF off: should not change recipientName", async () => {
+  it("FF off: should not change domain", async () => {
     jest.clearAllMocks();
     setup();
     mockedUseFeature.mockReturnValueOnce({ enabled: false });
@@ -148,12 +157,12 @@ describe("RecipientField", () => {
       expect(changeTransactionFn).toHaveBeenCalledWith({
         ...baseMockTransaction,
         recipient: "vitalik.eth",
-        recipientName: undefined,
+        domain: undefined,
       }),
     );
   });
 
-  it("FF is on : should change recipientName in transaction", async () => {
+  it("FF is on : should change domain in transaction", async () => {
     jest.clearAllMocks();
     setup({}, {});
     mockedUseFeature.mockReturnValueOnce({ enabled: true });
@@ -164,12 +173,28 @@ describe("RecipientField", () => {
       expect(changeTransactionFn).toHaveBeenCalledWith({
         ...baseMockTransaction,
         recipient: "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
-        recipientName: "vitalik.eth",
+        domain: "vitalik.eth",
       }),
     );
   });
 
-  it("FF is on : should not change recipientName because invalid recipient name", async () => {
+  it("FF is on : should reverse addr to domain name in transaction", async () => {
+    jest.clearAllMocks();
+    setup({}, {});
+    mockedUseFeature.mockReturnValueOnce({ enabled: true });
+    const input = screen.getByTestId("send-recipient-input");
+    fireEvent.change(input, { target: { value: "0x16bb635bc5c398b63a0fbb38dac84da709eb3e86" } });
+
+    await waitFor(() =>
+      expect(changeTransactionFn).toHaveBeenCalledWith({
+        ...baseMockTransaction,
+        recipient: "0x16bb635bc5c398b63a0fbb38dac84da709eb3e86",
+        domain: "degendon.eth",
+      }),
+    );
+  });
+
+  it("FF is on : should not change domain because invalid recipient name", async () => {
     jest.clearAllMocks();
     setup({}, {});
     mockedUseFeature.mockReturnValueOnce({ enabled: true });
@@ -180,7 +205,7 @@ describe("RecipientField", () => {
       expect(changeTransactionFn).toHaveBeenCalledWith({
         ...baseMockTransaction,
         recipient: "vitalik.notanamingservice",
-        recipientName: undefined,
+        domain: undefined,
       }),
     );
   });

@@ -2182,7 +2182,13 @@
     "steps": {
       "recipient": {
         "title": "Recipient",
-        "nftRecipient": "NFT to send"
+        "nftRecipient": "NFT to send",
+        "verifyAddress": "Please verify the address matches the one shared by the recipient.",
+        "namingService": {
+          "resolve": "This is a valid ENS linked to the following address :",
+          "supportLink": "What's an Ethereum Name Service ?",
+          "reverse": "This address is linked to {{domain}}"
+        }
       },
       "amount": {
         "title": "Amount",

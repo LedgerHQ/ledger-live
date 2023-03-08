@@ -2,29 +2,34 @@ import { NamingServiceProvider, useNamingService } from ".";
 import React from "react";
 import { renderHook } from "@testing-library/react-hooks";
 import { render, screen, waitFor } from "@testing-library/react";
-import { getAddressByName } from "./api";
+import { getAddressByName, getNameByAddress } from "./api";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
 
 jest.mock("./api");
 
 const mockedGetAddressByName = jest.mocked(getAddressByName, true);
+const mockedGetNameByAddress = jest.mocked(getNameByAddress, true);
 
-const CustomTest = ({ name }: { name: string }) => {
-  const data = useNamingService(name);
+const CustomTest = ({ str }: { str: string }) => {
+  const data = useNamingService(str);
 
-  let result: string | undefined;
+  let address: string | undefined;
+  let name: string | undefined;
+  let type: string | undefined;
 
   const status = data.status;
   if (data.status === "loaded") {
-    result = data.address;
-  } else {
-    result = undefined;
+    address = data.address;
+    name = data.name;
+    type = data.type;
   }
 
   return (
     <div>
       <div data-testid="status">{status}</div>
-      <div data-testid="result">{result}</div>
+      <div data-testid="address">{address}</div>
+      <div data-testid="name">{name}</div>
+      <div data-testid="type">{type}</div>
     </div>
   );
 };
@@ -37,7 +42,7 @@ describe("useNamingService", () => {
 
     render(
       <NamingServiceProvider>
-        <CustomTest name="notavalideth" />
+        <CustomTest str="notavalideth" />
       </NamingServiceProvider>
     );
 
@@ -58,24 +63,55 @@ describe("useNamingService", () => {
     expect(result.current.status).toBe("queued");
   });
 
-  test("success", async () => {
+  test("success forward", async () => {
     mockedGetAddressByName.mockImplementation(async () => {
       return "forced mocked address";
     });
 
     render(
       <NamingServiceProvider>
-        <CustomTest name="vitalik.eth" />
+        <CustomTest str="vitalik.eth" />
       </NamingServiceProvider>
     );
 
-    await waitFor(() => {
-      expect(screen.getByTestId("status").textContent).not.toBe("loading");
-    });
+    await waitFor(
+      () => {
+        expect(screen.getByTestId("status").textContent).toBe("loaded");
+      },
+      { timeout: 5000 }
+    );
 
     expect(screen.getByTestId("status").textContent).toBe("loaded");
-    expect(screen.getByTestId("result").textContent).toBe(
+    expect(screen.getByTestId("type").textContent).toBe("forward");
+    expect(screen.getByTestId("name").textContent).toBe("vitalik.eth");
+    expect(screen.getByTestId("address").textContent).toBe(
       "forced mocked address"
+    );
+  });
+
+  test("success reverse", async () => {
+    mockedGetNameByAddress.mockImplementation(async () => {
+      return "vitalik.eth";
+    });
+
+    render(
+      <NamingServiceProvider>
+        <CustomTest str="0xd8da6bf26964af9d7eed9e03e53415d37aa96045" />
+      </NamingServiceProvider>
+    );
+
+    await waitFor(
+      () => {
+        expect(screen.getByTestId("status").textContent).toBe("loaded");
+      },
+      { timeout: 5000 }
+    );
+
+    expect(screen.getByTestId("status").textContent).toBe("loaded");
+    expect(screen.getByTestId("type").textContent).toBe("reverse");
+    expect(screen.getByTestId("name").textContent).toBe("vitalik.eth");
+    expect(screen.getByTestId("address").textContent).toBe(
+      "0xd8da6bf26964af9d7eed9e03e53415d37aa96045"
     );
   });
 });

@@ -3374,8 +3374,7 @@
     "recipient": {
       "scan": "Scan QR code",
       "enterAddress": "Enter address",
-      "input": "Enter address",
-      "verifyAddress": "Please verify the address matches the one shared by the recipient."
+      "input": "Enter address"
     },
     "amount": {
       "available": "Total available",

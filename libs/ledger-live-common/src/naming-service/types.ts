@@ -1,7 +1,15 @@
+export type NamingServiceType = "reverse" | "forward";
+
 export type NamingServiceStatus =
   | { status: "queued" }
   | { status: "loading" }
-  | { status: "loaded"; address: string; name: string; updatedAt: number }
+  | {
+      status: "loaded";
+      address: string;
+      name: string;
+      type: NamingServiceType;
+      updatedAt: number;
+    }
   | { status: "error"; error: any; updatedAt: number };
 
 export type NamingServiceContextState = {
@@ -20,6 +28,7 @@ export type NamingServiceResponseLoaded = {
   status: "loaded";
   address: string;
   name: string;
+  type: NamingServiceType;
 };
 
 export type UseNamingServiceResponse =

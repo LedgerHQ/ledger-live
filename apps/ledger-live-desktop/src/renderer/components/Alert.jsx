@@ -266,27 +266,25 @@ export default function Alert({
     </Text>
   );
 
+  if (isDismissed) return null;
+
   return (
-    !isDismissed && (
-      <Container type={type} small={small} {...rest}>
-        {left || (!noIcon && icon) ? <LeftContent>{left || icon}</LeftContent> : null}
-        <Content>
-          {title && <TitleContent>{title}</TitleContent>}
-          <div>
-            {description}
-            {!learnMoreOnRight && hasLearnMore ? <> {learnMore}</> : null}
-          </div>
-        </Content>
-        {bannerId ? (
-          <CloseContainer id={`dismiss-${bannerId || ""}-banner`} onClick={onDismiss}>
-            <IconCross size={14} />
-          </CloseContainer>
-        ) : null}
-        {!right && learnMoreOnRight && hasLearnMore ? (
-          <RightContent>{learnMore}</RightContent>
-        ) : null}
-        {!!right && <RightContent>{right}</RightContent>}
-      </Container>
-    )
+    <Container type={type} small={small} {...rest}>
+      {left || (!noIcon && icon) ? <LeftContent>{left || icon}</LeftContent> : null}
+      <Content>
+        {title && <TitleContent>{title}</TitleContent>}
+        <div>
+          {description}
+          {!learnMoreOnRight && hasLearnMore ? <> {learnMore}</> : null}
+        </div>
+      </Content>
+      {bannerId ? (
+        <CloseContainer id={`dismiss-${bannerId || ""}-banner`} onClick={onDismiss}>
+          <IconCross size={14} />
+        </CloseContainer>
+      ) : null}
+      {!right && learnMoreOnRight && hasLearnMore ? <RightContent>{learnMore}</RightContent> : null}
+      {!!right && <RightContent>{right}</RightContent>}
+    </Container>
   );
 }

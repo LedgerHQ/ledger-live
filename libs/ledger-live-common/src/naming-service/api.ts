@@ -8,3 +8,10 @@ export const getAddressByName = async (name: string): Promise<string> => {
   const { data: address } = await network({ method: "GET", url });
   return address;
 };
+
+export const getNameByAddress = async (addr: string): Promise<string> => {
+  const currency = getCryptoCurrencyById("ethereum");
+  const url = `${blockchainBaseURL(currency)}/ens/reverse-resolve/${addr}`;
+  const { data: name } = await network({ method: "GET", url });
+  return name;
+};
