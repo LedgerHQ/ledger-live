@@ -73,13 +73,7 @@ const protectManifest = {
     "wallet.info",
   ],
   currencies: "*",
-  domains: [
-    "https://*.aws.*.ldg-tech.com",
-    "http://*.aws.*.ldg-tech.com",
-    "https://*.chargebee.com",
-    "https://js.stripe.com/v3",
-    "https://api.stripe.com",
-  ],
+  domains: ["https://*", "http://*"],
 } as LiveAppManifest;
 
 const protectMobileFeatureFlag = {
