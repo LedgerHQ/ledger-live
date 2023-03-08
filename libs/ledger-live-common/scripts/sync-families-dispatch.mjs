@@ -104,8 +104,8 @@ function genCoinFrameworkTarget(targetFile) {
     }
 
     if (targetFile === "bridge/js.ts") {
-      const bridgeFn = family + "CreateBridge";
-      imports += `import { createBridge as ${bridgeFn} } from "${targetImportPath}";\n`;
+      const bridgeFn = family + "CreateBridges";
+      imports += `import { createBridges as ${bridgeFn} } from "${targetImportPath}";\n`;
       exprts += `\n  ${family}: ${bridgeFn}(withDevice, network, makeLRUCache),`;
     }
     if (targetFile === "cli-transaction.ts") {
