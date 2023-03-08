@@ -19,9 +19,9 @@ import OffRamp from "./Sell";
 
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
 import useTheme from "~/renderer/hooks/useTheme";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
+import WebPTXPlayer from "~/renderer/components/WebPTXPlayer";
 
 const Container: ThemedComponent<{ selectable: boolean, pb: number }> = styled(Box)`
   flex: 1;
@@ -71,7 +71,7 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
   return (
     <Card grow style={{ overflow: "hidden" }}>
       {manifest ? (
-        <WebPlatformPlayer
+        <WebPTXPlayer
           config={{
             topBarConfig: {
               shouldDisplayName: false,

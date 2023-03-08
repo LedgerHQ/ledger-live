@@ -1,7 +1,7 @@
 // @flow
 
 import { WebviewTag } from "electron";
-import React, { RefObject, useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 
@@ -9,7 +9,6 @@ import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 import { rgba } from "~/renderer/styles/helpers";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
-import type { TopBarConfig } from "./type";
 
 import Box, { Tabbable } from "~/renderer/components/Box";
 
@@ -25,7 +24,7 @@ import LiveAppIcon from "./LiveAppIcon";
 
 import { openPlatformAppInfoDrawer } from "~/renderer/actions/UI";
 
-const Container: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const Container = styled(Box).attrs(() => ({
   horizontal: true,
   grow: 0,
   alignItems: "center",
@@ -35,7 +34,7 @@ const Container: ThemedComponent<{}> = styled(Box).attrs(() => ({
   border-bottom: 1px solid ${p => p.theme.colors.palette.text.shade10};
 `;
 
-const TitleContainer: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const TitleContainer = styled(Box).attrs(() => ({
   horizontal: true,
   grow: 0,
   alignItems: "center",
@@ -50,7 +49,7 @@ const TitleContainer: ThemedComponent<{}> = styled(Box).attrs(() => ({
   }
 `;
 
-const RightContainer: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const RightContainer = styled(Box).attrs(() => ({
   horizontal: true,
   grow: 0,
   alignItems: "center",
@@ -62,7 +61,7 @@ const ItemContainer: ThemedComponent<{
   isInteractive?: boolean,
   onClick?: () => void,
   disabled?: boolean,
-  children: React$Node,
+  children: React.ReactNode,
   justifyContent?: string,
 }> = styled(Tabbable).attrs(p => ({
   padding: 1,
@@ -96,38 +95,36 @@ const ItemContainer: ThemedComponent<{
   }
 `;
 
-const ItemContent: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const ItemContent = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
 }))`
   font-size: 14px;
   line-height: 20px;
 `;
 
-export const Separator: ThemedComponent<*> = styled.div`
+export const Separator = styled.div`
   margin-right: 16px;
   height: 15px;
   width: 1px;
   background: ${p => p.theme.colors.palette.divider};
 `;
 
+export type TopBarConfig = {
+  shouldDisplayName?: boolean,
+  shouldDisplayInfo?: boolean,
+  shouldDisplayClose?: boolean,
+  shouldDisplayNavigation?: boolean,
+};
+
 export type Props = {
   icon?: boolean,
   manifest: LiveAppManifest,
-  onReload: Function,
-  onClose?: Function,
-  onHelp?: Function,
+  onClose?: () => void,
   config?: TopBarConfig,
-  webviewRef: RefObject<WebviewTag>,
+  webview: WebviewTag,
 };
 
-const WebPlatformTopBar = ({
-  manifest,
-  onReload,
-  onHelp,
-  onClose,
-  config = {},
-  webviewRef,
-}: Props) => {
+export const TopBar = ({ manifest, onClose, config = {}, webview }: Props) => {
   const { name, icon } = manifest;
 
   const {
@@ -143,17 +140,11 @@ const WebPlatformTopBar = ({
   const dispatch = useDispatch();
 
   const handleDidNavigate = useCallback(() => {
-    const webview = webviewRef.current;
-
-    if (webview) {
       setCanGoBack(webview.canGoBack());
       setCanGoForward(webview.canGoForward());
-    }
-  }, [webviewRef]);
+  }, [webview]);
 
   useEffect(() => {
-    const webview = webviewRef.current;
-
     /**
      * Handle webview navigation events.
      * The two events are complementary to enccompass the webview's navigation
@@ -168,7 +159,7 @@ const WebPlatformTopBar = ({
      * https://www.electronjs.org/docs/latest/api/webview-tag#event-did-navigate-in-page
      */
 
-    if (webview && shouldDisplayNavigation) {
+    if (shouldDisplayNavigation) {
       webview.addEventListener("did-navigate", handleDidNavigate);
       webview.addEventListener("did-navigate-in-page", handleDidNavigate);
 
@@ -177,36 +168,33 @@ const WebPlatformTopBar = ({
         webview.removeEventListener("did-navigate-in-page", handleDidNavigate);
       };
     }
-  }, [handleDidNavigate, webviewRef, shouldDisplayNavigation]);
+  }, [handleDidNavigate, webview, shouldDisplayNavigation]);
+
+  const handleReload = useCallback(() => {
+    if (webview) {
+      webview.reloadIgnoringCache();
+    }
+  }, [webview]);
 
   const onClick = useCallback(() => {
     dispatch(openPlatformAppInfoDrawer({ manifest }));
   }, [manifest, dispatch]);
 
   const onOpenDevTools = useCallback(() => {
-    const webview = webviewRef.current;
-    if (webview) {
       webview.openDevTools();
-    }
-  }, [webviewRef]);
+  }, [webview]);
 
   const onGoBack = useCallback(() => {
-    const webview = webviewRef.current;
-    if (webview) {
       webview.goBack();
-    }
-  }, [webviewRef]);
+  }, [webview]);
 
   const onGoForward = useCallback(() => {
-    const webview = webviewRef.current;
-    if (webview) {
       webview.goForward();
-    }
-  }, [webviewRef]);
+  }, [webview]);
 
   return (
     <Container>
-      {shouldDisplayName && (
+      {shouldDisplayName ? (
         <>
           <TitleContainer>
             <LiveAppIcon name={name} icon={icon || undefined} size={20} />
@@ -214,14 +202,14 @@ const WebPlatformTopBar = ({
           </TitleContainer>
           <Separator />
         </>
-      )}
-      <ItemContainer isInteractive onClick={onReload}>
+      ) : null}
+      <ItemContainer isInteractive onClick={handleReload}>
         <IconReload size={16} />
         <ItemContent>
           <Trans i18nKey="common.sync.refresh" />
         </ItemContent>
       </ItemContainer>
-      {shouldDisplayNavigation && (
+      {shouldDisplayNavigation ? (
         <>
           <ItemContainer disabled={!canGoBack} isInteractive onClick={onGoBack}>
             <ArrowRight flipped size={16} />
@@ -230,8 +218,8 @@ const WebPlatformTopBar = ({
             <ArrowRight size={16} />
           </ItemContainer>
         </>
-      )}
-      {enablePlatformDevTools && (
+      ) : null}
+      {enablePlatformDevTools ? (
         <>
           <Separator />
           <ItemContainer isInteractive onClick={onOpenDevTools}>
@@ -241,8 +229,8 @@ const WebPlatformTopBar = ({
             </ItemContent>
           </ItemContainer>
         </>
-      )}
-      {(shouldDisplayInfo || shouldDisplayClose) && (
+      ) : null}
+      {(shouldDisplayInfo || shouldDisplayClose) ? (
         <RightContainer>
           {shouldDisplayInfo && (
             <ItemContainer isInteractive onClick={onClick}>
@@ -256,9 +244,7 @@ const WebPlatformTopBar = ({
             </ItemContainer>
           )}
         </RightContainer>
-      )}
+      ) : null}
     </Container>
   );
 };
-
-export default WebPlatformTopBar;
