@@ -9,6 +9,7 @@ import {
 import { TouchableOpacity, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
+import { Flex } from "@ledgerhq/native-ui";
 import { counterValueCurrencySelector } from "../reducers/settings";
 import {
   useTrackingPairs,
@@ -50,9 +51,11 @@ export const NoCountervaluePlaceholder = () => {
         onClose={closeModal}
         style={[styles.modal]}
       >
-        <Circle bg={colors.lightLive} size={70}>
-          <IconHelp size={30} color={colors.live} />
-        </Circle>
+        <Flex alignItems="center">
+          <Circle bg={colors.lightLive} size={70}>
+            <IconHelp size={30} color={colors.live} />
+          </Circle>
+        </Flex>
 
         <LText style={styles.modalTitle} semiBold>
           <Trans i18nKey="errors.countervaluesUnavailable.title" />
