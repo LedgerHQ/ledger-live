@@ -74,7 +74,7 @@ export default function Filter({ onClick }: Props) {
         const selected = filter.includes(type);
         const props = { selected, key: type, updateFilter, type };
         return (
-          <Btn key={type} {...props}>
+          <Btn key={type} {...props} data-test-id={`${type}-quote-filter-button`}>
             {selected ? (
               <Box mr={1}>
                 <Icons.CloseMedium size={16} />
