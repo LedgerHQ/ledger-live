@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.16.2-nightly.1
+
+### Patch Changes
+
+- [#2849](https://github.com/LedgerHQ/ledger-live/pull/2849) [`292069c492`](https://github.com/LedgerHQ/ledger-live/commit/292069c49232777f5088ff9b7ddff5b41acf3c40) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - fix(StartupTimeMarker): catch error and prevent re-invocation of native method
+
+- Updated dependencies [[`ef5835035b`](https://github.com/LedgerHQ/ledger-live/commit/ef5835035b93bb06f9cfbbb9da74ec2b2a53c5a7), [`f2968d5706`](https://github.com/LedgerHQ/ledger-live/commit/f2968d57065bd0b5219f97029887a2f61390ac27)]:
+  - @ledgerhq/live-common@29.1.0-nightly.2
+
 ## 3.16.2-nightly.0
 
 ### Patch Changes

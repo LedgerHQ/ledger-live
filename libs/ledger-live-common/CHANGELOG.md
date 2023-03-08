@@ -1,5 +1,13 @@
 # @ledgerhq/live-common
 
+## 29.1.0-nightly.2
+
+### Patch Changes
+
+- [#2609](https://github.com/LedgerHQ/ledger-live/pull/2609) [`ef5835035b`](https://github.com/LedgerHQ/ledger-live/commit/ef5835035b93bb06f9cfbbb9da74ec2b2a53c5a7) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Remove elrond specific logic outside of elrond family folder
+
+- [#2584](https://github.com/LedgerHQ/ledger-live/pull/2584) [`f2968d5706`](https://github.com/LedgerHQ/ledger-live/commit/f2968d57065bd0b5219f97029887a2f61390ac27) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Remove solana coin specific logic outside of its folder
+
 ## 29.1.0-nightly.1
 
 ### Patch Changes
