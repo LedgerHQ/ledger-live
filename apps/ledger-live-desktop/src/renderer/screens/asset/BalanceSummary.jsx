@@ -8,10 +8,13 @@ import type { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
 import Chart from "~/renderer/components/Chart";
 import Box, { Card } from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
-import { useCurrencyPortfolio } from "~/renderer/actions/portfolio";
+import { useCurrencyPortfolio, usePortfolio } from "~/renderer/actions/portfolio";
 import AssetBalanceSummaryHeader from "./AssetBalanceSummaryHeader";
 import { discreetModeSelector } from "~/renderer/reducers/settings";
 import FormattedDate from "~/renderer/components/FormattedDate";
+
+import ErrorBanner from "~/renderer/components/ErrorBanner";
+import PlaceholderChart from "~/renderer/components/PlaceholderChart";
 
 type Props = {
   counterValue: Currency,
@@ -30,6 +33,7 @@ export default function BalanceSummary({
   chartColor,
   currency,
 }: Props) {
+  const portfolio = usePortfolio();
   const {
     history,
     countervalueAvailable,
@@ -90,25 +94,40 @@ export default function BalanceSummary({
       </Box>
 
       <Box px={5} ff="Inter" fontSize={4} color="palette.text.shade80" pt={6}>
-        <Chart
-          magnitude={chartMagnitude}
-          color={chartColor}
-          // $FlowFixMe TODO make date non optional
-          data={history}
-          height={200}
-          tickXScale={range}
-          valueKey={displayCountervalue ? "countervalue" : "value"}
-          mapValue={displayCountervalue ? mapValueCounterValue : mapValueCryptoValue}
-          renderTickY={
-            discreetMode
-              ? () => ""
-              : displayCountervalue
-              ? renderTickYCounterValue
-              : renderTickYCryptoValue
-          }
-          isInteractive
-          renderTooltip={renderTooltip}
-        />
+        {currency.type === "TokenCurrency" && currency.id === "vechain/vtho" ? (
+          <>
+            <ErrorBanner
+              error={new Error("Graph not available for this token")}
+              warning={true}
+            ></ErrorBanner>
+            <PlaceholderChart
+              magnitude={counterValue.units[0].magnitude}
+              chartId="prova"
+              data={portfolio.balanceHistory}
+              tickXScale={range}
+            />
+          </>
+        ) : (
+          <Chart
+            magnitude={chartMagnitude}
+            color={chartColor}
+            // $FlowFixMe TODO make date non optional
+            data={history}
+            height={200}
+            tickXScale={range}
+            valueKey={displayCountervalue ? "countervalue" : "value"}
+            mapValue={displayCountervalue ? mapValueCounterValue : mapValueCryptoValue}
+            renderTickY={
+              discreetMode
+                ? () => ""
+                : displayCountervalue
+                ? renderTickYCounterValue
+                : renderTickYCryptoValue
+            }
+            isInteractive
+            renderTooltip={renderTooltip}
+          />
+        )}
       </Box>
     </Card>
   );
