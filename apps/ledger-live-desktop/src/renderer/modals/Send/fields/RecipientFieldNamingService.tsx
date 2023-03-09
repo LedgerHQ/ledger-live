@@ -3,11 +3,11 @@ import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/
 import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { TFunction } from "react-i18next";
 
-import { useNamingService } from "@ledgerhq/domain-service";
+import { useNamingService } from "@ledgerhq/domain-service/hooks/index";
 import {
   NamingServiceResponseLoaded,
   UseNamingServiceResponse,
-} from "@ledgerhq/domain-service/types";
+} from "@ledgerhq/domain-service/hooks/types";
 
 import RecipientFieldBase from "./RecipientFieldBase";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -66,7 +66,7 @@ const RecipientField = ({
       onChangeTransaction(
         bridge.updateTransaction(transaction, {
           recipient: namingServiceResponse.address,
-          domain: namingServiceResponse.name,
+          domain: namingServiceResponse.domain,
         }),
       );
     }
@@ -104,7 +104,7 @@ const RecipientField = ({
               <Box>
                 <Text ff="Inter" fontSize={3}>
                   {t("send.steps.recipient.namingService.reverse", {
-                    domain: namingServiceResponse.name,
+                    domain: namingServiceResponse.domain,
                   })}
                 </Text>
               </Box>

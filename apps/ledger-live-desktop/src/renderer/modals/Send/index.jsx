@@ -4,7 +4,7 @@ import React, { useCallback, useState } from "react";
 import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
 import type { StepId } from "./types";
-import { NamingServiceProvider } from "@ledgerhq/live-common/naming-service/index";
+import { NamingServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 
 type Props = {
   stepId: StepId,
