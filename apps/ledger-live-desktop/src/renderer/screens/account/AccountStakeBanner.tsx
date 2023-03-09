@@ -10,7 +10,8 @@ import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 
 export const AccountStakeBanner: React.FC<{
   account: AccountLike | null;
-}> = ({ account }) => {
+  parentAccount: Account;
+}> = ({ account, parentAccount }) => {
   if (!account) return null;
 
   if (isAccount(account)) {
@@ -19,7 +20,9 @@ export const AccountStakeBanner: React.FC<{
         return <EthereumStakeBanner account={account} />;
       case "cosmos":
       case "osmo":
-        return <CosmosStakeBanner account={account as CosmosAccount} />;
+        return (
+          <CosmosStakeBanner account={account as CosmosAccount} parentAccount={parentAccount} />
+        );
       case "solana":
         return <SolanaStakeBanner account={account} />;
       case "near":
