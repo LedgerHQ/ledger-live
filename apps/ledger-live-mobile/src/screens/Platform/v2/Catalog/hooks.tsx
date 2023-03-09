@@ -158,8 +158,7 @@ export function useSearch<Item>({
   const [isSearching, setIsSearching] = useState(false);
 
   const [result, setResult] = useState(list);
-  // TODO: what if list chanegs
-  const fuse = useRef(new Fuse(list, options));
+  const fuse = useMemo(() => new Fuse(list, options), [list, options]);
 
   const onChange = useCallback((value: string) => {
     if (value.length !== 0) {
@@ -172,13 +171,13 @@ export function useSearch<Item>({
   useEffect(() => {
     if (debouncedInput) {
       setIsSearching(true);
-      setResult(fuse.current.search(debouncedInput).map(res => res.item));
+      setResult(fuse.search(debouncedInput).map(res => res.item));
     } else {
       setResult([]);
     }
 
     setIsSearching(false);
-  }, [debouncedInput]);
+  }, [debouncedInput, fuse]);
 
   const onFocus = useCallback(() => {
     setIsActive(true);

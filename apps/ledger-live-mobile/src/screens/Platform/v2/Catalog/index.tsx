@@ -5,6 +5,7 @@ import * as Animatable from "react-native-animatable";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import Fuse from "fuse.js";
 import ArrowLeft from "../../../../icons/ArrowLeft";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
@@ -26,6 +27,11 @@ import { DAppDisclaimer } from "./DAppDisclaimer";
 import { Props } from "../../Catalog";
 
 const AnimatedView = Animatable.View;
+
+const options: Fuse.IFuseOptions<LiveAppManifest> = {
+  keys: ["name"],
+  threshold: 0.1,
+};
 
 export function Catalog({ navigation }: Props) {
   const { colors } = useTheme();
@@ -54,9 +60,7 @@ export function Catalog({ navigation }: Props) {
     result,
   } = useSearch({
     list: manifests,
-    options: {
-      keys: ["name"],
-    },
+    options,
   });
 
   // TODO: Move inside the custom hook
