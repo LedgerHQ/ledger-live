@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Icon } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { Linking } from "react-native";
-import InformationalMessageDrawerContent from "../InformationalMessageDrawerContent";
+import GenericInformationalDrawerContent from "../GenericInformationalDrawerContent";
 import GenericInformationalView from "../GenericInformationalView";
 
 type Props = {
@@ -54,8 +54,8 @@ const BluetoothPermissionsDenied: React.FC<Props> = ({
 
   if (componentType === "drawer") {
     return (
-      <InformationalMessageDrawerContent
-        iconType="error"
+      <GenericInformationalDrawerContent
+        icon={<Icon name="Bluetooth" size={30} color="neutral.c100" />}
         title={t("permissions.bluetooth.modalTitle")}
         description={description}
         primaryButtonLabel={buttonLabel}
