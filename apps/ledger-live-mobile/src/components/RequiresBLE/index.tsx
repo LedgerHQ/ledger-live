@@ -30,19 +30,19 @@ const RequiresBLE: React.FC<Props> = ({
       <AndroidRequiresBluetoothPermissions
         forceOpenSettingsOnErrorButton={forceOpenSettingsOnErrorButton}
       >
-        <AndroidRequiresLocationPermission
+        <RequiresBluetoothEnabled
           forceOpenSettingsOnErrorButton={forceOpenSettingsOnErrorButton}
         >
-          <AndroidRequiresLocationEnabled
+          <AndroidRequiresLocationPermission
             forceOpenSettingsOnErrorButton={forceOpenSettingsOnErrorButton}
           >
-            <RequiresBluetoothEnabled
+            <AndroidRequiresLocationEnabled
               forceOpenSettingsOnErrorButton={forceOpenSettingsOnErrorButton}
             >
               {children}
-            </RequiresBluetoothEnabled>
-          </AndroidRequiresLocationEnabled>
-        </AndroidRequiresLocationPermission>
+            </AndroidRequiresLocationEnabled>
+          </AndroidRequiresLocationPermission>
+        </RequiresBluetoothEnabled>
       </AndroidRequiresBluetoothPermissions>
     );
   }
