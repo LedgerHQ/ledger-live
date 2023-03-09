@@ -65,7 +65,7 @@ import { AccountsNavigatorParamList } from "../RootNavigator/types/AccountsNavig
 import InfoModal from "../../modals/Info";
 import { notAvailableModalInfo } from "../../screens/Nft/NftInfoNotAvailable";
 import { track, TrackScreen } from "../../analytics";
-import DesignedForStax from "./DesignedForStax";
+import { DesignedForStaxDrawer, DesignedForStaxText } from "./DesignedForStax";
 
 type Props = CompositeScreenProps<
   | StackNavigatorProps<NftNavigatorParamList, ScreenName.NftViewer>
@@ -314,13 +314,25 @@ const NftViewer = ({ route }: Props) => {
         />
         {!!nftMetadata?.staxImage && (
           <Flex zIndex={1000} position="absolute" bottom={0} width="100%">
-            <DesignedForStax size="medium" />
+            <DesignedForStaxText size="medium" />
           </Flex>
         )}
       </>
     ),
     [nftMetadata, nftStatus],
   );
+
+  const [isStaxDrawerOpen, setStaxDrawerOpen] = useState<boolean>(false);
+
+  const handleStaxModalClose = useCallback(() => {
+    setStaxDrawerOpen(false);
+  }, []);
+
+  useEffect(() => {
+    if (nftMetadata.staxImage) {
+      setStaxDrawerOpen(true);
+    }
+  }, [nftMetadata]);
 
   const [isOpen, setOpen] = useState<boolean>(false);
   const onOpenModal = useCallback(() => {
@@ -342,6 +354,10 @@ const NftViewer = ({ route }: Props) => {
         isOpened={isOpen}
         onClose={onCloseModal}
         data={notAvailableModalInfo}
+      />
+      <DesignedForStaxDrawer
+        isOpen={isStaxDrawerOpen}
+        onClose={handleStaxModalClose}
       />
       <ScrollView
         contentContainerStyle={styles.scrollView}

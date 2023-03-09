@@ -13,7 +13,7 @@ import NftMedia from "../NftMedia";
 import Skeleton from "../../Skeleton";
 import { NftSelectionCheckbox } from "../NftSelectionCheckbox";
 import NftListItemFloorPriceRow from "./NftListItemFloorPriceRow";
-import DesignedForStax from "./DesignedForStax";
+import { DesignedForStaxText } from "./DesignedForStax";
 
 type Props = {
   nft: ProtoNFT;
@@ -165,7 +165,7 @@ const NftMediaComponent = ({
         />
         {!!metadata?.staxImage && (
           <Flex zIndex={1000} position="absolute" bottom={0} width="100%">
-            <DesignedForStax size="small" />
+            <DesignedForStaxText size="small" />
           </Flex>
         )}
       </Flex>

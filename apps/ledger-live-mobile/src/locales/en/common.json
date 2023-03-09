@@ -5923,7 +5923,13 @@
       "allNft": "All NFT",
       "addNew": "Add new"
     },
-    "designedForStax": "<0>Designed for</0><1>Ledger</1><2>Stax</2>",
+    "designedForStax": {
+      "title": "<0>Designed for</0><1>Ledger</1><2>Stax</2>",
+      "drawer": {
+        "description": "This NFT contains an additional picture of the NFT, specifically designed for Ledger Stax's E Ink Screen.\n\nThis picture will be used when you set this NFT as your lock screen.",
+        "cta": "Got it"
+      }
+    },
     "viewer": {
       "properties": "Properties",
       "description": "Description",
