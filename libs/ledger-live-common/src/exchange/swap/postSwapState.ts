@@ -9,7 +9,7 @@ export const postSwapAccepted: PostSwapAccepted = async ({
   swapId = "",
   transactionId,
 }) => {
-  if (getEnv("MOCK"))
+  if (getEnv("MOCK") && !getEnv("PLAYWRIGHT_RUN"))
     return mockPostSwapAccepted({ provider, swapId, transactionId });
 
   /**
@@ -37,7 +37,8 @@ export const postSwapCancelled: PostSwapCancelled = async ({
   provider,
   swapId = "",
 }) => {
-  if (getEnv("MOCK")) return mockPostSwapCancelled({ provider, swapId });
+  if (getEnv("MOCK") && !getEnv("PLAYWRIGHT_RUN"))
+    return mockPostSwapCancelled({ provider, swapId });
 
   /**
    * Since swapId is requiered by the endpoit, don't call it if we don't have

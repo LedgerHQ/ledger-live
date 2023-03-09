@@ -16,29 +16,20 @@ import {
   fromAccountRaw,
   fromOperationRaw,
   fromSubAccountRaw,
-  fromCosmosResourcesRaw,
   fromBitcoinResourcesRaw,
   fromPolkadotResourcesRaw,
-  fromElrondResourcesRaw,
   fromCryptoOrgResourcesRaw,
-  fromSolanaResourcesRaw,
   fromNFTRaw,
-  toCosmosResourcesRaw,
   toPolkadotResourcesRaw,
-  toElrondResourcesRaw,
   toCryptoOrgResourcesRaw,
-  toSolanaResourcesRaw,
 } from "./account";
 import consoleWarnExpectToEqual from "./consoleWarnExpectToEqual";
 import { BitcoinAccount, BitcoinAccountRaw } from "./families/bitcoin/types";
-import { CosmosAccount, CosmosAccountRaw } from "./families/cosmos/types";
 import {
   CryptoOrgAccount,
   CryptoOrgAccountRaw,
 } from "./families/crypto_org/types";
-import { ElrondAccount, ElrondAccountRaw } from "./families/elrond/types";
 import { PolkadotAccount, PolkadotAccountRaw } from "./families/polkadot/types";
-import { SolanaAccount, SolanaAccountRaw } from "./families/solana/types";
 import { getAccountBridge } from "./bridge";
 
 // aim to build operations with the minimal diff & call to coin implementation possible
@@ -290,24 +281,6 @@ export function patchAccount(
   //   OR
   //   - current account data is different
   switch (account.currency.family) {
-    case "cosmos": {
-      const cosmosAcc = account as CosmosAccount;
-      const cosmosUpdatedRaw = updatedRaw as CosmosAccountRaw;
-      if (
-        cosmosUpdatedRaw.cosmosResources &&
-        (!cosmosAcc.cosmosResources ||
-          !areSameResources(
-            toCosmosResourcesRaw(cosmosAcc.cosmosResources),
-            cosmosUpdatedRaw.cosmosResources
-          ))
-      ) {
-        (next as CosmosAccount).cosmosResources = fromCosmosResourcesRaw(
-          cosmosUpdatedRaw.cosmosResources
-        );
-        changed = true;
-      }
-      break;
-    }
     case "bitcoin": {
       if (shouldRefreshBitcoinResources(updatedRaw, account)) {
         (next as BitcoinAccount).bitcoinResources = fromBitcoinResourcesRaw(
@@ -334,24 +307,6 @@ export function patchAccount(
       }
       break;
     }
-    case "elrond": {
-      const elrondAcc = account as ElrondAccount;
-      const elrondUpdatedRaw = updatedRaw as ElrondAccountRaw;
-      if (
-        elrondUpdatedRaw.elrondResources &&
-        (!elrondAcc.elrondResources ||
-          !areSameResources(
-            toElrondResourcesRaw(elrondAcc.elrondResources),
-            elrondUpdatedRaw.elrondResources
-          ))
-      ) {
-        (next as ElrondAccount).elrondResources = fromElrondResourcesRaw(
-          elrondUpdatedRaw.elrondResources
-        );
-        changed = true;
-      }
-      break;
-    }
     case "crypto_org": {
       const cryptoOrgAcc = account as CryptoOrgAccount;
       const cryptoOrgUpdatedRaw = updatedRaw as CryptoOrgAccountRaw;
@@ -365,25 +320,6 @@ export function patchAccount(
       ) {
         (next as CryptoOrgAccount).cryptoOrgResources =
           fromCryptoOrgResourcesRaw(cryptoOrgUpdatedRaw.cryptoOrgResources);
-        changed = true;
-      }
-      break;
-    }
-    case "solana": {
-      const solanaAcc = account as SolanaAccount;
-      const solanaUpdatedRaw = updatedRaw as SolanaAccountRaw;
-
-      if (
-        solanaUpdatedRaw.solanaResources &&
-        (!solanaAcc.solanaResources ||
-          !areSameResources(
-            toSolanaResourcesRaw(solanaAcc.solanaResources),
-            solanaUpdatedRaw.solanaResources
-          ))
-      ) {
-        (next as SolanaAccount).solanaResources = fromSolanaResourcesRaw(
-          solanaUpdatedRaw.solanaResources
-        );
         changed = true;
       }
       break;

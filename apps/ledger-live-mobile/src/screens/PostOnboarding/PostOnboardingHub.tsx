@@ -30,7 +30,7 @@ import {
 import { PostOnboardingNavigatorParamList } from "../../components/RootNavigator/types/PostOnboardingNavigator";
 import DeviceSetupView from "../../components/DeviceSetupView";
 import { useCompleteActionCallback } from "../../logic/postOnboarding/useCompleteAction";
-import { TrackScreen } from "../../analytics";
+import { track, TrackScreen } from "../../analytics";
 import Link from "../../components/wrappedUi/Link";
 
 const AnimatedFlex = Animated.createAnimatedComponent(Flex);
@@ -67,11 +67,10 @@ const PostOnboardingHub = ({ navigation, route }: NavigationProps) => {
      * Complete claim NFT action if the route param completed is true
      * */
     () => {
-      route &&
-        route.params &&
-        route.params.completed &&
-        route.params.completed === "true" &&
+      if (route?.params?.completed === "true") {
+        track("deeplink", { action: "Claim NFT return to setup" });
         completePostOnboardingAction(PostOnboardingActionId.claimNft);
+      }
     },
     [clearLastActionCompleted, completePostOnboardingAction, route],
   );
