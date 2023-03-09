@@ -30,7 +30,7 @@ const config: PlaywrightTestConfig = {
     viewport: { width: 1024, height: 768 }, // FIXME: viewport doesn't seem to work
     ignoreHTTPSErrors: true,
     screenshot: process.env.CI ? "on" : "off",
-    video: process.env.CI ? "retain-on-failure" : "off", // FIXME: "off" doesn't seem to work
+    video: process.env.CI ? "on-first-retry" : "off", // FIXME: "off" doesn't seem to work
     trace: process.env.CI ? "retain-on-failure" : "off", // FIXME: traceview doesn't seem to work
   },
   forbidOnly: !!process.env.CI,
