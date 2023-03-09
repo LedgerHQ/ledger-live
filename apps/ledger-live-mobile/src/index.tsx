@@ -85,7 +85,6 @@ import StyleProvider from "./StyleProvider";
 import { performanceReportSubject } from "./components/PerformanceConsole/usePerformanceReportsLog";
 import { setOsTheme } from "./actions/settings";
 
-
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
 }
