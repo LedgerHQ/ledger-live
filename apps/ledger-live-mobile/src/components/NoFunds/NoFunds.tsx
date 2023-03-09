@@ -9,6 +9,7 @@ import { useProviders } from "../../screens/Swap/Form";
 import TransferButton from "../TransferButton";
 import { useAnalytics } from "../../analytics";
 import { NavigatorName, ScreenName } from "../../const";
+import { TrackScreen } from "../../analytics";
 
 export default function NoFunds({ route }) {
   const { t } = useTranslation();
@@ -49,41 +50,41 @@ export default function NoFunds({ route }) {
     [navigation],
   );
 
-  const onReceiveFunds = useCallback(
-    () =>
-      onNavigate(NavigatorName.ReceiveFunds, {
-        screen: ScreenName.ReceiveConfirmation,
-        params: {
-          accountId: account.id,
-          parentId: parentAccount?.id,
-          currency,
-        },
-      }),
-    [account.id, currency, onNavigate, parentAccount?.id],
-  );
+  const onReceiveFunds = useCallback(() => {
+    track("button_clicked", {
+      button: "receive",
+      page,
+    });
+    onNavigate(NavigatorName.ReceiveFunds, {
+      screen: ScreenName.ReceiveConfirmation,
+      params: {
+        accountId: account.id,
+        parentId: parentAccount?.id,
+        currency,
+      },
+    });
+  }, [account.id, currency, onNavigate, page, parentAccount?.id, track]);
 
   const onSwap = useCallback(() => {
     track("button_clicked", {
-      ...sharedSwapTracking,
       button: "swap",
+      page,
     });
     onNavigate(NavigatorName.Swap, {
       screen: ScreenName.SwapForm,
     });
-  }, [onNavigate, track]);
-  const onBuy = useCallback(
-    () =>
-      onNavigate(NavigatorName.Exchange, { screen: ScreenName.ExchangeBuy }),
-    [onNavigate],
-  );
+  }, [onNavigate, page, track]);
+
+  const onBuy = useCallback(() => {
+    track("button_clicked", {
+      button: "buy",
+      page,
+    });
+    onNavigate(NavigatorName.Exchange, { screen: ScreenName.ExchangeBuy });
+  }, [onNavigate, page, track]);
 
   const buttonsList: ButtonItem[] = [
     {
-      eventProperties: {
-        button: "transfer_buy",
-        page,
-        drawer: "trade",
-      },
       title: t("stake.noFundsModal.options.buy.title"),
       description: t("stake.noFundsModal.options.buy.body"),
       Icon: Icons.PlusMedium,
@@ -92,11 +93,6 @@ export default function NoFunds({ route }) {
       rightArrow: true,
     },
     {
-      eventProperties: {
-        button: "transfer_swap",
-        page,
-        drawer: "trade",
-      },
       title: t("stake.noFundsModal.options.swap.title"),
       description: t("stake.noFundsModal.options.swap.body"),
       tag: t("stake.noFundsModal.options.swap.label"),
@@ -106,11 +102,6 @@ export default function NoFunds({ route }) {
       rightArrow: true,
     },
     {
-      eventProperties: {
-        button: "transfer_receive",
-        page,
-        drawer: "trade",
-      },
       title: t("stake.noFundsModal.options.receive.title"),
       description: t("stake.noFundsModal.options.receive.body"),
       onPress: onReceiveFunds,
@@ -122,6 +113,7 @@ export default function NoFunds({ route }) {
 
   return (
     <Flex style={{ height: "100%" }} justifyContent="center">
+      <TrackScreen category="NoFundsFlow" name="ServiceModal" />
       <Flex mx={45}>
         <Flex alignItems="center">
           <CoinsIcon />
