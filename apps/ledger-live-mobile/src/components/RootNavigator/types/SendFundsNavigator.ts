@@ -149,6 +149,7 @@ export type SendFundsNavigatorStackParamList = {
     parentId?: string;
     transaction: BitcoinTransaction;
     status?: BitcoinTransactionStatus;
+    isEdit?: boolean;
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SignTransactionSummary
