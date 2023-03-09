@@ -44,6 +44,9 @@ export const StakeBanner: React.FC<{ account: CosmosAccount; parentAccount: Acco
     : t("account.banner.delegation.cta");
 
   const onClick = () => {
+    console.log("CLICKING BANNER");
+    console.log("REDELEGATE?: ", redelegate);
+
     if (redelegate) {
       dispatch(
         openModal("MODAL_COSMOS_REDELEGATE", {
