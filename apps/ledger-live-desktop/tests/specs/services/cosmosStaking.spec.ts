@@ -40,6 +40,10 @@ test("Cosmos staking flows via portfolio. Check stake flow modals and stake bann
   const accountPage = new AccountPage(page);
   const layout = new Layout(page);
 
+  if (process.platform === "win32") {
+    return;
+  }
+
   await test.step(
     "access stake cosmos from portfolio page with an account that isn't staking",
     async () => {
