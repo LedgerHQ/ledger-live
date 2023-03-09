@@ -510,7 +510,7 @@ export default function Tutorial({ useCase }: Props) {
           // TODO in next ticket
           console.log("next");
         },
-        previous: () => history.push(`${path}/${ScreenId.genuineCheck}`),
+        previous: () => history.push("/onboarding/select-use-case"),
       },
     ],
     [
