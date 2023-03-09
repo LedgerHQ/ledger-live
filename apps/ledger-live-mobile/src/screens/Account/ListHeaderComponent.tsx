@@ -3,7 +3,6 @@ import { LayoutChangeEvent } from "react-native";
 import {
   isAccountEmpty,
   getMainAccount,
-  groupAccountOperationsByDay,
 } from "@ledgerhq/live-common/account/index";
 import {
   AccountLike,
@@ -135,11 +134,11 @@ export function getListHeaderComponents({
 
   const stickyHeaderIndices = empty ? [] : [0];
 
-  const [latestOperation] = groupAccountOperationsByDay(account, {
-    count: 2,
-  }).sections[0].data.filter(
-    operation => operation.type === "OUT" || operation.type === "NFT_OUT",
-  );
+  const [editableOperation] = account.pendingOperations
+    .filter(pendingOperation => {
+      return isEditableOperation(account, pendingOperation);
+    })
+    .sort((a, b) => a.date.getTime() - b.date.getTime());
 
   return {
     listHeaderComponents: [
@@ -164,12 +163,12 @@ export function getListHeaderComponents({
           <AccountSubHeader />
         </Box>
       ),
-      latestOperation && isEditableOperation(account, latestOperation) ? (
+      editableOperation && isEditableOperation(account, editableOperation) ? (
         <SectionContainer px={6}>
           <SideImageCard
             title={t("editTransaction.stuckTx")}
             cta={t("editTransaction.speedupOrCancel")}
-            onPress={() => onEditTransactionPress(latestOperation)}
+            onPress={() => onEditTransactionPress(editableOperation)}
           />
         </SectionContainer>
       ) : null,

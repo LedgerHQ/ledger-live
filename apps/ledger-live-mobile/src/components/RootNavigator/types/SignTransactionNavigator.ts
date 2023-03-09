@@ -118,6 +118,7 @@ export type SignTransactionNavigatorParamList = {
     parentId?: string;
     transaction: BitcoinTransaction;
     status?: BitcoinTransactionStatus;
+    isEdit?: boolean;
     currentNavigation:
       | ScreenName.LendingWithdrawSummary
       | ScreenName.LendingSupplySummary
