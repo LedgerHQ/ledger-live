@@ -28,7 +28,7 @@ export const createTransaction = (): Transaction => ({
   body: {
     chainTag: TESTNET_CHAIN_TAG,
     // placeholder, if "empty" returns error on send modal open
-    blockRef: "0x00634a0c856ec1db",
+    blockRef: "0x0000000000000000",
     expiration: 18,
     clauses: [],
     gasPriceCoef: DEFAULT_GAS_COEFFICIENT,
@@ -72,8 +72,6 @@ export const prepareTransaction = async (
 
   const blockRef = await getBlockRef();
 
-  const gas = await estimateGas(transaction);
-
   let clauses: Array<ThorTransaction.Clause> = [];
   if (transaction.recipient && isValid(transaction.recipient)) {
     if (isTokenAccount) {
@@ -82,6 +80,12 @@ export const prepareTransaction = async (
       clauses = await calculateClausesVet(transaction, amount);
     }
   }
+
+  const gas = await estimateGas({
+    ...transaction,
+    body: { ...transaction.body, clauses: clauses },
+  });
+
   const body = { ...transaction.body, gas, blockRef, clauses };
 
   return { ...transaction, body, amount };

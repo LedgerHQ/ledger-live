@@ -48,6 +48,8 @@ export const generateNonce = (): string => {
  */
 export const estimateGas = async (t: Transaction): Promise<number> => {
   const intrinsicGas = ThorTransaction.intrinsicGas(t.body.clauses);
+  const constant = 5000;
+  const type_fee = 16000;
 
   const tx = new ThorTransaction(t.body);
 
@@ -67,7 +69,12 @@ export const estimateGas = async (t: Transaction): Promise<number> => {
 
   const execGas = response.reduce((sum, out) => sum + out.gasUsed, 0);
 
-  return intrinsicGas + (execGas ? execGas + GAS_COEFFICIENT : 0);
+  return (
+    constant +
+    type_fee +
+    intrinsicGas +
+    (execGas ? execGas + GAS_COEFFICIENT : 0)
+  );
 };
 
 const getBaseGasPrice = async (): Promise<string> => {
