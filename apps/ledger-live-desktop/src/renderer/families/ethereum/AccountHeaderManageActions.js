@@ -40,7 +40,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
         onClick,
         event: "button_clicked",
         eventProperties: {
-          button: "earn",
+          button: "stake",
         },
         icon: IconCoins,
         label: t("account.stake", { currency: account?.currency?.name }),

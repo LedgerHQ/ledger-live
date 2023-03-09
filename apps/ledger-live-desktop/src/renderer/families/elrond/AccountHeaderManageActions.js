@@ -64,7 +64,7 @@ const AccountHeaderActions = (props: Props) => {
       label: t("account.stake"),
       event: "button_clicked",
       eventProperties: {
-        button: "earn",
+        button: "stake",
       },
     },
   ];

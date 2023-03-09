@@ -61,7 +61,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
       tooltip: disabledLabel,
       event: "button_clicked",
       eventProperties: {
-        button: "earn",
+        button: "stake",
       },
     },
   ];
