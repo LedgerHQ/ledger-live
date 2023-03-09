@@ -29,6 +29,7 @@ export type CustomImageNavigatorParamList = {
   [ScreenName.CustomImagePreviewPreEdit]: BaseParams &
     (ImageUrl | ImageFileUri | GalleryNFT) & {
       isPictureFromGallery?: boolean;
+      isStaxEnabled?: boolean;
     };
   [ScreenName.CustomImagePreviewPostEdit]: BaseParams & {
     baseImageFile: ImageFileUri;

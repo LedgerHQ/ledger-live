@@ -143,11 +143,12 @@ const NftLinksPanel = ({
       screen: ScreenName.CustomImagePreviewPreEdit,
       params: {
         imageUrl: customImageUri,
+        isStaxEnabled: !!nftMetadata?.staxImage,
         device: null,
       },
     });
     onClose && onClose();
-  }, [navigation, onClose, customImageUri]);
+  }, [navigation, onClose, customImageUri, nftMetadata?.staxImage]);
 
   const content = useMemo(() => {
     const topSection = [

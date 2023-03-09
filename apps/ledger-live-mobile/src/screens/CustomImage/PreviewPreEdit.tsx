@@ -67,7 +67,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   const { t } = useTranslation();
   const [loadedImage, setLoadedImage] = useState<ImageFileUri | null>(null);
   const { params } = route;
-  const { isPictureFromGallery, device } = params;
+  const { isPictureFromGallery, device, isStaxEnabled } = params;
 
   const isNftMetadata = "nftMetadataParams" in params;
   const isImageUrl = "imageUrl" in params;
@@ -89,6 +89,8 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   const { status, metadata } = nftMetadata as NFTResource & {
     metadata: NFTMetadata;
   };
+
+  const disabledEdit = isStaxEnabled || metadata?.staxImage;
 
   const nftImageUri = extractImageUrlFromNftMetadata(metadata);
 
@@ -317,7 +319,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
             <Button
               type="main"
               size="large"
-              outline
+              outline={!disabledEdit}
               mb={4}
               disabled={previewLoading}
               pending={rawResultLoading}
@@ -332,7 +334,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
               size="large"
               mb={8}
               onPress={handleEditPicture}
-              disabled={previewLoading}
+              disabled={previewLoading || disabledEdit}
               event="button_clicked"
               eventProperties={analyticsEditEventProps}
             >
