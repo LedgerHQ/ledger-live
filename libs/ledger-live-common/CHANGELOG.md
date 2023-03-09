@@ -1,5 +1,13 @@
 # @ledgerhq/live-common
 
+## 29.1.0-nightly.3
+
+### Patch Changes
+
+- [#2681](https://github.com/LedgerHQ/ledger-live/pull/2681) [`0f99b5dc44`](https://github.com/LedgerHQ/ledger-live/commit/0f99b5dc44f0e4f44e4199e80d40fb1bc5a88853) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Remove cosmos coin specific logic outside of its family folder
+
+- [#2827](https://github.com/LedgerHQ/ledger-live/pull/2827) [`16cad60fb0`](https://github.com/LedgerHQ/ledger-live/commit/16cad60fb0d21752fae5e3db6d0100ef5396e0a4) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Solana - set max validators to 1000, set cache duration to 15min
+
 ## 29.1.0-nightly.2
 
 ### Patch Changes

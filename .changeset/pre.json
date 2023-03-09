@@ -84,7 +84,8 @@
     "@ledgerhq/coin-polkadot": "0.0.1",
     "@ledgerhq/swift-bridge-hw-app-eth": "1.0.0",
     "@ledgerhq/swift-bridge-hw-app-solana": "1.0.0",
-    "@ledgerhq/swift-bridge-hw-transport-ble": "1.0.0"
+    "@ledgerhq/swift-bridge-hw-transport-ble": "1.0.0",
+    "@ledgerhq/domain-service": "0.1.0"
   },
   "changesets": [
     "big-bats-battle",
@@ -103,11 +104,13 @@
     "forty-icons-fetch",
     "forty-toes-smell",
     "four-experts-explode",
+    "friendly-penguins-remember",
     "friendly-turkeys-dress",
     "fuzzy-lemons-cough",
     "gold-tomatoes-complain",
     "great-lies-guess",
     "great-pets-report",
+    "happy-birds-share",
     "itchy-months-cover",
     "lazy-elephants-chew",
     "lazy-paws-appear",
@@ -128,6 +131,7 @@
     "serious-dryers-pretend",
     "shiny-spies-sparkle",
     "silly-planes-accept",
+    "smooth-insects-look",
     "soft-cats-smell",
     "stale-turtles-remember",
     "strange-ways-punch",
@@ -143,6 +147,7 @@
     "twenty-peas-perform",
     "two-jars-study",
     "violet-pandas-grab",
-    "wicked-lemons-flow"
+    "wicked-lemons-flow",
+    "wise-zoos-invent"
   ]
 }
