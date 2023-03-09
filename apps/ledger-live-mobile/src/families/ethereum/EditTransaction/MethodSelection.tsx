@@ -61,6 +61,7 @@ export function MethodSelection({ navigation, route }: Props) {
           .plus(new BigNumber(transactionToEdit.maxFeePerGas.toNumber() * 1.3))
           .isLessThan(account.balance);
       }
+
       return false;
     } else {
       if (transactionToEdit.gasPrice) {

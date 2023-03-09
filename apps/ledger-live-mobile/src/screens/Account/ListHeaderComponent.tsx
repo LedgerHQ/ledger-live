@@ -1,10 +1,6 @@
 import React, { ReactNode } from "react";
 import { LayoutChangeEvent } from "react-native";
-import {
-  isAccountEmpty,
-  getMainAccount,
-  groupAccountOperationsByDay,
-} from "@ledgerhq/live-common/account/index";
+import { isAccountEmpty, getMainAccount } from "@ledgerhq/live-common/account/index";
 import {
   AccountLike,
   Account,
@@ -21,12 +17,7 @@ import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
-<<<<<<< HEAD
-import { LayoutChangeEvent } from "react-native";
 import { isEditableOperation } from "@ledgerhq/coin-framework/operation";
-=======
-import { isEditableOperation } from "@ledgerhq/live-common/operation";
->>>>>>> 80082c1cf2 (fix operationRow.test)
 
 import Header from "./Header";
 import AccountGraphCard from "../../components/AccountGraphCard";
@@ -123,15 +114,11 @@ export function getListHeaderComponents({
 
   const stickyHeaderIndices = empty ? [] : [0];
 
-  const [latestOperation] = groupAccountOperationsByDay(account, {
-    count: 2,
-<<<<<<< HEAD
-  }).sections[0].data.filter(operation => operation.type === "OUT" || operation.type === "NFT_OUT");
-=======
-  }).sections[0].data.filter(
-    operation => operation.type === "OUT" || operation.type === "NFT_OUT",
-  );
->>>>>>> 80082c1cf2 (fix operationRow.test)
+  const [editableOperation] = account.pendingOperations
+    .filter(pendingOperation => {
+      return isEditableOperation(account, pendingOperation);
+    })
+    .sort((a, b) => a.date.getTime() - b.date.getTime());
 
   return {
     listHeaderComponents: [
@@ -154,12 +141,12 @@ export function getListHeaderComponents({
           <AccountSubHeader />
         </Box>
       ),
-      latestOperation && isEditableOperation(account, latestOperation) ? (
+      editableOperation && isEditableOperation(account, editableOperation) ? (
         <SectionContainer px={6}>
           <SideImageCard
             title={t("editTransaction.stuckTx")}
             cta={t("editTransaction.speedupOrCancel")}
-            onPress={() => onEditTransactionPress(latestOperation)}
+            onPress={() => onEditTransactionPress(editableOperation)}
           />
         </SectionContainer>
       ) : null,

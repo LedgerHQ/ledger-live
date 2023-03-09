@@ -21,6 +21,7 @@ import { inferMaxFeeRange, inferMaxPriorityFeeRange } from "./utils";
 
 type Props = {
   account: AccountLike;
+  isEdit?: boolean;
   parentAccount: Account | null | undefined;
   transaction: Transaction;
   onValidateFees: (transaction: Partial<Transaction>) => () => void;
