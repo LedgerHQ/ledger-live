@@ -42,7 +42,7 @@ const ValidatorField = ({
   selectedPoolId,
 }: Props) => {
   const [search, setSearch] = useState("");
-  const [ledgerPools, setLedgerPools] = useState([]); // TODO: fetch ledger pools and set it here
+  const [ledgerPools, setLedgerPools] = useState([]);
   const unit = getAccountUnit(account);
   const [validators, setValidators] = useState([]);
   const [pageNo, setPageNo] = useState(1);

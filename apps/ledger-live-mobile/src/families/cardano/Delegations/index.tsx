@@ -10,6 +10,10 @@ import {
 import type { Account } from "@ledgerhq/live-common/types/index";
 import type { CardanoDelegation } from "@ledgerhq/live-common/families/cardano/types";
 import { LEDGER_POOL_IDS } from "@ledgerhq/live-common/families/cardano/utils";
+import {
+  getDefaultExplorerView,
+  getStakePoolExplorer,
+} from "@ledgerhq/live-common/explorers";
 
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import AccountSectionLabel from "../../../components/AccountSectionLabel";
@@ -100,13 +104,10 @@ function Delegations({ account }: Props) {
 
   const onOpenExplorer = useCallback(
     (address: string) => {
-      // const url = getAddressExplorer(
-      //   getDefaultExplorerView(account.currency),
-      //   address,
-      // );
-      // if (url) Linking.openURL(url);
-      const url = "https://preprod.cardanoscan.io/pool/" + address;
-      Linking.openURL(url);
+      const explorerView = getDefaultExplorerView(account.currency);
+      const srURL = explorerView && getStakePoolExplorer(explorerView, address);
+
+      if (srURL) Linking.openURL(srURL);
     },
     [account.currency],
   );
