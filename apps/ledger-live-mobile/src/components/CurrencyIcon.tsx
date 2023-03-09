@@ -1,4 +1,4 @@
-import React, { ComponentType, memo } from "react";
+import React, { ComponentType, useMemo, memo } from "react";
 import {
   getCryptoCurrencyIcon,
   getTokenCurrencyIcon,
@@ -9,10 +9,10 @@ import {
   Currency,
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Flex, Text, ensureContrast } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
 
-import { useCurrencyColor } from "../helpers/getCurrencyColor";
+import { getCurrencyColor, useCurrencyColor } from "../helpers/getCurrencyColor";
 
 const DefaultWrapper = styled(Flex)`
   height: ${p => p.size}px;
@@ -66,9 +66,13 @@ type Props = {
 
 const CurrencyIcon = ({ size, currency, circle, color, radius, bg }: Props) => {
   const { colors } = useTheme();
+  const bgColor = useMemo(
+    () => ensureContrast(getCurrencyColor(currency), colors.constant.white),
+    [colors, currency],
+  );
   const currencyColor = useCurrencyColor(currency, colors.background.main);
-
   const overrideColor = color || currencyColor;
+  const iconSize = size * 0.625;
 
   if (currency.type === "FiatCurrency") {
     return null;
@@ -78,15 +82,15 @@ const CurrencyIcon = ({ size, currency, circle, color, radius, bg }: Props) => {
 
   if (circle) {
     return (
-      <CircleWrapper size={size} color={bg || colors.background.main}>
-        <IconComponent size={size} color={overrideColor} />
+      <CircleWrapper size={size} color={bg || bgColor}>
+        <IconComponent size={iconSize} color={overrideColor} />
       </CircleWrapper>
     );
   }
 
   return (
     <DefaultWrapper size={size} borderRadius={radius} bg={bg}>
-      <IconComponent size={size} color={overrideColor} />
+      <IconComponent size={iconSize} color={overrideColor} />
     </DefaultWrapper>
   );
 };

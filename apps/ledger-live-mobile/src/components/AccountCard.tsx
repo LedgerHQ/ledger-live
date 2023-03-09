@@ -61,7 +61,7 @@ const AccountCard = ({
       >
         <CurrencyIcon
           currency={currency}
-          color={disabled ? colors.neutral.c40 : undefined}
+          color={colors.constant.white}
           size={32}
           circle
         />
