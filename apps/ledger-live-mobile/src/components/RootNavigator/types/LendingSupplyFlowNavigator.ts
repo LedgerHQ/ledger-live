@@ -125,6 +125,7 @@ export type LendingSupplyFlowNavigatorParamList = {
   [ScreenName.BitcoinEditCustomFees]: {
     accountId: string;
     parentId?: string;
+    isEdit?: boolean;
     transaction: BitcoinTransaction;
     status?: BitcoinTransactionStatus;
     currentNavigation:

@@ -399,7 +399,6 @@ const send: ModeModule = {
       }
     }
   },
-
   fillTransactionData(a, t, tx) {
     const subAccount = inferTokenAccount(a, t);
 
@@ -431,9 +430,13 @@ const send: ModeModule = {
       tx.to = t.recipient;
     }
   },
-
   fillDeviceTransactionConfig({ transaction, account, parentAccount, status }, fields) {
     const hasValidDomain = validateDomain(transaction.recipientDomain?.domain);
+
+    fields.push({
+      type: "amount",
+      label: "Amount",
+    });
 
     // For contract interactions
     if (transaction.data) {
@@ -476,7 +479,6 @@ const send: ModeModule = {
           },
     );
   },
-
   fillOptimisticOperation(a, t, op) {
     const subAccount = inferTokenAccount(a, t);
 
@@ -503,7 +505,6 @@ const send: ModeModule = {
       ];
     }
   },
-
   // This is resolution config is necessary for plugins like Lido and stuff cause they use the send mode
   getResolutionConfig: () => ({
     erc20: true,
