@@ -1,6 +1,5 @@
 // Handle lifecycle of cached data.
 
-import { VALID_DOMAINS } from ".";
 import { NamingServiceStatus } from "./types";
 
 // Expiration date depend on the resource's status.
@@ -17,10 +16,3 @@ export function isOutdated(resource: NamingServiceStatus): boolean {
   }
   return false;
 }
-
-export const isNameValid = (name: string | undefined): boolean => {
-  return VALID_DOMAINS.some((str) => name?.endsWith(str));
-};
-
-export const isEthereumAddress = (address: string): boolean =>
-  /^0x[0-9a-fA-F]{40}$/.test(address);

@@ -5,8 +5,8 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { getAddressByName, getNameByAddress } from "./api";
-import { isEthereumAddress, isNameValid, isOutdated } from "./logic";
+import { resolveAddress, resolveDomain } from "../resolvers";
+import { isOutdated } from "./logic";
 import {
   NamingServiceContextAPI,
   NamingServiceContextState,
@@ -14,8 +14,6 @@ import {
   NamingServiceStatus,
   UseNamingServiceResponse,
 } from "./types";
-
-export const VALID_DOMAINS = [".eth"];
 
 const NamingServiceContext = createContext<NamingServiceContextType>({
   cache: {},
@@ -30,7 +28,7 @@ export const useNamingServiceAPI = (
   const cachedData = name && cache[name];
 
   useEffect(() => {
-    if (!name || (!isNameValid(name) && !isEthereumAddress(name))) return;
+    if (!name) return;
     if (!cachedData || isOutdated(cachedData)) {
       loadNamingServiceAPI(name);
     }
@@ -38,10 +36,7 @@ export const useNamingServiceAPI = (
 
   if (cachedData) {
     return cachedData;
-  } else if (
-    (!isNameValid(name) && name && !isEthereumAddress(name)) ||
-    !name
-  ) {
+  } else if (!name) {
     return {
       status: "error",
       error: new Error("Invalid name format"),
@@ -65,7 +60,7 @@ export function useNamingService(name: string): UseNamingServiceResponse {
     ? {
         status: "loaded",
         address: loadedData.address,
-        name: loadedData.name,
+        domain: loadedData.domain,
         type: loadedData.type,
       }
     : ({ status } as {
@@ -98,24 +93,27 @@ export function NamingServiceProvider({
         }));
 
         try {
-          let result: string;
-          if (isNameValid(str)) {
-            result = await getAddressByName(str);
+          const resolvedDomain = await resolveDomain(str);
+          if (resolvedDomain.length > 0) {
             setState((oldState) => ({
               ...oldState,
               cache: {
                 ...oldState.cache,
                 [str]: {
                   status: "loaded",
-                  address: result,
-                  name: str,
+                  address: resolvedDomain[0].address,
+                  domain: str,
                   type: "forward",
                   updatedAt: Date.now(),
                 },
               },
             }));
-          } else {
-            result = await getNameByAddress(str);
+
+            return;
+          }
+
+          const resolvedAddress = await resolveAddress(str);
+          if (resolvedAddress.length > 0) {
             setState((oldState) => ({
               ...oldState,
               cache: {
@@ -123,13 +121,17 @@ export function NamingServiceProvider({
                 [str]: {
                   status: "loaded",
                   address: str,
-                  name: result,
+                  domain: resolvedAddress[0].domain,
                   type: "reverse",
                   updatedAt: Date.now(),
                 },
               },
             }));
+
+            return;
           }
+
+          throw new Error("no resolve for " + str);
         } catch (error) {
           setState((oldState) => ({
             ...oldState,

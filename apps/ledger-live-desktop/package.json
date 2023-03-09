@@ -50,6 +50,7 @@
   "dependencies": {
     "@electron/remote": "^2",
     "@ledgerhq/devices": "workspace:^",
+    "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/electron-updater": "^4.2.2",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",

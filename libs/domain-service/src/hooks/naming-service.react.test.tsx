@@ -2,25 +2,24 @@ import { NamingServiceProvider, useNamingService } from ".";
 import React from "react";
 import { renderHook } from "@testing-library/react-hooks";
 import { render, screen, waitFor } from "@testing-library/react";
-import { getAddressByName, getNameByAddress } from "./api";
-import { LedgerAPI4xx } from "@ledgerhq/errors";
+import { resolveAddress, resolveDomain } from "../resolvers";
 
-jest.mock("./api");
+jest.mock("../resolvers");
 
-const mockedGetAddressByName = jest.mocked(getAddressByName, true);
-const mockedGetNameByAddress = jest.mocked(getNameByAddress, true);
+const mockedResolvedDomain = jest.mocked(resolveDomain, true);
+const mockedResolvedAddress = jest.mocked(resolveAddress, true);
 
 const CustomTest = ({ str }: { str: string }) => {
   const data = useNamingService(str);
 
   let address: string | undefined;
-  let name: string | undefined;
+  let domain: string | undefined;
   let type: string | undefined;
 
   const status = data.status;
   if (data.status === "loaded") {
     address = data.address;
-    name = data.name;
+    domain = data.domain;
     type = data.type;
   }
 
@@ -28,7 +27,7 @@ const CustomTest = ({ str }: { str: string }) => {
     <div>
       <div data-testid="status">{status}</div>
       <div data-testid="address">{address}</div>
-      <div data-testid="name">{name}</div>
+      <div data-testid="domain">{domain}</div>
       <div data-testid="type">{type}</div>
     </div>
   );
@@ -36,8 +35,12 @@ const CustomTest = ({ str }: { str: string }) => {
 
 describe("useNamingService", () => {
   test("should be an error", async () => {
-    mockedGetAddressByName.mockImplementation(async () => {
-      throw new LedgerAPI4xx();
+    mockedResolvedDomain.mockImplementation(async () => {
+      return [];
+    });
+
+    mockedResolvedAddress.mockImplementation(async () => {
+      return [];
     });
 
     render(
@@ -51,7 +54,6 @@ describe("useNamingService", () => {
     });
 
     // this test should be first otherwise mock call will be more than 0
-    expect(mockedGetAddressByName).toBeCalledTimes(0);
     expect(screen.getByTestId("status").textContent).toBe("error");
   });
 
@@ -64,8 +66,8 @@ describe("useNamingService", () => {
   });
 
   test("success forward", async () => {
-    mockedGetAddressByName.mockImplementation(async () => {
-      return "forced mocked address";
+    mockedResolvedDomain.mockImplementation(async () => {
+      return [{ address: "forced mocked address", registry: "ens" }];
     });
 
     render(
@@ -83,15 +85,18 @@ describe("useNamingService", () => {
 
     expect(screen.getByTestId("status").textContent).toBe("loaded");
     expect(screen.getByTestId("type").textContent).toBe("forward");
-    expect(screen.getByTestId("name").textContent).toBe("vitalik.eth");
+    expect(screen.getByTestId("domain").textContent).toBe("vitalik.eth");
     expect(screen.getByTestId("address").textContent).toBe(
       "forced mocked address"
     );
   });
 
   test("success reverse", async () => {
-    mockedGetNameByAddress.mockImplementation(async () => {
-      return "vitalik.eth";
+    mockedResolvedDomain.mockImplementation(async () => {
+      return [];
+    });
+    mockedResolvedAddress.mockImplementation(async () => {
+      return [{ domain: "vitalik.eth", registry: "ens" }];
     });
 
     render(
@@ -100,18 +105,15 @@ describe("useNamingService", () => {
       </NamingServiceProvider>
     );
 
-    await waitFor(
-      () => {
-        expect(screen.getByTestId("status").textContent).toBe("loaded");
-      },
-      { timeout: 5000 }
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId("status").textContent).toBe("loaded");
+    });
 
     expect(screen.getByTestId("status").textContent).toBe("loaded");
-    expect(screen.getByTestId("type").textContent).toBe("reverse");
-    expect(screen.getByTestId("name").textContent).toBe("vitalik.eth");
+    expect(screen.getByTestId("domain").textContent).toBe("vitalik.eth");
     expect(screen.getByTestId("address").textContent).toBe(
       "0xd8da6bf26964af9d7eed9e03e53415d37aa96045"
     );
+    expect(screen.getByTestId("type").textContent).toBe("reverse");
   });
 });

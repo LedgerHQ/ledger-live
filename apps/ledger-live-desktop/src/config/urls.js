@@ -310,4 +310,5 @@ export const urls = {
   },
   ledgerByFigmentTC:
     "https://cdn.figment.io/legal/Current%20Ledger_Online%20Staking%20Delgation%20Services%20Agreement.pdf",
+  ens: "https://support.ledger.com/hc/articles/9710787581469?docs=true",
 };

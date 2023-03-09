@@ -3,17 +3,20 @@ import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/
 import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { TFunction } from "react-i18next";
 
-import { useNamingService } from "@ledgerhq/live-common/naming-service/index";
+import { useNamingService } from "@ledgerhq/domain-service";
 import {
   NamingServiceResponseLoaded,
   UseNamingServiceResponse,
-} from "@ledgerhq/live-common/naming-service/types";
+} from "@ledgerhq/domain-service/types";
 
 import RecipientFieldBase from "./RecipientFieldBase";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import Alert from "~/renderer/components/Alert";
 import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box";
+import { urls } from "~/config/urls";
+import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
+import { openURL } from "~/renderer/linking";
 
 type Props = {
   account: Account;
@@ -68,6 +71,7 @@ const RecipientField = ({
       );
     }
   }, [bridge, transaction, onChangeTransaction, namingServiceResponse, hasValidatedName, value]);
+  const onSupportLinkClick = useCallback(() => openURL(urls.ens), []);
 
   return (
     <>
@@ -82,18 +86,36 @@ const RecipientField = ({
       />
       {hasValidatedName(namingServiceResponse) && (
         <Alert mt={5}>
-          <Box>
-            <Text ff="Inter" fontSize={3}>
-              {t("send.steps.recipient.namingService.resolve")}
-            </Text>
-          </Box>
-          <Box>
-            <Text ff="Inter|SemiBold" fontSize={3}>
-              {namingServiceResponse.type === "reverse"
-                ? namingServiceResponse.name
-                : namingServiceResponse.address}
-            </Text>
-          </Box>
+          {namingServiceResponse.type === "forward" ? (
+            <>
+              <Box>
+                <Text ff="Inter" fontSize={3}>
+                  {t("send.steps.recipient.namingService.resolve")}
+                </Text>
+              </Box>
+              <Box>
+                <Text ff="Inter|SemiBold" fontSize={3}>
+                  {namingServiceResponse.address}
+                </Text>
+              </Box>
+            </>
+          ) : (
+            <>
+              <Box>
+                <Text ff="Inter" fontSize={3}>
+                  {t("send.steps.recipient.namingService.reverse", {
+                    domain: namingServiceResponse.name,
+                  })}
+                </Text>
+              </Box>
+              <Box>
+                <LinkWithExternalIcon
+                  label={t("send.steps.recipient.namingService.supportLink")}
+                  onClick={onSupportLinkClick}
+                />
+              </Box>
+            </>
+          )}
         </Alert>
       )}
     </>

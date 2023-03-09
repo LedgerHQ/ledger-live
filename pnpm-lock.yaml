@@ -163,6 +163,7 @@ importers:
       '@bunchtogether/vite-plugin-flow': ^1.0.2
       '@electron/remote': ^2
       '@ledgerhq/devices': workspace:^
+      '@ledgerhq/domain-service': workspace:^
       '@ledgerhq/electron-updater': ^4.2.2
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
@@ -343,6 +344,7 @@ importers:
     dependencies:
       '@electron/remote': 2.0.8_electron@23.1.0
       '@ledgerhq/devices': link:../../libs/ledgerjs/packages/devices
+      '@ledgerhq/domain-service': link:../../libs/domain-service
       '@ledgerhq/electron-updater': 4.2.2
       '@ledgerhq/errors': link:../../libs/ledgerjs/packages/errors
       '@ledgerhq/hw-transport': link:../../libs/ledgerjs/packages/hw-transport
@@ -1181,6 +1183,8 @@ importers:
       '@ledgerhq/live-common': workspace:^
       '@ledgerhq/logs': workspace:^
       '@ledgerhq/types-cryptoassets': workspace:^
+      '@testing-library/react': '12'
+      '@testing-library/react-hooks': ^4.0.1
       '@types/jest': ^28.1.3
       '@typescript-eslint/eslint-plugin': ^5.46.1
       '@typescript-eslint/parser': ^5.46.1
@@ -1194,6 +1198,9 @@ importers:
       jest: ^28.1.3
       jest-environment-jsdom: ^28.1.3
       prettier: ^2.8.1
+      react: ^17.0.2
+      react-dom: ^17.0.2
+      react-test-renderer: ^17.0.2
       ts-jest: ^28.0.8
       typescript: ^4.9.5
     dependencies:
@@ -1201,8 +1208,12 @@ importers:
       '@ledgerhq/errors': link:../ledgerjs/packages/errors
       '@ledgerhq/live-common': link:../ledger-live-common
       '@ledgerhq/logs': link:../ledgerjs/packages/logs
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
     devDependencies:
       '@ledgerhq/types-cryptoassets': link:../ledgerjs/packages/types-cryptoassets
+      '@testing-library/react': 12.1.5_sfoxds7t5ydpegc3knd667wn6m
+      '@testing-library/react-hooks': 4.0.1_kcibn7jsej4njf6b4whwczgodu
       '@types/jest': 28.1.8
       '@typescript-eslint/eslint-plugin': 5.50.0_26f3njul6gntellyj5og7p3oly
       '@typescript-eslint/parser': 5.50.0_jofidmxrjzhj7l6vknpw5ecvfe
@@ -1216,6 +1227,7 @@ importers:
       jest: 28.1.3
       jest-environment-jsdom: 28.1.3
       prettier: 2.8.3
+      react-test-renderer: 17.0.2_react@17.0.2
       ts-jest: 28.0.8_mgg23zyyvjoe75wbzvxzqqpmne
       typescript: 4.9.5
 
@@ -19449,23 +19461,6 @@ packages:
       pretty-format: 27.5.1
     dev: true
 
-  /@testing-library/jest-native/5.4.2_kh3ko6fgffdhfizf4bwrlce54e:
-    resolution: {integrity: sha512-Vo/CE1uvCVH1H8YPoOEXLXVsm+BjzSQTq35+wkri1fr0O5D+A2WZ+m3ni5g6f1OCzNKNGIAHmisBEWkDs1P1mw==}
-    peerDependencies:
-      react: '>=16.0.0'
-      react-native: '>=0.59'
-      react-test-renderer: '>=16.0.0'
-    dependencies:
-      chalk: 4.1.2
-      jest-diff: 29.4.1
-      jest-matcher-utils: 29.4.1
-      pretty-format: 29.4.1
-      react: 17.0.2
-      react-native: 0.68.5_qiqqwmyv63yhnuboofexv3s7x4
-      react-test-renderer: 17.0.2_react@17.0.2
-      redent: 3.0.0
-    dev: true
-
   /@testing-library/react-hooks/4.0.1_hx2b44akkvgcgvvtmk7ds2qk6q:
     resolution: {integrity: sha512-DufI8Q2GOM7W2yFEEfz85VNVNaHZL0tPZyBT6ytV7HK+1A4frL1ty+W5NBE0u0K3EFV/Pg5O28HGNEtp9D5EyA==}
     peerDependencies:
@@ -19480,6 +19475,22 @@ packages:
       '@types/react': 17.0.45
       '@types/react-test-renderer': 17.0.2_@types+react@17.0.45
       react: 17.0.2
+    dev: true
+
+  /@testing-library/react-hooks/4.0.1_kcibn7jsej4njf6b4whwczgodu:
+    resolution: {integrity: sha512-DufI8Q2GOM7W2yFEEfz85VNVNaHZL0tPZyBT6ytV7HK+1A4frL1ty+W5NBE0u0K3EFV/Pg5O28HGNEtp9D5EyA==}
+    peerDependencies:
+      '@types/react': '*'
+      react: '>=16.9.0'
+      react-test-renderer: '>=16.9.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+    dependencies:
+      '@babel/runtime': 7.20.13
+      '@types/react-test-renderer': 17.0.2
+      react: 17.0.2
+      react-test-renderer: 17.0.2_react@17.0.2
     dev: true
 
   /@testing-library/react-hooks/4.0.1_rmfdlrtvj5fy7r2bxuk4wb2wvq:
@@ -19509,6 +19520,22 @@ packages:
       '@babel/runtime': 7.20.13
       '@testing-library/dom': 8.17.1
       '@types/react-dom': 17.0.16_@types+react@17.0.45
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
+    transitivePeerDependencies:
+      - '@types/react'
+    dev: true
+
+  /@testing-library/react/12.1.5_sfoxds7t5ydpegc3knd667wn6m:
+    resolution: {integrity: sha512-OfTXCJUFgjd/digLUuPxa0+/3ZxsQmE7ub9kcbW/wi96Bh3o/p5vrETcBGfP17NWPGqeYYl5LTRpwyGoMC4ysg==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      react: <18.0.0
+      react-dom: <18.0.0
+    dependencies:
+      '@babel/runtime': 7.20.13
+      '@testing-library/dom': 8.17.1
+      '@types/react-dom': 17.0.16
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
     transitivePeerDependencies:
@@ -20172,6 +20199,15 @@ packages:
       '@types/react': 17.0.45
     dev: true
 
+  /@types/react-dom/17.0.16:
+    resolution: {integrity: sha512-DWcXf8EbMrO/gWnQU7Z88Ws/p16qxGpPyjTKTpmBSFKeE+HveVubqGO1CVK7FrwlWD5MuOcvh8gtd0/XO38NdQ==}
+    peerDependencies:
+      '@types/react': '*'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+    dev: true
+
   /@types/react-dom/17.0.16_@types+react@17.0.45:
     resolution: {integrity: sha512-DWcXf8EbMrO/gWnQU7Z88Ws/p16qxGpPyjTKTpmBSFKeE+HveVubqGO1CVK7FrwlWD5MuOcvh8gtd0/XO38NdQ==}
     peerDependencies:
@@ -20347,6 +20383,15 @@ packages:
       '@types/react':
         optional: true
     dev: false
+
+  /@types/react-test-renderer/17.0.2:
+    resolution: {integrity: sha512-+F1KONQTBHDBBhbHuT2GNydeMpPuviduXIVJRB7Y4nma4NR5DrTJfMMZ+jbhEHbpwL+Uqhs1WXh4KHiyrtYTPg==}
+    peerDependencies:
+      '@types/react': '*'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+    dev: true
 
   /@types/react-test-renderer/17.0.2_@types+react@17.0.45:
     resolution: {integrity: sha512-+F1KONQTBHDBBhbHuT2GNydeMpPuviduXIVJRB7Y4nma4NR5DrTJfMMZ+jbhEHbpwL+Uqhs1WXh4KHiyrtYTPg==}
@@ -39667,7 +39712,6 @@ packages:
       write-file-atomic: 2.4.3
     transitivePeerDependencies:
       - supports-color
-    dev: true
 
   /jsdom/11.12.0:
     resolution: {integrity: sha512-y8Px43oyiBM13Zc1z780FrfNLJCXTL40EWlty/LXUtcjykRBNgLlCjWXpfSPBl2iv+N7koQN+dvqszHZgT/Fjw==}
@@ -47703,7 +47747,6 @@ packages:
     transitivePeerDependencies:
       - '@babel/preset-env'
       - supports-color
-    dev: true
 
   /react-native-codegen/0.0.7:
     resolution: {integrity: sha512-dwNgR8zJ3ALr480QnAmpTiqvFo+rDtq6V5oCggKhYFlRjzOmVSFn3YD41u8ltvKS5G2nQ8gCs2vReFFnRGLYng==}
@@ -48389,7 +48432,6 @@ packages:
       - metro-transform-worker
       - supports-color
       - utf-8-validate
-    dev: true
 
   /react-native/0.68.5_qiqqwmyv63yhnuboofexv3s7x4:
     resolution: {integrity: sha512-t3kiQ/gumFV+0r/NRSIGtYxanjY4da0utFqHgkMcRPJVwXFWC0Fr8YiOeRGYO1dp8EfrSsOjtfWic/inqVYlbQ==}
@@ -51950,34 +51992,6 @@ packages:
       supports-color: 5.5.0
     dev: false
 
-  /styled-components/5.3.5_3a4gaprdt6lucrt3fqgxp3nfme:
-    resolution: {integrity: sha512-ndETJ9RKaaL6q41B69WudeqLzOpY1A/ET/glXkNZ2T7dPjPqpPCXXQjDFYZWwNnE5co0wX+gTCqx9mfxTmSIPg==}
-    engines: {node: '>=10'}
-    requiresBuild: true
-    peerDependencies:
-      react: '>= 16.8.0'
-      react-dom: '>= 16.8.0'
-      react-is: '>= 16.8.0'
-      react-native: '*'
-    peerDependenciesMeta:
-      react-native:
-        optional: true
-    dependencies:
-      '@babel/helper-module-imports': 7.18.6
-      '@babel/traverse': 7.20.13_supports-color@5.5.0
-      '@emotion/is-prop-valid': 1.1.2
-      '@emotion/stylis': 0.8.5
-      '@emotion/unitless': 0.7.5
-      babel-plugin-styled-components: 2.0.7_styled-components@5.3.5
-      css-to-react-native: 3.0.0
-      hoist-non-react-statics: 3.3.2
-      react: 17.0.2
-      react-is: 17.0.2
-      react-native: 0.68.5_qiqqwmyv63yhnuboofexv3s7x4
-      shallowequal: 1.1.0
-      supports-color: 5.5.0
-    dev: false
-
   /styled-components/5.3.5_fane7jikarojcev26y27hpbhu4:
     resolution: {integrity: sha512-ndETJ9RKaaL6q41B69WudeqLzOpY1A/ET/glXkNZ2T7dPjPqpPCXXQjDFYZWwNnE5co0wX+gTCqx9mfxTmSIPg==}
     engines: {node: '>=10'}
@@ -51986,10 +52000,6 @@ packages:
       react: '>= 16.8.0'
       react-dom: '>= 16.8.0'
       react-is: '>= 16.8.0'
-      react-native: '*'
-    peerDependenciesMeta:
-      react-native:
-        optional: true
     dependencies:
       '@babel/helper-module-imports': 7.16.7
       '@babel/traverse': 7.17.10_supports-color@5.5.0
@@ -52013,10 +52023,6 @@ packages:
       react: '>= 16.8.0'
       react-dom: '>= 16.8.0'
       react-is: '>= 16.8.0'
-      react-native: '*'
-    peerDependenciesMeta:
-      react-native:
-        optional: true
     dependencies:
       '@babel/helper-module-imports': 7.16.7
       '@babel/traverse': 7.17.10_supports-color@5.5.0
@@ -52030,32 +52036,6 @@ packages:
       react-dom: 17.0.2_react@17.0.2
       react-is: 17.0.2
       react-native: 0.68.5_7bkeunqngmazlu32h3v2zcqrja
-      shallowequal: 1.1.0
-      supports-color: 5.5.0
-    dev: true
-
-  /styled-components/5.3.8_ovpqj5wn7dv5iunpkty63trwiy:
-    resolution: {integrity: sha512-6jQrlvaJQ16uWVVO0rBfApaTPItkqaG32l3746enNZzpMDxMvzmHzj8rHUg39bvVtom0Y8o8ZzWuchEXKGjVsg==}
-    engines: {node: '>=10'}
-    peerDependencies:
-      react: '>= 16.8.0'
-      react-dom: '>= 16.8.0'
-      react-is: '>= 16.8.0'
-      react-native: '*'
-    peerDependenciesMeta:
-      react-native:
-        optional: true
-    dependencies:
-      '@babel/helper-module-imports': 7.18.6
-      '@babel/traverse': 7.20.13_supports-color@5.5.0
-      '@emotion/is-prop-valid': 1.1.2
-      '@emotion/stylis': 0.8.5
-      '@emotion/unitless': 0.7.5
-      babel-plugin-styled-components: 2.0.7_styled-components@5.3.8
-      css-to-react-native: 3.0.0
-      hoist-non-react-statics: 3.3.2
-      react: 17.0.2
-      react-is: 17.0.2
       shallowequal: 1.1.0
       supports-color: 5.5.0
     dev: false

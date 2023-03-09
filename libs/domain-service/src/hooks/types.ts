@@ -6,7 +6,7 @@ export type NamingServiceStatus =
   | {
       status: "loaded";
       address: string;
-      name: string;
+      domain: string;
       type: NamingServiceType;
       updatedAt: number;
     }
@@ -27,7 +27,7 @@ export type NamingServiceContextType = NamingServiceContextState &
 export type NamingServiceResponseLoaded = {
   status: "loaded";
   address: string;
-  name: string;
+  domain: string;
   type: NamingServiceType;
 };
 
