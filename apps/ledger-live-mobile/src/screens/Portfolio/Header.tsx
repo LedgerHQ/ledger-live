@@ -9,6 +9,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { StackNavigationProp } from "@react-navigation/stack";
 import Touchable from "../../components/Touchable";
 import { NavigatorName, ScreenName } from "../../const";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
