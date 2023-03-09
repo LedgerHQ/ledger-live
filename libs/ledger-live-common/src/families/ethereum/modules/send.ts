@@ -490,11 +490,19 @@ const send: ModeModule = {
     }
   },
 
+<<<<<<< HEAD
   fillDeviceTransactionConfig(
     { transaction, account, parentAccount, status },
     fields
   ) {
     const hasValidDomain = validateDomain(transaction.recipientDomain?.domain);
+=======
+  fillDeviceTransactionConfig({ transaction }, fields) {
+    fields.push({
+      type: "amount",
+      label: "Amount",
+    });
+>>>>>>> e1549d5078 (show edit tx banner only for oldest tx)
 
     // For contract interactions
     if (transaction.data) {
