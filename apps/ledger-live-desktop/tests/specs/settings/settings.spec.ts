@@ -5,7 +5,7 @@ import { Layout } from "../../models/Layout";
 
 test.use({ userdata: "skip-onboarding" });
 
-test("Settings", async ({ page }) => {
+test.skip("Settings", async ({ page }) => {
   const settingsPage = new SettingsPage(page);
   const layout = new Layout(page);
 

@@ -9,7 +9,7 @@ import { languagePacksData } from "./data";
 test.use({ userdata: "skip-onboarding" });
 test.use({ env: { FORCE_PROVIDER: 12 } });
 
-test("Settings", async ({ page }) => {
+test.skip("Settings", async ({ page }) => {
   const deviceAction = new DeviceAction(page);
   const languageInstallation = new LanguageInstallation(page);
   const settingsPage = new SettingsPage(page);

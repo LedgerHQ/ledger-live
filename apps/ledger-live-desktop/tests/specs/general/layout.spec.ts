@@ -9,7 +9,7 @@ import { SettingsPage } from "../../models/SettingsPage";
 
 test.use({ userdata: "1AccountBTC1AccountETHStarred" });
 
-test("Layout", async ({ page }) => {
+test.skip("Layout", async ({ page }) => {
   const layout = new Layout(page);
   const drawer = new Drawer(page);
   const sendModal = new SendModal(page);

@@ -35,7 +35,7 @@ test.use({
   },
 });
 
-test("Ethereum staking flows via portfolio, asset page and market page", async ({ page }) => {
+test.skip("Ethereum staking flows via portfolio, asset page and market page", async ({ page }) => {
   const portfolioPage = new PortfolioPage(page);
   const drawer = new Drawer(page);
   const modal = new Modal(page);

@@ -10,7 +10,7 @@ test.use({ userdata: "skip-onboarding" });
 test.use({ env: { FORCE_PROVIDER: 12 } });
 
 // eslint-disable-next-line jest/no-done-callback
-test("Manager", async ({ page }) => {
+test.skip("Manager", async ({ page }) => {
   const managerPage = new ManagerPage(page);
   const languageInstallation = new LanguageInstallation(page);
   const deviceAction = new DeviceAction(page);

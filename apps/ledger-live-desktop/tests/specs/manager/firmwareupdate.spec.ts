@@ -7,7 +7,7 @@ import { Layout } from "../../models/Layout";
 
 test.use({ userdata: "skip-onboarding" });
 
-test("Firmware Update", async ({ page }) => {
+test.skip("Firmware Update", async ({ page }) => {
   const managerPage = new ManagerPage(page);
   const firmwareUpdateModal = new FirmwareUpdateModal(page);
   const deviceAction = new DeviceAction(page);

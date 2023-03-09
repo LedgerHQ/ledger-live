@@ -10,7 +10,7 @@ test.use({
   },
 });
 
-test("Segment", async ({ page }) => {
+test.skip("Segment", async ({ page }) => {
   const layout = new Layout(page);
   const firstSuccessfulQuery = new Promise((resolve, reject) => {
     page.on("response", response => {

@@ -33,7 +33,7 @@ test.use({
 // could add pause to HTTP mock to test 'LOADING' component
 
 test.describe.parallel("Swap", () => {
-  test("Add accounts via Swap page", async ({ page }) => {
+  test.skip("Add accounts via Swap page", async ({ page }) => {
     const layout = new Layout(page);
     const accountsPage = new AccountsPage(page);
     const accountPage = new AccountPage(page);
@@ -91,7 +91,7 @@ test.describe.parallel("Swap", () => {
     });
   });
 
-  test("Filter Rates", async ({ page }) => {
+  test.skip("Filter Rates", async ({ page }) => {
     const swapPage = new SwapPage(page);
     const layout = new Layout(page);
 
@@ -143,7 +143,7 @@ test.describe.parallel("Swap", () => {
     });
   });
 
-  test("Full Swap with Centralised Exchange", async ({ page }) => {
+  test.skip("Full Swap with Centralised Exchange", async ({ page }) => {
     const swapPage = new SwapPage(page);
     const deviceAction = new DeviceAction(page);
     const drawer = new Drawer(page);

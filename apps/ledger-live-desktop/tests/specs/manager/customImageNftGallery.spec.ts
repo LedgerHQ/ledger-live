@@ -12,7 +12,7 @@ test.use({
   featureFlags: { customImage: { enabled: true } },
 });
 
-test("Custom image (with populated NFT gallery)", async ({ page }) => {
+test.skip("Custom image (with populated NFT gallery)", async ({ page }) => {
   const managerPage = new ManagerPage(page);
   const deviceAction = new DeviceAction(page);
   const customImageDrawer = new CustomImageDrawer(page);

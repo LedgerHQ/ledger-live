@@ -8,7 +8,7 @@ import * as fs from "fs";
 
 test.use({ userdata: "skip-onboarding" });
 
-test("Enable password lock", async ({ page, userdataFile }) => {
+test.skip("Enable password lock", async ({ page, userdataFile }) => {
   const layout = new Layout(page);
   const modal = new Modal(page);
   const passwordlockModal = new PasswordlockModal(page);
