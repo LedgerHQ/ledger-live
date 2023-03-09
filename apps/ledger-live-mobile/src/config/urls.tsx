@@ -210,7 +210,7 @@ export const urls = {
     howToSecure: "https://www.ledger.com/academy/how-to-secure-your-nfts",
   },
   lnxFirmwareUpdate:
-    "https://support.ledger.com/hc/en-us/articles/360013349800-Update-Ledger-Nano-X-firmware?docs=true",
+    "https://support.ledger.com/hc/en-us/articles/9305992683165?docs=true",
   recoverSources: {
     myLedger: "ledgerlive://myledger",
   },

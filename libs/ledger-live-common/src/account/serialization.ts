@@ -4,17 +4,9 @@ import {
   fromBitcoinResourcesRaw,
 } from "../families/bitcoin/serialization";
 import {
-  toCosmosResourcesRaw,
-  fromCosmosResourcesRaw,
-} from "../families/cosmos/serialization";
-import {
   toPolkadotResourcesRaw,
   fromPolkadotResourcesRaw,
 } from "@ledgerhq/coin-polkadot/serialization";
-import {
-  toElrondResourcesRaw,
-  fromElrondResourcesRaw,
-} from "../families/elrond/serialization";
 import {
   toCryptoOrgResourcesRaw,
   fromCryptoOrgResourcesRaw,
@@ -59,23 +51,19 @@ import {
   toOperationRaw as commonToOperationRaw,
   fromOperationRaw as commonFromOperationRaw,
 } from "@ledgerhq/coin-framework/account/serialization";
-import { CosmosAccount, CosmosAccountRaw } from "../families/cosmos/types";
 import { BitcoinAccount, BitcoinAccountRaw } from "../families/bitcoin/types";
 import {
   PolkadotAccount,
   PolkadotAccountRaw,
 } from "@ledgerhq/coin-polkadot/types";
-import { ElrondAccount, ElrondAccountRaw } from "../families/elrond/types";
 import {
   CryptoOrgAccount,
   CryptoOrgAccountRaw,
 } from "../families/crypto_org/types";
 import { getAccountBridge } from "../bridge";
 
-export { toCosmosResourcesRaw, fromCosmosResourcesRaw };
 export { toBitcoinResourcesRaw, fromBitcoinResourcesRaw };
 export { toPolkadotResourcesRaw, fromPolkadotResourcesRaw };
-export { toElrondResourcesRaw, fromElrondResourcesRaw };
 export { toCryptoOrgResourcesRaw, fromCryptoOrgResourcesRaw };
 export { toCardanoResourceRaw, fromCardanoResourceRaw };
 
@@ -468,14 +456,6 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
   }
 
   switch (res.currency.family) {
-    case "cosmos": {
-      const cosmosResourcesRaw = (rawAccount as CosmosAccountRaw)
-        .cosmosResources;
-      if (cosmosResourcesRaw)
-        (res as CosmosAccount).cosmosResources =
-          fromCosmosResourcesRaw(cosmosResourcesRaw);
-      break;
-    }
     case "bitcoin": {
       const bitcoinResourcesRaw = (rawAccount as BitcoinAccountRaw)
         .bitcoinResources;
@@ -490,14 +470,6 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
       if (polkadotResourcesRaw)
         (res as PolkadotAccount).polkadotResources =
           fromPolkadotResourcesRaw(polkadotResourcesRaw);
-      break;
-    }
-    case "elrond": {
-      const elrondResourcesRaw = (rawAccount as ElrondAccountRaw)
-        .elrondResources;
-      if (elrondResourcesRaw)
-        (res as ElrondAccount).elrondResources =
-          fromElrondResourcesRaw(elrondResourcesRaw);
       break;
     }
     case "crypto_org": {
@@ -595,15 +567,6 @@ export function toAccountRaw(account: Account): AccountRaw {
   }
 
   switch (account.currency.family) {
-    case "cosmos": {
-      const cosmosAccount = account as CosmosAccount;
-      if (cosmosAccount.cosmosResources) {
-        (res as CosmosAccountRaw).cosmosResources = toCosmosResourcesRaw(
-          cosmosAccount.cosmosResources
-        );
-      }
-      break;
-    }
     case "bitcoin": {
       const bitcoinAccount = account as BitcoinAccount;
       if (bitcoinAccount.bitcoinResources) {
@@ -618,15 +581,6 @@ export function toAccountRaw(account: Account): AccountRaw {
       if (polkadotAccount.polkadotResources) {
         (res as PolkadotAccountRaw).polkadotResources = toPolkadotResourcesRaw(
           polkadotAccount.polkadotResources
-        );
-      }
-      break;
-    }
-    case "elrond": {
-      const elrondAccount = account as ElrondAccount;
-      if (elrondAccount.elrondResources) {
-        (res as ElrondAccountRaw).elrondResources = toElrondResourcesRaw(
-          elrondAccount.elrondResources
         );
       }
       break;

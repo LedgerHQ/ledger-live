@@ -16,25 +16,19 @@ import {
   fromAccountRaw,
   fromOperationRaw,
   fromSubAccountRaw,
-  fromCosmosResourcesRaw,
   fromBitcoinResourcesRaw,
   fromPolkadotResourcesRaw,
-  fromElrondResourcesRaw,
   fromCryptoOrgResourcesRaw,
   fromNFTRaw,
-  toCosmosResourcesRaw,
   toPolkadotResourcesRaw,
-  toElrondResourcesRaw,
   toCryptoOrgResourcesRaw,
 } from "./account";
 import consoleWarnExpectToEqual from "./consoleWarnExpectToEqual";
 import { BitcoinAccount, BitcoinAccountRaw } from "./families/bitcoin/types";
-import { CosmosAccount, CosmosAccountRaw } from "./families/cosmos/types";
 import {
   CryptoOrgAccount,
   CryptoOrgAccountRaw,
 } from "./families/crypto_org/types";
-import { ElrondAccount, ElrondAccountRaw } from "./families/elrond/types";
 import { PolkadotAccount, PolkadotAccountRaw } from "./families/polkadot/types";
 import { getAccountBridge } from "./bridge";
 
@@ -287,24 +281,6 @@ export function patchAccount(
   //   OR
   //   - current account data is different
   switch (account.currency.family) {
-    case "cosmos": {
-      const cosmosAcc = account as CosmosAccount;
-      const cosmosUpdatedRaw = updatedRaw as CosmosAccountRaw;
-      if (
-        cosmosUpdatedRaw.cosmosResources &&
-        (!cosmosAcc.cosmosResources ||
-          !areSameResources(
-            toCosmosResourcesRaw(cosmosAcc.cosmosResources),
-            cosmosUpdatedRaw.cosmosResources
-          ))
-      ) {
-        (next as CosmosAccount).cosmosResources = fromCosmosResourcesRaw(
-          cosmosUpdatedRaw.cosmosResources
-        );
-        changed = true;
-      }
-      break;
-    }
     case "bitcoin": {
       if (shouldRefreshBitcoinResources(updatedRaw, account)) {
         (next as BitcoinAccount).bitcoinResources = fromBitcoinResourcesRaw(
@@ -326,24 +302,6 @@ export function patchAccount(
       ) {
         (next as PolkadotAccount).polkadotResources = fromPolkadotResourcesRaw(
           polkadotUpdatedRaw.polkadotResources
-        );
-        changed = true;
-      }
-      break;
-    }
-    case "elrond": {
-      const elrondAcc = account as ElrondAccount;
-      const elrondUpdatedRaw = updatedRaw as ElrondAccountRaw;
-      if (
-        elrondUpdatedRaw.elrondResources &&
-        (!elrondAcc.elrondResources ||
-          !areSameResources(
-            toElrondResourcesRaw(elrondAcc.elrondResources),
-            elrondUpdatedRaw.elrondResources
-          ))
-      ) {
-        (next as ElrondAccount).elrondResources = fromElrondResourcesRaw(
-          elrondUpdatedRaw.elrondResources
         );
         changed = true;
       }

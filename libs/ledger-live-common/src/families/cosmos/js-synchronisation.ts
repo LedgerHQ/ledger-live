@@ -8,9 +8,12 @@ import {
 import { encodeAccountId } from "../../account";
 import { CosmosAPI } from "./api/Cosmos";
 import { encodeOperationId } from "../../operation";
-import { CosmosDelegationInfo } from "./types";
+import { CosmosAccount, CosmosAccountRaw, CosmosDelegationInfo } from "./types";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import { getMainMessage } from "./helpers";
+import { isEqual } from "lodash";
+import { Account, AccountRaw } from "@ledgerhq/types-live";
+import { fromCosmosResourcesRaw, toCosmosResourcesRaw } from "./serialization";
 
 const getBlankOperation = (tx, fees, id) => ({
   id: "",
@@ -233,3 +236,27 @@ export const getAccountShape: GetAccountShape = async (info) => {
 
 export const scanAccounts = makeScanAccounts({ getAccountShape });
 export const sync = makeSync({ getAccountShape });
+
+export function applyReconciliation(
+  account: Account,
+  updatedRaw: AccountRaw,
+  next: Account
+): boolean {
+  let changed = false;
+  const cosmosAcc = account as CosmosAccount;
+  const cosmosUpdatedRaw = updatedRaw as CosmosAccountRaw;
+  if (
+    cosmosUpdatedRaw.cosmosResources &&
+    (!cosmosAcc.cosmosResources ||
+      !isEqual(
+        toCosmosResourcesRaw(cosmosAcc.cosmosResources),
+        cosmosUpdatedRaw.cosmosResources
+      ))
+  ) {
+    (next as CosmosAccount).cosmosResources = fromCosmosResourcesRaw(
+      cosmosUpdatedRaw.cosmosResources
+    );
+    changed = true;
+  }
+  return changed;
+}

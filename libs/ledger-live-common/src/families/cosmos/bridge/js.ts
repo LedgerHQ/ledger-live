@@ -16,6 +16,8 @@ import { CosmosAPI } from "../api/Cosmos";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { CosmosValidatorsManager } from "../CosmosValidatorsManager";
+import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
+import { applyReconciliation } from "../js-synchronisation";
 
 const receive = makeAccountBridgeReceive();
 
@@ -67,6 +69,9 @@ const accountBridge: AccountBridge<Transaction> = {
   sync,
   receive,
   signOperation,
+  assignFromAccountRaw,
+  assignToAccountRaw,
+  applyReconciliation,
   broadcast: async ({ account, signedOperation }) => {
     return new CosmosAPI(account.currency.id).broadcast({
       signedOperation,
