@@ -5923,6 +5923,7 @@
       "allNft": "All NFT",
       "addNew": "Add new"
     },
+    "designedForStax": "<0>Designed for</0><1>Ledger</1><2>Stax</2>",
     "viewer": {
       "properties": "Properties",
       "description": "Description",

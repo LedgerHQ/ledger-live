@@ -255,7 +255,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
         method: "POST",
         url: `${getEnv(
           "NFT_ETH_METADATA_SERVICE"
-        )}/v1/ethereum/${chainId}/contracts/tokens/infos`,
+        )}/v1/ethereum/${chainId}/contracts/tokens/infos?provider=ledger`,
         data: input,
       });
 

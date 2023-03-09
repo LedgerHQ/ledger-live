@@ -45,7 +45,7 @@ type Props = {
   srcFallback: string;
   resizeMode?: ResizeMode;
   colors: Theme["colors"];
-  transaprency?: boolean;
+  transparency?: boolean;
 };
 
 type State = {
@@ -55,7 +55,7 @@ type State = {
 
 class NftImage extends React.PureComponent<Props, State> {
   static defaultProps = {
-    transaprency: false,
+    transparency: false,
   };
 
   state = {
@@ -108,7 +108,7 @@ class NftImage extends React.PureComponent<Props, State> {
       status,
       colors,
       resizeMode = "cover",
-      transaprency,
+      transparency,
     } = this.props;
     const { error, usingFallback } = this.state;
 
@@ -144,7 +144,7 @@ class NftImage extends React.PureComponent<Props, State> {
               style={[
                 styles.image,
                 {
-                  backgroundColor: transaprency ? undefined : colors.background,
+                  backgroundColor: transparency ? undefined : colors.background,
                 },
               ]}
               resizeMode={resizeMode}

@@ -65,6 +65,7 @@ import { AccountsNavigatorParamList } from "../RootNavigator/types/AccountsNavig
 import InfoModal from "../../modals/Info";
 import { notAvailableModalInfo } from "../../screens/Nft/NftInfoNotAvailable";
 import { track, TrackScreen } from "../../analytics";
+import DesignedForStax from "./DesignedForStax";
 
 type Props = CompositeScreenProps<
   | StackNavigatorProps<NftNavigatorParamList, ScreenName.NftViewer>
@@ -303,13 +304,20 @@ const NftViewer = ({ route }: Props) => {
 
   const NftComponent = useCallback(
     () => (
-      <NftMedia
-        resizeMode="contain"
-        style={styles.image}
-        metadata={nftMetadata}
-        mediaFormat={"big"}
-        status={nftStatus}
-      />
+      <>
+        <NftMedia
+          resizeMode="contain"
+          style={styles.image}
+          metadata={nftMetadata}
+          mediaFormat={"big"}
+          status={nftStatus}
+        />
+        {!!nftMetadata?.staxImage && (
+          <Flex zIndex={1000} position="absolute" bottom={0} width="100%">
+            <DesignedForStax size="medium" />
+          </Flex>
+        )}
+      </>
     ),
     [nftMetadata, nftStatus],
   );
