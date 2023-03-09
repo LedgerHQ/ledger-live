@@ -1,17 +1,17 @@
 import {
-  Flex,
   Aside,
-  Logos,
   Button,
-  Icons,
-  ProgressBar,
   Drawer,
+  Flex,
+  Icons,
   InfiniteLoader,
+  Logos,
+  ProgressBar,
 } from "@ledgerhq/react-ui";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
-import { Switch, Route, useHistory, useLocation } from "react-router-dom";
+import { Route, Switch, useHistory, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
@@ -45,6 +45,7 @@ import { saveSettings } from "~/renderer/actions/settings";
 import { UseCase } from "../../index";
 
 import { track } from "~/renderer/analytics/segment";
+import { RecoverHowTo } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/RecoverHowTo";
 
 const FlowStepperContainer = styled(Flex)`
   width: 100%;
@@ -184,6 +185,7 @@ export enum ScreenId {
   quizFailure = "quiz-failure",
   pairMyNano = "pair-my-nano",
   genuineCheck = "genuine-check",
+  recoverHowTo = "recover-how-to",
 }
 
 type ScreenComponent =
@@ -204,6 +206,7 @@ type ScreenComponent =
   | typeof QuizFailure
   | typeof PairMyNano
   | typeof GenuineCheck
+  | typeof RecoverHowTo
   | typeof Screen;
 
 interface IScreen {
@@ -469,7 +472,7 @@ export default function Tutorial({ useCase }: Props) {
           history.push(`${path}/${ScreenId.genuineCheck}`);
         },
         previous: () => {
-          if (useCase === UseCase.connectDevice) {
+          if (useCase === UseCase.connectDevice || useCase === UseCase.recover) {
             history.push("/onboarding/select-use-case");
           } else if (useCase === UseCase.setupDevice) {
             history.push(`${path}/${ScreenId.hideRecoveryPhrase}`);
@@ -489,11 +492,25 @@ export default function Tutorial({ useCase }: Props) {
         },
         canContinue: !!connectedDevice,
         next: () => {
-          dispatch(saveSettings({ hasCompletedOnboarding: true }));
-          track("Onboarding - End");
-          setOnboardingDone(true);
+          if (useCase === UseCase.recover) {
+            history.push(`${path}/${ScreenId.recoverHowTo}`);
+          } else {
+            dispatch(saveSettings({ hasCompletedOnboarding: true }));
+            track("Onboarding - End");
+            setOnboardingDone(true);
+          }
         },
         previous: () => history.push(`${path}/${ScreenId.pairMyNano}`),
+      },
+      {
+        id: ScreenId.recoverHowTo,
+        component: RecoverHowTo,
+        useCases: [UseCase.recover],
+        next: () => {
+          // TODO in next ticket
+          console.log("next");
+        },
+        previous: () => history.push(`${path}/${ScreenId.genuineCheck}`),
       },
     ],
     [
@@ -692,7 +709,7 @@ export default function Tutorial({ useCase }: Props) {
         AsideFooter={CurrentScreen.Footer}
         continueDisabled={canContinue === false}
         ProgressBar={
-          useCase !== UseCase.connectDevice ? (
+          useCase !== UseCase.connectDevice && useCase !== UseCase.recover ? (
             <ProgressBar steps={progressSteps} currentIndex={screenStepIndex} />
           ) : (
             <></>
