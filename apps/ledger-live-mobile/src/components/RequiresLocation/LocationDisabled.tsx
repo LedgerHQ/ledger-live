@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 
 import NoLocationImage from "../../icons/NoLocationImage";
-import InformationalMessageDrawerContent from "../InformationalMessageDrawerContent";
+import GenericInformationalDrawerContent from "../GenericInformationalDrawerContent";
 import GenericInformationalView from "../GenericInformationalView";
 
 type Props = {
@@ -62,8 +62,8 @@ const LocationDisabled: React.FC<Props> = ({
 
   if (componentType === "drawer") {
     return (
-      <InformationalMessageDrawerContent
-        iconType="error"
+      <GenericInformationalDrawerContent
+        icon={<NoLocationImage viewBox="0 0 113 114" height="60" width="60" />}
         title={t("location.titleServiceRequired")}
         description={t("location.descriptionServiceRequired")}
         primaryButtonLabel={buttonLabel}

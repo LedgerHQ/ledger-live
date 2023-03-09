@@ -3,7 +3,7 @@ import { PermissionsAndroid, Linking } from "react-native";
 import { useTranslation } from "react-i18next";
 import { locationPermission } from "./hooks/useAndroidLocationPermission";
 import NoLocationImage from "../../icons/NoLocationImage";
-import InformationalMessageDrawerContent from "../InformationalMessageDrawerContent";
+import GenericInformationalDrawerContent from "../GenericInformationalDrawerContent";
 import GenericInformationalView from "../GenericInformationalView";
 
 type Props = {
@@ -63,8 +63,8 @@ const LocationPermissionDenied: React.FC<Props> = ({
 
   if (componentType === "drawer") {
     return (
-      <InformationalMessageDrawerContent
-        iconType="error"
+      <GenericInformationalDrawerContent
+        icon={<NoLocationImage viewBox="0 0 113 114" height="60" width="60" />}
         title={title}
         description={description}
         primaryButtonLabel={buttonLabel}

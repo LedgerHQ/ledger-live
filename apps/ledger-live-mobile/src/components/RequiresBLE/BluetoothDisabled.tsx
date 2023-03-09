@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Linking, Platform } from "react-native";
 import { Icon } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import InformationalMessageDrawerContent from "../InformationalMessageDrawerContent";
+import GenericInformationalDrawerContent from "../GenericInformationalDrawerContent";
 import GenericInformationalView from "../GenericInformationalView";
 
 export type Props = {
@@ -49,8 +49,8 @@ const BluetoothDisabled: React.FC<Props> = ({
 
   if (componentType === "drawer") {
     return (
-      <InformationalMessageDrawerContent
-        iconType="error"
+      <GenericInformationalDrawerContent
+        icon={<Icon name="Bluetooth" size={30} color="neutral.c100" />}
         title={t("bluetooth.required")}
         description={t("bluetooth.checkEnabled")}
         primaryButtonLabel={buttonLabel}
