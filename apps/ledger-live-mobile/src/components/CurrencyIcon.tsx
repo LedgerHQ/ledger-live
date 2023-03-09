@@ -12,16 +12,20 @@ import {
 import { Flex, Text, ensureContrast } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
 
-import { getCurrencyColor, useCurrencyColor } from "../helpers/getCurrencyColor";
+import {
+  getCurrencyColor,
+  useCurrencyColor,
+} from "../helpers/getCurrencyColor";
 
-const DefaultWrapper = styled(Flex)`
+const DefaultWrapper = styled(Flex)<{ disabled?: boolean }>`
   height: ${p => p.size}px;
   width: ${p => p.size}px;
   align-items: center;
   justify-content: center;
+  opacity: ${p => (p.disabled ? 0.6 : 1)};
 `;
 
-const CircleWrapper = styled(Flex)`
+const CircleWrapper = styled(Flex)<{ disabled?: boolean }>`
   border-radius: 9999px;
   border: 1px solid transparent;
   background: ${p => p.color};
@@ -29,6 +33,7 @@ const CircleWrapper = styled(Flex)`
   width: ${p => p.size}px;
   align-items: center;
   justify-content: center;
+  opacity: ${p => (p.disabled ? 0.6 : 1)};
 `;
 
 type IconProps = {
@@ -62,9 +67,18 @@ type Props = {
   radius?: number;
   bg?: string;
   circle?: boolean;
+  disabled?: boolean;
 };
 
-const CurrencyIcon = ({ size, currency, circle, color, radius, bg }: Props) => {
+const CurrencyIcon = ({
+  size,
+  currency,
+  circle,
+  color,
+  radius,
+  bg,
+  disabled,
+}: Props) => {
   const { colors } = useTheme();
   const bgColor = useMemo(
     () => ensureContrast(getCurrencyColor(currency), colors.constant.white),
@@ -82,14 +96,19 @@ const CurrencyIcon = ({ size, currency, circle, color, radius, bg }: Props) => {
 
   if (circle) {
     return (
-      <CircleWrapper size={size} color={bg || bgColor}>
+      <CircleWrapper size={size} color={bg || bgColor} disabled={disabled}>
         <IconComponent size={iconSize} color={overrideColor} />
       </CircleWrapper>
     );
   }
 
   return (
-    <DefaultWrapper size={size} borderRadius={radius} bg={bg}>
+    <DefaultWrapper
+      size={size}
+      borderRadius={radius}
+      bg={bg}
+      disabled={disabled}
+    >
       <IconComponent size={iconSize} color={overrideColor} />
     </DefaultWrapper>
   );
