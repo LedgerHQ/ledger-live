@@ -58,58 +58,69 @@ const RequiresBluetoothDrawer = ({
     }
   }, [bluetoothRequirementsState, onUserClose]);
 
-  let content = null;
 
-  switch (bluetoothRequirementsState) {
-    case "bluetooth_permissions_ungranted":
-      content = (
+  return (
+    <>
+      <QueuedDrawer
+        isRequestingToBeOpened={
+          isOpenedOnIssue &&
+          bluetoothRequirementsState === "bluetooth_permissions_ungranted"
+        }
+        onClose={onClose}
+        preventBackdropClick
+        onModalHide={onDrawerHide}
+      >
         <BluetoothPermissionsDenied
           componentType="drawer"
           onRetry={retryRequestOnIssue}
           neverAskAgain={cannotRetryRequest}
         />
-      );
-      break;
-    case "location_permission_ungranted":
-      content = (
+      </QueuedDrawer>
+
+      <QueuedDrawer
+        isRequestingToBeOpened={
+          isOpenedOnIssue &&
+          bluetoothRequirementsState === "location_permission_ungranted"
+        }
+        onClose={onClose}
+        preventBackdropClick
+        onModalHide={onDrawerHide}
+      >
         <LocationPermissionDenied
           componentType="drawer"
           onRetry={retryRequestOnIssue}
           neverAskAgain={cannotRetryRequest}
         />
-      );
-      break;
-    case "bluetooth_disabled":
-      content = (
+      </QueuedDrawer>
+
+      <QueuedDrawer
+        isRequestingToBeOpened={
+          isOpenedOnIssue && bluetoothRequirementsState === "bluetooth_disabled"
+        }
+        onClose={onClose}
+        preventBackdropClick
+        onModalHide={onDrawerHide}
+      >
         <BluetoothDisabled
           componentType="drawer"
           onRetry={retryRequestOnIssue}
         />
-      );
-      break;
-    case "location_disabled":
-      content = (
+      </QueuedDrawer>
+
+      <QueuedDrawer
+        isRequestingToBeOpened={
+          isOpenedOnIssue && bluetoothRequirementsState === "location_disabled"
+        }
+        onClose={onClose}
+        preventBackdropClick
+        onModalHide={onDrawerHide}
+      >
         <LocationDisabled
           componentType="drawer"
           onRetry={retryRequestOnIssue}
         />
-      );
-      break;
-    default:
-      break;
-  }
-
-  const isRequestingToBeOpened = isOpenedOnIssue && content !== null;
-
-  return (
-    <QueuedDrawer
-      isRequestingToBeOpened={isRequestingToBeOpened}
-      onClose={onClose}
-      preventBackdropClick
-      onModalHide={onDrawerHide}
-    >
-      {content}
-    </QueuedDrawer>
+      </QueuedDrawer>
+    </>
   );
 };
 
