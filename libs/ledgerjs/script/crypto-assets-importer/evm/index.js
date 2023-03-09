@@ -46,9 +46,12 @@ module.exports = async (inputFolder, outputFolder) => {
         .readFile(path.join(definitionPath, "base_common.json"))
         .then(JSON.parse);
 
+      const isTestNet = baseCommonJSON.networks.some((network) => network.type === 'test');
+
       return {
         name: chainName,
         chainId: baseCommonJSON.chain_id,
+        isTestNet,
         definitionPath,
         signaturePath,
       };
