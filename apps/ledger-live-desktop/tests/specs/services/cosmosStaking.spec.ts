@@ -40,7 +40,11 @@ test("Cosmos staking flows via portfolio. Check stake flow modals and stake bann
   const accountPage = new AccountPage(page);
   const layout = new Layout(page);
 
+  // I know... I'm sorry. Running this test on the standard GH actions Windows machines causes a race condition to happen when navigating between Cosmos delegation banners.
+  // When it's fixed we can turn these tests on for Windows
+  // https://ledgerhq.atlassian.net/browse/LIVE-6716
   if (process.platform === "win32") {
+    console.log("SKIPPING COSMOS STAKING TESTS FOR WINDOWS");
     return;
   }
 
