@@ -1,28 +1,18 @@
-import React, { memo, useCallback, useMemo } from "react";
+import React, { memo, useCallback } from "react";
 import { StyleSheet } from "react-native";
-import {
-  useNftCollectionMetadata,
-  useNftMetadata,
-} from "@ledgerhq/live-common/nft/index";
-
-import {
-  NFTCollectionMetadata,
-  NFTCollectionMetadataResponse,
-  NFTMetadata,
-  NFTMetadataResponse,
-  ProtoNFT,
-} from "@ledgerhq/types-live";
+import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
+import { NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { Box, Flex, Tag, Text } from "@ledgerhq/native-ui";
 
 import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import { useTranslation } from "react-i18next";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { useTheme } from "styled-components/native";
-import CurrencyIcon from "../CurrencyIcon";
-import NftMedia from "./NftMedia";
-import Skeleton from "../Skeleton";
-import { NftSelectionCheckbox } from "./NftSelectionCheckbox";
+import NftMedia from "../NftMedia";
+import Skeleton from "../../Skeleton";
+import { NftSelectionCheckbox } from "../NftSelectionCheckbox";
+import NftListItemFloorPriceRow from "./NftListItemFloorPriceRow";
 
 type Props = {
   nft: ProtoNFT;
@@ -44,8 +34,6 @@ const NftCardView = ({
   nft,
   status,
   metadata,
-  collectionStatus,
-  collectionMetadata,
   onPress,
   onLongPress,
   selectable = false,
@@ -54,20 +42,12 @@ const NftCardView = ({
   nft: ProtoNFT;
   status: NFTResource["status"];
   metadata: NFTMetadata;
-  collectionStatus: NFTResource["status"];
-  collectionMetadata?: NFTCollectionMetadata | null;
   onPress?: () => void;
   onLongPress?: () => void;
   selectable?: boolean;
   isSelected?: boolean;
 }) => {
-  const currency = useMemo(
-    () => getCryptoCurrencyById(nft.currencyId),
-    [nft.currencyId],
-  );
-
   const loading = status === "loading";
-  const collectionLoading = collectionStatus === "loading";
 
   return (
     <StyledTouchableOpacity
@@ -102,38 +82,9 @@ const NftCardView = ({
               {displayText(metadata?.nftName)}
             </Text>
           </Skeleton>
-
-          <Flex flexDirection="row" alignItems="center">
-            <CurrencyIcon currency={currency} size={20} />
-
-            <Skeleton
-              loading={
-                !collectionMetadata?.tokenName &&
-                !metadata?.tokenName &&
-                collectionLoading
-              }
-              height={13}
-              width={115}
-              borderRadius={4}
-              ml={2}
-              my={2}
-            >
-              <Text
-                variant="paragraph"
-                fontWeight="medium"
-                color="neutral.c80"
-                ellipsizeMode="tail"
-                numberOfLines={1}
-                ml={2}
-                flexGrow={1}
-                flexShrink={1}
-              >
-                {displayText(
-                  collectionMetadata?.tokenName || metadata?.tokenName,
-                )}
-              </Text>
-            </Skeleton>
-          </Flex>
+          <FeatureToggle feature="counterValue">
+            <NftListItemFloorPriceRow nft={nft} />
+          </FeatureToggle>
         </Flex>
       </Box>
     </StyledTouchableOpacity>
@@ -160,13 +111,6 @@ const NftListItem = ({
     metadata: NFTMetadata;
   };
 
-  const { status: collectionStatus, metadata: collectionMetadata } =
-    useNftCollectionMetadata(nft?.contract, nft?.currencyId) as {
-      status: NFTResource["status"];
-      metadata?: NFTMetadataResponse["result"] &
-        NFTCollectionMetadataResponse["result"];
-    };
-
   const handlePress = useCallback(() => {
     if (onPress) {
       onPress(nft, metadata);
@@ -178,8 +122,6 @@ const NftListItem = ({
       nft={nft}
       status={status}
       metadata={metadata}
-      collectionStatus={collectionStatus}
-      collectionMetadata={collectionMetadata}
       onPress={handlePress}
       onLongPress={onLongPress}
       selectable={selectable}
