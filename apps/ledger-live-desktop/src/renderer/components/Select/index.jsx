@@ -49,6 +49,7 @@ export type Props = {
   stylesMap: CreateStylesReturnType => CreateStylesReturnType,
   extraRenderers?: { [string]: (props: *) => React$ElementType }, // Allows overriding react-select components. See: https://react-select.com/components
   disabledTooltipText?: string,
+  selectDataTestId?: string,
 };
 
 const Row = styled.div`
@@ -100,6 +101,7 @@ class MenuList extends PureComponent<*, *> {
       maxHeight,
       getValue,
       selectProps: { noOptionsMessage, rowHeight },
+      selectDataTestId,
     } = this.props;
     const { children } = this.state;
     if (!children) return null;
@@ -131,6 +133,7 @@ class MenuList extends PureComponent<*, *> {
         itemCount={children.length}
         itemSize={rowHeight}
         initialScrollOffset={initialOffset}
+        data-test-id={selectDataTestId}
       >
         {({ index, style }) => (
           <Row className={"option"} style={style}>
@@ -204,6 +207,7 @@ class Select extends PureComponent<Props> {
       rowHeight = small ? 34 : 48,
       autoFocus,
       extraRenderers,
+      selectDataTestId,
       ...props
     } = this.props;
 
@@ -257,6 +261,7 @@ class Select extends PureComponent<Props> {
         menuPortalTarget={document.body}
         rowHeight={rowHeight}
         onChange={this.handleChange}
+        data-test-id={selectDataTestId}
       />
     );
   }

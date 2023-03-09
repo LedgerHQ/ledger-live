@@ -18,7 +18,7 @@ export class Drawer {
     this.currencyButton = (currency: string) =>
       page.locator(`data-test-id=currency-row-${currency.toLowerCase()}`);
     this.accountButton = (accountName: string, index: number) =>
-      page.locator(`data-test-id=account-row-${accountName.toLowerCase()}-${index}`);
+      page.locator(`data-test-id=account-row-${accountName.toLowerCase()}-${index}`).first();
   }
 
   async continue() {

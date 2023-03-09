@@ -8,7 +8,7 @@ test("Terms of Use", async ({ page }) => {
   const termsModal = new TermsModal(page);
 
   await test.step("check for popup", async () => {
-    await termsModal.isVisible();
+    await termsModal.termsModal.isVisible();
     await expect(termsModal.termsModal).toBeVisible();
   });
 });
