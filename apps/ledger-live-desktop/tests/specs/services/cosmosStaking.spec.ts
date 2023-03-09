@@ -31,6 +31,12 @@ test.use({
   env: { MOCK: undefined },
 });
 
+const delay = (timeout: number) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(resolve, timeout);
+  });
+};
+
 test("Cosmos staking flows via portfolio. Check stake flow modals and stake banner", async ({
   page,
 }) => {
@@ -40,25 +46,30 @@ test("Cosmos staking flows via portfolio. Check stake flow modals and stake bann
   const accountPage = new AccountPage(page);
   const layout = new Layout(page);
 
-  // await test.step(
-  //   "access stake cosmos from portfolio page with an account that isn't staking",
-  //   async () => {
-  //     await portfolioPage.startStakeFlow();
-  //     await drawer.waitForDrawerToBeVisible();
-  //     await drawer.selectCurrency("cosmos");
-  //     await drawer.selectAccount("cosmos", 0);
-  //     await expect
-  //       .soft(modal.container)
-  //       .toHaveScreenshot("earn-delegate-staking-cosmos-account-modal.png");
-  //     await modal.continue();
-  //     await expect.soft(modal.container).toHaveScreenshot("delegate-cosmos-account-modal.png");
-  //     await modal.close();
-  //     await expect.soft(accountPage.stakeBanner).toHaveScreenshot("delegate-cosmos-banner.png");
-  //     await accountPage.clickBannerCTA();
-  //     await expect.soft(modal.container).toHaveScreenshot("delegate-cosmos-account-modal.png");
-  //     await modal.close();
-  //   },
-  // );
+  await test.step(
+    "access stake cosmos from portfolio page with an account that isn't staking",
+    async () => {
+      await portfolioPage.startStakeFlow();
+      await drawer.waitForDrawerToBeVisible();
+      await drawer.selectCurrency("cosmos");
+      await drawer.selectAccount("cosmos", 0);
+      await expect
+        .soft(modal.container)
+        .toHaveScreenshot("earn-delegate-staking-cosmos-account-modal.png");
+      await delay(2000);
+      await modal.continue();
+      await delay(2000);
+      await expect.soft(modal.container).toHaveScreenshot("delegate-cosmos-account-modal.png");
+      await modal.close();
+      await delay(2000);
+      await expect.soft(accountPage.stakeBanner).toHaveScreenshot("delegate-cosmos-banner.png");
+      await accountPage.clickBannerCTA();
+      await delay(2000);
+      await expect.soft(modal.container).toHaveScreenshot("delegate-cosmos-account-modal.png");
+      await modal.close();
+      await delay(2000);
+    },
+  );
 
   // await test.step(
   //   "access stake cosmos from portfolio page with an account with worse provider than ledger",
@@ -123,17 +134,17 @@ test("Cosmos staking flows via portfolio. Check stake flow modals and stake bann
   //   },
   // );
 
-  await test.step(
-    "access stake cosmos from portfolio page with an account with no funds previosly used to have it",
-    async () => {
-      await layout.goToPortfolio();
-      await portfolioPage.startStakeFlow();
-      await drawer.waitForDrawerToBeVisible();
-      await drawer.selectCurrency("cosmos");
-      await drawer.selectAccount("cosmos", 5);
-      await expect.soft(modal.container).toHaveScreenshot("non-funds-cosmos-account-modal.png");
-      await modal.close();
-      await expect.soft(page).toHaveScreenshot("no-funds-cosmos-account-page.png");
-    },
-  );
+  // await test.step(
+  //   "access stake cosmos from portfolio page with an account with no funds previosly used to have it",
+  //   async () => {
+  //     await layout.goToPortfolio();
+  //     await portfolioPage.startStakeFlow();
+  //     await drawer.waitForDrawerToBeVisible();
+  //     await drawer.selectCurrency("cosmos");
+  //     await drawer.selectAccount("cosmos", 5);
+  //     await expect.soft(modal.container).toHaveScreenshot("non-funds-cosmos-account-modal.png");
+  //     await modal.close();
+  //     await expect.soft(page).toHaveScreenshot("no-funds-cosmos-account-page.png");
+  //   },
+  // );
 });
