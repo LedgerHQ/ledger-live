@@ -147,6 +147,7 @@ export type LendingEnableFlowParamsList = {
     parentId?: string | null;
     transaction: BitcoinTransaction;
     status?: BitcoinTransactionStatus;
+    isEdit?: boolean;
     currentNavigation:
       | ScreenName.LendingWithdrawSummary
       | ScreenName.LendingSupplySummary
