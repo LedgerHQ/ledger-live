@@ -100,6 +100,7 @@ export type SignTransactionNavigatorParamList = {
     parentId?: string;
     transaction: BitcoinTransaction;
     status?: BitcoinTransactionStatus;
+    isEdit?: boolean;
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SignTransactionSummary
