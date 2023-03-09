@@ -22,8 +22,8 @@ export const buildTransaction = async (
     disableRounding: true,
     showAllDigits: true,
   });
-  const parsedNearAmount =
-    nearAPI.utils.format.parseNearAmount(formattedAmount);
+  const parsedNearAmount: string =
+    nearAPI.utils.format.parseNearAmount(formattedAmount) || "0";
 
   const actions: Action[] = [];
 
