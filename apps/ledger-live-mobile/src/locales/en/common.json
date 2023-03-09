@@ -1162,7 +1162,7 @@
     "restore": {
       "title": "Install the same apps as on {{deviceName}}?",
       "titleNoDeviceName": "Install the same apps as on previous Ledger device?",
-      "installCTA": "Install now",
+      "installCTA": "Restore now",
       "skipCTA": "I'll do this later"
     },
     "landing": {
