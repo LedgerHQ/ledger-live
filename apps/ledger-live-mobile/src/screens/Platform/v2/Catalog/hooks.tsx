@@ -248,17 +248,36 @@ export function useRecentlyUsed(manifests: LiveAppManifest[]) {
 
   const append = useCallback(
     (manifest: LiveAppManifest) => {
-      setState(state =>
-        state.recentlyUsed.includes(manifest.id)
-          ? state
-          : {
-              ...state,
-              recentlyUsed:
-                state.recentlyUsed.length >= MAX_LENGTH
-                  ? [manifest.id, ...state.recentlyUsed.slice(0, -1)]
-                  : [manifest.id, ...state.recentlyUsed],
-            },
-      );
+      setState(state => {
+        const index = state.recentlyUsed.findIndex(id => id === manifest.id);
+
+        // Manifest already in first position
+        if (index === 0) {
+          return state;
+        }
+
+        // Manifest present we move it to the first position
+        // No need to check for MAX_LENGTH as we only move it
+        if (index !== -1) {
+          return {
+            ...state,
+            recentlyUsed: [
+              manifest.id,
+              ...state.recentlyUsed.slice(0, index),
+              ...state.recentlyUsed.slice(index + 1),
+            ],
+          };
+        }
+
+        // Manifest not preset we simply append and check for the length
+        return {
+          ...state,
+          recentlyUsed:
+            state.recentlyUsed.length >= MAX_LENGTH
+              ? [manifest.id, ...state.recentlyUsed.slice(0, -1)]
+              : [manifest.id, ...state.recentlyUsed],
+        };
+      });
     },
     [setState],
   );
