@@ -105,7 +105,7 @@ const DeviceLanguageStep = ({
     deviceLocalizationFeatureFlag?.enabled,
   ]);
 
-  const deviceName = getDeviceModel(device.modelId).productName;
+  const deviceModel = getDeviceModel(device.modelId);
 
   return (
     <Flex alignItems="center">
@@ -114,7 +114,7 @@ const DeviceLanguageStep = ({
           <Track event="Page Manager FwUpdateDeviceLanguagePrompt" onMount />
           <ChangeDeviceLanguagePrompt
             language={localeIdToDeviceLanguage[currentLocale] as Language}
-            deviceName={deviceName}
+            deviceModel={deviceModel}
             canSkip
             onSkip={() => {
               track("Page Manager FwUpdateDeviceLanguagePromptDismissed");

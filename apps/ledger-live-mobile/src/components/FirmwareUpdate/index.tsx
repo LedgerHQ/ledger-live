@@ -6,6 +6,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Button, Icons } from "@ledgerhq/native-ui";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import { BluetoothNotSupportedError } from "@ledgerhq/live-common/errors";
+import useLatestFirmware from "@ledgerhq/live-common/hooks/useLatestFirmware";
 import {
   DisconnectedDevice,
   DisconnectedDeviceDuringOperation,
@@ -18,7 +19,6 @@ import {
 } from "../../actions/appstate";
 import QueuedDrawer from "../QueuedDrawer";
 import GenericErrorView from "../GenericErrorView";
-import useLatestFirmware from "../../hooks/useLatestFirmware";
 import ConfirmRecoveryStep from "./ConfirmRecoveryStep";
 import FlashMcuStep from "./FlashMcuStep";
 import FirmwareUpdatedStep from "./FirmwareUpdatedStep";

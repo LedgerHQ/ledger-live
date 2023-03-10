@@ -519,6 +519,7 @@ export default function BaseNavigator() {
         options={{
           headerShown: false,
         }}
+        {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
         name={NavigatorName.NotificationCenter}

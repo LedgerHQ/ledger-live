@@ -11,9 +11,11 @@ export type GetVersionCmdEvent =
   | { type: "data"; firmwareInfo: FirmwareInfo }
   | UnresponsiveCmdEvent;
 
-export function getVersion(
-  transport: Transport
-): Observable<GetVersionCmdEvent> {
+export type GetVersionCmdArgs = { transport: Transport };
+
+export function getVersion({
+  transport,
+}: GetVersionCmdArgs): Observable<GetVersionCmdEvent> {
   return new Observable((subscriber) => {
     // TODO: defines actual value
     const oldTimeout = transport.unresponsiveTimeout;

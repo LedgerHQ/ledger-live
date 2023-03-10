@@ -14,10 +14,6 @@ import {
   transportExchangeBulkUnsubscribeChannel,
 } from "~/config/transportChannels";
 
-// ~~~ Local state that main thread keep
-
-const hydratedPerCurrency = {};
-
 // ~~~
 
 const LEDGER_CONFIG_DIRECTORY = app.getPath("userData");
@@ -71,10 +67,7 @@ const spawnCoreProcess = () => {
 internal.onStart(() => {
   internal.process.on("message", handleGlobalInternalMessage);
 
-  internal.send({
-    type: "init",
-    hydratedPerCurrency,
-  });
+  internal.send({ type: "init" });
 });
 
 app.on("window-all-closed", async () => {
@@ -176,13 +169,6 @@ ipcMain.on("setEnv", async (event, env) => {
       internal.send({ type: "setEnv", env });
     }
   }
-});
-
-ipcMain.on("hydrateCurrencyData", (event, { currencyId, serialized }) => {
-  if (hydratedPerCurrency[currencyId] === serialized) return;
-  hydratedPerCurrency[currencyId] = serialized;
-
-  internal.send({ type: "hydrateCurrencyData", serialized, currencyId });
 });
 
 // route internal process messages to renderer
