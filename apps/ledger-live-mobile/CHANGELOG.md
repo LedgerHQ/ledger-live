@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.17.0-nightly.3
+
+### Minor Changes
+
+- [#2812](https://github.com/LedgerHQ/ledger-live/pull/2812) [`177eb29f7f`](https://github.com/LedgerHQ/ledger-live/commit/177eb29f7f002f0bb0ab7e9788e4125e88853479) Thanks [@nparigi-ledger](https://github.com/nparigi-ledger)! - Add floor price to nft gallery item
+
+### Patch Changes
+
+- [#2885](https://github.com/LedgerHQ/ledger-live/pull/2885) [`da115c7416`](https://github.com/LedgerHQ/ledger-live/commit/da115c7416204177fab709623cd8f76f5c38c3f8) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - New deeplinks + refactoring of deeplinks wrapper in LLM
+
+- [#2887](https://github.com/LedgerHQ/ledger-live/pull/2887) [`347e29c32f`](https://github.com/LedgerHQ/ledger-live/commit/347e29c32f6328b3edd2fb218b3cece6ce0d58d5) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - LLM - Recover - Update support url (nanoX)
+
 ## 3.16.2-nightly.2
 
 ### Patch Changes

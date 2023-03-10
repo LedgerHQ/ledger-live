@@ -1,5 +1,15 @@
 # ledger-live-desktop
 
+## 2.55.0-nightly.6
+
+### Patch Changes
+
+- [#2902](https://github.com/LedgerHQ/ledger-live/pull/2902) [`9079d95b57`](https://github.com/LedgerHQ/ledger-live/commit/9079d95b576896d38dbbb7b741fd32bc2ac8c9a8) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Fixes the side drawer close button on MacOS
+
+- [#2885](https://github.com/LedgerHQ/ledger-live/pull/2885) [`da115c7416`](https://github.com/LedgerHQ/ledger-live/commit/da115c7416204177fab709623cd8f76f5c38c3f8) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - New deeplinks + refactoring of deeplinks wrapper in LLM
+
+- [#2883](https://github.com/LedgerHQ/ledger-live/pull/2883) [`d4413a6a05`](https://github.com/LedgerHQ/ledger-live/commit/d4413a6a05a6a941831bdfd07d6bd30691183cc9) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Adds analytic events to account screen
+
 ## 2.55.0-nightly.5
 
 ### Patch Changes
