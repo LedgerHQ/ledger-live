@@ -132,6 +132,19 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
           }),
         );
       },
+      "exchange.start": ({ exchangeType, onSuccess, onCancel }) => {
+        dispatch(
+          openModal("MODAL_PLATFORM_EXCHANGE_START", {
+            exchangeType,
+            onResult: (nonce: string) => {
+              onSuccess(nonce);
+            },
+            onCancel: (error: Error) => {
+              onCancel(error);
+            },
+          }),
+        );
+      },
       "exchange.complete": ({ exchangeParams, onSuccess, onCancel }) => {
         dispatch(
           openModal("MODAL_PLATFORM_EXCHANGE_COMPLETE", {
@@ -140,6 +153,7 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
               onSuccess(operation.hash);
             },
             onCancel: (error: Error) => {
+              console.error(error);
               onCancel(error);
             },
           }),

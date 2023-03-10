@@ -45,6 +45,7 @@ import { TrackingAPI } from "./tracking";
 import {
   bitcoinFamillyAccountGetXPubLogic,
   broadcastTransactionLogic,
+  startExchangeLogic,
   completeExchangeLogic,
   CompleteExchangeRequest,
   CompleteExchangeUiRequest,
@@ -175,6 +176,11 @@ export interface UiHook {
     onSuccess: (result: AppResult) => void;
     onCancel: () => void;
   }) => void;
+  "exchange.start": (params: {
+    exchangeType: "FUND" | "SELL" | "SWAP";
+    onSuccess: (nonce: string) => void;
+    onCancel: (error: Error) => void;
+  }) => void;
   "exchange.complete": (params: {
     exchangeParams: CompleteExchangeUiRequest;
     onSuccess: (hash: string) => void;
@@ -302,6 +308,7 @@ export function useWalletAPIServer({
     "transaction.sign": uiTxSign,
     "transaction.broadcast": uiTxBroadcast,
     "device.transport": uiDeviceTransport,
+    "exchange.start": uiExchangeStart,
     "exchange.complete": uiExchangeComplete,
   },
 }: {
@@ -657,6 +664,33 @@ export function useWalletAPIServer({
   }, [accounts, manifest, server, tracking]);
 
   useEffect(() => {
+    if (!uiExchangeStart) {
+      return;
+    }
+
+    server.setHandler("exchange.start", ({ exchangeType }) => {
+      return startExchangeLogic(
+        { manifest, accounts, tracking },
+        exchangeType,
+        (exchangeType: "SWAP" | "FUND" | "SELL") =>
+          new Promise((resolve, reject) =>
+            uiExchangeStart({
+              exchangeType,
+              onSuccess: (nonce: string) => {
+                tracking.startExchangeSuccess(manifest);
+                resolve(nonce);
+              },
+              onCancel: (error) => {
+                tracking.completeExchangeFail(manifest);
+                reject(error);
+              },
+            })
+          )
+      );
+    });
+  }, [uiExchangeStart, accounts, manifest, server, tracking]);
+
+  useEffect(() => {
     if (!uiExchangeComplete) {
       return;
     }
@@ -669,8 +703,8 @@ export function useWalletAPIServer({
         toAccountId:
           params.exchangeType === "SWAP" ? params.toAccount.id : undefined,
         transaction: params.transaction,
-        binaryPayload: params.binaryPayload.toString(),
-        signature: params.signature.toString(),
+        binaryPayload: params.binaryPayload.toString("hex"),
+        signature: params.signature.toString("hex"),
         feesStrategy: params.feeStrategy,
         exchangeType: ExchangeType[params.exchangeType],
       };

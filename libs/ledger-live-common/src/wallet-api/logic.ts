@@ -232,6 +232,16 @@ export const bitcoinFamillyAccountGetXPubLogic = (
   return Promise.resolve(account.xpub);
 };
 
+export function startExchangeLogic(
+  { manifest, tracking }: WalletAPIContext,
+  exchangeType: "SWAP" | "SELL" | "FUND",
+  uiNavigation: (exchangeType: "SWAP" | "SELL" | "FUND") => Promise<string>
+): Promise<string> {
+  tracking.startExchangeRequested(manifest);
+
+  return uiNavigation(exchangeType);
+}
+
 export type CompleteExchangeRequest = {
   provider: string;
   fromAccountId: string;
@@ -251,6 +261,7 @@ export type CompleteExchangeUiRequest = {
   feesStrategy: string;
   exchangeType: number;
 };
+
 export function completeExchangeLogic(
   { manifest, accounts, tracking }: WalletAPIContext,
   {
@@ -267,10 +278,24 @@ export function completeExchangeLogic(
 ): Promise<string> {
   tracking.completeExchangeRequested(manifest);
 
-  // Nb get a hold of the actual accounts, and parent accounts
-  const fromAccount = accounts.find((a) => a.id === fromAccountId);
+  const realFromAccountId = getAccountIdFromWalletAccountId(fromAccountId);
+  if (!realFromAccountId) {
+    return Promise.reject(new Error(`accountId ${realFromAccountId} unknown`));
+  }
 
-  const toAccount = accounts.find((a) => a.id === toAccountId);
+  // Nb get a hold of the actual accounts, and parent accounts
+  const fromAccount = accounts.find((a) => a.id === realFromAccountId);
+
+  let toAccount;
+
+  if (toAccountId) {
+    const realToAccountId = getAccountIdFromWalletAccountId(toAccountId);
+    if (!realToAccountId) {
+      return Promise.reject(new Error(`accountId ${realToAccountId} unknown`));
+    }
+
+    toAccount = accounts.find((a) => a.id === realToAccountId);
+  }
 
   if (!fromAccount) {
     return Promise.reject();

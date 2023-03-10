@@ -32,19 +32,20 @@ const Body = ({
   };
   onClose: () => void;
 }) => {
-  const { onResult, onCancel } = data;
-  const { fromAccount: account, fromParentAccount: parentAccount } = data.exchange;
+  const { onResult, onCancel, ...exchangeParams } = data;
+
+  console.log({ exchangeParams });
+
+  const { fromAccount: account, fromParentAccount: parentAccount } = exchangeParams.exchange;
   let tokenCurrency;
   if (account.type === "TokenAccount") tokenCurrency = account.token;
   const request = {
-    ...data,
+    ...exchangeParams,
     exchange: toExchangeRaw(data.exchange),
     transaction: toTransactionRaw(data.transaction),
   };
-  const broadcast = useBroadcast({
-    account,
-    parentAccount,
-  });
+
+  const broadcast = useBroadcast({ account, parentAccount });
   const [transaction, setTransaction] = useState();
   const [signedOperation, setSignedOperation] = useState();
   const [error, setError] = useState();
