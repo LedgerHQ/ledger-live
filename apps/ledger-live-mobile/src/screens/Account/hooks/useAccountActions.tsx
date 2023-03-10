@@ -50,7 +50,6 @@ export default function useAccountActions({
   // @ts-expect-error issue in typing
   const decorators = perFamilyAccountActions[mainAccount?.currency?.family];
 
-  const isEthereum = currency.id === "ethereum";
   const isWalletConnectSupported = ["ethereum", "bsc", "polygon"].includes(
     currency.id,
   );
@@ -217,27 +216,6 @@ export default function useAccountActions({
   ];
   const secondaryActions = [
     ...baseActions,
-    ...(isEthereum
-      ? [
-          {
-            id: "stake",
-            navigationParams: [
-              NavigatorName.Base,
-              {
-                screen: ScreenName.PlatformApp,
-                params: {
-                  platform: "lido",
-                  name: "Lido",
-                },
-              },
-            ],
-            label: t("account.stake"),
-            Icon: Icons.ClaimRewardsMedium,
-            event: "Stake Ethereum Account Button",
-            eventProperties: { currencyName: currency?.name },
-          },
-        ]
-      : []),
     ...(isWalletConnectSupported
       ? [
           {

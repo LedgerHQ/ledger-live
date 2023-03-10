@@ -11,6 +11,8 @@ import { Icons } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "../../const";
 import { ActionButtonEvent } from "../../components/FabActions";
 
+type NavigationParamsType = readonly [name: string, options: object];
+
 const getActions = ({
   account,
   parentAccount,
@@ -46,14 +48,13 @@ const getActions = ({
     effectiveTimeToUnfreeze < Date.now();
   const canVote = (tronPower || 0) > 0;
   const lastVotedDate = getLastVotedDate(account as TronAccount);
-  return [
-    {
-      id: "stake",
-      disabled: !canVote && !canFreeze,
-      navigationParams: [
-        canVote ? NavigatorName.TronVoteFlow : NavigatorName.Freeze,
+
+  const getNavigationParams = () => {
+    if (canVote) {
+      return [
+        NavigatorName.TronVoteFlow,
         {
-          screen: canVote ? ScreenName.VoteStarted : ScreenName.FreezeInfo,
+          screen: ScreenName.VoteStarted,
           params: {
             params: {
               accountId,
@@ -61,7 +62,40 @@ const getActions = ({
             },
           },
         },
-      ],
+      ];
+    }
+    if (canFreeze) {
+      return [
+        NavigatorName.Freeze,
+        {
+          screen: ScreenName.FreezeInfo,
+          params: {
+            params: {
+              accountId,
+              parentId: parentAccount?.id,
+            },
+          },
+        },
+      ];
+    }
+    return [
+      NavigatorName.NoFundsFlow,
+      {
+        screen: ScreenName.NoFunds,
+        params: {
+          account,
+          parentAccount,
+        },
+      },
+    ];
+  };
+
+  const navigationParams = getNavigationParams();
+
+  return [
+    {
+      id: "stake",
+      navigationParams: navigationParams as any as NavigationParamsType,
       label: <Trans i18nKey="account.stake" />,
       Icon: Icons.ClaimRewardsMedium,
     },
