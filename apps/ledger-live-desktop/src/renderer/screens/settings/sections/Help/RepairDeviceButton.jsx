@@ -5,7 +5,7 @@ import { compose } from "redux";
 import { withRouter } from "react-router-dom";
 import repairFirmwareUpdate from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
 import { withTranslation } from "react-i18next";
-import logger from "~/logger";
+import logger from "~/renderer/logger";
 import type { TFunction } from "react-i18next";
 import Button from "~/renderer/components/Button";
 import RepairModal from "~/renderer/modals/RepairModal";

@@ -16,7 +16,7 @@ import { decodeNftId } from "@ledgerhq/live-common/nft/nftId";
 import { orderByLastReceived } from "@ledgerhq/live-common/nft/helpers";
 import { getEnv } from "@ledgerhq/live-common/env";
 import isEqual from "lodash/isEqual";
-import logger from "./../../logger/logger";
+import logger from "../logger";
 import accountModel from "./../../helpers/accountModel";
 import type { State } from ".";
 

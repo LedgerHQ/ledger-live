@@ -11,7 +11,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
-import logger from "~/logger/logger";
+import logger from "~/renderer/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import Track from "~/renderer/analytics/Track";

@@ -108,7 +108,7 @@ const build = async argv => {
   const mainConfig = require("./config/main.esbuild");
   const workersPath = path.join(lldRoot, "src", "renderer", "webworkers", "workers");
 
-  await Promise.all([
+  const results = await Promise.all([
     esbuild.build({
       ...mainConfig,
       define: buildMainEnv("production", argv),
@@ -147,6 +147,26 @@ const build = async argv => {
       }),
     ),
   ]);
+
+  // Ensure that we keep our bundle size under thresholds
+  if (results[0].metafile.outputs[".webpack/main.bundle.js"].bytes > 5 * 1024 * 1024) {
+    throw new Error(
+      "main bundle must be kept under 5 MB. This indicates a possible regression of importing too much modules. Most of Ledger Live must be run on renderer side.",
+    );
+  }
+
+  // Enable this code if you want to analyze bundle sizes
+  /*
+  fs.writeFileSync("metafile.main.json", JSON.stringify(results[0].metafile), "utf-8");
+  fs.writeFileSync("metafile.preloader.json", JSON.stringify(results[1].metafile), "utf-8");
+  fs.writeFileSync("metafile.webviewPreloader.json", JSON.stringify(results[2].metafile), "utf-8");
+  fs.writeFileSync(
+    "metafile.swapConnectWebviewPreloader.json",
+    JSON.stringify(results[3].metafile),
+    "utf-8",
+  );
+  fs.writeFileSync("metafile.renderer.json", JSON.stringify(results[4].metafile), "utf-8");
+  */
 };
 
 yargs

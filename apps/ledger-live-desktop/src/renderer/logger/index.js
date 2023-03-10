@@ -1,24 +1,41 @@
 // @flow
 import winston from "winston";
 import Transport from "winston-transport";
-import pname from "./pname";
 import { summarize } from "./summarize";
+import { captureException, captureBreadcrumb } from "~/sentry/renderer";
 
 const { format } = winston;
 const { combine, json, timestamp } = format;
 
-const pinfo = format(info => {
-  if (!info.pname) {
-    info.pname = pname;
-  }
-  return info;
-});
+// A transport that keep logs in memory for later use on Ctrl+E
+class MemoryTransport extends Transport {
+  _logs = [];
+  capacity = 3000;
 
-const transports = [];
+  getMemoryLogs() {
+    return this._logs.slice(0).reverse();
+  }
+
+  log(info, callback) {
+    setImmediate(() => {
+      this.emit("logged", info);
+    });
+
+    this._logs.push(info);
+    const l = this._logs.length;
+    if (l > this.capacity) this._logs.splice(0, l - this.capacity);
+
+    callback();
+  }
+}
+
+export const memoryLogger = new MemoryTransport();
+
+const transports = [memoryLogger];
 
 const logger = winston.createLogger({
   level: "debug",
-  format: combine(pinfo(), timestamp(), json()),
+  format: combine(timestamp(), json()),
   transports,
 });
 
@@ -70,36 +87,6 @@ export function enableDebugLogger() {
   }
   add(consoleT);
 }
-
-const captureBreadcrumb = (breadcrumb: any) => {
-  if (!process.env.STORYBOOK_ENV) {
-    try {
-      if (typeof window !== "undefined") {
-        import("~/sentry/renderer").then(sentry => sentry.captureBreadcrumb(breadcrumb));
-      } else if (process.title === "Ledger Live Internal") {
-        require("~/sentry/internal").captureBreadcrumb(breadcrumb);
-      } else {
-        require("~/sentry/main").captureBreadcrumb(breadcrumb);
-      }
-    } catch (e) {
-      logger.log("warn", "Can't captureBreadcrumb", e);
-    }
-  }
-};
-
-const captureException = (error: Error) => {
-  try {
-    if (typeof window !== "undefined") {
-      import("~/sentry/renderer").then(sentry => sentry.captureException(error));
-    } else if (process.title === "Ledger Live Internal") {
-      require("~/sentry/internal").captureException(error);
-    } else {
-      require("~/sentry/main").captureException(error);
-    }
-  } catch (e) {
-    logger.log("warn", "Can't send to sentry", error, e);
-  }
-};
 
 const logCmds = !process.env.NO_DEBUG_COMMANDS;
 const logDb = !process.env.NO_DEBUG_DB;

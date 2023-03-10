@@ -6,7 +6,7 @@ import repairFw from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
 import { useDispatch } from "react-redux";
 import Button from "~/renderer/components/Button";
 import RepairModal from "~/renderer/modals/RepairModal";
-import logger from "~/logger";
+import logger from "~/renderer/logger";
 import { useHistory } from "react-router-dom";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { openModal, closeModal } from "~/renderer/actions/modals";

@@ -18,7 +18,7 @@ import Stepper from "~/renderer/components/Stepper";
 import StepInfo, { StepInfoFooter } from "./steps/StepInfo";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
-import logger from "~/logger/logger";
+import logger from "~/renderer/logger";
 import type { StepId, StepProps, St, Mode } from "./types";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import type { TFunction } from "react-i18next";

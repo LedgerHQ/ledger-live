@@ -1,12 +1,9 @@
 // @flow
-import { getSentryIfAvailable } from "../sentry/internal";
+import { captureException, getSentryIfAvailable } from "../sentry/internal";
 import { unsubscribeSetup } from "./live-common-setup";
 import { setEnvUnsafe } from "@ledgerhq/live-common/env";
 import { serializeError } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
-import logger from "~/logger";
-import LoggerTransport from "~/logger/logger-transport-internal";
-
 import sentry, { setTags } from "~/sentry/internal";
 import {
   transportClose,
@@ -28,12 +25,10 @@ import {
 } from "~/config/transportChannels";
 
 process.on("exit", () => {
-  logger.debug("exiting process, unsubscribing all...");
+  console.debug("exiting process, unsubscribing all...");
   unsubscribeSetup();
   getSentryIfAvailable()?.close(2000);
 });
-
-logger.add(new LoggerTransport());
 
 process.title = "Ledger Live Internal";
 
@@ -46,7 +41,8 @@ process.on("uncaughtException", err => {
   // FIXME we should ideally do this:
   // process.exit(1)
   // but for now, until we kill all exceptions:
-  logger.critical(err, "uncaughtException");
+  console.error(err, "uncaughtException");
+  captureException(err);
 });
 
 // eslint-disable-next-line no-unused-vars
@@ -96,11 +92,7 @@ process.on("message", m => {
     }
 
     case "internalCrashTest": {
-      logger.critical(new Error("CrashTestInternal"));
-      break;
-    }
-
-    case "init": {
+      captureException(new Error("CrashTestInternal"));
       break;
     }
 

@@ -1,14 +1,22 @@
 // @flow
-import "../live-common-setup";
+import "~/live-common-setup-base";
+import "~/live-common-set-supported-currencies";
 import { Subject } from "rxjs";
 import { first } from "rxjs/operators";
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
 import { setSecp256k1Instance } from "@ledgerhq/live-common/families/bitcoin/wallet-btc/crypto/secp256k1";
 import { retry } from "@ledgerhq/live-common/promise";
+import { listen as listenLogs } from "@ledgerhq/logs";
 import { getUserId } from "~/helpers/user";
 import { setEnvOnAllThreads } from "./../helpers/env";
 import { IPCTransport } from "./IPCTransport";
 import { initWorker } from "./webworkers";
+import logger from "./logger";
+
+listenLogs(({ id, date, ...log }) => {
+  if (log.type === "hid-frame") return;
+  logger.debug(log);
+});
 
 setEnvOnAllThreads("USER_ID", getUserId());
 

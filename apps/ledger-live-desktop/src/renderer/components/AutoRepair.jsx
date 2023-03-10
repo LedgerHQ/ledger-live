@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import noop from "lodash/noop";
 import repair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
 import { Trans } from "react-i18next";
-import logger from "~/logger/logger";
+import logger from "~/renderer/logger";
 import RepairModal from "~/renderer/modals/RepairModal";
 
 type Props = {
