@@ -1,1 +1,6 @@
-[]
+[
+  {
+    "tag_name": "2.54.0",
+    "body": "\n### 🚀 Features\n\n- Starting today, you can manage 100+ tokens on Cronos, Fantom, and Moonbeam networks with Ledger Live. \n- Ledger Live will no longer display zero-amount transactions in the transaction history. If you want to view zero-amount transactions nonetheless, navigate to Settings -> Accounts -> Zero-amount transactions and flip the toggle switch to the on position.\n\n### 🐛 Fixes\n\n- We squished the bug that was triggering an error message instead of undelegating ATOM. \n"
+  }
+]
