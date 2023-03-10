@@ -41,7 +41,7 @@ const getActions = ({
   return [
     {
       id: "stake",
-      navigationParams: navigationParams as any as NavigationParamsType,
+      navigationParams: navigationParams as unknown as NavigationParamsType,
       label: <Trans i18nKey="account.stake" />,
       Icon: Icons.ClaimRewardsMedium,
     },

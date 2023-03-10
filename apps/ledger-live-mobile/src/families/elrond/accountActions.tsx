@@ -81,7 +81,7 @@ const getActions = (props: getActionsType): getActionsReturnType => {
       id: "stake",
       label: <Trans i18nKey="account.stake" />,
       Icon: Icons.ClaimRewardsMedium,
-      navigationParams: navigationParams as any as NavigationParamsType,
+      navigationParams: navigationParams as unknown as NavigationParamsType,
     },
   ];
 };
