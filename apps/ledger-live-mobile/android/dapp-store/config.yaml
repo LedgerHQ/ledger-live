@@ -23,6 +23,8 @@ release:
   catalog:
     en:
       name: "Ledger Live: Crypto & NFT App"
+      short_description: >-
+        <<SHORT_APP_DESCRIPTION (max 50 characters)>>
       long_description: >-
         From the company that produced the world’s most secure crypto hardware
         device comes the world’s most accessible and complete Web3 wallet:
