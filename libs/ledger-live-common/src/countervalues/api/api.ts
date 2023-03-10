@@ -5,10 +5,23 @@ import chunk from "lodash/chunk";
 import { formatPerGranularity } from "../helpers";
 import type { CounterValuesAPI, TrackingPair } from "../types";
 import { promiseAllBatched } from "../../promise";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 
 const baseURL = () => getEnv("LEDGER_COUNTERVALUES_API");
 
 const LATEST_CHUNK = 50;
+
+const encodedId = (currency: Currency) => {
+  switch (currency.type) {
+    case "FiatCurrency": {
+      return currency.ticker;
+    }
+    case "CryptoCurrency":
+    case "TokenCurrency": {
+      return encodeURIComponent(currency.id);
+    }
+  }
+};
 
 const latest = async (pairs: TrackingPair[], direct?: boolean) => {
   const all = await promiseAllBatched(
@@ -17,15 +30,10 @@ const latest = async (pairs: TrackingPair[], direct?: boolean) => {
     async (partial) => {
       const { data } = await network({
         method: "GET",
-        url: `${baseURL()}/latest${
-          direct ? "/direct" : "/indirect"
+        url: `${baseURL()}/v2/latest/${
+          direct ? "direct" : "indirect"
         }?pairs=${partial
-          .map(
-            (p) =>
-              `${p.from.countervalueTicker ?? p.from.ticker}:${
-                p.to.countervalueTicker ?? p.to.ticker
-              }`
-          )
+          .map((p) => `${encodedId(p.from)}:${encodedId(p.to)}`)
           .join(",")}`,
       });
       return data;
@@ -49,12 +57,12 @@ const api: CounterValuesAPI = {
       query.method = "direct";
     }
 
-    const fromTicker = from.countervalueTicker ?? from.ticker;
-    const toTicker = to.countervalueTicker ?? to.ticker;
     const { data } = await network({
       method: "GET",
       url: URL.format({
-        pathname: `${baseURL()}/${granularity}/${fromTicker}/${toTicker}`,
+        pathname: `${baseURL()}/v2/${granularity}/${encodedId(
+          from
+        )}/${encodedId(to)}`,
         query,
       }),
     });
