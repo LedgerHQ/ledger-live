@@ -26,14 +26,15 @@ export const decoratePromiseErrors = <A>(promise: Promise<A>): Promise<A> =>
   promise.catch(rethrowError);
 
 export const bleErrorToHwTransportError = new Map([
-  [BleErrorCode.ScanStartFailed, HwTransportErrorType.BleScanStartFailed],
+  [BleErrorCode.ScanStartFailed, HwTransportErrorType.BluetoothScanStartFailed],
   [
     BleErrorCode.LocationServicesDisabled,
-    HwTransportErrorType.BleLocationServicesDisabled,
+    HwTransportErrorType.LocationServicesDisabled,
   ],
   [
+    // BluetoothUnauthorized actually represents a location service unauthorized error
     BleErrorCode.BluetoothUnauthorized,
-    HwTransportErrorType.BleBluetoothUnauthorized,
+    HwTransportErrorType.LocationServicesUnauthorized,
   ],
 ]);
 
