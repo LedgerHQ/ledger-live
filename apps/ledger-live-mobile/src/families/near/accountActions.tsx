@@ -38,6 +38,7 @@ const getActions = ({
       ];
   return [
     {
+      id: "stake",
       navigationParams,
       label: <Trans i18nKey="account.stake" />,
       Icon: Icons.ClaimRewardsMedium,

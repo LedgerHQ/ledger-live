@@ -40,6 +40,7 @@ const getActions = ({
       ];
   return [
     {
+      id: "stake",
       navigationParams,
       label: <Trans i18nKey="celo.manage.title" />,
       Icon: () => <CeloIcon isDisabled={false} />,
