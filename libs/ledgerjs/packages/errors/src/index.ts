@@ -245,10 +245,10 @@ export const DBNotReset = createCustomErrorClass("DBNotReset");
  * Type of a Transport error used to represent all equivalent errors coming from all possible implementation of Transport
  */
 export enum HwTransportErrorType {
-  Unknown = 0,
-  BleLocationServicesDisabled = 1,
-  BleBluetoothUnauthorized = 2,
-  BleScanStartFailed = 3,
+  Unknown = "Unknown",
+  LocationServicesDisabled = "LocationServicesDisabled",
+  LocationServicesUnauthorized = "LocationServicesUnauthorized",
+  BluetoothScanStartFailed = "BluetoothScanStartFailed",
 }
 
 /**
