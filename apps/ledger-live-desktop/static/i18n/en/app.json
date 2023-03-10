@@ -180,10 +180,11 @@
       "title": "Speed up or Cancel",
       "description": "Your transaction is ongoing. You can speed it up with a higher network fee, or cancel it.",
       "stuckDescription": "Your transaction is stuck. Speed it up with a higher network fee, or cancel it.",
-      "previousFeesInfo": "Your previous transaction had a network fee of",
+      "previousFeesInfo": "Current network fee = ",
+      "learnMore": "I want to learn more",
       "panel": {
         "title": "Speed up or Cancel",
-        "description": "Your most recent 'send' transaction is stuck. Speed up the transaction with a higher network fee, or cancel it."
+        "description": "One of your most recent 'send' transactions is stuck. Speed up the transaction with a higher network fee, or cancel it."
       },
       "speedUp": {
         "title": "Speed Up",
@@ -191,7 +192,7 @@
       },
       "cancel": {
         "title": "Cancel",
-        "description": "Sending 0 {{ticker}} to your own address with a higher fee."
+        "description": "Sending 0 {{ticker}} to your own address. To ensure cancellation, the network fee is 30% higher than the fee of the transaction meant to be cancelled."
       },
       "steps": {
         "method": {
@@ -209,6 +210,11 @@
         "confirmation": {
           "title": "Confirmation"
         }
+      },
+      "error": {
+        "notEnoughFundsToCancel": "Cancelling transaction is not available because you don't have enough funds on your account.",
+        "notEnoughFundsToSpeedup": "Speeding up transaction is not available because you don’t have enough funds in your account.",
+        "notlowestNonceToSpeedup": "Speed up feature is not available. Your transaction is pending because a previous transaction is stuck. You can wait for it to be confirmed, speed it up and cancel it."
       }
     }
   },

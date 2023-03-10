@@ -32,7 +32,7 @@ const EditOperationPanel: React$ComponentType<Props> = (props: Props) => {
     [dispatch],
   );
   return (
-    <Alert type="warning">
+    <Alert type="warning" style={{ marginBottom: "40px" }}>
       <Trans i18nKey="operation.edit.panel.description" />
       <div>
         <Link

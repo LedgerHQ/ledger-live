@@ -252,6 +252,7 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
   const dispatch = useDispatch();
   const handleOpenEditModal = useCallback(
     (account, parentAccount, transactionRaw, transactionSequenceNumber, isNftOperation) => {
+      setDrawer(undefined);
       dispatch(
         openModal("MODAL_EDIT_TRANSACTION", {
           account,

@@ -10,16 +10,16 @@ import Text from "~/renderer/components/Text";
 import type { StepProps } from "../types";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { Flex, Link } from "@ledgerhq/react-ui";
+import ExternalLink from "~/renderer/icons/ExternalLink";
+import { openURL } from "~/renderer/linking";
 
 const EditTypeWrapper = styled(Box)`
   border: ${p =>
     `1px solid ${
       p.selected ? p.theme.colors.palette.primary.main : p.theme.colors.palette.divider
     }`};
-  ${p => (p.selected ? "box-shadow: 0px 0px 0px 4px rgba(138, 128, 219, 0.3);" : "")}
   padding: 20px 16px;
-  width: 100%;
-  font-family: "Inter";
   border-radius: 4px;
   &:hover {
     cursor: "pointer";
@@ -28,15 +28,17 @@ const EditTypeWrapper = styled(Box)`
 const EditTypeHeader = styled(Box)`
   color: ${p =>
     p.selected ? p.theme.colors.palette.primary.main : p.theme.colors.palette.text.shade50};
+  margin-left: 10px;
 `;
 
-const Description = styled.div`
-  font-size: 10px;
-  margin-left: 20px;
+const Description = styled(Box)`
   color: ${p => (p.selected ? "white" : "gray")};
+  margin-top: 5px;
+  margin-left: 15px;
+  width: 400px;
 `;
 
-const StepMethod = ({ account, editType, setEditType }: StepProps) => {
+const StepMethod = ({ account, editType, setEditType, t }: StepProps) => {
   const isCancel = editType === "cancel";
   return (
     <Box flow={4}>
@@ -47,15 +49,21 @@ const StepMethod = ({ account, editType, setEditType }: StepProps) => {
           setEditType("speedup");
         }}
       >
-        <EditTypeHeader horizontal alignItems="center" selected={!isCancel}>
-          <CheckBox isChecked={!isCancel} />
-          <Text fontSize={12} ff="Inter|ExtraBold" uppercase ml={1}>
-            <Trans i18nKey={"operation.edit.speedUp.title"} />
-          </Text>
-        </EditTypeHeader>
-        <Description selected={editType === "speedup"}>
-          <Trans i18nKey={"operation.edit.speedUp.description"} />
-        </Description>
+        <Flex flexDirection="row" justifyContent="left" alignItems="center">
+          <CheckBox style={{marginLeft: "0px"}} isChecked={!isCancel} />
+          <Box>
+          <EditTypeHeader horizontal alignItems="center" selected={!isCancel}>
+            <Text fontSize={14} ff="Inter|SemiBold" uppercase ml={1}>
+              <Trans i18nKey={"operation.edit.speedUp.title"} />
+            </Text>
+          </EditTypeHeader>
+          <Description selected={editType === "speedup"}>
+            <Text ff="Inter|Medium" fontSize={12}>
+              <Trans i18nKey={"operation.edit.speedUp.description"} />
+            </Text>
+          </Description>
+          </Box>
+        </Flex>
       </EditTypeWrapper>
       <EditTypeWrapper
         key={1}
@@ -64,13 +72,16 @@ const StepMethod = ({ account, editType, setEditType }: StepProps) => {
           setEditType("cancel");
         }}
       >
+        <Flex flexDirection="row" justifyContent="left" alignItems="center">
+        <CheckBox isChecked={editType === "cancel"} />
+        <Box>
         <EditTypeHeader horizontal alignItems="center" selected={isCancel}>
-          <CheckBox isChecked={editType === "cancel"} />
-          <Text fontSize={12} ff="Inter|ExtraBold" uppercase ml={1}>
+          <Text fontSize={14} ff="Inter|SemiBold" uppercase ml={1}>
             <Trans i18nKey={"operation.edit.cancel.title"} />
           </Text>
         </EditTypeHeader>
         <Description selected={isCancel}>
+        <Text ff="Inter|Medium" fontSize={12}>
           <Trans
             i18nKey={"operation.edit.cancel.description"}
             values={{
@@ -78,8 +89,14 @@ const StepMethod = ({ account, editType, setEditType }: StepProps) => {
                 account.type === "TokenAccount" ? account.token.ticker : account.currency.ticker,
             }}
           />
+          </Text>
         </Description>
+        </Box>
+        </Flex>
       </EditTypeWrapper>
+        <Text ff="Inter|Medium" fontSize={12} style={{textDecoration: "underline", textAlign: "center", cursor: "pointer"}} onClick={() => openURL("https://support.ledger.com/hc/articles/9756122596765?support=true")}>
+          {t("operation.edit.learnMore")}
+        </Text>
     </Box>
   );
 };

@@ -8,7 +8,7 @@ import Box from "~/renderer/components/Box";
 import OperationDate from "./OperationDate";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { InfiniteLoader } from "@ledgerhq/react-ui";
-import IconTriangleWarning from "~/renderer/icons/TriangleWarning";
+import { WarningSolidMedium } from "@ledgerhq/react-ui/assets/icons";
 import { FIVE_MINUTES_IN_MS } from "~/config/constants";
 
 const Cell: ThemedComponent<{}> = styled(Box).attrs(() => ({
@@ -36,12 +36,12 @@ class DateCell extends PureComponent<Props> {
   pendingLoadingIcon(isOlderThan5Min) {
     if (isOlderThan5Min) {
       return (
-        <Box style={{ verticalAlign: "top", display: "inline" }}>
-          <IconTriangleWarning color={"yellow"} />
+        <Box style={{ verticalAlign: "sub", display: "inline" }}>
+          <WarningSolidMedium size={12} color={"#FFBD42"} />
         </Box>
       );
     } else {
-      return <InfiniteLoader size={25} style={{ verticalAlign: "middle" }} />;
+      return <InfiniteLoader size={12} style={{ verticalAlign: "middle" }} />;
     }
   }
 
@@ -65,7 +65,14 @@ class DateCell extends PureComponent<Props> {
             <Box ff="Inter|SemiBold" fontSize={3} color="palette.text.shade80" style={ellipsis}>
               {// display pending icon (less than 5 minutes: loading spinner; more than 5 minutes: yellow warning icon)
               this.pendingLoadingIcon(new Date() - operation.date > FIVE_MINUTES_IN_MS)}
-              <Box style={{ verticalAlign: "middle", display: "inline-block", fontSize: "10px" }}>
+              <Box
+                style={{
+                  marginLeft: "4px",
+                  verticalAlign: "middle",
+                  display: "inline-block",
+                  fontSize: "10px",
+                }}
+              >
                 {t("operation.type.SENDING") + "..."}
               </Box>
             </Box>
