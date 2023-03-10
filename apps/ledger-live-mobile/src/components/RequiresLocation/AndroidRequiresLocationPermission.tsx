@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
-import BluetoothPermissionsDenied from "./BluetoothPermissionsDenied";
-import { useAndroidBluetoothPermissions } from "./hooks/useAndroidBluetoothPermissions";
+import { useAndroidLocationPermission } from "./hooks/useAndroidLocationPermission";
+import LocationPermissionDenied from "./LocationPermissionDenied";
 
 type Props = {
   children?: ReactNode | undefined;
@@ -8,8 +8,8 @@ type Props = {
 };
 
 /**
- * Renders children if the permissions for the bluetooth are granted.
- * Otherwise, tries to request the permissions. And if the user denies, renders an error.
+ * Renders children if the permission for the location services is granted.
+ * Otherwise, tries to request the permission. And if the user denies, renders an error.
  *
  * Should only be used for Android.
  *
@@ -18,24 +18,24 @@ type Props = {
  *   the error component will make the user go to the settings. Otherwise it will try to prompt the user to allow permission
  *   if possible. Defaults to false.
  */
-const AndroidRequiresBluetoothPermissions: React.FC<Props> = ({
+const AndroidRequiresLocationPermission: React.FC<Props> = ({
   children,
   forceOpenSettingsOnErrorButton = false,
 }) => {
-  const { hasPermissions, neverAskAgain, requestForPermissionsAgain } =
-    useAndroidBluetoothPermissions();
+  const { hasPermission, neverAskAgain, requestForPermissionAgain } =
+    useAndroidLocationPermission();
 
-  if (hasPermissions === "unknown") return null; // Prevents blink
+  if (hasPermission === "unknown") return null; // Prevents blink
 
-  return hasPermissions === "granted" ? (
+  return hasPermission === "granted" ? (
     <>{children}</>
   ) : (
-    <BluetoothPermissionsDenied
-      onRetry={requestForPermissionsAgain}
+    <LocationPermissionDenied
       neverAskAgain={neverAskAgain}
+      onRetry={requestForPermissionAgain}
       forceOpenSettings={forceOpenSettingsOnErrorButton}
     />
   );
 };
 
-export default React.memo(AndroidRequiresBluetoothPermissions);
+export default AndroidRequiresLocationPermission;
