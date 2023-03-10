@@ -599,9 +599,7 @@ export default function BaseNavigator() {
         component={NoFundsFlowNavigator}
         options={{
           ...TransparentHeaderNavigationOptions,
-          headerRight: () => (
-            <HeaderRightClose color={colors.text} preferDismiss={false} />
-          ),
+          headerRight: () => <HeaderRightClose preferDismiss={false} />,
           headerLeft: () => null,
         }}
       />

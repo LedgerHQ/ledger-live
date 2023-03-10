@@ -3,8 +3,8 @@ import { useTheme } from "@react-navigation/native";
 import Svg, { Path } from "react-native-svg";
 
 interface IconProps {
-  size: number;
-  color: string;
+  size?: number;
+  color?: string;
 }
 
 const CoinsIcon = ({ size = 135, color }: IconProps) => {

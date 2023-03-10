@@ -1,5 +1,9 @@
+import { Account } from "@ledgerhq/types-live";
 import { ScreenName } from "../../../const";
 
 export type NoFundsNavigatorParamList = {
-  [ScreenName.NoFundsFlowNavigator]: undefined;
+  [ScreenName.NoFunds]: {
+    account: Account;
+    parentAccount?: Account;
+  };
 };

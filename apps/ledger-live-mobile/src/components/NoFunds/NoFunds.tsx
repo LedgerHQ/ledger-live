@@ -4,18 +4,37 @@ import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCat
 import { getAllSupportedCryptoCurrencyTickers } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
+import { StyleProp, ViewStyle } from "react-native";
 import CoinsIcon from "./CoinsIcon";
 import { useProviders } from "../../screens/Swap/Form";
 import TransferButton from "../TransferButton";
-import { useAnalytics } from "../../analytics";
 import { NavigatorName, ScreenName } from "../../const";
-import { TrackScreen } from "../../analytics";
+import { TrackScreen, useAnalytics, track } from "../../analytics";
+import type { NoFundsNavigatorParamList } from "../RootNavigator/types/NoFundsNavigator";
+import { StackNavigatorProps } from "../RootNavigator/types/helpers";
 
-export default function NoFunds({ route }) {
+type Props = StackNavigatorProps<NoFundsNavigatorParamList, ScreenName.NoFunds>;
+
+type ButtonItem = {
+  title: string;
+  description: string;
+  tag?: string;
+  Icon: IconType;
+  onPress?: (() => void) | null;
+  disabled?: boolean;
+  event?: string;
+  eventProperties?: Parameters<typeof track>[1];
+  style?: StyleProp<ViewStyle>;
+  rightArrow: boolean;
+};
+
+export default function NoFunds({ route }: Props) {
   const { t } = useTranslation();
-  const { account, parentAccount } = route.params;
+  const { account, parentAccount } = route?.params;
   const rampCatalog = useRampCatalog();
-  const { providers, storedProviders } = useProviders();
+  const { providers } = useProviders();
   const navigation = useNavigation();
   const onRampAvailableTickers = useMemo(() => {
     if (!rampCatalog.value) {
@@ -25,14 +44,18 @@ export default function NoFunds({ route }) {
   }, [rampCatalog.value]);
 
   const swapAvailableIds = useMemo(() => {
-    return providers || storedProviders
-      ? (providers || storedProviders)
-          .map(({ pairs }) => pairs.map(({ from, to }) => [from, to]))
+    return providers
+      ? providers
+          .map(provider => {
+            return provider.pairs.map(({ from, to }) => {
+              return [from, to];
+            });
+          })
           .flat(2)
       : [];
-  }, [providers, storedProviders]);
+  }, [providers]);
 
-  const currency = parentAccount?.currency || account.currency;
+  const currency = parentAccount?.currency || account?.currency;
   const availableOnReceive = true;
   const availableOnBuy =
     currency && onRampAvailableTickers.includes(currency.ticker.toUpperCase());

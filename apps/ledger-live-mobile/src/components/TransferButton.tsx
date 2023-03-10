@@ -83,8 +83,8 @@ export default function TransferButton({
           </Text>
         </Flex>
         {rightArrow && (
-          <Flex>
-            <ChevronRightMedium size={18} styles={{ alignSelf: "flex-end" }} />
+          <Flex alignSelf="flex-end">
+            <ChevronRightMedium size={18} />
           </Flex>
         )}
       </Flex>
