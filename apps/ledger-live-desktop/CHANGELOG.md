@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 2.55.0-nightly.7
+
+### Minor Changes
+
+- [#2721](https://github.com/LedgerHQ/ledger-live/pull/2721) [`4fa6ba5cba`](https://github.com/LedgerHQ/ledger-live/commit/4fa6ba5cbabe56b182404288e278562be129d3fe) Thanks [@gre](https://github.com/gre)! - Remove 'experimental execution on renderer' to activate this mode for all users and simplify this tech debt.
+
+### Patch Changes
+
+- [#2884](https://github.com/LedgerHQ/ledger-live/pull/2884) [`0495c5e791`](https://github.com/LedgerHQ/ledger-live/commit/0495c5e7915593da97a39af5c441075a87802853) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Renamed Portuguese to Portuguese Brazilian
+
+- Updated dependencies [[`b947934b68`](https://github.com/LedgerHQ/ledger-live/commit/b947934b68f351f81e3f7f8031bfe52743948fe6)]:
+  - @ledgerhq/live-common@29.1.0-nightly.4
+
 ## 2.55.0-nightly.6
 
 ### Patch Changes
