@@ -85,6 +85,7 @@ import { hasNoAccountsSelector } from "../../reducers/accounts";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import DeviceConnect from "../../screens/DeviceConnect";
 import ExploreTabNavigator from "./ExploreTabNavigator";
+import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -518,6 +519,7 @@ export default function BaseNavigator() {
         options={{
           headerShown: false,
         }}
+        {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
         name={NavigatorName.NotificationCenter}
@@ -592,6 +594,15 @@ export default function BaseNavigator() {
             }
           },
         })}
+      />
+      <Stack.Screen
+        name={NavigatorName.NoFundsFlow}
+        component={NoFundsFlowNavigator}
+        options={{
+          ...TransparentHeaderNavigationOptions,
+          headerRight: () => <HeaderRightClose preferDismiss={false} />,
+          headerLeft: () => null,
+        }}
       />
     </Stack.Navigator>
   );

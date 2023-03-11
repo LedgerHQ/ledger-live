@@ -6110,5 +6110,27 @@
   },
   "deviceConnect": {
     "title": "Connect device"
+  },
+  "stake": {
+    "noFundsModal": {
+      "title": "Buy, swap or receive",
+      "text": "You do not have enough {{coin}} available to stake",
+      "description": "Not enough funds? Don’t worry, you can securely buy, swap or receive crypto directly in Ledger Live.",
+      "options": {
+        "buy": {
+          "title": "Buy",
+          "body": "Buy with trusted  providers"
+        },
+        "swap": {
+          "title": "Swap",
+          "label": "Popular",
+          "body": "Convert crypto to crypto securely"
+        },
+        "receive": {
+          "title": "Receive",
+          "body": "Receive crypto in your wallet"
+        }
+      }
+    }
   }
 }
