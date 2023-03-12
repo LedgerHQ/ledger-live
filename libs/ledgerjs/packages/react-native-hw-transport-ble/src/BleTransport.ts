@@ -364,10 +364,14 @@ export default class BleTransport extends Transport {
   /**
    * Exposed method from the ble-plx library
    * Sets new log level for native module's logging mechanism.
-   * @param {LogLevel} logLevel New log level to be set.
+   * @param string logLevel New log level to be set.
    */
-  static setLogLevel = (logLevel: LogLevel): void => {
-    bleManagerInstance().setLogLevel(logLevel);
+  static setLogLevel = (logLevel: string): void => {
+    if (Object.values<string>(LogLevel).includes(logLevel)) {
+      bleManagerInstance().setLogLevel(logLevel as LogLevel);
+    } else {
+      throw new Error(`${logLevel} is not a valid LogLevel`);
+    }
   };
 
   /**
@@ -398,9 +402,11 @@ export default class BleTransport extends Transport {
 
   /**
    * Scan for bluetooth Ledger devices
+   * @param observer Device is partial in order to avoid the live-common/this dep
+   * @returns TransportSubscription
    */
   static listen(
-    observer: TransportObserver<DescriptorEvent<Device>, HwTransportError>
+    observer: TransportObserver<DescriptorEvent<any>, HwTransportError>
   ): TransportSubscription {
     log(TAG, "listening for devices");
 
