@@ -221,7 +221,7 @@ export default function SettingsNavigator() {
         name={ScreenName.DebugGenerators}
         component={DebugGenerators}
         options={{
-          title: "Generators",
+          title: "Generators and Destructors",
         }}
       />
       <Stack.Screen
