@@ -1,5 +1,12 @@
 # @ledgerhq/domain-service
 
+## 0.2.0-nightly.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@29.1.0-nightly.5
+
 ## 0.2.0-nightly.1
 
 ### Patch Changes
