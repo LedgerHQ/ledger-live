@@ -2064,11 +2064,11 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         name: "Onomy",
         code: "NOM",
-        magnitude: 6,
+        magnitude: 9,
       },
       {
         name: "Micro-Onomy",
-        code: "unom",
+        code: "anom",
         magnitude: 0,
       },
     ],
