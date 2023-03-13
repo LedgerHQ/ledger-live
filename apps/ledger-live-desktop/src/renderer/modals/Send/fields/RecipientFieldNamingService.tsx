@@ -3,10 +3,10 @@ import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/
 import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { TFunction } from "react-i18next";
 
-import { useNamingService } from "@ledgerhq/domain-service/hooks/index";
+import { useDomainService } from "@ledgerhq/domain-service/hooks/index";
 import {
-  NamingServiceResponseLoaded,
-  UseNamingServiceResponse,
+  DomainServiceResponseLoaded,
+  UseDomainServiceResponse,
 } from "@ledgerhq/domain-service/hooks/types";
 
 import RecipientFieldBase from "./RecipientFieldBase";
@@ -45,9 +45,9 @@ const RecipientField = ({
   bridge,
   onChange,
 }: Props) => {
-  const namingServiceResponse = useNamingService(value);
+  const domainServiceResponse = useDomainService(value);
   const hasValidatedName = useCallback(
-    (nsResponse: UseNamingServiceResponse): nsResponse is NamingServiceResponseLoaded =>
+    (nsResponse: UseDomainServiceResponse): nsResponse is DomainServiceResponseLoaded =>
       nsResponse.status === "loaded",
     [],
   );
@@ -56,21 +56,21 @@ const RecipientField = ({
     const isInitValueDifferent = value !== transaction.domain;
     const isRecipientUpdated = transaction.recipient === transaction.domain;
     if (
-      (hasValidatedName(namingServiceResponse) &&
-        namingServiceResponse.type === "forward" &&
+      (hasValidatedName(domainServiceResponse) &&
+        domainServiceResponse.type === "forward" &&
         (isInitValueDifferent || isRecipientUpdated)) ||
-      (hasValidatedName(namingServiceResponse) &&
-        namingServiceResponse.type === "reverse" &&
+      (hasValidatedName(domainServiceResponse) &&
+        domainServiceResponse.type === "reverse" &&
         value !== transaction.recipient)
     ) {
       onChangeTransaction(
         bridge.updateTransaction(transaction, {
-          recipient: namingServiceResponse.address,
-          domain: namingServiceResponse.domain,
+          recipient: domainServiceResponse.address,
+          domain: domainServiceResponse.domain,
         }),
       );
     }
-  }, [bridge, transaction, onChangeTransaction, namingServiceResponse, hasValidatedName, value]);
+  }, [bridge, transaction, onChangeTransaction, domainServiceResponse, hasValidatedName, value]);
   const onSupportLinkClick = useCallback(() => openURL(urls.ens), []);
 
   return (
@@ -84,9 +84,9 @@ const RecipientField = ({
         value={value}
         onChange={onChange}
       />
-      {hasValidatedName(namingServiceResponse) && (
+      {hasValidatedName(domainServiceResponse) && (
         <Alert mt={5}>
-          {namingServiceResponse.type === "forward" ? (
+          {domainServiceResponse.type === "forward" ? (
             <>
               <Box>
                 <Text ff="Inter" fontSize={3}>
@@ -95,7 +95,7 @@ const RecipientField = ({
               </Box>
               <Box>
                 <Text ff="Inter|SemiBold" fontSize={3}>
-                  {namingServiceResponse.address}
+                  {domainServiceResponse.address}
                 </Text>
               </Box>
             </>
@@ -104,7 +104,7 @@ const RecipientField = ({
               <Box>
                 <Text ff="Inter" fontSize={3}>
                   {t("send.steps.recipient.namingService.reverse", {
-                    domain: namingServiceResponse.domain,
+                    domain: domainServiceResponse.domain,
                   })}
                 </Text>
               </Box>

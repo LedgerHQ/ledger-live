@@ -8,31 +8,31 @@ import React, {
 import { resolveAddress, resolveDomain } from "../resolvers";
 import { isOutdated } from "./logic";
 import {
-  NamingServiceContextAPI,
-  NamingServiceContextState,
-  NamingServiceContextType,
-  NamingServiceStatus,
-  UseNamingServiceResponse,
+  DomainServiceContextAPI,
+  DomainServiceContextState,
+  DomainServiceContextType,
+  DomainServiceStatus,
+  UseDomainServiceResponse,
 } from "./types";
 
-const NamingServiceContext = createContext<NamingServiceContextType>({
+const DomainServiceContext = createContext<DomainServiceContextType>({
   cache: {},
-  loadNamingServiceAPI: () => Promise.resolve(),
+  loadDomainServiceAPI: () => Promise.resolve(),
   clearCache: () => {},
 });
 
-export const useNamingServiceAPI = (
+export const useDomainServiceAPI = (
   name: string | undefined
-): NamingServiceStatus => {
-  const { cache, loadNamingServiceAPI } = useContext(NamingServiceContext);
+): DomainServiceStatus => {
+  const { cache, loadDomainServiceAPI } = useContext(DomainServiceContext);
   const cachedData = name && cache[name];
 
   useEffect(() => {
     if (!name) return;
     if (!cachedData || isOutdated(cachedData)) {
-      loadNamingServiceAPI(name);
+      loadDomainServiceAPI(name);
     }
-  }, [loadNamingServiceAPI, name, cachedData]);
+  }, [loadDomainServiceAPI, name, cachedData]);
 
   if (cachedData) {
     return cachedData;
@@ -47,8 +47,8 @@ export const useNamingServiceAPI = (
   }
 };
 
-export function useNamingService(name: string): UseNamingServiceResponse {
-  const data = useNamingServiceAPI(name);
+export function useDomainService(name: string): UseDomainServiceResponse {
+  const data = useDomainServiceAPI(name);
 
   const { status } = data;
   const loadedData = useMemo(
@@ -64,24 +64,24 @@ export function useNamingService(name: string): UseNamingServiceResponse {
         type: loadedData.type,
       }
     : ({ status } as {
-        status: Exclude<UseNamingServiceResponse["status"], "loaded">;
+        status: Exclude<UseDomainServiceResponse["status"], "loaded">;
       });
 }
 
-type NamingServiceProviderProps = {
+type DomainServiceProviderProps = {
   children: React.ReactNode;
 };
 
-export function NamingServiceProvider({
+export function DomainServiceProvider({
   children,
-}: NamingServiceProviderProps): React.ReactElement {
-  const [state, setState] = useState<NamingServiceContextState>({
+}: DomainServiceProviderProps): React.ReactElement {
+  const [state, setState] = useState<DomainServiceContextState>({
     cache: {},
   });
 
-  const api: NamingServiceContextAPI = useMemo(
+  const api: DomainServiceContextAPI = useMemo(
     () => ({
-      loadNamingServiceAPI: async (str: string) => {
+      loadDomainServiceAPI: async (str: string) => {
         setState((oldState) => ({
           ...oldState,
           cache: {
@@ -159,8 +159,8 @@ export function NamingServiceProvider({
   const value = { ...state, ...api };
 
   return (
-    <NamingServiceContext.Provider value={value}>
+    <DomainServiceContext.Provider value={value}>
       {children}
-    </NamingServiceContext.Provider>
+    </DomainServiceContext.Provider>
   );
 }

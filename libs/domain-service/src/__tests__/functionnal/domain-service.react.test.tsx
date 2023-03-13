@@ -1,16 +1,16 @@
-import { NamingServiceProvider, useNamingService } from ".";
 import React from "react";
+import { DomainServiceProvider, useDomainService } from "../../hooks";
 import { renderHook } from "@testing-library/react-hooks";
 import { render, screen, waitFor } from "@testing-library/react";
-import { resolveAddress, resolveDomain } from "../resolvers";
+import { resolveAddress, resolveDomain } from "../../resolvers";
 
-jest.mock("../resolvers");
+jest.mock("../../resolvers");
 
 const mockedResolvedDomain = jest.mocked(resolveDomain, true);
 const mockedResolvedAddress = jest.mocked(resolveAddress, true);
 
 const CustomTest = ({ str }: { str: string }) => {
-  const data = useNamingService(str);
+  const data = useDomainService(str);
 
   let address: string | undefined;
   let domain: string | undefined;
@@ -44,9 +44,9 @@ describe("useNamingService", () => {
     });
 
     render(
-      <NamingServiceProvider>
+      <DomainServiceProvider>
         <CustomTest str="notavalideth" />
-      </NamingServiceProvider>
+      </DomainServiceProvider>
     );
 
     await waitFor(() => {
@@ -58,7 +58,7 @@ describe("useNamingService", () => {
   });
 
   test("should be queue", () => {
-    const { result } = renderHook(useNamingService, {
+    const { result } = renderHook(useDomainService, {
       initialProps: "vitalik.eth",
     });
 
@@ -71,9 +71,9 @@ describe("useNamingService", () => {
     });
 
     render(
-      <NamingServiceProvider>
+      <DomainServiceProvider>
         <CustomTest str="vitalik.eth" />
-      </NamingServiceProvider>
+      </DomainServiceProvider>
     );
 
     await waitFor(
@@ -100,9 +100,9 @@ describe("useNamingService", () => {
     });
 
     render(
-      <NamingServiceProvider>
+      <DomainServiceProvider>
         <CustomTest str="0xd8da6bf26964af9d7eed9e03e53415d37aa96045" />
-      </NamingServiceProvider>
+      </DomainServiceProvider>
     );
 
     await waitFor(() => {

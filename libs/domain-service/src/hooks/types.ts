@@ -1,36 +1,32 @@
-export type NamingServiceType = "reverse" | "forward";
+export type DomainServiceType = "reverse" | "forward";
 
-export type NamingServiceStatus =
+export type DomainServiceStatus =
   | { status: "queued" }
   | { status: "loading" }
   | {
       status: "loaded";
       address: string;
       domain: string;
-      type: NamingServiceType;
+      type: DomainServiceType;
       updatedAt: number;
     }
   | { status: "error"; error: any; updatedAt: number };
 
-export type NamingServiceContextState = {
-  cache: Record<string, NamingServiceStatus>;
+export type DomainServiceContextState = {
+  cache: Record<string, DomainServiceStatus>;
 };
 
-export type NamingServiceContextAPI = {
-  loadNamingServiceAPI: (name: string) => Promise<void>;
+export type DomainServiceContextAPI = {
+  loadDomainServiceAPI: (name: string) => Promise<void>;
   clearCache: () => void;
 };
 
-export type NamingServiceContextType = NamingServiceContextState &
-  NamingServiceContextAPI;
+export type DomainServiceContextType = DomainServiceContextState &
+  DomainServiceContextAPI;
 
-export type NamingServiceResponseLoaded = {
+export type DomainServiceResponseLoaded = {
   status: "loaded";
   address: string;
   domain: string;
-  type: NamingServiceType;
+  type: DomainServiceType;
 };
-
-export type UseNamingServiceResponse =
-  | { status: Exclude<NamingServiceStatus["status"], "loaded"> }
-  | NamingServiceResponseLoaded;
