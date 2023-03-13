@@ -47,7 +47,13 @@ const useStakeFlow = () => {
               drawer: "Select Account And Currency Drawer",
             });
             setDrawer();
-            dispatch(openModal("MODAL_START_STAKE", { account, parentAccount, alwaysShowNoFunds }));
+
+            if (alwaysShowNoFunds) {
+              dispatch(openModal("MODAL_NO_FUNDS_STAKE", { account, parentAccount }));
+            } else {
+              dispatch(openModal("MODAL_START_STAKE", { account, parentAccount }));
+            }
+
             if (shouldRedirect) {
               history.push({
                 pathname: `/account/${account.id}`,
