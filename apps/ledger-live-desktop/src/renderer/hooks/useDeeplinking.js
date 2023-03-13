@@ -43,7 +43,7 @@ export function useDeepLinkHandler() {
 
   const navigate = useCallback(
     (url: string, state?: any, search?: string) => {
-      if (url === location.pathname && !search) {
+      if (url === location.pathname && search === location.search) {
         return;
       }
 
