@@ -25,7 +25,7 @@ import type { LendingSupplyFlowNavigatorParamList } from "../../components/RootN
 import type { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
 import type { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import type { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
-import type { EthereumEditTransactionParamList } from "../../components/RootNavigator/types/EthereumEditTransactionNavigator";
+import type { EditTransactionParamList } from "../../components/RootNavigator/types/EditTransactionNavigator";
 
 type Props = {
   transaction: Transaction;
@@ -53,10 +53,7 @@ type Props = {
       ScreenName.LendingWithdrawSummary
     >
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
-  | StackNavigatorProps<
-      EthereumEditTransactionParamList,
-      ScreenName.SendSummary
-    >,
+  | StackNavigatorProps<EditTransactionParamList, ScreenName.SendSummary>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 export default function AlgorandFeeRow({
