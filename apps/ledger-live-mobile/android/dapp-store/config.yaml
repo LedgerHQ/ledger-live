@@ -1,13 +1,13 @@
 publisher:
   name: Ledger SAS
-  address: ""
+  address: 7hmxf1enboeg7fxWLrMvKRGi9r1NbDG8j7i7MWtAmLLk
   website: https://www.ledger.com/pages/ledger-live
-  email: team-live@ledger.fr # TODO replace with whatever proper email
+  email: team-live@ledger.fr
   media:
     - purpose: icon
       uri: ./media/playstore-icon.png
 app:
-  address: ""
+  address: 7SE1D8eUsS3yAExzStukTwDDXzcC1xCh2nYX5CFzsMsT
   name: Ledger Live
   android_package: com.ledger.live
   urls:
@@ -23,8 +23,7 @@ release:
   catalog:
     en-US:
       name: "Ledger Live: Crypto & NFT App"
-      short_description: >- # <<SHORT_APP_DESCRIPTION>> 50 character max
-        Ledger Live Mobile 3.16.0
+      short_description: Ledger Live Mobile 3.16.0
       long_description: >-
         From the company that produced the world's most secure crypto hardware
         device comes the world's most accessible and complete Web3 wallet:
@@ -116,23 +115,25 @@ release:
         **Rewards are not guaranteed. Ledger provides no advice or
         recommendations on use of staking services.
       new_in_version: >-
-        Features
-        You can now manage 100+ tokens on Cronos, Fantom, and Moonbeam networks with Ledger Live.
+        Features You can now manage 100+ tokens on Cronos, Fantom, and Moonbeam
+        networks with Ledger Live.
 
-        Ledger Live will no longer display zero-amount transactions in the transaction history. If you want to view zero-amount transactions, navigate to Settings -> Accounts -> Zero-amount transactions and flip the toggle switch to the on position.
+        Ledger Live will no longer display zero-amount transactions in the
+        transaction history. If you want to view zero-amount transactions,
+        navigate to Settings -> Accounts -> Zero-amount transactions and flip
+        the toggle switch to the on position.
 
-        Discover section now features NewsFeed that will keep you up-to-date with the latest crypto news and events.
+        Discover section now features NewsFeed that will keep you up-to-date
+        with the latest crypto news and events.
 
-        Fixes
-        This release includes minor fixes.
+        Fixes This release includes minor fixes.
       saga_features: ""
   media:
     - purpose: screenshot
       uri: ./media/splash.webp
   files:
     - purpose: install
-      uri: >-
-        ../app/build/outputs/apk/release/app-arm64-v8a-release.apk
+      uri: ../app/build/outputs/apk/release/app-arm64-v8a-release.apk
 solana_mobile_dapp_publisher_portal:
   google_store_package: com.ledger.live
   testing_instructions: ""
