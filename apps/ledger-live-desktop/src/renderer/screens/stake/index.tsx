@@ -22,7 +22,7 @@ const useStakeFlow = () => {
   const dispatch = useDispatch();
 
   return useCallback(
-    ({ currencies, shouldRedirect = true, alwaysShowNoFunds = false }: Props) => {
+    ({ currencies, shouldRedirect = true, alwaysShowNoFunds = false }: Props = {}) => {
       const cryptoCurrencies = filterCurrencies(listCurrencies(true), {
         currencies: currencies || list,
       });
