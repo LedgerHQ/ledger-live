@@ -481,6 +481,7 @@ export default class BleTransport extends Transport {
   static disconnect = async (id: DeviceId): Promise<void> => {
     log(TAG, `user disconnect(${id})`);
     await bleManagerInstance().cancelDeviceConnection(id);
+    log(TAG, "disconnected");
   };
 
   id: string;
@@ -652,9 +653,9 @@ export default class BleTransport extends Transport {
 
     this.disconnectTimeout = setTimeout(() => {
       log(TAG, `Triggering a disconnect from ${this.id}`);
-
-      BleTransport.disconnect(this.id).catch(() => {});
-      resolve();
+      BleTransport.disconnect(this.id)
+        .catch(() => {})
+        .finally(resolve);
     }, 5000);
 
     // Close will resolve at most after 5000ms either by the disconnect or
