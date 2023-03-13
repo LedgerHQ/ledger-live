@@ -19,7 +19,7 @@ import type { BaseNavigatorStackParamList } from "../../components/RootNavigator
 import { ScreenName } from "../../const";
 import type { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import type { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
-import type { EthereumEditTransactionParamList } from "../../components/RootNavigator/types/EthereumEditTransactionNavigator";
+import type { EditTransactionParamList } from "../../components/RootNavigator/types/EditTransactionNavigator";
 
 type Props = {
   transaction: Transaction;
@@ -27,8 +27,16 @@ type Props = {
   parentAccount?: Account | null;
 } & CompositeScreenProps<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
-  | StackNavigatorProps<EthereumEditTransactionParamList, ScreenName.SendSummary>
   | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
+
+  | StackNavigatorProps<
+      SendFundsNavigatorStackParamList,
+      ScreenName.SendSummary
+    >
+  | StackNavigatorProps<
+      SignTransactionNavigatorParamList,
+      ScreenName.SignTransactionSummary
+    >
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
