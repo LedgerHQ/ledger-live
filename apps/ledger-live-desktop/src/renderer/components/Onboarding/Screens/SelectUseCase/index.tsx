@@ -23,6 +23,7 @@ import setupNanoLight from "./assets/setupNanoLight.png";
 import connectNanoDark from "./assets/connectNanoDark.png";
 import restorePhraseDark from "./assets/restorePhraseDark.png";
 import setupNanoDark from "./assets/setupNanoDark.png";
+import restoreUsingRecoverDark from "./assets/restoreUsingRecoverDark.png";
 
 import Illustration from "~/renderer/components/Illustration";
 
@@ -33,6 +34,7 @@ registerAssets([
   connectNanoDark,
   restorePhraseDark,
   setupNanoDark,
+  restoreUsingRecoverDark,
 ]);
 
 const SelectUseCaseContainer = styled(Flex).attrs({
@@ -184,6 +186,26 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
                 history.push(
                   `/onboarding/${UseCase.recoveryPhrase}/${ScreenId.importYourRecoveryPhrase}`,
                 );
+              }}
+            />
+            <UseCaseOption
+              dataTestId="v3-onboarding-restore-using-recover"
+              id="restore-device"
+              title={t("onboarding.screens.selectUseCase.options.4.title")}
+              description={
+                <Trans i18nKey="onboarding.screens.selectUseCase.options.4.description" />
+              }
+              illustration={
+                <Illustration
+                  lightSource={restoreUsingRecoverDark}
+                  darkSource={restoreUsingRecoverDark}
+                  size={220}
+                />
+              }
+              onClick={() => {
+                track("Onboarding - Restore");
+                setUseCase(UseCase.recover);
+                history.push(`/onboarding/${UseCase.recover}/${ScreenId.pairMyNano}`);
               }}
             />
           </RightColumn>
