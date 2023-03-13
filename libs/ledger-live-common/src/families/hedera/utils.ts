@@ -2,22 +2,23 @@ import estimateMaxSpendable from "./js-estimateMaxSpendable";
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
-import axios from "axios";
+import network from "../../network";
 
 export const estimatedFeeSafetyRate = 2;
 
 export async function getEstimatedFees(): Promise<BigNumber> {
   try {
-    const { data } = await axios.get(
-      "https://countervalues.live.ledger.com/latest/direct?pairs=hbar:usd"
-    );
-    if (data[0]) {
-      const hederaPrice = new BigNumber(data[0]);
-      return new BigNumber("0.0001").dividedBy(hederaPrice);
-    }
-  } catch {}
+    const { data } = await network({
+      method: "GET",
+      url: "https://countervalues.live.ledger.com/latest/direct?pairs=hbar:usd",
+    });
 
-  return new BigNumber("212800"); // 0.002128 ℏ (as of 2023-01-09)
+    return new BigNumber("0.0001").dividedBy(data[0]);
+  } catch {
+    // as fees are based on a currency conversion, we stay
+    // on the safe side here and double the estimate for "max spendable"
+    return new BigNumber("212800").multipliedBy(estimatedFeeSafetyRate); // 0.002128 ℏ (as of 2023-01-09)
+  }
 }
 
 export async function calculateAmount({
@@ -36,7 +37,7 @@ export async function calculateAmount({
 
   return {
     amount,
-    totalSpent: amount.plus(estimatedFees),
+    totalSpent: amount.plus(await getEstimatedFees()),
   };
 }
 

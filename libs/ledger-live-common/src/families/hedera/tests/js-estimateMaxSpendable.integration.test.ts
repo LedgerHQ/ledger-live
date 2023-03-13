@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import estimateMaxSpendable from "../js-estimateMaxSpendable";
-import axios from "axios";
+import network from "../../../network";
 
 const account: Account = {
   type: "Account",
@@ -51,27 +51,28 @@ const account: Account = {
   },
 };
 
-describe("js-estimateMaxSpendable", async () => {
-  // If get hedera price works, use real estimate, otherwise fallback to hard coded
-  let hederaPrice;
-
-  try {
-    const { data } = await axios.get(
-      "https://countervalues.live.ledger.com/latest/direct?pairs=hbar:usd"
-    );
-
-    hederaPrice = data[0];
-  } catch {
-    hederaPrice = 0;
-  }
-
+describe("js-estimateMaxSpendable", () => {
   let estimatedFees = new BigNumber("212800").multipliedBy(2);
 
-  if (hederaPrice) {
-    estimatedFees = new BigNumber("0.0001").dividedBy(
-      new BigNumber(hederaPrice)
-    );
-  }
+  it("should return hedera price if available", async () => {
+    // If get hedera price works, use real estimate, otherwise fallback to hard coded
+    let hederaPrice;
+    try {
+      const { data } = await network({
+        method: "GET",
+        url: "https://countervalues.live.ledger.com/latest/direct?pairs=hbar:usd",
+      });
+      hederaPrice = data[0];
+    } catch {
+      hederaPrice = 0;
+    }
+
+    if (hederaPrice) {
+      estimatedFees = new BigNumber("0.0001").dividedBy(
+        new BigNumber(hederaPrice)
+      );
+    }
+  })
 
   test("estimateMaxSpendable", async () => {
     const result = await estimateMaxSpendable({
@@ -81,4 +82,5 @@ describe("js-estimateMaxSpendable", async () => {
 
     expect(result).toEqual(data);
   });
+
 });
