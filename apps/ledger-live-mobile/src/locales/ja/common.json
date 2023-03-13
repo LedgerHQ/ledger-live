@@ -88,7 +88,11 @@
     "getSupport" : "サポートを利用する",
     "comingSoon" : "近日公開",
     "restart" : "再起動",
-    "loadMore" : "さらに読み込む"
+    "loadMore" : "さらに読み込む",
+    "patterns" : {
+      "id" : "ID {{ value }}",
+      "times" : "x{{ value }}"
+    }
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -828,7 +832,9 @@
     "required" : "Bluetoothが無効になっているようです。",
     "locationRequiredTitle" : "Bluetooth LEには位置情報が必要です。",
     "locationRequiredMessage" : "AndroidでBluetooth LEデバイスを一覧表示するには、位置情報サービスへのアクセスが必要です。",
-    "checkEnabled" : "スマートフォンの設定でBluetoothを有効にしてください。"
+    "checkEnabled" : "スマートフォンの設定でBluetoothを有効にしてください。",
+    "tryEnablingAgain" : "Bluetoothを再度有効にしてみてください",
+    "openSettings" : "Bluetooth設定を開く"
   },
   "webview" : {
     "noConnectionError" : {
@@ -838,12 +844,10 @@
   },
   "location" : {
     "titleServiceRequired" : "位置情報サービスが必要です",
-    "titlePermissionRequired" : "位置情報の許可が必要です",
-    "titlePermissionRequiredPrecise" : "正確な位置情報の許可が必要です",
     "descriptionServiceRequired" : "Ledger Liveは、Bluetoothでデバイスをペアリングするために、位置情報サービスへのアクセスが必要です。",
-    "descriptionPermissionRequired" : "Ledger Liveは、Bluetoothでデバイスをペアリングするために、位置情報の許可が必要です。",
-    "descriptionPermissionRequiredPrecise" : "Ledger Liveは、Bluetoothでデバイスをペアリングするために、位置情報の許可が必要です。",
     "open" : "位置情報の設定を開く",
+    "openSettings" : "位置情報の設定を開く",
+    "tryEnablingAgain" : "位置情報を再度有効にしてみてください",
     "noInfos" : "Ledgerがあなたの位置情報にアクセスすることはありません。"
   },
   "permissions" : {
@@ -856,6 +860,12 @@
       "modalButtonLabelBase" : "許可する",
       "modalButtonLabelSettingsVariant" : "設定を開く",
       "dontPair" : "ペアリングしない"
+    },
+    "location" : {
+      "titlePermissionRequired" : "位置情報の許可が必要です",
+      "titlePermissionRequiredPrecise" : "正確な位置情報の許可が必要です",
+      "descriptionPermissionRequired" : "Ledger Liveは、Bluetoothでデバイスをペアリングするために、位置情報の許可が必要です。",
+      "descriptionPermissionRequiredPrecise" : "Ledger Liveは、Bluetoothでデバイスをペアリングするために、位置情報の許可が必要です。"
     },
     "camera" : {
       "title" : "カメラを許可",
@@ -1279,8 +1289,13 @@
       },
       "recovery" : "リカバリーフレーズをすでにお持ちですか？",
       "protect" : {
-        "label" : "～60分",
-        "subTitle" : "Protectで復元"
+        "subTitle" : "Ledger Recoverを使用して復元",
+        "drawer" : {
+          "title" : "Ledger Nano Xを使用する",
+          "desc" : "Ledgerの復元ソフトローンチ（限定公開）はLedger Nano X専用です",
+          "buyNanoX" : "Ledger Nano Xを購入する",
+          "discoverBenefits" : "メリットをチェック"
+        }
       }
     },
     "stepNewDevice" : {
@@ -1507,25 +1522,20 @@
     "stepProtect" : {
       "bullets" : {
         "0" : {
-          "title" : "画面をチェックする ",
-          "label" : "デバイスの画面に表示される手順に従って、操作方法を学びましょう。"
+          "title" : "「復元」を選択",
+          "label" : "両方のボタンを同時に押して選択します。"
         },
         "1" : {
-          "title" : "「復元」を選択",
-          "label" : "両方のボタンを同時に押して、選択内容を確定します。"
-        },
-        "2" : {
-          "title" : "「Protectで復元」モードを選択",
-          "label" : "両方のボタンを同時に押して、選択内容を確定します。"
+          "title" : "「Ledger Recoverを使用して復元する」を選択",
+          "label" : "両方のボタンを同時に押して選択します。"
         }
       },
       "nextStep" : "続行",
       "extraInfo" : {
-        "tooltip" : "Ledgerで表示されない",
-        "title" : "Ledgerで「Protectで復元」が表示されないのはなぜですか？",
-        "desc1" : "最も可能性の高い理由は、お使いのデバイスがProtectと互換性がないことです。ご心配ありません。それをお使いいただけるように、ぜひサポートさせていただきます。",
-        "desc2" : "「My Ledgerに「Protectで復元」が表示されない（My Ledger does not display Restore with Protect）」を選択して、当社にご連絡ください。サポートさせていただきます。",
-        "cta" : "マニュアル手順を実行する",
+        "tooltip" : "「Ledger Recoverを使用して復元する」が表示されません",
+        "title" : "Ledger Nano XのOSをアップデートする必要があります",
+        "desc" : "OSをアップデートしてみるか、Ledgerサポートにご連絡ください。",
+        "cta" : "アップデート方法を確認",
         "supportLink" : "Ledgerサポートへのお問い合わせ"
       }
     },
@@ -1667,8 +1677,9 @@
         }
       },
       "protectConnectionInformationModal" : {
-        "title" : "Ledgerを接続できないのはなぜですか？",
-        "description" : "LedgerでBluetoothを有効にした後、Ledger Live Mobileへの接続に問題が発生した場合は、下の「問題の修正方法を学ぶ（Learn how to fix that）」ボタンをタップして指示に従ってください。"
+        "title" : "Ledger Nano Xの接続",
+        "description" : "Ledgerがスマートフォンの近くにあることを確認してから、もう一度お試しください。<LinkBluethooth>Bluetooth®接続の問題 \n</LinkBluethooth>。\nBluetooth®が機能している場合は、LedgerのOSをアップデートする必要がある場合があります。OSをアップデートしてみるか、Ledgerサポートにご連絡ください。 ",
+        "learnHowToUpdate" : "アップデート方法を確認"
       }
     },
     "stepImportAccounts" : {
@@ -1892,7 +1903,9 @@
     "seedStep" : {
       "title" : "秘密のリカバリーフレーズ",
       "doneTitle" : "秘密のリカバリーフレーズ確認済み",
-      "description" : "リカバリーフレーズは、秘密鍵をバックアップする24単語からなる秘密のリストです。{{productName}}は唯一無二のリカバリフレーズを生成します。Ledgerはそのコピーを保持しません"
+      "description" : "リカバリーフレーズは、秘密鍵をバックアップする24単語からなる秘密のリストです。{{productName}}は唯一無二のリカバリフレーズを生成します。Ledgerはそのコピーを保持しません",
+      "selection" : "最適な設定オプションを選択してください。",
+      "recovery" : "リカバリーには、資産の安全性を保証するため、必ずLedgerが生成した秘密のリカバリーフレーズを使用してください。\n\nリカバリーフレーズをお持ちではありませんか？{{productName}}を使用して、新しいフレーズを生成してください。"
     },
     "softwareChecksSteps" : {
       "title" : "ハードウェアとソフトウェアのチェック",
@@ -5446,6 +5459,7 @@
     "warnDelegation" : "正しくデリゲートしても、バリデーターからの報酬は保証されません。",
     "to" : "まで",
     "from" : "から",
+    "yield" : "推定利回り",
     "forAnEstYield" : "推定利回り：",
     "yieldPerYear" : "{{yield}}／年",
     "yieldInfos" : "利回り率の提供元：",
@@ -5573,6 +5587,7 @@
     "cta" : "続行"
   },
   "exchange" : {
+    "count" : "さらに+{{count}}",
     "buy" : {
       "screenTitle" : "暗号資産を購入",
       "tabTitle" : "購入",
@@ -6026,22 +6041,10 @@
       "status" : {
         "new" : {
           "title" : "新商品",
-          "desc" : "リカバリーフレーズをバックアップ",
-          "0" : {
-            "title" : "数百万人のLedgerユーザーが信頼"
-          },
-          "1" : {
-            "title" : "リカバリーフレーズは安全に個人とリンクされます"
-          },
-          "2" : {
-            "title" : "最先端の暗号化"
-          },
-          "3" : {
-            "title" : "3つの分散型のパーツに分けてシェアされ、リカバリーフレーズの盗難を防ぎます"
-          },
+          "desc" : "秘密のリカバリーフレーズなしでウォレットへのアクセスを復元します。",
           "actions" : {
-            "learnMore" : "詳細はこちら",
-            "alreadySubscribed" : "Protectを利用しますか？"
+            "learnMore" : "どのようなメリットがあるのでしょうか？",
+            "alreadySubscribed" : "すでにご登録済みですか？<LinkAccount>アカウントを表示</LinkAccount>"
           }
         },
         "confirmIdentity" : {
@@ -6104,5 +6107,30 @@
     "title" : "ニュースフィード",
     "poweredByCryptopanic" : "Powered by Cryptopanic",
     "noPosts" : "現在表示できる投稿がありません"
+  },
+  "deviceConnect" : {
+    "title" : "デバイスを接続"
+  },
+  "stake" : {
+    "noFundsModal" : {
+      "title" : "購入、スワップ、受け取り",
+      "text" : "ステーキングに十分な{{coin}}がありません",
+      "description" : "資金が足りませんか？ご心配いりません。Ledger Liveで暗号資産を直接、安全に購入、スワップ、または受け取ることができます。",
+      "options" : {
+        "buy" : {
+          "title" : "購入",
+          "body" : "信頼できるプロバイダーで購入する"
+        },
+        "swap" : {
+          "title" : "スワップ",
+          "label" : "人気",
+          "body" : "安全に別の暗号資産へ交換"
+        },
+        "receive" : {
+          "title" : "受け取る",
+          "body" : "ウォレットで暗号資産を受け取る"
+        }
+      }
+    }
   }
 }
