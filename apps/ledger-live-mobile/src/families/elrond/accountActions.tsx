@@ -29,7 +29,7 @@ type NavigationParamsType = readonly [name: string, options: object];
  * Declare the function that will return the actions' settings array.
  */
 
-const getActions = (props: getActionsType): getActionsReturnType => {
+const getMainActions = (props: getActionsType): getActionsReturnType => {
   const { account, parentAccount } = props;
 
   const balance = denominate({
@@ -86,4 +86,4 @@ const getActions = (props: getActionsType): getActionsReturnType => {
   ];
 };
 
-export default { getActions };
+export default { getMainActions };

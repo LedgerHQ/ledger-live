@@ -9,7 +9,7 @@ import { ActionButtonEvent } from "../../components/FabActions";
 
 type NavigationParamsType = readonly [name: string, options: object];
 
-const getActions = ({
+const getMainActions = ({
   account,
   parentAccount,
 }: {
@@ -49,5 +49,5 @@ const getActions = ({
 };
 
 export default {
-  getActions,
+  getMainActions,
 };

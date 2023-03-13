@@ -23,7 +23,7 @@ import { ActionButtonEvent } from "../../components/FabActions";
 
 type NavigationParamsType = readonly [name: string, options: object];
 
-const getActions = (args: {
+const getMainActions = (args: {
   account: PolkadotAccount;
   parentAccount?: Account;
 }): ActionButtonEvent[] | null => {
@@ -31,27 +31,13 @@ const getActions = (args: {
   if (!account.polkadotResources) return null;
   const { staking } = getCurrentPolkadotPreloadData();
   const accountId = account.id;
-  const { unlockedBalance, lockedBalance, nominations } =
-    account.polkadotResources || {};
+  const { lockedBalance } = account.polkadotResources || {};
   const electionOpen =
     staking?.electionClosed !== undefined ? !staking?.electionClosed : false;
-  const hasUnlockedBalance = unlockedBalance && unlockedBalance.gt(0);
   const hasBondedBalance = lockedBalance && lockedBalance.gt(0);
   const hasPendingBondOperation = hasPendingOperationType(account, "BOND");
-  const hasPendingWithdrawUnbondedOperation = hasPendingOperationType(
-    account,
-    "WITHDRAW_UNBONDED",
-  );
   const nominationEnabled = !electionOpen && canNominate(account);
-  const chillEnabled =
-    !electionOpen && canNominate(account) && nominations?.length;
-  const bondingEnabled =
-    !electionOpen &&
-    ((!hasBondedBalance && !hasPendingBondOperation) ||
-      (hasBondedBalance && canBond(account)));
-  const unbondingEnabled = !electionOpen && canUnbond(account);
-  const withdrawEnabled =
-    !electionOpen && hasUnlockedBalance && !hasPendingWithdrawUnbondedOperation;
+
   const earnRewardsEnabled =
     !electionOpen && !hasBondedBalance && !hasPendingBondOperation;
 
@@ -103,6 +89,44 @@ const getActions = (args: {
       label: <Trans i18nKey="account.stake" />,
       Icon: Icons.ClaimRewardsMedium,
     },
+  ];
+};
+
+const getSecondaryActions = (args: {
+  account: PolkadotAccount;
+  parentAccount?: Account;
+}): ActionButtonEvent[] | null => {
+  const { account } = args;
+  if (!account.polkadotResources) return null;
+  const { staking } = getCurrentPolkadotPreloadData();
+  const accountId = account.id;
+  const { unlockedBalance, lockedBalance, nominations } =
+    account.polkadotResources || {};
+  const electionOpen =
+    staking?.electionClosed !== undefined ? !staking?.electionClosed : false;
+  const hasUnlockedBalance = unlockedBalance && unlockedBalance.gt(0);
+  const hasBondedBalance = lockedBalance && lockedBalance.gt(0);
+  const hasPendingBondOperation = hasPendingOperationType(account, "BOND");
+  const hasPendingWithdrawUnbondedOperation = hasPendingOperationType(
+    account,
+    "WITHDRAW_UNBONDED",
+  );
+  const nominationEnabled = !electionOpen && canNominate(account);
+  const chillEnabled =
+    !electionOpen && canNominate(account) && nominations?.length;
+  const bondingEnabled =
+    !electionOpen &&
+    ((!hasBondedBalance && !hasPendingBondOperation) ||
+      (hasBondedBalance && canBond(account)));
+  const unbondingEnabled = !electionOpen && canUnbond(account);
+  const withdrawEnabled =
+    !electionOpen && hasUnlockedBalance && !hasPendingWithdrawUnbondedOperation;
+
+  if (hasExternalController(account) || hasExternalStash(account)) {
+    return null;
+  }
+
+  return [
     {
       id: "bond",
       disabled: !bondingEnabled,
@@ -191,5 +215,6 @@ const getActions = (args: {
 };
 
 export default {
-  getActions,
+  getMainActions,
+  getSecondaryActions,
 };

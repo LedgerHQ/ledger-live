@@ -5,7 +5,7 @@ import { Trans } from "react-i18next";
 import { SolanaAccount } from "@ledgerhq/live-common/families/solana/types";
 import { NavigatorName, ScreenName } from "../../const";
 
-const getActions = ({
+const getMainActions = ({
   account,
   parentAccount,
 }: {
@@ -50,5 +50,5 @@ const getActions = ({
 };
 
 export default {
-  getActions,
+  getMainActions,
 };
