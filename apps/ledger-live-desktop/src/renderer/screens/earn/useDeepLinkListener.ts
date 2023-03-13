@@ -2,25 +2,6 @@ import useStakeFlow from "~/renderer/screens/stake";
 import { useHistory, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 
-type QueryParamAction =
-  | {
-      action: "stake";
-    }
-  | {
-      action: "get-funds";
-      currencyId: string;
-    };
-
-const isValidQueryParamAction = (params: any): params is QueryParamAction => {
-  if (!params || typeof params !== "object") {
-    return false;
-  }
-  return (
-    params.action === "stake" ||
-    (params.action === "get-funds" && typeof params.currencyId === "string")
-  );
-};
-
 export const useDeepLinkListener = () => {
   const startStakeFlow = useStakeFlow();
   const location = useLocation();
@@ -28,26 +9,21 @@ export const useDeepLinkListener = () => {
 
   // looks for query params to trigger stake flow
   useEffect(() => {
-    const rawQueryParams = new URLSearchParams(location.search);
-    const queryParams = rawQueryParams.get("q");
+    const queryParams = new URLSearchParams(location.search);
 
-    if (!queryParams) {
+    if (!queryParams.get("action")) {
       return;
     }
 
-    const decodedQueryParams = JSON.parse(decodeURIComponent(queryParams));
-    if (!isValidQueryParamAction(decodedQueryParams)) {
-      return;
-    }
-
-    if (decodedQueryParams.action === "stake") {
+    if (queryParams.get("action") === "stake") {
       startStakeFlow({ shouldRedirect: false });
     }
 
-    if (decodedQueryParams.action === "get-funds") {
+    const currencyId = queryParams.get("currencyId");
+    if (queryParams.get("action") === "get-funds" && currencyId) {
       startStakeFlow({
         shouldRedirect: false,
-        currencies: [decodedQueryParams.currencyId],
+        currencies: [currencyId],
         alwaysShowNoFunds: true,
       });
     }

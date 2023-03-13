@@ -55,7 +55,7 @@ export function useDeepLinkHandler() {
 
   const handler = useCallback(
     (event: any, deeplink: string) => {
-      const { pathname, searchParams } = new URL(deeplink);
+      const { pathname, searchParams, search } = new URL(deeplink);
       /**
        * TODO: handle duplicated query params
        * Today, it only keeps one (the last) key / value pair encountered in search params
@@ -95,8 +95,7 @@ export function useDeepLinkHandler() {
           break;
 
         case "earn": {
-          const encodedQueryParams = encodeURIComponent(JSON.stringify(query));
-          navigate("/earn", undefined, `q=${encodedQueryParams}`);
+          navigate("/earn", undefined, search);
           break;
         }
 
