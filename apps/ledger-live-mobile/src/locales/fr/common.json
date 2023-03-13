@@ -88,7 +88,11 @@
     "getSupport" : "Obtenir de l’aide",
     "comingSoon" : "Bientôt disponibles",
     "restart" : "Redémarrer",
-    "loadMore" : "Charger plus"
+    "loadMore" : "Charger plus",
+    "patterns" : {
+      "id" : "Identifiant {{ value }}",
+      "times" : "x {{ value }}"
+    }
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -828,7 +832,9 @@
     "required" : "Le Bluetooth semble être désactivé.",
     "locationRequiredTitle" : "La localisation est requise pour le Bluetooth LE.",
     "locationRequiredMessage" : "Sur Android, il faut autoriser l’accès à la localisation pour afficher les appareils en Bluetooth LE.",
-    "checkEnabled" : "Merci d’activer le Bluetooth dans les Paramètres de votre téléphone."
+    "checkEnabled" : "Merci d’activer le Bluetooth dans les Paramètres de votre téléphone.",
+    "tryEnablingAgain" : "Réessayez d’activer le Bluetooth",
+    "openSettings" : "Ouvrir les Paramètres Bluetooth"
   },
   "webview" : {
     "noConnectionError" : {
@@ -838,12 +844,10 @@
   },
   "location" : {
     "titleServiceRequired" : "Localisation requise",
-    "titlePermissionRequired" : "Accès à la localisation requis",
-    "titlePermissionRequiredPrecise" : "Accès à la localisation précise requis",
     "descriptionServiceRequired" : "Ledger Live a besoin des services de localisation pour coupler votre appareil en Bluetooth.",
-    "descriptionPermissionRequired" : "Ledger Live a besoin de l’autorisation d’accéder à la position pour coupler votre appareil via Bluetooth.",
-    "descriptionPermissionRequiredPrecise" : "Ledger Live a besoin de l’autorisation d’accéder à la position précise pour coupler votre appareil via Bluetooth.",
     "open" : "Ouvrir les paramètres de localisation",
+    "openSettings" : "Ouvrir les paramètres de localisation",
+    "tryEnablingAgain" : "Réessayez d’autoriser la localisation",
     "noInfos" : "Ledger n’utilise pas vos données de localisation."
   },
   "permissions" : {
@@ -856,6 +860,12 @@
       "modalButtonLabelBase" : "Autoriser",
       "modalButtonLabelSettingsVariant" : "Accéder aux Paramètres",
       "dontPair" : "Ne pas coupler"
+    },
+    "location" : {
+      "titlePermissionRequired" : "Accès à la localisation requis",
+      "titlePermissionRequiredPrecise" : "Accès à la localisation précise requis",
+      "descriptionPermissionRequired" : "Ledger Live a besoin de l’autorisation d’accéder à la position pour coupler votre appareil via Bluetooth.",
+      "descriptionPermissionRequiredPrecise" : "Ledger Live a besoin de l’autorisation d’accéder à la position précise pour coupler votre appareil via Bluetooth."
     },
     "camera" : {
       "title" : "Autoriser l’appareil photo",
@@ -1279,8 +1289,13 @@
       },
       "recovery" : "Vous avez déjà une phrase de récupération ?",
       "protect" : {
-        "label" : "~60 min",
-        "subTitle" : "Restaurer avec Protect"
+        "subTitle" : "Restaurer avec Ledger Recover",
+        "drawer" : {
+          "title" : "Utilisez un Ledger Nano X",
+          "desc" : "Ledger Recover est actuellement exclusif au Ledger Nano X.",
+          "buyNanoX" : "Acheter un Ledger Nano X",
+          "discoverBenefits" : "Découvrir les avantages"
+        }
       }
     },
     "stepNewDevice" : {
@@ -1507,25 +1522,20 @@
     "stepProtect" : {
       "bullets" : {
         "0" : {
-          "title" : "Naviguez ",
-          "label" : "Apprenez à interagir avec votre appareil. Lisez les instructions à l’écran."
+          "title" : "Sélectionnez \"Restore\"",
+          "label" : "Appuyez simultanément sur les deux boutons pour sélectionner."
         },
         "1" : {
-          "title" : "Sélectionnez \"Restore\"",
-          "label" : "Appuyez simultanément sur les deux boutons pour valider."
-        },
-        "2" : {
-          "title" : "Sélectionnez \"Restore with Protect\"",
-          "label" : "Appuyez simultanément sur les deux boutons pour valider."
+          "title" : "Sélectionnez \"Restore using Ledger Recover\"",
+          "label" : "Appuyez simultanément sur les deux boutons pour sélectionner."
         }
       },
       "nextStep" : "Continuer",
       "extraInfo" : {
-        "tooltip" : "Je ne le vois pas sur mon Ledger",
-        "title" : "Pourquoi ne vois-je pas \"Restore with Protect\" sur mon Ledger ?",
-        "desc1" : "La raison la plus probable est que votre appareil n’est pas compatible avec Protect. Ne vous inquiétez pas, nous allons vous aider à résoudre ce problème.",
-        "desc2" : "Contactez-nous et choisissez « Mon Ledger n’affiche pas \"Restore with Protect\" ». Nous avons tout prévu.",
-        "cta" : "Suivre les étapes",
+        "tooltip" : "Je ne vois pas \"Restore using Ledger Recover\"",
+        "title" : "Le système d’exploitation de votre Ledger doit être mis à jour",
+        "desc" : "Essayez de mettre à jour le système d’exploitation ou contactez l’Assistance Ledger pour obtenir de l’aide.",
+        "cta" : "Comment mettre à jour",
         "supportLink" : "Contacter l’Assistance Ledger"
       }
     },
@@ -1667,8 +1677,9 @@
         }
       },
       "protectConnectionInformationModal" : {
-        "title" : "Je n’arrive pas à connecter mon Ledger. Pourquoi ?",
-        "description" : "Si vous rencontrez des problèmes de connexion à Ledger Live pour le mobile après avoir activé le Bluetooth sur votre Ledger, appuyez sur le bouton \"En savoir plus\", et suivez les instructions."
+        "title" : "Connecter votre Ledger Nano X",
+        "description" : "Assurez-vous que votre Ledger est à proximité de votre téléphone et réessayez. <LinkBluethooth>En savoir plus sur les problèmes de connexion Bluetooth®. \n</LinkBluethooth>\nSi le Bluetooth® fonctionne, vous devez peut-être mettre à jour le système d’exploitation de votre Ledger. Essayez de mettre à jour le système d’exploitation ou contactez l’Assistance Ledger pour obtenir de l’aide. ",
+        "learnHowToUpdate" : "Comment mettre à jour"
       }
     },
     "stepImportAccounts" : {
@@ -1892,7 +1903,9 @@
     "seedStep" : {
       "title" : "Phrase de récupération secrète",
       "doneTitle" : "Phrase de récupération secrète confirmée",
-      "description" : "Votre phrase de récupération (\"recovery phrase\") est une liste secrète de 24 mots qui sauvegarde vos clés privées. Votre {{productName}} génère une phrase de récupération unique. Ledger ne conserve pas de copie de celle-ci."
+      "description" : "Votre phrase de récupération (\"recovery phrase\") est une liste secrète de 24 mots qui sauvegarde vos clés privées. Votre {{productName}} génère une phrase de récupération unique. Ledger ne conserve pas de copie de celle-ci.",
+      "selection" : "Découvrez nos conseils de configuration.",
+      "recovery" : "Pour la récupération et pour plus de sécurité, utilisez une phrase de récupération secrète générée par un appareil Ledger.\n\nVous n’en avez pas déjà une ? Générez une nouvelle phrase avec votre {{productName}}."
     },
     "softwareChecksSteps" : {
       "title" : "Vérifications du matériel et du logiciel",
@@ -5446,6 +5459,7 @@
     "warnDelegation" : "Déléguer vos droits de vote ne garantit pas que vous recevrez des récompenses de la part du validateur.",
     "to" : "à",
     "from" : "de",
+    "yield" : "Rendement estimé",
     "forAnEstYield" : "pour un rendement estimé de",
     "yieldPerYear" : "{{yield}} / An",
     "yieldInfos" : "Les taux de rendement sont fournis par",
@@ -5573,6 +5587,7 @@
     "cta" : "Continuer"
   },
   "exchange" : {
+    "count" : "+ {{count}} autres",
     "buy" : {
       "screenTitle" : "ACHETER DES CRYPTOS",
       "tabTitle" : "Acheter",
@@ -6026,22 +6041,10 @@
       "status" : {
         "new" : {
           "title" : "Nouveau",
-          "desc" : "Sauvegardez votre phrase de récupération",
-          "0" : {
-            "title" : "Des millions d’utilisateurs Ledger nous font confiance."
-          },
-          "1" : {
-            "title" : "Votre phrase de récupération est liée à votre identité en toute sécurité."
-          },
-          "2" : {
-            "title" : "Chiffrement de pointe."
-          },
-          "3" : {
-            "title" : "Votre phrase de récupération est divisée en 3 fragments séparés ultra-sécurisés."
-          },
+          "desc" : "Retrouvez l’accès à votre wallet sans votre phrase de récupération secrète.",
           "actions" : {
-            "learnMore" : "En savoir plus",
-            "alreadySubscribed" : "Vous utilisez déjà Protect ?"
+            "learnMore" : "Quels sont les avantages ?",
+            "alreadySubscribed" : "Déjà abonné(e) ? <LinkAccount>Accéder à mon compte</LinkAccount>"
           }
         },
         "confirmIdentity" : {
@@ -6104,5 +6107,30 @@
     "title" : "Fil d’actualités",
     "poweredByCryptopanic" : "Propulsé par CryptoPanic",
     "noPosts" : "Pas de publication pour le moment"
+  },
+  "deviceConnect" : {
+    "title" : "Connectez votre appareil"
+  },
+  "stake" : {
+    "noFundsModal" : {
+      "title" : "Acheter, échanger ou recevoir",
+      "text" : "Votre solde de {{coin}} est insuffisant pour staker",
+      "description" : "Ne vous inquiétez pas. Vous pouvez acheter, échanger ou recevoir des cryptos en toute sécurité via Ledger Live.",
+      "options" : {
+        "buy" : {
+          "title" : "Acheter",
+          "body" : "Achetez auprès de prestataires de confiance."
+        },
+        "swap" : {
+          "title" : "Échanger",
+          "label" : "Populaire",
+          "body" : "Convertissez vos cryptos en toute sécurité."
+        },
+        "receive" : {
+          "title" : "Recevoir",
+          "body" : "Recevez des cryptos dans votre wallet."
+        }
+      }
+    }
   }
 }
