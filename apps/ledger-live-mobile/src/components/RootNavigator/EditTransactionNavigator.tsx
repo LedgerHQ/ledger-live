@@ -7,14 +7,14 @@ import { ScreenName } from "../../const";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 import { MethodSelection } from "../../families/ethereum/EditTransaction/MethodSelection";
-import { EthereumEditTransactionParamList } from "./types/EthereumEditTransactionNavigator";
+import { EditTransactionParamList } from "./types/EditTransactionNavigator";
 import SendSummary from "../../screens/SendFunds/04-Summary";
 import SelectDevice from "../../screens/SelectDevice";
 import SendConnectDevice from "../../screens/ConnectDevice";
 import SendValidationSuccess from "../../screens/SendFunds/07-ValidationSuccess";
 import SendValidationError from "../../screens/SendFunds/07-ValidationError";
 
-const Stack = createStackNavigator<EthereumEditTransactionParamList>();
+const Stack = createStackNavigator<EditTransactionParamList>();
 
 export default function EditTransactionNavigator() {
   const { t } = useTranslation();
@@ -27,7 +27,7 @@ export default function EditTransactionNavigator() {
   return (
     <Stack.Navigator screenOptions={stackNavigationConfig}>
       <Stack.Screen
-        name={ScreenName.EditEthereumTransactionMethodSelection}
+        name={ScreenName.EditTransactionMethodSelection}
         component={MethodSelection}
         options={{
           headerTitle: () => <StepHeader title={t("editTransaction.header")} />,
