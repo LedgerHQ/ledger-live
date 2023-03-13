@@ -8,7 +8,7 @@ import { BaseNavigatorStackParamList } from "../../components/RootNavigator/type
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { ScreenName } from "../../const";
-import { EthereumEditTransactionParamList } from "../../components/RootNavigator/types/EthereumEditTransactionNavigator";
+import { EditTransactionParamList } from "../../components/RootNavigator/types/EthereumEditTransactionNavigator";
 
 export type SendRowsFeeProps<T extends Transaction = Transaction> = {
   transaction: T;
@@ -28,6 +28,26 @@ export type SendRowsFeeProps<T extends Transaction = Transaction> = {
       SignTransactionNavigatorParamList,
       ScreenName.SignTransactionSummary
     >
+<<<<<<< HEAD
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
+=======
+  | StackNavigatorProps<
+      LendingEnableFlowParamsList,
+      ScreenName.LendingEnableSummary
+    >
+  | StackNavigatorProps<
+      LendingSupplyFlowNavigatorParamList,
+      ScreenName.LendingSupplySummary
+    >
+  | StackNavigatorProps<
+      LendingWithdrawFlowNavigatorParamList,
+      ScreenName.LendingWithdrawSummary
+    >
+  | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
+  | StackNavigatorProps<
+      EditTransactionParamList,
+      ScreenName.SpeedUpTransaction
+    >,
+>>>>>>> a325e08846 (rename edit tx navigator)
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
