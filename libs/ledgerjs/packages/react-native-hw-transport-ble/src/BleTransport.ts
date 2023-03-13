@@ -605,10 +605,6 @@ export default class BleTransport extends Transport {
     );
   }
 
-  setScrambleKey(): void {
-    throw new Error("method is deprecated, not implemented here.");
-  }
-
   /**
    * Do not call this directly unless you know what you're doing. Communication
    * with a Ledger device should be through the {@link exchange} method.
