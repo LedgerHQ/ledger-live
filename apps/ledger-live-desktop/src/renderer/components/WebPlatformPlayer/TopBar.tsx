@@ -5,10 +5,10 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 
-import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 import { rgba } from "~/renderer/styles/helpers";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
 import Box, { Tabbable } from "~/renderer/components/Box";
 
@@ -57,12 +57,12 @@ const RightContainer = styled(Box).attrs(() => ({
 }))``;
 
 const ItemContainer: ThemedComponent<{
-  "data-e2e"?: string,
-  isInteractive?: boolean,
-  onClick?: () => void,
-  disabled?: boolean,
-  children: React.ReactNode,
-  justifyContent?: string,
+  "data-e2e"?: string;
+  isInteractive?: boolean;
+  onClick?: () => void;
+  disabled?: boolean;
+  children: React.ReactNode;
+  justifyContent?: string;
 }> = styled(Tabbable).attrs(p => ({
   padding: 1,
   alignItems: "center",
@@ -110,18 +110,18 @@ export const Separator = styled.div`
 `;
 
 export type TopBarConfig = {
-  shouldDisplayName?: boolean,
-  shouldDisplayInfo?: boolean,
-  shouldDisplayClose?: boolean,
-  shouldDisplayNavigation?: boolean,
+  shouldDisplayName?: boolean;
+  shouldDisplayInfo?: boolean;
+  shouldDisplayClose?: boolean;
+  shouldDisplayNavigation?: boolean;
 };
 
 export type Props = {
-  icon?: boolean,
-  manifest: LiveAppManifest,
-  onClose?: () => void,
-  config?: TopBarConfig,
-  webview: WebviewTag,
+  icon?: boolean;
+  manifest: LiveAppManifest;
+  onClose?: () => void;
+  config?: TopBarConfig;
+  webview: WebviewTag;
 };
 
 export const TopBar = ({ manifest, onClose, config = {}, webview }: Props) => {
@@ -140,8 +140,8 @@ export const TopBar = ({ manifest, onClose, config = {}, webview }: Props) => {
   const dispatch = useDispatch();
 
   const handleDidNavigate = useCallback(() => {
-      setCanGoBack(webview.canGoBack());
-      setCanGoForward(webview.canGoForward());
+    setCanGoBack(webview.canGoBack());
+    setCanGoForward(webview.canGoForward());
   }, [webview]);
 
   useEffect(() => {
@@ -181,15 +181,15 @@ export const TopBar = ({ manifest, onClose, config = {}, webview }: Props) => {
   }, [manifest, dispatch]);
 
   const onOpenDevTools = useCallback(() => {
-      webview.openDevTools();
+    webview.openDevTools();
   }, [webview]);
 
   const onGoBack = useCallback(() => {
-      webview.goBack();
+    webview.goBack();
   }, [webview]);
 
   const onGoForward = useCallback(() => {
-      webview.goForward();
+    webview.goForward();
   }, [webview]);
 
   return (
@@ -230,7 +230,7 @@ export const TopBar = ({ manifest, onClose, config = {}, webview }: Props) => {
           </ItemContainer>
         </>
       ) : null}
-      {(shouldDisplayInfo || shouldDisplayClose) ? (
+      {shouldDisplayInfo || shouldDisplayClose ? (
         <RightContainer>
           {shouldDisplayInfo && (
             <ItemContainer isInteractive onClick={onClick}>

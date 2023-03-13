@@ -5,10 +5,10 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 
-import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 import { rgba } from "~/renderer/styles/helpers";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
 import Box, { Tabbable } from "~/renderer/components/Box";
 
@@ -30,12 +30,12 @@ const Container = styled(Box).attrs(() => ({
 `;
 
 const ItemContainer: ThemedComponent<{
-  "data-e2e"?: string,
-  isInteractive?: boolean,
-  onClick?: () => void,
-  disabled?: boolean,
-  children: React.ReactNode,
-  justifyContent?: string,
+  "data-e2e"?: string;
+  isInteractive?: boolean;
+  onClick?: () => void;
+  disabled?: boolean;
+  children: React.ReactNode;
+  justifyContent?: string;
 }> = styled(Tabbable).attrs(p => ({
   padding: 1,
   alignItems: "center",
@@ -83,8 +83,8 @@ export const Separator = styled.div`
 `;
 
 export type Props = {
-  manifest: LiveAppManifest,
-  webview: WebviewTag,
+  manifest: LiveAppManifest;
+  webview: WebviewTag;
 };
 
 export const TopBar = ({ manifest, webview }: Props) => {
@@ -113,13 +113,13 @@ export const TopBar = ({ manifest, webview }: Props) => {
 
   const handleDidNavigate = useCallback(() => {
     if (webview) {
-        const url = webview.getURL();
-        const manifestHostname = new URL(manifest.url).hostname;
-        const isOriginUrl = url.includes(manifestHostname);
-        if (isOriginUrl) {
-          lastMatchingURL.current = url; // WARN: last Web3App URL can't auto redirect to an external URL. If so this will create a loop when navigating back.
-        }
-        setIsMatchingURL(isOriginUrl);
+      const url = webview.getURL();
+      const manifestHostname = new URL(manifest.url).hostname;
+      const isOriginUrl = url.includes(manifestHostname);
+      if (isOriginUrl) {
+        lastMatchingURL.current = url; // WARN: last Web3App URL can't auto redirect to an external URL. If so this will create a loop when navigating back.
+      }
+      setIsMatchingURL(isOriginUrl);
     }
   }, [webview, manifest]);
 
@@ -128,7 +128,7 @@ export const TopBar = ({ manifest, webview }: Props) => {
       webview.addEventListener("did-navigate", handleDidNavigate);
       webview.addEventListener("did-navigate-in-page", handleDidNavigate);
       webview.addEventListener("dom-ready", handleDidNavigate);
-  
+
       return () => {
         webview.removeEventListener("did-navigate", handleDidNavigate);
         webview.removeEventListener("did-navigate-in-page", handleDidNavigate);
@@ -146,7 +146,8 @@ export const TopBar = ({ manifest, webview }: Props) => {
             <Trans i18nKey="common.backToMatchingURL" values={{ appName: manifest.name }} />
           </ItemContent>
         </ItemContainer>
-      )}      <ItemContainer isInteractive onClick={handleReload}>
+      )}{" "}
+      <ItemContainer isInteractive onClick={handleReload}>
         <IconReload size={16} />
         <ItemContent>
           <Trans i18nKey="common.sync.refresh" />
