@@ -2476,6 +2476,8 @@
       "carouselDesc": "We'll show you cards with personalised tips and our latest offers just for you.",
       "language": "Display language",
       "languageDesc": "Set the language displayed in Ledger Live.",
+      "dateFormat": "Date format",
+      "dateFormatDesc": "Set the date format for Ledger Live",
       "region": "Region",
       "regionDesc": "Choose your region to update formats of dates, time and currencies.",
       "password": "Password lock",
@@ -2524,7 +2526,13 @@
       "hideEmptyTokenAccounts": "Hide empty token accounts",
       "hideEmptyTokenAccountsDesc": "All empty token accounts in the Assets page will be hidden.",
       "filterTokenOperationsZeroAmount": "Hide token transactions when value is 0",
-      "filterTokenOperationsZeroAmountDesc": "Hiding token transactions without value can prevent some potential address poisoning attacks on Eth, Polygon, BSC, Tron..."
+      "filterTokenOperationsZeroAmountDesc": "Hiding token transactions without value can prevent some potential address poisoning attacks on Eth, Polygon, BSC, Tron...",
+      "DateFormatModal": {
+        "title": "Date format",
+        "default": "Default",
+        "dayFirst": "DD/MM/YYYY",
+        "monthFirst": "MM/DD/YYYY"
+      }
     },
     "currencies": {
       "header": "Currencies",
