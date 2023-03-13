@@ -7,7 +7,7 @@ import { NearAccount } from "@ledgerhq/live-common/families/near/types";
 import type { Account } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "../../const";
 
-const getActions = ({
+const getMainActions = ({
   account,
   parentAccount,
 }: {
@@ -47,5 +47,5 @@ const getActions = ({
 };
 
 export default {
-  getActions,
+  getMainActions,
 };

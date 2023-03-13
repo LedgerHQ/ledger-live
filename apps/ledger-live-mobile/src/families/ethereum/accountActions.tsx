@@ -5,7 +5,7 @@ import { Trans } from "react-i18next";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { NavigatorName, ScreenName } from "../../const";
 
-const getActions = ({
+const getMainActions = ({
   account,
   parentAccount,
 }: {
@@ -49,5 +49,5 @@ const getActions = ({
 };
 
 export default {
-  getActions,
+  getMainActions,
 };
