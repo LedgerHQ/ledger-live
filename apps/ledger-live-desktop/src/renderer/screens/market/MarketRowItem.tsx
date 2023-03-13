@@ -76,9 +76,7 @@ function MarketRowItem({
 
   // PTX smart routing feature flag - buy sell live app flag
   const ptxSmartRouting = useFeature("ptxSmartRouting");
-  const startStakeFlow = useStakeFlow({
-    currencies: currency?.internalCurrency ? [currency.internalCurrency.id] : undefined,
-  });
+  const startStakeFlow = useStakeFlow();
 
   const openAddAccounts = useCallback(() => {
     if (currency)
@@ -183,10 +181,12 @@ function MarketRowItem({
         page: "Page Market",
         ...stakeDefaultTrack,
       });
-      startStakeFlow();
+      startStakeFlow({
+        currencies: currency?.internalCurrency ? [currency.internalCurrency.id] : undefined,
+      });
       setTrackingSource("Page Market");
     },
-    [currency?.ticker, startStakeFlow],
+    [currency?.internalCurrency, currency?.ticker, startStakeFlow],
   );
 
   const onStarClick = useCallback(

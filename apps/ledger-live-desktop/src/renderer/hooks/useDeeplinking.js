@@ -95,14 +95,9 @@ export function useDeepLinkHandler() {
           break;
 
         case "earn": {
-          const { startStake } = query;
-          if (startStake) {
-            navigate("/earn", undefined, `?q=startStake`);
-            break;
-          } else {
-            navigate("/earn");
-            break;
-          }
+          const encodedQueryParams = encodeURIComponent(JSON.stringify(query));
+          navigate("/earn", undefined, `q=${encodedQueryParams}`);
+          break;
         }
 
         case "myledger": {

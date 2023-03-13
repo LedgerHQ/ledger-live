@@ -13,60 +13,62 @@ import { openModal } from "~/renderer/actions/modals";
 type Props = {
   currencies?: string[];
   shouldRedirect?: boolean;
+  alwaysShowNoFunds?: boolean;
 };
 
-const useStakeFlow = ({ currencies, shouldRedirect = true }: Props = {}) => {
+const useStakeFlow = () => {
   const history = useHistory();
   const { params: { list } = { list: undefined } } = useFeature("stakePrograms") || {};
   const dispatch = useDispatch();
 
-  const cryptoCurrencies = useMemo(() => {
-    return filterCurrencies(listCurrencies(true), {
-      currencies: currencies || list,
-    });
-  }, [currencies, list]);
+  return useCallback(
+    ({ currencies, shouldRedirect = true, alwaysShowNoFunds = false }: Props) => {
+      const cryptoCurrencies = filterCurrencies(listCurrencies(true), {
+        currencies: currencies || list,
+      });
 
-  return useCallback(() => {
-    page("Stake", "Drawer - Choose Asset", {
-      ...stakeDefaultTrack,
-      page: history.location.pathname,
-      type: "drawer",
-    });
-    setDrawer(
-      SelectAccountAndCurrencyDrawer,
-      {
-        currencies: cryptoCurrencies,
-        onAccountSelected: (account: Account, parentAccount: Account | null = null) => {
-          track("button_clicked", {
-            ...stakeDefaultTrack,
-            button: "asset",
-            page: history.location.pathname,
-            currency: account?.currency?.family,
-            account,
-            parentAccount,
-            drawer: "Select Account And Currency Drawer",
-          });
-          setDrawer();
-          dispatch(openModal("MODAL_START_STAKE", { account, parentAccount }));
-          if (shouldRedirect) {
-            history.push({
-              pathname: `/account/${account.id}`,
+      page("Stake", "Drawer - Choose Asset", {
+        ...stakeDefaultTrack,
+        page: history.location.pathname,
+        type: "drawer",
+      });
+      setDrawer(
+        SelectAccountAndCurrencyDrawer,
+        {
+          currencies: cryptoCurrencies,
+          onAccountSelected: (account: Account, parentAccount: Account | null = null) => {
+            track("button_clicked", {
+              ...stakeDefaultTrack,
+              button: "asset",
+              page: history.location.pathname,
+              currency: account?.currency?.family,
+              account,
+              parentAccount,
+              drawer: "Select Account And Currency Drawer",
             });
-          }
+            setDrawer();
+            dispatch(openModal("MODAL_START_STAKE", { account, parentAccount, alwaysShowNoFunds }));
+            if (shouldRedirect) {
+              history.push({
+                pathname: `/account/${account.id}`,
+              });
+            }
+          },
         },
-      },
-      {
-        onRequestClose: () => {
-          setDrawer();
-          track("button_clicked", {
-            ...stakeDefaultTrack,
-            button: "close",
-            page: history.location.pathname,
-          });
+        {
+          onRequestClose: () => {
+            setDrawer();
+            track("button_clicked", {
+              ...stakeDefaultTrack,
+              button: "close",
+              page: history.location.pathname,
+            });
+          },
         },
-      },
-    );
-  }, [cryptoCurrencies, dispatch, history]);
+      );
+    },
+    [dispatch, history, list],
+  );
 };
 
 export default useStakeFlow;

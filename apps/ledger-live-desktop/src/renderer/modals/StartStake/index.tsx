@@ -1,7 +1,7 @@
 import perFamilyManageActions from "~/renderer/generated/AccountHeaderManageActions";
 import { FC, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { closeModal } from "~/renderer/actions/modals";
+import { closeModal, openModal } from "~/renderer/actions/modals";
 import { Account } from "@ledgerhq/types-live";
 
 type Action = {
@@ -14,9 +14,10 @@ type CurrencyFamily = keyof typeof perFamilyManageActions;
 interface ModalStartStakeProps {
   account: Account;
   parentAccount: Account | null;
+  alwaysShowNoFunds: boolean;
 }
 
-const ModalStartStake: FC<ModalStartStakeProps> = ({ account, parentAccount }) => {
+const ModalStartStake: FC<ModalStartStakeProps> = ({ account, parentAccount, alwaysShowNoFunds }) => {
   const currencyFamily: CurrencyFamily = account.currency.family as CurrencyFamily;
   const manage = perFamilyManageActions[currencyFamily];
   const dispatch = useDispatch();
@@ -30,12 +31,17 @@ const ModalStartStake: FC<ModalStartStakeProps> = ({ account, parentAccount }) =
     const stakeAction = manageList.find(item => item.key === "Stake");
     dispatch(closeModal("MODAL_START_STAKE"));
 
+    if (alwaysShowNoFunds) {
+      dispatch(openModal("MODAL_NO_FUNDS_STAKE", { account, parentAccount }));
+      return;
+    }
+
     if (stakeAction) {
       stakeAction.onClick();
     }
     // ignoring manageList from dependency array
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account]);
+  }, [account, alwaysShowNoFunds]);
 
   return null;
 };
