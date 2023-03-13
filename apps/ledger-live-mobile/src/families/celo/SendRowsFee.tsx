@@ -23,7 +23,6 @@ import type { CeloRevokeFlowFlowParamList } from "./RevokeFlow/types";
 import type { CeloUnlockFlowParamList } from "./UnlockFlow/types";
 import type { CeloVoteFlowParamList } from "./VoteFlow/types";
 import type { CeloWithdrawFlowParamList } from "./WithdrawFlow/types";
-import { EthereumEditTransactionParamList } from "../../components/RootNavigator/types/EthereumEditTransactionNavigator";
 
 type Props = {
   account: AccountLike;
@@ -37,8 +36,10 @@ type Props = {
   | StackNavigatorProps<CeloRevokeFlowFlowParamList, ScreenName.CeloRevokeAmount>
   | StackNavigatorProps<CeloUnlockFlowParamList, ScreenName.CeloUnlockAmount>
   | StackNavigatorProps<CeloVoteFlowParamList, ScreenName.CeloVoteAmount>
-  | StackNavigatorProps<CeloWithdrawFlowParamList, ScreenName.CeloWithdrawAmount>
-  | StackNavigatorProps<EthereumEditTransactionParamList, ScreenName.SendSummary>,
+  | StackNavigatorProps<
+      CeloWithdrawFlowParamList,
+      ScreenName.CeloWithdrawAmount
+    >,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 export default function CeloFeeRow({ account, transaction }: Props) {
