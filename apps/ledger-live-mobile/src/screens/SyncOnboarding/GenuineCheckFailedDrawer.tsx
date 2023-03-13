@@ -12,9 +12,19 @@ export type Props = {
   onSkip?: () => void;
   onClose?: () => void;
   productName: string;
-  error: Error | null | undefined;
+  error?: Error | null;
 };
 
+/**
+ * Drawer displayed on a failed genuine check during the sync onboarding
+ *
+ * The failed genuine check can come from an error that happened during the genuine check
+ * or if the user cancelled/did not allow the genuine check.
+ *
+ * If `error` is set, displays the associated `GenericErrorView` with the translated message defined in common.json
+ *
+ * Otherwise displays an error message informing the user that they cancelled the genuine check
+ */
 const GenuineCheckFailedDrawer = ({
   isOpen,
   onRetry,
