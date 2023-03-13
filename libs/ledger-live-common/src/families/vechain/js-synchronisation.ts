@@ -14,7 +14,6 @@ import {
 import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
 
 const getAccountShape: GetAccountShape = async (info) => {
-  type TokenType = "TokenAccount";
   const { initialAccount, currency, derivationMode } = info;
   let { address } = info;
   address = eip55.encode(address);
@@ -59,20 +58,20 @@ const getAccountShape: GetAccountShape = async (info) => {
   const shape = {
     ...info,
     id: accountId,
-    balance: BigNumber(balance),
+    balance: new BigNumber(balance),
     creationDate: min_date != -1 ? new Date(min_date) : new Date(),
-    spendableBalance: BigNumber(balance),
+    spendableBalance: new BigNumber(balance),
     operationsCount: operations.length,
     operations: operations,
     blockHeight,
     subAccounts: [
       {
-        type: "TokenAccount" as TokenType,
+        type: "TokenAccount" as const,
         id: vthoAccountId,
         parentId: accountId,
         token: getTokenById("vechain/vtho"),
-        balance: BigNumber(energy),
-        spendableBalance: BigNumber(energy),
+        balance: new BigNumber(energy),
+        spendableBalance: new BigNumber(energy),
         creationDate: min_date != -1 ? new Date(min_date) : new Date(),
         operationsCount: VTHOoperations.length,
         operations: VTHOoperations,

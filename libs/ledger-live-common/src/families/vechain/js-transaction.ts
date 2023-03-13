@@ -24,7 +24,6 @@ import { isValid } from "./utils/address-utils";
  */
 export const createTransaction = (): Transaction => ({
   family: "vechain",
-  mode: "send_vet",
   body: {
     chainTag: TESTNET_CHAIN_TAG,
     // placeholder, if "empty" returns error on send modal open
@@ -37,6 +36,7 @@ export const createTransaction = (): Transaction => ({
     nonce: generateNonce(),
   },
   amount: BigNumber(0),
+  estimatedFees: BigNumber(0),
   recipient: "",
   useAllAmount: false,
 });
@@ -65,10 +65,8 @@ export const prepareTransaction = async (
   account: Account,
   transaction: Transaction
 ): Promise<Transaction> => {
-  const { amount, isTokenAccount } = await calculateTransactionInfo(
-    account,
-    transaction
-  );
+  const { amount, isTokenAccount, estimatedFees } =
+    await calculateTransactionInfo(account, transaction);
 
   const blockRef = await getBlockRef();
 
@@ -88,7 +86,7 @@ export const prepareTransaction = async (
 
   const body = { ...transaction.body, gas, blockRef, clauses };
 
-  return { ...transaction, body, amount };
+  return { ...transaction, body, amount, estimatedFees };
 };
 
 const calculateClausesVtho = async (
@@ -104,7 +102,6 @@ const calculateClausesVtho = async (
     data: "0x",
   };
 
-  transaction.mode = "send_vtho";
   const updatedValues = {
     to: transaction.recipient,
     amount: amount.toFixed(),
@@ -131,8 +128,6 @@ const calculateClausesVet = async (
     value: 0,
     data: "0x",
   };
-
-  transaction.mode = "send_vet";
 
   updatedClause.value = `${HEX_PREFIX}${amount.toString(16)}`;
   updatedClause.to = transaction.recipient;

@@ -28,7 +28,9 @@ export const calculateTransactionInfo = async (
   let totalSpent;
   if (isTokenAccount) {
     balance = tokenAccount.balance;
-    spendableBalance = tokenAccount.balance.minus(estimatedFees);
+    spendableBalance = tokenAccount.balance.minus(estimatedFees).gt(0)
+      ? tokenAccount.balance.minus(estimatedFees)
+      : new BigNumber(0);
     amount = useAllAmount ? spendableBalance : oldAmount;
     totalSpent = useAllAmount
       ? tokenAccount.balance

@@ -12,17 +12,15 @@ export type NetworkInfo = {
   family: "ethereum";
 };
 
-export type TransactionMode = "send_vet" | "send_vtho";
-
 export type Transaction = TransactionCommon & {
   family: "vechain";
-  mode: TransactionMode;
+  estimatedFees: BigNumber;
   body: ThorTransaction.Body;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
   family: "vechain";
-  mode: TransactionMode;
+  estimatedFees: BigNumber;
   body: ThorTransaction.Body;
 };
 

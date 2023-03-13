@@ -56,8 +56,7 @@ export const estimateGas = async (t: Transaction): Promise<number> => {
   const queryData: Query[] = [];
 
   t.body.clauses.forEach((c) => {
-    const recipient =
-      t.mode === "send_vtho" ? VTHO_ADDRESS : c.to || ZERO_ADDRESS;
+    const recipient = t.subAccountId ? VTHO_ADDRESS : c.to || ZERO_ADDRESS;
 
     queryData.push({
       to: isValid(recipient) ? recipient : ZERO_ADDRESS,

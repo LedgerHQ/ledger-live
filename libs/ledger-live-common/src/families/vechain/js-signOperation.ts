@@ -12,7 +12,6 @@ import { withDevice } from "../../hw/deviceAccess";
 import { encodeOperationId } from "../../operation";
 import { Transaction as ThorTransaction } from "thor-devkit";
 import Vet from "@ledgerhq/hw-app-vet";
-import { calculateFee } from "./utils/transaction-utils";
 
 const buildOptimisticOperation = async (
   account: Account,
@@ -29,10 +28,7 @@ const buildOptimisticOperation = async (
     hash: "",
     type: subAccountId ? "NONE" : type,
     value: subAccountId ? new BigNumber(0) : BigNumber(transaction.amount),
-    fee: await calculateFee(
-      BigNumber(transaction.body.gas),
-      transaction.body.gasPriceCoef
-    ),
+    fee: subAccountId ? new BigNumber(0) : transaction.estimatedFees,
     blockHash: null,
     blockHeight: null,
     senders: [account.freshAddress],
@@ -47,10 +43,7 @@ const buildOptimisticOperation = async (
             hash: "",
             type: "OUT",
             value: transaction.amount,
-            fee: await calculateFee(
-              BigNumber(transaction.body.gas),
-              transaction.body.gasPriceCoef
-            ),
+            fee: subAccountId ? transaction.estimatedFees : new BigNumber(0),
             blockHash: null,
             blockHeight: null,
             senders: [account.freshAddress],

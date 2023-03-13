@@ -10,6 +10,15 @@ type Clauses = {
   data: string;
   value: string | number;
 };
+
+const options = [
+  {
+    name: "vechainCurrency",
+    type: String,
+    desc: 'select between sending VET or VTHO using "VET" or "VTHO" strings',
+  },
+];
+
 function inferTransactions(
   transactions: Array<{
     account: AccountLike;
@@ -30,13 +39,13 @@ function inferTransactions(
 
     const clauses: Array<Clauses> = [];
 
-    if (opts.mode == "send_vet") {
+    if (opts.vechainCurrency == "VET") {
       clauses.push({
         to: transaction.recipient,
         value: "0x" + transaction.amount.toString(16),
         data: "0x",
       });
-    } else if (opts.mode == "send_vtho") {
+    } else if (opts.vechainCurrency == "VTHO") {
       clauses.push({
         value: 0,
         to: VTHO_ADDRESS,
@@ -50,13 +59,13 @@ function inferTransactions(
     return {
       ...transaction,
       family: "vechain",
-      mode: opts.mode || "send",
-      subAccountId: opts.mode == "send_vtho" ? subAccountId : "",
+      subAccountId: opts.vechainCurrency == "VTHO" ? subAccountId : "",
       body: { ...(transaction as VechainTransaction).body, clauses },
     } as VechainTransaction;
   });
 }
 
 export default {
+  options,
   inferTransactions,
 };

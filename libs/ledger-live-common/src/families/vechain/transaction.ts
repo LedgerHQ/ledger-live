@@ -13,7 +13,7 @@ import {
 } from "../../transaction/common";
 
 export const formatTransaction = (t: Transaction): string => {
-  return `${t.mode.toUpperCase()} 1 TO ${t.recipient}`;
+  return "";
 };
 
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
