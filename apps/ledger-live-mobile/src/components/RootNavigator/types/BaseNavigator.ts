@@ -76,7 +76,7 @@ import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/type
 import type { NoFundsNavigatorParamList } from "./NoFundsNavigator";
 import type { StakeNavigatorParamList } from "./StakeNavigator";
 import type { ExploreTabNavigatorStackParamList } from "./ExploreTabNavigator";
-import { EthereumEditTransactionParamList } from "./EthereumEditTransactionNavigator";
+import { EditTransactionParamList } from "./EditTransactionNavigator";
 
 type TradeParams = {
   type: "onRamp" | "offRamp";
@@ -314,7 +314,7 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.CosmosClaimRewardsFlow]: NavigatorScreenParams<CosmosClaimRewardsFlowParamList>;
 
   // Ethereum
-  [NavigatorName.EthereumEditTransaction]: NavigatorScreenParams<EthereumEditTransactionParamList>;
+  [NavigatorName.EthereumEditTransaction]: NavigatorScreenParams<EditTransactionParamList>;
 
   // Solana
   [NavigatorName.SolanaDelegationFlow]: NavigatorScreenParams<SolanaDelegationFlowParamList>;

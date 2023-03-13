@@ -11,7 +11,7 @@ import { BaseNavigatorStackParamList } from "../../components/RootNavigator/type
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { ScreenName } from "../../const";
-import { EthereumEditTransactionParamList } from "../../components/RootNavigator/types/EthereumEditTransactionNavigator";
+import { EditTransactionParamList } from "../../components/RootNavigator/types/EthereumEditTransactionNavigator";
 
 export type SendRowsFeeProps<T extends Transaction = Transaction> = {
   transaction: T;
@@ -41,7 +41,7 @@ export type SendRowsFeeProps<T extends Transaction = Transaction> = {
     >
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
   | StackNavigatorProps<
-      EthereumEditTransactionParamList,
+      EditTransactionParamList,
       ScreenName.SpeedUpTransaction
     >,
   StackNavigatorProps<BaseNavigatorStackParamList>
