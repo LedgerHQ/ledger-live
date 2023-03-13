@@ -222,10 +222,6 @@ export const SyncOnboarding = ({
     };
   }, []);
 
-  const handleClose = useCallback(() => {
-    goBackToPairingFlow();
-  }, [goBackToPairingFlow]);
-
   const handleDesyncTimedOut = useCallback(() => {
     setDesyncDrawerOpen(true);
   }, []);
@@ -260,6 +256,10 @@ export const SyncOnboarding = ({
 
     navigation.navigate(ScreenName.SyncOnboardingCompletion, { device });
   }, [device, dispatchRedux, navigation]);
+
+  const handleClose = useCallback(() => {
+    readyRedirectTimerRef.current ? handleDeviceReady() : goBackToPairingFlow();
+  }, [goBackToPairingFlow, handleDeviceReady]);
 
   useEffect(() => {
     if (!fatalError) {
