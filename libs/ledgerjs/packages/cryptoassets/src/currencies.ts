@@ -2784,18 +2784,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     color: "#28008C",
     family: "vechain",
     blockAvgTime: 10,
-    units: [
-      {
-        name: "VET",
-        code: "VET",
-        magnitude: 18,
-      },
-      {
-        name: "WEI",
-        code: "WEI",
-        magnitude: 0,
-      },
-    ],
+    units: ethereumUnits("VET", "VET"),
     explorerViews: [
       {
         tx: "https://explore-testnet.vechain.org/transactions/$hash",
