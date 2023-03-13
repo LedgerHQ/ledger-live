@@ -50,4 +50,4 @@ export type ExtraDeviceTransactionField =
   | ExtraDeviceTransactionField_stellar
   | ExtraDeviceTransactionField_tezos
   | ExtraDeviceTransactionField_tron
-  | ExtraDeviceTransactionField_polkadot;
+    | ExtraDeviceTransactionField_polkadot;
