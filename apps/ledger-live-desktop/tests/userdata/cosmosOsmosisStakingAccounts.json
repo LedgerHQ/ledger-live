@@ -11,7 +11,6 @@
       "language": "en",
       "theme": null,
       "region": null,
-      "locale": "en-US",
       "orderAccounts": "balance|desc",
       "countervalueFirst": false,
       "autoLockTimeout": 10,
@@ -19,78 +18,34 @@
       "marketIndicator": "western",
       "currenciesSettings": {},
       "pairExchanges": {},
-      "developerMode": true,
+      "developerMode": false,
       "loaded": true,
       "shareAnalytics": true,
       "sentryLogs": true,
-      "lastUsedVersion": "2.53.2",
+      "lastUsedVersion": "99.99.99",
       "dismissedBanners": [],
       "accountsViewMode": "list",
-      "nftsViewMode": "list",
       "showAccountsHelperBanner": true,
       "hideEmptyTokenAccounts": false,
       "sidebarCollapsed": false,
       "discreetMode": false,
       "preferredDeviceModel": "nanoS",
       "hasInstalledApps": true,
-      "carouselVisibility": 0,
-      "lastSeenDevice": {
-        "modelId": "nanoS",
-        "deviceInfo": {
-          "version": "2.1.0",
-          "mcuVersion": "1.12",
-          "seVersion": "2.1.0",
-          "majMin": "2.1",
-          "providerName": null,
-          "targetId": 823132164,
-          "hasDevFirmware": false,
-          "seTargetId": 823132164,
-          "isOSU": false,
-          "isBootloader": false,
-          "isRecoveryMode": false,
-          "managerAllowed": false,
-          "pinValidated": true,
-          "onboarded": true,
-          "bootloaderVersion": "0.11"
-        }
-      },
-      "lastSeenCustomImage": { "size": 0, "hash": "" },
-      "latestFirmware": null,
+      "carouselVisibility": 99999999999,
+      "hasAcceptedSwapKYC": false,
+      "lastSeenDevice": null,
       "blacklistedTokenIds": [],
-      "hiddenNftCollections": [],
+      "swapAcceptedProviderIds": [],
       "deepLinkUrl": null,
       "firstTimeLend": false,
+      "swapProviders": [],
       "showClearCacheBanner": false,
-      "fullNodeEnabled": false,
-      "allowDebugApps": false,
-      "allowExperimentalApps": false,
-      "enablePlatformDevTools": false,
-      "catalogProvider": "production",
-      "enableLearnPageStagingUrl": false,
-      "swap": {
-        "hasAcceptedIPSharing": false,
-        "acceptedProviders": [],
-        "selectableCurrencies": [],
-        "KYC": {}
-      },
-      "starredMarketCoins": [],
-      "overriddenFeatureFlags": {
-        "stakeAccountBanner": {
-          "enabled": true,
-          "params": {
-            "solana": { "redelegate": true, "delegate": true },
-            "eth": { "kiln": true, "lido": true },
-            "osmosis": { "redelegate": true, "delegate": true },
-            "cosmos": { "redelegate": true, "delegate": true },
-            "near": { "redelegate": true, "delegate": true }
-          },
-          "overridesRemote": true
-        }
-      },
-      "featureFlagsButtonVisible": false
+      "starredAccountIds": [],
+      "hasPassword": false
     },
-    "user": { "id": "6525c8fd-cbc0-4559-9200-db12843e1ef4" },
-    "announcements": { "announcements": [], "seenIds": [], "lastUpdateTime": 1676635211688 },
+    "user": {
+      "id": "08cf3393-c5eb-4ea7-92de-0deea22e3971"
+    },
     "accounts": [
       {
         "data": {

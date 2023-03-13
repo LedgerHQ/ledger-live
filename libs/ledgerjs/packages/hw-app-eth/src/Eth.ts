@@ -19,7 +19,11 @@ import type Transport from "@ledgerhq/hw-transport";
 import { BigNumber } from "bignumber.js";
 import { decodeTxInfo, hexBuffer, maybeHexBuffer, splitPath } from "./utils";
 // NB: these are temporary import for the deprecated fallback mechanism
-import { LedgerEthTransactionResolution, LoadConfig } from "./services/types";
+import {
+  LedgerEthTransactionResolution,
+  LoadConfig,
+  ResolutionConfig,
+} from "./services/types";
 import ledgerService from "./services/ledger";
 import {
   EthAppNftNotSupported,
@@ -304,6 +308,41 @@ export default class Eth {
     const r = response.slice(1, 1 + 32).toString("hex");
     const s = response.slice(1 + 32, 1 + 32 + 32).toString("hex");
     return { v, r, s };
+  }
+
+  /**
+   * Helper to get resolution and signature of a transaction in a single method
+   * 
+   * @param path: the BIP32 path to sign the transaction on
+   * @param rawTxHex: the raw ethereum transaction in hexadecimal to sign
+   * @param resolutionConfig: configuration about what should be clear signed in the transaction
+   * @param throwOnError: optional parameter to determine if a failing resolution of the transaction should throw an error or not
+   * @example
+   const tx = "e8018504e3b292008252089428ee52a8f3d6e5d15f8b131996950d7f296c7952872bd72a2487400080"; // raw tx to sign
+   const result = eth.clearSignTransaction("44'/60'/0'/0/0", tx, { erc20: true, externalPlugins: true, nft: true});
+   console.log(result);
+   */
+  async clearSignTransaction(
+    path: string,
+    rawTxHex: string,
+    resolutionConfig: ResolutionConfig,
+    throwOnError = false
+  ): Promise<{ r: string; s: string; v: string }> {
+    const resolution = await ledgerService
+      .resolveTransaction(rawTxHex, this.loadConfig, resolutionConfig)
+      .catch((e) => {
+        console.warn(
+          "an error occurred in resolveTransaction => fallback to blind signing: " +
+            String(e)
+        );
+
+        if (throwOnError) {
+          throw e;
+        }
+        return null;
+      });
+
+    return this.signTransaction(path, rawTxHex, resolution);
   }
 
   /**

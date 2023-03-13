@@ -20,12 +20,16 @@ import staxLoadImage from "~/internal/commands/staxLoadImage";
 import getOnboardingStatePolling from "~/internal/commands/getOnboardingStatePolling";
 import getGenuineCheckFromDeviceId from "~/internal/commands/getGenuineCheckFromDeviceId";
 import getLatestAvailableFirmwareFromDeviceId from "~/internal/commands/getLatestAvailableFirmwareFromDeviceId";
+import checkSignatureAndPrepare from "~/internal/commands/checkSignatureAndPrepare";
+import startExchange from "~/internal/commands/startExchange";
+import completeExchange from "~/internal/commands/completeExchange";
+import getTransactionId from "~/internal/commands/getTransactionId";
+import initSwap from "~/internal/commands/initSwap";
 
 import { v4 as uuidv4 } from "uuid";
 import { Observable } from "rxjs";
 import logger from "~/logger";
 import { deserializeError } from "@ledgerhq/errors";
-import { getEnv } from "@ledgerhq/live-common/env";
 
 // Implements command message of (Renderer proc -> Main proc)
 type Msg<A> = {
@@ -53,10 +57,15 @@ const commandsOnRenderer = {
   getOnboardingStatePolling,
   getGenuineCheckFromDeviceId,
   getLatestAvailableFirmwareFromDeviceId,
+  checkSignatureAndPrepare,
+  startExchange,
+  completeExchange,
+  getTransactionId,
+  initSwap,
 };
 
 export function command<Id: $Keys<Commands>>(id: Id): CommandFn<Id> {
-  if (getEnv("EXPERIMENTAL_EXECUTION_ON_RENDERER") && id in commandsOnRenderer) {
+  if (id in commandsOnRenderer) {
     return commandsOnRenderer[id];
   }
   // $FlowFixMe i'm not sure how to prove CommandFn to flow but it works
