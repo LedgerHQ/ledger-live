@@ -37,8 +37,7 @@ import NANO_X_LIGHT_firmwareUpdating from "~/renderer/animations/nanoX/2Firmware
 import NANO_X_DARK_firmwareUpdating from "~/renderer/animations/nanoX/2FirmwareUpdating/dark.json";
 import NANO_X_LIGHT_installLoading from "~/renderer/animations/nanoX/8InstallLoading/light.json";
 import NANO_X_DARK_installLoading from "~/renderer/animations/nanoX/8InstallLoading/dark.json";
-import NANO_X_LIGHT_recoverWithProtect from "~/renderer/animations/nanoX/RecoverWithProtect/light.json";
-import NANO_X_DARK_recoverWithProtect from "~/renderer/animations/nanoX/RecoverWithProtect/dark.json";
+
 // NANO SP
 import NANO_SP_LIGHT_plugAndPinCode from "~/renderer/animations/nanoSP/1PlugAndPinCode/light.json";
 import NANO_SP_DARK_plugAndPinCode from "~/renderer/animations/nanoSP/1PlugAndPinCode/dark.json";
@@ -93,8 +92,7 @@ export type AnimationKey =
   | "sign"
   | "firmwareUpdating"
   | "installLoading"
-  | "confirmLockscreen"
-  | "recoverWithProtect";
+  | "confirmLockscreen";
 type DeviceAnimations = { [key in AnimationKey]: ThemedAnimation };
 
 const nanoS: DeviceAnimations = {
@@ -180,10 +178,6 @@ const nanoX: DeviceAnimations = {
   confirmLockscreen: {
     light: STAX_confirmLockscreen,
     dark: STAX_confirmLockscreen,
-  },
-  recoverWithProtect: {
-    light: NANO_X_LIGHT_recoverWithProtect,
-    dark: NANO_X_DARK_recoverWithProtect,
   },
 };
 
