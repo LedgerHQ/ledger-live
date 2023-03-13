@@ -297,6 +297,12 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
     transport.notYetDisconnected = false;
     notif.unsubscribe();
     disconnectedSub.remove();
+    /**
+     * If you are wondering why we need to clear here too it's because
+     * disconnects can be triggered but also unexpected, from app switches
+     * for instance.
+     */
+    clearDisconnectTimeout(transport.id);
     delete transportsCache[transport.id];
     log(TAG, `BleTransport(${transport.id}) disconnected`);
     transport.emit("disconnect", e);
