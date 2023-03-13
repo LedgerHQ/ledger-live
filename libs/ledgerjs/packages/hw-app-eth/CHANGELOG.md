@@ -1,5 +1,14 @@
 # @ledgerhq/hw-app-eth
 
+## 6.32.1-next.0
+
+### Patch Changes
+
+- [#2819](https://github.com/LedgerHQ/ledger-live/pull/2819) [`0bf82a2b6c`](https://github.com/LedgerHQ/ledger-live/commit/0bf82a2b6cd1d0cac102cc6e142ad8d1ea098497) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add a new method `clearSignTransaction` allowing for transaction resolution and signature in a single method.
+
+- Updated dependencies [[`900ef4f528`](https://github.com/LedgerHQ/ledger-live/commit/900ef4f528c3b2359d666fbb76073978d5f9c840)]:
+  - @ledgerhq/cryptoassets@9.1.0-next.0
+
 ## 6.32.0
 
 ### Minor Changes
