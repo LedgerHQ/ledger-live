@@ -15,13 +15,13 @@ import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
-import { EthereumEditTransactionParamList } from "../../../components/RootNavigator/types/EthereumEditTransactionNavigator";
+import { EditTransactionParamList } from "../../../components/RootNavigator/types/EditTransactionNavigator";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import LText from "../../../components/LText";
 
 type Props = StackNavigatorProps<
-  EthereumEditTransactionParamList,
-  ScreenName.EditEthereumTransactionMethodSelection
+  EditTransactionParamList,
+  ScreenName.EditTransactionMethodSelection
 >;
 
 export function MethodSelection({ navigation, route }: Props) {
@@ -153,7 +153,7 @@ export function MethodSelection({ navigation, route }: Props) {
           isEdit: true,
           transaction,
           operation,
-          currentNavigation: ScreenName.EditEthereumTransactionMethodSelection,
+          currentNavigation: ScreenName.EditTransactionMethodSelection,
           nextNavigation: ScreenName.SendSelectDevice,
         });
         break;

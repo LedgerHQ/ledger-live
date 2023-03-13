@@ -5,8 +5,8 @@ import { AccountLike, Operation } from "@ledgerhq/types-live";
 
 import { ScreenName } from "../../../const";
 
-export type EthereumEditTransactionParamList = {
-  [ScreenName.EditEthereumTransactionMethodSelection]: {
+export type EditTransactionParamList = {
+  [ScreenName.EditTransactionMethodSelection]: {
     operation: Operation;
     account: AccountLike;
     parentAccount: AccountLike | undefined | null;
@@ -39,7 +39,7 @@ export type EthereumEditTransactionParamList = {
     currentNavigation:
       | ScreenName.SpeedUpTransaction
       | ScreenName.SendSummary
-      | ScreenName.EditEthereumTransactionMethodSelection;
+      | ScreenName.EditTransactionMethodSelection;
     nextNavigation:
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice;
