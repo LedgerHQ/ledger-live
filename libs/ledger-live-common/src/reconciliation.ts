@@ -33,6 +33,7 @@ import {
 } from "./families/crypto_org/types";
 import { PolkadotAccount, PolkadotAccountRaw } from "./families/polkadot/types";
 import { ZilliqaAccount, ZilliqaAccountRaw } from "./families/zilliqa/types";
+import { getAccountBridge } from "./bridge";
 
 // aim to build operations with the minimal diff & call to coin implementation possible
 export async function minimalOperationsBuilder<CO>(
@@ -338,8 +339,9 @@ export function patchAccount(
             cryptoOrgUpdatedRaw.cryptoOrgResources
           ))
       ) {
-        (next as CryptoOrgAccount).cryptoOrgResources =
-          fromCryptoOrgResourcesRaw(cryptoOrgUpdatedRaw.cryptoOrgResources);
+        (next as CryptoOrgAccount).cryptoOrgResources = fromCryptoOrgResourcesRaw(
+          cryptoOrgUpdatedRaw.cryptoOrgResources
+        );
         changed = true;
       }
       break;
