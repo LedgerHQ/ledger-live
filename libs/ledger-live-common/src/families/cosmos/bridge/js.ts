@@ -17,6 +17,8 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { CosmosValidatorsManager } from "../CosmosValidatorsManager";
 import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
+import { fetchCurrencyConfiguration } from "../../../config";
+import cryptoFactory from "../chain/chain";
 
 const receive = makeAccountBridgeReceive();
 
@@ -27,6 +29,7 @@ const getPreloadStrategy = (_currency) => ({
 const currencyBridge: CurrencyBridge = {
   getPreloadStrategy,
   preload: async (currency: CryptoCurrency) => {
+    const config = await fetchCurrencyConfiguration(currency);
     const cosmosValidatorsManager = new CosmosValidatorsManager(
       getCryptoCurrencyById(currency.id)
     );
@@ -36,10 +39,11 @@ const currencyBridge: CurrencyBridge = {
     });
     return Promise.resolve({
       validators,
+      config,
     });
   },
   hydrate: (
-    data: { validators?: CosmosValidatorItem[] },
+    data: { validators?: CosmosValidatorItem[]; config: any },
     currency: CryptoCurrency
   ) => {
     if (!data || typeof data !== "object") return;
@@ -50,6 +54,9 @@ const currencyBridge: CurrencyBridge = {
       !Array.isArray(validators)
     )
       return;
+    const relatedImpl = cryptoFactory(currency.id);
+    relatedImpl.ledgerValidator = data.config.ledgerValidator;
+    // relatedImpl.lcd = data.config.lcd;
     const cosmosValidatorsManager = new CosmosValidatorsManager(
       getCryptoCurrencyById(currency.id)
     );
