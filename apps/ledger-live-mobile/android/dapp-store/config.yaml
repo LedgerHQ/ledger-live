@@ -1,13 +1,13 @@
 publisher:
   name: Ledger SAS
-  address: CVqN9yj8m3xEhZ7Uio1kL4pPaygkaSiZvViwD6WnVtYb
+  address: ""
   website: https://www.ledger.com/pages/ledger-live
   email: team-live@ledger.fr # TODO replace with whatever proper email
   media:
     - purpose: icon
       uri: ./media/playstore-icon.png
 app:
-  address: 5hsaxqrdrCru21xEYAc2HhYh3Qmbsmoc48cC1nXT71mJ
+  address: ""
   name: Ledger Live
   android_package: com.ledger.live
   urls:
@@ -19,15 +19,15 @@ app:
     - purpose: icon
       uri: media/playstore-icon.png
 release:
-  address: FJkAE9qWFf9z7JS6oQChUrjwDAHTfgzYFV9rWmeuZ1fZ
+  address: ""
   catalog:
-    en:
+    en-US:
       name: "Ledger Live: Crypto & NFT App"
-      short_description: >-
-        <<SHORT_APP_DESCRIPTION (max 50 characters)>>
+      short_description: >- # <<SHORT_APP_DESCRIPTION>> 50 character max
+        Ledger Live Mobile 3.16.0
       long_description: >-
-        From the company that produced the world’s most secure crypto hardware
-        device comes the world’s most accessible and complete Web3 wallet:
+        From the company that produced the world's most secure crypto hardware
+        device comes the world's most accessible and complete Web3 wallet:
         Ledger Live. It offers everything the crypto newbie or crypto native
         could ever need, all in one place.
 
@@ -37,7 +37,7 @@ release:
         showing off their collection.
 
 
-        Here’s everything you can do through Ledger Live:
+        Here's everything you can do through Ledger Live:
 
 
         BUY CRYPTO
@@ -115,8 +115,16 @@ release:
 
         **Rewards are not guaranteed. Ledger provides no advice or
         recommendations on use of staking services.
-      new_in_version: |
-        <<PUT THE RELEASE NOTES HERE>>
+      new_in_version: >-
+        Features
+        You can now manage 100+ tokens on Cronos, Fantom, and Moonbeam networks with Ledger Live.
+
+        Ledger Live will no longer display zero-amount transactions in the transaction history. If you want to view zero-amount transactions, navigate to Settings -> Accounts -> Zero-amount transactions and flip the toggle switch to the on position.
+
+        Discover section now features NewsFeed that will keep you up-to-date with the latest crypto news and events.
+
+        Fixes
+        This release includes minor fixes.
       saga_features: ""
   media:
     - purpose: screenshot
