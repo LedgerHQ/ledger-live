@@ -326,14 +326,14 @@ async function deriveTransferCommandDescriptor(
 
   const fee = await estimateTxFee(api, mainAccount, "transfer");
 
-  const rentExcemptMin = await getAccountMinimumBalanceForRentExemption(
+  const rentExemptMin = await getAccountMinimumBalanceForRentExemption(
     api,
     mainAccount.freshAddress
   );
 
   const txAmount = tx.useAllAmount
     ? BigNumber.max(
-        mainAccount.spendableBalance.minus(fee).minus(rentExcemptMin),
+        mainAccount.spendableBalance.minus(fee).minus(rentExemptMin),
         0
       )
     : tx.amount;
@@ -346,7 +346,7 @@ async function deriveTransferCommandDescriptor(
     if (txAmount.lte(0)) {
       errors.amount = new AmountRequired();
     } else if (
-      txAmount.plus(fee).plus(rentExcemptMin).gt(mainAccount.spendableBalance)
+      txAmount.plus(fee).plus(rentExemptMin).gt(mainAccount.spendableBalance)
     ) {
       errors.amount = new NotEnoughBalance();
     }
@@ -385,7 +385,7 @@ async function deriveStakeCreateAccountCommandDescriptor(
   const stakeAccRentExemptAmount =
     await getStakeAccountMinimumBalanceForRentExemption(api);
 
-  const rentExcemptMin = await getAccountMinimumBalanceForRentExemption(
+  const rentExemptMin = await getAccountMinimumBalanceForRentExemption(
     api,
     mainAccount.freshAddress
   );
@@ -394,14 +394,14 @@ async function deriveStakeCreateAccountCommandDescriptor(
 
   const amount = tx.useAllAmount
     ? BigNumber.max(
-        mainAccount.spendableBalance.minus(fee).minus(rentExcemptMin),
+        mainAccount.spendableBalance.minus(fee).minus(rentExemptMin),
         0
       )
     : tx.amount;
 
   if (
     !errors.amount &&
-    mainAccount.spendableBalance.lt(amount.plus(fee).plus(rentExcemptMin))
+    mainAccount.spendableBalance.lt(amount.plus(fee).plus(rentExemptMin))
   ) {
     errors.amount = new NotEnoughBalance();
   }
