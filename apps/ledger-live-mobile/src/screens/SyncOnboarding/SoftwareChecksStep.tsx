@@ -13,12 +13,11 @@ import { getDeviceModel } from "@ledgerhq/devices";
 
 import GenuineCheckDrawer from "./GenuineCheckDrawer";
 import FirmwareUpdateDrawer from "./FirmwareUpdateDrawer";
-import GenuineCheckCancelledDrawer from "./GenuineCheckCancelledDrawer";
+import GenuineCheckFailedDrawer from "./GenuineCheckFailedDrawer";
 import UnlockDeviceDrawer from "./UnlockDeviceDrawer";
 import AllowManagerDrawer from "./AllowManagerDrawer";
 import { TrackScreen, track } from "../../analytics";
 
-const softwareStepDelay = 2500;
 const lockedDeviceTimeoutMs = 1000;
 
 type CheckStatus = "inactive" | "active" | "completed" | "failed";
@@ -31,6 +30,7 @@ type GenuineCheckStatus =
   | "requested"
   | "ongoing"
   | "completed"
+  | "skipped"
   | "failed";
 type GenuineCheckUiDrawerStatus =
   | "none"
@@ -151,14 +151,11 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
       }
       // First time doing the firmware check
       else if (
-        ["completed", "failed"].includes(genuineCheckStatus) &&
+        ["completed", "skipped"].includes(genuineCheckStatus) &&
         currentSoftwareChecksStep === "genuine-check"
       ) {
         setCurrentSoftwareChecksStep("firmware-update");
-
-        setTimeout(() => {
-          setFirmwareUpdateStatus("ongoing");
-        }, softwareStepDelay);
+        setFirmwareUpdateStatus("ongoing");
       }
     }
   }, [isDisplayed, currentSoftwareChecksStep, genuineCheckStatus]);
@@ -190,15 +187,11 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
 
         // Updates the genuineCheckStatus
         if (genuineCheckError) {
-          console.error(
-            "Failed to perform genuine check with error:",
-            genuineCheckError.message,
-          );
           setGenuineCheckStatus("failed");
         } else if (genuineState === "genuine") {
           setGenuineCheckStatus("completed");
         } else if (genuineState === "non-genuine") {
-          // FIXME: if the device is non-genuine, we should display something else
+          nextDrawerToDisplay = "cancelled";
           setGenuineCheckStatus("failed");
         }
 
@@ -210,12 +203,14 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
         } else if (devicePermissionState === "refused") {
           nextDrawerToDisplay = "cancelled";
         }
+      } else if (genuineCheckStatus === "failed") {
+        nextDrawerToDisplay = "cancelled";
       }
     }
     // currentSoftwareChecksStep can be any value for those UI updates
     if (genuineCheckStatus === "completed") {
       genuineCheckUiStepStatus = "completed";
-    } else if (genuineCheckStatus === "failed") {
+    } else if (genuineCheckStatus === "skipped") {
       genuineCheckUiStepStatus = "failed";
     }
 
@@ -360,9 +355,10 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
             isOpen={nextDrawerToDisplay === "allow-manager"}
             device={device}
           />
-          <GenuineCheckCancelledDrawer
+          <GenuineCheckFailedDrawer
             productName={productName}
             isOpen={nextDrawerToDisplay === "cancelled"}
+            error={genuineCheckError}
             onRetry={() => {
               track("button_clicked", {
                 button: "run genuine check again",
@@ -376,7 +372,7 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
                 button: "check if hardware genuine later",
                 drawer: "Failed Stax hardware check",
               });
-              setGenuineCheckStatus("failed");
+              setGenuineCheckStatus("skipped");
             }}
           />
           <FirmwareUpdateDrawer
