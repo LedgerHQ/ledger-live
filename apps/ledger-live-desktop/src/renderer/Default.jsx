@@ -14,6 +14,7 @@ import Accounts from "~/renderer/screens/accounts";
 import Card from "~/renderer/screens/card";
 import Manager from "~/renderer/screens/manager";
 import Exchange from "~/renderer/screens/exchange";
+import Earn from "./screens/earn";
 import Swap2 from "~/renderer/screens/exchange/Swap2";
 import USBTroubleshooting from "~/renderer/screens/USBTroubleshooting";
 import Account from "~/renderer/screens/account";
@@ -250,6 +251,7 @@ export default function Default() {
                             />
                             <Route path="/lend" render={props => <Lend {...props} />} />
                             <Route path="/exchange" render={(props: any) => <Exchange />} />
+                            <Route path="/earn" render={props => <Earn {...props} />} />
                             <Route
                               exact
                               path="/account/:id/nft-collection"

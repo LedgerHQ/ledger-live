@@ -215,6 +215,7 @@
     "accounts": "Accounts",
     "manager": "My Ledger",
     "exchange": "Buy / Sell",
+    "earn": "Earn",
     "swap": "Swap",
     "lend": "Lend",
     "catalog": "Discover",
@@ -4069,7 +4070,7 @@
       "tr": "Turkish",
       "ja": "Japanese",
       "ko": "Korean",
-      "pt" : "Português (Brasil)"
+      "pt": "Português (Brasil)"
     }
   },
   "theme": {
