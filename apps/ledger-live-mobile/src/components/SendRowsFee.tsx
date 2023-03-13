@@ -14,7 +14,7 @@ import type { SendFundsNavigatorStackParamList } from "./RootNavigator/types/Sen
 import type { SignTransactionNavigatorParamList } from "./RootNavigator/types/SignTransactionNavigator";
 import type { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator";
 import type { SwapNavigatorParamList } from "./RootNavigator/types/SwapNavigator";
-import { EthereumEditTransactionParamList } from "./RootNavigator/types/EthereumEditTransactionNavigator";
+import { EditTransactionParamList } from "./RootNavigator/types/EditTransactionNavigator";
 import { ScreenName } from "../const";
 
 type Props = {
@@ -37,7 +37,24 @@ type Props = {
       SignTransactionNavigatorParamList,
       ScreenName.SignTransactionSummary
     >
+<<<<<<< HEAD
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
+=======
+  | StackNavigatorProps<
+      LendingEnableFlowParamsList,
+      ScreenName.LendingEnableSummary
+    >
+  | StackNavigatorProps<
+      LendingSupplyFlowNavigatorParamList,
+      ScreenName.LendingSupplySummary
+    >
+  | StackNavigatorProps<
+      LendingWithdrawFlowNavigatorParamList,
+      ScreenName.LendingWithdrawSummary
+    >
+  | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
+  | StackNavigatorProps<EditTransactionParamList, ScreenName.SendSummary>,
+>>>>>>> a325e08846 (rename edit tx navigator)
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
