@@ -36,7 +36,7 @@ const RecipientField = ({
   const [value, setValue] = useState(
     initValue || transaction.domain || transaction.recipient || "",
   );
-  const FFNamingService = useFeature("trustedNameInputResolution");
+  const { enabled: isDomainResolutionEnabled } = useFeature("domainInputResolution") || {};
 
   useEffect(() => {
     if (value !== "" && value !== transaction.recipient) {
@@ -62,7 +62,7 @@ const RecipientField = ({
 
   if (!status) return null;
 
-  return FFNamingService?.enabled ? (
+  return isDomainResolutionEnabled ? (
     <RecipientFieldNamingService
       t={t}
       label={label}
