@@ -5,6 +5,20 @@ import {
 import Vet from "../src/Vet";
 import { Transaction as ThorTransaction } from "thor-devkit";
 
+test("getAppConfiguration", async () => {
+  const transport = await openTransportReplayer(
+    RecordStore.fromString(`
+    => e006000000
+    <= 030100079000
+    `)
+  );
+  const vet = new Vet(transport);
+  const result = await vet.getAppConfiguration();
+  expect({ version: result[1] + "." + result[2] + "." + result[3] }).toEqual({
+    version: "1.0.7",
+  });
+});
+
 test("Get address", async () => {
   const transport = await openTransportReplayer(
     RecordStore.fromString(`
