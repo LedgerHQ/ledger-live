@@ -47,8 +47,8 @@ const getIconBorder = (theme: Theme, status: ItemStatus, isLastItem?: boolean) =
 
 const CenterCircle = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>`
   border-radius: 9999px;
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   background: ${(p) => getIconBackground(p.theme, p.status, p.isLastItem)};
   border: 2px solid ${(p) => getIconBorder(p.theme, p.status, p.isLastItem)};
   align-items: center;
@@ -73,12 +73,12 @@ export default function TimelineIndicator({
 
   return (
     <Flex flexDirection="column" alignItems="center" {...props}>
-      <TopSegment status={status} hidden={isFirstItem} height={topHeight || "20px"} />
+      <TopSegment status={status} hidden={isFirstItem} height={topHeight || "22px"} />
       <CenterCircle status={status} isLastItem={isLastItem}>
         {status === "completed" && (
           <CircledCheckSolidMedium
             color={isLastItem ? colors.success.c100 : colors.primary.c80}
-            size={24}
+            size={16}
           />
         )}
       </CenterCircle>

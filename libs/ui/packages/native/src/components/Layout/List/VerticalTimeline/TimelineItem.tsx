@@ -103,7 +103,7 @@ export default function TimelineItem({
           isFirstItem={isFirstItem}
           isLastItem={isLastItem}
           mr={4}
-          topHeight={!isFirstItem && item.status === "active" ? "32px" : "20px"}
+          topHeight={!isFirstItem && item.status === "active" ? "34px" : "22px"}
         />
         <Container
           status={item.status}
