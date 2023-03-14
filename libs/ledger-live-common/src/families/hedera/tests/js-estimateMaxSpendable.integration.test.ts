@@ -72,7 +72,7 @@ describe("js-estimateMaxSpendable", () => {
         new BigNumber(hederaPrice)
       );
     }
-  })
+  });
 
   test("estimateMaxSpendable", async () => {
     const result = await estimateMaxSpendable({
@@ -82,5 +82,4 @@ describe("js-estimateMaxSpendable", () => {
 
     expect(result).toEqual(data);
   });
-
 });
