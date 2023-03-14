@@ -10,6 +10,7 @@ import uniq from "lodash/uniq";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { colors } from "~/renderer/styles/theme";
 import Alert from "~/renderer/components/Alert";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 import {
   findSubAccountById,
@@ -246,8 +247,9 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
       ? currency.parentCurrency.name
       : currency.name
     : undefined;
-  const editable = isEditableOperation(mainAccount, operation);
 
+  const editEthTx = useFeature("editEthTx");
+  const editable = editEthTx?.enabled && isEditableOperation(mainAccount, operation);
   const dispatch = useDispatch();
   const handleOpenEditModal = useCallback(
     (account, parentAccount, transactionRaw, transactionSequenceNumber, isNftOperation) => {

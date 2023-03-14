@@ -202,4 +202,7 @@ export const defaultFeatures: DefaultFeatures = {
   newsfeedPage: {
     enabled: false,
   },
+  editEthTx: {
+    enabled: false,
+  },
 };
