@@ -45,6 +45,7 @@ import useCenteredImage, {
 } from "../../components/CustomImage/useCenteredImage";
 import Button from "../../components/wrappedUi/Button";
 import { TrackScreen } from "../../analytics";
+import Link from "../../components/wrappedUi/Link";
 
 const DEFAULT_CONTRAST = 1;
 
@@ -90,7 +91,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     metadata: NFTMetadata;
   };
 
-  const disabledEdit = isStaxEnabled || metadata?.staxImage;
+  const disabledEdit = !!isStaxEnabled || !!metadata?.staxImage;
 
   const nftImageUri = extractImageUrlFromNftMetadata(metadata);
 
@@ -315,12 +316,12 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
               />
             </Flex>
           </Flex>
-          <Flex px={8}>
+          <Flex pb={8} px={8}>
             <Button
               type="main"
               size="large"
               outline={!disabledEdit}
-              mb={4}
+              mb={7}
               disabled={previewLoading}
               pending={rawResultLoading}
               onPress={requestRawResult}
@@ -330,16 +331,15 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
             >
               {t("customImage.preview.setPicture")}
             </Button>
-            <Button
+            <Link
               size="large"
-              mb={8}
               onPress={handleEditPicture}
               disabled={previewLoading || disabledEdit}
               event="button_clicked"
               eventProperties={analyticsEditEventProps}
             >
               {t("customImage.preview.editPicture")}
-            </Button>
+            </Link>
           </Flex>
         </Flex>
       )}

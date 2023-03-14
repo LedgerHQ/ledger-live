@@ -16,6 +16,7 @@ import FramedImage, {
   previewConfig,
 } from "../../components/CustomImage/FramedImage";
 import { TrackScreen } from "../../analytics";
+import Link from "../../components/wrappedUi/Link";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<
@@ -102,26 +103,26 @@ const PreviewPostEdit = ({ navigation, route }: NavigationProps) => {
             />
           </Flex>
         </Flex>
-        <Flex px={8}>
+        <Flex pb={8} px={8}>
           <Button
             type="main"
             size="large"
             outline={false}
-            mb={4}
+            mb={7}
             onPress={handleSetPicture}
             event="button_clicked"
             eventProperties={analyticsSetLockScreenEventProps}
           >
             {t("customImage.preview.setPicture")}
           </Button>
-          <Button
+          <Link
             size="large"
             onPress={handleEditPicture}
             event="button_clicked"
             eventProperties={analyticsEditEventProps}
           >
             {t("customImage.preview.editPicture")}
-          </Button>
+          </Link>
         </Flex>
       </Flex>
     </SafeAreaView>
