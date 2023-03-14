@@ -25,7 +25,7 @@ const getContainerBackground = (theme: Theme, status: ItemStatus, isLastItem?: b
   } else if (status === "completed") {
     return "transparent";
   } else if (status === "active") {
-    return theme.colors.neutral.c20;
+    return theme.colors.background.drawer;
   }
   return "transparent";
 };
@@ -114,8 +114,9 @@ export default function TimelineItem({
           <Flex flexDirection="row" justifyContent="space-between">
             <Text
               variant="body"
+              fontWeight="semiBold"
               flexShrink={1}
-              color={item.status === "active" ? "primary.c90" : "neutral.c80"}
+              color={item.status === "active" ? "neutral.c100" : "neutral.c70"}
             >
               {item.status === "completed" ? item.doneTitle ?? item.title : item.title}
             </Text>
