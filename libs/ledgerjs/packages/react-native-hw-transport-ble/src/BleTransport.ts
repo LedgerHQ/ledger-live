@@ -409,7 +409,7 @@ export default class BleTransport extends Transport {
    * @returns TransportSubscription
    */
   static listen(
-    observer: TransportObserver<DescriptorEvent<any>, HwTransportError>
+    observer: TransportObserver<DescriptorEvent<Device>, HwTransportError>
   ): TransportSubscription {
     log(TAG, "listening for devices");
 
@@ -616,7 +616,7 @@ export default class BleTransport extends Transport {
    * @param buffer
    * @param txid
    */
-  write = async (buffer: Buffer, txid?: string | undefined) => {
+  write = async (buffer: Buffer, txid?: string | undefined): Promise<void> => {
     log("ble-frame", "=> " + buffer.toString("hex"));
     if (!this.writeCmdCharacteristic) {
       try {
