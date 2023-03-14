@@ -52,7 +52,7 @@ const Step0Welcome: React.FC<
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
       <TrackScreen category={analyticsScreenName} />
-      <Flex flex={1}>
+      <Flex flex={1} mt={8}>
         <Video
           disableFocus
           source={
@@ -69,7 +69,7 @@ const Step0Welcome: React.FC<
           repeat
           resizeMode={"contain"}
         />
-        <Flex flex={1} px={7}>
+        <Flex px={7}>
           <Text variant="h4" fontWeight="semiBold" mt={8} textAlign="center">
             {t("customImage.landingPage.title")}
           </Text>
