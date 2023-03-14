@@ -1,8 +1,8 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import i18next from "i18next";
 import { differenceInCalendarDays } from "date-fns";
 import { createSelector } from "reselect";
+import { useTranslation } from "react-i18next";
 import compareDate from "../../logic/compareDate";
 import { dateFormatSelector, languageSelector } from "../../reducers/settings";
 import {
@@ -24,6 +24,8 @@ const localeDateTimeFormatSelector = createSelector(
 const FormatDay = ({ day }: Props) => {
   const dateTimeFormat = useSelector(localeDateTimeFormatSelector);
 
+  const { t } = useTranslation();
+
   const dateFormat = useSelector(dateFormatSelector);
   const dateFormatOptions =
     dateFormat === Format.default
@@ -35,9 +37,9 @@ const FormatDay = ({ day }: Props) => {
   const dayDiff = differenceInCalendarDays(Date.now(), day);
   const suffix =
     dayDiff === 0
-      ? ` - ${i18next.t("common.today")}`
+      ? ` - ${t("common.today")}`
       : dayDiff === 1
-      ? ` - ${i18next.t("common.yesterday")}`
+      ? ` - ${t("common.yesterday")}`
       : "";
   const formattedDate = dateFormatOptions.format(day);
   return (
