@@ -134,7 +134,7 @@ export function getListHeaderComponents({
     .filter(pendingOperation => {
       return isEditableOperation(account, pendingOperation);
     })
-    .sort((a, b) => a.date.getTime() - b.date.getTime());
+    .sort((a, b) => b.date.getTime() - a.date.getTime());
 
   return {
     listHeaderComponents: [
@@ -159,11 +159,11 @@ export function getListHeaderComponents({
           <AccountSubHeader />
         </Box>
       ),
-      editableOperation && isEditableOperation(account, editableOperation) ? (
+      editableOperation ? (
         <SectionContainer px={6}>
           <SideImageCard
-            title={t("editTransaction.stuckTx")}
-            cta={t("editTransaction.speedupOrCancel")}
+            title={t("editTransaction.panel.description")}
+            cta={t("editTransaction.cta")}
             onPress={() => onEditTransactionPress(editableOperation)}
           />
         </SectionContainer>
