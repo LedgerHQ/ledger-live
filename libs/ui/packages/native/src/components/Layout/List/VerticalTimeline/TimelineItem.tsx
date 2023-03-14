@@ -97,14 +97,20 @@ export default function TimelineItem({
 
   return (
     <Pressable onPress={handlePress}>
-      <Flex flexDirection="row">
+      <Flex flexDirection="row" borderColor="red">
         <TimelineIndicator
           status={item.status}
           isFirstItem={isFirstItem}
           isLastItem={isLastItem}
           mr={4}
+          topHeight={!isFirstItem && item.status === "active" ? "32px" : "20px"}
         />
-        <Container status={item.status} isLastItem={isLastItem} mb={4}>
+        <Container
+          status={item.status}
+          isLastItem={isLastItem}
+          mt={!isFirstItem && item.status === "active" ? 4 : 0}
+          mb={!isLastItem && item.status === "active" ? 4 : 0}
+        >
           <Flex flexDirection="row" justifyContent="space-between">
             <Text
               variant="body"

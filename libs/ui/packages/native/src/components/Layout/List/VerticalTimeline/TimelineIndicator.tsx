@@ -7,7 +7,6 @@ import { ItemStatus } from "../types";
 import { Theme } from "src/styles/theme";
 
 const TopSegment = styled(Flex)<{ status: ItemStatus; hidden?: boolean }>`
-  height: 20px;
   border-width: ${(p) => (p.hidden ? 0 : 1)}px;
   border-style: solid;
   border-color: ${(p) =>
@@ -46,7 +45,7 @@ const getIconBorder = (theme: Theme, status: ItemStatus, isLastItem?: boolean) =
   return theme.colors.primary.c80;
 };
 
-const CenterSegment = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>`
+const CenterCircle = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>`
   border-radius: 9999px;
   width: 20px;
   height: 20px;
@@ -60,22 +59,29 @@ export type Props = FlexProps & {
   status: ItemStatus;
   isFirstItem?: boolean;
   isLastItem?: boolean;
+  topHeight?: string;
 };
 
-export default function TimelineIndicator({ status, isFirstItem, isLastItem, ...props }: Props) {
+export default function TimelineIndicator({
+  status,
+  isFirstItem,
+  isLastItem,
+  topHeight,
+  ...props
+}: Props) {
   const { colors } = useTheme();
 
   return (
     <Flex flexDirection="column" alignItems="center" {...props}>
-      <TopSegment status={status} hidden={isFirstItem} />
-      <CenterSegment status={status} isLastItem={isLastItem}>
+      <TopSegment status={status} hidden={isFirstItem} height={topHeight || "20px"} />
+      <CenterCircle status={status} isLastItem={isLastItem}>
         {status === "completed" && (
           <CircledCheckSolidMedium
             color={isLastItem ? colors.success.c100 : colors.primary.c80}
             size={24}
           />
         )}
-      </CenterSegment>
+      </CenterCircle>
       <BottomSegment status={status} hidden={isLastItem} />
     </Flex>
   );
