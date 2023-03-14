@@ -252,7 +252,7 @@ const envDefinitions: Record<
     desc: "location of the crypto.org chain node",
   },
   CRYPTO_ORG_TESTNET_RPC_URL: {
-    def: "https://testnet-croeseid-4.crypto.org:26657",
+    def: "https://rpc-testnet-croeseid-4.crypto.org",
     parser: stringParser,
     desc: "location of the crypto.org chain testnet node",
   },
