@@ -30,7 +30,8 @@
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
-    "@ledgerhq/logs": "workspace:^"
+    "@ledgerhq/logs": "workspace:^",
+    "thor-devkit": "^2.0.6"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
