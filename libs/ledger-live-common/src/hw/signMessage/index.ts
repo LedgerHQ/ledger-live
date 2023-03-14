@@ -47,6 +47,7 @@ export const prepareMessageToSign = (
 };
 
 const signMessage: SignMessage = (transport, opts) => {
+  console.warn(perFamily);
   const { currency, verify } = opts;
   const signMessage = perFamily[currency.family].signMessage;
   invariant(signMessage, `signMessage is not implemented for ${currency.id}`);
@@ -57,6 +58,7 @@ const signMessage: SignMessage = (transport, opts) => {
         `signMessage ${currency.id} on ${opts.path} with message [${opts.message}]`,
         result
       );
+      console.warn(result);
       return result;
     })
     .catch((e) => {
@@ -74,6 +76,7 @@ const signMessage: SignMessage = (transport, opts) => {
           throw new UserRefusedAddress();
         }
       }
+      console.warn(e);
 
       throw e;
     });
