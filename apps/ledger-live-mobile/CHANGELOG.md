@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.17.0-nightly.6
+
+### Patch Changes
+
+- [#2935](https://github.com/LedgerHQ/ledger-live/pull/2935) [`2b770e6eb9`](https://github.com/LedgerHQ/ledger-live/commit/2b770e6eb9a0bee8cf5c5eef77f75ba49de8c17d) Thanks [@sarneijim](https://github.com/sarneijim)! - Move stake account button to main account buttons
+
+- [#2914](https://github.com/LedgerHQ/ledger-live/pull/2914) [`56adbff8fb`](https://github.com/LedgerHQ/ledger-live/commit/56adbff8fbb102edcbdf35cf80dfdf3b7cd84f7f) Thanks [@sarneijim](https://github.com/sarneijim)! - Implement no funds modal in stake button
+
+- Updated dependencies [[`01a33f58ba`](https://github.com/LedgerHQ/ledger-live/commit/01a33f58ba6c5518045546e8f38be3f05fc2a935)]:
+  - @ledgerhq/live-common@29.1.0-nightly.6
+
 ## 3.17.0-nightly.5
 
 ### Patch Changes
