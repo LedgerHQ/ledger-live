@@ -1,3 +1,4 @@
+import { DeviceExtractOnboardingStateError } from "@ledgerhq/errors";
 import {
   extractOnboardingState,
   OnboardingStep,
@@ -8,9 +9,10 @@ describe("@hw/extractOnboardingState", () => {
     describe("When the flag bytes are incorrect", () => {
       it("should throw an error", () => {
         const incompleteFlagsBytes = Buffer.from([0, 0]);
-        // DeviceExtractOnboardingStateError is not of type Error,
-        // so cannot check in toThrow(DeviceExtractOnboardingStateError)
-        expect(() => extractOnboardingState(incompleteFlagsBytes)).toThrow();
+
+        expect(() => extractOnboardingState(incompleteFlagsBytes)).toThrow(
+          DeviceExtractOnboardingStateError
+        );
       });
     });
 
@@ -190,7 +192,22 @@ describe("@hw/extractOnboardingState", () => {
         });
       });
 
-      describe("and the user is recovering a seed", () => {
+      describe("and the user wants to restore a seed, choosing between restoring their own seed or Recover", () => {
+        beforeEach(() => {
+          flagsBytes[3] = 14;
+        });
+
+        it("should return an onboarding step that is set at the setup restore choice", () => {
+          const onboardingState = extractOnboardingState(flagsBytes);
+
+          expect(onboardingState).not.toBeNull();
+          expect(onboardingState?.currentOnboardingStep).toBe(
+            OnboardingStep.SetupChoiceRestore
+          );
+        });
+      });
+
+      describe("and the user is restoring a seed directly (without Recover)", () => {
         describe("and the seed phrase type is set to X words", () => {
           it("should return a device state with the correct seed phrase type", () => {
             const byte3 = flagsBytes[2];
@@ -249,6 +266,21 @@ describe("@hw/extractOnboardingState", () => {
         });
       });
 
+      describe("and the user wants to restore with Recover", () => {
+        beforeEach(() => {
+          flagsBytes[3] = 13;
+        });
+
+        it("should return an onboarding step that is set at the restore with Recover", () => {
+          const onboardingState = extractOnboardingState(flagsBytes);
+
+          expect(onboardingState).not.toBeNull();
+          expect(onboardingState?.currentOnboardingStep).toBe(
+            OnboardingStep.RecoverRestore
+          );
+        });
+      });
+
       describe("and the user is on the safety warning screen", () => {
         beforeEach(() => {
           flagsBytes[3] = 10;
@@ -275,6 +307,21 @@ describe("@hw/extractOnboardingState", () => {
           expect(onboardingState).not.toBeNull();
           expect(onboardingState?.currentOnboardingStep).toBe(
             OnboardingStep.Ready
+          );
+        });
+      });
+
+      describe("and the device is set to an onboarding step/flag that is not handled yet", () => {
+        beforeEach(() => {
+          // To update so it's never handled
+          flagsBytes[3] = 20;
+        });
+
+        it("should thrown an error", () => {
+          // DeviceExtractOnboardingStateError is not of type Error,
+          // so cannot check in toThrow(DeviceExtractOnboardingStateError)
+          expect(() => extractOnboardingState(flagsBytes)).toThrow(
+            DeviceExtractOnboardingStateError
           );
         });
       });
