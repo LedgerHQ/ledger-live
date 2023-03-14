@@ -1,18 +1,13 @@
 import { getEnv } from "../../../env";
 import network from "../../../network";
-import { HEX_PREFIX, ZERO_ADDRESS } from "../constants";
+import { HEX_PREFIX } from "../constants";
 import crypto from "crypto";
 import BigNumber from "bignumber.js";
 import { Transaction as ThorTransaction } from "thor-devkit";
 import params from "../contracts/abis/params";
-import {
-  BASE_GAS_PRICE_KEY,
-  PARAMS_ADDRESS,
-  VTHO_ADDRESS,
-} from "../contracts/constants";
+import { BASE_GAS_PRICE_KEY, PARAMS_ADDRESS } from "../contracts/constants";
 import { Query } from "../api/types";
 import { query } from "../api/sdk";
-import { isValid } from "./address-utils";
 import { Transaction } from "../types";
 
 const BASE_URL = getEnv("API_VECHAIN_THOREST");
@@ -48,32 +43,23 @@ export const generateNonce = (): string => {
  */
 export const estimateGas = async (t: Transaction): Promise<number> => {
   const intrinsicGas = ThorTransaction.intrinsicGas(t.body.clauses);
-  const constant = 5000;
-  const type_fee = 16000;
-
-  const tx = new ThorTransaction(t.body);
 
   const queryData: Query[] = [];
 
   t.body.clauses.forEach((c) => {
-    const recipient = t.subAccountId ? VTHO_ADDRESS : c.to || ZERO_ADDRESS;
-
-    queryData.push({
-      to: isValid(recipient) ? recipient : ZERO_ADDRESS,
-      data: `${HEX_PREFIX}${tx.encode().toString("hex")}`,
-    });
+    if (c.to) {
+      queryData.push({
+        to: c.to,
+        data: c.data,
+      });
+    }
   });
 
   const response = await query(queryData);
 
   const execGas = response.reduce((sum, out) => sum + out.gasUsed, 0);
 
-  return (
-    constant +
-    type_fee +
-    intrinsicGas +
-    (execGas ? execGas + GAS_COEFFICIENT : 0)
-  );
+  return intrinsicGas + (execGas ? execGas + GAS_COEFFICIENT : 0);
 };
 
 const getBaseGasPrice = async (): Promise<string> => {
