@@ -295,6 +295,7 @@ export enum SettingsActionTypes {
   LAST_SEEN_DEVICE = "LAST_SEEN_DEVICE",
   LAST_SEEN_DEVICE_INFO = "LAST_SEEN_DEVICE_INFO",
   LAST_SEEN_DEVICE_LANGUAGE_ID = "LAST_SEEN_DEVICE_LANGUAGE_ID",
+  SET_HAS_SEEN_STAX_ENABLED_NFTS_POPUP = "SET_HAS_SEEN_STAX_ENABLED_NFTS_POPUP",
   SET_LAST_SEEN_CUSTOM_IMAGE = "SET_LAST_SEEN_CUSTOM_IMAGE",
   ADD_STARRED_MARKET_COINS = "ADD_STARRED_MARKET_COINS",
   REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
@@ -412,6 +413,10 @@ export type SettingsLastSeenDevicePayload = {
 export type SettingsLastSeenDeviceInfoPayload = {
   dmi: DeviceModelInfo;
 };
+export type SettingsSetHasSeenStaxEnabledNftsPopupPayload = Pick<
+  SettingsState,
+  "hasSeenStaxEnabledNftsPopup"
+>;
 export type SettingsLastSeenDeviceLanguagePayload = Partial<DeviceInfo>;
 
 export type SettingsAddStarredMarketcoinsPayload = {

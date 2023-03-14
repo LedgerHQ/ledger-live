@@ -76,6 +76,7 @@ import {
   SettingsLastSeenDeviceLanguagePayload,
   SettingsCompleteOnboardingPayload,
   SettingsSetDateFormatPayload,
+  SettingsSetHasSeenStaxEnabledNftsPopupPayload,
 } from "./types";
 import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
 
@@ -385,6 +386,14 @@ const setLastSeenDeviceInfoAction =
   );
 export const setLastSeenDeviceInfo = (dmi: DeviceModelInfo) =>
   setLastSeenDeviceInfoAction({ dmi });
+
+const setHasSeenStaxEnabledNftsPopupAction =
+  createAction<SettingsSetHasSeenStaxEnabledNftsPopupPayload>(
+    SettingsActionTypes.SET_HAS_SEEN_STAX_ENABLED_NFTS_POPUP,
+  );
+export const setHasSeenStaxEnabledNftsPopup = (
+  hasSeenStaxEnabledNftsPopup: boolean,
+) => setHasSeenStaxEnabledNftsPopupAction({ hasSeenStaxEnabledNftsPopup });
 
 const setLastSeenDeviceLanguageIdAction =
   createAction<SettingsLastSeenDeviceLanguagePayload>(

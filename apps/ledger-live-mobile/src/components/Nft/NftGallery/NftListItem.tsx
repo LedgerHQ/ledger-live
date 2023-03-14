@@ -4,16 +4,18 @@ import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import { NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { Box, Flex, Tag, Text } from "@ledgerhq/native-ui";
-
 import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import { useTranslation } from "react-i18next";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { useTheme } from "styled-components/native";
+import { useSelector } from "react-redux";
+
 import NftMedia from "../NftMedia";
 import Skeleton from "../../Skeleton";
 import { NftSelectionCheckbox } from "../NftSelectionCheckbox";
 import NftListItemFloorPriceRow from "./NftListItemFloorPriceRow";
-import { DesignedForStaxText } from "./DesignedForStax";
+import { DesignedForStaxText } from "../DesignedForStax";
+import { knownDeviceModelIdsSelector } from "../../../reducers/settings";
 
 type Props = {
   nft: ProtoNFT;
@@ -149,6 +151,8 @@ const NftMediaComponent = ({
 }: NftMediaProps & SelectionProps) => {
   const { t } = useTranslation();
   const { space } = useTheme();
+  const knownDeviceModelIds = useSelector(knownDeviceModelIdsSelector);
+
   return (
     <Box>
       <Flex mb={4}>
@@ -163,7 +167,7 @@ const NftMediaComponent = ({
           metadata={metadata}
           mediaFormat="preview"
         />
-        {!!metadata?.staxImage && (
+        {knownDeviceModelIds.stax && !!metadata?.staxImage && (
           <Flex zIndex={1000} position="absolute" bottom={0} width="100%">
             <DesignedForStaxText size="small" />
           </Flex>

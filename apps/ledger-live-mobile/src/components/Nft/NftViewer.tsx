@@ -23,7 +23,7 @@ import {
   getFloorPrice,
 } from "@ledgerhq/live-common/nft/index";
 import { BigNumber } from "bignumber.js";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Box, Button, Icons, Text, Flex } from "@ledgerhq/native-ui";
 import { useTranslation, Trans } from "react-i18next";
 import Clipboard from "@react-native-community/clipboard";
@@ -66,6 +66,11 @@ import InfoModal from "../../modals/Info";
 import { notAvailableModalInfo } from "../../screens/Nft/NftInfoNotAvailable";
 import { track, TrackScreen } from "../../analytics";
 import { DesignedForStaxDrawer, DesignedForStaxText } from "./DesignedForStax";
+import {
+  hasSeenStaxEnabledNftsPopupSelector,
+  knownDeviceModelIdsSelector,
+} from "../../reducers/settings";
+import { setHasSeenStaxEnabledNftsPopup } from "../../actions/settings";
 
 type Props = CompositeScreenProps<
   | StackNavigatorProps<NftNavigatorParamList, ScreenName.NftViewer>
@@ -153,6 +158,7 @@ const Section = ({
 const NftViewer = ({ route }: Props) => {
   const { params } = route;
   const { nft } = params;
+  const dispatch = useDispatch();
   const { status: nftStatus, metadata: nftMetadata } = useNftMetadata(
     nft?.contract,
     nft?.tokenId,
@@ -186,6 +192,11 @@ const NftViewer = ({ route }: Props) => {
   const account = useSelector<State, Account | undefined>(state =>
     accountSelector(state, { accountId }),
   )!;
+
+  const knownDeviceModelIds = useSelector(knownDeviceModelIdsSelector);
+  const hasSeenStaxEnabledNftsPopup = useSelector(
+    hasSeenStaxEnabledNftsPopupSelector,
+  );
 
   const [bottomModalOpen, setBottomModalOpen] = useState(false);
   const isLoading = nftStatus === "loading" || collectionStatus === "loading";
@@ -312,27 +323,32 @@ const NftViewer = ({ route }: Props) => {
           mediaFormat={"big"}
           status={nftStatus}
         />
-        {!!nftMetadata?.staxImage && (
+        {knownDeviceModelIds.stax && !!nftMetadata?.staxImage && (
           <Flex zIndex={1000} position="absolute" bottom={0} width="100%">
             <DesignedForStaxText size="medium" />
           </Flex>
         )}
       </>
     ),
-    [nftMetadata, nftStatus],
+    [knownDeviceModelIds, nftMetadata, nftStatus],
   );
 
   const [isStaxDrawerOpen, setStaxDrawerOpen] = useState<boolean>(false);
 
   const handleStaxModalClose = useCallback(() => {
     setStaxDrawerOpen(false);
-  }, []);
+    dispatch(setHasSeenStaxEnabledNftsPopup(true));
+  }, [dispatch]);
 
   useEffect(() => {
-    if (nftMetadata.staxImage) {
+    if (
+      !hasSeenStaxEnabledNftsPopup &&
+      knownDeviceModelIds.stax &&
+      nftMetadata?.staxImage
+    ) {
       setStaxDrawerOpen(true);
     }
-  }, [nftMetadata]);
+  }, [hasSeenStaxEnabledNftsPopup, knownDeviceModelIds, nftMetadata]);
 
   const [isOpen, setOpen] = useState<boolean>(false);
   const onOpenModal = useCallback(() => {

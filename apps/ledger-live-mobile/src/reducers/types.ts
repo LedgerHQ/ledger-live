@@ -209,6 +209,8 @@ export type SettingsState = {
     };
   };
   lastSeenDevice: DeviceModelInfo | null | undefined;
+  knownDeviceModelIds: Record<DeviceModelId, boolean>;
+  hasSeenStaxEnabledNftsPopup: boolean;
   starredMarketCoins: string[];
   lastConnectedDevice: Device | null | undefined;
   marketRequestParams: MarketListRequestParams;
