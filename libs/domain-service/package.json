@@ -68,6 +68,7 @@
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
+    "eip55": "^2.1.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   },
