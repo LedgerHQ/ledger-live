@@ -77,7 +77,6 @@ import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import AmountDetails from "./AmountDetails";
 import NFTOperationDetails from "./NFTOperationDetails";
 import { openModal } from "~/renderer/actions/modals";
-import { FIVE_MINUTES_IN_MS } from "~/config/constants";
 
 const mapStateToProps = (state, { operationId, accountId, parentId }) => {
   const marketIndicator = marketIndicatorSelector(state);
@@ -266,7 +265,7 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
     [dispatch],
   );
   // pending transactions that exceeds 5 minutes are considered as stuck transactions
-  const isStuck = new Date() - operation.date > FIVE_MINUTES_IN_MS;
+  const isStuck = new Date() - operation.date > getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
   return (
     <Box flow={3} px={20} mt={20}>
       <TrackPage

@@ -9,7 +9,7 @@ import OperationDate from "./OperationDate";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { InfiniteLoader } from "@ledgerhq/react-ui";
 import { WarningSolidMedium } from "@ledgerhq/react-ui/assets/icons";
-import { FIVE_MINUTES_IN_MS } from "~/config/constants";
+import { getEnv } from "@ledgerhq/live-common/env";
 
 const Cell: ThemedComponent<{}> = styled(Box).attrs(() => ({
   px: 3,
@@ -64,7 +64,9 @@ class DateCell extends PureComponent<Props> {
           <Box fontSize={3} color="palette.text.shade80">
             <Box ff="Inter|SemiBold" fontSize={3} color="palette.text.shade80" style={ellipsis}>
               {// display pending icon (less than 5 minutes: loading spinner; more than 5 minutes: yellow warning icon)
-              this.pendingLoadingIcon(new Date() - operation.date > FIVE_MINUTES_IN_MS)}
+              this.pendingLoadingIcon(
+                new Date() - operation.date > getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT"),
+              )}
               <Box
                 style={{
                   marginLeft: "4px",

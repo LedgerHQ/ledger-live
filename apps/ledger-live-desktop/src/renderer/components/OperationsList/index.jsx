@@ -28,7 +28,7 @@ import TableContainer, { TableHeader } from "../TableContainer";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import EditOperationPanel from "./EditOperationPanel";
-import { FIVE_MINUTES_IN_MS } from "~/config/constants";
+import { getEnv } from "@ledgerhq/live-common/env";
 import { isEditableOperation } from "@ledgerhq/live-common/operation";
 
 const ShowMore = styled(Box).attrs(() => ({
@@ -127,7 +127,7 @@ export class OperationsList extends PureComponent<Props, State> {
           if (
             (!stuckOperation ||
               operation.transactionSequenceNumber < stuckOperation.transactionSequenceNumber) &&
-            new Date() - operation.date > FIVE_MINUTES_IN_MS
+            new Date() - operation.date > getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT")
           ) {
             stuckOperation = operation;
           }
