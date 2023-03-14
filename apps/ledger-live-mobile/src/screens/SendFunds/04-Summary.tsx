@@ -334,7 +334,7 @@ const CurrentNetworkFee = ({
   return !!feeValue && feeValue.toNumber() > 0 ? (
     <Alert type="hint">
       <LText>
-        {t("editTransaction.currentNetworkFee", {
+        {t("editTransaction.previousFeesInfo", {
           amount: feeValue.toNumber(),
         })}
       </LText>
