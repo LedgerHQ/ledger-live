@@ -250,8 +250,10 @@ export default function Default() {
                               render={(props: any) => <PlatformApp {...props} />}
                             />
                             <Route path="/lend" render={props => <Lend {...props} />} />
+                            <FeatureToggle feature="ptxEarn">
+                              <Route path="/earn" render={props => <Earn {...props} />} />
+                            </FeatureToggle>
                             <Route path="/exchange" render={(props: any) => <Exchange />} />
-                            <Route path="/earn" render={props => <Earn {...props} />} />
                             <Route
                               exact
                               path="/account/:id/nft-collection"

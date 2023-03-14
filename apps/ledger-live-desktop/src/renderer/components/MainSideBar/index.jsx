@@ -412,16 +412,6 @@ const MainSideBar = () => {
                   disabled={noAccounts || navigationLocked}
                   collapsed={secondAnim}
                 />
-                <SideBarListItem
-                  id={"exchange"}
-                  label={t("sidebar.exchange")}
-                  icon={IconExchange}
-                  iconActiveColor="wallet"
-                  onClick={handleClickExchange}
-                  isActive={location.pathname === "/exchange"}
-                  disabled={noAccounts}
-                  collapsed={secondAnim}
-                />
                 <FeatureToggle feature="ptxEarn">
                   <SideBarListItem
                     id={"earn"}
@@ -433,6 +423,16 @@ const MainSideBar = () => {
                     collapsed={secondAnim}
                   />
                 </FeatureToggle>
+                <SideBarListItem
+                  id={"exchange"}
+                  label={t("sidebar.exchange")}
+                  icon={IconExchange}
+                  iconActiveColor="wallet"
+                  onClick={handleClickExchange}
+                  isActive={location.pathname === "/exchange"}
+                  disabled={noAccounts}
+                  collapsed={secondAnim}
+                />
                 <SideBarListItem
                   id={"swap"}
                   label={t("sidebar.swap")}
