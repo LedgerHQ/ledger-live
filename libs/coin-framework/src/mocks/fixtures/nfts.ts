@@ -307,7 +307,8 @@ export const NFTs = [
   },
 ];
 
-export const NFTs_STAX = [
+// Ethereum NFTs with the special "staxImage" metadata designed to fit the Ledger Stax screen
+export const NFTs_ETHEREUM_STAX_METADATA = [
   {
     id: "js:2:ethereum:0xB98d10d9f6d07bA283bFD21B2dFEc050f9Ae282A:+0xf4ac11a8967bc88c9ce5acf886bce605c9db9d6e+8482",
     tokenId: "8482",
@@ -358,7 +359,7 @@ export function createFixtureNFT(
   const nfts =
     currency.id === "ethereum"
       ? useStaxNFTs
-        ? NFTs_STAX
+        ? NFTs_ETHEREUM_STAX_METADATA
         : NFTs
       : NFTs_POLYGON;
   const index = Math.floor(Math.random() * nfts.length);
