@@ -195,7 +195,9 @@ const Body = ({
       ? params.transactionRaw.maxFeePerGas
       : params.transactionRaw.gasPrice,
   );
-  const feeValue = new BigNumber(params.transactionRaw.userGasLimit || params.transactionRaw.estimatedGasLimit)
+  const feeValue = new BigNumber(
+    params.transactionRaw.userGasLimit || params.transactionRaw.estimatedGasLimit,
+  )
     .times(feePerGas)
     .div(new BigNumber(10).pow(mainAccount.unit.magnitude));
   const haveFundToCancel = mainAccount.balance.gt(feeValue.times(1.3));
@@ -210,7 +212,9 @@ const Body = ({
       }
     }
   });
-  const [editType, setEditType] = useState(isOldestEditableOperation && haveFundToSpeedup? "speedup" : haveFundToCancel? "cancel" : "");
+  const [editType, setEditType] = useState(
+    isOldestEditableOperation && haveFundToSpeedup ? "speedup" : haveFundToCancel ? "cancel" : "",
+  );
   const handleSetEditType = useCallback(editType => setEditType(editType), []);
 
   const stepperProps = {

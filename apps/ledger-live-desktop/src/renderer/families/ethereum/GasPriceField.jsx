@@ -4,7 +4,11 @@ import React, { useCallback } from "react";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import type { Account } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus, TransactionRaw } from "@ledgerhq/live-common/families/ethereum/types";
+import type {
+  Transaction,
+  TransactionStatus,
+  TransactionRaw,
+} from "@ledgerhq/live-common/families/ethereum/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import FeeSliderField from "~/renderer/components/FeeSliderField";
 import { inferDynamicRange } from "@ledgerhq/live-common/range";
@@ -54,7 +58,7 @@ const FeesField = ({ account, transaction, status, updateTransaction, transactio
       maxValue,
     });
   }
-  
+
   const { units } = account.currency;
 
   return (

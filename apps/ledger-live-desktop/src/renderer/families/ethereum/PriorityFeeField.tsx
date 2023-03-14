@@ -61,7 +61,14 @@ type Props = {
 
 const fallbackMaxPriorityFeePerGas = inferDynamicRange(new BigNumber(10e9));
 
-const FeesField = ({ account, parentAccount, transaction, status, updateTransaction, transactionRaw }: Props) => {
+const FeesField = ({
+  account,
+  parentAccount,
+  transaction,
+  status,
+  updateTransaction,
+  transactionRaw,
+}: Props) => {
   invariant(transaction.family === "ethereum", "FeeField: ethereum family expected");
   const mainAccount = getMainAccount(account, parentAccount);
 
@@ -99,10 +106,10 @@ const FeesField = ({ account, parentAccount, transaction, status, updateTransact
   // update suggested max priority fee according to previous pending transaction if necessary
   if (transactionRaw && transactionRaw.maxPriorityFeePerGas) {
     const newMaxPriorityFeePerGas = new BigNumber(transactionRaw.maxPriorityFeePerGas).times(1.1);
-    if (newMaxPriorityFeePerGas.isGreaterThan(new BigNumber(lowPriorityFeeValue))){
+    if (newMaxPriorityFeePerGas.isGreaterThan(new BigNumber(lowPriorityFeeValue))) {
       lowPriorityFeeValue = formatCurrencyUnit(unit, newMaxPriorityFeePerGas);
     }
-    if (newMaxPriorityFeePerGas.isGreaterThan(new BigNumber(highPriorityFeeValue))){
+    if (newMaxPriorityFeePerGas.isGreaterThan(new BigNumber(highPriorityFeeValue))) {
       highPriorityFeeValue = formatCurrencyUnit(unit, newMaxPriorityFeePerGas);
     }
   }

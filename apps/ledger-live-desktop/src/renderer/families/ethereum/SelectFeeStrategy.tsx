@@ -115,7 +115,9 @@ const SelectFeeStrategy = ({
         ) {
           strategy.disabled =
             strategy.disabled ||
-            (strategyMaxPriorityFeePerGas.isLessThan(BigNumber(oldMaxPriorityFeePerGas).times(1.1)) &&
+            (strategyMaxPriorityFeePerGas.isLessThan(
+              BigNumber(oldMaxPriorityFeePerGas).times(1.1),
+            ) &&
               strategyMaxFeePerGas.isLessThan(BigNumber(oldMaxFeePerGas)));
         }
       });

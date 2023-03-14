@@ -37,7 +37,15 @@ const Description = styled(Box)`
   width: 400px;
 `;
 
-const StepMethod = ({ account, editType, setEditType, t, haveFundToSpeedup, haveFundToCancel, isOldestEditableOperation }: StepProps) => {
+const StepMethod = ({
+  account,
+  editType,
+  setEditType,
+  t,
+  haveFundToSpeedup,
+  haveFundToCancel,
+  isOldestEditableOperation,
+}: StepProps) => {
   const isCancel = editType === "cancel";
   const isSpeedup = editType === "speedup";
   const disableSpeedup = !haveFundToSpeedup || !isOldestEditableOperation;
@@ -48,37 +56,30 @@ const StepMethod = ({ account, editType, setEditType, t, haveFundToSpeedup, have
         key={0}
         selected={isSpeedup}
         onClick={() => {
-          if (!disableSpeedup){
+          if (!disableSpeedup) {
             setEditType("speedup");
           }
         }}
       >
         <Flex flexDirection="row" justifyContent="left" alignItems="center">
-          <CheckBox style={{marginLeft: "0px"}} isChecked={isSpeedup} disabled={disableSpeedup}/>
+          <CheckBox style={{ marginLeft: "0px" }} isChecked={isSpeedup} disabled={disableSpeedup} />
           <Box>
-          <EditTypeHeader horizontal alignItems="center" selected={isSpeedup}>
-            <Text fontSize={14} ff="Inter|SemiBold" uppercase ml={1}>
-              <Trans i18nKey={"operation.edit.speedUp.title"} />
-            </Text>
-          </EditTypeHeader>
-          <Description selected={editType === "speedup"}>
-            <Text ff="Inter|Medium" fontSize={12}>
-              {
-                haveFundToSpeedup && isOldestEditableOperation ? (
+            <EditTypeHeader horizontal alignItems="center" selected={isSpeedup}>
+              <Text fontSize={14} ff="Inter|SemiBold" uppercase ml={1}>
+                <Trans i18nKey={"operation.edit.speedUp.title"} />
+              </Text>
+            </EditTypeHeader>
+            <Description selected={editType === "speedup"}>
+              <Text ff="Inter|Medium" fontSize={12}>
+                {haveFundToSpeedup && isOldestEditableOperation ? (
                   <Trans i18nKey={"operation.edit.speedUp.description"} />
-                )
-                :
-                isOldestEditableOperation?
-                (
+                ) : isOldestEditableOperation ? (
                   <Trans i18nKey={"operation.edit.error.notEnoughFundsToSpeedup"} />
-                )
-                :
-                (
+                ) : (
                   <Trans i18nKey={"operation.edit.error.notlowestNonceToSpeedup"} />
-                )
-              }
-            </Text>
-          </Description>
+                )}
+              </Text>
+            </Description>
           </Box>
         </Flex>
       </EditTypeWrapper>
@@ -86,44 +87,47 @@ const StepMethod = ({ account, editType, setEditType, t, haveFundToSpeedup, have
         key={1}
         selected={isCancel}
         onClick={() => {
-          if (!disableCancel){
+          if (!disableCancel) {
             setEditType("cancel");
           }
         }}
       >
         <Flex flexDirection="row" justifyContent="left" alignItems="center">
-        <CheckBox isChecked={editType === "cancel"} disabled={disableCancel}/>
-        <Box>
-        <EditTypeHeader horizontal alignItems="center" selected={isCancel}>
-          <Text fontSize={14} ff="Inter|SemiBold" uppercase ml={1}>
-            <Trans i18nKey={"operation.edit.cancel.title"} />
-          </Text>
-        </EditTypeHeader>
-        <Description selected={isCancel}>
-        <Text ff="Inter|Medium" fontSize={12}>
-          {
-            haveFundToCancel? (
-            <Trans
-              i18nKey={"operation.edit.cancel.description"}
-              values={{
-                ticker:
-                  account.type === "TokenAccount" ? account.token.ticker : account.currency.ticker,
-              }}
-            />
-            )
-            :
-            (
-              <Trans i18nKey={"operation.edit.error.notEnoughFundsToCancel"} />
-            )
-          }
-          </Text>
-        </Description>
-        </Box>
+          <CheckBox isChecked={editType === "cancel"} disabled={disableCancel} />
+          <Box>
+            <EditTypeHeader horizontal alignItems="center" selected={isCancel}>
+              <Text fontSize={14} ff="Inter|SemiBold" uppercase ml={1}>
+                <Trans i18nKey={"operation.edit.cancel.title"} />
+              </Text>
+            </EditTypeHeader>
+            <Description selected={isCancel}>
+              <Text ff="Inter|Medium" fontSize={12}>
+                {haveFundToCancel ? (
+                  <Trans
+                    i18nKey={"operation.edit.cancel.description"}
+                    values={{
+                      ticker:
+                        account.type === "TokenAccount"
+                          ? account.token.ticker
+                          : account.currency.ticker,
+                    }}
+                  />
+                ) : (
+                  <Trans i18nKey={"operation.edit.error.notEnoughFundsToCancel"} />
+                )}
+              </Text>
+            </Description>
+          </Box>
         </Flex>
       </EditTypeWrapper>
-        <Text ff="Inter|Medium" fontSize={12} style={{textDecoration: "underline", textAlign: "center", cursor: "pointer"}} onClick={() => openURL("https://support.ledger.com/hc/articles/9756122596765?support=true")}>
-          {t("operation.edit.learnMore")}
-        </Text>
+      <Text
+        ff="Inter|Medium"
+        fontSize={12}
+        style={{ textDecoration: "underline", textAlign: "center", cursor: "pointer" }}
+        onClick={() => openURL("https://support.ledger.com/hc/articles/9756122596765?support=true")}
+      >
+        {t("operation.edit.learnMore")}
+      </Text>
     </Box>
   );
 };
