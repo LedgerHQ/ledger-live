@@ -7,8 +7,8 @@ import { scrollToTop } from "../navigation/utils";
 import { Merge } from "../types/helpers";
 
 export type Props = Merge<
-  Merge<HeaderTitleProps, { children?: React.ReactNode }>,
-  BaseTextProps
+  HeaderTitleProps,
+  { children?: React.ReactNode; color?: BaseTextProps["color"] }
 >;
 
 export default function HeaderTitle(props: Props) {
