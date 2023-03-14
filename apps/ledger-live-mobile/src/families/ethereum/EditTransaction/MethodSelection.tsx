@@ -46,7 +46,13 @@ export function MethodSelection({ navigation, route }: Props) {
 
   const bridge = getAccountBridge(account, parentAccount as Account);
 
-  const canCancel = (
+  const [latestPendingOperation] = account.pendingOperations.sort(
+    (a, b) => b.date.getTime() - a.date.getTime(),
+  );
+
+  const isLatestOperation = operation.id === latestPendingOperation.id;
+
+  const canCancelOperation = (
     account: AccountLike,
     currency: TokenCurrency | CryptoCurrency,
   ): boolean => {
@@ -74,10 +80,14 @@ export function MethodSelection({ navigation, route }: Props) {
     }
   };
 
-  const canSpeedup = (
+  const canSpeedUpOperation = (
     account: AccountLike,
     currency: TokenCurrency | CryptoCurrency,
   ): boolean => {
+    if (!isLatestOperation) {
+      return false;
+    }
+
     if (EIP1559ShouldBeUsed(currency)) {
       if (
         transactionToEdit.maxPriorityFeePerGas &&
@@ -105,16 +115,7 @@ export function MethodSelection({ navigation, route }: Props) {
     }
   };
 
-  const options = [
-    { i18nKey: "common.cancel", value: "cancel", disabledFn: canCancel },
-    {
-      i18nKey: "editTransaction.speedup",
-      value: "speedup",
-      disabledFn: canSpeedup,
-    },
-  ] as const;
-
-  const onSelect = (option: typeof options[number]["value"]) => {
+  const onSelect = (option: "cancel" | "speedup") => {
     switch (option) {
       case "cancel":
         transactionToEdit.amount = new BigNumber(0);
@@ -176,6 +177,10 @@ export function MethodSelection({ navigation, route }: Props) {
   if (!transaction) {
     return null;
   }
+
+  const canCancel = canCancelOperation(account, currency);
+  const canSpeedUp = canSpeedUpOperation(account, currency);
+
   return (
     <Flex flex={1} color="background.main">
       <TrackScreen
@@ -184,29 +189,36 @@ export function MethodSelection({ navigation, route }: Props) {
       />
       <Flex p={6}>
         <SelectableList onChange={onSelect}>
-          {options.map(editOption => {
-            const isEnabled = editOption.disabledFn(account, currency);
-
-            return (
-              <SelectableList.Element
-                disabled={!isEnabled}
-                value={editOption.value}
-              >
-                <Trans i18nKey={editOption.i18nKey} />
-                <Flex>
-                  <LText style={{ marginTop: 15, marginBottom: 0 }}>
-                    <Trans
-                      i18nKey={
-                        editOption.value === "speedup"
-                          ? "editTransaction.resubmitTxDescription"
-                          : "editTransaction.cancelTxDescription"
-                      }
-                    />
-                  </LText>
-                </Flex>
-              </SelectableList.Element>
-            );
-          })}
+          <SelectableList.Element disabled={!canCancel} value={"cancel"}>
+            <Trans i18nKey={"editTransaction.cancel.title"} />
+            <Flex>
+              <LText style={{ marginTop: 15, marginBottom: 0 }}>
+                <Trans
+                  i18nKey={
+                    canCancel
+                      ? "editTransaction.cancel.description"
+                      : "editTransaction.error.notEnoughFundsToCancel"
+                  }
+                />
+              </LText>
+            </Flex>
+          </SelectableList.Element>
+          <SelectableList.Element disabled={!canSpeedUp} value={"speedup"}>
+            <Trans i18nKey={"editTransaction.speedup.title"} />
+            <Flex>
+              <LText style={{ marginTop: 15, marginBottom: 0 }}>
+                <Trans
+                  i18nKey={
+                    canSpeedUp
+                      ? "editTransaction.speedup.description"
+                      : isLatestOperation
+                      ? "editTransaction.error.notlowestNonceToSpeedup"
+                      : "editTransaction.error.notEnoughFundsToSpeedup"
+                  }
+                />
+              </LText>
+            </Flex>
+          </SelectableList.Element>
         </SelectableList>
       </Flex>
     </Flex>
