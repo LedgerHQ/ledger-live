@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import {
   Transaction as EthereumTransaction,
   TransactionStatus,
+  TransactionRaw,
 } from "@ledgerhq/live-common/families/ethereum/types";
 import { inferDynamicRange } from "@ledgerhq/live-common/range";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
@@ -55,11 +56,12 @@ type Props = {
   transaction: EthereumTransaction;
   status: TransactionStatus;
   updateTransaction: Result<EthereumTransaction>["updateTransaction"];
+  transactionRaw?: TransactionRaw;
 };
 
 const fallbackMaxPriorityFeePerGas = inferDynamicRange(new BigNumber(10e9));
 
-const FeesField = ({ account, parentAccount, transaction, status, updateTransaction }: Props) => {
+const FeesField = ({ account, parentAccount, transaction, status, updateTransaction, transactionRaw }: Props) => {
   invariant(transaction.family === "ethereum", "FeeField: ethereum family expected");
   const mainAccount = getMainAccount(account, parentAccount);
 
@@ -87,14 +89,23 @@ const FeesField = ({ account, parentAccount, transaction, status, updateTransact
   const unit = units.length > 1 ? units[1] : units[0];
   const unitName = unit.code;
 
-  const [lowPriorityFeeValue, highPriorityFeeValue] = useMemo(
+  let [lowPriorityFeeValue, highPriorityFeeValue] = useMemo(
     () => [
       formatCurrencyUnit(unit, networkPriorityFee.min),
       formatCurrencyUnit(unit, networkPriorityFee.max),
     ],
     [networkPriorityFee.max, networkPriorityFee.min, unit],
   );
-
+  // update suggested max priority fee according to previous pending transaction if necessary
+  if (transactionRaw && transactionRaw.maxPriorityFeePerGas) {
+    const newMaxPriorityFeePerGas = new BigNumber(transactionRaw.maxPriorityFeePerGas).times(1.1);
+    if (newMaxPriorityFeePerGas.isGreaterThan(new BigNumber(lowPriorityFeeValue))){
+      lowPriorityFeeValue = formatCurrencyUnit(unit, newMaxPriorityFeePerGas);
+    }
+    if (newMaxPriorityFeePerGas.isGreaterThan(new BigNumber(highPriorityFeeValue))){
+      highPriorityFeeValue = formatCurrencyUnit(unit, newMaxPriorityFeePerGas);
+    }
+  }
   const validTransactionError = status.errors.maxPriorityFee;
   const validTransactionWarning = status.warnings.maxPriorityFee;
 

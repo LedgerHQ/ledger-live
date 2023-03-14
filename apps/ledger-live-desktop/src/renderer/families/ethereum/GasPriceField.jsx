@@ -4,7 +4,7 @@ import React, { useCallback } from "react";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import type { Account } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/ethereum/types";
+import type { Transaction, TransactionStatus, TransactionRaw } from "@ledgerhq/live-common/families/ethereum/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import FeeSliderField from "~/renderer/components/FeeSliderField";
 import { inferDynamicRange } from "@ledgerhq/live-common/range";
@@ -14,12 +14,13 @@ type Props = {
   transaction: Transaction,
   status: TransactionStatus,
   updateTransaction: (updater: any) => void,
+  transactionRaw?: TransactionRaw,
 };
 
 const fallbackGasPrice = inferDynamicRange(BigNumber(10e9));
 let lastNetworkGasPrice; // local cache of last value to prevent extra blinks
 
-const FeesField = ({ account, transaction, status, updateTransaction }: Props) => {
+const FeesField = ({ account, transaction, status, updateTransaction, transactionRaw }: Props) => {
   invariant(transaction.family === "ethereum", "FeeField: ethereum family expected");
 
   const bridge = getAccountBridge(account);
@@ -37,8 +38,23 @@ const FeesField = ({ account, transaction, status, updateTransaction }: Props) =
   if (!lastNetworkGasPrice && networkGasPrice) {
     lastNetworkGasPrice = networkGasPrice;
   }
-  const range = networkGasPrice || lastNetworkGasPrice || fallbackGasPrice;
+  let range = networkGasPrice || lastNetworkGasPrice || fallbackGasPrice;
   const gasPrice = transaction.gasPrice || range.initial;
+  // update gas price range according to previous pending transaction if necessary
+  if (transactionRaw && transactionRaw.gasPrice) {
+    const minNewGasPrice = new BigNumber(transactionRaw.gasPrice).times(1.1);
+    const minValue = BigNumber.max(range.min, minNewGasPrice);
+    let maxValue = BigNumber.max(range.max, minNewGasPrice);
+    // avoid lower bound = upper bound, which will cause an error in inferDynamicRange
+    if (minValue.isEqualTo(maxValue)) {
+      maxValue = minValue.times(2);
+    }
+    range = inferDynamicRange(minValue, {
+      minValue,
+      maxValue,
+    });
+  }
+  
   const { units } = account.currency;
 
   return (

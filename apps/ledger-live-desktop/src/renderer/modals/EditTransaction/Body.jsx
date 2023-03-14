@@ -13,6 +13,8 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import type { Account, AccountLike, Operation, TransactionCommonRaw } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import { EIP1559ShouldBeUsed } from "@ledgerhq/live-common/families/ethereum/transaction";
+import { isEditableOperation } from "@ledgerhq/live-common/operation";
 import logger from "~/logger";
 import Stepper from "~/renderer/components/Stepper";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
@@ -57,8 +59,6 @@ type StateProps = {|
   closeModal: string => void,
   openModal: (string, any) => void,
   updateAccountWithUpdater: (string, (Account) => Account) => void,
-  setEditType: string => void,
-  editType: string,
   setIsNFTSend: boolean => void,
   isNFTSend: boolean,
 |};
@@ -130,8 +130,6 @@ const Body = ({
   params,
   accounts,
   updateAccountWithUpdater,
-  setEditType,
-  editType,
   setIsNFTSend,
   isNFTSend,
 }: Props) => {
@@ -190,8 +188,30 @@ const Body = ({
   );
 
   const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
-
   const error = transactionError || bridgeError;
+  const mainAccount = getMainAccount(account, parentAccount);
+  const feePerGas = new BigNumber(
+    EIP1559ShouldBeUsed(mainAccount.currency)
+      ? params.transactionRaw.maxFeePerGas
+      : params.transactionRaw.gasPrice,
+  );
+  const feeValue = new BigNumber(params.transactionRaw.userGasLimit || params.transactionRaw.estimatedGasLimit)
+    .times(feePerGas)
+    .div(new BigNumber(10).pow(mainAccount.unit.magnitude));
+  const haveFundToCancel = mainAccount.balance.gt(feeValue.times(1.3));
+  const haveFundToSpeedup = mainAccount.balance.gt(
+    feeValue.times(1.1).plus(account.type === "Account" ? params.transactionRaw.amount : 0),
+  );
+  let isOldestEditableOperation = true;
+  account.pendingOperations.forEach(operation => {
+    if (isEditableOperation(account, operation)) {
+      if (operation.transactionSequenceNumber < params.transactionSequenceNumber) {
+        isOldestEditableOperation = false;
+      }
+    }
+  });
+  const [editType, setEditType] = useState(isOldestEditableOperation && haveFundToSpeedup? "speedup" : haveFundToCancel? "cancel" : "");
+  const handleSetEditType = useCallback(editType => setEditType(editType), []);
 
   const stepperProps = {
     title: t("operation.edit.title"),
@@ -220,13 +240,16 @@ const Body = ({
     updateTransaction,
     onConfirmationHandler: params.onConfirmationHandler,
     onFailHandler: params.onFailHandler,
-    setEditType,
+    setEditType: handleSetEditType,
     editType,
     setIsNFTSend,
     isNFTSend,
     transactionRaw: params.transactionRaw,
     isNftOperation: params.isNftOperation,
     transactionSequenceNumber: params.transactionSequenceNumber,
+    haveFundToSpeedup,
+    haveFundToCancel,
+    isOldestEditableOperation,
   };
 
   return (

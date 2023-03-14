@@ -115,8 +115,8 @@ const SelectFeeStrategy = ({
         ) {
           strategy.disabled =
             strategy.disabled ||
-            (strategyMaxPriorityFeePerGas.isLessThanOrEqualTo(BigNumber(oldMaxPriorityFeePerGas)) &&
-              strategyMaxFeePerGas.isLessThanOrEqualTo(BigNumber(oldMaxFeePerGas)));
+            (strategyMaxPriorityFeePerGas.isLessThan(BigNumber(oldMaxPriorityFeePerGas).times(1.1)) &&
+              strategyMaxFeePerGas.isLessThan(BigNumber(oldMaxFeePerGas)));
         }
       });
     } else {
@@ -124,7 +124,7 @@ const SelectFeeStrategy = ({
       if (oldGasPrice) {
         strategies.forEach(strategy => {
           strategy.disabled =
-            strategy.disabled || strategy.amount.isLessThanOrEqualTo(BigNumber(oldGasPrice));
+            strategy.disabled || strategy.amount.isLessThan(BigNumber(oldGasPrice).times(1.1));
         });
       }
     }

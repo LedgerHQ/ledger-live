@@ -10,8 +10,7 @@ import Text from "~/renderer/components/Text";
 import type { StepProps } from "../types";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { Flex, Link } from "@ledgerhq/react-ui";
-import ExternalLink from "~/renderer/icons/ExternalLink";
+import { Flex } from "@ledgerhq/react-ui";
 import { openURL } from "~/renderer/linking";
 
 const EditTypeWrapper = styled(Box)`
@@ -38,28 +37,46 @@ const Description = styled(Box)`
   width: 400px;
 `;
 
-const StepMethod = ({ account, editType, setEditType, t }: StepProps) => {
+const StepMethod = ({ account, editType, setEditType, t, haveFundToSpeedup, haveFundToCancel, isOldestEditableOperation }: StepProps) => {
   const isCancel = editType === "cancel";
+  const isSpeedup = editType === "speedup";
+  const disableSpeedup = !haveFundToSpeedup || !isOldestEditableOperation;
+  const disableCancel = !haveFundToCancel;
   return (
     <Box flow={4}>
       <EditTypeWrapper
         key={0}
-        selected={!isCancel}
+        selected={isSpeedup}
         onClick={() => {
-          setEditType("speedup");
+          if (!disableSpeedup){
+            setEditType("speedup");
+          }
         }}
       >
         <Flex flexDirection="row" justifyContent="left" alignItems="center">
-          <CheckBox style={{marginLeft: "0px"}} isChecked={!isCancel} />
+          <CheckBox style={{marginLeft: "0px"}} isChecked={isSpeedup} disabled={disableSpeedup}/>
           <Box>
-          <EditTypeHeader horizontal alignItems="center" selected={!isCancel}>
+          <EditTypeHeader horizontal alignItems="center" selected={isSpeedup}>
             <Text fontSize={14} ff="Inter|SemiBold" uppercase ml={1}>
               <Trans i18nKey={"operation.edit.speedUp.title"} />
             </Text>
           </EditTypeHeader>
           <Description selected={editType === "speedup"}>
             <Text ff="Inter|Medium" fontSize={12}>
-              <Trans i18nKey={"operation.edit.speedUp.description"} />
+              {
+                haveFundToSpeedup && isOldestEditableOperation ? (
+                  <Trans i18nKey={"operation.edit.speedUp.description"} />
+                )
+                :
+                isOldestEditableOperation?
+                (
+                  <Trans i18nKey={"operation.edit.error.notEnoughFundsToSpeedup"} />
+                )
+                :
+                (
+                  <Trans i18nKey={"operation.edit.error.notlowestNonceToSpeedup"} />
+                )
+              }
             </Text>
           </Description>
           </Box>
@@ -69,11 +86,13 @@ const StepMethod = ({ account, editType, setEditType, t }: StepProps) => {
         key={1}
         selected={isCancel}
         onClick={() => {
-          setEditType("cancel");
+          if (!disableCancel){
+            setEditType("cancel");
+          }
         }}
       >
         <Flex flexDirection="row" justifyContent="left" alignItems="center">
-        <CheckBox isChecked={editType === "cancel"} />
+        <CheckBox isChecked={editType === "cancel"} disabled={disableCancel}/>
         <Box>
         <EditTypeHeader horizontal alignItems="center" selected={isCancel}>
           <Text fontSize={14} ff="Inter|SemiBold" uppercase ml={1}>
@@ -82,13 +101,21 @@ const StepMethod = ({ account, editType, setEditType, t }: StepProps) => {
         </EditTypeHeader>
         <Description selected={isCancel}>
         <Text ff="Inter|Medium" fontSize={12}>
-          <Trans
-            i18nKey={"operation.edit.cancel.description"}
-            values={{
-              ticker:
-                account.type === "TokenAccount" ? account.token.ticker : account.currency.ticker,
-            }}
-          />
+          {
+            haveFundToCancel? (
+            <Trans
+              i18nKey={"operation.edit.cancel.description"}
+              values={{
+                ticker:
+                  account.type === "TokenAccount" ? account.token.ticker : account.currency.ticker,
+              }}
+            />
+            )
+            :
+            (
+              <Trans i18nKey={"operation.edit.error.notEnoughFundsToCancel"} />
+            )
+          }
           </Text>
         </Description>
         </Box>
@@ -114,6 +141,9 @@ export class StepMethodFooter extends PureComponent<StepProps> {
       transactionSequenceNumber,
       isNftOperation,
       setIsNFTSend,
+      haveFundToSpeedup,
+      haveFundToCancel,
+      isOldestEditableOperation,
     } = this.props;
     const bridge = getAccountBridge(account, parentAccount);
     return (
@@ -121,7 +151,7 @@ export class StepMethodFooter extends PureComponent<StepProps> {
         <Button
           id={"send-recipient-continue-button"}
           primary
-          disabled={false}
+          disabled={(!haveFundToSpeedup || !isOldestEditableOperation) && !haveFundToCancel} // continue button is disable if both "speedup" and "cancel" are not possible
           onClick={() => {
             if (isNftOperation) {
               setIsNFTSend(editType === "speedup");
@@ -130,6 +160,7 @@ export class StepMethodFooter extends PureComponent<StepProps> {
               updateTransaction(tx =>
                 bridge.updateTransaction(tx, {
                   amount: new BigNumber(transactionRaw.amount),
+                  data: transactionRaw.data,
                   nonce: transactionSequenceNumber,
                   recipient: transactionRaw.recipient,
                   mode: transactionRaw.mode,
@@ -143,7 +174,9 @@ export class StepMethodFooter extends PureComponent<StepProps> {
             } else {
               updateTransaction(tx =>
                 bridge.updateTransaction(tx, {
-                  amount: new BigNumber(1), // send a very little amout of fund to your own account. TODO: Fix Can't set 0 here because of NotEnoughBalance error is thrown from getTransactionStatus
+                  amount: new BigNumber(0),
+                  allowZeroAmount: true,
+                  data: undefined,
                   nonce: transactionSequenceNumber,
                   mode: "send",
                   recipient: account.freshAddress ?? parentAccount.freshAddress,

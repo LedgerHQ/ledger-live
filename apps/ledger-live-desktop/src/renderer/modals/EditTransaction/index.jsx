@@ -12,11 +12,9 @@ type Props = {
 
 const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
   const [stepId, setStep] = useState(() => initialStepId || "method");
-  const [editType, setEditType] = useState("speedup");
   const [isNftSend, setIsNFTSend] = useState(false);
   const handleReset = useCallback(() => setStep("method"), []);
   const handleStepChange = useCallback(stepId => setStep(stepId), []);
-  const handleSetEditType = useCallback(editType => setEditType(editType), []);
   const handleSetIsNFTSend = useCallback(isNftSend => setIsNFTSend(isNftSend), []);
   return (
     <Modal
@@ -30,8 +28,6 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
         <Body
           stepId={stepId}
           onClose={onClose}
-          setEditType={handleSetEditType}
-          editType={editType}
           setIsNFTSend={handleSetIsNFTSend}
           isNftSend={isNftSend}
           onChangeStepId={handleStepChange}
