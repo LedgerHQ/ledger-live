@@ -225,15 +225,10 @@
     "tooltip" : "В избранное"
   },
   "bridge" : {
-    "modalTitle" : "Откройте Device Bridge",
-    "openHeader" : "Открывайте доступ к счетам на устройстве через WebSocket",
-    "openDescription" : "Открытие моста даёт сторонним приложениям доступ ко всем вашим счетам.",
-    "openedHeader" : "Мост для {{appName}} открыт",
-    "openedDescription" : "Теперь вы можете использовать свой счёт {{appName}} в стороннем веб-приложении через WebSocket.",
-    "completeHeader" : "Сеанс моста завершён",
-    "completeDescription" : "Мост WebSocket закрыт.",
-    "openButton" : "Открыть",
-    "disconnectButton" : "Отключить"
+    "modalTitle" : "Device Bridge",
+    "openHeader" : "Device Bridge больше недоступен",
+    "openDescription" : "Настройте браузерное расширение кошелька для использования WebHID вместо Ledger Live.",
+    "closeButton" : "Закрыть"
   },
   "swap2" : {
     "title" : "Обмен",
@@ -828,6 +823,10 @@
         "near" : {
           "title" : "Угадайте что?",
           "description" : "У Ledger более низкие комиссии по сравнению с вашим валидатором. На этот процесс может уйти вплоть до 65 часов."
+        },
+        "elrond" : {
+          "title" : "Угадайте что?",
+          "description" : "У Ledger более низкие комиссии по сравнению с вашим валидатором. На этот процесс может уйти вплоть до 10 дней."
         }
       },
       "delegation" : {
@@ -849,6 +848,9 @@
         },
         "near" : {
           "description" : "Стейкайте NEAR с помощью валидатора «Ledger by Figment». Монеты остаются вашими, а их безопасность обеспечивает Ledger."
+        },
+        "elrond" : {
+          "description" : "Стейкайте ELROND с помощью валидатора «Ledger by Figment». Монеты остаются вашими, а их безопасность обеспечивает Ledger."
         }
       }
     }
@@ -2169,7 +2171,7 @@
     }
   },
   "send" : {
-    "title" : "Отправить",
+    "title" : "Отправка",
     "titleNft" : "Отправить NFT",
     "totalSpent" : "Всего будет списано",
     "steps" : {
@@ -2261,6 +2263,13 @@
     },
     "switchButton" : "Переключиться на {{language}}",
     "no" : "Мне не хочется"
+  },
+  "deviceRename" : {
+    "title" : "Переименовать {{ productName }}",
+    "chooseName" : "Укажите название",
+    "placeholder" : "Stax Олега",
+    "remainingCharacters" : "Осталось символов: {{ remainingCharacters }}",
+    "renamed" : "Название {{ productName }} изменено на\n«{{ name }}» "
   },
   "deviceLocalization" : {
     "language" : "Язык устройства",
@@ -3310,7 +3319,7 @@
     "simpleOperation" : {
       "modes" : {
         "withdrawUnbonded" : {
-          "title" : "Вывести",
+          "title" : "Вывод средств",
           "description" : "Вывод разблокированных активов станет возможет по истечении 28 дней после разблокировки.",
           "info" : "Впоследствии вы сможете вывести разблокированные средства на свой баланс."
         },
@@ -3430,7 +3439,7 @@
       },
       "withdraw" : {
         "flow" : {
-          "title" : "Вывести",
+          "title" : "Вывод средств",
           "steps" : {
             "amount" : {
               "title" : "Сумма"
@@ -3536,7 +3545,7 @@
         "available" : "Доступно для вывода"
       },
       "unstake" : "Вывести из стейкинга",
-      "withdraw" : "Вывод средств",
+      "withdraw" : "Вывести",
       "activeTooltip" : "Стейкинг приносит вознаграждения",
       "inactiveTooltip" : "Без стейкинга средства не приносят вознаграждения",
       "commission" : "Комиссия",
@@ -3786,6 +3795,9 @@
       "catalogRampServerDesc" : "Переключайтесь между несколькими операторами услуг обмена",
       "enablePlatformDevTools" : "Включить инструменты разработчика на платформе",
       "enablePlatformDevToolsDesc" : "Разрешить открывать окно инструментов разработчика на платформе",
+      "customLockScreen" : "Собственные картинки для экрана блокировки",
+      "customLockScreenDesc" : "Отладка собственных картинок для экрана блокировки",
+      "customLockScreenCTA" : "Запустить",
       "featureFlagsTitle" : "Определённые фича-флаги (feature flags), используемые в Ledger Live",
       "featureFlagsDesc" : "Переписанные значения будут сброшены в случае перезапуска приложения. Принимаются лишь валидные строки JSON.",
       "featureFlagsEdit" : "Редактировать",
@@ -3850,10 +3862,6 @@
         "experimentalCurrencies" : {
           "title" : "Экспериментальная интеграция",
           "description" : "Использовать доступные экспериментальные интеграции криптовалют."
-        },
-        "experimentalExecutionOnRenderer" : {
-          "title" : "Экспериментальная сеть",
-          "description" : "Используйте экспериментальную сеть для оптимизации взаимодействия с Ledger Live через VPN. Активируйте функцию только в случае возникновения системных ошибок при использовании VPN."
         },
         "experimentalLanguages" : {
           "title" : "Тестирование перевода",
@@ -5653,7 +5661,7 @@
     },
     "send" : {
       "memo" : {
-        "label" : "Текст Memo (необязательно)",
+        "label" : "Memo (необязательно)",
         "characterCount" : "{{memoLength}} / {{memoMaxLength}}"
       }
     }
@@ -5668,6 +5676,7 @@
   },
   "customImage" : {
     "title" : "Персонализированный экран блокировки",
+    "managerCTA" : "Изображение экрана блокировки",
     "steps" : {
       "choose" : {
         "stepLabel" : "Выбрать изображение",
