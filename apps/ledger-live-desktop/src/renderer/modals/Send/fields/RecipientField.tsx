@@ -6,7 +6,7 @@ import { TFunction } from "react-i18next";
 
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import RecipientFieldBase from "./RecipientFieldBase";
-import RecipientFieldNamingService from "./RecipientFieldNamingService";
+import RecipientFieldDomainService from "./RecipientFieldDomainService";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
@@ -63,7 +63,7 @@ const RecipientField = ({
   if (!status) return null;
 
   return isDomainResolutionEnabled ? (
-    <RecipientFieldNamingService
+    <RecipientFieldDomainService
       t={t}
       label={label}
       autoFocus={autoFocus}
