@@ -1,15 +1,19 @@
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Text } from "@ledgerhq/native-ui";
+import { useSelector } from "react-redux";
 import SettingsRow from "../../../components/SettingsRow";
-import { useLocale } from "../../../context/Locale";
 import { DateFormatDrawer } from "./DateFormatDrawer";
 import { track } from "../../../analytics";
 import { ScreenName } from "../../../const";
+import { dateFormatSelector } from "../../../reducers/settings";
+import { Format } from "../../../components/DateFormat/formatter.util";
 
+const drawerNameAnalytics = "Date Format selection";
 const DateFormatRow = () => {
   const [isOpen, setModalOpen] = useState<boolean>(false);
-  const { locale } = useLocale();
+
+  const dateFormat = useSelector(dateFormatSelector);
 
   const onClick = useCallback(() => {
     track("button_clicked", {
@@ -20,10 +24,9 @@ const DateFormatRow = () => {
   }, []);
 
   const onClose = useCallback(() => {
-    // ADD ANALYTICS
     track("button_clicked", {
       button: "Close",
-      drawer: "Failed Stax hardware check",
+      drawer: drawerNameAnalytics,
     });
     setModalOpen(false);
   }, []);
@@ -41,8 +44,9 @@ const DateFormatRow = () => {
         testID="data-format-button"
       >
         <Text variant={"body"} fontWeight={"medium"} color="primary.c80">
-          {/* {languages[locale] || locale} */}
-          DD/MM/YYYY
+          {dateFormat === Format.default
+            ? t("settings.display.DateFormatModal.default")
+            : dateFormat}
         </Text>
       </SettingsRow>
 

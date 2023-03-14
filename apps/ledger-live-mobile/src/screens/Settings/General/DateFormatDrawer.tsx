@@ -1,12 +1,16 @@
 import { Text, Flex } from "@ledgerhq/native-ui";
 import { CheckAloneMedium } from "@ledgerhq/native-ui/assets/icons";
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { useDispatch, useSelector } from "react-redux";
 import styled, { useTheme } from "styled-components/native";
+import { setDateFormat } from "../../../actions/settings";
 import { track, TrackScreen } from "../../../analytics";
+import { Format } from "../../../components/DateFormat/formatter.util";
 import QueuedDrawer from "../../../components/QueuedDrawer";
 import { ScreenName } from "../../../const";
+import { dateFormatSelector } from "../../../reducers/settings";
 
 const drawerNameAnalytics = "Date Format selection";
 
@@ -17,29 +21,35 @@ type Props = {
 
 export function DateFormatDrawer({ isOpen, onCloseModal }: Props) {
   const { t } = useTranslation();
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const dispatch = useDispatch();
+  const dateFormat = useSelector(dateFormatSelector);
 
   const options = [
     {
       title: t("settings.display.DateFormatModal.default"),
+      value: Format.default,
     },
     {
       title: t("settings.display.DateFormatModal.dayFirst"),
+      value: Format.ddmmyyyy,
     },
     {
       title: t("settings.display.DateFormatModal.monthFirst"),
+      value: Format.mmddyyyy,
     },
   ];
 
-  const onClickRow = useCallback((index: number) => {
-    setSelectedIndex(index);
-
-    track("button_clicked", {
-      button: "Date format",
-      screen: ScreenName.SettingsScreen,
-      drawer: drawerNameAnalytics,
-    });
-  }, []);
+  const onClickRow = useCallback(
+    (value: Format) => {
+      dispatch(setDateFormat(value));
+      track("button_clicked", {
+        button: value,
+        screen: ScreenName.SettingsScreen,
+        drawer: drawerNameAnalytics,
+      });
+    },
+    [dispatch],
+  );
 
   return (
     <QueuedDrawer
@@ -56,8 +66,8 @@ export function DateFormatDrawer({ isOpen, onCloseModal }: Props) {
       {options.map((option, index) => (
         <Row
           title={option.title}
-          onClickRow={() => onClickRow(index)}
-          isSelected={selectedIndex === index}
+          onClickRow={() => onClickRow(option.value)}
+          isSelected={dateFormat === option.value}
           hasMarginBottom={options.length !== index + 1}
         />
       ))}

@@ -3,20 +3,35 @@ import { useSelector } from "react-redux";
 import i18next from "i18next";
 import { differenceInCalendarDays } from "date-fns";
 import { createSelector } from "reselect";
-import compareDate from "../logic/compareDate";
-import { localeSelector } from "../reducers/settings";
+import compareDate from "../../logic/compareDate";
+import { dateFormatSelector, languageSelector } from "../../reducers/settings";
+import {
+  ddmmyyyyFormatter,
+  Format,
+  genericFormatter,
+  mmddyyyyFormatter,
+} from "./formatter.util";
 
 type Props = {
   day: Date;
 };
 
 const localeDateTimeFormatSelector = createSelector(
-  localeSelector,
-  locale => new Intl.DateTimeFormat(locale),
+  languageSelector,
+  language => genericFormatter(language),
 );
 
 const FormatDay = ({ day }: Props) => {
   const dateTimeFormat = useSelector(localeDateTimeFormatSelector);
+
+  const dateFormat = useSelector(dateFormatSelector);
+  const dateFormatOptions =
+    dateFormat === Format.default
+      ? dateTimeFormat
+      : dateFormat === Format.ddmmyyyy
+      ? ddmmyyyyFormatter
+      : mmddyyyyFormatter;
+
   const dayDiff = differenceInCalendarDays(Date.now(), day);
   const suffix =
     dayDiff === 0
@@ -24,7 +39,7 @@ const FormatDay = ({ day }: Props) => {
       : dayDiff === 1
       ? ` - ${i18next.t("common.yesterday")}`
       : "";
-  const formattedDate = dateTimeFormat.format(day);
+  const formattedDate = dateFormatOptions.format(day);
   return (
     <>
       {formattedDate}
