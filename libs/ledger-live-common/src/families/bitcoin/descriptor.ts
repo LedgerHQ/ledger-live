@@ -15,7 +15,7 @@ import { withDevice } from "../../hw/deviceAccess";
 import getAddress from "../../hw/getAddress";
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { decodeAccountId } from "../../account/accountId";
+import { decodeAccountId } from "../../account/index";
 
 export type AccountDescriptor = {
   internal: string;

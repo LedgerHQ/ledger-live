@@ -162,7 +162,7 @@ export async function updateCheckRun({
       repo,
       check_run_id: checkRun.id,
       status: "completed",
-      conclusion: valid ? "success" : "failure",
+      conclusion: valid ? "success" : "neutral",
       output,
       completed_at: new Date().toISOString(),
     });

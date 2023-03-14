@@ -13,7 +13,6 @@ const transitionStyles = {
 
 const DURATION = 200;
 
-/** each device storage bar will grow of 0.5% if the space is available or just fill its given percent basis if the bar is filled */
 const Bar = styled.div.attrs(props => ({
   style: {
     ...transitionStyles[props.state],
@@ -30,7 +29,7 @@ const Bar = styled.div.attrs(props => ({
   will-change: transform;
   background-color: ${p => p.theme.colors.palette.background.paper};
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.03);
-  padding: 62px 0px 15px 15px;
+  padding: 62px 0px 15px 0px;
   overflow-x: hidden;
   overflow-y: auto;
 `;

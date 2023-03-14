@@ -2,6 +2,7 @@
 # Current explorers configured per currency
 | name | ticker | PROD | EXPERIMENTAL |
 |--|--|--|--|
+| Avalanche C-Chain | AVAX | https://explorers.api.live.ledger.com/blockchain/v3/avax | N/A |
 | Bitcoin | BTC | https://explorers.api.live.ledger.com/blockchain/v3/btc | N/A |
 | Bitcoin Cash | BCH | https://explorers.api.live.ledger.com/blockchain/v3/bch | N/A |
 | Bitcoin Gold | BTG | https://explorers.api.live.ledger.com/blockchain/v3/btg | N/A |

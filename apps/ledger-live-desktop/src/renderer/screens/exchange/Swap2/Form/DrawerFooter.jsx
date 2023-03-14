@@ -33,7 +33,7 @@ export function DrawerFooter({ provider }: { provider: string }) {
   return (
     <>
       <Separator />
-      <Box mx="7px" mb="7px">
+      <Box mx="22px" mb="7px">
         <Terms>
           <Trans
             i18nKey={"DeviceAction.swap.acceptTerms"}

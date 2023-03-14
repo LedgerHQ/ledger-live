@@ -267,15 +267,10 @@
     "tooltip": "Star account"
   },
   "bridge": {
-    "modalTitle": "Open Device Bridge",
-    "openHeader": "Expose your Device accounts through WebSocket",
-    "openDescription": "Opening a bridge exposes all of your accounts to third party applications.",
-    "openedHeader": "{{appName}} bridge opened",
-    "openedDescription": "You can now access your {{appName}} account on third party web application through WebSocket.",
-    "completeHeader": "Bridge session completed",
-    "completeDescription": "The websocket bridge is now closed.",
-    "openButton": "Open",
-    "disconnectButton": "Disconnect"
+    "modalTitle": "Device Bridge",
+    "openHeader": "Device bridge is no longer available",
+    "openDescription": "Please configure your browser wallet extensions to use WebHID instead of Ledger Live.",
+    "closeButton": "Close"
   },
   "swap2": {
     "title": "Swap",
@@ -861,12 +856,44 @@
       "redelegation": {
         "title": "In case you didn’t know...",
         "description": "The Ledger validator stakes at a lower commission than the validator you’re using.",
-        "cta": "Redelegate with Ledger"
+        "cta": "Redelegate with Ledger",
+        "linkText": "What is redelegation and how long does it take?",
+        "solana": {
+          "title": "Did you know?",
+          "description": "Ledger offers a lower commission rate than your validator. This process can take up to 4 days."
+        },
+        "near": {
+          "title": "Did you know?",
+          "description": "Ledger offers a lower commission rate than your validator. This process can take up to 65 hours."
+        },
+        "elrond": {
+          "title": "Did you know?",
+          "description": "Ledger offers a lower commission rate than your validator. This process can take up to 10 days."
+        }
       },
       "delegation": {
         "title": "In case you didn’t know...",
         "description": "The Ledger validator stakes your {{asset}} at a commission of {{commission}}%.",
-        "cta": "Stake with Ledger"
+        "cta": "Stake with Ledger",
+        "linkText": "Learn more",
+        "ethereum": {
+          "lido": {
+            "title": "In case you didn’t know...",
+            "description": "Stake your Ethereum with Lido and earn rewards daily. No lock-up period. No minimum deposit.",
+            "cta": "Stake with Lido"
+          },
+          "kiln": {
+            "title": "Don’t just HODL. Grow your ETH",
+            "description": "Got more than 32 ETH? Earn passive rewards by securely staking your ETH with Kiln.",
+            "cta": "Stake with Kiln"
+          }
+        },
+        "near": {
+          "description": "Stake your NEAR with Ledger by Figment validator. Your coins stay yours, backed by Ledger’s uncompromising security."
+        },
+        "elrond": {
+          "description": "Stake your ELROND with Ledger by Figment validator. Your coins stay yours, backed by Ledger’s uncompromising security."
+        }
       }
     }
   },
@@ -1856,7 +1883,7 @@
       "used": "Used",
       "firmwareAvailable": "Firmware is outdated:",
       "firmwareUpToDate": "Firmware is up to date:",
-      "genuine": "Device is genuine",
+      "genuine": "Your device is Genuine",
       "incomplete": "Some apps were not recognized. Please uninstall, then reinstall them."
     },
     "applist": {
@@ -2278,6 +2305,13 @@
     },
     "switchButton": "Switch to {{language}}",
     "no": "I prefer not to"
+  },
+  "deviceRename": {
+    "title": "Rename {{ productName }}",
+    "chooseName": "Choose a name",
+    "placeholder": "Tony's Stax",
+    "remainingCharacters": "{{ remainingCharacters }} characters remaining",
+    "renamed": "{{ productName }} name changed to \n“{{ name }}” "
   },
   "deviceLocalization": {
     "language": "Language",
@@ -3819,6 +3853,9 @@
       "catalogRampServerDesc": "Switch between multiple trading providers",
       "enablePlatformDevTools": "Enable platform dev tools",
       "enablePlatformDevToolsDesc": "Enable opening platform apps dev tools window",
+      "customLockScreen": "Custom lock-screen assets",
+      "customLockScreenDesc": "Debug custom lock-screen graphical assets",
+      "customLockScreenCTA": "Launch",
       "featureFlagsTitle": "Defined feature flags used in Ledger Live",
       "featureFlagsDesc": "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
       "featureFlagsEdit": "Edit",
@@ -3834,7 +3871,9 @@
       "runLocalAppDeleteButton": "Delete",
       "runLocalAppOpenButton": "Open",
       "enableLearnStagingUrl": "Learn page staging URL",
-      "enableLearnStagingUrlDesc": "Enable the staging URL for the learn page."
+      "enableLearnStagingUrlDesc": "Enable the staging URL for the learn page.",
+      "openOnboardingAppInstallDebug": "Open onboarding app install debug screen",
+      "openOnboardingAppInstallDebugDesc": "Open a screen with the components from the sync onboarding app installation step"
     },
     "currencies": {
       "selectPlaceholder": "Select crypto asset",
@@ -3881,10 +3920,6 @@
         "experimentalCurrencies": {
           "title": "Experimental integrations",
           "description": "Use available experimental crypto assets integrations."
-        },
-        "experimentalExecutionOnRenderer": {
-          "title": "Experimental networking",
-          "description": "Use experimental networking to optimize your Ledger Live experience with your VPN. Activate this only if your current VPN causes system errors."
         },
         "experimentalLanguages": {
           "title": "Translation testing",
@@ -4000,6 +4035,10 @@
       "fullNode": {
         "title": "Connect Bitcoin full node",
         "desc": "Set up your Bitcoin full node to synchronize and send transactions without using Ledger’s explorers."
+      },
+      "filterTokenOperationsZeroAmount": {
+        "title": "Hide token transactions when value is 0",
+        "desc": "Hiding token transactions without value can prevent some potential address poisoning attacks on Eth, Polygon, BSC, Tron..."
       }
     }
   },
@@ -4072,7 +4111,7 @@
       "tr": "Turkish",
       "ja": "Japanese",
       "ko": "Korean",
-      "pt": "Portuguese"
+      "pt" : "Português (Brasil)"
     }
   },
   "theme": {
@@ -5582,6 +5621,10 @@
       "title": "Image loading from file failed",
       "description": "Please try again with another image"
     },
+    "ImageLoadFromNftError": {
+      "title": "Image loading from NFT failed",
+      "description": "Please try again with another NFT"
+    },
     "ImageDownloadError": {
       "title": "Image download failed",
       "description": "Please try again with another image"
@@ -5654,6 +5697,13 @@
       "descriptionWithProductName": "You need to setup your {{ productName }} first.\nWe will guide you through the setup process.",
       "goToOnboardingButton": "Set up my device",
       "goToOnboardingButtonWithProductName": "Set up my {{ productName }}"
+    },
+    "EtherscanAPIError": {
+      "title": "Fetching transactions failed",
+      "description": "An unexpected error occurred with the explorers. Please try again later"
+    },
+    "GasEstimationError": {
+      "title": "Gas estimation failed"
     }
   },
   "cryptoOrg": {
@@ -5687,12 +5737,19 @@
   },
   "customImage": {
     "title": "Custom lock screen",
+    "managerCTA": "Lock screen picture",
     "steps": {
       "choose": {
         "stepLabel": "Choose an image",
         "description": "Choose an image to set as (...)",
         "pickFromNftGallery": "Select from my NFT gallery",
-        "upload": "Upload from my computer"
+        "myNfts": "My NFTs",
+        "upload": "Upload from my computer",
+        "chooseNft": "Choose an NFT",
+        "selectNft": "Choose NFT",
+        "previousSelectNft": "back",
+        "nftEmptyStateTitle": "No NFT's to show yet",
+        "nftEmptyStateDescription": "Get started by adding NFTs to your wallet."
       },
       "adjust": {
         "stepLabel": "Adjust image",
@@ -5718,5 +5775,37 @@
     },
     "customImageSet": "Lockscreen set",
     "finishCTA": "Finish"
+  },
+  "onboardingAppInstall": {
+    "restore": {
+      "title": "Install the same apps as on {{deviceName}}?",
+      "titleNoDeviceName": "Install the same apps as on previous Ledger device?",
+      "subtitle": "You can install or remove apps at anytime.",
+      "installCTA": "Restore applications",
+      "skipCTA": "I'll do this later"
+    },
+    "default": {
+      "title": "{{ productName }} uses apps to enable secure blockchain transactions",
+      "subtitle": "We recommend downloading a default set of apps. You can download more later.",
+      "installCTA": "Install applications",
+      "skipCTA": "I'll do this later"
+    },
+    "progress": {
+      "loading": "Loading ...",
+      "resolving": "Resolving dependencies",
+      "progress": "Installing apps {{progress}}%",
+      "disclaimer": "Add or remove apps at any time from Ledger Live."
+    },
+    "cancelled": {
+      "title": "App installation was cancelled on {{productName}}",
+      "subtitle": "{{productName}} needs blockchain apps to approve your crypto and NFT transactions.",
+      "installCTA": "Install now",
+      "skipCTA": "I'll do this later"
+    },
+    "locked": {
+      "title": "Your {{productName}} is locked",
+      "subtitle": "Unlock your {{productName}} and restart the installation.",
+      "installCTA": "Restart installation"
+    }
   }
 }

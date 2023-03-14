@@ -11,7 +11,6 @@ import { setDrawer } from "../Provider";
 import Fuse from "fuse.js";
 
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
-import { useFilteredCurrencies } from "@ledgerhq/live-common/currencies/react";
 import type { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import Text from "~/renderer/components/Text";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
@@ -62,8 +61,7 @@ const HeaderContainer: ThemedComponent<any> = styled.div`
 
 type SelectAccountAndCurrencyDrawerProps = {
   onClose: () => void,
-  currencies?: string[],
-  includeTokens?: boolean,
+  currencies: CryptoOrTokenCurrency[],
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void,
   accounts$?: Observable<WalletAPIAccount[]>,
 };
@@ -75,16 +73,14 @@ const SearchInputContainer = styled.div`
 
 const MemoizedSelectAccountAndCurrencyDrawer = memo<SelectAccountAndCurrencyDrawerProps>(
   function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerProps) {
-    const { currencies, includeTokens, onAccountSelected, onClose, accounts$ } = props;
+    const { currencies, onAccountSelected, onClose, accounts$ } = props;
 
     const { t } = useTranslation();
-
-    const cryptoCurrencies = useFilteredCurrencies({ currencies, includeTokens });
 
     const [searchValue, setSearchValue] = useState<string>("");
 
     // sorting them by marketcap
-    const sortedCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
+    const sortedCurrencies = useCurrenciesByMarketcap(currencies);
 
     // performing fuzzy search if there is a valid searchValue
     const filteredCurrencies = useMemo(() => {
@@ -115,10 +111,8 @@ const MemoizedSelectAccountAndCurrencyDrawer = memo<SelectAccountAndCurrencyDraw
       [onAccountSelected, props, onClose, accounts$],
     );
 
-    if (cryptoCurrencies.length === 1) {
-      return (
-        <SelectAccountDrawer currency={cryptoCurrencies[0]} onAccountSelected={onAccountSelected} />
-      );
+    if (currencies.length === 1) {
+      return <SelectAccountDrawer currency={currencies[0]} onAccountSelected={onAccountSelected} />;
     }
 
     return (

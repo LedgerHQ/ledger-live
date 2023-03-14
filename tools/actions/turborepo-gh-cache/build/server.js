@@ -68858,9 +68858,9 @@ var require_src2 = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/get-intrinsic@1.1.2/node_modules/get-intrinsic/index.js
+// ../../../node_modules/.pnpm/get-intrinsic@1.2.0/node_modules/get-intrinsic/index.js
 var require_get_intrinsic = __commonJS({
-  "../../../node_modules/.pnpm/get-intrinsic@1.1.2/node_modules/get-intrinsic/index.js"(exports, module2) {
+  "../../../node_modules/.pnpm/get-intrinsic@1.2.0/node_modules/get-intrinsic/index.js"(exports, module2) {
     "use strict";
     var undefined2;
     var $SyntaxError = SyntaxError;
@@ -68913,6 +68913,8 @@ var require_get_intrinsic = __commonJS({
       "%AsyncIteratorPrototype%": needsEval,
       "%Atomics%": typeof Atomics === "undefined" ? undefined2 : Atomics,
       "%BigInt%": typeof BigInt === "undefined" ? undefined2 : BigInt,
+      "%BigInt64Array%": typeof BigInt64Array === "undefined" ? undefined2 : BigInt64Array,
+      "%BigUint64Array%": typeof BigUint64Array === "undefined" ? undefined2 : BigUint64Array,
       "%Boolean%": Boolean,
       "%DataView%": typeof DataView === "undefined" ? undefined2 : DataView,
       "%Date%": Date,
@@ -68967,6 +68969,13 @@ var require_get_intrinsic = __commonJS({
       "%WeakRef%": typeof WeakRef === "undefined" ? undefined2 : WeakRef,
       "%WeakSet%": typeof WeakSet === "undefined" ? undefined2 : WeakSet
     };
+    try {
+      null.error;
+    } catch (e) {
+      errorProto = getProto(getProto(e));
+      INTRINSICS["%Error.prototype%"] = errorProto;
+    }
+    var errorProto;
     var doEval = function doEval2(name) {
       var value;
       if (name === "%AsyncFunction%") {
@@ -69095,7 +69104,7 @@ var require_get_intrinsic = __commonJS({
       if (arguments.length > 1 && typeof allowMissing !== "boolean") {
         throw new $TypeError('"allowMissing" argument must be a boolean');
       }
-      if ($exec(/^%?[^%]*%?$/g, name) === null) {
+      if ($exec(/^%?[^%]*%?$/, name) === null) {
         throw new $SyntaxError("`%` may not be present anywhere but at the beginning and end of the intrinsic name");
       }
       var parts = stringToPath(name);

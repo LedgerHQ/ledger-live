@@ -10,7 +10,7 @@ import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
 import { StackNavigatorNavigation } from "../../../../components/RootNavigator/types/helpers";
 import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
 
-export default function Debugging() {
+export default function Features() {
   const navigation =
     useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
   return (
@@ -35,6 +35,12 @@ export default function Debugging() {
         desc="Fetch & restore from a connected device"
         iconLeft={<Icons.BracketsMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugFetchCustomImage)}
+      />
+      <SettingsRow
+        title="Firmware Update"
+        desc="Test the firmware update feature. USE AT YOUR OWN RISK!"
+        iconLeft={<Icons.NanoFirmwareUpdateMedium size={32} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugFirmwareUpdate)}
       />
       <SettingsRow
         title="Custom lockscreen graphics"

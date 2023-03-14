@@ -16,42 +16,18 @@ import {
   fromAccountRaw,
   fromOperationRaw,
   fromSubAccountRaw,
-  fromTronResourcesRaw,
-  fromCosmosResourcesRaw,
   fromBitcoinResourcesRaw,
-  fromPolkadotResourcesRaw,
-  fromTezosResourcesRaw,
-  fromElrondResourcesRaw,
   fromCryptoOrgResourcesRaw,
-  fromSolanaResourcesRaw,
-  fromCeloResourcesRaw,
-  fromNearResourcesRaw,
   fromNFTRaw,
-  toTronResourcesRaw,
-  toCosmosResourcesRaw,
-  toPolkadotResourcesRaw,
-  toTezosResourcesRaw,
-  toElrondResourcesRaw,
   toCryptoOrgResourcesRaw,
-  toSolanaResourcesRaw,
-  toCeloResourcesRaw,
-  toNearResourcesRaw,
 } from "./account";
 import consoleWarnExpectToEqual from "./consoleWarnExpectToEqual";
 import { BitcoinAccount, BitcoinAccountRaw } from "./families/bitcoin/types";
-import { CosmosAccount, CosmosAccountRaw } from "./families/cosmos/types";
 import {
   CryptoOrgAccount,
   CryptoOrgAccountRaw,
 } from "./families/crypto_org/types";
-import { ElrondAccount, ElrondAccountRaw } from "./families/elrond/types";
-import { PolkadotAccount, PolkadotAccountRaw } from "./families/polkadot/types";
-import { SolanaAccount, SolanaAccountRaw } from "./families/solana/types";
-import { TezosAccount, TezosAccountRaw } from "./families/tezos/types";
-import { TronAccount, TronAccountRaw } from "./families/tron/types";
-import { CeloAccount, CeloAccountRaw } from "./families/celo/types";
 import { getAccountBridge } from "./bridge";
-import { NearAccount, NearAccountRaw } from "./families/near/types";
 
 // aim to build operations with the minimal diff & call to coin implementation possible
 export async function minimalOperationsBuilder<CO>(
@@ -302,102 +278,11 @@ export function patchAccount(
   //   OR
   //   - current account data is different
   switch (account.currency.family) {
-    case "tron":
-      {
-        const tronAcc = account as TronAccount;
-        const tronUpdatedRaw = updatedRaw as TronAccountRaw;
-        if (
-          tronUpdatedRaw.tronResources &&
-          (!tronAcc.tronResources ||
-            !areSameResources(
-              toTronResourcesRaw(tronAcc.tronResources),
-              tronUpdatedRaw.tronResources
-            ))
-        ) {
-          (next as TronAccount).tronResources = fromTronResourcesRaw(
-            tronUpdatedRaw.tronResources
-          );
-          changed = true;
-        }
-      }
-      break;
-    case "cosmos": {
-      const cosmosAcc = account as CosmosAccount;
-      const cosmosUpdatedRaw = updatedRaw as CosmosAccountRaw;
-      if (
-        cosmosUpdatedRaw.cosmosResources &&
-        (!cosmosAcc.cosmosResources ||
-          !areSameResources(
-            toCosmosResourcesRaw(cosmosAcc.cosmosResources),
-            cosmosUpdatedRaw.cosmosResources
-          ))
-      ) {
-        (next as CosmosAccount).cosmosResources = fromCosmosResourcesRaw(
-          cosmosUpdatedRaw.cosmosResources
-        );
-        changed = true;
-      }
-      break;
-    }
     case "bitcoin": {
       if (shouldRefreshBitcoinResources(updatedRaw, account)) {
         (next as BitcoinAccount).bitcoinResources = fromBitcoinResourcesRaw(
           (updatedRaw as BitcoinAccountRaw).bitcoinResources
         );
-      }
-      break;
-    }
-    case "polkadot": {
-      const polkadotAcc = account as PolkadotAccount;
-      const polkadotUpdatedRaw = updatedRaw as PolkadotAccountRaw;
-      if (
-        polkadotUpdatedRaw.polkadotResources &&
-        (!polkadotAcc.polkadotResources ||
-          !areSameResources(
-            toPolkadotResourcesRaw(polkadotAcc.polkadotResources),
-            polkadotUpdatedRaw.polkadotResources
-          ))
-      ) {
-        (next as PolkadotAccount).polkadotResources = fromPolkadotResourcesRaw(
-          polkadotUpdatedRaw.polkadotResources
-        );
-        changed = true;
-      }
-      break;
-    }
-    case "tezos": {
-      const tezosAcc = account as TezosAccount;
-      const tezosUpdatedRaw = updatedRaw as TezosAccountRaw;
-      if (
-        tezosUpdatedRaw.tezosResources &&
-        (!tezosAcc.tezosResources ||
-          !areSameResources(
-            toTezosResourcesRaw(tezosAcc.tezosResources),
-            tezosUpdatedRaw.tezosResources
-          ))
-      ) {
-        (next as TezosAccount).tezosResources = fromTezosResourcesRaw(
-          tezosUpdatedRaw.tezosResources
-        );
-        changed = true;
-      }
-      break;
-    }
-    case "elrond": {
-      const elrondAcc = account as ElrondAccount;
-      const elrondUpdatedRaw = updatedRaw as ElrondAccountRaw;
-      if (
-        elrondUpdatedRaw.elrondResources &&
-        (!elrondAcc.elrondResources ||
-          !areSameResources(
-            toElrondResourcesRaw(elrondAcc.elrondResources),
-            elrondUpdatedRaw.elrondResources
-          ))
-      ) {
-        (next as ElrondAccount).elrondResources = fromElrondResourcesRaw(
-          elrondUpdatedRaw.elrondResources
-        );
-        changed = true;
       }
       break;
     }
@@ -414,64 +299,6 @@ export function patchAccount(
       ) {
         (next as CryptoOrgAccount).cryptoOrgResources =
           fromCryptoOrgResourcesRaw(cryptoOrgUpdatedRaw.cryptoOrgResources);
-        changed = true;
-      }
-      break;
-    }
-    case "solana": {
-      const solanaAcc = account as SolanaAccount;
-      const solanaUpdatedRaw = updatedRaw as SolanaAccountRaw;
-
-      if (
-        solanaUpdatedRaw.solanaResources &&
-        (!solanaAcc.solanaResources ||
-          !areSameResources(
-            toSolanaResourcesRaw(solanaAcc.solanaResources),
-            solanaUpdatedRaw.solanaResources
-          ))
-      ) {
-        (next as SolanaAccount).solanaResources = fromSolanaResourcesRaw(
-          solanaUpdatedRaw.solanaResources
-        );
-        changed = true;
-      }
-      break;
-    }
-    case "celo":
-      {
-        const celoAcc = account as CeloAccount;
-        const celoUpdatedRaw = updatedRaw as CeloAccountRaw;
-
-        if (
-          celoUpdatedRaw.celoResources &&
-          (!celoAcc.celoResources ||
-            !areSameResources(
-              toCeloResourcesRaw(celoAcc.celoResources),
-              celoUpdatedRaw.celoResources
-            ))
-        ) {
-          (next as CeloAccount).celoResources = fromCeloResourcesRaw(
-            celoUpdatedRaw.celoResources
-          );
-          changed = true;
-        }
-      }
-      break;
-    case "near": {
-      const nearAcc = account as NearAccount;
-      const nearUpdatedRaw = updatedRaw as NearAccountRaw;
-
-      if (
-        nearUpdatedRaw.nearResources &&
-        (!nearAcc.nearResources ||
-          !areSameResources(
-            toNearResourcesRaw(nearAcc.nearResources),
-            nearUpdatedRaw.nearResources
-          ))
-      ) {
-        (next as NearAccount).nearResources = fromNearResourcesRaw(
-          nearUpdatedRaw.nearResources
-        );
         changed = true;
       }
       break;

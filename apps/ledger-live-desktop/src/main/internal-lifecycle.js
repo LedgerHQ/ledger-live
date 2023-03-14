@@ -11,11 +11,8 @@ import {
   transportExchangeChannel,
   transportExchangeBulkChannel,
   transportOpenChannel,
+  transportExchangeBulkUnsubscribeChannel,
 } from "~/config/transportChannels";
-
-// ~~~ Local state that main thread keep
-
-const hydratedPerCurrency = {};
 
 // ~~~
 
@@ -70,10 +67,7 @@ const spawnCoreProcess = () => {
 internal.onStart(() => {
   internal.process.on("message", handleGlobalInternalMessage);
 
-  internal.send({
-    type: "init",
-    hydratedPerCurrency,
-  });
+  internal.send({ type: "init" });
 });
 
 app.on("window-all-closed", async () => {
@@ -177,13 +171,6 @@ ipcMain.on("setEnv", async (event, env) => {
   }
 });
 
-ipcMain.on("hydrateCurrencyData", (event, { currencyId, serialized }) => {
-  if (hydratedPerCurrency[currencyId] === serialized) return;
-  hydratedPerCurrency[currencyId] = serialized;
-
-  internal.send({ type: "hydrateCurrencyData", serialized, currencyId });
-});
-
 // route internal process messages to renderer
 const internalHandlerPromise = channel => {
   ipcMain.on(channel, (event, { data, requestId }) => {
@@ -230,7 +217,15 @@ const internalHandlerObservable = channel => {
   });
 };
 
+// simple event routing
+const internalHandlerEvent = channel => {
+  ipcMain.on(channel, (event, { data, requestId }) => {
+    internal.send({ type: channel, data, requestId });
+  });
+};
+
 internalHandlerPromise(transportOpenChannel);
 internalHandlerPromise(transportExchangeChannel);
 internalHandlerPromise(transportCloseChannel);
 internalHandlerObservable(transportExchangeBulkChannel);
+internalHandlerEvent(transportExchangeBulkUnsubscribeChannel);

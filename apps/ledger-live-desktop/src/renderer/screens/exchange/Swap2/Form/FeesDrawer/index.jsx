@@ -46,8 +46,8 @@ export default function FeesDrawer({
         {...swapDefaultTrack}
       />
       <DrawerTitle i18nKey="swap2.form.details.label.fees" />
-      <Box mt={3} flow={4} mr={3}>
-        {transaction.networkInfo && (
+      <Box mt={3} flow={4} mx={3}>
+        {transaction?.networkInfo && (
           <SendAmountFields
             account={mainAccount}
             status={status}

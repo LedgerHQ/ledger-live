@@ -57,6 +57,7 @@ const FeaturedButtons = () => {
         title={t("dashboard.featuredButtons.buySell.title")}
         body={t("dashboard.featuredButtons.buySell.description")}
         onClick={handleClickExchange}
+        entryButtonTestId="buy-sell-entry-button"
       />
       <EntryButton
         Icon={() => <Swap />}
@@ -64,6 +65,7 @@ const FeaturedButtons = () => {
         body={t("dashboard.featuredButtons.swap.description")}
         label={t("dashboard.featuredButtons.swap.label")}
         onClick={handleClickSwap}
+        entryButtonTestId="swap-entry-button"
       />
       <EntryButton
         Icon={() => <Growth />}
@@ -71,6 +73,7 @@ const FeaturedButtons = () => {
         title={t("dashboard.featuredButtons.earn.title")}
         body={t("dashboard.featuredButtons.earn.description")}
         onClick={handleClickStake}
+        entryButtonTestId="stake-entry-button"
       />
     </ButtonGrid>
   );

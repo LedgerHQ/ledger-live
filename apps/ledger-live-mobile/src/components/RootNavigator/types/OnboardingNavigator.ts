@@ -32,6 +32,7 @@ export type OnboardingNavigatorParamList = {
   [ScreenName.OnboardingModalSetupSecureRecovery]: undefined;
   [ScreenName.OnboardingGeneralInformation]: undefined;
   [ScreenName.OnboardingBluetoothInformation]: undefined;
+  [ScreenName.OnboardingProtectionConnectionInformation]: undefined;
   [ScreenName.OnboardingSetNewDevice]: { deviceModelId: DeviceModelId };
   [ScreenName.OnboardingRecoveryPhrase]: {
     deviceModelId: DeviceModelId;
@@ -44,6 +45,7 @@ export type OnboardingNavigatorParamList = {
     deviceModelId: DeviceModelId;
     next?: string;
     showSeedWarning?: boolean;
+    isProtectFlow?: boolean;
   };
   [ScreenName.OnboardingProtectFlow]: {
     deviceModelId: DeviceModelId;

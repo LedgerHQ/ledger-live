@@ -2205,12 +2205,12 @@ var import_child_process = require("child_process");
 var core = __toESM(require_core());
 function main() {
   return __async(this, null, function* () {
-    const ref = core.getInput("head-ref");
+    const ref = core.getInput("ref");
     const pkg = core.getInput("package") || "";
     const command = core.getInput("command");
     try {
       const turboOutput = (0, import_child_process.execSync)(
-        `npx turbo run ${command} --filter=...[${ref}] --dry=json`,
+        `npx turbo@1.7 run ${command} --filter=...[${ref}] --dry=json`,
         { encoding: "utf-8" }
       );
       const pnpmOutput = (0, import_child_process.execSync)(`npx pnpm list -r --depth=0 --json`, {

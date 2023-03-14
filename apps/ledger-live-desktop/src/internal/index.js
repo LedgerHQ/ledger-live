@@ -3,8 +3,6 @@ import { getSentryIfAvailable } from "../sentry/internal";
 import { unsubscribeSetup } from "./live-common-setup";
 import { setEnvUnsafe } from "@ledgerhq/live-common/env";
 import { serializeError } from "@ledgerhq/errors";
-import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { log } from "@ledgerhq/logs";
 import logger from "~/logger";
 import LoggerTransport from "~/logger/logger-transport-internal";
@@ -15,11 +13,13 @@ import {
   transportClose,
   transportExchange,
   transportExchangeBulk,
+  transportExchangeBulkUnsubscribe,
   transportOpen,
 } from "~/internal/transportHandler";
 import {
   transportCloseChannel,
   transportExchangeBulkChannel,
+  transportExchangeBulkUnsubscribeChannel,
   transportExchangeChannel,
   transportOpenChannel,
 } from "~/config/transportChannels";
@@ -71,6 +71,9 @@ process.on("message", m => {
     case transportExchangeBulkChannel:
       transportExchangeBulk(m);
       break;
+    case transportExchangeBulkUnsubscribeChannel:
+      transportExchangeBulkUnsubscribe(m);
+      break;
     case transportCloseChannel:
       transportClose(m);
       break;
@@ -115,25 +118,7 @@ process.on("message", m => {
       break;
     }
 
-    case "hydrateCurrencyData": {
-      const { currencyId, serialized } = m;
-      const currency = getCryptoCurrencyById(currencyId);
-      const data = serialized && JSON.parse(serialized);
-      log("hydrateCurrencyData", `hydrate currency ${currency.id}`);
-      getCurrencyBridge(currency).hydrate(data, currency);
-      break;
-    }
-
     case "init": {
-      const { hydratedPerCurrency } = m;
-      // hydrate all
-      log("init", `hydrate currencies ${Object.keys(hydratedPerCurrency).join(", ")}`);
-      Object.keys(hydratedPerCurrency).forEach(currencyId => {
-        const currency = getCryptoCurrencyById(currencyId);
-        const serialized = hydratedPerCurrency[currencyId];
-        const data = serialized && JSON.parse(serialized);
-        getCurrencyBridge(currency).hydrate(data, currency);
-      });
       break;
     }
 

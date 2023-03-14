@@ -16,9 +16,11 @@ import type {
 } from "./wallet-btc";
 import { BigNumber } from "bignumber.js";
 import { encodeOperationId } from "../../operation";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type {
+  CryptoCurrency,
+  CryptoCurrencyId,
+} from "@ledgerhq/types-cryptoassets";
 import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
-import type { CryptoCurrencyIds } from "@ledgerhq/cryptoassets";
 
 // correspond ~ to min relay fees but determined empirically for a tx to be accepted by network
 const minFees = {
@@ -142,10 +144,7 @@ type CoinLogic = {
 export const bchToCashaddrAddressWithoutPrefix = (recipient): string =>
   recipient ? recipient.substring(recipient.indexOf(":") + 1) : recipient;
 
-export const perCoinLogic: Record<
-  CryptoCurrencyIds,
-  CoinLogic | null | undefined
-> = {
+export const perCoinLogic: Partial<Record<CryptoCurrencyId, CoinLogic>> = {
   zencash: {
     hasExtraData: true, // FIXME (legacy) investigate why we need this here and drop
   },

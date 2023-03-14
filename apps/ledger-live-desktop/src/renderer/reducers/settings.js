@@ -175,6 +175,7 @@ const INITIAL_STATE: SettingsState = {
   nftsViewMode: "list",
   showAccountsHelperBanner: true,
   hideEmptyTokenAccounts: getEnv("HIDE_EMPTY_TOKEN_ACCOUNTS"),
+  filterTokenOperationsZeroAmount: getEnv("FILTER_ZERO_AMOUNT_ERC20_EVENTS"),
   sidebarCollapsed: false,
   discreetMode: false,
   preferredDeviceModel: "nanoS",
@@ -574,6 +575,9 @@ export const dismissedBannerSelectorLoaded = (bannerKey: string) => (state: Stat
 
 export const hideEmptyTokenAccountsSelector = (state: State) =>
   state.settings.hideEmptyTokenAccounts;
+
+export const filterTokenOperationsZeroAmountSelector = (state: State) =>
+  state.settings.filterTokenOperationsZeroAmount;
 
 export const lastSeenDeviceSelector = (state: State) => {
   // Nb workaround to prevent crash for dev/qa that have nanoFTS references.

@@ -1,5 +1,6 @@
 import expect from "expect";
 import invariant from "invariant";
+import sample from "lodash/sample";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { acceptTransaction } from "./speculos-deviceActions";
@@ -99,6 +100,65 @@ const evmBasicMutations = ({ maxAccount }) => [
           accountBeforeTransaction.balance.minus(operation.value).toString()
         )
       );
+    },
+  },
+  {
+    name: "move some ERC20",
+    maxRun: 1,
+    transaction: ({ account, siblings, bridge }) => {
+      const erc20Account = sample(
+        (account.subAccounts || []).filter((a) => a.balance.gt(0))
+      );
+      invariant(erc20Account, "no erc20 account");
+      const sibling = pickSiblings(siblings, 3);
+      const recipient = sibling.freshAddress;
+      return {
+        transaction: bridge.createTransaction(account),
+        updates: [
+          {
+            recipient,
+            subAccountId: erc20Account.id,
+          },
+          Math.random() < 0.5
+            ? {
+                useAllAmount: true,
+              }
+            : {
+                amount: erc20Account.balance
+                  .times(Math.random())
+                  .integerValue(),
+              },
+        ],
+      };
+    },
+    test: ({ accountBeforeTransaction, account, transaction, operation }) => {
+      // workaround for buggy explorer behavior (nodes desync)
+      invariant(
+        Date.now() - operation.date > 60000,
+        "operation time to be older than 60s"
+      );
+      invariant(accountBeforeTransaction.subAccounts, "sub accounts before");
+      const erc20accountBefore = accountBeforeTransaction.subAccounts.find(
+        (s) => s.id === transaction.subAccountId
+      );
+      invariant(erc20accountBefore, "erc20 acc was here before");
+      invariant(account.subAccounts, "sub accounts");
+      const erc20account = account.subAccounts.find(
+        (s) => s.id === transaction.subAccountId
+      );
+      invariant(erc20account, "erc20 acc is still here");
+
+      if (transaction.useAllAmount) {
+        botTest("erc20 account is empty", () =>
+          expect(erc20account.balance.toString()).toBe("0")
+        );
+      } else {
+        botTest("account balance moved with tx amount", () =>
+          expect(erc20account.balance.toString()).toBe(
+            erc20accountBefore.balance.minus(transaction.amount).toString()
+          )
+        );
+      }
     },
   },
 ];

@@ -16,6 +16,7 @@ import FirmwareUpdateDrawer from "./FirmwareUpdateDrawer";
 import GenuineCheckCancelledDrawer from "./GenuineCheckCancelledDrawer";
 import UnlockDeviceDrawer from "./UnlockDeviceDrawer";
 import AllowManagerDrawer from "./AllowManagerDrawer";
+import { TrackScreen, track } from "../../analytics";
 
 const softwareStepDelay = 2500;
 const lockedDeviceTimeoutMs = 1000;
@@ -324,12 +325,21 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
 
   return (
     <Flex>
+      <TrackScreen
+        category={`Set up ${productName}: Step 4 Software & Hardware check`}
+      />
       {isDisplayed && (
         <Flex>
           <GenuineCheckDrawer
             productName={productName}
             isOpen={nextDrawerToDisplay === "requested"}
-            onPress={() => setGenuineCheckStatus("ongoing")}
+            onPress={() => {
+              setGenuineCheckStatus("ongoing");
+              track("button_clicked", {
+                button: "Start genuine check",
+                drawer: "Start Stax hardware check",
+              });
+            }}
           />
           <UnlockDeviceDrawer
             isOpen={nextDrawerToDisplay === "unlock-needed"}
@@ -354,19 +364,57 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
             productName={productName}
             isOpen={nextDrawerToDisplay === "cancelled"}
             onRetry={() => {
+              track("button_clicked", {
+                button: "run genuine check again",
+                drawer: "Failed Stax hardware check",
+              });
               resetGenuineCheckState();
               setGenuineCheckStatus("unchecked");
             }}
-            onSkip={() => setGenuineCheckStatus("failed")}
+            onSkip={() => {
+              track("button_clicked", {
+                button: "check if hardware genuine later",
+                drawer: "Failed Stax hardware check",
+              });
+              setGenuineCheckStatus("failed");
+            }}
           />
           <FirmwareUpdateDrawer
             productName={productName}
             isOpen={nextDrawerToDisplay === "new-firmware-available"}
-            onSkip={() => setFirmwareUpdateStatus("completed")}
-            onUpdate={() => setFirmwareUpdateStatus("completed")}
+            onSkip={() => {
+              track("button_clicked", {
+                button: "skip software update",
+                drawer: `Set up ${productName}: Step 4: Software update available`,
+              });
+              setFirmwareUpdateStatus("completed");
+            }}
+            onUpdate={() => {
+              track("button_clicked", {
+                button: "download software update",
+                drawer: `Set up ${productName}: Step 4: Software update available`,
+              });
+              setFirmwareUpdateStatus("completed");
+            }}
           />
         </Flex>
       )}
+      {genuineCheckUiStepStatus === "failed" ? (
+        <TrackScreen
+          category={`Set up ${productName}: Step 4 Hardware not checked`}
+        />
+      ) : null}
+      {firmwareUpdateUiStepStatus === "active" ? (
+        <TrackScreen
+          category={`Set up ${productName}: Step 4 Checking software`}
+        />
+      ) : null}
+      {genuineCheckUiStepStatus === "completed" &&
+      firmwareUpdateUiStepStatus === "completed" ? (
+        <TrackScreen
+          category={`Set up ${productName}: Step 4: Software & Hardware checked successfully`}
+        />
+      ) : null}
       <CheckCard
         title={genuineCheckStepTitle}
         status={genuineCheckUiStepStatus}

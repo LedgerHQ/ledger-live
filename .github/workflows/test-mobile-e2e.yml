@@ -1,21 +1,18 @@
 name: "@Mobile • Test App End-2-End"
-run-name: "@Mobile • Test App End-2-End triggered by ${{ github.event_name == 'workflow_dispatch' && inputs.login || github.actor }} ${{ github.event_name == 'workflow_dispatch' && format('on branch {0}', inputs.ref) || format('on ref {0}', github.ref) }}"
+run-name: "@Mobile • Test App End-2-End triggered by ${{ github.event_name == 'workflow_dispatch' && inputs.login || github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
 
 on:
-  # pull_request:
   push:
     branches:
       - main
       - develop
       - release
       - hotfix
-  # schedule:
-  #   - cron: "0 0/12 * * *"
   workflow_dispatch:
     inputs:
       ref:
         description: the branch which triggered this workflow
-        required: true
+        required: false
       login:
         description: The GitHub username that triggered the workflow
         required: true
@@ -29,8 +26,8 @@ on:
 
 concurrency:
   # See: https://github.com/orgs/community/discussions/35341
-  group: ${{ github.workflow }}-${{ github.event.inputs.ref || github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ref != 'develop' || github.ref_name != 'develop' }}
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref_name != 'develop' }}
 
 jobs:
   detox-tests-ios:
@@ -46,7 +43,7 @@ jobs:
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ inputs.ref || github.ref }}
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
           base: ${{ inputs.base_ref }}
       - uses: pnpm/action-setup@v2
         with:
@@ -113,7 +110,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ inputs.ref || github.ref }}
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
       - uses: ./tools/actions/composites/upload-allure-report
         with:
           platform: ios
@@ -132,7 +129,7 @@ jobs:
   #     - name: checkout
   #       uses: actions/checkout@v3
   #       with:
-  #         ref: ${{ inputs.ref || 'develop' }}
+  #         ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
   #     - uses: pnpm/action-setup@v2
   #       with:
   #         version: latest
@@ -222,7 +219,7 @@ jobs:
   #     - name: checkout
   #       uses: actions/checkout@v3
   #       with:
-  #         ref: ${{ inputs.ref || 'develop' }}
+  #         ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
   #     - uses: ./tools/actions/composites/upload-allure-report
   #       with:
   #         platform: android
@@ -237,7 +234,7 @@ jobs:
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ inputs.ref || github.ref }}
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
           base: ${{ inputs.base_ref }}
       - uses: actions/github-script@v6
         name: prepare status
@@ -274,7 +271,7 @@ jobs:
             const report = {
               ios: {
                 pass: ${{ needs.detox-tests-ios.outputs.status == 'success' }},
-                status: "${{ needs.detox-tests-ios.outputs.status }}",
+                status: "${{ needs.e2e-tests-mac.outputs.status }}",
               },
               // TODO: Android
             };
@@ -305,6 +302,10 @@ jobs:
             Object.entries(report).forEach(([os, values]) => {
               summary += ` ${values.pass ? "✅" : "❌"} (${values.status}) |`;
             });
+
+            summary += `
+            ${{ steps.comment.outputs.body }}
+            `
 
             const output = {
               summary

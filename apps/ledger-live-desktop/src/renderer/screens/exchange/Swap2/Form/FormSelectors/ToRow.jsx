@@ -84,7 +84,7 @@ function ToRow({
       button: "New target currency",
       page: "Page Swap Form",
       ...swapDefaultTrack,
-      currency,
+      currency: currency.ticker || currency.name,
     });
     setToCurrency(currency);
   };
@@ -97,7 +97,7 @@ function ToRow({
         </FormLabel>
       </Box>
       <Box horizontal>
-        <Box flex="1">
+        <Box flex="1" data-test-id="destination-currency-dropdown">
           <SelectCurrency
             currencies={currencies}
             onChange={setCurrencyAndTrack}

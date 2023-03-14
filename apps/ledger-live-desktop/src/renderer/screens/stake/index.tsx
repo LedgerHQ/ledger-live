@@ -1,3 +1,5 @@
+import { useCallback, useMemo } from "react";
+import { listCurrencies, filterCurrencies } from "@ledgerhq/live-common/currencies/helpers";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -14,12 +16,16 @@ type Props = {
 
 const useStakeFlow = ({ currencies }: Props = {}) => {
   const history = useHistory();
-  const stakeProgramsFeatureFlag = useFeature("stakePrograms");
+  const { params: { list } = { list: undefined } } = useFeature("stakePrograms") || {};
   const dispatch = useDispatch();
-  const { params: paramsFlag } = stakeProgramsFeatureFlag || {};
-  const { list: listFlag } = paramsFlag || {};
 
-  const getStakeDrawer = () => {
+  const cryptoCurrencies = useMemo(() => {
+    return filterCurrencies(listCurrencies(true), {
+      currencies: currencies || list,
+    });
+  }, [currencies, list]);
+
+  return useCallback(() => {
     page("Stake", "Drawer - Choose Asset", {
       ...stakeDefaultTrack,
       page: history.location.pathname,
@@ -28,7 +34,7 @@ const useStakeFlow = ({ currencies }: Props = {}) => {
     setDrawer(
       SelectAccountAndCurrencyDrawer,
       {
-        currencies: currencies || listFlag || [],
+        currencies: cryptoCurrencies,
         onAccountSelected: (account: Account, parentAccount: Account | null = null) => {
           track("button_clicked", {
             ...stakeDefaultTrack,
@@ -57,13 +63,7 @@ const useStakeFlow = ({ currencies }: Props = {}) => {
         },
       },
     );
-  };
-
-  const getStakeFlow = () => {
-    getStakeDrawer();
-  };
-
-  return getStakeFlow;
+  }, [cryptoCurrencies, dispatch, history]);
 };
 
 export default useStakeFlow;

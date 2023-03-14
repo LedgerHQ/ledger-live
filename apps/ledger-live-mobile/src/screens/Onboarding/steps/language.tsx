@@ -11,7 +11,7 @@ import { from } from "rxjs";
 import { DeviceModelInfo, idsToLanguage, Language } from "@ledgerhq/types-live";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
-import { getDeviceModel } from "@ledgerhq/devices";
+import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { CompositeScreenProps } from "@react-navigation/native";
 import { useLocale } from "../../../context/Locale";
@@ -56,6 +56,10 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
   const [preventPromptBackdropClick, setPreventPromptBackdropClick] =
     useState<boolean>(false);
 
+  // Watchdog to prevent navigating back twice due onClose being called when user closes the drawer
+  // and when the drawer is hidden (see BaseModal)
+  const [wasNextCalled, setWasNextCalled] = useState<boolean>(false);
+
   const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(
     lastSeenDeviceSelector,
   );
@@ -99,8 +103,11 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
   };
 
   const next = useCallback(() => {
-    navigation.goBack();
-  }, [navigation]);
+    if (!wasNextCalled) {
+      setWasNextCalled(true);
+      navigation.goBack();
+    }
+  }, [navigation, wasNextCalled]);
 
   // no useCallBack around RNRRestart, or the app might crash.
   const changeLanguageRTL = async () => {
@@ -129,7 +136,7 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
           potentialDeviceLanguage !== undefined &&
           availableLanguages.includes(potentialDeviceLanguage);
 
-        // firmware version verification is not really needed here, the presence of a language id
+        // Nb firmware version verification is not really needed here, the presence of a language id
         // indicates that we are in a firmware that supports localization
         if (
           l !== currentLocale &&
@@ -165,8 +172,9 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
     next();
   }, [next]);
 
-  const deviceName =
-    lastSeenDevice && getDeviceModel(lastSeenDevice?.modelId).productName;
+  const deviceModel = getDeviceModel(
+    lastSeenDevice?.modelId || DeviceModelId.nanoX,
+  );
 
   return (
     <>
@@ -217,7 +225,7 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
           ) : (
             <ChangeDeviceLanguagePrompt
               language={localeIdToDeviceLanguage[currentLocale] as Language}
-              deviceName={deviceName ?? ""}
+              deviceModel={deviceModel}
               onConfirm={() => {
                 track("Page LiveLanguageChange LanguageInstallTriggered", {
                   selectedLanguage: localeIdToDeviceLanguage[currentLocale],

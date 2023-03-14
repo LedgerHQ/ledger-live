@@ -33,10 +33,12 @@ export type Props = Merge<
  * The queue is cleaned when its associated screen loses its navigation focus. If a drawer is requesting to be opened while
  * its associated screen has not the focus, it is not added to the queue and its onClose prop is called.
  *
+ * You can also block the drawer for closing by setting the modalLock redux app state.
+ * To do this, you can use the component components/ModalLock.
+ * A drawer can still forcefully close other drawers and opens itself while the modalLock is set to true.
+ *
  * Note: avoid conditionally render this component. Always render it and use isRequestingToBeOpened to control its visibility.
  * Note: to avoid a UI glitch on Android, do not put this drawer inside NavigationScrollView (and probably any other ScrollView)
- *
- * Dev: internal functions can be wrapped in useCallback once BottomDrawer and BaseModal are memoized components
  *
  * @param isRequestingToBeOpened: to use in place of isOpen. Setting to true will add the drawer to the queue.
  *   Setting to false will remove it from the queue. Default to false.
@@ -66,7 +68,8 @@ const QueuedDrawer = ({
   children,
   ...rest
 }: Props) => {
-  const modalLock = useSelector(isModalLockedSelector);
+  // If the drawer system is locked to the currently opened drawer
+  const areDrawersLocked = useSelector(isModalLockedSelector);
   const [hasFocus, setHasFocus] = useState(false);
   // Actual state that choses if the drawer is displayed or not
   const [isDisplayed, setIsDisplayed] = useState(false);
@@ -110,10 +113,10 @@ const QueuedDrawer = ({
 
   const handleClose = useCallback(() => {
     // Blocks the drawer from closing
-    if (modalLock) return;
+    if (areDrawersLocked) return;
 
     onClose && onClose();
-  }, [modalLock, onClose]);
+  }, [areDrawersLocked, onClose]);
 
   const handleModalHide = useCallback(() => {
     onModalHide && onModalHide();
@@ -173,17 +176,24 @@ const QueuedDrawer = ({
   // Handled separately to avoid calling addToWaitingDrawers or triggering useFocusEffect on every onClose changes (if not memoized).
   useEffect(() => {
     if (wasForcefullyCleaned) {
-      onClose && onClose();
       setWasForcefullyCleaned(false);
+
+      // Only call onClose if the drawer was trying to be opened
+      if (isRequestingToBeOpened || isForcingToBeOpened) {
+        onClose && onClose();
+      }
     }
+    // Only needs to be triggered when wasForcefullyCleaned is set to true.
+    // Avoids triggering when isRequestingToBeOpened or isForcingToBeOpened change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wasForcefullyCleaned, onClose]);
 
   return (
     <BottomDrawer
-      preventBackdropClick={modalLock || preventBackdropClick}
+      preventBackdropClick={areDrawersLocked || preventBackdropClick}
       onClose={handleClose}
       onModalHide={handleModalHide}
-      noCloseButton={modalLock || noCloseButton}
+      noCloseButton={areDrawersLocked || noCloseButton}
       modalStyle={style}
       containerStyle={containerStyle}
       isOpen={isDisplayed}

@@ -77,7 +77,7 @@ const signOperation = ({
           : undefined;
 
         const perCoin = perCoinLogic[currency.id];
-        let additionals = [currency.id];
+        let additionals: string[] = [currency.id];
 
         if (account.derivationMode === "native_segwit") {
           additionals.push("bech32");

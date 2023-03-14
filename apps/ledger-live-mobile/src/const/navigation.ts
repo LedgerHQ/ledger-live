@@ -40,6 +40,7 @@ export enum ScreenName {
   DebugFeatureFlags = "DebugFeatureFlags",
   DebugFeatures = "DebugFeatures",
   DebugFetchCustomImage = "DebugFetchCustomImage",
+  DebugFirmwareUpdate = "DebugFirmwareUpdate",
   DebugGenerators = "DebugGenerators",
   DebugHttpTransport = "DebugHttpTransport",
   DebugInformation = "DebugInformation",
@@ -409,6 +410,7 @@ export enum ScreenName {
   OnboardingSetupDeviceRecoveryPhrase = "OnboardingSetupDeviceRecoveryPhrase",
   OnboardingGeneralInformation = "OnboardingGeneralInformation",
   OnboardingBluetoothInformation = "OnboardingBluetoothInformation",
+  OnboardingProtectionConnectionInformation = "OnboardingProtectionConnectionInformation",
   OnboardingInfoModal = "OnboardingInfoModal",
   OnboardingRecoveryPhrase = "OnboardingRecoveryPhrase",
   OnboardingPairNew = "OnboardingPairNew",
@@ -489,6 +491,8 @@ export enum ScreenName {
   NearWithdrawingValidationError = "NearWithdrawingValidationError",
   NearWithdrawingValidationSuccess = "NearWithdrawingValidationSuccess",
 
+  Newsfeed = "Newsfeed",
+
   CustomImageStep0Welcome = "CustomImageStep0Welcome",
   CustomImageStep1Crop = "CustomImageStep1Crop",
   CustomImageStep2Preview = "CustomImageStep2Preview",
@@ -505,6 +509,7 @@ export enum ScreenName {
   PostOnboardingDebugScreen = "PostOnboardingDebugScreen",
   PostOnboardingMockActionScreen = "PostOnboardingMockActionScreen",
   WalletNftGallery = "WalletNftGallery",
+  NoFunds = "NoFunds",
 }
 export enum NavigatorName {
   // Stack
@@ -562,6 +567,7 @@ export enum NavigatorName {
   LendingEnableFlow = "LendingEnableFlow",
   LendingSupplyFlow = "LendingSupplyFlow",
   LendingWithdrawFlow = "LendingWithdrawFlow",
+  NoFundsFlow = "NoFundsFlow",
 
   SignTransaction = "SignTransaction",
   RequestAccount = "RequestAccount",
@@ -595,6 +601,7 @@ export enum NavigatorName {
   // Tab
   Main = "Main",
   WalletTab = "WalletTabNavigator",
+  ExploreTab = "ExploreTabNavigator",
   // Root
   RootNavigator = "RootNavigator",
   Discover = "Discover",

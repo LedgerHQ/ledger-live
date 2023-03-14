@@ -27,7 +27,7 @@ package = load_json(json_path: "./package.json")
 
 def infer_android_version_code
   # Checks all relevant tracks in the play console and take the highest (plus one).
-  ["Nightly", "internal", "beta", "alpha", "production"].map { |track|
+  ["Nightly", "internal", "beta", "alpha", "production", "Recover Beta"].map { |track|
     google_play_track_version_codes(
       package_name: "com.ledger.live",
       track: track,
@@ -452,13 +452,13 @@ platform :android do
   private_lane :upload do |options|
     if(options[:ci])
       upload_to_play_store(
-        track: options[:nightly] ? 'Nightly' : "internal",
+        track: options[:nightly] ? 'Nightly' : options[:recover] ? 'Recover Beta' : "internal",
         package_name: 'com.ledger.live',
         json_key_data: ENV["ANDROID_SERVICE_KEY_CONTENT"]
       )
     else
       upload_to_play_store(
-        track: options[:nightly] ? 'Nightly' : "internal",
+        track: options[:nightly] ? 'Nightly' : options[:recover] ? 'Recover Beta' : "internal",
         package_name: "com.ledger.live",
         json_key: ENV["ANDROID_SERVICE_KEY_PATH"],
       )
@@ -500,13 +500,26 @@ platform :android do
 
   desc "build nightly version"
   lane :ci_nightly do
-    prepare_android_internal(nightly: true)
+    prepare_android_internal
     build(
       type: "Release",
       ci: true
     )
     upload(
       nightly: true,
+      ci: true
+    )
+  end
+
+  desc "build recover version"
+  lane :ci_recover do
+    prepare_android_internal
+    build(
+      type: "Release",
+      ci: true
+    )
+    upload(
+      recover: true,
       ci: true
     )
   end

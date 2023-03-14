@@ -17,6 +17,8 @@ export const whitelistDependencies = [
   "Bitcoin",
   "Bitcoin Test",
   "Zcash",
+  "Avalanche",
+  "Avalanche Test",
 ];
 
 export function declareDep(name: string, dep: string): void {
@@ -103,13 +105,12 @@ export const polyfillApplication = (app: Application): Application => {
         // if it's ethereum, we have a specific case that we must only allow the Ethereum app
         app.name === "Ethereum")
   );
-  let o = app;
 
   if (crypto && !app.currencyId) {
-    o = { ...o, currencyId: crypto.id };
+    return { ...app, currencyId: crypto.id };
   }
 
-  return o;
+  return app;
 };
 
 export const calculateDependencies = (): void => {

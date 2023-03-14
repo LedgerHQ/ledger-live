@@ -115,15 +115,19 @@ const SectionFees = ({
           page: "Page Swap Form",
           ...swapDefaultTrack,
         });
-        setDrawer(FeesDrawer, {
-          setTransaction,
-          updateTransaction,
-          mainAccount: mainFromAccount,
-          currency,
-          status,
-          disableSlowStrategy: exchangeRate?.tradeMethod === "fixed",
-          provider,
-        });
+        setDrawer(
+          FeesDrawer,
+          {
+            setTransaction,
+            updateTransaction,
+            mainAccount: mainFromAccount,
+            currency,
+            status,
+            disableSlowStrategy: exchangeRate?.tradeMethod === "fixed",
+            provider,
+          },
+          { forceDisableFocusTrap: true },
+        );
       }),
     [
       canEdit,

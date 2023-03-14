@@ -73,6 +73,8 @@ import type { SolanaDelegationFlowParamList } from "../../../families/solana/Del
 import type { StellarAddAssetFlowParamList } from "../../../families/stellar/AddAssetFlow/types";
 import type { TezosDelegationFlowParamList } from "../../../families/tezos/DelegationFlow/types";
 import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/types";
+import type { NoFundsNavigatorParamList } from "./NoFundsNavigator";
+import { ExploreTabNavigatorStackParamList } from "./ExploreTabNavigator";
 
 type TradeParams = {
   type: "onRamp" | "offRamp";
@@ -116,7 +118,6 @@ export type BaseNavigatorStackParamList = {
     defaultCurrencyId?: string;
     defaultTicker?: string;
   };
-  [ScreenName.Learn]: undefined;
   [ScreenName.LearnWebView]: {
     uri?: string;
   };
@@ -315,10 +316,12 @@ export type BaseNavigatorStackParamList = {
   // Tron
   [NavigatorName.TronVoteFlow]: NavigatorScreenParams<TronVoteFlowParamList>;
 
+  [NavigatorName.ExploreTab]: NavigatorScreenParams<ExploreTabNavigatorStackParamList>;
+
   [ScreenName.DeviceConnect]: {
     appName?: string;
     onSuccess: (result: AppResult) => void;
-    onError: (error: Error) => void;
     onClose: () => void;
   };
+  [NavigatorName.NoFundsFlow]: NavigatorScreenParams<NoFundsNavigatorParamList>;
 };

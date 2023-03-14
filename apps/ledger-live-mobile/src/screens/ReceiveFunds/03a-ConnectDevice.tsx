@@ -62,7 +62,11 @@ export default function ConnectDevice({
       if (!account) {
         return null;
       }
-      setDevice(undefined);
+
+      // Nb Unsetting device here caused the scanning to start again,
+      // scanning causes a disconnect, which throws an error when we try to talk
+      // to the device on the next step.
+
       return navigation.navigate(ScreenName.ReceiveVerifyAddress, {
         ...route.params,
         ...payload,

@@ -107,9 +107,14 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
           <Trans i18nKey="manager.title" />
         </Text>
       </Flex>
+
       {newDeviceSelectionFeatureFlag?.enabled ? (
-        <Flex px={16} flex={1} pb={insets.bottom + TAB_BAR_SAFE_HEIGHT}>
-          <SelectDevice2 onSelect={onSelectDevice} stopBleScanning={!!device} />
+        <Flex flex={1} px={16} pb={insets.bottom + TAB_BAR_SAFE_HEIGHT}>
+          <SelectDevice2
+            onSelect={onSelectDevice}
+            stopBleScanning={!!device}
+            displayServicesWidget
+          />
         </Flex>
       ) : (
         <NavigationScrollView

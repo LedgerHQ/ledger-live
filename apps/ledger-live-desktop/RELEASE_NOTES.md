@@ -1,3 +1,20 @@
+# 2.54.0
+
+### 🚀 Features
+
+- Starting today, you can manage 100+ tokens on Cronos, Fantom, and Moonbeam networks with Ledger Live. 
+- Ledger Live will no longer display zero-amount transactions in the transaction history. If you want to view zero-amount transactions nonetheless, navigate to Settings -> Accounts -> Zero-amount transactions and flip the toggle switch to the on position.
+
+### 🐛 Fixes
+
+- We squished the bug that was triggering an error message instead of undelegating ATOM. 
+
+# 2.53.2
+
+### 🐛 Fixes
+
+- Some users reported a long sync time when adding an Ethereum account. We've fixed this.
+
 # 2.53.1
 
 ### 🌷 Improvements
