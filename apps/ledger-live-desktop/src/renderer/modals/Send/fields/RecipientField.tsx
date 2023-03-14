@@ -34,7 +34,7 @@ const RecipientField = ({
 }: Props) => {
   const bridge = getAccountBridge(account, null);
   const [value, setValue] = useState(
-    initValue || transaction.domain || transaction.recipient || "",
+    initValue || transaction?.recipientDomain?.domain || transaction.recipient || "",
   );
   const { enabled: isDomainResolutionEnabled } = useFeature("domainInputResolution") || {};
 

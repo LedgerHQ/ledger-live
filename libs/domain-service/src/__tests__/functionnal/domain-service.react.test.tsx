@@ -3,6 +3,7 @@ import { DomainServiceProvider, useDomainService } from "../../hooks";
 import { renderHook } from "@testing-library/react-hooks";
 import { render, screen, waitFor } from "@testing-library/react";
 import { resolveAddress, resolveDomain } from "../../resolvers";
+import { DomainServiceResolution } from "../../types";
 
 jest.mock("../../resolvers");
 

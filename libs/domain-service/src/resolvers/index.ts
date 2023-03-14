@@ -1,6 +1,6 @@
 import { log } from "@ledgerhq/logs";
 import network from "@ledgerhq/live-common/network";
-import { SupportedRegistries } from "../types";
+import { DomainServiceResolution, SupportedRegistries } from "../types";
 import {
   getRegistries,
   getRegistriesForAddress,
@@ -16,12 +16,12 @@ type DomainResolutionResponse = {
  * Get an array of addresses for a domain
  *
  * @param {string} domain
- * @returns {Promise<DomainResolutionResponse[]>}
+ * @returns {Promise<DomainServiceResolution[]>}
  */
 export const resolveDomain = async (
   domain: string,
   registryName?: SupportedRegistries
-): Promise<DomainResolutionResponse[]> => {
+): Promise<DomainServiceResolution[]> => {
   const registries = await (async () => {
     if (registryName) {
       const registries = await getRegistries();
@@ -58,7 +58,7 @@ export const resolveDomain = async (
         address: promise.value.data,
       });
       return result;
-    }, [] as DomainResolutionResponse[])
+    }, [] as DomainServiceResolution[])
   );
 };
 
@@ -71,12 +71,12 @@ type AddressResolutionResponse = {
  * Get an array of domains for an address
  *
  * @param {string} address
- * @returns {Promise<AddressResolutionResponse[]>}
+ * @returns {Promise<DomainServiceResolution[]>}
  */
 export const resolveAddress = async (
   address: string,
   registryName?: SupportedRegistries
-): Promise<AddressResolutionResponse[]> => {
+): Promise<DomainServiceResolution[]> => {
   const registries = await (async () => {
     if (registryName) {
       const registries = await getRegistries();
@@ -113,6 +113,6 @@ export const resolveAddress = async (
         domain: promise.value.data,
       });
       return result;
-    }, [] as AddressResolutionResponse[])
+    }, [] as DomainServiceResolution[])
   );
 };
