@@ -60,7 +60,7 @@ export class Layout {
     this.topbarSettingsButton = page.locator("data-test-id=topbar-settings-button");
     this.topbarLockButton = page.locator("data-test-id=topbar-password-lock-button");
     this.topbarHelpButton = page.locator("data-test-id=topbar-help-button");
-    this.discreetTooltip = page.locator("#tippy-12"); //automatically generated tippy id but it's consistent
+    this.discreetTooltip = page.locator("#tippy-12"); // automatically generated tippy id but it's consistent
 
     // general
     this.pageScroller = page.locator("id=page-scroller");
