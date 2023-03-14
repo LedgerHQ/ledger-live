@@ -16,7 +16,7 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import ChangeDeviceLanguagePrompt from "~/renderer/components/ChangeDeviceLanguagePrompt";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 
 type Props = {

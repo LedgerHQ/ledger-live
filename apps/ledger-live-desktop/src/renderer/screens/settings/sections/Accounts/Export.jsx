@@ -2,12 +2,10 @@
 import React, { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { EXPERIMENTAL_WS_EXPORT } from "~/config/constants";
 import { openModal } from "~/renderer/actions/modals";
 import Button from "~/renderer/components/Button";
 import ExportOperationsBtn from "~/renderer/components/ExportOperationsBtn";
 import { SettingsSectionRow as Row } from "../../SettingsSection";
-import SocketExport from "./SocketExport";
 
 const SectionExport = () => {
   const dispatch = useDispatch();
@@ -34,14 +32,6 @@ const SectionExport = () => {
       >
         <ExportOperationsBtn primary />
       </Row>
-      {EXPERIMENTAL_WS_EXPORT && (
-        <Row
-          title="Experimental websocket local export ⚡"
-          desc="Generate a pairing code and use it on Ledger Live Mobile"
-        >
-          <SocketExport />
-        </Row>
-      )}
     </>
   );
 };

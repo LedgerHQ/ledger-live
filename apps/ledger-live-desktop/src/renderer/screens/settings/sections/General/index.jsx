@@ -3,14 +3,12 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { EXPERIMENTAL_MARKET_INDICATOR_SETTINGS } from "~/config/constants";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../SettingsSection";
 import CounterValueSelect from "./CounterValueSelect";
 import LanguageSelect from "./LanguageSelect";
 import RegionSelect from "./RegionSelect";
 import ThemeSelect from "./ThemeSelect";
-import MarketIndicatorRadio from "./MarketIndicatorRadio";
 import PasswordButton from "./PasswordButton";
 import PasswordAutoLockSelect from "./PasswordAutoLockSelect";
 import SentryLogsButton from "./SentryLogsButton";
@@ -53,12 +51,6 @@ const SectionGeneral = () => {
         >
           <ThemeSelect />
         </Row>
-
-        {EXPERIMENTAL_MARKET_INDICATOR_SETTINGS ? (
-          <Row title={t("settings.display.stock")} desc={t("settings.display.stockDesc")}>
-            <MarketIndicatorRadio />
-          </Row>
-        ) : null}
 
         <Row title={t("settings.profile.password")} desc={t("settings.profile.passwordDesc")}>
           <PasswordButton />
