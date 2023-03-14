@@ -3,8 +3,7 @@ import config from "react-native-config";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { Alert as Confirmation } from "react-native";
 import { Alert, Icons } from "@ledgerhq/native-ui";
-import { useDispatch, useSelector } from "react-redux";
-import { State } from "../../../../reducers/types";
+import { useDispatch } from "react-redux";
 import GenerateMockAccounts from "./GenerateMockAccounts";
 import GenerateMockAccountsNft from "./GenerateMockAccountsNFTs";
 import ImportBridgeStreamData from "./ImportBridgeStreamData";
@@ -21,7 +20,6 @@ import { INITIAL_STATE as INITIAL_ACCOUNTS_STATE } from "../../../../reducers/ac
 import { INITIAL_STATE as INITIAL_BLE_STATE } from "../../../../reducers/ble";
 
 export default function Generators() {
-  const state = useSelector<State, State>(s => s);
   const dispatch = useDispatch();
   const reboot = useReboot();
 
@@ -50,34 +48,31 @@ export default function Generators() {
     onCallbackWithConfirmation(() => {
       dispatch(
         dangerouslyOverrideState({
-          ...state,
           settings: INITIAL_SETTINGS_STATE,
         }),
       );
     });
-  }, [dispatch, state]);
+  }, [dispatch]);
 
   const onWipeUsers = useCallback(() => {
     onCallbackWithConfirmation(() => {
       dispatch(
         dangerouslyOverrideState({
-          ...state,
           accounts: INITIAL_ACCOUNTS_STATE,
         }),
       );
     });
-  }, [dispatch, state]);
+  }, [dispatch]);
 
   const onWipeBLE = useCallback(() => {
     onCallbackWithConfirmation(() => {
       dispatch(
         dangerouslyOverrideState({
-          ...state,
           ble: INITIAL_BLE_STATE,
         }),
       );
     });
-  }, [dispatch, state]);
+  }, [dispatch]);
 
   const onForceRefresh = useCallback(() => {
     reboot();
