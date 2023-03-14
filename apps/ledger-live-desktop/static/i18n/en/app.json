@@ -225,15 +225,10 @@
     "tooltip": "Star account"
   },
   "bridge": {
-    "modalTitle": "Open Device Bridge",
-    "openHeader": "Expose your Device accounts through WebSocket",
-    "openDescription": "Opening a bridge exposes all of your accounts to third party applications.",
-    "openedHeader": "{{appName}} bridge opened",
-    "openedDescription": "You can now access your {{appName}} account on third party web application through WebSocket.",
-    "completeHeader": "Bridge session completed",
-    "completeDescription": "The websocket bridge is now closed.",
-    "openButton": "Open",
-    "disconnectButton": "Disconnect"
+    "modalTitle": "Device Bridge",
+    "openHeader": "Device bridge is no longer available",
+    "openDescription": "Please configure your browser wallet extensions to use WebHID instead of Ledger Live.",
+    "closeButton": "Close"
   },
   "swap2": {
     "title": "Swap",
