@@ -8,12 +8,9 @@ import {
 import { encodeAccountId } from "../../account";
 import { CosmosAPI } from "./api/Cosmos";
 import { encodeOperationId } from "../../operation";
-import { CosmosAccount, CosmosAccountRaw, CosmosDelegationInfo } from "./types";
+import { CosmosDelegationInfo } from "./types";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import { getMainMessage } from "./helpers";
-import { isEqual } from "lodash";
-import { Account, AccountRaw } from "@ledgerhq/types-live";
-import { fromCosmosResourcesRaw, toCosmosResourcesRaw } from "./serialization";
 
 const getBlankOperation = (tx, fees, id) => ({
   id: "",
