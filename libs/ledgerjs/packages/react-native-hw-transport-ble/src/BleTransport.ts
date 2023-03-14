@@ -294,14 +294,11 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
   // await transport.requestConnectionPriority("High");
 
   const onDisconnect = (e: BleError | null) => {
+    transport.isConnected = false;
     transport.notYetDisconnected = false;
     notif.unsubscribe();
     disconnectedSub.remove();
-    /**
-     * If you are wondering why we need to clear here too it's because
-     * disconnects can be triggered but also unexpected, from app switches
-     * for instance.
-     */
+
     clearDisconnectTimeout(transport.id);
     delete transportsCache[transport.id];
     log(TAG, `BleTransport(${transport.id}) disconnected`);
@@ -490,15 +487,16 @@ export default class BleTransport extends Transport {
     log(TAG, "disconnected");
   };
 
-  id: string;
   device: Device;
+  deviceModel: DeviceModel;
+  disconnectTimeout: null | ReturnType<typeof setTimeout> = null;
+  id: string;
+  isConnected = true;
   mtuSize = 20;
+  notifyObservable: Observable<any>;
+  notYetDisconnected = true;
   writeCharacteristic: Characteristic;
   writeCmdCharacteristic: Characteristic | undefined;
-  notifyObservable: Observable<any>;
-  deviceModel: DeviceModel;
-  notYetDisconnected = true;
-  disconnectTimeout: null | ReturnType<typeof setTimeout> = null;
 
   constructor(
     device: Device,
@@ -642,9 +640,11 @@ export default class BleTransport extends Transport {
   };
 
   /**
-   * Closing a transport connection is not immediate, this is intentional.
-   * We queue the disconnect and allow for a future connection to dismiss this
-   * event in order to prevent an unnecesary disconnect/connect.
+   * We intentionally do not immediately close a transport connection.
+   * Instead, we queue the disconnect and wait for a future connection to dismiss the event.
+   * This approach prevents unnecessary disconnects and reconnects. We use the isConnected
+   * flag to ensure that we do not trigger a disconnect if the current cached transport has
+   * already been disconnected.
    * @returns {Promise<void>}
    */
   async close(): Promise<void> {
@@ -659,13 +659,17 @@ export default class BleTransport extends Transport {
 
     this.disconnectTimeout = setTimeout(() => {
       log(TAG, `Triggering a disconnect from ${this.id}`);
-      BleTransport.disconnect(this.id)
-        .catch(() => {})
-        .finally(resolve);
+      if (this.isConnected) {
+        BleTransport.disconnect(this.id)
+          .catch(() => {})
+          .finally(resolve);
+      } else {
+        resolve();
+      }
     }, 5000);
 
-    // Close will resolve at most after 5000ms either by the disconnect or
-    // the actual apdu responding.
+    // The closure will occur no later than 5s, triggered either by disconnection
+    // or the actual response of the apdu.
     await Promise.race([
       this.exchangeBusyPromise || Promise.resolve(),
       disconnectPromise,
