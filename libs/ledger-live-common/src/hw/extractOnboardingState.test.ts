@@ -75,17 +75,17 @@ describe("@hw/extractOnboardingState", () => {
         });
       });
 
-      describe("and the user is choosing what kind of setup they want", () => {
+      describe("and the user is on 'choose name' step", () => {
         beforeEach(() => {
-          flagsBytes[3] = 5;
+          flagsBytes[3] = 12;
         });
 
-        it("should return an onboarding step that is set at the setup choice", () => {
+        it("should return an onboarding step that is set at ready", () => {
           const onboardingState = extractOnboardingState(flagsBytes);
 
           expect(onboardingState).not.toBeNull();
           expect(onboardingState?.currentOnboardingStep).toBe(
-            OnboardingStep.SetupChoice
+            OnboardingStep.ChooseName
           );
         });
       });
@@ -101,6 +101,21 @@ describe("@hw/extractOnboardingState", () => {
           expect(onboardingState).not.toBeNull();
           expect(onboardingState?.currentOnboardingStep).toBe(
             OnboardingStep.Pin
+          );
+        });
+      });
+
+      describe("and the user is choosing what kind of setup they want", () => {
+        beforeEach(() => {
+          flagsBytes[3] = 5;
+        });
+
+        it("should return an onboarding step that is set at the setup choice", () => {
+          const onboardingState = extractOnboardingState(flagsBytes);
+
+          expect(onboardingState).not.toBeNull();
+          expect(onboardingState?.currentOnboardingStep).toBe(
+            OnboardingStep.SetupChoice
           );
         });
       });
@@ -245,21 +260,6 @@ describe("@hw/extractOnboardingState", () => {
           expect(onboardingState).not.toBeNull();
           expect(onboardingState?.currentOnboardingStep).toBe(
             OnboardingStep.SafetyWarning
-          );
-        });
-      });
-
-      describe("and the user is on 'choose name' step", () => {
-        beforeEach(() => {
-          flagsBytes[3] = 12;
-        });
-
-        it("should return an onboarding step that is set at ready", () => {
-          const onboardingState = extractOnboardingState(flagsBytes);
-
-          expect(onboardingState).not.toBeNull();
-          expect(onboardingState?.currentOnboardingStep).toBe(
-            OnboardingStep.ChooseName
           );
         });
       });
