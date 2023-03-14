@@ -17,10 +17,8 @@ import {
   fromOperationRaw,
   fromSubAccountRaw,
   fromBitcoinResourcesRaw,
-  fromPolkadotResourcesRaw,
   fromCryptoOrgResourcesRaw,
   fromNFTRaw,
-  toPolkadotResourcesRaw,
   toCryptoOrgResourcesRaw,
 } from "./account";
 import consoleWarnExpectToEqual from "./consoleWarnExpectToEqual";
@@ -29,7 +27,6 @@ import {
   CryptoOrgAccount,
   CryptoOrgAccountRaw,
 } from "./families/crypto_org/types";
-import { PolkadotAccount, PolkadotAccountRaw } from "./families/polkadot/types";
 import { getAccountBridge } from "./bridge";
 
 // aim to build operations with the minimal diff & call to coin implementation possible
@@ -286,24 +283,6 @@ export function patchAccount(
         (next as BitcoinAccount).bitcoinResources = fromBitcoinResourcesRaw(
           (updatedRaw as BitcoinAccountRaw).bitcoinResources
         );
-      }
-      break;
-    }
-    case "polkadot": {
-      const polkadotAcc = account as PolkadotAccount;
-      const polkadotUpdatedRaw = updatedRaw as PolkadotAccountRaw;
-      if (
-        polkadotUpdatedRaw.polkadotResources &&
-        (!polkadotAcc.polkadotResources ||
-          !areSameResources(
-            toPolkadotResourcesRaw(polkadotAcc.polkadotResources),
-            polkadotUpdatedRaw.polkadotResources
-          ))
-      ) {
-        (next as PolkadotAccount).polkadotResources = fromPolkadotResourcesRaw(
-          polkadotUpdatedRaw.polkadotResources
-        );
-        changed = true;
       }
       break;
     }
