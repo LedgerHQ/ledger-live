@@ -3479,14 +3479,27 @@
     }
   },
   "editTransaction": {
+    "cta": "Speed up or Cancel",
+    "previousFeesInfo": "Current network fee = {{amount}} ETH",
     "header": "Edit Transaction",
-    "speedup": "Speed Up",
-    "stuckTx": "Your most recent 'send' transaction is stuck. Speed up the transaction with a higher network fee or cancel it.",
-    "speedupTxMessage": "Your transaction is ongoing. You can speed it up with a higher network fee or cancel it.",
-    "speedupOrCancel": "Speed up or Cancel",
-    "resubmitTxDescription": "Resubmit this transaction on a higher network fee.",
-    "cancelTxDescription": "Sending 0 ETH to your own address. To ensure cancellation, the network fee is 10-30% higher than the fee of the transaction meant to be cancelled.",
-    "currentNetworkFee": "Current network fee = {{amount}} ETH"
+    "panel": {
+      "title": "Speed up or Cancel",
+      "description": "Your most recent 'send' transactions is stuck. Speed up the transaction with a higher network fee, or cancel it.",
+      "speedupTxMessage": "Your transaction is ongoing. You can speed it up with a higher network fee or cancel it."
+    },
+    "speedUp": {
+      "title": "Speed Up",
+      "description": "Re-submit the transaction with a higher network fee."
+    },
+    "cancel": {
+      "title": "Cancel",
+      "description": "Sending 0 {{ticker}} to your own address. To ensure cancellation, the network fee is 30% higher than the fee of the transaction meant to be cancelled."
+    },
+    "error": {
+      "notEnoughFundsToCancel": "Cancelling transaction is not available because you don't have enough funds on your account.",
+      "notEnoughFundsToSpeedup": "Speeding up transaction is not available because you don’t have enough funds in your account.",
+      "notlowestNonceToSpeedup": "Speed up feature is not available. Your transaction is pending because a previous transaction is stuck. You can wait for it to be confirmed, speed it up and cancel it."
+    }
   },
   "requestAccount": {
     "stepperHeader": {
