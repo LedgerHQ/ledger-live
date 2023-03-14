@@ -1,7 +1,8 @@
 import React from "react";
-import { DomainServiceProvider, useDomainService } from "../../hooks";
+import "@testing-library/jest-dom";
 import { renderHook } from "@testing-library/react-hooks";
 import { render, screen, waitFor } from "@testing-library/react";
+import { DomainServiceProvider, useDomain } from "../../hooks";
 import { resolveAddress, resolveDomain } from "../../resolvers";
 import { DomainServiceResolution } from "../../types";
 
@@ -10,26 +11,30 @@ jest.mock("../../resolvers");
 const mockedResolvedDomain = jest.mocked(resolveDomain, true);
 const mockedResolvedAddress = jest.mocked(resolveAddress, true);
 
+const resolutionKeys: (keyof DomainServiceResolution)[] = [
+  "registry",
+  "address",
+  "domain",
+];
+
 const CustomTest = ({ str }: { str: string }) => {
-  const data = useDomainService(str);
-
-  let address: string | undefined;
-  let domain: string | undefined;
-  let type: string | undefined;
-
-  const status = data.status;
-  if (data.status === "loaded") {
-    address = data.address;
-    domain = data.domain;
-    type = data.type;
-  }
+  const result = useDomain(str);
+  const { status } = result;
 
   return (
     <div>
       <div data-testid="status">{status}</div>
-      <div data-testid="address">{address}</div>
-      <div data-testid="domain">{domain}</div>
-      <div data-testid="type">{type}</div>
+      {status === "loaded" && (
+        <div data-testid="resolutions">
+          {result.resolutions.map((resolution, index) => (
+            <React.Fragment key={index}>
+              <div data-testid={`${index}-registry`}>{resolution.registry}</div>
+              <div data-testid={`${index}-address`}>{resolution.address}</div>
+              <div data-testid={`${index}-domain`}>{resolution.domain}</div>
+            </React.Fragment>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
@@ -59,7 +64,7 @@ describe("useNamingService", () => {
   });
 
   test("should be queue", () => {
-    const { result } = renderHook(useDomainService, {
+    const { result } = renderHook(useDomain, {
       initialProps: "vitalik.eth",
     });
 
@@ -67,9 +72,14 @@ describe("useNamingService", () => {
   });
 
   test("success forward", async () => {
-    mockedResolvedDomain.mockImplementation(async () => {
-      return [{ address: "forced mocked address", registry: "ens" }];
-    });
+    const resolutions: DomainServiceResolution[] = [
+      {
+        address: "forced mocked address",
+        registry: "ens",
+        domain: "vitalik.eth",
+      },
+    ];
+    mockedResolvedDomain.mockImplementation(async () => resolutions);
 
     render(
       <DomainServiceProvider>
@@ -85,20 +95,31 @@ describe("useNamingService", () => {
     );
 
     expect(screen.getByTestId("status").textContent).toBe("loaded");
-    expect(screen.getByTestId("type").textContent).toBe("forward");
-    expect(screen.getByTestId("domain").textContent).toBe("vitalik.eth");
-    expect(screen.getByTestId("address").textContent).toBe(
-      "forced mocked address"
-    );
+    expect(screen.getByTestId("resolutions")).toBeInTheDocument();
+    resolutions.forEach((resolution, index) => {
+      resolutionKeys.forEach((field) => {
+        expect(screen.getByTestId("resolutions")).toContainElement(
+          screen.getByTestId(`${index}-${field}`)
+        );
+        expect(screen.getByTestId(`${index}-${field}`).textContent).toBe(
+          resolution[field]
+        );
+      });
+    });
   });
 
   test("success reverse", async () => {
+    const reverseResolutions: DomainServiceResolution[] = [
+      {
+        domain: "vitalik.eth",
+        registry: "ens",
+        address: "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
+      },
+    ];
     mockedResolvedDomain.mockImplementation(async () => {
       return [];
     });
-    mockedResolvedAddress.mockImplementation(async () => {
-      return [{ domain: "vitalik.eth", registry: "ens" }];
-    });
+    mockedResolvedAddress.mockImplementation(async () => reverseResolutions);
 
     render(
       <DomainServiceProvider>
@@ -111,10 +132,16 @@ describe("useNamingService", () => {
     });
 
     expect(screen.getByTestId("status").textContent).toBe("loaded");
-    expect(screen.getByTestId("domain").textContent).toBe("vitalik.eth");
-    expect(screen.getByTestId("address").textContent).toBe(
-      "0xd8da6bf26964af9d7eed9e03e53415d37aa96045"
-    );
-    expect(screen.getByTestId("type").textContent).toBe("reverse");
+    expect(screen.getByTestId("resolutions")).toBeInTheDocument();
+    reverseResolutions.forEach((resolution, index) => {
+      resolutionKeys.forEach((field) => {
+        expect(screen.getByTestId("resolutions")).toContainElement(
+          screen.getByTestId(`${index}-${field}`)
+        );
+        expect(screen.getByTestId(`${index}-${field}`).textContent).toBe(
+          resolution[field]
+        );
+      });
+    });
   });
 });

@@ -6,13 +6,13 @@ import React, {
   useState,
 } from "react";
 import { resolveAddress, resolveDomain } from "../resolvers";
+import { SupportedRegistries } from "../types";
 import { isOutdated } from "./logic";
 import {
   DomainServiceContextAPI,
   DomainServiceContextState,
   DomainServiceContextType,
   DomainServiceStatus,
-  UseDomainServiceResponse,
 } from "./types";
 
 const DomainServiceContext = createContext<DomainServiceContextType>({
@@ -21,52 +21,31 @@ const DomainServiceContext = createContext<DomainServiceContextType>({
   clearCache: () => {},
 });
 
-export const useDomainServiceAPI = (
-  name: string | undefined
+export const useDomain = (
+  addressOrDomain: string,
+  registry?: SupportedRegistries
 ): DomainServiceStatus => {
+  const addressOrDomainLC = addressOrDomain.toLowerCase();
   const { cache, loadDomainServiceAPI } = useContext(DomainServiceContext);
-  const cachedData = name && cache[name];
+  const cachedData = addressOrDomain && cache[addressOrDomainLC];
 
   useEffect(() => {
-    if (!name) return;
     if (!cachedData || isOutdated(cachedData)) {
-      loadDomainServiceAPI(name);
+      loadDomainServiceAPI(addressOrDomainLC, registry);
     }
-  }, [loadDomainServiceAPI, name, cachedData]);
+  }, [loadDomainServiceAPI, addressOrDomainLC, cachedData]);
 
   if (cachedData) {
     return cachedData;
-  } else if (!name) {
+  } else if (!addressOrDomain) {
     return {
       status: "error",
-      error: new Error("Invalid name format"),
+      error: new Error("No address or domain provided"),
       updatedAt: Date.now(),
     };
-  } else {
-    return { status: "queued" };
   }
+  return { status: "queued" };
 };
-
-export function useDomainService(name: string): UseDomainServiceResponse {
-  const data = useDomainServiceAPI(name);
-
-  const { status } = data;
-  const loadedData = useMemo(
-    () => (status === "loaded" ? data : null),
-    [data, status]
-  );
-
-  return loadedData && status === "loaded"
-    ? {
-        status: "loaded",
-        address: loadedData.address,
-        domain: loadedData.domain,
-        type: loadedData.type,
-      }
-    : ({ status } as {
-        status: Exclude<UseDomainServiceResponse["status"], "loaded">;
-      });
-}
 
 type DomainServiceProviderProps = {
   children: React.ReactNode;
@@ -81,29 +60,34 @@ export function DomainServiceProvider({
 
   const api: DomainServiceContextAPI = useMemo(
     () => ({
-      loadDomainServiceAPI: async (str: string) => {
+      loadDomainServiceAPI: async (
+        addressOrDomain: string,
+        registry?: SupportedRegistries
+      ) => {
         setState((oldState) => ({
           ...oldState,
           cache: {
             ...oldState.cache,
-            [str]: {
+            [addressOrDomain]: {
               status: "loading",
             },
           },
         }));
 
         try {
-          const resolvedDomain = await resolveDomain(str);
-          if (resolvedDomain.length > 0) {
+          const resolutions = await Promise.all([
+            resolveDomain(addressOrDomain, registry),
+            resolveAddress(addressOrDomain, registry),
+          ]).then((res) => res.flat());
+
+          if (resolutions.length) {
             setState((oldState) => ({
               ...oldState,
               cache: {
                 ...oldState.cache,
-                [str]: {
+                [addressOrDomain]: {
                   status: "loaded",
-                  address: resolvedDomain[0].address,
-                  domain: str,
-                  type: "forward",
+                  resolutions,
                   updatedAt: Date.now(),
                 },
               },
@@ -112,32 +96,13 @@ export function DomainServiceProvider({
             return;
           }
 
-          const resolvedAddress = await resolveAddress(str);
-          if (resolvedAddress.length > 0) {
-            setState((oldState) => ({
-              ...oldState,
-              cache: {
-                ...oldState.cache,
-                [str]: {
-                  status: "loaded",
-                  address: str,
-                  domain: resolvedAddress[0].domain,
-                  type: "reverse",
-                  updatedAt: Date.now(),
-                },
-              },
-            }));
-
-            return;
-          }
-
-          throw new Error("no resolve for " + str);
+          throw new Error("no resolution for " + addressOrDomain);
         } catch (error) {
           setState((oldState) => ({
             ...oldState,
             cache: {
               ...oldState.cache,
-              [str]: {
+              [addressOrDomain]: {
                 status: "error",
                 error,
                 updatedAt: Date.now(),

@@ -74,9 +74,11 @@
   },
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "12",
     "@testing-library/react-hooks": "^4.0.1",
     "@types/jest": "^28.1.3",
+    "@types/testing-library__jest-dom": "^5.14.5",
     "@typescript-eslint/eslint-plugin": "^5.46.1",
     "@typescript-eslint/parser": "^5.46.1",
     "cross-env": "^7.0.3",
