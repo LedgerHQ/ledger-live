@@ -1,6 +1,7 @@
 import type { Transaction } from "./types";
 import type { Account } from "@ledgerhq/types-live";
-import { Units, utils } from "@crypto-com/chain-jslib";
+import { Units, utils } from "@crypto-org-chain/chain-jslib";
+import { SIGN_MODE } from "@crypto-org-chain/chain-jslib/lib/dist/transaction/types";
 import { getAccountParams } from "./api/sdk";
 import { getCroSdk } from "./logic";
 
@@ -56,7 +57,7 @@ export const buildTransaction = async (
       publicKey: utils.Bytes.fromHexString(publicKey),
       accountNumber: new utils.Big(accountNumber),
       accountSequence: new utils.Big(sequence),
-      signMode: 0,
+      signMode: SIGN_MODE.LEGACY_AMINO_JSON,
     })
     .toSignable();
   return signableTx;
