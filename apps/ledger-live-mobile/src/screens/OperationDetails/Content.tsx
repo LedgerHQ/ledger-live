@@ -373,7 +373,7 @@ export default function Content({
           {isOperationStuck ? (
             <Box>
               <LText color="neutral.c20">
-                {t("editTransaction.panel.description")}
+                {t("editTransaction.panel.stuckMessage")}
               </LText>
               <LText marginTop={4}>
                 <Link onPress={onEditTxPress}>
@@ -391,7 +391,7 @@ export default function Content({
             <>
               <Box>
                 <LText color="neutral.c20">
-                  {t("editTransaction.panel.speedupTxMessage")}
+                  {t("editTransaction.panel.speedupMessage")}
                 </LText>
                 <LText marginTop={4}>
                   <Link onPress={onEditTxPress}>
