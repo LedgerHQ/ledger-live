@@ -1,9 +1,15 @@
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getAccount, getOperations } from "./api";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
+import { isEqual } from "lodash";
+import {
+  fromPolkadotResourcesRaw,
+  toPolkadotResourcesRaw,
+} from "./serialization";
+import { PolkadotAccount, PolkadotAccountRaw } from "./types";
 
 export const getAccountShape: GetAccountShape = async (info) => {
   await loadPolkadotCrypto();
@@ -55,3 +61,27 @@ export const getAccountShape: GetAccountShape = async (info) => {
   };
   return { ...shape, operations } as Partial<Account>;
 };
+
+export function applyReconciliation(
+  account: Account,
+  updatedRaw: AccountRaw,
+  next: Account
+): boolean {
+  const polkadotAcc = account as PolkadotAccount;
+  const polkadotUpdatedRaw = updatedRaw as PolkadotAccountRaw;
+  if (
+    polkadotUpdatedRaw.polkadotResources &&
+    (!polkadotAcc.polkadotResources ||
+      !isEqual(
+        toPolkadotResourcesRaw(polkadotAcc.polkadotResources),
+        polkadotUpdatedRaw.polkadotResources
+      ))
+  ) {
+    (next as PolkadotAccount).polkadotResources = fromPolkadotResourcesRaw(
+      polkadotUpdatedRaw.polkadotResources
+    );
+    return true;
+  }
+
+  return false;
+}

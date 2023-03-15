@@ -1081,7 +1081,7 @@
 | Cardano | virus | 0fd9819a9d7fb414880883f43a42d33458f12bc5f9841cec6457dc155669527553 | Virus | countervalues disabled | cardano/native/0fd9819a9d7fb414880883f43a42d33458f12bc5f9841cec6457dc155669527553 |
 | Cardano | WDAY | a3914cb7a564d010c7b67774ac8720a8ece3a758279b51d8a1c05cc55745444e4553444159 | Wednesday | countervalues disabled | cardano/native/a3914cb7a564d010c7b67774ac8720a8ece3a758279b51d8a1c05cc55745444e4553444159 |
 | Cardano | WMT | 1d7f33bd23d85e1a25d87d86fac4f199c3197a2f7afeb662a0f34e1e776f726c646d6f62696c65746f6b656e | World Mobile Token |  | cardano/native/1d7f33bd23d85e1a25d87d86fac4f199c3197a2f7afeb662a0f34e1e776f726c646d6f62696c65746f6b656e |
-| Cardano | XRAY | ae2a0aa5a24b27d9868c4a73b7c08077ac21baade5eca0fa467a2bbd58524159 | XRAY | countervalues disabled | cardano/native/ae2a0aa5a24b27d9868c4a73b7c08077ac21baade5eca0fa467a2bbd58524159 |
+| Cardano | XRAY | 86abe45be4d8fb2e8f28e8047d17d0ba5592f2a6c8c452fc88c2c14358524159 | XRAY | countervalues disabled | cardano/native/86abe45be4d8fb2e8f28e8047d17d0ba5592f2a6c8c452fc88c2c14358524159 |
 | Cardano | XT | 300ec0d82a79acdc0616fdc0ef615e7deeddb03275e834685e9ee8a65854 | XT | countervalues disabled | cardano/native/300ec0d82a79acdc0616fdc0ef615e7deeddb03275e834685e9ee8a65854 |
 | Cardano | YAY | 57684adcb032c8dbc40179841bed987d8dee7472617a0e5c25ef414059617953776170 | YaySwap | countervalues disabled | cardano/native/57684adcb032c8dbc40179841bed987d8dee7472617a0e5c25ef414059617953776170 |
 | Cardano | cNETA | b34b3ea80060ace9427bda98690a73d33840e27aaa8d6edb7f0c757a634e455441 | anetaBTC | countervalues disabled | cardano/native/b34b3ea80060ace9427bda98690a73d33840e27aaa8d6edb7f0c757a634e455441 |

@@ -102,11 +102,7 @@ const styles = StyleSheet.create({
   },
 });
 
-type AppProps = {
-  importDataString?: string;
-};
-
-function App({ importDataString }: AppProps) {
+function App() {
   useAppStateListener();
   useListenToHidDevices();
 
@@ -188,7 +184,7 @@ function App({ importDataString }: AppProps) {
     <GestureHandlerRootView style={styles.root}>
       <SyncNewAccounts priority={5} />
       <ExperimentalHeader />
-      <RootNavigator importDataString={importDataString} />
+      <RootNavigator />
       <AnalyticsConsole />
       <PerformanceConsole />
       <DebugTheme />
@@ -251,9 +247,7 @@ const StylesProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default class Root extends Component<{
-  importDataString?: string;
-}> {
+export default class Root extends Component {
   initTimeout: ReturnType<typeof setTimeout> | undefined;
 
   componentWillUnmount() {
@@ -273,7 +267,6 @@ export default class Root extends Component<{
   };
 
   render() {
-    const importDataString = __DEV__ ? this.props.importDataString : "";
     return (
       <RebootProvider onRebootStart={this.onRebootStart}>
         <LedgerStoreProvider onInitFinished={this.onInitFinished}>
@@ -313,11 +306,7 @@ export default class Root extends Component<{
                                                     <SnackbarContainer />
                                                     <NftMetadataProvider>
                                                       <MarketDataProvider>
-                                                        <App
-                                                          importDataString={
-                                                            importDataString
-                                                          }
-                                                        />
+                                                        <App />
                                                       </MarketDataProvider>
                                                     </NftMetadataProvider>
                                                   </NotificationsProvider>
