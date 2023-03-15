@@ -77,7 +77,6 @@ export type SwapNavigatorParamList = {
     overrideAmountLabel?: string;
     hideTotal?: boolean;
     operation?: Operation;
-    isEdit?: boolean;
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SignTransactionSummary
@@ -130,7 +129,6 @@ export type SwapNavigatorParamList = {
     parentId?: string;
     transaction: BitcoinTransaction;
     status?: BitcoinTransactionStatus;
-    isEdit?: boolean;
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SignTransactionSummary
