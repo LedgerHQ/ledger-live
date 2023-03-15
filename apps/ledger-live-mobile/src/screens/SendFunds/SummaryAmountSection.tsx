@@ -15,7 +15,6 @@ type Props = {
   amount: number | BigNumber;
   overrideAmountLabel?: string;
 };
-
 export default class SummaryAmountSection extends PureComponent<Props> {
   render() {
     const { account, amount, overrideAmountLabel } = this.props;
