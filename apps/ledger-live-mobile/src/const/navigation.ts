@@ -332,8 +332,6 @@ export enum ScreenName {
   // Ethereum
   EthereumCustomFees = "EthereumCustomFees",
   EthereumEditGasLimit = "EthereumEditGasLimit",
-  SpeedUpTransaction = "SpeedUpTransaction",
-  CancelTransaction = "CancelTransaction",
 
   // Polkadot
   PolkadotBondStarted = "PolkadotBondStarted",
@@ -550,8 +548,8 @@ export enum NavigatorName {
   RequestAccount = "RequestAccount",
   RequestAccountsAddAccounts = "RequestAccountsAddAccounts",
 
-  // Ethereum
-  EthereumEditTransaction = "EthereumEditTransaction",
+  // Edit transaction
+  EditTransaction = "EditTransaction",
 
   // Polkadot
   PolkadotBondFlow = "PolkadotBondFlow",
