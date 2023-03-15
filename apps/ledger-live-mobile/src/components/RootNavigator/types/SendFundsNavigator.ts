@@ -89,7 +89,6 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SwapForm;
     overrideAmountLabel?: string;
     operation?: Operation;
-    isEdit?: string;
     appName?: string;
   };
   [ScreenName.SendSelectDevice]: {
@@ -149,7 +148,6 @@ export type SendFundsNavigatorStackParamList = {
     parentId?: string;
     transaction: BitcoinTransaction;
     status?: BitcoinTransactionStatus;
-    isEdit?: boolean;
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SignTransactionSummary
