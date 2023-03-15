@@ -13,7 +13,6 @@ import { receiveAPDU } from "@ledgerhq/devices/lib/ble/receiveAPDU";
 import type {
   Subscription as TransportSubscription,
   Observer as TransportObserver,
-  DescriptorEvent,
 } from "@ledgerhq/hw-transport";
 import {
   BleManager,
@@ -24,6 +23,7 @@ import {
   Device,
   Characteristic,
   BleError,
+  Subscription,
 } from "react-native-ble-plx";
 import {
   BluetoothInfos,
@@ -292,12 +292,13 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
   );
 
   // await transport.requestConnectionPriority("High");
-
+  // eslint-disable-next-line prefer-const
+  let disconnectedSub: Subscription;
   const onDisconnect = (e: BleError | null) => {
     transport.isConnected = false;
     transport.notYetDisconnected = false;
     notif.unsubscribe();
-    disconnectedSub.remove();
+    disconnectedSub?.remove();
 
     clearDisconnectTimeout(transport.id);
     delete transportsCache[transport.id];
@@ -309,7 +310,7 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
   transportsCache[transport.id] = transport;
   const beforeMTUTime = Date.now();
 
-  const disconnectedSub = device.onDisconnected((e) => {
+  disconnectedSub = device.onDisconnected((e) => {
     if (!transport.notYetDisconnected) return;
     onDisconnect(e);
   });
@@ -351,6 +352,7 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
  */
 const TAG = "ble-verbose";
 export default class BleTransport extends Transport {
+  static disconnectTimeoutMs = 5000;
   /**
    *
    */
@@ -409,7 +411,7 @@ export default class BleTransport extends Transport {
    * @returns TransportSubscription
    */
   static listen(
-    observer: TransportObserver<DescriptorEvent<Device>, HwTransportError>
+    observer: TransportObserver<any, HwTransportError>
   ): TransportSubscription {
     log(TAG, "listening for devices");
 
@@ -666,7 +668,7 @@ export default class BleTransport extends Transport {
       } else {
         resolve();
       }
-    }, 5000);
+    }, BleTransport.disconnectTimeoutMs);
 
     // The closure will occur no later than 5s, triggered either by disconnection
     // or the actual response of the apdu.
