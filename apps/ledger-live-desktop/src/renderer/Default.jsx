@@ -250,9 +250,6 @@ export default function Default() {
                               render={(props: any) => <PlatformApp {...props} />}
                             />
                             <Route path="/lend" render={props => <Lend {...props} />} />
-                            <FeatureToggle feature="ptxEarn">
-                              <Route path="/earn" render={props => <Earn {...props} />} />
-                            </FeatureToggle>
                             <Route path="/exchange" render={(props: any) => <Exchange />} />
                             <Route
                               exact
@@ -281,6 +278,9 @@ export default function Default() {
                             <Route path="/market" render={props => <Market {...props} />} />
                             <FeatureToggle feature="learn">
                               <Route path="/learn" render={props => <Learn {...props} />} />
+                            </FeatureToggle>
+                            <FeatureToggle feature="ptxEarn">
+                              <Route path="/earn" render={props => <Earn {...props} />} />
                             </FeatureToggle>
                           </Switch>
                         </Page>
