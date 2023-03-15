@@ -1,5 +1,5 @@
 import React from "react";
-import { Dimensions, StyleSheet } from "react-native";
+import { Dimensions, PixelRatio, Platform, StyleSheet } from "react-native";
 import { CircledCheckSolidMedium } from "@ledgerhq/icons-ui/native";
 import styled, { useTheme } from "styled-components/native";
 import Svg, { Line } from "react-native-svg";
@@ -10,7 +10,7 @@ import { Theme } from "src/styles/theme";
 
 type SegmentProps = { status: ItemStatus; hidden?: boolean; height?: number };
 
-const dashLength = 3.7;
+const dashLength = 4;
 const linesWidth = 2;
 
 /**
@@ -49,6 +49,7 @@ const TopSegmentSvg: React.FC<SegmentProps> = ({ status, hidden, height }) => {
     </Flex>
   );
 };
+const topSegmentDefaultHeight = Platform.OS === "ios" ? 21 : 23;
 
 const BottomSegmentSvg: React.FC<SegmentProps> = ({ status, hidden }) => {
   const theme = useTheme();
@@ -127,7 +128,11 @@ export default function TimelineIndicator({
 
   return (
     <Flex flexDirection="column" alignItems="center" {...props}>
-      <TopSegmentSvg status={status} hidden={isFirstItem} height={topHeight || 22} />
+      <TopSegmentSvg
+        status={status}
+        hidden={isFirstItem}
+        height={PixelRatio.roundToNearestPixel(topHeight || topSegmentDefaultHeight)}
+      />
       <CenterCircle status={status} isLastItem={isLastItem}>
         {status === "completed" && (
           <CircledCheckSolidMedium
@@ -140,3 +145,5 @@ export default function TimelineIndicator({
     </Flex>
   );
 }
+
+TimelineIndicator.topSegmentDefaultHeight = topSegmentDefaultHeight;

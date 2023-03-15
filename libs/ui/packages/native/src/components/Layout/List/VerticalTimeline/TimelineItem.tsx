@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Pressable } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { Theme } from "src/styles/theme";
-import styled from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 
 import { Item, ItemStatus } from "../types";
 import Flex from "../../Flex";
@@ -17,12 +17,11 @@ export type Props = {
   isLastItem?: boolean;
   setActiveIndex?: (_: number) => void;
   index: number;
+  withExtraMarginOnActiveStep?: boolean;
 };
 
-const getContainerBackground = (theme: Theme, status: ItemStatus, isLastItem?: boolean) => {
-  if (isLastItem && status === "completed") {
-    return theme.colors.success.c30;
-  } else if (status === "completed") {
+const getContainerBackground = (theme: Theme, status: ItemStatus) => {
+  if (status === "completed") {
     return "transparent";
   } else if (status === "active") {
     return theme.colors.background.drawer;
@@ -31,12 +30,10 @@ const getContainerBackground = (theme: Theme, status: ItemStatus, isLastItem?: b
 };
 
 const getContainerBorder = (theme: Theme, status: ItemStatus, isLastItem?: boolean) => {
-  if (isLastItem && status === "completed") {
+  if (status === "completed") {
     return "transparent";
   } else if (isLastItem && status === "active") {
     return theme.colors.success.c100;
-  } else if (status === "completed") {
-    return "transparent";
   } else if (status === "active") {
     return theme.colors.neutral.c40;
   }
@@ -46,17 +43,10 @@ const getContainerBorder = (theme: Theme, status: ItemStatus, isLastItem?: boole
 const Container = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>`
   flex: 1;
   border-radius: ${(p) => p.theme.radii[2]}px;
-  background: ${(p) => getContainerBackground(p.theme, p.status, p.isLastItem)};
+  background: ${(p) => getContainerBackground(p.theme, p.status)};
   border: 1px solid ${(p) => getContainerBorder(p.theme, p.status, p.isLastItem)};
   padding: 20px 16px;
 `;
-
-const ShouldContinueOnStax = () => {
-  //TODO: Wait for the final design of this component. The prop is already set up
-  return <></>;
-};
-
-const withExtraMarginOnActive = false;
 
 export default function TimelineItem({
   item,
@@ -65,7 +55,9 @@ export default function TimelineItem({
   isLastItem,
   setActiveIndex,
   index,
+  withExtraMarginOnActiveStep,
 }: Props) {
+  const theme = useTheme();
   /**
    * Having an initial value of null will prevent having "height: 0" before the
    * initial call of onLayout.
@@ -105,20 +97,30 @@ export default function TimelineItem({
           isFirstItem={isFirstItem}
           isLastItem={isLastItem}
           mr={4}
-          topHeight={withExtraMarginOnActive && !isFirstItem && item.status === "active" ? 34 : 22}
+          topHeight={
+            withExtraMarginOnActiveStep && !isFirstItem && item.status === "active"
+              ? TimelineIndicator.topSegmentDefaultHeight + theme.space[4]
+              : undefined
+          }
         />
         <Container
           status={item.status}
           isLastItem={isLastItem}
-          mt={withExtraMarginOnActive && !isFirstItem && item.status === "active" ? 4 : 0}
-          mb={withExtraMarginOnActive && !isLastItem && item.status === "active" ? 4 : 0}
+          mt={withExtraMarginOnActiveStep && !isFirstItem && item.status === "active" ? 4 : 0}
+          mb={withExtraMarginOnActiveStep && !isLastItem && item.status === "active" ? 4 : 0}
         >
           <Flex flexDirection="row" justifyContent="space-between">
             <Text
               variant="body"
               fontWeight="semiBold"
               flexShrink={1}
-              color={item.status === "active" ? "neutral.c100" : "neutral.c70"}
+              color={
+                item.status === "completed" && isLastItem
+                  ? "success.c80"
+                  : item.status === "active"
+                  ? "neutral.c100"
+                  : "neutral.c70"
+              }
             >
               {item.status === "completed" ? item.doneTitle ?? item.title : item.title}
             </Text>
@@ -130,7 +132,6 @@ export default function TimelineItem({
               </Tag>
             )}
           </Flex>
-          {item.shouldContinueOnStax ? <ShouldContinueOnStax /> : null}
           <Animated.ScrollView style={animatedStyle} showsVerticalScrollIndicator={false}>
             <Animated.View onLayout={handleLayout}>
               {item.renderBody && item.status === "active" ? (
