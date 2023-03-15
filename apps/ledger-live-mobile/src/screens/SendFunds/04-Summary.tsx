@@ -4,8 +4,21 @@ import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
+<<<<<<< HEAD
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
+=======
+import {
+  getMainAccount,
+  getAccountCurrency,
+} from "@ledgerhq/live-common/account/index";
+import type {
+  Account,
+  AccountLike,
+  Operation,
+  TransactionCommonRaw,
+} from "@ledgerhq/types-live";
+>>>>>>> 6727ea9dcc (improved display of current network fee)
 import type { TransactionStatus as BitcoinTransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
 import { isEditableOperation } from "@ledgerhq/live-common/operation";
@@ -13,10 +26,14 @@ import { NotEnoughGas } from "@ledgerhq/errors";
 import { useTheme } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import invariant from "invariant";
-import { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import {
+  TransactionRaw,
+} from "@ledgerhq/live-common/families/ethereum/types";
 import BigNumber from "bignumber.js";
-import { EIP1559ShouldBeUsed } from "@ledgerhq/live-common/families/ethereum/transaction";
+import {
+  EIP1559ShouldBeUsed,
+  fromTransactionRaw,
+} from "@ledgerhq/live-common/families/ethereum/transaction";
 
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName, NavigatorName } from "../../const";
@@ -44,6 +61,10 @@ import type { SendFundsNavigatorStackParamList } from "../../components/RootNavi
 import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
+<<<<<<< HEAD
+=======
+import { EditTransactionParamList } from "../../components/RootNavigator/types/EditTransactionNavigator";
+>>>>>>> 6727ea9dcc (improved display of current network fee)
 
 type Navigation = BaseComposite<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
@@ -57,7 +78,12 @@ const WARN_FROM_UTXO_COUNT = 50;
 
 function SendSummary({ navigation, route }: Props) {
   const { colors } = useTheme();
+<<<<<<< HEAD
   const { nextNavigation, overrideAmountLabel, hideTotal, isEdit, operation } = route.params;
+=======
+  const { nextNavigation, overrideAmountLabel, hideTotal, operation } =
+    route.params;
+>>>>>>> 6727ea9dcc (improved display of current network fee)
 
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
 
@@ -226,11 +252,16 @@ function SendSummary({ navigation, route }: Props) {
           route={route}
         />
 
-        {isEdit && operation && isEditableOperation(account, operation) ? (
+        {operation && isEditableOperation(account, operation) ? (
           <CurrentNetworkFee
             account={account}
+<<<<<<< HEAD
             transaction={route.params.transaction as Transaction}
             currency={currencyOrToken}
+=======
+            parentAccount={parentAccount}
+            operation={operation}
+>>>>>>> 6727ea9dcc (improved display of current network fee)
           />
         ) : null}
 
@@ -312,14 +343,15 @@ function SendSummary({ navigation, route }: Props) {
 
 const CurrentNetworkFee = ({
   account,
-  transaction,
-  currency,
+  parentAccount,
+  operation,
 }: {
   account: AccountLike;
-  transaction: Transaction;
-  currency: CryptoCurrency | TokenCurrency;
+  parentAccount: Account | null | undefined;
+  operation: Operation;
 }) => {
   const { t } = useTranslation();
+<<<<<<< HEAD
   const feePerGas = new BigNumber(
     (account.type === "Account" && EIP1559ShouldBeUsed(account.currency)) ||
     (account.type === "TokenAccount" && EIP1559ShouldBeUsed(account.token.parentCurrency))
@@ -330,16 +362,40 @@ const CurrentNetworkFee = ({
   const feeValue = new BigNumber(transaction!.userGasLimit! || transaction!.estimatedGasLimit!)
     .times(feePerGas)
     .div(new BigNumber(10).pow(currency.units[0].magnitude));
+=======
 
-  return !!feeValue && feeValue.toNumber() > 0 ? (
-    <Alert type="hint">
-      <LText>
-        {t("editTransaction.previousFeesInfo", {
-          amount: feeValue.toNumber(),
-        })}
-      </LText>
-    </Alert>
-  ) : null;
+  if (operation && operation.transactionRaw) {
+    const transactionRaw = fromTransactionRaw(
+      operation.transactionRaw as TransactionRaw,
+    );
+    const mainAccount = getMainAccount(account, parentAccount);
+    const feePerGas = new BigNumber(
+      (account.type === "Account" && EIP1559ShouldBeUsed(account.currency)) ||
+      (account.type === "TokenAccount" &&
+        EIP1559ShouldBeUsed(account.token.parentCurrency))
+        ? transactionRaw.maxFeePerGas!
+        : transactionRaw.gasPrice!,
+    );
+>>>>>>> 6727ea9dcc (improved display of current network fee)
+
+    const feeValue = new BigNumber(
+      transactionRaw!.userGasLimit || transactionRaw!.estimatedGasLimit || 1,
+    )
+      .times(feePerGas)
+      .div(new BigNumber(10).pow(mainAccount.unit.magnitude));
+
+    return feeValue.toNumber() > 0 ? (
+      <Alert type="hint">
+        <LText>
+          {t("editTransaction.previousFeesInfo", {
+            amount: feeValue.toNumber(),
+          })}
+        </LText>
+      </Alert>
+    ) : null;
+  }
+
+  return null;
 };
 
 const styles = StyleSheet.create({

@@ -72,7 +72,6 @@ export type LendingEnableFlowParamsList = {
     operation?: Operation;
     overrideAmountLabel?: string;
     hideTotal?: boolean;
-    isEdit?: boolean;
     appName?: string;
     currentNavigation:
       | ScreenName.LendingWithdrawSummary
@@ -147,7 +146,6 @@ export type LendingEnableFlowParamsList = {
     parentId?: string | null;
     transaction: BitcoinTransaction;
     status?: BitcoinTransactionStatus;
-    isEdit?: boolean;
     currentNavigation:
       | ScreenName.LendingWithdrawSummary
       | ScreenName.LendingSupplySummary

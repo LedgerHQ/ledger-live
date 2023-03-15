@@ -47,7 +47,6 @@ export type SignTransactionNavigatorParamList = {
     operation?: Operation;
     overrideAmountLabel?: string;
     hideTotal?: boolean;
-    isEdit?: boolean;
     appName?: string;
     currentNavigation:
       | ScreenName.SignTransactionSummary
@@ -100,7 +99,6 @@ export type SignTransactionNavigatorParamList = {
     parentId?: string;
     transaction: BitcoinTransaction;
     status?: BitcoinTransactionStatus;
-    isEdit?: boolean;
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SignTransactionSummary
