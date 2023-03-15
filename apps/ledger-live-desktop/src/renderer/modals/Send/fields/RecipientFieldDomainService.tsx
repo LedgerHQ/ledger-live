@@ -1,13 +1,10 @@
-import React, { memo, useCallback, useEffect } from "react";
+import React, { memo, useCallback, useEffect, useMemo } from "react";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { TFunction } from "react-i18next";
 
-import { useDomainService } from "@ledgerhq/domain-service/hooks/index";
-import {
-  DomainServiceResponseLoaded,
-  UseDomainServiceResponse,
-} from "@ledgerhq/domain-service/hooks/types";
+import { useDomain } from "@ledgerhq/domain-service/hooks/index";
+import { isLoaded } from "@ledgerhq/domain-service/hooks/logic";
 
 import RecipientFieldBase from "./RecipientFieldBase";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -33,7 +30,7 @@ type Props = {
   onChange: (recipient: string, maybeExtra?: Record<string, CryptoCurrency>) => Promise<void>;
 };
 
-const RecipientField = ({
+const RecipientFieldDomainService = ({
   t,
   account,
   transaction,
@@ -45,33 +42,55 @@ const RecipientField = ({
   bridge,
   onChange,
 }: Props) => {
-  const domainServiceResponse = useDomainService(value);
-  const hasValidatedName = useCallback(
-    (nsResponse: UseDomainServiceResponse): nsResponse is DomainServiceResponseLoaded =>
-      nsResponse.status === "loaded",
-    [],
+  const onSupportLinkClick = useCallback(() => openURL(urls.ens), []);
+
+  const domainServiceResponse = useDomain(value, "ens");
+  const ensResolution = useMemo(
+    () => (isLoaded(domainServiceResponse) ? domainServiceResponse.resolutions[0] : null),
+    [domainServiceResponse],
+  );
+
+  const lowerCaseValue = useMemo(() => value.toLowerCase(), [value]);
+  const isForwardResolution = useMemo(
+    () => !!lowerCaseValue && lowerCaseValue === ensResolution?.domain,
+    [ensResolution?.domain, lowerCaseValue],
   );
 
   useEffect(() => {
-    const isInitValueDifferent = value !== transaction.domain;
-    const isRecipientUpdated = transaction.recipient === transaction.domain;
-    if (
-      (hasValidatedName(domainServiceResponse) &&
-        domainServiceResponse.type === "forward" &&
-        (isInitValueDifferent || isRecipientUpdated)) ||
-      (hasValidatedName(domainServiceResponse) &&
-        domainServiceResponse.type === "reverse" &&
-        value !== transaction.recipient)
-    ) {
+    const { recipient, recipientDomain } = transaction;
+
+    if (!ensResolution) {
+      // without ENS resolution transaction recipient should always be the user's input
+      const recipientUpdated = recipient === value;
+      // without ENS resolution transaction domain should be undefined
+      const hasDomain = !!recipientDomain;
+      if (!recipientUpdated || hasDomain) {
+        onChangeTransaction(
+          bridge.updateTransaction(transaction, {
+            recipient: value,
+            recipientDomain: undefined,
+          }),
+        );
+      }
+      return;
+    }
+
+    // verify if domain is present in transaction
+    const domainSet = recipientDomain === ensResolution;
+    const recipientSet = isForwardResolution
+      ? // if user's input is a domain, verify that we set the resolution's address as tx recipient
+        recipient === ensResolution?.address
+      : // if user's input is an address, keep the user's input as tx recipient
+        recipient === value;
+    if (!domainSet || !recipientSet) {
       onChangeTransaction(
         bridge.updateTransaction(transaction, {
-          recipient: domainServiceResponse.address,
-          domain: domainServiceResponse.domain,
+          recipient: isForwardResolution ? ensResolution.address : value,
+          recipientDomain: ensResolution,
         }),
       );
     }
-  }, [bridge, transaction, onChangeTransaction, domainServiceResponse, hasValidatedName, value]);
-  const onSupportLinkClick = useCallback(() => openURL(urls.ens), []);
+  }, [bridge, onChangeTransaction, ensResolution, transaction, isForwardResolution, value]);
 
   return (
     <>
@@ -84,9 +103,9 @@ const RecipientField = ({
         value={value}
         onChange={onChange}
       />
-      {hasValidatedName(domainServiceResponse) && (
+      {transaction.recipientDomain && (
         <Alert mt={5}>
-          {domainServiceResponse.type === "forward" ? (
+          {isForwardResolution ? (
             <>
               <Box>
                 <Text ff="Inter" fontSize={3}>
@@ -95,7 +114,7 @@ const RecipientField = ({
               </Box>
               <Box>
                 <Text ff="Inter|SemiBold" fontSize={3}>
-                  {domainServiceResponse.address}
+                  {transaction.recipientDomain.address}
                 </Text>
               </Box>
             </>
@@ -104,7 +123,7 @@ const RecipientField = ({
               <Box>
                 <Text ff="Inter" fontSize={3}>
                   {t("send.steps.recipient.namingService.reverse", {
-                    domain: domainServiceResponse.domain,
+                    domain: transaction.recipientDomain.domain,
                   })}
                 </Text>
               </Box>
@@ -122,4 +141,4 @@ const RecipientField = ({
   );
 };
 
-export default memo(RecipientField);
+export default memo(RecipientFieldDomainService);

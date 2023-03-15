@@ -1,31 +1,41 @@
-import { InvalidAddress } from "@ledgerhq/errors";
+import React from "react";
+import "@testing-library/jest-dom";
+import BigNumber from "bignumber.js";
 import {
   findCryptoCurrencyById,
   setSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import BigNumber from "bignumber.js";
-import React from "react";
+import { Account } from "@ledgerhq/types-live";
+import { InvalidAddress } from "@ledgerhq/errors";
 import { ThemeProvider } from "styled-components";
-import { TransactionMode } from "~/../../../libs/ledger-live-common/lib/families/ethereum/modules";
-import { NamingServiceProvider } from "~/../../../libs/ledger-live-common/lib/naming-service";
-import defaultTheme from "../../../styles/theme";
+import network from "@ledgerhq/live-common/network";
+import userEvent from "@testing-library/user-event";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { act, render, screen, waitFor } from "@testing-library/react";
+import { DomainServiceProvider } from "@ledgerhq/domain-service/lib/hooks/index";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/lib/families/ethereum/types";
+import defaultTheme from "~/renderer/styles/theme";
+import palettes from "~/renderer/styles/palettes";
 import RecipientField from "./RecipientField";
 
 // Alert component have many problems and many import that make the test break so
 // I have to remove it
-jest.mock("../../../components/Alert", () => () => {
+jest.mock("../../../components/Alert", () => {
   const mockDiv = () => {
     return <div />;
   };
   return mockDiv;
 });
+jest.mock("@ledgerhq/live-common/network");
+jest.mock("@ledgerhq/live-common/featureFlags/index");
+const mockedNetwork = jest.mocked(network);
+const mockedUseFeature = jest.mocked(useFeature);
+const mockedOnChangeTransaction = jest.fn().mockImplementation(t => t);
 
 const eth = findCryptoCurrencyById("ethereum");
 
-const mockAccount = {
+const mockAccount: Account = {
   type: "Account" as const,
   id: "js:2:ethereum:0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3:",
   starred: false,
@@ -68,12 +78,12 @@ const mockAccount = {
   subAccounts: [],
 };
 
-const baseMockTransaction = {
+const baseMockTransaction: Transaction = {
   amount: new BigNumber(0),
   recipient: "",
   useAllAmount: false,
-  mode: "send" as TransactionMode,
-  family: "ethereum" as const,
+  mode: "send",
+  family: "ethereum",
   gasPrice: null,
   maxFeePerGas: new BigNumber("28026227316"),
   maxPriorityFeePerGas: new BigNumber("1000000000"),
@@ -81,16 +91,11 @@ const baseMockTransaction = {
   estimatedGasLimit: null,
   feeCustomUnit: null,
   networkInfo: {
-    family: "ethereum" as const,
+    family: "ethereum",
   },
-  feesStrategy: "medium" as const,
 };
 
-const changeTransactionFn = jest.fn();
-jest.mock("@ledgerhq/live-common/featureFlags/index");
-const mockedUseFeature = jest.mocked(useFeature);
-
-const baseMockStatus = {
+const baseMockStatus: TransactionStatus = {
   errors: {},
   warnings: {},
   estimatedFees: new BigNumber("1041182537010000"),
@@ -98,23 +103,23 @@ const baseMockStatus = {
   totalSpent: new BigNumber("0"),
 };
 
-const setup = (mockStatus = {}, mockTransaction = {}) => {
+const setup = (
+  mockStatus: Partial<TransactionStatus> = {},
+  mockTransaction: Partial<Transaction> = {},
+) => {
   return render(
     <ThemeProvider
-      theme={{
-        ...defaultTheme,
-        colors: { palette: { text: { shade100: "" }, background: { default: "", paper: "" } } },
-      }}
+      theme={{ ...defaultTheme, colors: { ...defaultTheme.colors, palette: palettes.dark } } as any}
     >
-      <NamingServiceProvider>
+      <DomainServiceProvider>
         <RecipientField
           account={mockAccount}
           transaction={{ ...baseMockTransaction, ...mockTransaction }}
-          t={str => str}
-          onChangeTransaction={changeTransactionFn}
+          t={any => any.toString()}
+          onChangeTransaction={mockedOnChangeTransaction as any}
           status={{ ...baseMockStatus, ...mockStatus }}
-        ></RecipientField>
-      </NamingServiceProvider>
+        />
+      </DomainServiceProvider>
     </ThemeProvider>,
   );
 };
@@ -124,89 +129,173 @@ describe("RecipientField", () => {
     setSupportedCurrencies(["bitcoin", "ethereum"]);
   });
 
-  it("should render without problem with minimum config", () => {
-    setup();
-    expect(screen.findByTestId("send-recipient-input")).toBeTruthy();
-  });
+  beforeEach(() => {
+    jest.clearAllMocks();
 
-  it("should test change input should trigger change transaction", () => {
-    setup();
-    const input = screen.getByTestId("send-recipient-input");
-    expect(changeTransactionFn).toHaveBeenCalledTimes(0);
-    fireEvent.change(input, { target: { value: "mockrecipient" } });
-    expect(changeTransactionFn).toHaveBeenCalledTimes(1);
-    expect(changeTransactionFn).toHaveBeenCalledWith({
-      ...baseMockTransaction,
-      recipient: "mockrecipient",
+    mockedNetwork.mockImplementation(async ({ url }) => {
+      if (url?.endsWith("vitalik.eth")) {
+        return {
+          data: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+        };
+      } else if (url?.endsWith("0x16bb635bc5c398b63a0fbb38dac84da709eb3e86")) {
+        return {
+          data: "degendon.eth",
+        };
+      }
+      // eslint-disable-next-line prefer-promise-reject-errors
+      return Promise.reject({ response: { status: 404 } }) as any;
     });
   });
 
-  it("should display error if status has error", () => {
-    setup({ errors: { recipient: new InvalidAddress() } });
-    expect(screen.findByTestId("input-error")).toBeTruthy();
+  describe("Rendering", () => {
+    it("should render without problem with minimum config", async () => {
+      setup();
+      expect(screen.queryByRole("textbox")).toBeTruthy();
+    });
+
+    it("should test change input should trigger change transaction", async () => {
+      setup();
+      const input = screen.getByRole("textbox");
+      expect(mockedOnChangeTransaction).toHaveBeenCalledTimes(0);
+      await userEvent.type(input, "mockrecipient");
+      expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
+        ...baseMockTransaction,
+        recipient: "mockrecipient",
+      });
+    });
+
+    it("should display error if status has error", async () => {
+      setup({ errors: { recipient: new InvalidAddress() } });
+      expect(await screen.findByTestId("input-error")).toBeTruthy();
+    });
   });
 
-  it("FF off: should not change domain", async () => {
-    jest.clearAllMocks();
-    setup();
-    mockedUseFeature.mockReturnValueOnce({ enabled: false });
-    const input = screen.getByTestId("send-recipient-input");
-    fireEvent.change(input, { target: { value: "vitalik.eth" } });
+  describe("Feature Flag", () => {
+    describe("Flag on", () => {
+      beforeEach(() => {
+        mockedUseFeature.mockReturnValue({ enabled: true });
+      });
 
-    await waitFor(() =>
-      expect(changeTransactionFn).toHaveBeenCalledWith({
-        ...baseMockTransaction,
-        recipient: "vitalik.eth",
-        domain: undefined,
-      }),
-    );
-  });
+      it("should change domain in transaction", async () => {
+        setup();
+        const input = screen.getByRole("textbox");
 
-  it("FF is on : should change domain in transaction", async () => {
-    jest.clearAllMocks();
-    setup({}, {});
-    mockedUseFeature.mockReturnValueOnce({ enabled: true });
-    const input = screen.getByTestId("send-recipient-input");
-    fireEvent.change(input, { target: { value: "vitalik.eth" } });
+        await act(() => userEvent.type(input, "vitalik.eth"));
+        await waitFor(() =>
+          expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
+            ...baseMockTransaction,
+            recipient: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+            recipientDomain: {
+              registry: "ens",
+              domain: "vitalik.eth",
+              address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+            },
+          }),
+        );
+      });
 
-    await waitFor(() =>
-      expect(changeTransactionFn).toHaveBeenCalledWith({
-        ...baseMockTransaction,
-        recipient: "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
-        domain: "vitalik.eth",
-      }),
-    );
-  });
+      it("should reverse addr to domain name in transaction", async () => {
+        setup();
+        const input = screen.getByRole("textbox");
+        await act(() => userEvent.type(input, "0x16bb635bc5c398b63a0fbb38dac84da709eb3e86"));
+        await waitFor(() =>
+          expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
+            ...baseMockTransaction,
+            recipient: "0x16bb635bc5c398b63a0fbb38dac84da709eb3e86",
+            recipientDomain: {
+              registry: "ens",
+              domain: "degendon.eth",
+              address: "0x16Bb635bc5c398b63A0fBb38DAC84da709EB3e86",
+            },
+          }),
+        );
+      });
 
-  it("FF is on : should reverse addr to domain name in transaction", async () => {
-    jest.clearAllMocks();
-    setup({}, {});
-    mockedUseFeature.mockReturnValueOnce({ enabled: true });
-    const input = screen.getByTestId("send-recipient-input");
-    fireEvent.change(input, { target: { value: "0x16bb635bc5c398b63a0fbb38dac84da709eb3e86" } });
+      it("should not change domain because invalid recipient name", async () => {
+        setup();
+        const input = screen.getByRole("textbox");
 
-    await waitFor(() =>
-      expect(changeTransactionFn).toHaveBeenCalledWith({
-        ...baseMockTransaction,
-        recipient: "0x16bb635bc5c398b63a0fbb38dac84da709eb3e86",
-        domain: "degendon.eth",
-      }),
-    );
-  });
+        await act(() => userEvent.type(input, "vitalik.notanamingservice"));
+        await waitFor(() =>
+          expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
+            ...baseMockTransaction,
+            recipient: "vitalik.notanamingservice",
+            recipientDomain: undefined,
+          }),
+        );
+      });
 
-  it("FF is on : should not change domain because invalid recipient name", async () => {
-    jest.clearAllMocks();
-    setup({}, {});
-    mockedUseFeature.mockReturnValueOnce({ enabled: true });
-    const input = screen.getByTestId("send-recipient-input");
-    fireEvent.change(input, { target: { value: "vitalik.notanamingservice" } });
+      it("should remove domain on input change", async () => {
+        setup(
+          {},
+          {
+            recipient: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+            recipientDomain: {
+              registry: "ens",
+              domain: "vitalik.eth",
+              address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+            },
+          },
+        );
+        const input = screen.getByRole("textbox");
 
-    await waitFor(() =>
-      expect(changeTransactionFn).toHaveBeenCalledWith({
-        ...baseMockTransaction,
-        recipient: "vitalik.notanamingservice",
-        domain: undefined,
-      }),
-    );
+        await act(() => userEvent.type(input, "{Backspace}"));
+        await waitFor(() =>
+          expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
+            ...baseMockTransaction,
+            recipient: "vitalik.et",
+            recipientDomain: undefined,
+          }),
+        );
+      });
+
+      it("should add then remove domain on input change", async () => {
+        const user = userEvent.setup();
+        setup();
+
+        const input = screen.getByRole("textbox");
+
+        await act(() => user.type(input, "vitalik.eth"));
+        await waitFor(() =>
+          expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
+            ...baseMockTransaction,
+            recipient: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+            recipientDomain: {
+              registry: "ens",
+              domain: "vitalik.eth",
+              address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+            },
+          }),
+        );
+
+        await act(() => user.type(input, "{Backspace}"));
+        await waitFor(() =>
+          expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
+            ...baseMockTransaction,
+            recipient: "vitalik.et",
+            recipientDomain: undefined,
+          }),
+        );
+      });
+    });
+
+    describe("Flag off", () => {
+      beforeEach(() => {
+        mockedUseFeature.mockReturnValue({ enabled: false });
+      });
+
+      it("should not change domain", async () => {
+        setup();
+        const input = screen.getByRole("textbox");
+        await act(() => userEvent.type(input, "vitalik.eth"));
+        await waitFor(() =>
+          expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
+            ...baseMockTransaction,
+            recipient: "vitalik.eth",
+            recipientDomain: undefined,
+          }),
+        );
+      });
+    });
   });
 });

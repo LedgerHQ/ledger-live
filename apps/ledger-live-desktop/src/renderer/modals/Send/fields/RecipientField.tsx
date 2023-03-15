@@ -53,11 +53,10 @@ const RecipientField = ({
       onChangeTransaction(
         bridge.updateTransaction(transaction, {
           recipient: invalidRecipient ? "" : recipient,
-          domain: undefined,
         }),
       );
     },
-    [bridge, account, transaction, onChangeTransaction],
+    [account.currency.scheme, bridge, onChangeTransaction, transaction],
   );
 
   if (!status) return null;
