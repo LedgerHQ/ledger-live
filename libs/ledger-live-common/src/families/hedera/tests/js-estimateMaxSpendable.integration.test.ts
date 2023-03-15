@@ -53,7 +53,7 @@ const account: Account = {
 };
 
 describe("js-estimateMaxSpendable", () => {
-  let estimatedFees = new BigNumber("150200").multipliedBy(2);
+  let estimatedFees = new BigNumber("150200").multipliedBy(2); // 0.001502 ℏ (as of 2023-03-14)
 
   it("should return hedera price if available", async () => {
     // If get hedera price works, use real estimate, otherwise fallback to hard coded
