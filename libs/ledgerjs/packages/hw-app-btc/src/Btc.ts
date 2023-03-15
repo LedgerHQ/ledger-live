@@ -269,12 +269,35 @@ export default class Btc {
   }
 
   async changeImplIfNecessary(): Promise<BtcOld | BtcNew> {
+    // if BtcOld was instantiated, stick with it
+    if (this._impl instanceof BtcOld) return this._impl;
+
     const appAndVersion = await getAppAndVersion(this._transport);
-    if (appAndVersion.name === "Exchange" && this._impl instanceof BtcNew) {
-      const isBtcLegacy = await checkIsBtcLegacy(this._transport);
-      if (isBtcLegacy) {
-        this._impl = new BtcOld(this._transport);
-      }
+    let isBtcLegacy = true; // default for all altcoins
+
+    if (
+      appAndVersion.name === "Bitcoin" ||
+      appAndVersion.name === "Bitcoin Test"
+    ) {
+      const [major, minor] = appAndVersion.version.split(".");
+      // we use the legacy protocol for versions below 2.1.0 of the Bitcoin app.
+      isBtcLegacy =
+        parseInt(major) <= 1 || (parseInt(major) == 2 && parseInt(minor) == 0);
+    } else if (
+      appAndVersion.name === "Bitcoin Legacy" ||
+      appAndVersion.name === "Bitcoin Test Legacy"
+    ) {
+      // the "Bitcoin Legacy" and "Bitcoin Testnet Legacy" app use the legacy protocol, regardless of the version
+      isBtcLegacy = true;
+    } else if (appAndVersion.name === "Exchange") {
+      // We can't query the version of the Bitcoin app if we're coming from Exchange;
+      // therefore, we use a workaround to distinguish legacy and new versions.
+      // This can be removed once Ledger Live enforces minimum bitcoin version >= 2.1.0.
+      isBtcLegacy = await checkIsBtcLegacy(this._transport);
+    }
+
+    if (isBtcLegacy) {
+      this._impl = new BtcOld(this._transport);
     }
     return this._impl;
   }
