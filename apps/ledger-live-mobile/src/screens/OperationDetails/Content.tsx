@@ -351,7 +351,7 @@ export default function Content({
         >
           {isOperationStuck ? (
             <Box>
-              <LText marginLeft={2} color="neutral.c20">
+              <LText color="neutral.c20">
                 {t("editTransaction.panel.description")}
               </LText>
               <LText marginTop={4}>
@@ -361,7 +361,7 @@ export default function Content({
                     style={{ textDecorationLine: "underline" }}
                     marginTop={4}
                   >
-                    {t("editTransaction.speedupOrCancel")}
+                    {t("editTransaction.cta")}
                   </LText>
                 </Link>
               </LText>
@@ -369,8 +369,8 @@ export default function Content({
           ) : (
             <>
               <Box>
-                <LText marginLeft={2} color="neutral.c20">
-                  {t("editTransaction.panel.speedUpTxMessage")}
+                <LText color="neutral.c20">
+                  {t("editTransaction.panel.speedupTxMessage")}
                 </LText>
                 <LText marginTop={4}>
                   <Link onPress={onEditTxPress}>
@@ -379,7 +379,7 @@ export default function Content({
                       style={{ textDecorationLine: "underline" }}
                       marginTop={4}
                     >
-                      {t("editTransaction.speedupOrCancel")}
+                      {t("editTransaction.cta")}
                     </LText>
                   </Link>
                 </LText>
