@@ -137,7 +137,7 @@ export default function TimelineIndicator({
         {status === "completed" && (
           <CircledCheckSolidMedium
             color={isLastItem ? colors.success.c100 : colors.primary.c80}
-            size={16}
+            size={20}
           />
         )}
       </CenterCircle>
