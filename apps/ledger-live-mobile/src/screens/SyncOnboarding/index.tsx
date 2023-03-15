@@ -314,6 +314,7 @@ export const SyncOnboarding = ({
       return;
     }
 
+    // case DeviceOnboardingStep.SafetyWarning not handled so the previous step (new seed, restore, recover) is kept
     switch (deviceOnboardingState?.currentOnboardingStep) {
       case DeviceOnboardingStep.WelcomeScreen1:
       case DeviceOnboardingStep.WelcomeScreen2:
@@ -327,7 +328,6 @@ export const SyncOnboarding = ({
         setCompanionStepKey(CompanionStepKey.Pin);
         break;
       case DeviceOnboardingStep.SetupChoice:
-      case DeviceOnboardingStep.SafetyWarning:
         setCompanionStepKey(CompanionStepKey.Seed);
         setSeedPathStatus("choice_new_or_restore");
         break;
