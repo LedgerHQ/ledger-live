@@ -3483,9 +3483,8 @@
     "previousFeesInfo": "Current network fee = {{amount}} ETH",
     "header": "Edit Transaction",
     "panel": {
-      "title": "Speed up or Cancel",
-      "description": "Your most recent 'send' transactions is stuck. Speed up the transaction with a higher network fee, or cancel it.",
-      "speedupTxMessage": "Your transaction is ongoing. You can speed it up with a higher network fee or cancel it."
+      "stuckMessage": "Your most recent 'send' transactions is stuck. Speed up the transaction with a higher network fee, or cancel it.",
+      "speedupMessage": "Your transaction is ongoing. You can speed it up with a higher network fee or cancel it."
     },
     "speedUp": {
       "title": "Speed Up",

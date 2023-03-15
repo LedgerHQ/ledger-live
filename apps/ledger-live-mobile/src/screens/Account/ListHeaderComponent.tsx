@@ -22,6 +22,7 @@ import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { isEditableOperation } from "@ledgerhq/live-common/operation";
+import { getEnv } from "@ledgerhq/live-common/env";
 
 import Header from "./Header";
 import AccountGraphCard from "../../components/AccountGraphCard";
@@ -130,11 +131,18 @@ export function getListHeaderComponents({
 
   const stickyHeaderIndices = empty ? [] : [0];
 
-  const [editableOperation] = account.pendingOperations
+  const [oldestEditableOperation] = account.pendingOperations
     .filter(pendingOperation => {
       return isEditableOperation(account, pendingOperation);
     })
-    .sort((a, b) => b.date.getTime() - a.date.getTime());
+    .sort(
+      (a, b) => a.transactionSequenceNumber! - b.transactionSequenceNumber!,
+    );
+
+  const isOperationStuck =
+    oldestEditableOperation &&
+    oldestEditableOperation.date.getTime() <=
+      new Date().getTime() - getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
 
   return {
     listHeaderComponents: [
@@ -159,12 +167,16 @@ export function getListHeaderComponents({
           <AccountSubHeader />
         </Box>
       ),
-      editableOperation ? (
+      oldestEditableOperation ? (
         <SectionContainer px={6}>
           <SideImageCard
-            title={t("editTransaction.panel.description")}
+            title={t(
+              isOperationStuck
+                ? "editTransaction.panel.stuckMessage"
+                : "editTransaction.panel.speedupMessage",
+            )}
             cta={t("editTransaction.cta")}
-            onPress={() => onEditTransactionPress(editableOperation)}
+            onPress={() => onEditTransactionPress(oldestEditableOperation)}
           />
         </SectionContainer>
       ) : null,
