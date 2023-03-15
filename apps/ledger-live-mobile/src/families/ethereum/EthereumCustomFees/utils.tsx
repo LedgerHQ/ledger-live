@@ -8,7 +8,13 @@ const TWENTY_GWEI = new BigNumber(10e9);
 const defaultMaxPriorityFeeRange = inferDynamicRange(TWENTY_GWEI); // 0 - 20 Gwei
 const defaultMaxFeePerGasRange = inferDynamicRange(TWENTY_GWEI); // 0 - 20 Gwei
 
+<<<<<<< HEAD
 export const inferMaxPriorityFeeRange = (networkInfo: Transaction["networkInfo"]): Range => {
+=======
+export const inferMaxPriorityFeeRange = (
+  networkInfo: Transaction["networkInfo"],
+): Range => {
+>>>>>>> 6727ea9dcc (improved display of current network fee)
   if (!networkInfo?.maxPriorityFeePerGas || !networkInfo?.nextBaseFeePerGas)
     return defaultMaxPriorityFeeRange;
 
