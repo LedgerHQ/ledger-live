@@ -30,7 +30,6 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import EditOperationPanel from "./EditOperationPanel";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { isEditableOperation } from "@ledgerhq/live-common/operation";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const ShowMore = styled(Box).attrs(() => ({
   horizontal: true,
@@ -122,8 +121,7 @@ export class OperationsList extends PureComponent<Props, State> {
     // Scan all the transaction of the account to get the stuck transaction with lowest nonce if any
     const mainAccount = account ? getMainAccount(account, parentAccount) : null;
     let stuckOperation = null;
-    const editEthTx = useFeature("editEthTx");
-    if (editEthTx?.enabled && account && mainAccount.currency.family === "ethereum") {
+    if (account && mainAccount.currency.family === "ethereum") {
       account.pendingOperations.forEach(operation => {
         if (isEditableOperation(mainAccount, operation)) {
           if (

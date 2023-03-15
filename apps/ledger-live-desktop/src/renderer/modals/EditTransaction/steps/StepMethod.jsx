@@ -12,6 +12,7 @@ import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { Flex } from "@ledgerhq/react-ui";
 import { openURL } from "~/renderer/linking";
+import { urls } from "~/config/urls";
 
 const EditTypeWrapper = styled(Box)`
   border: ${p =>
@@ -124,7 +125,7 @@ const StepMethod = ({
         ff="Inter|Medium"
         fontSize={12}
         style={{ textDecoration: "underline", textAlign: "center", cursor: "pointer" }}
-        onClick={() => openURL("https://support.ledger.com/hc/articles/9756122596765?support=true")}
+        onClick={() => openURL(urls.editEthTx.learnMore)}
       >
         {t("operation.edit.learnMore")}
       </Text>

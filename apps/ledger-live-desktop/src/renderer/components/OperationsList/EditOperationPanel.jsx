@@ -7,6 +7,7 @@ import Alert from "~/renderer/components/Alert";
 import Link from "~/renderer/components/Link";
 import { openModal } from "~/renderer/actions/modals";
 import { useDispatch } from "react-redux";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
   operation: Operation,
@@ -17,6 +18,10 @@ type Props = {
 const EditOperationPanel: React$ComponentType<Props> = (props: Props) => {
   const { operation, account, parentAccount } = props;
   const dispatch = useDispatch();
+  const editEthTx = useFeature("editEthTx");
+  if (!editEthTx?.enabled) {
+    return null;
+  }
   const handleOpenEditModal = useCallback(
     (account, parentAccount, transactionRaw, transactionSequenceNumber, isNftOperation) => {
       dispatch(
