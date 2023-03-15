@@ -4,8 +4,10 @@ import { Trans, useTranslation } from "react-i18next";
 import BigNumber from "bignumber.js";
 import { Flex, SelectableList } from "@ledgerhq/native-ui";
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
-import { TransactionRaw } from "@ledgerhq/live-common/generated/types";
-import { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
+import {
+  Transaction,
+  TransactionRaw,
+} from "@ledgerhq/live-common/families/ethereum/types";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Account } from "@ledgerhq/types-live";
 import { EIP1559ShouldBeUsed } from "@ledgerhq/live-common/families/ethereum/transaction";
@@ -156,9 +158,11 @@ export function MethodSelection({ navigation, route }: Props) {
         accountId: account.id,
         parentId: parentAccount?.id,
         transaction,
+        transactionRaw: operation.transactionRaw! as TransactionRaw,
         operation,
         currentNavigation: ScreenName.EditTransactionMethodSelection,
         nextNavigation: ScreenName.SendSelectDevice,
+        setTransaction,
       });
     }
   }, [transaction, onSelect]);
