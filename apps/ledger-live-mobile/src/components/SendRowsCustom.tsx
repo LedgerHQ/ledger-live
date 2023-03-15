@@ -13,7 +13,7 @@ type Navigation = BaseComposite<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
   | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
-  | StackNavigatorProps<EditTransactionParamList, ScreenName.SpeedUpTransaction>
+  | StackNavigatorProps<EditTransactionParamList, ScreenName.SendSummary>
 >;
 
 export default ({

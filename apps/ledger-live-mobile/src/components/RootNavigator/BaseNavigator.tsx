@@ -590,7 +590,7 @@ export default function BaseNavigator() {
           }}
         />
         <Stack.Screen
-          name={NavigatorName.EthereumEditTransaction}
+          name={NavigatorName.EditTransaction}
           options={{ headerShown: false }}
           component={EditTransactionNavigator}
         />
