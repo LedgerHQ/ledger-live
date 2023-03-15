@@ -4,17 +4,18 @@ const { mergeConfig } = require("metro-config");
 
 const options = {
   projectRoot: __dirname,
-  // forcedDependencies: [
-  // "react-native",
-  // "react-native-reanimated",
-  // "expo",
-  // "expo-asset",
-  // "expo-file-system",
-  // "expo-font",
-  // "expo-modules-core",
-  // "expo-constants",
-  // "@babel/runtime",
-  // ],
+  forcedDependencies: [
+    "react-native-svg",
+    "react-native",
+    "react-native-reanimated",
+    "expo",
+    "expo-asset",
+    "expo-file-system",
+    "expo-font",
+    "expo-modules-core",
+    "expo-constants",
+    "@babel/runtime",
+  ],
 };
 
 const config = extraConfig(options, {
