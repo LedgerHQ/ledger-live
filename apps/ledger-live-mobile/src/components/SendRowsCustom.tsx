@@ -10,7 +10,7 @@ import type { SendFundsNavigatorStackParamList } from "./RootNavigator/types/Sen
 import type { SignTransactionNavigatorParamList } from "./RootNavigator/types/SignTransactionNavigator";
 import type { SwapNavigatorParamList } from "./RootNavigator/types/SwapNavigator";
 import { ScreenName } from "../const";
-import { EditTransactionParamList } from "./RootNavigator/types/EthereumEditTransactionNavigator";
+import { EditTransactionParamList } from "./RootNavigator/types/EditTransactionNavigator";
 
 type Navigation = BaseComposite<
   | StackNavigatorProps<
