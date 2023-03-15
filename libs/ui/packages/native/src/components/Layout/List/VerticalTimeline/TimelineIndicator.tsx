@@ -29,7 +29,12 @@ const TopSegmentSvg: React.FC<SegmentProps> = ({ status, hidden, height }) => {
   return (
     <Flex height={height} width={"100%"} overflow="hidden">
       <Flex style={StyleSheet.absoluteFillObject} alignItems="center">
-        <Svg height={linesLength} width={linesWidth} viewBox={`0 0 ${linesWidth} ${linesLength}`}>
+        <Svg
+          height={linesLength}
+          width={linesWidth}
+          viewBox={`0 0 ${linesWidth} ${linesLength}`}
+          preserveAspectRatio="xMinYMin slice"
+        >
           <Line
             x1="0"
             y1="0"
