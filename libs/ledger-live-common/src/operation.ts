@@ -68,10 +68,10 @@ export function patchOperationWithHash(operation: Operation, hash: string): Oper
   };
 }
 
-export const isEditableOperation = (
+export function isEditableOperation(
   account: AccountLike,
   operation: Operation
-): boolean => {
+): boolean {
   let isEthFamily = false;
   if (account.type === "Account") {
     isEthFamily = account.currency.family === "ethereum";
@@ -80,8 +80,6 @@ export const isEditableOperation = (
   }
 
   return (
-    isEthFamily &&
-    operation.blockHeight === null &&
-    (operation.type === "OUT" || operation.type === "NFT_OUT")
+    isEthFamily && operation.blockHeight === null && !!operation.transactionRaw
   );
-};
+}

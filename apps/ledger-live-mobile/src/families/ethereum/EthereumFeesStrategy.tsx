@@ -16,7 +16,7 @@ import SelectFeesStrategy from "../../components/SelectFeesStrategy";
 import { SendRowsFeeProps as Props } from "./types";
 import { ScreenName } from "../../const";
 
-export const getCustomStrategy = (
+const getCustomStrategy = (
   transaction: EthereumTransaction,
   currency: CryptoCurrency,
 ): (FeeStrategy & { userGasLimit?: BigNumber }) | null => {
@@ -44,7 +44,7 @@ export default function EthereumFeesStrategy({
   ...props
 }: Props<EthereumTransaction>) {
   const { currency } = getMainAccount(account, parentAccount);
-
+  const { operation } = route.params;
   const defaultStrategies = useFeesStrategy(transaction);
 
   const [customStrategy, setCustomStrategy] = useState(getCustomStrategy(transaction, currency));
@@ -55,7 +55,7 @@ export default function EthereumFeesStrategy({
   );
 
   const disabledStrategies = useMemo(() => {
-    return isEditableOperation(account, route.params.operation)
+    return operation && isEditableOperation(account, operation)
       ? strategies
           .filter(strategy => {
             if (EIP1559ShouldBeUsed(currency)) {
