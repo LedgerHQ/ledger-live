@@ -20,7 +20,7 @@ const Earn = () => {
     // TODO: Remove @ts-ignore after Card component be compatible with TS
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    <Card grow style={{ overflow: "hidden" }}>
+    <Card grow style={{ overflow: "hidden" }} data-test-id="earn-app-container">
       {manifest ? (
         <WebPlatformPlayer
           config={{
