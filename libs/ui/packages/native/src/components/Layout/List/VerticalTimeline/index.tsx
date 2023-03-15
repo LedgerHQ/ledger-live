@@ -2,6 +2,7 @@ import React from "react";
 
 import TimelineItem from "./TimelineItem";
 import Flex from "../../Flex";
+import Text, { BaseTextProps } from "../../../Text";
 import { BaseStyledProps } from "src/components/styled";
 import { Item, ItemStatus } from "../types";
 
@@ -34,4 +35,14 @@ export default function VerticalTimeline({
   );
 }
 
+const SubtitleText: React.FC<BaseTextProps> = (props) => (
+  <Text variant="body" fontWeight="semiBold" color="primary.c80" mb={3} {...props} />
+);
+
+const BodyText: React.FC<BaseTextProps> = (props) => (
+  <Text variant="bodyLineHeight" fontWeight="medium" color="neutral.c80" {...props} />
+);
+
+VerticalTimeline.BodyText = BodyText;
+VerticalTimeline.SubtitleText = SubtitleText;
 VerticalTimeline.ItemStatus = ItemStatus;
