@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.55.0-nightly.10
+
+### Patch Changes
+
+- [#2635](https://github.com/LedgerHQ/ledger-live/pull/2635) [`28fd570396`](https://github.com/LedgerHQ/ledger-live/commit/28fd57039606e9c02a9e93c8bf310e1645ffb0f7) Thanks [@gre](https://github.com/gre)! - Sunset 'Device Bridge' in LLD
+
+- Updated dependencies [[`496df9da72`](https://github.com/LedgerHQ/ledger-live/commit/496df9da7216d792d74c7cc22be68fb30415325c), [`76a2f02f03`](https://github.com/LedgerHQ/ledger-live/commit/76a2f02f03863ab01fcdf136bd436c62fb8f526e), [`b2a94b9081`](https://github.com/LedgerHQ/ledger-live/commit/b2a94b908103cbee9473319cc3706876d7ce2a19)]:
+  - @ledgerhq/live-common@29.1.0-nightly.7
+
 ## 2.55.0-nightly.9
 
 ### Patch Changes

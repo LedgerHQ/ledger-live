@@ -1,5 +1,11 @@
 # @ledgerhq/coin-framework
 
+## 0.1.1-nightly.1
+
+### Patch Changes
+
+- [#2327](https://github.com/LedgerHQ/ledger-live/pull/2327) [`76a2f02f03`](https://github.com/LedgerHQ/ledger-live/commit/76a2f02f03863ab01fcdf136bd436c62fb8f526e) Thanks [@RamyEB](https://github.com/RamyEB)! - Add Discover v2 UI behind feature flag
+
 ## 0.1.1-nightly.0
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # @ledgerhq/coin-polkadot
 
+## 0.1.0-nightly.1
+
+### Minor Changes
+
+- [#2844](https://github.com/LedgerHQ/ledger-live/pull/2844) [`b2a94b9081`](https://github.com/LedgerHQ/ledger-live/commit/b2a94b908103cbee9473319cc3706876d7ce2a19) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - polkadot serialization coin mod part 2
+
+### Patch Changes
+
+- Updated dependencies [[`76a2f02f03`](https://github.com/LedgerHQ/ledger-live/commit/76a2f02f03863ab01fcdf136bd436c62fb8f526e)]:
+  - @ledgerhq/coin-framework@0.1.1-nightly.1
+
 ## 0.0.3-nightly.0
 
 ### Patch Changes
