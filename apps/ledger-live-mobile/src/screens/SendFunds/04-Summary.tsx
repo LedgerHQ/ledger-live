@@ -8,12 +8,7 @@ import {
   getMainAccount,
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
-import type {
-  Account,
-  AccountLike,
-  Operation,
-  TransactionCommonRaw,
-} from "@ledgerhq/types-live";
+import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import type { TransactionStatus as BitcoinTransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
 import { isEditableOperation } from "@ledgerhq/live-common/operation";
@@ -21,10 +16,11 @@ import { NotEnoughGas } from "@ledgerhq/errors";
 import { useTheme } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import invariant from "invariant";
+import BigNumber from "bignumber.js";
+
 import {
   TransactionRaw,
 } from "@ledgerhq/live-common/families/ethereum/types";
-import BigNumber from "bignumber.js";
 import {
   EIP1559ShouldBeUsed,
   fromTransactionRaw,
