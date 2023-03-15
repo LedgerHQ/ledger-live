@@ -4,7 +4,6 @@ import type { formatCurrencyUnitOptions } from "@ledgerhq/live-common/currencies
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
-
 import { useLocale } from "../context/Locale";
 import DiscreetModeContext from "../context/DiscreetModeContext";
 import { discreetModeSelector } from "../reducers/settings";

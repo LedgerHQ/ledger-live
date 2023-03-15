@@ -45,6 +45,11 @@ export function MethodSelection({ navigation, route }: Props) {
       };
     });
 
+  invariant(
+    transaction,
+    "[useBridgeTransaction - MethodSelection] could not found transaction from bridge.",
+  );
+
   const mainAccount = getMainAccount(account, parentAccount as Account);
   const feePerGas = new BigNumber(
     EIP1559ShouldBeUsed(mainAccount.currency)
@@ -82,11 +87,8 @@ export function MethodSelection({ navigation, route }: Props) {
 
   const currency = getAccountCurrency(account);
 
-  invariant(transaction, "Could not edit the latest ethereum transaction");
-
   const bridge = getAccountBridge(account, parentAccount as Account);
 
-  const { t } = useTranslation();
   const onSelect = (option: "cancel" | "speedup") => {
     switch (option) {
       case "cancel":
@@ -166,6 +168,8 @@ export function MethodSelection({ navigation, route }: Props) {
       });
     }
   }, [transaction, onSelect]);
+
+  const { t } = useTranslation();
 
   if (!transaction) {
     return null;
