@@ -28,8 +28,8 @@ export type TranslatableString = {
 
 export type AppPlatform =
   | "desktop" // == windows || mac || linux
-  | "ios" // == android || ios
-  | "android";
+  | "mobile" // == android || ios
+  | "all";
 
 export type AppBranch = "stable" | "experimental" | "soon" | "debug";
 
@@ -41,14 +41,13 @@ export type AppPermission = {
 // TODO update to the new manifest types from wallet-api when released
 export type AppManifest = {
   id: string;
-  author?: string;
   private?: boolean;
   name: string;
   url: string | URL;
   homepageUrl: string;
   supportUrl?: string;
   icon?: string | null;
-  platforms: AppPlatform;
+  platform: AppPlatform;
   apiVersion: string;
   manifestVersion: string;
   branch: AppBranch;

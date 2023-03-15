@@ -6,7 +6,7 @@ import {
   WalletAPIContext,
 } from "./logic";
 
-import { AppManifest } from "./types";
+import { LiveAppManifest } from "../../platform/types";
 import {
   createFixtureAccount,
   createFixtureCryptoCurrency,
@@ -557,7 +557,7 @@ describe("bitcoinFamillyAccountGetXPubLogic", () => {
   });
 });
 
-function createAppManifest(id = "1"): AppManifest {
+function createAppManifest(id = "1"): LiveAppManifest {
   return {
     id,
     private: false,
