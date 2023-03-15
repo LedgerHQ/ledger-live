@@ -163,10 +163,7 @@ export default function Content({
     operation.date.getTime() <=
     new Date().getTime() - getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
 
-  const isEditable =
-    isEditableOperation(mainAccount, operation) &&
-    !isConfirmed &&
-    operation.type === "OUT";
+  const isEditable = isEditableOperation(mainAccount, operation);
 
   const specific =
     byFamiliesOperationDetails[
