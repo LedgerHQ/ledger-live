@@ -1,7 +1,15 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { storiesOf } from "../../storiesOf";
-import { Flex, VerticalTimeline, Text, Button, Switch, Divider } from "../../../../src";
+import {
+  Flex,
+  VerticalTimeline,
+  Text,
+  Button,
+  Switch,
+  Divider,
+  ContinueOnDevice,
+} from "../../../../src";
 
 const { ItemStatus } = VerticalTimeline;
 
@@ -16,9 +24,17 @@ const defaultItems = [
     estimatedTime: 120,
     shouldContinueOnStax: true,
     renderBody: () => (
-      <Text>
-        {`Your PIN can be 4 to 8 digits long. Anyone with access to your Nano and to your PIN can also access all your crypto and NFT assets.`}
-      </Text>
+      <Flex>
+        <Text mb={6}>
+          {`Your PIN can be 4 to 8 digits long. Anyone with access to your Nano and to your PIN can also access all your crypto and NFT assets.`}
+        </Text>
+        <ContinueOnDevice
+          Icon={({ size }) => (
+            <Flex height={size} width={size} borderRadius={size} bg="neutral.c40" />
+          )}
+          text="Set PIN on your Ledger Stax"
+        />
+      </Flex>
     ),
   },
   {
@@ -35,13 +51,16 @@ const defaultItems = [
     status: ItemStatus.inactive,
     title: "Software check",
     renderBody: () => (
-      <Text>{`We'll verify whether your Nano is genuine. This should be quick and easy!`}</Text>
+      <Flex>
+        <Text>{`We'll verify whether your Nano is genuine. This should be quick and easy!`}</Text>
+        <DynamicHeightComponent />
+      </Flex>
     ),
   },
   {
     status: ItemStatus.inactive,
     title: "Nano is ready",
-    renderBody: () => <DynamicHeightComponent />,
+    renderBody: () => <Text>Almost there ...</Text>,
   },
 ];
 
@@ -84,6 +103,9 @@ const VerticalTimelineStory = () => {
     <Flex width={"100%"} px={30} flex={1}>
       <ScrollView>
         <Switch checked={animate} onChange={setAnimate} label={"Auto animate VerticalTimeline"} />
+        <Button my={3} type="main" outline onPress={() => setActiveIndex(items.length)}>
+          Set last step complete
+        </Button>
         <Divider />
         <VerticalTimeline steps={items} setActiveIndex={animate ? undefined : setActiveIndex} />
       </ScrollView>
