@@ -223,21 +223,3 @@ export const isAddressPoisoningOperation = (
     operation.value.isZero()
   );
 };
-
-export const isEditableOperation = (
-  account: AccountLike,
-  operation: Operation
-): boolean => {
-  let isEthFamily = false;
-  if (account.type === "Account") {
-    isEthFamily = account.currency.family === "ethereum";
-  } else if (account.type === "TokenAccount") {
-    isEthFamily = account.token.parentCurrency.family === "ethereum";
-  }
-
-  return (
-    isEthFamily &&
-    operation.blockHeight === null &&
-    (operation.type === "OUT" || operation.type === "NFT_OUT")
-  );
-};
