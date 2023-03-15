@@ -89,7 +89,10 @@ export function MethodSelection({ navigation, route }: Props) {
     switch (option) {
       case "cancel":
         transactionToEdit.amount = new BigNumber(0);
-        transaction.data = Buffer.from("");
+        transactionToEdit.data = Buffer.from("");
+        transactionToEdit.nonce = operation.transactionSequenceNumber;
+        transactionToEdit.allowZeroAmount = true;
+        transaction.mode = "send";
 
         if (EIP1559ShouldBeUsed(currency)) {
           if (transactionToEdit.maxPriorityFeePerGas) {
@@ -118,15 +121,20 @@ export function MethodSelection({ navigation, route }: Props) {
         break;
 
       case "speedup":
-        navigation.navigate(ScreenName.SendSummary, {
-          accountId: account.id,
-          parentId: parentAccount?.id,
-          isEdit: true,
-          transaction,
-          operation,
-          currentNavigation: ScreenName.EditTransactionMethodSelection,
-          nextNavigation: ScreenName.SendSelectDevice,
-        });
+        transactionToEdit.nonce = operation.transactionSequenceNumber;
+        transactionToEdit.networkInfo = null;
+        transactionToEdit.gasPrice = null;
+        transactionToEdit.maxFeePerGas = null;
+        transactionToEdit.maxPriorityFeePerGas = null;
+        transaction.mode = "send";
+        transactionToEdit.recipient =
+          (account as Account)?.freshAddress ??
+          (parentAccount as Account)?.freshAddress;
+
+        setTransaction(
+          bridge.updateTransaction(transaction, transactionToEdit),
+        );
+
         break;
       default:
         break;
@@ -134,12 +142,23 @@ export function MethodSelection({ navigation, route }: Props) {
   };
 
   useEffect(() => {
+    // if cancel
     if (transaction.amount.eq(0)) {
       navigation.navigate(ScreenName.SendSelectDevice, {
         accountId: account.id,
         parentId: parentAccount?.id,
         transaction,
         status,
+      });
+      // if speedup
+    } else if (transaction.networkInfo === null) {
+      navigation.navigate(ScreenName.SendSummary, {
+        accountId: account.id,
+        parentId: parentAccount?.id,
+        transaction,
+        operation,
+        currentNavigation: ScreenName.EditTransactionMethodSelection,
+        nextNavigation: ScreenName.SendSelectDevice,
       });
     }
   }, [transaction, onSelect]);

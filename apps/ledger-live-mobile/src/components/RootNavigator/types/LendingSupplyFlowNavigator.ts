@@ -67,7 +67,6 @@ export type LendingSupplyFlowNavigatorParamList = {
       | ScreenName.SwapForm;
     overrideAmountLabel?: string;
     hideTotal?: boolean;
-    isEdit?: boolean;
     appName?: string;
   };
   [ScreenName.LendingSupplySelectDevice]: object;
@@ -125,7 +124,6 @@ export type LendingSupplyFlowNavigatorParamList = {
   [ScreenName.BitcoinEditCustomFees]: {
     accountId: string;
     parentId?: string;
-    isEdit?: boolean;
     transaction: BitcoinTransaction;
     status?: BitcoinTransactionStatus;
     currentNavigation:

@@ -30,7 +30,7 @@ const options = {
 };
 
 export default function EthereumCustomFees({ route }: Props) {
-  const { setTransaction, transaction, isEdit } = route.params;
+  const { setTransaction, transaction } = route.params;
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const navigation = useNavigation();
   invariant(account, "no account found");
