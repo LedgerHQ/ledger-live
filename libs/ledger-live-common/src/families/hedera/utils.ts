@@ -25,7 +25,6 @@ export async function calculateAmount({
   const amount = transaction.useAllAmount
     ? await estimateMaxSpendable({ account })
     : transaction.amount;
-    
   return {
     amount,
     totalSpent: amount.plus(estimatedFees),

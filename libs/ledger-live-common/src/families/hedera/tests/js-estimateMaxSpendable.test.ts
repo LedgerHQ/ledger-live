@@ -52,7 +52,7 @@ const account: Account = {
 };
 
 describe("js-estimateMaxSpendable", () => {
-  let estimatedFees = new BigNumber("150200"); // 0.001502 ℏ (as of 2023-03-14)
+  const estimatedFees = new BigNumber("150200"); // 0.001502 ℏ (as of 2023-03-14)
 
   test("estimateMaxSpendable", async () => {
     const result = await estimateMaxSpendable({

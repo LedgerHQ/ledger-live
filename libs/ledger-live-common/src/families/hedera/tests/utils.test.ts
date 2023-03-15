@@ -3,7 +3,6 @@ import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
 import { calculateAmount } from "../utils";
 
-
 // Balance is 1 Hbar
 const account: Account = {
   type: "Account",
@@ -61,7 +60,7 @@ const transaction: Transaction = {
 };
 
 describe("utils", () => {
-  let estimatedFees = new BigNumber("150200"); // 0.001502 ℏ (as of 2023-03-14)
+  const estimatedFees = new BigNumber("150200"); // 0.001502 ℏ (as of 2023-03-14)
 
   test("calculateAmount transaction.useAllAmount = true", async () => {
     transaction.useAllAmount = true;
