@@ -1,6 +1,6 @@
 // Handle lifecycle of cached data.
 
-import { DomainServiceStatus } from "./types";
+import { DomainServiceResponseLoaded, DomainServiceStatus } from "./types";
 
 // Expiration date depend on the resource's status.
 export function isOutdated(resource: DomainServiceStatus): boolean {
@@ -16,3 +16,7 @@ export function isOutdated(resource: DomainServiceStatus): boolean {
   }
   return false;
 }
+
+export const isLoaded = (
+  domain: DomainServiceStatus
+): domain is DomainServiceResponseLoaded => domain.status === "loaded";
