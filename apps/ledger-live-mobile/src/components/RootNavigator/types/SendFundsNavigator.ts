@@ -9,7 +9,10 @@ import type {
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/generated/types";
-import type { Transaction as EthereumTransaction } from "@ledgerhq/live-common/families/ethereum/types";
+import type {
+  Transaction as EthereumTransaction,
+  TransactionRaw as EtherumTransactionRaw,
+} from "@ledgerhq/live-common/families/ethereum/types";
 import type {
   CardanoAccount,
   Transaction as CardanoTransaction,
@@ -206,6 +209,7 @@ export type SendFundsNavigatorStackParamList = {
     parentId?: string;
     transaction: EthereumTransaction;
     setTransaction: Result<EthereumTransaction>["setTransaction"];
+    transactionRaw?: EtherumTransactionRaw;
     currentNavigation:
       | ScreenName.LendingWithdrawSummary
       | ScreenName.LendingSupplySummary

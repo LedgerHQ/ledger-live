@@ -3,7 +3,10 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getDefaultFeeUnit } from "@ledgerhq/live-common/families/ethereum/logic";
 import { getGasLimit } from "@ledgerhq/live-common/families/ethereum/transaction";
-import { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
+import {
+  Transaction,
+  TransactionRaw,
+} from "@ledgerhq/live-common/families/ethereum/types";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { Account, AccountLike } from "@ledgerhq/types-live";
@@ -23,6 +26,7 @@ type Props = {
   account: AccountLike;
   parentAccount: Account | null | undefined;
   transaction: Transaction;
+  transactionRaw?: TransactionRaw;
   onValidateFees: (transaction: Partial<Transaction>) => () => void;
 };
 
@@ -31,6 +35,7 @@ const Ethereum1559CustomFees = ({
   parentAccount,
   onValidateFees,
   transaction: originalTransaction,
+  transactionRaw,
 }: Props) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
@@ -71,7 +76,7 @@ const Ethereum1559CustomFees = ({
     warnings;
 
   const maxPriorityFeeRange = useMemo(
-    () => inferMaxPriorityFeeRange(transaction?.networkInfo),
+    () => inferMaxPriorityFeeRange(transaction?.networkInfo, transactionRaw),
     [transaction?.networkInfo],
   );
   const maxFeePerGasRange = useMemo(() => {
