@@ -12,6 +12,7 @@ import {
   ScrollContainer,
   VerticalTimeline,
   Text,
+  ContinueOnDevice,
 } from "@ledgerhq/native-ui";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import {
@@ -25,6 +26,7 @@ import { CompositeScreenProps } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 import { StorylyInstanceID } from "@ledgerhq/types-live";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { addKnownDevice } from "../../actions/ble";
 import { NavigatorName, ScreenName } from "../../const";
 import HelpDrawer from "./HelpDrawer";
@@ -48,6 +50,8 @@ import { SyncOnboardingStackParamList } from "../../components/RootNavigator/typ
 import InstallSetOfApps from "../../components/DeviceAction/InstallSetOfApps";
 import Stories from "../../components/StorylyStories";
 import { TrackScreen, track } from "../../analytics";
+
+const { BodyText, SubtitleText } = VerticalTimeline;
 
 type StepStatus = "completed" | "active" | "inactive";
 
@@ -91,6 +95,21 @@ enum CompanionStepKey {
   Ready,
   Exit,
 }
+
+const ContinueOnDeviceWithAnim: React.FC<{
+  deviceModelId: DeviceModelId;
+  text: string;
+}> = ({ text }) => {
+  // TODO: when lotties are available, move this component to its own file and use a different lottie for each deviceModelId, as Icon prop
+  return (
+    <ContinueOnDevice
+      Icon={({ size }) => (
+        <Flex height={size} width={size} borderRadius={size} bg="neutral.c40" />
+      )}
+      text={text}
+    />
+  );
+};
 
 export const SyncOnboarding = ({
   navigation,
@@ -410,9 +429,12 @@ export const SyncOnboarding = ({
           renderBody: () => (
             <>
               <TrackScreen category="Set up Ledger Stax: Step 1 device paired" />
-              <Text variant="bodyLineHeight">
-                {t("syncOnboarding.pairingStep.description", { productName })}
-              </Text>
+              <ContinueOnDeviceWithAnim
+                deviceModelId={device.modelId}
+                text={t("syncOnboarding.pairingStep.continueOnDevice", {
+                  productName,
+                })}
+              />
             </>
           ),
         },
@@ -424,9 +446,15 @@ export const SyncOnboarding = ({
           renderBody: () => (
             <Flex>
               <TrackScreen category="Set up Ledger Stax: Step 2 PIN" />
-              <Text variant="bodyLineHeight">
+              <BodyText mb={6}>
                 {t("syncOnboarding.pinStep.description", { productName })}
-              </Text>
+              </BodyText>
+              <ContinueOnDeviceWithAnim
+                deviceModelId={device.modelId}
+                text={t("syncOnboarding.pairingStep.continueOnDevice", {
+                  productName,
+                })}
+              />
             </Flex>
           ),
         },
@@ -440,6 +468,11 @@ export const SyncOnboarding = ({
               <TrackScreen category="Set up Ledger Stax: Step 3 Seed" />
               {seedPathStatus === "new_seed" ? (
                 <Flex pb={1}>
+                  <BodyText mb={6}>
+                    {t("syncOnboarding.seedStep.newSeedDescription", {
+                      productName,
+                    })}
+                  </BodyText>
                   <Stories
                     instanceID={StorylyInstanceID.recoverySeed}
                     vertical
@@ -447,21 +480,27 @@ export const SyncOnboarding = ({
                   />
                 </Flex>
               ) : seedPathStatus === "choice_restore_direct_or_recover" ? (
-                <Text variant="bodyLineHeight">
+                <BodyText>
                   {t("syncOnboarding.seedStep.choiceRestoreDirectOrRecover")}
-                </Text>
+                </BodyText>
               ) : seedPathStatus === "restore_seed" ? (
-                <Text variant="bodyLineHeight">
+                <BodyText>
                   {t("syncOnboarding.seedStep.restoreSeed", { productName })}
-                </Text>
+                </BodyText>
               ) : seedPathStatus === "recover_seed" ? (
-                <Text variant="bodyLineHeight">
-                  {t("syncOnboarding.seedStep.recoverSeed")}
-                </Text>
+                <BodyText>{t("syncOnboarding.seedStep.recoverSeed")}</BodyText>
               ) : (
-                <Text variant="bodyLineHeight">
-                  {t("syncOnboarding.seedStep.choiceNewOrRestore")}
-                </Text>
+                <Flex>
+                  <BodyText mb={6}>
+                    {t("syncOnboarding.seedStep.selection")}
+                  </BodyText>
+                  <ContinueOnDeviceWithAnim
+                    deviceModelId={device.modelId}
+                    text={t("syncOnboarding.pairingStep.continueOnDevice", {
+                      productName,
+                    })}
+                  />
+                </Flex>
               )}
             </Flex>
           ),
