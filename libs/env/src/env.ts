@@ -86,6 +86,11 @@ const envDefinitions: Record<
     parser: stringParser,
     desc: "Node endpoint for celo",
   },
+  COSMOS_GAS_AMPLIFIER: {
+    def: 1.2,
+    parser: intParser,
+    desc: "Cosmos gas estimate multiplier",
+  },
   API_COSMOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
     def: "https://cosmoshub4.coin.ledger.com",
     parser: stringParser,
@@ -152,7 +157,7 @@ const envDefinitions: Record<
     desc: "Static fee for Stellar account",
   },
   API_OSMOSIS_NODE: {
-    def: "https://osmosis.coin.ledger-stg.com",
+    def: "https://osmosis.coin.ledger.com/lcd",
     parser: stringParser,
     desc: "Endpoint for Osmosis Node",
   },
