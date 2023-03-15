@@ -49,7 +49,7 @@ const TopSegmentSvg: React.FC<SegmentProps> = ({ status, hidden, height }) => {
     </Flex>
   );
 };
-const topSegmentDefaultHeight = Platform.OS === "ios" ? 21 : 23;
+const topSegmentDefaultHeight = Platform.OS === "android" ? 23 : 21; // difference due to how borders are drawn in android
 
 const BottomSegmentSvg: React.FC<SegmentProps> = ({ status, hidden }) => {
   const theme = useTheme();
