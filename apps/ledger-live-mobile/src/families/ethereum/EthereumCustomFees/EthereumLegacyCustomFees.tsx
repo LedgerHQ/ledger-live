@@ -1,6 +1,9 @@
 import React, { useState, memo, useMemo } from "react";
 import { getGasLimit } from "@ledgerhq/live-common/families/ethereum/transaction";
-import { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
+import {
+  Transaction,
+  TransactionRaw,
+} from "@ledgerhq/live-common/families/ethereum/types";
 import { inferDynamicRange, Range } from "@ledgerhq/live-common/range";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
@@ -18,6 +21,7 @@ type Props = {
   parentAccount: Account | null | undefined;
   transaction: Transaction;
   onValidateFees: (transaction: Partial<Transaction>) => () => void;
+  transactionRaw?: TransactionRaw;
 };
 
 const fallbackGasPrice = inferDynamicRange(new BigNumber(10e9));
@@ -28,6 +32,7 @@ const EthereumLegacyCustomFees = ({
   parentAccount,
   onValidateFees,
   transaction,
+  transactionRaw,
 }: Props) => {
   const { colors } = useTheme();
 
@@ -40,11 +45,27 @@ const EthereumLegacyCustomFees = ({
     lastNetworkGasPrice = networkGasPrice;
   }
 
-  const range = networkGasPrice || lastNetworkGasPrice || fallbackGasPrice;
+  let range = lastNetworkGasPrice || fallbackGasPrice;
   const [gasPrice, setGasPrice] = useState(
     transaction.gasPrice || range.initial,
   );
   const [gasLimit, setGasLimit] = useState(getGasLimit(transaction));
+
+  // update gas price range according to previous pending transaction if necessary
+  if (transactionRaw && transactionRaw.gasPrice) {
+    const minNewGasPrice = new BigNumber(transactionRaw.gasPrice).times(1.1);
+    const minValue = BigNumber.max(range.min, minNewGasPrice);
+    let maxValue = BigNumber.max(range.max, minNewGasPrice);
+    // avoid lower bound = upper bound, which will cause an error in inferDynamicRange
+    if (minValue.isEqualTo(maxValue)) {
+      maxValue = minValue.times(2);
+    }
+
+    range = inferDynamicRange(minValue, {
+      minValue,
+      maxValue,
+    });
+  }
 
   const transactionPatch = useMemo<Partial<Transaction>>(
     () => ({

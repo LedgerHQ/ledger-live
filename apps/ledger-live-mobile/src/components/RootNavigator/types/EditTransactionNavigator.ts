@@ -1,7 +1,11 @@
-import { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
+import {
+  Transaction,
+  TransactionRaw,
+} from "@ledgerhq/live-common/families/ethereum/types";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/types-devices";
 import { AccountLike, Operation } from "@ledgerhq/types-live";
+import { Result } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
 import { ScreenName } from "../../../const";
 
@@ -34,6 +38,8 @@ export type EditTransactionParamList = {
     parentId?: string;
     deviceId?: string;
     transaction: Transaction;
+    transactionRaw?: TransactionRaw;
+    setTransaction: Result<Transaction>["setTransaction"];
     operation?: Operation;
     currentNavigation:
       | ScreenName.SpeedUpTransaction
