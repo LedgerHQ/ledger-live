@@ -119,9 +119,8 @@ const modes = Object.freeze({
     overridesDerivation: "44'/1729'/0'/0'/<account>'",
   },
   zilliqaL: {
-    // In time, this derivation pattern will be deprecated in favour of BIP-44.
-    // When that time comes, add:
-    // tag: "legacy",
+    mandatoryEmptyAccountSkip: 1,
+    isUnsplit: true,
     overridesDerivation: "44'/313'/<account>'/0'/0'",
   },
   tezboxL: {
@@ -226,6 +225,7 @@ const legacyDerivations: Record<CryptoCurrencyIds, DerivationMode[]> = {
   cardano: ["cardano"],
   cardano_testnet: ["cardano"],
   near: ["nearbip44h"],
+  zilliqa: ["zilliqaL"],
 };
 
 const legacyDerivationsPerFamily: Record<string, DerivationMode[]> = {
@@ -389,6 +389,7 @@ const disableBIP44: Record<string, boolean> = {
   cardano: true,
   cardano_testnet: true,
   near: true,
+  zilliqa: true,
 };
 type SeedInfo = {
   purpose: number;
@@ -396,6 +397,7 @@ type SeedInfo = {
 };
 type SeedPathFn = (info: SeedInfo) => string;
 const seedIdentifierPath: Record<string, SeedPathFn> = {
+  zilliqa: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'`,
   neo: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   filecoin: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   solana: ({ purpose, coinType }) => `${purpose}'/${coinType}'`,

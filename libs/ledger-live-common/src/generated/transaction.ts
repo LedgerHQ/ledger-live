@@ -17,6 +17,7 @@ import stellar from "../families/stellar/transaction";
 import tezos from "../families/tezos/transaction";
 import tron from "../families/tron/transaction";
 import zilliqa from "../families/zilliqa/transaction";
+import polkadot from "@ledgerhq/coin-polkadot/transaction";
 
 export default {
   algorand,
@@ -37,6 +38,6 @@ export default {
   stellar,
   tezos,
   tron,
+  zilliqa,
   polkadot,
- zilliqa
 };

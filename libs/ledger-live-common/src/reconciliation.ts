@@ -18,10 +18,8 @@ import {
   fromSubAccountRaw,
   fromBitcoinResourcesRaw,
   fromCryptoOrgResourcesRaw,
-  fromZilliqaResourcesRaw,
   fromNFTRaw,
   toCryptoOrgResourcesRaw,
-  toZilliqaResourcesRaw,
 } from "./account";
 import consoleWarnExpectToEqual from "./consoleWarnExpectToEqual";
 import { BitcoinAccount, BitcoinAccountRaw } from "./families/bitcoin/types";
