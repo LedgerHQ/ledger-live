@@ -20,7 +20,6 @@ export type EditTransactionParamList = {
     operation: Operation;
     account: AccountLike;
     parentAccount: AccountLike | undefined | null;
-    isEdit?: boolean;
   };
   [ScreenName.EthereumCustomFees]: {
     accountId: string;
@@ -45,7 +44,6 @@ export type EditTransactionParamList = {
       | ScreenName.SendSelectDevice;
     overrideAmountLabel?: string;
     hideTotal?: boolean;
-    isEdit?: boolean;
     appName?: string;
   };
   [ScreenName.SendSelectDevice]: {
