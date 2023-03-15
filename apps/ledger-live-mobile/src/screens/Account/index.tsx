@@ -128,7 +128,7 @@ const AccountScreenInner = ({
   const { secondaryActions } = useAccountActions({ account, parentAccount });
 
   const onEditTransactionPress = useCallback((latestOperation: Operation) => {
-    editTxNavigation.navigate(NavigatorName.EthereumEditTransaction, {
+    editTxNavigation.navigate(NavigatorName.EditTransaction, {
       screen: ScreenName.EditTransactionMethodSelection,
       params: { operation: latestOperation, account, parentAccount },
     });

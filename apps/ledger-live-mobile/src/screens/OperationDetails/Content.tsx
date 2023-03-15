@@ -147,7 +147,7 @@ export default function Content({
   const shouldDisplayTo = uniqueRecipients.length > 0 && !!uniqueRecipients[0];
 
   const onEditTxPress = useCallback(() => {
-    navigation.navigate(NavigatorName.EthereumEditTransaction, {
+    navigation.navigate(NavigatorName.EditTransaction, {
       screen: ScreenName.EditTransactionMethodSelection,
       params: { operation, account, parentAccount },
     });
