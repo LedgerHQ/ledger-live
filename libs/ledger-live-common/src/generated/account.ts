@@ -6,7 +6,6 @@ import elrond from "../families/elrond/account";
 import filecoin from "../families/filecoin/account";
 import near from "../families/near/account";
 import polkadot from "@ledgerhq/coin-polkadot/account";
-import zilliqa from "../families/zilliqa/account";
 
 export default {
   algorand,

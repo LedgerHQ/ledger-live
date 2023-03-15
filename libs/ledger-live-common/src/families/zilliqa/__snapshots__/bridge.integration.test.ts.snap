@@ -27,10 +27,6 @@ Array [
     "syncHash": undefined,
     "unitMagnitude": 12,
     "used": true,
-    "zilliqaResources": Object {
-      "nonce": 24,
-      "publicKey": "03fa3bee864530094c637994bd08b45eb1d96e8f3c03e866bc18c7f6b06be15fc7",
-    },
   },
   Object {
     "balance": "3191743968651",
@@ -57,10 +53,6 @@ Array [
     "syncHash": undefined,
     "unitMagnitude": 12,
     "used": true,
-    "zilliqaResources": Object {
-      "nonce": 35,
-      "publicKey": "02d0fa63f917e8c6504c8ed9d28669d6fab0137862c81e355af953cb884a463ab8",
-    },
   },
   Object {
     "balance": "9275351",
@@ -87,10 +79,6 @@ Array [
     "syncHash": undefined,
     "unitMagnitude": 12,
     "used": true,
-    "zilliqaResources": Object {
-      "nonce": 16,
-      "publicKey": "036c39ae31ef7c4f668a93c0f6343926ab9e635f16fcf6cd30a0ec659d67e7e6f3",
-    },
   },
   Object {
     "balance": "7521924",
@@ -117,10 +105,6 @@ Array [
     "syncHash": undefined,
     "unitMagnitude": 12,
     "used": true,
-    "zilliqaResources": Object {
-      "nonce": 4,
-      "publicKey": "03055443a4ed8692350ee874dc2718b13ec90bb9d069a2aeeb6e8d7baab65382e8",
-    },
   },
   Object {
     "balance": "7330918",
@@ -147,10 +131,6 @@ Array [
     "syncHash": undefined,
     "unitMagnitude": 12,
     "used": true,
-    "zilliqaResources": Object {
-      "nonce": 2,
-      "publicKey": "036d05ebad3cbe812a13eb75753be60d9573a14dd6b8f58798b2b50b1b6cc5c979",
-    },
   },
   Object {
     "balance": "1913179",
@@ -177,10 +157,6 @@ Array [
     "syncHash": undefined,
     "unitMagnitude": 12,
     "used": true,
-    "zilliqaResources": Object {
-      "nonce": 2,
-      "publicKey": "0382b45abf88430c5f3553fc6140976de9a539968d7fd1ec98e290c7b716749074",
-    },
   },
   Object {
     "balance": "13157575328739",
@@ -207,10 +183,6 @@ Array [
     "syncHash": undefined,
     "unitMagnitude": 12,
     "used": true,
-    "zilliqaResources": Object {
-      "nonce": 1,
-      "publicKey": "02f7a69301d7d402c4ccbefba3c2546cfaa36384ce6db6ba1208b935fd1dfeeb03",
-    },
   },
   Object {
     "balance": "0",
@@ -237,10 +209,32 @@ Array [
     "syncHash": undefined,
     "unitMagnitude": 12,
     "used": false,
-    "zilliqaResources": Object {
-      "nonce": 0,
-      "publicKey": "03b4c7677f1d2299ee2dec6ba255c0312972137e0f940b32be6bc7902f11824f85",
-    },
+  },
+  Object {
+    "balance": "0",
+    "currencyId": "zilliqa",
+    "derivationMode": "zilliqaL",
+    "freshAddress": "zil14x08fuga93cmr0dltsvne3t8gp77v8psdqglgv",
+    "freshAddressPath": "44'/313'/8'/0'/0'",
+    "freshAddresses": Array [
+      Object {
+        "address": "zil14x08fuga93cmr0dltsvne3t8gp77v8psdqglgv",
+        "derivationPath": "44'/313'/8'/0'/0'",
+      },
+    ],
+    "id": "js:2:zilliqa:zil14x08fuga93cmr0dltsvne3t8gp77v8psdqglgv:zilliqaL",
+    "index": 8,
+    "name": "Zilliqa 9",
+    "nfts": undefined,
+    "operationsCount": 0,
+    "pendingOperations": Array [],
+    "seedIdentifier": "03fa3bee864530094c637994bd08b45eb1d96e8f3c03e866bc18c7f6b06be15fc7",
+    "spendableBalance": "0",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 12,
+    "used": false,
   },
 ]
 `;
@@ -3561,6 +3555,7 @@ Array [
       "value": "0",
     },
   ],
+  Array [],
   Array [],
 ]
 `;

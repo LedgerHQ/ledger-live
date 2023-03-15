@@ -15,8 +15,8 @@ import solana from "../families/solana/deviceTransactionConfig";
 import stellar from "../families/stellar/deviceTransactionConfig";
 import tezos from "../families/tezos/deviceTransactionConfig";
 import tron from "../families/tron/deviceTransactionConfig";
-import polkadot from "@ledgerhq/coin-polkadot/deviceTransactionConfig";
 import zilliqa from "../families/zilliqa/deviceTransactionConfig";
+import polkadot from "@ledgerhq/coin-polkadot/deviceTransactionConfig";
 
 export default {
   algorand,
@@ -36,8 +36,8 @@ export default {
   stellar,
   tezos,
   tron,
-  polkadot,
   zilliqa,
+  polkadot,
 };
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_cosmos } from "../families/cosmos/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_filecoin } from "../families/filecoin/deviceTransactionConfig";

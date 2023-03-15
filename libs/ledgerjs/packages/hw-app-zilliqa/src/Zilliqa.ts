@@ -73,7 +73,6 @@ export default class Zilliqa {
       data,
       statusList
     );
-
     return result;
   }
   async getAppConfigurationInternal(): Promise<{
