@@ -16,7 +16,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import type { StepProps, St } from "./types";
 import type { Operation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { LEDGER_POOL_ADDRESSES } from "@ledgerhq/live-common/families/cardano/utils";
+import { LEDGER_POOL_IDS } from "@ledgerhq/live-common/families/cardano/utils";
 
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
@@ -133,13 +133,13 @@ const Body = ({
 
     let updatedTransaction = transaction;
     if (
-      LEDGER_POOL_ADDRESSES.length &&
-      (!currentDelegation || currentDelegation?.poolId !== LEDGER_POOL_ADDRESSES[0])
+      LEDGER_POOL_IDS.length &&
+      (!currentDelegation || currentDelegation?.poolId !== LEDGER_POOL_IDS[0])
     ) {
-      setSelectedPool({ poolId: LEDGER_POOL_ADDRESSES[0] });
+      setSelectedPool({ poolId: LEDGER_POOL_IDS[0] });
       updatedTransaction = bridge.updateTransaction(transaction, {
         mode: "delegate",
-        poolId: LEDGER_POOL_ADDRESSES[0],
+        poolId: LEDGER_POOL_IDS[0],
       });
     }
     return {

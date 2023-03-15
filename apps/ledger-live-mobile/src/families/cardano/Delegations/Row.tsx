@@ -6,7 +6,7 @@ import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
 import { Currency } from "@ledgerhq/live-common/types/index";
 import type { CardanoDelegation } from "@ledgerhq/live-common/families/cardano/types";
-import { LEDGER_POOL_ADDRESSES } from "@ledgerhq/live-common/families/cardano/utils";
+import { LEDGER_POOL_IDS } from "@ledgerhq/live-common/families/cardano/utils";
 import CounterValue from "../../../components/CounterValue";
 import ArrowRight from "../../../icons/ArrowRight";
 import LText from "../../../components/LText";
@@ -46,7 +46,7 @@ export default function DelegationRow({
       <View style={[styles.icon]}>
         <PoolImage
           size={42}
-          isLedger={LEDGER_POOL_ADDRESSES.includes(delegation.poolId)}
+          isLedger={LEDGER_POOL_IDS.includes(delegation.poolId)}
           name={delegation?.name ?? delegation.poolId ?? ""}
         />
       </View>

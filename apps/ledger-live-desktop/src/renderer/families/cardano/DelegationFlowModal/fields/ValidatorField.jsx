@@ -3,6 +3,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import type { TFunction } from "react-i18next";
 
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { debounce } from "lodash";
 
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
@@ -21,7 +22,7 @@ import {
 } from "@ledgerhq/live-common/families/cardano/api/getPools";
 
 import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";
-import { LEDGER_POOL_ADDRESSES } from "@ledgerhq/live-common/families/cardano/utils";
+import { LEDGER_POOL_IDS } from "@ledgerhq/live-common/families/cardano/utils";
 
 type Props = {
   t: TFunction,
@@ -41,13 +42,13 @@ const ValidatorField = ({
   selectedPoolId,
 }: Props) => {
   const [search, setSearch] = useState("");
-  const [ledgerPools, setLedgerPools] = useState([]); // TODO: fetch ledger pools and set it here
+  const [ledgerPools, setLedgerPools] = useState([]);
   const unit = getAccountUnit(account);
   const [validators, setValidators] = useState([]);
   const [pageNo, setPageNo] = useState(1);
   const [showAll, setShowAll] = useState(
-    LEDGER_POOL_ADDRESSES.length === 0 ||
-      (LEDGER_POOL_ADDRESSES.length === 1 && delegation.poolId === LEDGER_POOL_ADDRESSES[0]),
+    LEDGER_POOL_IDS.length === 0 ||
+      (LEDGER_POOL_IDS.length === 1 && delegation.poolId === LEDGER_POOL_IDS[0]),
   );
 
   const fetchPoolsFromNextPage = async () => {
@@ -57,7 +58,7 @@ const ValidatorField = ({
     }
   };
 
-  const poolIdsToFilterFromAllPools = [...LEDGER_POOL_ADDRESSES];
+  const poolIdsToFilterFromAllPools = [...LEDGER_POOL_IDS];
   if (delegation.poolId) {
     poolIdsToFilterFromAllPools.push(delegation.poolId);
   }
@@ -74,16 +75,18 @@ const ValidatorField = ({
     }
   };
 
+  const debouncedFetchPools = debounce(fetchPools, 1000);
+
   useEffect(() => {
     setPageNo(1);
-    fetchPools();
+    debouncedFetchPools();
   }, [search]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onSearch = useCallback(evt => setSearch(evt.target.value), [setSearch]);
 
   useEffect(() => {
-    if (LEDGER_POOL_ADDRESSES.length) {
-      fetchPoolDetails(account.currency, LEDGER_POOL_ADDRESSES).then(apiRes => {
+    if (LEDGER_POOL_IDS.length) {
+      fetchPoolDetails(account.currency, LEDGER_POOL_IDS).then(apiRes => {
         setLedgerPools(apiRes.pools);
       });
     }
@@ -115,7 +118,7 @@ const ValidatorField = ({
             search={search}
           />
         </Box>
-        {LEDGER_POOL_ADDRESSES.length ? (
+        {LEDGER_POOL_IDS.length ? (
           <SeeAllButton expanded={showAll} onClick={() => setShowAll(shown => !shown)}>
             <Text color="wallet" ff="Inter|SemiBold" fontSize={4}>
               <Trans i18nKey={showAll ? "distribution.showLess" : "distribution.showAll"} />
