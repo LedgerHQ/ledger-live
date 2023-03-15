@@ -37,7 +37,7 @@ type Navigation = BaseComposite<
       ScreenName.LendingWithdrawSummary
     >
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
-  | StackNavigatorProps<EditTransactionParamList, ScreenName.SpeedUpTransaction>
+  | StackNavigatorProps<EditTransactionParamList, ScreenName.SendSummary>
 >;
 
 export default ({

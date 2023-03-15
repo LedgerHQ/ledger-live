@@ -15,21 +15,11 @@ export type EditTransactionParamList = {
     account: AccountLike;
     parentAccount: AccountLike | undefined | null;
   };
-  [ScreenName.CancelTransaction]: {
-    operation: Operation;
-    account: AccountLike;
-    parentAccount: AccountLike | undefined | null;
-  };
-  [ScreenName.SpeedUpTransaction]: {
-    operation: Operation;
-    account: AccountLike;
-    parentAccount: AccountLike | undefined | null;
-  };
   [ScreenName.EthereumCustomFees]: {
     accountId: string;
     parentId?: string;
     transaction: Transaction;
-    currentNavigation: ScreenName.SpeedUpTransaction;
+    currentNavigation: ScreenName.EditTransactionMethodSelection;
     nextNavigation: ScreenName.SendSelectDevice;
     setTransaction: (transaction: Transaction) => void;
   };
@@ -41,10 +31,7 @@ export type EditTransactionParamList = {
     transactionRaw?: TransactionRaw;
     setTransaction: Result<Transaction>["setTransaction"];
     operation?: Operation;
-    currentNavigation:
-      | ScreenName.SpeedUpTransaction
-      | ScreenName.SendSummary
-      | ScreenName.EditTransactionMethodSelection;
+    currentNavigation: ScreenName.EditTransactionMethodSelection;
     nextNavigation:
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice;

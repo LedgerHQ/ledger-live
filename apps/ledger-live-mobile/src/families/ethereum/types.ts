@@ -40,9 +40,6 @@ export type SendRowsFeeProps<T extends Transaction = Transaction> = {
       ScreenName.LendingWithdrawSummary
     >
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
-  | StackNavigatorProps<
-      EditTransactionParamList,
-      ScreenName.SpeedUpTransaction
-    >,
+  | StackNavigatorProps<EditTransactionParamList, ScreenName.SendSummary>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
