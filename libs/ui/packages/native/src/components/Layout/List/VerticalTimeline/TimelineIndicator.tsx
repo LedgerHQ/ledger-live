@@ -1,29 +1,78 @@
 import React from "react";
+import { Dimensions, StyleSheet } from "react-native";
 import { CircledCheckSolidMedium } from "@ledgerhq/icons-ui/native";
 import styled, { useTheme } from "styled-components/native";
+import Svg, { Line } from "react-native-svg";
 
 import Flex, { Props as FlexProps } from "../../Flex";
 import { ItemStatus } from "../types";
 import { Theme } from "src/styles/theme";
 
-const TopSegment = styled(Flex)<{ status: ItemStatus; hidden?: boolean }>`
-  border-width: ${(p) => (p.hidden ? 0 : 1)}px;
-  border-style: solid;
-  border-color: ${(p) =>
-    p.status === "inactive" ? p.theme.colors.neutral.c50 : p.theme.colors.primary.c80};
-  background: ${(p) =>
-    p.status === "inactive" ? p.theme.colors.neutral.c50 : p.theme.colors.primary.c80};
-`;
+type SegmentProps = { status: ItemStatus; hidden?: boolean; height?: number };
 
-const BottomSegment = styled(Flex)<{ status: ItemStatus; hidden?: boolean }>`
-  flex: 1;
-  border-width: ${(p) => (p.hidden ? 0 : 1)}px;
-  border-style: solid;
-  border-color: ${(p) =>
-    p.status === "completed" ? p.theme.colors.primary.c80 : p.theme.colors.neutral.c50};
-  background: ${(p) =>
-    p.status === "completed" ? p.theme.colors.primary.c80 : p.theme.colors.neutral.c50};
-`;
+const dashLength = 3.7;
+const linesWidth = 2;
+
+/**
+ * We have to set a fixed size for the lines (and then they get clipped with overflow:hidden)
+ * because their real height is dynamic (depends on the height of the step) and
+ * there seems to be no way to have that height being dynamic without having the
+ * scaling effect affecting the length of the stroke dash (the "- - - ").
+ * This is kind of a trick but seemingly the only way to have a nice stroke dash
+ **/
+const linesLength = 5000;
+
+const TopSegmentSvg: React.FC<SegmentProps> = ({ status, hidden, height }) => {
+  const theme = useTheme();
+  const strokeColor = status === "inactive" ? theme.colors.neutral.c50 : theme.colors.primary.c80;
+  const strokeDashArray = status === "inactive" ? `${dashLength}` : undefined;
+  return (
+    <Flex height={height} width={"100%"} overflow="hidden">
+      <Flex style={StyleSheet.absoluteFillObject} alignItems="center">
+        <Svg height={linesLength} width={linesWidth} viewBox={`0 0 ${linesWidth} ${linesLength}`}>
+          <Line
+            x1="0"
+            y1="0"
+            x2="0"
+            y2="100"
+            strokeWidth={hidden ? 0 : 2 * linesWidth}
+            stroke={strokeColor}
+            strokeDasharray={strokeDashArray}
+          />
+        </Svg>
+      </Flex>
+    </Flex>
+  );
+};
+
+const BottomSegmentSvg: React.FC<SegmentProps> = ({ status, hidden }) => {
+  const theme = useTheme();
+  const strokeColor = status === "completed" ? theme.colors.primary.c80 : theme.colors.neutral.c50;
+  const strokeDashArray = status === "completed" ? undefined : `${dashLength}`;
+  return (
+    <Flex flex={1} width={"100%"} style={{ transform: [{ scaleY: -1 }] }} overflow="hidden">
+      <Flex style={StyleSheet.absoluteFillObject} alignItems="center">
+        <Svg
+          height={2 * Dimensions.get("screen").height}
+          width={linesWidth}
+          viewBox={`0 0 ${linesWidth} ${linesLength}`}
+          preserveAspectRatio="xMinYMin slice"
+        >
+          <Line
+            x1="0"
+            y1="0"
+            x2="0"
+            y2="100%"
+            strokeWidth={hidden ? 0 : 2 * linesWidth}
+            stroke={strokeColor}
+            strokeDasharray={strokeDashArray}
+            strokeDashoffset={`${dashLength}`}
+          />
+        </Svg>
+      </Flex>
+    </Flex>
+  );
+};
 
 const getIconBackground = (theme: Theme, status: ItemStatus, isLastItem?: boolean) => {
   if (status === "completed") {
@@ -59,7 +108,7 @@ export type Props = FlexProps & {
   status: ItemStatus;
   isFirstItem?: boolean;
   isLastItem?: boolean;
-  topHeight?: string;
+  topHeight?: number;
 };
 
 export default function TimelineIndicator({
@@ -73,7 +122,7 @@ export default function TimelineIndicator({
 
   return (
     <Flex flexDirection="column" alignItems="center" {...props}>
-      <TopSegment status={status} hidden={isFirstItem} height={topHeight || "22px"} />
+      <TopSegmentSvg status={status} hidden={isFirstItem} height={topHeight || 22} />
       <CenterCircle status={status} isLastItem={isLastItem}>
         {status === "completed" && (
           <CircledCheckSolidMedium
@@ -82,7 +131,7 @@ export default function TimelineIndicator({
           />
         )}
       </CenterCircle>
-      <BottomSegment status={status} hidden={isLastItem} />
+      <BottomSegmentSvg status={status} hidden={isLastItem} />
     </Flex>
   );
 }

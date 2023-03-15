@@ -56,6 +56,8 @@ const ShouldContinueOnStax = () => {
   return <></>;
 };
 
+const withExtraMarginOnActive = false;
+
 export default function TimelineItem({
   item,
   formatEstimatedTime,
@@ -97,19 +99,19 @@ export default function TimelineItem({
 
   return (
     <Pressable onPress={handlePress}>
-      <Flex flexDirection="row" borderColor="red">
+      <Flex flexDirection="row">
         <TimelineIndicator
           status={item.status}
           isFirstItem={isFirstItem}
           isLastItem={isLastItem}
           mr={4}
-          topHeight={!isFirstItem && item.status === "active" ? "34px" : "22px"}
+          topHeight={withExtraMarginOnActive && !isFirstItem && item.status === "active" ? 34 : 22}
         />
         <Container
           status={item.status}
           isLastItem={isLastItem}
-          mt={!isFirstItem && item.status === "active" ? 4 : 0}
-          mb={!isLastItem && item.status === "active" ? 4 : 0}
+          mt={withExtraMarginOnActive && !isFirstItem && item.status === "active" ? 4 : 0}
+          mb={withExtraMarginOnActive && !isLastItem && item.status === "active" ? 4 : 0}
         >
           <Flex flexDirection="row" justifyContent="space-between">
             <Text
