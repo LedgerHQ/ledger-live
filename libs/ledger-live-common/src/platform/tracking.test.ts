@@ -136,7 +136,7 @@ function appManifestFixture(name = "live-app"): LiveAppManifest {
     name,
     url: "https://www.ledger.fr",
     homepageUrl: "https://www.ledger.fr",
-    platform: "all",
+    platforms: ["ios", "android", "desktop"],
     apiVersion: "1.0.0",
     manifestVersion: "1.0.0",
     branch: "debug",

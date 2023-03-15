@@ -1,4 +1,4 @@
-import type { AppManifest } from "./types";
+import type { LiveAppManifest } from "../platform/types";
 
 /**
  * This signature is to be compatible with track method of `segment.js` file in LLM and LLD
@@ -14,10 +14,10 @@ type TrackWalletAPI = (
 /**
  * Obtain Event data from WalletAPI App manifest
  *
- * @param {AppManifest} manifest
+ * @param {LiveAppManifest} manifest
  * @returns Object - event data
  */
-function getEventData(manifest: AppManifest) {
+function getEventData(manifest: LiveAppManifest) {
   return { walletAPI: manifest.name };
 }
 
@@ -35,170 +35,170 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
 
   return {
     // Failed to load the iframe
-    load: (manifest: AppManifest) => {
+    load: (manifest: LiveAppManifest) => {
       track("WalletAPI Load", getEventData(manifest));
     },
 
     // Failed to load the iframe
-    reload: (manifest: AppManifest) => {
+    reload: (manifest: LiveAppManifest) => {
       track("WalletAPI Reload", getEventData(manifest));
     },
 
     // Failed to load the iframe
-    loadFail: (manifest: AppManifest) => {
+    loadFail: (manifest: LiveAppManifest) => {
       // TODO: handle iframe failed
       track("WalletAPI Load Fail", getEventData(manifest));
     },
 
     // Successfully loaded the iframe
-    loadSuccess: (manifest: AppManifest) => {
+    loadSuccess: (manifest: LiveAppManifest) => {
       track("WalletAPI Load Success", getEventData(manifest));
     },
 
     // Sign transaction modal open
-    signTransactionRequested: (manifest: AppManifest) => {
+    signTransactionRequested: (manifest: LiveAppManifest) => {
       track("WalletAPI SignTransaction", getEventData(manifest));
     },
 
     // Failed to sign transaction (cancel or error)
-    signTransactionFail: (manifest: AppManifest) => {
+    signTransactionFail: (manifest: LiveAppManifest) => {
       track("WalletAPI SignTransaction Fail", getEventData(manifest));
     },
 
     // Successfully signed transaction
-    signTransactionSuccess: (manifest: AppManifest) => {
+    signTransactionSuccess: (manifest: LiveAppManifest) => {
       track("WalletAPI SignTransaction Success", getEventData(manifest));
     },
 
     // Select account modal open
-    requestAccountRequested: (manifest: AppManifest) => {
+    requestAccountRequested: (manifest: LiveAppManifest) => {
       track("WalletAPI RequestAccount", getEventData(manifest));
     },
 
     // Failed to select account (cancel or error)
-    requestAccountFail: (manifest: AppManifest) => {
+    requestAccountFail: (manifest: LiveAppManifest) => {
       track("WalletAPI RequestAccount Fail", getEventData(manifest));
     },
 
     // The user successfully selected an account
-    requestAccountSuccess: (manifest: AppManifest) => {
+    requestAccountSuccess: (manifest: LiveAppManifest) => {
       track("WalletAPI RequestAccount Success", getEventData(manifest));
     },
 
     // Select account modal open
-    receiveRequested: (manifest: AppManifest) => {
+    receiveRequested: (manifest: LiveAppManifest) => {
       track("WalletAPI Receive", getEventData(manifest));
     },
 
     // Failed to select account (cancel or error)
-    receiveFail: (manifest: AppManifest) => {
+    receiveFail: (manifest: LiveAppManifest) => {
       track("WalletAPI Receive Fail", getEventData(manifest));
     },
 
     // The user successfully selected an account
-    receiveSuccess: (manifest: AppManifest) => {
+    receiveSuccess: (manifest: LiveAppManifest) => {
       track("WalletAPI Receive Success", getEventData(manifest));
     },
 
     // Failed to broadcast a signed transaction
-    broadcastFail: (manifest: AppManifest) => {
+    broadcastFail: (manifest: LiveAppManifest) => {
       track("WalletAPI Broadcast Fail", getEventData(manifest));
     },
 
     // Successfully broadcast a signed transaction
-    broadcastSuccess: (manifest: AppManifest) => {
+    broadcastSuccess: (manifest: LiveAppManifest) => {
       track("WalletAPI Broadcast Success", getEventData(manifest));
     },
 
     // Successfully broadcast a signed transaction
-    broadcastOperationDetailsClick: (manifest: AppManifest) => {
+    broadcastOperationDetailsClick: (manifest: LiveAppManifest) => {
       track("WalletAPI Broadcast OpD Clicked", getEventData(manifest));
     },
 
     // Generate Exchange nonce modal open
-    startExchangeRequested: (manifest: AppManifest) => {
+    startExchangeRequested: (manifest: LiveAppManifest) => {
       track("WalletAPI start Exchange Nonce request", getEventData(manifest));
     },
 
     // Successfully generated an Exchange app nonce
-    startExchangeSuccess: (manifest: AppManifest) => {
+    startExchangeSuccess: (manifest: LiveAppManifest) => {
       track("WalletAPI start Exchange Nonce success", getEventData(manifest));
     },
 
     // Failed to generate an Exchange app nonce
-    startExchangeFail: (manifest: AppManifest) => {
+    startExchangeFail: (manifest: LiveAppManifest) => {
       track("WalletAPI start Exchange Nonce fail", getEventData(manifest));
     },
 
-    completeExchangeRequested: (manifest: AppManifest) => {
+    completeExchangeRequested: (manifest: LiveAppManifest) => {
       track("WalletAPI complete Exchange requested", getEventData(manifest));
     },
 
     // Successfully completed an Exchange
-    completeExchangeSuccess: (manifest: AppManifest) => {
+    completeExchangeSuccess: (manifest: LiveAppManifest) => {
       track("WalletAPI complete Exchange success", getEventData(manifest));
     },
 
     // Failed to complete an Exchange
-    completeExchangeFail: (manifest: AppManifest) => {
+    completeExchangeFail: (manifest: LiveAppManifest) => {
       track("WalletAPI complete Exchange Nonce fail", getEventData(manifest));
     },
 
-    signMessageRequested: (manifest: AppManifest) => {
+    signMessageRequested: (manifest: LiveAppManifest) => {
       track("WalletAPI sign message requested", getEventData(manifest));
     },
 
-    signMessageSuccess: (manifest: AppManifest) => {
+    signMessageSuccess: (manifest: LiveAppManifest) => {
       track("WalletAPI sign message success", getEventData(manifest));
     },
 
-    signMessageFail: (manifest: AppManifest) => {
+    signMessageFail: (manifest: LiveAppManifest) => {
       track("WalletAPI sign message fail", getEventData(manifest));
     },
 
-    signMessageUserRefused: (manifest: AppManifest) => {
+    signMessageUserRefused: (manifest: LiveAppManifest) => {
       track("WalletAPI sign message user refused", getEventData(manifest));
     },
-    deviceTransportRequested: (manifest: AppManifest) => {
+    deviceTransportRequested: (manifest: LiveAppManifest) => {
       track("WalletAPI device transport requested", getEventData(manifest));
     },
-    deviceTransportSuccess: (manifest: AppManifest) => {
+    deviceTransportSuccess: (manifest: LiveAppManifest) => {
       track("WalletAPI device transport success", getEventData(manifest));
     },
-    deviceTransportFail: (manifest: AppManifest) => {
+    deviceTransportFail: (manifest: LiveAppManifest) => {
       track("WalletAPI device transport fail", getEventData(manifest));
     },
-    deviceExchangeRequested: (manifest: AppManifest) => {
+    deviceExchangeRequested: (manifest: LiveAppManifest) => {
       track("WalletAPI device exchange requested", getEventData(manifest));
     },
-    deviceExchangeSuccess: (manifest: AppManifest) => {
+    deviceExchangeSuccess: (manifest: LiveAppManifest) => {
       track("WalletAPI device exchange success", getEventData(manifest));
     },
-    deviceExchangeFail: (manifest: AppManifest) => {
+    deviceExchangeFail: (manifest: LiveAppManifest) => {
       track("WalletAPI device exchange fail", getEventData(manifest));
     },
-    deviceCloseRequested: (manifest: AppManifest) => {
+    deviceCloseRequested: (manifest: LiveAppManifest) => {
       track("WalletAPI device close requested", getEventData(manifest));
     },
-    deviceCloseSuccess: (manifest: AppManifest) => {
+    deviceCloseSuccess: (manifest: LiveAppManifest) => {
       track("WalletAPI device close success", getEventData(manifest));
     },
-    deviceCloseFail: (manifest: AppManifest) => {
+    deviceCloseFail: (manifest: LiveAppManifest) => {
       track("WalletAPI device close fail", getEventData(manifest));
     },
-    bitcoinFamillyAccountXpubRequested: (manifest: AppManifest) => {
+    bitcoinFamillyAccountXpubRequested: (manifest: LiveAppManifest) => {
       track(
         "WalletAPI bitcoin familly account xpub requested",
         getEventData(manifest)
       );
     },
-    bitcoinFamillyAccountXpubFail: (manifest: AppManifest) => {
+    bitcoinFamillyAccountXpubFail: (manifest: LiveAppManifest) => {
       track(
         "WalletAPI bitcoin familly account xpub fail",
         getEventData(manifest)
       );
     },
-    bitcoinFamillyAccountXpubSuccess: (manifest: AppManifest) => {
+    bitcoinFamillyAccountXpubSuccess: (manifest: LiveAppManifest) => {
       track(
         "WalletAPI bitcoin familly account xpub success",
         getEventData(manifest)

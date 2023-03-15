@@ -1,5 +1,5 @@
 import trackingWrapper from "./tracking";
-import { AppManifest } from "./types";
+import { LiveAppManifest } from "../platform/types";
 
 describe("trackingWrapper", () => {
   test.each([
@@ -130,13 +130,13 @@ describe("trackingWrapper", () => {
   );
 });
 
-function appManifestFixture(name = "live-app"): AppManifest {
+function appManifestFixture(name = "live-app"): LiveAppManifest {
   return {
     id: "12",
     name,
     url: "https://www.ledger.fr",
     homepageUrl: "https://www.ledger.fr",
-    platform: "all",
+    platforms: ["ios", "android", "android"],
     apiVersion: "1.0.0",
     manifestVersion: "1.0.0",
     branch: "debug",
