@@ -89,7 +89,6 @@ export default function SelectDevice({
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
