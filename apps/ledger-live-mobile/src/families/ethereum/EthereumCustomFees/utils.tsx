@@ -10,7 +10,6 @@ const defaultMaxFeePerGasRange = inferDynamicRange(TWENTY_GWEI); // 0 - 20 Gwei
 
 export const inferMaxPriorityFeeRange = (
   networkInfo: Transaction["networkInfo"],
-  isEdit: boolean,
 ): Range => {
   if (!networkInfo?.maxPriorityFeePerGas || !networkInfo?.nextBaseFeePerGas)
     return defaultMaxPriorityFeeRange;

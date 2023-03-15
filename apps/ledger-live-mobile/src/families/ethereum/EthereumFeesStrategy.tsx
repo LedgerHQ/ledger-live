@@ -10,6 +10,8 @@ import {
 } from "@ledgerhq/live-common/families/ethereum/transaction";
 import { FeeStrategy } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { isEditableOperation } from "@ledgerhq/live-common/operation";
+
 import SelectFeesStrategy from "../../components/SelectFeesStrategy";
 import { SendRowsFeeProps as Props } from "./types";
 import { ScreenName } from "../../const";
@@ -58,27 +60,23 @@ export default function EthereumFeesStrategy({
   );
 
   const disabledStrategies = useMemo(() => {
-    return route.params.isEdit
+    return isEditableOperation(account, route.params.operation)
       ? strategies
           .filter(strategy => {
             if (EIP1559ShouldBeUsed(currency)) {
-              const moreMaxFeePerGas =
-                strategy.extra?.maxFeePerGas.isGreaterThan(
-                  transaction.maxFeePerGas!.multipliedBy(1.1),
-                );
+              const lessMaxFeePerGas = strategy.extra?.maxFeePerGas.isLessThan(
+                transaction.maxFeePerGas!,
+              );
 
-              const moreMaxPriorityFeePerGas =
-                strategy.extra?.maxFeePerGas.isEqualTo(
-                  transaction.maxFeePerGas!,
-                ) &&
-                strategy.extra?.maxPriorityFeePerGas.isGreaterThan(
+              const lessMaxPriorityFeePerGas =
+                strategy.extra?.maxPriorityFeePerGas.isLessThan(
                   transaction.maxPriorityFeePerGas!.multipliedBy(1.1),
                 );
 
-              return moreMaxFeePerGas || moreMaxPriorityFeePerGas;
+              return lessMaxFeePerGas && lessMaxPriorityFeePerGas;
             }
 
-            return strategy.extra?.gasPrice.isGreaterThan(
+            return strategy.extra?.gasPrice.isLessThan(
               transaction.gasPrice?.multipliedBy(1.1) ?? 0,
             );
           })
