@@ -1,17 +1,20 @@
 import React, { useEffect } from "react";
 import invariant from "invariant";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import BigNumber from "bignumber.js";
 import { Flex, SelectableList } from "@ledgerhq/native-ui";
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import { TransactionRaw } from "@ledgerhq/live-common/generated/types";
 import { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import { Account } from "@ledgerhq/types-live";
 import { EIP1559ShouldBeUsed } from "@ledgerhq/live-common/families/ethereum/transaction";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import {
+  getAccountCurrency,
+  getMainAccount,
+} from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { isEditableOperation } from "@ledgerhq/live-common/operation";
 
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
@@ -40,81 +43,48 @@ export function MethodSelection({ navigation, route }: Props) {
       };
     });
 
+  const mainAccount = getMainAccount(account, parentAccount as Account);
+  const feePerGas = new BigNumber(
+    EIP1559ShouldBeUsed(mainAccount.currency)
+      ? transactionToEdit.maxFeePerGas!
+      : transactionToEdit.gasPrice!,
+  );
+
+  const feeValue = new BigNumber(
+    transactionToEdit.userGasLimit! || transactionToEdit.estimatedGasLimit,
+  )
+    .times(feePerGas)
+    .div(new BigNumber(10).pow(mainAccount.unit.magnitude));
+
+  const haveFundToCancel = mainAccount.balance.gt(feeValue.times(1.3));
+  const haveFundToSpeedup = mainAccount.balance.gt(
+    feeValue
+      .times(1.1)
+      .plus(account.type === "Account" ? transactionToEdit.amount : 0),
+  );
+
+  let isOldestEditableOperation = true;
+
+  account.pendingOperations.forEach(pendingOperation => {
+    if (isEditableOperation(account, pendingOperation)) {
+      if (
+        operation.transactionSequenceNumber &&
+        pendingOperation.transactionSequenceNumber &&
+        pendingOperation.transactionSequenceNumber <
+          operation.transactionSequenceNumber
+      ) {
+        isOldestEditableOperation = false;
+      }
+    }
+  });
+
   const currency = getAccountCurrency(account);
 
   invariant(transaction, "Could not edit the latest ethereum transaction");
 
   const bridge = getAccountBridge(account, parentAccount as Account);
 
-  const [oldestPendingOperation] = account.pendingOperations.sort(
-    (a, b) => b.date.getTime() - a.date.getTime(),
-  );
-
-  const isOldestPendingOperation = operation.id === oldestPendingOperation.id;
-
-  const canCancelOperation = (
-    account: AccountLike,
-    currency: TokenCurrency | CryptoCurrency,
-  ): boolean => {
-    if (EIP1559ShouldBeUsed(currency)) {
-      if (
-        transactionToEdit.maxPriorityFeePerGas &&
-        transactionToEdit.maxFeePerGas
-      ) {
-        return new BigNumber(
-          transactionToEdit.maxPriorityFeePerGas.toNumber() * 1.1,
-        )
-          .plus(new BigNumber(transactionToEdit.maxFeePerGas.toNumber() * 1.3))
-          .isLessThan(account.balance);
-      }
-
-      return false;
-    } else {
-      if (transactionToEdit.gasPrice) {
-        return new BigNumber(
-          transactionToEdit.gasPrice.toNumber() * 1.3,
-        ).isLessThan(account.balance);
-      }
-
-      return false;
-    }
-  };
-
-  const canSpeedUpOperation = (
-    account: AccountLike,
-    currency: TokenCurrency | CryptoCurrency,
-  ): boolean => {
-    if (!isOldestPendingOperation) {
-      return false;
-    }
-
-    if (EIP1559ShouldBeUsed(currency)) {
-      if (
-        transactionToEdit.maxPriorityFeePerGas &&
-        transactionToEdit.maxFeePerGas
-      ) {
-        return transactionToEdit.amount
-          .plus(
-            new BigNumber(
-              transactionToEdit.maxPriorityFeePerGas.toNumber() * 1.1,
-            ),
-          )
-          .plus(new BigNumber(transactionToEdit.maxFeePerGas.toNumber() * 1.3))
-          .isLessThan(account.balance);
-      }
-
-      return false;
-    } else {
-      if (transactionToEdit.gasPrice) {
-        return transactionToEdit.amount
-          .plus(new BigNumber(transactionToEdit.gasPrice.toNumber() * 1.3))
-          .isLessThan(account.balance);
-      }
-
-      return false;
-    }
-  };
-
+  const { t } = useTranslation();
   const onSelect = (option: "cancel" | "speedup") => {
     switch (option) {
       case "cancel":
@@ -178,9 +148,6 @@ export function MethodSelection({ navigation, route }: Props) {
     return null;
   }
 
-  const canCancel = canCancelOperation(account, currency);
-  const canSpeedUp = canSpeedUpOperation(account, currency);
-
   return (
     <Flex flex={1} color="background.main">
       <TrackScreen
@@ -189,30 +156,31 @@ export function MethodSelection({ navigation, route }: Props) {
       />
       <Flex p={6}>
         <SelectableList onChange={onSelect}>
-          <SelectableList.Element disabled={!canCancel} value={"cancel"}>
+          <SelectableList.Element disabled={!haveFundToCancel} value={"cancel"}>
             <Trans i18nKey={"editTransaction.cancel.title"} />
             <Flex>
               <LText style={{ marginTop: 15, marginBottom: 0 }}>
-                <Trans
-                  i18nKey={
-                    canCancel
-                      ? "editTransaction.cancel.description"
-                      : "editTransaction.error.notEnoughFundsToCancel"
-                  }
-                />
+                {haveFundToCancel
+                  ? t("editTransaction.cancel.description", {
+                      ticker: currency.ticker,
+                    })
+                  : t("editTransaction.error.notEnoughFundsToCancel")}
               </LText>
             </Flex>
           </SelectableList.Element>
-          <SelectableList.Element disabled={!canSpeedUp} value={"speedup"}>
-            <Trans i18nKey={"editTransaction.speedup.title"} />
+          <SelectableList.Element
+            disabled={!haveFundToSpeedup || !isOldestEditableOperation}
+            value={"speedup"}
+          >
+            <Trans i18nKey={"editTransaction.speedUp.title"} />
             <Flex>
               <LText style={{ marginTop: 15, marginBottom: 0 }}>
                 <Trans
                   i18nKey={
-                    canSpeedUp
-                      ? "editTransaction.speedup.description"
-                      : isOldestPendingOperation
+                    !isOldestEditableOperation
                       ? "editTransaction.error.notlowestNonceToSpeedup"
+                      : haveFundToSpeedup
+                      ? "editTransaction.speedUp.description"
                       : "editTransaction.error.notEnoughFundsToSpeedup"
                   }
                 />
