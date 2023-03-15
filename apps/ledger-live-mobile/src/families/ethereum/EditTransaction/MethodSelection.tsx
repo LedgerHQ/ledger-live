@@ -46,11 +46,11 @@ export function MethodSelection({ navigation, route }: Props) {
 
   const bridge = getAccountBridge(account, parentAccount as Account);
 
-  const [latestPendingOperation] = account.pendingOperations.sort(
+  const [oldestPendingOperation] = account.pendingOperations.sort(
     (a, b) => b.date.getTime() - a.date.getTime(),
   );
 
-  const isLatestOperation = operation.id === latestPendingOperation.id;
+  const isOldestPendingOperation = operation.id === oldestPendingOperation.id;
 
   const canCancelOperation = (
     account: AccountLike,
@@ -84,7 +84,7 @@ export function MethodSelection({ navigation, route }: Props) {
     account: AccountLike,
     currency: TokenCurrency | CryptoCurrency,
   ): boolean => {
-    if (!isLatestOperation) {
+    if (!isOldestPendingOperation) {
       return false;
     }
 
@@ -211,7 +211,7 @@ export function MethodSelection({ navigation, route }: Props) {
                   i18nKey={
                     canSpeedUp
                       ? "editTransaction.speedup.description"
-                      : isLatestOperation
+                      : isOldestPendingOperation
                       ? "editTransaction.error.notlowestNonceToSpeedup"
                       : "editTransaction.error.notEnoughFundsToSpeedup"
                   }
