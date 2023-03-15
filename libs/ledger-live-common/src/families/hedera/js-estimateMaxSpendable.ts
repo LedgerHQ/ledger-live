@@ -1,9 +1,9 @@
 import BigNumber from "bignumber.js";
-import { getEstimatedFees } from "./utils";
+import { estimatedFees, estimatedFeeSafetyRate } from "./utils";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 
-export default async function estimateMaxSpendable({
+export default function estimateMaxSpendable({
   account,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   parentAccount,
@@ -16,9 +16,11 @@ export default async function estimateMaxSpendable({
 }): Promise<BigNumber> {
   const balance = account.balance;
 
-  const estimatedFees = await getEstimatedFees();
+  // as fees are based on a currency conversion, we stay
+  // on the safe side here and double the estimate for "max spendable"
+  const estimatedFee = estimatedFees.multipliedBy(estimatedFeeSafetyRate);
 
-  let maxSpendable = balance.minus(estimatedFees);
+  let maxSpendable = balance.minus(estimatedFee);
 
   // set max spendable to 0 if negative
   // for cases where the user's account balance is smaller than the estimated fee

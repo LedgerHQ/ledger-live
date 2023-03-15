@@ -9,6 +9,7 @@ import {
 } from "@ledgerhq/errors";
 
 import { fromTransactionRaw } from "./transaction";
+import { estimatedFeeSafetyRate } from "./utils";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const hedera: CurrenciesData<Transaction> = {
@@ -93,7 +94,9 @@ const hedera: CurrenciesData<Transaction> = {
           }),
           expectedStatus: (account, _, status) => {
             return {
-              amount: account.balance.minus(status.estimatedFees),
+              amount: account.balance.minus(
+                status.estimatedFees.toNumber() * estimatedFeeSafetyRate
+              ),
               errors: {},
               warnings: {},
             };
