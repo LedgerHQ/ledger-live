@@ -173,10 +173,7 @@ export function MethodSelection({ navigation, route }: Props) {
 
   return (
     <Flex flex={1} color="background.main">
-      <TrackScreen
-        category="EthereumEditTransaction"
-        name="EthereumEditTransaction"
-      />
+      <TrackScreen category="EditTransaction" name="EditTransaction" />
       <Flex p={6}>
         <SelectableList onChange={onSelect}>
           <SelectableList.Element disabled={!haveFundToCancel} value={"cancel"}>
