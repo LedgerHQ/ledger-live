@@ -13,24 +13,24 @@ overrides:
   remove-flow-types-loader>loader-utils: '*'
 
 patchedDependencies:
-  rn-fetch-blob@0.12.0:
-    hash: n5yzdsrxz654upecs5xliebtmm
-    path: patches/rn-fetch-blob@0.12.0.patch
   react-native-video@5.2.0:
     hash: lojvl6twgoj4rxeqeytmq4uduq
     path: patches/react-native-video@5.2.0.patch
-  react-native-image-crop-tools@1.6.2:
-    hash: ykxjy5s7xujdxmsgrwxo5mh3y4
-    path: patches/react-native-image-crop-tools@1.6.2.patch
   react-native-fast-crypto@2.2.0:
     hash: jdmv3zyvsaug2f6l23zgrmwdli
     path: patches/react-native-fast-crypto@2.2.0.patch
-  react-native-tcp@4.0.0:
-    hash: frdjcnsdohx4blxdmaawwvdihy
-    path: patches/react-native-tcp@4.0.0.patch
+  rn-fetch-blob@0.12.0:
+    hash: n5yzdsrxz654upecs5xliebtmm
+    path: patches/rn-fetch-blob@0.12.0.patch
+  react-native-image-crop-tools@1.6.2:
+    hash: ykxjy5s7xujdxmsgrwxo5mh3y4
+    path: patches/react-native-image-crop-tools@1.6.2.patch
   react-native-os@1.2.6:
     hash: 2e25ffb547hjiczrnsjhxl6geu
     path: patches/react-native-os@1.2.6.patch
+  react-native-tcp@4.0.0:
+    hash: frdjcnsdohx4blxdmaawwvdihy
+    path: patches/react-native-tcp@4.0.0.patch
 
 importers:
 
@@ -1011,8 +1011,8 @@ importers:
       '@ledgerhq/devices': workspace:^
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
-      '@ledgerhq/live-date': workspace:^
       '@ledgerhq/live-env': workspace:^
+      '@ledgerhq/live-portfolio': workspace:^
       '@ledgerhq/live-promise': workspace:^
       '@ledgerhq/logs': workspace:^
       '@ledgerhq/types-cryptoassets': workspace:^
@@ -1050,8 +1050,8 @@ importers:
       '@ledgerhq/devices': link:../ledgerjs/packages/devices
       '@ledgerhq/errors': link:../ledgerjs/packages/errors
       '@ledgerhq/hw-transport': link:../ledgerjs/packages/hw-transport
-      '@ledgerhq/live-date': link:../date
       '@ledgerhq/live-env': link:../env
+      '@ledgerhq/live-portfolio': link:../live-portfolio
       '@ledgerhq/live-promise': link:../promise
       '@ledgerhq/logs': link:../ledgerjs/packages/logs
       '@ledgerhq/types-cryptoassets': link:../ledgerjs/packages/types-cryptoassets
@@ -1093,8 +1093,8 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-app-polkadot': workspace:^
       '@ledgerhq/live-app-sdk': ^0.8.1
-      '@ledgerhq/live-date': workspace:^
       '@ledgerhq/live-env': workspace:^
+      '@ledgerhq/live-portfolio': workspace:^
       '@ledgerhq/live-promise': workspace:^
       '@ledgerhq/logs': workspace:^
       '@ledgerhq/types-cryptoassets': workspace:^
@@ -1128,8 +1128,8 @@ importers:
       '@ledgerhq/errors': link:../ledgerjs/packages/errors
       '@ledgerhq/hw-app-polkadot': link:../ledgerjs/packages/hw-app-polkadot
       '@ledgerhq/live-app-sdk': 0.8.1
-      '@ledgerhq/live-date': link:../date
       '@ledgerhq/live-env': link:../env
+      '@ledgerhq/live-portfolio': link:../live-portfolio
       '@ledgerhq/live-promise': link:../promise
       '@ledgerhq/logs': link:../ledgerjs/packages/logs
       '@ledgerhq/types-cryptoassets': link:../ledgerjs/packages/types-cryptoassets
@@ -1147,41 +1147,6 @@ importers:
       '@types/jest': 29.4.0
       '@typescript-eslint/eslint-plugin': 5.50.0_26f3njul6gntellyj5og7p3oly
       '@typescript-eslint/parser': 5.50.0_jofidmxrjzhj7l6vknpw5ecvfe
-      eslint: 7.32.0
-      eslint-config-prettier: 8.5.0_eslint@7.32.0
-      eslint-config-typescript: 3.0.0_bvhhfxrlaenfxnnrz7vkefdxf4
-      eslint-formatter-pretty: 3.0.1
-      eslint-plugin-prettier: 3.4.1_tsf763imdh2cxf3xedc72a4xju
-      eslint-plugin-typescript: 0.14.0
-      jest: 28.1.3
-      prettier: 2.8.3
-      ts-jest: 28.0.8_mgg23zyyvjoe75wbzvxzqqpmne
-      typescript: 4.9.5
-
-  libs/date:
-    specifiers:
-      '@ledgerhq/types-live': workspace:^
-      '@types/jest': ^29.2.4
-      '@typescript-eslint/eslint-plugin': ^5.46.1
-      '@typescript-eslint/parser': ^5.46.1
-      cross-env: ^7.0.3
-      eslint: ^7.32.0
-      eslint-config-prettier: ^8.3.0
-      eslint-config-typescript: ^3.0.0
-      eslint-formatter-pretty: ^3.0.1
-      eslint-plugin-prettier: ^3.4.0
-      eslint-plugin-typescript: ^0.14.0
-      jest: ^28.1.1
-      prettier: ^2.8.1
-      ts-jest: ^28.0.5
-      typescript: ^4.9.4
-    dependencies:
-      '@ledgerhq/types-live': link:../ledgerjs/packages/types-live
-    devDependencies:
-      '@types/jest': 29.4.0
-      '@typescript-eslint/eslint-plugin': 5.50.0_26f3njul6gntellyj5og7p3oly
-      '@typescript-eslint/parser': 5.50.0_jofidmxrjzhj7l6vknpw5ecvfe
-      cross-env: 7.0.3
       eslint: 7.32.0
       eslint-config-prettier: 8.5.0_eslint@7.32.0
       eslint-config-typescript: 3.0.0_bvhhfxrlaenfxnnrz7vkefdxf4
@@ -1319,8 +1284,8 @@ importers:
       '@ledgerhq/hw-transport-mocker': workspace:^
       '@ledgerhq/hw-transport-node-speculos': workspace:^
       '@ledgerhq/live-app-sdk': ^0.8.1
-      '@ledgerhq/live-date': workspace:^
       '@ledgerhq/live-env': workspace:^
+      '@ledgerhq/live-portfolio': workspace:^
       '@ledgerhq/live-promise': workspace:^
       '@ledgerhq/logs': workspace:^
       '@ledgerhq/types-cryptoassets': workspace:^
@@ -1506,8 +1471,8 @@ importers:
       '@ledgerhq/hw-transport-mocker': link:../ledgerjs/packages/hw-transport-mocker
       '@ledgerhq/hw-transport-node-speculos': link:../ledgerjs/packages/hw-transport-node-speculos
       '@ledgerhq/live-app-sdk': 0.8.1
-      '@ledgerhq/live-date': link:../date
       '@ledgerhq/live-env': link:../env
+      '@ledgerhq/live-portfolio': link:../live-portfolio
       '@ledgerhq/live-promise': link:../promise
       '@ledgerhq/logs': link:../ledgerjs/packages/logs
       '@ledgerhq/wallet-api-core': 0.11.0
@@ -2872,6 +2837,41 @@ importers:
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
       ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
       typescript: 4.6.4
+
+  libs/live-portfolio:
+    specifiers:
+      '@ledgerhq/types-live': workspace:^
+      '@types/jest': ^29.2.4
+      '@typescript-eslint/eslint-plugin': ^5.46.1
+      '@typescript-eslint/parser': ^5.46.1
+      cross-env: ^7.0.3
+      eslint: ^7.32.0
+      eslint-config-prettier: ^8.3.0
+      eslint-config-typescript: ^3.0.0
+      eslint-formatter-pretty: ^3.0.1
+      eslint-plugin-prettier: ^3.4.0
+      eslint-plugin-typescript: ^0.14.0
+      jest: ^28.1.1
+      prettier: ^2.8.1
+      ts-jest: ^28.0.5
+      typescript: ^4.9.4
+    dependencies:
+      '@ledgerhq/types-live': link:../ledgerjs/packages/types-live
+    devDependencies:
+      '@types/jest': 29.4.0
+      '@typescript-eslint/eslint-plugin': 5.50.0_26f3njul6gntellyj5og7p3oly
+      '@typescript-eslint/parser': 5.50.0_jofidmxrjzhj7l6vknpw5ecvfe
+      cross-env: 7.0.3
+      eslint: 7.32.0
+      eslint-config-prettier: 8.5.0_eslint@7.32.0
+      eslint-config-typescript: 3.0.0_bvhhfxrlaenfxnnrz7vkefdxf4
+      eslint-formatter-pretty: 3.0.1
+      eslint-plugin-prettier: 3.4.1_tsf763imdh2cxf3xedc72a4xju
+      eslint-plugin-typescript: 0.14.0
+      jest: 28.1.3
+      prettier: 2.8.3
+      ts-jest: 28.0.8_mgg23zyyvjoe75wbzvxzqqpmne
+      typescript: 4.9.5
 
   libs/promise:
     specifiers:

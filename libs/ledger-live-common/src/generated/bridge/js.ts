@@ -19,7 +19,7 @@ import tron from "../../families/tron/bridge/js";
 import { makeLRUCache } from "../../cache";
 import network from "../../network";
 import { withDevice } from "../../hw/deviceAccess";
-import { createBridges as polkadotCreateBridge } from "@ledgerhq/coin-polkadot/bridge/js";
+import { createBridges as polkadotCreateBridges } from "@ledgerhq/coin-polkadot/bridge/js";
 
 export default {
   algorand,
@@ -40,5 +40,5 @@ export default {
   stellar,
   tezos,
   tron,
-  polkadot: polkadotCreateBridge(withDevice, network, makeLRUCache),
+  polkadot: polkadotCreateBridges(withDevice, network, makeLRUCache),
 };

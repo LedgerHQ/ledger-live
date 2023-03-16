@@ -20,7 +20,7 @@ import {
   getPortfolioRangeConfig,
   getDates,
   getRanges,
-} from "@ledgerhq/live-date";
+} from "@ledgerhq/live-portfolio";
 import { setEnv } from "../env";
 import { genAccount } from "../mock/account";
 import { getAccountCurrency } from "../account";

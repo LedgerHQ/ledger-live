@@ -1,5 +1,5 @@
 {
-  "name": "@ledgerhq/live-date",
+  "name": "@ledgerhq/live-portfolio",
   "version": "0.0.1",
   "description": "Ledger Live Date utilities",
   "keywords": [
@@ -12,7 +12,7 @@
   "bugs": {
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
-  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-date",
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/live-portfolio",
   "publishConfig": {
     "access": "public"
   },
