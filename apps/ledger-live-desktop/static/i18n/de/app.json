@@ -214,6 +214,7 @@
     "stars" : "Favoritenliste",
     "accounts" : "Konten",
     "manager" : "My Ledger",
+    "earn" : "Verdienen",
     "exchange" : "Kaufen / Verkaufen",
     "swap" : "Umtauschen",
     "lend" : "Leihen",
@@ -225,15 +226,10 @@
     "tooltip" : "Konto favorisieren"
   },
   "bridge" : {
-    "modalTitle" : "Öffne Gerätebrücke (device bridge)",
-    "openHeader" : "Geben Sie Ihre Gerätekonten über WebSocket ein",
-    "openDescription" : "Wenn Sie eine Verbindung (bridge) öffnen, setzen Sie alle Ihre Konten Drittanwendungen aus.",
-    "openedHeader" : "{{appName}} Verbindung (bridge) geöffnet",
-    "openedDescription" : "Sie können nun über WebSocket auf Ihr {{appName}} -Konto in Webanwendunden von Drittanbietern zugreifen.",
-    "completeHeader" : "Sitzung abgeschlossen",
-    "completeDescription" : "Die WebSocket Verbindung (bridge) ist nun geschlossen.",
-    "openButton" : "Öffnen",
-    "disconnectButton" : "Trennen"
+    "modalTitle" : "Geräteverbindung",
+    "openHeader" : "Geräteverbindung ist nicht mehr verfügbar",
+    "openDescription" : "Bitte konfigurieren Sie Ihre Browser-Wallet-Erweiterungen so, dass sie WebHID anstelle von Ledger Live verwenden.",
+    "closeButton" : "Schließen"
   },
   "swap2" : {
     "title" : "Umtauschen",
@@ -828,6 +824,10 @@
         "near" : {
           "title" : "Wussten Sie schon?",
           "description" : "Ledger bietet einen niedrigeren Provisionssatz als Ihr Validator. Dieser Vorgang kann bis zu 65 Stunden dauern."
+        },
+        "elrond" : {
+          "title" : "Wussten Sie schon?",
+          "description" : "Ledger bietet einen niedrigeren Provisionssatz als Ihr Validator. Dieser Vorgang kann bis zu 10 Tage dauern."
         }
       },
       "delegation" : {
@@ -849,6 +849,9 @@
         },
         "near" : {
           "description" : "Staken Sie Ihre NEAR mit dem Ledger by Figment Validator. Ihre Coins gehören stets Ihnen, unterstützt durch die kompromisslose Sicherheit von Ledger."
+        },
+        "elrond" : {
+          "description" : "Staken Sie Ihre ELROND mit dem Ledger by Figment Validator. Ihre Coins gehören stets Ihnen, unterstützt durch die kompromisslose Sicherheit von Ledger."
         }
       }
     }
@@ -1839,7 +1842,7 @@
       "used" : "Verwendet",
       "firmwareAvailable" : "Die Firmware ist veraltet:",
       "firmwareUpToDate" : "Die Firmware ist auf dem neuesten Stand:",
-      "genuine" : "Dein Gerät ist echt",
+      "genuine" : "Ihr Gerät ist echt",
       "incomplete" : "Einige Apps wurden nicht erkannt. Bitte deinstallieren Sie diese und installieren Sie sie dann neu."
     },
     "applist" : {
@@ -2261,6 +2264,13 @@
     },
     "switchButton" : "Zu {{language}} wechseln",
     "no" : "Lieber nicht"
+  },
+  "deviceRename" : {
+    "title" : "{{ productName }} umbenennen",
+    "chooseName" : "Wählen Sie einen Namen",
+    "placeholder" : "Tony's Stax",
+    "remainingCharacters" : "{{ remainingCharacters }} Zeichen verbleibend",
+    "renamed" : "{{ productName }}-Name geändert zu “{{ name }}” "
   },
   "deviceLocalization" : {
     "language" : "Sprache",
@@ -3786,6 +3796,9 @@
       "catalogRampServerDesc" : "Zwischen mehreren Handelsanbietern wechseln",
       "enablePlatformDevTools" : "Plattform-Entwicklungswerkzeuge aktivieren",
       "enablePlatformDevToolsDesc" : "Aktivieren Sie das Öffnen des Entwicklerwerkzeug-Fensters für Plattform-Apps",
+      "customLockScreen" : "Individuelle Sperrbildschirm-Elemente",
+      "customLockScreenDesc" : "Debuggen von individuellen Grafikelementen für den Sperrbildschirm",
+      "customLockScreenCTA" : "Starten",
       "featureFlagsTitle" : "In Ledger Live verwendete definierte Feature-Flags",
       "featureFlagsDesc" : "Überschriebene Werte werden zurückgesetzt, wenn die App neu gestartet wird. Es werden nur gültige JSON-Zeichenfolgen akzeptiert.",
       "featureFlagsEdit" : "Bearbeiten",
@@ -3850,10 +3863,6 @@
         "experimentalCurrencies" : {
           "title" : "Experimentelle Integrationen",
           "description" : "Verwenden Sie verfügbare experimentelle Integrationen für Krypto-Werte."
-        },
-        "experimentalExecutionOnRenderer" : {
-          "title" : "Experimentelle Netzwerke",
-          "description" : "Nutzen Sie experimentelle Netzwerke, um Ihr Ledger Live-Erlebnis mit Ihrem VPN zu optimieren. Aktivieren Sie diese Option nur, wenn Ihr aktuelles VPN Systemfehler verursacht."
         },
         "experimentalLanguages" : {
           "title" : "Testen der Übersetzung",
@@ -4045,7 +4054,7 @@
       "tr" : "Türkisch",
       "ja" : "Japanisch",
       "ko" : "Koreanisch",
-      "pt" : "Portugiesisch"
+      "pt" : "Portugiesisch (Brasilien)"
     }
   },
   "theme" : {
@@ -4207,6 +4216,10 @@
           "3" : {
             "title" : "Wiederherstellen Ihrer Wiederherstellungsphrase auf einem neuen Gerät",
             "description" : "Verwenden Sie eine vorhandene Wiederherstellungsphrase, um Ihre privaten Schlüssel auf einem neuen Nano wiederherzustellen!"
+          },
+          "4" : {
+            "title" : "Wiederherstellen mit Ledger Recover",
+            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4352,6 +4365,19 @@
             "help" : {
               "help" : "Hilfe benötigt",
               "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
+            }
+          },
+          "recoverHowTo" : {
+            "title" : "Wählen Sie „Restore using Ledger Recover“ (Mit Ledger Recover wiederherstellen)",
+            "1" : {
+              "title" : "Wählen Sie „Restore“ (Wiederherstellen)",
+              "descr" : "Drücken Sie beide Tasten gleichzeitig, um auszuwählen."
+            },
+            "2" : {
+              "title" : "Wählen Sie „Restore using Ledger Recover“ (Mit Ledger Recover wiederherstellen)"
+            },
+            "help" : {
+              "iDontSee" : "Ich kann „Restore using Ledger Recover“ (Mit Ledger Recover wiederherstellen) nicht sehen"
             }
           },
           "existingRecoveryPhrase" : {
@@ -5668,6 +5694,7 @@
   },
   "customImage" : {
     "title" : "Individueller Sperrbildschirm",
+    "managerCTA" : "Bild für Sperrbildschirm",
     "steps" : {
       "choose" : {
         "stepLabel" : "Wählen Sie ein Bild aus",
