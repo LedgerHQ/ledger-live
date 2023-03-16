@@ -3397,7 +3397,12 @@
       "scan": "Scan QR code",
       "enterAddress": "Enter address",
       "input": "Enter address",
-      "verifyAddress": "Please verify the address matches the one shared by the recipient."
+      "verifyAddress": "Please verify the address matches the one shared by the recipient.",
+      "domainService": {
+        "reverse": "This address is linked to {{domain}}",
+        "forward": "This is a valid ENS address",
+        "supportLink": "What's an Ethereum Name Service ?"
+      }
     },
     "amount": {
       "available": "Total available",

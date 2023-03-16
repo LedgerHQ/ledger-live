@@ -225,7 +225,10 @@ function SendSummary({ navigation, route }: Props) {
             },
           ]}
         />
-        <SummaryToSection recipient={transaction.recipient} />
+        <SummaryToSection
+          recipient={transaction.recipient}
+          domain={transaction.recipientDomain?.domain}
+        />
         {status.warnings.recipient ? (
           <LText style={styles.warning} color="orange">
             <TranslatedError error={status.warnings.recipient} />

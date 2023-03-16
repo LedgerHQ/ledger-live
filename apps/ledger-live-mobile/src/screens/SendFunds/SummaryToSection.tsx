@@ -9,9 +9,10 @@ import QRcode from "../../icons/QRcode";
 
 type Props = {
   recipient: string;
+  domain?: string;
 };
 
-function SummaryToSection({ recipient }: Props) {
+function SummaryToSection({ recipient, domain }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   return (
@@ -23,9 +24,18 @@ function SummaryToSection({ recipient }: Props) {
         </Circle>
       }
       data={
-        <LText numberOfLines={2} style={styles.summaryRowText}>
-          {recipient}
-        </LText>
+        <>
+          <LText numberOfLines={2} style={styles.domainRowText}>
+            {domain}
+          </LText>
+          <LText
+            numberOfLines={2}
+            style={domain ? styles.domainRowText : styles.summaryRowText}
+            color={domain ? "neutral.c70" : "neutral.c100"}
+          >
+            {recipient}
+          </LText>
+        </>
       }
     />
   );
@@ -34,6 +44,12 @@ function SummaryToSection({ recipient }: Props) {
 const styles = StyleSheet.create({
   summaryRowText: {
     fontSize: 16,
+  },
+  domainRowText: {
+    fontSize: 14,
+  },
+  addressRowText: {
+    fontSize: 14,
   },
 });
 export default memo<Props>(SummaryToSection);
