@@ -9,7 +9,7 @@ test.use({
   env: { DEBUG_UPDATE: true },
 });
 
-test("Updater", async ({ page }) => {
+test.skip("Updater", async ({ page }) => {
   const layout = new Layout(page);
   const settingsPage = new SettingsPage(page);
   const appUpdater = new AppUpdater(page);

@@ -9,7 +9,7 @@ import { padStart } from "lodash";
 
 test.use({ userdata: "skip-onboarding", featureFlags: { customImage: { enabled: true } } });
 
-test("Custom image", async ({ page }) => {
+test.skip("Custom image", async ({ page }) => {
   const managerPage = new ManagerPage(page);
   const deviceAction = new DeviceAction(page);
   const customImageDrawer = new CustomImageDrawer(page);

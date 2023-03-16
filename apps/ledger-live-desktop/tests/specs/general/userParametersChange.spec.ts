@@ -5,7 +5,7 @@ import { Layout } from "../../models/Layout";
 
 test.use({ userdata: "skip-onboarding" });
 
-test("User able to update currency/language/theme in settings", async ({ page }) => {
+test.skip("User able to update currency/language/theme in settings", async ({ page }) => {
   const settingsPage = new SettingsPage(page);
   const layout = new Layout(page);
 

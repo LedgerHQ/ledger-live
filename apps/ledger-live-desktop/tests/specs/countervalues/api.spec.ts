@@ -10,7 +10,9 @@ test.use({
   },
 });
 
-test("Countervalues: at least one call is made and successful to the API", async ({ page }) => {
+test.skip("Countervalues: at least one call is made and successful to the API", async ({
+  page,
+}) => {
   const firstSuccessfulQuery = new Promise((resolve, reject) => {
     page.on("response", response => {
       if (

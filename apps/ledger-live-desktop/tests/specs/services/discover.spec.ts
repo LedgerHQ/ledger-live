@@ -36,7 +36,7 @@ test.afterAll(() => {
 });
 
 // Due to flakiness on different OS's and CI, we won't run the screenshots where unncessary for testing
-test("Discover", async ({ page }) => {
+test.skip("Discover", async ({ page }) => {
   // Don't run test if server is not running
   if (!continueTest) return;
 

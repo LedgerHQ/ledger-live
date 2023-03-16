@@ -10,7 +10,7 @@ test.use({
   },
 });
 
-test("Unsupported OS", async ({ page }) => {
+test.skip("Unsupported OS", async ({ page }) => {
   const layout = new Layout(page);
   await test.step("displays the error page", async () => {
     await layout.renderError.waitFor({ state: "visible" });

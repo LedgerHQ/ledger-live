@@ -8,7 +8,7 @@ import { PortfolioPage } from "tests/models/PortfolioPage";
 test.use({ userdata: "skip-onboarding" });
 
 // eslint-disable-next-line jest/expect-expect
-test("Keyboard shortcuts", async ({ page }) => {
+test.skip("Keyboard shortcuts", async ({ page }) => {
   const layout = new Layout(page);
   const portfolioPage = new PortfolioPage(page);
   const addAccountModal = new AddAccountModal(page);

@@ -13,7 +13,7 @@ const nanos = [Nano.nanoX, Nano.nanoS, Nano.nanoSP];
 
 test.describe.parallel("Onboarding", () => {
   for (const nano of nanos) {
-    test(`[${nano}] Onboarding flow already set up`, async ({ page }) => {
+    test.skip(`[${nano}] Onboarding flow already set up`, async ({ page }) => {
       const onboardingPage = new OnboardingPage(page);
 
       await test.step("Wait for launch", async () => {

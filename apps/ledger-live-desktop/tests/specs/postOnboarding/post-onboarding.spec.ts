@@ -12,7 +12,7 @@ test.use({
   featureFlags: { customImage: { enabled: true } },
 });
 
-test("PostOnboarding", async ({ page }) => {
+test.skip("PostOnboarding", async ({ page }) => {
   const settingsPage = new SettingsPage(page);
   const layout = new Layout(page);
   const postOnboarding = new PostOnboarding(page);

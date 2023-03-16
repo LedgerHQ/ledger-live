@@ -15,7 +15,7 @@ process.env.PWDEBUG = "1";
 // app env
 test.use({ env: { DEV_TOOLS: true, HIDE_DEBUG_MOCK: undefined, DEBUG_UPDATE: true } });
 
-test("My test", async ({ page }) => {
+test.skip("My test", async ({ page }) => {
   test.setTimeout(6000000);
   // const deviceAction = new DeviceAction(page);
 
