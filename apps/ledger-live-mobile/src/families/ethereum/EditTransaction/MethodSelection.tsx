@@ -17,12 +17,14 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { isEditableOperation } from "@ledgerhq/live-common/operation";
+import { Linking } from "react-native";
 
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
 import { EditTransactionParamList } from "../../../components/RootNavigator/types/EditTransactionNavigator";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import LText from "../../../components/LText";
+import { urls } from "../../../config/urls";
 
 type Props = StackNavigatorProps<
   EditTransactionParamList,
@@ -212,6 +214,12 @@ export function MethodSelection({ navigation, route }: Props) {
             </Flex>
           </SelectableList.Element>
         </SelectableList>
+        <LText
+          style={{ marginTop: 8, textDecorationLine: "underline" }}
+          onPress={() => Linking.openURL(urls.editEthTx.learnMore)}
+        >
+          {t("editTransaction.learnMore")}
+        </LText>
       </Flex>
     </Flex>
   );
