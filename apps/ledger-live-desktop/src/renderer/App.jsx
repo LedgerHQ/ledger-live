@@ -36,7 +36,7 @@ import MarketDataProvider from "~/renderer/screens/market/MarketDataProviderWrap
 // $FlowFixMe
 import { ConnectEnvsToSentry } from "~/renderer/components/ConnectEnvsToSentry";
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
-import * as braze from "@braze/web-sdk";
+import { useBraze } from "./hooks/useBraze";
 
 const reloadApp = event => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
@@ -110,26 +110,7 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: * }) => {
 };
 
 const App = ({ store, initialCountervalues }: Props) => {
-  useEffect(() => {
-    braze.initialize('d84c8166-a00e-422f-8dc1-e48f103b413c', {
-      baseUrl: "sdk.fra-02.braze.eu",
-      enableLogging: true,
-    });
-    braze.changeUser("7d44cb19-eab3-4f85-b1c8-9f79981a35da");
-    console.log("IS PUSH SUPPORTED", braze.isPushSupported());
-    braze.requestPushPermission((endpoint, publicKey, userAuth) => {
-      console.log("SUCCESS", { endpoint, publicKey, userAuth })
-    }, (temporaryDenial) => {
-      console.log("NOT GRANTED - is temporary :", temporaryDenial)
-    });
-    console.log("IS PERMISSION GRANTED :", braze.isPushPermissionGranted())
-    braze.subscribeToContentCardsUpdates(function(cards){
-      // cards have been updated
-      console.log("CARDS HAVE BEEN UPDATED", cards)
-    });
-    console.log("IAM subscription :", braze.automaticallyShowInAppMessages());
-    braze.openSession();
-  }, [])
+  useBraze();
   return (
     <LiveStyleSheetManager>
       <Provider store={store}>
