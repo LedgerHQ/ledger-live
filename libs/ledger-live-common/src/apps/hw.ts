@@ -468,7 +468,7 @@ export const listApps = (
         .filter(Boolean);
 
       let customImageBlocks = 0;
-      if (deviceModelId === DeviceModelId.stax) {
+      if (deviceModelId === DeviceModelId.stax && !deviceInfo.isRecoveryMode) {
         const customImageSize = await staxFetchImageSize(transport);
         if (customImageSize) {
           customImageBlocks = Math.ceil(customImageSize / bytesPerBlock);
