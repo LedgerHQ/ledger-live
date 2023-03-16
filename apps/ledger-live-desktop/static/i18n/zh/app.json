@@ -828,6 +828,10 @@
         "near" : {
           "title" : "您知道吗？",
           "description" : "Ledger 提供的佣金率低于您的验证者。此过程最多可能需要 65 小时。"
+        },
+        "elrond" : {
+          "title" : "您知道吗？",
+          "description" : "Ledger 提供的佣金率低于您的验证者。此过程最多可能需要 10 天。"
         }
       },
       "delegation" : {
@@ -849,6 +853,9 @@
         },
         "near" : {
           "description" : "使用 Ledger by Figment 验证者权益质押您的 NEAR。您的币仍归您所有，由 Ledger 提供妥善的安全防护。"
+        },
+        "elrond" : {
+          "description" : "使用 Ledger by Figment 验证者权益质押您的 ELROND。您的币仍归您所有，由 Ledger 提供妥善的安全防护。"
         }
       }
     }
@@ -1839,7 +1846,7 @@
       "used" : "已用",
       "firmwareAvailable" : "固件版本过期：",
       "firmwareUpToDate" : "固件为最新版本：",
-      "genuine" : "设备是正版的",
+      "genuine" : "您的设备是正版的",
       "incomplete" : "部分应用程序没有被识别。请卸载并重新安装。"
     },
     "applist" : {
@@ -2261,6 +2268,13 @@
     },
     "switchButton" : "切换至{{language}}",
     "no" : "我不愿意"
+  },
+  "deviceRename" : {
+    "title" : "重命名 {{ productName }}",
+    "chooseName" : "选择名称",
+    "placeholder" : "Tony 的 Stax",
+    "remainingCharacters" : "剩余 {{ remainingCharacters }} 个字符",
+    "renamed" : "{{ productName }} 名称已更改为\n“{{ name }}” "
   },
   "deviceLocalization" : {
     "language" : "语言",
@@ -3786,6 +3800,9 @@
       "catalogRampServerDesc" : "在多个交易提供商之间切换",
       "enablePlatformDevTools" : "启用平台开发工具",
       "enablePlatformDevToolsDesc" : "启用打开平台应用程序开发工具的窗口",
+      "customLockScreen" : "自定义锁屏素材资源",
+      "customLockScreenDesc" : "调试自定义锁屏图形素材资源",
+      "customLockScreenCTA" : "启动",
       "featureFlagsTitle" : "Ledger Live 中使用的已定义功能标志",
       "featureFlagsDesc" : "如果重新启动应用程序，将重置覆盖的值。仅接受有效的 JSON 字符串。",
       "featureFlagsEdit" : "编辑",
@@ -3850,10 +3867,6 @@
         "experimentalCurrencies" : {
           "title" : "实验性集成",
           "description" : "使用可用的实验性加密资产集成。"
-        },
-        "experimentalExecutionOnRenderer" : {
-          "title" : "实验性网络",
-          "description" : "借助实验性网络优化您通过 VPN 使用 Ledger Live 的体验。仅在您当前使用的 VPN 导致系统错误时激活此功能。"
         },
         "experimentalLanguages" : {
           "title" : "翻译测试",
@@ -5668,6 +5681,7 @@
   },
   "customImage" : {
     "title" : "自定义锁屏界面",
+    "managerCTA" : "锁屏图片",
     "steps" : {
       "choose" : {
         "stepLabel" : "选择一张图片",
