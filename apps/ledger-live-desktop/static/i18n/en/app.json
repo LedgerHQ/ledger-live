@@ -3524,7 +3524,7 @@
     }
   },
   "vechain": {
-    "warning": "The graph is not available for this token"
+    "noGraphWarning": "The graph is not available for this token"
   },
   "near": {
     "account": {

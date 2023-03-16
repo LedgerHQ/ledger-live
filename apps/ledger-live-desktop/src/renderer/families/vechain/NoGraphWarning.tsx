@@ -21,8 +21,8 @@ const Container: ThemedComponent<{}> = styled(Box).attrs(props => ({
   ${p => {
     return css`
       padding: 16px 16px;
-      color: ${p.theme.colors.dark};
-      background-color: ${p.theme.colors.grey};
+      color: ${p.theme.colors.palette.text.shade70};
+      background-color: ${p.theme.colors.palette.text.shade5};
       border: none;
       border-xolor: transparent;
     `;
@@ -57,7 +57,7 @@ export default function Alert() {
       <Container type={"warning"} >
         <ExclamationCircle size={16} />
         <Content>
-          <TitleContent>{t("vechain.warning")}</TitleContent>
+          <TitleContent>{t("vechain.noGraphWarning")}</TitleContent>
         </Content>
       </Container>
     
