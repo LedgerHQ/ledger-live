@@ -268,6 +268,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
         setSeedPathStatus("restore_seed");
         break;
       case DeviceOnboardingStep.RecoverRestore:
+        setShouldRestoreApps(true);
         setStepKey(StepKey.Seed);
         setSeedPathStatus("recover_seed");
         break;

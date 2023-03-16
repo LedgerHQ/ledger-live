@@ -347,7 +347,7 @@ export const SyncOnboarding = ({
         setSeedPathStatus("restore_seed");
         break;
       case DeviceOnboardingStep.RecoverRestore:
-        setShouldRestoreApps(false);
+        setShouldRestoreApps(true);
         setCompanionStepKey(CompanionStepKey.Seed);
         setSeedPathStatus("recover_seed");
         break;
