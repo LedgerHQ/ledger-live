@@ -77,6 +77,12 @@ const getMainActions = ({
       navigationParams: navigationParams as unknown as NavigationParamsType,
       label: <Trans i18nKey="account.stake" />,
       Icon: Icons.ClaimRewardsMedium,
+      event: "button_clicked",
+      eventProperties: {
+        button: "stake",
+        token: "TRON",
+        page: "Account Page",
+      },
     },
   ];
 };
