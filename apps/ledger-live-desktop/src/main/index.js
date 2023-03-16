@@ -5,6 +5,7 @@ require("@electron/remote/main").initialize();
 /* eslint-disable import/first */
 import "./setup";
 import { app, Menu, ipcMain, session, webContents, shell } from "electron";
+import { setEnvUnsafe } from "@ledgerhq/live-common/env";
 import menu from "./menu";
 import {
   createMainWindow,
@@ -12,11 +13,11 @@ import {
   getMainWindowAsync,
   loadWindow,
 } from "./window-lifecycle";
-import { getSentryEnabled, setUserId } from "./internal-lifecycle";
 import resolveUserDataDirectory from "~/helpers/resolveUserDataDirectory";
 import db from "./db";
 import debounce from "lodash/debounce";
-import sentry from "~/sentry/main";
+import sentry, { setTags } from "~/sentry/main";
+import "./device";
 
 const gotLock = app.requestSingleInstanceLock();
 const userDataDirectory = resolveUserDataDirectory();
@@ -70,6 +71,29 @@ app.on("will-finish-launching", () => {
   });
 });
 
+let sentryEnabled = null;
+
+function getSentryEnabled(): boolean | null {
+  return sentryEnabled;
+}
+
+ipcMain.handle("set-sentry-tags", (event, tags) => {
+  setTags(tags);
+});
+
+ipcMain.on("sentryLogsChanged", (event, payload) => {
+  sentryEnabled = payload;
+});
+
+ipcMain.on("setEnv", async (event, env) => {
+  const { name, value } = env;
+  setEnvUnsafe(name, value);
+});
+
+app.on("window-all-closed", async () => {
+  app.quit();
+});
+
 app.on("ready", async () => {
   app.dirname = __dirname;
   if (__DEV__) {
@@ -83,11 +107,9 @@ app.on("ready", async () => {
 
   const userId = user?.id;
   if (userId) {
-    setUserId(userId);
     sentry(() => {
       const value = getSentryEnabled();
       if (value === null) return settings?.sentryLogs;
-      return value;
     }, userId);
   }
 

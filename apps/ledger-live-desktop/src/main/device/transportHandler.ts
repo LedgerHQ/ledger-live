@@ -11,6 +11,13 @@ import {
   transportListenChannel,
 } from "~/config/transportChannels";
 
+// simple pattern to channel all responses back to renderer
+// TODO: codebase can be simplified to embed the logic directly in place
+export const responses = new Subject();
+function respond(message: any) {
+  responses.next(message);
+}
+
 type APDUMessage =
   | { type: "exchange"; apduHex: string; requestId: string }
   | { type: "exchangeBulk"; apdusHex: string[]; requestId: string }
@@ -29,7 +36,7 @@ export const transportOpen = ({
   const subjectExist = transports.get(data.descriptor);
 
   const onEnd = () => {
-    process.send?.({
+    respond({
       type: transportOpenChannel,
       data,
       requestId,
@@ -49,14 +56,14 @@ export const transportOpen = ({
           transport
             .exchange(Buffer.from(e.apduHex, "hex"))
             .then(response =>
-              process.send?.({
+              respond({
                 type: transportExchangeChannel,
                 data: response.toString("hex"),
                 requestId: e.requestId,
               }),
             )
             .catch(error =>
-              process.send?.({
+              respond({
                 type: transportExchangeChannel,
                 error: serializeError(error),
                 requestId: e.requestId,
@@ -66,21 +73,21 @@ export const transportOpen = ({
           const apdus = e.apdusHex.map(apduHex => Buffer.from(apduHex, "hex"));
           const subscription = transport.exchangeBulk(apdus, {
             next: response => {
-              process.send?.({
+              respond({
                 type: transportExchangeBulkChannel,
                 data: response.toString("hex"),
                 requestId: e.requestId,
               });
             },
             error: error => {
-              process.send?.({
+              respond({
                 type: transportExchangeBulkChannel,
                 error: serializeError(error),
                 requestId: e.requestId,
               });
             },
             complete: () => {
-              process.send?.({
+              respond({
                 type: transportExchangeBulkChannel,
                 requestId: e.requestId,
               });
@@ -107,7 +114,7 @@ export const transportOpen = ({
     return subject;
   }).subscribe({
     error: error => {
-      process.send?.({
+      respond({
         type: transportOpenChannel,
         error: serializeError(error),
         requestId,
@@ -125,7 +132,7 @@ export const transportExchange = ({
 }) => {
   const subject = transports.get(data.descriptor);
   if (!subject) {
-    process.send?.({
+    respond({
       type: transportExchangeChannel,
       error: serializeError(
         new DisconnectedDeviceDuringOperation("No open transport for the given descriptor"),
@@ -146,7 +153,7 @@ export const transportExchangeBulk = ({
 }) => {
   const subject = transports.get(data.descriptor);
   if (!subject) {
-    process.send?.({
+    respond({
       type: transportExchangeBulkChannel,
       error: serializeError(
         new DisconnectedDeviceDuringOperation("No open transport for the given descriptor"),
@@ -168,7 +175,7 @@ export const transportExchangeBulkUnsubscribe = ({
 }) => {
   const subject = transports.get(data.descriptor);
   if (!subject) {
-    process.send?.({
+    respond({
       type: transportExchangeBulkUnsubscribeChannel,
       error: serializeError(
         new DisconnectedDeviceDuringOperation("No open transport for the given descriptor"),
@@ -185,15 +192,16 @@ const transportListenListeners = new Map<string, { unsubscribe: () => void }>();
 export const transportListen = ({ requestId }: { requestId: string }) => {
   const observable = new Observable(TransportNodeHidSingleton.listen);
   const subscription = observable.subscribe({
-    next: e => {
-      process.send?.({
+    next: ({ deviceModel, ...rest }) => {
+      respond({
         type: transportListenChannel,
-        data: e,
+        data: rest,
+        deviceModelId: deviceModel?.id,
         requestId,
       });
     },
     error: error => {
-      process.send?.({
+      respond({
         type: transportListenChannel,
         error: serializeError(error),
         requestId,
@@ -220,7 +228,7 @@ export const transportClose = ({
 }) => {
   const subject = transports.get(data.descriptor);
   if (!subject) {
-    process.send?.({
+    respond({
       type: transportCloseChannel,
       error: serializeError(
         new DisconnectedDeviceDuringOperation("No open transport for the given descriptor"),
@@ -231,7 +239,7 @@ export const transportClose = ({
   }
   subject.subscribe({
     complete: () => {
-      process.send?.({
+      respond({
         type: transportCloseChannel,
         data,
         requestId,

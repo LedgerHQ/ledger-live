@@ -15,6 +15,7 @@ import {
   transportExchangeChannel,
   transportOpenChannel,
 } from "~/config/transportChannels";
+import { getDeviceModel } from "@ledgerhq/devices";
 
 const rendererRequest = (channel, data) => {
   return new Promise((resolve, reject) => {
@@ -45,9 +46,13 @@ export class IPCTransport extends Transport {
       if (message.error) {
         observer.error(deserializeError(message.error));
       } else {
-        const { data } = message;
+        const { data, deviceModelId } = message;
         if (data) {
-          observer.next(data);
+          const d = { ...data };
+          if (deviceModelId) {
+            d.deviceModel = getDeviceModel(deviceModelId);
+          }
+          observer.next(d);
         } else {
           observer.complete();
         }

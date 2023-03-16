@@ -81,12 +81,6 @@ const LetMainSendCrashTest = () => {
   }, []);
   return null;
 };
-const LetInternalSendCrashTest = () => {
-  useEffect(() => {
-    ipcRenderer.send("internalCrashTest");
-  }, []);
-  return null;
-};
 
 export const TopBannerContainer: ThemedComponent<{}> = styled.div`
   position: sticky;
@@ -292,9 +286,6 @@ export default function Default() {
                       </KeyboardContent>
                       <KeyboardContent sequence="CRASH_MAIN">
                         <LetMainSendCrashTest />
-                      </KeyboardContent>
-                      <KeyboardContent sequence="CRASH_INTERNAL">
-                        <LetInternalSendCrashTest />
                       </KeyboardContent>
                     </Route>
                   </Switch>

@@ -31,11 +31,11 @@ export const useListenToHidDevices = () => {
             }
           }
         },
-        () => {
+        e => {
           resetDevices();
           syncDevices();
         },
-        () => {
+        e => {
           resetDevices();
           syncDevices();
         },
