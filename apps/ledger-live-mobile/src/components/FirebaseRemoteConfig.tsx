@@ -36,9 +36,11 @@ export const FirebaseRemoteConfigProvider = ({
         });
         await remoteConfig().fetchAndActivate();
       } catch (error) {
-        console.error(
-          `Failed to fetch Firebase remote config with error: ${error}`,
-        );
+        if (!unmounted) {
+          console.error(
+            `Failed to fetch Firebase remote config with error: ${error}`,
+          );
+        }
       }
       if (!unmounted) {
         setLoaded(true);

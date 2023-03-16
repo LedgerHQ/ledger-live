@@ -22,7 +22,6 @@ import appOpExec from "./appOpExec";
 import initSwap from "./initSwap";
 import startExchange from "./startExchange";
 import completeExchange from "./completeExchange";
-import websocketBridge from "./websocketBridge";
 import checkSignatureAndPrepare from "./checkSignatureAndPrepare";
 import getTransactionId from "./getTransactionId";
 import scanDescriptors from "./scanDescriptors";
@@ -33,11 +32,9 @@ import staxLoadImage from "./staxLoadImage";
 import getOnboardingStatePolling from "./getOnboardingStatePolling";
 import getGenuineCheckFromDeviceId from "./getGenuineCheckFromDeviceId";
 import getLatestAvailableFirmwareFromDeviceId from "./getLatestAvailableFirmwareFromDeviceId";
-import { commands as bridgeProxyCommands } from "~/renderer/bridge/proxy-commands";
 
 export const commandsById = {
   appOpExec,
-  ...bridgeProxyCommands,
   checkRPCNodeConfig,
   firmwarePrepare,
   firmwareMain,
@@ -61,7 +58,6 @@ export const commandsById = {
   getTransactionId,
   testCrash,
   testInterval,
-  websocketBridge,
   scanDescriptors,
   installLanguage,
   signMessage,

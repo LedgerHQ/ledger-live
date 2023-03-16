@@ -96,7 +96,7 @@ export default function AssetBalanceSummaryHeader({
 
   const { providers, storedProviders } = useProviders();
 
-  const startStakeFlow = useStakeFlow({ currencies: [currency?.id] });
+  const startStakeFlow = useStakeFlow({ currencies: currency ? [currency.id] : undefined });
   const stakeProgramsFeatureFlag = useFeature("stakePrograms");
   const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
   const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;
@@ -212,7 +212,7 @@ export default function AssetBalanceSummaryHeader({
         )}
 
         {availableOnStake && (
-          <Button variant="color" onClick={onStake}>
+          <Button variant="color" onClick={onStake} buttonTestId="asset-page-stake-button">
             {t("accounts.contextMenu.stake")}
           </Button>
         )}

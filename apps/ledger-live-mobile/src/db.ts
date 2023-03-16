@@ -14,6 +14,7 @@ import { Announcement } from "@ledgerhq/live-common/notifications/AnnouncementPr
 import store from "./logic/storeWrapper";
 import type { User } from "./types/store";
 import type { BleState, ProtectState, SettingsState } from "./reducers/types";
+import { PlatformState } from "./screens/Platform/v2/Catalog/types";
 
 export type Notifications = {
   announcements: Announcement[];
@@ -289,4 +290,16 @@ export async function getProtect(): Promise<ProtectState> {
 
 export async function saveProtect(obj: ProtectState): Promise<void> {
   await store.save("protect", obj);
+}
+
+export async function deleteProtect(): Promise<void> {
+  await store.delete("protect");
+}
+
+export function getPlatform(): Promise<PlatformState> {
+  return store.get("platform") as Promise<PlatformState>;
+}
+
+export function savePlatform(state: PlatformState): Promise<void> {
+  return store.save("platform", state);
 }

@@ -6,7 +6,6 @@ import {
   StackNavigationOptions,
 } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
-import { Flex, Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useSelector } from "react-redux";
@@ -60,7 +59,7 @@ import StepHeader from "../StepHeader";
 import PortfolioHistory from "../../screens/Portfolio/PortfolioHistory";
 import RequestAccountNavigator from "./RequestAccountNavigator";
 import VerifyAccount from "../../screens/VerifyAccount";
-import PlatformApp from "../../screens/Platform/App";
+import { LiveApp } from "../../screens/Platform";
 import AccountsNavigator from "./AccountsNavigator";
 import MarketCurrencySelect from "../../screens/Market/MarketCurrencySelect";
 import { BleDevicePairingFlow } from "../../screens/BleDevicePairingFlow/index";
@@ -70,7 +69,6 @@ import ScreenHeader from "../../screens/Exchange/ScreenHeader";
 import ExchangeStackNavigator from "./ExchangeStackNavigator";
 
 import PostBuyDeviceScreen from "../../screens/PostBuyDeviceScreen";
-import Learn from "../../screens/Learn/learn";
 import LearnWebView from "../../screens/Learn/index";
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 import PostBuyDeviceSetupNanoWallScreen from "../../screens/PostBuyDeviceSetupNanoWallScreen";
@@ -82,9 +80,11 @@ import CustomImageNavigator from "./CustomImageNavigator";
 import ClaimNftNavigator from "./ClaimNftNavigator";
 import PostOnboardingNavigator from "./PostOnboardingNavigator";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
-import { accountsSelector } from "../../reducers/accounts";
+import { hasNoAccountsSelector } from "../../reducers/accounts";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import DeviceConnect from "../../screens/DeviceConnect";
+import ExploreTabNavigator from "./ExploreTabNavigator";
+import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -99,9 +99,9 @@ export default function BaseNavigator() {
   const ptxSmartRoutingMobile = useFeature("ptxSmartRoutingMobile");
   const walletConnectLiveApp = useFeature("walletConnectLiveApp");
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
-  const accounts = useSelector(accountsSelector);
+  const isAccountsEmpty = useSelector(hasNoAccountsSelector);
   const readOnlyModeEnabled =
-    useSelector(readOnlyModeEnabledSelector) && accounts.length <= 0;
+    useSelector(readOnlyModeEnabledSelector) && isAccountsEmpty;
 
   return (
     <Stack.Navigator
@@ -180,33 +180,27 @@ export default function BaseNavigator() {
       />
       <Stack.Screen
         name={ScreenName.PlatformApp}
-        component={PlatformApp}
-        options={({ route }) => ({
-          headerBackImage: () => (
-            <Flex pl="16px">
-              <Icons.CloseMedium color="neutral.c100" size="20px" />
-            </Flex>
-          ),
+        component={LiveApp}
+        options={{
           headerStyle: styles.headerNoShadow,
-          title: route.params.name,
-        })}
+        }}
         {...noNanoBuyNanoWallScreenOptions}
-      />
-      <Stack.Screen
-        name={ScreenName.Learn}
-        component={Learn}
-        options={({ navigation }) => ({
-          headerShown: true,
-          animationEnabled: false,
-          headerTitle: t("discover.sections.learn.title"),
-          headerLeft: () => <BackButton navigation={navigation} />,
-          headerRight: () => null,
-        })}
       />
       <Stack.Screen
         name={ScreenName.LearnWebView}
         component={LearnWebView}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name={NavigatorName.ExploreTab}
+        component={ExploreTabNavigator}
+        options={({ navigation }) => ({
+          headerShown: true,
+          animationEnabled: false,
+          headerTitle: t("discover.sections.news.title"),
+          headerLeft: () => <BackButton navigation={navigation} />,
+          headerRight: () => null,
+        })}
       />
       <Stack.Screen
         name={NavigatorName.SignMessage}
@@ -518,6 +512,7 @@ export default function BaseNavigator() {
         options={{
           headerShown: false,
         }}
+        {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
         name={NavigatorName.NotificationCenter}
@@ -578,6 +573,10 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={ScreenName.DeviceConnect}
         component={DeviceConnect}
+        options={{
+          title: t("deviceConnect.title"),
+          headerRight: () => null,
+        }}
         listeners={({ route }) => ({
           beforeRemove: () => {
             const onClose =
@@ -588,6 +587,15 @@ export default function BaseNavigator() {
             }
           },
         })}
+      />
+      <Stack.Screen
+        name={NavigatorName.NoFundsFlow}
+        component={NoFundsFlowNavigator}
+        options={{
+          ...TransparentHeaderNavigationOptions,
+          headerRight: () => <HeaderRightClose preferDismiss={false} />,
+          headerLeft: () => null,
+        }}
       />
     </Stack.Navigator>
   );

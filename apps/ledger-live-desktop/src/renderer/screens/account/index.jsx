@@ -1,27 +1,29 @@
 // @flow
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback } from "react";
 import { compose } from "redux";
-import { connect, useDispatch, useSelector } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import { withTranslation } from "react-i18next";
-import type { TFunction } from "react-i18next";
 import { Redirect } from "react-router";
-import type { AccountLike, Account } from "@ledgerhq/types-live";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { findCompoundToken } from "@ledgerhq/live-common/currencies/index";
 import { isNFTActive } from "@ledgerhq/live-common/nft/support";
+import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import { accountSelector } from "~/renderer/reducers/accounts";
 import {
-  isAccountEmpty,
+  findSubAccountById,
   getAccountCurrency,
   getMainAccount,
-  findSubAccountById,
+  isAccountEmpty,
 } from "@ledgerhq/live-common/account/index";
-import { setCountervalueFirst } from "~/renderer/actions/settings";
 import {
-  hiddenNftCollectionsSelector,
+  setCountervalueFirst,
+  useFilterTokenOperationsZeroAmount,
+} from "~/renderer/actions/settings";
+import {
   countervalueFirstSelector,
+  hiddenNftCollectionsSelector,
 } from "~/renderer/reducers/settings";
 
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -39,7 +41,9 @@ import EmptyStateAccount from "./EmptyStateAccount";
 import TokensList from "./TokensList";
 import CompoundBodyHeader from "~/renderer/screens/lend/Account/AccountBodyHeader";
 import useCompoundAccountEnabled from "~/renderer/screens/lend/useCompoundAccountEnabled";
-import { getBannerProps, AccountBanner } from "./AccountBanner";
+import { AccountStakeBanner } from "~/renderer/screens/account/AccountStakeBanner";
+import type { TFunction } from "react-i18next";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
 
 const mapStateToProps = (
   state,
@@ -90,28 +94,23 @@ const AccountPage = ({
     ? perFamilyAccountSubHeader[mainAccount.currency.family]
     : null;
   const bgColor = useTheme("colors.palette.background.paper");
-
   const isCompoundEnabled = useCompoundAccountEnabled(account, parentAccount);
-
-  const [banner, setBanner] = useState({});
-
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (mainAccount) {
-      const bannerProps = getBannerProps(mainAccount, { t, dispatch });
-      setBanner(bannerProps);
-    }
-  }, [mainAccount, t, dispatch]);
+  const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
 
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
   const filterOperations = useCallback(
     (operation, account) => {
-      return !operation?.nftOperations?.find(op =>
+      // Remove operations linked to address poisoning
+      const removeZeroAmountTokenOp =
+        shouldFilterTokenOpsZeroAmount && isAddressPoisoningOperation(operation, account);
+      // Remove operations coming from an NFT collection considered spam
+      const opFromBlacklistedNftCollection = operation?.nftOperations?.find(op =>
         hiddenNftCollections.includes(`${account.id}|${op?.contract}`),
       );
+
+      return !opFromBlacklistedNftCollection && !removeZeroAmountTokenOp;
     },
-    [hiddenNftCollections],
+    [hiddenNftCollections, shouldFilterTokenOpsZeroAmount],
   );
 
   if (!account || !mainAccount) {
@@ -169,7 +168,7 @@ const AccountPage = ({
               ctoken={ctoken}
             />
           </Box>
-          {banner.display && <AccountBanner {...banner} />}
+          <AccountStakeBanner account={account} parentAccount={parentAccount} />
           {AccountBodyHeader ? (
             <AccountBodyHeader account={account} parentAccount={parentAccount} />
           ) : null}

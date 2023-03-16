@@ -38,9 +38,13 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
       {
         key: "Stake",
         onClick,
-        event: "Eth Stake Account Button",
+        event: "button_clicked",
+        eventProperties: {
+          button: "stake",
+        },
         icon: IconCoins,
         label: t("account.stake", { currency: account?.currency?.name }),
+        accountActionsTestId: "stake-from-account-action-button",
       },
     ];
   } else {

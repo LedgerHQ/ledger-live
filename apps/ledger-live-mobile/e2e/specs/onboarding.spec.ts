@@ -1,4 +1,4 @@
-import { expect, waitFor } from "detox";
+import { expect } from "detox";
 import { waitForElementByText } from "../helpers";
 import OnboardingSteps from "../models/onboarding/onboardingSteps";
 import PortfolioPage from "../models/wallet/portfolioPage";
@@ -10,11 +10,6 @@ describe("Onboarding", () => {
   beforeAll(() => {
     onboardingSteps = new OnboardingSteps();
     portfolioPage = new PortfolioPage();
-  });
-
-  it("waits for Onboarding page to be ready", async () => {
-    await onboardingSteps.getOnboardingGetStarted();
-    await waitForElementByText("Get started");
   });
 
   it("starts Onboarding", async () => {
@@ -30,7 +25,7 @@ describe("Onboarding", () => {
     await waitForElementByText("Ledger\u00A0Nano\u00A0X");
   });
 
-  it("choses Nano X", async () => {
+  it("chooses Nano X", async () => {
     await onboardingSteps.selectYourDevice("Ledger\u00A0Nano\u00A0X");
   });
 
@@ -48,22 +43,16 @@ describe("Onboarding", () => {
   });
 
   it("adds device via Bluetooth", async () => {
-    onboardingSteps.bridgeAddDevices();
-    await waitFor(onboardingSteps.getNanoDevice("David"))
-      .toExist()
-      .withTimeout(3000);
     await onboardingSteps.addDeviceViaBluetooth("David");
   });
 
   it("opens Ledger Live", async () => {
-    await waitFor(onboardingSteps.getContinue()).toExist().withTimeout(3000);
     await onboardingSteps.openLedgerLive();
-    // await onboardingSteps.declineNotifications();
-    await expect(portfolioPage.getSettingsButton()).toBeVisible();
+    await portfolioPage.waitForPortfolioPageToLoad();
+    await expect(portfolioPage.portfolioSettingsButton()).toBeVisible();
   });
 
   it("should see an empty portfolio page", async () => {
-    const elem = portfolioPage.getEmptyPortfolio();
-    await expect(elem).toBeVisible();
+    await expect(portfolioPage.emptyPortfolioComponent()).toBeVisible();
   });
 });

@@ -14,7 +14,7 @@ import {
   readOnlyModeEnabledSelector,
   walletTabNavigatorLastVisitedTabSelector,
 } from "../../reducers/settings";
-import { accountsSelector } from "../../reducers/accounts";
+import { hasNoAccountsSelector } from "../../reducers/accounts";
 import ReadOnlyPortfolio from "../../screens/Portfolio/ReadOnly";
 import { setWalletTabNavigatorLastVisitedTab } from "../../actions/settings";
 import WalletTabNavigatorTabBar from "../WalletTab/WalletTabNavigatorTabBar";
@@ -39,7 +39,7 @@ export default function WalletTabNavigator() {
   const walletNftGalleryFeature = useFeature("walletNftGallery");
   const dispatch = useDispatch();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
-  const accounts = useSelector(accountsSelector);
+  const hasNoAccounts = useSelector(hasNoAccountsSelector);
   const lastVisitedTab = useSelector(walletTabNavigatorLastVisitedTabSelector);
   const { t } = useTranslation();
   const [currentRouteName, setCurrentRouteName] = useState<
@@ -89,7 +89,7 @@ export default function WalletTabNavigator() {
           <WalletTab.Screen
             name={ScreenName.Portfolio}
             component={
-              readOnlyModeEnabled && accounts.length <= 0
+              readOnlyModeEnabled && hasNoAccounts
                 ? ReadOnlyPortfolio
                 : Portfolio
             }

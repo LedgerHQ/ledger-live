@@ -12,6 +12,7 @@ import { LiveAppManifest, Loadable } from "../../types";
 import api from "./api";
 import { FilterParams } from "../../filters";
 import { getEnv } from "../../../env";
+import useIsMounted from "../../../hooks/useIsMounted";
 
 const initialState: Loadable<LiveAppRegistry> = {
   isLoading: false,
@@ -69,11 +70,16 @@ export function useRemoteLiveAppContext(): LiveAppContextType {
   return useContext(liveAppContext);
 }
 
+export function useManifests(): LiveAppManifest[] {
+  return useRemoteLiveAppContext().state?.value?.liveAppFiltered ?? [];
+}
+
 export function RemoteLiveAppProvider({
   children,
   parameters,
   updateFrequency,
 }: LiveAppProviderProps): JSX.Element {
+  const isMounted = useIsMounted();
   const [state, setState] = useState<Loadable<LiveAppRegistry>>(initialState);
   const [provider, setProvider] = useState<string>(initialProvider);
 
@@ -101,6 +107,7 @@ export function RemoteLiveAppProvider({
         branches,
       });
 
+      if (!isMounted()) return;
       setState(() => ({
         isLoading: false,
         value: {
@@ -114,13 +121,15 @@ export function RemoteLiveAppProvider({
         error: null,
       }));
     } catch (error) {
+      if (!isMounted()) return;
       setState((currentState) => ({
         ...currentState,
         isLoading: false,
         error,
       }));
     }
-  }, [allowDebugApps, allowExperimentalApps, providerURL]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allowDebugApps, allowExperimentalApps, providerURL, isMounted]);
 
   const value: LiveAppContextType = useMemo(
     () => ({

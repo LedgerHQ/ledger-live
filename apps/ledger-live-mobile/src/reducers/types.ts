@@ -72,6 +72,7 @@ export type AppState = {
   modalLock: boolean;
   backgroundEvents: Array<FwUpdateBackgroundEvent>;
   isMainNavigatorVisible: boolean;
+  wiredDevice?: DeviceLike;
 };
 
 // === BLE STATE ===
@@ -186,13 +187,13 @@ export type SettingsState = {
   countervalueFirst: boolean;
   graphCountervalueFirst: boolean;
   hideEmptyTokenAccounts: boolean;
+  filterTokenOperationsZeroAmount: boolean;
   blacklistedTokenIds: string[];
   hiddenNftCollections: string[];
   dismissedBanners: string[];
   hasAvailableUpdate: boolean;
   theme: Theme;
   osTheme: string | null | undefined;
-  carouselVisibility: number | Record<string, boolean>;
   dismissedDynamicCards: string[];
   // number is the legacy type from LLM V2
   discreetMode: boolean;

@@ -4,6 +4,7 @@ import {
   createSelector,
   createSelectorCreator,
   defaultMemoize,
+  OutputSelector,
 } from "reselect";
 import uniq from "lodash/uniq";
 import {
@@ -25,6 +26,7 @@ import isEqual from "lodash/isEqual";
 import {
   addAccounts,
   canBeMigrated,
+  isAccountEmpty,
   flattenAccounts,
   getAccountCurrency,
   importAccountsReduce,
@@ -32,7 +34,10 @@ import {
   clearAccount,
   nestedSortAccounts,
   makeEmptyTokenAccount,
+  isAccountBalanceUnconfirmed,
 } from "@ledgerhq/live-common/account/index";
+import { decodeNftId } from "@ledgerhq/live-common/nft/nftId";
+import { orderByLastReceived } from "@ledgerhq/live-common/nft/helpers";
 import type { AccountsState, State } from "./types";
 import type {
   AccountsDeleteAccountPayload,
@@ -48,6 +53,10 @@ import type {
 } from "../actions/types";
 import { AccountsActionTypes } from "../actions/types";
 import accountModel from "../logic/accountModel";
+import {
+  blacklistedTokenIdsSelector,
+  hiddenNftCollectionsSelector,
+} from "./settings";
 
 export const INITIAL_STATE: AccountsState = {
   active: [],
@@ -128,6 +137,18 @@ export const exportSelector = (s: State) => ({
   active: s.accounts.active.map(accountModel.encode),
 });
 
+/**
+ * Warning: use this selector directly in `useSelector` only if you really need
+ * the full data of all the accounts in your hook or component.
+ * For many needs, other more accurate and memoized selectors (see below) are
+ * available.
+ * Using these selectors will prevent unnecessary updates (causing a re-render)
+ * of your hook or component every time something somewhere in one of the
+ * accounts changes.
+ * This is important because the `accounts` array is modified at the end almost
+ * every account sync, so potentially you could avoid many unnessary and
+ * expensive re-renders.
+ */
 export const accountsSelector = (s: State): Account[] => s.accounts.active;
 
 // NB some components don't need to refresh every time an account is updated, usually it's only
@@ -169,6 +190,17 @@ export const accountsCountSelector = createSelector(
   accountsSelector,
   acc => acc.length,
 );
+/** Returns a boolean that is true if and only if there is no account */
+export const hasNoAccountsSelector = createSelector(
+  accountsSelector,
+  acc => acc.length <= 0,
+);
+/** Returns a boolean that is true if and only if all accounts are empty */
+export const areAccountsEmptySelector = createSelector(
+  accountsSelector,
+  accounts => accounts.every(isAccountEmpty),
+);
+
 export const someAccountsNeedMigrationSelector = createSelector(
   accountsSelector,
   accounts => accounts.some(canBeMigrated),
@@ -389,6 +421,163 @@ export const hasLendEnabledAccountsSelector = createSelector(
         : null;
       return !!capabilities;
     }),
+);
+
+function accountHasPositiveBalance(account: AccountLike) {
+  return Boolean(account.balance?.gt(0));
+}
+
+export const accountsWithPositiveBalanceCountSelector = createSelector(
+  accountsSelector,
+  acc => acc.filter(accountHasPositiveBalance).length,
+);
+
+/**
+ * Selector creators
+ */
+
+type AccountsLikeSelector = OutputSelector<
+  State,
+  AccountLike[],
+  (res: Account[], res2: string[]) => AccountLike[]
+>;
+
+function makeAccountsCountSelectors(accountsSelector: AccountsLikeSelector) {
+  return createSelector(accountsSelector, accounts => accounts.length);
+}
+
+function makeHasAccountsSelectors(accountsSelector: AccountsLikeSelector) {
+  return createSelector(accountsSelector, accounts => accounts.length > 0);
+}
+
+function makeAccountsWithPositiveBalanceCountSelector(
+  accountsSelector: AccountsLikeSelector,
+) {
+  return createSelector(
+    accountsSelector,
+    accounts => accounts.filter(accountHasPositiveBalance).length,
+  );
+}
+
+function makeHasAccountsWithPositiveBalanceSelector(
+  accountsSelector: AccountsLikeSelector,
+) {
+  return createSelector(
+    accountsSelector,
+    accounts => accounts.filter(accountHasPositiveBalance).length > 0,
+  );
+}
+
+/**
+ * TOKEN-ACCOUNTS SELECTORS
+ */
+
+export const tokenAccountsSelector = createSelector(
+  accountsSelector,
+  accounts =>
+    flattenAccounts(accounts).filter(acc => acc.type === "TokenAccount"),
+);
+
+export const tokenAccountsNotBlacklistedSelector = createSelector(
+  tokenAccountsSelector,
+  blacklistedTokenIdsSelector,
+  (accounts, blacklistedIds) =>
+    accounts.filter(
+      acc => !blacklistedIds.includes(getAccountCurrency(acc).id),
+    ),
+);
+
+export const tokenAccountsCountSelector = makeAccountsCountSelectors(
+  tokenAccountsSelector,
+);
+
+export const tokenAccountsNotBlacklistedCountSelector =
+  makeAccountsCountSelectors(tokenAccountsNotBlacklistedSelector);
+
+export const hasTokenAccountsSelector = makeHasAccountsSelectors(
+  tokenAccountsSelector,
+);
+
+export const hasTokenAccountsNotBlacklistedSelector = makeHasAccountsSelectors(
+  tokenAccountsNotBlacklistedSelector,
+);
+
+export const tokenAccountsWithPositiveBalanceCountSelector =
+  makeAccountsWithPositiveBalanceCountSelector(tokenAccountsSelector);
+
+export const tokenAccountsNotBlackListedWithPositiveBalanceCountSelector =
+  makeAccountsWithPositiveBalanceCountSelector(
+    tokenAccountsNotBlacklistedSelector,
+  );
+
+export const hasTokenAccountsWithPositiveBalanceSelector =
+  makeHasAccountsWithPositiveBalanceSelector(tokenAccountsSelector);
+
+export const hasTokenAccountsNotBlackListedWithPositiveBalanceSelector =
+  makeHasAccountsWithPositiveBalanceSelector(
+    tokenAccountsNotBlacklistedSelector,
+  );
+
+/**
+ * NON-TOKEN-ACCOUNTS SELECTORS
+ */
+
+export const nonTokenAccountsSelector = createSelector(
+  accountsSelector,
+  accounts =>
+    flattenAccounts(accounts).filter(acc => acc.type !== "TokenAccount"),
+);
+
+export const nonTokenAccountsCountSelector = makeAccountsCountSelectors(
+  nonTokenAccountsSelector,
+);
+
+export const hasNonTokenAccountsSelector = makeHasAccountsSelectors(
+  nonTokenAccountsSelector,
+);
+
+export const nonTokenAccountsWithPositiveBalanceCountSelector =
+  makeAccountsWithPositiveBalanceCountSelector(nonTokenAccountsSelector);
+
+export const hasNonTokenAccountsWithPositiveBalanceSelector =
+  makeHasAccountsWithPositiveBalanceSelector(nonTokenAccountsSelector);
+
+/**
+ * Returns the list of all the NFTs from non hidden collections accross all
+ * accounts, ordered by last received.
+ *
+ * /!\ Use this with a deep equal comparison if possible as it will always
+ * return a new array if `accounts` or `hiddenNftCollections` changes.
+ *
+ * Example:
+ * ```
+ * import { isEqual } from "lodash";
+ * // ...
+ * const orderedVisibleNfts = useSelector(orderedVisibleNftsSelector, isEqual)
+ * ```
+ * */
+export const orderedVisibleNftsSelector = createSelector(
+  accountsSelector,
+  hiddenNftCollectionsSelector,
+  (accounts, hiddenNftCollections) => {
+    const nfts = accounts.map(a => a.nfts ?? []).flat();
+    const visibleNfts = nfts.filter(
+      nft =>
+        !hiddenNftCollections.includes(
+          `${decodeNftId(nft.id).accountId}|${nft.contract}`,
+        ),
+    );
+    return orderByLastReceived(accounts, visibleNfts);
+  },
+);
+
+/**
+ * Returns a boolean that is true if and only if some of the accounts have an
+ * unconfirmed balance
+ */
+export const areSomeAccountsBalanceUnconfirmedSelector = createSelector(
+  accountsSelector,
+  accounts => accounts.some(isAccountBalanceUnconfirmed),
 );
 
 type Payload = AccountsPayload | SettingsBlacklistTokenPayload;

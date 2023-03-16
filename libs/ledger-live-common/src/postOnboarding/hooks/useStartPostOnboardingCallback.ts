@@ -5,6 +5,13 @@ import { useCallback } from "react";
 import { useFeatureFlags } from "../../featureFlags";
 import { initPostOnboarding } from "../actions";
 
+type StartPostOnboardingOptions = {
+  deviceModelId: DeviceModelId;
+  mock?: boolean;
+  fallbackIfNoAction?: () => void;
+  resetNavigationStack?: boolean;
+};
+
 /**
  * Use this to initialize AND navigate to the post onboarding hub for a given
  * device model.
@@ -16,9 +23,7 @@ import { initPostOnboarding } from "../actions";
  * TODO: unit test this
  */
 export function useStartPostOnboardingCallback(): (
-  deviceModelId: DeviceModelId,
-  mock?: boolean,
-  fallbackIfNoAction?: () => void
+  options: StartPostOnboardingOptions
 ) => void {
   const dispatch = useDispatch();
   const { getFeature } = useFeatureFlags();
@@ -26,11 +31,13 @@ export function useStartPostOnboardingCallback(): (
     usePostOnboardingContext();
 
   return useCallback(
-    (
-      deviceModelId: DeviceModelId,
-      mock = false,
-      fallbackIfNoAction?: () => void
-    ) => {
+    (options: StartPostOnboardingOptions) => {
+      const {
+        deviceModelId,
+        mock = false,
+        fallbackIfNoAction,
+        resetNavigationStack,
+      } = options;
       const actions = getPostOnboardingActionsForDevice(
         deviceModelId,
         mock
@@ -52,7 +59,7 @@ export function useStartPostOnboardingCallback(): (
         }
         return;
       }
-      navigateToPostOnboardingHub();
+      navigateToPostOnboardingHub(resetNavigationStack);
     },
     [
       dispatch,

@@ -1,22 +1,9 @@
-import React, { ReactNode } from "react";
+import React from "react";
 
 import TimelineItem from "./TimelineItem";
-import { Flex } from "../..";
+import Flex from "../../Flex";
 import { BaseStyledProps } from "src/components/styled";
-
-export enum ItemStatus {
-  inactive = "inactive",
-  active = "active",
-  completed = "completed",
-}
-
-export type Item = {
-  status: ItemStatus;
-  title: string;
-  doneTitle?: string;
-  estimatedTime?: number;
-  renderBody?: (isDisplayed?: boolean) => ReactNode;
-};
+import { Item, ItemStatus } from "../types";
 
 export type Props = BaseStyledProps & {
   steps?: Item[];

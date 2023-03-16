@@ -27,8 +27,10 @@ export type FeatureId =
   | "currencyFlareMobile"
   | "ptxSmartRoutingMobile"
   | "mockFeature"
+  | "multibuyNavigation"
   | "syncOnboarding"
   | "walletConnectLiveApp"
+  | "walletConnectEntryPoint"
   | "customImage"
   | "referralProgramDiscoverCard"
   | "referralProgramDesktopBanner"
@@ -47,7 +49,9 @@ export type FeatureId =
   | "swapShowDexQuotes"
   | "stakePrograms"
   | "portfolioExchangeBanner"
-  | "objkt";
+  | "objkt"
+  | "stakeAccountBanner"
+  | "newsfeedPage";
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */

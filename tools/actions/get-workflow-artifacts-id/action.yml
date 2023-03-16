@@ -1,0 +1,22 @@
+name: get-workflow-artifacts-id
+description: get ids of artifacts from previous workflow to download
+inputs:
+  token:
+    required: true
+    description: access token (usually github.token)
+  isRelease:
+    required: false
+    description: true if this is a release workflow, will also download the hash.zip file
+    default: "false"
+  runId:
+    description: previous workflow run id
+    required: true
+outputs:
+  hash:
+    description: id of hash.zip (can be null is not in production release mode)
+  builds:
+    description: id of builds.zip
+
+runs:
+  using: node16
+  main: "build/main.js"

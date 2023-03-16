@@ -45,7 +45,6 @@ export default function DeviceActionModal<Req, Stt, Res>({
     if (onModalHide) onModalHide();
     if (onResult && result) {
       onResult(result);
-      setResult(null);
     }
   }, [onModalHide, onResult, result]);
 

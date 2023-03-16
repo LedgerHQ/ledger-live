@@ -9,6 +9,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
 
+import { TrackScreen, track } from "../../../analytics";
 import { DeviceActionDefaultRendering } from "..";
 import QueuedDrawer from "../../QueuedDrawer";
 
@@ -102,7 +103,9 @@ const InstallSetOfApps = ({
 
   if (opened) {
     onResult(true);
-    return null;
+    return error ? null : (
+      <TrackScreen category="Step 5: Install apps - successful" />
+    );
   }
 
   return userConfirmed ? (
@@ -122,18 +125,26 @@ const InstallSetOfApps = ({
             )}
           </Text>
           {itemProgress !== undefined
-            ? dependenciesToInstall?.map((appName, i) => (
-                <Item
-                  key={appName}
-                  i={i}
-                  appName={appName}
-                  isActive={currentAppOp?.name === appName}
-                  installed={
-                    progress ? !installQueue?.includes(appName) : undefined
-                  }
-                  itemProgress={itemProgress}
-                />
-              ))
+            ? dependenciesToInstall?.map((appName, i) => {
+                const isActive = currentAppOp?.name === appName;
+                return (
+                  <>
+                    {!shouldRestoreApps && isActive && (
+                      <TrackScreen category={`Installing ${appName}`} />
+                    )}
+                    <Item
+                      key={appName}
+                      i={i}
+                      appName={appName}
+                      isActive={isActive}
+                      installed={
+                        progress ? !installQueue?.includes(appName) : undefined
+                      }
+                      itemProgress={itemProgress}
+                    />
+                  </>
+                );
+              })
             : null}
         </Flex>
       </Flex>
@@ -156,17 +167,35 @@ const InstallSetOfApps = ({
       </QueuedDrawer>
     </Flex>
   ) : shouldRestoreApps ? (
-    <Restore
-      deviceName={lastDeviceProductName}
-      onConfirm={() => setUserConfirmed(true)}
-      onReject={() => onResult(false)}
-    />
+    <>
+      <TrackScreen category="Restore Applications Start" />
+      <Restore
+        deviceName={lastDeviceProductName}
+        onConfirm={() => {
+          track("button_clicked", { button: "Restore applications" });
+          setUserConfirmed(true);
+        }}
+        onReject={() => {
+          track("button_clicked", { button: "I'll do this later" });
+          onResult(false);
+        }}
+      />
+    </>
   ) : (
-    <Confirmation
-      productName={productName}
-      onConfirm={() => setUserConfirmed(true)}
-      onReject={() => onResult(false)}
-    />
+    <>
+      <TrackScreen category="Install Applications Start" />
+      <Confirmation
+        productName={productName}
+        onConfirm={() => {
+          track("button_clicked", { button: "Install applications" });
+          setUserConfirmed(true);
+        }}
+        onReject={() => {
+          track("button_clicked", { button: "I'll do this later" });
+          onResult(false);
+        }}
+      />
+    </>
   );
 };
 

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components";
 import { openURL } from "~/renderer/linking";
@@ -8,6 +8,7 @@ import LangSwitcher from "~/renderer/components/Onboarding/LangSwitcher";
 import { urls } from "~/config/urls";
 import { acceptTerms } from "~/renderer/terms";
 import { Text, Button, Logos, Icons, InvertThemeV3, Flex } from "@ledgerhq/react-ui";
+import { saveSettings } from "~/renderer/actions/settings";
 
 import BuyNanoX from "./assets/buyNanoX.webm";
 
@@ -84,6 +85,7 @@ export function Welcome() {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const { t } = useTranslation();
   const history = useHistory();
+  const dispatch = useDispatch();
   const { colors } = useTheme();
   const locale = useSelector(languageSelector) || "en";
 
@@ -111,6 +113,11 @@ export function Welcome() {
   ] = useState<boolean>(false);
 
   const timeout = useRef<ReturnType<typeof setTimeout>>();
+
+  const skipOnboarding = useCallback(() => {
+    dispatch(saveSettings({ hasCompletedOnboarding: true }));
+    history.push("/settings");
+  }, [dispatch, history]);
 
   const handleOpenFeatureFlagsDrawer = useCallback(nb => {
     if (nb === "1") countTitle.current++;
@@ -176,6 +183,18 @@ export function Welcome() {
           >
             {t("onboarding.screens.welcome.buyLink")}
           </Button>
+          {__DEV__ ? (
+            <Button
+              mt="24px"
+              iconPosition="right"
+              onClick={skipOnboarding}
+              outline={true}
+              flexDirection="column"
+              whiteSpace="normal"
+            >
+              {"(DEV) skip onboarding"}
+            </Button>
+          ) : null}
           <TermsAndConditionsContainer>
             <TermsAndConditionsText>
               {t("onboarding.screens.welcome.byTapping")}{" "}

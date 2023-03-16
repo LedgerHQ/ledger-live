@@ -15,6 +15,8 @@ import derivation from "./commands/derivation";
 import devDeviceAppsScenario from "./commands/devDeviceAppsScenario";
 import deviceAppVersion from "./commands/deviceAppVersion";
 import deviceInfo from "./commands/deviceInfo";
+import deviceSDKFirmwareUpdate from "./commands/deviceSDKFirmwareUpdate";
+import deviceSDKGetDeviceInfo from "./commands/deviceSDKGetDeviceInfo";
 import deviceVersion from "./commands/deviceVersion";
 import discoverDevices from "./commands/discoverDevices";
 import envs from "./commands/envs";
@@ -74,6 +76,8 @@ export default {
   devDeviceAppsScenario,
   deviceAppVersion,
   deviceInfo,
+  deviceSDKFirmwareUpdate,
+  deviceSDKGetDeviceInfo,
   deviceVersion,
   discoverDevices,
   envs,
