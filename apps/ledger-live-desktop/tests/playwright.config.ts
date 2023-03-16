@@ -6,7 +6,7 @@ const config: PlaywrightTestConfig = {
   outputDir: "./artifacts/test-results",
   timeout: process.env.CI ? 190000 : 600000,
   expect: {
-    timeout: 60000,
+    timeout: 30000,
     toHaveScreenshot: {
       /**
        * do not increase unless it makes most tests flaky

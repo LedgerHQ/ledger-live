@@ -87,7 +87,7 @@ export class DeviceAction {
       [deviceInfo, result],
     );
 
-    await this.loader.waitFor({ state: "hidden" });
+    await this.loader.waitFor({ state: "hidden", timeout: 60000 }); // TODO: this can take a while to load on slow github windows runners. Remove when we are using our own runners
   }
 
   async accessManagerWithL10n(
