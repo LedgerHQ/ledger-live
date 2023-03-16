@@ -15,7 +15,7 @@ const HookNotifications = () => {
   }, [notificationsStarted, notifications]);
 
   useEffect(sync, [sync]);
-  
+
   return null;
 };
 
