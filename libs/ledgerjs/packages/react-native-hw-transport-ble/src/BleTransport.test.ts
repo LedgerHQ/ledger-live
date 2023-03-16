@@ -176,7 +176,7 @@ describe("BleTransport connectivity test coverage", () => {
       expect(transport.isConnected).toBe(false);
     });
 
-    it("should disconnect in 1s (5s default) after calling close", async () => {
+    it("should disconnect in 500ms (5s default) after calling close", async () => {
       const transport = await BleTransport.open(deviceId);
       expect(transport.isConnected).toBe(true);
 
@@ -249,30 +249,27 @@ describe("BleTransport connectivity test coverage", () => {
       ).rejects.toThrow("Device is not connected"); // More specific errors some day.
     });
 
-    it("should disconnect if close is called, even if pending response", async () => {
+    it("should disconnect if close is called, even if pending response", (done) => {
       // This is actually a very important test, if we have an ongoing apdu response,
       // as in, the device never replied, but we expressed the intention of disconnecting
       // we will give it a few seconds and then disconnect regardless. Otherwise we fall
       // in the never ending await trap.
-      const transport = await BleTransport.open(deviceId);
-      expect(transport.isConnected).toBe(true);
-      transport.exchange(Buffer.from("b020000000", "hex"));
-      BleTransport.disconnectTimeoutMs = 500;
+      async function asyncFn() {
+        const transport = await BleTransport.open(deviceId);
+        expect(transport.isConnected).toBe(true);
+        transport.exchange(Buffer.from("b020000000", "hex"));
+        BleTransport.disconnectTimeoutMs = 500;
 
-      let resolve;
-      const promise = new Promise((_resolve, _reject) => {
-        resolve = _resolve;
-      });
+        transport.on("disconnect", () => {
+          done(); // If this is never called, then we're still waiting.
+        });
+        await transport.close();
 
-      transport.on("disconnect", () => {
-        resolve(); // If this is never called, then we're still waiting.
-      });
-      await transport.close();
+        // Expect the timeout for disconnection to be set
+        expect(transport.disconnectTimeout).not.toBe(undefined);
+      }
 
-      // Expect the timeout for disconnection to be set
-      expect(transport.disconnectTimeout).not.toBe(undefined);
-
-      return await promise;
+      asyncFn();
     });
   });
 });
