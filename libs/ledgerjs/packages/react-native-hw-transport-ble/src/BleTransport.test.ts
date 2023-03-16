@@ -265,7 +265,6 @@ describe("BleTransport connectivity test coverage", () => {
       });
 
       transport.on("disconnect", () => {
-        console.log("asdasdasdas", resolve);
         resolve(); // If this is never called, then we're still waiting.
       });
       await transport.close();
