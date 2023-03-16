@@ -1,7 +1,7 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { Layout } from "../../models/Layout";
-import { AccountsPage } from "tests/models/AccountsPage";
+import { AccountsPage } from "../../models/AccountsPage";
 
 test.use({ userdata: "bot-accounts" });
 

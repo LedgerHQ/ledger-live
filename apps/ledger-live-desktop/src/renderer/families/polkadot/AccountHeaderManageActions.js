@@ -80,6 +80,10 @@ const AccountHeaderManageActions = ({ account, parentAccount }: Props) => {
       disabled: !manageEnabled,
       label: t("account.stake"),
       tooltip: disabledLabel,
+      event: "button_clicked",
+      eventProperties: {
+        button: "stake",
+      },
     },
   ];
 };

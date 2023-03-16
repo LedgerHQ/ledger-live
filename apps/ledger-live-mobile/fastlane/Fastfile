@@ -452,7 +452,7 @@ platform :android do
   private_lane :upload do |options|
     if(options[:ci])
       upload_to_play_store(
-        track: options[:nightly] ? 'Nightly' : "internal",
+        track: options[:nightly] ? 'Nightly' : options[:recover] ? 'Recover Beta' : "internal",
         package_name: 'com.ledger.live',
         json_key_data: ENV["ANDROID_SERVICE_KEY_CONTENT"]
       )

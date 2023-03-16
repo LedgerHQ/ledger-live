@@ -7,11 +7,8 @@ import get from "lodash/get";
 import set from "lodash/set";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { NoDBPathGiven, DBWrongPassword } from "@ledgerhq/errors";
-import {} from "@ledgerhq/live-common/promise";
 import { encryptData, decryptData } from "~/main/db/crypto";
 import { readFile, writeFile } from "~/main/db/fsHelper";
-
-import logger from "~/logger";
 import { fsUnlink } from "~/helpers/fs";
 
 const debounce = (fn: any => any, ms: number) => {
@@ -101,7 +98,7 @@ async function load(ns: string): Promise<mixed> {
       memoryNamespaces[ns] = {};
       await save(ns);
     } else {
-      logger.error(err);
+      console.error(err);
       throw err;
     }
   }
@@ -158,7 +155,7 @@ async function setEncryptionKey(ns: string, keyPath: string, encryptionKey: stri
     return save(ns);
   } catch (err) {
     log("db", "setEncryptionKey failure: " + String(err));
-    logger.error(err);
+    console.error(err);
     throw new DBWrongPassword();
   }
 }
@@ -172,7 +169,6 @@ async function removeEncryptionKey(ns: string, keyPath: string) {
  * Set a key in the given namespace
  */
 async function setKey(ns: string, keyPath: string, value: any): Promise<any> {
-  logger.onDB("write", `${ns}:${keyPath}`);
   await ensureNSLoaded(ns);
   set(memoryNamespaces[ns], keyPath, value);
   return save(ns);
@@ -182,7 +178,6 @@ async function setKey(ns: string, keyPath: string, value: any): Promise<any> {
  * Get a key in the given namespace
  */
 async function getKey(ns: string, keyPath: string, defaultValue?: any): Promise<any> {
-  logger.onDB("read", `${ns}:${keyPath}`);
   await ensureNSLoaded(ns);
   if (!keyPath) return memoryNamespaces[ns] || defaultValue;
   return get(memoryNamespaces[ns], keyPath, defaultValue);
@@ -192,13 +187,11 @@ async function getKey(ns: string, keyPath: string, defaultValue?: any): Promise<
  * Get whole namespace
  */
 async function getNamespace(ns: string, defaultValue?: any) {
-  logger.onDB("read", ns);
   await ensureNSLoaded(ns);
   return memoryNamespaces[ns] || defaultValue;
 }
 
 async function setNamespace(ns: string, value: any) {
-  logger.onDB("write", ns);
   set(memoryNamespaces, ns, value);
   return save(ns);
 }
@@ -263,13 +256,11 @@ async function saveToDisk(ns: string) {
 }
 
 async function cleanCache() {
-  logger.onDB("clean cache");
   await setKey("app", "countervalues", null);
   await save("app");
 }
 
 async function resetAll() {
-  logger.onDB("reset all");
   if (!DBPath) throw new NoDBPathGiven();
   memoryNamespaces.app = null;
   await fsUnlink(path.resolve(DBPath, "app.json"));

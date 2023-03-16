@@ -70,6 +70,10 @@ export function useRemoteLiveAppContext(): LiveAppContextType {
   return useContext(liveAppContext);
 }
 
+export function useManifests(): LiveAppManifest[] {
+  return useRemoteLiveAppContext().state?.value?.liveAppFiltered ?? [];
+}
+
 export function RemoteLiveAppProvider({
   children,
   parameters,

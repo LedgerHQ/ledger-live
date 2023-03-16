@@ -1,5 +1,11 @@
 import { BigNumber } from "bignumber.js";
-import type { CosmosResourcesRaw, CosmosResources } from "./types";
+import type {
+  CosmosResourcesRaw,
+  CosmosResources,
+  CosmosAccountRaw,
+  CosmosAccount,
+} from "./types";
+import { Account, AccountRaw } from "@ledgerhq/types-live";
 
 export function toCosmosResourcesRaw(r: CosmosResources): CosmosResourcesRaw {
   const {
@@ -91,4 +97,20 @@ export function fromCosmosResourcesRaw(r: CosmosResourcesRaw): CosmosResources {
     unbondingBalance: new BigNumber(unbondingBalance),
     withdrawAddress,
   };
+}
+
+export function assignToAccountRaw(account: Account, accountRaw: AccountRaw) {
+  const cosmosAccount = account as CosmosAccount;
+  if (cosmosAccount.cosmosResources) {
+    (accountRaw as CosmosAccountRaw).cosmosResources = toCosmosResourcesRaw(
+      cosmosAccount.cosmosResources
+    );
+  }
+}
+
+export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
+  const cosmosResourcesRaw = (accountRaw as CosmosAccountRaw).cosmosResources;
+  if (cosmosResourcesRaw)
+    (account as CosmosAccount).cosmosResources =
+      fromCosmosResourcesRaw(cosmosResourcesRaw);
 }

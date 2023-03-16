@@ -75,9 +75,9 @@ export function listAndFilterCurrencies({
   includeTokens = false,
   currencies,
 }: CurrencyFilters): CryptoOrTokenCurrency[] {
-  const allCurrencies = listCurrencies(includeTokens).filter(
-    isPlatformSupportedCurrency
-  );
+  // We removed the filtering with `isPlatformSupportedCurrency`
+  // As we want to show all the currencies in the requestAccount drawer
+  const allCurrencies = listCurrencies(includeTokens);
 
   return filterCurrencies(allCurrencies, {
     includeTokens,

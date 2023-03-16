@@ -162,20 +162,6 @@ export interface AccountBridge<T extends TransactionCommon> {
     transaction?: T | null | undefined;
   }): Promise<BigNumber>;
   /**
-   * This function applies the change from moving from "account" to an updated version ("updatedRow").
-   * It returns a boolean value indicating if something changed in the "next" Account that possibly gets mutated in-place.
-   *
-   * @param {Account} account - The original account object.
-   * @param {AccountRaw} updatedRaw - The updated version of the account in its serialized form.
-   * @param {Account} next - The updated account object.
-   * @returns {boolean} - Indicates if something changed in the "next" account.
-   */
-  applyReconciliation?: (
-    account: Account,
-    updatedRaw: AccountRaw,
-    next: Account
-  ) => boolean;
-  /**
    * This function mutates the 'accountRaw' object in-place to add any extra fields that the coin may need to set.
    * It is called during the serialization mechanism, for instance bitcoinResources need to be serialized.
    *

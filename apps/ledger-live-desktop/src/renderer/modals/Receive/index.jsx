@@ -1,6 +1,6 @@
 // @flow
 import React, { PureComponent } from "react";
-import logger from "~/logger";
+import logger from "~/renderer/logger";
 import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
 import type { StepId } from "./Body";

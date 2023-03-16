@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Flex, Icons, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
+import { TrackScreen } from "../../analytics";
 
 type Props = {
   isOpen: boolean;
@@ -53,6 +54,11 @@ const ResyncOverlay = ({ isOpen, delay = 0, productName }: Props) => {
       width="100%"
       background={colors.constant.overlay}
     >
+      <TrackScreen
+        category="Stax BT Pairing Lost"
+        type="toast"
+        refreshSource={false}
+      />
       <Flex position="absolute" width="100%" bottom={0} padding={4}>
         <Flex
           width="100%"
