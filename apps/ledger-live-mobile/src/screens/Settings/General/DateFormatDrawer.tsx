@@ -2,7 +2,7 @@ import { Text, Flex } from "@ledgerhq/native-ui";
 import { CheckAloneMedium } from "@ledgerhq/native-ui/assets/icons";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { TouchableOpacity } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import styled, { useTheme } from "styled-components/native";
 import { setDateFormat } from "../../../actions/settings";
