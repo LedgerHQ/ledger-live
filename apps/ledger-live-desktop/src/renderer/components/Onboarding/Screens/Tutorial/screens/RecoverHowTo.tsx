@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useCallback, useContext } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { Title, AsideFooter, Column, Bullet, AnimationContainer } from "../shared";
 
@@ -8,25 +8,16 @@ import { useTheme } from "styled-components";
 
 import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
-import { OnboardingContext, UseCase } from "../../../index";
-import {
-  Icons,
-  Link,
-  Box,
-  Aside,
-  Button,
-  Drawer,
-  Flex,
-  InfiniteLoader,
-  Logos,
-  ProgressBar,
-  Popin,
-} from "@ledgerhq/react-ui";
-import Text from "../../../../../../../../../libs/ui/packages/react/src/components/asorted/Text";
+import { OnboardingContext } from "../../../index";
+import { Icons, Link, Box, Button, Popin, Text } from "@ledgerhq/react-ui";
+import { useSelector } from "react-redux";
+import { languageSelector } from "~/renderer/reducers/settings";
+import { openURL } from "~/renderer/linking";
+import { urls } from "~/config/urls";
 
 export function RecoverHowTo() {
   const theme = useTheme();
-  console.log("theme", theme)
+  const locale = useSelector(languageSelector) || "en";
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
   const color = theme.colors.palette.primary.c80;
   const steps = [
@@ -45,6 +36,13 @@ export function RecoverHowTo() {
     },
   ];
 
+  const onClickArticleLink = useCallback(() => openURL(urls.howToUpdateNewLedger), []);
+
+  const onClickSupportLink = useCallback(
+    () => openURL(urls.faq[locale in urls.faq ? locale : "en"]),
+    [locale],
+  );
+
   return (
     <Column>
       <Title>
@@ -58,19 +56,28 @@ export function RecoverHowTo() {
           <Trans i18nKey="onboarding.screens.tutorial.screens.recoverHowTo.help.iDontSee" />
         </Link>
       </Box>
-      <Popin isOpen={isDrawerOpen} isBackDisplayed={true} isCloseDisplayed={true}>
-        <Popin.Header onBack={() => setIsDrawerOpen(false)} onClose={() => setIsDrawerOpen(false)}>
-        </Popin.Header>
+      <Popin isOpen={isDrawerOpen} style={{ width: "480px", height: "unset" }}>
+        <Popin.Header onClose={() => setIsDrawerOpen(false)}></Popin.Header>
         <Popin.Body>
-          <Text variant="h4Inter">The OS on your Ledger Nano X needs to be updated</Text>
-
-          <Text variant="bodyLineHeight">
-            You can try updating the OS or contact Ledger support for assistance.
+          <Text variant="h4Inter">
+            <Trans i18nKey="onboarding.screens.tutorial.screens.recoverHowTo.help.modal.title" />
+          </Text>
+          <Text variant="bodyLineHeight" color={"neutral.c80"} mt={6}>
+            <Trans i18nKey="onboarding.screens.tutorial.screens.recoverHowTo.help.modal.subtitle" />
           </Text>
         </Popin.Body>
-        <Popin.Footer>
-          <Button variant="main">Next</Button>
-          <Button variant="main">Next</Button>
+        <Popin.Footer flexDirection={"column"} mt={8}>
+          <Button
+            variant="main"
+            size={"large"}
+            Icon={Icons.ExternalLinkMedium}
+            onClick={onClickArticleLink}
+          >
+            <Trans i18nKey="onboarding.screens.tutorial.screens.recoverHowTo.help.modal.learnHowToUpdate" />
+          </Button>
+          <Link mt={8} size={"medium"} Icon={Icons.ExternalLinkMedium} onClick={onClickSupportLink}>
+            <Trans i18nKey="onboarding.screens.tutorial.screens.recoverHowTo.help.modal.contactLedgerSupport" />
+          </Link>
         </Popin.Footer>
       </Popin>
     </Column>
