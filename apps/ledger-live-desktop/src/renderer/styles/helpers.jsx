@@ -47,16 +47,6 @@ export const centerEllipsis = (str: string, maxLength: number = 25) =>
     ? `${str.substr(0, Math.floor(maxLength / 2))}...${str.substr(Math.floor(-maxLength / 2))}`
     : str;
 
-export function getMarketColor({
-  marketIndicator,
-  isNegative,
-}: {
-  marketIndicator: string,
-  isNegative: boolean,
-}) {
-  if (isNegative) {
-    return colors[`marketDown_${marketIndicator}`];
-  }
-
-  return colors[`marketUp_${marketIndicator}`];
+export function getMarketColor({ isNegative }: { isNegative: boolean }) {
+  return isNegative ? colors.marketDown_western : colors.marketUp_western;
 }

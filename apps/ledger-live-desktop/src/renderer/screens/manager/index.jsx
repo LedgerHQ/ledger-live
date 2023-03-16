@@ -4,15 +4,17 @@ import { createAction } from "@ledgerhq/live-common/hw/actions/manager";
 import Dashboard from "~/renderer/screens/manager/Dashboard";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import DeviceAction from "~/renderer/components/DeviceAction";
-import { command } from "~/renderer/commands";
+import { from } from "rxjs";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
+import connectManager from "@ledgerhq/live-common/hw/connectManager";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { getEnv } from "@ledgerhq/live-common/env";
 import Disconnected from "./Disconnected";
 import { setLastSeenDevice } from "~/renderer/actions/settings";
 import { useDispatch } from "react-redux";
 
-const connectManagerExec = command("connectManager");
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectManagerExec);
+const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectManager);
 
 const Manager = () => {
   const [appsToRestore, setRestoreApps] = useState();
@@ -28,7 +30,7 @@ const Manager = () => {
 
   const refreshDeviceInfo = useCallback(() => {
     if (result?.device) {
-      command("getDeviceInfo")(result.device.deviceId)
+      withDevice(result.device.deviceId)(transport => from(getDeviceInfo(transport)))
         .toPromise()
         .then(deviceInfo => {
           setResult({ ...result, deviceInfo });

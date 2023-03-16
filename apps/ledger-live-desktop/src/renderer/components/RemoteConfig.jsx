@@ -1,10 +1,6 @@
 // @flow
 
-import React, { useEffect, useState, useContext } from "react";
-import axios from "axios";
-
-const remoteConfigUrl =
-  "https://raw.githubusercontent.com/LedgerHQ/ledger-live-desktop/config/config.json";
+import React, { useContext } from "react";
 
 export type RemoteConfig = {
   data: ?{
@@ -20,8 +16,8 @@ export type RemoteConfig = {
 
 const defaultValue: RemoteConfig = {
   data: null,
-  error: null,
-  lastUpdatedAt: null,
+  error: new Error("RemoteConfig is no longer used"),
+  lastUpdatedAt: new Date(),
 };
 
 export const RemoteConfigContext = React.createContext<RemoteConfig>(defaultValue);
@@ -34,28 +30,6 @@ type Props = {
   children: React$Node,
 };
 
-export const RemoteConfigProvider = ({ children }: Props) => {
-  const [remoteConfig, setRemoteConfig] = useState<$Shape<RemoteConfig>>(defaultValue);
-
-  useEffect(() => {
-    axios
-      .get(remoteConfigUrl)
-      .then(result => {
-        setRemoteConfig({
-          data: result.data,
-          error: null,
-          lastUpdatedAt: new Date(),
-        });
-      })
-      .catch((error: Error) => {
-        setRemoteConfig({
-          error,
-          lastUpdatedAt: new Date(),
-        });
-      });
-  }, []);
-
-  return (
-    <RemoteConfigContext.Provider value={remoteConfig}>{children}</RemoteConfigContext.Provider>
-  );
-};
+export const RemoteConfigProvider = ({ children }: Props) => (
+  <RemoteConfigContext.Provider value={defaultValue}>{children}</RemoteConfigContext.Provider>
+);

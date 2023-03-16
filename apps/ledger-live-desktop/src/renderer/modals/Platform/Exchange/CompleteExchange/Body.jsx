@@ -7,23 +7,20 @@ import type { Exchange } from "@ledgerhq/live-common/exchange/platform/types";
 import { toTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import type { Operation } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-
+import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { createAction } from "@ledgerhq/live-common/hw/actions/completeExchange";
 import { createAction as txCreateAction } from "@ledgerhq/live-common/hw/actions/transaction";
 
 import { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";
 import DeviceAction from "~/renderer/components/DeviceAction";
-import { command } from "~/renderer/commands";
 import BigSpinner from "~/renderer/components/BigSpinner";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { useBroadcast } from "~/renderer/hooks/useBroadcast";
+import completeExchange from "@ledgerhq/live-common/exchange/platform/completeExchange";
 
-const completeExchangeExec = command("completeExchange");
-const connectAppExec = command("connectApp");
-
-const exchangeAction = createAction(completeExchangeExec);
-const sendAction = txCreateAction(connectAppExec);
+const exchangeAction = createAction(completeExchange);
+const sendAction = txCreateAction(connectApp);
 
 const Body = ({
   data,

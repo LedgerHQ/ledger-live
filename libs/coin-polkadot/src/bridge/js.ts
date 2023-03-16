@@ -14,7 +14,7 @@ import {
 import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
 import { submitExtrinsic } from "../api";
 import { getPreloadStrategy, preload, hydrate } from "../preload";
-import { applyReconciliation, getAccountShape } from "../js-synchronisation";
+import { getAccountShape } from "../js-synchronisation";
 import createTransaction from "../js-createTransaction";
 import prepareTransaction from "../js-prepareTransaction";
 import getTransactionStatus from "../js-getTransactionStatus";
@@ -80,6 +80,5 @@ export function buildAccountBridge(
     broadcast,
     assignFromAccountRaw,
     assignToAccountRaw,
-    applyReconciliation,
   };
 }

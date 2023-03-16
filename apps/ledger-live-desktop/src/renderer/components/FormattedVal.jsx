@@ -8,11 +8,7 @@ import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import {
-  marketIndicatorSelector,
-  localeSelector,
-  discreetModeSelector,
-} from "~/renderer/reducers/settings";
+import { localeSelector, discreetModeSelector } from "~/renderer/reducers/settings";
 import { getMarketColor } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
 import FlipTicker from "~/renderer/components/FlipTicker";
@@ -66,13 +62,11 @@ type OwnProps = {
 };
 
 const mapStateToProps = createStructuredSelector({
-  marketIndicator: marketIndicatorSelector,
   discreet: discreetModeSelector,
   locale: localeSelector,
 });
 
 type Props = OwnProps & {
-  marketIndicator: string,
   discreet: boolean,
   locale: string,
 };
@@ -87,7 +81,6 @@ function FormattedVal(props: Props) {
     showCode,
     withIcon,
     locale,
-    marketIndicator,
     color,
     ellipsis,
     subMagnitude,
@@ -146,7 +139,6 @@ function FormattedVal(props: Props) {
   }
 
   const marketColor = getMarketColor({
-    marketIndicator,
     isNegative,
   });
 
