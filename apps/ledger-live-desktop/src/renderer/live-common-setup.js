@@ -35,10 +35,7 @@ const publicKeyTweakAddWorkerResponses = new Subject();
 const workers = Array(publicKeyTweakAddWorkerCount)
   .fill(null)
   .map(async (_, i) => {
-    const worker = await initWorker(
-      "../../webworkers/workers/publicKeyTweakAdd.ts",
-      "publicKeyTweakAdd-" + i,
-    );
+    const worker = await initWorker("../../webworkers/workers/publicKeyTweakAdd.ts");
     worker.onmessage = e => publicKeyTweakAddWorkerResponses.next(e.data);
     return worker;
   });
