@@ -160,6 +160,7 @@ importers:
       '@babel/preset-flow': ^7.13.13
       '@babel/preset-react': ^7.13.13
       '@babel/preset-typescript': ^7.15.0
+      '@braze/web-sdk': ^4.6.3
       '@bunchtogether/vite-plugin-flow': ^1.0.2
       '@electron/remote': ^2
       '@ledgerhq/devices': workspace:^
@@ -337,6 +338,7 @@ importers:
       yargs: ^15.3.1
       zxcvbn: ^4.4.2
     dependencies:
+      '@braze/web-sdk': 4.6.3
       '@electron/remote': 2.0.8_electron@23.1.0
       '@ledgerhq/devices': link:../../libs/ledgerjs/packages/devices
       '@ledgerhq/electron-updater': 4.2.2
@@ -7908,6 +7910,10 @@ packages:
   /@bcoe/v8-coverage/0.2.3:
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
 
+  /@braze/web-sdk/4.6.3:
+    resolution: {integrity: sha512-i9TxOEnZdK4npHY9rR3VSNG51VErpZ2GTAg5RIwMFmcOb+9/Q2oWyUGg50ZSiflUi0nfnakuodhSpugS96k7pQ==}
+    dev: false
+
   /@bunchtogether/vite-plugin-flow/1.0.2:
     resolution: {integrity: sha512-s6ixVp0GVTIYE5IWzSNi1GJ8Y0HZa0C0qYTneufkG5ppVD9slW/z0VUj7NGQ0EFHNTWKfKIUFr5xbwoH3WUXZg==}
     dependencies:
@@ -14312,7 +14318,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.20.13
       '@polkadot/util': 10.3.1
-      '@polkadot/util-crypto': 10.3.1_@polkadot+util@10.3.1
+      '@polkadot/util-crypto': 10.3.1
     dev: false
 
   /@polkadot/networks/10.3.1:
@@ -14337,7 +14343,7 @@ packages:
       '@polkadot/ui-settings': 2.11.1
       '@polkadot/ui-shared': 2.11.1_5aiqcisuhlfhaktqmynzmrayma
       '@polkadot/util': 10.3.1
-      '@polkadot/util-crypto': 10.3.1_@polkadot+util@10.3.1
+      '@polkadot/util-crypto': 10.3.1
       color: 3.2.1
       ethereum-blockies-base64: 1.0.2
       jdenticon: 3.2.0
@@ -14435,8 +14441,25 @@ packages:
     dependencies:
       '@babel/runtime': 7.20.13
       '@polkadot/util': 10.3.1
-      '@polkadot/util-crypto': 10.3.1_@polkadot+util@10.3.1
+      '@polkadot/util-crypto': 10.3.1
       color: 3.2.1
+    dev: false
+
+  /@polkadot/util-crypto/10.3.1:
+    resolution: {integrity: sha512-viqLMuNGrbB2lyDIYdXAl3tq/Em/Y7ql2FvCTHJmxXaB5C1NXiWf1SqFAahUJKohL+ke5IL0jr19wZu/f88lIQ==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@babel/runtime': 7.20.13
+      '@noble/hashes': 1.1.5
+      '@noble/secp256k1': 1.7.1
+      '@polkadot/networks': 10.3.1
+      '@polkadot/util': 10.3.1
+      '@polkadot/wasm-crypto': 6.4.1_hmowrubltiyg4mpvtnqaaplyfm
+      '@polkadot/x-bigint': 10.3.1
+      '@polkadot/x-randomvalues': 10.3.1
+      '@scure/base': 1.1.1
+      ed2curve: 0.3.0
+      tweetnacl: 1.0.3
     dev: false
 
   /@polkadot/util-crypto/10.3.1_@polkadot+util@10.3.1:

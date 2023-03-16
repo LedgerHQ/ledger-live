@@ -48,6 +48,7 @@
     "typecheck": "pnpm flow"
   },
   "dependencies": {
+    "@braze/web-sdk": "^4.6.3",
     "@electron/remote": "^2",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/electron-updater": "^4.2.2",
