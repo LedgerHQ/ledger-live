@@ -8,10 +8,7 @@ import {
   useRoute,
   useTheme as useNavTheme,
 } from "@react-navigation/native";
-import {
-  discoverDevices,
-  TransportModule,
-} from "@ledgerhq/live-common/hw/index";
+import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Flex } from "@ledgerhq/native-ui";
@@ -42,7 +39,6 @@ type Props = {
   onWithoutDevice?: () => void;
   withArrows?: boolean;
   usbOnly?: boolean;
-  filter?: (_: TransportModule) => boolean;
   autoSelectOnAdd?: boolean;
   hideAnimation?: boolean;
   /** If defined, only show devices that have a device model id in this array */
@@ -52,7 +48,6 @@ type Props = {
 export default function SelectDevice({
   usbOnly,
   withArrows,
-  filter = () => true,
   onSelect,
   onWithoutDevice,
   onBluetoothDeviceAction,
@@ -156,34 +151,50 @@ export default function SelectDevice({
   const hasUSBSection = Platform.OS === "android" || other.length > 0;
 
   useEffect(() => {
+    const filter = ({ id }: { id: string }) =>
+      ["hid", "httpdebug"].includes(id);
     const subscription = discoverDevices(filter).subscribe(e => {
       setDevices(devices => {
-        if (e.type !== "add") {
-          return devices.filter(d => d.deviceId !== e.id);
+        const isUSBDevice = e.id.startsWith("usb|");
+        if (e.type === "remove") {
+          return devices.filter(({ deviceId }) =>
+            isUSBDevice ? !deviceId.startsWith("usb|") : deviceId !== e.id,
+          );
         }
 
-        if (!devices.find(d => d.deviceId === e.id)) {
-          return [
-            ...devices,
-            {
-              deviceId: e.id,
-              deviceName: e.name || "",
-              modelId:
-                (e.deviceModel && (e.deviceModel.id as DeviceModelId)) ||
-                (Config?.FALLBACK_DEVICE_MODEL_ID as DeviceModelId) ||
-                "nanoX",
-              wired: e.id.startsWith("httpdebug|")
-                ? Config?.FALLBACK_DEVICE_WIRED === "YES"
-                : e.id.startsWith("usb|"),
-            },
-          ];
+        const modelId =
+          (e.deviceModel && (e.deviceModel.id as DeviceModelId)) ||
+          (Config?.FALLBACK_DEVICE_MODEL_ID as DeviceModelId) ||
+          "nanoX";
+
+        const wired = e.id.startsWith("httpdebug|")
+          ? Config?.FALLBACK_DEVICE_WIRED === "YES"
+          : isUSBDevice;
+
+        const deviceAlreadyListed = devices.find(d => d.deviceId === e.id);
+
+        if (!deviceAlreadyListed) {
+          // Nb wired devices seem to return a new id every time, instead of
+          // relying on the id, we can filter out all USB devices instead.
+          const device = {
+            deviceId: e.id,
+            deviceName: e.name || "",
+            modelId,
+            wired,
+          };
+
+          const maybeFilteredDevices = isUSBDevice
+            ? devices.filter(({ deviceId }) => !deviceId.startsWith("usb|"))
+            : devices;
+
+          return [...maybeFilteredDevices, device];
         }
 
         return devices;
       });
     });
     return () => subscription.unsubscribe();
-  }, [knownDevices, filter, deviceModelIds]);
+  }, []);
 
   return (
     <Flex flexDirection={"column"} alignSelf="stretch">

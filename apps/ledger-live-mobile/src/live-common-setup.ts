@@ -1,6 +1,6 @@
 import Config from "react-native-config";
-import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
+import { Observable, timer } from "rxjs";
+import { map, debounce } from "rxjs/operators";
 import { listen } from "@ledgerhq/logs";
 import HIDTransport from "@ledgerhq/react-native-hid";
 import withStaticURLs from "@ledgerhq/hw-transport-http";
@@ -123,6 +123,7 @@ registerTransportModule({
         name,
       };
     }),
+    debounce(e => timer(e.type === "remove" ? 2000 : 0)),
   ),
 });
 // Add dev mode support of an http proxy
