@@ -72,6 +72,7 @@ import type {
   SettingsCompleteOnboardingPayload,
   SettingsSetDateFormatPayload,
   SettingsSetHasSeenStaxEnabledNftsPopupPayload,
+  SettingsSetCustomImageTypePayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -123,6 +124,7 @@ export const INITIAL_STATE: SettingsState = {
   hasAvailableUpdate: false,
   theme: "system",
   osTheme: undefined,
+  customImageType: null,
   customImageBackup: undefined,
   lastSeenCustomImage: {
     size: 0,
@@ -505,6 +507,12 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     },
   }),
 
+  [SettingsActionTypes.SET_CUSTOM_IMAGE_TYPE]: (state, action) => ({
+    ...state,
+    customImageType: (action as Action<SettingsSetCustomImageTypePayload>)
+      .payload.customImageType,
+  }),
+
   [SettingsActionTypes.SET_HAS_SEEN_STAX_ENABLED_NFTS_POPUP]: (
     state,
     action,
@@ -866,6 +874,8 @@ export const knownDeviceModelIdsSelector = (state: State) =>
   state.settings.knownDeviceModelIds;
 export const hasSeenStaxEnabledNftsPopupSelector = (state: State) =>
   state.settings.hasSeenStaxEnabledNftsPopup;
+export const customImageTypeSelector = (state: State) =>
+  state.settings.customImageType;
 export const starredMarketCoinsSelector = (state: State) =>
   state.settings.starredMarketCoins;
 export const lastConnectedDeviceSelector = (state: State) => {

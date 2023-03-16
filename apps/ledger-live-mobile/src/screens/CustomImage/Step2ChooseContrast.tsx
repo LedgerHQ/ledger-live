@@ -100,7 +100,7 @@ const Step2ChooseContrast = ({ navigation, route }: NavigationProps) => {
 
   const { params } = route;
 
-  const { cropResult: croppedImage, device, baseImageFile } = params;
+  const { cropResult: croppedImage, device, baseImageFile, imageType } = params;
 
   const handleError = useCallback(
     (error: Error) => {
@@ -151,6 +151,7 @@ const Step2ChooseContrast = ({ navigation, route }: NavigationProps) => {
         imagePreview: processorPreviewImage,
         baseImageFile,
         device,
+        imageType,
       });
       setRawResultLoading(false);
     },
@@ -160,6 +161,7 @@ const Step2ChooseContrast = ({ navigation, route }: NavigationProps) => {
       processorPreviewImage,
       device,
       baseImageFile,
+      imageType,
     ],
   );
 

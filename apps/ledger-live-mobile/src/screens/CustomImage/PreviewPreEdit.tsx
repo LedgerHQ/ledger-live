@@ -91,7 +91,12 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     metadata: NFTMetadata;
   };
 
-  const disabledEdit = !!isStaxEnabled || !!metadata?.staxImage;
+  const isStaxEnabledImage = !!isStaxEnabled || !!metadata?.staxImage;
+  const imageType = isStaxEnabledImage
+    ? "staxEnabledImage"
+    : isNftMetadata
+    ? "originalNFTImage"
+    : "customImage";
 
   const nftImageUri = extractImageUrlFromNftMetadata(metadata);
 
@@ -195,10 +200,11 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
         rawData: data,
         previewData: processorPreviewImage,
         device,
+        imageType,
       });
       setRawResultLoading(false);
     },
-    [navigation, setRawResultLoading, processorPreviewImage, device],
+    [navigation, setRawResultLoading, processorPreviewImage, device, imageType],
   );
 
   const handlePreviewImageError = useCallback(
@@ -267,9 +273,10 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
       params: {
         device,
         baseImageFile: loadedImage,
+        imageType,
       },
     });
-  }, [navigation, device, loadedImage]);
+  }, [navigation, device, loadedImage, imageType]);
 
   if (!loadedImage || !loadedImage.imageFileUri) {
     return (
@@ -320,7 +327,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
             <Button
               type="main"
               size="large"
-              outline={!disabledEdit}
+              outline={!isStaxEnabledImage}
               mb={7}
               disabled={previewLoading}
               pending={rawResultLoading}
@@ -334,7 +341,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
             <Link
               size="large"
               onPress={handleEditPicture}
-              disabled={previewLoading || disabledEdit}
+              disabled={previewLoading || isStaxEnabledImage}
               event="button_clicked"
               eventProperties={analyticsEditEventProps}
             >

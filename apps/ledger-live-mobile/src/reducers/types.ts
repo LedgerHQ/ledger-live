@@ -27,6 +27,7 @@ import {
   NotificationContentCard,
 } from "../dynamicContent/types";
 import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
+import { ImageType } from "../components/CustomImage/types";
 
 // === ACCOUNT STATE ===
 
@@ -219,6 +220,7 @@ export type SettingsState = {
   sensitiveAnalytics: boolean;
   firstConnectionHasDevice: boolean | null;
   firstConnectHasDeviceUpdated: boolean | null;
+  customImageType: ImageType | null;
   customImageBackup?: { hex: string; hash: string };
   lastSeenCustomImage: {
     size: number;

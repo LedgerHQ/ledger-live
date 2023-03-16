@@ -77,8 +77,10 @@ import {
   SettingsCompleteOnboardingPayload,
   SettingsSetDateFormatPayload,
   SettingsSetHasSeenStaxEnabledNftsPopupPayload,
+  SettingsSetCustomImageTypePayload,
 } from "./types";
 import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
+import { ImageType } from "../components/CustomImage/types";
 
 // FIXME: NEVER USED BY ANYONE, DROP ?
 const setExchangePairsAction = createAction<SettingsSetPairsPayload>(
@@ -428,6 +430,13 @@ export const setLastConnectedDevice = (lastConnectedDevice: Device) =>
   setLastConnectedDeviceAction({
     lastConnectedDevice,
   });
+
+const setCustomImageTypeAction =
+  createAction<SettingsSetCustomImageTypePayload>(
+    SettingsActionTypes.SET_CUSTOM_IMAGE_TYPE,
+  );
+export const setCustomImageType = (imageType: ImageType) =>
+  setCustomImageTypeAction({ customImageType: imageType });
 
 const setCustomImageBackupAction =
   createAction<SettingsSetCustomImageBackupPayload>(

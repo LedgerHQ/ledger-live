@@ -36,7 +36,7 @@ const analyticsEditEventProps = {
 const PreviewPostEdit = ({ navigation, route }: NavigationProps) => {
   const { t } = useTranslation();
   const { params } = route;
-  const { baseImageFile, imagePreview, imageData, device } = params;
+  const { baseImageFile, imagePreview, imageData, device, imageType } = params;
 
   const handleError = useCallback(
     (error: Error) => {
@@ -58,8 +58,9 @@ const PreviewPostEdit = ({ navigation, route }: NavigationProps) => {
       rawData: imageData,
       previewData: imagePreview,
       device,
+      imageType,
     });
-  }, [navigation, device, imagePreview, imageData]);
+  }, [navigation, device, imagePreview, imageData, imageType]);
 
   const handlePreviewImageError = useCallback(
     ({ nativeEvent }: NativeSyntheticEvent<ImageErrorEventData>) => {
@@ -76,9 +77,10 @@ const PreviewPostEdit = ({ navigation, route }: NavigationProps) => {
         device,
         baseImageFile,
         isPictureFromGallery: false,
+        imageType,
       },
     });
-  }, [navigation, device, baseImageFile]);
+  }, [navigation, device, baseImageFile, imageType]);
 
   if (!imagePreview) {
     return <InfiniteLoader />;
