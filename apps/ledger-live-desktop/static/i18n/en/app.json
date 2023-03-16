@@ -214,6 +214,7 @@
     "stars": "Starred accounts",
     "accounts": "Accounts",
     "manager": "My Ledger",
+    "earn": "Earn",
     "exchange": "Buy / Sell",
     "swap": "Swap",
     "lend": "Lend",
@@ -4069,7 +4070,7 @@
       "tr": "Turkish",
       "ja": "Japanese",
       "ko": "Korean",
-      "pt" : "Português (Brasil)"
+      "pt": "Português (Brasil)"
     }
   },
   "theme": {
