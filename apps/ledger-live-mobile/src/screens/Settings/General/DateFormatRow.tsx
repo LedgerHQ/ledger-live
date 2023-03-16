@@ -9,7 +9,6 @@ import { ScreenName } from "../../../const";
 import { dateFormatSelector } from "../../../reducers/settings";
 import { Format } from "../../../components/DateFormat/formatter.util";
 
-const drawerNameAnalytics = "Date Format selection";
 const DateFormatRow = () => {
   const [isOpen, setModalOpen] = useState<boolean>(false);
 
@@ -23,13 +22,7 @@ const DateFormatRow = () => {
     setModalOpen(true);
   }, []);
 
-  const onClose = useCallback(() => {
-    track("button_clicked", {
-      button: "Close",
-      drawer: drawerNameAnalytics,
-    });
-    setModalOpen(false);
-  }, []);
+  const closeModal = useCallback(() => setModalOpen(false), []);
 
   const { t } = useTranslation();
 
@@ -50,7 +43,7 @@ const DateFormatRow = () => {
         </Text>
       </SettingsRow>
 
-      <DateFormatDrawer isOpen={isOpen} onCloseModal={onClose} />
+      <DateFormatDrawer isOpen={isOpen} closeModal={closeModal} />
     </>
   );
 };

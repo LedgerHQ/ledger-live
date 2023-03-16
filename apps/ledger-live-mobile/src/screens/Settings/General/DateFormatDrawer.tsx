@@ -16,13 +16,21 @@ const drawerNameAnalytics = "Date Format selection";
 
 type Props = {
   isOpen: boolean;
-  onCloseModal: () => void;
+  closeModal: () => void;
 };
 
-export function DateFormatDrawer({ isOpen, onCloseModal }: Props) {
+export function DateFormatDrawer({ isOpen, closeModal }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const dateFormat = useSelector(dateFormatSelector);
+
+  const onClose = useCallback(() => {
+    track("button_clicked", {
+      button: "Close",
+      drawer: drawerNameAnalytics,
+    });
+    closeModal();
+  }, [closeModal]);
 
   const options = [
     {
@@ -47,14 +55,15 @@ export function DateFormatDrawer({ isOpen, onCloseModal }: Props) {
         screen: ScreenName.SettingsScreen,
         drawer: drawerNameAnalytics,
       });
+      closeModal();
     },
-    [dispatch],
+    [closeModal, dispatch],
   );
 
   return (
     <QueuedDrawer
       isRequestingToBeOpened={isOpen}
-      onClose={onCloseModal}
+      onClose={onClose}
       preventBackdropClick
       title={t("settings.display.DateFormatModal.title")}
     >
