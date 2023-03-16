@@ -21,8 +21,8 @@ const Container: ThemedComponent<{}> = styled(Box).attrs(props => ({
   ${p => {
     return css`
       padding: 16px 16px;
-      color: ${p.theme.colors.orange};
-      background-color: ${p.theme.colors.lightWarning};
+      color: ${p.theme.colors.dark};
+      background-color: ${p.theme.colors.grey};
       border: none;
       border-xolor: transparent;
     `;
