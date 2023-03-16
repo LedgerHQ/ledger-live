@@ -18,6 +18,7 @@ type Props = {
   resizeMode?: FastImageProps["resizeMode"] & VideoProperties["resizeMode"];
   colors: Theme["colors"];
   transparency?: boolean;
+  children?: React.ReactNode | null;
 };
 
 type State = {

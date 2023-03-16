@@ -46,6 +46,7 @@ type Props = {
   resizeMode?: ResizeMode;
   colors: Theme["colors"];
   transparency?: boolean;
+  children?: React.ReactNode | null;
 };
 
 type State = {
@@ -109,6 +110,7 @@ class NftImage extends React.PureComponent<Props, State> {
       colors,
       resizeMode = "cover",
       transparency,
+      children,
     } = this.props;
     const { error, usingFallback } = this.state;
 
@@ -157,6 +159,7 @@ class NftImage extends React.PureComponent<Props, State> {
             />
           )}
         </Animated.View>
+        {children}
       </View>
     );
   }

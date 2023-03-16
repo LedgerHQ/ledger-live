@@ -322,12 +322,13 @@ const NftViewer = ({ route }: Props) => {
           metadata={nftMetadata}
           mediaFormat={"big"}
           status={nftStatus}
-        />
-        {knownDeviceModelIds.stax && !!nftMetadata?.staxImage && (
-          <Flex zIndex={1000} position="absolute" bottom={0} width="100%">
-            <DesignedForStaxText size="medium" />
-          </Flex>
-        )}
+        >
+          {knownDeviceModelIds.stax && !!nftMetadata?.staxImage ? (
+            <Flex zIndex={1000} position="absolute" bottom={0} width="100%">
+              <DesignedForStaxText size="medium" />
+            </Flex>
+          ) : null}
+        </NftMedia>
       </>
     ),
     [knownDeviceModelIds, nftMetadata, nftStatus],

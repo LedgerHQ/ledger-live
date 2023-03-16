@@ -166,12 +166,13 @@ const NftMediaComponent = ({
           status={status}
           metadata={metadata}
           mediaFormat="preview"
-        />
-        {knownDeviceModelIds.stax && !!metadata?.staxImage && (
-          <Flex zIndex={1000} position="absolute" bottom={0} width="100%">
-            <DesignedForStaxText size="small" />
-          </Flex>
-        )}
+        >
+          {knownDeviceModelIds.stax && !!metadata?.staxImage ? (
+            <Flex zIndex={1000} position="absolute" bottom={0} width="100%">
+              <DesignedForStaxText size="small" />
+            </Flex>
+          ) : null}
+        </NftMedia>
       </Flex>
       {nftAmount && nftAmount.gt(1) ? (
         <Tag
