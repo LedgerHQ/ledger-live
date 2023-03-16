@@ -942,7 +942,7 @@
     "month": "1M",
     "year": "1Y",
     "all": "ALL",
-    "graphNotSupported": "graph not available for this token"
+    "graphNotSupported": "The graph is not available for this token"
   },
   "carousel": {
     "title": "Close banner?",
