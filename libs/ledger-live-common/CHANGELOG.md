@@ -1,5 +1,15 @@
 # @ledgerhq/live-common
 
+## 29.1.0-nightly.8
+
+### Patch Changes
+
+- Updated dependencies [[`0ca89a8067`](https://github.com/LedgerHQ/ledger-live/commit/0ca89a80678743e9462aaf977448e759924a56b2)]:
+  - @ledgerhq/cryptoassets@9.1.0-nightly.0
+  - @ledgerhq/coin-framework@0.1.1-nightly.2
+  - @ledgerhq/coin-polkadot@0.1.0-nightly.2
+  - @ledgerhq/hw-app-eth@6.32.1-nightly.1
+
 ## 29.1.0-nightly.7
 
 ### Minor Changes

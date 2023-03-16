@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 9.1.0-nightly.0
+
+### Minor Changes
+
+- [#2942](https://github.com/LedgerHQ/ledger-live/pull/2942) [`0ca89a8067`](https://github.com/LedgerHQ/ledger-live/commit/0ca89a80678743e9462aaf977448e759924a56b2) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Update Cardano Xray token
+
 ## 9.0.0
 
 ### Major Changes

@@ -1,5 +1,12 @@
 # ledger-live-desktop
 
+## 2.55.0-nightly.11
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@29.1.0-nightly.8
+
 ## 2.55.0-nightly.10
 
 ### Patch Changes
