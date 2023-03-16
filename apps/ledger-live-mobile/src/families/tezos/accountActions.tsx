@@ -9,6 +9,8 @@ import { Icons } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "../../const";
 import { ActionButtonEvent } from "../../components/FabActions";
 
+type NavigationParamsType = readonly [name: string, options: object];
+
 const getExtraSendActionParams = ({ account }: { account: AccountLike }) => {
   const delegation = getAccountDelegationSync(account);
   const sendShouldWarnDelegation =
@@ -75,7 +77,7 @@ const getMainActions = ({
   return [
     {
       id: "stake",
-      navigationParams,
+      navigationParams: navigationParams as unknown as NavigationParamsType,
       label: <Trans i18nKey="account.stake" />,
       Icon: Icons.ClaimRewardsMedium,
       event: "button_clicked",
