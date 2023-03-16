@@ -106,6 +106,7 @@ export const withDevice =
 
       // When we'll finish all the current job, we'll call finish
       let resolveQueuedDevice;
+
       // This new promise is the next exec queue
       deviceQueues[deviceId] = new Promise((resolve) => {
         resolveQueuedDevice = resolve;
@@ -118,12 +119,14 @@ export const withDevice =
       deviceQueue
         .then(() => open(deviceId)) // open the transport
         .then(async (transport) => {
-          log("withDevice", `${nonce}: Starting job`);
-          setAllowAutoDisconnect(transport, deviceId, false);
+          log("withDevice", `${nonce}: got a transport`);
+
           if (unsubscribed) {
+            log("withDevice", `${nonce}: but we're unsubscribed`);
             // It was unsubscribed prematurely
             return finalize(transport, [resolveQueuedDevice]);
           }
+          setAllowAutoDisconnect(transport, deviceId, false);
 
           if (needsCleanup[identifyTransport(transport)]) {
             delete needsCleanup[identifyTransport(transport)];
@@ -149,6 +152,7 @@ export const withDevice =
             return finalize(transport, [resolveQueuedDevice]);
           }
 
+          log("withDevice", `${nonce}: Starting job`);
           sub = job(transport)
             .pipe(
               catchError(initialErrorRemapping),

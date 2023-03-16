@@ -152,7 +152,7 @@ describe("getOnboardingStatePolling", () => {
         });
 
         // Waits more than the timeout
-        jest.advanceTimersByTime(pollingPeriodMs + 1);
+        jest.advanceTimersByTime(pollingPeriodMs * 10 + 1);
       });
 
       it("should update the allowed error value to notify the consumer - timeout value set by the consumer", (done) => {
