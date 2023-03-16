@@ -155,11 +155,13 @@ jobs:
           path: |
             libs/ui/tests/react.spec.js-snapshots/
             libs/ui/test-results/
-      - name: Test coverage
-        run: npx codecov -F test
-        env:
-          CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
+      - uses: codecov/codecov-action@v3
+        if: always()
+        with:
+          token: ${{secrets.CODECOV_TOKEN}}
+          flags: test
       - uses: actions/github-script@v6
+        if: always()
         with:
           script: |
             const fs = require("fs");

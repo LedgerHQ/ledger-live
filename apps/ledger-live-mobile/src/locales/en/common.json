@@ -1138,6 +1138,10 @@
         "title": "Apps",
         "desc": "Explore Ledger's partner apps all in one place"
       },
+      "browseWeb3": {
+        "title": "Browse Web3",
+        "desc": "Explore Web3 fully integrated with Ledger"
+      },
       "earn": {
         "title": "Earn",
         "desc": "Grow your crypto through staking and lending."
@@ -2664,6 +2668,10 @@
         "experimentalSwap": {
           "title": "New SWAP interface",
           "description": "Use the new experimental swap interface"
+        },
+        "experimentalPlatformDiscover": {
+          "title": "Discover v2",
+          "description": "Use the new experimental discover screen"
         }
       },
       "developerFeatures": {
@@ -5733,6 +5741,51 @@
       }
     }
   },
+  "browseWeb3": {
+    "catalog": {
+      "title": "Browse Web3",
+      "subtitle": "Explore Web3 fully integrated with Ledger",
+      "section": {
+        "recentlyUsed": "Recently Used",
+        "categories": "Categories",
+        "clearAll": "Clear All"
+      },
+      "branch": {
+        "soon": "coming soon",
+        "experimental": "experimental",
+        "debug": "debug"
+      },
+      "banner": {
+        "title": "Discover our Live Catalog",
+        "description": "Unlock a new world of crypto possibilities. One secure access to all services – DeFi, NFTs and more to come."
+      },
+      "twitterBanner": {
+        "description": "Tell us what's the next service you want to see with the hashtag",
+        "tweetText": "The next Ledger App should be..."
+      },
+      "pollCTA": {
+        "title": "Poll",
+        "description": "Which service do you want to see in Ledger Live?"
+      },
+      "developerCTA": {
+        "title": "For Developers",
+        "description": "All the information you need to integrate your applications on Ledger Live."
+      },
+    },
+    "disclaimer": {
+      "title": "External Application",
+      "description": "You are about to be redirected to an application not operated by Ledger.",
+      "legalAdvice": "This application is not operated by Ledger. Ledger is not responsible for any loss of funds or quality of service of such application.\n\nAlways make sure to carefully verify the information displayed on your device.",
+      "legalAdviceShort": "Ledger is not responsible for any loss of funds. Always make sure to verify the information displayed on your device.",
+      "checkbox": "Do not remind me again.",
+      "CTA": "Continue"
+    },
+    "webPlatformPlayer": {
+      "infoPanel": {
+        "website": "website"
+      }
+    }
+  },
   "platform": {
     "catalog": {
       "title": "Live Apps Catalog",
@@ -5832,6 +5885,7 @@
       "reload": "Reload",
       "noCryptosFound": "No coins found",
       "noCurrencyFound": "No currency found",
+      "noAppFound": "No app found",
       "noSearchResultsFor": "Sorry, we did not find any coins for <0>{{search}}</0>. Please retry the search with another keyword.",
       "noCurrencySearchResultsFor": "Sorry, we did not find any currencies for <0>{{search}}</0>. Please retry the search with another keyword.",
       "noSearchResults": "Sorry, we did not find any search results.",
@@ -6110,5 +6164,27 @@
   },
   "deviceConnect": {
     "title": "Connect device"
+  },
+  "stake": {
+    "noFundsModal": {
+      "title": "Buy, swap or receive",
+      "text": "You do not have enough {{coin}} available to stake",
+      "description": "Not enough funds? Don’t worry, you can securely buy, swap or receive crypto directly in Ledger Live.",
+      "options": {
+        "buy": {
+          "title": "Buy",
+          "body": "Buy with trusted  providers"
+        },
+        "swap": {
+          "title": "Swap",
+          "label": "Popular",
+          "body": "Convert crypto to crypto securely"
+        },
+        "receive": {
+          "title": "Receive",
+          "body": "Receive crypto in your wallet"
+        }
+      }
+    }
   }
 }

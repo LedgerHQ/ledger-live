@@ -13,7 +13,7 @@ import type { TFunction } from "react-i18next";
 import { connect, useDispatch } from "react-redux";
 import { compose } from "redux";
 import { createStructuredSelector } from "reselect";
-import logger from "~/logger/logger";
+import logger from "~/renderer/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import Track from "~/renderer/analytics/Track";

@@ -6,9 +6,12 @@ import { BaseTextProps } from "@ledgerhq/native-ui/components/Text";
 import { scrollToTop } from "../navigation/utils";
 import { Merge } from "../types/helpers";
 
-export default function HeaderTitle(
-  props: Merge<HeaderTitleProps, { children?: React.ReactNode }>,
-) {
+export type Props = Merge<
+  HeaderTitleProps,
+  { children?: React.ReactNode; color?: BaseTextProps["color"] }
+>;
+
+export default function HeaderTitle(props: Props) {
   return (
     <TouchableWithoutFeedback onPress={scrollToTop}>
       <Text {...(props as BaseTextProps)} variant={"h5"} mx={5} mt={1} />

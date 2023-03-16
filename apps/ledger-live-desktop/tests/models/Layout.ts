@@ -28,6 +28,7 @@ export class Layout {
   readonly bookmarkedAccountsList: Locator;
   readonly bookmarkedAccounts: Locator;
   readonly drawerSwapButton: Locator;
+  readonly drawerEarnButton: Locator;
   readonly appUpdateBanner: Locator;
   readonly discreetTooltip: Locator;
 
@@ -50,6 +51,7 @@ export class Layout {
     this.drawerManagerButton = page.locator("data-test-id=drawer-manager-button");
     this.drawerBuycryptoButton = page.locator("data-test-id=drawer-exchange-button");
     this.drawerSwapButton = page.locator("data-test-id=drawer-swap-button");
+    this.drawerEarnButton = page.locator("data-test-id=drawer-earn-button");
     this.drawerExperimentalButton = page.locator("data-test-id=drawer-experimental-button");
     this.bookmarkedAccountsList = page.locator("data-test-id=drawer-bookmarked-accounts");
     this.bookmarkedAccounts = this.bookmarkedAccountsList.locator(".bookmarked-account-item");
@@ -60,7 +62,7 @@ export class Layout {
     this.topbarSettingsButton = page.locator("data-test-id=topbar-settings-button");
     this.topbarLockButton = page.locator("data-test-id=topbar-password-lock-button");
     this.topbarHelpButton = page.locator("data-test-id=topbar-help-button");
-    this.discreetTooltip = page.locator("#tippy-12"); //automatically generated tippy id but it's consistent
+    this.discreetTooltip = page.locator("#tippy-12"); // automatically generated tippy id but it's consistent
 
     // general
     this.pageScroller = page.locator("id=page-scroller");
@@ -100,6 +102,10 @@ export class Layout {
 
   async goToSwap() {
     await this.drawerSwapButton.click();
+  }
+
+  async goToEarn() {
+    await this.drawerEarnButton.click();
   }
 
   async toggleDiscreetMode() {

@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import axios from "axios";
+import axios, { AxiosPromise } from "axios";
 import type { AxiosError, AxiosRequestConfig, Method } from "axios";
 import { log } from "@ledgerhq/logs";
 import { NetworkDown, LedgerAPI5xx, LedgerAPI4xx } from "@ledgerhq/errors";
@@ -98,7 +98,7 @@ const extractErrorMessage = (raw: string): string | undefined => {
   return;
 };
 
-const implementation = (arg: AxiosRequestConfig): Promise<any> => {
+const implementation = <T = any>(arg: AxiosRequestConfig): AxiosPromise<T> => {
   invariant(typeof arg === "object", "network takes an object as parameter");
   let promise;
 

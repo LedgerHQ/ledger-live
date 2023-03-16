@@ -9,6 +9,12 @@ on:
       ref:
         description: the branch to prerelease from
         required: true
+      recover:
+        description: Recover Beta release track
+        required: false
+        type: boolean
+        default: false
+
 jobs:
   prerelease:
     name: Prerelease
@@ -153,7 +159,7 @@ jobs:
               owner: "ledgerhq",
               repo: "ledger-live-build",
               ref: "main",
-              workflow_id: "pre-mobile.yml",
+              workflow_id: ${{ inputs.recover && 'pre-mobile-recover.yml' || 'pre-mobile.yml' }},
               inputs: {
                 ref: "${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref_name }}",
               }

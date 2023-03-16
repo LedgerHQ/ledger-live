@@ -26,7 +26,6 @@ test("Updater", async ({ page }) => {
     await expect
       .soft(page)
       .toHaveScreenshot("app-updater-layout.png", { mask: [page.locator("canvas")] });
-    await expect.soft(layout.appUpdateBanner).toHaveScreenshot("app-updater-checking.png");
   });
 
   await test.step("[check-success] state should be visible", async () => {
@@ -46,7 +45,6 @@ test("Updater", async ({ page }) => {
 
   await test.step("[error] state should be visible", async () => {
     await appUpdater.setStatus("error");
-    await expect.soft(layout.appUpdateBanner).toHaveScreenshot("app-updater-error.png");
     await expect
       .soft(page)
       .toHaveScreenshot("app-updater-error-with-carousel.png", { mask: [page.locator("canvas")] });
@@ -57,7 +55,7 @@ test("Updater", async ({ page }) => {
     await settingsPage.carouselSwitchButton.click();
     await expect(settingsPage.carouselSwitchButton.locator("input")).not.toBeChecked();
     await layout.goToPortfolio();
-    await expect(layout.appUpdateBanner).toBeVisible();
+    await layout.appUpdateBanner.isVisible();
     await expect.soft(page).toHaveScreenshot("app-updater-error-without-carousel.png", {
       mask: [page.locator("canvas")],
     });

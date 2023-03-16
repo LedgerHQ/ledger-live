@@ -21,7 +21,7 @@ import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import Track from "~/renderer/analytics/Track";
-import logger from "~/logger/logger";
+import logger from "~/renderer/logger";
 import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
 
 import type { AccountBridge } from "@ledgerhq/types-live";

@@ -43,6 +43,7 @@ test("Market", async ({ page }) => {
   await test.step("filter starred", async () => {
     await marketPage.toggleStarFilter();
     await marketPage.waitForLoading();
+    await marketPage.waitForSearchBarToBeEmpty(); // windows was showing the search bar still containing text. This wait prevents that
     await expect.soft(page).toHaveScreenshot("market-page-filter-starred.png");
   });
 

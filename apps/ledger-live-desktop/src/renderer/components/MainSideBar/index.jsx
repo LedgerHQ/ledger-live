@@ -39,6 +39,7 @@ import IconApps from "~/renderer/icons/Apps";
 import IconReceive from "~/renderer/icons/Receive";
 import IconSend from "~/renderer/icons/Send";
 import IconExchange from "~/renderer/icons/Exchange";
+import IconEarn from "~/renderer/icons/Growth";
 import IconChevron from "~/renderer/icons/ChevronRightSmall";
 import IconLending from "~/renderer/icons/Graph";
 import IconExperimental from "~/renderer/icons/Experimental";
@@ -290,6 +291,10 @@ const MainSideBar = () => {
     push("/exchange");
   }, [push]);
 
+  const handleClickEarn = useCallback(() => {
+    push("/earn");
+  }, [push]);
+
   const handleClickLend = useCallback(() => {
     if (firstTimeLend) {
       dispatch(setFirstTimeLend());
@@ -407,6 +412,17 @@ const MainSideBar = () => {
                   disabled={noAccounts || navigationLocked}
                   collapsed={secondAnim}
                 />
+                <FeatureToggle feature="ptxEarn">
+                  <SideBarListItem
+                    id={"earn"}
+                    label={t("sidebar.earn")}
+                    icon={IconEarn}
+                    iconActiveColor="wallet"
+                    onClick={handleClickEarn}
+                    isActive={location.pathname === "/earn"}
+                    collapsed={secondAnim}
+                  />
+                </FeatureToggle>
                 <SideBarListItem
                   id={"exchange"}
                   label={t("sidebar.exchange")}

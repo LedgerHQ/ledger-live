@@ -1,6 +1,5 @@
 // @flow
 import { keyframes, css } from "styled-components";
-import { WARN_LEGACY_COLORS } from "~/config/constants";
 import type { CSSRules } from "styled-components";
 
 export const space = [0, 5, 10, 15, 20, 30, 40, 50, 70];
@@ -72,25 +71,12 @@ const colors = {
   lightWarning: "rgba(245, 127, 23, 0.1)",
   white: "#ffffff",
   experimentalBlue: "#49479c",
-  marketUp_eastern: "#ea2e49",
   marketUp_western: "#66be54",
-  marketDown_eastern: "#8a80db",
   marketDown_western: "#ea2e49",
   twitter: "#1b9df0",
 };
 
-// prettier-ignore
-const exportedColors = WARN_LEGACY_COLORS
-  ? new Proxy(colors, {
-    get: (target, prop) => {
-      // eslint-disable-next-line no-console
-      console.warn(`Usage of the deprecated legacy color scheme detected ${prop}`)
-      return '#FF0000'
-    },
-  })
-  : colors
-
-export { exportedColors as colors };
+export { colors };
 
 const animationLength = "0.3s";
 

@@ -9,6 +9,7 @@ import {
 import styled from "styled-components/native";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
 import { Device } from "@ledgerhq/types-devices";
+import { getDeviceModel } from "@ledgerhq/devices";
 
 import { useTranslation } from "react-i18next";
 import { setLanguage } from "../../actions/settings";
@@ -17,7 +18,7 @@ import { languages, supportedLocales } from "../../languages";
 import Illustration from "../../images/illustration/Illustration";
 import DeviceDark from "../../images/illustration/Dark/_FamilyPackX.png";
 import DeviceLight from "../../images/illustration/Light/_FamilyPackX.png";
-import { updateIdentify } from "../../analytics";
+import { TrackScreen, updateIdentify, track } from "../../analytics";
 import QueuedDrawer from "../../components/QueuedDrawer";
 
 type UiDrawerStatus =
@@ -78,6 +79,7 @@ const LanguageSelect = ({ device, productName }: Props) => {
   );
 
   const handleLanguageSelectOnPress = useCallback(() => {
+    track("button_clicked", { button: "language" });
     setLanguageSelectStatus("language-selection-requested");
   }, []);
 
@@ -86,10 +88,14 @@ const LanguageSelect = ({ device, productName }: Props) => {
   }, []);
 
   const handleFirmwareLanguageUpdate = useCallback(() => {
+    track("button_clicked", {
+      button: `change ${getDeviceModel(device.modelId).productName} language`,
+    });
     // TODO: redirect to firmware localization flow when available
-  }, []);
+  }, [device.modelId]);
 
   const handleFirmwareLanguageCancel = useCallback(() => {
+    track("button_clicked", { button: "cancel change language" });
     setLanguageSelectStatus("completed");
   }, []);
 
@@ -169,6 +175,7 @@ const LanguageSelect = ({ device, productName }: Props) => {
         }
         onClose={handleFirmwareLanguageCancel}
       >
+        <TrackScreen category="Change Stax language" />
         <Flex alignItems="center" justifyContent="center">
           <Illustration
             lightSource={DeviceLight}
