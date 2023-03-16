@@ -51,8 +51,8 @@ export const fromTransactionCommonRaw = (
     common.subAccountId = raw.subAccountId;
   }
 
-  if ("domain" in raw) {
-    common.domain = raw.domain;
+  if ("recipientDomain" in raw) {
+    common.recipientDomain = raw.recipientDomain;
   }
 
   return common;
@@ -74,8 +74,8 @@ export const toTransactionCommonRaw = (
     common.subAccountId = raw.subAccountId;
   }
 
-  if ("domain" in raw) {
-    common.domain = raw.domain;
+  if ("recipientDomain" in raw) {
+    common.recipientDomain = raw.recipientDomain;
   }
 
   return common;

@@ -39,7 +39,6 @@ const RecipientFieldBase = ({ t, account, autoFocus, status, label, value, onCha
         warning={recipientWarning}
         value={value}
         onChange={onChange}
-        data-testid="send-recipient-input"
         id={"send-recipient-input"}
       />
     </Box>

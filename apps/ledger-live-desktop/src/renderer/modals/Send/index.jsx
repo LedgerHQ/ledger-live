@@ -4,7 +4,7 @@ import React, { useCallback, useState } from "react";
 import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
 import type { StepId } from "./types";
-import { NamingServiceProvider } from "@ledgerhq/domain-service/hooks/index";
+import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 
 type Props = {
   stepId: StepId,
@@ -25,7 +25,7 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
   const handleStepChange = useCallback(stepId => setStep(stepId), []);
   const isModalLocked = MODAL_LOCKED[stepId];
   return (
-    <NamingServiceProvider>
+    <DomainServiceProvider>
       <Modal
         name="MODAL_SEND"
         centered
@@ -42,7 +42,7 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
           />
         )}
       />
-    </NamingServiceProvider>
+    </DomainServiceProvider>
   );
 };
 

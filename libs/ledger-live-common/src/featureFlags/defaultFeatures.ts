@@ -77,6 +77,9 @@ export const defaultFeatures: DefaultFeatures = {
   disableNftRaribleOpensea: {
     enabled: false,
   },
+  domainInputResolution: {
+    enabled: false,
+  },
   ratingsPrompt: {
     enabled: false,
     params: {

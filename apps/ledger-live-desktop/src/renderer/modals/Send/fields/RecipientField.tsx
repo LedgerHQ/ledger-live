@@ -6,7 +6,7 @@ import { TFunction } from "react-i18next";
 
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import RecipientFieldBase from "./RecipientFieldBase";
-import RecipientFieldNamingService from "./RecipientFieldNamingService";
+import RecipientFieldDomainService from "./RecipientFieldDomainService";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
@@ -34,9 +34,9 @@ const RecipientField = ({
 }: Props) => {
   const bridge = getAccountBridge(account, null);
   const [value, setValue] = useState(
-    initValue || transaction.domain || transaction.recipient || "",
+    initValue || transaction?.recipientDomain?.domain || transaction.recipient || "",
   );
-  const FFNamingService = useFeature("trustedNameInputResolution");
+  const { enabled: isDomainResolutionEnabled } = useFeature("domainInputResolution") || {};
 
   useEffect(() => {
     if (value !== "" && value !== transaction.recipient) {
@@ -53,17 +53,16 @@ const RecipientField = ({
       onChangeTransaction(
         bridge.updateTransaction(transaction, {
           recipient: invalidRecipient ? "" : recipient,
-          domain: undefined,
         }),
       );
     },
-    [bridge, account, transaction, onChangeTransaction],
+    [account.currency.scheme, bridge, onChangeTransaction, transaction],
   );
 
   if (!status) return null;
 
-  return FFNamingService?.enabled ? (
-    <RecipientFieldNamingService
+  return isDomainResolutionEnabled ? (
+    <RecipientFieldDomainService
       t={t}
       label={label}
       autoFocus={autoFocus}
