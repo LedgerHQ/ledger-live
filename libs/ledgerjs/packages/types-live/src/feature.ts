@@ -46,6 +46,7 @@ export type FeatureId =
   | "postOnboardingAssetsTransfer"
   | "firebaseEnvironmentReadOnly"
   | "protectServicesMobile"
+  | "protectServicesDesktop"
   | "swapShowDexQuotes"
   | "stakePrograms"
   | "portfolioExchangeBanner"
