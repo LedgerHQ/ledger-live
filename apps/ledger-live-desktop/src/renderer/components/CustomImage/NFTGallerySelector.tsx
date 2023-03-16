@@ -4,7 +4,7 @@ import { Flex, Grid, InfiniteLoader, Text } from "@ledgerhq/react-ui";
 import { NFTMetadata } from "@ledgerhq/types-live";
 import { orderedVisibleNftsSelector } from "../../reducers/accounts";
 import NftGalleryEmptyState from "./NftGalleryEmptyState";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 import NFTItem from "./NFTItem";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";

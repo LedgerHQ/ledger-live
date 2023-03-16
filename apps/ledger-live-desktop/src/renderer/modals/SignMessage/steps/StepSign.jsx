@@ -3,16 +3,14 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { getEnv } from "@ledgerhq/live-common/env";
 import type { StepProps } from "../types";
+import { signMessageExec, createAction } from "@ledgerhq/live-common/hw/signMessage/index";
 import DeviceAction from "~/renderer/components/DeviceAction";
-import { createAction } from "@ledgerhq/live-common/hw/signMessage/index";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
-import { command } from "~/renderer/commands";
 import { closeModal } from "~/renderer/actions/modals";
+import connectApp from "@ledgerhq/live-common/hw/connectApp";
 
-const connectAppExec = command("connectApp");
-const signMessageExec = command("signMessage");
 const action = createAction(
-  getEnv("MOCK") ? mockedEventEmitter : connectAppExec,
+  getEnv("MOCK") ? mockedEventEmitter : connectApp,
   getEnv("MOCK") ? mockedEventEmitter : signMessageExec,
 );
 

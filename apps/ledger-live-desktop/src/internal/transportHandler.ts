@@ -1,4 +1,5 @@
-import { Subject } from "rxjs";
+import { Subject, Observable } from "rxjs";
+import TransportNodeHidSingleton from "@ledgerhq/hw-transport-node-hid-singleton";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { DisconnectedDeviceDuringOperation, serializeError } from "@ledgerhq/errors";
 import {
@@ -7,6 +8,7 @@ import {
   transportExchangeBulkChannel,
   transportOpenChannel,
   transportExchangeBulkUnsubscribeChannel,
+  transportListenChannel,
 } from "~/config/transportChannels";
 
 type APDUMessage =
@@ -176,6 +178,37 @@ export const transportExchangeBulkUnsubscribe = ({
     return;
   }
   subject.next({ type: "exchangeBulkUnsubscribe", requestId });
+};
+
+const transportListenListeners = new Map<string, { unsubscribe: () => void }>();
+
+export const transportListen = ({ requestId }: { requestId: string }) => {
+  const observable = new Observable(TransportNodeHidSingleton.listen);
+  const subscription = observable.subscribe({
+    next: e => {
+      process.send?.({
+        type: transportListenChannel,
+        data: e,
+        requestId,
+      });
+    },
+    error: error => {
+      process.send?.({
+        type: transportListenChannel,
+        error: serializeError(error),
+        requestId,
+      });
+    },
+  });
+  transportListenListeners.set(requestId, subscription);
+};
+
+export const transportListenUnsubscribe = ({ requestId }: { requestId: string }) => {
+  const listener = transportListenListeners.get(requestId);
+  if (listener) {
+    listener.unsubscribe();
+    transportListenListeners.delete(requestId);
+  }
 };
 
 export const transportClose = ({

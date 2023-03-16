@@ -11,7 +11,7 @@ import { useCountervaluesState } from "@ledgerhq/live-common/countervalues/react
 import { accountsOpToCSV } from "@ledgerhq/live-common/csvExport";
 import type { Account } from "@ledgerhq/types-live";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
-import logger from "~/logger";
+import logger from "~/renderer/logger";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { activeAccountsSelector } from "~/renderer/reducers/accounts";
 import { closeModal } from "~/renderer/actions/modals";

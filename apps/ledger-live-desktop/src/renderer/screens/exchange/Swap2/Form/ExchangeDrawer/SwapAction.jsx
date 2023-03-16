@@ -1,19 +1,12 @@
 // @flow
 import { getEnv } from "@ledgerhq/live-common/env";
-import type { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/hooks/types";
-import {
-  toExchangeRateRaw,
-  toExchangeRaw,
-} from "@ledgerhq/live-common/exchange/swap/serialization";
 import type { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import { createAction as initSwapCreateAction } from "@ledgerhq/live-common/hw/actions/initSwap";
 import { createAction as transactionCreateAction } from "@ledgerhq/live-common/hw/actions/transaction";
-import { toTransactionRaw } from "@ledgerhq/live-common/transaction/index";
-import type { SignedOperation, Operation } from "@ledgerhq/types-live";
+import type { SignedOperation } from "@ledgerhq/types-live";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
-import { command } from "~/renderer/commands";
 import BigSpinner from "~/renderer/components/BigSpinner";
 import Box from "~/renderer/components/Box";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
@@ -22,25 +15,13 @@ import Text from "~/renderer/components/Text";
 import { useBroadcast } from "~/renderer/hooks/useBroadcast";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { swapKYCSelector } from "~/renderer/reducers/settings";
+import connectApp from "@ledgerhq/live-common/hw/connectApp";
+import initSwap from "@ledgerhq/live-common/exchange/swap/initSwap";
 
-const connectAppExec = command("connectApp");
-const initSwapExec = command("initSwap");
-
-const transactionAction = transactionCreateAction(
-  getEnv("MOCK") ? mockedEventEmitter : connectAppExec,
-);
+const transactionAction = transactionCreateAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 const initAction = initSwapCreateAction(
-  getEnv("MOCK") ? mockedEventEmitter : connectAppExec,
-  getEnv("MOCK")
-    ? mockedEventEmitter
-    : ({ exchange, exchangeRate, transaction, deviceId, userId }) =>
-        initSwapExec({
-          exchange: toExchangeRaw(exchange),
-          exchangeRate: toExchangeRateRaw(exchangeRate),
-          transaction: toTransactionRaw(transaction),
-          deviceId,
-          userId,
-        }),
+  getEnv("MOCK") ? mockedEventEmitter : connectApp,
+  getEnv("MOCK") ? mockedEventEmitter : initSwap,
 );
 
 const TransactionResult = ({ signedOperation }: { signedOperation: ?SignedOperation }) => {

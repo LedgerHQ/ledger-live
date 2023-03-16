@@ -42,14 +42,12 @@ Ledger Live main types.
 *   [SignOperationFnSignature](#signoperationfnsignature)
 *   [CurrencyBridge](#currencybridge)
 *   [AccountBridge](#accountbridge)
-    *   [applyReconciliation](#applyreconciliation)
-        *   [Parameters](#parameters)
     *   [assignToAccountRaw](#assigntoaccountraw)
-        *   [Parameters](#parameters-1)
+        *   [Parameters](#parameters)
     *   [assignFromAccountRaw](#assignfromaccountraw)
-        *   [Parameters](#parameters-2)
+        *   [Parameters](#parameters-1)
     *   [initAccount](#initaccount)
-        *   [Parameters](#parameters-3)
+        *   [Parameters](#parameters-2)
 *   [CurrenciesData](#currenciesdata)
     *   [Properties](#properties-11)
 *   [DatasetTest](#datasettest)
@@ -465,21 +463,6 @@ Abstraction related to a currency
 ### AccountBridge
 
 Abstraction related to an account
-
-#### applyReconciliation
-
-This function applies the change from moving from "account" to an updated version ("updatedRow").
-It returns a boolean value indicating if something changed in the "next" Account that possibly gets mutated in-place.
-
-Type: function (account: [Account](#account), updatedRaw: [AccountRaw](#accountraw), next: [Account](#account)): [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
-
-##### Parameters
-
-*   `account` **[Account](#account)** The original account object.
-*   `updatedRaw` **[AccountRaw](#accountraw)** The updated version of the account in its serialized form.
-*   `next` **[Account](#account)** The updated account object.
-
-Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Indicates if something changed in the "next" account.
 
 #### assignToAccountRaw
 

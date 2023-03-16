@@ -50,7 +50,6 @@ export default function useAccountActions({
   // @ts-expect-error issue in typing
   const decorators = perFamilyAccountActions[mainAccount?.currency?.family];
 
-  const isEthereum = currency.id === "ethereum";
   const isWalletConnectSupported = ["ethereum", "bsc", "polygon"].includes(
     currency.id,
   );
@@ -198,10 +197,10 @@ export default function useAccountActions({
     ...extraReceiveActionParams,
   };
 
-  const baseActions =
+  const familySpecificMainActions =
     (decorators &&
-      decorators.getActions &&
-      decorators.getActions({
+      decorators.getMainActions &&
+      decorators.getMainActions({
         account,
         parentAccount,
         colors,
@@ -209,35 +208,26 @@ export default function useAccountActions({
     [];
 
   const mainActions = [
+    ...familySpecificMainActions,
     ...(availableOnSwap ? [actionButtonSwap] : []),
     ...(!readOnlyModeEnabled && canBeBought ? [actionButtonBuy] : []),
     ...(!readOnlyModeEnabled && canBeSold ? [actionButtonSell] : []),
     ...(!readOnlyModeEnabled ? [SendAction] : []),
     ReceiveAction,
   ];
+
+  const familySpecificSecondaryActions =
+    (decorators &&
+      decorators.getSecondaryActions &&
+      decorators.getSecondaryActions({
+        account,
+        parentAccount,
+        colors,
+      })) ||
+    [];
+
   const secondaryActions = [
-    ...baseActions,
-    ...(isEthereum
-      ? [
-          {
-            id: "stake",
-            navigationParams: [
-              NavigatorName.Base,
-              {
-                screen: ScreenName.PlatformApp,
-                params: {
-                  platform: "lido",
-                  name: "Lido",
-                },
-              },
-            ],
-            label: t("account.stake"),
-            Icon: Icons.ClaimRewardsMedium,
-            event: "Stake Ethereum Account Button",
-            eventProperties: { currencyName: currency?.name },
-          },
-        ]
-      : []),
+    ...familySpecificSecondaryActions,
     ...(isWalletConnectSupported
       ? [
           {

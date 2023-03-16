@@ -2,6 +2,9 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import getAppAndVersion from "@ledgerhq/live-common/hw/getAppAndVersion";
+import { from } from "rxjs";
 
 import styled from "styled-components";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
@@ -16,7 +19,6 @@ import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import { useHistory } from "react-router-dom";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { command } from "~/renderer/commands";
 
 import nanoS from "./assets/nanoS.png";
 import blue from "./assets/blue.png";
@@ -91,16 +93,18 @@ const Disconnected = ({ onTryAgain }: { onTryAgain: boolean => void }) => {
       if (!device) {
         onTryAgain(false); // Device is disconnected
       } else {
-        sub = command("getAppAndVersion")(device).subscribe({
-          next: appAndVersion => {
-            if (["BOLOS", "OLOS\u0000"].includes(appAndVersion?.name)) {
-              onTryAgain(false); // Device is in dashboard
-            } else {
-              setShowSpinner(false);
-            }
+        sub = withDevice(device.deviceId)(transport => from(getAppAndVersion(transport))).subscribe(
+          {
+            next: appAndVersion => {
+              if (["BOLOS", "OLOS\u0000"].includes(appAndVersion?.name)) {
+                onTryAgain(false); // Device is in dashboard
+              } else {
+                setShowSpinner(false);
+              }
+            },
+            error: () => onTryAgain(false), // Fallback if error
           },
-          error: () => onTryAgain(false), // Fallback if error
-        });
+        );
       }
     }
     return () => {

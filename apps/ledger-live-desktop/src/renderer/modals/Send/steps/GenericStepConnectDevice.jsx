@@ -10,15 +10,13 @@ import { createAction } from "@ledgerhq/live-common/hw/actions/transaction";
 import { useBroadcast } from "~/renderer/hooks/useBroadcast";
 import type { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { command } from "~/renderer/commands";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import { closeModal } from "~/renderer/actions/modals";
+import connectApp from "@ledgerhq/live-common/hw/connectApp";
 
-const connectAppExec = command("connectApp");
-
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectAppExec);
+const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 
 const Result = ({
   signedOperation,
