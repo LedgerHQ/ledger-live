@@ -592,6 +592,7 @@ importers:
       '@jest/reporters': ^29.3.1
       '@ledgerhq/coin-framework': workspace:^
       '@ledgerhq/devices': workspace:^
+      '@ledgerhq/domain-service': workspace:^
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/hw-transport-http': workspace:^
@@ -804,6 +805,7 @@ importers:
       '@formatjs/intl-relativetimeformat': 11.1.8
       '@ledgerhq/coin-framework': link:../../libs/coin-framework
       '@ledgerhq/devices': link:../../libs/ledgerjs/packages/devices
+      '@ledgerhq/domain-service': link:../../libs/domain-service
       '@ledgerhq/errors': link:../../libs/ledgerjs/packages/errors
       '@ledgerhq/hw-transport': link:../../libs/ledgerjs/packages/hw-transport
       '@ledgerhq/hw-transport-http': link:../../libs/ledgerjs/packages/hw-transport-http

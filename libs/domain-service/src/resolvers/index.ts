@@ -8,6 +8,23 @@ import {
   getRegistriesForDomain,
 } from "../registries";
 
+Promise.allSettled =
+  Promise.allSettled ||
+  ((promises: Promise<any>[]) =>
+    Promise.all(
+      promises.map((p) =>
+        p
+          .then((value) => ({
+            status: "fulfilled",
+            value,
+          }))
+          .catch((reason) => ({
+            status: "rejected",
+            reason,
+          }))
+      )
+    ));
+
 /**
  * Get an array of addresses for a domain
  *

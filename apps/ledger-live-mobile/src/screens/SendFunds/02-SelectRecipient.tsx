@@ -7,15 +7,15 @@ import {
 } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
-import Clipboard from "@react-native-community/clipboard";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { Platform, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useSelector } from "react-redux";
+import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import { track, TrackScreen } from "../../analytics";
 import Alert from "../../components/Alert";
 import Button from "../../components/Button";
@@ -24,17 +24,15 @@ import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import KeyboardView from "../../components/KeyboardView";
 import LText from "../../components/LText";
 import NavigationScrollView from "../../components/NavigationScrollView";
-import RecipientInput from "../../components/RecipientInput";
 import RetryButton from "../../components/RetryButton";
 import {
   BaseComposite,
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import SupportLinkError from "../../components/SupportLinkError";
-import TranslatedError from "../../components/TranslatedError";
 import { ScreenName } from "../../const";
 import { accountScreenSelector } from "../../reducers/accounts";
+import { RecipientRow } from "./RecipientRow";
 
 const withoutHiddenError = (error: Error): Error | null =>
   error instanceof RecipientRequired ? null : error;
@@ -58,6 +56,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   const shouldSkipAmount =
     transaction?.family === "ethereum" &&
     transaction?.mode === "erc721.transfer";
+  const [value, setValue] = useState<string>("");
 
   const isNftSend = isNftTransaction(transaction);
   // handle changes from camera qr code
@@ -92,8 +91,9 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
           recipient,
         }),
       );
+      setValue(recipient);
     },
-    [account, parentAccount, setTransaction, transaction],
+    [account, parentAccount, setTransaction, transaction, setValue],
   );
   // FIXME: PROP IS NOT USED. REMOVE ?
   // const clear = useCallback(() => onChangeText(""), [onChangeText]);
@@ -212,37 +212,19 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                 ]}
               />
             </View>
-            <View style={styles.inputWrapper}>
-              <RecipientInput
-                onPaste={async () => {
-                  const text = await Clipboard.getString();
-                  onChangeText(text);
-                }}
-                onFocus={onRecipientFieldFocus}
+            <DomainServiceProvider>
+              <RecipientRow
                 onChangeText={onChangeText}
-                // FIXME: onInputCleared PROP DOES NOT EXISTS
-                // onInputCleared={clear}
-                value={transaction.recipient}
+                value={value}
+                onRecipientFieldFocus={onRecipientFieldFocus}
+                account={account}
+                parentAccount={parentAccount}
+                transaction={transaction}
+                setTransaction={setTransaction}
+                error={error}
+                warning={warning}
               />
-            </View>
-            {(error || warning) && (
-              <>
-                <LText
-                  style={[styles.warningBox]}
-                  color={error ? "alert" : warning ? "orange" : "darkBlue"}
-                >
-                  <TranslatedError error={error || warning} />
-                </LText>
-                <View
-                  style={{
-                    display: "flex",
-                    alignItems: "flex-start",
-                  }}
-                >
-                  <SupportLinkError error={error} type="alert" />
-                </View>
-              </>
-            )}
+            </DomainServiceProvider>
           </NavigationScrollView>
           <View style={styles.container}>
             {transaction.recipient && !(error || warning) ? (
@@ -314,19 +296,6 @@ const styles = StyleSheet.create({
     flex: 1,
     borderBottomWidth: 1,
     marginHorizontal: 8,
-  },
-  warningBox: {
-    marginTop: 8,
-    ...Platform.select({
-      android: {
-        marginLeft: 6,
-      },
-    }),
-  },
-  inputWrapper: {
-    marginTop: 32,
-    flexDirection: "row",
-    alignItems: "center",
   },
   button: {
     flex: 1,
