@@ -43,7 +43,7 @@ const config: PlaywrightTestConfig = {
     ? [
         ["html", { open: "never", outputFolder: "artifacts/html-report" }],
         ["github"],
-        ["line"],
+        ["list"],
         ["allure-playwright"],
       ]
     : "list",
