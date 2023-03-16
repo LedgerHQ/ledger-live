@@ -1,59 +1,69 @@
 import React from "react";
-import { Button, Flex, Text } from "@ledgerhq/native-ui";
-import { LedgerLogoRegular } from "@ledgerhq/native-ui/assets/icons";
+import { Button, Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { Trans, useTranslation } from "react-i18next";
 import QueuedDrawer from "../QueuedDrawer";
 
+type Size = "small" | "medium" | "large";
+
 export type DesignedForStaxTextProps = {
-  size?: "small" | "medium" | "large";
+  size?: Size;
   hideBackground?: boolean;
 };
+
+const LedgerLogo = ({
+  // children isn't used at all but it's easier to maintain translation files
+  // if the logo can be manipulated as a "Ledger" string
+  children: _,
+  size,
+  hideBackground,
+}: {
+  children?: string;
+} & DesignedForStaxTextProps) => {
+  return (
+    <Flex px={size === "small" ? 1 : 2}>
+      <Icons.LedgerLogoRegular
+        size={size === "medium" ? 24 : size === "large" ? 36 : 16}
+        color={hideBackground ? "neutral.c100" : "constant.white"}
+      />
+    </Flex>
+  );
+};
+
+const TagText = ({
+  children,
+  size,
+  hideBackground,
+}: {
+  children?: string;
+} & DesignedForStaxTextProps) => (
+  <Text
+    px={size === "small" ? 1 : 2}
+    variant="tinyAlpha"
+    fontSize={size === "medium" ? 14 : size === "large" ? 20 : undefined}
+    textTransform="uppercase"
+    textAlign="center"
+    color={hideBackground ? "neutral.c100" : "constant.white"}
+  >
+    {children}
+  </Text>
+);
 
 export const DesignedForStaxText = ({
   size = "small",
   hideBackground = false,
 }: DesignedForStaxTextProps) => {
-  const LedgerLogo = ({
-    // children isn't used at all but it's easier to maintain translation files
-    // if the logo can be manipulated as a "Ledger" string
-    children: _,
-  }: {
-    children?: string;
-  }) => {
-    return (
-      <Flex px={size === "small" ? 1 : 2}>
-        <LedgerLogoRegular
-          size={size === "medium" ? 24 : size === "large" ? 36 : 16}
-          color="neutral.c100"
-        />
-      </Flex>
-    );
-  };
-
-  const TagText = ({ children }: { children?: string }) => (
-    <Text
-      px={size === "small" ? 1 : 2}
-      variant="tinyAlpha"
-      fontSize={size === "medium" ? 14 : size === "large" ? 20 : undefined}
-      textTransform="uppercase"
-      textAlign="center"
-    >
-      {children}
-    </Text>
-  );
-
   return (
     <Flex
       p={size === "small" ? 3 : 5}
-      bg={hideBackground ? undefined : "effects.dropShadow"}
+      bg={hideBackground ? undefined : "#00000032"}
       justifyContent="center"
       alignItems="center"
       flexDirection="row"
     >
       <Trans i18nKey="nft.designedForStax.title">
-        <TagText />
-        <LedgerLogo />
-        <TagText />
+        <TagText size={size} hideBackground={hideBackground} />
+        <LedgerLogo size={size} hideBackground={hideBackground} />
+        <TagText size={size} hideBackground={hideBackground} />
       </Trans>
     </Flex>
   );
