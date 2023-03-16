@@ -42,21 +42,6 @@ const Default = () => {
       >
         <CatalogRampProviderSelect />
       </Row>
-
-      <Row
-        title={t("settings.developer.enablePlatformDevTools")}
-        desc={t("settings.developer.enablePlatformDevToolsDesc")}
-      >
-        <EnablePlatformDevToolsToggle />
-      </Row>
-      <RunLocalAppButton />
-      <FeatureFlagsSettings />
-      <Row
-        title={t("settings.developer.openOnboardingAppInstallDebug")}
-        desc={t("settings.developer.openOnboardingAppInstallDebugDesc")}
-      >
-        <OnboardingAppInstallDebugButton />
-      </Row>
       <Row
         title={t("settings.developer.enablePlatformDevTools")}
         desc={t("settings.developer.enablePlatformDevToolsDesc")}
@@ -71,6 +56,12 @@ const Default = () => {
         desc={t("settings.developer.enableLearnStagingUrlDesc")}
       >
         <EnableLearnPageStagingUrlToggle />
+      </Row>
+      <Row
+        title={t("settings.developer.openOnboardingAppInstallDebug")}
+        desc={t("settings.developer.openOnboardingAppInstallDebugDesc")}
+      >
+        <OnboardingAppInstallDebugButton />
       </Row>
     </Body>
   );
