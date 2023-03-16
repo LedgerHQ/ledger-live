@@ -29,7 +29,6 @@ const DateFormatRow = () => {
   return (
     <>
       <SettingsRow
-        event="DateFormatSettingsRow"
         title={t("settings.display.dateFormat")}
         desc={t("settings.display.dateFormatDesc")}
         arrowRight
