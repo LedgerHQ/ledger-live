@@ -651,8 +651,8 @@ export default class BleTransport extends Transport {
    */
   async close(): Promise<void> {
     let resolve: (value: void | PromiseLike<void>) => void;
-    const disconnectPromise = new Promise<void>((res) => {
-      resolve = res;
+    const disconnectPromise = new Promise<void>((innerResolve) => {
+      resolve = innerResolve;
     });
 
     clearDisconnectTimeout(this.id);
