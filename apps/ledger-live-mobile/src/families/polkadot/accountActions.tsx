@@ -29,11 +29,9 @@ const getMainActions = (args: {
 }): ActionButtonEvent[] | null => {
   const { account, parentAccount } = args;
   if (!account.polkadotResources) return null;
-  const { staking } = getCurrentPolkadotPreloadData();
   const accountId = account.id;
   const { lockedBalance } = account.polkadotResources || {};
-  const electionOpen =
-    staking?.electionClosed !== undefined ? !staking?.electionClosed : false;
+  const electionOpen = isElectionOpen();
   const hasBondedBalance = lockedBalance && lockedBalance.gt(0);
   const hasPendingBondOperation = hasPendingOperationType(account, "BOND");
   const nominationEnabled = !electionOpen && canNominate(account);
