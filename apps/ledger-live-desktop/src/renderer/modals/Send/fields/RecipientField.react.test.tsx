@@ -19,6 +19,10 @@ import defaultTheme from "~/renderer/styles/theme";
 import palettes from "~/renderer/styles/palettes";
 import RecipientField from "./RecipientField";
 
+// Temp mock to prevent error on sentry init
+jest.mock("../../../../sentry/install.js", () => ({
+  init: () => null,
+}));
 // Alert component have many problems and many import that make the test break so
 // I have to remove it
 jest.mock("../../../components/Alert", () => {
