@@ -581,7 +581,7 @@ const envDefinitions: Record<
     desc: "Swap API base",
   },
   SYNC_ALL_INTERVAL: {
-    def: 2 * 60 * 1000,
+    def: 8 * 60 * 1000,
     parser: intParser,
     desc: "delay between successive sync",
   },
@@ -596,7 +596,7 @@ const envDefinitions: Record<
     desc: "delay between sync when an operation is still pending",
   },
   SYNC_OUTDATED_CONSIDERED_DELAY: {
-    def: 2 * 60 * 1000,
+    def: 10 * 60 * 1000,
     parser: intParser,
     desc: "delay until Live consider a sync outdated",
   },

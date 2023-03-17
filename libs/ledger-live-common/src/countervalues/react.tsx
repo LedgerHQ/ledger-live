@@ -101,8 +101,8 @@ export function useTrackingPairForAccounts(
 export function Countervalues({
   children,
   userSettings,
-  pollInitDelay = 1 * 1000,
-  autopollInterval = 120 * 1000,
+  pollInitDelay = 3 * 1000,
+  autopollInterval = 8 * 60 * 1000,
   debounceDelay = 1000,
   savedState,
 }: Props): ReactElement {
