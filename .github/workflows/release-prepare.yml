@@ -73,18 +73,11 @@ jobs:
           git merge ${{ inputs.ref }}
           git push origin main
 
-      - name: merge into develop
+      - name: create PR to develop
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
-          git checkout develop
-          if git merge ${{ github.event.inputs.ref }}
-          then
-            git push origin develop
-          else
-            git merge --abort
-            git checkout ${{ github.event.inputs.ref }}
-            git checkout -b support/release-merge-conflicts
-            git push origin support/release-merge-conflicts
-            gh pr create --title ":rotating_light: Release merge conflicts" -F .github/templates/release-conflicts.md --base develop --head support/release-merge-conflicts
-          fi
+          git checkout ${{ github.event.inputs.ref }}
+          git checkout -b support/release-merge-conflicts
+          git push origin support/release-merge-conflicts
+          gh pr create --title ":rotating_light: Release merge conflicts" -F .github/templates/release-conflicts.md --base develop --head support/release-merge-conflicts
