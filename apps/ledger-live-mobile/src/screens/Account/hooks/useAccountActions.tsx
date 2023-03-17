@@ -208,10 +208,10 @@ export default function useAccountActions({
     [];
 
   const mainActions = [
-    ...familySpecificMainActions,
     ...(availableOnSwap ? [actionButtonSwap] : []),
     ...(!readOnlyModeEnabled && canBeBought ? [actionButtonBuy] : []),
     ...(!readOnlyModeEnabled && canBeSold ? [actionButtonSell] : []),
+    ...(!readOnlyModeEnabled ? familySpecificMainActions : []),
     ...(!readOnlyModeEnabled ? [SendAction] : []),
     ReceiveAction,
   ];
