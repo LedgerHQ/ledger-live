@@ -1309,8 +1309,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://v2.explorer.kabuto.sh/transaction/$hash",
-        address: "https://v2.explorer.kabuto.sh/id/$address",
+        tx: "https://hashscan.io/mainnet/transaction/$hash",
+        address: "https://hashscan.io/mainnet/account/$address",
       },
     ],
   },
