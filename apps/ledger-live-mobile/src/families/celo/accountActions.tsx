@@ -44,6 +44,12 @@ const getMainActions = ({
       navigationParams,
       label: <Trans i18nKey="account.stake" />,
       Icon: () => <CeloIcon isDisabled={false} />,
+      event: "button_clicked",
+      eventProperties: {
+        button: "stake",
+        token: "CELO",
+        page: "Account Page",
+      },
     },
   ];
 };

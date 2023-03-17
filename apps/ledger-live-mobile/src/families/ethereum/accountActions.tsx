@@ -40,8 +40,12 @@ const getMainActions = ({
         navigationParams,
         label: <Trans i18nKey="account.stake" />,
         Icon: Icons.ClaimRewardsMedium,
-        event: "Stake Ethereum Account Button",
-        eventProperties: { currencyName: account?.currency?.name },
+        event: "button_clicked",
+        eventProperties: {
+          button: "stake",
+          token: "ETH",
+          page: "Account Page",
+        },
       },
     ];
   }
