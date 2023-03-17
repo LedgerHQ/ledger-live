@@ -15,7 +15,6 @@ import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useSelector } from "react-redux";
-import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import { track, TrackScreen } from "../../analytics";
 import Alert from "../../components/Alert";
 import Button from "../../components/Button";
@@ -212,19 +211,17 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                 ]}
               />
             </View>
-            <DomainServiceProvider>
-              <RecipientRow
-                onChangeText={onChangeText}
-                value={value}
-                onRecipientFieldFocus={onRecipientFieldFocus}
-                account={account}
-                parentAccount={parentAccount}
-                transaction={transaction}
-                setTransaction={setTransaction}
-                error={error}
-                warning={warning}
-              />
-            </DomainServiceProvider>
+            <RecipientRow
+              onChangeText={onChangeText}
+              value={value}
+              onRecipientFieldFocus={onRecipientFieldFocus}
+              account={account}
+              parentAccount={parentAccount}
+              transaction={transaction}
+              setTransaction={setTransaction}
+              error={error}
+              warning={warning}
+            />
           </NavigationScrollView>
           <View style={styles.container}>
             {transaction.recipient && !(error || warning) ? (
