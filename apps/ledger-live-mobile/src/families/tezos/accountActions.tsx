@@ -9,6 +9,8 @@ import { Icons } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "../../const";
 import { ActionButtonEvent } from "../../components/FabActions";
 
+type NavigationParamsType = readonly [name: string, options: object];
+
 const getExtraSendActionParams = ({ account }: { account: AccountLike }) => {
   const delegation = getAccountDelegationSync(account);
   const sendShouldWarnDelegation =
@@ -50,11 +52,18 @@ const getMainActions = ({
 }): ActionButtonEvent[] | null | undefined => {
   const delegationDisabled =
     isAccountDelegating(account) || account.type !== "Account";
-
-  return [
-    {
-      disabled: delegationDisabled,
-      navigationParams: [
+  const navigationParams = delegationDisabled
+    ? [
+        NavigatorName.NoFundsFlow,
+        {
+          screen: ScreenName.NoFunds,
+          params: {
+            account,
+            parentAccount,
+          },
+        },
+      ]
+    : [
         NavigatorName.TezosDelegationFlow,
         {
           screen: ScreenName.DelegationStarted,
@@ -63,9 +72,20 @@ const getMainActions = ({
             parentId: parentAccount ? parentAccount.id : undefined,
           },
         },
-      ],
+      ];
+
+  return [
+    {
+      id: "stake",
+      navigationParams: navigationParams as unknown as NavigationParamsType,
       label: <Trans i18nKey="account.stake" />,
       Icon: Icons.ClaimRewardsMedium,
+      event: "button_clicked",
+      eventProperties: {
+        button: "stake",
+        token: "CELO",
+        page: "Account Page",
+      },
     },
   ];
 };

@@ -82,6 +82,12 @@ const getMainActions = (props: getActionsType): getActionsReturnType => {
       label: <Trans i18nKey="account.stake" />,
       Icon: Icons.ClaimRewardsMedium,
       navigationParams: navigationParams as unknown as NavigationParamsType,
+      event: "button_clicked",
+      eventProperties: {
+        button: "stake",
+        token: "ELROND",
+        page: "Account Page",
+      },
     },
   ];
 };
