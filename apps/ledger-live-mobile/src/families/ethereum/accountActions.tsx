@@ -12,6 +12,7 @@ const getMainActions = ({
   account: Account;
   parentAccount: Account;
 }) => {
+  // TODO: Update ledger-live/apps/ledger-live-mobile/src/components/Stake/index.tsx after Kiln stake implementation
   if (account.type === "Account" && account.currency.id === "ethereum") {
     const navigationParams = isAccountEmpty(account)
       ? [
