@@ -1,9 +1,5 @@
 import { BigNumber } from "bignumber.js";
 import {
-  toPolkadotResourcesRaw,
-  fromPolkadotResourcesRaw,
-} from "@ledgerhq/coin-polkadot/serialization";
-import {
   toCryptoOrgResourcesRaw,
   fromCryptoOrgResourcesRaw,
 } from "../families/crypto_org/serialization";
@@ -44,16 +40,10 @@ import {
   fromOperationRaw as commonFromOperationRaw,
 } from "@ledgerhq/coin-framework/account/serialization";
 import {
-  PolkadotAccount,
-  PolkadotAccountRaw,
-} from "@ledgerhq/coin-polkadot/types";
-import {
   CryptoOrgAccount,
   CryptoOrgAccountRaw,
 } from "../families/crypto_org/types";
 import { getAccountBridge } from "../bridge";
-
-export { toPolkadotResourcesRaw, fromPolkadotResourcesRaw };
 export { toCryptoOrgResourcesRaw, fromCryptoOrgResourcesRaw };
 
 export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
@@ -445,14 +435,6 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
   }
 
   switch (res.currency.family) {
-    case "polkadot": {
-      const polkadotResourcesRaw = (rawAccount as PolkadotAccountRaw)
-        .polkadotResources;
-      if (polkadotResourcesRaw)
-        (res as PolkadotAccount).polkadotResources =
-          fromPolkadotResourcesRaw(polkadotResourcesRaw);
-      break;
-    }
     case "crypto_org": {
       const cryptoOrgResourcesRaw = (rawAccount as CryptoOrgAccountRaw)
         .cryptoOrgResources;
@@ -548,15 +530,6 @@ export function toAccountRaw(account: Account): AccountRaw {
   }
 
   switch (account.currency.family) {
-    case "polkadot": {
-      const polkadotAccount = account as PolkadotAccount;
-      if (polkadotAccount.polkadotResources) {
-        (res as PolkadotAccountRaw).polkadotResources = toPolkadotResourcesRaw(
-          polkadotAccount.polkadotResources
-        );
-      }
-      break;
-    }
     case "crypto_org": {
       const crytpoOrgAccount = account as CryptoOrgAccount;
       if (crytpoOrgAccount.cryptoOrgResources) {
