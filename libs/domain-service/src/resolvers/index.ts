@@ -1,5 +1,6 @@
 import eip55 from "eip55";
 import { log } from "@ledgerhq/logs";
+import allSettled from "promise.allsettled";
 import network from "@ledgerhq/live-common/network";
 import { DomainServiceResolution, SupportedRegistries } from "../types";
 import {
@@ -8,22 +9,7 @@ import {
   getRegistriesForDomain,
 } from "../registries";
 
-Promise.allSettled =
-  Promise.allSettled ||
-  ((promises: Promise<any>[]) =>
-    Promise.all(
-      promises.map((p) =>
-        p
-          .then((value) => ({
-            status: "fulfilled",
-            value,
-          }))
-          .catch((reason) => ({
-            status: "rejected",
-            reason,
-          }))
-      )
-    ));
+allSettled.shim(); // Makes it compatible with React Native when Promise.allSettled isn't avaiblable
 
 /**
  * Get an array of addresses for a domain
