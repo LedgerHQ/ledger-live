@@ -1903,7 +1903,7 @@
       "title": "PIN",
       "doneTitle": "PIN set",
       "description": "Your PIN prevents unwanted access to your {{productName}}.",
-      "continueOnDevice": "Set PIN on your {{productName}}."
+      "continueOnDevice": "Set PIN on your {{productName}}"
     },
     "seedStep": {
       "title": "Secret Recovery Phrase",

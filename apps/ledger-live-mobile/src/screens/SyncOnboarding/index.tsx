@@ -442,7 +442,6 @@ export const SyncOnboarding = ({
           key: CompanionStepKey.Pin,
           title: t("syncOnboarding.pinStep.title"),
           doneTitle: t("syncOnboarding.pinStep.doneTitle"),
-          estimatedTime: 120,
           renderBody: () => (
             <Flex>
               <TrackScreen category="Set up Ledger Stax: Step 2 PIN" />
@@ -451,7 +450,7 @@ export const SyncOnboarding = ({
               </BodyText>
               <ContinueOnDeviceWithAnim
                 deviceModelId={device.modelId}
-                text={t("syncOnboarding.pairingStep.continueOnDevice", {
+                text={t("syncOnboarding.pinStep.continueOnDevice", {
                   productName,
                 })}
               />
@@ -462,7 +461,6 @@ export const SyncOnboarding = ({
           key: CompanionStepKey.Seed,
           title: t("syncOnboarding.seedStep.title"),
           doneTitle: t("syncOnboarding.seedStep.doneTitle"),
-          estimatedTime: 300,
           renderBody: () => (
             <Flex>
               <TrackScreen category="Set up Ledger Stax: Step 3 Seed" />
@@ -492,13 +490,18 @@ export const SyncOnboarding = ({
               ) : (
                 <Flex>
                   <BodyText mb={6}>
-                    {t("syncOnboarding.seedStep.selection")}
+                    {t("syncOnboarding.seedStep.selection", {
+                      productName,
+                    })}
                   </BodyText>
                   <ContinueOnDeviceWithAnim
                     deviceModelId={device.modelId}
-                    text={t("syncOnboarding.pairingStep.continueOnDevice", {
-                      productName,
-                    })}
+                    text={t(
+                      "syncOnboarding.seedStep.selectionContinueOnDevice",
+                      {
+                        productName,
+                      },
+                    )}
                   />
                 </Flex>
               )}
