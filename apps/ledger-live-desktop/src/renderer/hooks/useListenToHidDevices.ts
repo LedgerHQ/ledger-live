@@ -1,10 +1,9 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { Subscription } from "rxjs";
-import { ListenDescriptorEvent } from "@ledgerhq/hw-transport-node-hid-singleton";
+import { Subscription, Observable } from "rxjs";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { addDevice, removeDevice, resetDevices } from "~/renderer/actions/devices";
-import { command } from "~/renderer/commands";
+import { IPCTransport } from "../IPCTransport";
 
 export const useListenToHidDevices = () => {
   const dispatch = useDispatch();
@@ -13,8 +12,8 @@ export const useListenToHidDevices = () => {
     function syncDevices() {
       const devices: { [key: string]: boolean } = {};
 
-      sub = command("listenToHidDevices")().subscribe(
-        ({ device, deviceModel, type, descriptor }: ListenDescriptorEvent) => {
+      sub = new Observable(IPCTransport.listen).subscribe(
+        ({ device, deviceModel, type, descriptor }) => {
           if (device) {
             const deviceId = descriptor || "";
             const stateDevice = {

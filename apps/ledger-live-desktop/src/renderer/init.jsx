@@ -27,8 +27,7 @@ import {
   findCryptoCurrencyById,
 } from "@ledgerhq/live-common/currencies/index";
 
-import logger, { enableDebugLogger } from "~/logger";
-import loggerInstance from "~/logger/logger-transport-renderer-instance";
+import logger, { enableDebugLogger } from "./logger";
 import { enableGlobalTab, disableGlobalTab, isGlobalTabEnabled } from "~/config/global-tab";
 import sentry from "~/sentry/renderer";
 import { setEnvOnAllThreads } from "~/helpers/env";
@@ -51,8 +50,6 @@ import ReactRoot from "~/renderer/ReactRoot";
 import AppError from "~/renderer/AppError";
 import { expectOperatingSystemSupportStatus } from "~/support/os";
 import { listCachedCurrencyIds } from "./bridge/cache";
-
-logger.add(loggerInstance);
 
 if (process.env.VERBOSE) {
   enableDebugLogger();

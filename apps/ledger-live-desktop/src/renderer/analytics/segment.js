@@ -4,7 +4,7 @@ import { v4 as uuid } from "uuid";
 import invariant from "invariant";
 import { ReplaySubject } from "rxjs";
 import { getEnv } from "@ledgerhq/live-common/env";
-import logger from "~/logger";
+import logger from "~/renderer/logger";
 import { getParsedSystemLocale } from "~/helpers/systemLocale";
 import user from "~/helpers/user";
 import {

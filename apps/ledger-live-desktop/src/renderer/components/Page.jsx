@@ -4,7 +4,6 @@ import React, { useLayoutEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import AngleUp from "~/renderer/icons/AngleUp";
-import HSMStatusBanner from "~/renderer/components/HSMStatusBanner";
 import TopBar from "~/renderer/components/TopBar";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
@@ -133,7 +132,6 @@ const Page = ({ children }: Props) => {
 
   return (
     <PageContainer>
-      <HSMStatusBanner />
       <TopBar />
       <PageScrollerContainer id="scroll-area">
         <PageScrollTopSeparator isAtUpperBound={isScrollAtUpperBound} />

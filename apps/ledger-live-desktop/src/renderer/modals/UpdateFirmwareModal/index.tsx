@@ -7,7 +7,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
-import logger from "~/logger";
+import logger from "~/renderer/logger";
 import Modal from "~/renderer/components/Modal";
 import Stepper, { Step as TypedStep } from "~/renderer/components/Stepper";
 import { ModalStatus } from "~/renderer/screens/manager/FirmwareUpdate/types";

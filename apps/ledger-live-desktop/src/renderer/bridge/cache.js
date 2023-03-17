@@ -3,7 +3,7 @@
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import logger from "~/logger";
+import logger from "~/renderer/logger";
 
 export function clearBridgeCache() {
   Object.keys(global.localStorage)

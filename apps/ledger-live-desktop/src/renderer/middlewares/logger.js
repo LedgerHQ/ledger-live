@@ -1,6 +1,6 @@
 // @flow
 
-import logger from "~/logger";
+import logger from "~/renderer/logger";
 
 export default () => (next: *) => (action: *) => {
   logger.onReduxAction(action);

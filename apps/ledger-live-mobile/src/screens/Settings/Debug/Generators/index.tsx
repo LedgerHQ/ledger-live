@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useCallback } from "react";
 import config from "react-native-config";
 import { getEnv } from "@ledgerhq/live-common/env";
+import { Alert as Confirmation } from "react-native";
+import { Alert, Icons } from "@ledgerhq/native-ui";
+import { useDispatch, useSelector } from "react-redux";
+import { State } from "../../../../reducers/types";
 import GenerateMockAccounts from "./GenerateMockAccounts";
 import GenerateMockAccountsNft from "./GenerateMockAccountsNFTs";
 import ImportBridgeStreamData from "./ImportBridgeStreamData";
@@ -8,8 +12,77 @@ import GenerateMockAccount from "./GenerateMockAccountsSelect";
 import GenerateAnnouncement from "./GenerateAnnouncementMockData";
 import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
 import ToggleServiceStatusIncident from "./ToggleServiceStatus";
+import SettingsRow from "../../../../components/SettingsRow";
+import { dangerouslyOverrideState } from "../../../../actions/settings";
+import { useReboot } from "../../../../context/Reboot";
+
+import { INITIAL_STATE as INITIAL_SETTINGS_STATE } from "../../../../reducers/settings";
+import { INITIAL_STATE as INITIAL_ACCOUNTS_STATE } from "../../../../reducers/accounts";
+import { INITIAL_STATE as INITIAL_BLE_STATE } from "../../../../reducers/ble";
 
 export default function Generators() {
+  const state = useSelector<State, State>(s => s);
+  const dispatch = useDispatch();
+  const reboot = useReboot();
+
+  const onCallbackWithConfirmation = (callback: () => void) => {
+    Confirmation.alert(
+      "Destructive operation",
+      "There is no coming back from this.",
+      [
+        {
+          text: "Destroy",
+          onPress: () => callback(),
+        },
+        {
+          text: "Cancel",
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          onPress: () => {},
+        },
+      ],
+      {
+        cancelable: true,
+      },
+    );
+  };
+
+  const onWipeSettings = useCallback(() => {
+    onCallbackWithConfirmation(() => {
+      dispatch(
+        dangerouslyOverrideState({
+          ...state,
+          settings: INITIAL_SETTINGS_STATE,
+        }),
+      );
+    });
+  }, [dispatch, state]);
+
+  const onWipeUsers = useCallback(() => {
+    onCallbackWithConfirmation(() => {
+      dispatch(
+        dangerouslyOverrideState({
+          ...state,
+          accounts: INITIAL_ACCOUNTS_STATE,
+        }),
+      );
+    });
+  }, [dispatch, state]);
+
+  const onWipeBLE = useCallback(() => {
+    onCallbackWithConfirmation(() => {
+      dispatch(
+        dangerouslyOverrideState({
+          ...state,
+          ble: INITIAL_BLE_STATE,
+        }),
+      );
+    });
+  }, [dispatch, state]);
+
+  const onForceRefresh = useCallback(() => {
+    reboot();
+  }, [reboot]);
+
   return (
     <SettingsNavigationScrollView>
       <GenerateMockAccount />
@@ -28,6 +101,34 @@ export default function Generators() {
       <ImportBridgeStreamData
         title="Import .env BRIDGESTREAM_DATA"
         dataStr={config.BRIDGESTREAM_DATA}
+      />
+      <Alert
+        type="error"
+        title="The rows below perform destructive operations and should only be used if you know exactly what you're doing."
+      />
+      <SettingsRow
+        title="Refresh?"
+        desc="You may want to reload the app after wiping data"
+        iconLeft={<Icons.RefreshMedium size={24} color="black" />}
+        onPress={onForceRefresh}
+      />
+      <SettingsRow
+        title="Settings"
+        desc="Restores all settings to their default values"
+        iconLeft={<Icons.SettingsMedium size={24} color="black" />}
+        onPress={onWipeSettings}
+      />
+      <SettingsRow
+        title="Accounts"
+        desc="Get rid of all the accounts"
+        iconLeft={<Icons.UserMedium size={24} color="black" />}
+        onPress={onWipeUsers}
+      />
+      <SettingsRow
+        title="BLE devices"
+        desc="Forget all seed devices"
+        iconLeft={<Icons.NanoMedium size={24} color="black" />}
+        onPress={onWipeBLE}
       />
     </SettingsNavigationScrollView>
   );
