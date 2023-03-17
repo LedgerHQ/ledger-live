@@ -19,7 +19,7 @@ import HelpDrawer from "./HelpDrawer";
 import TroubleshootingDrawer from "./TroubleshootingDrawer";
 import SoftwareCheckStep from "./SoftwareCheckStep";
 import { DesyncOverlay } from "./DesyncOverlay";
-import RecoveryContent from "./RecoveryContent";
+import SeedStep, { SeedPathStatus } from "./SeedStep";
 import { StepText } from "./shared";
 import Header from "./Header";
 import Animation from "~/renderer/animations";
@@ -79,6 +79,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
   const [stepKey, setStepKey] = useState<StepKey>(StepKey.Paired);
   const [shouldRestoreApps, setShouldRestoreApps] = useState<boolean>(false);
   const deviceToRestore = useSelector(lastSeenDeviceSelector) as DeviceModelInfo | null | undefined;
+  const [seedPathStatus, setSeedPathStatus] = useState<SeedPathStatus>("choice_new_or_restore");
 
   const device = useSelector(getCurrentDevice);
 
@@ -152,8 +153,8 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
       {
         key: StepKey.Seed,
         status: "inactive",
-        title: t("syncOnboarding.manual.recoveryContent.title"),
-        renderBody: () => <RecoveryContent />,
+        title: t("syncOnboarding.manual.seedContent.title"),
+        renderBody: () => <SeedStep seedPathStatus={seedPathStatus} />,
         estimatedTime: 300,
       },
       {
@@ -190,12 +191,13 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
     ],
     [
       t,
-      device,
-      deviceToRestore,
-      shouldRestoreApps,
       productName,
+      seedPathStatus,
       lastKnownDeviceModelId,
       handleSoftwareCheckComplete,
+      device,
+      shouldRestoreApps,
+      deviceToRestore,
       handleInstallRecommendedApplicationComplete,
     ],
   );
@@ -244,19 +246,31 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
       return;
     }
 
+    // case DeviceOnboardingStep.SafetyWarning not handled so the previous step (new seed, restore, recover) is kept
     switch (deviceOnboardingState?.currentOnboardingStep) {
       case DeviceOnboardingStep.SetupChoice:
-      case DeviceOnboardingStep.SafetyWarning:
         setStepKey(StepKey.Seed);
+        setSeedPathStatus("choice_new_or_restore");
         break;
       case DeviceOnboardingStep.NewDevice:
       case DeviceOnboardingStep.NewDeviceConfirming:
         setShouldRestoreApps(false);
         setStepKey(StepKey.Seed);
+        setSeedPathStatus("new_seed");
+        break;
+      case DeviceOnboardingStep.SetupChoiceRestore:
+        setStepKey(StepKey.Seed);
+        setSeedPathStatus("choice_restore_direct_or_recover");
         break;
       case DeviceOnboardingStep.RestoreSeed:
         setShouldRestoreApps(true);
         setStepKey(StepKey.Seed);
+        setSeedPathStatus("restore_seed");
+        break;
+      case DeviceOnboardingStep.RecoverRestore:
+        setShouldRestoreApps(true);
+        setStepKey(StepKey.Seed);
+        setSeedPathStatus("recover_seed");
         break;
       case DeviceOnboardingStep.WelcomeScreen1:
       case DeviceOnboardingStep.WelcomeScreen2:
