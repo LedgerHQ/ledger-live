@@ -146,7 +146,7 @@ const BleDevicesScanning = ({
       setLocationDisabledError(false);
       setLocationUnauthorizedError(false);
     }
-  }, [scanningBleError]);
+  }, [scanningBleError, setStopBleScanning]);
 
   // This error should never happen if this component is wrapped in a RequiresBLE component.
   if (locationDisabledError) {
