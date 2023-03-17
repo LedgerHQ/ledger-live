@@ -3,10 +3,12 @@ import styled from "styled-components/native";
 import Text from "../../../src/components/Text";
 import Flex from "../../../src/components/Layout/Flex";
 import ScrollContainer from "../../../src/components/Layout/ScrollContainer";
-import { storiesOf } from "../storiesOf";
 import { palettes, ColorPalette } from "@ledgerhq/ui-shared";
 
-export default { title: "Particles" };
+export default {
+  title: "Particles/Colors",
+  component: Flex,
+};
 
 const ColorArea = styled(Flex)<{ type: keyof ColorPalette; shade: string }>`
   width: 200px;
@@ -49,4 +51,4 @@ export const Colors = (): JSX.Element => (
   </ScrollContainer>
 );
 
-storiesOf((story) => story("Particles", module).add("Colors", Colors));
+Colors.storyName = "Colors";
