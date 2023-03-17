@@ -13,6 +13,7 @@ import {
   VerticalTimeline,
   Text,
   ContinueOnDevice,
+  Divider,
 } from "@ledgerhq/native-ui";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import {
@@ -27,6 +28,7 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 import { StorylyInstanceID } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { addKnownDevice } from "../../actions/ble";
 import { NavigatorName, ScreenName } from "../../const";
 import HelpDrawer from "./HelpDrawer";
@@ -471,16 +473,51 @@ export const SyncOnboarding = ({
                       productName,
                     })}
                   </BodyText>
-                  <Stories
-                    instanceID={StorylyInstanceID.recoverySeed}
-                    vertical
-                    keepOriginalOrder
+                  <Flex mb={6}>
+                    <Stories
+                      instanceID={StorylyInstanceID.recoverySeed}
+                      vertical
+                      keepOriginalOrder
+                    />
+                  </Flex>
+                  <ContinueOnDeviceWithAnim
+                    deviceModelId={device.modelId}
+                    text={t("syncOnboarding.seedStep.newSeedContinueOnDevice", {
+                      productName,
+                    })}
                   />
                 </Flex>
               ) : seedPathStatus === "choice_restore_direct_or_recover" ? (
-                <BodyText>
-                  {t("syncOnboarding.seedStep.choiceRestoreDirectOrRecover")}
-                </BodyText>
+                <Flex>
+                  <SubtitleText>
+                    {t("syncOnboarding.seedStep.restoreChoiceSRPTitle")}
+                  </SubtitleText>
+                  <BodyText>
+                    {t("syncOnboarding.seedStep.restoreChoiceSRPDescription")}
+                  </BodyText>
+                  <FeatureToggle feature="protectServicesMobile">
+                    <Divider text={t("common.or")} my={6} />
+                    <SubtitleText>
+                      {t("syncOnboarding.seedStep.restoreChoiceRecoverTitle")}
+                    </SubtitleText>
+                    <BodyText>
+                      {t(
+                        "syncOnboarding.seedStep.restoreChoiceRecoverDescription",
+                      )}
+                    </BodyText>
+                  </FeatureToggle>
+                  <Flex mt={6}>
+                    <ContinueOnDeviceWithAnim
+                      deviceModelId={device.modelId}
+                      text={t(
+                        "syncOnboarding.seedStep.restoreChoiceContinueOnDevice",
+                        {
+                          productName,
+                        },
+                      )}
+                    />
+                  </Flex>
+                </Flex>
               ) : seedPathStatus === "restore_seed" ? (
                 <BodyText>
                   {t("syncOnboarding.seedStep.restoreSeed", { productName })}
