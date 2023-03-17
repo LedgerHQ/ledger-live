@@ -1,3 +1,4 @@
+import React from "react";
 import Flex, { FlexBoxProps } from "../Flex";
 import styled from "styled-components/native";
 import { Text } from "../../..";

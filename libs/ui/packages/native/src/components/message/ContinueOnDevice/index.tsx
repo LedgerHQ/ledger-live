@@ -1,3 +1,4 @@
+import React from "react";
 import { IconType } from "src/components/Icon/type";
 import { radii } from "../../../styles/theme";
 import Flex from "../../Layout/Flex";
