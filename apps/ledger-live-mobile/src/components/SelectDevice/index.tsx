@@ -94,25 +94,25 @@ export default function SelectDevice({
   }, [setIsBleRequired]);
 
   const handleOnSelect = useCallback(
-    deviceInfo => {
-      const { modelId, wired } = deviceInfo;
+    (device: Device) => {
+      const { modelId, wired } = device;
 
-      dispatch(setLastConnectedDevice(deviceInfo));
       if (wired) {
         track("Device selection", {
           modelId,
           connectionType: "USB",
         });
-        // Nb consider a device selection enough to show the fw update banner in portfolio
+
+        dispatch(setLastConnectedDevice(device));
         dispatch(setHasConnectedDevice(true));
-        onSelect(deviceInfo);
+        onSelect(device);
         dispatch(setReadOnlyMode(false));
         return;
       }
 
       // If not wired, bluetooth is required
       if (!isBleRequired) {
-        setLastSelectedDeviceBeforeRequireBluetoothCheck(deviceInfo);
+        setLastSelectedDeviceBeforeRequireBluetoothCheck(device);
         setIsBleRequired(true);
         return;
       }
@@ -121,7 +121,7 @@ export default function SelectDevice({
       // then all the bluetooth requirements should be respected. But to be sure no UI glitch
       // happened, checks the bluetoothRequirementsState
       if (bluetoothRequirementsState !== "all_respected") {
-        setLastSelectedDeviceBeforeRequireBluetoothCheck(deviceInfo);
+        setLastSelectedDeviceBeforeRequireBluetoothCheck(device);
         return;
       }
 
@@ -130,9 +130,9 @@ export default function SelectDevice({
         connectionType: "BLE",
       });
 
-      // Nb consider a device selection enough to show the fw update banner in portfolio
+      dispatch(setLastConnectedDevice(device));
       dispatch(setHasConnectedDevice(true));
-      onSelect(deviceInfo);
+      onSelect(device);
       dispatch(setReadOnlyMode(false));
     },
     [
@@ -159,7 +159,42 @@ export default function SelectDevice({
     handleOnSelect,
   ]);
 
-  const [devices, setDevices] = useState<Device[]>([]);
+  // When a new pairing (with a navigation) occurs, this component gets unmounted/remounted
+  // Therefore, its state (isBleRequired, or a selectedDevice) cannot be updated.
+  // No checks on the bluetooth requirements can done from this component because of this.
+  // The only thing that can be done is dispatch some info + call onSelect from the parent component.
+  // Pairing a new device, coming back to the screen rendering this component and then removing bluetooth is a possible edge case.
+  const handleOnPairNewDeviceDone = useCallback(
+    (device: Device) => {
+      if (!autoSelectOnAdd) return;
+
+      const { modelId, wired } = device;
+
+      if (wired) {
+        track("Device selection", {
+          modelId,
+          connectionType: "USB",
+        });
+
+        dispatch(setLastConnectedDevice(device));
+        dispatch(setHasConnectedDevice(true));
+        onSelect(device);
+        dispatch(setReadOnlyMode(false));
+        return;
+      }
+
+      track("Device selection", {
+        modelId,
+        connectionType: "BLE",
+      });
+
+      dispatch(setLastConnectedDevice(device));
+      dispatch(setHasConnectedDevice(true));
+      onSelect(device);
+      dispatch(setReadOnlyMode(false));
+    },
+    [autoSelectOnAdd, dispatch, onSelect],
+  );
 
   const onPairNewDevice = useCallback(() => {
     track("button_clicked", {
@@ -167,11 +202,15 @@ export default function SelectDevice({
       screen: route.name,
     });
 
+    // We should not pass non-serializable param like onDone when navigating.
+    // Fixed in the new SelectDevice2.
     navigation.navigate(ScreenName.PairDevices, {
-      onDone: autoSelectOnAdd ? handleOnSelect : null,
+      onDone: handleOnPairNewDeviceDone,
       deviceModelIds,
     });
-  }, [route.name, navigation, autoSelectOnAdd, handleOnSelect, deviceModelIds]);
+  }, [route.name, navigation, handleOnPairNewDeviceDone, deviceModelIds]);
+
+  const [devices, setDevices] = useState<Device[]>([]);
 
   const renderItem = useCallback(
     (item: Device) => (
