@@ -9,7 +9,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { NavigatorName, ScreenName } from "../../const";
 import perFamilyAccountActions from "../../generated/accountActions";
 
-const StakeFlow = { currencies } => {
+const StakeFlow = ({ currencies }) => {
   const { params: { list } = { list: undefined } } =
     useFeature("stakePrograms") || {};
   const navigation = useNavigation();
@@ -37,7 +37,10 @@ const StakeFlow = { currencies } => {
       const [name, options] = stakeFlow;
 
       // TODO: Remove after Kiln stake implementation was be done
-      if (account?.currency?.family === "ethereum" && name === NavigatorName.Base) {
+      if (
+        account?.currency?.family === "ethereum" &&
+        name === NavigatorName.Base
+      ) {
         navigation.navigate(name, {
           screen: options.screen,
           params: {
