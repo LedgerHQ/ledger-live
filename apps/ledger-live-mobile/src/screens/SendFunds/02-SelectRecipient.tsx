@@ -6,6 +6,7 @@ import {
   SyncSkipUnderPriority,
 } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
@@ -31,7 +32,8 @@ import {
 import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 import { ScreenName } from "../../const";
 import { accountScreenSelector } from "../../reducers/accounts";
-import { RecipientRow } from "./RecipientRow";
+import DomainServiceRecipientRow from "./DomainServiceRecipientRow";
+import RecipientRow from "./RecipientRow";
 
 const withoutHiddenError = (error: Error): Error | null =>
   error instanceof RecipientRequired ? null : error;
@@ -46,6 +48,9 @@ type Props = BaseComposite<
 export default function SendSelectRecipient({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const { enabled: isDomainResolutionEnabled } = useFeature(
+    "domainInputResolution",
+  );
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const { transaction, setTransaction, status, bridgePending, bridgeError } =
     useBridgeTransaction(() => ({
@@ -211,17 +216,27 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                 ]}
               />
             </View>
-            <RecipientRow
-              onChangeText={onChangeText}
-              value={value}
-              onRecipientFieldFocus={onRecipientFieldFocus}
-              account={account}
-              parentAccount={parentAccount}
-              transaction={transaction}
-              setTransaction={setTransaction}
-              error={error}
-              warning={warning}
-            />
+            {isDomainResolutionEnabled ? (
+              <DomainServiceRecipientRow
+                onChangeText={onChangeText}
+                value={value}
+                onRecipientFieldFocus={onRecipientFieldFocus}
+                account={account}
+                parentAccount={parentAccount}
+                transaction={transaction}
+                setTransaction={setTransaction}
+                error={error}
+                warning={warning}
+              />
+            ) : (
+              <RecipientRow
+                onChangeText={onChangeText}
+                onRecipientFieldFocus={onRecipientFieldFocus}
+                transaction={transaction}
+                warning={warning}
+                error={error}
+              />
+            )}
           </NavigationScrollView>
           <View style={styles.container}>
             {transaction.recipient && !(error || warning) ? (
