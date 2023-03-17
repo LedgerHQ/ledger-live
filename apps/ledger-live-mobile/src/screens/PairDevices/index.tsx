@@ -134,7 +134,7 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
       });
 
       try {
-        const transport = await TransportBLE.open(bleDevice);
+        const transport = await TransportBLE.open(bleDevice.id);
         if (unmounted.current) return;
 
         try {
