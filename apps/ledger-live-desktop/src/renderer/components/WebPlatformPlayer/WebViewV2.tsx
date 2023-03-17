@@ -160,10 +160,7 @@ function useWalletAPIUrl({ manifest, inputs }: Omit<Props, "onClose">) {
   );
 }
 
-function useWebView({
-  manifest,
-  inputs,
-}: Pick<Props, "manifest" | "inputs">) {
+function useWebView({ manifest, inputs }: Pick<Props, "manifest" | "inputs">) {
   const accounts = useSelector(flattenAccountsSelector);
 
   const webviewRef = useRef<WebviewTag>(null);
