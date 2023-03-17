@@ -1,5 +1,20 @@
 # live-mobile
 
+## 3.17.0-nightly.9
+
+### Patch Changes
+
+- [#2911](https://github.com/LedgerHQ/ledger-live/pull/2911) [`fb464093d8`](https://github.com/LedgerHQ/ledger-live/commit/fb464093d85b9e1f73fa761fb7439ee5fb0804d9) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Provide QA with a way of destroying data without uninstalling
+
+- Updated dependencies [[`1d0b2d19eb`](https://github.com/LedgerHQ/ledger-live/commit/1d0b2d19ebc5acd058930b842c6d37f8daf2a5a3), [`1d0b2d19eb`](https://github.com/LedgerHQ/ledger-live/commit/1d0b2d19ebc5acd058930b842c6d37f8daf2a5a3), [`fb464093d8`](https://github.com/LedgerHQ/ledger-live/commit/fb464093d85b9e1f73fa761fb7439ee5fb0804d9), [`ae211bda45`](https://github.com/LedgerHQ/ledger-live/commit/ae211bda45192e1575c6c7656dfad68c7dd93ffe)]:
+  - @ledgerhq/errors@6.12.4-nightly.0
+  - @ledgerhq/live-common@29.1.0-nightly.9
+  - @ledgerhq/devices@8.0.1-nightly.0
+  - @ledgerhq/hw-transport@6.28.2-nightly.0
+  - @ledgerhq/hw-transport-http@6.27.13-nightly.0
+  - @ledgerhq/react-native-hid@6.28.15-nightly.0
+  - @ledgerhq/react-native-hw-transport-ble@6.28.4-nightly.0
+
 ## 3.17.0-nightly.8
 
 ### Patch Changes

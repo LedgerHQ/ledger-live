@@ -1,5 +1,25 @@
 # ledger-live-desktop
 
+## 2.55.0-nightly.12
+
+### Minor Changes
+
+- [#2934](https://github.com/LedgerHQ/ledger-live/pull/2934) [`d0dc9d0ea7`](https://github.com/LedgerHQ/ledger-live/commit/d0dc9d0ea747d6eb861773df21b56a85517d001b) Thanks [@brunospolidorio](https://github.com/brunospolidorio)! - Add Earn on Main side bar
+
+### Patch Changes
+
+- [#2859](https://github.com/LedgerHQ/ledger-live/pull/2859) [`dd642a44c2`](https://github.com/LedgerHQ/ledger-live/commit/dd642a44c28d6f6d38a54a520fb5ee7015e9b9dc) Thanks [@gre](https://github.com/gre)! - LLD: Fully sunset "internal commands", introduce Web Workers for more performant calculation of segcp256k1 curve and remove tech debt & dead code.
+
+- [#2961](https://github.com/LedgerHQ/ledger-live/pull/2961) [`b2eff3487d`](https://github.com/LedgerHQ/ledger-live/commit/b2eff3487d2f27667fa2af8480c1c5555d3a46c2) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Remove duplicated entries in developer menu LLD
+
+- Updated dependencies [[`1d0b2d19eb`](https://github.com/LedgerHQ/ledger-live/commit/1d0b2d19ebc5acd058930b842c6d37f8daf2a5a3), [`1d0b2d19eb`](https://github.com/LedgerHQ/ledger-live/commit/1d0b2d19ebc5acd058930b842c6d37f8daf2a5a3), [`fb464093d8`](https://github.com/LedgerHQ/ledger-live/commit/fb464093d85b9e1f73fa761fb7439ee5fb0804d9), [`ae211bda45`](https://github.com/LedgerHQ/ledger-live/commit/ae211bda45192e1575c6c7656dfad68c7dd93ffe)]:
+  - @ledgerhq/errors@6.12.4-nightly.0
+  - @ledgerhq/live-common@29.1.0-nightly.9
+  - @ledgerhq/devices@8.0.1-nightly.0
+  - @ledgerhq/hw-transport@6.28.2-nightly.0
+  - @ledgerhq/hw-transport-http@6.27.13-nightly.0
+  - @ledgerhq/hw-transport-node-hid-singleton@6.28.10-nightly.0
+
 ## 2.55.0-nightly.11
 
 ### Patch Changes

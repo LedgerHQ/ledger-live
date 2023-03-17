@@ -1,5 +1,36 @@
 # @ledgerhq/live-common
 
+## 29.1.0-nightly.9
+
+### Patch Changes
+
+- [#2949](https://github.com/LedgerHQ/ledger-live/pull/2949) [`1d0b2d19eb`](https://github.com/LedgerHQ/ledger-live/commit/1d0b2d19ebc5acd058930b842c6d37f8daf2a5a3) Thanks [@juan-cortes](https://github.com/juan-cortes)! - modified the getdeviceinfo command to support another status code
+
+- [#2911](https://github.com/LedgerHQ/ledger-live/pull/2911) [`fb464093d8`](https://github.com/LedgerHQ/ledger-live/commit/fb464093d85b9e1f73fa761fb7439ee5fb0804d9) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Improve getOnboardingStatePolling logic attempting to fix disconnect bug
+
+- [#2559](https://github.com/LedgerHQ/ledger-live/pull/2559) [`ae211bda45`](https://github.com/LedgerHQ/ledger-live/commit/ae211bda45192e1575c6c7656dfad68c7dd93ffe) Thanks [@vlad-anger](https://github.com/vlad-anger)! - Crypto Icons - Add support for Ghostmarket tokens icons
+
+- Updated dependencies [[`1d0b2d19eb`](https://github.com/LedgerHQ/ledger-live/commit/1d0b2d19ebc5acd058930b842c6d37f8daf2a5a3), [`170f608de3`](https://github.com/LedgerHQ/ledger-live/commit/170f608de311f320795793b4606b063a3ce96def)]:
+  - @ledgerhq/errors@6.12.4-nightly.0
+  - @ledgerhq/cryptoassets@9.1.0-nightly.1
+  - @ledgerhq/coin-framework@0.1.1-nightly.3
+  - @ledgerhq/coin-polkadot@0.1.0-nightly.3
+  - @ledgerhq/devices@8.0.1-nightly.0
+  - @ledgerhq/hw-app-algorand@6.27.13-nightly.0
+  - @ledgerhq/hw-app-cosmos@6.27.13-nightly.0
+  - @ledgerhq/hw-app-eth@6.32.1-nightly.2
+  - @ledgerhq/hw-app-near@6.27.8-nightly.0
+  - @ledgerhq/hw-app-polkadot@6.27.13-nightly.0
+  - @ledgerhq/hw-app-solana@7.0.7-nightly.0
+  - @ledgerhq/hw-app-trx@6.27.13-nightly.0
+  - @ledgerhq/hw-transport@6.28.2-nightly.0
+  - @ledgerhq/hw-transport-node-speculos@6.27.13-nightly.0
+  - @ledgerhq/hw-app-btc@10.0.1-nightly.0
+  - @ledgerhq/hw-app-str@6.27.13-nightly.0
+  - @ledgerhq/hw-app-tezos@6.27.13-nightly.0
+  - @ledgerhq/hw-app-xrp@6.27.13-nightly.0
+  - @ledgerhq/hw-transport-mocker@6.27.13-nightly.0
+
 ## 29.1.0-nightly.8
 
 ### Patch Changes

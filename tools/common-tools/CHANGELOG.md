@@ -1,5 +1,21 @@
 # live-common-tools
 
+## 0.2.26-nightly.9
+
+### Patch Changes
+
+- Updated dependencies [[`1d0b2d19eb`](https://github.com/LedgerHQ/ledger-live/commit/1d0b2d19ebc5acd058930b842c6d37f8daf2a5a3), [`1d0b2d19eb`](https://github.com/LedgerHQ/ledger-live/commit/1d0b2d19ebc5acd058930b842c6d37f8daf2a5a3), [`170f608de3`](https://github.com/LedgerHQ/ledger-live/commit/170f608de311f320795793b4606b063a3ce96def), [`fb464093d8`](https://github.com/LedgerHQ/ledger-live/commit/fb464093d85b9e1f73fa761fb7439ee5fb0804d9), [`ae211bda45`](https://github.com/LedgerHQ/ledger-live/commit/ae211bda45192e1575c6c7656dfad68c7dd93ffe)]:
+  - @ledgerhq/errors@6.12.4-nightly.0
+  - @ledgerhq/live-common@29.1.0-nightly.9
+  - @ledgerhq/cryptoassets@9.1.0-nightly.1
+  - @ledgerhq/devices@8.0.1-nightly.0
+  - @ledgerhq/hw-app-eth@6.32.1-nightly.2
+  - @ledgerhq/hw-transport@6.28.2-nightly.0
+  - @ledgerhq/hw-transport-http@6.27.13-nightly.0
+  - @ledgerhq/hw-transport-web-ble@6.27.13-nightly.0
+  - @ledgerhq/hw-transport-webhid@6.27.13-nightly.0
+  - @ledgerhq/hw-transport-webusb@6.27.13-nightly.0
+
 ## 0.2.26-nightly.8
 
 ### Patch Changes
