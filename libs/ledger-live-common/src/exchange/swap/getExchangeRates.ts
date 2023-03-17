@@ -31,7 +31,7 @@ const getExchangeRates: GetExchangeRates = async (
   providers: AvailableProviderV3[] = [],
   includeDEX = false
 ) => {
-  if (getEnv("MOCK"))
+  if (getEnv("MOCK") && !getEnv("PLAYWRIGHT_RUN"))
     return mockGetExchangeRates(exchange, transaction, currencyTo);
 
   const from = getAccountCurrency(exchange.fromAccount).id;

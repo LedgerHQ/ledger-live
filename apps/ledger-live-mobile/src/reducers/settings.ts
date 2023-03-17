@@ -68,6 +68,8 @@ import type {
   SettingsSetFeatureFlagsBannerVisiblePayload,
   DangerouslyOverrideStatePayload,
   SettingsSetDebugAppLevelDrawerOpenedPayload,
+  SettingsLastSeenDeviceLanguagePayload,
+  SettingsCompleteOnboardingPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -286,9 +288,11 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     },
   }),
 
-  [SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING]: state => ({
+  [SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING]: (state, action) => ({
     ...state,
-    hasCompletedOnboarding: true,
+    hasCompletedOnboarding: (
+      action as Action<SettingsCompleteOnboardingPayload>
+    ).payload.hasCompletedOnboarding,
   }),
 
   [SettingsActionTypes.SETTINGS_INSTALL_APP_FIRST_TIME]: (state, action) => ({
@@ -484,6 +488,20 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       ...(action as Action<SettingsLastSeenDeviceInfoPayload>).payload.dmi,
     },
   }),
+
+  [SettingsActionTypes.LAST_SEEN_DEVICE_LANGUAGE_ID]: (state, action) => {
+    if (!state.lastSeenDevice) return state;
+    return {
+      ...state,
+      lastSeenDevice: {
+        ...state.lastSeenDevice,
+        deviceInfo: {
+          ...state.lastSeenDevice.deviceInfo,
+          ...(action as Action<SettingsLastSeenDeviceLanguagePayload>).payload,
+        },
+      },
+    };
+  },
 
   [SettingsActionTypes.ADD_STARRED_MARKET_COINS]: (state, action) => ({
     ...state,

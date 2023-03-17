@@ -149,6 +149,8 @@ const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModa
   );
 };
 
+const pageName = "Page Account";
+
 const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const contrastText = useTheme("colors.palette.text.shade60");
@@ -203,9 +205,22 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
 
   const history = useHistory();
 
+  const buttonSharedTrackingFields = useMemo(
+    () => ({
+      currency: currency.ticker,
+      currencyName: currency.name,
+      page: pageName,
+    }),
+    [currency],
+  );
+
   const onBuySell = useCallback(
     (mode = "buy") => {
       setTrackingSource("account header actions");
+      track("button_clicked", {
+        button: mode,
+        ...buttonSharedTrackingFields,
+      });
 
       history.push({
         pathname: "/exchange",
@@ -222,7 +237,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
             },
       });
     },
-    [currency, history, mainAccount, ptxSmartRouting],
+    [currency, history, mainAccount.id, ptxSmartRouting?.enabled, buttonSharedTrackingFields],
   );
 
   const onLend = useCallback(() => {
@@ -234,11 +249,10 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const onSwap = useCallback(() => {
     track("button_clicked", {
       button: "swap",
-      currency: currency.ticker,
-      page: "Page Account",
+      ...buttonSharedTrackingFields,
       ...swapDefaultTrack,
     });
-    setTrackingSource("Page Account");
+    setTrackingSource(pageName);
     history.push({
       pathname: "/swap",
       state: {
@@ -247,15 +261,23 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
         defaultParentAccount: parentAccount,
       },
     });
-  }, [currency, swapDefaultTrack, history, account, parentAccount]);
+  }, [currency, swapDefaultTrack, history, account, parentAccount, buttonSharedTrackingFields]);
 
   const onSend = useCallback(() => {
+    track("button_clicked", {
+      button: "send",
+      ...buttonSharedTrackingFields,
+    });
     openModal("MODAL_SEND", { parentAccount, account });
-  }, [parentAccount, account, openModal]);
+  }, [openModal, parentAccount, account, buttonSharedTrackingFields]);
 
   const onReceive = useCallback(() => {
+    track("button_clicked", {
+      button: "receive",
+      ...buttonSharedTrackingFields,
+    });
     openModal("MODAL_RECEIVE", { parentAccount, account });
-  }, [parentAccount, account, openModal]);
+  }, [openModal, parentAccount, account, buttonSharedTrackingFields]);
 
   const renderAction = ({
     label,
@@ -297,7 +319,10 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     disabled?: boolean,
     tooltip?: string,
   }[] = [
-    ...manageList,
+    ...manageList.map(item => ({
+      ...item,
+      eventProperties: { ...buttonSharedTrackingFields, ...item.eventProperties },
+    })),
     ...(availableOnCompound
       ? [
           {

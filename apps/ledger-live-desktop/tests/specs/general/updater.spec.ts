@@ -57,6 +57,7 @@ test("Updater", async ({ page }) => {
     await settingsPage.carouselSwitchButton.click();
     await expect(settingsPage.carouselSwitchButton.locator("input")).not.toBeChecked();
     await layout.goToPortfolio();
+    await layout.appUpdateBanner.isVisible();
     await expect(layout.appUpdateBanner).toBeVisible();
     await expect.soft(page).toHaveScreenshot("app-updater-error-without-carousel.png", {
       mask: [page.locator("canvas")],

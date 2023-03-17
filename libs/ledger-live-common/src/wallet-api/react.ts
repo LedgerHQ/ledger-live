@@ -203,7 +203,6 @@ export interface UiHook {
   "device.transport": (params: {
     appName: string | undefined;
     onSuccess: (result: AppResult) => void;
-    onError: (error: Error) => void;
     onCancel: () => void;
   }) => void;
 }
@@ -632,16 +631,12 @@ export function useWalletAPIServer({
                 return;
               }
               // TODO handle appFirmwareRange & seeded params
-              device?.subscribe(deviceParam.deviceId);
+              device.subscribe(deviceParam.deviceId);
               resolve("1");
             },
             onCancel: () => {
               tracking.deviceTransportFail(manifest);
               reject(new Error("User cancelled"));
-            },
-            onError: (error: Error) => {
-              tracking.deviceTransportFail(manifest);
-              reject(error);
             },
           });
         })

@@ -5,7 +5,9 @@ import { mockGetStatus } from "./mock";
 import type { GetMultipleStatus } from "./types";
 
 export const getMultipleStatus: GetMultipleStatus = async (statusList) => {
-  if (getEnv("MOCK")) return mockGetStatus(statusList);
+  if (getEnv("MOCK") && !getEnv("PLAYWRIGHT_RUN"))
+    return mockGetStatus(statusList);
+
   const res = await network({
     method: "POST",
     url: `${getSwapAPIBaseURL()}/swap/status`,

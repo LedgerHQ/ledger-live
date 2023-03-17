@@ -238,6 +238,10 @@ export function useDeepLinkHandler() {
 
           break;
         }
+        case "market":
+          navigate(`/market`);
+          break;
+
         case "portfolio":
         default:
           navigate("/");

@@ -25,12 +25,17 @@ const AccountBanner = (props: BannerProps) => {
       showIcon={false}
       containerProps={{ mt: -4, mb: 4, mx: 0, p: 12 }}
       renderContent={() => (
-        <Flex style={{ alignItems: "center", width: "100%" }}>
+        <Flex data-test-id="account-stake-banner" style={{ alignItems: "center", width: "100%" }}>
           <Flex style={{ flex: 1, flexDirection: "column" }}>
             <Text color="inherit" variant="body" fontWeight="bold" fontSize="14px">
               {title}
             </Text>
-            <Text color="inherit" variant="body" fontSize="14px" style={{ marginTop: "10px" }}>
+            <Text
+              color="inherit"
+              variant="body"
+              fontSize="14px"
+              style={{ marginTop: "10px", lineHeight: 1 }}
+            >
               {description}{" "}
               {linkUrl && linkText && (
                 <Link
@@ -43,7 +48,12 @@ const AccountBanner = (props: BannerProps) => {
               )}
             </Text>
           </Flex>
-          <Button variant="color" ml={12} onClick={onClick} buttonTestId="account-banner-button">
+          <Button
+            variant="color"
+            ml={12}
+            onClick={onClick}
+            buttonTestId="account-stake-banner-button"
+          >
             {cta}
           </Button>
         </Flex>

@@ -14,11 +14,18 @@ const getActions = ({
 }) => {
   const delegationDisabled = account.solanaResources?.stakes.length > 1;
 
-  return [
-    {
-      id: "stake",
-      disabled: delegationDisabled,
-      navigationParams: [
+  const navigationParams = delegationDisabled
+    ? [
+        NavigatorName.NoFundsFlow,
+        {
+          screen: ScreenName.NoFunds,
+          params: {
+            account,
+            parentAccount,
+          },
+        },
+      ]
+    : [
         NavigatorName.SolanaDelegationFlow,
         {
           screen: ScreenName.SolanaDelegationStarted,
@@ -30,7 +37,12 @@ const getActions = ({
             },
           },
         },
-      ],
+      ];
+
+  return [
+    {
+      id: "stake",
+      navigationParams,
       label: <Trans i18nKey="account.stake" />,
       Icon: Icons.ClaimRewardsMedium,
     },

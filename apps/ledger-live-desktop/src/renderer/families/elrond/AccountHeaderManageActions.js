@@ -1,10 +1,9 @@
 // @flow
 
 import { useCallback, useMemo } from "react";
-import { BigNumber } from "bignumber.js";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
+import { areEarnRewardsEnabled } from "@ledgerhq/live-common/families/elrond/helpers/areEarnRewardsEnabled";
 import { useElrondRandomizedValidators } from "@ledgerhq/live-common/families/elrond/react";
 
 import { modals } from "./modals";
@@ -24,13 +23,7 @@ const AccountHeaderActions = (props: Props) => {
   const dispatch = useDispatch();
   const validators = useElrondRandomizedValidators();
 
-  const earnRewardEnabled = useMemo(
-    (): boolean =>
-      BigNumber(denominate({ input: account.spendableBalance, showLastNonZeroDecimal: true })).gte(
-        1,
-      ),
-    [account.spendableBalance],
-  );
+  const earnRewardEnabled = useMemo(() => areEarnRewardsEnabled(account), [account]);
 
   const hasDelegations = account.elrondResources
     ? account.elrondResources.delegations.length > 0
@@ -69,6 +62,10 @@ const AccountHeaderActions = (props: Props) => {
       onClick: onClick,
       icon: IconCoins,
       label: t("account.stake"),
+      event: "button_clicked",
+      eventProperties: {
+        button: "stake",
+      },
     },
   ];
 };

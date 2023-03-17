@@ -4,7 +4,7 @@
   },
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "29.0.0",
+  "version": "29.1.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -237,8 +237,7 @@
     "utility-types": "^3.10.0",
     "varuint-bitcoin": "1.1.2",
     "winston": "^3.4.0",
-    "xstate": "^4.30.2",
-    "zcash-bitcore-lib": "^0.13.20-rc3"
+    "xstate": "^4.30.2"
   },
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",
@@ -278,6 +277,7 @@
     "jest-environment-jsdom": "28",
     "jest-file-snapshot": "^0.5.0",
     "long": "^4.0.0",
+    "mkdirp": "*",
     "prettier": "2.3.2",
     "react": "^17.0.2",
     "react-dom": "17.0.2",
@@ -292,7 +292,6 @@
     "typescript": "^4.8.3",
     "typescript-eslint-parser": "^22.0.0",
     "uuid": "^8.3.2",
-    "ws": "7",
-    "mkdirp": "*"
+    "ws": "7"
   }
 }

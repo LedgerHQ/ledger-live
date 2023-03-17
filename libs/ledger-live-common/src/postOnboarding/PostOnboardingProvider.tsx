@@ -7,14 +7,14 @@ import {
 
 export type PostOnboardingDependencies = {
   /** function to navigate to the post onboarding hub */
-  navigateToPostOnboardingHub: () => void;
+  navigateToPostOnboardingHub: (resetNavigationStack?: boolean) => void;
   /**
    * function that returns a `PostOnboardingAction` for the given
    * `PostOnboardingActionId` parameter.
    * */
   getPostOnboardingAction?: (
     id: PostOnboardingActionId
-  ) => PostOnboardingAction;
+  ) => PostOnboardingAction | undefined;
   /**
    * function that returns an array of `PostOnboardingAction` for the given
    * `DeviceModelId` parameter.

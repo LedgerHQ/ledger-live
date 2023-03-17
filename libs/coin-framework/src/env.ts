@@ -366,11 +366,6 @@ const envDefinitions: Record<
     parser: boolParser,
     desc: "enable an experimental swap interface",
   },
-  EXPERIMENTAL_EXECUTION_ON_RENDERER: {
-    def: false,
-    parser: boolParser,
-    desc: "enable an experimental execution of business logic to run on renderer side (LLD)",
-  },
   EXPLORER: {
     def: "https://explorers.api.live.ledger.com",
     parser: stringParser,
@@ -734,6 +729,11 @@ const envDefinitions: Record<
     def: false,
     parser: boolParser,
     desc: "Show a performance overlay on the app UI",
+  },
+  ETHEREUM_STUCK_TRANSACTION_TIMEOUT: {
+    def: 5 * 60 * 1000,
+    parser: intParser,
+    desc: "Time after which an optimisc operation is considered stuck",
   },
 };
 

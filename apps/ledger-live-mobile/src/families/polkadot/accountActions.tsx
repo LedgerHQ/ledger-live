@@ -21,8 +21,13 @@ import ChillIcon from "../../icons/VoteNay";
 import { NavigatorName, ScreenName } from "../../const";
 import { ActionButtonEvent } from "../../components/FabActions";
 
-const getActions = (args: { account: Account }): ActionButtonEvent[] | null => {
-  const account = args.account as PolkadotAccount;
+type NavigationParamsType = readonly [name: string, options: object];
+
+const getActions = (args: {
+  account: PolkadotAccount;
+  parentAccount?: Account;
+}): ActionButtonEvent[] | null => {
+  const { account, parentAccount } = args;
   if (!account.polkadotResources) return null;
   const { staking } = getCurrentPolkadotPreloadData();
   const accountId = account.id;
@@ -54,29 +59,47 @@ const getActions = (args: { account: Account }): ActionButtonEvent[] | null => {
     return null;
   }
 
+  const getNavigationParams = () => {
+    if (!earnRewardsEnabled && !nominationEnabled) {
+      return [
+        NavigatorName.NoFundsFlow,
+        {
+          screen: ScreenName.NoFunds,
+          params: {
+            account,
+            parentAccount,
+          },
+        },
+      ];
+    }
+    if (isStash(account)) {
+      return [
+        NavigatorName.PolkadotNominateFlow,
+        {
+          screen: ScreenName.PolkadotNominateSelectValidators,
+          params: {
+            accountId,
+          },
+        },
+      ];
+    }
+    return [
+      NavigatorName.PolkadotBondFlow,
+      {
+        screen: ScreenName.PolkadotBondStarted,
+        params: {
+          accountId,
+        },
+      },
+    ];
+  };
+
+  const navigationParams = getNavigationParams();
+
   return [
     {
       id: "stake",
-      disabled: !(earnRewardsEnabled || nominationEnabled),
-      navigationParams: isStash(account)
-        ? [
-            NavigatorName.PolkadotNominateFlow,
-            {
-              screen: ScreenName.PolkadotNominateSelectValidators,
-              params: {
-                accountId,
-              },
-            },
-          ]
-        : [
-            NavigatorName.PolkadotBondFlow,
-            {
-              screen: ScreenName.PolkadotBondStarted,
-              params: {
-                accountId,
-              },
-            },
-          ],
+      navigationParams: navigationParams as unknown as NavigationParamsType,
       label: <Trans i18nKey="account.stake" />,
       Icon: Icons.ClaimRewardsMedium,
     },

@@ -5,6 +5,7 @@ import {
 } from "@ledgerhq/types-live";
 import { handleActions } from "redux-actions";
 import type { ReducerMap } from "redux-actions";
+import { createSelector, Selector } from "reselect";
 
 export const initialState: PostOnboardingState = {
   deviceModelId: null,
@@ -82,49 +83,41 @@ function sanitizeDeviceModelId(
   return deviceModelId;
 }
 
-export const postOnboardingSelector = ({
-  postOnboarding,
-}: {
-  postOnboarding: PostOnboardingState;
-}): PostOnboardingState => ({
-  ...postOnboarding,
-  deviceModelId: sanitizeDeviceModelId(postOnboarding.deviceModelId),
-});
+export const postOnboardingSelector: Selector<
+  { postOnboarding: PostOnboardingState },
+  PostOnboardingState
+> = createSelector(
+  (state) => state.postOnboarding,
+  (postOnboarding) => ({
+    ...postOnboarding,
+    deviceModelId: sanitizeDeviceModelId(postOnboarding.deviceModelId),
+  })
+);
 
-export const hubStateSelector = ({
-  postOnboarding,
-}: {
-  postOnboarding: PostOnboardingState;
-}): {
-  deviceModelId: PostOnboardingState["deviceModelId"];
-  actionsToComplete: PostOnboardingState["actionsToComplete"];
-  actionsCompleted: PostOnboardingState["actionsCompleted"];
-  lastActionCompleted: PostOnboardingState["lastActionCompleted"];
-} => {
-  const {
-    deviceModelId,
-    actionsToComplete,
-    actionsCompleted,
-    lastActionCompleted,
-  } = postOnboarding;
-  return {
-    deviceModelId: sanitizeDeviceModelId(deviceModelId),
-    actionsToComplete,
-    actionsCompleted,
-    lastActionCompleted,
-  };
-};
+export const hubStateSelector = createSelector(
+  postOnboardingSelector,
+  (postOnboarding) => {
+    const {
+      deviceModelId,
+      actionsToComplete,
+      actionsCompleted,
+      lastActionCompleted,
+    } = postOnboarding;
+    return {
+      deviceModelId: sanitizeDeviceModelId(deviceModelId),
+      actionsToComplete,
+      actionsCompleted,
+      lastActionCompleted,
+    };
+  }
+);
 
-export const postOnboardingDeviceModelIdSelector = ({
-  postOnboarding,
-}: {
-  postOnboarding: PostOnboardingState;
-}): PostOnboardingState["deviceModelId"] =>
-  sanitizeDeviceModelId(postOnboarding.deviceModelId);
+export const postOnboardingDeviceModelIdSelector = createSelector(
+  postOnboardingSelector,
+  (postOnboarding) => sanitizeDeviceModelId(postOnboarding.deviceModelId)
+);
 
-export const walletPostOnboardingEntryPointDismissedSelector = ({
-  postOnboarding,
-}: {
-  postOnboarding: PostOnboardingState;
-}): PostOnboardingState["walletEntryPointDismissed"] =>
-  postOnboarding.walletEntryPointDismissed;
+export const walletPostOnboardingEntryPointDismissedSelector = createSelector(
+  postOnboardingSelector,
+  (postOnboarding) => postOnboarding.walletEntryPointDismissed
+);

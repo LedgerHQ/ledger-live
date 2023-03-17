@@ -52,7 +52,7 @@ export default function FirmwareUpdateReleaseNotes({
             }}
           >
             {"You are about to install "}
-            <LText semiBold>firmware version {version}.</LText>
+            <LText semiBold>FIRMWARE_VERSION</LText>
           </Trans>
           {"\n\n"}
           <Trans i18nKey="FirmwareUpdateReleaseNotes.introDescription1" />{" "}

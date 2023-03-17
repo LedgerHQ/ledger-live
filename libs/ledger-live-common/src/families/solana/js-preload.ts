@@ -11,6 +11,8 @@ import {
 } from "./utils";
 import { getValidators, ValidatorsAppValidator } from "./validator-app";
 
+export const PRELOAD_MAX_AGE = 15 * 60 * 1000; // 15min
+
 export async function preloadWithAPI(
   currency: CryptoCurrency,
   getAPI: () => Promise<ChainAPI>
