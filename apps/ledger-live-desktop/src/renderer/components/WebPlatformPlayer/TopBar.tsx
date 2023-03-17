@@ -1,7 +1,6 @@
 // @flow
 
-import { WebviewTag } from "electron";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { RefObject, useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 
@@ -23,6 +22,10 @@ import { enablePlatformDevToolsSelector } from "~/renderer/reducers/settings";
 import LiveAppIcon from "./LiveAppIcon";
 
 import { openPlatformAppInfoDrawer } from "~/renderer/actions/UI";
+import { WebviewState, WebviewTag } from "../Web3AppWebview/types";
+import Spinner from "../Spinner";
+
+import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 
 const Container = styled(Box).attrs(() => ({
   horizontal: true,
@@ -63,6 +66,7 @@ const ItemContainer: ThemedComponent<{
   disabled?: boolean;
   children: React.ReactNode;
   justifyContent?: string;
+  hidden?: boolean;
 }> = styled(Tabbable).attrs(p => ({
   padding: 1,
   alignItems: "center",
@@ -73,8 +77,11 @@ const ItemContainer: ThemedComponent<{
   -webkit-app-region: no-drag;
   height: 24px;
   position: relative;
-  cursor: pointer;
+  cursor: ${p => (p.isInteractive ? "pointer" : "initial")};
   pointer-events: ${p => (p.disabled ? "none" : "unset")};
+  user-select: none;
+  transition: opacity ease-out 100ms;
+  opacity: ${p => (p.hidden ? "0" : "1")};
 
   margin-right: 16px;
   &:last-child {
@@ -121,10 +128,11 @@ export type Props = {
   manifest: LiveAppManifest;
   onClose?: () => void;
   config?: TopBarConfig;
-  webview: WebviewTag;
+  webviewRef: RefObject<WebviewTag>;
+  webviewState: WebviewState;
 };
 
-export const TopBar = ({ manifest, onClose, config = {}, webview }: Props) => {
+export const TopBar = ({ manifest, onClose, config = {}, webviewRef, webviewState }: Props) => {
   const { name, icon } = manifest;
 
   const {
@@ -134,63 +142,51 @@ export const TopBar = ({ manifest, onClose, config = {}, webview }: Props) => {
     shouldDisplayNavigation = false,
   } = config;
 
-  const [canGoBack, setCanGoBack] = useState(false);
-  const [canGoForward, setCanGoForward] = useState(false);
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
   const dispatch = useDispatch();
 
-  const handleDidNavigate = useCallback(() => {
-    setCanGoBack(webview.canGoBack());
-    setCanGoForward(webview.canGoForward());
-  }, [webview]);
-
-  useEffect(() => {
-    /**
-     * Handle webview navigation events.
-     * The two events are complementary to enccompass the webview's navigation
-     *
-     * `did-navigate` is emitted when a navigation is done. But this event is not
-     * emitted for in-page navigations, such as clicking anchor links or updating
-     * the window.location.hash.
-     * That's why we use did-navigate-in-page event for this purpose.
-     * cf. doc bellow:
-     *
-     * https://www.electronjs.org/docs/latest/api/webview-tag#event-did-navigate
-     * https://www.electronjs.org/docs/latest/api/webview-tag#event-did-navigate-in-page
-     */
-
-    if (shouldDisplayNavigation) {
-      webview.addEventListener("did-navigate", handleDidNavigate);
-      webview.addEventListener("did-navigate-in-page", handleDidNavigate);
-
-      return () => {
-        webview.removeEventListener("did-navigate", handleDidNavigate);
-        webview.removeEventListener("did-navigate-in-page", handleDidNavigate);
-      };
-    }
-  }, [handleDidNavigate, webview, shouldDisplayNavigation]);
-
   const handleReload = useCallback(() => {
-    if (webview) {
-      webview.reloadIgnoringCache();
+    const webview = webviewRef.current;
+
+    if (!webview) {
+      return;
     }
-  }, [webview]);
+
+    webview.reloadIgnoringCache();
+  }, [webviewRef]);
 
   const onClick = useCallback(() => {
     dispatch(openPlatformAppInfoDrawer({ manifest }));
   }, [manifest, dispatch]);
 
   const onOpenDevTools = useCallback(() => {
+    const webview = webviewRef.current;
+
+    if (!webview) {
+      return;
+    }
     webview.openDevTools();
-  }, [webview]);
+  }, [webviewRef]);
 
   const onGoBack = useCallback(() => {
+    const webview = webviewRef.current;
+
+    if (!webview) {
+      return;
+    }
     webview.goBack();
-  }, [webview]);
+  }, [webviewRef]);
 
   const onGoForward = useCallback(() => {
+    const webview = webviewRef.current;
+
+    if (!webview) {
+      return;
+    }
     webview.goForward();
-  }, [webview]);
+  }, [webviewRef]);
+
+  const isLoading = useDebounce(webviewState.loading, 100);
 
   return (
     <Container>
@@ -211,10 +207,10 @@ export const TopBar = ({ manifest, onClose, config = {}, webview }: Props) => {
       </ItemContainer>
       {shouldDisplayNavigation ? (
         <>
-          <ItemContainer disabled={!canGoBack} isInteractive onClick={onGoBack}>
+          <ItemContainer disabled={!webviewState.canGoBack} isInteractive onClick={onGoBack}>
             <ArrowRight flipped size={16} />
           </ItemContainer>
-          <ItemContainer disabled={!canGoForward} isInteractive onClick={onGoForward}>
+          <ItemContainer disabled={!webviewState.canGoForward} isInteractive onClick={onGoForward}>
             <ArrowRight size={16} />
           </ItemContainer>
         </>
@@ -230,21 +226,22 @@ export const TopBar = ({ manifest, onClose, config = {}, webview }: Props) => {
           </ItemContainer>
         </>
       ) : null}
-      {shouldDisplayInfo || shouldDisplayClose ? (
-        <RightContainer>
-          {shouldDisplayInfo && (
-            <ItemContainer isInteractive onClick={onClick}>
-              <IconInfoCircle size={16} />
-            </ItemContainer>
-          )}
+      <RightContainer>
+        <ItemContainer hidden={!isLoading}>
+          <Spinner isRotating size={16} />
+        </ItemContainer>
+        {shouldDisplayInfo && (
+          <ItemContainer isInteractive onClick={onClick}>
+            <IconInfoCircle size={16} />
+          </ItemContainer>
+        )}
 
-          {shouldDisplayClose && (
-            <ItemContainer isInteractive onClick={onClose}>
-              <IconClose size={16} />
-            </ItemContainer>
-          )}
-        </RightContainer>
-      ) : null}
+        {shouldDisplayClose && (
+          <ItemContainer isInteractive onClick={onClose}>
+            <IconClose size={16} />
+          </ItemContainer>
+        )}
+      </RightContainer>
     </Container>
   );
 };

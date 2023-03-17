@@ -1,6 +1,5 @@
-import { WebviewTag } from "electron";
 import * as remote from "@electron/remote";
-import React, { ForwardedRef, useCallback, useEffect, useMemo } from "react";
+import React, { RefObject, useCallback, useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -19,7 +18,6 @@ import { getEnv } from "@ledgerhq/live-common/env";
 
 import { openModal } from "../../actions/modals";
 import { updateAccountWithUpdater } from "../../actions/accounts";
-import useTheme from "../../hooks/useTheme";
 import { flattenAccountsSelector } from "../../reducers/accounts";
 import BigSpinner from "../BigSpinner";
 import { setDrawer } from "~/renderer/drawers/Provider";
@@ -28,7 +26,8 @@ import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/Sele
 import { track } from "~/renderer/analytics/segment";
 import { shareAnalyticsSelector } from "~/renderer/reducers/settings";
 import { Loader } from "./styled";
-import { useCombinedRefs } from "./helpers";
+import { WebviewProps, WebviewTag } from "./types";
+import { useWebviewState } from "./helpers";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
 const tracking = trackingWrapper(track);
@@ -142,26 +141,15 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
 }
 
 function useWalletAPIUrl({ manifest, inputs }: Omit<Props, "onClose">) {
-  const theme = useTheme("colors.palette");
-
-  return useWalletAPIUrlRaw(
-    manifest,
-    {
-      background: theme.background.paper,
-      text: theme.text.shade100,
-    },
-    inputs,
-  );
+  return useWalletAPIUrlRaw(manifest, inputs);
 }
 
 function useWebView(
   { manifest, inputs }: Pick<Props, "manifest" | "inputs">,
-  ref: ForwardedRef<WebviewTag>,
+  webviewRef: RefObject<WebviewTag>,
 ) {
   const accounts = useSelector(flattenAccountsSelector);
 
-  const innerRef = React.useRef();
-  const webviewRef = useCombinedRefs<WebviewTag>(ref, innerRef);
   const uiHook = useUiHook(manifest);
   const url = useWalletAPIUrl({ manifest, inputs });
   const shareAnalytics = useSelector(shareAnalyticsSelector);
@@ -258,46 +246,45 @@ interface Props {
   inputs?: Record<string, string>;
 }
 
-export const WalletAPIWebview = React.forwardRef<WebviewTag, Props>(
-  ({ manifest, inputs = {} }, ref) => {
-    const { webviewRef, webviewStyle, url, widgetLoaded } = useWebView(
-      {
-        manifest,
-        inputs,
-      },
-      ref,
-    );
+export function WalletAPIWebview({ manifest, inputs = {}, renderTopBar }: WebviewProps) {
+  const webviewRef = useRef<WebviewTag>(null);
+  const { webviewState } = useWebviewState(webviewRef);
+  const { webviewStyle, url, widgetLoaded } = useWebView(
+    {
+      manifest,
+      inputs,
+    },
+    webviewRef,
+  );
 
-    return (
-      <>
-        <webview
-          src={url.toString()}
-          ref={webviewRef}
-          /**
-           * There seem to be an issue between Electron webview and styled-components
-           * (and React more broadly, cf. comment below).
-           * When using a styled webview componennt, the `allowpopups` prop does not
-           * seem to be set
-           */
-          style={webviewStyle}
-          preload={`file://${remote.app.dirname}/webviewPreloader.bundle.js`}
-          /**
-           * There seems to be an issue between Electron webview and react
-           * Hence, the normal `allowpopups` prop does not work and we need to
-           * explicitly set its value to "true" as a string
-           * cf. https://github.com/electron/electron/issues/6046
-           */
-          // @ts-expect-error: see above comment
-          allowpopups="true"
-        />
-        {!widgetLoaded ? (
-          <Loader>
-            <BigSpinner data-test-id="live-app-loading-spinner" size={50} />
-          </Loader>
-        ) : null}
-      </>
-    );
-  },
-);
-
-WalletAPIWebview.displayName = "WalletAPIWebview";
+  return (
+    <>
+      {renderTopBar ? renderTopBar(manifest, webviewRef, webviewState) : null}
+      <webview
+        src={url.toString()}
+        ref={webviewRef}
+        /**
+         * There seem to be an issue between Electron webview and styled-components
+         * (and React more broadly, cf. comment below).
+         * When using a styled webview componennt, the `allowpopups` prop does not
+         * seem to be set
+         */
+        style={webviewStyle}
+        preload={`file://${remote.app.dirname}/webviewPreloader.bundle.js`}
+        /**
+         * There seems to be an issue between Electron webview and react
+         * Hence, the normal `allowpopups` prop does not work and we need to
+         * explicitly set its value to "true" as a string
+         * cf. https://github.com/electron/electron/issues/6046
+         */
+        // @ts-expect-error: see above comment
+        allowpopups="true"
+      />
+      {!widgetLoaded ? (
+        <Loader>
+          <BigSpinner data-test-id="live-app-loading-spinner" size={50} />
+        </Loader>
+      ) : null}
+    </>
+  );
+}

@@ -1,18 +1,6 @@
-import React, {
-  useState,
-  useCallback,
-  useEffect,
-  useRef,
-  useMemo,
-} from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
-import {
-  ActivityIndicator,
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  SafeAreaView,
-} from "react-native";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { WebView as RNWebView } from "react-native-webview";
 import { useNavigation } from "@react-navigation/native";
 import { JSONRPCRequest } from "json-rpc-2.0";
@@ -34,7 +22,6 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import {
   broadcastTransactionLogic,
   receiveOnAccountLogic,
@@ -54,14 +41,10 @@ import {
   usePlatformUrl,
 } from "@ledgerhq/live-common/platform/react";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
-import { useTheme } from "styled-components/native";
 import BigNumber from "bignumber.js";
 import { NavigatorName, ScreenName } from "../../const";
 import { broadcastSignedTx } from "../../logic/screenTransactionHooks";
 import { flattenAccountsSelector } from "../../reducers/accounts";
-import UpdateIcon from "../../icons/Update";
-import InfoIcon from "../../icons/Info";
-import InfoPanel from "./InfoPanel";
 import { track } from "../../analytics/segment";
 import prepareSignTransaction from "./liveSDKLogic";
 import {
@@ -69,61 +52,18 @@ import {
   StackNavigatorNavigation,
 } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
+import { WebviewProps } from "./types";
+import { useWebviewState } from "./helpers";
 
 const tracking = trackingWrapper(track);
 
-type Props = {
-  manifest: LiveAppManifest;
-  inputs?: Record<string, string>;
-};
+export function PlatformAPIWebview({
+  manifest,
+  inputs = {},
+  renderTopBar,
+}: WebviewProps) {
+  const webviewRef = React.useRef<RNWebView>(null);
 
-const ReloadButton = ({
-  onReload,
-  loading,
-}: {
-  onReload: () => void;
-  loading: boolean;
-}) => {
-  const { colors } = useTheme();
-  return (
-    <TouchableOpacity
-      style={styles.buttons}
-      disabled={loading}
-      onPress={() => !loading && onReload()}
-    >
-      <UpdateIcon size={18} color={colors.neutral.c70} />
-    </TouchableOpacity>
-  );
-};
-
-const InfoPanelButton = ({
-  loading,
-  setIsInfoPanelOpened,
-}: {
-  loading: boolean;
-  setIsInfoPanelOpened: (_: boolean) => void;
-}) => {
-  const { colors } = useTheme();
-
-  const onPress = () => {
-    setIsInfoPanelOpened(true);
-  };
-
-  return (
-    <TouchableOpacity
-      style={styles.buttons}
-      disabled={loading}
-      onPress={onPress}
-    >
-      <InfoIcon size={18} color={colors.neutral.c70} />
-    </TouchableOpacity>
-  );
-};
-
-export const WebView = ({ manifest, inputs }: Props) => {
-  const targetRef: {
-    current: null | RNWebView;
-  } = useRef(null);
   const accounts = useSelector(flattenAccountsSelector);
   const navigation =
     useNavigation<
@@ -131,17 +71,8 @@ export const WebView = ({ manifest, inputs }: Props) => {
         StackNavigatorNavigation<BaseNavigatorStackParamList>
       >
     >();
-  const [loadDate, setLoadDate] = useState(new Date());
-  const [widgetLoaded, setWidgetLoaded] = useState(false);
-  const [isInfoPanelOpened, setIsInfoPanelOpened] = useState(false);
   const [device, setDevice] = useState<Device>();
-  const uri = usePlatformUrl(
-    manifest,
-    {
-      loadDate,
-    },
-    inputs,
-  );
+  const uri = usePlatformUrl(manifest, inputs);
   const listAccounts = useListPlatformAccounts(accounts);
   const listPlatformCurrencies = useListPlatformCurrencies();
 
@@ -552,7 +483,7 @@ export const WebView = ({ manifest, inputs }: Props) => {
     ],
   );
   const handleSend = useCallback((request: JSONRPCRequest): Promise<void> => {
-    targetRef?.current?.postMessage(JSON.stringify(request));
+    webviewRef?.current?.postMessage(JSON.stringify(request));
 
     return Promise.resolve();
   }, []);
@@ -568,88 +499,61 @@ export const WebView = ({ manifest, inputs }: Props) => {
     [receive],
   );
 
-  const handleLoad = useCallback(() => {
-    if (!widgetLoaded) {
-      tracking.platformLoadSuccess(manifest);
-      setWidgetLoaded(true);
-    }
-  }, [manifest, widgetLoaded]);
-
-  const handleReload = useCallback(() => {
-    tracking.platformReload(manifest);
-    setLoadDate(new Date());
-    setWidgetLoaded(false);
-  }, [manifest]);
+  const { webviewProps, webviewState } = useWebviewState();
 
   const handleError = useCallback(() => {
     tracking.platformLoadFail(manifest);
   }, [manifest]);
 
   useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <View style={styles.headerRight}>
-          <ReloadButton onReload={handleReload} loading={!widgetLoaded} />
-          <InfoPanelButton
-            loading={!widgetLoaded}
-            setIsInfoPanelOpened={setIsInfoPanelOpened}
-          />
-        </View>
-      ),
-    });
-  }, [navigation, widgetLoaded, handleReload, isInfoPanelOpened]);
-  useEffect(() => {
     tracking.platformLoad(manifest);
   }, [manifest]);
+
+  useEffect(() => {
+    const webview = webviewRef.current;
+    if (!webview) {
+      return;
+    }
+
+    navigation.setOptions({
+      headerRight: renderTopBar
+        ? () => renderTopBar(manifest, webviewRef, webviewState)
+        : undefined,
+      headerShown: !!renderTopBar,
+    });
+  }, [manifest, navigation, renderTopBar, webviewState]);
+
   return (
-    <SafeAreaView style={[styles.root]}>
-      <InfoPanel
-        name={manifest.name}
-        icon={manifest.icon}
-        url={manifest.homepageUrl}
-        uri={uri.toString()}
-        description={manifest.content.description}
-        isOpened={isInfoPanelOpened}
-        setIsOpened={setIsInfoPanelOpened}
-      />
-      <RNWebView
-        ref={targetRef}
-        startInLoadingState={true}
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}
-        renderLoading={() => (
-          <View style={styles.center}>
-            <ActivityIndicator size="large" />
-          </View>
-        )}
-        originWhitelist={manifest.domains}
-        allowsInlineMediaPlayback
-        source={{
-          uri: uri.toString(),
-        }}
-        onLoad={handleLoad}
-        onMessage={handleMessage}
-        onError={handleError}
-        overScrollMode="content"
-        bounces={false}
-        mediaPlaybackRequiresUserAction={false}
-        automaticallyAdjustContentInsets={false}
-        scrollEnabled={true}
-        style={styles.webview}
-      />
-    </SafeAreaView>
+    <RNWebView
+      ref={webviewRef}
+      allowsBackForwardNavigationGestures
+      startInLoadingState={true}
+      showsHorizontalScrollIndicator={false}
+      showsVerticalScrollIndicator={false}
+      renderLoading={() => (
+        <View style={styles.center}>
+          <ActivityIndicator size="large" />
+        </View>
+      )}
+      originWhitelist={manifest.domains}
+      allowsInlineMediaPlayback
+      source={{
+        uri: uri.toString(),
+      }}
+      onMessage={handleMessage}
+      onError={handleError}
+      overScrollMode="content"
+      bounces={false}
+      mediaPlaybackRequiresUserAction={false}
+      automaticallyAdjustContentInsets={false}
+      scrollEnabled={true}
+      style={styles.webview}
+      {...webviewProps}
+    />
   );
-};
+}
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
-  headerRight: {
-    display: "flex",
-    flexDirection: "row",
-    paddingRight: 8,
-  },
   center: {
     flex: 1,
     flexDirection: "column",
@@ -661,16 +565,9 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: "center",
   },
-  modalContainer: {
-    flexDirection: "row",
-  },
   webview: {
     flex: 0,
     width: "100%",
     height: "100%",
-  },
-  buttons: {
-    paddingVertical: 8,
-    paddingHorizontal: 8,
   },
 });

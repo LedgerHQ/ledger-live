@@ -7,10 +7,7 @@ import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { setSwapKYCStatus } from "~/renderer/actions/settings";
 import Box from "~/renderer/components/Box";
-import {
-  handleMessageEvent,
-  handleNewWindowEvent,
-} from "~/renderer/components/WebPlatformPlayer/utils";
+import { handleMessageEvent, handleNewWindowEvent } from "./utils";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import TopBar from "./TopBar";
 

@@ -2,23 +2,16 @@ import React, {
   useState,
   useCallback,
   useEffect,
-  useRef,
   useMemo,
+  RefObject,
 } from "react";
 import { useSelector } from "react-redux";
-import {
-  ActivityIndicator,
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  SafeAreaView,
-} from "react-native";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 import VersionNumber from "react-native-version-number";
 import { WebView as RNWebView } from "react-native-webview";
 import { useNavigation } from "@react-navigation/native";
 import { SignedOperation } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import {
   UiHook,
   useConfig,
@@ -26,20 +19,20 @@ import {
   useWalletAPIUrl,
 } from "@ledgerhq/live-common/wallet-api/react";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
-import { useTheme } from "styled-components/native";
 import BigNumber from "bignumber.js";
 import { NavigatorName, ScreenName } from "../../const";
 import { flattenAccountsSelector } from "../../reducers/accounts";
-import UpdateIcon from "../../icons/Update";
-import InfoIcon from "../../icons/Info";
-import InfoPanel from "./InfoPanel";
 import { track } from "../../analytics/segment";
 import prepareSignTransaction from "./liveSDKLogic";
-import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
+import {
+  RootNavigationComposite,
+  StackNavigatorNavigation,
+} from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { analyticsEnabledSelector } from "../../reducers/settings";
 import getOrCreateUser from "../../user";
-import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
+import { WebviewProps } from "./types";
+import { useWebviewState } from "./helpers";
 
 const wallet = {
   name: "ledger-live-mobile",
@@ -179,25 +172,14 @@ const useGetUserId = () => {
   return userId;
 };
 
-function useWebView({
-  manifest,
-  inputs,
-  hideHeader,
-}: Pick<Props, "manifest" | "inputs" | "hideHeader">) {
+function useWebView(
+  { manifest, inputs }: Pick<WebviewProps, "manifest" | "inputs">,
+  webviewRef: RefObject<RNWebView>,
+) {
   const accounts = useSelector(flattenAccountsSelector);
-  const navigation = useNavigation();
-  const [loadDate, setLoadDate] = useState(new Date());
-  const [isInfoPanelOpened, setIsInfoPanelOpened] = useState(false);
 
-  const webviewRef = useRef<RNWebView>(null);
   const uiHook = useUiHook();
-  const url = useWalletAPIUrl(
-    manifest,
-    {
-      loadDate,
-    },
-    inputs,
-  );
+  const url = useWalletAPIUrl(manifest, inputs);
   const analyticsEnabled = useSelector(analyticsEnabledSelector);
   const userId = useGetUserId();
   const config = useConfig({
@@ -216,13 +198,7 @@ function useWebView({
     };
   }, []);
 
-  const {
-    widgetLoaded,
-    onLoad,
-    onReload: onReloadRaw,
-    onMessage: onMessageRaw,
-    onLoadError,
-  } = useWalletAPIServer({
+  const { onMessage: onMessageRaw, onLoadError } = useWalletAPIServer({
     manifest,
     accounts,
     tracking,
@@ -240,83 +216,12 @@ function useWebView({
     [onMessageRaw],
   );
 
-  const onReload = useCallback(() => {
-    onReloadRaw();
-    setLoadDate(new Date()); // TODO: wtf
-  }, [onReloadRaw, setLoadDate]);
-
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <View style={styles.headerRight}>
-          <ReloadButton onReload={onReload} loading={!widgetLoaded} />
-          <InfoPanelButton
-            loading={!widgetLoaded}
-            setIsInfoPanelOpened={setIsInfoPanelOpened}
-          />
-        </View>
-      ),
-      headerShown: !hideHeader,
-    });
-  }, [navigation, widgetLoaded, onReload, isInfoPanelOpened, hideHeader]);
-
   return {
     uri: url.toString(),
-    isInfoPanelOpened,
-    setIsInfoPanelOpened,
     webviewRef,
-    onLoad,
     onLoadError,
     onMessage,
   };
-}
-
-function ReloadButton({
-  onReload,
-  loading,
-}: {
-  onReload: () => void;
-  loading: boolean;
-}) {
-  const { colors } = useTheme();
-  const onPress = useCallback(
-    () => !loading && onReload(),
-    [loading, onReload],
-  );
-
-  return (
-    <TouchableOpacity
-      style={styles.buttons}
-      disabled={loading}
-      onPress={onPress}
-    >
-      <UpdateIcon size={18} color={colors.neutral.c70} />
-    </TouchableOpacity>
-  );
-}
-
-function InfoPanelButton({
-  loading,
-  setIsInfoPanelOpened,
-}: {
-  loading: boolean;
-  setIsInfoPanelOpened: (_: boolean) => void;
-}) {
-  const { colors } = useTheme();
-
-  const onPress = useCallback(() => {
-    setIsInfoPanelOpened(true);
-  }, [setIsInfoPanelOpened]);
-
-  return (
-    <TouchableOpacity
-      style={styles.buttons}
-      disabled={loading}
-      onPress={onPress}
-    >
-      <InfoIcon size={18} color={colors.neutral.c70} />
-    </TouchableOpacity>
-  );
 }
 
 function renderLoading() {
@@ -327,26 +232,21 @@ function renderLoading() {
   );
 }
 
-interface Props {
-  manifest: AppManifest;
-  inputs?: Record<string, string>;
-  hideHeader?: boolean;
-}
+export function WalletAPIWebview({
+  manifest,
+  inputs = {},
+  renderTopBar,
+}: WebviewProps) {
+  const webviewRef = React.useRef<RNWebView>(null);
+  const { webviewProps, webviewState } = useWebviewState();
 
-export function WebView({ manifest, inputs, hideHeader = false }: Props) {
-  const {
-    uri,
-    isInfoPanelOpened,
-    setIsInfoPanelOpened,
+  const { uri, onMessage, onLoadError } = useWebView(
+    {
+      manifest,
+      inputs,
+    },
     webviewRef,
-    onLoad,
-    onMessage,
-    onLoadError,
-  } = useWebView({
-    manifest,
-    inputs,
-    hideHeader,
-  });
+  );
 
   const source = useMemo(() => {
     return {
@@ -354,54 +254,52 @@ export function WebView({ manifest, inputs, hideHeader = false }: Props) {
     };
   }, [uri]);
 
+  const navigation =
+    useNavigation<
+      RootNavigationComposite<
+        StackNavigatorNavigation<BaseNavigatorStackParamList>
+      >
+    >();
+
+  useEffect(() => {
+    const webview = webviewRef.current;
+    if (!webview) {
+      return;
+    }
+
+    navigation.setOptions({
+      headerRight: renderTopBar
+        ? () => renderTopBar(manifest, webviewRef, webviewState)
+        : undefined,
+      headerShown: !!renderTopBar,
+    });
+  }, [manifest, navigation, renderTopBar, webviewState]);
+
   return (
-    <SafeAreaView
-      style={[
-        styles.root,
-        { paddingTop: hideHeader ? extraStatusBarPadding : 0 },
-      ]}
-    >
-      <InfoPanel
-        name={manifest.name}
-        icon={manifest.icon}
-        url={manifest.homepageUrl}
-        uri={uri}
-        description={manifest.content.description}
-        isOpened={isInfoPanelOpened}
-        setIsOpened={setIsInfoPanelOpened}
-      />
-      <RNWebView
-        ref={webviewRef}
-        startInLoadingState={true}
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}
-        renderLoading={renderLoading}
-        originWhitelist={manifest.domains}
-        allowsInlineMediaPlayback
-        source={source}
-        onLoad={onLoad}
-        onMessage={onMessage}
-        onError={onLoadError}
-        overScrollMode="content"
-        bounces={false}
-        mediaPlaybackRequiresUserAction={false}
-        automaticallyAdjustContentInsets={false}
-        scrollEnabled={true}
-        style={styles.webview}
-      />
-    </SafeAreaView>
+    <RNWebView
+      ref={webviewRef}
+      startInLoadingState={true}
+      showsHorizontalScrollIndicator={false}
+      allowsBackForwardNavigationGestures
+      showsVerticalScrollIndicator={false}
+      renderLoading={renderLoading}
+      originWhitelist={manifest.domains}
+      allowsInlineMediaPlayback
+      source={source}
+      onMessage={onMessage}
+      onError={onLoadError}
+      overScrollMode="content"
+      bounces={false}
+      mediaPlaybackRequiresUserAction={false}
+      automaticallyAdjustContentInsets={false}
+      scrollEnabled={true}
+      style={styles.webview}
+      {...webviewProps}
+    />
   );
 }
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
-  headerRight: {
-    display: "flex",
-    flexDirection: "row",
-    paddingRight: 8,
-  },
   center: {
     flex: 1,
     flexDirection: "column",
@@ -413,16 +311,9 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: "center",
   },
-  modalContainer: {
-    flexDirection: "row",
-  },
   webview: {
     flex: 0,
     width: "100%",
     height: "100%",
-  },
-  buttons: {
-    paddingVertical: 8,
-    paddingHorizontal: 8,
   },
 });

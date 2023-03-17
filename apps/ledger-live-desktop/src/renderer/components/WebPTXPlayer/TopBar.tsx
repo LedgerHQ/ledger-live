@@ -1,7 +1,6 @@
 // @flow
 
-import { WebviewTag } from "electron";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { RefObject, useCallback, useEffect, useRef, useMemo } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 
@@ -15,9 +14,12 @@ import Box, { Tabbable } from "~/renderer/components/Box";
 import ArrowRight from "~/renderer/icons/ArrowRight";
 import LightBulb from "~/renderer/icons/LightBulb";
 import IconReload from "~/renderer/icons/UpdateCircle";
+import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 
 import { useSelector } from "react-redux";
 import { enablePlatformDevToolsSelector } from "~/renderer/reducers/settings";
+import { WebviewTag, WebviewState } from "../Web3AppWebview/types";
+import Spinner from "../Spinner";
 
 const Container = styled(Box).attrs(() => ({
   horizontal: true,
@@ -36,6 +38,7 @@ const ItemContainer: ThemedComponent<{
   disabled?: boolean;
   children: React.ReactNode;
   justifyContent?: string;
+  hidden?: boolean;
 }> = styled(Tabbable).attrs(p => ({
   padding: 1,
   alignItems: "center",
@@ -46,8 +49,11 @@ const ItemContainer: ThemedComponent<{
   -webkit-app-region: no-drag;
   height: 24px;
   position: relative;
-  cursor: pointer;
+  cursor: ${p => (p.isInteractive ? "pointer" : "initial")};
   pointer-events: ${p => (p.disabled ? "none" : "unset")};
+  user-select: none;
+  transition: opacity ease-out 100ms;
+  opacity: ${p => (p.hidden ? "0" : "1")};
 
   margin-right: 16px;
   &:last-child {
@@ -82,71 +88,84 @@ export const Separator = styled.div`
   background: ${p => p.theme.colors.palette.divider};
 `;
 
+const RightContainer = styled(Box).attrs(() => ({
+  horizontal: true,
+  grow: 0,
+  alignItems: "center",
+  ml: "auto",
+}))``;
+
 export type Props = {
+  icon?: boolean;
   manifest: LiveAppManifest;
-  webview: WebviewTag;
+  webviewRef: RefObject<WebviewTag>;
+  webviewState: WebviewState;
 };
 
-export const TopBar = ({ manifest, webview }: Props) => {
+export const TopBar = ({ manifest, webviewRef, webviewState }: Props) => {
   const lastMatchingURL = useRef("");
-  const [isMatchingURL, setIsMatchingURL] = useState(true);
+
+  const isWhitelistedDomain = useMemo(() => {
+    if (webviewState.url === "") {
+      return true;
+    }
+
+    const manifestHostname = new URL(manifest.url).hostname;
+    const currentHostname = new URL(webviewState.url).hostname;
+
+    return manifestHostname === currentHostname;
+  }, [manifest.url, webviewState.url]);
 
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
   const onOpenDevTools = useCallback(() => {
-    if (webview) {
-      webview.openDevTools();
+    const webview = webviewRef.current;
+
+    if (!webview) {
+      return;
     }
-  }, [webview]);
+
+    webview.openDevTools();
+  }, [webviewRef]);
 
   const onBackToMatchingURL = useCallback(async () => {
-    if (webview) {
-      await webview.loadURL(lastMatchingURL.current);
-      webview.clearHistory();
+    const webview = webviewRef.current;
+
+    if (!webview) {
+      return;
     }
-  }, [webview]);
+
+    await webview.loadURL(lastMatchingURL.current);
+    webview.clearHistory();
+  }, [webviewRef]);
 
   const handleReload = useCallback(() => {
-    if (webview) {
-      webview.reloadIgnoringCache();
-    }
-  }, [webview]);
+    const webview = webviewRef.current;
 
-  const handleDidNavigate = useCallback(() => {
-    if (webview) {
-      const url = webview.getURL();
-      const manifestHostname = new URL(manifest.url).hostname;
-      const isOriginUrl = url.includes(manifestHostname);
-      if (isOriginUrl) {
-        lastMatchingURL.current = url; // WARN: last Web3App URL can't auto redirect to an external URL. If so this will create a loop when navigating back.
-      }
-      setIsMatchingURL(isOriginUrl);
+    if (!webview) {
+      return;
     }
-  }, [webview, manifest]);
+
+    webview.reloadIgnoringCache();
+  }, [webviewRef]);
 
   useEffect(() => {
-    if (webview) {
-      webview.addEventListener("did-navigate", handleDidNavigate);
-      webview.addEventListener("did-navigate-in-page", handleDidNavigate);
-      webview.addEventListener("dom-ready", handleDidNavigate);
-
-      return () => {
-        webview.removeEventListener("did-navigate", handleDidNavigate);
-        webview.removeEventListener("did-navigate-in-page", handleDidNavigate);
-        webview.removeEventListener("dom-ready", handleDidNavigate);
-      };
+    if (isWhitelistedDomain) {
+      lastMatchingURL.current = webviewState.url;
     }
-  }, [handleDidNavigate, webview]);
+  }, [isWhitelistedDomain, webviewState.url]);
+
+  const isLoading = useDebounce(webviewState.loading, 100);
 
   return (
     <Container>
-      {!isMatchingURL && (
+      {!isWhitelistedDomain ? (
         <ItemContainer isInteractive onClick={onBackToMatchingURL}>
           <ArrowRight flipped size={16} />
           <ItemContent>
             <Trans i18nKey="common.backToMatchingURL" values={{ appName: manifest.name }} />
           </ItemContent>
         </ItemContainer>
-      )}{" "}
+      ) : null}
       <ItemContainer isInteractive onClick={handleReload}>
         <IconReload size={16} />
         <ItemContent>
@@ -164,6 +183,11 @@ export const TopBar = ({ manifest, webview }: Props) => {
           </ItemContainer>
         </>
       ) : null}
+      <RightContainer>
+        <ItemContainer hidden={!isLoading}>
+          <Spinner isRotating size={16} />
+        </ItemContainer>
+      </RightContainer>
     </Container>
   );
 };

@@ -1,11 +1,10 @@
-import { WebviewTag } from "electron";
-import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import React, { useCallback, useState } from "react";
+import React from "react";
 import styled from "styled-components";
 
 import Web3AppWebview from "../Web3AppWebview";
 import { TopBar } from "./TopBar";
 import Box from "../Box";
+import { TopBarRenderFunc, WebviewProps } from "../Web3AppWebview/types";
 
 export const Container = styled.div`
   display: flex;
@@ -20,23 +19,15 @@ export const Wrapper = styled(Box).attrs(() => ({
   position: relative;
 `;
 
-interface Props {
-  manifest: LiveAppManifest;
-  inputs?: Record<string, string>;
-}
+const renderTopBar: TopBarRenderFunc = (manifest, webviewRef, webviewState) => (
+  <TopBar manifest={manifest} webviewRef={webviewRef} webviewState={webviewState} />
+);
 
-export default function WebPTXPlayer({ manifest, inputs }: Props) {
-  const [webview, setWebview] = useState<WebviewTag>(null);
-
-  const webviewRef = useCallback(node => {
-    setWebview(node);
-  }, []);
-
+export default function WebPTXPlayer({ manifest, inputs }: WebviewProps) {
   return (
     <Container>
       <Wrapper>
-        {webview ? <TopBar manifest={manifest} webview={webview} /> : null}
-        <Web3AppWebview manifest={manifest} inputs={inputs} ref={webviewRef} />
+        <Web3AppWebview manifest={manifest} inputs={inputs} renderTopBar={renderTopBar} />
       </Wrapper>
     </Container>
   );
