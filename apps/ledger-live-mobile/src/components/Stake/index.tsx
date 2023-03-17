@@ -70,6 +70,7 @@ const StakeFlow = ({ currencies }) => {
     [navigation],
   );
   const onError = error => {
+    // eslint-disable-next-line no-console
     console.log("RequestAccountsSelectCrypto in Stake Flow", error);
   };
 
