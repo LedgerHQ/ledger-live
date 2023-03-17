@@ -6,6 +6,9 @@ import {
 } from "./descriptor";
 import { fromAccountRaw } from "../../account";
 import bitcoinDatasets from "./datasets/bitcoin";
+import { setSupportedCurrencies } from "../../currencies";
+
+setSupportedCurrencies(["bitcoin"]);
 describe("inferDescriptorFromAccount", () => {
   invariant(bitcoinDatasets.accounts, "bitcoin datasets have accounts");
   // FIXME: migrate away from invariant for more type guard
