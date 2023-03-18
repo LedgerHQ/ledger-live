@@ -46,7 +46,7 @@ import DefaultOperationDetailsExtra from "./Extra";
 import Skeleton from "../../components/Skeleton";
 import type { State } from "../../reducers/types";
 import Title from "./Title";
-import FormatDate from "../../components/FormatDate";
+import FormatDate from "../../components/DateFormat/FormatDate";
 import type {
   RootNavigationComposite,
   StackNavigatorNavigation,

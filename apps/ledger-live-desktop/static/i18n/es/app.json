@@ -828,6 +828,10 @@
         "near" : {
           "title" : "¿Lo sabías?",
           "description" : "Ledger ofrece una comisión más baja que tu validador. Este proceso puede tardar hasta 65 horas."
+        },
+        "elrond" : {
+          "title" : "¿Lo sabías?",
+          "description" : "Ledger ofrece una comisión más baja que tu validador. Este proceso puede tardar hasta 10 días."
         }
       },
       "delegation" : {
@@ -849,6 +853,9 @@
         },
         "near" : {
           "description" : "Pon tus NEAR en participación con el validador Ledger by Figment. Tus monedas seguirán siendo tuyas y estarán respaldadas por la seguridad sin concesiones de Ledger."
+        },
+        "elrond" : {
+          "description" : "Pon tus ELROND en participación con el validador Ledger by Figment. Tus monedas seguirán siendo tuyas y estarán respaldadas por la seguridad sin concesiones de Ledger."
         }
       }
     }
@@ -1839,7 +1846,7 @@
       "used" : "Utilizado",
       "firmwareAvailable" : "El firmware está desactualizado:",
       "firmwareUpToDate" : "El firmware está actualizado:",
-      "genuine" : "El dispositivo es auténtico",
+      "genuine" : "Tu dispositivo es original",
       "incomplete" : "No se reconocieron algunas aplicaciones. Desinstálalas y luego vuelve a instalarlas."
     },
     "applist" : {
@@ -2261,6 +2268,13 @@
     },
     "switchButton" : "Cambiar a {{language}}",
     "no" : "Prefiero no hacerlo"
+  },
+  "deviceRename" : {
+    "title" : "Renombrar {{ productName }}",
+    "chooseName" : "Elige un nombre",
+    "placeholder" : "Stax de Tony",
+    "remainingCharacters" : "Quedan {{ remainingCharacters }} caracteres",
+    "renamed" : "El nombre de {{ productName }} se cambió a \n“{{ name }}” "
   },
   "deviceLocalization" : {
     "language" : "Idioma",
@@ -3786,6 +3800,9 @@
       "catalogRampServerDesc" : "Cambiar entre varios proveedores de operaciones",
       "enablePlatformDevTools" : "Habilitar herramientas de desarrollador de plataforma",
       "enablePlatformDevToolsDesc" : "Habilitar ventana de herramientas de desarrollador de aplicaciones de plataforma",
+      "customLockScreen" : "Activos de la pantalla de bloqueo personalizada",
+      "customLockScreenDesc" : "Depurar activos gráficos de la pantalla de bloqueo personalizada",
+      "customLockScreenCTA" : "Ejecutar",
       "featureFlagsTitle" : "Marcas de funciones definidas que se usan en Ledger Live",
       "featureFlagsDesc" : "Los valores anulados se restablecerán si se vuelve a iniciar la aplicación. Solo se aceptarán las cadenas JSON válidas.",
       "featureFlagsEdit" : "Editar",
@@ -3850,10 +3867,6 @@
         "experimentalCurrencies" : {
           "title" : "Integraciones experimentales",
           "description" : "Utilizar integraciones experimentales de actrivos cripto disponibles."
-        },
-        "experimentalExecutionOnRenderer" : {
-          "title" : "Redes experimentales",
-          "description" : "Usa las redes experimentales para optimizar tu experiencia con Ledger Live con tu VPN. Activa esta opción solo si tu VPN actual provoca errores del sistema."
         },
         "experimentalLanguages" : {
           "title" : "Probar traducciones",
@@ -4045,7 +4058,7 @@
       "tr" : "Turco",
       "ja" : "Japonés",
       "ko" : "Coreano",
-      "pt" : "Portugués"
+      "pt" : "Portugués (Brasil)"
     }
   },
   "theme" : {
@@ -5668,6 +5681,7 @@
   },
   "customImage" : {
     "title" : "Pantalla de bloqueo personalizada",
+    "managerCTA" : "Imagen de pantalla de bloqueo",
     "steps" : {
       "choose" : {
         "stepLabel" : "Elige una imagen",

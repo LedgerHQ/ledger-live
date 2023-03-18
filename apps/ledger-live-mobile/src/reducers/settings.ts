@@ -70,6 +70,7 @@ import type {
   SettingsSetDebugAppLevelDrawerOpenedPayload,
   SettingsLastSeenDeviceLanguagePayload,
   SettingsCompleteOnboardingPayload,
+  SettingsSetDateFormatPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -164,6 +165,7 @@ export const INITIAL_STATE: SettingsState = {
   overriddenFeatureFlags: {},
   featureFlagsBannerVisible: false,
   debugAppLevelDrawerOpened: false,
+  dateFormat: "default",
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -607,6 +609,12 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ).payload.walletTabNavigatorLastVisitedTab,
   }),
 
+  [SettingsActionTypes.SETTINGS_SET_DATE_FORMAT]: (state, action) => ({
+    ...state,
+    dateFormat: (action as Action<SettingsSetDateFormatPayload>).payload
+      .dateFormat,
+  }),
+
   [SettingsActionTypes.SET_STATUS_CENTER]: (state, action) => ({
     ...state,
     displayStatusCenter: (action as Action<SettingsSetStatusCenterPayload>)
@@ -861,6 +869,7 @@ export const notificationsSelector = (state: State) =>
   state.settings.notifications;
 export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
   state.settings.walletTabNavigatorLastVisitedTab;
+export const dateFormatSelector = (state: State) => state.settings.dateFormat;
 export const statusCenterSelector = (state: State) =>
   state.settings.displayStatusCenter;
 export const overriddenFeatureFlagsSelector = (state: State) =>

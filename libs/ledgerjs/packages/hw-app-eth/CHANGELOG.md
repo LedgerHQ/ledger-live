@@ -1,27 +1,22 @@
 # @ledgerhq/hw-app-eth
 
-## 6.32.1-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`1d0b2d19eb`](https://github.com/LedgerHQ/ledger-live/commit/1d0b2d19ebc5acd058930b842c6d37f8daf2a5a3), [`170f608de3`](https://github.com/LedgerHQ/ledger-live/commit/170f608de311f320795793b4606b063a3ce96def)]:
-  - @ledgerhq/errors@6.12.4-nightly.0
-  - @ledgerhq/cryptoassets@9.1.0-nightly.1
-  - @ledgerhq/hw-transport@6.28.2-nightly.0
-  - @ledgerhq/hw-transport-mocker@6.27.13-nightly.0
-
-## 6.32.1-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`0ca89a8067`](https://github.com/LedgerHQ/ledger-live/commit/0ca89a80678743e9462aaf977448e759924a56b2)]:
-  - @ledgerhq/cryptoassets@9.1.0-nightly.0
-
-## 6.32.1-nightly.0
+## 6.32.1
 
 ### Patch Changes
 
 - [#2819](https://github.com/LedgerHQ/ledger-live/pull/2819) [`0bf82a2b6c`](https://github.com/LedgerHQ/ledger-live/commit/0bf82a2b6cd1d0cac102cc6e142ad8d1ea098497) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add a new method `clearSignTransaction` allowing for transaction resolution and signature in a single method.
+
+- Updated dependencies [[`900ef4f528`](https://github.com/LedgerHQ/ledger-live/commit/900ef4f528c3b2359d666fbb76073978d5f9c840)]:
+  - @ledgerhq/cryptoassets@9.1.0
+
+## 6.32.1-next.0
+
+### Patch Changes
+
+- [#2819](https://github.com/LedgerHQ/ledger-live/pull/2819) [`0bf82a2b6c`](https://github.com/LedgerHQ/ledger-live/commit/0bf82a2b6cd1d0cac102cc6e142ad8d1ea098497) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add a new method `clearSignTransaction` allowing for transaction resolution and signature in a single method.
+
+- Updated dependencies [[`900ef4f528`](https://github.com/LedgerHQ/ledger-live/commit/900ef4f528c3b2359d666fbb76073978d5f9c840)]:
+  - @ledgerhq/cryptoassets@9.1.0-next.0
 
 ## 6.32.0
 

@@ -1,13 +1,16 @@
 # @ledgerhq/react-native-hid
 
-## 6.28.15-nightly.0
+## 6.29.0
 
-### Patch Changes
+### Minor Changes
 
-- Updated dependencies [[`1d0b2d19eb`](https://github.com/LedgerHQ/ledger-live/commit/1d0b2d19ebc5acd058930b842c6d37f8daf2a5a3)]:
-  - @ledgerhq/errors@6.12.4-nightly.0
-  - @ledgerhq/devices@8.0.1-nightly.0
-  - @ledgerhq/hw-transport@6.28.2-nightly.0
+- [#2718](https://github.com/LedgerHQ/ledger-live/pull/2718) [`8787e31a55`](https://github.com/LedgerHQ/ledger-live/commit/8787e31a5566f1291fc762eb4287bcc0e5f2b509) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Support Android S+ for USB OTG connectivity on the react-native-hid transport
+
+## 6.29.0-next.0
+
+### Minor Changes
+
+- [#2718](https://github.com/LedgerHQ/ledger-live/pull/2718) [`8787e31a55`](https://github.com/LedgerHQ/ledger-live/commit/8787e31a5566f1291fc762eb4287bcc0e5f2b509) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Support Android S+ for USB OTG connectivity on the react-native-hid transport
 
 ## 6.28.14
 

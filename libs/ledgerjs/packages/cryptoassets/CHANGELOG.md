@@ -1,16 +1,16 @@
 # @ledgerhq/cryptoassets
 
-## 9.1.0-nightly.1
+## 9.1.0
 
 ### Minor Changes
 
-- [#2929](https://github.com/LedgerHQ/ledger-live/pull/2929) [`170f608de3`](https://github.com/LedgerHQ/ledger-live/commit/170f608de311f320795793b4606b063a3ce96def) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - update CAL
+- [#2765](https://github.com/LedgerHQ/ledger-live/pull/2765) [`900ef4f528`](https://github.com/LedgerHQ/ledger-live/commit/900ef4f528c3b2359d666fbb76073978d5f9c840) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - update CAL
 
-## 9.1.0-nightly.0
+## 9.1.0-next.0
 
 ### Minor Changes
 
-- [#2942](https://github.com/LedgerHQ/ledger-live/pull/2942) [`0ca89a8067`](https://github.com/LedgerHQ/ledger-live/commit/0ca89a80678743e9462aaf977448e759924a56b2) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Update Cardano Xray token
+- [#2765](https://github.com/LedgerHQ/ledger-live/pull/2765) [`900ef4f528`](https://github.com/LedgerHQ/ledger-live/commit/900ef4f528c3b2359d666fbb76073978d5f9c840) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - update CAL
 
 ## 9.0.0
 

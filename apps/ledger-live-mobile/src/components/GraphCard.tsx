@@ -16,7 +16,7 @@ import CurrencyUnitValue from "./CurrencyUnitValue";
 import { useTimeRange } from "../actions/settings";
 import getWindowDimensions from "../logic/getWindowDimensions";
 import Graph from "./Graph";
-import FormatDate from "./FormatDate";
+import FormatDate from "./DateFormat/FormatDate";
 import { track } from "../analytics";
 import { readOnlyModeEnabledSelector } from "../reducers/settings";
 import EmptyGraph from "../icons/EmptyGraph";

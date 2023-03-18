@@ -9,7 +9,7 @@ import {
 import { withDevice } from "../../hw/deviceAccess";
 import { Transaction } from "./types";
 import { buildUnsignedTransaction } from "./api/network";
-import { estimatedFees } from "./utils";
+import { getEstimatedFees } from "./utils";
 import Hedera from "./hw-app-hedera";
 
 const signOperation = ({
@@ -84,7 +84,7 @@ async function buildOptimisticOperation({
     hash: "",
     type: "OUT",
     value: transaction.amount,
-    fee: estimatedFees,
+    fee: await getEstimatedFees(),
     blockHash: null,
     blockHeight: null,
     senders: [account.freshAddress.toString()],

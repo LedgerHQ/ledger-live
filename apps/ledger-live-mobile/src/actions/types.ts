@@ -288,6 +288,7 @@ export enum SettingsActionTypes {
   SETTINGS_SET_DISCREET_MODE = "SETTINGS_SET_DISCREET_MODE",
   SETTINGS_SET_LANGUAGE = "SETTINGS_SET_LANGUAGE",
   SETTINGS_SET_LOCALE = "SETTINGS_SET_LOCALE",
+  SETTINGS_SET_DATE_FORMAT = "SETTINGS_SET_DATE_FORMAT",
   SET_SWAP_SELECTABLE_CURRENCIES = "SET_SWAP_SELECTABLE_CURRENCIES",
   SET_SWAP_KYC = "SET_SWAP_KYC",
   ACCEPT_SWAP_PROVIDER = "ACCEPT_SWAP_PROVIDER",
@@ -460,6 +461,8 @@ export type SettingsSetWalletTabNavigatorLastVisitedTabPayload = Pick<
   SettingsState,
   "walletTabNavigatorLastVisitedTab"
 >;
+
+export type SettingsSetDateFormatPayload = Pick<SettingsState, "dateFormat">;
 
 export type SettingsSetStatusCenterPayload = Pick<
   SettingsState,

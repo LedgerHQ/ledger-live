@@ -1,41 +1,20 @@
 # @ledgerhq/coin-polkadot
 
-## 0.1.0-nightly.3
+## 0.0.3
 
 ### Patch Changes
 
-- Updated dependencies [[`1d0b2d19eb`](https://github.com/LedgerHQ/ledger-live/commit/1d0b2d19ebc5acd058930b842c6d37f8daf2a5a3), [`170f608de3`](https://github.com/LedgerHQ/ledger-live/commit/170f608de311f320795793b4606b063a3ce96def)]:
-  - @ledgerhq/errors@6.12.4-nightly.0
-  - @ledgerhq/cryptoassets@9.1.0-nightly.1
-  - @ledgerhq/coin-framework@0.1.1-nightly.3
-  - @ledgerhq/devices@8.0.1-nightly.0
-  - @ledgerhq/hw-app-polkadot@6.27.13-nightly.0
+- Updated dependencies [[`bc3af8a918`](https://github.com/LedgerHQ/ledger-live/commit/bc3af8a91819eaa653f76db6333508111963fdba), [`900ef4f528`](https://github.com/LedgerHQ/ledger-live/commit/900ef4f528c3b2359d666fbb76073978d5f9c840), [`297d6cc4a0`](https://github.com/LedgerHQ/ledger-live/commit/297d6cc4a03444fce5272f192accc96fb7f26cef)]:
+  - @ledgerhq/coin-framework@0.2.0
+  - @ledgerhq/cryptoassets@9.1.0
 
-## 0.1.0-nightly.2
+## 0.0.3-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`0ca89a8067`](https://github.com/LedgerHQ/ledger-live/commit/0ca89a80678743e9462aaf977448e759924a56b2)]:
-  - @ledgerhq/cryptoassets@9.1.0-nightly.0
-  - @ledgerhq/coin-framework@0.1.1-nightly.2
-
-## 0.1.0-nightly.1
-
-### Minor Changes
-
-- [#2844](https://github.com/LedgerHQ/ledger-live/pull/2844) [`b2a94b9081`](https://github.com/LedgerHQ/ledger-live/commit/b2a94b908103cbee9473319cc3706876d7ce2a19) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - polkadot serialization coin mod part 2
-
-### Patch Changes
-
-- Updated dependencies [[`76a2f02f03`](https://github.com/LedgerHQ/ledger-live/commit/76a2f02f03863ab01fcdf136bd436c62fb8f526e)]:
-  - @ledgerhq/coin-framework@0.1.1-nightly.1
-
-## 0.0.3-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`297d6cc4a0`](https://github.com/LedgerHQ/ledger-live/commit/297d6cc4a03444fce5272f192accc96fb7f26cef)]:
-  - @ledgerhq/coin-framework@0.1.1-nightly.0
+- Updated dependencies [[`bc3af8a918`](https://github.com/LedgerHQ/ledger-live/commit/bc3af8a91819eaa653f76db6333508111963fdba), [`900ef4f528`](https://github.com/LedgerHQ/ledger-live/commit/900ef4f528c3b2359d666fbb76073978d5f9c840), [`297d6cc4a0`](https://github.com/LedgerHQ/ledger-live/commit/297d6cc4a03444fce5272f192accc96fb7f26cef)]:
+  - @ledgerhq/coin-framework@0.2.0-next.0
+  - @ledgerhq/cryptoassets@9.1.0-next.0
 
 ## 0.0.2
 

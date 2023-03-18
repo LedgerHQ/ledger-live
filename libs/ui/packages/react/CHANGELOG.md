@@ -1,5 +1,31 @@
 # @ledgerhq/react-ui
 
+## 0.12.0
+
+### Minor Changes
+
+- [#2728](https://github.com/LedgerHQ/ledger-live/pull/2728) [`13a71f1cb2`](https://github.com/LedgerHQ/ledger-live/commit/13a71f1cb24fa254a2ed0b2db7f0d7b8f32465b5) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed Country Flags icons. Those are no longer included within ReactUI and IconUI
+
+### Patch Changes
+
+- [#2652](https://github.com/LedgerHQ/ledger-live/pull/2652) [`e41884bb9e`](https://github.com/LedgerHQ/ledger-live/commit/e41884bb9ed5fadbe893042939c12214ea5e9491) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Support neutral info message on BaseInput
+
+- Updated dependencies [[`13a71f1cb2`](https://github.com/LedgerHQ/ledger-live/commit/13a71f1cb24fa254a2ed0b2db7f0d7b8f32465b5)]:
+  - @ledgerhq/icons-ui@0.3.5
+
+## 0.12.0-next.0
+
+### Minor Changes
+
+- [#2728](https://github.com/LedgerHQ/ledger-live/pull/2728) [`13a71f1cb2`](https://github.com/LedgerHQ/ledger-live/commit/13a71f1cb24fa254a2ed0b2db7f0d7b8f32465b5) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed Country Flags icons. Those are no longer included within ReactUI and IconUI
+
+### Patch Changes
+
+- [#2652](https://github.com/LedgerHQ/ledger-live/pull/2652) [`e41884bb9e`](https://github.com/LedgerHQ/ledger-live/commit/e41884bb9ed5fadbe893042939c12214ea5e9491) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Support neutral info message on BaseInput
+
+- Updated dependencies [[`13a71f1cb2`](https://github.com/LedgerHQ/ledger-live/commit/13a71f1cb24fa254a2ed0b2db7f0d7b8f32465b5)]:
+  - @ledgerhq/icons-ui@0.3.5-next.0
+
 ## 0.11.0
 
 ### Minor Changes

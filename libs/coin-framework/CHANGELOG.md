@@ -1,33 +1,30 @@
 # @ledgerhq/coin-framework
 
-## 0.1.1-nightly.3
+## 0.2.0
 
-### Patch Changes
+### Minor Changes
 
-- Updated dependencies [[`1d0b2d19eb`](https://github.com/LedgerHQ/ledger-live/commit/1d0b2d19ebc5acd058930b842c6d37f8daf2a5a3), [`170f608de3`](https://github.com/LedgerHQ/ledger-live/commit/170f608de311f320795793b4606b063a3ce96def)]:
-  - @ledgerhq/errors@6.12.4-nightly.0
-  - @ledgerhq/cryptoassets@9.1.0-nightly.1
-  - @ledgerhq/devices@8.0.1-nightly.0
-  - @ledgerhq/hw-transport@6.28.2-nightly.0
-
-## 0.1.1-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`0ca89a8067`](https://github.com/LedgerHQ/ledger-live/commit/0ca89a80678743e9462aaf977448e759924a56b2)]:
-  - @ledgerhq/cryptoassets@9.1.0-nightly.0
-
-## 0.1.1-nightly.1
-
-### Patch Changes
-
-- [#2327](https://github.com/LedgerHQ/ledger-live/pull/2327) [`76a2f02f03`](https://github.com/LedgerHQ/ledger-live/commit/76a2f02f03863ab01fcdf136bd436c62fb8f526e) Thanks [@RamyEB](https://github.com/RamyEB)! - Add Discover v2 UI behind feature flag
-
-## 0.1.1-nightly.0
+- [#2744](https://github.com/LedgerHQ/ledger-live/pull/2744) [`bc3af8a918`](https://github.com/LedgerHQ/ledger-live/commit/bc3af8a91819eaa653f76db6333508111963fdba) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for address poisoning filtering
 
 ### Patch Changes
 
 - [#2779](https://github.com/LedgerHQ/ledger-live/pull/2779) [`297d6cc4a0`](https://github.com/LedgerHQ/ledger-live/commit/297d6cc4a03444fce5272f192accc96fb7f26cef) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - add edit transaction helper and env variable
+
+- Updated dependencies [[`900ef4f528`](https://github.com/LedgerHQ/ledger-live/commit/900ef4f528c3b2359d666fbb76073978d5f9c840)]:
+  - @ledgerhq/cryptoassets@9.1.0
+
+## 0.2.0-next.0
+
+### Minor Changes
+
+- [#2744](https://github.com/LedgerHQ/ledger-live/pull/2744) [`bc3af8a918`](https://github.com/LedgerHQ/ledger-live/commit/bc3af8a91819eaa653f76db6333508111963fdba) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for address poisoning filtering
+
+### Patch Changes
+
+- [#2779](https://github.com/LedgerHQ/ledger-live/pull/2779) [`297d6cc4a0`](https://github.com/LedgerHQ/ledger-live/commit/297d6cc4a03444fce5272f192accc96fb7f26cef) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - add edit transaction helper and env variable
+
+- Updated dependencies [[`900ef4f528`](https://github.com/LedgerHQ/ledger-live/commit/900ef4f528c3b2359d666fbb76073978d5f9c840)]:
+  - @ledgerhq/cryptoassets@9.1.0-next.0
 
 ## 0.1.0
 
