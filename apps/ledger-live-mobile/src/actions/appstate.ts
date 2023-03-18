@@ -1,12 +1,17 @@
 import type { Dispatch } from "redux";
 import { createAction } from "redux-actions";
 import { isConnectedSelector } from "../reducers/appstate";
-import type { FwUpdateBackgroundEvent, State } from "../reducers/types";
+import type {
+  DeviceLike,
+  FwUpdateBackgroundEvent,
+  State,
+} from "../reducers/types";
 import type {
   AppStateAddBackgroundEventPayload,
   AppStateIsConnectedPayload,
   AppStateSetHasConnectedDevicePayload,
   AppStateSetModalLockPayload,
+  AppStateUpdateMainNavigatorVisibilityPayload,
 } from "./types";
 import { AppStateActionTypes } from "./types";
 
@@ -60,8 +65,25 @@ const dequeueBackgroundEventAction = createAction(
 export const dequeueBackgroundEvent = () => (dispatch: Dispatch) =>
   dispatch(dequeueBackgroundEventAction());
 
+const setWiredDeviceAction = createAction(AppStateActionTypes.SET_WIRED_DEVICE);
+export const setWiredDevice = (wiredDevice: DeviceLike | null) =>
+  setWiredDeviceAction({
+    wiredDevice,
+  });
+
 const clearBackgroundEventsAction = createAction(
   AppStateActionTypes.CLEAR_BACKGROUND_EVENTS,
 );
 export const clearBackgroundEvents = () => (dispatch: Dispatch) =>
   dispatch(clearBackgroundEventsAction());
+
+const updateMainNavigatorVisibilityAction =
+  createAction<AppStateUpdateMainNavigatorVisibilityPayload>(
+    AppStateActionTypes.UPDATE_MAIN_NAVIGATOR_VISIBILITY,
+  );
+export const updateMainNavigatorVisibility = (
+  isMainNavigatorVisible: boolean,
+) =>
+  updateMainNavigatorVisibilityAction({
+    isMainNavigatorVisible,
+  });

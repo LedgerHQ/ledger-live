@@ -27,6 +27,7 @@ export type SettingsNavigatorStackParamList = {
     | undefined;
   [ScreenName.DebugFeatureFlags]: undefined;
   [ScreenName.DebugInformation]: undefined;
+  [ScreenName.DebugPerformance]: undefined;
   [ScreenName.DebugDebugging]: undefined;
   [ScreenName.DebugConfiguration]: undefined;
   [ScreenName.DebugFeatures]: undefined;
@@ -51,10 +52,15 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugHttpTransport]: undefined;
   [ScreenName.DebugLogs]: undefined;
   [ScreenName.DebugLottie]: undefined;
+  [ScreenName.DebugTermsOfUse]: undefined;
+  [ScreenName.DebugVideos]: undefined;
   [ScreenName.BenchmarkQRStream]: undefined;
   [ScreenName.OnboardingLanguage]: undefined;
   [ScreenName.PostOnboardingDebugScreen]: undefined;
   [ScreenName.DebugStoryly]: undefined;
   [ScreenName.DebugFetchCustomImage]: undefined;
+  [ScreenName.DebugFirmwareUpdate]: undefined;
   [ScreenName.DebugCustomImageGraphics]: undefined;
+  [ScreenName.DebugCameraPermissions]: undefined;
+  [ScreenName.DebugQueuedDrawers]: undefined;
 };

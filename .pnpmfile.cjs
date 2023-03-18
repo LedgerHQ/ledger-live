@@ -48,7 +48,7 @@ function readPackage(pkg, context) {
         Furthermore it makes these packages self-contained which eases the CI process.
       */
       addDevDependencies(
-        /^@ledgerhq\/(hw-app.*|hw-transport.*|cryptoassets|devices|errors|logs|react-native-hid|react-native-hw-transport-ble|types-.*)$/,
+        /^@ledgerhq\/(hw-app.*|hw-transport.*|cryptoassets|devices|errors|logs|react-native-hid|react-native-hw-transport-ble|swift-bridge.*|types-.*)$/,
         {
           jest: "^28.1.1",
           "ts-jest": "^28.0.5",
@@ -101,7 +101,7 @@ function readPackage(pkg, context) {
         "web3-utils": pkg.dependencies?.["web3"],
       }),
       addDependencies("@celo/utils", {
-        randombytes: "*",
+        "fp-ts": "*",
         rlp: "*",
       }),
       /*  @cosmjs/* packages */

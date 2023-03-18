@@ -17,6 +17,8 @@ import { SwapFormParamList } from "../../types";
 import { fromSelector, pairsSelector } from "../../../../actions/swap";
 import TranslatedError from "../../../../components/TranslatedError";
 import { ScreenName } from "../../../../const";
+import { useAnalytics } from "../../../../analytics";
+import { sharedSwapTracking } from "../../utils";
 
 interface Props {
   provider?: string;
@@ -26,6 +28,7 @@ interface Props {
 }
 
 export function From({ swapTx, provider, swapError, isSendMaxLoading }: Props) {
+  const { track } = useAnalytics();
   const { t } = useTranslation();
   const navigation = useNavigation<SwapFormParamList>();
 
@@ -58,6 +61,10 @@ export function From({ swapTx, provider, swapError, isSendMaxLoading }: Props) {
   const pairs = useSelector(pairsSelector);
 
   const onPress = useCallback(() => {
+    track("button_clicked", {
+      ...sharedSwapTracking,
+      button: "Edit source account",
+    });
     // @ts-expect-error navigation type is only partially declared
     navigation.navigate(ScreenName.SwapSelectAccount, {
       target: "from",
@@ -65,7 +72,20 @@ export function From({ swapTx, provider, swapError, isSendMaxLoading }: Props) {
       selectableCurrencyIds: [...new Set(pairs.map(p => p.from))],
       swap: swapTx.swap,
     });
-  }, [navigation, provider, pairs, swapTx.swap]);
+  }, [navigation, provider, pairs, swapTx.swap, track]);
+
+  const onFocus = useCallback(
+    (event: boolean) => {
+      if (event) {
+        track("button_clicked", {
+          ...sharedSwapTracking,
+          button: "Amount input",
+          amount: null,
+        });
+      }
+    },
+    [track],
+  );
 
   return (
     <Flex
@@ -95,6 +115,7 @@ export function From({ swapTx, provider, swapError, isSendMaxLoading }: Props) {
               loading={isSendMaxLoading}
               unit={unit}
               onChange={swapTx.setFromAmount}
+              onFocus={onFocus}
               error={swapError}
             />
           </Flex>

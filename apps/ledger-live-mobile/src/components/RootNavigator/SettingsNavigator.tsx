@@ -20,9 +20,11 @@ import DebugExport from "../../screens/Settings/Debug/Features/ExportAccounts";
 import DebugFeatureFlags from "../../screens/FeatureFlagsSettings";
 import DebugFeatures from "../../screens/Settings/Debug/Features";
 import DebugFetchCustomImage from "../../screens/Settings/Debug/Features/FetchCustomImage";
+import DebugFirmwareUpdate from "../../screens/Settings/Debug/Features/FirmwareUpdate";
 import DebugGenerators from "../../screens/Settings/Debug/Generators";
 import DebugHttpTransport from "../../screens/Settings/Debug/Connectivity/DebugHttpTransport";
 import DebugInformation from "../../screens/Settings/Debug/Information";
+import DebugPerformance from "../../screens/Settings/Debug/Performance";
 import DebugLogs from "../../screens/Settings/Debug/Debugging/Logs";
 import DebugLottie from "../../screens/Settings/Debug/Features/Lottie";
 import DebugNetwork from "../../screens/Settings/Debug/Debugging/Network";
@@ -31,6 +33,7 @@ import DebugSettings from "../../screens/Settings/Debug";
 import DebugStore from "../../screens/Settings/Debug/Debugging/Store";
 import DebugStoryly from "../../screens/Settings/Debug/Features/Storyly";
 import DebugSwap from "../../screens/Settings/Debug/Features/Swap";
+import DebugVideos from "../../screens/Settings/Debug/Features/Videos";
 
 import Settings from "../../screens/Settings";
 import AccountsSettings from "../../screens/Settings/Accounts";
@@ -56,6 +59,9 @@ import HiddenNftCollections from "../../screens/Settings/Accounts/HiddenNftColle
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 import PostOnboardingDebugScreen from "../../screens/PostOnboarding/PostOnboardingDebugScreen";
 import { SettingsNavigatorStackParamList } from "./types/SettingsNavigator";
+import DebugTermsOfUse from "../../screens/Settings/Debug/Features/TermsOfUse";
+import CameraPermissions from "../../screens/Settings/Debug/Debugging/CameraPermissions";
+import DebugQueuedDrawers from "../../screens/Settings/Debug/Features/QueuedDrawers";
 
 const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 
@@ -215,7 +221,7 @@ export default function SettingsNavigator() {
         name={ScreenName.DebugGenerators}
         component={DebugGenerators}
         options={{
-          title: "Generators",
+          title: "Generators and Destructors",
         }}
       />
       <Stack.Screen
@@ -337,10 +343,24 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
+        name={ScreenName.DebugVideos}
+        component={DebugVideos}
+        options={{
+          title: "Debug Videos",
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.DebugFetchCustomImage}
         component={DebugFetchCustomImage}
         options={{
           title: "Debug FetchCustomImage",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugFirmwareUpdate}
+        component={DebugFirmwareUpdate}
+        options={{
+          title: "Debug FirmwareUpdate",
         }}
       />
       <Stack.Screen
@@ -355,6 +375,13 @@ export default function SettingsNavigator() {
         component={DebugStoryly}
         options={{
           title: "Debug Storyly",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugTermsOfUse}
+        component={DebugTermsOfUse}
+        options={{
+          title: "Debug Terms of Use",
         }}
       />
       <Stack.Screen
@@ -376,6 +403,24 @@ export default function SettingsNavigator() {
       <Stack.Screen
         name={ScreenName.PostOnboardingDebugScreen}
         component={PostOnboardingDebugScreen}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugCameraPermissions}
+        component={CameraPermissions}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugPerformance}
+        component={DebugPerformance}
+        options={{
+          title: "Performance",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugQueuedDrawers}
+        component={DebugQueuedDrawers}
+        options={{
+          title: "Debug bottom drawers",
+        }}
       />
     </Stack.Navigator>
   );

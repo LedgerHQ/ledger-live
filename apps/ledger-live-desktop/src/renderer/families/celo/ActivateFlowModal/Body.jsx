@@ -18,7 +18,7 @@ import Stepper from "~/renderer/components/Stepper";
 import StepVote, { StepVoteFooter } from "./steps/StepVote";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
-import logger from "~/logger/logger";
+import logger from "~/renderer/logger";
 import type { CeloVote } from "@ledgerhq/live-common/families/celo/types";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import type { TFunction } from "react-i18next";

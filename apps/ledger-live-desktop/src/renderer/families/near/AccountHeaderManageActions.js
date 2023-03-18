@@ -26,33 +26,41 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const hasStakingPositions = nearResources.stakingPositions.length > 0;
 
   const onClick = useCallback(() => {
-    if (hasStakingPositions) {
+    if (!stakingEnabled) {
       dispatch(
-        openModal("MODAL_NEAR_STAKE", {
+        openModal("MODAL_NO_FUNDS_STAKE", {
           account,
+          parentAccount,
         }),
       );
     } else {
-      dispatch(
-        openModal("MODAL_NEAR_REWARDS_INFO", {
-          account,
-        }),
-      );
+      if (hasStakingPositions) {
+        dispatch(
+          openModal("MODAL_NEAR_STAKE", {
+            account,
+          }),
+        );
+      } else {
+        dispatch(
+          openModal("MODAL_NEAR_REWARDS_INFO", {
+            account,
+          }),
+        );
+      }
     }
-  }, [dispatch, account, hasStakingPositions]);
+  }, [stakingEnabled, dispatch, account, hasStakingPositions, parentAccount]);
 
   if (parentAccount) return null;
-
-  const disabledLabel = stakingEnabled ? "" : t("near.stake.minSafeWarning");
-
   return [
     {
-      key: "stake",
+      key: "Stake",
       onClick: onClick,
       icon: IconCoins,
       label: t("account.stake"),
-      disabled: !stakingEnabled,
-      tooltip: disabledLabel,
+      event: "button_clicked",
+      eventProperties: {
+        button: "stake",
+      },
     },
   ];
 };

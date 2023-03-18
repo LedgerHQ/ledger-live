@@ -16,7 +16,7 @@ import { makeCompoundSummaryForAccount } from "@ledgerhq/live-common/compound/lo
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 
-import logger from "~/logger/logger";
+import logger from "~/renderer/logger";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import Track from "~/renderer/analytics/Track";

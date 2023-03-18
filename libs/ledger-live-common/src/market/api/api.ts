@@ -14,13 +14,13 @@ import {
 import { rangeDataTable } from "../utils/rangeDataTable";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "../../env";
-import network from "../../network";
+import network from "@ledgerhq/coin-framework/network";
 
 const cryptoCurrenciesList = [...listCryptoCurrencies(), ...listTokens()];
 
 const supportedCurrencies = listSupportedCurrencies();
 
-const liveCompatibleIds = supportedCurrencies
+const liveCompatibleIds: string[] = supportedCurrencies
   .map(({ id }: CryptoCurrency) => id)
   .filter(Boolean);
 

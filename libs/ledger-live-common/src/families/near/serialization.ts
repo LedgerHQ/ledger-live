@@ -1,5 +1,11 @@
 import { BigNumber } from "bignumber.js";
-import type { NearResources, NearResourcesRaw } from "./types";
+import type {
+  NearAccount,
+  NearAccountRaw,
+  NearResources,
+  NearResourcesRaw,
+} from "./types";
+import { Account, AccountRaw } from "@ledgerhq/types-live";
 
 export function toNearResourcesRaw(r: NearResources): NearResourcesRaw {
   const {
@@ -49,4 +55,20 @@ export function fromNearResourcesRaw(r: NearResourcesRaw): NearResources {
       })
     ),
   };
+}
+
+export function assignToAccountRaw(account: Account, accountRaw: AccountRaw) {
+  const nearAccount = account as NearAccount;
+  if (nearAccount.nearResources) {
+    (accountRaw as NearAccountRaw).nearResources = toNearResourcesRaw(
+      nearAccount.nearResources
+    );
+  }
+}
+
+export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
+  const nearResourcesRaw = (accountRaw as NearAccountRaw).nearResources;
+  if (nearResourcesRaw)
+    (account as NearAccount).nearResources =
+      fromNearResourcesRaw(nearResourcesRaw);
 }

@@ -30,9 +30,9 @@ jobs:
       - name: generate super report
         uses: ./tools/actions/generate-bot-super-report
         with:
-          branch: ${{github.event.inputs.branch}}
-          environment: ${{github.event.inputs.environment}}
-          days: ${{github.event.inputs.days}}
-          slackChannel: ${{github.event.inputs.slackChannel}}
+          branch: ${{inputs.branch}}
+          environment: ${{inputs.environment}}
+          days: ${{inputs.days}}
+          slackChannel: ${{inputs.slackChannel}}
           githubToken: ${{github.token}}
           slackApiToken: ${{secrets.SLACK_API_TOKEN}}

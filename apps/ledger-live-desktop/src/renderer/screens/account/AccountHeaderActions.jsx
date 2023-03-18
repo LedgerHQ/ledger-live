@@ -41,7 +41,7 @@ import {
   SendActionDefault,
   SwapActionDefault,
 } from "./AccountActionsDefault";
-import { swapDefaultTrack } from "~/renderer/screens/exchange/Swap2/utils/index";
+import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const ButtonSettings: ThemedComponent<{ disabled?: boolean }> = styled(Tabbable).attrs(() => ({
@@ -149,9 +149,12 @@ const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModa
   );
 };
 
+const pageName = "Page Account";
+
 const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const contrastText = useTheme("colors.palette.text.shade60");
+  const swapDefaultTrack = useGetSwapTrackingProperties();
 
   // PTX smart routing feature flag - buy sell live app flag
   const ptxSmartRouting = useFeature("ptxSmartRouting");
@@ -202,9 +205,22 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
 
   const history = useHistory();
 
+  const buttonSharedTrackingFields = useMemo(
+    () => ({
+      currency: currency.ticker,
+      currencyName: currency.name,
+      page: pageName,
+    }),
+    [currency],
+  );
+
   const onBuySell = useCallback(
     (mode = "buy") => {
       setTrackingSource("account header actions");
+      track("button_clicked", {
+        button: mode,
+        ...buttonSharedTrackingFields,
+      });
 
       history.push({
         pathname: "/exchange",
@@ -221,7 +237,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
             },
       });
     },
-    [currency, history, mainAccount, ptxSmartRouting],
+    [currency, history, mainAccount.id, ptxSmartRouting?.enabled, buttonSharedTrackingFields],
   );
 
   const onLend = useCallback(() => {
@@ -233,11 +249,10 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const onSwap = useCallback(() => {
     track("button_clicked", {
       button: "swap",
-      currency: currency.ticker,
-      page: "Page Account",
+      ...buttonSharedTrackingFields,
       ...swapDefaultTrack,
     });
-    setTrackingSource("Page Account");
+    setTrackingSource(pageName);
     history.push({
       pathname: "/swap",
       state: {
@@ -246,17 +261,34 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
         defaultParentAccount: parentAccount,
       },
     });
-  }, [currency, history, account, parentAccount]);
+  }, [currency, swapDefaultTrack, history, account, parentAccount, buttonSharedTrackingFields]);
 
   const onSend = useCallback(() => {
+    track("button_clicked", {
+      button: "send",
+      ...buttonSharedTrackingFields,
+    });
     openModal("MODAL_SEND", { parentAccount, account });
-  }, [parentAccount, account, openModal]);
+  }, [openModal, parentAccount, account, buttonSharedTrackingFields]);
 
   const onReceive = useCallback(() => {
+    track("button_clicked", {
+      button: "receive",
+      ...buttonSharedTrackingFields,
+    });
     openModal("MODAL_RECEIVE", { parentAccount, account });
-  }, [parentAccount, account, openModal]);
+  }, [openModal, parentAccount, account, buttonSharedTrackingFields]);
 
-  const renderAction = ({ label, onClick, event, eventProperties, icon, disabled, tooltip }) => {
+  const renderAction = ({
+    label,
+    onClick,
+    event,
+    eventProperties,
+    icon,
+    disabled,
+    tooltip,
+    accountActionsTestId,
+  }) => {
     const Icon = icon;
 
     const Action = (
@@ -267,6 +299,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
         eventProperties={eventProperties}
         iconComponent={Icon && <Icon size={14} overrideColor={contrastText} currency={currency} />}
         labelComponent={label}
+        accountActionsTestId={accountActionsTestId}
       />
     );
 
@@ -286,7 +319,10 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     disabled?: boolean,
     tooltip?: string,
   }[] = [
-    ...manageList,
+    ...manageList.map(item => ({
+      ...item,
+      eventProperties: { ...buttonSharedTrackingFields, ...item.eventProperties },
+    })),
     ...(availableOnCompound
       ? [
           {

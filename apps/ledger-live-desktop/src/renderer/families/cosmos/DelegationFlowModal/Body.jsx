@@ -24,14 +24,14 @@ import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
-import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
 import { BigNumber } from "bignumber.js";
 
 import Stepper from "~/renderer/components/Stepper";
 import StepDelegation, { StepDelegationFooter } from "./steps/StepDelegation";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
-import logger from "~/logger/logger";
+import logger from "~/renderer/logger";
 
 type OwnProps = {|
   stepId: StepId,
@@ -129,7 +129,9 @@ const Body = ({
 
     const transaction = bridge.updateTransaction(t, {
       mode: "delegate",
-      validators: [{ address: LEDGER_VALIDATOR_ADDRESS, amount: BigNumber(0) }],
+      validators: [
+        { address: cryptoFactory(account.currency.id).ledgerValidator, amount: BigNumber(0) },
+      ],
       recipient: account.freshAddress,
     });
 

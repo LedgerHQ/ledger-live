@@ -1,8 +1,9 @@
 import React from "react";
 import { DefaultTheme } from "styled-components/native";
-import { HeaderTitleProps } from "@react-navigation/elements";
 import HeaderRightClose from "../components/HeaderRightClose";
-import HeaderTitle from "../components/HeaderTitle";
+import HeaderTitle, {
+  Props as HeaderTitleProps,
+} from "../components/HeaderTitle";
 import HeaderBackImage from "../components/HeaderBackImage";
 import styles from "./styles";
 import { Theme } from "../colors";

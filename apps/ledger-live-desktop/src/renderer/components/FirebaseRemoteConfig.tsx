@@ -3,7 +3,8 @@ import { initializeApp } from "firebase/app";
 import { getRemoteConfig, fetchAndActivate, RemoteConfig } from "firebase/remote-config";
 import { defaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
 import { DefaultFeatures } from "@ledgerhq/types-live";
-import { reduce, snakeCase } from "lodash";
+import reduce from "lodash/reduce";
+import snakeCase from "lodash/snakeCase";
 
 import { getFirebaseConfig } from "~/firebase-setup";
 
@@ -44,6 +45,11 @@ export const FirebaseRemoteConfigProvider = ({ children }: Props): JSX.Element |
     const fetchConfig = async () => {
       try {
         const remoteConfig = getRemoteConfig();
+
+        if (__DEV__) {
+          remoteConfig.settings.minimumFetchIntervalMillis = 0;
+        }
+
         remoteConfig.defaultConfig = {
           ...formatDefaultFeatures(defaultFeatures),
         };

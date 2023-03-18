@@ -8,11 +8,11 @@ import invariant from "invariant";
 import { Observable } from "rxjs";
 import { toBalanceHistoryRaw } from "@ledgerhq/live-common/account/index";
 import type { PortfolioRange } from "@ledgerhq/types-live";
-import { getPortfolioCountByDate } from "@ledgerhq/live-common/portfolio/v2/index";
 import {
   getRanges,
   getDates,
-} from "@ledgerhq/live-common/portfolio/v2/range";
+  getPortfolioCountByDate,
+ } from "@ledgerhq/live-common/portfolio/v2/index";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 import {
   formatCurrencyUnit,

@@ -1,3 +1,5 @@
+import { setSupportedCurrencies } from "../../currencies/index";
+setSupportedCurrencies(["tron"]);
 import { renderHook, act } from "@testing-library/react-hooks";
 import {
   useTronSuperRepresentatives,

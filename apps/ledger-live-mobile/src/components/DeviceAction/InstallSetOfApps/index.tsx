@@ -1,19 +1,25 @@
 import React, { useCallback, useState, useMemo } from "react";
 import { Trans } from "react-i18next";
+import { useSelector } from "react-redux";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import withRemountableWrapper from "@ledgerhq/live-common/hoc/withRemountableWrapper";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { getDeviceModel } from "@ledgerhq/devices";
+import { DeviceModelInfo } from "@ledgerhq/types-live";
 
+import { TrackScreen, track } from "../../../analytics";
 import { DeviceActionDefaultRendering } from "..";
-import BottomModal from "../../BottomModal";
+import QueuedDrawer from "../../QueuedDrawer";
 
 import Item from "./Item";
 import Confirmation from "./Confirmation";
+import Restore from "./Restore";
+import { lastSeenDeviceSelector } from "../../../reducers/settings";
 
 type Props = {
+  restore?: boolean;
   dependencies?: string[];
   device: Device;
   onResult: (done: boolean) => void;
@@ -25,11 +31,12 @@ const action = createAction(connectApp);
 /**
  * This component overrides the default rendering for device actions in some
  * cases, falling back to the default one for the rest. Actions such as user blocking
- * requests, errors and such will be rendered in a BottomModal whereas installation
+ * requests, errors and such will be rendered in a QueuedDrawer whereas installation
  * progress and loading states will be handled inline as part of the screen where this
  * this is rendered.
  */
 const InstallSetOfApps = ({
+  restore = false,
   dependencies = [],
   device: selectedDevice,
   onResult,
@@ -38,14 +45,33 @@ const InstallSetOfApps = ({
 }: Props & { remountMe: () => void }) => {
   const [userConfirmed, setUserConfirmed] = useState(false);
   const productName = getDeviceModel(selectedDevice.modelId).productName;
+  const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(
+    lastSeenDeviceSelector,
+  );
+  const lastDeviceProductName = lastSeenDevice?.modelId
+    ? getDeviceModel(lastSeenDevice?.modelId).productName
+    : lastSeenDevice?.modelId;
+
+  const shouldRestoreApps = restore && !!lastSeenDevice;
+
+  const dependenciesToInstall = useMemo(() => {
+    if (shouldRestoreApps && lastSeenDevice) {
+      return lastSeenDevice.apps.map(app => app.name);
+    }
+    if (shouldRestoreApps && !lastSeenDevice) {
+      return [];
+    }
+    return dependencies;
+  }, [shouldRestoreApps, dependencies, lastSeenDevice]);
 
   const commandRequest = useMemo(
     () => ({
-      dependencies: dependencies.map(appName => ({ appName })),
+      dependencies: dependenciesToInstall.map(appName => ({ appName })),
       appName: "BOLOS",
       withInlineInstallProgress: true,
+      skipAppInstallIfNotFound: true,
     }),
-    [dependencies],
+    [dependenciesToInstall],
   );
 
   const status = action.useHook(
@@ -77,7 +103,9 @@ const InstallSetOfApps = ({
 
   if (opened) {
     onResult(true);
-    return null;
+    return error ? null : (
+      <TrackScreen category="Step 5: Install apps - successful" />
+    );
   }
 
   return userConfirmed ? (
@@ -97,29 +125,34 @@ const InstallSetOfApps = ({
             )}
           </Text>
           {itemProgress !== undefined
-            ? dependencies?.map((appName, i) => (
-                <Item
-                  key={appName}
-                  i={i}
-                  appName={appName}
-                  isActive={currentAppOp?.name === appName}
-                  installed={
-                    progress ? !installQueue?.includes(appName) : undefined
-                  }
-                  itemProgress={itemProgress}
-                />
-              ))
+            ? dependenciesToInstall?.map((appName, i) => {
+                const isActive = currentAppOp?.name === appName;
+                return (
+                  <>
+                    {!shouldRestoreApps && isActive && (
+                      <TrackScreen category={`Installing ${appName}`} />
+                    )}
+                    <Item
+                      key={appName}
+                      i={i}
+                      appName={appName}
+                      isActive={isActive}
+                      installed={
+                        progress ? !installQueue?.includes(appName) : undefined
+                      }
+                      itemProgress={itemProgress}
+                    />
+                  </>
+                );
+              })
             : null}
         </Flex>
       </Flex>
-      <Text textAlign="center" color="neutral.c70">
-        <Trans
-          i18nKey="installSetOfApps.ongoing.disclaimer"
-          values={{ productName }}
-        />
+      <Text variant="paragraphLineHeight" color="neutral.c70">
+        <Trans i18nKey="installSetOfApps.ongoing.disclaimer" />
       </Text>
-      <BottomModal
-        isOpened={!!allowManagerRequestedWording || !!error}
+      <QueuedDrawer
+        isRequestingToBeOpened={!!allowManagerRequestedWording || !!error}
         onClose={onWrappedError}
         onModalHide={onWrappedError}
       >
@@ -131,14 +164,38 @@ const InstallSetOfApps = ({
             />
           </Flex>
         </Flex>
-      </BottomModal>
+      </QueuedDrawer>
     </Flex>
+  ) : shouldRestoreApps ? (
+    <>
+      <TrackScreen category="Restore Applications Start" />
+      <Restore
+        deviceName={lastDeviceProductName}
+        onConfirm={() => {
+          track("button_clicked", { button: "Restore applications" });
+          setUserConfirmed(true);
+        }}
+        onReject={() => {
+          track("button_clicked", { button: "I'll do this later" });
+          onResult(false);
+        }}
+      />
+    </>
   ) : (
-    <Confirmation
-      productName={productName}
-      onConfirm={() => setUserConfirmed(true)}
-      onReject={() => onResult(false)}
-    />
+    <>
+      <TrackScreen category="Install Applications Start" />
+      <Confirmation
+        productName={productName}
+        onConfirm={() => {
+          track("button_clicked", { button: "Install applications" });
+          setUserConfirmed(true);
+        }}
+        onReject={() => {
+          track("button_clicked", { button: "I'll do this later" });
+          onResult(false);
+        }}
+      />
+    </>
   );
 };
 

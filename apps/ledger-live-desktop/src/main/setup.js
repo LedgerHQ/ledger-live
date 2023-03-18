@@ -1,50 +1,27 @@
 // @flow
 
-import "../live-common-setup-base";
+import "~/live-common-setup-base";
+import { captureException } from "~/sentry/main";
 import { ipcMain } from "electron";
 import contextMenu from "electron-context-menu";
 import { log } from "@ledgerhq/logs";
-import logger, { enableDebugLogger } from "../logger";
-import LoggerTransport from "~/logger/logger-transport-main";
-import LoggerTransportFirmware from "~/logger/logger-transport-firmware";
 import { fsWriteFile, fsReadFile, fsUnlink } from "~/helpers/fs";
 import updater from "./updater";
 import resolveUserDataDirectory from "~/helpers/resolveUserDataDirectory";
 import path from "path";
-import { enableFileLogger } from "~/logger/logger-transport-file";
-
-const loggerTransport = new LoggerTransport();
-const loggerFirmwareTransport = new LoggerTransportFirmware();
-logger.add(loggerTransport);
-logger.add(loggerFirmwareTransport);
-
-if (process.env.DEV_TOOLS || process.env.DEBUG_LOGS) {
-  enableDebugLogger();
-}
-
-if (process.env.DESKTOP_LOGS_FILE) {
-  let possiblydir = process.env.DESKTOP_LOGS_FILE;
-  if (possiblydir === "true" || possiblydir === "1") {
-    possiblydir = null; // we will infer the base desktop app folder instead
-  }
-  enableFileLogger(possiblydir);
-}
 
 ipcMain.on("mainCrashTest", () => {
-  logger.critical(new Error("CrashTestMain"));
+  captureException(new Error("CrashTestMain"));
 });
 
 ipcMain.on("updater", (e, type) => {
   updater(type);
 });
 
-ipcMain.handle("save-logs", async (event, path: { canceled: boolean, filePath: string }) =>
-  Promise.resolve().then(
-    () =>
-      !path.canceled &&
-      path.filePath &&
-      fsWriteFile(path.filePath, JSON.stringify(loggerTransport.logs)),
-  ),
+ipcMain.handle(
+  "save-logs",
+  async (event, path: { canceled: boolean, filePath: string }, experimentalLogs: string) =>
+    !path.canceled && path.filePath && fsWriteFile(path.filePath, experimentalLogs),
 );
 
 ipcMain.handle(
@@ -122,4 +99,4 @@ contextMenu({
   },
 });
 
-logger.info(`Ledger Live version: ${__APP_VERSION__}`, { type: "system-info" });
+console.log(`Ledger Live version: ${__APP_VERSION__}`, { type: "system-info" });

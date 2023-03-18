@@ -2,6 +2,7 @@ import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Tag } from "@ledgerhq/native-ui";
 import { Linking } from "react-native";
+import { urls } from "../../../config/urls";
 import Button from "../../Button";
 
 function ConfirmIdentityProtectState({
@@ -14,15 +15,13 @@ function ConfirmIdentityProtectState({
   const { confirmNowURI, viewDetailsURI } = params || {};
 
   const onConfirmNow = useCallback(() => {
-    Linking.canOpenURL(confirmNowURI).then(() =>
-      Linking.openURL(confirmNowURI),
-    );
+    const url = `${confirmNowURI}&source=${urls.recoverSources.myLedger}`;
+    Linking.canOpenURL(url).then(() => Linking.openURL(url));
   }, [confirmNowURI]);
 
   const onViewDetails = useCallback(() => {
-    Linking.canOpenURL(viewDetailsURI).then(() =>
-      Linking.openURL(viewDetailsURI),
-    );
+    const url = `${viewDetailsURI}&source=${urls.recoverSources.myLedger}`;
+    Linking.canOpenURL(url).then(() => Linking.openURL(url));
   }, [viewDetailsURI]);
 
   return (

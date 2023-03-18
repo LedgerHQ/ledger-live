@@ -1,11 +1,9 @@
 import { CosmosAccount, Transaction } from "./types";
 import BigNumber from "bignumber.js";
-import { defaultCosmosAPI } from "./api/Cosmos";
-import { getEnv } from "../../env";
-import { buildTransaction, postBuildTransaction } from "./js-buildTransaction";
 import { getMaxEstimatedBalance } from "./logic";
 import { CacheRes, makeLRUCache } from "../../cache";
 import type { Account } from "@ledgerhq/types-live";
+import cryptoFactory from "./chain/chain";
 
 export const calculateFees: CacheRes<
   Array<{
@@ -42,47 +40,12 @@ const getEstimatedFees = async (
   account: CosmosAccount,
   transaction: Transaction
 ): Promise<any> => {
-  let gasQty = new BigNumber(250000);
-  const gasPrice = new BigNumber(getEnv("COSMOS_GAS_PRICE"));
-
-  const unsignedPayload = await buildTransaction(account, transaction);
-
-  // be sure payload is complete
-  if (unsignedPayload) {
-    const pubkey = {
-      typeUrl: "/cosmos.crypto.secp256k1.PubKey",
-      value: new Uint8Array([
-        ...new Uint8Array([10, 33]),
-        ...new Uint8Array(Buffer.from(account.seedIdentifier, "hex")),
-      ]),
-    };
-
-    const tx_bytes = await postBuildTransaction(
-      account,
-      transaction,
-      pubkey,
-      unsignedPayload,
-      new Uint8Array(Buffer.from(account.seedIdentifier, "hex"))
-    );
-
-    const gasUsed = await defaultCosmosAPI.simulate(tx_bytes);
-
-    if (gasUsed.gt(0)) {
-      gasQty = gasUsed
-        // Don't known what is going on,
-        // Ledger Live Desktop return half of what it should,
-        // Ledger Live Common CLI do the math correctly.
-        // Use coeff 2 as trick..
-        // .multipliedBy(new BigNumber(getEnv("COSMOS_GAS_AMPLIFIER")))
-        .multipliedBy(new BigNumber(getEnv("COSMOS_GAS_AMPLIFIER") * 2))
-        .integerValue();
-    }
+  const cosmosCurrency = cryptoFactory(account.currency.id);
+  let estimatedGas = new BigNumber(cosmosCurrency.defaultGas);
+  if (cosmosCurrency.gas[transaction.mode]) {
+    estimatedGas = new BigNumber(cosmosCurrency.gas[transaction.mode]);
   }
-
-  const estimatedGas = gasQty;
-
-  const estimatedFees = gasPrice.multipliedBy(gasQty).integerValue();
-
+  const estimatedFees = estimatedGas.times(cosmosCurrency.minGasprice);
   return { estimatedFees, estimatedGas };
 };
 

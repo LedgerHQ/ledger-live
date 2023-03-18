@@ -1,5 +1,5 @@
 import { _electron as electron } from "playwright";
-import { test as base, expect, Page, ElectronApplication } from "@playwright/test";
+import { test as base, Page, ElectronApplication } from "@playwright/test";
 import * as fs from "fs";
 import * as path from "path";
 import * as crypto from "crypto";
@@ -101,35 +101,12 @@ const test = base.extend<TestFixtures>({
     // app is ready
     const page = await electronApp.firstWindow();
 
-    // start coverage
-    const istanbulCLIOutput = path.join(__dirname, "../artifacts/.nyc_output");
-
-    await page.addInitScript(() =>
-      window.addEventListener("beforeunload", () =>
-        (window as any).collectIstanbulCoverage(JSON.stringify((window as any).__coverage__)),
-      ),
-    );
-    await fs.promises.mkdir(istanbulCLIOutput, { recursive: true });
-    await page.exposeFunction("collectIstanbulCoverage", (coverageJSON: string) => {
-      if (coverageJSON)
-        fs.writeFileSync(
-          path.join(istanbulCLIOutput, `playwright_coverage_${generateUUID()}.json`),
-          coverageJSON,
-        );
-    });
-
     // app is loaded
-    // expect(await page.title()).toBe("Ledger Live");
     await page.waitForLoadState("domcontentloaded");
     await page.waitForSelector("#loader-container", { state: "hidden" });
 
     // use page in the test
     await use(page);
-
-    // stop coverage
-    await page.evaluate(() =>
-      (window as any).collectIstanbulCoverage(JSON.stringify((window as any).__coverage__)),
-    );
 
     // close app
     await electronApp.close();

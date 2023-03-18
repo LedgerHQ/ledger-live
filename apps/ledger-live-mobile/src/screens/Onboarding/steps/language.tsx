@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { I18nManager, ScrollView } from "react-native";
 import { Trans } from "react-i18next";
-import { Flex, SelectableList, BottomDrawer } from "@ledgerhq/native-ui";
+import { Flex, SelectableList } from "@ledgerhq/native-ui";
 import i18next from "i18next";
 import RNRestart from "react-native-restart";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,7 +11,7 @@ import { from } from "rxjs";
 import { DeviceModelInfo, idsToLanguage, Language } from "@ledgerhq/types-live";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
-import { getDeviceModel } from "@ledgerhq/devices";
+import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { CompositeScreenProps } from "@react-navigation/native";
 import { useLocale } from "../../../context/Locale";
@@ -37,6 +37,7 @@ import {
 import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
 import { BaseOnboardingNavigatorParamList } from "../../../components/RootNavigator/types/BaseOnboardingNavigator";
 import Button from "../../../components/Button";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 
 type NavigationProps = CompositeScreenProps<
   StackNavigatorProps<
@@ -54,6 +55,10 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
     useState<boolean>(false);
   const [preventPromptBackdropClick, setPreventPromptBackdropClick] =
     useState<boolean>(false);
+
+  // Watchdog to prevent navigating back twice due onClose being called when user closes the drawer
+  // and when the drawer is hidden (see BaseModal)
+  const [wasNextCalled, setWasNextCalled] = useState<boolean>(false);
 
   const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(
     lastSeenDeviceSelector,
@@ -98,8 +103,11 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
   };
 
   const next = useCallback(() => {
-    navigation.goBack();
-  }, [navigation]);
+    if (!wasNextCalled) {
+      setWasNextCalled(true);
+      navigation.goBack();
+    }
+  }, [navigation, wasNextCalled]);
 
   // no useCallBack around RNRRestart, or the app might crash.
   const changeLanguageRTL = async () => {
@@ -128,7 +136,7 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
           potentialDeviceLanguage !== undefined &&
           availableLanguages.includes(potentialDeviceLanguage);
 
-        // firmware version verification is not really needed here, the presence of a language id
+        // Nb firmware version verification is not really needed here, the presence of a language id
         // indicates that we are in a firmware that supports localization
         if (
           l !== currentLocale &&
@@ -164,13 +172,14 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
     next();
   }, [next]);
 
-  const deviceName =
-    lastSeenDevice && getDeviceModel(lastSeenDevice?.modelId).productName;
+  const deviceModel = getDeviceModel(
+    lastSeenDevice?.modelId || DeviceModelId.nanoX,
+  );
 
   return (
     <>
       <Flex flex={1} p={6}>
-        <ScrollView>
+        <ScrollView testID="scrollView-language-change">
           <Flex mb={4}>
             <SelectableList
               currentValue={currentLocale}
@@ -185,8 +194,8 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
           </Flex>
         </ScrollView>
       </Flex>
-      <BottomDrawer
-        isOpen={isDeviceLanguagePromptOpen}
+      <QueuedDrawer
+        isRequestingToBeOpened={isDeviceLanguagePromptOpen}
         onClose={closeDeviceLanguagePrompt}
         preventBackdropClick={preventPromptBackdropClick}
       >
@@ -216,7 +225,7 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
           ) : (
             <ChangeDeviceLanguagePrompt
               language={localeIdToDeviceLanguage[currentLocale] as Language}
-              deviceName={deviceName ?? ""}
+              deviceModel={deviceModel}
               onConfirm={() => {
                 track("Page LiveLanguageChange LanguageInstallTriggered", {
                   selectedLanguage: localeIdToDeviceLanguage[currentLocale],
@@ -226,9 +235,9 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
             />
           )}
         </Flex>
-      </BottomDrawer>
-      <BottomDrawer
-        isOpen={isRestartPromptOpened}
+      </QueuedDrawer>
+      <QueuedDrawer
+        isRequestingToBeOpened={isRestartPromptOpened}
         preventBackdropClick={false}
         title={<Trans i18nKey={"onboarding.stepLanguage.RestartModal.title"} />}
         description={
@@ -253,7 +262,7 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
             onPress={changeLanguageRTL}
           />
         </Flex>
-      </BottomDrawer>
+      </QueuedDrawer>
     </>
   );
 }

@@ -33,7 +33,7 @@ import {
   AccountBannerState,
   getAccountBannerState as getCosmosBannerState,
 } from "@ledgerhq/live-common/families/cosmos/banner";
-import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { AccountLike } from "@ledgerhq/types-live";
@@ -80,7 +80,7 @@ function Delegations({ account }: Props) {
   const unit = getAccountUnit(mainAccount);
   const navigation = useNavigation();
 
-  const { validators } = useCosmosFamilyPreloadData("cosmos");
+  const { validators } = useCosmosFamilyPreloadData(account.currency.id);
 
   const { cosmosResources } = mainAccount;
 
@@ -146,7 +146,7 @@ function Delegations({ account }: Props) {
     onNavigate({
       route: NavigatorName.CosmosDelegationFlow,
       screen:
-        delegations.length > 0
+        delegations.length === 0
           ? ScreenName.CosmosDelegationValidator
           : ScreenName.CosmosDelegationStarted,
     });
@@ -165,7 +165,7 @@ function Delegations({ account }: Props) {
 
   useEffect(() => {
     const state = getCosmosBannerState({ ...account });
-    const bannerText = getCosmosBannerProps(state, { t });
+    const bannerText = getCosmosBannerProps(state, { t }, account);
     setBanner({ ...state, ...bannerText });
   }, [account, t]);
 
@@ -467,7 +467,7 @@ function Delegations({ account }: Props) {
           <ValidatorImage
             isLedger={
               (delegation || undelegation)?.validatorAddress ===
-              LEDGER_VALIDATOR_ADDRESS
+              cryptoFactory(account.currency.id).ledgerValidator
             }
             name={
               (delegation || undelegation)?.validator?.name ??
@@ -520,6 +520,7 @@ function Delegations({ account }: Props) {
           image={<IlluRewards style={styles.illustration} />}
           description={t("cosmos.delegation.delegationEarn", {
             name: account.currency.name,
+            ticker: account.currency.ticker,
           })}
           infoUrl={urls.cosmosStaking}
           infoTitle={t("cosmos.delegation.info")}

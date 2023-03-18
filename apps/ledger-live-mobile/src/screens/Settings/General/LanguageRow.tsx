@@ -27,6 +27,7 @@ const LanguageSettingsRow = () => {
       desc={t("settings.display.languageDesc")}
       arrowRight
       onPress={onNavigate}
+      testID="language-button"
     >
       <Text variant={"body"} fontWeight={"medium"} color="primary.c80">
         {languages[locale] || locale}

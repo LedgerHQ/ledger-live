@@ -2,23 +2,23 @@ import { DerivationModes } from "../types";
 import BitcoinLikeWallet from "../wallet";
 import * as utils from "../utils";
 import { Account } from "../account";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 describe("testing estimateMaxSpendable", () => {
   const wallet = new BitcoinLikeWallet();
   let account: Account;
   it("should generate an account", async () => {
-    account = await wallet.generateAccount({
-      xpub: "xpub6CV2NfQJYxHn7MbSQjQip3JMjTZGUbeoKz5xqkBftSZZPc7ssVPdjKrgh6N8U1zoQDxtSo6jLarYAQahpd35SJoUKokfqf1DZgdJWZhSMqP",
-      path: "44'/0'",
-      index: 0,
-      currency: "bitcoin",
-      network: "mainnet",
-      derivationMode: DerivationModes.LEGACY,
-      explorer: "ledgerv3",
-      explorerURI: "https://explorers.api.vault.ledger.com/blockchain/v3/btc",
-      storage: "mock",
-      storageParams: [],
-    });
+    account = await wallet.generateAccount(
+      {
+        xpub: "xpub6CV2NfQJYxHn7MbSQjQip3JMjTZGUbeoKz5xqkBftSZZPc7ssVPdjKrgh6N8U1zoQDxtSo6jLarYAQahpd35SJoUKokfqf1DZgdJWZhSMqP",
+        path: "44'/0'",
+        index: 0,
+        currency: "bitcoin",
+        network: "mainnet",
+        derivationMode: DerivationModes.LEGACY,
+      },
+      getCryptoCurrencyById("bitcoin")
+    );
 
     expect(account.xpub.xpub).toEqual(
       "xpub6CV2NfQJYxHn7MbSQjQip3JMjTZGUbeoKz5xqkBftSZZPc7ssVPdjKrgh6N8U1zoQDxtSo6jLarYAQahpd35SJoUKokfqf1DZgdJWZhSMqP"

@@ -106,6 +106,7 @@ export const withDevice =
 
       // When we'll finish all the current job, we'll call finish
       let resolveQueuedDevice;
+
       // This new promise is the next exec queue
       deviceQueues[deviceId] = new Promise((resolve) => {
         resolveQueuedDevice = resolve;
@@ -118,12 +119,14 @@ export const withDevice =
       deviceQueue
         .then(() => open(deviceId)) // open the transport
         .then(async (transport) => {
-          log("withDevice", `${nonce}: Starting job`);
-          setAllowAutoDisconnect(transport, deviceId, false);
+          log("withDevice", `${nonce}: got a transport`);
+
           if (unsubscribed) {
+            log("withDevice", `${nonce}: but we're unsubscribed`);
             // It was unsubscribed prematurely
             return finalize(transport, [resolveQueuedDevice]);
           }
+          setAllowAutoDisconnect(transport, deviceId, false);
 
           if (needsCleanup[identifyTransport(transport)]) {
             delete needsCleanup[identifyTransport(transport)];
@@ -149,6 +152,7 @@ export const withDevice =
             return finalize(transport, [resolveQueuedDevice]);
           }
 
+          log("withDevice", `${nonce}: Starting job`);
           sub = job(transport)
             .pipe(
               catchError(initialErrorRemapping),
@@ -170,6 +174,7 @@ export const withDevice =
         if (sub) sub.unsubscribe();
       };
     });
+
 export const genericCanRetryOnError = (err: unknown): boolean => {
   if (err instanceof WrongAppForCurrency) return false;
   if (err instanceof WrongDeviceForAccount) return false;
@@ -182,6 +187,7 @@ export const genericCanRetryOnError = (err: unknown): boolean => {
   if (err instanceof TransportInterfaceNotAvailable) return false;
   return true;
 };
+
 export const retryWhileErrors =
   (acceptError: (arg0: Error) => boolean) =>
   (attempts: Observable<any>): Observable<any> =>
@@ -194,6 +200,7 @@ export const retryWhileErrors =
         return timer(getEnv("WITH_DEVICE_POLLING_DELAY"));
       })
     );
+
 export const withDevicePolling =
   (deviceId: string) =>
   <T>(

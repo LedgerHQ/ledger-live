@@ -14,7 +14,9 @@ test("Unsupported OS", async ({ page }) => {
   const layout = new Layout(page);
   await test.step("displays the error page", async () => {
     await layout.renderError.waitFor({ state: "visible" });
-    expect(await layout.renderError.isVisible()).toBe(true);
-    expect(await layout.page.screenshot()).toMatchSnapshot("error-os-unsupported.png");
+    await expect(layout.renderError).toBeVisible();
+    await expect(page).toHaveScreenshot("error-os-unsupported.png", {
+      clip: { x: 0, y: 0, width: 1024, height: 400 },
+    });
   });
 });

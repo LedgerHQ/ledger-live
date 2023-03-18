@@ -9,7 +9,7 @@ import ImageCropper, {
 } from "../../components/CustomImage/ImageCropper";
 import { ImageDimensions } from "../../components/CustomImage/types";
 import { targetDisplayDimensions } from "./shared";
-import Button from "../../components/Button";
+import Button from "../../components/wrappedUi/Button";
 import { ScreenName } from "../../const";
 import BottomContainer from "../../components/CustomImage/BottomButtonsContainer";
 import Touchable from "../../components/Touchable";
@@ -18,6 +18,7 @@ import {
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
 import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
+import { TrackScreen } from "../../analytics";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<
@@ -25,6 +26,14 @@ type NavigationProps = BaseComposite<
     ScreenName.CustomImageStep1Crop
   >
 >;
+
+const analyticsScreenName = "Crop or rotate picture";
+const analyticsRotateEventProps = {
+  button: "Rotate",
+};
+const analyticsConfirmProps = {
+  button: "Confirm crop",
+};
 
 /**
  * UI component that loads the input image (from the route params) &
@@ -92,6 +101,7 @@ const Step1Cropping = ({ navigation, route }: NavigationProps) => {
        */
       paddingBottom={bottom}
     >
+      <TrackScreen category={analyticsScreenName} />
       <Flex
         flex={1}
         onLayout={baseImageFile ? onContainerLayout : undefined}
@@ -124,7 +134,11 @@ const Step1Cropping = ({ navigation, route }: NavigationProps) => {
       {baseImageFile ? (
         <BottomContainer>
           <Box mb={7} alignSelf="center">
-            <Touchable onPress={handlePressRotateLeft}>
+            <Touchable
+              onPress={handlePressRotateLeft}
+              event="button_clicked"
+              eventProperties={analyticsRotateEventProps}
+            >
               <Flex
                 py={4}
                 px={6}
@@ -148,6 +162,8 @@ const Step1Cropping = ({ navigation, route }: NavigationProps) => {
               size="large"
               onPress={handlePressNext}
               outline={false}
+              event="button_clicked"
+              eventProperties={analyticsConfirmProps}
             >
               {t("customImage.confirmCrop")}
             </Button>

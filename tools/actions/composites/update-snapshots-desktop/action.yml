@@ -4,29 +4,10 @@ inputs:
   os:
     description: "name of the os (same as runs-on)"
     required: true
-  turbo-server-port:
-    description: "port on which the turborepo local cache server is running"
-    required: true
 
 runs:
   using: "composite"
   steps:
-    - name: Install dependencies
-      run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
-      shell: bash
-    - name: Install playwright dependencies
-      run: npx playwright@1.27.1 install --with-deps chromium
-      shell: bash
-    - name: Build dependencies
-      env:
-        GOGC: 75
-      run: |
-        pnpm build:lld:deps --api="http://127.0.0.1:${{ inputs.turbo-server-port }}" --token="yolo" --team="foo"
-        pnpm desktop build:testing
-      shell: bash
-    - name: Build Dummy SDK app for testing
-      run: pnpm --filter="dummy-live-app" i && pnpm --filter="dummy-live-app" build
-      shell: bash
     - name: Update playwright snapshots [Linux => xvfb-run]
       if: inputs.os == 'ubuntu-latest'
       run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:update-snapshots
@@ -37,13 +18,19 @@ runs:
       shell: bash
     - name: status
       id: status
-      run: echo "::set-output name=status::$(git status --porcelain | wc -l)"
+      run: echo "status=$(git status --porcelain | wc -l)" >> $GITHUB_OUTPUT
+      shell: bash
+    - id: changes
+      run: echo "changes=$(git status -s)"
       shell: bash
     - name: Commit snapshots
       if: steps.status.outputs.status != 0
-      run: >
+      run: |
         git add ./apps/ledger-live-desktop/tests/specs &&
-        git commit -m 'update screenshots (${{ inputs.os }})' &&
+        git commit -m "test(lld): update screenshots (${{ inputs.os }})
+
+        ${{ steps.changes.outputs.changes }}
+        lld, test, screenshot" &&
         git restore . &&
         git pull --rebase &&
         git push ||

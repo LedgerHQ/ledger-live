@@ -5,6 +5,7 @@ import {
 } from "@ledgerhq/types-live";
 import { handleActions } from "redux-actions";
 import type { ReducerMap } from "redux-actions";
+import { createSelector, Selector } from "reselect";
 
 export const initialState: PostOnboardingState = {
   deviceModelId: null,
@@ -65,45 +66,58 @@ export default handleActions<PostOnboardingState, Payload>(
   initialState
 );
 
-export const postOnboardingSelector = ({
-  postOnboarding,
-}: {
-  postOnboarding: PostOnboardingState;
-}): PostOnboardingState => postOnboarding;
+/**
+ * remove this function once we can safely assume no user has a LL holding in
+ * storage a ref to the old identifier "nanoFTS" which was changed in this PR
+ * https://github.com/LedgerHQ/ledger-live/pull/2144
+ * */
+function sanitizeDeviceModelId(
+  deviceModelId: DeviceModelId | null
+): DeviceModelId | null {
+  if (deviceModelId === null) return null;
+  // Nb workaround to prevent crash for dev/qa that have nanoFTS references.
+  // to be removed in a while.
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  if (deviceModelId === "nanoFTS") return DeviceModelId.stax;
+  return deviceModelId;
+}
 
-export const hubStateSelector = ({
-  postOnboarding,
-}: {
-  postOnboarding: PostOnboardingState;
-}): {
-  deviceModelId: PostOnboardingState["deviceModelId"];
-  actionsToComplete: PostOnboardingState["actionsToComplete"];
-  actionsCompleted: PostOnboardingState["actionsCompleted"];
-  lastActionCompleted: PostOnboardingState["lastActionCompleted"];
-} => {
-  const {
-    deviceModelId,
-    actionsToComplete,
-    actionsCompleted,
-    lastActionCompleted,
-  } = postOnboarding;
-  return {
-    deviceModelId,
-    actionsToComplete,
-    actionsCompleted,
-    lastActionCompleted,
-  };
-};
+export const postOnboardingSelector: Selector<
+  { postOnboarding: PostOnboardingState },
+  PostOnboardingState
+> = createSelector(
+  (state) => state.postOnboarding,
+  (postOnboarding) => ({
+    ...postOnboarding,
+    deviceModelId: sanitizeDeviceModelId(postOnboarding.deviceModelId),
+  })
+);
 
-export const postOnboardingDeviceModelIdSelector = ({
-  postOnboarding,
-}: {
-  postOnboarding: PostOnboardingState;
-}): PostOnboardingState["deviceModelId"] => postOnboarding.deviceModelId;
+export const hubStateSelector = createSelector(
+  postOnboardingSelector,
+  (postOnboarding) => {
+    const {
+      deviceModelId,
+      actionsToComplete,
+      actionsCompleted,
+      lastActionCompleted,
+    } = postOnboarding;
+    return {
+      deviceModelId: sanitizeDeviceModelId(deviceModelId),
+      actionsToComplete,
+      actionsCompleted,
+      lastActionCompleted,
+    };
+  }
+);
 
-export const walletPostOnboardingEntryPointDismissedSelector = ({
-  postOnboarding,
-}: {
-  postOnboarding: PostOnboardingState;
-}): PostOnboardingState["walletEntryPointDismissed"] =>
-  postOnboarding.walletEntryPointDismissed;
+export const postOnboardingDeviceModelIdSelector = createSelector(
+  postOnboardingSelector,
+  (postOnboarding) => sanitizeDeviceModelId(postOnboarding.deviceModelId)
+);
+
+export const walletPostOnboardingEntryPointDismissedSelector = createSelector(
+  postOnboardingSelector,
+  (postOnboarding) => postOnboarding.walletEntryPointDismissed
+);

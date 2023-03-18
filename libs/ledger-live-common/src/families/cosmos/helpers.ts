@@ -5,10 +5,10 @@ type Message = {
 
 export const getMainMessage = (messages: Message[]): Message => {
   const messagePriorities: string[] = [
-    "withdraw_rewards",
     "unbond",
     "redelegate",
     "delegate",
+    "withdraw_rewards",
     "transfer",
   ];
   const sortedTypes = messages

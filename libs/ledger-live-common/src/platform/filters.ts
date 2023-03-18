@@ -1,11 +1,10 @@
 import { makeRe } from "minimatch";
-import { PlatformAccount, PlatformCurrency, AppManifest } from "./types";
+import { AppPlatform, PlatformAccount, PlatformCurrency } from "./types";
 import { isPlatformTokenCurrency } from "./helpers";
-import semver from "semver";
 
 export type FilterParams = {
   branches?: string[];
-  platform?: string;
+  platform?: AppPlatform;
   private?: boolean;
   version?: string;
 };
@@ -59,47 +58,5 @@ export function filterPlatformCurrencies(
     }
 
     return true;
-  });
-}
-
-function matchVersion(
-  filterParams: FilterParams,
-  manifest: AppManifest
-): boolean {
-  return (
-    !filterParams.version ||
-    semver.satisfies(filterParams.version, manifest.apiVersion)
-  );
-}
-
-function matchBranches(filterParams: FilterParams, manifest: AppManifest) {
-  return (
-    !filterParams.branches || filterParams.branches.includes(manifest.branch)
-  );
-}
-
-function matchPlatform(filterParams: FilterParams, manifest: AppManifest) {
-  return (
-    !filterParams.platform ||
-    manifest.platform === "all" ||
-    filterParams.platform === manifest.platform
-  );
-}
-
-function matchPrivate(filterParams: FilterParams, manifest: AppManifest) {
-  return filterParams.private === true || !(manifest.private === true);
-}
-
-export function filterPlatformApps(
-  appManifests: AppManifest[],
-  filterParams: FilterParams
-): AppManifest[] {
-  return appManifests.filter((appManifest: AppManifest) => {
-    return (
-      matchBranches(filterParams, appManifest) &&
-      matchPlatform(filterParams, appManifest) &&
-      matchPrivate(filterParams, appManifest) &&
-      matchVersion(filterParams, appManifest)
-    );
   });
 }

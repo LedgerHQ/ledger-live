@@ -5,6 +5,8 @@ import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import IconCoins from "~/renderer/icons/ClaimReward";
 import { openModal } from "~/renderer/actions/modals";
+import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
+
 type Props = {
   account: AccountLike,
   parentAccount: ?Account,
@@ -15,21 +17,34 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const dispatch = useDispatch();
 
   const onClick = useCallback(() => {
-    dispatch(
-      openModal("MODAL_ETH_STAKE", {
-        account,
-      }),
-    );
-  }, [dispatch, account]);
+    if (isAccountEmpty(account)) {
+      dispatch(
+        openModal("MODAL_NO_FUNDS_STAKE", {
+          account,
+          parentAccount,
+        }),
+      );
+    } else {
+      dispatch(
+        openModal("MODAL_ETH_STAKE", {
+          account,
+        }),
+      );
+    }
+  }, [account, dispatch, parentAccount]);
 
-  if (account.type === "Account") {
+  if (account.type === "Account" && account.currency.id === "ethereum") {
     return [
       {
         key: "Stake",
         onClick,
-        event: "Eth Stake Account Button",
+        event: "button_clicked",
+        eventProperties: {
+          button: "stake",
+        },
         icon: IconCoins,
         label: t("account.stake", { currency: account?.currency?.name }),
+        accountActionsTestId: "stake-from-account-action-button",
       },
     ];
   } else {

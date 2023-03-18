@@ -1,11 +1,11 @@
 import { Icons, Text } from "@ledgerhq/native-ui";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Language, DeviceInfo } from "@ledgerhq/types-live";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import DeviceLanguageSelection from "./DeviceLanguageSelection";
-import BottomModal from "../../../components/BottomModal";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 import ChangeDeviceLanguageActionModal from "../../../components/ChangeDeviceLanguageActionModal";
 import { track } from "../../../analytics";
 import DeviceOptionRow from "./DeviceOptionRow";
@@ -44,7 +44,6 @@ const DeviceLanguage: React.FC<Props> = ({
     [setIsChangeLanguageOpen],
   );
   const openChangeLanguageModal = useCallback(() => {
-    track("Page Manager ChangeLanguageEntered");
     setIsChangeLanguageOpen(true);
   }, [setIsChangeLanguageOpen]);
 
@@ -68,9 +67,27 @@ const DeviceLanguage: React.FC<Props> = ({
   }, [setShouldInstallLanguage, setDeviceForActionModal]);
 
   const refreshDeviceLanguage = useCallback(() => {
-    track("Page Manager LanguageInstalled", { selectedLanguage });
     onLanguageChange();
-  }, [onLanguageChange, selectedLanguage]);
+  }, [onLanguageChange]);
+
+  const errorTracked = useRef(null);
+  const handleError = useCallback(
+    error => {
+      if (errorTracked.current !== error) {
+        track("Page Manager LanguageInstallError", { error, type: "drawer" });
+        errorTracked.current = error;
+      }
+      refreshDeviceLanguage();
+    },
+    [refreshDeviceLanguage],
+  );
+  const handleResult = useCallback(() => {
+    track("Page Manager LanguageInstalled", {
+      selectedLanguage,
+      type: "drawer",
+    });
+    refreshDeviceLanguage();
+  }, [refreshDeviceLanguage, selectedLanguage]);
 
   return (
     <>
@@ -87,8 +104,8 @@ const DeviceLanguage: React.FC<Props> = ({
           )
         }
       />
-      <BottomModal
-        isOpened={isChangeLanguageOpen}
+      <QueuedDrawer
+        isRequestingToBeOpened={isChangeLanguageOpen}
         onClose={closeChangeLanguageModal}
         onModalHide={openDeviceActionModal}
       >
@@ -100,16 +117,13 @@ const DeviceLanguage: React.FC<Props> = ({
           onConfirmInstall={confirmInstall}
           availableLanguages={availableLanguages}
         />
-      </BottomModal>
+      </QueuedDrawer>
       <ChangeDeviceLanguageActionModal
         onClose={closeDeviceActionModal}
         device={deviceForActionModal}
         language={selectedLanguage}
-        onError={error => {
-          track("Page Manager LanguageInstallError", { error });
-          refreshDeviceLanguage();
-        }}
-        onResult={refreshDeviceLanguage}
+        onError={handleError}
+        onResult={handleResult}
       />
     </>
   );

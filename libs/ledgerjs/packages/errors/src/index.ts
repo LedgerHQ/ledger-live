@@ -218,7 +218,6 @@ export const CantScanQRCode = createCustomErrorClass("CantScanQRCode");
 export const FeeNotLoaded = createCustomErrorClass("FeeNotLoaded");
 export const FeeRequired = createCustomErrorClass("FeeRequired");
 export const FeeTooHigh = createCustomErrorClass("FeeTooHigh");
-export const DustLimit = createCustomErrorClass("DustLimit");
 export const PendingOperation = createCustomErrorClass("PendingOperation");
 export const SyncError = createCustomErrorClass("SyncError");
 export const PairingFailed = createCustomErrorClass("PairingFailed");
@@ -229,6 +228,12 @@ export const FirmwareOrAppUpdateRequired = createCustomErrorClass(
   "FirmwareOrAppUpdateRequired"
 );
 
+// Bitcoin family
+export const OpReturnDataSizeLimit =
+  createCustomErrorClass("OpReturnSizeLimit");
+export const DustLimit = createCustomErrorClass("DustLimit");
+
+// Language
 export const LanguageNotFound = createCustomErrorClass("LanguageNotFound");
 
 // db stuff, no need to translate
@@ -247,7 +252,7 @@ export enum HwTransportErrorType {
 }
 
 /**
- * Represents an error coming from any Transport implementation.
+ * Represents an error coming from the usage of any Transport implementation.
  *
  * Needed to map a specific implementation error into an error that
  * can be managed by any code unaware of the specific Transport implementation
@@ -308,6 +313,8 @@ export const StatusCodes = {
   INCORRECT_LENGTH: 0x6700,
   INCORRECT_P1_P2: 0x6b00,
   INS_NOT_SUPPORTED: 0x6d00,
+  DEVICE_NOT_ONBOARDED: 0x6d07,
+  DEVICE_NOT_ONBOARDED_2: 0x6611,
   INVALID_KCV: 0x9485,
   INVALID_OFFSET: 0x9402,
   LICENSING: 0x6f42,

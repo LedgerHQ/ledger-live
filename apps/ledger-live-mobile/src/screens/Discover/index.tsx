@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { StackNavigationProp } from "@react-navigation/stack";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import Illustration from "../../images/illustration/Illustration";
 import { NavigatorName, ScreenName } from "../../const";
 import DiscoverCard from "./DiscoverCard";
@@ -17,6 +18,8 @@ import TabBarSafeAreaView, {
 import { AnalyticsContext } from "../../analytics/AnalyticsContext";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { MainNavigatorParamList } from "../../components/RootNavigator/types/MainNavigator";
+import useDynamicContent from "../../dynamicContent/dynamicContent";
+import { useIsNewsfeedAvailable } from "../../hooks/newsfeed/useIsNewsfeedAvailable";
 
 const images = {
   light: {
@@ -46,7 +49,8 @@ function Discover() {
       StackNavigationProp<BaseNavigatorStackParamList & MainNavigatorParamList>
     >();
 
-  const learn = useFeature("learn");
+  const learn = useFeature("brazeLearn");
+  const isNewsfeedAvailable = useIsNewsfeedAvailable();
   const referralProgramConfig = useFeature("referralProgramDiscoverCard");
   const isNFTDisabled =
     useFeature("disableNftLedgerMarket")?.enabled && Platform.OS === "ios";
@@ -62,6 +66,9 @@ function Discover() {
     });
   }, []);
 
+  const { learnCards } = useDynamicContent();
+  const version = useEnv("PLATFORM_DISCOVER_VERSION");
+
   const featuresList: {
     title: string;
     subTitle?: string;
@@ -72,7 +79,27 @@ function Discover() {
   }[] = useMemo(
     () =>
       [
-        ...(Platform.OS !== "ios"
+        ...(version === 2
+          ? [
+              {
+                title: t("discover.sections.browseWeb3.title"),
+                subTitle: t("discover.sections.browseWeb3.desc"),
+                onPress: () => {
+                  navigation.navigate(NavigatorName.Discover, {
+                    screen: ScreenName.PlatformCatalog,
+                  });
+                },
+                disabled: false,
+                Image: (
+                  <Illustration
+                    size={110}
+                    darkSource={images.dark.appsImg}
+                    lightSource={images.light.appsImg}
+                  />
+                ),
+              },
+            ]
+          : Platform.OS !== "ios"
           ? [
               {
                 title: t("discover.sections.ledgerApps.title"),
@@ -93,29 +120,53 @@ function Discover() {
               },
             ]
           : []),
-        {
-          title: t("discover.sections.learn.title"),
-          subTitle: t("discover.sections.learn.desc"),
-          onPress: () => {
-            readOnlyTrack("Learn");
-            if (!learn?.enabled) {
-              track("Discover - Learn - OpenUrl", {
-                url: urls.discover.academy,
-              });
-              Linking.openURL(urls.discover.academy);
-            } else {
-              navigation.navigate(ScreenName.Learn);
-            }
-          },
-          disabled: false,
-          Image: (
-            <Illustration
-              size={110}
-              darkSource={images.dark.learnImg}
-              lightSource={images.light.learnImg}
-            />
-          ),
-        },
+        ...(!learn?.enabled && !isNewsfeedAvailable
+          ? [
+              {
+                title: t("discover.sections.learn.title"),
+                subTitle: t("discover.sections.learn.desc"),
+                onPress: () => {
+                  readOnlyTrack("Learn");
+                  track("Discover - Learn - OpenUrl", {
+                    url: urls.discover.academy,
+                  });
+                  Linking.openURL(urls.discover.academy);
+                },
+                disabled: false,
+                Image: (
+                  <Illustration
+                    size={110}
+                    darkSource={images.dark.learnImg}
+                    lightSource={images.light.learnImg}
+                  />
+                ),
+              },
+            ]
+          : learnCards.length > 0 || isNewsfeedAvailable
+          ? [
+              {
+                title: t("discover.sections.news.title"),
+                subTitle: t("discover.sections.news.desc"),
+                onPress: () => {
+                  // Fixme: Can't find a way to make TS happy ...
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore
+                  navigation.navigate(NavigatorName.ExploreTab);
+                  track("banner_clicked", {
+                    banner: "News",
+                  });
+                },
+                disabled: false,
+                Image: (
+                  <Illustration
+                    size={110}
+                    darkSource={images.dark.learnImg}
+                    lightSource={images.light.learnImg}
+                  />
+                ),
+              },
+            ]
+          : []),
         {
           title: t("discover.sections.earn.title"),
           subTitle: t("discover.sections.earn.desc"),
@@ -182,12 +233,15 @@ function Discover() {
       ].sort((a, b) => (b.disabled ? -1 : 0)),
     [
       t,
+      learn?.enabled,
+      learnCards,
       isNFTDisabled,
       referralProgramConfig?.enabled,
       referralProgramConfig?.params.url,
       navigation,
       readOnlyTrack,
-      learn?.enabled,
+      isNewsfeedAvailable,
+      version,
     ],
   );
 

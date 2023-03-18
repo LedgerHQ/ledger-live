@@ -1,6 +1,6 @@
 import eip55 from "eip55";
 import BigNumber from "bignumber.js";
-import { encodeNftId } from ".";
+import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { decodeAccountId, groupAccountsOperationsByDay } from "../account";
 
 import type { Batch, BatchElement, Batcher } from "./NftMetadataProvider/types";
@@ -214,10 +214,12 @@ export const metadataCallBatcher = (
   };
 };
 
-export const getNFTByTokenId = (
+export const getNFT = (
+  contract?: string,
   tokenId?: string,
   nfts?: ProtoNFT[]
-): ProtoNFT | undefined => nfts?.find((nft) => nft.tokenId === tokenId);
+): ProtoNFT | undefined =>
+  nfts?.find((nft) => nft.contract === contract && nft.tokenId === tokenId);
 
 const SUPPORTED_CURRENCIES = ["ethereum", "polygon"];
 
@@ -259,14 +261,15 @@ export function orderByLastReceived(
   operationMapping.forEach((operation) => {
     // Prevent multiple occurences due to Exchange Send/Receive same NFT several times
     const isAlreadyIn = orderedNFTs.find(
-      (nft) => nft.tokenId === operation.tokenId
+      (nft) =>
+        nft.contract === operation.contract && nft.tokenId === operation.tokenId
     );
 
     if (!isAlreadyIn) {
-      const nft = getNFTByTokenId(operation.tokenId, nfts);
+      const nft = getNFT(operation.contract, operation.tokenId, nfts);
       if (nft) orderedNFTs.push(nft);
     }
   });
 
-  return groupByCurrency(orderedNFTs);
+  return groupByCurrency([...new Set(orderedNFTs)]);
 }

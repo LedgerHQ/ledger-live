@@ -6,8 +6,11 @@ import type {
   BitcoinInput,
   BitcoinOutputRaw,
   BitcoinOutput,
+  BitcoinAccountRaw,
+  BitcoinAccount,
 } from "./types";
 import wallet from "./wallet-btc";
+import { Account, AccountRaw } from "@ledgerhq/types-live";
 
 export function toBitcoinInputRaw({
   address,
@@ -73,6 +76,7 @@ export function fromBitcoinOutputRaw([
     isChange: !!isChange,
   };
 }
+
 export function toBitcoinResourcesRaw(
   r: BitcoinResources
 ): BitcoinResourcesRaw {
@@ -82,6 +86,7 @@ export function toBitcoinResourcesRaw(
       r.walletAccount && wallet.exportToSerializedAccountSync(r.walletAccount),
   };
 }
+
 export function fromBitcoinResourcesRaw(
   r: BitcoinResourcesRaw
 ): BitcoinResources {
@@ -91,4 +96,21 @@ export function fromBitcoinResourcesRaw(
       r.walletAccount &&
       wallet.importFromSerializedAccountSync(r.walletAccount),
   };
+}
+
+export function assignToAccountRaw(account: Account, accountRaw: AccountRaw) {
+  const bitcoinAccount = account as BitcoinAccount;
+  if (bitcoinAccount.bitcoinResources) {
+    (accountRaw as BitcoinAccountRaw).bitcoinResources = toBitcoinResourcesRaw(
+      bitcoinAccount.bitcoinResources
+    );
+  }
+}
+
+export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
+  const bitcoinResourcesRaw = (accountRaw as BitcoinAccountRaw)
+    .bitcoinResources;
+  if (bitcoinResourcesRaw)
+    (account as BitcoinAccount).bitcoinResources =
+      fromBitcoinResourcesRaw(bitcoinResourcesRaw);
 }

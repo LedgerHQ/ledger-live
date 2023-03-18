@@ -59,12 +59,15 @@ const excludedErrorName = [
   "GetAppAndVersionUnsupportedFormat",
   "BluetoothRequired",
   "ManagerDeviceLocked",
+  // errors coming from the usage of a Transport implementation
+  "HwTransportError",
   // other
   "InvalidAddressError",
   "SwapNoAvailableProviders",
   "AccountNeedResync",
   "DeviceAppVerifyNotSupported",
   "AccountAwaitingSendPendingOperations",
+  "HederaAddAccountError",
   // API issues
   "LedgerAPI4xx",
   "LedgerAPI5xx",

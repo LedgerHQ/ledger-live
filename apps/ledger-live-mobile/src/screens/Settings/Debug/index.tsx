@@ -75,7 +75,7 @@ export default function DebugSettings({
         onPress={() => navigate(ScreenName.DebugConnectivity)}
       />
       <SettingsRow
-        title="Generators"
+        title="Generators and Destructors"
         desc="Create new accounts, announcements, etc"
         iconLeft={<Icons.MicrochipMedium size={24} color="black" />}
         onPress={() => navigate(ScreenName.DebugGenerators)}
@@ -91,6 +91,12 @@ export default function DebugSettings({
         desc="Get information on your current setup"
         iconLeft={<Icons.InfoAltMedium size={24} color="black" />}
         onPress={() => navigate(ScreenName.DebugInformation)}
+      />
+      <SettingsRow
+        title="Performance"
+        desc="Get performance information about your setup"
+        iconLeft={<Icons.BarChartMedium size={24} color="black" />}
+        onPress={() => navigate(ScreenName.DebugPerformance)}
       />
       <TouchableWithoutFeedback onPress={onDebugHiddenPress}>
         <View>

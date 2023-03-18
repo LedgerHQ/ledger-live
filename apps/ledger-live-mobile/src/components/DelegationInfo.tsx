@@ -34,7 +34,7 @@ export default function DelegationInfo({
             name,
           }}
         >
-          <LText semiBold>text</LText>
+          <LText semiBold>PLACEHOLDER_TEXT</LText>
         </Trans>
       </LText>
 

@@ -1,6 +1,6 @@
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import Transport from "@ledgerhq/hw-transport";
-import type { DerivationMode } from "../../derivation";
+import type { DerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { TypedMessageData } from "../../families/ethereum/types";
 export type Result = {
   rsv: {

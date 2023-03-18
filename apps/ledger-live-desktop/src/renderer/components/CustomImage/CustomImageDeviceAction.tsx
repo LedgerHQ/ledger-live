@@ -7,7 +7,8 @@ import { ImageLoadRefusedOnDevice, ImageCommitRefusedOnDevice } from "@ledgerhq/
 import withRemountableWrapper from "@ledgerhq/live-common/hoc/withRemountableWrapper";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { useTranslation } from "react-i18next";
-import { Flex, Icons, Link } from "@ledgerhq/react-ui";
+import { Theme, Flex, Icons, Link } from "@ledgerhq/react-ui";
+import useTheme from "~/renderer/hooks/useTheme";
 import { DeviceActionDefaultRendering } from "../DeviceAction";
 import Button from "../ButtonV3";
 import {
@@ -16,8 +17,8 @@ import {
   renderImageLoadRequested,
   renderLoadingImage,
 } from "../DeviceAction/rendering";
+import staxLoadImage from "@ledgerhq/live-common/hw/staxLoadImage";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
-import { command } from "~/renderer/commands";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 
 type Props = {
@@ -31,8 +32,7 @@ type Props = {
   blockNavigation?: (blocked: boolean) => void;
 };
 
-const staxLoadImageExec = command("staxLoadImage");
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : staxLoadImageExec);
+const action = createAction(getEnv("MOCK") ? mockedEventEmitter : staxLoadImage);
 const mockedDevice = { deviceId: "", modelId: DeviceModelId.stax, wired: true };
 
 const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props => {
@@ -46,6 +46,7 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
     onTryAnotherImage,
     blockNavigation,
   } = props;
+  const type: Theme["theme"] = useTheme("colors.palette.type");
   const device = getEnv("MOCK") ? mockedDevice : props.device;
   const commandRequest = hexImage;
 
@@ -97,11 +98,11 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
   return (
     <Flex flexDirection="column" flex={1} justifyContent="center">
       {imageLoadRequested && device ? (
-        renderImageLoadRequested({ t, device })
+        renderImageLoadRequested({ t, device, type })
       ) : loadingImage && device ? (
-        renderLoadingImage({ t, device, progress, src: source })
+        renderLoadingImage({ t, device, progress, source })
       ) : imageCommitRequested && device ? (
-        renderImageCommitRequested({ t, device, src: source })
+        renderImageCommitRequested({ t, device, source, type })
       ) : isError ? (
         <Flex flexDirection="column" alignItems="center">
           {renderError({

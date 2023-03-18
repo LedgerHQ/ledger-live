@@ -1,12 +1,11 @@
 import React from "react";
 import styled from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import FormatDay from "./FormatDay";
+import { isEqual } from "lodash";
+import FormatDay from "./DateFormat/FormatDay";
 
 type Props = {
-  section: {
-    day: Date;
-  };
+  day: Date;
   withoutMarginBottom?: boolean;
 };
 
@@ -20,10 +19,7 @@ const Container = styled(Flex).attrs(
   }),
 )<{ withoutMarginBottom?: boolean }>``;
 
-export default function SectionHeader({
-  section,
-  withoutMarginBottom = false,
-}: Props) {
+function SectionHeader({ day, withoutMarginBottom = false }: Props) {
   return (
     <Container withoutMarginBottom={withoutMarginBottom}>
       <Text
@@ -33,8 +29,11 @@ export default function SectionHeader({
         variant="subtitle"
         uppercase
       >
-        <FormatDay day={section.day} />
+        <FormatDay day={day} />
       </Text>
     </Container>
   );
 }
+
+/** isEqual on dates is fine, I promise */
+export default React.memo(SectionHeader, isEqual);

@@ -14,9 +14,9 @@ import Delta from "./Delta";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import getWindowDimensions from "../logic/getWindowDimensions";
 import Graph from "./Graph";
-import TransactionsPendingConfirmationWarning from "./TransactionsPendingConfirmationWarning";
+import { TransactionsPendingConfirmationWarningAllAccounts } from "./TransactionsPendingConfirmationWarning";
 import ParentCurrencyIcon from "./ParentCurrencyIcon";
-import FormatDate from "./FormatDate";
+import FormatDate from "./DateFormat/FormatDate";
 import { ensureContrast } from "../colors";
 import { track } from "../analytics";
 import { Item } from "./Graph/types";
@@ -182,7 +182,7 @@ function AssetCentricGraphCard({
                     </Text>
                   </Flex>
                 )}
-                <TransactionsPendingConfirmationWarning />
+                <TransactionsPendingConfirmationWarningAllAccounts />
               </Flex>
               <Flex flexDirection={"row"}>
                 {!balanceHistory ? (

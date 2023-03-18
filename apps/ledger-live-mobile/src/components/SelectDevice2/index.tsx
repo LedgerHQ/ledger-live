@@ -4,14 +4,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import { CompositeScreenProps, useNavigation } from "@react-navigation/native";
-import {
-  Text,
-  Flex,
-  Icons,
-  BottomDrawer,
-  Box,
-  ScrollContainer,
-} from "@ledgerhq/native-ui";
+import { Text, Flex, Icons, Box, ScrollContainer } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet";
@@ -37,6 +30,8 @@ import { MainNavigatorParamList } from "../RootNavigator/types/MainNavigator";
 import PostOnboardingEntryPointCard from "../PostOnboarding/PostOnboardingEntryPointCard";
 import BleDevicePairingFlow from "../BleDevicePairingFlow";
 import BuyDeviceCTA from "../BuyDeviceCTA";
+import QueuedDrawer from "../QueuedDrawer";
+import ServicesWidget from "../ServicesWidget";
 
 type Navigation = BaseComposite<
   CompositeScreenProps<
@@ -52,9 +47,14 @@ type Props = {
   // Other component using this component needs to stop the BLE scanning before starting
   // to communicate to a device via BLE.
   stopBleScanning?: boolean;
+  displayServicesWidget?: boolean;
 };
 
-export default function SelectDevice({ onSelect, stopBleScanning }: Props) {
+export default function SelectDevice({
+  onSelect,
+  stopBleScanning,
+  displayServicesWidget,
+}: Props) {
   const [USBDevice, setUSBDevice] = useState<Device | undefined>();
   const [ProxyDevice, setProxyDevice] = useState<Device | undefined>();
 
@@ -164,6 +164,7 @@ export default function SelectDevice({ onSelect, stopBleScanning }: Props) {
   const onAddNewPress = useCallback(() => setIsAddNewDrawerOpen(true), []);
 
   const openBlePairingFlow = useCallback(() => {
+    setIsAddNewDrawerOpen(false);
     setIsPairingDevices(true);
   }, []);
 
@@ -173,6 +174,8 @@ export default function SelectDevice({ onSelect, stopBleScanning }: Props) {
   }, []);
 
   const onSetUpNewDevice = useCallback(() => {
+    setIsAddNewDrawerOpen(false);
+
     navigation.navigate(NavigatorName.BaseOnboarding, {
       screen: NavigatorName.Onboarding,
       params: {
@@ -269,10 +272,13 @@ export default function SelectDevice({ onSelect, stopBleScanning }: Props) {
                   <Trans i18nKey="manager.selectDevice.otgBanner" />
                 </Text>
               )}
+            {displayServicesWidget && <ServicesWidget />}
           </ScrollContainer>
-          <BuyDeviceCTA />
-          <BottomDrawer
-            isOpen={isAddNewDrawerOpen}
+          <Flex alignItems="center" mt={5}>
+            <BuyDeviceCTA />
+          </Flex>
+          <QueuedDrawer
+            isRequestingToBeOpened={isAddNewDrawerOpen}
             onClose={() => setIsAddNewDrawerOpen(false)}
           >
             <Flex>
@@ -346,7 +352,7 @@ export default function SelectDevice({ onSelect, stopBleScanning }: Props) {
                 </Flex>
               </Touchable>
             </Flex>
-          </BottomDrawer>
+          </QueuedDrawer>
         </>
       )}
     </Flex>

@@ -1,5 +1,73 @@
 # @ledgerhq/react-ui
 
+## 0.12.0
+
+### Minor Changes
+
+- [#2728](https://github.com/LedgerHQ/ledger-live/pull/2728) [`13a71f1cb2`](https://github.com/LedgerHQ/ledger-live/commit/13a71f1cb24fa254a2ed0b2db7f0d7b8f32465b5) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed Country Flags icons. Those are no longer included within ReactUI and IconUI
+
+### Patch Changes
+
+- [#2652](https://github.com/LedgerHQ/ledger-live/pull/2652) [`e41884bb9e`](https://github.com/LedgerHQ/ledger-live/commit/e41884bb9ed5fadbe893042939c12214ea5e9491) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Support neutral info message on BaseInput
+
+- Updated dependencies [[`13a71f1cb2`](https://github.com/LedgerHQ/ledger-live/commit/13a71f1cb24fa254a2ed0b2db7f0d7b8f32465b5)]:
+  - @ledgerhq/icons-ui@0.3.5
+
+## 0.12.0-next.0
+
+### Minor Changes
+
+- [#2728](https://github.com/LedgerHQ/ledger-live/pull/2728) [`13a71f1cb2`](https://github.com/LedgerHQ/ledger-live/commit/13a71f1cb24fa254a2ed0b2db7f0d7b8f32465b5) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed Country Flags icons. Those are no longer included within ReactUI and IconUI
+
+### Patch Changes
+
+- [#2652](https://github.com/LedgerHQ/ledger-live/pull/2652) [`e41884bb9e`](https://github.com/LedgerHQ/ledger-live/commit/e41884bb9ed5fadbe893042939c12214ea5e9491) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Support neutral info message on BaseInput
+
+- Updated dependencies [[`13a71f1cb2`](https://github.com/LedgerHQ/ledger-live/commit/13a71f1cb24fa254a2ed0b2db7f0d7b8f32465b5)]:
+  - @ledgerhq/icons-ui@0.3.5-next.0
+
+## 0.11.0
+
+### Minor Changes
+
+- [#2531](https://github.com/LedgerHQ/ledger-live/pull/2531) [`28105e0fd5`](https://github.com/LedgerHQ/ledger-live/commit/28105e0fd5cfa435f327e0ca6c2c643ff21c612e) Thanks [@gobeli](https://github.com/gobeli)! - Visual bugfix on input controls
+
+### Patch Changes
+
+- [#2460](https://github.com/LedgerHQ/ledger-live/pull/2460) [`b0849833f7`](https://github.com/LedgerHQ/ledger-live/commit/b0849833f7ff168610b288e24aab89de5eb04d7e) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Add extraChildrenContainerProps to FlowStepper component
+
+## 0.11.0-next.0
+
+### Minor Changes
+
+- [#2531](https://github.com/LedgerHQ/ledger-live/pull/2531) [`28105e0fd5`](https://github.com/LedgerHQ/ledger-live/commit/28105e0fd5cfa435f327e0ca6c2c643ff21c612e) Thanks [@gobeli](https://github.com/gobeli)! - Visual bugfix on input controls
+
+### Patch Changes
+
+- [#2460](https://github.com/LedgerHQ/ledger-live/pull/2460) [`b0849833f7`](https://github.com/LedgerHQ/ledger-live/commit/b0849833f7ff168610b288e24aab89de5eb04d7e) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Add extraChildrenContainerProps to FlowStepper component
+
+## 0.10.4
+
+### Patch Changes
+
+- [#2242](https://github.com/LedgerHQ/ledger-live/pull/2242) [`15ffdd6972`](https://github.com/LedgerHQ/ledger-live/commit/15ffdd6972dcc3bf5de5af34528725fae24120af) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: narrow-typed theme to "dark"| "light"
+
+  And exported Theme type from react-ui
+
+- Updated dependencies [[`5266518d0b`](https://github.com/LedgerHQ/ledger-live/commit/5266518d0baf26258f95a08d7f0a127f1848b38f)]:
+  - @ledgerhq/icons-ui@0.3.4
+
+## 0.10.4-next.0
+
+### Patch Changes
+
+- [#2242](https://github.com/LedgerHQ/ledger-live/pull/2242) [`15ffdd6972`](https://github.com/LedgerHQ/ledger-live/commit/15ffdd6972dcc3bf5de5af34528725fae24120af) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: narrow-typed theme to "dark"| "light"
+
+  And exported Theme type from react-ui
+
+- Updated dependencies [[`5266518d0b`](https://github.com/LedgerHQ/ledger-live/commit/5266518d0baf26258f95a08d7f0a127f1848b38f)]:
+  - @ledgerhq/icons-ui@0.3.4-next.0
+
 ## 0.10.3
 
 ### Patch Changes

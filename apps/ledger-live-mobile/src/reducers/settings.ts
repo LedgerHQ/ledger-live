@@ -16,8 +16,6 @@ import type { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { CurrencySettings, SettingsState, State } from "./types";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
-// eslint-disable-next-line import/no-cycle
-import { SLIDES } from "../components/Carousel/shared";
 import { getDefaultLanguageLocale, getDefaultLocale } from "../languages";
 import type {
   SettingsAcceptSwapProviderPayload,
@@ -26,6 +24,7 @@ import type {
   SettingsDismissBannerPayload,
   SettingsSetSwapKycPayload,
   SettingsHideEmptyTokenAccountsPayload,
+  SettingsFilterTokenOperationsZeroAmountPayload,
   SettingsHideNftCollectionPayload,
   SettingsImportDesktopPayload,
   SettingsImportPayload,
@@ -35,7 +34,6 @@ import type {
   SettingsRemoveStarredMarketcoinsPayload,
   SettingsSetAnalyticsPayload,
   SettingsSetAvailableUpdatePayload,
-  SettingsSetCarouselVisibilityPayload,
   SettingsSetCountervaluePayload,
   SettingsSetDiscreetModePayload,
   SettingsSetFirstConnectHasDeviceUpdatedPayload,
@@ -64,10 +62,15 @@ import type {
   SettingsUpdateCurrencyPayload,
   SettingsSetSwapSelectableCurrenciesPayload,
   SettingsSetDismissedDynamicCardsPayload,
+  SettingsSetStatusCenterPayload,
   SettingsSetOverriddenFeatureFlagPlayload,
   SettingsSetOverriddenFeatureFlagsPlayload,
   SettingsSetFeatureFlagsBannerVisiblePayload,
   DangerouslyOverrideStatePayload,
+  SettingsSetDebugAppLevelDrawerOpenedPayload,
+  SettingsLastSeenDeviceLanguagePayload,
+  SettingsCompleteOnboardingPayload,
+  SettingsSetDateFormatPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -112,6 +115,7 @@ export const INITIAL_STATE: SettingsState = {
   countervalueFirst: true,
   graphCountervalueFirst: true,
   hideEmptyTokenAccounts: false,
+  filterTokenOperationsZeroAmount: true,
   blacklistedTokenIds: [],
   hiddenNftCollections: [],
   dismissedBanners: [],
@@ -123,9 +127,6 @@ export const INITIAL_STATE: SettingsState = {
     size: 0,
     hash: "",
   },
-  carouselVisibility: Object.fromEntries(
-    SLIDES.map(slide => [slide.name, true]),
-  ),
   dismissedDynamicCards: [],
   discreetMode: false,
   language: getDefaultLanguageLocale(),
@@ -157,10 +158,14 @@ export const INITIAL_STATE: SettingsState = {
     areNotificationsAllowed: true,
     announcementsCategory: true,
     recommendationsCategory: true,
+    largeMoverCategory: true,
   },
   walletTabNavigatorLastVisitedTab: ScreenName.Portfolio,
+  displayStatusCenter: false,
   overriddenFeatureFlags: {},
   featureFlagsBannerVisible: false,
+  debugAppLevelDrawerOpened: false,
+  dateFormat: "default",
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -285,9 +290,11 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     },
   }),
 
-  [SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING]: state => ({
+  [SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING]: (state, action) => ({
     ...state,
-    hasCompletedOnboarding: true,
+    hasCompletedOnboarding: (
+      action as Action<SettingsCompleteOnboardingPayload>
+    ).payload.hasCompletedOnboarding,
   }),
 
   [SettingsActionTypes.SETTINGS_INSTALL_APP_FIRST_TIME]: (state, action) => ({
@@ -315,6 +322,16 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     hideEmptyTokenAccounts: (
       action as Action<SettingsHideEmptyTokenAccountsPayload>
     ).payload.hideEmptyTokenAccounts,
+  }),
+
+  [SettingsActionTypes.SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT]: (
+    state,
+    action,
+  ) => ({
+    ...state,
+    filterTokenOperationsZeroAmount: (
+      action as Action<SettingsFilterTokenOperationsZeroAmountPayload>
+    ).payload.filterTokenOperationsZeroAmount,
   }),
 
   [SettingsActionTypes.SHOW_TOKEN]: (state, action) => {
@@ -396,12 +413,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     osTheme: (action as Action<SettingsSetOsThemePayload>).payload.osTheme,
   }),
 
-  [SettingsActionTypes.SETTINGS_SET_CAROUSEL_VISIBILITY]: (state, action) => ({
-    ...state,
-    carouselVisibility: (action as Action<SettingsSetCarouselVisibilityPayload>)
-      .payload.carouselVisibility,
-  }),
-
   [SettingsActionTypes.SETTINGS_SET_DISMISSED_DYNAMIC_CARDS]: (
     state,
     action,
@@ -479,6 +490,20 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       ...(action as Action<SettingsLastSeenDeviceInfoPayload>).payload.dmi,
     },
   }),
+
+  [SettingsActionTypes.LAST_SEEN_DEVICE_LANGUAGE_ID]: (state, action) => {
+    if (!state.lastSeenDevice) return state;
+    return {
+      ...state,
+      lastSeenDevice: {
+        ...state.lastSeenDevice,
+        deviceInfo: {
+          ...state.lastSeenDevice.deviceInfo,
+          ...(action as Action<SettingsLastSeenDeviceLanguagePayload>).payload,
+        },
+      },
+    };
+  },
 
   [SettingsActionTypes.ADD_STARRED_MARKET_COINS]: (state, action) => ({
     ...state,
@@ -584,6 +609,18 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ).payload.walletTabNavigatorLastVisitedTab,
   }),
 
+  [SettingsActionTypes.SETTINGS_SET_DATE_FORMAT]: (state, action) => ({
+    ...state,
+    dateFormat: (action as Action<SettingsSetDateFormatPayload>).payload
+      .dateFormat,
+  }),
+
+  [SettingsActionTypes.SET_STATUS_CENTER]: (state, action) => ({
+    ...state,
+    displayStatusCenter: (action as Action<SettingsSetStatusCenterPayload>)
+      .payload.displayStatusCenter,
+  }),
+
   [SettingsActionTypes.SET_OVERRIDDEN_FEATURE_FLAG]: (state, action) => {
     const {
       payload: { id, value },
@@ -612,6 +649,15 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     return {
       ...state,
       featureFlagsBannerVisible,
+    };
+  },
+  [SettingsActionTypes.SET_DEBUG_APP_LEVEL_DRAWER_OPENED]: (state, action) => {
+    const {
+      payload: { debugAppLevelDrawerOpened },
+    } = action as Action<SettingsSetDebugAppLevelDrawerOpenedPayload>;
+    return {
+      ...state,
+      debugAppLevelDrawerOpened,
     };
   },
 };
@@ -748,24 +794,12 @@ export const exportSettingsSelector = createSelector(
 );
 export const hideEmptyTokenAccountsEnabledSelector = (state: State) =>
   state.settings.hideEmptyTokenAccounts;
+export const filterTokenOperationsZeroAmountEnabledSelector = (state: State) =>
+  state.settings.filterTokenOperationsZeroAmount;
 export const dismissedBannersSelector = (state: State) =>
   state.settings.dismissedBanners;
 export const hasAvailableUpdateSelector = (state: State) =>
   state.settings.hasAvailableUpdate;
-export const carouselVisibilitySelector = (state: State) => {
-  const settingValue = state.settings.carouselVisibility;
-
-  if (typeof settingValue === "number") {
-    /**
-     * Ensure correct behavior when using the legacy setting value from LLM v2:
-     * We show all the slides as they are different from the ones in V2.
-     * Users will then be able to hide them one by one if they want.
-     */
-    return Object.fromEntries(SLIDES.map(slide => [slide.name, true]));
-  }
-
-  return settingValue;
-};
 export const dismissedDynamicCardsSelector = (state: State) =>
   state.settings.dismissedDynamicCards;
 export const discreetModeSelector = (state: State): boolean =>
@@ -835,7 +869,12 @@ export const notificationsSelector = (state: State) =>
   state.settings.notifications;
 export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
   state.settings.walletTabNavigatorLastVisitedTab;
+export const dateFormatSelector = (state: State) => state.settings.dateFormat;
+export const statusCenterSelector = (state: State) =>
+  state.settings.displayStatusCenter;
 export const overriddenFeatureFlagsSelector = (state: State) =>
   state.settings.overriddenFeatureFlags;
 export const featureFlagsBannerVisibleSelector = (state: State) =>
   state.settings.featureFlagsBannerVisible;
+export const debugAppLevelDrawerOpenedSelector = (state: State) =>
+  state.settings.debugAppLevelDrawerOpened;

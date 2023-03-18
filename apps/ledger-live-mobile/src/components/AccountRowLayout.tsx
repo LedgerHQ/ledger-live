@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, TouchableOpacityProps } from "react-native";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { ValueChange } from "@ledgerhq/types-live";
 import { Flex, Text, Tag, Icons } from "@ledgerhq/native-ui";
@@ -16,7 +16,7 @@ type Props = {
   name: string;
   parentAccountName?: string;
   tag?: string | null | boolean;
-  onPress?: () => void;
+  onPress?: TouchableOpacityProps["onPress"];
   progress?: number;
   hideDelta?: boolean;
   topLink?: boolean;

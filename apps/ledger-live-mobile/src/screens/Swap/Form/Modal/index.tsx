@@ -9,6 +9,8 @@ import GenericErrorBottomModal from "../../../../components/GenericErrorBottomMo
 import { Confirmation, DeviceMeta } from "./Confirmation";
 import { Terms } from "./Terms";
 import { swapAcceptProvider } from "../../../../actions/settings";
+import { useAnalytics } from "../../../../analytics";
+import { sharedSwapTracking } from "../../utils";
 
 export function Modal({
   confirmed,
@@ -25,6 +27,7 @@ export function Modal({
   deviceMeta?: DeviceMeta;
   exchangeRate?: ExchangeRate;
 }) {
+  const { track } = useAnalytics();
   const dispatch = useDispatch();
   const [error, setError] = useState<Error>();
   const provider = exchangeRate?.provider;
@@ -55,6 +58,12 @@ export function Modal({
 
   const onError = useCallback(
     ({ error, swapId }) => {
+      track("error_message", {
+        ...sharedSwapTracking,
+        message: "drawer_error",
+        page: "Page Swap Drawer",
+        error: error?.name ?? "unknown",
+      });
       if (!exchangeRate) {
         return;
       }
@@ -63,7 +72,7 @@ export function Modal({
 
       setError(error);
     },
-    [exchangeRate],
+    [exchangeRate, track],
   );
 
   const resetError = useCallback(() => {
@@ -97,9 +106,7 @@ export function Modal({
         />
       )}
 
-      {error && (
-        <GenericErrorBottomModal error={error} isOpened onClose={resetError} />
-      )}
+      {error && <GenericErrorBottomModal error={error} onClose={resetError} />}
     </>
   );
 }

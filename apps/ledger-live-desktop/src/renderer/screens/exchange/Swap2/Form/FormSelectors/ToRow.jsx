@@ -25,7 +25,7 @@ import {
 import styled from "styled-components";
 import CounterValue from "~/renderer/components/CounterValue";
 import { track } from "~/renderer/analytics/segment";
-import { swapDefaultTrack } from "../../utils/index";
+import { useGetSwapTrackingProperties } from "../../utils/index";
 
 type Props = {
   fromAccount: $PropertyType<SwapSelectorStateType, "account">,
@@ -65,6 +65,7 @@ function ToRow({
   updateSelectedRate,
 }: Props) {
   const fromCurrencyId = fromAccount ? getAccountCurrency(fromAccount).id : null;
+  const swapDefaultTrack = useGetSwapTrackingProperties();
   const allCurrencies = useSelector(toSelector)(fromCurrencyId);
   const currencies = useSelectableCurrencies({ allCurrencies });
   const unit = toCurrency?.units[0];
@@ -83,7 +84,7 @@ function ToRow({
       button: "New target currency",
       page: "Page Swap Form",
       ...swapDefaultTrack,
-      currency,
+      currency: currency.ticker || currency.name,
     });
     setToCurrency(currency);
   };
@@ -96,7 +97,7 @@ function ToRow({
         </FormLabel>
       </Box>
       <Box horizontal>
-        <Box flex="1">
+        <Box flex="1" data-test-id="destination-currency-dropdown">
           <SelectCurrency
             currencies={currencies}
             onChange={setCurrencyAndTrack}

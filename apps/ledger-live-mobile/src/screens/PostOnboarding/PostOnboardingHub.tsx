@@ -30,6 +30,8 @@ import {
 import { PostOnboardingNavigatorParamList } from "../../components/RootNavigator/types/PostOnboardingNavigator";
 import DeviceSetupView from "../../components/DeviceSetupView";
 import { useCompleteActionCallback } from "../../logic/postOnboarding/useCompleteAction";
+import { track, TrackScreen } from "../../analytics";
+import Link from "../../components/wrappedUi/Link";
 
 const AnimatedFlex = Animated.createAnimatedComponent(Flex);
 
@@ -65,11 +67,10 @@ const PostOnboardingHub = ({ navigation, route }: NavigationProps) => {
      * Complete claim NFT action if the route param completed is true
      * */
     () => {
-      route &&
-        route.params &&
-        route.params.completed &&
-        route.params.completed === "true" &&
+      if (route?.params?.completed === "true") {
+        track("deeplink", { action: "Claim NFT return to setup" });
         completePostOnboardingAction(PostOnboardingActionId.claimNft);
+      }
     },
     [clearLastActionCompleted, completePostOnboardingAction, route],
   );
@@ -168,6 +169,14 @@ const PostOnboardingHub = ({ navigation, route }: NavigationProps) => {
 
   return (
     <DeviceSetupView hasCloseButton>
+      <TrackScreen
+        key={allDone.toString()}
+        category={
+          allDone
+            ? "User has completed all post-onboarding actions"
+            : "Post-onboarding hub"
+        }
+      />
       <Flex px={6} py={7} justifyContent="space-between" flex={1}>
         <Text variant="h1Inter" fontWeight="semiBold" mb={8}>
           {allDone
@@ -184,17 +193,16 @@ const PostOnboardingHub = ({ navigation, route }: NavigationProps) => {
             </React.Fragment>
           ))}
         </ScrollView>
-        <Flex mt={8}>
+        <Flex mt={8} alignItems="center" justifyContent="center">
           {allDone ? null : (
-            <Text
-              variant="large"
-              fontWeight="semiBold"
-              alignSelf="center"
+            <Link
+              size="large"
               onPress={navigateToMainScreen}
-              color="neutral.c100"
+              event="button_clicked"
+              eventProperties={{ button: "I'll do this later" }}
             >
               {t("postOnboarding.hub.skip")}
-            </Text>
+            </Link>
           )}
         </Flex>
       </Flex>

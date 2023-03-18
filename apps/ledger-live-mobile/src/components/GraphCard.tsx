@@ -10,13 +10,13 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSelector } from "react-redux";
 import Delta from "./Delta";
-import TransactionsPendingConfirmationWarning from "./TransactionsPendingConfirmationWarning";
+import { TransactionsPendingConfirmationWarningAllAccounts } from "./TransactionsPendingConfirmationWarning";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 
 import { useTimeRange } from "../actions/settings";
 import getWindowDimensions from "../logic/getWindowDimensions";
 import Graph from "./Graph";
-import FormatDate from "./FormatDate";
+import FormatDate from "./DateFormat/FormatDate";
 import { track } from "../analytics";
 import { readOnlyModeEnabledSelector } from "../reducers/settings";
 import EmptyGraph from "../icons/EmptyGraph";
@@ -145,7 +145,7 @@ function GraphCard({
                       />
                     </Text>
                   )}
-                  <TransactionsPendingConfirmationWarning />
+                  <TransactionsPendingConfirmationWarningAllAccounts />
                 </Flex>
                 <Flex flexDirection={"row"}>
                   {!balanceHistory ? (

@@ -2,13 +2,10 @@ import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { DiscoverPage } from "../../models/DiscoverPage";
 import { Layout } from "../../models/Layout";
-import { Drawer } from "tests/models/Drawer";
-import { Modal } from "tests/models/Modal";
-import { DeviceAction } from "tests/models/DeviceAction";
+import { Drawer } from "../../models/Drawer";
+import { Modal } from "../../models/Modal";
+import { DeviceAction } from "../../models/DeviceAction";
 import * as server from "../../utils/serve-dummy-app";
-
-// Comment out to disable recorder
-// process.env.PWDEBUG = "1";
 
 test.use({ userdata: "1AccountBTC1AccountETH" });
 
@@ -68,13 +65,13 @@ test("Discover", async ({ page }) => {
 
   await test.step("Request Account drawer - open", async () => {
     await discoverPage.requestAsset();
-    await expect(await discoverPage.selectAssetTitle.isVisible()).toBe(true);
+    await expect(discoverPage.selectAssetTitle).toBeVisible();
   });
 
   await test.step("Request Account - select asset", async () => {
     await discoverPage.selectAsset();
-    await expect(await discoverPage.selectAccountTitle.isVisible()).toBe(true);
-    await expect(await discoverPage.selectAssetSearchBar.isEnabled()).toBe(true);
+    await expect(discoverPage.selectAccountTitle).toBeVisible();
+    await expect(discoverPage.selectAssetSearchBar).toBeEnabled();
   });
 
   await test.step("Request Account - select BTC", async () => {
@@ -113,7 +110,10 @@ test("Discover", async ({ page }) => {
     await discoverPage.continueToSignTransaction();
     await layout.waitForLoadingSpinnerToHaveDisappeared();
     await discoverPage.waitForConfirmationScreenToBeDisplayed();
-    await expect.soft(page).toHaveScreenshot("live-app-sign-transaction-confirm.png");
+    await expect(page.locator("text=0.0000123")).toBeVisible();
+    await expect(page.locator("text=0.0000025")).toBeVisible();
+    // This screenshot is flaky as the loading spinner appears again after this confirm modal, and on slow CI runners the screenshot can take a picture of this instead of the confirm.
+    // await expect.soft(page).toHaveScreenshot("live-app-sign-transaction-confirm.png");
   });
 
   await test.step("Sign Transaction - signature output", async () => {

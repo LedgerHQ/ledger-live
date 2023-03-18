@@ -18,6 +18,7 @@ type Props = {
 const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+
   const locale = useSelector(localeSelector);
   const unit = getAccountUnit(account);
   const mainAccount = getMainAccount(account, parentAccount);
@@ -28,7 +29,14 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
   const earnRewardDisabled = tronPower === 0 && spendableBalance.lt(minAmount);
 
   const onClick = useCallback(() => {
-    if (tronPower > 0) {
+    if (earnRewardDisabled) {
+      dispatch(
+        openModal("MODAL_NO_FUNDS_STAKE", {
+          account,
+          parentAccount,
+        }),
+      );
+    } else if (tronPower > 0) {
       dispatch(
         openModal("MODAL_MANAGE_TRON", {
           parentAccount,
@@ -43,7 +51,7 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
         }),
       );
     }
-  }, [dispatch, tronPower, account, parentAccount]);
+  }, [account, earnRewardDisabled, tronPower, dispatch, parentAccount]);
 
   if (parentAccount) return null;
 
@@ -62,10 +70,13 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
     {
       key: "Stake",
       onClick: onClick,
-      disabled: earnRewardDisabled,
       icon: IconCoins,
       label: t("account.stake"),
       tooltip: disabledLabel,
+      event: "button_clicked",
+      eventProperties: {
+        button: "stake",
+      },
     },
   ];
 };

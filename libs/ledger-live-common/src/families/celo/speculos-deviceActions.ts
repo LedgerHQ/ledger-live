@@ -1,6 +1,10 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
-import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
+import {
+  deviceActionFlow,
+  formatDeviceAmount,
+  SpeculosButton,
+} from "../../bot/specs";
 
 const typeWording = {
   send: "Send",
@@ -18,11 +22,11 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
     steps: [
       {
         title: "Review",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Amount",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account, status }) =>
           formatDeviceAmount(account.currency, status.amount, {
             forceFloating: true,
@@ -30,31 +34,31 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Address",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => transaction.recipient,
       },
       {
         title: "Max Fees",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "No Gateway Fee",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Validator",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Type",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => {
           return typeWording[transaction.mode];
         },
       },
       {
         title: "Accept",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
       },
     ],
   });

@@ -1,5 +1,29 @@
 # @ledgerhq/icons-ui
 
+## 0.3.5
+
+### Patch Changes
+
+- [#2728](https://github.com/LedgerHQ/ledger-live/pull/2728) [`13a71f1cb2`](https://github.com/LedgerHQ/ledger-live/commit/13a71f1cb24fa254a2ed0b2db7f0d7b8f32465b5) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed Country Flags icons. Those are no longer included within ReactUI and IconUI
+
+## 0.3.5-next.0
+
+### Patch Changes
+
+- [#2728](https://github.com/LedgerHQ/ledger-live/pull/2728) [`13a71f1cb2`](https://github.com/LedgerHQ/ledger-live/commit/13a71f1cb24fa254a2ed0b2db7f0d7b8f32465b5) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed Country Flags icons. Those are no longer included within ReactUI and IconUI
+
+## 0.3.4
+
+### Patch Changes
+
+- [#2231](https://github.com/LedgerHQ/ledger-live/pull/2231) [`5266518d0b`](https://github.com/LedgerHQ/ledger-live/commit/5266518d0baf26258f95a08d7f0a127f1848b38f) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Case consistency: rename all icons that start with a capital letter
+
+## 0.3.4-next.0
+
+### Patch Changes
+
+- [#2231](https://github.com/LedgerHQ/ledger-live/pull/2231) [`5266518d0b`](https://github.com/LedgerHQ/ledger-live/commit/5266518d0baf26258f95a08d7f0a127f1848b38f) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Case consistency: rename all icons that start with a capital letter
+
 ## 0.3.3
 
 ### Patch Changes

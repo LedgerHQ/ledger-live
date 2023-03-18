@@ -161,6 +161,29 @@ export interface AccountBridge<T extends TransactionCommon> {
     parentAccount?: Account | null | undefined;
     transaction?: T | null | undefined;
   }): Promise<BigNumber>;
+  /**
+   * This function mutates the 'accountRaw' object in-place to add any extra fields that the coin may need to set.
+   * It is called during the serialization mechanism, for instance bitcoinResources need to be serialized.
+   *
+   * @param {Account} account - The original account object.
+   * @param {AccountRaw} accountRaw - The account in its serialized form.
+   */
+  assignToAccountRaw?: (account: Account, accountRaw: AccountRaw) => void;
+  /**
+   * This function mutates the 'account' object in-place to add any extra fields that the coin may need to set.
+   * It is called during the deserialization mechanism, for instance bitcoinResources need to be deserialized.
+   *
+   * @param {AccountRaw} accountRaw - The account in its serialized form.
+   * @param {Account} account - The original account object.
+   */
+  assignFromAccountRaw?: (accountRaw: AccountRaw, account: Account) => void;
+  /**
+   * This function mutates the 'account' object to extend it with any extra fields of the coin.
+   * For instance bitcoinResources needs to be created.
+   *
+   * @param {Account} account - The original account object to mutates in-place.
+   */
+  initAccount?: (account: Account) => void;
   // finalizing a transaction by signing it with the ledger device
   // This results of a "signed" event with a signedOperation
   // than can be locally saved and later broadcasted

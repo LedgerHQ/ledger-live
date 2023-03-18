@@ -1,10 +1,13 @@
 /** ⚠️ keep this order of import. @see https://docs.ethers.io/v5/cookbook/react-native/#cookbook-reactnative ⚠️ */
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { transactionToEthersTransaction } from "../adapters";
-import { FeeHistory, Transaction as EvmTransaction } from "../types";
 import { Account } from "@ledgerhq/types-live";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { FeeData, FeeHistory, Transaction as EvmTransaction } from "../types";
+import { transactionToEthersTransaction } from "../adapters";
+import { GasEstimationError } from "../errors";
+import ERC20Abi from "../abis/erc20.abi.json";
+import { log } from "@ledgerhq/logs";
 
 export const DEFAULT_RETRIES_RPC_METHODS = 2;
 
@@ -35,26 +38,26 @@ export async function withApi<T>(
 }
 
 /**
- * Get account balances and nonce
+ * Get account balance and last chain block
  */
-export const getAccount: (
+export const getBalanceAndBlock: (
   currency: CryptoCurrency,
   addr: string
-) => Promise<{ blockHeight: number; balance: BigNumber; nonce: number }> =
-  async (currency, addr) =>
-    withApi(currency, async (api) => {
-      const [balance, nonce, blockHeight] = await Promise.all([
-        getBalance(currency, addr),
-        getTransactionCount(currency, addr),
-        api.getBlockNumber(),
-      ]);
+) => Promise<{ blockHeight: number; balance: BigNumber }> = async (
+  currency,
+  addr
+) =>
+  withApi(currency, async (api) => {
+    const [balance, blockHeight] = await Promise.all([
+      getCoinBalance(currency, addr),
+      api.getBlockNumber(),
+    ]);
 
-      return {
-        blockHeight,
-        balance: new BigNumber(balance.toString()),
-        nonce,
-      };
-    });
+    return {
+      blockHeight,
+      balance: new BigNumber(balance.toString()),
+    };
+  });
 
 /**
  * Get a transaction by hash
@@ -70,12 +73,26 @@ export const getTransaction = (
 /**
  * Get the balance of an address
  */
-export const getBalance = (
+export const getCoinBalance = (
   currency: CryptoCurrency,
   address: string
 ): Promise<BigNumber> =>
   withApi(currency, async (api) => {
     const balance = await api.getBalance(address);
+    return new BigNumber(balance.toString());
+  });
+
+/**
+ * Get the balance of an address
+ */
+export const getTokenBalance = (
+  currency: CryptoCurrency,
+  address: string,
+  contractAddress: string
+): Promise<BigNumber> =>
+  withApi(currency, async (api) => {
+    const erc20 = new ethers.Contract(contractAddress, ERC20Abi, api);
+    const balance = await erc20.balanceOf(address);
     return new BigNumber(balance.toString());
   });
 
@@ -98,27 +115,29 @@ export const getGasEstimation = (
   transaction: EvmTransaction
 ): Promise<BigNumber> =>
   withApi(account.currency, async (api) => {
-    const ethersTransaction = transactionToEthersTransaction(
+    const { to, value, data } = transactionToEthersTransaction(
       transaction
     ) as ethers.providers.TransactionRequest;
-    const gasEtimation = await api.estimateGas({
-      ...ethersTransaction,
-      from: account.freshAddress, // should be necessary for some estimations
-    });
 
-    return new BigNumber(gasEtimation.toString());
+    try {
+      const gasEtimation = await api.estimateGas({
+        from: account.freshAddress, // should be necessary for some estimations
+        to,
+        value,
+        data,
+      });
+
+      return new BigNumber(gasEtimation.toString());
+    } catch (e) {
+      log("error", "EVM Family: Gas Estimation Error", e);
+      throw new GasEstimationError();
+    }
   });
 
 /**
  * Get an estimation of fees on the network
  */
-export const getFeesEstimation = (
-  currency: CryptoCurrency
-): Promise<{
-  maxFeePerGas: null | BigNumber;
-  maxPriorityFeePerGas: null | BigNumber;
-  gasPrice: null | BigNumber;
-}> =>
+export const getFeesEstimation = (currency: CryptoCurrency): Promise<FeeData> =>
   withApi(currency, async (api) => {
     const block = await api.getBlock("latest");
     const supports1559 = Boolean(block.baseFeePerGas);
@@ -188,12 +207,34 @@ export const getBlock = (
     return api.getBlock(blockHeight);
   });
 
+/**
+ * Get account balances and nonce
+ */
+export const getSubAccount: (
+  currency: CryptoCurrency,
+  addr: string
+) => Promise<{ blockHeight: number; balance: BigNumber; nonce: number }> =
+  async (currency, addr) =>
+    withApi(currency, async (api) => {
+      const [balance, nonce, blockHeight] = await Promise.all([
+        getCoinBalance(currency, addr),
+        getTransactionCount(currency, addr),
+        api.getBlockNumber(),
+      ]);
+
+      return {
+        blockHeight,
+        balance: new BigNumber(balance.toString()),
+        nonce,
+      };
+    });
+
 export default {
   DEFAULT_RETRIES_RPC_METHODS,
   withApi,
-  getAccount,
+  getBalanceAndBlock,
   getTransaction,
-  getBalance,
+  getCoinBalance,
   getTransactionCount,
   getGasEstimation,
   getFeesEstimation,

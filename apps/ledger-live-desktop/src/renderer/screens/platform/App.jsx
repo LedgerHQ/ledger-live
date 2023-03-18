@@ -5,10 +5,10 @@ import useTheme from "~/renderer/hooks/useTheme";
 
 import { Card } from "~/renderer/components/Box";
 import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
-import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { useSelector } from "react-redux";
+import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 
 type Props = {
   match: {
@@ -20,22 +20,28 @@ type Props = {
     url: string,
   },
   appId?: string,
+  location: {
+    hash: string,
+    params: {
+      [key: string]: string,
+    },
+    pathname: string,
+    search: string,
+    customDappUrl?: string,
+  },
 };
 
-export default function PlatformApp({ match, appId: propsAppId }: Props) {
+export default function PlatformApp({ match, appId: propsAppId, location }: Props) {
   const history = useHistory();
-  const { state: urlParams, search } = useLocation();
+  const { params: internalParams, search } = location;
+  const { state: urlParams, customDappUrl } = useLocation();
+
   const appId = propsAppId || match.params?.appId;
-
-  const localManifest = useLocalLiveAppManifest(appId);
-  const remoteManifest = useRemoteLiveAppManifest(appId);
-
-  const manifest = localManifest || remoteManifest;
 
   const returnTo = useMemo(() => {
     const params = new URLSearchParams(search);
-    return params.get("returnTo");
-  }, [search]);
+    return urlParams?.returnTo || params.get("returnTo") || internalParams?.returnTo;
+  }, [search, urlParams?.returnTo, internalParams?.returnTo]);
 
   const handleClose = useCallback(() => history.push(returnTo || `/platform`), [history, returnTo]);
   const themeType = useTheme("colors.palette.type");
@@ -44,8 +50,15 @@ export default function PlatformApp({ match, appId: propsAppId }: Props) {
     theme: themeType,
     lang,
     ...urlParams,
+    ...internalParams,
   };
 
+  const localManifest = useLocalLiveAppManifest(appId);
+  const remoteManifest = useRemoteLiveAppManifest(appId);
+  let manifest = localManifest || remoteManifest;
+  if (customDappUrl) {
+    manifest = { ...manifest, params: { ...manifest.params, dappUrl: customDappUrl } };
+  }
   // TODO for next urlscheme evolutions:
   // - check if local settings allow to launch an app from this branch, else display an error
   // - check if the app is available in store, else display a loader if apps are getting fetched from remote, else display an error stating that the app doesn't exist

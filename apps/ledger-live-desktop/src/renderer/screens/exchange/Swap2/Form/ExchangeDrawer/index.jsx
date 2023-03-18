@@ -20,7 +20,7 @@ import {
 } from "~/renderer/components/DeviceAction/rendering";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { swapDefaultTrack, useRedirectToSwapHistory } from "../../utils/index";
+import { useGetSwapTrackingProperties, useRedirectToSwapHistory } from "../../utils/index";
 import { DrawerTitle } from "../DrawerTitle";
 import { Separator } from "../Separator";
 import SwapAction from "./SwapAction";
@@ -44,6 +44,7 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
   const dispatch = useDispatch();
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
+  const swapDefaultTrack = useGetSwapTrackingProperties();
   const redirectToHistory = useRedirectToSwapHistory();
   const {
     transaction,
@@ -76,7 +77,7 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
       });
       setError(error);
     },
-    [exchangeRate],
+    [exchangeRate.provider, swapDefaultTrack],
   );
 
   const onCompletion = useCallback(
@@ -152,7 +153,7 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
           provider={exchangeRate.provider}
           {...swapDefaultTrack}
         />
-        <Box justifyContent="center" flex={1}>
+        <Box justifyContent="center" flex={1} mx={3}>
           <ErrorDisplay error={error} />
         </Box>
         <Box flex={0}>
@@ -178,7 +179,7 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
           provider={exchangeRate.provider}
           {...swapDefaultTrack}
         />
-        <Box justifyContent="center" flex={1}>
+        <Box justifyContent="center" flex={1} mx={3}>
           <SwapCompleted
             swapId={result?.swapId}
             provider={exchangeRate.provider}

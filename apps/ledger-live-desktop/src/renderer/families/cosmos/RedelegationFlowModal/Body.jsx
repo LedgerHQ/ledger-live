@@ -31,7 +31,7 @@ import StepValidators, { StepValidatorsFooter } from "./steps/StepValidators";
 import StepDestinationValidators from "./steps/StepDestinationValidators";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
-import logger from "~/logger/logger";
+import logger from "~/renderer/logger";
 
 type OwnProps = {|
   stepId: StepId,

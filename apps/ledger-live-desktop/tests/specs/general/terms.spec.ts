@@ -1,12 +1,14 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
+import { TermsModal } from "../../models/TermsModal";
 
 test.use({ userdata: "skip-onboarding-with-terms" });
 
 test("Terms of Use", async ({ page }) => {
-  await test.step("check for popup", async () => {
-    const modal = page.locator('[data-test-id="terms-update-popup"]');
+  const termsModal = new TermsModal(page);
 
-    expect(await modal.isVisible()).toBe(true);
+  await test.step("check for popup", async () => {
+    await termsModal.waitToBeVisible();
+    await expect.soft(page).toHaveScreenshot("terms-modal.png");
   });
 });

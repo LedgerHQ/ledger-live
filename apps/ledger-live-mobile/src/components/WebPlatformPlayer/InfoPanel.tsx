@@ -2,13 +2,19 @@ import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
-import { StyleSheet, View, TouchableOpacity, Linking } from "react-native";
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Linking,
+  ScrollView,
+} from "react-native";
 import { translateContent } from "@ledgerhq/live-common/platform/logic";
 import type { TranslatableString } from "@ledgerhq/live-common/platform/types";
 import { languageSelector } from "../../reducers/settings";
 import ExternalLinkIcon from "../../icons/ExternalLink";
 import AppIcon from "../../screens/Platform/AppIcon";
-import BottomModal from "../BottomModal";
+import QueuedDrawer from "../QueuedDrawer";
 import LText from "../LText";
 
 type Props = {
@@ -21,7 +27,7 @@ type Props = {
   setIsOpened: (_: boolean) => void;
 };
 
-const InfoPanel = ({
+export function InfoPanel({
   name,
   icon,
   description,
@@ -29,7 +35,7 @@ const InfoPanel = ({
   uri,
   isOpened,
   setIsOpened,
-}: Props) => {
+}: Props) {
   const settingsLocale = useSelector(languageSelector);
   const { colors } = useTheme();
   const onClose = useCallback(() => {
@@ -39,77 +45,79 @@ const InfoPanel = ({
     Linking.openURL(url);
   }, []);
   return (
-    <BottomModal
+    <QueuedDrawer
       style={{ ...styles.root, backgroundColor: colors.card }}
-      isOpened={isOpened}
+      isRequestingToBeOpened={isOpened}
       onClose={onClose}
     >
-      <View style={{ ...styles.flexRow, ...styles.titleContainer }}>
-        {icon ? (
-          <View style={styles.appIcon}>
-            <AppIcon size={40} name={name} icon={icon} />
-          </View>
-        ) : null}
-        <LText semiBold style={{ ...styles.title, color: colors.text }}>
-          {name}
+      <ScrollView>
+        <View style={{ ...styles.flexRow, ...styles.titleContainer }}>
+          {icon ? (
+            <View style={styles.appIcon}>
+              <AppIcon size={40} name={name} icon={icon} />
+            </View>
+          ) : null}
+          <LText semiBold style={{ ...styles.title, color: colors.text }}>
+            {name}
+          </LText>
+        </View>
+        <LText
+          style={{
+            ...styles.basicFontStyle,
+            ...styles.description,
+            color: colors.text,
+          }}
+        >
+          {translateContent(description, settingsLocale)}
         </LText>
-      </View>
-      <LText
-        style={{
-          ...styles.basicFontStyle,
-          ...styles.description,
-          color: colors.text,
-        }}
-      >
-        {translateContent(description, settingsLocale)}
-      </LText>
-      {url ? (
-        <>
-          <View style={styles.hr} />
-          <LText semiBold style={styles.subSectionTitle}>
-            <Trans i18nKey="platform.webPlatformPlayer.infoPanel.website" />
-          </LText>
-          <TouchableOpacity
-            style={styles.flexRow}
-            onPress={() => onLinkPress(url)}
-          >
-            <LText
-              semiBold
-              style={{ ...styles.basicFontStyle, color: colors.live }}
-            >
-              {url}
+        {url ? (
+          <>
+            <View style={styles.hr} />
+            <LText semiBold style={styles.subSectionTitle}>
+              <Trans i18nKey="platform.webPlatformPlayer.infoPanel.website" />
             </LText>
-            <View style={styles.externalLinkIcon}>
-              <ExternalLinkIcon size={14} color={colors.live} />
-            </View>
-          </TouchableOpacity>
-        </>
-      ) : null}
-      {__DEV__ && uri ? (
-        <>
-          <View style={styles.hr} />
-          <LText semiBold style={styles.subSectionTitle}>
-            URI:
-          </LText>
-          <TouchableOpacity
-            style={styles.flexRow}
-            onPress={() => onLinkPress(uri)}
-          >
-            <LText
-              semiBold
-              style={{ ...styles.basicFontStyle, color: colors.live }}
+            <TouchableOpacity
+              style={styles.flexRow}
+              onPress={() => onLinkPress(url)}
             >
-              {uri}
+              <LText
+                semiBold
+                style={{ ...styles.basicFontStyle, color: colors.live }}
+              >
+                {url}
+              </LText>
+              <View style={styles.externalLinkIcon}>
+                <ExternalLinkIcon size={14} color={colors.live} />
+              </View>
+            </TouchableOpacity>
+          </>
+        ) : null}
+        {__DEV__ && uri ? (
+          <>
+            <View style={styles.hr} />
+            <LText semiBold style={styles.subSectionTitle}>
+              URI:
             </LText>
-            <View style={styles.externalLinkIcon}>
-              <ExternalLinkIcon size={14} color={colors.live} />
-            </View>
-          </TouchableOpacity>
-        </>
-      ) : null}
-    </BottomModal>
+            <TouchableOpacity
+              style={styles.flexRow}
+              onPress={() => onLinkPress(uri)}
+            >
+              <LText
+                semiBold
+                style={{ ...styles.basicFontStyle, color: colors.live }}
+              >
+                {uri}
+              </LText>
+              <View style={styles.externalLinkIcon}>
+                <ExternalLinkIcon size={14} color={colors.live} />
+              </View>
+            </TouchableOpacity>
+          </>
+        ) : null}
+      </ScrollView>
+    </QueuedDrawer>
   );
-};
+}
 
 const styles = StyleSheet.create({
   root: {
@@ -153,4 +161,3 @@ const styles = StyleSheet.create({
     paddingLeft: 6,
   },
 });
-export default InfoPanel;

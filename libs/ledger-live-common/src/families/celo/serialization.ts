@@ -1,6 +1,11 @@
-// @flow
-import type { CeloResources, CeloResourcesRaw } from "./types";
+import type {
+  CeloAccount,
+  CeloAccountRaw,
+  CeloResources,
+  CeloResourcesRaw,
+} from "./types";
 import { BigNumber } from "bignumber.js";
+import { Account, AccountRaw } from "@ledgerhq/types-live";
 
 export function toCeloResourcesRaw(r: CeloResources): CeloResourcesRaw {
   const {
@@ -58,4 +63,19 @@ export function fromCeloResourcesRaw(r: CeloResourcesRaw): CeloResources {
     lockedGoldAddress: r.lockedGoldAddress,
     maxNumGroupsVotedFor: new BigNumber(r.maxNumGroupsVotedFor),
   };
+}
+
+export function assignToAccountRaw(account: Account, accountRaw: AccountRaw) {
+  const celoAccount = account as CeloAccount;
+  if (celoAccount.celoResources)
+    (accountRaw as CeloAccountRaw).celoResources = toCeloResourcesRaw(
+      celoAccount.celoResources
+    );
+}
+
+export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
+  const celoResourcesRaw = (accountRaw as CeloAccountRaw).celoResources;
+  if (celoResourcesRaw)
+    (account as CeloAccount).celoResources =
+      fromCeloResourcesRaw(celoResourcesRaw);
 }

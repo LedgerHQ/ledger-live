@@ -14,7 +14,7 @@ import { urls } from "~/config/urls";
 import { Switch, Route, useHistory, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Device } from "@ledgerhq/types-devices";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { ImportYourRecoveryPhrase } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/ImportYourRecoveryPhrase";
@@ -40,6 +40,7 @@ import { QuizSuccess } from "~/renderer/components/Onboarding/Screens/Tutorial/s
 import RecoveryWarning from "../../Help/RecoveryWarning";
 import { QuizzPopin } from "~/renderer/modals/OnboardingQuizz/OnboardingQuizzModal";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import { saveSettings } from "~/renderer/actions/settings";
 
 import { UseCase } from "../../index";
 
@@ -241,6 +242,8 @@ export default function Tutorial({ useCase }: Props) {
   const urlSplit = useMemo(() => pathname.split("/"), [pathname]);
   const currentStep = useMemo(() => urlSplit[urlSplit.length - 1], [urlSplit]);
   const path = useMemo(() => urlSplit.slice(0, urlSplit.length - 1).join("/"), [urlSplit]);
+
+  const dispatch = useDispatch();
 
   const screens = useMemo<IScreen[]>(
     () => [
@@ -486,6 +489,8 @@ export default function Tutorial({ useCase }: Props) {
         },
         canContinue: !!connectedDevice,
         next: () => {
+          dispatch(saveSettings({ hasCompletedOnboarding: true }));
+          track("Onboarding - End");
           setOnboardingDone(true);
         },
         previous: () => history.push(`${path}/${ScreenId.pairMyNano}`),
@@ -499,6 +504,7 @@ export default function Tutorial({ useCase }: Props) {
       userChosePinCodeHimself,
       userUnderstandConsequences,
       setOnboardingDone,
+      dispatch,
     ],
   );
 
@@ -513,7 +519,10 @@ export default function Tutorial({ useCase }: Props) {
        */
       const timeout: ReturnType<typeof setTimeout> = setTimeout(() => {
         if (history.location.pathname !== "/")
-          handleStartPostOnboarding(connectedDevice.modelId, true, () => history.push("/"));
+          handleStartPostOnboarding({
+            deviceModelId: connectedDevice.modelId,
+            fallbackIfNoAction: () => history.push("/"),
+          });
       }, 0);
       return () => {
         clearTimeout(timeout);

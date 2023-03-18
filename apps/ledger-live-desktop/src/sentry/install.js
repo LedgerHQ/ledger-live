@@ -1,7 +1,7 @@
 // @flow
 import os from "os";
-import pname from "~/logger/pname";
-import anonymizer from "~/logger/anonymizer";
+import pname from "./pname";
+import anonymizer from "./anonymizer";
 import "../env";
 import { getOperatingSystemSupportStatus } from "~/support/os";
 
@@ -58,6 +58,7 @@ const ignoreErrors = [
   "Unexpected ''",
   "Unexpected '<'",
   "Service Unvailable",
+  "HederaAddAccountError",
   // timeouts
   "ERR_CONNECTION_TIMED_OUT",
   "request timed out",
@@ -83,6 +84,8 @@ const ignoreErrors = [
   "ManagerDeviceLocked",
   "PairingFailed",
   "Ledger device: UNKNOWN_ERROR",
+  // errors coming from the usage of a Transport implementation
+  "HwTransportError",
   // other
   "AccountAwaitingSendPendingOperations",
   "AccountNeedResync",

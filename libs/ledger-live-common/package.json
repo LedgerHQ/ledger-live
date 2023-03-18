@@ -4,7 +4,7 @@
   },
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "27.10.0",
+  "version": "29.1.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -21,20 +21,11 @@
       "*.json": [
         "*.json"
       ],
-      "*/": [
-        "lib/*/index.d.ts"
-      ],
       "*": [
         "lib/*"
       ],
-      "lib/*/": [
-        "lib/*/index.d.ts"
-      ],
       "lib/*": [
         "lib/*"
-      ],
-      "lib-es/*/": [
-        "lib-es/*/index.d.ts"
       ],
       "lib-es/*": [
         "lib-es/*"
@@ -42,16 +33,10 @@
     }
   },
   "exports": {
-    "./lib/*/": "./lib/*/index.js",
     "./lib/*": "./lib/*.js",
     "./lib/*.js": "./lib/*.js",
-    "./lib-es/*/": "./lib-es/*/index.js",
     "./lib-es/*": "./lib-es/*.js",
     "./lib-es/*.js": "./lib-es/*.js",
-    "./*/": {
-      "require": "./lib/*/index.js",
-      "default": "./lib-es/*/index.js"
-    },
     "./*": {
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
@@ -83,6 +68,7 @@
   },
   "files": [
     "lib",
+    "lib-es",
     "src",
     "react.js",
     "reactNative.js"
@@ -124,24 +110,28 @@
   },
   "dependencies": {
     "@cardano-foundation/ledgerjs-hw-app-cardano": "^5.1.0",
-    "@celo/connect": "^1.5.2",
-    "@celo/contractkit": "^1.5.2",
-    "@celo/utils": "^1.5.2",
-    "@celo/wallet-base": "^1.5.2",
-    "@celo/wallet-ledger": "^1.5.2",
+    "@celo/connect": "^3.0.1",
+    "@celo/contractkit": "^3.0.1",
+    "@celo/utils": "^3.0.1",
+    "@celo/wallet-base": "^3.0.1",
+    "@celo/wallet-ledger": "^3.0.1",
     "@cosmjs/amino": "^0.28.4",
     "@cosmjs/crypto": "^0.26.5",
     "@cosmjs/launchpad": "^0.26.5",
     "@cosmjs/ledger-amino": "^0.26.5",
     "@cosmjs/proto-signing": "^0.26.5",
     "@cosmjs/stargate": "^0.26.5",
-    "@crypto-com/chain-jslib": "0.0.19",
+    "@crypto-org-chain/chain-jslib": "1.1.2",
+    "@elrondnetwork/erdjs": "11.0.0",
+    "@elrondnetwork/erdjs-network-providers": "^1.1.2",
     "@ethereumjs/common": "^2.6.2",
     "@ethereumjs/tx": "^3.5.0",
     "@ethersproject/shims": "^5.7.0",
     "@hashgraph/sdk": "^2.10.1",
     "@keplr-wallet/cosmos": "^0.9.16",
     "@keplr-wallet/proto-types": "^0.10.4",
+    "@ledgerhq/coin-framework": "workspace:^",
+    "@ledgerhq/coin-polkadot": "workspace:^",
     "@ledgerhq/compressjs": "github:LedgerHQ/compressjs#d9e8e4d994923e0ea76a32b97289bcccfe71b82e",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
@@ -160,15 +150,10 @@
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
-    "@ledgerhq/json-bignumber": "^1.1.0",
     "@ledgerhq/live-app-sdk": "^0.8.1",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/wallet-api-core": "^0.11.0",
-    "@ledgerhq/wallet-api-server": "^0.10.1",
-    "@polkadot/types": "9.8.1",
-    "@polkadot/types-known": "9.8.1",
-    "@polkadot/util": "10.1.12",
-    "@polkadot/util-crypto": "10.1.12",
+    "@ledgerhq/wallet-api-server": "^0.11.0",
     "@solana/spl-token": "^0.2.0",
     "@solana/web3.js": "1.41.3",
     "@stricahq/bip32ed25519": "^1.0.3",
@@ -223,7 +208,6 @@
     "jwt-decode": "^3.1.2",
     "leb128": "^0.0.5",
     "lodash": "^4.17.21",
-    "lru-cache": "5.1.1",
     "minimatch": "^5.1.0",
     "near-api-js": "^0.44.2",
     "numeral": "^2.0.6",
@@ -253,8 +237,7 @@
     "utility-types": "^3.10.0",
     "varuint-bitcoin": "1.1.2",
     "winston": "^3.4.0",
-    "xstate": "^4.30.2",
-    "zcash-bitcore-lib": "^0.13.20-rc3"
+    "xstate": "^4.30.2"
   },
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",
@@ -294,6 +277,7 @@
     "jest-environment-jsdom": "28",
     "jest-file-snapshot": "^0.5.0",
     "long": "^4.0.0",
+    "mkdirp": "*",
     "prettier": "2.3.2",
     "react": "^17.0.2",
     "react-dom": "17.0.2",
