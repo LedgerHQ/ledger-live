@@ -27,7 +27,7 @@ const handlers: ReducerMap<NotificationsState, NotificationsPayload> = {
     ...state,
     isPushNotificationsModalOpen: (
       action as Action<NotificationsSetModalOpenPayload>
-    ).payload.isPushNotificationsModalOpen,
+    ).payload,
   }),
   [NotificationsActionTypes.NOTIFICATIONS_SET_MODAL_LOCKED]: (
     state,
@@ -36,12 +36,12 @@ const handlers: ReducerMap<NotificationsState, NotificationsPayload> = {
     ...state,
     isPushNotificationsModalLocked: (
       action as Action<NotificationsSetModalLockedPayload>
-    ).payload.isPushNotificationsModalLocked,
+    ).payload,
   }),
   [NotificationsActionTypes.NOTIFICATIONS_SET_MODAL_TYPE]: (state, action) => ({
     ...state,
     notificationsModalType: (action as Action<NotificationsSetModalTypePayload>)
-      .payload.notificationsModalType,
+      .payload,
   }),
   [NotificationsActionTypes.NOTIFICATIONS_SET_CURRENT_ROUTE_NAME]: (
     state,
@@ -50,7 +50,7 @@ const handlers: ReducerMap<NotificationsState, NotificationsPayload> = {
     ...state,
     currentRouteName: (
       action as Action<NotificationsSetCurrentRouteNamePayload>
-    ).payload.currentRouteName,
+    ).payload,
   }),
   [NotificationsActionTypes.NOTIFICATIONS_SET_EVENT_TRIGGERED]: (
     state,
@@ -58,15 +58,14 @@ const handlers: ReducerMap<NotificationsState, NotificationsPayload> = {
   ) => ({
     ...state,
     eventTriggered: (action as Action<NotificationsSetEventTriggeredPayload>)
-      .payload.eventTriggered,
+      .payload,
   }),
   [NotificationsActionTypes.NOTIFICATIONS_SET_DATA_OF_USER]: (
     state,
     action,
   ) => ({
     ...state,
-    dataOfUser: (action as Action<NotificationsSetDataOfUserPayload>).payload
-      .dataOfUser,
+    dataOfUser: (action as Action<NotificationsSetDataOfUserPayload>).payload,
   }),
 
   [NotificationsActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (

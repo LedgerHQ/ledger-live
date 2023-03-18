@@ -76,7 +76,7 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
       )
         .toPromise()
         .then(deviceInfo => {
-          dispatch(setLastSeenDevice({ deviceInfo }));
+          dispatch(setLastSeenDevice(deviceInfo));
         });
     }
   }, [lastConnectedDevice, lastSeenDevice, dispatch]);

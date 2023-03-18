@@ -134,21 +134,23 @@ export function Confirmation({
 
       if (!mainAccount || !exchangeRate) return;
       dispatch(
-        updateAccountWithUpdater(mainAccount.id, account =>
-          addPendingOperation(
-            addToSwapHistory({
-              account,
+        updateAccountWithUpdater({
+          accountId: mainAccount.id,
+          updater: account =>
+            addPendingOperation(
+              addToSwapHistory({
+                account,
+                operation,
+                transaction: swapTx.current.transaction as Transaction,
+                swap: {
+                  exchange,
+                  exchangeRate: exchangeRate.current,
+                },
+                swapId,
+              }),
               operation,
-              transaction: swapTx.current.transaction as Transaction,
-              swap: {
-                exchange,
-                exchangeRate: exchangeRate.current,
-              },
-              swapId,
-            }),
-            operation,
-          ),
-        ),
+            ),
+        }),
       );
 
       if (typeof swapTx.current.swap.from.amount !== "undefined") {

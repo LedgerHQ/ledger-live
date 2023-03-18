@@ -21,6 +21,7 @@ import {
 import { BaseNavigatorStackParamList } from "../components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "../const";
 import { BaseOnboardingNavigatorParamList } from "../components/RootNavigator/types/BaseOnboardingNavigator";
+import { BleSaveDeviceNamePayload } from "../actions/types";
 
 const MAX_DEVICE_NAME = 20;
 const action = createAction(renameDevice);
@@ -37,7 +38,7 @@ type NavigationProps = RootComposite<
     >
 >;
 type Props = {
-  saveBleDeviceName: (d: string, v: string) => void;
+  saveBleDeviceName: ({ deviceId, name }: BleSaveDeviceNamePayload) => void;
 } & NavigationProps;
 
 function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
@@ -77,7 +78,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
   const onSuccess = useCallback(() => {
     setCompleted(true);
     setRunning(false);
-    saveBleDeviceName(device.deviceId, name);
+    saveBleDeviceName({ deviceId: device.deviceId, name });
 
     pushToast({
       id: "rename-device-success",

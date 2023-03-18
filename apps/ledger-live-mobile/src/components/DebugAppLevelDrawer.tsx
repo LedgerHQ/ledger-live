@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Alert } from "@ledgerhq/native-ui";
 import QueuedDrawer from "./QueuedDrawer";
-import { setDebugAppLelevelDrawerOpened } from "../actions/settings";
+import { setDebugAppLevelDrawerOpened } from "../actions/settings";
 import { debugAppLevelDrawerOpenedSelector } from "../reducers/settings";
 
 /**
@@ -12,7 +12,7 @@ import { debugAppLevelDrawerOpenedSelector } from "../reducers/settings";
 const DebugAppLevelDrawer = () => {
   const dispatch = useDispatch();
   const handleClose = useCallback(() => {
-    dispatch(setDebugAppLelevelDrawerOpened(false));
+    dispatch(setDebugAppLevelDrawerOpened(false));
   }, [dispatch]);
 
   const isOpen = useSelector(debugAppLevelDrawerOpenedSelector);

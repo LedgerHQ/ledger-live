@@ -22,31 +22,29 @@ export const INITIAL_STATE = {
 const handlers: ReducerMap<RatingsState, RatingsPayload> = {
   [RatingsActionTypes.RATINGS_SET_MODAL_OPEN]: (state, action) => ({
     ...state,
-    isRatingsModalOpen: (action as Action<RatingsSetModalOpenPayload>).payload
-      .isRatingsModalOpen,
+    isRatingsModalOpen: (action as Action<RatingsSetModalOpenPayload>).payload,
   }),
 
   [RatingsActionTypes.RATINGS_SET_MODAL_LOCKED]: (state, action) => ({
     ...state,
     isRatingsModalLocked: (action as Action<RatingsSetModalLockedPayload>)
-      .payload.isRatingsModalLocked,
+      .payload,
   }),
 
   [RatingsActionTypes.RATINGS_SET_CURRENT_ROUTE_NAME]: (state, action) => ({
     ...state,
     currentRouteName: (action as Action<RatingsSetCurrentRouteNamePayload>)
-      .payload.currentRouteName,
+      .payload,
   }),
 
   [RatingsActionTypes.RATINGS_SET_HAPPY_MOMENT]: (state, action) => ({
     ...state,
-    happyMoment: (action as Action<RatingsSetHappyMomentPayload>).payload
-      .happyMoment,
+    happyMoment: (action as Action<RatingsSetHappyMomentPayload>).payload,
   }),
 
   [RatingsActionTypes.RATINGS_SET_DATA_OF_USER]: (state, action) => ({
     ...state,
-    dataOfUser: (action as Action<RatingsDataOfUserPayload>).payload.dataOfUser,
+    dataOfUser: (action as Action<RatingsDataOfUserPayload>).payload,
   }),
 
   [RatingsActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (

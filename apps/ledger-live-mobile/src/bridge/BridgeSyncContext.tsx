@@ -18,7 +18,7 @@ export const BridgeSyncProvider = ({
   const dispatch = useDispatch();
   const updateAccount = useCallback(
     (accountId, updater) =>
-      dispatch(updateAccountWithUpdater(accountId, updater)),
+      dispatch(updateAccountWithUpdater({ accountId, updater })),
     [dispatch],
   );
   const recoverError = useCallback(error => {

@@ -144,16 +144,16 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
       if (!isEqual(actualRemoteValue, value)) {
         const { overriddenByEnv: _, ...pureValue } = value;
         const overridenValue = { ...pureValue, overridesRemote: true };
-        dispatch(setOverriddenFeatureFlag(key, overridenValue));
+        dispatch(setOverriddenFeatureFlag({ id: key, value: overridenValue }));
       } else {
-        dispatch(setOverriddenFeatureFlag(key, undefined));
+        dispatch(setOverriddenFeatureFlag({ id: key, value: undefined }));
       }
     },
     [appLanguage, dispatch],
   );
 
   const resetFeature = (key: FeatureId): void => {
-    dispatch(setOverriddenFeatureFlag(key, undefined));
+    dispatch(setOverriddenFeatureFlag({ id: key, value: undefined }));
   };
 
   const resetFeatures = (): void => {
