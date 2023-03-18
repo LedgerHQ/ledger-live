@@ -184,6 +184,17 @@ const cardano: AppSpec<Transaction> = {
           ],
         };
       },
+      test: ({ operation, transaction }): void => {
+        botTest("check delegate operation type", () => {
+          expect(operation.type).toEqual("DELEGATE");
+        });
+
+        botTest("op value should be equal to fees", () => {
+          expect(operation.value.toString()).toEqual(
+            transaction.fees?.toString()
+          );
+        });
+      },
     },
     {
       name: "redelegate to pool",
@@ -192,6 +203,10 @@ const cardano: AppSpec<Transaction> = {
         invariant(
           maxSpendable.gte(minBalanceRequiredForDelegate),
           "balance is too low"
+        );
+        invariant(
+          (account as CardanoAccount).cardanoResources.delegation?.poolId,
+          "account should already be delegated to redelegate"
         );
         const transaction = bridge.createTransaction(account);
         return {
@@ -205,6 +220,17 @@ const cardano: AppSpec<Transaction> = {
           ],
         };
       },
+      test: ({ operation, transaction }): void => {
+        botTest("check delegate operation type", () => {
+          expect(operation.type).toEqual("DELEGATE");
+        });
+
+        botTest("op value should be equal to fees", () => {
+          expect(operation.value.toString()).toEqual(
+            transaction.fees?.toString()
+          );
+        });
+      },
     },
     {
       name: "undelegate",
@@ -213,6 +239,10 @@ const cardano: AppSpec<Transaction> = {
         invariant(
           maxSpendable.gte(minBalanceRequiredForDelegate),
           "balance is too low"
+        );
+        invariant(
+          (account as CardanoAccount).cardanoResources.delegation?.poolId,
+          "account should already be delegated to undelegate"
         );
         const transaction = bridge.createTransaction(account);
         return {
@@ -223,6 +253,17 @@ const cardano: AppSpec<Transaction> = {
             },
           ],
         };
+      },
+      test: ({ operation, transaction }): void => {
+        botTest("check undelegate operation type", () => {
+          expect(operation.type).toEqual("UNDELEGATE");
+        });
+
+        botTest("op value should be equal to fees", () => {
+          expect(operation.value.toString()).toEqual(
+            transaction.fees?.toString()
+          );
+        });
       },
     },
   ],

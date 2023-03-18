@@ -4,12 +4,11 @@ import { getDefaultExplorerView, getStakePoolExplorer } from "@ledgerhq/live-com
 import type { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import { useSelector } from "react-redux";
 
-import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
+import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { urls } from "~/config/urls";
 import Box from "~/renderer/components/Box";
 import type { ValidatorRowProps } from "~/renderer/components/Delegation/ValidatorRow";
 import ValidatorRow from "~/renderer/components/Delegation/ValidatorRow";
