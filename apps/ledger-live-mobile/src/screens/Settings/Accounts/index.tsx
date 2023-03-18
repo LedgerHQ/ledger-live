@@ -143,7 +143,7 @@ export default function AccountsSettings({
 
 const styles = StyleSheet.create({
   root: {
-    paddingHorizontal: 16,
+    paddingTop: 16,
     marginBottom: 2,
     flex: 1,
   },
