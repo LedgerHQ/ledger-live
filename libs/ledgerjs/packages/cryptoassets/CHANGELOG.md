@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 9.2.0-nightly.0
+
+### Minor Changes
+
+- [#2297](https://github.com/LedgerHQ/ledger-live/pull/2297) [`f364721cd9`](https://github.com/LedgerHQ/ledger-live/commit/f364721cd9c1681141b62cd807796e0a0a45efe4) Thanks [@Sheng-Long](https://github.com/Sheng-Long)! - Update Hedera explorer links
+
 ## 9.1.0
 
 ### Minor Changes
