@@ -98,7 +98,12 @@ function OnboardingStepPairNew() {
             },
       },
     ],
-    [deviceModelId, theme, newDeviceSelectionFeatureFlag?.enabled],
+    [
+      newDeviceSelectionFeatureFlag?.enabled,
+      deviceModelId,
+      theme,
+      isProtectFlow,
+    ],
   );
 
   const startPostOnboarding = useStartPostOnboardingCallback();

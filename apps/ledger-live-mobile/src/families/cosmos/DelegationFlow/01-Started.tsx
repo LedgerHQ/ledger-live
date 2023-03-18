@@ -43,7 +43,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   const crypto = cryptoFactory(mainAccount.currency.id);
   const howDelegationWorks = useCallback(() => {
     Linking.openURL(cryptoFactory(mainAccount.currency.id).stakingDocUrl);
-  }, []);
+  }, [mainAccount.currency.id]);
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>

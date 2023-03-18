@@ -133,13 +133,13 @@ const BleDevicesScanning = ({
         setLocationUnauthorizedError(true);
       }
     }
-  }, [scanningBleError]);
+  }, [scanningBleError, setStopBleScanning]);
 
   const onLocationFixed = useCallback(() => {
     setLocationDisabledError(false);
     setLocationUnauthorizedError(false);
     setStopBleScanning(false);
-  }, [setLocationDisabledError, setLocationUnauthorizedError]);
+  }, [setStopBleScanning]);
 
   if (locationDisabledError) {
     return <LocationRequired onRetry={onLocationFixed} errorType="disabled" />;
