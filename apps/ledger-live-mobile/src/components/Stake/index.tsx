@@ -8,10 +8,11 @@ import {
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { NavigatorName, ScreenName } from "../../const";
 import perFamilyAccountActions from "../../generated/accountActions";
+import logger from "../../logger";
 
 const StakeFlow = ({ currencies }) => {
-  const { params: { list } = { list: undefined } } =
-    useFeature("stakePrograms") || {};
+  const featureFlag = useFeature("stakePrograms");
+  const list = featureFlag?.params?.list;
   const navigation = useNavigation();
   const cryptoCurrencies = useMemo(() => {
     return filterCurrencies(listCurrencies(true), {
@@ -31,9 +32,10 @@ const StakeFlow = ({ currencies }) => {
             colors: {},
           })) ||
         [];
-      const stakeFlow = familySpecificMainActions?.find(
+      const stakeFlow = familySpecificMainActions.find(
         action => action.id === "stake",
       )?.navigationParams;
+      if (!stakeFlow) return null;
       const [name, options] = stakeFlow;
 
       // TODO: Remove after Kiln stake implementation was be done
@@ -45,10 +47,8 @@ const StakeFlow = ({ currencies }) => {
           screen: options.screen,
           params: {
             ...(options?.params || {}),
-            ...{
-              accountId: account?.id,
-              parentId: parentAccount?.id,
-            },
+            accountId: account?.id,
+            parentId: parentAccount?.id,
           },
         });
       } else {
@@ -60,8 +60,6 @@ const StakeFlow = ({ currencies }) => {
               ...(options?.params || {}),
               account,
               parentAccount,
-              accountId: account?.id,
-              parentId: parentAccount?.id,
             },
           },
         });
@@ -70,8 +68,7 @@ const StakeFlow = ({ currencies }) => {
     [navigation],
   );
   const onError = error => {
-    // eslint-disable-next-line no-console
-    console.log("RequestAccountsSelectCrypto in Stake Flow", error);
+    logger.critical(error);
   };
 
   const requestAccount = useCallback(() => {
