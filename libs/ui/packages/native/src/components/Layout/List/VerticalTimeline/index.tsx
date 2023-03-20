@@ -63,7 +63,7 @@ export default function VerticalTimeline({
 }
 
 const SubtitleText: React.FC<BaseTextProps> = (props) => (
-  <Text variant="body" fontWeight="semiBold" color="primary.c80" mb={3} {...props} />
+  <Text variant="body" fontWeight="semiBold" color="neutral.c100" mb={3} {...props} />
 );
 
 const BodyText: React.FC<BaseTextProps> = (props) => (

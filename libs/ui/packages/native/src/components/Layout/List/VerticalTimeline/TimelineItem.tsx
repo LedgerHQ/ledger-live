@@ -24,7 +24,7 @@ const getContainerBackground = (theme: Theme, status: ItemStatus) => {
   if (status === "completed") {
     return "transparent";
   } else if (status === "active") {
-    return theme.colors.background.drawer;
+    return theme.colors.neutral.c20;
   }
   return "transparent";
 };
@@ -118,7 +118,7 @@ export default function TimelineItem({
                 item.status === "completed" && isLastItem
                   ? "success.c80"
                   : item.status === "active"
-                  ? "neutral.c100"
+                  ? "primary.c80"
                   : "neutral.c70"
               }
             >

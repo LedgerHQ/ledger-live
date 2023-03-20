@@ -13,11 +13,11 @@ const Divider: React.FC<FlexBoxProps & { text?: string }> = (props) => {
   if (!props.text) return <DividerBase {...props} />;
   return (
     <Flex {...props} flexDirection="row" alignItems="center">
-      <DividerBase flex={1} bg="neutral.c60" />
+      <DividerBase flex={1} />
       <Text variant="bodyLineHeight" color="neutral.c60" mx={6}>
         {props.text}
       </Text>
-      <DividerBase flex={1} bg="neutral.c60" />
+      <DividerBase flex={1} />
     </Flex>
   );
 };

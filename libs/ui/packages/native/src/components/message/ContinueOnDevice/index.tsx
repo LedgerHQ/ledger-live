@@ -1,28 +1,32 @@
 import React from "react";
 import { IconType } from "src/components/Icon/type";
-import { radii } from "../../../styles/theme";
+import Divider from "../../Layout/Divider";
 import Flex from "../../Layout/Flex";
 import Text from "../../Text";
 
 type Props = {
   Icon: IconType;
   text: string;
+  withTopDivider?: boolean;
 };
 
-const ContinueOnDevice: React.FC<Props> = ({ Icon, text }) => {
+const ContinueOnDevice: React.FC<Props> = ({ Icon, text, withTopDivider = true }) => {
   return (
-    <Flex
-      backgroundColor="neutral.c30"
-      p={3}
-      flexDirection="row"
-      alignItems="center"
-      borderRadius={radii[2]}
-      flexShrink={1}
-    >
-      <Icon size={48} />
-      <Text flex={1} mx={4} flexWrap="wrap" variant="body" fontWeight="medium" color="primary.c80">
-        {text}
-      </Text>
+    <Flex>
+      {withTopDivider ? <Divider my={6} /> : null}
+      <Flex flexDirection="row" alignItems="center" flexShrink={1}>
+        <Icon size={48} />
+        <Text
+          flex={1}
+          pl={4}
+          flexWrap="wrap"
+          variant="body"
+          fontWeight="medium"
+          color="neutral.c100"
+        >
+          {text}
+        </Text>
+      </Flex>
     </Flex>
   );
 };

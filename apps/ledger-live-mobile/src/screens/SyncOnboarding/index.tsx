@@ -9,7 +9,6 @@ import React, {
 import type { StackScreenProps } from "@react-navigation/stack";
 import {
   Flex,
-  ScrollContainer,
   VerticalTimeline,
   Text,
   ContinueOnDevice,
@@ -100,14 +99,16 @@ enum CompanionStepKey {
 const ContinueOnDeviceWithAnim: React.FC<{
   deviceModelId: DeviceModelId;
   text: string;
-}> = ({ text }) => {
+  withTopDivider?: boolean;
+}> = ({ text, withTopDivider }) => {
   // TODO: when lotties are available, move this component to its own file and use a different lottie for each deviceModelId, as Icon prop
   return (
     <ContinueOnDevice
-      Icon={({ size }) => (
+      Icon={({ size }: { size: number }) => (
         <Flex height={size} width={size} borderRadius={size} bg="neutral.c40" />
       )}
       text={text}
+      withTopDivider={withTopDivider}
     />
   );
 };
@@ -431,6 +432,7 @@ export const SyncOnboarding = ({
             <>
               <TrackScreen category="Set up Ledger Stax: Step 1 device paired" />
               <ContinueOnDeviceWithAnim
+                withTopDivider={false}
                 deviceModelId={device.modelId}
                 text={t("syncOnboarding.pairingStep.continueOnDevice", {
                   productName,
@@ -446,7 +448,7 @@ export const SyncOnboarding = ({
           renderBody: () => (
             <Flex>
               <TrackScreen category="Set up Ledger Stax: Step 2 PIN" />
-              <BodyText mb={6}>
+              <BodyText>
                 {t("syncOnboarding.pinStep.description", { productName })}
               </BodyText>
               <ContinueOnDeviceWithAnim
@@ -472,13 +474,11 @@ export const SyncOnboarding = ({
                       productName,
                     })}
                   </BodyText>
-                  <Flex mb={6}>
-                    <Stories
-                      instanceID={StorylyInstanceID.recoverySeed}
-                      vertical
-                      keepOriginalOrder
-                    />
-                  </Flex>
+                  <Stories
+                    instanceID={StorylyInstanceID.recoverySeed}
+                    vertical
+                    keepOriginalOrder
+                  />
                   <ContinueOnDeviceWithAnim
                     deviceModelId={device.modelId}
                     text={t("syncOnboarding.seedStep.newSeedContinueOnDevice", {
@@ -503,17 +503,15 @@ export const SyncOnboarding = ({
                       "syncOnboarding.seedStep.restoreChoiceRecoverDescription",
                     )}
                   </BodyText>
-                  <Flex mt={6}>
-                    <ContinueOnDeviceWithAnim
-                      deviceModelId={device.modelId}
-                      text={t(
-                        "syncOnboarding.seedStep.restoreChoiceContinueOnDevice",
-                        {
-                          productName,
-                        },
-                      )}
-                    />
-                  </Flex>
+                  <ContinueOnDeviceWithAnim
+                    deviceModelId={device.modelId}
+                    text={t(
+                      "syncOnboarding.seedStep.restoreChoiceContinueOnDevice",
+                      {
+                        productName,
+                      },
+                    )}
+                  />
                 </Flex>
               ) : seedPathStatus === "restore_seed" ? (
                 <BodyText>
@@ -523,7 +521,7 @@ export const SyncOnboarding = ({
                 <BodyText>{t("syncOnboarding.seedStep.recoverSeed")}</BodyText>
               ) : (
                 <Flex>
-                  <BodyText mb={6}>
+                  <BodyText>
                     {t("syncOnboarding.seedStep.selection", {
                       productName,
                     })}

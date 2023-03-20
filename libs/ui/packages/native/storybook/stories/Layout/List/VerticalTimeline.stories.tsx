@@ -10,11 +10,11 @@ const defaultItems = [
     status: ItemStatus.active,
     title: "step's {title} prop",
     renderBody: () => (
-      <Flex backgroundColor="primary.c10" p={3}>
-        <BodyText>{`This purple box is the React node returned by the step's {renderBody} prop`}</BodyText>
+      <Flex borderColor="neutral.c100" borderWidth={1} p={3}>
+        <BodyText>{`This box is the React node returned by the step's {renderBody} prop`}</BodyText>
         <Divider my={6} text="`Divider` component" />
         <SubtitleText>This subtitle text component is `VerticalTimeline.SubtitleText`</SubtitleText>
-        <BodyText mb={6}>This body text component is `VerticalTimeline.BodyText`</BodyText>
+        <BodyText>This body text component is `VerticalTimeline.BodyText`</BodyText>
         <ContinueOnDevice
           Icon={({ size }) => (
             <Flex height={size} width={size} borderRadius={size} bg="neutral.c40" />
@@ -31,7 +31,7 @@ const defaultItems = [
     shouldContinueOnStax: true,
     renderBody: () => (
       <Flex>
-        <BodyText mb={6}>
+        <BodyText>
           {`Your PIN can be 4 to 8 digits long. Anyone with access to your Nano and to your PIN can also access all your crypto and NFT assets.`}
         </BodyText>
         <ContinueOnDevice
