@@ -2260,6 +2260,9 @@
   "troubleshootNetwork": {
     "title": "Troubleshoot networking"
   },
+  "troubleshootSync": {
+    "title": "Troubleshoot synchronisation"
+  },
   "systemLanguageAvailable": {
     "title": "Change your app's language?",
     "description": {
@@ -3976,6 +3979,11 @@
     "troubleshootNetwork": {
       "title": "Troubleshoot networking",
       "desc": "Run a checklist to assess networking conditions for troubleshooting purposes.",
+      "btn": "Troubleshoot"
+    },
+    "troubleshootSync": {
+      "title": "Troubleshoot synchronisation",
+      "desc": "Show the current synchronisation technical update queue.",
       "btn": "Troubleshoot"
     },
     "accounts": {

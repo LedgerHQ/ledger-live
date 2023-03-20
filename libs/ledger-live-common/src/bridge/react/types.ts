@@ -23,6 +23,9 @@ export type SyncAction =
       type: "SYNC_ALL_ACCOUNTS";
       priority: number;
       reason: string;
+    }
+  | {
+      type: "GET_QUEUE_STATUS";
     };
 export type SyncState = {
   pending: boolean;

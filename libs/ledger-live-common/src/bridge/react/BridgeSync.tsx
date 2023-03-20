@@ -356,16 +356,25 @@ function useSync({ syncQueue, accounts }) {
       }) => {
         schedule(accountIds, priority, reason);
       },
+      GET_QUEUE_STATUS: () => {
+        return {
+          length: syncQueue.length(),
+          running: syncQueue.running(),
+          workersList: syncQueue.workersList(),
+        };
+      },
     };
     return (action: SyncAction) => {
       const handler = handlers[action.type];
 
       if (handler) {
-        log("bridge", `action ${action.type}`, {
-          action,
-          type: "syncQueue",
-        });
-        handler(action as any);
+        if (action.type !== "GET_QUEUE_STATUS") {
+          log("bridge", `action ${action.type}`, {
+            action,
+            type: "syncQueue",
+          });
+        }
+        return handler(action as any);
       } else {
         log("warn", "BridgeSyncContext unsupported action", {
           action,

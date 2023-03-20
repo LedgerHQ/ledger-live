@@ -8,6 +8,7 @@ import { languageSelector, swapKYCSelector } from "~/renderer/reducers/settings"
 import TrackPage from "~/renderer/analytics/TrackPage";
 import ExportLogsBtn from "~/renderer/components/ExportLogsButton";
 import TroubleshootNetworkBtn from "~/renderer/components/TroubleshootNetworkButton";
+import TroubleshootSyncBtn from "~/renderer/components/TroubleshootSyncButton";
 import OpenUserDataDirectoryBtn from "~/renderer/components/OpenUserDataDirectoryBtn";
 import RowItem from "../../RowItem";
 import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../SettingsSection";
@@ -47,6 +48,12 @@ const SectionHelp = () => {
           desc={t("settings.troubleshootNetwork.desc")}
         >
           <TroubleshootNetworkBtn />
+        </Row>
+        <Row
+          title={t("settings.troubleshootSync.title")}
+          desc={t("settings.troubleshootSync.desc")}
+        >
+          <TroubleshootSyncBtn />
         </Row>
         <Row
           title={t("settings.profile.launchOnboarding")}
