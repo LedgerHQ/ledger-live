@@ -1,5 +1,3 @@
-// @flow
-
 import React, { RefObject, useCallback, useEffect, useRef, useMemo } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
