@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { ScrollView, View } from "react-native";
+import { View } from "react-native";
 import { storiesOf } from "../../storiesOf";
 import { Flex, VerticalTimeline, Button, Switch, Divider, ContinueOnDevice } from "../../../../src";
 
@@ -73,6 +73,16 @@ const defaultItems = [
   },
   {
     status: ItemStatus.inactive,
+    title: "Install apps",
+    renderBody: () => (
+      <Flex>
+        <BodyText>{`Installing apps, the scroll view should scroll`}</BodyText>
+        <Flex backgroundColor="lightblue" width="100%" height={400} />
+      </Flex>
+    ),
+  },
+  {
+    status: ItemStatus.inactive,
     title: "Nano is ready",
     renderBody: () => <BodyText>Almost there ...</BodyText>,
   },
@@ -112,17 +122,14 @@ const VerticalTimelineStory = () => {
     };
     // eslint-disable-next-line
   }, [animate, currentIndex]);
-
   return (
     <Flex width={"100%"} px={30} flex={1}>
-      <ScrollView>
-        <Switch checked={animate} onChange={setAnimate} label={"Auto animate VerticalTimeline"} />
-        <Button my={3} type="main" outline onPress={() => setActiveIndex(items.length)}>
-          Set last step complete
-        </Button>
-        <Divider />
-        <VerticalTimeline steps={items} setActiveIndex={animate ? undefined : setActiveIndex} />
-      </ScrollView>
+      <Switch checked={animate} onChange={setAnimate} label={"Auto animate VerticalTimeline"} />
+      <Button my={3} type="main" outline onPress={() => setActiveIndex(items.length)}>
+        Set last step complete
+      </Button>
+      <Divider />
+      <VerticalTimeline steps={items} setActiveIndex={animate ? undefined : setActiveIndex} />
     </Flex>
   );
 };
@@ -134,7 +141,7 @@ const DynamicHeightComponent = () => {
       <Button
         type="main"
         onPress={() => {
-          setHeight(Math.random() * 300);
+          setHeight(Math.random() * 500);
         }}
       >
         set random size

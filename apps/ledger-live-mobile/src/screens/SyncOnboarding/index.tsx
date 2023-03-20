@@ -28,7 +28,6 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 import { StorylyInstanceID } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { addKnownDevice } from "../../actions/ble";
 import { NavigatorName, ScreenName } from "../../const";
 import HelpDrawer from "./HelpDrawer";
@@ -618,33 +617,34 @@ export const SyncOnboarding = ({
         onRetry={handleDesyncRetry}
         device={device}
       />
-      <Flex position="relative" flex={1}>
+      <Flex position="relative" flex={1} px={6}>
         <ResyncOverlay
           isOpen={isDesyncOverlayOpen}
           delay={resyncOverlayDisplayDelayMs}
           productName={productName}
         />
-        <ScrollContainer px={6}>
-          <Flex mb={8} flexDirection="row" alignItems="center">
-            <Text variant="h4" fontWeight="semiBold">
-              {t("syncOnboarding.title", { deviceName })}
-            </Text>
-            {/* TODO: disabled for now but will be used in the future */}
-            {/* <Button
-                  ml={2}
-                  Icon={Question}
-                  onPress={() => setHelpDrawerOpen(true)}
-                /> */}
-          </Flex>
+        <Flex>
           <VerticalTimeline
             steps={companionSteps}
             formatEstimatedTime={formatEstimatedTime}
+            header={
+              <Flex mb={8} flexDirection="row" alignItems="center">
+                <Text variant="h4" fontWeight="semiBold">
+                  {t("syncOnboarding.title", { deviceName })}
+                </Text>
+                {/* TODO: disabled for now but will be used in the future */}
+                {/* <Button
+                    ml={2}
+                    Icon={Question}
+                    onPress={() => setHelpDrawerOpen(true)}
+                  /> */}
+              </Flex>
+            }
           />
-
           {companionStepKey === CompanionStepKey.Exit ? (
             <TrackScreen category="Stax Set Up - Final step: Stax is ready" />
           ) : null}
-        </ScrollContainer>
+        </Flex>
       </Flex>
     </DeviceSetupView>
   );
