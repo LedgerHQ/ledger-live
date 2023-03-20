@@ -138,16 +138,9 @@ export function useEnableBluetooth(
     bluetoothServicesState = "enabled";
   } else if (observedTransportState === "PoweredOff") {
     bluetoothServicesState = "disabled";
-  } else if (
-    observedTransportState === "Unauthorized"
-    // bluetoothPromptResult === BluetoothPromptResult.BLE_CANNOT_BE_ENABLED
-  ) {
+  } else if (observedTransportState === "Unauthorized") {
     bluetoothServicesState = "unauthorized";
-  } else if (
-    observedTransportState === "Unknown"
-    // !bluetoothPromptedOnce
-    // bluetoothPromptResult === BluetoothPromptResult.BLE_UNKWOWN_STATE
-  ) {
+  } else if (observedTransportState === "Unknown") {
     bluetoothServicesState = "unknown";
   }
 
