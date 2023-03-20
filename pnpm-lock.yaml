@@ -994,7 +994,6 @@ importers:
       lottie-ios: 3.2.3
       lottie-react-native: ^5.1.3
       metro: ^0.67.0
-      metro-babel-register: ^0.75.0
       metro-extra-config: workspace:*
       metro-minify-uglify: ^0.67.0
       metro-react-native-babel-preset: ^0.67.0
@@ -1803,7 +1802,6 @@ importers:
       jetifier: 1.6.8
       local-web-server: 4.2.1
       metro: 0.67.0
-      metro-babel-register: 0.75.1
       metro-extra-config: link:../../tools/metro-extra-config
       metro-minify-uglify: 0.67.0
       metro-react-native-babel-preset: 0.67.0_@babel+core@7.17.10
@@ -44285,6 +44283,32 @@ packages:
     resolution: {integrity: sha512-4djr9G6fMdwQoD6LQ7hOKAm39+y12flWgovAqS1k5O8f42YQ3A1FFMyV5kKfetZuGhZO5BmNmOdRRZQ1TixtDw==}
 
   /babel-plugin-styled-components@2.0.7(styled-components@4.4.1):
+<<<<<<< HEAD
+=======
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+  /babel-plugin-styled-components@2.0.7(styled-components@4.4.1):
+=======
+=======
+>>>>>>> 20d5c6f724 (rename edit tx navigator)
+  /babel-plugin-replace-ts-export-assignment/0.0.2:
+    resolution: {integrity: sha512-BiTEG2Ro+O1spuheL5nB289y37FFmz0ISE6GjpNCG2JuA/WNcuEHSYw01+vN8quGf208sID3FnZFDwVyqX18YQ==}
+    dev: true
+
+<<<<<<< HEAD
+=======
+>>>>>>> c1d25cdc3c (remove metro babel register)
+=======
+>>>>>>> 20d5c6f724 (rename edit tx navigator)
+=======
+>>>>>>> b9cbc954cf (remove metro-babel-register)
+  /babel-plugin-styled-components/2.0.7_styled-components@4.4.1:
+>>>>>>> e3b44ff130 (fix merge conflict in env.ts)
+>>>>>>> 7163b03493 (remove metro babel register)
+>>>>>>> 06772525a9 (remove metro-babel-register)
     resolution: {integrity: sha512-i7YhvPgVqRKfoQ66toiZ06jPNA3p6ierpfUuEWxNF+fV27Uv5gxBkf8KZLHUCc1nFA9j6+80pYoIpqCeyW3/bA==}
     peerDependencies:
       styled-components: '>= 2'
@@ -65765,6 +65789,84 @@ packages:
     engines: {node: '>= 0.6'}
 
   /metro-babel-transformer@0.67.0:
+<<<<<<< HEAD
+=======
+=======
+<<<<<<< HEAD
+=======
+  /metro-babel-register@0.66.2:
+    resolution: {integrity: sha512-3F+vsVubUPJYKfVMeol8/7pd8CC287Rw92QYzJD8LEmI980xcgwMUEVBZ0UIAUwlLgiJG/f4Mwhuji2EeBXrPg==}
+    dependencies:
+      '@babel/core': 7.20.12
+      '@babel/plugin-proposal-nullish-coalescing-operator': 7.16.7(@babel/core@7.20.12)
+      '@babel/plugin-proposal-optional-chaining': 7.16.7(@babel/core@7.20.12)
+      '@babel/plugin-syntax-class-properties': 7.12.13(@babel/core@7.20.12)
+      '@babel/plugin-transform-flow-strip-types': 7.16.7(@babel/core@7.20.12)
+      '@babel/plugin-transform-modules-commonjs': 7.17.9(@babel/core@7.20.12)
+      '@babel/register': 7.17.7(@babel/core@7.20.12)
+      escape-string-regexp: 1.0.5
+    transitivePeerDependencies:
+      - supports-color
+
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> dd8e409f6f (fix merge conflict in env.ts)
+=======
+<<<<<<< HEAD
+>>>>>>> ec46115043 (remove metro babel register)
+=======
+<<<<<<< HEAD
+>>>>>>> d6d0fe4adf (remove metro-babel-register)
+  /metro-babel-transformer@0.67.0:
+=======
+  /metro-babel-register/0.75.1:
+    resolution: {integrity: sha512-xotDxxmi18a3zuwz/W6ojqQhKCFPK6XhVxkoBfzFFU08DG0trtfIph2IBJ1SBSA1rizigftAudWZtIPHAk1ZzA==}
+    engines: {node: '>=14.17.0'}
+    dependencies:
+      '@babel/core': 7.20.12
+      '@babel/plugin-proposal-nullish-coalescing-operator': 7.16.7_@babel+core@7.20.12
+      '@babel/plugin-proposal-optional-chaining': 7.16.7_@babel+core@7.20.12
+      '@babel/plugin-syntax-class-properties': 7.12.13_@babel+core@7.20.12
+      '@babel/plugin-transform-flow-strip-types': 7.16.7_@babel+core@7.20.12
+      '@babel/plugin-transform-modules-commonjs': 7.17.9_@babel+core@7.20.12
+      '@babel/preset-typescript': 7.21.0_@babel+core@7.20.12
+      '@babel/register': 7.17.7_@babel+core@7.20.12
+      babel-plugin-replace-ts-export-assignment: 0.0.2
+      escape-string-regexp: 1.0.5
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+<<<<<<< HEAD
+=======
+>>>>>>> c1d25cdc3c (remove metro babel register)
+=======
+  /metro-babel-register/0.75.1:
+    resolution: {integrity: sha512-xotDxxmi18a3zuwz/W6ojqQhKCFPK6XhVxkoBfzFFU08DG0trtfIph2IBJ1SBSA1rizigftAudWZtIPHAk1ZzA==}
+    engines: {node: '>=14.17.0'}
+    dependencies:
+      '@babel/core': 7.20.12
+      '@babel/plugin-proposal-nullish-coalescing-operator': 7.16.7_@babel+core@7.20.12
+      '@babel/plugin-proposal-optional-chaining': 7.16.7_@babel+core@7.20.12
+      '@babel/plugin-syntax-class-properties': 7.12.13_@babel+core@7.20.12
+      '@babel/plugin-transform-flow-strip-types': 7.16.7_@babel+core@7.20.12
+      '@babel/plugin-transform-modules-commonjs': 7.17.9_@babel+core@7.20.12
+      '@babel/preset-typescript': 7.21.0_@babel+core@7.20.12
+      '@babel/register': 7.17.7_@babel+core@7.20.12
+      babel-plugin-replace-ts-export-assignment: 0.0.2
+      escape-string-regexp: 1.0.5
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+>>>>>>> 20d5c6f724 (rename edit tx navigator)
+=======
+>>>>>>> b9cbc954cf (remove metro-babel-register)
+  /metro-babel-transformer/0.67.0:
+>>>>>>> e3b44ff130 (fix merge conflict in env.ts)
+>>>>>>> 7163b03493 (remove metro babel register)
+>>>>>>> 06772525a9 (remove metro-babel-register)
     resolution: {integrity: sha512-SBqc4nq/dgsPNFm+mpWcQQzJaXnh0nrfz2pSnZC4i6zMtIakrTWb8SQ78jOU1FZVEZ3nu9xCYVHS9Tbr/LoEuw==}
     dependencies:
       '@babel/core': 7.21.0
