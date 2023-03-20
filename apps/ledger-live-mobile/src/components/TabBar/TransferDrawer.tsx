@@ -53,6 +53,7 @@ export default function TransferDrawer({
   const areAccountsEmpty = useSelector(areAccountsEmptySelector);
 
   const walletConnectEntryPoint = useFeature("walletConnectEntryPoint");
+  const stakePrograms = useFeature("stakePrograms");
 
   const onNavigate = useCallback(
     (name: string, options?: object) => {
@@ -79,6 +80,15 @@ export default function TransferDrawer({
     [onNavigate],
   );
 
+  const onStake = useCallback(() => {
+    track("button_clicked", {
+      button: "exchange",
+      page,
+      flow: "stake",
+    });
+    onNavigate(NavigatorName.StakeFlow);
+  }, [onNavigate, page, track]);
+
   const onWalletConnect = useCallback(
     () =>
       onNavigate(NavigatorName.WalletConnect, {
@@ -91,11 +101,12 @@ export default function TransferDrawer({
     track("button_clicked", {
       ...sharedSwapTracking,
       button: "swap",
+      page,
     });
     onNavigate(NavigatorName.Swap, {
       screen: ScreenName.SwapForm,
     });
-  }, [onNavigate, track]);
+  }, [onNavigate, page, track]);
   const onBuy = useCallback(
     () =>
       onNavigate(NavigatorName.Exchange, { screen: ScreenName.ExchangeBuy }),
@@ -170,6 +181,23 @@ export default function TransferDrawer({
           : null,
       disabled: !accountsCount || readOnlyModeEnabled || areAccountsEmpty,
     },
+
+    ...(stakePrograms?.enabled
+      ? [
+          {
+            eventProperties: {
+              button: "transfer_stake",
+              page,
+              drawer: "stake",
+            },
+            title: t("transfer.stake.title"),
+            description: t("transfer.stake.description"),
+            Icon: Icons.ClaimRewardsMedium,
+            onPress: onStake,
+            disabled: readOnlyModeEnabled,
+          },
+        ]
+      : []),
     {
       eventProperties: {
         button: "transfer_swap",
