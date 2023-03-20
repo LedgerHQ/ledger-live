@@ -5784,7 +5784,7 @@
       "developerCTA": {
         "title": "For Developers",
         "description": "All the information you need to integrate your applications on Ledger Live."
-      },
+      }
     },
     "disclaimer": {
       "title": "External Application",
