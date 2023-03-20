@@ -1897,6 +1897,7 @@
     },
     "pairingStep": {
       "title": "{{productName}} is paired",
+      "description": "Continue setting up on {{productName}}.\nLook back here for step-by-step assistance.",
       "continueOnDevice": "Tap anywhere to continue on your {{productName}}"
     },
     "pinStep": {
