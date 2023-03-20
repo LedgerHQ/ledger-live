@@ -44,6 +44,15 @@ export const StakeBanner: React.FC<{ account: CosmosAccount; parentAccount: Acco
     : t("account.banner.delegation.cta");
 
   const onClick = () => {
+    track("button_clicked", {
+      ...stakeDefaultTrack,
+      delegation: "stake",
+      page: "Page Account",
+      button: "delegate",
+      redelegate,
+      token: account?.currency?.id?.toUpperCase(),
+    });
+
     if (redelegate) {
       dispatch(
         openModal("MODAL_COSMOS_REDELEGATE", {
