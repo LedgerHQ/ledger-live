@@ -99,7 +99,7 @@ function Discover() {
                 ),
               },
             ]
-          : Platform.OS !== "ios"
+          : Platform.OS !== "ios" || true
           ? [
               {
                 title: t("discover.sections.ledgerApps.title"),

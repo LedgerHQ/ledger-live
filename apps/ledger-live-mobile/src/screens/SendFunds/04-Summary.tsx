@@ -14,6 +14,7 @@ import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
 import { NotEnoughGas } from "@ledgerhq/errors";
 import { useTheme } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import invariant from "invariant";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName, NavigatorName } from "../../const";
 import { TrackScreen } from "../../analytics";
@@ -78,13 +79,18 @@ const WARN_FROM_UTXO_COUNT = 50;
 function SendSummary({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { nextNavigation, overrideAmountLabel, hideTotal } = route.params;
+
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  invariant(account, "account is missing");
+
   const { transaction, setTransaction, status, bridgePending } =
     useBridgeTransaction(() => ({
       transaction: route.params.transaction,
       account,
       parentAccount,
     }));
+  invariant(transaction, "transaction is missing");
+
   const isNFTSend = isNftTransaction(transaction);
   // handle any edit screen changes like fees changes
   useTransactionChangeFromNavigation(setTransaction);
@@ -171,8 +177,8 @@ function SendSummary({ navigation, route }: Props) {
   const { amount, totalSpent, errors } = status;
   const { transaction: transactionError } = errors;
   const error = errors[Object.keys(errors)[0]];
-  const mainAccount = account && getMainAccount(account, parentAccount);
-  const currency = account && getAccountCurrency(account);
+  const mainAccount = getMainAccount(account, parentAccount);
+  const currency = getAccountCurrency(mainAccount);
   const hasNonEmptySubAccounts =
     account &&
     account.type === "Account" &&
@@ -225,10 +231,7 @@ function SendSummary({ navigation, route }: Props) {
             },
           ]}
         />
-        <SummaryToSection
-          recipient={transaction.recipient}
-          domain={transaction.recipientDomain?.domain}
-        />
+        <SummaryToSection transaction={transaction} currency={currency} />
         {status.warnings.recipient ? (
           <LText style={styles.warning} color="orange">
             <TranslatedError error={status.warnings.recipient} />
