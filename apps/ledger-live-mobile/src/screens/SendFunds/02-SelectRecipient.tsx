@@ -1,5 +1,8 @@
 import { RecipientRequired } from "@ledgerhq/errors";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import {
+  getAccountCurrency,
+  getMainAccount,
+} from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   SyncOneAccountOnMount,
@@ -8,6 +11,7 @@ import {
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -48,10 +52,20 @@ type Props = BaseComposite<
 export default function SendSelectRecipient({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { enabled: isDomainResolutionEnabled } = useFeature(
-    "domainInputResolution",
-  );
+
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  invariant(account, "account is missing");
+
+  const mainAccount = getMainAccount(account, parentAccount);
+  const { enabled: isDomainResolutionEnabled, params } =
+    useFeature<{
+      supportedCurrencyIds: CryptoCurrencyId[];
+    }>("domainInputResolution") || {};
+  const isCurrencySupported =
+    params?.supportedCurrencyIds?.includes(
+      mainAccount.currency.id as CryptoCurrencyId,
+    ) || false;
+
   const { transaction, setTransaction, status, bridgePending, bridgeError } =
     useBridgeTransaction(() => ({
       account,
@@ -216,7 +230,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                 ]}
               />
             </View>
-            {isDomainResolutionEnabled ? (
+            {isDomainResolutionEnabled && isCurrencySupported ? (
               <DomainServiceRecipientRow
                 onChangeText={onChangeText}
                 value={value}
