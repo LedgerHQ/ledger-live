@@ -8,7 +8,7 @@ import {
   ArrowEvolutionDownMedium,
 } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
-import { BaseTextProps } from "@ledgerhq/native-ui/components/Text";
+import { BaseTextProps } from "@ledgerhq/native-ui/components/Text/index";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 
 type Props = {
