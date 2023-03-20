@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { areEarnRewardsEnabled } from "@ledgerhq/live-common/families/elrond/helpers/areEarnRewardsEnabled";
 import { useElrondRandomizedValidators } from "@ledgerhq/live-common/families/elrond/react";
-import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/elrond/constants";
 
 import { modals } from "./modals";
 import { openModal } from "~/renderer/actions/modals";

@@ -323,7 +323,7 @@ function convertElrondESDTTokens([
   decimals,
   signature,
   name,
-  disableCountervalue
+  disableCountervalue,
 ]: ElrondESDTToken): TokenCurrency {
   const ELROND_ESDT_CONTRACT =
     "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u";
