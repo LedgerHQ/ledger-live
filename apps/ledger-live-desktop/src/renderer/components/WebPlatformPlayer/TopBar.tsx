@@ -22,10 +22,11 @@ import { enablePlatformDevToolsSelector } from "~/renderer/reducers/settings";
 import LiveAppIcon from "./LiveAppIcon";
 
 import { openPlatformAppInfoDrawer } from "~/renderer/actions/UI";
-import { WebviewState, WebviewTag } from "../Web3AppWebview/types";
+import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 import Spinner from "../Spinner";
 
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
+import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 
 const Container = styled(Box).attrs(() => ({
   horizontal: true,
@@ -128,11 +129,11 @@ export type Props = {
   manifest: LiveAppManifest;
   onClose?: () => void;
   config?: TopBarConfig;
-  webviewRef: RefObject<WebviewTag>;
+  webviewAPIRef: RefObject<WebviewAPI>;
   webviewState: WebviewState;
 };
 
-export const TopBar = ({ manifest, onClose, config = {}, webviewRef, webviewState }: Props) => {
+export const TopBar = ({ manifest, onClose, config = {}, webviewAPIRef, webviewState }: Props) => {
   const { name, icon } = manifest;
 
   const {
@@ -146,45 +147,32 @@ export const TopBar = ({ manifest, onClose, config = {}, webviewRef, webviewStat
   const dispatch = useDispatch();
 
   const handleReload = useCallback(() => {
-    const webview = webviewRef.current;
+    const webview = safeGetRefValue(webviewAPIRef);
 
-    if (!webview) {
-      return;
-    }
-
-    webview.reloadIgnoringCache();
-  }, [webviewRef]);
+    webview.reload();
+  }, [webviewAPIRef]);
 
   const onClick = useCallback(() => {
     dispatch(openPlatformAppInfoDrawer({ manifest }));
   }, [manifest, dispatch]);
 
   const onOpenDevTools = useCallback(() => {
-    const webview = webviewRef.current;
+    const webview = safeGetRefValue(webviewAPIRef);
 
-    if (!webview) {
-      return;
-    }
     webview.openDevTools();
-  }, [webviewRef]);
+  }, [webviewAPIRef]);
 
   const onGoBack = useCallback(() => {
-    const webview = webviewRef.current;
+    const webview = safeGetRefValue(webviewAPIRef);
 
-    if (!webview) {
-      return;
-    }
     webview.goBack();
-  }, [webviewRef]);
+  }, [webviewAPIRef]);
 
   const onGoForward = useCallback(() => {
-    const webview = webviewRef.current;
+    const webview = safeGetRefValue(webviewAPIRef);
 
-    if (!webview) {
-      return;
-    }
     webview.goForward();
-  }, [webviewRef]);
+  }, [webviewAPIRef]);
 
   const isLoading = useDebounce(webviewState.loading, 100);
 

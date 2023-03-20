@@ -1,10 +1,11 @@
-import React, { useCallback } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 
-import Web3AppWebview from "../Web3AppWebview";
+import { Web3AppWebview } from "../Web3AppWebview";
 import { TopBar, TopBarConfig } from "./TopBar";
 import Box from "../Box";
-import { TopBarRenderFunc, WebviewProps } from "../Web3AppWebview/types";
+import { WebviewAPI, WebviewProps, WebviewState } from "../Web3AppWebview/types";
+import { initialWebviewState } from "../Web3AppWebview/helpers";
 
 export const Container = styled.div`
   display: flex;
@@ -29,23 +30,25 @@ type Props = {
 } & WebviewProps;
 
 export default function WebPlatformPlayer({ manifest, inputs, onClose, config }: Props) {
-  const renderTopBar = useCallback<TopBarRenderFunc>(
-    (manifest, webviewRef, webviewState) => (
-      <TopBar
-        manifest={manifest}
-        onClose={onClose}
-        webviewRef={webviewRef}
-        webviewState={webviewState}
-        config={config?.topBarConfig}
-      />
-    ),
-    [onClose, config],
-  );
+  const webviewAPIRef = useRef<WebviewAPI>(null);
+  const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
 
   return (
     <Container>
       <Wrapper>
-        <Web3AppWebview manifest={manifest} inputs={inputs} renderTopBar={renderTopBar} />
+        <TopBar
+          manifest={manifest}
+          onClose={onClose}
+          webviewAPIRef={webviewAPIRef}
+          webviewState={webviewState}
+          config={config?.topBarConfig}
+        />
+        <Web3AppWebview
+          manifest={manifest}
+          inputs={inputs}
+          onStateChange={setWebviewState}
+          ref={webviewAPIRef}
+        />
       </Wrapper>
     </Container>
   );

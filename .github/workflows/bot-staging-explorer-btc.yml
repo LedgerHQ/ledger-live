@@ -2,7 +2,7 @@ name: "[Bot] Bitcoin on Staging"
 on:
   workflow_dispatch:
   schedule:
-    - cron: 0 8 * * 1-5
+    - cron: 0 8 * * 3
 
 concurrency:
   group: bot-seed2

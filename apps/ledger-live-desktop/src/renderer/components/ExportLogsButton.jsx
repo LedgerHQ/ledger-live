@@ -5,24 +5,17 @@ import * as remote from "@electron/remote";
 import React, { useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { getEnv, getAllEnvs } from "@ledgerhq/live-common/env";
+import { getAllEnvs } from "@ledgerhq/live-common/env";
 import type { Account } from "@ledgerhq/types-live";
 import KeyHandler from "react-key-handler";
-import logger from "~/logger";
-import loggerInstance from "~/logger/logger-transport-renderer-instance";
+import logger, { memoryLogger } from "~/renderer/logger";
 import getUser from "~/helpers/user";
 import Button from "~/renderer/components/Button";
 import type { Props as ButtonProps } from "~/renderer/components/Button";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 
 const saveLogs = async (path: { canceled: boolean, filePath: string }) => {
-  await ipcRenderer.invoke(
-    "save-logs",
-    path,
-    getEnv("EXPERIMENTAL_EXECUTION_ON_RENDERER")
-      ? JSON.stringify(loggerInstance.getMemoryLogs())
-      : null,
-  );
+  await ipcRenderer.invoke("save-logs", path, JSON.stringify(memoryLogger.getMemoryLogs()));
 };
 
 type RestProps = ButtonProps & {|

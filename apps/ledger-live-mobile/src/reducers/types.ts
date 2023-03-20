@@ -228,6 +228,7 @@ export type SettingsState = {
   overriddenFeatureFlags: { [key in FeatureId]?: Feature | undefined };
   featureFlagsBannerVisible: boolean;
   debugAppLevelDrawerOpened: boolean;
+  dateFormat: string;
 };
 
 export type NotificationsSettings = {

@@ -1,9 +1,15 @@
 import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { CardMedium, SettingsMedium } from "@ledgerhq/native-ui/assets/icons";
+import {
+  CardMedium,
+  SettingsMedium,
+  WalletConnectMedium,
+} from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { StackNavigationProp } from "@react-navigation/stack";
 import Touchable from "../../components/Touchable";
 import { NavigatorName, ScreenName } from "../../const";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
@@ -49,6 +55,25 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
 
   const { t } = useTranslation();
 
+  const walletConnectEntryPoint = useFeature("walletConnectEntryPoint");
+
+  const onNavigate = useCallback(
+    (name: string, options?: object) => {
+      (
+        navigation as StackNavigationProp<{ [key: string]: object | undefined }>
+      ).navigate(name, options);
+    },
+    [navigation],
+  );
+
+  const onWalletConnectPress = useCallback(
+    () =>
+      onNavigate(NavigatorName.WalletConnect, {
+        screen: ScreenName.WalletConnectConnect,
+      }),
+    [onNavigate],
+  );
+
   const onSettingsButtonPress = useCallback(() => {
     track("button_clicked", {
       button: "Settings",
@@ -91,6 +116,20 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
         {!hidePortfolio && <DiscreetModeButton size={20} />}
       </Flex>
       <Flex flexDirection="row">
+        {!!walletConnectEntryPoint?.enabled && (
+          <Flex mr={7}>
+            <Touchable
+              onPress={onWalletConnectPress}
+              event="button_clicked"
+              eventProperties={{
+                button: "Wallet Connect",
+                screen: ScreenName.WalletConnectConnect,
+              }}
+            >
+              <WalletConnectMedium size={24} color={"neutral.c100"} />
+            </Touchable>
+          </Flex>
+        )}
         <Flex mr={7}>
           <Touchable
             onPress={onSideImageCardButtonPress}

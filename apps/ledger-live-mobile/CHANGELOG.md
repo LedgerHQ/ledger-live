@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.16.1
+
+### Patch Changes
+
+- [#2838](https://github.com/LedgerHQ/ledger-live/pull/2838) [`c52eb6d900`](https://github.com/LedgerHQ/ledger-live/commit/c52eb6d900b949457d76cbbbda23786dfbce04fa) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Bugfix : FaceId is triggered in loop.
+
+## 3.16.1-hotfix.0
+
+### Patch Changes
+
+- [#2838](https://github.com/LedgerHQ/ledger-live/pull/2838) [`c52eb6d900`](https://github.com/LedgerHQ/ledger-live/commit/c52eb6d900b949457d76cbbbda23786dfbce04fa) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Bugfix : FaceId is triggered in loop.
+
 ## 3.16.0
 
 ### Minor Changes

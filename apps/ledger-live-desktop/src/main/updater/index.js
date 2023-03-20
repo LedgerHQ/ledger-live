@@ -1,5 +1,4 @@
 // @flow
-import logger from "~/logger";
 
 let updater: { quitAndInstall?: () => void, downloadUpdate?: () => void } = {};
 
@@ -12,7 +11,7 @@ export default (type: string) => {
 
     case "quit-and-install":
       if (!updater.quitAndInstall) {
-        logger.error(`Auto-update error: quitAndInstall called before init`);
+        console.error(`Auto-update error: quitAndInstall called before init`);
       } else {
         updater.quitAndInstall();
       }
@@ -20,14 +19,14 @@ export default (type: string) => {
 
     case "download-update":
       if (!updater.downloadUpdate) {
-        logger.error(`Auto-update error: downloadUpdate called before init`);
+        console.error(`Auto-update error: downloadUpdate called before init`);
       } else {
         updater.downloadUpdate();
       }
       break;
 
     default:
-      logger.error(`Unknown updater message type: ${type}`);
+      console.error(`Unknown updater message type: ${type}`);
       break;
   }
 };

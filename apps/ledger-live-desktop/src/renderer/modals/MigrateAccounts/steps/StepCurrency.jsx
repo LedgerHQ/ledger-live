@@ -10,9 +10,9 @@ import last from "lodash/last";
 
 import type { Account } from "@ledgerhq/types-live";
 
-import logger from "~/logger";
+import logger from "~/renderer/logger";
 import Box from "~/renderer/components/Box";
-import { getCurrencyBridge } from "~/renderer/bridge/proxy";
+import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { colors } from "~/renderer/styles/theme";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import ExclamationCircle from "~/renderer/icons/ExclamationCircle";

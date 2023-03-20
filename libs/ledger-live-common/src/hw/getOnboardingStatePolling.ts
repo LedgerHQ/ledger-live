@@ -1,12 +1,4 @@
-import {
-  from,
-  merge,
-  partition,
-  of,
-  throwError,
-  Observable,
-  TimeoutError,
-} from "rxjs";
+import { from, of, throwError, Observable, TimeoutError } from "rxjs";
 import {
   map,
   catchError,
@@ -60,13 +52,11 @@ export type GetOnboardingStatePollingArgs = {
 export const getOnboardingStatePolling = ({
   deviceId,
   pollingPeriodMs,
-  fetchingTimeoutMs = pollingPeriodMs,
+  fetchingTimeoutMs = pollingPeriodMs * 10, // Nb Empirical value
 }: GetOnboardingStatePollingArgs): GetOnboardingStatePollingResult => {
   const getOnboardingStateOnce =
     (): Observable<OnboardingStatePollingResult> => {
-      const firmwareInfoOrAllowedErrorObservable = withDevice(deviceId)((t) =>
-        from(getVersion(t))
-      ).pipe(
+      return withDevice(deviceId)((t) => from(getVersion(t))).pipe(
         timeout(fetchingTimeoutMs), // Throws a TimeoutError
         first(),
         catchError((error: any) => {
@@ -76,20 +66,10 @@ export const getOnboardingStatePolling = ({
           }
 
           return throwError(error);
-        })
-      );
-
-      // If an error is catched previously, and this error is "allowed",
-      // the value from the observable is not a FirmwareInfo but an Error
-      const [firmwareInfoObservable, allowedErrorObservable] = partition(
-        firmwareInfoOrAllowedErrorObservable,
-        // TS cannot infer correctly the value given to RxJS partition
-        (value) => Boolean(value?.flags)
-      );
-
-      const onboardingStateFromFirmwareInfoObservable =
-        firmwareInfoObservable.pipe(
-          map((firmwareInfo: FirmwareInfo) => {
+        }),
+        map((event: FirmwareInfo | Error) => {
+          if ("flags" in event) {
+            const firmwareInfo = event as FirmwareInfo;
             let onboardingState: OnboardingState | null = null;
 
             try {
@@ -118,24 +98,17 @@ export const getOnboardingStatePolling = ({
               allowedError: null,
               lockedDevice: false,
             };
-          })
-        );
-
-      // Handles the case of an (allowed) Error value
-      const onboardingStateFromAllowedErrorObservable =
-        allowedErrorObservable.pipe(
-          map((allowedError: Error) => {
+          } else {
+            // If an error is catched previously, and this error is "allowed",
+            // the value from the observable is not a FirmwareInfo but an Error
+            const allowedError = event as Error;
             return {
               onboardingState: null,
               allowedError: allowedError,
               lockedDevice: allowedError instanceof LockedDeviceError,
             };
-          })
-        );
-
-      return merge(
-        onboardingStateFromFirmwareInfoObservable,
-        onboardingStateFromAllowedErrorObservable
+          }
+        })
       );
     };
 

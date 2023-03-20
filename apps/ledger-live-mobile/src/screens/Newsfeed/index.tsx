@@ -13,7 +13,7 @@ import CryptopanicIcon from "../../icons/Cryptopanic";
 import Button from "../../components/wrappedUi/Button";
 import Skeleton from "../../components/Skeleton";
 import { ScreenName } from "../../const";
-import FormatRelativeTime from "../../components/FormatRelativeTime";
+import FormatRelativeTime from "../../components/DateFormat/FormatRelativeTime";
 
 const keyExtractor = (item: CryptopanicNewsWithMetadata) => item.id.toString();
 

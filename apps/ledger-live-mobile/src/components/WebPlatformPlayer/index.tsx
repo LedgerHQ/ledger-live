@@ -1,134 +1,104 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import React, { RefObject, useCallback, useEffect, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  SafeAreaView,
-  BackHandler,
-} from "react-native";
-import { WebView as RNWebView } from "react-native-webview";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { StyleSheet, SafeAreaView, BackHandler, Platform } from "react-native";
 
-import { useTheme } from "styled-components/native";
-import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { useNavigation } from "@react-navigation/native";
-import { TopBarRenderFunc, WebviewState } from "../Web3AppWebview/types";
+import { Flex } from "@ledgerhq/native-ui";
+import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
+import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 
-import UpdateIcon from "../../icons/Update";
-import InfoIcon from "../../icons/Info";
-import Web3AppWebview from "../Web3AppWebview";
-import InfoPanel from "./InfoPanel";
+import { Web3AppWebview } from "../Web3AppWebview";
+import { RightHeader } from "./RightHeader";
+import { BottomBar } from "./BottomBar";
+import {
+  RootNavigationComposite,
+  StackNavigatorNavigation,
+} from "../RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
+import HeaderTitle from "../HeaderTitle";
+import { initialWebviewState } from "../Web3AppWebview/helpers";
+import { InfoPanel } from "./InfoPanel";
 
 type Props = {
   manifest: LiveAppManifest;
   inputs?: Record<string, string>;
 };
 
-const ReloadButton = ({
-  onReload,
-  loading,
-}: {
-  onReload: () => void;
-  loading: boolean;
-}) => {
-  const { colors } = useTheme();
-  return (
-    <TouchableOpacity
-      style={styles.buttons}
-      disabled={loading}
-      onPress={() => !loading && onReload()}
-    >
-      <UpdateIcon size={18} color={colors.neutral.c70} />
-    </TouchableOpacity>
-  );
-};
-
-const InfoPanelButton = ({
-  loading,
-  setIsInfoPanelOpened,
-}: {
-  loading: boolean;
-  setIsInfoPanelOpened: (_: boolean) => void;
-}) => {
-  const { colors } = useTheme();
-
-  const onPress = () => {
-    setIsInfoPanelOpened(true);
-  };
-
-  return (
-    <TouchableOpacity
-      style={styles.buttons}
-      disabled={loading}
-      onPress={onPress}
-    >
-      <InfoIcon size={18} color={colors.neutral.c70} />
-    </TouchableOpacity>
-  );
-};
-
-type TopBarProps = {
-  manifest: AppManifest;
-  webviewRef: RefObject<RNWebView>;
-  webviewState: WebviewState;
-};
-
-function TopBar({ manifest, webviewRef, webviewState }: TopBarProps) {
+const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
+  const webviewAPIRef = useRef<WebviewAPI>(null);
+  const [webviewState, setWebviewState] =
+    useState<WebviewState>(initialWebviewState);
   const [isInfoPanelOpened, setIsInfoPanelOpened] = useState(false);
 
-  const handleBackButton = useCallback(() => {
-    const webview = webviewRef.current;
-    if (!webview || !webviewState.canGoBack) {
-      return false;
+  const navigation =
+    useNavigation<
+      RootNavigationComposite<
+        StackNavigatorNavigation<BaseNavigatorStackParamList>
+      >
+    >();
+
+  const handleHardwareBackPress = useCallback(() => {
+    const webview = safeGetRefValue(webviewAPIRef);
+
+    if (webviewState.canGoBack) {
+      webview.goBack();
+      return true; // prevent default behavior (native navigation)
     }
 
-    webview.goBack();
-    return true;
-  }, [webviewState.canGoBack, webviewRef]);
+    return false;
+  }, [webviewState.canGoBack, webviewAPIRef]);
 
-  const navigation = useNavigation();
-
+  // eslint-disable-next-line consistent-return
   useEffect(() => {
-    const func = (e: { preventDefault: () => void }) => {
-      const result = handleBackButton();
-      if (result) {
-        e.preventDefault();
-      }
-    };
+    if (Platform.OS === "android") {
+      BackHandler.addEventListener(
+        "hardwareBackPress",
+        handleHardwareBackPress,
+      );
 
-    navigation.addListener("beforeRemove", func);
-
-    return () => {
-      navigation.removeListener("beforeRemove", func);
-    };
-  }, [handleBackButton, navigation]);
-
-  const handleReload = useCallback(() => {
-    const webview = webviewRef.current;
-    if (!webview) {
-      return;
+      return () => {
+        BackHandler.removeEventListener(
+          "hardwareBackPress",
+          handleHardwareBackPress,
+        );
+      };
     }
-
-    webview.reload();
-  }, [webviewRef]);
+  }, [handleHardwareBackPress]);
 
   useEffect(() => {
-    BackHandler.addEventListener("hardwareBackPress", handleBackButton);
-
-    return () => {
-      BackHandler.removeEventListener("hardwareBackPress", handleBackButton);
-    };
-  }, [handleBackButton]);
+    navigation.setOptions({
+      headerTitleAlign: "left",
+      headerLeft: () => null,
+      headerTitleContainerStyle: { marginHorizontal: 0 },
+      headerTitle: () => (
+        <Flex justifyContent={"center"} flex={1}>
+          <HeaderTitle color="neutral.c70"> {manifest.homepageUrl}</HeaderTitle>
+        </Flex>
+      ),
+      headerRight: () => (
+        <RightHeader
+          webviewAPIRef={webviewAPIRef}
+          webviewState={webviewState}
+          handlePressInfo={() => setIsInfoPanelOpened(true)}
+        />
+      ),
+      headerShown: true,
+    });
+  }, [manifest, navigation, webviewState]);
 
   return (
-    <>
-      <View style={styles.headerRight}>
-        <ReloadButton onReload={handleReload} loading={false} />
-        <InfoPanelButton
-          loading={false}
-          setIsInfoPanelOpened={setIsInfoPanelOpened}
-        />
-      </View>
+    <SafeAreaView style={[styles.root]}>
+      <Web3AppWebview
+        ref={webviewAPIRef}
+        manifest={manifest}
+        inputs={inputs}
+        onStateChange={setWebviewState}
+      />
+      <BottomBar
+        manifest={manifest}
+        webviewAPIRef={webviewAPIRef}
+        webviewState={webviewState}
+      />
       <InfoPanel
         name={manifest.name}
         icon={manifest.icon}
@@ -138,34 +108,11 @@ function TopBar({ manifest, webviewRef, webviewState }: TopBarProps) {
         isOpened={isInfoPanelOpened}
         setIsOpened={setIsInfoPanelOpened}
       />
-    </>
-  );
-}
-
-const WebViewWrapper = ({ manifest, inputs }: Props) => {
-  const renderTopBar = useCallback<TopBarRenderFunc>(
-    (manifest, webviewRef, webviewState) => (
-      <TopBar
-        manifest={manifest}
-        webviewRef={webviewRef}
-        webviewState={webviewState}
-      />
-    ),
-    [],
-  );
-
-  return (
-    <SafeAreaView style={[styles.root]}>
-      <Web3AppWebview
-        manifest={manifest}
-        inputs={inputs}
-        renderTopBar={renderTopBar}
-      />
     </SafeAreaView>
   );
 };
 
-export default WebViewWrapper;
+export default WebPlatformPlayer;
 
 const styles = StyleSheet.create({
   root: {

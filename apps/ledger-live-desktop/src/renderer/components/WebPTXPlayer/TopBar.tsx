@@ -18,8 +18,9 @@ import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 
 import { useSelector } from "react-redux";
 import { enablePlatformDevToolsSelector } from "~/renderer/reducers/settings";
-import { WebviewTag, WebviewState } from "../Web3AppWebview/types";
+import { WebviewState, WebviewAPI } from "../Web3AppWebview/types";
 import Spinner from "../Spinner";
+import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 
 const Container = styled(Box).attrs(() => ({
   horizontal: true,
@@ -98,15 +99,15 @@ const RightContainer = styled(Box).attrs(() => ({
 export type Props = {
   icon?: boolean;
   manifest: LiveAppManifest;
-  webviewRef: RefObject<WebviewTag>;
+  webviewAPIRef: RefObject<WebviewAPI>;
   webviewState: WebviewState;
 };
 
-export const TopBar = ({ manifest, webviewRef, webviewState }: Props) => {
-  const lastMatchingURL = useRef("");
+export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
+  const lastMatchingURL = useRef<string | null>(null);
 
   const isWhitelistedDomain = useMemo(() => {
-    if (webviewState.url === "") {
+    if (!lastMatchingURL || !webviewState.url) {
       return true;
     }
 
@@ -118,35 +119,24 @@ export const TopBar = ({ manifest, webviewRef, webviewState }: Props) => {
 
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
   const onOpenDevTools = useCallback(() => {
-    const webview = webviewRef.current;
-
-    if (!webview) {
-      return;
-    }
+    const webview = safeGetRefValue(webviewAPIRef);
 
     webview.openDevTools();
-  }, [webviewRef]);
+  }, [webviewAPIRef]);
 
   const onBackToMatchingURL = useCallback(async () => {
-    const webview = webviewRef.current;
+    const webview = safeGetRefValue(webviewAPIRef);
+    const url = safeGetRefValue(lastMatchingURL);
 
-    if (!webview) {
-      return;
-    }
-
-    await webview.loadURL(lastMatchingURL.current);
+    await webview.loadURL(url);
     webview.clearHistory();
-  }, [webviewRef]);
+  }, [webviewAPIRef]);
 
   const handleReload = useCallback(() => {
-    const webview = webviewRef.current;
+    const webview = safeGetRefValue(webviewAPIRef);
 
-    if (!webview) {
-      return;
-    }
-
-    webview.reloadIgnoringCache();
-  }, [webviewRef]);
+    webview.reload();
+  }, [webviewAPIRef]);
 
   useEffect(() => {
     if (isWhitelistedDomain) {

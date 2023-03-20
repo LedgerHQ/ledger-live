@@ -215,6 +215,7 @@
     "stars": "Starred accounts",
     "accounts": "Accounts",
     "manager": "My Ledger",
+    "earn": "Earn",
     "exchange": "Buy / Sell",
     "swap": "Swap",
     "lend": "Lend",
@@ -226,15 +227,10 @@
     "tooltip": "Star account"
   },
   "bridge": {
-    "modalTitle": "Open Device Bridge",
-    "openHeader": "Expose your Device accounts through WebSocket",
-    "openDescription": "Opening a bridge exposes all of your accounts to third party applications.",
-    "openedHeader": "{{appName}} bridge opened",
-    "openedDescription": "You can now access your {{appName}} account on third party web application through WebSocket.",
-    "completeHeader": "Bridge session completed",
-    "completeDescription": "The websocket bridge is now closed.",
-    "openButton": "Open",
-    "disconnectButton": "Disconnect"
+    "modalTitle": "Device Bridge",
+    "openHeader": "Device bridge is no longer available",
+    "openDescription": "Please configure your browser wallet extensions to use WebHID instead of Ledger Live.",
+    "closeButton": "Close"
   },
   "swap2": {
     "title": "Swap",
@@ -3885,10 +3881,6 @@
           "title": "Experimental integrations",
           "description": "Use available experimental crypto assets integrations."
         },
-        "experimentalExecutionOnRenderer": {
-          "title": "Experimental networking",
-          "description": "Use experimental networking to optimize your Ledger Live experience with your VPN. Activate this only if your current VPN causes system errors."
-        },
         "experimentalLanguages": {
           "title": "Translation testing",
           "description": "Adds unreleased languages to the language list in the general settings tab."
@@ -4079,7 +4071,7 @@
       "tr": "Turkish",
       "ja": "Japanese",
       "ko": "Korean",
-      "pt": "Portuguese"
+      "pt": "Português (Brasil)"
     }
   },
   "theme": {

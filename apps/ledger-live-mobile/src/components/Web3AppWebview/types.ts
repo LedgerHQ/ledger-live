@@ -1,17 +1,9 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { RefObject } from "react";
-import { WebView as RNWebView } from "react-native-webview";
-
-export type TopBarRenderFunc = (
-  manifest: LiveAppManifest,
-  webviewRef: RefObject<RNWebView>,
-  webviewState: WebviewState,
-) => JSX.Element;
 
 export type WebviewProps = {
   manifest: LiveAppManifest;
   inputs?: Record<string, string>;
-  renderTopBar?: TopBarRenderFunc;
+  onStateChange?: (webviewState: WebviewState) => void;
 };
 
 export type WebviewState = {
@@ -20,4 +12,11 @@ export type WebviewState = {
   canGoForward: boolean;
   title: string;
   loading: boolean;
+};
+
+export type WebviewAPI = {
+  reload: () => void;
+  goBack: () => void;
+  goForward: () => void;
+  loadURL: (url: string) => void;
 };

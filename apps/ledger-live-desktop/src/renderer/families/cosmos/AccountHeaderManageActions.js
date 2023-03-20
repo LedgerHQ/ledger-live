@@ -59,6 +59,10 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
       icon: IconCoins,
       label: t("account.stake"),
       tooltip: disabledLabel,
+      event: "button_clicked",
+      eventProperties: {
+        button: "stake",
+      },
     },
   ];
 };

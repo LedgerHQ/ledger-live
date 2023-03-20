@@ -20,7 +20,7 @@ import {
   readOnlyModeEnabledSelector,
 } from "../../reducers/settings";
 import { Props as ModalProps } from "../QueuedDrawer";
-import TransferButton from "./TransferButton";
+import TransferButton from "../TransferButton";
 import BuyDeviceBanner, { IMAGE_PROPS_SMALL_NANO } from "../BuyDeviceBanner";
 import SetupDeviceBanner from "../SetupDeviceBanner";
 import { track, useAnalytics } from "../../analytics";

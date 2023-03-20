@@ -1,37 +1,37 @@
-import { LockedDeviceError } from "@ledgerhq/errors";
+import { DisconnectedDevice, LockedDeviceError } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import type { DeviceId, DeviceInfo } from "@ledgerhq/types-live";
 
 import { getVersion } from "../commands/getVersion";
-import { getAppAndVersion } from "../commands/getAppAndVersion";
 
 import isDevFirmware from "../../hw/isDevFirmware";
-import { isDashboardName } from "../../hw/isDashboardName";
-import { withDevice } from "../../hw/deviceAccess";
 import { PROVIDERS } from "../../manager/provider";
 import { Observable } from "rxjs";
-import { map, filter, switchMap } from "rxjs/operators";
-import { SharedTaskEvent, sharedLogicTaskWrapper } from "./core";
+import { map, switchMap } from "rxjs/operators";
+import {
+  SharedTaskEvent,
+  retryOnErrorsCommandWrapper,
+  sharedLogicTaskWrapper,
+} from "./core";
+import { quitApp } from "../commands/quitApp";
+import { withTransport } from "../transports/core";
 
 const ManagerAllowedFlag = 0x08;
 const PinValidatedFlag = 0x80;
 
 export type GetDeviceInfoTaskArgs = { deviceId: DeviceId };
 
-// Do we really need an Error object ? :
-// - Longer to write a CustomError class that extends Error for each type of error
-// - our createCustomErrorClass function creates Error object that are hard/weird to compare
-//  (instanceOf does not work correctly)
-// I propose to only use a uniont of string literals:
-// - they are errors from the logic of this task, so we know where and why they are thrown
-// - easy to add one, easy to compare
-export type GetDeviceInfoTaskError =
-  | "DeviceOnDashboardExpected"
-  | "AnotherErrorHappeningDuringTheLogicOfThisTask";
+// No taskError for getDeviceInfoTask. Kept for consistency with other tasks.
+export type GetDeviceInfoTaskError = "None";
+
+export type GetDeviceInfoTaskErrorEvent = {
+  type: "taskError";
+  error: GetDeviceInfoTaskError;
+};
 
 export type GetDeviceInfoTaskEvent =
   | { type: "data"; deviceInfo: DeviceInfo }
-  | { type: "taskError"; error: GetDeviceInfoTaskError }
+  | GetDeviceInfoTaskErrorEvent
   | SharedTaskEvent;
 
 function internalGetDeviceInfoTask({
@@ -39,20 +39,15 @@ function internalGetDeviceInfoTask({
 }: GetDeviceInfoTaskArgs): Observable<GetDeviceInfoTaskEvent> {
   return new Observable((subscriber) => {
     return (
-      withDevice(deviceId)((transport) =>
-        getAppAndVersion(transport).pipe(
-          filter(({ appAndVersion: { name } }) => {
-            if (!isDashboardName(name)) {
-              subscriber.next({
-                type: "taskError",
-                error: "DeviceOnDashboardExpected",
-              });
-              return false;
-            }
-            return true;
-          }),
+      withTransport(deviceId)(({ transportRef }) =>
+        quitApp(transportRef.current).pipe(
           switchMap(() => {
-            return getVersion(transport);
+            return retryOnErrorsCommandWrapper({
+              command: getVersion,
+              allowedErrors: [
+                { maxRetries: 3, errorClass: DisconnectedDevice },
+              ],
+            })(transportRef, {});
           }),
           map((value) => {
             if (value.type === "unresponsive") {

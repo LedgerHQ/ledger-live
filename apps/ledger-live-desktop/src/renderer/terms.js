@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { urls } from "~/config/urls";
-import logger from "~/logger/logger";
+import logger from "~/renderer/logger";
 
 const currentTermsRequired = "2022-05-10";
 const currentLendingTermsRequired = "2020-11-10";

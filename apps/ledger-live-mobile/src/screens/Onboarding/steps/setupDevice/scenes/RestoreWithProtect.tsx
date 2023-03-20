@@ -7,6 +7,7 @@ import InfoModal from "../../../../../modals/Info";
 import Button from "../../../../../components/wrappedUi/Button";
 import { TrackScreen } from "../../../../../analytics";
 import Touchable from "../../../../../components/Touchable";
+import { urls } from "../../../../../config/urls";
 
 const RestoreWithProtectScene = () => {
   const { t } = useTranslation();
@@ -43,18 +44,13 @@ const Next = ({ onNext }: { onNext: () => void }) => {
   const restoreInfoDrawer =
     servicesConfig?.params?.onboardingRestore?.restoreInfoDrawer || {};
 
-  const updateFirmwareLink =
-    "https://support.ledger.com/hc/en-us/articles/360013349800-Update-Ledger-Nano-X-firmware?docs=true";
-
   const supportLink = restoreInfoDrawer?.supportLink;
 
   const onOpen = useCallback(() => setIsOpened(true), []);
   const onClose = useCallback(() => setIsOpened(false), []);
   const onLearnToUpdate = useCallback(() => {
     onClose();
-    Linking.canOpenURL(updateFirmwareLink).then(() =>
-      Linking.openURL(updateFirmwareLink),
-    );
+    Linking.openURL(urls.lnxFirmwareUpdate);
   }, [onClose]);
   const onSupportLink = useCallback(() => {
     onClose();

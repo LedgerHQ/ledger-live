@@ -1,19 +1,35 @@
 import semver from "semver";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
-import React from "react";
+import React, { forwardRef } from "react";
 import { WalletAPIWebview } from "./WalletAPIWebview";
 import { PlatformAPIWebview } from "./PlatformAPIWebview";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { WebviewProps } from "./types";
+import { WebviewAPI, WebviewProps } from "./types";
 
-function Web3AppWebview({ manifest, inputs, renderTopBar }: WebviewProps) {
-  <TrackPage category="Platform" name="App" appId={manifest.id} params={inputs} />;
+export const Web3AppWebview = forwardRef<WebviewAPI, WebviewProps>(
+  ({ manifest, inputs, onStateChange }, ref) => {
+    <TrackPage category="Platform" name="App" appId={manifest.id} params={inputs} />;
 
-  if (semver.satisfies(WALLET_API_VERSION, manifest.apiVersion)) {
-    return <WalletAPIWebview manifest={manifest} inputs={inputs} renderTopBar={renderTopBar} />;
-  }
+    if (semver.satisfies(WALLET_API_VERSION, manifest.apiVersion)) {
+      return (
+        <WalletAPIWebview
+          manifest={manifest}
+          inputs={inputs}
+          onStateChange={onStateChange}
+          ref={ref}
+        />
+      );
+    }
 
-  return <PlatformAPIWebview manifest={manifest} inputs={inputs} renderTopBar={renderTopBar} />;
-}
+    return (
+      <PlatformAPIWebview
+        manifest={manifest}
+        inputs={inputs}
+        onStateChange={onStateChange}
+        ref={ref}
+      />
+    );
+  },
+);
 
-export default Web3AppWebview;
+Web3AppWebview.displayName = "Web3AppWebview";

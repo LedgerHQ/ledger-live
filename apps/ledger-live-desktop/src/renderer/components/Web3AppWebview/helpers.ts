@@ -1,7 +1,18 @@
-import { RefObject, useCallback, useEffect, useState } from "react";
-import { WebviewState, WebviewTag } from "./types";
+import {
+  RefObject,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { addParamsToURL } from "@ledgerhq/live-common/wallet-api/helpers";
+import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
+import { LiveAppManifest } from "~/../../../libs/ledger-live-common/lib/platform/types";
+import { WebviewAPI, WebviewState, WebviewTag } from "./types";
 
-const initialState: WebviewState = {
+export const initialWebviewState: WebviewState = {
   url: "",
   canGoBack: false,
   canGoForward: false,
@@ -9,10 +20,89 @@ const initialState: WebviewState = {
   loading: false,
 };
 
-export function useWebviewState(webviewRef: RefObject<WebviewTag>) {
-  const [state, setState] = useState<WebviewState>(initialState);
-  const [isMounted, setMounted] = useState<boolean>(false);
+type UseWebviewStateParams = {
+  manifest: LiveAppManifest;
+  inputs?: Record<string, string>;
+};
 
+type UseWebviewStateReturn = {
+  webviewState: WebviewState;
+  webviewProps: {
+    src: string;
+  };
+  webviewRef: RefObject<WebviewTag>;
+};
+
+export function useWebviewState(
+  params: UseWebviewStateParams,
+  webviewAPIRef: React.ForwardedRef<WebviewAPI>,
+): UseWebviewStateReturn {
+  const webviewRef = useRef<WebviewTag>(null);
+  const { manifest, inputs } = params;
+
+  const initialURL = useMemo(() => {
+    const url = new URL(manifest.url);
+    addParamsToURL(url, inputs);
+    if (manifest.params) {
+      url.searchParams.set("params", JSON.stringify(manifest.params));
+    }
+    return url.toString();
+  }, [manifest, inputs]);
+
+  const [state, setState] = useState<WebviewState>(initialWebviewState);
+
+  /*
+  TODO: find a way to send custom headers
+  const { theme } = useTheme();
+
+  const headers = useMemo(() => {
+    return getClientHeaders({
+      client: "ledger-live-desktop",
+      theme,
+    });
+  }, [theme]);
+  */
+
+  useImperativeHandle(
+    webviewAPIRef,
+    () => {
+      return {
+        reload: () => {
+          const webview = safeGetRefValue(webviewRef);
+
+          webview.reload();
+        },
+        goBack: () => {
+          const webview = safeGetRefValue(webviewRef);
+
+          webview.goBack();
+        },
+        goForward: () => {
+          const webview = safeGetRefValue(webviewRef);
+
+          webview.goForward();
+        },
+        openDevTools: () => {
+          const webview = safeGetRefValue(webviewRef);
+
+          webview.openDevTools();
+        },
+        loadURL: (url: string): Promise<void> => {
+          const webview = safeGetRefValue(webviewRef);
+
+          return webview.loadURL(url);
+        },
+        clearHistory: () => {
+          const webview = safeGetRefValue(webviewRef);
+
+          webview.clearHistory();
+        },
+      };
+    },
+    [webviewRef],
+  );
+
+  const [isMounted, setMounted] = useState<boolean>(false);
   useEffect(() => {
     setMounted(true);
   }, [isMounted]);
@@ -123,7 +213,13 @@ export function useWebviewState(webviewRef: RefObject<WebviewTag>) {
     isMounted,
   ]);
 
+  const props = {
+    src: initialURL,
+  };
+
   return {
     webviewState: state,
+    webviewProps: props,
+    webviewRef,
   };
 }

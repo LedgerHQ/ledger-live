@@ -14,7 +14,6 @@ import {
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
 
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
-import { command } from "~/renderer/commands";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import HelpDrawer from "./HelpDrawer";
 import TroubleshootingDrawer from "./TroubleshootingDrawer";
@@ -27,6 +26,7 @@ import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "../../DeviceAction/animations";
 import DeviceIllustration from "../../DeviceIllustration";
 import OnboardingAppInstallStep from "../../OnboardingAppInstall";
+import { getOnboardingStatePolling } from "@ledgerhq/live-common/hw/getOnboardingStatePolling";
 
 const readyRedirectDelayMs = 2500;
 const pollingPeriodMs = 1000;
@@ -54,8 +54,6 @@ type Step = {
   estimatedTime?: number;
   renderBody?: () => ReactNode;
 };
-
-const getOnboardingStatePollingCommand = command("getOnboardingStatePolling");
 
 function nextStepKey(step: StepKey): StepKey {
   if (step === StepKey.Exit) {
@@ -214,7 +212,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
     fatalError,
     lockedDevice: lockedDeviceDuringPolling,
   } = useOnboardingStatePolling({
-    getOnboardingStatePolling: getOnboardingStatePollingCommand,
+    getOnboardingStatePolling,
     device,
     pollingPeriodMs,
     stopPolling,

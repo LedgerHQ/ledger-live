@@ -1,5 +1,4 @@
 import { BigNumber } from "bignumber.js";
-import { isEqual } from "lodash";
 import type {
   TronAccount,
   TronAccountRaw,
@@ -170,28 +169,4 @@ export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
   if (tronResourcesRaw)
     (account as TronAccount).tronResources =
       fromTronResourcesRaw(tronResourcesRaw);
-}
-
-export function applyReconciliation(
-  account: Account,
-  updatedRaw: AccountRaw,
-  next: Account
-): boolean {
-  let changed = false;
-  const tronAcc = account as TronAccount;
-  const tronUpdatedRaw = updatedRaw as TronAccountRaw;
-  if (
-    tronUpdatedRaw.tronResources &&
-    (!tronAcc.tronResources ||
-      !isEqual(
-        toTronResourcesRaw(tronAcc.tronResources),
-        tronUpdatedRaw.tronResources
-      ))
-  ) {
-    (next as TronAccount).tronResources = fromTronResourcesRaw(
-      tronUpdatedRaw.tronResources
-    );
-    changed = true;
-  }
-  return changed;
 }

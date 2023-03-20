@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 
-import Web3AppWebview from "../Web3AppWebview";
+import { Web3AppWebview } from "../Web3AppWebview";
 import { TopBar } from "./TopBar";
 import Box from "../Box";
-import { TopBarRenderFunc, WebviewProps } from "../Web3AppWebview/types";
+import { WebviewAPI, WebviewProps, WebviewState } from "../Web3AppWebview/types";
+import { initialWebviewState } from "../Web3AppWebview/helpers";
 
 export const Container = styled.div`
   display: flex;
@@ -19,15 +20,20 @@ export const Wrapper = styled(Box).attrs(() => ({
   position: relative;
 `;
 
-const renderTopBar: TopBarRenderFunc = (manifest, webviewRef, webviewState) => (
-  <TopBar manifest={manifest} webviewRef={webviewRef} webviewState={webviewState} />
-);
-
 export default function WebPTXPlayer({ manifest, inputs }: WebviewProps) {
+  const webviewAPIRef = useRef<WebviewAPI>(null);
+  const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
+
   return (
     <Container>
       <Wrapper>
-        <Web3AppWebview manifest={manifest} inputs={inputs} renderTopBar={renderTopBar} />
+        <TopBar manifest={manifest} webviewAPIRef={webviewAPIRef} webviewState={webviewState} />
+        <Web3AppWebview
+          manifest={manifest}
+          inputs={inputs}
+          onStateChange={setWebviewState}
+          ref={webviewAPIRef}
+        />
       </Wrapper>
     </Container>
   );

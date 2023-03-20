@@ -4,7 +4,9 @@ import React, {
   useEffect,
   useMemo,
   RefObject,
+  forwardRef,
 } from "react";
+
 import { useSelector } from "react-redux";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import VersionNumber from "react-native-version-number";
@@ -16,7 +18,6 @@ import {
   UiHook,
   useConfig,
   useWalletAPIServer,
-  useWalletAPIUrl,
 } from "@ledgerhq/live-common/wallet-api/react";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
 import BigNumber from "bignumber.js";
@@ -24,14 +25,11 @@ import { NavigatorName, ScreenName } from "../../const";
 import { flattenAccountsSelector } from "../../reducers/accounts";
 import { track } from "../../analytics/segment";
 import prepareSignTransaction from "./liveSDKLogic";
-import {
-  RootNavigationComposite,
-  StackNavigatorNavigation,
-} from "../RootNavigator/types/helpers";
+import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { analyticsEnabledSelector } from "../../reducers/settings";
 import getOrCreateUser from "../../user";
-import { WebviewProps } from "./types";
+import { WebviewAPI, WebviewProps } from "./types";
 import { useWebviewState } from "./helpers";
 
 const wallet = {
@@ -173,13 +171,12 @@ const useGetUserId = () => {
 };
 
 function useWebView(
-  { manifest, inputs }: Pick<WebviewProps, "manifest" | "inputs">,
+  { manifest }: Pick<WebviewProps, "manifest" | "inputs">,
   webviewRef: RefObject<RNWebView>,
 ) {
   const accounts = useSelector(flattenAccountsSelector);
 
   const uiHook = useUiHook();
-  const url = useWalletAPIUrl(manifest, inputs);
   const analyticsEnabled = useSelector(analyticsEnabledSelector);
   const userId = useGetUserId();
   const config = useConfig({
@@ -217,8 +214,6 @@ function useWebView(
   );
 
   return {
-    uri: url.toString(),
-    webviewRef,
     onLoadError,
     onMessage,
   };
@@ -227,79 +222,65 @@ function useWebView(
 function renderLoading() {
   return (
     <View style={styles.center}>
-      <ActivityIndicator size="large" />
+      <ActivityIndicator size="small" />
     </View>
   );
 }
 
-export function WalletAPIWebview({
-  manifest,
-  inputs = {},
-  renderTopBar,
-}: WebviewProps) {
-  const webviewRef = React.useRef<RNWebView>(null);
-  const { webviewProps, webviewState } = useWebviewState();
+export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
+  ({ manifest, inputs = {}, onStateChange }, ref) => {
+    const { webviewProps, webviewState, webviewRef } = useWebviewState(
+      {
+        manifest,
+        inputs,
+      },
+      ref,
+    );
 
-  const { uri, onMessage, onLoadError } = useWebView(
-    {
-      manifest,
-      inputs,
-    },
-    webviewRef,
-  );
+    useEffect(() => {
+      if (onStateChange) {
+        onStateChange(webviewState);
+      }
+    }, [webviewState, onStateChange]);
 
-  const source = useMemo(() => {
-    return {
-      uri,
-    };
-  }, [uri]);
+    const { onMessage, onLoadError } = useWebView(
+      {
+        manifest,
+        inputs,
+      },
+      webviewRef,
+    );
 
-  const navigation =
-    useNavigation<
-      RootNavigationComposite<
-        StackNavigatorNavigation<BaseNavigatorStackParamList>
-      >
-    >();
+    return (
+      <RNWebView
+        ref={webviewRef}
+        startInLoadingState={true}
+        showsHorizontalScrollIndicator={false}
+        allowsBackForwardNavigationGestures
+        showsVerticalScrollIndicator={false}
+        renderLoading={renderLoading}
+        originWhitelist={manifest.domains}
+        allowsInlineMediaPlayback
+        onMessage={onMessage}
+        onError={onLoadError}
+        overScrollMode="content"
+        bounces={false}
+        mediaPlaybackRequiresUserAction={false}
+        automaticallyAdjustContentInsets={false}
+        scrollEnabled={true}
+        style={styles.webview}
+        {...webviewProps}
+      />
+    );
+  },
+);
 
-  useEffect(() => {
-    const webview = webviewRef.current;
-    if (!webview) {
-      return;
-    }
-
-    navigation.setOptions({
-      headerRight: renderTopBar
-        ? () => renderTopBar(manifest, webviewRef, webviewState)
-        : undefined,
-      headerShown: !!renderTopBar,
-    });
-  }, [manifest, navigation, renderTopBar, webviewState]);
-
-  return (
-    <RNWebView
-      ref={webviewRef}
-      startInLoadingState={true}
-      showsHorizontalScrollIndicator={false}
-      allowsBackForwardNavigationGestures
-      showsVerticalScrollIndicator={false}
-      renderLoading={renderLoading}
-      originWhitelist={manifest.domains}
-      allowsInlineMediaPlayback
-      source={source}
-      onMessage={onMessage}
-      onError={onLoadError}
-      overScrollMode="content"
-      bounces={false}
-      mediaPlaybackRequiresUserAction={false}
-      automaticallyAdjustContentInsets={false}
-      scrollEnabled={true}
-      style={styles.webview}
-      {...webviewProps}
-    />
-  );
-}
+WalletAPIWebview.displayName = "WalletAPIWebview";
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
   center: {
     flex: 1,
     flexDirection: "column",
@@ -315,5 +296,6 @@ const styles = StyleSheet.create({
     flex: 0,
     width: "100%",
     height: "100%",
+    backgroundColor: "transparent",
   },
 });

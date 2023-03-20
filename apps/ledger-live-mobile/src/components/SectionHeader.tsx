@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { isEqual } from "lodash";
-import FormatDay from "./FormatDay";
+import FormatDay from "./DateFormat/FormatDay";
 
 type Props = {
   day: Date;

@@ -13,11 +13,7 @@ import signOperation from "../js-signOperation";
 import broadcast from "../js-broadcast";
 import estimateMaxSpendable from "../js-estimateMaxSpendable";
 import { preload, hydrate, getPreloadStrategy } from "../preload";
-import {
-  assignToAccountRaw,
-  assignFromAccountRaw,
-  applyReconciliation,
-} from "../serialization";
+import { assignToAccountRaw, assignFromAccountRaw } from "../serialization";
 
 const receive = makeAccountBridgeReceive();
 
@@ -40,7 +36,6 @@ const accountBridge: AccountBridge<Transaction> = {
   broadcast,
   assignToAccountRaw,
   assignFromAccountRaw,
-  applyReconciliation,
 };
 
 export default { currencyBridge, accountBridge };

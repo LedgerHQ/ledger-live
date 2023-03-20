@@ -119,7 +119,9 @@ const Step3Transfer = ({ route, navigation }: NavigationProps) => {
             onSkip={handleExit}
           />
         ) : newDeviceSelectionFeatureFlag?.enabled ? (
-          <SelectDevice2 onSelect={setDevice} stopBleScanning={!!device} />
+          <Flex flex={1} alignSelf="stretch">
+            <SelectDevice2 onSelect={setDevice} stopBleScanning={!!device} />
+          </Flex>
         ) : (
           <Flex flex={1} alignSelf="stretch">
             <SelectDevice

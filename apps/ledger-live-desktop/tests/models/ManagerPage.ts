@@ -74,6 +74,10 @@ export class ManagerPage {
     await this.installedAppEmptyState.waitFor({ state: "visible" });
   }
 
+  async waitForFirmwareUpdateButton() {
+    await this.firmwareUpdateButton.waitFor({ state: "visible" });
+  }
+
   async openFirmwareUpdateModal() {
     await this.firmwareUpdateButton.click();
   }

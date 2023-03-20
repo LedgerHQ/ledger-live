@@ -1,27 +1,31 @@
 import semver from "semver";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
-import React from "react";
+import React, { forwardRef } from "react";
 import { WalletAPIWebview } from "./WalletAPIWebview";
 import { PlatformAPIWebview } from "./PlatformAPIWebview";
-import { WebviewProps } from "./types";
+import { WebviewAPI, WebviewProps } from "./types";
 
-function Web3AppWebview({ manifest, inputs, renderTopBar }: WebviewProps) {
-  if (semver.satisfies(WALLET_API_VERSION, manifest.apiVersion)) {
+export const Web3AppWebview = forwardRef<WebviewAPI, WebviewProps>(
+  ({ manifest, inputs, onStateChange }, ref) => {
+    if (semver.satisfies(WALLET_API_VERSION, manifest.apiVersion)) {
+      return (
+        <WalletAPIWebview
+          ref={ref}
+          manifest={manifest}
+          inputs={inputs}
+          onStateChange={onStateChange}
+        />
+      );
+    }
     return (
-      <WalletAPIWebview
+      <PlatformAPIWebview
+        ref={ref}
         manifest={manifest}
         inputs={inputs}
-        renderTopBar={renderTopBar}
+        onStateChange={onStateChange}
       />
     );
-  }
-  return (
-    <PlatformAPIWebview
-      manifest={manifest}
-      inputs={inputs}
-      renderTopBar={renderTopBar}
-    />
-  );
-}
+  },
+);
 
-export default Web3AppWebview;
+Web3AppWebview.displayName = "Web3AppWebview";

@@ -11,8 +11,6 @@ import Box from "~/renderer/components/Box";
 import Spinner from "~/renderer/components/Spinner";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Button from "~/renderer/components/Button";
-import { command } from "~/renderer/commands";
-import findIndex from "lodash/findIndex";
 import styled from "styled-components";
 import Tooltip from "~/renderer/components/Tooltip";
 import TranslatedError from "~/renderer/components/TranslatedError";
@@ -43,15 +41,6 @@ function useRendererState() {
   return state;
 }
 
-function useInternalState() {
-  const [state, dispatch] = useReducer(troubleshootOverObservableReducer, []);
-  useEffect(() => {
-    const s = command("networkTroubleshoot")().subscribe(dispatch);
-    return () => s.unsubscribe();
-  }, []);
-  return state;
-}
-
 const Status = ({ status }: { status?: TroubleshootStatus }) => {
   switch (status?.status) {
     case "success":
@@ -74,34 +63,22 @@ const Status = ({ status }: { status?: TroubleshootStatus }) => {
   }
 };
 
-const RenderState = ({
-  unifiedState,
-}: {
-  unifiedState: Array<{
-    title: string,
-    renderer?: TroubleshootStatus,
-    internal?: TroubleshootStatus,
-  }>,
-}) => {
+const RenderState = ({ state }: { state: TroubleshootStatus[] }) => {
   return (
     <Table>
       <thead>
         <tr>
           <th>TEST</th>
           <th>RENDERER</th>
-          <th>INTERNAL</th>
         </tr>
       </thead>
       <tbody>
-        {unifiedState.map(({ title, renderer, internal }) => {
+        {state.map(status => {
           return (
-            <tr key={title}>
-              <td>{title}</td>
+            <tr key={status.title}>
+              <td>{status.title}</td>
               <td>
-                <Status status={renderer} />
-              </td>
-              <td>
-                <Status status={internal} />
+                <Status status={status.renderer} />
               </td>
             </tr>
           );
@@ -115,16 +92,6 @@ const Body = ({ onClose }: Props) => {
   const { t } = useTranslation();
 
   const rendererState = useRendererState();
-  const internalState = useInternalState();
-  const unifiedState = rendererState.map(s => ({ title: s.title, renderer: s }));
-  internalState.forEach(s => {
-    const i = findIndex(unifiedState, a => a.title === s.title);
-    if (i === -1) {
-      unifiedState.push({ title: s.title, internal: s });
-    } else {
-      unifiedState[i].internal = s;
-    }
-  });
 
   return (
     <ModalBody
@@ -133,7 +100,7 @@ const Body = ({ onClose }: Props) => {
       render={() => (
         <Box relative style={{ height: 500 }} px={5} pb={8}>
           <TrackPage category="Modal" name="TroubleshootNetwork" />
-          <RenderState unifiedState={unifiedState} />
+          <RenderState state={rendererState} />
         </Box>
       )}
       renderFooter={() => (
