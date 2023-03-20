@@ -1612,13 +1612,13 @@ importers:
   libs/ledgerjs/packages/cryptoassets:
     specifiers:
       '@ledgerhq/types-cryptoassets': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       invariant: '2'
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -1626,29 +1626,29 @@ importers:
       invariant: 2.2.4
     devDependencies:
       '@ledgerhq/types-cryptoassets': link:../types-cryptoassets
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/devices:
     specifiers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       '@types/semver': ^7.3.9
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
+      rimraf: ^4.1.2
       rxjs: '6'
       semver: ^7.3.5
-      source-map-support: '*'
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -1658,37 +1658,37 @@ importers:
       rxjs: 6.6.7
       semver: 7.3.7
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       '@types/semver': 7.3.9
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/errors:
     specifiers:
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-app-algorand:
@@ -1696,15 +1696,15 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/hw-transport-mocker': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       bip32-path: ^0.4.2
       documentation: 13.2.4
       hi-base32: ^0.5.1
       jest: ^28.1.1
       js-sha512: ^0.8.0
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       tweetnacl: ^1.0.3
@@ -1718,14 +1718,14 @@ importers:
       tweetnacl: 1.0.3
     devDependencies:
       '@ledgerhq/hw-transport-mocker': link:../hw-transport-mocker
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-app-btc:
@@ -1734,8 +1734,8 @@ importers:
       '@ledgerhq/hw-transport-mocker': workspace:^
       '@ledgerhq/hw-transport-node-speculos': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       axios: ^0.25.0
       bip32-path: ^0.4.2
       bitcoinjs-lib: ^5.2.0
@@ -1744,11 +1744,11 @@ importers:
       documentation: 13.2.4
       invariant: ^2.2.4
       jest: ^28.1.1
-      rimraf: '*'
+      rimraf: ^4.1.2
       ripemd160: '2'
       semver: ^7.3.5
       sha.js: '2'
-      source-map-support: '*'
+      source-map-support: ^0.5.21
       tiny-secp256k1: 1.1.6
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
@@ -1770,15 +1770,15 @@ importers:
     devDependencies:
       '@ledgerhq/hw-transport-mocker': link:../hw-transport-mocker
       '@ledgerhq/hw-transport-node-speculos': link:../hw-transport-node-speculos
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       axios: 0.25.0
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-app-cosmos:
@@ -1786,13 +1786,13 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/hw-transport-mocker': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       bip32-path: ^0.4.2
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -1802,14 +1802,14 @@ importers:
       bip32-path: 0.4.2
     devDependencies:
       '@ledgerhq/hw-transport-mocker': link:../hw-transport-mocker
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-app-eth:
@@ -1821,16 +1821,16 @@ importers:
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/hw-transport-mocker': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       axios: ^0.26.1
       bignumber.js: ^9.1.0
       crypto-js: ^4.1.1
       documentation: 13.2.4
       ethers: ^5.6.9
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -1846,15 +1846,15 @@ importers:
       bignumber.js: 9.1.0
       crypto-js: 4.1.1
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
       ethers: 5.7.0
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-app-helium:
@@ -1867,16 +1867,16 @@ importers:
       '@ledgerhq/hw-transport-mocker': workspace:^
       '@ledgerhq/hw-transport-node-speculos': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       axios: ^0.26.1
       bignumber.js: ^9.1.0
       bip32-path: ^0.4.2
       documentation: 13.2.4
       jest: ^28.1.1
       long: ^5.2.0
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -1893,15 +1893,15 @@ importers:
     devDependencies:
       '@ledgerhq/hw-transport-mocker': link:../hw-transport-mocker
       '@ledgerhq/hw-transport-node-speculos': link:../hw-transport-node-speculos
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       axios: 0.26.1
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-app-near:
@@ -1909,13 +1909,13 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/hw-transport-mocker': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       jest: ^28.1.1
       near-api-js: ^0.44.2
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -1925,14 +1925,14 @@ importers:
       near-api-js: 0.44.2
     devDependencies:
       '@ledgerhq/hw-transport-mocker': link:../hw-transport-mocker
-      '@types/jest': 28.1.8
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.8_l4uz7kl2eeclic7mumfbeqbwgi
-      ts-node: 10.7.0_c3itm6ihhon32dsg3xjgfmpk7a
+      ts-node: 10.7.0_aek4ofadwobuczfhqte56cpk4y
       typescript: 4.9.3
 
   libs/ledgerjs/packages/hw-app-polkadot:
@@ -1940,13 +1940,13 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/hw-transport-mocker': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       bip32-path: ^0.4.2
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -1956,14 +1956,14 @@ importers:
       bip32-path: 0.4.2
     devDependencies:
       '@ledgerhq/hw-transport-mocker': link:../hw-transport-mocker
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-app-solana:
@@ -1973,14 +1973,14 @@ importers:
       '@ledgerhq/hw-transport-mocker': workspace:^
       '@ledgerhq/hw-transport-node-speculos': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       axios: ^0.26.1
       bip32-path: ^0.4.2
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -1992,29 +1992,29 @@ importers:
     devDependencies:
       '@ledgerhq/hw-transport-mocker': link:../hw-transport-mocker
       '@ledgerhq/hw-transport-node-speculos': link:../hw-transport-node-speculos
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       axios: 0.26.1
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-app-str:
     specifiers:
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/hw-transport-mocker': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       base32.js: ^0.1.0
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
+      rimraf: ^4.1.2
       sha.js: ^2.3.6
-      source-map-support: '*'
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       tweetnacl: ^1.0.3
@@ -2026,29 +2026,29 @@ importers:
       tweetnacl: 1.0.3
     devDependencies:
       '@ledgerhq/hw-transport-mocker': link:../hw-transport-mocker
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-app-tezos:
     specifiers:
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/hw-transport-mocker': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       blake2b: ^2.1.4
       bs58check: ^2.1.2
       documentation: 13.2.4
       invariant: ^2.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2059,14 +2059,14 @@ importers:
       invariant: 2.2.4
     devDependencies:
       '@ledgerhq/hw-transport-mocker': link:../hw-transport-mocker
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-app-trx:
@@ -2074,12 +2074,12 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/hw-transport-mocker': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2088,27 +2088,27 @@ importers:
       '@ledgerhq/hw-transport': link:../hw-transport
     devDependencies:
       '@ledgerhq/hw-transport-mocker': link:../hw-transport-mocker
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-app-xrp:
     specifiers:
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/hw-transport-mocker': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       bip32-path: 0.4.2
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2117,27 +2117,27 @@ importers:
       bip32-path: 0.4.2
     devDependencies:
       '@ledgerhq/hw-transport-mocker': link:../hw-transport-mocker
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-transport:
     specifiers:
       '@ledgerhq/devices': workspace:^
       '@ledgerhq/errors': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       events: ^3.3.0
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2146,14 +2146,14 @@ importers:
       '@ledgerhq/errors': link:../errors
       events: 3.3.0
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-transport-http:
@@ -2161,13 +2161,13 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       axios: ^0.26.1
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2179,26 +2179,26 @@ importers:
       axios: 0.26.1
       ws: 7.5.7
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-transport-mocker:
     specifiers:
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2206,14 +2206,14 @@ importers:
       '@ledgerhq/hw-transport': link:../hw-transport
       '@ledgerhq/logs': link:../logs
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-transport-node-ble:
@@ -2223,14 +2223,14 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       invariant: ^2.2.4
       jest: ^28.1.1
-      rimraf: '*'
+      rimraf: ^4.1.2
       rxjs: '6'
-      source-map-support: '*'
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2243,14 +2243,14 @@ importers:
       invariant: 2.2.4
       rxjs: 6.6.7
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-transport-node-hid:
@@ -2260,14 +2260,14 @@ importers:
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/hw-transport-node-hid-noevents': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       jest: ^28.1.1
       lodash: ^4.17.21
       node-hid: ^2.1.2
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2282,14 +2282,14 @@ importers:
       node-hid: 2.1.2
       usb: 1.9.2
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-transport-node-hid-noevents:
@@ -2298,14 +2298,14 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       '@types/node-hid': ^1.3.1
       documentation: 13.2.4
       jest: ^28.1.1
       node-hid: ^2.1.2
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2316,15 +2316,15 @@ importers:
       '@ledgerhq/logs': link:../logs
       node-hid: 2.1.2
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       '@types/node-hid': 1.3.1
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-transport-node-hid-singleton:
@@ -2334,14 +2334,14 @@ importers:
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/hw-transport-node-hid-noevents': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       jest: ^28.1.1
       lodash: ^4.17.21
       node-hid: ^2.1.2
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2356,14 +2356,14 @@ importers:
       node-hid: 2.1.2
       usb: 2.5.1
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-transport-node-speculos:
@@ -2371,13 +2371,13 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
+      rimraf: ^4.1.2
       rxjs: '6'
-      source-map-support: '*'
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2387,14 +2387,14 @@ importers:
       '@ledgerhq/logs': link:../logs
       rxjs: 6.6.7
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-transport-node-speculos-http:
@@ -2402,13 +2402,13 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       axios: ^0.26.1
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2418,14 +2418,14 @@ importers:
       '@ledgerhq/logs': link:../logs
       axios: 0.26.1
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-transport-web-ble:
@@ -2434,14 +2434,14 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       '@types/web-bluetooth': ^0.0.12
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
+      rimraf: ^4.1.2
       rxjs: '6'
-      source-map-support: '*'
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2452,15 +2452,15 @@ importers:
       '@ledgerhq/logs': link:../logs
       rxjs: 6.6.7
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       '@types/web-bluetooth': 0.0.12
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-transport-webhid:
@@ -2469,13 +2469,13 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       '@types/w3c-web-hid': ^1.0.2
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2485,15 +2485,15 @@ importers:
       '@ledgerhq/hw-transport': link:../hw-transport
       '@ledgerhq/logs': link:../logs
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       '@types/w3c-web-hid': 1.0.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-transport-webusb:
@@ -2502,13 +2502,13 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       '@types/w3c-web-usb': ^1.0.5
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2518,37 +2518,37 @@ importers:
       '@ledgerhq/hw-transport': link:../hw-transport
       '@ledgerhq/logs': link:../logs
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       '@types/w3c-web-usb': 1.0.6
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/logs:
     specifiers:
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/react-native-hid:
@@ -2557,14 +2557,14 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       '@types/react-native': ^0.66.24
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
+      rimraf: ^4.1.2
       rxjs: '6'
-      source-map-support: '*'
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2576,15 +2576,15 @@ importers:
       '@ledgerhq/logs': link:../logs
       rxjs: 6.6.7
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       '@types/react-native': 0.66.24
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
       yarn-add-no-save: 1.0.3
 
@@ -2594,15 +2594,15 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       invariant: ^2.2.4
       jest: ^28.1.1
       react-native-ble-plx: 2.0.3
-      rimraf: '*'
+      rimraf: ^4.1.2
       rxjs: '6'
-      source-map-support: '*'
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2617,26 +2617,26 @@ importers:
       rxjs: 6.6.7
       uuid: 3.4.0
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/swift-bridge-hw-app-eth:
     specifiers:
       '@ledgerhq/hw-app-eth': workspace:^
       '@ledgerhq/swift-bridge-hw-transport-ble': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2644,26 +2644,26 @@ importers:
       '@ledgerhq/hw-app-eth': link:../hw-app-eth
       '@ledgerhq/swift-bridge-hw-transport-ble': link:../swift-bridge-hw-transport-ble
     devDependencies:
-      '@types/jest': 27.5.1
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_5gljhujmafmfys272awzdklxia
+      jest: 28.1.3_d2dllaz5dte7avnjm55wl7fmsu
       rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.8_mgg23zyyvjoe75wbzvxzqqpmne
-      ts-node: 10.9.1_c7x7xisxsab3cereq3ok2kgue4
+      ts-node: 10.9.1_ox4bw2nfeaywsll3jxp22xcahy
       typescript: 4.9.5
 
   libs/ledgerjs/packages/swift-bridge-hw-app-solana:
     specifiers:
       '@ledgerhq/hw-app-solana': workspace:^
       '@ledgerhq/swift-bridge-hw-transport-ble': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2671,97 +2671,97 @@ importers:
       '@ledgerhq/hw-app-solana': link:../hw-app-solana
       '@ledgerhq/swift-bridge-hw-transport-ble': link:../swift-bridge-hw-transport-ble
     devDependencies:
-      '@types/jest': 27.5.1
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_5gljhujmafmfys272awzdklxia
+      jest: 28.1.3_d2dllaz5dte7avnjm55wl7fmsu
       rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.8_mgg23zyyvjoe75wbzvxzqqpmne
-      ts-node: 10.9.1_c7x7xisxsab3cereq3ok2kgue4
+      ts-node: 10.9.1_ox4bw2nfeaywsll3jxp22xcahy
       typescript: 4.9.5
 
   libs/ledgerjs/packages/swift-bridge-hw-transport-ble:
     specifiers:
       '@ledgerhq/hw-transport': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
     dependencies:
       '@ledgerhq/hw-transport': link:../hw-transport
     devDependencies:
-      '@types/jest': 27.5.1
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_5gljhujmafmfys272awzdklxia
+      jest: 28.1.3_d2dllaz5dte7avnjm55wl7fmsu
       rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.8_mgg23zyyvjoe75wbzvxzqqpmne
-      ts-node: 10.9.1_c7x7xisxsab3cereq3ok2kgue4
+      ts-node: 10.9.1_ox4bw2nfeaywsll3jxp22xcahy
       typescript: 4.9.5
 
   libs/ledgerjs/packages/types-cryptoassets:
     specifiers:
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/types-devices:
     specifiers:
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/types-live:
     specifiers:
       '@ledgerhq/types-cryptoassets': workspace:^
       '@ledgerhq/types-devices': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       bignumber.js: ^9.1.0
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
+      rimraf: ^4.1.2
       rxjs: '6'
-      source-map-support: '*'
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2771,14 +2771,14 @@ importers:
     devDependencies:
       '@ledgerhq/types-cryptoassets': link:../types-cryptoassets
       '@ledgerhq/types-devices': link:../types-devices
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ui:
@@ -8867,7 +8867,7 @@ packages:
       '@cosmjs/math': 0.25.6
       '@cosmjs/socket': 0.25.6
       '@cosmjs/stream': 0.25.6
-      '@cosmjs/utils': 0.25.6
+      '@cosmjs/utils': 0.25.0-alpha.2
       axios: 0.21.4
       readonly-date: 1.0.0
       xstream: 11.14.0
@@ -8896,6 +8896,10 @@ packages:
 
   /@cosmjs/utils/0.24.1:
     resolution: {integrity: sha512-VA3WFx1lMFb7esp9BqHWkDgMvHoA3D9w+uDRvWhVRpUpDc7RYHxMbWExASjz+gNblTCg556WJGzF64tXnf9tdQ==}
+    dev: false
+
+  /@cosmjs/utils/0.25.0-alpha.2:
+    resolution: {integrity: sha512-ey+WKhnQ67L6JF1M3TLBRPXTDK8Az0uJ3m7UWWuT1p8z6K9kZfu+YiGmzJev64xuLP1kFaPJJLmBIpHH6HQ4hA==}
     dev: false
 
   /@cosmjs/utils/0.25.6:
@@ -13323,7 +13327,7 @@ packages:
       '@jest/schemas': 29.4.3
       '@types/istanbul-lib-coverage': 2.0.4
       '@types/istanbul-reports': 3.0.1
-      '@types/node': 18.11.18
+      '@types/node': 18.15.3
       '@types/yargs': 17.0.10
       chalk: 4.1.2
 
@@ -13646,11 +13650,11 @@ packages:
       detect-libc: 2.0.1
       https-proxy-agent: 5.0.1
       make-dir: 3.1.0
-      node-fetch: 2.6.7
+      node-fetch: 2.6.9
       nopt: 5.0.0
       npmlog: 5.0.1
       rimraf: 3.0.2
-      semver: 7.3.7
+      semver: 7.3.8
       tar: 6.1.11
     transitivePeerDependencies:
       - encoding
@@ -14314,7 +14318,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.20.13
       '@polkadot/util': 10.3.1
-      '@polkadot/util-crypto': 10.3.1
+      '@polkadot/util-crypto': 10.3.1_@polkadot+util@10.3.1
     dev: false
 
   /@polkadot/networks/10.3.1:
@@ -14339,7 +14343,7 @@ packages:
       '@polkadot/ui-settings': 2.11.1
       '@polkadot/ui-shared': 2.11.1_5aiqcisuhlfhaktqmynzmrayma
       '@polkadot/util': 10.3.1
-      '@polkadot/util-crypto': 10.3.1
+      '@polkadot/util-crypto': 10.3.1_@polkadot+util@10.3.1
       color: 3.2.1
       ethereum-blockies-base64: 1.0.2
       jdenticon: 3.2.0
@@ -14437,25 +14441,8 @@ packages:
     dependencies:
       '@babel/runtime': 7.20.13
       '@polkadot/util': 10.3.1
-      '@polkadot/util-crypto': 10.3.1
+      '@polkadot/util-crypto': 10.3.1_@polkadot+util@10.3.1
       color: 3.2.1
-    dev: false
-
-  /@polkadot/util-crypto/10.3.1:
-    resolution: {integrity: sha512-viqLMuNGrbB2lyDIYdXAl3tq/Em/Y7ql2FvCTHJmxXaB5C1NXiWf1SqFAahUJKohL+ke5IL0jr19wZu/f88lIQ==}
-    engines: {node: '>=14.0.0'}
-    dependencies:
-      '@babel/runtime': 7.20.13
-      '@noble/hashes': 1.1.5
-      '@noble/secp256k1': 1.7.1
-      '@polkadot/networks': 10.3.1
-      '@polkadot/util': 10.3.1
-      '@polkadot/wasm-crypto': 6.4.1_hmowrubltiyg4mpvtnqaaplyfm
-      '@polkadot/x-bigint': 10.3.1
-      '@polkadot/x-randomvalues': 10.3.1
-      '@scure/base': 1.1.1
-      ed2curve: 0.3.0
-      tweetnacl: 1.0.3
     dev: false
 
   /@polkadot/util-crypto/10.3.1_@polkadot+util@10.3.1:
@@ -19762,7 +19749,7 @@ packages:
   /@types/fs-extra/9.0.13:
     resolution: {integrity: sha512-nEnwB++1u5lVDM2UI4c1+5R+FYaKfaAzS4OococimjVm3nQw3TuzH5UNsocrcTBbhnerblyHj4A49qXbIiZdpA==}
     dependencies:
-      '@types/node': 18.11.18
+      '@types/node': 18.15.3
     dev: true
 
   /@types/glob/7.2.0:
@@ -19904,6 +19891,13 @@ packages:
       pretty-format: 29.5.0
     dev: true
 
+  /@types/jest/29.5.0:
+    resolution: {integrity: sha512-3Emr5VOl/aoBwnWcH/EFQvlSAmjV+XtV9GGu5mwdYew5vhQh0IUZx/60x0TzHDu09Bi7HMx10t/namdJw5QIcg==}
+    dependencies:
+      expect: 29.5.0
+      pretty-format: 29.5.0
+    dev: true
+
   /@types/js-yaml/4.0.5:
     resolution: {integrity: sha512-FhpRzf927MNQdRZP0J5DLIdTXhjLYzeUTmLAu69mnVksLH9CJY3IuSeEgbKUki7GQZm0WqDkGzyxju2EZGD2wA==}
     dev: false
@@ -19988,7 +19982,7 @@ packages:
   /@types/node-hid/1.3.1:
     resolution: {integrity: sha512-VPxuGDCoDxOUKrTZPSok7IEmiK4cVLfj8Csu09FtG5uF+eqf1HETERHXQkO02Rk6j6YiiHxp0/DA9R4llvhEzQ==}
     dependencies:
-      '@types/node': 17.0.32
+      '@types/node': 18.15.3
     dev: true
 
   /@types/node/10.12.18:
@@ -25450,7 +25444,7 @@ packages:
       mkdirp: 0.5.6
       move-concurrently: 1.0.1
       p-map: 3.0.0
-      promise-inflight: 1.0.1_bluebird@3.7.2
+      promise-inflight: 1.0.1
       rimraf: 2.7.1
       ssri: 7.1.1
       unique-filename: 1.1.1
@@ -26148,7 +26142,7 @@ packages:
     dependencies:
       inherits: 2.0.4
       process-nextick-args: 2.0.1
-      readable-stream: 2.3.7
+      readable-stream: 2.3.8
     dev: true
 
   /clsx/1.1.1:
@@ -26452,7 +26446,7 @@ packages:
     dependencies:
       buffer-from: 1.1.2
       inherits: 2.0.4
-      readable-stream: 3.6.0
+      readable-stream: 3.6.2
       typedarray: 0.0.6
     dev: true
 
@@ -28264,7 +28258,7 @@ packages:
     dependencies:
       acorn-node: 1.8.2
       defined: 1.0.0
-      minimist: 1.2.6
+      minimist: 1.2.8
 
   /detox/20.0.3_jest@28.1.3+metro@0.67.0:
     resolution: {integrity: sha512-WSyA+Oxcw6meJYFW4wpH27BCgNTniBVJTwXsQN4ox+OhoztO38yxZULH3+16hlbXNxLm9kMZFj/higA0+zum5Q==}
@@ -34469,7 +34463,7 @@ packages:
       is-negated-glob: 1.0.0
       ordered-read-streams: 1.0.1
       pumpify: 1.5.1
-      readable-stream: 2.3.7
+      readable-stream: 2.3.8
       remove-trailing-separator: 1.1.0
       to-absolute-glob: 2.0.2
       unique-stream: 2.3.1
@@ -37111,35 +37105,6 @@ packages:
       - ts-node
     dev: true
 
-  /jest-cli/28.1.3_5gljhujmafmfys272awzdklxia:
-    resolution: {integrity: sha512-roY3kvrv57Azn1yPgdTebPAXvdR2xfezaKKYzVxZ6It/5NCxzJym6tUI5P1zkdWhfUYkxEI9uZWcQdaFLo8mJQ==}
-    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
-    hasBin: true
-    peerDependencies:
-      node-notifier: ^8.0.1 || ^9.0.0 || ^10.0.0
-    peerDependenciesMeta:
-      node-notifier:
-        optional: true
-    dependencies:
-      '@jest/core': 28.1.3_ts-node@10.9.1
-      '@jest/test-result': 28.1.3
-      '@jest/types': 28.1.3
-      chalk: 4.1.2
-      exit: 0.1.2
-      graceful-fs: 4.2.10
-      import-local: 3.1.0
-      jest-config: 28.1.3_5gljhujmafmfys272awzdklxia
-      jest-util: 28.1.3
-      jest-validate: 28.1.3
-      prompts: 2.4.2
-      yargs: 17.5.1
-    transitivePeerDependencies:
-      - '@types/node'
-      - metro
-      - supports-color
-      - ts-node
-    dev: true
-
   /jest-cli/28.1.3_csdo2gfejusb3n4cacufvlevtu:
     resolution: {integrity: sha512-roY3kvrv57Azn1yPgdTebPAXvdR2xfezaKKYzVxZ6It/5NCxzJym6tUI5P1zkdWhfUYkxEI9uZWcQdaFLo8mJQ==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
@@ -37158,6 +37123,35 @@ packages:
       graceful-fs: 4.2.10
       import-local: 3.1.0
       jest-config: 28.1.3_csdo2gfejusb3n4cacufvlevtu
+      jest-util: 28.1.3
+      jest-validate: 28.1.3
+      prompts: 2.4.2
+      yargs: 17.5.1
+    transitivePeerDependencies:
+      - '@types/node'
+      - metro
+      - supports-color
+      - ts-node
+    dev: true
+
+  /jest-cli/28.1.3_d2dllaz5dte7avnjm55wl7fmsu:
+    resolution: {integrity: sha512-roY3kvrv57Azn1yPgdTebPAXvdR2xfezaKKYzVxZ6It/5NCxzJym6tUI5P1zkdWhfUYkxEI9uZWcQdaFLo8mJQ==}
+    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
+    hasBin: true
+    peerDependencies:
+      node-notifier: ^8.0.1 || ^9.0.0 || ^10.0.0
+    peerDependenciesMeta:
+      node-notifier:
+        optional: true
+    dependencies:
+      '@jest/core': 28.1.3_ts-node@10.9.1
+      '@jest/test-result': 28.1.3
+      '@jest/types': 28.1.3
+      chalk: 4.1.2
+      exit: 0.1.2
+      graceful-fs: 4.2.10
+      import-local: 3.1.0
+      jest-config: 28.1.3_d2dllaz5dte7avnjm55wl7fmsu
       jest-util: 28.1.3
       jest-validate: 28.1.3
       prompts: 2.4.2
@@ -37197,7 +37191,7 @@ packages:
       - supports-color
       - ts-node
 
-  /jest-cli/28.1.3_r5rwvyw2qgx3fnijwswldzdnfy:
+  /jest-cli/28.1.3_ummm5ounhu77rzsy63ziydt5vq:
     resolution: {integrity: sha512-roY3kvrv57Azn1yPgdTebPAXvdR2xfezaKKYzVxZ6It/5NCxzJym6tUI5P1zkdWhfUYkxEI9uZWcQdaFLo8mJQ==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     hasBin: true
@@ -37214,7 +37208,7 @@ packages:
       exit: 0.1.2
       graceful-fs: 4.2.10
       import-local: 3.1.0
-      jest-config: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
+      jest-config: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
       jest-util: 28.1.3
       jest-validate: 28.1.3
       prompts: 2.4.2
@@ -37328,47 +37322,6 @@ packages:
       pretty-format: 28.1.3
       slash: 3.0.0
       strip-json-comments: 3.1.1
-    transitivePeerDependencies:
-      - metro
-      - supports-color
-    dev: true
-
-  /jest-config/28.1.3_5gljhujmafmfys272awzdklxia:
-    resolution: {integrity: sha512-MG3INjByJ0J4AsNBm7T3hsuxKQqFIiRo/AUqb1q9LRKI5UU6Aar9JHbr9Ivn1TVwfUD9KirRoM/T6u8XlcQPHQ==}
-    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
-    peerDependencies:
-      '@types/node': '*'
-      ts-node: '>=9.0.0'
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      ts-node:
-        optional: true
-    dependencies:
-      '@babel/core': 7.20.12
-      '@jest/test-sequencer': 28.1.3
-      '@jest/types': 28.1.3
-      '@types/node': 17.0.32
-      babel-jest: 28.1.3_@babel+core@7.20.12
-      chalk: 4.1.2
-      ci-info: 3.3.2
-      deepmerge: 4.3.0
-      glob: 7.2.3
-      graceful-fs: 4.2.10
-      jest-circus: 28.1.3
-      jest-environment-node: 28.1.3
-      jest-get-type: 28.0.2
-      jest-regex-util: 28.0.2
-      jest-resolve: 28.1.3
-      jest-runner: 28.1.3
-      jest-util: 28.1.3
-      jest-validate: 28.1.3
-      micromatch: 4.0.5
-      parse-json: 5.2.0
-      pretty-format: 28.1.3
-      slash: 3.0.0
-      strip-json-comments: 3.1.1
-      ts-node: 10.9.1_c7x7xisxsab3cereq3ok2kgue4
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -37570,7 +37523,7 @@ packages:
       pretty-format: 28.1.3
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.1_c7x7xisxsab3cereq3ok2kgue4
+      ts-node: 10.9.1_ox4bw2nfeaywsll3jxp22xcahy
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -37652,47 +37605,6 @@ packages:
     transitivePeerDependencies:
       - metro
       - supports-color
-
-  /jest-config/28.1.3_r5rwvyw2qgx3fnijwswldzdnfy:
-    resolution: {integrity: sha512-MG3INjByJ0J4AsNBm7T3hsuxKQqFIiRo/AUqb1q9LRKI5UU6Aar9JHbr9Ivn1TVwfUD9KirRoM/T6u8XlcQPHQ==}
-    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
-    peerDependencies:
-      '@types/node': '*'
-      ts-node: '>=9.0.0'
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      ts-node:
-        optional: true
-    dependencies:
-      '@babel/core': 7.20.12
-      '@jest/test-sequencer': 28.1.3
-      '@jest/types': 28.1.3
-      '@types/node': 17.0.32
-      babel-jest: 28.1.3_@babel+core@7.20.12
-      chalk: 4.1.2
-      ci-info: 3.3.2
-      deepmerge: 4.3.0
-      glob: 7.2.3
-      graceful-fs: 4.2.10
-      jest-circus: 28.1.3
-      jest-environment-node: 28.1.3
-      jest-get-type: 28.0.2
-      jest-regex-util: 28.0.2
-      jest-resolve: 28.1.3
-      jest-runner: 28.1.3
-      jest-util: 28.1.3
-      jest-validate: 28.1.3
-      micromatch: 4.0.5
-      parse-json: 5.2.0
-      pretty-format: 28.1.3
-      slash: 3.0.0
-      strip-json-comments: 3.1.1
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
-    transitivePeerDependencies:
-      - metro
-      - supports-color
-    dev: true
 
   /jest-config/28.1.3_ummm5ounhu77rzsy63ziydt5vq:
     resolution: {integrity: sha512-MG3INjByJ0J4AsNBm7T3hsuxKQqFIiRo/AUqb1q9LRKI5UU6Aar9JHbr9Ivn1TVwfUD9KirRoM/T6u8XlcQPHQ==}
@@ -38978,7 +38890,7 @@ packages:
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
       '@jest/types': 29.5.0
-      '@types/node': 18.11.18
+      '@types/node': 18.15.3
       chalk: 4.1.2
       ci-info: 3.3.2
       graceful-fs: 4.2.10
@@ -39295,27 +39207,6 @@ packages:
       - ts-node
     dev: true
 
-  /jest/28.1.3_5gljhujmafmfys272awzdklxia:
-    resolution: {integrity: sha512-N4GT5on8UkZgH0O5LUavMRV1EDEhNTL0KEfRmDIeZHSV7p2XgLoY9t9VDUgL6o+yfdgYHVxuz81G8oB9VG5uyA==}
-    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
-    hasBin: true
-    peerDependencies:
-      node-notifier: ^8.0.1 || ^9.0.0 || ^10.0.0
-    peerDependenciesMeta:
-      node-notifier:
-        optional: true
-    dependencies:
-      '@jest/core': 28.1.3_ts-node@10.9.1
-      '@jest/types': 28.1.3
-      import-local: 3.1.0
-      jest-cli: 28.1.3_5gljhujmafmfys272awzdklxia
-    transitivePeerDependencies:
-      - '@types/node'
-      - metro
-      - supports-color
-      - ts-node
-    dev: true
-
   /jest/28.1.3_csdo2gfejusb3n4cacufvlevtu:
     resolution: {integrity: sha512-N4GT5on8UkZgH0O5LUavMRV1EDEhNTL0KEfRmDIeZHSV7p2XgLoY9t9VDUgL6o+yfdgYHVxuz81G8oB9VG5uyA==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
@@ -39330,6 +39221,27 @@ packages:
       '@jest/types': 28.1.3
       import-local: 3.1.0
       jest-cli: 28.1.3_csdo2gfejusb3n4cacufvlevtu
+    transitivePeerDependencies:
+      - '@types/node'
+      - metro
+      - supports-color
+      - ts-node
+    dev: true
+
+  /jest/28.1.3_d2dllaz5dte7avnjm55wl7fmsu:
+    resolution: {integrity: sha512-N4GT5on8UkZgH0O5LUavMRV1EDEhNTL0KEfRmDIeZHSV7p2XgLoY9t9VDUgL6o+yfdgYHVxuz81G8oB9VG5uyA==}
+    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
+    hasBin: true
+    peerDependencies:
+      node-notifier: ^8.0.1 || ^9.0.0 || ^10.0.0
+    peerDependenciesMeta:
+      node-notifier:
+        optional: true
+    dependencies:
+      '@jest/core': 28.1.3_ts-node@10.9.1
+      '@jest/types': 28.1.3
+      import-local: 3.1.0
+      jest-cli: 28.1.3_d2dllaz5dte7avnjm55wl7fmsu
     transitivePeerDependencies:
       - '@types/node'
       - metro
@@ -39357,7 +39269,7 @@ packages:
       - supports-color
       - ts-node
 
-  /jest/28.1.3_r5rwvyw2qgx3fnijwswldzdnfy:
+  /jest/28.1.3_ummm5ounhu77rzsy63ziydt5vq:
     resolution: {integrity: sha512-N4GT5on8UkZgH0O5LUavMRV1EDEhNTL0KEfRmDIeZHSV7p2XgLoY9t9VDUgL6o+yfdgYHVxuz81G8oB9VG5uyA==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     hasBin: true
@@ -39370,7 +39282,7 @@ packages:
       '@jest/core': 28.1.3_ts-node@10.7.0
       '@jest/types': 28.1.3
       import-local: 3.1.0
-      jest-cli: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
+      jest-cli: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
     transitivePeerDependencies:
       - '@types/node'
       - metro
@@ -40385,7 +40297,7 @@ packages:
     resolution: {integrity: sha512-b94GiNHQNy6JNTrt5w6zNyffMrNkXZb3KTkCZJb2V1xaEGCk093vkZ2jk3tpaeP33/OiXC+WvK9AxUebnf5nbw==}
     engines: {node: '>= 0.6.3'}
     dependencies:
-      readable-stream: 2.3.7
+      readable-stream: 2.3.8
     dev: true
 
   /lcid/1.0.0:
@@ -42540,7 +42452,7 @@ packages:
       duplexer2: 0.1.4
       inherits: 2.0.4
       konan: 2.1.1
-      readable-stream: 2.3.7
+      readable-stream: 2.3.8
       resolve: 1.22.1
       standard-version: 9.3.2
       stream-combiner2: 1.1.1
@@ -43636,7 +43548,7 @@ packages:
   /ordered-read-streams/1.0.1:
     resolution: {integrity: sha512-Z87aSjx3r5c0ZB7bcJqIgIRX5bxR7A4aSzvIbaxd0oTkWBCOoKfuGHiKj60CHVUgg1Phm5yMZzBdt8XqRs73Mw==}
     dependencies:
-      readable-stream: 2.3.7
+      readable-stream: 2.3.8
     dev: true
 
   /original/1.0.2:
@@ -46544,7 +46456,6 @@ packages:
     peerDependenciesMeta:
       bluebird:
         optional: true
-    dev: true
 
   /promise-inflight/1.0.1_bluebird@3.7.2:
     resolution: {integrity: sha512-6zWPyEOFaQBJYcGMHBKTKJ3u6TBsnMFOIZSa6ce1e/ZrrsOlnHRHbabMjLiBYKp+n44X9eUI6VUPaukCXHuG4g==}
@@ -49766,6 +49677,7 @@ packages:
   /rimraf/4.1.2:
     resolution: {integrity: sha512-BlIbgFryTbw3Dz6hyoWFhKk+unCcHMSkZGrTFVAx2WmttdBSonsdtRlwiuTbDqTKr+UlXIUqJVS4QT5tUzGENQ==}
     engines: {node: '>=14'}
+    deprecated: Please upgrade to 4.3.1 or higher to fix a potentially damaging issue regarding symbolic link following. See https://github.com/isaacs/rimraf/issues/259 for details.
     hasBin: true
 
   /ripemd160/2.0.2:
@@ -51366,7 +51278,7 @@ packages:
     resolution: {integrity: sha512-3PnJbYgS56AeWgtKF5jtJRT6uFJe56Z0Hc5Ngg/6sI6rIt8iiMBTa9cvdyFfpMQjaVHr8dusbNeFGIIonxOvKw==}
     dependencies:
       duplexer2: 0.1.4
-      readable-stream: 2.3.7
+      readable-stream: 2.3.8
     dev: true
 
   /stream-each/1.2.3:
@@ -51986,7 +51898,7 @@ packages:
   /subarg/1.0.0:
     resolution: {integrity: sha512-RIrIdRY0X1xojthNcVtgT9sjpOGagEUKpZdgBUi054OEPFo282yg+zE+t1Rj3+RqKq2xStL7uUHhY+AjbC4BXg==}
     dependencies:
-      minimist: 1.2.6
+      minimist: 1.2.8
     dev: true
 
   /sucrase/3.21.0:
@@ -53098,7 +53010,7 @@ packages:
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
       jest-util: 28.1.3
       json5: 2.2.1
       lodash.memoize: 4.1.2
@@ -53232,7 +53144,7 @@ packages:
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
       jest-util: 28.1.3
       json5: 2.2.3
       lodash.memoize: 4.1.2
@@ -53275,7 +53187,7 @@ packages:
       yargs-parser: 21.1.1
     dev: true
 
-  /ts-node/10.7.0_33lso24kgdvwdhve7eirdtgycu:
+  /ts-node/10.7.0_aek4ofadwobuczfhqte56cpk4y:
     resolution: {integrity: sha512-TbIGS4xgJoX2i3do417KSaep1uRAW/Lu+WAL2doDHC0D6ummjirVOXU5/7aiZotbQ5p1Zp9tP7U6cYhA0O7M8A==}
     hasBin: true
     peerDependencies:
@@ -53294,14 +53206,14 @@ packages:
       '@tsconfig/node12': 1.0.9
       '@tsconfig/node14': 1.0.1
       '@tsconfig/node16': 1.0.2
-      '@types/node': 17.0.32
+      '@types/node': 18.15.3
       acorn: 8.7.1
       acorn-walk: 8.2.0
       arg: 4.1.3
       create-require: 1.1.1
       diff: 4.0.2
       make-error: 1.3.6
-      typescript: 4.6.4
+      typescript: 4.9.3
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     transitivePeerDependencies:
@@ -53341,7 +53253,7 @@ packages:
       - source-map-support
     dev: true
 
-  /ts-node/10.7.0_c3itm6ihhon32dsg3xjgfmpk7a:
+  /ts-node/10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi:
     resolution: {integrity: sha512-TbIGS4xgJoX2i3do417KSaep1uRAW/Lu+WAL2doDHC0D6ummjirVOXU5/7aiZotbQ5p1Zp9tP7U6cYhA0O7M8A==}
     hasBin: true
     peerDependencies:
@@ -53360,14 +53272,14 @@ packages:
       '@tsconfig/node12': 1.0.9
       '@tsconfig/node14': 1.0.1
       '@tsconfig/node16': 1.0.2
-      '@types/node': 17.0.32
+      '@types/node': 18.15.3
       acorn: 8.7.1
       acorn-walk: 8.2.0
       arg: 4.1.3
       create-require: 1.1.1
       diff: 4.0.2
       make-error: 1.3.6
-      typescript: 4.9.3
+      typescript: 4.6.4
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     transitivePeerDependencies:
@@ -53407,39 +53319,6 @@ packages:
       - source-map-support
     dev: true
 
-  /ts-node/10.9.1_c7x7xisxsab3cereq3ok2kgue4:
-    resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
-    hasBin: true
-    peerDependencies:
-      '@swc/core': '>=1.2.50'
-      '@swc/wasm': '>=1.2.50'
-      '@types/node': '*'
-      typescript: '>=2.7'
-    peerDependenciesMeta:
-      '@swc/core':
-        optional: true
-      '@swc/wasm':
-        optional: true
-    dependencies:
-      '@cspotcode/source-map-support': 0.8.1_source-map-support@0.5.21
-      '@tsconfig/node10': 1.0.8
-      '@tsconfig/node12': 1.0.9
-      '@tsconfig/node14': 1.0.1
-      '@tsconfig/node16': 1.0.2
-      '@types/node': 17.0.32
-      acorn: 8.8.2
-      acorn-walk: 8.2.0
-      arg: 4.1.3
-      create-require: 1.1.1
-      diff: 4.0.2
-      make-error: 1.3.6
-      typescript: 4.9.5
-      v8-compile-cache-lib: 3.0.1
-      yn: 3.1.1
-    transitivePeerDependencies:
-      - source-map-support
-    dev: true
-
   /ts-node/10.9.1_cbfmry4sbbh4vatmdrsmatfg5a:
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
     hasBin: true
@@ -53455,6 +53334,39 @@ packages:
         optional: true
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
+      '@tsconfig/node10': 1.0.8
+      '@tsconfig/node12': 1.0.9
+      '@tsconfig/node14': 1.0.1
+      '@tsconfig/node16': 1.0.2
+      '@types/node': 18.15.3
+      acorn: 8.8.2
+      acorn-walk: 8.2.0
+      arg: 4.1.3
+      create-require: 1.1.1
+      diff: 4.0.2
+      make-error: 1.3.6
+      typescript: 4.9.5
+      v8-compile-cache-lib: 3.0.1
+      yn: 3.1.1
+    transitivePeerDependencies:
+      - source-map-support
+    dev: true
+
+  /ts-node/10.9.1_ox4bw2nfeaywsll3jxp22xcahy:
+    resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
+    hasBin: true
+    peerDependencies:
+      '@swc/core': '>=1.2.50'
+      '@swc/wasm': '>=1.2.50'
+      '@types/node': '*'
+      typescript: '>=2.7'
+    peerDependenciesMeta:
+      '@swc/core':
+        optional: true
+      '@swc/wasm':
+        optional: true
+    dependencies:
+      '@cspotcode/source-map-support': 0.8.1_source-map-support@0.5.21
       '@tsconfig/node10': 1.0.8
       '@tsconfig/node12': 1.0.9
       '@tsconfig/node14': 1.0.1
@@ -55190,7 +55102,7 @@ packages:
       lead: 1.0.0
       object.assign: 4.1.3
       pumpify: 1.5.1
-      readable-stream: 2.3.7
+      readable-stream: 2.3.8
       remove-bom-buffer: 3.0.0
       remove-bom-stream: 1.2.0
       resolve-options: 1.1.0
@@ -57725,7 +57637,7 @@ packages:
     dependencies:
       '@types/fs-extra': 9.0.13
       '@types/minimist': 1.2.2
-      '@types/node': 18.11.18
+      '@types/node': 18.15.3
       '@types/ps-tree': 1.1.2
       '@types/which': 2.0.1
       chalk: 5.0.1
