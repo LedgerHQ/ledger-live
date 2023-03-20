@@ -50,6 +50,7 @@ import { SyncOnboardingStackParamList } from "../../components/RootNavigator/typ
 import InstallSetOfApps from "../../components/DeviceAction/InstallSetOfApps";
 import Stories from "../../components/StorylyStories";
 import { TrackScreen, track } from "../../analytics";
+import ContinueOnStax from "./assets/ContinueOnStax";
 
 const { BodyText, SubtitleText } = VerticalTimeline;
 
@@ -104,9 +105,7 @@ const ContinueOnDeviceWithAnim: React.FC<{
   // TODO: when lotties are available, move this component to its own file and use a different lottie for each deviceModelId, as Icon prop
   return (
     <ContinueOnDevice
-      Icon={({ size }: { size: number }) => (
-        <Flex height={size} width={size} borderRadius={size} bg="neutral.c40" />
-      )}
+      Icon={ContinueOnStax}
       text={text}
       withTopDivider={withTopDivider}
     />
@@ -431,8 +430,10 @@ export const SyncOnboarding = ({
           renderBody: () => (
             <>
               <TrackScreen category="Set up Ledger Stax: Step 1 device paired" />
+              <BodyText>
+                {t("syncOnboarding.pairingStep.description", { productName })}
+              </BodyText>
               <ContinueOnDeviceWithAnim
-                withTopDivider={false}
                 deviceModelId={device.modelId}
                 text={t("syncOnboarding.pairingStep.continueOnDevice", {
                   productName,
