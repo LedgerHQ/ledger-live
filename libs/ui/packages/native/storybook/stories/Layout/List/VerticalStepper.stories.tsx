@@ -1,8 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { ScrollView } from "react-native";
-import { Flex, VerticalStepper, Text, Switch, Divider } from "../../../../src/components";
-
-const { ItemStatus } = VerticalStepper;
+import { Flex, VerticalStepper, Text, Switch, Divider } from "../../../../src";
+import { ItemStatus } from "../../../../src";
 
 const restoreSteps = [
   {

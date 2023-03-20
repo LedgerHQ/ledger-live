@@ -48,7 +48,7 @@ type Event =
       device: Device | null | undefined;
     };
 
-const getInitialState = (device?: Device | null | undefined): State => ({
+export const getInitialState = (device?: Device | null | undefined): State => ({
   isLoading: !!device,
   requestQuitApp: false,
   unresponsive: false,
@@ -59,7 +59,7 @@ const getInitialState = (device?: Device | null | undefined): State => ({
   imageHash: "",
 });
 
-const reducer = (state: State, e: Event): State => {
+export const reducer = (state: State, e: Event): State => {
   switch (e.type) {
     case "unresponsiveDevice":
       return { ...state, unresponsive: true, isLoading: false };

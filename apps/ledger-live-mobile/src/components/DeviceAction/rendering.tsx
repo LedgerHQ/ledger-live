@@ -1130,19 +1130,20 @@ export const AutoRepair = ({
 
 const ImageLoadingGeneric: React.FC<{
   title: string;
+  fullScreen?: boolean;
   children?: React.ReactNode | undefined;
   progress?: number;
   lottieSource?: FramedImageWithLottieProps["lottieSource"];
-}> = ({ title, children, progress, lottieSource }) => {
+}> = ({ title, fullScreen = true, children, progress, lottieSource }) => {
   return (
     <Flex
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
-      flex={1}
       alignSelf="stretch"
+      flex={fullScreen ? 1 : undefined}
     >
-      <Flex {...StyleSheet.absoluteFillObject}>
+      <Flex {...(fullScreen ? StyleSheet.absoluteFillObject : {})}>
         <Text
           textAlign="center"
           variant="h4"
@@ -1177,9 +1178,11 @@ const ImageLoadingGeneric: React.FC<{
 export const renderImageLoadRequested = ({
   t,
   device,
-}: RawProps & { device: Device }) => {
+  fullScreen = true,
+}: RawProps & { device: Device; fullScreen: boolean }) => {
   return (
     <ImageLoadingGeneric
+      fullScreen={fullScreen}
       title={t("customImage.allowPreview", {
         productName:
           device.deviceName || getDeviceModel(device.modelId)?.productName,
@@ -1214,9 +1217,11 @@ export const renderLoadingImage = ({
 export const renderImageCommitRequested = ({
   t,
   device,
-}: RawProps & { device: Device }) => {
+  fullScreen = true,
+}: RawProps & { device: Device; fullScreen: boolean }) => {
   return (
     <ImageLoadingGeneric
+      fullScreen={fullScreen}
       title={t("customImage.commitRequested", {
         productName:
           device.deviceName || getDeviceModel(device.modelId)?.productName,

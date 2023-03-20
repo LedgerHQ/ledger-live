@@ -4036,17 +4036,21 @@
   "FirmwareUpdate": {
     "title": "Update firmware",
     "updateDevice": "Update {{deviceName}}",
+    "updateDone": "All done! Your {{deviceName}} is up to date",
+    "updateDoneDescription": "New OS Version: {{firmwareVersion}}",
     "preparing": "Preparing the firmware update, please keep your device awake and connected. We will notify you of the progress",
     "confirmIdentifierText": "Verify that the identifier on your device is the same as the identifier below. Confirm and enter your PIN code if requested.",
     "pleaseReinstallApps": "Please reinstall the apps on your device.",
     "pleaseConfirmUpdate": "Confirm the update on your device",
     "pleaseConfirmUpdateOnYourDevice": "Confirm installation on {{deviceName}}",
+    "finishUpdateCTA": "Finish",
     "finishUpdate": "Finish the update on your {{deviceName}}",
     "identifierTitle": "Identifier:",
     "pleaseWaitDownload": "Please wait for the installer to be downloaded",
     "doNotLeaveLedgerLive": "Do not leave the Ledger Live app until the update is complete.",
     "preparingDevice": "Preparing your device",
     "pleaseWaitUpdate": "Please wait for the update to finish",
+    "viewUpdateChangelog": "View update changelog",
     "waitForFirmwareUpdate": "Wait for the firmware update to finish on your device",
     "waitForInstallationToFinish": "Wait for installation to finish on your {{deviceName}}",
     "staxBatteryLow": "Ledger Stax battery too low to update",
@@ -4083,7 +4087,7 @@
       "firmware": "Downloading update",
       "prepareUpdate":  {
         "titleActive": "Preparing update for install",
-        "description": "Transferring the update package to {{deviceName}}"
+        "description": "Backing up your configuration and transferring the update to {{deviceName}}."
       },
       "installUpdate":  {
         "titleInactive": "Install update",
@@ -4092,7 +4096,8 @@
       },
       "restoreSettings":  {
         "titleInactive": "Restore apps and settings",
-        "description": "Your settings and blockchain apps will be restored."
+        "description": "Your settings and blockchain apps will be restored.",
+        "restoreLockScreenPicture": "Restoring lock screen picture"
       }
     },
     "newVersion": "Update {{version}} available for your {{deviceName}}",

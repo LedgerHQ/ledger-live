@@ -1,9 +1,9 @@
+import { Linking } from "react-native";
 import { getDeviceModel } from "@ledgerhq/devices";
 import {
   updateFirmwareActionArgs,
   UpdateFirmwareActionState,
 } from "@ledgerhq/live-common/deviceSDK/actions/updateFirmware";
-import { useUpdateFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useUpdateFirmware";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   Alert,
@@ -13,8 +13,10 @@ import {
   Icons,
   Text,
   VerticalStepper,
+  ItemStatus,
 } from "@ledgerhq/native-ui";
 import { Item } from "@ledgerhq/native-ui/components/Layout/List/types";
+// import { log } from "@ledgerhq/logs";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -22,6 +24,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { Observable } from "rxjs";
+// import { scan, tap } from "rxjs/operators";
 import { updateMainNavigatorVisibility } from "../../actions/appstate";
 import {
   AllowManager,
@@ -37,12 +40,14 @@ import {
 } from "../../components/RootNavigator/types/helpers";
 import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/types/ManagerNavigator";
 import { ScreenName } from "../../const";
+import {
+  renderImageCommitRequested,
+  renderImageLoadRequested,
+} from "../../components/DeviceAction/rendering";
+import { useUpdateFirmwareAndRestoreSettings } from "./useUpdateFirmwareAndRestoreSettings";
+import { urls } from "../../config/urls";
 
-type NavigationProps = BaseComposite<
-  StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.FirmwareUpdate>
->;
-
-type FirmwareUpdateParams = {
+type FirmwareUpdateProps = {
   device: Device;
   deviceInfo: DeviceInfo;
   firmwareUpdateContext: FirmwareUpdateContext;
@@ -52,20 +57,9 @@ type FirmwareUpdateParams = {
   ) => Observable<UpdateFirmwareActionState>;
 };
 
-const restoreSteps = [
-  {
-    status: VerticalStepper.ItemStatus.completed,
-    title: "Restoring language",
-  },
-  {
-    status: VerticalStepper.ItemStatus.active,
-    title: "Restoring lock screen picture",
-  },
-  {
-    status: VerticalStepper.ItemStatus.inactive,
-    title: "Installing apps",
-  },
-];
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.FirmwareUpdate>
+>;
 
 type UpdateSteps = {
   prepareUpdate: Item;
@@ -123,31 +117,72 @@ export const FirmwareUpdate = ({
   firmwareUpdateContext,
   onBackFromUpdate,
   updateFirmwareAction,
-}: FirmwareUpdateParams) => {
-  const { triggerUpdate, updateState } = useUpdateFirmware({
-    deviceId: device?.deviceId ?? "",
-    updateFirmwareAction,
-  });
-
+}: FirmwareUpdateProps) => {
   const navigation = useNavigation();
   const { t } = useTranslation();
-
   const dispatch = useDispatch();
 
   const quitUpdate = useCallback(() => {
     if (onBackFromUpdate) onBackFromUpdate();
     navigation.goBack();
-  }, [navigation]);
+  }, [navigation, onBackFromUpdate]);
+
+  const onOpenReleaseNotes = useCallback(() => {
+    Linking.openURL(urls.fwUpdateReleaseNotes[device.modelId]);
+  }, [device.modelId]);
 
   const deviceName = useMemo(
     () => getDeviceModel(device.modelId).productName,
     [device.modelId],
   );
 
+  const [fullUpdateComplete, setFullUpdateComplete] = useState(false);
+
+  const { updateActionState, updateStep, retryUpdate, staxLoadImageState } =
+    useUpdateFirmwareAndRestoreSettings({
+      updateFirmwareAction,
+      device,
+    });
+
+  useEffect(() => {
+    if (updateStep === "completed") {
+      const completeTimeout = setTimeout(
+        () => setFullUpdateComplete(true),
+        3000,
+      );
+
+      return () => clearTimeout(completeTimeout);
+    }
+
+    return undefined;
+  });
+
+  const restoreSteps = useMemo(
+    () => [
+      {
+        status: {
+          start: ItemStatus.inactive,
+          imageBackup: ItemStatus.inactive,
+          firmwareUpdate: ItemStatus.inactive,
+          languageRestore: ItemStatus.inactive,
+          imageRestore: ItemStatus.active,
+          appsRestore: ItemStatus.completed,
+          completed: ItemStatus.completed,
+        }[updateStep],
+        progress: staxLoadImageState.progress,
+        title: t(
+          "FirmwareUpdate.steps.restoreSettings.restoreLockScreenPicture",
+        ),
+      },
+      // TODO: add here the apps and language steps when they're implemented
+    ],
+    [staxLoadImageState.progress, t, updateStep],
+  );
+
   const defaultSteps: UpdateSteps = useMemo(
     () => ({
       prepareUpdate: {
-        status: VerticalStepper.ItemStatus.inactive,
+        status: ItemStatus.inactive,
         title: t("FirmwareUpdate.steps.prepareUpdate.titleActive"),
         renderBody: () => (
           <Text color="neutral.c80">
@@ -158,7 +193,7 @@ export const FirmwareUpdate = ({
         ),
       },
       installUpdate: {
-        status: VerticalStepper.ItemStatus.inactive,
+        status: ItemStatus.inactive,
         title: t("FirmwareUpdate.steps.installUpdate.titleInactive"),
         renderBody: () => (
           <Text color="neutral.c80">
@@ -169,7 +204,7 @@ export const FirmwareUpdate = ({
         ),
       },
       restoreAppsAndSettings: {
-        status: VerticalStepper.ItemStatus.inactive,
+        status: ItemStatus.inactive,
         title: t("FirmwareUpdate.steps.restoreSettings.titleInactive"),
         renderBody: () => (
           <Flex>
@@ -182,7 +217,7 @@ export const FirmwareUpdate = ({
         ),
       },
     }),
-    [t, deviceName],
+    [t, deviceName, restoreSteps],
   );
 
   useEffect(() => {
@@ -203,9 +238,10 @@ export const FirmwareUpdate = ({
       "preparingUpdate",
       "installOsuDevicePermissionDenied",
     ];
+    // TODO: review this with all the actions states
 
-    return closableSteps.includes(updateState.step);
-  }, [updateState.step]);
+    return closableSteps.includes(updateActionState.step);
+  }, [updateActionState.step]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -227,10 +263,6 @@ export const FirmwareUpdate = ({
   // this will depend on the steps we go through during the update
   const [totalNumberOfSteps, setTotalNumberOfSteps] = useState(2);
 
-  useEffect(() => {
-    triggerUpdate();
-  }, [triggerUpdate]);
-
   const steps = useMemo(() => {
     const newSteps: UpdateSteps = {
       prepareUpdate: { ...defaultSteps.prepareUpdate },
@@ -240,18 +272,18 @@ export const FirmwareUpdate = ({
 
     // sets the install step as active
     const setInstallStepActive = () => {
-      newSteps.prepareUpdate.status = VerticalStepper.ItemStatus.completed;
-      newSteps.installUpdate.status = VerticalStepper.ItemStatus.active;
+      newSteps.prepareUpdate.status = ItemStatus.completed;
+      newSteps.installUpdate.status = ItemStatus.active;
     };
 
     // update the progress value of the prepare step
     const updatePrepareStepProgress = () => {
-      newSteps.prepareUpdate.progress = updateState.progress;
+      newSteps.prepareUpdate.progress = updateActionState.progress;
     };
 
     // update the progress value of the install step
     const updateInstallStepProgress = () => {
-      newSteps.installUpdate.progress = updateState.progress;
+      newSteps.installUpdate.progress = updateActionState.progress;
     };
 
     // clear the progress value of the install step (infinite spinner)
@@ -261,20 +293,19 @@ export const FirmwareUpdate = ({
 
     // sets the restore step as active
     const setRestoreStepActive = () => {
-      newSteps.prepareUpdate.status = VerticalStepper.ItemStatus.completed;
-      newSteps.installUpdate.status = VerticalStepper.ItemStatus.completed;
-      newSteps.restoreAppsAndSettings.status =
-        VerticalStepper.ItemStatus.active;
+      newSteps.prepareUpdate.status = ItemStatus.completed;
+      newSteps.installUpdate.status = ItemStatus.completed;
+      newSteps.restoreAppsAndSettings.status = ItemStatus.active;
     };
 
-    switch (updateState.step) {
+    switch (updateActionState.step) {
       case "installingOsu":
         updatePrepareStepProgress();
-        newSteps.prepareUpdate.status = VerticalStepper.ItemStatus.active;
+        newSteps.prepareUpdate.status = ItemStatus.active;
         break;
       case "preparingUpdate":
       case "allowSecureChannelRequested":
-        newSteps.prepareUpdate.status = VerticalStepper.ItemStatus.active;
+        newSteps.prepareUpdate.status = ItemStatus.active;
         break;
       case "flashingBootloader":
         setInstallStepActive();
@@ -287,7 +318,7 @@ export const FirmwareUpdate = ({
         break;
       case "flashingMcu":
         setInstallStepActive();
-        if (updateState.progress === 1) {
+        if (updateActionState.progress === 1) {
           // the last step of the update is always after the flashing of the MCU is completed
           clearInstallStepProgress();
           newSteps.installUpdate.title =
@@ -318,17 +349,18 @@ export const FirmwareUpdate = ({
     defaultSteps.restoreAppsAndSettings,
     t,
     totalNumberOfSteps,
-    updateState.progress,
-    updateState.step,
+    updateActionState.progress,
+    updateActionState.step,
   ]);
 
   const deviceInteractionDisplay = useMemo(() => {
-    if (updateState.error !== null) {
+    const error = updateActionState.error;
+    if (error) {
       return (
         <DeviceActionError
           device={device}
           t={t}
-          errorName={updateState.error.name}
+          errorName={error.name}
           translationContext="FirmwareUpdate"
         >
           <Button
@@ -344,7 +376,7 @@ export const FirmwareUpdate = ({
       );
     }
 
-    switch (updateState.step) {
+    switch (updateActionState.step) {
       case "allowSecureChannelRequested":
         return (
           <AllowManager
@@ -366,7 +398,7 @@ export const FirmwareUpdate = ({
           <FirmwareUpdateDenied
             device={device}
             newFirmwareVersion={firmwareUpdateContext.final.name}
-            onPressRestart={triggerUpdate}
+            onPressRestart={retryUpdate}
             onPressQuit={quitUpdate}
             t={t}
           />
@@ -375,41 +407,89 @@ export const FirmwareUpdate = ({
         if (!firmwareUpdateContext.shouldFlashMCU) {
           return <FinishFirmwareUpdate device={device} t={t} />;
         }
-        return undefined;
+        break;
       case "flashingMcu":
-        if (updateState.progress === 1) {
+        if (updateActionState.progress === 1) {
           return <FinishFirmwareUpdate device={device} t={t} />;
         }
-        return undefined;
+        break;
       default:
-        return undefined;
+        break;
     }
+
+    if (staxLoadImageState.imageLoadRequested) {
+      return renderImageLoadRequested({ t, device, fullScreen: false });
+    }
+
+    if (staxLoadImageState.imageCommitRequested) {
+      return renderImageCommitRequested({ t, device, fullScreen: false });
+    }
+
+    return undefined;
   }, [
-    updateState.error,
-    updateState.step,
-    updateState.progress,
+    updateActionState.error,
+    updateActionState.step,
+    updateActionState.progress,
+    staxLoadImageState.imageLoadRequested,
+    staxLoadImageState.imageCommitRequested,
     device,
+    t,
+    quitUpdate,
     deviceInfo.seVersion,
     firmwareUpdateContext.final.name,
     firmwareUpdateContext.shouldFlashMCU,
-    t,
-    triggerUpdate,
-    quitUpdate,
+    retryUpdate,
   ]);
 
   return (
     <>
-      <Flex flex={1} justifyContent="space-between">
-        <Flex>
-          <Text variant="h4" ml={5}>
-            {t("FirmwareUpdate.updateDevice", { deviceName })}
-          </Text>
-          <VerticalStepper steps={steps} />
+      {fullUpdateComplete ? (
+        <Flex flex={1} px={7}>
+          <Flex flex={1} justifyContent="center" alignItems="center">
+            <Flex mb={7}>
+              <Icons.CircledCheckSolidMedium color="success.c80" size={100} />
+            </Flex>
+            <Text textAlign="center" fontSize={7} mb={3}>
+              {t("FirmwareUpdate.updateDone", { deviceName })}
+            </Text>
+            <Text textAlign="center" fontSize={4} color="neutral.c80">
+              {t("FirmwareUpdate.updateDoneDescription", {
+                firmwareVersion: firmwareUpdateContext.final.name,
+              })}
+            </Text>
+          </Flex>
+          <Flex>
+            <Button type="main" outline={false} onPress={quitUpdate}>
+              {t("FirmwareUpdate.finishUpdateCTA")}
+            </Button>
+            <Button
+              type="default"
+              mt={5}
+              mb={9}
+              outline={false}
+              onPress={onOpenReleaseNotes}
+            >
+              {t("FirmwareUpdate.viewUpdateChangelog")}
+            </Button>
+          </Flex>
         </Flex>
-        <Flex mx={6} mb={8}>
-          <Alert type="info" title={t("FirmwareUpdate.doNotLeaveLedgerLive")} />
+      ) : (
+        <Flex flex={1} justifyContent="space-between">
+          <Flex>
+            <Text variant="h4" ml={5}>
+              {t("FirmwareUpdate.updateDevice", { deviceName })}
+            </Text>
+            <VerticalStepper steps={steps} />
+          </Flex>
+          <Flex mx={6} mb={8}>
+            <Alert
+              type="info"
+              title={t("FirmwareUpdate.doNotLeaveLedgerLive")}
+            />
+          </Flex>
         </Flex>
-      </Flex>
+      )}
+
       <QueuedDrawer
         isRequestingToBeOpened={Boolean(deviceInteractionDisplay)}
         noCloseButton
@@ -429,8 +509,6 @@ export const FirmwareUpdate = ({
 const FirmwareUpdateScreen = () => {
   const { params } = useRoute<NavigationProps["route"]>();
 
-  // TODO: should we do anything else here? redirect the user back?
-  // maybe push this null check up, even before the redirect?
   if (!params.device || !params.firmwareUpdateContext || !params.deviceInfo)
     return null;
 
