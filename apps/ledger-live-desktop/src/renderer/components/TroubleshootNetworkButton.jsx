@@ -36,7 +36,7 @@ const TroubleshootNetworkBtn = ({ primary = true, small = true, title, ...rest }
     <Button
       small={small}
       primary={primary}
-      event="ExportLogs"
+      event="TroubleshootNetwork"
       onClick={troubleshootNetwork}
       {...rest}
     >

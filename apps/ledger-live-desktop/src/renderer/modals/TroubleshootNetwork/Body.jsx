@@ -78,7 +78,7 @@ const RenderState = ({ state }: { state: TroubleshootStatus[] }) => {
             <tr key={status.title}>
               <td>{status.title}</td>
               <td>
-                <Status status={status.renderer} />
+                <Status status={status} />
               </td>
             </tr>
           );
