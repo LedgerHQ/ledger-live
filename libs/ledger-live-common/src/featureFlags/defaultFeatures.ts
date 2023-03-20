@@ -79,6 +79,9 @@ export const defaultFeatures: DefaultFeatures = {
   },
   domainInputResolution: {
     enabled: false,
+    params: {
+      supportedCurrencyIds: ["ethereum"],
+    },
   },
   ratingsPrompt: {
     enabled: false,

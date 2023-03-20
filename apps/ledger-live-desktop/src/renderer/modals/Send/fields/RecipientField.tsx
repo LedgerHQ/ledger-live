@@ -4,7 +4,7 @@ import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/
 import { Account } from "@ledgerhq/types-live";
 import { TFunction } from "react-i18next";
 
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import RecipientFieldBase from "./RecipientFieldBase";
 import RecipientFieldDomainService from "./RecipientFieldDomainService";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -36,7 +36,11 @@ const RecipientField = ({
   const [value, setValue] = useState(
     initValue || transaction?.recipientDomain?.domain || transaction.recipient || "",
   );
-  const { enabled: isDomainResolutionEnabled } = useFeature("domainInputResolution") || {};
+
+  const { enabled: isDomainResolutionEnabled, params } =
+    useFeature<{ supportedCurrencyIds: CryptoCurrencyId[] }>("domainInputResolution") || {};
+  const isCurrencySupported =
+    params?.supportedCurrencyIds?.includes(account.currency.id as CryptoCurrencyId) || false;
 
   useEffect(() => {
     if (value !== "" && value !== transaction.recipient) {
@@ -61,7 +65,7 @@ const RecipientField = ({
 
   if (!status) return null;
 
-  return isDomainResolutionEnabled ? (
+  return isDomainResolutionEnabled && isCurrencySupported ? (
     <RecipientFieldDomainService
       t={t}
       label={label}

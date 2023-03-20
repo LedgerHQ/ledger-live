@@ -57,7 +57,7 @@ export type FeatureId =
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */
-export type Feature = {
+export type Feature<T = any> = {
   /** If false, the feature is disabled (for every languages regardless of the languages_whitelisted option) */
   enabled: boolean;
   /** The `desktop_version` option is desktop specific, it has no impact on mobile */
@@ -84,7 +84,7 @@ export type Feature = {
   /** Whether the remote value of this object was overriden by an environment variable */
   overriddenByEnv?: boolean;
   /** Additional params */
-  params?: any;
+  params?: T;
 };
 
 /** */
