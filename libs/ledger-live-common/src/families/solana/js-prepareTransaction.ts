@@ -11,6 +11,7 @@ import { findSubAccountById } from "../../account";
 import type { Account } from "@ledgerhq/types-live";
 import { ChainAPI } from "./api";
 import {
+  getAccountMinimumBalanceForRentExemption,
   getMaybeTokenAccount,
   getMaybeVoteAccount,
   getStakeAccountAddressWithSeed,
@@ -40,7 +41,6 @@ import {
   isEd25519Address,
   isValidBase58Address,
   MAX_MEMO_LENGTH,
-  SOLANA_DUST,
 } from "./logic";
 import { estimateTxFee } from "./tx-fees";
 import type {
@@ -326,8 +326,16 @@ async function deriveTransferCommandDescriptor(
 
   const fee = await estimateTxFee(api, mainAccount, "transfer");
 
+  const rentExemptMin = await getAccountMinimumBalanceForRentExemption(
+    api,
+    mainAccount.freshAddress
+  );
+
   const txAmount = tx.useAllAmount
-    ? BigNumber.max(mainAccount.spendableBalance.minus(fee), 0)
+    ? BigNumber.max(
+        mainAccount.spendableBalance.minus(fee).minus(rentExemptMin),
+        0
+      )
     : tx.amount;
 
   if (tx.useAllAmount) {
@@ -337,7 +345,9 @@ async function deriveTransferCommandDescriptor(
   } else {
     if (txAmount.lte(0)) {
       errors.amount = new AmountRequired();
-    } else if (txAmount.plus(fee).gt(mainAccount.spendableBalance)) {
+    } else if (
+      txAmount.plus(fee).plus(rentExemptMin).gt(mainAccount.spendableBalance)
+    ) {
       errors.amount = new NotEnoughBalance();
     }
   }
@@ -375,16 +385,24 @@ async function deriveStakeCreateAccountCommandDescriptor(
   const stakeAccRentExemptAmount =
     await getStakeAccountMinimumBalanceForRentExemption(api);
 
+  const rentExemptMin = await getAccountMinimumBalanceForRentExemption(
+    api,
+    mainAccount.freshAddress
+  );
+
   const fee = txFee + stakeAccRentExemptAmount;
 
   const amount = tx.useAllAmount
     ? BigNumber.max(
-        mainAccount.spendableBalance.minus(fee).minus(SOLANA_DUST),
+        mainAccount.spendableBalance.minus(fee).minus(rentExemptMin),
         0
       )
     : tx.amount;
 
-  if (!errors.amount && mainAccount.spendableBalance.lt(amount.plus(fee))) {
+  if (
+    !errors.amount &&
+    mainAccount.spendableBalance.lt(amount.plus(fee).plus(rentExemptMin))
+  ) {
     errors.amount = new NotEnoughBalance();
   }
 
