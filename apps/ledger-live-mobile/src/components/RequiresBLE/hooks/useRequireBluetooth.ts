@@ -1,5 +1,5 @@
+import { useEffect, useState } from "react";
 import { Platform } from "react-native";
-
 import { useEnableBluetooth } from "./useEnableBluetooth";
 import { useAndroidEnableLocation } from "../../RequiresLocation/hooks/useAndroidEnableLocation";
 import { useAndroidBluetoothPermissions } from "./useAndroidBluetoothPermissions";
@@ -172,5 +172,68 @@ export const useRequireBluetooth = ({
     bluetoothRequirementsState,
     retryRequestOnIssue,
     cannotRetryRequest: cannotRetryRequest || !retryRequestOnIssue,
+  };
+};
+
+const DEFAULT_DEBOUNCE_MS = 500;
+
+/**
+ * Debounced version of useRequireBluetooth.
+ * Handles the logic making sure all bluetooth requirements are respected depending on the usage and the user OS.
+ *
+ * To avoid UI glitches prefer this hook and not directly useRequireBluetooth.
+ * To use with RequiresBluetoothDrawer to display issues on specific requirements.
+ *
+ * The UI glitch can happen because of the native popups that block React from updating the state.
+ * For example for a requirement A (bluetooth service for ex): the state `bluetoothRequirementsState` starts from “unknown”,
+ * then a native popup is displayed, blocking react to update the states, and then if the user enables the requirement
+ * from the native popup, the state goes to “A_not_respected” and just after to “A_respected”.
+ *
+ * Order: for better UX: handles bluetooth permissions + services enabled first,
+ * then location (if necessary) permissions and services enabled
+ *
+ * @param requiredFor The usage of bluetooth. Can be "scanning" or "connecting".
+ * @param isHookEnabled Whether the the processes to check and request for bluetooth requirements should be enabled or not.
+ *   Useful to disable the hook when the user does not need bluetooth yet.
+ * @param debounceTimeMs The debounce time in ms, default to DEFAULT_DEBOUNCE_MS
+ * @returns an object containing:
+ * - bluetoothRequirementsState: the state of the bluetooth requirements.
+ * - retryRequestOnIssue: a function to retry the process to check/request for the currently failed bluetooth requirement.
+ * - cannotRetryRequest: whether the consumer of this hook can use the retry function retryRequestOnIssue.
+ *   For example, for permissions on Android, it is only possible to retry to request directly the user (and not make them
+ *   go to the settings) if the user has not checked/triggered the "never ask again".
+ */
+export const useDebouncedRequireBluetooth = ({
+  requiredFor,
+  isHookEnabled = true,
+  debounceTimeMs = DEFAULT_DEBOUNCE_MS,
+}: UseRequireBluetoothArgs & {
+  debounceTimeMs?: number;
+}): UseRequireBluetoothOutput => {
+  const [debouncedState, setDebouncedState] =
+    useState<BluetoothRequirementsState>("unknown");
+
+  const {
+    bluetoothRequirementsState,
+    retryRequestOnIssue,
+    cannotRetryRequest,
+  } = useRequireBluetooth({ requiredFor, isHookEnabled });
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedState(bluetoothRequirementsState);
+    }, debounceTimeMs);
+
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+    };
+  }, [bluetoothRequirementsState, debounceTimeMs]);
+
+  return {
+    bluetoothRequirementsState: debouncedState,
+    retryRequestOnIssue,
+    cannotRetryRequest,
   };
 };
