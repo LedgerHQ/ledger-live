@@ -539,7 +539,7 @@ Type: (`"learn"` | `"brazePushNotifications"` | `"brazeLearn"` | `"llmNewDeviceS
 We use objects instead of direct booleans for potential future improvements
 like feature versioning etc
 
-Type: {enabled: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), desktop_version: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, enabledOverriddenForCurrentDesktopVersion: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, mobile_version: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, enabledOverriddenForCurrentMobileVersion: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, languages_whitelisted: \[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]?, languages_blacklisted: \[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]?, enabledOverriddenForCurrentLanguage: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, overridesRemote: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, overriddenByEnv: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, params: any?}
+Type: {enabled: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), desktop_version: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, enabledOverriddenForCurrentDesktopVersion: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, mobile_version: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, enabledOverriddenForCurrentMobileVersion: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, languages_whitelisted: \[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]?, languages_blacklisted: \[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]?, enabledOverriddenForCurrentLanguage: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, overridesRemote: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, overriddenByEnv: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, params: T?}
 
 #### Properties
 
@@ -553,7 +553,7 @@ Type: {enabled: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Refe
 *   `enabledOverriddenForCurrentLanguage` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
 *   `overridesRemote` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
 *   `overriddenByEnv` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
-*   `params` **any?** 
+*   `params` **T?** 
 
 #### enabled
 
@@ -649,7 +649,7 @@ Type: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Glob
 
 Additional params
 
-Type: any
+Type: T
 
 ### DefaultFeatures
 
