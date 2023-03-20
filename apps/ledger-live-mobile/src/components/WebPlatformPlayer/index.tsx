@@ -13,8 +13,9 @@ type Props = {
 
 const ledgerRecoverIds = [
   "protect",
-  "ledger-recover",
-  "ledger-recover-preprod",
+  "protect-preprod",
+  "protect-prod",
+  "protect-sit",
 ];
 
 const WebViewWrapper = ({ manifest, inputs }: Props) => {
