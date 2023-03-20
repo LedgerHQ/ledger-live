@@ -217,7 +217,7 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
           </LText>
         </View>
       </ScrollView>
-      {url && fromAccount ? <Footer url={url} account={fromAccount} /> : null}
+      {url && fromAccount ? <Footer url={url} currency={fromCurrency} /> : null}
     </View>
   );
 }
