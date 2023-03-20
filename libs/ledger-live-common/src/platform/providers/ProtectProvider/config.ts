@@ -7,6 +7,7 @@ const protectIds = {
   [ProtectEnv.PREPROD]: "protect-preprod",
   [ProtectEnv.STAGING]: "protect-staging",
   [ProtectEnv.SIMU]: "protect-simu",
+  [ProtectEnv.SIT]: "protect-sit",
   [ProtectEnv.SEC]: "protect",
 };
 
@@ -15,6 +16,7 @@ const protectURLs = {
   [ProtectEnv.STAGING]: "https://protect-frontend-stg.aws.stg.ldg-tech.com",
   [ProtectEnv.SIMU]: "https://protect-frontend-simu-stg.aws.stg.ldg-tech.com",
   [ProtectEnv.SEC]: "https://protect-frontend.aws.sec.ldg-tech.com",
+  [ProtectEnv.SIT]: "https://protect-frontend.aws.sit.ldg-tech.com",
 };
 
 const stargatePortalUrls = {
@@ -23,6 +25,7 @@ const stargatePortalUrls = {
   [ProtectEnv.SIMU]:
     "https://stargate-portal-simu-stg.api.aws.stg.ldg-tech.com",
   [ProtectEnv.SEC]: "https://stargate-portal-sec.api.aws.sec.ldg-tech.com",
+  [ProtectEnv.SIT]: "https://stargate-portal-sit.api.aws.sit.ldg-tech.com",
 };
 
 const protectId = protectIds[protectEnv];
