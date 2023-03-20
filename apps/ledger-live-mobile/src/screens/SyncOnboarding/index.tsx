@@ -495,17 +495,15 @@ export const SyncOnboarding = ({
                   <BodyText>
                     {t("syncOnboarding.seedStep.restoreChoiceSRPDescription")}
                   </BodyText>
-                  <FeatureToggle feature="protectServicesMobile">
-                    <Divider text={t("common.or")} my={6} />
-                    <SubtitleText>
-                      {t("syncOnboarding.seedStep.restoreChoiceRecoverTitle")}
-                    </SubtitleText>
-                    <BodyText>
-                      {t(
-                        "syncOnboarding.seedStep.restoreChoiceRecoverDescription",
-                      )}
-                    </BodyText>
-                  </FeatureToggle>
+                  <Divider text={t("common.or")} my={6} />
+                  <SubtitleText>
+                    {t("syncOnboarding.seedStep.restoreChoiceRecoverTitle")}
+                  </SubtitleText>
+                  <BodyText>
+                    {t(
+                      "syncOnboarding.seedStep.restoreChoiceRecoverDescription",
+                    )}
+                  </BodyText>
                   <Flex mt={6}>
                     <ContinueOnDeviceWithAnim
                       deviceModelId={device.modelId}
