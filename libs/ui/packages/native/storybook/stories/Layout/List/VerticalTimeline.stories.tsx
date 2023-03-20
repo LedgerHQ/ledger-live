@@ -1,21 +1,10 @@
 import { ComponentStory } from "@storybook/react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { View } from "react-native";
-import {
-  Flex,
-  VerticalTimeline,
-  Button,
-  Switch,
-  Divider,
-  ContinueOnDevice,
-} from "../../../../src/components";
+import { Flex, VerticalTimeline, Button, Switch, Divider, ContinueOnDevice } from "../../../../src";
+import { ItemStatus } from "../../../../src";
 
-export default {
-  title: "Layout/List/VerticalTimeline",
-  component: VerticalTimeline,
-};
-
-const { BodyText, SubtitleText, ItemStatus } = VerticalTimeline;
+const { BodyText, SubtitleText } = VerticalTimeline;
 
 const defaultItems = [
   {

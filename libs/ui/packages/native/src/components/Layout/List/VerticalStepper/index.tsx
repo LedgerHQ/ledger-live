@@ -3,7 +3,7 @@ import React from "react";
 import StepperItem from "./StepperItem";
 import { Flex } from "../..";
 import { BaseStyledProps } from "src/components/styled";
-import { Item, ItemStatus } from "../types";
+import { Item } from "../types";
 
 export type Props = BaseStyledProps & {
   steps?: Item[];
@@ -11,7 +11,7 @@ export type Props = BaseStyledProps & {
   nested?: boolean;
 };
 
-export default function VerticalStepper({ steps, onTapIndex, nested, ...props }: Props) {
+export default React.memo(function VerticalStepper({ steps, onTapIndex, nested, ...props }: Props) {
   return (
     <Flex {...props} flexDirection="column">
       {nested && <Flex mt={7} mb={4} borderBottomWidth={1} borderBottomColor="neutral.c40" />}
@@ -28,6 +28,4 @@ export default function VerticalStepper({ steps, onTapIndex, nested, ...props }:
       ))}
     </Flex>
   );
-}
-
-VerticalStepper.ItemStatus = ItemStatus;
+});
