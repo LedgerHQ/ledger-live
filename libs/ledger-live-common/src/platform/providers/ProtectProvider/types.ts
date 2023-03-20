@@ -12,6 +12,7 @@ export enum ProtectEnv {
   STAGING = "staging",
   SIMU = "simu",
   SEC = "sec",
+  SIT = "sit",
 }
 
 export type ProtectData = {
