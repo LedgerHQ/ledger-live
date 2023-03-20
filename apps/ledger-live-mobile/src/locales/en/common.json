@@ -2874,6 +2874,10 @@
     "exchange": {
       "title": "Buy / Sell"
     },
+    "stake": {
+      "title": "Stake",
+      "description": "Grow your crypto holdings."
+    },
     "swap": {
       "title": "Swap",
       "description": "Exchange crypto to crypto.",
