@@ -1,6 +1,6 @@
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import React, { useMemo } from "react";
-import { Image, StyleProp, ViewStyle } from "react-native";
+import { Image, StyleProp, ViewStyle, StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import styled, { useTheme } from "styled-components/native";
 import Svg, { Circle, Defs, LinearGradient, Stop } from "react-native-svg";
@@ -24,7 +24,10 @@ const IllustrationContainer = styled(Flex)<{ seen: boolean }>`
   border-radius: 100px;
 `;
 
-const Illustration = styled(Image).attrs({ resizeMode: "cover" })`
+const Illustration = styled(Image).attrs({
+  blurRadius: 2.5,
+  resizeMode: "cover",
+})`
   height: ${innerImageSize}px;
   width: ${innerImageSize}px;
   border-radius: 72px;
@@ -100,6 +103,15 @@ const StoryGroupItem: React.FC<Props> = props => {
           backgroundColor="neutral.c30"
         >
           <Illustration source={{ uri: iconUrl }} />
+          <Flex
+            style={StyleSheet.absoluteFillObject}
+            justifyContent="center"
+            alignItems="center"
+            backgroundColor="rgba(255,255,255,0.03)"
+            borderRadius={innerImageSize}
+          >
+            <Icons.PlayMedium size={24} color="constant.white" />
+          </Flex>
         </Flex>
         <Border seen={seen} />
       </IllustrationContainer>
