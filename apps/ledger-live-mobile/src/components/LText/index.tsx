@@ -59,6 +59,7 @@ function LText({ color, children, semiBold, bold, ...props }: Opts) {
     () => inferFontWeight({ semiBold, bold }),
     [semiBold, bold],
   );
+
   return (
     <Text {...props} fontWeight={fontWeight} color={color}>
       {children}

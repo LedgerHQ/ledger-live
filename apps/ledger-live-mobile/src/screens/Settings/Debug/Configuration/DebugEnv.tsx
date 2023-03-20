@@ -43,7 +43,7 @@ export default function DebugEnv() {
   const onSetEnv = useCallback(() => {
     if (!value) return;
     // Attempt to parse this input
-    const match = /([\w]+)=([\w]+)/.exec(value);
+    const match = /([\w]+)=(.+)/.exec(value);
     setStatus("");
 
     if (!match || match.length !== 3) {

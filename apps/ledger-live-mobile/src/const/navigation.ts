@@ -510,6 +510,7 @@ export enum ScreenName {
   PostOnboardingMockActionScreen = "PostOnboardingMockActionScreen",
   WalletNftGallery = "WalletNftGallery",
   NoFunds = "NoFunds",
+  Stake = "Stake",
 }
 export enum NavigatorName {
   // Stack
@@ -568,6 +569,7 @@ export enum NavigatorName {
   LendingSupplyFlow = "LendingSupplyFlow",
   LendingWithdrawFlow = "LendingWithdrawFlow",
   NoFundsFlow = "NoFundsFlow",
+  StakeFlow = "StakeFlow",
 
   SignTransaction = "SignTransaction",
   RequestAccount = "RequestAccount",
