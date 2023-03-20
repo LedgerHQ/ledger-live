@@ -214,6 +214,7 @@
     "stars" : "Cuentas destacadas",
     "accounts" : "Cuentas",
     "manager" : "Mi Ledger",
+    "earn" : "Gana",
     "exchange" : "Comprar / Vender",
     "swap" : "Permutar",
     "lend" : "Prestar",
@@ -225,15 +226,10 @@
     "tooltip" : "Destacar cuenta"
   },
   "bridge" : {
-    "modalTitle" : "Abrir puente de dispositivo",
-    "openHeader" : "Expón tus cuentas del dispositivo a través de WebSocket",
-    "openDescription" : "Abrir un puente expone todas tus cuentas a aplicaciones de terceros.",
-    "openedHeader" : "Puente {{appName}} abierto",
-    "openedDescription" : "Ahora puedes acceder a tu cuenta de {{appName}} en una aplicación web de terceros a través de WebSocket.",
-    "completeHeader" : "Sesión de puente finalizada",
-    "completeDescription" : "El puente WebSocket está ahora cerrado",
-    "openButton" : "Abrir",
-    "disconnectButton" : "Desconectar"
+    "modalTitle" : "Puente de dispositivo",
+    "openHeader" : "El puente de dispositivo ya no está disponible",
+    "openDescription" : "Configura las extensiones de billetera de tu navegador para utilizar WebHID en lugar de Ledger Live.",
+    "closeButton" : "Cerrar"
   },
   "swap2" : {
     "title" : "Permutar",
@@ -1218,9 +1214,13 @@
         "description" : "El PIN puede tener entre 4 y 8 dígitos",
         "text" : "Cualquier persona que tenga acceso a tu {{deviceName}} y a tu PIN también podrá acceder a todos tus activos cripto y NFT."
       },
-      "recoveryContent" : {
-        "title" : "Frase de recuperación",
-        "content" : "Consulta los siguientes videos para obtener más información sobre tu Frase de recuperación"
+      "seedContent" : {
+        "title" : "Frase de recuperación secreta",
+        "choiceNewOrRestore" : "Elige la opción de configuración que mejor se ajuste a tus necesidades.",
+        "newSeed" : "Consulta los siguientes videos para obtener más información sobre tu Frase de recuperación",
+        "choiceRestoreDirectOrRecover" : "Marcador de posición: elige la restauración directa o usa Recover.",
+        "recoverSeed" : "Marcador de posición: Recover",
+        "restoreSeed" : "Para garantizar la seguridad de tus activos, utiliza una Frase de recuperación secreta generada por un Ledger.\n\n¿No tienes una? Usa tu {{productName}} para generar una Frase nueva."
       },
       "softwareCheckContent" : {
         "title" : "Comprobación de software",
