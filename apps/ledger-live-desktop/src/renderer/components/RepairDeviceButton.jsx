@@ -2,12 +2,11 @@
 
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-
+import repairFw from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
 import { useDispatch } from "react-redux";
 import Button from "~/renderer/components/Button";
 import RepairModal from "~/renderer/modals/RepairModal";
-import { command } from "~/renderer/commands";
-import logger from "~/logger";
+import logger from "~/renderer/logger";
 import { useHistory } from "react-router-dom";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { openModal, closeModal } from "~/renderer/actions/modals";
@@ -81,7 +80,7 @@ const RepairDeviceButton: React$ComponentType<Props> = React.forwardRef(function
       }
 
       timeout.current = setTimeout(() => setIsLoading(true), 500);
-      sub.current = command("firmwareRepair")({ version }).subscribe({
+      sub.current = repairFw("", version).subscribe({
         next: ({ progress }) => {
           setIsLoading(isLoading);
           setProgress(progress);

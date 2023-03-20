@@ -1,5 +1,5 @@
 // @flow
-import "~/live-common-setup";
+import "~/live-common-setup-base";
 import { throwError } from "rxjs";
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
 import { setErrorRemapping } from "@ledgerhq/live-common/hw/deviceAccess";

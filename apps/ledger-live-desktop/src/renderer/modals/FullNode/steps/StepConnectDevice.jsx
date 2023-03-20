@@ -6,21 +6,21 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
+import { scanDescriptors } from "@ledgerhq/live-common/families/bitcoin/descriptor";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import BigSpinner from "~/renderer/components/BigSpinner";
 import Text from "~/renderer/components/Text";
 import OpenUserDataDirectoryBtn from "~/renderer/components/OpenUserDataDirectoryBtn";
 import { Trans } from "react-i18next";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
-import { command } from "~/renderer/commands";
+import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { getEnv } from "@ledgerhq/live-common/env";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import type { FullNodeSteps, ConnectionStatus } from "~/renderer/modals/FullNode";
 import { CheckWrapper, connectionStatus } from "~/renderer/modals/FullNode";
 import IconCheck from "~/renderer/icons/Check";
 
-const connectAppExec = command("connectApp");
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectAppExec);
+const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 
 const StepConnectDevice = ({
   onStepChange,
@@ -39,11 +39,11 @@ const StepConnectDevice = ({
 
   useEffect(() => {
     if (device) {
-      const sub = command("scanDescriptors")({
-        deviceId: device.deviceId,
-        currencyId: "bitcoin",
-        limit: numberOfAccountsToScan,
-      })
+      const sub = scanDescriptors(
+        device.deviceId,
+        getCryptoCurrencyById("bitcoin"),
+        numberOfAccountsToScan,
+      )
         // $FlowFixMe I don't know what you want.
         .pipe(reduce((acc, item) => acc.concat({ descriptor: item }), []))
         .subscribe({

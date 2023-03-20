@@ -8,6 +8,7 @@ import { Camera } from "expo-camera";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { Svg, Defs, Rect, Mask } from "react-native-svg";
 import { useIsFocused } from "@react-navigation/native";
+import { TrackScreen } from "../../analytics";
 import { useNavigateToPostOnboardingHubCallback } from "../../logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
 import { urls } from "../../config/urls";
 import RequiresCameraPermissions from "../../components/RequiresCameraPermissions";
@@ -120,6 +121,7 @@ const ClaimNftQrScan = () => {
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
+      <TrackScreen category="Scan Ledger Market Pass QR code" />
       <RequiresCameraPermissions optimisticallyMountChildren>
         <CameraPermissionContext.Consumer>
           {({ permissionGranted }) => (

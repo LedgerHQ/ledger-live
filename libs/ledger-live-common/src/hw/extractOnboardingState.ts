@@ -30,14 +30,16 @@ export enum OnboardingStep {
   WelcomeScreen3 = "WELCOME_SCREEN_3",
   WelcomeScreen4 = "WELCOME_SCREEN_4",
   WelcomeScreenReminder = "WELCOME_SCREEN_REMINDER",
-  SetupChoice = "SETUP_CHOICE",
+  ChooseName = "CHOOSE_NAME",
   Pin = "PIN",
+  SetupChoice = "SETUP_CHOICE",
   NewDevice = "NEW_DEVICE", // path "new device" & currentSeedWordIndex available
   NewDeviceConfirming = "NEW_DEVICE_CONFIRMING", // path "new device" & currentSeedWordIndex available
+  SetupChoiceRestore = "SETUP_CHOICE_RESTORE", // choosing between restoring a see directly (RestoreSeed) or use Recover (RecoverRestore)
   RestoreSeed = "RESTORE_SEED", // path "restore seed" & currentSeedWordIndex available
+  RecoverRestore = "RECOVER_RESTORE", // path "restore with Recover"
   SafetyWarning = "SAFETY WARNING",
   Ready = "READY",
-  ChooseName = "CHOOSE_NAME",
 }
 
 const fromBitsToOnboardingStep = new Map<number, OnboardingStep>([
@@ -54,6 +56,8 @@ const fromBitsToOnboardingStep = new Map<number, OnboardingStep>([
   [10, OnboardingStep.SafetyWarning],
   [11, OnboardingStep.Ready],
   [12, OnboardingStep.ChooseName],
+  [13, OnboardingStep.RecoverRestore],
+  [14, OnboardingStep.SetupChoiceRestore],
 ]);
 
 export type OnboardingState = {

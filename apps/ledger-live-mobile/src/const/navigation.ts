@@ -40,6 +40,7 @@ export enum ScreenName {
   DebugFeatureFlags = "DebugFeatureFlags",
   DebugFeatures = "DebugFeatures",
   DebugFetchCustomImage = "DebugFetchCustomImage",
+  DebugFirmwareUpdate = "DebugFirmwareUpdate",
   DebugGenerators = "DebugGenerators",
   DebugHttpTransport = "DebugHttpTransport",
   DebugInformation = "DebugInformation",
@@ -508,6 +509,8 @@ export enum ScreenName {
   PostOnboardingDebugScreen = "PostOnboardingDebugScreen",
   PostOnboardingMockActionScreen = "PostOnboardingMockActionScreen",
   WalletNftGallery = "WalletNftGallery",
+  NoFunds = "NoFunds",
+  Stake = "Stake",
 }
 export enum NavigatorName {
   // Stack
@@ -565,6 +568,8 @@ export enum NavigatorName {
   LendingEnableFlow = "LendingEnableFlow",
   LendingSupplyFlow = "LendingSupplyFlow",
   LendingWithdrawFlow = "LendingWithdrawFlow",
+  NoFundsFlow = "NoFundsFlow",
+  StakeFlow = "StakeFlow",
 
   SignTransaction = "SignTransaction",
   RequestAccount = "RequestAccount",

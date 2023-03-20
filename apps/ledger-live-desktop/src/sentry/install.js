@@ -1,7 +1,7 @@
 // @flow
 import os from "os";
-import pname from "~/logger/pname";
-import anonymizer from "~/logger/anonymizer";
+import pname from "./pname";
+import anonymizer from "./anonymizer";
 import "../env";
 import { getOperatingSystemSupportStatus } from "~/support/os";
 

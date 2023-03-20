@@ -75,6 +75,7 @@ import {
   SettingsFilterTokenOperationsZeroAmountPayload,
   SettingsLastSeenDeviceLanguagePayload,
   SettingsCompleteOnboardingPayload,
+  SettingsSetDateFormatPayload,
 } from "./types";
 import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
 
@@ -509,6 +510,14 @@ export const setWalletTabNavigatorLastVisitedTab = (
 ) =>
   setWalletTabNavigatorLastVisitedTabAction({
     walletTabNavigatorLastVisitedTab,
+  });
+
+const setDateFormatAction = createAction<SettingsSetDateFormatPayload>(
+  SettingsActionTypes.SETTINGS_SET_DATE_FORMAT,
+);
+export const setDateFormat = (dateFormat: string) =>
+  setDateFormatAction({
+    dateFormat,
   });
 
 const setStatusCenterAction = createAction<SettingsSetStatusCenterPayload>(

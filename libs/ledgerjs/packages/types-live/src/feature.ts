@@ -11,6 +11,7 @@ export type FeatureId =
   | "deviceInitialApps"
   | "buyDeviceFromLive"
   | "ptxSmartRouting"
+  | "ptxEarn"
   | "currencyAvalancheCChain"
   | "currencyOsmosis"
   | "currencyOsmosisMobile"

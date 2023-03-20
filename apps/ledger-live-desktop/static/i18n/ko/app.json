@@ -828,6 +828,10 @@
         "near" : {
           "title" : "알고 계셨나요?",
           "description" : "Ledger 수수료는 검증인 수수료보다 낮습니다. 이 프로세스는 최대 65시간이 소요될 수 있습니다."
+        },
+        "elrond" : {
+          "title" : "알고 계셨나요?",
+          "description" : "Ledger 수수료는 검증인 수수료보다 낮습니다. 이 프로세스는 최대 10일이 소요될 수 있습니다."
         }
       },
       "delegation" : {
@@ -849,6 +853,9 @@
         },
         "near" : {
           "description" : "Ledger by Figment 검증인으로 NEAR를 스테이킹하세요. Ledger의 타협 없는 강력한 보안이 자산을 안전하게 보호합니다."
+        },
+        "elrond" : {
+          "description" : "Ledger by Figment 검증인으로 ELROND를 스테이킹하세요. Ledger의 타협 없는 강력한 보안이 자산을 안전하게 보호합니다."
         }
       }
     }
@@ -1839,7 +1846,7 @@
       "used" : "사용됨",
       "firmwareAvailable" : "오래된 펌웨어:",
       "firmwareUpToDate" : "펌웨어가 최신입니다:",
-      "genuine" : "정품 장치입니다",
+      "genuine" : "귀하의 장치는 정품입니다",
       "incomplete" : "일부 앱이 인식되지 않았습니다. 제거 후 다시 설치하세요."
     },
     "applist" : {
@@ -2261,6 +2268,13 @@
     },
     "switchButton" : "{{language}}로 전환",
     "no" : "다음을 선호하지 않습니다:"
+  },
+  "deviceRename" : {
+    "title" : "{{ productName }} 이름 변경",
+    "chooseName" : "이름을 선택하세요",
+    "placeholder" : "Tony의 Stax",
+    "remainingCharacters" : "{{ remainingCharacters }}개 문자 남음",
+    "renamed" : "{{ productName }} 이름이 “{{ name }}”로 변경되었습니다 "
   },
   "deviceLocalization" : {
     "language" : "언어",
@@ -3786,6 +3800,9 @@
       "catalogRampServerDesc" : "다중 거래 공급자 간 전환",
       "enablePlatformDevTools" : "플랫폼 개발자 도구 사용",
       "enablePlatformDevToolsDesc" : "개방형 플랫폼 앱 개발자 도구 창 사용",
+      "customLockScreen" : "맞춤식 잠금 화면 자산",
+      "customLockScreenDesc" : "맞춤식 잠금 화면 그래픽 자산 디버그",
+      "customLockScreenCTA" : "실행",
       "featureFlagsTitle" : "Ledger Live에서 사용되는 정의된 기능 플래그",
       "featureFlagsDesc" : "앱을 다시 실행하면 재정의된 값이 다시 설정됩니다. 유효한 JSON 문자열만 허용됩니다.",
       "featureFlagsEdit" : "편집",
@@ -3850,10 +3867,6 @@
         "experimentalCurrencies" : {
           "title" : "실험 통합",
           "description" : "사용 가능한 실험 암호화폐 통합을 사용합니다."
-        },
-        "experimentalExecutionOnRenderer" : {
-          "title" : "실험 네트워킹",
-          "description" : "실험 네트워킹을 통해 VPN으로 Ledger Live 경험을 최적화하세요. 현재 사용 중인 VPN이 시스템 오류를 일으키는 경우에만 활성화하세요."
         },
         "experimentalLanguages" : {
           "title" : "번역 테스팅",
@@ -4045,7 +4058,7 @@
       "tr" : "터키어",
       "ja" : "일본어",
       "ko" : "한국어",
-      "pt" : "포르투갈어"
+      "pt" : "포르투갈어(브라질)"
     }
   },
   "theme" : {
@@ -5668,6 +5681,7 @@
   },
   "customImage" : {
     "title" : "맞춤 가능한 잠금 화면",
+    "managerCTA" : "잠금 화면 사진",
     "steps" : {
       "choose" : {
         "stepLabel" : "이미지 선택",

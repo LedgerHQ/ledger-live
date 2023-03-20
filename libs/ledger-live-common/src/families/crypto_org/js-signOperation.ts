@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
-import { utils } from "@crypto-com/chain-jslib";
+import { utils } from "@crypto-org-chain/chain-jslib";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import CryptoOrgApp from "@ledgerhq/hw-app-cosmos";
 import {

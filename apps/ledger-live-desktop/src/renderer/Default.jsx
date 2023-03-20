@@ -14,6 +14,7 @@ import Accounts from "~/renderer/screens/accounts";
 import Card from "~/renderer/screens/card";
 import Manager from "~/renderer/screens/manager";
 import Exchange from "~/renderer/screens/exchange";
+import Earn from "./screens/earn";
 import Swap2 from "~/renderer/screens/exchange/Swap2";
 import USBTroubleshooting from "~/renderer/screens/USBTroubleshooting";
 import Account from "~/renderer/screens/account";
@@ -35,7 +36,6 @@ import IsSystemLanguageAvailable from "~/renderer/components/IsSystemLanguageAva
 // $FlowFixMe
 import IsTermOfUseUpdated from "./components/IsTermOfUseUpdated";
 import KeyboardContent from "~/renderer/components/KeyboardContent";
-import PerfIndicator from "~/renderer/components/PerfIndicator";
 import MainSideBar from "~/renderer/components/MainSideBar";
 import TriggerAppReady from "~/renderer/components/TriggerAppReady";
 import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWrapper";
@@ -249,6 +249,7 @@ export default function Default() {
                               render={(props: any) => <PlatformApp {...props} />}
                             />
                             <Route path="/lend" render={props => <Lend {...props} />} />
+                            <Route path="/earn" render={props => <Earn {...props} />} />
                             <Route path="/exchange" render={(props: any) => <Exchange />} />
                             <Route
                               exact
@@ -288,9 +289,6 @@ export default function Default() {
                         <NightlyLayer />
                       ) : null}
 
-                      <KeyboardContent sequence="BJBJBJ">
-                        <PerfIndicator />
-                      </KeyboardContent>
                       <KeyboardContent sequence="CRASH_TEST">
                         <LetThisCrashForCrashTest />
                       </KeyboardContent>

@@ -73,6 +73,8 @@ import type { SolanaDelegationFlowParamList } from "../../../families/solana/Del
 import type { StellarAddAssetFlowParamList } from "../../../families/stellar/AddAssetFlow/types";
 import type { TezosDelegationFlowParamList } from "../../../families/tezos/DelegationFlow/types";
 import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/types";
+import type { NoFundsNavigatorParamList } from "./NoFundsNavigator";
+import type { StakeNavigatorParamList } from "./StakeNavigator";
 import { ExploreTabNavigatorStackParamList } from "./ExploreTabNavigator";
 
 type TradeParams = {
@@ -322,4 +324,6 @@ export type BaseNavigatorStackParamList = {
     onSuccess: (result: AppResult) => void;
     onClose: () => void;
   };
+  [NavigatorName.NoFundsFlow]: NavigatorScreenParams<NoFundsNavigatorParamList>;
+  [NavigatorName.StakeFlow]: NavigatorScreenParams<StakeNavigatorParamList>;
 };

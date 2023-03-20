@@ -23,6 +23,7 @@ import buildSignOperation from "../js-signOperation";
 import getAddress from "../hw-getAddress";
 import { loadPolkadotCrypto } from "../polkadot-crypto";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
 
@@ -77,5 +78,7 @@ export function buildAccountBridge(
     receive,
     signOperation,
     broadcast,
+    assignFromAccountRaw,
+    assignToAccountRaw,
   };
 }

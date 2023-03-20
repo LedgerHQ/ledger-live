@@ -9,6 +9,7 @@ import broadcast from "../js-broadcast";
 import estimateMaxSpendable from "../js-estimateMaxSpendable";
 import prepareTransaction from "../js-prepareTransaction";
 import createTransaction from "../js-createTransaction";
+import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
 
@@ -30,6 +31,8 @@ const accountBridge: AccountBridge<Transaction> = {
   receive,
   signOperation,
   broadcast,
+  assignFromAccountRaw,
+  assignToAccountRaw,
 };
 export default {
   currencyBridge,

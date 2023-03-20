@@ -4,18 +4,16 @@ import path from "path";
 import { setEnvUnsafe, getAllEnvs } from "@ledgerhq/live-common/env";
 import { isRestartNeeded } from "~/helpers/env";
 import { setTags } from "~/sentry/main";
-import logger from "~/logger";
 import InternalProcess from "./InternalProcess";
 import {
   transportCloseChannel,
   transportExchangeChannel,
   transportExchangeBulkChannel,
   transportOpenChannel,
+  transportExchangeBulkUnsubscribeChannel,
+  transportListenChannel,
+  transportListenUnsubscribeChannel,
 } from "~/config/transportChannels";
-
-// ~~~ Local state that main thread keep
-
-const hydratedPerCurrency = {};
 
 // ~~~
 
@@ -60,24 +58,18 @@ const spawnCoreProcess = () => {
   };
 
   internal.configure(path.resolve(__dirname, "main.bundle.js"), [], {
+    silent: true,
     env,
     execArgv: (process.env.LEDGER_INTERNAL_ARGS || "").split(/[ ]+/).filter(Boolean),
-    silent: true,
   });
   internal.start();
 };
 
 internal.onStart(() => {
   internal.process.on("message", handleGlobalInternalMessage);
-
-  internal.send({
-    type: "init",
-    hydratedPerCurrency,
-  });
 });
 
 app.on("window-all-closed", async () => {
-  logger.info("cleaning internal because main is done");
   if (internal.active) {
     await internal.stop();
   }
@@ -85,7 +77,6 @@ app.on("window-all-closed", async () => {
 });
 
 ipcMain.on("clean-processes", async () => {
-  logger.info("cleaning processes on demand");
   if (internal.active) {
     await internal.stop();
   }
@@ -177,13 +168,6 @@ ipcMain.on("setEnv", async (event, env) => {
   }
 });
 
-ipcMain.on("hydrateCurrencyData", (event, { currencyId, serialized }) => {
-  if (hydratedPerCurrency[currencyId] === serialized) return;
-  hydratedPerCurrency[currencyId] = serialized;
-
-  internal.send({ type: "hydrateCurrencyData", serialized, currencyId });
-});
-
 // route internal process messages to renderer
 const internalHandlerPromise = channel => {
   ipcMain.on(channel, (event, { data, requestId }) => {
@@ -230,7 +214,17 @@ const internalHandlerObservable = channel => {
   });
 };
 
+// simple event routing
+const internalHandlerEvent = channel => {
+  ipcMain.on(channel, (event, { data, requestId }) => {
+    internal.send({ type: channel, data, requestId });
+  });
+};
+
 internalHandlerPromise(transportOpenChannel);
 internalHandlerPromise(transportExchangeChannel);
 internalHandlerPromise(transportCloseChannel);
 internalHandlerObservable(transportExchangeBulkChannel);
+internalHandlerObservable(transportListenChannel);
+internalHandlerEvent(transportExchangeBulkUnsubscribeChannel);
+internalHandlerEvent(transportListenUnsubscribeChannel);

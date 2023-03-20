@@ -32,7 +32,6 @@ import {
 import {
   encodeAccountIdWithTokenAccountAddress,
   MAX_MEMO_LENGTH,
-  SOLANA_DUST,
 } from "./logic";
 import createTransaction from "./js-createTransaction";
 import { compact } from "lodash/fp";
@@ -73,6 +72,7 @@ const testOnChainData = {
   validatorAddress: "9QU2QSxhb24FUX3Tu2FpczXjpK3VYrvRudywSZaM29mF",
   fees: {
     stakeAccountRentExempt: 2282880,
+    systemAccountRentExempt: 890880,
     lamportsPerSignature: 5000,
   },
   // ---  maybe outdated or not real, fine for tests ---
@@ -328,8 +328,12 @@ function transferTests(): TransactionTestSpec[] {
         errors: {},
         warnings: {},
         estimatedFees: fees(1),
-        amount: testOnChainData.fundedSenderBalance.minus(fees(1)),
-        totalSpent: testOnChainData.fundedSenderBalance,
+        amount: testOnChainData.fundedSenderBalance
+          .minus(fees(1))
+          .minus(testOnChainData.fees.systemAccountRentExempt),
+        totalSpent: testOnChainData.fundedSenderBalance.minus(
+          testOnChainData.fees.systemAccountRentExempt
+        ),
       },
     },
     {
@@ -758,11 +762,13 @@ function stakingTests(): TransactionTestSpec[] {
         amount: testOnChainData.fundedSenderBalance
           .minus(fees(1))
           .minus(testOnChainData.fees.stakeAccountRentExempt)
-          .minus(SOLANA_DUST),
+          .minus(testOnChainData.fees.systemAccountRentExempt),
         estimatedFees: fees(1).plus(
           testOnChainData.fees.stakeAccountRentExempt
         ),
-        totalSpent: testOnChainData.fundedSenderBalance.minus(SOLANA_DUST),
+        totalSpent: testOnChainData.fundedSenderBalance.minus(
+          testOnChainData.fees.systemAccountRentExempt
+        ),
         errors: {},
       },
     },
