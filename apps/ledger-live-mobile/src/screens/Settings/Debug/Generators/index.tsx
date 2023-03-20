@@ -30,7 +30,7 @@ export default function Generators() {
       [
         {
           text: "Destroy",
-          onPress: () => callback(),
+          onPress: callback,
         },
         {
           text: "Cancel",
