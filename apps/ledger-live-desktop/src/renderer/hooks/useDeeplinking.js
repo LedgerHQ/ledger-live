@@ -42,13 +42,13 @@ export function useDeepLinkHandler() {
   const walletConnectLiveApp = useFeature("walletConnectLiveApp");
 
   const navigate = useCallback(
-    (url: string, state?: any, search?: string) => {
-      if (url === location.pathname && search === location.search) {
-        return;
+    (pathname: string, state?: any, search?: string) => {
+      const hasPathnameChanged = pathname !== location.pathname;
+      const hasSearchChanged = typeof search === "string" && search !== location.search;
+      if (hasPathnameChanged || hasSearchChanged) {
+        setTrackingSource("deeplink");
+        history.push({ pathname, state, search });
       }
-
-      setTrackingSource("deeplink");
-      history.push({ pathname: url, state, search });
     },
     [history, location],
   );
