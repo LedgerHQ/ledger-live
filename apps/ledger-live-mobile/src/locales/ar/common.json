@@ -88,7 +88,11 @@
     "getSupport" : "احصل على الدعم",
     "comingSoon" : "قريباً",
     "restart" : "إعادة التشغيل",
-    "loadMore" : "تحميل المزيد"
+    "loadMore" : "تحميل المزيد",
+    "patterns" : {
+      "id" : "مُعرّف {{ value }}",
+      "times" : "x{{ value }}"
+    }
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -828,7 +832,9 @@
     "required" : "عذراً، يبدو أن خاصية البلوتوث مُعطلة",
     "locationRequiredTitle" : "الموقع مطلوب لخدمة Bluetooth LE",
     "locationRequiredMessage" : "مطلوب تصريح المَوقع على أندرويد لعرض قائمة أجهزة Bluetooth LE.",
-    "checkEnabled" : "يرجى تمكين خاصية البلوتوث في إعدادات هاتفك."
+    "checkEnabled" : "يرجى تمكين خاصية البلوتوث في إعدادات هاتفك.",
+    "tryEnablingAgain" : "حاول تمكين البلوتوث مرة أخرى",
+    "openSettings" : "افتح إعدادات البلوتوث"
   },
   "webview" : {
     "noConnectionError" : {
@@ -838,12 +844,10 @@
   },
   "location" : {
     "titleServiceRequired" : "خدمات الموقع مطلوبة",
-    "titlePermissionRequired" : "إذن الموقع مطلوب",
-    "titlePermissionRequiredPrecise" : "إذن الموقع الدقيق مطلوب",
     "descriptionServiceRequired" : "Ledger Live يتطلب خدمات الموقع لإقران جهازك عبر خاصية البلوتوث.",
-    "descriptionPermissionRequired" : "Ledger Live يتطلب إذن الموقع لإقران جهازك عبر البلوتوث.",
-    "descriptionPermissionRequiredPrecise" : "Ledger Live يتطلب إذن الموقع الدقيق لإقران جهازك عبر البلوتوث.",
     "open" : "فتح إعدادات الموقع",
+    "openSettings" : "افتح إعدادات الموقع",
+    "tryEnablingAgain" : "حاول تمكين الموقع مرة أخرى",
     "noInfos" : "Ledger لا تقوم بالوصول إلى معلومات موقعك."
   },
   "permissions" : {
@@ -856,6 +860,12 @@
       "modalButtonLabelBase" : "تصريح",
       "modalButtonLabelSettingsVariant" : "انتقل إلى الإعدادات",
       "dontPair" : "لا تُقرِن"
+    },
+    "location" : {
+      "titlePermissionRequired" : "إذن الموقع مطلوب",
+      "titlePermissionRequiredPrecise" : "إذن الموقع الدقيق مطلوب",
+      "descriptionPermissionRequired" : "Ledger Live يتطلب إذن الموقع لإقران جهازك عبر البلوتوث.",
+      "descriptionPermissionRequiredPrecise" : "Ledger Live يتطلب إذن الموقع الدقيق لإقران جهازك عبر البلوتوث."
     },
     "camera" : {
       "title" : "منح تفويض للكاميرا",
@@ -1134,6 +1144,10 @@
         "title" : "التطبيقات",
         "desc" : "استكشف تطبيقات شركاء Ledger من مكان واحد"
       },
+      "browseWeb3" : {
+        "title" : "تصفح ويب 3.0",
+        "desc" : "استكشف ويب 3.0 المدمج بالكامل مع Ledger"
+      },
       "earn" : {
         "title" : "اكسب",
         "desc" : "قم بتنمية أصولك المشفرة من خلال التكديس والإقراض."
@@ -1279,8 +1293,13 @@
       },
       "recovery" : "لديك عبارة استرداد بالفعل؟",
       "protect" : {
-        "label" : "60 دقيقة تقريباً",
-        "subTitle" : "الاستعادة عن طريق Protect"
+        "subTitle" : "استعادة باستخدام Ledger Recover",
+        "drawer" : {
+          "title" : "استخدم Ledger Nano X",
+          "desc" : "إطلاق Ledger Recover الأولي حصري لـ Ledger Nano X",
+          "buyNanoX" : "شراء Ledger Nano X",
+          "discoverBenefits" : "اكتشف المزايا"
+        }
       }
     },
     "stepNewDevice" : {
@@ -1507,25 +1526,20 @@
     "stepProtect" : {
       "bullets" : {
         "0" : {
-          "title" : "تصفح ",
-          "label" : "تعرف على كيفية التفاعل مع جهازك من خلال قراءة التعليمات التي تظهر على الشاشة."
+          "title" : "اختر \"Restore [استعادة]\"",
+          "label" : "اضغط على كلا الزرين معاً للاختيار."
         },
         "1" : {
-          "title" : "اختر \"Restore [استعادة]\"",
-          "label" : "اضغط على كلا الزرين في وقت واحد لتأكيد الاختيار."
-        },
-        "2" : {
-          "title" : "اختر وضع \"Restore with Protect [الاستعادة عن طريق Protect]\"",
-          "label" : "اضغط على كلا الزرين في وقت واحد لتأكيد الاختيار."
+          "title" : "اختر \"Restore using Ledger Recover [استعادة باستخدام Ledger Recover]\"",
+          "label" : "اضغط على كلا الزرين معاً للاختيار."
         }
       },
       "nextStep" : "متابعة",
       "extraInfo" : {
-        "tooltip" : "لا أستطيع رؤيته على Ledger الخاص بي",
-        "title" : "لماذا لا أستطيع رؤية Restore with Protect [الاستعادة عن طريق Protect] على Ledger الخاص بي؟",
-        "desc1" : "السبب الأكثر احتمالاً هو أن جهازك غير متوافق مع Protect. لا تقلق، نحن هنا لإرشادك حول كيفية جعلها تعمل.",
-        "desc2" : "يُرجى التواصل معنا واختيار \"My Ledger doesn't display Restore with Protect [Ledger الخاص بي لا يعرض الاستعادة عن طريق Protect]\"، ونحن هنا من أجلك.",
-        "cta" : "اتبع الخطوات اليدوية",
+        "tooltip" : "لا أرى \"Restore using Ledger Recover [استعادة باستخدام Ledger Recover]\"",
+        "title" : "نظام التشغيل على Ledger Nano X خاصتك يحتاج إلى التحديث",
+        "desc" : "يمكنك محاولة تحديث نظام التشغيل أو التواصل مع دعم Ledger من أجل المساعدة.",
+        "cta" : "تعرف على كيفية التحديث",
         "supportLink" : "تواصل مع دعم Ledger"
       }
     },
@@ -1667,8 +1681,9 @@
         }
       },
       "protectConnectionInformationModal" : {
-        "title" : "لماذا لا أستطيع جهازي Ledger؟",
-        "description" : "إذا كنت تواجه مشكلات في الاتصال بـ Ledger Live للجوّال بعد أن قمت بتمكين البلوتوث على جهازك Ledger، يمكنك اتباع التعليمات بالنقر على زر \"Learn how to fix that (تعلم كيفية إصلاح ذلك)\" أدناه"
+        "title" : "اتصال Ledger Nano X",
+        "description" : "تأكد أن جهازك Ledger قريب من هاتفك وحاول مجدداً. <LinkBluethooth>مشكلات اتصال Bluetooth® \n</LinkBluethooth>.\nإذا كان Bluetooth® يعمل، قد تحتاج إلى تحديث نظام تشغيل Ledger. حاول تحديث نظام التشغيل، أو تواصل مع دعم Ledger من أجل المساعدة. ",
+        "learnHowToUpdate" : "تعرف على كيفية التحديث"
       }
     },
     "stepImportAccounts" : {
@@ -1892,7 +1907,11 @@
     "seedStep" : {
       "title" : "عبارة الاسترداد السرية",
       "doneTitle" : "تم تأكيد عبارة الاسترداد السرية",
-      "description" : "عبارة الاسترداد الخاصة بك هي قائمة سرية من 24 كلمة تقوم بنسخ مفاتيحك الخاصة أحتيطياً. {{productName}} خاصتك تنتج عبارة استرداد فريدة. Ledger لا تحتفظ بنسخة منها"
+      "description" : "عبارة الاسترداد الخاصة بك هي قائمة سرية من 24 كلمة تقوم بنسخ مفاتيحك الخاصة أحتيطياً. {{productName}} خاصتك تنتج عبارة استرداد فريدة. Ledger لا تحتفظ بنسخة منها",
+      "choiceNewOrRestore" : "Choose a setup option that best suits you.",
+      "choiceRestoreDirectOrRecover" : "Placeholder - choice direct restore or use Recover",
+      "recoverSeed" : "Placeholder: Recover",
+      "restoreSeed" : "For recovery, make sure to use a Secret Recovery Phrase generated by a Ledger for the guaranted security of your assets.\n\nDon't have one? Use your {{productName}} to generate a new Phrase."
     },
     "softwareChecksSteps" : {
       "title" : "التحقق من الجهاز والبرمجيات",
@@ -2465,6 +2484,8 @@
       "carouselDesc" : "سنعرض لك بطاقات تضم نصائح مخصصة وأحدث عروضنا من أجلك فقط.",
       "language" : "لغة العرض",
       "languageDesc" : "قم بتعيين اللغة المعروضة في Ledger Live.",
+      "dateFormat" : "Date format",
+      "dateFormatDesc" : "Set the date format for Ledger Live",
       "region" : "المنطقة",
       "regionDesc" : "اختر منطقتك لتحديث صِيغ التواريخ والوقت والعملات.",
       "password" : "قفل كلمة المرور",
@@ -2513,7 +2534,13 @@
       "hideEmptyTokenAccounts" : "إخفاء حسابات رموز التوكن الفارغة",
       "hideEmptyTokenAccountsDesc" : "جميع حسابات رموز التوكن الخالية في صفحة الأصول سيتم إخفائها.",
       "filterTokenOperationsZeroAmount" : "إخفاء معاملات رموز التوكن عندما تكون القيمة 0",
-      "filterTokenOperationsZeroAmountDesc" : "يمكن أن يؤدي إخفاء معاملات رموز التوكن التي ليست لديها قيمة إلى منع بعض هجمات تسميم العناوين المحتملة على Eth و Polygon و BSC و Tron..."
+      "filterTokenOperationsZeroAmountDesc" : "يمكن أن يؤدي إخفاء معاملات رموز التوكن التي ليست لديها قيمة إلى منع بعض هجمات تسميم العناوين المحتملة على Eth و Polygon و BSC و Tron...",
+      "DateFormatModal" : {
+        "title" : "Date format",
+        "default" : "Default",
+        "dayFirst" : "DD/MM/YYYY",
+        "monthFirst" : "MM/DD/YYYY"
+      }
     },
     "currencies" : {
       "header" : "العملات",
@@ -2657,6 +2684,10 @@
         "experimentalSwap" : {
           "title" : "واجهة مبادلة جديدة",
           "description" : "استخدم واجهة المبادلة التجريبية الجديدة"
+        },
+        "experimentalPlatformDiscover" : {
+          "title" : "اكتشف الإصدار 2",
+          "description" : "استخدام شاشة اكتشف التجريبية الجديدة"
         }
       },
       "developerFeatures" : {
@@ -2848,6 +2879,10 @@
     },
     "exchange" : {
       "title" : "شراء / بيع"
+    },
+    "stake" : {
+      "title" : "Stake",
+      "description" : "Grow your crypto holdings."
     },
     "swap" : {
       "title" : "مبادلة",
@@ -5446,6 +5481,7 @@
     "warnDelegation" : "تفويض حقوق التصويت الخاصة بك لا يضمن أي مكافآت من المدقق الذي تختاره.",
     "to" : "إلى",
     "from" : "من",
+    "yield" : "العائد التقديري",
     "forAnEstYield" : "لعائد تقديري",
     "yieldPerYear" : "{{yield}} / السنة",
     "yieldInfos" : "يتم تقديم معدلات العائد من قِبل",
@@ -5573,6 +5609,7 @@
     "cta" : "متابعة"
   },
   "exchange" : {
+    "count" : "+ {{count}} أكثر",
     "buy" : {
       "screenTitle" : "شراء أصول مشفرة",
       "tabTitle" : "شراء",
@@ -5718,6 +5755,51 @@
       }
     }
   },
+  "browseWeb3" : {
+    "catalog" : {
+      "title" : "تصفح ويب 3.0",
+      "subtitle" : "استكشف ويب 3.0 المدمج بالكامل مع Ledger",
+      "section" : {
+        "recentlyUsed" : "المُستخدَم مؤخراً",
+        "categories" : "الفئات",
+        "clearAll" : "Clear All"
+      },
+      "branch" : {
+        "soon" : "قريباً",
+        "experimental" : "تجريبي",
+        "debug" : "تصحيح الأخطاء"
+      },
+      "banner" : {
+        "title" : "اكتشف كتالوج التطبيقات الحية لدينا",
+        "description" : "افتح عالم جديد من إمكانيات التشفير. وصول آمن إلى جميع الخدمات من مكان واحد – التمويل اللامركزي (DeFi) والرموز غير القابلة للاستبدال والمزيد قادم."
+      },
+      "twitterBanner" : {
+        "description" : "أخبرنا ما الخدمة التالية التي تريد رؤيتها باستخدام علامة المربع (الهاشتاج)",
+        "tweetText" : "تطبيق Ledger القادم يجب أن يكون..."
+      },
+      "pollCTA" : {
+        "title" : "استطلاع",
+        "description" : "ما الخدمة التي تريد رؤيتها في Ledger Live؟"
+      },
+      "developerCTA" : {
+        "title" : "للمطوّرين",
+        "description" : "جميع المعلومات التي تحتاج إليها لدمج تطبيقاتك على Ledger Live."
+      }
+    },
+    "disclaimer" : {
+      "title" : "تطبيق خارجي",
+      "description" : "أنت على وشك أن تتم إعادة توجيهك إلى تطبيق لا يتم تشغيله من قِبل Ledger.",
+      "legalAdvice" : "لا يتم تشغيل هذا التطبيق من قِبل Ledger. إن Ledger غير مسؤولة عن أي خسارة للأموال أو عن جودة الخدمة لمثل هذا التطبيق.\n\nدائماً تأكد من التحقق بعناية من المعلومات المعروضة على جهازك.",
+      "legalAdviceShort" : "Ledger غير مسؤولة عن أي خسارة للأموال. تأكد دائماً من التحقق من المعلومات المعروضة على جهازك.",
+      "checkbox" : "لا تذكرني مرة أخرى.",
+      "CTA" : "متابعة"
+    },
+    "webPlatformPlayer" : {
+      "infoPanel" : {
+        "website" : "الموقع الإلكتروني"
+      }
+    }
+  },
   "platform" : {
     "catalog" : {
       "title" : "كتالوج التطبيقات الحية",
@@ -5817,6 +5899,7 @@
       "reload" : "إعادة تحميل",
       "noCryptosFound" : "لم يتم العثور على عملات",
       "noCurrencyFound" : "لم يتم العثور على عملات",
+      "noAppFound" : "لم يتم العثور على تطبيق",
       "noSearchResultsFor" : "عذراً، لم نجد أي عملات لـ<0>{{search}}</0>. يرجى إعادة محاولة البحث بكلمة رئيسية أخرى.",
       "noCurrencySearchResultsFor" : "عذراً، لم نجد أي عملات لـ<0>{{search}}</0>. يرجى إعادة محاولة البحث بكلمة رئيسية أخرى.",
       "noSearchResults" : "عذراً، لم نجد أي نتائج بحث.",
@@ -6026,22 +6109,10 @@
       "status" : {
         "new" : {
           "title" : "جديد",
-          "desc" : "قم بعمل نسخة احتياطية من عبارة الاسترداد الخاصة بك",
-          "0" : {
-            "title" : "يثق بها الملايين من مستخدمي Ledger"
-          },
-          "1" : {
-            "title" : "يتم ربط عبارة الاسترداد خاصتك بهويتك بأمان"
-          },
-          "2" : {
-            "title" : "أحدث تقنيات التشفير"
-          },
-          "3" : {
-            "title" : "مجزأة إلى 3 قطع لامركزية بحيث لا يمكن أبداً سرقة عبارة الاسترداد الخاصة بك"
-          },
+          "desc" : "استعدْ الوصول إلى محفظتك بدون عبارة الاسترداد السرية الخاصة بك.",
           "actions" : {
-            "learnMore" : "تعرّف على المزيد",
-            "alreadySubscribed" : "مشترك بالفعل في Protect؟"
+            "learnMore" : "كيف يفيدني هذا؟",
+            "alreadySubscribed" : "مشترك بالفعل؟ <LinkAccount>عرض حسابي</LinkAccount>"
           }
         },
         "confirmIdentity" : {
@@ -6104,5 +6175,30 @@
     "title" : "موجز الأخبار",
     "poweredByCryptopanic" : "يعمل بواسطة Cryptopanic",
     "noPosts" : "ليس هناك منشورات متاحة حالياً"
+  },
+  "deviceConnect" : {
+    "title" : "توصيل الجهاز"
+  },
+  "stake" : {
+    "noFundsModal" : {
+      "title" : "Buy, swap or receive",
+      "text" : "You do not have enough {{coin}} available to stake",
+      "description" : "Not enough funds? Don’t worry, you can securely buy, swap or receive crypto directly in Ledger Live.",
+      "options" : {
+        "buy" : {
+          "title" : "Buy",
+          "body" : "Buy with trusted  providers"
+        },
+        "swap" : {
+          "title" : "Swap",
+          "label" : "Popular",
+          "body" : "Convert crypto to crypto securely"
+        },
+        "receive" : {
+          "title" : "Receive",
+          "body" : "Receive crypto in your wallet"
+        }
+      }
+    }
   }
 }
