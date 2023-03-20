@@ -38,9 +38,10 @@ const mockedUseFeature = jest.mocked(useFeature);
 const mockedOnChangeTransaction = jest.fn().mockImplementation(t => t);
 
 const eth = findCryptoCurrencyById("ethereum");
+const polygon = findCryptoCurrencyById("polygon");
 
-const mockAccount: Account = {
-  type: "Account" as const,
+const ethMockAccount: Account = {
+  type: "Account",
   id: "js:2:ethereum:0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3:",
   starred: false,
   used: true,
@@ -69,7 +70,48 @@ const mockAccount: Account = {
     code: "ETH",
     magnitude: 18,
   },
-  currency: eth as CryptoCurrency,
+  currency: eth,
+  lastSyncDate: new Date("2023-02-14T11:01:19.252Z"),
+  swapHistory: [],
+  balanceHistoryCache: {
+    HOUR: { balances: [], latestDate: 1676329200000 },
+    DAY: { balances: [], latestDate: 1676329200000 },
+    WEEK: { balances: [], latestDate: 1676329200000 },
+  },
+  nfts: [],
+  subAccounts: [],
+};
+const polygonMockAccount: Account = {
+  type: "Account",
+  id: "js:2:polygon:0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3:",
+  starred: false,
+  used: true,
+  seedIdentifier:
+    "0441996d9ce858d8fd6304dd790e645500fc6cee7ae0fccfee8c8fa884dfa8ccf1f6f8cc82cc0aa71fc659c895a8a43b69f918b08a22b3a6145a0bbd93c5cb9308",
+  derivationMode: "",
+  index: 0,
+  freshAddress: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
+  freshAddressPath: "44'/60'/0'/0/0",
+  freshAddresses: [
+    {
+      address: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
+      derivationPath: "44'/60'/0'/0/0",
+    },
+  ],
+  name: "Polygon 1",
+  blockHeight: 16626551,
+  creationDate: new Date("2021-03-23T14:17:07.001Z"),
+  balance: new BigNumber("22913015427119498"),
+  spendableBalance: new BigNumber("22913015427119498"),
+  operations: [],
+  operationsCount: 0,
+  pendingOperations: [],
+  unit: {
+    name: "matic",
+    code: "MATIC",
+    magnitude: 18,
+  },
+  currency: polygon,
   lastSyncDate: new Date("2023-02-14T11:01:19.252Z"),
   swapHistory: [],
   syncHash: "[]_6595",
@@ -110,6 +152,7 @@ const baseMockStatus: TransactionStatus = {
 const setup = (
   mockStatus: Partial<TransactionStatus> = {},
   mockTransaction: Partial<Transaction> = {},
+  account = ethMockAccount,
 ) => {
   return render(
     <ThemeProvider
@@ -117,7 +160,7 @@ const setup = (
     >
       <DomainServiceProvider>
         <RecipientField
-          account={mockAccount}
+          account={account}
           transaction={{ ...baseMockTransaction, ...mockTransaction }}
           t={any => any.toString()}
           onChangeTransaction={mockedOnChangeTransaction as any}
@@ -130,7 +173,7 @@ const setup = (
 
 describe("RecipientField", () => {
   beforeAll(() => {
-    setSupportedCurrencies(["bitcoin", "ethereum"]);
+    setSupportedCurrencies(["polygon", "ethereum"]);
   });
 
   beforeEach(() => {
@@ -177,7 +220,10 @@ describe("RecipientField", () => {
   describe("Feature Flag", () => {
     describe("Flag on", () => {
       beforeEach(() => {
-        mockedUseFeature.mockReturnValue({ enabled: true });
+        mockedUseFeature.mockReturnValue({
+          enabled: true,
+          params: { supportedCurrencyIds: ["ethereum"] },
+        });
       });
 
       it("should change domain in transaction", async () => {
@@ -280,6 +326,20 @@ describe("RecipientField", () => {
             recipientDomain: undefined,
           }),
         );
+      });
+
+      it("should not change domain because currency not supported", async () => {
+        setup(null, null, polygonMockAccount);
+        const input = screen.getByRole("textbox");
+        await act(() => userEvent.type(input, "0x16bb635bc5c398b63a0fbb38dac84da709eb3e86"));
+        await waitFor(() =>
+          expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
+            ...baseMockTransaction,
+            recipient: "0x16bb635bc5c398b63a0fbb38dac84da709eb3e86",
+            recipientDomain: undefined,
+          }),
+        );
+        expect(mockedNetwork).not.toHaveBeenCalled();
       });
     });
 
