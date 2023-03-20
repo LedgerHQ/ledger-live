@@ -1,10 +1,10 @@
 // @flow
 
 import React, { useCallback, useState } from "react";
+import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
 import type { StepId } from "./types";
-import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 
 type Props = {
   stepId: StepId,
