@@ -31,7 +31,7 @@ import PostOnboardingEntryPointCard from "../PostOnboarding/PostOnboardingEntryP
 import BleDevicePairingFlow from "../BleDevicePairingFlow";
 import BuyDeviceCTA from "../BuyDeviceCTA";
 import { useResetOnNavigationFocusState } from "../../helpers/useResetOnNavigationFocusState";
-import { useRequireBluetooth } from "../RequiresBLE/hooks/useRequireBluetooth";
+import { useDebouncedRequireBluetooth } from "../RequiresBLE/hooks/useRequireBluetooth";
 import RequiresBluetoothDrawer from "../RequiresBLE/RequiresBluetoothDrawer";
 import QueuedDrawer from "../QueuedDrawer";
 import ServicesWidget from "../ServicesWidget";
@@ -95,7 +95,7 @@ export default function SelectDevice({
     bluetoothRequirementsState,
     retryRequestOnIssue,
     cannotRetryRequest,
-  } = useRequireBluetooth({
+  } = useDebouncedRequireBluetooth({
     requiredFor: "connecting",
     isHookEnabled: isBleRequired,
   });

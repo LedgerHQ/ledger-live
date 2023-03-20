@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Flex, Alert, Switch } from "@ledgerhq/native-ui";
 import NavigationScrollView from "../../../../components/NavigationScrollView";
 import RequiresBLE from "../../../../components/RequiresBLE";
-import { useRequireBluetooth } from "../../../../components/RequiresBLE/hooks/useRequireBluetooth";
+import { useDebouncedRequireBluetooth } from "../../../../components/RequiresBLE/hooks/useRequireBluetooth";
 import RequiresBluetoothDrawer from "../../../../components/RequiresBLE/RequiresBluetoothDrawer";
 
 /**
@@ -41,7 +41,7 @@ export default function DebugBluetoothAndLocationServices() {
     bluetoothRequirementsState,
     retryRequestOnIssue,
     cannotRetryRequest,
-  } = useRequireBluetooth({
+  } = useDebouncedRequireBluetooth({
     requiredFor: doesBleNeedScanning ? "scanning" : "connecting",
     isHookEnabled: isRequireCustomizedBluetoothEnabled,
   });

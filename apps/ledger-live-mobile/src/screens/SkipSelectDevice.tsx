@@ -8,7 +8,7 @@ import { AddAccountsNavigatorParamList } from "../components/RootNavigator/types
 import { StackNavigatorProps } from "../components/RootNavigator/types/helpers";
 import { ReceiveFundsStackParamList } from "../components/RootNavigator/types/ReceiveFundsNavigator";
 import { ScreenName } from "../const";
-import { useRequireBluetooth } from "../components/RequiresBLE/hooks/useRequireBluetooth";
+import { useDebouncedRequireBluetooth } from "../components/RequiresBLE/hooks/useRequireBluetooth";
 import RequiresBluetoothDrawer from "../components/RequiresBLE/RequiresBluetoothDrawer";
 
 type Navigation =
@@ -58,7 +58,7 @@ export default function SkipSelectDevice({ onResult, route }: Props) {
     bluetoothRequirementsState,
     retryRequestOnIssue,
     cannotRetryRequest,
-  } = useRequireBluetooth({
+  } = useDebouncedRequireBluetooth({
     requiredFor: "connecting",
     isHookEnabled: isBleRequired,
   });

@@ -32,7 +32,7 @@ import PairLight from "../../screens/Onboarding/assets/nanoX/pairDevice/light.js
 import PairDark from "../../screens/Onboarding/assets/nanoX/pairDevice/dark.json";
 import { DeviceLike } from "../../reducers/types";
 import { useResetOnNavigationFocusState } from "../../helpers/useResetOnNavigationFocusState";
-import { useRequireBluetooth } from "../RequiresBLE/hooks/useRequireBluetooth";
+import { useDebouncedRequireBluetooth } from "../RequiresBLE/hooks/useRequireBluetooth";
 import RequiresBluetoothDrawer from "../RequiresBLE/RequiresBluetoothDrawer";
 
 type Props = {
@@ -81,7 +81,7 @@ export default function SelectDevice({
     bluetoothRequirementsState,
     retryRequestOnIssue,
     cannotRetryRequest,
-  } = useRequireBluetooth({
+  } = useDebouncedRequireBluetooth({
     requiredFor: "connecting",
     isHookEnabled: isBleRequired,
   });
