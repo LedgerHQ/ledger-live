@@ -27,7 +27,7 @@ describe("Change Language", () => {
     { lang: "Español", localization: "General" },
     { lang: "Русский", localization: "Общие" },
     { lang: "Deutsch", localization: "Allgemeines" },
-    { lang: "Português", localization: "Geral" },
+    { lang: "Português (Brasil)", localization: "Geral" },
     { lang: "Türkçe", localization: "Genel" },
     { lang: "简体中文", localization: "一般条款" },
     { lang: "한국어", localization: "일반" },
