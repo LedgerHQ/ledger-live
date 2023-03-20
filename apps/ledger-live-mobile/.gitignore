@@ -69,6 +69,10 @@ buck-out/
 # VS Code
 *.vscode
 
+# jest
+coverage/
+**/__snapshots__/
+
 # misc
 .env
 .env.default
