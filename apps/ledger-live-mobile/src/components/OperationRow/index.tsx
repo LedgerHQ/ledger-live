@@ -222,6 +222,7 @@ function OperationRow({
               color={colors.neutral.c70}
               variant="paragraph"
               fontWeight="medium"
+              testID="operationRowDate"
             >
               {text} <OperationRowDate date={operation.date} />
             </Text>
