@@ -81,8 +81,13 @@ export default function TransferDrawer({
   );
 
   const onStake = useCallback(() => {
+    track("button_clicked", {
+      button: "exchange",
+      page,
+      flow: "stake",
+    });
     onNavigate(NavigatorName.StakeFlow);
-  }, [onNavigate]);
+  }, [onNavigate, page, track]);
 
   const onWalletConnect = useCallback(
     () =>
@@ -96,11 +101,12 @@ export default function TransferDrawer({
     track("button_clicked", {
       ...sharedSwapTracking,
       button: "swap",
+      page,
     });
     onNavigate(NavigatorName.Swap, {
       screen: ScreenName.SwapForm,
     });
-  }, [onNavigate, track]);
+  }, [onNavigate, page, track]);
   const onBuy = useCallback(
     () =>
       onNavigate(NavigatorName.Exchange, { screen: ScreenName.ExchangeBuy }),
