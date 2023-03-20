@@ -209,13 +209,8 @@
     "@actions/core": "^1.5.0",
     "@babel/core": "^7.12.9",
     "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
-<<<<<<< HEAD
     "@babel/preset-env": "^7.15.8",
     "@babel/preset-react": "^7.13.13",
-=======
-    "@babel/preset-react": "^7.13.13",
-    "@babel/preset-typescript": "^7.15.0",
->>>>>>> daa8f8d6ef (wip)
     "@babel/runtime": "^7.12.5",
     "@jest/reporters": "^29.3.1",
     "@react-native-community/eslint-config": "^2.0.0",
