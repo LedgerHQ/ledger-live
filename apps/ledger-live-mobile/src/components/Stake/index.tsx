@@ -15,7 +15,8 @@ import logger from "../../logger";
 const StakeFlow = () => {
   const featureFlag = useFeature("stakePrograms");
   const list = featureFlag?.params?.list;
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<StackNavigationProp<{ [key: string]: object | undefined }>>();
   const cryptoCurrencies = useMemo(() => {
     return filterCurrencies(listCurrencies(true), {
       currencies: list || [],
@@ -55,11 +56,7 @@ const StakeFlow = () => {
           },
         });
       } else {
-        (
-          navigation as StackNavigationProp<{
-            [key: string]: object | undefined;
-          }>
-        ).navigate(NavigatorName.Base, {
+        navigation.navigate(NavigatorName.Base, {
           screen: name,
           params: {
             screen: options.screen,
@@ -79,9 +76,7 @@ const StakeFlow = () => {
   };
 
   const requestAccount = useCallback(() => {
-    (
-      navigation as StackNavigationProp<{ [key: string]: object | undefined }>
-    ).replace(NavigatorName.RequestAccount, {
+    navigation.replace(NavigatorName.RequestAccount, {
       screen: ScreenName.RequestAccountsSelectCrypto,
       params: {
         currencies: cryptoCurrencies,
