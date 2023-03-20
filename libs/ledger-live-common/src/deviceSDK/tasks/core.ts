@@ -2,6 +2,7 @@ import {
   CantOpenDevice,
   DisconnectedDevice,
   LockedDeviceError,
+  TransportRaceCondition,
   createCustomErrorClass,
 } from "@ledgerhq/errors";
 import { Observable, from, of, throwError, timer } from "rxjs";
@@ -50,7 +51,8 @@ export function sharedLogicTaskWrapper<TaskArgsType, TaskEventsType>(
                 if (
                   error instanceof LockedDeviceError ||
                   error instanceof CantOpenDevice ||
-                  error instanceof DisconnectedDevice
+                  error instanceof DisconnectedDevice ||
+                  error instanceof TransportRaceCondition
                 ) {
                   // Emits to the action a locked device error event so it is aware of it before retrying
                   subscriber.next({ type: "error", error });

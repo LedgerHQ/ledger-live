@@ -88,7 +88,7 @@ export function updateFirmwareAction({
         | GetLatestFirmwareTaskErrorEvent
         | GetDeviceInfoTaskErrorEvent,
         UpdateFirmwareActionState
-      >((currentState, event) => {
+      >((_, event) => {
         switch (event.type) {
           case "taskError":
             return {
@@ -102,7 +102,7 @@ export function updateFirmwareAction({
           case "flashingMcu":
           case "flashingBootloader":
             return {
-              ...currentState,
+              ...initialState,
               step: event.type,
               progress: event.progress,
             };
@@ -110,16 +110,16 @@ export function updateFirmwareAction({
           case "installOsuDevicePermissionRequested":
           case "installOsuDevicePermissionGranted":
           case "installOsuDevicePermissionDenied":
-            return { ...currentState, step: event.type };
+            return { ...initialState, step: event.type };
           case "firmwareUpdateCompleted":
             return {
-              ...currentState,
+              ...initialState,
               step: event.type,
               updatedDeviceInfo: event.updatedDeviceInfo,
             };
           default:
             return {
-              ...currentState,
+              ...initialState,
               ...sharedReducer({
                 event,
               }),

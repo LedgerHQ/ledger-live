@@ -4098,7 +4098,8 @@
         "titleInactive": "Restore apps and settings",
         "description": "Your settings and blockchain apps will be restored.",
         "restoreLockScreenPicture": "Restoring lock screen picture",
-        "restoreLanguage": "Restoring language"
+        "restoreLanguage": "Restoring language",
+        "installingApps": "Installing apps"
       }
     },
     "newVersion": "Update {{version}} available for your {{deviceName}}",
