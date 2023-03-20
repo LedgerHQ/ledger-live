@@ -1,6 +1,8 @@
+/* eslint-disable consistent-return */
 import { useMemo, useLayoutEffect, useCallback } from "react";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import { Account } from "@ledgerhq/types-live";
 import {
   listCurrencies,
   filterCurrencies,
@@ -10,18 +12,19 @@ import { NavigatorName, ScreenName } from "../../const";
 import perFamilyAccountActions from "../../generated/accountActions";
 import logger from "../../logger";
 
-const StakeFlow = ({ currencies }) => {
+const StakeFlow = () => {
   const featureFlag = useFeature("stakePrograms");
   const list = featureFlag?.params?.list;
   const navigation = useNavigation();
   const cryptoCurrencies = useMemo(() => {
     return filterCurrencies(listCurrencies(true), {
-      currencies: currencies || list || [],
+      currencies: list || [],
     });
-  }, [currencies, list]);
+  }, [list]);
 
   const onSuccess = useCallback(
-    (account: AccountLike, parentAccount?: Account) => {
+    (account: Account, parentAccount?: Account) => {
+      // @ts-expect-error issue in typing
       const decorators = perFamilyAccountActions[account?.currency?.family];
       const familySpecificMainActions =
         (decorators &&
@@ -33,7 +36,7 @@ const StakeFlow = ({ currencies }) => {
           })) ||
         [];
       const stakeFlow = familySpecificMainActions.find(
-        action => action.id === "stake",
+        (action: { id: string }) => action.id === "stake",
       )?.navigationParams;
       if (!stakeFlow) return null;
       const [name, options] = stakeFlow;
@@ -52,7 +55,11 @@ const StakeFlow = ({ currencies }) => {
           },
         });
       } else {
-        navigation.navigate(NavigatorName.Base, {
+        (
+          navigation as StackNavigationProp<{
+            [key: string]: object | undefined;
+          }>
+        ).navigate(NavigatorName.Base, {
           screen: name,
           params: {
             screen: options.screen,
@@ -67,12 +74,14 @@ const StakeFlow = ({ currencies }) => {
     },
     [navigation],
   );
-  const onError = error => {
+  const onError = (error: Error) => {
     logger.critical(error);
   };
 
   const requestAccount = useCallback(() => {
-    navigation.replace(NavigatorName.RequestAccount, {
+    (
+      navigation as StackNavigationProp<{ [key: string]: object | undefined }>
+    ).replace(NavigatorName.RequestAccount, {
       screen: ScreenName.RequestAccountsSelectCrypto,
       params: {
         currencies: cryptoCurrencies,

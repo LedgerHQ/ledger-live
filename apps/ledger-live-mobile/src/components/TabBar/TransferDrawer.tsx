@@ -81,9 +81,7 @@ export default function TransferDrawer({
   );
 
   const onStake = useCallback(() => {
-    onNavigate(NavigatorName.StakeFlow, {
-      screen: NavigatorName.Stake,
-    });
+    onNavigate(NavigatorName.StakeFlow);
   }, [onNavigate]);
 
   const onWalletConnect = useCallback(
