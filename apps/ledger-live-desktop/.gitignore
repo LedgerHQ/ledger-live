@@ -134,3 +134,6 @@ ui-lib/storybook-static/*
 
 # IDE
 .vscode/*
+
+# release-notes generated file
+release-notes.json
