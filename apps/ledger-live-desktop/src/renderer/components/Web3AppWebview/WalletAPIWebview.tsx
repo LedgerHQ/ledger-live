@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import * as remote from "@electron/remote";
 import React, { forwardRef, RefObject, useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -225,7 +227,7 @@ function useWebView({ manifest }: Pick<Props, "manifest">, webviewRef: RefObject
     };
   }, [widgetLoaded]);
 
-  return { webviewRef, url, widgetLoaded, onReload, webviewStyle };
+  return { webviewRef, widgetLoaded, onReload, webviewStyle };
 }
 
 interface Props {

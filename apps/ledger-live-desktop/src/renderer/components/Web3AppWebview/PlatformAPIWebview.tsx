@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import * as remote from "@electron/remote";
 import { JSONRPCRequest } from "json-rpc-2.0";
 import React, { forwardRef, useCallback, useEffect, useMemo, useState } from "react";

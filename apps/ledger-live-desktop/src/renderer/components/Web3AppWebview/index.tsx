@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import semver from "semver";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import React, { forwardRef } from "react";

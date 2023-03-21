@@ -47,6 +47,7 @@ import {
 } from "@ledgerhq/live-common/platform/react";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 import BigNumber from "bignumber.js";
+import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { NavigatorName, ScreenName } from "../../const";
 import { broadcastSignedTx } from "../../logic/screenTransactionHooks";
 import { flattenAccountsSelector } from "../../reducers/accounts";
@@ -502,11 +503,15 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         signMessage,
       ],
     );
-    const handleSend = useCallback((request: JSONRPCRequest): Promise<void> => {
-      webviewRef?.current?.postMessage(JSON.stringify(request));
+    const handleSend = useCallback(
+      (request: JSONRPCRequest): Promise<void> => {
+        const webview = safeGetRefValue(webviewRef);
+        webview.postMessage(JSON.stringify(request));
 
-      return Promise.resolve();
-    }, []);
+        return Promise.resolve();
+      },
+      [webviewRef],
+    );
     const [receive] = useJSONRPCServer(handlers, handleSend);
     const handleMessage = useCallback(
       e => {

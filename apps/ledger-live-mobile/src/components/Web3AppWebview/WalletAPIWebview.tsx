@@ -15,6 +15,7 @@ import { useNavigation } from "@react-navigation/native";
 import { SignedOperation } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
+  safeGetRefValue,
   UiHook,
   useConfig,
   useWalletAPIServer,
@@ -188,12 +189,18 @@ function useWebView(
 
   const webviewHook = useMemo(() => {
     return {
-      reload: () => webviewRef.current?.reload(),
+      reload: () => {
+        const webview = safeGetRefValue(webviewRef);
+
+        webview.reload();
+      },
       postMessage: (message: string) => {
-        webviewRef.current?.postMessage(message);
+        const webview = safeGetRefValue(webviewRef);
+
+        webview.postMessage(message);
       },
     };
-  }, []);
+  }, [webviewRef]);
 
   const { onMessage: onMessageRaw, onLoadError } = useWalletAPIServer({
     manifest,
