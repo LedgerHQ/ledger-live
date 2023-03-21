@@ -3,7 +3,7 @@ import { Linking, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useElrondPreloadData } from "@ledgerhq/live-common/families/elrond/react";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
 import {

@@ -15,7 +15,7 @@ import {
 import type Transport from "@ledgerhq/hw-transport";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
-import type { DerivationMode } from "../derivation";
+import type { DerivationMode } from "@ledgerhq/coin-framework/derivation";
 import type { AppOp } from "../apps/types";
 import { getCryptoCurrencyById } from "../currencies";
 import appSupportsQuitApp from "../appSupportsQuitApp";

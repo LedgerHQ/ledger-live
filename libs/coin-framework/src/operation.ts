@@ -1,6 +1,6 @@
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { getEnv } from "./env";
+import { getEnv } from "@ledgerhq/live-env";
 
 export function findOperationInAccount(
   { operations, pendingOperations }: AccountLike,
