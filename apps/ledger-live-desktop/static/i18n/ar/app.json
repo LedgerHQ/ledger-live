@@ -80,6 +80,7 @@
     "selectCurrencyEmptyOption" : "لا يوجد أصل مشفر",
     "selectValidatorNoOption" : "لا يوجد مدقق مطابق \"{{accountName}}\"",
     "selectNoResults" : "لم يتم العثور على نتائج مطابقة \"{{query}}\"",
+    "backToLiveApp" : "عودة إلى {{appName}}",
     "sortBy" : "فرز حسب",
     "save" : "حفظ",
     "lock" : "إقفال",
@@ -824,7 +825,20 @@
       "delegation" : {
         "title" : "في حالة أنك لم تكن تعلم...",
         "description" : "مدقق Ledger يقوم بتكديس {{asset}} خاصتك بعمولة قدرها %{{commission}}.",
-        "cta" : "قم بالتكديس مع Ledger"
+        "cta" : "قم بالتكديس مع Ledger",
+        "linkText" : "تعرّف على المزيد",
+        "ethereum" : {
+          "lido" : {
+            "title" : "في حالة أنك لم تكن تعلم...",
+            "description" : "قم بتكديس إيثريوم خاصتك عن طريق Lido واكسب مكافآت يومية. دون فترة قَفل. دون حد أدنى للإيداع.",
+            "cta" : "قم بالتكديس مع Lido"
+          },
+          "kiln" : {
+            "title" : "لا تقم فقط بالاحتفاظ لفترة طويلة. قم بتنمية ETH خاصتك",
+            "description" : "لديك أكثر من 32 ETH؟ اكسب مكافآت سلبية عن طريق تكديس ETH خاصتك بأمان مع Kiln.",
+            "cta" : "قم بالتكديس مع Kiln"
+          }
+        }
       }
     }
   },
@@ -1399,7 +1413,7 @@
         "label" : "شائع"
       },
       "earn" : {
-        "title" : "اكسب",
+        "title" : "تكديس",
         "description" : "قم بتنمية أصولك المشفرة مع Ledger"
       }
     }
@@ -5356,7 +5370,7 @@
       "description" : "يجب تطبيق التوقيع في غضون 30 ثانية. يرجى إعادة المحاولة مرة أخرى."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "الطاقة أقل من المطلوب. قد تدفع رسوم تصل إلى 50TRX."
+      "title" : "الطاقة أقل من المطلوب. قد تدفع رسوم تصل إلى 50 TRX."
     },
     "PairingFailed" : {
       "title" : "لم يتم إجراء الإقران بنجاح",
@@ -5521,6 +5535,10 @@
       "title" : "فشل تحميل الصورة من الملف",
       "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
     },
+    "ImageLoadFromNftError" : {
+      "title" : "فشل تحميل الصورة من الرمز غير القابل للاستبدال",
+      "description" : "يُرجى المحاولة مرةً أخرى برمز غير قابل للاستبدال آخر"
+    },
     "ImageDownloadError" : {
       "title" : "فشل تنزيل الصورة",
       "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
@@ -5593,6 +5611,13 @@
       "descriptionWithProductName" : "يجب أن تقوم بإعداد {{ productName }} خاصتك أولاً.\nسنرشدك خلال عملية الإعداد.",
       "goToOnboardingButton" : "إعداد جهازي",
       "goToOnboardingButtonWithProductName" : "إعداد {{ productName }}"
+    },
+    "EtherscanAPIError" : {
+      "title" : "فشل إحضار المعاملات",
+      "description" : "حدث خطأ غير متوقع مع المستكشفات. يُرجى إعادة المحاولة لاحقاً"
+    },
+    "GasEstimationError" : {
+      "title" : "فشل تقدير الغاز"
     }
   },
   "cryptoOrg" : {
@@ -5631,7 +5656,13 @@
         "stepLabel" : "اختر صورة",
         "description" : "اختر صورة لتعيينها على أنها (...)",
         "pickFromNftGallery" : "اختر من معرض NFT",
-        "upload" : "تحميل من الكمبيوتر الخاص بي"
+        "myNfts" : "رموزي غير القابلة للاستبدال",
+        "upload" : "تحميل من الكمبيوتر الخاص بي",
+        "chooseNft" : "اختر رمزاً غير قابل للاستبدال",
+        "selectNft" : "اختر رمز غير قابل للاستبدال",
+        "previousSelectNft" : "عودة",
+        "nftEmptyStateTitle" : "ليس هناك رموز غير قابلة للاستبدال بعد لعرضها",
+        "nftEmptyStateDescription" : "ابدأ بإضافة رموز غير قابلة للاستبدال إلى محفظتك."
       },
       "adjust" : {
         "stepLabel" : "ضبط الصورة",
