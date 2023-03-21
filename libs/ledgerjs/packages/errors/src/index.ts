@@ -331,6 +331,7 @@ export const StatusCodes = {
   TECHNICAL_PROBLEM: 0x6f00,
   UNKNOWN_APDU: 0x6d02,
   USER_REFUSED_ON_DEVICE: 0x5501,
+  NOT_ENOUGH_SPACE: 0x5102,
 };
 
 export function getAltStatusMessage(code: number): string | undefined | null {
