@@ -241,7 +241,6 @@ importers:
       eslint-plugin-react: ^7.29.2
       eslint-plugin-react-hooks: ^4.3.0
       eslint-plugin-standard: ^5.0.0
-      ethereumjs-tx: ^2.1.2
       execa: ^4.0.2
       express: ^4.17.1
       file-loader: ^6.2.0
@@ -261,7 +260,6 @@ importers:
       listr: ^0.14.3
       listr-verbose-renderer: ^0.6.0
       lodash: ^4.17.21
-      lru-cache: ^5.1.1
       moment: ^2.29.4
       native-modules-tools: workspace:*
       nyc: ^15.1.0
@@ -320,7 +318,6 @@ importers:
       winston: ^3.2.1
       winston-transport: ^4.3.0
       write-file-atomic: ^3.0.3
-      ws: ^7.5.3
       xstate: ^4.30.2
       yargs: ^15.3.1
       zxcvbn: ^4.4.2
@@ -353,7 +350,6 @@ importers:
       color: 3.2.1
       dotenv: 16.0.3
       electron-context-menu: 3.6.1
-      ethereumjs-tx: 2.1.2
       firebase: 9.8.1
       focus-trap: 6.9.2
       fuse.js: 3.6.1
@@ -362,7 +358,6 @@ importers:
       json-rpc-2.0: 0.2.19
       jsqr: 1.4.0
       lodash: 4.17.21
-      lru-cache: 5.1.1
       moment: 2.29.4
       prando: 5.1.2
       prop-types: 15.8.1
@@ -407,7 +402,6 @@ importers:
       winston: 3.7.2
       winston-transport: 4.5.0
       write-file-atomic: 3.0.3
-      ws: 7.5.7
       xstate: 4.32.0
       zxcvbn: 4.4.2
     devDependencies:
