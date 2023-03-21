@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/live-common/explorers";
 import type { Account, OperationType, Operation } from "@ledgerhq/types-live";
 import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import type { CosmosDelegationInfo } from "@ledgerhq/live-common/families/cosmos/types";

@@ -1,5 +1,5 @@
-import { genAccount } from "./mocks/account";
-import { getDerivationModesForCurrency } from "./derivation";
+import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { getDerivationModesForCurrency } from "@ledgerhq/coin-framework/derivation";
 import { listCryptoCurrencies, setSupportedCurrencies } from "./currencies";
 import {
   accountDataToAccount,

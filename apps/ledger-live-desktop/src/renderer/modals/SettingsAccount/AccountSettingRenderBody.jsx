@@ -26,7 +26,7 @@ import ConfirmModal from "~/renderer/modals/ConfirmModal";
 import Space from "~/renderer/components/Space";
 import Button from "~/renderer/components/Button";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
-import { getTagDerivationMode } from "@ledgerhq/live-common/derivation";
+import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 
 type State = {
   accountName: ?string,

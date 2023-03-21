@@ -10,7 +10,7 @@ import {
   DerivationMode,
   getDerivationScheme,
   runDerivationScheme,
-} from "../../derivation";
+} from "@ledgerhq/coin-framework/derivation";
 import {
   decodeAccountId,
   decodeTokenAccountId,

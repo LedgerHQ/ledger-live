@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
-import { toLocaleString } from "@ledgerhq/live-common/currencies/BigNumberToLocaleString";
+import { toLocaleString } from "@ledgerhq/live-common/currencies/index";
 import { Navigation, RouteProps } from "./EthereumCustomFees/types";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import { localeSelector } from "../../reducers/settings";
