@@ -1,0 +1,61 @@
+$schema: "https://moonrepo.dev/schemas/tasks.json"
+implicitInputs: []
+tasks:
+  build:
+    command: pnpm run --if-present build
+    deps:
+      - ^:build
+    platform: node
+  build/deps:
+    command: noop
+    deps:
+      - ^:build
+    platform: node
+  clean:
+    command: pnpm run --if-present clean
+    options:
+      cache: false
+    platform: node
+  doc:
+    command: pnpm run --if-present doc
+    options:
+      cache: false
+    platform: node
+  lint:
+    command: pnpm run --if-present lint
+    inputs:
+      - $CI_OS
+    platform: node
+  lint/fix:
+    command: pnpm run --if-present lint:fix
+    platform: node
+  start:
+    command: pnpm run --if-present start
+    deps:
+      - ^:build
+    options:
+      cache: false
+    platform: node
+  test:
+    command: pnpm run --if-present test
+    deps:
+      - lint
+      - typecheck
+      - build
+    inputs:
+      - $CI_OS
+    platform: node
+  typecheck:
+    command: pnpm run --if-present typecheck
+    deps:
+      - ^:build
+    inputs:
+      - $CI_OS
+    platform: node
+  watch:
+    command: pnpm run --if-present watch
+    deps:
+      - ^:build
+    options:
+      cache: false
+    platform: node

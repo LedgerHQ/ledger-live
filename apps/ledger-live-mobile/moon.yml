@@ -1,0 +1,30 @@
+$schema: "https://moonrepo.dev/schemas/project.json"
+language: javascript
+type: application
+tasks:
+  lint:
+    deps:
+      - ^:build
+    inputs:
+      - $CI_OS
+    platform: node
+  android/apk:
+    command: pnpm run --if-present android:apk
+    deps:
+      - ^:build
+    platform: node
+  android/apk/local:
+    command: pnpm run android:apk:local
+    deps:
+      - ^:build
+    platform: node
+  ios/ci/adhoc:
+    command: pnpm run --if-present ios:ci:adhoc
+    deps:
+      - ^:build
+    platform: node
+  ios/local/ipa:
+    command: pnpm run --if-present ios:local:ipa
+    deps:
+      - ^:build
+    platform: node

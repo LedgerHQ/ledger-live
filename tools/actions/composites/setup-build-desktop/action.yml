@@ -11,19 +11,10 @@ outputs:
   name:
     description: "package.json name"
     value: ${{ steps.post-version.outputs.name }}
-  port:
-    description: "The port the local server runs on"
-    value: ${{ steps.turborepo-cache-server.outputs.port }}
 
 runs:
   using: "composite"
   steps:
-    - name: TurboRepo local caching server
-      id: turborepo-cache-server
-      uses: ./tools/actions/turborepo-gh-cache
-      with:
-        server-token: "yolo"
-        cleanup-cache-folder: "true"
     - name: install dependencies
       if: ${{ inputs.os != 'mac' }}
       run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --unsafe-perm

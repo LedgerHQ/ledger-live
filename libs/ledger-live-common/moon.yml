@@ -1,0 +1,21 @@
+$schema: "https://moonrepo.dev/schemas/project.json"
+language: javascript
+type: library
+tasks:
+  build:
+    deps:
+      - ^:build
+    outputs:
+      - lib/
+      - lib-es/
+      - src/data/icons/react/
+      - src/data/icons/reactNative/
+      - src/data/flags/react/
+      - src/data/flags/reactNative/
+    platform: node
+  typecheck:
+    deps:
+      - build
+    inputs:
+      - $CI_OS
+    platform: node

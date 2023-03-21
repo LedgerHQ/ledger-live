@@ -1,0 +1,21 @@
+$schema: "https://moonrepo.dev/schemas/project.json"
+language: javascript
+type: unknown
+dependsOn:
+  - change-product-name
+  - generate-bot-super-report
+  - generate-release-message
+  - get-package-infos
+  - get-workflow-artifacts-id
+  - live-common-affected
+  - moon-affected
+  - prepare-comment-screenshots
+  - submit-bot-report
+  - turborepo-gh-cache
+  - upload-images
+tasks:
+  build/actions:
+    command: noop
+    platform: node
+    deps:
+      - build

@@ -659,11 +659,10 @@ const getTransactionStatus = async (
     const expiredDatePath = recipient
       ? `tronResources.delegatedFrozen.${lowerCaseResource}.expiredAt`
       : `tronResources.frozen.${lowerCaseResource}.expiredAt`;
-    const expirationDate: Date | null | undefined = get(
-      a,
-      expiredDatePath,
-      undefined
-    );
+    const expirationDate = get(a, expiredDatePath, undefined) as
+      | Date
+      | null
+      | undefined;
 
     if (!expirationDate) {
       if (resource === "BANDWIDTH") {

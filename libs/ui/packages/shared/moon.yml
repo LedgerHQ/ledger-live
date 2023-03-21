@@ -1,0 +1,9 @@
+$schema: "https://moonrepo.dev/schemas/project.json"
+language: javascript
+type: library
+tasks:
+  build:
+    outputs:
+      - "lib/"
+    options:
+      mergeOutputs: replace

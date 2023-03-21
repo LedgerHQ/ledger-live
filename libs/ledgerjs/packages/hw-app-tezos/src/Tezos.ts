@@ -23,7 +23,7 @@ export const TezosCurves = {
   SECP256K1: 0x01,
   SECP256R1: 0x02,
 };
-export type Curve = typeof TezosCurves[keyof typeof TezosCurves];
+export type Curve = (typeof TezosCurves)[keyof typeof TezosCurves];
 export type GetAddressResult = {
   address: string;
   publicKey: string;

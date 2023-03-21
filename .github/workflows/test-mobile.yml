@@ -19,6 +19,10 @@ on:
       base_ref:
         description: The base branch to merge the head into when checking out the code
 
+env:
+  MOONBASE_ACCESS_KEY: ${{ secrets.TEMP_MOONBASE_ACCESS_KEY }}
+  MOONBASE_SECRET_KEY: ${{ secrets.TEMP_MOONBASE_SECRET_KEY }}
+
 concurrency:
   # See: https://github.com/orgs/community/discussions/35341
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -41,24 +45,18 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-gh-cache
-        with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
       - name: Install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - name: Run linter
         run: |
-          pnpm lint --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" -- --format="json" -o="lint.json"
+          pnpm moon r live-mobile:lint -- --format="json" -o="lint.json"
           cd apps/ledger-live-mobile
           node -p "require('./node_modules/eslint/lib/cli-engine/formatters/stylish.js')(require('./lint.json'))"
       - name: check for dead code
         run: cd apps/ledger-live-mobile && npx unimported
         shell: bash
       - name: Run code checkers
-        run: pnpm typecheck --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+        run: pnpm moon r ledger-live-mobile:typecheck
       - uses: actions/upload-artifact@v3
         name: upload eslint json output
         if: always()

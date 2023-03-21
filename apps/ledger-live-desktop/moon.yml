@@ -1,0 +1,50 @@
+$schema: "https://moonrepo.dev/schemas/project.json"
+language: javascript
+type: application
+tasks:
+  build:
+    deps:
+      - ^:build
+    options:
+      cache: false
+    platform: node
+  build/testing:
+    command: pnpm run build:testing
+    deps:
+      - ^:build
+    options:
+      cache: false
+    platform: node
+  lint:
+    deps:
+      - ^:build
+    inputs:
+      - $CI_OS
+    platform: node
+  test:
+    deps:
+      - ledger-live-desktop:build/testing
+    inputs:
+      - $CI_OS
+    platform: node
+  nightly:
+    command: pnpm run --if-present nightly
+    deps:
+      - ^:build
+    options:
+      cache: false
+    platform: node
+  pre-build:
+    command: pnpm run --if-present pre-build
+    deps:
+      - ^:build
+    options:
+      cache: false
+    platform: node
+  release:
+    command: pnpm run --if-present release
+    deps:
+      - ^:build
+    options:
+      cache: false
+    platform: node

@@ -1,7 +1,7 @@
 {
-  "name": "@actions/turbo-affected",
+  "name": "@actions/moon-affected",
   "version": "1.0.0",
-  "description": "Returns a list of affected packages, and optionnally if particular has been affected",
+  "description": "Returns a list of affected packages",
   "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
   "license": "MIT",
   "private": true,

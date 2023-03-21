@@ -19,6 +19,10 @@ on:
       base_ref:
         description: The base branch to merge the head into when checking out the code
 
+# env:
+#   MOONBASE_ACCESS_KEY: ${{ secrets.TEMP_MOONBASE_ACCESS_KEY }}
+#   MOONBASE_SECRET_KEY: ${{ secrets.TEMP_MOONBASE_SECRET_KEY }}
+
 concurrency:
   # See: https://github.com/orgs/community/discussions/35341
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -81,7 +85,10 @@ jobs:
         with:
           os: linux
       - name: Build the app
-        run: pnpm build:lld --api="http://127.0.0.1:${{ steps.build-desktop.outputs.port }}" --token="yolo" --team="foo"
+        run: |
+          pnpm moon setup
+          pnpm build:lld
+          pnpm moon teardown
       - name: Upload linux app
         uses: actions/upload-artifact@v3
         with:
@@ -116,7 +123,9 @@ jobs:
           os: win
       - name: Build the app
         run: |
-          pnpm build:lld --api="http://127.0.0.1:${{ steps.build-desktop.outputs.port }}" --token="yolo" --team="foo"
+          pnpm moon setup
+          pnpm build:lld
+          pnpm moon teardown
         shell: bash
       - name: Upload windows
         uses: actions/upload-artifact@v3
@@ -149,7 +158,9 @@ jobs:
           os: mac
       - name: Build the app
         run: |
-          pnpm build:lld --api="http://127.0.0.1:${{ steps.build-desktop.outputs.port }}" --token="yolo" --team="foo"
+          pnpm moon setup
+          pnpm build:lld
+          pnpm moon teardown
       - name: Upload macOS app
         uses: actions/upload-artifact@v3
         with:

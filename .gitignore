@@ -8,3 +8,7 @@ node_modules
 .eslintcache
 tsconfig.tsbuildinfo
 rce
+
+# moon
+.moon/cache
+.moon/docker

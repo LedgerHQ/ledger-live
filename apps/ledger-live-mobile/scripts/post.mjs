@@ -78,7 +78,7 @@ BRAZE_CUSTOM_ENDPOINT="sdk.fra-02.braze.eu"`;
 
     // We manually need to run Jetifier for React Native BLE PLX until they switch to AndroidX
     // https://github.com/Polidea/react-native-ble-plx#android-example-setup
-    await $`pnpm jetify`;
+    await $`pnpm exec jetify`;
   }
 };
 

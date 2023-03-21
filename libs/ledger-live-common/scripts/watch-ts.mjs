@@ -17,7 +17,7 @@ try {
   await $`node ./scripts/buildReactIcons.js`;
   await $`node ./scripts/buildReactFlags.js`;
 
-  await $`pnpm tsc --project src/tsconfig.json --watch`;
+  await $`pnpm exec tsc --project src/tsconfig.json --watch`;
 } catch (error) {
   console.log(chalk.red(error));
   process.exit(1);

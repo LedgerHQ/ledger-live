@@ -64,12 +64,6 @@ jobs:
         env:
           VERSION: ${{ steps.version.outputs.clean }}-sha.${{ steps.slug.outputs.sha8 }}
         run: cd apps/ledger-live-mobile && npm version $VERSION
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-gh-cache
-        with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
       - name: build the app
         env:
           ANDROID_KEYSTORE_PASS: staging
@@ -77,7 +71,7 @@ jobs:
           ANDROID_KEY_PASS: staging
           NODE_OPTIONS: "--max-old-space-size=7168"
           ANDROID_KEYSTORE_FILE: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/staging.kstr
-        run: pnpm build:llm:android --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+        run: pnpm build:llm:android
       - uses: ./tools/actions/get-package-infos
         id: post-version
         with:

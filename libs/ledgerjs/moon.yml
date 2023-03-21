@@ -1,0 +1,61 @@
+$schema: "https://moonrepo.dev/schemas/project.json"
+language: javascript
+type: unknown
+dependsOn:
+  - cryptoassets
+  - devices
+  - errors
+  - hw-app-algorand
+  - hw-app-btc
+  - hw-app-cosmos
+  - hw-app-eth
+  - hw-app-helium
+  - hw-app-near
+  - hw-app-polkadot
+  - hw-app-solana
+  - hw-app-str
+  - hw-app-tezos
+  - hw-app-trx
+  - hw-app-xrp
+  - hw-transport
+  - hw-transport-http
+  - hw-transport-mocker
+  - hw-transport-node-ble
+  - hw-transport-node-hid
+  - hw-transport-node-hid-noevents
+  - hw-transport-node-hid-singleton
+  - hw-transport-node-speculos
+  - hw-transport-node-speculos-http
+  - hw-transport-web-ble
+  - hw-transport-webhid
+  - hw-transport-webusb
+  - logs
+  - react-native-hid
+  - react-native-hw-transport-ble
+  - swift-bridge-hw-app-eth
+  - swift-bridge-hw-app-solana
+  - swift-bridge-hw-transport-ble
+  - types-cryptoassets
+  - types-devices
+  - types-live
+tasks:
+  build/ljs:
+    command: noop
+    platform: node
+    deps:
+      - build
+  clean/ljs:
+    command: noop
+    platform: node
+    deps:
+      - clean
+  doc/ljs:
+    command: noop
+    platform: node
+    deps:
+      - doc
+  watch/ljs:
+    command: noop
+    platform: node
+    deps:
+      - watch

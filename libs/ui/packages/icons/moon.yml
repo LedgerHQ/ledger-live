@@ -1,0 +1,12 @@
+$schema: "https://moonrepo.dev/schemas/project.json"
+language: javascript
+type: library
+tasks:
+  build:
+    deps:
+      - ^:build
+    outputs:
+      - react/
+      - native/
+      - index.js
+    platform: node

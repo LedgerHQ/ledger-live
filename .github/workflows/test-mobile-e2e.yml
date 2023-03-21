@@ -24,6 +24,10 @@ on:
 # env:
 #   DEBUG_DETOX: true
 
+env:
+  MOONBASE_ACCESS_KEY: ${{ secrets.TEMP_MOONBASE_ACCESS_KEY }}
+  MOONBASE_SECRET_KEY: ${{ secrets.TEMP_MOONBASE_SECRET_KEY }}
+
 concurrency:
   # See: https://github.com/orgs/community/discussions/35341
   group: ${{ github.workflow }}-${{ github.ref }}

@@ -20,6 +20,10 @@ on:
         description: The GitHub username that triggered the workflow
         required: true
 
+env:
+  MOONBASE_ACCESS_KEY: ${{ secrets.TEMP_MOONBASE_ACCESS_KEY }}
+  MOONBASE_SECRET_KEY: ${{ secrets.TEMP_MOONBASE_SECRET_KEY }}
+
 concurrency:
   # See: https://github.com/orgs/community/discussions/35341
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -110,17 +114,11 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.6
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-gh-cache
-        with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
       - name: Install dependencies
         run: pnpm i --filter="!./apps/**"
       - name: Build and Test affected libraries
         id: test-libs
-        run: pnpm run test --continue --filter="!./apps/**" --filter="!live-common-tools" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+        run: pnpm run test --continue --filter="!./apps/**" --filter="!live-common-tools" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]"
         shell: bash
       - name: (On Failure) Upload live-common snapshots and source
         uses: actions/upload-artifact@v3

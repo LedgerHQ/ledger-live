@@ -14,8 +14,7 @@
     "build": "tsc",
     "watch": "tsc --watch",
     "dev": "nodemon",
-    "start": "probot run ./lib/index.js",
-    "_test": "jest"
+    "start": "probot run ./lib/index.js"
   },
   "dependencies": {
     "@octokit/plugin-retry": "^4.1.1",

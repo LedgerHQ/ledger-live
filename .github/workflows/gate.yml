@@ -50,7 +50,11 @@ jobs:
             core.exportVariable("head_branch", newHeadBranch)
             core.exportVariable("base_branch", newBaseBranch)
 
-      - uses: ./tools/actions/turbo-affected
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - uses: ./tools/actions/moon-affected
         id: affected
         with:
           ref: ${{ format('origin/{0}', env.base_branch) }}

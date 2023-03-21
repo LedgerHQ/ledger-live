@@ -3,6 +3,19 @@
   "version": "0.0.1",
   "private": true,
   "devDependencies": {
-    "@types/node": "^18.15.11"
+    "@types/node": "^17.0.31"
+  },
+  "dependencies": {
+    "@actions/change-product-name": "workspace:*",
+    "@actions/generate-bot-super-report": "workspace:*",
+    "@actions/generate-release-message": "workspace:*",
+    "@actions/get-package-infos": "workspace:*",
+    "@actions/get-workflow-artifacts-id": "workspace:*",
+    "@actions/live-common-affected": "workspace:*",
+    "@actions/moon-affected": "workspace:*",
+    "@actions/prepare-comment-screenshots": "workspace:*",
+    "@actions/submit-bot-report": "workspace:*",
+    "@actions/turborepo-gh-cache": "workspace:*",
+    "@actions/upload-images": "workspace:*"
   }
 }
