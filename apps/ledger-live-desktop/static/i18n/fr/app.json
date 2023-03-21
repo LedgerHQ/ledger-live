@@ -80,6 +80,7 @@
     "selectCurrencyEmptyOption" : "Aucun crypto-actif",
     "selectValidatorNoOption" : "Aucun validateur correspondant à \"{{accountName}}\"",
     "selectNoResults" : "Aucun résultat trouvé pour \"{{query}}\"",
+    "backToLiveApp" : "Retourner sur {{appName}}",
     "sortBy" : "Trier par",
     "save" : "Enregistrer",
     "lock" : "Verrouiller",
@@ -541,7 +542,7 @@
     },
     "resetThirdPartyDataModal" : {
       "title" : "Supprimer vos données locales partagées avec des tiers",
-      "subtitle" : "Vous vous apprêtez à supprimer vos données stockées localement qui sont partagées avec des tiers. Vous devrez peut-être soumettre à nouveau votre vérification d’identité et/ou vous reconnecter pour accéder aux services fournis par nos partenaires.",
+      "subtitle" : "Vous vous apprêtez à supprimer vos données stockées localement qui sont partagées avec des tiers. Vous devrez peut-être soumettre à nouveau votre vérification d’identité et/ou vous reconnecter pour accéder aux services fournis par nos prestataires tiers.",
       "cta" : "Confirmer"
     },
     "modal" : {
@@ -824,7 +825,20 @@
       "delegation" : {
         "title" : "Bon à savoir",
         "description" : "En stakant vos {{asset}} via le validateur Ledger, les frais de commission sont de {{commission}} %.",
-        "cta" : "Staker avec Ledger"
+        "cta" : "Staker avec Ledger",
+        "linkText" : "En savoir plus",
+        "ethereum" : {
+          "lido" : {
+            "title" : "Bon à savoir",
+            "description" : "Stakez vos ETH avec Lido et gagnez des récompenses quotidiennes. Sans durée, ni montant minimum.",
+            "cta" : "Staker avec Lido"
+          },
+          "kiln" : {
+            "title" : "Maximisez votre HODL. Faites fructifier vos ETH.",
+            "description" : "Vous avez plus de 32 ETH ? Gagnez des récompenses en toute sécurité en mettant vos ETH en staking avec Kiln.",
+            "cta" : "Staker avec Kiln"
+          }
+        }
       }
     }
   },
@@ -835,7 +849,7 @@
     "reset" : "Réinitialiser",
     "verifyAddress" : "Merci de confirmer que l’adresse affichée est identique à celle sur votre appareil",
     "buy" : {
-      "header" : "Acheter des cryptos avec nos partenaires",
+      "header" : "Acheter des cryptos avec nos prestataires tiers",
       "title" : "Choisir un prestataire pour acheter des cryptos",
       "buyFrom" : "Achetez de là où vous vous trouvez",
       "cryptoSupported" : "cryptos prises en charge",
@@ -851,7 +865,7 @@
       }
     },
     "sell" : {
-      "header" : "Vendre des cryptos avec nos partenaires",
+      "header" : "Vendre des cryptos avec nos prestataires tiers",
       "title" : "Vendez des cryptos avec <0>{{provider}}</0>.",
       "tab" : "Vendre",
       "selectCrypto" : "Choisir un crypto-actif",
@@ -1300,7 +1314,7 @@
     },
     "buyCrypto" : {
       "title" : "Acheter des cryptos",
-      "description" : "Achetez des crypto-actifs via nos partenaires et recevez-les directement dans votre compte Ledger.",
+      "description" : "Achetez des crypto-actifs via nos prestataires tiers et recevez-les directement dans votre compte Ledger.",
       "cta" : "Acheter maintenant"
     },
     "familyPack" : {
@@ -1314,7 +1328,7 @@
     },
     "sell" : {
       "title" : "Vendre des cryptos",
-      "description" : "Vendez vos bitcoins via notre partenaire sans sortir de Ledger Live."
+      "description" : "Vendez vos bitcoins via notre prestataire tiers sans sortir de Ledger Live."
     },
     "stakeAlgorand" : {
       "title" : "Les récompenses avec Algorand",
@@ -1322,7 +1336,7 @@
     },
     "swap" : {
       "title" : "Échanger des cryptos",
-      "description" : "Échangez une crypto contre une autre sur Ledger Live grâce à nos partenaires."
+      "description" : "Échangez une crypto contre une autre sur Ledger Live grâce à nos prestataires tiers."
     },
     "lending" : {
       "title" : "Prêter",
@@ -1399,7 +1413,7 @@
         "label" : "Populaire"
       },
       "earn" : {
-        "title" : "Gagner",
+        "title" : "Staker",
         "description" : "Faites fructifier vos crypto-actifs via Ledger."
       }
     }
@@ -2924,7 +2938,7 @@
               "title" : "Récompenses bien encaissées",
               "titleCompound" : "Récompenses bien capitalisées",
               "text" : "Vos récompenses ont été ajoutées à votre solde disponible.",
-              "textCompound" : "Vos récompenses <0>{{amount}}</0> ont été automatiquement déléguées à <0>{{validator}}</0>.",
+              "textCompound" : "Vos récompenses de <0>{{amount}}</0> ont été automatiquement déléguées à <0>{{validator}}</0>.",
               "cta" : "Voir les détails"
             },
             "pending" : {
@@ -5356,7 +5370,7 @@
       "description" : "Les transactions doivent être signées dans les 30 secondes. Veuillez réessayer."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Énergie inférieure à la quantité requise. Vous pourriez payer des frais allant jusqu’à 50 TRX."
+      "title" : "Énergie inférieure à la quantité requise. Vous pourriez payer des frais allant jusqu’à 50 TRX."
     },
     "PairingFailed" : {
       "title" : "Échec du couplage",
@@ -5521,6 +5535,10 @@
       "title" : "Échec du chargement de l’image.",
       "description" : "Veuillez réessayer avec une autre image."
     },
+    "ImageLoadFromNftError" : {
+      "title" : "Échec du chargement du NFT",
+      "description" : "Veuillez réessayer avec un autre NFT."
+    },
     "ImageDownloadError" : {
       "title" : "Échec du téléchargement de l’image",
       "description" : "Veuillez réessayer avec une autre image."
@@ -5593,6 +5611,13 @@
       "descriptionWithProductName" : "Vous devez d’abord configurer votre {{ productName }}.\nNous vous guiderons à chaque étape.",
       "goToOnboardingButton" : "Configurer mon appareil",
       "goToOnboardingButtonWithProductName" : "Configurer mon {{ productName }}"
+    },
+    "EtherscanAPIError" : {
+      "title" : "Échec de la récupération des transactions",
+      "description" : "Une erreur s’est produite avec les explorateurs. Veuillez réessayer plus tard."
+    },
+    "GasEstimationError" : {
+      "title" : "Échec de l’estimation du prix du gaz"
     }
   },
   "cryptoOrg" : {
@@ -5631,7 +5656,13 @@
         "stepLabel" : "Choisissez une image",
         "description" : "Choisir une image à définir comme (...)",
         "pickFromNftGallery" : "Sélectionner depuis ma galerie de NFT",
-        "upload" : "Télécharger à partir de mon ordinateur"
+        "myNfts" : "Mes NFT",
+        "upload" : "Télécharger à partir de mon ordinateur",
+        "chooseNft" : "Choisir un NFT",
+        "selectNft" : "Choisir ce NFT",
+        "previousSelectNft" : "Retour",
+        "nftEmptyStateTitle" : "Pas (encore) de NFT",
+        "nftEmptyStateDescription" : "Commencez par ajouter des NFT à votre wallet."
       },
       "adjust" : {
         "stepLabel" : "Ajuster l’image",
