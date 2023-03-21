@@ -2874,6 +2874,10 @@
     "exchange": {
       "title": "Buy / Sell"
     },
+    "stake": {
+      "title": "Stake",
+      "description": "Grow your crypto holdings."
+    },
     "swap": {
       "title": "Swap",
       "description": "Exchange crypto to crypto.",
@@ -5780,7 +5784,7 @@
       "developerCTA": {
         "title": "For Developers",
         "description": "All the information you need to integrate your applications on Ledger Live."
-      },
+      }
     },
     "disclaimer": {
       "title": "External Application",

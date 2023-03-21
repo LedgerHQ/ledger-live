@@ -210,6 +210,17 @@ function readPackage(pkg, context) {
       }),
       addDependencies("@actions/cache", { "@azure/abort-controller": "*" }),
       addDependencies("rn-fetch-blob", { lodash: "*" }),
+      addPeerDependencies("styled-components", { "react-native": "*" }),
+      addPeerDependencies("use-latest-callback", { react: "*" }),
+      addPeerDependencies("rn-range-slider", {
+        react: "*",
+        "react-native": "*",
+        "prop-types": "*",
+      }),
+      addPeerDependencies("react-native-animatable", {
+        react: "*",
+        "react-native": "*",
+      }),
       // "dmg-builder" is required to build .dmg electron apps on macs,
       // but is not declared as such by app-builder-lib.
       // I'm not adding it as a dependency because if I did,
