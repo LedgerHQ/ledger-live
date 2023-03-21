@@ -80,6 +80,7 @@
     "selectCurrencyEmptyOption" : "No hay activos cripto",
     "selectValidatorNoOption" : "Ningún validador coincide con \"{{accountName}}\"",
     "selectNoResults" : "No se encontraron valores que coincidan con «{{query}}»",
+    "backToLiveApp" : "Volver a {{appName}}",
     "sortBy" : "Ordenar por",
     "save" : "Guardar",
     "lock" : "Bloquear",
@@ -824,7 +825,20 @@
       "delegation" : {
         "title" : "Por si no lo sabías,",
         "description" : "El validador de Ledger pone en participación tus {{asset}} con una comisión del {{commission}}%.",
-        "cta" : "Participar con Ledger"
+        "cta" : "Participar con Ledger",
+        "linkText" : "Más información",
+        "ethereum" : {
+          "lido" : {
+            "title" : "Por si no lo sabías,",
+            "description" : "Pon tus Ethereum en participación con Lido y gana recompensas diarias. Sin periodo de inmovilización. Sin depósito mínimo.",
+            "cta" : "Participar con Lido"
+          },
+          "kiln" : {
+            "title" : "No hagas solo HODL. Haz crecer tus ETH",
+            "description" : "¿Tienes más de 32 ETH? Consigue recompensas pasivas poniendo tu ETH de forma segura en participación con Kiln.",
+            "cta" : "Participar con Kiln"
+          }
+        }
       }
     }
   },
@@ -1399,7 +1413,7 @@
         "label" : "Popular"
       },
       "earn" : {
-        "title" : "Gana",
+        "title" : "Poner en participación",
         "description" : "Haz crecer tus cripto con Ledger"
       }
     }
@@ -5521,6 +5535,10 @@
       "title" : "Error al cargar la imagen desde el archivo.",
       "description" : "Vuelve a intentarlo con otra imagen"
     },
+    "ImageLoadFromNftError" : {
+      "title" : "Error al cargar la imagen del NFT",
+      "description" : "Vuelve a intentarlo con otro NFT"
+    },
     "ImageDownloadError" : {
       "title" : "Error al descargar la imagen",
       "description" : "Vuelve a intentarlo con otra imagen"
@@ -5593,6 +5611,13 @@
       "descriptionWithProductName" : "Primero debes configurar tu {{ productName }}.\nTe guiaremos a lo largo del proceso de configuración.",
       "goToOnboardingButton" : "Configurar mi dispositivo",
       "goToOnboardingButtonWithProductName" : "Configurar mi {{ productName }}"
+    },
+    "EtherscanAPIError" : {
+      "title" : "Se produjo un fallo al recuperar las transacciones",
+      "description" : "Se produjo un error inesperado con los exploradores. Inténtalo de nuevo más tarde"
+    },
+    "GasEstimationError" : {
+      "title" : "Se produjo un fallo en la estimación del gas"
     }
   },
   "cryptoOrg" : {
@@ -5631,7 +5656,13 @@
         "stepLabel" : "Elige una imagen",
         "description" : "Elige una imagen para establecerla como (...)",
         "pickFromNftGallery" : "Seleccionar de mi galería de NFT",
-        "upload" : "Cargar desde mi PC"
+        "myNfts" : "Mis NFTs",
+        "upload" : "Cargar desde mi PC",
+        "chooseNft" : "Elige un NFT",
+        "selectNft" : "Elegir NFT",
+        "previousSelectNft" : "Atrás",
+        "nftEmptyStateTitle" : "Todavía no hay NFTs para mostrar",
+        "nftEmptyStateDescription" : "Empieza agregando NFTs a tu billetera."
       },
       "adjust" : {
         "stepLabel" : "Ajustar imagen",
