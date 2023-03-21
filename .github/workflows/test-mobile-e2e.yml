@@ -41,6 +41,8 @@ jobs:
     outputs:
       status: ${{ steps.detox.outcome }}
     steps:
+      - name: Fail to test Slack report
+        run: exit 1
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
@@ -317,3 +319,63 @@ jobs:
         with:
           name: summary.json
           path: ${{ github.workspace }}/summary.json
+
+  report-on-slack:
+    runs-on: ubuntu-latest
+    needs: [detox-tests-ios]
+    if: failure()
+    steps:
+      - name: format message
+        uses: actions/github-script@v6
+        id: message
+        with:
+          script: |
+            const fs = require("fs");
+            const text = `❌ 🍏 Detox tests failed ❌`;
+            const iOSResult = [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": `❌ iOS Detox tests failed ❌`,
+                  "emoji": true
+                }
+              },
+              {
+                "type": "divider"
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": `😵 Build Failed
+                  `
+                }
+              }
+            ];
+            const infoBlock = [
+              {
+                "type": "divider"
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": `<https://github.com/LedgerHQ/ledger-live/actions/runs/${{ github.run_id }}|Workflow run> for more informations`,
+                }
+              }
+            ];
+            const blocks = [].concat(iOSResult).concat(infoBlock);
+            const result = {
+              text,
+              blocks
+            };
+            fs.writeFileSync(`./payload-slack-content.json`, JSON.stringify(result, null, 2));
+      - name: post to a Slack channel
+        id: slack
+        uses: slackapi/slack-github-action@v1.23.0
+        with:
+          channel-id: "CTMQ0S5SB"
+          payload-file-path: "./payload-slack-content.json"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
