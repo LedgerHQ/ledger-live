@@ -1,5 +1,11 @@
 # @ledgerhq/errors
 
+## 6.12.4-next.0
+
+### Patch Changes
+
+- [#2949](https://github.com/LedgerHQ/ledger-live/pull/2949) [`1d0b2d19eb`](https://github.com/LedgerHQ/ledger-live/commit/1d0b2d19ebc5acd058930b842c6d37f8daf2a5a3) Thanks [@juan-cortes](https://github.com/juan-cortes)! - added new status code to unboarded device
+
 ## 6.12.3
 
 ### Patch Changes
