@@ -29,7 +29,7 @@ import StepDelegation, { StepDelegationFooter } from "./steps/StepDelegation";
 import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
-import logger from "~/logger/logger";
+import logger from "../../../logger";
 
 type OwnProps = {|
   stepId: StepId,
