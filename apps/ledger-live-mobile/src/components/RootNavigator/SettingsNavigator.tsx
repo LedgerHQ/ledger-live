@@ -24,6 +24,7 @@ import DebugFirmwareUpdate from "../../screens/Settings/Debug/Features/FirmwareU
 import DebugGenerators from "../../screens/Settings/Debug/Generators";
 import DebugHttpTransport from "../../screens/Settings/Debug/Connectivity/DebugHttpTransport";
 import DebugInformation from "../../screens/Settings/Debug/Information";
+import DebugInstallSetOfApps from "../../screens/Settings/Debug/Features/InstallSetOfApps";
 import DebugPerformance from "../../screens/Settings/Debug/Performance";
 import DebugLogs from "../../screens/Settings/Debug/Debugging/Logs";
 import DebugLottie from "../../screens/Settings/Debug/Features/Lottie";
@@ -243,6 +244,13 @@ export default function SettingsNavigator() {
         component={DebugFeatureFlags}
         options={{
           title: "Feature Flags",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugInstallSetOfApps}
+        component={DebugInstallSetOfApps}
+        options={{
+          title: "Install set of apps",
         }}
       />
       <Stack.Screen
