@@ -80,6 +80,7 @@
     "selectCurrencyEmptyOption" : "没有加密货币资产",
     "selectValidatorNoOption" : "不存在与 \"{{accountName}}\" 匹配的验证者",
     "selectNoResults" : "未找到与 \"{{query}} \" 匹配的结果",
+    "backToLiveApp" : "返回 {{appName}}",
     "sortBy" : "排序方式",
     "save" : "保存",
     "lock" : "锁定",
@@ -608,13 +609,13 @@
   },
   "stake" : {
     "noFundsModal" : {
-      "title" : "Buy, swap or receive",
-      "text" : "You do not have enough {{coin}} available to stake",
-      "description" : "Not enough funds? Don’t worry, you can securely buy, swap or receive crypto directly in Ledger Live.",
+      "title" : "买入、互换或接收",
+      "text" : "您没有足够的 {{coin}} 可供权益质押",
+      "description" : "资金不足？别担心，您可以直接在 Ledger Live 中买入、互换或接收加密货币。",
       "options" : {
         "buy" : {
           "title" : "买入",
-          "body" : "Buy with trusted  providers"
+          "body" : "通过值得信赖的服务提供商买入"
         },
         "swap" : {
           "title" : "互换",
@@ -623,7 +624,7 @@
         },
         "receive" : {
           "title" : "接收",
-          "body" : "Receive crypto in your wallet"
+          "body" : "在您的钱包中接收加密货币"
         }
       }
     }
@@ -824,7 +825,20 @@
       "delegation" : {
         "title" : "您知道吗……",
         "description" : "使用 Ledger 验证器权益质押 {{asset}}，仅需 {{commission}}% 的佣金。",
-        "cta" : "使用 Ledger 进行权益质押"
+        "cta" : "使用 Ledger 进行权益质押",
+        "linkText" : "了解更多",
+        "ethereum" : {
+          "lido" : {
+            "title" : "您知道吗……",
+            "description" : "使用 Lido 权益质押您的以太币，每天赚取奖励。无锁定期。无最低存款限制。",
+            "cta" : "使用 Lido 权益质押"
+          },
+          "kiln" : {
+            "title" : "请不要仅仅长期持有。增长您的以太币",
+            "description" : "有超过 32 个以太币？不妨使用 Kiln 安全权益质押您的以太币来赚取被动奖励。",
+            "cta" : "使用 Kiln 权益质押"
+          }
+        }
       }
     }
   },
@@ -1399,7 +1413,7 @@
         "label" : "热门"
       },
       "earn" : {
-        "title" : "赚取",
+        "title" : "权益质押",
         "description" : "通过 Ledger 增长加密资产"
       }
     }
@@ -5356,7 +5370,7 @@
       "description" : "必须在 30 秒内予以签署。请重试。"
     },
     "TronNotEnoughEnergy" : {
-      "title" : "能量低于必要值。您可能需要支付高达 50TRX 的费用。"
+      "title" : "能量低于必要值。您可能需要支付高达 50 TRX 的费用。"
     },
     "PairingFailed" : {
       "title" : "配对不成功",
@@ -5521,6 +5535,10 @@
       "title" : "从文件加载图片失败",
       "description" : "请使用另一张图片重试"
     },
+    "ImageLoadFromNftError" : {
+      "title" : "从 NFT 加载图片失败",
+      "description" : "请使用另一个 NFT 重试"
+    },
     "ImageDownloadError" : {
       "title" : "图片下载失败",
       "description" : "请使用另一张图片重试"
@@ -5593,6 +5611,13 @@
       "descriptionWithProductName" : "您需要先设置 {{ productName }}。\n我们将引导您完成设置流程。",
       "goToOnboardingButton" : "设置我的设备",
       "goToOnboardingButtonWithProductName" : "设置我的 {{ productName }}"
+    },
+    "EtherscanAPIError" : {
+      "title" : "未能提取交易",
+      "description" : "浏览器出现意外错误。请重试"
+    },
+    "GasEstimationError" : {
+      "title" : "未能估计 Gas 费用"
     }
   },
   "cryptoOrg" : {
@@ -5631,7 +5656,13 @@
         "stepLabel" : "选择一张图片",
         "description" : "选择要设为 (...) 的图片",
         "pickFromNftGallery" : "从我的 NFT 画廊中选择",
-        "upload" : "从我的计算机上传"
+        "myNfts" : "我的 NFT",
+        "upload" : "从我的计算机上传",
+        "chooseNft" : "选择 NFT",
+        "selectNft" : "选择 NFT",
+        "previousSelectNft" : "返回",
+        "nftEmptyStateTitle" : "暂时没有 NFT 可显示",
+        "nftEmptyStateDescription" : "首先将 NFT 添加到您的钱包"
       },
       "adjust" : {
         "stepLabel" : "调整图片",
