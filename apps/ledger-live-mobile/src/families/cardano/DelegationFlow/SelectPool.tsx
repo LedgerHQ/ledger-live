@@ -1,11 +1,10 @@
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
-import React, { useCallback, useState, useEffect, useMemo, useRef } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native";
+import React, { useCallback } from "react";
+import { FlatList, StyleSheet, View, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
-import type { StakePool, APIGetPoolList } from "@ledgerhq/live-common/families/cardano/api/api-types";
-import { fetchPoolList } from "@ledgerhq/live-common/families/cardano/api/getPools";
+import type { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";
+import { useCardanoFamilyPools } from "@ledgerhq/live-common/families/cardano/react";
 import { TrackScreen } from "../../../analytics";
 import { ScreenName } from "../../../const";
 import { accountScreenSelector } from "../../../reducers/accounts";
@@ -30,58 +29,9 @@ export default function SelectPool({ navigation, route }: Props) {
   invariant(account, "account must be defined");
   invariant(account.type === "Account", "account must be of type Account");
 
-  const [pools, setPools] = useState([]as Array<StakePool>);
+  const { pools, searchQuery, setSearchQuery, onScrollEndReached } =
+    useCardanoFamilyPools(account.currency);
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const searchRef = useRef(searchQuery);
-  searchRef.current = searchQuery;
-
-  const limit = 100;
-  let pageNo = 1;
-  let isPaginationDisabled = useRef(false);
-
-  const loadPage = () => {
-    fetchPoolList(account.currency, searchQuery, pageNo, limit).then((apiRes: APIGetPoolList) => {
-      setPools(currentPools => {
-        return [
-          ...currentPools,
-          ...apiRes.pools,
-        ];
-      });
-    });
-  };
-
-  useEffect(() => {
-    isPaginationDisabled.current = false;
-    pageNo = 1;
-
-    const delayDebounceFn = setTimeout(() => {
-      fetchPoolList(account.currency, searchQuery, pageNo, limit).then((apiRes: APIGetPoolList) => {
-        setPools([
-          ...apiRes.pools,
-        ]);  
-  
-        if (searchQuery && apiRes.pools.length < limit) {
-          isPaginationDisabled.current = true;
-        }
-      });
-    }, searchQuery ? 500 : 0)
-
-    return ()=>clearInterval(delayDebounceFn);
-    
-  }, [searchQuery]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const onScrollEndReached = useCallback(
-    () => {
-      if (isPaginationDisabled.current) return;
-      
-      pageNo++;
-      loadPage();
-    },
-    [pageNo],
-  );
-
-  
   const onItemPress = useCallback(
     (pool: StakePool) => {
       navigation.navigate(ScreenName.CardanoDelegationSummary, {
