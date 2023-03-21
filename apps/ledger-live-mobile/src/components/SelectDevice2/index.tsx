@@ -152,10 +152,10 @@ export default function SelectDevice({
         knownDevice.name !== equivalentScannedDevice.deviceName
       ) {
         dispatch(
-          saveBleDeviceName(
-            knownDevice.id,
-            equivalentScannedDevice?.deviceName,
-          ),
+          saveBleDeviceName({
+            deviceId: knownDevice.id,
+            name: equivalentScannedDevice?.deviceName,
+          }),
         );
       }
     });

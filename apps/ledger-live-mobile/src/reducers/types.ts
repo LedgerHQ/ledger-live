@@ -72,7 +72,7 @@ export type AppState = {
   modalLock: boolean;
   backgroundEvents: Array<FwUpdateBackgroundEvent>;
   isMainNavigatorVisible: boolean;
-  wiredDevice?: DeviceLike;
+  wiredDevice: DeviceLike | null;
 };
 
 // === BLE STATE ===
@@ -164,8 +164,6 @@ export type Pair = {
   to: Currency;
   exchange?: string | null;
 };
-
-// export type SetExchangePairs = (_: Array<Pair>) => any;
 
 export type Theme = "system" | "light" | "dark";
 

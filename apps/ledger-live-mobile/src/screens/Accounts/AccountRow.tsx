@@ -118,6 +118,8 @@ const AccountRow = ({
       navigation,
       navigationParams,
       parentId,
+      sourceScreenName,
+      startNavigationTTITimer,
     ],
   );
 

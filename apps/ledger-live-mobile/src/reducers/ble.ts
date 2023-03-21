@@ -18,9 +18,7 @@ export const INITIAL_STATE = {
 };
 const handlers: ReducerMap<BleState, BlePayload> = {
   [BleActionTypes.BLE_ADD_DEVICE]: (state, action) => {
-    const {
-      payload: { device },
-    } = action as Action<BleAddKnownDevicePayload>;
+    const device = (action as Action<BleAddKnownDevicePayload>).payload;
     return {
       knownDevices: state.knownDevices
         .filter(d => d.id !== device.id)
@@ -29,15 +27,13 @@ const handlers: ReducerMap<BleState, BlePayload> = {
   },
   [BleActionTypes.BLE_REMOVE_DEVICE]: (state, action) => ({
     knownDevices: state.knownDevices.filter(
-      d =>
-        d.id !==
-        (action as Action<BleRemoveKnownDevicePayload>).payload.deviceId,
+      d => d.id !== (action as Action<BleRemoveKnownDevicePayload>).payload,
     ),
   }),
   [BleActionTypes.BLE_REMOVE_DEVICES]: (state, action) => ({
     knownDevices: state.knownDevices.filter(
       d =>
-        !(action as Action<BleRemoveKnownDevicesPayload>).payload.ids.includes(
+        !(action as Action<BleRemoveKnownDevicesPayload>).payload.includes(
           d.id,
         ),
     ),
