@@ -11,6 +11,8 @@ import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { Account } from "@ledgerhq/types-live";
 import { openModal } from "~/renderer/actions/modals";
 import { useDispatch } from "react-redux";
+import { track } from "~/renderer/analytics/segment";
+import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 
 export const StakeBanner: React.FC<{ account: CosmosAccount; parentAccount: Account }> = ({
   account,
