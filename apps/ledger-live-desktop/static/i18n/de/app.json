@@ -80,6 +80,7 @@
     "selectCurrencyEmptyOption" : "Kein Krypto-Wert",
     "selectValidatorNoOption" : "Kein passendes Konto zu \"{{accountName}}\" gefunden",
     "selectNoResults" : "Keine Ergebnisse gefunden zu \"{{query}}\"",
+    "backToLiveApp" : "Zurück zu {{appName}}",
     "sortBy" : "Sortieren nach",
     "save" : "Speichern",
     "lock" : "Sperren",
@@ -824,7 +825,20 @@
       "delegation" : {
         "title" : "Schon gewusst?",
         "description" : "Der Ledger-Validator erledigt das Staking Ihrer {{asset}} zu einer Provision in Höhe von {{commission}} %.",
-        "cta" : "Mit Ledger staken"
+        "cta" : "Mit Ledger staken",
+        "linkText" : "Weitere Informationen",
+        "ethereum" : {
+          "lido" : {
+            "title" : "Schon gewusst?",
+            "description" : "Staken Sie Ihr Ethereum mit Lido ein und verdienen Sie täglich Belohnungen. Keine Sperrfrist. Keine Mindesteinzahlung.",
+            "cta" : "Staking mit Lido"
+          },
+          "kiln" : {
+            "title" : "HODLn Sie nicht nur. Vermehren Sie Ihre ETH.",
+            "description" : "Sie haben mehr als 32 ETH? Verdienen Sie passive Belohnungen, indem Sie Ihre ETH sicher mit Kiln staken.",
+            "cta" : "Staking mit Kiln"
+          }
+        }
       }
     }
   },
@@ -1399,7 +1413,7 @@
         "label" : "beliebt"
       },
       "earn" : {
-        "title" : "Verdienen",
+        "title" : "Staken",
         "description" : "Vermehren Sie Ihre Kryptowährungen mit Ledger"
       }
     }
@@ -5521,6 +5535,10 @@
       "title" : "Das Laden des Bildes aus einer Datei ist fehlgeschlagen",
       "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
     },
+    "ImageLoadFromNftError" : {
+      "title" : "Das Bild konnte nicht aus dem NFT geladen werden",
+      "description" : "Bitte versuchen Sie es erneut mit einem anderen NFT"
+    },
     "ImageDownloadError" : {
       "title" : "Bilddownload fehlgeschlagen",
       "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
@@ -5593,6 +5611,13 @@
       "descriptionWithProductName" : "Sie müssen Ihr {{ productName }} zuerst einrichten.\nWir führen Sie durch den Einrichtungsprozess.",
       "goToOnboardingButton" : "Mein Gerät einrichten",
       "goToOnboardingButtonWithProductName" : "Mein {{ productName }} einrichten"
+    },
+    "EtherscanAPIError" : {
+      "title" : "Abruf der Transaktionen fehlgeschlagen",
+      "description" : "Bei den Explorern ist ein unerwarteter Fehler aufgetreten. Versuchen Sie es bitte später noch einmal"
+    },
+    "GasEstimationError" : {
+      "title" : "Gasgebührenschätzung fehlgeschlagen"
     }
   },
   "cryptoOrg" : {
@@ -5631,7 +5656,13 @@
         "stepLabel" : "Wählen Sie ein Bild aus",
         "description" : "Wählen Sie ein Bild, das als (...) festgelegt werden soll",
         "pickFromNftGallery" : "Aus meiner NFT-Galerie auswählen",
-        "upload" : "Von meinem Computer hochladen"
+        "myNfts" : "Meine NFTs",
+        "upload" : "Von meinem Computer hochladen",
+        "chooseNft" : "Wählen Sie ein NFT",
+        "selectNft" : "NFT wählen",
+        "previousSelectNft" : "Zurück",
+        "nftEmptyStateTitle" : "Es können noch keine NFTs angezeigt werden",
+        "nftEmptyStateDescription" : "Fügen Sie NFTs zu Ihrer Wallet hinzu, um loszulegen."
       },
       "adjust" : {
         "stepLabel" : "Bild anpassen",
