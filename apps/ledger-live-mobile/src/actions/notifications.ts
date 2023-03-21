@@ -1,5 +1,4 @@
 import { createAction } from "redux-actions";
-import type { EventTrigger, DataOfUser } from "../logic/notifications";
 import type {
   NotificationsSetCurrentRouteNamePayload,
   NotificationsSetDataOfUserPayload,
@@ -10,60 +9,27 @@ import type {
 } from "./types";
 import { NotificationsActionTypes } from "./types";
 
-const setNotificationsModalOpenAction =
+export const setNotificationsModalOpen =
   createAction<NotificationsSetModalOpenPayload>(
     NotificationsActionTypes.NOTIFICATIONS_SET_MODAL_OPEN,
   );
-export const setNotificationsModalOpen = (
-  isPushNotificationsModalOpen: boolean,
-) =>
-  setNotificationsModalOpenAction({
-    isPushNotificationsModalOpen,
-  });
-
-const setNotificationsModalLockedAction =
+export const setNotificationsModalLocked =
   createAction<NotificationsSetModalLockedPayload>(
     NotificationsActionTypes.NOTIFICATIONS_SET_MODAL_LOCKED,
   );
-export const setNotificationsModalLocked = (
-  isPushNotificationsModalLocked: boolean,
-) =>
-  setNotificationsModalLockedAction({
-    isPushNotificationsModalLocked,
-  });
-
-const setNotificationsModalTypeAction =
+export const setNotificationsModalType =
   createAction<NotificationsSetModalTypePayload>(
     NotificationsActionTypes.NOTIFICATIONS_SET_MODAL_TYPE,
   );
-export const setNotificationsModalType = (notificationsModalType: string) =>
-  setNotificationsModalTypeAction({
-    notificationsModalType,
-  });
-
-const setNotificationsCurrentRouteNameAction =
+export const setNotificationsCurrentRouteName =
   createAction<NotificationsSetCurrentRouteNamePayload>(
     NotificationsActionTypes.NOTIFICATIONS_SET_CURRENT_ROUTE_NAME,
   );
-export const setNotificationsCurrentRouteName = (currentRouteName?: string) =>
-  setNotificationsCurrentRouteNameAction({
-    currentRouteName,
-  });
-
-const setNotificationsEventTriggeredAction =
+export const setNotificationsEventTriggered =
   createAction<NotificationsSetEventTriggeredPayload>(
     NotificationsActionTypes.NOTIFICATIONS_SET_EVENT_TRIGGERED,
   );
-export const setNotificationsEventTriggered = (eventTriggered?: EventTrigger) =>
-  setNotificationsEventTriggeredAction({
-    eventTriggered,
-  });
-
-const setNotificationsDataOfUserAction =
+export const setNotificationsDataOfUser =
   createAction<NotificationsSetDataOfUserPayload>(
     NotificationsActionTypes.NOTIFICATIONS_SET_DATA_OF_USER,
   );
-export const setNotificationsDataOfUser = (dataOfUser?: DataOfUser) =>
-  setNotificationsDataOfUserAction({
-    dataOfUser,
-  });

@@ -65,7 +65,7 @@ const WebViewScreen = ({
   }, [uri, setLoading]);
 
   useEffect(() => {
-    if (!enableNavigationOverride) return;
+    if (!enableNavigationOverride) return undefined;
     const unsubscribe = navigation.addListener("beforeRemove", e => {
       if (canGoBack) return;
       // Prevent default behavior of leaving the screen
@@ -73,9 +73,8 @@ const WebViewScreen = ({
       ref.current?.goBack();
     });
 
-    // eslint-disable-next-line consistent-return
     return unsubscribe;
-  }, [canGoBack, navigation]);
+  }, [canGoBack, enableNavigationOverride, navigation]);
 
   const handleOnLoad = useCallback(() => {
     setLoading(false);

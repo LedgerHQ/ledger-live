@@ -7,6 +7,7 @@ import { map } from "rxjs/operators";
 import useIsMounted from "@ledgerhq/live-common/hooks/useIsMounted";
 import { setWiredDevice } from "../actions/appstate";
 import { DeviceLike } from "../reducers/types";
+import { AppStateSetWiredDevicePayload } from "../actions/types";
 
 /**
  * Allows LLM to be aware of USB OTG connections on Android as they happen.
@@ -47,7 +48,7 @@ export const useListenToHidDevices = () => {
           ),
         )
         .subscribe({
-          next: (wiredDevice: DeviceLike | null) => {
+          next: (wiredDevice: AppStateSetWiredDevicePayload) => {
             dispatch(setWiredDevice(wiredDevice));
           },
           error: () => {
