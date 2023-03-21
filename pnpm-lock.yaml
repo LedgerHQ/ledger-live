@@ -1612,13 +1612,13 @@ importers:
   libs/ledgerjs/packages/cryptoassets:
     specifiers:
       '@ledgerhq/types-cryptoassets': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       invariant: '2'
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -1626,29 +1626,29 @@ importers:
       invariant: 2.2.4
     devDependencies:
       '@ledgerhq/types-cryptoassets': link:../types-cryptoassets
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/devices:
     specifiers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       '@types/semver': ^7.3.9
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
+      rimraf: ^4.1.2
       rxjs: '6'
       semver: ^7.3.5
-      source-map-support: '*'
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -1658,37 +1658,37 @@ importers:
       rxjs: 6.6.7
       semver: 7.3.7
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       '@types/semver': 7.3.9
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/errors:
     specifiers:
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-app-algorand:
@@ -1696,15 +1696,15 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/hw-transport-mocker': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       bip32-path: ^0.4.2
       documentation: 13.2.4
       hi-base32: ^0.5.1
       jest: ^28.1.1
       js-sha512: ^0.8.0
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       tweetnacl: ^1.0.3
@@ -1718,14 +1718,14 @@ importers:
       tweetnacl: 1.0.3
     devDependencies:
       '@ledgerhq/hw-transport-mocker': link:../hw-transport-mocker
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-app-btc:
@@ -1734,8 +1734,8 @@ importers:
       '@ledgerhq/hw-transport-mocker': workspace:^
       '@ledgerhq/hw-transport-node-speculos': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       axios: ^0.25.0
       bip32-path: ^0.4.2
       bitcoinjs-lib: ^5.2.0
@@ -1744,11 +1744,11 @@ importers:
       documentation: 13.2.4
       invariant: ^2.2.4
       jest: ^28.1.1
-      rimraf: '*'
+      rimraf: ^4.1.2
       ripemd160: '2'
       semver: ^7.3.5
       sha.js: '2'
-      source-map-support: '*'
+      source-map-support: ^0.5.21
       tiny-secp256k1: 1.1.6
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
@@ -1770,15 +1770,15 @@ importers:
     devDependencies:
       '@ledgerhq/hw-transport-mocker': link:../hw-transport-mocker
       '@ledgerhq/hw-transport-node-speculos': link:../hw-transport-node-speculos
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       axios: 0.25.0
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-app-cosmos:
@@ -1786,13 +1786,13 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/hw-transport-mocker': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       bip32-path: ^0.4.2
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -1802,14 +1802,14 @@ importers:
       bip32-path: 0.4.2
     devDependencies:
       '@ledgerhq/hw-transport-mocker': link:../hw-transport-mocker
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-app-eth:
@@ -1821,16 +1821,16 @@ importers:
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/hw-transport-mocker': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       axios: ^0.26.1
       bignumber.js: ^9.1.0
       crypto-js: ^4.1.1
       documentation: 13.2.4
       ethers: ^5.6.9
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -1846,15 +1846,15 @@ importers:
       bignumber.js: 9.1.0
       crypto-js: 4.1.1
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
       ethers: 5.7.0
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-app-helium:
@@ -1867,16 +1867,16 @@ importers:
       '@ledgerhq/hw-transport-mocker': workspace:^
       '@ledgerhq/hw-transport-node-speculos': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       axios: ^0.26.1
       bignumber.js: ^9.1.0
       bip32-path: ^0.4.2
       documentation: 13.2.4
       jest: ^28.1.1
       long: ^5.2.0
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -1893,15 +1893,15 @@ importers:
     devDependencies:
       '@ledgerhq/hw-transport-mocker': link:../hw-transport-mocker
       '@ledgerhq/hw-transport-node-speculos': link:../hw-transport-node-speculos
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       axios: 0.26.1
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-app-near:
@@ -1909,13 +1909,13 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/hw-transport-mocker': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       jest: ^28.1.1
       near-api-js: ^0.44.2
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -1925,14 +1925,14 @@ importers:
       near-api-js: 0.44.2
     devDependencies:
       '@ledgerhq/hw-transport-mocker': link:../hw-transport-mocker
-      '@types/jest': 28.1.8
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.8_l4uz7kl2eeclic7mumfbeqbwgi
-      ts-node: 10.7.0_c3itm6ihhon32dsg3xjgfmpk7a
+      ts-node: 10.7.0_aek4ofadwobuczfhqte56cpk4y
       typescript: 4.9.3
 
   libs/ledgerjs/packages/hw-app-polkadot:
@@ -1940,13 +1940,13 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/hw-transport-mocker': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       bip32-path: ^0.4.2
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -1956,14 +1956,14 @@ importers:
       bip32-path: 0.4.2
     devDependencies:
       '@ledgerhq/hw-transport-mocker': link:../hw-transport-mocker
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-app-solana:
@@ -1973,14 +1973,14 @@ importers:
       '@ledgerhq/hw-transport-mocker': workspace:^
       '@ledgerhq/hw-transport-node-speculos': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       axios: ^0.26.1
       bip32-path: ^0.4.2
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -1992,29 +1992,29 @@ importers:
     devDependencies:
       '@ledgerhq/hw-transport-mocker': link:../hw-transport-mocker
       '@ledgerhq/hw-transport-node-speculos': link:../hw-transport-node-speculos
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       axios: 0.26.1
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-app-str:
     specifiers:
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/hw-transport-mocker': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       base32.js: ^0.1.0
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
+      rimraf: ^4.1.2
       sha.js: ^2.3.6
-      source-map-support: '*'
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       tweetnacl: ^1.0.3
@@ -2026,29 +2026,29 @@ importers:
       tweetnacl: 1.0.3
     devDependencies:
       '@ledgerhq/hw-transport-mocker': link:../hw-transport-mocker
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-app-tezos:
     specifiers:
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/hw-transport-mocker': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       blake2b: ^2.1.4
       bs58check: ^2.1.2
       documentation: 13.2.4
       invariant: ^2.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2059,14 +2059,14 @@ importers:
       invariant: 2.2.4
     devDependencies:
       '@ledgerhq/hw-transport-mocker': link:../hw-transport-mocker
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-app-trx:
@@ -2074,12 +2074,12 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/hw-transport-mocker': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2088,27 +2088,27 @@ importers:
       '@ledgerhq/hw-transport': link:../hw-transport
     devDependencies:
       '@ledgerhq/hw-transport-mocker': link:../hw-transport-mocker
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-app-xrp:
     specifiers:
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/hw-transport-mocker': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       bip32-path: 0.4.2
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2117,27 +2117,27 @@ importers:
       bip32-path: 0.4.2
     devDependencies:
       '@ledgerhq/hw-transport-mocker': link:../hw-transport-mocker
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-transport:
     specifiers:
       '@ledgerhq/devices': workspace:^
       '@ledgerhq/errors': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       events: ^3.3.0
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2146,14 +2146,14 @@ importers:
       '@ledgerhq/errors': link:../errors
       events: 3.3.0
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-transport-http:
@@ -2161,13 +2161,13 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       axios: ^0.26.1
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2179,26 +2179,26 @@ importers:
       axios: 0.26.1
       ws: 7.5.7
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-transport-mocker:
     specifiers:
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2206,14 +2206,14 @@ importers:
       '@ledgerhq/hw-transport': link:../hw-transport
       '@ledgerhq/logs': link:../logs
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-transport-node-ble:
@@ -2223,14 +2223,14 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       invariant: ^2.2.4
       jest: ^28.1.1
-      rimraf: '*'
+      rimraf: ^4.1.2
       rxjs: '6'
-      source-map-support: '*'
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2243,14 +2243,14 @@ importers:
       invariant: 2.2.4
       rxjs: 6.6.7
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-transport-node-hid:
@@ -2260,14 +2260,14 @@ importers:
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/hw-transport-node-hid-noevents': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       jest: ^28.1.1
       lodash: ^4.17.21
       node-hid: ^2.1.2
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2282,14 +2282,14 @@ importers:
       node-hid: 2.1.2
       usb: 1.9.2
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-transport-node-hid-noevents:
@@ -2298,14 +2298,14 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       '@types/node-hid': ^1.3.1
       documentation: 13.2.4
       jest: ^28.1.1
       node-hid: ^2.1.2
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2316,15 +2316,15 @@ importers:
       '@ledgerhq/logs': link:../logs
       node-hid: 2.1.2
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       '@types/node-hid': 1.3.1
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-transport-node-hid-singleton:
@@ -2334,14 +2334,14 @@ importers:
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/hw-transport-node-hid-noevents': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       jest: ^28.1.1
       lodash: ^4.17.21
       node-hid: ^2.1.2
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2356,14 +2356,14 @@ importers:
       node-hid: 2.1.2
       usb: 2.5.1
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-transport-node-speculos:
@@ -2371,13 +2371,13 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
+      rimraf: ^4.1.2
       rxjs: '6'
-      source-map-support: '*'
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2387,14 +2387,14 @@ importers:
       '@ledgerhq/logs': link:../logs
       rxjs: 6.6.7
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-transport-node-speculos-http:
@@ -2402,13 +2402,13 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       axios: ^0.26.1
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2418,14 +2418,14 @@ importers:
       '@ledgerhq/logs': link:../logs
       axios: 0.26.1
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-transport-web-ble:
@@ -2434,14 +2434,14 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       '@types/web-bluetooth': ^0.0.12
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
+      rimraf: ^4.1.2
       rxjs: '6'
-      source-map-support: '*'
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2452,15 +2452,15 @@ importers:
       '@ledgerhq/logs': link:../logs
       rxjs: 6.6.7
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       '@types/web-bluetooth': 0.0.12
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-transport-webhid:
@@ -2469,13 +2469,13 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       '@types/w3c-web-hid': ^1.0.2
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2485,15 +2485,15 @@ importers:
       '@ledgerhq/hw-transport': link:../hw-transport
       '@ledgerhq/logs': link:../logs
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       '@types/w3c-web-hid': 1.0.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/hw-transport-webusb:
@@ -2502,13 +2502,13 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       '@types/w3c-web-usb': ^1.0.5
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2518,37 +2518,37 @@ importers:
       '@ledgerhq/hw-transport': link:../hw-transport
       '@ledgerhq/logs': link:../logs
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       '@types/w3c-web-usb': 1.0.6
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/logs:
     specifiers:
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/react-native-hid:
@@ -2557,14 +2557,14 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       '@types/react-native': ^0.66.24
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
+      rimraf: ^4.1.2
       rxjs: '6'
-      source-map-support: '*'
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2576,15 +2576,15 @@ importers:
       '@ledgerhq/logs': link:../logs
       rxjs: 6.6.7
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       '@types/react-native': 0.66.24
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
       yarn-add-no-save: 1.0.3
 
@@ -2594,15 +2594,15 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/logs': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       invariant: ^2.2.4
       jest: ^28.1.1
       react-native-ble-plx: 2.0.3
-      rimraf: '*'
+      rimraf: ^4.1.2
       rxjs: '6'
-      source-map-support: '*'
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2617,26 +2617,26 @@ importers:
       rxjs: 6.6.7
       uuid: 3.4.0
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/swift-bridge-hw-app-eth:
     specifiers:
       '@ledgerhq/hw-app-eth': workspace:^
       '@ledgerhq/swift-bridge-hw-transport-ble': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2644,26 +2644,26 @@ importers:
       '@ledgerhq/hw-app-eth': link:../hw-app-eth
       '@ledgerhq/swift-bridge-hw-transport-ble': link:../swift-bridge-hw-transport-ble
     devDependencies:
-      '@types/jest': 27.5.1
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_5gljhujmafmfys272awzdklxia
+      jest: 28.1.3_d2dllaz5dte7avnjm55wl7fmsu
       rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.8_mgg23zyyvjoe75wbzvxzqqpmne
-      ts-node: 10.9.1_c7x7xisxsab3cereq3ok2kgue4
+      ts-node: 10.9.1_ox4bw2nfeaywsll3jxp22xcahy
       typescript: 4.9.5
 
   libs/ledgerjs/packages/swift-bridge-hw-app-solana:
     specifiers:
       '@ledgerhq/hw-app-solana': workspace:^
       '@ledgerhq/swift-bridge-hw-transport-ble': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2671,97 +2671,97 @@ importers:
       '@ledgerhq/hw-app-solana': link:../hw-app-solana
       '@ledgerhq/swift-bridge-hw-transport-ble': link:../swift-bridge-hw-transport-ble
     devDependencies:
-      '@types/jest': 27.5.1
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_5gljhujmafmfys272awzdklxia
+      jest: 28.1.3_d2dllaz5dte7avnjm55wl7fmsu
       rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.8_mgg23zyyvjoe75wbzvxzqqpmne
-      ts-node: 10.9.1_c7x7xisxsab3cereq3ok2kgue4
+      ts-node: 10.9.1_ox4bw2nfeaywsll3jxp22xcahy
       typescript: 4.9.5
 
   libs/ledgerjs/packages/swift-bridge-hw-transport-ble:
     specifiers:
       '@ledgerhq/hw-transport': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
     dependencies:
       '@ledgerhq/hw-transport': link:../hw-transport
     devDependencies:
-      '@types/jest': 27.5.1
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_5gljhujmafmfys272awzdklxia
+      jest: 28.1.3_d2dllaz5dte7avnjm55wl7fmsu
       rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.8_mgg23zyyvjoe75wbzvxzqqpmne
-      ts-node: 10.9.1_c7x7xisxsab3cereq3ok2kgue4
+      ts-node: 10.9.1_ox4bw2nfeaywsll3jxp22xcahy
       typescript: 4.9.5
 
   libs/ledgerjs/packages/types-cryptoassets:
     specifiers:
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/types-devices:
     specifiers:
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
-      source-map-support: '*'
+      rimraf: ^4.1.2
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
     devDependencies:
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ledgerjs/packages/types-live:
     specifiers:
       '@ledgerhq/types-cryptoassets': workspace:^
       '@ledgerhq/types-devices': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
+      '@types/jest': ^29.5.0
+      '@types/node': ^18.15.3
       bignumber.js: ^9.1.0
       documentation: 13.2.4
       jest: ^28.1.1
-      rimraf: '*'
+      rimraf: ^4.1.2
       rxjs: '6'
-      source-map-support: '*'
+      source-map-support: ^0.5.21
       ts-jest: ^28.0.5
       ts-node: ^10.4.0
       typescript: ^4
@@ -2771,14 +2771,14 @@ importers:
     devDependencies:
       '@ledgerhq/types-cryptoassets': link:../types-cryptoassets
       '@ledgerhq/types-devices': link:../types-devices
-      '@types/jest': 27.5.0
-      '@types/node': 17.0.32
+      '@types/jest': 29.5.0
+      '@types/node': 18.15.3
       documentation: 13.2.4
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
-      rimraf: 3.0.2
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
+      rimraf: 4.1.2
       source-map-support: 0.5.21
       ts-jest: 28.0.7_5ohzrmm2xby2kpbdtr5cjigoti
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi
       typescript: 4.6.4
 
   libs/ui:
@@ -2835,7 +2835,7 @@ importers:
       camelcase: 6.3.0
       esbuild: 0.13.15
       glob: 7.2.0
-      react-native-svg: 12.3.0_ondxtwf5lqq5g76dzmsmwamaca
+      react-native-svg: 12.3.0_react@17.0.2
       rimraf: 4.1.2
       tiny-glob: 0.2.9
       typescript: 4.9.3
@@ -3777,10 +3777,6 @@ packages:
     dependencies:
       '@babel/highlight': 7.18.6
 
-  /@babel/compat-data/7.17.10:
-    resolution: {integrity: sha512-GZt/TCsG70Ms19gfZO1tM4CVnXsPgEPBCpJu+Qz3L0LUDsY5nZqFZglIoPC1kIYOtNBZlrnFT+klg12vFGZXrw==}
-    engines: {node: '>=6.9.0'}
-
   /@babel/compat-data/7.20.14:
     resolution: {integrity: sha512-0YpKHD6ImkWMEINCyDAD0HLLUH/lPCefG8ld9it8DJB2wnApraKuhgYTvTY1z7UFIfBTGy5LwncZ+5HWWGbhFw==}
     engines: {node: '>=6.9.0'}
@@ -3969,41 +3965,6 @@ packages:
       browserslist: 4.21.3
       semver: 6.3.0
 
-  /@babel/helper-compilation-targets/7.17.10_@babel+core@7.20.12:
-    resolution: {integrity: sha512-gh3RxjWbauw/dFiU/7whjd0qN9K6nPJMqe6+Er7rOavFh0CQUSwhAE3IcTho2rywPJFxej6TUUHDkWcYI6gGqQ==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0
-    dependencies:
-      '@babel/compat-data': 7.20.14
-      '@babel/core': 7.20.12
-      '@babel/helper-validator-option': 7.18.6
-      browserslist: 4.21.3
-      semver: 6.3.0
-
-  /@babel/helper-compilation-targets/7.18.9:
-    resolution: {integrity: sha512-tzLCyVmqUiFlcFoAPLA/gL9TeYrF61VLNtb+hvkuVaB5SUjW7jcfrglBIX1vUIoT7CLP3bBlIMeyEsIl2eFQNg==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0
-    dependencies:
-      '@babel/compat-data': 7.20.14
-      '@babel/helper-validator-option': 7.18.6
-      browserslist: 4.21.3
-      semver: 6.3.0
-
-  /@babel/helper-compilation-targets/7.18.9_@babel+core@7.9.0:
-    resolution: {integrity: sha512-tzLCyVmqUiFlcFoAPLA/gL9TeYrF61VLNtb+hvkuVaB5SUjW7jcfrglBIX1vUIoT7CLP3bBlIMeyEsIl2eFQNg==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0
-    dependencies:
-      '@babel/compat-data': 7.20.14
-      '@babel/core': 7.9.0
-      '@babel/helper-validator-option': 7.18.6
-      browserslist: 4.21.3
-      semver: 6.3.0
-
   /@babel/helper-compilation-targets/7.20.7:
     resolution: {integrity: sha512-4tGORmfQcrc+bvrjb5y3dG9Mx1IOZjsHqQVUz7XCNHO+iTmqxWnVg3KRygjGmpRLJGdQSKuvFinbIb0CnZwHAQ==}
     engines: {node: '>=6.9.0'}
@@ -4063,7 +4024,7 @@ packages:
     dependencies:
       '@babel/helper-annotate-as-pure': 7.18.6
       '@babel/helper-environment-visitor': 7.18.9
-      '@babel/helper-function-name': 7.18.9
+      '@babel/helper-function-name': 7.19.0
       '@babel/helper-member-expression-to-functions': 7.17.7
       '@babel/helper-optimise-call-expression': 7.16.7
       '@babel/helper-replace-supers': 7.16.7
@@ -4114,7 +4075,7 @@ packages:
       '@babel/core': 7.9.0
       '@babel/helper-annotate-as-pure': 7.18.6
       '@babel/helper-environment-visitor': 7.18.9
-      '@babel/helper-function-name': 7.18.9
+      '@babel/helper-function-name': 7.19.0
       '@babel/helper-member-expression-to-functions': 7.17.7
       '@babel/helper-optimise-call-expression': 7.16.7
       '@babel/helper-replace-supers': 7.16.7
@@ -4241,13 +4202,6 @@ packages:
 
   /@babel/helper-function-name/7.17.9:
     resolution: {integrity: sha512-7cRisGlVtiVqZ0MW0/yFB4atgpGLWEHUVYnb448hZK4x+vih0YO5UoS11XIYtZYqHd0dIPMdUSv8q5K4LdMnIg==}
-    engines: {node: '>=6.9.0'}
-    dependencies:
-      '@babel/template': 7.20.7
-      '@babel/types': 7.20.7
-
-  /@babel/helper-function-name/7.18.9:
-    resolution: {integrity: sha512-fJgWlZt7nxGksJS9a0XdSaI4XvpExnNIgRP+rVefWh5U7BL8pPuir6SJUmFKRfjWQ51OtWSzwOxhaH/EBWWc0A==}
     engines: {node: '>=6.9.0'}
     dependencies:
       '@babel/template': 7.20.7
@@ -4407,10 +4361,6 @@ packages:
     resolution: {integrity: sha512-nHtDoQcuqFmwYNYPz3Rah5ph2p8PFeFCsZk9A/48dPc/rGocJ5J3hAAZ7pb76VWX3fZKu+uEr/FhH5jLx7umrw==}
     engines: {node: '>=6.9.0'}
 
-  /@babel/helper-validator-identifier/7.18.6:
-    resolution: {integrity: sha512-MmetCkz9ej86nJQV+sFCxoGGrUbU3q02kgLciwkrt9QqEB7cP39oKEY0PakknEO0Gu20SskMRi+AYZ3b1TpN9g==}
-    engines: {node: '>=6.9.0'}
-
   /@babel/helper-validator-identifier/7.19.1:
     resolution: {integrity: sha512-awrNfaMtnHUr653GgGEs++LlAvW6w+DcPrOliSMXWCKo597CwL5Acf/wWdNkf/tfEQE3mjkeD1YOVZOUV/od1w==}
     engines: {node: '>=6.9.0'}
@@ -4516,7 +4466,7 @@ packages:
       '@babel/core': ^7.0.0
     dependencies:
       '@babel/core': 7.20.12
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-bugfix-v8-spread-parameters-in-optional-chaining/7.16.7_@babel+core@7.17.10:
     resolution: {integrity: sha512-di8vUHRdf+4aJ7ltXhaDbPoszdkh59AQtJM5soLsuHpQJdFQZOA4uGj0V2u/CZ8bJ/u8ULDL5yq6FO/bCXnKHw==}
@@ -4536,7 +4486,7 @@ packages:
       '@babel/core': ^7.13.0
     dependencies:
       '@babel/core': 7.20.12
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
       '@babel/helper-skip-transparent-expression-wrappers': 7.16.0
       '@babel/plugin-proposal-optional-chaining': 7.16.7_@babel+core@7.20.12
 
@@ -4560,7 +4510,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
       '@babel/helper-remap-async-to-generator': 7.16.8
       '@babel/plugin-syntax-async-generators': 7.8.4_@babel+core@7.20.12
     transitivePeerDependencies:
@@ -4573,7 +4523,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
       '@babel/helper-remap-async-to-generator': 7.16.8
       '@babel/plugin-syntax-async-generators': 7.8.4_@babel+core@7.9.0
     transitivePeerDependencies:
@@ -4586,7 +4536,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/helper-create-class-features-plugin': 7.17.9
-      '@babel/helper-plugin-utils': 7.16.7
+      '@babel/helper-plugin-utils': 7.20.2
     transitivePeerDependencies:
       - supports-color
 
@@ -4646,7 +4596,7 @@ packages:
     dependencies:
       '@babel/core': 7.20.12
       '@babel/helper-create-class-features-plugin': 7.17.9_@babel+core@7.20.12
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
       '@babel/plugin-syntax-class-static-block': 7.14.5_@babel+core@7.20.12
     transitivePeerDependencies:
       - supports-color
@@ -4712,7 +4662,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
       '@babel/plugin-syntax-dynamic-import': 7.8.3_@babel+core@7.20.12
 
   /@babel/plugin-proposal-dynamic-import/7.16.7_@babel+core@7.9.0:
@@ -4722,7 +4672,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
       '@babel/plugin-syntax-dynamic-import': 7.8.3_@babel+core@7.9.0
 
   /@babel/plugin-proposal-export-default-from/7.16.7:
@@ -4765,16 +4715,6 @@ packages:
       '@babel/plugin-syntax-export-namespace-from': 7.8.3_@babel+core@7.17.10
     dev: true
 
-  /@babel/plugin-proposal-export-namespace-from/7.16.7_@babel+core@7.20.12:
-    resolution: {integrity: sha512-ZxdtqDXLRGBL64ocZcs7ovt71L3jhC1RGSyR996svrCi3PYqHNkb3SwPJCs8RIzD86s+WPpt2S73+EHCGO+NUA==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/core': 7.20.12
-      '@babel/helper-plugin-utils': 7.16.7
-      '@babel/plugin-syntax-export-namespace-from': 7.8.3_@babel+core@7.20.12
-
   /@babel/plugin-proposal-export-namespace-from/7.18.9_@babel+core@7.17.10:
     resolution: {integrity: sha512-k1NtHyOMvlDDFeb9G5PhUXuGj8m/wiwojgQVEhJ/fsVsMCpLyOP4h0uGEjYJKrRI+EVPlb5Jk+Gt9P97lOGwtA==}
     engines: {node: '>=6.9.0'}
@@ -4784,6 +4724,16 @@ packages:
       '@babel/core': 7.17.10
       '@babel/helper-plugin-utils': 7.18.9
       '@babel/plugin-syntax-export-namespace-from': 7.8.3_@babel+core@7.17.10
+
+  /@babel/plugin-proposal-export-namespace-from/7.18.9_@babel+core@7.20.12:
+    resolution: {integrity: sha512-k1NtHyOMvlDDFeb9G5PhUXuGj8m/wiwojgQVEhJ/fsVsMCpLyOP4h0uGEjYJKrRI+EVPlb5Jk+Gt9P97lOGwtA==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    dependencies:
+      '@babel/core': 7.20.12
+      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/plugin-syntax-export-namespace-from': 7.8.3_@babel+core@7.20.12
 
   /@babel/plugin-proposal-json-strings/7.16.7_@babel+core@7.17.10:
     resolution: {integrity: sha512-lNZ3EEggsGY78JavgbHsK9u5P3pQaW7k4axlgFLYkMd7UBsiNahCITShLjNQschPyjtO6dADrL24757IdhBrsQ==}
@@ -4802,7 +4752,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
       '@babel/plugin-syntax-json-strings': 7.8.3_@babel+core@7.20.12
 
   /@babel/plugin-proposal-json-strings/7.16.7_@babel+core@7.9.0:
@@ -4812,7 +4762,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
       '@babel/plugin-syntax-json-strings': 7.8.3_@babel+core@7.9.0
 
   /@babel/plugin-proposal-logical-assignment-operators/7.16.7_@babel+core@7.17.10:
@@ -4832,7 +4782,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
       '@babel/plugin-syntax-logical-assignment-operators': 7.10.4_@babel+core@7.20.12
 
   /@babel/plugin-proposal-nullish-coalescing-operator/7.16.7:
@@ -4841,7 +4791,7 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
       '@babel/plugin-syntax-nullish-coalescing-operator': 7.8.3
 
   /@babel/plugin-proposal-nullish-coalescing-operator/7.16.7_@babel+core@7.17.10:
@@ -4871,7 +4821,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
       '@babel/plugin-syntax-nullish-coalescing-operator': 7.8.3_@babel+core@7.9.0
 
   /@babel/plugin-proposal-nullish-coalescing-operator/7.8.3_@babel+core@7.9.0:
@@ -4900,7 +4850,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
       '@babel/plugin-syntax-numeric-separator': 7.10.4_@babel+core@7.20.12
 
   /@babel/plugin-proposal-numeric-separator/7.16.7_@babel+core@7.9.0:
@@ -4910,7 +4860,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
       '@babel/plugin-syntax-numeric-separator': 7.10.4_@babel+core@7.9.0
 
   /@babel/plugin-proposal-numeric-separator/7.8.3_@babel+core@7.9.0:
@@ -4939,9 +4889,9 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
-      '@babel/compat-data': 7.17.10
-      '@babel/helper-compilation-targets': 7.18.9
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/compat-data': 7.20.14
+      '@babel/helper-compilation-targets': 7.20.7
+      '@babel/helper-plugin-utils': 7.20.2
       '@babel/plugin-syntax-object-rest-spread': 7.8.3
       '@babel/plugin-transform-parameters': 7.16.7
 
@@ -4977,10 +4927,10 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
-      '@babel/compat-data': 7.17.10
+      '@babel/compat-data': 7.20.14
       '@babel/core': 7.9.0
-      '@babel/helper-compilation-targets': 7.18.9_@babel+core@7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-compilation-targets': 7.20.7_@babel+core@7.9.0
+      '@babel/helper-plugin-utils': 7.20.2
       '@babel/plugin-syntax-object-rest-spread': 7.8.3_@babel+core@7.9.0
       '@babel/plugin-transform-parameters': 7.16.7_@babel+core@7.9.0
 
@@ -4990,7 +4940,7 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
       '@babel/plugin-syntax-optional-catch-binding': 7.8.3
 
   /@babel/plugin-proposal-optional-catch-binding/7.16.7_@babel+core@7.17.10:
@@ -5020,7 +4970,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
       '@babel/plugin-syntax-optional-catch-binding': 7.8.3_@babel+core@7.9.0
 
   /@babel/plugin-proposal-optional-chaining/7.16.7:
@@ -5029,7 +4979,7 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
       '@babel/helper-skip-transparent-expression-wrappers': 7.16.0
       '@babel/plugin-syntax-optional-chaining': 7.8.3
 
@@ -5062,7 +5012,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
       '@babel/helper-skip-transparent-expression-wrappers': 7.16.0
       '@babel/plugin-syntax-optional-chaining': 7.8.3_@babel+core@7.9.0
 
@@ -5095,7 +5045,7 @@ packages:
     dependencies:
       '@babel/core': 7.20.12
       '@babel/helper-create-class-features-plugin': 7.17.9_@babel+core@7.20.12
-      '@babel/helper-plugin-utils': 7.16.7
+      '@babel/helper-plugin-utils': 7.20.2
     transitivePeerDependencies:
       - supports-color
 
@@ -5120,9 +5070,9 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
-      '@babel/helper-annotate-as-pure': 7.16.7
+      '@babel/helper-annotate-as-pure': 7.18.6
       '@babel/helper-create-class-features-plugin': 7.17.9_@babel+core@7.20.12
-      '@babel/helper-plugin-utils': 7.16.7
+      '@babel/helper-plugin-utils': 7.20.2
       '@babel/plugin-syntax-private-property-in-object': 7.14.5_@babel+core@7.20.12
     transitivePeerDependencies:
       - supports-color
@@ -5145,7 +5095,7 @@ packages:
     dependencies:
       '@babel/core': 7.20.12
       '@babel/helper-create-regexp-features-plugin': 7.17.0_@babel+core@7.20.12
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-proposal-unicode-property-regex/7.16.7_@babel+core@7.9.0:
     resolution: {integrity: sha512-QRK0YI/40VLhNVGIjRNAAQkEHws0cswSdFFjpFyt943YmJIU1da9uW63Iu6NFV6CxTZW5eTDCrwZUstBWgp/Rg==}
@@ -5155,7 +5105,7 @@ packages:
     dependencies:
       '@babel/core': 7.9.0
       '@babel/helper-create-regexp-features-plugin': 7.17.0_@babel+core@7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-syntax-async-generators/7.8.4_@babel+core@7.17.10:
     resolution: {integrity: sha512-tycmZxkGfZaxhMRbXlPXuVFpdWlXpir2W4AMhSJgRKzk/eDlIXOhb2LHWoLpDF7TEHylV5zNhykX6KAgHJmTNw==}
@@ -5179,7 +5129,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-syntax-bigint/7.8.3_@babel+core@7.17.10:
     resolution: {integrity: sha512-wnTnFlG+YxQm3vDxpGE57Pj0srRU4sHE/mDkt1qv2YJJSeUAec2ma4WLUnUPeKjyrfntVwe/N6dCXpU+zL3Npg==}
@@ -5202,7 +5152,7 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-syntax-class-properties/7.12.13_@babel+core@7.17.10:
     resolution: {integrity: sha512-fm4idjKla0YahUNgFNLCB0qySdsoPiZP3iQE3rky0mBUtMZ23yDJ9SJdg6dXTSDnulOVqiF3Hgr9nbXvXTQZYA==}
@@ -5236,7 +5186,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-syntax-decorators/7.17.0_@babel+core@7.17.10:
     resolution: {integrity: sha512-qWe85yCXsvDEluNP0OyeQjH63DlhAR3W7K9BxxU1MvbDb48tgBG+Ao6IJJ6smPDrrVzSQZrbF6donpkFBMcs3A==}
@@ -5270,7 +5220,7 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
-      '@babel/helper-plugin-utils': 7.16.7
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-syntax-dynamic-import/7.8.3_@babel+core@7.17.10:
     resolution: {integrity: sha512-5gdGbFon+PszYzqs83S3E5mpi7/y/8M9eC90MRTZfduQOYW76ig6SOSPNe41IG5LoP3FGBn2N0RjVDSQiS94kQ==}
@@ -5294,7 +5244,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.16.7
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-syntax-export-default-from/7.16.7:
     resolution: {integrity: sha512-4C3E4NsrLOgftKaTYTULhHsuQrGv3FHrBzOMDiS7UYKIpgGBkAdawg4h+EI8zPeK9M0fiIIh72hIwsI24K7MbA==}
@@ -5378,7 +5328,7 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
-      '@babel/helper-plugin-utils': 7.16.7
+      '@babel/helper-plugin-utils': 7.20.2
     dev: true
 
   /@babel/plugin-syntax-import-meta/7.10.4_@babel+core@7.17.10:
@@ -5419,7 +5369,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-syntax-jsx/7.12.1_@babel+core@7.12.9:
     resolution: {integrity: sha512-1yRi7yAtB0ETgxdY9ti/p2TivUxJkTdhu/ZbF9MshVGqOx1TdB3b7xCXs49Fupgg50N45KcAsRP/ZqWjs9SRjg==}
@@ -5486,7 +5436,7 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-syntax-nullish-coalescing-operator/7.8.3_@babel+core@7.17.10:
     resolution: {integrity: sha512-aSff4zPII1u2QD7y+F8oDsz19ew4IGEJg9SVW+bqwpwtfFleiQDMdzA/R+UlWDzfnHFCxxleFT0PMIrR36XLNQ==}
@@ -5510,7 +5460,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-syntax-numeric-separator/7.10.4_@babel+core@7.17.10:
     resolution: {integrity: sha512-9H6YdfkcK/uOnY/K7/aA2xpzaAgkQn37yzWUMRK7OaPOqOpGS1+n0H5hxT9AUw9EsSjPW8SVyMJwYRtWs3X3ug==}
@@ -5534,14 +5484,14 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-syntax-object-rest-spread/7.8.3:
     resolution: {integrity: sha512-XoqMijGZb9y3y2XskN+P1wUGiVwWZ5JmoDRwx5+3GmEplNyVM2s2Dg8ILFQm8rWM48orGy5YpI5Bl8U1y7ydlA==}
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-syntax-object-rest-spread/7.8.3_@babel+core@7.12.9:
     resolution: {integrity: sha512-XoqMijGZb9y3y2XskN+P1wUGiVwWZ5JmoDRwx5+3GmEplNyVM2s2Dg8ILFQm8rWM48orGy5YpI5Bl8U1y7ydlA==}
@@ -5549,7 +5499,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.12.9
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
     dev: true
 
   /@babel/plugin-syntax-object-rest-spread/7.8.3_@babel+core@7.17.10:
@@ -5574,14 +5524,14 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-syntax-optional-catch-binding/7.8.3:
     resolution: {integrity: sha512-6VPD0Pc1lpTqw0aKoeRTMiB+kWhAoT24PA+ksWSBrFtl5SIRVpZlwN3NNPQjehA2E/91FV3RjLWoVTglWcSV3Q==}
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-syntax-optional-catch-binding/7.8.3_@babel+core@7.17.10:
     resolution: {integrity: sha512-6VPD0Pc1lpTqw0aKoeRTMiB+kWhAoT24PA+ksWSBrFtl5SIRVpZlwN3NNPQjehA2E/91FV3RjLWoVTglWcSV3Q==}
@@ -5605,14 +5555,14 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-syntax-optional-chaining/7.8.3:
     resolution: {integrity: sha512-KoK9ErH1MBlCPxV0VANkXW2/dw4vlbGDrFgz8bmUsBGYkFRcbRwMh6cIJubdPrkxRwuGdtCk0v/wPTKbQgBjkg==}
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-syntax-optional-chaining/7.8.3_@babel+core@7.17.10:
     resolution: {integrity: sha512-KoK9ErH1MBlCPxV0VANkXW2/dw4vlbGDrFgz8bmUsBGYkFRcbRwMh6cIJubdPrkxRwuGdtCk0v/wPTKbQgBjkg==}
@@ -5636,7 +5586,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-syntax-private-property-in-object/7.14.5_@babel+core@7.17.10:
     resolution: {integrity: sha512-0wVnp9dxJ72ZUJDV27ZfbSj6iHLoytYZmh3rFcxNnvsJF3ktkzLDZPy/mA17HGsaQT3/DQsWYX1f1QGWkCoVUg==}
@@ -5654,7 +5604,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-syntax-top-level-await/7.14.5_@babel+core@7.17.10:
     resolution: {integrity: sha512-hx++upLv5U1rgYfwe1xBQUhRmU41NEvpUvrp8jkrSCdvGSnM5/qdRMtylJ6PG5OFkBaHkbTAKTnd3/YyESRHFw==}
@@ -5681,7 +5631,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-syntax-typescript/7.17.10:
     resolution: {integrity: sha512-xJefea1DWXW09pW4Tm9bjwVlPDyYA2it3fWlmEjpYz6alPvTUjL0EOzNzI/FEOyI3r4/J7uVH5UqKgl1TQ5hqQ==}
@@ -5724,7 +5674,7 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-arrow-functions/7.16.7_@babel+core@7.17.10:
     resolution: {integrity: sha512-9ffkFFMbvzTvv+7dTp/66xvZAWASuPD5Tl9LK3Z9vhOmANo6j94rik+5YMBt4CwHVMWLWpMsriIc2zsa3WW3xQ==}
@@ -5751,7 +5701,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-async-to-generator/7.16.8:
     resolution: {integrity: sha512-MtmUmTJQHCnyJVrScNzNlofQJ3dLFuobYn3mwOTKHnSCMtbNsqvF71GQmJfFjdrXSsAA7iysFmYWw4bXZ20hOg==}
@@ -5759,8 +5709,8 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
-      '@babel/helper-module-imports': 7.16.7
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-module-imports': 7.18.6
+      '@babel/helper-plugin-utils': 7.20.2
       '@babel/helper-remap-async-to-generator': 7.16.8
     transitivePeerDependencies:
       - supports-color
@@ -5798,8 +5748,8 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-module-imports': 7.16.7
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-module-imports': 7.18.6
+      '@babel/helper-plugin-utils': 7.20.2
       '@babel/helper-remap-async-to-generator': 7.16.8
     transitivePeerDependencies:
       - supports-color
@@ -5810,7 +5760,7 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-block-scoped-functions/7.16.7_@babel+core@7.17.10:
     resolution: {integrity: sha512-JUuzlzmF40Z9cXyytcbZEZKckgrQzChbQJw/5PuEHYeqzCsvebDx0K0jWnIIVcmmDOAVctCgnYs0pMcrYj2zJg==}
@@ -5837,7 +5787,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-block-scoping/7.16.7:
     resolution: {integrity: sha512-ObZev2nxVAYA4bhyusELdo9hb3H+A56bxH3FZMbEImZFiEDYVHXQSJ1hQKFlDnlt8G9bBrCZ5ZpURZUrV4G5qQ==}
@@ -5880,11 +5830,11 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
-      '@babel/helper-annotate-as-pure': 7.16.7
+      '@babel/helper-annotate-as-pure': 7.18.6
       '@babel/helper-environment-visitor': 7.18.9
-      '@babel/helper-function-name': 7.18.9
+      '@babel/helper-function-name': 7.19.0
       '@babel/helper-optimise-call-expression': 7.16.7
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
       '@babel/helper-replace-supers': 7.16.7
       '@babel/helper-split-export-declaration': 7.18.6
       globals: 11.12.0
@@ -5934,11 +5884,11 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-annotate-as-pure': 7.16.7
+      '@babel/helper-annotate-as-pure': 7.18.6
       '@babel/helper-environment-visitor': 7.18.9
-      '@babel/helper-function-name': 7.18.9
+      '@babel/helper-function-name': 7.19.0
       '@babel/helper-optimise-call-expression': 7.16.7
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
       '@babel/helper-replace-supers': 7.16.7
       '@babel/helper-split-export-declaration': 7.18.6
       globals: 11.12.0
@@ -5951,7 +5901,7 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-computed-properties/7.16.7_@babel+core@7.17.10:
     resolution: {integrity: sha512-gN72G9bcmenVILj//sv1zLNaPyYcOzUho2lIJBMh/iakJ9ygCo/hEF9cpGb61SCMEDxbbyBoVQxrt+bWKu5KGw==}
@@ -5978,7 +5928,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-destructuring/7.17.7:
     resolution: {integrity: sha512-XVh0r5yq9sLR4vZ6eVZe8FKfIcSgaTBxVBRSYokRj2qksf6QerYnTxz9/GTuKTH/n/HwLP7t6gtlybHetJ/6hQ==}
@@ -5986,7 +5936,7 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-destructuring/7.17.7_@babel+core@7.17.10:
     resolution: {integrity: sha512-XVh0r5yq9sLR4vZ6eVZe8FKfIcSgaTBxVBRSYokRj2qksf6QerYnTxz9/GTuKTH/n/HwLP7t6gtlybHetJ/6hQ==}
@@ -6013,7 +5963,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-dotall-regex/7.16.7_@babel+core@7.17.10:
     resolution: {integrity: sha512-Lyttaao2SjZF6Pf4vk1dVKv8YypMpomAbygW+mU5cYP3S5cWTfCJjG8xV6CFdzGFlfWK81IjL9viiTvpb6G7gQ==}
@@ -6033,7 +5983,7 @@ packages:
     dependencies:
       '@babel/core': 7.20.12
       '@babel/helper-create-regexp-features-plugin': 7.17.0_@babel+core@7.20.12
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-dotall-regex/7.16.7_@babel+core@7.9.0:
     resolution: {integrity: sha512-Lyttaao2SjZF6Pf4vk1dVKv8YypMpomAbygW+mU5cYP3S5cWTfCJjG8xV6CFdzGFlfWK81IjL9viiTvpb6G7gQ==}
@@ -6043,7 +5993,7 @@ packages:
     dependencies:
       '@babel/core': 7.9.0
       '@babel/helper-create-regexp-features-plugin': 7.17.0_@babel+core@7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-duplicate-keys/7.16.7_@babel+core@7.17.10:
     resolution: {integrity: sha512-03DvpbRfvWIXyK0/6QiR1KMTWeT6OcQ7tbhjrXyFS02kjuX/mu5Bvnh5SDSWHxyawit2g5aWhKwI86EE7GUnTw==}
@@ -6061,7 +6011,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-duplicate-keys/7.16.7_@babel+core@7.9.0:
     resolution: {integrity: sha512-03DvpbRfvWIXyK0/6QiR1KMTWeT6OcQ7tbhjrXyFS02kjuX/mu5Bvnh5SDSWHxyawit2g5aWhKwI86EE7GUnTw==}
@@ -6070,7 +6020,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-exponentiation-operator/7.16.7:
     resolution: {integrity: sha512-8UYLSlyLgRixQvlYH3J2ekXFHDFLQutdy7FfFAMm3CPZ6q9wHCwnUyiXpQCe3gVVnQlHc5nsuiEVziteRNTXEA==}
@@ -6079,7 +6029,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/helper-builder-binary-assignment-operator-visitor': 7.16.7
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-exponentiation-operator/7.16.7_@babel+core@7.17.10:
     resolution: {integrity: sha512-8UYLSlyLgRixQvlYH3J2ekXFHDFLQutdy7FfFAMm3CPZ6q9wHCwnUyiXpQCe3gVVnQlHc5nsuiEVziteRNTXEA==}
@@ -6109,7 +6059,7 @@ packages:
     dependencies:
       '@babel/core': 7.9.0
       '@babel/helper-builder-binary-assignment-operator-visitor': 7.16.7
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-flow-strip-types/7.16.7:
     resolution: {integrity: sha512-mzmCq3cNsDpZZu9FADYYyfZJIOrSONmHcop2XEKPdBNMa4PDC4eEvcOvzZaCNcjKu72v0XQlA5y1g58aLRXdYg==}
@@ -6155,7 +6105,7 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-for-of/7.16.7_@babel+core@7.17.10:
     resolution: {integrity: sha512-/QZm9W92Ptpw7sjI9Nx1mbcsWz33+l8kuMIQnDwgQBG5s3fAfQvkRjQ7NqXhtNcKOnPkdICmUHyCaWW06HCsqg==}
@@ -6182,7 +6132,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-function-name/7.16.7:
     resolution: {integrity: sha512-SU/C68YVwTRxqWj5kgsbKINakGag0KTgq9f2iZEXdStoAbOzLHEBRYzImmA6yFo8YZhJVflvXmIHUO7GWHmxxA==}
@@ -6190,9 +6140,9 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
-      '@babel/helper-compilation-targets': 7.18.9
-      '@babel/helper-function-name': 7.18.9
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-compilation-targets': 7.20.7
+      '@babel/helper-function-name': 7.19.0
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-function-name/7.16.7_@babel+core@7.17.10:
     resolution: {integrity: sha512-SU/C68YVwTRxqWj5kgsbKINakGag0KTgq9f2iZEXdStoAbOzLHEBRYzImmA6yFo8YZhJVflvXmIHUO7GWHmxxA==}
@@ -6223,9 +6173,9 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-compilation-targets': 7.18.9_@babel+core@7.9.0
-      '@babel/helper-function-name': 7.18.9
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-compilation-targets': 7.20.7_@babel+core@7.9.0
+      '@babel/helper-function-name': 7.19.0
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-literals/7.16.7:
     resolution: {integrity: sha512-6tH8RTpTWI0s2sV6uq3e/C9wPo4PTqqZps4uF0kzQ9/xPLFQtipynvmT1g/dOfEJ+0EQsHhkQ/zyRId8J2b8zQ==}
@@ -6233,7 +6183,7 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-literals/7.16.7_@babel+core@7.17.10:
     resolution: {integrity: sha512-6tH8RTpTWI0s2sV6uq3e/C9wPo4PTqqZps4uF0kzQ9/xPLFQtipynvmT1g/dOfEJ+0EQsHhkQ/zyRId8J2b8zQ==}
@@ -6260,7 +6210,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-member-expression-literals/7.16.7:
     resolution: {integrity: sha512-mBruRMbktKQwbxaJof32LT9KLy2f3gH+27a5XSuXo6h7R3vqltl0PgZ80C8ZMKw98Bf8bqt6BEVi3svOh2PzMw==}
@@ -6268,7 +6218,7 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-member-expression-literals/7.16.7_@babel+core@7.17.10:
     resolution: {integrity: sha512-mBruRMbktKQwbxaJof32LT9KLy2f3gH+27a5XSuXo6h7R3vqltl0PgZ80C8ZMKw98Bf8bqt6BEVi3svOh2PzMw==}
@@ -6295,7 +6245,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-modules-amd/7.16.7_@babel+core@7.17.10:
     resolution: {integrity: sha512-KaaEtgBL7FKYwjJ/teH63oAmE3lP34N3kshz8mm4VMAw7U3PxjVwwUmxEFksbgsNUaO3wId9R2AVQYSEGRa2+g==}
@@ -6317,8 +6267,8 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
-      '@babel/helper-module-transforms': 7.18.9
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-module-transforms': 7.20.11
+      '@babel/helper-plugin-utils': 7.20.2
       babel-plugin-dynamic-import-node: 2.3.3
     transitivePeerDependencies:
       - supports-color
@@ -6330,8 +6280,8 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-module-transforms': 7.18.9
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-module-transforms': 7.20.11
+      '@babel/helper-plugin-utils': 7.20.2
       babel-plugin-dynamic-import-node: 2.3.3
     transitivePeerDependencies:
       - supports-color
@@ -6414,9 +6364,9 @@ packages:
     dependencies:
       '@babel/core': 7.20.12
       '@babel/helper-hoist-variables': 7.18.6
-      '@babel/helper-module-transforms': 7.18.9
-      '@babel/helper-plugin-utils': 7.18.9
-      '@babel/helper-validator-identifier': 7.18.6
+      '@babel/helper-module-transforms': 7.20.11
+      '@babel/helper-plugin-utils': 7.20.2
+      '@babel/helper-validator-identifier': 7.19.1
       babel-plugin-dynamic-import-node: 2.3.3
     transitivePeerDependencies:
       - supports-color
@@ -6429,9 +6379,9 @@ packages:
     dependencies:
       '@babel/core': 7.9.0
       '@babel/helper-hoist-variables': 7.18.6
-      '@babel/helper-module-transforms': 7.18.9
-      '@babel/helper-plugin-utils': 7.18.9
-      '@babel/helper-validator-identifier': 7.18.6
+      '@babel/helper-module-transforms': 7.20.11
+      '@babel/helper-plugin-utils': 7.20.2
+      '@babel/helper-validator-identifier': 7.19.1
       babel-plugin-dynamic-import-node: 2.3.3
     transitivePeerDependencies:
       - supports-color
@@ -6455,8 +6405,8 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
-      '@babel/helper-module-transforms': 7.18.9
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-module-transforms': 7.20.11
+      '@babel/helper-plugin-utils': 7.20.2
     transitivePeerDependencies:
       - supports-color
 
@@ -6467,8 +6417,8 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-module-transforms': 7.18.9
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-module-transforms': 7.20.11
+      '@babel/helper-plugin-utils': 7.20.2
     transitivePeerDependencies:
       - supports-color
 
@@ -6515,7 +6465,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-new-target/7.16.7_@babel+core@7.9.0:
     resolution: {integrity: sha512-xiLDzWNMfKoGOpc6t3U+etCE2yRnn3SM09BXqWPIZOBpL2gvVrBWUKnsJx0K/ADi5F5YC5f8APFfWrz25TdlGg==}
@@ -6524,7 +6474,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-object-assign/7.16.7:
     resolution: {integrity: sha512-R8mawvm3x0COTJtveuoqZIjNypn2FjfvXZr4pSQ8VhEFBuQGBz4XhHasZtHXjgXU4XptZ4HtGof3NoYc93ZH9Q==}
@@ -6558,7 +6508,7 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
       '@babel/helper-replace-supers': 7.16.7
     transitivePeerDependencies:
       - supports-color
@@ -6594,7 +6544,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
       '@babel/helper-replace-supers': 7.16.7
     transitivePeerDependencies:
       - supports-color
@@ -6650,7 +6600,7 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-property-literals/7.16.7_@babel+core@7.17.10:
     resolution: {integrity: sha512-z4FGr9NMGdoIl1RqavCqGG+ZuYjfZ/hkCIeuH6Do7tXmSm0ls11nYVSJqFEUOSJbDab5wC6lRE/w6YjVcr6Hqw==}
@@ -6677,7 +6627,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-react-constant-elements/7.17.6_@babel+core@7.20.12:
     resolution: {integrity: sha512-OBv9VkyyKtsHZiHLoSfCn+h6yU7YKX8nrs32xUmOa1SRSk+t03FosB6fBZ0Yz4BpD1WV7l73Nsad+2Tz7APpqw==}
@@ -6977,7 +6927,7 @@ packages:
     dependencies:
       '@babel/core': 7.20.12
       '@babel/helper-annotate-as-pure': 7.18.6
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-regenerator/7.17.9:
     resolution: {integrity: sha512-Lc2TfbxR1HOyn/c6b4Y/b6NHoTb67n/IoWLxTu4kC7h4KQnWlhCq2S8Tx0t2SVvv5Uu87Hs+6JEJ5kt2tYGylQ==}
@@ -7030,7 +6980,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-reserved-words/7.16.7_@babel+core@7.9.0:
     resolution: {integrity: sha512-KQzzDnZ9hWQBjwi5lpY5v9shmm6IVG0U9pB18zvMu2i4H90xpT4gmqwPYsn8rObiadYe2M0gmgsiOIF5A/2rtg==}
@@ -7039,7 +6989,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-runtime/7.17.10:
     resolution: {integrity: sha512-6jrMilUAJhktTr56kACL8LnWC5hx3Lf27BS0R0DSyW/OoJfb/iTHeE96V3b1dgKG3FSFdd/0culnYWMkjcKCig==}
@@ -7259,7 +7209,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-typeof-symbol/7.16.7_@babel+core@7.9.0:
     resolution: {integrity: sha512-p2rOixCKRJzpg9JB4gjnG4gjWkWa89ZoYUnl9snJ1cWIcTH/hvxZqfO+WjG6T8DRBpctEol5jw1O5rA8gkCokQ==}
@@ -7268,7 +7218,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-typescript/7.16.8:
     resolution: {integrity: sha512-bHdQ9k7YpBDO2d0NVfkj51DpQcvwIzIusJ7mEUaMlbZq3Kt/U47j24inXZHQ5MDiYpCs+oZiwnXyKedE8+q7AQ==}
@@ -7337,7 +7287,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-unicode-regex/7.16.7:
     resolution: {integrity: sha512-oC5tYYKw56HO75KZVLQ+R/Nl3Hro9kf8iG0hXoaHP7tjAyCpvqBiSNe6vGrZni1Z6MggmUOC6A7VP7AVmw225Q==}
@@ -7476,18 +7426,18 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
-      '@babel/compat-data': 7.17.10
+      '@babel/compat-data': 7.20.14
       '@babel/core': 7.20.12
-      '@babel/helper-compilation-targets': 7.17.10_@babel+core@7.20.12
-      '@babel/helper-plugin-utils': 7.16.7
-      '@babel/helper-validator-option': 7.16.7
+      '@babel/helper-compilation-targets': 7.20.7_@babel+core@7.20.12
+      '@babel/helper-plugin-utils': 7.20.2
+      '@babel/helper-validator-option': 7.18.6
       '@babel/plugin-bugfix-safari-id-destructuring-collision-in-function-expression': 7.16.7_@babel+core@7.20.12
       '@babel/plugin-bugfix-v8-spread-parameters-in-optional-chaining': 7.16.7_@babel+core@7.20.12
       '@babel/plugin-proposal-async-generator-functions': 7.16.8_@babel+core@7.20.12
       '@babel/plugin-proposal-class-properties': 7.16.7_@babel+core@7.20.12
       '@babel/plugin-proposal-class-static-block': 7.17.6_@babel+core@7.20.12
       '@babel/plugin-proposal-dynamic-import': 7.16.7_@babel+core@7.20.12
-      '@babel/plugin-proposal-export-namespace-from': 7.16.7_@babel+core@7.20.12
+      '@babel/plugin-proposal-export-namespace-from': 7.18.9_@babel+core@7.20.12
       '@babel/plugin-proposal-json-strings': 7.16.7_@babel+core@7.20.12
       '@babel/plugin-proposal-logical-assignment-operators': 7.16.7_@babel+core@7.20.12
       '@babel/plugin-proposal-nullish-coalescing-operator': 7.16.7_@babel+core@7.20.12
@@ -7545,7 +7495,7 @@ packages:
       '@babel/plugin-transform-unicode-escapes': 7.16.7_@babel+core@7.20.12
       '@babel/plugin-transform-unicode-regex': 7.16.7_@babel+core@7.20.12
       '@babel/preset-modules': 0.1.5_@babel+core@7.20.12
-      '@babel/types': 7.17.10
+      '@babel/types': 7.20.7
       babel-plugin-polyfill-corejs2: 0.3.1_@babel+core@7.20.12
       babel-plugin-polyfill-corejs3: 0.5.2_@babel+core@7.20.12
       babel-plugin-polyfill-regenerator: 0.3.1_@babel+core@7.20.12
@@ -7642,8 +7592,8 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
-      '@babel/helper-plugin-utils': 7.20.2
-      '@babel/helper-validator-option': 7.18.6
+      '@babel/helper-plugin-utils': 7.16.7
+      '@babel/helper-validator-option': 7.16.7
       '@babel/plugin-transform-flow-strip-types': 7.16.7_@babel+core@7.20.12
 
   /@babel/preset-modules/0.1.5_@babel+core@7.17.10:
@@ -7664,10 +7614,10 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
       '@babel/plugin-proposal-unicode-property-regex': 7.16.7_@babel+core@7.20.12
       '@babel/plugin-transform-dotall-regex': 7.16.7_@babel+core@7.20.12
-      '@babel/types': 7.18.10
+      '@babel/types': 7.20.7
       esutils: 2.0.3
 
   /@babel/preset-modules/0.1.5_@babel+core@7.9.0:
@@ -7676,10 +7626,10 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.20.2
       '@babel/plugin-proposal-unicode-property-regex': 7.16.7_@babel+core@7.9.0
       '@babel/plugin-transform-dotall-regex': 7.16.7_@babel+core@7.9.0
-      '@babel/types': 7.18.10
+      '@babel/types': 7.20.7
       esutils: 2.0.3
 
   /@babel/preset-react/7.16.7_@babel+core@7.17.10:
@@ -7704,10 +7654,10 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
-      '@babel/helper-plugin-utils': 7.16.7
-      '@babel/helper-validator-option': 7.16.7
+      '@babel/helper-plugin-utils': 7.20.2
+      '@babel/helper-validator-option': 7.18.6
       '@babel/plugin-transform-react-display-name': 7.16.7_@babel+core@7.20.12
-      '@babel/plugin-transform-react-jsx': 7.17.3_@babel+core@7.20.12
+      '@babel/plugin-transform-react-jsx': 7.18.10_@babel+core@7.20.12
       '@babel/plugin-transform-react-jsx-development': 7.16.7_@babel+core@7.20.12
       '@babel/plugin-transform-react-pure-annotations': 7.16.7_@babel+core@7.20.12
 
@@ -7893,14 +7843,6 @@ packages:
     resolution: {integrity: sha512-9O26jG0mBYfGkUYCYZRnBwbVLd1UZOICEr2Em6InB6jVfsAv1GKgwXHmrSg+WFWDmeKTA6vyTZiN8tCSM5Oo3A==}
     engines: {node: '>=6.9.0'}
     dependencies:
-      '@babel/helper-validator-identifier': 7.19.1
-      to-fast-properties: 2.0.0
-
-  /@babel/types/7.18.10:
-    resolution: {integrity: sha512-MJvnbEiiNkpjo+LknnmRrqbY1GPUUggjv+wQVjetM/AONoupqRALB7I6jGqNUAZsKcRIEu2J6FRFvsczljjsaQ==}
-    engines: {node: '>=6.9.0'}
-    dependencies:
-      '@babel/helper-string-parser': 7.19.4
       '@babel/helper-validator-identifier': 7.19.1
       to-fast-properties: 2.0.0
 
@@ -8867,7 +8809,7 @@ packages:
       '@cosmjs/math': 0.25.6
       '@cosmjs/socket': 0.25.6
       '@cosmjs/stream': 0.25.6
-      '@cosmjs/utils': 0.25.6
+      '@cosmjs/utils': 0.25.0-alpha.2
       axios: 0.21.4
       readonly-date: 1.0.0
       xstream: 11.14.0
@@ -8896,6 +8838,10 @@ packages:
 
   /@cosmjs/utils/0.24.1:
     resolution: {integrity: sha512-VA3WFx1lMFb7esp9BqHWkDgMvHoA3D9w+uDRvWhVRpUpDc7RYHxMbWExASjz+gNblTCg556WJGzF64tXnf9tdQ==}
+    dev: false
+
+  /@cosmjs/utils/0.25.0-alpha.2:
+    resolution: {integrity: sha512-ey+WKhnQ67L6JF1M3TLBRPXTDK8Az0uJ3m7UWWuT1p8z6K9kZfu+YiGmzJev64xuLP1kFaPJJLmBIpHH6HQ4hA==}
     dev: false
 
   /@cosmjs/utils/0.25.6:
@@ -13323,7 +13269,7 @@ packages:
       '@jest/schemas': 29.4.3
       '@types/istanbul-lib-coverage': 2.0.4
       '@types/istanbul-reports': 3.0.1
-      '@types/node': 18.11.18
+      '@types/node': 18.15.3
       '@types/yargs': 17.0.10
       chalk: 4.1.2
 
@@ -13646,11 +13592,11 @@ packages:
       detect-libc: 2.0.1
       https-proxy-agent: 5.0.1
       make-dir: 3.1.0
-      node-fetch: 2.6.7
+      node-fetch: 2.6.9
       nopt: 5.0.0
       npmlog: 5.0.1
       rimraf: 3.0.2
-      semver: 7.3.7
+      semver: 7.3.8
       tar: 6.1.11
     transitivePeerDependencies:
       - encoding
@@ -14314,7 +14260,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.20.13
       '@polkadot/util': 10.3.1
-      '@polkadot/util-crypto': 10.3.1
+      '@polkadot/util-crypto': 10.3.1_@polkadot+util@10.3.1
     dev: false
 
   /@polkadot/networks/10.3.1:
@@ -14339,7 +14285,7 @@ packages:
       '@polkadot/ui-settings': 2.11.1
       '@polkadot/ui-shared': 2.11.1_5aiqcisuhlfhaktqmynzmrayma
       '@polkadot/util': 10.3.1
-      '@polkadot/util-crypto': 10.3.1
+      '@polkadot/util-crypto': 10.3.1_@polkadot+util@10.3.1
       color: 3.2.1
       ethereum-blockies-base64: 1.0.2
       jdenticon: 3.2.0
@@ -14359,7 +14305,7 @@ packages:
       '@babel/runtime': 7.20.13
       '@polkadot/ui-shared': 2.11.1_5aiqcisuhlfhaktqmynzmrayma
       '@polkadot/util': 10.3.1
-      '@polkadot/util-crypto': 10.3.1
+      '@polkadot/util-crypto': 10.3.1_@polkadot+util@10.3.1
       react: 17.0.2
       react-native: 0.68.5_7bkeunqngmazlu32h3v2zcqrja
       react-native-svg: 12.5.1_ondxtwf5lqq5g76dzmsmwamaca
@@ -14437,25 +14383,8 @@ packages:
     dependencies:
       '@babel/runtime': 7.20.13
       '@polkadot/util': 10.3.1
-      '@polkadot/util-crypto': 10.3.1
+      '@polkadot/util-crypto': 10.3.1_@polkadot+util@10.3.1
       color: 3.2.1
-    dev: false
-
-  /@polkadot/util-crypto/10.3.1:
-    resolution: {integrity: sha512-viqLMuNGrbB2lyDIYdXAl3tq/Em/Y7ql2FvCTHJmxXaB5C1NXiWf1SqFAahUJKohL+ke5IL0jr19wZu/f88lIQ==}
-    engines: {node: '>=14.0.0'}
-    dependencies:
-      '@babel/runtime': 7.20.13
-      '@noble/hashes': 1.1.5
-      '@noble/secp256k1': 1.7.1
-      '@polkadot/networks': 10.3.1
-      '@polkadot/util': 10.3.1
-      '@polkadot/wasm-crypto': 6.4.1_hmowrubltiyg4mpvtnqaaplyfm
-      '@polkadot/x-bigint': 10.3.1
-      '@polkadot/x-randomvalues': 10.3.1
-      '@scure/base': 1.1.1
-      ed2curve: 0.3.0
-      tweetnacl: 1.0.3
     dev: false
 
   /@polkadot/util-crypto/10.3.1_@polkadot+util@10.3.1:
@@ -19762,7 +19691,7 @@ packages:
   /@types/fs-extra/9.0.13:
     resolution: {integrity: sha512-nEnwB++1u5lVDM2UI4c1+5R+FYaKfaAzS4OococimjVm3nQw3TuzH5UNsocrcTBbhnerblyHj4A49qXbIiZdpA==}
     dependencies:
-      '@types/node': 18.11.18
+      '@types/node': 18.15.3
     dev: true
 
   /@types/glob/7.2.0:
@@ -19904,6 +19833,13 @@ packages:
       pretty-format: 29.5.0
     dev: true
 
+  /@types/jest/29.5.0:
+    resolution: {integrity: sha512-3Emr5VOl/aoBwnWcH/EFQvlSAmjV+XtV9GGu5mwdYew5vhQh0IUZx/60x0TzHDu09Bi7HMx10t/namdJw5QIcg==}
+    dependencies:
+      expect: 29.5.0
+      pretty-format: 29.5.0
+    dev: true
+
   /@types/js-yaml/4.0.5:
     resolution: {integrity: sha512-FhpRzf927MNQdRZP0J5DLIdTXhjLYzeUTmLAu69mnVksLH9CJY3IuSeEgbKUki7GQZm0WqDkGzyxju2EZGD2wA==}
     dev: false
@@ -19988,7 +19924,7 @@ packages:
   /@types/node-hid/1.3.1:
     resolution: {integrity: sha512-VPxuGDCoDxOUKrTZPSok7IEmiK4cVLfj8Csu09FtG5uF+eqf1HETERHXQkO02Rk6j6YiiHxp0/DA9R4llvhEzQ==}
     dependencies:
-      '@types/node': 17.0.32
+      '@types/node': 18.15.3
     dev: true
 
   /@types/node/10.12.18:
@@ -23878,7 +23814,7 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
-      '@babel/compat-data': 7.17.10
+      '@babel/compat-data': 7.20.14
       '@babel/helper-define-polyfill-provider': 0.3.1
       semver: 6.3.0
     transitivePeerDependencies:
@@ -23999,7 +23935,7 @@ packages:
     peerDependencies:
       styled-components: '>= 2'
     dependencies:
-      '@babel/helper-annotate-as-pure': 7.16.7
+      '@babel/helper-annotate-as-pure': 7.18.6
       '@babel/helper-module-imports': 7.18.6
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
@@ -24017,7 +23953,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5_3a4gaprdt6lucrt3fqgxp3nfme
+      styled-components: 5.3.5_fane7jikarojcev26y27hpbhu4
 
   /babel-plugin-syntax-jsx/6.18.0:
     resolution: {integrity: sha1-CvMqmm4Tyno/1QaeYtew9Y0NiUY=}
@@ -25450,7 +25386,7 @@ packages:
       mkdirp: 0.5.6
       move-concurrently: 1.0.1
       p-map: 3.0.0
-      promise-inflight: 1.0.1_bluebird@3.7.2
+      promise-inflight: 1.0.1
       rimraf: 2.7.1
       ssri: 7.1.1
       unique-filename: 1.1.1
@@ -26148,7 +26084,7 @@ packages:
     dependencies:
       inherits: 2.0.4
       process-nextick-args: 2.0.1
-      readable-stream: 2.3.7
+      readable-stream: 2.3.8
     dev: true
 
   /clsx/1.1.1:
@@ -26452,7 +26388,7 @@ packages:
     dependencies:
       buffer-from: 1.1.2
       inherits: 2.0.4
-      readable-stream: 3.6.0
+      readable-stream: 3.6.2
       typedarray: 0.0.6
     dev: true
 
@@ -28264,7 +28200,7 @@ packages:
     dependencies:
       acorn-node: 1.8.2
       defined: 1.0.0
-      minimist: 1.2.6
+      minimist: 1.2.8
 
   /detox/20.0.3_jest@28.1.3+metro@0.67.0:
     resolution: {integrity: sha512-WSyA+Oxcw6meJYFW4wpH27BCgNTniBVJTwXsQN4ox+OhoztO38yxZULH3+16hlbXNxLm9kMZFj/higA0+zum5Q==}
@@ -34469,7 +34405,7 @@ packages:
       is-negated-glob: 1.0.0
       ordered-read-streams: 1.0.1
       pumpify: 1.5.1
-      readable-stream: 2.3.7
+      readable-stream: 2.3.8
       remove-trailing-separator: 1.1.0
       to-absolute-glob: 2.0.2
       unique-stream: 2.3.1
@@ -37111,35 +37047,6 @@ packages:
       - ts-node
     dev: true
 
-  /jest-cli/28.1.3_5gljhujmafmfys272awzdklxia:
-    resolution: {integrity: sha512-roY3kvrv57Azn1yPgdTebPAXvdR2xfezaKKYzVxZ6It/5NCxzJym6tUI5P1zkdWhfUYkxEI9uZWcQdaFLo8mJQ==}
-    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
-    hasBin: true
-    peerDependencies:
-      node-notifier: ^8.0.1 || ^9.0.0 || ^10.0.0
-    peerDependenciesMeta:
-      node-notifier:
-        optional: true
-    dependencies:
-      '@jest/core': 28.1.3_ts-node@10.9.1
-      '@jest/test-result': 28.1.3
-      '@jest/types': 28.1.3
-      chalk: 4.1.2
-      exit: 0.1.2
-      graceful-fs: 4.2.10
-      import-local: 3.1.0
-      jest-config: 28.1.3_5gljhujmafmfys272awzdklxia
-      jest-util: 28.1.3
-      jest-validate: 28.1.3
-      prompts: 2.4.2
-      yargs: 17.5.1
-    transitivePeerDependencies:
-      - '@types/node'
-      - metro
-      - supports-color
-      - ts-node
-    dev: true
-
   /jest-cli/28.1.3_csdo2gfejusb3n4cacufvlevtu:
     resolution: {integrity: sha512-roY3kvrv57Azn1yPgdTebPAXvdR2xfezaKKYzVxZ6It/5NCxzJym6tUI5P1zkdWhfUYkxEI9uZWcQdaFLo8mJQ==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
@@ -37158,6 +37065,35 @@ packages:
       graceful-fs: 4.2.10
       import-local: 3.1.0
       jest-config: 28.1.3_csdo2gfejusb3n4cacufvlevtu
+      jest-util: 28.1.3
+      jest-validate: 28.1.3
+      prompts: 2.4.2
+      yargs: 17.5.1
+    transitivePeerDependencies:
+      - '@types/node'
+      - metro
+      - supports-color
+      - ts-node
+    dev: true
+
+  /jest-cli/28.1.3_d2dllaz5dte7avnjm55wl7fmsu:
+    resolution: {integrity: sha512-roY3kvrv57Azn1yPgdTebPAXvdR2xfezaKKYzVxZ6It/5NCxzJym6tUI5P1zkdWhfUYkxEI9uZWcQdaFLo8mJQ==}
+    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
+    hasBin: true
+    peerDependencies:
+      node-notifier: ^8.0.1 || ^9.0.0 || ^10.0.0
+    peerDependenciesMeta:
+      node-notifier:
+        optional: true
+    dependencies:
+      '@jest/core': 28.1.3_ts-node@10.9.1
+      '@jest/test-result': 28.1.3
+      '@jest/types': 28.1.3
+      chalk: 4.1.2
+      exit: 0.1.2
+      graceful-fs: 4.2.10
+      import-local: 3.1.0
+      jest-config: 28.1.3_d2dllaz5dte7avnjm55wl7fmsu
       jest-util: 28.1.3
       jest-validate: 28.1.3
       prompts: 2.4.2
@@ -37197,7 +37133,7 @@ packages:
       - supports-color
       - ts-node
 
-  /jest-cli/28.1.3_r5rwvyw2qgx3fnijwswldzdnfy:
+  /jest-cli/28.1.3_ummm5ounhu77rzsy63ziydt5vq:
     resolution: {integrity: sha512-roY3kvrv57Azn1yPgdTebPAXvdR2xfezaKKYzVxZ6It/5NCxzJym6tUI5P1zkdWhfUYkxEI9uZWcQdaFLo8mJQ==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     hasBin: true
@@ -37214,7 +37150,7 @@ packages:
       exit: 0.1.2
       graceful-fs: 4.2.10
       import-local: 3.1.0
-      jest-config: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
+      jest-config: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
       jest-util: 28.1.3
       jest-validate: 28.1.3
       prompts: 2.4.2
@@ -37328,47 +37264,6 @@ packages:
       pretty-format: 28.1.3
       slash: 3.0.0
       strip-json-comments: 3.1.1
-    transitivePeerDependencies:
-      - metro
-      - supports-color
-    dev: true
-
-  /jest-config/28.1.3_5gljhujmafmfys272awzdklxia:
-    resolution: {integrity: sha512-MG3INjByJ0J4AsNBm7T3hsuxKQqFIiRo/AUqb1q9LRKI5UU6Aar9JHbr9Ivn1TVwfUD9KirRoM/T6u8XlcQPHQ==}
-    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
-    peerDependencies:
-      '@types/node': '*'
-      ts-node: '>=9.0.0'
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      ts-node:
-        optional: true
-    dependencies:
-      '@babel/core': 7.20.12
-      '@jest/test-sequencer': 28.1.3
-      '@jest/types': 28.1.3
-      '@types/node': 17.0.32
-      babel-jest: 28.1.3_@babel+core@7.20.12
-      chalk: 4.1.2
-      ci-info: 3.3.2
-      deepmerge: 4.3.0
-      glob: 7.2.3
-      graceful-fs: 4.2.10
-      jest-circus: 28.1.3
-      jest-environment-node: 28.1.3
-      jest-get-type: 28.0.2
-      jest-regex-util: 28.0.2
-      jest-resolve: 28.1.3
-      jest-runner: 28.1.3
-      jest-util: 28.1.3
-      jest-validate: 28.1.3
-      micromatch: 4.0.5
-      parse-json: 5.2.0
-      pretty-format: 28.1.3
-      slash: 3.0.0
-      strip-json-comments: 3.1.1
-      ts-node: 10.9.1_c7x7xisxsab3cereq3ok2kgue4
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -37570,7 +37465,7 @@ packages:
       pretty-format: 28.1.3
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.1_c7x7xisxsab3cereq3ok2kgue4
+      ts-node: 10.9.1_ox4bw2nfeaywsll3jxp22xcahy
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -37652,47 +37547,6 @@ packages:
     transitivePeerDependencies:
       - metro
       - supports-color
-
-  /jest-config/28.1.3_r5rwvyw2qgx3fnijwswldzdnfy:
-    resolution: {integrity: sha512-MG3INjByJ0J4AsNBm7T3hsuxKQqFIiRo/AUqb1q9LRKI5UU6Aar9JHbr9Ivn1TVwfUD9KirRoM/T6u8XlcQPHQ==}
-    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
-    peerDependencies:
-      '@types/node': '*'
-      ts-node: '>=9.0.0'
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      ts-node:
-        optional: true
-    dependencies:
-      '@babel/core': 7.20.12
-      '@jest/test-sequencer': 28.1.3
-      '@jest/types': 28.1.3
-      '@types/node': 17.0.32
-      babel-jest: 28.1.3_@babel+core@7.20.12
-      chalk: 4.1.2
-      ci-info: 3.3.2
-      deepmerge: 4.3.0
-      glob: 7.2.3
-      graceful-fs: 4.2.10
-      jest-circus: 28.1.3
-      jest-environment-node: 28.1.3
-      jest-get-type: 28.0.2
-      jest-regex-util: 28.0.2
-      jest-resolve: 28.1.3
-      jest-runner: 28.1.3
-      jest-util: 28.1.3
-      jest-validate: 28.1.3
-      micromatch: 4.0.5
-      parse-json: 5.2.0
-      pretty-format: 28.1.3
-      slash: 3.0.0
-      strip-json-comments: 3.1.1
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
-    transitivePeerDependencies:
-      - metro
-      - supports-color
-    dev: true
 
   /jest-config/28.1.3_ummm5ounhu77rzsy63ziydt5vq:
     resolution: {integrity: sha512-MG3INjByJ0J4AsNBm7T3hsuxKQqFIiRo/AUqb1q9LRKI5UU6Aar9JHbr9Ivn1TVwfUD9KirRoM/T6u8XlcQPHQ==}
@@ -38054,7 +37908,7 @@ packages:
     dependencies:
       '@jest/types': 27.5.1
       '@types/graceful-fs': 4.1.5
-      '@types/node': 18.11.18
+      '@types/node': 18.15.3
       anymatch: 3.1.2
       fb-watchman: 2.0.1
       graceful-fs: 4.2.10
@@ -38109,7 +37963,6 @@ packages:
       fsevents: 2.3.2
     transitivePeerDependencies:
       - metro
-    dev: true
 
   /jest-haste-map/28.1.3_metro@0.67.0:
     resolution: {integrity: sha512-3S+RQWDXccXDKSWnkHa/dPwt+2qwA8CJzR61w3FoYCvoo3Pn8tvGcysmMF0Bj0EX5RYvAI2EIvC57OmotfdtKA==}
@@ -38402,7 +38255,7 @@ packages:
       jest-resolve:
         optional: true
     dependencies:
-      jest-resolve: 28.1.3_metro@0.67.0
+      jest-resolve: 28.1.3
 
   /jest-regex-util/24.9.0:
     resolution: {integrity: sha512-05Cmb6CuxaA+Ys6fjr3PhvV3bGQmO+2p2La4hFbU+W5uOc479f7FdLXUWXw4pYMAhhSZIuKHwSXSu6CsSBAXQA==}
@@ -38511,7 +38364,6 @@ packages:
       slash: 3.0.0
     transitivePeerDependencies:
       - metro
-    dev: true
 
   /jest-resolve/28.1.3_metro@0.67.0:
     resolution: {integrity: sha512-Z1W3tTjE6QaNI90qo/BJpfnvpxtaFTFw5CDgwpyE/Kz8U/06N1Hjf4ia9quUhCh39qIGWF1ZuxFiBiJQwSEYKQ==}
@@ -38978,7 +38830,7 @@ packages:
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
       '@jest/types': 29.5.0
-      '@types/node': 18.11.18
+      '@types/node': 18.15.3
       chalk: 4.1.2
       ci-info: 3.3.2
       graceful-fs: 4.2.10
@@ -39131,7 +38983,7 @@ packages:
       metro:
         optional: true
     dependencies:
-      '@types/node': 18.11.18
+      '@types/node': 18.15.3
       merge-stream: 2.0.0
       supports-color: 7.2.0
 
@@ -39295,27 +39147,6 @@ packages:
       - ts-node
     dev: true
 
-  /jest/28.1.3_5gljhujmafmfys272awzdklxia:
-    resolution: {integrity: sha512-N4GT5on8UkZgH0O5LUavMRV1EDEhNTL0KEfRmDIeZHSV7p2XgLoY9t9VDUgL6o+yfdgYHVxuz81G8oB9VG5uyA==}
-    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
-    hasBin: true
-    peerDependencies:
-      node-notifier: ^8.0.1 || ^9.0.0 || ^10.0.0
-    peerDependenciesMeta:
-      node-notifier:
-        optional: true
-    dependencies:
-      '@jest/core': 28.1.3_ts-node@10.9.1
-      '@jest/types': 28.1.3
-      import-local: 3.1.0
-      jest-cli: 28.1.3_5gljhujmafmfys272awzdklxia
-    transitivePeerDependencies:
-      - '@types/node'
-      - metro
-      - supports-color
-      - ts-node
-    dev: true
-
   /jest/28.1.3_csdo2gfejusb3n4cacufvlevtu:
     resolution: {integrity: sha512-N4GT5on8UkZgH0O5LUavMRV1EDEhNTL0KEfRmDIeZHSV7p2XgLoY9t9VDUgL6o+yfdgYHVxuz81G8oB9VG5uyA==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
@@ -39330,6 +39161,27 @@ packages:
       '@jest/types': 28.1.3
       import-local: 3.1.0
       jest-cli: 28.1.3_csdo2gfejusb3n4cacufvlevtu
+    transitivePeerDependencies:
+      - '@types/node'
+      - metro
+      - supports-color
+      - ts-node
+    dev: true
+
+  /jest/28.1.3_d2dllaz5dte7avnjm55wl7fmsu:
+    resolution: {integrity: sha512-N4GT5on8UkZgH0O5LUavMRV1EDEhNTL0KEfRmDIeZHSV7p2XgLoY9t9VDUgL6o+yfdgYHVxuz81G8oB9VG5uyA==}
+    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
+    hasBin: true
+    peerDependencies:
+      node-notifier: ^8.0.1 || ^9.0.0 || ^10.0.0
+    peerDependenciesMeta:
+      node-notifier:
+        optional: true
+    dependencies:
+      '@jest/core': 28.1.3_ts-node@10.9.1
+      '@jest/types': 28.1.3
+      import-local: 3.1.0
+      jest-cli: 28.1.3_d2dllaz5dte7avnjm55wl7fmsu
     transitivePeerDependencies:
       - '@types/node'
       - metro
@@ -39357,7 +39209,7 @@ packages:
       - supports-color
       - ts-node
 
-  /jest/28.1.3_r5rwvyw2qgx3fnijwswldzdnfy:
+  /jest/28.1.3_ummm5ounhu77rzsy63ziydt5vq:
     resolution: {integrity: sha512-N4GT5on8UkZgH0O5LUavMRV1EDEhNTL0KEfRmDIeZHSV7p2XgLoY9t9VDUgL6o+yfdgYHVxuz81G8oB9VG5uyA==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     hasBin: true
@@ -39370,7 +39222,7 @@ packages:
       '@jest/core': 28.1.3_ts-node@10.7.0
       '@jest/types': 28.1.3
       import-local: 3.1.0
-      jest-cli: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
+      jest-cli: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
     transitivePeerDependencies:
       - '@types/node'
       - metro
@@ -40385,7 +40237,7 @@ packages:
     resolution: {integrity: sha512-b94GiNHQNy6JNTrt5w6zNyffMrNkXZb3KTkCZJb2V1xaEGCk093vkZ2jk3tpaeP33/OiXC+WvK9AxUebnf5nbw==}
     engines: {node: '>= 0.6.3'}
     dependencies:
-      readable-stream: 2.3.7
+      readable-stream: 2.3.8
     dev: true
 
   /lcid/1.0.0:
@@ -42540,7 +42392,7 @@ packages:
       duplexer2: 0.1.4
       inherits: 2.0.4
       konan: 2.1.1
-      readable-stream: 2.3.7
+      readable-stream: 2.3.8
       resolve: 1.22.1
       standard-version: 9.3.2
       stream-combiner2: 1.1.1
@@ -43636,7 +43488,7 @@ packages:
   /ordered-read-streams/1.0.1:
     resolution: {integrity: sha512-Z87aSjx3r5c0ZB7bcJqIgIRX5bxR7A4aSzvIbaxd0oTkWBCOoKfuGHiKj60CHVUgg1Phm5yMZzBdt8XqRs73Mw==}
     dependencies:
-      readable-stream: 2.3.7
+      readable-stream: 2.3.8
     dev: true
 
   /original/1.0.2:
@@ -46544,7 +46396,6 @@ packages:
     peerDependenciesMeta:
       bluebird:
         optional: true
-    dev: true
 
   /promise-inflight/1.0.1_bluebird@3.7.2:
     resolution: {integrity: sha512-6zWPyEOFaQBJYcGMHBKTKJ3u6TBsnMFOIZSa6ce1e/ZrrsOlnHRHbabMjLiBYKp+n44X9eUI6VUPaukCXHuG4g==}
@@ -48021,6 +47872,7 @@ packages:
       css-tree: 1.1.3
       react: 17.0.2
       react-native: 0.68.5_7bkeunqngmazlu32h3v2zcqrja
+    dev: false
 
   /react-native-svg/12.3.0_react@17.0.2:
     resolution: {integrity: sha512-ESG1g1j7/WLD7X3XRFTQHVv0r6DpbHNNcdusngAODIxG88wpTWUZkhcM3A2HJTb+BbXTFDamHv7FwtRKWQ/ALg==}
@@ -49766,6 +49618,7 @@ packages:
   /rimraf/4.1.2:
     resolution: {integrity: sha512-BlIbgFryTbw3Dz6hyoWFhKk+unCcHMSkZGrTFVAx2WmttdBSonsdtRlwiuTbDqTKr+UlXIUqJVS4QT5tUzGENQ==}
     engines: {node: '>=14'}
+    deprecated: Please upgrade to 4.3.1 or higher to fix a potentially damaging issue regarding symbolic link following. See https://github.com/isaacs/rimraf/issues/259 for details.
     hasBin: true
 
   /ripemd160/2.0.2:
@@ -51366,7 +51219,7 @@ packages:
     resolution: {integrity: sha512-3PnJbYgS56AeWgtKF5jtJRT6uFJe56Z0Hc5Ngg/6sI6rIt8iiMBTa9cvdyFfpMQjaVHr8dusbNeFGIIonxOvKw==}
     dependencies:
       duplexer2: 0.1.4
-      readable-stream: 2.3.7
+      readable-stream: 2.3.8
     dev: true
 
   /stream-each/1.2.3:
@@ -51763,6 +51616,10 @@ packages:
     peerDependencies:
       react: '>= 16.3.0'
       react-dom: '>= 16.3.0'
+      react-native: '*'
+    peerDependenciesMeta:
+      react-native:
+        optional: true
     dependencies:
       '@babel/helper-module-imports': 7.16.7
       '@babel/traverse': 7.17.10_supports-color@5.5.0
@@ -51807,6 +51664,7 @@ packages:
       react-native: 0.68.5_7bkeunqngmazlu32h3v2zcqrja
       shallowequal: 1.1.0
       supports-color: 5.5.0
+    dev: false
 
   /styled-components/5.3.5_fane7jikarojcev26y27hpbhu4:
     resolution: {integrity: sha512-ndETJ9RKaaL6q41B69WudeqLzOpY1A/ET/glXkNZ2T7dPjPqpPCXXQjDFYZWwNnE5co0wX+gTCqx9mfxTmSIPg==}
@@ -51816,6 +51674,10 @@ packages:
       react: '>= 16.8.0'
       react-dom: '>= 16.8.0'
       react-is: '>= 16.8.0'
+      react-native: '*'
+    peerDependenciesMeta:
+      react-native:
+        optional: true
     dependencies:
       '@babel/helper-module-imports': 7.16.7
       '@babel/traverse': 7.17.10_supports-color@5.5.0
@@ -51986,7 +51848,7 @@ packages:
   /subarg/1.0.0:
     resolution: {integrity: sha512-RIrIdRY0X1xojthNcVtgT9sjpOGagEUKpZdgBUi054OEPFo282yg+zE+t1Rj3+RqKq2xStL7uUHhY+AjbC4BXg==}
     dependencies:
-      minimist: 1.2.6
+      minimist: 1.2.8
     dev: true
 
   /sucrase/3.21.0:
@@ -53098,7 +52960,7 @@ packages:
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
       jest-util: 28.1.3
       json5: 2.2.1
       lodash.memoize: 4.1.2
@@ -53232,7 +53094,7 @@ packages:
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 28.1.3_r5rwvyw2qgx3fnijwswldzdnfy
+      jest: 28.1.3_ummm5ounhu77rzsy63ziydt5vq
       jest-util: 28.1.3
       json5: 2.2.3
       lodash.memoize: 4.1.2
@@ -53275,7 +53137,7 @@ packages:
       yargs-parser: 21.1.1
     dev: true
 
-  /ts-node/10.7.0_33lso24kgdvwdhve7eirdtgycu:
+  /ts-node/10.7.0_aek4ofadwobuczfhqte56cpk4y:
     resolution: {integrity: sha512-TbIGS4xgJoX2i3do417KSaep1uRAW/Lu+WAL2doDHC0D6ummjirVOXU5/7aiZotbQ5p1Zp9tP7U6cYhA0O7M8A==}
     hasBin: true
     peerDependencies:
@@ -53294,14 +53156,14 @@ packages:
       '@tsconfig/node12': 1.0.9
       '@tsconfig/node14': 1.0.1
       '@tsconfig/node16': 1.0.2
-      '@types/node': 17.0.32
+      '@types/node': 18.15.3
       acorn: 8.7.1
       acorn-walk: 8.2.0
       arg: 4.1.3
       create-require: 1.1.1
       diff: 4.0.2
       make-error: 1.3.6
-      typescript: 4.6.4
+      typescript: 4.9.3
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     transitivePeerDependencies:
@@ -53341,7 +53203,7 @@ packages:
       - source-map-support
     dev: true
 
-  /ts-node/10.7.0_c3itm6ihhon32dsg3xjgfmpk7a:
+  /ts-node/10.7.0_ogluj4bgsl2ca2tt3ihwaj6gvi:
     resolution: {integrity: sha512-TbIGS4xgJoX2i3do417KSaep1uRAW/Lu+WAL2doDHC0D6ummjirVOXU5/7aiZotbQ5p1Zp9tP7U6cYhA0O7M8A==}
     hasBin: true
     peerDependencies:
@@ -53360,14 +53222,14 @@ packages:
       '@tsconfig/node12': 1.0.9
       '@tsconfig/node14': 1.0.1
       '@tsconfig/node16': 1.0.2
-      '@types/node': 17.0.32
+      '@types/node': 18.15.3
       acorn: 8.7.1
       acorn-walk: 8.2.0
       arg: 4.1.3
       create-require: 1.1.1
       diff: 4.0.2
       make-error: 1.3.6
-      typescript: 4.9.3
+      typescript: 4.6.4
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     transitivePeerDependencies:
@@ -53407,39 +53269,6 @@ packages:
       - source-map-support
     dev: true
 
-  /ts-node/10.9.1_c7x7xisxsab3cereq3ok2kgue4:
-    resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
-    hasBin: true
-    peerDependencies:
-      '@swc/core': '>=1.2.50'
-      '@swc/wasm': '>=1.2.50'
-      '@types/node': '*'
-      typescript: '>=2.7'
-    peerDependenciesMeta:
-      '@swc/core':
-        optional: true
-      '@swc/wasm':
-        optional: true
-    dependencies:
-      '@cspotcode/source-map-support': 0.8.1_source-map-support@0.5.21
-      '@tsconfig/node10': 1.0.8
-      '@tsconfig/node12': 1.0.9
-      '@tsconfig/node14': 1.0.1
-      '@tsconfig/node16': 1.0.2
-      '@types/node': 17.0.32
-      acorn: 8.8.2
-      acorn-walk: 8.2.0
-      arg: 4.1.3
-      create-require: 1.1.1
-      diff: 4.0.2
-      make-error: 1.3.6
-      typescript: 4.9.5
-      v8-compile-cache-lib: 3.0.1
-      yn: 3.1.1
-    transitivePeerDependencies:
-      - source-map-support
-    dev: true
-
   /ts-node/10.9.1_cbfmry4sbbh4vatmdrsmatfg5a:
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
     hasBin: true
@@ -53455,6 +53284,39 @@ packages:
         optional: true
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
+      '@tsconfig/node10': 1.0.8
+      '@tsconfig/node12': 1.0.9
+      '@tsconfig/node14': 1.0.1
+      '@tsconfig/node16': 1.0.2
+      '@types/node': 18.15.3
+      acorn: 8.8.2
+      acorn-walk: 8.2.0
+      arg: 4.1.3
+      create-require: 1.1.1
+      diff: 4.0.2
+      make-error: 1.3.6
+      typescript: 4.9.5
+      v8-compile-cache-lib: 3.0.1
+      yn: 3.1.1
+    transitivePeerDependencies:
+      - source-map-support
+    dev: true
+
+  /ts-node/10.9.1_ox4bw2nfeaywsll3jxp22xcahy:
+    resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
+    hasBin: true
+    peerDependencies:
+      '@swc/core': '>=1.2.50'
+      '@swc/wasm': '>=1.2.50'
+      '@types/node': '*'
+      typescript: '>=2.7'
+    peerDependenciesMeta:
+      '@swc/core':
+        optional: true
+      '@swc/wasm':
+        optional: true
+    dependencies:
+      '@cspotcode/source-map-support': 0.8.1_source-map-support@0.5.21
       '@tsconfig/node10': 1.0.8
       '@tsconfig/node12': 1.0.9
       '@tsconfig/node14': 1.0.1
@@ -55190,7 +55052,7 @@ packages:
       lead: 1.0.0
       object.assign: 4.1.3
       pumpify: 1.5.1
-      readable-stream: 2.3.7
+      readable-stream: 2.3.8
       remove-bom-buffer: 3.0.0
       remove-bom-stream: 1.2.0
       resolve-options: 1.1.0
@@ -57725,7 +57587,7 @@ packages:
     dependencies:
       '@types/fs-extra': 9.0.13
       '@types/minimist': 1.2.2
-      '@types/node': 18.11.18
+      '@types/node': 18.15.3
       '@types/ps-tree': 1.1.2
       '@types/which': 2.0.1
       chalk: 5.0.1
