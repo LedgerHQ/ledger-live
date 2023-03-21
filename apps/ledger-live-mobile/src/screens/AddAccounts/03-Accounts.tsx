@@ -459,6 +459,7 @@ function AddAccountsAccounts({
       )}
       <GenericErrorBottomModal
         error={error}
+        onClose={onCancel}
         onModalHide={onModalHide}
         footerButtons={
           <>

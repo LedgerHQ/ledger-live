@@ -101,12 +101,18 @@ export default function SelectDevice({
       if (e.type === "remove") setDevice(undefined);
       if (e.type === "add") {
         const { name, deviceModel, id, wired } = e;
-        setDevice({
-          deviceName: name,
-          modelId: deviceModel?.id,
-          deviceId: id,
-          wired,
-        } as Device);
+
+        setDevice((maybeDevice: Device | undefined) => {
+          return (
+            maybeDevice ||
+            ({
+              deviceName: name,
+              modelId: deviceModel?.id,
+              deviceId: id,
+              wired,
+            } as Device)
+          );
+        });
       }
     });
     return () => sub.unsubscribe();
