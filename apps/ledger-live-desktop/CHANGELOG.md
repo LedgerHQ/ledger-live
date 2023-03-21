@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.55.1-nightly.1
+
+### Patch Changes
+
+- [#2994](https://github.com/LedgerHQ/ledger-live/pull/2994) [`c7086b085f`](https://github.com/LedgerHQ/ledger-live/commit/c7086b085fded97ce30e0e8c097eca2ea8b0e80e) Thanks [@gre](https://github.com/gre)! - fixes: restore troubleshoot networking debug feature
+
+- Updated dependencies [[`8340016ef0`](https://github.com/LedgerHQ/ledger-live/commit/8340016ef051927a6701c731ac16842b7caf7023), [`9b22d499f2`](https://github.com/LedgerHQ/ledger-live/commit/9b22d499f2d0e62d78dbe178808d5fa392d22dda)]:
+  - @ledgerhq/live-common@29.2.0-nightly.1
+
 ## 2.55.1-nightly.0
 
 ### Patch Changes

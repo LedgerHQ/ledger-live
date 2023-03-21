@@ -1,5 +1,22 @@
 # live-mobile
 
+## 3.18.0-nightly.1
+
+### Minor Changes
+
+- [#2983](https://github.com/LedgerHQ/ledger-live/pull/2983) [`1650a9d074`](https://github.com/LedgerHQ/ledger-live/commit/1650a9d074313f7e966e781732abdc318c1cfb69) Thanks [@lvndry](https://github.com/lvndry)! - Introduce React Testing Library in LLM
+
+### Patch Changes
+
+- [#2980](https://github.com/LedgerHQ/ledger-live/pull/2980) [`8484021aac`](https://github.com/LedgerHQ/ledger-live/commit/8484021aac9cbbe6f12a162473824a9de9f33028) Thanks [@juan-cortes](https://github.com/juan-cortes)! - allow symbols in env override debug menu
+
+- [#2988](https://github.com/LedgerHQ/ledger-live/pull/2988) [`6d3814d8c3`](https://github.com/LedgerHQ/ledger-live/commit/6d3814d8c32647b04d82c9655a7ef99ce9f3d315) Thanks [@sarneijim](https://github.com/sarneijim)! - Add stake button as third button in main account actions
+
+- [#2978](https://github.com/LedgerHQ/ledger-live/pull/2978) [`c06ebd58f6`](https://github.com/LedgerHQ/ledger-live/commit/c06ebd58f60d90a9de3c332537bc4f99cba2c4f6) Thanks [@sarneijim](https://github.com/sarneijim)! - Add common stake flow to lld
+
+- Updated dependencies [[`8340016ef0`](https://github.com/LedgerHQ/ledger-live/commit/8340016ef051927a6701c731ac16842b7caf7023), [`9b22d499f2`](https://github.com/LedgerHQ/ledger-live/commit/9b22d499f2d0e62d78dbe178808d5fa392d22dda)]:
+  - @ledgerhq/live-common@29.2.0-nightly.1
+
 ## 3.18.0-nightly.0
 
 ### Minor Changes

@@ -1,5 +1,15 @@
 # @ledgerhq/live-common
 
+## 29.2.0-nightly.1
+
+### Minor Changes
+
+- [#2784](https://github.com/LedgerHQ/ledger-live/pull/2784) [`9b22d499f2`](https://github.com/LedgerHQ/ledger-live/commit/9b22d499f2d0e62d78dbe178808d5fa392d22dda) Thanks [@konoart](https://github.com/konoart)! - Fix minimum amount requirement for Solana accounts to be considered rent exempted after transfering and staking
+
+### Patch Changes
+
+- [#2976](https://github.com/LedgerHQ/ledger-live/pull/2976) [`8340016ef0`](https://github.com/LedgerHQ/ledger-live/commit/8340016ef051927a6701c731ac16842b7caf7023) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Remove serialization logic polkadot
+
 ## 29.2.0-nightly.0
 
 ### Minor Changes
